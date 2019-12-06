@@ -2,150 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75869115748
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 19:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF21511576F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 19:52:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbfLFSpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 13:45:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35764 "EHLO mail.kernel.org"
+        id S1726353AbfLFSwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 13:52:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbfLFSpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 13:45:54 -0500
+        id S1726317AbfLFSwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 13:52:10 -0500
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3622024670;
-        Fri,  6 Dec 2019 18:45:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13474206DF;
+        Fri,  6 Dec 2019 18:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575657953;
-        bh=uI9EKANieQp4/2Z6MB2ZAs2MMN7vumj93kZAcBBUEt0=;
+        s=default; t=1575658329;
+        bh=6MslA0G9d2mkJX5HjO2oRLRV6mBYmWeHXVt0lz47ZKI=;
         h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=1wiQHNi35PaEkG8c+sJQrPmvIkrOI/hWxm7imrIqmIQHlt1NZuKXhss6iRwGFU39D
-         bpjt5/DslssYZVyMiM8JtFzAxn6dtHXeIMXZ0Ir9xeC9GRGBAfnSA1UijLPVHmAkBm
-         g3CNDUixy30L8My/oZEi+y4wch3I/jeCaNGlu36g=
+        b=LpKUDyboUSg+jDJz5EbK6kTnYJXxCYSY3uhxQbbEjMzMkfvtWM6WYVxNMzhXP830F
+         /cdFuy5ztmHyPY1yqjR7XeepkOQiwSt+8NG4LH5T3OamrmcVQAYbXwFTxvvUMvgePL
+         1sMpCze0B9qTGBXbEen4TFbiuOOu1zl1csr4u8FU=
 Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 0E73635206AB; Fri,  6 Dec 2019 10:45:53 -0800 (PST)
-Date:   Fri, 6 Dec 2019 10:45:53 -0800
+        id DF12135206AB; Fri,  6 Dec 2019 10:52:08 -0800 (PST)
+Date:   Fri, 6 Dec 2019 10:52:08 -0800
 From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "linux-kernel-mentees@lists.linuxfoundation.org" 
-        <linux-kernel-mentees@lists.linuxfoundation.org>,
-        "madhuparnabhowmik04@gmail.com" <madhuparnabhowmik04@gmail.com>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "joel@joelfernandes.org" <joel@joelfernandes.org>
-Subject: Re: [PATCH 2/2] fs: nfs: dir.c: Fix sparse error
-Message-ID: <20191206184553.GI2889@paulmck-ThinkPad-P72>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Tejun Heo <tj@kernel.org>, jiangshanlai@gmail.com,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: Workqueues splat due to ending up on wrong CPU
+Message-ID: <20191206185208.GA25636@paulmck-ThinkPad-P72>
 Reply-To: paulmck@kernel.org
-References: <20191206151640.10966-1-madhuparnabhowmik04@gmail.com>
- <20191206160238.GE2889@paulmck-ThinkPad-P72>
- <2ec21ec537144bb3c0d5fbdaf88ea022d07b7ff8.camel@hammerspace.com>
- <20191206182414.GH2889@paulmck-ThinkPad-P72>
- <127792d6811173921733542052f061a18991f441.camel@hammerspace.com>
+References: <20191127155027.GA15170@paulmck-ThinkPad-P72>
+ <20191128161823.GA24667@paulmck-ThinkPad-P72>
+ <20191129155850.GA17002@paulmck-ThinkPad-P72>
+ <20191202015548.GA13391@paulmck-ThinkPad-P72>
+ <20191202201338.GH16681@devbig004.ftw2.facebook.com>
+ <20191203095521.GH2827@hirez.programming.kicks-ass.net>
+ <20191204201150.GA14040@paulmck-ThinkPad-P72>
+ <20191205102928.GG2810@hirez.programming.kicks-ass.net>
+ <20191205103213.GB2871@hirez.programming.kicks-ass.net>
+ <20191205144805.GR2889@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <127792d6811173921733542052f061a18991f441.camel@hammerspace.com>
+In-Reply-To: <20191205144805.GR2889@paulmck-ThinkPad-P72>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 06:28:14PM +0000, Trond Myklebust wrote:
-> On Fri, 2019-12-06 at 10:24 -0800, Paul E. McKenney wrote:
-> > On Fri, Dec 06, 2019 at 05:52:10PM +0000, Trond Myklebust wrote:
-> > > Hi Paul,
+On Thu, Dec 05, 2019 at 06:48:05AM -0800, Paul E. McKenney wrote:
+> On Thu, Dec 05, 2019 at 11:32:13AM +0100, Peter Zijlstra wrote:
+> > On Thu, Dec 05, 2019 at 11:29:28AM +0100, Peter Zijlstra wrote:
+> > > On Wed, Dec 04, 2019 at 12:11:50PM -0800, Paul E. McKenney wrote:
 > > > 
-> > > On Fri, 2019-12-06 at 08:02 -0800, Paul E. McKenney wrote:
-> > > > On Fri, Dec 06, 2019 at 08:46:40PM +0530, 
-> > > > madhuparnabhowmik04@gmail.com wrote:
-> > > > > From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> > > > > 
-> > > > > This patch fixes the following errors:
-> > > > > fs/nfs/dir.c:2353:14: error: incompatible types in comparison
-> > > > > expression (different address spaces):
-> > > > > fs/nfs/dir.c:2353:14:    struct list_head [noderef] <asn:4> *
-> > > > > fs/nfs/dir.c:2353:14:    struct list_head *
-> > > > > 
-> > > > > caused due to directly accessing the prev pointer of
-> > > > > a RCU protected list.
-> > > > > Accessing the pointer using the macro list_prev_rcu() fixes
-> > > > > this
-> > > > > error.
-> > > > > 
-> > > > > Signed-off-by: Madhuparna Bhowmik <
-> > > > > madhuparnabhowmik04@gmail.com>
-> > > > > ---
-> > > > >  fs/nfs/dir.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-> > > > > index e180033e35cf..2035254cc283 100644
-> > > > > --- a/fs/nfs/dir.c
-> > > > > +++ b/fs/nfs/dir.c
-> > > > > @@ -2350,7 +2350,7 @@ static int
-> > > > > nfs_access_get_cached_rcu(struct
-> > > > > inode *inode, const struct cred *cre
-> > > > >  	rcu_read_lock();
-> > > > >  	if (nfsi->cache_validity & NFS_INO_INVALID_ACCESS)
-> > > > >  		goto out;
-> > > > > -	lh = rcu_dereference(nfsi-
-> > > > > >access_cache_entry_lru.prev);
-> > > > > +	lh = rcu_dereference(list_prev_rcu(&nfsi-
-> > > > > > access_cache_entry_lru));
-> > > > 
-> > > > And as noted in the earlier email, what is preventing concurrent
-> > > > insertions into  and deletions from this list?
-> > > > 
-> > > > o	This use of list_move_tail() is OK because it does not poison.
-> > > > 	Though it isn't being all that friendly to lockless access to
-> > > > 	->prev -- no WRITE_ONCE() in list_move_tail().
-> > > > 
-> > > > o	The use of list_add_tail() is not safe with RCU readers, though
-> > > > 	they do at least partially compensate via use of smp_wmb()
-> > > > 	in nfs_access_add_cache() before calling
-> > > > nfs_access_add_rbtree().
-> > > > 
-> > > > o	The list_del() near the end of nfs_access_add_rbtree() will
-> > > > 	poison the ->prev pointer.  I don't see how this is safe given
-> > > > the
-> > > > 	possibility of a concurrent call to
-> > > > nfs_access_get_cached_rcu().
+> > > > And the good news is that I didn't see the workqueue splat, though my
+> > > > best guess is that I had about a 13% chance of not seeing it due to
+> > > > random chance (and I am currently trying an idea that I hope will make
+> > > > it more probable).  But I did get a couple of new complaints about RCU
+> > > > being used illegally from an offline CPU.  Splats below.
 > > > 
-> > > The pointer nfsi->access_cache_entry_lru is the head of the list,
-> > > so it
-> > > won't get poisoned. Furthermore, the objects it points to are freed
-> > > using kfree_rcu(), so they will survive as long as we hold the rcu
-> > > read
-> > > lock. The object's cred pointers also points to something that is
-> > > freed
-> > > in an rcu-safe manner.
-> > > 
-> > > The problem here is rather that a racing list_del() can cause nfsi-
-> > > > access_cache_entry_lru to be empty, which is presumably why Neil
-> > > > added
-> > > that check plus the empty cred pointer check in the following line.
-> > > 
-> > > The barrier semantics may be suspect, although the spin unlock
-> > > after
-> > > list_del() should presumably guarantee release semantics?
-> > 
-> > Ah, OK, so you are only ever using ->prev only from the head of the
-> > list,
-> > and presumably never do list_del() on the head itself.  (Don't laugh,
-> > this does really happen as a way to remove the entire list, though
-> > perhaps with list_del_init() rather than list_del().)
+> > > Shiny!
 > 
-> Correct.
-> 
-> > Maybe we should have a list_tail_rcu() that is only expected to work
-> > on the head of the list?
-> 
-> That might be the best way to resolve this, yes.
+> And my attempt to speed things up did succeed, but the success was limited
+> to finding more places where rcutorture chokes on CPUs being slow to boot.
+> Fixing those and trying again...
 
-Madhuparna, would you be willing to do a patch series along these lines?
+And I finally did manage to get a clean run.  There are probably a few
+more things that a large slow-booting hyperthreaded system can do to
+confuse rcutorture, but it is at least down to a dull roar.
+
+> > > > Your patch did rearrange the CPU-online sequence, so let's see if I
+> > > > can piece things together...
+> > > > 
+> > > > RCU considers a CPU to be online at rcu_cpu_starting() time.  This is
+> > > > called from notify_cpu_starting(), which is called from the arch-specific
+> > > > CPU-bringup code.  Any RCU readers before rcu_cpu_starting() will trigger
+> > > > the warning I am seeing.
+> > > 
+> > > Right.
+> > > 
+> > > > The original location of the stop_machine_unpark() was in
+> > > > bringup_wait_for_ap(), which is called from bringup_cpu(), which is in
+> > > > the CPUHP_BRINGUP_CPU entry of cpuhp_hp_states[].  Which, if I am not
+> > > > too confused, is invoked by some CPU other than the to-be-incoming CPU.
+> > > 
+> > > Correct.
+> > > 
+> > > > The new location of the stop_machine_unpark() is in cpuhp_online_idle(),
+> > > > which is called from cpu_startup_entry(), which is invoked from
+> > > > the arch-specific bringup code that runs on the incoming CPU.
+> > > 
+> > > The new place is the final piece of bringup, it is right before where
+> > > the freshly woken CPU will drop into the idle loop and start scheduling
+> > > (for the first time).
+> > > 
+> > > > Which
+> > > > is the same code that invokes notify_cpu_starting(), so we need
+> > > > notify_cpu_starting() to be invoked before cpu_startup_entry().
+> > > 
+> > > Right, that is right before we run what used to be the CPU_STARTING
+> > > notifiers. This is in fact (on x86) before the CPU is marked
+> > > cpu_online(). It has to be before cpu_startup_entry(), before this is
+> > > ran with IRQs disabled, while cpu_startup_entry() demands IRQs are
+> > > enabled.
+> > > 
+> > > > The order is not immediately obvious on IA64.  But it looks like
+> > > > everything else does it in the required order, so I am a bit confused
+> > > > about this.
+> > > 
+> > > That makes two of us, afaict we have RCU up and running when we get to
+> > > the idle loop.
+> > 
+> > Or did we need rcutree_online_cpu() to have ran? Because that is ran
+> > much later than this...
+> 
+> No, rcu_cpu_starting() does the trick.  So I remain confused.
+> 
+> My thought is to add some printk()s or tracing to rcu_cpu_starting()
+> and its counterpart, rcu_report_dead().  But is there a better way?
+
+And the answer is...
+
+This splat happens even without your fix!
+
+Which goes a long way to explaining why neither of us could figure out
+how your fix could have caused it.  It apparently was the increased
+stress required to reproduce quickly rather than your fix that made it
+happen more frequently.  Though there are few enough occurrences that
+it might just be random chance.
+
+Thoughts?
 
 							Thanx, Paul
+
+------------------------------------------------------------------------
+
+[   98.468097] =============================
+[   98.468097] WARNING: suspicious RCU usage
+[   98.468098] 5.4.0-rc1+ #128 Not tainted
+[   98.468099] -----------------------------
+[   98.468099] kernel/sched/fair.c:6458 suspicious rcu_dereference_check() usage!
+[   98.468099] 
+[   98.468100] other info that might help us debug this:
+[   98.468100] 
+[   98.468101] 
+[   98.468101] RCU used illegally from offline CPU!
+[   98.468102] rcu_scheduler_active = 2, debug_locks = 1
+[   98.468105] 3 locks held by swapper/1/0:
+[   98.468107]  #0: ffffffff91462958 ((console_sem).lock){-.-.}, at: up+0xd/0x50
+[   98.468120]  #1: ffff9dc89ecd87c0 (&p->pi_lock){-.-.}, at: try_to_wake_up+0x51/0x980
+[   98.468131]  #2: ffffffff914647e0 (rcu_read_lock){....}, at: select_task_rq_fair+0xdb/0x12f0
+[   98.468161] initcall init_netconsole+0x0/0x21a returned 0 after 470496 usecs
+[   98.468164] 
+[   98.468167] stack backtrace:
+[   98.468169] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.4.0-rc1+ #128
+[   98.468172] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.11.0-2.el7 04/01/2014
+[   98.468177] Call Trace:
+[   98.468178]  dump_stack+0x5e/0x8b
+[   98.468178]  select_task_rq_fair+0x8ef/0x12f0
+[   98.468179]  ? select_task_rq_fair+0xdb/0x12f0
+[   98.468179]  ? try_to_wake_up+0x51/0x980
+[   98.468180]  try_to_wake_up+0x171/0x980
+[   98.468180]  up+0x3b/0x50
+[   98.468180]  __up_console_sem+0x2e/0x50
+[   98.468181]  console_unlock+0x3eb/0x5a0
+[   98.468181]  ? console_unlock+0x19d/0x5a0
+[   98.468182]  vprintk_emit+0xfc/0x2c0
+[   98.468182]  printk+0x53/0x6a
+[   98.468182]  ? slow_virt_to_phys+0x22/0x120
+[   98.468183]  start_secondary+0x41/0x190
+[   98.468183]  secondary_startup_64+0xa4/0xb0
+[   98.468183] 
+[   98.468184] =============================
+[   98.468184] WARNING: suspicious RCU usage
+[   98.468185] 5.4.0-rc1+ #128 Not tainted
+[   98.468185] -----------------------------
+[   98.468185] kernel/sched/fair.c:6010 suspicious rcu_dereference_check() usage!
+[   98.468186] 
+[   98.468186] other info that might help us debug this:
+[   98.468187] 
+[   98.468187] 
+[   98.468187] RCU used illegally from offline CPU!
+[   98.468188] rcu_scheduler_active = 2, debug_locks = 1
+[   98.468188] 3 locks held by swapper/1/0:
+[   98.468189]  #0: ffffffff91462958 ((console_sem).lock){-.-.}, at: up+0xd/0x50
+[   98.468191]  #1: ffff9dc89ecd87c0 (&p->pi_lock){-.-.}, at: try_to_wake_up+0x51/0x980
+[   98.468193]  #2: ffffffff914647e0 (rcu_read_lock){....}, at: select_task_rq_fair+0xdb/0x12f0
+[   98.468195] 
+[   98.468195] stack backtrace:
+[   98.468196] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.4.0-rc1+ #128
+[   98.468196] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.11.0-2.el7 04/01/2014
+[   98.468197] Call Trace:
+[   98.468197]  dump_stack+0x5e/0x8b
+[   98.468197]  select_task_rq_fair+0x967/0x12f0
+[   98.468198]  ? select_task_rq_fair+0xdb/0x12f0
+[   98.468198]  ? try_to_wake_up+0x51/0x980
+[   98.468199]  try_to_wake_up+0x171/0x980
+[   98.468199]  up+0x3b/0x50
+[   98.468199]  __up_console_sem+0x2e/0x50
+[   98.468200]  console_unlock+0x3eb/0x5a0
+[   98.468200]  ? console_unlock+0x19d/0x5a0
+[   98.468201]  vprintk_emit+0xfc/0x2c0
+[   98.468201]  printk+0x53/0x6a
+[   98.468201]  ? slow_virt_to_phys+0x22/0x120
+[   98.468202]  start_secondary+0x41/0x190
+[   98.468202]  secondary_startup_64+0xa4/0xb0
