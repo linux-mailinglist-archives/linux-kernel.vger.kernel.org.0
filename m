@@ -2,98 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A384114F1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 11:35:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 277BA114F1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 11:35:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbfLFKfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 05:35:51 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:55916 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726102AbfLFKfv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 05:35:51 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB6AXb4K012056;
-        Fri, 6 Dec 2019 04:34:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=gODTI0lW1pdRgw8ARzPT2hG/hZAyqOBktg59aJ0itXo=;
- b=JGYVJCRKfWlj4U1CRVRaNLheVAXMN0UpKhO5wWhF1OVVjzTtLapt6rXwRwuiQLvvWYOq
- ZqzmENVuZie+QlP8jdkmkcrlsA5R9SKs49XH+Ko7CyKJQ0JfsWo9Lf6QfsVFpyHjcb+2
- 6dZ7LTkDPM7fgSDWDvPQnpMd7Wg9c710J3WXJXOceQJ/k9+wC+s++QSfLq0h7Hn/IrwK
- Y4Su51rR09YwwUzh7HxBBZDkJOSz8vCukobzSho6xbRMQq5jOvWbaK3GncRrWTZHS/Ez
- Sjll2JKiW8K73nM/LPN0bGnhFRucaro9iU4jq//KRCfM034+IKggAlYHpq8vvia8JsBW hQ== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex01.ad.cirrus.com ([5.172.152.52])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2wqmq101fa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 06 Dec 2019 04:34:57 -0600
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 6 Dec
- 2019 10:34:53 +0000
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Fri, 6 Dec 2019 10:34:53 +0000
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id D991F2D1;
-        Fri,  6 Dec 2019 10:34:53 +0000 (UTC)
-Date:   Fri, 6 Dec 2019 10:34:53 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Chuhong Yuan <hslester96@gmail.com>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <patches@opensource.cirrus.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: wm5100: add missed regulator_bulk_disable
-Message-ID: <20191206103453.GC10451@ediswmail.ad.cirrus.com>
-References: <20191206075300.18182-1-hslester96@gmail.com>
+        id S1726244AbfLFKfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 05:35:09 -0500
+Received: from foss.arm.com ([217.140.110.172]:38940 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726102AbfLFKfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 05:35:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D2181FB;
+        Fri,  6 Dec 2019 02:35:08 -0800 (PST)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A7783F718;
+        Fri,  6 Dec 2019 02:35:07 -0800 (PST)
+Date:   Fri, 6 Dec 2019 10:35:05 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Eric Auger <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, maz@kernel.org,
+        linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        james.morse@arm.com, suzuki.poulose@arm.com, drjones@redhat.com
+Subject: Re: [RFC 1/3] KVM: arm64: pmu: Don't increment SW_INCR if PMCR.E is
+ unset
+Message-ID: <20191206103505.GM18399@e119886-lin.cambridge.arm.com>
+References: <20191204204426.9628-1-eric.auger@redhat.com>
+ <20191204204426.9628-2-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191206075300.18182-1-hslester96@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
- suspectscore=2 spamscore=0 priorityscore=1501 phishscore=0 clxscore=1015
- mlxscore=0 malwarescore=0 mlxlogscore=977 adultscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1912060091
+In-Reply-To: <20191204204426.9628-2-eric.auger@redhat.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 03:53:00PM +0800, Chuhong Yuan wrote:
-> The driver forgets to call regulator_bulk_disable() in remove like that
-> in probe failure.
-> Add the missed call to fix it.
+On Wed, Dec 04, 2019 at 09:44:24PM +0100, Eric Auger wrote:
+> The specification says PMSWINC increments PMEVCNTR<n>_EL1 by 1
+> if PMEVCNTR<n>_EL0 is enabled and configured to count SW_INCR.
 > 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> For PMEVCNTR<n>_EL0 to be enabled, we need both PMCNTENSET to
+> be set for the corresponding event counter but we also need
+> the PMCR.E bit to be set.
+> 
+> Fixes: 7a0adc7064b8 ("arm64: KVM: Add access handler for PMSWINC register")
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
 > ---
->  sound/soc/codecs/wm5100.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  virt/kvm/arm/pmu.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/sound/soc/codecs/wm5100.c b/sound/soc/codecs/wm5100.c
-> index 91cc63c5a51f..d985b2061169 100644
-> --- a/sound/soc/codecs/wm5100.c
-> +++ b/sound/soc/codecs/wm5100.c
-> @@ -2653,6 +2653,8 @@ static int wm5100_i2c_remove(struct i2c_client *i2c)
->  		gpio_set_value_cansleep(wm5100->pdata.ldo_ena, 0);
->  		gpio_free(wm5100->pdata.ldo_ena);
->  	}
-> +	regulator_bulk_disable(ARRAY_SIZE(wm5100->core_supplies),
-> +			       wm5100->core_supplies);
+> diff --git a/virt/kvm/arm/pmu.c b/virt/kvm/arm/pmu.c
+> index 8731dfeced8b..c3f8b059881e 100644
+> --- a/virt/kvm/arm/pmu.c
+> +++ b/virt/kvm/arm/pmu.c
+> @@ -486,6 +486,9 @@ void kvm_pmu_software_increment(struct kvm_vcpu *vcpu, u64 val)
+>  	if (val == 0)
+>  		return;
 >  
+> +	if (!(__vcpu_sys_reg(vcpu, PMCR_EL0) & ARMV8_PMU_PMCR_E))
+> +		return;
+> +
 
-This is a bit trickier than this since these regulators are being
-controlled by PM runtime, and it doesn't necessarily leave things
-in an enabled state when it is disabled.
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
 
-Thanks,
-Charles
+
+>  	enable = __vcpu_sys_reg(vcpu, PMCNTENSET_EL0);
+>  	for (i = 0; i < ARMV8_PMU_CYCLE_IDX; i++) {
+>  		if (!(val & BIT(i)))
+> -- 
+> 2.20.1
+> 
