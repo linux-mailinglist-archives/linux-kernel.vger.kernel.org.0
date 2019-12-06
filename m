@@ -2,93 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 145131154E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:12:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64D48115551
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:29:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfLFQMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 11:12:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726261AbfLFQMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:12:02 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63349206DF;
-        Fri,  6 Dec 2019 16:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575648721;
-        bh=3R+PC8Ff3M5yx19vaH341IDsCcc0jMlrqtmK1IJiZAc=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=2KY561JwdQ6U0gtI10EgrHS/V+IZj3bshbV5dB/HBR3ySMGIm6HWbbvYTEuBx8dFI
-         x/GqAF17JWtwmewJ76R82AKu0jZ1gLyLhcSaHc0BHvEqXJ7hG7orMrs3JovQys3+gc
-         0EHwNmuiae58NPAYHd88l9LkQszbRRUhjUjzywRM=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 3768835206AB; Fri,  6 Dec 2019 08:12:01 -0800 (PST)
-Date:   Fri, 6 Dec 2019 08:12:01 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     madhuparnabhowmik04@gmail.com, trond.myklebust@hammerspace.com,
-        anna.schumaker@netapp.com, linux-nfs@vger.kernel.org,
-        rcu@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fs: nfs: dir.c: Fix sparse error
-Message-ID: <20191206161201.GF2889@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191206151640.10966-1-madhuparnabhowmik04@gmail.com>
- <20191206160002.GB15547@google.com>
+        id S1726386AbfLFQ3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 11:29:34 -0500
+Received: from mail-40138.protonmail.ch ([185.70.40.138]:11488 "EHLO
+        mail-40138.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbfLFQ3e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 11:29:34 -0500
+X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Dec 2019 11:29:33 EST
+Date:   Fri, 06 Dec 2019 16:13:05 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1575648792;
+        bh=z5ckHnM1JT0bjLvn3hu4ZpaORLMeQ8ST4azSjqKt/OI=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=LBJvUu/rQZkFQkYxEnV1DHmyjivJCcrljuT6+EmK6y1juedk/dCQonL5Z22l5fmRh
+         5GgA7lg5FL7hpb+KuTpYPzxna6usQ0kC1uruq2SLXjQuLRezWJ7WkpBWU5W+CyCF5E
+         MN6S0Ndur6pvnTwJ3yKsFbWEPr1hGRWDOAvGOQFI=
+To:     Peter Zijlstra <peterz@infradead.org>
+From:   Krzysztof Piecuch <piecuch@protonmail.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "drake@endlessm.com" <drake@endlessm.com>,
+        "malat@debian.org" <malat@debian.org>,
+        "juri.lelli@redhat.com" <juri.lelli@redhat.com>
+Reply-To: Krzysztof Piecuch <piecuch@protonmail.com>
+Subject: Re: [PATCH] x86/tsc: Don't use cpuid 0x16 leaf to determine cpu speed.
+Message-ID: <s2tCh5akte6KmZimjnjJ0dn_zhWfLr_DEXJ6je2DFCUwZwrF9wqS4kPcJ-j1LOtP8rmkjR6oMg58anmztMJMd0e1Dfe8CvtTZudBXRT4gik=@protonmail.com>
+In-Reply-To: <20191206103942.GE2844@hirez.programming.kicks-ass.net>
+References: <SoluZg51N39Rx0tDCSJFbEvvgMrDnJ_g0RdRdN5mtCfag4GahIOPfok7UbkyeO5Qpl3wUHp8H8y73JtClcZvr1ARSIOBIFQAne0Z712el8M=@protonmail.com>
+ <20191206103942.GE2844@hirez.programming.kicks-ass.net>
+Feedback-ID: krphKiiPlx_XKIryTSpdJ_XtBwogkHXWA-Us-PsTeaBSrzOTAKWxwbFkseT4Z85b_7PMRvSnq3Ah7f9INXrOMw==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191206160002.GB15547@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 11:00:02AM -0500, Joel Fernandes wrote:
-> +Paul, here is the dependent patch for the list_prev_rcu() patch Madhuparna
-> posted.
+Thank you for your reply.
 
-Got it, thank you!
+I experience 2% tsc clock-drift (671s ahead of my local NTP server after 9.=
+5h)
+on my machine with Supermicro's Hyperspeed turned on. There's no clock
+drift when I turn Hyperspeed off.
 
-And however this turns out, it does illustrate the value of the sparse
-address-space checks!
+As far as I know Hyperspeed increases base clock frequency[1].
 
-							Thanx, Paul
+That's what CPUID says about my overclocked Intel Xeon Gold 6146:
 
-> On Fri, Dec 06, 2019 at 08:46:40PM +0530, madhuparnabhowmik04@gmail.com wrote:
-> > From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> > 
-> > This patch fixes the following errors:
-> > fs/nfs/dir.c:2353:14: error: incompatible types in comparison expression (different address spaces):
-> > fs/nfs/dir.c:2353:14:    struct list_head [noderef] <asn:4> *
-> > fs/nfs/dir.c:2353:14:    struct list_head *
-> > 
-> > caused due to directly accessing the prev pointer of
-> > a RCU protected list.
-> > Accessing the pointer using the macro list_prev_rcu() fixes this error.
-> > 
-> > Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> > ---
-> >  fs/nfs/dir.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-> > index e180033e35cf..2035254cc283 100644
-> > --- a/fs/nfs/dir.c
-> > +++ b/fs/nfs/dir.c
-> > @@ -2350,7 +2350,7 @@ static int nfs_access_get_cached_rcu(struct inode *inode, const struct cred *cre
-> >  	rcu_read_lock();
-> >  	if (nfsi->cache_validity & NFS_INO_INVALID_ACCESS)
-> >  		goto out;
-> > -	lh = rcu_dereference(nfsi->access_cache_entry_lru.prev);
-> > +	lh = rcu_dereference(list_prev_rcu(&nfsi->access_cache_entry_lru));
-> >  	cache = list_entry(lh, struct nfs_access_entry, lru);
-> >  	if (lh == &nfsi->access_cache_entry_lru ||
-> >  	    cred != cache->cred)
-> > -- 
-> > 2.17.1
-> > 
+   Time Stamp Counter/Core Crystal Clock Information (0x15):
+      TSC/clock ratio =3D 256/2
+      nominal core crystal clock =3D 0 Hz
+   Processor Frequency Information (0x16):
+      Core Base Frequency (MHz) =3D 0xc80 (3200)
+      Core Maximum Frequency (MHz) =3D 0x1068 (4200)
+      Bus (Reference) Frequency (MHz) =3D 0x64 (100)
+
+tsc_refine_calibration_work never corrects the early calibration
+because it calculates a tsc frequency beyond 1% tolerance.
+
+I've bumped the tsc_refine_calibration_work's tolerance to 3% and made it w=
+ork:
+
+Hyperspeed:
+[    8.571471] tsc: Refined TSC clocksource calibration: 3264.012 MHz
+No hyperspeed:
+[    8.506009] tsc: Refined TSC clocksource calibration: 3200.013 MHz
+
+Increasing the tolerance to 3% would work in my case but apparently some
+servers can increase the base-clock frequency to 6%. [2]
+At this point in order to completely eliminate this bug we would need to
+significantly increase the tolerance which might introduce other bugs.
+
+[1]: https://www.supermicro.com/support/faqs/faq.cfm?faq=3D21337
+[2]: https://www.servethehome.com/supermicro-hyper-speed-server-overclockin=
+g-bios/
+
+Kind regards,
+Krzysztof Piecuch
+
