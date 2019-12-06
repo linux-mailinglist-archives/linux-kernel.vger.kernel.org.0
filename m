@@ -2,105 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACE20114E55
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:45:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0D33114E5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:49:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726321AbfLFJpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 04:45:38 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51197 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfLFJpi (ORCPT
+        id S1726330AbfLFJte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 04:49:34 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55699 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfLFJte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 04:45:38 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p9so7129521wmg.0;
-        Fri, 06 Dec 2019 01:45:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VgZXkaerCaq814dwnILX7vYtRFOjbm5DfD5NkTzjaTo=;
-        b=K6sdxfwvQPjEECZJH9PvcwUtZP8upA7qjYykUbYxv/o1AeRrnwqEpAUIHj+mcGSUni
-         gxVPuZGaG/1KJfRJCfr/EQNC/z6qwV7H+APlCjxBMvCvG2nxOjyZ6mu3CZsCxzie0mv6
-         uzeEQTRSC7+HnIxalFxtv9IGHHyzVEkWENSlB02oOlWtYKs5HlIEgoHUS9wFAQ0FbWIt
-         DExQCPJ/SfnUPB5NRBf0R7/Gy6U7wM38EvQLYpIZfUGmiNCaroo6J19KMJRs2tpDKIfy
-         O4PNOwlIlvz8tIzEr3nRPoNXYcyHz0IRnYOES7E8SjoATIEwl2bI8lfzJHqGQZT6mc0B
-         j2vg==
-X-Gm-Message-State: APjAAAWAUrQn3jejbOmWy7ROlgRHdFNNE0B5V8nMig43xmtS1Z0DOfkz
-        Em0ceBax8/jSaj1NVbjE65izXCkP
-X-Google-Smtp-Source: APXvYqxzG3UZEpVj2ra8UPftUD4jNLDT9c/lbi7vIZ4Au8QKO1FCp9GXKuu0+aBLhs5BYLTfzIZ2OA==
-X-Received: by 2002:a7b:c24c:: with SMTP id b12mr9616831wmj.16.1575625536360;
-        Fri, 06 Dec 2019 01:45:36 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id d186sm2986921wmf.7.2019.12.06.01.45.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2019 01:45:35 -0800 (PST)
-Date:   Fri, 6 Dec 2019 10:45:34 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, mtk.manpages@gmail.com,
-        cl@linux.com, cai@lca.pw, akpm@linux-foundation.org,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] move_pages.2: not return ENOENT if the page are already
- on the target nodes
-Message-ID: <20191206094534.GL28317@dhcp22.suse.cz>
-References: <1575596090-115377-1-git-send-email-yang.shi@linux.alibaba.com>
- <0dc96e40-5f2b-a2fe-6e5f-b6f3d5e9ebde@nvidia.com>
+        Fri, 6 Dec 2019 04:49:34 -0500
+Received: from 79.184.254.100.ipv4.supernova.orange.pl (79.184.254.100) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id bb149af0a0a8a15a; Fri, 6 Dec 2019 10:49:30 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Subject: [RFC][PATCH 5/6] intel_idle: Refactor intel_idle_cpuidle_driver_init()
+Date:   Fri, 06 Dec 2019 10:46:10 +0100
+Message-ID: <2442751.d4WTBNuXdf@kreacher>
+In-Reply-To: <2037014.bnAicLLH9b@kreacher>
+References: <2037014.bnAicLLH9b@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0dc96e40-5f2b-a2fe-6e5f-b6f3d5e9ebde@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 06-12-19 00:25:53, John Hubbard wrote:
-> On 12/5/19 5:34 PM, Yang Shi wrote:
-> > Since commit e78bbfa82624 ("mm: stop returning -ENOENT
-> > from sys_move_pages() if nothing got migrated"), move_pages doesn't
-> > return -ENOENT anymore if the pages are already on the target nodes, but
-> > this change is never reflected in manpage.
-> > 
-> > Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-> > Cc: Christoph Lameter <cl@linux.com>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Cc: Qian Cai <cai@lca.pw>
-> > Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> > ---
-> >   man2/move_pages.2 | 5 ++---
-> >   1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/man2/move_pages.2 b/man2/move_pages.2
-> > index 2d96468..2a2f3cd 100644
-> > --- a/man2/move_pages.2
-> > +++ b/man2/move_pages.2
-> > @@ -192,9 +192,8 @@ was specified or an attempt was made to migrate pages of a kernel thread.
-> >   One of the target nodes is not online.
-> >   .TP
-> >   .B ENOENT
-> > -No pages were found that require moving.
-> > -All pages are either already
-> > -on the target node, not present, had an invalid address or could not be
-> > +No pages were found.
-> > +All pages are either not present, had an invalid address or could not be
-> >   moved because they were mapped by multiple processes.
-> >   .TP
-> >   .B EPERM
-> > 
-> 
-> whoa, hold on. If I'm reading through the various error paths correctly, then this
-> code is *never* going to return ENOENT for the whole function. It can fill in that
-> value per-page, in the status array, but that's all. Did I get that right?
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-You are right. Both store_status and do_move_pages_to_node do overwrite
-the error code. So you are right that ENOENT return value is not
-possible. I haven't checked since when this is the case. This whole
-syscall is a disaster from the API and documentation POV.
+Move the C-state verification and checks from
+intel_idle_cpuidle_driver_init() to a separate function,
+intel_idle_verify_cstate(), and make the former call it after
+checking the CPUIDLE_FLAG_UNUSABLE state flag.
 
-Btw. Page states error codes could see some refinements as well.
--- 
-Michal Hocko
-SUSE Labs
+Also combine the drv->states[] updates with the incrementation of
+drv->state_count.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/idle/intel_idle.c |   49 +++++++++++++++++++++++-----------------------
+ 1 file changed, 25 insertions(+), 24 deletions(-)
+
+Index: linux-pm/drivers/idle/intel_idle.c
+===================================================================
+--- linux-pm.orig/drivers/idle/intel_idle.c
++++ linux-pm/drivers/idle/intel_idle.c
+@@ -944,6 +944,22 @@ static void intel_idle_s2idle(struct cpu
+ 	mwait_idle_with_hints(eax, ecx);
+ }
+ 
++static bool intel_idle_verify_cstate(unsigned int mwait_hint)
++{
++	unsigned int mwait_cstate = MWAIT_HINT2CSTATE(mwait_hint) + 1;
++	unsigned int num_substates = (mwait_substates >> mwait_cstate * 4) &
++					MWAIT_SUBSTATE_MASK;
++
++	/* Ignore the C-state if there are NO sub-states in CPUID for it. */
++	if (num_substates == 0)
++		return false;
++
++	if (mwait_cstate > 2 && !boot_cpu_has(X86_FEATURE_NONSTOP_TSC))
++		mark_tsc_unstable("TSC halts in idle states deeper than C2");
++
++	return true;
++}
++
+ static void __setup_broadcast_timer(bool on)
+ {
+ 	if (on)
+@@ -1332,10 +1348,10 @@ static void __init intel_idle_cpuidle_dr
+ 	drv->state_count = 1;
+ 
+ 	for (cstate = 0; cstate < CPUIDLE_STATE_MAX; ++cstate) {
+-		int num_substates, mwait_hint, mwait_cstate;
++		unsigned int mwait_hint;
+ 
+-		if ((cpuidle_state_table[cstate].enter == NULL) &&
+-		    (cpuidle_state_table[cstate].enter_s2idle == NULL))
++		if (!cpuidle_state_table[cstate].enter &&
++		    !cpuidle_state_table[cstate].enter_s2idle)
+ 			break;
+ 
+ 		if (cstate + 1 > max_cstate) {
+@@ -1343,34 +1359,19 @@ static void __init intel_idle_cpuidle_dr
+ 			break;
+ 		}
+ 
+-		mwait_hint = flg2MWAIT(cpuidle_state_table[cstate].flags);
+-		mwait_cstate = MWAIT_HINT2CSTATE(mwait_hint);
+-
+-		/* number of sub-states for this state in CPUID.MWAIT */
+-		num_substates = (mwait_substates >> ((mwait_cstate + 1) * 4))
+-					& MWAIT_SUBSTATE_MASK;
+-
+-		/* if NO sub-states for this state in CPUID, skip it */
+-		if (num_substates == 0)
+-			continue;
+-
+-		/* if state marked as disabled, skip it */
++		/* If marked as unusable, skip this state. */
+ 		if (cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_UNUSABLE) {
+ 			pr_debug("state %s is disabled\n",
+ 				 cpuidle_state_table[cstate].name);
+ 			continue;
+ 		}
+ 
++		mwait_hint = flg2MWAIT(cpuidle_state_table[cstate].flags);
++		if (!intel_idle_verify_cstate(mwait_hint))
++			continue;
+ 
+-		if (((mwait_cstate + 1) > 2) &&
+-			!boot_cpu_has(X86_FEATURE_NONSTOP_TSC))
+-			mark_tsc_unstable("TSC halts in idle"
+-					" states deeper than C2");
+-
+-		drv->states[drv->state_count] =	/* structure copy */
+-			cpuidle_state_table[cstate];
+-
+-		drv->state_count += 1;
++		/* Structure copy. */
++		drv->states[drv->state_count++] = cpuidle_state_table[cstate];
+ 	}
+ 
+ 	if (icpu->byt_auto_demotion_disable_flag) {
+
+
+
