@@ -2,116 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5F4D115513
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA309115518
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:24:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfLFQYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 11:24:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726258AbfLFQYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:24:00 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 977C520659;
-        Fri,  6 Dec 2019 16:23:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575649439;
-        bh=F9OTDyXwrGShhha34PK6U8wuxLV81Kw3Kz0btZvBz6c=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Jou6FGmHqPVqcqnO2VJmeqnwycT8hsakmYNCGMZfr2CqTCqAUEBNTxKw3VMk4k4ff
-         qrcSONAFYYFOJ9VkhwlE9gl+0pEDfPIY/0bJhNkRaAv4VuUeyz2PhAzvXaKmz2Qlyc
-         FKzv7KlmwZiouw7Jb2RjyV9ll/5zuO2ouf3F8wxs=
-Subject: Re: [PATCH 4.14 000/209] 4.14.158-stable review
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20191204175321.609072813@linuxfoundation.org>
- <1dac10cd-7183-9dfd-204c-05fae75bcd74@kernel.org>
- <20191206152823.GA75339@kroah.com>
- <785c9534-1eb2-ea9b-8c9b-6713fdefdd01@kernel.org>
- <e04a233b-0854-2dd4-060e-47e1013879ee@roeck-us.net>
-From:   shuah <shuah@kernel.org>
-Message-ID: <f7e72654-42a6-864a-4b4c-41adcce74404@kernel.org>
-Date:   Fri, 6 Dec 2019 09:23:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1726465AbfLFQYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 11:24:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41970 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726258AbfLFQYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 11:24:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9D64CB190;
+        Fri,  6 Dec 2019 16:24:35 +0000 (UTC)
+From:   Thomas Renninger <trenn@suse.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, Thomas Renninger <trenn@suse.de>,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux@armlinux.org.uk, will.deacon@arm.com, x86@kernel.org,
+        fschnitzlein@suse.de
+Subject: [PATCH v5 0/3] sysfs: add sysfs based cpuinfo
+Date:   Fri,  6 Dec 2019 17:24:18 +0100
+Message-Id: <20191206162421.15050-1-trenn@suse.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <e04a233b-0854-2dd4-060e-47e1013879ee@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/19 9:10 AM, Guenter Roeck wrote:
-> On 12/6/19 7:35 AM, shuah wrote:
->> On 12/6/19 8:28 AM, Greg Kroah-Hartman wrote:
->>> On Fri, Dec 06, 2019 at 08:24:36AM -0700, shuah wrote:
->>>> On 12/4/19 10:53 AM, Greg Kroah-Hartman wrote:
->>>>> This is the start of the stable review cycle for the 4.14.158 release.
->>>>> There are 209 patches in this series, all will be posted as a response
->>>>> to this one.  If anyone has any issues with these being applied, 
->>>>> please
->>>>> let me know.
->>>>>
->>>>> Responses should be made by Fri, 06 Dec 2019 17:50:10 +0000.
->>>>> Anything received after that time might be too late.
->>>>>
->>>>> The whole patch series can be found in one patch at:
->>>>>     https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.158-rc1.gz 
->>>>>
->>>>> or in the git tree and branch at:
->>>>>     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
->>>>> linux-4.14.y
->>>>> and the diffstat can be found below.
->>>>>
->>>>> thanks,
->>>>>
->>>>> greg k-h
->>>>>
->>>>
->>>> Starting with Linux 4.14.157, 4.9.204, and 4.4.204 stables stopped
->>>> booting on my system. It can't find the root disk. No config changes
->>>> in between.
->>>>
->>>> I have been bisecting 4.14 and 4.9 with no luck so far. I updated
->>>> to Ubuntu 19.10 in between.
->>>>
->>>> The only other thing I see is CONFIG_GCC_VERSION which is supported
->>>> starting 4.18. I don't this boot failing issue on 4.19 + up. I am
->>>> also chasing any links between this config and scripts and tools
->>>> that generate the initramfs.
->>>
->>> Did you also upgrade your version of gcc?  I know I build those older
->>> kernels with the latest version of gcc for build tests, but I do not
->>> boot them.  I think everyone who still uses them uses older versions of
->>> gcc.
->>
->> Yes. gcc version changed. That has been my strong suspect since I 
->> started poking around the CONFIG_GCC_VERSION.
->>
-> 
-> What version of gcc are you using ? I currently use gcc 8.3.0 for all
-> qemu boot tests (except for 3.16 which doesn't support it, or at least
-> it didn't when I last checked), and have not observed any problems.
-> 
+I picked up Felix Schnizlein's work from 2017.
 
-With the upgrade gcc version went from 8.3.0 to 9.2.1
+It was already reviewed by Greg-KH at this time and even
+pushed into linux-next tree, when it came out that the mails
+never reached lkml, even the list was added to CC.
 
-Interestingly enough all the older 4.14, 4.9, and 4.4 kernel I have
-on the system boot just fine. It fails when build newer rcs with new
-gcc, boot fails.
+ARM people then correctly complained that this needs more review
+by ARCH people. It got reverted, Felix had no time anymore and this
+nice patcheset was hanging around nowhere...
 
-I would really like to understand it just in case something in our
-kbuild scrips is the issue.
 
-thanks,
--- Shuah
+Changes (by trenn) since v4:
+- Do not separate bug and flag list via comma, but by space
+- Adjust renamed cpu_data(c).x86_mask to cpu_data(c).x86_stepping
+  due to commit b399151cb48db30ad1e0
+- Introduce
+  config CPUINFO_SYSFS
+  and use config HAVE_CPUINFO_SYSFS as a pre-set helper only
+- Set CPUINFO_SYSFS
+  def_bool y
+
+=============================================
+
+Tested on x86_64 and aarch64 (see below).
+
+Tested on x86_64 (virtual machine):
+
+------------------------------------------------------------
+
+/sys/devices/system/cpu/cpu1/info/:[0]# ls
+bogomips  bugs  cpu_family  flags  model  model_name  stepping  vendor_id
+
+for file in *;do echo $file; cat $file;echo;done
+bogomips
+5187.72
+
+bugs
+cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs 
+itlb_multihit
+
+cpu_family
+6
+
+flags
+fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 
+clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc 
+rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid 
+sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand 
+hypervisor lahf_lm abm cpuid_fault invpcid_single pti ssbd ibrs ibpb fsgsbase 
+tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat umip
+
+model
+60
+
+model_name
+Intel Core Processor (Haswell, no TSX, IBRS)
+
+stepping
+1
+
+vendor_id
+GenuineIntel
+
+=============================================
+
+Tested on aarch64:
+
+/sys/devices/system/cpu/cpu1/info/:[0]# ls
+architecture  bogomips  flags  implementer  part  revision  variant
+
+------------------------------------------------------------
+
+for file in *;do echo $file; cat $file;echo;done
+architecture
+8
+
+bogomips
+40.00
+
+flags
+fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid asimdrdm
+
+implementer
+0x51
+
+part
+0xc00
+
+revision
+1
+
+variant
+0x0
+
+
+Felix Schnizlein (3):
+  cpuinfo: add sysfs based arch independent cpuinfo framework
+  x86 cpuinfo: implement sysfs nodes for x86
+  arm64 cpuinfo: implement sysfs nodes for arm64
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu | 52 ++++++++++++
+ arch/Kconfig                                       | 11 +++
+ arch/arm64/Kconfig                                 |  1 +
+ arch/arm64/kernel/cpuinfo.c                        | 55 ++++++++++++
+ arch/x86/Kconfig                                   |  1 +
+ arch/x86/kernel/Makefile                           |  2 +
+ arch/x86/kernel/cpuinfo.c                          | 99 ++++++++++++++++++++++
+ drivers/base/Makefile                              |  1 +
+ drivers/base/cpuinfo.c                             | 48 +++++++++++
+ include/linux/cpuhotplug.h                         |  1 +
+ include/linux/cpuinfo.h                            | 43 ++++++++++
+ 11 files changed, 314 insertions(+)
+ create mode 100644 arch/x86/kernel/cpuinfo.c
+ create mode 100644 drivers/base/cpuinfo.c
+ create mode 100644 include/linux/cpuinfo.h
+
+-- 
+2.16.4
 
