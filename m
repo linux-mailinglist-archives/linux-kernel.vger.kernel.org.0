@@ -2,150 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E6D2115129
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:39:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A09AD115136
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:41:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfLFNji convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Dec 2019 08:39:38 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:42808 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726195AbfLFNji (ORCPT
+        id S1726350AbfLFNlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 08:41:04 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33763 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbfLFNlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 08:39:38 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-16-t457RrF7MGGa9WB2Ppc0Xw-1; Fri, 06 Dec 2019 13:39:35 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 6 Dec 2019 13:39:35 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 6 Dec 2019 13:39:35 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     network dev <netdev@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: recvfrom/recvmsg performance and CONFIG_HARDENED_USERCOPY
-Thread-Topic: recvfrom/recvmsg performance and CONFIG_HARDENED_USERCOPY
-Thread-Index: AdWsNynavvs+VRwOQ6mSStk+IzVA6A==
-Date:   Fri, 6 Dec 2019 13:39:35 +0000
-Message-ID: <23db23416d3148fa86e54dccc6152266@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 6 Dec 2019 08:41:04 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 6so3352177pgk.0;
+        Fri, 06 Dec 2019 05:41:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3EFCJeRV2jMf+iQ+j1NhNnzIhn47IDN/JAAO+nGlAGU=;
+        b=rn0r9y4MNjQb5vsu88mzLjNm0oUlpl/NY+ttecEbHb2mr82tElxKnFHiEE49UMuLFu
+         2GDmEqj7H+Z/pNuhLTQzgpzB1xoQ3LseCus1xviES7APeu2ZPo/piNpI70zRsqe8jYI4
+         n9lxAtkegvvyEBBZk4Tyk2RA6FpoC1ExcvjEhFnAmHWJdz558NEYdaackd3r6HQmbfDF
+         KZRF4RTuB0zhQ8uP3bmAFrKd2GSdxq5cxrmqinmkjOSmGNzRoW6S1RD1b2xpPXBDBmJL
+         X7NHGhNHXMELfqLJSSxwEikYAF97tpZD8svdq3TCzvPna+21CSwqgWUALGjWX6DcITNq
+         NZ1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3EFCJeRV2jMf+iQ+j1NhNnzIhn47IDN/JAAO+nGlAGU=;
+        b=FCbCzRpFvFZ2UyV8fe1kRc316Eemcs3wZuQUrOH5sb2oCrHfxe1ADOh3eHv/PYgcJc
+         7ROBvMqbolwX6Mg75pAToF+M6arEltKDfip4dIjVUBvxQoE5y4F+aAJtMXlgwHYQ/Mlx
+         e6rmOpSeLxbBOnMzlHRpBPqroRRV29O8aiVuqrLwKm9l1Z3b5R+q4hzguj0Ym8A+iJ+k
+         YW/Cp02yFXuTEtRQFuWywo0cE1KqGWlaZzvW5phtXKV36eTDdgzP6qhkMlBZQUIb62aD
+         mu0mAlGs4K2cCqcHw1dsiH9v2v3c17Mzj/ePn0u2VfaR9nvls3vCOT6EdlWg8jPMswNk
+         W18Q==
+X-Gm-Message-State: APjAAAUzSla3A49oNY0dENjHdW03fNbrIQnScPx67jNnkbJFZp4t4K+U
+        gF7Ou8E+Y1FJcI/ydStRs8k=
+X-Google-Smtp-Source: APXvYqy+STqdn3H3r8DJnP94GB2uQbw7gMpPHzPAmc32MRNlyiXZJqgSHJ+AG0RxOsAQuQNQp/BUIQ==
+X-Received: by 2002:a62:ea19:: with SMTP id t25mr14534879pfh.74.1575639663699;
+        Fri, 06 Dec 2019 05:41:03 -0800 (PST)
+Received: from [192.168.86.235] (c-73-241-150-58.hsd1.ca.comcast.net. [73.241.150.58])
+        by smtp.gmail.com with ESMTPSA id f24sm3398977pjp.12.2019.12.06.05.41.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2019 05:41:02 -0800 (PST)
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Subject: Re: [PATCH] selftests: net: ip_defrag: increase netdev_max_backlog
+To:     Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     netdev@vger.kernel.org, davem@davemloft.net, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        posk@google.com
+References: <20191204195321.406365-1-cascardo@canonical.com>
+ <483097a3-92ec-aedd-60d9-ab7f58b9708d@gmail.com>
+ <20191206121707.GC5083@calabresa>
+Message-ID: <d2dddb34-f126-81f8-cbf7-04635f04795a@gmail.com>
+Date:   Fri, 6 Dec 2019 05:41:01 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-MC-Unique: t457RrF7MGGa9WB2Ppc0Xw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20191206121707.GC5083@calabresa>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some tests I've done seem to show that recvmsg() is much slower that recvfrom()
-even though most of what they do is the same.
-One thought is that the difference is all the extra copy_from_user() needed by
-recvmsg. CONFIG_HARDENED_USERCOPY can add a significant cost.
 
-I've built rebuilt my 5.4-rc7 kernel with all the copy_to/from_user() in net/socket.c
-replaced with the '_' prefixed versions (that don't call check_object()).
-And also changed rw_copy_check_uvector() in fs/read_write.c.
 
-Schedviz then showed the time spent by the application thread that calls
-recvmsg() (about) 225 times being reduced from 0.9ms to 0.75ms.
+On 12/6/19 4:17 AM, Thadeu Lima de Souza Cascardo wrote:
+> On Wed, Dec 04, 2019 at 12:03:57PM -0800, Eric Dumazet wrote:
+>>
+>>
+>> On 12/4/19 11:53 AM, Thadeu Lima de Souza Cascardo wrote:
+>>> When using fragments with size 8 and payload larger than 8000, the backlog
+>>> might fill up and packets will be dropped, causing the test to fail. This
+>>> happens often enough when conntrack is on during the IPv6 test.
+>>>
+>>> As the larger payload in the test is 10000, using a backlog of 1250 allow
+>>> the test to run repeatedly without failure. At least a 1000 runs were
+>>> possible with no failures, when usually less than 50 runs were good enough
+>>> for showing a failure.
+>>>
+>>> As netdev_max_backlog is not a pernet setting, this sets the backlog to
+>>> 1000 during exit to prevent disturbing following tests.
+>>>
+>>
+>> Hmmm... I would prefer not changing a global setting like that.
+>> This is going to be flaky since we often run tests in parallel (using different netns)
+>>
+>> What about adding a small delay after each sent packet ?
+>>
+>> diff --git a/tools/testing/selftests/net/ip_defrag.c b/tools/testing/selftests/net/ip_defrag.c
+>> index c0c9ecb891e1d78585e0db95fd8783be31bc563a..24d0723d2e7e9b94c3e365ee2ee30e9445deafa8 100644
+>> --- a/tools/testing/selftests/net/ip_defrag.c
+>> +++ b/tools/testing/selftests/net/ip_defrag.c
+>> @@ -198,6 +198,7 @@ static void send_fragment(int fd_raw, struct sockaddr *addr, socklen_t alen,
+>>                 error(1, 0, "send_fragment: %d vs %d", res, frag_len);
+>>  
+>>         frag_counter++;
+>> +       usleep(1000);
+>>  }
+>>  
+>>  static void send_udp_frags(int fd_raw, struct sockaddr *addr,
+>>
+> 
+> That won't work because the issue only shows when we using conntrack, as the
+> packet will be reassembled on output, then fragmented again. When this happens,
+> the fragmentation code is transmitting the fragments in a tight loop, which
+> floods the backlog.
 
-I've now instrumented the actual recv calls. It show some differences,
-but now enough to explain the 20% difference above.
-(This is all made more difficult because my Ivy Bridge i7-3770 refuses
-to run at a fixed frequency.)
+Interesting !
 
-Anyway using PERF_COUNT_HW_CPU_CYCLES I've got the following
-histograms for the number of cycles in each recv call.
-There are about the same number (2.8M) in each column over
-an elapsed time of 20 seconds.
-There are 450 active UDP sockets, each receives 1 message every 20ms.
-Every 10ms a RT thread that is pinned to a cpu reads all the pending messages.
-This is a 4 core hyperthreading (8 cpu) system.
-During these tests 5 other threads are also busy.
-There are no sends (on those sockets).
+So it looks like the test is correct, and exposed a long standing problem in this code.
 
-         |       recvfrom      |       recvmsg
- cycles  |   unhard  |    hard |   unhard  |    hard
------------------------------------------------------
-   1472:         29          1          0          0
-   1600:       8980       4887          3          0
-   1728:     112540     159518       5393       2895
-   1856:     174555     270148     119054     111230
-   1984:     126007     168383     152310     195288
-   2112:      80249      87045     118941     168801
-   2240:      61570      54790      81847     110561
-   2368:      95088      61796      57496      71732
-   2496:     193633     155870      54020      54801
-   2624:     274997     284921     102465      74626
-   2752:     276661     295715     160492     119498
-   2880:     248751     264174     206327     186028
-   3008:     207532     213067     230704     229232
-   3136:     167976     164804     226493     238555
-   3264:     133708     124857     202639     220574
-   3392:     107859      95696     172949     189475
-   3520:      88599      75943     141056     153524
-   3648:      74290      61586     115873     120994
-   3776:      62253      50891      96061      95040
-   3904:      52213      42482      81113      76577
-   4032:      42920      34632      69077      63131
-   4160:      35472      28327      60074      53631
-   4288:      28787      22603      51345      46620
-   4416:      24072      18496      44006      40325
-   4544:      20107      14886      37185      34516
-   4672:      16759      12206      31408      29031
-   4800:      14195       9991      26843      24396
-   4928:      12356       8167      22775      20165
-   5056:      10387       6931      19404      16591
-   5184:       9284       5916      16817      13743
-   5312:       7994       5116      14737      11452
-   5440:       7152       4495      12592       9607
-   5568:       6300       3969      11117       8592
-   5696:       5445       3421       9988       7237
-   5824:       4683       2829       8839       6368
-   5952:       3959       2643       7652       5652
-   6080:       3454       2377       6442       4814
-   6208:       3041       2219       5735       4170
-   6336:       2840       2060       5059       3615
-   6464:       2428       1975       4433       3201
-   6592:       2109       1794       4078       2823
-   6720:       1871       1382       3549       2558
-   6848:       1706       1262       3110       2328
-   6976:       1567       1001       2733       1991
-   7104:       1436        873       2436       1819
-   7232:       1417        860       2102       1652
-   7360:       1414        741       1823       1429
-   7488:       1372        814       1663       1239
-   7616:       1201        896       1430       1152
-   7744:       1275       1008       1364       1049
-   7872:       1382       1120       1367        925
-   8000:       1316       1282       1253        815
-   8128:       1264       1266       1313        792
-  8256+:      19252      19450      34703      30228
-----------------------------------------------------
-  Total:    2847707    2863582    2853688    2877088
+We should not adjust the test to some kernel-of-the-day-constraints, and instead fix the kernel bug ;)
 
-This does show a few interesting things:
-1) The 'hardened' kernel is slower, especially for recvmsg.
-2) The difference for recvfrom isn't enough for the 20% reduction I saw.
-3) There are two peaks at the top a 'not insubstantial' number are a lot
-   faster than the main peak.
-4) There is second peak way down at 8000 cycles.
-   This is repeatable.
+Where is this tight loop exactly ?
 
-Any idea what is actually going on??
+If this is feeding/bursting ~1000 skbs via netif_rx() in a BH context, maybe we need to call a variant
+that allows immediate processing instead of (ab)using the softnet backlog.
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Thanks !
