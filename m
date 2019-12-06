@@ -2,132 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6200D1150AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE7681150BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:03:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbfLFMx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 07:53:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53940 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726160AbfLFMx0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 07:53:26 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB6ClbV6064006
-        for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2019 07:53:25 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wq55tfmrn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 07:53:24 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Fri, 6 Dec 2019 12:53:22 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 6 Dec 2019 12:53:20 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB6CrJSh61407486
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 6 Dec 2019 12:53:19 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 90BBB11C052;
-        Fri,  6 Dec 2019 12:53:19 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F11FA11C050;
-        Fri,  6 Dec 2019 12:53:17 +0000 (GMT)
-Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Fri,  6 Dec 2019 12:53:17 +0000 (GMT)
-Date:   Fri, 6 Dec 2019 18:23:17 +0530
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH] sched/fair: Optimize select_idle_core
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20191205172316.8198-1-srikar@linux.vnet.ibm.com>
- <6242deaa-e570-3384-0737-e49abb0599dd@arm.com>
+        id S1726234AbfLFNDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 08:03:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726128AbfLFNDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 08:03:03 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 903EF2464E;
+        Fri,  6 Dec 2019 13:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575637383;
+        bh=nu9QCTqM5WXOIT+G9aiycC+1A31iUFHQjDd4ZczZSCQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A7/Uc0ULYMTnDP7XBhIKeKkTGXW5DcmM/GjnT7fPd2vQ+hHIhe/OnDNUPtE9ymA3U
+         PeN53l7aGoU9A7T5xoWwlklJ+HezOHBgdlbyJFaOU81xt2s4GEDbkVJ/7nDZOX0D4A
+         l8V1IZiPOox7WXZobykU4ElqZHgFHTGHEI1DNq3o=
+Date:   Fri, 6 Dec 2019 14:03:00 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     =?utf-8?B?546L5paH5rab?= <witallwang@gmail.com>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>, Pavel Machek <pavel@denx.de>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 200/321] mm/page_alloc.c: deduplicate
+ __memblock_free_early() and memblock_free()
+Message-ID: <20191206130300.GB1399220@kroah.com>
+References: <20191203223427.103571230@linuxfoundation.org>
+ <20191203223437.527630884@linuxfoundation.org>
+ <20191205115043.GA25107@duo.ucw.cz>
+ <20191205131128.GA25566@linux.ibm.com>
+ <CACzRS4cYJkJAhOdm+qf55H7O4S5HiQEe_fguJGx-mZYJzz62ug@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6242deaa-e570-3384-0737-e49abb0599dd@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 19120612-4275-0000-0000-0000038C63DA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19120612-4276-0000-0000-000038A00C9D
-Message-Id: <20191206125317.GC22330@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-06_03:2019-12-05,2019-12-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 spamscore=0 malwarescore=0
- adultscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912060110
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACzRS4cYJkJAhOdm+qf55H7O4S5HiQEe_fguJGx-mZYJzz62ug@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Valentin,
+On Fri, Dec 06, 2019 at 10:34:19AM +0800, 王文涛 wrote:
+> Yes, Mike's follow up fix should be picked too with this change.
+> 
+> On Thu, Dec 5, 2019 at 9:11 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> 
+> > On Thu, Dec 05, 2019 at 12:50:43PM +0100, Pavel Machek wrote:
+> > > Hi!
+> > > On Tue 2019-12-03 23:34:26, Greg Kroah-Hartman wrote:
+> > > > From: Wentao Wang <witallwang@gmail.com>
+> > > >
+> > > > [ Upstream commit d31cfe7bff9109476da92c245b56083e9b48d60a ]
+> > >
+> > >
+> > > > @@ -1537,12 +1537,7 @@ void * __init memblock_virt_alloc_try_nid(
+> > > >   */
+> > > >  void __init __memblock_free_early(phys_addr_t base, phys_addr_t size)
+> > > >  {
+> > > > -   phys_addr_t end = base + size - 1;
+> > > > -
+> > > > -   memblock_dbg("%s: [%pa-%pa] %pF\n",
+> > > > -                __func__, &base, &end, (void *)_RET_IP_);
+> > > > -   kmemleak_free_part_phys(base, size);
+> > > > -   memblock_remove_range(&memblock.reserved, base, size);
+> > > > +   memblock_free(base, size);
+> > > >  }
+> > >
+> > > This makes the memblock_dbg() less useful: _RET_IP_ will now be one of
+> > > __memblock_free_early(), not of the original caller.
+> > >
+> > > That may be okay, but I guess it should be mentioned in changelog, and
+> > > I don't really see why it is queued for -stable.
+> >
+> > Not sure why this one was picked for -stable, but in upstream there is a
+> > followup commit 4d72868c8f7c ("memblock: replace usage of
+> > __memblock_free_early() with memblock_free()") that completely eliminates
+> > __memblock_free_early(). IMHO it would make sense to either to take both or
+> > to drop both.
 
-> Say you have a 4-core SMT2 system with the usual numbering scheme:
-> 
-> {0, 4}  {1, 5}  {2, 6}  {3, 7}
-> CORE0   CORE1   CORE2   CORE3
-> 
-> 
-> Say 'target' is the prev_cpu, in that case let's pick 5. Because we do a
-> for_each_cpu_wrap(), our iteration for 'core' would start with 
-> 
->   5, 6, 7, ...
-> 
-> So say CORE2 is entirely idle and CORE1 isn't, we would go through the
-> inner loop on CORE1 (with 'core' == 5), then go through CORE2 (with
-> 'core' == 6) and return 'core'. I find it a bit unusual that we wouldn't
-> return the first CPU in the SMT mask, usually we try to fill sched_groups
-> in cpumask order.
-> 
-> 
-> If we could have 'cpus' start with only primary CPUs, that would simplify
-> things methinks:
-> 
 
-Its probably something to think over. I probably don't have an answer on why
-we are not choosing the starting cpu to be primary CPU.  Would we have to
-think of the case where the Primary CPUs are online / offline etc? I mean
-with target cpu, we know the CPU is online for sure.
-
->   for_each_cpu_wrap(core, cpus, target) {
-> 	  bool idle = true;
-> 
-> 	  for_each_cpu(cpu, cpu_smt_mask(core)) {
-> 		  if (!available_idle_cpu(cpu)) {
-> 			  idle = false;
-> 			  break;
-> 		  }
-> 
-> 	  __cpumask_clear_cpu(core, cpus);
-> 
-> 	  if (idle)
-> 		  return core;
-> 
-> 
-> Food for thought; your change itself looks fine as it is.
-> 
-> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
-> 
-
-Thanks for the review.
-
--- 
-Thanks and Regards
-Srikar Dronamraju
+This commit does not apply to the 4.19.y tree :(
 
