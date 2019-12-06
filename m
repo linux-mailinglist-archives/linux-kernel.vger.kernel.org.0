@@ -2,118 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5514111501E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:00:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF2111502A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:10:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbfLFMAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 07:00:07 -0500
-Received: from foss.arm.com ([217.140.110.172]:41226 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbfLFMAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 07:00:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E36231B;
-        Fri,  6 Dec 2019 04:00:06 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 268B63F52E;
-        Fri,  6 Dec 2019 04:00:05 -0800 (PST)
-Subject: Re: [PATCH] sched/fair: Optimize select_idle_core
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-References: <20191205172316.8198-1-srikar@linux.vnet.ibm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <6242deaa-e570-3384-0737-e49abb0599dd@arm.com>
-Date:   Fri, 6 Dec 2019 12:00:00 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726245AbfLFMKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 07:10:44 -0500
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:42553 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726124AbfLFMKn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 07:10:43 -0500
+X-Greylist: delayed 1798 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Dec 2019 07:10:43 EST
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.52 with ESMTP; 6 Dec 2019 20:40:41 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: neidhard.kim@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.178.32.48)
+        by 156.147.1.121 with ESMTP; 6 Dec 2019 20:40:41 +0900
+X-Original-SENDERIP: 10.178.32.48
+X-Original-MAILFROM: neidhard.kim@lge.com
+From:   Jongsung Kim <neidhard.kim@lge.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        mcoquelin.stm32@gmail.com, davem@davemloft.net,
+        joabreu@synopsys.com, alexandre.torgue@st.com,
+        peppe.cavallaro@st.com, Jongsung Kim <neidhard.kim@lge.com>
+Subject: [PATCH] net: stmmac: reset Tx desc base address before restarting Tx
+Date:   Fri,  6 Dec 2019 20:40:00 +0900
+Message-Id: <20191206114000.27283-1-neidhard.kim@lge.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191205172316.8198-1-srikar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/12/2019 17:23, Srikar Dronamraju wrote:
-> Currently we loop through all threads of a core to evaluate if the core
-> is idle or not. This is unnecessary. If a thread of a core is not
-> idle, skip evaluating other threads of a core.
-> 
-> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-> ---
->  kernel/sched/fair.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 69a81a5709ff..b9d628128cfc 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5872,10 +5872,12 @@ static int select_idle_core(struct task_struct *p, struct sched_domain *sd, int
->  		bool idle = true;
->  
->  		for_each_cpu(cpu, cpu_smt_mask(core)) {
-> -			__cpumask_clear_cpu(cpu, cpus);
-> -			if (!available_idle_cpu(cpu))
-> +			if (!available_idle_cpu(cpu)) {
->  				idle = false;
-> +				break;
-> +			}
->  		}
-> +		cpumask_andnot(cpus, cpus, cpu_smt_mask(core));
->  
+Refer to the databook of DesignWare Cores Ethernet MAC Universal:
 
-That looks sensible enough to me. I do have one random thought, however.
+6.2.1.5 Register 4 (Transmit Descriptor List Address Register
 
+If this register is not changed when the ST bit is set to 0, then
+the DMA takes the descriptor address where it was stopped earlier.
 
-Say you have a 4-core SMT2 system with the usual numbering scheme:
+The stmmac_tx_err() does zero indices to Tx descriptors, but does
+not reset HW current Tx descriptor address. To fix inconsistency,
+the base address of the Tx descriptors should be rewritten before
+restarting Tx.
 
-{0, 4}  {1, 5}  {2, 6}  {3, 7}
-CORE0   CORE1   CORE2   CORE3
+Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 644cb5d1fd4f..bbc65bd332a8 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2009,6 +2009,8 @@ static void stmmac_tx_err(struct stmmac_priv *priv, u32 chan)
+ 	tx_q->cur_tx = 0;
+ 	tx_q->mss = 0;
+ 	netdev_tx_reset_queue(netdev_get_tx_queue(priv->dev, chan));
++	stmmac_init_tx_chan(priv, priv->ioaddr, priv->plat->dma_cfg,
++			    tx_q->dma_tx_phy, chan);
+ 	stmmac_start_tx_dma(priv, chan);
+ 
+ 	priv->dev->stats.tx_errors++;
+-- 
+2.20.1
 
-Say 'target' is the prev_cpu, in that case let's pick 5. Because we do a
-for_each_cpu_wrap(), our iteration for 'core' would start with 
-
-  5, 6, 7, ...
-
-So say CORE2 is entirely idle and CORE1 isn't, we would go through the
-inner loop on CORE1 (with 'core' == 5), then go through CORE2 (with
-'core' == 6) and return 'core'. I find it a bit unusual that we wouldn't
-return the first CPU in the SMT mask, usually we try to fill sched_groups
-in cpumask order.
-
-
-If we could have 'cpus' start with only primary CPUs, that would simplify
-things methinks:
-
-  for_each_cpu_wrap(core, cpus, target) {
-	  bool idle = true;
-
-	  for_each_cpu(cpu, cpu_smt_mask(core)) {
-		  if (!available_idle_cpu(cpu)) {
-			  idle = false;
-			  break;
-		  }
-
-	  __cpumask_clear_cpu(core, cpus);
-
-	  if (idle)
-		  return core;
-
-
-Food for thought; your change itself looks fine as it is.
-
-Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
-
-
->  		if (idle)
->  			return core;
-> 
