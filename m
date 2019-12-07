@@ -2,125 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF1B4115E19
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 19:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCCFF115E1B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 20:02:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfLGS7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Dec 2019 13:59:39 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55178 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbfLGS7i (ORCPT
+        id S1726579AbfLGTCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Dec 2019 14:02:25 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:45181 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726455AbfLGTCZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Dec 2019 13:59:38 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b11so11298713wmj.4
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2019 10:59:36 -0800 (PST)
+        Sat, 7 Dec 2019 14:02:25 -0500
+Received: by mail-pj1-f68.google.com with SMTP id r11so4112272pjp.12
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2019 11:02:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=LvpxQRRYJHPl/HMTn0zSCJc2tb2wBsjsoY0M462SFMs=;
-        b=c3ulfSaLqsVq3iP2vELAyCyV+pXoDyw6hEsXE133zV/aXbbIasdzD9m++4c6Bey5lV
-         yo6Z7ZbqrUx9Sbhp5BE/qvBPZvVBMoQDTaSzoCe3sTG/ZuAHLHZ2tyOVMGbrDHOFOKFY
-         BVTGxtRSsZuKslvQ4RTAeoSm/6YqLjTRxkkL+LL9Igoqq4Ktz+sEdHWoionDbIVTdEFs
-         DK+nDHwnYj6ekFtvfvABpSX0H6TsOyEogiSNi/4Mi24TcoKwtBnpHpIbuOLr83Lvi71z
-         2XdAk3qx0G7KNyFesVokZ1BnlwLzRnFp3gQVCVoGNAjJ5JfGg3XAg8HzddmRik/h3HvN
-         OuLg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S+O3tniQbreYjLt+qRLs4KvW/hWdvmqmN88mvSWKL64=;
+        b=rVVaTJgX4MHCY/8CFIFmhOsoZFiInVECkykdIg2MsO5pH4XXKOQDO8K1Jm57yB+PQ/
+         wsFnIkh+F/RTBKMIL8FfTU2F+u5zlQDO/FJlfELaV/RZT0EHLzojQbYSPxtTcXL982z4
+         B/Amfn9DbBNp8o/T8u/HQHojc8WTfoBaB9i7oZg+nutiSdKSjxafTwOO3ywZe0j5vH6U
+         /T4v5STwef9ZVOq6msPvWw1wVjP68kMFXuocJIxckvOhb7zCE03/dKuvcS6cxsQOXGAE
+         sT33JVfCcXi3NAyNnGhG1mIdJlBv1L7IEisS9DCGGciaqMrVnoQdJxgE+Ab6JDfue5OG
+         VWLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=LvpxQRRYJHPl/HMTn0zSCJc2tb2wBsjsoY0M462SFMs=;
-        b=iU5YX+HqPgg6wB1xddkWR+8yV9KvUJwM4AaB1cMyZ19SBWQ3oPgmLwiEVY87s288DF
-         bKwPSqflUScf6i0Fc6IPktFw63Nmsd/7BJObxsiz5M8U01OshREoGoMesMPohYSj8kNx
-         KedIBCCCDZdTf2ySXZqTn4kSglKgfm8E307GU7wvNM49Pb2XiUeCLS97cvyboEdq+RJN
-         j48dLr4SJuk5idH2w9rSKTh90UWRkae99JTaFh1qjoc7ZdBnue2TVY0EyWJ7CaYUX9g8
-         8B6enPixsV4nm7uUMU3rQY4LqneQ/sJ5Nc7s4KO7EijliDBbUTHy9QMiLPpNgD3+Q//p
-         hU4Q==
-X-Gm-Message-State: APjAAAXt0fjdTzSxPrEHqYMg5QZz84gAVF+ihwrRzxt6FO97KCqTULbm
-        1kAj1Wbm058AFxeq/ZgjV0/cO6jBbbDX4rR/3Ac=
-X-Google-Smtp-Source: APXvYqxS26Nq5VaodSppBRwydNC+TIciFnMGLUIIT4tDf3ZBKyNFEmO6xBaH7ghM6Mvg7+H3wphbMCXyVV3rCVlzREk=
-X-Received: by 2002:a05:600c:21c6:: with SMTP id x6mr16032281wmj.177.1575745176062;
- Sat, 07 Dec 2019 10:59:36 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S+O3tniQbreYjLt+qRLs4KvW/hWdvmqmN88mvSWKL64=;
+        b=EsOETkomOOyKsU5EdHEbaMXE7OMBz0MBHes30tDlhZIrVsUkf8/t7tLdIeCzCxWHqe
+         +J04M2K49haaHA6i6K6RBY6bxdFpRLBcUhId1jdbBawOYfMbfxW6Wp25XYj3u4GY9Hhu
+         DIsKWBRyOP1D6qy28x5Tw6VZ/3ujqQQ+kMtMocbXuo1NrLftVLp0afDsNqvRRUQuI0Ii
+         /yd6q+ryvUHP2LSGweg9uZD3gcXxHqt47uh37cciKRYjYNZJFTA3YiVQujHTP1SBs+cd
+         SDBy0svZPQlvfA9Ohv1ZCgEwXeCbG4L0A9xE4AJe2gu+cJkTALmxyvou/HLIaR7mZ/Kv
+         mPBQ==
+X-Gm-Message-State: APjAAAUrAWULgaFkadkl40wvYVAFUWDQGUWqXbofZ+8mV2o7Gex55v8o
+        dcVj9U/3hu5dAYxuF8xJCMFSTLBPet8kdh9JpuxperB+ovQ=
+X-Google-Smtp-Source: APXvYqysY6iW4Z7Hdm6HS9R4fuevTm5nuSeGPWXJaMlAouvKIhvTrtrexltFr2BdaGBJPCL/1A04ltY9ZFoWxhzOsWE=
+X-Received: by 2002:a17:90a:30a4:: with SMTP id h33mr22854724pjb.50.1575745344201;
+ Sat, 07 Dec 2019 11:02:24 -0800 (PST)
 MIME-Version: 1.0
-Reply-To: sebastient766@gmail.com
-Received: by 2002:a05:6000:182:0:0:0:0 with HTTP; Sat, 7 Dec 2019 10:59:35
- -0800 (PST)
-From:   =?UTF-8?B?TXIuU8OpYmFzdGllbiBUb25p?= <sebastient766@gmail.com>
-Date:   Sat, 7 Dec 2019 10:59:35 -0800
-X-Google-Sender-Auth: xqLd-ULvMtV-dK8-a2I6jzfebXE
-Message-ID: <CAG3TQM18iU5JCWBy2s-n+MN7dpp+D96anRipwU2S64sLmN6PuA@mail.gmail.com>
-Subject: Dear Friend,
-To:     undisclosed-recipients:;
+References: <20191207034409.25668-1-yuehaibing@huawei.com>
+In-Reply-To: <20191207034409.25668-1-yuehaibing@huawei.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Sat, 7 Dec 2019 11:02:13 -0800
+Message-ID: <CAM_iQpVUZ2Hbk2=sJbjJ2gL9WHRFPGWwhYhSQAFFpRyjdgCYOw@mail.gmail.com>
+Subject: Re: [PATCH -next] tracing: remove set but not used variable 'buffer'
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FROM MR.S=C3=89BASTIEN TONI
-AUDIT& ACCOUNT MANAGER
-BANK OF AFRICA (B.O.A)
-OUAGADOUGOU BURKINA FASO
-WEST AFRICA.
+On Fri, Dec 6, 2019 at 7:46 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> kernel/trace/trace_events_inject.c: In function trace_inject_entry:
+> kernel/trace/trace_events_inject.c:20:22: warning: variable buffer set but not used [-Wunused-but-set-variable]
+>
+> It is never used, so remove it.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Dear Friend,
+Right, this should be a leftover after I removed ring_buffer_nest_start().
+And my compiler failed to catch this.
 
-With due respect, I have decided to contact you on
-abusinesstransaction  that will be beneficial to both of us. At the
-bank last account and  auditing evaluation, my staffs came across an
-old account which was being maintained by a foreign client who we
-learn was among the deceased passengers of motor accident on
-November.2003, the deceased was unable to run this account since his
-death. Theaccount has  remained dormant without the knowledge of his
-family since it was put in a  safe deposit account in the bank for
-future investment by the client.
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 
-Since his demise, even the members of his family haven't applied for
-claims  over this fund and it has been in the safe deposit account
-until I  discovered that it cannot be claimed since our client
-isaforeign nationaland we are sure that he has no next of kin here to
-file claims over the money. As the director of the department, this
-discovery was brought to my office so as to decide what is to bedone.I
- decided to seek ways through which to transfer this money out of the
-bank  and
-out of the country too.
-
-The total amount in the account is 18.6 million with my positions as
-staffs  of the bank, I am handicapped because I cannot operate foreign
-accounts and  cannot lay bonafide claim over this money. The client
-was a foreign  national and you will only be asked to act as his next
-of kin and I will  supply you with all the necessary information and
-bank data to assist you in being able to transfer this money to any
-bank of your  choice where this money could be transferred into.The
-total sum will be  shared as follows: 50% for me, 50% for you and
-expenses incidental occur  during the transfer will be incur by both
-of us. The transfer is risk free on both sides hence you are going to
-follow my instruction till the fund  transfer to your account. Since I
-work in this bank that is why you should  be confident in the success
-of this transaction because you will be updated with information as at
-when desired.
-
-I will wish you to keep this transaction secret and confidential as I
-am  hoping to retire with my share of this money at the end of
-transaction  which will be when this money is safety in your account.
-I will then come over to your country for sharing according to the
-previously agreed percentages. You might even have to advise me on
-possibilities of investment in your country or elsewhere of our
-choice. May  God help you to help me to a restive retirement, Amen,And
-You have to  contact me through my private e-mail
-at(sebastient766@gmail.com)Please for further information and inquires
-feel free to contact me back immediately for more explanation and
-better  understanding I want you to assure me your capability of
-handling this  project with trust by providing me your following
-information details such as:
-
-(1)NAME..............
-(2)AGE:................
-(3)SEX:.....................
-(4)PHONE NUMBER:.................
-(5)OCCUPATION:.....................
-(6)YOUR COUNTRY:.....................
-
-Yours sincerely,
-Mr.S=C3=A9bastien Toni
+Thanks.
