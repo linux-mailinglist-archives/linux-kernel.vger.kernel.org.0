@@ -2,153 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EEDA115F8A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 23:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9036F115FAB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 23:50:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfLGWsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Dec 2019 17:48:16 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45269 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbfLGWsN (ORCPT
+        id S1727193AbfLGWuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Dec 2019 17:50:02 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46445 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbfLGWuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Dec 2019 17:48:13 -0500
-Received: by mail-lj1-f193.google.com with SMTP id d20so11443704ljc.12
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2019 14:48:12 -0800 (PST)
+        Sat, 7 Dec 2019 17:50:01 -0500
+Received: by mail-pf1-f195.google.com with SMTP id y14so5223585pfm.13
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2019 14:50:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n+bzarr7WGG9UNw/1xFlnTHXwkh2li5KYb8dKx07T4w=;
-        b=D6hYWc8qs0agBGRnbrYf1SDdMDgkvhKHwhdLZrSu85/3YN1ltTHpwMKTMhYoV/i120
-         1onptQLl9ldf+3ruI4Bz9iKb/qrxCtvUs5vwPUmv15J/Ti+o0GKsC5Bp9Pf8ipD+F8TH
-         n4jC3g0rUdz+iIu4PIDtkZQjZvGINraOeGlyY=
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=lL+1PRskYMs2R8IhafHrkXHNGmWtEsk3V5MLoBd8+zY=;
+        b=DwhmzTgcKmnOBPVF0IjpaSQlVwQ4sIrkmeLbE3VWvbZ97Tkj0feHuKEpNuI0VsvcSD
+         KaA6vhX0ftaetj1cNLOJN6vBeWR+t3PqP6r6HGxlDpdQwnoIAO+VcY/fT4o+v8wpQaER
+         WVBnWDGG82IuOKQDh7VsUblhCG44KUfpdiGPfPMKDAzmThmKScGWDvs8MAI4l1ep33WP
+         ty6SDX5JzDO3+dkxfieBloSXg3wg5uJ5tW4OcDfpsZE/E41kef6PxCewCvQdmz+Lm+dL
+         0zVtmLx191aByueJrGeEjyxQT/YwUF2Fl8lV7QdFXIStWJLKfxM2OSTx8CddO6iyYpap
+         XkTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n+bzarr7WGG9UNw/1xFlnTHXwkh2li5KYb8dKx07T4w=;
-        b=NwG11uOvgv3M58EYHgPLJ53hikEYBz9ibq3k0PBpuP16q62w/HKFPprSAGv7isdTty
-         tzx2x81aPEZNJFScCjXge4QP5Jjnwr+OD+G/nzxMeDmkfMsLOXEm0XkTedQmsCcGiQwu
-         s61dsIiKQHMFgzjVxIcLbD6zX6EQ89TiiPJpK0KU5ML56aB0fHgcq4F/c8Wts5Rm2Y5r
-         zvVjDPQDmZs/9Uxg4DU6m/82wXGKvcW8YvAaf2VJaPfNog4ZNtaG+zIHxKOcd+vuP5vj
-         T/ALXxdIOse5w9OAz0q8KCpAQjb6j+8V4R0pqta7G4pycvAkFsbTsP+OP77rdWGgY9F3
-         r7XQ==
-X-Gm-Message-State: APjAAAX7SMYm4pgjrEhQFXaYCRzOS7WpYalhw9QLFYMxI90KwycRaLB7
-        SdA09KRAR+DYu6nvKERU9DVwe7m7sOw=
-X-Google-Smtp-Source: APXvYqwEU+YAHfEgtkPAVBfvmwwipTORywO0+xk8MNFnEh2hhRBrKeqncfAbwMb5xgurWX2kSl3pbQ==
-X-Received: by 2002:a2e:809a:: with SMTP id i26mr12265696ljg.108.1575758890965;
-        Sat, 07 Dec 2019 14:48:10 -0800 (PST)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id v2sm8712802ljv.70.2019.12.07.14.48.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2019 14:48:09 -0800 (PST)
-Received: by mail-lj1-f170.google.com with SMTP id a13so11465392ljm.10
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2019 14:48:09 -0800 (PST)
-X-Received: by 2002:a2e:91cb:: with SMTP id u11mr10211828ljg.82.1575758888845;
- Sat, 07 Dec 2019 14:48:08 -0800 (PST)
-MIME-Version: 1.0
-References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
- <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
- <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com> <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 7 Dec 2019 14:47:52 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
-Message-ID: <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
-To:     David Sterba <dsterba@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lL+1PRskYMs2R8IhafHrkXHNGmWtEsk3V5MLoBd8+zY=;
+        b=sqIpdxwr8sRcbG3C5BmbWeTk7w8MoIzUPKkQtS4Yb9v8sXEzYOBriWM0wOv/ZhoTHU
+         ngKcuR+JK+TvDkNsDwVTnmImSMv9aOKawKcyQF6OmqH2o2Al69wRe4+bT1q7WsIfUwLh
+         PvPpLZu+ZLL848VYyC6RcQ4keSJ8L+u+0Ks71JiqAjRRsaG/v6hY1g4XX9eJg0ijvMq+
+         fWVwxNGPj5agBFK/sUsQM6JTthZ1KhOGA81wTpzPTGB+JDsHdtLX6mnPWEEM6KoUWhw2
+         oBfeiIfc9cr7ews/2K9HNCPwN6A2AabKqXSqllwYmv3yHSm8sDLg88UZksVYNPx7aa4p
+         /Whw==
+X-Gm-Message-State: APjAAAW6MdtfCbimP9ZyNvGh9V6ZWm7xpPSAXRlWb5gWypJad1wBKGTW
+        yjxZZwUQZqsS9OCmCFtuQVSDHyEB5HyXEQ==
+X-Google-Smtp-Source: APXvYqwGQDo739d6dIOpL5JSCvp4GW1cBrkgeXp/wmM8/PMERqSFA/jOs/yhBO6I0yrKn0/7RPqhQw==
+X-Received: by 2002:a63:5221:: with SMTP id g33mr11340616pgb.68.1575759000761;
+        Sat, 07 Dec 2019 14:50:00 -0800 (PST)
+Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
+        by smtp.gmail.com with ESMTPSA id s11sm19995747pgo.85.2019.12.07.14.49.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 07 Dec 2019 14:49:59 -0800 (PST)
+From:   Olof Johansson <olof@lixom.net>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH] ALSA: echoaudio: simplify get_audio_levels
+Date:   Sat,  7 Dec 2019 14:49:53 -0800
+Message-Id: <20191207224953.25944-1-olof@lixom.net>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 6, 2019 at 7:50 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> The "make goes slow" problem bisects down to b667b8673443 ("pipe:
-> Advance tail pointer inside of wait spinlock in pipe_read()").
+The loop optimizer seems to go astray here, and produces some warnings
+that don't seem valid.
 
-I'm not entirely sure that ends up being 100% true. It did bisect to
-that, but the behavior wasn't entirely stable. There definitely is
-some nasty timing trigger.
+Still, the code can be simplified -- just clear the whole array at the
+beginning, and fill in whatever values are valid on the platform.
 
-But I did finally figure out what seems to have been going on with at
-least the biggest part of the build performance regression. It's seems
-to be a nasty interaction with the scheduler and the GNU make
-jobserver, and in particular the pipe wakeups really _really_ do seem
-to want to be synchronous both for the readers and the writers.
+Warnings before this change (GCC 8.2.0 ARM allmodconfig):
 
-When a writer wakes up a reader, we want the reader to react quickly
-and vice versa. The most obvious case was for the GNU make jobserver,
-where sub-makes would do a single-byte write to the jobserver pipe,
-and we want to wake up the reader *immediatly*, because the reader is
-actually a lot more important than the writer. The reader is what gets
-the next job going, the writer just got done with the last one.
+In file included from ../sound/pci/echoaudio/gina24.c:115:
+../sound/pci/echoaudio/echoaudio.c: In function 'snd_echo_vumeters_get':
+../sound/pci/echoaudio/echoaudio_dsp.c:647:9: warning: iteration 1073741824 invokes undefined behavior [-Waggressive-loop-optimizations]
+In file included from ../sound/pci/echoaudio/layla24.c:112:
+../sound/pci/echoaudio/echoaudio.c: In function 'snd_echo_vumeters_get':
+../sound/pci/echoaudio/echoaudio_dsp.c:658:9: warning: iteration 1073741824 invokes undefined behavior [-Waggressive-loop-optimizations]
+../sound/pci/echoaudio/echoaudio_dsp.c:647:9: warning: iteration 1073741824 invokes undefined behavior [-Waggressive-loop-optimizations]
 
-And when a reader empties a full pipe, it's because the writer is
-generating data, and you want to just get the writer going again asap.
+Signed-off-by: Olof Johansson <olof@lixom.net>
+---
+ sound/pci/echoaudio/echoaudio_dsp.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-Anyway, I've spent way too much time looking at this and wondering
-about odd performance patterns. It seems to be mostly back up to
-normal.
+diff --git a/sound/pci/echoaudio/echoaudio_dsp.c b/sound/pci/echoaudio/echoaudio_dsp.c
+index 50d4a87a6bb34..f02f5b1568dee 100644
+--- a/sound/pci/echoaudio/echoaudio_dsp.c
++++ b/sound/pci/echoaudio/echoaudio_dsp.c
+@@ -635,36 +635,30 @@ This function assumes there are no more than 16 in/out busses or pipes
+ Meters is an array [3][16][2] of long. */
+ static void get_audio_meters(struct echoaudio *chip, long *meters)
+ {
+-	int i, m, n;
++	unsigned int i, m, n;
+ 
+-	m = 0;
+-	n = 0;
+-	for (i = 0; i < num_busses_out(chip); i++, m++) {
++	for (i = 0 ; i < 96; i++)
++		meters[i] = 0;
++
++	for (m = 0, n = 0, i = 0; i < num_busses_out(chip); i++, m++) {
+ 		meters[n++] = chip->comm_page->vu_meter[m];
+ 		meters[n++] = chip->comm_page->peak_meter[m];
+ 	}
+-	for (; n < 32; n++)
+-		meters[n] = 0;
+ 
+ #ifdef ECHOCARD_ECHO3G
+ 	m = E3G_MAX_OUTPUTS;	/* Skip unused meters */
+ #endif
+ 
+-	for (i = 0; i < num_busses_in(chip); i++, m++) {
++	for (n = 32, i = 0; i < num_busses_in(chip); i++, m++) {
+ 		meters[n++] = chip->comm_page->vu_meter[m];
+ 		meters[n++] = chip->comm_page->peak_meter[m];
+ 	}
+-	for (; n < 64; n++)
+-		meters[n] = 0;
+-
+ #ifdef ECHOCARD_HAS_VMIXER
+-	for (i = 0; i < num_pipes_out(chip); i++, m++) {
++	for (n = 64, i = 0; i < num_pipes_out(chip); i++, m++) {
+ 		meters[n++] = chip->comm_page->vu_meter[m];
+ 		meters[n++] = chip->comm_page->peak_meter[m];
+ 	}
+ #endif
+-	for (; n < 96; n++)
+-		meters[n] = 0;
+ }
+ 
+ 
+-- 
+2.11.0
 
-I say "mostly", because I still see times of "not as many concurrent
-compiles going as I'd expect". It might be a kbuild problem, it might
-be an issue with GNU make (I've seen problems with the make jobserver
-wanting many more tokens than expected before and the kernel makefiles
-- it migth be about deep subdirectories etc), and it might be some
-remaining pipe issue. But my allmodconfig builds aren't _enormously_
-slower than they used to be.
-
-But there's definitely some unhappy interaction with the jobserver. I
-have 16 threads (8 cores with HT), and I generally use "make -j32" to
-keep them busy because the jobserver isn't great. The pipe rework made
-even that 2x slop not work all that well. Something held on to tokens
-too long, and there was definitely some interaction with the pipe
-wakeup code. Using "-j64" hid the problem, but it was a problem.
-
-It might be the new scheduler balancing changes that are interacting
-with the pipe thing. I'm adding PeterZ, Ingo and Vincent to the cc,
-because I hadn't realized just how important the sync wakeup seems to
-be for pipe performance even at a big level.
-
-I've pushed out my pipe changes. I really didn't want to do that kind
-of stuff at the end of the merge window, but I spent a lot more time
-than I wanted looking at this code, because I was getting to the point
-where the alternative was to just revert it all.
-
-DavidH, give these a look:
-
-  85190d15f4ea pipe: don't use 'pipe_wait() for basic pipe IO
-  a28c8b9db8a1 pipe: remove 'waiting_writers' merging logic
-  f467a6a66419 pipe: fix and clarify pipe read wakeup logic
-  1b6b26ae7053 pipe: fix and clarify pipe write wakeup logic
-  ad910e36da4c pipe: fix poll/select race introduced by the pipe rework
-
-the top two of which are purely "I'm fed up looking at this code, this
-needs to go" kind of changes.
-
-In particular, that last change is because I think the GNU jobserver
-problem is partly a thundering herd issue: when a job token becomes
-free (ie somebody does a one-byte write to an empty jobserver pipe),
-it wakes up *everybody* who is waiting for a token. One of them will
-get it, and the others will go to sleep again. And then it repeats all
-over. I didn't fix it, but it _could_ be fixed with exclusive waits
-for readers/writers, but that means more smarts than pipe_wait() can
-do. And because the jobserver isn't great at keeping everybody happy,
-I'm using a much bigger "make -jX" value than the number of CPU's I
-have, which makes the herd bigger. And I suspect none of this helps
-the scheduler pick the _right_ process to run, which just makes
-scheduling an even bigger problem.
-
-            Linus
