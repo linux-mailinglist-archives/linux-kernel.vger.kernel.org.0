@@ -2,101 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAAB9115B57
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 07:39:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF39E115B66
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 07:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbfLGGjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Dec 2019 01:39:20 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:8586 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726025AbfLGGjU (ORCPT
+        id S1726575AbfLGGrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Dec 2019 01:47:33 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38196 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfLGGrc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Dec 2019 01:39:20 -0500
-X-UUID: 30520caad3a04d458a6e199ce99c9f6a-20191207
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=FsOPpGNcvyN3hqCpKWKad5Cxcn0GwUWSQI3FseIG2Rg=;
-        b=Ch2EJJRY4iHukue/yzS8oQ9cnCLyxaAYDIp8wKWnk6b2vAHc5j440FyHfuc5usvXgozSluJe0PiAnf0NO/IOaFu68v3rDG8/39vFGnzV6jGZPPo/v+gUEuh2fKLUwUpiubf/r9KC6REHx8Q/NWhF6iF8b4IW2RFhgYTKgHFH2c0=;
-X-UUID: 30520caad3a04d458a6e199ce99c9f6a-20191207
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1158404149; Sat, 07 Dec 2019 14:39:11 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sat, 7 Dec 2019 14:38:51 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sat, 7 Dec 2019 14:38:44 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <pedrom.sousa@synopsys.com>, <jejb@linux.ibm.com>,
-        <matthias.bgg@gmail.com>
-CC:     <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <beanhuo@micron.com>,
-        <kuohong.wang@mediatek.com>, <peter.wang@mediatek.com>,
-        <chun-hung.wu@mediatek.com>, <andy.teng@mediatek.com>,
-        <leon.chen@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v1 2/2] scsi: ufs-mediatek: add device reset implementation
-Date:   Sat, 7 Dec 2019 14:39:08 +0800
-Message-ID: <1575700748-28191-3-git-send-email-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1575700748-28191-1-git-send-email-stanley.chu@mediatek.com>
-References: <1575700748-28191-1-git-send-email-stanley.chu@mediatek.com>
+        Sat, 7 Dec 2019 01:47:32 -0500
+Received: by mail-lf1-f65.google.com with SMTP id r14so6948074lfm.5
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 22:47:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UPyMBRgocz3Gumc8hl0udOJ28y6fAihoSPqhWLZGSXM=;
+        b=h7pAQHlrS6wsadii68Qu+ijamfwzEaVopIOIiDv9h0hJUjMnoGk9P+OtTNLnGmPppc
+         W7AxQS9TnRlwOWRH1bRJ+xNjY0XkB6HAqCnGY1EtuiQ1JktHJD/nePqvOv+A95wC7Xjr
+         6eP1E881/JjuF6eV/8qFgevKqrjb1xXHiV/Ag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UPyMBRgocz3Gumc8hl0udOJ28y6fAihoSPqhWLZGSXM=;
+        b=A1rz5mUZST6U28zNoyemEKaZ4mpg4jKOetmyfzDak/qS3pzSznPYzEL2l/M/KP8bt9
+         lYDLcSUvLgkav6Z2/g6vr8QFHeCPhjWkCNPpXdJynRDLrQAyVE0R5Jjb13VPmnDvgDDf
+         Q8wVEWTuCFSnj+lKLQBnnWSrX7aH2Vf8NC1CPchuDyxyjiNBspQmRFdFXF+QX8j2iBgq
+         FTV++41/i0pJ/vc/tVXJ9kl+DF/QcE0X27JzXvLld6AW/txIo733sg8mD9hUlOBzr9Nz
+         rvHhauHux1A7ZXZ9aroy8qwGTye/pIHuuJxE0+j4+knc5FOIIh4MRmlyFlWIjGdR5DHr
+         dZEw==
+X-Gm-Message-State: APjAAAVTCipS+4DR4pfMp2fMbkKAIkN4w1PS2kaSu45Ve3Q0Ouo8Szv0
+        WFnQiuKeTfGc9vbRAO0GtKqciyU4aD4=
+X-Google-Smtp-Source: APXvYqxFY1P1qKwjgFS79JrOp4MGfLQ9cybGi3Q7Livs9f1tjOLyEIrwlfiyM69a63GnWIutkOUing==
+X-Received: by 2002:ac2:544f:: with SMTP id d15mr10815068lfn.126.1575701249353;
+        Fri, 06 Dec 2019 22:47:29 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id b17sm7514044lfp.15.2019.12.06.22.47.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2019 22:47:28 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id r19so10045262ljg.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 22:47:27 -0800 (PST)
+X-Received: by 2002:a2e:9041:: with SMTP id n1mr10951802ljg.133.1575701247153;
+ Fri, 06 Dec 2019 22:47:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+ <20191206214725.GA2108@latitude> <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
+ <20191207000015.GA1757@latitude>
+In-Reply-To: <20191207000015.GA1757@latitude>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 6 Dec 2019 22:47:11 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgkmG9xu_tvMbFTUyn3f2knr7POHjiwMtEmNxXzdPN8wg@mail.gmail.com>
+Message-ID: <CAHk-=wgkmG9xu_tvMbFTUyn3f2knr7POHjiwMtEmNxXzdPN8wg@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+To:     Johannes Hirte <johannes.hirte@datenkhaos.de>
+Cc:     David Howells <dhowells@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIGRldmljZSByZXNldCB2b3BzIGltcGxlbWVudGF0aW9uIGluIE1lZGlhVGVrIFVGUyBkcml2
-ZXIuDQoNClNpZ25lZC1vZmYtYnk6IFN0YW5sZXkgQ2h1IDxzdGFubGV5LmNodUBtZWRpYXRlay5j
-b20+DQotLS0NCiBkcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jIHwgMjcgKysrKysrKysr
-KysrKysrKysrKysrKysrKysrDQogZHJpdmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuaCB8ICA3
-ICsrKysrKysNCiAyIGZpbGVzIGNoYW5nZWQsIDM0IGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMgYi9kcml2ZXJzL3Njc2kvdWZzL3Vm
-cy1tZWRpYXRlay5jDQppbmRleCA4M2UyOGVkYzNhYzUuLjZhM2VjMTFiMTZkYiAxMDA2NDQNCi0t
-LSBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMNCisrKyBiL2RyaXZlcnMvc2NzaS91
-ZnMvdWZzLW1lZGlhdGVrLmMNCkBAIC02LDEwICs2LDEyIEBADQogICoJUGV0ZXIgV2FuZyA8cGV0
-ZXIud2FuZ0BtZWRpYXRlay5jb20+DQogICovDQogDQorI2luY2x1ZGUgPGxpbnV4L2FybS1zbWNj
-Yy5oPg0KICNpbmNsdWRlIDxsaW51eC9vZi5oPg0KICNpbmNsdWRlIDxsaW51eC9vZl9hZGRyZXNz
-Lmg+DQogI2luY2x1ZGUgPGxpbnV4L3BoeS9waHkuaD4NCiAjaW5jbHVkZSA8bGludXgvcGxhdGZv
-cm1fZGV2aWNlLmg+DQorI2luY2x1ZGUgPGxpbnV4L3NvYy9tZWRpYXRlay9tdGtfc2lwX3N2Yy5o
-Pg0KIA0KICNpbmNsdWRlICJ1ZnNoY2QuaCINCiAjaW5jbHVkZSAidWZzaGNkLXBsdGZybS5oIg0K
-QEAgLTI2OSw2ICsyNzEsMzAgQEAgc3RhdGljIGludCB1ZnNfbXRrX2xpbmtfc3RhcnR1cF9ub3Rp
-Znkoc3RydWN0IHVmc19oYmEgKmhiYSwNCiAJcmV0dXJuIHJldDsNCiB9DQogDQorc3RhdGljIHZv
-aWQgdWZzX210a19kZXZpY2VfcmVzZXQoc3RydWN0IHVmc19oYmEgKmhiYSkNCit7DQorCXN0cnVj
-dCBhcm1fc21jY2NfcmVzIHJlczsNCisNCisJYXJtX3NtY2NjX3NtYyhNVEtfU0lQX1VGU19DT05U
-Uk9MLCBVRlNfTVRLX1NJUF9ERVZJQ0VfUkVTRVQsDQorCQkgICAgICAwLCAwLCAwLCAwLCAwLCAw
-LCAmcmVzKTsNCisJLyoNCisJICogVGhlIHJlc2V0IHNpZ25hbCBpcyBhY3RpdmUgbG93LiBVRlMg
-ZGV2aWNlcyBzaGFsbCBkZXRlY3QNCisJICogbW9yZSB0aGFuIG9yIGVxdWFsIHRvIDF1cyBvZiBw
-b3NpdGl2ZSBvciBuZWdhdGl2ZSBSU1Rfbg0KKwkgKiBwdWxzZSB3aWR0aC4NCisJICoNCisJICog
-VG8gYmUgb24gc2FmZSBzaWRlLCBrZWVwIHRoZSByZXNldCBsb3cgZm9yIGF0IGxlYXN0IDEwdXMu
-DQorCSAqLw0KKwl1c2xlZXBfcmFuZ2UoMTAsIDE1KTsNCisNCisJYXJtX3NtY2NjX3NtYyhNVEtf
-U0lQX1VGU19DT05UUk9MLCBVRlNfTVRLX1NJUF9ERVZJQ0VfUkVTRVQsDQorCQkgICAgICAxLCAw
-LCAwLCAwLCAwLCAwLCAmcmVzKTsNCisNCisJLyogU29tZSBkZXZpY2VzIG1heSBuZWVkIHRpbWUg
-dG8gcmVzcG9uZCB0byByc3RfbiAqLw0KKwl1c2xlZXBfcmFuZ2UoMTAwMDAsIDE1MDAwKTsNCisN
-CisJZGV2X2luZm8oaGJhLT5kZXYsICJkZXZpY2UgcmVzZXQgZG9uZVxuIik7DQorfQ0KKw0KIHN0
-YXRpYyBpbnQgdWZzX210a19zdXNwZW5kKHN0cnVjdCB1ZnNfaGJhICpoYmEsIGVudW0gdWZzX3Bt
-X29wIHBtX29wKQ0KIHsNCiAJc3RydWN0IHVmc19tdGtfaG9zdCAqaG9zdCA9IHVmc2hjZF9nZXRf
-dmFyaWFudChoYmEpOw0KQEAgLTMwMyw2ICszMjksNyBAQCBzdGF0aWMgc3RydWN0IHVmc19oYmFf
-dmFyaWFudF9vcHMgdWZzX2hiYV9tdGtfdm9wcyA9IHsNCiAJLnB3cl9jaGFuZ2Vfbm90aWZ5ICAg
-PSB1ZnNfbXRrX3B3cl9jaGFuZ2Vfbm90aWZ5LA0KIAkuc3VzcGVuZCAgICAgICAgICAgICA9IHVm
-c19tdGtfc3VzcGVuZCwNCiAJLnJlc3VtZSAgICAgICAgICAgICAgPSB1ZnNfbXRrX3Jlc3VtZSwN
-CisJLmRldmljZV9yZXNldCAgICAgICAgPSB1ZnNfbXRrX2RldmljZV9yZXNldCwNCiB9Ow0KIA0K
-IC8qKg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmggYi9kcml2
-ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5oDQppbmRleCAxOWY4YzQyZmUwNmYuLmIwM2Y2MDFk
-M2E5ZSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmgNCisrKyBi
-L2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmgNCkBAIC02LDYgKzYsOCBAQA0KICNpZm5k
-ZWYgX1VGU19NRURJQVRFS19IDQogI2RlZmluZSBfVUZTX01FRElBVEVLX0gNCiANCisjaW5jbHVk
-ZSA8bGludXgvYml0b3BzLmg+DQorDQogLyoNCiAgKiBWZW5kb3Igc3BlY2lmaWMgcHJlLWRlZmlu
-ZWQgcGFyYW1ldGVycw0KICAqLw0KQEAgLTI5LDYgKzMxLDExIEBADQogI2RlZmluZSBWU19TQVZF
-UE9XRVJDT05UUk9MICAgICAgICAgMHhEMEE2DQogI2RlZmluZSBWU19VTklQUk9QT1dFUkRPV05D
-T05UUk9MICAgMHhEMEE4DQogDQorLyoNCisgKiBTaVAgY29tbWFuZHMNCisgKi8NCisjZGVmaW5l
-IFVGU19NVEtfU0lQX0RFVklDRV9SRVNFVCAgICBCSVQoMSkNCisNCiAvKg0KICAqIFZTX0RFQlVH
-Q0xPQ0tFTkFCTEUNCiAgKi8NCi0tIA0KMi4xOC4wDQo=
+On Fri, Dec 6, 2019 at 4:00 PM Johannes Hirte
+<johannes.hirte@datenkhaos.de> wrote:
+>
+> Tested with 5.4.0-11505-g347f56fb3890 and still the same wrong behavior.
+> Reliable testcase is facebook, where timeline isn't updated with firefox.
 
+Hmm. I'm not on FB, so that's not a great test for me.
+
+But I've been staring at the code for a long time, and I did find another issue.
+
+poll() and select() were subtly racy and broken. The code did
+
+        unsigned int head = READ_ONCE(pipe->head);
+        unsigned int tail = READ_ONCE(pipe->tail);
+
+which is ok in theory - select and poll can be racy, and doing racy
+reads is ok and we do it in other places too.
+
+But when you don't do proper locking and do racy poll/select, you need
+to make sure that *if* you were wrong, and said "there's nothing
+pending", you need to have added yourself to the wait-queue so that
+any changes caused poll to update.
+
+And the new pipe code did that wrong. It added itself to the poll wait
+queues *after* it had read that racy data, so you could get into a
+race where
+
+ - poll reads stale data
+
+      - data changes, wakeup happens
+
+ - poll adds itself to the poll wait queue after the wakeup
+
+ - poll returns "nothing to read/write" based on stale data, and never
+saw the wakeup event that told it otherwise.
+
+So a patch something like the appended (whitespace-damaged once again,
+because it's untested and I've only been _looking_ a the code) might
+solve that issue.
+
+That said, the race here is quite small. Since that firefox problem is
+apparently repeatable for you, the timing is either _very_ unlucky, or
+there is something else going on too.
+
+                  Linus
+
+--- snip snip ---
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index c561f7f5e902..4c39ea9b3419 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -557,12 +557,24 @@ pipe_poll(struct file *filp, poll_table *wait)
+ {
+        __poll_t mask;
+        struct pipe_inode_info *pipe = filp->private_data;
+-       unsigned int head = READ_ONCE(pipe->head);
+-       unsigned int tail = READ_ONCE(pipe->tail);
++       unsigned int head, tail;
+
++       /*
++        * Reading only -- no need for acquiring the semaphore.
++        *
++        * But because this is racy, the code has to add the
++        * entry to the poll table _first_ ..
++        */
+        poll_wait(filp, &pipe->wait, wait);
+
+-       /* Reading only -- no need for acquiring the semaphore.  */
++       /*
++        * .. and only then can you do the racy tests. That way,
++        * if something changes and you got it wrong, the poll
++        * table entry will wake you up and fix it.
++        */
++       head = READ_ONCE(pipe->head);
++       tail = READ_ONCE(pipe->tail);
++
+        mask = 0;
+        if (filp->f_mode & FMODE_READ) {
+                if (!pipe_empty(head, tail))
