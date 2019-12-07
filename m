@@ -2,151 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E91115A87
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 02:09:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C731A115A8E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 02:13:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbfLGBJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 20:09:43 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38291 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfLGBJn (ORCPT
+        id S1726442AbfLGBNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 20:13:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28666 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726371AbfLGBNI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 20:09:43 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p17so9105260wmi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 17:09:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yD+Kc1w68swJeTB/Vxg8esU+QpTKf/Y2rxrM02hsM8E=;
-        b=erVUUFtB6mpxaavF/Ysp04B0vSbTaHZdphEw6PTLPxx4Jh1Lr2T0Jk8GcojtMGgxI3
-         DBrW0+V6iZJe3f8YfhDCKupEhidu6nFRAn3EgPh/iKNjplr7NjNrVYW9yeieGHE8n8B6
-         82lbOmdaJ/+WYpSO8E560+uoe6p3ly2WEZ9B4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yD+Kc1w68swJeTB/Vxg8esU+QpTKf/Y2rxrM02hsM8E=;
-        b=S8Vv1Mq8PY5HQH14pizmxANC2VdKix08Wub6I2Ye//727HPJlYeOnsA7PLn7Qq7YBl
-         Fez8SpeK9J82yfqGBxQ8bnneht08RBoVAwHDOH+p/GQtIfrORl6ChSMnGAAjTZvtnSxl
-         pwcZW9Vm5Ev7332q3nSGdyJ6p8agoPNLf9wzV+iSEZ1FCDony99w+Ti5XqqFjkU4Y2Qi
-         hLCL0LPOqbjGjJudRYR0SnEUR6i5laOrQTx+isjPVv6KGdNqLHtaCCHsa0xa235HaSqH
-         FQMe6fq7iTjjxVrmH5GYRtA2QMj1fUWsNGSSdlosRXz7ZGmASSxtHUzBRrAJPpHy2KcK
-         7iOA==
-X-Gm-Message-State: APjAAAW5f8k6j8n2XgUDCdKBQT0hOxDNizkWsbTtNGWAS8xSmqd0YJMN
-        GPXU3JZoh5Cg3HjG4nkW6Pz6RA==
-X-Google-Smtp-Source: APXvYqxObGo3CZK1oMZD8K04TAdbPkiFZl31iS0EfNlkm/zzbTK+0LJdmEc/w156VyiqFzklzdlVMA==
-X-Received: by 2002:a7b:cbc4:: with SMTP id n4mr12296535wmi.118.1575680980554;
-        Fri, 06 Dec 2019 17:09:40 -0800 (PST)
-Received: from rj-aorus.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id d14sm18881353wru.9.2019.12.06.17.09.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2019 17:09:39 -0800 (PST)
-Subject: Re: [PATCH 1/2] dt-bindings: soc: Add binding doc for iProc IDM
- device
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-References: <20191202233127.31160-1-ray.jui@broadcom.com>
- <20191202233127.31160-2-ray.jui@broadcom.com>
- <62254bbb-168e-c0ad-a72d-bd659a2c23fa@gmail.com>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <0f0e965b-2e57-8b6b-0c72-1a1008497793@broadcom.com>
-Date:   Fri, 6 Dec 2019 17:09:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <62254bbb-168e-c0ad-a72d-bd659a2c23fa@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 6 Dec 2019 20:13:08 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB71CQwF124511
+        for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2019 20:13:05 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wq9hph2ww-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 20:13:05 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <linuxram@us.ibm.com>;
+        Sat, 7 Dec 2019 01:13:04 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 7 Dec 2019 01:12:59 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB71CwdX2032102
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 7 Dec 2019 01:12:58 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3AD7F4C04A;
+        Sat,  7 Dec 2019 01:12:58 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 217724C040;
+        Sat,  7 Dec 2019 01:12:54 +0000 (GMT)
+Received: from oc0525413822.ibm.com (unknown [9.80.215.155])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat,  7 Dec 2019 01:12:53 +0000 (GMT)
+From:   Ram Pai <linuxram@us.ibm.com>
+To:     mpe@ellerman.id.au
+Cc:     linuxppc-dev@lists.ozlabs.org, benh@kernel.crashing.org,
+        david@gibson.dropbear.id.au, paulus@ozlabs.org,
+        mdroth@linux.vnet.ibm.com, hch@lst.de, linuxram@us.ibm.com,
+        andmike@us.ibm.com, sukadev@linux.vnet.ibm.com, mst@redhat.com,
+        ram.n.pai@gmail.com, aik@ozlabs.ru, cai@lca.pw, tglx@linutronix.de,
+        bauerman@linux.ibm.com, linux-kernel@vger.kernel.org,
+        leonardo@linux.ibm.com
+Subject: [PATCH v5 0/2] Enable IOMMU support for pseries Secure VMs
+Date:   Fri,  6 Dec 2019 17:12:37 -0800
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 19120701-0028-0000-0000-000003C62762
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19120701-0029-0000-0000-000024894E8C
+Message-Id: <1575681159-30356-1-git-send-email-linuxram@us.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-06_08:2019-12-05,2019-12-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ mlxlogscore=620 suspectscore=1 malwarescore=0 lowpriorityscore=0
+ adultscore=0 spamscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912070004
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series enables IOMMU support for pseries Secure VMs.
+
+Tested using QEMU command line option:
+
+	"-device virtio-scsi-pci,id=scsi0,bus=pci.0,addr=0x4,
+	iommu_platform=on,disable-modern=off,disable-legacy=on"
+
+	and
+
+	"-device virtio-blk-pci,scsi=off,bus=pci.0,
+	addr=0x5,drive=drive-virtio-disk0,id=virtio-disk0,
+	iommu_platform=on,disable-modern=off,disable-legacy=on"
+
+changelog:
+	v5: unshare the page used in H_PUT_TCE_INDIRECT hcall to
+       	    communicate the TCE entries with the hypervisor.
+	    Concern raised by Alexey. This minimizes the number
+	    of pages shared with the hypervisor.
+
+	v4: Corrected the Subject, to include the keyword 'PATCH'.
+		No other changes.
+
+	v3: Better description of 2/2 patch.
+		Suggested by David Gibson.
+
+	v2: added comments describing the changes.
+		Suggested by Alexey and Michael Ellermen.
 
 
-On 12/5/19 4:09 PM, Florian Fainelli wrote:
-> On 12/2/19 3:31 PM, Ray Jui wrote:
->> Add binding document for iProc based IDM devices.
->>
->> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> 
-> Looks good to me, it's 2019, nearly 2020, maybe make this a YAML
-> compatible binding since it is a new one?
-> 
+Ram Pai (2):
+  powerpc/pseries/iommu: Share the per-cpu TCE page with the hypervisor.
+  powerpc/pseries/iommu: Use dma_iommu_ops for Secure VM.
 
-Sorry I am not aware of this YAML requirement until now.
+ arch/powerpc/platforms/pseries/iommu.c | 43 ++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 13 deletions(-)
 
-Is this a new requirement that new DT binding document should be made 
-with YAML format?
+-- 
+1.8.3.1
 
-Thanks,
-
-Ray
-
-
->> ---
->>   .../bindings/soc/bcm/brcm,iproc-idm.txt       | 44 +++++++++++++++++++
->>   1 file changed, 44 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,iproc-idm.txt
->>
->> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,iproc-idm.txt b/Documentation/devicetree/bindings/soc/bcm/brcm,iproc-idm.txt
->> new file mode 100644
->> index 000000000000..388c6b036d7e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,iproc-idm.txt
->> @@ -0,0 +1,44 @@
->> +Broadcom iProc Interconnect Device Management (IDM) device
->> +
->> +The Broadcom iProc IDM device allows control and monitoring of ASIC internal
->> +bus transactions. Most importantly, it can be configured to detect bus
->> +transaction timeout. In such case, critical information such as transaction
->> +address that caused the error, bus master ID of the transaction that caused
->> +the error, and etc., are made available from the IDM device.
->> +
->> +-------------------------------------------------------------------------------
->> +
->> +Required properties for IDM device node:
->> +- compatible: must be "brcm,iproc-idm"
->> +- reg: base address and length of the IDM register space
->> +- interrupt: IDM interrupt number
->> +- brcm,iproc-idm-bus: IDM bus string
->> +
->> +Optional properties for IDM device node:
->> +- brcm,iproc-idm-elog: phandle to the device node of the IDM logging device
->> +
->> +-------------------------------------------------------------------------------
->> +
->> +Required properties for IDM error logging device node:
->> +- compatible: must be "brcm,iproc-idm-elog";
->> +- reg: base address and length of reserved memory location where IDM error
->> +  events can be saved
->> +
->> +-------------------------------------------------------------------------------
->> +
->> +Example:
->> +
->> +idm {
->> +	idm-elog {
->> +		compatible = "brcm,iproc-idm-elog";
->> +		reg = <0x8f221000 0x1000>;
->> +	};
->> +
->> +	idm-mhb-paxc-axi {
->> +		compatible = "brcm,iproc-idm";
->> +		reg = <0x60406900 0x200>;
->> +		interrupt = <GIC_SPI 516 IRQ_TYPE_LEVEL_HIGH>;
->> +		brcm,iproc-idm-bus = "idm-mhb-paxc-axi";
->> +		brcm,iproc-idm-elog = <&idm-elog>;
->> +	};
->> +};
->>
-> 
-> 
