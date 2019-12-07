@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6817115A5A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 01:37:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCF35115A5C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 01:38:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbfLGAhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 19:37:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39436 "EHLO mail.kernel.org"
+        id S1726469AbfLGAiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 19:38:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726374AbfLGAhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 19:37:09 -0500
+        id S1726375AbfLGAiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 19:38:55 -0500
 Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E51C6217F4;
-        Sat,  7 Dec 2019 00:37:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 555CC217F4;
+        Sat,  7 Dec 2019 00:38:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575679028;
-        bh=7dRPatdPCbbZGZLlBLBgkiWBhSl7GWUs4mboLXQ5xMU=;
+        s=default; t=1575679134;
+        bh=pXgE5bJzghH5mG4jiwsiWhC/T97HlG8oVxO+qHwaLtg=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hCUwOrYRci73JrGgxEGqlNTxcjWwwXrJ5/yLUIIMvZ/cEWvggOe1UEAAgGsHvmLpK
-         bwC3thokiEet0eWhvrewRZtbwwc5L8wXM9wMoJ5laFloknZHPoM9/3wKsBsvbbq4V9
-         9J9m0dkhLSnfpToe/MMZ4kqCHbdnlTOU8J8529X4=
-Date:   Fri, 6 Dec 2019 16:37:07 -0800
+        b=gOYIIK+Pufb0FTzfOJJIZVX9AevjAXpf2Gwym20jWFIoUoXfk+qI9BEPAkynHMXzD
+         lhztH0y2SyYKYFuCX5aS8W70c+aHV3gy47mr2w45LgvIimNT+wDD/PIDRh+rZssSn3
+         49Wn9C8bzZnwSdoV/p11WeyWl+iMWBjoA6FfKt1A=
+Date:   Fri, 6 Dec 2019 16:38:53 -0800
 From:   Andrew Morton <akpm@linux-foundation.org>
 To:     Daniel Axtens <dja@axtens.net>
 Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org,
@@ -31,7 +31,7 @@ Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, dvyukov@google.com,
         daniel@iogearbox.net, cai@lca.pw
 Subject: Re: [PATCH 1/3] mm: add apply_to_existing_pages helper
-Message-Id: <20191206163707.17f627c502846bd636049ad4@linux-foundation.org>
+Message-Id: <20191206163853.cdeb5dc80a8622fb6323a8d2@linux-foundation.org>
 In-Reply-To: <20191205140407.1874-1-dja@axtens.net>
 References: <20191205140407.1874-1-dja@axtens.net>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
@@ -45,113 +45,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri,  6 Dec 2019 01:04:05 +1100 Daniel Axtens <dja@axtens.net> wrote:
 
-> +/*
-> + * Scan a region of virtual memory, calling a provided function on
-> + * each leaf page table where it exists.
-> + *
-> + * Unlike apply_to_page_range, this does _not_ fill in page tables
-> + * where they are absent.
-> + */
-> +int apply_to_existing_pages(struct mm_struct *mm, unsigned long addr,
-> +			    unsigned long size, pte_fn_t fn, void *data)
-> +{
-> +	pgd_t *pgd;
-> +	unsigned long next;
-> +	unsigned long end = addr + size;
-> +	int err = 0;
-> +
-> +	if (WARN_ON(addr >= end))
-> +		return -EINVAL;
-> +
-> +	pgd = pgd_offset(mm, addr);
-> +	do {
-> +		next = pgd_addr_end(addr, end);
-> +		if (pgd_none_or_clear_bad(pgd))
-> +			continue;
-> +		err = apply_to_p4d_range(mm, pgd, addr, next, fn, data, false);
-> +		if (err)
-> +			break;
-> +	} while (pgd++, addr = next, addr != end);
-> +
-> +	return err;
-> +}
-> +EXPORT_SYMBOL_GPL(apply_to_existing_pages);
+> apply_to_page_range takes an address range, and if any parts of it
+> are not covered by the existing page table hierarchy, it allocates
+> memory to fill them in.
+> 
+> In some use cases, this is not what we want - we want to be able to
+> operate exclusively on PTEs that are already in the tables.
+> 
+> Add apply_to_existing_pages for this. Adjust the walker functions
+> for apply_to_page_range to take 'create', which switches them between
+> the old and new modes.
 
-This is almost identical to apply_to_page_range() and cries out for
-some deduplication.  This?
+Wouldn't apply_to_existing_page_range() be a better name?
 
---- a/mm/memory.c~mm-add-apply_to_existing_pages-helper-fix
+--- a/include/linux/mm.h~mm-add-apply_to_existing_pages-helper-fix-fix
++++ a/include/linux/mm.h
+@@ -2621,9 +2621,9 @@ static inline int vm_fault_to_errno(vm_f
+ typedef int (*pte_fn_t)(pte_t *pte, unsigned long addr, void *data);
+ extern int apply_to_page_range(struct mm_struct *mm, unsigned long address,
+ 			       unsigned long size, pte_fn_t fn, void *data);
+-extern int apply_to_existing_pages(struct mm_struct *mm, unsigned long address,
+-				   unsigned long size, pte_fn_t fn,
+-				   void *data);
++extern int apply_to_existing_page_range(struct mm_struct *mm,
++				   unsigned long address, unsigned long size,
++				   pte_fn_t fn, void *data);
+ 
+ #ifdef CONFIG_PAGE_POISONING
+ extern bool page_poisoning_enabled(void);
+--- a/mm/memory.c~mm-add-apply_to_existing_pages-helper-fix-fix
 +++ a/mm/memory.c
-@@ -2141,12 +2141,9 @@ static int apply_to_p4d_range(struct mm_
- 	return err;
- }
- 
--/*
-- * Scan a region of virtual memory, filling in page tables as necessary
-- * and calling a provided function on each leaf page table.
-- */
--int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
--			unsigned long size, pte_fn_t fn, void *data)
-+static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
-+				 unsigned long size, pte_fn_t fn,
-+				 void *data, bool create)
+@@ -2184,12 +2184,12 @@ EXPORT_SYMBOL_GPL(apply_to_page_range);
+  * Unlike apply_to_page_range, this does _not_ fill in page tables
+  * where they are absent.
+  */
+-int apply_to_existing_pages(struct mm_struct *mm, unsigned long addr,
+-			    unsigned long size, pte_fn_t fn, void *data)
++int apply_to_existing_page_range(struct mm_struct *mm, unsigned long addr,
++				 unsigned long size, pte_fn_t fn, void *data)
  {
- 	pgd_t *pgd;
- 	unsigned long next;
-@@ -2159,13 +2156,25 @@ int apply_to_page_range(struct mm_struct
- 	pgd = pgd_offset(mm, addr);
- 	do {
- 		next = pgd_addr_end(addr, end);
--		err = apply_to_p4d_range(mm, pgd, addr, next, fn, data, true);
-+		if (!create && pgd_none_or_clear_bad(pgd))
-+			continue;
-+		err = apply_to_p4d_range(mm, pgd, addr, next, fn, data, create);
- 		if (err)
- 			break;
- 	} while (pgd++, addr = next, addr != end);
- 
- 	return err;
+ 	return __apply_to_page_range(mm, addr, size, fn, data, false);
  }
-+
-+/*
-+ * Scan a region of virtual memory, filling in page tables as necessary
-+ * and calling a provided function on each leaf page table.
-+ */
-+int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
-+			unsigned long size, pte_fn_t fn, void *data)
-+{
-+	return __apply_to_page_range(mm, addr, size, fn, data, true);
-+}
- EXPORT_SYMBOL_GPL(apply_to_page_range);
+-EXPORT_SYMBOL_GPL(apply_to_existing_pages);
++EXPORT_SYMBOL_GPL(apply_to_existing_page_range);
  
  /*
-@@ -2178,25 +2187,7 @@ EXPORT_SYMBOL_GPL(apply_to_page_range);
- int apply_to_existing_pages(struct mm_struct *mm, unsigned long addr,
- 			    unsigned long size, pte_fn_t fn, void *data)
- {
--	pgd_t *pgd;
--	unsigned long next;
--	unsigned long end = addr + size;
--	int err = 0;
--
--	if (WARN_ON(addr >= end))
--		return -EINVAL;
--
--	pgd = pgd_offset(mm, addr);
--	do {
--		next = pgd_addr_end(addr, end);
--		if (pgd_none_or_clear_bad(pgd))
--			continue;
--		err = apply_to_p4d_range(mm, pgd, addr, next, fn, data, false);
--		if (err)
--			break;
--	} while (pgd++, addr = next, addr != end);
--
--	return err;
-+	return __apply_to_page_range(mm, addr, size, fn, data, false);
- }
- EXPORT_SYMBOL_GPL(apply_to_existing_pages);
- 
+  * handle_pte_fault chooses page fault handler according to an entry which was
 _
-
 
