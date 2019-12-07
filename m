@@ -2,62 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E2F6115A3C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 01:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6CC1115A56
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 01:32:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbfLGA34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 19:29:56 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42655 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbfLGA3z (ORCPT
+        id S1726425AbfLGAcr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 19:32:47 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44977 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbfLGAcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 19:29:55 -0500
-Received: by mail-wr1-f66.google.com with SMTP id a15so9604643wrf.9
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 16:29:54 -0800 (PST)
+        Fri, 6 Dec 2019 19:32:47 -0500
+Received: by mail-pf1-f196.google.com with SMTP id d199so4182156pfd.11
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 16:32:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=S7m9By4/eRnSy0vxdfJ6TocT5eJ8gcKLceyHvlHTn3o=;
-        b=LXxoS6Ed7of6jWaofmDfQc8/u3Mg9Maolmr3Vpf9Rmy6M9EqjFAuvGQ8h9p7LhnwAL
-         J2FbblgdkGgZHafRFxx28eRdV2u28AyUlEZcVvHuYvVm3rtf1quwzUCMSvqmMRhzvXWg
-         Lr2BVgHFftpJuxoM6FIG7HwvD6NJoH8mvEjpjvV8POe7OxPQSgcaMvRkWz9Uiu2DLDQI
-         zLbCM6eF/2UqhYCC9SzqWLAqDFWNhNPH2Mzqdx7SMOIQYQVzi+r4mUYfVbZ4zkg6G/Rf
-         GMyYZz2zxEAODyOdyEtKF6h6LvlYj6nQy3cPNK/qqQ+yOafhqpdxqfrrNrKMk4+XdZU4
-         ueNQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9nA6TLXHYl8v79peg3VhVosiUxmffdmpQbw61XmrrVw=;
+        b=k0mgtqawhqQauqAo6Xm6Y0XzZGm+X99KsWdAV+KuEkGfXAz/WbV5qUCiTIVMIqFkwk
+         7YChpnQVxjemzb+1wlbUjYOprUtpKjXvqjRtjpw7O/Vsf1oTijwu+Po2hmkkgHo4rHWL
+         yYy8ypWJhdy/D+TdRYSMxI5LAbmxsNoON7lZOBvucAOTj9ehPhvWT4RVSHNtjtSIpE7M
+         IMfHqeUxooqAdCRdoVmiE+LDBu4CoMo7vw/OkUMVo/Wh3sR9MReIZOODRP+FVe9E2TII
+         OgsKP/VB4cJYtHkOpR697qiXPFqarvTCZK58ExPs4sJ7HRe6kUR27yRcsJiWMAnTy6XZ
+         VuOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=S7m9By4/eRnSy0vxdfJ6TocT5eJ8gcKLceyHvlHTn3o=;
-        b=ljh/JKXxnIrC8YNN1OdwoGJZwskjLyTJBYqejBIJsQVI7KpkNuqbFYmFox7n6Vsv4z
-         4pKH/lnvAUuKennxlUJ2XQ+hOd+dNd8/8K7bcDmvgfXK/0HxFrKw1NOQcpAbfVEDe43a
-         3+BWiiwRDKXODQ1BXVEPOpTZfc49WXwXN0eri0D1afBHYvw2AwL9YHnS2gi4ekD+g5YE
-         zcoJ0nPGtrw8skFrimfUJmr3Zs/V8VcxSkFZcd9PcS3TGh/w8oBjKsJF77moxip6LTVm
-         o2VSuHMlDZAOnRcIBbzx74nspiqCiQghTTAtZJdnvsgZ7+o0q2/9eCaQ7lpb5HToc3Yv
-         uPwQ==
-X-Gm-Message-State: APjAAAV19aHW2n2G/7bTIHGTqVoeQz+6nMzlwD078o5P0weqfXVcCFSh
-        stYu2cPRHZkdn960VbY4K/5WviGaXrK7t0q/2Js=
-X-Google-Smtp-Source: APXvYqwrh3pZjAB0r+TmXxbhmAM/apODdHlIT+82DMPTCRz8CUTTqPzcZB7T3FAp1SOvDrWQKKNsT0CStxod+O7hBLs=
-X-Received: by 2002:adf:e591:: with SMTP id l17mr16654604wrm.139.1575678594023;
- Fri, 06 Dec 2019 16:29:54 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9nA6TLXHYl8v79peg3VhVosiUxmffdmpQbw61XmrrVw=;
+        b=ojqVrEoJF7w61EjBx+RbAxnAe8T3JOzyJ61HYqIOkOHnFvVHv1kZ9NwcxO5iCg1Knp
+         78C9Zd0jbl5Nua8pFE0vJRTCwaOF5sLfHzs+8fsrdgBHGp3BVvzRwmtvAX5tPvxWmwno
+         XBUU1/gtKcI0OHeGf/x/qRIIP12uLrgMcbkI9ud5DKoDa9z93gscUnvzYpXZrrtlRTM4
+         LpGeqjUDX8/EMLelomyEU8yTm/b4yOFC5XXc0Un115NNfxrKNOp99JOwdY1mj0l4nQh1
+         9DwlGlT2RdMF49gH5cOe0L1B2F+7Kc9svaWjqo5cQIyFhIUBWGRiTGt7flQW0hXa7SPz
+         MO3g==
+X-Gm-Message-State: APjAAAVP8MZZcBFrpZeJF4hosYpW4HNu0G/nlmeTJVPwgAxPL05ryJSc
+        A5kjZK6EmcErcJZDOuWrGEgQEnJqKyK4tA8JByFsFg==
+X-Google-Smtp-Source: APXvYqyAM9UyYZckbr97n8v5vv5QX+O9jWt0njXHGztaN/fZMNU2oZVIVd2VtftBNRvnLjGxsuqS4BrCMBIKw6qyeGk=
+X-Received: by 2002:aa7:961b:: with SMTP id q27mr17493808pfg.23.1575678766044;
+ Fri, 06 Dec 2019 16:32:46 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a5d:678e:0:0:0:0:0 with HTTP; Fri, 6 Dec 2019 16:29:53 -0800 (PST)
-Reply-To: mrs.aalia.ahmed@gmail.com
-From:   "Mrs.Aalia.Ahmed" <adamhana1907@gmail.com>
-Date:   Sat, 7 Dec 2019 00:29:53 +0000
-Message-ID: <CAOGreO=8t36s1Mau26bRqTQErHsnOf5ki10AJ6EA4tNedNUo8g@mail.gmail.com>
-Subject: OK
-To:     undisclosed-recipients:;
+References: <20191206020153.228283-1-brendanhiggins@google.com>
+ <20191206020153.228283-2-brendanhiggins@google.com> <f217945d-ab64-10cc-bb12-3a4d810ff25a@cambridgegreys.com>
+In-Reply-To: <f217945d-ab64-10cc-bb12-3a4d810ff25a@cambridgegreys.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 6 Dec 2019 16:32:34 -0800
+Message-ID: <CAFd5g45cSKATfw4GKPw6QdhQKDNi=0gcDRjQ7N0T1XrdtSTPrg@mail.gmail.com>
+Subject: Re: [RFC v1 1/2] um: drivers: remove support for UML_NET_PCAP
+To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        David Gow <davidgow@google.com>, linux-um@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        johannes.berg@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings My Dearest One.
+On Thu, Dec 5, 2019 at 11:23 PM Anton Ivanov
+<anton.ivanov@cambridgegreys.com> wrote:
+[...]
+> 1. There is a proposed patch for the build system to fix it.
+>
+> 2. We should be removing all old drivers and replacing them with the
+> vector ones.
 
-My name is Mrs.Aalia.Ahmed, i saw your profile and became interested
-in you, please contact me through my email address
-(mrs.aalia.ahmed@gmail.com) to know each other and i have something
-very important to tell you, i wait for your response to my email ID.
-(mrs.aalia.ahmed@gmail.com
+Hmm...does this mean you would entertain a patch removing all the
+non-vector UML network drivers? I would be happy to see VDE go as
+well.
+
+In any event, it sounds like I should probably drop this patch as it
+is currently.
+
+Thanks!
