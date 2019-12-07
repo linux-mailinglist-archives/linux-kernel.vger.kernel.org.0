@@ -2,95 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E6E115A8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 02:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70E48115A80
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 02:07:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfLGBLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 20:11:07 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40355 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfLGBLG (ORCPT
+        id S1726423AbfLGBHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 20:07:46 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35819 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbfLGBHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 20:11:06 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y5so6611465lfy.7
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 17:11:05 -0800 (PST)
+        Fri, 6 Dec 2019 20:07:46 -0500
+Received: by mail-pg1-f196.google.com with SMTP id l24so4176858pgk.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 17:07:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xp39wpo5AR+pbRP/tZoeRSZICS3SHzWRMfhJEvbxIGA=;
-        b=F9QgFlzOLVDvV/NH9kO5C38Tw6X+Hr1zV9nvDrPtaW9IdmdHU1TNQTmWgtmr08QLWs
-         m/LzPoUZk/NRRXSGyCni67pyjPAjI1csctIc4AcmS9vEoOX/8bco5LDaWzkI+5Pvvxsm
-         tA5h/kF2wpsxbPSmFh84K3eYpHR4dbqT6qkZM=
+        d=google.com; s=20161025;
+        h=date:from:subject:in-reply-to:cc:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jgPnL+5CfrvgeIvrxi5m1URbPq9UfCHRkF3knFWgGMo=;
+        b=vnGHB43imTN0QjS6hkVorlkKBz9FeRi7coqQYKVSZrNzu/moiA3L0lN/rlICiyRZHJ
+         Mh53ovWyz5PC6CNMvZVO7WD6S1sTZ6O5LGg+ugmfR6s7ghr/zccdDSRcdHvZVCHtN7vk
+         +MzaGgY460pFTYKZdZiU7yd9ELl1QotycSPLtwCk/MTZObu2SBttSveckWvIQRTPRJDb
+         VYkI+7gPM5D0vkj3UthTfXLDDaaf2wdIiaP37tRn3NR00CjhJJIC0ncgx/AYpOOCXfST
+         dbTRMxmf0dzFCZwJ4u5YxSgKZvnIl2uYwBkXhuvQHoEXnEj9IYeGoFnA8p/d1a5RZMQi
+         KScw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xp39wpo5AR+pbRP/tZoeRSZICS3SHzWRMfhJEvbxIGA=;
-        b=YWYwj70CJOFyxtYhS+ZirIEDoURs8mfevWfhrtvsbDnugmx7gaEF8f/qOMX96osNHs
-         DVqtkrWOHW3IXUJ85b5AP1mIhoEjAsq/jztuntqJr/vtZsyuElrPMm9A6c9bKzUTSBN8
-         D9hsjIrBGUQBG5FmkmMOui0VEBG1K8KR6z8DFwggXxgYP4Cwv5ahq8ZltmQ16vfhVs+b
-         JyyfMy++bIhhhM4bzrHlZyGxjWX9dJL7zcHtU3gzSijShMZTAKm4Kft4gOWfmnk5tvH8
-         5GnOXlKBMeWihPVavwQ2yv7Vk+NYxT5Ja7qfvgfSq6GbPSi8Uz8RptNVSDx/pmwV+w/e
-         62Bg==
-X-Gm-Message-State: APjAAAXzJyANT3+JVx/f1oCFsKsxeRhvK7m8GIwO9iLFauxzMDImXQjf
-        4VyGOMDyCv+43p6VBsBg5ku0ehkR5Lc=
-X-Google-Smtp-Source: APXvYqwzW9+QGbgqtTK8dyBglEsOMB/W7PYsPEqrIugTZ0WJZnnLBBv4qlhfpd8XEYEDuwH64qQhEw==
-X-Received: by 2002:a19:c205:: with SMTP id l5mr9348330lfc.159.1575681064502;
-        Fri, 06 Dec 2019 17:11:04 -0800 (PST)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id q12sm7289078ljc.74.2019.12.06.17.11.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2019 17:11:04 -0800 (PST)
-Received: by mail-lf1-f54.google.com with SMTP id r14so6618181lfm.5
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 17:11:03 -0800 (PST)
-X-Received: by 2002:ac2:555c:: with SMTP id l28mr9400181lfk.52.1575680636244;
- Fri, 06 Dec 2019 17:03:56 -0800 (PST)
-MIME-Version: 1.0
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
- <20191206214725.GA2108@latitude> <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
- <20191207000015.GA1757@latitude>
-In-Reply-To: <20191207000015.GA1757@latitude>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 6 Dec 2019 17:03:40 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
-Message-ID: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
- not cursor and length [ver #2]
-To:     Johannes Hirte <johannes.hirte@datenkhaos.de>
-Cc:     David Howells <dhowells@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:subject:in-reply-to:cc:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=jgPnL+5CfrvgeIvrxi5m1URbPq9UfCHRkF3knFWgGMo=;
+        b=U79isTARiPkN0i+k7FRRLGA7AeMEz7I7Arth7ji3k/++RVyPciivzwYGIEdGDVqZgZ
+         UbjzQSBc+cWenBzoO2t8LdFeBLcdH/3/b2jXBjeDaU1sCMI63y/zjXvbGCrqoObRVYok
+         ylZ44GL8UKcmF1L9Gq3PK41JVAhf0VugncpqSltCEDO3WItyV7havqheM+PhDuD36IcU
+         hj26jq0lmMOjYUudWVFNUPD/9e+UiP6iIquT0eLLgiOmQKlGLhimXxtNppoWZM4xYRLz
+         myK3deEXqgAmUPT5O1zczU2ACbMKDQ+d18bnCNVFhQmZ84K0lYNhjnLhJQWtxN2cXwnC
+         hhcA==
+X-Gm-Message-State: APjAAAXeZ4TaQEgHzE4ppbjRCU3/WO4qhwL6NiwZ8dsiGFPXPGMsGNeL
+        H+8o/XrlBUBm5TYexioKC+LUXA==
+X-Google-Smtp-Source: APXvYqw+i60gFlnrvD0Dor+Sp0d2gAyk8B4gXSdQsjoxvzXIiXKLyW9wvw9NoSdBgAup/UtS8uprIg==
+X-Received: by 2002:a62:be12:: with SMTP id l18mr10004721pff.206.1575680865151;
+        Fri, 06 Dec 2019 17:07:45 -0800 (PST)
+Received: from localhost ([2620:0:1000:2514:7f69:cd98:a2a2:a03d])
+        by smtp.gmail.com with ESMTPSA id y128sm17328385pfg.17.2019.12.06.17.07.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2019 17:07:44 -0800 (PST)
+Date:   Fri, 06 Dec 2019 17:07:44 -0800 (PST)
+X-Google-Original-Date: Fri, 06 Dec 2019 16:33:00 PST (-0800)
+From:   Palmer Dabbelt <palmerdabbelt@google.com>
+X-Google-Original-From: Palmer Dabbelt <palmer@dabbelt.com>
+Subject:     RE: [PATCH v3 5/6] gpio: sifive: Add GPIO driver for SiFive SoCs
+In-Reply-To: <208a63e8819b84f9dc03f270f2606294@www.loen.fr>
+CC:     yash.shah@sifive.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, Paul Walmsley <paul.walmsley@sifive.com>,
+        aou@eecs.berkeley.edu, tglx@linutronix.de, jason@lakedaemon.net,
+        bmeng.cn@gmail.com, Atish Patra <Atish.Patra@wdc.com>,
+        sagar.kadam@sifive.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com
+To:     maz@kernel.org
+Message-ID: <mhng-be0f81d1-78d1-4e9c-8dae-1344635fbbb7@palmerdabbelt-glaptop>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 6, 2019 at 4:00 PM Johannes Hirte
-<johannes.hirte@datenkhaos.de> wrote:
+On Fri, 29 Nov 2019 01:12:10 PST (-0800), maz@kernel.org wrote:
+> On 2019-11-29 06:27, Yash Shah wrote:
+>>> -----Original Message-----
+>>> From: Linus Walleij <linus.walleij@linaro.org>
+>>> Sent: 28 November 2019 17:50
+>>> To: Yash Shah <yash.shah@sifive.com>
+>>> Cc: bgolaszewski@baylibre.com; robh+dt@kernel.org;
+>>> mark.rutland@arm.com; palmer@dabbelt.com; Paul Walmsley ( Sifive)
+>>> <paul.walmsley@sifive.com>; aou@eecs.berkeley.edu;
+>>> tglx@linutronix.de;
+>>> jason@lakedaemon.net; maz@kernel.org; bmeng.cn@gmail.com;
+>>> atish.patra@wdc.com; Sagar Kadam <sagar.kadam@sifive.com>; linux-
+>>> gpio@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>>> riscv@lists.infradead.org; linux-kernel@vger.kernel.org; Sachin
+>>> Ghadi
+>>> <sachin.ghadi@sifive.com>
+>>> Subject: Re: [PATCH v3 5/6] gpio: sifive: Add GPIO driver for SiFive
+>>> SoCs
+>>>
+>>> On Mon, Nov 25, 2019 at 6:58 AM Yash Shah <yash.shah@sifive.com>
+>>> wrote:
+>>>
+>>> > Adds the GPIO driver for SiFive RISC-V SoCs.
+>>> >
+>>> > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+>>> > [Atish: Various fixes and code cleanup]
+>>> > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+>>> > Signed-off-by: Yash Shah <yash.shah@sifive.com>
+>>>
+>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>>
+>>> I suppose Marc will merge all patches into the irqchip tree as they
+>>> are logically
+>>> dependent? If you want the GPIO bindings and this driver directly
+>>> merged
+>>> (no deps) then I can do that as well.
+>>
+>> Yes, the GPIO driver have logical dependency on irqchip patches. It
+>> is best if Marc merges all the patches into the irqchip tree.
+>>
+>> @Marc Zyngier, Are you going to merge all the patches into the
+>> irqchip tree?
 >
-> Tested with 5.4.0-11505-g347f56fb3890 and still the same wrong behavior.
+> I'm happy to pick this up, but that's definitely 5.6 material as
+> I stopped collecting new 5.5 features a couple of weeks ago.
 
-Ok, we'll continue looking.
-
-That said, your version string is strange.
-
-Commit 347f56fb3890 should be  "v5.4.0-13174-g347f56fb3890", the fact
-that you have "11505" confuses me.
-
-The hash is what matters, but I wonder what is going on that you have
-the commit count in that version string so wrong.
-
-                   Linus
+Thanks!
