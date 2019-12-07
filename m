@@ -2,169 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2DB9115F0B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 23:25:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1C2E115F5D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 23:48:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfLGWY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Dec 2019 17:24:58 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41403 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbfLGWYy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Dec 2019 17:24:54 -0500
-Received: by mail-pl1-f193.google.com with SMTP id bd4so4199620plb.8;
-        Sat, 07 Dec 2019 14:24:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ExI/TKDdtqZJzeoXoc2AmfkP7V2dbpxkrYjX02g6qW8=;
-        b=U1LXHG0VqwagIGA58czXmw1H4VD/s4EQgeoMRqcaqrB4IHMlYDFRyLonTr3/YNyqfQ
-         ssWFu20NjDv55dUc6YSELfgM2hGxVqpE8E2EEzCeiNr28psNeLADRkC67b4dZTnX/8Ag
-         GF/Xij3GKtlCwBTwIUNgng+p82rkDjxUGC/UUdPzLyewnRZ/IVHBTNcp0HWBA3z/TW6X
-         sSoufAOKOQoQcSbrKpW+SY18KjvhVrhMuBT7tDuv3fahEWQUEeRAc1n/AiFKO5R1oGGF
-         qUznNHp8pumNfO7tnNk9ZTzOCPpdEKHxPLSX610n37BAZJ16kc2fIFso407JTCNEbQlv
-         sd8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ExI/TKDdtqZJzeoXoc2AmfkP7V2dbpxkrYjX02g6qW8=;
-        b=S6KWBgTUtP0hZ4PV3OmTaoRDzQXo1y73eSnPxCEsAxBu74Vz+lBpfRwUELFJH9O/uU
-         p8XxywAROP4uXrDt9Mzvwc8CYmkaH9eIhUJYRu2xPQqh4TkXIX+BP6vdw8ivf0p/jjSd
-         v/jyy49emjTQpsMbB3KE2p2AT/YXidl7WVtGAEstigBiuHcNnpApIJ/cOGCsvXv/Agl9
-         uYk0NNHwwKYG+FqUOYYiF9eWtVkLrXbSSj4hMZVYyZaoL8dzmdB/1dgjqGlotSn6Usdo
-         4SMnvKHtIQcwnafC2Taka1A6pi9/tTegRtZVJZffslck5y+ylGqtvAl2lyIS2vZSwwls
-         7ECQ==
-X-Gm-Message-State: APjAAAUAWfihxU7kzGDNtfgprA7bww9LHBireY0BIHDYRhmb9LHmugr4
-        hsSBmarKbQnAF+yF7HK9M6s=
-X-Google-Smtp-Source: APXvYqx7bStIx6xSAxvlhcLeWquMhjmkWNjHW7tGd9W2s1pTJYJMoxzoc3cto86XzIWwTO2kvqyL3Q==
-X-Received: by 2002:a17:90a:2486:: with SMTP id i6mr24849994pje.9.1575757493839;
-        Sat, 07 Dec 2019 14:24:53 -0800 (PST)
-Received: from [192.168.0.53] ([211.243.117.64])
-        by smtp.gmail.com with ESMTPSA id w11sm16400204pfn.4.2019.12.07.14.24.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2019 14:24:53 -0800 (PST)
-Subject: Re: [PATCH 1/2] irqchip: define EXYNOS_IRQ_COMBINER
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux@armlinux.org.uk, kgene@kernel.org, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com, Hyunki Koo <hyunki00.koo@samsung.com>
-References: <20191207130049.27533-1-hyunki00.koo@gmail.com>
- <20191207130049.27533-2-hyunki00.koo@gmail.com>
- <20191207132855.GA4384@kozik-lap>
- <CAJKOXPcUXRGa7+ZgSYomo5v_eh=GjqyWYBkzsXUJi0zAPHcOjg@mail.gmail.com>
-From:   Hyunki Koo <hyunki00.koo@gmail.com>
-Message-ID: <e6c3661e-36df-5ae8-eedb-1961063bcabb@gmail.com>
-Date:   Sun, 8 Dec 2019 07:24:49 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726653AbfLGWsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Dec 2019 17:48:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42852 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726416AbfLGWsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Dec 2019 17:48:04 -0500
+Received: from ziggy.de (unknown [95.169.229.25])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D691D206DF;
+        Sat,  7 Dec 2019 22:47:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575758882;
+        bh=93NzKwhH96xN9ph6jHZTyuNaVTL3dPzKjPH/rfZohME=;
+        h=From:To:Cc:Subject:Date:From;
+        b=e5NmXO42FZJxfWU96LzDKeiQX5mbz0BLaxnTby1/9Pn0Q+JizVFSuHjnqRW0s9ZnY
+         hnN5q3R2ur6DOk9b02yjQvdFxlp7N/IsI5sxaEXsJM68Q0thsq6Sc5+H0jUsrVLdY3
+         ORalyU0pxGNSd6MkPptb313Q+9TlthVRPr6mio+w=
+From:   matthias.bgg@kernel.org
+To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com, enric.balletbo@collabora.com
+Cc:     sean.wang@mediatek.com, sean.wang@kernel.org,
+        rdunlap@infradead.org, wens@csie.org, hsinyi@chromium.org,
+        frank-w@public-files.de, drinkcat@chromium.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, mbrugger@suse.com,
+        matthias.bgg@kernel.org
+Subject: [resend PATCH v6 00/12] arm/arm64: mediatek: Fix mmsys device probing
+Date:   Sat,  7 Dec 2019 23:47:28 +0100
+Message-Id: <20191207224740.24536-1-matthias.bgg@kernel.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPcUXRGa7+ZgSYomo5v_eh=GjqyWYBkzsXUJi0zAPHcOjg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Matthias Brugger <mbrugger@suse.com>
 
-On 19. 12. 7. 오후 10:37, Krzysztof Kozlowski wrote:
-> On Sat, 7 Dec 2019 at 14:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On Sat, Dec 07, 2019 at 10:00:48PM +0900, Hyunki Koo wrote:
->>> From: Hyunki Koo <hyunki00.koo@samsung.com>
->>>
->>> Not all exynos device have IRQ_COMBINER.
->>> Thus add the config for EXYNOS_IRQ_COMBINER.
->>>
->>> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
->>> ---
->>>   drivers/irqchip/Kconfig  | 7 +++++++
->>>   drivers/irqchip/Makefile | 2 +-
->>>   2 files changed, 8 insertions(+), 1 deletion(-)
->>>
->> Hi,
->>
->> There is no changelog and versioning of this patch so I do not
->> understand how it differs with previous. It's a resend? v2? It brings
->> the confusion and looks like you're ignoring previous comments.
->>
->> Looks the same and looks like breaking Exynos platforms in the same way.
->>
->> If you not want to skip combiner on ARMv8, it makes sense, then please
->> follow the approach we did for Pinctrl drivers (PINCTRL_EXYNOS_ARM and
->> PINCTRL_EXYNOS_ARM64).
->>
->> Best regards,
->> Krzysztof
-> Ah, now I see the second patch. Still you break bisect which requires
-> specific ordering of patches or squashing them into one. Optionally
-> this could be default=y if ARCH_EXYNOS && ARM. I prefer just squashing
-> both into one patch in this case.
+[reseding due to wrong mail of Stephen]
 
-you mean squashing two files arch/arm/mach-exynos/Kconfig and 
-arch/arm/mach-exynos/Kconfig into one patch
+This is version five of the series. It's a long time this wasn't worked on, so
+as a reminder, version four can be found here:
+https://patchwork.kernel.org/cover/10686247/
 
-or squashing into only one file like blow?
+The biggest changes this new version does, is to implement the clock probing
+through a platform driver. The corresponding platform device get's created in
+the DRM driver. I converted all the clock drivers to platform drivers and tested
+the approach on the Acer Chromebook R13 (mt8173 based).
+Apart from that I reordered the patches so that the DT bindings update are the first
+patches.
 
-+config EXYNOS_IRQ_COMBINER
-+       bool "Samsung Exynos IRQ combiner support"
-+       depends on (ARCH_EXYNOS  && ARM) || COMPILE_TEST
-+       default y
+Changes since v5:
+- re-arrange the patch order
+- generate platform_device for mmsys clock driver inside the DRM driver
+- fix DTS binding accordingly
+- switch all mmsys clock driver to platform probing
+- fix mt8173 platform driver remove function
+- fix probe defer path in HDMI driver
+- fix probe defer path in mtk_mdp_comp
+- fix identation of error messages
 
-I prefer first one (squashing two files into one patch)
+Changes since v4:
+- fix missing regmap accessors in drm diver (patch 1)
+- omit probe deffered warning on all drivers (patch 5)
+- update drm and clk bindings (patch 6 and 7)
+- put mmsys clock part in dts child node of mmsys. Only done
+for HW where no dts backport compatible breakage is expected 
+(either DRM driver not yet implemented or no HW available to
+the public) (patch 9 to 12)
 
->
->>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
->>> index ba152954324b..3ed7b7f2ae26 100644
->>> --- a/drivers/irqchip/Kconfig
->>> +++ b/drivers/irqchip/Kconfig
->>> @@ -499,4 +499,11 @@ config SIFIVE_PLIC
->>>
->>>           If you don't know what to do here, say Y.
->>>
->>> +config EXYNOS_IRQ_COMBINER
->>> +     bool "Samsung Exynos IRQ combiner support"
-> Now point it to be visible. Only for COMPILE_TEST
->
->>> +     depends on ARCH_EXYNOS
-> Since you make it a separate option, make it COMPILE_TEST.
+Changes since v3:
+- use platform device to probe clock driver
+- add Acked-by CK Hu for the probe deferred patch
 
-Is this  good ?
+Changes since v2:
+- fix kconfig typo (shame on me)
+- delete __initconst from mm_clocks as converted to a platform driver
+  
+Changes since v1:
+- add binding documentation
+- ddp: use regmap_update_bits
+- ddp: ignore EPROBE_DEFER on clock probing
+- mfd: delete mmsys_private
+- add Reviewed-by and Acked-by tags
+ 
+MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
 
-+config EXYNOS_IRQ_COMBINER
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver get probed, which in effect breaks
+graphics on mt8173 and mt2701.
 
-+       bool "Samsung Exynos IRQ combiner support"
-+       depends on (ARCH_EXYNOS  && ARM) || COMPILE_TEST
+This patch uses a platform device registration in the DRM driver, which
+will trigger the probe of the corresponding clock driver. It was tested on the
+bananapi-r2 and the Acer R13 Chromebook.
 
->
-> Best regards,
-> Krzysztof
->
->>> +     help
->>> +       Say yes here to add support for the IRQ combiner devices embedded
->>> +       in Samsung Exynos chips.
->>> +
->>>   endmenu
->>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->>> index e806dda690ea..60d7c7260fc3 100644
->>> --- a/drivers/irqchip/Makefile
->>> +++ b/drivers/irqchip/Makefile
->>> @@ -9,7 +9,7 @@ obj-$(CONFIG_ARCH_BCM2835)            += irq-bcm2835.o
->>>   obj-$(CONFIG_ARCH_BCM2835)           += irq-bcm2836.o
->>>   obj-$(CONFIG_DAVINCI_AINTC)          += irq-davinci-aintc.o
->>>   obj-$(CONFIG_DAVINCI_CP_INTC)                += irq-davinci-cp-intc.o
->>> -obj-$(CONFIG_ARCH_EXYNOS)            += exynos-combiner.o
->>> +obj-$(CONFIG_EXYNOS_IRQ_COMBINER)    += exynos-combiner.o
->>>   obj-$(CONFIG_FARADAY_FTINTC010)              += irq-ftintc010.o
->>>   obj-$(CONFIG_ARCH_HIP04)             += irq-hip04.o
->>>   obj-$(CONFIG_ARCH_LPC32XX)           += irq-lpc32xx.o
->>> --
->>> 2.17.1
->>>
+
+Matthias Brugger (12):
+  dt-bindings: display: mediatek: Add mmsys binding description
+  dt-bindings: mediatek: Add compatible for mt7623
+  drm/mediatek: Use regmap for register access
+  drm: mediatek: Omit warning on probe defers
+  media: mtk-mdp: Check return value of of_clk_get
+  clk: mediatek: mt2701: switch mmsys to platform device probing
+  clk: mediatek: mt2712e: switch to platform device probing
+  clk: mediatek: mt6779: switch mmsys to platform device probing
+  clk: mediatek: mt6797: switch to platform device probing
+  clk: mediatek: mt8183: switch mmsys to platform device probing
+  clk: mediatek: mt8173: switch mmsys to platform device probing
+  drm/mediatek: Add support for mmsys through a pdev
+
+ .../display/mediatek/mediatek,disp.txt        | 30 ++++++-----
+ drivers/clk/mediatek/clk-mt2701-mm.c          | 41 +++++++++-----
+ drivers/clk/mediatek/clk-mt2712-mm.c          | 39 +++++++++-----
+ drivers/clk/mediatek/clk-mt6779-mm.c          | 41 +++++++++-----
+ drivers/clk/mediatek/clk-mt6797-mm.c          | 43 ++++++++++-----
+ drivers/clk/mediatek/clk-mt8173.c             | 51 +++++++++++++++---
+ drivers/clk/mediatek/clk-mt8183-mm.c          | 39 +++++++++-----
+ drivers/gpu/drm/mediatek/mtk_disp_color.c     |  5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |  5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |  5 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            | 12 +++--
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c        | 54 +++++++++----------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 35 +++++++++---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |  4 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |  8 ++-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c           |  4 +-
+ drivers/media/platform/mtk-mdp/mtk_mdp_comp.c |  6 +++
+ 19 files changed, 295 insertions(+), 135 deletions(-)
+
+-- 
+2.24.0
+
