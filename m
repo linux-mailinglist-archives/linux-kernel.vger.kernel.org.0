@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30B76115FC0
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 23:55:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89196115FC2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 23:55:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfLGWzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Dec 2019 17:55:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46414 "EHLO mail.kernel.org"
+        id S1726838AbfLGWz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Dec 2019 17:55:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbfLGWzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Dec 2019 17:55:24 -0500
-Subject: Re: [GIT PULL] xen: branch for v5.5-rc1
+        id S1726415AbfLGWzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Dec 2019 17:55:25 -0500
+Subject: Re: [GIT PULL] VFIO updates for v5.5-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575759323;
-        bh=5XzSFmIU7PVbmSshNy7EZ1NML47wHN86RFr0A/PoRQM=;
+        s=default; t=1575759325;
+        bh=6bf2vTuczZfI0NcDWQQmnkLeGscMFLhylFHjX1D4aSM=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=gDOVCVvIOUuw09yzMbNCCi1CGdykKlhtNlv/Ja1urANyNJYBEY7JnX11jB9ehPIAW
-         csvMWylu0t+YdRDURZq8AFMGJIuqOEe9q8gkXk0xHYOcVVKFhoJraJ/P/mWyHZiRkn
-         Tzfcz2Dh6FPX8dXJHq8m9fKkEehsiMumQofEYENs=
+        b=L0WZEWgxYQvbMQZlVN/YSz1Cbc2WuDot4YNSafiU8tJByGj96XupOIf6KpCATVO2y
+         sCCu9zKsA7nbo8I/Xh8BlNvOEVDRp3IPTTcm755KuKkdH8IcgwPFnx/w2is1rsa3fD
+         qaNcp05BQQOvTJy+GmogzmA7tNu8vJ8mXutmr2xY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191206165511.14749-1-jgross@suse.com>
-References: <20191206165511.14749-1-jgross@suse.com>
+In-Reply-To: <20191206112227.53e15607@x1.home>
+References: <20191206112227.53e15607@x1.home>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191206165511.14749-1-jgross@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git
- for-linus-5.5b-rc1-tag
-X-PR-Tracked-Commit-Id: 14855954f63608c5622d5eaa964d3872ce5c5514
+X-PR-Tracked-Message-Id: <20191206112227.53e15607@x1.home>
+X-PR-Tracked-Remote: git://github.com/awilliam/linux-vfio.git
+ tags/vfio-v5.5-rc1
+X-PR-Tracked-Commit-Id: 9917b54aded12dff9beb9e709981617b788e44b0
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f74fd13f4585e418a3e630a82468be58bf1d98c1
-Message-Id: <157575932368.19906.7832606302436981258.pr-tracker-bot@kernel.org>
-Date:   Sat, 07 Dec 2019 22:55:23 +0000
-To:     Juergen Gross <jgross@suse.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
+X-PR-Merge-Commit-Id: 94e89b40235476a83a53a47b9ffb0cb91a4c335e
+Message-Id: <157575932528.19906.8235171981287173268.pr-tracker-bot@kernel.org>
+Date:   Sat, 07 Dec 2019 22:55:25 +0000
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri,  6 Dec 2019 17:55:11 +0100:
+The pull request you sent on Fri, 6 Dec 2019 11:22:27 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-5.5b-rc1-tag
+> git://github.com/awilliam/linux-vfio.git tags/vfio-v5.5-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f74fd13f4585e418a3e630a82468be58bf1d98c1
+https://git.kernel.org/torvalds/c/94e89b40235476a83a53a47b9ffb0cb91a4c335e
 
 Thank you!
 
