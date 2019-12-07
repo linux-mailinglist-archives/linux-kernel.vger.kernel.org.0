@@ -2,85 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10446115AE8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 05:02:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E335115AEC
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 05:19:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbfLGEBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 23:01:50 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35190 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfLGEBu (ORCPT
+        id S1726513AbfLGENj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 23:13:39 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39646 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbfLGENj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 23:01:50 -0500
-Received: by mail-lj1-f195.google.com with SMTP id j6so9827283lja.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 20:01:48 -0800 (PST)
+        Fri, 6 Dec 2019 23:13:39 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 2so4380892pfx.6
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 20:13:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=D9bKHIb2A+ygTSdf7+zChgWhyt6dX/dK0jQhf4W59Is=;
-        b=VewXPpWS3+yURzc9MxeOz56Shx1+ekHKKsZfJnkLg9gHFEScXDb5QEN818XuMQTXYe
-         NyJTv407dJJ9d7NrQabS6rsC/IYYbwFbxjny2fxTVVGjPfxy1f48xIkLhmJy8IQJILgZ
-         BI217t4bFVF2NVTgqWRTPYknLUJ/qIOuDYDFk=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
+        b=a7AA3qSSI1RAimnZmhvuJWBYTfGVCK5rvkBArjZxjmV9vuRuViPAEDhM7WyyLzruJ3
+         GJ6a0dLfM4J6l3NDP2dvplSqsEiw/9xrlCp2fZZkYJrLqD+OjquhUI0eScXkupPltwk0
+         W8Z36MUKUfZLYIz3BgCG0zCbsgC6x5oujJb+dc5D+jB/+UdtPtmnrmP/k7vvwNFekDnQ
+         NhmXCZ1SowZTaESQu3PTtQUNqx9gIbwghqdAvssRCTttOdB1EvXMiqe7mmzKgY/MRC1J
+         V6w+2wMqGn1CkL3DIh0r7oN0CKRctT49EASnvk+8J3oriE3j1WyJyCRXwo49elZvl1yZ
+         lgIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=D9bKHIb2A+ygTSdf7+zChgWhyt6dX/dK0jQhf4W59Is=;
-        b=fc5LutpoSvuIT+UC5RxVGrIcRtAW3uK4xC3NMIx1W/U7J0vwB85PQqVSkfIFG+An9K
-         9X5GEtvNDqbKjJUxJgUIAnmymHiy7f3sETzuApuiVRjvacmg5WdEVVG4PbiQh83MNwQN
-         rwv2jyoitaayuj6Sfo7r5WRKHWbnK1QhOb87mAhBufb21zo/r+nVkuZVy7DIVACj42IU
-         ai9Cb0Ty3gn3/fPPAAOh2rD8gEnFN27Mz5CxZr/Kvz1vyz5vgmXIQrWlDzigcJrnxKm5
-         /qKDnT2J1q44/+8i4TuOgpT6l0DHwvWFnC6WNJxoAEo4c7QHhSwBFoRWetlH/sM7bLtv
-         UWzg==
-X-Gm-Message-State: APjAAAWsB/FWO1nbt1o+Tw7uPoygR6eb65FN1D5A8nlICFmt50MvjAmr
-        vI0Olst3bHpZ/ZiewovWeKEfWX22lR8=
-X-Google-Smtp-Source: APXvYqyaAjbxLUYN31f0M8dB1Xu+acVGKJbWMabMayMpTv9uDhrqXq7gdgr3+Xrf6IIku8SnhVZ3hA==
-X-Received: by 2002:a2e:2201:: with SMTP id i1mr10050868lji.110.1575691307262;
-        Fri, 06 Dec 2019 20:01:47 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id j18sm7441357lfh.6.2019.12.06.20.01.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2019 20:01:46 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id m30so6769279lfp.8
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 20:01:46 -0800 (PST)
-X-Received: by 2002:ac2:465e:: with SMTP id s30mr6736611lfo.134.1575691305722;
- Fri, 06 Dec 2019 20:01:45 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
+        b=We35YeHIBoI1nSZn8+VTFwFL1J6vQjPSg7Siy1U4pb8nPDeb+mzoc7aKUQgBigY2Ge
+         2g1JJZeS5+tOoXF906v+23ehIlJQFHKhF0wRqJyu8CiscQbL7O4P1fwiFCXxY9hkppaE
+         k6c7YnQWyqDMEPw1iwdba5FB7e7IpiheJX5t1FBAJ3dWMgS8cmYiF5xI+LoNl+3GzKKq
+         yND1Tx97pYSDMPrlcRyOOI0d1uyH9sJHgTBZeKpOgfDLIHAvb0+j/oknh4/yadtjbwUs
+         PrRXHKosfu1/CuEMLi4WQwTmaFJO7LXZRo83V7J2huZLaqlgE3EbPwcfpck5tORjUo8W
+         jlZg==
+X-Gm-Message-State: APjAAAV4g2PNy1BcpiGN3PKKY352S4IN6Yw6au656YCOAINj6rt9nkcQ
+        jXm5GrT3vgXibrzu88XftYF1fxfHuS7xuzxQgEs=
+X-Google-Smtp-Source: APXvYqw6VUmqMNfli2VhJ6ZHpG/GonE3vwPACIU55ox8kFu0rkPmN0jNUfKpixfiSdb8ayBIf+4TY8SCpKhPzUnrnng=
+X-Received: by 2002:a62:b509:: with SMTP id y9mr17455117pfe.12.1575692018514;
+ Fri, 06 Dec 2019 20:13:38 -0800 (PST)
 MIME-Version: 1.0
-References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
- <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
- <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com> <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 6 Dec 2019 20:01:29 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whnf=avRa4JVoiEB+75mSpnAKuoQSFaxOJWHfqX3mqUqg@mail.gmail.com>
-Message-ID: <CAHk-=whnf=avRa4JVoiEB+75mSpnAKuoQSFaxOJWHfqX3mqUqg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
-To:     David Sterba <dsterba@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a17:90a:2103:0:0:0:0 with HTTP; Fri, 6 Dec 2019 20:13:37
+ -0800 (PST)
+Reply-To: suleman_bello@yahoo.com
+From:   Mr Suleman Bello <rahimbf12@gmail.com>
+Date:   Fri, 6 Dec 2019 20:13:37 -0800
+Message-ID: <CAOvXLRbJEEEgY-RBWjoeBHLpn_s-a0E39ZBOV+3n7OjwgCvszw@mail.gmail.com>
+Subject: CAN I TRUST YOU?
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 6, 2019 at 7:50 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I assume it's the added "do_wakeup = 0" (not the spinlock) that ends
-> up having some subtle issue.
+Dear Friend,
 
-Ahh, and then later that is removed, but when it is removed it also
-remote the wakeup before the pipe_wait(). So whatever issue that
-commit introduces ends up remaining.
+Please i want you to read this letter very carefully and i must
+apologize for berging this message into your mail box without any
+formal introduction due to the urgency and confidential of this issue
+and i know that this message will come to you as a surprise, Please
+this is not a joke and i will not like you to joke with it.I am
+Mr.Suleman Bello, a staff in African Development Bank (A.D.B)
+Ouagadougou, Burkina faso West Africa.I discovered existing dormant
+account for years. When I discovered that there had been neither
+continuation nor withdrawals from this account for this long period
+and according to the laws and constitution guiding this banking
+institution, any unserviceable account for more than (7) seven years,
+that fund will be transferred to national treasury as unclaimed fund.
 
-I wonder if the extra wakeups ended up hiding some other bug. We do
-extra wakeups on the write side too, with a "FIXME! Is this really
-true?" comment..
+I Hoped that you will not expose or betray this trust and confident
+that i am about to extablish with you for the mutual benefit of you
+and i.I need your urgent assistance in transferring the sum of $10.5
+)million usd into your account within 7 banking days. This money has
+been dormant for years in our Bank, and The request of foreigner in
+this transaction is necessary because our late customer was a
+foreigner and a burkinabe cannot stand as next of kin to a
+foreigner.Because of the static of this transaction I want you to
+stand as the next of kin so that our bank will accord you the
+recognition and have the fund transferred to your account.
 
-              Linus
+Upon your response, I shall then provide you with further information
+and more deities that will help you understand the transaction. I am
+expecting your urgent response to enable me inform you on how the
+business will be executed. Please I would like you to keep this
+transaction confidential and as a top secret or delete if you are not
+interested.
+
+Thanks
+Mr.Suleman Bello.
