@@ -2,105 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC5F8115A77
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 02:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7E6E115A8B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 02:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfLGBDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 20:03:14 -0500
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:36719 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726377AbfLGBDO (ORCPT
+        id S1726469AbfLGBLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 20:11:07 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40355 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbfLGBLG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 20:03:14 -0500
-Received: by mail-pg1-f202.google.com with SMTP id v10so4761752pgg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 17:03:13 -0800 (PST)
+        Fri, 6 Dec 2019 20:11:06 -0500
+Received: by mail-lf1-f66.google.com with SMTP id y5so6611465lfy.7
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 17:11:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=+IdXMXYjVavqAmN5NgAIFvnwk1QJqhlOL+roypy9i6k=;
-        b=v2jC46By43DMIdJPFUpvxJi38u0+6Ud+FT3hnKjofkUJ1cL0JcKAkG8HkYj6T1WPjr
-         C+3NBCz8mongITTYdonNJkUT5dqkf3tWpf0FshwsFrkHPBfUsPsTz3+MxsvnQ2B7p9T9
-         p4QLAAFut7cfUi8l4+FkTHgR21v3mRvaSePnkPs/lKNT6MSyhlLPQPP8r8X7NQwz0e/m
-         34crDb0LpLcn8FZw9PyHZX+7Y6LS9yQFJcLz0jqkMi5lRHjc5+xrGo7u5ClmBZBAxyOF
-         ONwviFt8Sp5DzAkyW2bblGfMamWlqmeOZAMhYe/bDGtQAPll8SJpOHDV6y4ixMQGOoTk
-         OZ1w==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xp39wpo5AR+pbRP/tZoeRSZICS3SHzWRMfhJEvbxIGA=;
+        b=F9QgFlzOLVDvV/NH9kO5C38Tw6X+Hr1zV9nvDrPtaW9IdmdHU1TNQTmWgtmr08QLWs
+         m/LzPoUZk/NRRXSGyCni67pyjPAjI1csctIc4AcmS9vEoOX/8bco5LDaWzkI+5Pvvxsm
+         tA5h/kF2wpsxbPSmFh84K3eYpHR4dbqT6qkZM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=+IdXMXYjVavqAmN5NgAIFvnwk1QJqhlOL+roypy9i6k=;
-        b=KHIipKknsco0OsEMDVnuxpJD7VHSYpeGn8W1nqRIjMFu2kqMSzj9NIU2LX8Dh9u97i
-         682MCyOwcabFCaQ0pslc959s/j3FItFZH+VcH6e3FVbiVs2xLwD+vwxfvE6OViwMU5KA
-         GGxAWYEI5dhNngLWCnyGin/co55QgceqCZMFgC/ZpjG1Ym0Wuzu7gI2iprrCW/cKGfTo
-         0dzEUpSeLW9wo4QuwdR6vnMeFxGZMWpYMQOTRUghJ/aVmGIU8ydoPKBOh4bME0D2/qXW
-         HcApw4K28uMbOaqQAuQzbdpc06vSGmNc6Xp4tNqZNF0OzFB7ZcFvdwT3Ph5l2oCthAZM
-         zUQA==
-X-Gm-Message-State: APjAAAV0tK4KIfR4f6bbzykAyDjHTuzyqV23tvNBIIeLMPaWgEXToA4L
-        aTe1YbI9LEhwcrzn7kczYWAF/Gxf0vTceZw=
-X-Google-Smtp-Source: APXvYqxwWy7sqK7tv5i8D9ZMa79QuWpIcSb3RUe18BuHysKPVcr81Jh11Mv3m1W0IyXBAdKC+0pyAT7PnrWQSnU=
-X-Received: by 2002:a63:e30a:: with SMTP id f10mr6545728pgh.331.1575680593512;
- Fri, 06 Dec 2019 17:03:13 -0800 (PST)
-Date:   Fri,  6 Dec 2019 17:03:07 -0800
-Message-Id: <20191207010307.56529-1-saravanak@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
-Subject: [PATCH v1] of/platform: Unconditionally pause/resume sync state
- during kernel init
-From:   Saravana Kannan <saravanak@google.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xp39wpo5AR+pbRP/tZoeRSZICS3SHzWRMfhJEvbxIGA=;
+        b=YWYwj70CJOFyxtYhS+ZirIEDoURs8mfevWfhrtvsbDnugmx7gaEF8f/qOMX96osNHs
+         DVqtkrWOHW3IXUJ85b5AP1mIhoEjAsq/jztuntqJr/vtZsyuElrPMm9A6c9bKzUTSBN8
+         D9hsjIrBGUQBG5FmkmMOui0VEBG1K8KR6z8DFwggXxgYP4Cwv5ahq8ZltmQ16vfhVs+b
+         JyyfMy++bIhhhM4bzrHlZyGxjWX9dJL7zcHtU3gzSijShMZTAKm4Kft4gOWfmnk5tvH8
+         5GnOXlKBMeWihPVavwQ2yv7Vk+NYxT5Ja7qfvgfSq6GbPSi8Uz8RptNVSDx/pmwV+w/e
+         62Bg==
+X-Gm-Message-State: APjAAAXzJyANT3+JVx/f1oCFsKsxeRhvK7m8GIwO9iLFauxzMDImXQjf
+        4VyGOMDyCv+43p6VBsBg5ku0ehkR5Lc=
+X-Google-Smtp-Source: APXvYqwzW9+QGbgqtTK8dyBglEsOMB/W7PYsPEqrIugTZ0WJZnnLBBv4qlhfpd8XEYEDuwH64qQhEw==
+X-Received: by 2002:a19:c205:: with SMTP id l5mr9348330lfc.159.1575681064502;
+        Fri, 06 Dec 2019 17:11:04 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id q12sm7289078ljc.74.2019.12.06.17.11.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2019 17:11:04 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id r14so6618181lfm.5
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 17:11:03 -0800 (PST)
+X-Received: by 2002:ac2:555c:: with SMTP id l28mr9400181lfk.52.1575680636244;
+ Fri, 06 Dec 2019 17:03:56 -0800 (PST)
+MIME-Version: 1.0
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+ <20191206214725.GA2108@latitude> <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
+ <20191207000015.GA1757@latitude>
+In-Reply-To: <20191207000015.GA1757@latitude>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 6 Dec 2019 17:03:40 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
+Message-ID: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+To:     Johannes Hirte <johannes.hirte@datenkhaos.de>
+Cc:     David Howells <dhowells@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>
-Cc:     kernel test robot <lkp@intel.com>, kernel-team@android.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 5e6669387e22 ("of/platform: Pause/resume sync state during init
-and of_platform_populate()") paused/resumed sync state during init only
-if Linux had parsed and populated a devicetree.
+On Fri, Dec 6, 2019 at 4:00 PM Johannes Hirte
+<johannes.hirte@datenkhaos.de> wrote:
+>
+> Tested with 5.4.0-11505-g347f56fb3890 and still the same wrong behavior.
 
-However, the check for that (of_have_populated_dt()) can change between
-initcall levels when device tree unittests are enabled. This causes an
-unmatched pause/resume of sync state. To avoid this, just
-unconditionally pause/resume sync state during init.
+Ok, we'll continue looking.
 
-Fixes: 5e6669387e22 ("of/platform: Pause/resume sync state during init and of_platform_populate()")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/of/platform.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+That said, your version string is strange.
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index d93891a05f60..3371e4a06248 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -518,10 +518,11 @@ static int __init of_platform_default_populate_init(void)
- {
- 	struct device_node *node;
- 
-+	device_links_supplier_sync_state_pause();
-+
- 	if (!of_have_populated_dt())
- 		return -ENODEV;
- 
--	device_links_supplier_sync_state_pause();
- 	/*
- 	 * Handle certain compatibles explicitly, since we don't want to create
- 	 * platform_devices for every node in /reserved-memory with a
-@@ -545,8 +546,7 @@ arch_initcall_sync(of_platform_default_populate_init);
- 
- static int __init of_platform_sync_state_init(void)
- {
--	if (of_have_populated_dt())
--		device_links_supplier_sync_state_resume();
-+	device_links_supplier_sync_state_resume();
- 	return 0;
- }
- late_initcall_sync(of_platform_sync_state_init);
--- 
-2.24.0.393.g34dc348eaf-goog
+Commit 347f56fb3890 should be  "v5.4.0-13174-g347f56fb3890", the fact
+that you have "11505" confuses me.
 
+The hash is what matters, but I wonder what is going on that you have
+the commit count in that version string so wrong.
+
+                   Linus
