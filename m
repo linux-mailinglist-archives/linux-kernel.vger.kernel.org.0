@@ -2,79 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF1C115A20
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 01:29:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E2F6115A3C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 01:29:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbfLGA3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 19:29:05 -0500
-Received: from mga09.intel.com ([134.134.136.24]:11091 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726374AbfLGA3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 19:29:05 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2019 16:29:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,286,1571727600"; 
-   d="scan'208";a="214583796"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga006.jf.intel.com with ESMTP; 06 Dec 2019 16:29:04 -0800
-Date:   Fri, 6 Dec 2019 16:29:04 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-Message-ID: <20191207002904.GA29396@linux.intel.com>
-References: <20191129213505.18472-1-peterx@redhat.com>
- <20191129213505.18472-5-peterx@redhat.com>
- <20191202201036.GJ4063@linux.intel.com>
- <20191202211640.GF31681@xz-x1>
- <20191202215049.GB8120@linux.intel.com>
- <fd882b9f-e510-ff0d-db43-eced75427fc6@redhat.com>
- <20191203184600.GB19877@linux.intel.com>
- <374f18f1-0592-9b70-adbb-0a72cc77d426@redhat.com>
+        id S1726728AbfLGA34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 19:29:56 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42655 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbfLGA3z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 19:29:55 -0500
+Received: by mail-wr1-f66.google.com with SMTP id a15so9604643wrf.9
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 16:29:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=S7m9By4/eRnSy0vxdfJ6TocT5eJ8gcKLceyHvlHTn3o=;
+        b=LXxoS6Ed7of6jWaofmDfQc8/u3Mg9Maolmr3Vpf9Rmy6M9EqjFAuvGQ8h9p7LhnwAL
+         J2FbblgdkGgZHafRFxx28eRdV2u28AyUlEZcVvHuYvVm3rtf1quwzUCMSvqmMRhzvXWg
+         Lr2BVgHFftpJuxoM6FIG7HwvD6NJoH8mvEjpjvV8POe7OxPQSgcaMvRkWz9Uiu2DLDQI
+         zLbCM6eF/2UqhYCC9SzqWLAqDFWNhNPH2Mzqdx7SMOIQYQVzi+r4mUYfVbZ4zkg6G/Rf
+         GMyYZz2zxEAODyOdyEtKF6h6LvlYj6nQy3cPNK/qqQ+yOafhqpdxqfrrNrKMk4+XdZU4
+         ueNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=S7m9By4/eRnSy0vxdfJ6TocT5eJ8gcKLceyHvlHTn3o=;
+        b=ljh/JKXxnIrC8YNN1OdwoGJZwskjLyTJBYqejBIJsQVI7KpkNuqbFYmFox7n6Vsv4z
+         4pKH/lnvAUuKennxlUJ2XQ+hOd+dNd8/8K7bcDmvgfXK/0HxFrKw1NOQcpAbfVEDe43a
+         3+BWiiwRDKXODQ1BXVEPOpTZfc49WXwXN0eri0D1afBHYvw2AwL9YHnS2gi4ekD+g5YE
+         zcoJ0nPGtrw8skFrimfUJmr3Zs/V8VcxSkFZcd9PcS3TGh/w8oBjKsJF77moxip6LTVm
+         o2VSuHMlDZAOnRcIBbzx74nspiqCiQghTTAtZJdnvsgZ7+o0q2/9eCaQ7lpb5HToc3Yv
+         uPwQ==
+X-Gm-Message-State: APjAAAV19aHW2n2G/7bTIHGTqVoeQz+6nMzlwD078o5P0weqfXVcCFSh
+        stYu2cPRHZkdn960VbY4K/5WviGaXrK7t0q/2Js=
+X-Google-Smtp-Source: APXvYqwrh3pZjAB0r+TmXxbhmAM/apODdHlIT+82DMPTCRz8CUTTqPzcZB7T3FAp1SOvDrWQKKNsT0CStxod+O7hBLs=
+X-Received: by 2002:adf:e591:: with SMTP id l17mr16654604wrm.139.1575678594023;
+ Fri, 06 Dec 2019 16:29:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <374f18f1-0592-9b70-adbb-0a72cc77d426@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a5d:678e:0:0:0:0:0 with HTTP; Fri, 6 Dec 2019 16:29:53 -0800 (PST)
+Reply-To: mrs.aalia.ahmed@gmail.com
+From:   "Mrs.Aalia.Ahmed" <adamhana1907@gmail.com>
+Date:   Sat, 7 Dec 2019 00:29:53 +0000
+Message-ID: <CAOGreO=8t36s1Mau26bRqTQErHsnOf5ki10AJ6EA4tNedNUo8g@mail.gmail.com>
+Subject: OK
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 11:05:47AM +0100, Paolo Bonzini wrote:
-> On 03/12/19 19:46, Sean Christopherson wrote:
-> > Rather than reserve entries, what if vCPUs reserved an entire ring?  Create
-> > a pool of N=nr_vcpus rings that are shared by all vCPUs.  To mark pages
-> > dirty, a vCPU claims a ring, pushes the pages into the ring, and then
-> > returns the ring to the pool.  If pushing pages hits the soft limit, a
-> > request is made to drain the ring and the ring is not returned to the pool
-> > until it is drained.
-> > 
-> > Except for acquiring a ring, which likely can be heavily optimized, that'd
-> > allow parallel processing (#1), and would provide a facsimile of #2 as
-> > pushing more pages onto a ring would naturally increase the likelihood of
-> > triggering a drain.  And it might be interesting to see the effect of using
-> > different methods of ring selection, e.g. pure round robin, LRU, last used
-> > on the current vCPU, etc...
-> 
-> If you are creating nr_vcpus rings, and draining is done on the vCPU
-> thread that has filled the ring, why not create nr_vcpus+1?  The current
-> code then is exactly the same as pre-claiming a ring per vCPU and never
-> releasing it, and using a spinlock to claim the per-VM ring.
+Greetings My Dearest One.
 
-Because I really don't like kvm_get_running_vcpu() :-)
-
-Binding the rings to vCPUs also makes for an inflexible API, e.g. the
-amount of memory required for the rings scales linearly with the number of
-vCPUs, or maybe there's a use case for having M:N vCPUs:rings.
-
-That being said, I'm pretty clueless when it comes to implementing and
-tuning the userspace side of this type of stuff, so feel free to ignore my
-thoughts on the API.
+My name is Mrs.Aalia.Ahmed, i saw your profile and became interested
+in you, please contact me through my email address
+(mrs.aalia.ahmed@gmail.com) to know each other and i have something
+very important to tell you, i wait for your response to my email ID.
+(mrs.aalia.ahmed@gmail.com
