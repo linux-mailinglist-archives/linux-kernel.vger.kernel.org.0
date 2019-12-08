@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDF88116294
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 15:59:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F7021162B3
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 16:00:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfLHO6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 09:58:55 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36853 "EHLO
+        id S1726442AbfLHO7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 09:59:55 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:36793 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfLHO6v (ORCPT
+        with ESMTP id S1726646AbfLHO6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 09:58:51 -0500
+        Sun, 8 Dec 2019 09:58:46 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1idy16-0000XO-Ul; Sun, 08 Dec 2019 15:58:37 +0100
+        id 1idy14-0000Vi-L1; Sun, 08 Dec 2019 15:58:34 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0A7A51C288A;
-        Sun,  8 Dec 2019 15:58:33 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8BB951C2889;
+        Sun,  8 Dec 2019 15:58:32 +0100 (CET)
 Date:   Sun, 08 Dec 2019 14:58:32 -0000
 From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/rt, nios2: Use CONFIG_PREEMPTION
+Subject: [tip: sched/urgent] sched/rt, riscv: Use CONFIG_PREEMPTION
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Ley Foon Tan <lftan@altera.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        nios2-dev@lists.rocketboards.org, Ingo Molnar <mingo@kernel.org>,
+        linux-riscv@lists.infradead.org, Ingo Molnar <mingo@kernel.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191015191821.11479-15-bigeasy@linutronix.de>
-References: <20191015191821.11479-15-bigeasy@linutronix.de>
+In-Reply-To: <20191015191821.11479-17-bigeasy@linutronix.de>
+References: <20191015191821.11479-17-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <157581711289.21853.4554966498466249373.tip-bot2@tip-bot2>
+Message-ID: <157581711242.21853.7571841063567586614.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -51,14 +53,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/urgent branch of tip:
 
-Commit-ID:     f0365eb50b04de91d0119619026865ba2a352a34
-Gitweb:        https://git.kernel.org/tip/f0365eb50b04de91d0119619026865ba2a352a34
+Commit-ID:     29ff64929e6caf3a6df8e719aa5b9dc36e8e407a
+Gitweb:        https://git.kernel.org/tip/29ff64929e6caf3a6df8e719aa5b9dc36e8e407a
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 15 Oct 2019 21:18:01 +02:00
+AuthorDate:    Tue, 15 Oct 2019 21:18:03 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Sun, 08 Dec 2019 14:37:34 +01:00
 
-sched/rt, nios2: Use CONFIG_PREEMPTION
+sched/rt, riscv: Use CONFIG_PREEMPTION
 
 CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
 Both PREEMPT and PREEMPT_RT require the same functionality which today
@@ -69,26 +71,37 @@ Switch the entry code over to use CONFIG_PREEMPTION.
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ley Foon Tan <lftan@altera.com>
+Acked-by: Paul Walmsley <paul.walmsley@sifive.com> # for arch/riscv
+Cc: Albert Ou <aou@eecs.berkeley.edu>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Palmer Dabbelt <palmer@sifive.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: nios2-dev@lists.rocketboards.org
-Link: https://lore.kernel.org/r/20191015191821.11479-15-bigeasy@linutronix.de
+Cc: linux-riscv@lists.infradead.org
+Link: https://lore.kernel.org/r/20191015191821.11479-17-bigeasy@linutronix.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/nios2/kernel/entry.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/riscv/kernel/entry.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/nios2/kernel/entry.S b/arch/nios2/kernel/entry.S
-index 1e515cc..3d8d1d0 100644
---- a/arch/nios2/kernel/entry.S
-+++ b/arch/nios2/kernel/entry.S
-@@ -365,7 +365,7 @@ ENTRY(ret_from_interrupt)
- 	ldw	r1, PT_ESTATUS(sp)	/* check if returning to kernel */
- 	TSTBNZ	r1, r1, ESTATUS_EU, Luser_return
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index a1349ca..dd61bb2 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -155,7 +155,7 @@ _save_context:
+ 	REG_L x2,  PT_SP(sp)
+ 	.endm
  
--#ifdef CONFIG_PREEMPT
-+#ifdef CONFIG_PREEMPTION
- 	GET_THREAD_INFO	r1
- 	ldw	r4, TI_PREEMPT_COUNT(r1)
- 	bne	r4, r0, restore_all
+-#if !IS_ENABLED(CONFIG_PREEMPT)
++#if !IS_ENABLED(CONFIG_PREEMPTION)
+ .set resume_kernel, restore_all
+ #endif
+ 
+@@ -304,7 +304,7 @@ restore_all:
+ 	sret
+ #endif
+ 
+-#if IS_ENABLED(CONFIG_PREEMPT)
++#if IS_ENABLED(CONFIG_PREEMPTION)
+ resume_kernel:
+ 	REG_L s0, TASK_TI_PREEMPT_COUNT(tp)
+ 	bnez s0, restore_all
