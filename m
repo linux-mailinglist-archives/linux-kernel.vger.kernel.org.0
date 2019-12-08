@@ -2,53 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C9A1163E5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 22:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F3FF1163ED
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 22:55:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbfLHVkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 16:40:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726983AbfLHVkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 16:40:31 -0500
-Subject: Re: [GIT] Networking
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575841230;
-        bh=Vh+GHB7iBE8UpmI2vtnLLcBJcO6gDTjsLLsxwAQWEfo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=KGdRCYRu1oRM3GXjWw1FQHIdcMnmAPFDDlMtRYnsS6vgKIL8A404SAW7+dnWG8eyf
-         Rx/8HCHxF4xL4FsozZ5FXm5Zc+q7Iqs5R94flEEFIn9DtizfH4VBLPD5qK/Wfum+jc
-         0em1DtERbbewM22k9YPSlbZPbLfW9o+IPl/QxYSw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191208.012032.1258816267132319518.davem@redhat.com>
-References: <20191208.012032.1258816267132319518.davem@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191208.012032.1258816267132319518.davem@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
- refs/heads/master
-X-PR-Tracked-Commit-Id: 0fc75219fe9a3c90631453e9870e4f6d956f0ebc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 95e6ba5133163f8241c9ea2439369cec0452fec6
-Message-Id: <157584123092.22418.18372587348625646538.pr-tracker-bot@kernel.org>
-Date:   Sun, 08 Dec 2019 21:40:30 +0000
-To:     David Miller <davem@redhat.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1726728AbfLHVze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 16:55:34 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:58156 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbfLHVze (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Dec 2019 16:55:34 -0500
+X-Greylist: delayed 556 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Dec 2019 16:55:33 EST
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id CE56F72CCD5;
+        Mon,  9 Dec 2019 00:46:15 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 9DF744A4AEF;
+        Mon,  9 Dec 2019 00:46:15 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     "Dmitry V . Levin" <ldv@altlinux.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] tools lib: Disable redundant-delcs error for strlcpy
+Date:   Mon,  9 Dec 2019 00:46:07 +0300
+Message-Id: <20191208214607.20679-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 08 Dec 2019 01:20:32 -0800 (PST):
+Disable `redundant-decls' error for strlcpy declaration and solve build
+error allowing users to compile vanilla kernels.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git refs/heads/master
+When glibc have strlcpy (such as in ALT linux since 2004) objtool and
+perf build fails with something like:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/95e6ba5133163f8241c9ea2439369cec0452fec6
+  In file included from exec-cmd.c:3:
+  tools/include/linux/string.h:20:15: error: redundant redeclaration of ‘strlcpy’ [-Werror=redundant-decls]
+     20 | extern size_t strlcpy(char *dest, const char *src, size_t size);
+	|               ^~~~~~~
 
-Thank you!
+It's very hard to produce a perfect fix for that since it is a header
+file indirectly pulled from many sources from different Makefile builds.
 
+Fixes: ce99091 ("perf tools: Move strlcpy() from perf to tools/lib/string.c")
+Fixes: 0215d59 ("tools lib: Reinstate strlcpy() header guard with __UCLIBC__")
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Cc: Dmitry V. Levin <ldv@altlinux.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: stable@vger.kernel.org
+---
+ tools/include/linux/string.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tools/include/linux/string.h b/tools/include/linux/string.h
+index 980cb9266718..99ede7f5dfb8 100644
+--- a/tools/include/linux/string.h
++++ b/tools/include/linux/string.h
+@@ -17,7 +17,10 @@ int strtobool(const char *s, bool *res);
+  * However uClibc headers also define __GLIBC__ hence the hack below
+  */
+ #if defined(__GLIBC__) && !defined(__UCLIBC__)
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wredundant-decls"
+ extern size_t strlcpy(char *dest, const char *src, size_t size);
++#pragma GCC diagnostic pop
+ #endif
+ 
+ char *str_error_r(int errnum, char *buf, size_t buflen);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.11.0
+
