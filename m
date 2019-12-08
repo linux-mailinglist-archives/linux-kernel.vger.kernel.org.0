@@ -2,159 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80D921163D3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 22:13:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4652A1163CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 22:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfLHVNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 16:13:48 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37571 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbfLHVNr (ORCPT
+        id S1726675AbfLHVNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 16:13:21 -0500
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:41366 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfLHVNV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 16:13:47 -0500
-Received: by mail-ot1-f66.google.com with SMTP id k14so10495072otn.4;
-        Sun, 08 Dec 2019 13:13:46 -0800 (PST)
+        Sun, 8 Dec 2019 16:13:21 -0500
+Received: by mail-lj1-f169.google.com with SMTP id h23so13303288ljc.8
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2019 13:13:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0kwV+KswtHN7mYaC55RJRRsqfRs6Nx3Ld51+tu4vFoQ=;
-        b=HQjxQZbnHf+jlQhInZKQ+e1iABi36NuPsOr4suD1ytiVAWqgvu/W7LRx1NgoepTw8j
-         Z1rv9heWIOYCPxULSnCSR0DgvItmztDLABRtRbxqphZGpgeVeqEE+eaxJWWnWz2ERR95
-         cGDbPyfH+RJVuATL4CMm/9Uv6GGVyQxO2bfvHgzNqd93GxKlEZX43LSPhVApi5o9X9jT
-         im2oanflYmwpnIT5ORHJmHEi7BzHxi78oXaju1LFQRwXdkvqucP/ndJ6YOoCTyqvaHO1
-         HJ//4A6Hw6+3ECp8DgneeZnyoUOPb5NQs54Yyx8e3qBg3/oPz/WFrsQa2J8n0coJN2Qt
-         5yAw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=d3S3tZ4cyxYnqybCtgSUG/QSzGylVP+6oGA6c3aAP30=;
+        b=MCu8xXwViwxnt/W5lRZ1jEe9Q7Q77WzXDMckhiMbrfG3uGXhUJx7gdOkz0KeKNOSsd
+         On750D2T1DYYQxpA2zJ35buKOC2qiTumHBjY6pOlYoVy5Ba+CKNudMOmgeV013paeHJF
+         cLAq+ODv2koRUIVwVCsmkt078i0rP0y82yhiI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0kwV+KswtHN7mYaC55RJRRsqfRs6Nx3Ld51+tu4vFoQ=;
-        b=pITilW3+eXRBnoma9oo96+9W9VVKI/cTBJGYGv0eXRNYBo/tquXilX6QvRYoIttUS2
-         CX8f1PsGgFaD5LvfYRYH4V4Jr5Pr5ufPEDOb64Qg9OYG62r9vvkit/HPHt/2s0oqsQJa
-         XweAHGGYsem/7q4BmoS6xWZ2fXVNAjTijSq8jgND85N7T4I5JgZvQkHbmKCem4BiNgKl
-         HRpcRcYHWgbhgMzdsN+rm+O/rdXGshw961JfG6Fw7qASTikBFgMr/0N66wKuD/sXcmP+
-         CBoRxl0Sr3T/bYyYZOauo1upExL2M8qSRKt5jXDBuxUl1hLj1Ytzu4PSOycuy5nA2qfg
-         fyzA==
-X-Gm-Message-State: APjAAAUlyhJzzdIgQq/33jRP9Xti19j1s/P6Si+wOw6k0fQlzSApf5OL
-        Gd/AcROqpVpsXe+0fo28Z8c=
-X-Google-Smtp-Source: APXvYqy7bZUrmTKtzvftWC/PbGIijpAIJL/5cklq+ZEYSotaEgnaQ+SE80XCvspKE8h+QUbEWABNJQ==
-X-Received: by 2002:a9d:5552:: with SMTP id h18mr18315822oti.122.1575839626207;
-        Sun, 08 Dec 2019 13:13:46 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id e65sm6099639otb.62.2019.12.08.13.13.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2019 13:13:45 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH v3] media: v4l2-device.h: Explicitly compare grp{id,mask} to zero in v4l2_device macros
-Date:   Sun,  8 Dec 2019 14:11:40 -0700
-Message-Id: <20191208211139.18514-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191105045907.26123-1-natechancellor@gmail.com>
-References: <20191105045907.26123-1-natechancellor@gmail.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=d3S3tZ4cyxYnqybCtgSUG/QSzGylVP+6oGA6c3aAP30=;
+        b=tSswjUdbBGGbPyARdDm9E7O1xn+72lWJ5c7pEv428ccYlqogL8OmUeiNB1eGaAfTZQ
+         2xgGikcT95h0ZEYGdPRR6+GXIMgRsrnjNFo17HHMvB0HNLoYcJuxu3FlgivcGGNR6PLX
+         +3X+FKWzWf2AgtZqCcTDTb3qrlzVrj+xdQdAQMjSI5Sgv9Hqs/bS5HlYhcwGNzqojz94
+         A+DtD39P7L3DnLymf0cvTc08ysc/l3AuhwMPPiu+tjnqV4ktRKswpzHUMGn7ajq0+mlV
+         MgkIVVEyuxIB57WkDoLh3BXMzdhLFLS844pc8Ip2aDFNP+rNuqu1MKeiP7ACA83wimId
+         UWbA==
+X-Gm-Message-State: APjAAAUWy4fBd+8xvGB0eUnzU4GUK0H9Rj2afYAxFozqYzy13x1IgJQ7
+        KiiuswKibqzZvo7yPMW1TOa5CA3KvUo=
+X-Google-Smtp-Source: APXvYqzD82Ly78R3xnOD+w8Vgm9M6m/uPwVylLj11BGtUDeR6wWD+drmUIkBL6a0CY1a1HjZzFG4IQ==
+X-Received: by 2002:a2e:3312:: with SMTP id d18mr15050487ljc.222.1575839597000;
+        Sun, 08 Dec 2019 13:13:17 -0800 (PST)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id e8sm11637225ljb.45.2019.12.08.13.13.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2019 13:13:15 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id k8so13301136ljh.5
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2019 13:13:15 -0800 (PST)
+X-Received: by 2002:a05:651c:239:: with SMTP id z25mr12456110ljn.48.1575839595143;
+ Sun, 08 Dec 2019 13:13:15 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 8 Dec 2019 13:12:59 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whiKy63tpFVUUS1sH07ce692rKcoo0ztnHw5UaPaMg8Ng@mail.gmail.com>
+Message-ID: <CAHk-=whiKy63tpFVUUS1sH07ce692rKcoo0ztnHw5UaPaMg8Ng@mail.gmail.com>
+Subject: Fundamental race condition in wait_event_interruptible_exclusive() ?
+To:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building with Clang + -Wtautological-constant-compare, several of
-the ivtv and cx18 drivers warn along the lines of:
+So I'm looking at the thundering herd issue with pipes, and I have a
+truly monumentally silly benchmark for it:
 
- drivers/media/pci/cx18/cx18-driver.c:1005:21: warning: converting the
- result of '<<' to a boolean always evaluates to true
- [-Wtautological-constant-compare]
-                         cx18_call_hw(cx, CX18_HW_GPIO_RESET_CTRL,
-                                         ^
- drivers/media/pci/cx18/cx18-cards.h:18:37: note: expanded from macro
- 'CX18_HW_GPIO_RESET_CTRL'
- #define CX18_HW_GPIO_RESET_CTRL         (1 << 6)
-                                           ^
- 1 warning generated.
+        #include <unistd.h>
 
-This warning happens because the shift operation is implicitly converted
-to a boolean in v4l2_device_mask_call_all before being negated. This can
-be solved by just comparing the mask result to 0 explicitly so that
-there is no boolean conversion. The ultimate goal is to enable
--Wtautological-compare globally because there are several subwarnings
-that would be helpful to have.
+        int main(int argc, char **argv)
+        {
+                int fd[2], counters[2];
 
-For visual consistency and avoidance of these warnings in the future,
-all of the implicitly boolean conversions in the v4l2_device macros
-are converted to explicit ones as well.
+                pipe(fd);
+                counters[0] = 0;
+                counters[1] = -1;
+                write(fd[1], counters, sizeof(counters));
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/752
-Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
+                /* 64 processes */
+                fork(); fork(); fork(); fork(); fork(); fork();
 
-v1 -> v2: https://lore.kernel.org/lkml/20191024201240.49063-1-natechancellor@gmail.com/
+                do {
+                        int i;
+                        read(fd[0], &i, sizeof(i));
+                        if (i < 0)
+                                continue;
+                        counters[0] = i+1;
+                        write(fd[1], counters, (1+(i & 1)) *sizeof(int));
+                } while (counters[0] < 1000000);
+                return 0;
+        }
 
-* Fix typo in commit message
-* Add Nick's Reviewed-by.
+which basically passes an integer token around (with "-1" being
+"ignore" and being passed around occasionally as a test for partial
+reads).
 
-v2 -> v3: https://lore.kernel.org/lkml/20191105045907.26123-1-natechancellor@gmail.com/
+It passes that counter token around a million times, and every other
+time it also writes that "-1" case, so in a perfect world, you'd get
+1.5 million scheduling events, because that's how many write() ->
+read() pairings there are.
 
-* Improve reasoning for change (Ezequiel)
-* Patch all implicit boolean conversions (Ezequiel)
-* Add Ezequiel's reviewed-by.
+Even in a perfect world there will be a few extra scheduling events
+because the whole "finish the pipeline" waits for _everybody_ to see
+that one million number, so the counter token gets passed around a bit
+more than exactly a million times, but that's in the noise.
 
- include/media/v4l2-device.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+In reality, I get many more than that, because the write will wake up
+all the readers, even if only one (or two) get any values. You can see
+it easily with "perf stat" or whatever.
 
-diff --git a/include/media/v4l2-device.h b/include/media/v4l2-device.h
-index 5f36e0d2ede6..95353ae476a1 100644
---- a/include/media/v4l2-device.h
-+++ b/include/media/v4l2-device.h
-@@ -371,7 +371,7 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
- 		struct v4l2_subdev *__sd;				\
- 									\
- 		__v4l2_device_call_subdevs_p(v4l2_dev, __sd,		\
--			!(grpid) || __sd->grp_id == (grpid), o, f ,	\
-+			(grpid) == 0 || __sd->grp_id == (grpid), o, f ,	\
- 			##args);					\
- 	} while (0)
- 
-@@ -403,7 +403,7 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
- ({									\
- 	struct v4l2_subdev *__sd;					\
- 	__v4l2_device_call_subdevs_until_err_p(v4l2_dev, __sd,		\
--			!(grpid) || __sd->grp_id == (grpid), o, f ,	\
-+			(grpid) == 0 || __sd->grp_id == (grpid), o, f ,	\
- 			##args);					\
- })
- 
-@@ -431,8 +431,8 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
- 		struct v4l2_subdev *__sd;				\
- 									\
- 		__v4l2_device_call_subdevs_p(v4l2_dev, __sd,		\
--			!(grpmsk) || (__sd->grp_id & (grpmsk)), o, f ,	\
--			##args);					\
-+			(grpmsk) == 0 || (__sd->grp_id & (grpmsk)), o,	\
-+			f , ##args);					\
- 	} while (0)
- 
- /**
-@@ -462,8 +462,8 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
- ({									\
- 	struct v4l2_subdev *__sd;					\
- 	__v4l2_device_call_subdevs_until_err_p(v4l2_dev, __sd,		\
--			!(grpmsk) || (__sd->grp_id & (grpmsk)), o, f ,	\
--			##args);					\
-+			(grpmsk) == 0 || (__sd->grp_id & (grpmsk)), o,	\
-+			f , ##args);					\
- })
- 
- 
--- 
-2.24.0
+Whatever, that's not the important part. The benchmark is obviously
+entirely artificial and not that interesting, it's just to show a
+point.
 
+I do have a tentative patch to fix it - use separate reader and writer
+wake queues, and exclusive waits.
+
+But when I was looking at using exclusive waits, I noticed an issue.
+It looks like wait_event_interruptible_exclusive() is fundamentally
+untrustworthy.
+
+What I'd _like_ to do is basically something like this in pipe_read():
+
+        .. read the data, pipe is now empty ..
+        __pipe_unlock();
+        .. wake writers if the pipe used to be full ..
+
+        // Wait for more data
+        err = wait_event_interruptible_exclusive(pipe->rd_wait,
+pipe_readable());
+        if (err)
+                return err;
+
+        // Remember that we need to wake up the next reader
+        // if we don't consume everything
+        wake_remaining_readers = true;
+
+        __pipe_lock();
+        .. loop back and read the data ..
+
+but it looks like the above pattern is actually buggy (the above
+doesn't have the parts at the end where we actually wake the next
+reader if we didn't empty the pipe, I'm just describing the waiting
+part).
+
+The reason it is buggy is that wait_event_interruptible_exclusive()
+does this (inside the __wait_event() macro that it expands to):
+
+                long __int = prepare_to_wait_event(&wq_head,
+&__wq_entry, state);\
+
+         \
+                if (condition)
+         \
+                        break;
+         \
+
+         \
+                if (___wait_is_interruptible(state) && __int) {
+         \
+                        __ret = __int;
+         \
+                        goto __out;
+         \
+
+and the thing is, if does that "__ret = __int" case and returns
+-ERESTARTSYS, it's possible that the wakeup event has already been
+consumed, because we've added ourselves as an exclusive writer to the
+queue. So it _says_ it was interrupted, not woken up, and the wait got
+cancelled, but because we were an exclusive waiter, we might be the
+_only_ thing that got woken up, and the wakeup basically got forgotten
+- all the other exclusive waiters will remain waiting.
+
+Yes, yes, I can make the read_pipe() logic be that I ignore the return
+value entirely, and always take the pipe lock, and always loop back,
+and then the reading code will check for signal_pending() there, and
+do the wake_remaining_readers if there is still data to be read, and
+just do this instead:
+
+        wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable());
+
+        // Remember that we need to wake up the next reader
+        // if we don't consume everything
+        wake_remaining_readers = true;
+
+        __pipe_lock();
+        .. loop back and read the data ..
+
+but that's kind of sad. And the basic point is that the return value
+from wait_event_interruptible_exclusive() seems to not really be
+reliable. You can't really use it - even if it says you got
+interrupted, you still have to go back and check the condition and do
+the work, and only do interruptability handling after that.
+
+I dunno. Maybe this is fundamental to the interface? We do not have a
+lot of users that mix "interruptible" and "exclusive". In fact, I see
+only two cases that care about the return value, but at least the fuse
+use does seem to have exactly this problem with potentially lost
+wakeups because the ERESTARTSYS case ends up eating a wakeup without
+doing anything about it.
+
+Looks like the other user - the USB gadget HID thing - also has this
+buggy pattern of believing the return value, and losing a wakeup
+event.
+
+Adding Miklos and Felipe to the cc just because of the fuse and USB
+gadget potential issues, but this is mainly a scheduler maintainer
+question.
+
+It's possible that I've misread the wait-event code. PeterZ?
+
+                 Linus
