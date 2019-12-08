@@ -2,66 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC9311627B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 15:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 101691162C2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 16:00:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfLHOz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 09:55:28 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:33340 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbfLHOz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 09:55:28 -0500
-Received: from muedsl-82-207-238-043.citykom.de ([82.207.238.43] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1idxy1-00043q-L8; Sun, 08 Dec 2019 15:55:25 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     linux-rockchip@lists.infradead.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        christoph.muellner@theobroma-systems.com,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: [PATCH 3/3] arm64: dts: rockchip: enable the gpu on px30-evb
-Date:   Sun,  8 Dec 2019 15:55:08 +0100
-Message-Id: <20191208145508.3124-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191208145508.3124-1-heiko@sntech.de>
-References: <20191208145508.3124-1-heiko@sntech.de>
+        id S1727143AbfLHPAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 10:00:16 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:36708 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbfLHO6g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Dec 2019 09:58:36 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1idy10-0000Qv-JV; Sun, 08 Dec 2019 15:58:30 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F39901C2884;
+        Sun,  8 Dec 2019 15:58:29 +0100 (CET)
+Date:   Sun, 08 Dec 2019 14:58:29 -0000
+From:   "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] sched/rt, workqueue: Use PREEMPTION
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191015191821.11479-35-bigeasy@linutronix.de>
+References: <20191015191821.11479-35-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <157581710980.21853.10591538571662051255.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+The following commit has been merged into the sched/urgent branch of tip:
 
-The px30 has a Mali Bifrost gpu, so enable it on the evb board
-and connect it with its supplying regulator.
+Commit-ID:     025f50f3866486a5278afa91f0d3b6b780141050
+Gitweb:        https://git.kernel.org/tip/025f50f3866486a5278afa91f0d3b6b780141050
+Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate:    Tue, 15 Oct 2019 21:18:21 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sun, 08 Dec 2019 14:37:37 +01:00
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+sched/rt, workqueue: Use PREEMPTION
+
+CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
+Both PREEMPT and PREEMPT_RT require the same functionality which today
+depends on CONFIG_PREEMPT.
+
+Update the comment to use PREEMPTION because it is true for both
+preemption models.
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>
+Link: https://lore.kernel.org/r/20191015191821.11479-35-bigeasy@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/arm64/boot/dts/rockchip/px30-evb.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/workqueue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/px30-evb.dts b/arch/arm64/boot/dts/rockchip/px30-evb.dts
-index f2fcca21c04d..180995a590c1 100644
---- a/arch/arm64/boot/dts/rockchip/px30-evb.dts
-+++ b/arch/arm64/boot/dts/rockchip/px30-evb.dts
-@@ -132,6 +132,11 @@ &gmac {
- 	status = "okay";
- };
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index bc88fd9..bf57dc7 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -2280,7 +2280,7 @@ __acquires(&pool->lock)
+ 	}
  
-+&gpu {
-+	mali-supply = <&vdd_log>;
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
--- 
-2.24.0
-
+ 	/*
+-	 * The following prevents a kworker from hogging CPU on !PREEMPT
++	 * The following prevents a kworker from hogging CPU on !PREEMPTION
+ 	 * kernels, where a requeueing work item waiting for something to
+ 	 * happen could deadlock with stop_machine as such work item could
+ 	 * indefinitely requeue itself while all other CPUs are trapped in
