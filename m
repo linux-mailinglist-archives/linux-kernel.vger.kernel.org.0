@@ -2,82 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C58C1161E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 14:56:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E975311625C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 15:05:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfLHNzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 08:55:52 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60502 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726903AbfLHNyq (ORCPT
+        id S1726505AbfLHOFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 09:05:23 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53619 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726336AbfLHOFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 08:54:46 -0500
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1idx1H-0007iu-HN; Sun, 08 Dec 2019 13:54:43 +0000
-Received: from ben by deadeye with local (Exim 4.93-RC1)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1idx1G-0002QJ-7I; Sun, 08 Dec 2019 13:54:42 +0000
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 8 Dec 2019 09:05:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575813920;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=30ipBLDOpILVGltlX+yMvZubDIZXAvCZnhKBpoYTnd0=;
+        b=SkKosVp5YTE7Hi+oVvSCkJn+2c6pDWpLMZ8JKKGRa6FCydEcMO1GZ+j2iWajZOm/dz4vML
+        e0d2wF6PjmSKKP3juJ8JlvHVl9h3l+QOUmKiJirjh725ShF7xWDWFm0pRxeCVZMrW3rnKH
+        76F6xBL4tdnPr80KSJA40GtnqIlG3mU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-434-Jlez8AwzPJG4MblyeZEWbg-1; Sun, 08 Dec 2019 09:05:19 -0500
+Received: by mail-wr1-f69.google.com with SMTP id 90so5981148wrq.6
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2019 06:05:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=30ipBLDOpILVGltlX+yMvZubDIZXAvCZnhKBpoYTnd0=;
+        b=AwIEaTXa3n2scZ3RM7+rI+9kMaKUuzgkgUOQgG8KbbfA/2J3UaKoKW/tV3R3v2AFDj
+         FZYvGCx7xC6GKz9QHeIS+oNbDzU/WNA2HaW7fFP/qQo/rx/r4YgUKHADP1oDCsF4Ypxb
+         WAvCTaS1tykRR4E/qAmRTNmllDfFW7KHn4xySBocPlknLJuDGwm6G16CF1tkQGOkRL30
+         f5I8MwEK1dhJZ2tSwp18nurZgKG1/cqaAdsmEndf4Ic+kaBX/40ibBu0W2Z7O6MwdYSC
+         3BeFDFsTOZm2o6HcJKEoQ85VCW934B1wTJ6+clfSzzDFoRU3gPl3hbyb2dBLUQDaWu6Y
+         0ppg==
+X-Gm-Message-State: APjAAAW+i97jfUXWRtuOLg109ngrUGAu0CeNip8Q/1IY8MdFp7QJVyHs
+        5mvDq9L+3OF9Upm/nZzkwMXSDqXOZZgbsCXaqrRncqYWU7xpYUqMGI4S7RvMA8bk7bunUErcEup
+        iwEVtFn/q9fPJvV+gkCe/pRPW
+X-Received: by 2002:adf:ebc3:: with SMTP id v3mr3828228wrn.280.1575813918079;
+        Sun, 08 Dec 2019 06:05:18 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwClxrwfKXccjCy3DgP3KyYWvRyxieD/Vi/Ud1fqKAxEpVX6n6WXJ4jmC4eyZLJ/l742BKMfA==
+X-Received: by 2002:adf:ebc3:: with SMTP id v3mr3828207wrn.280.1575813917877;
+        Sun, 08 Dec 2019 06:05:17 -0800 (PST)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id q6sm24703020wrx.72.2019.12.08.06.05.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2019 06:05:17 -0800 (PST)
+Subject: Re: [PATCH] ACPI: button: Add a DMI quirk for Razer Blade Stealth 13
+ late 2019 lid-switch
+To:     Jason Ekstrand <jason@jlekstrand.net>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191206175409.335568-1-jason@jlekstrand.net>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <3565c99f-3cc4-32cb-1cac-98c7b0392e5c@redhat.com>
+Date:   Sun, 8 Dec 2019 15:05:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        syzbot+863724e7128e14b26732@syzkaller.appspotmail.com,
-        "Marc Kleine-Budde" <mkl@pengutronix.de>,
-        "Johan Hovold" <johan@kernel.org>
-Date:   Sun, 08 Dec 2019 13:53:56 +0000
-Message-ID: <lsq.1575813165.369617906@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 72/72] can: peak_usb: fix slab info leak
-In-Reply-To: <lsq.1575813164.154362148@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <20191206175409.335568-1-jason@jlekstrand.net>
+Content-Language: en-US
+X-MC-Unique: Jlez8AwzPJG4MblyeZEWbg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.79-rc1 review patch.  If anyone has any objections, please let me know.
+Hi,
 
-------------------
+On 06-12-2019 18:54, Jason Ekstrand wrote:
+> Running evemu-record on the lid switch event shows that the lid reports
+> the first close but then never reports an open.  This causes systemd to
+> continuously re-suspend the laptop every 30s.  Resetting the _LID to
+> open fixes the issue.
 
-From: Johan Hovold <johan@kernel.org>
+Sorry to be a bit nitpicky here, but the LID does work normally right,
+so it does signal an event when it gets closed a second time right?
 
-commit f7a1337f0d29b98733c8824e165fca3371d7d4fd upstream.
+Your current commit message and comment suggest closing the LID only
+works once. So perhaps something like this for the comment:
 
-Fix a small slab info leak due to a failure to clear the command buffer
-at allocation.
+/*
+  * Razer Blade Stealth 13 late 2019, _LID always reports closed,
+  * even when opened.
+  */
 
-The first 16 bytes of the command buffer are always sent to the device
-in pcan_usb_send_cmd() even though only the first two may have been
-initialised in case no argument payload is provided (e.g. when waiting
-for a response).
+And adjust the comment accordingly.
 
-Fixes: bb4785551f64 ("can: usb: PEAK-System Technik USB adapters driver core")
-Reported-by: syzbot+863724e7128e14b26732@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/net/can/usb/peak_usb/pcan_usb_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
 
---- a/drivers/net/can/usb/peak_usb/pcan_usb_core.c
-+++ b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
-@@ -732,7 +732,7 @@ static int peak_usb_create_dev(struct pe
- 	dev = netdev_priv(netdev);
- 
- 	/* allocate a buffer large enough to send commands */
--	dev->cmd_buf = kmalloc(PCAN_USB_MAX_CMD_LEN, GFP_KERNEL);
-+	dev->cmd_buf = kzalloc(PCAN_USB_MAX_CMD_LEN, GFP_KERNEL);
- 	if (!dev->cmd_buf) {
- 		err = -ENOMEM;
- 		goto lbl_free_candev;
+Hans
+
+
+
+> Signed-off-by: Jason Ekstrand <jason@jlekstrand.net>
+> ---
+> 
+> Re-sending due to a typo in my own e-mail address. :(
+> 
+>   drivers/acpi/button.c | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+> index 662e07afe9a1..f7ca94e41c48 100644
+> --- a/drivers/acpi/button.c
+> +++ b/drivers/acpi/button.c
+> @@ -122,6 +122,17 @@ static const struct dmi_system_id dmi_lid_quirks[] = {
+>   		},
+>   		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
+>   	},
+> +	{
+> +		/*
+> +		 * Razer Blade Stealth 13 late 2019, _LID reports the first
+> +		 * close but never resets to open.
+> +		 */
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Razer"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Razer Blade Stealth 13 Late 2019"),
+> +		},
+> +		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
+> +	},
+>   	{}
+>   };
+>   
+> 
 
