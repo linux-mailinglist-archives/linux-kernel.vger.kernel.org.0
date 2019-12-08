@@ -2,80 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 887F11163C5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 21:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D99F1163D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 22:18:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfLHUz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 15:55:27 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:55441 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbfLHUz0 (ORCPT
+        id S1726717AbfLHVSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 16:18:01 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:41458 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbfLHVSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 15:55:26 -0500
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id DE367C0003;
-        Sun,  8 Dec 2019 20:55:22 +0000 (UTC)
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Yue Wang <yue.wang@Amlogic.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 2/2] PCI: amlogic: Use PCIe pll gate when available
-Date:   Sun,  8 Dec 2019 22:03:20 +0100
-Message-Id: <20191208210320.15539-3-repk@triplefau.lt>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191208210320.15539-1-repk@triplefau.lt>
-References: <20191208210320.15539-1-repk@triplefau.lt>
+        Sun, 8 Dec 2019 16:18:00 -0500
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id 054C3200ABD;
+        Sun,  8 Dec 2019 21:09:39 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id EA06A20AAF; Sun,  8 Dec 2019 21:41:02 +0100 (CET)
+Date:   Sun, 8 Dec 2019 21:41:02 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Simon Geis <simon.geis@fau.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Adam Zerella <adam.zerella@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
+        Lukas Panzer <lukas.panzer@fau.de>
+Subject: Re: [PATCH 01/12] PCMCIA: use dev_err/dev_info instead of printk
+Message-ID: <20191208204102.GA239870@light.dominikbrodowski.net>
+References: <20191208160947.20694-2-simon.geis@fau.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191208160947.20694-2-simon.geis@fau.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to get PCIe working reliably on some AXG platforms, PCIe pll
-cml needs to be enabled. This is done by using the PCIE_PLL_CML_ENABLE
-clock gate.
+On Sun, Dec 08, 2019 at 05:09:36PM +0100, Simon Geis wrote:
+> Fix the checkpatch warning:
+> 	WARNING: Prefer netdev_err(netdev, ... then dev_err(dev, ...
+> 		then pr_err(...  to printk(KERN_ERR ...
+> and
+> 	WARNING: printk() should include KERN_<LEVEL> facility level
+> 		by using dev_err()/dev_info() according to the message.
 
-This clock gate is optional, so do not fail if it is missing in the
-devicetree.
+Thanks for the patch! The actual diff looks fine, but the commit message
+still needs some refinement. Please do not repeat the checkpatch warnings
+(removing them from existing files is not a goal in itself!), but
+describe the goal of the patch ("Improve the log output by using the
+device-aware dev_err()/dev_info() functions. While at it, update one
+remaining printk(KERN_ERR ...) call to the preferred pr_err() call.")
 
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- drivers/pci/controller/dwc/pci-meson.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> Split the assignment of variable 'sock' in in order to get access to
+> struct_info with the 'container_of' function call.
 
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index 3772b02a5c55..32b70ea9a426 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -89,6 +89,7 @@ struct meson_pcie_clk_res {
- 	struct clk *mipi_gate;
- 	struct clk *port_clk;
- 	struct clk *general_clk;
-+	struct clk *pll_cml_gate;
- };
- 
- struct meson_pcie_rc_reset {
-@@ -300,6 +301,10 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
- 	if (IS_ERR(res->clk))
- 		return PTR_ERR(res->clk);
- 
-+	res->pll_cml_gate = meson_pcie_probe_clock(dev, "pll_cml_en", 0);
-+	if (IS_ERR(res->pll_cml_gate))
-+		res->pll_cml_gate = NULL;
-+
- 	return 0;
- }
- 
--- 
-2.24.0
+As that merely describes what the code does, it is not needed in the
+commit message.
 
+> pr_err is used where no struct pci_dev is available.
+
+If you describe the goal of the patch above, that becomes clear by itself.
+So you may want to remove this line as well.
+
+Thanks,
+	Dominik
