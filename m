@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B0451162B5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 16:00:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9883116288
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 15:58:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbfLHO6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726643AbfLHO6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 8 Dec 2019 09:58:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36725 "EHLO
+Received: from Galois.linutronix.de ([193.142.43.55]:36761 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbfLHO6i (ORCPT
+        with ESMTP id S1726017AbfLHO6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 09:58:38 -0500
+        Sun, 8 Dec 2019 09:58:42 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1idy10-0000Qx-NE; Sun, 08 Dec 2019 15:58:30 +0100
+        id 1idy12-0000TC-Eq; Sun, 08 Dec 2019 15:58:32 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5B0271C2886;
-        Sun,  8 Dec 2019 15:58:30 +0100 (CET)
-Date:   Sun, 08 Dec 2019 14:58:30 -0000
-From:   "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1C3E31C2885;
+        Sun,  8 Dec 2019 15:58:32 +0100 (CET)
+Date:   Sun, 08 Dec 2019 14:58:31 -0000
+From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/rt, locking: Use CONFIG_PREEMPTION
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+Subject: [tip: sched/urgent] sched/rt, sh: Use CONFIG_PREEMPTION
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rich Felker <dalias@libc.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-sh@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191015191821.11479-32-bigeasy@linutronix.de>
-References: <20191015191821.11479-32-bigeasy@linutronix.de>
+In-Reply-To: <20191015191821.11479-19-bigeasy@linutronix.de>
+References: <20191015191821.11479-19-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <157581711027.21853.10949763858370689710.tip-bot2@tip-bot2>
+Message-ID: <157581711194.21853.14714840736791910225.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,88 +52,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/urgent branch of tip:
 
-Commit-ID:     1b40cd56f3bcffcfedb43bc30bd431b52240fb3b
-Gitweb:        https://git.kernel.org/tip/1b40cd56f3bcffcfedb43bc30bd431b52240fb3b
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Tue, 15 Oct 2019 21:18:18 +02:00
+Commit-ID:     7be60ccbc59098f5251edae51bbf08e2d2226da0
+Gitweb:        https://git.kernel.org/tip/7be60ccbc59098f5251edae51bbf08e2d2226da0
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Tue, 15 Oct 2019 21:18:05 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sun, 08 Dec 2019 14:37:36 +01:00
+CommitterDate: Sun, 08 Dec 2019 14:37:35 +01:00
 
-sched/rt, locking: Use CONFIG_PREEMPTION
+sched/rt, sh: Use CONFIG_PREEMPTION
 
 CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
 Both PREEMPT and PREEMPT_RT require the same functionality which today
 depends on CONFIG_PREEMPT.
 
-Switch the Kconfig dependency to use CONFIG_PREEMPTION.
+Switch the entry code over to use CONFIG_PREEMPTION.
 
+[bigeasy: +Kconfig]
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/r/20191015191821.11479-32-bigeasy@linutronix.de
+Cc: Rich Felker <dalias@libc.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org
+Link: https://lore.kernel.org/r/20191015191821.11479-19-bigeasy@linutronix.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/Kconfig.locks | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/sh/Kconfig                | 2 +-
+ arch/sh/kernel/cpu/sh5/entry.S | 4 ++--
+ arch/sh/kernel/entry-common.S  | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/Kconfig.locks b/kernel/Kconfig.locks
-index e0852dc..3de8fd1 100644
---- a/kernel/Kconfig.locks
-+++ b/kernel/Kconfig.locks
-@@ -101,7 +101,7 @@ config UNINLINE_SPIN_UNLOCK
- # unlock and unlock_irq functions are inlined when:
- #   - DEBUG_SPINLOCK=n and ARCH_INLINE_*LOCK=y
- #  or
--#   - DEBUG_SPINLOCK=n and PREEMPT=n
-+#   - DEBUG_SPINLOCK=n and PREEMPTION=n
- #
- # unlock_bh and unlock_irqrestore functions are inlined when:
- #   - DEBUG_SPINLOCK=n and ARCH_INLINE_*LOCK=y
-@@ -139,7 +139,7 @@ config INLINE_SPIN_UNLOCK_BH
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index f356ee6..9ece111 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -108,7 +108,7 @@ config GENERIC_CALIBRATE_DELAY
  
- config INLINE_SPIN_UNLOCK_IRQ
+ config GENERIC_LOCKBREAK
  	def_bool y
--	depends on !PREEMPT || ARCH_INLINE_SPIN_UNLOCK_IRQ
-+	depends on !PREEMPTION || ARCH_INLINE_SPIN_UNLOCK_IRQ
+-	depends on SMP && PREEMPT
++	depends on SMP && PREEMPTION
  
- config INLINE_SPIN_UNLOCK_IRQRESTORE
- 	def_bool y
-@@ -168,7 +168,7 @@ config INLINE_READ_LOCK_IRQSAVE
+ config ARCH_SUSPEND_POSSIBLE
+ 	def_bool n
+diff --git a/arch/sh/kernel/cpu/sh5/entry.S b/arch/sh/kernel/cpu/sh5/entry.S
+index de68ffd..81c8b64 100644
+--- a/arch/sh/kernel/cpu/sh5/entry.S
++++ b/arch/sh/kernel/cpu/sh5/entry.S
+@@ -86,7 +86,7 @@
+ 	andi	r6, ~0xf0, r6;		\
+ 	putcon	r6, SR;
  
- config INLINE_READ_UNLOCK
- 	def_bool y
--	depends on !PREEMPT || ARCH_INLINE_READ_UNLOCK
-+	depends on !PREEMPTION || ARCH_INLINE_READ_UNLOCK
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ #  define preempt_stop()	CLI()
+ #else
+ #  define preempt_stop()
+@@ -884,7 +884,7 @@ ret_from_exception:
  
- config INLINE_READ_UNLOCK_BH
- 	def_bool y
-@@ -176,7 +176,7 @@ config INLINE_READ_UNLOCK_BH
+ 	/* Check softirqs */
  
- config INLINE_READ_UNLOCK_IRQ
- 	def_bool y
--	depends on !PREEMPT || ARCH_INLINE_READ_UNLOCK_IRQ
-+	depends on !PREEMPTION || ARCH_INLINE_READ_UNLOCK_IRQ
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	pta   ret_from_syscall, tr0
+ 	blink   tr0, ZERO
  
- config INLINE_READ_UNLOCK_IRQRESTORE
- 	def_bool y
-@@ -205,7 +205,7 @@ config INLINE_WRITE_LOCK_IRQSAVE
+diff --git a/arch/sh/kernel/entry-common.S b/arch/sh/kernel/entry-common.S
+index d31f66e..956a7a0 100644
+--- a/arch/sh/kernel/entry-common.S
++++ b/arch/sh/kernel/entry-common.S
+@@ -41,7 +41,7 @@
+  */
+ #include <asm/dwarf.h>
  
- config INLINE_WRITE_UNLOCK
- 	def_bool y
--	depends on !PREEMPT || ARCH_INLINE_WRITE_UNLOCK
-+	depends on !PREEMPTION || ARCH_INLINE_WRITE_UNLOCK
+-#if defined(CONFIG_PREEMPT)
++#if defined(CONFIG_PREEMPTION)
+ #  define preempt_stop()	cli ; TRACE_IRQS_OFF
+ #else
+ #  define preempt_stop()
+@@ -84,7 +84,7 @@ ENTRY(ret_from_irq)
+ 	get_current_thread_info r8, r0
+ 	bt	resume_kernel	! Yes, it's from kernel, go back soon
  
- config INLINE_WRITE_UNLOCK_BH
- 	def_bool y
-@@ -213,7 +213,7 @@ config INLINE_WRITE_UNLOCK_BH
- 
- config INLINE_WRITE_UNLOCK_IRQ
- 	def_bool y
--	depends on !PREEMPT || ARCH_INLINE_WRITE_UNLOCK_IRQ
-+	depends on !PREEMPTION || ARCH_INLINE_WRITE_UNLOCK_IRQ
- 
- config INLINE_WRITE_UNLOCK_IRQRESTORE
- 	def_bool y
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	bra	resume_userspace
+ 	 nop
+ ENTRY(resume_kernel)
