@@ -2,56 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBA011163CE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 22:13:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80D921163D3
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 22:13:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbfLHVK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 16:10:28 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:40496 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbfLHVJj (ORCPT
+        id S1726777AbfLHVNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 16:13:48 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37571 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfLHVNr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 16:09:39 -0500
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id C57AF200A85;
-        Sun,  8 Dec 2019 21:09:37 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 766AC20AD3; Sun,  8 Dec 2019 21:58:19 +0100 (CET)
-Date:   Sun, 8 Dec 2019 21:58:19 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Simon Geis <simon.geis@fau.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Adam Zerella <adam.zerella@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
-        Lukas Panzer <lukas.panzer@fau.de>
-Subject: Re: [PATCH 12/12] PCMCIA: remove ifdef 0 block
-Message-ID: <20191208205819.GH240074@light.dominikbrodowski.net>
-References: <20191208160947.20694-2-simon.geis@fau.de>
- <20191208160947.20694-13-simon.geis@fau.de>
+        Sun, 8 Dec 2019 16:13:47 -0500
+Received: by mail-ot1-f66.google.com with SMTP id k14so10495072otn.4;
+        Sun, 08 Dec 2019 13:13:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0kwV+KswtHN7mYaC55RJRRsqfRs6Nx3Ld51+tu4vFoQ=;
+        b=HQjxQZbnHf+jlQhInZKQ+e1iABi36NuPsOr4suD1ytiVAWqgvu/W7LRx1NgoepTw8j
+         Z1rv9heWIOYCPxULSnCSR0DgvItmztDLABRtRbxqphZGpgeVeqEE+eaxJWWnWz2ERR95
+         cGDbPyfH+RJVuATL4CMm/9Uv6GGVyQxO2bfvHgzNqd93GxKlEZX43LSPhVApi5o9X9jT
+         im2oanflYmwpnIT5ORHJmHEi7BzHxi78oXaju1LFQRwXdkvqucP/ndJ6YOoCTyqvaHO1
+         HJ//4A6Hw6+3ECp8DgneeZnyoUOPb5NQs54Yyx8e3qBg3/oPz/WFrsQa2J8n0coJN2Qt
+         5yAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0kwV+KswtHN7mYaC55RJRRsqfRs6Nx3Ld51+tu4vFoQ=;
+        b=pITilW3+eXRBnoma9oo96+9W9VVKI/cTBJGYGv0eXRNYBo/tquXilX6QvRYoIttUS2
+         CX8f1PsGgFaD5LvfYRYH4V4Jr5Pr5ufPEDOb64Qg9OYG62r9vvkit/HPHt/2s0oqsQJa
+         XweAHGGYsem/7q4BmoS6xWZ2fXVNAjTijSq8jgND85N7T4I5JgZvQkHbmKCem4BiNgKl
+         HRpcRcYHWgbhgMzdsN+rm+O/rdXGshw961JfG6Fw7qASTikBFgMr/0N66wKuD/sXcmP+
+         CBoRxl0Sr3T/bYyYZOauo1upExL2M8qSRKt5jXDBuxUl1hLj1Ytzu4PSOycuy5nA2qfg
+         fyzA==
+X-Gm-Message-State: APjAAAUlyhJzzdIgQq/33jRP9Xti19j1s/P6Si+wOw6k0fQlzSApf5OL
+        Gd/AcROqpVpsXe+0fo28Z8c=
+X-Google-Smtp-Source: APXvYqy7bZUrmTKtzvftWC/PbGIijpAIJL/5cklq+ZEYSotaEgnaQ+SE80XCvspKE8h+QUbEWABNJQ==
+X-Received: by 2002:a9d:5552:: with SMTP id h18mr18315822oti.122.1575839626207;
+        Sun, 08 Dec 2019 13:13:46 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id e65sm6099639otb.62.2019.12.08.13.13.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2019 13:13:45 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: [PATCH v3] media: v4l2-device.h: Explicitly compare grp{id,mask} to zero in v4l2_device macros
+Date:   Sun,  8 Dec 2019 14:11:40 -0700
+Message-Id: <20191208211139.18514-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191105045907.26123-1-natechancellor@gmail.com>
+References: <20191105045907.26123-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191208160947.20694-13-simon.geis@fau.de>
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 08, 2019 at 05:09:47PM +0100, Simon Geis wrote:
-> indirect_read16 is similar to indirect_read with the exception that 
-> it reads 16 instead of 8 bit.
+When building with Clang + -Wtautological-constant-compare, several of
+the ivtv and cx18 drivers warn along the lines of:
 
-... and, most importantly, indirect_read16 is unused in this module.
+ drivers/media/pci/cx18/cx18-driver.c:1005:21: warning: converting the
+ result of '<<' to a boolean always evaluates to true
+ [-Wtautological-constant-compare]
+                         cx18_call_hw(cx, CX18_HW_GPIO_RESET_CTRL,
+                                         ^
+ drivers/media/pci/cx18/cx18-cards.h:18:37: note: expanded from macro
+ 'CX18_HW_GPIO_RESET_CTRL'
+ #define CX18_HW_GPIO_RESET_CTRL         (1 << 6)
+                                           ^
+ 1 warning generated.
 
-Thanks,
-	Dominik
+This warning happens because the shift operation is implicitly converted
+to a boolean in v4l2_device_mask_call_all before being negated. This can
+be solved by just comparing the mask result to 0 explicitly so that
+there is no boolean conversion. The ultimate goal is to enable
+-Wtautological-compare globally because there are several subwarnings
+that would be helpful to have.
+
+For visual consistency and avoidance of these warnings in the future,
+all of the implicitly boolean conversions in the v4l2_device macros
+are converted to explicit ones as well.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/752
+Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+
+v1 -> v2: https://lore.kernel.org/lkml/20191024201240.49063-1-natechancellor@gmail.com/
+
+* Fix typo in commit message
+* Add Nick's Reviewed-by.
+
+v2 -> v3: https://lore.kernel.org/lkml/20191105045907.26123-1-natechancellor@gmail.com/
+
+* Improve reasoning for change (Ezequiel)
+* Patch all implicit boolean conversions (Ezequiel)
+* Add Ezequiel's reviewed-by.
+
+ include/media/v4l2-device.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/include/media/v4l2-device.h b/include/media/v4l2-device.h
+index 5f36e0d2ede6..95353ae476a1 100644
+--- a/include/media/v4l2-device.h
++++ b/include/media/v4l2-device.h
+@@ -371,7 +371,7 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ 		struct v4l2_subdev *__sd;				\
+ 									\
+ 		__v4l2_device_call_subdevs_p(v4l2_dev, __sd,		\
+-			!(grpid) || __sd->grp_id == (grpid), o, f ,	\
++			(grpid) == 0 || __sd->grp_id == (grpid), o, f ,	\
+ 			##args);					\
+ 	} while (0)
+ 
+@@ -403,7 +403,7 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ ({									\
+ 	struct v4l2_subdev *__sd;					\
+ 	__v4l2_device_call_subdevs_until_err_p(v4l2_dev, __sd,		\
+-			!(grpid) || __sd->grp_id == (grpid), o, f ,	\
++			(grpid) == 0 || __sd->grp_id == (grpid), o, f ,	\
+ 			##args);					\
+ })
+ 
+@@ -431,8 +431,8 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ 		struct v4l2_subdev *__sd;				\
+ 									\
+ 		__v4l2_device_call_subdevs_p(v4l2_dev, __sd,		\
+-			!(grpmsk) || (__sd->grp_id & (grpmsk)), o, f ,	\
+-			##args);					\
++			(grpmsk) == 0 || (__sd->grp_id & (grpmsk)), o,	\
++			f , ##args);					\
+ 	} while (0)
+ 
+ /**
+@@ -462,8 +462,8 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ ({									\
+ 	struct v4l2_subdev *__sd;					\
+ 	__v4l2_device_call_subdevs_until_err_p(v4l2_dev, __sd,		\
+-			!(grpmsk) || (__sd->grp_id & (grpmsk)), o, f ,	\
+-			##args);					\
++			(grpmsk) == 0 || (__sd->grp_id & (grpmsk)), o,	\
++			f , ##args);					\
+ })
+ 
+ 
+-- 
+2.24.0
+
