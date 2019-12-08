@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A32D41162F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 17:16:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FCBF1162F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 17:16:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbfLHQPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 11:15:38 -0500
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:49514 "EHLO
+        id S1726707AbfLHQPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 11:15:55 -0500
+Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:49518 "EHLO
         faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726460AbfLHQPh (ORCPT
+        by vger.kernel.org with ESMTP id S1726474AbfLHQPh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 8 Dec 2019 11:15:37 -0500
-Received: from faui04f.informatik.uni-erlangen.de (faui04f.informatik.uni-erlangen.de [131.188.30.136])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id A22E3241768;
-        Sun,  8 Dec 2019 17:10:25 +0100 (CET)
+Received: from faui04f.informatik.uni-erlangen.de (faui04f.informatik.uni-erlangen.de [IPv6:2001:638:a000:4130:131:188:30:136])
+        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 176B5241775;
+        Sun,  8 Dec 2019 17:10:32 +0100 (CET)
 Received: by faui04f.informatik.uni-erlangen.de (Postfix, from userid 66991)
-        id 96D95C20BC6; Sun,  8 Dec 2019 17:10:25 +0100 (CET)
+        id 09185C20BC6; Sun,  8 Dec 2019 17:10:32 +0100 (CET)
 From:   Simon Geis <simon.geis@fau.de>
 To:     Dominik Brodowski <linux@dominikbrodowski.net>
 Cc:     Simon Geis <simon.geis@fau.de>,
@@ -26,9 +26,9 @@ Cc:     Simon Geis <simon.geis@fau.de>,
         Adam Zerella <adam.zerella@gmail.com>,
         linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
         Lukas Panzer <lukas.panzer@fau.de>
-Subject: [PATCH 04/12] PCMCIA: Remove spaces before tabs
-Date:   Sun,  8 Dec 2019 17:09:39 +0100
-Message-Id: <20191208160947.20694-5-simon.geis@fau.de>
+Subject: [PATCH 05/12] PCMCIA: remove braces around single statement blocks
+Date:   Sun,  8 Dec 2019 17:09:40 +0100
+Message-Id: <20191208160947.20694-6-simon.geis@fau.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191208160947.20694-2-simon.geis@fau.de>
 References: <20191208160947.20694-2-simon.geis@fau.de>
@@ -42,87 +42,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Co-developed-by: Lukas Panzer <lukas.panzer@fau.de>
 Signed-off-by: Lukas Panzer <lukas.panzer@fau.de>
 Signed-off-by: Simon Geis <simon.geis@fau.de>
-
 ---
- drivers/pcmcia/i82092.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/pcmcia/i82092.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
-index bb3014ba329e..2f698d021411 100644
+index 2f698d021411..0adac6b24915 100644
 --- a/drivers/pcmcia/i82092.c
 +++ b/drivers/pcmcia/i82092.c
-@@ -42,7 +42,7 @@ static struct pci_driver i82092aa_pci_driver = {
- 
- /* the pccard structure and its functions */
- static struct pccard_operations i82092aa_operations = {
--	.init 		 	= i82092aa_init,
-+	.init			= i82092aa_init,
- 	.get_status		= i82092aa_get_status,
- 	.set_socket		= i82092aa_set_socket,
- 	.set_io_map		= i82092aa_set_io_map,
-@@ -59,7 +59,7 @@ struct socket_info {
- 		 * 2 = card but not initialized,
- 		 * 3 = operational card
- 		 */
--	unsigned int io_base; 	/* base io address of the socket */
-+	unsigned int io_base;	/* base io address of the socket */
- 
- 	struct pcmcia_socket socket;
- 	struct pci_dev *dev;	/* The PCI device for the socket */
-@@ -326,7 +326,7 @@ static irqreturn_t i82092aa_interrupt(int irq, void *dev)
- 			csc = indirect_read(i, I365_CSC); /* card status change register */
- 
- 			if (csc == 0)  /* no events on this socket */
--			   	continue;
-+				continue;
- 			handled = 1;
- 			events = 0;
- 
-@@ -334,7 +334,7 @@ static irqreturn_t i82092aa_interrupt(int irq, void *dev)
- 				events |= SS_DETECT;
- 				dev_info(&sockets[i].dev->dev,
- 					 "Card detected in socket %i!\n", i);
--			 }
-+			}
- 
- 			if (indirect_read(i, I365_INTCTL) & I365_PC_IOCARD) {
- 				/* For IO/CARDS, bit 0 means "read the card" */
-@@ -399,18 +399,18 @@ static int i82092aa_init(struct pcmcia_socket *sock)
- {
- 	int i;
- 	struct resource res = { .start = 0, .end = 0x0fff };
--        pccard_io_map io = { 0, 0, 0, 0, 1 };
-+	pccard_io_map io = { 0, 0, 0, 0, 1 };
- 	pccard_mem_map mem = { .res = &res, };
- 
--        enter("i82092aa_init");
-+	enter("i82092aa_init");
- 
--        for (i = 0; i < 2; i++) {
--        	io.map = i;
--                i82092aa_set_io_map(sock, &io);
-+	for (i = 0; i < 2; i++) {
-+		io.map = i;
-+		i82092aa_set_io_map(sock, &io);
- 	}
--        for (i = 0; i < 5; i++) {
--        	mem.map = i;
--                i82092aa_set_mem_map(sock, &mem);
-+	for (i = 0; i < 5; i++) {
-+		mem.map = i;
-+		i82092aa_set_mem_map(sock, &mem);
+@@ -145,9 +145,8 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
+ 		sockets[i].socket.ops = &i82092aa_operations;
+ 		sockets[i].socket.resource_ops = &pccard_nonstatic_ops;
+ 		ret = pcmcia_register_socket(&sockets[i].socket);
+-		if (ret) {
++		if (ret)
+ 			goto err_out_free_sockets;
+-		}
  	}
  
- 	leave("i82092aa_init");
-@@ -653,7 +653,7 @@ static int i82092aa_set_mem_map(struct pcmcia_socket *socket, struct pccard_mem_
+ 	leave("i82092aa_pci_probe");
+@@ -155,9 +154,8 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
  
- 	/* Turn off the window before changing anything */
- 	if (indirect_read(sock, I365_ADDRWIN) & I365_ENA_MEM(map))
--	              indirect_resetbit(sock, I365_ADDRWIN, I365_ENA_MEM(map));
-+		indirect_resetbit(sock, I365_ADDRWIN, I365_ENA_MEM(map));
+ err_out_free_sockets:
+ 	if (i) {
+-		for (i--; i >= 0; i--) {
++		for (i--; i >= 0; i--)
+ 			pcmcia_unregister_socket(&sockets[i].socket);
+-		}
+ 	}
+ 	free_irq(dev->irq, i82092aa_interrupt);
+ err_out_free_res:
+@@ -346,9 +344,8 @@ static irqreturn_t i82092aa_interrupt(int irq, void *dev)
+ 				events |= (csc & I365_CSC_READY) ? SS_READY : 0;
+ 			}
  
+-			if (events) {
++			if (events)
+ 				pcmcia_parse_events(&sockets[i].socket, events);
+-			}
+ 			active |= events;
+ 		}
  
- /*	dev_info(&sock_info->dev->dev,
+@@ -430,9 +427,8 @@ static int i82092aa_get_status(struct pcmcia_socket *socket, u_int *value)
+ 	status = indirect_read(sock, I365_STATUS); /* Interface Status Register */
+ 	*value = 0;
+ 
+-	if ((status & I365_CS_DETECT) == I365_CS_DETECT) {
++	if ((status & I365_CS_DETECT) == I365_CS_DETECT)
+ 		*value |= SS_DETECT;
+-	}
+ 
+ 	/* IO cards have a different meaning of bits 0,1 */
+ 	/* Also notice the inverse-logic on the bits */
+@@ -545,9 +541,8 @@ static int i82092aa_set_socket(struct pcmcia_socket *socket, socket_state_t *sta
+ 	/* Enable specific interrupt events */
+ 
+ 	reg = 0x00;
+-	if (state->csc_mask & SS_DETECT) {
++	if (state->csc_mask & SS_DETECT)
+ 		reg |= I365_CSC_DETECT;
+-	}
+ 	if (state->flags & SS_IOCARD) {
+ 		if (state->csc_mask & SS_STSCHG)
+ 			reg |= I365_CSC_STSCHG;
 -- 
 2.20.1
 
