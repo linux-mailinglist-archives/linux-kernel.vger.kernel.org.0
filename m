@@ -2,83 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F3FF1163ED
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 22:55:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F94A1163F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2019 23:08:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbfLHVze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 16:55:34 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:58156 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbfLHVze (ORCPT
+        id S1726795AbfLHWIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 17:08:09 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43689 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726665AbfLHWIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 16:55:34 -0500
-X-Greylist: delayed 556 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Dec 2019 16:55:33 EST
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id CE56F72CCD5;
-        Mon,  9 Dec 2019 00:46:15 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 9DF744A4AEF;
-        Mon,  9 Dec 2019 00:46:15 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     "Dmitry V . Levin" <ldv@altlinux.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] tools lib: Disable redundant-delcs error for strlcpy
-Date:   Mon,  9 Dec 2019 00:46:07 +0300
-Message-Id: <20191208214607.20679-1-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
+        Sun, 8 Dec 2019 17:08:09 -0500
+Received: by mail-oi1-f194.google.com with SMTP id x14so4635240oic.10;
+        Sun, 08 Dec 2019 14:08:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6LcpecxJCuptWnky/wBInRHW7dBWZyoNDO8ejqGqya4=;
+        b=JiUPaF+aLz6TU175q9IIuAWCfbj1Dp34A44ajwK6wWjJuU4qAW6BB4WFznxCnlrz+m
+         11aV+yzG5hho4KnFOHqZ4MdNh0vO5men3cU1qp5cZ4yKlf8NYCo/WlL3zH/9Us1l56E2
+         zaiUI5IFBXi84lF7T6fkfCSTwUxRB+6DMpcPrFgw+839cVtn7VvEd/tz1YJlMGKUMrFv
+         cMVvpXHbsEhI+l1VNNoyP/3w2xVFStHfFJ1IDsQzMBaQj74boPcUBmJpW+MuWdDWAp4S
+         z91RVykEF70X975kRocmzBBOXgC3eOuH0yxBwNCsUrxB0bkqd2TIjaIXJztFPi8M4KID
+         6zPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6LcpecxJCuptWnky/wBInRHW7dBWZyoNDO8ejqGqya4=;
+        b=RFKfF3+N3VgeXEAJWocg22vGGkANgCW6zk3A93KeUHfbeZ/OFd5ZUbH45i9Q0oNybe
+         SM6A9TKT3/heLEn5KVBG6bu74Jw+HHe7KY3TaFP/AQUks97W3EeMWtWSlzLM0A8DI+xF
+         GVSxDILmZAciC4J2vkMKcpv/OfEK6XBdlzRozZ0sQ8yOYasnyFq/F215R6cm6z890Lu6
+         eG/5Tkj0qKBz5tfZS0vL5jPhaZY2ccA/aHRZVB4J7HkYQZ+8mCDynIU6fxgd8/oLzX+l
+         q84o85GFm+R1mxAMiqpjsDkSRLtP5mBw19m4SNYPu4Imxb0m5HKSoA97u6J64CuwbC8y
+         OMsA==
+X-Gm-Message-State: APjAAAWMJoo2W9LAGWfV6bui17gBqhmP/zf2IKD07K2a0CaQPSOWJJyS
+        VcjB+l4bRf+NdU8gUMLIiPRGklF6qLc+zl7mZQQ=
+X-Google-Smtp-Source: APXvYqyhNhm0JNicy/loq8RdAT4DHahKdfAG1UNTU2pTEGoRTXZgPhgK9yLqIJ8epqm1nERlorhDJkru2+6iVkzYho0=
+X-Received: by 2002:a54:401a:: with SMTP id x26mr21795889oie.15.1575842888488;
+ Sun, 08 Dec 2019 14:08:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20191208210320.15539-1-repk@triplefau.lt> <20191208210320.15539-2-repk@triplefau.lt>
+In-Reply-To: <20191208210320.15539-2-repk@triplefau.lt>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 8 Dec 2019 23:07:57 +0100
+Message-ID: <CAFBinCA7Tnc2M=4jxYYS_RuoLnGNprUOFDrZG_G6fhQCyb3Cig@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: meson: axg: add pcie pll cml gating
+To:     Remi Pommarel <repk@triplefau.lt>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pci@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Disable `redundant-decls' error for strlcpy declaration and solve build
-error allowing users to compile vanilla kernels.
+Hi Remi,
 
-When glibc have strlcpy (such as in ALT linux since 2004) objtool and
-perf build fails with something like:
+On Sun, Dec 8, 2019 at 9:56 PM Remi Pommarel <repk@triplefau.lt> wrote:
+[...]
+> +static MESON_GATE(axg_pcie_pll_cml_enable, HHI_MIPI_CNTL0, 26);
+we already have CLKID_PCIE_CML_EN0
+do you know how this new one is related (in terms of clock hierarchy)
+to the existing one?
 
-  In file included from exec-cmd.c:3:
-  tools/include/linux/string.h:20:15: error: redundant redeclaration of ‘strlcpy’ [-Werror=redundant-decls]
-     20 | extern size_t strlcpy(char *dest, const char *src, size_t size);
-	|               ^~~~~~~
+[...]
+> --- a/include/dt-bindings/clock/axg-clkc.h
+> +++ b/include/dt-bindings/clock/axg-clkc.h
+> @@ -72,5 +72,6 @@
+>  #define CLKID_PCIE_CML_EN1                     80
+>  #define CLKID_MIPI_ENABLE                      81
+>  #define CLKID_GEN_CLK                          84
+> +#define CLKID_PCIE_PLL_CML_ENABLE              91
+this has to be a separate patch if you want the .dts patch to go into
+the same cycle
+the .dts change depends on this one. what we typically do is to apply
+the dt-bindings patches to a separate clock branch, create an
+immutable tag and then Kevin pulls that into his dt64 branch.
+the clock controller changes go into a separate patch in the
+clk-meson/drivers branch to avoid conflicts with other driver changes
 
-It's very hard to produce a perfect fix for that since it is a header
-file indirectly pulled from many sources from different Makefile builds.
 
-Fixes: ce99091 ("perf tools: Move strlcpy() from perf to tools/lib/string.c")
-Fixes: 0215d59 ("tools lib: Reinstate strlcpy() header guard with __UCLIBC__")
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-Cc: Dmitry V. Levin <ldv@altlinux.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: stable@vger.kernel.org
----
- tools/include/linux/string.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tools/include/linux/string.h b/tools/include/linux/string.h
-index 980cb9266718..99ede7f5dfb8 100644
---- a/tools/include/linux/string.h
-+++ b/tools/include/linux/string.h
-@@ -17,7 +17,10 @@ int strtobool(const char *s, bool *res);
-  * However uClibc headers also define __GLIBC__ hence the hack below
-  */
- #if defined(__GLIBC__) && !defined(__UCLIBC__)
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wredundant-decls"
- extern size_t strlcpy(char *dest, const char *src, size_t size);
-+#pragma GCC diagnostic pop
- #endif
- 
- char *str_error_r(int errnum, char *buf, size_t buflen);
--- 
-2.11.0
-
+Martin
