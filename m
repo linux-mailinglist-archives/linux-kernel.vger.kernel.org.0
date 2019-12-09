@@ -2,100 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A670116523
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 03:54:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61372116533
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 04:05:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfLICys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 21:54:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56930 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbfLICyr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 21:54:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=m2lUrODSpTuA1453mVsRp9l2Fn57jclNVrwv88nJH8Y=; b=ofkFUo2BBScyBoHteW+FYdFTH
-        xY8wAN7UTp5i74wJ5G89ooYRGaIjVUTrykMrxdN5eujS01tufh7Z3PJ5S4tVyN46KZ4jxX9yBcMcA
-        o5qt/e+a0uJWQMbvu2frMzsRhntfDijHp8RRj6Ke4O7AmiapWfdMpo4esNGzZ49tjtjejZCw88qRl
-        qwCdSUrtX57t+tnLOvdhxp5b9m+s/DJTMSy1qaErZLohxzIB1Ft8LW/7+T3muN5XhIPcsSLHNbqRx
-        qJCYi5yizWaiCPr/e6h2FZwb8n+cQdV6Xv5yfvFdtm14EaYsdCwtcxUtsws5mtq1jPZO5SzWcE6pq
-        ZjKyVGoQg==;
-Received: from [2601:1c0:6280:3f0::3deb]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ie9CA-00038h-Jy; Mon, 09 Dec 2019 02:54:46 +0000
-Subject: Re: [PATCH v5 2/2] iio: (bma400) add driver for the BMA400
-To:     Dan Robertson <dan@dlrobertson.com>,
-        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
-References: <20191209014320.13149-1-dan@dlrobertson.com>
- <20191209014320.13149-3-dan@dlrobertson.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <cf3f2297-dc01-b2c9-657b-933f24b15594@infradead.org>
-Date:   Sun, 8 Dec 2019 18:54:44 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1726960AbfLIDFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 22:05:15 -0500
+Received: from mga01.intel.com ([192.55.52.88]:31796 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726748AbfLIDFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Dec 2019 22:05:14 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Dec 2019 19:05:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,294,1571727600"; 
+   d="scan'208";a="412614427"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Dec 2019 19:05:12 -0800
+Date:   Mon, 9 Dec 2019 10:45:27 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Will Deacon <will@kernel.org>
+Cc:     mdf@kernel.org, mark.rutland@arm.com, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        atull@kernel.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH v6 0/2] add performance reporting support to FPGA DFL
+ drivers
+Message-ID: <20191209024527.GA22625@hao-dev>
+References: <1573622695-25607-1-git-send-email-hao.wu@intel.com>
+ <20191125033412.GB890@hao-dev>
+ <20191125080127.GC1809@willie-the-truck>
+ <20191125080839.GA6227@hao-dev>
 MIME-Version: 1.0
-In-Reply-To: <20191209014320.13149-3-dan@dlrobertson.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191125080839.GA6227@hao-dev>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Nov 25, 2019 at 04:08:39PM +0800, Wu Hao wrote:
+> On Mon, Nov 25, 2019 at 08:01:28AM +0000, Will Deacon wrote:
+> > On Mon, Nov 25, 2019 at 11:34:12AM +0800, Wu Hao wrote:
+> > > Hi Will and Mark,
+> > > 
+> > > Could you please help us on review this patchset? as this patchset mainly 
+> > > introduced a new perf driver following the similar way as drivers/perf/*.
+> > 
+> > Why is it not under drivers/perf/, then?
+> 
+> Hi Will
+> 
+> Thanks for the quick response. This is one sub feature for DFL based FPGAs,
+> and we plan to put this sub feature together with others, including related
+> documentation. It only registers a standard perf pmu for its userspace
+> interfaces.
+> 
+> > 
+> > > This patchset has been submitted for a long time but didn't receive any
+> > > comment after v4. we appreciate any review comments! thanks in advance. :)
+> > 
+> > Hmm, not sure I saw the previous versions. Guessing I wasn't on cc?
+> 
+> We switched to perf API from v4, and started ccing you and Mark from v5. :)
 
+Hi Will
 
-On 12/8/19 5:43 PM, Dan Robertson wrote:
-> diff --git a/drivers/iio/accel/Kconfig b/drivers/iio/accel/Kconfig
-> index d4ef35aeb579..dc9bc646d403 100644
-> --- a/drivers/iio/accel/Kconfig
-> +++ b/drivers/iio/accel/Kconfig
-> @@ -112,6 +112,22 @@ config BMA220
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called bma220_spi.
->  
-> +config BMA400
-> +	tristate "Bosch BMA400 3-Axis Accelerometer Driver"
-> +	select REGMAP
-> +	select BMA400_I2C if (I2C)
+Did you get a chance to look into this patchset?
 
-What's with the parentheses?  I see that there are roughly 2700
-"select ... if X" without parens and around 95 like
-"select ... if ("  [using rough grep expressions].
-The parens are unnecessary.  They are often used on complex
-expressions, but certainly not on simple ones (except in iio).
+Thanks
+Hao
 
-> +	help
-> +	  Say Y here if you want to build a driver for the Bosch BMA400
-> +	  triaxial acceleration sensor.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called bma400_core and you will also get
-> +	  bma400_i2c for I2C.
-
-iff I2C is set/enabled, so could be confusing.
-
-> +
-> +config BMA400_I2C
-> +	tristate
-> +	depends on BMA400
-> +
->  config BMC150_ACCEL
->  	tristate "Bosch BMC150 Accelerometer Driver"
->  	select IIO_BUFFER
-
-
--- 
-~Randy
-
+> 
+> Thanks
+> Hao
+> 
+> > 
+> > Will
