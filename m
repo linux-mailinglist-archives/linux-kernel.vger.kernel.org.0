@@ -2,148 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76EB21170AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 16:38:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 920161170D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 16:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfLIPio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 10:38:44 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35586 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbfLIPio (ORCPT
+        id S1726589AbfLIPq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 10:46:27 -0500
+Received: from mail2.protonmail.ch ([185.70.40.22]:21016 "EHLO
+        mail2.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbfLIPq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 10:38:44 -0500
-Received: by mail-io1-f65.google.com with SMTP id v18so15248226iol.2;
-        Mon, 09 Dec 2019 07:38:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ZJHtdl64eSg7tX1bls5wY/hgwg2SeBy1mqhpZlCukvg=;
-        b=sYWBiNewuyqeitxp4PMfrWb8D5LArfvGYVlnna4mBtaRMWcybALmK4TSqg7M/HKA1i
-         85aVtTxdrFrUZO5be9qMmHnxoj2f16hCkwRN6gtWVx+L9JUsxL5DLcePNscgNynYhloC
-         VEm6MCqqrVLY1aRK63NYHp9pg3+pwb5JS4nOdvLU+JWQh1qcMOXZjhrE9qxaP0Q4BehK
-         Gsn2K/LiOp2/s0TUyEEvu1PvhZpNTUN8pemOAMe5iT4VX7Ac1b2opKqp8pl7TSLhmffY
-         HobeBr/5FkeX5fDbHWmaxUGCJKWKMFHairadzP8yQM6TqaCNEtvIec58Uw99BqricfOM
-         k+iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZJHtdl64eSg7tX1bls5wY/hgwg2SeBy1mqhpZlCukvg=;
-        b=r6HIcT/wrZJe5hli8ReOBHqc4OxKhzGQ74KXShZLl4f8SsMA1eG6OqULVmdZT7nw18
-         SpjYsPKSuIMmGJyJ6xgfGBcGMDt/lxEw/cRzLyJoVpDZI82m3G3JYAoVRLYmdNpFffBK
-         MsSYrGlYUeUgywN6lCfQ6BArlvX2o+t2Hl0mJhwnhPnVsJmpcyPOo0ypqVglZHU192Jf
-         cce9+5fLe6i/KVvyM5ouRqnQ80IvIxJPblqcFPnHfYe+NgHZmgTdv3Oi/fFFTIi8xLoe
-         WZC4GkhH1jIvKGY2AydgN4jEpkPRZwGtiI5v1BGHoXB7Jw9aoE09vGip1z5xNSt+vG1r
-         VC/Q==
-X-Gm-Message-State: APjAAAXUI3IaXwvGrumCBGnDZRNAmgQBOt5okZJhAsyK1HU2cIQNRG8G
-        DYuzdn7dpTduRAvOVVFy7ataENu4fhII2qNeCbM=
-X-Google-Smtp-Source: APXvYqyKe81SV620SWPT3vlC+s2nmZV57gLiyzYp6LoXO4TmESagI9KWQZJxUmkLqawCteKkmS0vffcB403S2IYmD8Y=
-X-Received: by 2002:a02:8817:: with SMTP id r23mr28310766jai.120.1575905923417;
- Mon, 09 Dec 2019 07:38:43 -0800 (PST)
+        Mon, 9 Dec 2019 10:46:26 -0500
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Dec 2019 10:46:25 EST
+Date:   Mon, 09 Dec 2019 15:39:35 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1575905983;
+        bh=sdYA01Ye3dElkfrKicXfg3nPj3ghftlcHzLFa+FeGJE=;
+        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
+        b=N1iDV9tvbCvehNZY4m3S/gbnDiGlhqqX0TyqXv3J9jQHBeTMgY9y0tsLUJxMLh7ZT
+         GWfuD3bIuLQ6sU0HH8fuJ2aXYhFTcHjEV0mTvJfe4rAbC038s1nardnRxu6aWtvd+m
+         gwS7HGCSWh27c8YbE+KyPHbiDlm/17wM7WvK47so=
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Subject: Re: was: Fair Pay - Libra Netcurrency? + good plugins and mastering.
+Message-ID: <3MGC8s8MulBHTw_9IM8P7mxe2czyXajlzA41pTmRpMCWQ2mrwVY-CpWE6nNlPccW-XryWxrVqE_kVtreWFbOvdSP9fBiAHoG-2utATMYJ-g=@protonmail.com>
+Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
 MIME-Version: 1.0
-References: <20191206184536.2507-1-linux.amoon@gmail.com> <20191206184536.2507-3-linux.amoon@gmail.com>
- <f1327196-66c9-d152-c0ca-914d43d6f55e@arm.com>
-In-Reply-To: <f1327196-66c9-d152-c0ca-914d43d6f55e@arm.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Mon, 9 Dec 2019 21:08:31 +0530
-Message-ID: <CANAwSgTSDX=36eF3UxVyVykguRjd90=x4iT27s=nJg5ezG_V7w@mail.gmail.com>
-Subject: Re: [RFCv1 2/8] mfd: rk808: use syscore for RK805 PMIC shutdown
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Daniel Schultz <d.schultz@phytec.de>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rockchip@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=3.8 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        SH_BODYURI_REVERSE_SBL shortcircuit=no autolearn=no autolearn_force=no
+        version=3.4.2
+X-Spam-Level: ***
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+What we definately see people have difficulties with is economy. And also g=
+ood plugins and mastering on the sound side.
 
-On Mon, 9 Dec 2019 at 19:04, Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 06/12/2019 6:45 pm, Anand Moon wrote:
-> > Use common syscore_shutdown for RK805 PMIC to do
-> > clean I2C shutdown, drop the unused pm_pwroff_prep_fn
-> > and pm_pwroff_fn function pointers.
->
-> Coincidentally, I've also been looking at RK805 for the sake of trying
-> to get suspend to behave on my RK3328 box, and I've ended up with some
-> slightly different cleanup patches - I'll tidy them up and post them for
-> comparison as soon as I can.
+This should probably be a standard part of the IS (os) aswell.
 
-No issue if their is better clean approach, I will definitely test that ser=
-ies.
->
-> > Cc: Heiko Stuebner <heiko@sntech.de>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> >   drivers/mfd/rk808.c | 33 +++++++++++++++++----------------
-> >   1 file changed, 17 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-> > index e637f5bcc8bb..713d989064ba 100644
-> > --- a/drivers/mfd/rk808.c
-> > +++ b/drivers/mfd/rk808.c
-> > @@ -467,16 +467,6 @@ static void rk808_update_bits(unsigned int reg, un=
-signed int mask,
-> >                       "can't write to register 0x%x: %x!\n", reg, ret);
-> >   }
-> >
-> > -static void rk805_device_shutdown(void)
-> > -{
-> > -     rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF, DEV_OFF);
-> > -}
-> > -
-> > -static void rk805_device_shutdown_prepare(void)
-> > -{
-> > -     rk808_update_bits(RK805_GPIO_IO_POL_REG, SLP_SD_MSK, SHUTDOWN_FUN=
-);
-> > -}
-> > -
-> >   static void rk808_device_shutdown(void)
-> >   {
-> >       rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF_RST, DEV_OFF_RST);
-> > @@ -491,10 +481,23 @@ static void rk8xx_syscore_shutdown(void)
-> >   {
-> >       struct rk808 *rk808 =3D i2c_get_clientdata(rk808_i2c_client);
-> >
-> > -     if (system_state =3D=3D SYSTEM_POWER_OFF &&
-> > -         (rk808->variant =3D=3D RK809_ID || rk808->variant =3D=3D RK81=
-7_ID)) {
-> > -             rk808_update_bits(RK817_SYS_CFG(3), RK817_SLPPIN_FUNC_MSK=
-,
-> > -                             SLPPIN_DN_FUN);
-> > +     if (system_state =3D=3D SYSTEM_POWER_OFF) {
-> > +             dev_info(&rk808_i2c_client->dev, "System Shutdown Event\n=
-");
-> > +
-> > +             switch (rk808->variant) {
-> > +             case RK805_ID:
-> > +                     rk808_update_bits(RK805_GPIO_IO_POL_REG,
-> > +                                     SLP_SD_MSK, SHUTDOWN_FUN);
-> > +                     rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF, DE=
-V_OFF);
->
-> Why this change? Shutdown via the SLEEP pin is working just fine on my
-> box :/
->
-> Robin.
+Personally I think a 4-band mastering RMS based process sounds the best, kn=
+ee here also interesting, with only tops taken by the final limiter. (which=
+ is best with reduced processing in release, with threshold or similar)
 
-As per RK-805 datasheet [0] below.
-For clean poweroff we need to set in DEV_CTRL_REG reg
-Bit 0 DEV_OFF: write =E2=80=9C1=E2=80=9D to turn down the PMU.
+And then earlier we also support 4K quadratic grid RGBW subpixles at 72,734=
+hz which is minimal psychovisual noise.
 
-[0] http://files.pine64.org/doc/rock64/Rockchip_RK805_Datasheet_V1.1%C2%A02=
-0160921.pdf
+Maing the A/V part of this optimal, and a lot of this is part of the POP cu=
+lture that will be on this.
 
--Anand
+Still also taking considerations to researchers who may publish their stuff=
+ in the same way and gain correct exposure through a correctly indexed file=
+structure, which goes for both.
+
+Being the end of .com confusion, and rather a whole filestructure for it, w=
+ithout unnecessary logins or other, people finding their files and correct =
+commerciality enojoined.
+
+Peace.
+Ywe.
+Fair Pay OS Project.
+https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
+
+
+Sent with ProtonMail Secure Email.
+
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Saturday 7. December 2019 kl. 11:11, Ywe C=C3=A6rlyn <ywecrn@protonmail.=
+com> wrote:
+
+> In the development of an optimal Interface System, we see considerations =
+to culture, became relevant, and a universalization of paradigm, finding th=
+e three letter paradigm to be too narrow.
+>
+> Particulary the error margin of a culture, goes to the club, where it get=
+s its outlet in sex.
+>
+> The question becomes how much can one improve it? Or really what can one =
+do with the schizophrenia of psychiatry vs club, that itself states sex on =
+the city is ok.
+>
+> It will never resolve.
+>
+> If one analyses history, gods of the club kind, often were gay, until the=
+y found the holy grail, that for sexual purposes, reduced the mushromm god,=
+ to minimal, so that it was not gay, in the club itself.
+>
+> Making weekdays macho, and the weekend gardenly.Which is what many people=
+ still believe, - The three-letter paradigm of most societies.
+>
+> Which basically a good O.S. must escape. Or I.S. really Interface System,=
+ as we deal really only with interfacing between software and hardware.
+>
+> Because where I grew up this three-letter paradigm was so fixed, that bas=
+ically a drunk O.S. like Microsoft just could happen.
+>
+> I am trying the name Z-IS, for the moment, trying to escape this paradigm=
+, as much as possible, giving the club to those who want, and really have n=
+othing to do with it myself. I just want an optimal economy for myself, and=
+ my society.
+>
+> And so comes the question, what netcurrency should one support? The same =
+considerations goes to this ofcourse.
+>
+> Libra seems to be GNU related. So even Facebook tries to do this in GNU s=
+pace.
+>
+> Any thoughts on this? (sane please)
+>
+>
+> -------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+------------------------------------------------------------
+>
+> Ywe
+> Fair Pay Project.
+> https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
+
+
