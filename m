@@ -2,74 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5163116E4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 14:57:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3078116E59
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 14:58:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfLIN5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 08:57:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60392 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726687AbfLIN5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 08:57:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DC6FAAC3C;
-        Mon,  9 Dec 2019 13:57:49 +0000 (UTC)
-Subject: Re: [PATCH 4/4] xen-blkback: support dynamic unbind/bind
-To:     Paul Durrant <pdurrant@amazon.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-References: <20191205140123.3817-1-pdurrant@amazon.com>
- <20191205140123.3817-5-pdurrant@amazon.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <bbf958af-d435-3a56-1e91-e068125a9ce7@suse.com>
-Date:   Mon, 9 Dec 2019 14:57:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727779AbfLIN6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 08:58:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51348 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727669AbfLIN63 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 08:58:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=p3AHg01GzBfCAwXTHfYhqubAMqRq0EW1LlGivKYK9aQ=; b=du0d4ED4pEft4i4vPCtqfLCOp
+        esqaMKpCD8hPWIQ2zbctS9HG0DPGFiqt521Yb1eHEYFVPkTDXzIa6vmlKc9LsggxVBECPjHTHBPpo
+        tEzQu3x4r2id8j5DwWvcRE5V9u5FpImc6+HXCaiPvh8UEK9O6CBAs78ueFhdRo/jmEQXVI8BIvLeS
+        X9swmJQ3duj43u4g7x0XVF8IpIyskbQkrpMXVbAADZ5nI2K2p2t4ti29ckzcRd6KKIjEvCyIUZRNG
+        v9IkiU/28Q8moHjDunbEXcW95RGyC0P9aZF+mGKUafr7AQYSQGpECkRgz5v0rWRgrs7wvZI2Hio5Y
+        zM6/TnQ1Q==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ieJYP-0001aO-8x; Mon, 09 Dec 2019 13:58:25 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-mips@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: RFC: kill off ioremap_nocache
+Date:   Mon,  9 Dec 2019 14:58:20 +0100
+Message-Id: <20191209135823.28465-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191205140123.3817-5-pdurrant@amazon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05.12.19 15:01, Paul Durrant wrote:
-> By simply re-attaching to shared rings during connect_ring() rather than
-> assuming they are freshly allocated (i.e assuming the counters are zero)
-> it is possible for vbd instances to be unbound and re-bound from and to
-> (respectively) a running guest.
-> 
-> This has been tested by running:
-> 
-> while true; do dd if=/dev/urandom of=test.img bs=1M count=1024; done
-> 
-> in a PV guest whilst running:
-> 
-> while true;
->    do echo vbd-$DOMID-$VBD >unbind;
->    echo unbound;
->    sleep 5;
->    echo vbd-$DOMID-$VBD >bind;
->    echo bound;
->    sleep 3;
->    done
-> 
-> in dom0 from /sys/bus/xen-backend/drivers/vbd to continuously unbind and
-> re-bind its system disk image.
+Hi all,
 
-Could you do the same test with mixed reads/writes and verification of
-the read/written data, please? A write-only test is not _that_
-convincing regarding correctness. It only proves the guest is not
-crashing.
+with the ioremap changes that did land in 5.5-rc1 ioremap_nocache is
+now equal to ioremap for all architectures.  For most architectures
+including the common one this has been the case for about 20 years,
+but we had a few holdouts.
 
-I'm fine with the general approach, though.
+That means ioremap_nocache is entirely superflous now and can be
+killed off.  This series has one big scripted patch to do just that
+after a little prep patch to fix up the not entirely obvious mips
+definition.
 
-
-Juergen
+Let me know what you think and if this is something acceptable for
+just after -rc1.
