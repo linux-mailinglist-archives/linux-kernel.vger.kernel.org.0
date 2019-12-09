@@ -2,91 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 424BA116541
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 04:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09313116563
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 04:26:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfLIDQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 22:16:19 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36382 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbfLIDQS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 22:16:18 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r19so13894849ljg.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2019 19:16:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0eZBzbT0umg6+Hs7q0Pnqxg4tmozetMjiZRECdwYTQ0=;
-        b=MWuYxiKb2CdwSMwdcUQLL2uhffAmgdvG0nK6gTfcO2CRxV0EDyfH78R4RWl7nvxi1m
-         VPXqRvcP3Y1Rqmgt4bq1b5gQp3Tim9naBLL3rs+ghsEI+/WZ7HKpaPQpBj88BYdb/5Ic
-         a5Y6pc+UVsIzS8JCmTj5F9uNcZYYFBKeLkqJI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0eZBzbT0umg6+Hs7q0Pnqxg4tmozetMjiZRECdwYTQ0=;
-        b=N5oV6y4LHqR/nzA47KOfyImf3jhIZRZcerXVeg3T5JlhfYNXEHmXHflXvCgAi77NDw
-         SfBe0VgrCiCd8a9SoYNjKc2aNkfyk4vuHSwW922Z8R85Os5A2/GiGWfLeRPJUe3veZTT
-         KIaNCqiGpD8a9SgMDyLWgFe3bGcahEPS2+PCqr/CICrsA3C7r1/yDbBA8FCDJjAHGqp2
-         tRliOP+MMeAKHQnAwca0ZSUiQ1AfihsXfaxYykcrkMWRqRRFIdzjAdENGXyk4hRm+0um
-         iYTwgrkrewG9gcG9kw59yIG5UDZCqLwhyG9COoriKjS+xD1+Yqqfff008gbFs/Ig63Qp
-         ijfA==
-X-Gm-Message-State: APjAAAUBjU68/vTSmCYrlZyZ4t7cEuXlZgAp+mUzrWUD+2jseOH9RmDG
-        fkJzQmrVNnp3CzrddymQKNDcDpvGwBQ=
-X-Google-Smtp-Source: APXvYqzTuQ9bHmS4+a3jFGGF7AP4AjN5yvyicEkVfBn/VMf1Sq+DBlVNewRNJDR6OdYAzfjkMygIHQ==
-X-Received: by 2002:a05:651c:285:: with SMTP id b5mr15342690ljo.14.1575861375654;
-        Sun, 08 Dec 2019 19:16:15 -0800 (PST)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id a9sm10071936lfk.23.2019.12.08.19.16.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Dec 2019 19:16:14 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id 203so9424445lfa.12
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2019 19:16:14 -0800 (PST)
-X-Received: by 2002:ac2:50cc:: with SMTP id h12mr13797909lfm.29.1575861374341;
- Sun, 08 Dec 2019 19:16:14 -0800 (PST)
+        id S1727022AbfLIDZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 22:25:55 -0500
+Received: from mga05.intel.com ([192.55.52.43]:54662 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726748AbfLIDZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Dec 2019 22:25:55 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Dec 2019 19:25:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,294,1571727600"; 
+   d="scan'208";a="244303960"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.9])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Dec 2019 19:25:52 -0800
+Date:   Sun, 8 Dec 2019 22:17:42 -0500
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Eric Blake <eblake@redhat.com>
+Cc:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "He, Shaopeng" <shaopeng.he@intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>
+Subject: Re: [RFC PATCH 1/9] vfio/pci: introduce mediate ops to intercept
+ vfio-pci ops
+Message-ID: <20191209031742.GJ31791@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20191205032419.29606-1-yan.y.zhao@intel.com>
+ <20191205032536.29653-1-yan.y.zhao@intel.com>
+ <9461f821-73fd-a66f-e142-c1a55e38e7a0@redhat.com>
 MIME-Version: 1.0
-References: <30808b0b-367a-266a-7ef4-de69c08e1319@internode.on.net>
- <09396dca-3643-9a4b-070a-e7db2a07235e@internode.on.net> <CAHk-=wjj8SQx4YzS8yw7ZJJKiVLBY0g=d8rCSyPCM=8Pzmz+Zg@mail.gmail.com>
- <20191209025209.GA4203@ZenIV.linux.org.uk> <CAHk-=whY0GL-FpnjUmc7fjDqz-yRJ=QBO7LT6aEzt-_raAb1bw@mail.gmail.com>
-In-Reply-To: <CAHk-=whY0GL-FpnjUmc7fjDqz-yRJ=QBO7LT6aEzt-_raAb1bw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 8 Dec 2019 19:15:58 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whyQ-Ets2v3bg7eP8GAGpzA7f2pqyiw5tPj8HFoxFcEjw@mail.gmail.com>
-Message-ID: <CAHk-=whyQ-Ets2v3bg7eP8GAGpzA7f2pqyiw5tPj8HFoxFcEjw@mail.gmail.com>
-Subject: Re: refcount_t: underflow; use-after-free with CIFS umount after
- scsi-misc commit ef2cc88e2a205b8a11a19e78db63a70d3728cdf5
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Arthur Marsh <arthur.marsh@internode.on.net>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9461f821-73fd-a66f-e142-c1a55e38e7a0@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 8, 2019 at 7:10 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> You're right that at least the CI bots might want to disable it for
-> bisecting. Or force a particular seed for RANDSTRUCT - I seem to
-> recall that there was some way to make it be at least repeatable for
-> any particular structure.
+Sorry about that. I'll pay attention to them next time and thank you for
+pointing them out :)
 
-Yeah, if you build in the same directory and don't do a "distclean" or
-"git clean -dqfx", the seed remains in
-scripts/gcc-plgins/randomize_layout_seed.h across builds, and the
-result then _should_ be repeatable.
-
-But yes, it's the kind of noise that is likely not worth fighting for
-bisection (or any random bug hunting) at all, and turning off
-RANDSTRUCT is probably the right thing to do.
-
-But I don't think Arthur had RANDSTRUCT enabled, so that should be fine.
-
-            Linus
+On Sat, Dec 07, 2019 at 07:13:30AM +0800, Eric Blake wrote:
+> On 12/4/19 9:25 PM, Yan Zhao wrote:
+> > when vfio-pci is bound to a physical device, almost all the hardware
+> > resources are passthroughed.
+> 
+> The intent is obvious, but it sounds awkward to a native speaker.
+> s/passthroughed/passed through/
+> 
+> > Sometimes, vendor driver of this physcial device may want to mediate some
+> 
+> physical
+> 
+> > hardware resource access for a short period of time, e.g. dirty page
+> > tracking during live migration.
+> > 
+> > Here we introduce mediate ops in vfio-pci for this purpose.
+> > 
+> > Vendor driver can register a mediate ops to vfio-pci.
+> > But rather than directly bind to the passthroughed device, the
+> 
+> passed-through
+> 
+> -- 
+> Eric Blake, Principal Software Engineer
+> Red Hat, Inc.           +1-919-301-3226
+> Virtualization:  qemu.org | libvirt.org
+> 
