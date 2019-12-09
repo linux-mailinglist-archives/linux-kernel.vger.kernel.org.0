@@ -2,137 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78C6311763C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:49:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7D27117647
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:50:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfLITth convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Dec 2019 14:49:37 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51884 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726342AbfLITth (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 14:49:37 -0500
-Received: by mail-wm1-f65.google.com with SMTP id g206so645659wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 11:49:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=FetqLdZTgqYVH7ikYZFDoVL0KC42SrD46xkQJuqyRM0=;
-        b=NaSc5kZ1R/4efC67d19MWDwT+WF2CVLQayBwOBjY8hChMSPtFyGUUWB6PwnfqM1+eJ
-         +a0/G3ihEpl4SVwGthQWrupqD1292ud4dd5ZSaAwj2S8YCFeb8GUQ8vq2wDYY3OhiHTI
-         Zt1oX82Jnh4FBNrawcPgvPLVpNujwm6YYEH0uOPzooEBXN1MF70HFm/Bu+adrOur7+q+
-         5wgMMFDa9+TAld09a+c4OgwuDiDpUkFGqR2AeEfK0DGfPRMT1pCZ3JVNLmYAcc6ftvBd
-         dM4kDC/kbvTy3hYk/yn5EFqoWRsM42JnwAzjMsDe9w8UrGWB8eDkOD9U/knT0WanYVBd
-         ASlQ==
-X-Gm-Message-State: APjAAAWjVfHnnCji2hF8FFQGdqknrwbJxGoaegi5QNVetW6uZcRMZHsc
-        8zi/6pG9Hcu+Gmhrsai7d+3Pxw==
-X-Google-Smtp-Source: APXvYqzwdtZwcs4aWr/n3Y0vKZr/hBTDd8QXrLwOo8iigFvCVNTzOKX0Gg9TpN8KcfynfzDWIDYi9w==
-X-Received: by 2002:a1c:41c4:: with SMTP id o187mr819910wma.24.1575920974952;
-        Mon, 09 Dec 2019 11:49:34 -0800 (PST)
-Received: from [10.152.225.171] ([185.81.138.20])
-        by smtp.gmail.com with ESMTPSA id y6sm590029wrl.17.2019.12.09.11.49.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2019 11:49:34 -0800 (PST)
-Date:   Mon, 09 Dec 2019 20:49:30 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20191209192959.GB10721@redhat.com>
-References: <20191209070646.GA32477@ircssh-2.c.rugged-nimbus-611.internal> <20191209192959.GB10721@redhat.com>
+        id S1726903AbfLITup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 14:50:45 -0500
+Received: from mail-eopbgr40072.outbound.protection.outlook.com ([40.107.4.72]:42819
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726483AbfLITuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 14:50:44 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dOGL+utWNTDRvyeUq6Oy5JLVoxBAj04zk3YlRJMvKNtQPxnN5Yk12UQLKcY9QbCX8DSFVsgOBA3N+w8qSDaHGQcwaPBJuUOqGKdVlOckSHbrq9r6eylN4kemeAtqTfSJW/fNohmfcIxvz1fDUkb23h5WdNyBcCwjStokC0yCFaUU/ftwEXqUHkbi2wHJ7A+DNRUm2r1E49a/WKH115h+vlyhV7lbFxRNNH8arzYiaMdUQ1Ykyqqak10SQ9gOrse3RhMtLEk5rMKdJ2PSn/HpvoiIUiE3l2Rp0yW/3Z/vvYbz/MmITOGqrEWHDLB4xuSCug1xBpRPVsqRkXkPwNqoUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wuL3k3OMRAuDSx5j/pqvS5ffTbqocxDy5N8f1ScvhN0=;
+ b=aSsn8OEGskpZn+3m+9zWXcGH4yxwoOLnNlX1pzIpX/Ab1NFfCjI4aJXlKssOL9gAjjm7+wXvV7FcgR0WsORCk53GninhJG0CNSEszcX4LozmNdWPqDbkwNrlxbaju8+XfzenWGcdoN6Wz1/VXxGVWKSrsGuO77xV5Q57vbyhFnCAQ8yzvV99+N70GmDrzd8lxqllCdWZ8mDTB4CtQBiX4ivGw01pDecqXvFWzz2t+NA+fbYFSYTNtC3xf09mYKcVom0+AqmEczOloHbsNv998MtyZbu5Yvoy0wKsJx5h+5OK1ia7XU++IYyPoHp1YLKDqK7GD7hkAyd/008B/49wJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wuL3k3OMRAuDSx5j/pqvS5ffTbqocxDy5N8f1ScvhN0=;
+ b=A9lrbQYpGwWyPg6EsM16e0T64Zrk21bwwuTZ9W8A/XDzALiMMK4QnH4bnzdpHBAqQ2z7MtVYzVtq9tYCgn2PbInihKKysEpZpdKQzHCCgDTZh6O78pNhofUR8c6Yz4474/aBgEUTqSuEmHE40Vl6WqYv8JDawMdfiFLRxp48Dn8=
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com (20.179.234.30) by
+ VE1PR04MB6445.eurprd04.prod.outlook.com (20.179.232.214) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.17; Mon, 9 Dec 2019 19:50:40 +0000
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::d91b:86b1:7d97:944d]) by VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::d91b:86b1:7d97:944d%7]) with mapi id 15.20.2516.017; Mon, 9 Dec 2019
+ 19:50:40 +0000
+From:   Leo Li <leoyang.li@nxp.com>
+To:     Michael Walle <michael@walle.cc>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: RE: [PATCH v2] arm64: dts: ls1028a: fix reboot node
+Thread-Topic: [PATCH v2] arm64: dts: ls1028a: fix reboot node
+Thread-Index: AQHVrsESw4ah5znw0UmG0v9WXCnxKKeyNhjA
+Date:   Mon, 9 Dec 2019 19:50:40 +0000
+Message-ID: <VE1PR04MB6687035009C691D31844C51D8F580@VE1PR04MB6687.eurprd04.prod.outlook.com>
+References: <20191209184644.14057-1-michael@walle.cc>
+In-Reply-To: <20191209184644.14057-1-michael@walle.cc>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leoyang.li@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ce08cba7-a2af-4def-7b48-08d77ce111f3
+x-ms-traffictypediagnostic: VE1PR04MB6445:
+x-microsoft-antispam-prvs: <VE1PR04MB64458244C962DFC2567EB58B8F580@VE1PR04MB6445.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 02462830BE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(346002)(396003)(376002)(189003)(199004)(13464003)(66476007)(4326008)(478600001)(64756008)(66946007)(66446008)(76116006)(66556008)(33656002)(52536014)(186003)(229853002)(9686003)(55016002)(26005)(53546011)(5660300002)(2906002)(54906003)(7696005)(305945005)(81156014)(8936002)(8676002)(110136005)(71200400001)(6506007)(81166006)(86362001)(316002)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6445;H:VE1PR04MB6687.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: PsB/40aM/00u7wMeZ3DaKsPoByMxhnYRBkfnac0SgpGWjXsCBRt6yGEen/Bje6LXn7V9xfHn1uECXrhcObsY3ufom+AseW1XX5Ji/YvXnq7Wev37CQkqoLLp+4uAPwKJQSkmeRViA6ItDF4uE3VC9o8Jez4htyBU4C1ZS1acEZ2qqcOilP9hXM23ZAqtpvqtA/ZGXKKfPD2kUe7zxTp2E3wLGkuw5U2yshu/pH2cbyd/Wde3q5+oCkd4h/U8Dqs3MlgnTf+MXpaRbktAOtJgV6rxuc3U7wQHsXGOIO11tTMYYYVq70Qwwu6Y4u23/39mfB/+AFuGiMe5DCgY+DRTohoigqC4FcbUL3gENcYCqxy3EbJzzBhpfmkb5tXbwbSQrq63rhWgp01ypVFe+1t0b0HXXAZT9WjST9WxZclXcakSH70L0Squeg8L6i7quETuHpI4QcSaD2jnKT5Mr4FWF1IdzcYxVVZfSwX/wo9MMyPc95s6oQkIUUeEPOPk5AR0
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v2 4/4] samples: Add example of using PTRACE_GETFD in conjunction with user trap
-To:     Oleg Nesterov <oleg@redhat.com>, Sargun Dhillon <sargun@sargun.me>
-CC:     linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
-        cyphar@cyphar.com, luto@amacapital.net, viro@zeniv.linux.org.uk
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-Message-ID: <BE3E056F-0147-4A00-8FF7-6CC9DE02A30C@ubuntu.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce08cba7-a2af-4def-7b48-08d77ce111f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Dec 2019 19:50:40.5830
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uk5sKrQqzteuRlDg0QAtG48JrNrfAcqQJqEVw6f8xCF+HcSFq1z1/LgXvObiwrOkEupuGivffiCF41JjCTX3eA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6445
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On December 9, 2019 8:30:00 PM GMT+01:00, Oleg Nesterov <oleg@redhat.com> wrote:
->On 12/09, Sargun Dhillon wrote:
->>
->> +#define CHILD_PORT_TRY_BIND	80
->> +#define CHILD_PORT_ACTUAL_BIND	4998
->
->...
->
->> +static int handle_req(int listener)
->> +{
->> +	struct sockaddr_in addr = {
->> +		.sin_family	= AF_INET,
->> +		.sin_port	= htons(4998),
->
->then I think
->		.sin_port = htons(CHILD_PORT_ACTUAL_BIND);
->
->would be more clear...
->
->> +		.sin_addr	= {
->> +			.s_addr	= htonl(INADDR_LOOPBACK)
->> +		}
->> +	};
->> +	struct ptrace_getfd_args getfd_args = {
->> +		.options = PTRACE_GETFD_O_CLOEXEC
->> +	};
->> +	struct seccomp_notif_sizes sizes;
->> +	struct seccomp_notif_resp *resp;
->> +	struct seccomp_notif *req;
->> +	int fd, ret = 1;
->> +
->> +	if (seccomp(SECCOMP_GET_NOTIF_SIZES, 0, &sizes) < 0) {
->> +		perror("seccomp(GET_NOTIF_SIZES)");
->> +		goto out;
->> +	}
->> +	req = malloc(sizes.seccomp_notif);
->> +	if (!req)
->> +		goto out;
->> +	memset(req, 0, sizeof(*req));
->> +
->> +	resp = malloc(sizes.seccomp_notif_resp);
->> +	if (!resp)
->> +		goto out_free_req;
->> +	memset(resp, 0, sizeof(*resp));
->> +
->> +	if (ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, req)) {
->> +		perror("ioctl recv");
->> +		goto out;
->> +	}
->> +	printf("Child tried to call bind with fd: %lld\n",
->req->data.args[0]);
->> +	getfd_args.fd = req->data.args[0];
->> +	fd = ptrace_getfd(req->pid, &getfd_args);
->
->and iiuc otherwise you do not need to ptrace the child. So you could
->remove
->ptrace(PTRACE_SEIZE) in main() and just do
->
->	ptrace(PTRACE_SEIZE, req->pid);
->	fd = ptrace_getfd(req->pid, &getfd_args);
->	ptrace(PTRACE_DETACH, req->pid);
->
->here. However, PTRACE_DETACH won't work, it needs the stopped tracee.
->We can
->add PTRACE_DETACH_ASYNC, but this makes me think that PTRACE_GETFD has
->nothing
->to do with ptrace.
->
->May be a new syscall which does ptrace_may_access() + get_task_file()
->will make
->more sense?
->
->Oleg.
 
-Once more since this annoying app uses html by default...
 
-But we can already do this right now and this is just an improvement.
-That's a bit rich for a new syscall imho...
+> -----Original Message-----
+> From: Michael Walle <michael@walle.cc>
+> Sent: Monday, December 9, 2019 12:47 PM
+> To: linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org; lin=
+ux-
+> kernel@vger.kernel.org
+> Cc: Shawn Guo <shawnguo@kernel.org>; Leo Li <leoyang.li@nxp.com>; Rob
+> Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
+> Michael Walle <michael@walle.cc>
+> Subject: [PATCH v2] arm64: dts: ls1028a: fix reboot node
+>=20
+> The reboot register isn't located inside the DCFG controller, but in its =
+own RST
+> controller. Fix it.
+>=20
+> Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
+> Signed-off-by: Michael Walle <michael@walle.cc>
 
-Christian
+Acked-by: Li Yang <leoyang.li@nxp.com>
+
+> ---
+>=20
+> changes since v1:
+>  - add fixes tag
+>  - remove "ls1028a-rst" compatible string, because there is no actual
+>    driver for it. It just use the syscon driver.
+>=20
+>  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> index 8b28fda2ca20..7825550b7cef 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> @@ -88,7 +88,7 @@
+>=20
+>  	reboot {
+>  		compatible =3D"syscon-reboot";
+> -		regmap =3D <&dcfg>;
+> +		regmap =3D <&rst>;
+>  		offset =3D <0xb0>;
+>  		mask =3D <0x02>;
+>  	};
+> @@ -178,6 +178,12 @@
+>  			little-endian;
+>  		};
+>=20
+> +		rst: syscon@1e60000 {
+> +			compatible =3D "syscon";
+> +			reg =3D <0x0 0x1e60000 0x0 0x10000>;
+> +			little-endian;
+> +		};
+> +
+>  		scfg: syscon@1fc0000 {
+>  			compatible =3D "fsl,ls1028a-scfg", "syscon";
+>  			reg =3D <0x0 0x1fc0000 0x0 0x10000>;
+> --
+> 2.20.1
+
