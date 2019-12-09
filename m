@@ -2,128 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AE50117130
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 17:11:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74AFB11713B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 17:14:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfLIQLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 11:11:07 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:44015 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726342AbfLIQLH (ORCPT
+        id S1726771AbfLIQOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 11:14:38 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:36151 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfLIQOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 11:11:07 -0500
-Received: by mail-il1-f195.google.com with SMTP id u16so13179012ilg.10;
-        Mon, 09 Dec 2019 08:11:07 -0800 (PST)
+        Mon, 9 Dec 2019 11:14:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=V1rQj2NYpyrjZuSj9vZCVjr8OoOEApgs5CD1MbhwecM=;
-        b=URz2es964aBg/tgzcHlwyqPIOI4zN8TSjwiGZ8xcptQ5xFQKA1+8VK9Q+bSAiyZPkt
-         74U96aFbCX1Vn0Im6NR7EzpsCgPqfqdODHuB33UHFQBfSpKJjtC9Tw9LcQVBqUIF3jGI
-         gCk3Ts8CIo4T4VRYAdJIKKuyMZJ4adIq5PWx7YmpIBaCrurtNXC76eBlhMFs7I8Lv5+0
-         YoeSBdX8JSuTVZQ6PIS0G3GjCmOFhCDRFvj93byVGJzXYHt4YJ52yyYOiF09c0tNpxhH
-         Be3AA8H6Rnr+6dj7Ykd97lapmM4QO+fshpQWO0J07qmm+AOl4rgm7Cb+iWiZdx9tzWiF
-         6Aww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=V1rQj2NYpyrjZuSj9vZCVjr8OoOEApgs5CD1MbhwecM=;
-        b=W+ZPj6GxT/yyxj4qPK/rZO0wDOMr4OUvcfYPDNTZ+3jB7fmhLO9c25grq2NZ2g5lAo
-         orJQ7HIvugR3RWoTqBLFfPiRUHUWb2gv9JkYHDnIWN9xf3Twxw5BjYKaDd1AZ/PLiKSA
-         kdB3Gb/ZSHssZ3dtvhSj5mOez7LkkC148a/DZvs8kljKh/u9utu+AKH6Y5FYjcA2zEwH
-         YtrS6f63AbJQv6HAFbjMIk4/uQkYqW73DDYZO8hGeklQWf0/7iAtKacXM6hDdykaM8So
-         82Y2mzel2P9GYWcw90hcXOUnCk83/RtN1qdT0hBOiVi+6QXGOnZOyCwMUUOVpWNG6kiS
-         HBiw==
-X-Gm-Message-State: APjAAAXdWlM8NYEm8sGWr8OwsHjSOy49OT64AZUd6YrDNS3zXAwrFtDw
-        Nb3c9dL1T/Beh/FFjs01AiPGDELGHjMMfbGPdis=
-X-Google-Smtp-Source: APXvYqz0nWHT53HKk7dsGX4luv1vsXxIjyyy+6bEaibX3GI/XQkhJ3tLcZNkrwGMUE6JA9WhNqD08VhRtGUdBkigH/8=
-X-Received: by 2002:a92:3b19:: with SMTP id i25mr28698139ila.85.1575907866282;
- Mon, 09 Dec 2019 08:11:06 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1575908075; x=1607444075;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=ZBGQbbnv8KtY9nxeNmMM4jHcv10ZJxJYQAC1VG2Uq7k=;
+  b=GZkmwZz7DiDJLZAeoX4hqYq+m84XY/b/594rqGK+1dS0q5IJ4qTQpEeb
+   8uvfjMqSVRZKDEd8QZbzAWPDZGgigRWpo2bJuaXS+lf25dZtzGjkyYIIX
+   YeMf263w5N4CCV4GDGoWfvw4eLMJF6f2y7Rb5qVya/rAUkBJ930F5BdyO
+   Y=;
+IronPort-SDR: zlRrF6DJxd0B6RciHqxJwmqRc9oDT5wCRVixRxzRXvP39MPSUBL0Hb1kxKP7Bg+HOoodmJzWc0
+ SNXLKoKffzoA==
+X-IronPort-AV: E=Sophos;i="5.69,296,1571702400"; 
+   d="scan'208";a="4054777"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 09 Dec 2019 16:14:13 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS id 82E38A1FA1;
+        Mon,  9 Dec 2019 16:14:08 +0000 (UTC)
+Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 16:14:07 +0000
+Received: from ua9e4f3715fbc5f.ant.amazon.com (10.43.162.249) by
+ EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 16:13:57 +0000
+From:   Hanna Hawa <hhhawa@amazon.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <tsahee@annapurnalabs.com>, <antoine.tenart@bootlin.com>,
+        <hhhawa@amazon.com>, <mchehab+samsung@kernel.org>,
+        <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+        <Jonathan.Cameron@huawei.com>, <tglx@linutronix.de>,
+        <khilman@baylibre.com>, <chanho.min@lge.com>, <heiko@sntech.de>,
+        <nm@ti.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <dwmw@amazon.co.uk>,
+        <benh@amazon.com>, <ronenk@amazon.com>, <talel@amazon.com>,
+        <jonnyc@amazon.com>, <hanochu@amazon.com>, <barakw@amazon.com>
+Subject: [PATCH v2 0/6] Amazon's Annapurna Labs Alpine v3 device-tree
+Date:   Mon, 9 Dec 2019 16:13:35 +0000
+Message-ID: <20191209161341.29607-1-hhhawa@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <PSXP216MB043824762539AFC40143D75880490@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-In-Reply-To: <PSXP216MB043824762539AFC40143D75880490@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-Reply-To: bjorn@helgaas.com
-From:   Bjorn Helgaas <bjorn.helgaas@gmail.com>
-Date:   Mon, 9 Dec 2019 10:10:55 -0600
-Message-ID: <CABhMZUXOQXruHnZARVqe8cdkuhGXenMZ__7GhaJtDDsdBrcoyQ@mail.gmail.com>
-Subject: Re: [[RFC PATCH v1] 0/1] Add pci=nobbn to ignore ACPI _BBN method to
- override host bridge bus window
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-pci@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.249]
+X-ClientProxiedBy: EX13D14UWB003.ant.amazon.com (10.43.161.162) To
+ EX13D19EUB003.ant.amazon.com (10.43.166.69)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 9:02 PM Nicholas Johnson
-<nicholas.johnson-opensource@outlook.com.au> wrote:
->
-> Hi all,
->
-> I want to be able to override the bus resource from ACPI, but nocrs does
-> not do it. I am putting this out here to get a feel for the sentiment
-> for doing something like this.
+This series organize the Amazon's Annapurna Labs Alpine device tree
+bindings, device tree folder and adds new device tree for Alpine v3.
 
-This should be cc'd to linus-pci and linux-acpi (added).  I only
-noticed this message by accident.  And I don't see the patch at all.
+Changes since v1:
+-----------------
+- Rename al,alpine DT binding to amazon,alpine
+- Rename al folder to be amazon
+- Update maintainers of amazon,alpine DT
+- Add missing alpine-v2 DT binding
+- Fix yaml schemas for alpine-v3-evp.dts:
+	- #size-cells:0:0: 0 is not one of [1, 2]
+	- arch-timer: interrupts: [[1, 13, 8, 1, 14, 8, 1, 11, 8, 1, 10,
+	8]] is too short
+- Change compatible string of alpine-v3-evp to amazon,al
 
-> What is my motivation for doing this?
->
-> I have a Gigabyte Z170X Designare motherboard which only gives resource
-> [bus 00-7e]. I want the full [bus 00-ff] because I am trying to add as
-> many Thunderbolt 3 ports with add-in cards as possible. Thunderbolt
-> consumes bus numbers quickly. An Intel Ice Lake implementation (ideal)
-> consumes 42 busses per port, but prior solutions consume 50 busses per
-> port and have additional busses required for the NHI and USB
-> controllers, as well as the bridges from the root port.
->
-> Why not change nocrs to do this? Why the new kernel parameter?
->
-> I imagine that on systems with multiple PCI root complexes, things will
-> get hairy if we do this, if they are not placed on separate segments /
-> domains by the firmware. I do not own such a beast, but from what I
-> understand, the firmware normally places them on the same segment /
-> domain with non-overlapping bus numbers. But we may still want to use
-> nocrs for other reasons. I need to use nocrs to allow Linux to allocate
-> vast amounts of MMIO and MMIO_PREF under the Thunderbolt root ports
-> without the BIOS support for Thunderbolt. Hence, they should be kept
-> separate.
->
-> Why do this in general?
->
-> The bus resource is still a resource which is specified from ACPI, just
-> like those overridden by nocrs. Even if we do not use pci=nocrs to
-> override it, it should be possible to override it, just as it is
-> possible to override _CRS.
+Hanna Hawa (5):
+  dt-bindings: arm: amazon: rename al,alpine DT binding to amazon,al
+  arm64: dts: amazon: rename al folder to be amazon
+  dt-bindings: arm: amazon: update maintainers of amazon,al DT bindings
+  dt-bindings: arm: amazon: add missing alpine-v2 DT binding
+  dt-bindings: arm: amazon: add Amazon Annapurna Labs Alpine V3
 
-pci=nocrs is for working around defects in firmware or Linux.  The
-firmware knows more about the platform than Linux, and in general we
-have to trust it.  We probably should taint the kernel when we use it.
+Ronen Krupnik (1):
+  arm64: dts: amazon: add Amazon's Annapurna Labs Alpine v3 support
 
-Any parameter like this should work the same on all ACPI systems,
-including ia64 and arm64, and should probably also taint the kernel.
+ .../devicetree/bindings/arm/al,alpine.yaml    |  21 -
+ .../devicetree/bindings/arm/amazon,al.yaml    |  33 ++
+ MAINTAINERS                                   |   2 +-
+ arch/arm64/boot/dts/Makefile                  |   2 +-
+ arch/arm64/boot/dts/{al => amazon}/Makefile   |   1 +
+ .../boot/dts/{al => amazon}/alpine-v2-evp.dts |   0
+ .../boot/dts/{al => amazon}/alpine-v2.dtsi    |   0
+ arch/arm64/boot/dts/amazon/alpine-v3-evp.dts  |  23 ++
+ arch/arm64/boot/dts/amazon/alpine-v3.dtsi     | 371 ++++++++++++++++++
+ 9 files changed, 430 insertions(+), 23 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/al,alpine.yaml
+ create mode 100644 Documentation/devicetree/bindings/arm/amazon,al.yaml
+ rename arch/arm64/boot/dts/{al => amazon}/Makefile (64%)
+ rename arch/arm64/boot/dts/{al => amazon}/alpine-v2-evp.dts (100%)
+ rename arch/arm64/boot/dts/{al => amazon}/alpine-v2.dtsi (100%)
+ create mode 100644 arch/arm64/boot/dts/amazon/alpine-v3-evp.dts
+ create mode 100644 arch/arm64/boot/dts/amazon/alpine-v3.dtsi
 
-I can't see the patch itself, but I'm a little confused because we
-normally get the bus number range from _CRS in acpi_pci_root_add() and
-your patch doesn't appear to touch that.
+-- 
+2.17.1
 
-> Nicholas Johnson (1):
->   PCI: Add pci=nobbn to ignore ACPI _BBN method to override host bridge
->     bus window
->
->  Documentation/admin-guide/kernel-parameters.txt |  2 ++
->  arch/x86/include/asm/pci_x86.h                  |  1 +
->  arch/x86/pci/acpi.c                             | 11 +++++++++++
->  arch/x86/pci/common.c                           |  3 +++
->  4 files changed, 17 insertions(+)
->
-> --
-> 2.24.0
->
