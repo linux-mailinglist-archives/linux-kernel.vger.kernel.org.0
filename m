@@ -2,118 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 116661174FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:57:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84F0D117502
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:59:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfLIS50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:57:26 -0500
-Received: from mail-dm6nam11on2117.outbound.protection.outlook.com ([40.107.223.117]:32321
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726354AbfLIS5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:57:25 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y2w6ZXTE8zQiKMx1q6aTQ99YWUVNHW0k4H9nUDdlY+52AOmcGNLU9mDIOilHWXlG3ta5aUTS2bXx2q0FUGzh3tXmSgIiPLUqyL31MOPaa2i80F9kgEPaF/xJ1P8K2RG3qfL2mz3KvvsHl5BsLtrSk6Hsco5bKD/4VgC0WUCNcnGoy9/ftA3z/E3MlUJAgYZYftT9gmeAwfF5vbMQsTPFFJ/4gFNJfoKIdQe/k6CbKDMSnRJFurzgKoHUDwPWXAcXRX88Ss/w7SVf7pV0WTd+RZGr7w9jgow/dqDGLehEjCxH7cpnKcSGgjCK5nBbm0UAeokbeX2rAHW6kU0DyzVAUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HjP6Sw6SMOiyxFiTos0s8WzN7ZhAQOqI0eNAkHnxay4=;
- b=EHaGJmEuLJUeiEafQKN+mpR4JEJZoK+t+Elz5oOAxuCpgZpIrP+TvjO9QiifqRUDAZsx0ibEswmoJvOlmsz+AYIdldBpIS5o0jDUdmBoghpX3OqPaQ3p23Y4xSV8jLr5Cg8Dyk3ihcgexThC42PB3BpdVD6vymukHMIfB5cEAes6u+TExt8TvJWCXXcoPBSfuTPZ1j5GqhPQOvg7ExXWy+7crg0Of3Aw6VSV9VHsOwSt/gTAimuz6K1ohQUcKKsYXJvuBz9AEGBjHLKSkfsVFXce8mW+5F5995o5VGigNbDsJk/4bUNVUUJe/u0LS4XoffcleqNKdKfP4THdx1er6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=lexmark.com; dmarc=pass action=none header.from=lexmark.com;
- dkim=pass header.d=lexmark.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Lexmark.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HjP6Sw6SMOiyxFiTos0s8WzN7ZhAQOqI0eNAkHnxay4=;
- b=YH9VoDK2ntESyCABwGlIMONZWBKGC0Ma4CT7Ru6KdJS2RSu9dwTDIBratPj2W0P9JUAYqJdFdv4o3YttOdNz7KvoHzk1pSePG9s+dcKRwuoNkO9jsS1oHoJM0g9KI77UfZh+tZ4mU3LDiKhOA2xaf4fuPFrzIch8/oXBR8fjMOY=
-Received: from BN8PR10MB3379.namprd10.prod.outlook.com (20.179.140.29) by
- BN8PR10MB3603.namprd10.prod.outlook.com (20.179.96.92) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.14; Mon, 9 Dec 2019 18:57:23 +0000
-Received: from BN8PR10MB3379.namprd10.prod.outlook.com
- ([fe80::9d23:4a97:d48a:7f84]) by BN8PR10MB3379.namprd10.prod.outlook.com
- ([fe80::9d23:4a97:d48a:7f84%7]) with mapi id 15.20.2516.018; Mon, 9 Dec 2019
- 18:57:23 +0000
-From:   Zak Hays <zak.hays@lexmark.com>
-CC:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "amit.kucheria@verdurent.com" <amit.kucheria@verdurent.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 2/2] thermal: armada: clear reset in armadaxp_init
-Thread-Topic: [PATCH v3 2/2] thermal: armada: clear reset in armadaxp_init
-Thread-Index: AQHVrsGMMfmUV7zSrUWgfyKlL9CT4aeyJweT
-Date:   Mon, 9 Dec 2019 18:57:23 +0000
-Message-ID: <BN8PR10MB33797EECAC557B5018A0A6628C580@BN8PR10MB3379.namprd10.prod.outlook.com>
-References: <1575917171-11085-1-git-send-email-zhays@lexmark.com>,<1575917171-11085-2-git-send-email-zhays@lexmark.com>
-In-Reply-To: <1575917171-11085-2-git-send-email-zhays@lexmark.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=zak.hays@lexmark.com; 
-x-originating-ip: [192.146.101.90]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: cc3f8f70-5ae2-4f46-4ed2-08d77cd9a03f
-x-ms-traffictypediagnostic: BN8PR10MB3603:
-x-microsoft-antispam-prvs: <BN8PR10MB3603BF2BC87BDD0FB23DCF3E8C580@BN8PR10MB3603.namprd10.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:428;
-x-forefront-prvs: 02462830BE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(376002)(396003)(39860400002)(346002)(366004)(189003)(199004)(7696005)(478600001)(54906003)(64756008)(66556008)(66476007)(316002)(9686003)(8676002)(2906002)(4326008)(33656002)(109986005)(44832011)(305945005)(81166006)(81156014)(71200400001)(71190400001)(55016002)(76116006)(86362001)(6506007)(52536014)(66946007)(5660300002)(26005)(4744005)(8936002)(66446008)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR10MB3603;H:BN8PR10MB3379.namprd10.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: lexmark.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: fjlgU4pD+ww3o5DMqvq6mL6oPhZWsJzbZBUgAh90XTSBv3l+OJ+rZcvtQgL0ctWf/5Maxt+bcaGt/xxq9p1X+xzsyC7kGR+hnRZEflhId5QNlghqlUeHpPCje1RBRRt671INqOkrmc0X79G5U09UM9U9RCfUMZfKhKFV3VXE0XveUTJw85BkCt9EWL7VZGCuf2BUFgRwnn189UWtjF+e4M0VXVBLhTpl7VL9ntgwXuukQWQAbljllMD5QydJFFsXw0OL26yxH+GZogCTCLyIDEV6q/MgFJuK+1hw7To+7v4jhWKJXoxeVDY1KbsZW10mx/wfkIv8PPVQDc49KJtHFaV/r9KhL8TEE3Cv5+Sbzqmpnt8osfOFuX1+b7DRSp0d/CR6XBMsI+ZjI9ChA3VbFnVOIs/EuQkCVvm5HsJcJckr6Wq+53mHhGtyxvHCuc9M
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Lexmark.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc3f8f70-5ae2-4f46-4ed2-08d77cd9a03f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Dec 2019 18:57:23.3685
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 12709065-6e6c-41c9-9e4d-fb0a436969ce
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: eXwS9LBF80UXkW0v0MJK6Heu6oWOlPHmuRQn0M3B7y7A6GTwqQOLe0tnMuVmD5r464SBTqY6B81pqYezEz3T2Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR10MB3603
-To:     unlisted-recipients:; (no To-header on input)
+        id S1726647AbfLIS7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:59:09 -0500
+Received: from foss.arm.com ([217.140.110.172]:42294 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726354AbfLIS7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 13:59:09 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B4B311D4;
+        Mon,  9 Dec 2019 10:59:08 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B7B63F6CF;
+        Mon,  9 Dec 2019 10:59:07 -0800 (PST)
+Date:   Mon, 09 Dec 2019 18:59:06 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: hdmi-codec: re-introduce mutex locking again" to the asoc tree
+In-Reply-To: <20191206103542.485224-1-jbrunet@baylibre.com>
+Message-Id: <applied-20191206103542.485224-1-jbrunet@baylibre.com>
+X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reset bit needs to be cleared in the init sequence otherwise it=0A=
-holds the block in reset.=0A=
-=0A=
-Signed-off-by: Zachary Hays <zhays@lexmark.com>=0A=
----=0A=
-v2: update commit title and add "Signed-off-by"=0A=
-v3: resend for clarification=0A=
----=0A=
- drivers/thermal/armada_thermal.c | 3 +++=0A=
- 1 file changed, 3 insertions(+)=0A=
-=0A=
-diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_ther=
-mal.c=0A=
-index 88363812033c..8c4d1244ee7a 100644=0A=
---- a/drivers/thermal/armada_thermal.c=0A=
-+++ b/drivers/thermal/armada_thermal.c=0A=
-@@ -155,6 +155,9 @@ static void armadaxp_init(struct platform_device *pdev,=
-=0A=
-=0A=
-        regmap_write(priv->syscon, data->syscon_control1_off, reg);=0A=
-=0A=
-+       reg &=3D ~PMU_TDC0_SW_RST_MASK;=0A=
-+       regmap_write(priv->syscon, data->syscon_control1_off, reg);=0A=
-+=0A=
-        /* Enable the sensor */=0A=
-        regmap_read(priv->syscon, data->syscon_status_off, &reg);=0A=
-        reg &=3D ~PMU_TM_DISABLE_MASK;=0A=
---=0A=
-2.7.4=0A=
-=0A=
+The patch
+
+   ASoC: hdmi-codec: re-introduce mutex locking again
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 1442842952ccfe4178602c7a8459ac2ecb9d9e1a Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Fri, 6 Dec 2019 11:35:42 +0100
+Subject: [PATCH] ASoC: hdmi-codec: re-introduce mutex locking again
+
+The dai codec needs to ensure that on one dai is used at any time.
+This is currently protected by bit atomic operation. With this change,
+it done with a mutex instead.
+
+This change is not about functionality or efficiency. It is done with
+the hope that it help maintainability in the future.
+
+Suggested-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://lore.kernel.org/r/20191206103542.485224-1-jbrunet@baylibre.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/hdmi-codec.c | 32 +++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
+
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index f8b5b960e597..543363102d03 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -274,7 +274,8 @@ struct hdmi_codec_priv {
+ 	uint8_t eld[MAX_ELD_BYTES];
+ 	struct snd_pcm_chmap *chmap_info;
+ 	unsigned int chmap_idx;
+-	unsigned long busy;
++	struct mutex lock;
++	bool busy;
+ 	struct snd_soc_jack *jack;
+ 	unsigned int jack_status;
+ };
+@@ -390,9 +391,10 @@ static int hdmi_codec_startup(struct snd_pcm_substream *substream,
+ 	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
+ 	int ret = 0;
+ 
+-	ret = test_and_set_bit(0, &hcp->busy);
+-	if (ret) {
++	mutex_lock(&hcp->lock);
++	if (hcp->busy) {
+ 		dev_err(dai->dev, "Only one simultaneous stream supported!\n");
++		mutex_unlock(&hcp->lock);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -405,21 +407,21 @@ static int hdmi_codec_startup(struct snd_pcm_substream *substream,
+ 	if (hcp->hcd.ops->get_eld) {
+ 		ret = hcp->hcd.ops->get_eld(dai->dev->parent, hcp->hcd.data,
+ 					    hcp->eld, sizeof(hcp->eld));
++		if (ret)
++			goto err;
++
++		ret = snd_pcm_hw_constraint_eld(substream->runtime, hcp->eld);
++		if (ret)
++			goto err;
+ 
+-		if (!ret) {
+-			ret = snd_pcm_hw_constraint_eld(substream->runtime,
+-							hcp->eld);
+-			if (ret)
+-				goto err;
+-		}
+ 		/* Select chmap supported */
+ 		hdmi_codec_eld_chmap(hcp);
+ 	}
+-	return 0;
++
++	hcp->busy = true;
+ 
+ err:
+-	/* Release the exclusive lock on error */
+-	clear_bit(0, &hcp->busy);
++	mutex_unlock(&hcp->lock);
+ 	return ret;
+ }
+ 
+@@ -431,7 +433,9 @@ static void hdmi_codec_shutdown(struct snd_pcm_substream *substream,
+ 	hcp->chmap_idx = HDMI_CODEC_CHMAP_IDX_UNKNOWN;
+ 	hcp->hcd.ops->audio_shutdown(dai->dev->parent, hcp->hcd.data);
+ 
+-	clear_bit(0, &hcp->busy);
++	mutex_lock(&hcp->lock);
++	hcp->busy = false;
++	mutex_unlock(&hcp->lock);
+ }
+ 
+ static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
+@@ -811,6 +815,8 @@ static int hdmi_codec_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	hcp->hcd = *hcd;
++	mutex_init(&hcp->lock);
++
+ 	daidrv = devm_kcalloc(dev, dai_count, sizeof(*daidrv), GFP_KERNEL);
+ 	if (!daidrv)
+ 		return -ENOMEM;
+-- 
+2.20.1
+
