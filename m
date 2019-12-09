@@ -2,88 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03FF4116BA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:02:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F4A116BAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:03:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfLILCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 06:02:31 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38400 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726377AbfLILCb (ORCPT
+        id S1727534AbfLILDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 06:03:07 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40670 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfLILDG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 06:02:31 -0500
-Received: by mail-ot1-f67.google.com with SMTP id h20so11800986otn.5;
-        Mon, 09 Dec 2019 03:02:31 -0800 (PST)
+        Mon, 9 Dec 2019 06:03:06 -0500
+Received: by mail-qt1-f196.google.com with SMTP id t17so8492562qtr.7
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 03:03:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=guROBr6juOEQDfgau8bZWFn2Tnd13c7eR1doQlJs0Fknwfq5m2NcH7iCDe9FYEHNLB
+         tsWymOQvUhQNXA5nxZV6CT2ISb3B/lP1o4eGCoOSmcXzNyr0lLlvzm1GTJ8OTo2kXw16
+         40WOCWh8MmPHelTn5/7wg7oguUqTKu7upyz61JzJGWXb9p0wQeYlUxDxjPJSazfW3CHf
+         vfOmdrCixzCSNuQPMI5ABKOOF9PC6wDJY6lMieArPDs1ih+LZc0MZ1bdDr2Y8vt+93BR
+         HFF1HVnF3zLJuqTMAfvYMd2U+vACjl00Eurf/EuW9EEjZwr08lM/2aWeHc2DCsko/9If
+         NP9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fJNDi0M45jZlryP2aMU9SVRVU8qA2CoeN4czv5XE8B0=;
-        b=dCUqEjh9x4+cZLqWy2jS6zA8TI9k5OmbMq6a4Q+tI8D3eeDVo6gZZbdh9rIcixZctv
-         KhumO9mG8mBQTZKf2Z2yFBrAc9js6Bzq6WsGW0WFHOOl5XuyukVYnmy/yOgCowJNn5o2
-         tDQDJ+S1hkyQP2t+HKw5jka8aF2DGkKAGkpWrUNgYA0eY5ubkdEKW5tqE9Itnletp+k+
-         KEsbvPMZl8bo7gHPeBXUGt+6RHp5d4O6OmsNz540mTBn6cLsoP6FD4nRzkwATXhhjbhO
-         PYxHSih883TXVzoPpG2Tdz0wl2enOoJ39aEvY+oee7JJKA3ClGV7RhN0nfh2DP90KadQ
-         k8kQ==
-X-Gm-Message-State: APjAAAUOqbzKJEmyiojW37wMyRnXAf0w6ziAAiC3xQH053GTTajhBQFd
-        h94Oi2tmjrWG4+LvdUe+p/w6rnIbyzJnGxCiceY=
-X-Google-Smtp-Source: APXvYqyASDMcvMVSw4ovcmQTB9nrbrRo9vpc8QeLZxBQuzWqrh2Fn/ZsF/x2Wn3kfeBGED/KFwngR4cbLXN67MVIfhE=
-X-Received: by 2002:a9d:dc1:: with SMTP id 59mr13146650ots.250.1575889350841;
- Mon, 09 Dec 2019 03:02:30 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=bj/XE2M/CdyJIEri0U+P5dLFiMBZJOEaXDOufITNer4Uti8xORJGIcYeZLjuwzp0OT
+         jQ5os1blfX8olPEEuNOc+4k0SwpEN3siKD0bPjKOPGRPjJF6KTuQAmmp5WgfEY+G27NV
+         e7rq9leGRZLg/Ve82v2jzz02rgOzAgEF1djeimyYoftkT66fbA0awkfm9iwRhAkjm5ii
+         dZ+uOJVdfsz4FmF9Wz4SV468t7BCkpxE83SoOhxjPSICyAIAGIOtNJvRdQQVXrORmnMm
+         nw/sNBeFrgfnRAj3uyw2Gd2IGA1QIkG/FzoOhSflAsKOlMDysyQvWPhsz3o+PX3/Qqeb
+         rhyg==
+X-Gm-Message-State: APjAAAX9psEp3ti5ZHJhrTLUfAxAbs24li3GXMBJ+c7mW95GtYzkFGtx
+        slRQHrAkhwyoYiH742caHJGyr9IxyryhOfLwpFE=
+X-Google-Smtp-Source: APXvYqz10QRdWROV9mFUHAHZkkgC46/zQqVwf5QoQiTuVKcoeqGiRQlwcj2QoHS7Yj9hC6Jh5BVjnze7SDnpJ7SisAo=
+X-Received: by 2002:aed:27de:: with SMTP id m30mr24639545qtg.151.1575889386148;
+ Mon, 09 Dec 2019 03:03:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20191209105613.2491-1-geert@linux-m68k.org>
-In-Reply-To: <20191209105613.2491-1-geert@linux-m68k.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 Dec 2019 12:02:19 +0100
-Message-ID: <CAMuHMdV+4Q2atJUPsYuc+UFxyoh1fscQL7aLUp4CWrb7=U706g@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v5.5-rc1
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+Received: by 2002:a0c:b241:0:0:0:0:0 with HTTP; Mon, 9 Dec 2019 03:03:05 -0800 (PST)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <kagnalex@gmail.com>
+Date:   Mon, 9 Dec 2019 12:03:05 +0100
+Message-ID: <CACemp=4YF13U5_=6wTQrsuU_x+QU_WaX3dnaYeBe7XcU6-0i=A@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 11:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Below is the list of build error/warning regressions/improvements in
-> v5.5-rc1[1] compared to v5.4[2].
->
-> Summarized:
->   - build errors: +2/-8
->   - build warnings: +84/-87
->
-> Happy fixing! ;-)
->
-> Thanks to the linux-next team for providing the build service.
->
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/e42617b825f8073569da76dc4510bfa019b1c35a/ (all 232 configs)
-> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/219d54332a09e8d8741c1e1982f5eae56099de85/ (all 232 configs)
->
->
-> *** ERRORS ***
->
-> 2 error regressions:
->   + error: "clk_set_min_rate" [drivers/devfreq/tegra30-devfreq.ko] undefined!:  => N/A
->   + error: tegra30-devfreq.c: undefined reference to `clk_set_min_rate':  => .text+0xcc8)
+Hallo
 
-sh-all{mod,yes}config
+Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($8,5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
 
-Legacy non-CCF platform do not provide clk_set_min_rate(), so this needs
-a dependency on CCF.
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: eddywilliam0002gmail.com
 
-BTW, it seems this was already known back in June...
-https://lore.kernel.org/linux-pm/5301c593-97e1-db4e-067b-0522537b55d9@gmail.com/
+Vielen Dank im Voraus,
+Mr. Eddy William,
 
-Gr{oetje,eeting}s,
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Hello
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
+
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:eddywilliam0002gmail.=
+com
+
+Many thanks in advance,
+Mr.Eddy William,
