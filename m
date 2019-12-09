@@ -2,92 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 587F41164D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 02:40:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D97A21164E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 02:59:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfLIBkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 20:40:43 -0500
-Received: from mga17.intel.com ([192.55.52.151]:45255 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726635AbfLIBkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 20:40:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Dec 2019 17:40:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,293,1571727600"; 
-   d="scan'208";a="206735287"
-Received: from rzhang1-mobile.sh.intel.com ([10.239.195.243])
-  by orsmga008.jf.intel.com with ESMTP; 08 Dec 2019 17:40:32 -0800
-Message-ID: <2a37f59cd86d75258ac7257a23132d6ebfbcea70.camel@intel.com>
-Subject: Re: [PATCH 3.16 43/72] thermal: Fix use-after-free when
- unregistering thermal zone device
-From:   Zhang Rui <rui.zhang@intel.com>
-To:     Ben Hutchings <ben@decadent.org.uk>,
-        Ido Schimmel <idosch@mellanox.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        Denis Kirjanov <kda@linux-powerpc.org>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "wvw@google.com" <wvw@google.com>
-Date:   Mon, 09 Dec 2019 09:40:37 +0800
-In-Reply-To: <92faedffaa625da9d385a6af2e554d8e4744fa7a.camel@decadent.org.uk>
-References: <lsq.1575813164.154362148@decadent.org.uk>
-         <lsq.1575813165.267246545@decadent.org.uk>
-         <20191208162216.GA330015@splinter>
-         <92faedffaa625da9d385a6af2e554d8e4744fa7a.camel@decadent.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726926AbfLIB76 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 8 Dec 2019 20:59:58 -0500
+Received: from sender4-op-o18.zoho.com ([136.143.188.18]:17883 "EHLO
+        sender4-op-o18.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbfLIB76 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Dec 2019 20:59:58 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1575856777; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=nx/Z+X629+q2nyX4BFllfyG+e+ORROPqmDFfEU+0loJIHo/ybj1ulm2q9UksTxNqhqZo6BNEIFP6kmLU4gygo2wO8pGCf2EF5boPyXb8WNeL8I3MyeVokbZnfThdybAFs2Z94OH0vOF6SQKccz2gB7jfmbH76qgjRKrzOtD6N5A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1575856777; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=ESf2SzK4n1rGhfuHWUdei9+0zhGWSY6S3zGH3rZPrs8=; 
+        b=AIhBWSIIfoo4jElND5MEI+s6wqQIXy4+ehjMFfewaQLeWdPKmKMWLjO/AE0yCou17o4nVTvunVTrGIjCV/5BGV30YC/nnaWjmqL3e8uiOtxJiAz9f1r7XM7AJsF3s4YmRRNmhGegHrrkDuhyJMPGqmuc1dcMWC4unQ/IjPlO3go=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie.verizon.net (pool-173-73-58-202.washdc.fios.verizon.net [173.73.58.202]) by mx.zohomail.com
+        with SMTPS id 1575856775769662.3246858379019; Sun, 8 Dec 2019 17:59:35 -0800 (PST)
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Joe Perches <joe@perches.com>,
+        Dan Robertson <dan@dlrobertson.com>
+Message-ID: <20191209014320.13149-1-dan@dlrobertson.com>
+Subject: [PATCH v5 0/2] iio: add driver for Bosch BMA400 accelerometer
+Date:   Mon,  9 Dec 2019 01:43:18 +0000
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-12-08 at 18:09 +0000, Ben Hutchings wrote:
-> On Sun, 2019-12-08 at 16:22 +0000, Ido Schimmel wrote:
-> > On Sun, Dec 08, 2019 at 01:53:27PM +0000, Ben Hutchings wrote:
-> > > 3.16.79-rc1 review patch.  If anyone has any objections, please
-> > > let me know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Ido Schimmel <idosch@mellanox.com>
-> > > 
-> > > commit 1851799e1d2978f68eea5d9dff322e121dcf59c1 upstream.
-> > > 
-> > > thermal_zone_device_unregister() cancels the delayed work that
-> > > polls the
-> > > thermal zone, but it does not wait for it to finish. This is racy
-> > > with
-> > > respect to the freeing of the thermal zone device, which can
-> > > result in a
-> > > use-after-free [1].
-> > > 
-> > > Fix this by waiting for the delayed work to finish before freeing
-> > > the
-> > > thermal zone device. Note that thermal_zone_device_set_polling()
-> > > is
-> > > never invoked from an atomic context, so it is safe to call
-> > > cancel_delayed_work_sync() that can block.
-> > 
-> > Ben,
-> > 
-> > Wei Wang (copied) found a problem with this patch and fixed it:
-> > 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=163b00cde7cf2206e248789d2780121ad5e6a70b
-> > 
-> > I believe you should take both patches to your tree.
-> 
-> Thanks, I will add that now that it is in Linus's tree.
-> 
+This patchset adds a IIO driver for the Bosch BMA400 3-axes ultra low-power
+accelerometer. The initial implementation of the driver adds read support for
+the acceleration and temperature data registers. The driver also has support
+for reading and writing to the output data rate, oversampling ratio, and scale
+configuration registers.
 
-yes, please do, thanks!
+The major update in this patchset version is the move from using tables
+to convert user input to/from the raw register value to using a
+function.
 
--rui
-> Ben.
-> 
+Tests run:
+ - Various tests with libiio and i2c-dev
+ - dtbs_check and dt_binding_check
+
+Thanks again for the reviews of patches v4! If I missed anything please
+let me know.
+
+Cheers,
+
+ - Dan
+
+
+Changes in v5:
+
+ * Move to using a function instead of lookup tables for scale and
+   frequency conversions.
+ * Rename DT bindings to bosch,bma400.yaml
+ * Fixed other errors and improvements found by reviewers
+
+Changes in v4:
+
+ * Fix error in DT bindings
+ * Fix typo when setting the OSR
+ * Simplified the cached sample frequency
+ * Fix the MODULE_LICENSE
+
+Changes in v3:
+
+ * Use yaml format for DT bindings
+ * Remove strict dependency on OF
+ * Tidy Kconfig dependencies
+ * Stylistic changes
+ * Do not soft-reset device on remove
+
+Changes in v2:
+
+ * Implemented iio_info -> read_avail
+ * Stylistic changes
+ * Implemented devicetree bindings
+
+
+Dan Robertson (2):
+  dt-bindings: iio: accel: bma400: add bindings
+  iio: (bma400) add driver for the BMA400
+
+ .../bindings/iio/accel/bosch,bma400.yaml      |  39 +
+ drivers/iio/accel/Kconfig                     |  16 +
+ drivers/iio/accel/Makefile                    |   2 +
+ drivers/iio/accel/bma400.h                    |  95 ++
+ drivers/iio/accel/bma400_core.c               | 823 ++++++++++++++++++
+ drivers/iio/accel/bma400_i2c.c                |  62 ++
+ 6 files changed, 1037 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
+ create mode 100644 drivers/iio/accel/bma400.h
+ create mode 100644 drivers/iio/accel/bma400_core.c
+ create mode 100644 drivers/iio/accel/bma400_i2c.c
+
+
 
