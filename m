@@ -2,71 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0513E116A8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:07:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C17D1116A87
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:07:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfLIKHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 05:07:35 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:46477 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbfLIKHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 05:07:32 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 5f4a0ed7;
-        Mon, 9 Dec 2019 09:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=MzJW81Y2l9liUBJB6xdygpI6H4o=; b=D4yQpP
-        ToqTcWOuLNSvqv42XXZtLwM+wq3bvnpgw1X35Cy+9SS81MrB+T7tfkr7dbH1zupx
-        BhaVPA2zv1haRFCrxM2kkPYWczlodGtEPhAyB8sUyxbPKKQIwPgM6Q1KNlG5AHHB
-        Ako9WX2xHOGqBvNl5AgGI4nAdKPk4+Lmcx8ZFeycBBU0dNGtbTp/HIkoK/mKg3zu
-        r/fhV7E3LgzbAl/5gUOhu7VvrlycyLO+z1wOGm/ATOVrnLsH7b3N1N9itxrWqQ4z
-        wVXks3r7VL31hC+IEOoFnku7LYXbWPKHL0iGCcHRd8OPVIxYv5zjgu9he0XCimnO
-        aYC977hzI39h3+WA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c73e30a7 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Mon, 9 Dec 2019 09:12:06 +0000 (UTC)
-Received: by mail-oi1-f175.google.com with SMTP id l136so5835068oig.1;
-        Mon, 09 Dec 2019 02:07:29 -0800 (PST)
-X-Gm-Message-State: APjAAAUHBkT009BfylPoZuddSE5vWCKwH+kZuUBbbcBzoPVjfv24wJNy
-        dxM+hFe5eL7LS2pIXTJTlXD74PdcqKWRFKC+YYk=
-X-Google-Smtp-Source: APXvYqzrtpXcTBYUHQPnLatbUuyLsHiq7IJk7Mrmbl3KgZotcTSAlcByvlElSfsmxye6pDFpFYSdAb3f/wV2X2FykNI=
-X-Received: by 2002:aca:cf58:: with SMTP id f85mr23924143oig.6.1575886048379;
- Mon, 09 Dec 2019 02:07:28 -0800 (PST)
+        id S1727299AbfLIKHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 05:07:21 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53648 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726801AbfLIKHU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 05:07:20 -0500
+Received: by mail-wm1-f65.google.com with SMTP id n9so14261028wmd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 02:07:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZK01xO2VHFn+IEu/N2yJTe1AAJ2Ih5XXg9yHN17A9sE=;
+        b=D7601d8weQa7Gu1WIKVejDlYat4+gEkYQnsEI/LYzxwxZq4g0yCOC1dKdKqnCAGRic
+         T97zYBzJmwxGJNIhxV8W+S8NbZmI8z/rakAODWQEmkMLc6Sx1ZJgqdmozeUj5IIxp9JX
+         dXpAFS95j9Hv8kA92KP9p77scWxmA+yGQwbbPPUI9y894fs0zPo7XMuYaPbikgmbtClx
+         xwxkjnGoOVpW79gsYQzY3nRD41cJlk1oufp2Ltk2Set4/Mqj2o/Pevk2GjxDvYwp7RAQ
+         gkvHIGiGn6T22rwrSe3qQ3+Gsg92L7vAWIEPYwKSU86wKHoz66ktpPNxbfYKD3DpoTJK
+         IQmQ==
+X-Gm-Message-State: APjAAAXMtlW0aiJsVNcDBhwhtE/P/fFhwHGoJBflKQ6IYsPFPkcVosht
+        qLx+DAzpgN3MmJS7v/v2x7T/QIdM
+X-Google-Smtp-Source: APXvYqxFkqWC+BhtSyCb9+jQbv4vLo/72RGm6Rz/bOhvzh38nITpvs1G+YEkejn2rSWpaKrxrmyPNg==
+X-Received: by 2002:a7b:c38c:: with SMTP id s12mr23890833wmj.96.1575886039073;
+        Mon, 09 Dec 2019 02:07:19 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id n12sm13092152wmd.1.2019.12.09.02.07.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 02:07:18 -0800 (PST)
+Date:   Mon, 9 Dec 2019 11:07:17 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgross@suse.com,
+        william.kucharski@oracle.com, mingo@kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH] mm/hotplug: Only respect mem= parameter during boot stage
+Message-ID: <20191209100717.GC6156@dhcp22.suse.cz>
+References: <20191206150524.14687-1-bhe@redhat.com>
 MIME-Version: 1.0
-References: <20191208232734.225161-1-Jason@zx2c4.com> <20191208.175209.1415607162791536317.davem@davemloft.net>
-In-Reply-To: <20191208.175209.1415607162791536317.davem@davemloft.net>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Mon, 9 Dec 2019 11:07:16 +0100
-X-Gmail-Original-Message-ID: <CAHmME9pXLEhe1gJm84EzXCRONMH-VfBh6UsKQ_DLq1NyOSS+_Q@mail.gmail.com>
-Message-ID: <CAHmME9pXLEhe1gJm84EzXCRONMH-VfBh6UsKQ_DLq1NyOSS+_Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net: WireGuard secure network tunnel
-To:     David Miller <davem@davemloft.net>
-Cc:     Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191206150524.14687-1-bhe@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 2:52 AM David Miller <davem@davemloft.net> wrote:
->
-> From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-> Date: Mon,  9 Dec 2019 00:27:34 +0100
->
-> > WireGuard is a layer 3 secure networking tunnel made specifically for
-> > the kernel, that aims to be much simpler and easier to audit than IPsec.
-> > Extensive documentation and description of the protocol and
-> > considerations, along with formal proofs of the cryptography, are
-> > available at:
-> >
-> >   * https://www.wireguard.com/
-> >   * https://www.wireguard.com/papers/wireguard.pdf
->  ...
->
-> Applied, thanks Jason.
+On Fri 06-12-19 23:05:24, Baoquan He wrote:
+> In commit 357b4da50a62 ("x86: respect memory size limiting via mem=
+> parameter") a global varialbe global max_mem_size is added to store
+> the value which is parsed from 'mem= '. This truly stops those
+> DIMM from being added into system memory during boot.
+> 
+> However, it also limits the later memory hotplug functionality. Any
+> memory board can't be hot added any more if its region is beyond the
+> max_mem_size. System will print error like below:
+> 
+> [  216.387164] acpi PNP0C80:02: add_memory failed
+> [  216.389301] acpi PNP0C80:02: acpi_memory_enable_device() error
+> [  216.392187] acpi PNP0C80:02: Enumeration failure
+> 
+> >From document of 'mem =' parameter, it should be a restriction during
+> boot, but not impact the system memory adding/removing after booting.
+> 
+>   mem=nn[KMG]     [KNL,BOOT] Force usage of a specific amount of memory
+> 
+> So fix it by also checking if it's during SYSTEM_BOOTING stage when
+> restrict memory adding. Otherwise, skip the restriction.
 
-Thank you, Dave!
+Could you be more specific about why the boot vs. later hotplug makes
+any difference? The documentation is explicit about the boot time but
+considering this seems to be like that since ever I strongly suspect
+that this is just an omission.
+
+Btw. how have you tested the situation fixed by 357b4da50a62?
+
+> Fixes: 357b4da50a62 ("x86: respect memory size limiting via mem= parameter")
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> ---
+>  mm/memory_hotplug.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 55ac23ef11c1..5466a0a00901 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -105,7 +105,7 @@ static struct resource *register_memory_resource(u64 start, u64 size)
+>  	unsigned long flags =  IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+>  	char *resource_name = "System RAM";
+>  
+> -	if (start + size > max_mem_size)
+> +	if (start + size > max_mem_size && system_state == SYSTEM_BOOTING)
+>  		return ERR_PTR(-E2BIG);
+>  
+>  	/*
+> -- 
+> 2.17.2
+
+-- 
+Michal Hocko
+SUSE Labs
