@@ -2,145 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 920161170D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 16:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58D7C1170B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 16:41:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfLIPq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 10:46:27 -0500
-Received: from mail2.protonmail.ch ([185.70.40.22]:21016 "EHLO
-        mail2.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbfLIPq0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 10:46:26 -0500
-X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Dec 2019 10:46:25 EST
-Date:   Mon, 09 Dec 2019 15:39:35 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1575905983;
-        bh=sdYA01Ye3dElkfrKicXfg3nPj3ghftlcHzLFa+FeGJE=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=N1iDV9tvbCvehNZY4m3S/gbnDiGlhqqX0TyqXv3J9jQHBeTMgY9y0tsLUJxMLh7ZT
-         GWfuD3bIuLQ6sU0HH8fuJ2aXYhFTcHjEV0mTvJfe4rAbC038s1nardnRxu6aWtvd+m
-         gwS7HGCSWh27c8YbE+KyPHbiDlm/17wM7WvK47so=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Re: was: Fair Pay - Libra Netcurrency? + good plugins and mastering.
-Message-ID: <3MGC8s8MulBHTw_9IM8P7mxe2czyXajlzA41pTmRpMCWQ2mrwVY-CpWE6nNlPccW-XryWxrVqE_kVtreWFbOvdSP9fBiAHoG-2utATMYJ-g=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        id S1726538AbfLIPlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 10:41:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726080AbfLIPlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 10:41:05 -0500
+Received: from localhost (unknown [89.205.132.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E023C2073D;
+        Mon,  9 Dec 2019 15:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575906064;
+        bh=xchqQrFdZC9lF1bCvucvR91oCh8m2y80Hp0P0ydGrDk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T6ptTT5Dvl7Ke0t4vlq8m8f4XwnvIcTx03hZ7ubXpADtuyaQreXvuWT/F3tAUw0iO
+         nv0m8FLvmrHqSej/FKphn7MbmX/ckC1wKOZ9PaDgJOXkqAH1c+1QVOtZrqdxcZIKLV
+         S5/fZKB6PwdMdpgk8HQYC1Tf4PzP6toHs+047CQY=
+Date:   Mon, 9 Dec 2019 16:41:01 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Krzysztof Halasa <khc@pm.waw.pl>, devel@driverdev.osuosl.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Eric Biggers <ebiggers@kernel.org>,
+        Andrew Hendry <andrew.hendry@gmail.com>,
+        linux-x25@vger.kernel.org, Kevin Curtis <kevin.curtis@farsite.com>,
+        "R.J.Dunlop" <bob.dunlop@farsite.com>,
+        Zhao Qiang <qiang.zhao@nxp.com>,
+        syzbot+429c200ffc8772bfe070@syzkaller.appspotmail.com,
+        syzbot+eec0c87f31a7c3b66f7b@syzkaller.appspotmail.com
+Subject: Re: [PATCH 4/4] [RFC] staging/net: move AF_X25 into drivers/staging
+Message-ID: <20191209154101.GB1284708@kroah.com>
+References: <20191209151256.2497534-1-arnd@arndb.de>
+ <20191209151256.2497534-4-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=3.8 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        SH_BODYURI_REVERSE_SBL shortcircuit=no autolearn=no autolearn_force=no
-        version=3.4.2
-X-Spam-Level: ***
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209151256.2497534-4-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-What we definately see people have difficulties with is economy. And also g=
-ood plugins and mastering on the sound side.
+On Mon, Dec 09, 2019 at 04:12:56PM +0100, Arnd Bergmann wrote:
+> syzbot keeps finding issues in the X.25 implementation that nobody is
+> interested in fixing.  Given that all the x25 patches of the past years
+> that are not global cleanups tend to fix user-triggered oopses, is it
+> time to just retire the subsystem?
+> 
+> I looked a bit closer and found:
+> 
+> - we used to support x25 hardware in linux, but with WAN_ROUTER
+>   removed in linux-3.9 and isdn4linux removed in 5.3, there is only hdlc,
+>   ethernet and the N_X25 tty ldisc left. Out of these, only HDLC_X25 made
+>   it beyond the experimental stage, so this is probably what everyone
+>   uses if there are users at all.
+> 
+> - The most common hdlc hardware that people seem to be using are
+>   the "farsync" PCIe and USB adapters. Linux only has drivers for the
+>   older PCI devices from that series, but no hardware that works on
+>   modern systems.
+> 
+> - The manufacturer still updates their own kernel drivers and provides
+>   support, but ships that with a fork or rewrite of the subsystem
+>   code now.  Kevin Curtis is also listed as maintainer, but appears to
+>   have given up in 2013 after [1].
+> 
+> - The most popular software implementation appears to be X25 over TCP
+>   (XOT), which is supported by Farsite and other out-of-tree stacks but
+>   never had an implementation in mainline.
+> 
+> - Most other supported HDLC hardware that we supoprt is for the ISA or
+>   PCI buses. There are newer PCIe or USB devices, but those all require
+>   a custom device driver and often a custom subsystem, none of which got
+>   submitted for mainline inclusion. This includes hardware from Microgate
+>   (SyncLink), Comtrol (RocketPort Express) and Sealevel (SeaMAC).
+> 
+> - The X.25 subsystem is listed as "odd fixes", but the last reply on
+>   the netdev mailing list from the maintainer was also in 2013[2].
+> 
+> - The HDLC subsystem itself is listed as maintained by Krzysztof Halasa,
+>   and there were new drivers merged for SoC based devices as late as
+>   2016 by Zhao Qiang: Freescale/NXP QUICC Engine and Maxim ds26522.
+>   There has not been much work on HDLC or drivers/net/wan recently,
+>   but both developers are still responsive on the mailing list and
+>   work on other parts of the kernel.
+> 
+> Based on the above, I would conclude that X.25 can probably get moved
+> to staging as keeping it in the kernel seems to do more harm than good,
+> but HDLC below it should probably stay as there it seems there are still
+> users of a small subset of the mainline drivers.
+> 
+> Move all of X.25 into drivers/staging for now, with a projected removal
+> date set for Linux-5.8.
+> 
+> Cc: Eric Biggers <ebiggers@kernel.org>
+> Cc: Andrew Hendry <andrew.hendry@gmail.com>
+> Cc: linux-x25@vger.kernel.org
+> Cc: Kevin Curtis <kevin.curtis@farsite.com>
+> Cc: "R.J.Dunlop" <bob.dunlop@farsite.com>
+> Cc: Zhao Qiang <qiang.zhao@nxp.com>
+> Cc: Krzysztof Halasa <khc@pm.waw.pl>
+> Reported-by: syzbot+429c200ffc8772bfe070@syzkaller.appspotmail.com
+> Reported-by: syzbot+eec0c87f31a7c3b66f7b@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?id=5b0ecf0386f56be7fe7210a14d0f62df765c0c39
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ----
+> 
+> If anyone has different views or additional information, let us know.
+> 
+> If you agree with the above, please Ack.
 
-This should probably be a standard part of the IS (os) aswell.
+ACK!
 
-Personally I think a 4-band mastering RMS based process sounds the best, kn=
-ee here also interesting, with only tops taken by the final limiter. (which=
- is best with reduced processing in release, with threshold or similar)
-
-And then earlier we also support 4K quadratic grid RGBW subpixles at 72,734=
-hz which is minimal psychovisual noise.
-
-Maing the A/V part of this optimal, and a lot of this is part of the POP cu=
-lture that will be on this.
-
-Still also taking considerations to researchers who may publish their stuff=
- in the same way and gain correct exposure through a correctly indexed file=
-structure, which goes for both.
-
-Being the end of .com confusion, and rather a whole filestructure for it, w=
-ithout unnecessary logins or other, people finding their files and correct =
-commerciality enojoined.
-
-Peace.
-Ywe.
-Fair Pay OS Project.
-https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
-
-
-Sent with ProtonMail Secure Email.
-
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On Saturday 7. December 2019 kl. 11:11, Ywe C=C3=A6rlyn <ywecrn@protonmail.=
-com> wrote:
-
-> In the development of an optimal Interface System, we see considerations =
-to culture, became relevant, and a universalization of paradigm, finding th=
-e three letter paradigm to be too narrow.
->
-> Particulary the error margin of a culture, goes to the club, where it get=
-s its outlet in sex.
->
-> The question becomes how much can one improve it? Or really what can one =
-do with the schizophrenia of psychiatry vs club, that itself states sex on =
-the city is ok.
->
-> It will never resolve.
->
-> If one analyses history, gods of the club kind, often were gay, until the=
-y found the holy grail, that for sexual purposes, reduced the mushromm god,=
- to minimal, so that it was not gay, in the club itself.
->
-> Making weekdays macho, and the weekend gardenly.Which is what many people=
- still believe, - The three-letter paradigm of most societies.
->
-> Which basically a good O.S. must escape. Or I.S. really Interface System,=
- as we deal really only with interfacing between software and hardware.
->
-> Because where I grew up this three-letter paradigm was so fixed, that bas=
-ically a drunk O.S. like Microsoft just could happen.
->
-> I am trying the name Z-IS, for the moment, trying to escape this paradigm=
-, as much as possible, giving the club to those who want, and really have n=
-othing to do with it myself. I just want an optimal economy for myself, and=
- my society.
->
-> And so comes the question, what netcurrency should one support? The same =
-considerations goes to this ofcourse.
->
-> Libra seems to be GNU related. So even Facebook tries to do this in GNU s=
-pace.
->
-> Any thoughts on this? (sane please)
->
->
-> -------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
-------------------------------------------------------------
->
-> Ywe
-> Fair Pay Project.
-> https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
-
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
