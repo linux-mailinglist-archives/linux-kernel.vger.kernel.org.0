@@ -2,226 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55851117669
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:56:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 886C911766E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfLITzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 14:55:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43550 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726991AbfLITzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 14:55:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 62CCEAFCC;
-        Mon,  9 Dec 2019 19:55:45 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 0F7A1E0321; Mon,  9 Dec 2019 20:55:45 +0100 (CET)
-Message-Id: <0c239334df943c3f5f4ca74a2509754e08eda9e3.1575920565.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1575920565.git.mkubecek@suse.cz>
-References: <cover.1575920565.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net-next 5/5] ethtool: provide link mode names as a string set
-To:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Date:   Mon,  9 Dec 2019 20:55:45 +0100 (CET)
+        id S1726605AbfLIT5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 14:57:31 -0500
+Received: from mga04.intel.com ([192.55.52.120]:49527 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726230AbfLIT5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 14:57:31 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2019 11:57:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,296,1571727600"; 
+   d="scan'208";a="264346146"
+Received: from nshalmon-mobl.ger.corp.intel.com (HELO localhost) ([10.252.8.146])
+  by FMSMGA003.fm.intel.com with ESMTP; 09 Dec 2019 11:57:21 -0800
+Date:   Mon, 9 Dec 2019 21:57:19 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+Message-ID: <20191209195719.GH19243@linux.intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <20191128182450.GA3493127@kroah.com>
+ <20191206203807.GA9971@linux.intel.com>
+ <20191207080939.GA193518@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191207080939.GA193518@kroah.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike e.g. netdev features, the ethtool ioctl interface requires link mode
-table to be in sync between kernel and userspace for userspace to be able
-to display and set all link modes supported by kernel. The way arbitrary
-length bitsets are implemented in netlink interface, this will be no longer
-needed.
+On Sat, Dec 07, 2019 at 09:09:39AM +0100, Greg KH wrote:
+> On Fri, Dec 06, 2019 at 10:38:07PM +0200, Jarkko Sakkinen wrote:
+> > > Why a whole cdev?
+> > > 
+> > > Why not use a misc device?  YOu only have 2 devices right?  Why not 2
+> > > misc devices then?  That saves the use of a whole major number and makes
+> > > your code a _LOT_ simpler.
+> > 
+> > The downside would be that if we ever want to add sysfs attributes, that
+> > could not be done synchronously with the device creation.
+> 
+> That is what the groups member of struct misc_device is for.
 
-To allow userspace to access all link modes running kernel supports, add
-table of ethernet link mode names and make it available as a string set to
-userspace GET_STRSET requests. Add build time check to make sure names
-are defined for all modes declared in enum ethtool_link_mode_bit_indices.
+OK, cool, then there is no problem changing to misc.
 
-Once the string set is available, make it also accessible via ioctl.
+I haven't seen misc drivers (not that I've looked through every single
+of them so I suppose there are such) to use it and somehow have been
+blind to seeing it that it si there.
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
- include/linux/ethtool.h      |  4 ++
- include/uapi/linux/ethtool.h |  2 +
- net/ethtool/common.c         | 86 ++++++++++++++++++++++++++++++++++++
- net/ethtool/common.h         |  2 +
- net/ethtool/ioctl.c          |  5 +++
- 5 files changed, 99 insertions(+)
+Thanks again for the feedback. I'll fix this for the next patch set
+version.
 
-diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
-index 95991e4300bf..5caef65d93d6 100644
---- a/include/linux/ethtool.h
-+++ b/include/linux/ethtool.h
-@@ -102,6 +102,10 @@ static inline u32 ethtool_rxfh_indir_default(u32 index, u32 n_rx_rings)
- #define __ETHTOOL_DECLARE_LINK_MODE_MASK(name)		\
- 	DECLARE_BITMAP(name, __ETHTOOL_LINK_MODE_MASK_NBITS)
- 
-+/* compose link mode index from speed, type and duplex */
-+#define ETHTOOL_LINK_MODE(speed, type, duplex) \
-+	ETHTOOL_LINK_MODE_ ## speed ## base ## type ## _ ## duplex ## _BIT
-+
- /* drivers must ignore base.cmd and base.link_mode_masks_nwords
-  * fields, but they are allowed to overwrite them (will be ignored).
-  */
-diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
-index d4591792f0b4..f44155840b07 100644
---- a/include/uapi/linux/ethtool.h
-+++ b/include/uapi/linux/ethtool.h
-@@ -593,6 +593,7 @@ struct ethtool_pauseparam {
-  * @ETH_SS_RSS_HASH_FUNCS: RSS hush function names
-  * @ETH_SS_PHY_STATS: Statistic names, for use with %ETHTOOL_GPHYSTATS
-  * @ETH_SS_PHY_TUNABLES: PHY tunable names
-+ * @ETH_SS_LINK_MODES: link mode names
-  */
- enum ethtool_stringset {
- 	ETH_SS_TEST		= 0,
-@@ -604,6 +605,7 @@ enum ethtool_stringset {
- 	ETH_SS_TUNABLES,
- 	ETH_SS_PHY_STATS,
- 	ETH_SS_PHY_TUNABLES,
-+	ETH_SS_LINK_MODES,
- };
- 
- /**
-diff --git a/net/ethtool/common.c b/net/ethtool/common.c
-index 220d6b539180..be1b26970eb1 100644
---- a/net/ethtool/common.c
-+++ b/net/ethtool/common.c
-@@ -83,3 +83,89 @@ phy_tunable_strings[__ETHTOOL_PHY_TUNABLE_COUNT][ETH_GSTRING_LEN] = {
- 	[ETHTOOL_PHY_FAST_LINK_DOWN] = "phy-fast-link-down",
- 	[ETHTOOL_PHY_EDPD]	= "phy-energy-detect-power-down",
- };
-+
-+#define __LINK_MODE_NAME(speed, type, duplex) \
-+	#speed "base" #type "/" #duplex
-+#define __DEFINE_LINK_MODE_NAME(speed, type, duplex) \
-+	[ETHTOOL_LINK_MODE(speed, type, duplex)] = \
-+	__LINK_MODE_NAME(speed, type, duplex)
-+#define __DEFINE_SPECIAL_MODE_NAME(_mode, _name) \
-+	[ETHTOOL_LINK_MODE_ ## _mode ## _BIT] = _name
-+
-+const char
-+link_mode_names[__ETHTOOL_LINK_MODE_MASK_NBITS][ETH_GSTRING_LEN] = {
-+	__DEFINE_LINK_MODE_NAME(10, T, Half),
-+	__DEFINE_LINK_MODE_NAME(10, T, Full),
-+	__DEFINE_LINK_MODE_NAME(100, T, Half),
-+	__DEFINE_LINK_MODE_NAME(100, T, Full),
-+	__DEFINE_LINK_MODE_NAME(1000, T, Half),
-+	__DEFINE_LINK_MODE_NAME(1000, T, Full),
-+	__DEFINE_SPECIAL_MODE_NAME(Autoneg, "Autoneg"),
-+	__DEFINE_SPECIAL_MODE_NAME(TP, "TP"),
-+	__DEFINE_SPECIAL_MODE_NAME(AUI, "AUI"),
-+	__DEFINE_SPECIAL_MODE_NAME(MII, "MII"),
-+	__DEFINE_SPECIAL_MODE_NAME(FIBRE, "FIBRE"),
-+	__DEFINE_SPECIAL_MODE_NAME(BNC, "BNC"),
-+	__DEFINE_LINK_MODE_NAME(10000, T, Full),
-+	__DEFINE_SPECIAL_MODE_NAME(Pause, "Pause"),
-+	__DEFINE_SPECIAL_MODE_NAME(Asym_Pause, "Asym_Pause"),
-+	__DEFINE_LINK_MODE_NAME(2500, X, Full),
-+	__DEFINE_SPECIAL_MODE_NAME(Backplane, "Backplane"),
-+	__DEFINE_LINK_MODE_NAME(1000, KX, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, KX4, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, KR, Full),
-+	[ETHTOOL_LINK_MODE_10000baseR_FEC_BIT] = "10000baseR_FEC",
-+	__DEFINE_LINK_MODE_NAME(20000, MLD2, Full),
-+	__DEFINE_LINK_MODE_NAME(20000, KR2, Full),
-+	__DEFINE_LINK_MODE_NAME(40000, KR4, Full),
-+	__DEFINE_LINK_MODE_NAME(40000, CR4, Full),
-+	__DEFINE_LINK_MODE_NAME(40000, SR4, Full),
-+	__DEFINE_LINK_MODE_NAME(40000, LR4, Full),
-+	__DEFINE_LINK_MODE_NAME(56000, KR4, Full),
-+	__DEFINE_LINK_MODE_NAME(56000, CR4, Full),
-+	__DEFINE_LINK_MODE_NAME(56000, SR4, Full),
-+	__DEFINE_LINK_MODE_NAME(56000, LR4, Full),
-+	__DEFINE_LINK_MODE_NAME(25000, CR, Full),
-+	__DEFINE_LINK_MODE_NAME(25000, KR, Full),
-+	__DEFINE_LINK_MODE_NAME(25000, SR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, CR2, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, KR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, KR4, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, SR4, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, CR4, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, LR4_ER4, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, SR2, Full),
-+	__DEFINE_LINK_MODE_NAME(1000, X, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, CR, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, SR, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, LR, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, LRM, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, ER, Full),
-+	__DEFINE_LINK_MODE_NAME(2500, T, Full),
-+	__DEFINE_LINK_MODE_NAME(5000, T, Full),
-+	__DEFINE_SPECIAL_MODE_NAME(FEC_NONE, "None"),
-+	__DEFINE_SPECIAL_MODE_NAME(FEC_RS, "RS"),
-+	__DEFINE_SPECIAL_MODE_NAME(FEC_BASER, "BASER"),
-+	__DEFINE_LINK_MODE_NAME(50000, KR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, SR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, CR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, LR_ER_FR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, DR, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, KR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, SR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, CR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, LR2_ER2_FR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, DR2, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, KR4, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, SR4, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, LR4_ER4_FR4, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, DR4, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, CR4, Full),
-+	__DEFINE_LINK_MODE_NAME(100, T1, Full),
-+	__DEFINE_LINK_MODE_NAME(1000, T1, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, KR8, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, SR8, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, LR8_ER8_FR8, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, DR8, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, CR8, Full),
-+};
-diff --git a/net/ethtool/common.h b/net/ethtool/common.h
-index 41b2efc1e4e1..351e019b8d85 100644
---- a/net/ethtool/common.h
-+++ b/net/ethtool/common.h
-@@ -13,5 +13,7 @@ extern const char
- tunable_strings[__ETHTOOL_TUNABLE_COUNT][ETH_GSTRING_LEN];
- extern const char
- phy_tunable_strings[__ETHTOOL_PHY_TUNABLE_COUNT][ETH_GSTRING_LEN];
-+extern const char
-+link_mode_names[__ETHTOOL_LINK_MODE_MASK_NBITS][ETH_GSTRING_LEN];
- 
- #endif /* _ETHTOOL_COMMON_H */
-diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-index b262db5a1d91..9274d70c496b 100644
---- a/net/ethtool/ioctl.c
-+++ b/net/ethtool/ioctl.c
-@@ -154,6 +154,9 @@ static int __ethtool_get_sset_count(struct net_device *dev, int sset)
- 	    !ops->get_ethtool_phy_stats)
- 		return phy_ethtool_get_sset_count(dev->phydev);
- 
-+	if (sset == ETH_SS_LINK_MODES)
-+		return __ETHTOOL_LINK_MODE_MASK_NBITS;
-+
- 	if (ops->get_sset_count && ops->get_strings)
- 		return ops->get_sset_count(dev, sset);
- 	else
-@@ -178,6 +181,8 @@ static void __ethtool_get_strings(struct net_device *dev,
- 	else if (stringset == ETH_SS_PHY_STATS && dev->phydev &&
- 		 !ops->get_ethtool_phy_stats)
- 		phy_ethtool_get_strings(dev->phydev, data);
-+	else if (stringset == ETH_SS_LINK_MODES)
-+		memcpy(data, link_mode_names, sizeof(link_mode_names));
- 	else
- 		/* ops->get_strings is valid because checked earlier */
- 		ops->get_strings(dev, stringset, data);
--- 
-2.24.0
-
+/Jarkko
