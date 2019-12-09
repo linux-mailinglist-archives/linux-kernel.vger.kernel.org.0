@@ -2,148 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D0F117A47
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 23:55:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D13B117A29
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 23:55:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbfLIWzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 17:55:05 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:19976 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727543AbfLIWyO (ORCPT
+        id S1727628AbfLIWy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 17:54:28 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:38807 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727605AbfLIWyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 17:54:14 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5deed08f0000>; Mon, 09 Dec 2019 14:54:07 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 09 Dec 2019 14:54:13 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 09 Dec 2019 14:54:13 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 9 Dec
- 2019 22:54:12 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 9 Dec 2019 22:54:11 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5deed0920003>; Mon, 09 Dec 2019 14:54:11 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v8 26/26] selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN coverage
-Date:   Mon, 9 Dec 2019 14:53:44 -0800
-Message-ID: <20191209225344.99740-27-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191209225344.99740-1-jhubbard@nvidia.com>
-References: <20191209225344.99740-1-jhubbard@nvidia.com>
+        Mon, 9 Dec 2019 17:54:20 -0500
+Received: by mail-pj1-f66.google.com with SMTP id l4so6522784pjt.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 14:54:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=GZbS2xfEltGE7F6nx/Sqk3zKGRtEeNKmrbNzg2JwiAc=;
+        b=mUW88DZZcUm77HMOxXwdlW6E09GhqoZdMi73UXyZvqXuxha8a/66J2NeEmajC50CRk
+         uppHSqsk6KZHN5slwK1hx8E1lS59JSJvffgtzvzQCCxoXvGEDs9g6yOrYKjrRQc0U2VJ
+         F14XddSIXzsYYLvZsaRRw8i6eGlXsRTa8DVQOtQgFAg4WGiZIXhzticlJkngYIiqZUiS
+         zYvyRcJUcIUxVNQf3PvH7XVTAVQq++X8LmuBCfi53vTg7GhZ2oC5qsbIOHt1PGov85IV
+         P+2JlSX9fuav7dYzPqKnHewt2fbwfzjZ+dAb5juXdJEkLzYajGr6Yer6SwKDajIRbAit
+         eEXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=GZbS2xfEltGE7F6nx/Sqk3zKGRtEeNKmrbNzg2JwiAc=;
+        b=RAxF1aYqjrgVprZOwQsKsqCfqnrlPi6PmIY/paHKM87x+ZEjDq3rleGqfdlpLIVj/F
+         OzFZ4CdxV4y7cyUEe4OvfiCFQyCJfiIMLkUTiH8MTB9JRJZWAEQKGA9E8RauoyibJy/E
+         XebDyuhjlzLyxxrQ0SK0ezhqXCRdJddx81nXMIgzmUy6DKxWlq3/vXLJlfb58CwlXi1Y
+         tz7sNWjLMNZS9mv86JqgGvjJJrdMjBohQXkAnFV6dGUPY3VxuR+zrA8q/O1SYfGudmOM
+         /v5BdyaUFyeYWw0ZBIXjdyhdufbajFbuZUbXPG5ljac4yu5sV0mktzqCe+wTZ64OuygH
+         mwmA==
+X-Gm-Message-State: APjAAAX20EG/FU+rR43xCKLwWwUo7l4hvd3H0174P4hGKgVghmK0/sWz
+        4FzrqRpct9JR9FxQZQ3aBl82AA==
+X-Google-Smtp-Source: APXvYqwNJMLkK5JvNCFW6hNtE0esgiRwTzkpNVJU4zltb0IL3k5qCFuUjWhWC1FqrZ+fqHmQWyHuQg==
+X-Received: by 2002:a17:902:d883:: with SMTP id b3mr1804416plz.231.1575932059858;
+        Mon, 09 Dec 2019 14:54:19 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id a25sm499720pfo.116.2019.12.09.14.54.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Dec 2019 14:54:19 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jian Hu <jian.hu@amlogic.com>, "Rob Herring" <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: meson-a1: add I2C nodes
+In-Reply-To: <20191202111253.94872-1-jian.hu@amlogic.com>
+References: <20191202111253.94872-1-jian.hu@amlogic.com>
+Date:   Mon, 09 Dec 2019 14:54:18 -0800
+Message-ID: <7hsgltqfdx.fsf@baylibre.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575932047; bh=efjW/rF0EGuRthlOGEU05IQnyHi57jZRzyopoxtDk8c=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=qV3uJB7VZRPn8h/t1hIu8YevHEQMbA6ytY7EXlbIwT+Y5aVa6SSMTKDXGhoau+Np9
-         SXj+sUF5Zt1nGzc+gDnMftMZ783jkTGZpbgnOkcctnZX3s3d6WXHEohuIVF7yzZeGR
-         ygw/gKI58lE2sUc35Cy0UmpJw+FO/2bcReyZzeD70yLGqvf4tS0EdeF8RZfC0ASFL8
-         7kuLYQ1Ps+1sWrXxax9z07GSCOo44qcTHbB3lxAH77qnnhMi2B1hjBCUkNOq6E9/ek
-         Op/wTYdOnk2+V0dbVmV+gE5zCnUDp7xm+aIrH1mszn1QnNw72uwtRJfg/zkFxFZtTv
-         8OVY/MKZ8u6pw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's good to have basic unit test coverage of the new FOLL_PIN
-behavior. Fortunately, the gup_benchmark unit test is extremely
-fast (a few milliseconds), so adding it the the run_vmtests suite
-is going to cause no noticeable change in running time.
+Hi Jian,
 
-So, add two new invocations to run_vmtests:
+Jian Hu <jian.hu@amlogic.com> writes:
 
-1) Run gup_benchmark with normal get_user_pages().
+> There are four I2C controllers in A1 series,
+> Share the same comptible with AXG.The I2C nodes
+> depend on pinmux and clock controller.
+>
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 149 ++++++++++++++++++++++
+>  1 file changed, 149 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+> index eab2ecd36aa8..d0a73d953f5e 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+> @@ -16,6 +16,13 @@
+>  	#address-cells = <2>;
+>  	#size-cells = <2>;
+>  
+> +	aliases {
+> +		i2c0 = &i2c0;
+> +		i2c1 = &i2c1;
+> +		i2c2 = &i2c2;
+> +		i2c3 = &i2c3;
+> +	};
+> +
+>  	cpus {
+>  		#address-cells = <2>;
+>  		#size-cells = <0>;
+> @@ -117,6 +124,46 @@
+>  				};
+>  			};
+>  
+> +			i2c0: i2c@1400 {
+> +				compatible = "amlogic,meson-axg-i2c";
+> +				reg = <0x0 0x1400 0x0 0x24>;
 
-2) Run gup_benchmark with pin_user_pages(). This is much like
-the first call, except that it sets FOLL_PIN.
+The AXG DT files use 0x20 for the length.  You are using 0x24.  I don't
+see any additional registers added to the driver, so this doesn't look right.
 
-Running these two in quick succession also provide a visual
-comparison of the running times, which is convenient.
+> +				interrupts = <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				clocks = <&clkc_periphs CLKID_I2C_M_A>;
+> +				status = "disabled";
+> +			};
+> +
+> +			i2c1: i2c@5c00 {
+> +				compatible = "amlogic,meson-axg-i2c";
+> +				reg = <0x0 0x5c00 0x0 0x24>;
+> +				interrupts = <GIC_SPI 68 IRQ_TYPE_EDGE_RISING>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				clocks = <&clkc_periphs CLKID_I2C_M_B>;
+> +				status = "disabled";
+> +			};
+> +
+> +			i2c2: i2c@6800 {
+> +				compatible = "amlogic,meson-axg-i2c";
+> +				reg = <0x0 0x6800 0x0 0x24>;
+> +				interrupts = <GIC_SPI 76 IRQ_TYPE_EDGE_RISING>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				clocks = <&clkc_periphs CLKID_I2C_M_C>;
+> +				status = "disabled";
+> +			};
+> +
+> +			i2c3: i2c@6c00 {
+> +				compatible = "amlogic,meson-axg-i2c";
+> +				reg = <0x0 0x6c00 0x0 0x24>;
+> +				interrupts = <GIC_SPI 78 IRQ_TYPE_EDGE_RISING>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				clocks = <&clkc_periphs CLKID_I2C_M_D>;
+> +				status = "disabled";
+> +			};
+> +
+>  			uart_AO: serial@1c00 {
+>  				compatible = "amlogic,meson-gx-uart",
+>  					     "amlogic,meson-ao-uart";
+> @@ -171,3 +218,105 @@
+>  		#clock-cells = <0>;
+>  	};
+>  };
+> +
+> +&periphs_pinctrl {
+> +	i2c0_f11_pins:i2c0-f11 {
+> +		mux {
+> +			groups = "i2c0_sck_f11",
+> +				"i2c0_sda_f12";
+> +			function = "i2c0";
+> +			bias-pull-up;
+> +			drive-strength-microamp = <3000>;
 
-The new invocations are fairly early in the run_vmtests script,
-because with test suites, it's usually preferable to put the
-shorter, faster tests first, all other things being equal.
+Can you also add some comment to the changelog about the need for
+drive-strength compared to AXG.
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- tools/testing/selftests/vm/run_vmtests | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> +		};
+> +	};
 
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftes=
-ts/vm/run_vmtests
-index a692ea828317..df6a6bf3f238 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -112,6 +112,28 @@ echo "NOTE: The above hugetlb tests provide minimal co=
-verage.  Use"
- echo "      https://github.com/libhugetlbfs/libhugetlbfs.git for"
- echo "      hugetlb regression testing."
-=20
-+echo "--------------------------------------------"
-+echo "running 'gup_benchmark -U' (normal/slow gup)"
-+echo "--------------------------------------------"
-+./gup_benchmark -U
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+	exitcode=3D1
-+else
-+	echo "[PASS]"
-+fi
-+
-+echo "------------------------------------------"
-+echo "running gup_benchmark -b (pin_user_pages)"
-+echo "------------------------------------------"
-+./gup_benchmark -b
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+	exitcode=3D1
-+else
-+	echo "[PASS]"
-+fi
-+
- echo "-------------------"
- echo "running userfaultfd"
- echo "-------------------"
---=20
-2.24.0
-
+Kevin
