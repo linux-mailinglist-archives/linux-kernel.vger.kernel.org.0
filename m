@@ -2,91 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA1ED117428
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:27:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75B291173C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:13:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfLIS11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:27:27 -0500
-Received: from sender4-op-o18.zoho.com ([136.143.188.18]:17863 "EHLO
-        sender4-op-o18.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726342AbfLIS10 (ORCPT
+        id S1726682AbfLISND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:13:03 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42381 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbfLISND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:27:26 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1575916033; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=Uqeax3GWXw+lN2aiuuJ2WAdj6XJgf83shDkh4o75FqkeAl5csykPMHKyW4TQgimjl7U/UDhVIoUSh4vziZCAakMLOIYaF0zvEpDrlgJDyKMdpbVvsvDRYXVGyTNBr9NHYrPtnoNCCLelDAQvT5W7l89MYQdTzvP1nSfu2R9JMJg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1575916033; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=qST48LGbEeti0hVqrKe4JVhTVDhvY4DFmAgNm3h8veo=; 
-        b=E9VH1LQn7SoUzRt1ikBlGnECa3C35ZQVKcifJtkVMROrNZO1tS7iu2OcZS2NBXd+AMClI7pBPvL1ZmX/z8iZmu4r8HfBJHjxKc6/xJUy6uq8qlBEgFBNzoilmDcVVRtcmIGSxIFjD8agU+C8AOFZxqv4IE1x/hnnqDMcyFQynAw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=dlrobertson.com;
-        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
-        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
-Received: from nessie (pool-173-73-58-202.washdc.fios.verizon.net [173.73.58.202]) by mx.zohomail.com
-        with SMTPS id 1575916032260346.62116454289855; Mon, 9 Dec 2019 10:27:12 -0800 (PST)
-Date:   Mon, 9 Dec 2019 18:11:53 +0000
-From:   Dan Robertson <dan@dlrobertson.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Mon, 9 Dec 2019 13:13:03 -0500
+Received: by mail-wr1-f67.google.com with SMTP id a15so17243230wrf.9;
+        Mon, 09 Dec 2019 10:13:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/Lzf1hIoDU/ZjVff0Ob50B/u4dz41ExonvLP+obnOrY=;
+        b=veU94l/2yneEs2+AYnPRfypLrEwv/lHOSPvX2FqK4ks4WOdsJkkhAm4704nkBZ/6Mi
+         lazIXl2B9ITEC8ee2XmyffCUC6U1UxH6gR89nd73H2hk9MND/KGz0gFcIDaoU59+mrNe
+         s4vvhZNA0EcQumdairxyFg8FSbETavWj4ki9o6CcpeoxWnWox79TQtPOcnpnJQek4G1R
+         WrFcNF+8ArAqMgIYmMiIF6YjptIwS/YnvFwU64wa67dKt4UvGQNRP3Oc1V+GG1r37M1p
+         dlLjbhoiVa8aQS2KZXvMnQga8nB+XqTaw/IdkyHaxjVt5G6qK6/Im8JtyYoUxV5L2iZm
+         YoqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=/Lzf1hIoDU/ZjVff0Ob50B/u4dz41ExonvLP+obnOrY=;
+        b=WU8BM4CQ+wMzXkyp2S7ZTvyB0bmFLeXQl4QbkmvwgZgQLrGGk1ZvwX+UDerPpALiRT
+         cpZ2hOnluVBREy4Qz3wtmHNrc+Bhu5PchZU0hnS/KfIs9EVBR5ulFgReYtIVNbX6gUmk
+         PmIt5zNxFSePQrPfSmQFtwMpJeldKFlAsYwE6jZ2t3irlG2NEl6Cx8WrOPFfMKFZFG7Q
+         ahC7ShATXzEVuVZujwjk8wUonwfkc2fOeeQaZuCBxE7vVtZbgL8ousrLSF3H1kUa/bPB
+         WwlDkG8NLZc2NbFFE0IVaJFUqxcmpM3+s3Na4EQ3nsN73AyXLi0KM+r7VKWWcs1m6Wdk
+         BHLQ==
+X-Gm-Message-State: APjAAAXNvDzQvG5NE2DJerSdwNvmbvcMPm+VF7VW0apeQ9n4yyJpUPgg
+        vCTG//4g0tbTOspU1/ICEcI=
+X-Google-Smtp-Source: APXvYqz09GH7IbLXL1n86qn2SJ7Z7dx3lAnu4LcZ3gQ+++4bhQhZLSjmbqLnsv9mnd/KlGDUZHcj5A==
+X-Received: by 2002:a5d:5308:: with SMTP id e8mr3599909wrv.77.1575915181066;
+        Mon, 09 Dec 2019 10:13:01 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id g21sm219800wmh.17.2019.12.09.10.12.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 10:13:00 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v5 2/2] iio: (bma400) add driver for the BMA400
-Message-ID: <20191209181153.GA13304@nessie>
-References: <20191209014320.13149-1-dan@dlrobertson.com>
- <20191209014320.13149-3-dan@dlrobertson.com>
- <cf3f2297-dc01-b2c9-657b-933f24b15594@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf3f2297-dc01-b2c9-657b-933f24b15594@infradead.org>
-X-ZohoMailClient: External
+        Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>
+Cc:     mbrugger@suse.com, phil@raspberrypi.org,
+        devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: bcm2711: fix soc's node dma-ranges
+Date:   Mon,  9 Dec 2019 10:12:56 -0800
+Message-Id: <20191209181256.5854-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191204125633.27696-1-nsaenzjulienne@suse.de>
+References: <20191204125633.27696-1-nsaenzjulienne@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 08, 2019 at 06:54:44PM -0800, Randy Dunlap wrote:
-> On 12/8/19 5:43 PM, Dan Robertson wrote:
-> > diff --git a/drivers/iio/accel/Kconfig b/drivers/iio/accel/Kconfig
-> > index d4ef35aeb579..dc9bc646d403 100644
-> > --- a/drivers/iio/accel/Kconfig
-> > +++ b/drivers/iio/accel/Kconfig
-> > @@ -112,6 +112,22 @@ config BMA220
-> >  	  To compile this driver as a module, choose M here: the
-> >  	  module will be called bma220_spi.
-> >  
-> > +config BMA400
-> > +	tristate "Bosch BMA400 3-Axis Accelerometer Driver"
-> > +	select REGMAP
-> > +	select BMA400_I2C if (I2C)
+On Wed,  4 Dec 2019 13:56:33 +0100, Nicolas Saenz Julienne <nsaenzjulienne@suse.de> wrote:
+> Raspberry Pi's firmware has a feature to select how much memory to
+> reserve for its GPU called 'gpu_mem'. The possible values go from 16MB
+> to 944MB, with a default of 64MB. This memory resides in the topmost
+> part of the lower 1GB memory area and grows bigger expanding towards the
+> begging of memory.
 > 
-> What's with the parentheses?  I see that there are roughly 2700
-> "select ... if X" without parens and around 95 like
-> "select ... if ("  [using rough grep expressions].
-> The parens are unnecessary.  They are often used on complex
-> expressions, but certainly not on simple ones (except in iio).
-
-Good point. I'll remove it. I'll need the parentheses if/when SPI support is
-added, but I'll add it when it is needed.
-
-> > +	help
-> > +	  Say Y here if you want to build a driver for the Bosch BMA400
-> > +	  triaxial acceleration sensor.
-> > +
-> > +	  To compile this driver as a module, choose M here: the
-> > +	  module will be called bma400_core and you will also get
-> > +	  bma400_i2c for I2C.
+> It turns out that with low 'gpu_mem' values (16MB and 32MB) the size of
+> the memory available to the system in the lower 1GB area can outgrow the
+> interconnect's dma-range as its size was selected based on the maximum
+> system memory available given the default gpu_mem configuration. This
+> makes that memory slice unavailable for DMA. And may cause nasty kernel
+> warnings if CMA happens to include it.
 > 
-> iff I2C is set/enabled, so could be confusing.
+> Change soc's dma-ranges to really reflect it's HW limitation, which is
+> being able to only DMA to the lower 1GB area.
+> 
+> Fixes: 7dbe8c62ceeb ("ARM: dts: Add minimal Raspberry Pi 4 support")
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
 
-Good catch.
-
-Cheers,
-
- - Dan
-
+Applied to devicetree/fixes, thanks!
+--
+Florian
