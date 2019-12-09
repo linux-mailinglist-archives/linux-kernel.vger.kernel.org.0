@@ -2,170 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A02D116631
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 06:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DD43116620
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 06:21:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfLIFWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 00:22:20 -0500
-Received: from mailgw02.mediatek.com ([216.200.240.185]:57928 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfLIFWU (ORCPT
+        id S1726362AbfLIFVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 00:21:24 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35255 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfLIFVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 00:22:20 -0500
-X-UUID: 7d2a2792f7f346f291bfd187e52f4b4e-20191208
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=1kPa4zJHOSGaYA23yBBwBHLWH3hbtYiGylkDOLzCaCs=;
-        b=RW5WN56e4ZEmzyodValrlYVVgY8rihf9F+AcOz2mBQoOZRhGppamwzP0uo7q3C7E1aex4aMUX2aGz+GR/ciKs1LQ8vMbdKBFJ9aqv36iBfa/N4B0LYrLqA23yB06BiYi1/gJEAHGIGWGaqnPQKprr7rXeP4KtWE+gKHR/cWgCXE=;
-X-UUID: 7d2a2792f7f346f291bfd187e52f4b4e-20191208
-Received: from mtkcas68.mediatek.inc [(172.29.94.19)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (musrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 841586414; Sun, 08 Dec 2019 21:19:12 -0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- MTKMBS62N1.mediatek.inc (172.29.193.41) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 8 Dec 2019 21:20:11 -0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 9 Dec 2019 13:18:39 +0800
-Message-ID: <1575868749.7013.6.camel@mtksdaap41>
-Subject: Re: [resend PATCH v6 04/12] drm: mediatek: Omit warning on probe
- defers
-From:   CK Hu <ck.hu@mediatek.com>
-To:     <matthias.bgg@kernel.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ulrich.hecht+renesas@gmail.com>,
-        <laurent.pinchart@ideasonboard.com>,
-        <enric.balletbo@collabora.com>, <sean.wang@mediatek.com>,
-        <sean.wang@kernel.org>, <rdunlap@infradead.org>, <wens@csie.org>,
-        <hsinyi@chromium.org>, <frank-w@public-files.de>,
-        <drinkcat@chromium.org>, <linux-media@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <mbrugger@suse.com>
-Date:   Mon, 9 Dec 2019 13:19:09 +0800
-In-Reply-To: <20191207224740.24536-5-matthias.bgg@kernel.org>
-References: <20191207224740.24536-1-matthias.bgg@kernel.org>
-         <20191207224740.24536-5-matthias.bgg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Mon, 9 Dec 2019 00:21:24 -0500
+Received: by mail-pg1-f195.google.com with SMTP id l24so6507226pgk.2;
+        Sun, 08 Dec 2019 21:21:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=AW9VGumdZy3wyOIy/HTgLy8T6vfCGABBPNOsP0bKaQE=;
+        b=TsG72EKhhevQp6j8XWGxYjQUHFzVKmaJ+m6N3d0iIbPMuUY9MxkgA1+vjqDbRmFDeO
+         ghawKgXv6oFiwdG60kodv4PWWwf2+7SjkF/xi6rhUHjJOpkQpQtpYsKQvmIaAf/vr+BC
+         r3ovygDlMulStfAJC+J2FJfON43TXLO8IrfNuZZvvwtdulQqdItQBNmRP/9sCpBEUNUQ
+         /A4W2DZsA7wRKxgYBl7xwDVwE1xK9bkEsu4sMM0OLnLcN6UrfP0joLWUZcfrhEfZsklz
+         ktfOtxJJDO+Adp1o6Ul8WBQN0+Udjkits3w7hrH+/olZ69NId9+GyD5QYMdBdJBB50G8
+         ZGng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=AW9VGumdZy3wyOIy/HTgLy8T6vfCGABBPNOsP0bKaQE=;
+        b=IdmRvHtBfQdKdWykFZURtgzXOuwrmw9rVFyVssh5/yCvDZ1+USioUA2+Gd3RHarnpo
+         YE30Cr3Oc4AQMXvvnD2IrxgJhvSaK0ggd0E7UJuSORtbk/AgERmmCgRBlnheeyoOscy/
+         CpCnOeYJnsrJLOkB7hwuK7DC9c3nQTQqn1Ewcm26pEjB/+fjnnwSGi4yckJnREhCvyp+
+         jR/i7XsQsh1JFec60+CKUzvjWfEKzCX6XlvvRJSkhnCFcJC1cYJjlAwFLBgG9upBe7Gj
+         uUgzi7O0cNaOsDsQTSFGU25Q5c4uOL0UyjmA6gBQQlZfQhbKY9AV+ZYL3Bewp8btHNMj
+         gBXQ==
+X-Gm-Message-State: APjAAAVXpfTgBYfOjsnMDcxif+ssJbkD4GmNCHhJh4B20N0N/3ohBKTr
+        2b6yHG9UXrDA5AXD7Kt3PLUTddFT
+X-Google-Smtp-Source: APXvYqxYDPRGsuZZfyTlwwznlYvBbns+TS2/nPhxae0oeWbWTkG1vruV0JtDqhcrduLGxraf//k3IQ==
+X-Received: by 2002:a63:4a50:: with SMTP id j16mr17333906pgl.308.1575868882682;
+        Sun, 08 Dec 2019 21:21:22 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id b7sm10752127pjo.3.2019.12.08.21.21.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 08 Dec 2019 21:21:21 -0800 (PST)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     linux-hwmon@vger.kernel.org
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-ide@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 0/1] Summary: hwmon driver for temperature sensors on SATA drives
+Date:   Sun,  8 Dec 2019 21:21:18 -0800
+Message-Id: <20191209052119.32072-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIE1hdHRoaWFzOg0KDQpPbiBTYXQsIDIwMTktMTItMDcgYXQgMjM6NDcgKzAxMDAsIG1hdHRo
-aWFzLmJnZ0BrZXJuZWwub3JnIHdyb3RlOg0KPiBGcm9tOiBNYXR0aGlhcyBCcnVnZ2VyIDxtYnJ1
-Z2dlckBzdXNlLmNvbT4NCj4gDQo+IEl0IGNhbiBoYXBwZW4gdGhhdCB0aGUgbW1zeXMgY2xvY2sg
-ZHJpdmVycyBhcmVuJ3QgcHJvYmVkIGJlZm9yZSB0aGUNCj4gcGxhdGZvcm0gZHJpdmVyIGdldHMg
-aW52b2tlZC4gVGhlIHBsYXRmb3JtIGRyaXZlciB1c2VkIHRvIHByaW50IGEgd2FybmluZw0KPiB0
-aGF0IHRoZSBkcml2ZXIgZmFpbGVkIHRvIGdldCB0aGUgY2xvY2tzLiBPbWl0IHRoaXMgZXJyb3Ig
-b24NCj4gdGhlIGRlZmVyZWQgcHJvYmUgcGF0aC4NCg0KUmV2aWV3ZWQtYnk6IENLIEh1IDxjay5o
-dUBtZWRpYXRlay5jb20+DQoNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1hdHRoaWFzIEJydWdnZXIg
-PG1icnVnZ2VyQHN1c2UuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZGlzcF9jb2xvci5jIHwgIDUgKysrKy0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZGlzcF9vdmwuYyAgIHwgIDUgKysrKy0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZGlzcF9yZG1hLmMgIHwgIDUgKysrKy0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZHBpLmMgICAgICAgIHwgMTIgKysrKysrKysrLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVk
-aWF0ZWsvbXRrX2RybV9kZHAuYyAgICB8ICA0ICsrKy0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRp
-YXRlay9tdGtfZHNpLmMgICAgICAgIHwgIDggKysrKysrLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9t
-ZWRpYXRlay9tdGtfaGRtaS5jICAgICAgIHwgIDQgKysrLQ0KPiAgNyBmaWxlcyBjaGFuZ2VkLCAz
-MyBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3BfY29sb3IuYyBiL2RyaXZlcnMvZ3B1L2RybS9t
-ZWRpYXRlay9tdGtfZGlzcF9jb2xvci5jDQo+IGluZGV4IDU5ZGUyYTQ2YWE0OS4uOGYwZmM5NmVm
-N2JjIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3BfY29s
-b3IuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3BfY29sb3IuYw0K
-PiBAQCAtMTE4LDcgKzExOCwxMCBAQCBzdGF0aWMgaW50IG10a19kaXNwX2NvbG9yX3Byb2JlKHN0
-cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJcmV0ID0gbXRrX2RkcF9jb21wX2luaXQo
-ZGV2LCBkZXYtPm9mX25vZGUsICZwcml2LT5kZHBfY29tcCwgY29tcF9pZCwNCj4gIAkJCQkmbXRr
-X2Rpc3BfY29sb3JfZnVuY3MpOw0KPiAgCWlmIChyZXQpIHsNCj4gLQkJZGV2X2VycihkZXYsICJG
-YWlsZWQgdG8gaW5pdGlhbGl6ZSBjb21wb25lbnQ6ICVkXG4iLCByZXQpOw0KPiArCQlpZiAocmV0
-ICE9IC1FUFJPQkVfREVGRVIpDQo+ICsJCQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBpbml0aWFs
-aXplIGNvbXBvbmVudDogJWRcbiIsDQo+ICsJCQkJcmV0KTsNCj4gKw0KPiAgCQlyZXR1cm4gcmV0
-Ow0KPiAgCX0NCj4gIA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
-a19kaXNwX292bC5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kaXNwX292bC5jDQo+
-IGluZGV4IDIxODUxNzU2YzU3OS4uNzQ4N2IwMTgyYzA1IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3Bfb3ZsLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
-L21lZGlhdGVrL210a19kaXNwX292bC5jDQo+IEBAIC0yODUsNyArMjg1LDEwIEBAIHN0YXRpYyBp
-bnQgbXRrX2Rpc3Bfb3ZsX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJ
-cmV0ID0gbXRrX2RkcF9jb21wX2luaXQoZGV2LCBkZXYtPm9mX25vZGUsICZwcml2LT5kZHBfY29t
-cCwgY29tcF9pZCwNCj4gIAkJCQkmbXRrX2Rpc3Bfb3ZsX2Z1bmNzKTsNCj4gIAlpZiAocmV0KSB7
-DQo+IC0JCWRldl9lcnIoZGV2LCAiRmFpbGVkIHRvIGluaXRpYWxpemUgY29tcG9uZW50OiAlZFxu
-IiwgcmV0KTsNCj4gKwkJaWYgKHJldCAhPSAtRVBST0JFX0RFRkVSKQ0KPiArCQkJZGV2X2Vycihk
-ZXYsICJGYWlsZWQgdG8gaW5pdGlhbGl6ZSBjb21wb25lbnQ6ICVkXG4iLA0KPiArCQkJCXJldCk7
-DQo+ICsNCj4gIAkJcmV0dXJuIHJldDsNCj4gIAl9DQo+ICANCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9yZG1hLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVk
-aWF0ZWsvbXRrX2Rpc3BfcmRtYS5jDQo+IGluZGV4IDQwNWFmZWYzMTQwNy4uODM1ZWE4ZjhkYWI5
-IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3BfcmRtYS5j
-DQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9yZG1hLmMNCj4gQEAg
-LTI4Nyw3ICsyODcsMTAgQEAgc3RhdGljIGludCBtdGtfZGlzcF9yZG1hX3Byb2JlKHN0cnVjdCBw
-bGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJcmV0ID0gbXRrX2RkcF9jb21wX2luaXQoZGV2LCBk
-ZXYtPm9mX25vZGUsICZwcml2LT5kZHBfY29tcCwgY29tcF9pZCwNCj4gIAkJCQkmbXRrX2Rpc3Bf
-cmRtYV9mdW5jcyk7DQo+ICAJaWYgKHJldCkgew0KPiAtCQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0
-byBpbml0aWFsaXplIGNvbXBvbmVudDogJWRcbiIsIHJldCk7DQo+ICsJCWlmIChyZXQgIT0gLUVQ
-Uk9CRV9ERUZFUikNCj4gKwkJCWRldl9lcnIoZGV2LCAiRmFpbGVkIHRvIGluaXRpYWxpemUgY29t
-cG9uZW50OiAlZFxuIiwNCj4gKwkJCQlyZXQpOw0KPiArDQo+ICAJCXJldHVybiByZXQ7DQo+ICAJ
-fQ0KPiAgDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RwaS5j
-IGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcGkuYw0KPiBpbmRleCBiZTZkOTVjNWZm
-MjUuLjllZDMyNDcwYWQwMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVr
-L210a19kcGkuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RwaS5jDQo+
-IEBAIC03MDAsMjEgKzcwMCwyNyBAQCBzdGF0aWMgaW50IG10a19kcGlfcHJvYmUoc3RydWN0IHBs
-YXRmb3JtX2RldmljZSAqcGRldikNCj4gIAlkcGktPmVuZ2luZV9jbGsgPSBkZXZtX2Nsa19nZXQo
-ZGV2LCAiZW5naW5lIik7DQo+ICAJaWYgKElTX0VSUihkcGktPmVuZ2luZV9jbGspKSB7DQo+ICAJ
-CXJldCA9IFBUUl9FUlIoZHBpLT5lbmdpbmVfY2xrKTsNCj4gLQkJZGV2X2VycihkZXYsICJGYWls
-ZWQgdG8gZ2V0IGVuZ2luZSBjbG9jazogJWRcbiIsIHJldCk7DQo+ICsJCWlmIChyZXQgIT0gLUVQ
-Uk9CRV9ERUZFUikNCj4gKwkJCWRldl9lcnIoZGV2LCAiRmFpbGVkIHRvIGdldCBlbmdpbmUgY2xv
-Y2s6ICVkXG4iLCByZXQpOw0KPiArDQo+ICAJCXJldHVybiByZXQ7DQo+ICAJfQ0KPiAgDQo+ICAJ
-ZHBpLT5waXhlbF9jbGsgPSBkZXZtX2Nsa19nZXQoZGV2LCAicGl4ZWwiKTsNCj4gIAlpZiAoSVNf
-RVJSKGRwaS0+cGl4ZWxfY2xrKSkgew0KPiAgCQlyZXQgPSBQVFJfRVJSKGRwaS0+cGl4ZWxfY2xr
-KTsNCj4gLQkJZGV2X2VycihkZXYsICJGYWlsZWQgdG8gZ2V0IHBpeGVsIGNsb2NrOiAlZFxuIiwg
-cmV0KTsNCj4gKwkJaWYgKHJldCAhPSAtRVBST0JFX0RFRkVSKQ0KPiArCQkJZGV2X2VycihkZXYs
-ICJGYWlsZWQgdG8gZ2V0IHBpeGVsIGNsb2NrOiAlZFxuIiwgcmV0KTsNCj4gKw0KPiAgCQlyZXR1
-cm4gcmV0Ow0KPiAgCX0NCj4gIA0KPiAgCWRwaS0+dHZkX2NsayA9IGRldm1fY2xrX2dldChkZXYs
-ICJwbGwiKTsNCj4gIAlpZiAoSVNfRVJSKGRwaS0+dHZkX2NsaykpIHsNCj4gIAkJcmV0ID0gUFRS
-X0VSUihkcGktPnR2ZF9jbGspOw0KPiAtCQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBnZXQgdHZk
-cGxsIGNsb2NrOiAlZFxuIiwgcmV0KTsNCj4gKwkJaWYgKHJldCAhPSAtRVBST0JFX0RFRkVSKQ0K
-PiArCQkJZGV2X2VycihkZXYsICJGYWlsZWQgdG8gZ2V0IHR2ZHBsbCBjbG9jazogJWRcbiIsIHJl
-dCk7DQo+ICsNCj4gIAkJcmV0dXJuIHJldDsNCj4gIAl9DQo+ICANCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcC5jIGIvZHJpdmVycy9ncHUvZHJtL21l
-ZGlhdGVrL210a19kcm1fZGRwLmMNCj4gaW5kZXggYjc2NTE4MTIyM2U2Li42MDU0ZTJiNjc1Zjkg
-MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcC5jDQo+
-ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcC5jDQo+IEBAIC01NTgs
-NyArNTU4LDkgQEAgc3RhdGljIGludCBtdGtfZGRwX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
-Y2UgKnBkZXYpDQo+ICANCj4gIAlkZHAtPmNsayA9IGRldm1fY2xrX2dldChkZXYsIE5VTEwpOw0K
-PiAgCWlmIChJU19FUlIoZGRwLT5jbGspKSB7DQo+IC0JCWRldl9lcnIoZGV2LCAiRmFpbGVkIHRv
-IGdldCBjbG9ja1xuIik7DQo+ICsJCWlmIChQVFJfRVJSKGRkcC0+Y2xrKSAhPSAtRVBST0JFX0RF
-RkVSKQ0KPiArCQkJZGV2X2VycihkZXYsICJGYWlsZWQgdG8gZ2V0IGNsb2NrXG4iKTsNCj4gKw0K
-PiAgCQlyZXR1cm4gUFRSX0VSUihkZHAtPmNsayk7DQo+ICAJfQ0KPiAgDQo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL21l
-ZGlhdGVrL210a19kc2kuYw0KPiBpbmRleCA0MzMyNTYzZGY5NTIuLjY2ZDViMGZkZDY3OCAxMDA2
-NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kc2kuYw0KPiArKysgYi9k
-cml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RzaS5jDQo+IEBAIC0xMTEwLDE0ICsxMTEwLDE4
-IEBAIHN0YXRpYyBpbnQgbXRrX2RzaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQ0KPiAgCWRzaS0+ZW5naW5lX2NsayA9IGRldm1fY2xrX2dldChkZXYsICJlbmdpbmUiKTsNCj4g
-IAlpZiAoSVNfRVJSKGRzaS0+ZW5naW5lX2NsaykpIHsNCj4gIAkJcmV0ID0gUFRSX0VSUihkc2kt
-PmVuZ2luZV9jbGspOw0KPiAtCQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBnZXQgZW5naW5lIGNs
-b2NrOiAlZFxuIiwgcmV0KTsNCj4gKwkJaWYgKHJldCAhPSAtRVBST0JFX0RFRkVSKQ0KPiArCQkJ
-ZGV2X2VycihkZXYsICJGYWlsZWQgdG8gZ2V0IGVuZ2luZSBjbG9jazogJWRcbiIsIHJldCk7DQo+
-ICsNCj4gIAkJcmV0dXJuIHJldDsNCj4gIAl9DQo+ICANCj4gIAlkc2ktPmRpZ2l0YWxfY2xrID0g
-ZGV2bV9jbGtfZ2V0KGRldiwgImRpZ2l0YWwiKTsNCj4gIAlpZiAoSVNfRVJSKGRzaS0+ZGlnaXRh
-bF9jbGspKSB7DQo+ICAJCXJldCA9IFBUUl9FUlIoZHNpLT5kaWdpdGFsX2Nsayk7DQo+IC0JCWRl
-dl9lcnIoZGV2LCAiRmFpbGVkIHRvIGdldCBkaWdpdGFsIGNsb2NrOiAlZFxuIiwgcmV0KTsNCj4g
-KwkJaWYgKHJldCAhPSAtRVBST0JFX0RFRkVSKQ0KPiArCQkJZGV2X2VycihkZXYsICJGYWlsZWQg
-dG8gZ2V0IGRpZ2l0YWwgY2xvY2s6ICVkXG4iLCByZXQpOw0KPiArDQo+ICAJCXJldHVybiByZXQ7
-DQo+ICAJfQ0KPiAgDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
-X2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfaGRtaS5jDQo+IGluZGV4IGNl
-OTFiNjEzNjRlYi4uNjJmOWNhMjMwOGVlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-bWVkaWF0ZWsvbXRrX2hkbWkuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
-X2hkbWkuYw0KPiBAQCAtMTQ0Nyw3ICsxNDQ3LDkgQEAgc3RhdGljIGludCBtdGtfaGRtaV9kdF9w
-YXJzZV9wZGF0YShzdHJ1Y3QgbXRrX2hkbWkgKmhkbWksDQo+ICANCj4gIAlyZXQgPSBtdGtfaGRt
-aV9nZXRfYWxsX2NsayhoZG1pLCBucCk7DQo+ICAJaWYgKHJldCkgew0KPiAtCQlkZXZfZXJyKGRl
-diwgIkZhaWxlZCB0byBnZXQgY2xvY2tzOiAlZFxuIiwgcmV0KTsNCj4gKwkJaWYgKHJldCAhPSAt
-RVBST0JFX0RFRkVSKQ0KPiArCQkJZGV2X2VycihkZXYsICJGYWlsZWQgdG8gZ2V0IGNsb2Nrczog
-JWRcbiIsIHJldCk7DQo+ICsNCj4gIAkJcmV0dXJuIHJldDsNCj4gIAl9DQo+ICANCg0K
+In the past, several attempts have been made to add support for reporting
+SCSI/[S]ATA drive temperatures to the Linux kernel. This is desirable to
+have a means to report drive temperatures to userspace without root
+privileges and in a standard format, but also to be able to tie reported
+temperatures with the thermal subsystem.
 
+The most recent attempt was [1] by Linus Walleij. It went through a total
+of seven iterations. At the end, it was rejected for a number of reasons;
+see the provided link for details. This implementation resides in the
+SCSI core. It originally resided in libata but was moved to SCSI per
+maintainer request, where it was ultimately rejected.
+
+The feedback on this approach suggests to use the SCSI Temperature log page
+[0x0d] as means to access drive temperature information. It is unknown
+if this is implemented in any real SCSI drive. The feedback also suggests to
+obtain temperature from ATA drives, convert it into the SCSI temperature log
+page in libata-scsi, and to use that information in a hardware monitoring
+driver. The format and method to do this is documented in [3]. This is not
+currently implemented in the Linux kernel.
+
+An earlier submission of a driver to report SCSI/SATA drive temperatures
+was made back in 2009 by Constantin Baranov [2]. This submission resides
+in the hardware monitoring subsystem. It does not rely on changes in the
+SCSI subsystem or in libata-scsi. Instead, it registers itself with the
+SCSI subsystem using scsi_register_interface(). It was rejected primarily
+because it executes ATA passthrough commands without verification that it
+is actually connected to an ATA drive.
+
+Both submissions use SMART attributes to read drive temperature information.
+[1] also tries to identify temperature limits from those attributes.
+Unfortunately, SMART attributes are not well defined, resulting in relative
+complex code trying to identify the exact format of the reported data.
+
+With the available information and feedback, we can make a number of
+observations and conclusions.
+a) Using available (S)ATA drive temperature information and convert it to
+   a SCSI log page is an interesting idea. On the downside, it would add a
+   substantial amount of complexity to libata-scsi. The code would either
+   have to be optional, or it would have to be built into the kernel even
+   if it is never used on a given system. Without access to SCSI drives
+   supporting this feature, it would be all but impossible to test the code
+   against such a drive. It would neither be possible to test correctness
+   of the code in libata-scsi nor in the driver using that information.
+   Overall it would be much easier and much less risky to implement such
+   code on the receiving side (ie in a driver reporting the temperatures)
+   instead of trying to convert the information from one format to another
+   first. In summary, it is neither practical nor feasible. On top of that,
+   there is no guarantee that code implementing this functionality would
+   ever be accepted into the kernel for this very reason.
+b) The code needed to read and analyze SCSI temperature log pages is quite
+   complex (see smartmontools [5]). There is no existing support code
+   in the Linux kernel; such code would have to be written. This makes
+   the approach discussed in a) even more risky and less practical.
+c) Overall, any attempt to report temperature information for anything
+   but SATA drives in the kernel is not practical due to the complexity
+   involved, and due to the inability to test the resulting code with
+   non-SATA drives.
+d) Using SMART data for anything but basic temperature reporting is not
+   really feasible due to the lack of standardization. Any attempt to do
+   this would add a substantial amount of code, ambiguity, and risk.
+
+This submission implements a driver to report the temperature of SATA
+drives through the hardware monitoring subsystem. It is implemented as
+stand-alone driver in the hardware monitoring subsystem. The driver uses
+the mechanism from submission [1] to register with the SCSI subsystem.
+By using this mechanism, changes in the SCSI or ATA subsystems are not
+required.  To reduce risk and complexity, it only instantiates after
+reliably validating that it is connected to a SATA drive. It does not
+attempt to report the temperature of non-SATA drives.
+
+The driver uses the SCT Command Transport feature set as specified in
+ATA8-ACS [4] to read and report the temperature as well as temperature
+limits and lowest/highest temperature information (if available) for
+SATA drives. If a drive does not support SCT Command Transport, the driver
+attempts to access a limited set of well known SMART attributes to read
+the drive temperature. In that case, only the current drive temperature
+is reported.
+
+---
+References:
+[1] https://patchwork.kernel.org/patch/10688021/
+[2] https://lore.kernel.org/lkml/20090913040104.ab1d0b69.const@mimas.ru/
+[3] http://www.t10.org/cgi-bin/ac.pl?t=f&f=sat5r02.pdf
+    Information technology - SCSI / ATA Translation - 5 (SAT-5),
+    section 10.3.8 (Temperature log page).
+[4] http://www.t13.org/documents/uploadeddocuments/docs2008/d1699r6a-ata8-acs.pdf
+    ANS T13/1699-D "Information technology - AT Attachment 8 - ATA/ATAPI Command
+    Set (ATA8-ACS)"
+[5] https://github.com/mirror/smartmontools.git
