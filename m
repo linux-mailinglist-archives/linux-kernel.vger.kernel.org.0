@@ -2,134 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90586116F57
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:43:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83EE6116F5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:44:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbfLIOng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 09:43:36 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56198 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbfLIOng (ORCPT
+        id S1727901AbfLIOoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 09:44:12 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:34796 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727891AbfLIOoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:43:36 -0500
-Received: by mail-wm1-f67.google.com with SMTP id q9so15773257wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 06:43:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5GMrlDTJZgtlmwpkaFtSDadNDfv99seyl6nQwayimsA=;
-        b=pdlBTrpRLbnz32b/1c1oiv1TQ4ys41nnGHQc3qPNlMP35assplQ0ZD6VMQ2KmGWmbJ
-         unF4CtInhA3xLB/28qiCVfhZZnTJBN/p9bFeIpBDSKMuof1IRjmvZhhNJs5NPDhv/87I
-         9y2eyJzpAwYuxdUO94AUxQnQIhQMbcFoz/8VwIq4UJvjTqvMoKwB/+Cl1rWE/U80WNGb
-         cgG7x1qjVb7gOYYQETFVlQlHYkuZdOqYOlCKoNRTUwPUEkREJpGSnZm5/mv/+tbA+IMx
-         PU3mb3an9rfUq5ax4WRoqKKNMUOF7ILy5PgBXaHle+1TnBNuBCsLTzEg07HX1EZ29UUL
-         z4cg==
-X-Gm-Message-State: APjAAAWjxEWHFvW6ZyYA71OSu87sfYKz+QIxEQXmEsDFY7wDanOH9mVT
-        sMjUCFPwyjwNYPOAmYLLRfM=
-X-Google-Smtp-Source: APXvYqzn0eMk4JDUlv6X+P0C1L5Eb29E1giMVkZCuArPNDbgN+9AVUrkvAFe+KXAfBGHr05FLEINhw==
-X-Received: by 2002:a1c:5448:: with SMTP id p8mr25624781wmi.70.1575902614236;
-        Mon, 09 Dec 2019 06:43:34 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id t78sm13737425wmt.24.2019.12.09.06.43.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 06:43:33 -0800 (PST)
-Date:   Mon, 9 Dec 2019 15:43:32 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memcg: account security cred as well to kmemcg
-Message-ID: <20191209144332.GA24368@dhcp22.suse.cz>
-References: <20191205223721.40034-1-shakeelb@google.com>
- <20191206081710.GK28317@dhcp22.suse.cz>
- <CALvZod4VgNJOXy+bMLvzDhpYUu8tBe-63aDA842LH4-O5f5zKw@mail.gmail.com>
+        Mon, 9 Dec 2019 09:44:10 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB9Egjpg017551;
+        Mon, 9 Dec 2019 15:43:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=vKx6OPdSeYJTuRGa0bHCD2tYSeg+UtY9A3haTmI2eKA=;
+ b=c6ntOlc126VLKeqyu4GAC4nsRoo7L/y/wpleFu9k1K+1s90MlQADGV2W+omSCJCO3CvN
+ EyJtnea6Ee3WS9nY/7HUgXOMnAg1Q+E2DGu5F7gHrOtsvZ9pbKRa3nD5kYUmbOR5pt2x
+ ah1hkDXaCytdccqyyaH++WgfekYbeVLs76peteDiSzhFC/LaCP31IocckHdvEOA/Xx+X
+ Aa4o3Nhws5Np5oqMvE85guQd3c5PJmv/Jwvm91G2SGNdt+7tbr0awKQOFHZkDxxT2G+A
+ T6soWnVEfm7PhN1YgDLqZuruHnHt+7AcTziV0LU+HJ8+ZRhQE465zo4K4C/C5hBq7fKu vQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2wradh7xe1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 09 Dec 2019 15:43:52 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6C39910002A;
+        Mon,  9 Dec 2019 15:43:51 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3CA812D3765;
+        Mon,  9 Dec 2019 15:43:51 +0100 (CET)
+Received: from lmecxl0912.lme.st.com (10.75.127.51) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 9 Dec
+ 2019 15:43:50 +0100
+Subject: Re: [PATCH 5/5] ARM: dts: stm32: add phy-names to usbotg_hs on
+ stm32mp157c-ev1
+To:     Amelie Delaunay <amelie.delaunay@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20191121161259.25799-1-amelie.delaunay@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <181a4a40-f54c-3559-aaa9-9443fb2153ac@st.com>
+Date:   Mon, 9 Dec 2019 15:43:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod4VgNJOXy+bMLvzDhpYUu8tBe-63aDA842LH4-O5f5zKw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191121161259.25799-1-amelie.delaunay@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-09_04:2019-12-09,2019-12-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 06-12-19 08:51:21, Shakeel Butt wrote:
-> On Fri, Dec 6, 2019 at 12:17 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Thu 05-12-19 14:37:21, Shakeel Butt wrote:
-> > > The cred_jar kmem_cache is already memcg accounted in the current
-> > > kernel but cred->security is not. Account cred->security to kmemcg.
-> > >
-> > > Recently we saw high root slab usage on our production and on further
-> > > inspection, we found a buggy application leaking processes. Though that
-> > > buggy application was contained within its memcg but we observe much
-> > > more system memory overhead, couple of GiBs, during that period. This
-> > > overhead can adversely impact the isolation on the system. One of source
-> > > of high overhead, we found was cred->secuity objects.
-> >
-> > I am not familiar with this area much. What is the timelife of these
-> > objects? Do they go away with a task allocating them?
-> >
+Hi Amélie,
+
+On 11/21/19 5:12 PM, Amelie Delaunay wrote:
+> phy-names is required by usbotg_hs driver to get the phy, otherwise, it
+> considers that there is no phys property.
 > 
-> Lifetime is at least the life of the process allocating them.
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> ---
+>   arch/arm/boot/dts/stm32mp157c-ev1.dts | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+> index 2010f6292a77..228e35e16884 100644
+> --- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
+> +++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+> @@ -355,6 +355,7 @@
+>   &usbotg_hs {
+>   	dr_mode = "peripheral";
+>   	phys = <&usbphyc_port1 0>;
+> +	phy-names = "usb2-phy";
+>   	status = "okay";
+>   };
+>   
+> 
 
-Thanks for the clarification! It is better to be explicit about this in
-the changelog I believe because it would make a review much easier.
-Accounting for objects which are not bound to a user process context is
-more complex and requires much more considerations.
 
-> > > Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Series applied on stm32-next.
 
-With that clarification
-Acked-by: Michal Hocko <mhocko@suse.com>
+Note: due to new STM32 diversity I renamed some patches.
 
-> > >
-> > > ---
-> > >  kernel/cred.c | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/kernel/cred.c b/kernel/cred.c
-> > > index c0a4c12d38b2..9ed51b70ed80 100644
-> > > --- a/kernel/cred.c
-> > > +++ b/kernel/cred.c
-> > > @@ -223,7 +223,7 @@ struct cred *cred_alloc_blank(void)
-> > >       new->magic = CRED_MAGIC;
-> > >  #endif
-> > >
-> > > -     if (security_cred_alloc_blank(new, GFP_KERNEL) < 0)
-> > > +     if (security_cred_alloc_blank(new, GFP_KERNEL_ACCOUNT) < 0)
-> > >               goto error;
-> > >
-> > >       return new;
-> > > @@ -282,7 +282,7 @@ struct cred *prepare_creds(void)
-> > >       new->security = NULL;
-> > >  #endif
-> > >
-> > > -     if (security_prepare_creds(new, old, GFP_KERNEL) < 0)
-> > > +     if (security_prepare_creds(new, old, GFP_KERNEL_ACCOUNT) < 0)
-> > >               goto error;
-> > >       validate_creds(new);
-> > >       return new;
-> > > @@ -715,7 +715,7 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
-> > >  #ifdef CONFIG_SECURITY
-> > >       new->security = NULL;
-> > >  #endif
-> > > -     if (security_prepare_creds(new, old, GFP_KERNEL) < 0)
-> > > +     if (security_prepare_creds(new, old, GFP_KERNEL_ACCOUNT) < 0)
-> > >               goto error;
-> > >
-> > >       put_cred(old);
-> > > --
-> > > 2.24.0.393.g34dc348eaf-goog
-> > >
-> >
-> > --
-> > Michal Hocko
-> > SUSE Labs
-
--- 
-Michal Hocko
-SUSE Labs
+Regards
+Alex
