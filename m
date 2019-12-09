@@ -2,110 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EAFF11727D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:09:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CECC2117292
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:15:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfLIRJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 12:09:30 -0500
-Received: from mga07.intel.com ([134.134.136.100]:3279 "EHLO mga07.intel.com"
+        id S1726668AbfLIRPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 12:15:12 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:42672 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726532AbfLIRJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 12:09:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2019 09:09:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,296,1571727600"; 
-   d="scan'208";a="362990817"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga004.jf.intel.com with ESMTP; 09 Dec 2019 09:09:29 -0800
-Date:   Mon, 9 Dec 2019 09:14:15 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, "Yi Liu" <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        Joe Perches <joe@perches.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v5 0/8] VT-d Native Shared virtual memory cleanup and
- fixes
-Message-ID: <20191209091415.0a733af6@jacob-builder>
-In-Reply-To: <1575316709-54903-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1575316709-54903-1-git-send-email-jacob.jun.pan@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726483AbfLIRPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 12:15:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=yDkXn8c2FrkGfy+U0MRLuXrzEaNV8CpIo/QaRFz2xmk=; b=EGDMJAMzVzZqYHI5GtOsZe0vDx
+        tq8tD6m0jNbrFCUTpJbj/4Q8jHLyi8GIWgNxrZFofOGSyH4vg6mJF5LvyTMJ6XF/mmlL1xiiKgPKd
+        LVAHbKb2+yDoAQvdWqny4t+JS45zWGe18sLJa+z1g2gsUBblNbqfm8XM6no+X5BudnFc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ieMcm-0006d0-NV; Mon, 09 Dec 2019 18:15:08 +0100
+Date:   Mon, 9 Dec 2019 18:15:08 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1] ARM i.MX6q: make sure PHY fixup for KSZ9031 is
+ applied only on one board
+Message-ID: <20191209171508.GD9099@lunn.ch>
+References: <20191209084430.11107-1-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209084430.11107-1-o.rempel@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg and Baolu,
+Hi Oleksij
 
-Any more comments on this series? I rebased it on v5.5-rc1 without
-changes.
+> This patch changes the MICREL KSZ9031 fixup, which was introduced for
+> the "Data Modul eDM-QMX6" board in following patch, to be only activated
+> for this specific board.
 
+...
 
-Thanks,
+>  static void __init imx6q_enet_phy_init(void)
+>  {
+> +	/* Warning: please do not extend this fixup list. This fixups are
+> +	 * applied even on boards where related PHY is not directly connected
+> +	 * to the ethernet controller. For example with switch in the middle.
+> +	 */
+>  	if (IS_BUILTIN(CONFIG_PHYLIB)) {
+>  		phy_register_fixup_for_uid(PHY_ID_KSZ9021, MICREL_PHY_ID_MASK,
+>  				ksz9021rn_phy_fixup);
+> -		phy_register_fixup_for_uid(PHY_ID_KSZ9031, MICREL_PHY_ID_MASK,
+> -				ksz9031rn_phy_fixup);
+> +
+> +		if (of_machine_is_compatible("dmo,imx6q-edmqmx6"))
+> +			phy_register_fixup_for_uid(PHY_ID_KSZ9031,
+> +						   MICREL_PHY_ID_MASK,
+> +						   ksz9031rn_phy_fixup);
+> +
+>  		phy_register_fixup_for_uid(PHY_ID_AR8031, 0xffffffef,
+>  				ar8031_phy_fixup);
+>  		phy_register_fixup_for_uid(PHY_ID_AR8035, 0xffffffef,
 
-Jacob
+What about the other 3 fixups? Are they not also equally broken,
+applied for all boards, not specific boards?
 
-On Mon,  2 Dec 2019 11:58:21 -0800
-Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
-
-> Mostly extracted from nested SVA/SVM series based on review comments
-> of v7. https://lkml.org/lkml/2019/10/24/852
-> 
-> This series also adds a few important fixes for native use of SVA.
-> Nested SVA new code will be submitted separately as a smaller set.
-> Based on the core branch of IOMMU tree staged for v5.5, where common
-> APIs for vSVA were applied.
-> git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git core
-> 
-> Changelog:
-> v5	- Regrouped patch 6 and 8, added comments suggested by Joe
-> Perches v4	- Commit message fix
-> 
-> V3
-> 	- Squashed 1/10 & 2/10
-> 	- Deleted "8/10 Fix PASID cache flush" from this series
-> 	- Addressed reviews from Eric Auger and Baolu
-> V2
-> 	- Coding style fixes based on Baolu's input, no functional
-> change
-> 	- Added Acked-by tags.
-> 
-> Thanks,
-> 
-> Jacob
-> 
-> 
-> *** BLURB HERE ***
-> 
-> Jacob Pan (8):
->   iommu/vt-d: Fix CPU and IOMMU SVM feature matching checks
->   iommu/vt-d: Match CPU and IOMMU paging mode
->   iommu/vt-d: Reject SVM bind for failed capability check
->   iommu/vt-d: Avoid duplicated code for PASID setup
->   iommu/vt-d: Fix off-by-one in PASID allocation
->   iommu/vt-d: Replace Intel specific PASID allocator with IOASID
->   iommu/vt-d: Avoid sending invalid page response
->   iommu/vt-d: Misc macro clean up for SVM
-> 
->  drivers/iommu/Kconfig       |   1 +
->  drivers/iommu/intel-iommu.c |  23 +++----
->  drivers/iommu/intel-pasid.c |  96 ++++++++------------------
->  drivers/iommu/intel-svm.c   | 163
-> +++++++++++++++++++++++++-------------------
-> include/linux/intel-iommu.h |   5 +- 5 files changed, 135
-> insertions(+), 153 deletions(-)
-> 
-
-[Jacob Pan]
+	Andrew
