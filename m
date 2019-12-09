@@ -2,131 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83CCB116F6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:44:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2403116F72
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:45:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbfLIOox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 09:44:53 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59592 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727683AbfLIOoo (ORCPT
+        id S1727860AbfLIOpx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Dec 2019 09:45:53 -0500
+Received: from ipmail05.adl3.internode.on.net ([150.101.137.13]:33487 "EHLO
+        ipmail05.adl3.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727388AbfLIOpx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:44:44 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191209144443euoutp0123254d78f0bfd9b96f046db3ea1d92ea~euyQgJySo0694406944euoutp019
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2019 14:44:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191209144443euoutp0123254d78f0bfd9b96f046db3ea1d92ea~euyQgJySo0694406944euoutp019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575902683;
-        bh=WzxcJ59gNp8il6neN2DdkauTkF314FsLCY6M8Z2mAPo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xo4Pkq5p94MZjF1xE9mpkIO18EK9iRU49ssF4tlWcSL9Unfhd3vKVESAaq5BqCdsy
-         62hrOxKsya/XqfyZW1d99XwedhXSMhJEctU9Q3m7Y/lEN8dc7oWp7l3jC4nw0w7e25
-         dER8pu4ihe3Q+0CAdtVRQmM3Jlv/CbRRTNcmewPA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191209144443eucas1p13af02c6d9c3ee96923731419cac4d131~euyQO_GzB1796517965eucas1p1M;
-        Mon,  9 Dec 2019 14:44:43 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id FF.28.60698.BDD5EED5; Mon,  9
-        Dec 2019 14:44:43 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191209144442eucas1p214c553519b7a9d3d005802984bc6fb31~euyP5moCq1662616626eucas1p2w;
-        Mon,  9 Dec 2019 14:44:42 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191209144442eusmtrp2c0d5e4c9bda2feaf9c4b23e408e4bc1b~euyP4-lhL2834828348eusmtrp2m;
-        Mon,  9 Dec 2019 14:44:42 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-18-5dee5ddb09d1
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 67.09.08375.ADD5EED5; Mon,  9
-        Dec 2019 14:44:42 +0000 (GMT)
-Received: from AMDC3218.digital.local (unknown [106.120.51.18]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191209144442eusmtip2429bc4ca617da4080f05b8994f119bcd~euyPYHo0o1707917079eusmtip2E;
-        Mon,  9 Dec 2019 14:44:42 +0000 (GMT)
-From:   Kamil Konieczny <k.konieczny@samsung.com>
-To:     k.konieczny@samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH 4/4] PM / devfreq: use delayed work if DEVFREQ_DELAYED_TIMER
- set
-Date:   Mon,  9 Dec 2019 15:44:25 +0100
-Message-Id: <20191209144425.13321-5-k.konieczny@samsung.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191209144425.13321-1-k.konieczny@samsung.com>
+        Mon, 9 Dec 2019 09:45:53 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CV/QCtXe5dAG/sfAFkhkUSKoQCgl2?=
+ =?us-ascii?q?GJow5hUiKCySHJAkBPAMBAREBNoN4AoI9OBMSAgcBAQEFBBABAQEyhROGKwE?=
+ =?us-ascii?q?FI1YQCAMNCwICHwcCAiE2Bg4FgyKCRwMurCaBMhqFNYJLDWOBSIEOjE+BTD+?=
+ =?us-ascii?q?BOAwDEYJMPoQpAQGDLjKCLK17H0MHgjFuBJUPgkKHc4QtA4d1g1gtjS6dKyG?=
+ =?us-ascii?q?BWTMaLm8BgxGNQ44hLjSBHxoLixqCMgEB?=
+X-IronPort-SPAM: SPAM
+Received: from unknown (HELO [100.69.114.178]) ([1.124.236.111])
+  by ipmail05.adl3.internode.on.net with ESMTP; 10 Dec 2019 01:15:49 +1030
+Date:   Tue, 10 Dec 2019 01:15:46 +1030
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAHk-=wjj8SQx4YzS8yw7ZJJKiVLBY0g=d8rCSyPCM=8Pzmz+Zg@mail.gmail.com>
+References: <30808b0b-367a-266a-7ef4-de69c08e1319@internode.on.net> <09396dca-3643-9a4b-070a-e7db2a07235e@internode.on.net> <CAHk-=wjj8SQx4YzS8yw7ZJJKiVLBY0g=d8rCSyPCM=8Pzmz+Zg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfSxVcRje757Pa107DuWNYt1NXytqWjtFTcuWrLZqba3aTUfOfMSle3xd
-        f1GtizBKEoasibtQ0lW3xeJGCLO2Utj8kYmQr/KRjxyH8t/zPu/zPO/7bi+NsXmEAx2sjRR0
-        Wj5UTVrhpoaZtt1dmhHNnp/tJPcsu4LgPk/2E1zheDbBtbc/pbjW60MU99GcR3ITqRbElVl6
-        KK4roYT0UvpUGpNIn7QqI/KZqHQ6hV2w8gwQQoOjBZ3b4ctWQWVF+VSEkYpdXDBT8aiYTEZK
-        Gph9YEptx5ORFc0yJQj6R6couZhEYOqYJOViAkFDy3ds1TLfl6+QMMs8RmA0Rv9zZBUbl3NJ
-        xg3etjbhErZjHCGpKEMhiTCmQQHmunlCatgyZ6CzZw4lI5rGGReoN1yUaBXjCfdmc0mJBsYZ
-        8oa3S7SSOQQ/xjIxWWIDTQ++LcdjS5IbL3IxKR6Y2xSUvl/1ekNmX4i8sy0MNlZRMt4Ei68K
-        FDKOgb6HaZTsvYmg1zCGyw0PqG/sIKQcjNkBFWY3mT4Cid3NK/HW0DlsI69gDXdM9zGZVkHi
-        LVZWu0B/c8rKJEdIXiwnZOwDiePNZDrakrPmmJw1x+T8n1uIMCOyF6LEsEBBdNcKMa4iHyZG
-        aQNdr4SHVaKln2lZaPz1EtXM+dchhkbqdapCrxENS/DRoj6sDgGNqe1UjzIGNawqgNfHCbpw
-        P11UqCDWIUcaV9ur3IsGNCwTyEcKVwUhQtCtdhW00iEe6S8ZjrGntXHXSrd2/x56c6AzKISZ
-        tgTM2tfo//CxparX1fr1eRW16tqNLh71fRlnfYdHWr/g+w+ajNXZd9+p56bavP0LnI5W+qpP
-        1CTM4B98v5Z/ck6f9gvcYM5IFLV2w71Pelli4CT/fJez2dFi2JxSMHp+sTrrXOq0tyF923E1
-        Lgbxe3diOpH/C3TZ/QQvAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42I5/e/4Pd1bse9iDQ491LLYOGM9q8X1L89Z
-        LRZ8msFqcf78BnaLs01v2C0u75rDZvG59wijxdojd9ktbjeuYHPg9Ni0qpPNo2/LKkaPz5vk
-        Apij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DLW
-        LprHXrCKveL/v13sDYzL2LoYOTkkBEwk/j6dxwRiCwksZZT41aoOEZeWaDy9mgnCFpb4c60L
-        qJ4LqOYTo0T3gVUsIAk2AX2Jg2dPgtkiQA2diyaCNTALnGGS+NVSAWILCwRIbLl4HyjOwcEi
-        oCpxuD0aJMwrYCMx9ddsNpCwhIC8xJy3GiBhTgFbidcfpzBDnGMj0f7/PwtEuaDEyZlPWCCm
-        y0s0b53NPIFRYBaS1CwkqQWMTKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzEC42HbsZ+bdzBe
-        2hh8iFGAg1GJh3eBw7tYIdbEsuLK3EOMEhzMSiK8Sya+ihXiTUmsrEotyo8vKs1JLT7EaAr0
-        wkRmKdHkfGCs5pXEG5oamltYGpobmxubWSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYPSr
-        Oda76EqBsk9XX3Ai5649bK0+hklsRzQty6zTt/NezX11MSHlm6V0URhLzVLGKUuuz14apMLA
-        uvmnn4qUz2ZDm82M5pNFJmQY29aWpdm8/W7aIs59jG3rTFetMLkdR7bEnnZr3bWxe476co1G
-        x12J1ln77lQZVExzqgvby3XwxEOLTdsvKrEUZyQaajEXFScCABkg26udAgAA
-X-CMS-MailID: 20191209144442eucas1p214c553519b7a9d3d005802984bc6fb31
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191209144442eucas1p214c553519b7a9d3d005802984bc6fb31
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191209144442eucas1p214c553519b7a9d3d005802984bc6fb31
-References: <20191209144425.13321-1-k.konieczny@samsung.com>
-        <CGME20191209144442eucas1p214c553519b7a9d3d005802984bc6fb31@eucas1p2.samsung.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: refcount_t: underflow; use-after-free with CIFS umount after scsi-misc commit ef2cc88e2a205b8a11a19e78db63a70d3728cdf5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+CC:     SCSI development list <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+From:   Arthur Marsh <arthur.marsh@internode.on.net>
+Message-ID: <5E678754-A3E8-46CE-8062-DA717F2C098F@internode.on.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If option DEVFREQ_DELAYED_TIMER is set use delayed work in devfreq
-workqueue from devfreq start.
+Hi, I ran the last good kernel with several boot-up, cifs mount, un-mount, shut down cycles without encountering the problem.
 
-Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
----
- drivers/devfreq/devfreq.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+After applying the patch from <ronniesahlberg@gmail.com>:
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index c277d1770fef..d9edf648a09e 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -702,7 +702,10 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	devfreq->last_status.current_frequency = profile->initial_freq;
- 	devfreq->data = data;
- 	devfreq->nb.notifier_call = devfreq_notifier_call;
--	devfreq->delayed_timer = false;
-+	if (IS_ENABLED(CONFIG_DEVFREQ_DELAYED_TIMER))
-+		devfreq->delayed_timer = true;
-+	else
-+		devfreq->delayed_timer = false;
- 
- 	if (!devfreq->profile->max_state && !devfreq->profile->freq_table) {
- 		mutex_unlock(&devfreq->lock);
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 0ab6b1200288..d2658f51ff60 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1847,7 +1847,8 @@ SMB2_tdis(const unsigned int xid, struct cifs_tcon *tcon)
+if ((tcon->need_reconnect) || (tcon->ses->need_reconnect))
+return 0;
+
+- close_shroot(&tcon->crfid);
++ if (tcon->crfid.is_valid)
++ close_shroot(&tcon->crfid);
+
+
+ to kernel 5.5.0-rc1 I no longer experience the problem.
+
+Regards,
+
+Arthur. 
+
+On 9 December 2019 12:53:02 pm ACDT, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>On Sun, Dec 8, 2019 at 5:49 PM Arthur Marsh
+><arthur.marsh@internode.on.net> wrote:
+>>
+>> This still happens with 5.5.0-rc1:
+>
+>Does it happen 100% of the time?
+>
+>Your bisection result looks pretty nonsensical - not that it's
+>impossible (anything is possible), but it really doesn't look very
+>likely. Which makes me think maybe it's slightly timing-sensitive or
+>something?
+>
+>Would you mind trying to re-do the bisection, and for each kernel try
+>the mount thing at least a few times before you decide a kernel is
+>good?
+>
+>Bisection is very powerful, but if _any_ of the kernels you marked
+>good weren't really good (they just happened to not trigger the
+>problem), bisection ends up giving completely the wrong answer. And
+>with that bisection commit, there's not even a hint of what could have
+>gone wrong.
+>
+>             Linus
+
 -- 
-2.24.0
-
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
