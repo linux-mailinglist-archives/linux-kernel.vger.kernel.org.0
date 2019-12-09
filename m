@@ -2,181 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 376DD116E0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 14:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C973116E11
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 14:38:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbfLINhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 08:37:46 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42224 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbfLINhq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 08:37:46 -0500
-Received: by mail-qk1-f196.google.com with SMTP id z14so2675256qkg.9;
-        Mon, 09 Dec 2019 05:37:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/xGnfoL+Q5lxOftoFuoAZhd74qwSzhnVOVjw5OvXHFM=;
-        b=U49pN4MShVa9I6gosbwKeuRR8/P41PZRcOweU0sHhzfXI8IzpGcs9sPlh23zU3+kd0
-         +lMJndGzXUoksfINbZjJUE6yVtb+3WBW7mS5Q9JmYeUhUCSIomQlwKKCpSccenO4qVOs
-         KvqNRQpR3N46pN8XTJPJ+CaKt1QVUXEvgEhaUp7oo8gwUBPQBNt2NqwwfQeLcQzNv7Nq
-         nu8UurvP+Cg0TIBnAoeXQ+ZouvttiMSUp3V3zg9/h6f/h109GCIpCoNza14pwc5+62vK
-         m7qOFGGYKTWmvSenSp8GsGyRZ2mRZMemoWQSxuKeX+Q+pHe5kMKNX0YGLB6xlDQudhWw
-         GZiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/xGnfoL+Q5lxOftoFuoAZhd74qwSzhnVOVjw5OvXHFM=;
-        b=uPPbt5a/PVZwDJ+jkUYATjdanZRMmkqa4UPf8nJNX/eaphlrNAc1LmMfAKVJT7H3P0
-         aNFJXXnARs6pdgtHHpQB/Ha/BFKvVFLlJ07ubHrKQTH9dZsdSuXix/pDNQkIAmocWhHB
-         bFYgmM4SW58Y2mE4S6NktuyLwnjLDk9MKYEHoV58r4Lo4DLaKWruhM75jhqEb83iPIg7
-         Xr9EBY5C1eHGAv6hCIQcjMsWBXNcCEnTC5TunIxPbofXz4QwbBo15lNXyKcBv8kMIuGP
-         qDj5fQrwHeq9crrCqSv4SF7U7sgJt2fbeZytMDFBeMHDHyRJ8UtjwDnegC5dTWXZGmfe
-         Sepw==
-X-Gm-Message-State: APjAAAXPSSM225UjbBwU17x9W8NQiyNGMegRl5gRmCLcWnYuJbZ1M4mJ
-        5MQ9QbaGpKEYyQUU68kviBb3h0UnDx4aJA3kHZQ=
-X-Google-Smtp-Source: APXvYqyy+pyt3+tHN1YUVJHOdfhc/PRYtoTCblfW0ozOp9vWQN673XU0C1+hCw+KWhrukdItq0qHZrW+JPcMOPiWEnk=
-X-Received: by 2002:a37:6c01:: with SMTP id h1mr26390419qkc.484.1575898664569;
- Mon, 09 Dec 2019 05:37:44 -0800 (PST)
+        id S1727740AbfLINit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 08:38:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50662 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727038AbfLINit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 08:38:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EF9DCAF55;
+        Mon,  9 Dec 2019 13:38:46 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH 2/4] xenbus: limit when state is forced to
+ closed
+To:     "Durrant, Paul" <pdurrant@amazon.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20191205140123.3817-1-pdurrant@amazon.com>
+ <20191205140123.3817-3-pdurrant@amazon.com>
+ <20191209113926.GS980@Air-de-Roger>
+ <b8a138ad-5770-65fa-f368-f7b4063702fa@suse.com>
+ <3412e42d13224b6786613e58dc189ebf@EX13D32EUC003.ant.amazon.com>
+ <8d66e520-3009-cde1-e24c-26d7476e5873@suse.com>
+ <63d653a04207451e9041c89acd04f2a2@EX13D32EUC003.ant.amazon.com>
+From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Message-ID: <2cd2a27e-2bb8-bd9d-45d8-1710038fb97a@suse.com>
+Date:   Mon, 9 Dec 2019 14:38:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <20191206184536.2507-1-linux.amoon@gmail.com> <724aa7db-3838-16f9-d344-1789ae2a5746@arm.com>
-In-Reply-To: <724aa7db-3838-16f9-d344-1789ae2a5746@arm.com>
-From:   Peter Geis <pgwipeout@gmail.com>
-Date:   Mon, 9 Dec 2019 08:37:28 -0500
-Message-ID: <CAMdYzYoZY5gau=DGtPhk9CPV_WcyM4wjR9o+rPyaQfOzoy2Y=Q@mail.gmail.com>
-Subject: Re: [RFCv1 0/8] RK3399 clean shutdown issue
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Anand Moon <linux.amoon@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Daniel Schultz <d.schultz@phytec.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <63d653a04207451e9041c89acd04f2a2@EX13D32EUC003.ant.amazon.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 8:29 AM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 06/12/2019 6:45 pm, Anand Moon wrote:
-> > Most of the RK3399 SBC boards do not perform clean
-> > shutdown and clean reboot.
->
-> FWIW reboot problems on RK3399 have been tracked down to issues in
-> upstream ATF, and are unrelated to the PMIC.
->
-> > These patches try to help resolve the issue with proper
-> > shutdown by turning off the PMIC.
->
-> As mentioned elsewhere[1], although this is what the BSP kernel seems to
-> do, and in practice it's unlikely to matter for the majority of devboard
-> users like you and me, I still feel a bit uncomfortable with this
-> solution for systems using ATF as in principle the secure world might
-> want to know about orderly shutdowns, and this effectively makes every
-> shutdown an unexpected power loss from secure software's point of view.
->
-> Robin.
+On 09.12.19 13:19, Durrant, Paul wrote:
+>> -----Original Message-----
+>> From: Jürgen Groß <jgross@suse.com>
+>> Sent: 09 December 2019 12:09
+>> To: Durrant, Paul <pdurrant@amazon.com>; Roger Pau Monné
+>> <roger.pau@citrix.com>
+>> Cc: linux-kernel@vger.kernel.org; xen-devel@lists.xenproject.org; Stefano
+>> Stabellini <sstabellini@kernel.org>; Boris Ostrovsky
+>> <boris.ostrovsky@oracle.com>
+>> Subject: Re: [Xen-devel] [PATCH 2/4] xenbus: limit when state is forced to
+>> closed
+>>
+>> On 09.12.19 13:03, Durrant, Paul wrote:
+>>>> -----Original Message-----
+>>>> From: Jürgen Groß <jgross@suse.com>
+>>>> Sent: 09 December 2019 11:55
+>>>> To: Roger Pau Monné <roger.pau@citrix.com>; Durrant, Paul
+>>>> <pdurrant@amazon.com>
+>>>> Cc: linux-kernel@vger.kernel.org; xen-devel@lists.xenproject.org;
+>> Stefano
+>>>> Stabellini <sstabellini@kernel.org>; Boris Ostrovsky
+>>>> <boris.ostrovsky@oracle.com>
+>>>> Subject: Re: [Xen-devel] [PATCH 2/4] xenbus: limit when state is forced
+>> to
+>>>> closed
+>>>>
+>>>> On 09.12.19 12:39, Roger Pau Monné wrote:
+>>>>> On Thu, Dec 05, 2019 at 02:01:21PM +0000, Paul Durrant wrote:
+>>>>>> Only force state to closed in the case when the toolstack may need to
+>>>>>> clean up. This can be detected by checking whether the state in
+>>>> xenstore
+>>>>>> has been set to closing prior to device removal.
+>>>>>
+>>>>> I'm not sure I see the point of this, I would expect that a failure to
+>>>>> probe or the removal of the device would leave the xenbus state as
+>>>>> closed, which is consistent with the actual driver state.
+>>>>>
+>>>>> Can you explain what's the benefit of leaving a device without a
+>>>>> driver in such unknown state?
+>>>>
+>>>> And more concerning: did you check that no frontend/backend is
+>>>> relying on the closed state to be visible without closing having been
+>>>> set before?
+>>>
+>>> Blkfront doesn't seem to mind and I believe the Windows PV drivers cope,
+>> but I don't really understand the comment since this patch is actually
+>> removing a case where the backend transitions directly to closed.
+>>
+>> I'm not speaking of blkfront/blkback only, but of net, tpm, scsi, pvcall
+>> etc. frontends/backends. After all you are modifying a function common
+>> to all PV driver pairs.
+>>
+>> You are removing a state switc to "closed" in case the state was _not_
+>> "closing" before.
+> 
+> Yes, which AFAIK is against the intention of the generic PV protocol such that it ever existed anyway.
 
-Since ATF is operating completely in volatile memory, and shouldn't be
-touching hardware once it passes off control to the kernel anyways,
-what is the harm of pulling the rug out from under it?
-If this idea is to prevent issues in the future, such as if ATF does
-gain the ability to preempt hardware control, then at that time ATF
-will need to be able to handle actually powering off devices using the
-same functionality.
+While this might be the case we should _not_ break any guests
+running now. So this kind of reasoning is dangerous.
 
-But as we discussed previously, ATF doesn't have this capability, so
-in this case any board without a dedicated power-off gpio will be
-unable to power off at all.
-Also it seems that giving ATF this functionality, with the current
-state of ATF, would be cost prohibitive.
+> 
+>> So any PV driver reacting to "closed" of the other end
+>> in case the previous state might not have been "closing" before is at
+>> risk to misbehave with your patch.
+> 
+> Well, they will see nothing now. If the state was not closing, it gets left alone, so the frontend shouldn't do anything. The only risk that I can see is that some frontend/backend pair needed a direct 4 -> 6 transition to support 'unbind' before but AFAIK nothing has ever supported that, and blk and net crash'n'burn if you try that on upstream as it stands. A clean unplug would always set state to 5 first, since that's part of the unplug protocol.
 
-I personally feel that allowing the kernel to do this is a solution to
-the problem we have now.
+That was my question: are you sure all current and previous
+guest frontends and backends are handling unplug this way?
+
+Not "should handle", but "do handle".
 
 
->
-> [1]
-> http://lists.infradead.org/pipermail/linux-rockchip/2019-December/028183.html
->
-> > For reference
-> > RK805 PMCI data sheet:
-> > [0] http://rockchip.fr/RK805%20datasheet%20V1.3.pdf
-> > RK808 PMIC data sheet:
-> > [1] http://rockchip.fr/RK808%20datasheet%20V1.4.pdf
-> > RK817 PMIC data sheet:
-> > [2] http://rockchip.fr/RK817%20datasheet%20V1.01.pdf
-> > RK818 PMIC data sheet:
-> > [3] http://rockchip.fr/RK818%20datasheet%20V1.0.pdf
-> >
-> > Reboot issue:
-> > My guess is that we need to some proper sequence of
-> > setting to PMCI to perform clean.
-> >
-> > If you have any input please share them.
-> >
-> > Tested on SBC
-> > Rock960 Model A
-> > Odroid N1
-> > Rock64
-> >
-> > -Anand Moon
-> >
-> > Anand Moon (8):
-> >    mfd: rk808: Refactor shutdown functions
-> >    mfd: rk808: use syscore for RK805 PMIC shutdown
-> >    mfd: rk808: use syscore for RK808 PMIC shutdown
-> >    mfd: rk808: use syscore for RK818 PMIC shutdown
-> >    mfd: rk808: cleanup unused function pointer
-> >    mfd: rk808: use common syscore for all PMCI for clean shutdown
-> >    arm64: rockchip: drop unused field from rk8xx i2c node
-> >    arm: rockchip: drop unused field from rk8xx i2c node
-> >
-> >   arch/arm/boot/dts/rk3036-kylin.dts            |   1 -
-> >   arch/arm/boot/dts/rk3188-px3-evb.dts          |   1 -
-> >   arch/arm/boot/dts/rk3288-evb-rk808.dts        |   1 -
-> >   arch/arm/boot/dts/rk3288-phycore-som.dtsi     |   1 -
-> >   arch/arm/boot/dts/rk3288-popmetal.dts         |   1 -
-> >   arch/arm/boot/dts/rk3288-tinker.dtsi          |   1 -
-> >   arch/arm/boot/dts/rk3288-veyron.dtsi          |   1 -
-> >   arch/arm/boot/dts/rk3288-vyasa.dts            |   1 -
-> >   arch/arm/boot/dts/rv1108-elgin-r1.dts         |   1 -
-> >   arch/arm/boot/dts/rv1108-evb.dts              |   1 -
-> >   arch/arm64/boot/dts/rockchip/px30-evb.dts     |   1 -
-> >   arch/arm64/boot/dts/rockchip/rk3328-a1.dts    |   1 -
-> >   arch/arm64/boot/dts/rockchip/rk3328-evb.dts   |   1 -
-> >   .../arm64/boot/dts/rockchip/rk3328-roc-cc.dts |   1 -
-> >   .../arm64/boot/dts/rockchip/rk3328-rock64.dts |   1 -
-> >   .../boot/dts/rockchip/rk3368-geekbox.dts      |   1 -
-> >   arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi |   1 -
-> >   .../boot/dts/rockchip/rk3368-px5-evb.dts      |   1 -
-> >   .../boot/dts/rockchip/rk3399-firefly.dts      |   1 -
-> >   .../boot/dts/rockchip/rk3399-hugsun-x99.dts   |   1 -
-> >   .../boot/dts/rockchip/rk3399-khadas-edge.dtsi |   1 -
-> >   .../boot/dts/rockchip/rk3399-leez-p710.dts    |   1 -
-> >   .../boot/dts/rockchip/rk3399-nanopi4.dtsi     |   1 -
-> >   .../boot/dts/rockchip/rk3399-orangepi.dts     |   1 -
-> >   arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi |   1 -
-> >   .../boot/dts/rockchip/rk3399-roc-pc.dtsi      |   1 -
-> >   .../boot/dts/rockchip/rk3399-rock-pi-4.dts    |   1 -
-> >   .../boot/dts/rockchip/rk3399-rock960.dtsi     |   1 -
-> >   .../boot/dts/rockchip/rk3399-rockpro64.dts    |   1 -
-> >   .../boot/dts/rockchip/rk3399-sapphire.dtsi    |   1 -
-> >   drivers/mfd/rk808.c                           | 144 +++++-------------
-> >   include/linux/mfd/rk808.h                     |   2 -
-> >   32 files changed, 42 insertions(+), 134 deletions(-)
-> >
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+Juergen
