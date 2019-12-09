@@ -2,70 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E10F2117418
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:25:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA6411741F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:26:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfLISZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:25:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726354AbfLISZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:25:41 -0500
-Received: from localhost (unknown [5.29.147.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D1962077B;
-        Mon,  9 Dec 2019 18:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575915940;
-        bh=7lZhBALm50HN15SBV5fFrjzT8kipUFrgnVFKe9+PyI0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u+Pyb/iDy+kPaQAzVaYes4E8svDMq84BeCg+ARHzAIP9AimybpRCbpl3GIhqqlnhb
-         nHRW6EL6Sj0en0v8UklM/YoDdwplAkX2ZB3da/fTEuX4GNNfaXoyoJUg2ngdGv5VyV
-         IcQcqp+sgvQ1CkUy50V7aC6F8twkZajXYu2URhMs=
-Date:   Mon, 9 Dec 2019 20:25:36 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 1/2] mm/gup: allow FOLL_FORCE for get_user_pages_fast()
-Message-ID: <20191209182536.GC67461@unreal>
-References: <20191204213603.464373-1-jhubbard@nvidia.com>
- <20191204213603.464373-2-jhubbard@nvidia.com>
+        id S1726824AbfLISZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:25:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36084 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726642AbfLISZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 13:25:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5212CAD2D;
+        Mon,  9 Dec 2019 18:25:51 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id EA416DA82A; Mon,  9 Dec 2019 19:25:43 +0100 (CET)
+Date:   Mon, 9 Dec 2019 19:25:43 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Dinghao Liu <dinghao.liu@zju.edu.cn>
+Cc:     kjlu@umn.edu, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] btrfs: add missing check after link_free_space
+Message-ID: <20191209182543.GQ2734@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        kjlu@umn.edu, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191209034114.16212-1-dinghao.liu@zju.edu.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191204213603.464373-2-jhubbard@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191209034114.16212-1-dinghao.liu@zju.edu.cn>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 01:36:02PM -0800, John Hubbard wrote:
-> Commit 817be129e6f2 ("mm: validate get_user_pages_fast flags") allowed
-> only FOLL_WRITE and FOLL_LONGTERM to be passed to get_user_pages_fast().
-> This, combined with the fact that get_user_pages_fast() falls back to
-> "slow gup", which *does* accept FOLL_FORCE, leads to an odd situation:
-> if you need FOLL_FORCE, you cannot call get_user_pages_fast().
->
-> There does not appear to be any reason for filtering out FOLL_FORCE.
-> There is nothing in the _fast() implementation that requires that we
-> avoid writing to the pages. So it appears to have been an oversight.
->
-> Fix by allowing FOLL_FORCE to be set for get_user_pages_fast().
->
-> Fixes: 817be129e6f2 ("mm: validate get_user_pages_fast flags")
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+On Mon, Dec 09, 2019 at 11:41:14AM +0800, Dinghao Liu wrote:
+> The return value of link_free_space is checked out-sync.
+> One branch of an if statement uses an extra check after
+> WARN_ON() but its peer branch does not. WARN_ON() does
+> not change the control flow, thus only using this check
+> might be insufficient.
+> 
+> Fix this by simply adding a check on ret.
+> 
+> Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+> --
+> Changes in v2:
+>   - Add memory free for free space entry.
 > ---
->  mm/gup.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
+>  fs/btrfs/free-space-cache.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
+> index 3283da419200..ba2e6cea5233 100644
+> --- a/fs/btrfs/free-space-cache.c
+> +++ b/fs/btrfs/free-space-cache.c
+> @@ -2437,6 +2437,10 @@ int btrfs_remove_free_space(struct btrfs_block_group *block_group,
+>  			if (info->bytes) {
+>  				ret = link_free_space(ctl, info);
+>  				WARN_ON(ret);
+> +				if (ret) {
+> +					kmem_cache_free(btrfs_free_space_cachep, info);
+> +					goto out_lock;
+> +				}
+>  			} else {
+>  				kmem_cache_free(btrfs_free_space_cachep, info);
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+There are two link_free_space followed by WARN_ON instances in the
+function, please remove both.
+
+In the above case, the branches can be merged together so there's not
+repeated kmem_cache_free, like
+
+	if (info->bytes)
+		ret = link_free_space(...);
+	kmem_cache_free(btrfs_free_space_cachep, info);
+	if (ret)
+		goto out_unlock;
