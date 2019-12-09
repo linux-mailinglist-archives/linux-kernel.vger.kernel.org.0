@@ -2,102 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46DF811765C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:54:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E316F117666
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:56:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbfLITyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 14:54:38 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:19955 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbfLITyi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 14:54:38 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5deea6770001>; Mon, 09 Dec 2019 11:54:31 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 09 Dec 2019 11:54:37 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 09 Dec 2019 11:54:37 -0800
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 9 Dec
- 2019 19:54:37 +0000
-Received: from [10.110.48.28] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 9 Dec 2019
- 19:54:37 +0000
-Subject: Re: [PATCH v2 1/2] mm/gup: allow FOLL_FORCE for get_user_pages_fast()
-To:     Leon Romanovsky <leon@kernel.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, <linux-rdma@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20191204213603.464373-1-jhubbard@nvidia.com>
- <20191204213603.464373-2-jhubbard@nvidia.com> <20191209182536.GC67461@unreal>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <7ceb9a54-6e2f-6d1f-70ba-f6ad5ba0b37f@nvidia.com>
-Date:   Mon, 9 Dec 2019 11:54:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <20191209182536.GC67461@unreal>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575921271; bh=aYYf+3MgNx882/6bWA0YHWVT6GLALSpA6F24y/9AlO0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=SnYpIJZa36DGx3o90G2KZqfxdnVww5TQO7kjIc3RDrtpF/iyFp2WoOL6Yz2JLgp37
-         Vhjgo48MYabYW7yhYCN/bPjnZAs/EZJgAH2u5TtH+05tdTxM/H3tAFtmYZETQ8PYuB
-         qAB1nLeSN+ROLL4dEdqKgJkiuriINbvQyu0gCzeaFRrQJrAlrlBBYxhnFkMMLU3mMJ
-         h1epTVMihjJIV9dv9Fa+7Z2z33mn71vAU1s0XcMnB6brv+gco7gWPN2vInCq+e4xs+
-         1GvK0+aUaComW80KYf6KZcqAa5BBR2jqqE1Lpx4nUm091EZ2LH9C7IaGxgIrAMXbuH
-         Xy83MRJlaAAPg==
+        id S1726687AbfLITz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 14:55:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43358 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726495AbfLITz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 14:55:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E293CAD5C;
+        Mon,  9 Dec 2019 19:55:25 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id E57A1E0321; Mon,  9 Dec 2019 20:55:19 +0100 (CET)
+Message-Id: <cover.1575920565.git.mkubecek@suse.cz>
+From:   Michal Kubecek <mkubecek@suse.cz>
+Subject: [PATCH net-next 0/5] ethtool netlink interface, preliminary patches
+To:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Date:   Mon,  9 Dec 2019 20:55:19 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/9/19 10:25 AM, Leon Romanovsky wrote:
-> On Wed, Dec 04, 2019 at 01:36:02PM -0800, John Hubbard wrote:
->> Commit 817be129e6f2 ("mm: validate get_user_pages_fast flags") allowed
->> only FOLL_WRITE and FOLL_LONGTERM to be passed to get_user_pages_fast().
->> This, combined with the fact that get_user_pages_fast() falls back to
->> "slow gup", which *does* accept FOLL_FORCE, leads to an odd situation:
->> if you need FOLL_FORCE, you cannot call get_user_pages_fast().
->>
->> There does not appear to be any reason for filtering out FOLL_FORCE.
->> There is nothing in the _fast() implementation that requires that we
->> avoid writing to the pages. So it appears to have been an oversight.
->>
->> Fix by allowing FOLL_FORCE to be set for get_user_pages_fast().
->>
->> Fixes: 817be129e6f2 ("mm: validate get_user_pages_fast flags")
->> Cc: Christoph Hellwig <hch@lst.de>
->> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
->> ---
->>  mm/gup.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
-> 
-> Thanks,
-> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-> 
+As Jakub Kicinski suggested in ethtool netlink v7 discussion, this
+submission consists only of preliminary patches which raised no objections;
+first four patches already have Acked-by or Reviewed-by.
 
-Hi Leon, thanks for the reviews, great timing! I'll add the tags to
-the commits, which I'm just about to post as part of the larger 
-"pin user pages" patchset.
+- patch 1 exposes permanent hardware address (as shown by "ethtool -P")
+  via rtnetlink
+- patch 2 is renames existing netlink helper to a better name
+- patch 3 and 4 reorganize existing ethtool code (no functional change)
+- patch 5 makes the table of link mode names available as an ethtool string
+  set (will be needed for the netlink interface) 
 
+Once we get these out of the way, v8 of the first part of the ethtool
+netlink interface will follow.
 
-thanks,
+Michal Kubecek (5):
+  rtnetlink: provide permanent hardware address in RTM_NEWLINK
+  netlink: rename nl80211_validate_nested() to nla_validate_nested()
+  ethtool: move to its own directory
+  ethtool: move string arrays into common file
+  ethtool: provide link mode names as a string set
+
+ include/linux/ethtool.h                 |   4 +
+ include/net/netlink.h                   |   8 +-
+ include/uapi/linux/ethtool.h            |   2 +
+ include/uapi/linux/if_link.h            |   1 +
+ net/Makefile                            |   2 +-
+ net/core/Makefile                       |   2 +-
+ net/core/rtnetlink.c                    |   5 +
+ net/ethtool/Makefile                    |   3 +
+ net/ethtool/common.c                    | 171 ++++++++++++++++++++++++
+ net/ethtool/common.h                    |  19 +++
+ net/{core/ethtool.c => ethtool/ioctl.c} |  89 +-----------
+ net/wireless/nl80211.c                  |   3 +-
+ 12 files changed, 219 insertions(+), 90 deletions(-)
+ create mode 100644 net/ethtool/Makefile
+ create mode 100644 net/ethtool/common.c
+ create mode 100644 net/ethtool/common.h
+ rename net/{core/ethtool.c => ethtool/ioctl.c} (95%)
+
 -- 
-John Hubbard
-NVIDIA
+2.24.0
+
