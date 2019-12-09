@@ -2,95 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBB78116E5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 14:58:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D062116E53
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 14:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbfLIN6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 08:58:30 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51342 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727438AbfLIN62 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 08:58:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=wfB5eYEKYbznlKXlwvrX8OFMl1D2sjJ0QQBFfWysImA=; b=ukPbOjtTMSFzWUelOj6xnn6II7
-        XRctBcaSFhh4oEO9KgR1Kcks3sCyHmQvFodgkkH2d4FAFeKhr6AZlWg+7rSeK/8mrlapPbRbW/bQr
-        lltlUdHij0JChdaJJ9nKixjdYUbt9t7j8cYdO5bJadOrDFjFLpByMY8+qo1rZ44VZaeSarI+qxVdD
-        dHIIjEZo4diyolSZmPIuEKOZZ6d+MIMETkyncCQebTHMWEWxZb+N/D6k5YueKRoZjK9aKjC1/jw1g
-        RSCjqgbvVVzc0LMtQWy6QOaJe8ibH007eTxLgSw1JKL50dWHaslBF8zI23mB7EIRVvdaHGEpyYXL1
-        6w4TKsiQ==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ieJYR-0001an-Er; Mon, 09 Dec 2019 13:58:27 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-mips@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] MIPS: define ioremap_nocache to ioremap
-Date:   Mon,  9 Dec 2019 14:58:21 +0100
-Message-Id: <20191209135823.28465-2-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191209135823.28465-1-hch@lst.de>
-References: <20191209135823.28465-1-hch@lst.de>
+        id S1727654AbfLIN6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 08:58:25 -0500
+Received: from foss.arm.com ([217.140.110.172]:33168 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727438AbfLIN6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 08:58:25 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7696328;
+        Mon,  9 Dec 2019 05:58:24 -0800 (PST)
+Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFE123F718;
+        Mon,  9 Dec 2019 05:58:22 -0800 (PST)
+Subject: Re: [RFCv1 0/8] RK3399 clean shutdown issue
+To:     Peter Geis <pgwipeout@gmail.com>
+Cc:     Anand Moon <linux.amoon@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Daniel Schultz <d.schultz@phytec.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+References: <20191206184536.2507-1-linux.amoon@gmail.com>
+ <724aa7db-3838-16f9-d344-1789ae2a5746@arm.com>
+ <CAMdYzYoZY5gau=DGtPhk9CPV_WcyM4wjR9o+rPyaQfOzoy2Y=Q@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <f7ac4ff0-5c32-9bb3-1547-ec7ac80bf38d@arm.com>
+Date:   Mon, 9 Dec 2019 13:58:21 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAMdYzYoZY5gau=DGtPhk9CPV_WcyM4wjR9o+rPyaQfOzoy2Y=Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-They are both defined the same way, but this makes it easier to validate
-the scripted ioremap_nocache removal following soon.
+On 09/12/2019 1:37 pm, Peter Geis wrote:
+> On Mon, Dec 9, 2019 at 8:29 AM Robin Murphy <robin.murphy@arm.com> wrote:
+>>
+>> On 06/12/2019 6:45 pm, Anand Moon wrote:
+>>> Most of the RK3399 SBC boards do not perform clean
+>>> shutdown and clean reboot.
+>>
+>> FWIW reboot problems on RK3399 have been tracked down to issues in
+>> upstream ATF, and are unrelated to the PMIC.
+>>
+>>> These patches try to help resolve the issue with proper
+>>> shutdown by turning off the PMIC.
+>>
+>> As mentioned elsewhere[1], although this is what the BSP kernel seems to
+>> do, and in practice it's unlikely to matter for the majority of devboard
+>> users like you and me, I still feel a bit uncomfortable with this
+>> solution for systems using ATF as in principle the secure world might
+>> want to know about orderly shutdowns, and this effectively makes every
+>> shutdown an unexpected power loss from secure software's point of view.
+>>
+>> Robin.
+> 
+> Since ATF is operating completely in volatile memory, and shouldn't be
+> touching hardware once it passes off control to the kernel anyways,
+> what is the harm of pulling the rug out from under it?
+> If this idea is to prevent issues in the future, such as if ATF does
+> gain the ability to preempt hardware control, then at that time ATF
+> will need to be able to handle actually powering off devices using the
+> same functionality.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/mips/include/asm/io.h | 25 ++-----------------------
- 1 file changed, 2 insertions(+), 23 deletions(-)
+It's not ATF itself I'm concerned about, but arbitrary Secure EL1 
+payloads. In theory, a TEE might want to do something like cycle keys or 
+log events in a TPM (or just encrypted in an external SPI flash), or 
+scrub secure DRAM for cold boot protection. I'm pretty sure none of us 
+are running such a thing on our boards today, but an upstream solution 
+really wants to be robust for the general case.
 
-diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
-index 3f6ce74335b4..d9caa811a2fa 100644
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -227,29 +227,8 @@ static inline void __iomem *ioremap_prot(phys_addr_t offset,
-  */
- #define ioremap(offset, size)						\
- 	__ioremap_mode((offset), (size), _CACHE_UNCACHED)
--
--/*
-- * ioremap_nocache     -   map bus memory into CPU space
-- * @offset:    bus address of the memory
-- * @size:      size of the resource to map
-- *
-- * ioremap_nocache performs a platform specific sequence of operations to
-- * make bus memory CPU accessible via the readb/readw/readl/writeb/
-- * writew/writel functions and the other mmio helpers. The returned
-- * address is not guaranteed to be usable directly as a virtual
-- * address.
-- *
-- * This version of ioremap ensures that the memory is marked uncachable
-- * on the CPU as well as honouring existing caching rules from things like
-- * the PCI bus. Note that there are other caches and buffers on many
-- * busses. In particular driver authors should read up on PCI writes
-- *
-- * It's useful if some control registers are in such an area and
-- * write combining or read caching is not desirable:
-- */
--#define ioremap_nocache(offset, size)					\
--	__ioremap_mode((offset), (size), _CACHE_UNCACHED)
--#define ioremap_uc ioremap_nocache
-+#define ioremap_nocache		ioremap
-+#define ioremap_uc		ioremap
- 
- /*
-  * ioremap_cache -	map bus memory into CPU space
--- 
-2.20.1
+> But as we discussed previously, ATF doesn't have this capability, so
+> in this case any board without a dedicated power-off gpio will be
+> unable to power off at all.
+> Also it seems that giving ATF this functionality, with the current
+> state of ATF, would be cost prohibitive.
+> 
+> I personally feel that allowing the kernel to do this is a solution to
+> the problem we have now.
 
+Sure - I do like your cool idea of using a custom reboot reason to 
+handle a 'trusted' poweroff in the U-Boot SPL - but in the meantime 
+anything would be a practical improvement over the current situation. I 
+reckon this other patch[1] (this seems to be a popular issue all of a 
+sudden!) looks like the neatest interim step.
+
+Robin.
+
+[1] 
+http://lists.infradead.org/pipermail/linux-rockchip/2019-December/028245.html
+
+>>> For reference
+>>> RK805 PMCI data sheet:
+>>> [0] http://rockchip.fr/RK805%20datasheet%20V1.3.pdf
+>>> RK808 PMIC data sheet:
+>>> [1] http://rockchip.fr/RK808%20datasheet%20V1.4.pdf
+>>> RK817 PMIC data sheet:
+>>> [2] http://rockchip.fr/RK817%20datasheet%20V1.01.pdf
+>>> RK818 PMIC data sheet:
+>>> [3] http://rockchip.fr/RK818%20datasheet%20V1.0.pdf
+>>>
+>>> Reboot issue:
+>>> My guess is that we need to some proper sequence of
+>>> setting to PMCI to perform clean.
+>>>
+>>> If you have any input please share them.
+>>>
+>>> Tested on SBC
+>>> Rock960 Model A
+>>> Odroid N1
+>>> Rock64
+>>>
+>>> -Anand Moon
+>>>
+>>> Anand Moon (8):
+>>>     mfd: rk808: Refactor shutdown functions
+>>>     mfd: rk808: use syscore for RK805 PMIC shutdown
+>>>     mfd: rk808: use syscore for RK808 PMIC shutdown
+>>>     mfd: rk808: use syscore for RK818 PMIC shutdown
+>>>     mfd: rk808: cleanup unused function pointer
+>>>     mfd: rk808: use common syscore for all PMCI for clean shutdown
+>>>     arm64: rockchip: drop unused field from rk8xx i2c node
+>>>     arm: rockchip: drop unused field from rk8xx i2c node
+>>>
+>>>    arch/arm/boot/dts/rk3036-kylin.dts            |   1 -
+>>>    arch/arm/boot/dts/rk3188-px3-evb.dts          |   1 -
+>>>    arch/arm/boot/dts/rk3288-evb-rk808.dts        |   1 -
+>>>    arch/arm/boot/dts/rk3288-phycore-som.dtsi     |   1 -
+>>>    arch/arm/boot/dts/rk3288-popmetal.dts         |   1 -
+>>>    arch/arm/boot/dts/rk3288-tinker.dtsi          |   1 -
+>>>    arch/arm/boot/dts/rk3288-veyron.dtsi          |   1 -
+>>>    arch/arm/boot/dts/rk3288-vyasa.dts            |   1 -
+>>>    arch/arm/boot/dts/rv1108-elgin-r1.dts         |   1 -
+>>>    arch/arm/boot/dts/rv1108-evb.dts              |   1 -
+>>>    arch/arm64/boot/dts/rockchip/px30-evb.dts     |   1 -
+>>>    arch/arm64/boot/dts/rockchip/rk3328-a1.dts    |   1 -
+>>>    arch/arm64/boot/dts/rockchip/rk3328-evb.dts   |   1 -
+>>>    .../arm64/boot/dts/rockchip/rk3328-roc-cc.dts |   1 -
+>>>    .../arm64/boot/dts/rockchip/rk3328-rock64.dts |   1 -
+>>>    .../boot/dts/rockchip/rk3368-geekbox.dts      |   1 -
+>>>    arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi |   1 -
+>>>    .../boot/dts/rockchip/rk3368-px5-evb.dts      |   1 -
+>>>    .../boot/dts/rockchip/rk3399-firefly.dts      |   1 -
+>>>    .../boot/dts/rockchip/rk3399-hugsun-x99.dts   |   1 -
+>>>    .../boot/dts/rockchip/rk3399-khadas-edge.dtsi |   1 -
+>>>    .../boot/dts/rockchip/rk3399-leez-p710.dts    |   1 -
+>>>    .../boot/dts/rockchip/rk3399-nanopi4.dtsi     |   1 -
+>>>    .../boot/dts/rockchip/rk3399-orangepi.dts     |   1 -
+>>>    arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi |   1 -
+>>>    .../boot/dts/rockchip/rk3399-roc-pc.dtsi      |   1 -
+>>>    .../boot/dts/rockchip/rk3399-rock-pi-4.dts    |   1 -
+>>>    .../boot/dts/rockchip/rk3399-rock960.dtsi     |   1 -
+>>>    .../boot/dts/rockchip/rk3399-rockpro64.dts    |   1 -
+>>>    .../boot/dts/rockchip/rk3399-sapphire.dtsi    |   1 -
+>>>    drivers/mfd/rk808.c                           | 144 +++++-------------
+>>>    include/linux/mfd/rk808.h                     |   2 -
+>>>    32 files changed, 42 insertions(+), 134 deletions(-)
+>>>
+>>
+>> _______________________________________________
+>> Linux-rockchip mailing list
+>> Linux-rockchip@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
