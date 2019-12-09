@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D451178A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:44:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 772FF1178BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:44:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfLIVoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 16:44:01 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35802 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfLIVn5 (ORCPT
+        id S1726884AbfLIVoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 16:44:00 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40767 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbfLIVn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 16:43:57 -0500
-Received: by mail-wr1-f68.google.com with SMTP id g17so17857669wro.2;
-        Mon, 09 Dec 2019 13:43:56 -0800 (PST)
+        Mon, 9 Dec 2019 16:43:59 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t14so903603wmi.5;
+        Mon, 09 Dec 2019 13:43:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=z4v4wVl3s1hArrGKDQlCf3SAy+2jZtyPSY8RHpRjW/c=;
-        b=AwCtSsGgaxa2dIWV1nmq65YJ25iDf9OXOxia9MHl012H1+fXikG+cajj+8mIDBCP+F
-         baCRUDfv/t96NstrQSw6iu9J82D0O5VNRgOdzWt1iq4TvXRcXNiICHcpUqCNj+uN7Nyn
-         qtPogoAZAeJbITVUF1wMmPLgK6YqXSOyF/RbkCOvH0dt1ZbyDHz8kYuvoQ7q1/U5hugZ
-         xjiPaYz7TaRn7P2HM4eKS9GO8msrpQfRlROMuHyv0nolEaN4q3OXVgZjgNUsGh4hDEG/
-         vNWPJPfnIdqPDEEZRXbc80uEmFZfgq8+GyEYHFmQ9ZqM324qxbBdX7ZWMJgT1E1FPS5U
-         jaEQ==
+        bh=jJrtiyNSy3kb+yNwZbjKaE7PnY4m0t7haj0Vxh+WdWs=;
+        b=jbAb1fA8KX8Y8PwYKNYDdE0HH6hmUW/fWzkkhmiwZaCG9+MEnzb9FDseK/3fmxoK70
+         Qa5s2SV65r34IsnegiZNnEMhoQ1PQeKuoDC8Gd/13xt8oZPM40lvzXpIkYKEiiuXH6bM
+         965VTDP1D8selcFEdBVOUJbGomqls3VkoZkCukYgx8GfIHGfJFgK8vMEW8yMCgNjjAyq
+         TYvdqM6bMoGpo7bMT0rgki9Kk4QnPihmFdhcQaxqcKikGHEZUpVI4YIIA5+5RLmcZ7j3
+         zJWtmo1YkB9hWWF/JLa6nrnVNcbFGE6JbkEflVtavDNMgCkFiNx9/NPSGe/2FDmduLHR
+         STxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=z4v4wVl3s1hArrGKDQlCf3SAy+2jZtyPSY8RHpRjW/c=;
-        b=uieSVSsHeDf1QSa3AvUHxeiYb8uaOTsq6QkRyA28+Tw/SvKPEY9vsRNTWTiqq9/d8F
-         DcSbekP3BSzdvdSyrldiQoBH+JlBX8wxgEd918sjrt7aRfk0pC2yw51iEZF+kk1n8PaI
-         gDshuzj7TYjtL7k4m6R2uSwFwJkxyoow2REK/1Typ3U4+N6bU976QqgjSYRpx5hxWg+Q
-         G03cT3m1RABs89Hz2dGwn11b4Lg9DNA+spjnFFFU3ZtncNA+c3H81GtHc307vs1npAnO
-         vRjg+g6j1E916pWxH492JFUiynSnaJJ/WhdHbvikfif7swPU+YOTaVJRyfd/xdPDXTvn
-         PLNQ==
-X-Gm-Message-State: APjAAAWYaCUn4cyNAipEMf7GfzuL+Q9z8+rDyTvpXVGMsIohg9PF7ik/
-        W/yio9kLiOBDDGMJvyghH1t3VskjdHo=
-X-Google-Smtp-Source: APXvYqxydTzJY3/flDZyk3K+zgZNi/HF2YIBKBim12x2P58l7mUSYjazyQkDbiyB5aEYaBzsOXxlIg==
-X-Received: by 2002:a05:6000:11c3:: with SMTP id i3mr4336383wrx.244.1575927835229;
-        Mon, 09 Dec 2019 13:43:55 -0800 (PST)
+        bh=jJrtiyNSy3kb+yNwZbjKaE7PnY4m0t7haj0Vxh+WdWs=;
+        b=jerRqDb0BhB7n6UXH8GS8KnD59aI7hMi2OX7VEt45BpIELQZcis0bfYtjQEYXyt0w3
+         3bqxL+5uquK+EaPce7wPaBYv6auZxD2WdwMPP6W7atOe1nzr/cSZACQTYN5H8A/nLWsP
+         mwifUWNhGitLjIYDVVwlsVNn6yzbButFFdOxcjdL1jOg2X3/3WsGKMg2EZLb4EXd9Z9B
+         tPrVqXN4w6KWYJq/LuexFi/TKeescWIi0XRTbcWwYvRnIy+tT12mi5++Qx08Ddas0xCP
+         gCc47sO7gQsVzb6rNxRUf5WWv9mUcigHNcbtOwUvjogyFUP5CczdNaOsKpIXUnQsdMzf
+         VCfA==
+X-Gm-Message-State: APjAAAVwZOKNWzf7z7dgvhVOGpfRJ6FsRkwcHHsiN8303sGCtoW7gZR+
+        7yGYwdDRDfAgiieD9RmVstnmvFzLssU=
+X-Google-Smtp-Source: APXvYqy5Ni/fe4Sa6fRIvpNYyKUpMpbgNKl0s95fnFXOrDr5nyt+76C3CaWfwS3RAezCpmV36FlL3Q==
+X-Received: by 2002:a7b:cc81:: with SMTP id p1mr1238187wma.62.1575927837172;
+        Mon, 09 Dec 2019 13:43:57 -0800 (PST)
 Received: from stbsrv-and-01.and.broadcom.net ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id z6sm757714wmz.12.2019.12.09.13.43.53
+        by smtp.gmail.com with ESMTPSA id z6sm757714wmz.12.2019.12.09.13.43.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 13:43:54 -0800 (PST)
+        Mon, 09 Dec 2019 13:43:56 -0800 (PST)
 From:   Al Cooper <alcooperx@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Al Cooper <alcooperx@gmail.com>,
@@ -54,9 +54,9 @@ Cc:     Al Cooper <alcooperx@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
         Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH v2 resend 01/13] phy: usb: EHCI DMA may lose a burst of DMA data for 7255xA0 family
-Date:   Mon,  9 Dec 2019 16:42:37 -0500
-Message-Id: <20191209214249.41137-2-alcooperx@gmail.com>
+Subject: [PATCH v2 resend 02/13] phy: usb: Get all drivers that use USB clks using correct enable/disable
+Date:   Mon,  9 Dec 2019 16:42:38 -0500
+Message-Id: <20191209214249.41137-3-alcooperx@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191209214249.41137-1-alcooperx@gmail.com>
 References: <20191209214249.41137-1-alcooperx@gmail.com>
@@ -65,61 +65,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the EHCI controller received a 512 byte USB packet that
-had to be broken into 2 256 byte bursts across the SCB bus AND
-there was a following 512 byte USB packet, the second burst of
-data from the first packet was sometimes being lost. If the
-burst size was changed to 128 bytes via the EBR_SCB_SIZE field
-in the USB_CTRL_EBRIDGE register we'd see the 4th 128 byte burst
-of the first packet being lost. This problem became much worse
-if other threads were running that accessed memory, like a memcpy
-test. Setting the EBR_SCB_SIZE to 512, which prevents breaking
-the EHCI USB packet (max size of 512 bytes) into bursts, fixed
-the problem.
+The BRCM USB Phy, ohci, ehci and xhci drivers all use the USB clocks
+but not all drivers use the clk_prepare_enable/clk_disable_unprepare
+versions to enable/disable the clocks. This change gets all drivers
+using the prepare version.
 
 Signed-off-by: Al Cooper <alcooperx@gmail.com>
 ---
- drivers/phy/broadcom/phy-brcm-usb-init.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/phy/broadcom/phy-brcm-usb.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/phy/broadcom/phy-brcm-usb-init.c b/drivers/phy/broadcom/phy-brcm-usb-init.c
-index 3c53625f8bc2..56d9b314a8d0 100644
---- a/drivers/phy/broadcom/phy-brcm-usb-init.c
-+++ b/drivers/phy/broadcom/phy-brcm-usb-init.c
-@@ -42,6 +42,7 @@
- #define   USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK		0x80000000 /* option */
- #define USB_CTRL_EBRIDGE		0x0c
- #define   USB_CTRL_EBRIDGE_ESTOP_SCB_REQ_MASK		0x00020000 /* option */
-+#define   USB_CTRL_EBRIDGE_EBR_SCB_SIZE_MASK		0x00000f80 /* option */
- #define USB_CTRL_OBRIDGE		0x10
- #define   USB_CTRL_OBRIDGE_LS_KEEP_ALIVE_MASK		0x08000000
- #define USB_CTRL_MDIO			0x14
-@@ -176,6 +177,7 @@ static const struct id_to_type id_to_type_table[] = {
- 	{ 0x33900000, BRCM_FAMILY_3390A0 },
- 	{ 0x72500010, BRCM_FAMILY_7250B0 },
- 	{ 0x72600000, BRCM_FAMILY_7260A0 },
-+	{ 0x72550000, BRCM_FAMILY_7260A0 },
- 	{ 0x72680000, BRCM_FAMILY_7271A0 },
- 	{ 0x72710000, BRCM_FAMILY_7271A0 },
- 	{ 0x73640000, BRCM_FAMILY_7364A0 },
-@@ -948,6 +950,17 @@ void brcm_usb_init_eohci(struct brcm_usb_init_params *params)
- 	if (params->selected_family == BRCM_FAMILY_7271A0)
- 		/* Enable LS keep alive fix for certain keyboards */
- 		USB_CTRL_SET(ctrl, OBRIDGE, LS_KEEP_ALIVE);
-+
-+	if (params->family_id == 0x72550000) {
-+		/*
-+		 * Make the burst size 512 bytes to fix a hardware bug
-+		 * on the 7255a0. See HW7255-24.
-+		 */
-+		reg = brcmusb_readl(USB_CTRL_REG(ctrl, EBRIDGE));
-+		reg &= ~USB_CTRL_MASK(EBRIDGE, EBR_SCB_SIZE);
-+		reg |= 0x800;
-+		brcmusb_writel(reg, USB_CTRL_REG(ctrl, EBRIDGE));
-+	}
- }
+diff --git a/drivers/phy/broadcom/phy-brcm-usb.c b/drivers/phy/broadcom/phy-brcm-usb.c
+index f5c1f2983a1d..217e3702ef4e 100644
+--- a/drivers/phy/broadcom/phy-brcm-usb.c
++++ b/drivers/phy/broadcom/phy-brcm-usb.c
+@@ -74,8 +74,8 @@ static int brcm_usb_phy_init(struct phy *gphy)
+ 	 */
+ 	mutex_lock(&priv->mutex);
+ 	if (priv->init_count++ == 0) {
+-		clk_enable(priv->usb_20_clk);
+-		clk_enable(priv->usb_30_clk);
++		clk_prepare_enable(priv->usb_20_clk);
++		clk_prepare_enable(priv->usb_30_clk);
+ 		brcm_usb_init_common(&priv->ini);
+ 	}
+ 	mutex_unlock(&priv->mutex);
+@@ -106,8 +106,8 @@ static int brcm_usb_phy_exit(struct phy *gphy)
+ 	mutex_lock(&priv->mutex);
+ 	if (--priv->init_count == 0) {
+ 		brcm_usb_uninit_common(&priv->ini);
+-		clk_disable(priv->usb_20_clk);
+-		clk_disable(priv->usb_30_clk);
++		clk_disable_unprepare(priv->usb_20_clk);
++		clk_disable_unprepare(priv->usb_30_clk);
+ 	}
+ 	mutex_unlock(&priv->mutex);
+ 	phy->inited = false;
+@@ -360,8 +360,8 @@ static int brcm_usb_phy_probe(struct platform_device *pdev)
+ 	if (priv->has_eohci)
+ 		brcm_usb_uninit_eohci(&priv->ini);
+ 	brcm_usb_uninit_common(&priv->ini);
+-	clk_disable(priv->usb_20_clk);
+-	clk_disable(priv->usb_30_clk);
++	clk_disable_unprepare(priv->usb_20_clk);
++	clk_disable_unprepare(priv->usb_30_clk);
  
- void brcm_usb_init_xhci(struct brcm_usb_init_params *params)
+ 	phy_provider = devm_of_phy_provider_register(dev, brcm_usb_phy_xlate);
+ 
+@@ -381,8 +381,8 @@ static int brcm_usb_phy_suspend(struct device *dev)
+ 	struct brcm_usb_phy_data *priv = dev_get_drvdata(dev);
+ 
+ 	if (priv->init_count) {
+-		clk_disable(priv->usb_20_clk);
+-		clk_disable(priv->usb_30_clk);
++		clk_disable_unprepare(priv->usb_20_clk);
++		clk_disable_unprepare(priv->usb_30_clk);
+ 	}
+ 	return 0;
+ }
+@@ -391,8 +391,8 @@ static int brcm_usb_phy_resume(struct device *dev)
+ {
+ 	struct brcm_usb_phy_data *priv = dev_get_drvdata(dev);
+ 
+-	clk_enable(priv->usb_20_clk);
+-	clk_enable(priv->usb_30_clk);
++	clk_prepare_enable(priv->usb_20_clk);
++	clk_prepare_enable(priv->usb_30_clk);
+ 	brcm_usb_init_ipp(&priv->ini);
+ 
+ 	/*
+@@ -405,13 +405,13 @@ static int brcm_usb_phy_resume(struct device *dev)
+ 			brcm_usb_init_eohci(&priv->ini);
+ 		} else if (priv->has_eohci) {
+ 			brcm_usb_uninit_eohci(&priv->ini);
+-			clk_disable(priv->usb_20_clk);
++			clk_disable_unprepare(priv->usb_20_clk);
+ 		}
+ 		if (priv->phys[BRCM_USB_PHY_3_0].inited) {
+ 			brcm_usb_init_xhci(&priv->ini);
+ 		} else if (priv->has_xhci) {
+ 			brcm_usb_uninit_xhci(&priv->ini);
+-			clk_disable(priv->usb_30_clk);
++			clk_disable_unprepare(priv->usb_30_clk);
+ 		}
+ 	} else {
+ 		if (priv->has_xhci)
+@@ -419,8 +419,8 @@ static int brcm_usb_phy_resume(struct device *dev)
+ 		if (priv->has_eohci)
+ 			brcm_usb_uninit_eohci(&priv->ini);
+ 		brcm_usb_uninit_common(&priv->ini);
+-		clk_disable(priv->usb_20_clk);
+-		clk_disable(priv->usb_30_clk);
++		clk_disable_unprepare(priv->usb_20_clk);
++		clk_disable_unprepare(priv->usb_30_clk);
+ 	}
+ 
+ 	return 0;
 -- 
 2.17.1
 
