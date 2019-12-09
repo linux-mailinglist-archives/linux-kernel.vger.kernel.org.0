@@ -2,279 +2,293 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E19C11652C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 04:02:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB23C116536
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 04:08:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfLIDCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 22:02:24 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43629 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726669AbfLIDCY (ORCPT
+        id S1726955AbfLIDIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 22:08:15 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45340 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbfLIDIO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 22:02:24 -0500
-Received: by mail-pl1-f193.google.com with SMTP id q16so5159550plr.10
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2019 19:02:23 -0800 (PST)
+        Sun, 8 Dec 2019 22:08:14 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 203so9414609lfa.12
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2019 19:08:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=K1LLOVeJtONoqpWzLiZzppWNSNBZ0v/NxRhgPKC4b2k=;
-        b=O7dFI6rD2zZnI2kre5EzJMO+Bw36s1NGTVWnohQAwFMBsg/xt8z9WShTKOKuP4qDJ9
-         F0kZkuBVevWNnPNkQXqblak50hDfM/Crlj2vR6U/6aNTwc5FTvde+cCcdeSc2mfEtKt+
-         8PIWMj0rPUhWUPX2YgMecsL05uwxCVpP0XUO/9B4dmesxsn4eVeKp0dBdGn6A2PE/4Yq
-         /bAxZQL43RAUrYfrSozwIyyxIz/A59jgQkqOFJnyoIOwxwoYmbTasHpUb2WW75PyGH5o
-         VG2f4CBmngK6zm0RIhDF4sCr8wJNMGeBQBBfSW0f6hlcmf+LNVE+X6UZqM581U1V7Nv3
-         TjTA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1o76pOQdj/SJvElXbPgyCnuWGkFbOPeZu8rPkooahM4=;
+        b=Vt9S6TSXx7TfnWCRpkzajAWLUjiKU5QTcoQm7m09hAIRUdfZukovNbeQs1fH/s5mtr
+         VGaN/9k3+pDvP5w1KazB9/nrgR8CHYC/R8p7V8UEOiYzPKpBoA+kXLblbe2CdCwUHZ1M
+         PCyDBCAkovDZOEX6PNO0zvg3/wySvdTYT4iQw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=K1LLOVeJtONoqpWzLiZzppWNSNBZ0v/NxRhgPKC4b2k=;
-        b=KU/XFsp97UlE0fKe4w41gpjZtkaDNOPns9/kmRbS26qsrI6bppCqLzt4rULszIDyvE
-         NZ3FlNfRsRq26e+Mx783PhEgUDf6hLlp6AdfmhQVO1ttkaIj8bmewsBFLVT4gZkU7p1K
-         UbwhvoU7A6tl+9MeveZY9QSULUP6svL7Z9+MZQCwcK/3Rzeqfz3IWAZPKp24ZAO/gDlg
-         UyIn9zqlbF20sq5NAmjozRi3aEnf/dckelFT0zF8+BO5f+Ihe7KScf6YTlhbls63Nbg4
-         q5m9JO8/8p3iCldqG9v6V6s2erJeuDviOW8ErZHYFnpL6rd0vK9lxfImK3eTY4O/k8Vp
-         7blw==
-X-Gm-Message-State: APjAAAVgdYA+lQEQt1kWWHyicd6Dpcyz9AeCC3k0ko0287tUxLWq2yCZ
-        3uuk0wcY7wtbEoxnmJrGYe/QJA==
-X-Google-Smtp-Source: APXvYqyJvjBg3ma14h+/TdMJZyPnWqz4Ej8Vw8Ndc1+bfZTO7tFYRTO9/cJ9oOgd3i4IMecEW9nX1A==
-X-Received: by 2002:a17:902:ab86:: with SMTP id f6mr24215136plr.78.1575860543219;
-        Sun, 08 Dec 2019 19:02:23 -0800 (PST)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id b2sm7497299pjq.3.2019.12.08.19.02.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 08 Dec 2019 19:02:22 -0800 (PST)
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     catalin.marinas@arm.com, will.deacon@arm.com, robh+dt@kernel.org,
-        frowand.list@gmail.com
-Cc:     james.morse@arm.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v3 2/2] arm64: kexec_file: add crash dump support
-Date:   Mon,  9 Dec 2019 12:03:45 +0900
-Message-Id: <20191209030345.5735-3-takahiro.akashi@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191209030345.5735-1-takahiro.akashi@linaro.org>
-References: <20191209030345.5735-1-takahiro.akashi@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1o76pOQdj/SJvElXbPgyCnuWGkFbOPeZu8rPkooahM4=;
+        b=NKb+usZSKBqeDnwCjD6OGvG6z6BKQ8L8Z2VYA8MgBaywX1eO+DfWO7WOEiCSO2PPEX
+         IWzK5atpT/UQ+2s9A8CrknFOKxcwBQaGLKSk2Yt16VNfKB0I1+A0z2THqZbKsPZ3blEI
+         iFlglKoEzP9ddDG3Xbc/t8dvNOAvE+2pUy8pd10leYOvx3RiJKVkfWak07nvQoBzzvAT
+         UBEKaE8jAoMQ/VwBWyztFihU35Gd1IccCJ1OKtqcPfCbIPnmFzssc1H07WhwOU1RK0uE
+         8yCbp2YbfKWcau513D7viPPN/pJM5he0gDBoJeUaMlVh3CeKgcHixw+e3IZtUxFOuRj5
+         kt6Q==
+X-Gm-Message-State: APjAAAXJSeYN38NzDrUzBUi3tUzUsPNf7r3H4886maFsDDGne/+w79uW
+        M9dNBHXeNMucen6mm7IeBfr9jWbgf38=
+X-Google-Smtp-Source: APXvYqzA+bnb0qsTQHUkLGzD7U7cZ+dB6p5pr14Q343A/AuMNoEK2ghNQM/pkEs7W1HdaAi9SqPO6g==
+X-Received: by 2002:a19:f514:: with SMTP id j20mr12828087lfb.31.1575860891181;
+        Sun, 08 Dec 2019 19:08:11 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id w17sm7542578lfn.22.2019.12.08.19.08.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2019 19:08:10 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id s22so13856481ljs.7
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2019 19:08:09 -0800 (PST)
+X-Received: by 2002:a05:651c:239:: with SMTP id z25mr13013414ljn.48.1575860889477;
+ Sun, 08 Dec 2019 19:08:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wj42ROD+dj1Nix=X7Raa9YjLfXykFczy0BkMqAXsFeLVA@mail.gmail.com>
+ <CAHk-=wga+oXMeMjftCKGT=BA=B2Ucfwx18C5eV-DcPwOAJ18Fg@mail.gmail.com>
+ <CAHk-=wj9pprDUeoJd5EeN-2x7+GXdSsm44mSv1y9f5e7MrTZ2A@mail.gmail.com>
+ <qsh5n2$3pu9$1@blaine.gmane.org> <CABA31DrsaqT-TsOVx=kbRBnuM5He53+=NLgwm94swY-x1UPjuA@mail.gmail.com>
+ <CAHk-=wgteio3DVccVPZrD-dd9BNDM5128EQqCFxaEOb4Eu9H=w@mail.gmail.com>
+In-Reply-To: <CAHk-=wgteio3DVccVPZrD-dd9BNDM5128EQqCFxaEOb4Eu9H=w@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 8 Dec 2019 19:07:52 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wim87L71B11tpBkT-bibjSOCQ9RkKoY5hgSKK8H+sJBZA@mail.gmail.com>
+Message-ID: <CAHk-=wim87L71B11tpBkT-bibjSOCQ9RkKoY5hgSKK8H+sJBZA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+To:     Akemi Yagi <toracat@elrepo.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: multipart/mixed; boundary="00000000000088cb9c05993cb476"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling crash dump (kdump) includes
-* prepare contents of ELF header of a core dump file, /proc/vmcore,
-  using crash_prepare_elf64_headers(), and
-* add two device tree properties, "linux,usable-memory-range" and
-  "linux,elfcorehdr", which represent respectively a memory range
-  to be used by crash dump kernel and the header's location
+--00000000000088cb9c05993cb476
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
----
- arch/arm64/include/asm/kexec.h         |   4 +
- arch/arm64/kernel/kexec_image.c        |   4 -
- arch/arm64/kernel/machine_kexec_file.c | 106 ++++++++++++++++++++++++-
- 3 files changed, 106 insertions(+), 8 deletions(-)
+On Sun, Dec 8, 2019 at 10:04 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, Dec 8, 2019 at 8:46 AM Akemi Yagi <toracat@elrepo.org> wrote:
+> >
+> > I forgot to mention that the aforementioned bug in make was originally
+> > reported for Fedora. They now have a patched version of make
+> > (make-4.2.1-15.fc32) in Rawhide.
+>
+> Yes, as mentioned I do expect it's some jobserver interaction - I've
+> seen bad jobserver behavior before. But my 'make' hasn't been upgraded
+> since May, as far as I can tell from my logs, so the huge performance
+> regression was new.
 
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index 12a561a54128..d24b527e8c00 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -96,6 +96,10 @@ static inline void crash_post_resume(void) {}
- struct kimage_arch {
- 	void *dtb;
- 	unsigned long dtb_mem;
-+	/* Core ELF header buffer */
-+	void *elf_headers;
-+	unsigned long elf_headers_mem;
-+	unsigned long elf_headers_sz;
- };
- 
- extern const struct kexec_file_ops kexec_image_ops;
-diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-index 29a9428486a5..af9987c154ca 100644
---- a/arch/arm64/kernel/kexec_image.c
-+++ b/arch/arm64/kernel/kexec_image.c
-@@ -47,10 +47,6 @@ static void *image_load(struct kimage *image,
- 	struct kexec_segment *kernel_segment;
- 	int ret;
- 
--	/* We don't support crash kernels yet. */
--	if (image->type == KEXEC_TYPE_CRASH)
--		return ERR_PTR(-EOPNOTSUPP);
--
- 	/*
- 	 * We require a kernel with an unambiguous Image header. Per
- 	 * Documentation/arm64/booting.rst, this is the case when image_size
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 7b08bf9499b6..f1d1bb895fd2 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -17,12 +17,15 @@
- #include <linux/memblock.h>
- #include <linux/of_fdt.h>
- #include <linux/random.h>
-+#include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/vmalloc.h>
- #include <asm/byteorder.h>
- 
- /* relevant device tree properties */
-+#define FDT_PROP_KEXEC_ELFHDR	"linux,elfcorehdr"
-+#define FDT_PROP_MEM_RANGE	"linux,usable-memory-range"
- #define FDT_PROP_INITRD_START	"linux,initrd-start"
- #define FDT_PROP_INITRD_END	"linux,initrd-end"
- #define FDT_PROP_BOOTARGS	"bootargs"
-@@ -40,6 +43,10 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	vfree(image->arch.dtb);
- 	image->arch.dtb = NULL;
- 
-+	vfree(image->arch.elf_headers);
-+	image->arch.elf_headers = NULL;
-+	image->arch.elf_headers_sz = 0;
-+
- 	return kexec_image_post_load_cleanup_default(image);
- }
- 
-@@ -55,6 +62,31 @@ static int setup_dtb(struct kimage *image,
- 
- 	off = ret;
- 
-+	ret = fdt_delprop(dtb, off, FDT_PROP_KEXEC_ELFHDR);
-+	if (ret && ret != -FDT_ERR_NOTFOUND)
-+		goto out;
-+	ret = fdt_delprop(dtb, off, FDT_PROP_MEM_RANGE);
-+	if (ret && ret != -FDT_ERR_NOTFOUND)
-+		goto out;
-+
-+	if (image->type == KEXEC_TYPE_CRASH) {
-+		/* add linux,elfcorehdr */
-+		ret = fdt_appendprop_addrrange(dtb, 0, off,
-+				FDT_PROP_KEXEC_ELFHDR,
-+				image->arch.elf_headers_mem,
-+				image->arch.elf_headers_sz);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+
-+		/* add linux,usable-memory-range */
-+		ret = fdt_appendprop_addrrange(dtb, 0, off,
-+				FDT_PROP_MEM_RANGE,
-+				crashk_res.start,
-+				crashk_res.end - crashk_res.start + 1);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+	}
-+
- 	/* add bootargs */
- 	if (cmdline) {
- 		ret = fdt_setprop_string(dtb, off, FDT_PROP_BOOTARGS, cmdline);
-@@ -125,8 +157,8 @@ static int setup_dtb(struct kimage *image,
- }
- 
- /*
-- * More space needed so that we can add initrd, bootargs, kaslr-seed, and
-- * rng-seed.
-+ * More space needed so that we can add initrd, bootargs, kaslr-seed,
-+ * rng-seed, userable-memory-range and elfcorehdr.
-  */
- #define DTB_EXTRA_SPACE 0x1000
- 
-@@ -174,6 +206,43 @@ static int create_dtb(struct kimage *image,
- 	}
- }
- 
-+static int prepare_elf_headers(void **addr, unsigned long *sz)
-+{
-+	struct crash_mem *cmem;
-+	unsigned int nr_ranges;
-+	int ret;
-+	u64 i;
-+	phys_addr_t start, end;
-+
-+	nr_ranges = 1; /* for exclusion of crashkernel region */
-+	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE,
-+					MEMBLOCK_NONE, &start, &end, NULL)
-+		nr_ranges++;
-+
-+	cmem = kmalloc(sizeof(struct crash_mem) +
-+			sizeof(struct crash_mem_range) * nr_ranges, GFP_KERNEL);
-+	if (!cmem)
-+		return -ENOMEM;
-+
-+	cmem->max_nr_ranges = nr_ranges;
-+	cmem->nr_ranges = 0;
-+	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE,
-+					MEMBLOCK_NONE, &start, &end, NULL) {
-+		cmem->ranges[cmem->nr_ranges].start = start;
-+		cmem->ranges[cmem->nr_ranges].end = end - 1;
-+		cmem->nr_ranges++;
-+	}
-+
-+	/* Exclude crashkernel region */
-+	ret = crash_exclude_mem_range(cmem, crashk_res.start, crashk_res.end);
-+
-+	if (!ret)
-+		ret =  crash_prepare_elf64_headers(cmem, true, addr, sz);
-+
-+	kfree(cmem);
-+	return ret;
-+}
-+
- int load_other_segments(struct kimage *image,
- 			unsigned long kernel_load_addr,
- 			unsigned long kernel_size,
-@@ -181,14 +250,43 @@ int load_other_segments(struct kimage *image,
- 			char *cmdline)
- {
- 	struct kexec_buf kbuf;
--	void *dtb = NULL;
--	unsigned long initrd_load_addr = 0, dtb_len;
-+	void *headers, *dtb = NULL;
-+	unsigned long headers_sz, initrd_load_addr = 0, dtb_len;
- 	int ret = 0;
- 
- 	kbuf.image = image;
- 	/* not allocate anything below the kernel */
- 	kbuf.buf_min = kernel_load_addr + kernel_size;
- 
-+	/* load elf core header */
-+	if (image->type == KEXEC_TYPE_CRASH) {
-+		ret = prepare_elf_headers(&headers, &headers_sz);
-+		if (ret) {
-+			pr_err("Preparing elf core header failed\n");
-+			goto out_err;
-+		}
-+
-+		kbuf.buffer = headers;
-+		kbuf.bufsz = headers_sz;
-+		kbuf.mem = 0;
-+		kbuf.memsz = headers_sz;
-+		kbuf.buf_align = SZ_64K; /* largest supported page size */
-+		kbuf.buf_max = ULONG_MAX;
-+		kbuf.top_down = true;
-+
-+		ret = kexec_add_buffer(&kbuf);
-+		if (ret) {
-+			vfree(headers);
-+			goto out_err;
-+		}
-+		image->arch.elf_headers = headers;
-+		image->arch.elf_headers_mem = kbuf.mem;
-+		image->arch.elf_headers_sz = headers_sz;
-+
-+		pr_debug("Loaded elf core header at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-+			 image->arch.elf_headers_mem, headers_sz, headers_sz);
-+	}
-+
- 	/* load initrd */
- 	if (initrd) {
- 		kbuf.buffer = initrd;
--- 
-2.24.0
+Interestingly, when I'm trying to do the non-thundering-herd pipe
+reads and writes, a side effect of that is that the read target is
+"fair" (ie when there are multiple concurrent waiting read() calls,
+it's always the first one that gets it).
 
+And that seems to really mess up the jobserver bug, and triggers it
+every single time.
+
+Fairness is often bad for locking throughput, but this is on another
+level entirely, and yeah, I see a lot of "defunct" shell and make
+processes, so it does seem to be the make bug.
+
+(Adding scheduler people to the participants list, because this patch
+is the "avoid using the return value of
+wait_event_interruptible_exclusive()" version because I think
+wait_event_interruptible_exclusive() is itself buggy).
+
+I built a new version of 'make' from source, and that one seems to
+work fine with the attached patch. But the standard Fedora 'make'
+binary completely hates this patch.
+
+Sad. The patch does seem to be the RightThing(tm) to do, but this make
+bug makes it inadvisable to apply it unless you want to play with
+things.
+
+                   Linus
+
+--00000000000088cb9c05993cb476
+Content-Type: application/x-patch; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k3xufdw20>
+X-Attachment-Id: f_k3xufdw20
+
+IGZzL2NvcmVkdW1wLmMgICAgICAgICAgICAgfCAgNCArLS0KIGZzL3BpcGUuYyAgICAgICAgICAg
+ICAgICAgfCA2NyArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0t
+LQogZnMvc3BsaWNlLmMgICAgICAgICAgICAgICB8ICA4ICsrKy0tLQogaW5jbHVkZS9saW51eC9w
+aXBlX2ZzX2kuaCB8ICAyICstCiA0IGZpbGVzIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyksIDMw
+IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2ZzL2NvcmVkdW1wLmMgYi9mcy9jb3JlZHVtcC5j
+CmluZGV4IGIxZWE3ZGZiZDE0OS4uZjgyOTZhODJkMDFkIDEwMDY0NAotLS0gYS9mcy9jb3JlZHVt
+cC5jCisrKyBiL2ZzL2NvcmVkdW1wLmMKQEAgLTUxNyw3ICs1MTcsNyBAQCBzdGF0aWMgdm9pZCB3
+YWl0X2Zvcl9kdW1wX2hlbHBlcnMoc3RydWN0IGZpbGUgKmZpbGUpCiAJcGlwZV9sb2NrKHBpcGUp
+OwogCXBpcGUtPnJlYWRlcnMrKzsKIAlwaXBlLT53cml0ZXJzLS07Ci0Jd2FrZV91cF9pbnRlcnJ1
+cHRpYmxlX3N5bmMoJnBpcGUtPndhaXQpOworCXdha2VfdXBfaW50ZXJydXB0aWJsZV9zeW5jKCZw
+aXBlLT5yZF93YWl0KTsKIAlraWxsX2Zhc3luYygmcGlwZS0+ZmFzeW5jX3JlYWRlcnMsIFNJR0lP
+LCBQT0xMX0lOKTsKIAlwaXBlX3VubG9jayhwaXBlKTsKIApAQCAtNTI1LDcgKzUyNSw3IEBAIHN0
+YXRpYyB2b2lkIHdhaXRfZm9yX2R1bXBfaGVscGVycyhzdHJ1Y3QgZmlsZSAqZmlsZSkKIAkgKiBX
+ZSBhY3R1YWxseSB3YW50IHdhaXRfZXZlbnRfZnJlZXphYmxlKCkgYnV0IHRoZW4gd2UgbmVlZAog
+CSAqIHRvIGNsZWFyIFRJRl9TSUdQRU5ESU5HIGFuZCBpbXByb3ZlIGR1bXBfaW50ZXJydXB0ZWQo
+KS4KIAkgKi8KLQl3YWl0X2V2ZW50X2ludGVycnVwdGlibGUocGlwZS0+d2FpdCwgcGlwZS0+cmVh
+ZGVycyA9PSAxKTsKKwl3YWl0X2V2ZW50X2ludGVycnVwdGlibGUocGlwZS0+cmRfd2FpdCwgcGlw
+ZS0+cmVhZGVycyA9PSAxKTsKIAogCXBpcGVfbG9jayhwaXBlKTsKIAlwaXBlLT5yZWFkZXJzLS07
+CmRpZmYgLS1naXQgYS9mcy9waXBlLmMgYi9mcy9waXBlLmMKaW5kZXggODcxMDllNzYxZmE1Li4x
+ZWI2NGNhYjYzYjUgMTAwNjQ0Ci0tLSBhL2ZzL3BpcGUuYworKysgYi9mcy9waXBlLmMKQEAgLTEw
+OCwxNiArMTA4LDE5IEBAIHZvaWQgcGlwZV9kb3VibGVfbG9jayhzdHJ1Y3QgcGlwZV9pbm9kZV9p
+bmZvICpwaXBlMSwKIC8qIERyb3AgdGhlIGlub2RlIHNlbWFwaG9yZSBhbmQgd2FpdCBmb3IgYSBw
+aXBlIGV2ZW50LCBhdG9taWNhbGx5ICovCiB2b2lkIHBpcGVfd2FpdChzdHJ1Y3QgcGlwZV9pbm9k
+ZV9pbmZvICpwaXBlKQogewotCURFRklORV9XQUlUKHdhaXQpOworCURFRklORV9XQUlUKHJkd2Fp
+dCk7CisJREVGSU5FX1dBSVQod3J3YWl0KTsKIAogCS8qCiAJICogUGlwZXMgYXJlIHN5c3RlbS1s
+b2NhbCByZXNvdXJjZXMsIHNvIHNsZWVwaW5nIG9uIHRoZW0KIAkgKiBpcyBjb25zaWRlcmVkIGEg
+bm9uaW50ZXJhY3RpdmUgd2FpdDoKIAkgKi8KLQlwcmVwYXJlX3RvX3dhaXQoJnBpcGUtPndhaXQs
+ICZ3YWl0LCBUQVNLX0lOVEVSUlVQVElCTEUpOworCXByZXBhcmVfdG9fd2FpdCgmcGlwZS0+cmRf
+d2FpdCwgJnJkd2FpdCwgVEFTS19JTlRFUlJVUFRJQkxFKTsKKwlwcmVwYXJlX3RvX3dhaXQoJnBp
+cGUtPndyX3dhaXQsICZ3cndhaXQsIFRBU0tfSU5URVJSVVBUSUJMRSk7CiAJcGlwZV91bmxvY2so
+cGlwZSk7CiAJc2NoZWR1bGUoKTsKLQlmaW5pc2hfd2FpdCgmcGlwZS0+d2FpdCwgJndhaXQpOwor
+CWZpbmlzaF93YWl0KCZwaXBlLT5yZF93YWl0LCAmcmR3YWl0KTsKKwlmaW5pc2hfd2FpdCgmcGlw
+ZS0+d3Jfd2FpdCwgJndyd2FpdCk7CiAJcGlwZV9sb2NrKHBpcGUpOwogfQogCkBAIC0yODYsNyAr
+Mjg5LDcgQEAgcGlwZV9yZWFkKHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICp0
+bykKIAlzaXplX3QgdG90YWxfbGVuID0gaW92X2l0ZXJfY291bnQodG8pOwogCXN0cnVjdCBmaWxl
+ICpmaWxwID0gaW9jYi0+a2lfZmlscDsKIAlzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlID0g
+ZmlscC0+cHJpdmF0ZV9kYXRhOwotCWJvb2wgd2FzX2Z1bGw7CisJYm9vbCB3YXNfZnVsbCwgd2Fr
+ZV9uZXh0X3JlYWRlciA9IGZhbHNlOwogCXNzaXplX3QgcmV0OwogCiAJLyogTnVsbCByZWFkIHN1
+Y2NlZWRzLiAqLwpAQCAtMzQ0LDEwICszNDcsMTAgQEAgcGlwZV9yZWFkKHN0cnVjdCBraW9jYiAq
+aW9jYiwgc3RydWN0IGlvdl9pdGVyICp0bykKIAogCQkJaWYgKCFidWYtPmxlbikgewogCQkJCXBp
+cGVfYnVmX3JlbGVhc2UocGlwZSwgYnVmKTsKLQkJCQlzcGluX2xvY2tfaXJxKCZwaXBlLT53YWl0
+LmxvY2spOworCQkJCXNwaW5fbG9ja19pcnEoJnBpcGUtPnJkX3dhaXQubG9jayk7CiAJCQkJdGFp
+bCsrOwogCQkJCXBpcGUtPnRhaWwgPSB0YWlsOwotCQkJCXNwaW5fdW5sb2NrX2lycSgmcGlwZS0+
+d2FpdC5sb2NrKTsKKwkJCQlzcGluX3VubG9ja19pcnEoJnBpcGUtPnJkX3dhaXQubG9jayk7CiAJ
+CQl9CiAJCQl0b3RhbF9sZW4gLT0gY2hhcnM7CiAJCQlpZiAoIXRvdGFsX2xlbikKQEAgLTM3MSwx
+OSArMzc0LDI0IEBAIHBpcGVfcmVhZChzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRl
+ciAqdG8pCiAJCX0KIAkJX19waXBlX3VubG9jayhwaXBlKTsKIAkJaWYgKHdhc19mdWxsKSB7Ci0J
+CQl3YWtlX3VwX2ludGVycnVwdGlibGVfc3luY19wb2xsKCZwaXBlLT53YWl0LCBFUE9MTE9VVCB8
+IEVQT0xMV1JOT1JNKTsKKwkJCXdha2VfdXBfaW50ZXJydXB0aWJsZV9zeW5jX3BvbGwoJnBpcGUt
+PndyX3dhaXQsIEVQT0xMT1VUIHwgRVBPTExXUk5PUk0pOwogCQkJa2lsbF9mYXN5bmMoJnBpcGUt
+PmZhc3luY193cml0ZXJzLCBTSUdJTywgUE9MTF9PVVQpOwogCQl9Ci0JCXdhaXRfZXZlbnRfaW50
+ZXJydXB0aWJsZShwaXBlLT53YWl0LCBwaXBlX3JlYWRhYmxlKHBpcGUpKTsKKwkJd2FpdF9ldmVu
+dF9pbnRlcnJ1cHRpYmxlX2V4Y2x1c2l2ZShwaXBlLT5yZF93YWl0LCBwaXBlX3JlYWRhYmxlKHBp
+cGUpKTsKIAkJX19waXBlX2xvY2socGlwZSk7CiAJCXdhc19mdWxsID0gcGlwZV9mdWxsKHBpcGUt
+PmhlYWQsIHBpcGUtPnRhaWwsIHBpcGUtPm1heF91c2FnZSk7CisJCXdha2VfbmV4dF9yZWFkZXIg
+PSB0cnVlOwogCX0KKwlpZiAocGlwZV9lbXB0eShwaXBlLT5oZWFkLCBwaXBlLT50YWlsKSkKKwkJ
+d2FrZV9uZXh0X3JlYWRlciA9IGZhbHNlOwogCV9fcGlwZV91bmxvY2socGlwZSk7CiAKIAlpZiAo
+d2FzX2Z1bGwpIHsKLQkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlX3N5bmNfcG9sbCgmcGlwZS0+d2Fp
+dCwgRVBPTExPVVQgfCBFUE9MTFdSTk9STSk7CisJCXdha2VfdXBfaW50ZXJydXB0aWJsZV9zeW5j
+X3BvbGwoJnBpcGUtPndyX3dhaXQsIEVQT0xMT1VUIHwgRVBPTExXUk5PUk0pOwogCQlraWxsX2Zh
+c3luYygmcGlwZS0+ZmFzeW5jX3dyaXRlcnMsIFNJR0lPLCBQT0xMX09VVCk7CiAJfQorCWlmICh3
+YWtlX25leHRfcmVhZGVyKQorCQl3YWtlX3VwX2ludGVycnVwdGlibGVfc3luY19wb2xsKCZwaXBl
+LT5yZF93YWl0LCBFUE9MTElOIHwgRVBPTExSRE5PUk0pOwogCWlmIChyZXQgPiAwKQogCQlmaWxl
+X2FjY2Vzc2VkKGZpbHApOwogCXJldHVybiByZXQ7CkBAIC00MTUsNiArNDIzLDcgQEAgcGlwZV93
+cml0ZShzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRlciAqZnJvbSkKIAlzaXplX3Qg
+dG90YWxfbGVuID0gaW92X2l0ZXJfY291bnQoZnJvbSk7CiAJc3NpemVfdCBjaGFyczsKIAlib29s
+IHdhc19lbXB0eSA9IGZhbHNlOworCWJvb2wgd2FrZV9uZXh0X3dyaXRlciA9IGZhbHNlOwogCiAJ
+LyogTnVsbCB3cml0ZSBzdWNjZWVkcy4gKi8KIAlpZiAodW5saWtlbHkodG90YWxfbGVuID09IDAp
+KQpAQCAtNDkzLDE2ICs1MDIsMTYgQEAgcGlwZV93cml0ZShzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0
+cnVjdCBpb3ZfaXRlciAqZnJvbSkKIAkJCSAqIGl0LCBlaXRoZXIgdGhlIHJlYWRlciB3aWxsIGNv
+bnN1bWUgaXQgb3IgaXQnbGwgc3RpbGwKIAkJCSAqIGJlIHRoZXJlIGZvciB0aGUgbmV4dCB3cml0
+ZS4KIAkJCSAqLwotCQkJc3Bpbl9sb2NrX2lycSgmcGlwZS0+d2FpdC5sb2NrKTsKKwkJCXNwaW5f
+bG9ja19pcnEoJnBpcGUtPnJkX3dhaXQubG9jayk7CiAKIAkJCWhlYWQgPSBwaXBlLT5oZWFkOwog
+CQkJaWYgKHBpcGVfZnVsbChoZWFkLCBwaXBlLT50YWlsLCBwaXBlLT5tYXhfdXNhZ2UpKSB7Ci0J
+CQkJc3Bpbl91bmxvY2tfaXJxKCZwaXBlLT53YWl0LmxvY2spOworCQkJCXNwaW5fdW5sb2NrX2ly
+cSgmcGlwZS0+cmRfd2FpdC5sb2NrKTsKIAkJCQljb250aW51ZTsKIAkJCX0KIAogCQkJcGlwZS0+
+aGVhZCA9IGhlYWQgKyAxOwotCQkJc3Bpbl91bmxvY2tfaXJxKCZwaXBlLT53YWl0LmxvY2spOwor
+CQkJc3Bpbl91bmxvY2tfaXJxKCZwaXBlLT5yZF93YWl0LmxvY2spOwogCiAJCQkvKiBJbnNlcnQg
+aXQgaW50byB0aGUgYnVmZmVyIGFycmF5ICovCiAJCQlidWYgPSAmcGlwZS0+YnVmc1toZWFkICYg
+bWFza107CkBAIC01NTQsMTQgKzU2MywxNyBAQCBwaXBlX3dyaXRlKHN0cnVjdCBraW9jYiAqaW9j
+Yiwgc3RydWN0IGlvdl9pdGVyICpmcm9tKQogCQkgKi8KIAkJX19waXBlX3VubG9jayhwaXBlKTsK
+IAkJaWYgKHdhc19lbXB0eSkgewotCQkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlX3N5bmNfcG9sbCgm
+cGlwZS0+d2FpdCwgRVBPTExJTiB8IEVQT0xMUkROT1JNKTsKKwkJCXdha2VfdXBfaW50ZXJydXB0
+aWJsZV9zeW5jX3BvbGwoJnBpcGUtPnJkX3dhaXQsIEVQT0xMSU4gfCBFUE9MTFJETk9STSk7CiAJ
+CQlraWxsX2Zhc3luYygmcGlwZS0+ZmFzeW5jX3JlYWRlcnMsIFNJR0lPLCBQT0xMX0lOKTsKIAkJ
+fQotCQl3YWl0X2V2ZW50X2ludGVycnVwdGlibGUocGlwZS0+d2FpdCwgcGlwZV93cml0YWJsZShw
+aXBlKSk7CisJCXdhaXRfZXZlbnRfaW50ZXJydXB0aWJsZV9leGNsdXNpdmUocGlwZS0+d3Jfd2Fp
+dCwgcGlwZV93cml0YWJsZShwaXBlKSk7CiAJCV9fcGlwZV9sb2NrKHBpcGUpOwogCQl3YXNfZW1w
+dHkgPSBwaXBlX2VtcHR5KGhlYWQsIHBpcGUtPnRhaWwpOworCQl3YWtlX25leHRfd3JpdGVyID0g
+dHJ1ZTsKIAl9CiBvdXQ6CisJaWYgKHBpcGVfZnVsbChwaXBlLT5oZWFkLCBwaXBlLT50YWlsLCBw
+aXBlLT5tYXhfdXNhZ2UpKQorCQl3YWtlX25leHRfd3JpdGVyID0gZmFsc2U7CiAJX19waXBlX3Vu
+bG9jayhwaXBlKTsKIAogCS8qCkBAIC01NzQsOSArNTg2LDExIEBAIHBpcGVfd3JpdGUoc3RydWN0
+IGtpb2NiICppb2NiLCBzdHJ1Y3QgaW92X2l0ZXIgKmZyb20pCiAJICogd2FrZSB1cCBwZW5kaW5n
+IGpvYnMKIAkgKi8KIAlpZiAod2FzX2VtcHR5KSB7Ci0JCXdha2VfdXBfaW50ZXJydXB0aWJsZV9z
+eW5jX3BvbGwoJnBpcGUtPndhaXQsIEVQT0xMSU4gfCBFUE9MTFJETk9STSk7CisJCXdha2VfdXBf
+aW50ZXJydXB0aWJsZV9zeW5jX3BvbGwoJnBpcGUtPnJkX3dhaXQsIEVQT0xMSU4gfCBFUE9MTFJE
+Tk9STSk7CiAJCWtpbGxfZmFzeW5jKCZwaXBlLT5mYXN5bmNfcmVhZGVycywgU0lHSU8sIFBPTExf
+SU4pOwogCX0KKwlpZiAod2FrZV9uZXh0X3dyaXRlcikKKwkJd2FrZV91cF9pbnRlcnJ1cHRpYmxl
+X3N5bmNfcG9sbCgmcGlwZS0+d3Jfd2FpdCwgRVBPTExPVVQgfCBFUE9MTFdSTk9STSk7CiAJaWYg
+KHJldCA+IDAgJiYgc2Jfc3RhcnRfd3JpdGVfdHJ5bG9jayhmaWxlX2lub2RlKGZpbHApLT5pX3Ni
+KSkgewogCQlpbnQgZXJyID0gZmlsZV91cGRhdGVfdGltZShmaWxwKTsKIAkJaWYgKGVycikKQEAg
+LTYyMCwxMiArNjM0LDE1IEBAIHBpcGVfcG9sbChzdHJ1Y3QgZmlsZSAqZmlscCwgcG9sbF90YWJs
+ZSAqd2FpdCkKIAl1bnNpZ25lZCBpbnQgaGVhZCwgdGFpbDsKIAogCS8qCi0JICogUmVhZGluZyBv
+bmx5IC0tIG5vIG5lZWQgZm9yIGFjcXVpcmluZyB0aGUgc2VtYXBob3JlLgorCSAqIFJlYWRpbmcg
+cGlwZSBzdGF0ZSBvbmx5IC0tIG5vIG5lZWQgZm9yIGFjcXVpcmluZyB0aGUgc2VtYXBob3JlLgog
+CSAqCiAJICogQnV0IGJlY2F1c2UgdGhpcyBpcyByYWN5LCB0aGUgY29kZSBoYXMgdG8gYWRkIHRo
+ZQogCSAqIGVudHJ5IHRvIHRoZSBwb2xsIHRhYmxlIF9maXJzdF8gLi4KIAkgKi8KLQlwb2xsX3dh
+aXQoZmlscCwgJnBpcGUtPndhaXQsIHdhaXQpOworCWlmIChmaWxwLT5mX21vZGUgJiBGTU9ERV9S
+RUFEKQorCQlwb2xsX3dhaXQoZmlscCwgJnBpcGUtPnJkX3dhaXQsIHdhaXQpOworCWlmIChmaWxw
+LT5mX21vZGUgJiBGTU9ERV9XUklURSkKKwkJcG9sbF93YWl0KGZpbHAsICZwaXBlLT53cl93YWl0
+LCB3YWl0KTsKIAogCS8qCiAJICogLi4gYW5kIG9ubHkgdGhlbiBjYW4geW91IGRvIHRoZSByYWN5
+IHRlc3RzLiBUaGF0IHdheSwKQEAgLTY4NCw3ICs3MDEsOCBAQCBwaXBlX3JlbGVhc2Uoc3RydWN0
+IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUgKmZpbGUpCiAJCXBpcGUtPndyaXRlcnMtLTsKIAog
+CWlmIChwaXBlLT5yZWFkZXJzIHx8IHBpcGUtPndyaXRlcnMpIHsKLQkJd2FrZV91cF9pbnRlcnJ1
+cHRpYmxlX3N5bmNfcG9sbCgmcGlwZS0+d2FpdCwgRVBPTExJTiB8IEVQT0xMT1VUIHwgRVBPTExS
+RE5PUk0gfCBFUE9MTFdSTk9STSB8IEVQT0xMRVJSIHwgRVBPTExIVVApOworCQl3YWtlX3VwX2lu
+dGVycnVwdGlibGVfc3luY19wb2xsKCZwaXBlLT5yZF93YWl0LCBFUE9MTElOIHwgRVBPTExSRE5P
+Uk0gfCBFUE9MTEVSUiB8IEVQT0xMSFVQKTsKKwkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlX3N5bmNf
+cG9sbCgmcGlwZS0+d3Jfd2FpdCwgRVBPTExPVVQgfCBFUE9MTFdSTk9STSB8IEVQT0xMRVJSIHwg
+RVBPTExIVVApOwogCQlraWxsX2Zhc3luYygmcGlwZS0+ZmFzeW5jX3JlYWRlcnMsIFNJR0lPLCBQ
+T0xMX0lOKTsKIAkJa2lsbF9mYXN5bmMoJnBpcGUtPmZhc3luY193cml0ZXJzLCBTSUdJTywgUE9M
+TF9PVVQpOwogCX0KQEAgLTc2Nyw3ICs3ODUsOCBAQCBzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICph
+bGxvY19waXBlX2luZm8odm9pZCkKIAkJCSAgICAgR0ZQX0tFUk5FTF9BQ0NPVU5UKTsKIAogCWlm
+IChwaXBlLT5idWZzKSB7Ci0JCWluaXRfd2FpdHF1ZXVlX2hlYWQoJnBpcGUtPndhaXQpOworCQlp
+bml0X3dhaXRxdWV1ZV9oZWFkKCZwaXBlLT5yZF93YWl0KTsKKwkJaW5pdF93YWl0cXVldWVfaGVh
+ZCgmcGlwZS0+d3Jfd2FpdCk7CiAJCXBpcGUtPnJfY291bnRlciA9IHBpcGUtPndfY291bnRlciA9
+IDE7CiAJCXBpcGUtPm1heF91c2FnZSA9IHBpcGVfYnVmczsKIAkJcGlwZS0+cmluZ19zaXplID0g
+cGlwZV9idWZzOwpAQCAtOTg1LDcgKzEwMDQsOCBAQCBzdGF0aWMgaW50IHdhaXRfZm9yX3BhcnRu
+ZXIoc3RydWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlwZSwgdW5zaWduZWQgaW50ICpjbnQpCiAKIHN0
+YXRpYyB2b2lkIHdha2VfdXBfcGFydG5lcihzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlKQog
+ewotCXdha2VfdXBfaW50ZXJydXB0aWJsZSgmcGlwZS0+d2FpdCk7CisJd2FrZV91cF9pbnRlcnJ1
+cHRpYmxlKCZwaXBlLT5yZF93YWl0KTsKKwl3YWtlX3VwX2ludGVycnVwdGlibGUoJnBpcGUtPndy
+X3dhaXQpOwogfQogCiBzdGF0aWMgaW50IGZpZm9fb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBz
+dHJ1Y3QgZmlsZSAqZmlscCkKQEAgLTEwOTYsMTMgKzExMTYsMTMgQEAgc3RhdGljIGludCBmaWZv
+X29wZW4oc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUgKmZpbHApCiAKIGVycl9yZDoK
+IAlpZiAoIS0tcGlwZS0+cmVhZGVycykKLQkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT53
+YWl0KTsKKwkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT53cl93YWl0KTsKIAlyZXQgPSAt
+RVJFU1RBUlRTWVM7CiAJZ290byBlcnI7CiAKIGVycl93cjoKIAlpZiAoIS0tcGlwZS0+d3JpdGVy
+cykKLQkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT53YWl0KTsKKwkJd2FrZV91cF9pbnRl
+cnJ1cHRpYmxlKCZwaXBlLT5yZF93YWl0KTsKIAlyZXQgPSAtRVJFU1RBUlRTWVM7CiAJZ290byBl
+cnI7CiAKQEAgLTEyMjksNyArMTI0OSw4IEBAIHN0YXRpYyBsb25nIHBpcGVfc2V0X3NpemUoc3Ry
+dWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlwZSwgdW5zaWduZWQgbG9uZyBhcmcpCiAJcGlwZS0+bWF4
+X3VzYWdlID0gbnJfc2xvdHM7CiAJcGlwZS0+dGFpbCA9IHRhaWw7CiAJcGlwZS0+aGVhZCA9IGhl
+YWQ7Ci0Jd2FrZV91cF9pbnRlcnJ1cHRpYmxlX2FsbCgmcGlwZS0+d2FpdCk7CisJd2FrZV91cF9p
+bnRlcnJ1cHRpYmxlX2FsbCgmcGlwZS0+cmRfd2FpdCk7CisJd2FrZV91cF9pbnRlcnJ1cHRpYmxl
+X2FsbCgmcGlwZS0+d3Jfd2FpdCk7CiAJcmV0dXJuIHBpcGUtPm1heF91c2FnZSAqIFBBR0VfU0la
+RTsKIAogb3V0X3JldmVydF9hY2N0OgpkaWZmIC0tZ2l0IGEvZnMvc3BsaWNlLmMgYi9mcy9zcGxp
+Y2UuYwppbmRleCAzMDA5NjUyYTQxYzguLmQ2NzE5MzZkMGFhZCAxMDA2NDQKLS0tIGEvZnMvc3Bs
+aWNlLmMKKysrIGIvZnMvc3BsaWNlLmMKQEAgLTE2NSw4ICsxNjUsOCBAQCBzdGF0aWMgY29uc3Qg
+c3RydWN0IHBpcGVfYnVmX29wZXJhdGlvbnMgdXNlcl9wYWdlX3BpcGVfYnVmX29wcyA9IHsKIHN0
+YXRpYyB2b2lkIHdha2V1cF9waXBlX3JlYWRlcnMoc3RydWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlw
+ZSkKIHsKIAlzbXBfbWIoKTsKLQlpZiAod2FpdHF1ZXVlX2FjdGl2ZSgmcGlwZS0+d2FpdCkpCi0J
+CXdha2VfdXBfaW50ZXJydXB0aWJsZSgmcGlwZS0+d2FpdCk7CisJaWYgKHdhaXRxdWV1ZV9hY3Rp
+dmUoJnBpcGUtPnJkX3dhaXQpKQorCQl3YWtlX3VwX2ludGVycnVwdGlibGUoJnBpcGUtPnJkX3dh
+aXQpOwogCWtpbGxfZmFzeW5jKCZwaXBlLT5mYXN5bmNfcmVhZGVycywgU0lHSU8sIFBPTExfSU4p
+OwogfQogCkBAIC00NjIsOCArNDYyLDggQEAgc3RhdGljIGludCBwaXBlX3RvX3NlbmRwYWdlKHN0
+cnVjdCBwaXBlX2lub2RlX2luZm8gKnBpcGUsCiBzdGF0aWMgdm9pZCB3YWtldXBfcGlwZV93cml0
+ZXJzKHN0cnVjdCBwaXBlX2lub2RlX2luZm8gKnBpcGUpCiB7CiAJc21wX21iKCk7Ci0JaWYgKHdh
+aXRxdWV1ZV9hY3RpdmUoJnBpcGUtPndhaXQpKQotCQl3YWtlX3VwX2ludGVycnVwdGlibGUoJnBp
+cGUtPndhaXQpOworCWlmICh3YWl0cXVldWVfYWN0aXZlKCZwaXBlLT53cl93YWl0KSkKKwkJd2Fr
+ZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT53cl93YWl0KTsKIAlraWxsX2Zhc3luYygmcGlwZS0+
+ZmFzeW5jX3dyaXRlcnMsIFNJR0lPLCBQT0xMX09VVCk7CiB9CiAKZGlmZiAtLWdpdCBhL2luY2x1
+ZGUvbGludXgvcGlwZV9mc19pLmggYi9pbmNsdWRlL2xpbnV4L3BpcGVfZnNfaS5oCmluZGV4IGRi
+Y2ZhNjg5MjM4NC4uZDU3NjUwMzk2NTJhIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L3BpcGVf
+ZnNfaS5oCisrKyBiL2luY2x1ZGUvbGludXgvcGlwZV9mc19pLmgKQEAgLTQ3LDcgKzQ3LDcgQEAg
+c3RydWN0IHBpcGVfYnVmZmVyIHsKICAqKi8KIHN0cnVjdCBwaXBlX2lub2RlX2luZm8gewogCXN0
+cnVjdCBtdXRleCBtdXRleDsKLQl3YWl0X3F1ZXVlX2hlYWRfdCB3YWl0OworCXdhaXRfcXVldWVf
+aGVhZF90IHJkX3dhaXQsIHdyX3dhaXQ7CiAJdW5zaWduZWQgaW50IGhlYWQ7CiAJdW5zaWduZWQg
+aW50IHRhaWw7CiAJdW5zaWduZWQgaW50IG1heF91c2FnZTsK
+--00000000000088cb9c05993cb476--
