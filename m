@@ -2,136 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4165116BCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2881D116BDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:09:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbfLILIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 06:08:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45622 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727599AbfLILIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 06:08:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7F531AEEC;
-        Mon,  9 Dec 2019 11:08:50 +0000 (UTC)
-Subject: Re: [PATCH] mm/hotplug: Only respect mem= parameter during boot stage
-To:     David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        william.kucharski@oracle.com, mingo@kernel.org,
-        akpm@linux-foundation.org
-References: <20191206150524.14687-1-bhe@redhat.com>
- <20191209100717.GC6156@dhcp22.suse.cz>
- <7fc610be-df56-c5ae-33fb-53b471aa76d1@suse.com>
- <94aead35-1541-6c1a-d172-70dc613410c2@redhat.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <1089517e-4454-be5e-1320-7f246c4efefe@suse.com>
-Date:   Mon, 9 Dec 2019 12:08:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727686AbfLILJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 06:09:22 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:1622 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727667AbfLILJV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 06:09:21 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB9B3UZj022346;
+        Mon, 9 Dec 2019 05:09:18 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type;
+ s=PODMain02222019; bh=d4+Caqw0hJU802CgHU5kAEcGYPQkdHY1suuasB+tLhA=;
+ b=jsUH8twqDBhxJ9MXfbhDN8vPo4RfUNhd1fC4BiTg9/kdNzQFmGRE0RethVHOsaD48Ihb
+ T3uGMSPc3h6reJg6L2b4f2OOmTc15LYd+jPZb2ExSWlJDae+AOSlBpmORMuAhO9cOx4b
+ gVi0QDywM/uZ4tLIs2hy95ctVcE7MTyybvaYN9u7RU0KDIBsg9lh5kUYNFlDX/HWDAYl
+ e3aH2sLApI5BHhznMuwzZlMW45Suj/sDA5illFgFDvmSWCda4RAU1lOShamj4cuWGGW7
+ DKyk+MrbpH6fyHsX3Q7AOsQ+kE+B+LKru6OGEyv6OaxtDb7TFZIVD1PNNokkfHL65mfq ww== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex02.ad.cirrus.com ([5.172.152.52])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2wrac6j0mt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 09 Dec 2019 05:09:18 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 9 Dec
+ 2019 11:09:16 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Mon, 9 Dec 2019 11:09:16 +0000
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 315EC2C8;
+        Mon,  9 Dec 2019 11:09:16 +0000 (UTC)
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <cw00.choi@samsung.com>
+CC:     <myungjoo.ham@samsung.com>, <patches@opensource.cirrus.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 01/10] extcon: arizona: Correct clean up if arizona_identify_headphone fails
+Date:   Mon, 9 Dec 2019 11:09:07 +0000
+Message-ID: <20191209110916.29524-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <94aead35-1541-6c1a-d172-70dc613410c2@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxlogscore=733
+ spamscore=0 mlxscore=0 clxscore=1015 adultscore=0 impostorscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1912090094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.12.19 12:01, David Hildenbrand wrote:
-> On 09.12.19 11:24, Jürgen Groß wrote:
->> On 09.12.19 11:07, Michal Hocko wrote:
->>> On Fri 06-12-19 23:05:24, Baoquan He wrote:
->>>> In commit 357b4da50a62 ("x86: respect memory size limiting via mem=
->>>> parameter") a global varialbe global max_mem_size is added to store
->>>> the value which is parsed from 'mem= '. This truly stops those
->>>> DIMM from being added into system memory during boot.
->>>>
->>>> However, it also limits the later memory hotplug functionality. Any
->>>> memory board can't be hot added any more if its region is beyond the
->>>> max_mem_size. System will print error like below:
->>>>
->>>> [  216.387164] acpi PNP0C80:02: add_memory failed
->>>> [  216.389301] acpi PNP0C80:02: acpi_memory_enable_device() error
->>>> [  216.392187] acpi PNP0C80:02: Enumeration failure
->>>>
->>>> >From document of 'mem =' parameter, it should be a restriction during
->>>> boot, but not impact the system memory adding/removing after booting.
->>>>
->>>>     mem=nn[KMG]     [KNL,BOOT] Force usage of a specific amount of memory
->>>>
->>>> So fix it by also checking if it's during SYSTEM_BOOTING stage when
->>>> restrict memory adding. Otherwise, skip the restriction.
->>>
->>> Could you be more specific about why the boot vs. later hotplug makes
->>> any difference? The documentation is explicit about the boot time but
->>> considering this seems to be like that since ever I strongly suspect
->>> that this is just an omission.
->>>
->>> Btw. how have you tested the situation fixed by 357b4da50a62?
->>
->> I guess he hasn't.
->>
->> The backtrace of the problem at that time was:
->>
->> [ 8321.876844]  [<ffffffff81019ab9>] dump_trace+0x59/0x340
->> [ 8321.882683]  [<ffffffff81019e8a>] show_stack_log_lvl+0xea/0x170
->> [ 8321.889298]  [<ffffffff8101ac31>] show_stack+0x21/0x40
->> [ 8321.895043]  [<ffffffff81319530>] dump_stack+0x5c/0x7c
->> [ 8321.900779]  [<ffffffff8107fbf1>] warn_slowpath_common+0x81/0xb0
->> [ 8321.907482]  [<ffffffff81009f54>] xen_alloc_pte+0x1d4/0x390
->> [ 8321.913718]  [<ffffffff81064950>]
->> pmd_populate_kernel.constprop.6+0x40/0x80
->> [ 8321.921498]  [<ffffffff815ef0a8>] phys_pmd_init+0x210/0x255
->> [ 8321.927724]  [<ffffffff815ef2c7>] phys_pud_init+0x1da/0x247
->> [ 8321.933951]  [<ffffffff815efb81>] kernel_physical_mapping_init+0xf5/0x1d4
->> [ 8321.941533]  [<ffffffff815ebc7d>] init_memory_mapping+0x18d/0x380
->> [ 8321.948341]  [<ffffffff810647f9>] arch_add_memory+0x59/0xf0
->> [ 8321.954570]  [<ffffffff815eceed>] add_memory_resource+0x8d/0x160
->> [ 8321.961283]  [<ffffffff815ecff2>] add_memory+0x32/0xf0
->> [ 8321.967025]  [<ffffffff813e1c91>] acpi_memory_device_add+0x131/0x2e0
->> [ 8321.974128]  [<ffffffff8139f752>] acpi_bus_attach+0xe2/0x190
->> [ 8321.980453]  [<ffffffff8139f6ce>] acpi_bus_attach+0x5e/0x190
->> [ 8321.986778]  [<ffffffff8139f6ce>] acpi_bus_attach+0x5e/0x190
->> [ 8321.993103]  [<ffffffff8139f6ce>] acpi_bus_attach+0x5e/0x190
->> [ 8321.999428]  [<ffffffff813a1157>] acpi_bus_scan+0x37/0x70
->> [ 8322.005461]  [<ffffffff81fba955>] acpi_scan_init+0x77/0x1b4
->> [ 8322.011690]  [<ffffffff81fba70c>] acpi_init+0x297/0x2b3
->> [ 8322.017530]  [<ffffffff8100213a>] do_one_initcall+0xca/0x1f0
->> [ 8322.023855]  [<ffffffff81f74266>] kernel_init_freeable+0x194/0x226
->> [ 8322.030760]  [<ffffffff815eb1ba>] kernel_init+0xa/0xe0
->> [ 8322.036503]  [<ffffffff815f7bc5>] ret_from_fork+0x55/0x80
->>
->> So this patch would break it again.
->>
->> I'd recommend ...
->>
->>>
->>>> Fixes: 357b4da50a62 ("x86: respect memory size limiting via mem= parameter")
->>>> Signed-off-by: Baoquan He <bhe@redhat.com>
->>>> ---
->>>>    mm/memory_hotplug.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
->>>> index 55ac23ef11c1..5466a0a00901 100644
->>>> --- a/mm/memory_hotplug.c
->>>> +++ b/mm/memory_hotplug.c
->>>> @@ -105,7 +105,7 @@ static struct resource *register_memory_resource(u64 start, u64 size)
->>>>    	unsigned long flags =  IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
->>>>    	char *resource_name = "System RAM";
->>>>    
->>>> -	if (start + size > max_mem_size)
->>>> +	if (start + size > max_mem_size && system_state == SYSTEM_BOOTING)
->>
->> ... changing this to: ... && system_state != SYSTEM_RUNNING
-> 
-> I think we usually use system_state < SYSTEM_RUNNING
-> 
+In the error path of arizona_identify_headphone, neither the clamp nor
+the PM runtime are cleaned up. Add calls to clean up both of these.
 
-Works for me as well. :-)
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ drivers/extcon/extcon-arizona.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
+index e970134c95fab..79e9a24101823 100644
+--- a/drivers/extcon/extcon-arizona.c
++++ b/drivers/extcon/extcon-arizona.c
+@@ -724,6 +724,9 @@ static void arizona_identify_headphone(struct arizona_extcon_info *info)
+ 	return;
+ 
+ err:
++	arizona_extcon_hp_clamp(info, false);
++	pm_runtime_put_autosuspend(info->dev);
++
+ 	regmap_update_bits(arizona->regmap, ARIZONA_ACCESSORY_DETECT_MODE_1,
+ 			   ARIZONA_ACCDET_MODE_MASK, ARIZONA_ACCDET_MODE_MIC);
+ 
+-- 
+2.11.0
 
-Juergen
