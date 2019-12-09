@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 420501171A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 17:29:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57C711171A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 17:29:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfLIQ3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 11:29:25 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57849 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726562AbfLIQ3Z (ORCPT
+        id S1726926AbfLIQ3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 11:29:35 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21392 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726408AbfLIQ3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 11:29:25 -0500
+        Mon, 9 Dec 2019 11:29:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575908963;
+        s=mimecast20190719; t=1575908973;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
         bh=NNvyL4Y9eRzqtb2H2E84LxRf2YADQJydGhMMLpn/rvY=;
-        b=OplCVjKrQSFLDMx/tmvrPsGWR7m0hGjhyqJ0G5TJ73BOQTEuNV+rxXwF87MkIL0jP46S2S
-        GDltfyvLtnRarPiz42sRnEy0j41hE+ibyd27us4fB+KjX8PowXkqeDgiagb1EAoMsNb39I
-        xeY4GH+iwxjBxDr4s8Qpyuv5XUmh1t0=
+        b=CtgdPaUXHLr7wOYSR51eTk3XjiAgFnLa4/BHk6Uy7LJiRBJrDGTHpgwpwT8WAYWOeXZTMQ
+        Z+DlxrfqC9i+CPyWbIxq29xfAjOYS+IZwSAX8j0SLiMm82HGqcFudxJx6YZMjLUsWytbeg
+        DnKWY3vd9yN4H/t+Xyu+lw8P94vAA7U=
 Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
  [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-364-tAbvzKvuMXmwhfb7sJlOGA-1; Mon, 09 Dec 2019 11:29:22 -0500
-Received: by mail-qv1-f72.google.com with SMTP id a4so4924223qvn.14
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 08:29:22 -0800 (PST)
+ us-mta-81-kC_5v7YMNQCgVDUGvrysxg-1; Mon, 09 Dec 2019 11:29:31 -0500
+Received: by mail-qv1-f72.google.com with SMTP id g15so4909307qvq.20
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 08:29:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
         bh=wQxMVxgAtK5y0CyKs1BCEj6d5vwE3qN67Xvd5FZmfgk=;
-        b=VNt5zOAeDM70NhOOBdGXKoiGsfCS9WBmThesBF40SHxXV63CquOS3josLIhjhLjsid
-         cO77iRjL/jLyY9N5DQRXg0/zcyKBXX98fgYC+amxds0MqewVhqHXVCvXpwe0PUBMIq37
-         AjgvdUJ3xhnUTigNkLFpzmCodJ8XdWeh53VLt6wEvAZM0lqjf1DeP3aYEifE/zGMYnSM
-         uqBghtOkRi6SOKbFqJcnQVYV816VCNeXO2npgSTjkV1tQtkFct/alAnX+iHUbDBsAZQJ
-         dOI1viAs1GoNGLn+97EKmsSd/QFsMhyS5arCYrqjqxsQLl3CezET9zh5osa9rEwIqJcS
-         JZ3Q==
-X-Gm-Message-State: APjAAAXAzQU0rya0VYRKA+t2IUTLkSFz2scTzoteBXGiHbq1RYe9UnLp
-        m4ym8TIvQteCNN/CdMhX/MCo3mYS/Qx0A2oj/9km9jhlG7cSO+/GHlsgaB+J/I3x2/xYd/M9I/r
-        q6rv0/v/GJFh7CqGAp6D6p/0s
-X-Received: by 2002:ac8:7699:: with SMTP id g25mr14525697qtr.75.1575908962218;
-        Mon, 09 Dec 2019 08:29:22 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxBHx4JNZAzW5zOl78IJTl/Z39c+yCCpUqxZ1MccFYIr6NFhza1xXBFpnvMlezVfnTZjFAmuw==
-X-Received: by 2002:ac8:7699:: with SMTP id g25mr14525689qtr.75.1575908962077;
-        Mon, 09 Dec 2019 08:29:22 -0800 (PST)
+        b=V18p9fxar1LM0QJHY4BU3GNkwxo8Jewya11oBpgt/lwy2Zqp65lmWzEO1W1zrwwkFn
+         L4tWV0aY4flQ4vECxM8iQUs3Jq7faTVnr0rguYiLNrDIKLEBadW92PvIrs+CrGT4rUri
+         QCAVTqcUvi9JlabnFLRXoLb0IQFtB6rVQSf9CkfnhG0JvH3yQ2REVg8DL0MkXy3qM/+J
+         SPuEH7bLY0wxNyy6nO07bCqzGgw0AVi6stHtsZd96M308ZGIyCEv0Sf07ZZq3utx1JTs
+         ZBTxO0RLYz22r4Ksb+Jw2ZI7aVAHReKqAuyZxvZS3zjhi8zBVzoQo2V/eF3kDH5Kd6/t
+         juYA==
+X-Gm-Message-State: APjAAAU/K77ZDwfs3i67tjb8qjxUqdwyj/Y/YuKxs4z4lO8cgBg7nnuM
+        TDwSzYiSJV11D+1m3aKgZEkWpQFfQfYapr2vpgj3Jm6Ad76rJTIT20BlaVK0u/J/WxB9HY5cIjN
+        ldnpEyHJK6Inb5Q+ZFgKjoOrp
+X-Received: by 2002:a05:620a:899:: with SMTP id b25mr6205351qka.197.1575908971023;
+        Mon, 09 Dec 2019 08:29:31 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwFUcc6D6y2hR3oAFJBLyCpXqAb6UQCleKthwatt7HxCSSIjpA7ZaRTzyQmAILOaUj4yhzSHQ==
+X-Received: by 2002:a05:620a:899:: with SMTP id b25mr6205322qka.197.1575908970851;
+        Mon, 09 Dec 2019 08:29:30 -0800 (PST)
 Received: from redhat.com (bzq-79-181-48-215.red.bezeqint.net. [79.181.48.215])
-        by smtp.gmail.com with ESMTPSA id x19sm19777qtm.47.2019.12.09.08.29.18
+        by smtp.gmail.com with ESMTPSA id f19sm420087qkk.69.2019.12.09.08.29.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 08:29:21 -0800 (PST)
-Date:   Mon, 9 Dec 2019 11:29:16 -0500
+        Mon, 09 Dec 2019 08:29:30 -0800 (PST)
+Date:   Mon, 9 Dec 2019 11:29:25 -0500
 From:   "Michael S. Tsirkin" <mst@redhat.com>
 To:     linux-kernel@vger.kernel.org, Julio Faracco <jcfaracco@gmail.com>
 Cc:     netdev@vger.kernel.org, davem@davemloft.net, mst@redhat.com,
@@ -64,7 +64,7 @@ MIME-Version: 1.0
 In-Reply-To: <20191209162727.10113-1-mst@redhat.com>
 X-Mailer: git-send-email 2.22.0.678.g13338e74b8
 X-Mutt-Fcc: =sent
-X-MC-Unique: tAbvzKvuMXmwhfb7sJlOGA-1
+X-MC-Unique: kC_5v7YMNQCgVDUGvrysxg-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
