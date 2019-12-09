@@ -2,333 +2,426 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFE8117073
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 16:30:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70ED8117079
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 16:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbfLIPaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 10:30:13 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55554 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726683AbfLIP37 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 10:29:59 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB9FSEfT109821
-        for <linux-kernel@vger.kernel.org>; Mon, 9 Dec 2019 10:29:58 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wrt116rpm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 10:29:58 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zaslonko@linux.ibm.com>;
-        Mon, 9 Dec 2019 15:29:56 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 9 Dec 2019 15:29:53 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB9FTqjh47055108
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 9 Dec 2019 15:29:52 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0B93EA404D;
-        Mon,  9 Dec 2019 15:29:52 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4674A4051;
-        Mon,  9 Dec 2019 15:29:51 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  9 Dec 2019 15:29:51 +0000 (GMT)
-From:   Mikhail Zaslonko <zaslonko@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     Richard Purdie <rpurdie@rpsys.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Eduard Shishkin <edward6@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zaslonko@linux.ibm.com
-Subject: [PATCH v2 6/6] btrfs: Use larger zlib buffer for s390 hardware compression
-Date:   Mon,  9 Dec 2019 16:29:48 +0100
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191209152948.37080-1-zaslonko@linux.ibm.com>
-References: <20191209152948.37080-1-zaslonko@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19120915-0016-0000-0000-000002D3305E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19120915-0017-0000-0000-00003335432E
-Message-Id: <20191209152948.37080-7-zaslonko@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-09_04:2019-12-09,2019-12-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 suspectscore=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 adultscore=0 clxscore=1015 priorityscore=1501 bulkscore=0
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912090135
+        id S1726960AbfLIPah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 10:30:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38430 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726491AbfLIPah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 10:30:37 -0500
+Received: from localhost (unknown [89.205.132.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E073E2068E;
+        Mon,  9 Dec 2019 15:30:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575905435;
+        bh=LYjRBh90O5HYAIu5dtpovBGv6ud9Pv4H6SyZaJxCCG4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V8dyaFJc26XWEkqrZE7OPAFunXLGJAe4VMYn7kTD+y+HxwNy7kd6zOPRXPxKWP/rh
+         Gg1ejCitUO270AjzGN9I2QwBfkVkvSdsgZhLUDlh21TsKN3bhxbPXJcnV6s+WHKHdM
+         CUcxfPbFLLZbQUwnt8ZZ3X2+S/umolRLJw69IZr4=
+Date:   Mon, 9 Dec 2019 16:30:31 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     shubhrajyoti.datta@gmail.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        michal.simek@xilinx.com, robh+dt@kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Subbaraya Sundeep Bhatta <sbhatta@xilinx.com>
+Subject: Re: [PATCH v2 1/2] uio: uio_xilinx_apm: Add Xilinx AXI performance
+ monitor driver
+Message-ID: <20191209153031.GC1280846@kroah.com>
+References: <1575901405-3084-1-git-send-email-shubhrajyoti.datta@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1575901405-3084-1-git-send-email-shubhrajyoti.datta@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to the small size of zlib buffer (1 page) set in btrfs code, s390
-hardware compression is rather limited in terms of performance. Increasing
-the buffer size to 4 pages when s390 zlib hardware support is enabled
-would bring significant benefit to btrfs zlib (up to 60% better performance
-compared to the PAGE_SIZE buffer). In case of memory pressure we fall back
-to a single page buffer during workspace allocation.
+On Mon, Dec 09, 2019 at 07:53:24PM +0530, shubhrajyoti.datta@gmail.com wrote:
+> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> 
+> Added driver for Xilinx AXI performance monitor IP.
+> 
+> Signed-off-by: Subbaraya Sundeep Bhatta <sbhatta@xilinx.com>
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> ---
+> v2:
+> Updated the header
+> 
+>  drivers/uio/Kconfig          |  12 ++
+>  drivers/uio/Makefile         |   1 +
+>  drivers/uio/uio_xilinx_apm.c | 358 +++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 371 insertions(+)
+>  create mode 100644 drivers/uio/uio_xilinx_apm.c
+> 
+> diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
+> index 202ee81..de30312 100644
+> --- a/drivers/uio/Kconfig
+> +++ b/drivers/uio/Kconfig
+> @@ -165,4 +165,16 @@ config UIO_HV_GENERIC
+>  	  to network and storage devices from userspace.
+>  
+>  	  If you compile this as a module, it will be called uio_hv_generic.
+> +
+> +config UIO_XILINX_APM
+> +	tristate "Xilinx AXI Performance Monitor driver"
+> +	depends on MICROBLAZE || ARCH_ZYNQ || ARCH_ZYNQMP
+> +	help
+> +	  This driver is developed for AXI Performance Monitor IP, designed to
+> +	  monitor AXI4 traffic for performance analysis of AXI bus in the
+> +	  system. Driver maps HW registers and parameters to userspace.
+> +
+> +	  To compile this driver as a module, choose M here; the module
+> +	  will be called uio_xilinx_apm.
+> +
+>  endif
+> diff --git a/drivers/uio/Makefile b/drivers/uio/Makefile
+> index c285dd2..b3464d8 100644
+> --- a/drivers/uio/Makefile
+> +++ b/drivers/uio/Makefile
+> @@ -11,3 +11,4 @@ obj-$(CONFIG_UIO_PRUSS)         += uio_pruss.o
+>  obj-$(CONFIG_UIO_MF624)         += uio_mf624.o
+>  obj-$(CONFIG_UIO_FSL_ELBC_GPCM)	+= uio_fsl_elbc_gpcm.o
+>  obj-$(CONFIG_UIO_HV_GENERIC)	+= uio_hv_generic.o
+> +obj-$(CONFIG_UIO_XILINX_APM)	+= uio_xilinx_apm.o
+> diff --git a/drivers/uio/uio_xilinx_apm.c b/drivers/uio/uio_xilinx_apm.c
+> new file mode 100644
+> index 0000000..3f69922
+> --- /dev/null
+> +++ b/drivers/uio/uio_xilinx_apm.c
+> @@ -0,0 +1,358 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Xilinx AXI Performance Monitor
+> + *
+> + * Description:
+> + * This driver is developed for AXI Performance Monitor IP,
+> + * designed to monitor AXI4 traffic for performance analysis
+> + * of AXI bus in the system. Driver maps HW registers and parameters
+> + * to userspace. Userspace need not clear the interrupt of IP since
+> + * driver clears the interrupt.
+> + *
+> + * Copyright (c) 2019 Xilinx Inc.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
+> +#include <linux/uio_driver.h>
+> +
+> +#define XAPM_IS_OFFSET		0x0038  /* Interrupt Status Register */
+> +#define DRV_NAME		"xilinxapm_uio"
+> +#define DRV_VERSION		"1.0"
 
-Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
----
- fs/btrfs/compression.c |   2 +-
- fs/btrfs/zlib.c        | 118 +++++++++++++++++++++++++++--------------
- 2 files changed, 80 insertions(+), 40 deletions(-)
+No need for a version, the code is in the kernel tree, use the version
+of the kernel instead please.
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index b05b361e2062..f789b356fd8b 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -1158,7 +1158,7 @@ int btrfs_decompress_buf2page(const char *buf, unsigned long buf_start,
- 	/* copy bytes from the working buffer into the pages */
- 	while (working_bytes > 0) {
- 		bytes = min_t(unsigned long, bvec.bv_len,
--				PAGE_SIZE - buf_offset);
-+				PAGE_SIZE - (buf_offset % PAGE_SIZE));
- 		bytes = min(bytes, working_bytes);
- 
- 		kaddr = kmap_atomic(bvec.bv_page);
-diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
-index df1aace5df50..0bc0d57ba233 100644
---- a/fs/btrfs/zlib.c
-+++ b/fs/btrfs/zlib.c
-@@ -20,9 +20,12 @@
- #include <linux/refcount.h>
- #include "compression.h"
- 
-+#define ZLIB_DFLTCC_BUF_SIZE    (4 * PAGE_SIZE)
-+
- struct workspace {
- 	z_stream strm;
- 	char *buf;
-+	unsigned long buf_size;
- 	struct list_head list;
- 	int level;
- };
-@@ -76,7 +79,17 @@ static struct list_head *zlib_alloc_workspace(unsigned int level)
- 			zlib_inflate_workspacesize());
- 	workspace->strm.workspace = kvmalloc(workspacesize, GFP_KERNEL);
- 	workspace->level = level;
--	workspace->buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+	workspace->buf = NULL;
-+	if (zlib_deflate_dfltcc_enabled()) {
-+		workspace->buf = kmalloc(ZLIB_DFLTCC_BUF_SIZE,
-+					 __GFP_NOMEMALLOC | __GFP_NORETRY |
-+					 __GFP_NOWARN | GFP_NOIO);
-+		workspace->buf_size = ZLIB_DFLTCC_BUF_SIZE;
-+	}
-+	if (!workspace->buf) {
-+		workspace->buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+		workspace->buf_size = PAGE_SIZE;
-+	}
- 	if (!workspace->strm.workspace || !workspace->buf)
- 		goto fail;
- 
-@@ -97,6 +110,7 @@ static int zlib_compress_pages(struct list_head *ws,
- 			       unsigned long *total_out)
- {
- 	struct workspace *workspace = list_entry(ws, struct workspace, list);
-+	int i;
- 	int ret;
- 	char *data_in;
- 	char *cpage_out;
-@@ -104,6 +118,7 @@ static int zlib_compress_pages(struct list_head *ws,
- 	struct page *in_page = NULL;
- 	struct page *out_page = NULL;
- 	unsigned long bytes_left;
-+	unsigned long in_buf_pages;
- 	unsigned long len = *total_out;
- 	unsigned long nr_dest_pages = *out_pages;
- 	const unsigned long max_out = nr_dest_pages * PAGE_SIZE;
-@@ -121,9 +136,6 @@ static int zlib_compress_pages(struct list_head *ws,
- 	workspace->strm.total_in = 0;
- 	workspace->strm.total_out = 0;
- 
--	in_page = find_get_page(mapping, start >> PAGE_SHIFT);
--	data_in = kmap(in_page);
--
- 	out_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
- 	if (out_page == NULL) {
- 		ret = -ENOMEM;
-@@ -133,12 +145,34 @@ static int zlib_compress_pages(struct list_head *ws,
- 	pages[0] = out_page;
- 	nr_pages = 1;
- 
--	workspace->strm.next_in = data_in;
-+	workspace->strm.next_in = workspace->buf;
-+	workspace->strm.avail_in = 0;
- 	workspace->strm.next_out = cpage_out;
- 	workspace->strm.avail_out = PAGE_SIZE;
--	workspace->strm.avail_in = min(len, PAGE_SIZE);
- 
- 	while (workspace->strm.total_in < len) {
-+		/* get next set of pages and copy their contents to
-+		 * the input buffer for the following deflate call
-+		 */
-+		if (workspace->strm.avail_in == 0) {
-+			bytes_left = len - workspace->strm.total_in;
-+			in_buf_pages = min(DIV_ROUND_UP(bytes_left, PAGE_SIZE),
-+					   workspace->buf_size / PAGE_SIZE);
-+			for (i = 0; i < in_buf_pages; i++) {
-+				in_page = find_get_page(mapping,
-+							start >> PAGE_SHIFT);
-+				data_in = kmap(in_page);
-+				memcpy(workspace->buf + i*PAGE_SIZE, data_in,
-+				       PAGE_SIZE);
-+				kunmap(in_page);
-+				put_page(in_page);
-+				start += PAGE_SIZE;
-+			}
-+			workspace->strm.avail_in = min(bytes_left,
-+						       workspace->buf_size);
-+			workspace->strm.next_in = workspace->buf;
-+		}
-+
- 		ret = zlib_deflate(&workspace->strm, Z_SYNC_FLUSH);
- 		if (ret != Z_OK) {
- 			pr_debug("BTRFS: deflate in loop returned %d\n",
-@@ -155,6 +189,7 @@ static int zlib_compress_pages(struct list_head *ws,
- 			ret = -E2BIG;
- 			goto out;
- 		}
-+
- 		/* we need another page for writing out.  Test this
- 		 * before the total_in so we will pull in a new page for
- 		 * the stream end if required
-@@ -180,33 +215,42 @@ static int zlib_compress_pages(struct list_head *ws,
- 		/* we're all done */
- 		if (workspace->strm.total_in >= len)
- 			break;
--
--		/* we've read in a full page, get a new one */
--		if (workspace->strm.avail_in == 0) {
--			if (workspace->strm.total_out > max_out)
--				break;
--
--			bytes_left = len - workspace->strm.total_in;
--			kunmap(in_page);
--			put_page(in_page);
--
--			start += PAGE_SIZE;
--			in_page = find_get_page(mapping,
--						start >> PAGE_SHIFT);
--			data_in = kmap(in_page);
--			workspace->strm.avail_in = min(bytes_left,
--							   PAGE_SIZE);
--			workspace->strm.next_in = data_in;
--		}
-+		if (workspace->strm.total_out > max_out)
-+			break;
- 	}
- 	workspace->strm.avail_in = 0;
--	ret = zlib_deflate(&workspace->strm, Z_FINISH);
--	zlib_deflateEnd(&workspace->strm);
--
--	if (ret != Z_STREAM_END) {
--		ret = -EIO;
--		goto out;
-+	/* call deflate with Z_FINISH flush parameter providing more output
-+	 * space but no more input data, until it returns with Z_STREAM_END
-+	 */
-+	while (ret != Z_STREAM_END) {
-+		ret = zlib_deflate(&workspace->strm, Z_FINISH);
-+		if (ret == Z_STREAM_END)
-+			break;
-+		if (ret != Z_OK && ret != Z_BUF_ERROR) {
-+			zlib_deflateEnd(&workspace->strm);
-+			ret = -EIO;
-+			goto out;
-+		} else if (workspace->strm.avail_out == 0) {
-+			/* get another page for the stream end */
-+			kunmap(out_page);
-+			if (nr_pages == nr_dest_pages) {
-+				out_page = NULL;
-+				ret = -E2BIG;
-+				goto out;
-+			}
-+			out_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
-+			if (out_page == NULL) {
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+			cpage_out = kmap(out_page);
-+			pages[nr_pages] = out_page;
-+			nr_pages++;
-+			workspace->strm.avail_out = PAGE_SIZE;
-+			workspace->strm.next_out = cpage_out;
-+		}
- 	}
-+	zlib_deflateEnd(&workspace->strm);
- 
- 	if (workspace->strm.total_out >= workspace->strm.total_in) {
- 		ret = -E2BIG;
-@@ -221,10 +265,6 @@ static int zlib_compress_pages(struct list_head *ws,
- 	if (out_page)
- 		kunmap(out_page);
- 
--	if (in_page) {
--		kunmap(in_page);
--		put_page(in_page);
--	}
- 	return ret;
- }
- 
-@@ -250,7 +290,7 @@ static int zlib_decompress_bio(struct list_head *ws, struct compressed_bio *cb)
- 
- 	workspace->strm.total_out = 0;
- 	workspace->strm.next_out = workspace->buf;
--	workspace->strm.avail_out = PAGE_SIZE;
-+	workspace->strm.avail_out = workspace->buf_size;
- 
- 	/* If it's deflate, and it's got no preset dictionary, then
- 	   we can tell zlib to skip the adler32 check. */
-@@ -289,7 +329,7 @@ static int zlib_decompress_bio(struct list_head *ws, struct compressed_bio *cb)
- 		}
- 
- 		workspace->strm.next_out = workspace->buf;
--		workspace->strm.avail_out = PAGE_SIZE;
-+		workspace->strm.avail_out = workspace->buf_size;
- 
- 		if (workspace->strm.avail_in == 0) {
- 			unsigned long tmp;
-@@ -340,7 +380,7 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
- 	workspace->strm.total_in = 0;
- 
- 	workspace->strm.next_out = workspace->buf;
--	workspace->strm.avail_out = PAGE_SIZE;
-+	workspace->strm.avail_out = workspace->buf_size;
- 	workspace->strm.total_out = 0;
- 	/* If it's deflate, and it's got no preset dictionary, then
- 	   we can tell zlib to skip the adler32 check. */
-@@ -384,7 +424,7 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
- 			buf_offset = 0;
- 
- 		bytes = min(PAGE_SIZE - pg_offset,
--			    PAGE_SIZE - buf_offset);
-+			    PAGE_SIZE - (buf_offset % PAGE_SIZE));
- 		bytes = min(bytes, bytes_left);
- 
- 		kaddr = kmap_atomic(dest_page);
-@@ -395,7 +435,7 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
- 		bytes_left -= bytes;
- next:
- 		workspace->strm.next_out = workspace->buf;
--		workspace->strm.avail_out = PAGE_SIZE;
-+		workspace->strm.avail_out = workspace->buf_size;
- 	}
- 
- 	if (ret != Z_STREAM_END && bytes_left != 0)
--- 
-2.17.1
+> +#define UIO_DUMMY_MEMSIZE	4096
+> +#define XAPM_MODE_ADVANCED	1
+> +#define XAPM_MODE_PROFILE	2
+> +#define XAPM_MODE_TRACE		3
+> +
+> +/**
+> + * struct xapm_param - HW parameters structure
+> + * @mode: Mode in which APM is working
+> + * @maxslots: Maximum number of Slots in APM
+> + * @eventcnt: Event counting enabled in APM
+> + * @eventlog: Event logging enabled in APM
+> + * @sampledcnt: Sampled metric counters enabled in APM
+> + * @numcounters: Number of counters in APM
+> + * @metricwidth: Metric Counter width (32/64)
+> + * @sampledwidth: Sampled metric counter width
+> + * @globalcntwidth: Global Clock counter width
+> + * @scalefactor: Scaling factor
+> + * @isr: Interrupts info shared to userspace
+> + * @is_32bit_filter: Flags for 32bit filter
+> + * @clk: Clock handle
+> + */
+> +struct xapm_param {
+> +	u32 mode;
+> +	u32 maxslots;
+> +	u32 eventcnt;
+> +	u32 eventlog;
+> +	u32 sampledcnt;
+> +	u32 numcounters;
+> +	u32 metricwidth;
+> +	u32 sampledwidth;
+> +	u32 globalcntwidth;
+> +	u32 scalefactor;
+> +	u32 isr;
+> +	bool is_32bit_filter;
+> +	struct clk *clk;
 
+You seem to copy this structure to hardware?  How?  This is not a
+definition of a proper hardware interface.  Or are you copying it to
+userspace?  If so, even worse!  This is not how to properly define such
+a structure at all.
+
+> +};
+> +
+> +/**
+> + * struct xapm_dev - Global driver structure
+> + * @info: uio_info structure
+> + * @param: xapm_param structure
+> + * @regs: IOmapped base address
+> + */
+> +struct xapm_dev {
+> +	struct uio_info info;
+> +	struct xapm_param param;
+> +	void __iomem *regs;
+> +};
+> +
+> +/**
+> + * xapm_handler - Interrupt handler for APM
+> + * @irq: IRQ number
+> + * @info: Pointer to uio_info structure
+> + *
+> + * Return: Always returns IRQ_HANDLED
+> + */
+> +static irqreturn_t xapm_handler(int irq, struct uio_info *info)
+> +{
+> +	struct xapm_dev *xapm = (struct xapm_dev *)info->priv;
+
+DO you need to cast?
+
+> +	void *ptr;
+> +
+> +	ptr = (unsigned long *)xapm->info.mem[1].addr;
+
+No need to cast.  And ptr is a void, not unsigned long *.
+
+> +	/* Clear the interrupt and copy the ISR value to userspace */
+> +	xapm->param.isr = readl(xapm->regs + XAPM_IS_OFFSET);
+> +	writel(xapm->param.isr, xapm->regs + XAPM_IS_OFFSET);
+> +	memcpy(ptr, &xapm->param, sizeof(struct xapm_param));
+
+Where did you just copy this memory to?
+
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +/**
+> + * xapm_getprop - Retrieves dts properties to param structure
+> + * @pdev: Pointer to platform device
+> + * @param: Pointer to param structure
+> + *
+> + * Returns: '0' on success and failure value on error
+> + */
+> +static int xapm_getprop(struct platform_device *pdev, struct xapm_param *param)
+> +{
+> +	u32 mode = 0;
+> +	int ret;
+> +	struct device_node *node;
+> +
+> +	node = pdev->dev.of_node;
+> +
+> +	/* Retrieve required dts properties and fill param structure */
+> +	ret = of_property_read_u32(node, "xlnx,enable-profile", &mode);
+> +	if (ret < 0)
+> +		dev_info(&pdev->dev, "no property xlnx,enable-profile\n");
+
+If it's an error, make it dev_err().  No need to be noisy otherwise.
+Same for all of these.
+
+> +	else if (mode)
+> +		param->mode = XAPM_MODE_PROFILE;
+> +
+> +	ret = of_property_read_u32(node, "xlnx,enable-trace", &mode);
+> +	if (ret < 0)
+> +		dev_info(&pdev->dev, "no property xlnx,enable-trace\n");
+> +	else if (mode)
+> +		param->mode = XAPM_MODE_TRACE;
+> +
+> +	ret = of_property_read_u32(node, "xlnx,num-monitor-slots",
+> +				   &param->maxslots);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "no property xlnx,num-monitor-slots");
+
+Doesn't of_property_read_u32() print an error if it can not be found?
+Don't duplicate the message please.  Same for all of these.
+
+
+> +		return ret;
+> +	}
+> +
+> +	ret = of_property_read_u32(node, "xlnx,enable-event-count",
+> +				   &param->eventcnt);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "no property xlnx,enable-event-count");
+> +		return ret;
+> +	}
+> +
+> +	ret = of_property_read_u32(node, "xlnx,enable-event-log",
+> +				   &param->eventlog);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "no property xlnx,enable-event-log");
+> +		return ret;
+> +	}
+> +
+> +	ret = of_property_read_u32(node, "xlnx,have-sampled-metric-cnt",
+> +				   &param->sampledcnt);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "no property xlnx,have-sampled-metric-cnt");
+> +		return ret;
+> +	}
+> +
+> +	ret = of_property_read_u32(node, "xlnx,num-of-counters",
+> +				   &param->numcounters);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "no property xlnx,num-of-counters");
+> +		return ret;
+> +	}
+> +
+> +	ret = of_property_read_u32(node, "xlnx,metric-count-width",
+> +				   &param->metricwidth);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "no property xlnx,metric-count-width");
+> +		return ret;
+> +	}
+> +
+> +	ret = of_property_read_u32(node, "xlnx,metrics-sample-count-width",
+> +				   &param->sampledwidth);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "no property metrics-sample-count-width");
+> +		return ret;
+> +	}
+> +
+> +	ret = of_property_read_u32(node, "xlnx,global-count-width",
+> +				   &param->globalcntwidth);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "no property xlnx,global-count-width");
+> +		return ret;
+> +	}
+> +
+> +	ret = of_property_read_u32(node, "xlnx,metric-count-scale",
+> +				   &param->scalefactor);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "no property xlnx,metric-count-scale");
+> +		return ret;
+> +	}
+> +
+> +	param->is_32bit_filter = of_property_read_bool(node,
+> +						"xlnx,id-filter-32bit");
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * xapm_probe - Driver probe function
+> + * @pdev: Pointer to the platform_device structure
+> + *
+> + * Returns: '0' on success and failure value on error
+> + */
+> +
+
+Why the blank line?  Why the kernel doc for static functions?
+
+> +static int xapm_probe(struct platform_device *pdev)
+> +{
+> +	struct xapm_dev *xapm;
+> +	struct resource *res;
+> +	int irq;
+> +	int ret;
+> +	void *ptr;
+> +
+> +	xapm = devm_kzalloc(&pdev->dev, (sizeof(struct xapm_dev)), GFP_KERNEL);
+> +	if (!xapm)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	xapm->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(xapm->regs)) {
+> +		dev_err(&pdev->dev, "unable to iomap registers\n");
+> +		return PTR_ERR(xapm->regs);
+> +	}
+> +
+> +	xapm->param.clk = devm_clk_get(&pdev->dev, NULL);
+> +	if (IS_ERR(xapm->param.clk)) {
+> +		if (PTR_ERR(xapm->param.clk) != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "axi clock error\n");
+> +		return PTR_ERR(xapm->param.clk);
+> +	}
+> +
+> +	ret = clk_prepare_enable(xapm->param.clk);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Unable to enable clock.\n");
+> +		return ret;
+> +	}
+> +	pm_runtime_get_noresume(&pdev->dev);
+> +	pm_runtime_set_active(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+> +	/* Initialize mode as Advanced so that if no mode in dts, default
+> +	 * is Advanced
+> +	 */
+
+Odd commenting style, this isn't the network stack :)
+
+
+> +	xapm->param.mode = XAPM_MODE_ADVANCED;
+> +	ret = xapm_getprop(pdev, &xapm->param);
+> +	if (ret < 0)
+> +		goto err_clk_dis;
+> +
+> +	xapm->info.mem[0].name = "xilinx_apm";
+
+Not driver name?  Why have that #define then?
+
+> +	xapm->info.mem[0].addr = res->start;
+> +	xapm->info.mem[0].size = resource_size(res);
+> +	xapm->info.mem[0].memtype = UIO_MEM_PHYS;
+> +
+> +	xapm->info.mem[1].addr = (unsigned long)kzalloc(UIO_DUMMY_MEMSIZE,
+> +							GFP_KERNEL);
+> +	ptr = (unsigned long *)xapm->info.mem[1].addr;
+> +	xapm->info.mem[1].size = UIO_DUMMY_MEMSIZE;
+> +	xapm->info.mem[1].memtype = UIO_MEM_LOGICAL;
+> +
+> +	xapm->info.name = "axi-pmon";
+> +	xapm->info.version = DRV_VERSION;
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0) {
+> +		dev_err(&pdev->dev, "unable to get irq\n");
+> +		ret = irq;
+> +		goto err_clk_dis;
+> +	}
+> +
+> +	xapm->info.irq = irq;
+> +	xapm->info.handler = xapm_handler;
+> +	xapm->info.priv = xapm;
+> +	xapm->info.irq_flags = IRQF_SHARED;
+> +
+> +	memcpy(ptr, &xapm->param, sizeof(struct xapm_param));
+
+Where did you just copy this to?
+
+> +
+> +	ret = uio_register_device(&pdev->dev, &xapm->info);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "unable to register to UIO\n");
+> +		goto err_clk_dis;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, xapm);
+> +
+> +	dev_info(&pdev->dev, "Probed Xilinx APM\n");
+
+Again, this should be quiet if all goes well, didn't I say that before?
+
+Finally, why do you need a UIO driver at all here?  Why can't the
+current ones work properly for you?
+
+thanks,
+
+greg k-h
