@@ -2,85 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 785D1117404
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E478117421
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:26:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfLISVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:21:34 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44193 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbfLISVd (ORCPT
+        id S1726897AbfLIS0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:26:01 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:46356 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbfLIS0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:21:33 -0500
-Received: by mail-pf1-f196.google.com with SMTP id d199so7635015pfd.11
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 10:21:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=z4B1DM+aYjxU+okrUuJoTvRLDFQzAUQP1MHsJfZ8ctg=;
-        b=q5/UvgeROeU3XcWh+RDObGQ7F7Bmj11Kx8jho5OEjbRMuNDvmEZfOhzgcc9AUY+V1M
-         gOPJP9vZHUcMDsOVRHlD6EzmsWTz6cVLVMB8aokm+SC93CYAMe9yom1XauZLQ5Xu4gkf
-         tDIY+t1f5TMcTsB7ym2IRbOv6pJC2lOmqSvTFEfnf5RdnGQEA2fw4q6dts6lKZnsIVxq
-         8iulm8VeHg0xmM3VAcKh4EWL475zo30DSZ1WmlNl2YzXNWOh/tfvIR9mFTnlJRaTZvtY
-         u+a7qm3ElNWYQ19JxD7r0HJGJfDAHOHxAt8rDbqBnbeVFPF5h2DC8STYiDbFy+3jymMx
-         8tbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=z4B1DM+aYjxU+okrUuJoTvRLDFQzAUQP1MHsJfZ8ctg=;
-        b=XM7sA6nHxGoUD2iac/vHW6rVuKLxWBZ+smmwMpKAjdT+HfG0LD1y2zVPFfmVbTv9CJ
-         zF30yVRPGdatntziMXMVtZ6ue/Qy0lZhAvHrsrC9rtURn6MzwxV7QxhqK1wQ84LbdHX5
-         Jgle9EHxGZxK/ZeHqxfHo9c9Tmn6cI0ryHVA4hPmLK9DJwSzpHX+9/Sh3x9s59B0vOpC
-         Xsdz1wscggj2ubdS1lFurQSXnvIolkN7dw4YgrxGJT9+wD0TeINdqe4edqIj4rj5a7PL
-         Ahz8MJTflrCQG0ipvjqZhTM3av/Kef4nCz4CMxO7wZ+1EfRd7dr9Kxlt+3bDgVexQbR0
-         T3nQ==
-X-Gm-Message-State: APjAAAWr9zTzY3CNVAD8U9HmeiDrN90UyUMjZO0k9K6ew6g3DL2P/Q/5
-        9hJZYFXl96CWhyZIFVZoGSbKQveQ3tjZwt81uEc=
-X-Google-Smtp-Source: APXvYqwekMLgHnGpcX+Q9TeGrlNRN6d2gJIp9hLw2vC5U/Y90DxoXESib0aslz8aRzYvGv8XqspdpqOTxTj5rei5z1Y=
-X-Received: by 2002:a63:6d0e:: with SMTP id i14mr20569185pgc.12.1575915692777;
- Mon, 09 Dec 2019 10:21:32 -0800 (PST)
+        Mon, 9 Dec 2019 13:26:00 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB9IPtM9095286;
+        Mon, 9 Dec 2019 12:25:55 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575915955;
+        bh=wHjPXA26kNlnCk1JrNudGWLJavjZeOcEMg0UiUtbdZ8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=dym3GMJQR0LJ3UuJ6i408gxdRMDtMZD5zTxWSbnrjkuG+QTkTXZLvYVt8b9H/xoOL
+         ItOs1wwi2IciH1iaNPXfrfWcXDMjfl+67I6wfTwAWLyDL2cplKYfWwFxiPQxZZy1Dq
+         JBj1faQQC+Iv4gMz5gD4BnoQ1pCwkZDtKfcKngqs=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB9IPsIO055343
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 9 Dec 2019 12:25:55 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Dec
+ 2019 12:25:54 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 9 Dec 2019 12:25:54 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB9IPsad010705;
+        Mon, 9 Dec 2019 12:25:54 -0600
+Subject: Re: [PATCH net-next v2 0/2] Rebase of patches
+To:     David Miller <davem@davemloft.net>
+CC:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
+        <bunk@kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <grygorii.strashko@ti.com>
+References: <20191209175943.23110-1-dmurphy@ti.com>
+ <20191209.101005.1980841296607612612.davem@davemloft.net>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <898c9346-311e-4c93-9f83-afe255b54243@ti.com>
+Date:   Mon, 9 Dec 2019 12:23:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Received: by 2002:a17:90a:3aec:0:0:0:0 with HTTP; Mon, 9 Dec 2019 10:21:31
- -0800 (PST)
-Reply-To: muahammedrabia@gmail.com
-From:   "Mrs. Rabia Muahammed " <gudahakim22@gmail.com>
-Date:   Mon, 9 Dec 2019 10:21:31 -0800
-Message-ID: <CAEjO5Nj_E-W=wa7+8f51pbDBaaPB6NXNmhOiYxoSvMkXRBRYRQ@mail.gmail.com>
-Subject: From Mrs. Rabia Muahammed
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191209.101005.1980841296607612612.davem@davemloft.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-From Mrs. Rabia Muahammed
+David
 
-Dear Good Friend
+On 12/9/19 12:10 PM, David Miller wrote:
+> From: Dan Murphy <dmurphy@ti.com>
+> Date: Mon, 9 Dec 2019 11:59:41 -0600
+>
+>> This is a rebase of the dp83867 patches on top of the net-next tree
+> That's not what this patch series does.
+>
+> The introductory posting is where you describe, at a high level, what the
+> whole patch series is doing as a unit, how it is doing it, and why it is
+> doing it that way.
+>
+> It also serves as the single email I can respond to when I want to let you
+> know that I've applied the patch series.
+>
+> Please read the documentation under Documentation/ if you still are unsure
+> what this introductory posting is all about and how you should compose one.
+>
+> Thank you.
 
-My Name Is Mrs. Rabia Muahammed , I am a banker in (GARANTI BANK
-ISTANBUL TURKEY (G B I T)
-I want to transfer an abandoned sum of 25.5 millions USD to your
-account. 50% will be for you. No risk involved. Contact me for more
-details. Kindly reply me back.
+I understand what a cover letter is.
+
+I don't normally see cover letters required for small patchsets like 
+this in other trees.  The commit messages should explain in detail what 
+is being changed as the cover letters are not committed to the kernel.  
+I only add cover letters when the patchsets are significant, per the 
+Documentation/ you eluded to.
+
+But if you require this for the linux net tree then I can add them as I 
+move forward it is not a problem either way.
+
+Dan
 
 
-Fill this information
-
-
-Full name:
-Direct cell number:
-Country:
-City:
-Age :
-Gender:
-Occupation:
-
-
-Please respond urgently
-
-
-Regards,
-Mrs.Rabia Muahammed
