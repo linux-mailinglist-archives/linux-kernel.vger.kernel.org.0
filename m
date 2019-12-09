@@ -2,63 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFAC6116998
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 10:39:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FF0411699F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 10:39:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbfLIJjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 04:39:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43186 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727388AbfLIJjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 04:39:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3F59BB1A3;
-        Mon,  9 Dec 2019 09:39:04 +0000 (UTC)
-Subject: Re: [PATCH v3 0/1] xen/blkback: Squeeze page pools if a memory
- pressure
-To:     SeongJae Park <sjpark@amazon.com>, axboe@kernel.dk,
-        konrad.wilk@oracle.com, roger.pau@citrix.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pdurrant@amazon.com, sj38.park@gmail.com,
-        xen-devel@lists.xenproject.org
-References: <20191209085839.21215-1-sjpark@amazon.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <954f7beb-9d40-253e-260b-4750809bf808@suse.com>
-Date:   Mon, 9 Dec 2019 10:39:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727610AbfLIJjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 04:39:24 -0500
+Received: from foss.arm.com ([217.140.110.172]:53430 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727578AbfLIJjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 04:39:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5B00328;
+        Mon,  9 Dec 2019 01:39:21 -0800 (PST)
+Received: from e123648.NAT.warszawa.vectranet.pl (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D0E143F6CF;
+        Mon,  9 Dec 2019 01:39:19 -0800 (PST)
+From:   lukasz.luba@arm.com
+To:     linux-kernel@vger.kernel.org, krzk@kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, Dietmar.Eggemann@arm.com,
+        Lukasz Luba <lukasz.luba@arm.com>
+Subject: [PATCH] MAINTAINERS: update my email address
+Date:   Mon,  9 Dec 2019 09:39:07 +0000
+Message-Id: <20191209093907.6646-1-lukasz.luba@arm.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20191209085839.21215-1-sjpark@amazon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.12.19 09:58, SeongJae Park wrote:
-> Each `blkif` has a free pages pool for the grant mapping.  The size of
-> the pool starts from zero and be increased on demand while processing
-> the I/O requests.  If current I/O requests handling is finished or 100
-> milliseconds has passed since last I/O requests handling, it checks and
-> shrinks the pool to not exceed the size limit, `max_buffer_pages`.
-> 
-> Therefore, `blkfront` running guests can cause a memory pressure in the
-> `blkback` running guest by attaching a large number of block devices and
-> inducing I/O.
+From: Lukasz Luba <lukasz.luba@arm.com>
 
-I'm having problems to understand how a guest can attach a large number
-of block devices without those having been configured by the host admin
-before.
+Update my email address to @arm.com in MAINTAINERS and map it correctly
+in .mailmap file.
 
-If those devices have been configured, dom0 should be ready for that
-number of devices, e.g. by having enough spare memory area for ballooned
-pages.
+Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+---
+Hi Krzysztof,
 
-So either I'm missing something here or your reasoning for the need of
-the patch is wrong.
+Could you pick it up, please?
+It is based on tag v5.5-rc1.
 
+Regards,
+Lukasz
 
-Juergen
+ .mailmap    | 1 +
+ MAINTAINERS | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/.mailmap b/.mailmap
+index c24773db04a7..6adff2db7076 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -152,6 +152,7 @@ Linus Lüssing <linus.luessing@c0d3.blue> <linus.luessing@web.de>
+ Linus Lüssing <linus.luessing@c0d3.blue> <linus.luessing@ascom.ch>
+ Li Yang <leoyang.li@nxp.com> <leo@zh-kernel.org>
+ Li Yang <leoyang.li@nxp.com> <leoli@freescale.com>
++Lukasz Luba <lukasz.luba@arm.com> <l.luba@partner.samsung.com>
+ Maciej W. Rozycki <macro@mips.com> <macro@imgtec.com>
+ Marc Zyngier <maz@kernel.org> <marc.zyngier@arm.com>
+ Marcin Nowakowski <marcin.nowakowski@mips.com> <marcin.nowakowski@imgtec.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bd5847e802de..e3626bacea40 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4999,7 +4999,7 @@ F:	include/linux/dma-mapping.h
+ F:	include/linux/dma-noncoherent.h
+ 
+ DMC FREQUENCY DRIVER FOR SAMSUNG EXYNOS5422
+-M:	Lukasz Luba <l.luba@partner.samsung.com>
++M:	Lukasz Luba <lukasz.luba@arm.com>
+ L:	linux-pm@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+-- 
+2.17.1
+
