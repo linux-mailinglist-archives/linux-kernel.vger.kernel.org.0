@@ -2,88 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30EF6117B52
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 00:17:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 144BA117B61
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 00:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbfLIXRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 18:17:52 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:35499 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726592AbfLIXRw (ORCPT
+        id S1727224AbfLIXVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 18:21:09 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:46980 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbfLIXVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 18:17:52 -0500
-Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9FDC93A1740;
-        Tue, 10 Dec 2019 10:17:46 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ieSHf-000609-Or; Tue, 10 Dec 2019 10:17:43 +1100
-Date:   Tue, 10 Dec 2019 10:17:43 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: single aio thread is migrated crazily by scheduler
-Message-ID: <20191209231743.GA19256@dread.disaster.area>
-References: <20191115010824.GC4847@ming.t460p>
- <20191115045634.GN4614@dread.disaster.area>
- <20191115070843.GA24246@ming.t460p>
- <20191115234005.GO4614@dread.disaster.area>
- <20191118092121.GV4131@hirez.programming.kicks-ass.net>
- <20191118204054.GV4614@dread.disaster.area>
- <20191120191636.GI4097@hirez.programming.kicks-ass.net>
- <20191120220313.GC18056@pauld.bos.csb>
- <20191121132937.GW4114@hirez.programming.kicks-ass.net>
- <20191209165122.GA27229@linux.vnet.ibm.com>
+        Mon, 9 Dec 2019 18:21:09 -0500
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.92.3)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1ieSKk-00GuNm-IL; Tue, 10 Dec 2019 00:20:54 +0100
+Message-ID: <54d6f040b283ad19e739d3b5a05d249285231c54.camel@sipsolutions.net>
+Subject: Re: [PATCH net-next 1/5] rtnetlink: provide permanent hardware
+ address in RTM_NEWLINK
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Michal Kubecek <mkubecek@suse.cz>,
+        David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 10 Dec 2019 00:20:51 +0100
+In-Reply-To: <0f4b780d5dd38109768d863781b0ce6de9ef4fbb.1575920565.git.mkubecek@suse.cz>
+References: <cover.1575920565.git.mkubecek@suse.cz>
+         <0f4b780d5dd38109768d863781b0ce6de9ef4fbb.1575920565.git.mkubecek@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191209165122.GA27229@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
-        a=7-415B0cAAAA:8 a=-oRCy8-_WFT2JPw6eY8A:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 10:21:22PM +0530, Srikar Dronamraju wrote:
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 44123b4d14e8..efd740aafa17 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2664,7 +2664,12 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
->   */
->  int wake_up_process(struct task_struct *p)
->  {
-> -	return try_to_wake_up(p, TASK_NORMAL, 0);
-> +	int wake_flags = 0;
-> +
-> +	if (is_per_cpu_kthread(p))
-> +		wake_flags = WF_KTHREAD;
-> +
-> +	return try_to_wake_up(p, TASK_NORMAL, WF_KTHREAD);
+On Mon, 2019-12-09 at 20:55 +0100, Michal Kubecek wrote:
+> 
+> +	if (memchr_inv(dev->perm_addr, '\0', dev->addr_len) &&
 
-This is buggy. It always sets WF_KTHREAD, even for non-kernel
-processes. I think you meant:
+Why not simply !is_zero_ether_addr()?
 
-	return try_to_wake_up(p, TASK_NORMAL, wake_flags);
+johannes
 
-I suspect this bug invalidates the test results presented, too...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
