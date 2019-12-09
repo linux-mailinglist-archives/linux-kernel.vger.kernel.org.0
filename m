@@ -2,97 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E478117421
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:26:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8E4B117412
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:24:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfLIS0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:26:01 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:46356 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfLIS0A (ORCPT
+        id S1726668AbfLISYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:24:33 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37504 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfLISYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:26:00 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB9IPtM9095286;
-        Mon, 9 Dec 2019 12:25:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575915955;
-        bh=wHjPXA26kNlnCk1JrNudGWLJavjZeOcEMg0UiUtbdZ8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=dym3GMJQR0LJ3UuJ6i408gxdRMDtMZD5zTxWSbnrjkuG+QTkTXZLvYVt8b9H/xoOL
-         ItOs1wwi2IciH1iaNPXfrfWcXDMjfl+67I6wfTwAWLyDL2cplKYfWwFxiPQxZZy1Dq
-         JBj1faQQC+Iv4gMz5gD4BnoQ1pCwkZDtKfcKngqs=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB9IPsIO055343
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Dec 2019 12:25:55 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Dec
- 2019 12:25:54 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Dec 2019 12:25:54 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB9IPsad010705;
-        Mon, 9 Dec 2019 12:25:54 -0600
-Subject: Re: [PATCH net-next v2 0/2] Rebase of patches
-To:     David Miller <davem@davemloft.net>
-CC:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <bunk@kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>
-References: <20191209175943.23110-1-dmurphy@ti.com>
- <20191209.101005.1980841296607612612.davem@davemloft.net>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <898c9346-311e-4c93-9f83-afe255b54243@ti.com>
-Date:   Mon, 9 Dec 2019 12:23:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Mon, 9 Dec 2019 13:24:33 -0500
+Received: by mail-lj1-f196.google.com with SMTP id u17so16784618lja.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 10:24:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tIXWZyTd39+6esYPe9MmFdMJXzmcp5bMpJnRkNThpb4=;
+        b=I5z0RVLWrUPKkPPuZeqHORejsaLh5EEfaCmf/IUxy3Oow1k8FTCGy60JJ0TNIV3r4f
+         2P/+8pOUDPgMSUgGxWyl95suJenzD1M7wzFBDWuG6/N9n3g6tJq7RZ0gNcKqdsCA0lQI
+         CgpVgkKslfC4ZiS36sJHLjqnWvQ8F/RhgZL3g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tIXWZyTd39+6esYPe9MmFdMJXzmcp5bMpJnRkNThpb4=;
+        b=mvky1QB+Mdq7KlqKAtgpPoN+CV8QoCn5tIb8zWJdB0YhpmuWb61eNkpKurAdgPNjF4
+         FZ39lwzKRy+1IqovreNl+xs23fVRQDlP8KSyh1gUJgxZF7R8d/ve+GVH2NAl/a5gLJsI
+         7jyhR6rZsYKsF7tGDL402zKJSNwk7xBbrULiQOwOOBV4OH22A2FdUDo0PAr1ByDJDv9D
+         ve+NHWWs+gcAl4d2SzFN6Ui58qmYX3XiJXOhBK1kX9rUROy3kPcceUnCJi6sE+J+364N
+         uX22VKGtAbQ1ZyLA7Vrba8WvLpH2jTV+ReaBUiaBmugn5CGGrQW7ADuq91jgoL+E8Zx0
+         DbCQ==
+X-Gm-Message-State: APjAAAWKyw4lpBSQOh3bfUQo3JTIglcGH8p5d4J6Xto3ZVueUjba1mPS
+        uz3O7J9fO5QJA33kZFGiT5pBvmzfijQ=
+X-Google-Smtp-Source: APXvYqwXcYJJuajPdF+Mdz6f97MU7/NA/8txg5YhKqEoAdm1aBH+NkKDXawSeZTgInzPkAXdTGZCEw==
+X-Received: by 2002:a2e:6a03:: with SMTP id f3mr16909924ljc.232.1575915871216;
+        Mon, 09 Dec 2019 10:24:31 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id m24sm106607lfl.34.2019.12.09.10.24.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2019 10:24:29 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id d20so16732046ljc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 10:24:28 -0800 (PST)
+X-Received: by 2002:a05:651c:239:: with SMTP id z25mr15574881ljn.48.1575915868556;
+ Mon, 09 Dec 2019 10:24:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191209.101005.1980841296607612612.davem@davemloft.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
+ <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
+ <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
+ <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
+ <CAKfTPtDBtPuvK0NzYC0VZgEhh31drCDN=o+3Hd3fUwoffQg0fw@mail.gmail.com>
+ <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com>
+ <CABA31DqGSycoE2hxk92NZ8qb47DqTR0+UGMQN_or1zpoGCg9fw@mail.gmail.com> <CAHk-=wjnXUUbYikSFba5QqvJoFnO8c_ykXrw9Zz2Lt4SeyeZUQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjnXUUbYikSFba5QqvJoFnO8c_ykXrw9Zz2Lt4SeyeZUQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 9 Dec 2019 10:24:12 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wizyzWdjkpm_Zm9DY9TzDCB2cbyhf5HUKoWnfJoqSNtuQ@mail.gmail.com>
+Message-ID: <CAHk-=wizyzWdjkpm_Zm9DY9TzDCB2cbyhf5HUKoWnfJoqSNtuQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+To:     Akemi Yagi <toracat@elrepo.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        DJ Delorie <dj@redhat.com>, David Sterba <dsterba@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David
-
-On 12/9/19 12:10 PM, David Miller wrote:
-> From: Dan Murphy <dmurphy@ti.com>
-> Date: Mon, 9 Dec 2019 11:59:41 -0600
+On Mon, Dec 9, 2019 at 10:18 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
->> This is a rebase of the dp83867 patches on top of the net-next tree
-> That's not what this patch series does.
+> Looks like opensuse and ubuntu are also on 4.2.1 according to
 >
-> The introductory posting is where you describe, at a high level, what the
-> whole patch series is doing as a unit, how it is doing it, and why it is
-> doing it that way.
+>    https://software.opensuse.org/package/make
+>    https://packages.ubuntu.com/cosmic/make
 >
-> It also serves as the single email I can respond to when I want to let you
-> know that I've applied the patch series.
->
-> Please read the documentation under Documentation/ if you still are unsure
-> what this introductory posting is all about and how you should compose one.
->
-> Thank you.
+> so apparently the bug is almost universal with the big three sharing
+> this buggy version.
 
-I understand what a cover letter is.
+And the reason seems to be is that it's considered the latest "release" version.
 
-I don't normally see cover letters required for small patchsets like 
-this in other trees.  The commit messages should explain in detail what 
-is being changed as the cover letters are not committed to the kernel.  
-I only add cover letters when the patchsets are significant, per the 
-Documentation/ you eluded to.
+In the git tree, I see 4.2.92, but looking at
 
-But if you require this for the linux net tree then I can add them as I 
-move forward it is not a problem either way.
+    https://ftp.gnu.org/gnu/make/
 
-Dan
+it looks like 4.2.1 is the latest actual "release".
 
+Oh well. I can't find a workaround for the bug, other than perhaps
+using "make -LX" instead of "make -jX". Which is not the same thing at
+all, of course.
 
+                Linus
