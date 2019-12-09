@@ -2,59 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC66117944
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 23:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A3FF117945
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 23:27:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfLIWYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 17:24:55 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:37226 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726156AbfLIWYy (ORCPT
+        id S1726949AbfLIWZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 17:25:59 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45874 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbfLIWZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 17:24:54 -0500
-Received: by mail-pj1-f68.google.com with SMTP id ep17so6491754pjb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 14:24:54 -0800 (PST)
+        Mon, 9 Dec 2019 17:25:58 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 2so7933296pfg.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 14:25:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=x3D7n4O3kX8B7KT//FIge0j+XydruvOFEBnBKMDQn84=;
-        b=Os0qYB1gNkMhu5bccBa/iWtRXy7cUmbltuRSoHOA25++iLBHnsK4LQqIGSW/4VmaUC
-         rFx94GXTakBK9ErXWX79g1pQR3cUrClNexIUuGxabmhdbuyaLvBPj3lveAg8nlbfyxrb
-         NDe0LNsNQUiOD/ROkrf69V1RTxWrq/tqRMR4Gw/2VFO9TPgIGD8rWvy/QgD2u+VkmNk+
-         RrInxkfVAJKiuPt/3JknHM2YxMUH16ZEBeW0JzY1pC9ps/Y2av9qGc5qYan8b3kIHdvI
-         uFyeenmN6uxhFlomDtFrM0WjE2/gAidWiYxA0PJ/NvejI6fB6VyRmXxjgRLneQobSsU1
-         3bcQ==
+        bh=e8vzmB2zQOVicf37JYB7f5dUsZ9PAEbPEnqlneCb8hk=;
+        b=NSH9ULh/1hAOLuPMNPJfxklHlE41CsUwmWn/AlWHF+NXzPTPqa461LIDyAeuIK1ZkC
+         jcvFyZM62M3TyE35p9IkhgrSTYl8uWlVlLUlyqR/zuwW4GTq75XDmk4xOazIivi0fjRQ
+         HFStxYtDHWNEI+Hi/mOViXqpYWFULyktYYG0zvxkLbmQRhlWfpW8XO+VfQ0ml1j/lvz0
+         OXmR1i8k6mKWWm8qHSSNqiiyPxT2sWUaaBZY7l5mRmphES0IKelAqESY+DkgQA28PRT1
+         qvTzEDzU9U9VU7mP4ridDIou1QERo9IFl+safi1TbqdJMwfr07By6LDNeDRrT6sR0EIb
+         PNXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=x3D7n4O3kX8B7KT//FIge0j+XydruvOFEBnBKMDQn84=;
-        b=QttBJZkVt5pcsHyoTVMY7bdkxqf/KZRYkqWNSmbKbTpThnPdkYa8cXdGsm/lL1aZPA
-         jjiYdP4rZQHWNbCciBSF3ZrT+IEUEV1yu8FCt413aQl06L869hmkfQMbAk8RrarQK9gM
-         ursAqQuUcR8nwdswmr82sogp+VfuXpn/F/Wp70axjrrU3H9ey4AClMlhe9a6etjUI3Y5
-         r4W4zLOlXhaiuQ+UmzlrDJnoCTlaEhPfQrNQTHBIOPzn8gTMiENy0GZVO1c9NGsinrkb
-         YbyyovQKX7IUMkH66mu/IYj5kTG9xaZToqLBXgoctwut/0vjKSr4B1zivg9OpVNLW46u
-         mIWQ==
-X-Gm-Message-State: APjAAAWVBIRGpnc8/Tl0LzD2Tk99i3vENSDsW0OuoFQI6rmt2+ArCSN8
-        lY4xRGronuP++wxR30Cl447Z63fIedvTBw==
-X-Google-Smtp-Source: APXvYqwmpgZFnfs15zotdT2qkfcibGHFV7p0FuUe95hjRjGSKRP1wFd1Bqfcrf67Nov5zS8f7qjaDw==
-X-Received: by 2002:a17:90a:d783:: with SMTP id z3mr1473865pju.3.1575930294097;
-        Mon, 09 Dec 2019 14:24:54 -0800 (PST)
+        bh=e8vzmB2zQOVicf37JYB7f5dUsZ9PAEbPEnqlneCb8hk=;
+        b=p+sxc7tvIkhAmPuMTq3qe68Mxu5w1Fma4x8fKV0FGXsYzGMSJcWoXHdOBHrvO/61vq
+         5uk39iPu8saxC7yHA4Z2PfvfV465RecWbeJaw2W5puskYltXBnJjD9yZSMZP+SM+rnxI
+         k51ubaDw1U3rpIoGNJyRkt5qxY34w/vknKM8JmWYfvosaa/M2QNbjQOPMAM7owMxHjvS
+         g4KFyx7yANdAEfze5ugImxe/eEDtJMJPR90UWup/uq7p11ATAdkDV9i33Jo7JH9Xwbfe
+         M58CkghFUoe1kddrD3pUVXY4kVEpexMakvJjeOXAi3I6DIU9GTk/rSCAXr5OwzgLPdAk
+         oJQQ==
+X-Gm-Message-State: APjAAAUf/GDboH3thieeX2/3k11Bd8N6fy95PLZMGk208oqahqqaGskh
+        JViHoFZpHK3E6TxlaMQSVfAu9g==
+X-Google-Smtp-Source: APXvYqywvsTO2z1jHZUpDVc2D7xS1pwfKfSChZ6K2XJIA8v7tS/ZhIBV/gXtqeqzdKHsR1Wdvopmsg==
+X-Received: by 2002:a62:3706:: with SMTP id e6mr32484589pfa.31.1575930358173;
+        Mon, 09 Dec 2019 14:25:58 -0800 (PST)
 Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id 16sm452756pfh.182.2019.12.09.14.24.53
+        by smtp.gmail.com with ESMTPSA id g22sm515509pgk.85.2019.12.09.14.25.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Dec 2019 14:24:53 -0800 (PST)
+        Mon, 09 Dec 2019 14:25:57 -0800 (PST)
 From:   Kevin Hilman <khilman@baylibre.com>
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de, linux-amlogic@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, narmstrong@baylibre.com,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH RESEND v1 0/2] amlogic: meson-ee-pwrc: two small fixes
-In-Reply-To: <20191130145821.1490349-1-martin.blumenstingl@googlemail.com>
-References: <20191130145821.1490349-1-martin.blumenstingl@googlemail.com>
-Date:   Mon, 09 Dec 2019 14:24:52 -0800
-Message-ID: <7h8snlrvbf.fsf@baylibre.com>
+Subject: Re: [PATCH] dt-bindings: reset: meson8b: fix duplicate reset IDs
+In-Reply-To: <20191130185337.1757000-1-martin.blumenstingl@googlemail.com>
+References: <20191130185337.1757000-1-martin.blumenstingl@googlemail.com>
+Date:   Mon, 09 Dec 2019 14:25:57 -0800
+Message-ID: <7h5ziprv9m.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,18 +65,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-> While working on power domain support for the 32-bit SoCs I had some
-> crashes when trying to actually use the power domains. Turns out I had
-> a bug in my patches which add support for the older SoCs to
-> meson-ee-pwrc. However, I didn't notice these because the driver probed
-> just fine.
+> According to the public S805 datasheet the RESET2 register uses the
+> following bits for the PIC_DC, PSC and NAND reset lines:
+> - PIC_DC is at bit 3 (meaning: RESET_VD_RMEM + 3)
+> - PSC is at bit 4 (meaning: RESET_VD_RMEM + 4)
+> - NAND is at bit 5 (meaning: RESET_VD_RMEM + 4)
 >
-> This is my attempt to spot "problems" (bugs in my code) earlier.
+> Update the reset IDs of these three reset lines so they don't conflict
+> with PIC_DC and map to the actual hardware reset lines.
 >
-> RESEND: sorry for the noise, I forgot to add the linux-amlogic mailing
-> list. This is important so patchwork can pick up these patches.
+> Fixes: 79795e20a184eb ("dt-bindings: reset: Add bindings for the Meson SoC Reset Controller")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Queued as fixes for v5.5,
+Queued as a fix for v5.5-rc,
 
 Thanks,
 
