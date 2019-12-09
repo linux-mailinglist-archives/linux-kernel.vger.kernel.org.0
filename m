@@ -2,111 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AE72116547
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 04:19:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B688511654D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 04:20:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfLIDTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 22:19:04 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:36748 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbfLIDTD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 22:19:03 -0500
-Received: by mail-il1-f194.google.com with SMTP id b15so11469808iln.3;
-        Sun, 08 Dec 2019 19:19:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZP/DTKsRxd9x57rsuKi8rjLFwHgduCkLhdBpzRruD/w=;
-        b=ZptXpSDhjq8fSMtsFkMdbzfmlB939M/2rbME2gXYrx419Yu8kgJxcJVzTcYzXavcYm
-         Ed0GRd/uxVxTj5vKNdiUgpwmPDZEHML4kMMtAmlOd05dIBpH1xqwMlD1MdOtDDEua7eQ
-         kyLjuaV7DH6TXgGqS5RlJxQwZmjCkvoisiLGb+ygv1nxeXTabKCji2imYOXkmcEmtvBP
-         B2K0iR7PZ2/4WMIcKVyYgUANVebXvotyUry/5ge/inl6ZdJkNDDPPkLpX1/Vi3l57s8J
-         1q/PT919jpr9DTfP1vy9GblNmCz87eG+sbb3FBRQtYekYdeTvfeSLgN2bK244NzjRiVl
-         QPaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZP/DTKsRxd9x57rsuKi8rjLFwHgduCkLhdBpzRruD/w=;
-        b=P7vFI33wjkczLSRBfJp0SFgm2gJSKX47XZCTQ5lSwChkHHFyuY459kKM1Ae2nkLJPL
-         1InGsRJPVydoOAZ1dKIFdW/bmS44i4mK3npFZei809gxUQagn/KMA4g++RsEblNPhlgO
-         Xl6MOS1OakeD+5CnYJkbivgxuvMCf34DQRgjNnTA6GXQkAbiJ+zLfcc+y+Yve/Qf3nJJ
-         wcaVg2Z0msDCUz0XC7EMdzy+aIGBJak+Vm5K665OCTd9xATWQKE9qLRTlkrK6RH/t5hZ
-         RsBj+HtyCcXnJpHADjMLRXTGfXRIiMerXalpUcCE16jG8cl6LlEp/illNKpUHtL3e9cJ
-         gslg==
-X-Gm-Message-State: APjAAAV1QmaD2Zj661saXA5PQxMBJzyuC12YEjU8EPXiggUigITRmxId
-        CR1pugD9793PSQLHAMfJpBT1NWYJsNfPTPIXKL0=
-X-Google-Smtp-Source: APXvYqw1T/CjK18NVu5fCfSpv0DdJ/Q859PkDoWYZRQARGF3edcc+8tR3ocf9sjDqKEeeEb0bzfe+p6ty4AHsGBag1s=
-X-Received: by 2002:a92:d642:: with SMTP id x2mr26470036ilp.169.1575861542470;
- Sun, 08 Dec 2019 19:19:02 -0800 (PST)
-MIME-Version: 1.0
-References: <30808b0b-367a-266a-7ef4-de69c08e1319@internode.on.net>
- <09396dca-3643-9a4b-070a-e7db2a07235e@internode.on.net> <CAHk-=wjj8SQx4YzS8yw7ZJJKiVLBY0g=d8rCSyPCM=8Pzmz+Zg@mail.gmail.com>
-In-Reply-To: <CAHk-=wjj8SQx4YzS8yw7ZJJKiVLBY0g=d8rCSyPCM=8Pzmz+Zg@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Sun, 8 Dec 2019 21:18:51 -0600
-Message-ID: <CAH2r5mvAv651DcX0--8oRYR8BXmBr8F=ymeBVDXm5YoQfcnK2A@mail.gmail.com>
-Subject: Re: refcount_t: underflow; use-after-free with CIFS umount after
- scsi-misc commit ef2cc88e2a205b8a11a19e78db63a70d3728cdf5
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Arthur Marsh <arthur.marsh@internode.on.net>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        ronnie sahlberg <ronniesahlberg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727002AbfLIDUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 22:20:15 -0500
+Received: from mga03.intel.com ([134.134.136.65]:17890 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726834AbfLIDUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Dec 2019 22:20:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Dec 2019 19:20:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,294,1571727600"; 
+   d="scan'208";a="219892592"
+Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
+  by fmsmga001.fm.intel.com with ESMTP; 08 Dec 2019 19:20:10 -0800
+From:   Dilip Kota <eswara.kota@linux.intel.com>
+To:     lorenzo.pieralisi@arm.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        andrew.murray@arm.com, robh@kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com, Dilip Kota <eswara.kota@linux.intel.com>
+Subject: [PATCH v11 0/3] PCI: Add Intel PCIe Driver and respective dt-binding yaml file
+Date:   Mon,  9 Dec 2019 11:20:03 +0800
+Message-Id: <cover.1575860791.git.eswara.kota@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 8, 2019 at 8:23 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sun, Dec 8, 2019 at 5:49 PM Arthur Marsh
-> <arthur.marsh@internode.on.net> wrote:
-> >
-> > This still happens with 5.5.0-rc1:
->
-> Does it happen 100% of the time?
+Intel PCIe is Synopsys based controller. Intel PCIe driver uses
+DesignWare PCIe framework for host initialization and register
+configurations.
 
-I can reproduce it (although it was a little more difficult since WiFi doesn't
-work on RC1 on some of my hardware - due to the 802.11 driver regression oops.
-I was able to reproduce it to Samba localhost).
+Changes on v11:
+	Patches rebase on kernel v5.5-rc1
 
+Dilip Kota (3):
+  dt-bindings: PCI: intel: Add YAML schemas for the PCIe RC controller
+  PCI: dwc: intel: PCIe RC controller driver
+  PCI: artpec6: Configure FTS with dwc helper function
 
-> Your bisection result looks pretty nonsensical - not that it's
-> impossible (anything is possible), but it really doesn't look very
-> likely. Which makes me think maybe it's slightly timing-sensitive or
-> something?
+ .../devicetree/bindings/pci/intel-gw-pcie.yaml     | 138 ++++++
+ drivers/pci/controller/dwc/Kconfig                 |  11 +
+ drivers/pci/controller/dwc/Makefile                |   1 +
+ drivers/pci/controller/dwc/pcie-artpec6.c          |   8 +-
+ drivers/pci/controller/dwc/pcie-designware.c       |  57 +++
+ drivers/pci/controller/dwc/pcie-designware.h       |  12 +
+ drivers/pci/controller/dwc/pcie-intel-gw.c         | 545 +++++++++++++++++++++
+ include/uapi/linux/pci_regs.h                      |   1 +
+ 8 files changed, 766 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-intel-gw.c
 
-The bisection result is implausible.  I just did some experiments and
-it looks far more likely is that it is related to commit
-72e73c78c446e ("cifs: close the shared root handle on tree disconnect")
-so added Ronnie to the cc.  That patch added a call (at unmount time)
-to close_shroot.
-The idea of that patch made sense - although tree disconnect (and then
-logoff of the session)
-will indirectly free any open handles on the server for that session,
-it is a little
-cleaner to close the cached root SMB3 file handle explicitly.
+-- 
+2.11.0
 
-void close_shroot(struct cached_fid *cfid)
-{
-        mutex_lock(&cfid->fid_mutex);
-        kref_put(&cfid->refcount, smb2_close_cached_fid);
-        mutex_unlock(&cfid->fid_mutex);
-}
-
-
-Taking out the one line change in the patch from last week that calls
-close_shroot from
-umount (SMB2_tdis, ie tree_disconnect) I don't see the problem so far
-more likely
-that it is related to that commit.   The problem seems to be related
-to servers which
-don't support directory leases.  Will spin up a patch to fix this if
-Ronnie hasn't already fixed it
