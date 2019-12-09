@@ -2,87 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82FA1116AB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E675116AC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbfLIKQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 05:16:04 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43504 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbfLIKQD (ORCPT
+        id S1727260AbfLIKTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 05:19:22 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:39762 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726279AbfLIKTW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 05:16:03 -0500
-Received: by mail-ed1-f65.google.com with SMTP id dc19so12141833edb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 02:16:02 -0800 (PST)
+        Mon, 9 Dec 2019 05:19:22 -0500
+Received: by mail-yw1-f68.google.com with SMTP id h126so5581545ywc.6;
+        Mon, 09 Dec 2019 02:19:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=/n4nTTf9LbwjXF+RgFyMsCArpdvUowlgj7yQOsjBSxc=;
-        b=dmOnEXqyUwXa+AOXyM+hRSvStOaYgwVcOpL3YpESnAYWZG+Z6G+UZEpFU+MOGdLIAq
-         V1ielcfzoTfXfdXRXa3J36UDv8mYc1SmmgYn7eENj4bOeSM7h0UozrxKIZSNGfa9QGqx
-         WQYRuPPNnMQK/oEXTWap+F3iDxJrxj2bCAL0cAGgDZK5JEj3d7AodqjEODhamp33Yyzw
-         hJGSP84MJwKaEcdqfh2uupwn2fbnSBSVpT0RKzFnNYdmc+M+ZC+ssUVWunMa6Q1MZJnI
-         RSbMlgaNrCx82+boxuhIxdkoSgQYvsdzkk5PK5cXi7fJrEUKLM7PnAtME7wJfLHc+SYL
-         YDUA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kfJJcbBCtP2J5q6yO63evUfynsnsxLvvCJ773MPUEuA=;
+        b=Ma3N+JtK7nruXZYsUdJNld9kFQdW2aBkcD1kjYbGBX9hAa2s7I+IUzxdCECHUvYuGF
+         zGpp/tU4+99lnfPkh34QEDnvnCFUxEgiLR6y805/D4WZF9OWa6InE9G2wEjoPmFZfO4m
+         mlUu7oC7sv3HtH7XDJl9eyL8N2Ueek0EBBEhk1/Uh/bsvkIRseP/PK4V9QlvS7x0r92R
+         7tUfFGLzdq3ERnzyVE/9QhH6wPByphkk/ZPxCYEl7xMY0jAO9AazE+PZLK+TFAnVS2F8
+         Op2HpFBJP0oh+v37w0IdOfio2G+AEHz+s2Kn46jjl2T3zHu+b/wvA5ZKE6OyxGLEIIOM
+         kQlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=/n4nTTf9LbwjXF+RgFyMsCArpdvUowlgj7yQOsjBSxc=;
-        b=DuMxxudG5wuWD5yXbreLRl2Cc2XpSBqFY5KPPtaTW4dLk/86DBKIP+5+0X3OGWjSpe
-         vn71z3yQ+rojCI94ZKw8Btr3+uVNp9V8fIt5/BPB9a70dYJXiEockDMnR4UF3M+fwwdR
-         Sq2eROy/nFzbfFndrZz8gw3lXA+/uZH8f66cuWwuxQ5a1AvUQu0mTyy/ifzr/r4yzkXN
-         aWYLbuxSTHzsC4sowt8DFL3wM854oN6HguAAB14qpgsW67p2OvCoDtqwetMsRW9u276J
-         8p+5YF/5bjpuF1creZM9CIqIV3VxGc/d4dX+OkIiakOZxupc1x1WeBpGwH1ApTGSCiXe
-         8axA==
-X-Gm-Message-State: APjAAAUSvrhSv2AyZDXbufvugtlI48j5mzqxC6PLtPe4DKFrvBeyBZ3+
-        NdlJLsNt8c7XsHEVWQkBUheUGDDn9n/NI/oxVnw=
-X-Google-Smtp-Source: APXvYqw9M9wthXX6xSxd+4FLXvAmgIibCmBrdkuLlh6HRvCgyjYhfqSKl7zup1UfEJuqfiThf4DKZl4VdDm1rq2FnKc=
-X-Received: by 2002:aa7:d9c6:: with SMTP id v6mr31489466eds.107.1575886561993;
- Mon, 09 Dec 2019 02:16:01 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kfJJcbBCtP2J5q6yO63evUfynsnsxLvvCJ773MPUEuA=;
+        b=B9qZk2sbX64LYUhhojLvZfCrDs0k2Rs5q6ZYGC7ApV2TNb1/xJLY62Zo8PSXHHJHVg
+         BWemom+NnIypFt8q+AuMJuol2iqUejg5ErwfDxBKL+v2bzjGSl3EhECRmLepMekwd5af
+         BzRPjMymLtgB4VPiXRkGz8POHcXyVcU+aV7v25OU6wAut9FOz7dDPWKZ3K3vkONXyIOy
+         v5hUCrvpxD91AcPHEaJjjbwdLSIKE4RvDLb30xzrHnSWUYxhFvgd3QnA0vOTefLErtGc
+         jiiDz1Pc2PCIJKMB3T9ZI4sv169iIGnY4TXZdx0C+RS+0ugwbKMBwqrPtHbc2GKpyAwe
+         gR4Q==
+X-Gm-Message-State: APjAAAVoYySIJuklMVrnP3mVAgQNF6zO/qgsYb6c8hhIDNDyPYFwesfm
+        I369NCqhQtd1zhcjuYj9mVN4qlrc6i/k7g==
+X-Google-Smtp-Source: APXvYqybZF5QzKydT/LE1jUr5ytCmmr6NJnb7T7X1akDgzfB6NIg7H27WuB42i7MMYoUAhlqt7QAQA==
+X-Received: by 2002:a0d:db49:: with SMTP id d70mr19255094ywe.370.1575886760637;
+        Mon, 09 Dec 2019 02:19:20 -0800 (PST)
+Received: from karen ([2604:2d80:d68c:d900:c4d5:fc84:cce:f8b4])
+        by smtp.gmail.com with ESMTPSA id p133sm2400557ywb.71.2019.12.09.02.19.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 02:19:20 -0800 (PST)
+From:   Scott Schafer <schaferjscott@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Scott Schafer <schaferjscott@gmail.com>,
+        Manish Chopra <manishc@marvell.com>,
+        GR-Linux-NIC-Dev@marvell.com, netdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: qlge: Fix CamelCase in qlge.h and qlge_dbg.c
+Date:   Mon,  9 Dec 2019 04:19:08 -0600
+Message-Id: <20191209101908.23878-1-schaferjscott@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Received: by 2002:a05:6402:2078:0:0:0:0 with HTTP; Mon, 9 Dec 2019 02:16:01
- -0800 (PST)
-From:   Mrs Monica Gabriele <monicagabriele64@gmail.com>
-Date:   Mon, 9 Dec 2019 11:16:01 +0100
-X-Google-Sender-Auth: 5yCvandI96gdVaR4E9owOCCW35E
-Message-ID: <CANTe7kLRr7Ly8OeUSi9ZgoT4GTThpWFpQ+MT0-73SCaCbPhLDA@mail.gmail.com>
-Subject: Greetings in the name of the ALMIGHTY
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello My Dear
+This patch addresses CamelCase warnings in qlge.h under struct
+mpi_coredump_global_header and mpi_coredump_segment_header. As
+well ass addresses CamelCase warnings in qlge_dbg.c when the
+structs are used.
 
-Calvary Greetings in the name of the ALMIGHTY
+Signed-off-by: Scott Schafer <schaferjscott@gmail.com>
+---
+ drivers/staging/qlge/qlge.h     | 14 +++++++-------
+ drivers/staging/qlge/qlge_dbg.c | 20 ++++++++++----------
+ 2 files changed, 17 insertions(+), 17 deletions(-)
 
-I am Mrs Monica Gabriele from Switzerland I am married to Late
-Mr.Gabriele Joseph who is a wealthy business man here in Burkina Faso
-we were married  for many years without a child before he died after a
-brief illness. Before his sudden death we where devoted Christian When
-my late husband was alive he deposited the sum of Six Million Two
-Hundred United State Dollars ($6.200.000.00) in one of the prime bank
-here in Burkina Faso Presently this money is still with the Bank,
+diff --git a/drivers/staging/qlge/qlge.h b/drivers/staging/qlge/qlge.h
+index 6ec7e3ce3863..57884aac308f 100644
+--- a/drivers/staging/qlge/qlge.h
++++ b/drivers/staging/qlge/qlge.h
+@@ -1627,18 +1627,18 @@ enum {
+ #define MPI_COREDUMP_COOKIE 0x5555aaaa
+ struct mpi_coredump_global_header {
+ 	u32	cookie;
+-	u8	idString[16];
+-	u32	timeLo;
+-	u32	timeHi;
+-	u32	imageSize;
+-	u32	headerSize;
++	u8	id_string[16];
++	u32	time_lo;
++	u32	time_hi;
++	u32	image_size;
++	u32	header_size;
+ 	u8	info[220];
+ };
+ 
+ struct mpi_coredump_segment_header {
+ 	u32	cookie;
+-	u32	segNum;
+-	u32	segSize;
++	u32	seg_num;
++	u32	seg_size;
+ 	u32	extra;
+ 	u8	description[16];
+ };
+diff --git a/drivers/staging/qlge/qlge_dbg.c b/drivers/staging/qlge/qlge_dbg.c
+index 83f34ca43aa4..aac20db565fa 100644
+--- a/drivers/staging/qlge/qlge_dbg.c
++++ b/drivers/staging/qlge/qlge_dbg.c
+@@ -702,8 +702,8 @@ static void ql_build_coredump_seg_header(
+ {
+ 	memset(seg_hdr, 0, sizeof(struct mpi_coredump_segment_header));
+ 	seg_hdr->cookie = MPI_COREDUMP_COOKIE;
+-	seg_hdr->segNum = seg_number;
+-	seg_hdr->segSize = seg_size;
++	seg_hdr->seg_num = seg_number;
++	seg_hdr->seg_size = seg_size;
+ 	strncpy(seg_hdr->description, desc, (sizeof(seg_hdr->description)) - 1);
+ }
+ 
+@@ -741,12 +741,12 @@ int ql_core_dump(struct ql_adapter *qdev, struct ql_mpi_coredump *mpi_coredump)
+ 	memset(&(mpi_coredump->mpi_global_header), 0,
+ 	       sizeof(struct mpi_coredump_global_header));
+ 	mpi_coredump->mpi_global_header.cookie = MPI_COREDUMP_COOKIE;
+-	mpi_coredump->mpi_global_header.headerSize =
++	mpi_coredump->mpi_global_header.header_size =
+ 		sizeof(struct mpi_coredump_global_header);
+-	mpi_coredump->mpi_global_header.imageSize =
++	mpi_coredump->mpi_global_header.image_size =
+ 		sizeof(struct ql_mpi_coredump);
+-	strncpy(mpi_coredump->mpi_global_header.idString, "MPI Coredump",
+-		sizeof(mpi_coredump->mpi_global_header.idString));
++	strncpy(mpi_coredump->mpi_global_header.id_string, "MPI Coredump",
++		sizeof(mpi_coredump->mpi_global_header.id_string));
+ 
+ 	/* Get generic NIC reg dump */
+ 	ql_build_coredump_seg_header(&mpi_coredump->nic_regs_seg_hdr,
+@@ -1231,12 +1231,12 @@ static void ql_gen_reg_dump(struct ql_adapter *qdev,
+ 	memset(&(mpi_coredump->mpi_global_header), 0,
+ 	       sizeof(struct mpi_coredump_global_header));
+ 	mpi_coredump->mpi_global_header.cookie = MPI_COREDUMP_COOKIE;
+-	mpi_coredump->mpi_global_header.headerSize =
++	mpi_coredump->mpi_global_header.header_size =
+ 		sizeof(struct mpi_coredump_global_header);
+-	mpi_coredump->mpi_global_header.imageSize =
++	mpi_coredump->mpi_global_header.image_size =
+ 		sizeof(struct ql_reg_dump);
+-	strncpy(mpi_coredump->mpi_global_header.idString, "MPI Coredump",
+-		sizeof(mpi_coredump->mpi_global_header.idString));
++	strncpy(mpi_coredump->mpi_global_header.id_string, "MPI Coredump",
++		sizeof(mpi_coredump->mpi_global_header.id_string));
+ 
+ 
+ 	/* segment 16 */
+-- 
+2.20.1
 
-I am very sick from Kidney cancer that i may not last till the next
-two months according to my doctor so now i decided to donate this
-money to a honest individual who will use it to work for Almighty,
-orphans, widow and maintenance of church to fulfill the vow i and my
-late husband made to Almighty, and i have chosen you after praying.
-
-I want this money to be use as i have said since i do not have any
-child to inherit it and our relatives are all unbelievers and i don't
-want our hard earn money to be used in ungodly way so you will take
-40% of the fund for your effort and use the remaining as i stated, as
-soon as i read from you i will give you more details on how to achieve
-it, I need your urgent reply on my private email address:
-(monicagabriele64@gmail.com) as i don't know what tomorrow will
-result, i wish you the best in life. Please Always remember me in your
-prayers.
-
-Yours Sister,
-Mrs Monica Gabriele.
-Please Let My Situation Touch Your Heart.
