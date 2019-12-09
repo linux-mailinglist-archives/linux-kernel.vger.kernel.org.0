@@ -2,106 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D577511776F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 21:32:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF4C117778
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 21:32:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfLIUcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 15:32:04 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33536 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbfLIUcE (ORCPT
+        id S1726856AbfLIUcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 15:32:41 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33797 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbfLIUcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 15:32:04 -0500
-Received: by mail-lj1-f195.google.com with SMTP id 21so17247315ljr.0;
-        Mon, 09 Dec 2019 12:32:02 -0800 (PST)
+        Mon, 9 Dec 2019 15:32:41 -0500
+Received: by mail-oi1-f193.google.com with SMTP id l136so7656075oig.1;
+        Mon, 09 Dec 2019 12:32:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7izI5yySW8HJDMLC7WRv/sy3ibH99uzphJXtJkJddJQ=;
-        b=XnoB37SZ0a/YxpyqAi9dQGwkTb0afAZoZxp1yOZoPehpJzvD0R8gCMMhe3Fl24vHgF
-         UOcSqopMJwFKgkiAL6lSqyUShBFC3Ux4Q+ZjsAW9dEyeiurg1bY+1jf2AgNE8hIVosZy
-         BunkJgj/TaQvjFwcpiKmchdtn88nYXylH01axcN+lAmU7onGGYXAklcwQWjmKXmFnZqj
-         eIiE4bwUxWeFgCimel2+Iu0VH3rKcgg8RegRyu8FpaPV/ptkIu+Y00kCC/xU2C7Q2kbI
-         bybns2WZRfdVw6aReHfKMrw8Bn82yY86eRLYRaEqiaCf0aXiLQUU8E3Oqdmhp92qwWOj
-         K7dg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QcDMXx7JLbsJ2UCoZNJKLtfB+ZkWm+OkWxKRuqwbsNs=;
+        b=ii5EIKHBMaUVjEe/pz16DIxXm7wIOI19PiJzZ/jRWPQdu6FJoVjJ0CDB9uIbNL4bhT
+         B+rmUwsjdnM2DJtFKideItEvY2CMBK4T3nHz780Don2HA/9AaYPso9dyQbR5SUcHq3JX
+         DNgFjgLNLcjaMR44m6YmsQZWcYZ+y8sobtakx0B+rV8O9haEKPhcG+p0HcED+hMfw42b
+         2Ci7tVAleD761wJTbclrhtNiWcs1HAkGMLdIOXbXzYElCdYa3Z8DM9A4XPGaD8On7uqS
+         th3RknfkyGEL09MbE6gt382YWYtvPpxrUVO0vcp8hRazfg5L+22guUXO3hfiasrzmIHZ
+         aVqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=7izI5yySW8HJDMLC7WRv/sy3ibH99uzphJXtJkJddJQ=;
-        b=Uq8nKqO1a7OmwNK0DSxoEeVNVa1xvMoiZy6Pf/N611TV/Pzd22fXvf4eCOvDLS9HjJ
-         cXXnR1Ly0n7Pp7lCeZfeleQAUNu1DyPFqSCX8UAN6yrSMl/ODc2W1EFd5VKmDjJtFhWv
-         q+ic92m/kXl1qEKMVgLmhswwiubJsqPqgRLVPVs7xweCh4i+ZV5m8hZM6Mq+RzsTzo7T
-         kGc26I2ET9/4OiWavOrUHtwzJFNFnpt8Udf6CxG97BuMnAOu9CUhUJNkgBEI2k0h0fzo
-         eYwsNe7eig4jllqwyU1oUA8y14oeDuHldNZkfE85CLPLXbR3U3gx6i+cxLrDncsNzLDu
-         Fkfg==
-X-Gm-Message-State: APjAAAXLkwYNkZrDVV0hszdRvRlRdzJRraTmZd5Aduh6BPinDJYBueS2
-        nSFVpzySL7UezXjpDSavXaE=
-X-Google-Smtp-Source: APXvYqw6Z3Y4rpulNU8ccGeKOMeq0qRcIep/L2gJzf/UAE2VbwUX37q+bKKC5bmFhvBRfIijYPPyHQ==
-X-Received: by 2002:a2e:8953:: with SMTP id b19mr16426695ljk.249.1575923521486;
-        Mon, 09 Dec 2019 12:32:01 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id z9sm475423ljm.40.2019.12.09.12.31.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2019 12:32:00 -0800 (PST)
-Subject: Re: [PATCH v3 09/15] ASoC: tegra: Add fallback for audio mclk
-To:     Mark Brown <broonie@kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org,
-        mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com, mturquette@baylibre.com,
-        horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com,
-        krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com,
-        josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        alexios.zavras@intel.com, alsa-devel@alsa-project.org
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-10-git-send-email-skomatineni@nvidia.com>
- <20191209164027.GG5483@sirena.org.uk>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <7fe879fd-dae3-1e64-1031-cd9f00e31552@gmail.com>
-Date:   Mon, 9 Dec 2019 23:31:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        bh=QcDMXx7JLbsJ2UCoZNJKLtfB+ZkWm+OkWxKRuqwbsNs=;
+        b=Ztm024coPL41NjmNmntXMUozDBQBjGV6N6tPXbQ+PhR8xMK68JwMrCh5lh5B+hkvXy
+         I5s5A5i3+TN3C+ulJj1uTvco9r+SC3cprnA43z/tpQEYlsL/fd+7f1py/8nYY7/m3Ivq
+         a+tRCiAt5vdpsJ6FRKvBnfCDuigYTsXqILD5MzQzfQBLgkwEISCosoRPvAkIsc8SFRps
+         n+yEL3xcIbkD6kMufN/jgIw79q0cynW4UIVaylUmKuFE9/aRpnom7gmdUoLKMNOGKv9+
+         w3F4x5jQajHcWdeAnbWmENOnuSpSLCY87m8fqRHFm6MlfuNhKpDGKnvVlIvliTTzmzEN
+         +QcA==
+X-Gm-Message-State: APjAAAXHYg6gV9fVfzgXmVxUdVqGrXJcWdscrzX0KG+zIh048ic26yXY
+        k6gECv7X8ntAqw5Gc5lc+bI=
+X-Google-Smtp-Source: APXvYqwQiJRdqznvLkCjZMRsuRjsUdi2zEVecgF+rxwnBIHpEw9DLBMn1AR7VjFqiDCXnvZTVFexsg==
+X-Received: by 2002:aca:570f:: with SMTP id l15mr917514oib.120.1575923559992;
+        Mon, 09 Dec 2019 12:32:39 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id f3sm368332oto.57.2019.12.09.12.32.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 12:32:39 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>
+Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] drm: msm: mdp4: Adjust indentation in mdp4_dsi_encoder_enable
+Date:   Mon,  9 Dec 2019 13:32:30 -0700
+Message-Id: <20191209203230.1593-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191209164027.GG5483@sirena.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-09.12.2019 19:40, Mark Brown пишет:
-> On Thu, Dec 05, 2019 at 06:48:49PM -0800, Sowjanya Komatineni wrote:
->> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
->> are moved to Tegra PMC driver with pmc as clock provider and using pmc
->> clock ids.
->>
->> New device tree uses clk_out_1 from pmc clock provider.
->>
->> So, this patch adds fallback to extern1 in case of retrieving mclk fails
->> to be backward compatible of new device tree with older kernels.
->>
->> Cc: stable@vger.kernel.org
-> 
-> Why would this need to be a stable fix?  Presumably people with stable
-> kernels are using the old device tree anyway?
-> 
+Clang warns:
 
-Presumably, yes.
+../drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c:124:3: warning:
+misleading indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+         mdp4_crtc_set_config(encoder->crtc,
+         ^
+../drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c:121:2: note:
+previous statement is here
+        if (mdp4_dsi_encoder->enabled)
+        ^
 
-At least Rob Herring is asking to maintain backwards compatibility
-because some ditros are using newer device-trees with stable kernels.
-I'm personally also tending to use the newer DTB with older kernel
-version whenever there is a need to check something using stable kernel.
-Perhaps losing sound is not very important, but will be nicer if that
-doesn't happen.
+This warning occurs because there is a space after the tab on this line.
+Remove it so that the indentation is consistent with the Linux kernel
+coding style and clang no longer warns.
+
+Fixes: 776638e73a19 ("drm/msm/dsi: Add a mdp4 encoder for DSI")
+Link: https://github.com/ClangBuiltLinux/linux/issues/792
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
+index 772f0753ed38..aaf2f26f8505 100644
+--- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
++++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
+@@ -121,7 +121,7 @@ static void mdp4_dsi_encoder_enable(struct drm_encoder *encoder)
+ 	if (mdp4_dsi_encoder->enabled)
+ 		return;
+ 
+-	 mdp4_crtc_set_config(encoder->crtc,
++	mdp4_crtc_set_config(encoder->crtc,
+ 			MDP4_DMA_CONFIG_PACK_ALIGN_MSB |
+ 			MDP4_DMA_CONFIG_DEFLKR_EN |
+ 			MDP4_DMA_CONFIG_DITHER_EN |
+-- 
+2.24.0
+
