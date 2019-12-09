@@ -2,135 +2,291 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DCE119676D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B478919679D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbgC1QnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:43:19 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50214 "EHLO mx.sdf.org"
+        id S1728112AbgC1Qpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:45:30 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50068 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726382AbgC1QnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:18 -0400
+        id S1727461AbgC1Qp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:45:28 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGh7AX024059
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhLIs009854
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:07 GMT
+        Sat, 28 Mar 2020 16:43:21 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGh72M012415;
-        Sat, 28 Mar 2020 16:43:07 GMT
-Message-Id: <202003281643.02SGh72M012415@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhLiv003379;
+        Sat, 28 Mar 2020 16:43:21 GMT
+Message-Id: <202003281643.02SGhLiv003379@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Wed, 4 Dec 2019 02:23:54 -0500
-Subject: [RFC PATCH v1 03/50] fault-inject: Shrink struct fault_attr
+Date:   Sun, 8 Dec 2019 21:03:28 -0500
+Subject: [RFC PATCH v1 36/50] random: Merge batched entropy buffers
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Theodore Ts'o" <tytso@mit.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Probaility has a useful range of 0 to 100.
-Verbose has a useful range of 0 to 2.
+Use just one batched entropy buffer for u32 and u64 results,
+saving 72 bytes per CPU.  (On 32-bit platforms, the buffer is
+also shrunk by 4 bytes.)
 
-Reduce them both from unsigned long to unsigned char.  Since there
-was already a hole they can fit into, this saves 16 bytes.
+A further space-saving hack is to note that the buffer is never
+completely full between calls, so the read position can be stored
+in the first byte.
 
-There's one consequential fix required: i915 selftests set the
-probability to 999 for some reason, which had the same effect as
-100.  Leaving it alone would have worked with a compiler warning
-(999 % 256 = 231 is also >= 100, so would have the same effect),
-but it seemed better to clean it up.
+The only reason for having two buffers was to avoid dealing with
+unaligned 64-bit fetches, particularly across a buffer refill
+boundary.  This can be handled without increasing code size
+(in fact, this patch saves 78 bytes of text on x86-64).
+
+$ size drivers/char/random.o.*
+   text    data     bss     dec     hex filename
+  16966    1461     864   19291    4b5b drivers/char/random.o.old
+  16888    1365     864   19117    4aad drivers/char/random.o.new
+     78      96
+
+The magic is an "XOR trick" for combining fresh (i.e. never exposed
+to an attacker) and stale (previously exposed) random data.
+
+If X and Y are both fresh, then X^Y and Y are also both fresh.
+Exposing X^Y does not expose Y.
+
+If X is stale, then X^Y is fresh, but after exposing it, Y is stale.
+
+If X is part-fresh and part-stale, then the magic happens:
+X^Y is all fresh, and the corresponding parts of Y become stale.
+
+The effect is that we can fetch a fresh random word from an unaligned
+buffer position by xoring two aligned words.
+
+On some platforms, we could just do an unaligned fetch, but doing
+it this way simplifies buffer underflow handling.
+
+In fact, get_random_u32 could be simplified further since the
+buffer is guaranteed 4-byte aligned, but it's written to allow
+a future byte-aligned variant to be added.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: intel-gfx@lists.freedesktop.org
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Theodore Ts'o <tytso@mit.edu>
 ---
- drivers/gpu/drm/i915/selftests/i915_gem_gtt.c |  2 +-
- include/linux/fault-inject.h                  |  4 ++--
- lib/fault-inject.c                            | 10 +++++-----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/char/random.c | 150 +++++++++++++++++++++++++++++++-----------
+ 1 file changed, 112 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-index 3f7e80fb3bbd1..3342e3c0ec10b 100644
---- a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-+++ b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-@@ -901,7 +901,7 @@ static int shrink_hole(struct drm_i915_private *i915,
- 	unsigned long prime;
- 	int err;
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 52dbe0357520b..43c1eb9866de7 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -2400,28 +2400,76 @@ struct ctl_table random_table[] = {
  
--	vm->fault_attr.probability = 999;
-+	vm->fault_attr.probability = 100;
- 	atomic_set(&vm->fault_attr.times, -1);
+ struct batched_entropy {
+ 	union {
+-		u64 entropy_u64[CHACHA_BLOCK_SIZE / sizeof(u64)];
+-		u32 entropy_u32[CHACHA_BLOCK_SIZE / sizeof(u32)];
++		u64 entropy64[CHACHA_BLOCK_SIZE / sizeof(u64)];
++		u32 entropy32[CHACHA_BLOCK_SIZE / sizeof(u32)];
++		u8 entropy8[CHACHA_BLOCK_SIZE];
++		u8 position;	/* Offset of last consumed byte */
++				/* Fresh data starts at position + 1 */
+ 	};
+-	unsigned int position;
+ 	spinlock_t batch_lock;
+ };
  
- 	for_each_prime_number_from(prime, 0, ULONG_MAX - 1) {
-diff --git a/include/linux/fault-inject.h b/include/linux/fault-inject.h
-index e525f6957c49f..094dd7d2a2ce6 100644
---- a/include/linux/fault-inject.h
-+++ b/include/linux/fault-inject.h
-@@ -14,11 +14,11 @@
-  * Documentation/fault-injection/fault-injection.rst
+ /*
+- * Get a random word for internal kernel use only. The quality of the random
+- * number is either as good as RDRAND or as good as /dev/urandom, with the
+- * goal of being quite fast and not depleting entropy. In order to ensure
+- * that the randomness provided by this function is okay, the function
+- * wait_for_random_bytes() should be called and return 0 at least once
+- * at any point prior.
++ * Get a random word for applications which do not require forward
++ * secrecy.  There are many such applications in the kernel, which
++ * can be identified by the lack of a memzero_explicit() to ensure that
++ * the value remains secret after the kernel is done using it.
++ *
++ * The quality of the random numbers is either as good as RDRAND or
++ * as good as /dev/urandom, with the goal of being quite fast and not
++ * depleting entropy. In order to ensure that the randomness provided
++ * by these functions is okay, the function wait_for_random_bytes()
++ * should be called and return 0 at least once at any point prior.
++ *
++ * When RDRAND is not available, we use per-CPU "batched entropy" buffers
++ * which store up to CHACHA_BLOCK_SIZE bytes of precomputed CRNG output.
++ * Because we only fill it on demand, it's never completely full between
++ * calls, and the first byte is re-used to store the offset of the
++ * available data in the tail of the buffer.
   */
- struct fault_attr {
--	unsigned long probability;
- 	unsigned long interval;
- 	atomic_t times;
- 	atomic_t space;
--	unsigned long verbose;
-+	unsigned char probability;
-+	unsigned char verbose;
- 	bool task_filter;
- 	unsigned long stacktrace_depth;
- 	unsigned long require_start;
-diff --git a/lib/fault-inject.c b/lib/fault-inject.c
-index e20151fa5515e..406e27ba8e60f 100644
---- a/lib/fault-inject.c
-+++ b/lib/fault-inject.c
-@@ -17,13 +17,13 @@
-  */
- int setup_fault_attr(struct fault_attr *attr, char *str)
- {
--	unsigned long probability;
-+	unsigned char probability;
- 	unsigned long interval;
- 	int times;
- 	int space;
+-static DEFINE_PER_CPU(struct batched_entropy, batched_entropy_u64) = {
+-	.batch_lock	= __SPIN_LOCK_UNLOCKED(batched_entropy_u64.lock),
++static DEFINE_PER_CPU(struct batched_entropy, batched_entropy) = {
++	.position	= CHACHA_BLOCK_SIZE,
++	.batch_lock	= __SPIN_LOCK_UNLOCKED(batched_entropy.lock)
+ };
  
- 	/* "<interval>,<probability>,<space>,<times>" */
--	if (sscanf(str, "%lu,%lu,%d,%d",
-+	if (sscanf(str, "%lu,%hhu,%d,%d",
- 			&interval, &probability, &space, &times) < 4) {
- 		printk(KERN_WARNING
- 			"FAULT_INJECTION: failed to parse arguments\n");
-@@ -43,7 +43,7 @@ static void fail_dump(struct fault_attr *attr)
++/**
++ * get_random_u64 - Generate a random 64-bit value
++ *
++ * Return a cryptographically strong random number.  Unlike
++ * get_random_bytes(), this does not do (expensive!) backtracking
++ * protection; the value returned can be recovered by a later attacker
++ * who gains read access to kernel memory.  This is completely fine in
++ * the very common case that the secret derived from the value returned
++ * is stored in the kernel for as long as it is valuable.  (E.g. a hash
++ * salt, an authentication cookie, or a randomized address space.)
++ *
++ * It is perfectly safe to expose the output of this generator to
++ * hostile attackers; backtracking is only relevant to attackers who
++ * gain access to its input (its internal state).
++ *
++ * Uses (only!) the hardware RNG (e.g. RDRAND) if available.
++ *
++ * There's an XOR trick which is used in the implementation to deal with
++ * unaligned buffers without doing unaligned fetches.
++ *
++ * If X and Y are fresh random values, then X^Y and Y are also fresh
++ * random values.  You're not "using Y twice" in any sort of bad way.
++ *
++ * If X is a value known to an attacker (or even maliciously chosen
++ * by an attacker), then X^Y is still fresh.  (But after using it,
++ * Y is no longer fresh.)
++ *
++ * Combining these bytewise, If X is a partially-used word consisting
++ * of a prefix of attacker-known bytes, and a suffix of fresh bytes,
++ * then X^Y is fully random, *and* Y now has a prefix which has been
++ * exposed and a suffix which is still fresh.
++ *
++ * Return: A cryptographically strong 64-bit random value.
++ */
+ u64 get_random_u64(void)
  {
- 	if (attr->verbose > 0 && __ratelimit(&attr->ratelimit_state)) {
- 		printk(KERN_NOTICE "FAULT_INJECTION: forcing a failure.\n"
--		       "name %pd, interval %lu, probability %lu, "
-+		       "name %pd, interval %lu, probability %d, "
- 		       "space %d, times %d\n", attr->dname,
- 		       attr->interval, attr->probability,
- 		       atomic_read(&attr->space),
-@@ -204,11 +204,11 @@ struct dentry *fault_create_debugfs_attr(const char *name,
- 	if (IS_ERR(dir))
- 		return dir;
+ 	u64 ret;
++	size_t pos;
+ 	unsigned long flags;
+ 	struct batched_entropy *batch;
+ 	static void *previous;
+@@ -2437,24 +2485,48 @@ u64 get_random_u64(void)
  
--	debugfs_create_ul("probability", mode, dir, &attr->probability);
-+	debugfs_create_u8("probability", mode, dir, &attr->probability);
- 	debugfs_create_ul("interval", mode, dir, &attr->interval);
- 	debugfs_create_atomic_t("times", mode, dir, &attr->times);
- 	debugfs_create_atomic_t("space", mode, dir, &attr->space);
--	debugfs_create_ul("verbose", mode, dir, &attr->verbose);
-+	debugfs_create_u8("verbose", mode, dir, &attr->verbose);
- 	debugfs_create_u32("verbose_ratelimit_interval_ms", mode, dir,
- 			   &attr->ratelimit_state.interval);
- 	debugfs_create_u32("verbose_ratelimit_burst", mode, dir,
+ 	warn_unseeded_randomness(&previous);
+ 
+-	batch = raw_cpu_ptr(&batched_entropy_u64);
++	batch = raw_cpu_ptr(&batched_entropy);
+ 	spin_lock_irqsave(&batch->batch_lock, flags);
+-	if (batch->position % ARRAY_SIZE(batch->entropy_u64) == 0) {
+-		extract_crng((u8 *)batch->entropy_u64);
+-		batch->position = 0;
++	pos = batch->position;
++	batch->position = (pos + sizeof(ret)) & (CHACHA_BLOCK_SIZE - 1);
++	/* First partial word (0..7 bytes used) */
++	pos &= -sizeof(ret);
++	ret = *(u64 *)(batch->entropy8 + pos);
++	pos += sizeof(ret);
++	if (pos == CHACHA_BLOCK_SIZE) {
++		extract_crng(batch->entropy8);
++		pos = 0;
+ 	}
+-	ret = batch->entropy_u64[batch->position++];
++	/* Second partial word (1..8 bytes used) */
++	ret ^= *(u64 *)(batch->entropy8 + pos);	/* XOR trick described above */
+ 	spin_unlock_irqrestore(&batch->batch_lock, flags);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(get_random_u64);
+ 
+-static DEFINE_PER_CPU(struct batched_entropy, batched_entropy_u32) = {
+-	.batch_lock	= __SPIN_LOCK_UNLOCKED(batched_entropy_u32.lock),
+-};
++/**
++ * get_random_u32 - Generate a random 32-bit value
++ *
++ * Return a cryptographically strong random number.  Unlike
++ * get_random_bytes(), this does not do (expensive!) backtracking
++ * protection; the value returned can be recovered by a later attacker
++ * who gains read access to kernel memory.  This is completely fine in
++ * the very common case that the secret derived from the value returned
++ * is stored in the kernel for as long as it is valuable.  (E.g. a hash
++ * salt, an authentication cookie, or a randomized address space.)
++ *
++ * It is perfectly safe to expose the output of this generator to
++ * hostile attackers; backtracking is only relevant to attackers who
++ * gain access to its input (its internal state).
++ *
++ * Uses (only!) the hardware RNG (e.g. RDRAND) if available.
++ *
++ * Return: A cryptographically strong 32-bit random value.
++ */
+ u32 get_random_u32(void)
+ {
+ 	u32 ret;
++	size_t pos;
+ 	unsigned long flags;
+ 	struct batched_entropy *batch;
+ 	static void *previous;
+@@ -2464,39 +2536,41 @@ u32 get_random_u32(void)
+ 
+ 	warn_unseeded_randomness(&previous);
+ 
+-	batch = raw_cpu_ptr(&batched_entropy_u32);
++	batch = raw_cpu_ptr(&batched_entropy);
+ 	spin_lock_irqsave(&batch->batch_lock, flags);
+-	if (batch->position % ARRAY_SIZE(batch->entropy_u32) == 0) {
+-		extract_crng((u8 *)batch->entropy_u32);
+-		batch->position = 0;
++	pos = batch->position;
++	batch->position = (pos + sizeof(ret)) & (CHACHA_BLOCK_SIZE - 1);
++	/* First partial word (0..7 bytes used) */
++	pos &= -sizeof(ret);
++	ret = *(u32 *)(batch->entropy8 + pos);
++	pos += sizeof(ret);
++	/* unlikely is defined by gcc as 10% probable.  This is 1/16 */
++	if (unlikely(pos == CHACHA_BLOCK_SIZE)) {
++		extract_crng(batch->entropy8);
++		pos = 0;
+ 	}
+-	ret = batch->entropy_u32[batch->position++];
++	/* Second partial word (1..8 bytes used) */
++	ret ^= *(u32 *)(batch->entropy8 + pos);
+ 	spin_unlock_irqrestore(&batch->batch_lock, flags);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(get_random_u32);
+ 
+ /* It's important to invalidate all potential batched entropy that might
+- * be stored before the crng is initialized, which we can do lazily by
+- * simply resetting the counter to zero so that it's re-extracted on the
+- * next usage. */
++ * be stored before the crng is initialized.
++ */
+ static void invalidate_batched_entropy(void)
+ {
+ 	int cpu;
+-	unsigned long flags;
+ 
+ 	for_each_possible_cpu (cpu) {
+-		struct batched_entropy *batched_entropy;
++		struct batched_entropy *batch;
++		unsigned long flags;
+ 
+-		batched_entropy = per_cpu_ptr(&batched_entropy_u32, cpu);
+-		spin_lock_irqsave(&batched_entropy->batch_lock, flags);
+-		batched_entropy->position = 0;
+-		spin_unlock(&batched_entropy->batch_lock);
+-
+-		batched_entropy = per_cpu_ptr(&batched_entropy_u64, cpu);
+-		spin_lock(&batched_entropy->batch_lock);
+-		batched_entropy->position = 0;
+-		spin_unlock_irqrestore(&batched_entropy->batch_lock, flags);
++		batch = per_cpu_ptr(&batched_entropy, cpu);
++		spin_lock_irqsave(&batch->batch_lock, flags);
++		batch->position = CHACHA_BLOCK_SIZE - 1;
++		spin_unlock_irqrestore(&batch->batch_lock, flags);
+ 	}
+ }
+ 
 -- 
 2.26.0
 
