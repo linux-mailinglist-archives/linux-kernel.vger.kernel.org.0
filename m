@@ -2,92 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2F4A116BAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94D09116BAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:03:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfLILDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 06:03:07 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40670 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726377AbfLILDG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 06:03:06 -0500
-Received: by mail-qt1-f196.google.com with SMTP id t17so8492562qtr.7
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 03:03:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=guROBr6juOEQDfgau8bZWFn2Tnd13c7eR1doQlJs0Fknwfq5m2NcH7iCDe9FYEHNLB
-         tsWymOQvUhQNXA5nxZV6CT2ISb3B/lP1o4eGCoOSmcXzNyr0lLlvzm1GTJ8OTo2kXw16
-         40WOCWh8MmPHelTn5/7wg7oguUqTKu7upyz61JzJGWXb9p0wQeYlUxDxjPJSazfW3CHf
-         vfOmdrCixzCSNuQPMI5ABKOOF9PC6wDJY6lMieArPDs1ih+LZc0MZ1bdDr2Y8vt+93BR
-         HFF1HVnF3zLJuqTMAfvYMd2U+vACjl00Eurf/EuW9EEjZwr08lM/2aWeHc2DCsko/9If
-         NP9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=bj/XE2M/CdyJIEri0U+P5dLFiMBZJOEaXDOufITNer4Uti8xORJGIcYeZLjuwzp0OT
-         jQ5os1blfX8olPEEuNOc+4k0SwpEN3siKD0bPjKOPGRPjJF6KTuQAmmp5WgfEY+G27NV
-         e7rq9leGRZLg/Ve82v2jzz02rgOzAgEF1djeimyYoftkT66fbA0awkfm9iwRhAkjm5ii
-         dZ+uOJVdfsz4FmF9Wz4SV468t7BCkpxE83SoOhxjPSICyAIAGIOtNJvRdQQVXrORmnMm
-         nw/sNBeFrgfnRAj3uyw2Gd2IGA1QIkG/FzoOhSflAsKOlMDysyQvWPhsz3o+PX3/Qqeb
-         rhyg==
-X-Gm-Message-State: APjAAAX9psEp3ti5ZHJhrTLUfAxAbs24li3GXMBJ+c7mW95GtYzkFGtx
-        slRQHrAkhwyoYiH742caHJGyr9IxyryhOfLwpFE=
-X-Google-Smtp-Source: APXvYqz10QRdWROV9mFUHAHZkkgC46/zQqVwf5QoQiTuVKcoeqGiRQlwcj2QoHS7Yj9hC6Jh5BVjnze7SDnpJ7SisAo=
-X-Received: by 2002:aed:27de:: with SMTP id m30mr24639545qtg.151.1575889386148;
- Mon, 09 Dec 2019 03:03:06 -0800 (PST)
+        id S1727545AbfLILDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 06:03:18 -0500
+Received: from foss.arm.com ([217.140.110.172]:56290 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726297AbfLILDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 06:03:18 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 965571FB;
+        Mon,  9 Dec 2019 03:03:17 -0800 (PST)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D6EF3F6CF;
+        Mon,  9 Dec 2019 03:03:16 -0800 (PST)
+Date:   Mon, 9 Dec 2019 11:03:15 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Remi Pommarel <repk@triplefau.lt>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 2/2] PCI: amlogic: Use PCIe pll gate when available
+Message-ID: <20191209110314.GQ18399@e119886-lin.cambridge.arm.com>
+References: <20191208210320.15539-1-repk@triplefau.lt>
+ <20191208210320.15539-3-repk@triplefau.lt>
 MIME-Version: 1.0
-Received: by 2002:a0c:b241:0:0:0:0:0 with HTTP; Mon, 9 Dec 2019 03:03:05 -0800 (PST)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <kagnalex@gmail.com>
-Date:   Mon, 9 Dec 2019 12:03:05 +0100
-Message-ID: <CACemp=4YF13U5_=6wTQrsuU_x+QU_WaX3dnaYeBe7XcU6-0i=A@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191208210320.15539-3-repk@triplefau.lt>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo
+On Sun, Dec 08, 2019 at 10:03:20PM +0100, Remi Pommarel wrote:
+> In order to get PCIe working reliably on some AXG platforms, PCIe pll
+> cml needs to be enabled. This is done by using the PCIE_PLL_CML_ENABLE
+> clock gate.
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8,5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+s/cml/CML/
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0002gmail.com
+In addition to Jerome's feedback - it would also be helpful to explain
+when CML outputs should be enabled, i.e. which platforms and why those
+ones?
 
-Vielen Dank im Voraus,
-Mr. Eddy William,
+> 
+> This clock gate is optional, so do not fail if it is missing in the
+> devicetree.
 
+If certain platforms require PCIE_PLL_CML_ENABLE to work reliably and
+thus the clock is specified in the device tree - then surely if there
+is an error in enabling the clock we should fail? I.e. should you only
+ignore -ENOENT here?
 
+Thanks,
 
-Hello
+Andrew Murray
 
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0002gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William,
+> 
+> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> ---
+>  drivers/pci/controller/dwc/pci-meson.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+> index 3772b02a5c55..32b70ea9a426 100644
+> --- a/drivers/pci/controller/dwc/pci-meson.c
+> +++ b/drivers/pci/controller/dwc/pci-meson.c
+> @@ -89,6 +89,7 @@ struct meson_pcie_clk_res {
+>  	struct clk *mipi_gate;
+>  	struct clk *port_clk;
+>  	struct clk *general_clk;
+> +	struct clk *pll_cml_gate;
+>  };
+>  
+>  struct meson_pcie_rc_reset {
+> @@ -300,6 +301,10 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
+>  	if (IS_ERR(res->clk))
+>  		return PTR_ERR(res->clk);
+>  
+> +	res->pll_cml_gate = meson_pcie_probe_clock(dev, "pll_cml_en", 0);
+> +	if (IS_ERR(res->pll_cml_gate))
+> +		res->pll_cml_gate = NULL;
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.24.0
+> 
