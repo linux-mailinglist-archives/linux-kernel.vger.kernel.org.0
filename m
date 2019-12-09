@@ -2,87 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F09FA1174DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:49:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A04D81174F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfLIStq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:49:46 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40775 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbfLIStn (ORCPT
+        id S1726769AbfLIS4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:56:13 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:10589 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbfLIS4N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:49:43 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t14so401457wmi.5;
-        Mon, 09 Dec 2019 10:49:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ieJvOVklxuG7HYJXPgw7cQzJLJhBqz5GQLQqmQnTPp4=;
-        b=Lwf95EfzH7X2wqXwpLouZbCqEIcPDGv1zMT1wNBySqePdfmNyCiRNxM/Bw5YYaCGzR
-         8vaqCCts8pf7TdrQXmK3MXHS5wSBZ4WMCDjBmo8nDUHOUqNKLb73ez8jEar32qCMGuSv
-         N1zZz8s5JTzYlWwxjBNBR2bpCa5WuOGrH/1PkqGEK7CXMso4w0yakRIo6W1WH+KfGXxT
-         YhOqn3ywUJW+3cCDUlxh3w4ekLu4JOhauTIDHt+l0KEzbnrFWhpF44GB+frbLehyZaFy
-         YRkFO2fPSmlhc3o6qx8+gDkyYqnq7NdwRcs0P3WtfURDvDAEQfRncYb/MI1Wn64ctylR
-         DUQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ieJvOVklxuG7HYJXPgw7cQzJLJhBqz5GQLQqmQnTPp4=;
-        b=c/iIZw+/imPp3bgMAGirA/EmV0clTmLD5EGprtBTAYzrho9umrbunN0k9ZBaZNMtOC
-         DgZCC5NBZUn34nr6/NAcRrKdwlQ+5iIcSwgj9VSQmlpjDGlajrPn27LGPhhNpvHivqR3
-         0YLrSKNR5bZwdN/EO6zTXg/BVIRJzncLRSMdQ3A+Iu2eMM9OjYbwBVur2Q06dveYMvOo
-         hSKl2kkfDD8UeNRzV4TdPXc4cq3JQrORK+cSh1dL7ocBqlQH/hahS7KyIcJQXzPQtZuB
-         X0rijvMsrnDxfH183qZ/BW64z6yrLtWKSxHqacx1ihtSx0ZnMur/ZBEACzpOMvHWZfWT
-         4w6g==
-X-Gm-Message-State: APjAAAVRqDgX5FvOXvhRhUtvwk6cvk1noFzT/+53x6XHAPIfnnkcraan
-        JLfnxk3QB7QrAIHstg7rGlnK9aO6aCsFOEkWrhM=
-X-Google-Smtp-Source: APXvYqyINvbXlKGlHkBtb2/gbmqbckNx0an6BfCyVuvVe7hes9oGx6nniEIkTZxW7OEwUEirs3vHnefdx1qjNHf1ZVA=
-X-Received: by 2002:a05:600c:2951:: with SMTP id n17mr488448wmd.75.1575917381626;
- Mon, 09 Dec 2019 10:49:41 -0800 (PST)
+        Mon, 9 Dec 2019 13:56:13 -0500
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQr4OGUPX+1JiWAnI+L0="
+X-RZG-CLASS-ID: mo00
+Received: from localhost.localdomain
+        by smtp.strato.de (RZmta 46.0.2 DYNA|AUTH)
+        with ESMTPSA id R01a59vB9IswbS2
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Mon, 9 Dec 2019 19:54:58 +0100 (CET)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     =?UTF-8?q?Cl=C3=A9ment=20Perrochaud?= 
+        <clement.perrochaud@effinnov.com>,
+        Charles Gorand <charles.gorand@effinnov.com>,
+        linux-nfc@lists.01.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH] NFC: nxp-nci: Fix probing without ACPI
+Date:   Mon,  9 Dec 2019 19:53:43 +0100
+Message-Id: <20191209185343.215893-1-stephan@gerhold.net>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20190912012920.29601-1-andrew.smirnov@gmail.com>
- <27b7642917479f9c17af30054abe1a72d0b121f7.camel@pengutronix.de> <94ec72a1-78a0-5a0e-ce52-ccc88e82e4d4@linaro.org>
-In-Reply-To: <94ec72a1-78a0-5a0e-ce52-ccc88e82e4d4@linaro.org>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Mon, 9 Dec 2019 10:49:30 -0800
-Message-ID: <CAHQ1cqF9AH=M7DtY3_DvB7RC-FvpiDRvk5LYx0QENhs_hO9W4w@mail.gmail.com>
-Subject: Re: [PATCH v7 00/12] QorIQ TMU multi-sensor and HWMON support
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 10:20 AM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> Hi Lucas,
->
->
-> On 06/12/2019 12:46, Lucas Stach wrote:
-> > Hi all,
-> >
-> > can this series be considered for mainline inclusion? It has been
-> > tested and works well in our i.MX8M kernel setup.
->
-> I'm fine with the changes but the series does not longer apply. I tried
-> to solve the conflicts but got too many of them.
->
-> Is it possible to respin the series?
->
+devm_acpi_dev_add_driver_gpios() returns -ENXIO if CONFIG_ACPI
+is disabled (e.g. on device tree platforms).
+In this case, nxp-nci will silently fail to probe.
 
-Yeah, no problem. Will do.
+The other NFC drivers only log a debug message if
+devm_acpi_dev_add_driver_gpios() fails.
+Do the same in nxp-nci to fix this problem.
 
-Thanks,
-Andrey Smirnov
+Fixes: ad0acfd69add ("NFC: nxp-nci: Get rid of code duplication in ->probe()")
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+---
+ drivers/nfc/nxp-nci/i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nfc/nxp-nci/i2c.c b/drivers/nfc/nxp-nci/i2c.c
+index 4d1909aecd6c..9f60e4dc5a90 100644
+--- a/drivers/nfc/nxp-nci/i2c.c
++++ b/drivers/nfc/nxp-nci/i2c.c
+@@ -278,7 +278,7 @@ static int nxp_nci_i2c_probe(struct i2c_client *client,
+ 
+ 	r = devm_acpi_dev_add_driver_gpios(dev, acpi_nxp_nci_gpios);
+ 	if (r)
+-		return r;
++		dev_dbg(dev, "Unable to add GPIO mapping table\n");
+ 
+ 	phy->gpiod_en = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
+ 	if (IS_ERR(phy->gpiod_en)) {
+-- 
+2.24.0
+
