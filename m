@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85B6D117930
+	by mail.lfdr.de (Postfix) with ESMTP id 15E9011792F
 	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 23:24:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbfLIWXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 17:23:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40534 "EHLO mail.kernel.org"
+        id S1726955AbfLIWXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 17:23:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbfLIWXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 17:23:47 -0500
+        id S1726483AbfLIWXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 17:23:48 -0500
 Received: from localhost (unknown [104.132.0.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B9762071E;
-        Mon,  9 Dec 2019 22:23:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2071320721;
+        Mon,  9 Dec 2019 22:23:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575930227;
-        bh=A+gppiBF+YkBTBbG9jAbQcsegmphuu6BqQl55N2MGpg=;
+        s=default; t=1575930228;
+        bh=TaaCS8RTMLVqjYqfCHXD8HZCQIXSSSjJveEkKOckY4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QoM6NzNiGJqicb+Ws8gUtxZCWYelOHpEef3cGJYk6HEfrAGJOGUz/RZ4SFzVt5GsQ
-         2Y9TUW4k9V5XXjX9g2774ksy4/mngjfVobySy5Tr2vaC99Y6KI5FQ0VahT0cmV60St
-         wqF73/kj7rWlziKSdt+p6MhcVScbmlwg2IEW+2qw=
+        b=QEnd3J1oeG0+9T5erKTz7uO3O/W4upU6IBhql845eAAUb9M1shFMafFgW7msGEALi
+         x8BqBGByDYM3xHhe+beDrAFBDqRPC4WbiGdKYT/QtdK9i1nLpVh9WmAkErHZuYnOVH
+         VJb7p6YckhqOTppjiXn/BsBoQcBSpfGpSxKxcxzM=
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net
 Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/6] f2fs: declare nested quota_sem and remove unnecessary sems
-Date:   Mon,  9 Dec 2019 14:23:41 -0800
-Message-Id: <20191209222345.1078-2-jaegeuk@kernel.org>
+Subject: [PATCH 3/6] f2fs: keep quota data on write_begin failure
+Date:   Mon,  9 Dec 2019 14:23:42 -0800
+Message-Id: <20191209222345.1078-3-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20191209222345.1078-1-jaegeuk@kernel.org>
 References: <20191209222345.1078-1-jaegeuk@kernel.org>
@@ -40,105 +40,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1.
-f2fs_quota_sync
- -> down_read(&sbi->quota_sem)
- -> dquot_writeback_dquots
-  -> f2fs_dquot_commit
-   -> down_read(&sbi->quota_sem)
-
-2.
-f2fs_quota_sync
- -> down_read(&sbi->quota_sem)
-  -> f2fs_write_data_pages
-   -> f2fs_write_single_data_page
-    -> down_write(&F2FS_I(inode)->i_sem)
-
-f2fs_mkdir
- -> f2fs_do_add_link
-   -> down_write(&F2FS_I(inode)->i_sem)
-   -> f2fs_init_inode_metadata
-    -> f2fs_new_node_page
-     -> dquot_alloc_inode
-      -> f2fs_dquot_mark_dquot_dirty
-       -> down_read(&sbi->quota_sem)
+This patch avoids some unnecessary locks for quota files when write_begin
+fails.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/super.c | 22 +++++-----------------
- 1 file changed, 5 insertions(+), 17 deletions(-)
+ fs/f2fs/data.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5111e1ffe58a..15888ca02e7f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2156,39 +2156,30 @@ static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
- static int f2fs_dquot_commit(struct dquot *dquot)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
--	int ret;
-+	int ret = dquot_commit(dquot);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index fc40a72f7827..3b2945121557 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2600,14 +2600,16 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
+ 	struct inode *inode = mapping->host;
+ 	loff_t i_size = i_size_read(inode);
  
--	down_read(&sbi->quota_sem);
--	ret = dquot_commit(dquot);
- 	if (ret < 0)
- 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
--	up_read(&sbi->quota_sem);
- 	return ret;
- }
++	if (IS_NOQUOTA(inode))
++		return;
++
+ 	/* In the fs-verity case, f2fs_end_enable_verity() does the truncate */
+ 	if (to > i_size && !f2fs_verity_in_progress(inode)) {
+ 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 		down_write(&F2FS_I(inode)->i_mmap_sem);
  
- static int f2fs_dquot_acquire(struct dquot *dquot)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
--	int ret;
-+	int ret = dquot_acquire(dquot);
+ 		truncate_pagecache(inode, i_size);
+-		if (!IS_NOQUOTA(inode))
+-			f2fs_truncate_blocks(inode, i_size, true);
++		f2fs_truncate_blocks(inode, i_size, true);
  
--	down_read(&sbi->quota_sem);
--	ret = dquot_acquire(dquot);
- 	if (ret < 0)
- 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
--	up_read(&sbi->quota_sem);
- 	return ret;
- }
- 
- static int f2fs_dquot_release(struct dquot *dquot)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
--	int ret;
-+	int ret = dquot_release(dquot);
- 
--	down_read(&sbi->quota_sem);
--	ret = dquot_release(dquot);
- 	if (ret < 0)
- 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
--	up_read(&sbi->quota_sem);
- 	return ret;
- }
- 
-@@ -2198,7 +2189,7 @@ static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	int ret;
- 
--	down_read(&sbi->quota_sem);
-+	down_read_nested(&sbi->quota_sem, SINGLE_DEPTH_NESTING);
- 	ret = dquot_mark_dquot_dirty(dquot);
- 
- 	/* if we are using journalled quota */
-@@ -2212,13 +2203,10 @@ static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
- static int f2fs_dquot_commit_info(struct super_block *sb, int type)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
--	int ret;
-+	int ret = dquot_commit_info(sb, type);
- 
--	down_read(&sbi->quota_sem);
--	ret = dquot_commit_info(sb, type);
- 	if (ret < 0)
- 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
--	up_read(&sbi->quota_sem);
- 	return ret;
- }
- 
+ 		up_write(&F2FS_I(inode)->i_mmap_sem);
+ 		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
 -- 
 2.19.0.605.g01d371f741-goog
 
