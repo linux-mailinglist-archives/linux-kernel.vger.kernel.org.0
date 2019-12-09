@@ -2,94 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F18E116E96
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:07:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E163116EB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:11:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfLIOHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 09:07:50 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36290 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727818AbfLIOHs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:07:48 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB9E2Z3K029711;
-        Mon, 9 Dec 2019 15:07:36 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=BCWX5NNeDVU6wpFJD/S/N/1xkElQUKoGoGtgt/DzrE4=;
- b=aV9aeettm48PTkUp9/ucH7YOznx3hKtPa+AWvQmxejzR2VuSZTQ9H5x8KN77eI03s+2z
- ZuiltkGyccdCzDLjexMNNgfG23S1jsTpd5BLde2r6UsQng/2rQSV+lVtUTYICZV4ADQ4
- 9viHA+aY3v7oOs8x/fQQIzoOe7TsSbVeWmSbujMv0E+YQABtmTJvpf6Qx4UOkJg0KgOv
- ew3yusQ5uJeahQKJcxiY1EzadTzDatDdnxFVEMndtatphfI8Riw67u4fBVeCxAX6uZGi
- 8g4EZBZzw58S/ETFVA/fXKhHyldHBtiZG6YYRE7feX3sr5xYeV/iy3jep5q9QcaPKwdX qg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2wraq3qshq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 09 Dec 2019 15:07:36 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 075AB100034;
-        Mon,  9 Dec 2019 15:07:35 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CE10A20DAFE;
-        Mon,  9 Dec 2019 15:07:35 +0100 (CET)
-Received: from lmecxl0912.lme.st.com (10.75.127.50) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 9 Dec
- 2019 15:07:35 +0100
-Subject: Re: [PATCH 1/3] ARM: dts: stm32: remove useless clock-names from RTC
- node on stm32f429
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191202145604.28872-1-benjamin.gaignard@st.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <49d3e0c4-7e0d-0c5f-524c-4f2f9f197582@st.com>
-Date:   Mon, 9 Dec 2019 15:07:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727788AbfLIOLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 09:11:53 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7200 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727388AbfLIOLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 09:11:52 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C17D8952A78FAB84FF53;
+        Mon,  9 Dec 2019 22:11:49 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 9 Dec 2019 22:11:41 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <broonie@kernel.org>, <marek.vasut@gmail.com>,
+        <tudor.ambarus@microchip.com>
+CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <linux-spi@vger.kernel.org>,
+        <xuejiancheng@hisilicon.com>, <fengsheng5@huawei.com>,
+        <chenxiang66@hisilicon.com>, John Garry <john.garry@huawei.com>
+Subject: [PATCH v2 0/3] HiSilicon v3xx SFC driver
+Date:   Mon, 9 Dec 2019 22:08:07 +0800
+Message-ID: <1575900490-74467-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-In-Reply-To: <20191202145604.28872-1-benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-09_04:2019-12-09,2019-12-09 signatures=0
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin,
+This patchset introduces support for the HiSilicon SFC V3XX driver.
 
-On 12/2/19 3:56 PM, Benjamin Gaignard wrote:
-> On stm32f4 family RTC node doesn't need clock-names property.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->   arch/arm/boot/dts/stm32f429.dtsi | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-> index 5c8a826b3195..ac9caaf4cf51 100644
-> --- a/arch/arm/boot/dts/stm32f429.dtsi
-> +++ b/arch/arm/boot/dts/stm32f429.dtsi
-> @@ -318,7 +318,6 @@
->   			compatible = "st,stm32-rtc";
->   			reg = <0x40002800 0x400>;
->   			clocks = <&rcc 1 CLK_RTC>;
-> -			clock-names = "ck_rtc";
->   			assigned-clocks = <&rcc 1 CLK_RTC>;
->   			assigned-clock-parents = <&rcc 1 CLK_LSE>;
->   			interrupt-parent = <&exti>;
-> 
+Whilst the kernel tree already includes support for a "HiSilicon SFC
+driver", that is for different HW. Indeed, as mentioned in patch #1, the
+naming for that driver could be better, as it should support more memory
+technologies than SPI NOR (as I have been told), and it is actually known
+internally as FMC. As such, maybe "hisi-fmc" would have been better, but
+we can't change that now.
 
-Applied on stm32-next.
+I used V3XX in this driver name, as that is the unique versioning for
+this HW.
 
-Thanks.
-Alex
+As for the driver itself, it is quite simple. Only ACPI firmware is
+supported, and we assume m25p80 compatible SPI NOR part will be used.
+
+DMA is not supported, and we just use polling mode for operation
+completion notification. The driver uses the SPI MEM OPs.
+
+Changes from v1:
+- Add ACPI kconfig dependency
+- Fix up header comment style
+- Change macros naming style
+- Try to enforce aligned accesses in hisi_sfc_v3xx_adjust_op_size()
+
+John Garry (3):
+  mtd: spi-nor: hisi-sfc: Try to provide some clarity on which SFC we
+    are
+  spi: Add HiSilicon v3xx SPI NOR flash controller driver
+  MAINTAINERS: Add a maintainer for the HiSilicon v3xx SFC driver
+
+ MAINTAINERS                     |   6 +
+ drivers/mtd/spi-nor/Kconfig     |   4 +-
+ drivers/mtd/spi-nor/hisi-sfc.c  |   2 +-
+ drivers/spi/Kconfig             |   9 +
+ drivers/spi/Makefile            |   1 +
+ drivers/spi/spi-hisi-sfc-v3xx.c | 284 ++++++++++++++++++++++++++++++++
+ 6 files changed, 303 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/spi/spi-hisi-sfc-v3xx.c
+
+-- 
+2.17.1
+
