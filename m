@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D42D117225
+	by mail.lfdr.de (Postfix) with ESMTP id 8D700117226
 	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 17:50:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbfLIQur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 11:50:47 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:46465 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbfLIQuo (ORCPT
+        id S1726835AbfLIQus (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 11:50:48 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:46469 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbfLIQuq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 11:50:44 -0500
-Received: by mail-pj1-f66.google.com with SMTP id z21so6122989pjq.13
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 08:50:44 -0800 (PST)
+        Mon, 9 Dec 2019 11:50:46 -0500
+Received: by mail-pj1-f68.google.com with SMTP id z21so6123010pjq.13
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 08:50:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HxjIDEX+7ZVeJgru8LvvR5BufYtC0NpT+WMH9OusOnY=;
-        b=BQOeRUrPJ++Kti92Xgwb5MxAYTIorWD7rvCPzQY/cR2v608QtRkHwD6Y+ywHt8d84x
-         rgCXVDZbeKRx0VBOH89NFymh5/jMPAGwo6yJRQxw+kYaDqfnU/wT2j+LuKiYyuD4HB/1
-         KSQoGWEsuVMK+dqIKyDqffC/Rso/XGEvNcqwMlDfTdvCLktfCZb8UBzYTJVfI6qVb0Jp
-         IQSqlBsZKlecpPyAvmS8q1uUEXAXK8kboyXwHwtBCbmVLM1kjKCX6OiMqcPpfMia9Izz
-         ymwh5Bs2RWRMS7QyWzPxprJh0cWCJmmJ0TV+/alpNwSmkb1l658CP6Obv3KyezE0t2ds
-         qnag==
+        bh=7j8A/bmJ0tivsU1R0/vbl49gfES1PujVpawMqj4L0dI=;
+        b=iplkALAZMx+B4uudUY+CyOprIn5iQJqyJfp73EPWgJt3f5iTj/qSpIwRdArrIDAQ/q
+         yCnhdG4xKbW/AUUVaYED3jlGQoTcWI9xdpyV9jN5begCp1ibEK0NSH2y5JtNaeSDSch3
+         PxWcatN0Sq9JLZh+9qpJ2fMGREq6DL7ZFPxhZ95hyfckkDafiIy4FRtrXKEQ0oC5lUgh
+         Y6NZPMKmmr3xRQtnY6FXmDmd6p/kLSCKwK7fqH+KMg+klPCRMwc2AFOANV8Dz13UIWav
+         Gg0xJUb10//xoqyfU3OYaHP2YXwDGenQxGDGMHAEHdLUcj9KITsT/bsKMjfNA0zoDNyT
+         r+fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HxjIDEX+7ZVeJgru8LvvR5BufYtC0NpT+WMH9OusOnY=;
-        b=GPqg9/24J9AO2GrwX21ar9l+cBDM6FuTTHCZynkkGoMt8BZGr6yECA7uj4hvFh8Ew3
-         Cqwty81ojM0M9fkKcAFx779TvhUXL2efxg0lzzM/92xK4sYEHqtO0TLzgkhV9odyGGLc
-         MnJzK6rk9eEZzyP6YbXUmrp52DKr6z0Beowemf8mZ4/GuU+JND9doL0DnS+DmMnq1P1U
-         xdnxUYmjEWVSD9LhBTTqFnrU0ByF8A5m8tAWkygKQqAR3HBeFxVAmluG+RD6w0e3JwH2
-         CtiOrAf446jC3+Vyic78qgNmJLnfauHNSqEECkQvM/w94L/DkRHkc8mwialMYI5Bobgj
-         btrQ==
-X-Gm-Message-State: APjAAAXj7iunlOYN1RNIt59ZExHOSDSlDpM3BojEfDIA+4mumtW1sMRk
-        qfFrKZs1cCLrqilz/R+gMiQ=
-X-Google-Smtp-Source: APXvYqw7fxQZCJAJm1NIbn6GoldxdOhS8euDIKP37TXk4AquUSLIi3jNWpIgYBiJKeIf9lakrhXYmw==
-X-Received: by 2002:a17:90a:cc16:: with SMTP id b22mr33101464pju.65.1575910243781;
-        Mon, 09 Dec 2019 08:50:43 -0800 (PST)
+        bh=7j8A/bmJ0tivsU1R0/vbl49gfES1PujVpawMqj4L0dI=;
+        b=svvBqtzmp11NbKdbOFx/VKW0uFhPbFERuqwFXie9RcMwgsIKClkEx3PW4MlsV5EqBY
+         Cf0Wiu4F7x1oc91CXNSCoLibpNk49nM4+7bj7A/uI+k5bNsgmK37Yi5ELaqCttES+q6q
+         MorNuuwf98VgjpuBG99da24BRtxWDtxwFx+uaG2oAIMe/9Q6w7qwVkwGEUJfyt7TI5JR
+         5Yxy3ibEu1nbDpGdv62bOhsrR2yuMF4VHaiXVwwz4Lo7vYhdSX1xKSyfUu0iUFEBF9lk
+         2MRIv1NcSOcZDLxG1Jwf/RFXtYX6u/TYp8X3yBu/RTWQSPoF7kLD8AxtEwU8UfmYF9EC
+         4dPQ==
+X-Gm-Message-State: APjAAAWMwQVkoaW8yP8kOGbdgujdhUeg4GOhWF3DrLeX3i2qDyg50tXq
+        5sCFO9D4Ly+8M9rEZz80Dww=
+X-Google-Smtp-Source: APXvYqzQjCtuiV7fSG1wIeHmk2lOV/ALk5dveVljihJCp6vzBXm2UhInYMiasdvg3HGwQmtmb10w1w==
+X-Received: by 2002:a17:902:7d98:: with SMTP id a24mr30813869plm.321.1575910245353;
+        Mon, 09 Dec 2019 08:50:45 -0800 (PST)
 Received: from localhost.localdomain (c-67-165-113-11.hsd1.wa.comcast.net. [67.165.113.11])
-        by smtp.gmail.com with ESMTPSA id c19sm18299294pfc.144.2019.12.09.08.50.41
+        by smtp.gmail.com with ESMTPSA id c19sm18299294pfc.144.2019.12.09.08.50.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 08:50:42 -0800 (PST)
+        Mon, 09 Dec 2019 08:50:44 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -53,9 +53,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] ARM: dts: imx6: rdu2: Disable WP for USDHC2 and USDHC3
-Date:   Mon,  9 Dec 2019 08:50:17 -0800
-Message-Id: <20191209165018.21794-2-andrew.smirnov@gmail.com>
+Subject: [PATCH v3 3/3] ARM: dts: imx6: rdu2: Limit USBH1 to Full Speed
+Date:   Mon,  9 Dec 2019 08:50:18 -0800
+Message-Id: <20191209165018.21794-3-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191209165018.21794-1-andrew.smirnov@gmail.com>
 References: <20191209165018.21794-1-andrew.smirnov@gmail.com>
@@ -66,9 +66,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RDU2 production units come with resistor connecting WP pin to
-correpsonding GPIO DNPed for both SD card slots. Drop any WP related
-configuration and mark both slots with "disable-wp".
+Cabling used to connect devices to USBH1 on RDU2 does not meet USB
+spec cable quality and cable length requirements to operate at High
+Speed, so limit the port to Full Speed only.
 
 Reported-by: Chris Healy <cphealy@gmail.com>
 Reviewed-by: Chris Healy <cphealy@gmail.com>
@@ -80,47 +80,21 @@ Cc: Lucas Stach <l.stach@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-index 7531f0595bd1..d062c86e0762 100644
+index d062c86e0762..ca0b81c41998 100644
 --- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
 +++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-@@ -743,7 +743,7 @@
- 	pinctrl-0 = <&pinctrl_usdhc2>;
- 	bus-width = <4>;
- 	cd-gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
--	wp-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-+	disable-wp;
- 	vmmc-supply = <&reg_3p3v_sd>;
- 	vqmmc-supply = <&reg_3p3v>;
- 	no-1-8-v;
-@@ -756,7 +756,7 @@
- 	pinctrl-0 = <&pinctrl_usdhc3>;
- 	bus-width = <4>;
- 	cd-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
--	wp-gpios = <&gpio2 1 GPIO_ACTIVE_HIGH>;
-+	disable-wp;
- 	vmmc-supply = <&reg_3p3v_sd>;
- 	vqmmc-supply = <&reg_3p3v>;
- 	no-1-8-v;
-@@ -1180,7 +1180,6 @@
- 			MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
- 			MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
- 			MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
--			MX6QDL_PAD_NANDF_D3__GPIO2_IO03		0x40010040
- 			MX6QDL_PAD_NANDF_D2__GPIO2_IO02		0x40010040
- 		>;
- 	};
-@@ -1193,7 +1192,6 @@
- 			MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
- 			MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
- 			MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
--			MX6QDL_PAD_NANDF_D1__GPIO2_IO01		0x40010040
- 			MX6QDL_PAD_NANDF_D0__GPIO2_IO00		0x40010040
+@@ -890,6 +890,7 @@
+ &usbh1 {
+ 	vbus-supply = <&reg_5p0v_main>;
+ 	disable-over-current;
++	maximum-speed = "full-speed";
+ 	status = "okay";
+ };
  
- 		>;
 -- 
 2.21.0
 
