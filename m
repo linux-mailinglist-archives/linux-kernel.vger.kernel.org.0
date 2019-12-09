@@ -2,221 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9695F1178C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A23B91178D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:51:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfLIVpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 16:45:08 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37910 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfLIVpI (ORCPT
+        id S1726879AbfLIVvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 16:51:03 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:55408 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfLIVu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 16:45:08 -0500
-Received: by mail-ot1-f66.google.com with SMTP id h20so13637020otn.5
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 13:45:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ER5XOmpfTbyA77VZ0mW/V+9R8ytRWk1qGHF5rdwU7So=;
-        b=OkPhOsRfdqcG7yIBu/Vxs7LM4zdcAq2xGCHoNVMFrpG8RA/x57P9Nk91e6XPNtYeu0
-         yDLoILlRLTckXgD3qIBvjEmg9h/L2cnI/7MS87MiMg+eKQumXK8XiQayMtfVsydRrxSf
-         yQ8GfSJz6U1IVCsjGVj5In76A4ET/ZM7F23H/mHd+t4YDtKLMZXNmpA9dhfF82OUH31t
-         j1156+QLTqu5x6kD/xkDX9GT4B4xXtM7PUm8qgmfNRFXrKupcA26mgfdA82s2yr1cOpy
-         WRpSmo7QTP4EmuL9OdAnLEek3XxeUtID/DxtXojmKEWYfyffb9G9oeYdS6rqNmcDSiSx
-         CKTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ER5XOmpfTbyA77VZ0mW/V+9R8ytRWk1qGHF5rdwU7So=;
-        b=SOgRZDkCDb6Z4qXrkMYkwrOIr0JP7SyX/dzTuanB0Izii53MlISSBqVFuLKT7L0uwX
-         ZljMCBCsf9Vuzna6F+2dNKFai/K8DaEhhSnvL754c8u/RO5rWC6VJHaWLL8byngMZGuh
-         NY3L4k+L24iDDk0rAicIxBYM7apUPOolxxW6y7cEKGFLFY63oKfVe34N7PUdS2yRyG0B
-         88BBuppO4xnBjKRfXsVEBzhXzZo4/wISV62zOownfWTLu4Rnw6iKyJWRJd9fPJUqmp1t
-         odNgXGOTmeDS29KRKxArfaBNgAhR9BXGeNbbPbeYr6lx7hpJuwhcG7RGvJuC6fWP+ine
-         1QeA==
-X-Gm-Message-State: APjAAAVhlTTWvDMPMXngVvXOI+KzHGRkIGiH92+qPXEFJZI4LYkgBdst
-        0YcVJLahgaSrG23Lf2ezh70=
-X-Google-Smtp-Source: APXvYqwY43CbS3Sb8mZuD3/Jw8lqjWbnbiMpng2baZgioTPwEu3ffo+xD2GO+SEDxlxfOGQeHXrzAg==
-X-Received: by 2002:a9d:366:: with SMTP id 93mr1778892otv.183.1575927907211;
-        Mon, 09 Dec 2019 13:45:07 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id t80sm533904oih.23.2019.12.09.13.45.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 13:45:06 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH v3] mtd: onenand_base: Adjust indentation in onenand_read_ops_nolock
-Date:   Mon,  9 Dec 2019 14:44:23 -0700
-Message-Id: <20191209214422.53661-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191209210328.18866-1-natechancellor@gmail.com>
-References: <20191209210328.18866-1-natechancellor@gmail.com>
+        Mon, 9 Dec 2019 16:50:59 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB9Low0i005349;
+        Mon, 9 Dec 2019 15:50:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575928258;
+        bh=lUSdxRhD6XTC7WhbY0PYaGuAAuVAsloAEADwb1YGU8w=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=YG2txRg5aS6wPIGElxOMo+yKk+nel+Uqz2sJ8oERHhEWqhkRKE/hnhpvgdUvLlnNj
+         s3MeHF+KKqrQo0qRVK0N5meBLuDmfmZD3/4XO9D1z5Xru3pnLl5hcxXKQs4UvHtXC6
+         8pnvXC2ZBMH8TlY2rMwUiZStmlA18Vfx3rgP80RI=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB9Low3I114613;
+        Mon, 9 Dec 2019 15:50:58 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Dec
+ 2019 15:50:57 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 9 Dec 2019 15:50:57 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB9LovU2107056;
+        Mon, 9 Dec 2019 15:50:57 -0600
+Subject: Re: [PATCH v2 1/3] power_supply: Add additional health properties to
+ the header
+To:     <sre@kernel.org>, <linux-pm@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20191029200201.24483-1-dmurphy@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <b1a00b89-b091-4526-fbd4-d42261f0d287@ti.com>
+Date:   Mon, 9 Dec 2019 15:48:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191029200201.24483-1-dmurphy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+Bump
 
-../drivers/mtd/nand/onenand/onenand_base.c:1269:3: warning: misleading
-indentation; statement is not part of the previous 'if'
-[-Wmisleading-indentation]
-        while (!ret) {
-        ^
-../drivers/mtd/nand/onenand/onenand_base.c:1266:2: note: previous
-statement is here
-        if (column + thislen > writesize)
-        ^
-1 warning generated.
-
-This warning occurs because there is a space before the tab of the while
-loop. There are spaces at the beginning of a lot of the lines in this
-block, remove them so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
-
-Fixes: a8de85d55700 ("[MTD] OneNAND: Implement read-while-load")
-Link: https://github.com/ClangBuiltLinux/linux/issues/794
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
-
-v1 -> v2:
-
-* Clean up the block before the one that warns, which was added as part
-  of the fixes commit (Nick).
-
-v2 -> v3:
-
-* Fix one missed conversion (Nick).
-
- drivers/mtd/nand/onenand/onenand_base.c | 82 ++++++++++++-------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
-
-diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
-index 77bd32a683e1..9e81cd982dd3 100644
---- a/drivers/mtd/nand/onenand/onenand_base.c
-+++ b/drivers/mtd/nand/onenand/onenand_base.c
-@@ -1248,44 +1248,44 @@ static int onenand_read_ops_nolock(struct mtd_info *mtd, loff_t from,
- 
- 	stats = mtd->ecc_stats;
- 
-- 	/* Read-while-load method */
-+	/* Read-while-load method */
- 
-- 	/* Do first load to bufferRAM */
-- 	if (read < len) {
-- 		if (!onenand_check_bufferram(mtd, from)) {
-+	/* Do first load to bufferRAM */
-+	if (read < len) {
-+		if (!onenand_check_bufferram(mtd, from)) {
- 			this->command(mtd, ONENAND_CMD_READ, from, writesize);
-- 			ret = this->wait(mtd, FL_READING);
-- 			onenand_update_bufferram(mtd, from, !ret);
-+			ret = this->wait(mtd, FL_READING);
-+			onenand_update_bufferram(mtd, from, !ret);
- 			if (mtd_is_eccerr(ret))
- 				ret = 0;
-- 		}
-- 	}
-+		}
-+	}
- 
- 	thislen = min_t(int, writesize, len - read);
- 	column = from & (writesize - 1);
- 	if (column + thislen > writesize)
- 		thislen = writesize - column;
- 
-- 	while (!ret) {
-- 		/* If there is more to load then start next load */
-- 		from += thislen;
-- 		if (read + thislen < len) {
-+	while (!ret) {
-+		/* If there is more to load then start next load */
-+		from += thislen;
-+		if (read + thislen < len) {
- 			this->command(mtd, ONENAND_CMD_READ, from, writesize);
-- 			/*
-- 			 * Chip boundary handling in DDP
-- 			 * Now we issued chip 1 read and pointed chip 1
-+			/*
-+			 * Chip boundary handling in DDP
-+			 * Now we issued chip 1 read and pointed chip 1
- 			 * bufferram so we have to point chip 0 bufferram.
-- 			 */
-- 			if (ONENAND_IS_DDP(this) &&
-- 			    unlikely(from == (this->chipsize >> 1))) {
-- 				this->write_word(ONENAND_DDP_CHIP0, this->base + ONENAND_REG_START_ADDRESS2);
-- 				boundary = 1;
-- 			} else
-- 				boundary = 0;
-- 			ONENAND_SET_PREV_BUFFERRAM(this);
-- 		}
-- 		/* While load is going, read from last bufferRAM */
-- 		this->read_bufferram(mtd, ONENAND_DATARAM, buf, column, thislen);
-+			 */
-+			if (ONENAND_IS_DDP(this) &&
-+			    unlikely(from == (this->chipsize >> 1))) {
-+				this->write_word(ONENAND_DDP_CHIP0, this->base + ONENAND_REG_START_ADDRESS2);
-+				boundary = 1;
-+			} else
-+				boundary = 0;
-+			ONENAND_SET_PREV_BUFFERRAM(this);
-+		}
-+		/* While load is going, read from last bufferRAM */
-+		this->read_bufferram(mtd, ONENAND_DATARAM, buf, column, thislen);
- 
- 		/* Read oob area if needed */
- 		if (oobbuf) {
-@@ -1301,24 +1301,24 @@ static int onenand_read_ops_nolock(struct mtd_info *mtd, loff_t from,
- 			oobcolumn = 0;
- 		}
- 
-- 		/* See if we are done */
-- 		read += thislen;
-- 		if (read == len)
-- 			break;
-- 		/* Set up for next read from bufferRAM */
-- 		if (unlikely(boundary))
-- 			this->write_word(ONENAND_DDP_CHIP1, this->base + ONENAND_REG_START_ADDRESS2);
-- 		ONENAND_SET_NEXT_BUFFERRAM(this);
-- 		buf += thislen;
-+		/* See if we are done */
-+		read += thislen;
-+		if (read == len)
-+			break;
-+		/* Set up for next read from bufferRAM */
-+		if (unlikely(boundary))
-+			this->write_word(ONENAND_DDP_CHIP1, this->base + ONENAND_REG_START_ADDRESS2);
-+		ONENAND_SET_NEXT_BUFFERRAM(this);
-+		buf += thislen;
- 		thislen = min_t(int, writesize, len - read);
-- 		column = 0;
-- 		cond_resched();
-- 		/* Now wait for load */
-- 		ret = this->wait(mtd, FL_READING);
-- 		onenand_update_bufferram(mtd, from, !ret);
-+		column = 0;
-+		cond_resched();
-+		/* Now wait for load */
-+		ret = this->wait(mtd, FL_READING);
-+		onenand_update_bufferram(mtd, from, !ret);
- 		if (mtd_is_eccerr(ret))
- 			ret = 0;
-- 	}
-+	}
- 
- 	/*
- 	 * Return success, if no ECC failures, else -EBADMSG
--- 
-2.24.0
-
+On 10/29/19 3:01 PM, Dan Murphy wrote:
+> Add HEALTH_WARM, HEALTH_COOL and HEALTH_HOT to the health enum.
+>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>
+> v2 - No changes
+>
+>   include/linux/power_supply.h | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+> index 28413f737e7d..bd0d3225f245 100644
+> --- a/include/linux/power_supply.h
+> +++ b/include/linux/power_supply.h
+> @@ -61,6 +61,9 @@ enum {
+>   	POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE,
+>   	POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE,
+>   	POWER_SUPPLY_HEALTH_OVERCURRENT,
+> +	POWER_SUPPLY_HEALTH_WARM,
+> +	POWER_SUPPLY_HEALTH_COOL,
+> +	POWER_SUPPLY_HEALTH_HOT,
+>   };
+>   
+>   enum {
