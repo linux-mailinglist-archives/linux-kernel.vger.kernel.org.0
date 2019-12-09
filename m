@@ -2,103 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 697D3116E6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:02:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDF22116E72
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:02:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfLIOCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 09:02:19 -0500
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:7886 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbfLIOCT (ORCPT
+        id S1727787AbfLIOCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 09:02:43 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:42301 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727684AbfLIOCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:02:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1575900138; x=1607436138;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=+i/b4CFSEFHJeiq4trv8xtJuqigVv7Z2IWBdQyD0XN8=;
-  b=pxeQmvsd6fFlCSgLzx8k9O2cHbz4WvTrqWVct4kt56nzxTMuYzeaMfJb
-   AQiHNuSYJD3fKhjX9UOWo9Jso/iRXv52bQt9ElKLOw9VRaBdTuUpSH8pM
-   Z5tm5XpDvjP1WMcXIV/SDCrIIMMoT4YnsI9/YRDZUGEnDUb+W1JCVDKkt
-   8=;
-IronPort-SDR: ZtjWxqRUb6zVEKInpl8mlFv42ZyzVIRguM0rDek4yp66JehlC7VoQgT6RqBV2588FDLhStBdC5
- 3qfwaWE0MNzw==
-X-IronPort-AV: E=Sophos;i="5.69,294,1571702400"; 
-   d="scan'208";a="4027420"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 09 Dec 2019 14:01:47 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com (Postfix) with ESMTPS id 4569AA22B3;
-        Mon,  9 Dec 2019 14:01:44 +0000 (UTC)
-Received: from EX13D32EUC002.ant.amazon.com (10.43.164.94) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 9 Dec 2019 14:01:44 +0000
-Received: from EX13D32EUC003.ant.amazon.com (10.43.164.24) by
- EX13D32EUC002.ant.amazon.com (10.43.164.94) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 9 Dec 2019 14:01:44 +0000
-Received: from EX13D32EUC003.ant.amazon.com ([10.43.164.24]) by
- EX13D32EUC003.ant.amazon.com ([10.43.164.24]) with mapi id 15.00.1367.000;
- Mon, 9 Dec 2019 14:01:43 +0000
-From:   "Durrant, Paul" <pdurrant@amazon.com>
-To:     =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-CC:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?utf-8?B?Um9nZXIgUGF1IE1vbm7DqQ==?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "Stefano Stabellini" <sstabellini@kernel.org>
-Subject: RE: [PATCH 4/4] xen-blkback: support dynamic unbind/bind
-Thread-Topic: [PATCH 4/4] xen-blkback: support dynamic unbind/bind
-Thread-Index: AQHVq3SGozEa3lNeXkCoixgttFczb6ex2l+AgAAA6dA=
-Date:   Mon, 9 Dec 2019 14:01:43 +0000
-Message-ID: <158cb2845bec457fa54c6dfbd5a9efac@EX13D32EUC003.ant.amazon.com>
-References: <20191205140123.3817-1-pdurrant@amazon.com>
- <20191205140123.3817-5-pdurrant@amazon.com>
- <bbf958af-d435-3a56-1e91-e068125a9ce7@suse.com>
-In-Reply-To: <bbf958af-d435-3a56-1e91-e068125a9ce7@suse.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.164.211]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 9 Dec 2019 09:02:41 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB9E17Rh002940;
+        Mon, 9 Dec 2019 15:02:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=h0NDLxS3j9GuxtUF4CHpY+EnFaY9d7pHHOIkb2OZAns=;
+ b=TL77VmqZ6PBbQBR4bgNU6G/GBf+MokTel3SnHpeiyO76m2Aa3yPOTu6R+dB+zSNQdVf0
+ vauYvasBECN30yo6TxYqKQQWZIAjO6aZidp1Miyn5dm7zEWYrzX0LLw2LpqMCzO1pos9
+ KJRAYmhEXNe1B1gOAAXspNV0Cy4WsPV/7NUjWRQRHndTlGhOVyyZMOjNbcS/mD9rQUWr
+ ik1MGKkBCkcVpz7MfGAvXqQdG9MJ6Oj8taMOoEYbToFfKpy4x2iZ1MOdqkVFKI7T47s6
+ ssFGg7FczNryUw10RQfmhakYWkoaQxq48dqQYUmJPo8bBeSB12lJkAw793nSRfnyjG5a FQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2wrapxfpn1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 09 Dec 2019 15:02:23 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1606D100038;
+        Mon,  9 Dec 2019 15:02:21 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EACFA2FF5F7;
+        Mon,  9 Dec 2019 15:02:20 +0100 (CET)
+Received: from lmecxl0912.lme.st.com (10.75.127.48) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 9 Dec
+ 2019 15:02:20 +0100
+Subject: Re: [PATCH V4 net-next 0/4] net: ethernet: stmmac: cleanup clock and
+ optimization
+To:     Christophe Roullier <christophe.roullier@st.com>,
+        <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
+        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <peppe.cavallaro@st.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <andrew@lunn.ch>
+References: <20191107084757.17910-1-christophe.roullier@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <5b1774f4-c0ec-030d-90a8-65b714545b9b@st.com>
+Date:   Mon, 9 Dec 2019 15:02:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20191107084757.17910-1-christophe.roullier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-09_04:2019-12-09,2019-12-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKw7xyZ2VuIEdyb8OfIDxqZ3Jv
-c3NAc3VzZS5jb20+DQo+IFNlbnQ6IDA5IERlY2VtYmVyIDIwMTkgMTM6NTgNCj4gVG86IER1cnJh
-bnQsIFBhdWwgPHBkdXJyYW50QGFtYXpvbi5jb20+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
-b3JnOw0KPiB4ZW4tZGV2ZWxAbGlzdHMueGVucHJvamVjdC5vcmcNCj4gQ2M6IEtvbnJhZCBSemVz
-enV0ZWsgV2lsayA8a29ucmFkLndpbGtAb3JhY2xlLmNvbT47IFJvZ2VyIFBhdSBNb25uw6kNCj4g
-PHJvZ2VyLnBhdUBjaXRyaXguY29tPjsgSmVucyBBeGJvZSA8YXhib2VAa2VybmVsLmRrPjsgQm9y
-aXMgT3N0cm92c2t5DQo+IDxib3Jpcy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT47IFN0ZWZhbm8gU3Rh
-YmVsbGluaSA8c3N0YWJlbGxpbmlAa2VybmVsLm9yZz4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCA0
-LzRdIHhlbi1ibGtiYWNrOiBzdXBwb3J0IGR5bmFtaWMgdW5iaW5kL2JpbmQNCj4gDQo+IE9uIDA1
-LjEyLjE5IDE1OjAxLCBQYXVsIER1cnJhbnQgd3JvdGU6DQo+ID4gQnkgc2ltcGx5IHJlLWF0dGFj
-aGluZyB0byBzaGFyZWQgcmluZ3MgZHVyaW5nIGNvbm5lY3RfcmluZygpIHJhdGhlciB0aGFuDQo+
-ID4gYXNzdW1pbmcgdGhleSBhcmUgZnJlc2hseSBhbGxvY2F0ZWQgKGkuZSBhc3N1bWluZyB0aGUg
-Y291bnRlcnMgYXJlIHplcm8pDQo+ID4gaXQgaXMgcG9zc2libGUgZm9yIHZiZCBpbnN0YW5jZXMg
-dG8gYmUgdW5ib3VuZCBhbmQgcmUtYm91bmQgZnJvbSBhbmQgdG8NCj4gPiAocmVzcGVjdGl2ZWx5
-KSBhIHJ1bm5pbmcgZ3Vlc3QuDQo+ID4NCj4gPiBUaGlzIGhhcyBiZWVuIHRlc3RlZCBieSBydW5u
-aW5nOg0KPiA+DQo+ID4gd2hpbGUgdHJ1ZTsgZG8gZGQgaWY9L2Rldi91cmFuZG9tIG9mPXRlc3Qu
-aW1nIGJzPTFNIGNvdW50PTEwMjQ7IGRvbmUNCj4gPg0KPiA+IGluIGEgUFYgZ3Vlc3Qgd2hpbHN0
-IHJ1bm5pbmc6DQo+ID4NCj4gPiB3aGlsZSB0cnVlOw0KPiA+ICAgIGRvIGVjaG8gdmJkLSRET01J
-RC0kVkJEID51bmJpbmQ7DQo+ID4gICAgZWNobyB1bmJvdW5kOw0KPiA+ICAgIHNsZWVwIDU7DQo+
-ID4gICAgZWNobyB2YmQtJERPTUlELSRWQkQgPmJpbmQ7DQo+ID4gICAgZWNobyBib3VuZDsNCj4g
-PiAgICBzbGVlcCAzOw0KPiA+ICAgIGRvbmUNCj4gPg0KPiA+IGluIGRvbTAgZnJvbSAvc3lzL2J1
-cy94ZW4tYmFja2VuZC9kcml2ZXJzL3ZiZCB0byBjb250aW51b3VzbHkgdW5iaW5kIGFuZA0KPiA+
-IHJlLWJpbmQgaXRzIHN5c3RlbSBkaXNrIGltYWdlLg0KPiANCj4gQ291bGQgeW91IGRvIHRoZSBz
-YW1lIHRlc3Qgd2l0aCBtaXhlZCByZWFkcy93cml0ZXMgYW5kIHZlcmlmaWNhdGlvbiBvZg0KPiB0
-aGUgcmVhZC93cml0dGVuIGRhdGEsIHBsZWFzZT8gQSB3cml0ZS1vbmx5IHRlc3QgaXMgbm90IF90
-aGF0Xw0KPiBjb252aW5jaW5nIHJlZ2FyZGluZyBjb3JyZWN0bmVzcy4gSXQgb25seSBwcm92ZXMg
-dGhlIGd1ZXN0IGlzIG5vdA0KPiBjcmFzaGluZy4NCg0KU3VyZS4gSSdsbCBmaW5kIHNvbWV0aGlu
-ZyB0aGF0IHdpbGwgdmVyaWZ5IGNvbnRlbnQuDQoNCj4gDQo+IEknbSBmaW5lIHdpdGggdGhlIGdl
-bmVyYWwgYXBwcm9hY2gsIHRob3VnaC4NCj4gDQoNCkNvb2wsIHRoYW5rcywNCg0KICBQYXVsDQoN
-Cj4gDQo+IEp1ZXJnZW4NCg==
+Hi Christophe
+
+On 11/7/19 9:47 AM, Christophe Roullier wrote:
+> Some improvements:
+>   - manage syscfg as optional clock,
+>   - update slew rate of ETH_MDIO pin,
+>   - Enable gating of the MAC TX clock during TX low-power mode
+> 
+> V4: Update with Andrew Lunn remark
+> 
+> Christophe Roullier (4):
+>    net: ethernet: stmmac: Add support for syscfg clock
+>    ARM: dts: stm32: remove syscfg clock on stm32mp157c ethernet
+>    ARM: dts: stm32: adjust slew rate for Ethernet
+>    ARM: dts: stm32: Enable gating of the MAC TX clock during TX low-power
+>      mode on stm32mp157c
+> 
+>   arch/arm/boot/dts/stm32mp157-pinctrl.dtsi     |  9 ++++++--
+>   arch/arm/boot/dts/stm32mp157c.dtsi            |  7 +++---
+>   .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 23 +++++++------------
+>   3 files changed, 18 insertions(+), 21 deletions(-)
+> 
+
+For DT patches:
+
+Applied on stm32-next.
+
+Thanks.
+Alex
