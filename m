@@ -2,83 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61372116533
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 04:05:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6489711652A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 04:02:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfLIDFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Dec 2019 22:05:15 -0500
-Received: from mga01.intel.com ([192.55.52.88]:31796 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbfLIDFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Dec 2019 22:05:14 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Dec 2019 19:05:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,294,1571727600"; 
-   d="scan'208";a="412614427"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Dec 2019 19:05:12 -0800
-Date:   Mon, 9 Dec 2019 10:45:27 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Will Deacon <will@kernel.org>
-Cc:     mdf@kernel.org, mark.rutland@arm.com, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        atull@kernel.org, gregkh@linuxfoundation.org
-Subject: Re: [PATCH v6 0/2] add performance reporting support to FPGA DFL
- drivers
-Message-ID: <20191209024527.GA22625@hao-dev>
-References: <1573622695-25607-1-git-send-email-hao.wu@intel.com>
- <20191125033412.GB890@hao-dev>
- <20191125080127.GC1809@willie-the-truck>
- <20191125080839.GA6227@hao-dev>
+        id S1726917AbfLIDCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Dec 2019 22:02:14 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39796 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbfLIDCO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Dec 2019 22:02:14 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 2so6441391pfx.6
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2019 19:02:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NbnsQ6ttBdh/Z/p6HKp+CY97QZQdRbJ9oPgvtM/X3Xk=;
+        b=UqR48An0tfqvHjq/UHrgSgERccvByqklZebNFmIzyHBPsp3DcP29jBrAtbNOopkKfp
+         fgJYRqkbswS/wiiDwlRCu3DJYHi/1aC//Zy5pTi7J0OVW6UHkFQKZXOcs+OMVTwtK2zT
+         obluGXLQTOk8bvwqXcwtul7vuclqcwztBHIDUmmnc4jA32ji14qcCudxPJavX6Irs/iT
+         PUm1NzQhqmvC5+C1y1+PTIgaRR/a57mBerAI5ECJp4b/kIyiLp5fkevyjAXT565pQ4QN
+         3dtTpLUAZBC+NYLXYkbGr1259qR2aIWtmgt2vwjdw27nKXRw2p7fG+R5AoY5rMjycuca
+         uz8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NbnsQ6ttBdh/Z/p6HKp+CY97QZQdRbJ9oPgvtM/X3Xk=;
+        b=j4GI/u/4LHQHBTrSlrOmaEH719g3QP+gWpSYUe1Zfw+4h0YYYRHanc3/KIZMAxmzg4
+         flQQc+HWR25FnPeNWdYmUO/9mQjkMkOXsp2QErFulVMKQE9MHGuZbgz1pw0dx+C2Z2kY
+         17JFE57Kd7e4sSAvqM91iZ8FqtEBNPZ2G+IoJnhLae1qdIqFtRs9y/hLp4cYHUrC4LPJ
+         8zaDoWd8C4RxH7ks04C2WgxdZVF5NSYtGi/RoT3cx4+/6ovbj6oUdhdffAF+/PYRu6hE
+         XoraMBw3+pDvy2shrneUxUm4MkIuTyjfx8wyeXS3SKu3oK4mbygh3W+EB4VZc47fMFft
+         6VXQ==
+X-Gm-Message-State: APjAAAV6vjLDzj4hwAmLrOP766w3PJJ9MVWKBzldTZDoq3ACEcVK+xgB
+        8Q9o8AmE5T4wHT6G6hk7INjeSNgdWqw=
+X-Google-Smtp-Source: APXvYqyFDl32R/rnwpVkKgrNnE1eRzlqR9wwFkEon9M0auaRUzwaRi9sgW8y2FSWf8RbQdA7tC4HnA==
+X-Received: by 2002:a62:382:: with SMTP id 124mr2496242pfd.11.1575860533827;
+        Sun, 08 Dec 2019 19:02:13 -0800 (PST)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id z19sm23401431pfn.49.2019.12.08.19.02.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 08 Dec 2019 19:02:13 -0800 (PST)
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     catalin.marinas@arm.com, will.deacon@arm.com, robh+dt@kernel.org,
+        frowand.list@gmail.com
+Cc:     james.morse@arm.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v3 0/2] arm64: kexec_file: add kdump
+Date:   Mon,  9 Dec 2019 12:03:43 +0900
+Message-Id: <20191209030345.5735-1-takahiro.akashi@linaro.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191125080839.GA6227@hao-dev>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 04:08:39PM +0800, Wu Hao wrote:
-> On Mon, Nov 25, 2019 at 08:01:28AM +0000, Will Deacon wrote:
-> > On Mon, Nov 25, 2019 at 11:34:12AM +0800, Wu Hao wrote:
-> > > Hi Will and Mark,
-> > > 
-> > > Could you please help us on review this patchset? as this patchset mainly 
-> > > introduced a new perf driver following the similar way as drivers/perf/*.
-> > 
-> > Why is it not under drivers/perf/, then?
-> 
-> Hi Will
-> 
-> Thanks for the quick response. This is one sub feature for DFL based FPGAs,
-> and we plan to put this sub feature together with others, including related
-> documentation. It only registers a standard perf pmu for its userspace
-> interfaces.
-> 
-> > 
-> > > This patchset has been submitted for a long time but didn't receive any
-> > > comment after v4. we appreciate any review comments! thanks in advance. :)
-> > 
-> > Hmm, not sure I saw the previous versions. Guessing I wasn't on cc?
-> 
-> We switched to perf API from v4, and started ccing you and Mark from v5. :)
+This is the last piece of my kexec_file_load implementation for arm64.
+It is now ready for being merged as some relevant patch to dtc/libfdt[1]
+has finally been integrated in v5.3-rc1.
+(Nothing changed since kexec_file v16[2] except adding Patch#1.)
 
-Hi Will
+Patch#1 is preliminary patches for libfdt component.
+Patch#2 is to add kdump support.
 
-Did you get a chance to look into this patchset?
+Bhepesh's patch[3] will be required for 52-bit VA support either against
+legacy kexec or kexec_file.
+Once this patch is applied, whether or not CONFIG_ARM64_VA_BITS_52 is
+enabled or not, a matching fix[4] on user space side, crash utility,
+will also be needed. 
+# NOTE:
+# As of v5.5-rc1, crash utility doesn't work due to the commit
+# b6e43c0e3129 ("arm64: remove __exception annotations").
+# But the fix is trivial and it won't affect this kernel patch.
 
-Thanks
-Hao
+Anyway, I tested my patch, at least, with the following configuration:
+1) CONFIG_ARM64_BITS_48=y
+2) CONFIG_ARM64_BITS_52=y, but vabits_actual=48
 
-> 
-> Thanks
-> Hao
-> 
-> > 
-> > Will
+(I don't have any platform to use for
+3) CONFIG_ARM64_BITS_52=y, and vabits_actual=52)
+
+[1] commit 9bb9c6a110ea ("scripts/dtc: Update to upstream version
+    v1.5.0-23-g87963ee20693"), in particular
+	7fcf8208b8a9 libfdt: add fdt_append_addrrange()
+[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-November/612641.html
+[3] http://lists.infradead.org/pipermail/linux-arm-kernel/2019-November/693411.html
+[4] https://www.redhat.com/archives/crash-utility/2019-November/msg00014.html
+
+Changes in v3 (Dec 9, 2019)
+* rebased to v5.5-rc1
+* remove v2's patch#2 as the same fix has been applied
+* Otherwise, no functional changes (since v1)
+
+Changes in v2 (Nov 14, 2019)
+* rebased to v5.4-rc7
+* no functional changes
+
+v1 (Sept 12, 2019)
+* on top of v5.3-rc8
+
+AKASHI Takahiro (2):
+  libfdt: include fdt_addresses.c
+  arm64: kexec_file: add crash dump support
+
+ arch/arm64/include/asm/kexec.h         |   4 +
+ arch/arm64/kernel/kexec_image.c        |   4 -
+ arch/arm64/kernel/machine_kexec_file.c | 106 ++++++++++++++++++++++++-
+ lib/Makefile                           |   2 +-
+ lib/fdt_addresses.c                    |   2 +
+ 5 files changed, 109 insertions(+), 9 deletions(-)
+ create mode 100644 lib/fdt_addresses.c
+
+-- 
+2.24.0
+
