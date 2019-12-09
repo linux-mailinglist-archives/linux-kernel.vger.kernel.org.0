@@ -2,233 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A424611783B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:18:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06CD2117846
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:19:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbfLIVSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 16:18:42 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41822 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbfLIVSl (ORCPT
+        id S1726932AbfLIVTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 16:19:05 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39994 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726780AbfLIVTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 16:18:41 -0500
-Received: by mail-pg1-f193.google.com with SMTP id x8so7736896pgk.8
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 13:18:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8sHrzINyOkYNGQIQ9XXaLWKRmil7He9/vhOTZUxiLLw=;
-        b=uW7KM0kdul8udjx+VGXxVZkx3nIsZrbTLdHzXY6E6egwpRT1L3B8lKi8xx53yKTK5g
-         c+s2jBB0b1IEkjhSwxqkUsz+gLchSAkiJyaBJXocl29G5xa1l+cK59XREHl4pxIXP9ZH
-         PVF2TUcOJl0o4+42k4numsNxHmTiYIsoRguDOzbNI/yxZCQCC3qU2oDA3h2S1kjGoDNG
-         ymJFefPu0zTuNc7eSegY4sWWQAEPFtKJat+jilFe2eTBqPsD2uEN/qKFFIGqn1K6K9Mm
-         FuKgtcfk9+yFAzlJV+SguKDnWBov3wK1LWXoHGTbvNqyMCwKjMHMhuocdS+fCTBCi2AP
-         qlcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8sHrzINyOkYNGQIQ9XXaLWKRmil7He9/vhOTZUxiLLw=;
-        b=GV4sJ9Kw9m832tYwwvcQV8ZRYF2PKmtDHzj9V4H4XWKjT9qE65q+JyB0gaAwDRupCS
-         hYOBs9BMobCLnbC0epQnPP7q4f8m9lYyzld1xeUHUwEagabNvjSashGSqmEp66XMC1UA
-         mhF+4mbaE4NDWfNoGTImSKiR85WqBXixvYHTXAHVePDip1WsDLy9tXMKvvugoMn3OBUr
-         6VOCS5olq6zbbN+zvHhDpc3r9ClvN6cwSRpU3zoH/SmEQbb+CFjq/jitY6JksCjNYrzP
-         or1haetqJzmRebT7HgBVL++wkYwfdGtg98f2GkcGe1905NuquE9gpkSSi7dsun7Qat/0
-         9Jeg==
-X-Gm-Message-State: APjAAAXMH54aTfJ5IiQ8K8/GpAVC5MmmVxfUXxN/UYjH3tdBojIbIZ3E
-        vdRKhOI4AolSEtR+eM1G89Q+e2MC823x+wg81giTjw==
-X-Google-Smtp-Source: APXvYqxsdIDMfz7N8k5QAyut9TYtchslk0l1X3EQIaFJPMPBYjWBQrkZ0ibJBDa/mh0YI1EgXFRT3s5C4jgAa2w+vuk=
-X-Received: by 2002:aa7:9151:: with SMTP id 17mr31823690pfi.3.1575926320653;
- Mon, 09 Dec 2019 13:18:40 -0800 (PST)
-MIME-Version: 1.0
-References: <20191209205010.4115-1-natechancellor@gmail.com> <20191209210328.18866-1-natechancellor@gmail.com>
-In-Reply-To: <20191209210328.18866-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 9 Dec 2019 13:18:29 -0800
-Message-ID: <CAKwvOd=GYWaoxQg_xH-gOHfqKeTZ_qaw35ucjFxcjd69AK+pyw@mail.gmail.com>
-Subject: Re: [PATCH v2] mtd: onenand_base: Adjust indentation in onenand_read_ops_nolock
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
+        Mon, 9 Dec 2019 16:19:04 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB9LHQaB062868
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Dec 2019 16:19:03 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wrt9xctb6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 16:19:02 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 9 Dec 2019 21:19:01 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 9 Dec 2019 21:18:57 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB9LIFHH44957952
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 9 Dec 2019 21:18:15 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE22F11C04C;
+        Mon,  9 Dec 2019 21:18:56 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3AEC011C050;
+        Mon,  9 Dec 2019 21:18:55 +0000 (GMT)
+Received: from dhcp-9-31-102-17.watson.ibm.com (unknown [9.31.102.17])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Dec 2019 21:18:55 +0000 (GMT)
+Subject: Re: One question about trusted key of keyring in Linux kernel.
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Bottomley <jejb@linux.ibm.com>
+Cc:     "Zhao, Shirley" <shirley.zhao@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "'Mauro Carvalho Chehab'" <mchehab+samsung@kernel.org>,
+        "Zhu, Bing" <bing.zhu@intel.com>,
+        "Chen, Luhai" <luhai.chen@intel.com>
+Date:   Mon, 09 Dec 2019 16:18:54 -0500
+In-Reply-To: <20191209194715.GD19243@linux.intel.com>
+References: <A888B25CD99C1141B7C254171A953E8E49096521@shsmsx102.ccr.corp.intel.com>
+         <1575057916.6220.7.camel@linux.ibm.com>
+         <A888B25CD99C1141B7C254171A953E8E4909BA3B@shsmsx102.ccr.corp.intel.com>
+         <1575260220.4080.17.camel@linux.ibm.com>
+         <A888B25CD99C1141B7C254171A953E8E4909D360@shsmsx102.ccr.corp.intel.com>
+         <1575267453.4080.26.camel@linux.ibm.com>
+         <A888B25CD99C1141B7C254171A953E8E4909E381@shsmsx102.ccr.corp.intel.com>
+         <1575269075.4080.31.camel@linux.ibm.com>
+         <A888B25CD99C1141B7C254171A953E8E4909E399@shsmsx102.ccr.corp.intel.com>
+         <1575312932.24227.13.camel@linux.ibm.com>
+         <20191209194715.GD19243@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19120921-0020-0000-0000-00000395FAE1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19120921-0021-0000-0000-000021ED3888
+Message-Id: <1575926334.4557.17.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-09_04:2019-12-09,2019-12-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ suspectscore=0 mlxscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ adultscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
+ mlxlogscore=879 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912090167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 1:04 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> ../drivers/mtd/nand/onenand/onenand_base.c:1269:3: warning: misleading
-> indentation; statement is not part of the previous 'if'
-> [-Wmisleading-indentation]
->         while (!ret) {
->         ^
-> ../drivers/mtd/nand/onenand/onenand_base.c:1266:2: note: previous
-> statement is here
->         if (column + thislen > writesize)
->         ^
-> 1 warning generated.
->
-> This warning occurs because there is a space before the tab of the while
-> loop. There are spaces at the beginning of a lot of the lines in this
-> block, remove them so that the indentation is consistent with the Linux
-> kernel coding style and clang no longer warns.
->
-> Fixes: a8de85d55700 ("[MTD] OneNAND: Implement read-while-load")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/794
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->
-> v1 -> v2:
->
-> * Clean up the block before the one that warns, which was added as part
->   of the fixes commit (Nick).
->
->  drivers/mtd/nand/onenand/onenand_base.c | 80 ++++++++++++-------------
->  1 file changed, 40 insertions(+), 40 deletions(-)
->
-> diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
-> index 77bd32a683e1..13c69eb021a6 100644
-> --- a/drivers/mtd/nand/onenand/onenand_base.c
-> +++ b/drivers/mtd/nand/onenand/onenand_base.c
-> @@ -1248,44 +1248,44 @@ static int onenand_read_ops_nolock(struct mtd_info *mtd, loff_t from,
->
->         stats = mtd->ecc_stats;
->
-> -       /* Read-while-load method */
-> +       /* Read-while-load method */
->
-> -       /* Do first load to bufferRAM */
-> -       if (read < len) {
-> -               if (!onenand_check_bufferram(mtd, from)) {
-> +       /* Do first load to bufferRAM */
-> +       if (read < len) {
-> +               if (!onenand_check_bufferram(mtd, from)) {
->                         this->command(mtd, ONENAND_CMD_READ, from, writesize);
-> -                       ret = this->wait(mtd, FL_READING);
-> -                       onenand_update_bufferram(mtd, from, !ret);
-> +                       ret = this->wait(mtd, FL_READING);
-> +                       onenand_update_bufferram(mtd, from, !ret);
->                         if (mtd_is_eccerr(ret))
->                                 ret = 0;
-> -               }
-> -       }
-> +               }
-> +       }
->
->         thislen = min_t(int, writesize, len - read);
->         column = from & (writesize - 1);
->         if (column + thislen > writesize)
->                 thislen = writesize - column;
->
-> -       while (!ret) {
-> -               /* If there is more to load then start next load */
-> -               from += thislen;
-> -               if (read + thislen < len) {
-> +       while (!ret) {
-> +               /* If there is more to load then start next load */
-> +               from += thislen;
-> +               if (read + thislen < len) {
->                         this->command(mtd, ONENAND_CMD_READ, from, writesize);
-> -                       /*
-> -                        * Chip boundary handling in DDP
-> -                        * Now we issued chip 1 read and pointed chip 1
-> +                       /*
-> +                        * Chip boundary handling in DDP
-> +                        * Now we issued chip 1 read and pointed chip 1
->                          * bufferram so we have to point chip 0 bufferram.
-> -                        */
-> -                       if (ONENAND_IS_DDP(this) &&
-> -                           unlikely(from == (this->chipsize >> 1))) {
-> -                               this->write_word(ONENAND_DDP_CHIP0, this->base + ONENAND_REG_START_ADDRESS2);
-> -                               boundary = 1;
-> -                       } else
-> -                               boundary = 0;
-> -                       ONENAND_SET_PREV_BUFFERRAM(this);
-> -               }
-> -               /* While load is going, read from last bufferRAM */
-> -               this->read_bufferram(mtd, ONENAND_DATARAM, buf, column, thislen);
-> +                        */
-> +                       if (ONENAND_IS_DDP(this) &&
-> +                           unlikely(from == (this->chipsize >> 1))) {
-> +                               this->write_word(ONENAND_DDP_CHIP0, this->base + ONENAND_REG_START_ADDRESS2);
-> +                               boundary = 1;
-> +                       } else
-> +                               boundary = 0;
-> +                       ONENAND_SET_PREV_BUFFERRAM(this);
-> +               }
-> +               /* While load is going, read from last bufferRAM */
-> +               this->read_bufferram(mtd, ONENAND_DATARAM, buf, column, thislen);
->
->                 /* Read oob area if needed */
->                 if (oobbuf) {
-> @@ -1302,23 +1302,23 @@ static int onenand_read_ops_nolock(struct mtd_info *mtd, loff_t from,
->                 }
->
->                 /* See if we are done */
+On Mon, 2019-12-09 at 21:47 +0200, Jarkko Sakkinen wrote:
+> On Mon, Dec 02, 2019 at 10:55:32AM -0800, James Bottomley wrote:
+> > blob but it looks like we need to fix the API.  I suppose the good news
+> > is given this failure that we have the opportunity to rewrite the API
+> > since no-one else can have used it for anything because of this.  The
+> 
+> I did successfully run this test when I wrote it 5 years ago:
+> 
+> https://github.com/jsakkine-intel/tpm2-scripts/blob/master/keyctl-smoke.sh
 
-With this applied, I see a missed instance right here ^ (L1304).
-In vim:
+Thanks, Jarkko.  Is this test still working or is there a regression?
 
+Mimi
 
-^ \t
-
-In my .vimrc, I set:
-https://github.com/nickdesaulniers/dotfiles/blob/37359525f5a403b4ed2d3f9d1bbbee2da8ec8115/.vimrc#L35-L41
-to make tabs glaringly visible.
-
-> -               read += thislen;
-> -               if (read == len)
-> -                       break;
-> -               /* Set up for next read from bufferRAM */
-> -               if (unlikely(boundary))
-> -                       this->write_word(ONENAND_DDP_CHIP1, this->base + ONENAND_REG_START_ADDRESS2);
-> -               ONENAND_SET_NEXT_BUFFERRAM(this);
-> -               buf += thislen;
-> +               read += thislen;
-> +               if (read == len)
-> +                       break;
-> +               /* Set up for next read from bufferRAM */
-> +               if (unlikely(boundary))
-> +                       this->write_word(ONENAND_DDP_CHIP1, this->base + ONENAND_REG_START_ADDRESS2);
-> +               ONENAND_SET_NEXT_BUFFERRAM(this);
-> +               buf += thislen;
->                 thislen = min_t(int, writesize, len - read);
-> -               column = 0;
-> -               cond_resched();
-> -               /* Now wait for load */
-> -               ret = this->wait(mtd, FL_READING);
-> -               onenand_update_bufferram(mtd, from, !ret);
-> +               column = 0;
-> +               cond_resched();
-> +               /* Now wait for load */
-> +               ret = this->wait(mtd, FL_READING);
-> +               onenand_update_bufferram(mtd, from, !ret);
->                 if (mtd_is_eccerr(ret))
->                         ret = 0;
-> -       }
-> +       }
->
->         /*
->          * Return success, if no ECC failures, else -EBADMSG
-> --
-> 2.24.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20191209210328.18866-1-natechancellor%40gmail.com.
-
-
-
--- 
-Thanks,
-~Nick Desaulniers
