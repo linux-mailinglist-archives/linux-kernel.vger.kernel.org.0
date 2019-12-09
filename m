@@ -2,31 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F03F117BAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 00:46:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C57117BAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 00:46:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbfLIXoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 18:44:15 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:52365 "EHLO
+        id S1727349AbfLIXoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 18:44:09 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:39823 "EHLO
         ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726743AbfLIXoJ (ORCPT
+        with ESMTP id S1727091AbfLIXoJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Dec 2019 18:44:09 -0500
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id B74DB2304C;
-        Tue, 10 Dec 2019 00:44:05 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 414D823061;
+        Tue, 10 Dec 2019 00:44:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1575935046;
+        t=1575935047;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=9SMg2Cu1zKUbHhX0qMmHr+reE8G5Mnme8ftIO8ll3Tc=;
-        b=c3kwm7J3TcRR4lGnhx6RbZC8PGIWULFe1MzSkuTgZuYJjskdkJXNfVRxFkjZuDwt9advkR
-        iUdRVYCJoE9zVYzZw3tRuFXLMrvgoAR2MsRohzbTmCH5dR3zW3w3ng7baP9zian0gEztox
-        d2wtzqceGFA+GyCD6YLXvLjZttYuk44=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=K66pbM+Fv3RvbrM97OMe2n8P9YUrIMeUwtk+G3iABdc=;
+        b=h8vjQ7b70YcaW9DXpZRNl9lHtaoFQvlc2kO31t4fa5Y68t021zz8Ymgo3ZcIn/WjxT4l3Q
+        bZyepj6vhKRuLHAY7GckJZHcQOGB4c0HqLz9YokxLZuAaJu+ZxpcXXRBwku/IWqJEMa/PG
+        CzdA0uZhuGhn/xTyOXAGT9EMIftoy4w=
 From:   Michael Walle <michael@walle.cc>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -35,10 +36,12 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
         Yuantian Tang <andy.tang@nxp.com>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 0/5] ls1028a: dts fixes and new board support
-Date:   Tue, 10 Dec 2019 00:43:45 +0100
-Message-Id: <20191209234350.18994-1-michael@walle.cc>
+Subject: [PATCH v2 1/5] arm64: dts: ls1028a: fix typo in TMU calibration data
+Date:   Tue, 10 Dec 2019 00:43:46 +0100
+Message-Id: <20191209234350.18994-2-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191209234350.18994-1-michael@walle.cc>
+References: <20191209234350.18994-1-michael@walle.cc>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spamd-Bar: ++++++
@@ -46,24 +49,24 @@ X-Spam-Level: ******
 X-Rspamd-Server: web
 X-Spam-Status: Yes, score=6.40
 X-Spam-Score: 6.40
-X-Rspamd-Queue-Id: B74DB2304C
+X-Rspamd-Queue-Id: 414D823061
 X-Spamd-Result: default: False [6.40 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
          TO_DN_SOME(0.00)[];
          R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
          BROKEN_CONTENT_TYPE(1.50)[];
+         DKIM_SIGNED(0.00)[];
          RCPT_COUNT_SEVEN(0.00)[9];
+         MID_CONTAINS_FROM(1.00)[];
+         NEURAL_HAM(-0.00)[-0.705];
          RCVD_COUNT_ZERO(0.00)[0];
          FROM_EQ_ENVFROM(0.00)[];
          MIME_TRACE(0.00)[0:+];
          ASN(0.00)[asn:31334, ipnet:2a02:810c::/31, country:DE];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         MID_CONTAINS_FROM(1.00)[];
-         NEURAL_HAM(-0.00)[-0.735];
          SUSPICIOUS_RECIPS(1.50)[]
 X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,56 +74,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds basic support for the Kontron SMARC-sAL28 board. It also
-adds missing nodes to the ls1028a base device tree which are used by the
-board.
+The temperature sensor may jump backwards because there is a wrong
+calibration value. Both values have to be monotonically increasing.
+Fix it.
 
-changes since v1:
- - dropped "arm64: dts: ls1028a: add FlexSPI node" in favor of:
-   https://lore.kernel.org/lkml/1575457098-18368-2-git-send-email-Ashish.Kumar@nxp.com/
-   Thus, this series now depends on that patch
- - better commit message for the TMU patch
- - added fixes tag to the TMU patch
- - document the LS1028A evaluation boards compatible strings
- - document the Kontron sl28 boards compatible strings
- - fix node names of the sl28 device tree(s)
- - removed device specific compatible string of the spi flash
- - rebased the patch series
- - integrate the RGMII configuration of the AR8031 PHY since the binding is
-   now already upstream
+This was tested on a custom board.
 
-This patchseries depends on:
- - [Patch v2 1/5] arm64: dts: ls1028a: Add FlexSPI support
-   https://lore.kernel.org/lkml/1575457098-18368-2-git-send-email-Ashish.Kumar@nxp.com/
- - [PATCH v2 1/2] dt-bindings: clock: document the fsl-sai driver
-   https://lore.kernel.org/lkml/20191209233305.18619-1-michael@walle.cc/
+Fixes: 571cebfe8e2b ("arm64: dts: ls1028a: Add Thermal Monitor Unit node")
+Signed-off-by: Michael Walle <michael@walle.cc>
+Acked-by: Tang Yuantian <andy.tang@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This patchseries superseeds:
- - [PATCH 0/4] ls1028a: dts fixes and new board support
-   https://lore.kernel.org/lkml/20191123201317.25861-1-michael@walle.cc/
- - [PATCH] arm64: dts: sl28: configure the RGMII PHY
-   https://lore.kernel.org/lkml/20191123202624.28093-1-michael@walle.cc/
-
-Michael Walle (5):
-  arm64: dts: ls1028a: fix typo in TMU calibration data
-  arm64: dts: ls1028a: add missing sai nodes
-  dt-bindings: arm: fsl: add LS1028A based boards
-  dt-bindings: arm: fsl: add Kontron sl28 boards
-  arm64: dts: freescale: add Kontron sl28 support
-
- .../devicetree/bindings/arm/fsl.yaml          |  45 +++++
- arch/arm64/boot/dts/freescale/Makefile        |   4 +
- .../fsl-ls1028a-kontron-kbox-a-230-ls.dts     |  27 +++
- .../fsl-ls1028a-kontron-sl28-var3-ads2.dts    | 106 +++++++++++
- .../fsl-ls1028a-kontron-sl28-var4.dts         |  50 +++++
- .../freescale/fsl-ls1028a-kontron-sl28.dts    | 174 ++++++++++++++++++
- .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |  44 ++++-
- 7 files changed, 449 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var4.dts
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 8e8a77eb596a..06082c932531 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -584,7 +584,7 @@
+ 					       0x00010004 0x0000003d
+ 					       0x00010005 0x00000045
+ 					       0x00010006 0x0000004d
+-					       0x00010007 0x00000045
++					       0x00010007 0x00000055
+ 					       0x00010008 0x0000005e
+ 					       0x00010009 0x00000066
+ 					       0x0001000a 0x0000006e
 -- 
 2.20.1
 
