@@ -2,163 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 651D8116715
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 07:51:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D61D411674E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 08:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfLIGvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 01:51:18 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:33747 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfLIGvS (ORCPT
+        id S1727143AbfLIHD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 02:03:29 -0500
+Received: from twhmllg3.macronix.com ([211.75.127.131]:63391 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbfLIHD2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 01:51:18 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191209065115epoutp039032ae6517f6368d5de254e114187bfc~eoU3SBzyy1887218872epoutp03m
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2019 06:51:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191209065115epoutp039032ae6517f6368d5de254e114187bfc~eoU3SBzyy1887218872epoutp03m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575874275;
-        bh=LsaN0pPFmyhAyZW+6JHxwgUFxLvFkNwwC3oQiQya+AE=;
-        h=To:Cc:From:Subject:Date:References:From;
-        b=RWETZMUDOXnScr9c1n5z09DcsdOekebdfCFuYhAi1ukX2p8OjwaAOF7somIejOakM
-         HdGoDc7oktTc4LexREx7IqzAGD0JJDetMPXDY+mn/VpeQnuz8HI/xfH8wsQ1JSJgJ4
-         8Q9D0us9H3Z3drjuW8JcAnKl3vxLFA0Tqf2x7tyI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191209065114epcas1p4324743c64ba1e4c979646c6ba9ab40af~eoU2c0Xlj1318713187epcas1p40;
-        Mon,  9 Dec 2019 06:51:14 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47WYkR1s4FzMqYm4; Mon,  9 Dec
-        2019 06:51:11 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        01.D6.51241.CDEEDED5; Mon,  9 Dec 2019 15:51:08 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191209065107epcas1p4eaa96dffa943add96359b15cbd4d3b62~eoUwaGp2O1318713187epcas1p4T;
-        Mon,  9 Dec 2019 06:51:07 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191209065107epsmtrp106228911c264ff9a3bd0728c5655ebf7~eoUwZXu7G2247022470epsmtrp1S;
-        Mon,  9 Dec 2019 06:51:07 +0000 (GMT)
-X-AuditID: b6c32a39-14bff7000001c829-ed-5dedeedc7476
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        26.08.10238.BDEEDED5; Mon,  9 Dec 2019 15:51:07 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191209065107epsmtip24612d5091e2456a0b4f131ca352b9d5e~eoUwN54da0746207462epsmtip28;
-        Mon,  9 Dec 2019 06:51:07 +0000 (GMT)
-To:     "Rafael J. Wysocki <rjw@rjwysocki.net>" <rjw@rjwysocki.net>
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
-        "Chanwoo Choi (samsung.com)" <cw00.choi@samsung.com>,
-        =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [GIT PULL] devfreq fixes for v5.5-rc2
-Organization: Samsung Electronics
-Message-ID: <f2f33725-5a73-0553-ef8a-52b192b80cfb@samsung.com>
-Date:   Mon, 9 Dec 2019 15:57:34 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Mon, 9 Dec 2019 02:03:28 -0500
+X-Greylist: delayed 1496 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Dec 2019 02:03:28 EST
+Received: from TWHMLLG3.macronix.com (localhost [127.0.0.2] (may be forged))
+        by TWHMLLG3.macronix.com with ESMTP id xB96cUFt082356
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Dec 2019 14:38:30 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from twhfmlp1.macronix.com (twhfm1p1.macronix.com [172.17.20.91])
+        by TWHMLLG3.macronix.com with ESMTP id xB96cNWv082301;
+        Mon, 9 Dec 2019 14:38:23 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
+        by Forcepoint Email with ESMTP id 83AF2D64DA588A20DB58;
+        Mon,  9 Dec 2019 14:38:23 +0800 (CST)
+In-Reply-To: <1f1a368a-e3d3-4e58-819e-b4dffc3212ef@ti.com>
+References: <1573808288-19365-1-git-send-email-masonccyang@mxic.com.tw> <1573808288-19365-4-git-send-email-masonccyang@mxic.com.tw> <1f1a368a-e3d3-4e58-819e-b4dffc3212ef@ti.com>
+To:     "Vignesh Raghavendra" <vigneshr@ti.com>
+Cc:     bbrezillon@kernel.org,
+        "Boris Brezillon" <boris.brezillon@bootlin.com>,
+        broonie@kernel.org, computersforpeace@gmail.com,
+        dwmw2@infradead.org, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        miquel.raynal@bootlin.com, richard@nod.at,
+        tudor.ambarus@microchip.com
+Subject: Re: [PATCH 3/4] mtd: spi-nor: Add Octal 8D-8D-8D mode support for Macronix
+ mx25uw51245g
 MIME-Version: 1.0
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SW0gUYRTH+XZmx9Hc+lq7nIxynYrS0nbStVG0EiUWMjHKHqpFBx102Ss7
-        q3R5yKK8kaZGSdtFo8Kyh2BbTIXYsLKWbprdKEtLw5TsfjEya8cx8u13zvkfzvl/36EJ9Ukq
-        lDZanYLDypsZKohsuhYRFdX9ftigLfEt46qfPiS5J18HlNzdve8CuK7W4xT3peI64p7vOUdx
-        d24/UK4J0Lsbyyi951EJqa/0NCL9F/f8DHKLKTFf4HMFh0aw5thyjda8JGbdxqyULF2clo1i
-        47mVjMbKW4QkJjUtI2qt0ezfgNEU8uYCfyqDF0Vm+apEh63AKWjybaIziRHsuWZ7vD1a5C1i
-        gTUvOsdmSWC12hU6vzDblN/jbkf2N3j7qb4xsggNqspRIA04FnofFynLURCtxs0IRjvGCDn4
-        jODd3k8KOfiOoGHfJfSvxVd+n5BYja8guPMjRBZ9QHDDe8xfoOkZeDWUfjRKeQJ3KMDr6QmQ
-        GigcCd63TymJQ3A0fN9foZR4Gg6HRyN94wNUeBV0j1aOa0i8EHrrT5ASz8Sbwde0b0IzHXxH
-        +8fzBJ4Nz/rrFDKHweXh44S8aBcFLZ8YmVPhZ3UFJXMIDN30BMgcCoMHiyd4F5z3XaekpQGX
-        IvB4O5RyIQa8Zw8pJGMEjoCLrcvldDi0/DqB5LlT4f23A0pJAlgFpcVqWbIAunpfKGSeA6dL
-        yihZooe6srAqFO6aZMY1yYxrkhnX/7n1iGxEswS7aMkTRNaum/zXbjR+m5Hxzaj9XlobwjRi
-        glWahGGDWskXijssbQhogpmhOlM9ZFCrcvkdOwWHLctRYBbENqTzv3U1ETozx+a/dKszi9Wt
-        iImJ4WLZOB3LMrNV9EinQY3zeKdgEgS74PjXp6ADQ4vQ9lNpPpNJt2hJfWPxPEPD7iO+qrVz
-        iwZ9nt+Zhy9c3PC66XRXUOWrAcpY13Ky5/BARXBz+s3+6drM2MIxsu9JZ2b3rZrsB1sfJ4bU
-        lp5JOLK0sxPPiv+4qGpj/dzB5MKv6UHJHxQvsznurLM2cPEBbkprynlz3zbd0FX3vZqrfzat
-        f8mQYj7PRhIOkf8Le/I3P7EDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSvO7td29jDfYu17OYeOMKi8X1L89Z
-        Lc42vWG3uLxrDpvF594jjBa3G1ewWZw5fYnVgd1j06pONo8tV9tZPPq2rGL0+LxJLoAlissm
-        JTUnsyy1SN8ugSvj/qZjjAVPBSoWPv7H0sD4kreLkZNDQsBE4mTXeWYQW0hgN6PEvu/8EHFJ
-        iWkXjwLFOYBsYYnDh4u7GLmASt4ySry/f4EJJC4iYC/R8SETJM4scIlJYtavTywgvWwCWhL7
-        X9xgA7GFBfQkvrX2soLY/AKKEld/PGYEsXkF7CTu/OkDq2ERUJF4sGAuWK+oQJjEziWPmSBq
-        BCVOznwCFmcWUJf4M+8SM4QtLnHryXwmCFteYvvbOcwTGAVnIWmZhaRlFpKWWUhaFjCyrGKU
-        TC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECI4ILc0djJeXxB9iFOBgVOLhrbB5GyvEmlhW
-        XJl7iFGCg1lJhHfJxFexQrwpiZVVqUX58UWlOanFhxilOViUxHmf5h2LFBJITyxJzU5NLUgt
-        gskycXBKNTDyPlv81M1Vo/LHfqFcY9GLpxkaP80+bN8YMtlnaoLnF8nPpz3lLReavn6p+/V1
-        XmF8153nSxLTReUVv8yU/WNzle+MT4TmxllFm7VX8gh5sWlVvLvuFqGv80gwWWleoVDmn69T
-        tYXF7+b8cn1pa5Ajp9zUssm0p7yrwOb7Vp9T2e++GKS02yixFGckGmoxFxUnAgAAW9AghAIA
-        AA==
-X-CMS-MailID: 20191209065107epcas1p4eaa96dffa943add96359b15cbd4d3b62
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191209065107epcas1p4eaa96dffa943add96359b15cbd4d3b62
-References: <CGME20191209065107epcas1p4eaa96dffa943add96359b15cbd4d3b62@epcas1p4.samsung.com>
+X-KeepSent: 5C924A21:8A6464DD-482584CB:00232656;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OF5C924A21.8A6464DD-ON482584CB.00232656-482584CB.002479DE@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Mon, 9 Dec 2019 14:38:25 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/12/09 PM 02:38:23,
+        Serialize complete at 2019/12/09 PM 02:38:23
+Content-Type: text/plain; charset="US-ASCII"
+X-MAIL: TWHMLLG3.macronix.com xB96cNWv082301
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Rafael,
 
-This is devfreq-fixes pull request for v5.5-rc2. I add detailed description of
-this pull request on the following tag. Please pull devfreq with following updates.
-- tag name : devfreq-fixes-for-5.5-rc2
+Hi Vignesh,
 
-Regards,
-Chanwoo Choi
+> > 
+> >  /*
+> > + * Read configuration register 2, returning its value in the
+> > + * location. Return the configuration register 2 value.
+> > + * Returns negative if error occurred.
+> > + */
+> > +static int read_cr2(struct spi_nor *nor, u32 addr)
+> 
+> Please prefix spi_nor_* for all new functions. 
+> Also, include manf name if its vendor specific.
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+okay, will fix it.
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+> 
+> > +{
+> > +   int ret;
+> > +
+> > +   if (nor->spimem) {
+> > +      struct spi_mem_op op =
+> > +         SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_RDCR2, 1),
+> > +               SPI_MEM_OP_ADDR(4, addr, 1),
+> > +               SPI_MEM_OP_DUMMY(4, 1),
+> > +               SPI_MEM_OP_DATA_IN(1, nor->bouncebuf, 1));
+> > +
+> > +      if (spi_nor_protocol_is_8_8_8(nor->read_proto)) {
+> > +         op.cmd.buswidth = 8;
+> > +         op.addr.buswidth = 8;
+> > +         op.dummy.buswidth = 8;
+> > +         op.data.buswidth = 8;
+> > +         op.cmd.nbytes = 2;
+> > +
+> > +         if (spi_nor_protocol_is_8D_8D_8D(nor->read_proto)) {
+> > +            op.dummy.nbytes *= 2;
+> > +            op.cmd.dtr = true;
+> > +            op.addr.dtr = true;
+> > +            op.dummy.dtr = true;
+> > +            op.data.dtr = true;
+> > +         }
+> > +
+> > +         if (nor->ext_cmd_mode == EXT_CMD_IS_INVERSE)
+> > +            op.cmd.ext_opcode = ~SPINOR_OP_RDCR2;
+> > +         else
+> > +            op.cmd.ext_opcode = SPINOR_OP_RDCR2;
+> > +      }
+> > +
+> > +      ret = spi_mem_exec_op(nor->spimem, &op);
+> > +   } else {
+> > +      ret = -ENOTSUPP;
+> > +   }
+> > +
+> > +   if (ret < 0) {
+> > +      dev_err(nor->dev, "error %d reading CR\n", ret);
+> > +      return ret;
+> > +   }
+> > +
+> > +   return nor->bouncebuf[0];
+> > +}
+> > +
+> > +/*
+> >   * Write configuration register 2 one byte
+> >   * Returns negative if error occurred.
+> >   */
+> > @@ -2275,10 +2325,72 @@ static int spi_nor_spansion_clear_sr_bp(struct 
+spi_nor *nor)
+> >     return 0;
+> >  }
+> > 
+> > +static void
+> > +spi_nor_set_read_settings(struct spi_nor_read_command *read,
+> > +           u8 num_mode_clocks,
+> > +           u8 num_wait_states,
+> > +           u8 opcode,
+> > +           enum spi_nor_protocol proto);
+> > +
+> > +static void
+> > +spi_nor_set_pp_settings(struct spi_nor_pp_command *pp,
+> > +         u8 opcode,
+> > +         enum spi_nor_protocol proto);
+> > +
+> > +static void
+> > +mx25uw51245g_default_init(struct spi_nor *nor)
+> > +{
+> > +   struct spi_nor_flash_parameter *params = &nor->params;
+> > +
+> > +   if (!(nor->spimem->spi->mode & (SPI_RX_OCTAL | SPI_TX_OCTAL)))
+> > +      return;
+> > +
+> > +   /* Octal 8S-8S-8S mode */
+> > +   params->hwcaps.mask |= SNOR_HWCAPS_OPI_FULL_STR;
+> > +   spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_8_8_8],
+> > +              0, 20, SPINOR_OP_READ_8_8_8,
+> > +              SNOR_PROTO_8_8_8);
+> > +
+> > +   spi_nor_set_pp_settings(&params->page_programs[SNOR_CMD_PP_8_8_8],
+> > +            SPINOR_OP_PP_8_8_8, SNOR_PROTO_8_8_8);
+> > +
+> > +   /* Octal 8D-8D-8D mode */
+> > +   params->hwcaps.mask |= SNOR_HWCAPS_OPI_FULL_DTR;
+> > +   spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_8D_8D_8D],
+> > +              0, 20, SPINOR_OP_READ_8D_8D_8D,
+> > +              SNOR_PROTO_8_8_8_DTR);
+> > +
+> > + 
+spi_nor_set_pp_settings(&params->page_programs[SNOR_CMD_PP_8D_8D_8D],
+> > +            SPINOR_OP_PP_8D_8D_8D, SNOR_PROTO_8_8_8_DTR);
+> > +
+> > +   nor->ext_cmd_mode = EXT_CMD_IS_INVERSE;
+> > +}
+> 
+> I don't see anything that is macronix specific here.. Can this be moved 
+to
+> generic code with information parsed from SFDP table?
 
-are available in the Git repository at:
+This mx25uw51245g device support SFDP command but returns an empty SFDP 
+page.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git tags/devfreq-fixes-for-5.5-rc2
+> 
+> > +
+> > +static void
+> > +mx25uw51245g_post_sfdp_fixups(struct spi_nor *nor)
+> > +{
+> > +   struct spi_nor_flash_parameter *params = &nor->params;
+> > +   u8 cr2;
+> > +
+> > +   cr2 = read_cr2(nor, CR2_REG0) & CR2_REG0_MODE_MASK;
+> > +
+> > +   if (params->hwcaps.mask & SNOR_HWCAPS_OPI_FULL_DTR)
+> > +      cr2 |= CR2_REG0_MODE_OPI_DTR;
+> > +   else if (params->hwcaps.mask & SNOR_HWCAPS_OPI_FULL_STR)
+> > +      cr2 |= CR2_REG0_MODE_OPI_STR;
+> > +
+> > +   write_cr2(nor, CR2_REG0, cr2);
+> > +}
+> > +
+> 
+> I see this as a misuse of sfdp_fixups hook:
+> 
+>  * @post_sfdp: called after SFDP has been parsed (is also called for SPI 
+NORs
+>  *             that do not support RDSFDP). Typically used to tweak 
+various
+>  *             parameters that could not be extracted by other means 
+(i.e.
+>  *             when information provided by the SFDP/flash_info tables 
+are
+>  *             incomplete or wrong).
+>  *
+> 
+> 
+> This should only tweak options parsed by SFDP and not be used to
+> configure flash to a different mode. Please add a separate function 
+> to do so. See https://patchwork.kernel.org/patch/10638085/
+> 
 
-for you to fetch changes up to 27dbc542f651ed09de910f274b32634904103774:
+okay.
+My idea is that device changed to 8D-8D-8D stateful mode after SFDP 
+parsed. 
+But if SFDP page table is broken in device and driver will just configure 
+the device into 8D-8D-8D mode directly.
 
-  PM / devfreq: Use PM QoS for sysfs min/max_freq (2019-12-09 12:19:16 +0900)
 
-----------------------------------------------------------------
+thanks for your time & comments.
 
-Update devfreq for 5.5-rc2
+Mason
 
-Detailed description for this pull request:
-1. Update devfreq core
-- Add PM QoS support for devfreq device with following QoS type. External user
-of devfreq device can request the minimum and maximum frequency according to
-their multiple requirements.
-: DEV_PM_QOS_MIN_FREQUENCY is used for requesting the minimum device frequency.
-: DEV_PM_QOS_MAX_FREQUENCY is used for requesting the maximum device frequency.
+CONFIDENTIALITY NOTE:
 
-- Use PM QoS interface when entering the min/max_freq via sysfs interface.
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
 
-- Add get_freq_range() helper function in order to get the final min/max
-frequency among the multiple requirements of min/max frequency.
+Macronix International Co., Ltd.
 
-- Fix the issue such as fixing the return value and modify code
-for more correct exception handling if error happen.
+=====================================================================
 
-----------------------------------------------------------------
 
-Leonard Crestez (6):
-      PM / devfreq: Fix devfreq_notifier_call returning errno
-      PM / devfreq: Set scaling_max_freq to max on OPP notifier error
-      PM / devfreq: Introduce get_freq_range helper
-      PM / devfreq: Don't fail devfreq_dev_release if not in list
-      PM / devfreq: Add PM QoS support
-      PM / devfreq: Use PM QoS for sysfs min/max_freq
 
- drivers/devfreq/devfreq.c | 273 ++++++++++++++++++++++++++++++++++------------
- include/linux/devfreq.h   |  14 ++-
- 2 files changed, 212 insertions(+), 75 deletions(-)
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
