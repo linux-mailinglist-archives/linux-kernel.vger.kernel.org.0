@@ -2,66 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE61411741B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:25:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D7E9117424
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:26:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfLISZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:25:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726354AbfLISZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:25:52 -0500
-Received: from localhost (unknown [5.29.147.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6DDB2077B;
-        Mon,  9 Dec 2019 18:25:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575915951;
-        bh=0x24JbKtdKPgiAN8s6OzmJaIhlnMzm4HgL/VS3/HRF0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZnGDGGKR61nsPfye0idSv4CQ458wRafaZkQmQZCr4nXClHZRBL14FF5hzcL+Iwr+5
-         hgKqXB4UAbwN8iFUPw+yFGaciUZ6nXVQwOXuO2IkSomP69aIOFbEOljPCDWfbrHpqd
-         RXE7T3sI5DbZKTd2gmfnMybXHlxuYQ7vJwugYwdw=
-Date:   Mon, 9 Dec 2019 20:25:47 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: [PATCH v2 2/2] IB/umem: use get_user_pages_fast() to pin DMA
- pages
-Message-ID: <20191209182547.GD67461@unreal>
-References: <20191204213603.464373-1-jhubbard@nvidia.com>
- <20191204213603.464373-3-jhubbard@nvidia.com>
+        id S1726677AbfLIS0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:26:31 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:37364 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726408AbfLIS0b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 13:26:31 -0500
+Received: (qmail 4869 invoked by uid 2102); 9 Dec 2019 13:26:30 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 9 Dec 2019 13:26:30 -0500
+Date:   Mon, 9 Dec 2019 13:26:30 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Jiri Kosina <jikos@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+cc:     syzbot <syzbot+ec5f884c4a135aa0dbb9@syzkaller.appspotmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        <linux-input@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: INFO: rcu detected stall in hub_event
+In-Reply-To: <Pine.LNX.4.44L0.1911251216350.1565-100000@iolanthe.rowland.org>
+Message-ID: <Pine.LNX.4.44L0.1912091318210.1462-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204213603.464373-3-jhubbard@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 01:36:03PM -0800, John Hubbard wrote:
-> And get rid of the mmap_sem calls, as part of that. Note
-> that get_user_pages_fast() will, if necessary, fall back to
-> __gup_longterm_unlocked(), which takes the mmap_sem as needed.
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  drivers/infiniband/core/umem.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
->
+On Mon, 25 Nov 2019, Alan Stern wrote:
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+> Jiri:
+> 
+> On Sat, 23 Nov 2019, Andrey Konovalov wrote:
+> 
+> > I'm not sure, but the stack trace reminds me of this issue, so this
+> > report might be related:
+> > 
+> > https://groups.google.com/d/msg/syzkaller-bugs/X0zVbh8aFEM/NsPcshjxBgAJ
+> 
+> No, the issue is quite different, although it is also a bug in the HID
+> parser.  The big problem is that the parser assumes all usages will
+> belong to a collection.
+> 
+> There's also a second, smaller bug: hid_apply_multipler() assumes every
+> Resolution Multiplier control is associated with a Logical Collection
+> (i.e., there's no way the routine can ever set multiplier_collection to
+> NULL) even though there's a big quotation from the HID Usage Table
+> manual at the start of the function saying that they don't have to be.  
+> This bug can be fixed easily, though.
+> 
+> The first bug is more troublesome.  hid_add_usage() explicitly sets the 
+> parser->local.collection_index[] entry to 0 if the current collection 
+> stack is empty.  But there's no way to distinguish this 0 from a 
+> genuine index value that happens to point to the first collection!
+> 
+> So what should happen when a usage appears outside of all collections?  
+> Is it a bug in the report descriptor (the current code suggests that it 
+> is not)?
+> 
+> Or should we use a different sentinel value for the collection_index[]
+> entry, one that cannot be confused with a genuine value, such as
+> UINT_MAX?
+
+On Tue, 26 Nov 2019, Jiri Kosina wrote:
+
+> Alan, did you get a test result from syzbot on this patch? My mailbox 
+> doesn't seem to have it.
+
+On Tue, 26 Nov 2019, syzbot wrote:
+
+> Hello,
+>
+> syzbot has tested the proposed patch and the reproducer did not trigger
+> crash:
+>
+> Reported-and-tested-by:
+> syzbot+ec5f884c4a135aa0dbb9@syzkaller.appspotmail.com
+
+Jiri:
+
+Now we've got the answer.  The current question is: What should I do
+with the patch?  It seems rather ad-hoc, not a proper solution to the
+problem.
+
+To refresh your memory, here is the patch that syzbot tested:
+
+ drivers/hid/hid-core.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+Index: usb-devel/drivers/hid/hid-core.c
+===================================================================
+--- usb-devel.orig/drivers/hid/hid-core.c
++++ usb-devel/drivers/hid/hid-core.c
+@@ -1057,6 +1057,8 @@ static void hid_apply_multiplier(struct
+ 	while (multiplier_collection->parent_idx != -1 &&
+ 	       multiplier_collection->type != HID_COLLECTION_LOGICAL)
+ 		multiplier_collection = &hid->collection[multiplier_collection->parent_idx];
++	if (multiplier_collection->type != HID_COLLECTION_LOGICAL)
++		multiplier_collection = NULL;
+ 
+ 	effective_multiplier = hid_calculate_multiplier(hid, multiplier);
+ 
+@@ -1191,6 +1193,9 @@ int hid_open_report(struct hid_device *d
+ 	}
+ 	device->collection_size = HID_DEFAULT_NUM_COLLECTIONS;
+ 
++	/* Needed for usages before the first collection */
++	device->collection[0].parent_idx = -1;
++
+ 	ret = -EINVAL;
+ 	while ((start = fetch_item(start, end, &item)) != NULL) {
+ 
+Alan Stern
+
