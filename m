@@ -2,129 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9B3511672C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 07:58:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 651D8116715
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 07:51:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfLIGza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 01:55:30 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:36001 "EHLO
+        id S1727109AbfLIGvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 01:51:18 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:33747 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbfLIGzJ (ORCPT
+        with ESMTP id S1726270AbfLIGvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 01:55:09 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191209065506epoutp03d19262c7a77947e81fd4b1d74364921d~eoYOzGlCE2191521915epoutp03_
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2019 06:55:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191209065506epoutp03d19262c7a77947e81fd4b1d74364921d~eoYOzGlCE2191521915epoutp03_
+        Mon, 9 Dec 2019 01:51:18 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191209065115epoutp039032ae6517f6368d5de254e114187bfc~eoU3SBzyy1887218872epoutp03m
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2019 06:51:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191209065115epoutp039032ae6517f6368d5de254e114187bfc~eoU3SBzyy1887218872epoutp03m
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575874506;
-        bh=BQMzFjXZUxAA/aGKbpc6LXqAXraXwtjNcNJwMrNXjDg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qIdMBItwr+Z3wsU8CcWpu7skJjZfoquCrD03/RWyT6mMEYMM1nGyoz8y2szFxa7Ab
-         VmsbiwhMf4a6heu+4SMwRnsN1K6mTYmw/DJjtVy8Z/z07BhEGvpwRxu+X/+GR19RvS
-         zyx5DXiJlIh1knXLhRB3DIe8W6ZiFH3/ue4aXxew=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191209065506epcas1p2a6ae4a51cecd9a810d7300b5a946e882~eoYOhwbd12291722917epcas1p2e;
-        Mon,  9 Dec 2019 06:55:06 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.163]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47WYpx0HCFzMqYkb; Mon,  9 Dec
-        2019 06:55:05 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FD.C8.48498.8CFEDED5; Mon,  9 Dec 2019 15:55:04 +0900 (KST)
+        s=mail20170921; t=1575874275;
+        bh=LsaN0pPFmyhAyZW+6JHxwgUFxLvFkNwwC3oQiQya+AE=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=RWETZMUDOXnScr9c1n5z09DcsdOekebdfCFuYhAi1ukX2p8OjwaAOF7somIejOakM
+         HdGoDc7oktTc4LexREx7IqzAGD0JJDetMPXDY+mn/VpeQnuz8HI/xfH8wsQ1JSJgJ4
+         8Q9D0us9H3Z3drjuW8JcAnKl3vxLFA0Tqf2x7tyI=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191209065114epcas1p4324743c64ba1e4c979646c6ba9ab40af~eoU2c0Xlj1318713187epcas1p40;
+        Mon,  9 Dec 2019 06:51:14 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 47WYkR1s4FzMqYm4; Mon,  9 Dec
+        2019 06:51:11 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        01.D6.51241.CDEEDED5; Mon,  9 Dec 2019 15:51:08 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191209065504epcas1p261e9cd0660deddb18d76684038c9b8fa~eoYM10z-F2289222892epcas1p2X;
-        Mon,  9 Dec 2019 06:55:04 +0000 (GMT)
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20191209065107epcas1p4eaa96dffa943add96359b15cbd4d3b62~eoUwaGp2O1318713187epcas1p4T;
+        Mon,  9 Dec 2019 06:51:07 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191209065504epsmtrp16a0d75588ba5ce063bf867195e5a2184~eoYM1LKIk2418724187epsmtrp1Y;
-        Mon,  9 Dec 2019 06:55:04 +0000 (GMT)
-X-AuditID: b6c32a36-a3dff7000001bd72-30-5dedefc8e4d9
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        20191209065107epsmtrp106228911c264ff9a3bd0728c5655ebf7~eoUwZXu7G2247022470epsmtrp1S;
+        Mon,  9 Dec 2019 06:51:07 +0000 (GMT)
+X-AuditID: b6c32a39-14bff7000001c829-ed-5dedeedc7476
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        68.48.10238.8CFEDED5; Mon,  9 Dec 2019 15:55:04 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191209065504epsmtip135698c2d1f76a7685c4bcd84b9b236c7~eoYMnWBLm1817618176epsmtip1B;
-        Mon,  9 Dec 2019 06:55:04 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH v6 13/13] MAINTAINERS: add exfat filesystem
-Date:   Mon,  9 Dec 2019 01:51:48 -0500
-Message-Id: <20191209065149.2230-14-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191209065149.2230-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTu5929u1qL63x0srB1IUJF3cPpTV0FPRgUJAkW2rKru0xzL3Zn
-        2AO0l8owbRBZWRGpYSY4zHcvm5ZF0ZNQM4xIzMRnURlGtO1q9d93vvN95xzOOSQm/YSHkblm
-        O2czs0aaCBC1dkfERj+amtDJx4eUzPHqRoK5fuOBH3P7zmMR87rzIsHMVhYyzb97cObV1LRo
-        o1h771KDWHtroIjQljfXI+3XpnCtu22cSMHTjck5HKvnbDLOnG3R55oNGnpbauamTHW8XBGt
-        WMck0DIza+I09ObtKdFbc42eKWjZAdaY76FSWJ6nY9cn2yz5dk6WY+HtGpqz6o1Whdwaw7Mm
-        Pt9siMm2mBIVcrlS7VHuM+Zc7dtt/Y4XdMz8FBWhItyB/Emg4sBZMejnQAGklGpHMHl0lBCC
-        Lwg+zJ0XCcF3BK5nLX4Llg5nPSYk7iDoa6kW/7V0HX/o8ZMkQUXBr+YQryGY2gA3q7p8lTDq
-        BIIrT2YxbyKISoLuphYfFlFroKt/WOz1SqhkmLtcIDRbBTdcXT6Jv4ceL7vvmxWoiwRUuaoI
-        QbQZnve8m8dBMNbbLBZwGHyuKPbVBOowzNzDBLoUwegPjYBVMNDowr0SjIqAxs5YgV4NHXOX
-        kBdj1FKY/FaGC1UkUFosFSRroPxV9/xKVoCjZHq+qRZq+9/gwkYqELx3tOKnUfiFfx2uIFSP
-        QjkrbzJwvMKq/P9eTcj3ZJHx7ejqs+1uRJGIXiKRJU7opDh7gD9ociMgMTpYUuMc00klevbg
-        Ic5mybTlGznejdSePTqxsJBsi+dlzfZMhVqpUqmYuPiEeLWKXiYhZ1/qpJSBtXN5HGflbAs+
-        P9I/rAjV7a9esSVROhvaGxJgV2552ldyyt2ZN9QHLsWMrqyO760ZdWRlpGUkzVTuTLsWRZ9f
-        VPviXPaSthR70mBu+bFOSjJdmNq/doTZw2gMgQ0foe3IG+PXrMC75pFTsGMlHb5x+eLHO/Df
-        BWdPut42iFp3xTbsrSxMODN85kJQOjj1tIjPYRWRmI1n/wCBSn/EegMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrALMWRmVeSWpSXmKPExsWy7bCSnO6J929jDea0SFk0L17PZrFy9VEm
-        iz17T7JYXN41h83ix/R6iy3/jrBaXHr/gcWB3WP/3DXsHrtvNrB59G1ZxejxeZOcx6Htb9gC
-        WKO4bFJSczLLUov07RK4MhZdjyj4xlqx8+NPlgbGBtYuRk4OCQETiZ0TVzF3MXJxCAnsZpTo
-        /XCeBSIhLXHsxBmgBAeQLSxx+HAxRM0HRol355+ygsTZBLQl/mwRBSkXEXCU6N11mAWkhlmg
-        i1HiUdM3ZpCEsIC1xOFNW8FsFgFViQM3nrCD9PIK2Ej8nlcBsUpeYvWGA2AlnEDhNz0HmUBs
-        IaDWqy+XMk5g5FvAyLCKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM43LQ0dzBeXhJ/
-        iFGAg1GJh7fC5m2sEGtiWXFl7iFGCQ5mJRHeJRNfxQrxpiRWVqUW5ccXleakFh9ilOZgURLn
-        fZp3LFJIID2xJDU7NbUgtQgmy8TBKdXAKJDzP0x9/71LC/Ozu+yiXYRymNPXLLDp/G+tnXVC
-        OzaBXdhqzS0XtU0d06UC9gYYnddmWLqw+9K9/Q8n6FxLY/n5Pk3o4udTZVNCk8NurF//6qik
-        k4xX9fZ10VcbZx9oXGB61OVuKlP+3vkfTf5FqZSevXBQ+de8jSkZfxYlTZm3wZq3xazwrhJL
-        cUaioRZzUXEiAD7uCVwzAgAA
-X-CMS-MailID: 20191209065504epcas1p261e9cd0660deddb18d76684038c9b8fa
+        26.08.10238.BDEEDED5; Mon,  9 Dec 2019 15:51:07 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191209065107epsmtip24612d5091e2456a0b4f131ca352b9d5e~eoUwN54da0746207462epsmtip28;
+        Mon,  9 Dec 2019 06:51:07 +0000 (GMT)
+To:     "Rafael J. Wysocki <rjw@rjwysocki.net>" <rjw@rjwysocki.net>
+Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
+        "Chanwoo Choi (samsung.com)" <cw00.choi@samsung.com>,
+        =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [GIT PULL] devfreq fixes for v5.5-rc2
+Organization: Samsung Electronics
+Message-ID: <f2f33725-5a73-0553-ef8a-52b192b80cfb@samsung.com>
+Date:   Mon, 9 Dec 2019 15:57:34 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
+MIME-Version: 1.0
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SW0gUYRTH+XZmx9Hc+lq7nIxynYrS0nbStVG0EiUWMjHKHqpFBx102Ss7
+        q3R5yKK8kaZGSdtFo8Kyh2BbTIXYsLKWbprdKEtLw5TsfjEya8cx8u13zvkfzvl/36EJ9Ukq
+        lDZanYLDypsZKohsuhYRFdX9ftigLfEt46qfPiS5J18HlNzdve8CuK7W4xT3peI64p7vOUdx
+        d24/UK4J0Lsbyyi951EJqa/0NCL9F/f8DHKLKTFf4HMFh0aw5thyjda8JGbdxqyULF2clo1i
+        47mVjMbKW4QkJjUtI2qt0ezfgNEU8uYCfyqDF0Vm+apEh63AKWjybaIziRHsuWZ7vD1a5C1i
+        gTUvOsdmSWC12hU6vzDblN/jbkf2N3j7qb4xsggNqspRIA04FnofFynLURCtxs0IRjvGCDn4
+        jODd3k8KOfiOoGHfJfSvxVd+n5BYja8guPMjRBZ9QHDDe8xfoOkZeDWUfjRKeQJ3KMDr6QmQ
+        GigcCd63TymJQ3A0fN9foZR4Gg6HRyN94wNUeBV0j1aOa0i8EHrrT5ASz8Sbwde0b0IzHXxH
+        +8fzBJ4Nz/rrFDKHweXh44S8aBcFLZ8YmVPhZ3UFJXMIDN30BMgcCoMHiyd4F5z3XaekpQGX
+        IvB4O5RyIQa8Zw8pJGMEjoCLrcvldDi0/DqB5LlT4f23A0pJAlgFpcVqWbIAunpfKGSeA6dL
+        yihZooe6srAqFO6aZMY1yYxrkhnX/7n1iGxEswS7aMkTRNaum/zXbjR+m5Hxzaj9XlobwjRi
+        glWahGGDWskXijssbQhogpmhOlM9ZFCrcvkdOwWHLctRYBbENqTzv3U1ETozx+a/dKszi9Wt
+        iImJ4WLZOB3LMrNV9EinQY3zeKdgEgS74PjXp6ADQ4vQ9lNpPpNJt2hJfWPxPEPD7iO+qrVz
+        iwZ9nt+Zhy9c3PC66XRXUOWrAcpY13Ky5/BARXBz+s3+6drM2MIxsu9JZ2b3rZrsB1sfJ4bU
+        lp5JOLK0sxPPiv+4qGpj/dzB5MKv6UHJHxQvsznurLM2cPEBbkprynlz3zbd0FX3vZqrfzat
+        f8mQYj7PRhIOkf8Le/I3P7EDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSvO7td29jDfYu17OYeOMKi8X1L89Z
+        Lc42vWG3uLxrDpvF594jjBa3G1ewWZw5fYnVgd1j06pONo8tV9tZPPq2rGL0+LxJLoAlissm
+        JTUnsyy1SN8ugSvj/qZjjAVPBSoWPv7H0sD4kreLkZNDQsBE4mTXeWYQW0hgN6PEvu/8EHFJ
+        iWkXjwLFOYBsYYnDh4u7GLmASt4ySry/f4EJJC4iYC/R8SETJM4scIlJYtavTywgvWwCWhL7
+        X9xgA7GFBfQkvrX2soLY/AKKEld/PGYEsXkF7CTu/OkDq2ERUJF4sGAuWK+oQJjEziWPmSBq
+        BCVOznwCFmcWUJf4M+8SM4QtLnHryXwmCFteYvvbOcwTGAVnIWmZhaRlFpKWWUhaFjCyrGKU
+        TC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECI4ILc0djJeXxB9iFOBgVOLhrbB5GyvEmlhW
+        XJl7iFGCg1lJhHfJxFexQrwpiZVVqUX58UWlOanFhxilOViUxHmf5h2LFBJITyxJzU5NLUgt
+        gskycXBKNTDyPlv81M1Vo/LHfqFcY9GLpxkaP80+bN8YMtlnaoLnF8nPpz3lLReavn6p+/V1
+        XmF8153nSxLTReUVv8yU/WNzle+MT4TmxllFm7VX8gh5sWlVvLvuFqGv80gwWWleoVDmn69T
+        tYXF7+b8cn1pa5Ajp9zUssm0p7yrwOb7Vp9T2e++GKS02yixFGckGmoxFxUnAgAAW9AghAIA
+        AA==
+X-CMS-MailID: 20191209065107epcas1p4eaa96dffa943add96359b15cbd4d3b62
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191209065504epcas1p261e9cd0660deddb18d76684038c9b8fa
-References: <20191209065149.2230-1-namjae.jeon@samsung.com>
-        <CGME20191209065504epcas1p261e9cd0660deddb18d76684038c9b8fa@epcas1p2.samsung.com>
+X-CMS-RootMailID: 20191209065107epcas1p4eaa96dffa943add96359b15cbd4d3b62
+References: <CGME20191209065107epcas1p4eaa96dffa943add96359b15cbd4d3b62@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add myself and Sungjong Seo as exfat maintainer.
+Dear Rafael,
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+This is devfreq-fixes pull request for v5.5-rc2. I add detailed description of
+this pull request on the following tag. Please pull devfreq with following updates.
+- tag name : devfreq-fixes-for-5.5-rc2
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8ecf4253d794..4523823ad5cc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6214,6 +6214,13 @@ F:	include/trace/events/mdio.h
- F:	include/uapi/linux/mdio.h
- F:	include/uapi/linux/mii.h
- 
-+EXFAT FILE SYSTEM
-+M:	Namjae Jeon <namjae.jeon@samsung.com>
-+M:	Sungjong Seo <sj1557.seo@samsung.com>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+F:	fs/exfat/
-+
- EXFAT FILE SYSTEM
- M:	Valdis Kletnieks <valdis.kletnieks@vt.edu>
- L:	linux-fsdevel@vger.kernel.org
--- 
-2.17.1
+Regards,
+Chanwoo Choi
 
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git tags/devfreq-fixes-for-5.5-rc2
+
+for you to fetch changes up to 27dbc542f651ed09de910f274b32634904103774:
+
+  PM / devfreq: Use PM QoS for sysfs min/max_freq (2019-12-09 12:19:16 +0900)
+
+----------------------------------------------------------------
+
+Update devfreq for 5.5-rc2
+
+Detailed description for this pull request:
+1. Update devfreq core
+- Add PM QoS support for devfreq device with following QoS type. External user
+of devfreq device can request the minimum and maximum frequency according to
+their multiple requirements.
+: DEV_PM_QOS_MIN_FREQUENCY is used for requesting the minimum device frequency.
+: DEV_PM_QOS_MAX_FREQUENCY is used for requesting the maximum device frequency.
+
+- Use PM QoS interface when entering the min/max_freq via sysfs interface.
+
+- Add get_freq_range() helper function in order to get the final min/max
+frequency among the multiple requirements of min/max frequency.
+
+- Fix the issue such as fixing the return value and modify code
+for more correct exception handling if error happen.
+
+----------------------------------------------------------------
+
+Leonard Crestez (6):
+      PM / devfreq: Fix devfreq_notifier_call returning errno
+      PM / devfreq: Set scaling_max_freq to max on OPP notifier error
+      PM / devfreq: Introduce get_freq_range helper
+      PM / devfreq: Don't fail devfreq_dev_release if not in list
+      PM / devfreq: Add PM QoS support
+      PM / devfreq: Use PM QoS for sysfs min/max_freq
+
+ drivers/devfreq/devfreq.c | 273 ++++++++++++++++++++++++++++++++++------------
+ include/linux/devfreq.h   |  14 ++-
+ 2 files changed, 212 insertions(+), 75 deletions(-)
