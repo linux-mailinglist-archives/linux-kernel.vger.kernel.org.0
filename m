@@ -2,65 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF22116F8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:50:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50ECA116F98
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:51:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfLIOu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 09:50:28 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45579 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbfLIOuX (ORCPT
+        id S1725956AbfLIOva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 09:51:30 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45227 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbfLIOv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:50:23 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j42so16459240wrj.12
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 06:50:21 -0800 (PST)
+        Mon, 9 Dec 2019 09:51:29 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 2so7336508pfg.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 06:51:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=v6i9DrODxvVzc7sEu1n26IoTawSzw3EOrGL5427sW0Q=;
-        b=qMW40Glimuk8RCsOpQuJ/pexDlbz4FJLVtFyjhBvedGJfjxS4yJweoEhUs42NkR8ym
-         ceaQO7flrjft3Ema57FQ4RUg5SaisdUyht8l2r3bp27a3Yqvf9KqWMFIb5hcuQD0MDck
-         6aTI0aVh5Kx5Gs/FBgPYx3Vvu043B0vg+XvmlVjhhNE/JHmgzKamOdPGvIxNv21VtyoU
-         YBqmv46iNclra+yjNW58pyG8B0uXyXVQM2HgfWVZlMvZMgNNKD8zTu5wRNc6W7Fsb2oH
-         sL+3hR/RGv9m+EYzbye8FGIEJijiVk6ee10zp4cGSW8cLTfwtxrCZ41IRcihwAKbQ30G
-         xo6g==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y+0hUIOuHNjYLITTiiOz7YncnUCd05TXc7UArDjIWPQ=;
+        b=MTVk39t+p3sutUs/EaeRJsE9LBl7uiMHkFMRLZd/nX+Pe2fsFUDRRmXx9l/V5Dj6aV
+         59Z9O3SSk0vvqJhbLLM3jWLWTQgC0a5FRwezfJhM/mgIXd7HIQAOSTSiq0SsZSItO1RV
+         LBTAWLNycc1s071U3sy9+SqAlBOMKjNrnU7mE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=v6i9DrODxvVzc7sEu1n26IoTawSzw3EOrGL5427sW0Q=;
-        b=gAdX1CrsE+izSrUQK9P9e9zXjCtl9y+Ky3pZ8/vfPyH+DkoXG4cgZLxr9IjcEQHal2
-         BLEyjf//Dyc0f21A+d/3m7q21cWC+YdeOd2ENEABsc4JGP/P/1uZkxgxCmhLkUZr1N7Z
-         CH2Jl8ri+/pEmKBh7XVTc0/rJDvy7IHE1OeZCba3s2AIImURCBtMyyv9MgbMLJr5rMCM
-         zLEIZbzsqBldpeoqtVfa3ZaN26XIaPOJYud2AM+mZodfy1ixzHwD2+oQQrvLey0ELA6A
-         XlWJPAvm2zmpSZMk7w8+IE1CKamrfBLiESufWicLQ7v5BhvKTD6AbRbKZIV2QSAoTxfV
-         BqOA==
-X-Gm-Message-State: APjAAAV6bKbd3YB6aNqMt56VRhWhlF4I9aTeIvsIoXpQJ0FaSUnwo7FR
-        nXOZ2ZQrDHxvClPO6eKObuw=
-X-Google-Smtp-Source: APXvYqycPV9EZHFU8VN58XAVcMErrL4NDZbeMSU6cPaHd0nxxJDiVJbBvYMs0iBbchsEY0d1dIwJOQ==
-X-Received: by 2002:adf:f6c8:: with SMTP id y8mr2576924wrp.167.1575903020783;
-        Mon, 09 Dec 2019 06:50:20 -0800 (PST)
-Received: from localhost (pD9E518ED.dip0.t-ipconnect.de. [217.229.24.237])
-        by smtp.gmail.com with ESMTPSA id a16sm26990396wrt.37.2019.12.09.06.50.19
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y+0hUIOuHNjYLITTiiOz7YncnUCd05TXc7UArDjIWPQ=;
+        b=jw9/l9re5YzxBVbqo5i6BlC9yWQ6Pio3fS1G6QUtoCJ+vJoyyBTl7Xj8BhowSP/8Rt
+         j1ZyRU9vTCMY5Kk/BkCfyI6LOa5YwWFCu9rFFzWqygqk/q/Ie6EsEAgBawGoNnBuota0
+         XStNxwQkZspxAOGvOB48OwA5Hmo0A/TYYFUQCDBhVPXYLeEdW2z22GhvokTWGiHqkL7z
+         dSqvXmgoVCBoIGpKRFGQS9iqn17wR5WoANE+0kVifLRDbjs7H3b3/6yjQr/9G4aKtjUh
+         X9rWl+Rr3v1wiv+k61Mhxy/QbL9QsB1b7aF+kIWCleaEUETx9LClNABLvp2bJcPaTrZV
+         FKhg==
+X-Gm-Message-State: APjAAAVvP/mH04fOFkhB8C5DUCpHahT/KKeWHB3Vo688j6QWDnnBWyB+
+        q4IwwGSJHqaAdX7WNMP1Qdw5JQ==
+X-Google-Smtp-Source: APXvYqywaG4WX0pSxF4HCeSSMFbKbY3wDRtmsG50dx44TU1Ypx6sq4Pk+CTzkgbiq0kZiYkp7z8Gbw==
+X-Received: by 2002:a63:1101:: with SMTP id g1mr18531573pgl.435.1575903089059;
+        Mon, 09 Dec 2019 06:51:29 -0800 (PST)
+Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
+        by smtp.gmail.com with ESMTPSA id k16sm29143119pfh.97.2019.12.09.06.51.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 06:50:19 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] iommu: virtio: Use iommu_put_resv_regions_simple()
-Date:   Mon,  9 Dec 2019 15:50:07 +0100
-Message-Id: <20191209145007.2433144-6-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191209145007.2433144-1-thierry.reding@gmail.com>
-References: <20191209145007.2433144-1-thierry.reding@gmail.com>
+        Mon, 09 Dec 2019 06:51:28 -0800 (PST)
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+To:     dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Archit Taneja <architt@codeaurora.org>, p.zabel@pengutronix.de,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: [PATCH RESEND 0/4] drm: bridge: anx7688 and an optional feature
+Date:   Mon,  9 Dec 2019 22:50:12 +0800
+Message-Id: <20191209145016.227784-1-hsinyi@chromium.org>
+X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,66 +69,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+[Resend to cc more reviewers]
 
-Use the new standard function instead of open-coding it.
+This series is to add anx7688 bridge driver. It is extended from
+previous work[1].
 
-Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc: virtualization@lists.linux-foundation.org
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- change subject prefix to 'iommu: virt:' to 'iommu: virtio:'
+The first 2 patches are same as previous version, with some modification
+due to drm core function changes and use regmap abstraction.
 
- drivers/iommu/virtio-iommu.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+We add an optional feature bypass-gpios so that driver can decide if it serves
+as simple pass-thru by reading GPIO values, which is controlled by
+hardware.
 
-diff --git a/drivers/iommu/virtio-iommu.c b/drivers/iommu/virtio-iommu.c
-index 315c7cc4f99d..834e56a28d4d 100644
---- a/drivers/iommu/virtio-iommu.c
-+++ b/drivers/iommu/virtio-iommu.c
-@@ -837,14 +837,6 @@ static void viommu_get_resv_regions(struct device *dev, struct list_head *head)
- 	iommu_dma_get_resv_regions(dev, head);
- }
- 
--static void viommu_put_resv_regions(struct device *dev, struct list_head *head)
--{
--	struct iommu_resv_region *entry, *next;
--
--	list_for_each_entry_safe(entry, next, head, list)
--		kfree(entry);
--}
--
- static struct iommu_ops viommu_ops;
- static struct virtio_driver virtio_iommu_drv;
- 
-@@ -914,7 +906,7 @@ static int viommu_add_device(struct device *dev)
- err_unlink_dev:
- 	iommu_device_unlink(&viommu->iommu, dev);
- err_free_dev:
--	viommu_put_resv_regions(dev, &vdev->resv_regions);
-+	iommu_put_resv_regions_simple(dev, &vdev->resv_regions);
- 	kfree(vdev);
- 
- 	return ret;
-@@ -932,7 +924,7 @@ static void viommu_remove_device(struct device *dev)
- 
- 	iommu_group_remove_device(dev);
- 	iommu_device_unlink(&vdev->viommu->iommu, dev);
--	viommu_put_resv_regions(dev, &vdev->resv_regions);
-+	iommu_put_resv_regions_simple(dev, &vdev->resv_regions);
- 	kfree(vdev);
- }
- 
-@@ -961,7 +953,7 @@ static struct iommu_ops viommu_ops = {
- 	.remove_device		= viommu_remove_device,
- 	.device_group		= viommu_device_group,
- 	.get_resv_regions	= viommu_get_resv_regions,
--	.put_resv_regions	= viommu_put_resv_regions,
-+	.put_resv_regions	= iommu_put_resv_regions_simple,
- 	.of_xlate		= viommu_of_xlate,
- };
- 
+[1] https://lore.kernel.org/lkml/1467013727-11482-1-git-send-email-drinkcat@chromium.org/
+
+Hsin-Yi Wang (2):
+  dt-bindings: drm/bridge: analogix-anx78xx: support bypass GPIO
+  drm: bridge: anx7688: Support bypass GPIO feature
+
+Nicolas Boichat (2):
+  dt-bindings: drm/bridge: analogix-anx7688: Add ANX7688 transmitter
+    binding
+  drm: bridge: anx7688: Add anx7688 bridge driver support.
+
+ .../bindings/display/bridge/anx7688.txt       |  70 +++++
+ drivers/gpu/drm/bridge/Kconfig                |   9 +
+ drivers/gpu/drm/bridge/Makefile               |   1 +
+ drivers/gpu/drm/bridge/analogix-anx7688.c     | 260 ++++++++++++++++++
+ 4 files changed, 340 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/anx7688.txt
+ create mode 100644 drivers/gpu/drm/bridge/analogix-anx7688.c
+
 -- 
-2.23.0
+2.24.0.393.g34dc348eaf-goog
 
