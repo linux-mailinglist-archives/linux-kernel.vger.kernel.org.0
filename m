@@ -2,99 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B29E011754B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C4F117575
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:16:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfLITOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 14:14:06 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:56032 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726365AbfLITOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 14:14:05 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ieOTk-00025q-NL; Mon, 09 Dec 2019 12:13:57 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ieOTd-0001Mv-Me; Mon, 09 Dec 2019 12:13:49 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Date:   Mon,  9 Dec 2019 12:13:46 -0700
-Message-Id: <20191209191346.5197-7-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191209191346.5197-1-logang@deltatee.com>
-References: <20191209191346.5197-1-logang@deltatee.com>
+        id S1726810AbfLITQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 14:16:44 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36889 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfLITQo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 14:16:44 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c23so905169plz.4;
+        Mon, 09 Dec 2019 11:16:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g6zkbUlOTbCJgJvtgyfcRvZ9zBUSaegJ3s+RiDC5Ad0=;
+        b=unKWnoTKSfnJJm1wX5W0WtEgOJP17vgC3lyn9GZeAwFzEdge0FJEz7VDfikYXfURg3
+         rHqFi6fYx/+LvIrg2r674tEKM2b5+LBATNDrrMOy6X/fM6Rki1SGB7CAbG0dc1fIf5KS
+         9G40qWgW+zgXlePk+DnyEed9vE95WChckeJjyYUUp46lL97x8hCVqWBsM2/hqPVRRFhj
+         1CDqcM5dP9rX4vKmIW1Y/DMiRQ0pf5HlluyGJ5oEKrmrcoi/s3rzmYjqeyV7YO0Zfb0J
+         vzgNXlgEBUNZbelb4rUVcEjXjXJQYOHJG+/busl0aM1uwfac0pPwn3SDZRANBJtsP3c7
+         Qi0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g6zkbUlOTbCJgJvtgyfcRvZ9zBUSaegJ3s+RiDC5Ad0=;
+        b=X0wqtQlO1+fvMMSMOSpAFH4d9KOE6olo/EC46fZhFRPyaUAgMCgDx/TJ6o8f0knViD
+         Ua2pSLmjrw7QVGLA6LkDL+yZgMOm24xztNcmBalPZsIxSzpiHI0EtzFmT/YIXHeEoaQy
+         ioqqNctTCvCeHjHCN6BXxXvgoxExnZCFesgvLvq3FnoqvaGi6bPFjQX4Ga83NtWoo5AS
+         PlRlyXsKBELQ9I/MMpKldUI09qh+J4bISwFkm6ZXpHjp+r2yWDcMAcTf5TdLnmFMZ52o
+         4hMRASoaLyz1LEbXH+JA2K42c+FNsX0XSPJ2s/p1Ij8wzCGiYBQsum8lpO1vWbe2j+Yf
+         M0iw==
+X-Gm-Message-State: APjAAAX7PpCqYnlg5vAKFi7w2hWoOAQS6aQIwcP0COwiWF3ylZSYisDn
+        n/dBA+/rAmMsS71eex6OksiI03DTbAyLi1rrvtg=
+X-Google-Smtp-Source: APXvYqzmO5ZwJe89134XQysUWnxbYrefIYWkIAKfadLFNeaTKhmTWOJOn2cyMCgxk7sOKdftvlSnleyzvodYcnlnGw4=
+X-Received: by 2002:a17:902:8d96:: with SMTP id v22mr10761896plo.262.1575919003068;
+ Mon, 09 Dec 2019 11:16:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-mm@kvack.org, hch@lst.de, dan.j.williams@intel.com, akpm@linux-foundation.org, catalin.marinas@arm.com, benh@kernel.crashing.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, will@kernel.org, luto@kernel.org, peterz@infradead.org, logang@deltatee.com, jgg@ziepe.ca
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        MYRULES_NO_TEXT autolearn=no autolearn_force=no version=3.4.2
-Subject: [PATCH 6/6] mm/memremap: Set caching mode for PCI P2PDMA memory to WC
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20191209185343.215893-1-stephan@gerhold.net>
+In-Reply-To: <20191209185343.215893-1-stephan@gerhold.net>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 9 Dec 2019 21:16:33 +0200
+Message-ID: <CAHp75VfA89iw1nSp1+zY3huRds0mkM-cEZdtJFdFJK-OXVJjew@mail.gmail.com>
+Subject: Re: [PATCH] NFC: nxp-nci: Fix probing without ACPI
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?Q?Cl=C3=A9ment_Perrochaud?= 
+        <clement.perrochaud@effinnov.com>,
+        Charles Gorand <charles.gorand@effinnov.com>,
+        linux-nfc@lists.01.org, netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI BAR IO memory should never be mapped as WB, however prior to this
-the PAT bits were set WB and it was typically overridden by MTRR
-registers set by the firmware.
+On Mon, Dec 9, 2019 at 8:57 PM Stephan Gerhold <stephan@gerhold.net> wrote:
+>
+> devm_acpi_dev_add_driver_gpios() returns -ENXIO if CONFIG_ACPI
+> is disabled (e.g. on device tree platforms).
+> In this case, nxp-nci will silently fail to probe.
+>
+> The other NFC drivers only log a debug message if
+> devm_acpi_dev_add_driver_gpios() fails.
+> Do the same in nxp-nci to fix this problem.
+>
 
-Set PCI P2PDMA memory to be WC (writecombining) as the only current
-user (the NVMe CMB) was originally mapped WC before the P2PDMA code
-replaced the mapping with devm_memremap_pages().
+Ah, thanks!
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Future use-cases may need to generalize this by adding flags to
-select the caching type, as some P2PDMA cases will not want WC.
-However, those use-cases are not upstream yet and this can be changed
-when they arrive.
+> Fixes: ad0acfd69add ("NFC: nxp-nci: Get rid of code duplication in ->probe()")
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+> ---
+>  drivers/nfc/nxp-nci/i2c.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/nfc/nxp-nci/i2c.c b/drivers/nfc/nxp-nci/i2c.c
+> index 4d1909aecd6c..9f60e4dc5a90 100644
+> --- a/drivers/nfc/nxp-nci/i2c.c
+> +++ b/drivers/nfc/nxp-nci/i2c.c
+> @@ -278,7 +278,7 @@ static int nxp_nci_i2c_probe(struct i2c_client *client,
+>
+>         r = devm_acpi_dev_add_driver_gpios(dev, acpi_nxp_nci_gpios);
+>         if (r)
+> -               return r;
+> +               dev_dbg(dev, "Unable to add GPIO mapping table\n");
+>
+>         phy->gpiod_en = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
+>         if (IS_ERR(phy->gpiod_en)) {
+> --
+> 2.24.0
+>
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- mm/memremap.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 4edcca074e15..ced32593e4a7 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -187,7 +187,10 @@ void *memremap_pages(struct dev_pagemap *pgmap, int nid)
- 		}
- 		break;
- 	case MEMORY_DEVICE_DEVDAX:
-+		need_devmap_managed = false;
-+		break;
- 	case MEMORY_DEVICE_PCI_P2PDMA:
-+		pgprot = pgprot_writecombine(pgprot);
- 		need_devmap_managed = false;
- 		break;
- 	default:
 -- 
-2.20.1
-
+With Best Regards,
+Andy Shevchenko
