@@ -2,95 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C52116FA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:52:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFFD116FAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:53:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfLIOwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 09:52:09 -0500
-Received: from mail.manjaro.org ([176.9.38.148]:55212 "EHLO manjaro.org"
+        id S1726358AbfLIOxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 09:53:16 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:46588 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726598AbfLIOwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:52:09 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by manjaro.org (Postfix) with ESMTP id ED77136E3C6B;
-        Mon,  9 Dec 2019 15:52:06 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at manjaro.org
-Received: from manjaro.org ([127.0.0.1])
-        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ROUn39D3oXYX; Mon,  9 Dec 2019 15:52:04 +0100 (CET)
-From:   Tobias Schramm <t.schramm@manjaro.org>
-Subject: Re: [RFCv1 0/8] RK3399 clean shutdown issue
-To:     Peter Geis <pgwipeout@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     Anand Moon <linux.amoon@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Daniel Schultz <d.schultz@phytec.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-References: <20191206184536.2507-1-linux.amoon@gmail.com>
- <724aa7db-3838-16f9-d344-1789ae2a5746@arm.com>
- <CAMdYzYoZY5gau=DGtPhk9CPV_WcyM4wjR9o+rPyaQfOzoy2Y=Q@mail.gmail.com>
-Message-ID: <5baf8423-8aa6-21a4-b066-71e3d12330cd@manjaro.org>
-Date:   Mon, 9 Dec 2019 15:51:04 +0100
+        id S1726230AbfLIOxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 09:53:14 -0500
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.lan)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ieKPN-0001Ca-En; Mon, 09 Dec 2019 15:53:09 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     linux-rockchip@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, heiko@sntech.de,
+        christoph.muellner@theobroma-systems.com,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Subject: [PATCH 1/2] arm64: dts: rockchip: add core dsi components for px30
+Date:   Mon,  9 Dec 2019 15:53:00 +0100
+Message-Id: <20191209145301.5307-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <CAMdYzYoZY5gau=DGtPhk9CPV_WcyM4wjR9o+rPyaQfOzoy2Y=Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 
-> On Mon, Dec 9, 2019 at 8:29 AM Robin Murphy <robin.murphy@arm.com> wrote:
->> On 06/12/2019 6:45 pm, Anand Moon wrote:
->>> Most of the RK3399 SBC boards do not perform clean
->>> shutdown and clean reboot.
->> FWIW reboot problems on RK3399 have been tracked down to issues in
->> upstream ATF, and are unrelated to the PMIC.
->>
->>> These patches try to help resolve the issue with proper
->>> shutdown by turning off the PMIC.
->> As mentioned elsewhere[1], although this is what the BSP kernel seems to
->> do, and in practice it's unlikely to matter for the majority of devboard
->> users like you and me, I still feel a bit uncomfortable with this
->> solution for systems using ATF as in principle the secure world might
->> want to know about orderly shutdowns, and this effectively makes every
->> shutdown an unexpected power loss from secure software's point of view.
->>
->> Robin.
-> Since ATF is operating completely in volatile memory, and shouldn't be
-> touching hardware once it passes off control to the kernel anyways,
-> what is the harm of pulling the rug out from under it?
-> If this idea is to prevent issues in the future, such as if ATF does
-> gain the ability to preempt hardware control, then at that time ATF
-> will need to be able to handle actually powering off devices using the
-> same functionality.
+This adds the dw-mipi-dsi controller and the external dsi-dphy
+and hooks them into the display-subsystem on px30.
 
-As far as I know ATF implements PSCI, doesn't it? Thus I would assume 
-that it should most definitely handle power off for all platforms as 
-indicated by the presence of platform handlers in [1].
+Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+---
+ arch/arm64/boot/dts/rockchip/px30.dtsi | 61 ++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-> But as we discussed previously, ATF doesn't have this capability, so
-> in this case any board without a dedicated power-off gpio will be
-> unable to power off at all.
-> Also it seems that giving ATF this functionality, with the current
-> state of ATF, would be cost prohibitive.
->
-> I personally feel that allowing the kernel to do this is a solution to
-> the problem we have now.
-
-Maybe I'm missing something here but I'd suggest that implementing an 
-i2c driver in the rockchip platform part of ATF using libfdt to find the 
-PMIC from the devicetree would be the way to go.
-
-[1] 
-https://github.com/ARM-software/arm-trusted-firmware/blob/master/lib/psci/psci_system_off.c#L31
+diff --git a/arch/arm64/boot/dts/rockchip/px30.dtsi b/arch/arm64/boot/dts/rockchip/px30.dtsi
+index c31423f36192..ff53cc56f80f 100644
+--- a/arch/arm64/boot/dts/rockchip/px30.dtsi
++++ b/arch/arm64/boot/dts/rockchip/px30.dtsi
+@@ -820,6 +820,19 @@ u2phy_otg: otg-port {
+ 		};
+ 	};
+ 
++	dsi_dphy: phy@ff2e0000 {
++		compatible = "rockchip,px30-dsi-dphy";
++		reg = <0x0 0xff2e0000 0x0 0x10000>;
++		clocks = <&pmucru SCLK_MIPIDSIPHY_REF>, <&cru PCLK_MIPIDSIPHY>;
++		clock-names = "ref", "pclk";
++		#clock-cells = <0>;
++		resets = <&cru SRST_MIPIDSIPHY_P>;
++		reset-names = "apb";
++		#phy-cells = <0>;
++		power-domains = <&power PX30_PD_VO>;
++		status = "disabled";
++	};
++
+ 	usb20_otg: usb@ff300000 {
+ 		compatible = "rockchip,px30-usb", "rockchip,rk3066-usb",
+ 			     "snps,dwc2";
+@@ -943,6 +956,44 @@ gpu: gpu@ff400000 {
+ 		status = "disabled";
+ 	};
+ 
++	dsi: dsi@ff450000 {
++		compatible = "rockchip,px30-mipi-dsi";
++		reg = <0x0 0xff450000 0x0 0x10000>;
++		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru PCLK_MIPI_DSI>;
++		clock-names = "pclk";
++		resets = <&cru SRST_MIPIDSI_HOST_P>;
++		reset-names = "apb";
++		phys = <&dsi_dphy>;
++		phy-names = "dphy";
++		power-domains = <&power PX30_PD_VO>;
++		rockchip,grf = <&grf>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				dsi_in_vopb: endpoint@0 {
++					reg = <0>;
++					remote-endpoint = <&vopb_out_dsi>;
++				};
++
++				dsi_in_vopl: endpoint@1 {
++					reg = <1>;
++					remote-endpoint = <&vopl_out_dsi>;
++				};
++			};
++		};
++	};
++
+ 	vopb: vop@ff460000 {
+ 		compatible = "rockchip,px30-vop-big";
+ 		reg = <0x0 0xff460000 0x0 0xefc>;
+@@ -960,6 +1011,11 @@ vopb: vop@ff460000 {
+ 		vopb_out: port {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++
++			vopb_out_dsi: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&dsi_in_vopb>;
++			};
+ 		};
+ 	};
+ 
+@@ -992,6 +1048,11 @@ vopl: vop@ff470000 {
+ 		vopl_out: port {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++
++			vopl_out_dsi: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&dsi_in_vopl>;
++			};
+ 		};
+ 	};
+ 
+-- 
+2.24.0
 
