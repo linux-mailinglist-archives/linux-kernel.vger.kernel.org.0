@@ -2,122 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 002EF1168E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 10:08:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 568D91168E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 10:09:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbfLIJI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 04:08:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726377AbfLIJI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 04:08:56 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EEB82072D;
-        Mon,  9 Dec 2019 09:08:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575882536;
-        bh=QAsy6KYtyWoOffL4NFS3+5/Zh44sQt9mMpY2XhbERdM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fJr+YRMo1Rnw0+vTxF6gPpMdzFTFrIfbdML67vLN6jbyh5McznFgrIX0BjK9CA7iK
-         dYFz9iFC0H8+/ml50izL4yc8S1EpANPnuREKYX0eAc4PdGphLzymmVskHnzECr1+Mu
-         /+hwKeGGPVnWAKfkdb21nDvtwNEbJop3/VDxkcus=
-Date:   Mon, 9 Dec 2019 17:08:42 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Michael Walle <michael@walle.cc>, Alison Wang <alison.wang@nxp.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] arm64: dts: ls1028a: put SAIs into async mode
-Message-ID: <20191209090840.GL3365@dragon>
-References: <20191129210937.26808-1-michael@walle.cc>
+        id S1727457AbfLIJJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 04:09:11 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40103 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfLIJJL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 04:09:11 -0500
+Received: by mail-ed1-f67.google.com with SMTP id c93so11998921edf.7
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 01:09:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=aCP8xBJNYpnf/1dnrNzIPwstnt7b+cav5lYl114Has8=;
+        b=QxrcLPRwutgSkdxFZcVhw/H+pmf15454jhen7PwHu4adM2JzRwyRCL+hDj/1Pa8ElO
+         BjuPZdBMeLKwxH1CzU7cnx06SyVh3Ef0kPtri3UjJbjwcBns5U26jwtYLmY7s7IHUkBq
+         z5uzAtjccTNr6wKa45ON6PC+loJsuyLu1EEganFUEpN23pY0Dh7odVLl/uJYudxov5Fd
+         f/J1Ao6RSNV1jFmGA6THZQaroOyHPwEE43z/D0PYrxZEJvMlGHxQTb31kJLbwRwzDENa
+         b8u4X4ygTcgr5xzH0iZyJvH9C6oz7pM/tgWc3YXecvifpXpeb1dxHLN5EUpGqih1HV9s
+         YjIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=aCP8xBJNYpnf/1dnrNzIPwstnt7b+cav5lYl114Has8=;
+        b=KEwjD1L6gMEU4zUzNE9PW06M3b2cyR145Q8va0larxB0XihQjRYsK8NfvRsXfyjijD
+         8uv/hxOg99lXspDIAjJsSvg6lvHlorbk2pJ/QT6MS6C5DApbt9QArJ2z9YxjQoFWTT+p
+         zHSIFHX5qc2UnAk9cDq/QgUDoUjR6hWHt0GRAa4AxIULdBc/3vUhu3xklEkb8tygU5OU
+         2gxN/LN4h/HQ1lzIE67W1YxpafPH8QvXQQNkFj3aCrPBVELqnV8C2KvDvLOuNzlINCC9
+         SwcqprvH9np6WysypxLrk4pT+ZW4ghp0g2jnpNo/6GoFN2wm7iCFI28GLlrv7rwwQjQL
+         s33A==
+X-Gm-Message-State: APjAAAUtozDPL+fGeT+sdoOHerA2xVvVSETCMbkegvINBnzLo+eQg3BU
+        RIvb+j2F2y4Q0/WlhVMDbCCiwG+8aCbd068t+wNrz5hErkg=
+X-Google-Smtp-Source: APXvYqwIifXO3dcemjWp4SowjBSW0nR3WId3LsF2WbWmMqyzZtsf1qfL6GCtN0CU/ATK25v2S/R70O6SQEWZ8y0SnBw=
+X-Received: by 2002:aa7:d897:: with SMTP id u23mr31341542edq.50.1575882549444;
+ Mon, 09 Dec 2019 01:09:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191129210937.26808-1-michael@walle.cc>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20191116151308.17817-1-hslester96@gmail.com> <20191209090020.GG3468@dell>
+In-Reply-To: <20191209090020.GG3468@dell>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Mon, 9 Dec 2019 17:09:01 +0800
+Message-ID: <CANhBUQ2+ogNxA7OGM87igDrCSfbhvCzV5HEzQUWgDqwuMHBE3Q@mail.gmail.com>
+Subject: Re: [PATCH] mfd: sm501: fix mismatches of request_mem_region
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Alison Wang
+On Mon, Dec 9, 2019 at 5:00 PM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Sat, 16 Nov 2019, Chuhong Yuan wrote:
+>
+> > This driver misuses release_resource + kfree to match request_mem_regio=
+n,
+> > which is incorrect.
+> > The right way is to use release_mem_region.
+> > Replace the mismatched calls with the right ones to fix it.
+> >
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> > ---
+> >  drivers/mfd/sm501.c | 19 +++++++------------
+> >  1 file changed, 7 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+> > index 154270f8d8d7..e49787e6bb93 100644
+> > --- a/drivers/mfd/sm501.c
+> > +++ b/drivers/mfd/sm501.c
+> > @@ -1086,8 +1086,7 @@ static int sm501_register_gpio(struct sm501_devda=
+ta *sm)
+> >       iounmap(gpio->regs);
+> >
+> >   err_claimed:
+> > -     release_resource(gpio->regs_res);
+> > -     kfree(gpio->regs_res);
+> > +     release_mem_region(iobase, 0x20);
+> >
+> >       return ret;
+> >  }
+> > @@ -1095,6 +1094,7 @@ static int sm501_register_gpio(struct sm501_devda=
+ta *sm)
+> >  static void sm501_gpio_remove(struct sm501_devdata *sm)
+> >  {
+> >       struct sm501_gpio *gpio =3D &sm->gpio;
+> > +     resource_size_t iobase =3D sm->io_res->start + SM501_GPIO;
+>
+> Shouldn't this be 'struct resource *'?
+>
 
-On Fri, Nov 29, 2019 at 10:09:37PM +0100, Michael Walle wrote:
-> The LS1028A SoC has only unidirectional SAIs. Therefore, it doesn't make
-> sense to have the RX and TX part synchronous. Even worse, the RX part
-> wont work out of the box because by default it is configured as
-> synchronous to the TX part. And as said before, the pinmux of the SoC
-> can only be configured to route either the RX or the TX signals to the
-> SAI but never both at the same time. Thus configure the asynchronous
-> mode by default.
-> 
-> Signed-off-by: Michael Walle <michael@walle.cc>
+sm501_register_gpio() uses resource_size_t, so I use the same type in remov=
+e.
 
-Alison, Leo,
-
-Looks good to you?
-
-Shawn
-
-> ---
->  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index 379913756e90..9be33426e5ce 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -637,6 +637,7 @@
->  			dma-names = "tx", "rx";
->  			dmas = <&edma0 1 4>,
->  			       <&edma0 1 3>;
-> +			fsl,sai-asynchronous;
->  			status = "disabled";
->  		};
->  
-> @@ -651,6 +652,7 @@
->  			dma-names = "tx", "rx";
->  			dmas = <&edma0 1 6>,
->  			       <&edma0 1 5>;
-> +			fsl,sai-asynchronous;
->  			status = "disabled";
->  		};
->  
-> @@ -665,6 +667,7 @@
->  			dma-names = "tx", "rx";
->  			dmas = <&edma0 1 8>,
->  			       <&edma0 1 7>;
-> +			fsl,sai-asynchronous;
->  			status = "disabled";
->  		};
->  
-> @@ -679,6 +682,7 @@
->  			dma-names = "tx", "rx";
->  			dmas = <&edma0 1 10>,
->  			       <&edma0 1 9>;
-> +			fsl,sai-asynchronous;
->  			status = "disabled";
->  		};
->  
-> @@ -693,6 +697,7 @@
->  			dma-names = "tx", "rx";
->  			dmas = <&edma0 1 12>,
->  			       <&edma0 1 11>;
-> +			fsl,sai-asynchronous;
->  			status = "disabled";
->  		};
->  
-> @@ -707,6 +712,7 @@
->  			dma-names = "tx", "rx";
->  			dmas = <&edma0 1 14>,
->  			       <&edma0 1 13>;
-> +			fsl,sai-asynchronous;
->  			status = "disabled";
->  		};
->  
-> -- 
-> 2.20.1
-> 
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Linaro Services Technical Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
