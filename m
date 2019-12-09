@@ -2,129 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AF05116AE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:22:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BCA8116AEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:24:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfLIKWD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Dec 2019 05:22:03 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:58624 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726279AbfLIKWC (ORCPT
+        id S1727403AbfLIKYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 05:24:32 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:41315 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726279AbfLIKYc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 05:22:02 -0500
-X-IronPort-AV: E=Sophos;i="5.69,294,1571695200"; 
-   d="scan'208";a="419359771"
-X-MGA-submission: =?us-ascii?q?MDEy0mNecwNuL9Jk5yYbF2EQVnchtra1QLxSda?=
- =?us-ascii?q?LVt2y4q13qmPpebNroNPIYago/EeZChF1k1i8WrzH2uQbUIlF5P+NBEb?=
- =?us-ascii?q?zQ45Lx2dyOC7BDW8GJHNWgCr6Dib9AlaQwu2cPD16slJUMVl5OoQGXuy?=
- =?us-ascii?q?KwBuaKZZ69PpoINS8s52KQlw=3D=3D?=
-Received: from zcs-store9.inria.fr ([128.93.142.36])
-  by mail2-relais-roc.national.inria.fr with ESMTP; 09 Dec 2019 11:21:57 +0100
-Date:   Mon, 9 Dec 2019 11:21:57 +0100 (CET)
-From:   Julia Lawall <julia.lawall@inria.fr>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sinclair Yeh <syeh@vmware.com>,
-        linux-graphics-maintainer@vmware.com,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <1606305704.12702713.1575886917867.JavaMail.zimbra@inria.fr>
-In-Reply-To: <20191208105328.15335-1-lukas.bulwahn@gmail.com>
-References: <20191208105328.15335-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] drm/vmwgfx: Replace deprecated PTR_RET
+        Mon, 9 Dec 2019 05:24:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1575887072; x=1607423072;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:mime-version;
+  bh=TFhrQ8TsGCVpfe7qixLlviznfKMBnnGyy14ZJutL01Q=;
+  b=LzYyV/QZZc3sH1e7KGUGZXEsHI2keOD53LJXnCoKJSsJx8PT0TqLjlhs
+   pR6kNwefBMlDDX8PTNfa6Ssld8ZRnMY4xbwdZ7waq4sVOyUrwgThSvVHG
+   kI2X8R7dsUBCIyBCURi42nQt9ecL38zGlG7PzgtVYIn4jeN5lC7MBK6em
+   c=;
+IronPort-SDR: LhN+WuCUR0utaUbkSbqVuYjmhb2X6P9gEQoHKVbHuK6WeSYVaDGlSMQBcTUtdx6mHGX7twf2Sl
+ tjgcW2EmOvsA==
+X-IronPort-AV: E=Sophos;i="5.69,294,1571702400"; 
+   d="scan'208";a="3990731"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 09 Dec 2019 10:24:21 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com (Postfix) with ESMTPS id B074CA0766;
+        Mon,  9 Dec 2019 10:24:20 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 10:24:20 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.100) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 10:24:16 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     <jgross@suse.com>
+CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <pdurrant@amazon.com>, <sj38.park@gmail.com>,
+        <xen-devel@lists.xenproject.org>
+Subject: Re: Re: [PATCH v3 0/1] xen/blkback: Squeeze page pools if a memory pressure
+Date:   Mon, 9 Dec 2019 11:23:47 +0100
+Message-ID: <20191209102347.17337-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+References: <954f7beb-9d40-253e-260b-4750809bf808@suse.com>
+In-Reply-To: <954f7beb-9d40-253e-260b-4750809bf808@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [202.161.33.40]
-X-Mailer: Zimbra 8.7.11_GA_3800 (ZimbraWebClient - FF70 (Linux)/8.7.11_GA_3800)
-Thread-Topic: drm/vmwgfx: Replace deprecated PTR_RET
-Thread-Index: E97hwnQVmXIxUQ0U2XENNb5kIN+0Tw==
+Content-Type: text/plain
+X-Originating-IP: [10.43.160.100]
+X-ClientProxiedBy: EX13D22UWC003.ant.amazon.com (10.43.162.250) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> De: "Lukas Bulwahn" <lukas.bulwahn@gmail.com>
-> À: "Thomas Hellstrom" <thellstrom@vmware.com>, dri-devel@lists.freedesktop.org
-> Cc: "David Airlie" <airlied@linux.ie>, "Daniel Vetter" <daniel@ffwll.ch>, "Sinclair Yeh" <syeh@vmware.com>,
-> linux-graphics-maintainer@vmware.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Lukas Bulwahn"
-> <lukas.bulwahn@gmail.com>
-> Envoyé: Dimanche 8 Décembre 2019 18:53:28
-> Objet: [PATCH] drm/vmwgfx: Replace deprecated PTR_RET
+On   Mon, 9 Dec 2019 10:39:02 +0100  Juergen <jgross@suse.com> wrote:
 
-> Commit 508108ea2747 ("drm/vmwgfx: Don't refcount command-buffer managed
-> resource lookups during command buffer validation") slips in use of
-> deprecated PTR_RET. Use PTR_ERR_OR_ZERO instead.
-> 
-> As the PTR_ERR_OR_ZERO is a bit longer than PTR_RET, we introduce
-> local variable ret for proper indentation and line-length limits.
+>On 09.12.19 09:58, SeongJae Park wrote:
+>> Each `blkif` has a free pages pool for the grant mapping.  The size of
+>> the pool starts from zero and be increased on demand while processing
+>> the I/O requests.  If current I/O requests handling is finished or 100
+>> milliseconds has passed since last I/O requests handling, it checks and
+>> shrinks the pool to not exceed the size limit, `max_buffer_pages`.
+>>
+>> Therefore, `blkfront` running guests can cause a memory pressure in the
+>> `blkback` running guest by attaching a large number of block devices and
+>> inducing I/O.
+>
+>I'm having problems to understand how a guest can attach a large number
+>of block devices without those having been configured by the host admin
+>before.
+>
+>If those devices have been configured, dom0 should be ready for that
+>number of devices, e.g. by having enough spare memory area for ballooned
+>pages.
 
-Is 0 actually possible?  I have the impression that it is not, but perhaps I missed something.
+As mentioned in the original message as below, administrators _can_ avoid this
+problem, but finding the optimal configuration is hard, especially if the
+number of the guests is large.
 
-julia
+	System administrators can avoid such problematic situations by limiting
+	the maximum number of devices each guest can attach.  However, finding
+	the optimal limit is not so easy.  Improper set of the limit can
+	results in the memory pressure or a resource underutilization.
 
 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on current master (9455d25f4e3b) and next-20191207
-> compile-tested on x86_64_defconfig + DRM_VMWGFX=y
-> 
-> drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 21 +++++++++++++++------
-> 1 file changed, 15 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> index 934ad7c0c342..73489a45decb 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> @@ -2377,9 +2377,12 @@ static int vmw_cmd_dx_clear_rendertarget_view(struct
-> vmw_private *dev_priv,
-> {
-> 	VMW_DECLARE_CMD_VAR(*cmd, SVGA3dCmdDXClearRenderTargetView) =
-> 		container_of(header, typeof(*cmd), header);
-> +	struct vmw_resource *ret;
-> 
-> -	return PTR_RET(vmw_view_id_val_add(sw_context, vmw_view_rt,
-> -					   cmd->body.renderTargetViewId));
-> +	ret = vmw_view_id_val_add(sw_context, vmw_view_rt,
-> +				  cmd->body.renderTargetViewId);
-> +
-> +	return PTR_ERR_OR_ZERO(ret);
-> }
-> 
-> /**
-> @@ -2396,9 +2399,12 @@ static int vmw_cmd_dx_clear_depthstencil_view(struct
-> vmw_private *dev_priv,
-> {
-> 	VMW_DECLARE_CMD_VAR(*cmd, SVGA3dCmdDXClearDepthStencilView) =
-> 		container_of(header, typeof(*cmd), header);
-> +	struct vmw_resource *ret;
-> +
-> +	ret = vmw_view_id_val_add(sw_context, vmw_view_ds,
-> +				  cmd->body.depthStencilViewId);
-> 
-> -	return PTR_RET(vmw_view_id_val_add(sw_context, vmw_view_ds,
-> -					   cmd->body.depthStencilViewId));
-> +	return PTR_ERR_OR_ZERO(ret);
-> }
-> 
-> static int vmw_cmd_dx_view_define(struct vmw_private *dev_priv,
-> @@ -2741,9 +2747,12 @@ static int vmw_cmd_dx_genmips(struct vmw_private
-> *dev_priv,
-> {
-> 	VMW_DECLARE_CMD_VAR(*cmd, SVGA3dCmdDXGenMips) =
-> 		container_of(header, typeof(*cmd), header);
-> +	struct vmw_resource *ret;
-> +
-> +	ret = vmw_view_id_val_add(sw_context, vmw_view_sr,
-> +				  cmd->body.shaderResourceViewId);
-> 
-> -	return PTR_RET(vmw_view_id_val_add(sw_context, vmw_view_sr,
-> -					   cmd->body.shaderResourceViewId));
-> +	return PTR_ERR_OR_ZERO(ret);
-> }
-> 
-> /**
-> --
-> 2.17.1
+Thanks,
+SeongJae Park
+
+>
+>So either I'm missing something here or your reasoning for the need of
+>the patch is wrong.
+>
+>
+>Juergen
+>
