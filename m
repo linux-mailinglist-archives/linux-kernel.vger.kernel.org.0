@@ -2,61 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 277EA116CF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 13:21:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3139116CEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 13:20:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfLIMUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 07:20:51 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44667 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727578AbfLIMUs (ORCPT
+        id S1727566AbfLIMUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 07:20:34 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35446 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727232AbfLIMUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 07:20:48 -0500
-Received: by mail-pf1-f196.google.com with SMTP id d199so7149681pfd.11
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 04:20:48 -0800 (PST)
+        Mon, 9 Dec 2019 07:20:33 -0500
+Received: by mail-wr1-f66.google.com with SMTP id g17so15987038wro.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 04:20:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uaDYqsyc1Amfj+rSgV5LdqRPEszOSqeoO5bxQF6wI/8=;
-        b=HLgV18T+ucI2mKJgCw3vbomZ0tuzLu/7/QH2PtjQy299n5JyYS+Q6PHKNLr7OTXImX
-         QY6tia+bJb7iRkFFxN7yJrcvlfR9Li81a98kc7ViNQ0V8S4AXznyoEG0HYaXQGQt4aT5
-         PZHiH6nFw3wYdCuYq6T8rCEZBXIUJf9UGdjZQ=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IEnxe+vNcQIIOdbQCJdw7H0NnUMN0YCJx2d0b7iRXO0=;
+        b=Pqljb8jOEfj4sQBHVKTQXybiKxMVaV5vjMy5yi+GY+yhURsWcKv7OjWFCYxLSG6Y3W
+         UEvf9/lFK0yQK6pmOabG/vZxgTMJ6xx4bdujdsexpBLtoU0KkRMfCM80xbYJSvNv9Z2u
+         yuPT32CwBMLWPrCv6TQ4W0y9TgByZM+WCdss/AzshsMXUZyBNpY+6cKtcljD7V+J453y
+         2ASGjh/GfZkofRCbs2dwdJMupJ38m9cAus561DOzswwSW9HxfwZrUjc+DuoHa4U/mXhW
+         HNktOMFf9pmBl7Zm48qir7a57CH4j9XOMs7miOFR9GHg6kGCSBFyVoBZMgFLaxwktzFx
+         LTHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uaDYqsyc1Amfj+rSgV5LdqRPEszOSqeoO5bxQF6wI/8=;
-        b=QluRpihH//7bNIhbG2Alr+Cgqv28DmW1P8gnSouug7dea64WNrWKo6W0Pu5avbH8tU
-         QdViJLiRIB0HDDYgeRIBztOGRw2D3TfoOlL9Qrp52Pu07dMHOa+o8Qc5myFfwsTlxoMW
-         dJvU+27vE7DvN0oEHM0b21iejosFg0idYBvl7rpud0RFskgeWWSl9SseQyNm9jeDDKh3
-         tUtSFRKDfFYP25bDQ2d2RkaXk7Q2/tEqIJZxKGMcFOHgTVKXQCWn1JlKc8/Jri1KonPl
-         6PZxbKLQA0s9pTpamqHhEFTlzyVzgMsjUHR5GCQlb6JVunNcqpfMivucCLw8vPsvgzjB
-         0iBw==
-X-Gm-Message-State: APjAAAUP4PAu0NU6bT9oJ6194an7c9OegcGV0mF4gAsBZuMFqqhO7emN
-        8xaifdsr9Xtdde6Qn4NYORSlfw==
-X-Google-Smtp-Source: APXvYqy/lHJIWrfIzvI2UJaglWQA7earIp8Y3bMqEUk8egTypwDN5U4K852L6vRuGCM11q/C3vqrtQ==
-X-Received: by 2002:a63:cd16:: with SMTP id i22mr19049999pgg.239.1575894047511;
-        Mon, 09 Dec 2019 04:20:47 -0800 (PST)
-Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
-        by smtp.gmail.com with ESMTPSA id p21sm26733813pfn.103.2019.12.09.04.20.45
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IEnxe+vNcQIIOdbQCJdw7H0NnUMN0YCJx2d0b7iRXO0=;
+        b=XvE+l7N8WM2gvB3tZwh6KJiIkO1OHAca5nAs2OA7O9tciSUbHpCUcH15hEsAnn4Px3
+         0MPi0TixXmKvnCZLc/GXIQduOK6YgzmMdrkCpnrI4C7KWrCgZkfisHkNSYZ//9C+oNfv
+         JOoYN5pVaJlPKUQNq1ArXNb2MiD9SafxM+E8Q+lD7t8GB7HPh/b2gRf7eCERMS1nFw0Z
+         Fi+8OYqp8/VRVIr9xJdDwXbW/7P/e5VbqpAHn7yDafbK+jD6o9g+iLwRXI05t9oPUSsZ
+         GpybIWiekke0UhiCxsHYLO9SYhMJzlkfe+aJD0UAN2pNyWNcSi4rXkZzhfTHYrExi0KK
+         NQDA==
+X-Gm-Message-State: APjAAAWQN6iU+FonjKn6wmvG2GXcVPKGPIg/ZZJMlasjpeKA2iaInsLJ
+        fLEW7W1qdGW/IkL3qoftr5GRTQ==
+X-Google-Smtp-Source: APXvYqz98vZuBLcYM8ZhXEFLZRBpSVxQYrHtGSxeVi7XEoSvipKy6w4NOibAIPpPXKO6wM9o6T6cYQ==
+X-Received: by 2002:a5d:4204:: with SMTP id n4mr1876656wrq.123.1575894031025;
+        Mon, 09 Dec 2019 04:20:31 -0800 (PST)
+Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id u18sm27066949wrt.26.2019.12.09.04.20.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 04:20:47 -0800 (PST)
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Archit Taneja <architt@codeaurora.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Matthias Brugger <mbrugger@suse.com>, p.zabel@pengutronix.de,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] drm: bridge: anx7688: Support bypass GPIO feature
-Date:   Mon,  9 Dec 2019 20:20:13 +0800
-Message-Id: <20191209122013.178564-5-hsinyi@chromium.org>
-X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
-In-Reply-To: <20191209122013.178564-1-hsinyi@chromium.org>
-References: <20191209122013.178564-1-hsinyi@chromium.org>
+        Mon, 09 Dec 2019 04:20:30 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     mchehab@kernel.org, hans.verkuil@cisco.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] media: meson: vdec: Add compliant H264 support
+Date:   Mon,  9 Dec 2019 13:20:24 +0100
+Message-Id: <20191209122028.13714-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,117 +61,182 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support optional feature: bypass GPIO.
+Hello,
 
-Get GPIO status in irq handler. If GPIO is active, mode_fixup would be
-bypassed.
+This patch series aims to bring H.264 support as well as compliance update
+to the amlogic stateful video decoder driver.
 
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
----
- drivers/gpu/drm/bridge/analogix-anx7688.c | 57 +++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+The issue in the V1 patchset at [1] is solved by patch #1 following comments
+and requirements from hans. It moves the full draining & stopped state tracking
+and handling from vicodec to core v4l2-mem2mem.
 
-diff --git a/drivers/gpu/drm/bridge/analogix-anx7688.c b/drivers/gpu/drm/bridge/analogix-anx7688.c
-index 5a3a2251c1c5..1d09db2cf8e9 100644
---- a/drivers/gpu/drm/bridge/analogix-anx7688.c
-+++ b/drivers/gpu/drm/bridge/analogix-anx7688.c
-@@ -5,11 +5,16 @@
-  * Copyright 2016 Google LLC
-  */
- 
-+#include <linux/gpio.h>
- #include <linux/i2c.h>
-+#include <linux/interrupt.h>
- #include <linux/module.h>
-+#include <linux/of_gpio.h>
- #include <linux/regmap.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_crtc.h>
-+#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_probe_helper.h>
- 
- /* Register addresses */
- #define VENDOR_ID_REG 0x00
-@@ -31,6 +36,9 @@ struct anx7688 {
- 	struct i2c_client *client;
- 	struct regmap *regmap;
- 
-+	struct gpio_desc *gpiod_bypass;
-+	int bypass;
-+
- 	bool filter;
- };
- 
-@@ -49,6 +57,10 @@ static bool anx7688_bridge_mode_fixup(struct drm_bridge *bridge,
- 	int totalbw, requiredbw;
- 	int ret;
- 
-+	/* bypass anx mode fixup */
-+	if (anx7688->bypass)
-+		return true;
-+
- 	if (!anx7688->filter)
- 		return true;
- 
-@@ -93,6 +105,19 @@ static const struct drm_bridge_funcs anx7688_bridge_funcs = {
- 	.mode_fixup	= anx7688_bridge_mode_fixup,
- };
- 
-+static irqreturn_t gpio_display_mux_det_threaded_handler(int unused, void *data)
-+{
-+	struct anx7688 *anx7688 = data;
-+
-+	anx7688->bypass = gpiod_get_value(anx7688->gpiod_bypass);
-+	dev_dbg(&anx7688->client->dev, "Interrupt %d!\n", anx7688->bypass);
-+
-+	if (anx7688->bridge.dev)
-+		drm_kms_helper_hotplug_event(anx7688->bridge.dev);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static const struct regmap_config anx7688_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-@@ -156,6 +181,38 @@ static int anx7688_i2c_probe(struct i2c_client *client,
- 			 buffer[0], buffer[1]);
- 	}
- 
-+	/* Optional bypass-gpios */
-+	anx7688->gpiod_bypass = devm_gpiod_get_optional(dev, "bypass",
-+							GPIOD_IN);
-+	if (IS_ERR(anx7688->gpiod_bypass)) {
-+		ret = PTR_ERR(anx7688->gpiod_bypass);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "bypass-gpios assigned failed\n");
-+		return ret;
-+	}
-+	if (anx7688->gpiod_bypass) {
-+		int irq;
-+
-+		irq = gpiod_to_irq(anx7688->gpiod_bypass);
-+		if (irq < 0) {
-+			dev_err(dev, "Failed to get output irq %d\n", irq);
-+			return -ENODEV;
-+		}
-+
-+		anx7688->bypass = gpiod_get_value(anx7688->gpiod_bypass);
-+
-+		ret = devm_request_threaded_irq(dev, irq, NULL,
-+				gpio_display_mux_det_threaded_handler,
-+				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING |
-+				IRQF_ONESHOT,
-+				"gpio-display-mux-det", anx7688);
-+		if (ret) {
-+			dev_err(dev,
-+				"Failed to request MUX_DET threaded irq\n");
-+			return ret;
-+		}
-+	}
-+
- 	anx7688->bridge.funcs = &anx7688_bridge_funcs;
- 	drm_bridge_add(&anx7688->bridge);
- 
+With this, it passes v4l2-compliance with streaming on Amlogic G12A and
+Amlogic SM1 SoCs successfully.
+
+This patchset depends on G12A and SM1 enablement series at [2] and [3].
+
+The compliance log is:
+# v4l2-compliance --stream-from-hdr test-25fps.h264.hdr -s
+v4l2-compliance SHA: 7ead0e1856b89f2e19369af452bb03fd0cd16793, 64 bits
+
+Compliance test for vicodec device /dev/video0:
+
+Driver Info:
+	Driver name      : vicodec
+	Card type        : vicodec
+	Bus info         : platform:vicodec
+	Driver version   : 5.5.0
+	Capabilities     : 0x84208000
+		Video Memory-to-Memory
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x04208000
+		Video Memory-to-Memory
+		Streaming
+		Extended Pix Format
+	Detected Stateful Encoder
+Media Driver Info:
+	Driver name      : vicodec
+	Model            : vicodec
+	Serial           : 
+	Bus info         : platform:vicodec
+	Media version    : 5.5.0
+	Hardware revision: 0x00000000 (0)
+	Driver version   : 5.5.0
+Interface Info:
+	ID               : 0x0300000c
+	Type             : V4L Video
+Entity Info:
+	ID               : 0x00000001 (1)
+	Name             : stateful-encoder-source
+	Function         : V4L2 I/O
+	Pad 0x01000002   : 0: Source
+	  Link 0x02000008: to remote pad 0x1000005 of entity 'stateful-encoder-proc': Data, Enabled, Immutable
+
+Required ioctls:
+	test MC information (see 'Media Driver Info' above): OK
+	test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+	test second /dev/video0 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 6 Private Controls: 0
+
+Format ioctls:
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls:
+	test VIDIOC_(TRY_)ENCODER_CMD: OK
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+	test read/write: OK (Not Supported)
+	test blocking wait: OK
+	Video Capture: Captured 60 buffers                
+	test MMAP (select): OK
+	Video Capture: Captured 60 buffers                
+	test MMAP (epoll): OK
+	Video Capture: Captured 60 buffers                
+	test USERPTR (select): OK
+	test DMABUF: Cannot test, specify --expbuf-device
+
+Total for vicodec device /dev/video0: 50, Succeeded: 50, Failed: 0, Warnings: 0
+
+Changes since v2 at [4]:
+- Move full draining & stopped state tracking into core v4l2-mem2mem
+- Adapt vicodec to use the core v4l2-mem2mem draining & stopped state tracking
+
+Changes since v1 at [1]:
+- fixed output_size is never used reported by hans
+- rebased on G12A and SM1 patches
+- added handling of qbuf after STREAMON and STOP before enought buffer queued
+
+[1] https://lore.kernel.org/linux-media/20191007145909.29979-1-mjourdan@baylibre.com
+[2] https://lore.kernel.org/linux-media/20191205153408.26500-1-narmstrong@baylibre.com
+[3] https://lore.kernel.org/linux-media/20191121101429.23831-1-narmstrong@baylibre.com
+[4] https://lore.kernel.org/linux-media/20191126093733.32404-1-narmstrong@baylibre.com
+
+Maxime Jourdan (2):
+  media: meson: vdec: bring up to compliance
+  media: meson: vdec: add H.264 decoding support
+
+Neil Armstrong (2):
+  media: v4l2-mem2mem: handle draining, stopped and next-buf-is-last
+    states
+  media: vicodec: use v4l2-mem2mem draining, stopped and
+    next-buf-is-last states handling
+
+ drivers/media/platform/vicodec/vicodec-core.c | 154 ++----
+ drivers/media/v4l2-core/v4l2-mem2mem.c        | 174 ++++++-
+ drivers/staging/media/meson/vdec/Makefile     |   2 +-
+ drivers/staging/media/meson/vdec/codec_h264.c | 482 ++++++++++++++++++
+ drivers/staging/media/meson/vdec/codec_h264.h |  14 +
+ drivers/staging/media/meson/vdec/esparser.c   |  58 +--
+ drivers/staging/media/meson/vdec/vdec.c       |  92 ++--
+ drivers/staging/media/meson/vdec/vdec.h       |  14 +-
+ .../staging/media/meson/vdec/vdec_helpers.c   |  85 ++-
+ .../staging/media/meson/vdec/vdec_helpers.h   |   6 +-
+ .../staging/media/meson/vdec/vdec_platform.c  |  71 +++
+ include/media/v4l2-mem2mem.h                  |  87 ++++
+ 12 files changed, 1009 insertions(+), 230 deletions(-)
+ create mode 100644 drivers/staging/media/meson/vdec/codec_h264.c
+ create mode 100644 drivers/staging/media/meson/vdec/codec_h264.h
+
 -- 
-2.24.0.393.g34dc348eaf-goog
+2.22.0
 
