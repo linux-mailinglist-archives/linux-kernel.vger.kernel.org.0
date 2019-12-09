@@ -2,464 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D27116C4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:32:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C36C116C53
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:33:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfLILcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 06:32:36 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34491 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727300AbfLILcg (ORCPT
+        id S1727522AbfLILdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 06:33:39 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:52524 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727313AbfLILdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 06:32:36 -0500
-Received: by mail-lj1-f194.google.com with SMTP id m6so15228635ljc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 03:32:34 -0800 (PST)
+        Mon, 9 Dec 2019 06:33:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=139VhUE0ULptSgM687dOPDSISRH69HAE51tANtu1U5A=;
-        b=KgSR4MHuOqo0MAzhIBFDX7Pgk1tvfAAcgxqFzJcZromZyqt/ER2Fz7o71lJ+XwXwfi
-         lkSWRCXpiWYHQSssYGt6AtxCBA+I08ogBBjuLdAauFi4UCR46zqbhy968CxXqi1XcrMo
-         mFHXv5TV7NqjGr8kYmYNVNNjZpnCDTT3X5b++LvHKgutDrJNmGuxl0Hg6MGsR3S8IcYA
-         Fc4AzmZIGvEeJ4KwM3BA5LTu+raZQ1QH6ziZBC+IbzTBbqxlKBvVnkl42Nm4mTdvEGt9
-         e67UlVvRv73g5WshmyYBv3ZcXxU/C5Acw/rpBJ7P/Qki7PEeON6XKxbWPw3tfATew2ci
-         1Nog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=139VhUE0ULptSgM687dOPDSISRH69HAE51tANtu1U5A=;
-        b=m8nAIpK4757g/gFLjKRbjd8F+ToN3ne5bnhfhFHNVKhlpF39sIkIoBul8bMV+U6HON
-         a2opTfTGAVF77t9KpZvaXzCIzR+ZW3QpVsqT8v2T/RNyuWcMTt7Z6UCE4mI6Y4xYJlzp
-         p+BPSnPnbyMTE3W5Qwc4UO2LNt9rMdvoqPNMhpxIRckuQ4X8N24jrzQfZSQhC/ODaMZB
-         qFUaXKgcNglGhqEOzf4otXKZXPi2xIYU/VRt5cE1tJURQjcSEskkUgSoab+8Jh7mKc9W
-         2B4u6FH/Nc6hP8glY/73Y1RYTSodM4ygc3OmmF3heG0ShlM/6Ee96SB8dSXQcmRAacev
-         krrg==
-X-Gm-Message-State: APjAAAW6CUqr9B8+bs+7d2FJQLUJDvCM5PMppYbinBMLic2RLpZo3lAs
-        93VfBxMMAs6oDcJVbnJ4ncVhtw==
-X-Google-Smtp-Source: APXvYqwuBQcYqsVPHHkw/+7RHfyKlSHlx0rL1KZ2GKOomyPwWF1Q61sGQrQitT4Q/CNEnYoyn8Cr4w==
-X-Received: by 2002:a2e:b045:: with SMTP id d5mr3872840ljl.184.1575891153363;
-        Mon, 09 Dec 2019 03:32:33 -0800 (PST)
-Received: from msk1wst115n.omp.ru (mail.omprussia.ru. [5.134.221.218])
-        by smtp.gmail.com with ESMTPSA id g85sm10797035lfd.66.2019.12.09.03.32.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Dec 2019 03:32:32 -0800 (PST)
-Message-ID: <e234c599ec452ed81fb703c69adf60c1e57062dd.camel@dubeyko.com>
-Subject: Re: [PATCH v6 05/13] exfat: add file operations
-From:   Vyacheslav Dubeyko <slava@dubeyko.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com
-Date:   Mon, 09 Dec 2019 14:32:32 +0300
-In-Reply-To: <20191209065149.2230-6-namjae.jeon@samsung.com>
-References: <20191209065149.2230-1-namjae.jeon@samsung.com>
-         <CGME20191209065500epcas1p3da26ef7963bbba978ed614bc19b2ea07@epcas1p3.samsung.com>
-         <20191209065149.2230-6-namjae.jeon@samsung.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1575891218; x=1607427218;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   in-reply-to:content-transfer-encoding;
+  bh=jCDbQSdoBdfMrVuJUQRfuw9YKJvl0RFzFJ83Wu3g8QU=;
+  b=EgTLVB2BmaIqAuenrfyQg0x0+/Ir4PiIXqhWygW4GIxjQVqihXu4p0Om
+   9cvbBvLp+otU8vaYo3TDg0pToW4YnyaMf/ijeNaRo/1FXJ2LjDHN747Xi
+   mU4uO/O9ccABZkmV5pir2Slt9xKtN4++NWhEqxzrwaaOnLZVirF3VMIgd
+   g=;
+IronPort-SDR: L9FyZ/Wo8dtPzPzFif4LsTdQfHQIxKbR+hC5608Mr4rSs8W9JKV103XRU93491eIRRYTYnZCnB
+ BKNPXn1P+gLQ==
+X-IronPort-AV: E=Sophos;i="5.69,294,1571702400"; 
+   d="scan'208";a="12413711"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2c-4e7c8266.us-west-2.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 09 Dec 2019 11:33:24 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2c-4e7c8266.us-west-2.amazon.com (Postfix) with ESMTPS id B356AA1C95;
+        Mon,  9 Dec 2019 11:33:23 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 11:33:22 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.100) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 11:33:19 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     <jgross@suse.com>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sj38.park@gmail.com" <sj38.park@gmail.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Subject: Re: Re: [PATCH v3 0/1] xen/blkback: Squeeze page pools if a memory pressure
+Date:   Mon, 9 Dec 2019 12:32:40 +0100
+Message-ID: <20191209113240.847-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+In-Reply-To: <17131297-6d09-7302-d632-246f62487652@suse.com> (raw)
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.43.160.100]
+X-ClientProxiedBy: EX13D37UWA003.ant.amazon.com (10.43.160.25) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-12-09 at 01:51 -0500, Namjae Jeon wrote:
-> This adds the implementation of file operations for exfat.
-> 
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-> ---
->  fs/exfat/file.c | 343
-> ++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 343 insertions(+)
->  create mode 100644 fs/exfat/file.c
-> 
-> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-> new file mode 100644
-> index 000000000000..1a32a88e2055
-> --- /dev/null
-> +++ b/fs/exfat/file.c
-> @@ -0,0 +1,343 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
-> + */
-> +
-> +#include <linux/slab.h>
-> +#include <linux/cred.h>
-> +#include <linux/buffer_head.h>
-> +
-> +#include "exfat_raw.h"
-> +#include "exfat_fs.h"
-> +
-> +static int exfat_cont_expand(struct inode *inode, loff_t size)
-> +{
-> +	struct address_space *mapping = inode->i_mapping;
-> +	loff_t start = i_size_read(inode), count = size -
-> i_size_read(inode);
-> +	int err, err2;
-> +
-> +	err = generic_cont_expand_simple(inode, size);
-> +	if (err)
-> +		return err;
-> +
-> +	inode->i_ctime = inode->i_mtime = current_time(inode);
-> +	mark_inode_dirty(inode);
-> +
-> +	if (!IS_SYNC(inode))
-> +		return 0;
-> +
-> +	err = filemap_fdatawrite_range(mapping, start, start + count -
-> 1);
-> +	err2 = sync_mapping_buffers(mapping);
-> +	if (!err)
-> +		err = err2;
-> +	err2 = write_inode_now(inode, 1);
-> +	if (!err)
-> +		err = err2;
-> +	if (err)
-> +		return err;
-> +
-> +	return filemap_fdatawait_range(mapping, start, start + count -
-> 1);
-> +}
-> +
-> +static bool exfat_allow_set_time(struct exfat_sb_info *sbi, struct
-> inode *inode)
-> +{
-> +	mode_t allow_utime = sbi->options.allow_utime;
-> +
-> +	if (!uid_eq(current_fsuid(), inode->i_uid)) {
-> +		if (in_group_p(inode->i_gid))
-> +			allow_utime >>= 3;
-> +		if (allow_utime & MAY_WRITE)
-> +			return true;
-> +	}
-> +
-> +	/* use a default check */
-> +	return false;
-> +}
-> +
-> +static int exfat_sanitize_mode(const struct exfat_sb_info *sbi,
-> +		struct inode *inode, umode_t *mode_ptr)
-> +{
-> +	mode_t i_mode, mask, perm;
-> +
-> +	i_mode = inode->i_mode;
-> +
-> +	mask = (S_ISREG(i_mode) || S_ISLNK(i_mode)) ?
-> +		sbi->options.fs_fmask : sbi->options.fs_dmask;
-> +	perm = *mode_ptr & ~(S_IFMT | mask);
-> +
-> +	/* Of the r and x bits, all (subject to umask) must be
-> present.*/
-> +	if ((perm & 0555) != (i_mode & 0555))
+On Mon, 9 Dec 2019 12:08:10 +0100 "Jürgen Groß" <jgross@suse.com> wrote:
 
-What's about to use constants here instead of hardcoded values?
+>On 09.12.19 11:52, SeongJae Park wrote:
+>> On Mon, 9 Dec 2019 11:15:22 +0100 "Jürgen Groß" <jgross@suse.com> wrote:
+>>
+>>> On 09.12.19 10:46, Durrant, Paul wrote:
+>>>>> -----Original Message-----
+>>>>> From: Jürgen Groß <jgross@suse.com>
+>>>>> Sent: 09 December 2019 09:39
+>>>>> To: Park, Seongjae <sjpark@amazon.com>; axboe@kernel.dk;
+>>>>> konrad.wilk@oracle.com; roger.pau@citrix.com
+>>>>> Cc: linux-block@vger.kernel.org; linux-kernel@vger.kernel.org; Durrant,
+>>>>> Paul <pdurrant@amazon.com>; sj38.park@gmail.com; xen-
+>>>>> devel@lists.xenproject.org
+>>>>> Subject: Re: [PATCH v3 0/1] xen/blkback: Squeeze page pools if a memory
+>>>>> pressure
+>>>>>
+>>>>> On 09.12.19 09:58, SeongJae Park wrote:
+>>>>>> Each `blkif` has a free pages pool for the grant mapping.  The size of
+>>>>>> the pool starts from zero and be increased on demand while processing
+>>>>>> the I/O requests.  If current I/O requests handling is finished or 100
+>>>>>> milliseconds has passed since last I/O requests handling, it checks and
+>>>>>> shrinks the pool to not exceed the size limit, `max_buffer_pages`.
+>>>>>>
+>>>>>> Therefore, `blkfront` running guests can cause a memory pressure in the
+>>>>>> `blkback` running guest by attaching a large number of block devices and
+>>>>>> inducing I/O.
+>>>>>
+>>>>> I'm having problems to understand how a guest can attach a large number
+>>>>> of block devices without those having been configured by the host admin
+>>>>> before.
+>>>>>
+>>>>> If those devices have been configured, dom0 should be ready for that
+>>>>> number of devices, e.g. by having enough spare memory area for ballooned
+>>>>> pages.
+>>>>>
+>>>>> So either I'm missing something here or your reasoning for the need of
+>>>>> the patch is wrong.
+>>>>>
+>>>>
+>>>> I think the underlying issue is that persistent grant support is hogging memory in the backends, thereby compromising scalability. IIUC this patch is essentially a band-aid to get back to the scalability that was possible before persistent grant support was added. Ultimately the right answer should be to get rid of persistent grants support and use grant copy, but such a change is clearly more invasive and would need far more testing.
+>>>
+>>> Persistent grants are hogging ballooned pages, which is equivalent to
+>>> memory only in case of the backend's domain memory being equal or
+>>> rather near to its max memory size.
+>>>
+>>> So configuring the backend domain with enough spare area for ballooned
+>>> pages should make this problem much less serious.
+>>>
+>>> Another problem in this area is the amount of maptrack frames configured
+>>> for a driver domain, which will limit the number of concurrent foreign
+>>> mappings of that domain.
+>>
+>> Right, similar problems from other backends are possible.
+>>
+>>>
+>>> So instead of having a blkback specific solution I'd rather have a
+>>> common callback for backends to release foreign mappings in order to
+>>> enable a global resource management.
+>>
+>> This patch is also based on a common callback, namely the shrinker callback
+>> system.  As the shrinker callback is designed for the general memory pressure
+>> handling, I thought this is a right one to use.  Other backends having similar
+>> problems can use this in their way.
+>
+> But this is addressing memory shortage only and it is acting globally.
+>
+> What I'd like to have in some (maybe distant) future is a way to control
+> resource usage per guest. Why would you want to throttle performance of
+> all guests instead of only the one causing the pain by hogging lots of
+> resources?
 
-> +		return -EPERM;
-> +
-> +	if (exfat_mode_can_hold_ro(inode)) {
-> +		/*
-> +		 * Of the w bits, either all (subject to umask) or none
-> must
-> +		 * be present.
-> +		 */
-> +		if ((perm & 0222) && ((perm & 0222) != (0222 & ~mask)))
+Good point.  I was also concerned about the performance fairness at first, but
+settled in this ugly but simple solution mainly because my worst-case
+performance test (detailed in 1st patch's commit msg) shows no visible
+performance degradation, though it is a minimal test on my test environment.
 
-Ditto.
+Anyway, I agree with your future direction.
 
-> +			return -EPERM;
-> +	} else {
-> +		/*
-> +		 * If exfat_mode_can_hold_ro(inode) is false, can't
-> change
-> +		 * w bits.
-> +		 */
-> +		if ((perm & 0222) != (0222 & ~mask))
+>
+> The new backend callback should (IMO) have a domid as parameter for
+> specifying which guest should be taken away resources (including the
+> possibility to select "any domain").
+>
+> It might be reasonable to have your shrinker hook in e.g. xenbus for
+> calling the backend callbacks. And you could have another agent in the
+> grant driver reacting on shortage of possible grant mappings.
+>
+> I don't expect you to implement all of that at once, but I think having
+> that idea in mind when addressing current issues would be nice. So as a
+> starting point you could move the shrinker hook to xenbus, add the
+> generic callback to struct xenbus_driver, populate that callback in
+> blkback and call it in the shrinker hook with "any domain". This would
+> enable a future extension to other backends and a dynamic resource
+> management in a natural way.
 
-Ditto.
+Appreciate this kind and detailed advice.  I will post the second version
+applying your comments, soon.
 
-> +			return -EPERM;
-> +	}
-> +
-> +	*mode_ptr &= S_IFMT | perm;
-> +
-> +	return 0;
-> +}
-> +
-> +/* resize the file length */
-> +int __exfat_truncate(struct inode *inode, loff_t new_size)
-> +{
-> +	unsigned int num_clusters_new, num_clusters_phys;
-> +	unsigned int last_clu = FREE_CLUSTER;
-> +	struct exfat_chain clu;
-> +	struct exfat_timestamp tm;
-> +	struct exfat_dentry *ep, *ep2;
-> +	struct super_block *sb = inode->i_sb;
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +	struct exfat_inode_info *ei = EXFAT_I(inode);
-> +	struct exfat_entry_set_cache *es = NULL;
-> +	int evict = (ei->dir.dir == DIR_DELETED) ? 1 : 0;
-> +
-> +	/* check if the given file ID is opened */
-> +	if (ei->type != TYPE_FILE && ei->type != TYPE_DIR)
-> +		return -EPERM;
-> +
-> +	exfat_set_vol_flags(sb, VOL_DIRTY);
-> +
-> +	num_clusters_new = EXFAT_B_TO_CLU_ROUND_UP(i_size_read(inode),
-> sbi);
-> +	num_clusters_phys =
-> +		EXFAT_B_TO_CLU_ROUND_UP(EXFAT_I(inode)->i_size_ondisk,
-> sbi);
-> +
-> +	exfat_chain_set(&clu, ei->start_clu, num_clusters_phys, ei-
-> >flags);
-> +
-> +	if (new_size > 0) {
-> +		/*
-> +		 * Truncate FAT chain num_clusters after the first
-> cluster
-> +		 * num_clusters = min(new, phys);
-> +		 */
-> +		unsigned int num_clusters =
-> +			min(num_clusters_new, num_clusters_phys);
-> +
-> +		/*
-> +		 * Follow FAT chain
-> +		 * (defensive coding - works fine even with corrupted
-> FAT table
-> +		 */
-> +		if (clu.flags == ALLOC_NO_FAT_CHAIN) {
-> +			clu.dir += num_clusters;
-> +			clu.size -= num_clusters;
-> +		} else {
-> +			while (num_clusters > 0) {
-> +				last_clu = clu.dir;
-> +				if (exfat_get_next_cluster(sb,
-> &(clu.dir)))
-> +					return -EIO;
-> +
-> +				num_clusters--;
-> +				clu.size--;
-> +			}
-> +		}
-> +	} else {
-> +		ei->flags = ALLOC_NO_FAT_CHAIN;
-> +		ei->start_clu = EOF_CLUSTER;
-> +	}
-> +
-> +	i_size_write(inode, new_size);
-> +
-> +	if (ei->type == TYPE_FILE)
-> +		ei->attr |= ATTR_ARCHIVE;
-> +
-> +	/* update the directory entry */
-> +	if (!evict) {
-> +		es = exfat_get_dentry_set(sb, &(ei->dir), ei->entry,
-> +				ES_ALL_ENTRIES, &ep);
-> +		if (!es)
-> +			return -EIO;
-> +		ep2 = ep + 1;
-
-The ep2 could point out on the garbage here. Maybe, it makes sense to
-add some check here?
 
 Thanks,
-Viacheslav Dubeyko.
+SeongJae Park
 
-> +
-> +		exfat_set_entry_time(ep, exfat_tm_now(EXFAT_SB(sb),
-> &tm),
-> +				TM_MODIFY);
-> +		ep->file_attr = cpu_to_le16(ei->attr);
-> +
-> +		/* File size should be zero if there is no cluster
-> allocated */
-> +		if (ei->start_clu == EOF_CLUSTER)
-> +			ep->stream_valid_size = ep->stream_size = 0;
-> +		else {
-> +			ep->stream_valid_size = cpu_to_le64(new_size);
-> +			ep->stream_size = ep->stream_valid_size;
-> +		}
-> +
-> +		if (new_size == 0) {
-> +			/* Any directory can not be truncated to zero
-> */
-> +			WARN_ON(ei->type != TYPE_FILE);
-> +
-> +			ep2->stream_flags = ALLOC_FAT_CHAIN;
-> +			ep2->stream_start_clu = FREE_CLUSTER;
-> +		}
-> +
-> +		if (exfat_update_dir_chksum_with_entry_set(sb, es,
-> +		    inode_needs_sync(inode)))
-> +			return -EIO;
-> +		kfree(es);
-> +	}
-> +
-> +	/* cut off from the FAT chain */
-> +	if (ei->flags == ALLOC_FAT_CHAIN && last_clu != FREE_CLUSTER &&
-> +			last_clu != EOF_CLUSTER) {
-> +		if (exfat_ent_set(sb, last_clu, EOF_CLUSTER))
-> +			return -EIO;
-> +	}
-> +
-> +	/* invalidate cache and free the clusters */
-> +	/* clear exfat cache */
-> +	exfat_cache_inval_inode(inode);
-> +
-> +	/* hint information */
-> +	ei->hint_bmap.off = EOF_CLUSTER;
-> +	ei->hint_bmap.clu = EOF_CLUSTER;
-> +	if (ei->rwoffset > new_size)
-> +		ei->rwoffset = new_size;
-> +
-> +	/* hint_stat will be used if this is directory. */
-> +	ei->hint_stat.eidx = 0;
-> +	ei->hint_stat.clu = ei->start_clu;
-> +	ei->hint_femp.eidx = EXFAT_HINT_NONE;
-> +
-> +	/* free the clusters */
-> +	if (exfat_free_cluster(inode, &clu))
-> +		return -EIO;
-> +
-> +	exfat_set_vol_flags(sb, VOL_CLEAN);
-> +
-> +	return 0;
-> +}
-> +
-> +void exfat_truncate(struct inode *inode, loff_t size)
-> +{
-> +	struct super_block *sb = inode->i_sb;
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +	unsigned int blocksize = 1 << inode->i_blkbits;
-> +	loff_t aligned_size;
-> +	int err;
-> +
-> +	mutex_lock(&sbi->s_lock);
-> +	if (EXFAT_I(inode)->start_clu == 0) {
-> +		/*
-> +		 * Empty start_clu != ~0 (not allocated)
-> +		 */
-> +		exfat_fs_error(sb, "tried to truncate zeroed
-> cluster.");
-> +		goto write_size;
-> +	}
-> +
-> +	err = __exfat_truncate(inode, i_size_read(inode));
-> +	if (err)
-> +		goto write_size;
-> +
-> +	inode->i_ctime = inode->i_mtime = current_time(inode);
-> +	if (IS_DIRSYNC(inode))
-> +		exfat_sync_inode(inode);
-> +	else
-> +		mark_inode_dirty(inode);
-> +
-> +	inode->i_blocks = ((i_size_read(inode) + (sbi->cluster_size -
-> 1)) &
-> +			~(sbi->cluster_size - 1)) >> inode->i_blkbits;
-> +write_size:
-> +	aligned_size = i_size_read(inode);
-> +	if (aligned_size & (blocksize - 1)) {
-> +		aligned_size |= (blocksize - 1);
-> +		aligned_size++;
-> +	}
-> +
-> +	if (EXFAT_I(inode)->i_size_ondisk > i_size_read(inode))
-> +		EXFAT_I(inode)->i_size_ondisk = aligned_size;
-> +
-> +	if (EXFAT_I(inode)->i_size_aligned > i_size_read(inode))
-> +		EXFAT_I(inode)->i_size_aligned = aligned_size;
-> +	mutex_unlock(&sbi->s_lock);
-> +}
-> +
-> +int exfat_getattr(const struct path *path, struct kstat *stat,
-> +		unsigned int request_mask, unsigned int query_flags)
-> +{
-> +	struct inode *inode = d_backing_inode(path->dentry);
-> +
-> +	generic_fillattr(inode, stat);
-> +	stat->blksize = EXFAT_SB(inode->i_sb)->cluster_size;
-> +	return 0;
-> +}
-> +
-> +int exfat_setattr(struct dentry *dentry, struct iattr *attr)
-> +{
-> +	struct exfat_sb_info *sbi = EXFAT_SB(dentry->d_sb);
-> +	struct inode *inode = dentry->d_inode;
-> +	unsigned int ia_valid;
-> +	int error;
-> +
-> +	if ((attr->ia_valid & ATTR_SIZE) &&
-> +	    attr->ia_size > i_size_read(inode)) {
-> +		error = exfat_cont_expand(inode, attr->ia_size);
-> +		if (error || attr->ia_valid == ATTR_SIZE)
-> +			return error;
-> +		attr->ia_valid &= ~ATTR_SIZE;
-> +	}
-> +
-> +	/* Check for setting the inode time. */
-> +	ia_valid = attr->ia_valid;
-> +	if ((ia_valid & (ATTR_MTIME_SET | ATTR_ATIME_SET |
-> ATTR_TIMES_SET)) &&
-> +	    exfat_allow_set_time(sbi, inode)) {
-> +		attr->ia_valid &= ~(ATTR_MTIME_SET | ATTR_ATIME_SET |
-> +				ATTR_TIMES_SET);
-> +	}
-> +
-> +	error = setattr_prepare(dentry, attr);
-> +	attr->ia_valid = ia_valid;
-> +	if (error)
-> +		return error;
-> +
-> +	if (((attr->ia_valid & ATTR_UID) &&
-> +	     !uid_eq(attr->ia_uid, sbi->options.fs_uid)) ||
-> +	    ((attr->ia_valid & ATTR_GID) &&
-> +	     !gid_eq(attr->ia_gid, sbi->options.fs_gid)) ||
-> +	    ((attr->ia_valid & ATTR_MODE) &&
-> +	     (attr->ia_mode & ~(S_IFREG | S_IFLNK | S_IFDIR | 0777))))
-> +		return -EPERM;
-> +
-> +	/*
-> +	 * We don't return -EPERM here. Yes, strange, but this is too
-> +	 * old behavior.
-> +	 */
-> +	if (attr->ia_valid & ATTR_MODE) {
-> +		if (exfat_sanitize_mode(sbi, inode, &attr->ia_mode) <
-> 0)
-> +			attr->ia_valid &= ~ATTR_MODE;
-> +	}
-> +
-> +	if (attr->ia_valid & ATTR_SIZE) {
-> +		down_write(&EXFAT_I(inode)->truncate_lock);
-> +		truncate_setsize(inode, attr->ia_size);
-> +		exfat_truncate(inode, attr->ia_size);
-> +		up_write(&EXFAT_I(inode)->truncate_lock);
-> +	}
-> +
-> +	setattr_copy(inode, attr);
-> +	mark_inode_dirty(inode);
-> +
-> +	return error;
-> +}
-> +
-> +const struct file_operations exfat_file_operations = {
-> +	.llseek      = generic_file_llseek,
-> +	.read_iter   = generic_file_read_iter,
-> +	.write_iter  = generic_file_write_iter,
-> +	.mmap        = generic_file_mmap,
-> +	.fsync       = generic_file_fsync,
-> +	.splice_read = generic_file_splice_read,
-> +};
-> +
-> +const struct inode_operations exfat_file_inode_operations = {
-> +	.setattr     = exfat_setattr,
-> +	.getattr     = exfat_getattr,
-> +};
-
+>
+>
+>Juergen
+>
