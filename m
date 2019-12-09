@@ -2,268 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B12A116BE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:09:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2641A116C02
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 12:11:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbfLILJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 06:09:37 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:23858 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727580AbfLILJa (ORCPT
+        id S1727820AbfLILLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 06:11:12 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34774 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727566AbfLILLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 06:09:30 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB9B9QlV029232;
-        Mon, 9 Dec 2019 05:09:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=PODMain02222019;
- bh=E8Gko3t1/vmDhbyLkG6oaY0YzKBD04P+NBZ0WSQsnZk=;
- b=kVaxjB2mSa5m1m9e/QApHdfxaCeDCVMllOTyPtvFofJFpIwwXtLVveAh1rcKcrs8+gy/
- V1VzCA6FPL+z346wstGSnpNbVZPKyuVoHrOg8z/CR3TOyTBl7xDQOYo8a53roou23vV6
- AqXTIPokhLQQZUbGPxO5UxKRZG6YdAYLnhh9KlM9JCe98rJEkfryW859Sjp8gm4CzYEZ
- rR+RJFwa5LdJgViRU9Wsgi6msUJAdL61H6tlzcX8oFb48/akVAcTlEXhJiO4SocoOD/2
- x2Hb+5IOg/8aVT4Gfskr4Mm10I/jgylps3cNZ2JlZ3I9veUR4OmQIbAYeflrcsNgSq1q RQ== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex02.ad.cirrus.com ([5.172.152.52])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2wrac6j0mt-6
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 09 Dec 2019 05:09:28 -0600
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 9 Dec
- 2019 11:09:16 +0000
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Mon, 9 Dec 2019 11:09:16 +0000
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id A0E832D1;
-        Mon,  9 Dec 2019 11:09:16 +0000 (UTC)
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <cw00.choi@samsung.com>
-CC:     <myungjoo.ham@samsung.com>, <patches@opensource.cirrus.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 10/10] extcon: arizona: Factor out microphone and button detection
-Date:   Mon, 9 Dec 2019 11:09:16 +0000
-Message-ID: <20191209110916.29524-10-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20191209110916.29524-1-ckeepax@opensource.cirrus.com>
-References: <20191209110916.29524-1-ckeepax@opensource.cirrus.com>
+        Mon, 9 Dec 2019 06:11:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575889870;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kKNJqGYoFHuNlkkCEvoI/4LL4dAPCIC/HY9H8FJVQzM=;
+        b=OGoVvngFeYFGO9jSFncwFSxBBp9GnxWTFL7gXQPj7GcBuYxa+PFgz2inzQpzEvKTeK13QI
+        sjdhzZ3OmZufQNkBJGBUpvPZoTKqgMhpbVJ1rfWs4tpzZIQjgJsDpl3/re3fkhfFKNtOhA
+        pDf7/HgFeGrXDR9tE740uX0uONN3LIM=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-378-G02mOvLaOIerl92oRSOGFg-1; Mon, 09 Dec 2019 06:11:04 -0500
+Received: by mail-lj1-f200.google.com with SMTP id p90so3209417ljp.23
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 03:11:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=/XI1i3yD2ZF8jeazCNhTgJLTTX7l/kk7N2T0Iz8NsVo=;
+        b=Bt12ALjfELCcOH4no5MGP8Nb6A/Ns7LAGAQ5bAsIpRR0k+UjFsRYlkyIwvfo4sJuhh
+         2LFS9dRhWa5zbw2d/U/VczucZLuyTLj5ODGHZDeEgQV8X3xoVtY4dUAyoHHG1qXnv4aQ
+         y3CJILSNL+LgiOwbbCrcYEt9G05EPaVUvBZlnkt4hWCSrCNmc7IAaqK7T479f5Av1KCo
+         S3nARzQMiTRovBHtDH2M/xbg61eEry/Qobs41dsz9JLgy23ezMXJFAlPAw9LTghywVPi
+         z8cUZOLPc1MjSYEkkMW6YfdKGRg6sJGnaLYAh6MhxKif3zbeTErZGj2gfawBTPepwhm1
+         GwkQ==
+X-Gm-Message-State: APjAAAV3K6AT6xdYQSC+CNf2b2EOmdRDPnvbYvr4vxjr//Zha58vT6sT
+        p8jQnkAVpXQi9os/jGzvFSHOyOWI0m3BzKbGM8g0e/u7Ihv+Qbpls+wV2LUL+bg+R4lIWHpEp25
+        iO6aysaBXawRyU2R6e/Lr7J0c
+X-Received: by 2002:a2e:6a14:: with SMTP id f20mr17195080ljc.87.1575889862614;
+        Mon, 09 Dec 2019 03:11:02 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwz7+idSyfFRccLmSN8y783VRquoHKeJhGew9SSKWdah45sGBl7BuznHHfRp0fUYiD+0/fR8A==
+X-Received: by 2002:a2e:6a14:: with SMTP id f20mr17195059ljc.87.1575889862292;
+        Mon, 09 Dec 2019 03:11:02 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id v9sm4240067lfe.18.2019.12.09.03.11.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 03:11:01 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id 9B41A18257B; Mon,  9 Dec 2019 12:11:00 +0100 (CET)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Steve French <smfrench@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
+Subject: Re: 5.5-rc1 oops on boot in 802.11 kernel driver
+In-Reply-To: <0101016eea3353da-835ca00e-d6c9-4e2c-aa0b-f6db8a4c518a-000000@us-west-2.amazonses.com>
+References: <CAH2r5mvZ=S0FHGP+Y_r5f37TXVehv2shj9f6w67zBxfjR+Zt-Q@mail.gmail.com> <0101016eea3353da-835ca00e-d6c9-4e2c-aa0b-f6db8a4c518a-000000@us-west-2.amazonses.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Mon, 09 Dec 2019 12:11:00 +0100
+Message-ID: <87h829lpob.fsf@toke.dk>
 MIME-Version: 1.0
+X-MC-Unique: G02mOvLaOIerl92oRSOGFg-1
+X-Mimecast-Spam-Score: 0
 Content-Type: text/plain
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxlogscore=999
- spamscore=0 mlxscore=0 clxscore=1015 adultscore=0 impostorscore=0
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1912090095
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Continue refactoring the microphone detect handling by factoring
-out the handling for microphone detection and button detection
-into separate functions. This both makes the code a little clearer
-and prepares for some planned future refactoring to make the state
-handling in the driver more explicit.
+Kalle Valo <kvalo@codeaurora.org> writes:
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/extcon/extcon-arizona.c | 115 +++++++++++++++++++++++++---------------
- 1 file changed, 71 insertions(+), 44 deletions(-)
+> Hi Steve,
+>
+> Steve French <smfrench@gmail.com> writes:
+>
+>> Noticed this crash in the Linux kernel Wifi driver on boot a few
+>> minutes ago immediately after updating to latest mainline kernel about
+>> an hour ago. I didn't see it last week and certainly not in 5.4.
+>
+> please CC linux-wireless on all wireless related problems, we don't
+> follow lkml very closely and I found your email just by chance.
+>
+> Full warning below. Steve is using iwlwifi.
 
-diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
-index b09a9a8ce98bc..7401733db08bb 100644
---- a/drivers/extcon/extcon-arizona.c
-+++ b/drivers/extcon/extcon-arizona.c
-@@ -872,38 +872,18 @@ static int arizona_micd_read(struct arizona_extcon_info *info)
- 	return val;
- }
- 
--static void arizona_micd_detect(struct work_struct *work)
-+static int arizona_micdet_reading(void *priv)
- {
--	struct arizona_extcon_info *info = container_of(work,
--						struct arizona_extcon_info,
--						micd_detect_work.work);
-+	struct arizona_extcon_info *info = priv;
- 	struct arizona *arizona = info->arizona;
--	unsigned int val = 0, lvl;
--	int ret, i, key;
--
--	cancel_delayed_work_sync(&info->micd_timeout_work);
--
--	mutex_lock(&info->lock);
--
--	/* If the cable was removed while measuring ignore the result */
--	ret = extcon_get_state(info->edev, EXTCON_MECHANICAL);
--	if (ret < 0) {
--		dev_err(arizona->dev, "Failed to check cable state: %d\n",
--				ret);
--		mutex_unlock(&info->lock);
--		return;
--	} else if (!ret) {
--		dev_dbg(arizona->dev, "Ignoring MICDET for removed cable\n");
--		mutex_unlock(&info->lock);
--		return;
--	}
-+	int ret, val;
- 
- 	if (info->detecting && arizona->pdata.micd_software_compare)
- 		ret = arizona_micd_adc_read(info);
- 	else
- 		ret = arizona_micd_read(info);
- 	if (ret < 0)
--		goto handled;
-+		return ret;
- 
- 	val = ret;
- 
-@@ -913,11 +893,11 @@ static void arizona_micd_detect(struct work_struct *work)
- 		info->mic = false;
- 		info->detecting = false;
- 		arizona_identify_headphone(info);
--		goto handled;
-+		return 0;
- 	}
- 
- 	/* If we got a high impedence we should have a headset, report it. */
--	if (info->detecting && (val & ARIZONA_MICD_LVL_8)) {
-+	if (val & ARIZONA_MICD_LVL_8) {
- 		info->mic = true;
- 		info->detecting = false;
- 
-@@ -936,7 +916,7 @@ static void arizona_micd_detect(struct work_struct *work)
- 				ret);
- 		}
- 
--		goto handled;
-+		return 0;
- 	}
- 
- 	/* If we detected a lower impedence during initial startup
-@@ -945,7 +925,7 @@ static void arizona_micd_detect(struct work_struct *work)
- 	 * plain headphones.  If both polarities report a low
- 	 * impedence then give up and report headphones.
- 	 */
--	if (info->detecting && (val & MICD_LVL_1_TO_7)) {
-+	if (val & MICD_LVL_1_TO_7) {
- 		if (info->jack_flips >= info->micd_num_modes * 10) {
- 			dev_dbg(arizona->dev, "Detected HP/line\n");
- 
-@@ -959,13 +939,45 @@ static void arizona_micd_detect(struct work_struct *work)
- 			arizona_extcon_set_mode(info, info->micd_mode);
- 
- 			info->jack_flips++;
-+
-+			if (arizona->pdata.micd_software_compare)
-+				regmap_update_bits(arizona->regmap,
-+						   ARIZONA_MIC_DETECT_1,
-+						   ARIZONA_MICD_ENA,
-+						   ARIZONA_MICD_ENA);
-+
-+			queue_delayed_work(system_power_efficient_wq,
-+					   &info->micd_timeout_work,
-+					   msecs_to_jiffies(arizona->pdata.micd_timeout));
- 		}
- 
--		goto handled;
-+		return 0;
- 	}
- 
- 	/*
- 	 * If we're still detecting and we detect a short then we've
-+	 * got a headphone.
-+	 */
-+	dev_dbg(arizona->dev, "Headphone detected\n");
-+	info->detecting = false;
-+
-+	arizona_identify_headphone(info);
-+
-+	return 0;
-+}
-+
-+static int arizona_button_reading(void *priv)
-+{
-+	struct arizona_extcon_info *info = priv;
-+	struct arizona *arizona = info->arizona;
-+	int val, key, lvl, i;
-+
-+	val = arizona_micd_read(info);
-+	if (val < 0)
-+		return val;
-+
-+	/*
-+	 * If we're still detecting and we detect a short then we've
- 	 * got a headphone.  Otherwise it's a button press.
- 	 */
- 	if (val & MICD_LVL_0_TO_7) {
-@@ -986,11 +998,6 @@ static void arizona_micd_detect(struct work_struct *work)
- 			} else {
- 				dev_err(arizona->dev, "Button out of range\n");
- 			}
--		} else if (info->detecting) {
--			dev_dbg(arizona->dev, "Headphone detected\n");
--			info->detecting = false;
--
--			arizona_identify_headphone(info);
- 		} else {
- 			dev_warn(arizona->dev, "Button with no mic: %x\n",
- 				 val);
-@@ -1004,19 +1011,39 @@ static void arizona_micd_detect(struct work_struct *work)
- 		arizona_extcon_pulse_micbias(info);
- 	}
- 
--handled:
--	if (info->detecting) {
--		if (arizona->pdata.micd_software_compare)
--			regmap_update_bits(arizona->regmap,
--					   ARIZONA_MIC_DETECT_1,
--					   ARIZONA_MICD_ENA,
--					   ARIZONA_MICD_ENA);
-+	return 0;
-+}
- 
--		queue_delayed_work(system_power_efficient_wq,
--				   &info->micd_timeout_work,
--				   msecs_to_jiffies(arizona->pdata.micd_timeout));
-+static void arizona_micd_detect(struct work_struct *work)
-+{
-+	struct arizona_extcon_info *info = container_of(work,
-+						struct arizona_extcon_info,
-+						micd_detect_work.work);
-+	struct arizona *arizona = info->arizona;
-+	int ret;
-+
-+	cancel_delayed_work_sync(&info->micd_timeout_work);
-+
-+	mutex_lock(&info->lock);
-+
-+	/* If the cable was removed while measuring ignore the result */
-+	ret = extcon_get_state(info->edev, EXTCON_MECHANICAL);
-+	if (ret < 0) {
-+		dev_err(arizona->dev, "Failed to check cable state: %d\n",
-+				ret);
-+		mutex_unlock(&info->lock);
-+		return;
-+	} else if (!ret) {
-+		dev_dbg(arizona->dev, "Ignoring MICDET for removed cable\n");
-+		mutex_unlock(&info->lock);
-+		return;
- 	}
- 
-+	if (info->detecting)
-+		arizona_micdet_reading(info);
-+	else
-+		arizona_button_reading(info);
-+
- 	pm_runtime_mark_last_busy(info->dev);
- 	mutex_unlock(&info->lock);
- }
--- 
-2.11.0
+Right, we already got a similar report off-list, but with a different
+stack trace. I was going to try to reproduce this on my own machine
+today. However, the fact that this includes the iwl_mvm_tx_reclaim()
+function may be a hint; that code seems to be reusing skbs without
+freeing them?
+
+If I'm reading the code correctly, it seems the reuse leads to the same
+skb being passed to ieee80211_tx_status() multiple times; the driver is
+clearing info->status, but since we added the info->tx_time_est field,
+that would lead to double-accounting of that SKB, which would explain
+the warning?
+
+Can someone familiar with iwlwifi confirm that this is indeed what that
+code is supposed to be doing? If it is, I think it needs the patch
+below; however, if I'm wrong, then clearing the field could lead to the
+opposite problem (that skbs fail to be accounted at all), which would
+lead to the queue being throttled because the limit gets too high and is
+never brought back down...
+
+-Toke
+
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c b/drivers/net/wire=
+less/intel/iwlwifi/mvm/tx.c
+index dc5c02fbc65a..7d822445730c 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+@@ -1848,6 +1848,7 @@ static void iwl_mvm_tx_reclaim(struct iwl_mvm *mvm, i=
+nt sta_id, int tid,
+                iwl_trans_free_tx_cmd(mvm->trans, info->driver_data[1]);
+=20
+                memset(&info->status, 0, sizeof(info->status));
++               info->tx_time_est =3D 0;
+                /* Packet was transmitted successfully, failures come as si=
+ngle
+                 * frames because before failing a frame the firmware trans=
+mits
+                 * it without aggregation at least once.
 
