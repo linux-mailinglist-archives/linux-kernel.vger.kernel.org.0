@@ -2,91 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86CDD117800
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:09:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B741177F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:07:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbfLIVJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 16:09:17 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:52288 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbfLIVJR (ORCPT
+        id S1726637AbfLIVHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 16:07:53 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38213 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbfLIVHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 16:09:17 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB9L9ANx047646;
-        Mon, 9 Dec 2019 15:09:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575925750;
-        bh=Y4Fj9ku2JzET4DUtx5DnN34khAGg36Lhfe3pUDRQA3k=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=jhUlUlPm3bcdAoESnImEXH6bHp8xiIG2TuhcWJVNnL9mSheE0GPDNh2ROJ99vPgUI
-         7jzaVhlN/CYsq58+U95Ghk8lEYk6+8OPRuAhcBsVXtQHGebopRanadNndeJZ9xzlnh
-         vs00QY427Xwdi8vBy14bjL4Q9FedOC/qGE7HxQU0=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB9L9AAF053616
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Dec 2019 15:09:10 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Dec
- 2019 15:09:10 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Dec 2019 15:09:10 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB9L9As7115332;
-        Mon, 9 Dec 2019 15:09:10 -0600
-Subject: Re: [PATCH 2/2] net: m_can: Make wake-up gpio an optional
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Sean Nyekjaer <sean@geanix.com>
-CC:     <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20191204175112.7308-1-dmurphy@ti.com>
- <20191204175112.7308-2-dmurphy@ti.com>
- <b9eaa5c4-13bc-295f-dcbf-d2a846243682@geanix.com>
- <827b022e-9188-7bcf-25e3-3777df3b08a5@ti.com>
- <809b9ff1-88e3-4e46-33e0-856db37898b2@pengutronix.de>
- <dc24a8a3-d515-f84b-9f33-db92bd4a412a@ti.com>
- <6ef8fe8a-acec-89c5-83d3-fd47cf1f40ab@pengutronix.de>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <cc310081-1855-958b-fbe4-529937ff941c@ti.com>
-Date:   Mon, 9 Dec 2019 15:07:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Mon, 9 Dec 2019 16:07:53 -0500
+Received: by mail-pg1-f195.google.com with SMTP id a33so7509155pgm.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 13:07:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K+eNXnjIau7cgWUnA3a2Cqn1U1V3PjkPxI5SSOqsokA=;
+        b=N66gVvBqkf/IjPQJvFj30UwukfXdt7TOhv82tZT0Y1uUriBCsQn852PcFt58pbGqRp
+         4gI4geMvYZAbnsP3cmY1HBIBfrePAAtWS2G2tDjmxVQrTuAXyr/GKlD+3jAmfHJ+x3mN
+         nUbzjuk6TRlU2f/oY17DgyGFu2HHkF3EtxYivNULwN0EdRBe/tWmUNxjY+sABJZClkXu
+         swMlYnD9n+MlEt5Z1j016kwLNcmGyJ2Kq0vCYcJ8ZgSnrSDEuCuiLHXWhqen6acZN7MY
+         eTomNjbMQhZ5O3+bSXk2fvVW1quzeUl8aXog4mBOHVo/c9yhU3uKAenXTgNeqKN6+EI+
+         yOdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K+eNXnjIau7cgWUnA3a2Cqn1U1V3PjkPxI5SSOqsokA=;
+        b=UThvi9Zi9cGmysaXuodbTN37JPjd76nqmJ2wo2t3eau87u/AepaxKwoALAa2Jr2XeU
+         Nv/EKQRV+PjP/BUR82WtyKYd0GmVj+xg5UZbXV9h581QRdh4tNq+zWmZgjhHbj27s9oj
+         uVM1co0aBFnaUdZW3FObfPQqyPeyAjzDckKlQpqwAtGOB/V1sjuSMuIoLzfltlRrQeB6
+         6SLowcMjRqU8eONu8w7xJcymJ7Ejx2VTxGxiFAVq/uFqjGfZwQ5XzzELBILLfT3rgXVn
+         OOfjOK2tFuynpZ/yeSlxSY81+y2q5eXpSvx5o8MLlMR5ho0TrBWuxRNECYR6IxX2l7gZ
+         aNGQ==
+X-Gm-Message-State: APjAAAXjXJHnotLfyE/AxYktJZ3zozMe3ugzWO9kui5mqmRVo/urlXhl
+        jjD+3c+8gBChpCpXDKsykYhBVIZ0J8aft4W+SztLcA==
+X-Google-Smtp-Source: APXvYqxUFVcNRk0/nAhQuNe2/SnfwtMmBoobRu1zKuYgYL2LWWtIcBKJdlZgzI3AQuAYyh7coP7wm3PK/UOBY/C2Cag=
+X-Received: by 2002:a65:590f:: with SMTP id f15mr20478238pgu.381.1575925672294;
+ Mon, 09 Dec 2019 13:07:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <6ef8fe8a-acec-89c5-83d3-fd47cf1f40ab@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191209201444.33243-1-natechancellor@gmail.com>
+In-Reply-To: <20191209201444.33243-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 9 Dec 2019 13:07:41 -0800
+Message-ID: <CAKwvOdmrGGn6f+XBOO3GCm-jVftLsFTUXdbhS9_iJVY03XqCjA@mail.gmail.com>
+Subject: Re: [PATCH] xen/blkfront: Adjust indentation in xlvbd_alloc_gendisk
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Stefano Stabellini <stefano.stabellini@eu.citrix.com>,
+        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marc
-
-On 12/9/19 3:06 PM, Marc Kleine-Budde wrote:
-> On 12/9/19 10:01 PM, Dan Murphy wrote:
->>>>> I would add tcan4x5x to the subject of this patch ->
->>>>> "net: m_can: tcan4x5x Make wake-up gpio an optional"
->>>>>
->>>> Do you want me to submit v2 with the $subject change?
->>>>
->>>> Or would you fix it up when committing it?
->>> I'll change the subject while applying.
->>>
->>> Dan, what about maintainerchip of the tcan4x5?
->> Do you know when you will be applying these?
-> The patch is already upstream. See linux-can/mater:
+On Mon, Dec 9, 2019 at 12:14 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 >
-> https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can.git/log/
+> Clang warns:
 >
-> https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can.git/commit/?id=2de497356955ce58cd066fb03d2da5235f3c7c23
-
-Ah I was looking here
-
-https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git
-
+> ../drivers/block/xen-blkfront.c:1117:4: warning: misleading indentation;
+> statement is not part of the previous 'if' [-Wmisleading-indentation]
+>                 nr_parts = PARTS_PER_DISK;
+>                 ^
+> ../drivers/block/xen-blkfront.c:1115:3: note: previous statement is here
+>                 if (err)
+>                 ^
 >
+> This is because there is a space at the beginning of this line; remove
+> it so that the indentation is consistent according to the Linux kernel
+> coding style and clang no longer warns.
+>
+> While we are here, the previous line has some trailing whitespace; clean
+> that up as well.
+>
+> Fixes: c80a420995e7 ("xen-blkfront: handle Xen major numbers other than XENVBD")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/791
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/block/xen-blkfront.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+> index a74d03913822..c02be06c5299 100644
+> --- a/drivers/block/xen-blkfront.c
+> +++ b/drivers/block/xen-blkfront.c
+> @@ -1113,8 +1113,8 @@ static int xlvbd_alloc_gendisk(blkif_sector_t capacity,
+
+While you're here, would you please also removing the single space
+before the labels in this function?
+
+In vim:
+
+/^ [a-zA-Z]
+
+turns up 5 labels with this.
+
+>         if (!VDEV_IS_EXTENDED(info->vdevice)) {
+>                 err = xen_translate_vdev(info->vdevice, &minor, &offset);
+>                 if (err)
+> -                       return err;
+> -               nr_parts = PARTS_PER_DISK;
+> +                       return err;
+> +               nr_parts = PARTS_PER_DISK;
+>         } else {
+>                 minor = BLKIF_MINOR_EXT(info->vdevice);
+>                 nr_parts = PARTS_PER_EXT_DISK;
+> --
+> 2.24.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20191209201444.33243-1-natechancellor%40gmail.com.
+
+
+
+-- 
+Thanks,
+~Nick Desaulniers
