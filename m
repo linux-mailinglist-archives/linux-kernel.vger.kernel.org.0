@@ -2,76 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4C21168A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 09:51:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6AA01168A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 09:51:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbfLIIvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 03:51:41 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:39338 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbfLIIvj (ORCPT
+        id S1727325AbfLIIvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 03:51:38 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:37907 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfLIIvh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 03:51:39 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id E568628FFE3
-Subject: Re: [resend PATCH v6 02/12] dt-bindings: mediatek: Add compatible for
- mt7623
-To:     matthias.bgg@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com
-Cc:     sean.wang@mediatek.com, sean.wang@kernel.org,
-        rdunlap@infradead.org, wens@csie.org, hsinyi@chromium.org,
-        frank-w@public-files.de, drinkcat@chromium.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, mbrugger@suse.com
-References: <20191207224740.24536-1-matthias.bgg@kernel.org>
- <20191207224740.24536-3-matthias.bgg@kernel.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <d09c3801-71cf-4855-8370-95d146b76ed4@collabora.com>
-Date:   Mon, 9 Dec 2019 09:51:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Mon, 9 Dec 2019 03:51:37 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ieElS-000547-VQ; Mon, 09 Dec 2019 09:51:35 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 781451C28F2;
+        Mon,  9 Dec 2019 09:51:34 +0100 (CET)
+Date:   Mon, 09 Dec 2019 08:51:34 -0000
+From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/mtrr] x86/mtrr: Get rid of mtrr_seq_show() forward declaration
+Cc:     Borislav Petkov <bp@suse.de>, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191108200815.24589-1-bp@alien8.de>
+References: <20191108200815.24589-1-bp@alien8.de>
 MIME-Version: 1.0
-In-Reply-To: <20191207224740.24536-3-matthias.bgg@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Message-ID: <157588149438.21853.11921626365712409629.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+The following commit has been merged into the x86/mtrr branch of tip:
 
-On 7/12/19 23:47, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <mbrugger@suse.com>
-> 
-> MediaTek mt7623 uses the mt2701 binings as fallback.
+Commit-ID:     2e30dd9e0698d5a04698f38e932a6e29893d8a93
+Gitweb:        https://git.kernel.org/tip/2e30dd9e0698d5a04698f38e932a6e29893d8a93
+Author:        Borislav Petkov <bp@suse.de>
+AuthorDate:    Fri, 08 Nov 2019 21:05:45 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Mon, 09 Dec 2019 09:23:44 +01:00
 
-typo s/binings/bindings/
+x86/mtrr: Get rid of mtrr_seq_show() forward declaration
 
-> Document this in the binding description.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
->  .../devicetree/bindings/display/mediatek/mediatek,disp.txt      | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> index c71c8a4b73ff..a747895574f1 100644
-> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> @@ -42,6 +42,8 @@ Required properties (all function blocks):
->  	"mediatek,<chip>-disp-od"		- overdrive
->  	"mediatek,<chip>-mmsys", "syscon"	- provide clocks and components management
->    the supported chips are mt2701, mt2712 and mt8173.
-> +  For mt7623, compatible must be:
-> +        "mediatek,mt7623-<component>" , "mediatek,mt2701-<component>"
->  
->  - reg: Physical base address and length of the function block register space
->  - interrupts: The interrupt signal from the function block (required, except for
-> 
+... by moving the function up in the file.
+
+No functional changes.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: x86@kernel.org
+Link: https://lkml.kernel.org/r/20191108200815.24589-1-bp@alien8.de
+---
+ arch/x86/kernel/cpu/mtrr/if.c | 42 ++++++++++++++++------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index 4d36dcc..268d318 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -373,28 +373,6 @@ static int mtrr_close(struct inode *ino, struct file *file)
+ 	return single_release(ino, file);
+ }
+ 
+-static int mtrr_seq_show(struct seq_file *seq, void *offset);
+-
+-static int mtrr_open(struct inode *inode, struct file *file)
+-{
+-	if (!mtrr_if)
+-		return -EIO;
+-	if (!mtrr_if->get)
+-		return -ENXIO;
+-	return single_open(file, mtrr_seq_show, NULL);
+-}
+-
+-static const struct file_operations mtrr_fops = {
+-	.owner			= THIS_MODULE,
+-	.open			= mtrr_open,
+-	.read			= seq_read,
+-	.llseek			= seq_lseek,
+-	.write			= mtrr_write,
+-	.unlocked_ioctl		= mtrr_ioctl,
+-	.compat_ioctl		= mtrr_ioctl,
+-	.release		= mtrr_close,
+-};
+-
+ static int mtrr_seq_show(struct seq_file *seq, void *offset)
+ {
+ 	char factor;
+@@ -426,6 +404,26 @@ static int mtrr_seq_show(struct seq_file *seq, void *offset)
+ 	return 0;
+ }
+ 
++static int mtrr_open(struct inode *inode, struct file *file)
++{
++	if (!mtrr_if)
++		return -EIO;
++	if (!mtrr_if->get)
++		return -ENXIO;
++	return single_open(file, mtrr_seq_show, NULL);
++}
++
++static const struct file_operations mtrr_fops = {
++	.owner			= THIS_MODULE,
++	.open			= mtrr_open,
++	.read			= seq_read,
++	.llseek			= seq_lseek,
++	.write			= mtrr_write,
++	.unlocked_ioctl		= mtrr_ioctl,
++	.compat_ioctl		= mtrr_ioctl,
++	.release		= mtrr_close,
++};
++
+ static int __init mtrr_if_init(void)
+ {
+ 	struct cpuinfo_x86 *c = &boot_cpu_data;
