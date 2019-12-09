@@ -2,85 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A286116A65
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC101169E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 10:46:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbfLIKAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 05:00:06 -0500
-Received: from owa.iluvatar.ai ([103.91.158.24]:16133 "EHLO smg.iluvatar.ai"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727200AbfLIKAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 05:00:06 -0500
-X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Dec 2019 05:00:04 EST
-X-AuditID: 0a650161-78bff700000078a3-9f-5dee2de096fb
-Received: from owa.iluvatar.ai (s-10-101-1-102.iluvatar.local [10.101.1.102])
-        by smg.iluvatar.ai (Symantec Messaging Gateway) with SMTP id 7B.F0.30883.0ED2EED5; Mon,  9 Dec 2019 19:20:00 +0800 (HKT)
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; d=iluvatar.ai; s=key_2018;
-        c=relaxed/relaxed; t=1575884707; h=from:subject:to:date:message-id;
-        bh=4XY6KZy5NFgqtGCerKi26yFsh/3MiJ6OzvRR3Z9dvrw=;
-        b=F3HhOdnrOFHJ8EUYcI6dCcUMs7jE6v9RPJHfkluSmPDlJdvhE52A0KDst39yd9GhXefhAyENZtK
-        Kwg5vNp32vDRDm+xPvY3oUS+BLPha5JVUM8oF6fUGQZS3L+eZP6HgfkkkNUJjxpKJEuHZec8Axclt
-        yLUCLplrfBkOxIQoQco=
-Received: from hsj-Precision-5520.iluvatar.local (10.101.199.253) by
- S-10-101-1-102.iluvatar.local (10.101.1.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1415.2; Mon, 9 Dec 2019 17:45:07 +0800
-From:   Huang Shijie <sjhuang@iluvatar.ai>
-To:     <jbaron@akamai.com>
-CC:     <linux-kernel@vger.kernel.org>, <1537577747@qq.com>,
-        Huang Shijie <sjhuang@iluvatar.ai>
-Subject: [PATCH] lib/dynamic_debug: make better dynamic log output
-Date:   Mon, 9 Dec 2019 17:44:37 +0800
-Message-ID: <20191209094437.14866-1-sjhuang@iluvatar.ai>
-X-Mailer: git-send-email 2.17.1
+        id S1727311AbfLIJqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 04:46:33 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:53393 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbfLIJqc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 04:46:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1575884791; x=1607420791;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=4cIuMxtJH4KZz9+iT3cGj9msbb3a41ZVBSEqjbz+WdA=;
+  b=SLSmAy21f7mrEWjW9itUQV8+9DQ0hLws3fPikioviEZLyvl3edlFONHo
+   vTGW2nvmhYTYZrBbD9mDQA6/I2l19jIhUQQwV2PHp5Zl3zwE2F3p9vy1j
+   Y7wO7ZL1sHjA8ZYZtjEgvpI9r5om25ius/wJDG7D57OLMDwwGjoRVCRLd
+   8=;
+IronPort-SDR: arqHB+twrTT98tJnLn4AETwVom5+UNCEXWZoX+SoypLJ7tOeZxnXbkSGFvksFQPtNgtDUfSYSt
+ G+F8qhe4JlUg==
+X-IronPort-AV: E=Sophos;i="5.69,294,1571702400"; 
+   d="scan'208";a="8224098"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-7d76a15f.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 09 Dec 2019 09:46:30 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-7d76a15f.us-east-1.amazon.com (Postfix) with ESMTPS id 963E2A22A5;
+        Mon,  9 Dec 2019 09:46:27 +0000 (UTC)
+Received: from EX13D31EUB001.ant.amazon.com (10.43.166.210) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 09:46:26 +0000
+Received: from EX13D32EUC003.ant.amazon.com (10.43.164.24) by
+ EX13D31EUB001.ant.amazon.com (10.43.166.210) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 09:46:25 +0000
+Received: from EX13D32EUC003.ant.amazon.com ([10.43.164.24]) by
+ EX13D32EUC003.ant.amazon.com ([10.43.164.24]) with mapi id 15.00.1367.000;
+ Mon, 9 Dec 2019 09:46:25 +0000
+From:   "Durrant, Paul" <pdurrant@amazon.com>
+To:     =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        "Park, Seongjae" <sjpark@amazon.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "roger.pau@citrix.com" <roger.pau@citrix.com>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sj38.park@gmail.com" <sj38.park@gmail.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Subject: RE: [PATCH v3 0/1] xen/blkback: Squeeze page pools if a memory
+ pressure
+Thread-Topic: [PATCH v3 0/1] xen/blkback: Squeeze page pools if a memory
+ pressure
+Thread-Index: AQHVrm7tNfXN4zMxAE2n5qoiVkODNaexjBwAgAABEcA=
+Date:   Mon, 9 Dec 2019 09:46:25 +0000
+Message-ID: <026ba79524da43648371e5bca437a5e4@EX13D32EUC003.ant.amazon.com>
+References: <20191209085839.21215-1-sjpark@amazon.com>
+ <954f7beb-9d40-253e-260b-4750809bf808@suse.com>
+In-Reply-To: <954f7beb-9d40-253e-260b-4750809bf808@suse.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.164.211]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Originating-IP: [10.101.199.253]
-X-ClientProxiedBy: S-10-101-1-102.iluvatar.local (10.101.1.102) To
- S-10-101-1-102.iluvatar.local (10.101.1.102)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJLMWRmVeSWpSXmKPExsXClcqYpvtA912sQXeHscXkqwfYLGYsPs5q
-        cXnXHDYHZo/JRxYwe9x6tpbV4/MmuQDmKC6blNSczLLUIn27BK6M9ubcghdsFat67jA2MJ5m
-        7WLk4JAQMJFo+lzQxcjFISRwglHi2NtHbF2MnBzMAhISB1+8YAZJsAi8ZZLYeXQ3K0RVK5PE
-        xBU3mECq2AQ0JOaeuMsMMklEQFzi/XxXiOZYibld+8DCwgJOEnv3RoCEWQRUJBb+OcgCYvMK
-        WEgs37CAGcSWEJCXWL3hADNEXFDi5MwnLCCtQgIKEi9WakGUKEks2TuLCcIulPj+8i7LBEaB
-        WUgunYWkewEj0ypG/uLcdL3MnNKyxJLEIr3EzE2MkPBL3MF4o/Ol3iFGAQ5GJR7eCYFvY4VY
-        E8uKK3MPMUpwMCuJ8C6Z+CpWiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/Qv6cxQgLpiSWp2amp
-        BalFMFkmDk6pBqapbo3Vs7r8Ofw6Yp6GGUrN+rDkptTd5c6bL6Uf5Jy+a/2+VWJTsk1WPUu/
-        xdCy1u1bE5NyetHs+IvcvdOUfmfmX6z6v3Yv0+/arODc3fzR/ruzandZ2IUaHGQsEUlyDDz7
-        MZqF9elplUvs86M+ZXKzvDArDG9d8PdTTabuvg+BO+Nbo52SF69fenzKBZtI8XsbXJR7r+lX
-        GOjM+SzL5rPk0qq9VitsHWb/ttC1K1PMtgoyU7I9FvRbIvTz1euncpuXvdS8Hphyeu6eM9Ui
-        DApJ3o+Llhls7V0RO11qnt+M5PVT1J3EDE6fFuK6ca5e6NfkXCbBKe92aR1YNlvPJKnH48k5
-        cZZz1aam33cnRyixFGckGmoxFxUnAgB4aCFhvAIAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver strings and device name is not changed for the driver's dynamic
-log output. But the dynamic_emit_prefix() which contains the function names
-may changed when the function names are changed.
-
-So the patch makes the better dynamic log output.
-
-Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
----
- lib/dynamic_debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-index c60409138e13..8cfcdd5bd1ff 100644
---- a/lib/dynamic_debug.c
-+++ b/lib/dynamic_debug.c
-@@ -590,8 +590,8 @@ void __dynamic_dev_dbg(struct _ddebug *descriptor,
- 		char buf[PREFIX_SIZE];
- 
- 		dev_printk_emit(LOGLEVEL_DEBUG, dev, "%s%s %s: %pV",
--				dynamic_emit_prefix(descriptor, buf),
- 				dev_driver_string(dev), dev_name(dev),
-+				dynamic_emit_prefix(descriptor, buf),
- 				&vaf);
- 	}
- 
--- 
-2.17.1
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKw7xyZ2VuIEdyb8OfIDxqZ3Jv
+c3NAc3VzZS5jb20+DQo+IFNlbnQ6IDA5IERlY2VtYmVyIDIwMTkgMDk6MzkNCj4gVG86IFBhcmss
+IFNlb25namFlIDxzanBhcmtAYW1hem9uLmNvbT47IGF4Ym9lQGtlcm5lbC5kazsNCj4ga29ucmFk
+LndpbGtAb3JhY2xlLmNvbTsgcm9nZXIucGF1QGNpdHJpeC5jb20NCj4gQ2M6IGxpbnV4LWJsb2Nr
+QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgRHVycmFudCwN
+Cj4gUGF1bCA8cGR1cnJhbnRAYW1hem9uLmNvbT47IHNqMzgucGFya0BnbWFpbC5jb207IHhlbi0N
+Cj4gZGV2ZWxAbGlzdHMueGVucHJvamVjdC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAw
+LzFdIHhlbi9ibGtiYWNrOiBTcXVlZXplIHBhZ2UgcG9vbHMgaWYgYSBtZW1vcnkNCj4gcHJlc3N1
+cmUNCj4gDQo+IE9uIDA5LjEyLjE5IDA5OjU4LCBTZW9uZ0phZSBQYXJrIHdyb3RlOg0KPiA+IEVh
+Y2ggYGJsa2lmYCBoYXMgYSBmcmVlIHBhZ2VzIHBvb2wgZm9yIHRoZSBncmFudCBtYXBwaW5nLiAg
+VGhlIHNpemUgb2YNCj4gPiB0aGUgcG9vbCBzdGFydHMgZnJvbSB6ZXJvIGFuZCBiZSBpbmNyZWFz
+ZWQgb24gZGVtYW5kIHdoaWxlIHByb2Nlc3NpbmcNCj4gPiB0aGUgSS9PIHJlcXVlc3RzLiAgSWYg
+Y3VycmVudCBJL08gcmVxdWVzdHMgaGFuZGxpbmcgaXMgZmluaXNoZWQgb3IgMTAwDQo+ID4gbWls
+bGlzZWNvbmRzIGhhcyBwYXNzZWQgc2luY2UgbGFzdCBJL08gcmVxdWVzdHMgaGFuZGxpbmcsIGl0
+IGNoZWNrcyBhbmQNCj4gPiBzaHJpbmtzIHRoZSBwb29sIHRvIG5vdCBleGNlZWQgdGhlIHNpemUg
+bGltaXQsIGBtYXhfYnVmZmVyX3BhZ2VzYC4NCj4gPg0KPiA+IFRoZXJlZm9yZSwgYGJsa2Zyb250
+YCBydW5uaW5nIGd1ZXN0cyBjYW4gY2F1c2UgYSBtZW1vcnkgcHJlc3N1cmUgaW4gdGhlDQo+ID4g
+YGJsa2JhY2tgIHJ1bm5pbmcgZ3Vlc3QgYnkgYXR0YWNoaW5nIGEgbGFyZ2UgbnVtYmVyIG9mIGJs
+b2NrIGRldmljZXMgYW5kDQo+ID4gaW5kdWNpbmcgSS9PLg0KPiANCj4gSSdtIGhhdmluZyBwcm9i
+bGVtcyB0byB1bmRlcnN0YW5kIGhvdyBhIGd1ZXN0IGNhbiBhdHRhY2ggYSBsYXJnZSBudW1iZXIN
+Cj4gb2YgYmxvY2sgZGV2aWNlcyB3aXRob3V0IHRob3NlIGhhdmluZyBiZWVuIGNvbmZpZ3VyZWQg
+YnkgdGhlIGhvc3QgYWRtaW4NCj4gYmVmb3JlLg0KPiANCj4gSWYgdGhvc2UgZGV2aWNlcyBoYXZl
+IGJlZW4gY29uZmlndXJlZCwgZG9tMCBzaG91bGQgYmUgcmVhZHkgZm9yIHRoYXQNCj4gbnVtYmVy
+IG9mIGRldmljZXMsIGUuZy4gYnkgaGF2aW5nIGVub3VnaCBzcGFyZSBtZW1vcnkgYXJlYSBmb3Ig
+YmFsbG9vbmVkDQo+IHBhZ2VzLg0KPiANCj4gU28gZWl0aGVyIEknbSBtaXNzaW5nIHNvbWV0aGlu
+ZyBoZXJlIG9yIHlvdXIgcmVhc29uaW5nIGZvciB0aGUgbmVlZCBvZg0KPiB0aGUgcGF0Y2ggaXMg
+d3JvbmcuDQo+IA0KDQpJIHRoaW5rIHRoZSB1bmRlcmx5aW5nIGlzc3VlIGlzIHRoYXQgcGVyc2lz
+dGVudCBncmFudCBzdXBwb3J0IGlzIGhvZ2dpbmcgbWVtb3J5IGluIHRoZSBiYWNrZW5kcywgdGhl
+cmVieSBjb21wcm9taXNpbmcgc2NhbGFiaWxpdHkuIElJVUMgdGhpcyBwYXRjaCBpcyBlc3NlbnRp
+YWxseSBhIGJhbmQtYWlkIHRvIGdldCBiYWNrIHRvIHRoZSBzY2FsYWJpbGl0eSB0aGF0IHdhcyBw
+b3NzaWJsZSBiZWZvcmUgcGVyc2lzdGVudCBncmFudCBzdXBwb3J0IHdhcyBhZGRlZC4gVWx0aW1h
+dGVseSB0aGUgcmlnaHQgYW5zd2VyIHNob3VsZCBiZSB0byBnZXQgcmlkIG9mIHBlcnNpc3RlbnQg
+Z3JhbnRzIHN1cHBvcnQgYW5kIHVzZSBncmFudCBjb3B5LCBidXQgc3VjaCBhIGNoYW5nZSBpcyBj
+bGVhcmx5IG1vcmUgaW52YXNpdmUgYW5kIHdvdWxkIG5lZWQgZmFyIG1vcmUgdGVzdGluZy4NCg0K
+ICBQYXVsDQo=
