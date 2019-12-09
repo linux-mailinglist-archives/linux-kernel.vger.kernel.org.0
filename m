@@ -2,58 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C0E11737F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F743117385
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:11:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfLISKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:10:07 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:33672 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfLISKH (ORCPT
+        id S1726631AbfLISLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:11:51 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47960 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbfLISLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:10:07 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 772711543992E;
-        Mon,  9 Dec 2019 10:10:06 -0800 (PST)
-Date:   Mon, 09 Dec 2019 10:10:05 -0800 (PST)
-Message-Id: <20191209.101005.1980841296607612612.davem@davemloft.net>
-To:     dmurphy@ti.com
-Cc:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        bunk@kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        grygorii.strashko@ti.com
-Subject: Re: [PATCH net-next v2 0/2] Rebase of patches
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191209175943.23110-1-dmurphy@ti.com>
-References: <20191209175943.23110-1-dmurphy@ti.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Mon, 9 Dec 2019 13:11:51 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 12646290491
+Message-ID: <7b92111b0c6443653de45f1eeec867645c127f32.camel@collabora.com>
+Subject: Re: [PATCH v3 2/5] media: hantro: Reduce H264 extra space for
+ motion vectors
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Tomasz Figa <tfiga@chromium.org>, Jonas Karlman <jonas@kwiboo.se>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Mon, 09 Dec 2019 15:11:41 -0300
+In-Reply-To: <CAAFQd5CSWea=DNjySJxZmVi+2c5U4EKVPa1mf3vHh70+YrAQCA@mail.gmail.com>
+References: <HE1PR06MB4011EDD5F2686A05BC35F61CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
+         <20191106223408.2176-1-jonas@kwiboo.se>
+         <HE1PR06MB4011FF930111A869E4645C8CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
+         <CAAFQd5CSWea=DNjySJxZmVi+2c5U4EKVPa1mf3vHh70+YrAQCA@mail.gmail.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 09 Dec 2019 10:10:06 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Murphy <dmurphy@ti.com>
-Date: Mon, 9 Dec 2019 11:59:41 -0600
+On Wed, 2019-11-20 at 21:44 +0900, Tomasz Figa wrote:
+> Hi Jonas,
+> 
+> On Thu, Nov 7, 2019 at 7:34 AM Jonas Karlman <jonas@kwiboo.se> wrote:
+> > A decoded 8-bit 4:2:0 frame need memory for up to 448 bytes per
+> > macroblock with additional 32 bytes on multi-core variants.
+> > 
+> > Memory layout is as follow:
+> > 
+> > +---------------------------+
+> > > Y-plane   256 bytes x MBs |
+> > +---------------------------+
+> > > UV-plane  128 bytes x MBs |
+> > +---------------------------+
+> > > MV buffer  64 bytes x MBs |
+> > +---------------------------+
+> > > MC sync          32 bytes |
+> > +---------------------------+
+> > 
+> > Reduce the extra space allocated now that motion vector buffer offset no
+> > longer is based on the extra space.
+> > 
+> > Only allocate extra space for 64 bytes x MBs of motion vector buffer
+> > and 32 bytes for multi-core sync.
+> > 
+> > Fixes: a9471e25629b ("media: hantro: Add core bits to support H264 decoding")
+> > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> > Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > ---
+> > Changes in v3:
+> >   - add memory layout to code comment (Boris)
+> > Changes in v2:
+> >   - updated commit message
+> > ---
+> >  drivers/staging/media/hantro/hantro_v4l2.c | 20 ++++++++++++++++++--
+> >  1 file changed, 18 insertions(+), 2 deletions(-)
+> > 
+> 
+> Thanks for the patch!
+> 
+> What platform did you test it on and how? Was it tested with IOMMU enabled?
 
-> This is a rebase of the dp83867 patches on top of the net-next tree
+Hello Tomasz,
 
-That's not what this patch series does.
+Please note that this series has been picked-up and is merged
+in v5.5-rc1.
 
-The introductory posting is where you describe, at a high level, what the
-whole patch series is doing as a unit, how it is doing it, and why it is
-doing it that way.
+IIRC, we tested these patches on RK3399 and RK3288 (that means
+with an IOMMU). I've just ran some more extensive tests on RK3288,
+on media/master; and I plan to test some more on RK3399 later this week.
 
-It also serves as the single email I can respond to when I want to let you
-know that I've applied the patch series.
+Do you have any specific concern in mind?
 
-Please read the documentation under Documentation/ if you still are unsure
-what this introductory posting is all about and how you should compose one.
+Thanks,
+Ezequiel
 
-Thank you.
