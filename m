@@ -2,99 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F743117385
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA1ED117428
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:27:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfLISLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:11:51 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47960 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfLISLv (ORCPT
+        id S1726614AbfLIS11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:27:27 -0500
+Received: from sender4-op-o18.zoho.com ([136.143.188.18]:17863 "EHLO
+        sender4-op-o18.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfLIS10 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:11:51 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 12646290491
-Message-ID: <7b92111b0c6443653de45f1eeec867645c127f32.camel@collabora.com>
-Subject: Re: [PATCH v3 2/5] media: hantro: Reduce H264 extra space for
- motion vectors
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Tomasz Figa <tfiga@chromium.org>, Jonas Karlman <jonas@kwiboo.se>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Mon, 09 Dec 2019 15:11:41 -0300
-In-Reply-To: <CAAFQd5CSWea=DNjySJxZmVi+2c5U4EKVPa1mf3vHh70+YrAQCA@mail.gmail.com>
-References: <HE1PR06MB4011EDD5F2686A05BC35F61CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
-         <20191106223408.2176-1-jonas@kwiboo.se>
-         <HE1PR06MB4011FF930111A869E4645C8CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
-         <CAAFQd5CSWea=DNjySJxZmVi+2c5U4EKVPa1mf3vHh70+YrAQCA@mail.gmail.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        Mon, 9 Dec 2019 13:27:26 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1575916033; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=Uqeax3GWXw+lN2aiuuJ2WAdj6XJgf83shDkh4o75FqkeAl5csykPMHKyW4TQgimjl7U/UDhVIoUSh4vziZCAakMLOIYaF0zvEpDrlgJDyKMdpbVvsvDRYXVGyTNBr9NHYrPtnoNCCLelDAQvT5W7l89MYQdTzvP1nSfu2R9JMJg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1575916033; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=qST48LGbEeti0hVqrKe4JVhTVDhvY4DFmAgNm3h8veo=; 
+        b=E9VH1LQn7SoUzRt1ikBlGnECa3C35ZQVKcifJtkVMROrNZO1tS7iu2OcZS2NBXd+AMClI7pBPvL1ZmX/z8iZmu4r8HfBJHjxKc6/xJUy6uq8qlBEgFBNzoilmDcVVRtcmIGSxIFjD8agU+C8AOFZxqv4IE1x/hnnqDMcyFQynAw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie (pool-173-73-58-202.washdc.fios.verizon.net [173.73.58.202]) by mx.zohomail.com
+        with SMTPS id 1575916032260346.62116454289855; Mon, 9 Dec 2019 10:27:12 -0800 (PST)
+Date:   Mon, 9 Dec 2019 18:11:53 +0000
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v5 2/2] iio: (bma400) add driver for the BMA400
+Message-ID: <20191209181153.GA13304@nessie>
+References: <20191209014320.13149-1-dan@dlrobertson.com>
+ <20191209014320.13149-3-dan@dlrobertson.com>
+ <cf3f2297-dc01-b2c9-657b-933f24b15594@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf3f2297-dc01-b2c9-657b-933f24b15594@infradead.org>
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-11-20 at 21:44 +0900, Tomasz Figa wrote:
-> Hi Jonas,
+On Sun, Dec 08, 2019 at 06:54:44PM -0800, Randy Dunlap wrote:
+> On 12/8/19 5:43 PM, Dan Robertson wrote:
+> > diff --git a/drivers/iio/accel/Kconfig b/drivers/iio/accel/Kconfig
+> > index d4ef35aeb579..dc9bc646d403 100644
+> > --- a/drivers/iio/accel/Kconfig
+> > +++ b/drivers/iio/accel/Kconfig
+> > @@ -112,6 +112,22 @@ config BMA220
+> >  	  To compile this driver as a module, choose M here: the
+> >  	  module will be called bma220_spi.
+> >  
+> > +config BMA400
+> > +	tristate "Bosch BMA400 3-Axis Accelerometer Driver"
+> > +	select REGMAP
+> > +	select BMA400_I2C if (I2C)
 > 
-> On Thu, Nov 7, 2019 at 7:34 AM Jonas Karlman <jonas@kwiboo.se> wrote:
-> > A decoded 8-bit 4:2:0 frame need memory for up to 448 bytes per
-> > macroblock with additional 32 bytes on multi-core variants.
-> > 
-> > Memory layout is as follow:
-> > 
-> > +---------------------------+
-> > > Y-plane   256 bytes x MBs |
-> > +---------------------------+
-> > > UV-plane  128 bytes x MBs |
-> > +---------------------------+
-> > > MV buffer  64 bytes x MBs |
-> > +---------------------------+
-> > > MC sync          32 bytes |
-> > +---------------------------+
-> > 
-> > Reduce the extra space allocated now that motion vector buffer offset no
-> > longer is based on the extra space.
-> > 
-> > Only allocate extra space for 64 bytes x MBs of motion vector buffer
-> > and 32 bytes for multi-core sync.
-> > 
-> > Fixes: a9471e25629b ("media: hantro: Add core bits to support H264 decoding")
-> > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> > Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > ---
-> > Changes in v3:
-> >   - add memory layout to code comment (Boris)
-> > Changes in v2:
-> >   - updated commit message
-> > ---
-> >  drivers/staging/media/hantro/hantro_v4l2.c | 20 ++++++++++++++++++--
-> >  1 file changed, 18 insertions(+), 2 deletions(-)
-> > 
+> What's with the parentheses?  I see that there are roughly 2700
+> "select ... if X" without parens and around 95 like
+> "select ... if ("  [using rough grep expressions].
+> The parens are unnecessary.  They are often used on complex
+> expressions, but certainly not on simple ones (except in iio).
+
+Good point. I'll remove it. I'll need the parentheses if/when SPI support is
+added, but I'll add it when it is needed.
+
+> > +	help
+> > +	  Say Y here if you want to build a driver for the Bosch BMA400
+> > +	  triaxial acceleration sensor.
+> > +
+> > +	  To compile this driver as a module, choose M here: the
+> > +	  module will be called bma400_core and you will also get
+> > +	  bma400_i2c for I2C.
 > 
-> Thanks for the patch!
-> 
-> What platform did you test it on and how? Was it tested with IOMMU enabled?
+> iff I2C is set/enabled, so could be confusing.
 
-Hello Tomasz,
+Good catch.
 
-Please note that this series has been picked-up and is merged
-in v5.5-rc1.
+Cheers,
 
-IIRC, we tested these patches on RK3399 and RK3288 (that means
-with an IOMMU). I've just ran some more extensive tests on RK3288,
-on media/master; and I plan to test some more on RK3399 later this week.
-
-Do you have any specific concern in mind?
-
-Thanks,
-Ezequiel
+ - Dan
 
