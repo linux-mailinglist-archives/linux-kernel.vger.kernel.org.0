@@ -2,130 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85B741177F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92648117802
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:09:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbfLIVHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 16:07:53 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38213 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbfLIVHx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 16:07:53 -0500
-Received: by mail-pg1-f195.google.com with SMTP id a33so7509155pgm.5
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 13:07:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K+eNXnjIau7cgWUnA3a2Cqn1U1V3PjkPxI5SSOqsokA=;
-        b=N66gVvBqkf/IjPQJvFj30UwukfXdt7TOhv82tZT0Y1uUriBCsQn852PcFt58pbGqRp
-         4gI4geMvYZAbnsP3cmY1HBIBfrePAAtWS2G2tDjmxVQrTuAXyr/GKlD+3jAmfHJ+x3mN
-         nUbzjuk6TRlU2f/oY17DgyGFu2HHkF3EtxYivNULwN0EdRBe/tWmUNxjY+sABJZClkXu
-         swMlYnD9n+MlEt5Z1j016kwLNcmGyJ2Kq0vCYcJ8ZgSnrSDEuCuiLHXWhqen6acZN7MY
-         eTomNjbMQhZ5O3+bSXk2fvVW1quzeUl8aXog4mBOHVo/c9yhU3uKAenXTgNeqKN6+EI+
-         yOdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K+eNXnjIau7cgWUnA3a2Cqn1U1V3PjkPxI5SSOqsokA=;
-        b=UThvi9Zi9cGmysaXuodbTN37JPjd76nqmJ2wo2t3eau87u/AepaxKwoALAa2Jr2XeU
-         Nv/EKQRV+PjP/BUR82WtyKYd0GmVj+xg5UZbXV9h581QRdh4tNq+zWmZgjhHbj27s9oj
-         uVM1co0aBFnaUdZW3FObfPQqyPeyAjzDckKlQpqwAtGOB/V1sjuSMuIoLzfltlRrQeB6
-         6SLowcMjRqU8eONu8w7xJcymJ7Ejx2VTxGxiFAVq/uFqjGfZwQ5XzzELBILLfT3rgXVn
-         OOfjOK2tFuynpZ/yeSlxSY81+y2q5eXpSvx5o8MLlMR5ho0TrBWuxRNECYR6IxX2l7gZ
-         aNGQ==
-X-Gm-Message-State: APjAAAXjXJHnotLfyE/AxYktJZ3zozMe3ugzWO9kui5mqmRVo/urlXhl
-        jjD+3c+8gBChpCpXDKsykYhBVIZ0J8aft4W+SztLcA==
-X-Google-Smtp-Source: APXvYqxUFVcNRk0/nAhQuNe2/SnfwtMmBoobRu1zKuYgYL2LWWtIcBKJdlZgzI3AQuAYyh7coP7wm3PK/UOBY/C2Cag=
-X-Received: by 2002:a65:590f:: with SMTP id f15mr20478238pgu.381.1575925672294;
- Mon, 09 Dec 2019 13:07:52 -0800 (PST)
+        id S1726769AbfLIVJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 16:09:38 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:20946 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726354AbfLIVJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 16:09:38 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 47Wwjy6cZpzCS;
+        Mon,  9 Dec 2019 22:07:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1575925623; bh=Qc4cMiFfqRcpK1/wEakCiApC7wh9tCxkWxOw2MmHKU0=;
+        h=Date:From:Subject:To:Cc:From;
+        b=aFdT+b/auaLo+CrXXgBNInWjo2FntKJNOsY7H/vwhIqJiN5dtFsEjGUHWH5i092F2
+         o9XEt4YLMpJ5XgvJQQh3ZgoTJLbQ/uFNjdPm8H+YCtBGELbs4r89+N227sg11EAtPL
+         v5zeVpOlmV2MeY8niGFydO9uyUKoLZGA2O8ii+H+ylrgJbQET14gGxW+6BTiG3ahtV
+         IYPwNwPfkM6eZfim0g8tOCBRzT0OdvVVGrW1Cb1FPbDh68C6D/J9b2PFbQTxNp58NE
+         dglh3O6LPrfy+OwAWSvYcKhMMgeG0cIRg5E5eVefT2XNZD+NmIuu4P1AYQ2jpGWwNE
+         /SqHYEuIr9g9g==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
+Date:   Mon, 09 Dec 2019 22:09:35 +0100
+Message-Id: <cover.1575925023.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 0/4] mmc: simplify WP/CD GPIO handling
 MIME-Version: 1.0
-References: <20191209201444.33243-1-natechancellor@gmail.com>
-In-Reply-To: <20191209201444.33243-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 9 Dec 2019 13:07:41 -0800
-Message-ID: <CAKwvOdmrGGn6f+XBOO3GCm-jVftLsFTUXdbhS9_iJVY03XqCjA@mail.gmail.com>
-Subject: Re: [PATCH] xen/blkfront: Adjust indentation in xlvbd_alloc_gendisk
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Stefano Stabellini <stefano.stabellini@eu.citrix.com>,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 12:14 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> ../drivers/block/xen-blkfront.c:1117:4: warning: misleading indentation;
-> statement is not part of the previous 'if' [-Wmisleading-indentation]
->                 nr_parts = PARTS_PER_DISK;
->                 ^
-> ../drivers/block/xen-blkfront.c:1115:3: note: previous statement is here
->                 if (err)
->                 ^
->
-> This is because there is a space at the beginning of this line; remove
-> it so that the indentation is consistent according to the Linux kernel
-> coding style and clang no longer warns.
->
-> While we are here, the previous line has some trailing whitespace; clean
-> that up as well.
->
-> Fixes: c80a420995e7 ("xen-blkfront: handle Xen major numbers other than XENVBD")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/791
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/block/xen-blkfront.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-> index a74d03913822..c02be06c5299 100644
-> --- a/drivers/block/xen-blkfront.c
-> +++ b/drivers/block/xen-blkfront.c
-> @@ -1113,8 +1113,8 @@ static int xlvbd_alloc_gendisk(blkif_sector_t capacity,
+This series removes convoluted handling of inverted CD and WP lines in
+SD/MMC host drivers when using GPIOs.
 
-While you're here, would you please also removing the single space
-before the labels in this function?
+First patch, sent separately earlier, adds gpiod_toggle_active_low() to
+switch line inversion flag in the gpiod structure. Next two patches
+modify WP and CD initialization to apply all the inversions onto gpiod's
+active-low flag. Final patch removes now-unused argument from init functions.
 
-In vim:
+x86 allyesconfig build-tested.
 
-/^ [a-zA-Z]
+Michał Mirosław (4):
+  gpio: add gpiod_toggle_active_low()
+  mmc: rework wp-gpio handling
+  mmc: rework cd-gpio handling
+  mmc: remove mmc_gpiod_request_*(invert_gpio)
 
-turns up 5 labels with this.
-
->         if (!VDEV_IS_EXTENDED(info->vdevice)) {
->                 err = xen_translate_vdev(info->vdevice, &minor, &offset);
->                 if (err)
-> -                       return err;
-> -               nr_parts = PARTS_PER_DISK;
-> +                       return err;
-> +               nr_parts = PARTS_PER_DISK;
->         } else {
->                 minor = BLKIF_MINOR_EXT(info->vdevice);
->                 nr_parts = PARTS_PER_EXT_DISK;
-> --
-> 2.24.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20191209201444.33243-1-natechancellor%40gmail.com.
-
-
+ drivers/gpio/gpiolib-of.c          | 21 -------------------
+ drivers/gpio/gpiolib.c             | 11 ++++++++++
+ drivers/mmc/core/host.c            | 33 ++++++++----------------------
+ drivers/mmc/core/slot-gpio.c       | 30 ++++++++++-----------------
+ drivers/mmc/host/davinci_mmc.c     |  4 ++--
+ drivers/mmc/host/mmc_spi.c         |  4 ++--
+ drivers/mmc/host/mmci.c            |  4 ++--
+ drivers/mmc/host/pxamci.c          | 12 +++++------
+ drivers/mmc/host/s3cmci.c          |  4 ++--
+ drivers/mmc/host/sdhci-acpi.c      |  2 +-
+ drivers/mmc/host/sdhci-esdhc-imx.c | 15 +++++++-------
+ drivers/mmc/host/sdhci-pci-core.c  |  4 ++--
+ drivers/mmc/host/sdhci-sirf.c      |  2 +-
+ drivers/mmc/host/sdhci-spear.c     |  2 +-
+ drivers/mmc/host/tmio_mmc_core.c   |  2 +-
+ include/linux/gpio/consumer.h      |  7 +++++++
+ include/linux/mmc/slot-gpio.h      |  5 ++---
+ 17 files changed, 67 insertions(+), 95 deletions(-)
 
 -- 
-Thanks,
-~Nick Desaulniers
+2.20.1
+
