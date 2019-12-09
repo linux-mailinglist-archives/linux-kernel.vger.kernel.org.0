@@ -2,130 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE0D11731E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:49:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F8EB117325
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:50:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfLIRs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 12:48:57 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37569 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfLIRsv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 12:48:51 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f129so235227wmf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 09:48:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=X/QxkqoCfNiDwbQBCosbR1xXW2Kn7mUOpxj7Z6Ec4tQ=;
-        b=FNFsQi1Ziq/g/TKpDjaB0oQo/xJ2w1yIoCHEIB+IWEbbT4RHkwM++ZkmUJhfYnK/4f
-         DC+M843zmrYieXNJUjLeJFMOhGkF/81Hn4G3BYMZm3Y8F68htLlFurK7quXInOmRpH1u
-         3I1MeGlEko3ljtZKwhKApuHKK9J2hiRkzk9Iw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=X/QxkqoCfNiDwbQBCosbR1xXW2Kn7mUOpxj7Z6Ec4tQ=;
-        b=Km9jOR4wQ9DABiQTOG46qfMkS1vBxGajVz/iOltOL7S0zVaEiicFLyhe05/l+MUK/6
-         FmAuZUShlMlP1Feu9hYRINV1/ckAff0Wf2UchNLGfH0nz4L0T/APxn4d2jM9s53bgDHi
-         3rr2T07MUxBzYI57npyq5UU63mknk3y5tCdVk7JYUxzRGCz0wBKYUNoZ/VwwIvV3tugj
-         iNmpISOw+HUEXpGOGIlEHj32G6uEUCc+XwMxR9zoI12DdXuluePrmLwtlNJgQa4FOMfz
-         5dOEeu00A5TcUXEBNIYC4rgp2Ess8gKhMAV+VZLEdoJhou1h/8Pn5DbNOXK8PfSoKcEW
-         ACWQ==
-X-Gm-Message-State: APjAAAWOzZMxyd51pKbdtCDaxHkJ94eeCj7FrkJpff7U2Gzt8gmyUAaZ
-        0MqJUxC9GOS9Iqjwg6f3VAJJwg==
-X-Google-Smtp-Source: APXvYqzhlTWGpGQUoj9DvSwIF0wdyqpSte9sh0cRZC2pBSzgYOQm+C5Kw7pJkCaSFtgwmOixc6RSFw==
-X-Received: by 2002:a7b:c19a:: with SMTP id y26mr242739wmi.152.1575913728145;
-        Mon, 09 Dec 2019 09:48:48 -0800 (PST)
-Received: from [10.69.49.110] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id n12sm131452wmd.1.2019.12.09.09.48.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Dec 2019 09:48:47 -0800 (PST)
-Subject: Re: [PATCH] scsi:lpfc:Fix memory leak on lpfc_bsg_write_ebuf_set func
-To:     "wubo (T)" <wubo40@huawei.com>,
-        "dick.kennedy@broadcom.com" <dick.kennedy@broadcom.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "liuzhiqiang (I)" <liuzhiqiang26@huawei.com>,
-        Mingfangsen <mingfangsen@huawei.com>
-References: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915E7A966@DGGEML525-MBS.china.huawei.com>
-From:   James Smart <james.smart@broadcom.com>
-Message-ID: <4afb52b8-c3ff-8c29-2597-11b8428e75b1@broadcom.com>
-Date:   Mon, 9 Dec 2019 09:48:44 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726720AbfLIRuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 12:50:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46882 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726379AbfLIRuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 12:50:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 312BEB15B;
+        Mon,  9 Dec 2019 17:50:03 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 0F44DDA82A; Mon,  9 Dec 2019 18:49:56 +0100 (CET)
+Date:   Mon, 9 Dec 2019 18:49:55 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     David Sterba <dsterba@suse.com>
+Cc:     torvalds@linux-foundation.org, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Btrfs kconfig update for 5.5-rc2
+Message-ID: <20191209174955.GO2734@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, David Sterba <dsterba@suse.com>,
+        torvalds@linux-foundation.org, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1575911345.git.dsterba@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915E7A966@DGGEML525-MBS.china.huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1575911345.git.dsterba@suse.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/2019 7:22 PM, wubo (T) wrote:
-> When phba->mbox_ext_buf_ctx.seqNum != phba->mbox_ext_buf_ctx.numBuf,
-> dd_data should be freed before return SLI_CONFIG_HANDLED.
->
-> When lpfc_sli_issue_mbox func return fails, pmboxq should be also freed in job_error tag.
->
->
-> Signed-off-by:Bo wu <wubo40@huawei.com>
-> Reviewed-by:Zhiqiang Liu <liuzhiqiang26@huawei.com>
-> ---
->   drivers/scsi/lpfc/lpfc_bsg.c | 15 +++++++++------
->   1 file changed, 9 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
-> index 39a736b887b1..6c2b03415a2c 100644
-> --- a/drivers/scsi/lpfc/lpfc_bsg.c
-> +++ b/drivers/scsi/lpfc/lpfc_bsg.c
-> @@ -4489,12 +4489,6 @@ lpfc_bsg_write_ebuf_set(struct lpfc_hba *phba, struct bsg_job *job,
->   	phba->mbox_ext_buf_ctx.seqNum++;
->   	nemb_tp = phba->mbox_ext_buf_ctx.nembType;
->   
-> -	dd_data = kmalloc(sizeof(struct bsg_job_data), GFP_KERNEL);
-> -	if (!dd_data) {
-> -		rc = -ENOMEM;
-> -		goto job_error;
-> -	}
-> -
->   	pbuf = (uint8_t *)dmabuf->virt;
->   	size = job->request_payload.payload_len;
->   	sg_copy_to_buffer(job->request_payload.sg_list,
-> @@ -4531,6 +4525,13 @@ lpfc_bsg_write_ebuf_set(struct lpfc_hba *phba, struct bsg_job *job,
->   				"2968 SLI_CONFIG ext-buffer wr all %d "
->   				"ebuffers received\n",
->   				phba->mbox_ext_buf_ctx.numBuf);
-> +
-> +		dd_data = kmalloc(sizeof(struct bsg_job_data), GFP_KERNEL);
-> +		if (!dd_data) {
-> +			rc = -ENOMEM;
-> +			goto job_error;
-> +		}
-> +
->   		/* mailbox command structure for base driver */
->   		pmboxq = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
->   		if (!pmboxq) {
-> @@ -4579,6 +4580,8 @@ lpfc_bsg_write_ebuf_set(struct lpfc_hba *phba, struct bsg_job *job,
->   	return SLI_CONFIG_HANDLED;
->   
->   job_error:
-> +	if (pmboxq)
-> +		mempool_free(pmboxq, phba->mbox_mem_pool);
->   	lpfc_bsg_dma_page_free(phba, dmabuf);
->   	kfree(dd_data);
->   
+On Mon, Dec 09, 2019 at 06:31:12PM +0100, David Sterba wrote:
+> Hi,
+> 
+> this is a separate pull request based on 5.5-rc1 that adds config
+> dependency integrating the crypto code and btrfs support for blake2b
+> (added in this dev cycle, via different trees). Without it the option
+> has to be selected manually. Please pull, thanks.
+> 
+> The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+> 
+>   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.5-rc1-kconfig
 
-Looks good!
+There's also the signed tag that I forgot to update in the mail:
 
-Reviewed-by: James Smart <james.smart@broadcom.com>
-
--- james
-
-
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.5-rc1-kconfig-tag
