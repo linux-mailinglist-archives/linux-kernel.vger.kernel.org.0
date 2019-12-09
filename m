@@ -2,85 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A23B91178D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:51:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25A4F1178DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 22:52:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfLIVvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 16:51:03 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:55408 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfLIVu7 (ORCPT
+        id S1726971AbfLIVw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 16:52:29 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39775 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfLIVw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 16:50:59 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB9Low0i005349;
-        Mon, 9 Dec 2019 15:50:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575928258;
-        bh=lUSdxRhD6XTC7WhbY0PYaGuAAuVAsloAEADwb1YGU8w=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=YG2txRg5aS6wPIGElxOMo+yKk+nel+Uqz2sJ8oERHhEWqhkRKE/hnhpvgdUvLlnNj
-         s3MeHF+KKqrQo0qRVK0N5meBLuDmfmZD3/4XO9D1z5Xru3pnLl5hcxXKQs4UvHtXC6
-         8pnvXC2ZBMH8TlY2rMwUiZStmlA18Vfx3rgP80RI=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB9Low3I114613;
-        Mon, 9 Dec 2019 15:50:58 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Dec
- 2019 15:50:57 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Dec 2019 15:50:57 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB9LovU2107056;
-        Mon, 9 Dec 2019 15:50:57 -0600
-Subject: Re: [PATCH v2 1/3] power_supply: Add additional health properties to
- the header
-To:     <sre@kernel.org>, <linux-pm@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>
-References: <20191029200201.24483-1-dmurphy@ti.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <b1a00b89-b091-4526-fbd4-d42261f0d287@ti.com>
-Date:   Mon, 9 Dec 2019 15:48:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Mon, 9 Dec 2019 16:52:28 -0500
+Received: by mail-wm1-f65.google.com with SMTP id s14so927007wmh.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 13:52:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FhsD4XoraOrhcYU/bmdtm44QDUDPKPQnbWRVNcj/Pdw=;
+        b=plzq5HfxDYgsXkKks69lSVb87yXZcc+LP3zeyOWaTML+CBz5kI3xgDicZhmUusmvel
+         AI0QyiJCGj2PBkyana9/jxKAp/5rPwkTsUXwCanmkIEEGisSD694ul6cvhBCaOFV+aGR
+         WKoF0tUw5Cmb9OHB6TSsBvRHcGftHn1ITnnbh64/y5y6DZNzHQW6sdI+sp/zk7yPFD9+
+         BCxneGqB05jT2K9DHDIeITH+9eQthGT5BGnyFCw+y18krFNzPPH486yQXVpUL6/U8mM0
+         EMyZybof3qOwy060Z58GZJWK0QXlAUc1n5/ZcmVJ5TCJ+4Cz7aCbXoEBc074apNSryjM
+         kszQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FhsD4XoraOrhcYU/bmdtm44QDUDPKPQnbWRVNcj/Pdw=;
+        b=GLLFMuVdWy0/lfvDXlO6ba5jw0PJz9nEPL8cwpG6PiQxW5R6jeAI99Su6zYM2mAVaS
+         +KpEzPZmpD0frGzzA8nGxiODGQg6a5jx6LhZDiuKClmHT46MLH8AkVuKAK2/uPsH12/K
+         tzVMtMOkvdeIbvXYrN+G8/vwwz1FL/J1dOJrqSp69N1Pnm50QunsamJmVI7WeSVkQzeh
+         CB8STEly79bWETjGMJkBsOnqzWMZsiEjzALPpYnRtePgp8B/DvCH+bYAY5i89RT70o/u
+         x24xKSG1FIRwSQQPOrpAliT6k9+jSqEVhn2jM02aKSuY0S1z95P4wwEkSBAUD3ZzdzPq
+         7Ipg==
+X-Gm-Message-State: APjAAAVKqdAkHBLzGAFDLcsW8OOGZnFDa1S7XlA7fU7IavDPVaSIxHnl
+        gPgfsNR1g1gvCElpiEW0594=
+X-Google-Smtp-Source: APXvYqzdsMbGJ/Vc4zou2dhGGxJpSrNwVwIkMYpQX3RAQP3qPEPPUgc2H/VrRbCaM8yIyXKSVS0xMA==
+X-Received: by 2002:a1c:638a:: with SMTP id x132mr1306927wmb.43.1575928346943;
+        Mon, 09 Dec 2019 13:52:26 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a03f:40f6:4600:a51f:44c:fbfb:c44])
+        by smtp.gmail.com with ESMTPSA id 16sm788661wmi.0.2019.12.09.13.52.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 13:52:26 -0800 (PST)
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: [PATCH] lib/generic-radix-tree.c: remove unneeded __rcu
+Date:   Mon,  9 Dec 2019 22:50:20 +0100
+Message-Id: <20191209215020.58281-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191029200201.24483-1-dmurphy@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bump
+struct __genradix is defined as having its member 'root'
+annotated as __rcu. But in the corresponding API RCU is not used.
+Sparse reports this type mismatch as:
+	lib/generic-radix-tree.c:56:35: warning: incorrect type in initializer (different address spaces)
+	lib/generic-radix-tree.c:56:35:    expected struct genradix_root *r
+	lib/generic-radix-tree.c:56:35:    got struct genradix_root [noderef] <asn:4> *__val
+with 6 other ones.
 
-On 10/29/19 3:01 PM, Dan Murphy wrote:
-> Add HEALTH_WARM, HEALTH_COOL and HEALTH_HOT to the health enum.
->
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->
-> v2 - No changes
->
->   include/linux/power_supply.h | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-> index 28413f737e7d..bd0d3225f245 100644
-> --- a/include/linux/power_supply.h
-> +++ b/include/linux/power_supply.h
-> @@ -61,6 +61,9 @@ enum {
->   	POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE,
->   	POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE,
->   	POWER_SUPPLY_HEALTH_OVERCURRENT,
-> +	POWER_SUPPLY_HEALTH_WARM,
-> +	POWER_SUPPLY_HEALTH_COOL,
-> +	POWER_SUPPLY_HEALTH_HOT,
->   };
->   
->   enum {
+So, correct root's type by removing this unneeded __rcu.
+
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ include/linux/generic-radix-tree.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/generic-radix-tree.h b/include/linux/generic-radix-tree.h
+index 02393c0c98f9..bfd00320c7f3 100644
+--- a/include/linux/generic-radix-tree.h
++++ b/include/linux/generic-radix-tree.h
+@@ -44,7 +44,7 @@
+ struct genradix_root;
+ 
+ struct __genradix {
+-	struct genradix_root __rcu	*root;
++	struct genradix_root		*root;
+ };
+ 
+ /*
+-- 
+2.24.0
+
