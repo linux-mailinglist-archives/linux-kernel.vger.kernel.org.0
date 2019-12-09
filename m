@@ -2,1231 +2,330 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C12D117312
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21278117321
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:49:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfLIRql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 12:46:41 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:5276 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbfLIRql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 12:46:41 -0500
-Received: from localhost (mailhub1-ext [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 47WrGd3f0xz9v25S;
-        Mon,  9 Dec 2019 18:46:33 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=biFin78t; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id eUEkPYkU1rax; Mon,  9 Dec 2019 18:46:33 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47WrGd1v2Dz9v25P;
-        Mon,  9 Dec 2019 18:46:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1575913593; bh=E62z/gzuNyNBes9MIg6/Vui8Cg9huWGV2P9qfVOZNnE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=biFin78t8R6A15BykMxBoKtLXrg15GGXUh6TFKtWDWed2W9B71ecpFjPC2BaFqH4V
-         ccUUZ5hotEB0Nn1YBQ80jsU2Cq6d3h26GKJP1ns2+vz7d4kRB3wJGnaSkqX5MzlTwA
-         /wlMaDnKF9gdoLFQZvt6AeAosS3/K8gDElu0paAg=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8CBC48B7F7;
-        Mon,  9 Dec 2019 18:46:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id xOP8ZmgFJIBe; Mon,  9 Dec 2019 18:46:38 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2EF508B7F3;
-        Mon,  9 Dec 2019 18:46:37 +0100 (CET)
-Subject: Re: [PATCH] powerpc: add support for folded p4d page tables
-To:     Mike Rapoport <rppt@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
-        linux-mm@kvack.org, Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org
-References: <20191209150908.6207-1-rppt@kernel.org>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <7f4c038d-e971-b61f-3d3a-60a5faddfc0a@c-s.fr>
-Date:   Mon, 9 Dec 2019 18:46:36 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726646AbfLIRst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 12:48:49 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34792 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfLIRst (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 12:48:49 -0500
+Received: by mail-lj1-f194.google.com with SMTP id m6so16679397ljc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 09:48:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4LQ+LMuNUc6UzcbkWxd/rVAV7ZUCn5ppE+1rXFKEHhc=;
+        b=CkDKjnxWG4FRbtEbI7ud7XBkCBtyfJArxT9/XBR2xQYpr8HBAqwH2Tf0JminQO2nlV
+         x7XlZnDMnvVttfpm0UsAW28SHg3Kafh2gKQ6WiOFSBT48kh6c+G6q6rtBbGrQur6oeXC
+         /89sNopGRySvD+a7Wl8ZaN0nqRFhJbctudN9g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4LQ+LMuNUc6UzcbkWxd/rVAV7ZUCn5ppE+1rXFKEHhc=;
+        b=Xp+6VMSQly5g8IhQYr7aBEeHzzcvjEUNHTrLYH0wHMoCpxMSXz1uH73mhM4MkFNljs
+         3PsL1uhBr+WZMfAv7yuIRx6Rg0D+vjZOFIk0kdo3FbQ5SDms8vgLfAbpPfAmP7CRI4ZZ
+         mo7XlZulFbfaV1S5rOhDXgjjULADx9YUQfWm7YvMoCnBT1SRMlBLYHLm47EfDUzI/YGx
+         4nOjX6XCelWQWhvDUJi/9MRep7wU0M85KLtPRL3F6sBxLLUe4f9hvoGI5otSTDMO4N5M
+         8reKQNitoo2K1dwSmnzTTQPUghidauf/7R2XdV9wh961B3siZzBD5VHjyIJC2QuWPXNP
+         H3IA==
+X-Gm-Message-State: APjAAAWte13R3TN7MGkXggn6goBc/dLYPTM2x+2FP1PdDCYy55UuIEqx
+        /Gu/kkceKA+e2M0QAoMTjfSW+kZfRO0=
+X-Google-Smtp-Source: APXvYqxREdZleP0pmJEfq5PXFBTBi2G72NBwgllsnDfxzfmYefZYY0BkEJdkENgy+ik7XdNnJc3Wmg==
+X-Received: by 2002:a2e:898f:: with SMTP id c15mr7767022lji.41.1575913725698;
+        Mon, 09 Dec 2019 09:48:45 -0800 (PST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 10sm329896ljw.2.2019.12.09.09.48.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2019 09:48:44 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id u17so16660252lja.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 09:48:44 -0800 (PST)
+X-Received: by 2002:a2e:241a:: with SMTP id k26mr17623229ljk.26.1575913723833;
+ Mon, 09 Dec 2019 09:48:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191209150908.6207-1-rppt@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
+ <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
+ <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
+ <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com> <CAKfTPtDBtPuvK0NzYC0VZgEhh31drCDN=o+3Hd3fUwoffQg0fw@mail.gmail.com>
+In-Reply-To: <CAKfTPtDBtPuvK0NzYC0VZgEhh31drCDN=o+3Hd3fUwoffQg0fw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 9 Dec 2019 09:48:27 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com>
+Message-ID: <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+To:     Vincent Guittot <vincent.guittot@linaro.org>,
+        DJ Delorie <dj@redhat.com>
+Cc:     David Sterba <dsterba@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000b4feb20599490119"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--000000000000b4feb20599490119
+Content-Type: text/plain; charset="UTF-8"
 
+[ Added DJ to the participants, since he seems to be the Fedora make
+maintainer - DJ, any chance that this absolutely horrid 'make' buf can
+be fixed in older versions too, not just rawhide? The bugfix is two
+and a half years old by now, and the bug looks real and very serious ]
 
-Le 09/12/2019 à 16:09, Mike Rapoport a écrit :
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> Implement primitives necessary for the 4th level folding, add walks of p4d
-> level where appropriate and replace 5level-fixup.h with pgtable-nop4d.h.
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+On Mon, Dec 9, 2019 at 1:54 AM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> Which version of make should I use to reproduce the problem ?
 
-Tested on 8xx and 83xx, no problem observed (ie book3s/32 and nohash/32)
+So the problematic one is "make-4.2.1-13.fc30.x86_64" in Fedora 30.
+I'm assuming it's fairly plain 4.2.1, but I didn't try to look into
+the source rpm or anything like that.
 
-Tested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+The working one for me was just the top of -git from
 
-Christophe
+    https://git.savannah.gnu.org/git/make.git
 
-> ---
->   arch/powerpc/include/asm/book3s/32/pgtable.h  |  1 -
->   arch/powerpc/include/asm/book3s/64/hash.h     |  4 +-
->   arch/powerpc/include/asm/book3s/64/pgalloc.h  |  4 +-
->   arch/powerpc/include/asm/book3s/64/pgtable.h  | 58 ++++++++++--------
->   arch/powerpc/include/asm/book3s/64/radix.h    |  6 +-
->   arch/powerpc/include/asm/nohash/32/pgtable.h  |  1 -
->   arch/powerpc/include/asm/nohash/64/pgalloc.h  |  2 +-
->   .../include/asm/nohash/64/pgtable-4k.h        | 32 +++++-----
->   arch/powerpc/include/asm/nohash/64/pgtable.h  |  6 +-
->   arch/powerpc/include/asm/pgtable.h            |  8 +++
->   arch/powerpc/kvm/book3s_64_mmu_radix.c        | 59 ++++++++++++++++---
->   arch/powerpc/lib/code-patching.c              |  7 ++-
->   arch/powerpc/mm/book3s32/mmu.c                |  2 +-
->   arch/powerpc/mm/book3s32/tlb.c                |  4 +-
->   arch/powerpc/mm/book3s64/hash_pgtable.c       |  4 +-
->   arch/powerpc/mm/book3s64/radix_pgtable.c      | 19 ++++--
->   arch/powerpc/mm/book3s64/subpage_prot.c       |  6 +-
->   arch/powerpc/mm/hugetlbpage.c                 | 28 +++++----
->   arch/powerpc/mm/kasan/kasan_init_32.c         |  8 +--
->   arch/powerpc/mm/mem.c                         |  4 +-
->   arch/powerpc/mm/nohash/40x.c                  |  4 +-
->   arch/powerpc/mm/nohash/book3e_pgtable.c       | 15 +++--
->   arch/powerpc/mm/pgtable.c                     | 25 +++++++-
->   arch/powerpc/mm/pgtable_32.c                  | 28 +++++----
->   arch/powerpc/mm/pgtable_64.c                  | 10 ++--
->   arch/powerpc/mm/ptdump/hashpagetable.c        | 20 ++++++-
->   arch/powerpc/mm/ptdump/ptdump.c               | 22 ++++++-
->   arch/powerpc/xmon/xmon.c                      | 17 +++++-
->   28 files changed, 284 insertions(+), 120 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-> index 0796533d37dd..e23de69bbaf8 100644
-> --- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-> +++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-> @@ -2,7 +2,6 @@
->   #ifndef _ASM_POWERPC_BOOK3S_32_PGTABLE_H
->   #define _ASM_POWERPC_BOOK3S_32_PGTABLE_H
->   
-> -#define __ARCH_USE_5LEVEL_HACK
->   #include <asm-generic/pgtable-nopmd.h>
->   
->   #include <asm/book3s/32/hash.h>
-> diff --git a/arch/powerpc/include/asm/book3s/64/hash.h b/arch/powerpc/include/asm/book3s/64/hash.h
-> index 2781ebf6add4..876d1528c2cf 100644
-> --- a/arch/powerpc/include/asm/book3s/64/hash.h
-> +++ b/arch/powerpc/include/asm/book3s/64/hash.h
-> @@ -134,9 +134,9 @@ static inline int get_region_id(unsigned long ea)
->   
->   #define	hash__pmd_bad(pmd)		(pmd_val(pmd) & H_PMD_BAD_BITS)
->   #define	hash__pud_bad(pud)		(pud_val(pud) & H_PUD_BAD_BITS)
-> -static inline int hash__pgd_bad(pgd_t pgd)
-> +static inline int hash__p4d_bad(p4d_t p4d)
->   {
-> -	return (pgd_val(pgd) == 0);
-> +	return (p4d_val(p4d) == 0);
->   }
->   #ifdef CONFIG_STRICT_KERNEL_RWX
->   extern void hash__mark_rodata_ro(void);
-> diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-> index f6968c811026..08603089ea5f 100644
-> --- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
-> +++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-> @@ -87,9 +87,9 @@ static inline void pgd_free(struct mm_struct *mm, pgd_t *pgd)
->   	kmem_cache_free(PGT_CACHE(PGD_INDEX_SIZE), pgd);
->   }
->   
-> -static inline void pgd_populate(struct mm_struct *mm, pgd_t *pgd, pud_t *pud)
-> +static inline void p4d_populate(struct mm_struct *mm, p4d_t *pgd, pud_t *pud)
->   {
-> -	*pgd =  __pgd(__pgtable_ptr_val(pud) | PGD_VAL_BITS);
-> +	*pgd =  __p4d(__pgtable_ptr_val(pud) | PGD_VAL_BITS);
->   }
->   
->   static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long addr)
-> diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-> index b01624e5c467..96fc48a42f4d 100644
-> --- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-> +++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-> @@ -2,7 +2,7 @@
->   #ifndef _ASM_POWERPC_BOOK3S_64_PGTABLE_H_
->   #define _ASM_POWERPC_BOOK3S_64_PGTABLE_H_
->   
-> -#include <asm-generic/5level-fixup.h>
-> +#include <asm-generic/pgtable-nop4d.h>
->   
->   #ifndef __ASSEMBLY__
->   #include <linux/mmdebug.h>
-> @@ -251,7 +251,7 @@ extern unsigned long __pmd_frag_size_shift;
->   /* Bits to mask out from a PUD to get to the PMD page */
->   #define PUD_MASKED_BITS		0xc0000000000000ffUL
->   /* Bits to mask out from a PGD to get to the PUD page */
-> -#define PGD_MASKED_BITS		0xc0000000000000ffUL
-> +#define P4D_MASKED_BITS		0xc0000000000000ffUL
->   
->   /*
->    * Used as an indicator for rcu callback functions
-> @@ -949,54 +949,60 @@ static inline bool pud_access_permitted(pud_t pud, bool write)
->   	return pte_access_permitted(pud_pte(pud), write);
->   }
->   
-> -#define pgd_write(pgd)		pte_write(pgd_pte(pgd))
-> +#define __p4d_raw(x)	((p4d_t) { __pgd_raw(x) })
-> +static inline __be64 p4d_raw(p4d_t x)
-> +{
-> +	return pgd_raw(x.pgd);
-> +}
-> +
-> +#define p4d_write(p4d)		pte_write(p4d_pte(p4d))
->   
-> -static inline void pgd_clear(pgd_t *pgdp)
-> +static inline void p4d_clear(p4d_t *p4dp)
->   {
-> -	*pgdp = __pgd(0);
-> +	*p4dp = __p4d(0);
->   }
->   
-> -static inline int pgd_none(pgd_t pgd)
-> +static inline int p4d_none(p4d_t p4d)
->   {
-> -	return !pgd_raw(pgd);
-> +	return !p4d_raw(p4d);
->   }
->   
-> -static inline int pgd_present(pgd_t pgd)
-> +static inline int p4d_present(p4d_t p4d)
->   {
-> -	return !!(pgd_raw(pgd) & cpu_to_be64(_PAGE_PRESENT));
-> +	return !!(p4d_raw(p4d) & cpu_to_be64(_PAGE_PRESENT));
->   }
->   
-> -static inline pte_t pgd_pte(pgd_t pgd)
-> +static inline pte_t p4d_pte(p4d_t p4d)
->   {
-> -	return __pte_raw(pgd_raw(pgd));
-> +	return __pte_raw(p4d_raw(p4d));
->   }
->   
-> -static inline pgd_t pte_pgd(pte_t pte)
-> +static inline p4d_t pte_p4d(pte_t pte)
->   {
-> -	return __pgd_raw(pte_raw(pte));
-> +	return __p4d_raw(pte_raw(pte));
->   }
->   
-> -static inline int pgd_bad(pgd_t pgd)
-> +static inline int p4d_bad(p4d_t p4d)
->   {
->   	if (radix_enabled())
-> -		return radix__pgd_bad(pgd);
-> -	return hash__pgd_bad(pgd);
-> +		return radix__p4d_bad(p4d);
-> +	return hash__p4d_bad(p4d);
->   }
->   
-> -#define pgd_access_permitted pgd_access_permitted
-> -static inline bool pgd_access_permitted(pgd_t pgd, bool write)
-> +#define p4d_access_permitted p4d_access_permitted
-> +static inline bool p4d_access_permitted(p4d_t p4d, bool write)
->   {
-> -	return pte_access_permitted(pgd_pte(pgd), write);
-> +	return pte_access_permitted(p4d_pte(p4d), write);
->   }
->   
-> -extern struct page *pgd_page(pgd_t pgd);
-> +extern struct page *p4d_page(p4d_t p4d);
->   
->   /* Pointers in the page table tree are physical addresses */
->   #define __pgtable_ptr_val(ptr)	__pa(ptr)
->   
->   #define pmd_page_vaddr(pmd)	__va(pmd_val(pmd) & ~PMD_MASKED_BITS)
->   #define pud_page_vaddr(pud)	__va(pud_val(pud) & ~PUD_MASKED_BITS)
-> -#define pgd_page_vaddr(pgd)	__va(pgd_val(pgd) & ~PGD_MASKED_BITS)
-> +#define p4d_page_vaddr(p4d)	__va(p4d_val(p4d) & ~P4D_MASKED_BITS)
->   
->   #define pgd_index(address) (((address) >> (PGDIR_SHIFT)) & (PTRS_PER_PGD - 1))
->   #define pud_index(address) (((address) >> (PUD_SHIFT)) & (PTRS_PER_PUD - 1))
-> @@ -1010,8 +1016,8 @@ extern struct page *pgd_page(pgd_t pgd);
->   
->   #define pgd_offset(mm, address)	 ((mm)->pgd + pgd_index(address))
->   
-> -#define pud_offset(pgdp, addr)	\
-> -	(((pud_t *) pgd_page_vaddr(*(pgdp))) + pud_index(addr))
-> +#define pud_offset(p4dp, addr)	\
-> +	(((pud_t *) p4d_page_vaddr(*(p4dp))) + pud_index(addr))
->   #define pmd_offset(pudp,addr) \
->   	(((pmd_t *) pud_page_vaddr(*(pudp))) + pmd_index(addr))
->   #define pte_offset_kernel(dir,addr) \
-> @@ -1366,6 +1372,12 @@ static inline bool pud_is_leaf(pud_t pud)
->   	return !!(pud_raw(pud) & cpu_to_be64(_PAGE_PTE));
->   }
->   
-> +#define p4d_is_leaf p4d_is_leaf
-> +static inline bool p4d_is_leaf(p4d_t p4d)
-> +{
-> +	return !!(p4d_raw(p4d) & cpu_to_be64(_PAGE_PTE));
-> +}
-> +
->   #define pgd_is_leaf pgd_is_leaf
->   static inline bool pgd_is_leaf(pgd_t pgd)
->   {
-> diff --git a/arch/powerpc/include/asm/book3s/64/radix.h b/arch/powerpc/include/asm/book3s/64/radix.h
-> index d97db3ad9aae..9bca2ac64220 100644
-> --- a/arch/powerpc/include/asm/book3s/64/radix.h
-> +++ b/arch/powerpc/include/asm/book3s/64/radix.h
-> @@ -30,7 +30,7 @@
->   /* Don't have anything in the reserved bits and leaf bits */
->   #define RADIX_PMD_BAD_BITS		0x60000000000000e0UL
->   #define RADIX_PUD_BAD_BITS		0x60000000000000e0UL
-> -#define RADIX_PGD_BAD_BITS		0x60000000000000e0UL
-> +#define RADIX_P4D_BAD_BITS		0x60000000000000e0UL
->   
->   #define RADIX_PMD_SHIFT		(PAGE_SHIFT + RADIX_PTE_INDEX_SIZE)
->   #define RADIX_PUD_SHIFT		(RADIX_PMD_SHIFT + RADIX_PMD_INDEX_SIZE)
-> @@ -227,9 +227,9 @@ static inline int radix__pud_bad(pud_t pud)
->   }
->   
->   
-> -static inline int radix__pgd_bad(pgd_t pgd)
-> +static inline int radix__p4d_bad(p4d_t p4d)
->   {
-> -	return !!(pgd_val(pgd) & RADIX_PGD_BAD_BITS);
-> +	return !!(p4d_val(p4d) & RADIX_P4D_BAD_BITS);
->   }
->   
->   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-> index 552b96eef0c8..a0edcc7b0700 100644
-> --- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-> +++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-> @@ -2,7 +2,6 @@
->   #ifndef _ASM_POWERPC_NOHASH_32_PGTABLE_H
->   #define _ASM_POWERPC_NOHASH_32_PGTABLE_H
->   
-> -#define __ARCH_USE_5LEVEL_HACK
->   #include <asm-generic/pgtable-nopmd.h>
->   
->   #ifndef __ASSEMBLY__
-> diff --git a/arch/powerpc/include/asm/nohash/64/pgalloc.h b/arch/powerpc/include/asm/nohash/64/pgalloc.h
-> index b9534a793293..668aee6017e7 100644
-> --- a/arch/powerpc/include/asm/nohash/64/pgalloc.h
-> +++ b/arch/powerpc/include/asm/nohash/64/pgalloc.h
-> @@ -15,7 +15,7 @@ struct vmemmap_backing {
->   };
->   extern struct vmemmap_backing *vmemmap_list;
->   
-> -#define pgd_populate(MM, PGD, PUD)	pgd_set(PGD, (unsigned long)PUD)
-> +#define p4d_populate(MM, P4D, PUD)	p4d_set(P4D, (unsigned long)PUD)
->   
->   static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long addr)
->   {
-> diff --git a/arch/powerpc/include/asm/nohash/64/pgtable-4k.h b/arch/powerpc/include/asm/nohash/64/pgtable-4k.h
-> index c40ec32b8194..81b1c54e3cf1 100644
-> --- a/arch/powerpc/include/asm/nohash/64/pgtable-4k.h
-> +++ b/arch/powerpc/include/asm/nohash/64/pgtable-4k.h
-> @@ -2,7 +2,7 @@
->   #ifndef _ASM_POWERPC_NOHASH_64_PGTABLE_4K_H
->   #define _ASM_POWERPC_NOHASH_64_PGTABLE_4K_H
->   
-> -#include <asm-generic/5level-fixup.h>
-> +#include <asm-generic/pgtable-nop4d.h>
->   
->   /*
->    * Entries per page directory level.  The PTE level must use a 64b record
-> @@ -45,41 +45,41 @@
->   #define PMD_MASKED_BITS		0
->   /* Bits to mask out from a PUD to get to the PMD page */
->   #define PUD_MASKED_BITS		0
-> -/* Bits to mask out from a PGD to get to the PUD page */
-> -#define PGD_MASKED_BITS		0
-> +/* Bits to mask out from a P4D to get to the PUD page */
-> +#define P4D_MASKED_BITS		0
->   
->   
->   /*
->    * 4-level page tables related bits
->    */
->   
-> -#define pgd_none(pgd)		(!pgd_val(pgd))
-> -#define pgd_bad(pgd)		(pgd_val(pgd) == 0)
-> -#define pgd_present(pgd)	(pgd_val(pgd) != 0)
-> -#define pgd_page_vaddr(pgd)	(pgd_val(pgd) & ~PGD_MASKED_BITS)
-> +#define p4d_none(p4d)		(!p4d_val(p4d))
-> +#define p4d_bad(p4d)		(p4d_val(p4d) == 0)
-> +#define p4d_present(p4d)	(p4d_val(p4d) != 0)
-> +#define p4d_page_vaddr(p4d)	(p4d_val(p4d) & ~P4D_MASKED_BITS)
->   
->   #ifndef __ASSEMBLY__
->   
-> -static inline void pgd_clear(pgd_t *pgdp)
-> +static inline void p4d_clear(p4d_t *p4dp)
->   {
-> -	*pgdp = __pgd(0);
-> +	*p4dp = __p4d(0);
->   }
->   
-> -static inline pte_t pgd_pte(pgd_t pgd)
-> +static inline pte_t p4d_pte(p4d_t p4d)
->   {
-> -	return __pte(pgd_val(pgd));
-> +	return __pte(p4d_val(p4d));
->   }
->   
-> -static inline pgd_t pte_pgd(pte_t pte)
-> +static inline p4d_t pte_p4d(pte_t pte)
->   {
-> -	return __pgd(pte_val(pte));
-> +	return __p4d(pte_val(pte));
->   }
-> -extern struct page *pgd_page(pgd_t pgd);
-> +extern struct page *p4d_page(p4d_t p4d);
->   
->   #endif /* !__ASSEMBLY__ */
->   
-> -#define pud_offset(pgdp, addr)	\
-> -  (((pud_t *) pgd_page_vaddr(*(pgdp))) + \
-> +#define pud_offset(p4dp, addr)	\
-> +  (((pud_t *) p4d_page_vaddr(*(p4dp))) + \
->       (((addr) >> PUD_SHIFT) & (PTRS_PER_PUD - 1)))
->   
->   #define pud_ERROR(e) \
-> diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-> index 9a33b8bd842d..b360f262b9c6 100644
-> --- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-> +++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-> @@ -175,11 +175,11 @@ static inline pud_t pte_pud(pte_t pte)
->   	return __pud(pte_val(pte));
->   }
->   #define pud_write(pud)		pte_write(pud_pte(pud))
-> -#define pgd_write(pgd)		pte_write(pgd_pte(pgd))
-> +#define p4d_write(pgd)		pte_write(p4d_pte(p4d))
->   
-> -static inline void pgd_set(pgd_t *pgdp, unsigned long val)
-> +static inline void p4d_set(p4d_t *p4dp, unsigned long val)
->   {
-> -	*pgdp = __pgd(val);
-> +	*p4dp = __p4d(val);
->   }
->   
->   /*
-> diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
-> index 0e4ec8cc37b7..f831b4d866c3 100644
-> --- a/arch/powerpc/include/asm/pgtable.h
-> +++ b/arch/powerpc/include/asm/pgtable.h
-> @@ -145,6 +145,14 @@ static inline bool pud_is_leaf(pud_t pud)
->   }
->   #endif
->   
-> +#ifndef p4d_is_leaf
-> +#define p4d_is_leaf p4d_is_leaf
-> +static inline bool p4d_is_leaf(p4d_t p4d)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->   #ifndef pgd_is_leaf
->   #define pgd_is_leaf pgd_is_leaf
->   static inline bool pgd_is_leaf(pgd_t pgd)
-> diff --git a/arch/powerpc/kvm/book3s_64_mmu_radix.c b/arch/powerpc/kvm/book3s_64_mmu_radix.c
-> index da857c8ba6e4..28e166cbd963 100644
-> --- a/arch/powerpc/kvm/book3s_64_mmu_radix.c
-> +++ b/arch/powerpc/kvm/book3s_64_mmu_radix.c
-> @@ -496,17 +496,39 @@ static void kvmppc_unmap_free_pud(struct kvm *kvm, pud_t *pud,
->   	pud_free(kvm->mm, pud);
->   }
->   
-> +static void kvmppc_unmap_free_p4d(struct kvm *kvm, p4d_t *p4d,
-> +				  unsigned int lpid)
-> +{
-> +	unsigned long iu;
-> +	p4d_t *p = p4d;
-> +
-> +	for (iu = 0; iu < PTRS_PER_P4D; ++iu, ++p) {
-> +		if (!p4d_present(*p))
-> +			continue;
-> +		if (p4d_is_leaf(*p)) {
-> +			p4d_clear(p);
-> +		} else {
-> +			pud_t *pud;
-> +
-> +			pud = pud_offset(p, 0);
-> +			kvmppc_unmap_free_pud(kvm, pud, lpid);
-> +			p4d_clear(p);
-> +		}
-> +	}
-> +	p4d_free(kvm->mm, p4d);
-> +}
-> +
->   void kvmppc_free_pgtable_radix(struct kvm *kvm, pgd_t *pgd, unsigned int lpid)
->   {
->   	unsigned long ig;
->   
->   	for (ig = 0; ig < PTRS_PER_PGD; ++ig, ++pgd) {
-> -		pud_t *pud;
-> +		p4d_t *p4d;
->   
->   		if (!pgd_present(*pgd))
->   			continue;
-> -		pud = pud_offset(pgd, 0);
-> -		kvmppc_unmap_free_pud(kvm, pud, lpid);
-> +		p4d = p4d_offset(pgd, 0);
-> +		kvmppc_unmap_free_p4d(kvm, p4d, lpid);
->   		pgd_clear(pgd);
->   	}
->   }
-> @@ -568,6 +590,7 @@ int kvmppc_create_pte(struct kvm *kvm, pgd_t *pgtable, pte_t pte,
->   		      unsigned long *rmapp, struct rmap_nested **n_rmap)
->   {
->   	pgd_t *pgd;
-> +	p4d_t *p4d, *new_p4d = NULL;
->   	pud_t *pud, *new_pud = NULL;
->   	pmd_t *pmd, *new_pmd = NULL;
->   	pte_t *ptep, *new_ptep = NULL;
-> @@ -575,9 +598,15 @@ int kvmppc_create_pte(struct kvm *kvm, pgd_t *pgtable, pte_t pte,
->   
->   	/* Traverse the guest's 2nd-level tree, allocate new levels needed */
->   	pgd = pgtable + pgd_index(gpa);
-> -	pud = NULL;
-> +	p4d = NULL;
->   	if (pgd_present(*pgd))
-> -		pud = pud_offset(pgd, gpa);
-> +		p4d = p4d_offset(pgd, gpa);
-> +	else
-> +		new_p4d = p4d_alloc_one(kvm->mm, gpa);
-> +
-> +	pud = NULL;
-> +	if (p4d_present(*p4d))
-> +		pud = pud_offset(p4d, gpa);
->   	else
->   		new_pud = pud_alloc_one(kvm->mm, gpa);
->   
-> @@ -599,12 +628,18 @@ int kvmppc_create_pte(struct kvm *kvm, pgd_t *pgtable, pte_t pte,
->   	/* Now traverse again under the lock and change the tree */
->   	ret = -ENOMEM;
->   	if (pgd_none(*pgd)) {
-> +		if (!new_p4d)
-> +			goto out_unlock;
-> +		pgd_populate(kvm->mm, pgd, new_p4d);
-> +		new_p4d = NULL;
-> +	}
-> +	if (p4d_none(*p4d)) {
->   		if (!new_pud)
->   			goto out_unlock;
-> -		pgd_populate(kvm->mm, pgd, new_pud);
-> +		p4d_populate(kvm->mm, p4d, new_pud);
->   		new_pud = NULL;
->   	}
-> -	pud = pud_offset(pgd, gpa);
-> +	pud = pud_offset(p4d, gpa);
->   	if (pud_is_leaf(*pud)) {
->   		unsigned long hgpa = gpa & PUD_MASK;
->   
-> @@ -1222,6 +1257,7 @@ static ssize_t debugfs_radix_read(struct file *file, char __user *buf,
->   	pgd_t *pgt;
->   	struct kvm_nested_guest *nested;
->   	pgd_t pgd, *pgdp;
-> +	p4d_t p4d, *p4dp;
->   	pud_t pud, *pudp;
->   	pmd_t pmd, *pmdp;
->   	pte_t *ptep;
-> @@ -1300,7 +1336,14 @@ static ssize_t debugfs_radix_read(struct file *file, char __user *buf,
->   			continue;
->   		}
->   
-> -		pudp = pud_offset(&pgd, gpa);
-> +		p4dp = p4d_offset(&pgd, gpa);
-> +		p4d = READ_ONCE(*p4dp);
-> +		if (!(p4d_val(p4d) & _PAGE_PRESENT)) {
-> +			gpa = (gpa & P4D_MASK) + P4D_SIZE;
-> +			continue;
-> +		}
-> +
-> +		pudp = pud_offset(&p4d, gpa);
->   		pud = READ_ONCE(*pudp);
->   		if (!(pud_val(pud) & _PAGE_PRESENT)) {
->   			gpa = (gpa & PUD_MASK) + PUD_SIZE;
-> diff --git a/arch/powerpc/lib/code-patching.c b/arch/powerpc/lib/code-patching.c
-> index 3345f039a876..7a59f6863cec 100644
-> --- a/arch/powerpc/lib/code-patching.c
-> +++ b/arch/powerpc/lib/code-patching.c
-> @@ -107,13 +107,18 @@ static inline int unmap_patch_area(unsigned long addr)
->   	pte_t *ptep;
->   	pmd_t *pmdp;
->   	pud_t *pudp;
-> +	p4d_t *p4dp;
->   	pgd_t *pgdp;
->   
->   	pgdp = pgd_offset_k(addr);
->   	if (unlikely(!pgdp))
->   		return -EINVAL;
->   
-> -	pudp = pud_offset(pgdp, addr);
-> +	p4dp = p4d_offset(pgdp, addr);
-> +	if (unlikely(!p4dp))
-> +		return -EINVAL;
-> +
-> +	pudp = pud_offset(p4dp, addr);
->   	if (unlikely(!pudp))
->   		return -EINVAL;
->   
-> diff --git a/arch/powerpc/mm/book3s32/mmu.c b/arch/powerpc/mm/book3s32/mmu.c
-> index 69b2419accef..7479960dc434 100644
-> --- a/arch/powerpc/mm/book3s32/mmu.c
-> +++ b/arch/powerpc/mm/book3s32/mmu.c
-> @@ -312,7 +312,7 @@ void hash_preload(struct mm_struct *mm, unsigned long ea)
->   
->   	if (!Hash)
->   		return;
-> -	pmd = pmd_offset(pud_offset(pgd_offset(mm, ea), ea), ea);
-> +	pmd = pmd_offset(pud_offset(p4d_offset(pgd_offset(mm, ea), ea), ea), ea);
->   	if (!pmd_none(*pmd))
->   		add_hash_page(mm->context.id, ea, pmd_val(*pmd));
->   }
-> diff --git a/arch/powerpc/mm/book3s32/tlb.c b/arch/powerpc/mm/book3s32/tlb.c
-> index 2fcd321040ff..175bc33b41b7 100644
-> --- a/arch/powerpc/mm/book3s32/tlb.c
-> +++ b/arch/powerpc/mm/book3s32/tlb.c
-> @@ -87,7 +87,7 @@ static void flush_range(struct mm_struct *mm, unsigned long start,
->   	if (start >= end)
->   		return;
->   	end = (end - 1) | ~PAGE_MASK;
-> -	pmd = pmd_offset(pud_offset(pgd_offset(mm, start), start), start);
-> +	pmd = pmd_offset(pud_offset(p4d_offset(pgd_offset(mm, start), start), start), start);
->   	for (;;) {
->   		pmd_end = ((start + PGDIR_SIZE) & PGDIR_MASK) - 1;
->   		if (pmd_end > end)
-> @@ -145,7 +145,7 @@ void flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr)
->   		return;
->   	}
->   	mm = (vmaddr < TASK_SIZE)? vma->vm_mm: &init_mm;
-> -	pmd = pmd_offset(pud_offset(pgd_offset(mm, vmaddr), vmaddr), vmaddr);
-> +	pmd = pmd_offset(pud_offset(p4d_offset(pgd_offset(mm, vmaddr), vmaddr), vmaddr), vmaddr);
->   	if (!pmd_none(*pmd))
->   		flush_hash_pages(mm->context.id, vmaddr, pmd_val(*pmd), 1);
->   }
-> diff --git a/arch/powerpc/mm/book3s64/hash_pgtable.c b/arch/powerpc/mm/book3s64/hash_pgtable.c
-> index 64733b9cb20a..9cd15937e88a 100644
-> --- a/arch/powerpc/mm/book3s64/hash_pgtable.c
-> +++ b/arch/powerpc/mm/book3s64/hash_pgtable.c
-> @@ -148,6 +148,7 @@ void hash__vmemmap_remove_mapping(unsigned long start,
->   int hash__map_kernel_page(unsigned long ea, unsigned long pa, pgprot_t prot)
->   {
->   	pgd_t *pgdp;
-> +	p4d_t *p4dp;
->   	pud_t *pudp;
->   	pmd_t *pmdp;
->   	pte_t *ptep;
-> @@ -155,7 +156,8 @@ int hash__map_kernel_page(unsigned long ea, unsigned long pa, pgprot_t prot)
->   	BUILD_BUG_ON(TASK_SIZE_USER64 > H_PGTABLE_RANGE);
->   	if (slab_is_available()) {
->   		pgdp = pgd_offset_k(ea);
-> -		pudp = pud_alloc(&init_mm, pgdp, ea);
-> +		p4dp = p4d_offset(pgdp, ea);
-> +		pudp = pud_alloc(&init_mm, p4dp, ea);
->   		if (!pudp)
->   			return -ENOMEM;
->   		pmdp = pmd_alloc(&init_mm, pudp, ea);
-> diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
-> index 974109bb85db..c02427eab084 100644
-> --- a/arch/powerpc/mm/book3s64/radix_pgtable.c
-> +++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
-> @@ -64,17 +64,24 @@ static int early_map_kernel_page(unsigned long ea, unsigned long pa,
->   {
->   	unsigned long pfn = pa >> PAGE_SHIFT;
->   	pgd_t *pgdp;
-> +	p4d_t *p4dp;
->   	pud_t *pudp;
->   	pmd_t *pmdp;
->   	pte_t *ptep;
->   
->   	pgdp = pgd_offset_k(ea);
->   	if (pgd_none(*pgdp)) {
-> +		p4dp = early_alloc_pgtable(PGD_TABLE_SIZE, nid,
-> +						region_start, region_end);
-> +		pgd_populate(&init_mm, pgdp, p4dp);
-> +	}
-> +	p4dp = p4d_offset(pgdp, ea);
-> +	if (p4d_none(*p4dp)) {
->   		pudp = early_alloc_pgtable(PUD_TABLE_SIZE, nid,
->   						region_start, region_end);
-> -		pgd_populate(&init_mm, pgdp, pudp);
-> +		p4d_populate(&init_mm, p4dp, pudp);
->   	}
-> -	pudp = pud_offset(pgdp, ea);
-> +	pudp = pud_offset(p4dp, ea);
->   	if (map_page_size == PUD_SIZE) {
->   		ptep = (pte_t *)pudp;
->   		goto set_the_pte;
-> @@ -114,6 +121,7 @@ static int __map_kernel_page(unsigned long ea, unsigned long pa,
->   {
->   	unsigned long pfn = pa >> PAGE_SHIFT;
->   	pgd_t *pgdp;
-> +	p4d_t *p4dp;
->   	pud_t *pudp;
->   	pmd_t *pmdp;
->   	pte_t *ptep;
-> @@ -136,7 +144,8 @@ static int __map_kernel_page(unsigned long ea, unsigned long pa,
->   	 * boot.
->   	 */
->   	pgdp = pgd_offset_k(ea);
-> -	pudp = pud_alloc(&init_mm, pgdp, ea);
-> +	p4dp = p4d_offset(pgdp, ea);
-> +	pudp = pud_alloc(&init_mm, p4dp, ea);
->   	if (!pudp)
->   		return -ENOMEM;
->   	if (map_page_size == PUD_SIZE) {
-> @@ -173,6 +182,7 @@ void radix__change_memory_range(unsigned long start, unsigned long end,
->   {
->   	unsigned long idx;
->   	pgd_t *pgdp;
-> +	p4d_t *p4dp;
->   	pud_t *pudp;
->   	pmd_t *pmdp;
->   	pte_t *ptep;
-> @@ -185,7 +195,8 @@ void radix__change_memory_range(unsigned long start, unsigned long end,
->   
->   	for (idx = start; idx < end; idx += PAGE_SIZE) {
->   		pgdp = pgd_offset_k(idx);
-> -		pudp = pud_alloc(&init_mm, pgdp, idx);
-> +		p4dp = p4d_offset(pgdp, idx);
-> +		pudp = pud_alloc(&init_mm, p4dp, idx);
->   		if (!pudp)
->   			continue;
->   		if (pud_is_leaf(*pudp)) {
-> diff --git a/arch/powerpc/mm/book3s64/subpage_prot.c b/arch/powerpc/mm/book3s64/subpage_prot.c
-> index 2ef24a53f4c9..27daeed1a141 100644
-> --- a/arch/powerpc/mm/book3s64/subpage_prot.c
-> +++ b/arch/powerpc/mm/book3s64/subpage_prot.c
-> @@ -54,6 +54,7 @@ static void hpte_flush_range(struct mm_struct *mm, unsigned long addr,
->   			     int npages)
->   {
->   	pgd_t *pgd;
-> +	p4d_t *p4d;
->   	pud_t *pud;
->   	pmd_t *pmd;
->   	pte_t *pte;
-> @@ -62,7 +63,10 @@ static void hpte_flush_range(struct mm_struct *mm, unsigned long addr,
->   	pgd = pgd_offset(mm, addr);
->   	if (pgd_none(*pgd))
->   		return;
-> -	pud = pud_offset(pgd, addr);
-> +	p4d = p4d_offset(pgd, addr);
-> +	if (p4d_none(*p4d))
-> +		return;
-> +	pud = pud_offset(p4d, addr);
->   	if (pud_none(*pud))
->   		return;
->   	pmd = pmd_offset(pud, addr);
-> diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
-> index 73d4873fc7f8..43d463f20fc3 100644
-> --- a/arch/powerpc/mm/hugetlbpage.c
-> +++ b/arch/powerpc/mm/hugetlbpage.c
-> @@ -112,6 +112,7 @@ static int __hugepte_alloc(struct mm_struct *mm, hugepd_t *hpdp,
->   pte_t *huge_pte_alloc(struct mm_struct *mm, unsigned long addr, unsigned long sz)
->   {
->   	pgd_t *pg;
-> +	p4d_t *p4;
->   	pud_t *pu;
->   	pmd_t *pm;
->   	hugepd_t *hpdp = NULL;
-> @@ -121,20 +122,21 @@ pte_t *huge_pte_alloc(struct mm_struct *mm, unsigned long addr, unsigned long sz
->   
->   	addr &= ~(sz-1);
->   	pg = pgd_offset(mm, addr);
-> +	p4 = p4d_offset(pg, addr);
->   
->   #ifdef CONFIG_PPC_BOOK3S_64
->   	if (pshift == PGDIR_SHIFT)
->   		/* 16GB huge page */
-> -		return (pte_t *) pg;
-> +		return (pte_t *) p4;
->   	else if (pshift > PUD_SHIFT) {
->   		/*
->   		 * We need to use hugepd table
->   		 */
->   		ptl = &mm->page_table_lock;
-> -		hpdp = (hugepd_t *)pg;
-> +		hpdp = (hugepd_t *)p4;
->   	} else {
->   		pdshift = PUD_SHIFT;
-> -		pu = pud_alloc(mm, pg, addr);
-> +		pu = pud_alloc(mm, p4, addr);
->   		if (!pu)
->   			return NULL;
->   		if (pshift == PUD_SHIFT)
-> @@ -159,10 +161,10 @@ pte_t *huge_pte_alloc(struct mm_struct *mm, unsigned long addr, unsigned long sz
->   #else
->   	if (pshift >= PGDIR_SHIFT) {
->   		ptl = &mm->page_table_lock;
-> -		hpdp = (hugepd_t *)pg;
-> +		hpdp = (hugepd_t *)p4;
->   	} else {
->   		pdshift = PUD_SHIFT;
-> -		pu = pud_alloc(mm, pg, addr);
-> +		pu = pud_alloc(mm, p4, addr);
->   		if (!pu)
->   			return NULL;
->   		if (pshift >= PUD_SHIFT) {
-> @@ -384,7 +386,7 @@ static void hugetlb_free_pmd_range(struct mmu_gather *tlb, pud_t *pud,
->   	mm_dec_nr_pmds(tlb->mm);
->   }
->   
-> -static void hugetlb_free_pud_range(struct mmu_gather *tlb, pgd_t *pgd,
-> +static void hugetlb_free_pud_range(struct mmu_gather *tlb, p4d_t *p4d,
->   				   unsigned long addr, unsigned long end,
->   				   unsigned long floor, unsigned long ceiling)
->   {
-> @@ -394,7 +396,7 @@ static void hugetlb_free_pud_range(struct mmu_gather *tlb, pgd_t *pgd,
->   
->   	start = addr;
->   	do {
-> -		pud = pud_offset(pgd, addr);
-> +		pud = pud_offset(p4d, addr);
->   		next = pud_addr_end(addr, end);
->   		if (!is_hugepd(__hugepd(pud_val(*pud)))) {
->   			if (pud_none_or_clear_bad(pud))
-> @@ -429,8 +431,8 @@ static void hugetlb_free_pud_range(struct mmu_gather *tlb, pgd_t *pgd,
->   	if (end - 1 > ceiling - 1)
->   		return;
->   
-> -	pud = pud_offset(pgd, start);
-> -	pgd_clear(pgd);
-> +	pud = pud_offset(p4d, start);
-> +	p4d_clear(p4d);
->   	pud_free_tlb(tlb, pud, start);
->   	mm_dec_nr_puds(tlb->mm);
->   }
-> @@ -443,6 +445,7 @@ void hugetlb_free_pgd_range(struct mmu_gather *tlb,
->   			    unsigned long floor, unsigned long ceiling)
->   {
->   	pgd_t *pgd;
-> +	p4d_t *p4d;
->   	unsigned long next;
->   
->   	/*
-> @@ -465,10 +468,11 @@ void hugetlb_free_pgd_range(struct mmu_gather *tlb,
->   	do {
->   		next = pgd_addr_end(addr, end);
->   		pgd = pgd_offset(tlb->mm, addr);
-> +		p4d = p4d_offset(pgd, addr);
->   		if (!is_hugepd(__hugepd(pgd_val(*pgd)))) {
-> -			if (pgd_none_or_clear_bad(pgd))
-> +			if (p4d_none_or_clear_bad(p4d))
->   				continue;
-> -			hugetlb_free_pud_range(tlb, pgd, addr, next, floor, ceiling);
-> +			hugetlb_free_pud_range(tlb, p4d, addr, next, floor, ceiling);
->   		} else {
->   			unsigned long more;
->   			/*
-> @@ -481,7 +485,7 @@ void hugetlb_free_pgd_range(struct mmu_gather *tlb,
->   			if (more > next)
->   				next = more;
->   
-> -			free_hugepd_range(tlb, (hugepd_t *)pgd, PGDIR_SHIFT,
-> +			free_hugepd_range(tlb, (hugepd_t *)p4d, PGDIR_SHIFT,
->   					  addr, next, floor, ceiling);
->   		}
->   	} while (addr = next, addr != end);
-> diff --git a/arch/powerpc/mm/kasan/kasan_init_32.c b/arch/powerpc/mm/kasan/kasan_init_32.c
-> index 0e6ed4413eea..cac0452cbe1f 100644
-> --- a/arch/powerpc/mm/kasan/kasan_init_32.c
-> +++ b/arch/powerpc/mm/kasan/kasan_init_32.c
-> @@ -36,7 +36,7 @@ static int __ref kasan_init_shadow_page_tables(unsigned long k_start, unsigned l
->   	unsigned long k_cur, k_next;
->   	pgprot_t prot = slab_is_available() ? kasan_prot_ro() : PAGE_KERNEL;
->   
-> -	pmd = pmd_offset(pud_offset(pgd_offset_k(k_start), k_start), k_start);
-> +	pmd = pmd_offset(pud_offset(p4d_offset(pgd_offset_k(k_start), k_start), k_start), k_start);
->   
->   	for (k_cur = k_start; k_cur != k_end; k_cur = k_next, pmd++) {
->   		pte_t *new;
-> @@ -94,7 +94,7 @@ static int __ref kasan_init_region(void *start, size_t size)
->   		block = memblock_alloc(k_end - k_start, PAGE_SIZE);
->   
->   	for (k_cur = k_start & PAGE_MASK; k_cur < k_end; k_cur += PAGE_SIZE) {
-> -		pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
-> +		pmd_t *pmd = pmd_offset(pud_offset(p4d_offset(pgd_offset_k(k_cur), k_cur), k_cur), k_cur);
->   		void *va = block ? block + k_cur - k_start : kasan_get_one_page();
->   		pte_t pte = pfn_pte(PHYS_PFN(__pa(va)), PAGE_KERNEL);
->   
-> @@ -118,7 +118,7 @@ static void __init kasan_remap_early_shadow_ro(void)
->   	kasan_populate_pte(kasan_early_shadow_pte, prot);
->   
->   	for (k_cur = k_start & PAGE_MASK; k_cur < k_end; k_cur += PAGE_SIZE) {
-> -		pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
-> +		pmd_t *pmd = pmd_offset(pud_offset(p4d_offset(pgd_offset_k(k_cur), k_cur), k_cur), k_cur);
->   		pte_t *ptep = pte_offset_kernel(pmd, k_cur);
->   
->   		if ((pte_val(*ptep) & PTE_RPN_MASK) != pa)
-> @@ -205,7 +205,7 @@ void __init kasan_early_init(void)
->   	unsigned long addr = KASAN_SHADOW_START;
->   	unsigned long end = KASAN_SHADOW_END;
->   	unsigned long next;
-> -	pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(addr), addr), addr);
-> +	pmd_t *pmd = pmd_offset(pud_offset(p4d_offset(pgd_offset_k(addr), addr), addr), addr);
->   
->   	BUILD_BUG_ON(KASAN_SHADOW_START & ~PGDIR_MASK);
->   
-> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-> index 9488b63dfc87..ed2e24e493b9 100644
-> --- a/arch/powerpc/mm/mem.c
-> +++ b/arch/powerpc/mm/mem.c
-> @@ -68,8 +68,8 @@ EXPORT_SYMBOL(kmap_prot);
->   
->   static inline pte_t *virt_to_kpte(unsigned long vaddr)
->   {
-> -	return pte_offset_kernel(pmd_offset(pud_offset(pgd_offset_k(vaddr),
-> -			vaddr), vaddr), vaddr);
-> +	return pte_offset_kernel(pmd_offset(pud_offset(p4d_offset(pgd_offset_k(vaddr),
-> +			vaddr), vaddr), vaddr), vaddr);
->   }
->   #endif
->   
-> diff --git a/arch/powerpc/mm/nohash/40x.c b/arch/powerpc/mm/nohash/40x.c
-> index f348104eb461..7aaf7155e350 100644
-> --- a/arch/powerpc/mm/nohash/40x.c
-> +++ b/arch/powerpc/mm/nohash/40x.c
-> @@ -104,7 +104,7 @@ unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
->   		pmd_t *pmdp;
->   		unsigned long val = p | _PMD_SIZE_16M | _PAGE_EXEC | _PAGE_HWWRITE;
->   
-> -		pmdp = pmd_offset(pud_offset(pgd_offset_k(v), v), v);
-> +		pmdp = pmd_offset(pud_offset(p4d_offset(pgd_offset_k(v), v), v), v);
->   		*pmdp++ = __pmd(val);
->   		*pmdp++ = __pmd(val);
->   		*pmdp++ = __pmd(val);
-> @@ -119,7 +119,7 @@ unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
->   		pmd_t *pmdp;
->   		unsigned long val = p | _PMD_SIZE_4M | _PAGE_EXEC | _PAGE_HWWRITE;
->   
-> -		pmdp = pmd_offset(pud_offset(pgd_offset_k(v), v), v);
-> +		pmdp = pmd_offset(pud_offset(p4d_offset(pgd_offset_k(v), v), v), v);
->   		*pmdp = __pmd(val);
->   
->   		v += LARGE_PAGE_SIZE_4M;
-> diff --git a/arch/powerpc/mm/nohash/book3e_pgtable.c b/arch/powerpc/mm/nohash/book3e_pgtable.c
-> index 4637fdd469cf..a62d59a928be 100644
-> --- a/arch/powerpc/mm/nohash/book3e_pgtable.c
-> +++ b/arch/powerpc/mm/nohash/book3e_pgtable.c
-> @@ -73,6 +73,7 @@ static void __init *early_alloc_pgtable(unsigned long size)
->   int __ref map_kernel_page(unsigned long ea, unsigned long pa, pgprot_t prot)
->   {
->   	pgd_t *pgdp;
-> +	p4d_t *p4dp;
->   	pud_t *pudp;
->   	pmd_t *pmdp;
->   	pte_t *ptep;
-> @@ -80,7 +81,10 @@ int __ref map_kernel_page(unsigned long ea, unsigned long pa, pgprot_t prot)
->   	BUILD_BUG_ON(TASK_SIZE_USER64 > PGTABLE_RANGE);
->   	if (slab_is_available()) {
->   		pgdp = pgd_offset_k(ea);
-> -		pudp = pud_alloc(&init_mm, pgdp, ea);
-> +		p4dp = p4d_alloc(&init_mm, pgdp, ea);
-> +		if (!p4dp)
-> +			return -ENOMEM;
-> +		pudp = pud_alloc(&init_mm, p4dp, ea);
->   		if (!pudp)
->   			return -ENOMEM;
->   		pmdp = pmd_alloc(&init_mm, pudp, ea);
-> @@ -91,13 +95,16 @@ int __ref map_kernel_page(unsigned long ea, unsigned long pa, pgprot_t prot)
->   			return -ENOMEM;
->   	} else {
->   		pgdp = pgd_offset_k(ea);
-> -#ifndef __PAGETABLE_PUD_FOLDED
->   		if (pgd_none(*pgdp)) {
->   			pudp = early_alloc_pgtable(PUD_TABLE_SIZE);
->   			pgd_populate(&init_mm, pgdp, pudp);
->   		}
-> -#endif /* !__PAGETABLE_PUD_FOLDED */
-> -		pudp = pud_offset(pgdp, ea);
-> +		p4dp = p4d_offset(pgdp, ea);
-> +		if (p4d_none(*p4dp)) {
-> +			pmdp = early_alloc_pgtable(PMD_TABLE_SIZE);
-> +			p4d_populate(&init_mm, p4dp, pmdp);
-> +		}
-> +		pudp = pud_offset(p4dp, ea);
->   		if (pud_none(*pudp)) {
->   			pmdp = early_alloc_pgtable(PMD_TABLE_SIZE);
->   			pud_populate(&init_mm, pudp, pmdp);
-> diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
-> index e3759b69f81b..dca6a72da26a 100644
-> --- a/arch/powerpc/mm/pgtable.c
-> +++ b/arch/powerpc/mm/pgtable.c
-> @@ -265,6 +265,7 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
->   void assert_pte_locked(struct mm_struct *mm, unsigned long addr)
->   {
->   	pgd_t *pgd;
-> +	p4d_t *p4d;
->   	pud_t *pud;
->   	pmd_t *pmd;
->   
-> @@ -272,7 +273,9 @@ void assert_pte_locked(struct mm_struct *mm, unsigned long addr)
->   		return;
->   	pgd = mm->pgd + pgd_index(addr);
->   	BUG_ON(pgd_none(*pgd));
-> -	pud = pud_offset(pgd, addr);
-> +	p4d = p4d_offset(pgd, addr);
-> +	BUG_ON(p4d_none(*p4d));
-> +	pud = pud_offset(p4d, addr);
->   	BUG_ON(pud_none(*pud));
->   	pmd = pmd_offset(pud, addr);
->   	/*
-> @@ -313,6 +316,7 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
->   			bool *is_thp, unsigned *hpage_shift)
->   {
->   	pgd_t pgd, *pgdp;
-> +	p4d_t p4d, *p4dp;
->   	pud_t pud, *pudp;
->   	pmd_t pmd, *pmdp;
->   	pte_t *ret_pte;
-> @@ -346,13 +350,30 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
->   		goto out_huge;
->   	}
->   
-> +	pdshift = P4D_SHIFT;
-> +	p4dp = p4d_offset(&pgd, ea);
-> +	p4d  = READ_ONCE(*p4dp);
-> +
-> +	if (p4d_none(p4d))
-> +		return NULL;
-> +
-> +	if (p4d_is_leaf(p4d)) {
-> +		ret_pte = (pte_t *)p4dp;
-> +		goto out;
-> +	}
-> +
-> +	if (is_hugepd(__hugepd(p4d_val(p4d)))) {
-> +		hpdp = (hugepd_t *)&p4d;
-> +		goto out_huge;
-> +	}
-> +
->   	/*
->   	 * Even if we end up with an unmap, the pgtable will not
->   	 * be freed, because we do an rcu free and here we are
->   	 * irq disabled
->   	 */
->   	pdshift = PUD_SHIFT;
-> -	pudp = pud_offset(&pgd, ea);
-> +	pudp = pud_offset(&p4d, ea);
->   	pud  = READ_ONCE(*pudp);
->   
->   	if (pud_none(pud))
-> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-> index 73b84166d06a..50d97127a801 100644
-> --- a/arch/powerpc/mm/pgtable_32.c
-> +++ b/arch/powerpc/mm/pgtable_32.c
-> @@ -63,7 +63,7 @@ int __ref map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot)
->   	int err = -ENOMEM;
->   
->   	/* Use upper 10 bits of VA to index the first level map */
-> -	pd = pmd_offset(pud_offset(pgd_offset_k(va), va), va);
-> +	pd = pmd_offset(pud_offset(p4d_offset(pgd_offset_k(va), va), va), va);
->   	/* Use middle 10 bits of VA to index the second-level map */
->   	if (likely(slab_is_available()))
->   		pg = pte_alloc_kernel(pd, va);
-> @@ -130,6 +130,7 @@ static int
->   get_pteptr(struct mm_struct *mm, unsigned long addr, pte_t **ptep, pmd_t **pmdp)
->   {
->           pgd_t	*pgd;
-> +	p4d_t	*p4d;
->   	pud_t	*pud;
->           pmd_t	*pmd;
->           pte_t	*pte;
-> @@ -137,17 +138,20 @@ get_pteptr(struct mm_struct *mm, unsigned long addr, pte_t **ptep, pmd_t **pmdp)
->   
->           pgd = pgd_offset(mm, addr & PAGE_MASK);
->           if (pgd) {
-> -		pud = pud_offset(pgd, addr & PAGE_MASK);
-> -		if (pud && pud_present(*pud)) {
-> -			pmd = pmd_offset(pud, addr & PAGE_MASK);
-> -			if (pmd_present(*pmd)) {
-> -				pte = pte_offset_map(pmd, addr & PAGE_MASK);
-> -				if (pte) {
-> -					retval = 1;
-> -					*ptep = pte;
-> -					if (pmdp)
-> -						*pmdp = pmd;
-> -					/* XXX caller needs to do pte_unmap, yuck */
-> +		p4d = p4d_offset(pgd, addr & PAGE_MASK);
-> +		if (p4d && p4d_present(*p4d)) {
-> +			pud = pud_offset(p4d, addr & PAGE_MASK);
-> +			if (pud && pud_present(*pud)) {
-> +				pmd = pmd_offset(pud, addr & PAGE_MASK);
-> +				if (pmd_present(*pmd)) {
-> +					pte = pte_offset_map(pmd, addr & PAGE_MASK);
-> +					if (pte) {
-> +						retval = 1;
-> +						*ptep = pte;
-> +						if (pmdp)
-> +							*pmdp = pmd;
-> +						/* XXX caller needs to do pte_unmap, yuck */
-> +					}
->   				}
->   			}
->   		}
-> diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
-> index e78832dce7bb..1f86a88fd4bb 100644
-> --- a/arch/powerpc/mm/pgtable_64.c
-> +++ b/arch/powerpc/mm/pgtable_64.c
-> @@ -101,13 +101,13 @@ EXPORT_SYMBOL(__pte_frag_size_shift);
->   
->   #ifndef __PAGETABLE_PUD_FOLDED
->   /* 4 level page table */
-> -struct page *pgd_page(pgd_t pgd)
-> +struct page *p4d_page(p4d_t p4d)
->   {
-> -	if (pgd_is_leaf(pgd)) {
-> -		VM_WARN_ON(!pgd_huge(pgd));
-> -		return pte_page(pgd_pte(pgd));
-> +	if (p4d_is_leaf(p4d)) {
-> +		VM_WARN_ON(!p4d_huge(p4d));
-> +		return pte_page(p4d_pte(p4d));
->   	}
-> -	return virt_to_page(pgd_page_vaddr(pgd));
-> +	return virt_to_page(p4d_page_vaddr(p4d));
->   }
->   #endif
->   
-> diff --git a/arch/powerpc/mm/ptdump/hashpagetable.c b/arch/powerpc/mm/ptdump/hashpagetable.c
-> index a07278027c6f..ac360ad865a8 100644
-> --- a/arch/powerpc/mm/ptdump/hashpagetable.c
-> +++ b/arch/powerpc/mm/ptdump/hashpagetable.c
-> @@ -417,9 +417,9 @@ static void walk_pmd(struct pg_state *st, pud_t *pud, unsigned long start)
->   	}
->   }
->   
-> -static void walk_pud(struct pg_state *st, pgd_t *pgd, unsigned long start)
-> +static void walk_pud(struct pg_state *st, p4d_t *p4d, unsigned long start)
->   {
-> -	pud_t *pud = pud_offset(pgd, 0);
-> +	pud_t *pud = pud_offset(p4d, 0);
->   	unsigned long addr;
->   	unsigned int i;
->   
-> @@ -431,6 +431,20 @@ static void walk_pud(struct pg_state *st, pgd_t *pgd, unsigned long start)
->   	}
->   }
->   
-> +static void walk_p4d(struct pg_state *st, pgd_t *pgd, unsigned long start)
-> +{
-> +	p4d_t *p4d = p4d_offset(pgd, 0);
-> +	unsigned long addr;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < PTRS_PER_P4D; i++, p4d++) {
-> +		addr = start + i * P4D_SIZE;
-> +		if (!p4d_none(*p4d))
-> +			/* p4d exists */
-> +			walk_pud(st, p4d, addr);
-> +	}
-> +}
-> +
->   static void walk_pagetables(struct pg_state *st)
->   {
->   	pgd_t *pgd = pgd_offset_k(0UL);
-> @@ -445,7 +459,7 @@ static void walk_pagetables(struct pg_state *st)
->   		addr = KERN_VIRT_START + i * PGDIR_SIZE;
->   		if (!pgd_none(*pgd))
->   			/* pgd exists */
-> -			walk_pud(st, pgd, addr);
-> +			walk_p4d(st, pgd, addr);
->   	}
->   }
->   
-> diff --git a/arch/powerpc/mm/ptdump/ptdump.c b/arch/powerpc/mm/ptdump/ptdump.c
-> index 2f9ddc29c535..5c2f3b916ac8 100644
-> --- a/arch/powerpc/mm/ptdump/ptdump.c
-> +++ b/arch/powerpc/mm/ptdump/ptdump.c
-> @@ -273,9 +273,9 @@ static void walk_pmd(struct pg_state *st, pud_t *pud, unsigned long start)
->   	}
->   }
->   
-> -static void walk_pud(struct pg_state *st, pgd_t *pgd, unsigned long start)
-> +static void walk_pud(struct pg_state *st, p4d_t *p4d, unsigned long start)
->   {
-> -	pud_t *pud = pud_offset(pgd, 0);
-> +	pud_t *pud = pud_offset(p4d, 0);
->   	unsigned long addr;
->   	unsigned int i;
->   
-> @@ -289,6 +289,22 @@ static void walk_pud(struct pg_state *st, pgd_t *pgd, unsigned long start)
->   	}
->   }
->   
-> +static void walk_p4d(struct pg_state *st, pgd_t *pgd, unsigned long start)
-> +{
-> +	p4d_t *p4d = p4d_offset(pgd, 0);
-> +	unsigned long addr;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < PTRS_PER_P4D; i++, p4d++) {
-> +		addr = start + i * P4D_SIZE;
-> +		if (!p4d_none(*p4d) && !p4d_is_leaf(*p4d))
-> +			/* p4d exists */
-> +			walk_pud(st, p4d, addr);
-> +		else
-> +			note_page(st, addr, 2, p4d_val(*p4d));
-> +	}
-> +}
-> +
->   static void walk_pagetables(struct pg_state *st)
->   {
->   	unsigned int i;
-> @@ -302,7 +318,7 @@ static void walk_pagetables(struct pg_state *st)
->   	for (i = pgd_index(addr); i < PTRS_PER_PGD; i++, pgd++, addr += PGDIR_SIZE) {
->   		if (!pgd_none(*pgd) && !pgd_is_leaf(*pgd))
->   			/* pgd exists */
-> -			walk_pud(st, pgd, addr);
-> +			walk_p4d(st, pgd, addr);
->   		else
->   			note_page(st, addr, 1, pgd_val(*pgd));
->   	}
-> diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-> index a7056049709e..dd36e10efa65 100644
-> --- a/arch/powerpc/xmon/xmon.c
-> +++ b/arch/powerpc/xmon/xmon.c
-> @@ -3128,6 +3128,7 @@ static void show_pte(unsigned long addr)
->   	struct task_struct *tsk = NULL;
->   	struct mm_struct *mm;
->   	pgd_t *pgdp, *pgdir;
-> +	p4d_t *p4dp;
->   	pud_t *pudp;
->   	pmd_t *pmdp;
->   	pte_t *ptep;
-> @@ -3172,7 +3173,21 @@ static void show_pte(unsigned long addr)
->   	}
->   	printf("pgdp @ 0x%px = 0x%016lx\n", pgdp, pgd_val(*pgdp));
->   
-> -	pudp = pud_offset(pgdp, addr);
-> +	p4dp = p4d_offset(pgdp, addr);
-> +
-> +	if (p4d_none(*p4dp)) {
-> +		printf("No valid P4D\n");
-> +		return;
-> +	}
-> +
-> +	if (p4d_is_leaf(*p4dp)) {
-> +		format_pte(p4dp, p4d_val(*p4dp));
-> +		return;
-> +	}
-> +
-> +	printf("p4dp @ 0x%px = 0x%016lx\n", p4dp, p4d_val(*p4dp));
-> +
-> +	pudp = pud_offset(p4dp, addr);
->   
->   	if (pud_none(*pudp)) {
->   		printf("No valid PUD\n");
-> 
+which is 4.2.92 right now.
 
+The fix is presumably commit b552b05 ("[SV 51159] Use a non-blocking
+read with pselect to avoid hangs") as per Akemi. That is indeed after
+4.2.1, and it looks real.
 
+Before that commit the buggy jobserver code basically does
+
+ (1) use pselect() to wait for readable and see child deaths atomically
+ (2) use blocking read to get the token
+
+and while (1) is atomic, if the child death happens between the two,
+it goes into the blocking read and has SIGCHLD blocked, so it will try
+to read the token from the token pipe, but it will never react to the
+child death - and the child death is what is going to _release_ a
+token.
+
+So what seems to happen is that when the right timing triggers, you
+end up with a lot of sub-makes waiting for a token, but they are also
+all supposed to _release_ a token. So you don't have enough tokens to
+go around. In the worst case, _everybody_ who has a token is also not
+releasing it, and then you end up triggering the timeout code (after
+one second), which will make things really go into a crawl.
+
+And by a crawl I mean that worst-case you really end up with just one
+job per second per sub-make. It will take _hours_ to compile the
+kernel at that speed, when it normally finishes in 15 minutes on my
+machine even when I do a from-scratch allmodconfig build.
+
+It does seem to be a major bug in the jobserver code. In particular
+with the trial fair and exclusive wakeup patch that I sent out in the
+other thread, it seems to be _reliably_ much worse and triggers 100%
+of the time for me.
+
+It's possible that my trial patch is buggy, but everything else looks
+fine, and with a fixed make the trial patch works for me.
+
+I'll include the trial patch here too, I think I cc'd you on the other
+thread too, but hey..
+
+Anyway, it looks like the sync wakeup thing is more of a "get timing
+right by luck" thing than anything else. Possibly it actually causes
+the reverse order of reader wakeups more often (ie the most _recent_
+reader is most likely to get woken up synchronously) and that may be
+what really ends up masking the jobserver problem, since apparently
+doing wakeups in the fair and proper order makes things much worse..
+
+What a horrible pain that pipe rework ended up being. But I think
+we're in better shape now than we used to be, it just had very
+unfortunate timing issues and several real bugs.
+
+But sadly, there's no way I can push that fair pipe wakeup thing as
+long as this horribly buggy version of make is widespread.
+
+                 Linus
+
+--000000000000b4feb20599490119
+Content-Type: application/x-patch; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k3ypp8jm0>
+X-Attachment-Id: f_k3ypp8jm0
+
+IGZzL2NvcmVkdW1wLmMgICAgICAgICAgICAgfCAgNCArLS0KIGZzL3BpcGUuYyAgICAgICAgICAg
+ICAgICAgfCA2NyArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0t
+LQogZnMvc3BsaWNlLmMgICAgICAgICAgICAgICB8ICA4ICsrKy0tLQogaW5jbHVkZS9saW51eC9w
+aXBlX2ZzX2kuaCB8ICAyICstCiA0IGZpbGVzIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyksIDMw
+IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2ZzL2NvcmVkdW1wLmMgYi9mcy9jb3JlZHVtcC5j
+CmluZGV4IGIxZWE3ZGZiZDE0OS4uZjgyOTZhODJkMDFkIDEwMDY0NAotLS0gYS9mcy9jb3JlZHVt
+cC5jCisrKyBiL2ZzL2NvcmVkdW1wLmMKQEAgLTUxNyw3ICs1MTcsNyBAQCBzdGF0aWMgdm9pZCB3
+YWl0X2Zvcl9kdW1wX2hlbHBlcnMoc3RydWN0IGZpbGUgKmZpbGUpCiAJcGlwZV9sb2NrKHBpcGUp
+OwogCXBpcGUtPnJlYWRlcnMrKzsKIAlwaXBlLT53cml0ZXJzLS07Ci0Jd2FrZV91cF9pbnRlcnJ1
+cHRpYmxlX3N5bmMoJnBpcGUtPndhaXQpOworCXdha2VfdXBfaW50ZXJydXB0aWJsZV9zeW5jKCZw
+aXBlLT5yZF93YWl0KTsKIAlraWxsX2Zhc3luYygmcGlwZS0+ZmFzeW5jX3JlYWRlcnMsIFNJR0lP
+LCBQT0xMX0lOKTsKIAlwaXBlX3VubG9jayhwaXBlKTsKIApAQCAtNTI1LDcgKzUyNSw3IEBAIHN0
+YXRpYyB2b2lkIHdhaXRfZm9yX2R1bXBfaGVscGVycyhzdHJ1Y3QgZmlsZSAqZmlsZSkKIAkgKiBX
+ZSBhY3R1YWxseSB3YW50IHdhaXRfZXZlbnRfZnJlZXphYmxlKCkgYnV0IHRoZW4gd2UgbmVlZAog
+CSAqIHRvIGNsZWFyIFRJRl9TSUdQRU5ESU5HIGFuZCBpbXByb3ZlIGR1bXBfaW50ZXJydXB0ZWQo
+KS4KIAkgKi8KLQl3YWl0X2V2ZW50X2ludGVycnVwdGlibGUocGlwZS0+d2FpdCwgcGlwZS0+cmVh
+ZGVycyA9PSAxKTsKKwl3YWl0X2V2ZW50X2ludGVycnVwdGlibGUocGlwZS0+cmRfd2FpdCwgcGlw
+ZS0+cmVhZGVycyA9PSAxKTsKIAogCXBpcGVfbG9jayhwaXBlKTsKIAlwaXBlLT5yZWFkZXJzLS07
+CmRpZmYgLS1naXQgYS9mcy9waXBlLmMgYi9mcy9waXBlLmMKaW5kZXggODcxMDllNzYxZmE1Li4x
+ZWI2NGNhYjYzYjUgMTAwNjQ0Ci0tLSBhL2ZzL3BpcGUuYworKysgYi9mcy9waXBlLmMKQEAgLTEw
+OCwxNiArMTA4LDE5IEBAIHZvaWQgcGlwZV9kb3VibGVfbG9jayhzdHJ1Y3QgcGlwZV9pbm9kZV9p
+bmZvICpwaXBlMSwKIC8qIERyb3AgdGhlIGlub2RlIHNlbWFwaG9yZSBhbmQgd2FpdCBmb3IgYSBw
+aXBlIGV2ZW50LCBhdG9taWNhbGx5ICovCiB2b2lkIHBpcGVfd2FpdChzdHJ1Y3QgcGlwZV9pbm9k
+ZV9pbmZvICpwaXBlKQogewotCURFRklORV9XQUlUKHdhaXQpOworCURFRklORV9XQUlUKHJkd2Fp
+dCk7CisJREVGSU5FX1dBSVQod3J3YWl0KTsKIAogCS8qCiAJICogUGlwZXMgYXJlIHN5c3RlbS1s
+b2NhbCByZXNvdXJjZXMsIHNvIHNsZWVwaW5nIG9uIHRoZW0KIAkgKiBpcyBjb25zaWRlcmVkIGEg
+bm9uaW50ZXJhY3RpdmUgd2FpdDoKIAkgKi8KLQlwcmVwYXJlX3RvX3dhaXQoJnBpcGUtPndhaXQs
+ICZ3YWl0LCBUQVNLX0lOVEVSUlVQVElCTEUpOworCXByZXBhcmVfdG9fd2FpdCgmcGlwZS0+cmRf
+d2FpdCwgJnJkd2FpdCwgVEFTS19JTlRFUlJVUFRJQkxFKTsKKwlwcmVwYXJlX3RvX3dhaXQoJnBp
+cGUtPndyX3dhaXQsICZ3cndhaXQsIFRBU0tfSU5URVJSVVBUSUJMRSk7CiAJcGlwZV91bmxvY2so
+cGlwZSk7CiAJc2NoZWR1bGUoKTsKLQlmaW5pc2hfd2FpdCgmcGlwZS0+d2FpdCwgJndhaXQpOwor
+CWZpbmlzaF93YWl0KCZwaXBlLT5yZF93YWl0LCAmcmR3YWl0KTsKKwlmaW5pc2hfd2FpdCgmcGlw
+ZS0+d3Jfd2FpdCwgJndyd2FpdCk7CiAJcGlwZV9sb2NrKHBpcGUpOwogfQogCkBAIC0yODYsNyAr
+Mjg5LDcgQEAgcGlwZV9yZWFkKHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICp0
+bykKIAlzaXplX3QgdG90YWxfbGVuID0gaW92X2l0ZXJfY291bnQodG8pOwogCXN0cnVjdCBmaWxl
+ICpmaWxwID0gaW9jYi0+a2lfZmlscDsKIAlzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlID0g
+ZmlscC0+cHJpdmF0ZV9kYXRhOwotCWJvb2wgd2FzX2Z1bGw7CisJYm9vbCB3YXNfZnVsbCwgd2Fr
+ZV9uZXh0X3JlYWRlciA9IGZhbHNlOwogCXNzaXplX3QgcmV0OwogCiAJLyogTnVsbCByZWFkIHN1
+Y2NlZWRzLiAqLwpAQCAtMzQ0LDEwICszNDcsMTAgQEAgcGlwZV9yZWFkKHN0cnVjdCBraW9jYiAq
+aW9jYiwgc3RydWN0IGlvdl9pdGVyICp0bykKIAogCQkJaWYgKCFidWYtPmxlbikgewogCQkJCXBp
+cGVfYnVmX3JlbGVhc2UocGlwZSwgYnVmKTsKLQkJCQlzcGluX2xvY2tfaXJxKCZwaXBlLT53YWl0
+LmxvY2spOworCQkJCXNwaW5fbG9ja19pcnEoJnBpcGUtPnJkX3dhaXQubG9jayk7CiAJCQkJdGFp
+bCsrOwogCQkJCXBpcGUtPnRhaWwgPSB0YWlsOwotCQkJCXNwaW5fdW5sb2NrX2lycSgmcGlwZS0+
+d2FpdC5sb2NrKTsKKwkJCQlzcGluX3VubG9ja19pcnEoJnBpcGUtPnJkX3dhaXQubG9jayk7CiAJ
+CQl9CiAJCQl0b3RhbF9sZW4gLT0gY2hhcnM7CiAJCQlpZiAoIXRvdGFsX2xlbikKQEAgLTM3MSwx
+OSArMzc0LDI0IEBAIHBpcGVfcmVhZChzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRl
+ciAqdG8pCiAJCX0KIAkJX19waXBlX3VubG9jayhwaXBlKTsKIAkJaWYgKHdhc19mdWxsKSB7Ci0J
+CQl3YWtlX3VwX2ludGVycnVwdGlibGVfc3luY19wb2xsKCZwaXBlLT53YWl0LCBFUE9MTE9VVCB8
+IEVQT0xMV1JOT1JNKTsKKwkJCXdha2VfdXBfaW50ZXJydXB0aWJsZV9zeW5jX3BvbGwoJnBpcGUt
+PndyX3dhaXQsIEVQT0xMT1VUIHwgRVBPTExXUk5PUk0pOwogCQkJa2lsbF9mYXN5bmMoJnBpcGUt
+PmZhc3luY193cml0ZXJzLCBTSUdJTywgUE9MTF9PVVQpOwogCQl9Ci0JCXdhaXRfZXZlbnRfaW50
+ZXJydXB0aWJsZShwaXBlLT53YWl0LCBwaXBlX3JlYWRhYmxlKHBpcGUpKTsKKwkJd2FpdF9ldmVu
+dF9pbnRlcnJ1cHRpYmxlX2V4Y2x1c2l2ZShwaXBlLT5yZF93YWl0LCBwaXBlX3JlYWRhYmxlKHBp
+cGUpKTsKIAkJX19waXBlX2xvY2socGlwZSk7CiAJCXdhc19mdWxsID0gcGlwZV9mdWxsKHBpcGUt
+PmhlYWQsIHBpcGUtPnRhaWwsIHBpcGUtPm1heF91c2FnZSk7CisJCXdha2VfbmV4dF9yZWFkZXIg
+PSB0cnVlOwogCX0KKwlpZiAocGlwZV9lbXB0eShwaXBlLT5oZWFkLCBwaXBlLT50YWlsKSkKKwkJ
+d2FrZV9uZXh0X3JlYWRlciA9IGZhbHNlOwogCV9fcGlwZV91bmxvY2socGlwZSk7CiAKIAlpZiAo
+d2FzX2Z1bGwpIHsKLQkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlX3N5bmNfcG9sbCgmcGlwZS0+d2Fp
+dCwgRVBPTExPVVQgfCBFUE9MTFdSTk9STSk7CisJCXdha2VfdXBfaW50ZXJydXB0aWJsZV9zeW5j
+X3BvbGwoJnBpcGUtPndyX3dhaXQsIEVQT0xMT1VUIHwgRVBPTExXUk5PUk0pOwogCQlraWxsX2Zh
+c3luYygmcGlwZS0+ZmFzeW5jX3dyaXRlcnMsIFNJR0lPLCBQT0xMX09VVCk7CiAJfQorCWlmICh3
+YWtlX25leHRfcmVhZGVyKQorCQl3YWtlX3VwX2ludGVycnVwdGlibGVfc3luY19wb2xsKCZwaXBl
+LT5yZF93YWl0LCBFUE9MTElOIHwgRVBPTExSRE5PUk0pOwogCWlmIChyZXQgPiAwKQogCQlmaWxl
+X2FjY2Vzc2VkKGZpbHApOwogCXJldHVybiByZXQ7CkBAIC00MTUsNiArNDIzLDcgQEAgcGlwZV93
+cml0ZShzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRlciAqZnJvbSkKIAlzaXplX3Qg
+dG90YWxfbGVuID0gaW92X2l0ZXJfY291bnQoZnJvbSk7CiAJc3NpemVfdCBjaGFyczsKIAlib29s
+IHdhc19lbXB0eSA9IGZhbHNlOworCWJvb2wgd2FrZV9uZXh0X3dyaXRlciA9IGZhbHNlOwogCiAJ
+LyogTnVsbCB3cml0ZSBzdWNjZWVkcy4gKi8KIAlpZiAodW5saWtlbHkodG90YWxfbGVuID09IDAp
+KQpAQCAtNDkzLDE2ICs1MDIsMTYgQEAgcGlwZV93cml0ZShzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0
+cnVjdCBpb3ZfaXRlciAqZnJvbSkKIAkJCSAqIGl0LCBlaXRoZXIgdGhlIHJlYWRlciB3aWxsIGNv
+bnN1bWUgaXQgb3IgaXQnbGwgc3RpbGwKIAkJCSAqIGJlIHRoZXJlIGZvciB0aGUgbmV4dCB3cml0
+ZS4KIAkJCSAqLwotCQkJc3Bpbl9sb2NrX2lycSgmcGlwZS0+d2FpdC5sb2NrKTsKKwkJCXNwaW5f
+bG9ja19pcnEoJnBpcGUtPnJkX3dhaXQubG9jayk7CiAKIAkJCWhlYWQgPSBwaXBlLT5oZWFkOwog
+CQkJaWYgKHBpcGVfZnVsbChoZWFkLCBwaXBlLT50YWlsLCBwaXBlLT5tYXhfdXNhZ2UpKSB7Ci0J
+CQkJc3Bpbl91bmxvY2tfaXJxKCZwaXBlLT53YWl0LmxvY2spOworCQkJCXNwaW5fdW5sb2NrX2ly
+cSgmcGlwZS0+cmRfd2FpdC5sb2NrKTsKIAkJCQljb250aW51ZTsKIAkJCX0KIAogCQkJcGlwZS0+
+aGVhZCA9IGhlYWQgKyAxOwotCQkJc3Bpbl91bmxvY2tfaXJxKCZwaXBlLT53YWl0LmxvY2spOwor
+CQkJc3Bpbl91bmxvY2tfaXJxKCZwaXBlLT5yZF93YWl0LmxvY2spOwogCiAJCQkvKiBJbnNlcnQg
+aXQgaW50byB0aGUgYnVmZmVyIGFycmF5ICovCiAJCQlidWYgPSAmcGlwZS0+YnVmc1toZWFkICYg
+bWFza107CkBAIC01NTQsMTQgKzU2MywxNyBAQCBwaXBlX3dyaXRlKHN0cnVjdCBraW9jYiAqaW9j
+Yiwgc3RydWN0IGlvdl9pdGVyICpmcm9tKQogCQkgKi8KIAkJX19waXBlX3VubG9jayhwaXBlKTsK
+IAkJaWYgKHdhc19lbXB0eSkgewotCQkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlX3N5bmNfcG9sbCgm
+cGlwZS0+d2FpdCwgRVBPTExJTiB8IEVQT0xMUkROT1JNKTsKKwkJCXdha2VfdXBfaW50ZXJydXB0
+aWJsZV9zeW5jX3BvbGwoJnBpcGUtPnJkX3dhaXQsIEVQT0xMSU4gfCBFUE9MTFJETk9STSk7CiAJ
+CQlraWxsX2Zhc3luYygmcGlwZS0+ZmFzeW5jX3JlYWRlcnMsIFNJR0lPLCBQT0xMX0lOKTsKIAkJ
+fQotCQl3YWl0X2V2ZW50X2ludGVycnVwdGlibGUocGlwZS0+d2FpdCwgcGlwZV93cml0YWJsZShw
+aXBlKSk7CisJCXdhaXRfZXZlbnRfaW50ZXJydXB0aWJsZV9leGNsdXNpdmUocGlwZS0+d3Jfd2Fp
+dCwgcGlwZV93cml0YWJsZShwaXBlKSk7CiAJCV9fcGlwZV9sb2NrKHBpcGUpOwogCQl3YXNfZW1w
+dHkgPSBwaXBlX2VtcHR5KGhlYWQsIHBpcGUtPnRhaWwpOworCQl3YWtlX25leHRfd3JpdGVyID0g
+dHJ1ZTsKIAl9CiBvdXQ6CisJaWYgKHBpcGVfZnVsbChwaXBlLT5oZWFkLCBwaXBlLT50YWlsLCBw
+aXBlLT5tYXhfdXNhZ2UpKQorCQl3YWtlX25leHRfd3JpdGVyID0gZmFsc2U7CiAJX19waXBlX3Vu
+bG9jayhwaXBlKTsKIAogCS8qCkBAIC01NzQsOSArNTg2LDExIEBAIHBpcGVfd3JpdGUoc3RydWN0
+IGtpb2NiICppb2NiLCBzdHJ1Y3QgaW92X2l0ZXIgKmZyb20pCiAJICogd2FrZSB1cCBwZW5kaW5n
+IGpvYnMKIAkgKi8KIAlpZiAod2FzX2VtcHR5KSB7Ci0JCXdha2VfdXBfaW50ZXJydXB0aWJsZV9z
+eW5jX3BvbGwoJnBpcGUtPndhaXQsIEVQT0xMSU4gfCBFUE9MTFJETk9STSk7CisJCXdha2VfdXBf
+aW50ZXJydXB0aWJsZV9zeW5jX3BvbGwoJnBpcGUtPnJkX3dhaXQsIEVQT0xMSU4gfCBFUE9MTFJE
+Tk9STSk7CiAJCWtpbGxfZmFzeW5jKCZwaXBlLT5mYXN5bmNfcmVhZGVycywgU0lHSU8sIFBPTExf
+SU4pOwogCX0KKwlpZiAod2FrZV9uZXh0X3dyaXRlcikKKwkJd2FrZV91cF9pbnRlcnJ1cHRpYmxl
+X3N5bmNfcG9sbCgmcGlwZS0+d3Jfd2FpdCwgRVBPTExPVVQgfCBFUE9MTFdSTk9STSk7CiAJaWYg
+KHJldCA+IDAgJiYgc2Jfc3RhcnRfd3JpdGVfdHJ5bG9jayhmaWxlX2lub2RlKGZpbHApLT5pX3Ni
+KSkgewogCQlpbnQgZXJyID0gZmlsZV91cGRhdGVfdGltZShmaWxwKTsKIAkJaWYgKGVycikKQEAg
+LTYyMCwxMiArNjM0LDE1IEBAIHBpcGVfcG9sbChzdHJ1Y3QgZmlsZSAqZmlscCwgcG9sbF90YWJs
+ZSAqd2FpdCkKIAl1bnNpZ25lZCBpbnQgaGVhZCwgdGFpbDsKIAogCS8qCi0JICogUmVhZGluZyBv
+bmx5IC0tIG5vIG5lZWQgZm9yIGFjcXVpcmluZyB0aGUgc2VtYXBob3JlLgorCSAqIFJlYWRpbmcg
+cGlwZSBzdGF0ZSBvbmx5IC0tIG5vIG5lZWQgZm9yIGFjcXVpcmluZyB0aGUgc2VtYXBob3JlLgog
+CSAqCiAJICogQnV0IGJlY2F1c2UgdGhpcyBpcyByYWN5LCB0aGUgY29kZSBoYXMgdG8gYWRkIHRo
+ZQogCSAqIGVudHJ5IHRvIHRoZSBwb2xsIHRhYmxlIF9maXJzdF8gLi4KIAkgKi8KLQlwb2xsX3dh
+aXQoZmlscCwgJnBpcGUtPndhaXQsIHdhaXQpOworCWlmIChmaWxwLT5mX21vZGUgJiBGTU9ERV9S
+RUFEKQorCQlwb2xsX3dhaXQoZmlscCwgJnBpcGUtPnJkX3dhaXQsIHdhaXQpOworCWlmIChmaWxw
+LT5mX21vZGUgJiBGTU9ERV9XUklURSkKKwkJcG9sbF93YWl0KGZpbHAsICZwaXBlLT53cl93YWl0
+LCB3YWl0KTsKIAogCS8qCiAJICogLi4gYW5kIG9ubHkgdGhlbiBjYW4geW91IGRvIHRoZSByYWN5
+IHRlc3RzLiBUaGF0IHdheSwKQEAgLTY4NCw3ICs3MDEsOCBAQCBwaXBlX3JlbGVhc2Uoc3RydWN0
+IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUgKmZpbGUpCiAJCXBpcGUtPndyaXRlcnMtLTsKIAog
+CWlmIChwaXBlLT5yZWFkZXJzIHx8IHBpcGUtPndyaXRlcnMpIHsKLQkJd2FrZV91cF9pbnRlcnJ1
+cHRpYmxlX3N5bmNfcG9sbCgmcGlwZS0+d2FpdCwgRVBPTExJTiB8IEVQT0xMT1VUIHwgRVBPTExS
+RE5PUk0gfCBFUE9MTFdSTk9STSB8IEVQT0xMRVJSIHwgRVBPTExIVVApOworCQl3YWtlX3VwX2lu
+dGVycnVwdGlibGVfc3luY19wb2xsKCZwaXBlLT5yZF93YWl0LCBFUE9MTElOIHwgRVBPTExSRE5P
+Uk0gfCBFUE9MTEVSUiB8IEVQT0xMSFVQKTsKKwkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlX3N5bmNf
+cG9sbCgmcGlwZS0+d3Jfd2FpdCwgRVBPTExPVVQgfCBFUE9MTFdSTk9STSB8IEVQT0xMRVJSIHwg
+RVBPTExIVVApOwogCQlraWxsX2Zhc3luYygmcGlwZS0+ZmFzeW5jX3JlYWRlcnMsIFNJR0lPLCBQ
+T0xMX0lOKTsKIAkJa2lsbF9mYXN5bmMoJnBpcGUtPmZhc3luY193cml0ZXJzLCBTSUdJTywgUE9M
+TF9PVVQpOwogCX0KQEAgLTc2Nyw3ICs3ODUsOCBAQCBzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICph
+bGxvY19waXBlX2luZm8odm9pZCkKIAkJCSAgICAgR0ZQX0tFUk5FTF9BQ0NPVU5UKTsKIAogCWlm
+IChwaXBlLT5idWZzKSB7Ci0JCWluaXRfd2FpdHF1ZXVlX2hlYWQoJnBpcGUtPndhaXQpOworCQlp
+bml0X3dhaXRxdWV1ZV9oZWFkKCZwaXBlLT5yZF93YWl0KTsKKwkJaW5pdF93YWl0cXVldWVfaGVh
+ZCgmcGlwZS0+d3Jfd2FpdCk7CiAJCXBpcGUtPnJfY291bnRlciA9IHBpcGUtPndfY291bnRlciA9
+IDE7CiAJCXBpcGUtPm1heF91c2FnZSA9IHBpcGVfYnVmczsKIAkJcGlwZS0+cmluZ19zaXplID0g
+cGlwZV9idWZzOwpAQCAtOTg1LDcgKzEwMDQsOCBAQCBzdGF0aWMgaW50IHdhaXRfZm9yX3BhcnRu
+ZXIoc3RydWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlwZSwgdW5zaWduZWQgaW50ICpjbnQpCiAKIHN0
+YXRpYyB2b2lkIHdha2VfdXBfcGFydG5lcihzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlKQog
+ewotCXdha2VfdXBfaW50ZXJydXB0aWJsZSgmcGlwZS0+d2FpdCk7CisJd2FrZV91cF9pbnRlcnJ1
+cHRpYmxlKCZwaXBlLT5yZF93YWl0KTsKKwl3YWtlX3VwX2ludGVycnVwdGlibGUoJnBpcGUtPndy
+X3dhaXQpOwogfQogCiBzdGF0aWMgaW50IGZpZm9fb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBz
+dHJ1Y3QgZmlsZSAqZmlscCkKQEAgLTEwOTYsMTMgKzExMTYsMTMgQEAgc3RhdGljIGludCBmaWZv
+X29wZW4oc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUgKmZpbHApCiAKIGVycl9yZDoK
+IAlpZiAoIS0tcGlwZS0+cmVhZGVycykKLQkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT53
+YWl0KTsKKwkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT53cl93YWl0KTsKIAlyZXQgPSAt
+RVJFU1RBUlRTWVM7CiAJZ290byBlcnI7CiAKIGVycl93cjoKIAlpZiAoIS0tcGlwZS0+d3JpdGVy
+cykKLQkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT53YWl0KTsKKwkJd2FrZV91cF9pbnRl
+cnJ1cHRpYmxlKCZwaXBlLT5yZF93YWl0KTsKIAlyZXQgPSAtRVJFU1RBUlRTWVM7CiAJZ290byBl
+cnI7CiAKQEAgLTEyMjksNyArMTI0OSw4IEBAIHN0YXRpYyBsb25nIHBpcGVfc2V0X3NpemUoc3Ry
+dWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlwZSwgdW5zaWduZWQgbG9uZyBhcmcpCiAJcGlwZS0+bWF4
+X3VzYWdlID0gbnJfc2xvdHM7CiAJcGlwZS0+dGFpbCA9IHRhaWw7CiAJcGlwZS0+aGVhZCA9IGhl
+YWQ7Ci0Jd2FrZV91cF9pbnRlcnJ1cHRpYmxlX2FsbCgmcGlwZS0+d2FpdCk7CisJd2FrZV91cF9p
+bnRlcnJ1cHRpYmxlX2FsbCgmcGlwZS0+cmRfd2FpdCk7CisJd2FrZV91cF9pbnRlcnJ1cHRpYmxl
+X2FsbCgmcGlwZS0+d3Jfd2FpdCk7CiAJcmV0dXJuIHBpcGUtPm1heF91c2FnZSAqIFBBR0VfU0la
+RTsKIAogb3V0X3JldmVydF9hY2N0OgpkaWZmIC0tZ2l0IGEvZnMvc3BsaWNlLmMgYi9mcy9zcGxp
+Y2UuYwppbmRleCAzMDA5NjUyYTQxYzguLmQ2NzE5MzZkMGFhZCAxMDA2NDQKLS0tIGEvZnMvc3Bs
+aWNlLmMKKysrIGIvZnMvc3BsaWNlLmMKQEAgLTE2NSw4ICsxNjUsOCBAQCBzdGF0aWMgY29uc3Qg
+c3RydWN0IHBpcGVfYnVmX29wZXJhdGlvbnMgdXNlcl9wYWdlX3BpcGVfYnVmX29wcyA9IHsKIHN0
+YXRpYyB2b2lkIHdha2V1cF9waXBlX3JlYWRlcnMoc3RydWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlw
+ZSkKIHsKIAlzbXBfbWIoKTsKLQlpZiAod2FpdHF1ZXVlX2FjdGl2ZSgmcGlwZS0+d2FpdCkpCi0J
+CXdha2VfdXBfaW50ZXJydXB0aWJsZSgmcGlwZS0+d2FpdCk7CisJaWYgKHdhaXRxdWV1ZV9hY3Rp
+dmUoJnBpcGUtPnJkX3dhaXQpKQorCQl3YWtlX3VwX2ludGVycnVwdGlibGUoJnBpcGUtPnJkX3dh
+aXQpOwogCWtpbGxfZmFzeW5jKCZwaXBlLT5mYXN5bmNfcmVhZGVycywgU0lHSU8sIFBPTExfSU4p
+OwogfQogCkBAIC00NjIsOCArNDYyLDggQEAgc3RhdGljIGludCBwaXBlX3RvX3NlbmRwYWdlKHN0
+cnVjdCBwaXBlX2lub2RlX2luZm8gKnBpcGUsCiBzdGF0aWMgdm9pZCB3YWtldXBfcGlwZV93cml0
+ZXJzKHN0cnVjdCBwaXBlX2lub2RlX2luZm8gKnBpcGUpCiB7CiAJc21wX21iKCk7Ci0JaWYgKHdh
+aXRxdWV1ZV9hY3RpdmUoJnBpcGUtPndhaXQpKQotCQl3YWtlX3VwX2ludGVycnVwdGlibGUoJnBp
+cGUtPndhaXQpOworCWlmICh3YWl0cXVldWVfYWN0aXZlKCZwaXBlLT53cl93YWl0KSkKKwkJd2Fr
+ZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT53cl93YWl0KTsKIAlraWxsX2Zhc3luYygmcGlwZS0+
+ZmFzeW5jX3dyaXRlcnMsIFNJR0lPLCBQT0xMX09VVCk7CiB9CiAKZGlmZiAtLWdpdCBhL2luY2x1
+ZGUvbGludXgvcGlwZV9mc19pLmggYi9pbmNsdWRlL2xpbnV4L3BpcGVfZnNfaS5oCmluZGV4IGRi
+Y2ZhNjg5MjM4NC4uZDU3NjUwMzk2NTJhIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L3BpcGVf
+ZnNfaS5oCisrKyBiL2luY2x1ZGUvbGludXgvcGlwZV9mc19pLmgKQEAgLTQ3LDcgKzQ3LDcgQEAg
+c3RydWN0IHBpcGVfYnVmZmVyIHsKICAqKi8KIHN0cnVjdCBwaXBlX2lub2RlX2luZm8gewogCXN0
+cnVjdCBtdXRleCBtdXRleDsKLQl3YWl0X3F1ZXVlX2hlYWRfdCB3YWl0OworCXdhaXRfcXVldWVf
+aGVhZF90IHJkX3dhaXQsIHdyX3dhaXQ7CiAJdW5zaWduZWQgaW50IGhlYWQ7CiAJdW5zaWduZWQg
+aW50IHRhaWw7CiAJdW5zaWduZWQgaW50IG1heF91c2FnZTsK
+--000000000000b4feb20599490119--
