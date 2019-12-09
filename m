@@ -2,155 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10796116EE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5486A116EE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbfLIOZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 09:25:07 -0500
-Received: from mail-eopbgr770077.outbound.protection.outlook.com ([40.107.77.77]:49230
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727359AbfLIOZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:25:07 -0500
-Received: from SN4PR0201CA0020.namprd02.prod.outlook.com
- (2603:10b6:803:2b::30) by BN6PR02MB2482.namprd02.prod.outlook.com
- (2603:10b6:404:55::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.12; Mon, 9 Dec
- 2019 14:25:05 +0000
-Received: from SN1NAM02FT063.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::201) by SN4PR0201CA0020.outlook.office365.com
- (2603:10b6:803:2b::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.12 via Frontend
- Transport; Mon, 9 Dec 2019 14:25:05 +0000
-Authentication-Results: spf=softfail (sender IP is 149.199.60.83)
- smtp.mailfrom=gmail.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=fail action=none header.from=gmail.com;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- gmail.com discourages use of 149.199.60.83 as permitted sender)
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT063.mail.protection.outlook.com (10.152.72.213) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2495.26
- via Frontend Transport; Mon, 9 Dec 2019 14:25:05 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <shubhrajyoti.datta@gmail.com>)
-        id 1ieJwo-0007qK-FV; Mon, 09 Dec 2019 06:23:38 -0800
-Received: from [127.0.0.1] (helo=xsj-smtp-dlp2.xlnx.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <shubhrajyoti.datta@gmail.com>)
-        id 1ieJwj-0006oW-B1; Mon, 09 Dec 2019 06:23:33 -0800
-Received: from xsj-pvapsmtp01 (smtp-fallback.xilinx.com [149.199.38.66] (may be forged))
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xB9ENWdJ017866;
-        Mon, 9 Dec 2019 06:23:32 -0800
-Received: from [10.140.6.59] (helo=xhdshubhraj40.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <shubhrajyoti.datta@gmail.com>)
-        id 1ieJwi-0006nz-2F; Mon, 09 Dec 2019 06:23:32 -0800
-From:   shubhrajyoti.datta@gmail.com
-To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     michal.simek@xilinx.com, gregkh@linuxfoundation.org,
-        robh+dt@kernel.org,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH v2 2/2] devicetree: bindings: Add the binding doc for xilinx APM
-Date:   Mon,  9 Dec 2019 19:53:25 +0530
-Message-Id: <1575901405-3084-2-git-send-email-shubhrajyoti.datta@gmail.com>
-X-Mailer: git-send-email 2.1.1
-In-Reply-To: <1575901405-3084-1-git-send-email-shubhrajyoti.datta@gmail.com>
-References: <1575901405-3084-1-git-send-email-shubhrajyoti.datta@gmail.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-Result: No--6.273-7.0-31-1
-X-imss-scan-details: No--6.273-7.0-31-1;No--6.273-5.0-31-1
-X-TM-AS-User-Approved-Sender: No;No
-X-TM-AS-Result-Xfilter: Match text exemption rules:No
-X-EOPAttributedMessage: 0
-X-Matching-Connectors: 132203751052549827;(f9e945fa-a09a-4caa-7158-08d2eb1d8c44);()
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(39860400002)(136003)(189003)(199004)(9686003)(107886003)(81156014)(82202003)(4326008)(8936002)(86362001)(81166006)(70586007)(70206006)(8676002)(450100002)(316002)(2906002)(55446002)(36756003)(6666004)(356004)(498600001)(26005)(305945005)(9786002)(76482006)(2616005)(73392003)(336012)(5660300002)(426003)(42866002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR02MB2482;H:xsj-pvapsmtpgw01;FPR:;SPF:SoftFail;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+        id S1727591AbfLIO27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 09:28:59 -0500
+Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:55955 "EHLO
+        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfLIO27 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 09:28:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1575901739;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=X1P5ZS66O+SyV3Z0pG3ySBc5zDyuUajrOIBHrzr8Pms=;
+  b=EH2gqenm9Iv6+PdaymFKCdHBdr1KRQJR+nXxnqIcKj1IYX3mM6G4Oa0t
+   xgtALdDRhsCihQOgIfncGZJbNgprWRQ22QcEZAjNQ6EZrZ/+HdTvR9lwM
+   lfTsGh5Zh/MpvoocaoJr1BcePvnig8xmgsnlmUmlnt5DoA2Dc+FblYeFG
+   w=;
+Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
+  receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
+  roger.pau@citrix.com designates 162.221.158.21 as permitted
+  sender) identity=mailfrom; client-ip=162.221.158.21;
+  receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: a1ru/4XWSvrJrh5euaNnkOw8Vn3o3G46oijEi/FPyzJJ5TLvObjfsKXIaMgNz5CM0IqGTp3qc5
+ NKJSNxeQQkbuDEB0EqCCu+3gryAHE1mLeXG3H7Dmucqllf79phmdJt0RvpKjbrz1TcKdPaV+Qa
+ a/DvXG50rPXGHbnFS0pDCNSVnVX/hoAYQmmbAvyKX9TVwCttsWCQlnqmmrnFPoBKrSC0nQ50zH
+ 2CANj0bjodv3B6IMfPEnJIN8sKz9KkOB1CxplML9TB/kUiwIowKQRH/nwzVmjkWuM+spastILk
+ S4g=
+X-SBRS: 2.7
+X-MesageID: 9395324
+X-Ironport-Server: esa3.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.69,296,1571716800"; 
+   d="scan'208";a="9395324"
+Date:   Mon, 9 Dec 2019 15:28:52 +0100
+From:   Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
+To:     "Durrant, Paul" <pdurrant@amazon.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "Juergen Gross" <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
+Subject: Re: [Xen-devel] [PATCH 2/4] xenbus: limit when state is forced to
+ closed
+Message-ID: <20191209142852.GW980@Air-de-Roger>
+References: <20191205140123.3817-1-pdurrant@amazon.com>
+ <20191205140123.3817-3-pdurrant@amazon.com>
+ <20191209113926.GS980@Air-de-Roger>
+ <19b5c2fa36b842e58bbdddd602c4e672@EX13D32EUC003.ant.amazon.com>
+ <20191209122537.GV980@Air-de-Roger>
+ <54e3cd3a42d8418d9a36388315deab13@EX13D32EUC003.ant.amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7f39353d-0110-4d57-7c11-08d77cb395e5
-X-MS-TrafficTypeDiagnostic: BN6PR02MB2482:
-X-Microsoft-Antispam-PRVS: <BN6PR02MB248243FD0D3BFD1E278061CC87580@BN6PR02MB2482.namprd02.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
-X-Forefront-PRVS: 02462830BE
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7ko+LpF7lVln+qf+9OCdrEQb8bT729BaPUuevIqd2Q6P7Y//d5dAXKO1dFbMjFJZTn0jHNVxK1ex4g6Hgymb/ttq8OA5SdVFBQuGbv5cW3cZaocrFHd5+wKkc3hzq8OtJEB1VuSgwNHX5clqEp51CH1PgBeRvNSHZsDi84lC5RnJ4LVsnihirsSvtKOFxl5kL47HqGeW/xanPKNaXSJulw51lVGjvqp4rq+VXmEY6FF1aSC06bhV9CBdnMqwsFVOceRmGxYul36Gj7vPo/V5JfwkaQfEsVjP8VXbkymw+ES9U+4uijv+vtftK4ey3dWxuFwkOqNq8k2p4VY2o7FP+UCEt3wrc3D4VSvNhWEdSQdGR6PDITEi2t8bcwtaWOqbw9i3X/ZLvh5XnRDEEMpBwYl8YXtE3Ca9FcGcGghsYLgzdYTWa7OYsKGUFbsafy48sPJIeYMm1qinVOtwzGpV7vnoBlQyKy/BwUsxK5wSum+0Y2Iw4OmkRoZACta9cZm5
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2019 14:25:05.0928
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f39353d-0110-4d57-7c11-08d77cb395e5
-X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR02MB2482
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <54e3cd3a42d8418d9a36388315deab13@EX13D32EUC003.ant.amazon.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL03.citrite.net (10.69.22.127)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+On Mon, Dec 09, 2019 at 12:40:47PM +0000, Durrant, Paul wrote:
+> > -----Original Message-----
+> > From: Roger Pau Monné <roger.pau@citrix.com>
+> > Sent: 09 December 2019 12:26
+> > To: Durrant, Paul <pdurrant@amazon.com>
+> > Cc: linux-kernel@vger.kernel.org; xen-devel@lists.xenproject.org; Juergen
+> > Gross <jgross@suse.com>; Stefano Stabellini <sstabellini@kernel.org>;
+> > Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> > Subject: Re: [Xen-devel] [PATCH 2/4] xenbus: limit when state is forced to
+> > closed
+> > 
+> > On Mon, Dec 09, 2019 at 12:01:38PM +0000, Durrant, Paul wrote:
+> > > > -----Original Message-----
+> > > > From: Roger Pau Monné <roger.pau@citrix.com>
+> > > > Sent: 09 December 2019 11:39
+> > > > To: Durrant, Paul <pdurrant@amazon.com>
+> > > > Cc: linux-kernel@vger.kernel.org; xen-devel@lists.xenproject.org;
+> > Juergen
+> > > > Gross <jgross@suse.com>; Stefano Stabellini <sstabellini@kernel.org>;
+> > > > Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> > > > Subject: Re: [Xen-devel] [PATCH 2/4] xenbus: limit when state is
+> > forced to
+> > > > closed
+> > > >
+> > > > On Thu, Dec 05, 2019 at 02:01:21PM +0000, Paul Durrant wrote:
+> > > > > Only force state to closed in the case when the toolstack may need
+> > to
+> > > > > clean up. This can be detected by checking whether the state in
+> > xenstore
+> > > > > has been set to closing prior to device removal.
+> > > >
+> > > > I'm not sure I see the point of this, I would expect that a failure to
+> > > > probe or the removal of the device would leave the xenbus state as
+> > > > closed, which is consistent with the actual driver state.
+> > > >
+> > > > Can you explain what's the benefit of leaving a device without a
+> > > > driver in such unknown state?
+> > > >
+> > >
+> > > If probe fails then I think it should leave the state alone. If the
+> > > state is moved to closed then basically you just killed that
+> > > connection to the guest (as the frontend will normally close down
+> > > when it sees this change) so, if the probe failure was due to a bug
+> > > in blkback or, e.g., a transient resource issue then it's game over
+> > > as far as that guest goes.
+> > 
+> > But the connection can be restarted by switching the backend to the
+> > init state again.
+> 
+> Too late. The frontend saw closed and you already lost.
+> 
+> > 
+> > > The ultimate goal here is PV backend re-load that is completely
+> > transparent to the guest. Modifying anything in xenstore compromises that
+> > so we need to be careful.
+> > 
+> > That's a fine goal, but not switching to closed state in
+> > xenbus_dev_remove seems wrong, as you have actually left the frontend
+> > without a matching backend and with the state not set to closed.
+> > 
+> 
+> Why is this a problem? With this series fully applied a (block) backend can come and go without needing to change the state. Relying on guests to DTRT is not a sustainable option for a cloud deployment.
+> 
+> > Ie: that would be fine if you explicitly state this is some kind of
+> > internal blkback reload, but not for the general case where blkback
+> > has been unbound. I think we need someway to difference a blkback
+> > reload vs a unbound.
+> > 
+> 
+> Why do we need that though? Why is it advantageous for a backend to go to closed. No PV backends cope with an unbind as-is, and a toolstack initiated unplug will always set state to 5 anyway. So TBH any state transition done directly in the xenbus code looks wrong to me anyway (but appears to be a necessary evil to keep the toolstack working in the event it spawns a backend where there is actually to driver present, or it doesn't come online).
 
-Add the devicetree binding for xilinx APM.
+IMO the normal flow for unbind would be to attempt to close open
+connections and then remove the driver: leaving frontends connected
+without any attached backends is not correct, and will just block the
+guest frontend until requests start timing out.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
----
-v2:
-patch added
+I can see the reasoning for doing that for the purpose of updating a
+blkback module without guests noticing, but I would prefer that
+leaving connections open was an option that could be given when
+unbinding (or maybe a driver option in sysfs?), so that the default
+behaviour would be to try to close everything when unbinding if
+possible.
 
- .../devicetree/bindings/perf/xilinx_apm.txt        | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/perf/xilinx_apm.txt
-
-diff --git a/Documentation/devicetree/bindings/perf/xilinx_apm.txt b/Documentation/devicetree/bindings/perf/xilinx_apm.txt
-new file mode 100644
-index 0000000..a11c82e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/perf/xilinx_apm.txt
-@@ -0,0 +1,44 @@
-+* Xilinx AXI Performance monitor IP
-+
-+Required properties:
-+- compatible: "xlnx,axi-perf-monitor"
-+- interrupts: Should contain APM interrupts.
-+- interrupt-parent: Must be core interrupt controller.
-+- reg: Should contain APM registers location and length.
-+- xlnx,enable-profile: Enables the profile mode.
-+- xlnx,enable-trace: Enables trace mode.
-+- xlnx,num-monitor-slots: Maximum number of slots in APM.
-+- xlnx,enable-event-count: Enable event count.
-+- xlnx,enable-event-log: Enable event logging.
-+- xlnx,have-sampled-metric-cnt:Sampled metric counters enabled in APM.
-+- xlnx,num-of-counters: Number of counters in APM
-+- xlnx,metric-count-width: Metric Counter width (32/64)
-+- xlnx,metrics-sample-count-width: Sampled metric counter width
-+- xlnx,global-count-width: Global Clock counter width
-+- clocks: Input clock specifier.
-+
-+Optional properties:
-+- xlnx,id-filter-32bit: APM is in 32-bit mode
-+
-+Example:
-+++++++++
-+
-+apm: apm@44a00000 {
-+    compatible = "xlnx,axi-perf-monitor";
-+    interrupt-parent = <&axi_intc_1>;
-+    interrupts = <1 2>;
-+    reg = <0x44a00000 0x1000>;
-+    clocks = <&clkc 15>;
-+    xlnx,enable-profile = <0>;
-+    xlnx,enable-trace = <0>;
-+    xlnx,num-monitor-slots = <4>;
-+    xlnx,enable-event-count = <1>;
-+    xlnx,enable-event-log = <1>;
-+    xlnx,have-sampled-metric-cnt = <1>;
-+    xlnx,num-of-counters = <8>;
-+    xlnx,metric-count-width = <32>;
-+    xlnx,metrics-sample-count-width = <32>;
-+    xlnx,global-count-width = <32>;
-+    xlnx,metric-count-scale = <1>;
-+    xlnx,id-filter-32bit;
-+};
--- 
-2.1.1
-
+Thanks, Roger.
