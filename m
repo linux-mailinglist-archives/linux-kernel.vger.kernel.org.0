@@ -2,72 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A04D81174F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:56:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56CEE1174FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 19:57:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfLIS4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 13:56:13 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:10589 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbfLIS4N (ORCPT
+        id S1726822AbfLIS5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 13:57:35 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:53172 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbfLIS5f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:56:13 -0500
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQr4OGUPX+1JiWAnI+L0="
-X-RZG-CLASS-ID: mo00
-Received: from localhost.localdomain
-        by smtp.strato.de (RZmta 46.0.2 DYNA|AUTH)
-        with ESMTPSA id R01a59vB9IswbS2
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Mon, 9 Dec 2019 19:54:58 +0100 (CET)
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     =?UTF-8?q?Cl=C3=A9ment=20Perrochaud?= 
-        <clement.perrochaud@effinnov.com>,
-        Charles Gorand <charles.gorand@effinnov.com>,
-        linux-nfc@lists.01.org, netdev@vger.kernel.org,
+        Mon, 9 Dec 2019 13:57:35 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB9InAbA174145;
+        Mon, 9 Dec 2019 18:57:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=t4Q3+VCvf0pnJ0ErAbeBt14xGyjINJVueiRTqeprC+0=;
+ b=iViU9+wIvq0XjOQvuDTgqpO5R0kHHZRU3WONhCx0brXfWPccbNaz02nP2nbsXlElZ8vY
+ Z47vE2RHGh1bikbAYIyAH3aLOTSvDFD/OEqbHIE/CokuJI2GioXzkEvtUkOUnWZWyYOz
+ 9B5NG5yhtwLbHYF63uAepP/dV+fbxz9RejDcTXCLMcY+YKcMwndnOc47KuY66mmxkuqq
+ /PaPyZ9YhL1jspJ3qsLQzdTMK1rN9/SKyklQi01lXFEBRi/248nk7n2cvS4HIUlPQrmX
+ iAabKT5DI6ZeS+VDBz0aIzsJ10PqcWpwi0aFZXpGLZ+i5k7JbGr9PDfWU1ZF7zAdnUhX qA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2wr41q1hnr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Dec 2019 18:57:22 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB9InDU8056065;
+        Mon, 9 Dec 2019 18:55:21 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2wrnj3n52p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Dec 2019 18:55:21 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB9ItKx0028094;
+        Mon, 9 Dec 2019 18:55:20 GMT
+Received: from kadam (/41.210.147.78)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Dec 2019 10:55:14 -0800
+Date:   Mon, 9 Dec 2019 21:54:11 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
         linux-kernel@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH] NFC: nxp-nci: Fix probing without ACPI
-Date:   Mon,  9 Dec 2019 19:53:43 +0100
-Message-Id: <20191209185343.215893-1-stephan@gerhold.net>
-X-Mailer: git-send-email 2.24.0
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH] media: allegro: add the missed check for
+ v4l2_m2m_ctx_init
+Message-ID: <20191209185411.GK1765@kadam>
+References: <20191209085807.16126-1-hslester96@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209085807.16126-1-hslester96@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912090151
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912090151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_acpi_dev_add_driver_gpios() returns -ENXIO if CONFIG_ACPI
-is disabled (e.g. on device tree platforms).
-In this case, nxp-nci will silently fail to probe.
+On Mon, Dec 09, 2019 at 04:58:07PM +0800, Chuhong Yuan wrote:
+> diff --git a/drivers/staging/media/allegro-dvt/allegro-core.c b/drivers/staging/media/allegro-dvt/allegro-core.c
+> index 6f0cd0784786..5f1d454b41bb 100644
+> --- a/drivers/staging/media/allegro-dvt/allegro-core.c
+> +++ b/drivers/staging/media/allegro-dvt/allegro-core.c
+> @@ -2341,6 +2341,13 @@ static int allegro_open(struct file *file)
+>  	channel->fh.m2m_ctx = v4l2_m2m_ctx_init(dev->m2m_dev, channel,
+>  						allegro_queue_init);
+>  
+> +	if (IS_ERR(channel->fh.m2m_ctx)) {
+> +		v4l2_fh_del(&channel->fh);
+> +		v4l2_fh_exit(&channel->fh);
+> +		kfree(channel);
+                      ^^^^^^^
+Free
 
-The other NFC drivers only log a debug message if
-devm_acpi_dev_add_driver_gpios() fails.
-Do the same in nxp-nci to fix this problem.
+> +		return PTR_ERR(channel->fh.m2m_ctx);
+                               ^^^^^^^^^^^^^^^^^^^
+Dereferencing freed memory.
 
-Fixes: ad0acfd69add ("NFC: nxp-nci: Get rid of code duplication in ->probe()")
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
- drivers/nfc/nxp-nci/i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+regards,
+dan carpenter
 
-diff --git a/drivers/nfc/nxp-nci/i2c.c b/drivers/nfc/nxp-nci/i2c.c
-index 4d1909aecd6c..9f60e4dc5a90 100644
---- a/drivers/nfc/nxp-nci/i2c.c
-+++ b/drivers/nfc/nxp-nci/i2c.c
-@@ -278,7 +278,7 @@ static int nxp_nci_i2c_probe(struct i2c_client *client,
- 
- 	r = devm_acpi_dev_add_driver_gpios(dev, acpi_nxp_nci_gpios);
- 	if (r)
--		return r;
-+		dev_dbg(dev, "Unable to add GPIO mapping table\n");
- 
- 	phy->gpiod_en = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
- 	if (IS_ERR(phy->gpiod_en)) {
--- 
-2.24.0
+> +	}
+> +
 
