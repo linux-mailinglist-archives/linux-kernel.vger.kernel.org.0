@@ -2,117 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7CCA1169D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 10:45:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8BF51169DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 10:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfLIJoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 04:44:30 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57628 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbfLIJo0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 04:44:26 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB99iJ6N108696;
-        Mon, 9 Dec 2019 03:44:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575884659;
-        bh=WLIFq7NRcnOQ5VrrQVld4qrMZ5LO0r2DacFF2Nqd75g=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=lPZPSKztLyHDhZKS4X3DYLyPRgStoxw7ECMb/BEvkkXKbB+O5KSFm/rI0kyDit7vN
-         tMx02pMFm1PTixuWfoVUYFEi+yNR6ey7B7F3vwSa78WOCtzSWMfFXnTIDXCLb+KhCc
-         MG3Kw/n6UQnbij5DEswm/2H0kyJV+WjkyKTyhypk=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB99iJ0q100211
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Dec 2019 03:44:19 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Dec
- 2019 03:44:18 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Dec 2019 03:44:18 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB99hOWt080263;
-        Mon, 9 Dec 2019 03:44:14 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <vkoul@kernel.org>, <robh+dt@kernel.org>, <nm@ti.com>,
-        <ssantosh@kernel.org>
-CC:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
-        <t-kristo@ti.com>, <tony@atomide.com>, <j-keerthy@ti.com>,
-        <vigneshr@ti.com>
-Subject: [PATCH v7 12/12] dmaengine: ti: k3-udma: Wait for peer teardown completion if supported
-Date:   Mon, 9 Dec 2019 11:43:32 +0200
-Message-ID: <20191209094332.4047-13-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191209094332.4047-1-peter.ujfalusi@ti.com>
-References: <20191209094332.4047-1-peter.ujfalusi@ti.com>
+        id S1727551AbfLIJol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 04:44:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727350AbfLIJoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 04:44:39 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AAD720726;
+        Mon,  9 Dec 2019 09:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575884678;
+        bh=imotwJ4gICaZ02FoqooFcZsxweEm3UFRbehyTXXWTKs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SmMvhnhGIWsZOdi+RMzfniaJ+94EMedHgnL+d+RxHRwLvG+q+EihVC4tU2P5SmuRl
+         J54YIH/aKb8LkZzI2HFd6+rwqAdD5cQoivfoINv1IwuAlfwXUzMPUmlaNy+Oq2Orgs
+         Si257mCJ1/JWZj8r9K+/njClLcptsysHWwGBsvb8=
+Date:   Mon, 9 Dec 2019 09:44:33 +0000
+From:   Will Deacon <will@kernel.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     SeongJae Park <sj38.park@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-doc <linux-doc@vger.kernel.org>, notify@kernel.org,
+        SeongJae Park <sjpark@amazon.de>
+Subject: Re: [PATCH v2] Documentation/barriers/kokr: Remove references to
+ [smp_]read_barrier_depends()
+Message-ID: <20191209094432.GA3306@willie-the-truck>
+References: <20191121193209.15687-1-sj38.park@gmail.com>
+ <20191129180837.7233-1-sjpark@amazon.de>
+ <CAEjAshpsnrfkb83738rtkPbQohoFP0LZbP_45rUqyBX-RvsVwg@mail.gmail.com>
+ <20191206204406.GK2889@paulmck-ThinkPad-P72>
+ <CAEjAshrGRafO4-k0tDD_XjC8EDq11AOh3PX+bPUhrjkuo+N76A@mail.gmail.com>
+ <20191206220858.GL2889@paulmck-ThinkPad-P72>
+ <CAEjAshosihoc7YR4WrseZDe_oquiJPeP+2yyCDRJuMJ4rzsp8w@mail.gmail.com>
+ <20191206225156.GM2889@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191206225156.GM2889@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the TDTYPE if it is supported on the platform (j721e) which will cause
-UDMAP to wait for the remote peer to finish the teardown before returning
-the teardown completed message.
+On Fri, Dec 06, 2019 at 02:51:56PM -0800, Paul E. McKenney wrote:
+> On Fri, Dec 06, 2019 at 11:38:22PM +0100, SeongJae Park wrote:
+> > On Fri, Dec 6, 2019 at 11:08 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > But since Jon seems to be taking these in his capacity and Documentation
+> > > maintainer, could you please resend CCing him?  If we have these changes
+> > > scattered across too many trees, someone is going to get confused,
+> > > and it probably will be me.  ;-)
+> > 
+> > Agreed, CC-ing Jon to this mail.  That said, this is a followup of Will's
+> > patch[1] and the patch is also not queued in Jon's tree.  So, I would like to
+> > hear Will's opinion either, if possible.
+> > 
+> > [1]  https://lore.kernel.org/lkml/20191108170120.22331-10-will@kernel.org/
+> 
+> Ah, this one got caught out in the conversion from .html to .rst.
+> 
+> I did get an ack on one of those, and thus queued it.  I clearly need to
+> take another look at Will's series, and thank you for the reminder!
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/dma/ti/k3-udma.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+I was planning to include this in the next posting of my series, but I was
+waiting for the merge window to close first. Now that we have -rc1, I'll
+post it this week, although the patches are also queued up in my tree here
+[1] (warning -- rebasing development branch).
 
-diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
-index 48933689f790..58239b53ba35 100644
---- a/drivers/dma/ti/k3-udma.c
-+++ b/drivers/dma/ti/k3-udma.c
-@@ -85,6 +85,7 @@ struct udma_rchan {
- 
- #define UDMA_FLAG_PDMA_ACC32		BIT(0)
- #define UDMA_FLAG_PDMA_BURST		BIT(1)
-+#define UDMA_FLAG_TDTYPE		BIT(2)
- 
- struct udma_match_data {
- 	u32 psil_base;
-@@ -1586,7 +1587,8 @@ static int udma_tisci_tx_channel_config(struct udma_chan *uc)
- 	req_tx.tx_supr_tdpkt = uc->notdpkt;
- 	req_tx.tx_fetch_size = fetch_size >> 2;
- 	req_tx.txcq_qnum = tc_ring;
--	if (uc->ep_type == PSIL_EP_PDMA_XY) {
-+	if (uc->ep_type == PSIL_EP_PDMA_XY &&
-+	    ud->match_data->flags & UDMA_FLAG_TDTYPE) {
- 		/* wait for peer to complete the teardown for PDMAs */
- 		req_tx.valid_params |=
- 				TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_TDTYPE_VALID;
-@@ -3032,7 +3034,7 @@ static struct udma_match_data am654_mcu_data = {
- static struct udma_match_data j721e_main_data = {
- 	.psil_base = 0x1000,
- 	.enable_memcpy_support = true,
--	.flags = UDMA_FLAG_PDMA_ACC32 | UDMA_FLAG_PDMA_BURST,
-+	.flags = UDMA_FLAG_PDMA_ACC32 | UDMA_FLAG_PDMA_BURST | UDMA_FLAG_TDTYPE,
- 	.statictr_z_mask = GENMASK(23, 0),
- 	.rchan_oes_offset = 0x400,
- 	.tpl_levels = 3,
-@@ -3046,7 +3048,7 @@ static struct udma_match_data j721e_main_data = {
- static struct udma_match_data j721e_mcu_data = {
- 	.psil_base = 0x6000,
- 	.enable_memcpy_support = false, /* MEM_TO_MEM is slow via MCU UDMA */
--	.flags = UDMA_FLAG_PDMA_ACC32 | UDMA_FLAG_PDMA_BURST,
-+	.flags = UDMA_FLAG_PDMA_ACC32 | UDMA_FLAG_PDMA_BURST | UDMA_FLAG_TDTYPE,
- 	.statictr_z_mask = GENMASK(23, 0),
- 	.rchan_oes_offset = 0x400,
- 	.tpl_levels = 2,
--- 
-Peter
+I'll leave the patches that are unrelated to smp_read_barrier_depends() to
+Paul and Jon, unless they indicate a preference to the contrary.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Will
 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=lto
