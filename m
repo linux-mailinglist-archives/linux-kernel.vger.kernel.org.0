@@ -2,138 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E9FD11729F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69DED1172B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:25:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbfLIRTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 12:19:10 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:36873 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfLIRTK (ORCPT
+        id S1726605AbfLIRZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 12:25:07 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41250 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfLIRZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 12:19:10 -0500
-Received: by mail-io1-f70.google.com with SMTP id p2so11209523iof.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 09:19:09 -0800 (PST)
+        Mon, 9 Dec 2019 12:25:06 -0500
+Received: by mail-lf1-f66.google.com with SMTP id m30so11335908lfp.8
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 09:25:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=W/QJ5ovOHc4Q7NQmlc4wzHJJBcoki7MUH+1DSWQU63c=;
+        b=aGdC8bNygzNmZFS0MkVcG2q9mU+4yfymSLwjdyJeEUTueWhiPaGoDF5Y1v/1Y4jIEH
+         8uRPyaxH8jivAGk7bbXj4AIRWX4diMdaWsR8tBFN/PMQpb2mb0Cig1zilqi5oC954XBF
+         3aR9u8nHb6JjUYcADRDRXWnSDftlrXlAxqakCS9APSTFQWg25V/4XoOM0IiwOEtbHUP3
+         z+JudUVWroFoquKrqjFVQbmcfHmZmEZCzHmPmbrmAMxLY9FfJj/NOEuKblh01UaESTmT
+         Q30cxYQKK5+0kEByO4m7Zr0Ir6+DFWCoeZjm89KTlZPR1g60o61Juqm/W6UQCcBi3SD3
+         fc1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=ZGmLGR8RQMhvLkJMgnWmDVmAcCNn1ByHkQQ3qWq1qls=;
-        b=NPVDcL9CASG4+I2RBF0K6ca/p/fXP9rFgY6ao79R19J1HNFjlCKlHz3nG34LGzIj4f
-         uQOaO09Vu0yxfawuFjB+n+mlbTJ1L/EnvKlnSTuEq1/fnyiP4hNZBzPJv1/vT9AcAIm8
-         hMk/x/enLmJcujaEat/1KDLCtdlgFU/y8dHeL4nwqWm6fhLTcE0BrKmTVXa/UsnbQT6I
-         C0LLrQlXRI6KCyJ93CZ1Di2QsyIz6lTVgCQa6LL4HlDcQgk4KJRikvA8y8GqMI8mWoBb
-         ZzQZyeosxZ/FkC/1fJ7qcZ73B+yPidLd+GXbHN9qrjTQMVWHFUC9xM6mOiBJzpzMtVnJ
-         djTA==
-X-Gm-Message-State: APjAAAWaIjcjHMmE98HCVTpqBi8j9wuMY8SCheBt7oXQyM17nPlwZDhU
-        8Ht8L/zMkZ5HwdxPfO/3V/zKQnDGkJT7GOn/hKXfLwuAoD7F
-X-Google-Smtp-Source: APXvYqzYIPn0SwpO+WwH9NiHtAsHoZQVL0zzOl1xuHT7b8Tqqz2HRbeJiSWQEHh6ew2pK0WoQV+NLQRDuXvQ/IhSwNQCuLDcLdox
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=W/QJ5ovOHc4Q7NQmlc4wzHJJBcoki7MUH+1DSWQU63c=;
+        b=dauX+yzxqbieJSa5QwQuPtYtfMYGZACHh/JSiq/R0RLTznDHbBHBRL+JFUqDSXZbw6
+         LL+aqvJYj6YIqRPTfAswag4cbfQv8uEtiaTIivvDeJ2rJiqR5fG3JBFThP8nG4+HPS6a
+         fLPHVG4f5tji8eXhsPDVP1uheJ1iof+ONV5isQ0bcAjXb8KP+xOBbRrw99wdKxOdMWGK
+         RhZwt7rVaa0KHrFeN7YQ+il1XNuYCZD0/QxhpE5J9w/R/wqFaWrElmHqsNbDpEbkOsMl
+         BOTrifkRH+IS+ttkzqOSYxwA2YFsK2o8kussGgKsWrAN2n8uutcLI5YAcVmZJLoLBxRT
+         r/Lg==
+X-Gm-Message-State: APjAAAU9JDqcByS5IE1nLxRRIpwqBFuv5sqwvC7eyy3AVn7lMtrj9ttp
+        Glpz5TzpjuAiy41SOgk4zioO6w==
+X-Google-Smtp-Source: APXvYqwdi5x5du1IVH+xwVTC4as4D6VV+lXmBmm1HEyRlHBFA1Xo9c3Y0t/S5G4V/y8rSQcrNmA2OA==
+X-Received: by 2002:ac2:44ce:: with SMTP id d14mr11736754lfm.140.1575912304733;
+        Mon, 09 Dec 2019 09:25:04 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id h14sm45462lfc.2.2019.12.09.09.25.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Dec 2019 09:25:03 -0800 (PST)
+Date:   Mon, 9 Dec 2019 09:22:28 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] ARM: dts: exynos: Second pull for v5.5
+Message-ID: <20191209172228.sdhzd52u7jbfmas6@localhost>
+References: <20191119142026.7190-1-krzk@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:8141:: with SMTP id e62mr28304159ild.119.1575911949346;
- Mon, 09 Dec 2019 09:19:09 -0800 (PST)
-Date:   Mon, 09 Dec 2019 09:19:09 -0800
-In-Reply-To: <000000000000a968ef059944263f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f02ffa05994897f1@google.com>
-Subject: Re: BUG: unable to handle kernel paging request in do_con_trol
-From:   syzbot <syzbot+9bce437b96dc287eafef@syzkaller.appspotmail.com>
-To:     daniel.vetter@ffwll.ch, ghalat@redhat.com,
-        gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, mpatocka@redhat.com,
-        nico@fluxnic.net, okash.khawaja@gmail.com, sam@ravnborg.org,
-        syzkaller-bugs@googlegroups.com, textshell@uchuujin.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191119142026.7190-1-krzk@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Tue, Nov 19, 2019 at 03:20:26PM +0100, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> On top of previous pull request - minor updates for next cycle.
 
-HEAD commit:    e42617b8 Linux 5.5-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1018aaeae00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3754e2c78c1adb82
-dashboard link: https://syzkaller.appspot.com/bug?extid=9bce437b96dc287eafef
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d65c2ee00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111cd4b6e00000
+Hi,
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9bce437b96dc287eafef@syzkaller.appspotmail.com
+Given that this was new features, and it came in late, I didn't merge it in
+before the window opened. I have however staged it into arm/dt for 5.6 now.
 
-BUG: unable to handle page fault for address: 000000010000000e
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0002) - not-present page
-PGD 9fe71067 P4D 9fe71067 PUD 0
-Oops: 0002 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 9069 Comm: syz-executor976 Not tainted 5.5.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:memset16 arch/x86/include/asm/string_64.h:25 [inline]
-RIP: 0010:scr_memsetw include/linux/vt_buffer.h:36 [inline]
-RIP: 0010:csi_K drivers/tty/vt/vt.c:1558 [inline]
-RIP: 0010:do_con_trol+0x47ea/0x61b0 drivers/tty/vt/vt.c:2370
-Code: 08 2c 01 0f 8e b1 00 00 00 4c 8b bd 08 ff ff ff 48 63 db 44 89 e9 41  
-0f b7 84 24 c8 03 00 00 48 01 db d1 e9 49 01 df 4c 89 ff <f3> 66 ab 49 8d  
-bc 24 78 04 00 00 b8 ff ff 37 00 48 89 fa 48 c1 e0
-RSP: 0018:ffffc90007a8f8b0 EFLAGS: 00010202
-RAX: 0000000000000720 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: 1ffff11012a0fe79 RSI: ffffffff83e103ed RDI: 000000010000000e
-RBP: ffffc90007a8f9d0 R08: ffff8880a88b6000 R09: ffff8880a88b6890
-R10: fffffbfff14f3330 R11: ffffffff8a799987 R12: ffff88809507f000
-R13: 0000000000000002 R14: 0000000000000001 R15: 000000010000000e
-FS:  0000000001de2880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000010000000e CR3: 00000000957c3000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  do_con_write.part.0+0xfd9/0x1ef0 drivers/tty/vt/vt.c:2797
-  do_con_write drivers/tty/vt/vt.c:2565 [inline]
-  con_write+0x46/0xd0 drivers/tty/vt/vt.c:3135
-  process_output_block drivers/tty/n_tty.c:595 [inline]
-  n_tty_write+0x40e/0x1080 drivers/tty/n_tty.c:2333
-  do_tty_write drivers/tty/tty_io.c:962 [inline]
-  tty_write+0x496/0x7f0 drivers/tty/tty_io.c:1046
-  __vfs_write+0x8a/0x110 fs/read_write.c:494
-  vfs_write+0x268/0x5d0 fs/read_write.c:558
-  ksys_write+0x14f/0x290 fs/read_write.c:611
-  __do_sys_write fs/read_write.c:623 [inline]
-  __se_sys_write fs/read_write.c:620 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:620
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4404f9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe6223d8b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004404f9
-RDX: 0000000000000078 RSI: 0000000020000200 RDI: 0000000000000004
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401de0
-R13: 0000000000401e70 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-CR2: 000000010000000e
----[ end trace 21a0d6437741ca8e ]---
-RIP: 0010:memset16 arch/x86/include/asm/string_64.h:25 [inline]
-RIP: 0010:scr_memsetw include/linux/vt_buffer.h:36 [inline]
-RIP: 0010:csi_K drivers/tty/vt/vt.c:1558 [inline]
-RIP: 0010:do_con_trol+0x47ea/0x61b0 drivers/tty/vt/vt.c:2370
-Code: 08 2c 01 0f 8e b1 00 00 00 4c 8b bd 08 ff ff ff 48 63 db 44 89 e9 41  
-0f b7 84 24 c8 03 00 00 48 01 db d1 e9 49 01 df 4c 89 ff <f3> 66 ab 49 8d  
-bc 24 78 04 00 00 b8 ff ff 37 00 48 89 fa 48 c1 e0
-RSP: 0018:ffffc90007a8f8b0 EFLAGS: 00010202
-RAX: 0000000000000720 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: 1ffff11012a0fe79 RSI: ffffffff83e103ed RDI: 000000010000000e
-RBP: ffffc90007a8f9d0 R08: ffff8880a88b6000 R09: ffff8880a88b6890
-R10: fffffbfff14f3330 R11: ffffffff8a799987 R12: ffff88809507f000
-R13: 0000000000000002 R14: 0000000000000001 R15: 000000010000000e
-FS:  0000000001de2880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000010000000e CR3: 00000000957c3000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
+Thanks,
+
+-Olof
