@@ -2,74 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E47B11668C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 06:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB466116690
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 06:50:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfLIFs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 00:48:59 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:51527 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726343AbfLIFs7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 00:48:59 -0500
-X-UUID: 902b7fe004794afd88fd55965f676b0c-20191209
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zK5djuSKYwqaaHgHxdED8AbROBXJzib5e6bG7MyafoQ=;
-        b=T0rnmY1g38CZXStFCH3SSNkP+iHjXCP0tF0EoP6CwBeQoRi4n9o1pk9Ho96wxCubp9pWELGxyyXm0HKFcEPuSoXA/wPFmg8ZanRnFpTpvrgHuTigNbrghjq+bWzQ2KFTzoGJE5E4XRp9r8kKGYpTxsJrJfRmd+eCOr66WRNRnJ0=;
-X-UUID: 902b7fe004794afd88fd55965f676b0c-20191209
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <walter-zh.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 462000421; Mon, 09 Dec 2019 13:48:52 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 9 Dec 2019 13:48:43 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 9 Dec 2019 13:48:36 +0800
-From:   Walter Wu <walter-zh.wu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        id S1727061AbfLIFuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 00:50:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726132AbfLIFuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 00:50:17 -0500
+Received: from devnote2 (unknown [180.22.253.92])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 900B7206D3;
+        Mon,  9 Dec 2019 05:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575870616;
+        bh=R0dRoRAY4AWuXuEgdxQagG5YTnurfWd7YsIc+RAjjm4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hJ2OFgv607/k4OkLsAE8Hq05LS5VDWUVqa5DhA5j1JUbAu4R7M0wYkGxUdcH/YpiU
+         LCH2U9ImHSBbq93kGzXoDymA4vyJZ8wtlj7t5EH4d9UjyVNtgrMt7hSxcL980liOrn
+         V0ltYqG+b31v/MYVS8YCkKqFr7yVOwKCwhwDHtuo=
+Date:   Mon, 9 Dec 2019 14:50:09 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        Walter Wu <walter-zh.wu@mediatek.com>
-Subject: [PATCH] lib/stackdepot: Fix global out-of-bounds in stackdepot
-Date:   Mon, 9 Dec 2019 13:48:49 +0800
-Message-ID: <20191209054849.26756-1-walter-zh.wu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 01/22] bootconfig: Add Extra Boot Config support
+Message-Id: <20191209145009.502ece2e58ffab5e31430a0e@kernel.org>
+In-Reply-To: <02b132dd-6f50-cf1d-6cc1-ff6bbbcf79cd@infradead.org>
+References: <157528159833.22451.14878731055438721716.stgit@devnote2>
+        <157528160980.22451.2034344493364709160.stgit@devnote2>
+        <02b132dd-6f50-cf1d-6cc1-ff6bbbcf79cd@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SWYgdGhlIGRlcG90X2luZGV4ID0gU1RBQ0tfQUxMT0NfTUFYX1NMQUJTIC0gMiwgdGhlbiBpdCB3
-aWxsIGNhdXNlDQphcnJheSBvdXQtb2YtYm91bmRzIGFjY2Vzcywgc28gdGhhdCB3ZSBzaG91bGQg
-bW9kaWZ5IHRoZSBkZXRlY3Rpb24NCnRvIGF2b2lkIHRoaXMgYXJyYXkgb3V0LW9mLWJvdW5kcyBi
-dWcuDQoNCkNvbnNpZGVyIGZvbGxvd2luZyBjYWxsIGZsb3cgc2VxdWVuY2U6DQoNCnN0YWNrX2Rl
-cG90X3NhdmUoKQ0KICAgZGVwb3RfYWxsb2Nfc3RhY2soKQ0KICAgICAgaWYgKHVubGlrZWx5KGRl
-cG90X2luZGV4ICsgMSA+PSBTVEFDS19BTExPQ19NQVhfU0xBQlMpKSAvL3Bhc3MNCiAgICAgIGRl
-cG90X2luZGV4KysgIC8vZGVwb3RfaW5kZXggPSBTVEFDS19BTExPQ19NQVhfU0xBQlMgLSAxDQoN
-CnN0YWNrX2RlcG90X3NhdmUoKQ0KICAgaW5pdF9zdGFja19zbGFiKCkNCiAgICAgIHN0YWNrX3Ns
-YWJzW2RlcG90X2luZGV4ICsgMV0gIC8vaGVyZSBnZXQgZ2xvYmFsIG91dC1vZi1ib3VuZHMNCg0K
-U2lnbmVkLW9mZi1ieTogV2FsdGVyIFd1IDx3YWx0ZXItemgud3VAbWVkaWF0ZWsuY29tPg0KLS0t
-DQogbGliL3N0YWNrZGVwb3QuYyB8IDIgKy0NCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
-KyksIDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBhL2xpYi9zdGFja2RlcG90LmMgYi9saWIv
-c3RhY2tkZXBvdC5jDQppbmRleCBlZDcxN2RkMDhmZjMuLjdlOGExNWU0MTYwMCAxMDA2NDQNCi0t
-LSBhL2xpYi9zdGFja2RlcG90LmMNCisrKyBiL2xpYi9zdGFja2RlcG90LmMNCkBAIC0xMDYsNyAr
-MTA2LDcgQEAgc3RhdGljIHN0cnVjdCBzdGFja19yZWNvcmQgKmRlcG90X2FsbG9jX3N0YWNrKHVu
-c2lnbmVkIGxvbmcgKmVudHJpZXMsIGludCBzaXplLA0KIAlyZXF1aXJlZF9zaXplID0gQUxJR04o
-cmVxdWlyZWRfc2l6ZSwgMSA8PCBTVEFDS19BTExPQ19BTElHTik7DQogDQogCWlmICh1bmxpa2Vs
-eShkZXBvdF9vZmZzZXQgKyByZXF1aXJlZF9zaXplID4gU1RBQ0tfQUxMT0NfU0laRSkpIHsNCi0J
-CWlmICh1bmxpa2VseShkZXBvdF9pbmRleCArIDEgPj0gU1RBQ0tfQUxMT0NfTUFYX1NMQUJTKSkg
-ew0KKwkJaWYgKHVubGlrZWx5KGRlcG90X2luZGV4ICsgMiA+PSBTVEFDS19BTExPQ19NQVhfU0xB
-QlMpKSB7DQogCQkJV0FSTl9PTkNFKDEsICJTdGFjayBkZXBvdCByZWFjaGVkIGxpbWl0IGNhcGFj
-aXR5Iik7DQogCQkJcmV0dXJuIE5VTEw7DQogCQl9DQotLSANCjIuMTguMA0K
+Hi Randy,
 
+Thank you for your review!
+
+On Sun, 8 Dec 2019 11:34:32 -0800
+Randy Dunlap <rdunlap@infradead.org> wrote:
+
+> Hi,
+> 
+> On 12/2/19 2:13 AM, Masami Hiramatsu wrote:
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index 67a602ee17f1..13bb3eac804c 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -1235,6 +1235,17 @@ source "usr/Kconfig"
+> >  
+> >  endif
+> >  
+> > +config BOOT_CONFIG
+> > +	bool "Boot config support"
+> > +	select LIBXBC
+> > +	default y
+> 
+> questionable "default y".
+> That needs lots of justification.
+
+OK, I can make it 'n' by default.
+
+I thought that was OK because most of the memories for the
+bootconfig support were released after initialization.
+If user doesn't pass the bootconfig, only the code for
+/proc/bootconfig remains on runtime memory.
+
+> > +	help
+> > +	 Extra boot config allows system admin to pass a config file as
+> > +	 complemental extension of kernel cmdline when boot.
+> 
+> 	                                          when booting.
+
+OK.
+
+> 
+> > +	 The boot config file is usually attached at the end of initramfs.
+> 
+> The 3 help text lines above should be indented with one tab + 2 spaces,
+> like the "If" line below.
+
+Ah, thanks for pointing it out!
+I'll fix that.
+
+Thank you,
+
+> 
+> > +
+> > +	  If unsure, say Y.
+> > +
+> >  choice
+> >  	prompt "Compiler optimization level"
+> >  	default CC_OPTIMIZE_FOR_PERFORMANCE
+> 
+> 
+> -- 
+> ~Randy
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
