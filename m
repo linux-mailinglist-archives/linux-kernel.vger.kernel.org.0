@@ -2,111 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6857116682
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 06:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E47B11668C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 06:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfLIFnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 00:43:23 -0500
-Received: from ozlabs.org ([203.11.71.1]:37465 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726408AbfLIFnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 00:43:23 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47WXD73mCSz9sP6;
-        Mon,  9 Dec 2019 16:43:19 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1575870201;
-        bh=EU4lPc5IWHfktnisegd6j5Y6xKovFoBVkVjlsMX4/pE=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=igRorkS97HOON5GNqt21oBCytjvq3MO/I/pbqKeA+/w/EC95/C9ComNHV83pfOIJo
-         b4BGFIKg3r1DHuXk2sPf8s03P3Ccx8hYkery5YB1CDqnFS8wlBMbZBLR3vtejfl7jy
-         h6x4j9eJEGkJyxOc4uI8gM+N1rH/AVk/tDaClHwM+fcgo3GK4PTf+I/L3YSt4sLzOe
-         RiNCkQNfxvAXHlPpCsDKltYrZ92IGr8D/O4Hj8MjwAiYJrgDx589PIR6zviioFUxG3
-         +7ISbse34yFB4L6wshgcHwRY2JHcyhf5nNMe6B1HMP9BmG6lP0V29ZZes4qk3i1bZa
-         6BWY4Z7Sl5Y9Q==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Christian Zigotzky <chzigotzky@xenosoft.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Darren Stevens <darren@stevens-zone.net>,
-        mad skateman <madskateman@gmail.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH] powerpc: ensure that swiotlb buffer is allocated from low memory
-In-Reply-To: <20191204123524.22919-1-rppt@kernel.org>
-References: <20191204123524.22919-1-rppt@kernel.org>
-Date:   Mon, 09 Dec 2019 16:43:17 +1100
-Message-ID: <87h82aqcju.fsf@mpe.ellerman.id.au>
+        id S1726927AbfLIFs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 00:48:59 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:51527 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726343AbfLIFs7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 00:48:59 -0500
+X-UUID: 902b7fe004794afd88fd55965f676b0c-20191209
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zK5djuSKYwqaaHgHxdED8AbROBXJzib5e6bG7MyafoQ=;
+        b=T0rnmY1g38CZXStFCH3SSNkP+iHjXCP0tF0EoP6CwBeQoRi4n9o1pk9Ho96wxCubp9pWELGxyyXm0HKFcEPuSoXA/wPFmg8ZanRnFpTpvrgHuTigNbrghjq+bWzQ2KFTzoGJE5E4XRp9r8kKGYpTxsJrJfRmd+eCOr66WRNRnJ0=;
+X-UUID: 902b7fe004794afd88fd55965f676b0c-20191209
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 462000421; Mon, 09 Dec 2019 13:48:52 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 9 Dec 2019 13:48:43 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 9 Dec 2019 13:48:36 +0800
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>,
+        Walter Wu <walter-zh.wu@mediatek.com>
+Subject: [PATCH] lib/stackdepot: Fix global out-of-bounds in stackdepot
+Date:   Mon, 9 Dec 2019 13:48:49 +0800
+Message-ID: <20191209054849.26756-1-walter-zh.wu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
 Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mike Rapoport <rppt@kernel.org> writes:
-> From: Mike Rapoport <rppt@linux.ibm.com>
->
-> Some powerpc platforms (e.g. 85xx) limit DMA-able memory way below 4G. If a
-> system has more physical memory than this limit, the swiotlb buffer is not
-> addressable because it is allocated from memblock using top-down mode.
->
-> Force memblock to bottom-up mode before calling swiotlb_init() to ensure
-> that the swiotlb buffer is DMA-able.
->
-> Link: https://lkml.kernel.org/r/F1EBB706-73DF-430E-9020-C214EC8ED5DA@xenosoft.de
+SWYgdGhlIGRlcG90X2luZGV4ID0gU1RBQ0tfQUxMT0NfTUFYX1NMQUJTIC0gMiwgdGhlbiBpdCB3
+aWxsIGNhdXNlDQphcnJheSBvdXQtb2YtYm91bmRzIGFjY2Vzcywgc28gdGhhdCB3ZSBzaG91bGQg
+bW9kaWZ5IHRoZSBkZXRlY3Rpb24NCnRvIGF2b2lkIHRoaXMgYXJyYXkgb3V0LW9mLWJvdW5kcyBi
+dWcuDQoNCkNvbnNpZGVyIGZvbGxvd2luZyBjYWxsIGZsb3cgc2VxdWVuY2U6DQoNCnN0YWNrX2Rl
+cG90X3NhdmUoKQ0KICAgZGVwb3RfYWxsb2Nfc3RhY2soKQ0KICAgICAgaWYgKHVubGlrZWx5KGRl
+cG90X2luZGV4ICsgMSA+PSBTVEFDS19BTExPQ19NQVhfU0xBQlMpKSAvL3Bhc3MNCiAgICAgIGRl
+cG90X2luZGV4KysgIC8vZGVwb3RfaW5kZXggPSBTVEFDS19BTExPQ19NQVhfU0xBQlMgLSAxDQoN
+CnN0YWNrX2RlcG90X3NhdmUoKQ0KICAgaW5pdF9zdGFja19zbGFiKCkNCiAgICAgIHN0YWNrX3Ns
+YWJzW2RlcG90X2luZGV4ICsgMV0gIC8vaGVyZSBnZXQgZ2xvYmFsIG91dC1vZi1ib3VuZHMNCg0K
+U2lnbmVkLW9mZi1ieTogV2FsdGVyIFd1IDx3YWx0ZXItemgud3VAbWVkaWF0ZWsuY29tPg0KLS0t
+DQogbGliL3N0YWNrZGVwb3QuYyB8IDIgKy0NCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
+KyksIDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBhL2xpYi9zdGFja2RlcG90LmMgYi9saWIv
+c3RhY2tkZXBvdC5jDQppbmRleCBlZDcxN2RkMDhmZjMuLjdlOGExNWU0MTYwMCAxMDA2NDQNCi0t
+LSBhL2xpYi9zdGFja2RlcG90LmMNCisrKyBiL2xpYi9zdGFja2RlcG90LmMNCkBAIC0xMDYsNyAr
+MTA2LDcgQEAgc3RhdGljIHN0cnVjdCBzdGFja19yZWNvcmQgKmRlcG90X2FsbG9jX3N0YWNrKHVu
+c2lnbmVkIGxvbmcgKmVudHJpZXMsIGludCBzaXplLA0KIAlyZXF1aXJlZF9zaXplID0gQUxJR04o
+cmVxdWlyZWRfc2l6ZSwgMSA8PCBTVEFDS19BTExPQ19BTElHTik7DQogDQogCWlmICh1bmxpa2Vs
+eShkZXBvdF9vZmZzZXQgKyByZXF1aXJlZF9zaXplID4gU1RBQ0tfQUxMT0NfU0laRSkpIHsNCi0J
+CWlmICh1bmxpa2VseShkZXBvdF9pbmRleCArIDEgPj0gU1RBQ0tfQUxMT0NfTUFYX1NMQUJTKSkg
+ew0KKwkJaWYgKHVubGlrZWx5KGRlcG90X2luZGV4ICsgMiA+PSBTVEFDS19BTExPQ19NQVhfU0xB
+QlMpKSB7DQogCQkJV0FSTl9PTkNFKDEsICJTdGFjayBkZXBvdCByZWFjaGVkIGxpbWl0IGNhcGFj
+aXR5Iik7DQogCQkJcmV0dXJuIE5VTEw7DQogCQl9DQotLSANCjIuMTguMA0K
 
-This wasn't bisected, but I thought it was a regression. Do we know what
-commit caused it?
-
-Was it 25078dc1f74b ("powerpc: use mm zones more sensibly") ?
-
-Or was that a red herring?
-
-cheers
-
-> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Darren Stevens <darren@stevens-zone.net>
-> Cc: mad skateman <madskateman@gmail.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> ---
->  arch/powerpc/mm/mem.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-> index be941d382c8d..14c2c53e3f9e 100644
-> --- a/arch/powerpc/mm/mem.c
-> +++ b/arch/powerpc/mm/mem.c
-> @@ -260,6 +260,14 @@ void __init mem_init(void)
->  	BUILD_BUG_ON(MMU_PAGE_COUNT > 16);
->  
->  #ifdef CONFIG_SWIOTLB
-> +	/*
-> +	 * Some platforms (e.g. 85xx) limit DMA-able memory way below
-> +	 * 4G. We force memblock to bottom-up mode to ensure that the
-> +	 * memory allocated in swiotlb_init() is DMA-able.
-> +	 * As it's the last memblock allocation, no need to reset it
-> +	 * back to to-down.
-> +	 */
-> +	memblock_set_bottom_up(true);
->  	swiotlb_init(0);
->  #endif
->  
-> -- 
-> 2.24.0
