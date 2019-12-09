@@ -2,107 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DABDB11758E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09D09117599
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfLITWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 14:22:30 -0500
-Received: from mail-pj1-f74.google.com ([209.85.216.74]:52420 "EHLO
-        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbfLITWa (ORCPT
+        id S1726956AbfLITXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 14:23:54 -0500
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:52478 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726916AbfLITXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 14:22:30 -0500
-Received: by mail-pj1-f74.google.com with SMTP id b22so7244142pjp.19
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 11:22:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=KvC0u7VAHQ2xfNCKqFfggoTr2hcV06Kdgwlw8hh9MO0=;
-        b=Gern8aRQLFovPJ6OwOkeRDvXgezARFO0bi6QIfk1RUy/EbFz25LyASGNgBRSqXol+7
-         qpTvC+VhPcgKAqxuwnowU80CYAmbtVw06RINw0Zorun5Un0CvvwCbUgI9NJDW65KUJLc
-         MqlHKGs6zeJXXCzbq61BbwiGKVE0kqBRO/3q6BlvkRmt5bJ6KDCu9G3wD7vufJVwaDAy
-         rVhgvFYbHKz1Fu/ht9QQZkE6NxHhy8QFo36lC2s6jrXL9sBTGfFS+B/YAhJClujiXKta
-         zt429kyW1dip5uQ+El2Cb/EEEEkVR6usByu+XvS/C6TqoloJYOfnX9nOoUmsICNvTIQD
-         OnRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=KvC0u7VAHQ2xfNCKqFfggoTr2hcV06Kdgwlw8hh9MO0=;
-        b=gch+p6WFuQ6lpatkwylJo1SGwer6YdU+NXHTsLvqtBXW/qjXU5x2sFh3YwXL/rgnoD
-         qL9gfTwcbince/fwOjym81UEpn1KOnvByMjSJF8cmMx+haI+b0e5rT5pMuQFY2BuA++F
-         X5nfKu/nMesO+yhKYoJ/xBN3zElWetuAjLnAccZ5q9fX3ejdDkr6IJLu/xw7PEoxlMNb
-         fr0PzXOA2fJjgThUkGWtJOcngI1cRtRW2tlYoocZZky5Ct+jKKziMIqzJ/vfSpMBCNRp
-         Ro/XjDJZhPA5lloFHYPvJW3gTwvNdO63OH3rmkTMudsPFJyTf3MqbNYrGt5QQnow+RWb
-         kepg==
-X-Gm-Message-State: APjAAAWj4smbwyFg4OcEVd9vqAOpVp+XnQ5U+IcEMvi+crk0PLYwedbf
-        1f/jlk2HDqbn/oB4C4m9P817NI29p6VpTWI=
-X-Google-Smtp-Source: APXvYqy0X8mnqLfEq6D6hLuFnJ9MbnQw7/eACLLFm4DrjDmsJ8rR+mjl83k64FESLF/FDyElUwdR8+I0xVP3xCI=
-X-Received: by 2002:a63:4f5c:: with SMTP id p28mr19965327pgl.409.1575919349328;
- Mon, 09 Dec 2019 11:22:29 -0800 (PST)
-Date:   Mon,  9 Dec 2019 11:22:21 -0800
-Message-Id: <20191209192221.143379-1-saravanak@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
-Subject: [PATCH v2] of/platform: Unconditionally pause/resume sync state
- during kernel init
-From:   Saravana Kannan <saravanak@google.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>
-Cc:     kernel test robot <lkp@intel.com>, kernel-team@android.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 9 Dec 2019 14:23:53 -0500
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from lsun@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 9 Dec 2019 21:23:51 +0200
+Received: from farm-0002.mtbu.labs.mlnx (farm-0002.mtbu.labs.mlnx [10.15.2.32])
+        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id xB9JNjEd025071;
+        Mon, 9 Dec 2019 14:23:45 -0500
+Received: (from lsun@localhost)
+        by farm-0002.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id xB9JNdYW023594;
+        Mon, 9 Dec 2019 14:23:39 -0500
+From:   Liming Sun <lsun@mellanox.com>
+To:     Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        David Woods <dwoods@mellanox.com>
+Cc:     Liming Sun <lsun@mellanox.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/1] platform/mellanox: fix the mlx-bootctl sysfs
+Date:   Mon,  9 Dec 2019 14:23:29 -0500
+Message-Id: <94727fab054309cd98c876748fd27b130ce5031f.1575918870.git.lsun@mellanox.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 5e6669387e22 ("of/platform: Pause/resume sync state during init
-and of_platform_populate()") paused/resumed sync state during init only
-if Linux had parsed and populated a devicetree.
+This is a follow-up commit for the sysfs attributes to change
+from DRIVER_ATTR to DEVICE_ATTR according to some initial comments.
+In such case, it's better to point the sysfs path to the device
+itself instead of the driver. This commit adds the missing
+sysfs_create_group() so the attributes can be created under the
+device. The ABI document is also updated.
 
-However, the check for that (of_have_populated_dt()) can change after
-of_platform_default_populate_init() executes.  One example of this is
-when devicetree unittests are enabled.  This causes an unmatched
-pause/resume of sync state. To avoid this, just unconditionally
-pause/resume sync state during init.
-
-Fixes: 5e6669387e22 ("of/platform: Pause/resume sync state during init and of_platform_populate()")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Saravana Kannan <saravanak@google.com>
-Reviewed-by: Frank Rowand <frowand.list@gmail.com>
+Signed-off-by: Liming Sun <lsun@mellanox.com>
 ---
- drivers/of/platform.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/ABI/testing/sysfs-platform-mellanox-bootctl | 10 +++++-----
+ drivers/platform/mellanox/mlxbf-bootctl.c                 | 15 +++++++++++++++
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index d93891a05f60..3371e4a06248 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -518,10 +518,11 @@ static int __init of_platform_default_populate_init(void)
- {
- 	struct device_node *node;
+diff --git a/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl b/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
+index c65a805..401d202 100644
+--- a/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
++++ b/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
+@@ -1,4 +1,4 @@
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/lifecycle_state
++What:		/sys/bus/platform/devices/MLNXBF04:00/lifecycle_state
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+@@ -10,7 +10,7 @@ Description:
+ 		  GA Non-Secured - Non-Secure chip and not able to change state
+ 		  RMA - Return Merchandise Authorization
  
-+	device_links_supplier_sync_state_pause();
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/post_reset_wdog
++What:		/sys/bus/platform/devices/MLNXBF04:00/post_reset_wdog
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+@@ -19,7 +19,7 @@ Description:
+ 		to reboot the chip and recover it to the old state if the new
+ 		boot partition fails.
+ 
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/reset_action
++What:		/sys/bus/platform/devices/MLNXBF04:00/reset_action
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+@@ -30,7 +30,7 @@ Description:
+ 		  emmc - boot from the onchip eMMC
+ 		  emmc_legacy - boot from the onchip eMMC in legacy (slow) mode
+ 
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/second_reset_action
++What:		/sys/bus/platform/devices/MLNXBF04:00/second_reset_action
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+@@ -44,7 +44,7 @@ Description:
+ 		  swap_emmc - swap the primary / secondary boot partition
+ 		  none - cancel the action
+ 
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/secure_boot_fuse_state
++What:		/sys/bus/platform/devices/MLNXBF04:00/secure_boot_fuse_state
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+diff --git a/drivers/platform/mellanox/mlxbf-bootctl.c b/drivers/platform/mellanox/mlxbf-bootctl.c
+index 61753b6..9482eab 100644
+--- a/drivers/platform/mellanox/mlxbf-bootctl.c
++++ b/drivers/platform/mellanox/mlxbf-bootctl.c
+@@ -282,9 +282,16 @@ static bool mlxbf_bootctl_guid_match(const guid_t *guid,
+ static int mlxbf_bootctl_probe(struct platform_device *pdev)
+ {
+ 	struct arm_smccc_res res = { 0 };
++	struct device *dev = &pdev->dev;
+ 	guid_t guid;
+ 	int ret;
+ 
++	ret = sysfs_create_group(&dev->kobj, &mlxbf_bootctl_group);
++	if (ret) {
++		dev_err(dev, "failed to create attributes, err=%d\n", ret);
++		return ret;
++	}
 +
- 	if (!of_have_populated_dt())
- 		return -ENODEV;
- 
--	device_links_supplier_sync_state_pause();
- 	/*
- 	 * Handle certain compatibles explicitly, since we don't want to create
- 	 * platform_devices for every node in /reserved-memory with a
-@@ -545,8 +546,7 @@ arch_initcall_sync(of_platform_default_populate_init);
- 
- static int __init of_platform_sync_state_init(void)
- {
--	if (of_have_populated_dt())
--		device_links_supplier_sync_state_resume();
-+	device_links_supplier_sync_state_resume();
+ 	/* Ensure we have the UUID we expect for this service. */
+ 	arm_smccc_smc(MLXBF_BOOTCTL_SIP_SVC_UID, 0, 0, 0, 0, 0, 0, 0, &res);
+ 	guid_parse(mlxbf_bootctl_svc_uuid_str, &guid);
+@@ -305,8 +312,16 @@ static int mlxbf_bootctl_probe(struct platform_device *pdev)
  	return 0;
  }
- late_initcall_sync(of_platform_sync_state_init);
+ 
++static int mlxbf_bootctl_remove(struct platform_device *pdev)
++{
++	sysfs_remove_group(&pdev->dev.kobj, &mlxbf_bootctl_group);
++
++	return 0;
++}
++
+ static struct platform_driver mlxbf_bootctl_driver = {
+ 	.probe = mlxbf_bootctl_probe,
++	.remove = mlxbf_bootctl_remove,
+ 	.driver = {
+ 		.name = "mlxbf-bootctl",
+ 		.groups = mlxbf_bootctl_groups,
 -- 
-2.24.0.393.g34dc348eaf-goog
+1.8.3.1
 
