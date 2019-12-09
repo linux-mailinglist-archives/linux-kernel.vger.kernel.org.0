@@ -2,217 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0328A116EBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:12:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49EB3116EAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 15:10:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbfLIOM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 09:12:29 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53868 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727572AbfLIOM3 (ORCPT
+        id S1727846AbfLIOKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 09:10:19 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:22662 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726687AbfLIOKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:12:29 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB9ECInv038967;
-        Mon, 9 Dec 2019 08:12:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575900738;
-        bh=5OoN0aAf1+m+H15mUeLfOY0iq50ktGieToH8IRJysz8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Mxu8JAV0s847KTsyxqRTL6JvrMgBuJuCJnkkWXp7LexJw9xgIMYhN/wHdY5EXQbzf
-         Q2Gs9wTv9GBvFV3lMTw1u4GqZDnJEVwRifrwvxM2pvS00MYyzWcwC3DzzgQiZib/Z0
-         BFPCLhMT4wiHACuf/mXtRG8IjGkADQ3FeucfzmVI=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB9ECI1H029344
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Dec 2019 08:12:18 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Dec
- 2019 08:12:17 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Dec 2019 08:12:17 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB9ECHE2021529;
-        Mon, 9 Dec 2019 08:12:17 -0600
-Subject: Re: [PATCH v5 1/2] leds: tps6105x: add driver for mfd chip led mode
-To:     Sven Van Asbroeck <thesven73@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, Pavel Machek <pavel@ucw.cz>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Grigoryev Denis <grigoryev@fastwel.ru>,
-        Axel Lin <axel.lin@ingics.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20191209140234.6558-1-TheSven73@gmail.com>
- <20191209140234.6558-2-TheSven73@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <81e05dad-8582-7673-7ff3-658d7f08ed6a@ti.com>
-Date:   Mon, 9 Dec 2019 08:10:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Mon, 9 Dec 2019 09:10:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575900616;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=E8MHeSmErGIjySHPAAzp+CJ/YCYvZDrefSPRZN4SlDA=;
+        b=QrlcNg0Mlxm3t5sgINgeoTGRE03XJtbjlH6oB3LqS6+TkgPsunV50/oNOjrFkBC/Pbm8cu
+        6D4UgaEZ24uigEf3ST5NLmbvYrkjxft0RARkXqpdVWPnplofeYYWoY0tX/XSXyzICTo5ck
+        Q3pwgrrmZ7/xVb388Ae/FFSvC0sRjnw=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-183-6wiH1DbDMsqfdLsu_DMYhA-1; Mon, 09 Dec 2019 09:10:15 -0500
+Received: by mail-lf1-f70.google.com with SMTP id q3so2894699lfb.21
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 06:10:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=E8MHeSmErGIjySHPAAzp+CJ/YCYvZDrefSPRZN4SlDA=;
+        b=L3xUchrh3PfxVgQpQcHCVjHYk5XujEcloaQGtkvtl+PYFYNYqyry4sbJU3Su0AUvIO
+         94ctPzedeP3AWUV47LgHnPPNO8ut3dpa7qar5/LZD8rAwFyZv1Xvje7tl4JmKEE81dQI
+         iP0eB8us+IUixq+ZGk1vbi0PpU+NX7smxclc+XDRVUHuPbGp6S2FDWSTBUWF04TPfaej
+         Ljn8Qjd1YKA/XvVCTnsoAbF5EZpicAwp+34GQOC5nY5RnRM9BKUqMbq/f4UA8ImTESqF
+         MmhIIsGNc/Z0CseFEbFm4pYM+D/gI1fkkGvSQlGPqiftt1bW/O1psmvu1bEvovqzE6d2
+         am/g==
+X-Gm-Message-State: APjAAAXWRT/uULFAH8OvoQ0I5NWIbb1VPnoETTq4ERpSso9BooM83fkm
+        cpF2prLpzxbzADRmB0aInMJsAjBfb0/S39hUdHbxJHbZumSRNVwazi498yoDDirtvPDyhiPH1uh
+        wEECwMbbY9YlRCnsYd9ifGvmv
+X-Received: by 2002:a2e:5850:: with SMTP id x16mr17025787ljd.228.1575900613926;
+        Mon, 09 Dec 2019 06:10:13 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwbgId3BcY2VrxCOO3tOzW3tTJ8ze5gQc8m0QowN0hydiXJKpH9z/cbAknaAe2Dzi4DnaAxQg==
+X-Received: by 2002:a2e:5850:: with SMTP id x16mr17025767ljd.228.1575900613666;
+        Mon, 09 Dec 2019 06:10:13 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id r2sm10989213lfn.13.2019.12.09.06.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 06:10:12 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id 2182D181938; Mon,  9 Dec 2019 15:10:12 +0100 (CET)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Steve French <smfrench@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
+Subject: Re: 5.5-rc1 oops on boot in 802.11 kernel driver
+In-Reply-To: <87h829lpob.fsf@toke.dk>
+References: <CAH2r5mvZ=S0FHGP+Y_r5f37TXVehv2shj9f6w67zBxfjR+Zt-Q@mail.gmail.com> <0101016eea3353da-835ca00e-d6c9-4e2c-aa0b-f6db8a4c518a-000000@us-west-2.amazonses.com> <87h829lpob.fsf@toke.dk>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Mon, 09 Dec 2019 15:10:12 +0100
+Message-ID: <87muc1io8r.fsf@toke.dk>
 MIME-Version: 1.0
-In-Reply-To: <20191209140234.6558-2-TheSven73@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MC-Unique: 6wiH1DbDMsqfdLsu_DMYhA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sven
+Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com> writes:
 
-On 12/9/19 8:02 AM, Sven Van Asbroeck wrote:
-> This driver adds support for the led operational mode of the
-s/led/LED
-> tps6105x mfd device.
-s/mfd/MFD
+> Kalle Valo <kvalo@codeaurora.org> writes:
 >
-> Tree: next-20191118
-> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-> ---
->   drivers/leds/Kconfig         | 10 +++++
->   drivers/leds/Makefile        |  1 +
->   drivers/leds/leds-tps6105x.c | 83 ++++++++++++++++++++++++++++++++++++
->   3 files changed, 94 insertions(+)
->   create mode 100644 drivers/leds/leds-tps6105x.c
+>> Hi Steve,
+>>
+>> Steve French <smfrench@gmail.com> writes:
+>>
+>>> Noticed this crash in the Linux kernel Wifi driver on boot a few
+>>> minutes ago immediately after updating to latest mainline kernel about
+>>> an hour ago. I didn't see it last week and certainly not in 5.4.
+>>
+>> please CC linux-wireless on all wireless related problems, we don't
+>> follow lkml very closely and I found your email just by chance.
+>>
+>> Full warning below. Steve is using iwlwifi.
 >
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 4b68520ac251..7c7ceaa824a2 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -836,6 +836,16 @@ config LEDS_LM36274
->   	  Say Y to enable the LM36274 LED driver for TI LMU devices.
->   	  This supports the LED device LM36274.
->   
-> +config LEDS_TPS6105X
-> +	tristate "LED support for TI TPS6105X"
-> +	depends on LEDS_CLASS
-> +	depends on TPS6105X
-> +	default y if TPS6105X
-> +	help
-> +	  This driver supports TPS61050/TPS61052 led chips.
-s/led/LED
-> +	  It is a single boost converter primarily for white LEDs and
-> +	  audio amplifiers.
-> +
->   comment "LED Triggers"
->   source "drivers/leds/trigger/Kconfig"
->   
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 2da39e896ce8..d7e1107753fb 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -85,6 +85,7 @@ obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
->   obj-$(CONFIG_LEDS_TI_LMU_COMMON)	+= leds-ti-lmu-common.o
->   obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
->   obj-$(CONFIG_LEDS_LM36274)		+= leds-lm36274.o
-> +obj-$(CONFIG_LEDS_TPS6105X)		+= leds-tps6105x.o
->   
->   # LED SPI Drivers
->   obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
-> diff --git a/drivers/leds/leds-tps6105x.c b/drivers/leds/leds-tps6105x.c
-> new file mode 100644
-> index 000000000000..ea2afaa3e3f0
-> --- /dev/null
-> +++ b/drivers/leds/leds-tps6105x.c
-> @@ -0,0 +1,83 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
+> Right, we already got a similar report off-list, but with a different
+> stack trace. I was going to try to reproduce this on my own machine
+> today. However, the fact that this includes the iwl_mvm_tx_reclaim()
+> function may be a hint; that code seems to be reusing skbs without
+> freeing them?
+>
+> If I'm reading the code correctly, it seems the reuse leads to the same
+> skb being passed to ieee80211_tx_status() multiple times; the driver is
+> clearing info->status, but since we added the info->tx_time_est field,
+> that would lead to double-accounting of that SKB, which would explain
+> the warning?
+>
+> Can someone familiar with iwlwifi confirm that this is indeed what that
+> code is supposed to be doing? If it is, I think it needs the patch
+> below; however, if I'm wrong, then clearing the field could lead to the
+> opposite problem (that skbs fail to be accounted at all), which would
+> lead to the queue being throttled because the limit gets too high and is
+> never brought back down...
 
-Do you need a copyright?
+Right, and now I did boot up my own laptop with the -next kernel, and
+tested the patch. It definitely breaks things, so that was not the
+issue. However, I don't get the WARN_ON either, so don't have any better
+ideas. I guess we'll have to wait for someone who actually knows the
+iwlwifi driver to take a look at this :)
 
+-Toke
 
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/mfd/tps6105x.h>
-> +#include <linux/regmap.h>
-> +
-> +struct tps6105x_priv {
-> +	struct regmap *regmap;
-> +	struct led_classdev cdev;
-> +	struct fwnode_handle *fwnode;
-> +};
-> +
-> +static void tps6105x_handle_put(void *data)
-> +{
-> +	struct tps6105x_priv *priv = data;
-> +
-> +	fwnode_handle_put(priv->fwnode);
-> +}
-> +
-> +static int tps6105x_brightness_set(struct led_classdev *cdev,
-> +				  enum led_brightness brightness)
-> +{
-> +	struct tps6105x_priv *priv = container_of(cdev, struct tps6105x_priv,
-> +							cdev);
-> +
-> +	return regmap_update_bits(priv->regmap, TPS6105X_REG_0,
-> +		TPS6105X_REG0_TORCHC_MASK,
-> +		brightness << TPS6105X_REG0_TORCHC_SHIFT);
-> +}
-> +
-> +static int tps6105x_led_probe(struct platform_device *pdev)
-> +{
-> +	struct tps6105x *tps6105x = dev_get_platdata(&pdev->dev);
-> +	struct tps6105x_platform_data *pdata = tps6105x->pdata;
-> +	struct led_init_data init_data = { };
-> +	struct tps6105x_priv *priv;
-> +	int ret;
-> +
-> +	/* This instance is not set for torch mode so bail out */
-> +	if (pdata->mode != TPS6105X_MODE_TORCH) {
-> +		dev_info(&pdev->dev,
-> +			"chip not in torch mode, exit probe");
-> +		return -EINVAL;
-> +	}
-> +
-> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +	priv->fwnode = device_get_next_child_node(pdev->dev.parent, NULL);
-
-Probably need to check for NULL on the return
-
-
-> +	ret = devm_add_action_or_reset(&pdev->dev, tps6105x_handle_put, priv);
-> +	if (ret)
-> +		return ret;
-> +	priv->regmap = tps6105x->regmap;
-> +	priv->cdev.brightness_set_blocking = tps6105x_brightness_set;
-> +	priv->cdev.max_brightness = 7;
-> +	init_data.devicename = "tps6105x";
-> +	init_data.default_label = ":torch";
-> +	init_data.fwnode = priv->fwnode;
-> +
-> +	ret = regmap_update_bits(tps6105x->regmap, TPS6105X_REG_0,
-> +		TPS6105X_REG0_MODE_MASK | TPS6105X_REG0_TORCHC_MASK,
-> +		TPS6105X_REG0_MODE_TORCH << TPS6105X_REG0_MODE_SHIFT);
-Checkpatch should have warned about alignment here
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_led_classdev_register_ext(&pdev->dev, &priv->cdev,
-> +					      &init_data);
-> +}
-> +
-> +static struct platform_driver led_driver = {
-> +	.probe = tps6105x_led_probe,
-> +	.driver = {
-> +		.name = "tps6105x-leds",
-> +	},
-> +};
-> +
-> +module_platform_driver(led_driver);
-> +
-> +MODULE_DESCRIPTION("TPS6105x led driver");
-> +MODULE_AUTHOR("Sven Van Asbroeck <TheSven73@gmail.com>");
-> +MODULE_LICENSE("GPL v2");
