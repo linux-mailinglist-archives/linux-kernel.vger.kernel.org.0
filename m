@@ -2,207 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 786D3117B21
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 00:03:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5F40117B28
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 00:03:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfLIXDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 18:03:19 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10959 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726207AbfLIXDS (ORCPT
+        id S1727199AbfLIXDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 18:03:31 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46912 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726207AbfLIXDa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 18:03:18 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5deed2ab0000>; Mon, 09 Dec 2019 15:03:07 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 09 Dec 2019 15:03:13 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 09 Dec 2019 15:03:13 -0800
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 9 Dec
- 2019 23:03:13 +0000
-Received: from [10.2.174.71] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 9 Dec 2019
- 23:03:11 +0000
-Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <tglx@linutronix.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
-        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
-        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
-        <josephl@nvidia.com>, <vidyas@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
- <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
- <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
- <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
- <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
- <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
- <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
- <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
- <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
-Message-ID: <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
-Date:   Mon, 9 Dec 2019 15:03:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 9 Dec 2019 18:03:30 -0500
+Received: by mail-ot1-f65.google.com with SMTP id g18so13748729otj.13;
+        Mon, 09 Dec 2019 15:03:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mIeK58ZyBw/P30tMn5CgGP7nw/fqYsNmtUWT8mBCQPM=;
+        b=IjzyqIMAbJiOI7ASpW60l27nnPDRCGUWwkZOTlL0WN7HSoB2jUkeexGQ1OyTuT6Ave
+         Q9YtBWC6NN0h9q+Ng3TyjFN2dJZKV5I5n4sKH4l3WJlk9bFDqol3anmvdqw5oO1JDVvl
+         eSR0NK70xQNg2iNoM4QpEgbvtP7aZ42/qKQaZ/9HoL/OVX2oceWDLbBRGl2B17votDhV
+         aw/cVTcQT9xSX98GopB4Wd53Sz3F9uiUGAidh1e1XPc2edw8199yJL5Ee84t/xIpYXnY
+         4NJ/H625SjT3zu4PPDc9BYYzVG/I0d4ZrFx55WeR1kXMyA0A4pzNq75wFYC/kFHPe6HR
+         Z88g==
+X-Gm-Message-State: APjAAAUo4ZxqSp6D7Sexn7zjH0RywoM++o/p7vBK0b2UA/pp2XEIkGDh
+        2akUcI910MGujbqH9qI68vCQI+KuDDgT1IhX9mw=
+X-Google-Smtp-Source: APXvYqzS06CWYdOsYavQjsZV+tLraI3NwXBOyN8HRUI1R9B/eXaf/0xNyNhfIuzqY/3BkOWd6Qf11TLXujrvcr+hc+c=
+X-Received: by 2002:a05:6830:95:: with SMTP id a21mr22577442oto.167.1575932609343;
+ Mon, 09 Dec 2019 15:03:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575932588; bh=RD/UuYFLXtwBxgHk80kzPJPqxUQ1zAc8jBfi48zHg7Y=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=AF+ZrVUhuuI4n2G07/qPG+bFuep43+eiGM4ll6OZKtOX7H9bG1ZBL6W1Y+0W0aIEb
-         KOqfHAt9utQisUiWPXchiaiRf0/+hVFVhOdpZ7TEicYJDa72O/5HGWJLSZHKhE/302
-         1VDHk6r585XJ6/xRAmujBL7OldwSDkMLqh7O5sFMxOPaf5H9bCIjTrbpM1b5ZQ7ZlW
-         fmOuV43ULlc2wjdH1uOk+j864vcHbBAJGgbfa4p6BXgpxy61xeUseg67hVGMiZ/e2w
-         iFBT03GD7G+fs9/i3BrSP86QSVFkZihdGSB0eACQVGHdVcAaYfNpgb4Sj58eNj9iHt
-         7sW63WDhQtmEQ==
+References: <1773028.iBGNyVBcMc@kreacher> <2991d01601fdbcf25d745a387eda74926f1192b2.camel@intel.com>
+ <56a33219fc336c26b8ef9d8de1a3d50893a7b7d1.camel@linux.intel.com> <7cc9a74a0e16b8e3583401f6be43820377a8f875.camel@linux.intel.com>
+In-Reply-To: <7cc9a74a0e16b8e3583401f6be43820377a8f875.camel@linux.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 10 Dec 2019 00:03:18 +0100
+Message-ID: <CAJZ5v0g=D3uOhETbAcuXEQfwNSK5RtK6-XVgOtRr-4n718Pifg@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: PM: Avoid attaching ACPI PM domain to certain devices
+To:     Todd Brandt <todd.e.brandt@linux.intel.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Brandt, Todd E" <todd.e.brandt@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 9, 2019 at 11:49 PM Todd Brandt
+<todd.e.brandt@linux.intel.com> wrote:
+>
+> On Thu, 2019-12-05 at 09:32 -0800, Todd Brandt wrote:
+> > On Wed, 2019-12-04 at 22:04 +0800, Zhang Rui wrote:
+> > > On Wed, 2019-12-04 at 02:54 +0100, Rafael J. Wysocki wrote:
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > Certain ACPI-enumerated devices represented as platform devices
+> > > > in
+> > > > Linux, like fans, require special low-level power management
+> > > > handling
+> > > > implemented by their drivers that is not in agreement with the
+> > > > ACPI
+> > > > PM domain behavior.  That leads to problems with managing ACPI
+> > > > fans
+> > > > during system-wide suspend and resume.
+> > > >
+> > > > For this reason, make acpi_dev_pm_attach() skip the affected
+> > > > devices
+> > > > by adding a list of device IDs to avoid to it and putting the IDs
+> > > > of
+> > > > the affected devices into that list.
+> > > >
+> > > > Fixes: e5cc8ef31267 (ACPI / PM: Provide ACPI PM callback routines
+> > > > for
+> > > > subsystems)
+> > > > Reported-by: Zhang Rui <rui.zhang@intel.com>
+> > > > Cc: 3.10+ <stable@vger.kernel.org> # 3.10+
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > ---
+> > > >
+> > > > Rui,
+> > > >
+> > > > Please test this on the machine(s) affected by the fan
+> > > > suspend/resume
+> > > > issues.
+> > >
+> > > Sure, Todd and I will re-run stress test with this patch applied
+> > > when
+> > > 5.5-rc1 released.
+> >
+> > I've applied it 5.4.0 and will do a full stress test run this weekend
+> > in the lab (where 7 out of 20 machines have this issue). The kernel
+> > will be called "5.4.0-acpifanfix", and the data should be ready
+> > Sunday
+> > Dec 8.
+> >
+> > This is the issue I'll test for:
+> > https://bugzilla.kernel.org/show_bug.cgi?id=204321
+> >
+>
+> The test data is in and I'm very happy to report that the patch works
+> extremely well. Here's the data gathered on the bugzilla issue 204321:
+> ACPI fan resume is too long.
+>
+> [With the patch]
+>
+> Kernel              Host                      Test Run    Count Rate
+> 5.4.0-acpifanfix    otcpl-whl-u-clear         mem-x2351    1    0.04%
+> 5.4.0-acpifanfix    otcpl-z170x-ud5           mem-x2369    0    0%
+> 5.4.0-acpifanfix    otcpl-z170x-ud5           freeze-x2492 0    0%
+> 5.4.0-acpifanfix    otcpl-whl-u-clear         freeze-x2411 0    0%
+> 5.4.0-acpifanfix    otcpl-whl-u               mem-x2289    0    0%
+> 5.4.0-acpifanfix    otcpl-whl-u               freeze-x2389 0    0%
+> 5.4.0-acpifanfix    otcpl-icl-u-2             mem-x2273    0    0%
+> 5.4.0-acpifanfix    otcpl-icl-u-2             freeze-x817  0    0%
+> 5.4.0-acpifanfix    otcpl-glk-rvp-1           freeze-x122  0    0%
+> 5.4.0-acpifanfix    otcpl-dell-p5510-xeon-1   mem-x1851    0    0%
+> 5.4.0-acpifanfix    otcpl-dell-p5510-xeon-1   freeze-x1994 0    0%
+> 5.4.0-acpifanfix    otcpl-dell-inspiron-3493  mem-x1722    0    0%
+> 5.4.0-acpifanfix    otcpl-dell-inspiron-3493  freeze-x2102 0    0%
+> 5.4.0-acpifanfix    otcpl-cfl-u-01            mem-x39      0    0%
+> 5.4.0-acpifanfix    otcpl-cfl-u-01            freeze-x2091 0    0%
+> 5.4.0-acpifanfix    otcpl-cfl-h               mem-x415     0    0%
+> 5.4.0-acpifanfix    otcpl-cfl-h               freeze-x2265 0    0%
+> 5.4.0-acpifanfix    otcpl-aml-y               mem-x3126    0    0%
+> 5.4.0-acpifanfix    otcpl-aml-y               freeze-x2288 0    0%
+>
+> [Without the patch]
+>
+> Kernel    Host                      Test Run    Count Rate
+> 5.3.0+    otcpl-icl-u-2             mem-x2571    2571 100.00%
+> 5.3.0+    otcpl-whl-u               mem-x2497    2497 100.00%
+> 5.3.0+    otcpl-cfl-h               mem-x2068    2068 100.00%
+> 5.3.0+    otcpl-glk-rvp-1           mem-x75      74   98.67%
+> 5.3.0+    otcpl-cfl-u-01            mem-x1074    1050 97.77%
+> 5.3.0+    otcpl-glk-rvp-1           freeze-x45   12   26.67%
+> 5.3.0+    otcpl-whl-u               freeze-x2649 428  16.16%
+> 5.3.0+    otcpl-aml-y               freeze-x2434 373  15.32%
+> 5.3.0+    otcpl-cfl-u-01            freeze-x2419 123  5.08%
+> 5.3.0+    otcpl-latexo-ivb-cpt      freeze-x1914 97   5.07%
+> 5.3.0+    otcpl-whl-u-clear         mem-x2640    69   2.61%
+> 5.3.0+    otcpl-icl-u-2             freeze-x2757 59   2.14%
+> 5.3.0+    otcpl-whl-u-clear         freeze-x2830 53   1.87%
+> 5.3.0+    otcpl-tgl-rvp             freeze-x2086 20   0.96%
+> 5.3.0+    otcpl-cfl-h               freeze-x2457 8    0.33%
+> 5.3.0+    otcpl-latexo-ivb-cpt      mem-x2000    4    0.20%
+> 5.3.0+    otcpl-aml-y               mem-x2727    2    0.07%
+> 5.3.0+    otcpl-z170x-ud5           mem-x2669    0    0%
+> 5.3.0+    otcpl-z170x-ud5           freeze-x2881 0    0%
+> 5.3.0+    otcpl-lenovo-ideapad-130  mem-x2000    0    0%
+> 5.3.0+    otcpl-lenovo-ideapad-130  freeze-x2000 0    0%
+> 5.3.0+    otcpl-dell-p5510-xeon-2   mem-x570     0    0%
+> 5.3.0+    otcpl-dell-p5510-xeon-2   freeze-x1093 0    0%
+> 5.3.0+    otcpl-dell-p5510-xeon-1   mem-x2209    0    0%
+> 5.3.0+    otcpl-dell-p5510-xeon-1   freeze-x2431 0    0%
+> 5.3.0+    otcpl-dell-inspiron-3493  freeze-x1170 0    0%
+> 5.3.0+    otcpl-chromebook-hsw      freeze-x1305 0    0%
+> 5.3.0+    otcpl-chromebook-hsw      freeze-x368  0    0%
 
-On 12/9/19 12:46 PM, Sowjanya Komatineni wrote:
->
-> On 12/9/19 12:12 PM, Dmitry Osipenko wrote:
->> 08.12.2019 00:36, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> On 12/7/19 11:59 AM, Sowjanya Komatineni wrote:
->>>> On 12/7/19 8:00 AM, Dmitry Osipenko wrote:
->>>>> 07.12.2019 18:53, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>> 07.12.2019 18:47, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>> 07.12.2019 17:28, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>>> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82:
->>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out_3
->>>>>>>>> with
->>>>>>>>> mux and gate for each of these clocks.
->>>>>>>>>
->>>>>>>>> Currently these PMC clocks are registered by Tegra clock driver
->>>>>>>>> using
->>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base=20
->>>>>>>>> address
->>>>>>>>> and register offsets and PMC programming for these clocks happens
->>>>>>>>> through direct PMC access by the clock driver.
->>>>>>>>>
->>>>>>>>> With this, when PMC is in secure mode any direct PMC access=20
->>>>>>>>> from the
->>>>>>>>> non-secure world does not go through and these clocks will not be
->>>>>>>>> functional.
->>>>>>>>>
->>>>>>>>> This patch adds these clocks registration with PMC as a clock
->>>>>>>>> provider
->>>>>>>>> for these clocks. clk_ops callback implementations for these=20
->>>>>>>>> clocks
->>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
->>>>>>>>> programming
->>>>>>>>> in secure mode and non-secure mode.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>> ---
->>>>>>> [snip]
->>>>>>>
->>>>>>>>> +
->>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops =3D {
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
->>>>>>>>> +};
->>>>>>>> What's the benefit of separating GATE from the MUX?
->>>>>>>>
->>>>>>>> I think it could be a single clock.
->>>>>>> According to TRM:
->>>>>>>
->>>>>>> 1. GATE and MUX are separate entities.
->>>>>>>
->>>>>>> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram in=20
->>>>>>> TRM).
->>>>>>>
->>>>>>> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable" it,
->>>>>>> correct?
->>> Was following existing clk-tegra-pmc as I am not sure of reason for
->>> having these clocks registered as separate mux and gate clocks.
->>>
->>> Yes, PMC clocks can be registered as single clock and can use clk_ops
->>> for set/get parent and enable/disable.
->>>
->>> enable/disable of PMC clocks is for force-enable to force the clock to
->>> run regardless of ACCEPT_REQ or INVERT_REQ.
->>>
->>>>>> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these clocks
->>>>>> should belong to PMC.
->>>>> Also, it should be "osc" and not "clk_m".
->>>> I followed the same parents as it were in existing clk-tegra-pmc=20
->>>> driver.
->>>>
->>>> Yeah they are wrong and they should be from osc and not clk_m.
->>>>
->>>> Will fix in next version.
->>>>
-Reg clk_m_div2/3, they are dividers at OSC pad and not really internal=20
-to PMC block.
+Great, thanks for the verification!
 
-current clock driver creates clk_m_div clocks which should actually be=20
-osc_div2/osc_div4 clocks with osc as parent.
+I will queue up the patch for the next ACPI pull request, then.
 
-There are no clk_m_div2 and clk_m_div4 from clk_m
-
-Will fix this in next version.
-
->> Could you please describe the full EXTPERIPH clock topology and how the
->> pinmux configuration is related to it all?
->>
->> What is internal to the Tegra chip and what are the external outputs?
->>
->> Is it possible to bypass PMC on T30+ for the EXTPERIPH clocks?
->
-> PMC CLK1/2/3 possible sources are OSC_DIV1, OSC_DIV2, OSC_DIV4,=20
-> EXTPERIPH from CAR.
->
-> OSC_DIV1/2/4 are with internal dividers at the OSC Pads
->
-> EXTPERIPH is from CAR and it has reset and enable controls along with=20
-> clock source selections to choose one of the PLLA_OUT0, CLK_S,=20
-> PLLP_OUT0, CLK_M, PLLE_OUT0
->
-> So, PMC CLK1/2/4 possible parents are OSC_DIV1, OSC_DIV2, OSC_DIV4,=20
-> EXTERN.
->
->
-> CLK1/2/3 also has Pinmux to route EXTPERIPH output on to these pins.
->
->
-> When EXTERN output clock is selected for these PMC clocks thru=20
-> CLKx_SRC_SEL, output clock is from driver by EXTPERIPH from CAR via=20
-> Pinmux logic or driven as per CLKx_SRC_SEL bypassing pinmux based on=20
-> CLKx_ACCEPT_REQ bit.
->
->
-> PMC Clock control register has bit CLKx_ACCEPT_REQ
-> When CLKx_ACCEPT_REQ =3D 0, output clock driver is from by EXTPERIPH=20
-> through the pinmux
-> When CLKx_ACCEPT_REQ =3D 1, output clock is based on CLKx_SRC_SEL bits=20
-> (OSC_DIV1/2/4 and EXTPERIPH clock bypassing the pinmux)
->
-> FORCE_EN bit in PMC CLock control register forces the clock to run=20
-> regardless of this.
+Thanks!
