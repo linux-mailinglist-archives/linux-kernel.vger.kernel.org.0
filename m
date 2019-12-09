@@ -2,180 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3273E116D77
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 14:01:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CBA116D6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 14:00:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfLINBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 08:01:17 -0500
-Received: from out28-145.mail.aliyun.com ([115.124.28.145]:51685 "EHLO
-        out28-145.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727746AbfLINBP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 08:01:15 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07893191|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0390381-0.0034777-0.957484;DS=CONTINUE|ham_alarm|0.00877232-0.000346047-0.990882;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03303;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=22;RT=22;SR=0;TI=SMTPD_---.GDcmOki_1575896441;
-Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GDcmOki_1575896441)
-          by smtp.aliyun-inc.com(10.147.41.138);
-          Mon, 09 Dec 2019 21:01:03 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
-        jhogan@kernel.org, mripard@kernel.org, shawnguo@kernel.org,
-        mark.rutland@arm.com, ebiederm@xmission.com, ralf@linux-mips.org,
-        heiko@sntech.de, icenowy@aosc.io,
-        laurent.pinchart@ideasonboard.com, krzk@kernel.org,
-        geert+renesas@glider.be, paul@crapouillou.net,
-        prasannatsmkumar@gmail.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, 772753199@qq.com
-Subject: [PATCH v7 6/6] MIPS: CU1000: Add devicetree & config with PDMA/MSC/RTC/WDT/NET enabled.
-Date:   Mon,  9 Dec 2019 21:00:38 +0800
-Message-Id: <1575896438-9562-7-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575896438-9562-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1575896438-9562-1-git-send-email-zhouyanjie@wanyeetech.com>
+        id S1727617AbfLINA5 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Dec 2019 08:00:57 -0500
+Received: from mail-oln040092254048.outbound.protection.outlook.com ([40.92.254.48]:44146
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727038AbfLINA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 08:00:57 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ghPnSiS2bR3slrAQz625jnpVwX7oyzb4sIMrn2qCcIrFF58h/ZjUAwgdostbOzQ8Wd2sPVipDrRGh/J9qkUwp+Xdfp5c5jCdFB3+Y+9eBq15ZOlzERuj4qoxV5RgjfBnWVKD0Pg5Kcgf17hBDf9xTPTUpSyoyQgvGaXrp1oWsEXvlAA3tgmzZFrzl4d5tus85jRU/YIS+45hf0tBWCipyXBW39DJV7KpXn6EaNnXxD+sKE6NLP5Yilu7BADMNakWVMqKHeZDmVaRmaGz/LJLqccISQzLnVTri4HvMHbTPy5bG/Gnau5x5UFcgPi+ogHHSHCYY1l0biP788FzHpForw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yfiqzN34SYKlgEbvFx+4dvp3h00h3Xf+NeQ/xHHE9uM=;
+ b=SFGm/scm/vV+dpopVyd+0P0cLXmROs10hYcqDaSJONPFLZv/z2fm/cbjy3PGtQHxeFUC4O8zN8j51NKb9hnWubpfsVWDHKOZKENGNdtSFiknaPRbcN66o8Z50iOUbPqbKO6NMI2XQN8JJ0eLJxGPmo/fc5Y2if4ifBpCNSKHPXCxbvojXt43xG1lEN1xUMrVZyh7XKJY5NF75bVLNGmq3jAD8eRpKq3YQYS+0ADZjukHJ34vC/fSCl4I6JRmhPnjPw9/q1r7AdvLHKD/1OZZzoHsbhss07lVkemptt45YeWhzTEsrTM03cqGLJQ98ZYGsmr5aWXmWjmWYzmFVspWpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from HK2APC01FT003.eop-APC01.prod.protection.outlook.com
+ (10.152.248.55) by HK2APC01HT194.eop-APC01.prod.protection.outlook.com
+ (10.152.249.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2495.25; Mon, 9 Dec
+ 2019 13:00:51 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM (10.152.248.51) by
+ HK2APC01FT003.mail.protection.outlook.com (10.152.248.173) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.25 via Frontend Transport; Mon, 9 Dec 2019 13:00:51 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::20ad:6646:5bcd:63c9]) by PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::20ad:6646:5bcd:63c9%11]) with mapi id 15.20.2516.018; Mon, 9 Dec 2019
+ 13:00:51 +0000
+From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Subject: [PATCH v12 4/4] PCI: Allow extend_bridge_window() to shrink resource
+ if necessary
+Thread-Topic: [PATCH v12 4/4] PCI: Allow extend_bridge_window() to shrink
+ resource if necessary
+Thread-Index: AQHVrpCvPIyPLGgIT0aVKrLx85Jowg==
+Date:   Mon, 9 Dec 2019 13:00:51 +0000
+Message-ID: <PSXP216MB04384D7A7F321A0BED323CB180580@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+Accept-Language: en-AU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SYYP282CA0016.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:b4::26) To PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:300:d::20)
+x-incomingtopheadermarker: OriginalChecksum:80C3EB2F81A8A468B085D06868FAF549D412D6C83B2D184D939604642F70FED3;UpperCasedChecksum:B054872A94759315DC83A89DBF2A2B9094D459A0DE929939226AAA364F3471BD;SizeAsReceived:7612;Count:47
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [dZOOw6rEfqlkSrUq9vgwc/up2qRoE85kXEKEMPfX2be8l5KRbuIu2JBqqxWmaaOJel9LMrlLFD4=]
+x-microsoft-original-message-id: <20191209130042.GA3017@nicholas-dell-linux>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 47
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: dffdd2b2-3743-4042-8d71-08d77ca7d162
+x-ms-exchange-slblob-mailprops: Zv/SX2iM+5WBO+Hzd/SDavkKHBOvnksd01hJFr3iXCJtXVv218tmSHREHPLp5PjzMFrUVa9edh5xVOtuh1IlKnrhyx/eqMfwjLS45pH+hQA/H+lSCBDm67k1PVziUdpQat3HZ+VKpUgdLP32raZf6L9cYpfy52l4Lw7oie0Garzi5vuSPyj3/2JicpUM8lg2kk/UpY4q8p6py2MGjNT67Ydt/JhjqYcHA92bDSpwPFjC69Qvclf0AYzMz8xTDadV/7i7RhPOa2BzGayTr0gA9YDL18S3pIYwwIC5hReEMO1bQdzmYV4jfnN+6icvmglqlOotTtJkPpmGOgrK/qNuLqTrWTmRnfJPMF+3HrhVT3BGPRV8fT2L2LJZSwgkXvLIPXcBUQvUb64JsNiWtIVsXfS/0+vgNzx6yMLZl0ysaq8HrtZNKhx9iULSposG9PDZrxrn7OP57Kj3PqdaLBn+kVnPA9ExlHM2Jd1j5mj8Dd67xOXY4swkV2yyZmD113Yck7yHFQGGhAIKf4voiHILDFLyik9yaTmKetIYaX1gbjEJ7EgGt7Tx1pwkoDAqg3zpphFrMrMkIgBKLbvOxaJj1BIycQGdGZ+d9vIbQO4lDJM2gx9qV6HqSEabEef9wE7T+3SZQhCf3rT4Vg9yBAQEIzdWA2xoxN+4kkLzWBXdLQUIFmYgi2Ut/udTgXuBwftauC6a8Onr9Yc=
+x-ms-traffictypediagnostic: HK2APC01HT194:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: GElS8eutZGp8lfwKE1ZwpGLLCi+dKHJhFycZD6CAm0QImSIANV87AbtVWRaK5llTTxngFB2wQmrRfMZWMlUOv3If4fG0sF8eeErugvdKfqgcHgs9Gmp0tptDEmTVHYq5t491UjUCWKYI0+zszDS491Q08ohIvsfmPPADTzsOMi32RB5cME/Wn3Grio4OOCHS
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <DDC4DA17C837A94799C56ED7E180746A@KORP216.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: dffdd2b2-3743-4042-8d71-08d77ca7d162
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Dec 2019 13:00:51.5042
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2APC01HT194
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the CU1000 Neo devicetree and defconfig with PDMA, MMC, RTC, WDT
-and NET enabled.
+Remove checks for resource size in extend_bridge_window(). This is
+necessary to allow the pci_bus_distribute_available_resources() to
+function when the kernel parameter pci=hpmemsize=nn[KMG] is used to
+allocate resources. Because the kernel parameter sets the size of all
+hotplug bridges to be the same, there are problems when nested hotplug
+bridges are encountered. Fitting a downstream hotplug bridge with size X
+and normal bridges with non-zero size Y into parent hotplug bridge with
+size X is impossible, and hence the downstream hotplug bridge needs to
+shrink to fit into its parent.
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+Add check for if bridge is extended or shrunken and adjust pci_dbg to
+reflect this.
+
+Reset the resource if its new size is zero (if we have run out of a
+bridge window resource) to prevent the PCI resource assignment code from
+attempting to assign a zero-sized resource.
+
+Rename extend_bridge_window() to adjust_bridge_window() to reflect the
+fact that the window can now shrink.
+
+Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
+ drivers/pci/setup-bus.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-Notes:
-    v7:
-    New patch, merge[06/12],[08/12],[10/12],[12/12] in v6.
-
- arch/mips/boot/dts/ingenic/cu1000-neo.dts | 47 +++++++++++++++++++++++++++++++
- arch/mips/configs/cu1000-neo_defconfig    | 17 +++++++++--
- 2 files changed, 62 insertions(+), 2 deletions(-)
-
-diff --git a/arch/mips/boot/dts/ingenic/cu1000-neo.dts b/arch/mips/boot/dts/ingenic/cu1000-neo.dts
-index 6f1a7e9..b0733da 100644
---- a/arch/mips/boot/dts/ingenic/cu1000-neo.dts
-+++ b/arch/mips/boot/dts/ingenic/cu1000-neo.dts
-@@ -43,10 +43,57 @@
- 	status = "okay";
- };
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 0e0c8b677..22aed6cdb 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -1832,22 +1832,29 @@ void __init pci_assign_unassigned_resources(void)
+ 	}
+ }
  
-+&mac {
-+	phy-mode = "rmii";
-+	phy-handle = <&lan8720a>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pins_mac>;
-+
-+	snps,reset-gpio = <&gpc 23 GPIO_ACTIVE_LOW>; /* PC23 */
-+	snps,reset-active-low;
-+	snps,reset-delays-us = <0 10000 30000>;
-+
-+	status = "okay";
-+};
-+
-+&mdio {
-+	status = "okay";
-+
-+	lan8720a: ethernet-phy@0 {
-+		compatible = "ethernet-phy-id0007.c0f0", "ethernet-phy-ieee802.3-c22";
-+		reg = <0>;
-+	};
-+};
-+
-+&msc0 {
-+	bus-width = <8>;
-+	max-frequency = <50000000>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pins_msc0>;
-+
-+	non-removable;
-+
-+	status = "okay";
-+};
-+
- &pinctrl {
- 	pins_uart2: uart2 {
- 		function = "uart2";
- 		groups = "uart2-data-d";
- 		bias-disable;
- 	};
-+
-+	pins_mac: mac {
-+		function = "mac";
-+		groups = "mac";
-+		bias-disable;
-+	};
-+
-+	pins_msc0: msc0 {
-+		function = "mmc0";
-+		groups = "mmc0-1bit", "mmc0-4bit", "mmc0-8bit";
-+		bias-disable;
-+	};
- };
-diff --git a/arch/mips/configs/cu1000-neo_defconfig b/arch/mips/configs/cu1000-neo_defconfig
-index 4fafe92..9f988ed 100644
---- a/arch/mips/configs/cu1000-neo_defconfig
-+++ b/arch/mips/configs/cu1000-neo_defconfig
-@@ -16,8 +16,6 @@ CONFIG_CGROUP_DEVICE=y
- CONFIG_CGROUP_CPUACCT=y
- CONFIG_NAMESPACES=y
- CONFIG_USER_NS=y
--CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="arch/mips/boot/ramdisk.cpio.gz"
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- CONFIG_SYSCTL_SYSCALL=y
- CONFIG_KALLSYMS_ALL=y
-@@ -35,11 +33,17 @@ CONFIG_HZ_100=y
- # CONFIG_COMPACTION is not set
- CONFIG_CMA=y
- CONFIG_CMA_AREAS=7
-+CONFIG_NET=y
-+CONFIG_UNIX=y
-+CONFIG_INET=y
- CONFIG_UEVENT_HELPER=y
- CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_DEVTMPFS=y
- # CONFIG_FW_LOADER is not set
- # CONFIG_ALLOW_DEV_COREDUMP is not set
-+CONFIG_NETDEVICES=y
-+CONFIG_STMMAC_ETH=y
-+CONFIG_SMSC_PHY=y
- # CONFIG_INPUT_MOUSEDEV is not set
- # CONFIG_INPUT_KEYBOARD is not set
- # CONFIG_INPUT_MOUSE is not set
-@@ -55,17 +59,26 @@ CONFIG_SERIAL_8250_INGENIC=y
- CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
- CONFIG_GPIO_SYSFS=y
-+CONFIG_WATCHDOG=y
-+CONFIG_JZ4740_WDT=y
- # CONFIG_HWMON is not set
- # CONFIG_LCD_CLASS_DEVICE is not set
- # CONFIG_BACKLIGHT_CLASS_DEVICE is not set
- # CONFIG_VGA_CONSOLE is not set
- # CONFIG_HID is not set
- # CONFIG_USB_SUPPORT is not set
-+CONFIG_MMC=y
-+CONFIG_MMC_JZ4740=y
-+CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_JZ4740=y
-+CONFIG_DMADEVICES=y
-+CONFIG_DMA_JZ4780=y
- # CONFIG_IOMMU_SUPPORT is not set
- CONFIG_NVMEM=y
- CONFIG_NVMEM_SYSFS=y
- CONFIG_EXT4_FS=y
- # CONFIG_DNOTIFY is not set
-+CONFIG_AUTOFS_FS=y
- CONFIG_PROC_KCORE=y
- # CONFIG_PROC_PAGE_MONITOR is not set
- CONFIG_TMPFS=y
+-static void extend_bridge_window(struct pci_dev *bridge, struct resource *res,
++static void adjust_bridge_window(struct pci_dev *bridge, struct resource *res,
+ 				 struct list_head *add_list,
+ 				 resource_size_t new_size)
+ {
+-	resource_size_t add_size;
++	resource_size_t add_size, size = resource_size(res);
+ 
+ 	if (res->parent)
+ 		return;
+ 
+-	if (resource_size(res) >= new_size)
+-		return;
++	if (new_size > size) {
++		add_size = new_size - size;
++		pci_dbg(bridge, "bridge window %pR extended by %pa\n", res,
++			&add_size);
++	} else if (new_size < size) {
++		add_size = size - new_size;
++		pci_dbg(bridge, "bridge window %pR shrunken by %pa\n", res,
++			&add_size);
++	}
+ 
+-	add_size = new_size - resource_size(res);
+-	pci_dbg(bridge, "bridge window %pR extended by %pa\n", res, &add_size);
+ 	res->end = res->start + new_size - 1;
+ 	remove_from_list(add_list, res);
++	if (!new_size)
++		reset_resource(res);
+ }
+ 
+ static void pci_bus_distribute_available_resources(struct pci_bus *bus,
+@@ -1883,9 +1890,9 @@ static void pci_bus_distribute_available_resources(struct pci_bus *bus,
+ 	 * Update the resources to fill as much remaining resource space in the
+ 	 * parent bridge as possible, whilst considering alignment.
+ 	 */
+-	extend_bridge_window(bridge, io_res, add_list, resource_size(&io));
+-	extend_bridge_window(bridge, mmio_res, add_list, resource_size(&mmio));
+-	extend_bridge_window(bridge, mmio_pref_res, add_list,
++	adjust_bridge_window(bridge, io_res, add_list, resource_size(&io));
++	adjust_bridge_window(bridge, mmio_res, add_list, resource_size(&mmio));
++	adjust_bridge_window(bridge, mmio_pref_res, add_list,
+ 			     resource_size(&mmio_pref));
+ 
+ 	/*
 -- 
-2.7.4
+2.24.0
 
