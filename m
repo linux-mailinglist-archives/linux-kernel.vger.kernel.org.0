@@ -2,413 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBAB4116713
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 07:44:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80928116718
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 07:55:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbfLIGoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 01:44:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfLIGoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 01:44:14 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B136C206E0;
-        Mon,  9 Dec 2019 06:44:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575873853;
-        bh=satcp7pvBEkmw0YjKfECaSFQJOr6tyXzvyx3YGw6ZHk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DmNA/+/H631bjUIVQXGdULprDWxbrnAXnICRc5ZyYbq9W1cKvGzdbnY0XHmvHLZeJ
-         UX2HeP56Vz3bcchoj3GyJaoyLG0Wy7neBtnFHkBukXMqA6MskNEevrBkx2woEKu1Su
-         qCVkFVPhz2FMiafNBnuWo7fziZ0TsHn8KhCrznFw=
-Date:   Mon, 9 Dec 2019 14:43:58 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 4/4] arm64: dts: freescale: add Kontron sl28 support
-Message-ID: <20191209064356.GD3365@dragon>
-References: <20191123201317.25861-1-michael@walle.cc>
- <20191123201317.25861-5-michael@walle.cc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191123201317.25861-5-michael@walle.cc>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1727067AbfLIGzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 01:55:01 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:36402 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfLIGzB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 01:55:01 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191209065459epoutp01467401e37a1c98c756103580802851d3~eoYHyYokF3023230232epoutp01L
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2019 06:54:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191209065459epoutp01467401e37a1c98c756103580802851d3~eoYHyYokF3023230232epoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575874499;
+        bh=A0WbscGLp/FBqHZYKkFQAzolQTINH8FBFgyBhh91qlo=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=O3rxMzPtTuuFWhNmIbBPdSpwnqBLdDPCoMgC+BikRKm2hFNwx/ZdJ+yM9Rw3DTzEC
+         UZ/gTwsT+U8Ft3J/yT9iNocvnVtTmovA/zoBb6qUyZNWL3aKjqB/bchxH3m8cmUlqC
+         S/xHhLeRW+NbzFRtDqUVZaEKv+Diq/r25HbxSFNY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191209065458epcas1p4576f756fac74480897c2897f1ca95fbe~eoYHTlt2D1133711337epcas1p4P;
+        Mon,  9 Dec 2019 06:54:58 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47WYpn46S6zMqYkk; Mon,  9 Dec
+        2019 06:54:57 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        05.87.48019.1CFEDED5; Mon,  9 Dec 2019 15:54:57 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191209065457epcas1p3130d80fd65c9a1c1af5f67dadc49e913~eoYGCzw6D0815208152epcas1p3x;
+        Mon,  9 Dec 2019 06:54:57 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191209065457epsmtrp27680ec5738aabd55502fffbc7eb92b47~eoYGB523D2761927619epsmtrp2L;
+        Mon,  9 Dec 2019 06:54:57 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-82-5dedefc1b5bf
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C7.E9.06569.1CFEDED5; Mon,  9 Dec 2019 15:54:57 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.88.103.87]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191209065457epsmtip1c49566f731f8c7eddc23004dd559f6bb~eoYF3slhX1943719437epsmtip1Q;
+        Mon,  9 Dec 2019 06:54:57 +0000 (GMT)
+From:   Namjae Jeon <namjae.jeon@samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, Namjae Jeon <namjae.jeon@samsung.com>
+Subject: [PATCH v6 00/13] add the latest exfat driver
+Date:   Mon,  9 Dec 2019 01:51:35 -0500
+Message-Id: <20191209065149.2230-1-namjae.jeon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFKsWRmVeSWpSXmKPExsWy7bCmru7B929jDU7tVrBoXryezWLl6qNM
+        Fnv2nmSxuLxrDpvFj+n1Flv+HWG1uPT+A4sDu8f+uWvYPXbfbGDz6NuyitHj8yY5j0Pb37AF
+        sEbl2GSkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAXaGk
+        UJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTA0KNArTswtLs1L10vOz7UyNDAwMgWq
+        TMjJWLw1t+CpfMWJ3//ZGhj/SnQxcnJICJhIfLq/iLGLkYtDSGAHo8TFL/eYIZxPjBInzxxn
+        hXC+MUrMWXGXDablw5VbLBCJvYwSO/7uY4Vr+bdnL1AVBwebgLbEny2iIA0iAvYSm2cfAGtg
+        FmhhlFhw+gczSEJYwFRiy6q57CA2i4CqxIOz+9lBenkFrCWOtcZCLJOXWL3hANhJEgIdbBJd
+        3x9AXeEisXLlMUYIW1ji1fEt7BC2lMTndxA3SAhUS3zczwwR7mCUePHdFsI2lri5fgMrSAmz
+        gKbE+l36EGFFiZ2/54JNZBbgk3j3tYcVYgqvREebEESJqkTfpcNMELa0RFf7B6ilHhJHL14A
+        axUSiJX4Nq2VfQKj7CyEBQsYGVcxiqUWFOempxYbFpggR9EmRnC60rLYwbjnnM8hRgEORiUe
+        XgWrt7FCrIllxZW5hxglOJiVRHiXTHwVK8SbklhZlVqUH19UmpNafIjRFBh0E5mlRJPzgak0
+        ryTe0NTI2NjYwsTM3MzUWEmcl+PHxVghgfTEktTs1NSC1CKYPiYOTqkGxuBWGe7jL8x3yWtO
+        YvFjWDr39sHERyvyJku+KZxxsTy9ZckU/cZ8PotaV3kfabmEr1fDy7dG5a+0Y9C6eFPb847t
+        fPZvlZtvtEQ96TjK4JlxdGXQde7LSoo1U/cetjnPsqpNyffQr3mBGauVwz2Cd6+K51UreuT9
+        5sas38l37m0xDOj7GOk3R4mlOCPRUIu5qDgRAEiSR7htAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgluLIzCtJLcpLzFFi42LZdlhJTvfg+7exBpNuc1g0L17PZrFy9VEm
+        iz17T7JYXN41h83ix/R6iy3/jrBaXHr/gcWB3WP/3DXsHrtvNrB59G1ZxejxeZOcx6Htb9gC
+        WKO4bFJSczLLUov07RK4MhZvzS14Kl9x4vd/tgbGvxJdjJwcEgImEh+u3GLpYuTiEBLYzSix
+        ccE5FoiEtMSxE2eYuxg5gGxhicOHiyFqPjBK7Gi7wgQSZxPQlvizRRSkXETAUaJ312GwOcwC
+        XYwSj5q+MYMkhAVMJbasmssOYrMIqEo8OLufHaSXV8Ba4lhrLMQqeYnVGw4wT2DkWcDIsIpR
+        MrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cTIzh8tLR2MJ44EX+IUYCDUYmHV8HqbawQa2JZ
+        cWXuIUYJDmYlEd4lE1/FCvGmJFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQnliSmp2aWpBa
+        BJNl4uCUamCMfLNW/Xa6nLjTz/NJkRPL/rmfUNml/yXH0Ivj7aZ40b8rcvjDo8qFw/buvPv2
+        /pEpEhMmXZvw6+xy1djJsQEKl88o9C9t1Lr6+7iRtFzdhk03L6WeNF8s/vzM3P7bGl6GK95a
+        f1ryLOPf8jtL+aTeHct49jnr5YMDM7jaNyqvmX/XPjvqpYD9ISWW4oxEQy3mouJEAEOHs1Ab
+        AgAA
+X-CMS-MailID: 20191209065457epcas1p3130d80fd65c9a1c1af5f67dadc49e913
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191209065457epcas1p3130d80fd65c9a1c1af5f67dadc49e913
+References: <CGME20191209065457epcas1p3130d80fd65c9a1c1af5f67dadc49e913@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 09:13:17PM +0100, Michael Walle wrote:
-> Add device tree files for the Kontron SMARC-sAL28 board and its
-> carriers.
-> 
-> Signed-off-by: Michael Walle <michael@walle.cc>
-> ---
->  arch/arm64/boot/dts/freescale/Makefile        |   4 +
->  .../fsl-ls1028a-kontron-kbox-a-230-ls.dts     |  27 +++
->  .../fsl-ls1028a-kontron-sl28-var3-ads2.dts    |  73 ++++++++
->  .../fsl-ls1028a-kontron-sl28-var4.dts         |  34 ++++
->  .../freescale/fsl-ls1028a-kontron-sl28.dts    | 158 ++++++++++++++++++
->  5 files changed, 296 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var4.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 93fce8f0c66d..080c5a59d6bd 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -4,6 +4,10 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-frwy.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-oxalis.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-qds.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-rdb.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-kontron-kbox-a-230-ls.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-kontron-sl28.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-kontron-sl28-var3-ads2.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-kontron-sl28-var4.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-qds.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-rdb.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1043a-qds.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts
-> new file mode 100644
-> index 000000000000..97e72c94b7fc
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts
-> @@ -0,0 +1,27 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Device Tree File for the Kontron KBox A-230-LS.
-> + *
-> + * This consists of a Kontron SMARC-sAL28 (Dual PHY) and a special
-> + * carrier (s1914).
-> + *
-> + * Copyright (C) 2019 Michael Walle <michael@walle.cc>
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +#include "fsl-ls1028a-kontron-sl28-var4.dts"
-> +
-> +/ {
-> +	model = "Kontron KBox A-230-LS";
-> +	compatible = "kontron,kbox-a-230-ls", "kontron,sl28-var3",
-> +		     "kontron,sl28", "fsl,ls1028a";
+This adds the latest Samsung exfat driver to fs/exfat. This is an
+implementation of the Microsoft exFAT specification. Previous versions
+of this shipped with millions of Android phones, and a random previous
+snaphot has been merged in drivers/staging/.
 
-Any new compatible needs to be documented.
+Compared to the sdfat driver shipped on the phones the following changes
+have been made:
 
-> +};
-> +
-> +&i2c4 {
-> +	eeprom@50 {
-> +		compatible = "atmel,24c32";
-> +		reg = <0x50>;
-> +		pagesize = <32>;
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
-> new file mode 100644
-> index 000000000000..a4640e6b3928
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
-> @@ -0,0 +1,73 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Device Tree file for the Kontron SMARC-sAL28 board on a SMARC Eval 2.0
-> + * carrier (ADS2).
-> + *
-> + * Copyright (C) 2019 Michael Walle <michael@walle.cc>
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +#include "fsl-ls1028a-kontron-sl28.dts"
-> +
-> +/ {
-> +	model = "Kontron SMARC-sAL28 (Single PHY) on SMARC Eval 2.0 carrier";
-> +	compatible = "kontron,sl28-var3-ads2", "kontron,sl28", "fsl,ls1028a";
-> +
-> +	sound {
-> +		compatible = "simple-audio-card";
-> +		simple-audio-card,format = "i2s";
-> +		simple-audio-card,widgets =
-> +			"Headphone", "Headphone Jack",
-> +			"Line", "Line Out Jack";
-> +		simple-audio-card,routing =
-> +			"Line Out Jack", "LINEOUTR",
-> +			"Line Out Jack", "LINEOUTL",
-> +			"Headphone Jack", "HPOUTR",
-> +			"Headphone Jack", "HPOUTL";
-> +		simple-audio-card,mclk-fs = <256>;
-> +
-> +		simple-audio-card,cpu {
-> +			sound-dai = <&sai6>;
-> +		};
-> +
-> +		simple-audio-card,codec {
-> +			sound-dai = <&wm8904>;
-> +			frame-master;
-> +			bitclock-master;
-> +		};
-> +	};
-> +};
-> +
-> +&i2c4 {
-> +	status = "okay";
-> +
-> +	wm8904: wm8904@1a {
+ - the support for vfat has been removed as that is already supported
+   by fs/fat
+ - driver has been renamed to exfat
+ - the code has been refactored and clean up to fully integrate into
+   the upstream Linux version and follow the Linux coding style
+ - metadata operations like create, lookup and readdir have been further
+   optimized
+ - various major and minor bugs have been fixed
 
-audio-codec for node name.
+We plan to treat this version as the future upstream for the code base
+once merged, and all new features and bug fixes will go upstream first.
 
-> +		#sound-dai-cells = <0>;
-> +		compatible = "wlf,wm8904";
-> +		reg = <0x1a>;
-> +		clocks = <&wm8904_mclk>;
-> +		clock-names = "mclk";
-> +		assigned-clocks = <&wm8904_mclk>;
-> +		assigned-clock-rates = <1250000>;
-> +	};
-> +
-> +	eeprom@50 {
-> +		compatible = "atmel,24c32";
-> +		reg = <0x50>;
-> +		pagesize = <32>;
-> +	};
-> +};
-> +
-> +&sai6 {
-> +	status = "okay";
-> +};
-> +
-> +&soc {
-> +	wm8904_mclk: wm8904-mclk@f130080 {
-> +		compatible = "fsl,vf610-sai-clock";
+v6:
+ - Fix always false comparison due to limited range of allow_utime's data
+   type.
+ - Move bh into loop in exfat_find_dir_entry().
+ - Move entry_uniname and unichar variables into
+   an if "entry_type == TYPE_EXTEND" branch.
 
-Unsupported/undocumented binding?
+v5:
+ - Remove a blank line between the message and the error code in
+   exfat_load_upcase_table.
+ - Move brelse to the end of the while loop and rename release_bh label
+   to free_table in exfat_load_upcase_table.
+ - Move an error code assignment after a failed function call.
+ - Rename labels and directly return instead of goto.
+ - Improve the exception handling in exfat_get_dentry_set().
+ - Remove ->d_time leftover.
+ - fix boolreturn.cocci warnings.
 
-> +		reg = <0x0 0xf130080 0x0 0x80>;
-> +		clocks = <&clockgen 4 1>;
-> +		#clock-cells = <0>;
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var4.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var4.dts
-> new file mode 100644
-> index 000000000000..5c8b13108e4d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var4.dts
-> @@ -0,0 +1,34 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Device Tree file for the Kontron SMARC-sAL28 board.
-> + *
-> + * This is for the network variant 4 which has two ethernet ports. It
-> + * extends the base and provides one more port connected via RGMII.
-> + *
-> + * Copyright (C) 2019 Michael Walle <michael@walle.cc>
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +#include "fsl-ls1028a-kontron-sl28.dts"
-> +
-> +/ {
-> +	model = "Kontron SMARC-sAL28 (Dual PHY)";
-> +	compatible = "kontron,sl28-var4", "kontron,sl28", "fsl,ls1028a";
-> +};
-> +
-> +&enetc_port1 {
-> +	phy-handle = <&phy1>;
-> +	phy-connection-type = "rgmii-id";
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		phy1: ethernet-phy@4 {
-> +			reg = <0x4>;
-> +			eee-broken-1000t;
-> +			eee-broken-100tx;
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
-> new file mode 100644
-> index 000000000000..a18cb4395ad0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
-> @@ -0,0 +1,158 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Device Tree file for the Kontron SMARC-sAL28 board.
-> + *
-> + * Copyright (C) 2019 Michael Walle <michael@walle.cc>
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +#include "fsl-ls1028a.dtsi"
-> +
-> +/ {
-> +	model = "Kontron SMARC-sAL28";
-> +	compatible = "kontron,sl28", "fsl,ls1028a";
-> +
-> +	aliases {
-> +		crypto = &crypto;
-> +		serial0 = &duart0;
-> +		serial1 = &duart1;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +};
-> +
-> +&duart0 {
-> +	status = "okay";
-> +};
-> +
-> +&duart1 {
-> +	status = "okay";
-> +};
-> +
-> +&enetc_port0 {
-> +	phy-handle = <&phy0>;
-> +	phy-connection-type = "sgmii";
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		phy0: ethernet-phy@5 {
-> +			reg = <0x5>;
-> +			eee-broken-1000t;
-> +			eee-broken-100tx;
-> +		};
-> +	};
-> +};
-> +
-> +&esdhc {
-> +	sd-uhs-sdr104;
-> +	sd-uhs-sdr50;
-> +	sd-uhs-sdr25;
-> +	sd-uhs-sdr12;
-> +	status = "okay";
-> +};
-> +
-> +&esdhc1 {
-> +	mmc-hs200-1_8v;
-> +	mmc-hs400-1_8v;
-> +	bus-width = <8>;
-> +	status = "okay";
-> +};
-> +
-> +&fspi {
-> +	status = "okay";
-> +
-> +	w25q32jw@0 {
+v4:
+ - Declare ALLOC_FAT_CHAIN and ALLOC_NO_FAT_CHAIN macros.
+ - Rename labels with proper name.
+ - Remove blank lines.
+ - Remove pointer check for bh.
+ - Move ep into loop in exfat_load_bitmap().
+ - Replace READ/WRITE_ONCE() with test_and_clear_bit() and set_bit().
+ - Change exfat_allow_set_time return type with bool.
 
-Use a generic node name.
+v3:
+ - fix wrong sbi->s_dirt set.
 
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "w25q32jw", "jedec,spi-nor";
+v2:
+ - Check the bitmap count up to the total clusters.
+ - Rename goto labels in several places.
+ - Change time mode type with enumeration.
+ - Directly return error instead of goto at first error check.
+ - Combine seq_printf calls into a single one.
 
-Is "w25q32jw" documented somewhere?
+Namjae Jeon (13):
+  exfat: add in-memory and on-disk structures and headers
+  exfat: add super block operations
+  exfat: add inode operations
+  exfat: add directory operations
+  exfat: add file operations
+  exfat: add exfat entry operations
+  exfat: add bitmap operations
+  exfat: add exfat cache
+  exfat: add misc operations
+  exfat: add nls operations
+  exfat: add Kconfig and Makefile
+  exfat: add exfat in fs/Kconfig and fs/Makefile
+  MAINTAINERS: add exfat filesystem
 
-Shawn
+ MAINTAINERS          |    7 +
+ fs/Kconfig           |    3 +-
+ fs/Makefile          |    1 +
+ fs/exfat/Kconfig     |   21 +
+ fs/exfat/Makefile    |    8 +
+ fs/exfat/balloc.c    |  272 ++++++++
+ fs/exfat/cache.c     |  325 ++++++++++
+ fs/exfat/dir.c       | 1310 +++++++++++++++++++++++++++++++++++++
+ fs/exfat/exfat_fs.h  |  538 ++++++++++++++++
+ fs/exfat/exfat_raw.h |  191 ++++++
+ fs/exfat/fatent.c    |  472 ++++++++++++++
+ fs/exfat/file.c      |  343 ++++++++++
+ fs/exfat/inode.c     |  693 ++++++++++++++++++++
+ fs/exfat/misc.c      |  240 +++++++
+ fs/exfat/namei.c     | 1459 ++++++++++++++++++++++++++++++++++++++++++
+ fs/exfat/nls.c       |  808 +++++++++++++++++++++++
+ fs/exfat/super.c     |  738 +++++++++++++++++++++
+ 17 files changed, 7428 insertions(+), 1 deletion(-)
+ create mode 100644 fs/exfat/Kconfig
+ create mode 100644 fs/exfat/Makefile
+ create mode 100644 fs/exfat/balloc.c
+ create mode 100644 fs/exfat/cache.c
+ create mode 100644 fs/exfat/dir.c
+ create mode 100644 fs/exfat/exfat_fs.h
+ create mode 100644 fs/exfat/exfat_raw.h
+ create mode 100644 fs/exfat/fatent.c
+ create mode 100644 fs/exfat/file.c
+ create mode 100644 fs/exfat/inode.c
+ create mode 100644 fs/exfat/misc.c
+ create mode 100644 fs/exfat/namei.c
+ create mode 100644 fs/exfat/nls.c
+ create mode 100644 fs/exfat/super.c
 
-> +		m25p,fast-read;
-> +		spi-max-frequency = <133000000>;
-> +		reg = <0>;
-> +		/* The following setting enables 1-1-2 (CMD-ADDR-DATA) mode */
-> +		spi-rx-bus-width = <2>; /* 2 SPI Rx lines */
-> +		spi-tx-bus-width = <1>; /* 1 SPI Tx line */
-> +
-> +		partition@0 {
-> +			reg = <0x000000 0x010000>;
-> +			label = "rcw";
-> +			read-only;
-> +		};
-> +
-> +		partition@10000 {
-> +			reg = <0x010000 0x0f0000>;
-> +			label = "failsafe bootloader";
-> +			read-only;
-> +		};
-> +
-> +		partition@100000 {
-> +			reg = <0x100000 0x040000>;
-> +			label = "failsafe DP firmware";
-> +			read-only;
-> +		};
-> +
-> +		partition@140000 {
-> +			reg = <0x140000 0x0a0000>;
-> +			label = "failsafe trusted firmware";
-> +			read-only;
-> +		};
-> +
-> +		partition@1e0000 {
-> +			reg = <0x1e0000 0x020000>;
-> +			label = "reserved";
-> +			read-only;
-> +		};
-> +
-> +		partition@200000 {
-> +			reg = <0x200000 0x010000>;
-> +			label = "configuration store";
-> +		};
-> +
-> +		partition@210000 {
-> +			reg = <0x210000 0x0f0000>;
-> +			label = "bootloader";
-> +		};
-> +
-> +		partition@300000 {
-> +			reg = <0x300000 0x040000>;
-> +			label = "DP firmware";
-> +		};
-> +
-> +		partition@340000 {
-> +			reg = <0x340000 0x0a0000>;
-> +			label = "trusted firmware";
-> +		};
-> +
-> +		partition@3e0000 {
-> +			reg = <0x3e0000 0x020000>;
-> +			label = "bootloader environment";
-> +		};
-> +	};
-> +};
-> +
-> +&i2c0 {
-> +	status = "okay";
-> +
-> +	rtc@32 {
-> +		compatible = "microcrystal,rv8803";
-> +		reg = <0x32>;
-> +	};
-> +
-> +	eeprom@50 {
-> +		compatible = "atmel,24c32";
-> +		reg = <0x50>;
-> +		pagesize = <32>;
-> +	};
-> +};
-> +
-> +&i2c3 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c4 {
-> +	status = "okay";
-> +};
-> -- 
-> 2.20.1
-> 
+-- 
+2.17.1
+
