@@ -2,116 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 932D5116A70
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:01:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B92116ACD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:20:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfLIKBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 05:01:54 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38568 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbfLIKBy (ORCPT
+        id S1727398AbfLIKUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 05:20:07 -0500
+Received: from authsmtp31.register.it ([81.88.54.72]:44115 "EHLO
+        authsmtp.register.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726279AbfLIKUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 05:01:54 -0500
-Received: by mail-oi1-f196.google.com with SMTP id b8so5795351oiy.5;
-        Mon, 09 Dec 2019 02:01:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+FtaHC/0W+/eC6v7DNQkqqYp4JgH05lJ8TyIqrizDhU=;
-        b=NXhB4U1v2RcMbAr52Bglnu2G25EYrw/SUnwq0SjKtTGfl5r1fbl8H6mXKCSPHyM4ke
-         rg9zfs+5WzN0t2e5g2YIKDQud8cCv8LrHvGyEIyMYDopW5j0V1x9oDkeqg6mD41EtQKJ
-         /EUBPzNYeLxUfmKvqQsBFVhRkXn3GkvphX8FOSg0Wb59J+8fi4+Htv1qk0ct/WEdwNX1
-         F5a9W6igHgRm01O0psme+kv+0+Q+AXGqGv7N0UubqcjnvBFfH+W6GJZNgStxVem/Td3A
-         DFXqJSMtYd7D4e2vX7qNmvAN7LdvwLXduV3W5v0Dt+lgeRdEPEWIuzcze+vHQ2WOVBYX
-         yuAQ==
-X-Gm-Message-State: APjAAAXdtJTkRnW2CSV/z46k4JBqrSV+smQJUxp6AaGcDM/qGGuWLzbk
-        cZovQuGcxpkVoCl5wk/Cl4Is2AJjwpWDXSUt8nY=
-X-Google-Smtp-Source: APXvYqx/zqoTfacR4nFj7pWLFpqF9WOA4QsBoywpKgDTlpakrgxkJT6WBi296tGo6aqd8joGAParb+DeUWEQTCDS0lk=
-X-Received: by 2002:a05:6808:b38:: with SMTP id t24mr18479690oij.110.1575885713344;
- Mon, 09 Dec 2019 02:01:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20191202070348.32148-1-tao3.xu@intel.com>
-In-Reply-To: <20191202070348.32148-1-tao3.xu@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 9 Dec 2019 11:01:42 +0100
-Message-ID: <CAJZ5v0hqjR5EdrxcdkLUpxseFiizqNjtA3nYdDtZiSt85JiywQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI/HMAT: Fix the parsing of Cache Associativity and
- Write Policy
-To:     Tao Xu <tao3.xu@intel.com>
-Cc:     Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Mon, 9 Dec 2019 05:20:04 -0500
+X-Greylist: delayed 642 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Dec 2019 05:20:03 EST
+Received: from [192.168.1.1] ([93.41.32.9])
+        by cmsmtp with ESMTPSA
+        id eFwHidjUzRIgteFwHisCIW; Mon, 09 Dec 2019 11:06:50 +0100
+X-Rid:  guido@trentalancia.com@93.41.32.9
+Message-ID: <1575886009.5344.17.camel@trentalancia.com>
+Subject: [PATCH v2] scsi: ignore Synchronize Cache command failures to keep
+ using drives not supporting it
+From:   Guido Trentalancia <guido@trentalancia.com>
+To:     linux-scsi@vger.kernel.org
+Cc:     drew@colorado.edu, linux-kernel@vger.kernel.org
+Date:   Mon, 09 Dec 2019 11:06:49 +0100
+X-Priority: 1
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfPdHbJXj2Dh+hR6D3iWJA9SqLmvvYMfvd3NxBZs+adXa33U2fMEX+s0reVw7wu4hMRTjURDbaqwlk2lPOVMoDp3r2fkAGMWPjLJP96Qc69vQqkRSqK7K
+ qv4Mw84x504BjqSE9xGtFnnGnRE4pI1z5v4rPvOSHwCbp51H2NKhaDDg6J45EQr117CaGujz+RUae0astppuV8zcBPNHQ9g5TDOKvNYN1fTKpiCWa6jmki0S
+ RtZ90dDh5beeCFjGwsukRMUQ2QI2aIBv7ZLjeaRf5FU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 8:03 AM Tao Xu <tao3.xu@intel.com> wrote:
->
-> In chapter 5.2.27.5, Table 5-147: Field "Cache Attributes" of
-> ACPI 6.3 spec: 0 is "None", 1 is "Direct Mapped", 2 is "Complex Cache
-> Indexing" for Cache Associativity; 0 is "None", 1 is "Write Back",
-> 2 is "Write Through" for Write Policy.
+Many obsolete hard drives do not support the Synchronize Cache SCSI
+command. Such command is generally issued during fsync() calls which
+at the moment therefore fail with the ILLEGAL_REQUEST sense key.
 
-Well, I'm not sure what the connection between the above statement,
-which is correct AFAICS, and the changes made by the patch is.
+Since this failure is currently treated as critical in the kernel SCSI
+disk driver, such obsolete hard drives cannot be used anymore (at least
+since kernel 4.10, maybe even earlier): they cannot be formatted,
+mounted and/or checked using tools such as e2fsprogs.
 
-Is that the *_OTHER symbol names are confusing or something deeper?
+Because there is nothing which can be done if the drive does not support
+such command, such ILLEGAL_REQUEST should be treated as non-critical so
+that the underlying operation does not fail and the obsolete hard drive
+can be used normally.
 
-> Signed-off-by: Tao Xu <tao3.xu@intel.com>
-> ---
->  drivers/acpi/numa/hmat.c | 4 ++--
->  include/linux/node.h     | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-> index 2c32cfb72370..719d0279563d 100644
-> --- a/drivers/acpi/numa/hmat.c
-> +++ b/drivers/acpi/numa/hmat.c
-> @@ -383,7 +383,7 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
->                 break;
->         case ACPI_HMAT_CA_NONE:
->         default:
-> -               tcache->cache_attrs.indexing = NODE_CACHE_OTHER;
-> +               tcache->cache_attrs.indexing = NODE_CACHE_NONE;
->                 break;
->         }
->
-> @@ -396,7 +396,7 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
->                 break;
->         case ACPI_HMAT_CP_NONE:
->         default:
-> -               tcache->cache_attrs.write_policy = NODE_CACHE_WRITE_OTHER;
-> +               tcache->cache_attrs.write_policy = NODE_CACHE_WRITE_NONE;
->                 break;
->         }
->         list_add_tail(&tcache->node, &target->caches);
-> diff --git a/include/linux/node.h b/include/linux/node.h
-> index 4866f32a02d8..6dbd764d09ce 100644
-> --- a/include/linux/node.h
-> +++ b/include/linux/node.h
-> @@ -36,15 +36,15 @@ struct node_hmem_attrs {
->  };
->
->  enum cache_indexing {
-> +       NODE_CACHE_NONE,
->         NODE_CACHE_DIRECT_MAP,
->         NODE_CACHE_INDEXED,
-> -       NODE_CACHE_OTHER,
->  };
->
->  enum cache_write_policy {
-> +       NODE_CACHE_WRITE_NONE,
->         NODE_CACHE_WRITE_BACK,
->         NODE_CACHE_WRITE_THROUGH,
-> -       NODE_CACHE_WRITE_OTHER,
->  };
->
->  /**
+This second version of the patch (v2) disables the Write Cache feature
+as a precaution on hard drives which do not support the Synchronize Cache
+command and therefore the cache flushing functionality.
+
+Although the Write Cache is disabled (v2) when using such hard drives
+which do not feature the Synchronize Cache SCSI command, there is still
+some risk of data loss in case of power cuts, USB cable disconnects and
+so on, which depend on the drive itself and not on this patch or the
+rest of the kernel code: YOU HAVE BEEN WARNED - THE DRIVE MANIFACTURER
+SHOULD HAVE BEEN WARNED YOU IN THE FIRST PLACE - IN DOUBT, UPGRADE TO A
+NEWER HARD DRIVE !!
+
+Tested on a Maxtor OneTouch USB 200Gb External Hard Drive.
+
+Signed-off-by: Guido Trentalancia <guido@trentalancia.com>
+---
+ drivers/scsi/sd.c |   29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff -pru a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+--- a/drivers/scsi/sd.c	2019-03-17 18:22:04.822720851 +0100
++++ b/drivers/scsi/sd.c	2019-03-20 17:41:44.526957307 +0100
+@@ -22,6 +22,10 @@
+  *	 - Badari Pulavarty <pbadari@us.ibm.com>, Matthew Wilcox 
+  *	   <willy@debian.org>, Kurt Garloff <garloff@suse.de>: 
+  *	   Support 32k/1M disks.
++ *	 - Guido Trentalancia <guido@trentalancia.com> ignore Synchronize
++ *	   Cache command failures on hard-drives that do not support it
++ *	   and disable the Write Cache functionality on such devices as a
++ *	   precaution: this allows to keep using several obsolete drives.
+  *
+  *	Logging policy (needs CONFIG_SCSI_LOGGING defined):
+  *	 - setting up transfer: SCSI_LOG_HLQUEUE levels 1 and 2
+@@ -1633,6 +1637,20 @@ static int sd_sync_cache(struct scsi_dis
+ 	}
+ 
+ 	if (res) {
++		/*
++		 * sshdr.sense_key == ILLEGAL_REQUEST means this drive
++		 * doesn't support sync. There's not much to do and
++		 * sync shouldn't fail.
++		 */
++		if (sshdr->sense_key == ILLEGAL_REQUEST && sshdr->asc == 0x20) {
++			if (sdkp->WCE) {
++				sdkp->WCE = 0;
++				sd_printk(KERN_NOTICE, sdkp, "Drive does not support Synchronize Cache(10) command: disabling write cache.\n");
++				sd_set_flush_flag(sdkp);
++			}
++			return 0;
++		}
++
+ 		sd_print_result(sdkp, "Synchronize Cache(10) failed", res);
+ 
+ 		if (driver_byte(res) == DRIVER_SENSE)
+@@ -2022,6 +2040,17 @@ static int sd_done(struct scsi_cmnd *SCp
+ 					req->rq_flags |= RQF_QUIET;
+ 				}
+ 				break;
++			case SYNCHRONIZE_CACHE:
++				if (sshdr.asc == 0x20) {
++					if (sdkp->WCE) {
++						sdkp->WCE = 0;
++						sd_printk(KERN_NOTICE, sdkp, "Drive does not support Synchronize Cache(10) command: disabling write cache.\n");
++						sd_set_flush_flag(sdkp);
++					}
++					SCpnt->result = 0;
++					good_bytes = scsi_bufflen(SCpnt);
++				}
++				break;
+ 			}
+ 		}
+ 		break;
