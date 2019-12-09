@@ -2,130 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B7A41172AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:23:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 100A01172BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:30:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbfLIRXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 12:23:50 -0500
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:63542 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfLIRXu (ORCPT
+        id S1726598AbfLIRaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 12:30:25 -0500
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:56797 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726230AbfLIRaZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 12:23:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1575912229; x=1607448229;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=/o/DIuVt0siT0/xDHQSqGb+p+hsUxtlaap2ta8gFs3c=;
-  b=ZtJwfcJ6q9uQaK7W3CuLy9rooxW6Lj2cG5JwBehMS74EoCelKy14v8cV
-   WCrrclUrTOjHX+WCeydmnEcdZaSlxMyWaXL8RybjQpgeunI3BTnJZV8M+
-   gBy6WzOGI8zJhJhTpKkB4/8LVcc7qX5t0LfAosTg5ndmQrUJ5ivpwb1PP
-   g=;
-IronPort-SDR: hUDG+2m+V51DMKrCpX/G/TdEZw/vlZOyeUKcewJhYdAI+7Eurg8b2SUBXrdD1VZAEKboO9MI7O
- f64BC+pBLA6w==
-X-IronPort-AV: E=Sophos;i="5.69,296,1571702400"; 
-   d="scan'208";a="7775052"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2c-168cbb73.us-west-2.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 09 Dec 2019 17:23:43 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2c-168cbb73.us-west-2.amazon.com (Postfix) with ESMTPS id 67D19A1DB8;
-        Mon,  9 Dec 2019 17:23:41 +0000 (UTC)
-Received: from EX13D32EUC002.ant.amazon.com (10.43.164.94) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 9 Dec 2019 17:23:40 +0000
-Received: from EX13D32EUC003.ant.amazon.com (10.43.164.24) by
- EX13D32EUC002.ant.amazon.com (10.43.164.94) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 9 Dec 2019 17:23:40 +0000
-Received: from EX13D32EUC003.ant.amazon.com ([10.43.164.24]) by
- EX13D32EUC003.ant.amazon.com ([10.43.164.24]) with mapi id 15.00.1367.000;
- Mon, 9 Dec 2019 17:23:39 +0000
-From:   "Durrant, Paul" <pdurrant@amazon.com>
-To:     =?iso-8859-1?Q?Roger_Pau_Monn=E9?= <roger.pau@citrix.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "Juergen Gross" <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
-Subject: RE: [Xen-devel] [PATCH 2/4] xenbus: limit when state is forced to
- closed
-Thread-Topic: [Xen-devel] [PATCH 2/4] xenbus: limit when state is forced to
- closed
-Thread-Index: AQHVq3SCoU35oX1INEGjFwMD1PQM5aexs7UAgAAEsBCAAAg3gIAAAevggAAghQCAAAFgMIAACyOAgAAHopCAABsYgIAAAH5A
-Date:   Mon, 9 Dec 2019 17:23:39 +0000
-Message-ID: <5851d5c9424d4df088af96b24dca1906@EX13D32EUC003.ant.amazon.com>
-References: <20191205140123.3817-1-pdurrant@amazon.com>
- <20191205140123.3817-3-pdurrant@amazon.com>
- <20191209113926.GS980@Air-de-Roger>
- <19b5c2fa36b842e58bbdddd602c4e672@EX13D32EUC003.ant.amazon.com>
- <20191209122537.GV980@Air-de-Roger>
- <54e3cd3a42d8418d9a36388315deab13@EX13D32EUC003.ant.amazon.com>
- <20191209142852.GW980@Air-de-Roger>
- <e026926b9aea4ffe868d41828c1f4721@EX13D32EUC003.ant.amazon.com>
- <20191209151339.GZ980@Air-de-Roger>
- <b9271df6222a4fba86ec54c81b09eace@EX13D32EUC003.ant.amazon.com>
- <20191209171757.GC980@Air-de-Roger>
-In-Reply-To: <20191209171757.GC980@Air-de-Roger>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.164.211]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 9 Dec 2019 12:30:25 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id B973FD77;
+        Mon,  9 Dec 2019 12:30:23 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 09 Dec 2019 12:30:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=warpmail.net; h=
+        from:to:cc:subject:references:date:in-reply-to:message-id
+        :mime-version:content-type; s=fm2; bh=VxSk0kTeowdly7fXn1T+bkV6s+
+        34rC3j1VX5t2hOPBs=; b=rChYbxSkkwzz6Dd7x8jQ9HDYu7oC81Q3AyaZvNsoqY
+        +K8t92AYKsQgcNOZfkp5fnmZemuVkpOWmooRrwBcfqkXqnuQzGkeJfOMrCPGfMjO
+        2SWLJrFTgOVxBATZvHNbZqiRH0LGHZpCqz+FkEF/AgmNXmB5TNOS4gnJRCOVG6bD
+        WLKA/f93fUtsqzG4Ar/thTF0CJh633vOXGucRMKVHc1ifF1ia4B1eAUdMa+cjmwO
+        Dyzdhq+5OU+UzflEHx7CNoVVhdC0cbVDHBnMwaWEH4Lt9fd0bxwl1MMOd/hu3XgN
+        KaebUjuRw7WXEPPk19shMY1ZtciMUPmJwuRJbA3zeesQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=VxSk0k
+        Teowdly7fXn1T+bkV6s+34rC3j1VX5t2hOPBs=; b=pKxWTsqn1PQxuxfI6p3qCj
+        KQ3+AWwaViFnLNaUG7oLEE4QbHaLcoN4rlGxGKMkLHkmie/6DSXSmAXnwa9xk54N
+        J9W4nKa80XSZYz/MSKwbFLHr0fVyQNu7FirT5BkdM9lONWQt8hE9E8biCzIFeAvo
+        DQHWoi81wAq8hYwfLiBwXKf17b876UrTy0cygNx3UPsfU1qsZGHMq7u68BdrNNLj
+        zv21dpCVAKSxFJ4YazApzq8czVxpUoVzWIctZOnyL/CcQL/0WrQVUBCY14lmFeSr
+        TCJQPWVKNiI6KPqJIJl6PuUSHZyaPG0bxV0L0qsifmMerNAz89kKdSXOD+wVyj4A
+        ==
+X-ME-Sender: <xms:roTuXc1Kf3vMPA9kv5zf9d3AY17FQ4CuuJgxKHgWz6o0gBVBZnu1_g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudeltddguddtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufhffjgfkfgggtgesghdtreertdertdenucfhrhhomhepphhhihhl
+    ihhpseifrghrphhmrghilhdrnhgvthculdfrhhhilhhiphcumfdrmdenucfkphepjeelrd
+    dvudelrdduleefrdelieenucfrrghrrghmpehmrghilhhfrhhomhepphhhihhlihhpseif
+    rghrphhmrghilhdrnhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:roTuXSxACSGWVpHtjnBkVgVR6zFSXwvDUZuQ5-1QEUoWwfsshH4htA>
+    <xmx:roTuXRXcnOHOBb03UHnagPVvWByN6WDenjuahG5avS_lcY8CbYThaQ>
+    <xmx:roTuXe9q_nLuiWtpP90WwxZzy4vIyhitLh0Zj0xzyoF4qqOuGOfnvw>
+    <xmx:r4TuXR4MvW8YLVtS5O-6JbOy6aIXm_aLHbZP9d0Xi6llatl1lcdsaQ>
+Received: from localhost (p4fdbc160.dip0.t-ipconnect.de [79.219.193.96])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 012F930600E0;
+        Mon,  9 Dec 2019 12:30:21 -0500 (EST)
+From:   philip@warpmail.net (Philip K.)
+To:     Denis Efremov <efremov@linux.com>
+Cc:     moritzm.mueller@posteo.de, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@i4.cs.fau.de
+Subject: Re: [PATCH] floppy: hide invalid floppy disk types
+References: <20191208194534.32270-1-moritzm.mueller@posteo.de>
+        <d3f0613c-6c3a-8efc-1c27-a6b75c34972f@gmail.com> <87h82ajzqd.fsf@bulbul>
+        <04f0dfb9-d25a-d9a3-74cd-538165a8bfa2@linux.com>
+Date:   Mon, 09 Dec 2019 18:30:18 +0100
+In-Reply-To: <04f0dfb9-d25a-d9a3-74cd-538165a8bfa2@linux.com> (Denis Efremov's
+        message of "Mon, 9 Dec 2019 20:04:32 +0300")
+Message-ID: <878snle79x.fsf@bulbul>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Roger Pau Monn=E9 <roger.pau@citrix.com>
-> Sent: 09 December 2019 17:18
-> To: Durrant, Paul <pdurrant@amazon.com>
-> Cc: linux-kernel@vger.kernel.org; xen-devel@lists.xenproject.org; Juergen
-> Gross <jgross@suse.com>; Stefano Stabellini <sstabellini@kernel.org>;
-> Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Subject: Re: [Xen-devel] [PATCH 2/4] xenbus: limit when state is forced t=
-o
-> closed
->=20
-> On Mon, Dec 09, 2019 at 04:26:15PM +0000, Durrant, Paul wrote:
-> > > > If you want unbind to actually do a proper unplug then that's extra
-> work
-> > > and not really something I want to tackle (and re-bind would still
-> need to
-> > > be toolstack initiated as something would have to re-create the
-> xenstore
-> > > area).
-> > >
-> > > Why do you say the xenstore area would need to be recreated?
-> > >
-> > > Setting state to closed shouldn't cause any cleanup of the xenstore
-> > > area, as that should already happen for example when using pvgrub
-> > > since in that case grub itself disconnects and already causes a
-> > > transition to closed and a re-attachment afterwards by the guest
-> > > kernel.
-> > >
-> >
-> > For some reason, when I originally tested, the xenstore area
-> disappeared. I checked again and it did not this time. I just ended up
-> with a frontend stuck in state 5 (because it is the system disk and won't
-> go offline) trying to talk to a non-existent backend. Upon re-bind the
-> backend goes into state 5 (because it sees the 5 in the frontend) and
-> leaves the guest wedged.
->=20
-> Likely blkfront should go back to init state, but anyway, that's not
-> something that needs fixing as part of this series.
->=20
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Ok, cool.
 
-I am wondering though whether we ought to suppress bind/unbind for drivers =
-that don't whitelist themselves (through the new xenbus_driver flag that I'=
-ll add). It's somewhat misleading that the nodes are there but don't necess=
-arily work.
+> Hmm, I would say that driver blacklisting is a more proper solution in
+> this case. I doubt there are people with this issue and real floppy drives
+> in their setup. Altering the default driver's initialization scheme seems
+> superfluous to me.
 
-  Paul
+As long as major distributions like Ubuntu ship the floppy module, there
+are enough people who could be affected by this peculiar behaviour.
+While I agree that blacklisting the module would be more elegant, I
+still think that a patch that goes in this direction could help more
+people, especially those who don't want or cannot solve kernel-related
+issues.
 
+> This will force users (if there are ones) who depends on this behavior
+> to rebuild the kernel. blacklisting doesn't require kernel rebuild.
+
+Are there floppy disks of unknown types? Our patch is intentionally
+conservative: We won't hide false negatives. If the motherboard reports
+an non-existent disk
+
+If you're ready to think about it, we could consider extending the patch
+to un-register the device if it can recognise that it's (probably) not
+real. In our case, for example, fdisk reported that fd0 had a size of
+4k, something think is a strong indicator that something's not right.
+
+Alternatively, we could look into what the comment
+
+	/* FIXME: additional physical CMOS drive detection should go here */
+
+would imply. This particular bug can only affect fd0 and fd1, so if we
+spent some more time, we could find something.
+
+=2D-=20
+	With kind regards,
+	Philip K.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEXEVvqaSeWykH0GvsTLppj2Aa7OEFAl3uhKoACgkQTLppj2Aa
+7OF9pAgAqWP2tVIcoQy/Ulcz7yj53sm5Owk+EhQWE3AvheRX6y0GKgoISKw3PDHG
+D+EluFH2strIYikcsEkWzvEGNnafcvHhfT+qNVwg5uj5aN2MfaMHHBzkHsgYYV1n
+AIYU62vaY2Wvrh2QxGEojUNL8YHBHWLihVxmUPVzztP8KJ7MnPhYhJDi9jZwPZzM
+bsZzavZL/E8YS4FprpXJ2bLMMHgdn/uG2M0VXQ4ZWowtqKv4Md5wwILpukA0JdpD
+C8UzNE49oFIGb/WHGLj/fZCM002in9hcsTOBVM5Cl20KbHGUU0M2+S1R3gu0cLR0
+spfepi0i9PEPa6b/KB8mmltBvuCQ/A==
+=bMz4
+-----END PGP SIGNATURE-----
+--=-=-=--
