@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD71117510
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:00:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5B1C117512
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:00:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbfLITAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 14:00:03 -0500
-Received: from foss.arm.com ([217.140.110.172]:42572 "EHLO foss.arm.com"
+        id S1726974AbfLITAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 14:00:06 -0500
+Received: from foss.arm.com ([217.140.110.172]:42588 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726365AbfLITAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 14:00:02 -0500
+        id S1726354AbfLITAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 14:00:04 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A89B013FD;
-        Mon,  9 Dec 2019 11:00:01 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 36BCA328;
+        Mon,  9 Dec 2019 11:00:04 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 268113F6CF;
-        Mon,  9 Dec 2019 11:00:01 -0800 (PST)
-Date:   Mon, 09 Dec 2019 18:59:59 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8BC53F6CF;
+        Mon,  9 Dec 2019 11:00:03 -0800 (PST)
+Date:   Mon, 09 Dec 2019 19:00:02 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Benjamin Gaignard <benjamin.gaignard@st.com>
 Cc:     alexandre.torgue@st.com, broonie@kernel.org,
@@ -27,9 +27,9 @@ Cc:     alexandre.torgue@st.com, broonie@kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         Mark Brown <broonie@kernel.org>, mark.rutland@arm.com,
         robh+dt@kernel.org
-Subject: Applied "dt-bindings: regulator: Convert stm32 vrefbuf bindings to json-schema" to the regulator tree
-In-Reply-To: <20191122104536.20283-2-benjamin.gaignard@st.com>
-Message-Id: <applied-20191122104536.20283-2-benjamin.gaignard@st.com>
+Subject: Applied "dt-bindings: regulator: Convert stm32 booster bindings to json-schema" to the regulator tree
+In-Reply-To: <20191122104536.20283-1-benjamin.gaignard@st.com>
+Message-Id: <applied-20191122104536.20283-1-benjamin.gaignard@st.com>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -38,7 +38,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   dt-bindings: regulator: Convert stm32 vrefbuf bindings to json-schema
+   dt-bindings: regulator: Convert stm32 booster bindings to json-schema
 
 has been applied to the regulator tree at
 
@@ -63,110 +63,102 @@ to this mail.
 Thanks,
 Mark
 
-From 21b2c47161449c44e5a70eab646260aaeceb331c Mon Sep 17 00:00:00 2001
+From 681700c38f3e989a3da940d0120b0268c25c54d8 Mon Sep 17 00:00:00 2001
 From: Benjamin Gaignard <benjamin.gaignard@st.com>
-Date: Fri, 22 Nov 2019 11:45:36 +0100
-Subject: [PATCH] dt-bindings: regulator: Convert stm32 vrefbuf bindings to
+Date: Fri, 22 Nov 2019 11:45:35 +0100
+Subject: [PATCH] dt-bindings: regulator: Convert stm32 booster bindings to
  json-schema
 
-Convert the STM32 regulator vrefbuf binding to DT schema format using json-schema
+Convert the STM32 regulator booster binding to DT schema format using json-schema
 
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 CC: Fabrice Gasnier <fabrice.gasnier@st.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
-Link: https://lore.kernel.org/r/20191122104536.20283-2-benjamin.gaignard@st.com
+Link: https://lore.kernel.org/r/20191122104536.20283-1-benjamin.gaignard@st.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../bindings/regulator/st,stm32-vrefbuf.txt   | 20 -------
- .../bindings/regulator/st,stm32-vrefbuf.yaml  | 52 +++++++++++++++++++
- 2 files changed, 52 insertions(+), 20 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/regulator/st,stm32-vrefbuf.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/st,stm32-vrefbuf.yaml
+ .../bindings/regulator/st,stm32-booster.txt   | 18 --------
+ .../bindings/regulator/st,stm32-booster.yaml  | 46 +++++++++++++++++++
+ 2 files changed, 46 insertions(+), 18 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/regulator/st,stm32-booster.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/st,stm32-booster.yaml
 
-diff --git a/Documentation/devicetree/bindings/regulator/st,stm32-vrefbuf.txt b/Documentation/devicetree/bindings/regulator/st,stm32-vrefbuf.txt
+diff --git a/Documentation/devicetree/bindings/regulator/st,stm32-booster.txt b/Documentation/devicetree/bindings/regulator/st,stm32-booster.txt
 deleted file mode 100644
-index 5ddb8500a929..000000000000
---- a/Documentation/devicetree/bindings/regulator/st,stm32-vrefbuf.txt
+index 479ad4c8758e..000000000000
+--- a/Documentation/devicetree/bindings/regulator/st,stm32-booster.txt
 +++ /dev/null
-@@ -1,20 +0,0 @@
--STM32 VREFBUF - Voltage reference buffer
+@@ -1,18 +0,0 @@
+-STM32 BOOSTER - Booster for ADC analog input switches
 -
--Some STM32 devices embed a voltage reference buffer which can be used as
--voltage reference for ADCs, DACs and also as voltage reference for external
--components through the dedicated VREF+ pin.
+-Some STM32 devices embed a 3.3V booster supplied by Vdda, that can be used
+-to supply ADC analog input switches.
 -
 -Required properties:
--- compatible:		Must be "st,stm32-vrefbuf".
--- reg:			Offset and length of VREFBUF register set.
--- clocks:		Must contain an entry for peripheral clock.
+-- compatible: Should be one of:
+-  "st,stm32h7-booster"
+-  "st,stm32mp1-booster"
+-- st,syscfg: Phandle to system configuration controller.
+-- vdda-supply: Phandle to the vdda input analog voltage.
 -
 -Example:
--	vrefbuf: regulator@58003c00 {
--		compatible = "st,stm32-vrefbuf";
--		reg = <0x58003C00 0x8>;
--		clocks = <&rcc VREF_CK>;
--		regulator-min-microvolt = <1500000>;
--		regulator-max-microvolt = <2500000>;
+-	booster: regulator-booster {
+-		compatible = "st,stm32mp1-booster";
+-		st,syscfg = <&syscfg>;
 -		vdda-supply = <&vdda>;
 -	};
-diff --git a/Documentation/devicetree/bindings/regulator/st,stm32-vrefbuf.yaml b/Documentation/devicetree/bindings/regulator/st,stm32-vrefbuf.yaml
+diff --git a/Documentation/devicetree/bindings/regulator/st,stm32-booster.yaml b/Documentation/devicetree/bindings/regulator/st,stm32-booster.yaml
 new file mode 100644
-index 000000000000..33cdaeb25aee
+index 000000000000..64f1183ce841
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/st,stm32-vrefbuf.yaml
-@@ -0,0 +1,52 @@
++++ b/Documentation/devicetree/bindings/regulator/st,stm32-booster.yaml
+@@ -0,0 +1,46 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/regulator/st,stm32-vrefbuf.yaml#
++$id: http://devicetree.org/schemas/regulator/st,stm32-booster.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: STMicroelectronics STM32 Voltage reference buffer bindings
-+
-+description: |
-+  Some STM32 devices embed a voltage reference buffer which can be used as
-+  voltage reference for ADCs, DACs and also as voltage reference for external
-+  components through the dedicated VREF+ pin.
++title: STMicroelectronics STM32 booster for ADC analog input switches bindings
 +
 +maintainers:
 +  - Fabrice Gasnier <fabrice.gasnier@st.com>
++
++description: |
++  Some STM32 devices embed a 3.3V booster supplied by Vdda, that can be used
++  to supply ADC analog input switches.
 +
 +allOf:
 +  - $ref: "regulator.yaml#"
 +
 +properties:
 +  compatible:
-+    const: st,stm32-vrefbuf
++    enum:
++      - st,stm32h7-booster
++      - st,stm32mp1-booster
 +
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
++  st,syscfg:
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    description: phandle to system configuration controller.
 +
 +  vdda-supply:
 +    description: phandle to the vdda input analog voltage.
 +
 +required:
 +  - compatible
-+  - reg
-+  - clocks
++  - st,syscfg
 +  - vdda-supply
 +
 +examples:
 +  - |
-+    #include <dt-bindings/clock/stm32mp1-clks.h>
-+    vrefbuf@50025000 {
-+      compatible = "st,stm32-vrefbuf";
-+      reg = <0x50025000 0x8>;
-+      regulator-min-microvolt = <1500000>;
-+      regulator-max-microvolt = <2500000>;
-+      clocks = <&rcc VREF>;
++    regulator-booster {
++      compatible = "st,stm32mp1-booster";
++      st,syscfg = <&syscfg>;
 +      vdda-supply = <&vdda>;
 +    };
 +
 +...
-+
 -- 
 2.20.1
 
