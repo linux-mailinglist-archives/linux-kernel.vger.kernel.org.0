@@ -2,106 +2,497 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B662F117138
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 17:14:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C28F611714A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 17:15:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfLIQOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 11:14:21 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:46796 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbfLIQOU (ORCPT
+        id S1726956AbfLIQPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 11:15:13 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:35739 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfLIQPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 11:14:20 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB9GALHN047053;
-        Mon, 9 Dec 2019 16:13:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=DDBb3Lws0Bln7Q3yPsjcV6BrBWhAmpQz0iFXZoZdVaE=;
- b=giGlsQnrCGDqDgomc4UoquZSV7PRsD2k7cQm2RfMgqNza20kUYpjCUHilFp0DkiKE5fb
- QOr6dPrfdHR2ilzpjtJxaqs1CU0KfDs3l53gRkg0rytjH1rQqGnnI28q4v4E7S799y/r
- 4PwFmhkSRXehyzRjvFsAHVNY5IO0my80aOWjRPaEFUZDpYr2l7Xf6F71R3V+aOhXrNWA
- tN87Czw3clxzuxnoipdMDJOHfpgh4eThRyThiq7InI6TfeASDL6Q6iVlT9m/mKf7EMw8
- usL47NtHCR2+P7E3mp/qI67Fz5pUEbL/7RYQJocZqx31YCG+lOpcHWXVe7oQhyxx6YRt Tg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2wrw4mwd1h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 09 Dec 2019 16:13:49 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB9GALFE107601;
-        Mon, 9 Dec 2019 16:13:49 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2wrp7nkv16-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 09 Dec 2019 16:13:49 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xB9GDjD5015770;
-        Mon, 9 Dec 2019 16:13:45 GMT
-Received: from tomti.i.net-space.pl (/10.175.212.194)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Dec 2019 08:13:45 -0800
-Date:   Mon, 9 Dec 2019 17:13:40 +0100
-From:   Daniel Kiper <daniel.kiper@oracle.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] Documentation: x86: fix boot.rst warning and format
-Message-ID: <20191209161340.kdsikc2hvbhmpi6k@tomti.i.net-space.pl>
-References: <c6fbf592-0aca-69d9-e903-e869221a041a@infradead.org>
+        Mon, 9 Dec 2019 11:15:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1575908113; x=1607444113;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=mGD0mBi681bA6Sg3jSrGbZhToqu3CaL2eEZ8Y6uJ660=;
+  b=ZxKjirGT9w8uH9BaMeJeKGPh69mPdKn/BrYbzI2RBa+qqFDOuC99S6vl
+   AIsiiQO4w5Zm0m/New7p2U3xt29k6EoK8pHfi0yvc4QuZfhFULybAuone
+   fbOFibIKkU6b86oYdmZdrAkLzFJufi7pFWGjpSrzvdhbOV5cgJpSzYY/L
+   w=;
+IronPort-SDR: Jfwf2iVW8g5rlKM1XjXB5mBKz7CJPNXFn0e6nJNVowrU+cZKOYRvEdUqJtSAFV9yFXbAycPUQi
+ gvSk7G5b6lkQ==
+X-IronPort-AV: E=Sophos;i="5.69,296,1571702400"; 
+   d="scan'208";a="7698703"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 09 Dec 2019 16:15:11 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com (Postfix) with ESMTPS id E743FA2116;
+        Mon,  9 Dec 2019 16:15:09 +0000 (UTC)
+Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 16:15:09 +0000
+Received: from ua9e4f3715fbc5f.ant.amazon.com (10.43.162.249) by
+ EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Dec 2019 16:14:58 +0000
+From:   Hanna Hawa <hhhawa@amazon.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <tsahee@annapurnalabs.com>, <antoine.tenart@bootlin.com>,
+        <hhhawa@amazon.com>, <mchehab+samsung@kernel.org>,
+        <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+        <Jonathan.Cameron@huawei.com>, <tglx@linutronix.de>,
+        <khilman@baylibre.com>, <chanho.min@lge.com>, <heiko@sntech.de>,
+        <nm@ti.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <dwmw@amazon.co.uk>,
+        <benh@amazon.com>, <ronenk@amazon.com>, <talel@amazon.com>,
+        <jonnyc@amazon.com>, <hanochu@amazon.com>, <barakw@amazon.com>
+Subject: [PATCH v2 6/6] arm64: dts: amazon: add Amazon's Annapurna Labs Alpine v3 support
+Date:   Mon, 9 Dec 2019 16:13:41 +0000
+Message-ID: <20191209161341.29607-7-hhhawa@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191209161341.29607-1-hhhawa@amazon.com>
+References: <20191209161341.29607-1-hhhawa@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6fbf592-0aca-69d9-e903-e869221a041a@infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9465 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=988
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912090139
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9465 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912090139
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.249]
+X-ClientProxiedBy: EX13D14UWB003.ant.amazon.com (10.43.161.162) To
+ EX13D19EUB003.ant.amazon.com (10.43.166.69)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 08, 2019 at 08:25:10PM -0800, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Fix a Sphinx documentation format warning by breaking a long line
-> into 2 lines.
->
-> Also drop the ':' usage after the Protocol version numbers since
-> other Protocol versions don't use colons.
->
-> Documentation/x86/boot.rst:72: WARNING: Malformed table.
-> Text in column margin in table line 57.
->
-> Fixes: 2c33c27fd603 ("x86/boot: Introduce kernel_info")
-> Fixes: 00cd1c154d56 ("x86/boot: Introduce kernel_info.setup_type_max")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: linux-doc@vger.kernel.org
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: Daniel Kiper <daniel.kiper@oracle.com>
+From: Ronen Krupnik <ronenk@amazon.com>
 
-Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+This patch adds the initial support for the Amazon's Annapurna Labs
+Alpine v3 Soc and Evaluation Platform (EVP).
 
-What can I do next time to avoid mistakes like that? I suppose that
-I can run something to get this warning but I do not know what exactly
-it should be.
+Signed-off-by: Ronen Krupnik <ronenk@amazon.com>
+---
+ arch/arm64/boot/dts/amazon/Makefile          |   1 +
+ arch/arm64/boot/dts/amazon/alpine-v3-evp.dts |  23 ++
+ arch/arm64/boot/dts/amazon/alpine-v3.dtsi    | 371 +++++++++++++++++++
+ 3 files changed, 395 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amazon/alpine-v3-evp.dts
+ create mode 100644 arch/arm64/boot/dts/amazon/alpine-v3.dtsi
 
-Daniel
+diff --git a/arch/arm64/boot/dts/amazon/Makefile b/arch/arm64/boot/dts/amazon/Makefile
+index d79822dc30cd..ba9e11544905 100644
+--- a/arch/arm64/boot/dts/amazon/Makefile
++++ b/arch/arm64/boot/dts/amazon/Makefile
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ dtb-$(CONFIG_ARCH_ALPINE)	+= alpine-v2-evp.dtb
++dtb-$(CONFIG_ARCH_ALPINE)	+= alpine-v3-evp.dtb
+diff --git a/arch/arm64/boot/dts/amazon/alpine-v3-evp.dts b/arch/arm64/boot/dts/amazon/alpine-v3-evp.dts
+new file mode 100644
+index 000000000000..8c1e11cf5855
+--- /dev/null
++++ b/arch/arm64/boot/dts/amazon/alpine-v3-evp.dts
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
++ */
++
++#include "alpine-v3.dtsi"
++
++/ {
++	model = "Amazon's Annapurna Labs Alpine v3 Evaluation Platform (EVP)";
++	compatible = "amazon,al-alpine-v3-evp", "amazon,al-alpine-v3";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/amazon/alpine-v3.dtsi b/arch/arm64/boot/dts/amazon/alpine-v3.dtsi
+new file mode 100644
+index 000000000000..4945087f59e6
+--- /dev/null
++++ b/arch/arm64/boot/dts/amazon/alpine-v3.dtsi
+@@ -0,0 +1,371 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2019, Amazon.com, Inc. or its affiliates. All Rights Reserved
++ */
++
++/dts-v1/;
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	model = "Amazon's Annapurna Labs Alpine v3";
++	compatible = "amazon,al-alpine-v3";
++
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x0>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster0_l2>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x1>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster0_l2>;
++		};
++
++		cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x2>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster0_l2>;
++		};
++
++		cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x3>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster0_l2>;
++		};
++
++		cpu@100 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x100>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster1_l2>;
++		};
++
++		cpu@101 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x101>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster1_l2>;
++		};
++
++		cpu@102 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x102>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster1_l2>;
++		};
++
++		cpu@103 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x103>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster1_l2>;
++		};
++
++		cpu@200 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x200>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster2_l2>;
++		};
++
++		cpu@201 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x201>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster2_l2>;
++		};
++
++		cpu@202 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x202>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster2_l2>;
++		};
++
++		cpu@203 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x203>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster2_l2>;
++		};
++
++		cpu@300 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x300>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster3_l2>;
++		};
++
++		cpu@301 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x301>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster3_l2>;
++		};
++
++		cpu@302 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x302>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster3_l2>;
++		};
++
++		cpu@303 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x303>;
++			enable-method = "psci";
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>;
++			i-cache-size = <0xc000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&cluster3_l2>;
++		};
++
++		cluster0_l2: cache@0 {
++			compatible = "cache";
++			cache-size = <0x200000>;
++			cache-line-size = <64>;
++			cache-sets = <2048>;
++			cache-level = <2>;
++		};
++
++		cluster1_l2: cache@100 {
++			compatible = "cache";
++			cache-size = <0x200000>;
++			cache-line-size = <64>;
++			cache-sets = <2048>;
++			cache-level = <2>;
++		};
++
++		cluster2_l2: cache@200 {
++			compatible = "cache";
++			cache-size = <0x200000>;
++			cache-line-size = <64>;
++			cache-sets = <2048>;
++			cache-level = <2>;
++		};
++
++		cluster3_l2: cache@300 {
++			compatible = "cache";
++			cache-size = <0x200000>;
++			cache-line-size = <64>;
++			cache-sets = <2048>;
++			cache-level = <2>;
++		};
++
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		secmon@0 {
++			reg = <0x0 0x0 0x0 0x100000>;
++			no-map;
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++
++		interrupt-parent = <&gic>;
++		ranges;
++
++		arch-timer {
++			compatible = "arm,armv8-timer";
++			interrupts = <GIC_PPI 0xd IRQ_TYPE_LEVEL_LOW>,
++				     <GIC_PPI 0xe IRQ_TYPE_LEVEL_LOW>,
++				     <GIC_PPI 0xb IRQ_TYPE_LEVEL_LOW>,
++				     <GIC_PPI 0xa IRQ_TYPE_LEVEL_LOW>;
++		};
++
++		gic: interrupt-controller@f0000000 {
++			compatible = "arm,gic-v3";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x0 0xf0800000 0 0x10000>,
++			      <0x0 0xf0a00000 0 0x200000>,
++			      <0x0 0xf0000000 0 0x2000>,
++			      <0x0 0xf0010000 0 0x1000>,
++			      <0x0 0xf0020000 0 0x2000>;
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		msix: msix@fbe00000 {
++			compatible = "al,alpine-msix";
++			reg = <0x0 0xfbe00000 0x0 0x100000>;
++			interrupt-controller;
++			msi-controller;
++			al,msi-base-spi = <160>;
++			al,msi-num-spis = <800>;
++			interrupt-parent = <&gic>;
++		};
++
++		pmu {
++			compatible = "arm,cortex-a72-pmu";
++			interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		uart0: serial@fd883000 {
++			compatible = "ns16550a";
++			device_type = "serial";
++			reg = <0x0 0xfd883000 0x0 0x1000>;
++			clock-frequency = <0>;
++			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++		};
++
++		pci@fbd00000 {
++			compatible = "pci-host-ecam-generic";
++			device_type = "pci";
++			#size-cells = <2>;
++			#address-cells = <3>;
++			#interrupt-cells = <1>;
++			reg = <0x0 0xfbd00000 0x0 0x100000>;
++			interrupt-map-mask = <0xf800 0 0 7>;
++			/* 8 x legacy interrupts for SATA only */
++			interrupt-map = <0x4000 0 0 1 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
++					<0x4800 0 0 1 &gic 0 58 IRQ_TYPE_LEVEL_HIGH>,
++					<0x5000 0 0 1 &gic 0 59 IRQ_TYPE_LEVEL_HIGH>,
++					<0x5800 0 0 1 &gic 0 60 IRQ_TYPE_LEVEL_HIGH>,
++					<0x6000 0 0 1 &gic 0 61 IRQ_TYPE_LEVEL_HIGH>,
++					<0x6800 0 0 1 &gic 0 62 IRQ_TYPE_LEVEL_HIGH>,
++					<0x7000 0 0 1 &gic 0 63 IRQ_TYPE_LEVEL_HIGH>,
++					<0x7800 0 0 1 &gic 0 64 IRQ_TYPE_LEVEL_HIGH>;
++			ranges = <0x02000000 0x0 0xfe000000 0x0 0xfe000000 0x0 0x1000000>;
++			bus-range = <0x00 0x00>;
++			msi-parent = <&msix>;
++		};
++	};
++};
+-- 
+2.17.1
+
