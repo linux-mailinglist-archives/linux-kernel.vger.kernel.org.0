@@ -2,85 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A14A117769
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 21:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55EB9117773
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 21:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfLIUbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 15:31:23 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40822 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbfLIUbW (ORCPT
+        id S1726843AbfLIUcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 15:32:11 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63454 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726787AbfLIUcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 15:31:22 -0500
-Received: by mail-lj1-f195.google.com with SMTP id s22so17193106ljs.7
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 12:31:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RtSnkh/bQ3nRcwbPWyDEoC5sS6sTfNQ61n5WXag4RSg=;
-        b=TQXKisb/u+nCZaUFIHZbt6vrBToHvsyyouYG83bL9aHsrrjtRvdZJwM/ghFdOcNL0l
-         7PwEsI2aN6kU6bd43IEAstkXa6YHlDXIOgcVERCOMQHucxZJOQ9BK7Fsx2wuivc2+4VI
-         pYS+1LsVVnCQXPWL+2Y77ddGR7l38DTZ2RwKIFM9qvspawn4aM+iNu57Ek/PcDFJQ3Eb
-         itaCwV988R+Rnfy/GmZbzGIelc409+ljtTRAXZXdKrMuauXcKavAsJC/j6Lkr+MlexwH
-         XOFXIlLPFh+hANyweaeumsdP/KP5yvaPutyihrpesAZJJx8D5KVix6iJSHodZCcXXw40
-         NbyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RtSnkh/bQ3nRcwbPWyDEoC5sS6sTfNQ61n5WXag4RSg=;
-        b=tXNeBZ489OnfZ9ZCuf4jhbJ89hdICUQQDzLt8um25kN5utuunHvPsRCvBFz+5CSsew
-         +jNTW4hKrycrsbneZDft/rHBS04/T0f4a7oBSbql5e6p4Yp5N7GuWbQTXN/VZpxtF3Ea
-         fmf4EtzrhSui8OLQCP/qTkx4Q0OFjdgj5FZz689ZaVxTBtXhkhv5innBjNblTVo4tSzp
-         DL8aXqyBwtDML4omQjKlooyke+vawNWcAHUBArDW5hJzpgmSBnV6LwC1M2W3JMQ63WmY
-         +aLKdZiJyjGkD9KRQcEoZW12hpDc1OLlv5ycKmZ4sSsAf4J6JAmYjZxXAmc/WsUsw8Ag
-         Wk/Q==
-X-Gm-Message-State: APjAAAXFTM5csPwPBFsu7r/n98kKWSkR1clr1EltSbk+7Mwk98ssGXpK
-        2byl2BNEyp384eZve/CgrskRmnWk/XFDuUBDUpDQ
-X-Google-Smtp-Source: APXvYqwNuaM3T1RoYDtFsytt5qY7kCFzvkm2V35m9l8RLEbT2lVNz1KT7NTjE2alakRLWdNQcQZBGT6GCrkypO1NLyE=
-X-Received: by 2002:a2e:9d9a:: with SMTP id c26mr686698ljj.225.1575923480292;
- Mon, 09 Dec 2019 12:31:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20191201183347.18122-1-frextrite@gmail.com> <20191202211915.GF17234@google.com>
- <CAHC9VhTTS43aKQojtoBRRipP7TwhaVnK7DAqpFN0J0_FNLY+sw@mail.gmail.com> <20191202233458.GN17234@google.com>
-In-Reply-To: <20191202233458.GN17234@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 9 Dec 2019 15:31:09 -0500
-Message-ID: <CAHC9VhSLM=MBXEXiwG+in1+WrTvVpSJxm+eYH51xRfMkoCafBA@mail.gmail.com>
-Subject: Re: [PATCH v3] kernel: audit.c: Add __rcu annotation to RCU pointer
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Amol Grover <frextrite@gmail.com>, Eric Paris <eparis@redhat.com>,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Shuah Khan <skhan@linuxfoundation.org>, paulmck@kernel.org,
-        rcu@vger.kernel.org, rostedt@kernel.org
+        Mon, 9 Dec 2019 15:32:10 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB9KMkoV092333;
+        Mon, 9 Dec 2019 15:31:56 -0500
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wrt59sytm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 09 Dec 2019 15:31:56 -0500
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xB9KVcoR031171;
+        Mon, 9 Dec 2019 20:31:55 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma05wdc.us.ibm.com with ESMTP id 2wr3q65nwh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 09 Dec 2019 20:31:55 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB9KVtJ642861030
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 9 Dec 2019 20:31:55 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 29667B206B;
+        Mon,  9 Dec 2019 20:31:55 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C37FCB205F;
+        Mon,  9 Dec 2019 20:31:53 +0000 (GMT)
+Received: from jarvis.ext.hansenpartnership.com (unknown [9.85.200.101])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Dec 2019 20:31:53 +0000 (GMT)
+Message-ID: <1575923513.31378.22.camel@linux.ibm.com>
+Subject: Re: One question about trusted key of keyring in Linux kernel.
+From:   James Bottomley <jejb@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "Zhao, Shirley" <shirley.zhao@intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "'Mauro Carvalho Chehab'" <mchehab+samsung@kernel.org>,
+        "Zhu, Bing" <bing.zhu@intel.com>,
+        "Chen, Luhai" <luhai.chen@intel.com>
+Date:   Mon, 09 Dec 2019 12:31:53 -0800
+In-Reply-To: <20191209194715.GD19243@linux.intel.com>
+References: <A888B25CD99C1141B7C254171A953E8E49096521@shsmsx102.ccr.corp.intel.com>
+         <1575057916.6220.7.camel@linux.ibm.com>
+         <A888B25CD99C1141B7C254171A953E8E4909BA3B@shsmsx102.ccr.corp.intel.com>
+         <1575260220.4080.17.camel@linux.ibm.com>
+         <A888B25CD99C1141B7C254171A953E8E4909D360@shsmsx102.ccr.corp.intel.com>
+         <1575267453.4080.26.camel@linux.ibm.com>
+         <A888B25CD99C1141B7C254171A953E8E4909E381@shsmsx102.ccr.corp.intel.com>
+         <1575269075.4080.31.camel@linux.ibm.com>
+         <A888B25CD99C1141B7C254171A953E8E4909E399@shsmsx102.ccr.corp.intel.com>
+         <1575312932.24227.13.camel@linux.ibm.com>
+         <20191209194715.GD19243@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-09_04:2019-12-09,2019-12-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 mlxlogscore=987 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912090160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 6:35 PM Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Mon, Dec 02, 2019 at 06:24:29PM -0500, Paul Moore wrote:
-> > On Mon, Dec 2, 2019 at 4:19 PM Joel Fernandes <joel@joelfernandes.org> wrote:
-> > > Good idea to CC the following on RCU patches:
-> > > Paul McKenney
-> > > Steven Rostedt
-> > > (Any others on the RCU maintainers list).
-> > > And, the list: rcu@vger.kernel.org
-> > >
-> > > Could anyone Ack the patch? Looks safe and straight forward.
-> >
-> > FWIW, this looks reasonable to me, but I don't see this as a critical
-> > fix that needs to go in during the merge window.  Unless I see any
-> > objections, I'll plan on merging this into audit/next once the merge
-> > window closes.
->
-> Sounds good, thanks!
+On Mon, 2019-12-09 at 21:47 +0200, Jarkko Sakkinen wrote:
+> On Mon, Dec 02, 2019 at 10:55:32AM -0800, James Bottomley wrote:
+> > blob but it looks like we need to fix the API.  I suppose the good
+> > news is given this failure that we have the opportunity to rewrite
+> > the API since no-one else can have used it for anything because of
+> > this.  The
+> 
+> I did successfully run this test when I wrote it 5 years ago:
+> 
+> https://github.com/jsakkine-intel/tpm2-scripts/blob/master/keyctl-smo
+> ke.sh
+> 
+> Given that there is API a way must be found that backwards
+> compatibility
+> is not broken. New format is fine but it must co-exist.
 
-FYI, it's in audit/next now.  Thanks again.
+The old API is unsupportable in the combination of policy + auth as I
+already explained.  The kernel doesn't have access to the nonces to
+generate the HMAC because the session was created by the user and the
+API has no way to pass them in (plus passing them in would be a huge
+security failure if we tried).  Given that Shirley appears to be the
+first person ever to try this, I don't think the old API has grown any
+policy users so its safe to remove it.  If we get a complaint, we can
+discuss adding it back.
 
--- 
-paul moore
-www.paul-moore.com
+James
+
