@@ -2,108 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C17D1116A87
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:07:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A91BD116AA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 11:13:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbfLIKHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 05:07:21 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53648 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbfLIKHU (ORCPT
+        id S1727188AbfLIKNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 05:13:35 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:47908 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfLIKNe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 05:07:20 -0500
-Received: by mail-wm1-f65.google.com with SMTP id n9so14261028wmd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 02:07:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZK01xO2VHFn+IEu/N2yJTe1AAJ2Ih5XXg9yHN17A9sE=;
-        b=D7601d8weQa7Gu1WIKVejDlYat4+gEkYQnsEI/LYzxwxZq4g0yCOC1dKdKqnCAGRic
-         T97zYBzJmwxGJNIhxV8W+S8NbZmI8z/rakAODWQEmkMLc6Sx1ZJgqdmozeUj5IIxp9JX
-         dXpAFS95j9Hv8kA92KP9p77scWxmA+yGQwbbPPUI9y894fs0zPo7XMuYaPbikgmbtClx
-         xwxkjnGoOVpW79gsYQzY3nRD41cJlk1oufp2Ltk2Set4/Mqj2o/Pevk2GjxDvYwp7RAQ
-         gkvHIGiGn6T22rwrSe3qQ3+Gsg92L7vAWIEPYwKSU86wKHoz66ktpPNxbfYKD3DpoTJK
-         IQmQ==
-X-Gm-Message-State: APjAAAXMtlW0aiJsVNcDBhwhtE/P/fFhwHGoJBflKQ6IYsPFPkcVosht
-        qLx+DAzpgN3MmJS7v/v2x7T/QIdM
-X-Google-Smtp-Source: APXvYqxFkqWC+BhtSyCb9+jQbv4vLo/72RGm6Rz/bOhvzh38nITpvs1G+YEkejn2rSWpaKrxrmyPNg==
-X-Received: by 2002:a7b:c38c:: with SMTP id s12mr23890833wmj.96.1575886039073;
-        Mon, 09 Dec 2019 02:07:19 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id n12sm13092152wmd.1.2019.12.09.02.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 02:07:18 -0800 (PST)
-Date:   Mon, 9 Dec 2019 11:07:17 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgross@suse.com,
-        william.kucharski@oracle.com, mingo@kernel.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH] mm/hotplug: Only respect mem= parameter during boot stage
-Message-ID: <20191209100717.GC6156@dhcp22.suse.cz>
-References: <20191206150524.14687-1-bhe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191206150524.14687-1-bhe@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 9 Dec 2019 05:13:34 -0500
+Received: from ramsan ([84.195.182.253])
+        by xavier.telenet-ops.be with bizsmtp
+        id bmDU2100k5USYZQ01mDU7x; Mon, 09 Dec 2019 11:13:32 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ieG2i-0003mS-Kz; Mon, 09 Dec 2019 11:13:28 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ieG2i-0006vI-J1; Mon, 09 Dec 2019 11:13:28 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: defconfig: Restore debugfs support
+Date:   Mon,  9 Dec 2019 11:13:27 +0100
+Message-Id: <20191209101327.26571-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 06-12-19 23:05:24, Baoquan He wrote:
-> In commit 357b4da50a62 ("x86: respect memory size limiting via mem=
-> parameter") a global varialbe global max_mem_size is added to store
-> the value which is parsed from 'mem= '. This truly stops those
-> DIMM from being added into system memory during boot.
-> 
-> However, it also limits the later memory hotplug functionality. Any
-> memory board can't be hot added any more if its region is beyond the
-> max_mem_size. System will print error like below:
-> 
-> [  216.387164] acpi PNP0C80:02: add_memory failed
-> [  216.389301] acpi PNP0C80:02: acpi_memory_enable_device() error
-> [  216.392187] acpi PNP0C80:02: Enumeration failure
-> 
-> >From document of 'mem =' parameter, it should be a restriction during
-> boot, but not impact the system memory adding/removing after booting.
-> 
->   mem=nn[KMG]     [KNL,BOOT] Force usage of a specific amount of memory
-> 
-> So fix it by also checking if it's during SYSTEM_BOOTING stage when
-> restrict memory adding. Otherwise, skip the restriction.
+Since commit 0e4a459f56c32d3e ("tracing: Remove unnecessary DEBUG_FS
+dependency"), CONFIG_DEBUG_FS is no longer auto-enabled.  This breaks
+booting Debian 9, as systemd needs debugfs:
 
-Could you be more specific about why the boot vs. later hotplug makes
-any difference? The documentation is explicit about the boot time but
-considering this seems to be like that since ever I strongly suspect
-that this is just an omission.
+    [FAILED] Failed to mount /sys/kernel/debug.
+    See 'systemctl status sys-kernel-debug.mount' for details.
+    [DEPEND] Dependency failed for Local File Systems.
+    ...
+    You are in emergGive root password for maintenance
+    (or press Control-D to continue):
 
-Btw. how have you tested the situation fixed by 357b4da50a62?
+Fix this by enabling CONFIG_DEBUG_FS explicitly.
 
-> Fixes: 357b4da50a62 ("x86: respect memory size limiting via mem= parameter")
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  mm/memory_hotplug.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 55ac23ef11c1..5466a0a00901 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -105,7 +105,7 @@ static struct resource *register_memory_resource(u64 start, u64 size)
->  	unsigned long flags =  IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
->  	char *resource_name = "System RAM";
->  
-> -	if (start + size > max_mem_size)
-> +	if (start + size > max_mem_size && system_state == SYSTEM_BOOTING)
->  		return ERR_PTR(-E2BIG);
->  
->  	/*
-> -- 
-> 2.17.2
+See also commit 18977008f44c66bd ("ARM: multi_v7_defconfig: Restore
+debugfs support").
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued as a fix for v5.5.
+---
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 7f0985e023313b57..64fa849f8bbe0617 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -215,4 +215,5 @@ CONFIG_DMA_CMA=y
+ CONFIG_CMA_SIZE_MBYTES=64
+ CONFIG_PRINTK_TIME=y
+ # CONFIG_ENABLE_MUST_CHECK is not set
++CONFIG_DEBUG_FS=y
+ CONFIG_DEBUG_KERNEL=y
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
