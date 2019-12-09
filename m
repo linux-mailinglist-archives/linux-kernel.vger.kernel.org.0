@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54ECC1175E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:33:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1DFD1175EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 20:33:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbfLITdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 14:33:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42792 "EHLO mail.kernel.org"
+        id S1726888AbfLITdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 14:33:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbfLITdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 14:33:12 -0500
+        id S1726491AbfLITdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 14:33:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDCAF20637;
-        Mon,  9 Dec 2019 19:33:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA56F20637;
+        Mon,  9 Dec 2019 19:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575919992;
-        bh=0W8gGVJjYDtZQlvmewb1/dTzwlrjf/HjG4bOkj24umM=;
+        s=default; t=1575920000;
+        bh=YKamD1F92dm0sW2KmlWTQVpyZ6P3uL46uhIRYxBO4JQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ootnHT+Bxq0JYJhMp8lJR53Phx2cn1oCTphpYtSn7RMAqlYdGiFmLHD9cogDM2tOD
-         usoe7KJEfLcwICsKHvIJ+hyiyx76PvbhIK9aorbi6uGic9OPOfatuD1xWTCFrINdj3
-         hBpnInoSbsmeWI/gvT70tSAxloEGH6dNOfuNG3EU=
+        b=KQ4vH9G6TqCqWfQjKVb/NAuG5qCVL6Bapj0+FHozitNRdUUYjOfCPqI9kCeN+WX4G
+         KoQeaiqV/tY7Q4lLeDMBSPMI+X03cM8JxEYECRgssna2X6Go5j/sTxhnpK42zN+3un
+         cWquTaCRBWb7NIE/ZT086fUZwg41XH2G/Nkj1OR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH 1/6] drivers/base: base.h: add proper copyright and header info
-Date:   Mon,  9 Dec 2019 20:32:58 +0100
-Message-Id: <20191209193303.1694546-2-gregkh@linuxfoundation.org>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: [PATCH 2/6] device.h: move devtmpfs prototypes out of the file
+Date:   Mon,  9 Dec 2019 20:32:59 +0100
+Message-Id: <20191209193303.1694546-3-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191209193303.1694546-1-gregkh@linuxfoundation.org>
 References: <20191209193303.1694546-1-gregkh@linuxfoundation.org>
@@ -40,35 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-base.h didn't have any copyright information in it, so update it with
-the correct information.
+The devtmpfs functions do not need to be in device.h as only the driver
+core uses them, so move them to the private .h file for the driver core.
 
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/base.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/base/base.h    | 8 ++++++++
+ include/linux/device.h | 4 ----
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 0d32544b6f91..80598b312940 100644
+index 80598b312940..40fb069a8a7e 100644
 --- a/drivers/base/base.h
 +++ b/drivers/base/base.h
-@@ -1,4 +1,15 @@
- /* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2001-2003 Patrick Mochel <mochel@osdl.org>
-+ * Copyright (c) 2004-2009 Greg Kroah-Hartman <gregkh@suse.de>
-+ * Copyright (c) 2008-2012 Novell Inc.
-+ * Copyright (c) 2012-2019 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-+ * Copyright (c) 2012-2019 Linux Foundation
-+ *
-+ * Core driver model functions and structures that should not be
-+ * shared outside of the drivers/base/ directory.
-+ *
-+ */
- #include <linux/notifier.h>
+@@ -186,3 +186,11 @@ extern void device_links_unbind_consumers(struct device *dev);
  
- /**
+ /* device pm support */
+ void device_pm_move_to_tail(struct device *dev);
++
++#ifdef CONFIG_DEVTMPFS
++int devtmpfs_create_node(struct device *dev);
++int devtmpfs_delete_node(struct device *dev);
++#else
++static inline int devtmpfs_create_node(struct device *dev) { return 0; }
++static inline int devtmpfs_delete_node(struct device *dev) { return 0; }
++#endif
+diff --git a/include/linux/device.h b/include/linux/device.h
+index e226030c1df3..3daec3af1753 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -1664,12 +1664,8 @@ extern void put_device(struct device *dev);
+ extern bool kill_device(struct device *dev);
+ 
+ #ifdef CONFIG_DEVTMPFS
+-extern int devtmpfs_create_node(struct device *dev);
+-extern int devtmpfs_delete_node(struct device *dev);
+ extern int devtmpfs_mount(const char *mntdir);
+ #else
+-static inline int devtmpfs_create_node(struct device *dev) { return 0; }
+-static inline int devtmpfs_delete_node(struct device *dev) { return 0; }
+ static inline int devtmpfs_mount(const char *mountpoint) { return 0; }
+ #endif
+ 
 -- 
 2.24.0
 
