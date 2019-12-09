@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F8EB117325
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:50:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 305E6117328
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2019 18:51:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbfLIRuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 12:50:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46882 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726379AbfLIRuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 12:50:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 312BEB15B;
-        Mon,  9 Dec 2019 17:50:03 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 0F44DDA82A; Mon,  9 Dec 2019 18:49:56 +0100 (CET)
-Date:   Mon, 9 Dec 2019 18:49:55 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     David Sterba <dsterba@suse.com>
-Cc:     torvalds@linux-foundation.org, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Btrfs kconfig update for 5.5-rc2
-Message-ID: <20191209174955.GO2734@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, David Sterba <dsterba@suse.com>,
-        torvalds@linux-foundation.org, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1575911345.git.dsterba@suse.com>
+        id S1726769AbfLIRvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 12:51:24 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:42836 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726265AbfLIRvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 12:51:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ms/F2s3/R6/K6xLFMgTAAHNf26wBJJq851sLoWDyaHM=; b=QPhX/g5vzvc1EQQR+ElUulM8CO
+        FQ5cp0+vJTpkVCwhpZxYH/fpmFvYseVfS37Ux9Yw4Ve0l/QbXlr9Nri9O6Im84c/1y21fBliMB2cC
+        67MfEbqnAKFKRkazihaobdHVRE9bpS28H7xPMBIp7nYjxCTXdP/C3iLcNLm7BXAr38Go=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ieNBn-0006wI-N6; Mon, 09 Dec 2019 18:51:19 +0100
+Date:   Mon, 9 Dec 2019 18:51:19 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Fabio Estevam <festevam@gmail.com>, netdev@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1] ARM i.MX6q: make sure PHY fixup for KSZ9031 is
+ applied only on one board
+Message-ID: <20191209175119.GK9099@lunn.ch>
+References: <20191209084430.11107-1-o.rempel@pengutronix.de>
+ <20191209171508.GD9099@lunn.ch>
+ <20191209173952.qnkzfrbixjgi2jfy@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1575911345.git.dsterba@suse.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20191209173952.qnkzfrbixjgi2jfy@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 06:31:12PM +0100, David Sterba wrote:
-> Hi,
-> 
-> this is a separate pull request based on 5.5-rc1 that adds config
-> dependency integrating the crypto code and btrfs support for blake2b
-> (added in this dev cycle, via different trees). Without it the option
-> has to be selected manually. Please pull, thanks.
-> 
-> The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
-> 
->   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.5-rc1-kconfig
+> Yes. all of them are broken.
+> I just trying to not wake all wasp at one time. Most probably there are
+> board working by accident. So, it will be good to have at least separate
+> patches for each fixup.
 
-There's also the signed tag that I forgot to update in the mail:
+I agree about a patch per fixup. Can you try to generate such patches?
+See if there is enough history in git to determine which boards
+actually need these fixups?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.5-rc1-kconfig-tag
+Thanks
+	Andrew
