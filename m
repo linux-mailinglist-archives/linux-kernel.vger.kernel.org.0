@@ -2,107 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8831199F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CABA11975B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:33:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbfLJVr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:47:57 -0500
-Received: from mail-bn8nam12on2094.outbound.protection.outlook.com ([40.107.237.94]:32864
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727378AbfLJVJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:09:07 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c07pa3Pu5hc5TOpSC5Ad2VeR0iNkLBEB2meOZA7jMmb8rmOEdY62gG6t75W4xxzSfeWstKvl4kNQtot8cDvp1j/iodv7IUjCewqtDT3hNnem/rbt+bEsWTt1QiPeOOzP0SbddNdpYyDA5GLTI+v3X6Bjp97p6a4SM45Wn7XzeAnHZvQ/G2CWXRWZ5/bbW/ffBSv8bIvGJDFCHtpk+vwo3H9F9/6ct8XZRLEbPCONA/x70nF2dzQ98nOzGd9JGPTF1ge1ybuXKFhdfAYssQsZq8KjCOMG52C/08rFfVIti+5pD1Yg6HxpTwo19d1+O3Wz6XF7KEEStGU2AM3MKQT7sw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BjXRkNr4pVTiZLb/Kp08Prk/koBOlTWeVZqYYYYgmWo=;
- b=gEehUZmpOz40G11rM1VQID7eHK6i9doJ6IV9Ra0doj3l6vU+YjsIgdi/3yyJM7Htfyr5QNqepsQT3CihFnv8HruXyGPHXOQMWZDVgP9SJz8rNxGIxkPvyjRzPIc2f5/MvKfVaO56qrK0b9hceRUqUlRc1A9XI+AqrT1h2qmn8Oy59OyK565eOtNEIiDKccPB7x5LOInEq45/GTaPdLXzTkVdYtTfr3KsyE5YnKdtORSnnf859vk6bQMm7dzxIZg6rT7dBi7Z3iXcOOAAwsO1/Va+0FkoLaK2dofCxR6K/9DuNnTbjdCQQn8wtqFwr7HXI+HJSo1rWv9qZ+kv0EYR3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BjXRkNr4pVTiZLb/Kp08Prk/koBOlTWeVZqYYYYgmWo=;
- b=P+ftj8ZtshGe3qXNGLvXWHQOTAj2j+9V81VySAbSDD1ycmtciK6OW3EEj3WK/VFPxbncr60xHDwKcoz4a+9KPFLQq0iQM4nrK6JTs8C3SlbISNx/S/rUWgMlg5nbM0mZJMwmSNQL05ng4xnC/5W81X04CL3tSsfFHd6vzLAD7Vg=
-Received: from CY4PR21MB0632.namprd21.prod.outlook.com (10.175.115.22) by
- CY4PR21MB0839.namprd21.prod.outlook.com (10.173.192.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2559.7; Tue, 10 Dec 2019 21:08:52 +0000
-Received: from CY4PR21MB0632.namprd21.prod.outlook.com
- ([fe80::283c:9f7f:6def:3c25]) by CY4PR21MB0632.namprd21.prod.outlook.com
- ([fe80::283c:9f7f:6def:3c25%12]) with mapi id 15.20.2516.018; Tue, 10 Dec
- 2019 21:08:51 +0000
-From:   Steve MacLean <Steve.MacLean@microsoft.com>
-To:     Steve MacLean <Steve.MacLean@microsoft.com>,
-        Jiri Olsa <jolsa@redhat.com>
-CC:     Steve MacLean <steve.maclean@linux.microsoft.com>,
-        Stephane Eranian <eranian@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3] perf inject --jit: Remove //anon mmap events
-Thread-Topic: [PATCH v3] perf inject --jit: Remove //anon mmap events
-Thread-Index: AQHVkCoSdDKHEwaGv0G9a4q1EVvH9qd1/B4AgAnxV+CABfnPgIAApblAgC2ObtA=
-Date:   Tue, 10 Dec 2019 21:08:51 +0000
-Message-ID: <CY4PR21MB06325A6C1C9D9F3B5665B32CF75B0@CY4PR21MB0632.namprd21.prod.outlook.com>
-References: <1572553836-32361-1-git-send-email-steve.maclean@linux.microsoft.com>
- <20191101082740.GB2172@krava>
- <CY4PR21MB063262D81AB2BE5FEE88057EF77A0@CY4PR21MB0632.namprd21.prod.outlook.com>
- <20191111113311.GA9791@krava>
- <CY4PR21MB0632B5EE447DA9B931CB114DF7740@CY4PR21MB0632.namprd21.prod.outlook.com>
-In-Reply-To: <CY4PR21MB0632B5EE447DA9B931CB114DF7740@CY4PR21MB0632.namprd21.prod.outlook.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=stmaclea@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-11-11T21:35:54.8355878Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=803678eb-e808-48dd-8a22-5ef03782f866;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Steve.MacLean@microsoft.com; 
-x-originating-ip: [24.163.126.65]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 79903d42-8b13-4aaa-c62e-08d77db52893
-x-ms-traffictypediagnostic: CY4PR21MB0839:|CY4PR21MB0839:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CY4PR21MB083977AFF51A09BDC3C5FF22F75B0@CY4PR21MB0839.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2958;
-x-forefront-prvs: 02475B2A01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(366004)(376002)(346002)(39860400002)(199004)(189003)(81156014)(66946007)(558084003)(66476007)(8936002)(64756008)(66446008)(10290500003)(55016002)(66556008)(19618925003)(71200400001)(76116006)(8990500004)(81166006)(8676002)(4270600006)(52536014)(33656002)(5660300002)(9686003)(2906002)(110136005)(26005)(186003)(316002)(54906003)(7696005)(6506007)(86362001)(478600001)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0839;H:CY4PR21MB0632.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NmZESDkoAJOWzF8Ze8fgIuGE8P29dJqG3PAuBAJRJMMTf0X1q7S5hL31bOPO3uQH7xeeF4Lsm+b4gN84Xxue0HTWAmtLlnA438XdouGp7RJGg+A50nP2YOEio0mlmRj3g///m/NrQbO5uPV2TLoHCYuktFW7PFunLTh/H2idmdfO+b+6/5U/sgkMLlKbI5ksMf/DLMbuzkoEgureFNvjybih/9ynoiJjorfkSSV4kfsR9KNbiKdY43Z37RI7XHn7Z/VogFP73VmFEFacJmYFhCnqd9ey8XKi86XBi38WtCm5wip2zvlwC9o1EWdPVjXy1kXcXZT6mJcNGhYMIq9dYccP8ig2bBSCaVYd+W7/3ShCWxhlXHn/rrb3T0mz8+2faFIR+clBPeFvWOt8IQBvzo5uqPcS5Cvkoz7fhAVH5F7WFwyYq4Kbwl/c7cmaSnIr
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1728501AbfLJVc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:32:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35914 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728342AbfLJVcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:32:24 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E50B520836;
+        Tue, 10 Dec 2019 21:32:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576013544;
+        bh=8eUQp3KG8X6DLnHabSfqihP05oJI+/W0yUSHlUMBdwA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bD7r+vW8S659UdOra1Jq1pV331LFqhBgjhY/feBvR9rQu1DWLWdLNy32xRYQilo/b
+         ugvbsWMuZNKtXrg6BTRxfodujXXOwhv0iFOdl/DqRyXPxpWGoX1JK83iuZPQmJ/Tx8
+         G02uNG/SJ2BP+WfzoeOd8IFOr+ifDjZfrKVjrkco=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sean Paul <seanpaul@chromium.org>, Lyude Paul <lyude@redhat.com>,
+        Todd Previte <tprevite@gmail.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 001/177] drm: mst: Fix query_payload ack reply struct
+Date:   Tue, 10 Dec 2019 16:29:25 -0500
+Message-Id: <20191210213221.11921-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79903d42-8b13-4aaa-c62e-08d77db52893
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2019 21:08:51.8530
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OfA7ANNU+sp/gGdruuhh8jzjI5pnSpLc/M5hMponIgHVOKXETrTp+6rhmU3EVWnMd1jGO+NbYsK693cPYneONA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0839
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anything I can do to help get this reviewed?
+From: Sean Paul <seanpaul@chromium.org>
+
+[ Upstream commit 268de6530aa18fe5773062367fd119f0045f6e88 ]
+
+Spec says[1] Allocated_PBN is 16 bits
+
+[1]- DisplayPort 1.2 Spec, Section 2.11.9.8, Table 2-98
+
+Fixes: ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Todd Previte <tprevite@gmail.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190829165223.129662-1-sean@poorly.run
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/drm/drm_dp_mst_helper.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+index 7f78d26a07669..0f7439f0bb2f7 100644
+--- a/include/drm/drm_dp_mst_helper.h
++++ b/include/drm/drm_dp_mst_helper.h
+@@ -313,7 +313,7 @@ struct drm_dp_resource_status_notify {
+ 
+ struct drm_dp_query_payload_ack_reply {
+ 	u8 port_number;
+-	u8 allocated_pbn;
++	u16 allocated_pbn;
+ };
+ 
+ struct drm_dp_sideband_msg_req_body {
+-- 
+2.20.1
+
