@@ -2,77 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46336119A87
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:03:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE93119B1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:11:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfLJWCl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:02:41 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:46138 "EHLO vps0.lunn.ch"
+        id S1729464AbfLJWFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:05:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbfLJWCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:02:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=oNrhFWA1lMqgOP0XHTa3xdZ+GV9N7jCyBqMVj23yRHs=; b=xZWRhz+CFM5NfZoAhdE/Gf5Ate
-        jwkCAm8gpKDWE3b5P9ajfLkTLdVB6mq5zla3yoyBXTl7B6q88/vbXgqargSm/6APZB/TKAoXevZv4
-        oTGN3doiai+QIEhx1FqEk3Fa7u7QZwAndwta5kY3sotOnTY49pV6t4NxXfpKEYe8xkuI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1ienaR-0007qA-JO; Tue, 10 Dec 2019 23:02:31 +0100
-Date:   Tue, 10 Dec 2019 23:02:31 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Marek Behun <marek.behun@nic.cz>
-Cc:     Landen Chao <landen.chao@mediatek.com>, f.fainelli@gmail.com,
-        vivien.didelot@savoirfairelinux.com, matthias.bgg@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        davem@davemloft.net, sean.wang@mediatek.com, opensource@vdorst.com,
-        frank-w@public-files.de
-Subject: Re: [PATCH net-next 4/6] net: dsa: mt7530: Add the support of MT7531
- switch
-Message-ID: <20191210220231.GA30053@lunn.ch>
-References: <cover.1575914275.git.landen.chao@mediatek.com>
- <6d608dd024edc90b09ba4fe35417b693847f973c.1575914275.git.landen.chao@mediatek.com>
- <20191210163557.GC27714@lunn.ch>
- <20191210213351.2df6acbf@nic.cz>
+        id S1727307AbfLJWFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:05:00 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C49F5214D8;
+        Tue, 10 Dec 2019 22:04:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576015500;
+        bh=L20tOjEVEAi70ooVFlzfIgyn5KKlXFx0nlxe2Dzc2rg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fGvwCr3qe4y9D15/HBB8wiGMElA3M+2HjYG5VPPJGtOHXgC5RmK4S+NQuc+QrpOk2
+         W1sOGEEsSEQKjL8MI+sqAne05+kFC+EqSYiF0LhFx7Mq9JrBTXdQGEfCxycSfx5zEY
+         eBCo3VZVgM5rnSr9lGKIpUHFZQR0F81kkjIyqXzA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Chuhong Yuan <hslester96@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 100/130] media: si470x-i2c: add missed operations in remove
+Date:   Tue, 10 Dec 2019 17:02:31 -0500
+Message-Id: <20191210220301.13262-100-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191210220301.13262-1-sashal@kernel.org>
+References: <20191210220301.13262-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210213351.2df6acbf@nic.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 09:33:51PM +0100, Marek Behun wrote:
-> On Tue, 10 Dec 2019 17:35:57 +0100
-> Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> > On Tue, Dec 10, 2019 at 04:14:40PM +0800, Landen Chao wrote:
-> > > Add new support for MT7531:
-> > > 
-> > > MT7531 is the next generation of MT7530. It is also a 7-ports switch with
-> > > 5 giga embedded phys, 2 cpu ports, and the same MAC logic of MT7530. Cpu
-> > > port 6 only supports HSGMII interface. Cpu port 5 supports either RGMII
-> > > or HSGMII in different HW sku.  
-> > 
-> > Hi Landen
-> > 
-> > Looking at the code, you seem to treat HSGMII as 2500Base-X. Is this
-> > correct? Or is it SGMII over clocked to 2.5Gbps?
-> > 
-> > 	 Andrew
-> 
-> How would that work? Would 10 and 100 be overclocked to 25 and 250?
+From: Chuhong Yuan <hslester96@gmail.com>
 
-No. SGMII clocked up to 2.5G does not support any of the lower
-speeds. And inband signalling does not make much sense, the control
-word is all wrong.
+[ Upstream commit 2df200ab234a86836a8879a05a8007d6b884eb14 ]
 
-     Andrew
+The driver misses calling v4l2_ctrl_handler_free and
+v4l2_device_unregister in remove like what is done in probe failure.
+Add the calls to fix it.
+
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/radio/si470x/radio-si470x-i2c.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/radio/si470x/radio-si470x-i2c.c b/drivers/media/radio/si470x/radio-si470x-i2c.c
+index 8ce6f9cff7463..b60fb6ed5aeb5 100644
+--- a/drivers/media/radio/si470x/radio-si470x-i2c.c
++++ b/drivers/media/radio/si470x/radio-si470x-i2c.c
+@@ -455,6 +455,8 @@ static int si470x_i2c_remove(struct i2c_client *client)
+ 	video_unregister_device(&radio->videodev);
+ 	kfree(radio);
+ 
++	v4l2_ctrl_handler_free(&radio->hdl);
++	v4l2_device_unregister(&radio->v4l2_dev);
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
+
