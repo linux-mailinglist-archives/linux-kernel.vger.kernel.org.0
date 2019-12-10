@@ -2,127 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F12E1185BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:02:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B77C81185C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:03:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbfLJLCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 06:02:24 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45304 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbfLJLCY (ORCPT
+        id S1727283AbfLJLDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:03:18 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35444 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbfLJLDS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:02:24 -0500
-Received: by mail-lj1-f196.google.com with SMTP id d20so19321365ljc.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 03:02:22 -0800 (PST)
+        Tue, 10 Dec 2019 06:03:18 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 15so13373009lfr.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 03:03:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=avT8djgaVLUaP/1BXJuTZBwRdJwwah+0AF+tp3FQZPs=;
-        b=Mf3xlkOSDEXkKBh/xlW95jq/ctKWC6+5W25pp6TESvMuNfvypSGAfYHsVnbPTF1cYg
-         RR0YLlmQ0tYBn9eVo9B5cXn5iQtVmIH73aTUt7+x6qyrXUIoBdS4hBRmUK0eZkDmLkAb
-         EGIAlfTwNBPpLzuweZ8Ri86B/UxW1T1ZRDG8hmX5tHJ5Y5Aildo02kJCV0NHR6AdkbLh
-         NBmHSZGnygxVFb9Yn3M+Ft/tELQKD1dHnNiv4mWLZc6mZCvBM+Tsyr0Wp7Sd2MG1aAHj
-         Tq/GviXZQEHaPzhya05BIy0b3HF1EnJFgiDF4nG2cr+QZRR8UVHE0LLUBd9LPIqUTqH1
-         6QoQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=8JxHqFH5t4cpg678LNV/W1e4iU7ybt9If64FElJ9r6M=;
+        b=m4H+rYbZ6XAVCmuz/ZEi7KUEpxFMvzJsZ5Jr6L0HMgMdxWvJsIuC6/IGq1+b8WabzY
+         FVjb5ND8HayQmvLtrSYWi5Yqdva0qft2QuMNsDiv5URY57ifF07jqp0T3WDYIgUBOwIM
+         qK32VEpVtXlkW++5d8MinTOiGHOd5UZDb5yAY5J5I+RolE+CgNncPm2ar11mlg82fuZX
+         Q8Ee845WpvFmjUKgYOJ1Ff/oXTOXSullxjyBfi6X19HaStgBaio6c8LNH8lFNl4KnGBF
+         M8sQXpssDZn04laahAl96+KdxItmkAzx8QcQ/M7qK9fp8lN2wEfMjr5nXFRZV8VOXUCx
+         aIAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=avT8djgaVLUaP/1BXJuTZBwRdJwwah+0AF+tp3FQZPs=;
-        b=lmLr/0v1qsw3vEraMBWm79H9umwP4IFOSdysSvSi3zJZ4Y5ziMSEZtPYjhLJqugOSI
-         CLUTekjBHpNSaEd8zxE4KN2yp1OU+NU0zk5uAqVckIf2/iVHjYTYBRD+Fh4GptnfDmgu
-         uA/E58Eojl/HHN8N+/ytOsdIw1azDE5NNvBkWX+PvVH3lqebfehrZhAaS2evN07x01k7
-         9UqymrDhpVuLVyAeBHrI2IMvCLZZF2pMvsb2ssh5j0xNIVeozgnssAgTIBynLFGqp9Pf
-         FBHaOG2l1LZ7kR1C/tHBtxbWtGQ+2244cJZ/xhw0LbM9K3SlELhiwtUxpk8VORji/rrJ
-         J9ow==
-X-Gm-Message-State: APjAAAX3r3gqRNp9oQsqtcvc4W/vdI6k+k59nR2IF9VVafWz+eqN84DA
-        B5APDk3vUzYfjpvZrC4zdQ9Y/CkW/l7Xlo+2Wyk1zQ==
-X-Google-Smtp-Source: APXvYqzdKySfdTeUTqDZf48QC6nKJjVrzelXQbA5XcMaY5YcawhwrWRM8Td38VBdqI6RgEEmwUiYHkXJsa2/pme7HDg=
-X-Received: by 2002:a2e:9a04:: with SMTP id o4mr21104651lji.214.1575975741445;
- Tue, 10 Dec 2019 03:02:21 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=8JxHqFH5t4cpg678LNV/W1e4iU7ybt9If64FElJ9r6M=;
+        b=toaRSm3bD090Ar9XLNTTk4SDBN194wgN/kcvc8mAo5zW+iaD2l+4bGtdu4sKiz0xO1
+         JejElarAibaNntbQakeRtSGttX93SMufIRnhQWREEGvOhjsGadqdCMdUpm9VgVdgax0U
+         P5l9OFoCwG9vnBjvSxa0YQRnxwC5DcgwxY/iDyafy5CN8gdEYAuVnEwLDpGXB1wRQ0OR
+         8QYDCDeV5OG1spYPyv/622UZy7OIaEfclSFNyU4JM+hi7yczWpu/G3dYNvnrl6bwmmpA
+         bJWngXvTHZdemPNQicW/gn3AfJ0Bk+RRi86LbIzsAxaM7uENaoEu8Bn5G2nEl7mQdBC0
+         x/lA==
+X-Gm-Message-State: APjAAAUV4AtdTt8K4uBxaliRknPJ7UX7BO8jPpYVGyv4rRK80L2gOj52
+        CSJtOrZ8PnPP3Q3yo/G0VD36zzzI1aCJgL3BVb4=
+X-Google-Smtp-Source: APXvYqyW6paKZXh64t7GRHEOqBfSWJt6bdRMRrVlt1h+V2/b8QJyOFSZHIjAQIFOQ6IHKbLAEMK7lJN/U6CVGk6D4aA=
+X-Received: by 2002:a19:4208:: with SMTP id p8mr17953633lfa.160.1575975796133;
+ Tue, 10 Dec 2019 03:03:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20191115234005.GO4614@dread.disaster.area> <20191118092121.GV4131@hirez.programming.kicks-ass.net>
- <20191118204054.GV4614@dread.disaster.area> <20191120191636.GI4097@hirez.programming.kicks-ass.net>
- <20191120220313.GC18056@pauld.bos.csb> <20191121132937.GW4114@hirez.programming.kicks-ass.net>
- <20191209165122.GA27229@linux.vnet.ibm.com> <20191209231743.GA19256@dread.disaster.area>
- <20191210054330.GF27253@linux.vnet.ibm.com> <CAKfTPtCBxV+az30n8E9fRv_HweN_QPJn_ni961OsKp5xUWUD2A@mail.gmail.com>
- <20191210101116.GA9139@linux.vnet.ibm.com>
-In-Reply-To: <20191210101116.GA9139@linux.vnet.ibm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 10 Dec 2019 12:02:09 +0100
-Message-ID: <CAKfTPtD1by06eQ=vJhh9SvfegRanSSwQrKPageLGo0OODu9bjg@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/core: Preempt current task in favour of bound kthread
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-fs <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>
+Received: by 2002:ab3:5a03:0:0:0:0:0 with HTTP; Tue, 10 Dec 2019 03:03:15
+ -0800 (PST)
+Reply-To: kelvin.neil1992@gmail.com
+From:   ".kelvin.neil.," <muhammadabdul3096@gmail.com>
+Date:   Tue, 10 Dec 2019 03:03:15 -0800
+Message-ID: <CAAHP-cyrPNELmUC1gwdDFV7WURm8BaAg7pq7WJP41TVEunnQ6Q@mail.gmail.com>
+Subject: HELLO DEAR FRIEND,THIS IS URGENT PLEASE
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019 at 11:11, Srikar Dronamraju
-<srikar@linux.vnet.ibm.com> wrote:
->
-> * Vincent Guittot <vincent.guittot@linaro.org> [2019-12-10 10:43:46]:
->
-> > On Tue, 10 Dec 2019 at 06:43, Srikar Dronamraju
-> > <srikar@linux.vnet.ibm.com> wrote:
-> > >
-> > > This is more prone to happen if the current running task is CPU
-> > > intensive and the sched_wake_up_granularity is set to larger value.
-> > > When the sched_wake_up_granularity was relatively small, it was observed
-> > > that the bound thread would complete before the load balancer would have
-> > > chosen to move the cache hot task to a different CPU.
-> > >
-> > > To deal with this situation, the current running task would yield to a
-> > > per CPU bound kthread, provided kthread is not CPU intensive.
-> > >
-> > > /pboffline/hwcct_prg_old/lib/fsperf -t overwrite --noclean -f 5g -b 4k /pboffline
-> > >
-> > > (With sched_wake_up_granularity set to 15ms)
-> >
-> > So you increase sched_wake_up_granularity to a high level to ensure
-> > that current is no preempted by waking thread but then you add a way
-> > to finally preempt it which is somewhat weird IMO
-> >
->
-> Yes, setting to a smaller value will help mitigate/solve the problem.
-> There may be folks out who have traditionally set a high wake_up_granularity
-> (and have seen better performance with it), who may miss out that when using
-> blk-mq, such settings will cause more harm. And they may continue to see
-> some performance regressions when they move to a lower wake_up_granularity.
->
-> > Have you tried to increase the priority of workqueue thread  (decrease
-> > nice priority) ? This is the right way to reduce the impact of the
-> > sched_wake_up_granularity on the wakeup of your specific kthread.
-> > Because what you want at the end is keeping a low wakeup granularity
-> > for these io workqueues
-> >
->
-> Yes, people can tune the priority of workqueue threads and infact it may be
-> easier to set wake_up_granularity to a lower value. However the point is how
-> do we make everyone aware that they are running into a performance issue
-> with a higher wakeup_granularity?
+HELLO DEAR FRIEND,THIS IS URGENT PLEASE
 
-I did the test on my local setup to change the nice priority of io
-workqueue and the active migrations are removed even with high
-wakeup_granularity because IO workqueue can still preempt normal task
-but let other workqueue behave normally.
+  My name is Mr. kelvin.Neil. I have decided to seek a confidential
+  co-operation  with you in the execution of the deal described
+  here-under for our both  mutual benefit and I hope you will keep it a
+  top secret because of the nature  of the transaction, During the
+  course of our bank year auditing, I discovered  an unclaimed/abandoned
+  fund, sum total of {US$10.5 Million United State  Dollars} in the bank
+  account that belongs to a Saudi Arabia businessman Who unfortunately
+  lost his life and entire family in a Motor Accident.
 
->
-> --
-> Thanks and Regards
-> Srikar Dronamraju
->
+  Now our bank has been waiting for any of the relatives to come-up for
+  the claim but nobody has done that. I personally has been unsuccessful
+  in locating any of the relatives, now, I sincerely seek your consent
+  to present you as the next of kin / Will Beneficiary to the deceased
+  so that the proceeds of this account valued at {US$10.5 Million United
+  State Dollars} can be paid to you, which we will share in these
+  percentages ratio, 60% to me and 40% to you. All I request is your
+  utmost sincere co-operation; trust and maximum confidentiality to
+  achieve this project successfully. I have carefully mapped out the
+  moralities for execution of this transaction under a legitimate
+  arrangement to protect you from any breach of the law both in your
+  country and here in Burkina Faso when the fund is being transferred to
+  your bank account.
+
+  I will have to provide all the relevant document that will be
+  requested to indicate that you are the rightful beneficiary of this
+  legacy and our bank will release the fund to you without any further
+  delay, upon your consideration and acceptance of this offer, please
+  send me the following information as stated below so we can proceed
+  and get this fund transferred to your designated bank account
+  immediately.
+
+  -Your Full Name:
+  -Your Contact Address:
+  -Your direct Mobile telephone Number:
+  -Your Date of Birth:
+  -Your occupation:
+
+  I await your swift response.
+
+  Best regards,
+  Mr. kelvin.Neil
