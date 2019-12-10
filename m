@@ -2,78 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66CD511830C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9240E118314
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbfLJJIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:08:54 -0500
-Received: from a27-56.smtp-out.us-west-2.amazonses.com ([54.240.27.56]:42598
-        "EHLO a27-56.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727045AbfLJJIw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:08:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575968931;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type;
-        bh=fAhQaC8sJcNzBFJdml56yo1VHwYdbrT0AxCr3FdKVP4=;
-        b=LTit0VSro6eezsKkd0yJKAHbAOkpzct9tIrvYYlVv1N6WRAyoYDThKowOKJzz7HO
-        hjL8WTgi/xlb8QyfTgHfOR7hREUpm/oBHLWTyHL8SLvr+FjqMQtNF3aLe5vOudyT5d3
-        h3EZ3UILArkJx718/mt0ELU2sy1K1wW81TcRCKFw=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575968931;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type:Feedback-ID;
-        bh=fAhQaC8sJcNzBFJdml56yo1VHwYdbrT0AxCr3FdKVP4=;
-        b=C+hIXG6h6/8VT5IVFRqUtt3+PFxgMKxcx9EYGu/+BnY0BB+tGanu5PG2D2SS8PwK
-        ehMQl2a1YLVWgr0wX70NCHTtx6vVSPagrY98uwvHWDtMd1pP/T9NFcDMn9qri579xe0
-        o090mWODoSoFOczptEnwRQklWottJ84B6PYjikZs=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 423C7C4479C
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Soeren Moch <smoch@web.de>
-Cc:     Wright Feng <wright.feng@cypress.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] brcmfmac: reset two D11 cores if chip has two D11 cores
-References: <20191209223822.27236-1-smoch@web.de>
-Date:   Tue, 10 Dec 2019 09:08:51 +0000
-In-Reply-To: <20191209223822.27236-1-smoch@web.de> (Soeren Moch's message of
-        "Mon, 9 Dec 2019 23:38:15 +0100")
-Message-ID: <0101016eef117ea9-8b775155-a37b-4174-99b7-c9d320c94b64-000000@us-west-2.amazonses.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-SES-Outgoing: 2019.12.10-54.240.27.56
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+        id S1727221AbfLJJJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:09:39 -0500
+Received: from comms.puri.sm ([159.203.221.185]:54324 "EHLO comms.puri.sm"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726884AbfLJJJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 04:09:38 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by comms.puri.sm (Postfix) with ESMTP id 16C30E10EC;
+        Tue, 10 Dec 2019 01:09:37 -0800 (PST)
+Received: from comms.puri.sm ([127.0.0.1])
+        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id s3CwpN2XUNh5; Tue, 10 Dec 2019 01:09:36 -0800 (PST)
+From:   Martin Kepplinger <martin.kepplinger@puri.sm>
+To:     robh@kernel.org, mark.rutland@arm.com
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com, kernel@puri.sm,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Martin Kepplinger <martin.kepplinger@puri.sm>
+Subject: [PATCH] arm64: dts: imx8mq-librem5-devkit: use correct interrupt for the magnetometer
+Date:   Tue, 10 Dec 2019 10:08:57 +0100
+Message-Id: <20191210090857.10663-1-martin.kepplinger@puri.sm>
+In-Reply-To: <20191203130336.18763-1-martin.kepplinger@puri.sm>
+References: <20191203130336.18763-1-martin.kepplinger@puri.sm>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Soeren Moch <smoch@web.de> writes:
+From: "Angus Ainslie (Purism)" <angus@akkea.ca>
 
-> From: Wright Feng <wright.feng@cypress.com>
->
-> There are two D11 cores in RSDB chips like 4359. We have to reset two
-> D11 cores simutaneously before firmware download, or the firmware may
-> not be initialized correctly and cause "fw initialized failed" error.
->
-> Signed-off-by: Wright Feng <wright.feng@cypress.com>
+The LSM9DS1 uses a high level interrupt.
 
-Soeren's s-o-b missing at least in patches 1, 6 and 7. Please read:
+Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
+---
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#signed-off-by_missing
+Any objections or questions about the previously sent accelerometer DT
+description? It and this follow-up bugfix is what we're running for
+quite some time now.
 
+thanks,
+
+                             martin
+
+
+
+ arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+index 2834d273bfdf..8de24a2d5234 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+@@ -429,7 +429,7 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_imu>;
+ 		interrupt-parent = <&gpio3>;
+-		interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
++		interrupts = <19 IRQ_TYPE_LEVEL_HIGH>;
+ 		vdd-supply = <&reg_3v3_p>;
+ 		vddio-supply = <&reg_3v3_p>;
+ 	};
 -- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
+
