@@ -2,246 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 465FF119069
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 20:15:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93B4F11907C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 20:19:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbfLJTPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 14:15:25 -0500
-Received: from sv2-smtprelay2.synopsys.com ([149.117.73.133]:50260 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727374AbfLJTPY (ORCPT
+        id S1726714AbfLJTTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 14:19:35 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8902 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbfLJTTe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 14:15:24 -0500
-Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id CB71342D3E;
-        Tue, 10 Dec 2019 19:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1576005323; bh=ijj0KzZBkUqDb7XWvuGI3bBDE73rWKtohTfndEjc7D0=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=bnyriU4Ol2J3RaDHKaQqWWXeIOVFtoDRRzkFjj9sHy0UILJCbyrTYEj7MjZ/g8kUl
-         n4R268akYPFYjzjDJdP41FDyMKJjBkf+d+kD6/grIViTUVLvyOuoL/+cFUUp8ikbJ5
-         jvi6QZyuaiCD6KfqAQTWqSHG/HS8IBWTMEpKJ8Wa3ZKn4DtGej+lTZi2JELAgju7IY
-         rdxRhxnbP1/tM5fMynPUvRyBXJXGbYsTmSsy501rdH21T+sf7es92KTPtImqOfQoS0
-         d6dXdit7+kHgRIDfk1X2anNSDeWawY6zb6s0h810zYSIK3y5ogFuWtGqUGtNaeC4uZ
-         Ifx/i5rMdeMpQ==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 39D12A007F;
-        Tue, 10 Dec 2019 19:15:20 +0000 (UTC)
-Received: from us01hybrid1.internal.synopsys.com (10.13.188.44) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 10 Dec 2019 11:15:07 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (10.202.3.67) by
- mrs.synopsys.com (10.13.188.44) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Tue, 10 Dec 2019 11:15:07 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AN5LOFuLMtJGwSwOZnk0Mh3d37EgHMRoqIO2smlRqadWFAnMAawwxyQBdMQF33VGSdblnGpvmHcyQbTfOT9hlx98umVGk/KVQ+yBt15b+YFg2dlIyHcsERXXy8Io2ZxQS+eVY6BbbmAlqWOLxdyrqraWKhf3hzt11Os1ydR8v5dC3XlQb9S+NZZoiOEelxwA6UWiJtMaW3D0KMWZFlPjyApSIvoJDqYpzzKhBHLT1rli8bjW5AHiDkYzGlpjXdJgf7noSbvMpuwxB0p16Xcw5ZeyzzYDxozMx0HuPEgGhb8ysTKQ2AH6y8l+TaWwkxNbbd0/ey4KIRyM1e8dGj64vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ijj0KzZBkUqDb7XWvuGI3bBDE73rWKtohTfndEjc7D0=;
- b=h875oxH/sKyGwPyVrfK81IVERRSmFyDABa/yAwrVa+nvewTtz+RjRouDcOe2OmL6mvT1ponElkLCHqc7Cqz2fkHedfweULB195W7Dy6ZKPqr6XARYv5rYl7d2S9jv3038L56fGfGKMP+OOz6usAw6Le5foARG/UngQ6tNQJEBOrwoo2FnZWt/Tnd1KEiE7qCXhuW+i7RYXWFzuPd/Lg8DUn2f6kY9Ir4FwJJzLtBkIvQKI2N7S/VqZKDqaIpFoW9RJCWfqTt3ObprPKpf6xDF7UbMEJDkyLJ4V9N9vnw437oEhYKHxeW+N7aHA2Y3dqMAwImpApz07zeH4HdxNx84A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ijj0KzZBkUqDb7XWvuGI3bBDE73rWKtohTfndEjc7D0=;
- b=b7hnP127cTPZCq2lTn6eToN0Jq6Wn7cy0+Dfova7uXx7kdi1Mvl9lZdt07KuNRUmi+lN7jT9umEV2GSRMNa8ZFeY4pCn13whU6Y1LRpj7K7vjPxlKI8kyKi1THbJwlDJYO4SYra+tBunVD9kmhIk7InPx5H+RDd5JBOeme3F50E=
-Received: from CH2PR12MB4216.namprd12.prod.outlook.com (20.180.6.151) by
- CH2PR12MB4246.namprd12.prod.outlook.com (20.180.6.210) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.17; Tue, 10 Dec 2019 19:15:06 +0000
-Received: from CH2PR12MB4216.namprd12.prod.outlook.com
- ([fe80::81fc:ad3e:6315:c6ff]) by CH2PR12MB4216.namprd12.prod.outlook.com
- ([fe80::81fc:ad3e:6315:c6ff%7]) with mapi id 15.20.2516.018; Tue, 10 Dec 2019
- 19:15:06 +0000
-From:   Vitor Soares <Vitor.Soares@synopsys.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mark Brown <broonie@kernel.org>
-Subject: RE: [RFC 5/5] i3c: add i3cdev module to expose i3c dev in /dev
-Thread-Topic: [RFC 5/5] i3c: add i3cdev module to expose i3c dev in /dev
-Thread-Index: AQHVr2/iKIpGMGLN70aN99S9k54hW6ezpfQAgAAC6IA=
-Date:   Tue, 10 Dec 2019 19:15:05 +0000
-Message-ID: <CH2PR12MB4216E04995E421F04B7662DEAE5B0@CH2PR12MB4216.namprd12.prod.outlook.com>
-References: <cover.1575977795.git.vitor.soares@synopsys.com>
- <f9f20eaf900ed5629dd3d824bc1e90c7e6b4a371.1575977795.git.vitor.soares@synopsys.com>
- <CAK8P3a1cwoTbT3zsa-tfApwewDT1-ksHZs6_vkBYpKbgptsfjw@mail.gmail.com>
-In-Reply-To: <CAK8P3a1cwoTbT3zsa-tfApwewDT1-ksHZs6_vkBYpKbgptsfjw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jYzI5aGNtVnpYR0Z3Y0dSaGRHRmNjbTloYldsdVoxd3dPV1E0TkRsaU5p?=
- =?utf-8?B?MHpNbVF6TFRSaE5EQXRPRFZsWlMwMllqZzBZbUV5T1dVek5XSmNiWE5uYzF4?=
- =?utf-8?B?dGMyY3ROV1F5WTJRNFkySXRNV0k0TVMweE1XVmhMVGd5TnpJdFlqZ3dPR05t?=
- =?utf-8?B?TlRsa04yWmpYR0Z0WlMxMFpYTjBYRFZrTW1Oa09HTmtMVEZpT0RFdE1URmxZ?=
- =?utf-8?B?UzA0TWpjeUxXSTRNRGhqWmpVNVpEZG1ZMkp2WkhrdWRIaDBJaUJ6ZWowaU1U?=
- =?utf-8?B?Y3hNaUlnZEQwaU1UTXlNakEwTnpnNU1ESTJNemc0TWprMklpQm9QU0o1ZUdJ?=
- =?utf-8?B?MVpTdFVNbXRLVHpkV2VETkNiMmRQVGxsR1VIWkpRMEU5SWlCcFpEMGlJaUJp?=
- =?utf-8?B?YkQwaU1DSWdZbTg5SWpFaUlHTnBQU0pqUVVGQlFVVlNTRlV4VWxOU1ZVWk9R?=
- =?utf-8?B?MmRWUVVGQ1VVcEJRVUpKSzFsVlptcHhMMVpCWTFnM016bGhiV1ZvTWpsNFpu?=
- =?utf-8?B?Wm1NWEZhTmtoaU1FOUJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlNFRkJRVUZEYTBOQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UlVGQlVVRkNRVUZCUVd0NFYyOXNVVUZCUVVGQlFVRkJRVUZCUVVGQlFVbzBR?=
- =?utf-8?B?VUZCUW0xQlIydEJZbWRDYUVGSE5FRlpkMEpzUVVZNFFXTkJRbk5CUjBWQllt?=
- =?utf-8?B?ZENkVUZIYTBGaVowSnVRVVk0UVdSM1FtaEJTRkZCV2xGQ2VVRkhNRUZaVVVK?=
- =?utf-8?B?NVFVZHpRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZGUVVGQlFVRkJRVUZCUVdk?=
- =?utf-8?B?QlFVRkJRVUZ1WjBGQlFVZFpRV0ozUWpGQlJ6UkJXa0ZDZVVGSWEwRllkMEoz?=
- =?utf-8?B?UVVkRlFXTm5RakJCUnpSQldsRkNlVUZJVFVGWWQwSnVRVWRaUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlVVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVTkJRVUZCUVVGRFpVRkJRVUZhWjBKMlFVaFZRV0puUW10QlNF?=
- =?utf-8?B?bEJaVkZDWmtGSVFVRlpVVUo1UVVoUlFXSm5RbXhCU0VsQlkzZENaa0ZJVFVG?=
- =?utf-8?B?WlVVSjBRVWhOUVdSUlFuVkJSMk5CV0hkQ2FrRkhPRUZpWjBKdFFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRa0ZCUVVGQlFVRkJRVUZKUVVGQlFVRkJTalJCUVVGQ2JVRkhPRUZr?=
- =?utf-8?B?VVVKMVFVZFJRV05uUWpWQlJqaEJZMEZDYUVGSVNVRmtRVUoxUVVkVlFXTm5R?=
- =?utf-8?B?bnBCUmpoQlkzZENhRUZITUVGamQwSXhRVWMwUVZwM1FtWkJTRWxCV2xGQ2Vr?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVGQlowRkJRVUZCUVc1blFV?=
- =?utf-8?B?RkJSMWxCWW5kQ01VRkhORUZhUVVKNVFVaHJRVmgzUW5kQlIwVkJZMmRDTUVG?=
- =?utf-8?B?SE5FRmFVVUo1UVVoTlFWaDNRbnBCUnpCQllWRkNha0ZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJRVUZCUVVGQlFVRkJRMEZC?=
- =?utf-8?B?UVVGQlFVTmxRVUZCUVZwblFuWkJTRlZCWW1kQ2EwRklTVUZsVVVKbVFVaEJR?=
- =?utf-8?B?VmxSUW5sQlNGRkJZbWRDYkVGSVNVRmpkMEptUVVoTlFXUkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZDUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVsQlFVRkJRVUZLTkVGQlFVSnRRVWM0UVdSUlFuVkJSMUZCWTJk?=
- =?utf-8?B?Q05VRkdPRUZqUVVKb1FVaEpRV1JCUW5WQlIxVkJZMmRDZWtGR09FRmtRVUo2?=
- =?utf-8?B?UVVjd1FWbDNRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlJVRkJRVUZCUVVGQlFVRm5RVUZCUVVGQmJtZEJRVUZIV1VGaWQwSXhR?=
- =?utf-8?B?VWMwUVZwQlFubEJTR3RCV0hkQ2QwRkhSVUZqWjBJd1FVYzBRVnBSUW5sQlNF?=
- =?utf-8?B?MUJXSGRDTVVGSE1FRlpkMEZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVkZCUVVGQlFVRkJRVUZEUVVGQlFVRkJRMlZCUVVG?=
- =?utf-8?B?QlduZENNRUZJVFVGWWQwSjNRVWhKUVdKM1FtdEJTRlZCV1hkQ01FRkdPRUZr?=
- =?utf-8?B?UVVKNVFVZEZRV0ZSUW5WQlIydEJZbWRDYmtGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVKQlFVRkJRVUZCUVVGQlNVRkJR?=
- =?utf-8?B?VUZCUVVvMFFVRkJRbnBCUjBWQllrRkNiRUZJVFVGWWQwSm9RVWROUVZsM1Fu?=
- =?utf-8?B?WkJTRlZCWW1kQ01FRkdPRUZqUVVKelFVZEZRV0puUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkZRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRV2RCUVVGQlFVRnVaMEZCUVVoTlFWbFJRbk5CUjFWQlkzZENaa0ZJ?=
- =?utf-8?B?UlVGa1VVSjJRVWhSUVZwUlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCVVVGQlFVRkJRVUZCUVVOQlFVRkJRVUZEWlVGQlFVRmpkMEoxUVVoQlFX?=
- =?utf-8?B?TjNRbVpCUjNkQllWRkNha0ZIVlVGaVowSjZRVWRWUVZoM1FqQkJSMVZCWTJk?=
- =?utf-8?B?Q2RFRkdPRUZOVVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFrRkJRVUZCUVVGQlFVRkpRVUZCUVVGQlNqUkJRVUZD?=
- =?utf-8?B?ZWtGSE5FRmpRVUo2UVVZNFFXSkJRbkJCUjAxQldsRkNkVUZJVFVGYVVVSm1R?=
- =?utf-8?B?VWhSUVZwUlFubEJSekJCV0hkQ2VrRklVVUZrVVVKclFVZFZRV0puUWpCQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVGQlFVRkJRVUZCWjBGQlFV?=
- =?utf-8?B?RkJRVzVuUVVGQlNGbEJXbmRDWmtGSGMwRmFVVUkxUVVoalFXSjNRbmxCUjFG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGUlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlEwRkJRVUZCUVVFOUlpOCtQQzl0WlhSaFBnPT0=?=
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=soares@synopsys.com; 
-x-originating-ip: [83.174.63.141]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bf7ca85f-292d-4c9b-73d0-08d77da54414
-x-ms-traffictypediagnostic: CH2PR12MB4246:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR12MB4246BB75315C43B967D7BED0AE5B0@CH2PR12MB4246.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 02475B2A01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(366004)(396003)(136003)(376002)(189003)(199004)(33656002)(66446008)(316002)(71200400001)(2906002)(86362001)(966005)(4326008)(76116006)(55016002)(26005)(186003)(7696005)(6506007)(81166006)(478600001)(64756008)(8676002)(81156014)(66946007)(66476007)(53546011)(6916009)(52536014)(54906003)(66556008)(9686003)(8936002)(5660300002)(42413003)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:CH2PR12MB4246;H:CH2PR12MB4216.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: WrfnuHmZ3H3kipLlu8ha11L4hHJdt4dLSZPGmYY5aMcgS2zqATqJfDCObqLqCOgIIRvp+Qdi3l7AGWgaffhRK7UlBMAVTrFitMrVaOB3yDHofkXNKwjNdLv/tj0EQoYv1zxnFoBr2xqeeumFT0AjDZ6vH2J/aUttvtBbc/JiUPTd22TD/SzT/c3VQFkgOa1VQ9QuvkbzZJ+Ib3NHtnFkV/zMxfSH7gBE3jNr8bGOtvR5eHwiVR83Tc/D+lkZxAIRSH01V4a0hTPqsXHEqW8O32LBL6FZUXc3JnwsRUPyz0Yq4p0SKYnvsJk6zmWLMYGPPOIjfNCn0DevJ9i2MJOJgmOB1mF+cxELDPqyhbkHEDPJgJrEKD1aqeV/8rwd6Wt9W48/5msPCDGMuuv31jw0uTDQzSxpaELwR4+pm9xGmu7H3GIy3kpgOEIFM1nDP2BOAnFkBESEO5outHiC05Aa3nsUFJ0fXuSUjfolMtlBL7C81krVtmnz7IaPSRQgrKp/fbPLFVeixH00V+EkjUjnIbUug1YttKtJyuGJncz1goxbPV9Uv9HcbFIamHSMFHmY
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 10 Dec 2019 14:19:34 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5defef970000>; Tue, 10 Dec 2019 11:18:47 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 10 Dec 2019 11:18:53 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 10 Dec 2019 11:18:53 -0800
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
+ 2019 19:18:53 +0000
+Received: from [10.2.174.71] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
+ 2019 19:18:51 +0000
+Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
+        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
+        <tglx@linutronix.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
+        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
+        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
+        <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+ <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
+ <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
+ <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
+ <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
+ <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
+ <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
+ <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+ <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
+ <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
+ <db3bee1e-1bfa-2f9e-9ed1-91b98554556a@gmail.com>
+ <22a2f8bd-561d-f4c6-4eef-bb61095c53b2@nvidia.com>
+ <5a5cfa74-66be-5c7a-04eb-88c355851c59@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <302d8483-513c-9c20-e4d4-1e24f2b317d6@nvidia.com>
+Date:   Tue, 10 Dec 2019 11:18:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf7ca85f-292d-4c9b-73d0-08d77da54414
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2019 19:15:05.9410
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FsJUpeY/aHsWGTIghZcAnEuRP2IXlg6PwWMpXSb+cXLsFGOinfmAZQ24nob7OU7T59j6CmJy0nPgNG4FzekFdw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4246
-X-OriginatorOrg: synopsys.com
+In-Reply-To: <5a5cfa74-66be-5c7a-04eb-88c355851c59@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576005527; bh=nSHPQRJtbbzTaMMJDPqshfJCmi/GwjGhrtfnMwUJLaI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=B0W8Q5LpqO32TI3xWEwQx0LT8eQMvWgXZLszXRSbB8TBCxrSlsceBtBnkH1UOyFDQ
+         mlB3aa0PLKPpV/bzhLn1+MEVDffLWKWl1lWK6UzyuvYuFjCjYtQdbS6GI8J00nRgdf
+         8nJeFrvRzhlyWgIOONKA5rNPFDYabLTCmpxCAhtdTQ6trhGDJa6zRipQe97GtMbwoT
+         cgcPcjuY9g+t/W1ryMF9taW7HLd2n4wI/4MeDZqdfBaYPBtBtKH1LI4gl8g3WZI8EH
+         kwBMDIvyDOCOJ2be3kLnySp45FQ5pTH1uE1fcr6YNZpDpDv2dp8VUh0shZ1SzXFcPh
+         sT7kcJhNaE7Hg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQXJuZCwNCg0KRnJvbTogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4NCkRhdGU6IFR1
-ZSwgRGVjIDEwLCAyMDE5IGF0IDE3OjUxOjE0DQoNCj4gT24gVHVlLCBEZWMgMTAsIDIwMTkgYXQg
-NDozNyBQTSBWaXRvciBTb2FyZXMgPFZpdG9yLlNvYXJlc0BzeW5vcHN5cy5jb20+IHdyb3RlOg0K
-PiA+DQo+ID4gKy8qIElPQ1RMIGNvbW1hbmRzICovDQo+ID4gKyNkZWZpbmUgSTNDX0RFVl9JT0Nf
-TUFHSUMgICAgICAweDA3DQo+ID4gKw0KPiA+ICtzdHJ1Y3QgaTNjX2lvY19wcml2X3hmZXIgew0K
-PiA+ICsgICAgICAgc3RydWN0IGkzY19wcml2X3hmZXIgX191c2VyICp4ZmVyczsgICAgIC8qIHBv
-aW50ZXJzIHRvIGkzY19wcml2X3hmZXIgKi8NCj4gPiArICAgICAgIF9fdTMyIG54ZmVyczsgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAvKiBudW1iZXIgb2YgaTNjX3ByaXZfeGZlciAqLw0KPiA+
-ICt9Ow0KPiA+ICsNCj4gPiArI2RlZmluZSBJM0NfSU9DX1BSSVZfWEZFUiAgICAgIFwNCj4gPiAr
-ICAgICAgIF9JT1coSTNDX0RFVl9JT0NfTUFHSUMsIDMwLCBzdHJ1Y3QgaTNjX2lvY19wcml2X3hm
-ZXIpDQo+ID4gKw0KPiA+ICsjZGVmaW5lICBJM0NfSU9DX1BSSVZfWEZFUl9NQVhfTVNHUyAgICA0
-Mg0KPiANCj4gVGhpcyBpcyBub3QgYSBncmVhdCBkYXRhIHN0cnVjdHVyZSBmb3IgVUFQSSwgcGxl
-YXNlIHNlZQ0KPiBodHRwczovL3VybGRlZmVuc2UucHJvb2Zwb2ludC5jb20vdjIvdXJsP3U9aHR0
-cHMtM0FfX2dpdC5rZXJuZWwub3JnX3B1Yl9zY21fbGludXhfa2VybmVsX2dpdF9hcm5kX3BsYXln
-cm91bmQuZ2l0X3RyZWVfRG9jdW1lbnRhdGlvbl9jb3JlLTJEYXBpX2lvY3RsLnJzdC0zRmgtM0Rj
-b21wYXQtMkRpb2N0bC0yRGVuZGdhbWUtMjZpZC0zRDkyNzMyNGI3OTAwZWU5Yjg3NzY5MWE4YjIz
-N2UyNzJmYWJiMjFiZjUmZD1Ed0lCYVEmYz1EUEw2X1hfNkprWEZ4N0FYV3FCMHRnJnI9cVZ1VTY0
-dTl4NzdZMEtkMFBoREtfbHB4RmdnNlBLOVBhdGVId2piX0RZMCZtPTVROVdqSzBvOTNOUjdEUTlO
-TTZTbzZtZmRncE5uWm5TYVA4cU1wZ2FDN0Umcz1MenpqclVRQUc4Zng1amtWeUs3M2RCRHJhaE5B
-dmswOUN4eGx4M0tPaVhJJmU9IA0KPiANCj4gZm9yIHNvbWUgYmFja2dyb3VuZC4gSSdtIHBsYW5u
-aW5nIHRvIHN1Ym1pdCB0aGF0IGRvY3VtZW50YXRpb24gZm9yDQo+IG1haW5saW5lIGludGVncmF0
-aW9uIHNvb24uDQo+IA0KPiAgICAgIEFybmQNCg0KVGhhbmtzIGZvciBzaGFyaW5nIHRoZSBkb2N1
-bWVudC4NCg0KTXkgdW5kZXJzdGFuZGluZyBpcyB0aGF0IEkgc2hvdWxkIHVzZSBhIGRhdGEgc3Ry
-dWN0dXJlIGxpa2UgdGhlIHN0cnVjdCANCnNwaV9pb2NfdHJhbnNmZXIsIHdpdGggdGhpcyBJIG1h
-eSBhbHNvIHVzZSB0aGUgc2FtZSBpb2N0bCBjb21tYW5kIA0KZGVmaW5pdGlvbi4gQW0gSSByaWdo
-dD8NCkluIHRoZSBkb2N1bWVudGF0aW9uIHlvdSBhbHNvIHJlZmVyIHRoZSBjb21wYWN0X2lvY3Rs
-KCkgYW5kIEl0IGlzIG5vdCANCmNsZWFyIHRvIG1lIGlmIHRoZSBjb21wYWN0X2lvY3RsKCkgaXMg
-bWFuZGF0b3J5IGluIHRoaXMgY2FzZS4gU2hvdWxkIEkgDQppbXBsZW1lbnQgaXQgYXMgd2VsbD8N
-Cg0KQmVzdCByZWdhcmRzLA0KVml0b3IgU29hcmVzDQo=
+
+On 12/10/19 10:30 AM, Dmitry Osipenko wrote:
+> 10.12.2019 20:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 12/10/19 9:41 AM, Dmitry Osipenko wrote:
+>>> 09.12.2019 23:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> On 12/9/19 12:12 PM, Dmitry Osipenko wrote:
+>>>>> 08.12.2019 00:36, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> On 12/7/19 11:59 AM, Sowjanya Komatineni wrote:
+>>>>>>> On 12/7/19 8:00 AM, Dmitry Osipenko wrote:
+>>>>>>>> 07.12.2019 18:53, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>> 07.12.2019 18:47, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>>> 07.12.2019 17:28, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
+:
+>>>>>>>>>>> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=
+=D1=82:
+>>>>>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out=
+_3
+>>>>>>>>>>>> with
+>>>>>>>>>>>> mux and gate for each of these clocks.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Currently these PMC clocks are registered by Tegra clock drive=
+r
+>>>>>>>>>>>> using
+>>>>>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base add=
+ress
+>>>>>>>>>>>> and register offsets and PMC programming for these clocks happ=
+ens
+>>>>>>>>>>>> through direct PMC access by the clock driver.
+>>>>>>>>>>>>
+>>>>>>>>>>>> With this, when PMC is in secure mode any direct PMC access
+>>>>>>>>>>>> from the
+>>>>>>>>>>>> non-secure world does not go through and these clocks will not=
+ be
+>>>>>>>>>>>> functional.
+>>>>>>>>>>>>
+>>>>>>>>>>>> This patch adds these clocks registration with PMC as a clock
+>>>>>>>>>>>> provider
+>>>>>>>>>>>> for these clocks. clk_ops callback implementations for these
+>>>>>>>>>>>> clocks
+>>>>>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
+>>>>>>>>>>>> programming
+>>>>>>>>>>>> in secure mode and non-secure mode.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>>>>>> ---
+>>>>>>>>>> [snip]
+>>>>>>>>>>
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops =3D {
+>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
+>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
+>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
+>>>>>>>>>>>> +};
+>>>>>>>>>>> What's the benefit of separating GATE from the MUX?
+>>>>>>>>>>>
+>>>>>>>>>>> I think it could be a single clock.
+>>>>>>>>>> According to TRM:
+>>>>>>>>>>
+>>>>>>>>>> 1. GATE and MUX are separate entities.
+>>>>>>>>>>
+>>>>>>>>>> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram in
+>>>>>>>>>> TRM).
+>>>>>>>>>>
+>>>>>>>>>> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable" it,
+>>>>>>>>>> correct?
+>>>>>> Was following existing clk-tegra-pmc as I am not sure of reason for
+>>>>>> having these clocks registered as separate mux and gate clocks.
+>>>>>>
+>>>>>> Yes, PMC clocks can be registered as single clock and can use clk_op=
+s
+>>>>>> for set/get parent and enable/disable.
+>>>>>>
+>>>>>> enable/disable of PMC clocks is for force-enable to force the clock =
+to
+>>>>>> run regardless of ACCEPT_REQ or INVERT_REQ.
+>>>>>>
+>>>>>>>>> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these cloc=
+ks
+>>>>>>>>> should belong to PMC.
+>>>>>>>> Also, it should be "osc" and not "clk_m".
+>>>>>>> I followed the same parents as it were in existing clk-tegra-pmc
+>>>>>>> driver.
+>>>>>>>
+>>>>>>> Yeah they are wrong and they should be from osc and not clk_m.
+>>>>>>>
+>>>>>>> Will fix in next version.
+>>>>>>>
+>>>>> Could you please describe the full EXTPERIPH clock topology and how t=
+he
+>>>>> pinmux configuration is related to it all?
+>>>>>
+>>>>> What is internal to the Tegra chip and what are the external outputs?
+>>>>>
+>>>>> Is it possible to bypass PMC on T30+ for the EXTPERIPH clocks?
+>>>> PMC CLK1/2/3 possible sources are OSC_DIV1, OSC_DIV2, OSC_DIV4,
+>>>> EXTPERIPH from CAR.
+>>>>
+>>>> OSC_DIV1/2/4 are with internal dividers at the OSC Pads
+>>>>
+>>>> EXTPERIPH is from CAR and it has reset and enable controls along with
+>>>> clock source selections to choose one of the PLLA_OUT0, CLK_S,
+>>>> PLLP_OUT0, CLK_M, PLLE_OUT0
+>>> Are you sure that EXTPERIPH has a reset? What will it reset? Why it's
+>>> not documented in TRM?
+>> Yes, Extperiph1/2/3 has RST part of CAR RST_DEVICES_V bits 24/25/26
+> Are these bits not documented in a public TRMs? I checked
+> T30/114/124/210 TRMs and CLK_RST_CONTROLLER_RST_DEVICES_V_0 doesn't have
+> those bits in the docs.
+>
+Yeah these bits are missing in all Tegra TRM docs. Will request for=20
+having EXTPERIPH reset bits to be updated in TRM...
+>>>> So, PMC CLK1/2/4 possible parents are OSC_DIV1, OSC_DIV2, OSC_DIV4, EX=
+TERN.
+>>>>
+>>>>
+>>>> CLK1/2/3 also has Pinmux to route EXTPERIPH output on to these pins.
+>>> Could you please clarify what are "these" pins? Perhaps you meant the
+>>> EXTERN pin of PMC?
+>> By CLK1/2/3 pins, I am referring to CLK_OUT_1/2/3 pins from Tegra
+> I see now what you meant, thanks.
+>
+> [snip}
