@@ -2,114 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF79F119169
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:02:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49181119175
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:05:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfLJUBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:01:48 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35818 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbfLJUBr (ORCPT
+        id S1726646AbfLJUFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:05:02 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42316 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfLJUFC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:01:47 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f8so17123283edv.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 12:01:45 -0800 (PST)
+        Tue, 10 Dec 2019 15:05:02 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 66so16668201otd.9;
+        Tue, 10 Dec 2019 12:05:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/R0DvHO32Ps1xRQleCzKMKFqLHiFsSU0YTem1kX0McY=;
-        b=R7H1U1qRykpKlz90guDfnfMLQu+EzMsrV2O6YkM4xhmZeMcLM57ApewNRgw7I3oxKI
-         2aAD35/rc6ipU1JVj4R7fnWWDXdfU60Ru7OkIh/gvKcGZOMCsZoTifF7aVmY87MT6hgE
-         dD5ngP3bxwvgxaUKGXlHDjhdzIOD2MYqyaZAQ0zNBWoe41+9R24H9mu0HoZ73/j1dZHO
-         1e1NADmg1PX1InTdZK26A9BHbzzbv9g+wwZC320VhTgoMhgDSR7ws8a9GUG3L9eiWd/C
-         XjXyLoPqpEfT9KeiRzpCp3r467r5KBUq+K4z3zpDpkHtZFXjE071oLAqXrPbaYl//h7O
-         M3GQ==
+         :cc;
+        bh=ffu1c8lDFafmMWH7UIK/Jm4IFvQzvK0JEWcwhE/AfdQ=;
+        b=NqY1B5LjJU0vM1d4WpeD0ZeoqgIt8hI6csNKV63oMHCy3CIGP/mE+VFXtRsCWysuOH
+         cBLhJFhVVWspwhg/0iJ+LYahN59cIYX4PzSNnSoLhTclj18oWAVTNbPbGXKwVUcG1m5b
+         vIqO9tIcWm1mHn3TDhenvm/Kb7y5VviWObIh9zOffAVbOM+2BsUKYe/3mp7ItszjjpU7
+         4r0dzTo0MHzXV0SdMbgtbegD81UW42uChbRS654dX25anJKmSBszdBRt0XPRpcJGh616
+         Zi7BSVuJofr6eR1H3qChHVMLTUpJyFOV8FSWll960WfMQRcJGW+9xU5/6Be4ts7TsrE1
+         dVPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/R0DvHO32Ps1xRQleCzKMKFqLHiFsSU0YTem1kX0McY=;
-        b=T1t3WOAkbgVp3rVItQ+GX0U1aFutpUNP6juvSJ+DfN2DKifmxfSbUvaxi+HsZWJnpP
-         6P8/Egah14TC6hnOZv17XrWS5uevBGnH3h4ZxEHYo8Ia/hZmxJKpIsXmf4lqmCsIgxRZ
-         WjjHrVyuqrA2qtNA969FfzJ7U4+C3OR00a2h3TYUx37TKZUYJI4Xsw7P2H6eXnoIa9xu
-         uBof0DH7gK+fx7jYyFArg3Jjijj+1IpPCdVmlII2cHrHoAWsC7y1PJPwayNSJvYGufY+
-         9gGU83IRNhNRVpAaq6jPNAsDKYesO3F/dhEAthyM2za1mmRbP/lgICsQSRDpkQBpR5wX
-         qreQ==
-X-Gm-Message-State: APjAAAXxIsOSefTsF8HLcIBYih5IfSfxeLpifQ4cSGl1R0EENftEl4dj
-        UZCZIXor0o4xBjEAoK9rBUEsIaUjAiSLs6F9rdR3bg==
-X-Google-Smtp-Source: APXvYqw9iivvFvbh4l0R0xUIg3aOHjmVGVcBM1DAkbhY5OagPSNUaYsBKKSgVVT4xv09dpa7VBmQFMfoID9G8U35Vko=
-X-Received: by 2002:a17:906:4881:: with SMTP id v1mr5729193ejq.329.1576008104565;
- Tue, 10 Dec 2019 12:01:44 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=ffu1c8lDFafmMWH7UIK/Jm4IFvQzvK0JEWcwhE/AfdQ=;
+        b=WTd3AbWGofBBIl6yvzkncMGPhFjibDOCy5STmhtT3w+33Gze4vLtl159i+lZmpUn8Q
+         TZpbUyaP4HyzLC3vkoyzx8z1iudHznYi89OpHFbKUcXM6gBJm37C/OAg6Ldbts3VYLyl
+         +QnH51MuFMoqjHZNMPej/Nt20yh2V9VCqZ9g8iUp1xepRqB3tlt2YRgAWaFG0h1IXR21
+         yqyzTbYTPIbdMpG+VRJ0k8kNMCb9z97V+FnlzjvroO6YvUr5Gb4V2HaoIQpDEYLLYyJS
+         O0KChN2lgEav1NOmdUpFkP/xBl6rAbjC7TbFDqQg+mmNpOocNQFyneDvQKAZplB6ky6L
+         CQ7A==
+X-Gm-Message-State: APjAAAUA5jJ5r7LmNb57sehwLa1K+SUjJjeNus9fjnmtVCXB0zg2whZR
+        2a4v+WBsV//s9L6kUTf+6yejLO2u8PqwoBHBcy0=
+X-Google-Smtp-Source: APXvYqyQXxbMb0eeNtonRVid5JNsQL8VWcdzxoDr8Caq2Q5ouK3M+5t6gh12myZjJdQRIwE/4kJ8HDen46CJJDc7XCI=
+X-Received: by 2002:a05:6830:1b71:: with SMTP id d17mr19510797ote.42.1576008301566;
+ Tue, 10 Dec 2019 12:05:01 -0800 (PST)
 MIME-Version: 1.0
-References: <20191205071953.121511-1-wvw@google.com> <69dd3a7a-c5fe-3ae7-8a4d-c3939870eed8@linaro.org>
-In-Reply-To: <69dd3a7a-c5fe-3ae7-8a4d-c3939870eed8@linaro.org>
-From:   Wei Wang <wvw@google.com>
-Date:   Tue, 10 Dec 2019 12:01:32 -0800
-Message-ID: <CAGXk5yrsmvHK_xwvp_kFNmSqKOZ7Ef3HrVBHYDMBmDsCz0FNSQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] thermal: introduce by-name softlink
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Wei Wang <wei.vince.wang@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20191101143126.2549-1-linux.amoon@gmail.com> <7hfthtrvvv.fsf@baylibre.com>
+ <c89791de-0a46-3ce2-b3e2-3640c364cd0f@baylibre.com> <CANAwSgQx3LjQe60TGgKyk6B5BD5y1caS2tA+O+GFES7=qCFeKg@mail.gmail.com>
+ <7hfthsqcap.fsf@baylibre.com>
+In-Reply-To: <7hfthsqcap.fsf@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 10 Dec 2019 21:04:50 +0100
+Message-ID: <CAFBinCBfgxXhPKpBLdoq9AimrpaneYFgzgJoDyC-2xhbHmihpA@mail.gmail.com>
+Subject: Re: [RFC-next 0/1] Odroid C2: Enable DVFS for cpu
+To:     Kevin Hilman <khilman@baylibre.com>
+Cc:     Anand Moon <linux.amoon@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 6:36 AM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
+On Tue, Dec 10, 2019 at 7:13 PM Kevin Hilman <khilman@baylibre.com> wrote:
 >
-> On 05/12/2019 08:19, Wei Wang wrote:
-> > The paths thermal_zone%d and cooling_device%d are not intuitive and the
-> > numbers are subject to change due to device tree change. This usually
-> > leads to tree traversal in userspace code.
-> > The patch creates `tz-by-name' and `cdev-by-name' for thermal zone and
-> > cooling_device respectively.
+> Anand Moon <linux.amoon@gmail.com> writes:
 >
-> Instead of adding another ABI, I suggest we put the current one
-> deprecated with a warning in the dmesg, update the documentation and
-> change the name the next version.
+> > Hi Neil / Kevin,
+> >
+> > On Tue, 10 Dec 2019 at 14:13, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> >>
+> >> On 09/12/2019 23:12, Kevin Hilman wrote:
+> >> > Anand Moon <linux.amoon@gmail.com> writes:
+> >> >
+> >> >> Some how this patch got lost, so resend this again.
+> >> >>
+> >> >> [0] https://patchwork.kernel.org/patch/11136545/
+> >> >>
+> >> >> This patch enable DVFS on GXBB Odroid C2.
+> >> >>
+> >> >> DVFS has been tested by running the arm64 cpuburn
+> >> >> [1] https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S
+> >> >> PM-QA testing
+> >> >> [2] https://git.linaro.org/power/pm-qa.git [cpufreq testcase]
+> >> >>
+> >> >> Tested on latest U-Boot 2019.07-1 (Aug 01 2019 - 23:58:01 +0000) Arch Linux ARM
+> >> >
+> >> > Have you tested with the Harkernel u-boot?
+> >> >
+> >> > Last I remember, enabling CPUfreq will cause system hangs with the
+> >> > Hardkernel u-boot because of improperly enabled frequencies, so I'm not
+> >> > terribly inclined to merge this patch.
+> >
+> > HK u-boot have many issue with loading the kernel, with load address
+> > *it's really hard to build the kernel for HK u-boot*,
+> > to get the configuration correctly.
+> >
+> > Well I have tested with mainline u-boot with latest ATF .
+> > I would prefer mainline u-boot for all the Amlogic SBC, since
+> > they sync with latest driver changes.
 >
+> Yes, we would all prefer mainline u-boot, but the mainline kernel needs
+> to support the vendor u-boot that is shipping with the boards.  So
+> until Hardkernel (and other vendors) switch to mainline u-boot we do not
+> want to have upstream kernel defaults that will not boot with the vendor
+> u-boot.
 >
+> We can always support these features, but they just cannot be enabled
+> by default.
+(I don't have an Odroid-C2 but I'm curious)
+should Anand submit a patch to mainline u-boot instead? the
+&scpi_clocks node could be enabled at runtime by mainline u-boot
 
-IMHO, we should keep the existing path which is a common pattern for
-sysfs interface. There are reasons we need couple thermal zone and
-cooling device in one class, but might be worth considering split as
-the latter might be used for other purposes e.g. battery current limit
-for preventive vdrop prevention. By nature, thermal zone are sensors,
-and cooling devices are usually components with potential high power
-use.
 
-
-> > Changes since v1 [1]:
-> >  * Split cooling device registration into a seperate patch
-> > Changes since v2 [2]:
-> >  * Split improve error message in thermal zone registration
-> >
-> > [1]: v1: https://lore.kernel.org/patchwork/patch/1139450/
-> > [2]: v2: https://lkml.org/lkml/2019/12/4/1291
-> >
-> > Wei Wang (3):
-> >   thermal: prevent cooling device with no type to be registered
-> >   thermal: improve error message in thermal zone registration
-> >   thermal: create softlink by name for thermal_zone and cooling_device
-> >
-> >  drivers/thermal/thermal_core.c | 55 +++++++++++++++++++++++++++-------
-> >  1 file changed, 44 insertions(+), 11 deletions(-)
-> >
->
->
-> --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
+Martin
