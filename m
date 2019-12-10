@@ -2,160 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68EDD118F8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:14:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F0A8118F94
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:15:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbfLJSOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 13:14:50 -0500
-Received: from foss.arm.com ([217.140.110.172]:52834 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727349AbfLJSOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 13:14:50 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E79181FB;
-        Tue, 10 Dec 2019 10:14:48 -0800 (PST)
-Received: from [10.1.197.50] (e120937-lin.cambridge.arm.com [10.1.197.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 795A93F6CF;
-        Tue, 10 Dec 2019 10:14:48 -0800 (PST)
-Subject: Re: [PATCH 03/15] firmware: arm_scmi: Skip protocol initialisation
- for additional devices
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20191210145345.11616-1-sudeep.holla@arm.com>
- <20191210145345.11616-4-sudeep.holla@arm.com>
-From:   Cristian Marussi <cristian.marussi@arm.com>
-Message-ID: <944a2d76-a3d3-9238-1960-63c3f29bea05@arm.com>
-Date:   Tue, 10 Dec 2019 18:14:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727789AbfLJSPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 13:15:48 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36451 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbfLJSPs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 13:15:48 -0500
+Received: by mail-pg1-f195.google.com with SMTP id k3so8626368pgc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:15:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=kfLit8LCSQ20powxSKYWCP8N8M+8XWObHNOV3Cp5ZFE=;
+        b=FwUBWi9X6lnjaJWijeU8P6xQR2Yp703scW9SLcH8NgPLyKR/nUa8y4eOqMcVaRTSk4
+         tcvmrhzkqYkS8gpG+GVfApk07EkDCKXveshyGFCdzPWWOsUOOu5tV3DS3LXnxD3QRB+m
+         bZrv45p67LNVj/kJTeKbtMT3wdS3ewyDaRbSiw+weCRaMrSD2ttdqr1VKNOnHk0ewkTL
+         NsDbcRNLkRIk8bPKhl3CylU/tCFIocywzPTKj/ZlQBT0Tl6XHmo6DECLYUYfUHKvAkai
+         u1igvJdm9ZujDZNoRpz0k6oiOYkjyr/mxpOEQr/iw0EFosNHKmcKqsLwNrwSMw0hWN6M
+         hIgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=kfLit8LCSQ20powxSKYWCP8N8M+8XWObHNOV3Cp5ZFE=;
+        b=PG/xAGtMYWqw1BmakXEru53j6SbKvGo5iEPNdu9eUMYOeL++Dov02+m2vIQAbC0ktz
+         fo2vM0ZGuoD9EsvItrJ7aymZaJTeOjIJfAJjy4Go121J6lUmzQECxWZdgw3AUT2pN2gp
+         lkh03L1YuhfPqj30v+/y8KiMGZQjBfESUta3eJR2kOSwTXhrw26iVlgJnnsklSbHmDye
+         iSTMBYt+DvTlv6E3U4PRxBttbGoU5/9vGMYL5jC+DATRVTSNngpLq/adk6om4RDKtDPY
+         WnL3qS+NPH6BugOZy3ptr0hNQkm4v1wzhXeqaGh4WtvOfWNXlPg/SYBM4ScDgbgOjrTu
+         qAyA==
+X-Gm-Message-State: APjAAAUOtBFZSxpwVn9dHl45jZDVfDFJZTauU1yqPb7f0LHqnCzEfQQd
+        cemOhoexILWeX99CFD3ZXObgJg==
+X-Google-Smtp-Source: APXvYqwpRGFP81NCx9NWPduL64oaXvGdMHqxm0bX+hBAxyEfO2ttMxw7y0Q9JTow9L1V6Lb4JcuPPw==
+X-Received: by 2002:aa7:9197:: with SMTP id x23mr37703857pfa.163.1576001747315;
+        Tue, 10 Dec 2019 10:15:47 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id 17sm4363066pfv.142.2019.12.10.10.15.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Dec 2019 10:15:46 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: meson-a1: add I2C nodes
+In-Reply-To: <e90e00e1-c868-ce09-6f79-deb62da72b43@amlogic.com>
+References: <20191202111253.94872-1-jian.hu@amlogic.com> <7hsgltqfdx.fsf@baylibre.com> <e90e00e1-c868-ce09-6f79-deb62da72b43@amlogic.com>
+Date:   Tue, 10 Dec 2019 10:15:45 -0800
+Message-ID: <7hblsgqc6m.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20191210145345.11616-4-sudeep.holla@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/2019 14:53, Sudeep Holla wrote:
-> The scmi bus now supports adding multiple devices per protocol,
-> and since scmi_protocol_init is called for each scmi device created,
-> we must avoid allocating protocol private data and initialising the
-> protocol itself if it is already initialised.
-> 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
+Jian Hu <jian.hu@amlogic.com> writes:
 
-Wouldn't be better to add some kind of per-protocol 'initialized' flag somewhere
-in the bus abstraction so that the protocol_id itself could be marked as initialized
-once bus::scmi_protocol_init() completes successfully so that we could just skip the
-invocation itself of bus::scmi_protocol_init() for all the protocols already detected
-as initialized ?
+> Hi Kevin
+>
+> Thanks for your review
+>
+> On 2019/12/10 6:54, Kevin Hilman wrote:
+>> Hi Jian,
+>> 
+>> Jian Hu <jian.hu@amlogic.com> writes:
+>> 
+>>> There are four I2C controllers in A1 series,
+>>> Share the same comptible with AXG.The I2C nodes
+>>> depend on pinmux and clock controller.
+>>>
+>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>> ---
+>>>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 149 ++++++++++++++++++++++
+>>>   1 file changed, 149 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+>>> index eab2ecd36aa8..d0a73d953f5e 100644
+>>> --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+>>> +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+>>> @@ -16,6 +16,13 @@
+>>>   	#address-cells = <2>;
+>>>   	#size-cells = <2>;
+>>>   
+>>> +	aliases {
+>>> +		i2c0 = &i2c0;
+>>> +		i2c1 = &i2c1;
+>>> +		i2c2 = &i2c2;
+>>> +		i2c3 = &i2c3;
+>>> +	};
+>>> +
+>>>   	cpus {
+>>>   		#address-cells = <2>;
+>>>   		#size-cells = <0>;
+>>> @@ -117,6 +124,46 @@
+>>>   				};
+>>>   			};
+>>>   
+>>> +			i2c0: i2c@1400 {
+>>> +				compatible = "amlogic,meson-axg-i2c";
+>>> +				reg = <0x0 0x1400 0x0 0x24>;
+>> 
+>> The AXG DT files use 0x20 for the length.  You are using 0x24.  I don't
+>> see any additional registers added to the driver, so this doesn't look right.
+> In fact, For G12 series and A1, the length should be 0x24. A new 
+> register is added, And it is for IRQ handler timeout. If the 
+> transmission is exceeding a limited time, it will abort the 
+> transmission.Now the function is not used, There is completion to deal 
+> the timeout in the driver. I will set the length 0x20 becouse of the new 
+> register is not used.
 
-Or, if not a flag, maybe deactivating the registered protocol init function itself
-once it has been successfully called once .....something along the lines of:
+Yes, we can extend it to 0x24 when support for the new register is
+added, because that will mean adding a new compatible string also.
 
-diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
-index 7a30952b463d..a551a00586c6 100644
---- a/drivers/firmware/arm_scmi/bus.c
-+++ b/drivers/firmware/arm_scmi/bus.c
-@@ -73,6 +73,8 @@ static int scmi_dev_probe(struct device *dev)
-        ret = scmi_protocol_init(scmi_dev->protocol_id, scmi_dev->handle);
-        if (ret)
-                return ret;
-+       idr_replace(&scmi_protocols, dummy_return_0_callback,
-+                       scmi_dev->protocol_id);
- 
-        return scmi_drv->probe(scmi_dev);
+>> 
+>>> +				interrupts = <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
+>>> +				#address-cells = <1>;
+>>> +				#size-cells = <0>;
+>>> +				clocks = <&clkc_periphs CLKID_I2C_M_A>;
+>>> +				status = "disabled";
+>>> +			};
+>>> +
+>>> +			i2c1: i2c@5c00 {
+>>> +				compatible = "amlogic,meson-axg-i2c";
+>>> +				reg = <0x0 0x5c00 0x0 0x24>;
+>>> +				interrupts = <GIC_SPI 68 IRQ_TYPE_EDGE_RISING>;
+>>> +				#address-cells = <1>;
+>>> +				#size-cells = <0>;
+>>> +				clocks = <&clkc_periphs CLKID_I2C_M_B>;
+>>> +				status = "disabled";
+>>> +			};
+>>> +
+>>> +			i2c2: i2c@6800 {
+>>> +				compatible = "amlogic,meson-axg-i2c";
+>>> +				reg = <0x0 0x6800 0x0 0x24>;
+>>> +				interrupts = <GIC_SPI 76 IRQ_TYPE_EDGE_RISING>;
+>>> +				#address-cells = <1>;
+>>> +				#size-cells = <0>;
+>>> +				clocks = <&clkc_periphs CLKID_I2C_M_C>;
+>>> +				status = "disabled";
+>>> +			};
+>>> +
+>>> +			i2c3: i2c@6c00 {
+>>> +				compatible = "amlogic,meson-axg-i2c";
+>>> +				reg = <0x0 0x6c00 0x0 0x24>;
+>>> +				interrupts = <GIC_SPI 78 IRQ_TYPE_EDGE_RISING>;
+>>> +				#address-cells = <1>;
+>>> +				#size-cells = <0>;
+>>> +				clocks = <&clkc_periphs CLKID_I2C_M_D>;
+>>> +				status = "disabled";
+>>> +			};
+>>> +
+>>>   			uart_AO: serial@1c00 {
+>>>   				compatible = "amlogic,meson-gx-uart",
+>>>   					     "amlogic,meson-ao-uart";
+>>> @@ -171,3 +218,105 @@
+>>>   		#clock-cells = <0>;
+>>>   	};
+>>>   };
+>>> +
+>>> +&periphs_pinctrl {
+>>> +	i2c0_f11_pins:i2c0-f11 {
+>>> +		mux {
+>>> +			groups = "i2c0_sck_f11",
+>>> +				"i2c0_sda_f12";
+>>> +			function = "i2c0";
+>>> +			bias-pull-up;
+>>> +			drive-strength-microamp = <3000>;
+>> 
+>> Can you also add some comment to the changelog about the need for
+>> drive-strength compared to AXG.
+>
+> OK, Drive strength function is added for GPIO pins from G12 series.
+> So does A1 series.
 
-[not really tested eh ... :D]
+Yes, that's what I assumed.  Please add that to the changelog as one of
+the new features in A1 compared to AXG.
 
-This way we can drop this patch as a whole and avoid any future needs to remember
-to add this same sort of logic in the next XYZ protocol implementation.
+Thanks,
 
-Cheers
-
-Cristian
-
->  drivers/firmware/arm_scmi/clock.c   | 3 +++
->  drivers/firmware/arm_scmi/perf.c    | 3 +++
->  drivers/firmware/arm_scmi/power.c   | 3 +++
->  drivers/firmware/arm_scmi/reset.c   | 3 +++
->  drivers/firmware/arm_scmi/sensors.c | 3 +++
->  5 files changed, 15 insertions(+)
-> 
-> diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-> index 32526a793f3a..922b22aaaf84 100644
-> --- a/drivers/firmware/arm_scmi/clock.c
-> +++ b/drivers/firmware/arm_scmi/clock.c
-> @@ -316,6 +316,9 @@ static int scmi_clock_protocol_init(struct scmi_handle *handle)
->  	int clkid, ret;
->  	struct clock_info *cinfo;
-> 
-> +	if (handle->clk_ops && handle->clk_priv)
-> +		return 0; /* initialised already for the first device */
-> +
->  	scmi_version_get(handle, SCMI_PROTOCOL_CLOCK, &version);
-> 
->  	dev_dbg(handle->dev, "Clock Version %d.%d\n",
-> diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-> index 601af4edad5e..55c2a4c21ccb 100644
-> --- a/drivers/firmware/arm_scmi/perf.c
-> +++ b/drivers/firmware/arm_scmi/perf.c
-> @@ -710,6 +710,9 @@ static int scmi_perf_protocol_init(struct scmi_handle *handle)
->  	u32 version;
->  	struct scmi_perf_info *pinfo;
-> 
-> +	if (handle->perf_ops && handle->perf_priv)
-> +		return 0; /* initialised already for the first device */
-> +
->  	scmi_version_get(handle, SCMI_PROTOCOL_PERF, &version);
-> 
->  	dev_dbg(handle->dev, "Performance Version %d.%d\n",
-> diff --git a/drivers/firmware/arm_scmi/power.c b/drivers/firmware/arm_scmi/power.c
-> index 5abef7079c0a..9a7593238b8f 100644
-> --- a/drivers/firmware/arm_scmi/power.c
-> +++ b/drivers/firmware/arm_scmi/power.c
-> @@ -185,6 +185,9 @@ static int scmi_power_protocol_init(struct scmi_handle *handle)
->  	u32 version;
->  	struct scmi_power_info *pinfo;
-> 
-> +	if (handle->power_ops && handle->power_priv)
-> +		return 0; /* initialised already for the first device */
-> +
->  	scmi_version_get(handle, SCMI_PROTOCOL_POWER, &version);
-> 
->  	dev_dbg(handle->dev, "Power Version %d.%d\n",
-> diff --git a/drivers/firmware/arm_scmi/reset.c b/drivers/firmware/arm_scmi/reset.c
-> index ab42c21c5517..809dc8faee1e 100644
-> --- a/drivers/firmware/arm_scmi/reset.c
-> +++ b/drivers/firmware/arm_scmi/reset.c
-> @@ -195,6 +195,9 @@ static int scmi_reset_protocol_init(struct scmi_handle *handle)
->  	u32 version;
->  	struct scmi_reset_info *pinfo;
-> 
-> +	if (handle->reset_ops && handle->reset_priv)
-> +		return 0; /* initialised already for the first device */
-> +
->  	scmi_version_get(handle, SCMI_PROTOCOL_RESET, &version);
-> 
->  	dev_dbg(handle->dev, "Reset Version %d.%d\n",
-> diff --git a/drivers/firmware/arm_scmi/sensors.c b/drivers/firmware/arm_scmi/sensors.c
-> index a400ea805fc2..b7f92c37c8a4 100644
-> --- a/drivers/firmware/arm_scmi/sensors.c
-> +++ b/drivers/firmware/arm_scmi/sensors.c
-> @@ -276,6 +276,9 @@ static int scmi_sensors_protocol_init(struct scmi_handle *handle)
->  	u32 version;
->  	struct sensors_info *sinfo;
-> 
-> +	if (handle->sensor_ops && handle->sensor_priv)
-> +		return 0; /* initialised already for the first device */
-> +
->  	scmi_version_get(handle, SCMI_PROTOCOL_SENSOR, &version);
-> 
->  	dev_dbg(handle->dev, "Sensor Version %d.%d\n",
-> --
-> 2.17.1
-> 
-
+Kevin
