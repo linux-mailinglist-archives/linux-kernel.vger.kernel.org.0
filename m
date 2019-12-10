@@ -2,170 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 591D5118048
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 07:19:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B07811804E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 07:20:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfLJGTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 01:19:11 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:35630 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726085AbfLJGTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 01:19:10 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A7EEE695893D429303CB;
-        Tue, 10 Dec 2019 14:19:08 +0800 (CST)
-Received: from [127.0.0.1] (10.67.101.242) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Tue, 10 Dec 2019
- 14:19:02 +0800
-Subject: Re: [PATCH] crypto: hisilicon - still no need to check return value
- of debugfs_create functions
-To:     Zhou Wang <wangzhou1@hisilicon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-References: <20191209152151.GA1282293@kroah.com>
- <5DEF1993.8020307@hisilicon.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Xu Zaibo <xuzaibo@huawei.com>
-Message-ID: <7c93bc03-c25c-6460-22df-9b0f5bcf7ffc@huawei.com>
-Date:   Tue, 10 Dec 2019 14:19:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S1727207AbfLJGU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 01:20:27 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45880 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfLJGU0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 01:20:26 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 203so12665507lfa.12;
+        Mon, 09 Dec 2019 22:20:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Jv//fc1VPzyc+MNAsiN7TquFe8yzj3we6ZRj3X1mR00=;
+        b=nwjhEEqFWHgdt7GcskJDmpuj3JQ6GgLRuMmIWw6ew5Pe1AlHuPb/kNgkY6UbbWf/nV
+         0Nxxbp7JtxbIWFD+mwB12W1o13HMGfeRyDupDkdAlMtQQTKb50geCspTGO6+cse+klui
+         V3wsKUraWC6uWYeKN1y0zYqwOufAElbN3bP5lGSx9DTdBYeYcQ+G7hmkN7p2sah5vwAr
+         XcClaUU/W3cAGDsogtO2Oi+IiZoCCa+orrJTucBey2OVgNPweO8lbw+l1vK0q5VM6yY1
+         FTfuN5knCSTU95Ifmd7gxdrn5t6iCv91xSDHzI5iNFpaedvjFXTHKLGwm+Q8FPfCTExF
+         OWCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Jv//fc1VPzyc+MNAsiN7TquFe8yzj3we6ZRj3X1mR00=;
+        b=nbxImwX4MWwVMGsGLNK3dG6WglerT72NSmjtAYC695YFDiYFkCI2kHipOLQL9kc89z
+         fnhz3T3Y7qq35u/xPO3ERGBCxaJgLIi2s7xVaRqx9kL548c/GpMJbEopk43ABeuIR/RO
+         qxsfOBHGmsup/FL4gaAgAYrbWIV1yR/QZIi7nJHO5rD0SEWx83FNl2lIPxAOwDE4OK6H
+         3zWu1P9vXKIxc0WHzQPonk5orENJ/vTFGo1pBiNqwNMMj15Ijq8SkSsvUS5JReJDxZz7
+         /jrCSEhEJxXTsXctDRxuFqYBVnDKEjZvL34DKgtICW72rgvPgHUTrqZ84ArN1Dnb4iPH
+         vpzA==
+X-Gm-Message-State: APjAAAXxj8ydYRhB5ULFEotU3xzwckPs6952dXdBI1qchtRXd1mJ2UZk
+        qIA0lJ+/uLHFXCluySEf3esURRtruZLa9yrMKRs=
+X-Google-Smtp-Source: APXvYqyS0TFkIrszmllm1gFo+1Pqhy+E7YQmUTRI7t9cOOtybqrCk6UxIdDQrEHQ6tJeW5fDrNFEyZx+GuLyWPaGlbM=
+X-Received: by 2002:a19:6a06:: with SMTP id u6mr13880006lfu.187.1575958823690;
+ Mon, 09 Dec 2019 22:20:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <5DEF1993.8020307@hisilicon.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.101.242]
-X-CFilter-Loop: Reflected
+References: <20191209194305.20828-1-sjpark@amazon.com> <20191209194305.20828-2-sjpark@amazon.com>
+ <2aca11d5-38ba-e924-c38e-e48c52c915c6@suse.com>
+In-Reply-To: <2aca11d5-38ba-e924-c38e-e48c52c915c6@suse.com>
+From:   SeongJae Park <sj38.park@gmail.com>
+Date:   Tue, 10 Dec 2019 07:19:57 +0100
+Message-ID: <CAEjAshpqjByUcJpmkTU4ukm3pPn0hDfRfB=Rh_vh81ajr9z1Tw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] xenbus/backend: Add memory pressure handler callback
+To:     =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Cc:     SeongJae Park <sjpark@amazon.com>, Jens Axboe <axboe@kernel.dk>,
+        konrad.wilk@oracle.com, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, pdurrant@amazon.com,
+        roger.pau@citrix.com, xen-devel@lists.xenproject.org,
+        SeongJae Park <sjpark@amazon.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Okay, I will fix this, thanks.
-
-Cheers,
-
-Zaibo
-
-.
-
-On 2019/12/10 12:05, Zhou Wang wrote:
-> On 2019/12/9 23:21, Greg Kroah-Hartman wrote:
->> Just like in 4a97bfc79619 ("crypto: hisilicon - no need to check return
->> value of debugfs_create functions"), there still is no need to ever
->> check the return value.  The function can work or not, but the code
->> logic should never do something different based on this.
-> Thanks for fix this, +To Zaibo Xu who is the maintainer of this module :)
+On Tue, Dec 10, 2019 at 7:11 AM J=C3=BCrgen Gro=C3=9F <jgross@suse.com> wro=
+te:
 >
-> Best,
-> Zhou
+> On 09.12.19 20:43, SeongJae Park wrote:
+> > From: SeongJae Park <sjpark@amazon.de>
+> >
+> > Granting pages consumes backend system memory.  In systems configured
+> > with insufficient spare memory for those pages, it can cause a memory
+> > pressure situation.  However, finding the optimal amount of the spare
+> > memory is challenging for large systems having dynamic resource
+> > utilization patterns.  Also, such a static configuration might lacks a
+> > flexibility.
+> >
+> > To mitigate such problems, this commit adds a memory reclaim callback t=
+o
+> > 'xenbus_driver'.  Using this facility, 'xenbus' would be able to monito=
+r
+> > a memory pressure and request specific domains of specific backend
+> > drivers which causing the given pressure to voluntarily release its
+> > memory.
+> >
+> > That said, this commit simply requests every callback registered driver
+> > to release its memory for every domain, rather than issueing the
+> > requests to the drivers and domain in charge.  Such things would be a
+> > future work.  Also, this commit focuses on memory only.  However, it
+> > would be ablt to be extended for general resources.
+> >
+> > Signed-off-by: SeongJae Park <sjpark@amazon.de>
+> > ---
+> >   drivers/xen/xenbus/xenbus_probe_backend.c | 31 ++++++++++++++++++++++=
++
+> >   include/xen/xenbus.h                      |  1 +
+> >   2 files changed, 32 insertions(+)
+> >
+> > diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xe=
+nbus/xenbus_probe_backend.c
+> > index b0bed4faf44c..cd5fd1cd8de3 100644
+> > --- a/drivers/xen/xenbus/xenbus_probe_backend.c
+> > +++ b/drivers/xen/xenbus/xenbus_probe_backend.c
+> > @@ -248,6 +248,34 @@ static int backend_probe_and_watch(struct notifier=
+_block *notifier,
+> >       return NOTIFY_DONE;
+> >   }
+> >
+> > +static int xenbus_backend_reclaim(struct device *dev, void *data)
+> > +{
+> > +     struct xenbus_driver *drv;
+> > +     if (!dev->driver)
+> > +             return -ENOENT;
+> > +     drv =3D to_xenbus_driver(dev->driver);
+> > +     if (drv && drv->reclaim)
+> > +             drv->reclaim(to_xenbus_device(dev), DOMID_INVALID);
+> > +     return 0;
+> > +}
+> > +
+> > +/*
+> > + * Returns 0 always because we are using shrinker to only detect memor=
+y
+> > + * pressure.
+> > + */
+> > +static unsigned long xenbus_backend_shrink_count(struct shrinker *shri=
+nker,
+> > +                             struct shrink_control *sc)
+> > +{
+> > +     bus_for_each_dev(&xenbus_backend.bus, NULL, NULL,
+> > +                     xenbus_backend_reclaim);
+> > +     return 0;
+> > +}
+> > +
+> > +static struct shrinker xenbus_backend_shrinker =3D {
+> > +     .count_objects =3D xenbus_backend_shrink_count,
+> > +     .seeks =3D DEFAULT_SEEKS,
+> > +};
+> > +
+> >   static int __init xenbus_probe_backend_init(void)
+> >   {
+> >       static struct notifier_block xenstore_notifier =3D {
+> > @@ -264,6 +292,9 @@ static int __init xenbus_probe_backend_init(void)
+> >
+> >       register_xenstore_notifier(&xenstore_notifier);
+> >
+> > +     if (register_shrinker(&xenbus_backend_shrinker))
+> > +             pr_warn("shrinker registration failed\n");
+> > +
+> >       return 0;
+> >   }
+> >   subsys_initcall(xenbus_probe_backend_init);
+> > diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+> > index 869c816d5f8c..52aaf4f78400 100644
+> > --- a/include/xen/xenbus.h
+> > +++ b/include/xen/xenbus.h
+> > @@ -104,6 +104,7 @@ struct xenbus_driver {
+> >       struct device_driver driver;
+> >       int (*read_otherend_details)(struct xenbus_device *dev);
+> >       int (*is_ready)(struct xenbus_device *dev);
+> > +     unsigned (*reclaim)(struct xenbus_device *dev, domid_t domid);
 >
->> Cc: Zhou Wang <wangzhou1@hisilicon.com>
->> Cc: Herbert Xu <herbert@gondor.apana.org.au>
->> Cc: "David S. Miller" <davem@davemloft.net>
->> Cc: linux-crypto@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> ---
->>   drivers/crypto/hisilicon/hpre/hpre_main.c | 28 +++++------------------
->>   1 file changed, 6 insertions(+), 22 deletions(-)
->>
->> diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
->> index 34e0424410bf..711f5d18b641 100644
->> --- a/drivers/crypto/hisilicon/hpre/hpre_main.c
->> +++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
->> @@ -557,7 +557,7 @@ static const struct file_operations hpre_ctrl_debug_fops = {
->>   static int hpre_create_debugfs_file(struct hpre_debug *dbg, struct dentry *dir,
->>   				    enum hpre_ctrl_dbgfs_file type, int indx)
->>   {
->> -	struct dentry *tmp, *file_dir;
->> +	struct dentry *file_dir;
->>   
->>   	if (dir)
->>   		file_dir = dir;
->> @@ -571,10 +571,8 @@ static int hpre_create_debugfs_file(struct hpre_debug *dbg, struct dentry *dir,
->>   	dbg->files[indx].debug = dbg;
->>   	dbg->files[indx].type = type;
->>   	dbg->files[indx].index = indx;
->> -	tmp = debugfs_create_file(hpre_debug_file_name[type], 0600, file_dir,
->> -				  dbg->files + indx, &hpre_ctrl_debug_fops);
->> -	if (!tmp)
->> -		return -ENOENT;
->> +	debugfs_create_file(hpre_debug_file_name[type], 0600, file_dir,
->> +			    dbg->files + indx, &hpre_ctrl_debug_fops);
->>   
->>   	return 0;
->>   }
->> @@ -585,7 +583,6 @@ static int hpre_pf_comm_regs_debugfs_init(struct hpre_debug *debug)
->>   	struct hisi_qm *qm = &hpre->qm;
->>   	struct device *dev = &qm->pdev->dev;
->>   	struct debugfs_regset32 *regset;
->> -	struct dentry *tmp;
->>   
->>   	regset = devm_kzalloc(dev, sizeof(*regset), GFP_KERNEL);
->>   	if (!regset)
->> @@ -595,10 +592,7 @@ static int hpre_pf_comm_regs_debugfs_init(struct hpre_debug *debug)
->>   	regset->nregs = ARRAY_SIZE(hpre_com_dfx_regs);
->>   	regset->base = qm->io_base;
->>   
->> -	tmp = debugfs_create_regset32("regs", 0444,  debug->debug_root, regset);
->> -	if (!tmp)
->> -		return -ENOENT;
->> -
->> +	debugfs_create_regset32("regs", 0444,  debug->debug_root, regset);
->>   	return 0;
->>   }
->>   
->> @@ -609,15 +603,12 @@ static int hpre_cluster_debugfs_init(struct hpre_debug *debug)
->>   	struct device *dev = &qm->pdev->dev;
->>   	char buf[HPRE_DBGFS_VAL_MAX_LEN];
->>   	struct debugfs_regset32 *regset;
->> -	struct dentry *tmp_d, *tmp;
->> +	struct dentry *tmp_d;
->>   	int i, ret;
->>   
->>   	for (i = 0; i < HPRE_CLUSTERS_NUM; i++) {
->>   		sprintf(buf, "cluster%d", i);
->> -
->>   		tmp_d = debugfs_create_dir(buf, debug->debug_root);
->> -		if (!tmp_d)
->> -			return -ENOENT;
->>   
->>   		regset = devm_kzalloc(dev, sizeof(*regset), GFP_KERNEL);
->>   		if (!regset)
->> @@ -627,9 +618,7 @@ static int hpre_cluster_debugfs_init(struct hpre_debug *debug)
->>   		regset->nregs = ARRAY_SIZE(hpre_cluster_dfx_regs);
->>   		regset->base = qm->io_base + hpre_cluster_offsets[i];
->>   
->> -		tmp = debugfs_create_regset32("regs", 0444, tmp_d, regset);
->> -		if (!tmp)
->> -			return -ENOENT;
->> +		debugfs_create_regset32("regs", 0444, tmp_d, regset);
->>   		ret = hpre_create_debugfs_file(debug, tmp_d, HPRE_CLUSTER_CTRL,
->>   					       i + HPRE_CLUSTER_CTRL);
->>   		if (ret)
->> @@ -668,9 +657,6 @@ static int hpre_debugfs_init(struct hpre *hpre)
->>   	int ret;
->>   
->>   	dir = debugfs_create_dir(dev_name(dev), hpre_debugfs_root);
->> -	if (!dir)
->> -		return -ENOENT;
->> -
->>   	qm->debug.debug_root = dir;
->>   
->>   	ret = hisi_qm_debug_init(qm);
->> @@ -1014,8 +1000,6 @@ static void hpre_register_debugfs(void)
->>   		return;
->>   
->>   	hpre_debugfs_root = debugfs_create_dir(hpre_name, NULL);
->> -	if (IS_ERR_OR_NULL(hpre_debugfs_root))
->> -		hpre_debugfs_root = NULL;
->>   }
->>   
->>   static void hpre_unregister_debugfs(void)
->>
-> .
->
+> Can you please add a comment here regarding semantics of specifying
+> DOMID_INVALID as domid?
+
+Yes, of course.  Will do with the next version.
 
 
+Thanks,
+SeongJae Park
+
+>
+> Block maintainers, would you be fine with me carrying this series
+> through the Xen tree?
+>
+>
+> Juergen
