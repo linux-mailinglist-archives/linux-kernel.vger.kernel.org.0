@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D69FF119722
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 838AF119736
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:32:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbfLJVJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:09:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57884 "EHLO mail.kernel.org"
+        id S1728314AbfLJVbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:31:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726913AbfLJVJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:09:25 -0500
+        id S1728164AbfLJVJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:09:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D915824699;
-        Tue, 10 Dec 2019 21:09:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68050246B1;
+        Tue, 10 Dec 2019 21:09:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576012164;
-        bh=yS2KDEXb1mtqkGjsdBPg69ZkH+a+Qekok3ngQXZ45Jc=;
+        s=default; t=1576012167;
+        bh=E1tJuxh6B/FdhYCbWIjwtof1EY/rbm/Cp4AzRV0SBi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BBOMGUX+vuZ2Ifb1HTSH9xfKyc6fTsWNsWvTyOrj4GnZ3RIZX+4Hvspq7kgmVsPVR
-         CKjV2dudYXM4AXWEJDJ4zp5GgrK450tnk315R3MTXv7yGiBnFKjaXfZ1ZTRdSWaTIo
-         Rr/QfXkWxNaaHS3H51cD6WkWPH21B9eVY4dv4CkE=
+        b=BC04pFOuUto13FtqjCEYl0KuHsdUDSQLxB3ySIRBqdEIj3lWuUYcYdsrzIXZHVMcY
+         43oPXPYiR3UaK6sFFGlAIkIgyJnvL6Eu1PVIppaWf12gf64CnDmVScAtt8SXZ+MhkH
+         COtcWOlZRCXNVUk4iyVKVe7347Y1EqxcDrH8+eVI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Roman Li <Roman.Li@amd.com>,
+Cc:     Kevin Wang <kevin1.wang@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 125/350] drm/amd/display: enable hostvm based on roimmu active for dcn2.1
-Date:   Tue, 10 Dec 2019 16:03:50 -0500
-Message-Id: <20191210210735.9077-86-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 127/350] drm/amdgpu: fix amdgpu trace event print string format error
+Date:   Tue, 10 Dec 2019 16:03:52 -0500
+Message-Id: <20191210210735.9077-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
 References: <20191210210735.9077-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,90 +46,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>
+From: Kevin Wang <kevin1.wang@amd.com>
 
-[ Upstream commit 48d92e8eda3d9b61978377e7539bfc5958e850cf ]
+[ Upstream commit 2c2fdb8bca290c439e383cfb6857b0c65e528964 ]
 
-Enabling hostvm when ROIMMU is not active seems to break GPUVM.
-This fixes the issue by not enabling hostvm if ROIMMU is not
-activated.
+the trace event print string format error.
+(use integer type to handle string)
 
-Signed-off-by: Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Reviewed-by: Roman Li <Roman.Li@amd.com>
+before:
+amdgpu_test_kev-1556  [002]   138.508781: amdgpu_cs_ioctl:
+sched_job=8, timeline=gfx_0.0.0, context=177, seqno=1,
+ring_name=ffff94d01c207bf0, num_ibs=2
+
+after:
+amdgpu_test_kev-1506  [004]   370.703783: amdgpu_cs_ioctl:
+sched_job=12, timeline=gfx_0.0.0, context=234, seqno=2,
+ring_name=gfx_0.0.0, num_ibs=1
+
+change trace event list:
+1.amdgpu_cs_ioctl
+2.amdgpu_sched_run_job
+3.amdgpu_ib_pipe_sync
+
+Signed-off-by: Kevin Wang <kevin1.wang@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../drm/amd/display/dc/dcn21/dcn21_hubbub.c   | 40 ++++++++++++-------
- 1 file changed, 25 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_hubbub.c b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_hubbub.c
-index d1266741763b9..f5f6b4a0f0aa4 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_hubbub.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_hubbub.c
-@@ -22,6 +22,7 @@
-  * Authors: AMD
-  *
-  */
-+#include <linux/delay.h>
- #include "dm_services.h"
- #include "dcn20/dcn20_hubbub.h"
- #include "dcn21_hubbub.h"
-@@ -71,30 +72,39 @@ static uint32_t convert_and_clamp(
- void dcn21_dchvm_init(struct hubbub *hubbub)
- {
- 	struct dcn20_hubbub *hubbub1 = TO_DCN20_HUBBUB(hubbub);
-+	uint32_t riommu_active;
-+	int i;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
+index 77674a7b96163..91899d28fa722 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
+@@ -170,7 +170,7 @@ TRACE_EVENT(amdgpu_cs_ioctl,
+ 			     __field(unsigned int, context)
+ 			     __field(unsigned int, seqno)
+ 			     __field(struct dma_fence *, fence)
+-			     __field(char *, ring_name)
++			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
+ 			     __field(u32, num_ibs)
+ 			     ),
  
- 	//Init DCHVM block
- 	REG_UPDATE(DCHVM_CTRL0, HOSTVM_INIT_REQ, 1);
+@@ -179,12 +179,12 @@ TRACE_EVENT(amdgpu_cs_ioctl,
+ 			   __assign_str(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
+ 			   __entry->context = job->base.s_fence->finished.context;
+ 			   __entry->seqno = job->base.s_fence->finished.seqno;
+-			   __entry->ring_name = to_amdgpu_ring(job->base.sched)->name;
++			   __assign_str(ring, to_amdgpu_ring(job->base.sched)->name)
+ 			   __entry->num_ibs = job->num_ibs;
+ 			   ),
+ 	    TP_printk("sched_job=%llu, timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
+ 		      __entry->sched_job_id, __get_str(timeline), __entry->context,
+-		      __entry->seqno, __entry->ring_name, __entry->num_ibs)
++		      __entry->seqno, __get_str(ring), __entry->num_ibs)
+ );
  
- 	//Poll until RIOMMU_ACTIVE = 1
--	//TODO: Figure out interval us and retry count
--	REG_WAIT(DCHVM_RIOMMU_STAT0, RIOMMU_ACTIVE, 1, 5, 100);
-+	for (i = 0; i < 100; i++) {
-+		REG_GET(DCHVM_RIOMMU_STAT0, RIOMMU_ACTIVE, &riommu_active);
+ TRACE_EVENT(amdgpu_sched_run_job,
+@@ -195,7 +195,7 @@ TRACE_EVENT(amdgpu_sched_run_job,
+ 			     __string(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
+ 			     __field(unsigned int, context)
+ 			     __field(unsigned int, seqno)
+-			     __field(char *, ring_name)
++			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
+ 			     __field(u32, num_ibs)
+ 			     ),
  
--	//Reflect the power status of DCHUBBUB
--	REG_UPDATE(DCHVM_RIOMMU_CTRL0, HOSTVM_POWERSTATUS, 1);
-+		if (riommu_active)
-+			break;
-+		else
-+			udelay(5);
-+	}
-+
-+	if (riommu_active) {
-+		//Reflect the power status of DCHUBBUB
-+		REG_UPDATE(DCHVM_RIOMMU_CTRL0, HOSTVM_POWERSTATUS, 1);
+@@ -204,12 +204,12 @@ TRACE_EVENT(amdgpu_sched_run_job,
+ 			   __assign_str(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
+ 			   __entry->context = job->base.s_fence->finished.context;
+ 			   __entry->seqno = job->base.s_fence->finished.seqno;
+-			   __entry->ring_name = to_amdgpu_ring(job->base.sched)->name;
++			   __assign_str(ring, to_amdgpu_ring(job->base.sched)->name)
+ 			   __entry->num_ibs = job->num_ibs;
+ 			   ),
+ 	    TP_printk("sched_job=%llu, timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
+ 		      __entry->sched_job_id, __get_str(timeline), __entry->context,
+-		      __entry->seqno, __entry->ring_name, __entry->num_ibs)
++		      __entry->seqno, __get_str(ring), __entry->num_ibs)
+ );
  
--	//Start rIOMMU prefetching
--	REG_UPDATE(DCHVM_RIOMMU_CTRL0, HOSTVM_PREFETCH_REQ, 1);
-+		//Start rIOMMU prefetching
-+		REG_UPDATE(DCHVM_RIOMMU_CTRL0, HOSTVM_PREFETCH_REQ, 1);
  
--	// Enable dynamic clock gating
--	REG_UPDATE_4(DCHVM_CLK_CTRL,
--					HVM_DISPCLK_R_GATE_DIS, 0,
--					HVM_DISPCLK_G_GATE_DIS, 0,
--					HVM_DCFCLK_R_GATE_DIS, 0,
--					HVM_DCFCLK_G_GATE_DIS, 0);
-+		// Enable dynamic clock gating
-+		REG_UPDATE_4(DCHVM_CLK_CTRL,
-+						HVM_DISPCLK_R_GATE_DIS, 0,
-+						HVM_DISPCLK_G_GATE_DIS, 0,
-+						HVM_DCFCLK_R_GATE_DIS, 0,
-+						HVM_DCFCLK_G_GATE_DIS, 0);
+@@ -468,7 +468,7 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
+ 	    TP_PROTO(struct amdgpu_job *sched_job, struct dma_fence *fence),
+ 	    TP_ARGS(sched_job, fence),
+ 	    TP_STRUCT__entry(
+-			     __field(const char *,name)
++			     __string(ring, sched_job->base.sched->name);
+ 			     __field(uint64_t, id)
+ 			     __field(struct dma_fence *, fence)
+ 			     __field(uint64_t, ctx)
+@@ -476,14 +476,14 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
+ 			     ),
  
--	//Poll until HOSTVM_PREFETCH_DONE = 1
--	//TODO: Figure out interval us and retry count
--	REG_WAIT(DCHVM_RIOMMU_STAT0, HOSTVM_PREFETCH_DONE, 1, 5, 100);
-+		//Poll until HOSTVM_PREFETCH_DONE = 1
-+		REG_WAIT(DCHVM_RIOMMU_STAT0, HOSTVM_PREFETCH_DONE, 1, 5, 100);
-+	}
- }
- 
- static int hubbub21_init_dchub(struct hubbub *hubbub,
+ 	    TP_fast_assign(
+-			   __entry->name = sched_job->base.sched->name;
++			   __assign_str(ring, sched_job->base.sched->name)
+ 			   __entry->id = sched_job->base.id;
+ 			   __entry->fence = fence;
+ 			   __entry->ctx = fence->context;
+ 			   __entry->seqno = fence->seqno;
+ 			   ),
+ 	    TP_printk("job ring=%s, id=%llu, need pipe sync to fence=%p, context=%llu, seq=%u",
+-		      __entry->name, __entry->id,
++		      __get_str(ring), __entry->id,
+ 		      __entry->fence, __entry->ctx,
+ 		      __entry->seqno)
+ );
 -- 
 2.20.1
 
