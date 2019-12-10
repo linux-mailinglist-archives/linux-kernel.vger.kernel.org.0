@@ -2,166 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AA6B117D38
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 02:35:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90578117D51
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 02:42:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfLJBfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 20:35:13 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:46015 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbfLJBfN (ORCPT
+        id S1726824AbfLJBmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 20:42:45 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19740 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726502AbfLJBmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 20:35:13 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191210013510epoutp024c55e12e0ad9cd49ad91a4baba54158a~e3qLeoC-X0805108051epoutp02W
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:35:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191210013510epoutp024c55e12e0ad9cd49ad91a4baba54158a~e3qLeoC-X0805108051epoutp02W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575941710;
-        bh=qFiCkpWdOhMk6slOqt40KxqUMhSvlXpG9cflFcoQj2I=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=LUHpmSPv6HLm9R/eR8aw7ZYm7SDqmlXd6lMFvxjmxKd4Y/b7+ymY8aVPMgkmpk0GH
-         Ok9S387axIMRgZE3C9Nu+ajSVJ4zTVbbaURcCsyrqTVXCvim65MxP0fKn61D6+9Ham
-         Gem+OKxBDuxs7kIKSY0Ui3zukZ4piotmfE9vbKhM=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191210013510epcas1p2248b3cbbae64420c6c1b8dd87bfd1bbb~e3qLK-vr81892118921epcas1p2d;
-        Tue, 10 Dec 2019 01:35:10 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47X2gH5QH7zMqYlh; Tue, 10 Dec
-        2019 01:35:07 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8C.40.48019.546FEED5; Tue, 10 Dec 2019 10:35:01 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191210013501epcas1p2532f000b722aac007d096c7adc1f92b4~e3qCntqUY2119221192epcas1p22;
-        Tue, 10 Dec 2019 01:35:01 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191210013501epsmtrp1d908bcace9dc47ff1fe897fc32efc236~e3qCm_50y0823808238epsmtrp1q;
-        Tue, 10 Dec 2019 01:35:01 +0000 (GMT)
-X-AuditID: b6c32a38-257ff7000001bb93-16-5deef6455802
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E5.DC.06569.546FEED5; Tue, 10 Dec 2019 10:35:01 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191210013501epsmtip14955e9626732f54cb7603b58c6c824e7~e3qCdp8pt1587015870epsmtip1X;
-        Tue, 10 Dec 2019 01:35:01 +0000 (GMT)
-Subject: Re: [PATCH 1/4] PM / devfreq: reuse system workqueue machanism
-To:     Kamil Konieczny <k.konieczny@samsung.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <2eab8a20-1701-94dc-410a-bb072a5f5b4e@samsung.com>
-Date:   Tue, 10 Dec 2019 10:41:27 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Mon, 9 Dec 2019 20:42:44 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBA1fnQL141195
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Dec 2019 20:42:43 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wsmftjwyc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 20:42:42 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <sourabhjain@linux.ibm.com>;
+        Tue, 10 Dec 2019 01:42:41 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 10 Dec 2019 01:42:38 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBA1gbPr54394894
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Dec 2019 01:42:37 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 19DDA11C04A;
+        Tue, 10 Dec 2019 01:42:37 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6145311C052;
+        Tue, 10 Dec 2019 01:42:35 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.59.157])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 10 Dec 2019 01:42:35 +0000 (GMT)
+Subject: Re: [PATCH v5 3/6] powerpc/fadump: reorganize /sys/kernel/fadump_*
+ sysfs files
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org,
+        mahesh@linux.vnet.ibm.com, hbathini@linux.ibm.com
+References: <20191209045826.30076-1-sourabhjain@linux.ibm.com>
+ <20191209045826.30076-4-sourabhjain@linux.ibm.com>
+ <20191209081023.GC706232@kroah.com>
+From:   Sourabh Jain <sourabhjain@linux.ibm.com>
+Date:   Tue, 10 Dec 2019 07:12:34 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20191209144425.13321-2-k.konieczny@samsung.com>
+In-Reply-To: <20191209081023.GC706232@kroah.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTURju7G53V3N5mqlvBmVXjDKWXufqJi2KrAZFWZE/ArGLHtTcV7tT
-        rP6U1MzIPijFRGtQUkplUyu1cmRqCeX6RMmKKClNUzLtgwradhf573mf93nO+z7nHIZSO+ko
-        JtdsJzazYGTpYPmNe4viNWu/jaYneFzxvKuiXsE7xysUvMdzTck/KhpR8s9aq2j+a2kH4q90
-        vFby/Qcu0asYQ0NdCW041lSHDF8b5qZSO/JW5BAhi9iiiTnTkpVrztazG7ZlrMnQLU3gNNxy
-        fhkbbRZMRM+mbEzVrMs1ejdgowsEY76XShVEkY1fucJmybeT6ByLaNezxJpltC63LhEFk5hv
-        zl6SaTElcwkJiTqvcGdejruqRWYtmlF4+k3EfnR3+hEUxABOgq6xV4ojKJhR42YEVYM9gWIc
-        QU3bmFIqviGYONam+Gd52neLlhp3EJw+9FsmFWMInlR3eTsME4bXw53GNJ9hFtbASHMN5dNQ
-        +KwMRsof+0+icRy4B/toHw7F8+HFj/fIh1V4JZSWOvy8HMdC5/Wfch8Ox2nQfeNgQDMTus8M
-        +PkgrIfjveN+PYUj4eXAOZmE58HNz1X+wYCHaWh5+kcmRUiBMyV1tITD4NP9JqWEo2DouCOA
-        90FtdwctmQ8jaHI/DuTXgrvmlMyXksKLoL41XqLnQ8uvaiQNngGjk0cVPglgFRx2qCVJDDx7
-        +zqwwmw4X1xCn0Bs5ZQ4lVMiVE6JUPl/mBPJ61AEsYqmbCJy1qSpr92A/L8zjm9Gt3s2tiPM
-        IDZE5Vw1mq5WCAXiHlM7AoZiZ6nuO7yUKkvYs5fYLBm2fCMR25HOe9snqajwTIv3r5vtGZwu
-        UavV8kncUh3HsZEq5seTdDXOFuwkjxArsf3zyZigqP3IMfFlMiTkw+U5jelxi12hawrLNhW4
-        dENprUNzn4emFNfvGvLMHO9KFotIpM55ES184VGX3Sb6mqs7LhiSD33cYD1xNHh7P2eoLV9t
-        7HT39DeGXX7YFjapra13TWt4NGfXq+ESzbsHpt2tJ8tymc29MWK5eUvxRGxhp45esLXiO2Hl
-        Yo7AxVE2UfgLjFYelbMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJTtf127tYgyM7uCw2zljParHg0wxW
-        i/PnN7BbnG16w25xedccNovPvUcYLdYeuctucbtxBZsDh8emVZ1sHn1bVjF6fN4kF8AcxWWT
-        kpqTWZZapG+XwJWxf85OpoImvoop98QaGA9ydzFyckgImEhcurGbrYuRi0NIYDejxP5jc9gg
-        EpIS0y4eZe5i5ACyhSUOHy4GCQsJvGWUmHGgBiQsLOAusXdzGEhYREBX4s2OpcwgY5gFFjBJ
-        zL85kQVi5mFGiR3Ln7KCVLEJaEnsf3EDbD6/gKLE1R+PGUFsXgE7id7eNrA4i4CqxNGtP1lA
-        bFGBMImdSx4zQdQISpyc+QQszilgK9F//RNYPbOAusSfeZeYIWxxiVtP5jNB2PIS29/OYZ7A
-        KDwLSfssJC2zkLTMQtKygJFlFaNkakFxbnpusWGBUV5quV5xYm5xaV66XnJ+7iZGcARpae1g
-        PHEi/hCjAAejEg+vh927WCHWxLLiytxDjBIczEoivMfbgEK8KYmVValF+fFFpTmpxYcYpTlY
-        lMR55fOPRQoJpCeWpGanphakFsFkmTg4pRoYI3p4Y0zK/j05wmgdNT1cWDXIJM9tsuTMI58V
-        woJbLlilbl2+UFGxJti0rbQ4Pfl6RtEdadHNd5N9bMOi+m8dnGb0xO1W2b7Qmf/erj3yMiA8
-        frr7jKkrsr6Efy+ydas+aXNy0YOQ3f9WeO5efiH5zqYvWxQk7b63TRHa8zhMTiyaI//gd6lw
-        JZbijERDLeai4kQARxaNG5wCAAA=
-X-CMS-MailID: 20191210013501epcas1p2532f000b722aac007d096c7adc1f92b4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191209144441eucas1p16945780c1a1ff3302a233414ae6aace2
-References: <20191209144425.13321-1-k.konieczny@samsung.com>
-        <CGME20191209144441eucas1p16945780c1a1ff3302a233414ae6aace2@eucas1p1.samsung.com>
-        <20191209144425.13321-2-k.konieczny@samsung.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19121001-0012-0000-0000-00000373505B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19121001-0013-0000-0000-000021AF20DB
+Message-Id: <64537bac-5fc3-bda8-4cac-338436b30d3e@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-09_05:2019-12-09,2019-12-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 mlxlogscore=999 adultscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1912100014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/9/19 11:44 PM, Kamil Konieczny wrote:
-> There is no need for creating another workqueue, it is enough
-> to reuse system_freezable_power_efficient one.
+
+
+On 12/9/19 1:40 PM, Greg KH wrote:
+> On Mon, Dec 09, 2019 at 10:28:23AM +0530, Sourabh Jain wrote:
+>> +#define CREATE_SYMLINK(target, symlink_name) do {\
+>> +	rc = compat_only_sysfs_link_entry_to_kobj(kernel_kobj, fadump_kobj, \
+>> +						  target, symlink_name); \
+>> +	if (rc) \
+>> +		pr_err("unable to create %s symlink (%d)", symlink_name, rc); \
+>> +} while (0)
 > 
-> Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
-> ---
->  drivers/devfreq/devfreq.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 46a7ff7c2994..955949c6fc1f 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -1532,11 +1532,11 @@ static int __init devfreq_init(void)
->  		return PTR_ERR(devfreq_class);
->  	}
->  
-> -	devfreq_wq = create_freezable_workqueue("devfreq_wq");
-> +	devfreq_wq = system_freezable_power_efficient_wq;
+> No need for a macro, just spell it all out.  And properly clean up if an
+> error happens, you are just printing it out and moving on, which is
+> probably NOT what you want to do, right?
 
-It affect the behaviors of whole device drivers using devfreq subsystem.
-It is not good to change the workqueue type without any reasonable
-data like experiment result, power-consumption result and performance
-result for almost device drivers using devfreq subsystem.
+Yeah actually there is no point in keeping the fadump_enabled symlink if fadump_registered
+symlink creation fails.
 
-Are there any problem or any benefit to change workqueue type?
+And it is even better to unregister the FADump if fadump_group creation fails.
 
-Actually, it is not simple to change the like just one device driver
-because devfreq subsytem is very important for both performance
-and power-consumption.
-
-If you hope to change the feature related to both performance 
-and power-consumption, please suggest the reasonable data
-with fundamental reason.
-
-So, I can't agree it.
-
-
->  	if (!devfreq_wq) {
->  		class_destroy(devfreq_class);
-> -		pr_err("%s: couldn't create workqueue\n", __FILE__);
-> -		return -ENOMEM;
-> +		pr_err("%s: system_freezable_power_efficient_wq isn't initialized\n", __FILE__);
-> +		return -EINVAL;
->  	}
->  	devfreq_class->dev_groups = devfreq_groups;
->  
 > 
+>> +static struct attribute_group fadump_group = {
+>> +	.attrs = fadump_attrs,
+>> +};
+> 
+> ATTRIBUTE_GROUPS()?
+
+Thanks, I will use this macro.
+
+-Sourabh Jain
 
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+
