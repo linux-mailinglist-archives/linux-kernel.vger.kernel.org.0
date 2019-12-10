@@ -2,83 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA4A111910D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 20:53:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9DFF119123
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 20:55:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfLJTw7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 14:52:59 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:48441 "EHLO
+        id S1727014AbfLJTzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 14:55:09 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:43471 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbfLJTw6 (ORCPT
+        with ESMTP id S1726903AbfLJTzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 14:52:58 -0500
+        Tue, 10 Dec 2019 14:55:03 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MTikV-1iAh0D2xMz-00U0Gz; Tue, 10 Dec 2019 20:52:04 +0100
+ 1MBmDy-1iSdZE09bI-00CCMA; Tue, 10 Dec 2019 20:53:44 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Sekhar Nori <nsekhar@ti.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Lechner <david@lechnology.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: davinci: select CONFIG_RESET_CONTROLLER
-Date:   Tue, 10 Dec 2019 20:51:44 +0100
-Message-Id: <20191210195202.622734-1-arnd@arndb.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Ben Zhang <benzh@chromium.org>,
+        Curtis Malainey <cujomalainey@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH] ASoC: rt5677: add SPI_MASTER dependency
+Date:   Tue, 10 Dec 2019 20:52:26 +0100
+Message-Id: <20191210195333.648018-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:yzlNRh3NNg4yi3/+SOu84vzqxuE3ALqmc8SzWN8n/eF/oFv9jH3
- pXUf0p+Robr0Mvi0Z5VXk60Q11HWX/ycX9tpw5EN7RlgBnPljnqSjSd+u2UdlVBpdR1xPG3
- dsLC+Dw5cG2sUwDhXndzdJRu2JJhpkp2uOJxSdmuxVZZFUoKZGazSdi525M5KidPgSPCFvi
- QIV4ktU1sNBtL7IVARytA==
+X-Provags-ID: V03:K1:FRkHOOKgb97GU78DRa4WO6ybtXkwJBdydEWXHFH0XK6ebufL9xV
+ 1EnlNmOIxy2m4DJZpwOSZDYe6VdSkLHIYTkUdRCdxb96bn4+i9aM5HDbv8Y7m7upSqX0g+4
+ aZ7pxvErgtXqj88QUP5vZlUGYWZsThHweb+iyAH57kzxC10soq23IhgctvcW1mAt5mudX0M
+ ofu4B2dzMSXFkyVJqr7fA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:nkkoiZh+DM8=:HiMiLl6p7f68ae705iW+WW
- /+K5vhIuXifxSPnLe8u2pTUoZL61HepdIzROtYD+VGqOK16vjoxCRfLOyjD8/UWskFA6N4DDC
- cBTKWyP0TLZoZohKUcjDF1uj07cGjE88fDdmdA9G8N5Vfg5iQUU2OcDbTeZRmZ4cj6Q2kXRVu
- CG91KwO/mNFaIZrcFGhI+MsL8lrciilwEzX/ayTAf9jx3aR8QO0CgSnL4OhygxjN6ZXIXvIhv
- ZZ5gfXPk14E3wZQ5iQ/Lw+ocrbT3WaUwT2uX5QrgyNLk5bbacd89kD0ap6l/nW956g7lmMbx0
- OmYZWnDp/f3aKJzs8AHAK46+0v6KqR8rxScuD2y/yACg71oLqzKH8JYJZmIQZuBzvmFuadkW6
- aivmTH6ZYsOxGmjGDcgrKDQJUnAbxsTz1vcpiPpVHQVm89R4FFXqiQ1G7FBnrEDSKTeps3dgN
- Bnlhf4DXGlLI3/VNjHgmOA2+WrQ5vUZdctWq45f1sguM1SUAEIXWBK2RM6MNmJziV6VFVsVFe
- +CctwO6vX8nzbpbMtFP4/MnUs8Vz5oB8qeJqpJ5StboXEdRJEO7h1+JQjGx3HImT6RT+7TUOF
- bxG/5/2mmE0sPCiE1UP7rC6ZJT2rDjXHBKmlrYISXKFneXcuwzKbU+RC5Y6PyZNVjaBh7W0SN
- xQRKPNsEnGnhZwOx0SdF0v7d/pmr848lP1StNa+YAc3ycQtWPdmY5b/Kxi/kIqMFR6OuhEbRn
- J4wqUtJOz9KKy5YcL57Z+d/WTlubpqhCfHNXt4yiyX2eqBFNX8L2xJZkWhYD+lIZwU8B5iQ6v
- 5HsJ3qdXA5htkt8CD1+rh02KI9u30r7CXPQMXFCHLL4KaKl3/zQIJvJ7NLrxfhyEF0FYbnQJw
- q+ACtPYVeVTWNIx4eAdQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:aRxDfmwkuqQ=:Q5kIO/JyMKhASOEVpBGr79
+ mltKx8dNXZy5JN2a10gY5qm3kf02KQ8QYkK/4v3cAdAbmccyzL4DXyE+PKfOKw6YenitwI12c
+ 8YbdnsOQ8CJRf8p4rEWHGUvRObVYsyum+gwXLcv7ROZGJT3/G/YCUikha20/xZ/QOXlfAzyia
+ 7c+O9S7Q5eND46EM3BY8MWxHHnw6vvaouoJcBvalhn6utMA4Xdyu6sQ8klBKG/OgtzUIK/5f5
+ dgV1/mPcAfVkiDLHIOYY33Pv7BbxGikgB3SDFPgfExtJQj9YatmVAE8kJpv7eYxwqZEW9xR2U
+ wUG2rEBAkKiD8Wfob5x3p4BZ7vIWifgoOi5pHHimENGsOT+B3UybUI5RUND6zaquO3rBi8evu
+ rYtEPAxqZ5pKX8o/t6h14iPnoO/9+X619xrMLQmZMHVYg1lXfFU/da7NavX81GHaMC7DXR8lW
+ yVoDxUCfei6PWs8RaBl7o7ewBIyGnUE4uocUG3rbI/SlP78kYT6tpS4PtTKHZQMiv7NbGvII1
+ 8/SzVaX+qN+X55J8eYxyg/eCefYiWim8pCMOjrJPOTeNSnV6RCH3iEeHZS48oGJvCIvexLTjY
+ tVeasw/P6N94yIWtOgt5S1yqSEgIg0TJvze3ZruHI+ks3QwRINk3gVegkpgUvEBcd4IxFI2yl
+ QDOUbechDBC9C1VkFW5voYcKksms6yCQrIFWzOrWWLxhO5Ahg3fDkwe272NzdQXH0pRQrq9nC
+ OehoDnS0YYCsMz/8ALLgfgBpT9+mK0KV3838L/HVcBGhGfNBCXig+a9eqoEyQQ6SqIU83x0IQ
+ C6Kx99oKCbEHzZkvBlwpEoLaMYnbY5DOCCrIY1KjWrOLqhhrYUQFyfH0Lmn7+kt/a+MbIJtvw
+ QFiozHF88wZ3H1Nwewdw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Selecting RESET_CONTROLLER is actually required, otherwise we
-can get a link failure in the clock driver:
+When CONFIG_SPI is disabled, the newly added code for the DSP
+firmware loading fails to link:
 
-drivers/clk/davinci/psc.o: In function `__davinci_psc_register_clocks':
-psc.c:(.text+0x9a0): undefined reference to `devm_reset_controller_register'
-drivers/clk/davinci/psc-da850.o: In function `da850_psc0_init':
-psc-da850.c:(.text+0x24): undefined reference to `reset_controller_add_lookup'
+ERROR: "rt5677_spi_hotword_detected" [sound/soc/codecs/snd-soc-rt5677.ko] undefined!
+ERROR: "rt5677_spi_write" [sound/soc/codecs/snd-soc-rt5677.ko] undefined!
 
-Fixes: f962396ce292 ("ARM: davinci: support multiplatform build for ARM v5")
-Cc: <stable@vger.kernel.org> # v5.4
+Add a dependency to prevent this configuration.
+
+Note: the does not work with the DT probing, as there is no binding
+for the SPI half of the driver, but nothing seems to be using that
+with the mainline kernel anyway.
+
+Fixes: 461c623270e4 ("ASoC: rt5677: Load firmware via SPI using delayed work")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-davinci/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/Kconfig       | 1 +
+ sound/soc/intel/boards/Kconfig | 1 +
+ sound/soc/mediatek/Kconfig     | 2 +-
+ sound/soc/tegra/Kconfig        | 2 +-
+ 4 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index dd427bd2768c..02b180ad7245 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -9,6 +9,7 @@ menuconfig ARCH_DAVINCI
- 	select PM_GENERIC_DOMAINS if PM
- 	select PM_GENERIC_DOMAINS_OF if PM && OF
- 	select REGMAP_MMIO
-+	select RESET_CONTROLLER
- 	select HAVE_IDE
- 	select PINCTRL_SINGLE
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 71b7286d14f2..8e9c461a84f8 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -1047,6 +1047,7 @@ config SND_SOC_RT5670
  
+ config SND_SOC_RT5677
+ 	tristate
++	depends on SPI_MASTER
+ 	select REGMAP_I2C
+ 	select REGMAP_IRQ
+ 
+diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
+index ef20316e83d1..da7f9111f3d3 100644
+--- a/sound/soc/intel/boards/Kconfig
++++ b/sound/soc/intel/boards/Kconfig
+@@ -34,6 +34,7 @@ if SND_SOC_INTEL_HASWELL || SND_SOC_SOF_BROADWELL
+ config SND_SOC_INTEL_BDW_RT5677_MACH
+ 	tristate "Broadwell with RT5677 codec"
+ 	depends on I2C
++	depends on SPI_MASTER
+ 	depends on I2C_DESIGNWARE_PLATFORM || COMPILE_TEST
+ 	depends on GPIOLIB || COMPILE_TEST
+ 	depends on X86_INTEL_LPSS || COMPILE_TEST
+diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+index a656d2014127..4699787c93ed 100644
+--- a/sound/soc/mediatek/Kconfig
++++ b/sound/soc/mediatek/Kconfig
+@@ -97,7 +97,7 @@ config SND_SOC_MT8173_RT5650_RT5514
+ 
+ config SND_SOC_MT8173_RT5650_RT5676
+ 	tristate "ASoC Audio driver for MT8173 with RT5650 RT5676 codecs"
+-	depends on SND_SOC_MT8173 && I2C
++	depends on SND_SOC_MT8173 && I2C && SPI_MASTER
+ 	select SND_SOC_RT5645
+ 	select SND_SOC_RT5677
+ 	select SND_SOC_HDMI_CODEC
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index addadc827b91..df36e84c0116 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -122,7 +122,7 @@ config SND_SOC_TEGRA_MAX98090
+ 
+ config SND_SOC_TEGRA_RT5677
+ 	tristate "SoC Audio support for Tegra boards using a RT5677 codec"
+-	depends on SND_SOC_TEGRA && I2C && GPIOLIB
++	depends on SND_SOC_TEGRA && I2C && GPIOLIB && SPI_MASTER
+ 	select SND_SOC_RT5677
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
 -- 
 2.20.0
 
