@@ -2,81 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B52EE1184DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 494701184E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:22:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfLJKVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 05:21:53 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:57111 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726574AbfLJKVx (ORCPT
+        id S1727443AbfLJKWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 05:22:01 -0500
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:52681 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727272AbfLJKV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:21:53 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-181-dlX51XbcOgGmzaLpZVEObQ-1; Tue, 10 Dec 2019 10:21:50 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 10 Dec 2019 10:21:49 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 10 Dec 2019 10:21:49 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Andy Lutomirski' <luto@amacapital.net>
-CC:     Eric Dumazet <eric.dumazet@gmail.com>,
-        network dev <netdev@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: recvfrom/recvmsg performance and CONFIG_HARDENED_USERCOPY
-Thread-Topic: recvfrom/recvmsg performance and CONFIG_HARDENED_USERCOPY
-Thread-Index: AdWsNynavvs+VRwOQ6mSStk+IzVA6AACUqqAAI3fO8AAEiVBgAAgNCaQ
-Date:   Tue, 10 Dec 2019 10:21:49 +0000
-Message-ID: <5a3cf731da8442909a4b84d975beb5e0@AcuMS.aculab.com>
-References: <efffc167eff1475f94f745f733171d59@AcuMS.aculab.com>
- <F6840B11-060A-48F2-9FFE-774E73C50765@amacapital.net>
-In-Reply-To: <F6840B11-060A-48F2-9FFE-774E73C50765@amacapital.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 10 Dec 2019 05:21:58 -0500
+Received: by mail-wm1-f52.google.com with SMTP id p9so2503352wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 02:21:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CSZM3uDVFbgkGr5DOjP7IcHDu8SRtqcHecCMBfj8wdY=;
+        b=bk1OjF1VqQtJjMsGBNsVGJdfcBZnseHh4z8BN+rTKQ8xNgG+3ms3U0jzjSAZprHXS4
+         cdAbnxNvSHuqozBuZsINgY4wjARPKvOdJhRiu1MmY+KXFjk7PPoZGI6ZQnVExyyDXqsa
+         4+j4e2qioxqZS5X2PyxEbpTJQPJY3LiKI9ixESj2gfy0KsqYjPHA2D+XMnhDh2brQSPw
+         WiNo33DRyBj8CIcvX0tbN34TJTZL3ndkdszop1nKWxNNC0uJuvwRlweYVy/Frn0+sNwd
+         i08Q9zXYdlA1j4farnjdaQ59MAdLAr4xO3IyE/LJxzV58syIYyoLJRaNglN4lXQs0Nuy
+         eEEA==
+X-Gm-Message-State: APjAAAU4uCU+at0TQA0GI/Pu9dizn3pSsN3yQhPy7RFyboKvPfVonqDa
+        tblruliTUDVlAED7LqCq2SQ=
+X-Google-Smtp-Source: APXvYqy6ifGo1Gx4DRfjm9s/uVX87SaxM+rvYejqy3++2/RdsMTq7LWzLUAHDAUzgKq0o6g+yDvB7g==
+X-Received: by 2002:a1c:a382:: with SMTP id m124mr4339772wme.90.1575973316781;
+        Tue, 10 Dec 2019 02:21:56 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id k4sm2629758wmk.26.2019.12.10.02.21.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 02:21:56 -0800 (PST)
+Date:   Tue, 10 Dec 2019 11:21:55 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgross@suse.com,
+        akpm@linux-foundation.org
+Subject: Re: [Patch v2] mm/hotplug: Only respect mem= parameter during boot
+ stage
+Message-ID: <20191210102155.GD10404@dhcp22.suse.cz>
+References: <20191210084413.21957-1-bhe@redhat.com>
+ <75188d0f-c609-5417-aa2e-354e76b7ba6e@gmail.com>
+ <429622cf-f0f4-5d80-d39d-b0d8a6c6605f@redhat.com>
+ <20191210095002.GA10404@dhcp22.suse.cz>
+ <20191210101100.GM2984@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-X-MC-Unique: dlX51XbcOgGmzaLpZVEObQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210101100.GM2984@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQW5keSBMdXRvbWlyc2tpDQo+IFNlbnQ6IDA5IERlY2VtYmVyIDIwMTkgMTg6NDMNCj4g
-DQo+ID4gT24gRGVjIDksIDIwMTksIGF0IDM6MDEgQU0sIERhdmlkIExhaWdodCA8RGF2aWQuTGFp
-Z2h0QGFjdWxhYi5jb20+IHdyb3RlOg0KPiA+DQo+ID4g77u/RnJvbTogRXJpYyBEdW1hemV0DQo+
-ID4+IFNlbnQ6IDA2IERlY2VtYmVyIDIwMTkgMTQ6MjINCj4gPiAuLi4NCj4gPj4gUmVhbCBxdWVz
-dGlvbiBpcyA6IERvIHlvdSBhY3R1YWxseSBuZWVkIHRvIHVzZSByZWN2bXNnKCkgaW5zdGVhZCBv
-ZiByZWN2ZnJvbSgpID8NCj4gPj4gSWYgcmVjdm1zZygpIHByb3ZpZGVzIGFkZGl0aW9uYWwgY21z
-ZywgdGhpcyBpcyBub3Qgc3VycHJpc2luZyBpdCBpcyBtb3JlIGV4cGVuc2l2ZS4NCj4gPg0KPiA+
-IEV4Y2VwdCBJJ20gbm90IHBhc3NpbmcgaW4gYSBidWZmZXIgZm9yIGl0Lg0KPiA+IFRoZSByZWFz
-b24gSSdtIGxvb2tpbmcgYXQgcmVjdm1zZyBpcyB0aGF0IEknZCBsaWtlIHRvIHVzZSByZWN2bW1z
-ZyBpdCBvcmRlciB0bw0KPiA+IHJlYWQgb3V0IG1vcmUgdGhhbiBvbmUgbWVzc2FnZSBmcm9tIGEg
-c29ja2V0IHdpdGhvdXQgZG9pbmcgYW4gZXh0cmEgcG9sbCgpLg0KPiA+IE5vdGUgdGhhdCBJIGRv
-bid0IGV4cGVjdCB0aGVyZSB0byBiZSBhIHNlY29uZCBtZXNzYWdlIG1vc3Qgb2YgdGhlIHRpbWUg
-YW5kDQo+ID4gYWxtb3N0IG5ldmVyIGEgdGhpcmQgb25lLg0KPiA+DQo+ID4gQWx0aG91Z2ggSSB0
-aGluayB0aGF0IHdpbGwgb25seSBldmVyICd3aW4nIGlmIHJlY3ZtbXNnKCkgY2FsbGVkIHZmc19w
-b2xsKCkgdG8gZmluZA0KPiA+IGlmIHRoZXJlIHdhcyBtb3JlIGRhdGEgdG8gcmVhZCBiZWZvcmUg
-ZG9pbmcgYW55IG9mIHRoZSBjb3B5X2Zyb21fdXNlcigpIGV0Yw0KPiANCj4gSSB3b3VsZCBzdWdn
-ZXN0IGEgbW9yZSBnZW5lcmFsIGltcHJvdmVtZW50OiBhZGQgYSAtRUFHQUlOIGZhc3QgcGF0aCB0
-byByZWN2bXNnKCkuDQo+IElmIHRoZSBzb2NrZXQgaXMgbm9uYmxvY2tpbmcgYW5kIGhhcyBubyBk
-YXRhIHRvDQo+IHJlYWQsIHRoZW4gdGhlcmUgc2hvdWxkbuKAmXQgYmUgYSBuZWVkIHRvIHByb2Nl
-c3MgdGhlIGlvdmVjIGF0IGFsbC4NCg0KWW91IGRvbid0IHdhbnQgdG8gZG8gdGhhdCBmb3IgcmVj
-dm1zZygpIGl0c2VsZi4NCkl0IHdpbGwgbm9ybWFsbHkgb25seSBiZSBjYWxsZWQgaWYgcG9sbCgp
-IHJlcG9ydGVkIGRhdGEgaXMgYXZhaWxhYmxlLg0KQWN0dWFsbHkgdGhlIE1TR19XQUlURk9ST05F
-IGZsYWcgY291bGQgYmUgdXNlZCB0byBkbyBhIGNhbGwNCnRvIHZmc19wb2xsKCkgYmVmb3JlIHRo
-ZSBzdWJzZXF1ZW50IGNhbGxzIHRvIF9fc3lzX3JlY3Ztc2coKS4NClRoaXMgd2lsbCB3b3JrIGZv
-ciBub24tYmxvY2tpbmcgc29ja2V0cyAob3IgZXZlbiBjYWxscyB3aXRoIGJvdGgNCk1TR19ET05U
-V0FJVCBhbmQgTVNHX1dBSVRGT1JPTkUgc2V0KS4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQg
-QWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVz
-LCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Tue 10-12-19 18:11:00, Baoquan He wrote:
+> On 12/10/19 at 10:50am, Michal Hocko wrote:
+[...]
+> > [1] Btw. it would have been much better if you posted the version 2 only
+> > after all the feedback got discussed properly.
+> 
+> You could have replied to wrong person. 
+> 
+> I don't know the use case David told. My motivation was to make memory hotplug
+> not impacted after boot. I thought I have got your question and answered
+> it. I will wait a little longer when post next time.
 
+let me reply to your original email.
+-- 
+Michal Hocko
+SUSE Labs
