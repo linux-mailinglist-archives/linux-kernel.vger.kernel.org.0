@@ -2,102 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9EF5118F0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 18:32:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC7C2118F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 18:49:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbfLJRca (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 12:32:30 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36762 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727211AbfLJRca (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 12:32:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0PlbuVjzY3V2HTrOXpLIk3hznlIV1chetO8B0aO9utU=; b=YUV9ZZun1mPnOMcp5QA6R1ye6
-        mrfb8m6x5bNoy2/WHW11Xlwky/kC3KhAoHB+Wq8wRC5AoZ+6CTIdOfAlyglynI74j9JtqJLyvkTnU
-        MOUjg5lIqziy5TDrhMPKurJ42p0i4TVWt891RDDZ0y8906k3QArsFwqg/q0u+2X99HTmMcuaHyXug
-        KCN9EtFS5u/s9/zAEnu6Lle8Qz3MoxXB1Qk6hBGm1ZPyVyKikBrbmxWlbKCZ8xKvkYw3EQRh67yFD
-        rATCk+6GL8Lo9r4zd5Az56rIcsEDTBBJNUip2jWT7gqRHsI0erudCuXoaE4QkHvbmi5OOc5I7XdmM
-        OYMckR6BA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iejMq-0000j7-KE; Tue, 10 Dec 2019 17:32:12 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A3498305DD6;
-        Tue, 10 Dec 2019 18:30:49 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2305929DB7785; Tue, 10 Dec 2019 18:32:09 +0100 (CET)
-Date:   Tue, 10 Dec 2019 18:32:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, bristot@redhat.com,
-        jbaron@akamai.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, namit@vmware.com, hpa@zytor.com,
-        luto@kernel.org, ard.biesheuvel@linaro.org, jpoimboe@redhat.com,
-        jeyu@kernel.org, alexei.starovoitov@gmail.com
-Subject: Re: [PATCH -tip 1/2] x86/alternative: Sync bp_patching update for
- avoiding NULL pointer exception
-Message-ID: <20191210173209.GP2844@hirez.programming.kicks-ass.net>
-References: <157483420094.25881.9190014521050510942.stgit@devnote2>
- <157483421229.25881.15314414408559963162.stgit@devnote2>
- <20191209143940.GI2810@hirez.programming.kicks-ass.net>
- <20191211014401.2f0c27f259a83d1f32aa6f2e@kernel.org>
+        id S1727620AbfLJRt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 12:49:26 -0500
+Received: from mga14.intel.com ([192.55.52.115]:31791 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727520AbfLJRtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 12:49:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 09:30:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,300,1571727600"; 
+   d="scan'208";a="215642261"
+Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
+  by orsmga003.jf.intel.com with ESMTP; 10 Dec 2019 09:30:43 -0800
+Reply-To: thor.thayer@linux.intel.com
+Subject: Re: [Bisected] altera_edac crash on a system without ECC
+To:     Aaro Koskinen <aaro.koskinen@nokia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
+References: <20191129165739.GA2583@ak-laptop.emea.nsn-net.net>
+ <3bbd2890-ffcc-39df-8ab6-ecf72d92a006@linux.intel.com>
+ <20191204132531.GA22600@ak-laptop.emea.nsn-net.net>
+From:   Thor Thayer <thor.thayer@linux.intel.com>
+Message-ID: <f9634662-23b0-7ec7-aed5-754bd5dc81b8@linux.intel.com>
+Date:   Tue, 10 Dec 2019 11:32:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211014401.2f0c27f259a83d1f32aa6f2e@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191204132531.GA22600@ak-laptop.emea.nsn-net.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 01:44:01AM +0900, Masami Hiramatsu wrote:
+Hi Aaro,
 
-> This looks good, but I feel it is a bit complicated.
+On 12/4/19 7:25 AM, Aaro Koskinen wrote:
+> Hi,
 > 
-> If we use atomic (and spin-wait) here, can we use atomic_inc_not_zero()
-> in the poke_int3_handler() at first for making sure the bp_batching is
-> under operation or not?
-> I think it makes things simpler, like below.
+> On Tue, Dec 03, 2019 at 05:09:48PM -0600, Thor Thayer wrote:
+>> On 11/29/19 10:57 AM, Aaro Koskinen wrote:
+>>> Hi,
+>>>
+>>> I tried booting v5.4 mainline kernel on a stratix10 board with ECC
+>>> disabled, and the altera-edac driver (with only SDRAM enabled) is
+>>> now crashing the system instead of failing the probe with "No ECC/ECC
+>>> disabled".
+>>>
+>> I apologize for the late reply. I was on vacation.
+>>
+>> ECC disabled means the sof/jic that you're loading has ECC disabled,
+>> correct?
 > 
-> ---------
-> atomic_t bp_refcnt;
+> Yes.
 > 
-> poke_int3_handler()
-> {
-> 	smp_rmb();
-> 	if (!READ_ONCE(bp_patching.nr_entries))
-> 		return 0;
-> 	if (!atomic_inc_not_zero(&bp_refcnt))
-> 		return 0;
-> 	smp_mb__after_atomic();
-> 	[use bp_patching]
-> 	atomic_dec(&bp_refcnt);
-> }
+>>> This seems to have started with commit 08f08bfb7b4c ("EDAC, altera:
+>>> Merge Stratix10 into the Arria10 SDRAM probe routine"). With the change,
+>>> looks like sdram probe no longer uses SMC calls and instead accesses
+>>> the registers directly. The crash looks like this:
+>>
+>> I haven't seen this. I'd expect both ECC enabled and disabled to fail with
+>> the dumps you have below since they'd both need to use the regmap functions.
 > 
-> text_poke_bp_batch()
-> {
-> 	bp_patching.vec = tp;
-> 	bp_patching.nr_entries = nr_entries;
-> 	smp_wmb();
-> 	atomic_inc(&bp_refcnt);
-> 	...
-> 	atomic_dec(&bp_refcnt);
-> 	/* wait for all running poke_int3_handler(). */
-> 	atomic_cond_read_acquire(&bp_refcnt, !VAL);
-> 	bp_patching.vec = NULL;
-> 	bp_patching.nr_entries = 0;
-> }
+> With ECC enabled it doesn't fail, as the direct register access appears
+> to work then (I also checked by reading 0xf8011101 from userspace -
+> and it works without an abort).
+> 
+>> Yes, this does look like it is using the register accesses instead of the
+>> SMC call. Line 2206 sets the SMC call after determining from the if()
+>> statement if it is a Stratix10 or Arria10 and from below it seems to take
+>> the Arria10 path.
+> 
+> But that's setting the ecc_mgr_map. I think that altr_check_ecc_deps
+> and altr_sdram_probe use a different mapping. Before commit 08f08bfb7b4c
+> there was S10 specific altr_s10_sdram_probe() that took care of the SMC,
+> but I cannot see how the current code doing that unless I'm missing some
+> special magic.
+> 
+>> The altr_check_ecc_deps() call is checking whether ECC is enabled so the
+>> probe should fail.
+>>
+>> I suspect the device tree. Can you verify the following node is in your
+>> device tree?
+>>
+>> 	sdramedac {
+>> 		compatible = "altr,sdram-edac-s10";
+>> 		altr,sdr-syscon = <&sdr>;
+>> 		interrupts = <16 4>;
+>> 	};
+> 
+> Yes, I'm using the in-tree socfpga_stratix10.dtsi.
+> 
+> A.
+> 
+This appears to be a setup problem in U-Boot where U-Boot only allows 
+access to the ECC registers if ECC is enabled. However, the Linux EDAC 
+driver reads the ECC registers to determine if ECC is enabled or not.
 
-I feel that is actually more complicated...  Let me try to see if I can
-simplify things.
+A patch that always allows access to the ECC registers has been posted 
+to U-Boot.
+https://patchwork.ozlabs.org/patch/1205274/
+
+Thanks,
+
+Thor
+
