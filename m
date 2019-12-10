@@ -2,72 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C60D118388
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CAF311838A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:28:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbfLJJ2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:28:09 -0500
-Received: from sonic308-1.consmr.mail.bf2.yahoo.com ([74.6.130.40]:37938 "EHLO
-        sonic308-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726574AbfLJJ2I (ORCPT
+        id S1727317AbfLJJ2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:28:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36978 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbfLJJ2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:28:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1575970087; bh=6u3qDl6yXWBH9oVBF6VmNFaXPPfmaUEmS0LDo6+oXlw=; h=Date:From:Reply-To:Subject:From:Subject; b=dhcTzaJXlImAv1d9IOQLOBYVfq+a6/AtxxOp9P/3QkEqj6c+D2grGSMjitMouQ0uvwLDXVlgEAq0FbGsnl4HHtYyyeO81fyAEVSFDVFO722agYsA2s+/9qxFJyRHVBRSV9kV06iCQkD1c5GM69VxnkCbzZ/Y5piCnOFQbhe+32rgUjRmqRJHiNgBwosrFj92b0uzEMZeRqpufh1NsTWbdhrrmqq20lPUiAKOL/XysZTubimvGU4KL4WZrn1cssgPohfsDLNlhvbB8O/tNSpcW/7w9wmAkaZrfpgcKq+mgBhdE6F46FvVgdcdvwEnUlkSdkBbxqzISLxqKdY9IOAS+w==
-X-YMail-OSG: OSSOpdoVM1lxPSsJsQuamg8PWxt_nl9kUhSoHmpm8iDHh5ELZSq8LXomBVti4e6
- 1o6XN1wKXNCHDX1h84pxd59KhtNN6wwWQjyBJV63jXWi.fVbHSvimvylLSNXI0EXzYT6eNgsJB2G
- 7wOuXpAFFWoAUJxMlmfa.uy34YHoFAprNrPkRE3G2Fa4DUO80r4PIgK7IeQnxQYMVxmVd22D5gyv
- q8YhwRfTOl7rvNrAu4W6.BufzucNM9b._2eKU8KgyPQ0ewsod.CxWXTyhWgjBOWieF5WXpbYy9jF
- pDAVuIFJbvq9y2_DJWWn_SkHgbskcz47kTsE0kMO.0DEFWgMYnWvyYFYAZhh7VTfCOcatu6U60aI
- a.tcVQ761gGF8fpF_YbZFoGu2jsyEG5Aw6ops._1cim5hEQrm1ib8H6CVSrZaCVXJvLIvMJS9ORk
- pAxC5ee9zmDgQJoT6s1PEvDdvnNIjY8.l.w.KxFdrf0P.Gqo0KpyeiwRtWlzQj9hbcc_mMq0MSA7
- pR3jyjkc.J4aIk30gFuD3JGpDvf2n6iHK5ture80E8rfC59.ZvOqgJgtyhSePe448KBo3SnOlGjt
- hGBdCqboFpQj1U95qMI2WcrJzXWKHTERTmKY_bqqxT8U5uCYDgSN2bxXXdfQxojeoP20m6Vsm29h
- z4FVszR.tBfVL1OXNLbJKAb_DKp1Ge4bKKvro.tRxVNopc5nNLZts4UuecAs7TPxasZQdKPyB2CV
- 1Xz.joUrIFeSprUbX9znsd4HdYIIhNYFjM.iCVaN67nPiBbD6fiLTuL8ks58qk0EwsTatI40MErL
- fCo8ssVWnxyy_8AQ53S15ngZ7XM7EyBfLi0AJsX61HP9OlxjUmg3Mp0DsqnBP9jf18goEs0bWBsg
- P35NreS9Eez11c7nfJ78OTKxPuY_bM2qM2OItUQnhqWQZUK5rQEDw9bfdKuQL8D2oHgbcQxbQYE0
- ar2tIAOX2nb9SaJpXa4qONUB.cTuwCiam7DXdKqlCrY0vWs1n7QJfpfRavZGGnyoYSSKGu28YS4j
- JvTy_hmrNrAgGZoMT9HGaFtLINIiPQvsoyiq7Zwo5503rT6c6Ugl7EPrbUEd.PgnxnN5Qf3L2Pd9
- .11YkxWyDG_hTx90duIqWYn.6QkWXWwCp1zQB3Dwk1vR1t2j_zp7OdgKiivVEpNQ1X.xqZRw7NXB
- FUmB97KCrOJAG7AGMp3Wv00ExVMdsabj3S9Vh8o38GsEkUyfercYXudG4zWYU0K3RLYPDAMt4YCS
- dBqkjCWF2fd7qlyFUGEwvU5zl.ecWhAmA_BKqa5ZntkKLrxpRuPZFUHk48OQ6jF8mwDOO5ay7yqH
- VDZiaUA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Tue, 10 Dec 2019 09:28:07 +0000
-Date:   Tue, 10 Dec 2019 09:28:03 +0000 (UTC)
-From:   Ms Lisa Hugh <lisa.hugh222@gmail.com>
-Reply-To: ms.lisahugh000@gmail.com
-Message-ID: <2044225484.7405135.1575970083815@mail.yahoo.com>
-Subject: I NEED YOUR HELP FOR THIS BUSINESS.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 10 Dec 2019 04:28:24 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w15so19248284wru.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:28:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=oAs8ibnr4mvDvPDKIG5QSiRq0APvvSSUYr3TLtcey1c=;
+        b=sRuRnggVkOKW6gbGS0j4n40P5A5fQbUOobxwjiMP8vC9THrPFc2kSF5OBow4+CPsFO
+         42q7uSXgtaaQwSCHuv4e3jT8OtwPJNtT/3LeczYeqEbuQPOG1SLv4L/+dg/I5x4vIOyG
+         olG8nEl8m68kZcMAfr0B+sM20uCCB6f3SEdFOpbbo31lDCpklzMvYZLdRgq+KPDcx6M0
+         FgqTTsyPZLDLuCs6Z70pc4wMgI4tw+dGiTI5NRTL6woVqUASQfmBlKAZaqHxagugWO1r
+         UF9+nPUkHjVKdFVxa9fg+lsHoEehhLL1RS7gX9z+2ChPy0UzCJmdhiYovWXijyowGyqx
+         AIwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oAs8ibnr4mvDvPDKIG5QSiRq0APvvSSUYr3TLtcey1c=;
+        b=VEHiTyHOo1j4oo3k/fEgrxc1wOaIlkR28sIBnKZhd4k+RIYs0C8pBNsINqDlw4faVN
+         9Fc45UreGI+Sq631tlDcRBW0uAahVM98J39Mk6bCGSMNWDEWno4NbopZslsF8Cc6HtU2
+         UYcS6j4kPpHkXHoBGMkIdARhBIsru9bE0taC1MZGgFzlQLA4ZyOQjN6p2qvozSy90SYo
+         FQHIKwAX1VqxUd0wHtSoAqVBVISkdTpdZMkMEbYR26PfHZgT6S4xRp2qUC1Z9lZXzkTV
+         nZ0YfEgvCtbChKqoRCgqKryJGO86tsnQwUcYfqrAJlKv1zArR/vD84NgtilAN4YlOf+2
+         pyTA==
+X-Gm-Message-State: APjAAAWNwgLgHKzfwO0vEQwUP2TJAil496bttMFpwStux6Qlb/L+QVbk
+        JQvm58V7iXrfxPILc6skYY2OTQ==
+X-Google-Smtp-Source: APXvYqxItV/IdHWtVOSgaK4JqtnqK9fn7jjy/+Xj1c+6KcVGaRa6Cjx+549x4dxDF3wFheCoAD/vXw==
+X-Received: by 2002:adf:f311:: with SMTP id i17mr2001059wro.81.1575970102448;
+        Tue, 10 Dec 2019 01:28:22 -0800 (PST)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id o15sm2602560wra.83.2019.12.10.01.28.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 10 Dec 2019 01:28:21 -0800 (PST)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     mark.rutland@arm.com, mripard@kernel.org, robh+dt@kernel.org,
+        wens@csie.org, georgii.staroselskii@emlid.com,
+        aleksandr.aleksandrov@emlid.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH] ARM: dts: allwinner: restore hdmi_con_in node
+Date:   Tue, 10 Dec 2019 09:28:07 +0000
+Message-Id: <1575970087-11667-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Compiling today next (20191210) fail to build with
+arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts:53.25-55.4: ERROR (phandle_references): /soc/hdmi@1ee0000/ports/port@1/endpoint: Reference to non-existent node or label "hdmi_con_in"
 
+This patch fixes the build by restoring this node.
 
-Dear Friend,
+Fixes: b120a822ef10 ("ARM: dts: allwinner: Split out non-SoC specific parts of Neutis N5")
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ .../allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts  | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-I am Ms Lisa Hugh work with the department of Audit and accounting manager here in the Bank(B.O.A).
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
+index fb96d356055e..d6cc6592cfa3 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
+@@ -15,6 +15,17 @@
+ 		     "emlid,neutis-n5",
+ 		     "allwinner,sun50i-h5";
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	vdd_cpux: gpio-regulator {
+ 		compatible = "regulator-gpio";
+ 		regulator-name = "vdd-cpux";
+-- 
+2.23.0
 
-Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment and the amount is (US$4.5M DOLLARS).
-
-I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me after success.
-
-Note/ 50% for you why 50% for me after success of the transfer to your bank account.
-
-Below information is what i need from you so will can be reaching each other .
-
-1)Full name ...
-2)Private telephone number...
-3)Age...
-4)Nationality...
-5)Occupation ...
-
-
-Thanks.
-
-Ms Lisa Hugh
