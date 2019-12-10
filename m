@@ -2,115 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3909A118C8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C87118C99
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:34:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbfLJPcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 10:32:00 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46702 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727320AbfLJPcA (ORCPT
+        id S1727550AbfLJPef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 10:34:35 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:41084 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727407AbfLJPed (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 10:32:00 -0500
-Received: from [167.98.27.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iehUR-00044m-8O; Tue, 10 Dec 2019 15:31:55 +0000
-Received: from ben by deadeye with local (Exim 4.93-RC1)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iehUQ-0007aj-Bv; Tue, 10 Dec 2019 15:31:54 +0000
-Message-ID: <e1df16f96a889e870045d6198b3cd301d135003f.camel@decadent.org.uk>
-Subject: Re: [PATCH 3.16 10/72] video: of: display_timing: Add of_node_put()
- in of_get_display_timing()
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "# 4.0+" <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Denis Kirjanov <kda@linux-powerpc.org>,
-        David Airlie <airlied@linux.ie>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 10 Dec 2019 15:31:49 +0000
-In-Reply-To: <CAD=FV=XpyONBT_XcKLRj2qkcJHkVntoHJJs=tYbVjzF9V10ziQ@mail.gmail.com>
-References: <lsq.1575813164.154362148@decadent.org.uk>
-         <lsq.1575813165.830287385@decadent.org.uk>
-         <CAD=FV=XpyONBT_XcKLRj2qkcJHkVntoHJJs=tYbVjzF9V10ziQ@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-ekvcjEuOJjj69DSg13MY"
-User-Agent: Evolution 3.30.5-1.1 
+        Tue, 10 Dec 2019 10:34:33 -0500
+Received: by mail-il1-f194.google.com with SMTP id z90so16479969ilc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 07:34:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FGyjYTdu5ZHfhBTYWa8rY8PUU33rrbDpvrkOm5yDTKU=;
+        b=zsi7BXLZHizQ/ZIdGHk1obNgb9g5EtEzg1WCUE/CFWb/TfvqW8pzY+TGw/g/ciM9iV
+         xvc2rZQZu94so3EXcA5h9HThj/wJe5oDwUDTSSL2vqv5C423zz6VJwAvnvHv226Q6X1z
+         BbtVZBbhxtuvbeSP5WaA6bqMqUu6t1SXf64SVmI492DuNoJ87VixAy9KECN9qe6airKJ
+         y9MyNlbZVZdxQtwAAOd+LAb2qT1UvvxQDVUEWAvwLdwVudg5Le01IxP50oTy04o+IRqp
+         MMK/x1HVGZEd6yDpqyrcVAQrnv7KSofV/In1ibOuRau1nP0YzXeYx0cKUBODlErPEv8K
+         3m2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FGyjYTdu5ZHfhBTYWa8rY8PUU33rrbDpvrkOm5yDTKU=;
+        b=eBl9it74anP2EdytppUPuGS2n4yKw6ZOFgybt8F123npFM56yGYaiXPGFdQCXj2Wsz
+         UR37O7pJ4cQnXJZ/HUc/agvUdub82OiKX2xKTT44ZsXWsYV3IAay2aq8WL1OBKLFktQl
+         Zhq6beZ6Wj39sFsrh1721S0hOo/E9KxP3I+CSeiMJ9pXUr1/8BN+SQSB/gQrg/rTPnut
+         RHU5QPlr9rPeDs5k80M6U1/On6HMCL8Vr6aNhJv9Xxq3OvqGxXjujJo1XjgbCUTSky0C
+         69/YeU1+00CYtt89SgmMvcgHrqSA6Nr3q2PRhjJ4Yd/YUN23vrQRWSsyccywUCMqvR3S
+         /t+g==
+X-Gm-Message-State: APjAAAW9lAYD7/cN074gYVmn34k5YolJbAcyYd/OiS6tQYYpPhINaIFI
+        wOGz8Mkarj7u3voRzGVRiRqzElOlmbg+a+CbM/PGxA==
+X-Google-Smtp-Source: APXvYqxR6yL60usvgtnxayjCw7D66FdmmysWcML2rqCAD7Jj4eV7h4xdg0eGxLK1ndOT2EpRQNCwnViaykhRbnK+7Do=
+X-Received: by 2002:a05:6e02:beb:: with SMTP id d11mr33169519ilu.220.1575992073058;
+ Tue, 10 Dec 2019 07:34:33 -0800 (PST)
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 167.98.27.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+References: <20191210021525.13455-1-warthog618@gmail.com> <CAMRc=Md4PmbcGAKxP1LG08bREtWCtsXbt=ZgL50PrizF4F4pxg@mail.gmail.com>
+ <20191210145515.GB3509@sol>
+In-Reply-To: <20191210145515.GB3509@sol>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 10 Dec 2019 16:34:21 +0100
+Message-ID: <CAMRc=MemKDFDHpEdq2OKvEduBTdi2c3oQmgeYF8qX1rcc-rk8A@mail.gmail.com>
+Subject: Re: [PATCH] gpio: gpio-mockup: Fix usage of new GPIO_LINE_DIRECTION
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+wt., 10 gru 2019 o 15:55 Kent Gibson <warthog618@gmail.com> napisa=C5=82(a)=
+:
+>
+> On Tue, Dec 10, 2019 at 03:11:12PM +0100, Bartosz Golaszewski wrote:
+> > wt., 10 gru 2019 o 03:15 Kent Gibson <warthog618@gmail.com> napisa=C5=
+=82(a):
+> > >
+> > > Restore the external behavior of gpio-mockup to what it was prior to =
+the
+> > > change to using GPIO_LINE_DIRECTION.
+> > >
+> > > Signed-off-by: Kent Gibson <warthog618@gmail.com>
+> > > ---
+> > >
+> > > Fix a regression introduced in v5.5-rc1.
+> > >
+> > > The change to GPIO_LINE_DIRECTION reversed the polarity of the
+> > > dir field within gpio-mockup.c, but overlooked inverting the value on
+> > > initialization and when returned by gpio_mockup_get_direction.
+> > > The latter is a bug.
+> > > The former is a problem for tests which assume initial conditions,
+> > > specifically the mockup used to initialize chips with all lines as in=
+puts.
+> > > That superficially appeared to be the case after the previous patch d=
+ue
+> > > to the bug in gpio_mockup_get_direction.
+> > >
+> > >  drivers/gpio/gpio-mockup.c | 7 +++++--
+> > >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> > > index 56d647a30e3e..c4fdc192ea4e 100644
+> > > --- a/drivers/gpio/gpio-mockup.c
+> > > +++ b/drivers/gpio/gpio-mockup.c
+> > > @@ -226,7 +226,7 @@ static int gpio_mockup_get_direction(struct gpio_=
+chip *gc, unsigned int offset)
+> > >         int direction;
+> > >
+> > >         mutex_lock(&chip->lock);
+> > > -       direction =3D !chip->lines[offset].dir;
+> > > +       direction =3D chip->lines[offset].dir;
+> > >         mutex_unlock(&chip->lock);
+> > >
+> > >         return direction;
+> > > @@ -395,7 +395,7 @@ static int gpio_mockup_probe(struct platform_devi=
+ce *pdev)
+> > >         struct gpio_chip *gc;
+> > >         struct device *dev;
+> > >         const char *name;
+> > > -       int rv, base;
+> > > +       int rv, base, i;
+> > >         u16 ngpio;
+> > >
+> > >         dev =3D &pdev->dev;
+> > > @@ -447,6 +447,9 @@ static int gpio_mockup_probe(struct platform_devi=
+ce *pdev)
+> > >         if (!chip->lines)
+> > >                 return -ENOMEM;
+> > >
+> > > +       for (i =3D 0; i < gc->ngpio; i++)
+> > > +               chip->lines[i].dir =3D GPIO_LINE_DIRECTION_IN;
+> > > +
+> > >         if (device_property_read_bool(dev, "named-gpio-lines")) {
+> > >                 rv =3D gpio_mockup_name_lines(dev, chip);
+> > >                 if (rv)
+> > > --
+> > > 2.24.0
+> > >
+> >
+> > Hi Kent,
+> >
+> > I was applying and testing your libgpiod series and noticed that the
+> > gpio-tools tests fail after applying patches 16 & 17 (with linux
+> > v5.5-rc1). Is this fix related to this?
+> >
+>
+> I don't think so.  I've only been able to trip this problem with a
+> couple of corner cases in my Go uapi test suite.
+> I have been unable to reproduce it with the tools as it requires
+> multiple requests with the same chip fd, including an as-is, to trip.
+>
+> And running the libgpiod tests against v5.5-rc1 works for me.
+> Can you provide more details as to the errors you are seeing?
+>
 
---=-ekvcjEuOJjj69DSg13MY
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hmm whatever that was, it's gone now. Must have been some leftovers
+from previous builds. All works now.
 
-On Mon, 2019-12-09 at 13:19 -0800, Doug Anderson wrote:
-> Hi,
->=20
-> On Sun, Dec 8, 2019 at 5:54 AM Ben Hutchings <ben@decadent.org.uk> wrote:
-> > 3.16.79-rc1 review patch.  If anyone has any objections, please let me =
-know.
-> >=20
-> > ------------------
-> >=20
-> > From: Douglas Anderson <dianders@chromium.org>
-> >=20
-> > commit 4faba50edbcc1df467f8f308893edc3fdd95536e upstream.
-> >=20
-> > =3D46romcode inspection it can be seen that of_get_display_timing() is
-> > lacking an of_node_put().  Add it.
->=20
-> I don't object, but I am curious why "From code" got turned into
-> "=3D46romcode" in the commit message.
+> Btw, I was writing tests for your LINEINFO_WATCH patch v2, which I was
+> applying to v5.5-rc1, when I ran across this.  That works ok if I
+> __packed the changed struct.
 
-I'm not sure why this happened, but it has happened in the process of
-generating the review mail.  The patch file I'm actually going to apply
-is not affected.
+These things can still change, so don't spend too much time on it yet. :)
 
-Ben.
+Since the lineinfo struct is not __packed, I'd prefer to not use it
+for any struct embedding it. I'll just add appropriate padding for
+64-bit alignment.
 
---=20
-Ben Hutchings
-Experience is directly proportional to the value of equipment destroyed
-                                                    - Carolyn Scheppner
+> And I can confirm that patch v2 doesn't isolate watches on different
+> chip fds.
+>
 
+Yeah, I'll fix this.
 
+Bart
 
---=-ekvcjEuOJjj69DSg13MY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl3vumUACgkQ57/I7JWG
-EQkGRRAAxOkWOx0oI/kMsYlf9iX8k6HAXnLbZ/em6+gnuT8sVhqpJ3oHcnZttUAe
-dgSZIH6nvhOlfj7tVhcK0GVtlfkSOc+YnlM5ieRkDbS7CM3NVD8DcGr7JMVMUdDv
-ftYJQrv3aa/ptHUmdr4W3OzG9ZmVaM6A1acKgVd0Ot5QB1mbeChyNaRFme1sesFf
-pzdM05cbMfRD5aNB+Bp6WMsQenHMrJkTTjE4LkgrSN7VMoi9uhsOJK1W3wA7u2yM
-P3Nq/7rE+rrgtCfXYSvjlXkwplF+eYhP90YvrHCrpZZiOoS4EpPIg11jmmtK7zQH
-19MZZwc+SX3jtX+rPcKUckp6S9CoEEapqGTL74JoEcy5DodwfcnGrPzU3tSD7Rwm
-BGdyRoEzEHw7lhrNzBMtZ+QUv3+mqM3Qtd7CWTsJLj2RMxzB/qsaUAMh9VE1Wlr7
-nspF96mLXXL8Hy6sjheHLsV4xq6KpSaivLrSqIcmUUo2tU7MUra+YxyQzn/icwyB
-uJLi1yQxJlYdgBN4Mkb+xOQtk9zO719mDQYcPeYDn2L2+vC29aPQBYX3Eu+pmQfk
-cs8sWddjb5ZQmupeSEX37svxZ0hBnNGKowP+wFtLYdlymn5KG5dLjJy5/fKupVAa
-TDhcwheI8OpJm+IhffaLoJre+A3HZQCPIKTnYtRLrtzGQVnZxHo=
-=JsqF
------END PGP SIGNATURE-----
-
---=-ekvcjEuOJjj69DSg13MY--
+> Kent.
