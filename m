@@ -2,309 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C93D6118364
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25A6411837B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:26:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbfLJJTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:19:02 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:42350 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfLJJTA (ORCPT
+        id S1727143AbfLJJ0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:26:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:42676 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfLJJ0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:19:00 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191210091855epoutp020aeaa14455b1e476ff57f567e12b6d3c~e9-FkRQYN0270402704epoutp02a
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 09:18:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191210091855epoutp020aeaa14455b1e476ff57f567e12b6d3c~e9-FkRQYN0270402704epoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575969535;
-        bh=3hdCeQwWFZQSogkjtNK8wKAaFRc0a2bGIVeBUs+CZkc=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=eaIt9WtC6RHY/2X2IPDt3K8EDffrV3MyutXiS5jMS8tjKdbF3jp0+UmCCcSL7cYNJ
-         X+vebSsgo6K9yZLrcBAh/N+q9wWYQmPw9dEB0byfPVQenPp2GnvkMFhcXEHYkqU1Hn
-         VbPAIOuWXSAadL0uPLSqf28D6sni8WOnaGeNqoNE=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191210091854epcas1p41a546c8aeb2218e75f0bd2a925bb8e1a~e9-E0hZIe1023210232epcas1p4P;
-        Tue, 10 Dec 2019 09:18:54 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47XDyN49F3zMqYkk; Tue, 10 Dec
-        2019 09:18:52 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D0.7A.51241.BF26FED5; Tue, 10 Dec 2019 18:18:51 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191210091851epcas1p2c00cdfae9340a610769aaf951428283d~e9-BNDj5R3073530735epcas1p2l;
-        Tue, 10 Dec 2019 09:18:51 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191210091850epsmtrp1fba8c22f8ea0c83dbcc8ceeebaea451d~e9-BHmAnk3031430314epsmtrp1Z;
-        Tue, 10 Dec 2019 09:18:50 +0000 (GMT)
-X-AuditID: b6c32a39-163ff7000001c829-13-5def62fbf64b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D2.D1.06569.AF26FED5; Tue, 10 Dec 2019 18:18:50 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191210091850epsmtip1eab599cc4db407bbf805f17df241fb0b~e9-A2hSR01022110221epsmtip1t;
-        Tue, 10 Dec 2019 09:18:50 +0000 (GMT)
-Subject: Re: [PATCH 2/4] PM / devfreq: add possibility for delayed work
-To:     Kamil Konieczny <k.konieczny@samsung.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <9f5c7de3-dd03-5c0a-ea97-bc170303422b@samsung.com>
-Date:   Tue, 10 Dec 2019 18:25:16 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Tue, 10 Dec 2019 04:26:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HnoPtgDyyEf84ZWb/qymyd1fNl04iBZY3/x7YWhBuy8=; b=du4OR0LwfqnYS24MzA+8qk22K
+        ww7jdnZ7F5lymBuvVfjwdS4X/9q1flzgkvLLm0Qw1m/yMZ8RY93MaWAmixCw9xhyNHSq/uKjRLlJT
+        PPuVM/mHsbLpkzniD0IAth0h+2hP0iulbN7HBZMPMeg/YxuMfw1w4dBPZe+lAc/eQKRV2afp8XYr2
+        hT24hxLfBGdN9pq2oahlKlkcRYq9VKn7XgIAhESiiCBZdwF6wy7AH2NpbE1l6v3CcGliN3sXSluRS
+        vHI0Ju0Elox8AjwmMO1rY7YwAlMTfmLMtx9EssBvX/YaTmFDLCoORALz3wQS6wOdX7yY9t1ILaKgN
+        fwzpq7K1g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iebmN-0002pk-NM; Tue, 10 Dec 2019 09:26:04 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B7096300596;
+        Tue, 10 Dec 2019 10:24:41 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1E45D2010F142; Tue, 10 Dec 2019 10:26:01 +0100 (CET)
+Date:   Tue, 10 Dec 2019 10:26:01 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Phil Auld <pauld@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v2] sched/core: Preempt current task in favour of bound
+ kthread
+Message-ID: <20191210092601.GK2844@hirez.programming.kicks-ass.net>
+References: <20191115070843.GA24246@ming.t460p>
+ <20191115234005.GO4614@dread.disaster.area>
+ <20191118092121.GV4131@hirez.programming.kicks-ass.net>
+ <20191118204054.GV4614@dread.disaster.area>
+ <20191120191636.GI4097@hirez.programming.kicks-ass.net>
+ <20191120220313.GC18056@pauld.bos.csb>
+ <20191121132937.GW4114@hirez.programming.kicks-ass.net>
+ <20191209165122.GA27229@linux.vnet.ibm.com>
+ <20191209231743.GA19256@dread.disaster.area>
+ <20191210054330.GF27253@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <03350bb0-11a8-a179-7197-1049dc5e1ef6@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTURzHO7vb3TVanpbmr0WlN4QUprva6ippRi8hESGISMVuelBzL3Y3
-        exHYy1R6EpQuU3tiUqyWlloi2fIRmWVUZlhRVlraqLCE/mnbXeR/n/P9fb/8fr9zDkOpa2kN
-        U2iyEatJMLD0dPmt+1E67Z+tnmydZ3IBf6PSqeDrflQq+L6+60q+d9+Ykn/WWk3zP4+4EX/N
-        PaTkX++tp1OYVFdDOZ16tLEBpf50LcigNhctLyBCHrGGE1OuOa/QlJ/Ert+QsypHv1THabkE
-        fhkbbhKMJIldnZahXVto8E7AhhcLBrtXyhBEkY1NXm41220kvMAs2pJYYskzWBIsMaJgFO2m
-        /JhcszGR0+ni9F7jlqKCfmeb0nKc3+E+HVmCHmorUBADeAkcqeqXV6DpjBo3Ixg92BQ4/EDQ
-        P/lbJh1+Ieg+f075L1JycQhJhTYErVUe2ldQYw+Cpu+bfTwbr4Mz+wcVPg7BWhhrvkT5AhSu
-        kcHYqSf+Ao2joX1kwB8OxhHwfPID8rEKJ8O9k3v9HjmOhPHSermPQ/FG6Ll1IOCZBT1Vw349
-        CK+A359e+XUKh8HgcK1M4oVwe7yakqb+SsNb12KJV0NX9wOFxLPhS1djYDMNjB4rDfBuuNLj
-        pn1DAy5D0Nj+JBCIh/ZLJ70NGG+DKHC2xkpyBLT8ORuYYSZ8mzis8FkAq6CsVC1ZFsGzd0My
-        iefChUPl9HHEOqZs45iygWPKBo7/zeqQvAHNIRbRmE9EzqKf+tgu5P+c0QnNqPNxWgfCDGJn
-        qOpSvmWrFUKxuNPYgYCh2BBVV6lXUuUJO3cRqznHajcQsQPpvZd9gtKE5pq9X91ky+H0cfHx
-        8fwSbqme49gwFTP5NFuN8wUbKSLEQqz/cjImSFOCZpqD+eRpZZenOYddwZFG6u77pJV3ord9
-        cKRH7X6p6YyLHVxJakq42x+dvQ9TyLWsbYnBQ5luUp6VPm/k8URop/Nq74vMvj3f+95UBj3y
-        3Kylt4/OaEm7YA2pSpw/cb7i1BcFfWjfQNidjpYNmzKH7a63xYaY+vTPa8IGzuSmvJ9rZuVi
-        gcBFU1ZR+AtJKcFFsgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJTvdX0vtYg7n7TS02zljParHg0wxW
-        i/PnN7BbnG16w25xedccNovPvUcYLdYeuctucbtxBZsDh8emVZ1sHn1bVjF6fN4kF8AcxWWT
-        kpqTWZZapG+XwJVxaf1e9oIJFhVHpqs2MJ7S7WLk5JAQMJFoWHKXEcQWEtjNKPH8tyREXFJi
-        2sWjzF2MHEC2sMThw8UQJW8ZJb4tMQSxhQXcJWY332IFsUUEdCXe7FgKVM7FwSywgEli/s2J
-        LCCOkMBaJonLU86wg1SxCWhJ7H9xgw3E5hdQlLj64zHYYl4BO4mDkxvBJrEIqEq8bVvBAmKL
-        CoRJ7FzymAmiRlDi5MwnYHFOAXuJ789ugvUyC6hL/Jl3iRnCFpe49WQ+E4QtL7H97RzmCYzC
-        s5C0z0LSMgtJyywkLQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl5+duYgRHkJbWDsYT
-        J+IPMQpwMCrx8HrYvYsVYk0sK67MPcQowcGsJMJ7vA0oxJuSWFmVWpQfX1Sak1p8iFGag0VJ
-        nFc+/1ikkEB6YklqdmpqQWoRTJaJg1OqgXF689rTHHN8uiRDXraK/7f3P+5v67zhpMLszOqA
-        px6zHUv2PPn6+8mBeo2uO8ofLTVX/O09ZHee99l/8e4NPfu//M3qWH2LQbnluNTjtXWrdxV+
-        cX9gUX55ZZVF/MoZOmnBYtPXHV6572HaVYnvHgcbDeY0XFeu3/j1UuaUe552gS6STKwV7YpK
-        LMUZiYZazEXFiQC1Ny3anAIAAA==
-X-CMS-MailID: 20191210091851epcas1p2c00cdfae9340a610769aaf951428283d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191209144441eucas1p2ccd371e5861e8c0a3948cdc6640ad0d5
-References: <20191209144425.13321-1-k.konieczny@samsung.com>
-        <CGME20191209144441eucas1p2ccd371e5861e8c0a3948cdc6640ad0d5@eucas1p2.samsung.com>
-        <20191209144425.13321-3-k.konieczny@samsung.com>
-        <2881c0b8-9d05-aa5f-c216-8d5a09eb0b00@samsung.com>
-        <03350bb0-11a8-a179-7197-1049dc5e1ef6@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210054330.GF27253@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/19 6:03 PM, Kamil Konieczny wrote:
-> Hi Chanwoo,
-> 
-> On 10.12.2019 02:47, Chanwoo Choi wrote:
->> On 12/9/19 11:44 PM, Kamil Konieczny wrote:
->>> Current devfreq workqueue uses deferred timer. Introduce sysfs
->>> file delayed_timer and use it for change from deferred to
->>> delayed work. The default is to use old deferred one, which
->>> saves power, but can miss increased demand for higher bus
->>> frequency if timer was assigned to idle cpu.
->>
->> As I commented on patch1, If you hope to change the feature
->> related to both performance  and power-consumption, 
->> you have to suggest the reasonable data with test result
->> on multiple scenarios.
-> 
-> Unfortunatly I do not have such tests. Do you have them ?
-> May you share them with me or Marek ?
+On Tue, Dec 10, 2019 at 11:13:30AM +0530, Srikar Dronamraju wrote:
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 44123b4d14e8..82126cbf62cd 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2664,7 +2664,12 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+>   */
+>  int wake_up_process(struct task_struct *p)
+>  {
+> -	return try_to_wake_up(p, TASK_NORMAL, 0);
+> +	int wake_flags = 0;
+> +
+> +	if (is_per_cpu_kthread(p))
+> +		wake_flags = WF_KTHREAD;
+> +
+> +	return try_to_wake_up(p, TASK_NORMAL, wake_flags);
+>  }
+>  EXPORT_SYMBOL(wake_up_process);
 
-You have to do some test for this patch
-because you tried to use the 'delayed work' by this patch.
+Why wake_up_process() and not try_to_wake_up() ? This way
+wake_up_state(.state = TASK_NORMAL() is no longer the same as
+wake_up_process(), and that's weird!
 
-Actually, If possible, I want to apply some feature
-if there are any real requirements.
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 69a81a5709ff..36486f71e59f 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6660,6 +6660,27 @@ static void set_skip_buddy(struct sched_entity *se)
+>  		cfs_rq_of(se)->skip = se;
+>  }
+>  
+> +static int kthread_wakeup_preempt(struct rq *rq, struct task_struct *p, int wake_flags)
+> +{
+> +	struct task_struct *curr = rq->curr;
+> +	struct cfs_rq *cfs_rq = task_cfs_rq(curr);
+> +
+> +	if (!(wake_flags & WF_KTHREAD))
+> +		return 0;
+> +
+> +	if (p->nr_cpus_allowed != 1 || curr->nr_cpus_allowed == 1)
+> +		return 0;
 
-> 
->> Firstly,
->> I don't agree to add 'delayed_timer' sysfs entries.
->> If some device driver want to use the different type of
->> workqueue, they can choice the workqueue type in the
->> probe function of device driver. 
-> 
-> sysfs allows change in runtime
+Per the above, WF_KTHREAD already implies p->nr_cpus_allowed == 1.
 
-hmm. I don't say that sysfs can't change the value at the runtime.
-It is not proper answer from my opinion. Without any answer
-from my opinion, you just say the feature of sysfs interface.
-You and me already knew that user can change the value via sysfs.
+> +	if (cfs_rq->nr_running > 2)
+> +		return 0;
+> +
+> +	/*
+> +	 * Don't preempt, if the waking kthread is more CPU intensive than
+> +	 * the current thread.
+> +	 */
+> +	return p->nvcsw * curr->nivcsw >= p->nivcsw * curr->nvcsw;
 
-> 
->> Secondly, the 'dealyed_timer' is not for all devfreq
->> device driver. Only devfreq device driver uses the
->> 'simple_ondemand' governor. It is wrong to show
->> without any specific reason.
-> 
-> Good point, performance or powersave with fixed max or min freq
-> do not need them.
-> 
->> If you suggest the reasonable data with test result,
->> I prefer to add the new flag to 'struct devfreq_dev_profile'.
-> 
-> imho users of devfreq may give it a try and perform tests themselfs
-> and then share results.
+Both these conditions seem somewhat arbitrary. The number of context
+switch does not correspond to CPU usage _at_all_.
 
-As I commented above, I want to apply some feature
-if there are any real requirements.
+vtime OTOH does reflect exactly that, if it runs a lot, it will be ahead
+in the tree.
 
-> 
->>>
->>> Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
->>> ---
->>>  Documentation/ABI/testing/sysfs-class-devfreq | 10 ++++
->>>  drivers/devfreq/devfreq.c                     | 46 ++++++++++++++++++-
->>>  include/linux/devfreq.h                       |  2 +
->>>  3 files changed, 57 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-class-devfreq b/Documentation/ABI/testing/sysfs-class-devfreq
->>> index 9758eb85ade3..07bfd0df6a4a 100644
->>> --- a/Documentation/ABI/testing/sysfs-class-devfreq
->>> +++ b/Documentation/ABI/testing/sysfs-class-devfreq
->>> @@ -30,6 +30,16 @@ Description:
->>>  		target_freq when get_cur_freq() is not implemented by
->>>  		devfreq driver.
->>>  
->>> +What:		/sys/class/devfreq/.../delayed_timer
->>> +Date:		December 2019
->>> +Contact:	Kamil Konieczny <k.konieczny@samsung.com>
->>> +Description:
->>> +		This ABI shows or clears timer type used by devfreq
->>> +		workqueue. When 0, it uses default deferred timer.
->>> +		When set to 1 devfreq will use delayed timer. Example
->>> +		useage:
->>> +			echo 1 > /sys/class/devfreq/.../delayed_timer
->>> +
->>>  What:		/sys/class/devfreq/.../target_freq
->>>  Date:		September 2012
->>>  Contact:	Rajagopal Venkat <rajagopal.venkat@linaro.org>
->>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>> index 955949c6fc1f..c277d1770fef 100644
->>> --- a/drivers/devfreq/devfreq.c
->>> +++ b/drivers/devfreq/devfreq.c
->>> @@ -445,7 +445,11 @@ void devfreq_monitor_start(struct devfreq *devfreq)
->>>  	if (devfreq->governor->interrupt_driven)
->>>  		return;
->>>  
->>> -	INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
->>> +	if (devfreq->delayed_timer)
->>> +		INIT_DELAYED_WORK(&devfreq->work, devfreq_monitor);
->>> +	else
->>> +		INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
->>> +
->>>  	if (devfreq->profile->polling_ms)
->>>  		queue_delayed_work(devfreq_wq, &devfreq->work,
->>>  			msecs_to_jiffies(devfreq->profile->polling_ms));
->>> @@ -698,6 +702,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
->>>  	devfreq->last_status.current_frequency = profile->initial_freq;
->>>  	devfreq->data = data;
->>>  	devfreq->nb.notifier_call = devfreq_notifier_call;
->>> +	devfreq->delayed_timer = false;
->>>  
->>>  	if (!devfreq->profile->max_state && !devfreq->profile->freq_table) {
->>>  		mutex_unlock(&devfreq->lock);
->>> @@ -1288,6 +1293,44 @@ static ssize_t available_governors_show(struct device *d,
->>>  }
->>>  static DEVICE_ATTR_RO(available_governors);
->>>  
->>> +static ssize_t delayed_timer_show(struct device *dev,
->>> +				  struct device_attribute *attr, char *buf)
->>> +{
->>> +	int i;
->>> +
->>> +	i = to_devfreq(dev)->delayed_timer ? 1 : 0;
->>> +	return sprintf(buf, "%d\n", i);
->>> +}
->>> +
->>> +static ssize_t delayed_timer_store(struct device *dev,
->>> +				   struct device_attribute *attr,
->>> +				   const char *buf, size_t count)
->>> +{
->>> +	struct devfreq *df = to_devfreq(dev);
->>> +	bool old_timer;
->>> +	int value, ret;
->>> +
->>> +	if (!df->governor)
->>> +		return -EINVAL;
->>> +
->>> +	ret = kstrtoint(buf, 10, &value);
->>> +	if (ret || (value != 1 && value != 0))
->>> +		return -EINVAL;
->>> +
->>> +	mutex_lock(&df->lock);
->>> +	old_timer = df->delayed_timer;
->>> +	df->delayed_timer = value == 0 ? false : true;
->>> +	mutex_unlock(&df->lock);
->>> +
->>> +	if (old_timer != df->delayed_timer) {
->>> +		devfreq_monitor_stop(df);
->>> +		devfreq_monitor_start(df);
->>> +	}
->>> +
->>> +	return count;
->>> +}
->>> +static DEVICE_ATTR_RW(delayed_timer);
->>> +
->>>  static ssize_t cur_freq_show(struct device *dev, struct device_attribute *attr,
->>>  			     char *buf)
->>>  {
->>> @@ -1513,6 +1556,7 @@ static struct attribute *devfreq_attrs[] = {
->>>  	&dev_attr_name.attr,
->>>  	&dev_attr_governor.attr,
->>>  	&dev_attr_available_governors.attr,
->>> +	&dev_attr_delayed_timer.attr,
->>>  	&dev_attr_cur_freq.attr,
->>>  	&dev_attr_available_frequencies.attr,
->>>  	&dev_attr_target_freq.attr,
->>> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
->>> index de2fdc56aa5b..761aa0a09db7 100644
->>> --- a/include/linux/devfreq.h
->>> +++ b/include/linux/devfreq.h
->>> @@ -134,6 +134,7 @@ struct devfreq_stats {
->>>   *		reevaluate operable frequencies. Devfreq users may use
->>>   *		devfreq.nb to the corresponding register notifier call chain.
->>>   * @work:	delayed work for load monitoring.
->>> + * @delayed_timer:	use delayed or deferred timer for workqueue.
->>>   * @previous_freq:	previously configured frequency value.
->>>   * @data:	Private data of the governor. The devfreq framework does not
->>>   *		touch this.
->>> @@ -166,6 +167,7 @@ struct devfreq {
->>>  	char governor_name[DEVFREQ_NAME_LEN];
->>>  	struct notifier_block nb;
->>>  	struct delayed_work work;
->>> +	bool delayed_timer;
->>>  
->>>  	unsigned long previous_freq;
->>>  	struct devfreq_dev_status last_status;
->>>
->>
->>
-> 
+> +}
+> +
+>  /*
+>   * Preempt the current task with a newly woken task if needed:
+>   */
+> @@ -6716,7 +6737,7 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
+>  	find_matching_se(&se, &pse);
+>  	update_curr(cfs_rq_of(se));
+>  	BUG_ON(!pse);
+> -	if (wakeup_preempt_entity(se, pse) == 1) {
+> +	if (wakeup_preempt_entity(se, pse) == 1 || kthread_wakeup_preempt(rq, p, wake_flags)) {
+>  		/*
+>  		 * Bias pick_next to pick the sched entity that is
+>  		 * triggering this preemption.
 
+How about something like:
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+	if (wakeup_preempt_entity(se, pse) >= 1-!!(wake_flags & WF_KTHREAD))
+
+instead? Then we allow kthreads a little more preemption room.
