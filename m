@@ -2,251 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B14991183D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:44:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE2F118422
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfLJJoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:44:02 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37976 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727110AbfLJJoB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:44:01 -0500
-Received: by mail-lf1-f66.google.com with SMTP id r14so13163369lfm.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:43:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eVprmkX04/ZA2Ox8rlDXhtYrH8Cdrulho+SeNeN/8to=;
-        b=M3jycdhtLFPex3L2spBWypQ+mK6nzf31bl4Gqd6sV7LltjwgcUk+7tKuPRbipf0QT8
-         DUdNjLvxx+OlIZd/SEXYZwssHKB/+1igQw9UrcPIS1qNYoNdnTC+BuYqHJpWChzAQPu2
-         C1lwwQpvn1z208nDPbeiFhqGpcYTxdwZuFeQbx3A85Shke5cSZsT35JEHWBc7zFn4Ibt
-         whbcBTPlXYZk+JQ0IbTt8BzAU7SLpAM8BLQ0piJQrYs2FT7c7kwKHBRxtvCggR22S/Os
-         ToNBOf5X7zXI3Vd3I/zKmsH6MavzavFu3q2pyJV1DXQk5Mr3cQ7XG3N4IBT5bAIqTTH5
-         u78g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eVprmkX04/ZA2Ox8rlDXhtYrH8Cdrulho+SeNeN/8to=;
-        b=B+cvUspnlc2ZJrpSXe5+w4gOVFQNT6vnnyd2JcRTCGMpw+wToMbMRypNQLQ+hIfSYO
-         v60Zo9jCYjSXAbSs4wjxYhcapF2kvvKqlABODNERMYdRg9Lb6RygoDug8Isiqa4wMc0f
-         i+D7xVmmXKhrKl315aOn8Qj9vSmiVcz/tnOs4LUh8kzd4n0fQlW6qEQ7eYSJyJJlHK+M
-         6rvkMSCsZ6wFRtaPZvT2s7bsU4DCr3j3iTB6AXEnDzMLRCKoul04PQD2NV9woaJ3p4MO
-         b8DW1CaqdWGz5rz06hPLR0MAHsiOIQf708FiO6fo4t2ojVT3c17k1TcT2UnqHThU9Fkh
-         SQCQ==
-X-Gm-Message-State: APjAAAVyaT3V0mSwo3mMfl+p6LpxpQLkkgJA8YWqVsvyzNpK6P+qTF6F
-        dddfsZSbwIOzmjOtTiSPAvNOPFUVn6vNArSigo086Q==
-X-Google-Smtp-Source: APXvYqwU6TvB7JcE/3RASUPFThxDiWpcs5rUTJFNuWlv+3cPwgOkF4im9S52I4IaK/gV84FJf6KuxUd7LyOYLmW+s08=
-X-Received: by 2002:a19:6b0e:: with SMTP id d14mr10053401lfa.151.1575971038660;
- Tue, 10 Dec 2019 01:43:58 -0800 (PST)
+        id S1727326AbfLJJwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:52:04 -0500
+Received: from mx1.emlix.com ([188.40.240.192]:52806 "EHLO mx1.emlix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727196AbfLJJwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 04:52:03 -0500
+X-Greylist: delayed 451 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 04:52:02 EST
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.emlix.com (Postfix) with ESMTPS id 988E75FE45;
+        Tue, 10 Dec 2019 10:44:30 +0100 (CET)
+Subject: Re: [PATCH v5 1/3] dmaengine: imx-sdma: fix buffer ownership
+To:     Robin Gong <yibin.gong@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "jlu@pengutronix.de" <jlu@pengutronix.de>,
+        Andy Duan <fugang.duan@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190923135808.815-1-philipp.puschmann@emlix.com>
+ <20190923135808.815-2-philipp.puschmann@emlix.com>
+ <VE1PR04MB6638A9E882D40FB7F8CB7F14895D0@VE1PR04MB6638.eurprd04.prod.outlook.com>
+From:   Philipp Puschmann <philipp.puschmann@emlix.com>
+Message-ID: <eb584cf0-2be4-138f-e339-aaf9f6f203b0@emlix.com>
+Date:   Tue, 10 Dec 2019 10:44:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20191115045634.GN4614@dread.disaster.area> <20191115070843.GA24246@ming.t460p>
- <20191115234005.GO4614@dread.disaster.area> <20191118092121.GV4131@hirez.programming.kicks-ass.net>
- <20191118204054.GV4614@dread.disaster.area> <20191120191636.GI4097@hirez.programming.kicks-ass.net>
- <20191120220313.GC18056@pauld.bos.csb> <20191121132937.GW4114@hirez.programming.kicks-ass.net>
- <20191209165122.GA27229@linux.vnet.ibm.com> <20191209231743.GA19256@dread.disaster.area>
- <20191210054330.GF27253@linux.vnet.ibm.com>
-In-Reply-To: <20191210054330.GF27253@linux.vnet.ibm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 10 Dec 2019 10:43:46 +0100
-Message-ID: <CAKfTPtCBxV+az30n8E9fRv_HweN_QPJn_ni961OsKp5xUWUD2A@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/core: Preempt current task in favour of bound kthread
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-fs <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <VE1PR04MB6638A9E882D40FB7F8CB7F14895D0@VE1PR04MB6638.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019 at 06:43, Srikar Dronamraju
-<srikar@linux.vnet.ibm.com> wrote:
->
-> A running task can wake-up a per CPU bound kthread on the same CPU.
-> If the current running task doesn't yield the CPU before the next load
-> balance operation, the scheduler would detect load imbalance and try to
-> balance the load. However this load balance would fail as the waiting
-> task is CPU bound, while the running task cannot be moved by the regular
-> load balancer. Finally the active load balancer would kick in and move
-> the task to a different CPU/Core. Moving the task to a different
-> CPU/core can lead to loss in cache affinity leading to poor performance.
->
-> This is more prone to happen if the current running task is CPU
-> intensive and the sched_wake_up_granularity is set to larger value.
-> When the sched_wake_up_granularity was relatively small, it was observed
-> that the bound thread would complete before the load balancer would have
-> chosen to move the cache hot task to a different CPU.
->
-> To deal with this situation, the current running task would yield to a
-> per CPU bound kthread, provided kthread is not CPU intensive.
->
-> /pboffline/hwcct_prg_old/lib/fsperf -t overwrite --noclean -f 5g -b 4k /pboffline
->
-> (With sched_wake_up_granularity set to 15ms)
 
-So you increase sched_wake_up_granularity to a high level to ensure
-that current is no preempted by waking thread but then you add a way
-to finally preempt it which is somewhat weird IMO
 
-Have you tried to increase the priority of workqueue thread  (decrease
-nice priority) ? This is the right way to reduce the impact of the
-sched_wake_up_granularity on the wakeup of your specific kthread.
-Because what you want at the end is keeping a low wakeup granularity
-for these io workqueues
+Am 04.12.19 um 10:19 schrieb Robin Gong:
+> On 2019-9-23 Philipp Puschmann <philipp.puschmann@emlix.com> wrote:
+>> BD_DONE flag marks ownership of the buffer. When 1 SDMA owns the buffer,
+>> when 0 ARM owns it. When processing the buffers in
+>> sdma_update_channel_loop the ownership of the currently processed buffer
+>> was set to SDMA again before running the callback function of the buffer and
+>> while the sdma script may be running in parallel. So there was the possibility to
+>> get the buffer overwritten by SDMA before it has been processed by kernel
+> Does this patch need indeed? I don't think any difference here move done flag
+> before callback or after callback, because callback never care this flag and actually
+> done flag is setup for next time rather than this time.
+The callback doesn't care, but the DMA controller cares about this flag. I see a possible race
+condition here. If i set the DONE flag for a specific buffer descriptor before handling the
+data belonging to this buffer descriptor (aka running the callback function) the DMA script running
+at the same time could corrupt that data while being processed.
+Or is there are mechanism that prevents this case, that i havn't considered here.
 
->
-> Performance counter stats for 'system wide' (5 runs):
-> event                                        v5.4                               v5.4 + patch(v2)
-> probe:active_load_balance_cpu_stop       1,919  ( +-  2.89% )                   5  ( +- 12.56% )
-> sched:sched_waking                     441,535  ( +-  0.17% )             901,174  ( +-  0.25% )
-> sched:sched_wakeup                     441,533  ( +-  0.17% )             901,172  ( +-  0.25% )
-> sched:sched_wakeup_new                   2,436  ( +-  8.08% )                 525  ( +-  2.57% )
-> sched:sched_switch                     797,007  ( +-  0.26% )           1,458,463  ( +-  0.24% )
-> sched:sched_migrate_task                20,998  ( +-  1.04% )               2,279  ( +-  3.47% )
-> sched:sched_process_free                 2,436  ( +-  7.90% )                 527  ( +-  2.30% )
-> sched:sched_process_exit                 2,451  ( +-  7.85% )                 542  ( +-  2.24% )
-> sched:sched_wait_task                        7  ( +- 21.20% )                   1  ( +- 77.46% )
-> sched:sched_process_wait                 3,951  ( +-  9.14% )                 816  ( +-  3.52% )
-> sched:sched_process_fork                 2,435  ( +-  8.09% )                 524  ( +-  2.58% )
-> sched:sched_process_exec                 1,023  ( +- 12.21% )                 198  ( +-  3.23% )
-> sched:sched_wake_idle_without_ipi      187,794  ( +-  1.14% )             348,565  ( +-  0.34% )
->
-> Elasped time in seconds          289.43 +- 1.42 ( +-  0.49% )    72.6013 +- 0.0417 ( +-  0.06% )
-> Throughput results
->
-> v5.4
-> Trigger time:................... 0.842679 s   (Throughput:     6075.86 MB/s)
-> Asynchronous submit time:.......   1.0184 s   (Throughput:     5027.49 MB/s)
-> Synchronous submit time:........        0 s   (Throughput:           0 MB/s)
-> I/O time:.......................   263.17 s   (Throughput:      19.455 MB/s)
-> Ratio trigger time to I/O time:.0.00320202
->
-> v5.4 + patch(v2)
-> Trigger time:................... 0.853973 s   (Throughput:      5995.5 MB/s)
-> Asynchronous submit time:....... 0.768092 s   (Throughput:     6665.86 MB/s)
-> Synchronous submit time:........        0 s   (Throughput:           0 MB/s)
-> I/O time:.......................  44.0267 s   (Throughput:     116.292 MB/s)
-> Ratio trigger time to I/O time:.0.0193966
->
-> (With sched_wake_up_granularity set to 4ms)
->
-> Performance counter stats for 'system wide' (5 runs):
-> event                                         v5.4                              v5.4 + patch(v2)
-> probe:active_load_balance_cpu_stop               6  ( +-  6.03% )                   5  ( +- 23.20% )
-> sched:sched_waking                         899,880  ( +-  0.38% )             899,737  ( +-  0.41% )
-> sched:sched_wakeup                         899,878  ( +-  0.38% )             899,736  ( +-  0.41% )
-> sched:sched_wakeup_new                         622  ( +- 11.95% )                 499  ( +-  1.08% )
-> sched:sched_switch                       1,458,214  ( +-  0.40% )           1,451,374  ( +-  0.32% )
-> sched:sched_migrate_task                     3,120  ( +- 10.00% )               2,500  ( +- 10.86% )
-> sched:sched_process_free                       608  ( +- 12.18% )                 484  ( +-  1.19% )
-> sched:sched_process_exit                       623  ( +- 11.91% )                 499  ( +-  1.15% )
-> sched:sched_wait_task                            1  ( +- 31.18% )                   1  ( +- 31.18% )
-> sched:sched_process_wait                       998  ( +- 13.22% )                 765  ( +-  0.16% )
-> sched:sched_process_fork                       622  ( +- 11.95% )                 498  ( +-  1.08% )
-> sched:sched_process_exec                       242  ( +- 13.81% )                 183  ( +-  0.48% )
-> sched:sched_wake_idle_without_ipi          349,165  ( +-  0.35% )             347,773  ( +-  0.43% )
->
-> Elasped time in seconds           72.8560 +- 0.0768 ( +-  0.11% )     72.4327 +- 0.0797 ( +-  0.11% )
->
-> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-> ---
-> Changelog:
-> v1 : http://lore.kernel.org/lkml/20191209165122.GA27229@linux.vnet.ibm.com
-> v1->v2: Pass the the right params to try_to_wake_up as correctly pointed out
-> by Dave Chinner
->
->
->  kernel/sched/core.c  |  7 ++++++-
->  kernel/sched/fair.c  | 23 ++++++++++++++++++++++-
->  kernel/sched/sched.h |  3 ++-
->  3 files changed, 30 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 44123b4d14e8..82126cbf62cd 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2664,7 +2664,12 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
->   */
->  int wake_up_process(struct task_struct *p)
->  {
-> -       return try_to_wake_up(p, TASK_NORMAL, 0);
-> +       int wake_flags = 0;
-> +
-> +       if (is_per_cpu_kthread(p))
-> +               wake_flags = WF_KTHREAD;
-> +
-> +       return try_to_wake_up(p, TASK_NORMAL, wake_flags);
->  }
->  EXPORT_SYMBOL(wake_up_process);
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 69a81a5709ff..36486f71e59f 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6660,6 +6660,27 @@ static void set_skip_buddy(struct sched_entity *se)
->                 cfs_rq_of(se)->skip = se;
->  }
->
-> +static int kthread_wakeup_preempt(struct rq *rq, struct task_struct *p, int wake_flags)
-> +{
-> +       struct task_struct *curr = rq->curr;
-> +       struct cfs_rq *cfs_rq = task_cfs_rq(curr);
-> +
-> +       if (!(wake_flags & WF_KTHREAD))
-> +               return 0;
-> +
-> +       if (p->nr_cpus_allowed != 1 || curr->nr_cpus_allowed == 1)
-> +               return 0;
-> +
-> +       if (cfs_rq->nr_running > 2)
-> +               return 0;
-> +
-> +       /*
-> +        * Don't preempt, if the waking kthread is more CPU intensive than
-> +        * the current thread.
-> +        */
-> +       return p->nvcsw * curr->nivcsw >= p->nivcsw * curr->nvcsw;
-> +}
-> +
->  /*
->   * Preempt the current task with a newly woken task if needed:
->   */
-> @@ -6716,7 +6737,7 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
->         find_matching_se(&se, &pse);
->         update_curr(cfs_rq_of(se));
->         BUG_ON(!pse);
-> -       if (wakeup_preempt_entity(se, pse) == 1) {
-> +       if (wakeup_preempt_entity(se, pse) == 1 || kthread_wakeup_preempt(rq, p, wake_flags)) {
->                 /*
->                  * Bias pick_next to pick the sched entity that is
->                  * triggering this preemption.
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index c8870c5bd7df..23d4284ad1e3 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1643,7 +1643,8 @@ static inline int task_on_rq_migrating(struct task_struct *p)
->   */
->  #define WF_SYNC                        0x01            /* Waker goes to sleep after wakeup */
->  #define WF_FORK                        0x02            /* Child wakeup after fork */
-> -#define WF_MIGRATED            0x4             /* Internal use, task got migrated */
-> +#define WF_MIGRATED            0x04            /* Internal use, task got migrated */
-> +#define WF_KTHREAD             0x08            /* Per CPU Kthread*/
->
->  /*
->   * To aid in avoiding the subversion of "niceness" due to uneven distribution
-> --
-> 2.18.1
->
+> Basically, this flag should be
+> set to 1 quickly asap so that sdma could use this bd asap. If delay the flag may cause
+> sdma channel stop since all BDs consumed.
+
+> Could you try again your case without this patch?
+I don't have the hw to reproduce this available at the moment but as i remember i did run it without
+this patch successfully already. The problem i have described above was more a logical or theoretical
+one than a problem that really occured with my setup.
+
+>> leading to kind of random errors in the upper layers, e.g. bluetooth.
+>>
+>> Fixes: 1ec1e82f2510 ("dmaengine: Add Freescale i.MX SDMA support")
+>> Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
+>> ---
+>>
+>> Changelog v5:
+>>  - no changes
+>>
+>> Changelog v4:
+>>  - fixed the fixes tag
+>>
+>> Changelog v3:
+>>  - use correct dma_wmb() instead of dma_wb()
+>>  - add fixes tag
+>>
+>> Changelog v2:
+>>  - add dma_wb()
+>>
+>>  drivers/dma/imx-sdma.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c index
+>> 9ba74ab7e912..b42281604e54 100644
+>> --- a/drivers/dma/imx-sdma.c
+>> +++ b/drivers/dma/imx-sdma.c
+>> @@ -802,7 +802,6 @@ static void sdma_update_channel_loop(struct
+>> sdma_channel *sdmac)
+>>  		*/
+>>
+>>  		desc->chn_real_count = bd->mode.count;
+>> -		bd->mode.status |= BD_DONE;
+>>  		bd->mode.count = desc->period_len;
+>>  		desc->buf_ptail = desc->buf_tail;
+>>  		desc->buf_tail = (desc->buf_tail + 1) % desc->num_bd; @@ -817,6
+>> +816,9 @@ static void sdma_update_channel_loop(struct sdma_channel
+>> *sdmac)
+>>  		dmaengine_desc_get_callback_invoke(&desc->vd.tx, NULL);
+>>  		spin_lock(&sdmac->vc.lock);
+>>
+>> +		dma_wmb();
+>> +		bd->mode.status |= BD_DONE;
+>> +
+>>  		if (error)
+>>  			sdmac->status = old_status;
+>>  	}
+>> --
+>> 2.23.0
+> 
