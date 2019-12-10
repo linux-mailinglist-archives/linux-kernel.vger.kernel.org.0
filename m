@@ -2,78 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C4801180CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 07:52:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC3FD1180DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 07:54:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfLJGwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 01:52:33 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:48165 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbfLJGwd (ORCPT
+        id S1727296AbfLJGyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 01:54:37 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:38344 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbfLJGyg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 01:52:33 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ieZNm-0002nD-1i; Tue, 10 Dec 2019 07:52:30 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ieZNl-0004eE-Cp; Tue, 10 Dec 2019 07:52:29 +0100
-Date:   Tue, 10 Dec 2019 07:52:29 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, wahrenst@gmx.net,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH] pwm: bcm2835: Allow building for ARCH_BRCMSTB
-Message-ID: <20191210065229.hopmnq5qlwtl7gzw@pengutronix.de>
-References: <20191209232503.7252-1-f.fainelli@gmail.com>
+        Tue, 10 Dec 2019 01:54:36 -0500
+Received: by mail-il1-f195.google.com with SMTP id u17so15190589ilq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 22:54:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gu0tI1Ph2fkGTpOQyVLmgqpol4E6X/tEFsGWyYePxFo=;
+        b=EOSodPBvj8YO5TUFc/w6bgKtErmFN3IADsXNow5Dn0RDaYlWV7fzSalNujYqj+W7Ea
+         vMcGDUeAqyOAVmkKnYSXWKOxwdUL/+YXgTVZxijs49Qm2F7s93h2rj9jtq2Kg+VQKc5w
+         mYKfcvW9cULBVw3OI8imSJXJMYD/oWIajIlnU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gu0tI1Ph2fkGTpOQyVLmgqpol4E6X/tEFsGWyYePxFo=;
+        b=Jv8ak4yf4ORvD+p4A+n2uZfgJPWK2VKWPTT67KPAWAJvD5oPnnIrijq+xIGy7gbBlc
+         aZWGjxquDXlLPyXPKmv2L1or+aG7IoS++SUXiBo9XyypWlU5ty4tfSWfBB5ybZvzs1DJ
+         vlPRIiEdaNLWWWQf6acSJy2qin5Y8caX4DzUKT7JtTa4eAdy4zEAZMHhdyPWju/b9Ma/
+         PL1UHmgqtAxaytyCOO8NYRkF301Yg/MzkdSD9iLallZSJJ4tT86/lr3F+dITucSGmWJ/
+         ZrjSFmX9ZVyoy4aFYUENl+Y67s7ahIxG3bbbGJvkF9CwKXXD7eQEjucJzHc6nw9Kneb8
+         qkDw==
+X-Gm-Message-State: APjAAAW4flrI+AbrckR82QispD8w9FeboY9UD0t5Z6guxF9WcoHfj7AP
+        ItOLvGAsrSkUhoYt7ukvFhfTfFxcfX573ap5K1tvdQ==
+X-Google-Smtp-Source: APXvYqzeecdVJpN22hzm3NN0X757pkAa6hjd9KkC9mnUCmHxZKpkuuZRPLFDBaLHWi7AKKKmVYEnJhEoLcgSsypydlo=
+X-Received: by 2002:a92:5c47:: with SMTP id q68mr25325970ilb.41.1575960875769;
+ Mon, 09 Dec 2019 22:54:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191209232503.7252-1-f.fainelli@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20191128125100.14291-1-patrick.rudolph@9elements.com> <20191128125100.14291-2-patrick.rudolph@9elements.com>
+In-Reply-To: <20191128125100.14291-2-patrick.rudolph@9elements.com>
+From:   Julius Werner <jwerner@chromium.org>
+Date:   Mon, 9 Dec 2019 22:54:23 -0800
+Message-ID: <CAODwPW8Koy1BvKGJU6PKexYx+PNE+WY7+m69gcxT689vBy+AoQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] firmware: google: Expose CBMEM over sysfs
+To:     Patrick Rudolph <patrick.rudolph@9elements.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Julius Werner <jwerner@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 03:25:03PM -0800, Florian Fainelli wrote:
-> BCM7211 is supported using ARCH_BRCMSTB and uses this PWM controller
-> driver, make it possible to build it.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  drivers/pwm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index bd21655c37a6..0bb8a40c8d6c 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -100,7 +100,7 @@ config PWM_BCM_KONA
->  
->  config PWM_BCM2835
->  	tristate "BCM2835 PWM support"
-> -	depends on ARCH_BCM2835
-> +	depends on ARCH_BCM2835 || ARCH_BRCMSTB
+> +static int cbmem_probe(struct coreboot_device *cdev)
+> +{
+> +       struct device *dev = &cdev->dev;
+> +       struct cb_priv *priv;
+> +       int err;
+> +
+> +       priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       memcpy(&priv->entry, &cdev->cbmem_entry, sizeof(priv->entry));
+> +
+> +       priv->remap = memremap(priv->entry.address,
+> +                              priv->entry.entry_size, MEMREMAP_WB);
 
-It would be nice to allow this driver to be compiled with COMPILE_TEST,
-too. But also without this:
+We've just been discussing some problems with CBMEM areas and memory
+mapping types in Chrome OS. CBMEM is not guaranteed to be page-aligned
+(at least not the "small" entries), but the kernel can only assign
+memory attributes for a page at a time (and refuses to map the same
+area twice with two different memory types, for good reason). So if
+CBMEM entries sharing a page are mapped as writeback by one driver but
+uncached by the other, things break.
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+There are some CBMEM entries that need to be mapped uncached (e.g. the
+ACPI UCSI table, which isn't even handled by anything using this CBMEM
+code) and others for which it would make more sense (e.g. the memory
+console, where firmware may add more lines at runtime), but I don't
+think there are any regions that really *need* to be writeback. None
+of the stuff accessing these areas should access them often enough
+that caching matters, and I think it's generally more common to map
+firmware memory areas as uncached anyway. So how about we standardize
+on mapping it all uncached to avoid any attribute clashes? (That would
+mean changing the existing VPD and memconsole drivers to use
+ioremap(), too.)
