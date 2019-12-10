@@ -2,281 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFDE3117F1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:47:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66B06117F0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:41:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfLJErb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 23:47:31 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36178 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbfLJEra (ORCPT
+        id S1726860AbfLJElB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 23:41:01 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:41799 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbfLJElB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 23:47:30 -0500
-Received: by mail-pl1-f194.google.com with SMTP id d15so49889pll.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 20:47:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Qz4EMw+QBJw2XWxTbQKVczK3wuv6III+QMaefXi4B1g=;
-        b=O5nCdYx24XRHih+SobL+eWjqEusRBefcWBDsBAOpFVAMMe2QengfDnaGE/2eb0QLV2
-         8SvJ9eVwh2xDfgv4uBgb6H0ZItjFdyKZ+Miq75UP9ce2bzPevxnMdJ0+S6UXrQPHQNOt
-         ILMzn3kwdJAJNWxoffMwxSm2RUfbtz0r2eGag=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Qz4EMw+QBJw2XWxTbQKVczK3wuv6III+QMaefXi4B1g=;
-        b=n7YR00glUB7sIdqG8oE7iPVSex03tuScGOxqjzkI5kIDWPDQjix26IZ/6JtEVV7FAa
-         wYXw0OIY1hkyR6/pYavLewIWgs4HWkizXpv4xFerza3B5LXfTHP9Ew/3Of6z2C/umSDH
-         rBAUAboFC8sZF68YcyMkd0DGdomP36/JwVpwt2YF2iyu9SfONJ0YIw6hBXwk6hFIgB8M
-         BAZTaXDuPLRcsufpu8egw0qasfLi+jiZ5U4JyyvU/3y9/ApfwwD+B2q2kG/L8n8oQD02
-         qmwl926WeSHBkFFAhAAPL6l7wHhgFYDo8igkodggAGHR9GCgUEtr2YSs9Tw4pN6z8Yd4
-         0Arg==
-X-Gm-Message-State: APjAAAXB3GjpexYbZaXvLHzAXbd0C6aIiz61O4t5w1g4KKW+fqPzeHYW
-        rKU234EnEv/LH27UBl5uY7+L1wEhD5M=
-X-Google-Smtp-Source: APXvYqw7LnsjeT+HcbOOl/JAdXG9ZgiZpjPbgIlnkKCZPr9JzIqeMTG75gBMCWn5zm8HjDsTA4uL0A==
-X-Received: by 2002:a17:90a:374f:: with SMTP id u73mr3243246pjb.22.1575953249787;
-        Mon, 09 Dec 2019 20:47:29 -0800 (PST)
-Received: from localhost (2001-44b8-1113-6700-e460-0b66-7007-c654.static.ipv6.internode.on.net. [2001:44b8:1113:6700:e460:b66:7007:c654])
-        by smtp.gmail.com with ESMTPSA id a14sm1176178pfn.22.2019.12.09.20.47.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 20:47:29 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
-        christophe.leroy@c-s.fr, aneesh.kumar@linux.ibm.com,
-        bsingharora@gmail.com
-Cc:     Daniel Axtens <dja@axtens.net>
-Subject: [PATCH v2 1/4] mm: define MAX_PTRS_PER_{PTE,PMD,PUD}
-Date:   Tue, 10 Dec 2019 15:47:11 +1100
-Message-Id: <20191210044714.27265-2-dja@axtens.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210044714.27265-1-dja@axtens.net>
-References: <20191210044714.27265-1-dja@axtens.net>
+        Mon, 9 Dec 2019 23:41:01 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191210044057epoutp022197a69eb2a315f73bbd087b719e5273~e6MYcLU4V0190601906epoutp021
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 04:40:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191210044057epoutp022197a69eb2a315f73bbd087b719e5273~e6MYcLU4V0190601906epoutp021
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575952857;
+        bh=0aHgv6I5n6zloYGGXpmUFbpr1AC6keJ830N7MzWtD3k=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=UIc0pMNn/c04HQj81dkyoHw0KiJGGGU916hHaeNLMSH43iqQV7vQr1yRRCKBgAH+E
+         ZuRWH1E+hMbBF0Dm4nxwB9+U4rJ2zRlbmoWIgm6K9hHaSW/v1iVviO0/tjXTpsLF5z
+         LsrVu76U7uUSS64HgqXUvIAZ4rr87C2eCSznKArc=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191210044056epcas1p469d65f6853c497793675e3e118eb9824~e6MX6O_ng2442824428epcas1p4P;
+        Tue, 10 Dec 2019 04:40:56 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47X6nf3f5vzMqYkY; Tue, 10 Dec
+        2019 04:40:54 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1D.F0.48019.FC12FED5; Tue, 10 Dec 2019 13:40:47 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191210044046epcas1p3e9343cc918be7dd39f49592cf1047e1c~e6MOp_BNz1727817278epcas1p3I;
+        Tue, 10 Dec 2019 04:40:46 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191210044046epsmtrp282f32f7a7949189d4cbd74e06265cdb2~e6MOpEIsU0529105291epsmtrp2_;
+        Tue, 10 Dec 2019 04:40:46 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-fe-5def21cfdb65
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BB.1A.06569.EC12FED5; Tue, 10 Dec 2019 13:40:46 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191210044046epsmtip14192116ffeb1cff8bdaae28f419c7ab8~e6MOiKLXs1173711737epsmtip1B;
+        Tue, 10 Dec 2019 04:40:46 +0000 (GMT)
+Subject: Re: [PATCH 01/10] extcon: arizona: Correct clean up if
+ arizona_identify_headphone fails
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     myungjoo.ham@samsung.com, patches@opensource.cirrus.com,
+        linux-kernel@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <c1db1ef9-91e7-0475-8c19-86fd8102cd17@samsung.com>
+Date:   Tue, 10 Dec 2019 13:47:12 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191209110916.29524-1-ckeepax@opensource.cirrus.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphk+LIzCtJLcpLzFFi42LZdlhTT/e84vtYg1Wt0hZXWjcxWlzeNYfN
+        4nbjCjaLz+/3szqweEyf85/Ro2/LKkaPz5vkApijsm0yUhNTUosUUvOS81My89JtlbyD453j
+        Tc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgLYpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yV
+        UgtScgosC/SKE3OLS/PS9ZLzc60MDQyMTIEKE7IzOs6+ZC34z17xoX0mWwPjNbYuRk4OCQET
+        iXm3jzJ3MXJxCAnsYJToaJnKBuF8YpR4f+g2lPONUWLbocmMMC1L+v5DtexllPhy6TYLhPOe
+        UeLM6vvMIFXCAkkSb59cALNFBIwkPh6/xQRiMwtESyz4vAxsOZuAlsT+FzfAbH4BRYmrPx6D
+        beAVsJP4390AVM/BwSKgKrFyuwdIWFQgTOLkthaoEkGJkzOfsIDYnALOEmue72KBGC8ucevJ
+        fKhV8hLb384BO1RC4AibxNSJ06E+cJG40nKAGcIWlnh1fAs7hC0l8fndXmjAVEusPHmEDaK5
+        g1Fiy/4LrBAJY4n9SyeDHccsoCmxfpc+RFhRYufvuYwQi/kk3n3tYQUpkRDglehoE4IoUZa4
+        /OAuE4QtKbG4vZNtAqPSLCTvzELywiwkL8xCWLaAkWUVo1hqQXFuemqxYYEJcmxvYgSnRC2L
+        HYx7zvkcYhTgYFTi4V3g8C5WiDWxrLgy9xCjBAezkgjv8TagEG9KYmVValF+fFFpTmrxIUZT
+        YGBPZJYSTc4Hpuu8knhDUyNjY2MLE0MzU0NDJXFejh8XY4UE0hNLUrNTUwtSi2D6mDg4pRoY
+        o367y20pkFNg8sm4uLTKMXLzpF4Z8Sd3GUT6L07M3pb52jvtt+K7j5MWFT79MWHP9UVBRuZ3
+        Aj5/N/PY8UPkWKVmZKLLo97FlRka4mKbryyXr5F+suDH+/WZkjG5UisPbty67xTDhOap6ScC
+        l/rotD9a3yN5iHWC1i5zm2mFT++a7LywSiZeRomlOCPRUIu5qDgRAMm2VvSfAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGLMWRmVeSWpSXmKPExsWy7bCSnO45xfexBu++qVtcad3EaHF51xw2
+        i9uNK9gsPr/fz+rA4jF9zn9Gj74tqxg9Pm+SC2CO4rJJSc3JLEst0rdL4MroOPuSteA/e8WH
+        9plsDYzX2LoYOTkkBEwklvT9Z+5i5OIQEtjNKHHjykNGiISkxLSLR4ESHEC2sMThw8UQNW8Z
+        JWYsaWUBqREWSJJ4++QCM4gtImAk8fH4LSYQm1kgWuJS/1cWiIZpjBIdLyaDFbEJaEnsf3ED
+        bDO/gKLE1R+PwZbxCthJ/O9uYAJZxiKgKrFyuwdIWFQgTGLnksdMECWCEidnPgHbyyngLLHm
+        +S4WiF3qEn/mXWKGsMUlbj2ZD3WDvMT2t3OYJzAKz0LSPgtJyywkLbOQtCxgZFnFKJlaUJyb
+        nltsWGCUl1quV5yYW1yal66XnJ+7iREcG1paOxhPnIg/xCjAwajEw+th9y5WiDWxrLgy9xCj
+        BAezkgjv8TagEG9KYmVValF+fFFpTmrxIUZpDhYlcV75/GORQgLpiSWp2ampBalFMFkmDk6p
+        BsbkoHf6l8relyXL8r3XDNpQ1dDSrasl0rWAU+RBjJV3Rfjfp6w/qubrb5+zvZT9QfcS3sAr
+        ibahzjxnouNNNCLf35HJPrPGQqpRN0JqzcGmy032sksiJplcsf/PueHM7L+Ka+4udr9/iStT
+        Rin9mYFQZb23hrmGUMnKQ0ffz/v1Sv+z+MLN65VYijMSDbWYi4oTAXUSQY6JAgAA
+X-CMS-MailID: 20191210044046epcas1p3e9343cc918be7dd39f49592cf1047e1c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191209110925epcas4p3731ec3380f882027824b188439aa3bc9
+References: <CGME20191209110925epcas4p3731ec3380f882027824b188439aa3bc9@epcas4p3.samsung.com>
+        <20191209110916.29524-1-ckeepax@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-powerpc has boot-time configurable PTRS_PER_PTE, PMD and PUD. The
-values are selected based on the MMU under which the kernel is
-booted. This is much like how 4 vs 5-level paging on x86_64 leads to
-boot-time configurable PTRS_PER_P4D.
+On 12/9/19 8:09 PM, Charles Keepax wrote:
+> In the error path of arizona_identify_headphone, neither the clamp nor
+> the PM runtime are cleaned up. Add calls to clean up both of these.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
+>  drivers/extcon/extcon-arizona.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
+> index e970134c95fab..79e9a24101823 100644
+> --- a/drivers/extcon/extcon-arizona.c
+> +++ b/drivers/extcon/extcon-arizona.c
+> @@ -724,6 +724,9 @@ static void arizona_identify_headphone(struct arizona_extcon_info *info)
+>  	return;
+>  
+>  err:
+> +	arizona_extcon_hp_clamp(info, false);
+> +	pm_runtime_put_autosuspend(info->dev);
+> +
+>  	regmap_update_bits(arizona->regmap, ARIZONA_ACCESSORY_DETECT_MODE_1,
+>  			   ARIZONA_ACCDET_MODE_MASK, ARIZONA_ACCDET_MODE_MIC);
+>  
+> 
 
-So far, this hasn't leaked out of arch/powerpc. But with KASAN, we
-have static arrays based on PTRS_PER_*, so for powerpc support must
-provide constant upper bounds for generic code.
+Applied these patches in this series. Thanks.
 
-Define MAX_PTRS_PER_{PTE,PMD,PUD} for this purpose.
-
-I have configured these constants:
- - in asm-generic headers
- - on arches that implement KASAN: x86, s390, arm64, xtensa and powerpc
-
-I haven't wired up any other arches just yet - there is no user of
-the constants outside of the KASAN code I add in the next patch, so
-missing the constants on arches that don't support KASAN shouldn't
-break anything.
-
-Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Daniel Axtens <dja@axtens.net>
----
- arch/arm64/include/asm/pgtable-hwdef.h       | 3 +++
- arch/powerpc/include/asm/book3s/64/hash.h    | 4 ++++
- arch/powerpc/include/asm/book3s/64/pgtable.h | 7 +++++++
- arch/powerpc/include/asm/book3s/64/radix.h   | 5 +++++
- arch/s390/include/asm/pgtable.h              | 3 +++
- arch/x86/include/asm/pgtable_types.h         | 5 +++++
- arch/xtensa/include/asm/pgtable.h            | 1 +
- include/asm-generic/pgtable-nop4d-hack.h     | 9 +++++----
- include/asm-generic/pgtable-nopmd.h          | 9 +++++----
- include/asm-generic/pgtable-nopud.h          | 9 +++++----
- 10 files changed, 43 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index d9fbd433cc17..485e1f3c5c6f 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -41,6 +41,7 @@
- #define ARM64_HW_PGTABLE_LEVEL_SHIFT(n)	((PAGE_SHIFT - 3) * (4 - (n)) + 3)
- 
- #define PTRS_PER_PTE		(1 << (PAGE_SHIFT - 3))
-+#define MAX_PTRS_PER_PTE	PTRS_PER_PTE
- 
- /*
-  * PMD_SHIFT determines the size a level 2 page table entry can map.
-@@ -50,6 +51,7 @@
- #define PMD_SIZE		(_AC(1, UL) << PMD_SHIFT)
- #define PMD_MASK		(~(PMD_SIZE-1))
- #define PTRS_PER_PMD		PTRS_PER_PTE
-+#define MAX_PTRS_PER_PMD	PTRS_PER_PMD
- #endif
- 
- /*
-@@ -60,6 +62,7 @@
- #define PUD_SIZE		(_AC(1, UL) << PUD_SHIFT)
- #define PUD_MASK		(~(PUD_SIZE-1))
- #define PTRS_PER_PUD		PTRS_PER_PTE
-+#define MAX_PTRS_PER_PUD	PTRS_PER_PUD
- #endif
- 
- /*
-diff --git a/arch/powerpc/include/asm/book3s/64/hash.h b/arch/powerpc/include/asm/book3s/64/hash.h
-index 2781ebf6add4..fce329b8452e 100644
---- a/arch/powerpc/include/asm/book3s/64/hash.h
-+++ b/arch/powerpc/include/asm/book3s/64/hash.h
-@@ -18,6 +18,10 @@
- #include <asm/book3s/64/hash-4k.h>
- #endif
- 
-+#define H_PTRS_PER_PTE		(1 << H_PTE_INDEX_SIZE)
-+#define H_PTRS_PER_PMD		(1 << H_PMD_INDEX_SIZE)
-+#define H_PTRS_PER_PUD		(1 << H_PUD_INDEX_SIZE)
-+
- /* Bits to set in a PMD/PUD/PGD entry valid bit*/
- #define HASH_PMD_VAL_BITS		(0x8000000000000000UL)
- #define HASH_PUD_VAL_BITS		(0x8000000000000000UL)
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index b01624e5c467..209817235a44 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -231,6 +231,13 @@ extern unsigned long __pmd_frag_size_shift;
- #define PTRS_PER_PUD	(1 << PUD_INDEX_SIZE)
- #define PTRS_PER_PGD	(1 << PGD_INDEX_SIZE)
- 
-+#define MAX_PTRS_PER_PTE	((H_PTRS_PER_PTE > R_PTRS_PER_PTE) ? \
-+				  H_PTRS_PER_PTE : R_PTRS_PER_PTE)
-+#define MAX_PTRS_PER_PMD	((H_PTRS_PER_PMD > R_PTRS_PER_PMD) ? \
-+				  H_PTRS_PER_PMD : R_PTRS_PER_PMD)
-+#define MAX_PTRS_PER_PUD	((H_PTRS_PER_PUD > R_PTRS_PER_PUD) ? \
-+				  H_PTRS_PER_PUD : R_PTRS_PER_PUD)
-+
- /* PMD_SHIFT determines what a second-level page table entry can map */
- #define PMD_SHIFT	(PAGE_SHIFT + PTE_INDEX_SIZE)
- #define PMD_SIZE	(1UL << PMD_SHIFT)
-diff --git a/arch/powerpc/include/asm/book3s/64/radix.h b/arch/powerpc/include/asm/book3s/64/radix.h
-index d97db3ad9aae..4f826259de71 100644
---- a/arch/powerpc/include/asm/book3s/64/radix.h
-+++ b/arch/powerpc/include/asm/book3s/64/radix.h
-@@ -35,6 +35,11 @@
- #define RADIX_PMD_SHIFT		(PAGE_SHIFT + RADIX_PTE_INDEX_SIZE)
- #define RADIX_PUD_SHIFT		(RADIX_PMD_SHIFT + RADIX_PMD_INDEX_SIZE)
- #define RADIX_PGD_SHIFT		(RADIX_PUD_SHIFT + RADIX_PUD_INDEX_SIZE)
-+
-+#define R_PTRS_PER_PTE		(1 << RADIX_PTE_INDEX_SIZE)
-+#define R_PTRS_PER_PMD		(1 << RADIX_PMD_INDEX_SIZE)
-+#define R_PTRS_PER_PUD		(1 << RADIX_PUD_INDEX_SIZE)
-+
- /*
-  * Size of EA range mapped by our pagetables.
-  */
-diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
-index 7b03037a8475..3b491ce52ed2 100644
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -342,6 +342,9 @@ static inline int is_module_addr(void *addr)
- #define PTRS_PER_PGD	_CRST_ENTRIES
- 
- #define MAX_PTRS_PER_P4D	PTRS_PER_P4D
-+#define MAX_PTRS_PER_PUD	PTRS_PER_PUD
-+#define MAX_PTRS_PER_PMD	PTRS_PER_PMD
-+#define MAX_PTRS_PER_PTE	PTRS_PER_PTE
- 
- /*
-  * Segment table and region3 table entry encoding
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index ea7400726d7a..82d523db133b 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -257,6 +257,11 @@ enum page_cache_mode {
- # include <asm/pgtable_64_types.h>
- #endif
- 
-+/* There is no runtime switching of these sizes */
-+#define MAX_PTRS_PER_PUD PTRS_PER_PUD
-+#define MAX_PTRS_PER_PMD PTRS_PER_PMD
-+#define MAX_PTRS_PER_PTE PTRS_PER_PTE
-+
- #ifndef __ASSEMBLY__
- 
- #include <linux/types.h>
-diff --git a/arch/xtensa/include/asm/pgtable.h b/arch/xtensa/include/asm/pgtable.h
-index 27ac17c9da09..5d6aa16ceae6 100644
---- a/arch/xtensa/include/asm/pgtable.h
-+++ b/arch/xtensa/include/asm/pgtable.h
-@@ -55,6 +55,7 @@
-  * we don't really have any PMD directory physically.
-  */
- #define PTRS_PER_PTE		1024
-+#define MAX_PTRS_PER_PTE	1024
- #define PTRS_PER_PTE_SHIFT	10
- #define PTRS_PER_PGD		1024
- #define PGD_ORDER		0
-diff --git a/include/asm-generic/pgtable-nop4d-hack.h b/include/asm-generic/pgtable-nop4d-hack.h
-index 829bdb0d6327..6faa23f9e0b4 100644
---- a/include/asm-generic/pgtable-nop4d-hack.h
-+++ b/include/asm-generic/pgtable-nop4d-hack.h
-@@ -14,10 +14,11 @@
-  */
- typedef struct { pgd_t pgd; } pud_t;
- 
--#define PUD_SHIFT	PGDIR_SHIFT
--#define PTRS_PER_PUD	1
--#define PUD_SIZE	(1UL << PUD_SHIFT)
--#define PUD_MASK	(~(PUD_SIZE-1))
-+#define PUD_SHIFT		PGDIR_SHIFT
-+#define MAX_PTRS_PER_PUD	1
-+#define PTRS_PER_PUD		1
-+#define PUD_SIZE		(1UL << PUD_SHIFT)
-+#define PUD_MASK		(~(PUD_SIZE-1))
- 
- /*
-  * The "pgd_xxx()" functions here are trivial for a folded two-level
-diff --git a/include/asm-generic/pgtable-nopmd.h b/include/asm-generic/pgtable-nopmd.h
-index 0d9b28cba16d..4a860f47f3e6 100644
---- a/include/asm-generic/pgtable-nopmd.h
-+++ b/include/asm-generic/pgtable-nopmd.h
-@@ -17,10 +17,11 @@ struct mm_struct;
-  */
- typedef struct { pud_t pud; } pmd_t;
- 
--#define PMD_SHIFT	PUD_SHIFT
--#define PTRS_PER_PMD	1
--#define PMD_SIZE  	(1UL << PMD_SHIFT)
--#define PMD_MASK  	(~(PMD_SIZE-1))
-+#define PMD_SHIFT		PUD_SHIFT
-+#define MAX_PTRS_PER_PMD	1
-+#define PTRS_PER_PMD		1
-+#define PMD_SIZE  		(1UL << PMD_SHIFT)
-+#define PMD_MASK  		(~(PMD_SIZE-1))
- 
- /*
-  * The "pud_xxx()" functions here are trivial for a folded two-level
-diff --git a/include/asm-generic/pgtable-nopud.h b/include/asm-generic/pgtable-nopud.h
-index d3776cb494c0..1aef1b18edbc 100644
---- a/include/asm-generic/pgtable-nopud.h
-+++ b/include/asm-generic/pgtable-nopud.h
-@@ -18,10 +18,11 @@
-  */
- typedef struct { p4d_t p4d; } pud_t;
- 
--#define PUD_SHIFT	P4D_SHIFT
--#define PTRS_PER_PUD	1
--#define PUD_SIZE  	(1UL << PUD_SHIFT)
--#define PUD_MASK  	(~(PUD_SIZE-1))
-+#define PUD_SHIFT		P4D_SHIFT
-+#define MAX_PTRS_PER_PUD	1
-+#define PTRS_PER_PUD		1
-+#define PUD_SIZE  		(1UL << PUD_SHIFT)
-+#define PUD_MASK  		(~(PUD_SIZE-1))
- 
- /*
-  * The "p4d_xxx()" functions here are trivial for a folded two-level
 -- 
-2.20.1
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
