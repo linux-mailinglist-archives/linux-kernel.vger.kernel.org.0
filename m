@@ -2,143 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C308A119BA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 598C8119BBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729479AbfLJWKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:10:24 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41114 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728605AbfLJWKT (ORCPT
+        id S1730025AbfLJWLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:11:11 -0500
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:42733 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728173AbfLJWLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:10:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576015818;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ovr8AOrCcVXk6ps0Yd3R+k9jarJnVZ/R6m24MU31Neg=;
-        b=Pqqc7OHLvlgJLovS9IHJmjbNTH8+nPSXzIN+/TMFoDTfU/i+1ZmaCDPGgS9eWkp4LLZxNA
-        EmFsHRQKH8u0cBymH3EjS2eZQhvDmaSP5kxdAxqcpxiFy25fqeE+9BfYkoQFB5QlkApB4z
-        GjjS7FgG6xWCUHD/+DuVRX5yU0zZWNE=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-156-m9VD7xjPMKGba5fsmBOSgg-1; Tue, 10 Dec 2019 17:10:14 -0500
-Received: by mail-qv1-f72.google.com with SMTP id r8so7838589qvp.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 14:10:14 -0800 (PST)
+        Tue, 10 Dec 2019 17:11:10 -0500
+Received: by mail-pl1-f201.google.com with SMTP id b3so586478plr.9
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 14:11:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=b73r53Ks39MzD1p7Mnxh3aUtTHdkJg2TG1gTQXCA0JA=;
+        b=i0uoT9B7VkzZLco87pN4yTJXrhjzrCyboyzAodwErTl0USjyKxQpB8BzII9F79iW5Q
+         StJAIzVxBqZBcrl61TgA0+Xjrodo4IBl2vMz9KUV1XjHxjmrRVLhRZwkNmgun+G2244b
+         672pjof/K4JjBwR+7wFlGQzL8CepOAOffo4t9eGjXSsRk+R8pIpb3y3WM1ZGatYVqoh6
+         n9ZaZiJ1rnLaTy+QLc6aSkhDKvipXqctmsMdXZM2oYgN3j+BYFQ4mok4xCtYYdVB4pov
+         F1gaQm0kN2iKRNPeaCrl+d3NAzFOHghLUAkV7ZA//lAPjircz9IcwetG+vyx9pKIDapk
+         WioA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ovr8AOrCcVXk6ps0Yd3R+k9jarJnVZ/R6m24MU31Neg=;
-        b=m822FFudWeJSaabCIZwLpddKn1E6Efi54WwgORrAYRGJAU+TksMmDxZ/DWA6LheClI
-         dH6OUHHIs4HIlKI1LYZFmuBegmiLJAGMjZgKXwC3yVPSnxvufQMSaBtOtWfK56xsQXIG
-         JtMS+jpoQElt3O2zIo8eKCTPdFTpmMW5T/HZnlQ4db9Ogvum4Cp5f39R9ZyRyp1IVPGs
-         eGdIw/TqsFt5kKpvYkohuZH/kPXapry4oaDDufGilFVJvOKMPJTVAAOBd8MVm2gMocGU
-         YcjidPjLqtrg8fnIKj2Kr65WfvSmKj/fQPI8U9qbW0455SAxW3ovRTRzaPSpKybSMwcS
-         Fchw==
-X-Gm-Message-State: APjAAAW50W/b8zss0k3vTGRZ7IRU0+KsswTPiS7UlK+OgDNKVO3rG133
-        lIFUx3OJPgTUfjCeV8JPha1Gk6TchZhVOQX3FBEloq1E3soQPTRwlSvLsbrHAJ+r1w7wRd3eme2
-        6KYn5rrfXCY3M80BbQvK9Ci1r
-X-Received: by 2002:a37:51d4:: with SMTP id f203mr18706qkb.212.1576015814422;
-        Tue, 10 Dec 2019 14:10:14 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwwpNDBUah/JxrSAKxCjiRELPnHOg3DdeD0npoO5tGbThZQTwIdN5FQktw+smPeDV7cbUZ/0w==
-X-Received: by 2002:a37:51d4:: with SMTP id f203mr18680qkb.212.1576015814067;
-        Tue, 10 Dec 2019 14:10:14 -0800 (PST)
-Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id z64sm60335qtc.4.2019.12.10.14.10.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2019 14:10:13 -0800 (PST)
-Subject: Re: Regression in squashfs mount option handling in v5.4
-To:     Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>
-References: <20191130181548.GA28459@gentoo-tp.home>
- <6af16095-eab0-9e99-6782-374705d545e4@infradead.org>
- <20191210185002.GA20850@gentoo-tp.home>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <2286b071-76ac-1659-5dba-6381ecb269c6@redhat.com>
-Date:   Tue, 10 Dec 2019 17:10:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <20191210185002.GA20850@gentoo-tp.home>
-Content-Language: en-US
-X-MC-Unique: m9VD7xjPMKGba5fsmBOSgg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=b73r53Ks39MzD1p7Mnxh3aUtTHdkJg2TG1gTQXCA0JA=;
+        b=mMu56K6zTPO/b1V7unVsQIDVTl+yzB9V7vVVAPH+0OfdfrIZqnTOvDFkHD9ZZaQJs5
+         3TbbqkyGLkbffGJZtexL+pMTasNZ5wLmzTPe7bOyA0V1mtqJyCev7RtRJ4KN36bK6ubt
+         SsAHN/p+DQ3gKMFJ6Dv/I5WVseRdR/xxe62NQfPGvjTJHt0sJQsiXlPa/3/hfgDpZvb4
+         Lc4RqHF4Dahp1oFMRHZMT+lrwBSYlcYVlmz3FtP46h7PFf1RAYIaU+r0MjQSWYXb9cfw
+         tF2BJPNYfwh4pETbwD/AcTKmBIB6txCp/lKnqpaQocote9gmg80j7XW+apXqqVlKQFtN
+         s+Sw==
+X-Gm-Message-State: APjAAAXbNQjyOX+PFd7d/BldyWer66gFIGuYckrqU5ESiXHw4FMgS2F9
+        HojPk8bZw55Y+XqVK6vLERuqp062hD45oVe/aVyHoA==
+X-Google-Smtp-Source: APXvYqxIkhq83HNF7Fpw49kmXHGQa5sYZO4wUfdhjjk6/E84bpG99rvKGJ2oOA55p8kIVLS2Md1/2sQ489DZZWBwOZ50WQ==
+X-Received: by 2002:a65:6249:: with SMTP id q9mr405022pgv.340.1576015869302;
+ Tue, 10 Dec 2019 14:11:09 -0800 (PST)
+Date:   Tue, 10 Dec 2019 14:10:48 -0800
+Message-Id: <20191210221048.83628-1-thomasanderson@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
+Subject: [PATCH] drm/edid: Increase size of VDB and CMDB bitmaps to 256 bits
+From:   Thomas Anderson <thomasanderson@google.com>
+To:     "=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=" 
+        <ville.syrjala@linux.intel.com>
+Cc:     Bhawanpreet Lakha <Bhawanpreet.lakha@amd.com>,
+        Harry Wentland <hwentlan@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>, Sean Pau <sean@poorly.run>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Thomas Anderson <thomasanderson@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/19 1:50 PM, Jeremi Piotrowski wrote:
-> On Sat, Nov 30, 2019 at 10:56:47AM -0800, Randy Dunlap wrote:
->> [adding Cc-s]
->>
->> On 11/30/19 10:15 AM, Jeremi Piotrowski wrote:
->>> Hi,
->>>
->>> I'm working on an embedded project which uses 'rauc' as an updater. rauc mounts
->>> a squashfs image using
->>>
->>>    mount -t squashfs -o ro,loop,sizelimit=xxx squashfs.img /mnt
->>>
->>> On my system mount is busybox, and busybox does not know the sizelimit
->>> parameter, so it simply passes it on to the mount syscall. The syscall
->>> arguments end up being:
->>>
->>>    mount("/dev/loop0", "dir", "squashfs", MS_RDONLY|MS_SILENT, "sizelimit=xxx")
->>>
->>> Until kernel 5.4 this worked, since 5.4 this returns EINVAL and dmesg contains
->>> the line "squashfs: Unknown parameter 'sizelimit'". I believe this has to do
->>> with the conversion of squashfs to the new mount api.
->>>
->>> This is an unfortunate regression, and it does not seem like this can be simply
->>> reverted. What is the suggested course of action?
->>>
->>> Please cc me on replies, I'm not subscribed to the list.
->>>
->>> Thanks,
->>> Jeremi
->>>
->>
->>
->> -- 
->> ~Randy
->> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Ping. This is preventing me from updating the kernel on my systems.
-> 
+CEA-861-G adds modes up to 219, so increase the size of the
+maps in preparation for adding the new modes to drm_edid.c.
 
-Fedora is hitting a similar issue https://bugzilla.redhat.com/show_bug.cgi?id=1781863
+Signed-off-by: Thomas Anderson <thomasanderson@google.com>
+---
+ include/drm/drm_connector.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Dec 10 10:04:06 kernel: squashfs: version 4.0 (2009/01/31) Phillip Lougher
-Dec 10 10:04:06 kernel: squashfs: Unknown parameter 'errors'
-
-I don't think squashfs ever actually supported the errors parameter
-but it was just silently ignored. It turns out you could can pass
-whatever nonsense you want for parameters so I don't think we can
-reject parameters in the generic case
-
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 138b5b4d621d..7ec20b1f8a53 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -160,8 +160,7 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
-  		return 0;
-  	}
-  
--	return invalf(fc, "%s: Unknown parameter '%s'",
--		      fc->fs_type->name, param->key);
-+	return 0;
-  }
-  EXPORT_SYMBOL(vfs_parse_fs_param);
+diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+index 5f8c3389d46f..17b728d9c73d 100644
+--- a/include/drm/drm_connector.h
++++ b/include/drm/drm_connector.h
+@@ -188,19 +188,19 @@ struct drm_hdmi_info {
+ 
+ 	/**
+ 	 * @y420_vdb_modes: bitmap of modes which can support ycbcr420
+-	 * output only (not normal RGB/YCBCR444/422 outputs). There are total
+-	 * 107 VICs defined by CEA-861-F spec, so the size is 128 bits to map
+-	 * upto 128 VICs;
++	 * output only (not normal RGB/YCBCR444/422 outputs). The max VIC
++	 * defined by the CEA-861-G spec is 219, so the size is 256 bits to map
++	 * up to 256 VICs.
+ 	 */
+-	unsigned long y420_vdb_modes[BITS_TO_LONGS(128)];
++	unsigned long y420_vdb_modes[BITS_TO_LONGS(256)];
+ 
+ 	/**
+ 	 * @y420_cmdb_modes: bitmap of modes which can support ycbcr420
+-	 * output also, along with normal HDMI outputs. There are total 107
+-	 * VICs defined by CEA-861-F spec, so the size is 128 bits to map upto
+-	 * 128 VICs;
++	 * output also, along with normal HDMI outputs. The max VIC defined by
++	 * the CEA-861-G spec is 219, so the size is 256 bits to map up to 256
++	 * VICs.
+ 	 */
+-	unsigned long y420_cmdb_modes[BITS_TO_LONGS(128)];
++	unsigned long y420_cmdb_modes[BITS_TO_LONGS(256)];
+ 
+ 	/** @y420_cmdb_map: bitmap of SVD index, to extraxt vcb modes */
+ 	u64 y420_cmdb_map;
+-- 
+2.24.0.525.g8f36a354ae-goog
 
