@@ -2,105 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69CD117C17
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 01:06:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2257D117C18
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 01:06:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfLJAGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 19:06:41 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:57745 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbfLJAGk (ORCPT
+        id S1727420AbfLJAGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 19:06:46 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:52032 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfLJAGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 19:06:40 -0500
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 3DB0D2304C;
-        Tue, 10 Dec 2019 01:06:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1575936398;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=SQSB7aaTDeosGfScfkElLltHtjKOhiB3ySxyA9Xk4pM=;
-        b=LUb2ArSKFj734DrOu29xTCX5VFhRmcC3RSuas9H1v/tSYzhwBSW1kMjgdhtDLqHIG7dFAn
-        PyiSvI3s+28kf1XW5HIv9jMMMn+s9bFSG8hOBc1DXqRC2K75rCMD/hLVHIOTqeSQEOeKhh
-        2YmXlEbmCsCeHfJKLa1JCJZEBJLbIxU=
-From:   Michael Walle <michael@walle.cc>
-To:     yinbo.zhu@nxp.com
-Cc:     Ashish.Kumar@nxp.com, alexandru.marginean@nxp.com,
-        alison.wang@nxp.com, amit.jain_1@nxp.com,
-        catalin.horghidan@nxp.com, claudiu.manoil@nxp.com,
-        devicetree@vger.kernel.org, jiafei.pan@nxp.com, leoyang.li@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, mark.rutland@arm.com,
-        rajat.srivastava@nxp.com, rajesh.bhagat@nxp.com,
-        robh+dt@kernel.org, vabhav.sharma@nxp.com, xiaobo.xie@nxp.com,
-        yangbo.lu@nxp.com, Michael Walle <michael@walle.cc>
-Subject: Re: [PATCH v1 3/4] arm64: dts: ls1028a: fix little-big endian issue for dcfg
-Date:   Tue, 10 Dec 2019 01:06:23 +0100
-Message-Id: <20191210000623.22321-1-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814072649.8237-3-yinbo.zhu@nxp.com>
-References: <20190814072649.8237-3-yinbo.zhu@nxp.com>
+        Mon, 9 Dec 2019 19:06:46 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBA04GhW031683;
+        Tue, 10 Dec 2019 00:06:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=3s1yOhxXzIZ2EdKGgerVgQWxqiH1u5YZX4OXhPSEQz4=;
+ b=po7ej6FQbAjQODWDACjuUl0jMaMtw9QSVUDT/VQ9cx/FXrKdoQJwApx3gNc0SeBNB5Yq
+ kkO7VsiLsPtjIvhnfswH1hO5ZR+Bf5DGyTaPQBHYMLLLIfg0z0tgd08B+rDGv/1wgJf4
+ P9GtYwtkw3UqVVjzu+O4W2JOL8tvOhaxzph3Doqai/XYAeRlsM06zHJFY86SsT/puNjN
+ SIUapaSsiD0mcR1XOYraQzcOPsKOfAtUBFyREXHYJ3uWjpxxLaDMJnQ8/5mQR9YQ2aJu
+ TvSuKFFsGSkTxQUFVbj9gR9ltbiT/9b8inmns5wZ35Oy6IPDaJ4bgk59dtCKA5xh3aBC qw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2wr41q2wq8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Dec 2019 00:06:39 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBA04D5D157892;
+        Tue, 10 Dec 2019 00:06:39 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2wsv8atg4f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Dec 2019 00:06:38 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBA06bIx003934;
+        Tue, 10 Dec 2019 00:06:37 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Dec 2019 16:06:36 -0800
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Don Brace <don.brace@microsemi.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] scsi: smartpqi: add missed free_irq in suspend
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191203111337.13054-1-hslester96@gmail.com>
+Date:   Mon, 09 Dec 2019 19:06:34 -0500
+In-Reply-To: <20191203111337.13054-1-hslester96@gmail.com> (Chuhong Yuan's
+        message of "Tue, 3 Dec 2019 19:13:37 +0800")
+Message-ID: <yq1fthtoxh1.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++++
-X-Spam-Level: ******
-X-Rspamd-Server: web
-X-Spam-Status: Yes, score=6.40
-X-Spam-Score: 6.40
-X-Rspamd-Queue-Id: 3DB0D2304C
-X-Spamd-Result: default: False [6.40 / 15.00];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[21];
-         MID_CONTAINS_FROM(1.00)[];
-         NEURAL_HAM(-0.00)[-0.685];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:31334, ipnet:2a02:810c::/31, country:DE];
-         SUSPICIOUS_RECIPS(1.50)[]
-X-Spam: Yes
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=836
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912090190
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=917 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912090191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> dcfg use little endian that SoC register value will be correct
-> 
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This patch is still missing. Any news?
+> The driver calls request_irq in resume but does not call free_irq in
+> suspend.
+> Add the missed call to fix it.
 
-Tested-by: Michael Walle <michael@walle.cc>
+Microsemi: Please review!
 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index b0d4f8916ede..5538e8e354b2 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -162,7 +162,7 @@
->  		dcfg: syscon@1e00000 {
->  			compatible = "fsl,ls1028a-dcfg", "syscon";
->  			reg = <0x0 0x1e00000 0x0 0x10000>;
-> -			big-endian;
-> +			little-endian;
->  		};
->  
->  		scfg: syscon@1fc0000 {
-> -- 
-> 2.17.1
-> 
+-- 
+Martin K. Petersen	Oracle Linux Engineering
