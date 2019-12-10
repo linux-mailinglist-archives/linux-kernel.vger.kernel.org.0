@@ -2,91 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F10311914C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3DB3119161
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:01:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfLJT7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 14:59:51 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:53595 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfLJT7u (ORCPT
+        id S1726908AbfLJUBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:01:39 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43332 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbfLJUBj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 14:59:50 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MjSPq-1htqK43Row-00l1Jv; Tue, 10 Dec 2019 20:59:42 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Roman Li <Roman.Li@amd.com>, Eric Yang <Eric.Yang2@amd.com>,
-        Michael Strauss <michael.strauss@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amd/display: include linux/slab.h where needed
-Date:   Tue, 10 Dec 2019 20:59:24 +0100
-Message-Id: <20191210195941.931745-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:OrcnEQHu5wIVElyPLtj9cM/U8i3tJsEHQqMgWD9iAttxajBL+4Y
- PRozQipVEPM78uWvddh6kjFJP0m9W7Xl2iyfwMr6le8zEOqtUcR3YqBbcY0m8NmbwLj4gij
- nH91rockYuPliucDJPwxBaK0+/s8ZLF4ilxO0+TiyEzKKY8itGLkPD8DVvHiCm1DACaRXts
- wksFhEsGXgNsaguRsbwew==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BEiflWA01l4=:gpxzEPPROCuBYSCdglCxHL
- 0FQH6OkxWAbdkjhBtOL2AOW8TAzyUHTAwzR5AHHK34sofuin6RguUUZM4C2xfxlzS6CZOZCKz
- Vo+yFJMGQ1BhPWdJG9soTTJrBPbwWOmI/bekCgki/MyU1It2Zx5Gne0YZaduSKHuAb0c+6YuY
- UpL90RraaJFqofxod1WlkAjNmht7gW1xPfTQwcufejGVJFhtrWOnrLcB5PyA76aPi9FHFVzvA
- kPjqEaWQGpM3xe9qkwf6ZjNXogUw5NkQhhqsndAXeH8kpKKt4hcLquS3mPWNqCQ6aZVcLcqbZ
- tfJHLO/WK7A4/jNQ1gNjssnSHMqomjQE73RqgmN+a9WwtA2tbrdfl5KOjDkoU8YrmhJACYK+W
- q36JztMtUCneNEZ6LNdXgahuwkkodb9RTyIIacI8L5lwUPUZRC3k33OCFOn24mdnsx5UL86tC
- PPbls88S0p6zUPMMN1zOFF3uP0TMZaNPetFeEdCwKosDt57VVWEHpFE9t/JCIFFofQjpB/BpA
- 7JAubHz0yx4UUIeL6yol4IjXh1+EOCsjo+kZYaCUsVJL8zceWjEt4ZAUZjNLEW+7andvWqIyh
- w7oh5ezTHSn1BoCiCPguMWISCoPlAxEvaMCRimn3oR127JBQHa+H9DlG5f1LtOvIO9hXE2Zos
- 5eSy9+iqpnSZhzGhTLuPx1nhkoO+rpRsUtZijJ8uPTvjoXouQJkXKrN9o9H5Bvx1lyPKI0mU+
- /EFS1hkKQ0TdUH7AOlhi1Ni9JD6z30oze1Ep4dCICmtrQsf4ZKsCI7vMCb9p7gawwP5k19GoT
- B8adXghoLkZL9WVo+ogipbYaq0Q5KN1jqMyHeq5myaaI/2CQF6K3IJzktAZ4hi80CVBLrDliv
- p91ZckwO07jrR8qPb+Fw==
+        Tue, 10 Dec 2019 15:01:39 -0500
+Received: by mail-wr1-f68.google.com with SMTP id d16so21492705wre.10;
+        Tue, 10 Dec 2019 12:01:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Po2VpYcFa8arMmQElIzg8ts/l2BOi8KtBQ9ifjUcxhc=;
+        b=GDFNbiRDmc/Dx0anO4WL3fjzLKs4732xpj4XHB1kaCfw7QsLKpI10VoQDGfsh8nYqQ
+         wVjdpXxOYoAzgmBUZ7qUpXK9DgZUl3bLqEL+pAXpJGN7YT1im/AoyqxEtD3ZSVFVKVnK
+         ilvtCk704/3OakKf0M6cB8BX/qe17kuJ4WrGZtOH2gZF3thtRkp9hj6r2Gx4VSGAOvB5
+         mCy2ry3zZYZG4JyRoOawymXy1CHXIGnzK/DwTK2bFVZsjwFOIlLxJdUbfj4UbXvfan8k
+         pRuWw0NpEcV/lbv2SAfQXORb2keGKJHFF/drxsM9kcquS5ZeV4kFhJ1FpMF+BlvD5pxK
+         JDdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Po2VpYcFa8arMmQElIzg8ts/l2BOi8KtBQ9ifjUcxhc=;
+        b=S9DGKAhk9p1zOIMgQwvC9QI5MbjsEzO9XzdHIR7urtLcZEsAk9q5Ok/L34dtX8TbQ5
+         qRLiXIlP3sXdMAAs6Yi+MsQTpFMV6G3gzCw/RDQQvGlu6YL8lbEon40uLASjshiipmBF
+         ORdpanvPjTXFWPWRe0vFPk9ILKlldf5sLaC7WOLnNAZbx4cODLVKCYOkrWZjHAOWPNKT
+         lHUxL4yYrnkw1n1pC4Y7nay/ADvot47ERRQk3MnbdoBtdrsk/QWhZX5Bhx7mXylCePJf
+         8nOL+KsmY1V0yrb33Nl/ja5vxrV0CRuRiQFem6vM+7QY659KGXO2Ee7VT5zVXP1w13j5
+         9LUQ==
+X-Gm-Message-State: APjAAAVwKoWDHCw4I8Hy5mBI/V/K6YHVvL9TZKTAV9bv4gReytUGxZDN
+        2o55cxVzgwLMIkRrCthXhwW100xF
+X-Google-Smtp-Source: APXvYqzHTERxcshg/vkN601hSQ1Og9RLmRmiJZXYHOg0oIRC+4FLYahrnRQMGu9ST/L2H0XnpS9jwg==
+X-Received: by 2002:adf:e812:: with SMTP id o18mr5050154wrm.127.1576008096684;
+        Tue, 10 Dec 2019 12:01:36 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id z6sm4352255wmz.12.2019.12.10.12.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 12:01:35 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
+        ARCHITECTURE),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX
+        ARM ARCHITECTURE), Jim Quinlan <jim2101024@gmail.com>
+Subject: [PATCH 0/2] reset: Add Broadcom STB RESCAL reset controller
+Date:   Tue, 10 Dec 2019 11:59:01 -0800
+Message-Id: <20191210195903.24127-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calling kzalloc() and related functions requires the
-linux/slab.h header to be included:
+Hi Philipp,
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn21/dcn21_resource.c: In function 'dcn21_ipp_create':
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn21/dcn21_resource.c:679:3: error: implicit declaration of function 'kzalloc'; did you mean 'd_alloc'? [-Werror=implicit-function-declaration]
-   kzalloc(sizeof(struct dcn10_ipp), GFP_KERNEL);
+This patch series adds support for the BCM7216 RESCAL reset controller
+which is necessary to initialize SATA and PCIe0/1 on that chip.
 
-A lot of other headers also miss a direct include in this file,
-but this is the only one that causes a problem for now.
+Please let us know if you have any comments. Thanks!
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c | 2 ++
- 1 file changed, 2 insertions(+)
+Jim Quinlan (2):
+  dt-bindings: reset: Document BCM7216 RESCAL reset controller
+  reset: Add Broadcom STB RESCAL reset controller
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
-index 906c84e6b49b..af57885bbff2 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
-@@ -23,6 +23,8 @@
-  *
-  */
- 
-+#include <linux/slab.h>
-+
- #include "dm_services.h"
- #include "dc.h"
- 
+ .../reset/brcm,bcm7216-pcie-sata-rescal.txt   |  26 ++++
+ drivers/reset/Kconfig                         |   7 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-brcmstb-rescal.c          | 124 ++++++++++++++++++
+ 4 files changed, 158 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/brcm,bcm7216-pcie-sata-rescal.txt
+ create mode 100644 drivers/reset/reset-brcmstb-rescal.c
+
 -- 
-2.20.0
+2.17.1
 
