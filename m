@@ -2,99 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72A2D11898B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17955118999
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:24:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfLJNYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 08:24:13 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:57637 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbfLJNYM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 08:24:12 -0500
-X-Originating-IP: 90.182.112.136
-Received: from localhost (136.112.broadband15.iol.cz [90.182.112.136])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 52D7960018;
-        Tue, 10 Dec 2019 13:24:06 +0000 (UTC)
-Date:   Tue, 10 Dec 2019 14:24:02 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v5 13/16] rtc: bd70528 add BD71828 support
-Message-ID: <20191210132402.GK1463890@piout.net>
-References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
- <648d09ab52fb125cab8d26dd13ef71dd4fd5f778.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <648d09ab52fb125cab8d26dd13ef71dd4fd5f778.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1727743AbfLJNY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 08:24:28 -0500
+Received: from foss.arm.com ([217.140.110.172]:44260 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727431AbfLJNY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 08:24:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6047A328;
+        Tue, 10 Dec 2019 05:24:26 -0800 (PST)
+Received: from DESKTOP-VLO843J.cambridge.arm.com (DESKTOP-VLO843J.cambridge.arm.com [10.1.26.198])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6B7493F52E;
+        Tue, 10 Dec 2019 05:24:25 -0800 (PST)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org, heiko@sntech.de, smoch@web.de,
+        linux.amoon@gmail.com, linux-rockchip@lists.infradead.org
+Subject: [PATCH 0/4] mfd: RK8xx tidyup
+Date:   Tue, 10 Dec 2019 13:24:29 +0000
+Message-Id: <cover.1575932654.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi all,
 
-On 18/11/2019 09:00:47+0200, Matti Vaittinen wrote:
-> @@ -468,26 +596,35 @@ static int bd70528_probe(struct platform_device *pdev)
->  	 *  leave them enabled as irq-controller should disable irqs
->  	 *  from sub-registers when IRQ is disabled or freed.
->  	 */
-> -	ret = regmap_update_bits(mfd->regmap,
-> +	if (enable_main_irq) {
-> +		ret = regmap_update_bits(mfd->regmap,
->  				 BD70528_REG_INT_MAIN_MASK,
->  				 BD70528_INT_RTC_MASK, 0);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to enable RTC interrupts\n");
-> -		return ret;
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "Failed to enable RTC interrupts\n");
-> +			return ret;
-> +		}
->  	}
->  
->  	return rtc_register_device(rtc);
->  }
+In trying to debug suspend issues on my RK3328 box, I was looking at
+how the RK8xx driver handles the RK805 sleep pin, and frankly the whole
+driver seemed untidy enough to warrant some cleanup and minor fixes
+before going any further. I've based the series on top of Soeren's
+"mfd: rk808: Always use poweroff when requested" patch[1].
 
-Missing blank line here.
+Note that I've only had time to build-test these patches so far, but I
+wanted to share them early for the sake of discussion in response to
+the other thread[2].
 
-> +static const struct platform_device_id bd718x7_rtc_id[] = {
-> +	{ "bd70528-rtc", ROHM_CHIP_TYPE_BD70528 },
-> +	{ "bd71828-rtc", ROHM_CHIP_TYPE_BD71828 },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(platform, bd718x7_rtc_id);
->  
+Robin.
 
-Else, Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+[1] https://patchwork.kernel.org/patch/11279249/
+[2] https://patchwork.kernel.org/cover/11276945/
+
+Robin Murphy (4):
+  mfd: rk808: Set global instance unconditionally
+  mfd: rk808: Always register syscore ops
+  mfd: rk808: Reduce shutdown duplication
+  mfd: rk808: Convert RK805 to syscore/PM ops
+
+ drivers/mfd/rk808.c       | 122 ++++++++++++++++----------------------
+ include/linux/mfd/rk808.h |   2 -
+ 2 files changed, 50 insertions(+), 74 deletions(-)
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.1
+
