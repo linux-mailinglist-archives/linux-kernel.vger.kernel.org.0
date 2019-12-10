@@ -2,129 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF9D118177
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 08:44:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED57711819A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 08:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbfLJHoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 02:44:21 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38866 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbfLJHoU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 02:44:20 -0500
-Received: by mail-io1-f66.google.com with SMTP id v3so725014ioj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 23:44:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hIsV7YVqTr9LN39nGbpXBWYNxZYF/API4vjBkMRTnwk=;
-        b=Ljb8tg7n90pdawq/mSFektjTKgzTmE7zQum6REv33IhRaHuPe1d9SUFjtSRTKFr2p7
-         PQTUukcvGegnkptM1YRmnXr+B556MHA6AdoZWJ0FHHj4E3yCB8dPnHFmQzR/+GjAHB7Q
-         fetDW20lj789BZBkb0oUyj8+oxtJXcCXrAap3ooXvVGD1CbQpR64kRfOsPBOui/kWwN6
-         uUwh1N9O9JrpixNgeSWkkc2mln9fnCDyU12KpGHykJADPKH0ZRFI0DxSoQpbDlWoydz6
-         ouCO9/RAOx+Z4TDLjJmxC8w8PB1XkHf/TGmSWGi4xoWOBEZnaGFISiUnhU4AgOhQlSE3
-         yzFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hIsV7YVqTr9LN39nGbpXBWYNxZYF/API4vjBkMRTnwk=;
-        b=iBWo1wm6n7xvexhooTvA5LfjCFpqrZq1uf/8pMiJcnQ/KX4DnWvDL4whcOrPJQLcEn
-         +vkAZWBd8N+cUmpwY8Y1mlQsNmaE2rwoO2AfVCcPxfyK+a0fuPPG5mFcIYMP7GCIYnvv
-         W1Up+2X6PXqF6jKL7nKTJP15FopSPD8tEoUVjdi1EelBMagm/FH3OjSTvb3u1U0HE0YF
-         jiJvBGy9xblFGFmD4RDnmJgZfy64JTYl/lYk4ChzhiH7W97o1YvFGp727RcZ2JS3xUyh
-         ahRxcdL6rwt/SLgal/T+gHjLK8rME1rhj/HLBiXaW1EFqEbW3YmRU6DnvALFIP2YkGY0
-         O9Fg==
-X-Gm-Message-State: APjAAAVdf5KxUqosPVH5nbPTcQaGg6AXi6/KougqThjmopxOUcmTHWFo
-        IEyJb7bnJumOW/Q7vhZ8U4BE3sgyJloRmMj5DEE=
-X-Google-Smtp-Source: APXvYqx7x52SHGUCnps+unxtCpneRw981NZJH+EbrlRI3ANRLVcL+vm9mUgkduOPsk30MEnyZmF2DaqDKCxWgGbMDhM=
-X-Received: by 2002:a6b:770b:: with SMTP id n11mr22526006iom.154.1575963860181;
- Mon, 09 Dec 2019 23:44:20 -0800 (PST)
+        id S1727276AbfLJH4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 02:56:18 -0500
+Received: from mail-eopbgr70055.outbound.protection.outlook.com ([40.107.7.55]:6231
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726685AbfLJH4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 02:56:17 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EGZlOIQTvcO2GvWk/Ag359FIUyhaO/qJh/gF46Z9Y15PAMc73CK+6mjT5WbCMzLJUiUXf+5zIT8lE/UPG7zLW16thF6WADSSTwkOyIF5kopjlXiobeUA0tNVt/+8wVrFPMO3y+SkGQyEAPE/mbmSmV4E7GrG7h1EIx9GitofPG2JTiVO3678gY6rXVT2JkUZMQNe5sMR2tlM9FWTIR7l7Palw/25nLSHzZPooneZKNSGhn9gd/9P5YR3xWCAIhR8EjJ4SfQ9Mgnj3fTQanP4K81ZVVO+8hunJronPfTQpvbxRw5cVgMLwvtvrvEb/gdzUSq6qC0pnNubvsUffWNM+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ivKuD0VO4RjzlVM4+Z4wnDsyPr6leurFbvVLFdmvRXw=;
+ b=VXmPCw7CSmP6g1vnHnZbHowmrQVc+BjSi6oCEI4Irkjdo7UWRhjOQlfzVzrIPVhMV3ETkT+3cTsbXfm8dYWwHiCoCFG2No9GZQ2EdBUAOWG7fGdmCrxlXQW6ZipPjSF6aWPOB2bOyLz0hyFMC/Ztyq9QXHRrKcV+LWjL/azaqN+7mn8ma4i0tfNBB6cyAVAlnZK/Amje9URWDMzZ/vYZxgMin3lrmXWtALLwhIS1OCRoVlXIqm3C3/ebGmhi8KrlT8BF764nrYJWum6vWwDTiJdyuXFxUTKI5OCaXQOX/SjsTWdTTwDYFO7iaOTV20YqIEJoxltR30KJPC/SVazQmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ivKuD0VO4RjzlVM4+Z4wnDsyPr6leurFbvVLFdmvRXw=;
+ b=mW3sQxHrb1Qj+F7Gaex3qqx0d+KxLnLohNzO6kSwUrEWxv3/2q3rqRZ0cX2Xtt/+KRwmf51xEoIJwY4pjw8lkBrudxdk17O4PFLkC/5XVqSqVTwGZrICWZoTlv9JGmcR8D2VLIQfPKXlTcjwm8Xel3AMRMZPLeeB44JUfq3+8Do=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB2814.eurprd04.prod.outlook.com (10.172.255.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.14; Tue, 10 Dec 2019 07:56:09 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::64c8:fba:99e8:5ec4]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::64c8:fba:99e8:5ec4%6]) with mapi id 15.20.2516.018; Tue, 10 Dec 2019
+ 07:56:09 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Adam Ford <aford173@gmail.com>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] crypto: caam: Change the i.MX8MQ check support all
+ i.MX8M variants
+Thread-Topic: [PATCH 1/2] crypto: caam: Change the i.MX8MQ check support all
+ i.MX8M variants
+Thread-Index: AQHVp9DLhD4655goh0SoqF8mEBltdw==
+Date:   Tue, 10 Dec 2019 07:56:09 +0000
+Message-ID: <VI1PR0402MB34857B8C5560B912B34674AB985B0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <20191130225153.30111-1-aford173@gmail.com>
+ <e8e429dd-4508-9835-fd01-825d2de8871e@kontron.de>
+ <CAHCN7xLkV1WC=9ACj1Mi8+uE8kRCEjCEe+Y36pXwkNeNrgrNVg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7de3bd68-2464-4c47-6a37-08d77d466b59
+x-ms-traffictypediagnostic: VI1PR0402MB2814:|VI1PR0402MB2814:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB281482D0A7ED7FD6E10208A8985B0@VI1PR0402MB2814.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:332;
+x-forefront-prvs: 02475B2A01
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(376002)(39860400002)(396003)(366004)(51444003)(189003)(199004)(8936002)(8676002)(5660300002)(6506007)(81166006)(81156014)(55016002)(305945005)(33656002)(52536014)(7416002)(66556008)(64756008)(66476007)(229853002)(7696005)(186003)(66446008)(91956017)(2906002)(54906003)(71200400001)(66946007)(4326008)(86362001)(71190400001)(478600001)(53546011)(9686003)(26005)(76116006)(316002)(110136005)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2814;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: mjwf0v/HF7m5b76gwOZIf4LJfctT4j0II6ipyQf07G/rg/mVl6HyEgfg+sMtrrYH7uT2cl43DWKjgoVvZF0cBI2X+oMj7HAUA+jU2drRmYIHNQdKffJuH6vzVxFW5khcQJ9o8Kqokz1rCWtY2vrlxIP8bS7oHfe+hbWwi9WeFCSaEtmd8ZegZOxsOOi5sxOMGbsCJk9l6jFo+dvGnlQhdDhryV4h49sMEcgl3EiY7XxcW6DQNFuRk6wkbHKWIDCQjZzSKwqrcfnzjdLsSsEHth1CSI8iBCJItqh3t4w1qhFV599SOrIP+Oc4FwNRftpiIlLfJclagjESGYNbiiiuYoOPTS9kz/I1vMPpCEvv09f/8UMCmkuEiZi4gG9Pv9Dddw7TQ5ysr3uCkEUaE/H94iON3cp4rw1FHBc83G/VyeRMsUOW8Thec+QEZx4o3n+JPsQCqPRGpnNk0OpDM7F94kibHedU9OjIF796d/FlVvh7X4DCpAxtA1JUbqeWJO7r
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20191208041318.3702-1-cai@lca.pw>
-In-Reply-To: <20191208041318.3702-1-cai@lca.pw>
-From:   Ryan Chen <yu.chen.surf@gmail.com>
-Date:   Tue, 10 Dec 2019 15:55:57 +0800
-Message-ID: <CADjb_WRmyE3rRN2sLAh9ZOqAg0E3WeCkj9SwSM9dorvx4TGC2A@mail.gmail.com>
-Subject: Re: [PATCH] x86/resctrl: fix an imbalance in domain_remove_cpu
-To:     Qian Cai <cai@lca.pw>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        John Stultz <john.stultz@linaro.org>, sboyd@kernel.org,
-        Tony Luck <tony.luck@intel.com>, tj@kernel.org,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7de3bd68-2464-4c47-6a37-08d77d466b59
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2019 07:56:09.6700
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gbJcbrGvW2+1DRqLoh1k2zYbBPPOX7SXXBEu4Fza2IKT0B1S1AFou7RbOI72rpg02kkqp1TCgGe2xEEciB2PMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2814
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Qian,
-
-On Sun, Dec 8, 2019 at 12:14 PM Qian Cai <cai@lca.pw> wrote:
->
-> domain_add_cpu() calls domain_setup_mon_state() only when r->mon_capable
-> is true where it will initialize d->mbm_over. However,
-> domain_remove_cpu() calls cancel_delayed_work(&d->mbm_over) without
-> checking r->mon_capable. Hence, it triggers a debugobjects warning when
-> offlining CPUs because those timer debugobjects are never initialized.
->
-Could you elaborate a little more on the failure symptom?
-If I understand correctly, the error you described was  due to
-r->mon_capable set to false while is_mbm_enabled() returns true?
-Which means on this platform rdt_mon_features is non zero?
-And in get_rdt_mon_resources() it will invoke rdt_get_mon_l3_config(),
-however the only possible failure to do not set r->mon_capable is that it
- failed in dom_data_init() due to kcalloc() failure?  Then the logic in
-get_rdt_resources() is that it will ignore the return error if rdt allocate
-feature is supported on this platform?  If this is the case, the r->mon_capable
-is not an indicator for whether the overflow thread has been created, right?
-Can we simply remove the check of r->mon_capable in domain_add_cpu() and
-invoke  domain_setup_mon_state() directly?
-> ODEBUG: assert_init not available (active state 0) object type:
-> timer_list hint: 0x0
-> WARNING: CPU: 143 PID: 789 at lib/debugobjects.c:484
-> debug_print_object+0xfe/0x140
-> Hardware name: HP Synergy 680 Gen9/Synergy 680 Gen9 Compute Module, BIOS
-> I40 05/23/2018
-> RIP: 0010:debug_print_object+0xfe/0x140
-> Call Trace:
-> debug_object_assert_init+0x1f5/0x240
-> del_timer+0x6f/0xf0
-> try_to_grab_pending+0x42/0x3c0
-> cancel_delayed_work+0x7d/0x150
-> resctrl_offline_cpu+0x3c0/0x520
-> cpuhp_invoke_callback+0x197/0x1120
-> cpuhp_thread_fun+0x252/0x2f0
-> smpboot_thread_fn+0x255/0x440
-> kthread+0x1e6/0x210
-> ret_from_fork+0x3a/0x50
->
-> Fixes: e33026831bdb ("x86/intel_rdt/mbm: Handle counter overflow")
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  arch/x86/kernel/cpu/resctrl/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-> index 03eb90d00af0..89049b343c7a 100644
-> --- a/arch/x86/kernel/cpu/resctrl/core.c
-> +++ b/arch/x86/kernel/cpu/resctrl/core.c
-> @@ -618,7 +618,7 @@ static void domain_remove_cpu(int cpu, struct rdt_resource *r)
->                 if (static_branch_unlikely(&rdt_mon_enable_key))
->                         rmdir_mondata_subdir_allrdtgrp(r, d->id);
->                 list_del(&d->list);
-> -               if (is_mbm_enabled())
-> +               if (r->mon_capable && is_mbm_enabled())
->                         cancel_delayed_work(&d->mbm_over);
-Humm, it looks like there are two places within this function
-invoked cancel_delayed_work(&d->mbm_over),
-why not adding the check for both of them?
-
-thanks,
-Y
+On 12/6/2019 9:55 PM, Adam Ford wrote:=0A=
+> On Wed, Dec 4, 2019 at 5:38 AM Schrempf Frieder=0A=
+> <frieder.schrempf@kontron.de> wrote:=0A=
+>>=0A=
+>> Hi Adam,=0A=
+>>=0A=
+>> On 30.11.19 23:51, Adam Ford wrote:=0A=
+>>> The i.MX8M Mini uses the same crypto engine as the i.MX8MQ, but=0A=
+>>> the driver is restricting the check to just the i.MX8MQ.=0A=
+>>>=0A=
+>>> This patch lets the driver support all i.MX8M Variants if enabled.=0A=
+>>>=0A=
+>>> Signed-off-by: Adam Ford <aford173@gmail.com>=0A=
+>>=0A=
+>> What about the following lines in run_descriptor_deco0()? Does this=0A=
+>> condition also apply to i.MX8MM?=0A=
+> =0A=
+> I think that's a question for NXP.  I am not seeing that in the NXP=0A=
+> Linux Release, and I don't have an 8MQ to compare.=0A=
+> =0A=
+IIRC the i.MX BSP releases use the JRI for initializing the RNG,=0A=
+and not the DECO register interface.=0A=
+=0A=
+> I was able to get the driver working on the i.MXMM with the patch.=0A=
+> =0A=
+You are probably using a newer U-boot, which includes=0A=
+commit dfaec76029f2 ("crypto/fsl: instantiate all rng state handles")=0A=
+=0A=
+> NXP  Team,=0A=
+> =0A=
+> Do you have any opinions on this?=0A=
+> =0A=
+Since current U-boot initializes both RNG state handles, practically=0A=
+instantiate_rng() is a no-op.=0A=
+=0A=
+A simple experiment is to "lie" about the state_handle_mask, to exercise=0A=
+the DECO acquire code (or, as mentioned above, to run with an older U-boot)=
+:=0A=
+=0A=
+@@ -268,12 +272,19 @@ static int instantiate_rng(struct device *ctrldev, in=
+t state_handle_mask,=0A=
+        struct caam_ctrl __iomem *ctrl;=0A=
+        u32 *desc, status =3D 0, rdsta_val;=0A=
+        int ret =3D 0, sh_idx;=0A=
++       static int force_init =3D 1;=0A=
+=0A=
+        ctrl =3D (struct caam_ctrl __iomem *)ctrlpriv->ctrl;=0A=
+        desc =3D kmalloc(CAAM_CMD_SZ * 7, GFP_KERNEL);=0A=
+        if (!desc)=0A=
+                return -ENOMEM;=0A=
+=0A=
++       if (force_init && (state_handle_mask =3D=3D 0x3)) {=0A=
++               dev_err(ctrldev, "Forcing reinit of RNG state handle 0!\n")=
+;=0A=
++               force_init =3D 0;=0A=
++               state_handle_mask =3D 0x2;=0A=
++       }=0A=
++=0A=
+        for (sh_idx =3D 0; sh_idx < RNG4_MAX_HANDLES; sh_idx++) {=0A=
+                /*=0A=
+                 * If the corresponding bit is set, this state handle=0A=
+=0A=
+In this case boot log confirms the DECO cannot be acquired:=0A=
+[    2.137101] caam 30900000.crypto: Forcing reinit of RNG state handle 0!=
+=0A=
+[    2.172293] caam 30900000.crypto: failed to acquire DECO 0=0A=
+[    2.177786] caam 30900000.crypto: failed to instantiate RNG=0A=
+=0A=
+To sum up, writing to DECORSR is mandatory.=0A=
+=0A=
+Horia=0A=
