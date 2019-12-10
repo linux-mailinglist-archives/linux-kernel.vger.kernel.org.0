@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F7B6117E82
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 04:43:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D341117E7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 04:42:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbfLJDnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 22:43:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60770 "EHLO mail.kernel.org"
+        id S1727128AbfLJDm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 22:42:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726818AbfLJDmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 22:42:23 -0500
+        id S1726890AbfLJDmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 22:42:24 -0500
 Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A47520836;
-        Tue, 10 Dec 2019 03:42:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 372AF207FF;
+        Tue, 10 Dec 2019 03:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1575949343;
-        bh=Tu/7gUtpU1cBxmPQ1sfJOyv68J2ruAoA+a7c4SVI5Ys=;
+        bh=FYSuXrBnGcX5rNJrafNsBGF9FbKeaRXFZRr6RrKW6t4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vhA1X2YpTVtS5HuYlUvBBAb88P/8B1o9a13jfapK0cMr5jzo4M3KoxbodeC2ayzQ1
-         rEEOWp9DKo90qTldA3uDlGKmvsspsA7YGKBW6BAlk+VqsB+wO1zmu19BKk+hEXzmbK
-         0c6vRuP/p4NmMuuQZ+OmlI6a2jGabwOkz7BWT1ck=
+        b=cw663crx5NaY+PzwY4MC7sz+s5ZFgWfb/RAMWZEtGNCNgBWctYSdONb52Ez50n07q
+         xkloszOeP00Lb22Uw4PzXOtuvX+B3q31kk/NcwDA1pniB81UoA0CAe12+13FA75DDs
+         ai0yNqSRwr4BQveebCbXX/5rH3JujGAG9YYsQ2f0=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 04/12] torture: Handle systems lacking the mpstat command
-Date:   Mon,  9 Dec 2019 19:42:09 -0800
-Message-Id: <20191210034217.405-4-paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 05/12] rcutorture: Add worst-case call_rcu() forward-progress results
+Date:   Mon,  9 Dec 2019 19:42:10 -0800
+Message-Id: <20191210034217.405-5-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191210034119.GA32711@paulmck-ThinkPad-P72>
 References: <20191210034119.GA32711@paulmck-ThinkPad-P72>
@@ -45,41 +45,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-The rcutorture scripting uses the mpstat command to determine how much
-the system is being used, and adjusts make's -j argument accordingly.
-However, mpstat isn't installed by default, so it would be good if the
-scripting does something useful when mpstat isn't present.
-
-This commit therefore makes the scripts assumes that if mpstat is not
-present, they are free to use all the CPUs.
+This commit adds the worst-case results from any call_rcu()
+forward-progress tests to the rcutorture test-summary output.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- tools/testing/selftests/rcutorture/bin/cpus2use.sh | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ tools/testing/selftests/rcutorture/bin/kvm-recheck-rcu.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/rcutorture/bin/cpus2use.sh b/tools/testing/selftests/rcutorture/bin/cpus2use.sh
-index 4e94855..1dbfb62 100755
---- a/tools/testing/selftests/rcutorture/bin/cpus2use.sh
-+++ b/tools/testing/selftests/rcutorture/bin/cpus2use.sh
-@@ -15,8 +15,15 @@ then
- 	exit 0
- fi
- ncpus=`grep '^processor' /proc/cpuinfo | wc -l`
--idlecpus=`mpstat | tail -1 | \
--	awk -v ncpus=$ncpus '{ print ncpus * ($7 + $NF) / 100 }'`
-+if mpstat -V > /dev/null 2>&1
-+then
-+	idlecpus=`mpstat | tail -1 | \
-+		awk -v ncpus=$ncpus '{ print ncpus * ($7 + $NF) / 100 }'`
-+else
-+	# No mpstat command, so use all available CPUs.
-+	echo The mpstat command is not available, so greedily using all CPUs.
-+	idlecpus=$ncpus
-+fi
- awk -v ncpus=$ncpus -v idlecpus=$idlecpus < /dev/null '
- BEGIN {
- 	cpus2use = idlecpus;
+diff --git a/tools/testing/selftests/rcutorture/bin/kvm-recheck-rcu.sh b/tools/testing/selftests/rcutorture/bin/kvm-recheck-rcu.sh
+index 2a7f3f4..9d9a416 100755
+--- a/tools/testing/selftests/rcutorture/bin/kvm-recheck-rcu.sh
++++ b/tools/testing/selftests/rcutorture/bin/kvm-recheck-rcu.sh
+@@ -25,6 +25,7 @@ stopstate="`grep 'End-test grace-period state: g' $i/console.log 2> /dev/null |
+ 	    tail -1 | sed -e 's/^\[[ 0-9.]*] //' |
+ 	    awk '{ print \"[\" $1 \" \" $5 \" \" $6 \" \" $7 \"]\"; }' |
+ 	    tr -d '\012\015'`"
++fwdprog="`grep 'rcu_torture_fwd_prog_cr Duration' $i/console.log 2> /dev/null | sed -e 's/^\[[^]]*] //' | sort -k15nr | head -1 | awk '{ print $14 " " $15 }'`"
+ if test -z "$ngps"
+ then
+ 	echo "$configfile ------- " $stopstate
+@@ -39,7 +40,7 @@ else
+ 			BEGIN { print ngps / dur }' < /dev/null`
+ 		title="$title ($ngpsps/s)"
+ 	fi
+-	echo $title $stopstate
++	echo $title $stopstate $fwdprog
+ 	nclosecalls=`grep --binary-files=text 'torture: Reader Batch' $i/console.log | tail -1 | awk '{for (i=NF-8;i<=NF;i++) sum+=$i; } END {print sum}'`
+ 	if test -z "$nclosecalls"
+ 	then
 -- 
 2.9.5
 
