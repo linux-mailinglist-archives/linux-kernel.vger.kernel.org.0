@@ -2,84 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ABAB119CB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BED6F119DA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:39:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbfLJWdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:33:03 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34275 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729403AbfLJWcV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:32:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576017140;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DIEGxaEoEqnxv3W7KxXHjyimH36onDwUaRqX3wb5gSo=;
-        b=LFKPWlTe7u6TnMA7crp/fd/4aiJ6lABRNz3CfHQO7vGoSvMHROXZaTlt7fUCFNRIJWQBnl
-        kTX0p9cvoKpn0QvzUotLrYME9LN5OTUrYPnHoq6Y/RcLT6d57rZjAScvJtBBRs9aOREd//
-        /+GIhzqx3RljqJKr8FZrajFGZWE/6AQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-205-CRXAWaLROYCkocpE2NuCbA-1; Tue, 10 Dec 2019 17:32:16 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730387AbfLJWjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:39:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54252 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726691AbfLJWd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:33:27 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 426DD800D41;
-        Tue, 10 Dec 2019 22:32:15 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 818A45D9C5;
-        Tue, 10 Dec 2019 22:32:13 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20191210220523.28540-1-dave@stgolabs.net>
-References: <20191210220523.28540-1-dave@stgolabs.net> <20191210193011.GA11802@worktop.programming.kicks-ass.net>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     dhowells@redhat.com, peterz@infradead.org,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        will@kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH] Revert "locking/mutex: Complain upon mutex API misuse in IRQ contexts"
+        by mail.kernel.org (Postfix) with ESMTPSA id CE920207FF;
+        Tue, 10 Dec 2019 22:33:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576017206;
+        bh=0UTppwjja+mDbI1LJGPxJ1hNwKzUn7kPVpfiS3MxMZI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=tRjHWp9jlsHTO6v5kinom+taLfVCYjQ5fIMedbpc47mYUU5NT5QT3l8cXDQ4drapH
+         ZnTCkyvkT/xss2A5Bc4mcJ0ZmM2zzXCLSkkEpkGn3t3HW3yi6DDXJkIyCWBELkPnc4
+         6/yfNTwYIX2qemRa0lr5qwCAlsClgDuQlziZW1/8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Benoit Parrot <bparrot@ti.com>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 08/71] media: am437x-vpfe: Setting STD to current value is not an error
+Date:   Tue, 10 Dec 2019 17:32:13 -0500
+Message-Id: <20191210223316.14988-8-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191210223316.14988-1-sashal@kernel.org>
+References: <20191210223316.14988-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-ID: <24324.1576017132.1@warthog.procyon.org.uk>
-Date:   Tue, 10 Dec 2019 22:32:12 +0000
-Message-ID: <24325.1576017132@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: CRXAWaLROYCkocpE2NuCbA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Davidlohr Bueso <dave@stgolabs.net> wrote:
+From: Benoit Parrot <bparrot@ti.com>
 
-> This ended up causing some noise in places such as rxrpc running in softi=
-rq.
->=20
-> The warning is misleading in this case as the mutex trylock and unlock
-> operations are done within the same context; and therefore we need not
-> worry about the PI-boosting issues that comes along with no single-owner
-> lock guarantees.
->=20
-> While we don't want to support this in mutexes, there is no way out of
-> this yet; so lets get rid of the WARNs for now, as it is only fair to
-> code that has historically relied on non-preemptible softirq guarantees.
-> In addition, changing the lock type is also unviable: exclusive rwsems
-> have the same issue (just not the WARN_ON) and counting semaphores
-> would introduce a performance hit as mutexes are a lot more optimized.
->=20
-> This reverts commit 5d4ebaa87329ef226e74e52c80ac1c62e4948987.
->=20
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+[ Upstream commit 13aa21cfe92ce9ebb51824029d89f19c33f81419 ]
 
-Tested-by: David Howells <dhowells@redhat.com>
+VIDIOC_S_STD should not return an error if the value is identical
+to the current one.
+This error was highlighted by the v4l2-compliance test.
+
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/am437x/am437x-vpfe.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
+index 572bc043b62de..36add3c463f75 100644
+--- a/drivers/media/platform/am437x/am437x-vpfe.c
++++ b/drivers/media/platform/am437x/am437x-vpfe.c
+@@ -1847,6 +1847,10 @@ static int vpfe_s_std(struct file *file, void *priv, v4l2_std_id std_id)
+ 	if (!(sdinfo->inputs[0].capabilities & V4L2_IN_CAP_STD))
+ 		return -ENODATA;
+ 
++	/* if trying to set the same std then nothing to do */
++	if (vpfe_standards[vpfe->std_index].std_id == std_id)
++		return 0;
++
+ 	/* If streaming is started, return error */
+ 	if (vb2_is_busy(&vpfe->buffer_queue)) {
+ 		vpfe_err(vpfe, "%s device busy\n", __func__);
+-- 
+2.20.1
 
