@@ -2,100 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EDBA118E83
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 18:05:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24302118E88
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 18:05:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbfLJRFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 12:05:22 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37337 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727482AbfLJRFW (ORCPT
+        id S1727816AbfLJRFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 12:05:53 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:39603 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727557AbfLJRFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 12:05:22 -0500
-Received: by mail-ed1-f65.google.com with SMTP id cy15so16626767edb.4;
-        Tue, 10 Dec 2019 09:05:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V/m7GvYpg3asIPZhHfNwzAdY+b/5CfIU9R9Z7IpYwiU=;
-        b=urIFH+zO4UZfF2rCurnwpzVDpFNMAqb2rWMAIdXu58p8ugm6svnzZ31UqKn+Rtbu5e
-         PQsO/BsQcZt/HKR9Hv4vG658oKEceiGQQVzZQcDCEEuiMdWZbPa8u31fvChGoYyihI6Y
-         sl5fkWptMuptcHYYYeXRZneQVLiNZmRg52kmHZy2nFsGvceMwwa1MKoOeZ7HkVSFiCzK
-         nuD7lyyY/3F2R8aVkID44KN0loAp/QQCgWhn4yFIKm+V7Jbnun8WnKWqmVo4Ntm+41Z5
-         P+iwzzCI7ibvAAnmmMzUWCsPVXjIo3en5FfaJIT/ttoJaq9exR3GPS32l+UhFoQca0lg
-         2mTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V/m7GvYpg3asIPZhHfNwzAdY+b/5CfIU9R9Z7IpYwiU=;
-        b=dLQCvLvKcvZY8c3Bl29HYB9hejgb4ngDKjrvWsVJokR6aJKEyHpbtKl2bqS9LSO6vb
-         cEI1tK1lCtzquyzn8bQUrdQfuy1cmjWobRX5emuMJ/LnUDsv9ipQXyiNCDyLW20AWOm3
-         tjftByKCqehd27YsRHklzytUYdOAPRz56Ee7iR8TClyANDcUoYFdgrgp3IzevbvXHZ+U
-         Z09KIBcZbq5Xd9DthvQkKikv/j/1e6JLbSCpkMnojn1Qb575HcCDEGgNvqmHzVub4tCB
-         dvvJbQlV65XnI5IAcMZvApehrH7P9noXT054kjOglV2WwyKfQId50yezGy0bCIEqnbwj
-         jcRw==
-X-Gm-Message-State: APjAAAX+fqbonNqu8TixMR8DFHNuf7kQ3ixXPmyPRmQPUkh5xug+LIys
-        ggznIfKfp9RW7St8f6uAXOEM0s7moQ+jdsWwuVg=
-X-Google-Smtp-Source: APXvYqzyHbVIEY/8yAXTbmWOCmJY+Np2u+GYL67HEkNJeOc5mAbpPhpBS37Z+eeJdlRiZHSgZ7qlEoQyRL9kKTMTrHc=
-X-Received: by 2002:a17:907:11cc:: with SMTP id va12mr4844106ejb.164.1575997520215;
- Tue, 10 Dec 2019 09:05:20 -0800 (PST)
+        Tue, 10 Dec 2019 12:05:53 -0500
+X-Originating-IP: 90.182.112.136
+Received: from localhost (136.112.broadband15.iol.cz [90.182.112.136])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 628381BF213;
+        Tue, 10 Dec 2019 17:05:51 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>
+Cc:     Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] PM / sleep: switch to rtc_time64_to_tm/rtc_tm_to_time64
+Date:   Tue, 10 Dec 2019 18:05:40 +0100
+Message-Id: <20191210170540.3006422-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <cover.1575914275.git.landen.chao@mediatek.com>
- <6d608dd024edc90b09ba4fe35417b693847f973c.1575914275.git.landen.chao@mediatek.com>
- <20191210163557.GC27714@lunn.ch>
-In-Reply-To: <20191210163557.GC27714@lunn.ch>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Tue, 10 Dec 2019 19:05:08 +0200
-Message-ID: <CA+h21hp12UGQ04W4rDo2PdFa2_5oMmX05KKUecdz5-+hv-JqAA@mail.gmail.com>
-Subject: Re: [PATCH net-next 4/6] net: dsa: mt7530: Add the support of MT7531 switch
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Landen Chao <landen.chao@mediatek.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        matthias.bgg@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>, sean.wang@mediatek.com,
-        =?UTF-8?Q?Ren=C3=A9_van_Dorst?= <opensource@vdorst.com>,
-        frank-w@public-files.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Landen, Andrew,
+Call the 64bit versions of rtc_tm time conversion to avoid the y2038 issue.
 
-On Tue, 10 Dec 2019 at 18:36, Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Tue, Dec 10, 2019 at 04:14:40PM +0800, Landen Chao wrote:
-> > Add new support for MT7531:
-> >
-> > MT7531 is the next generation of MT7530. It is also a 7-ports switch with
-> > 5 giga embedded phys, 2 cpu ports, and the same MAC logic of MT7530. Cpu
-> > port 6 only supports HSGMII interface. Cpu port 5 supports either RGMII
-> > or HSGMII in different HW sku.
->
-> Hi Landen
->
-> Looking at the code, you seem to treat HSGMII as 2500Base-X. Is this
-> correct? Or is it SGMII over clocked to 2.5Gbps?
->
->          Andrew
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ kernel/power/suspend_test.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I think the better question is: what is being understood by HSGMII?
-What does the AN base page look like? Do you support AN with the 2500
-baud speed? Do you support AN with lower speeds? Do you support lower
-speeds at all? What PHYs do you interoperate with in this mode? If you
-don't support AN, then what's so SGMII about it? And for that matter,
-if you don't support AN, what's so 2500Base-X (802.3z) about it? I see
-you unconditionally force the speed and disable AN in this mode. Do
-you have any reference for what SerDes protocol your hardware
-implements in this mode?
+diff --git a/kernel/power/suspend_test.c b/kernel/power/suspend_test.c
+index 60564b58de07..e1ed58adb69e 100644
+--- a/kernel/power/suspend_test.c
++++ b/kernel/power/suspend_test.c
+@@ -70,7 +70,7 @@ static void __init test_wakealarm(struct rtc_device *rtc, suspend_state_t state)
+ 	static char info_test[] __initdata =
+ 		KERN_INFO "PM: test RTC wakeup from '%s' suspend\n";
+ 
+-	unsigned long		now;
++	time64_t		now;
+ 	struct rtc_wkalrm	alm;
+ 	int			status;
+ 
+@@ -81,10 +81,10 @@ static void __init test_wakealarm(struct rtc_device *rtc, suspend_state_t state)
+ 		printk(err_readtime, dev_name(&rtc->dev), status);
+ 		return;
+ 	}
+-	rtc_tm_to_time(&alm.time, &now);
++	now = rtc_tm_to_time64(&alm.time);
+ 
+ 	memset(&alm, 0, sizeof alm);
+-	rtc_time_to_tm(now + TEST_SUSPEND_SECONDS, &alm.time);
++	rtc_time64_to_tm(now + TEST_SUSPEND_SECONDS, &alm.time);
+ 	alm.enabled = true;
+ 
+ 	status = rtc_set_alarm(rtc, &alm);
+-- 
+2.23.0
 
-Thanks,
--Vladimir
