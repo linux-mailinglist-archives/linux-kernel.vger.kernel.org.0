@@ -2,134 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACD78118925
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:07:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2143F11892D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:08:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfLJNHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 08:07:39 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:56292 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbfLJNHi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 08:07:38 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-fa-5def9897233e
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 81.2C.08102.7989FED5; Tue, 10 Dec 2019 14:07:35 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Tue, 10 Dec 2019 14:07:29 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "hofrat@osadl.org" <hofrat@osadl.org>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>
-Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
- regulator bindings
-Thread-Topic: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
- regulator bindings
-Thread-Index: AQHVndzxthsd4Y8wKkm7W/92Uslk+KeRDPcAgAAbkICAAZUNgIAACqYAgAAMmACADvFigIAASP2AgBE6YYCAAA/YgIAACHeAgAABEoCAAAYbAA==
-Date:   Tue, 10 Dec 2019 13:07:28 +0000
-Message-ID: <ad8bb62352137b7142fce12e3d78f5c60ebc16a4.camel@fi.rohmeurope.com>
-References: <20191118162502.GJ9761@sirena.org.uk>
-         <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
-         <20191119181325.GD3634@sirena.org.uk>
-         <fa69d01504817e3260d2b023ae2637aa2f1b2862.camel@fi.rohmeurope.com>
-         <20191119193636.GH3634@sirena.org.uk>
-         <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
-         <20191129120925.GA5747@sirena.org.uk>
-         <ccc533df4e00bdcbe18ea45a0e0679161ff41354.camel@fi.rohmeurope.com>
-         <20191210121129.GA6110@sirena.org.uk>
-         <557a4c5993a6fb16710342438f74f92bdfb40ec0.camel@fi.rohmeurope.com>
-         <20191210124537.GD6110@sirena.org.uk>
-In-Reply-To: <20191210124537.GD6110@sirena.org.uk>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1548C81BFAE2DE45A32CFD65DD6D7B43@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1727580AbfLJNID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 08:08:03 -0500
+Received: from mail-eopbgr690080.outbound.protection.outlook.com ([40.107.69.80]:46822
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727529AbfLJNH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 08:07:59 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lfHqo69PbB6QvbCnWcdqi+8ApjxxEfT13dLYGUrt7WHLIEEyewWGch9+3XkGC81etY7EFk5YGFCwCJ9taMOoMVk4d6ceL8dOpB8mP8ZFfHsCDi/4bBaVhMYf423d7D45SjdzhKKEJKQxVivGwODmhtR74Kka32Wu2SeP5uiap2ULq7M7z3u67hHSix2qW8CPvxq4Sb5wXQH7U/oXs82sYL+TiZBq5WJn+cXlg1iBGFnt2f3QqhU8pcPsxfPfLqI5hyjduGfLl5jHi1CH/2AFvokud7oXMTVgdAodc9TlUBEePoxxJbbEOgxxs/Cp5G+zjfH03ts4RVfU2gxkco/Yyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fj+oD0KgsNOBwhS6sD0d4UQxcccC7nEOj1NsraymGZU=;
+ b=i9Hto5R0832sueEemNAywu6MkfOcZvld+ivQXvdq4Raek6yKp5mEIUGxWypouIhDvygcXl6VKHyM/VzmY+CGvzstoFTy/PCyHAzaqu5yuFJX1CkY0qLlF9zrysIpL3xoB0y17TtldO9apXqGoapbmkKIeZqmwayCQySfApRJbL/qtJOU/QhPk/7O9MyEHZhJNv6q/qRuzOhaPh616xP/hqLF0ISXDU0euzyQ2d64zZkGiFApoCc02h3t7dfkvkPdlFU+1rzS/JfFp/IfQLRD6JhjMcMO8saZSyMsp20bMM9tZSPt75mpDn2k7Hx16Bmv4PU79FknxIRXZgLlLwpy6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fj+oD0KgsNOBwhS6sD0d4UQxcccC7nEOj1NsraymGZU=;
+ b=nuUWiSq7PuLfwN1sdYBbufNpwvvQhoEEpyzN7t0KrNuUK3MjrWjvUTafVLTznXS71aCwHge7rlMAsNtJxiKe6tztFN+iA9onsHbDR6aqokt5ZcRbMF/kH2ypkxWVWkfGtWj6iETD6P1Xp8drFYoFQ9bkN8i2QZoU1vXDK5RbRnE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Sanju.Mehta@amd.com; 
+Received: from MN2PR12MB3455.namprd12.prod.outlook.com (20.178.244.22) by
+ MN2PR12MB3934.namprd12.prod.outlook.com (10.255.237.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.13; Tue, 10 Dec 2019 13:07:54 +0000
+Received: from MN2PR12MB3455.namprd12.prod.outlook.com
+ ([fe80::1900:6cb7:12ff:11c]) by MN2PR12MB3455.namprd12.prod.outlook.com
+ ([fe80::1900:6cb7:12ff:11c%4]) with mapi id 15.20.2516.018; Tue, 10 Dec 2019
+ 13:07:54 +0000
+From:   Sanjay R Mehta <Sanju.Mehta@amd.com>
+To:     Shyam-sundar.S-k@amd.com, fancer.lancer@gmail.com, jdmason@kudzu.us
+Cc:     logang@deltatee.com, dave.jiang@intel.com, allenbh@gmail.com,
+        will@kernel.org, linux-ntb@googlegroups.com,
+        linux-kernel@vger.kernel.org, Sanjay R Mehta <sanju.mehta@amd.com>
+Subject: [PATCH] ntb_perf: pass correct struct device to dma_alloc_coherent
+Date:   Tue, 10 Dec 2019 07:07:35 -0600
+Message-Id: <1575983255-70377-1-git-send-email-Sanju.Mehta@amd.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: MAXPR0101CA0004.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:c::14) To MN2PR12MB3455.namprd12.prod.outlook.com
+ (2603:10b6:208:d0::22)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxTVxjOuff03gty3aWFcWRKZo0KI+pc9uNkMcyY2N1liSHZEs0Sgpf1
-        SrtBS26LUxYNi+GjYBhkmmJHQT6qrEXRAnEQcK4rK6uOjU2UTahr7Bw40+6D4fwYW2+vCr/O
-        c97ned7nPcl7GFLdQ2cyRpNVlExCiZZKhpe6H3o32ZtjBS+2+NJw18QkjWuip2g87wxCfDwc
-        oXDkUg3Abf5xFa6/3K/CHbFmFbbZalX4xsA5iMf6bgJ88+9RgBeu1hL42KPTBP7jaEiF26u7
-        IO5rewTwD0MtFB64exbgrzxXKXzGP0Nj1/UJAre4xiCO/Wkj8ERwJ54JjlL4yMQUiatG/DRe
-        vHYe4obx17Zn8T2tPYCPTVXRfGvPB/ygY4bmO4fnCN7rtlH89LVhiu9s+FjFzx79EvILV5og
-        39DvBvzt9l7IB6YuELy99T7Bd3vu0fxf3qx87u0V24oE6/43jcWmLXl7VxhqjnxHlv2kOXDx
-        7mmyEjRr6kASg7iXkbu9l6oDyYyamwSov7uaVC5jAE2Nfxq/MAzFbUN1P9KyIY3bhI4/6EwY
-        SO5ECpqNDiUIDbcX9f92CyoiAZ1ceEgo+DAKhX6mZAy59ejy76MJPcvtQmfOewglbBqi2dBi
-        QpTEvYRCgesqGQNuDbJVRhONSC4DeW/fUyljc6hr+FtSwelo7tbi47oWjdwPQ3lokstBvUNb
-        FOt2dMP3EangtehYffjxDKno6xMR2AiedSxLcCy5HcvcjmVuxzL3SaByA1QqGEuKBau4dbMk
-        lm+WzIbS+PGOudQLlO2b/wz853vdBwgG+MAqhtCms5GKWIF6ZZFZf9AgWAyFUnmJaPEBxJDa
-        NDZQHS1Qs3rhYIUomZ9QzzFQm8FuDDcVqDk56z1RLBOlJ+xqhtEiVmePN02VxGLxwD5jiXWJ
-        JpgkuXlyZppFNOlFSSi3GgrlBSm0xDdEplLiuTbZzlrKhNJ4VbEGQS7TOOfsIBm/09VBqqHJ
-        bBIzM9gdspSTpYZy09OgOyCDAVoNOy2zKfEv+LTPnXgEIUfo5adZrMISlVkJ8kJDFa4Pnc/o
-        vvj81YGALTd/5Pkcl47NXzlepKuNzAf1a6GU7Tq7ypPkib2xM/DL8PeDUXfxAgleseeYD7my
-        9uxhs3XzTWHr4eQref+krts1Offg/ez1u9uCvdOw/sKO9F+rsmJOEMsdfNdor9Osxv9uaNy3
-        Zj//zSd6f9+6tw5pocUgbH2BlCzC/yQ5kKU/BAAA
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [165.204.156.251]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 7befc626-5bc5-4468-a67d-08d77d71f7af
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3934:|MN2PR12MB3934:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR12MB3934F1B7D571D2E94E787A5BE55B0@MN2PR12MB3934.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-Forefront-PRVS: 02475B2A01
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(39860400002)(346002)(136003)(376002)(189003)(199004)(186003)(8936002)(2616005)(6666004)(6512007)(52116002)(6486002)(86362001)(4326008)(478600001)(2906002)(66946007)(6506007)(26005)(8676002)(36756003)(81166006)(5660300002)(66556008)(66476007)(316002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3934;H:MN2PR12MB3455.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9h6NvTAuSuNFpB953cv6cXnXQtx8tDbItafwDIs8vESpPNT11rOk5PVdAVcFCGJZg1Cfz6Zicab9pcJsm728G7E/3lGHcy2ute18rftEmoYaYC8cyKpMXtFdVadTYHg5VVd96VGvBV9D4cGLy8DBqrckvqXksJGTFQG3ldGvkFmKaDTZFhRnKPVQSsfPrZP9Eg92p+n3VS9mE3TPQv21iXjTvhTW6Ur68n+ZhnM455iPKYyQd0o8FO4emgJBySGjYiKQsdE+mxu/NSUQHg1OjkNXOoW4BCIaMb655MmZxTiNRZ8EXGfFGbBOzbVl1Z4v54LR7xn95IqwK89JWy65+XLbe/oOdnF7kifzNSijP/mwL/gx4KwthZ3skK9LVg2eGkRep858efOX7jBs8Ue7CSnn9IL+3Rp6KOEVpFLKIXaY7F9NPO6+H9kdCsqfdq1E
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7befc626-5bc5-4468-a67d-08d77d71f7af
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2019 13:07:54.0762
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TETFvItKW9G1/vL3Ua/kXE0YaJGH8lzJlDZXthxDH3uhI6E+HgzjaKpZ6En+t2Q8SFIIMSYESaXoFJlEITkuQw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3934
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiBUdWUsIDIwMTktMTItMTAgYXQgMTI6NDUgKzAwMDAsIE1hcmsgQnJvd24gd3JvdGU6DQo+
-IE9uIFR1ZSwgRGVjIDEwLCAyMDE5IGF0IDEyOjQxOjQ3UE0gKzAwMDAsIFZhaXR0aW5lbiwgTWF0
-dGkgd3JvdGU6DQo+IA0KPiA+IFRoZSB0aGluZyBpcyB0aGF0IGlmIHdlIGRvIGluaXRpYWwgc2V0
-dGluZyBvZiB2b2x0YWdlcyAoYmFzZWQgb24NCj4gPiBiaW5kaW5nIGRhdGEpIHdlIGNhbiBzZXQg
-dGhlIHZvbHRhZ2VzIHRvIHJlZ2lzdGVycyBiZWZvcmUgd2Ugc3dpdGNoDQo+ID4gdG8NCj4gPiB0
-aGF0IHJ1bi1sZXZlbC4gSWYgd2UgZG9uJ3QgZG8gaW5pdGlhbCBzZXR0aW5nIHRoZW4gd2Ugd2ls
-bCBvbmx5IGRvDQo+ID4gc2V0dGluZyB3aGVuIHZvbHRhZ2UgY2hhbmdlIGlzIGFjdHVhbGx5IHJl
-cXVlc3RlZCAtIHdoaWNoIG1heSBiZQ0KPiA+IHRvbw0KPiA+IGxhdGUuIChJIGFjdHVhbGx5IGhl
-YXJkIHNvbWV3aGVyZSB0aGF0IHRoZXJlIGlzIDQwIHVTIHRpbWUgbGltaXQgLQ0KPiA+IGJ1dA0K
-PiA+IEkgZG9uJ3Qgc2VlIGhvdyB0aGlzIGlzIGNvdW50ZWQuIFN0YXJ0aW5nIGZyb20gd2hhdD8g
-LSBhbmQgSSBkb24ndA0KPiA+IHNlZQ0KPiA+IGhvdyB0aGlzIGlzIGd1YXJhbnRlZWQgZXZlbiB3
-aXRoIEdQSU8gaWYgaW50ZXJydXB0cyBhcmUgdG8gYmUNCj4gPiBzZXJ2ZWQpLg0KPiANCj4gSSBz
-dXNwZWN0IHRoYXQgaWYgdGhhdCBsaW1pdCBpcyBhIHJlYWwgdGhpbmcgaXQncyBmcm9tIHNvbWUg
-cnVudGltZQ0KPiBwZXJmb3JtYW5jZSBtZXRyaWNzIHdoZXJlIHBlb3BsZSBhcmUgZG9pbmcgYmVu
-Y2htYXJraW5nIHRvIHZlcmlmeQ0KPiB0aGF0DQo+IGV2ZXJ5dGhpbmcgaXMgd29ya2luZyBmaW5l
-IHJhdGhlciB0aGFuIGFuIGFic29sdXRlIHRoaW5nIHRoYXQgaXMgYQ0KPiBiYXNpYw0KPiByZXF1
-aXJlbWVudCBmb3Igb3BlcmF0aW9uLg0KPiANCj4gPiBTbywgSSBhbSBhZ2FpbiB3b25kZXJpbmcg
-aWYgSSBzaG91bGQganVzdCB1cHN0cmVhbSB0aGUgYmFzaWMNCj4gPiBjb250cm9sDQo+ID4gd2l0
-aCBJMkMgZm9yIFNvQ3Mgd2hpY2ggZG8gbm90IHJlcXVpcmUgZmFzdCBEVlMgdm9sdGFnZSBjaGFu
-Z2VzIGFuZA0KPiA+IHBlcmhhcHMgbWFpbnRhaW4vcHJvdmlkZSBvd24gc2V0IG9mIHBhdGNoZXMg
-d2l0aCBhZGRpdGlvbmFsDQo+ID4gaW50ZXJmYWNlDQo+ID4gZm9yIHJ1bi1sZXZlbCBjb250cm9s
-IGZvciB0aG9zZSBjdXN0b21lcnMgd2hvIHJlcXVpcmUgaXQuLi4gU29ycnkNCj4gPiBmb3INCj4g
-PiBiZWluZyBzdWNoIGEgZGlmZmljdWx0IGd1eS4gRGVjaXNpb24gbWFraW5nIHNlZW1zIHRvIG5v
-dCBiZSBteQ0KPiA+IHN0cm9uZw0KPiA+IHBvaW50IDovDQo+IA0KPiBZZXMsIGRlZmluaXRlbHkg
-c3VibWl0IHRoZSBiYXNpYyBzdHVmZiBzZXBhcmF0ZWx5IC0gdGhlIEdQSU8gY2hhbmdlcw0KPiBj
-YW4NCj4gYmUgcmV2aWV3ZWQgYXMgYSBzZXBhcmF0ZSwgaW5jcmVtZW50YWwgcGF0Y2guDQoNClJp
-Z2h0LiBUaGF0IHdhcyByYXRpb25hbGUgYmVoaW5kIHNwbGl0dGluZyB0aGUgcmVndWxhdG9yIHN1
-cHBvcnQgaW4gdHdvDQpwYXRjaGVzLiBJIHdhcyBqdXN0IHVuc3VyZSBpZiBJIHNob3VsZCBhZGQg
-YWxsIHRoZSBEVCBiaW5kaW5ncyBhbHJlYWR5DQpoZXJlLiBXZWxsLCBJIGd1ZXNzIEkgd2lsbCBk
-cm9wIHRoZSBydW4tbGV2ZWwgb25lcyBmb3Igbm93LiBBZGRpbmcgbmV3DQpiaW5kaW5ncyBsYXRl
-ciBtaWdodCBub3QgYmUgYXMgaGFyZCBhcyByZW1vdmluZyB0aGVtLiBUaGFua3MgZm9yDQpzdXBw
-b3J0ISBEaXNjdXNzaW5nIHRoaXMgd2l0aCBzb21lb25lIGlzIGRlZmluaXRlbHkgaGVscGZ1bCA6
-KQ0KDQpCciwNCglNYXR0aQ0K
+From: Sanjay R Mehta <sanju.mehta@amd.com>
+
+Currently, ntb->dev is passed to dma_alloc_coherent
+and dma_free_coherent calls. The returned dma_addr_t
+is the CPU physical address. This works fine as long
+as IOMMU is disabled. But when IOMMU is enabled, we
+need to make sure that IOVA is returned for dma_addr_t.
+So the correct way to achieve this is by changing the
+first parameter of dma_alloc_coherent() as ntb->pdev->dev
+instead.
+
+Fixes: 5648e56 ("NTB: ntb_perf: Add full multi-port NTB API support")
+Signed-off-by: Sanjay R Mehta <sanju.mehta@amd.com>
+---
+ drivers/ntb/test/ntb_perf.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
+index f5df33a..8729838 100644
+--- a/drivers/ntb/test/ntb_perf.c
++++ b/drivers/ntb/test/ntb_perf.c
+@@ -559,7 +559,7 @@ static void perf_free_inbuf(struct perf_peer *peer)
+ 		return;
+ 
+ 	(void)ntb_mw_clear_trans(peer->perf->ntb, peer->pidx, peer->gidx);
+-	dma_free_coherent(&peer->perf->ntb->dev, peer->inbuf_size,
++	dma_free_coherent(&peer->perf->ntb->pdev->dev, peer->inbuf_size,
+ 			  peer->inbuf, peer->inbuf_xlat);
+ 	peer->inbuf = NULL;
+ }
+@@ -588,8 +588,9 @@ static int perf_setup_inbuf(struct perf_peer *peer)
+ 
+ 	perf_free_inbuf(peer);
+ 
+-	peer->inbuf = dma_alloc_coherent(&perf->ntb->dev, peer->inbuf_size,
+-					 &peer->inbuf_xlat, GFP_KERNEL);
++	peer->inbuf = dma_alloc_coherent(&perf->ntb->pdev->dev,
++					 peer->inbuf_size, &peer->inbuf_xlat,
++					 GFP_KERNEL);
+ 	if (!peer->inbuf) {
+ 		dev_err(&perf->ntb->dev, "Failed to alloc inbuf of %pa\n",
+ 			&peer->inbuf_size);
+-- 
+2.7.4
+
