@@ -2,72 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CF0F119F64
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 00:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A4D119F72
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 00:35:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbfLJX3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 18:29:51 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:45624 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfLJX3u (ORCPT
+        id S1727409AbfLJXfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 18:35:20 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39567 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbfLJXfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 18:29:50 -0500
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0C79220B7187;
-        Tue, 10 Dec 2019 15:29:49 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0C79220B7187
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576020590;
-        bh=uiXPuT0rz2rgnowjJOtq0WuS1BUhAKkOvqVAB3hq80I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FAnvBDGqJtl/KP+Q5YTm0V5K695Z/eElzTGO7BBM6Z5oVmY7JOkq/HxCLuBKKVIV/
-         7tCrmIABR60nfB6q3JaL+40Gpnwp7dxlyoLdpijZaoCvQF42Uq4oolENM33VA1JHz1
-         XiLI9RmlO80y+If+lPRvCkWYyI/mDmvTqhSmWM/I=
-Subject: Re: [PATCH v10 1/6] IMA: Check IMA policy flag
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-References: <20191204224131.3384-1-nramas@linux.microsoft.com>
- <20191204224131.3384-2-nramas@linux.microsoft.com>
- <1576017749.4579.40.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <6385347a-bc40-7717-f9ad-8ed7dd7fee51@linux.microsoft.com>
-Date:   Tue, 10 Dec 2019 15:29:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <1576017749.4579.40.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Tue, 10 Dec 2019 18:35:20 -0500
+Received: by mail-wm1-f65.google.com with SMTP id d5so3521423wmb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 15:35:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=aPVFdQIWNj16ZK5RdjBKbqDPawIqCxaDmrjeIuzNinU=;
+        b=adPF2rXzMF8gO757e5fLYqNf/NWfsMRveDYLbZkuTCkMirY9OWNWSontRZyC2R75eI
+         wNd2hHSyTgz6mMFoW1mcQcjch/WjkWGndnjPV4RHaOlukq8MDxL0eSelvQT92CXnve4R
+         oZ/XdQOoceuTnnMnGlswiJiP7Mj85DOuBAnr/1LE3xvVosSTeST0eRfA1MSxxnhKilEJ
+         557jja9A+qKYnGrcFE7FBKawYUjsjTEnd7O1KfRTyTMpPgAmCnv/oRLerMKQi9pEKcyd
+         1wd+y4izFFTi1tzuQ5bQmXi7XFBUxDb1wcnd9yyoAnY2C6x3hYHmefS8Vb6DyDsMS2hj
+         uLTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aPVFdQIWNj16ZK5RdjBKbqDPawIqCxaDmrjeIuzNinU=;
+        b=S0dimu+VhobWC6SmBPDJj4laYTjdS+YjI0W2oUVWti7kiIgbMPo6mguRNvGfqJRE/X
+         v4tjqvMNHTDp7GfxyvoC3PQ3VxqFF2hwtM/rAK65aiDbLgB+XTKP7VtTFhWV3Y3/GqkS
+         FV4U65QJRmgWEOEzJdGykYfOAZGbwBgCqeQzgY8ZOylbwllXycsfm95hV6i5+X92cgK2
+         j9F5MOkThbayxgVU9WvEMLTv7DC4WMq8d6qwD5CvYMHAlfN0zaRklUWXeaxTVk79MFJR
+         asHFd+b2ZqV/7C4h/eSp0nYhZZSqStQz4TkYyc4Tulm4CO0ULzncxa7LhAJWmR6rHnXF
+         wNHA==
+X-Gm-Message-State: APjAAAViwPEMr6qRzA3N7EyNB0xNnUMG6IuusteuvAgns9ulN7j1o5nX
+        gV9XEIqDw3x6x6WKWHHWRbw=
+X-Google-Smtp-Source: APXvYqy8Ksgy0PPntHDhclphM607VPHVR5PA0lJyIgfy7XCtzEZHiOuGylmR1rQ3R47lf1vDApknGA==
+X-Received: by 2002:a1c:a9c2:: with SMTP id s185mr1046723wme.119.1576020917919;
+        Tue, 10 Dec 2019 15:35:17 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id n16sm59478wro.88.2019.12.10.15.35.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 15:35:17 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
+        ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/4] soc: bcm: brcmstb: biuctrl updates
+Date:   Tue, 10 Dec 2019 15:30:39 -0800
+Message-Id: <20191210233043.15193-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/19 2:42 PM, Mimi Zohar wrote:
+Hi all,
 
-> Patch descriptions aren't suppose to be written as pseudo code.  Start
-> with the current status and problem description.
-> 
-> For example, "process_buffer_measurement() may be called prior to IMA being initialized, which would result in a kernel panic.  This patch ..."
-> 
-> Mimi
+This patch series updates the Broadcom STB BIUCTRL register code to
+support the latest and greatest chips (7255, 7216, 7211) and also fixes
+the 7260A0 and B0 chips to use the correct tuning parameters.
 
-I'll update the patch description in this one and in the other patches 
-per your comments.
+Florian Fainelli (4):
+  soc: bcm: brcmstb: biuctrl: Tune 7260 BIU interface
+  soc: bcm: brcmstb: biuctrl: Tune interface for 7255 and 7216
+  soc: bcm: brcmstb: biuctrl: Update layout for A72 on 7211
+  soc: bcm: brcmstb: biuctrl: Update programming for 7211
 
-Are you done reviewing all the patches in this set?
+ drivers/soc/bcm/brcmstb/biuctrl.c | 30 ++++++++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 8 deletions(-)
 
-Other than the one code change per your comment on "[PATCH v10 5/6]" 
-there are no other code changes I need to make?
-Just wanted to confirm.
+-- 
+2.17.1
 
-	[PATCH v10 5/6] IMA: Add support to limit measuring keys
-=> With the additional "uid" support this isn't necessarily true any
-more.
-
-thanks,
-  -lakshmi
