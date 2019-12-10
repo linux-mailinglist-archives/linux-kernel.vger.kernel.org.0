@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D32C117EBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:08:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3BC117EC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:08:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfLJEHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 23:07:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43280 "EHLO mail.kernel.org"
+        id S1726996AbfLJEHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 23:07:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbfLJEHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726619AbfLJEHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Dec 2019 23:07:45 -0500
 Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30EEC207FF;
+        by mail.kernel.org (Postfix) with ESMTPSA id D1C0E2080D;
         Tue, 10 Dec 2019 04:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575950864;
-        bh=EHdy3lPlwbUbWpC4sHzAdF6ygyYZm7lBwwiG9rLftcs=;
+        s=default; t=1575950865;
+        bh=hkE3djVetnvqBS1YIlZacEzmgwQ31kas5IS+lXjAyMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YhQMj57GvpdwRs8km7MjtlGzAaCslsLdRDwiveYDIDOHRN42zcqC29T+24ZUR7rfB
-         ZPzU8zIA7gAwoQ39W/ffBMBm/OXKlxhEK/F5R/sDLZCdZqVBIkiYGmjXwLPLdf5sJl
-         sKKKLbjcJo+uF3MkCrs2EvKdxXwr6eogKeOyjnus=
+        b=TrpGDPyxg7hIr43+E8XhRcq0s/70O93e7dT+fi9V8zjwU9BrhcCCLCd1+noA1w+Pz
+         I2WQlODrV3/uh1SkQbR1ID7e/cS6WW3F8Fj47WmJ74Yc0Fq9bM5GyvcVtXkLR3BAwt
+         OuNq76So+zEAr0ynRyggpn5OadqaOYg359tiUSFk=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -31,10 +31,11 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 02/12] rcu: Mark non-global functions and variables as static
-Date:   Mon,  9 Dec 2019 20:07:31 -0800
-Message-Id: <20191210040741.2943-2-paulmck@kernel.org>
+        Lai Jiangshan <laijs@linux.alibaba.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 03/12] rcu: Fix harmless omission of "CONFIG_" from #if condition
+Date:   Mon,  9 Dec 2019 20:07:32 -0800
+Message-Id: <20191210040741.2943-3-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191210040714.GA2715@paulmck-ThinkPad-P72>
 References: <20191210040714.GA2715@paulmck-ThinkPad-P72>
@@ -43,74 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+From: Lai Jiangshan <laijs@linux.alibaba.com>
 
-Each of rcu_state, rcu_rnp_online_cpus(), rcu_dynticks_curr_cpu_in_eqs(),
-and rcu_dynticks_snap() are used only in the kernel/rcu/tree.o translation
-unit, and may thus be marked static.  This commit therefore makes this
-change.
+The C preprocessor macros SRCU and TINY_RCU should instead be CONFIG_SRCU
+and CONFIG_TINY_RCU, respectively in the #f in kernel/rcu/rcu.h. But
+there is no harm when "TINY_RCU" is wrongly used, which are always
+non-defined, which makes "!defined(TINY_RCU)" always true, which means
+the code block is always included, and the included code block doesn't
+cause any compilation error so far in CONFIG_TINY_RCU builds.  It is
+also the reason this change should not be taken in -stable.
 
-Reported-by: Ben Dooks <ben.dooks@codethink.co.uk>
+This commit adds the needed "CONFIG_" prefix to both macros.
+
+Not for -stable.
+
+Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
+Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- kernel/rcu/tree.c | 8 ++++----
- kernel/rcu/tree.h | 2 --
- 2 files changed, 4 insertions(+), 6 deletions(-)
+ kernel/rcu/rcu.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 1694a6b..dd8cfc3 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -84,7 +84,7 @@ static DEFINE_PER_CPU_SHARED_ALIGNED(struct rcu_data, rcu_data) = {
- 	.dynticks_nmi_nesting = DYNTICK_IRQ_NONIDLE,
- 	.dynticks = ATOMIC_INIT(RCU_DYNTICK_CTRL_CTR),
- };
--struct rcu_state rcu_state = {
-+static struct rcu_state rcu_state = {
- 	.level = { &rcu_state.node[0] },
- 	.gp_state = RCU_GP_IDLE,
- 	.gp_seq = (0UL - 300UL) << RCU_SEQ_CTR_SHIFT,
-@@ -188,7 +188,7 @@ EXPORT_SYMBOL_GPL(rcu_get_gp_kthreads_prio);
-  * held, but the bit corresponding to the current CPU will be stable
-  * in most contexts.
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index ab504fb..4732594 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -281,7 +281,7 @@ void rcu_test_sync_prims(void);
   */
--unsigned long rcu_rnp_online_cpus(struct rcu_node *rnp)
-+static unsigned long rcu_rnp_online_cpus(struct rcu_node *rnp)
- {
- 	return READ_ONCE(rnp->qsmaskinitnext);
- }
-@@ -294,7 +294,7 @@ static void rcu_dynticks_eqs_online(void)
-  *
-  * No ordering, as we are sampling CPU-local information.
-  */
--bool rcu_dynticks_curr_cpu_in_eqs(void)
-+static bool rcu_dynticks_curr_cpu_in_eqs(void)
- {
- 	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+ extern void resched_cpu(int cpu);
  
-@@ -305,7 +305,7 @@ bool rcu_dynticks_curr_cpu_in_eqs(void)
-  * Snapshot the ->dynticks counter with full ordering so as to allow
-  * stable comparison of this counter with past and future snapshots.
-  */
--int rcu_dynticks_snap(struct rcu_data *rdp)
-+static int rcu_dynticks_snap(struct rcu_data *rdp)
- {
- 	int snap = atomic_add_return(0, &rdp->dynticks);
+-#if defined(SRCU) || !defined(TINY_RCU)
++#if defined(CONFIG_SRCU) || !defined(CONFIG_TINY_RCU)
  
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 055c317..e4dc5de 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -403,8 +403,6 @@ static const char *tp_rcu_varname __used __tracepoint_string = rcu_name;
- #define RCU_NAME rcu_name
- #endif /* #else #ifdef CONFIG_TRACING */
+ #include <linux/rcu_node_tree.h>
  
--int rcu_dynticks_snap(struct rcu_data *rdp);
--
- /* Forward declarations for tree_plugin.h */
- static void rcu_bootup_announce(void);
- static void rcu_qs(void);
+@@ -418,7 +418,7 @@ do {									\
+ #define raw_lockdep_assert_held_rcu_node(p)				\
+ 	lockdep_assert_held(&ACCESS_PRIVATE(p, lock))
+ 
+-#endif /* #if defined(SRCU) || !defined(TINY_RCU) */
++#endif /* #if defined(CONFIG_SRCU) || !defined(CONFIG_TINY_RCU) */
+ 
+ #ifdef CONFIG_SRCU
+ void srcu_init(void);
 -- 
 2.9.5
 
