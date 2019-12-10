@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB92119343
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:08:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0877B119344
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbfLJVIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:08:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55572 "EHLO mail.kernel.org"
+        id S1727605AbfLJVId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:08:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727834AbfLJVIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:08:18 -0500
+        id S1727836AbfLJVIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:08:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7213C20836;
-        Tue, 10 Dec 2019 21:08:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6B5320652;
+        Tue, 10 Dec 2019 21:08:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576012097;
-        bh=6fwUb6MigjWRWv6QEWMWqEYkJGBehiZ+r1aewxVkB0A=;
+        s=default; t=1576012099;
+        bh=wlb3aptF+UfvJxTE3wVtDGZpzjjtOcE5vPI8R5fDwa8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2N260DjkA1ZYPqHnoDUUR+Hj26Vw5NsSE1Dv4DY8ubBLz52tpLXN4cVBeeduJvQIb
-         q4XYPdY/OXs7YKn3/2frDQFqVycMOt1SC4YE5iFpAZ8DSLf2BH5gWGEKHO4FkD2yRU
-         9KnHrXV1PhewCXpL/xoX4fF/TalSjzyq9LqU5GU4=
+        b=CU7PPcRlNsW5jw7g1y789J25/FS8ry+xn3ptPCsE4bhy5Y85UTtYCksy8SztkJ/ks
+         jhHqGh09NOmVfjga31qjPOWNLH/brSWZuHA2qSZbem0yD5f82TRa3GRcY7Jm9fXl/B
+         B0eMeGkndejSulFcsPNXaAtXHX//Rb8a9nrAxRdw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oak Zeng <Oak.Zeng@amd.com>, Jonathan Kim <Jonathan.Kim@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 073/350] drm/amdkfd: Fix MQD size calculation
-Date:   Tue, 10 Dec 2019 16:02:58 -0500
-Message-Id: <20191210210735.9077-34-sashal@kernel.org>
+Cc:     Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Huacai Chen <chenhc@lemote.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 075/350] MIPS: futex: Emit Loongson3 sync workarounds within asm
+Date:   Tue, 10 Dec 2019 16:03:00 -0500
+Message-Id: <20191210210735.9077-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
 References: <20191210210735.9077-1-sashal@kernel.org>
@@ -45,38 +44,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oak Zeng <Oak.Zeng@amd.com>
+From: Paul Burton <paul.burton@mips.com>
 
-[ Upstream commit 40a9592a26608e16f7545a068ea4165e1869f629 ]
+[ Upstream commit 3c1d3f0979721a39dd2980c97466127ce65aa130 ]
 
-On device initialization, a chunk of GTT memory is pre-allocated for
-HIQ and all SDMA queues mqd. The size of this allocation was wrong.
-The correct sdma engine number should be PCIe-optimized SDMA engine
-number plus xgmi SDMA engine number.
+Generate the sync instructions required to workaround Loongson3 LL/SC
+errata within inline asm blocks, which feels a little safer than doing
+it from C where strictly speaking the compiler would be well within its
+rights to insert a memory access between the separate asm statements we
+previously had, containing sync & ll instructions respectively.
 
-Reported-by: Jonathan Kim <Jonathan.Kim@amd.com>
-Signed-off-by: Jonathan Kim <Jonathan.Kim@amd.com>
-Signed-off-by: Oak Zeng <Oak.Zeng@amd.com>
-Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/include/asm/barrier.h | 13 +++++++------
+ arch/mips/include/asm/futex.h   | 15 +++++++--------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-index d985e31fcc1eb..f335f73919d15 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-@@ -1676,7 +1676,8 @@ static int allocate_hiq_sdma_mqd(struct device_queue_manager *dqm)
- 	struct kfd_dev *dev = dqm->dev;
- 	struct kfd_mem_obj *mem_obj = &dqm->hiq_sdma_mqd;
- 	uint32_t size = dqm->mqd_mgrs[KFD_MQD_TYPE_SDMA]->mqd_size *
--		dev->device_info->num_sdma_engines *
-+		(dev->device_info->num_sdma_engines +
-+		dev->device_info->num_xgmi_sdma_engines) *
- 		dev->device_info->num_sdma_queues_per_engine +
- 		dqm->mqd_mgrs[KFD_MQD_TYPE_HIQ]->mqd_size;
+diff --git a/arch/mips/include/asm/barrier.h b/arch/mips/include/asm/barrier.h
+index 9228f73862205..fb842965d541d 100644
+--- a/arch/mips/include/asm/barrier.h
++++ b/arch/mips/include/asm/barrier.h
+@@ -218,13 +218,14 @@
+  * ordering will be done by smp_llsc_mb() and friends.
+  */
+ #if defined(CONFIG_WEAK_REORDERING_BEYOND_LLSC) && defined(CONFIG_SMP)
+-#define __WEAK_LLSC_MB		"	sync	\n"
+-#define smp_llsc_mb()		__asm__ __volatile__(__WEAK_LLSC_MB : : :"memory")
+-#define __LLSC_CLOBBER
++# define __WEAK_LLSC_MB		sync
++# define smp_llsc_mb() \
++	__asm__ __volatile__(__stringify(__WEAK_LLSC_MB) : : :"memory")
++# define __LLSC_CLOBBER
+ #else
+-#define __WEAK_LLSC_MB		"		\n"
+-#define smp_llsc_mb()		do { } while (0)
+-#define __LLSC_CLOBBER		"memory"
++# define __WEAK_LLSC_MB
++# define smp_llsc_mb()		do { } while (0)
++# define __LLSC_CLOBBER		"memory"
+ #endif
+ 
+ #ifdef CONFIG_CPU_CAVIUM_OCTEON
+diff --git a/arch/mips/include/asm/futex.h b/arch/mips/include/asm/futex.h
+index b83b0397462d9..54cf205309316 100644
+--- a/arch/mips/include/asm/futex.h
++++ b/arch/mips/include/asm/futex.h
+@@ -16,6 +16,7 @@
+ #include <asm/barrier.h>
+ #include <asm/compiler.h>
+ #include <asm/errno.h>
++#include <asm/sync.h>
+ #include <asm/war.h>
+ 
+ #define __futex_atomic_op(insn, ret, oldval, uaddr, oparg)		\
+@@ -32,7 +33,7 @@
+ 		"	.set	arch=r4000			\n"	\
+ 		"2:	sc	$1, %2				\n"	\
+ 		"	beqzl	$1, 1b				\n"	\
+-		__WEAK_LLSC_MB						\
++		__stringify(__WEAK_LLSC_MB)				\
+ 		"3:						\n"	\
+ 		"	.insn					\n"	\
+ 		"	.set	pop				\n"	\
+@@ -50,19 +51,19 @@
+ 		  "i" (-EFAULT)						\
+ 		: "memory");						\
+ 	} else if (cpu_has_llsc) {					\
+-		loongson_llsc_mb();					\
+ 		__asm__ __volatile__(					\
+ 		"	.set	push				\n"	\
+ 		"	.set	noat				\n"	\
+ 		"	.set	push				\n"	\
+ 		"	.set	"MIPS_ISA_ARCH_LEVEL"		\n"	\
++		"	" __SYNC(full, loongson3_war) "		\n"	\
+ 		"1:	"user_ll("%1", "%4")" # __futex_atomic_op\n"	\
+ 		"	.set	pop				\n"	\
+ 		"	" insn	"				\n"	\
+ 		"	.set	"MIPS_ISA_ARCH_LEVEL"		\n"	\
+ 		"2:	"user_sc("$1", "%2")"			\n"	\
+ 		"	beqz	$1, 1b				\n"	\
+-		__WEAK_LLSC_MB						\
++		__stringify(__WEAK_LLSC_MB)				\
+ 		"3:						\n"	\
+ 		"	.insn					\n"	\
+ 		"	.set	pop				\n"	\
+@@ -147,7 +148,7 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
+ 		"	.set	arch=r4000				\n"
+ 		"2:	sc	$1, %2					\n"
+ 		"	beqzl	$1, 1b					\n"
+-		__WEAK_LLSC_MB
++		__stringify(__WEAK_LLSC_MB)
+ 		"3:							\n"
+ 		"	.insn						\n"
+ 		"	.set	pop					\n"
+@@ -164,13 +165,13 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
+ 		  "i" (-EFAULT)
+ 		: "memory");
+ 	} else if (cpu_has_llsc) {
+-		loongson_llsc_mb();
+ 		__asm__ __volatile__(
+ 		"# futex_atomic_cmpxchg_inatomic			\n"
+ 		"	.set	push					\n"
+ 		"	.set	noat					\n"
+ 		"	.set	push					\n"
+ 		"	.set	"MIPS_ISA_ARCH_LEVEL"			\n"
++		"	" __SYNC(full, loongson3_war) "			\n"
+ 		"1:	"user_ll("%1", "%3")"				\n"
+ 		"	bne	%1, %z4, 3f				\n"
+ 		"	.set	pop					\n"
+@@ -178,8 +179,7 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
+ 		"	.set	"MIPS_ISA_ARCH_LEVEL"			\n"
+ 		"2:	"user_sc("$1", "%2")"				\n"
+ 		"	beqz	$1, 1b					\n"
+-		__WEAK_LLSC_MB
+-		"3:							\n"
++		"3:	" __SYNC_ELSE(full, loongson3_war, __WEAK_LLSC_MB) "\n"
+ 		"	.insn						\n"
+ 		"	.set	pop					\n"
+ 		"	.section .fixup,\"ax\"				\n"
+@@ -194,7 +194,6 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
+ 		: GCC_OFF_SMALL_ASM() (*uaddr), "Jr" (oldval), "Jr" (newval),
+ 		  "i" (-EFAULT)
+ 		: "memory");
+-		loongson_llsc_mb();
+ 	} else
+ 		return -ENOSYS;
  
 -- 
 2.20.1
