@@ -2,403 +2,339 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 429BD1187CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:13:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE2A7118799
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:03:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbfLJMNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 07:13:42 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:55099 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727528AbfLJMNg (ORCPT
+        id S1727564AbfLJMD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 07:03:28 -0500
+Received: from out28-51.mail.aliyun.com ([115.124.28.51]:52664 "EHLO
+        out28-51.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726957AbfLJMD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 07:13:36 -0500
-Received: from 79.184.255.117.ipv4.supernova.orange.pl (79.184.255.117) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id c4d8c0b94484c4a9; Tue, 10 Dec 2019 13:13:31 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Subject: [RFC v2][PATCH 4/9] ACPI: processor: Export acpi_processor_evaluate_cst()
-Date:   Tue, 10 Dec 2019 13:02:43 +0100
-Message-ID: <2468664.3cBljMoXCB@kreacher>
-In-Reply-To: <35821518.IbFVMVmUy3@kreacher>
-References: <35821518.IbFVMVmUy3@kreacher>
+        Tue, 10 Dec 2019 07:03:26 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437209|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.124055-0.0147101-0.861235;DS=CONTINUE|ham_alarm|0.0131168-0.000745652-0.986138;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07394;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=25;RT=25;SR=0;TI=SMTPD_---.GEHd9lh_1575979374;
+Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GEHd9lh_1575979374)
+          by smtp.aliyun-inc.com(10.147.42.197);
+          Tue, 10 Dec 2019 20:03:08 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
+        jhogan@kernel.org, mripard@kernel.org, shawnguo@kernel.org,
+        mark.rutland@arm.com, alexandre.belloni@bootlin.com,
+        ralf@linux-mips.org, heiko@sntech.de, icenowy@aosc.io,
+        ak@linux.intel.com, laurent.pinchart@ideasonboard.com,
+        krzk@kernel.org, geert+renesas@glider.be, paul@crapouillou.net,
+        prasannatsmkumar@gmail.com, keescook@chromium.org,
+        ebiederm@xmission.com, sernia.zhou@foxmail.com,
+        zhenwenjin@gmail.com, 772753199@qq.com
+Subject: [PATCH v8 4/4] MIPS: Ingenic: Add YSH & ATIL CU Neo board support.
+Date:   Tue, 10 Dec 2019 20:02:43 +0800
+Message-Id: <1575979363-25956-5-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1575979363-25956-1-git-send-email-zhouyanjie@wanyeetech.com>
+References: <1575979363-25956-1-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Add a device tree for the Ingenic X1000 based YSH & ATIL CU Neo board.
+Note that this is unselectable via Kconfig until the X1000 SoC is made
+selectable in a later commit.
 
-The intel_idle driver will be modified to use ACPI _CST subsequently
-and it will need to call acpi_processor_evaluate_cst(), so move that
-function to acpi_processor.c so that it is always present (which is
-required by intel_idle) and export it to modules to allow the ACPI
-processor driver (which is modular) to call it.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
 ---
 
-No changes from the previous version.
+Notes:
+    v1->v2:
+    Rebase on top of mips-next, use TCU for system timer and clocksource.
+    
+    v2->v3:
+    No change.
+    
+    v3->v4:
+    1.Adjust "model" in "cu1000.dts" to match the description in "devices.yaml".
+    2.Adjust "bool" in "Kconfig" to avoid duplicate names with subsequent boards.
+    
+    v4->v5:
+    1.Rename "cu1000" to "cu1000-neo" to prevent conflicts with subsequent boards
+      such as "cu1000-geo", and so on.
+    2.Remove "CONFIG_HZ=100" and "mem=32M@0x0" from defconfg.
+    3.Modify incorrect comments in DT.
+    
+    v5->v6:
+    1.Use "stdout-path = "serial2:115200n8"" instead "stdout-path = &uart2" in DT.
+    2.Remove "console=ttyS2,115200n8" and "CONFIG_CMDLINE_OVERRIDE=y" from defconfg.
+    
+    v6->v7:
+    Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
+    to "周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>" because
+    the old mailbox is in an unstable state.
+    
+    v7->v8:
+    Merge [6/6] in v7 to this patch.
 
----
- drivers/acpi/acpi_processor.c |  154 ++++++++++++++++++++++++++++++++++++++++++
- drivers/acpi/processor_idle.c |  139 -------------------------------------
- include/linux/acpi.h          |    9 ++
- 3 files changed, 163 insertions(+), 139 deletions(-)
+ arch/mips/boot/dts/ingenic/Makefile       |   1 +
+ arch/mips/boot/dts/ingenic/cu1000-neo.dts |  99 ++++++++++++++++++++++++++
+ arch/mips/configs/cu1000-neo_defconfig    | 111 ++++++++++++++++++++++++++++++
+ arch/mips/jz4740/Kconfig                  |   4 ++
+ 4 files changed, 215 insertions(+)
+ create mode 100644 arch/mips/boot/dts/ingenic/cu1000-neo.dts
+ create mode 100644 arch/mips/configs/cu1000-neo_defconfig
 
-Index: linux-pm/drivers/acpi/acpi_processor.c
-===================================================================
---- linux-pm.orig/drivers/acpi/acpi_processor.c
-+++ linux-pm/drivers/acpi/acpi_processor.c
-@@ -729,4 +729,161 @@ bool acpi_processor_claim_cst_control(vo
- 	return true;
- }
- EXPORT_SYMBOL_GPL(acpi_processor_claim_cst_control);
-+
-+/**
-+ * acpi_processor_evaluate_cst - Evaluate the processor _CST control method.
-+ * @handle: ACPI handle of the processor object containing the _CST.
-+ * @cpu: The numeric ID of the target CPU.
-+ * @info: Object write the C-states information into.
-+ *
-+ * Extract the C-state information for the given CPU from the output of the _CST
-+ * control method under the corresponding ACPI processor object (or processor
-+ * device object) and populate @info with it.
-+ *
-+ * If any ACPI_ADR_SPACE_FIXED_HARDWARE C-states are found, invoke
-+ * acpi_processor_ffh_cstate_probe() to verify them and update the
-+ * cpu_cstate_entry data for @cpu.
-+ */
-+int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
-+				struct acpi_processor_power *info)
-+{
-+	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-+	union acpi_object *cst;
-+	acpi_status status;
-+	u64 count;
-+	int last_index = 0;
-+	int i, ret = 0;
-+
-+	status = acpi_evaluate_object(handle, "_CST", NULL, &buffer);
-+	if (ACPI_FAILURE(status)) {
-+		acpi_handle_debug(handle, "No _CST\n");
-+		return -ENODEV;
-+	}
-+
-+	cst = buffer.pointer;
-+
-+	/* There must be at least 2 elements. */
-+	if (!cst || cst->type != ACPI_TYPE_PACKAGE || cst->package.count < 2) {
-+		acpi_handle_warn(handle, "Invalid _CST output\n");
-+		ret = -EFAULT;
-+		goto end;
-+	}
-+
-+	count = cst->package.elements[0].integer.value;
-+
-+	/* Validate the number of C-states. */
-+	if (count < 1 || count != cst->package.count - 1) {
-+		acpi_handle_warn(handle, "Inconsistent _CST data\n");
-+		ret = -EFAULT;
-+		goto end;
-+	}
-+
-+	for (i = 1; i <= count; i++) {
-+		union acpi_object *element;
-+		union acpi_object *obj;
-+		struct acpi_power_register *reg;
-+		struct acpi_processor_cx cx;
-+
-+		/*
-+		 * If there is not enough space for all C-states, skip the
-+		 * excess ones and log a warning.
-+		 */
-+		if (last_index >= ACPI_PROCESSOR_MAX_POWER - 1) {
-+			acpi_handle_warn(handle,
-+					 "No room for more idle states (limit: %d)\n",
-+					 ACPI_PROCESSOR_MAX_POWER - 1);
-+			break;
-+		}
-+
-+		memset(&cx, 0, sizeof(cx));
-+
-+		element = &cst->package.elements[i];
-+		if (element->type != ACPI_TYPE_PACKAGE)
-+			continue;
-+
-+		if (element->package.count != 4)
-+			continue;
-+
-+		obj = &element->package.elements[0];
-+
-+		if (obj->type != ACPI_TYPE_BUFFER)
-+			continue;
-+
-+		reg = (struct acpi_power_register *)obj->buffer.pointer;
-+
-+		obj = &element->package.elements[1];
-+		if (obj->type != ACPI_TYPE_INTEGER)
-+			continue;
-+
-+		cx.type = obj->integer.value;
-+		/*
-+		 * There are known cases in which the _CST output does not
-+		 * contain C1, so if the type of the first state found is not
-+		 * C1, leave an empty slot for C1 to be filled in later.
-+		 */
-+		if (i == 1 && cx.type != ACPI_STATE_C1)
-+			last_index = 1;
-+
-+		cx.address = reg->address;
-+		cx.index = last_index + 1;
-+
-+		if (reg->space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
-+			if (!acpi_processor_ffh_cstate_probe(cpu, &cx, reg)) {
-+				/*
-+				 * In the majority of cases _CST describes C1 as
-+				 * a FIXED_HARDWARE C-state, but if the command
-+				 * line forbids using MWAIT, use CSTATE_HALT for
-+				 * C1 regardless.
-+				 */
-+				if (cx.type == ACPI_STATE_C1 &&
-+				    boot_option_idle_override == IDLE_NOMWAIT) {
-+					cx.entry_method = ACPI_CSTATE_HALT;
-+					snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
-+				} else {
-+					cx.entry_method = ACPI_CSTATE_FFH;
-+				}
-+			} else if (cx.type == ACPI_STATE_C1) {
-+				/*
-+				 * In the special case of C1, FIXED_HARDWARE can
-+				 * be handled by executing the HLT instruction.
-+				 */
-+				cx.entry_method = ACPI_CSTATE_HALT;
-+				snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
-+			} else {
-+				continue;
-+			}
-+		} else if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
-+			cx.entry_method = ACPI_CSTATE_SYSTEMIO;
-+			snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI IOPORT 0x%x",
-+				 cx.address);
-+		} else {
-+			continue;
-+		}
-+
-+		if (cx.type == ACPI_STATE_C1)
-+			cx.valid = 1;
-+
-+		obj = &element->package.elements[2];
-+		if (obj->type != ACPI_TYPE_INTEGER)
-+			continue;
-+
-+		cx.latency = obj->integer.value;
-+
-+		obj = &element->package.elements[3];
-+		if (obj->type != ACPI_TYPE_INTEGER)
-+			continue;
-+
-+		memcpy(&info->states[++last_index], &cx, sizeof(cx));
-+	}
-+
-+	acpi_handle_info(handle, "Found %d idle states\n", last_index);
-+
-+	info->count = last_index;
-+
-+      end:
-+	kfree(buffer.pointer);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(acpi_processor_evaluate_cst);
- #endif /* CONFIG_ACPI_PROCESSOR_CSTATE */
-Index: linux-pm/include/linux/acpi.h
-===================================================================
---- linux-pm.orig/include/linux/acpi.h
-+++ linux-pm/include/linux/acpi.h
-@@ -280,10 +280,19 @@ static inline bool invalid_phys_cpuid(ph
- /* Validate the processor object's proc_id */
- bool acpi_duplicate_processor_id(int proc_id);
- /* Processor _CTS control */
-+struct acpi_processor_power;
-+
- #ifdef CONFIG_ACPI_PROCESSOR_CSTATE
- bool acpi_processor_claim_cst_control(void);
-+int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
-+				struct acpi_processor_power *info);
- #else
- static inline bool acpi_processor_claim_cst_control(void) { return false; }
-+static inline int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
-+					      struct acpi_processor_power *info)
-+{
-+	return -ENODEV;
-+}
- #endif
+diff --git a/arch/mips/boot/dts/ingenic/Makefile b/arch/mips/boot/dts/ingenic/Makefile
+index 9cc4844..e165429 100644
+--- a/arch/mips/boot/dts/ingenic/Makefile
++++ b/arch/mips/boot/dts/ingenic/Makefile
+@@ -2,5 +2,6 @@
+ dtb-$(CONFIG_JZ4740_QI_LB60)	+= qi_lb60.dtb
+ dtb-$(CONFIG_JZ4770_GCW0)	+= gcw0.dtb
+ dtb-$(CONFIG_JZ4780_CI20)	+= ci20.dtb
++dtb-$(CONFIG_X1000_CU1000_NEO)	+= cu1000-neo.dtb
  
- #ifdef CONFIG_ACPI_HOTPLUG_CPU
-Index: linux-pm/drivers/acpi/processor_idle.c
-===================================================================
---- linux-pm.orig/drivers/acpi/processor_idle.c
-+++ linux-pm/drivers/acpi/processor_idle.c
-@@ -297,148 +297,6 @@ static int acpi_processor_get_power_info
- 	return 0;
- }
+ obj-$(CONFIG_BUILTIN_DTB)	+= $(addsuffix .o, $(dtb-y))
+diff --git a/arch/mips/boot/dts/ingenic/cu1000-neo.dts b/arch/mips/boot/dts/ingenic/cu1000-neo.dts
+new file mode 100644
+index 00000000..b0733da
+--- /dev/null
++++ b/arch/mips/boot/dts/ingenic/cu1000-neo.dts
+@@ -0,0 +1,99 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++
++#include "x1000.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/clock/ingenic,tcu.h>
++
++/ {
++	compatible = "yna,cu1000-neo", "ingenic,x1000";
++	model = "YSH & ATIL General Board CU Neo";
++
++	aliases {
++		serial2 = &uart2;
++	};
++
++	chosen {
++		stdout-path = "serial2:115200n8";
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x0 0x04000000>;
++	};
++};
++
++&exclk {
++	clock-frequency = <24000000>;
++};
++
++&tcu {
++	/* 1500 kHz for the system timer and clocksource */
++	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER2>;
++	assigned-clock-rates = <1500000>, <1500000>;
++
++	/* Use channel #0 for the system timer channel #2 for the clocksource */
++	ingenic,pwm-channels-mask = <0xfa>;
++};
++
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pins_uart2>;
++
++	status = "okay";
++};
++
++&mac {
++	phy-mode = "rmii";
++	phy-handle = <&lan8720a>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pins_mac>;
++
++	snps,reset-gpio = <&gpc 23 GPIO_ACTIVE_LOW>; /* PC23 */
++	snps,reset-active-low;
++	snps,reset-delays-us = <0 10000 30000>;
++
++	status = "okay";
++};
++
++&mdio {
++	status = "okay";
++
++	lan8720a: ethernet-phy@0 {
++		compatible = "ethernet-phy-id0007.c0f0", "ethernet-phy-ieee802.3-c22";
++		reg = <0>;
++	};
++};
++
++&msc0 {
++	bus-width = <8>;
++	max-frequency = <50000000>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pins_msc0>;
++
++	non-removable;
++
++	status = "okay";
++};
++
++&pinctrl {
++	pins_uart2: uart2 {
++		function = "uart2";
++		groups = "uart2-data-d";
++		bias-disable;
++	};
++
++	pins_mac: mac {
++		function = "mac";
++		groups = "mac";
++		bias-disable;
++	};
++
++	pins_msc0: msc0 {
++		function = "mmc0";
++		groups = "mmc0-1bit", "mmc0-4bit", "mmc0-8bit";
++		bias-disable;
++	};
++};
+diff --git a/arch/mips/configs/cu1000-neo_defconfig b/arch/mips/configs/cu1000-neo_defconfig
+new file mode 100644
+index 00000000..9f988ed
+--- /dev/null
++++ b/arch/mips/configs/cu1000-neo_defconfig
+@@ -0,0 +1,111 @@
++CONFIG_LOCALVERSION_AUTO=y
++CONFIG_KERNEL_GZIP=y
++CONFIG_SYSVIPC=y
++CONFIG_NO_HZ_IDLE=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_PREEMPT=y
++CONFIG_IKCONFIG=y
++CONFIG_IKCONFIG_PROC=y
++CONFIG_LOG_BUF_SHIFT=14
++CONFIG_CGROUPS=y
++CONFIG_MEMCG=y
++CONFIG_MEMCG_KMEM=y
++CONFIG_CGROUP_SCHED=y
++CONFIG_CGROUP_FREEZER=y
++CONFIG_CGROUP_DEVICE=y
++CONFIG_CGROUP_CPUACCT=y
++CONFIG_NAMESPACES=y
++CONFIG_USER_NS=y
++CONFIG_CC_OPTIMIZE_FOR_SIZE=y
++CONFIG_SYSCTL_SYSCALL=y
++CONFIG_KALLSYMS_ALL=y
++CONFIG_EMBEDDED=y
++# CONFIG_VM_EVENT_COUNTERS is not set
++# CONFIG_COMPAT_BRK is not set
++CONFIG_SLAB=y
++CONFIG_MACH_INGENIC=y
++CONFIG_X1000_CU1000_NEO=y
++CONFIG_HIGHMEM=y
++CONFIG_HZ_100=y
++# CONFIG_SECCOMP is not set
++# CONFIG_SUSPEND is not set
++# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
++# CONFIG_COMPACTION is not set
++CONFIG_CMA=y
++CONFIG_CMA_AREAS=7
++CONFIG_NET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_UEVENT_HELPER=y
++CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
++CONFIG_DEVTMPFS=y
++# CONFIG_FW_LOADER is not set
++# CONFIG_ALLOW_DEV_COREDUMP is not set
++CONFIG_NETDEVICES=y
++CONFIG_STMMAC_ETH=y
++CONFIG_SMSC_PHY=y
++# CONFIG_INPUT_MOUSEDEV is not set
++# CONFIG_INPUT_KEYBOARD is not set
++# CONFIG_INPUT_MOUSE is not set
++# CONFIG_SERIO is not set
++CONFIG_VT_HW_CONSOLE_BINDING=y
++CONFIG_LEGACY_PTY_COUNT=2
++CONFIG_SERIAL_EARLYCON=y
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_8250_NR_UARTS=3
++CONFIG_SERIAL_8250_RUNTIME_UARTS=3
++CONFIG_SERIAL_8250_INGENIC=y
++CONFIG_SERIAL_OF_PLATFORM=y
++# CONFIG_HW_RANDOM is not set
++CONFIG_GPIO_SYSFS=y
++CONFIG_WATCHDOG=y
++CONFIG_JZ4740_WDT=y
++# CONFIG_HWMON is not set
++# CONFIG_LCD_CLASS_DEVICE is not set
++# CONFIG_BACKLIGHT_CLASS_DEVICE is not set
++# CONFIG_VGA_CONSOLE is not set
++# CONFIG_HID is not set
++# CONFIG_USB_SUPPORT is not set
++CONFIG_MMC=y
++CONFIG_MMC_JZ4740=y
++CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_JZ4740=y
++CONFIG_DMADEVICES=y
++CONFIG_DMA_JZ4780=y
++# CONFIG_IOMMU_SUPPORT is not set
++CONFIG_NVMEM=y
++CONFIG_NVMEM_SYSFS=y
++CONFIG_EXT4_FS=y
++# CONFIG_DNOTIFY is not set
++CONFIG_AUTOFS_FS=y
++CONFIG_PROC_KCORE=y
++# CONFIG_PROC_PAGE_MONITOR is not set
++CONFIG_TMPFS=y
++CONFIG_CONFIGFS_FS=y
++CONFIG_NLS=y
++CONFIG_NLS_CODEPAGE_936=y
++CONFIG_NLS_CODEPAGE_950=y
++CONFIG_NLS_ASCII=y
++CONFIG_NLS_ISO8859_1=y
++CONFIG_NLS_UTF8=y
++CONFIG_CRYPTO_ECHAINIV=y
++CONFIG_CRYPTO_AES=y
++CONFIG_CRYPTO_DEFLATE=y
++CONFIG_CRYPTO_LZO=y
++CONFIG_PRINTK_TIME=y
++CONFIG_CONSOLE_LOGLEVEL_DEFAULT=15
++CONFIG_CONSOLE_LOGLEVEL_QUIET=15
++CONFIG_MESSAGE_LOGLEVEL_DEFAULT=7
++CONFIG_DEBUG_INFO=y
++CONFIG_STRIP_ASM_SYMS=y
++CONFIG_DEBUG_FS=y
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_PANIC_ON_OOPS=y
++CONFIG_PANIC_TIMEOUT=10
++# CONFIG_SCHED_DEBUG is not set
++# CONFIG_DEBUG_PREEMPT is not set
++CONFIG_STACKTRACE=y
++# CONFIG_FTRACE is not set
++CONFIG_CMDLINE_BOOL=y
++CONFIG_CMDLINE="earlycon clk_ignore_unused"
+diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
+index 6b96844..412d2fa 100644
+--- a/arch/mips/jz4740/Kconfig
++++ b/arch/mips/jz4740/Kconfig
+@@ -16,6 +16,10 @@ config JZ4780_CI20
+ 	bool "MIPS Creator CI20"
+ 	select MACH_JZ4780
  
--static int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
--				       struct acpi_processor_power *info)
--{
--	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
--	union acpi_object *cst;
--	acpi_status status;
--	u64 count;
--	int last_index = 0;
--	int i, ret = 0;
--
--	status = acpi_evaluate_object(handle, "_CST", NULL, &buffer);
--	if (ACPI_FAILURE(status)) {
--		acpi_handle_debug(handle, "No _CST\n");
--		return -ENODEV;
--	}
--
--	cst = buffer.pointer;
--
--	/* There must be at least 2 elements. */
--	if (!cst || cst->type != ACPI_TYPE_PACKAGE || cst->package.count < 2) {
--		acpi_handle_warn(handle, "Invalid _CST output\n");
--		ret = -EFAULT;
--		goto end;
--	}
--
--	count = cst->package.elements[0].integer.value;
--
--	/* Validate the number of C-states. */
--	if (count < 1 || count != cst->package.count - 1) {
--		acpi_handle_warn(handle, "Inconsistent _CST data\n");
--		ret = -EFAULT;
--		goto end;
--	}
--
--	for (i = 1; i <= count; i++) {
--		union acpi_object *element;
--		union acpi_object *obj;
--		struct acpi_power_register *reg;
--		struct acpi_processor_cx cx;
--
--		/*
--		 * If there is not enough space for all C-states, skip the
--		 * excess ones and log a warning.
--		 */
--		if (last_index >= ACPI_PROCESSOR_MAX_POWER - 1) {
--			acpi_handle_warn(handle,
--					 "No room for more idle states (limit: %d)\n",
--					 ACPI_PROCESSOR_MAX_POWER - 1);
--			break;
--		}
--
--		memset(&cx, 0, sizeof(cx));
--
--		element = &cst->package.elements[i];
--		if (element->type != ACPI_TYPE_PACKAGE)
--			continue;
--
--		if (element->package.count != 4)
--			continue;
--
--		obj = &element->package.elements[0];
--
--		if (obj->type != ACPI_TYPE_BUFFER)
--			continue;
--
--		reg = (struct acpi_power_register *)obj->buffer.pointer;
--
--		obj = &element->package.elements[1];
--		if (obj->type != ACPI_TYPE_INTEGER)
--			continue;
--
--		cx.type = obj->integer.value;
--		/*
--		 * There are known cases in which the _CST output does not
--		 * contain C1, so if the type of the first state found is not
--		 * C1, leave an empty slot for C1 to be filled in later.
--		 */
--		if (i == 1 && cx.type != ACPI_STATE_C1)
--			last_index = 1;
--
--		cx.address = reg->address;
--		cx.index = last_index + 1;
--
--		if (reg->space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
--			if (!acpi_processor_ffh_cstate_probe(cpu, &cx, reg)) {
--				/*
--				 * In the majority of cases _CST describes C1 as
--				 * a FIXED_HARDWARE C-state, but if the command
--				 * line forbids using MWAIT, use CSTATE_HALT for
--				 * C1 regardless.
--				 */
--				if (cx.type == ACPI_STATE_C1 &&
--				    boot_option_idle_override == IDLE_NOMWAIT) {
--					cx.entry_method = ACPI_CSTATE_HALT;
--					snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
--				} else {
--					cx.entry_method = ACPI_CSTATE_FFH;
--				}
--			} else if (cx.type == ACPI_STATE_C1) {
--				/*
--				 * In the special case of C1, FIXED_HARDWARE can
--				 * be handled by executing the HLT instruction.
--				 */
--				cx.entry_method = ACPI_CSTATE_HALT;
--				snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
--			} else {
--				continue;
--			}
--		} else if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
--			cx.entry_method = ACPI_CSTATE_SYSTEMIO;
--			snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI IOPORT 0x%x",
--				 cx.address);
--		} else {
--			continue;
--		}
--
--		if (cx.type == ACPI_STATE_C1)
--			cx.valid = 1;
--
--		obj = &element->package.elements[2];
--		if (obj->type != ACPI_TYPE_INTEGER)
--			continue;
--
--		cx.latency = obj->integer.value;
--
--		obj = &element->package.elements[3];
--		if (obj->type != ACPI_TYPE_INTEGER)
--			continue;
--
--		memcpy(&info->states[++last_index], &cx, sizeof(cx));
--	}
--
--	acpi_handle_info(handle, "Found %d idle states\n", last_index);
--
--	info->count = last_index;
--
--      end:
--	kfree(buffer.pointer);
--
--	return ret;
--}
--
- static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
- {
- 	int ret;
-
-
++config X1000_CU1000_NEO
++	bool "YSH & ATIL CU1000 Module with Neo backplane"
++	select MACH_X1000
++
+ endchoice
+ 
+ config MACH_JZ4740
+-- 
+2.7.4
 
