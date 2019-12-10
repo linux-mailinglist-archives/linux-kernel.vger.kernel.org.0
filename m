@@ -2,155 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13BFA11855A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D74B2118575
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:44:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfLJKnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 05:43:14 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35756 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726574AbfLJKnO (ORCPT
+        id S1727310AbfLJKoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 05:44:01 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59460 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727448AbfLJKnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:43:14 -0500
+        Tue, 10 Dec 2019 05:43:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575974593;
+        s=mimecast20190719; t=1575974602;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=p0+JwFDMZsyAdIm5iZQOsypIJdHkBPYWVLOBLKiChvk=;
-        b=g+R7jGIZ2x4ztGC/+8sFaDP6TjPt0UcOIQiHZA4Id/zuwNZ/eJ5CnRvCA3KQYmdF1jY5x8
-        wCjnhvjFa/dLpTQoD+hjCMDjE2nAYA5lgCcsUBU9vtCz18i9vq4ZfUUDXafFMFzPUj25/z
-        hPqXtisGaxfy0OieKVW0n5W34g3VhSA=
+        bh=tnXvqpFpNzP8oPTla7hKks1vt4Ju8zKblazbqfdN9vI=;
+        b=JVbfjLVtEWgQxNlILL8WSfNGCH8Z4Ar6MMbL1VVxyRMesPyBD1ZHP6jKHofb+addSQF8fO
+        yI3S0yRl7KL6BXYYUL9h2imOFnkMdqC1U6uQRKOkC5GVy4zQasWeIgugPesek2TEKM54wQ
+        6Ksc7Zd/97EkdiVfgyGc/ky1eiV1FwE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-71-vQGtSDQ5Nn-OyTGmwJgrKA-1; Tue, 10 Dec 2019 05:43:08 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-66-cxDu77_YMKiBjb-D9Pf9LQ-1; Tue, 10 Dec 2019 05:43:19 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A75528024DD;
-        Tue, 10 Dec 2019 10:43:06 +0000 (UTC)
-Received: from localhost (ovpn-12-38.pek2.redhat.com [10.72.12.38])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F39B75C1B0;
-        Tue, 10 Dec 2019 10:43:05 +0000 (UTC)
-Date:   Tue, 10 Dec 2019 18:43:03 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgross@suse.com,
-        william.kucharski@oracle.com, mingo@kernel.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH] mm/hotplug: Only respect mem= parameter during boot stage
-Message-ID: <20191210104303.GN2984@MiWiFi-R3L-srv>
-References: <20191206150524.14687-1-bhe@redhat.com>
- <20191209100717.GC6156@dhcp22.suse.cz>
- <20191210072453.GI2984@MiWiFi-R3L-srv>
- <20191210102834.GE10404@dhcp22.suse.cz>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B6E17800D5E;
+        Tue, 10 Dec 2019 10:43:17 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-117-168.ams2.redhat.com [10.36.117.168])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B7B5660568;
+        Tue, 10 Dec 2019 10:43:15 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     netdev@vger.kernel.org, davem@davemloft.net
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        Jorgen Hansen <jhansen@vmware.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH net-next v2 2/6] vsock: add VMADDR_CID_LOCAL definition
+Date:   Tue, 10 Dec 2019 11:43:03 +0100
+Message-Id: <20191210104307.89346-3-sgarzare@redhat.com>
+In-Reply-To: <20191210104307.89346-1-sgarzare@redhat.com>
+References: <20191210104307.89346-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191210102834.GE10404@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: vQGtSDQ5Nn-OyTGmwJgrKA-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: cxDu77_YMKiBjb-D9Pf9LQ-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/19 at 11:28am, Michal Hocko wrote:
-> On Tue 10-12-19 15:24:53, Baoquan He wrote:
-> > On 12/09/19 at 11:07am, Michal Hocko wrote:
-> > > On Fri 06-12-19 23:05:24, Baoquan He wrote:
-> > > > In commit 357b4da50a62 ("x86: respect memory size limiting via mem=
-=3D
-> > > > parameter") a global varialbe global max_mem_size is added to store
-> > > > the value which is parsed from 'mem=3D '. This truly stops those
-> > > > DIMM from being added into system memory during boot.
-> > > >=20
-> > > > However, it also limits the later memory hotplug functionality. Any
-> > > > memory board can't be hot added any more if its region is beyond th=
-e
-> > > > max_mem_size. System will print error like below:
-> > > >=20
-> > > > [  216.387164] acpi PNP0C80:02: add_memory failed
-> > > > [  216.389301] acpi PNP0C80:02: acpi_memory_enable_device() error
-> > > > [  216.392187] acpi PNP0C80:02: Enumeration failure
-> > > >=20
-> > > > >From document of 'mem =3D' parameter, it should be a restriction d=
-uring
-> > > > boot, but not impact the system memory adding/removing after bootin=
-g.
-> > > >=20
-> > > >   mem=3Dnn[KMG]     [KNL,BOOT] Force usage of a specific amount of =
-memory
-> > > >=20
-> > > > So fix it by also checking if it's during SYSTEM_BOOTING stage when
-> > > > restrict memory adding. Otherwise, skip the restriction.
-> > >=20
-> > > Could you be more specific about why the boot vs. later hotplug makes
-> > > any difference? The documentation is explicit about the boot time but
-> > > considering this seems to be like that since ever I strongly suspect
-> > > that this is just an omission.
-> >=20
-> > I think the 'mem=3D' updating in commit 357b4da50a62 will only affect
-> > those hotplugable memory regions. When I tested it, there are three
-> > memmory boards, one is the normal memory region with 4G memory, and the
-> > other two are hotpluggable memory boards and recorded in ACPI tables,
-> > each is 1GB. When put all them three onsite before boot, they will be
-> > recognized by firmware and written into e820 table and/or EFI table, th=
-en
-> > kernel can read them from e820 and them as system memory, we get 6G
-> > memory.=20
-> >=20
-> > However, if add 'mem=3D', like 'mme=3D3G', w/o commit 357b4da50a62, in =
-e820,
-> > we will only get 3G memory. Later in acpi_init(), acpi scanning will
-> > search those two memory regions, and try to add them into system call
-> > because the two hotpluggable memory boards are power on and ready.
-> > Then we will get 3G + 1G + 1G, 5G memory. the 1st 3G is from the normal
-> > memory board, its last 1G is trimmed. Jurgen's patch is trying to fix t=
-his
-> > because the adding happens during boot time, and conflicts with 'mem=3D=
-'.=20
->=20
-> Unless I misunderstand what you are saying this all is just expected.
-> You have restricted the memory explicitly and the result is that not all
-> the memory is visible.
+The VMADDR_CID_RESERVED (1) was used by VMCI, but now it is not
+used anymore, so we can reuse it for local communication
+(loopback) adding the new well-know CID: VMADDR_CID_LOCAL.
 
-Yes.
+Cc: Jorgen Hansen <jhansen@vmware.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ include/uapi/linux/vm_sockets.h | 8 +++++---
+ net/vmw_vsock/vmci_transport.c  | 2 +-
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
->=20
-> > But after system bootup, we should be able to hot add/remove any memory
-> > board. This should not be restricted by a boot-time kernel parameter
-> > 'mme=3D'. This is what I am trying to fix.
->=20
-> This is a simple statement without any actual explanation on why. Why is
-> hotplug memory special? What is the usecase? Who would want to use mem
-> parameter and later expect a memory above the restrected area to be
-> hotplugable?
-
-The why is 'mem=3D' is used to restrict the amount of system ram during
-boot. We have two ways to add system memory, one is installing DIMMs
-before boot, the other is hot adding memory after boot. Without David's=20
-use case, we may need redefine 'mem=3D' and change its documentation in
-kernel-parameters.txt, if we don't want to fix it like this. Otherwise,
-'mem=3D' will limit the system's upper system ram always, that is not
-expected.
-
->=20
-> David has provided an actual usecase [1] but this needs to be documented
-> somewhere so that we do not break that accidentally in the future.
-> Ideally both in code which adds the boot restriction and the kernel
-> command line documentation to be explicit about BOOT restriction.
->=20
-> [1] http://lkml.kernel.org/r/429622cf-f0f4-5d80-d39d-b0d8a6c6605f@redhat.=
-com
-
-Yes, agree. As I replied in the v2 thread, I will add that into log, and
-also will change text of 'mem=3D' in kernel-parameters.txt.
-
-Thanks
-Baoquan
+diff --git a/include/uapi/linux/vm_sockets.h b/include/uapi/linux/vm_socket=
+s.h
+index 68d57c5e99bc..fd0ed7221645 100644
+--- a/include/uapi/linux/vm_sockets.h
++++ b/include/uapi/linux/vm_sockets.h
+@@ -99,11 +99,13 @@
+=20
+ #define VMADDR_CID_HYPERVISOR 0
+=20
+-/* This CID is specific to VMCI and can be considered reserved (even VMCI
+- * doesn't use it anymore, it's a legacy value from an older release).
++/* Use this as the destination CID in an address when referring to the
++ * local communication (loopback).
++ * (This was VMADDR_CID_RESERVED, but even VMCI doesn't use it anymore,
++ * it was a legacy value from an older release).
+  */
+=20
+-#define VMADDR_CID_RESERVED 1
++#define VMADDR_CID_LOCAL 1
+=20
+ /* Use this as the destination CID in an address when referring to the hos=
+t
+  * (any process other than the hypervisor).  VMCI relies on it being 2, bu=
+t
+diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.=
+c
+index 644d32e43d23..4b8b1150a738 100644
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -648,7 +648,7 @@ static int vmci_transport_recv_dgram_cb(void *data, str=
+uct vmci_datagram *dg)
+ static bool vmci_transport_stream_allow(u32 cid, u32 port)
+ {
+ =09static const u32 non_socket_contexts[] =3D {
+-=09=09VMADDR_CID_RESERVED,
++=09=09VMADDR_CID_LOCAL,
+ =09};
+ =09int i;
+=20
+--=20
+2.23.0
 
