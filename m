@@ -2,150 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 072CF11915C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:01:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70130119154
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:01:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfLJUBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:01:16 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:51867 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbfLJUBP (ORCPT
+        id S1727068AbfLJUAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:00:35 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44551 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbfLJUAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:01:15 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MRSdf-1iQ6xB0jJ7-00NPmT; Tue, 10 Dec 2019 21:00:40 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Piotr Sroka <piotrs@cadence.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, kbuild test robot <lkp@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        YueHaibing <yuehaibing@huawei.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: rawnand: cadence: fix address space mixup
-Date:   Tue, 10 Dec 2019 20:59:55 +0100
-Message-Id: <20191210200014.949529-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 10 Dec 2019 15:00:33 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q10so21512019wrm.11;
+        Tue, 10 Dec 2019 12:00:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+xeCGefpGQy2sjgNGOl+Y50d//RwjlVI7sRbqcHrAp4=;
+        b=BiS1cDh+P9bCWW2ka7NcIQDHU99Kn5O7ZAiRBjLegvHkYyubb9sankMnNyOIadKGtj
+         sipBJHj72DaqrBpuSGE2i1gnbMh+2SPZWmzWWn7kvwwtXAftCIp+/Dy0TFdbAPNB3nap
+         uz0VMQlUU5KpSY0lSU8FRmcC9eL2PfqFKvV4GMf/TaUxKkF7km3Z/NqrhCLSVeittWVO
+         C890+Y3XjK2L1aa5Lr40eSOdznCUEt7P4HhBWwNRcK/wziGaudjuvXmARbN6ukznGH3y
+         9MjTcMUFVHBhu4uWmjeD0UgYLDKKM0txxMrfChn8EjPe5YgrrI+D1xsL6q4kmV95R0mT
+         XQKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+xeCGefpGQy2sjgNGOl+Y50d//RwjlVI7sRbqcHrAp4=;
+        b=I1TNV5wFx7nHjzxdU85PMM8f1eH78WBrFkrfCUN9DEkiL+00jiete0QlwCio7LJerO
+         8udowyHpZVC+Z4EWpZPTlBmbuaX2Gyod/8nyc20iaUt1pyU9H8MsaK68BeC8xUedLZUL
+         pgLon5TliCh6k0rBlt3o0v/f0pZPKmEeq3Ycsrent/5BGS7CBKZQMU2ffQd2nqS/SyX6
+         sn9C9XEk7HpoXrGG8bG6PeWEecHnRzjv4EQ5n1AO/ueTSNsRWIYJRqJspLM3BahYldOb
+         BY/6PQeFqwNsss2TpJCvIIEndwRrVhOqHEXN7EzULPfjfUoJ/uqkRJUTaw1nAa0MjO6V
+         lyug==
+X-Gm-Message-State: APjAAAVu8gxpz//kpvKVJAYxmChiEatua0XORFuyYqiSLC0Eh3dAqySS
+        MitMj+6kEFQ1q/lH5vGgkV0=
+X-Google-Smtp-Source: APXvYqzpu8OOo+U+YwFj7SHZFDBR48BOqfZIl7wVK/FMuNySRzX9p5e7U6/uTahIjSPirfINT95Mrw==
+X-Received: by 2002:adf:9c8f:: with SMTP id d15mr1530407wre.390.1576008031386;
+        Tue, 10 Dec 2019 12:00:31 -0800 (PST)
+Received: from localhost.localdomain (p200300F1371AD700428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:371a:d700:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id t81sm4428610wmg.6.2019.12.10.12.00.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 12:00:30 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-mmc@vger.kernel.org, ulf.hansson@linaro.org
+Cc:     robh+dt@kernel.org, jianxin.pan@amlogic.com, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        lnykww@gmail.com, yinxin_1989@aliyun.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 0/2] Amlogic 32-bit Meson SoC SDHC MMC controller driver
+Date:   Tue, 10 Dec 2019 21:00:20 +0100
+Message-Id: <20191210200022.29696-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:txJklOowuSRLj0koCfpHwgfGy1GnDaqSKN+I1klemQktVt55+vk
- bZmUdtxS4iQFjc1FoYZvgb+xJpGxxHn78pz0xmXekGDzvWH/CDrOP9kmh5qorGelqV+XNCH
- GL0HstVAgcyk9+C45VfS3sCwsxgwEz+uipE//D1XPjAXt/JSEhsGM8hC7nLKGHmbvlwmnFB
- Oa4HqVUMw0L7GwerspFbg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:mbiYpSZ6SPE=:3HvWkAOW/EugY9Lv84f9OP
- B3UlxY8qECwn2z8cz0Fae2n9XvtANC5HTx0fQDIYopO5GyCmQqW2/PLTNapJ1iSi6oM3KaudH
- 23TjgcsKuOAkLpIdL0BPE0vHjzNgd9Iggv6Pv1tWUg7Vk+QYGQBmyTTbtCaEOiuAODfjQKIzz
- Yc/p7TbIMQbqS1Bvgfh60f3Wkw4Uy3VA6e3AfepxrO760XhG0gDPPYo2hsGLlesPbpurhx0G7
- 7WzwnEP0OeYu+TzOcPi143Ox66qi4O83RihWTZ9IgMjtNd3Iyd6LgZrLkDb43naCuDGm5wVZm
- 5yTm/+PVhIGbGYbw2qMoqYzetq9BhTQkYCV8Pxq2rCfRMbgAhPTDIrznCXRqdKrS2yBfNxqIy
- gFJbArlc88EqB6ZywlBJ2XSIKKga8g8qi4IgziLSO5AjryXBuxLcJ97BDU+CRsWabsIH3wFeC
- ZSGWWrj01TMIN71IFJOcr6ihdqzK+FH29qG+NWtI/8u/8QqkE15HXr3FW6dYoz+Yt37Kf+SMw
- b3SlMEVJ9Gp0+bOjDh1hS0M48CYQllItcJWlSk1DzPimvUYzuGyx5pFQYgsoPcZUfddDFZXOo
- FvMb1CA8VVu0niNGJEzm3AqWmQhRbznNprA7/3dBXZEBDLJceYPkewJjnouNsdNWGUHDPujbY
- FGTxRm5vKVI+9D67wmCaEdAhiE2lgUPZgc7isZ4kcmLbYiNwmdNvRNlJzn/edCcGThI+XlPxj
- A96xDoHaLxaBxp93eQxBavi0XtBjs7txOn7iDq6D5yjob7MDshpLwYAmL5NuSoilwPyruTZ7P
- ldecQ1xGWZnkZ1egU1Y7F9yW0hSEaVGstioKeupCfPTTQG5omSNmywcCa4pC7EvjS4YvE8ZAF
- yEI7JSi/Elqr1KAqL1XQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_addr_t and pointers can are not interchangeable, and can
-be different sizes:
+Hello,
 
-drivers/mtd/nand/raw/cadence-nand-controller.c: In function 'cadence_nand_cdma_transfer':
-drivers/mtd/nand/raw/cadence-nand-controller.c:1283:12: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
-            (void *)dma_buf, (void *)dma_ctrl_dat,
-            ^
-drivers/mtd/nand/raw/cadence-nand-controller.c:1283:29: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
-            (void *)dma_buf, (void *)dma_ctrl_dat,
-                             ^
+this is the first non-RFC version of the driver for the Amlogic "SDHC"
+MMC controller found on Meson6, Meson8, Meson8b and Meson8m2 SoCs.
 
-Use dma_addr_t consistently here, which cleans up a couple of casts
-as a side-effect.
+The public S805 (Meson8b) datasheet has some documentation starting on
+page 74: [0]
 
-Fixes: ec4ba01e894d ("mtd: rawnand: Add new Cadence NAND driver to MTD subsystem")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- .../mtd/nand/raw/cadence-nand-controller.c    | 21 ++++++++-----------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+It's performance is still not as good as the driver from Amlogic's 3.10
+kernel, but it does not corrupt data anymore (as RFC v1 did).
 
-diff --git a/drivers/mtd/nand/raw/cadence-nand-controller.c b/drivers/mtd/nand/raw/cadence-nand-controller.c
-index 3a36285a8d8a..5a2d7e7ffaee 100644
---- a/drivers/mtd/nand/raw/cadence-nand-controller.c
-+++ b/drivers/mtd/nand/raw/cadence-nand-controller.c
-@@ -402,7 +402,7 @@ struct cadence_nand_cdma_desc {
- 	u16 rsvd2;
- 
- 	/* System/host memory address required for data DMA commands. */
--	u64 memory_pointer;
-+	u64 memory_addr;
- 
- 	/* Status of operation. */
- 	u32 status;
-@@ -416,7 +416,7 @@ struct cadence_nand_cdma_desc {
- 	u32 rsvd4;
- 
- 	/* Control data pointer. */
--	u64 ctrl_data_ptr;
-+	u64 ctrl_data_addr;
- };
- 
- /* Interrupt status. */
-@@ -914,8 +914,8 @@ static void cadence_nand_get_caps(struct cdns_nand_ctrl *cdns_ctrl)
- /* Prepare CDMA descriptor. */
- static void
- cadence_nand_cdma_desc_prepare(struct cdns_nand_ctrl *cdns_ctrl,
--			       char nf_mem, u32 flash_ptr, char *mem_ptr,
--			       char *ctrl_data_ptr, u16 ctype)
-+			       char nf_mem, u32 flash_ptr, dma_addr_t mem_addr,
-+			       dma_addr_t ctrl_data_addr, u16 ctype)
- {
- 	struct cadence_nand_cdma_desc *cdma_desc = cdns_ctrl->cdma_desc;
- 
-@@ -931,13 +931,13 @@ cadence_nand_cdma_desc_prepare(struct cdns_nand_ctrl *cdns_ctrl,
- 	cdma_desc->command_flags |= CDMA_CF_DMA_MASTER;
- 	cdma_desc->command_flags  |= CDMA_CF_INT;
- 
--	cdma_desc->memory_pointer = (uintptr_t)mem_ptr;
-+	cdma_desc->memory_addr = mem_addr;
- 	cdma_desc->status = 0;
- 	cdma_desc->sync_flag_pointer = 0;
- 	cdma_desc->sync_arguments = 0;
- 
- 	cdma_desc->command_type = ctype;
--	cdma_desc->ctrl_data_ptr = (uintptr_t)ctrl_data_ptr;
-+	cdma_desc->ctrl_data_addr = ctrl_data_addr;
- }
- 
- static u8 cadence_nand_check_desc_error(struct cdns_nand_ctrl *cdns_ctrl,
-@@ -1280,8 +1280,7 @@ cadence_nand_cdma_transfer(struct cdns_nand_ctrl *cdns_ctrl, u8 chip_nr,
- 	}
- 
- 	cadence_nand_cdma_desc_prepare(cdns_ctrl, chip_nr, page,
--				       (void *)dma_buf, (void *)dma_ctrl_dat,
--				       ctype);
-+				       dma_buf, dma_ctrl_dat, ctype);
- 
- 	status = cadence_nand_cdma_send_and_wait(cdns_ctrl, thread_nr);
- 
-@@ -1358,10 +1357,8 @@ static int cadence_nand_erase(struct nand_chip *chip, u32 page)
- 	int status;
- 	u8 thread_nr = cdns_chip->cs[chip->cur_cs];
- 
--	cadence_nand_cdma_desc_prepare(cdns_ctrl,
--				       cdns_chip->cs[chip->cur_cs],
--				       page, NULL, NULL,
--				       CDMA_CT_ERASE);
-+	cadence_nand_cdma_desc_prepare(cdns_ctrl, cdns_chip->cs[chip->cur_cs],
-+				       page, 0, 0, CDMA_CT_ERASE);
- 	status = cadence_nand_cdma_send_and_wait(cdns_ctrl, thread_nr);
- 	if (status) {
- 		dev_err(cdns_ctrl->dev, "erase operation failed\n");
+Special thanks to the people who supported me off-list - you are
+amazing and deserve to be mentioned here:
+- Xin Yin who helped me fix two more write corruption problems. I am
+  hoping that he will reply with Reviewed-by, Tested-by and Bug-fixed-by
+- Jianxin Pan for sharing some of the internal workings of this MMC
+  controller with me
+- Wei Wang for spotting the initial write corruption problem and helping
+  test this driver on his board. I have his permission to add his
+  Tested-by (off-list, he's Cc'ed so if there's any problem he can speak
+  up)
+
+
+Changes since v2 at [2]:
+- rebased on top of v5.5-rc1
+- added Rob's and Xin Yin's Reviewed-by and Tested-by (thank you!)
+- (note: Kevin had v2 of this series in -next for a few days so the
+   build test robots could play with it. I haven't received any negative
+   feedback in that time)
+
+Changes since RFC v1 at [1]:
+- don't set MESON_SDHC_MISC_MANUAL_STOP to fix one of three write
+  corruption problems. the out-of-tree 3.10 "reference" driver doesn't
+  set it either
+- check against data->flags instead of cmd->flags when testing for
+  MMC_DATA_WRITE as spotted by Xin Yin (many thanks!). This fixes
+  another write corruption problem
+- clear the FIFOs after successfully transferring data as suggested by
+  Xin Yin (many thanks!). This is what the 3.10 driver did and fixes yet
+  another write corruption problem
+- integrate the clock suggestions from Jianxin Pan so the driver is now
+  able to set up the clocks correctly for all known cases. documentation
+  is also added to the patch description. Thank you Jianxin for the
+  help!
+- set the correct max_busy_timeout as suggested by Jianxin Pan (thanks!)
+- convert the dt-bindings to .yaml (which is why I didn't add Rob's
+  Reviewed-by)
+- switch to struct clk_parent_data as part of newer common clock
+  framework APIs to simplify the clock setup
+- dropped CMD23 support because it seems to hurt read and write
+  performance by 10-20% in my tests. it's not clear why, but for now we
+  can live without this.
+- use devm_platform_ioremap_resource instead of open-coding it
+
+
+[0] https://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
+[1] https://patchwork.kernel.org/cover/11035505/
+[2] http://lists.infradead.org/pipermail/linux-amlogic/2019-November/014576.html
+
+
+Martin Blumenstingl (2):
+  dt-bindings: mmc: Document the Amlogic Meson SDHC MMC host controller
+  mmc: host: meson-mx-sdhc: new driver for the Amlogic Meson SDHC host
+
+ .../bindings/mmc/amlogic,meson-mx-sdhc.yaml   |   64 +
+ drivers/mmc/host/Kconfig                      |   14 +
+ drivers/mmc/host/Makefile                     |    1 +
+ drivers/mmc/host/meson-mx-sdhc.c              | 1174 +++++++++++++++++
+ 4 files changed, 1253 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdhc.yaml
+ create mode 100644 drivers/mmc/host/meson-mx-sdhc.c
+
 -- 
-2.20.0
+2.24.0
 
