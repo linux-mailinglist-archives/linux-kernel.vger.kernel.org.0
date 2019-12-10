@@ -2,134 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04AE51184E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:22:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6A211184F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:25:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbfLJKWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 05:22:49 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43216 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726574AbfLJKWs (ORCPT
+        id S1727320AbfLJKZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 05:25:06 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36277 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727149AbfLJKZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:22:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575973367;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1hYi5eS0bvVMUP0KaJ0gTC9c1AaBzYooRd9sn22yfd4=;
-        b=ewK0fUbZvpHu/jgruzmOaPS7wTHazTex4gGRakUhxzHWNmd212VQymljvhD5/6Q7g8+A1E
-        BT7zswWpwhzRDqM5SCqdD5SjMOFIlXIdoElxZguGuyy0pvjT0x1SUmdYDVf9D6WL2QQtsD
-        KAvtSkGkofVeULn1ys0ZXck2Zcc5D28=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-361-EoFzPUU3OzWiPdHK-QA7uA-1; Tue, 10 Dec 2019 05:22:46 -0500
-Received: by mail-wr1-f71.google.com with SMTP id c6so8720537wrm.18
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 02:22:46 -0800 (PST)
+        Tue, 10 Dec 2019 05:25:06 -0500
+Received: by mail-lf1-f68.google.com with SMTP id n12so13271986lfe.3;
+        Tue, 10 Dec 2019 02:25:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Lg4AhAvPA2MW169lce5BVlmxb20DdD9akZ2hhy6ig3k=;
+        b=FTiCBLotYFjh03wZj4knhcl8BMXBmq0zAi457bVRqn+6sc7GAOVzCj32SSKhUowk39
+         S2ANnGVWu8HiwFveq4v/GT0it5Jv4Sm4Cw6YEYYjHIIv8z7ODCH/ONDyFYw3xryCuAJx
+         KZNz8eUOyKp6173vQJSbNSQBI9U/u21/q8DFVvBcwNBb12hms38D6VYBJCbD0jSNolt9
+         jCXg1kUrfpkD6fKz2WZJx/jLc7gy95Q5tA6mzMa4JIjleJzOzbloLczSC9mpyBblRcqo
+         Gi4UxaDIVKn3aCRl/AmTyYrihS+4IqTCcCKpw8yEikIu4P77/3qmXdEVvWfES4cf7SUP
+         PR6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1hYi5eS0bvVMUP0KaJ0gTC9c1AaBzYooRd9sn22yfd4=;
-        b=jKTO++4xiA4rIQhJe6FyUUzAa4WJjuB5W44Ifsargy0UiQe1soGnokUK0zC1tI9Q6N
-         tXXEyHOQ5c9egQqSOLQO7bg1xz9Yh2zVDWaDGkh3jsdUoq3eKtsV2Q/g29/uKHWoKN39
-         NcBO+DMUyM1sYK3mpG3nto9vxpPAkOSj0MAfBl10n6oeUF2WkS/Igz2upGImniHtEd4o
-         ITYr7RnrNytWFFX+MQEuPFS2/1gjHLD3O7TGY3CAzJw9KYEsRXt01cowGXsO5m1Wy1TY
-         ZCXvZKS50SH1OLGWffUp3a6CKy+4JlPf5hbAXUnwzUNAyPG1r23T9UQKAIdljDhC0byi
-         uJBQ==
-X-Gm-Message-State: APjAAAWDxNLH8rELdKd9DChEe4nq3Tlbi8jNSOOB4L8JofvmvosVNCFq
-        CC0NNW8ISd2ZxgJMRptu+22YInBQG0aQmnqvY+ThecqcVtP9BnwtNWbm+9vtwIDpdnOj2sOf8PY
-        G8ZMnGfsYCUXAUznsqtCrGdiO
-X-Received: by 2002:adf:ec83:: with SMTP id z3mr2272237wrn.133.1575973365550;
-        Tue, 10 Dec 2019 02:22:45 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxBitfZdf/RJEPq1dZzPfkb453HjvEVJ0+/v+Z4WoHLXSV9FfeJBqhYpzRlJBzCwH1tt+vBvw==
-X-Received: by 2002:adf:ec83:: with SMTP id z3mr2272216wrn.133.1575973365287;
-        Tue, 10 Dec 2019 02:22:45 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9? ([2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9])
-        by smtp.gmail.com with ESMTPSA id n3sm2520674wmc.27.2019.12.10.02.22.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2019 02:22:44 -0800 (PST)
-Subject: Re: [PATCH 2/2] KVM: x86: Skip zeroing of MPX state on reset event
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191209201932.14259-1-sean.j.christopherson@intel.com>
- <20191209201932.14259-3-sean.j.christopherson@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <8c0589c5-f7c5-604c-3090-56dc886cb817@redhat.com>
-Date:   Tue, 10 Dec 2019 11:22:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Lg4AhAvPA2MW169lce5BVlmxb20DdD9akZ2hhy6ig3k=;
+        b=ZULYYPBDUSehEINErlwtnX/Ewz29xY5WAs1jcaXTHUxlxrLH/pD12zpV5k7Us3k4Np
+         mzpPNJWv1p+h3QNPpL3UFRmSB3LY0oJ6M1dtfBaXQmcGJ0vmRkr2bgTu1Bja6zqfgGqh
+         J7Il9HMYBNc9mr0Ds8p8sG/TNbVU/wTMECBuQjxjKet+Envh2UgjKCrN1vOv+95hkdyB
+         hefV/m3JewQlTOIFb28Bqc6GTqe6qWT4uas9rYMPEYbEDKysbqFe3o+ZxM5nbEw4j2u/
+         jQ/3hz7e3uYZbnawFOQXznAuP6pN8X9QmUQgvwJfGqgwWj4hl/FbzvAzvoG4tByF3QQy
+         4CQQ==
+X-Gm-Message-State: APjAAAU+ry7XEyUkVK+ARIroNrseW3G+m2+EI8KDBQPvsj/65/7VQvcw
+        99QyOz7jg3n1BrqHPrGF8fQ0ZHGqTyO/VwBV5dw=
+X-Google-Smtp-Source: APXvYqzJ1n85YcM5EF1ZvSd+1TmfnkyzXyHPP1Je/JBYVDcQHyXtbVJXSpCo0J5NP1ZNn5s9enJ5G9jr2beZsSr+XS8=
+X-Received: by 2002:a19:6a06:: with SMTP id u6mr14474371lfu.187.1575973503519;
+ Tue, 10 Dec 2019 02:25:03 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191209201932.14259-3-sean.j.christopherson@intel.com>
-Content-Language: en-US
-X-MC-Unique: EoFzPUU3OzWiPdHK-QA7uA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+References: <20191210080628.5264-1-sjpark@amazon.de> <20191210080628.5264-2-sjpark@amazon.de>
+ <20191210101635.GD980@Air-de-Roger> <20191210102023.GF980@Air-de-Roger>
+In-Reply-To: <20191210102023.GF980@Air-de-Roger>
+From:   SeongJae Park <sj38.park@gmail.com>
+Date:   Tue, 10 Dec 2019 11:24:37 +0100
+Message-ID: <CAEjAshqsdjANuZDJwUnTgh3FBnhN-fp6T7-oN0hZKq8uHMDWhA@mail.gmail.com>
+Subject: Re: [Xen-devel] [PATCH v5 1/2] xenbus/backend: Add memory pressure
+ handler callback
+To:     =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, SeongJae Park <sjpark@amazon.com>,
+        konrad.wilk@oracle.com, pdurrant@amazon.com,
+        SeongJae Park <sjpark@amazon.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/19 21:19, Sean Christopherson wrote:
-> Don't bother zeroing out MPX state in the guest's FPU on a reset event,
-> the guest's FPU is always zero allocated and there is no path between
-> kvm_arch_vcpu_create() and kvm_arch_vcpu_setup() that can lead to guest
-> MPX state being modified.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+On Tue, Dec 10, 2019 at 11:21 AM Roger Pau Monn=C3=A9 <roger.pau@citrix.com=
+> wrote:
+>
+> On Tue, Dec 10, 2019 at 11:16:35AM +0100, Roger Pau Monn=C3=A9 wrote:
+> > On Tue, Dec 10, 2019 at 08:06:27AM +0000, SeongJae Park wrote:
+> > > diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+> > > index 869c816d5f8c..cdb075e4182f 100644
+> > > --- a/include/xen/xenbus.h
+> > > +++ b/include/xen/xenbus.h
+> > > @@ -104,6 +104,7 @@ struct xenbus_driver {
+> > >     struct device_driver driver;
+> > >     int (*read_otherend_details)(struct xenbus_device *dev);
+> > >     int (*is_ready)(struct xenbus_device *dev);
+> > > +   unsigned (*reclaim)(struct xenbus_device *dev);
+> >
+> > ... hence I wonder why it's returning an unsigned when it's just
+> > ignored.
+> >
+> > IMO it should return an int to signal errors, and the return should be
+> > ignored.
+>
+> Meant to write 'shouldn't be ignored' sorry.
 
-Makes sense, but it's a bit weird to have INIT reset _less_ state than
-RESET...  I've queued patch 1 only for now.
+Thanks for good opinions and comments!  I will apply your comments in the n=
+ext
+version.
 
-Paolo
 
-> ---
->  arch/x86/kvm/x86.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 854ae27bb021..e6f4174f55cd 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9194,15 +9194,14 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
->  	kvm_async_pf_hash_reset(vcpu);
->  	vcpu->arch.apf.halted = false;
->  
-> -	if (kvm_mpx_supported()) {
-> +	if (kvm_mpx_supported() && init_event) {
->  		void *mpx_state_buffer;
->  
->  		/*
-> -		 * To avoid have the INIT path from kvm_apic_has_events() that be
-> -		 * called with loaded FPU and does not let userspace fix the state.
-> +		 * Temporarily flush the guest's FPU to memory so that zeroing
-> +		 * out the MPX areas is done using up-to-date state.
->  		 */
-> -		if (init_event)
-> -			kvm_put_guest_fpu(vcpu);
-> +		kvm_put_guest_fpu(vcpu);
->  		mpx_state_buffer = get_xsave_addr(&vcpu->arch.guest_fpu->state.xsave,
->  					XFEATURE_BNDREGS);
->  		if (mpx_state_buffer)
-> @@ -9211,8 +9210,7 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
->  					XFEATURE_BNDCSR);
->  		if (mpx_state_buffer)
->  			memset(mpx_state_buffer, 0, sizeof(struct mpx_bndcsr));
-> -		if (init_event)
-> -			kvm_load_guest_fpu(vcpu);
-> +		kvm_load_guest_fpu(vcpu);
->  	}
->  
->  	if (!init_event) {
-> 
+Thanks,
+SeongJae Park
 
+>
+> Roger.
