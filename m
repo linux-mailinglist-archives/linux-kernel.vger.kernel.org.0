@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 518A7118341
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:15:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48FCD118343
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfLJJPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:15:00 -0500
+        id S1727415AbfLJJPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:15:03 -0500
 Received: from mga12.intel.com ([192.55.52.136]:29109 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbfLJJO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:14:59 -0500
+        id S1726911AbfLJJPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 04:15:02 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 01:14:58 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 01:15:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,299,1571727600"; 
-   d="scan'208";a="244777905"
+   d="scan'208";a="244777952"
 Received: from nntpdsd52-183.inn.intel.com ([10.125.52.183])
-  by fmsmga002.fm.intel.com with ESMTP; 10 Dec 2019 01:14:55 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 10 Dec 2019 01:14:58 -0800
 From:   roman.sudarikov@linux.intel.com
 To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
@@ -27,14 +27,13 @@ To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         linux-kernel@vger.kernel.org, eranian@google.com,
         bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com
 Cc:     alexander.antonov@intel.com, roman.sudarikov@linux.intel.com
-Subject: [PATCH v2 1/3] perf x86: Infrastructure for exposing an Uncore unit to PMON mapping
-Date:   Tue, 10 Dec 2019 12:14:49 +0300
-Message-Id: <20191210091451.6054-2-roman.sudarikov@linux.intel.com>
+Subject: [PATCH v2 2/3] perf x86: Add compaction function for uncore attributes
+Date:   Tue, 10 Dec 2019 12:14:50 +0300
+Message-Id: <20191210091451.6054-3-roman.sudarikov@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20191210091451.6054-1-roman.sudarikov@linux.intel.com>
 References: <20191210091451.6054-1-roman.sudarikov@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -43,142 +42,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
 
-Intel® Xeon® Scalable processor family (code name Skylake-SP) makes
-significant changes in the integrated I/O (IIO) architecture. The new
-solution introduces IIO stacks which are responsible for managing traffic
-between the PCIe domain and the Mesh domain. Each IIO stack has its own
-PMON block and can handle either DMI port, x16 PCIe root port, MCP-Link
-or various built-in accelerators. IIO PMON blocks allow concurrent
-monitoring of I/O flows up to 4 x4 bifurcation within each IIO stack.
-
-Software is supposed to program required perf counters within each IIO
-stack and gather performance data. The tricky thing here is that IIO PMON
-reports data per IIO stack but users have no idea what IIO stacks are -
-they only know devices which are connected to the platform.
-
-Understanding IIO stack concept to find which IIO stack that particular
-IO device is connected to, or to identify an IIO PMON block to program
-for monitoring specific IIO stack assumes a lot of implicit knowledge
-about given Intel server platform architecture.
-
-Usage example:
-    /sys/devices/uncore_<type>_<pmu_idx>/platform_mapping
-
-Each Uncore unit type, by its nature, can be mapped to its own context,
-for example:
-1. CHA - each uncore_cha_<pmu_idx> is assigned to manage a distinct slice
-   of LLC capacity;
-2. UPI - each uncore_upi_<pmu_idx> is assigned to manage one link of Intel
-   UPI Subsystem;
-3. IIO - each uncore_iio_<pmu_idx> is assigned to manage one stack of the
-   IIO module;
-4. IMC - each uncore_imc_<pmu_idx> is assigned to manage one channel of
-   Memory Controller.
-
-Implementation details:
-Two callbacks added to struct intel_uncore_type to discover and map Uncore
-units to PMONs:
-    int (*get_topology)(void)
-    int (*set_mapping)(struct intel_uncore_pmu *pmu)
-
-Details of IIO Uncore unit mapping to IIO PMON:
-Each IIO stack is either DMI port, x16 PCIe root port, MCP-Link or various
-built-in accelerators. For Uncore IIO Unit type, the platform_mapping file
-holds bus numbers of devices, which can be monitored by that IIO PMON block
-on each die.
+In current design, there is an implicit assumption that array of pointers
+to uncore type attributes is NULL terminated. However, not all attributes
+are mandatory for each Uncore unit type, e.g. "events" is required for
+IMC but doesn't exist for CHA. That approach correctly supports only one
+optional attribute which also must be the last in the row.
+The patch removes limitation by safely removing embedded NULL elements.
 
 Co-developed-by: Alexander Antonov <alexander.antonov@intel.com>
 Signed-off-by: Alexander Antonov <alexander.antonov@intel.com>
 Signed-off-by: Roman Sudarikov <roman.sudarikov@linux.intel.com>
 ---
- arch/x86/events/intel/uncore.c | 26 ++++++++++++++++++++++++++
- arch/x86/events/intel/uncore.h |  9 ++++++++-
- 2 files changed, 34 insertions(+), 1 deletion(-)
+ arch/x86/events/intel/uncore.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 86467f85c383..24e120289018 100644
+index 24e120289018..a05352c4fc01 100644
 --- a/arch/x86/events/intel/uncore.c
 +++ b/arch/x86/events/intel/uncore.c
-@@ -816,6 +816,15 @@ static ssize_t uncore_get_attr_cpumask(struct device *dev,
+@@ -923,6 +923,22 @@ static void uncore_types_exit(struct intel_uncore_type **types)
+ 		uncore_type_exit(*types);
+ }
  
- static DEVICE_ATTR(cpumask, S_IRUGO, uncore_get_attr_cpumask, NULL);
- 
-+static ssize_t platform_mapping_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
++static void uncore_type_attrs_compaction(struct intel_uncore_type *type)
 +{
-+	struct intel_uncore_pmu *pmu = dev_get_drvdata(dev);
++	int i, j;
++	int size = ARRAY_SIZE(type->attr_groups);
 +
-+	return snprintf(buf, PAGE_SIZE - 1, "%s\n", (char *)pmu->mapping);
++	for (i = 0, j = 0; i < size; i++) {
++		if (!type->attr_groups[i])
++			continue;
++		if (i > j) {
++			type->attr_groups[j] = type->attr_groups[i];
++			type->attr_groups[i] = NULL;
++		}
++		j++;
++	}
 +}
-+static DEVICE_ATTR_RO(platform_mapping);
 +
- static struct attribute *uncore_pmu_attrs[] = {
- 	&dev_attr_cpumask.attr,
- 	NULL,
-@@ -825,6 +834,15 @@ static const struct attribute_group uncore_pmu_attr_group = {
- 	.attrs = uncore_pmu_attrs,
- };
- 
-+static struct attribute *mapping_attrs[] = {
-+	&dev_attr_platform_mapping.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group uncore_mapping_group = {
-+	.attrs = mapping_attrs,
-+};
-+
- static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
+ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
  {
- 	int ret;
-@@ -954,6 +972,14 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
- 
- 	type->pmu_group = &uncore_pmu_attr_group;
+ 	struct intel_uncore_pmu *pmus;
+@@ -980,6 +996,12 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
+ 		if (!type->get_topology(type) && !type->set_mapping(type))
+ 			type->mapping_group = &uncore_mapping_group;
  
 +	/*
-+	 * Exposing mapping of Uncore units to corresponding Uncore PMUs
-+	 * through /sys/devices/uncore_<type>_<idx>/platform_mapping
++	 * For optional attributes, we can safely remove embedded NULL
++	 * attr_groups elements.
 +	 */
-+	if (type->get_topology && type->set_mapping)
-+		if (!type->get_topology(type) && !type->set_mapping(type))
-+			type->mapping_group = &uncore_mapping_group;
++	uncore_type_attrs_compaction(type);
 +
  	return 0;
  
  err:
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index bbfdaa720b45..31008e5cea57 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -71,13 +71,19 @@ struct intel_uncore_type {
- 	struct intel_uncore_ops *ops;
- 	struct uncore_event_desc *event_descs;
- 	struct freerunning_counters *freerunning;
--	const struct attribute_group *attr_groups[4];
-+	const struct attribute_group *attr_groups[5];
- 	struct pmu *pmu; /* for custom pmu ops */
-+	u64 *topology;
-+	/* finding Uncore units */
-+	int (*get_topology)(struct intel_uncore_type *type);
-+	/* mapping Uncore units to PMON ranges */
-+	int (*set_mapping)(struct intel_uncore_type *type);
- };
- 
- #define pmu_group attr_groups[0]
- #define format_group attr_groups[1]
- #define events_group attr_groups[2]
-+#define mapping_group attr_groups[3]
- 
- struct intel_uncore_ops {
- 	void (*init_box)(struct intel_uncore_box *);
-@@ -99,6 +105,7 @@ struct intel_uncore_pmu {
- 	int				pmu_idx;
- 	int				func_id;
- 	bool				registered;
-+	void				*mapping;
- 	atomic_t			activeboxes;
- 	struct intel_uncore_type	*type;
- 	struct intel_uncore_box		**boxes;
 -- 
 2.19.1
 
