@@ -2,169 +2,466 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE941118723
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:52:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1405118732
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:52:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfLJLvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 06:51:14 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39195 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbfLJLvO (ORCPT
+        id S1727608AbfLJLvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:51:42 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23487 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727566AbfLJLvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:51:14 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y11so19680461wrt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 03:51:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LbaT//1CIWZj7PovMzq7HWVulVly+//fBwXIOhYXXwc=;
-        b=M6jVIcNxsWiSx0G4DH486LOjGMSySbL/rK8GfSc8+rQwZYOdfM0hIU1PvKF8AaUSJI
-         08KxCjCqdIq/JO8lfp1vEcXPA+8r9hei6j7yOVE+8aMmKu6noRaoKXKOvvc5SZ+Ju61T
-         2YTFnkLeIzmo68cW5OQtM1+SsCGxYCCNnAM8vJ+0lQ4xBawva5yWqfm355BlUtoZz0MV
-         taRmME8SIp3aJTeGGoQT0gSFTfr3HfbQIGswiKPyjJSLPlO9NjNSZP/b6myOIbGE7tl+
-         IIFCeyF/y68zlzMnTPs3HgvDfym+NRmjYtz6LYhJzRt+apEluV3o9dknCq1aVVF9KH+r
-         KgBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=LbaT//1CIWZj7PovMzq7HWVulVly+//fBwXIOhYXXwc=;
-        b=QkUEX5kFSFkfmiYPE2cAwPQl+bUf+vvZDWhHWJg2sBkXoEdMsc1LaY8enbc++cE2Jx
-         v5tIoUpUlC9kmcW+vM/Mt1JsYAjq9gALAe1xYwsmTbDS9Qbmd4TDdNnlSRi9H8r/mhRN
-         toFZlNDG3uf5M9DqwJEhMiky/hL8kXGFUWuGubFPiefGRNBzdg4L2+i20UivA+GN53cF
-         EeCwJEvdLmbjqJyPBpjlZ35UUjqDRWoEFGiCn8Gj0E8bSUSTJAFEkFccF5rK4c4Uj+4e
-         tZk/2+RRuFanAVx6oRC4ANGvp8EHTxkL9VtVhcZpYEnQUavC8FpHK8eGXLWSky9K/nYV
-         h/vw==
-X-Gm-Message-State: APjAAAVDpI+uGR6W1Qsg4mUC0q/q9nqcl72YQuDwi3u1eXm8zwh30XYg
-        5d20u1WQE/5niFJJvZTo89PbyvP9ECQ=
-X-Google-Smtp-Source: APXvYqwvFc8Lxa1iFphn/dCM4UiwsnLfnObrmZlv0DxIgU35Zl75XDXezvxqCjfsSoYtNWg8MxqvKw==
-X-Received: by 2002:a5d:5345:: with SMTP id t5mr2925064wrv.0.1575978670794;
-        Tue, 10 Dec 2019 03:51:10 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:683a:fee4:9950:e8ce? ([2a01:e34:ed2f:f020:683a:fee4:9950:e8ce])
-        by smtp.googlemail.com with ESMTPSA id x26sm2773387wmc.30.2019.12.10.03.51.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2019 03:51:10 -0800 (PST)
-Subject: Re: [PATCH v3 2/2] clocksource/drivers/timer-microchip-pit64b: add
- Microchip PIT64B support
-To:     Claudiu.Beznea@microchip.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, Nicolas.Ferre@microchip.com,
-        alexandre.belloni@bootlin.com, Ludovic.Desroches@microchip.com,
-        tglx@linutronix.de
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1575470549-702-1-git-send-email-claudiu.beznea@microchip.com>
- <1575470549-702-3-git-send-email-claudiu.beznea@microchip.com>
- <19796bfc-144c-8129-2e06-07d882e5e9f5@linaro.org>
- <3e49256f-9452-cede-5fa8-443c15857e1b@microchip.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <d104a0d3-950d-3132-4bf8-d06ccb7c6f25@linaro.org>
-Date:   Tue, 10 Dec 2019 12:51:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Tue, 10 Dec 2019 06:51:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575978698;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6oQXtIewwTWaOzQzYG+ktwsVMsKeXC10T7diExx0ZM0=;
+        b=MP5zVxsfB2IGrPHdQKaR6VOCaoSPYTa27wiWdLOS25muy17/rhi3Jv/oClsHhKbvYcw579
+        SlyGa5u4xNkuZopd3lBiaDGIZyYJQvxexH3Rm6m34YuQw8y33tTlGIDGtL7VWt2pEaUuYJ
+        v+yd+pdVyDBZDIFK+KPk7pBWoptfhWA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-347-ynEH5jikOQ6OXA7g5P9YBA-1; Tue, 10 Dec 2019 06:51:35 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AC400804417;
+        Tue, 10 Dec 2019 11:51:32 +0000 (UTC)
+Received: from shalem.localdomain.com (unknown [10.36.118.144])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 80DDC5DA60;
+        Tue, 10 Dec 2019 11:51:28 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: [PATCH v10 02/10] efi: Add embedded peripheral firmware support
+Date:   Tue, 10 Dec 2019 12:51:09 +0100
+Message-Id: <20191210115117.303935-3-hdegoede@redhat.com>
+In-Reply-To: <20191210115117.303935-1-hdegoede@redhat.com>
+References: <20191210115117.303935-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <3e49256f-9452-cede-5fa8-443c15857e1b@microchip.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: ynEH5jikOQ6OXA7g5P9YBA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/2019 12:43, Claudiu.Beznea@microchip.com wrote:
-> 
-> 
-> On 09.12.2019 19:04, Daniel Lezcano wrote:
->> On 04/12/2019 15:42, Claudiu Beznea wrote:
->>> Add driver for Microchip PIT64B timer. Timer could be used in continuous
->>> mode or oneshot mode. The hardware has 2x32 bit registers for period
->>> emulating a 64 bit timer. The LSB_PR and MSB_PR registers are used to
->>> set the period value (compare value). TLSB and TMSB keeps the current
->>> value of the counter. After a compare the TLSB and TMSB register resets.
->>> The driver uses PIT64B timer for clocksource or clockevent. First
->>> requested timer would be registered as clockevent, second one would be
->>> registered as clocksource. Individual PIT64B hardware resources were used
->>> for clocksource and clockevent to be able to support high resolution
->>> timers with this hardware implementation.
->>>
->>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->>> ---
+Just like with PCI options ROMs, which we save in the setup_efi_pci*
+functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM itself
+sometimes may contain data which is useful/necessary for peripheral drivers
+to have access to.
 
-[ ... ]
+Specifically the EFI code may contain an embedded copy of firmware which
+needs to be (re)loaded into the peripheral. Normally such firmware would be
+part of linux-firmware, but in some cases this is not feasible, for 2
+reasons:
 
->> Also, the 'high' part change may be checked, like:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/tree/drivers/clocksource/timer-imx-sysctr.c?h=bleeding-edge#n51
-> 
-> The IP guarantees that the reading of counter is atomic if
-> MCHP_PIT64B_TLSBR is read first. With this, would you still want to add the
-> check you mention above?
+1) The firmware is customized for a specific use-case of the chipset / use
+with a specific hardware model, so we cannot have a single firmware file
+for the chipset. E.g. touchscreen controller firmwares are compiled
+specifically for the hardware model they are used with, as they are
+calibrated for a specific model digitizer.
 
-No, sorry I should have read the comment :/
+2) Despite repeated attempts we have failed to get permission to
+redistribute the firmware. This is especially a problem with customized
+firmwares, these get created by the chip vendor for a specific ODM and the
+copyright may partially belong with the ODM, so the chip vendor cannot
+give a blanket permission to distribute these.
 
-[ ... ]
+This commit adds support for finding peripheral firmware embedded in the
+EFI code and makes the found firmware available through the new
+efi_get_embedded_fw() function.
 
+Support for loading these firmwares through the standard firmware loading
+mechanism is added in a follow-up commit in this patch-series.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware near the end
+of start_kernel(), just before calling rest_init(), this is on purpose
+because the typical EFI_BOOT_SERVICES_CODE memory-segment is too large for
+early_memremap(), so the check must be done after mm_init(). This relies
+on EFI_BOOT_SERVICES_CODE not being free-ed until efi_free_boot_services()
+is called, which means that this will only work on x86 for now.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Reported-by: Dave Olsthoorn <dave@bewaar.me>
+Suggested-by: Peter Jones <pjones@redhat.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v9:
+- At least touchscreen_dmi.c uses the same dmi_table for its own private
+  data and the fw_desc structs, putting the fw_desc struct first in the
+  data driver_data points to so that the dmi_table can be shared with
+  efi_check_for_embedded_firmwares(). But not all entries there have
+  embedded-fw so in some cases the fw_desc is empty (zero-ed out).
+  This can lead to a possible crash because fw_desc->length now is
+  less then 8, so if the segment size is close enough to a multiple of the
+  page_size, then the memcmp to check the prefix my segfault. Crashing the
+  machine. v9 checks for and skips these empty fw_desc entries avoiding thi=
+s.
+- Rename found_fw_list to efi_embedded_fw_list and export it for use by
+  lib/test_firmware.c
+
+Changes in v8:
+- Properly deal with the (theoretical?) case of an EFI segment being
+  smaller then the fw we are looking for
+- Log a warning when efi_get_embedded_fw get called while we did not (yet)
+  check for embedded firmwares
+
+Changes in v7:
+- Split drivers/firmware/efi and drivers/base/firmware_loader changes into
+  2 patches
+- Use new, standalone, lib/crypto/sha256.c code
+
+Changes in v6:
+- Rework code to remove casts from if (prefix =3D=3D mem) comparison
+- Use SHA256 hashes instead of crc32 sums
+- Add new READING_FIRMWARE_EFI_EMBEDDED read_file_id and use it
+- Call security_kernel_read_file(NULL, READING_FIRMWARE_EFI_EMBEDDED)
+  to check if this is allowed before looking at EFI embedded fw
+- Document why we are not using the UEFI PI Firmware Volume protocol
+
+Changes in v5:
+- Rename the EFI_BOOT_SERVICES flag to EFI_PRESERVE_BS_REGIONS
+
+Changes in v4:
+- Drop note in docs about EFI_FIRMWARE_VOLUME_PROTOCOL, it is not part of
+  UEFI proper, so the EFI maintainers don't want us referring people to it
+- Use new EFI_BOOT_SERVICES flag
+- Put the new fw_get_efi_embedded_fw() function in its own fallback_efi.c
+  file which only gets built when EFI_EMBEDDED_FIRMWARE is selected
+- Define an empty stub for fw_get_efi_embedded_fw() in fallback.h hwen
+  EFI_EMBEDDED_FIRMWARE is not selected, to avoid the need for #ifdefs
+  in firmware_loader/main.c
+- Properly call security_kernel_post_read_file() on the firmware returned
+  by efi_get_embedded_fw() to make sure that we are allowed to use it
+
+Changes in v3:
+- Fix the docs using "efi-embedded-fw" as property name instead of
+  "efi-embedded-firmware"
+
+Changes in v2:
+- Rebased on driver-core/driver-core-next
+- Add documentation describing the EFI embedded firmware mechanism to:
+  Documentation/driver-api/firmware/request_firmware.rst
+- Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
+  fw support if this is set. This is an invisible option which should be
+  selected by drivers which need this
+- Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
+  from the efi-embedded-fw code, instead drivers using this are expected to
+  export a dmi_system_id array, with each entries' driver_data pointing to =
+a
+  efi_embedded_fw_desc struct and register this with the efi-embedded-fw co=
+de
+- Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
+  this avoids us messing with the EFI memmap and avoids the need to make
+  changes to efi_mem_desc_lookup()
+- Make the firmware-loader code only fallback to efi_get_embedded_fw() if t=
+he
+  passed in device has the "efi-embedded-firmware" device-property bool set
+- Skip usermodehelper fallback when "efi-embedded-firmware" device-property
+  is set
+---
+ arch/x86/platform/efi/efi.c              |   1 +
+ drivers/firmware/efi/Kconfig             |   4 +
+ drivers/firmware/efi/Makefile            |   1 +
+ drivers/firmware/efi/embedded-firmware.c | 156 +++++++++++++++++++++++
+ include/linux/efi.h                      |   6 +
+ include/linux/efi_embedded_fw.h          |  39 ++++++
+ 6 files changed, 207 insertions(+)
+ create mode 100644 drivers/firmware/efi/embedded-firmware.c
+ create mode 100644 include/linux/efi_embedded_fw.h
+
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index 3e5375ee53a0..ff1eb6dd04f1 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -1062,6 +1062,7 @@ static void __init __efi_enter_virtual_mode(void)
+ =09=09panic("EFI call to SetVirtualAddressMap() failed!");
+ =09}
+=20
++=09efi_check_for_embedded_firmwares();
+ =09efi_free_boot_services();
+=20
+ =09/*
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index bcc378c19ebe..69dffe46fc76 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -215,6 +215,10 @@ config EFI_RCI2_TABLE
+=20
+ =09  Say Y here for Dell EMC PowerEdge systems.
+=20
++config EFI_EMBEDDED_FIRMWARE
++=09bool
++=09select CRYPTO_LIB_SHA256
++
+ endmenu
+=20
+ config UEFI_CPER
+diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
+index 554d795270d9..256d6121b2b3 100644
+--- a/drivers/firmware/efi/Makefile
++++ b/drivers/firmware/efi/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_EFI_TEST)=09=09=09+=3D test/
+ obj-$(CONFIG_EFI_DEV_PATH_PARSER)=09+=3D dev-path-parser.o
+ obj-$(CONFIG_APPLE_PROPERTIES)=09=09+=3D apple-properties.o
+ obj-$(CONFIG_EFI_RCI2_TABLE)=09=09+=3D rci2-table.o
++obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)=09+=3D embedded-firmware.o
+=20
+ fake_map-y=09=09=09=09+=3D fake_mem.o
+ fake_map-$(CONFIG_X86)=09=09=09+=3D x86_fake_mem.o
+diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/ef=
+i/embedded-firmware.c
+new file mode 100644
+index 000000000000..6668ad48133f
+--- /dev/null
++++ b/drivers/firmware/efi/embedded-firmware.c
+@@ -0,0 +1,156 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Support for extracting embedded firmware for peripherals from EFI code,
++ *
++ * Copyright (c) 2018 Hans de Goede <hdegoede@redhat.com>
++ */
++
++#include <linux/dmi.h>
++#include <linux/efi.h>
++#include <linux/efi_embedded_fw.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/types.h>
++#include <linux/vmalloc.h>
++#include <crypto/sha.h>
++
++/* Exported for use by lib/test_firmware.c only */
++LIST_HEAD(efi_embedded_fw_list);
++EXPORT_SYMBOL_GPL(efi_embedded_fw_list);
++
++static bool checked_for_fw;
++
++static const struct dmi_system_id * const embedded_fw_table[] =3D {
++=09NULL
++};
++
++/*
++ * Note the efi_check_for_embedded_firmwares() code currently makes the
++ * following 2 assumptions. This may needs to be revisited if embedded fir=
+mware
++ * is found where this is not true:
++ * 1) The firmware is only found in EFI_BOOT_SERVICES_CODE memory segments
++ * 2) The firmware always starts at an offset which is a multiple of 8 byt=
+es
++ */
++static int __init efi_check_md_for_embedded_firmware(
++=09efi_memory_desc_t *md, const struct efi_embedded_fw_desc *desc)
++{
++=09const u64 prefix =3D *((u64 *)desc->prefix);
++=09struct sha256_state sctx;
++=09struct efi_embedded_fw *fw;
++=09u8 sha256[32];
++=09u64 i, size;
++=09void *map;
++
++=09size =3D md->num_pages << EFI_PAGE_SHIFT;
++=09map =3D memremap(md->phys_addr, size, MEMREMAP_WB);
++=09if (!map) {
++=09=09pr_err("Error mapping EFI mem at %#llx\n", md->phys_addr);
++=09=09return -ENOMEM;
++=09}
++
++=09for (i =3D 0; (i + desc->length) <=3D size; i +=3D 8) {
++=09=09u64 *mem =3D map + i;
++
++=09=09if (*mem !=3D prefix)
++=09=09=09continue;
++
++=09=09sha256_init(&sctx);
++=09=09sha256_update(&sctx, map + i, desc->length);
++=09=09sha256_final(&sctx, sha256);
++=09=09if (memcmp(sha256, desc->sha256, 32) =3D=3D 0)
++=09=09=09break;
++=09}
++=09if ((i + desc->length) > size) {
++=09=09memunmap(map);
++=09=09return -ENOENT;
++=09}
++
++=09pr_info("Found EFI embedded fw '%s'\n", desc->name);
++
++=09fw =3D kmalloc(sizeof(*fw), GFP_KERNEL);
++=09if (!fw) {
++=09=09memunmap(map);
++=09=09return -ENOMEM;
++=09}
++
++=09fw->data =3D kmemdup(map + i, desc->length, GFP_KERNEL);
++=09memunmap(map);
++=09if (!fw->data) {
++=09=09kfree(fw);
++=09=09return -ENOMEM;
++=09}
++
++=09fw->name =3D desc->name;
++=09fw->length =3D desc->length;
++=09list_add(&fw->list, &efi_embedded_fw_list);
++
++=09return 0;
++}
++
++void __init efi_check_for_embedded_firmwares(void)
++{
++=09const struct efi_embedded_fw_desc *fw_desc;
++=09const struct dmi_system_id *dmi_id;
++=09efi_memory_desc_t *md;
++=09int i, r;
++
++=09for (i =3D 0; embedded_fw_table[i]; i++) {
++=09=09dmi_id =3D dmi_first_match(embedded_fw_table[i]);
++=09=09if (!dmi_id)
++=09=09=09continue;
++
++=09=09fw_desc =3D dmi_id->driver_data;
++
++=09=09/*
++=09=09 * In some drivers the struct driver_data contains may contain
++=09=09 * other driver specific data after the fw_desc struct; and
++=09=09 * the fw_desc struct itself may be empty, skip these.
++=09=09 */
++=09=09if (!fw_desc->name)
++=09=09=09continue;
++
++=09=09for_each_efi_memory_desc(md) {
++=09=09=09if (md->type !=3D EFI_BOOT_SERVICES_CODE)
++=09=09=09=09continue;
++
++=09=09=09r =3D efi_check_md_for_embedded_firmware(md, fw_desc);
++=09=09=09if (r =3D=3D 0)
++=09=09=09=09break;
++=09=09}
++=09}
++
++=09checked_for_fw =3D true;
++}
++
++int efi_get_embedded_fw(const char *name, void **data, size_t *size)
++{
++=09struct efi_embedded_fw *iter, *fw =3D NULL;
++=09void *buf =3D *data;
++
++=09if (!checked_for_fw) {
++=09=09pr_warn("Warning %s called while we did not check for embedded fw\n"=
+,
++=09=09=09__func__);
++=09=09return -ENOENT;
++=09}
++
++=09list_for_each_entry(iter, &efi_embedded_fw_list, list) {
++=09=09if (strcmp(name, iter->name) =3D=3D 0) {
++=09=09=09fw =3D iter;
++=09=09=09break;
++=09=09}
++=09}
++
++=09if (!fw)
++=09=09return -ENOENT;
++
++=09buf =3D vmalloc(fw->length);
++=09if (!buf)
++=09=09return -ENOMEM;
++
++=09memcpy(buf, fw->data, fw->length);
++=09*size =3D fw->length;
++=09*data =3D buf;
++
++=09return 0;
++}
++EXPORT_SYMBOL_GPL(efi_get_embedded_fw);
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index c364106250e9..28e363be39ea 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1660,6 +1660,12 @@ static inline void
+ efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg) { }
+ #endif
+=20
++#ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
++void efi_check_for_embedded_firmwares(void);
++#else
++static inline void efi_check_for_embedded_firmwares(void) { }
++#endif
++
+ efi_status_t efi_random_get_seed(efi_system_table_t *sys_table_arg);
+=20
+ void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
+diff --git a/include/linux/efi_embedded_fw.h b/include/linux/efi_embedded_f=
+w.h
+new file mode 100644
+index 000000000000..5a8ae662911b
+--- /dev/null
++++ b/include/linux/efi_embedded_fw.h
+@@ -0,0 +1,39 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_EFI_EMBEDDED_FW_H
++#define _LINUX_EFI_EMBEDDED_FW_H
++
++#include <linux/list.h>
++#include <linux/mod_devicetable.h>
++
++/*
++ * This struct and efi_embedded_fw_list are private to the efi-embedded fw
++ * implementation they are in this header for use by lib/test_firmware.c o=
+nly!
++ */
++struct efi_embedded_fw {
++=09struct list_head list;
++=09const char *name;
++=09void *data;
++=09size_t length;
++};
++
++extern struct list_head efi_embedded_fw_list;
++
++/**
++ * struct efi_embedded_fw_desc - This struct is used by the EFI embedded-f=
+w
++ *                               code to search for embedded firmwares.
++ *
++ * @name:   Name to register the firmware with if found
++ * @prefix: First 8 bytes of the firmware
++ * @length: Length of the firmware in bytes including prefix
++ * @sha256: SHA256 of the firmware
++ */
++struct efi_embedded_fw_desc {
++=09const char *name;
++=09u8 prefix[8];
++=09u32 length;
++=09u8 sha256[32];
++};
++
++int efi_get_embedded_fw(const char *name, void **dat, size_t *sz);
++
++#endif
+--=20
+2.23.0
 
