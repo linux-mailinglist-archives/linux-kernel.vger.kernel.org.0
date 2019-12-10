@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77E8D1199FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:53:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB4C1199DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:52:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729547AbfLJVse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:48:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56640 "EHLO mail.kernel.org"
+        id S1728004AbfLJVI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:08:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727977AbfLJVIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:08:53 -0500
+        id S1727480AbfLJVIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:08:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A26C124681;
-        Tue, 10 Dec 2019 21:08:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFA85246A0;
+        Tue, 10 Dec 2019 21:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576012132;
-        bh=fDlCz48UzNqMTToEOtxJXxL6opyU7MqwTF3ydeStP4E=;
+        s=default; t=1576012133;
+        bh=wFmrpTpKGuWOOHnH6tF+vDWSqyPuVJlOwUZXMTsIoVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v3/nxT3fD2dJCd9ZTn0ZJAvMBdfSiLsweYiMpQuSZl62BedSFkJn9L1ybXqux/vaL
-         IZ0bDtf5llnQRbQjiKE9STS/QFyuf0LTSKPmwMAjgJpSnN93fZGPzEYk5l6WxozJ9s
-         TBTodpBGf4ettpkbcqwAR5EGAKxD1VQD/Na8ci8s=
+        b=YONWwQ90K/ZZCxZQYifYX+kFwj+1PJMdLPMRGLF8hOkgmrsaKZPmyodC56IoEmSw5
+         hDGQLxpH0pDe/zmZuas9sK860PEe7uchfd7ILP5ofLMi6shRWqcR4jHxmuGUVuy7Yh
+         WwmeCVWQZJyh67IFvPP0E+2spa147DWDpAPBKpt0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Galiffi <david.galiffi@amd.com>, Jun Lei <Jun.Lei@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 100/350] drm/amd/display: Fix dongle_caps containing stale information.
-Date:   Tue, 10 Dec 2019 16:03:25 -0500
-Message-Id: <20191210210735.9077-61-sashal@kernel.org>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 101/350] extcon: sm5502: Reset registers during initialization
+Date:   Tue, 10 Dec 2019 16:03:26 -0500
+Message-Id: <20191210210735.9077-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
 References: <20191210210735.9077-1-sashal@kernel.org>
@@ -45,63 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Galiffi <david.galiffi@amd.com>
+From: Stephan Gerhold <stephan@gerhold.net>
 
-[ Upstream commit dd998291dbe92106d8c4a7581c409b356928d711 ]
+[ Upstream commit 6942635032cfd3e003e980d2dfa4e6323a3ce145 ]
 
-[WHY]
+On some devices (e.g. Samsung Galaxy A5 (2015)), the bootloader
+seems to keep interrupts enabled for SM5502 when booting Linux.
+Changing the cable state (i.e. plugging in a cable) - until the driver
+is loaded - will therefore produce an interrupt that is never read.
 
-During detection:
-function: get_active_converter_info populates link->dpcd_caps.dongle_caps
-only when dpcd_rev >= DPCD_REV_11 and DWN_STRM_PORTX_TYPE is
-DOWN_STREAM_DETAILED_HDMI or DOWN_STREAM_DETAILED_DP_PLUS_PLUS.
-Otherwise, it is not cleared, and stale information remains.
+In this situation, the cable state will be stuck forever on the
+initial state because SM5502 stops sending interrupts.
+This can be avoided by clearing those pending interrupts after
+the driver has been loaded.
 
-During mode validation:
-function: dp_active_dongle_validate_timing reads
-link->dpcd_caps.dongle_caps->dongle_type to determine the maximum
-pixel clock to support. This information is now stale and no longer
-valid.
+One way to do this is to reset all registers to default state
+by writing to SM5502_REG_RESET. This ensures that we start from
+a clean state, with all interrupts disabled.
 
-[HOW]
-dp_active_dongle_validate_timing should be using
-link->dpcd_caps->dongle_type instead.
-
-Signed-off-by: David Galiffi <david.galiffi@amd.com>
-Reviewed-by: Jun Lei <Jun.Lei@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link.c    | 2 +-
- drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/extcon/extcon-sm5502.c | 4 ++++
+ drivers/extcon/extcon-sm5502.h | 2 ++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-index de1b61595ffbf..efc1d30544bb6 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-@@ -2219,7 +2219,7 @@ static bool dp_active_dongle_validate_timing(
- 		break;
- 	}
+diff --git a/drivers/extcon/extcon-sm5502.c b/drivers/extcon/extcon-sm5502.c
+index dc43847ad2b08..b3d93baf4fc58 100644
+--- a/drivers/extcon/extcon-sm5502.c
++++ b/drivers/extcon/extcon-sm5502.c
+@@ -65,6 +65,10 @@ struct sm5502_muic_info {
+ /* Default value of SM5502 register to bring up MUIC device. */
+ static struct reg_data sm5502_reg_data[] = {
+ 	{
++		.reg = SM5502_REG_RESET,
++		.val = SM5502_REG_RESET_MASK,
++		.invert = true,
++	}, {
+ 		.reg = SM5502_REG_CONTROL,
+ 		.val = SM5502_REG_CONTROL_MASK_INT_MASK,
+ 		.invert = false,
+diff --git a/drivers/extcon/extcon-sm5502.h b/drivers/extcon/extcon-sm5502.h
+index 9dbb634d213b7..ce1f1ec310c49 100644
+--- a/drivers/extcon/extcon-sm5502.h
++++ b/drivers/extcon/extcon-sm5502.h
+@@ -237,6 +237,8 @@ enum sm5502_reg {
+ #define DM_DP_SWITCH_UART			((DM_DP_CON_SWITCH_UART <<SM5502_REG_MANUAL_SW1_DP_SHIFT) \
+ 						| (DM_DP_CON_SWITCH_UART <<SM5502_REG_MANUAL_SW1_DM_SHIFT))
  
--	if (dongle_caps->dongle_type != DISPLAY_DONGLE_DP_HDMI_CONVERTER ||
-+	if (dpcd_caps->dongle_type != DISPLAY_DONGLE_DP_HDMI_CONVERTER ||
- 		dongle_caps->extendedCapValid == false)
- 		return true;
- 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-index 9e261dbf2e493..5a583707d198a 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-@@ -2545,6 +2545,7 @@ static void get_active_converter_info(
- 	uint8_t data, struct dc_link *link)
- {
- 	union dp_downstream_port_present ds_port = { .byte = data };
-+	memset(&link->dpcd_caps.dongle_caps, 0, sizeof(link->dpcd_caps.dongle_caps));
- 
- 	/* decode converter info*/
- 	if (!ds_port.fields.PORT_PRESENT) {
++#define SM5502_REG_RESET_MASK			(0x1)
++
+ /* SM5502 Interrupts */
+ enum sm5502_irq {
+ 	/* INT1 */
 -- 
 2.20.1
 
