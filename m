@@ -2,201 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A22117EA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:02:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5BE9117EB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:05:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfLJECI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 23:02:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727047AbfLJECD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 23:02:03 -0500
-Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0BE824654;
-        Tue, 10 Dec 2019 04:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575950522;
-        bh=6VAQ1U2rnpuLdZeDT9xVjPxKpUozILPc+bcz3+w2kEA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VLq4IfVVuhI1DOVpl+TvFCR4PT8XBDiY0ep5Vwgk89BI8/pKoyTUkE9HuEUiZ5Cfo
-         EGPKH7XI26esWk/htI3rjpYE4j4BdFjocrBpWegscALQ0OdRe+jBuXj8k+Aulo5c04
-         tJBKbCcq0ov7VKJU8NZLw1nmD2ggvcwP6eCkb8qI=
-From:   paulmck@kernel.org
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 10/10] rcu: Enable tick for nohz_full CPUs slow to provide expedited QS
-Date:   Mon,  9 Dec 2019 20:01:54 -0800
-Message-Id: <20191210040154.2498-10-paulmck@kernel.org>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20191210040122.GA2419@paulmck-ThinkPad-P72>
-References: <20191210040122.GA2419@paulmck-ThinkPad-P72>
+        id S1726860AbfLJEFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 23:05:50 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58226 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726619AbfLJEFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 23:05:49 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 56E37E770E1C85B03A92;
+        Tue, 10 Dec 2019 12:05:47 +0800 (CST)
+Received: from [127.0.0.1] (10.63.139.185) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 10 Dec 2019
+ 12:05:39 +0800
+Subject: Re: [PATCH] crypto: hisilicon - still no need to check return value
+ of debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Xu Zaibo <xuzaibo@huawei.com>
+References: <20191209152151.GA1282293@kroah.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Zhou Wang <wangzhou1@hisilicon.com>
+Message-ID: <5DEF1993.8020307@hisilicon.com>
+Date:   Tue, 10 Dec 2019 12:05:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <20191209152151.GA1282293@kroah.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.63.139.185]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+On 2019/12/9 23:21, Greg Kroah-Hartman wrote:
+> Just like in 4a97bfc79619 ("crypto: hisilicon - no need to check return
+> value of debugfs_create functions"), there still is no need to ever
+> check the return value.  The function can work or not, but the code
+> logic should never do something different based on this.
 
-An expedited grace period can be stalled by a nohz_full CPU looping
-in kernel context.  This possibility is currently handled by some
-carefully crafted checks in rcu_read_unlock_special() that enlist help
-from ksoftirqd when permitted by the scheduler.  However, it is exactly
-these checks that require the scheduler avoid holding any of its rq or
-pi locks across rcu_read_unlock() without also having held them across
-the entire RCU read-side critical section.
+Thanks for fix this, +To Zaibo Xu who is the maintainer of this module :)
 
-It would therefore be very nice if expedited grace periods could
-handle nohz_full CPUs looping in kernel context without such checks.
-This commit therefore adds code to the expedited grace period's wait
-and cleanup code that forces the scheduler-clock interrupt on for CPUs
-that fail to quickly supply a quiescent state.  "Quickly" is currently
-a hard-coded single-jiffy delay.
+Best,
+Zhou
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- include/linux/tick.h  |  5 ++++-
- kernel/rcu/tree.h     |  1 +
- kernel/rcu/tree_exp.h | 52 ++++++++++++++++++++++++++++++++++++++++++++-------
- 3 files changed, 50 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index 7896f792d3..7340613 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -109,8 +109,10 @@ enum tick_dep_bits {
- 	TICK_DEP_BIT_PERF_EVENTS	= 1,
- 	TICK_DEP_BIT_SCHED		= 2,
- 	TICK_DEP_BIT_CLOCK_UNSTABLE	= 3,
--	TICK_DEP_BIT_RCU		= 4
-+	TICK_DEP_BIT_RCU		= 4,
-+	TICK_DEP_BIT_RCU_EXP		= 5
- };
-+#define TICK_DEP_BIT_MAX TICK_DEP_BIT_RCU_EXP
- 
- #define TICK_DEP_MASK_NONE		0
- #define TICK_DEP_MASK_POSIX_TIMER	(1 << TICK_DEP_BIT_POSIX_TIMER)
-@@ -118,6 +120,7 @@ enum tick_dep_bits {
- #define TICK_DEP_MASK_SCHED		(1 << TICK_DEP_BIT_SCHED)
- #define TICK_DEP_MASK_CLOCK_UNSTABLE	(1 << TICK_DEP_BIT_CLOCK_UNSTABLE)
- #define TICK_DEP_MASK_RCU		(1 << TICK_DEP_BIT_RCU)
-+#define TICK_DEP_MASK_RCU_EXP		(1 << TICK_DEP_BIT_RCU_EXP)
- 
- #ifdef CONFIG_NO_HZ_COMMON
- extern bool tick_nohz_enabled;
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 055c317..f9253ed 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -182,6 +182,7 @@ struct rcu_data {
- 	bool rcu_need_heavy_qs;		/* GP old, so heavy quiescent state! */
- 	bool rcu_urgent_qs;		/* GP old need light quiescent state. */
- 	bool rcu_forced_tick;		/* Forced tick to provide QS. */
-+	bool rcu_forced_tick_exp;	/*   ... provide QS to expedited GP. */
- #ifdef CONFIG_RCU_FAST_NO_HZ
- 	bool all_lazy;			/* All CPU's CBs lazy at idle start? */
- 	unsigned long last_accelerate;	/* Last jiffy CBs were accelerated. */
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 081a179..30b2a02 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -230,7 +230,9 @@ static void __maybe_unused rcu_report_exp_rnp(struct rcu_node *rnp, bool wake)
- static void rcu_report_exp_cpu_mult(struct rcu_node *rnp,
- 				    unsigned long mask, bool wake)
- {
-+	int cpu;
- 	unsigned long flags;
-+	struct rcu_data *rdp;
- 
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 	if (!(rnp->expmask & mask)) {
-@@ -238,6 +240,13 @@ static void rcu_report_exp_cpu_mult(struct rcu_node *rnp,
- 		return;
- 	}
- 	WRITE_ONCE(rnp->expmask, rnp->expmask & ~mask);
-+	for_each_leaf_node_cpu_mask(rnp, cpu, mask) {
-+		rdp = per_cpu_ptr(&rcu_data, cpu);
-+		if (!IS_ENABLED(CONFIG_NO_HZ_FULL) || !rdp->rcu_forced_tick_exp)
-+			continue;
-+		rdp->rcu_forced_tick_exp = false;
-+		tick_dep_clear_cpu(cpu, TICK_DEP_BIT_RCU_EXP);
-+	}
- 	__rcu_report_exp_rnp(rnp, wake, flags); /* Releases rnp->lock. */
- }
- 
-@@ -450,6 +459,26 @@ static void sync_rcu_exp_select_cpus(void)
- }
- 
- /*
-+ * Wait for the expedited grace period to elapse, within time limit.
-+ * If the time limit is exceeded without the grace period elapsing,
-+ * return false, otherwise return true.
-+ */
-+static bool synchronize_rcu_expedited_wait_once(long tlimit)
-+{
-+	int t;
-+	struct rcu_node *rnp_root = rcu_get_root();
-+
-+	t = swait_event_timeout_exclusive(rcu_state.expedited_wq,
-+					  sync_rcu_exp_done_unlocked(rnp_root),
-+					  tlimit);
-+	// Workqueues should not be signaled.
-+	if (t > 0 || sync_rcu_exp_done_unlocked(rnp_root))
-+		return true;
-+	WARN_ON(t < 0);  /* workqueues should not be signaled. */
-+	return false;
-+}
-+
-+/*
-  * Wait for the expedited grace period to elapse, issuing any needed
-  * RCU CPU stall warnings along the way.
-  */
-@@ -460,22 +489,31 @@ static void synchronize_rcu_expedited_wait(void)
- 	unsigned long jiffies_start;
- 	unsigned long mask;
- 	int ndetected;
-+	struct rcu_data *rdp;
- 	struct rcu_node *rnp;
- 	struct rcu_node *rnp_root = rcu_get_root();
--	int ret;
- 
- 	trace_rcu_exp_grace_period(rcu_state.name, rcu_exp_gp_seq_endval(), TPS("startwait"));
- 	jiffies_stall = rcu_jiffies_till_stall_check();
- 	jiffies_start = jiffies;
-+	if (IS_ENABLED(CONFIG_NO_HZ_FULL)) {
-+		if (synchronize_rcu_expedited_wait_once(1))
-+			return;
-+		rcu_for_each_leaf_node(rnp) {
-+			for_each_leaf_node_cpu_mask(rnp, cpu, rnp->expmask) {
-+				rdp = per_cpu_ptr(&rcu_data, cpu);
-+				if (rdp->rcu_forced_tick_exp)
-+					continue;
-+				rdp->rcu_forced_tick_exp = true;
-+				tick_dep_set_cpu(cpu, TICK_DEP_BIT_RCU_EXP);
-+			}
-+		}
-+		WARN_ON_ONCE(1);
-+	}
- 
- 	for (;;) {
--		ret = swait_event_timeout_exclusive(
--				rcu_state.expedited_wq,
--				sync_rcu_exp_done_unlocked(rnp_root),
--				jiffies_stall);
--		if (ret > 0 || sync_rcu_exp_done_unlocked(rnp_root))
-+		if (synchronize_rcu_expedited_wait_once(jiffies_stall))
- 			return;
--		WARN_ON(ret < 0);  /* workqueues should not be signaled. */
- 		if (rcu_cpu_stall_suppress)
- 			continue;
- 		panic_on_rcu_stall();
--- 
-2.9.5
+> 
+> Cc: Zhou Wang <wangzhou1@hisilicon.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/crypto/hisilicon/hpre/hpre_main.c | 28 +++++------------------
+>  1 file changed, 6 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
+> index 34e0424410bf..711f5d18b641 100644
+> --- a/drivers/crypto/hisilicon/hpre/hpre_main.c
+> +++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
+> @@ -557,7 +557,7 @@ static const struct file_operations hpre_ctrl_debug_fops = {
+>  static int hpre_create_debugfs_file(struct hpre_debug *dbg, struct dentry *dir,
+>  				    enum hpre_ctrl_dbgfs_file type, int indx)
+>  {
+> -	struct dentry *tmp, *file_dir;
+> +	struct dentry *file_dir;
+>  
+>  	if (dir)
+>  		file_dir = dir;
+> @@ -571,10 +571,8 @@ static int hpre_create_debugfs_file(struct hpre_debug *dbg, struct dentry *dir,
+>  	dbg->files[indx].debug = dbg;
+>  	dbg->files[indx].type = type;
+>  	dbg->files[indx].index = indx;
+> -	tmp = debugfs_create_file(hpre_debug_file_name[type], 0600, file_dir,
+> -				  dbg->files + indx, &hpre_ctrl_debug_fops);
+> -	if (!tmp)
+> -		return -ENOENT;
+> +	debugfs_create_file(hpre_debug_file_name[type], 0600, file_dir,
+> +			    dbg->files + indx, &hpre_ctrl_debug_fops);
+>  
+>  	return 0;
+>  }
+> @@ -585,7 +583,6 @@ static int hpre_pf_comm_regs_debugfs_init(struct hpre_debug *debug)
+>  	struct hisi_qm *qm = &hpre->qm;
+>  	struct device *dev = &qm->pdev->dev;
+>  	struct debugfs_regset32 *regset;
+> -	struct dentry *tmp;
+>  
+>  	regset = devm_kzalloc(dev, sizeof(*regset), GFP_KERNEL);
+>  	if (!regset)
+> @@ -595,10 +592,7 @@ static int hpre_pf_comm_regs_debugfs_init(struct hpre_debug *debug)
+>  	regset->nregs = ARRAY_SIZE(hpre_com_dfx_regs);
+>  	regset->base = qm->io_base;
+>  
+> -	tmp = debugfs_create_regset32("regs", 0444,  debug->debug_root, regset);
+> -	if (!tmp)
+> -		return -ENOENT;
+> -
+> +	debugfs_create_regset32("regs", 0444,  debug->debug_root, regset);
+>  	return 0;
+>  }
+>  
+> @@ -609,15 +603,12 @@ static int hpre_cluster_debugfs_init(struct hpre_debug *debug)
+>  	struct device *dev = &qm->pdev->dev;
+>  	char buf[HPRE_DBGFS_VAL_MAX_LEN];
+>  	struct debugfs_regset32 *regset;
+> -	struct dentry *tmp_d, *tmp;
+> +	struct dentry *tmp_d;
+>  	int i, ret;
+>  
+>  	for (i = 0; i < HPRE_CLUSTERS_NUM; i++) {
+>  		sprintf(buf, "cluster%d", i);
+> -
+>  		tmp_d = debugfs_create_dir(buf, debug->debug_root);
+> -		if (!tmp_d)
+> -			return -ENOENT;
+>  
+>  		regset = devm_kzalloc(dev, sizeof(*regset), GFP_KERNEL);
+>  		if (!regset)
+> @@ -627,9 +618,7 @@ static int hpre_cluster_debugfs_init(struct hpre_debug *debug)
+>  		regset->nregs = ARRAY_SIZE(hpre_cluster_dfx_regs);
+>  		regset->base = qm->io_base + hpre_cluster_offsets[i];
+>  
+> -		tmp = debugfs_create_regset32("regs", 0444, tmp_d, regset);
+> -		if (!tmp)
+> -			return -ENOENT;
+> +		debugfs_create_regset32("regs", 0444, tmp_d, regset);
+>  		ret = hpre_create_debugfs_file(debug, tmp_d, HPRE_CLUSTER_CTRL,
+>  					       i + HPRE_CLUSTER_CTRL);
+>  		if (ret)
+> @@ -668,9 +657,6 @@ static int hpre_debugfs_init(struct hpre *hpre)
+>  	int ret;
+>  
+>  	dir = debugfs_create_dir(dev_name(dev), hpre_debugfs_root);
+> -	if (!dir)
+> -		return -ENOENT;
+> -
+>  	qm->debug.debug_root = dir;
+>  
+>  	ret = hisi_qm_debug_init(qm);
+> @@ -1014,8 +1000,6 @@ static void hpre_register_debugfs(void)
+>  		return;
+>  
+>  	hpre_debugfs_root = debugfs_create_dir(hpre_name, NULL);
+> -	if (IS_ERR_OR_NULL(hpre_debugfs_root))
+> -		hpre_debugfs_root = NULL;
+>  }
+>  
+>  static void hpre_unregister_debugfs(void)
+> 
 
