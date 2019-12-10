@@ -2,185 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E00A1118DF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 17:42:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25916118E00
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 17:43:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbfLJQmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 11:42:39 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:36668 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727836AbfLJQm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 11:42:26 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1ieiad-0005DL-0G; Tue, 10 Dec 2019 09:42:24 -0700
-To:     Jens Axboe <axboe@kernel.dk>,
-        kernel test robot <rong.a.chen@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        lkp@lists.01.org
-References: <20191208154020.GK32275@shao2-debian>
- <ee156e51-bede-9c58-b48b-31aac65976ea@kernel.dk>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <03060cee-4820-6706-03e4-11d5ccf3363f@deltatee.com>
-Date:   Tue, 10 Dec 2019 09:42:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727764AbfLJQnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 11:43:03 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:48999 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727535AbfLJQnC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 11:43:02 -0500
+X-Originating-IP: 90.182.112.136
+Received: from localhost (136.112.broadband15.iol.cz [90.182.112.136])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id CF5E640012;
+        Tue, 10 Dec 2019 16:42:58 +0000 (UTC)
+Date:   Tue, 10 Dec 2019 17:42:56 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rtc@vger.kernel.org, srv_heupstream@mediatek.com,
+        Ran Bi <ran.bi@mediatek.com>
+Subject: Re: [PATCH v6 6/6] rtc: Add support for the MediaTek MT6358 RTC
+Message-ID: <20191210164256.GU1463890@piout.net>
+References: <1575639183-17606-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+ <1575639183-17606-7-git-send-email-hsin-hsiung.wang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <ee156e51-bede-9c58-b48b-31aac65976ea@kernel.dk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: lkp@lists.01.org, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, hch@lst.de, rong.a.chen@intel.com, axboe@kernel.dk
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [block] 48d9b0d431: BUG:kernel_NULL_pointer_dereference,address
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1575639183-17606-7-git-send-email-hsin-hsiung.wang@mediatek.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-12-09 10:06 p.m., Jens Axboe wrote:
-> Logan,
+On 06/12/2019 21:33:03+0800, Hsin-Hsiung Wang wrote:
+> From: Ran Bi <ran.bi@mediatek.com>
 > 
-> Are you looking into this one?
-
-Yes, I have a patch I'll send out shortly.
-
-Logan
-
+> This add support for the MediaTek MT6358 RTC. Driver using
+> compatible data to store different RTC_WRTGR address offset.
 > 
-> On 12/8/19 8:40 AM, kernel test robot wrote:
->> FYI, we noticed the following commit (built with gcc-7):
->>
->> commit: 48d9b0d43105e0da2b7c135eedd24e51234fb5e4 ("block: account statistics for passthrough requests")
->> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->>
->> in testcase: rcuperf
->> with following parameters:
->>
->> 	runtime: 300s
->> 	perf_type: tasks
->>
->>
->>
->> on test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
->>
->> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
->>
->>
->> +-------------------------------------------------------+------------+------------+
->> |                                                       | 8148f0b564 | 48d9b0d431 |
->> +-------------------------------------------------------+------------+------------+
->> | boot_successes                                        | 8          | 0          |
->> | boot_failures                                         | 0          | 8          |
->> | BUG:kernel_NULL_pointer_dereference,address           | 0          | 8          |
->> | Oops:#[##]                                            | 0          | 8          |
->> | EIP:blk_account_io_completion                         | 0          | 8          |
->> | EIP:ide_output_data                                   | 0          | 8          |
->> | Kernel_panic-not_syncing:Fatal_exception_in_interrupt | 0          | 8          |
->> +-------------------------------------------------------+------------+------------+
->>
->>
->> If you fix the issue, kindly add following tag
->> Reported-by: kernel test robot <rong.a.chen@intel.com>
->>
->>
->> [   14.392111] BUG: kernel NULL pointer dereference, address: 000002ac
->> [   14.392607] #PF: supervisor write access in kernel mode
->> [   14.392607] #PF: error_code(0x0002) - not-present page
->> [   14.392607] *pde = 00000000 
->> [   14.392607] Oops: 0002 [#1]
->> [   14.392607] CPU: 0 PID: 237 Comm: kworker/0:1H Not tainted 5.4.0-rc2-00011-g48d9b0d43105e #1
->> [   14.392607] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
->> [   14.392607] Workqueue: kblockd drive_rq_insert_work
->> [   14.392607] EIP: blk_account_io_completion+0x7a/0xf0
->> [   14.392607] Code: 89 54 24 08 31 d2 89 4c 24 04 31 c9 c7 04 24 02 00 00 00 c1 ee 09 e8 f5 21 a6 ff e8 70 5c a7 ff 8b 53 60 8d 04 bd 00 00 00 00 <01> b4 02 ac 02 00 00 8b 9a 88 02 00 00 85 db 74 11 85 d2 74 51 8b
->> [   14.392607] EAX: 00000000 EBX: f5b80000 ECX: 00000000 EDX: 00000000
->> [   14.392607] ESI: 00000000 EDI: 00000000 EBP: f3031e70 ESP: f3031e54
->> [   14.392607] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010046
->> [   14.392607] CR0: 80050033 CR2: 000002ac CR3: 03c25000 CR4: 000406d0
->> [   14.392607] Call Trace:
->> [   14.392607]  <IRQ>
->> [   14.392607]  ? blk_account_io_completion+0x38/0xf0
->> [   14.392607]  blk_update_request+0x85/0x420
->> [   14.392607]  ? _raw_spin_unlock_irqrestore+0x4f/0x60
->> [   14.392607]  ? trace_hardirqs_off+0xca/0xe0
->> [   14.392607]  ? _raw_spin_unlock_irqrestore+0x4f/0x60
->> [   14.392607]  ? complete+0x41/0x50
->> [   14.392607]  ide_end_rq+0x38/0xa0
->> [   14.392607]  ide_complete_rq+0x3d/0x70
->> [   14.392607]  cdrom_newpc_intr+0x258/0xba0
->> [   14.392607]  ? find_held_lock+0x2f/0xa0
->> [   14.392607]  ? cdrom_analyze_sense_data+0x1b0/0x1b0
->> [   14.392607]  ide_intr+0x135/0x250
->> [   14.392607]  __handle_irq_event_percpu+0x3e/0x250
->> [   14.392607]  handle_irq_event_percpu+0x1f/0x50
->> [   14.392607]  handle_irq_event+0x32/0x60
->> [   14.392607]  ? handle_fasteoi_irq+0x160/0x160
->> [   14.392607]  handle_level_irq+0x6c/0x110
->> [   14.392607]  handle_irq+0x72/0xa0
->> [   14.392607]  </IRQ>
->> [   14.392607]  do_IRQ+0x45/0xad
->> [   14.392607]  common_interrupt+0x115/0x11c
->> [   14.392607] EIP: ide_output_data+0xb7/0x140
->> [   14.392607] Code: 00 00 00 0f b7 03 66 89 07 83 c3 02 39 d3 75 f3 83 c4 14 5b 5e 5f 5d c3 8d 76 00 8b 4d ec d1 e9 80 7d f0 00 75 15 89 de 89 fa <f3> 66 6f 83 c4 14 5b 5e 5f 5d c3 8d b6 00 00 00 00 85 c9 74 ee 49
->> [   14.392607] EAX: 00000000 EBX: f5b800ac ECX: 00000000 EDX: 00000170
->> [   14.392607] ESI: f5b800b8 EDI: 00000170 EBP: f6a57dac ESP: f6a57d8c
->> [   14.392607] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010246
->> [   14.392607]  ? print_usage_bug+0x9b/0x1f0
->> [   14.392607]  ? ide_output_data+0xb7/0x140
->> [   14.392607]  ? ide_set_handler+0x42/0x50
->> [   14.392607]  ide_transfer_pc+0x11c/0x2a0
->> [   14.392607]  ? ide_check_atapi_device+0x130/0x130
->> [   14.392607]  ? ide_pc_intr+0x3d0/0x3d0
->> [   14.392607]  ide_issue_pc+0x160/0x250
->> [   14.392607]  ? ide_check_atapi_device+0x130/0x130
->> [   14.392607]  ide_cd_do_request+0x18e/0x3d0
->> [   14.392607]  ide_issue_rq+0x13a/0x6a0
->> [   14.392607]  ? _raw_spin_unlock_irq+0x22/0x30
->> [   14.392607]  ? lockdep_hardirqs_on+0xe4/0x190
->> [   14.392607]  ? _raw_spin_unlock_irq+0x22/0x30
->> [   14.392607]  ? trace_hardirqs_on+0x38/0xe0
->> [   14.392607]  ? drive_rq_insert_work+0x7a/0xf0
->> [   14.392607]  drive_rq_insert_work+0x8a/0xf0
->> [   14.392607]  process_one_work+0x207/0x500
->> [   14.392607]  ? process_one_work+0x16b/0x500
->> [   14.392607]  worker_thread+0x39/0x400
->> [   14.392607]  kthread+0xee/0x110
->> [   14.392607]  ? process_one_work+0x500/0x500
->> [   14.392607]  ? kthread_create_on_node+0x30/0x30
->> [   14.392607]  ret_from_fork+0x1e/0x28
->> [   14.392607] Modules linked in:
->> [   14.392607] CR2: 00000000000002ac
->> [   14.392607] ---[ end trace 2efe0b990b41cd59 ]---
->>
->>
->> To reproduce:
->>
->>         # build kernel
->> 	cd linux
->> 	cp config-5.4.0-rc2-00011-g48d9b0d43105e .config
->> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=i386 olddefconfig prepare modules_prepare bzImage
->>
->>         git clone https://github.com/intel/lkp-tests.git
->>         cd lkp-tests
->>         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
->>
->>
->>
->> Thanks,
->> Rong Chen
->>
+> Signed-off-by: Ran Bi <ran.bi@mediatek.com>
+> Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+> ---
+>  drivers/rtc/rtc-mt6397.c | 38 ++++++++++++++++++++++++++++++--------
+>  1 file changed, 30 insertions(+), 8 deletions(-)
 > 
-> 
+> diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+> index b216bdc..631e275 100644
+> --- a/drivers/rtc/rtc-mt6397.c
+> +++ b/drivers/rtc/rtc-mt6397.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/irqdomain.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_device.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/io.h>
+>  #include <linux/mfd/mt6397/core.h>
+> @@ -19,7 +20,8 @@
+>  #define RTC_BBPU		0x0000
+>  #define RTC_BBPU_CBUSY		BIT(6)
+>  
+> -#define RTC_WRTGR		0x003c
+> +#define RTC_WRTGR_MT6358	0x3a
+> +#define RTC_WRTGR_MT6397	0x3c
+>  
+>  #define RTC_IRQ_STA		0x0002
+>  #define RTC_IRQ_STA_AL		BIT(0)
+> @@ -63,6 +65,10 @@
+>  #define RTC_NUM_YEARS		128
+>  #define RTC_MIN_YEAR_OFFSET	(RTC_MIN_YEAR - RTC_BASE_YEAR)
+>  
+> +struct mtk_rtc_data {
+> +	u32			wrtgr;
+> +};
+> +
+>  struct mt6397_rtc {
+>  	struct device		*dev;
+>  	struct rtc_device	*rtc_dev;
+> @@ -70,15 +76,34 @@ struct mt6397_rtc {
+>  	struct regmap		*regmap;
+>  	int			irq;
+>  	u32			addr_base;
+> +	const struct mtk_rtc_data *data;
+> +};
+> +
+> +static const struct mtk_rtc_data mt6358_rtc_data = {
+> +	.wrtgr = RTC_WRTGR_MT6358,
+>  };
+>  
+> +static const struct mtk_rtc_data mt6397_rtc_data = {
+> +	.wrtgr = RTC_WRTGR_MT6397,
+> +};
+> +
+> +static const struct of_device_id mt6397_rtc_of_match[] = {
+> +	{ .compatible = "mediatek,mt6358-rtc",
+> +		.data = (void *)&mt6358_rtc_data, },
+> +	{ .compatible = "mediatek,mt6397-rtc",
+> +		.data = (void *)&mt6397_rtc_data, },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, mt6397_rtc_of_match);
+> +
+>  static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
+>  {
+>  	unsigned long timeout = jiffies + HZ;
+>  	int ret;
+>  	u32 data;
+>  
+> -	ret = regmap_write(rtc->regmap, rtc->addr_base + RTC_WRTGR, 1);
+> +	ret = regmap_write(rtc->regmap,
+> +			   rtc->addr_base + rtc->data->wrtgr, 1);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -333,6 +358,9 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	rtc->addr_base = res->start;
+>  
+> +	rtc->data = (struct mtk_rtc_data *)
+> +			of_device_get_match_data(&pdev->dev);
+> +
+>  	rtc->irq = platform_get_irq(pdev, 0);
+>  	if (rtc->irq < 0)
+>  		return rtc->irq;
+> @@ -406,12 +434,6 @@ static int mt6397_rtc_resume(struct device *dev)
+>  static SIMPLE_DEV_PM_OPS(mt6397_pm_ops, mt6397_rtc_suspend,
+>  			mt6397_rtc_resume);
+>  
+> -static const struct of_device_id mt6397_rtc_of_match[] = {
+> -	{ .compatible = "mediatek,mt6397-rtc", },
+> -	{ }
+> -};
+> -MODULE_DEVICE_TABLE(of, mt6397_rtc_of_match);
+> -
+>  static struct platform_driver mtk_rtc_driver = {
+>  	.driver = {
+>  		.name = "mt6397-rtc",
+> -- 
+> 2.6.4
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
