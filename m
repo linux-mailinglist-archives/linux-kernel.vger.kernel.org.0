@@ -2,106 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ED95118CBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 035FD118CB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:37:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbfLJPhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 10:37:42 -0500
-Received: from sv2-smtprelay2.synopsys.com ([149.117.73.133]:53730 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727411AbfLJPhk (ORCPT
+        id S1727562AbfLJPhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 10:37:40 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:45222 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727330AbfLJPhk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Dec 2019 10:37:40 -0500
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 21414405E0;
-        Tue, 10 Dec 2019 15:37:39 +0000 (UTC)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 8A2B9C00BC;
+        Tue, 10 Dec 2019 15:37:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1575992259; bh=fYuY0lyYqVPq+/KbacWe8P4uzxJ1IsIgZmjZKUwsUeo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bE8Cvb50ctNvJTv8ONaR0ziSsoWGdFlr4d0SeLDUx/4mQ3Ilmc5iXrEYAVNHQweog
-         p0ntUaFjRp3ft9wkJBVkxMzPvKz1pqYRgkufGMWCbwkZ9NXYahiIGpJUYSEa3MsLx5
-         dXAhg+bRyviaj8e27S+X92G+9Q3jKys2PYiITdTiX0HQ63AicK680Y+8jUXtxAFKul
-         oacBoagqV0+wbwg8wsOdPqTzbe5npiUcD5GcOqmPRsHc2Ac9zunPWnadZFIzVBlCQQ
-         tmG3QQSpw2xQzKKbchFJCgFdqQjK6/qaSkL3MQ5S2K0ZlawvtAmMx+VBOOHguMzItY
-         UcK9HmM5/MldA==
+        t=1575992259; bh=wCGz21uv5jylmEZ0nnnjoDbbVduGA33/JL1HaoI4a4g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=YDPKO9wzoyy39bw6iC7+R76kinU7HKu9ki7xlgNpkouzr6ES2FCtj56iRAgaPfe+Q
+         ZIR9oIHNjzEildKY/ywHeHs4otRepS3e4WCOEoqPV8vXSYNRDhDqLJGEppwH5Yy6VB
+         KVRXF+mk1PhEcJQURZ12MKLYx/Z7ZFQHLFAI7YCEI6ylywYo2x+5ZJaJrlANuH0DYO
+         gEC24w6H1pFeGejXf+E77nQiAcdVTuPCXd3o3+ufxOKvtSHO6winoIcUFnljbJ4pDW
+         uNDmuelsw1zoLpVCyB1kMDpGpv/ZhkUTZA65gGNilmn4Kg9m0KnemZh+5o3ZAAqny8
+         kzDPkFLhAHmqQ==
 Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9AAA5A005D;
+        by mailhost.synopsys.com (Postfix) with ESMTP id 96528A0062;
         Tue, 10 Dec 2019 15:37:36 +0000 (UTC)
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 691303E2CC;
+        by de02.synopsys.com (Postfix) with ESMTP id 6D4D23E2D0;
         Tue, 10 Dec 2019 16:37:36 +0100 (CET)
 From:   Vitor Soares <Vitor.Soares@synopsys.com>
 To:     linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org
 Cc:     Joao.Pinto@synopsys.com, bbrezillon@kernel.org,
         gregkh@linuxfoundation.org, wsa@the-dreams.de, arnd@arndb.de,
         broonie@kernel.org, Vitor Soares <Vitor.Soares@synopsys.com>
-Subject: [RFC 0/5] Introduce i3c device userspace interface
-Date:   Tue, 10 Dec 2019 16:37:28 +0100
-Message-Id: <cover.1575977795.git.vitor.soares@synopsys.com>
+Subject: [RFC 1/5] i3c: master: export i3c_masterdev_type
+Date:   Tue, 10 Dec 2019 16:37:29 +0100
+Message-Id: <e6300a989b856e77bab8e57a71ae30b18ced8b3d.1575977795.git.vitor.soares@synopsys.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1575977795.git.vitor.soares@synopsys.com>
+References: <cover.1575977795.git.vitor.soares@synopsys.com>
+In-Reply-To: <cover.1575977795.git.vitor.soares@synopsys.com>
+References: <cover.1575977795.git.vitor.soares@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For today there is no way to use i3c devices from user space and
-the introduction of such API will help developers during the i3c device
-or i3c host controllers development.
+Export i3c_masterdev_type symbol so i3cdev module can verify if an
+i3c device is a master device.
 
-The i3cdev module is highly based on i2c-dev and yet I tried to address
-the concerns raised in [1].
+Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
+---
+ drivers/i3c/internals.h | 1 +
+ drivers/i3c/master.c    | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-NOTES:
-- The i3cdev dynamically request an unused major number.
-
-- The i3c devices are dynamically exposed/removed from dev/ folder based
-  on if they have a device driver bound to it.
-
-- For now, the module exposes i3c devices without device driver on
-  dev/i3c-<bus>-<pid>, but we can change the path to
-  dev/bus/i3c/<bus>-<pid> or dev/i3c/<bus>-<pid>.
-
-- As in the i2c subsystem, here it is exposed the i3c_priv_xfer to
-  userspace. I tried to use a dedicated structure as in spidev but I don't
-  see any obvious advantage.
-
-- Since the i3c API only exposes i3c_priv_xfer to devices, for now, the
-  module just makes use of one ioctl(). This can change in the future with
-  the introduction hdr commands or by the need of exposing some CCC
-  commands to the device API (private contract between master-slave).
-  Regarding the i3c device info, some information is already available
-  through sysfs. We can add more device attributes to expose more
-  information or add a dedicated ioctl() request for that purpose or both.
-
-- Similar to i2c, I have also created a tool that you can find in [2]
-  for testing purposes. If you have some time available I would appreciate
-  your feedback about it as well.
-
-[1] https://lkml.org/lkml/2018/11/15/853
-[2] https://github.com/vitor-soares-snps/i3c-tools.git
-
-Vitor Soares (5):
-  i3c: master: export i3c_masterdev_type
-  i3c: master: export i3c_bus_type symbol
-  i3c: device: expose transfer strutures to uapi
-  i3c: master: add i3c_for_each_dev helper
-  i3c: add i3cdev module to expose i3c dev in /dev
-
- drivers/i3c/Kconfig             |  15 ++
- drivers/i3c/Makefile            |   1 +
- drivers/i3c/i3cdev.c            | 438 ++++++++++++++++++++++++++++++++++++++++
- drivers/i3c/internals.h         |   2 +
- drivers/i3c/master.c            |  16 +-
- include/linux/i3c/device.h      |  54 +----
- include/uapi/linux/i3c/device.h |  66 ++++++
- include/uapi/linux/i3c/i3cdev.h |  27 +++
- 8 files changed, 565 insertions(+), 54 deletions(-)
- create mode 100644 drivers/i3c/i3cdev.c
- create mode 100644 include/uapi/linux/i3c/device.h
- create mode 100644 include/uapi/linux/i3c/i3cdev.h
-
+diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
+index 86b7b44..bc062e8 100644
+--- a/drivers/i3c/internals.h
++++ b/drivers/i3c/internals.h
+@@ -11,6 +11,7 @@
+ #include <linux/i3c/master.h>
+ 
+ extern struct bus_type i3c_bus_type;
++extern const struct device_type i3c_masterdev_type;
+ 
+ void i3c_bus_normaluse_lock(struct i3c_bus *bus);
+ void i3c_bus_normaluse_unlock(struct i3c_bus *bus);
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 0436916..a1fb5f7 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -523,9 +523,10 @@ static void i3c_masterdev_release(struct device *dev)
+ 	of_node_put(dev->of_node);
+ }
+ 
+-static const struct device_type i3c_masterdev_type = {
++const struct device_type i3c_masterdev_type = {
+ 	.groups	= i3c_masterdev_groups,
+ };
++EXPORT_SYMBOL_GPL(i3c_masterdev_type);
+ 
+ int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode,
+ 		     unsigned long max_i2c_scl_rate)
 -- 
 2.7.4
 
