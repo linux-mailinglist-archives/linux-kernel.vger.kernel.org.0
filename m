@@ -2,142 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03DB81187C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:13:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3949211879C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:03:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfLJMNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 07:13:38 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57785 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727506AbfLJMNd (ORCPT
+        id S1727578AbfLJMDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 07:03:46 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:33261 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727398AbfLJMDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 07:13:33 -0500
-Received: from 79.184.255.117.ipv4.supernova.orange.pl (79.184.255.117) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 13df9256bad9aa3c; Tue, 10 Dec 2019 13:13:30 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Subject: [RFC v2][PATCH 5/9] intel_idle: Refactor intel_idle_cpuidle_driver_init()
-Date:   Tue, 10 Dec 2019 13:03:01 +0100
-Message-ID: <12822878.tX331RTXvW@kreacher>
-In-Reply-To: <35821518.IbFVMVmUy3@kreacher>
-References: <35821518.IbFVMVmUy3@kreacher>
+        Tue, 10 Dec 2019 07:03:46 -0500
+X-UUID: 42ddcc08682a4bf1b96141fa4e928936-20191210
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=2INHnv89DngP2q6S6QSycxepChudtOI9fx0i3gt9NlY=;
+        b=LVKCFza6ucdjA7jR+uQLT74Cl22YZro8IyNdueS+2CZEtspmhrN/HJWgSWUwZ+xzH8K9xGP2+0ylpfMJNxcR23vKSf2tGPoo7gQic62mQJVB3qjIYt3wE2estBHW2OJYLN+FXa7hOACaK0ETs/rDUKBnErmM3rdDMEiUbH17BNA=;
+X-UUID: 42ddcc08682a4bf1b96141fa4e928936-20191210
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <chaotian.jing@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1116796004; Tue, 10 Dec 2019 20:03:41 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs07n1.mediatek.inc
+ (172.21.101.16) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 10 Dec
+ 2019 20:03:32 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 10 Dec 2019 20:03:29 +0800
+Message-ID: <1575979419.7714.1.camel@mhfsdcap03>
+Subject: Re: [PATCH] mmc: mediatek: fix CMD_TA to 2 for MT8173 HS200/HS400
+ mode
+From:   Chaotian Jing <chaotian.jing@mediatek.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     srv_heupstream <srv_heupstream@mediatek.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>, <hsinyi@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Date:   Tue, 10 Dec 2019 20:03:39 +0800
+In-Reply-To: <CAPDyKFo9Z2yj7zC5VOS-iX_LyavPp1A4n73eAp7VD-Q+dpoqpw@mail.gmail.com>
+References: <20191204071958.18553-1-chaotian.jing@mediatek.com>
+         <CAPDyKFo9Z2yj7zC5VOS-iX_LyavPp1A4n73eAp7VD-Q+dpoqpw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Move the C-state verification and checks from
-intel_idle_cpuidle_driver_init() to a separate function,
-intel_idle_verify_cstate(), and make the former call it after
-checking the CPUIDLE_FLAG_UNUSABLE state flag.
-
-Also combine the drv->states[] updates with the incrementation of
-drv->state_count.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-No changes from the previous version.
-
----
- drivers/idle/intel_idle.c |   49 +++++++++++++++++++++++-----------------------
- 1 file changed, 25 insertions(+), 24 deletions(-)
-
-Index: linux-pm/drivers/idle/intel_idle.c
-===================================================================
---- linux-pm.orig/drivers/idle/intel_idle.c
-+++ linux-pm/drivers/idle/intel_idle.c
-@@ -944,6 +944,22 @@ static void intel_idle_s2idle(struct cpu
- 	mwait_idle_with_hints(eax, ecx);
- }
- 
-+static bool intel_idle_verify_cstate(unsigned int mwait_hint)
-+{
-+	unsigned int mwait_cstate = MWAIT_HINT2CSTATE(mwait_hint) + 1;
-+	unsigned int num_substates = (mwait_substates >> mwait_cstate * 4) &
-+					MWAIT_SUBSTATE_MASK;
-+
-+	/* Ignore the C-state if there are NO sub-states in CPUID for it. */
-+	if (num_substates == 0)
-+		return false;
-+
-+	if (mwait_cstate > 2 && !boot_cpu_has(X86_FEATURE_NONSTOP_TSC))
-+		mark_tsc_unstable("TSC halts in idle states deeper than C2");
-+
-+	return true;
-+}
-+
- static void __setup_broadcast_timer(bool on)
- {
- 	if (on)
-@@ -1332,10 +1348,10 @@ static void __init intel_idle_cpuidle_dr
- 	drv->state_count = 1;
- 
- 	for (cstate = 0; cstate < CPUIDLE_STATE_MAX; ++cstate) {
--		int num_substates, mwait_hint, mwait_cstate;
-+		unsigned int mwait_hint;
- 
--		if ((cpuidle_state_table[cstate].enter == NULL) &&
--		    (cpuidle_state_table[cstate].enter_s2idle == NULL))
-+		if (!cpuidle_state_table[cstate].enter &&
-+		    !cpuidle_state_table[cstate].enter_s2idle)
- 			break;
- 
- 		if (cstate + 1 > max_cstate) {
-@@ -1343,34 +1359,19 @@ static void __init intel_idle_cpuidle_dr
- 			break;
- 		}
- 
--		mwait_hint = flg2MWAIT(cpuidle_state_table[cstate].flags);
--		mwait_cstate = MWAIT_HINT2CSTATE(mwait_hint);
--
--		/* number of sub-states for this state in CPUID.MWAIT */
--		num_substates = (mwait_substates >> ((mwait_cstate + 1) * 4))
--					& MWAIT_SUBSTATE_MASK;
--
--		/* if NO sub-states for this state in CPUID, skip it */
--		if (num_substates == 0)
--			continue;
--
--		/* if state marked as disabled, skip it */
-+		/* If marked as unusable, skip this state. */
- 		if (cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_UNUSABLE) {
- 			pr_debug("state %s is disabled\n",
- 				 cpuidle_state_table[cstate].name);
- 			continue;
- 		}
- 
-+		mwait_hint = flg2MWAIT(cpuidle_state_table[cstate].flags);
-+		if (!intel_idle_verify_cstate(mwait_hint))
-+			continue;
- 
--		if (((mwait_cstate + 1) > 2) &&
--			!boot_cpu_has(X86_FEATURE_NONSTOP_TSC))
--			mark_tsc_unstable("TSC halts in idle"
--					" states deeper than C2");
--
--		drv->states[drv->state_count] =	/* structure copy */
--			cpuidle_state_table[cstate];
--
--		drv->state_count += 1;
-+		/* Structure copy. */
-+		drv->states[drv->state_count++] = cpuidle_state_table[cstate];
- 	}
- 
- 	if (icpu->byt_auto_demotion_disable_flag) {
-
-
+T24gVHVlLCAyMDE5LTEyLTEwIGF0IDEwOjUxICswMTAwLCBVbGYgSGFuc3NvbiB3cm90ZToNCj4g
+T24gV2VkLCA0IERlYyAyMDE5IGF0IDA4OjIwLCBDaGFvdGlhbiBKaW5nIDxjaGFvdGlhbi5qaW5n
+QG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiB0aGVyZSBpcyBhIGNoYW5jZSB0aGF0IGFs
+d2F5cyBnZXQgcmVzcG9uc2UgQ1JDIGVycm9yIGFmdGVyIEhTMjAwIHR1bmluZywNCj4gPiB0aGUg
+cmVhc29uIGlzIHRoYXQgbmVlZCBzZXQgQ01EX1RBIHRvIDIuIHRoaXMgbW9kaWZpY2F0aW9uIGlz
+IG9ubHkgZm9yDQo+ID4gTVQ4MTczLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQ2hhb3RpYW4g
+SmluZyA8Y2hhb3RpYW4uamluZ0BtZWRpYXRlay5jb20+DQo+IA0KPiBJIGhhdmUgYXBwbGllZCB0
+aGlzIGZvciBmaXhlcywgaG93ZXZlciBpdCBzZWVtcyBsaWtlIHRoaXMgc2hvdWxkIGFsc28NCj4g
+YmUgdGFnZ2VkIGZvciBzdGFibGUsIHJpZ2h0Pw0KPiBZZXMhIHNob3VsZCBiZSB0YWdnZWQgZm9y
+IHN0YWJsZS4NCj4gSXMgdGhlcmUgYSBzcGVjaWZpYyBjb21taXQgdGhpcyBmaXhlcyBvciBzaG91
+bGQgd2UganVzdCBmaW5kIHRoZQ0KPiB2ZXJzaW9uIGl0IGFwcGxpZXMgdG8/DQo+IA0KIHRoaXMg
+cGF0Y2ggc2hvdWxkIGJlIGEgZml4IHRvIGNvbW1pdDoNCjFlZGU1Y2I4OGEyOWJiYTFhYWQxYjY4
+OTY1YzVmYzhlMDBiMjBlZDkNCj4gS2luZCByZWdhcmRzDQo+IFVmZmUNCj4gDQo+IA0KPiANCj4g
+PiAtLS0NCj4gPiAgZHJpdmVycy9tbWMvaG9zdC9tdGstc2QuYyB8IDIgKysNCj4gPiAgMSBmaWxl
+IGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+bW1jL2hvc3QvbXRrLXNkLmMgYi9kcml2ZXJzL21tYy9ob3N0L210ay1zZC5jDQo+ID4gaW5kZXgg
+MTg5ZTQyNjc0ZDg1Li4wMTBmZTI5YTQ4ODggMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9tbWMv
+aG9zdC9tdGstc2QuYw0KPiA+ICsrKyBiL2RyaXZlcnMvbW1jL2hvc3QvbXRrLXNkLmMNCj4gPiBA
+QCAtMjI4LDYgKzIyOCw3IEBADQo+ID4gICNkZWZpbmUgTVNEQ19QQVRDSF9CSVRfU1BDUFVTSCAg
+ICAoMHgxIDw8IDI5KSAgLyogUlcgKi8NCj4gPiAgI2RlZmluZSBNU0RDX1BBVENIX0JJVF9ERUNS
+Q1RNTyAgICgweDEgPDwgMzApICAvKiBSVyAqLw0KPiA+DQo+ID4gKyNkZWZpbmUgTVNEQ19QQVRD
+SF9CSVQxX0NNRFRBICAgICAoMHg3IDw8IDMpICAgIC8qIFJXICovDQo+ID4gICNkZWZpbmUgTVNE
+Q19QQVRDSF9CSVQxX1NUT1BfRExZICAoMHhmIDw8IDgpICAgIC8qIFJXICovDQo+ID4NCj4gPiAg
+I2RlZmluZSBNU0RDX1BBVENIX0JJVDJfQ0ZHUkVTUCAgICgweDEgPDwgMTUpICAgLyogUlcgKi8N
+Cj4gPiBAQCAtMTg4MSw2ICsxODgyLDcgQEAgc3RhdGljIGludCBoczQwMF90dW5lX3Jlc3BvbnNl
+KHN0cnVjdCBtbWNfaG9zdCAqbW1jLCB1MzIgb3Bjb2RlKQ0KPiA+DQo+ID4gICAgICAgICAvKiBz
+ZWxlY3QgRU1NQzUwIFBBRCBDTUQgdHVuZSAqLw0KPiA+ICAgICAgICAgc2RyX3NldF9iaXRzKGhv
+c3QtPmJhc2UgKyBQQURfQ01EX1RVTkUsIEJJVCgwKSk7DQo+ID4gKyAgICAgICBzZHJfc2V0X2Zp
+ZWxkKGhvc3QtPmJhc2UgKyBNU0RDX1BBVENIX0JJVDEsIE1TRENfUEFUQ0hfQklUMV9DTURUQSwg
+Mik7DQo+ID4NCj4gPiAgICAgICAgIGlmIChtbWMtPmlvcy50aW1pbmcgPT0gTU1DX1RJTUlOR19N
+TUNfSFMyMDAgfHwNCj4gPiAgICAgICAgICAgICBtbWMtPmlvcy50aW1pbmcgPT0gTU1DX1RJTUlO
+R19VSFNfU0RSMTA0KQ0KPiA+IC0tDQo+ID4gMi4xOC4wDQo+IA0KPiBfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPiBMaW51eC1tZWRpYXRlayBtYWlsaW5n
+IGxpc3QNCj4gTGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBodHRwOi8vbGlz
+dHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LW1lZGlhdGVrDQoNCg==
 
