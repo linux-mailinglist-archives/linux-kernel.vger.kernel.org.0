@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E5D118975
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:23:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60BDB118996
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:24:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbfLJNXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 08:23:36 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46312 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfLJNXe (ORCPT
+        id S1727727AbfLJNYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 08:24:23 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40287 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727431AbfLJNXg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 08:23:34 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z7so19982090wrl.13;
-        Tue, 10 Dec 2019 05:23:32 -0800 (PST)
+        Tue, 10 Dec 2019 08:23:36 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t14so3157895wmi.5;
+        Tue, 10 Dec 2019 05:23:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jJrtiyNSy3kb+yNwZbjKaE7PnY4m0t7haj0Vxh+WdWs=;
-        b=J99n2bWznpxOP6+vsSZXrEr6p/rw1T5xKdv3U2W6e9//RNmPZtPXfD62u24G8E+C/7
-         XtwiqCDRNhXLmsDBiHVkU4zNSkopGxxHRzkWHwqzVKWhux6HNd5FHIAgUjenIZeY0JEI
-         TEVAlO4ktkiqYCmQDqZWXC0pDNAxCtdluBOXIMlXO8nr/QZXaYHKZgUCAF5qKF6kxAdD
-         W+ocHC6CEtPkTlYlFIIkMX9ehfWN4VmWo8PKArMUcj9fYSlTTU7E7BgbBk0wmP885JT4
-         00t12Pn0vbf8l+ToQpMqZAE9ZZt9OdQw6PnhCP0gcwxlHchMrexSZ/445YuFgG/f1qQP
-         CP3A==
+        bh=H4+FLclhdhCw74jAzeAwHm0BVOBLEFDsMtURbkkNBZU=;
+        b=T3WH5XqfLetiRgJBy6bGiL857tumh3t0aFWaqjQBigz1b4hiy5q6+MPfBTdlR2deaY
+         3vEUap4VQO8vWsJ8/pt3CaMMxqt2jo/i5LrozOqJ3Acd9OzRxCl5XcrSloYesxdWqUHb
+         Y8rES7Z6Gc82Nj2abcYYHPeCMB9X7ogpZ/9h0p7dt4VdWenICy0mLuuRdYxCR+3END9Y
+         jjFaPcUjznVi0d2RmnmLssCIQ6PuwaOV6lg0Pipkg+lGRK0+mJo4ddwIj+TkHaxMeUIz
+         IWgrjmQIvjHVUYj2sQB2kbwlLLHRW8kscQlNVbbNjYHfq9goJ/8XIIkBDQpEpNCNitil
+         Zn1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=jJrtiyNSy3kb+yNwZbjKaE7PnY4m0t7haj0Vxh+WdWs=;
-        b=auTeupwX/67CQ0tGq7yTjQ2wCOcmtSA/3DpcKjrvXPq0QIsPg6v+zUw/bz264XVEp8
-         eIBTc4tfPs+gMV3GU9dGWbv86cTIaFFqiN1LKvwM0COhag3K7PaTPd5igp2jMaEL81Pd
-         TpJ6x+gxJK2tYiO37AwREWP3RxGN8rysst4QoFAiHrCPTIBsJc6sF/lE0Ep3p9kqwLUo
-         tFgA0uN159DuT2O6il6M9g1JvA3U3TOnqvAzSyP8xboVh7xqqnCvIr8sbH7TfSs0vl0b
-         Z+8w6saP5zqYIzcvtBB9vHQzdK42/myAS+W9XHrDNPYAVrtdTqZLiD2tUTSeQITtfcpD
-         psvw==
-X-Gm-Message-State: APjAAAUBawExN1dnjvWrLNaTZWuXYt8U9O2WSSz5kSRnNUHP4m2c8cec
-        kWcGiC5IHq9SSE6SY1lsyG9+7sa9RRc=
-X-Google-Smtp-Source: APXvYqzCXFiEb3ot8a+PusJOfCQFFN49/7xqDziU6xgfwuaj+jEQc3h7lpRtk7Dxa6zdush/Y6vt4g==
-X-Received: by 2002:a5d:558d:: with SMTP id i13mr190439wrv.364.1575984211923;
-        Tue, 10 Dec 2019 05:23:31 -0800 (PST)
+        bh=H4+FLclhdhCw74jAzeAwHm0BVOBLEFDsMtURbkkNBZU=;
+        b=jyD++X1trwTHBnpPxKD0XwSarCot0kKhrJT8pP8pH6tYqq6x32sTWeLYc+fRnKilOo
+         HqKc8Ws8ibstUynsLvE+EGj12VSTaN2YcYL6vakIHsI6TBZz6wB3e3EagkFeA98Ad0Wz
+         57SqMaiw2vvMXmjxzaJPVPOvn8ZHS4u8HkpJ386PIE71z6yvftAW3BSq2ZIfPGzQlDTg
+         h199u6F6eYUfYk0BbStsAalqkn4nmzf0v86lCQn5UvjA+pqUHOv1oRsvyxtLpY/C2qSS
+         FnX6b8VpqvwwwFXKNsUn6psT7uSpkxv/OgNkqTlokqfJ3x78ft77brA4jd08x3FIAfow
+         3n3w==
+X-Gm-Message-State: APjAAAV5nuNORj1yhAVxaYHBEatCnn/U5tdz+9ufhzRqLF07dlByF3b5
+        9NW8RMljtD4+9d4QUImA3lqw8bduVVY=
+X-Google-Smtp-Source: APXvYqwRKREd+dTcyz/cmUO5OP+/NQ+62nTATaIIK9TjFJFfl/x1evrju2D3rlM1KG1gHPjAkpeR7w==
+X-Received: by 2002:a7b:c750:: with SMTP id w16mr5536056wmk.46.1575984213983;
+        Tue, 10 Dec 2019 05:23:33 -0800 (PST)
 Received: from stbsrv-and-01.and.broadcom.net ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id s82sm3101680wms.28.2019.12.10.05.23.30
+        by smtp.gmail.com with ESMTPSA id s82sm3101680wms.28.2019.12.10.05.23.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 05:23:31 -0800 (PST)
+        Tue, 10 Dec 2019 05:23:33 -0800 (PST)
 From:   Al Cooper <alcooperx@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Al Cooper <alcooperx@gmail.com>,
@@ -54,9 +54,9 @@ Cc:     Al Cooper <alcooperx@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
         Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH v3 02/13] phy: usb: Get all drivers that use USB clks using correct enable/disable
-Date:   Tue, 10 Dec 2019 08:21:21 -0500
-Message-Id: <20191210132132.41509-3-alcooperx@gmail.com>
+Subject: [PATCH v3 03/13] phy: usb: Put USB phys into IDDQ on suspend to save power in S2 mode
+Date:   Tue, 10 Dec 2019 08:21:22 -0500
+Message-Id: <20191210132132.41509-4-alcooperx@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191210132132.41509-1-alcooperx@gmail.com>
 References: <20191210132132.41509-1-alcooperx@gmail.com>
@@ -65,102 +65,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BRCM USB Phy, ohci, ehci and xhci drivers all use the USB clocks
-but not all drivers use the clk_prepare_enable/clk_disable_unprepare
-versions to enable/disable the clocks. This change gets all drivers
-using the prepare version.
+Currently the Phy driver will put the USB phys into the max
+power saving mode (IDDQ) when there is no corresponding XHCI, EHCI
+or OHCI client (through rmmod, unbind or if the driver is not
+builtin). This change will also put the Phys into IDDQ mode
+on suspend so that S2 will get the additional power savings.
 
 Signed-off-by: Al Cooper <alcooperx@gmail.com>
 ---
- drivers/phy/broadcom/phy-brcm-usb.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/phy/broadcom/phy-brcm-usb-init.c |  2 --
+ drivers/phy/broadcom/phy-brcm-usb.c      | 11 +++++++++--
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/phy/broadcom/phy-brcm-usb-init.c b/drivers/phy/broadcom/phy-brcm-usb-init.c
+index bd473d12ab28..ac7f7995c11f 100644
+--- a/drivers/phy/broadcom/phy-brcm-usb-init.c
++++ b/drivers/phy/broadcom/phy-brcm-usb-init.c
+@@ -1002,8 +1002,6 @@ void brcm_usb_uninit_common(struct brcm_usb_init_params *params)
+ 
+ void brcm_usb_uninit_eohci(struct brcm_usb_init_params *params)
+ {
+-	if (USB_CTRL_MASK_FAMILY(params, USB_PM, USB20_HC_RESETB))
+-		USB_CTRL_UNSET_FAMILY(params, USB_PM, USB20_HC_RESETB);
+ }
+ 
+ void brcm_usb_uninit_xhci(struct brcm_usb_init_params *params)
 diff --git a/drivers/phy/broadcom/phy-brcm-usb.c b/drivers/phy/broadcom/phy-brcm-usb.c
-index f5c1f2983a1d..217e3702ef4e 100644
+index 217e3702ef4e..634afc803778 100644
 --- a/drivers/phy/broadcom/phy-brcm-usb.c
 +++ b/drivers/phy/broadcom/phy-brcm-usb.c
-@@ -74,8 +74,8 @@ static int brcm_usb_phy_init(struct phy *gphy)
- 	 */
- 	mutex_lock(&priv->mutex);
- 	if (priv->init_count++ == 0) {
--		clk_enable(priv->usb_20_clk);
--		clk_enable(priv->usb_30_clk);
-+		clk_prepare_enable(priv->usb_20_clk);
-+		clk_prepare_enable(priv->usb_30_clk);
- 		brcm_usb_init_common(&priv->ini);
- 	}
- 	mutex_unlock(&priv->mutex);
-@@ -106,8 +106,8 @@ static int brcm_usb_phy_exit(struct phy *gphy)
- 	mutex_lock(&priv->mutex);
- 	if (--priv->init_count == 0) {
- 		brcm_usb_uninit_common(&priv->ini);
--		clk_disable(priv->usb_20_clk);
--		clk_disable(priv->usb_30_clk);
-+		clk_disable_unprepare(priv->usb_20_clk);
-+		clk_disable_unprepare(priv->usb_30_clk);
- 	}
- 	mutex_unlock(&priv->mutex);
- 	phy->inited = false;
-@@ -360,8 +360,8 @@ static int brcm_usb_phy_probe(struct platform_device *pdev)
- 	if (priv->has_eohci)
- 		brcm_usb_uninit_eohci(&priv->ini);
- 	brcm_usb_uninit_common(&priv->ini);
--	clk_disable(priv->usb_20_clk);
--	clk_disable(priv->usb_30_clk);
-+	clk_disable_unprepare(priv->usb_20_clk);
-+	clk_disable_unprepare(priv->usb_30_clk);
- 
- 	phy_provider = devm_of_phy_provider_register(dev, brcm_usb_phy_xlate);
- 
-@@ -381,8 +381,8 @@ static int brcm_usb_phy_suspend(struct device *dev)
+@@ -381,8 +381,15 @@ static int brcm_usb_phy_suspend(struct device *dev)
  	struct brcm_usb_phy_data *priv = dev_get_drvdata(dev);
  
  	if (priv->init_count) {
--		clk_disable(priv->usb_20_clk);
--		clk_disable(priv->usb_30_clk);
-+		clk_disable_unprepare(priv->usb_20_clk);
-+		clk_disable_unprepare(priv->usb_30_clk);
+-		clk_disable_unprepare(priv->usb_20_clk);
+-		clk_disable_unprepare(priv->usb_30_clk);
++		if (priv->phys[BRCM_USB_PHY_3_0].inited)
++			brcm_usb_uninit_xhci(&priv->ini);
++		if (priv->phys[BRCM_USB_PHY_2_0].inited)
++			brcm_usb_uninit_eohci(&priv->ini);
++		brcm_usb_uninit_common(&priv->ini);
++		if (priv->phys[BRCM_USB_PHY_3_0].inited)
++			clk_disable_unprepare(priv->usb_30_clk);
++		if (priv->phys[BRCM_USB_PHY_2_0].inited)
++			clk_disable_unprepare(priv->usb_20_clk);
  	}
  	return 0;
  }
-@@ -391,8 +391,8 @@ static int brcm_usb_phy_resume(struct device *dev)
- {
- 	struct brcm_usb_phy_data *priv = dev_get_drvdata(dev);
- 
--	clk_enable(priv->usb_20_clk);
--	clk_enable(priv->usb_30_clk);
-+	clk_prepare_enable(priv->usb_20_clk);
-+	clk_prepare_enable(priv->usb_30_clk);
- 	brcm_usb_init_ipp(&priv->ini);
- 
- 	/*
-@@ -405,13 +405,13 @@ static int brcm_usb_phy_resume(struct device *dev)
- 			brcm_usb_init_eohci(&priv->ini);
- 		} else if (priv->has_eohci) {
- 			brcm_usb_uninit_eohci(&priv->ini);
--			clk_disable(priv->usb_20_clk);
-+			clk_disable_unprepare(priv->usb_20_clk);
- 		}
- 		if (priv->phys[BRCM_USB_PHY_3_0].inited) {
- 			brcm_usb_init_xhci(&priv->ini);
- 		} else if (priv->has_xhci) {
- 			brcm_usb_uninit_xhci(&priv->ini);
--			clk_disable(priv->usb_30_clk);
-+			clk_disable_unprepare(priv->usb_30_clk);
- 		}
- 	} else {
- 		if (priv->has_xhci)
-@@ -419,8 +419,8 @@ static int brcm_usb_phy_resume(struct device *dev)
- 		if (priv->has_eohci)
- 			brcm_usb_uninit_eohci(&priv->ini);
- 		brcm_usb_uninit_common(&priv->ini);
--		clk_disable(priv->usb_20_clk);
--		clk_disable(priv->usb_30_clk);
-+		clk_disable_unprepare(priv->usb_20_clk);
-+		clk_disable_unprepare(priv->usb_30_clk);
- 	}
- 
- 	return 0;
 -- 
 2.17.1
 
