@@ -2,255 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B223117E78
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 04:42:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09BE8117E8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 04:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbfLJDmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 22:42:37 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43056 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbfLJDme (ORCPT
+        id S1726810AbfLJDuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 22:50:35 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:7373 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbfLJDuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 22:42:34 -0500
-Received: by mail-qt1-f193.google.com with SMTP id q8so1468460qtr.10
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 19:42:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=HSkbHsLsaqfQDr/Qigk/MgThmH429gWM5QAZfrurbHg=;
-        b=AIVWunWPK5LW9THdKlTLo/WzQvKZZ2EqSyz58pgGOfu5PSMm3SUsXm585KE3McK6hu
-         Lz27O7Ve1HGXIO66jt+jzI1AQ8w4hwQJ+BUNgVa8hHpKbXXRnMIomcu7fQ/qj1v0AkVx
-         Ud7tLGzFoB/I0EEm6ScN8/bkeKdjLo6mxwqYnh1so7ve2YT6EQ3MZUeC2LKl6ywGf1K0
-         L4b80SW7JagXi8GtTLgUQXVacQ1yR3l2r3BLaUUrCReIVnrFLeh6FhiDfwt8Fy+oVHel
-         AyD39csnZjWmaxZJg0ijrmopIvQcrNLltdR8vpZedWVD20gBt2zyHForNixroxvr2MHU
-         kA6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=HSkbHsLsaqfQDr/Qigk/MgThmH429gWM5QAZfrurbHg=;
-        b=aEiRwol4TCn7BUI3f5lGO6rEp7YsI3sI1TMxtx3MNJR4k8Ak5n0Xru+r9i6PA7jCqy
-         BoSKhDFlbjWl+HSn6QDGa1i5aAx1f7wmYiBc45wG7O4DWgd63OAl7TbWP/eBZem3ogzk
-         JKrOi6xQMSEVNYgDEZtb5EvpayhlfIdY/aoeMXAp0oEcsyiokXd9+mARbIDzkfIzT0gN
-         t75gYw/OEZoWf8s+URt1jvIE/U4idgVmk2F+onurfzaqhZSqEYhgOUZk9Q+6F0yVGwrQ
-         vobCy54wKY+zahkg9bxqmGUysvaWU4DqJlw9wjVFqU9S+zqCeWMyryNddyhVGSlPD347
-         ep6A==
-X-Gm-Message-State: APjAAAUq5aGn/9wJWiyRpfmAGIUyJJvQk543/knjAqHpG/fEJRfKDSBG
-        qx9xinkebjirpMCzjLFpdZ3E7dFp/ag=
-X-Google-Smtp-Source: APXvYqyacWiSW20TRcPBrAZJpXpXZOit1js32GRkn/LlvYq9Pp4PQdj4OqUPdlH8mrwsZGwXkwD8mQ==
-X-Received: by 2002:aed:33a3:: with SMTP id v32mr28458752qtd.269.1575949353549;
-        Mon, 09 Dec 2019 19:42:33 -0800 (PST)
-Received: from skullcanyon ([192.222.193.21])
-        by smtp.gmail.com with ESMTPSA id o19sm683827qtb.43.2019.12.09.19.42.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 19:42:32 -0800 (PST)
-Message-ID: <89908b9f9ae974b23f7ba05ff658c3860bfbba88.camel@ndufresne.ca>
-Subject: Re: [PATCH v3 0/4] media: meson: vdec: Add compliant H264 support
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Neil Armstrong <narmstrong@baylibre.com>, mchehab@kernel.org,
-        hans.verkuil@cisco.com
-Cc:     linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Mon, 09 Dec 2019 22:42:30 -0500
-In-Reply-To: <20191209122028.13714-1-narmstrong@baylibre.com>
-References: <20191209122028.13714-1-narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+        Mon, 9 Dec 2019 22:50:35 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5def16040000>; Mon, 09 Dec 2019 19:50:28 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 09 Dec 2019 19:50:34 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 09 Dec 2019 19:50:34 -0800
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
+ 2019 03:50:33 +0000
+Received: from [10.24.193.46] (172.20.13.39) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
+ 2019 03:50:30 +0000
+Subject: Re: [PATCH 03/18] phy: tegra: xusb: Add usb-role-switch support
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <jonathanh@nvidia.com>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <kishon@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
+ <1575629421-7039-4-git-send-email-nkristam@nvidia.com>
+ <20191206145445.GD2085684@ulmo>
+X-Nvconfidentiality: public
+From:   Nagarjuna Kristam <nkristam@nvidia.com>
+Message-ID: <9ce40f6c-e742-79f0-ee99-517571c46bc3@nvidia.com>
+Date:   Tue, 10 Dec 2019 09:22:23 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191206145445.GD2085684@ulmo>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1575949828; bh=aIFYXzL74CPu1pOPMHd8motPMl3uNcZkSE0kei/OXaE=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ZQVxtU4Mh0l2o2B8MfVPxBw8aF1y6zRSLnWEkqN6KX5J9iB+2eR4fdcF2SW7O1o7c
+         pmr9ZarKPuitlQ6MaKsgaRA0p949nstsW1za16xvtp8Av5qH+kb0kq2zokfdJe9in1
+         hma/T05tg9T+1/ZqJ8WewV7I6lwD1+Ol0LkwpwsAt5zICIKN97lVFUwb79/LKtlAYp
+         J+MyIm+/Lx7ow9OkP+0GsMp+f0z4/3sYJuvCRmIcLL/v5mTYKsX0xsWnV2mNCTkaog
+         zHMbwqJGYWWEQsCLziqvkebPduYJLDHAh/LCRG1GjWFT0RwqYg9EQxBqy6Y59rOJG8
+         Q7lnJr9hZMq0w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Le lundi 09 décembre 2019 à 13:20 +0100, Neil Armstrong a écrit :
-> Hello,
-> 
-> This patch series aims to bring H.264 support as well as compliance update
-> to the amlogic stateful video decoder driver.
 
-I have started testing this patchset on S905X. I'm not very far into it
-yet, but noticed this spam in the kernel logs:
+On 06-12-2019 20:24, Thierry Reding wrote:
+> On Fri, Dec 06, 2019 at 04:20:06PM +0530, Nagarjuna Kristam wrote:
+>> If usb-role-switch property is present in USB 2 port, register
+>> usb-role-switch to receive usb role changes.
+>>
+>> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+>> ---
+>>  drivers/phy/tegra/Kconfig |  1 +
+>>  drivers/phy/tegra/xusb.c  | 40 ++++++++++++++++++++++++++++++++++++++++
+>>  drivers/phy/tegra/xusb.h  |  3 +++
+>>  3 files changed, 44 insertions(+)
+>>
+>> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+>> index f9817c3..df07c4d 100644
+>> --- a/drivers/phy/tegra/Kconfig
+>> +++ b/drivers/phy/tegra/Kconfig
+>> @@ -2,6 +2,7 @@
+>>  config PHY_TEGRA_XUSB
+>>  	tristate "NVIDIA Tegra XUSB pad controller driver"
+>>  	depends on ARCH_TEGRA
+>> +	select USB_CONN_GPIO
+>>  	help
+>>  	  Choose this option if you have an NVIDIA Tegra SoC.
+>>  
+>> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+>> index f98ec39..da60a63 100644
+>> --- a/drivers/phy/tegra/xusb.c
+>> +++ b/drivers/phy/tegra/xusb.c
+>> @@ -523,6 +523,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+>>  	port->dev.type = &tegra_xusb_port_type;
+>>  	port->dev.of_node = of_node_get(np);
+>>  	port->dev.parent = padctl->dev;
+>> +	port->dev.driver = padctl->dev->driver;
+>>  
+>>  	err = dev_set_name(&port->dev, "%s-%u", name, index);
+>>  	if (err < 0)
+>> @@ -532,6 +533,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+>>  	if (err < 0)
+>>  		goto unregister;
+>>  
+>> +	dev_set_drvdata(&port->dev, port);
+> You never seem to use dev_get_drvdata() to get at this. Also, you can
+> get at it via container_of(), so this is only marginally useful to begin
+> with.
+> 
+Its actually used in API tegra_xusb_role_sw_set, but thats in patch 0004.
+Will move this line to 0004 patch to align with the usage.
 
-[  192.230935] meson-vdec c8820000.video-codec: VIFIFO usage (16777858) > VIFIFO size (16777216)
+>>  	return 0;
+>>  
+>>  unregister:
+>> @@ -541,6 +543,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+>>  
+>>  static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
+>>  {
+>> +	usb_role_switch_unregister(port->usb_role_sw);
+>>  	device_unregister(&port->dev);
+>>  }
+>>  
+>> @@ -551,11 +554,39 @@ static const char *const modes[] = {
+>>  	[USB_DR_MODE_OTG] = "otg",
+>>  };
+>>  
+>> +static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
+>> +{
+>> +	dev_dbg(dev, "%s calling notifier for role is %d\n", __func__, role);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
+>> +{
+>> +	int err = 0;
+>> +	struct usb_role_switch_desc role_sx_desc = {
+>> +					.set = tegra_xusb_role_sw_set,
+>> +					.fwnode = dev_fwnode(&port->dev),
+>> +						   };
+>> +
+>> +	port->usb_role_sw = usb_role_switch_register(&port->dev,
+>> +						&role_sx_desc);
+>> +	if (IS_ERR(port->usb_role_sw)) {
+>> +		err = PTR_ERR(port->usb_role_sw);
+>> +		if (err != EPROBE_DEFER)
+>> +			dev_err(&port->dev, "Failed to register USB role SW: %d",
+>> +				err);
+>> +	}
+>> +
+>> +	return err;
+>> +}
+>> +
+>>  static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
+>>  {
+>>  	struct tegra_xusb_port *port = &usb2->base;
+>>  	struct device_node *np = port->dev.of_node;
+>>  	const char *mode;
+>> +	int err;
+>>  
+>>  	usb2->internal = of_property_read_bool(np, "nvidia,internal");
+>>  
+>> @@ -572,6 +603,15 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
+>>  		usb2->mode = USB_DR_MODE_HOST;
+>>  	}
+>>  
+>> +	if (of_property_read_bool(np, "usb-role-switch")) {
+>> +		/* populate connector entry */
+>> +		of_platform_populate(np, NULL, NULL, &port->dev);
+> I think we want to clean this up on failure, don't we? Otherwise we
+> might end up trying to register the same platform device multiple times.
+> Also, do we want to depopulate when the port is removed again?
+> 
+> Have you tried unloading and loading the driver to see if that works?
+> 
+> Thierry
+> 
+platform needs to be depopulate on error/remove and will add corresponding code.
+padctl driver can be unloaded after unloading all dependent drivers. re-loading
+caused failure of usb role switch due to missing depopulate. Will update changes
+to consider the same.
 
-So far it seems to be printed once per frame while decoding
-bbb_sunflower_1080p_30fps_normal.mp4 from blender fondation. I'm don't
-think I have ever seen that one before.
-
-> 
-> The issue in the V1 patchset at [1] is solved by patch #1 following comments
-> and requirements from hans. It moves the full draining & stopped state tracking
-> and handling from vicodec to core v4l2-mem2mem.
-> 
-> With this, it passes v4l2-compliance with streaming on Amlogic G12A and
-> Amlogic SM1 SoCs successfully.
-> 
-> This patchset depends on G12A and SM1 enablement series at [2] and [3].
-> 
-> The compliance log is:
-> # v4l2-compliance --stream-from-hdr test-25fps.h264.hdr -s
-> v4l2-compliance SHA: 7ead0e1856b89f2e19369af452bb03fd0cd16793, 64 bits
-> 
-> Compliance test for vicodec device /dev/video0:
-> 
-> Driver Info:
-> 	Driver name      : vicodec
-> 	Card type        : vicodec
-> 	Bus info         : platform:vicodec
-> 	Driver version   : 5.5.0
-> 	Capabilities     : 0x84208000
-> 		Video Memory-to-Memory
-> 		Streaming
-> 		Extended Pix Format
-> 		Device Capabilities
-> 	Device Caps      : 0x04208000
-> 		Video Memory-to-Memory
-> 		Streaming
-> 		Extended Pix Format
-> 	Detected Stateful Encoder
-> Media Driver Info:
-> 	Driver name      : vicodec
-> 	Model            : vicodec
-> 	Serial           : 
-> 	Bus info         : platform:vicodec
-> 	Media version    : 5.5.0
-> 	Hardware revision: 0x00000000 (0)
-> 	Driver version   : 5.5.0
-> Interface Info:
-> 	ID               : 0x0300000c
-> 	Type             : V4L Video
-> Entity Info:
-> 	ID               : 0x00000001 (1)
-> 	Name             : stateful-encoder-source
-> 	Function         : V4L2 I/O
-> 	Pad 0x01000002   : 0: Source
-> 	  Link 0x02000008: to remote pad 0x1000005 of entity 'stateful-encoder-proc': Data, Enabled, Immutable
-> 
-> Required ioctls:
-> 	test MC information (see 'Media Driver Info' above): OK
-> 	test VIDIOC_QUERYCAP: OK
-> 
-> Allow for multiple opens:
-> 	test second /dev/video0 open: OK
-> 	test VIDIOC_QUERYCAP: OK
-> 	test VIDIOC_G/S_PRIORITY: OK
-> 	test for unlimited opens: OK
-> 
-> Debug ioctls:
-> 	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
-> 	test VIDIOC_LOG_STATUS: OK (Not Supported)
-> 
-> Input ioctls:
-> 	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
-> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-> 	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-> 	test VIDIOC_ENUMAUDIO: OK (Not Supported)
-> 	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
-> 	test VIDIOC_G/S_AUDIO: OK (Not Supported)
-> 	Inputs: 0 Audio Inputs: 0 Tuners: 0
-> 
-> Output ioctls:
-> 	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-> 	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-> 	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-> 	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-> 	Outputs: 0 Audio Outputs: 0 Modulators: 0
-> 
-> Input/Output configuration ioctls:
-> 	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
-> 	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
-> 	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
-> 	test VIDIOC_G/S_EDID: OK (Not Supported)
-> 
-> Control ioctls:
-> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
-> 	test VIDIOC_QUERYCTRL: OK
-> 	test VIDIOC_G/S_CTRL: OK
-> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
-> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-> 	Standard Controls: 6 Private Controls: 0
-> 
-> Format ioctls:
-> 	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-> 	test VIDIOC_G/S_PARM: OK (Not Supported)
-> 	test VIDIOC_G_FBUF: OK (Not Supported)
-> 	test VIDIOC_G_FMT: OK
-> 	test VIDIOC_TRY_FMT: OK
-> 	test VIDIOC_S_FMT: OK
-> 	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-> 	test Cropping: OK
-> 	test Composing: OK (Not Supported)
-> 	test Scaling: OK (Not Supported)
-> 
-> Codec ioctls:
-> 	test VIDIOC_(TRY_)ENCODER_CMD: OK
-> 	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-> 	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-> 
-> Buffer ioctls:
-> 	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-> 	test VIDIOC_EXPBUF: OK
-> 	test Requests: OK (Not Supported)
-> 
-> Test input 0:
-> 
-> Streaming ioctls:
-> 	test read/write: OK (Not Supported)
-> 	test blocking wait: OK
-> 	Video Capture: Captured 60 buffers                
-> 	test MMAP (select): OK
-> 	Video Capture: Captured 60 buffers                
-> 	test MMAP (epoll): OK
-> 	Video Capture: Captured 60 buffers                
-> 	test USERPTR (select): OK
-> 	test DMABUF: Cannot test, specify --expbuf-device
-> 
-> Total for vicodec device /dev/video0: 50, Succeeded: 50, Failed: 0, Warnings: 0
-> 
-> Changes since v2 at [4]:
-> - Move full draining & stopped state tracking into core v4l2-mem2mem
-> - Adapt vicodec to use the core v4l2-mem2mem draining & stopped state tracking
-> 
-> Changes since v1 at [1]:
-> - fixed output_size is never used reported by hans
-> - rebased on G12A and SM1 patches
-> - added handling of qbuf after STREAMON and STOP before enought buffer queued
-> 
-> [1] https://lore.kernel.org/linux-media/20191007145909.29979-1-mjourdan@baylibre.com
-> [2] https://lore.kernel.org/linux-media/20191205153408.26500-1-narmstrong@baylibre.com
-> [3] https://lore.kernel.org/linux-media/20191121101429.23831-1-narmstrong@baylibre.com
-> [4] https://lore.kernel.org/linux-media/20191126093733.32404-1-narmstrong@baylibre.com
-> 
-> Maxime Jourdan (2):
->   media: meson: vdec: bring up to compliance
->   media: meson: vdec: add H.264 decoding support
-> 
-> Neil Armstrong (2):
->   media: v4l2-mem2mem: handle draining, stopped and next-buf-is-last
->     states
->   media: vicodec: use v4l2-mem2mem draining, stopped and
->     next-buf-is-last states handling
-> 
->  drivers/media/platform/vicodec/vicodec-core.c | 154 ++----
->  drivers/media/v4l2-core/v4l2-mem2mem.c        | 174 ++++++-
->  drivers/staging/media/meson/vdec/Makefile     |   2 +-
->  drivers/staging/media/meson/vdec/codec_h264.c | 482 ++++++++++++++++++
->  drivers/staging/media/meson/vdec/codec_h264.h |  14 +
->  drivers/staging/media/meson/vdec/esparser.c   |  58 +--
->  drivers/staging/media/meson/vdec/vdec.c       |  92 ++--
->  drivers/staging/media/meson/vdec/vdec.h       |  14 +-
->  .../staging/media/meson/vdec/vdec_helpers.c   |  85 ++-
->  .../staging/media/meson/vdec/vdec_helpers.h   |   6 +-
->  .../staging/media/meson/vdec/vdec_platform.c  |  71 +++
->  include/media/v4l2-mem2mem.h                  |  87 ++++
->  12 files changed, 1009 insertions(+), 230 deletions(-)
->  create mode 100644 drivers/staging/media/meson/vdec/codec_h264.c
->  create mode 100644 drivers/staging/media/meson/vdec/codec_h264.h
-> 
-
+Thanks,
+Nagarjuna
+>> +
+>> +		err = tegra_xusb_setup_usb_role_switch(port);
+>> +		if (err < 0)
+>> +			return err;
+>> +	}
+>> +
+>>  	usb2->supply = devm_regulator_get(&port->dev, "vbus");
+>>  	return PTR_ERR_OR_ZERO(usb2->supply);
+>>  }
+>> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+>> index da94fcc..9f27899 100644
+>> --- a/drivers/phy/tegra/xusb.h
+>> +++ b/drivers/phy/tegra/xusb.h
+>> @@ -12,6 +12,7 @@
+>>  #include <linux/workqueue.h>
+>>  
+>>  #include <linux/usb/otg.h>
+>> +#include <linux/usb/role.h>
+>>  
+>>  /* legacy entry points for backwards-compatibility */
+>>  int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
+>> @@ -266,6 +267,8 @@ struct tegra_xusb_port {
+>>  	struct list_head list;
+>>  	struct device dev;
+>>  
+>> +	struct usb_role_switch *usb_role_sw;
+>> +
+>>  	const struct tegra_xusb_port_ops *ops;
+>>  };
+>>  
+>> -- 
+>> 2.7.4
+>>
