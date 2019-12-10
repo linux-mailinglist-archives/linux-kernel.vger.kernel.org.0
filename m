@@ -2,88 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C83CE117C1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 01:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B69CD117C17
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 01:06:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfLJAHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 19:07:55 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:37058 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfLJAHz (ORCPT
+        id S1727338AbfLJAGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 19:06:41 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:57745 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbfLJAGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 19:07:55 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBA049WE027933;
-        Tue, 10 Dec 2019 00:07:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=nfvfiNn59Br0Y5cyzpzvLpjMzzt3WoBA+ysKa3AGrHQ=;
- b=LRawvDfjjAqG41sw3v4EXcKgTYGf7oAy1Yvb+0o419Ix31F1y09h00QCjUqPqA1uzLDR
- ItJHvT+wcUm1NEKFY8iH2ZihpAdsQ4OAbUVxHcwc0eK6R/UZPE9xwsvzo1x4yaeDuH0a
- 2YXTudP5nQhfBI7UGsjrRSBfqdZrz6A+DSi4HsyMi4kgQ3XedRtAYzFurFFTWh3bIYlO
- a4a4WLzfjEJlGw4GNE9UelUtgX6/D4jdTa8qF/pcJ69XX+4/Di0inwUKgdU1IaWEdmwl
- Bx16tSNqEh+YYo7bRkkgqGCBB+PJXD9zk4hv4WL5IUyM37rkgctgxH5JYSGccu8dziWa Cg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2wr4qrat7t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 00:07:19 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBA03wRu057735;
-        Tue, 10 Dec 2019 00:05:18 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2wsru83qag-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 00:05:18 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBA05FmW015583;
-        Tue, 10 Dec 2019 00:05:16 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Dec 2019 16:05:15 -0800
-To:     sheebab <sheebab@cadence.com>
-Cc:     <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
-        <pedrom.sousa@synopsys.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>, <stanley.chu@mediatek.com>,
-        <beanhuo@micron.com>, <yuehaibing@huawei.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <vigneshr@ti.com>, <mparab@cadence.com>, <rafalc@cadence.com>
-Subject: Re: [PATCH] scsi: ufs: Disable autohibern8 feature in Cadence UFS
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1575367635-22662-1-git-send-email-sheebab@cadence.com>
-Date:   Mon, 09 Dec 2019 19:05:12 -0500
-In-Reply-To: <1575367635-22662-1-git-send-email-sheebab@cadence.com>
-        (sheebab@cadence.com's message of "Tue, 3 Dec 2019 11:07:15 +0100")
-Message-ID: <yq1k175oxjb.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Mon, 9 Dec 2019 19:06:40 -0500
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 3DB0D2304C;
+        Tue, 10 Dec 2019 01:06:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1575936398;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SQSB7aaTDeosGfScfkElLltHtjKOhiB3ySxyA9Xk4pM=;
+        b=LUb2ArSKFj734DrOu29xTCX5VFhRmcC3RSuas9H1v/tSYzhwBSW1kMjgdhtDLqHIG7dFAn
+        PyiSvI3s+28kf1XW5HIv9jMMMn+s9bFSG8hOBc1DXqRC2K75rCMD/hLVHIOTqeSQEOeKhh
+        2YmXlEbmCsCeHfJKLa1JCJZEBJLbIxU=
+From:   Michael Walle <michael@walle.cc>
+To:     yinbo.zhu@nxp.com
+Cc:     Ashish.Kumar@nxp.com, alexandru.marginean@nxp.com,
+        alison.wang@nxp.com, amit.jain_1@nxp.com,
+        catalin.horghidan@nxp.com, claudiu.manoil@nxp.com,
+        devicetree@vger.kernel.org, jiafei.pan@nxp.com, leoyang.li@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, mark.rutland@arm.com,
+        rajat.srivastava@nxp.com, rajesh.bhagat@nxp.com,
+        robh+dt@kernel.org, vabhav.sharma@nxp.com, xiaobo.xie@nxp.com,
+        yangbo.lu@nxp.com, Michael Walle <michael@walle.cc>
+Subject: Re: [PATCH v1 3/4] arm64: dts: ls1028a: fix little-big endian issue for dcfg
+Date:   Tue, 10 Dec 2019 01:06:23 +0100
+Message-Id: <20191210000623.22321-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190814072649.8237-3-yinbo.zhu@nxp.com>
+References: <20190814072649.8237-3-yinbo.zhu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=660
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912090190
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=725 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912090191
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+X-Spam-Level: ******
+X-Rspamd-Server: web
+X-Spam-Status: Yes, score=6.40
+X-Spam-Score: 6.40
+X-Rspamd-Queue-Id: 3DB0D2304C
+X-Spamd-Result: default: False [6.40 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[21];
+         MID_CONTAINS_FROM(1.00)[];
+         NEURAL_HAM(-0.00)[-0.685];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:31334, ipnet:2a02:810c::/31, country:DE];
+         SUSPICIOUS_RECIPS(1.50)[]
+X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> dcfg use little endian that SoC register value will be correct
+> 
+> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-sheebab,
+This patch is still missing. Any news?
 
-> This patch disables autohibern8 feature in Cadence UFS.  The
-> autohibern8 feature has issues due to which unexpected interrupt
-> trigger is happening. After the interrupt issue is sorted out
-> autohibern8 feature will be re-enabled
+Tested-by: Michael Walle <michael@walle.cc>
 
-Applied to 5.5/scsi-fixes, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> index b0d4f8916ede..5538e8e354b2 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> @@ -162,7 +162,7 @@
+>  		dcfg: syscon@1e00000 {
+>  			compatible = "fsl,ls1028a-dcfg", "syscon";
+>  			reg = <0x0 0x1e00000 0x0 0x10000>;
+> -			big-endian;
+> +			little-endian;
+>  		};
+>  
+>  		scfg: syscon@1fc0000 {
+> -- 
+> 2.17.1
+> 
