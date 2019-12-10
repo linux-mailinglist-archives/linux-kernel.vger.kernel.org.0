@@ -2,99 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 550F4119D00
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:35:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD40119D71
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:38:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730493AbfLJWfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:35:05 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:35805 "EHLO ozlabs.org"
+        id S1730489AbfLJWh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:37:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727427AbfLJWfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:35:03 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1730355AbfLJWhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:37:47 -0500
+Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47XZcx5kMkz9sS8;
-        Wed, 11 Dec 2019 09:34:57 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1576017300;
-        bh=jMelgaoY2YVu2U1fG/AHlQ4glmuVPCJvHyn0RjP4iOo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=q2RFFgseM6kD3z7fostLllZY/5UCm67D4hQss4rwT7awNS0TvHiOFE3j902qDWO3L
-         gOoEJ9anWy0fFyzVm37l3xkdzh2p5LBZ2HLmsxN9iz38lJslK97BSFUIknMNUlDuTB
-         gIxCNPulcTiL7Ro3PaevaJfGkMUy1UMZLGGLZop690Q+2ABuUW8wgf7FBIV13VpSLj
-         OIdJKYkAl0v6gXvKrjyWI9S4TYNW6TTx4WmGvGqMJp72743c/tNbYlGMW4aoYBklph
-         LG3qmF7hWHdeHr8jv5pSMAoDOW9K4h9HLhNGnAETws26bUY27mPQHvF2EsWgirDlNW
-         uEZJohI+/5L2Q==
-Date:   Wed, 11 Dec 2019 09:34:49 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: Tree for Dec 10 (ethernet/8390/8390p.c)
-Message-ID: <20191211093449.0932cef4@canb.auug.org.au>
-In-Reply-To: <ce89aa80-558c-1ccb-afbe-0af6bc4f3e19@infradead.org>
-References: <20191210140225.1aa0c90e@canb.auug.org.au>
-        <ce89aa80-558c-1ccb-afbe-0af6bc4f3e19@infradead.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id B6617214D8;
+        Tue, 10 Dec 2019 22:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576017467;
+        bh=pmltaW9LsjEuTpeKbuA3I4m6I9tXYKuy+WxPnOiBySg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=GpF77bDRMYOZMzZUsc1xfZBNt0grHZ4wf9ahTXpwyB/3gWFtElsyCOKqPj3U1bJFM
+         F12G87CHzuPAb/bUPdSWsiVx1FaP+i8FGPXzpLIMlG9rGYgTSbaTbyG8VW14eyc8d+
+         yP9jUwAsNzCNQ3sJ/NVKANDpE4MxAYItUWmqRpYM=
+Date:   Tue, 10 Dec 2019 16:37:45 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     James Sewart <jamessewart@arista.com>
+Cc:     linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Dmitry Safonov <dima@arista.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v6 2/3] PCI: Add parameter nr_devfns to pci_add_dma_alias
+Message-ID: <20191210223745.GA167002@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7LARfLRMNLloF/0HH__5J_H";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D4C7374E-4DFE-4024-8E76-9F54BF421B62@arista.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/7LARfLRMNLloF/0HH__5J_H
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+[+cc Joerg]
 
-Hi Randy,
+On Tue, Dec 03, 2019 at 03:43:53PM +0000, James Sewart wrote:
+> pci_add_dma_alias can now be used to create a dma alias for a range of
+> devfns.
+> 
+> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> Signed-off-by: James Sewart <jamessewart@arista.com>
+> ---
+>  drivers/pci/pci.c    | 22 +++++++++++++++++-----
+>  drivers/pci/quirks.c | 14 +++++++-------
+>  include/linux/pci.h  |  2 +-
+>  3 files changed, 25 insertions(+), 13 deletions(-)
 
-On Mon, 9 Dec 2019 23:13:34 -0800 Randy Dunlap <rdunlap@infradead.org> wrot=
-e:
->
-> On 12/9/19 7:02 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Changes since 20191209:
-> >  =20
->=20
-> on i386:
->=20
-> ../drivers/net/ethernet/8390/8390p.c:44:6: error: conflicting types for =
-=E2=80=98eip_tx_timeout=E2=80=99
->  void eip_tx_timeout(struct net_device *dev, unsigned int txqueue)
->       ^~~~~~~~~~~~~~
-> In file included from ../drivers/net/ethernet/8390/lib8390.c:75:0,
->                  from ../drivers/net/ethernet/8390/8390p.c:12:
-> ../drivers/net/ethernet/8390/8390.h:53:6: note: previous declaration of =
-=E2=80=98eip_tx_timeout=E2=80=99 was here
->  void eip_tx_timeout(struct net_device *dev);
->       ^~~~~~~~~~~~~~
+Heads up Joerg: I also updated drivers/iommu/amd_iommu.c (this is the
+one reported by the kbuild test robot) and removed the printk there
+that prints the same thing as the one in pci_add_dma_alias(), and I
+updated a PCI quirk that was merged after this patch was posted.
 
-Looks like this has been fixed for today (in the vhost tree).
---=20
-Cheers,
-Stephen Rothwell
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index d3c83248f3ce..dbb01aceafda 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5857,7 +5857,8 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
+>  /**
+>   * pci_add_dma_alias - Add a DMA devfn alias for a device
+>   * @dev: the PCI device for which alias is added
+> - * @devfn: alias slot and function
+> + * @devfn_from: alias slot and function
+> + * @nr_devfns: Number of subsequent devfns to alias
+>   *
+>   * This helper encodes an 8-bit devfn as a bit number in dma_alias_mask
+>   * which is used to program permissible bus-devfn source addresses for DMA
+> @@ -5873,8 +5874,13 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
+>   * cannot be left as a userspace activity).  DMA aliases should therefore
+>   * be configured via quirks, such as the PCI fixup header quirk.
+>   */
+> -void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
+> +void pci_add_dma_alias(struct pci_dev *dev, u8 devfn_from, unsigned nr_devfns)
+>  {
+> +	int devfn_to;
+> +
+> +	nr_devfns = min(nr_devfns, (unsigned)MAX_NR_DEVFNS);
+> +	devfn_to = devfn_from + nr_devfns - 1;
 
---Sig_/7LARfLRMNLloF/0HH__5J_H
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I made this look like:
 
------BEGIN PGP SIGNATURE-----
++       devfn_to = min(devfn_from + nr_devfns - 1,
++                      (unsigned) MAX_NR_DEVFNS - 1);
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3wHYkACgkQAVBC80lX
-0Gy1zQf/XBlLXFyjf2UIu0lqNQyKeWdtnjgqXuqcFOQtDqhdZ1u1ulVlNP6DQllI
-oS7FFzxgOUf/yj1rWFLc/MoXE9Gx7TxwiSwphiGgw1A1/2mpD3ARKhVnwUeConM/
-uJnBvgvWbpKnkuEdxl/HmAf31/R3eqrKwjOBvDb0eutvuFVr0dzkg8fadtu7zqRz
-gRBVxsmqtP7KNfHjBtTZu4AyarX57ry7bZ+zTal9zvML7kKCyYYRp0xtqkn30EWC
-jNkvGM9HDbKT7MSLoxctSTYvW4I+OQKfJSZQFPFPCIYEtnHw7SPtUGzq44O2Z+hs
-a90M1MwaouLwQLFDfghQRpHmWRwPgA==
-=9FkA
------END PGP SIGNATURE-----
+so devfn_from=0xf0, nr_devfns=0x20 doesn't cause devfn_to to wrap
+around.
 
---Sig_/7LARfLRMNLloF/0HH__5J_H--
+I did keep Logan's reviewed-by, so let me know if I broke something.
+
+>  	if (!dev->dma_alias_mask)
+>  		dev->dma_alias_mask = bitmap_zalloc(MAX_NR_DEVFNS, GFP_KERNEL);
+>  	if (!dev->dma_alias_mask) {
+> @@ -5882,9 +5888,15 @@ void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
+>  		return;
+>  	}
+>  
+> -	set_bit(devfn, dev->dma_alias_mask);
+> -	pci_info(dev, "Enabling fixed DMA alias to %02x.%d\n",
+> -		 PCI_SLOT(devfn), PCI_FUNC(devfn));
+> +	bitmap_set(dev->dma_alias_mask, devfn_from, nr_devfns);
+> +
+> +	if (nr_devfns == 1)
+> +		pci_info(dev, "Enabling fixed DMA alias to %02x.%d\n",
+> +				PCI_SLOT(devfn_from), PCI_FUNC(devfn_from));
+> +	else if(nr_devfns > 1)
+> +		pci_info(dev, "Enabling fixed DMA alias for devfn range from %02x.%d to %02x.%d\n",
+> +				PCI_SLOT(devfn_from), PCI_FUNC(devfn_from),
+> +				PCI_SLOT(devfn_to), PCI_FUNC(devfn_to));
+>  }
