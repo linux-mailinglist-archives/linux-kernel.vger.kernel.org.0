@@ -2,108 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDD441184E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:22:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B52EE1184DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:21:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfLJKV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 05:21:58 -0500
-Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:24439 "EHLO
-        esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfLJKV5 (ORCPT
+        id S1727224AbfLJKVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 05:21:53 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:57111 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726574AbfLJKVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:21:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1575973317;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=4PhE0mOGPD1zWZASbQ5CWdp3IZVaRYiYD5CdAezDIzg=;
-  b=EebQ1jgiepeEgkAhPB1OXJjmDCAqe5oarwxgCPAkX9gFRup0fr9bUy5v
-   XGfZFw1i+P7ME171ocHatDwqpFLUmP4w+1x9u5HeLmCQxFv/7EhAYTdUN
-   WY7mGAJGqI4n90gxG5FrCg1mtAlav782SckEslFwTJVJTJ7s8BW6eB1Zq
-   g=;
-Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
-  receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa2.hc3370-68.iphmx.com: domain of
-  roger.pau@citrix.com designates 162.221.158.21 as permitted
-  sender) identity=mailfrom; client-ip=162.221.158.21;
-  receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: J/Qwc1MLS8uzoplHZItR93vbDIMgnz3emkOpUjrWj9JL23ADQcoIho4tYn5tjdu3JFCBTJ+W8O
- plARZAwoIRJqT0bZ0j1l8NTrKDrhwiDWjQocq8hGJMx6uguvE+U2nXB0bJDEFxebBkMyT/IHKy
- vW2udoFw/dOZ73cpw1J3BTTq1J0jnFgFkBlE4Ml+e85k/r5MyvH8pHxgNzxGIy9dDsek/H23Ax
- TdqTP9EV1nylxtyI3d5TOYZiKYwVR5shwFf9FQxGQE2H79Dppbs5/4u8cj676sEe2NXZwNFvyV
- 2vs=
-X-SBRS: 2.7
-X-MesageID: 9447992
-X-Ironport-Server: esa2.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.69,299,1571716800"; 
-   d="scan'208";a="9447992"
-Date:   Tue, 10 Dec 2019 11:21:49 +0100
-From:   Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-To:     SeongJae Park <sj38.park@gmail.com>
-CC:     <axboe@kernel.dk>, <sjpark@amazon.com>, <konrad.wilk@oracle.com>,
-        <pdurrant@amazon.com>, SeongJae Park <sjpark@amazon.de>,
-        <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <xen-devel@lists.xenproject.org>
-Subject: Re: [Xen-devel] [PATCH v5 1/2] xenbus/backend: Add memory pressure
- handler callback
-Message-ID: <20191210102023.GF980@Air-de-Roger>
-References: <20191210080628.5264-1-sjpark@amazon.de>
- <20191210080628.5264-2-sjpark@amazon.de>
- <20191210101635.GD980@Air-de-Roger>
+        Tue, 10 Dec 2019 05:21:53 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-181-dlX51XbcOgGmzaLpZVEObQ-1; Tue, 10 Dec 2019 10:21:50 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 10 Dec 2019 10:21:49 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 10 Dec 2019 10:21:49 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Andy Lutomirski' <luto@amacapital.net>
+CC:     Eric Dumazet <eric.dumazet@gmail.com>,
+        network dev <netdev@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: recvfrom/recvmsg performance and CONFIG_HARDENED_USERCOPY
+Thread-Topic: recvfrom/recvmsg performance and CONFIG_HARDENED_USERCOPY
+Thread-Index: AdWsNynavvs+VRwOQ6mSStk+IzVA6AACUqqAAI3fO8AAEiVBgAAgNCaQ
+Date:   Tue, 10 Dec 2019 10:21:49 +0000
+Message-ID: <5a3cf731da8442909a4b84d975beb5e0@AcuMS.aculab.com>
+References: <efffc167eff1475f94f745f733171d59@AcuMS.aculab.com>
+ <F6840B11-060A-48F2-9FFE-774E73C50765@amacapital.net>
+In-Reply-To: <F6840B11-060A-48F2-9FFE-774E73C50765@amacapital.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191210101635.GD980@Air-de-Roger>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL03.citrite.net (10.69.22.127)
+X-MC-Unique: dlX51XbcOgGmzaLpZVEObQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 11:16:35AM +0100, Roger Pau Monné wrote:
-> On Tue, Dec 10, 2019 at 08:06:27AM +0000, SeongJae Park wrote:
-> > diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
-> > index 869c816d5f8c..cdb075e4182f 100644
-> > --- a/include/xen/xenbus.h
-> > +++ b/include/xen/xenbus.h
-> > @@ -104,6 +104,7 @@ struct xenbus_driver {
-> >  	struct device_driver driver;
-> >  	int (*read_otherend_details)(struct xenbus_device *dev);
-> >  	int (*is_ready)(struct xenbus_device *dev);
-> > +	unsigned (*reclaim)(struct xenbus_device *dev);
-> 
-> ... hence I wonder why it's returning an unsigned when it's just
-> ignored.
-> 
-> IMO it should return an int to signal errors, and the return should be
-> ignored.
+RnJvbTogQW5keSBMdXRvbWlyc2tpDQo+IFNlbnQ6IDA5IERlY2VtYmVyIDIwMTkgMTg6NDMNCj4g
+DQo+ID4gT24gRGVjIDksIDIwMTksIGF0IDM6MDEgQU0sIERhdmlkIExhaWdodCA8RGF2aWQuTGFp
+Z2h0QGFjdWxhYi5jb20+IHdyb3RlOg0KPiA+DQo+ID4g77u/RnJvbTogRXJpYyBEdW1hemV0DQo+
+ID4+IFNlbnQ6IDA2IERlY2VtYmVyIDIwMTkgMTQ6MjINCj4gPiAuLi4NCj4gPj4gUmVhbCBxdWVz
+dGlvbiBpcyA6IERvIHlvdSBhY3R1YWxseSBuZWVkIHRvIHVzZSByZWN2bXNnKCkgaW5zdGVhZCBv
+ZiByZWN2ZnJvbSgpID8NCj4gPj4gSWYgcmVjdm1zZygpIHByb3ZpZGVzIGFkZGl0aW9uYWwgY21z
+ZywgdGhpcyBpcyBub3Qgc3VycHJpc2luZyBpdCBpcyBtb3JlIGV4cGVuc2l2ZS4NCj4gPg0KPiA+
+IEV4Y2VwdCBJJ20gbm90IHBhc3NpbmcgaW4gYSBidWZmZXIgZm9yIGl0Lg0KPiA+IFRoZSByZWFz
+b24gSSdtIGxvb2tpbmcgYXQgcmVjdm1zZyBpcyB0aGF0IEknZCBsaWtlIHRvIHVzZSByZWN2bW1z
+ZyBpdCBvcmRlciB0bw0KPiA+IHJlYWQgb3V0IG1vcmUgdGhhbiBvbmUgbWVzc2FnZSBmcm9tIGEg
+c29ja2V0IHdpdGhvdXQgZG9pbmcgYW4gZXh0cmEgcG9sbCgpLg0KPiA+IE5vdGUgdGhhdCBJIGRv
+bid0IGV4cGVjdCB0aGVyZSB0byBiZSBhIHNlY29uZCBtZXNzYWdlIG1vc3Qgb2YgdGhlIHRpbWUg
+YW5kDQo+ID4gYWxtb3N0IG5ldmVyIGEgdGhpcmQgb25lLg0KPiA+DQo+ID4gQWx0aG91Z2ggSSB0
+aGluayB0aGF0IHdpbGwgb25seSBldmVyICd3aW4nIGlmIHJlY3ZtbXNnKCkgY2FsbGVkIHZmc19w
+b2xsKCkgdG8gZmluZA0KPiA+IGlmIHRoZXJlIHdhcyBtb3JlIGRhdGEgdG8gcmVhZCBiZWZvcmUg
+ZG9pbmcgYW55IG9mIHRoZSBjb3B5X2Zyb21fdXNlcigpIGV0Yw0KPiANCj4gSSB3b3VsZCBzdWdn
+ZXN0IGEgbW9yZSBnZW5lcmFsIGltcHJvdmVtZW50OiBhZGQgYSAtRUFHQUlOIGZhc3QgcGF0aCB0
+byByZWN2bXNnKCkuDQo+IElmIHRoZSBzb2NrZXQgaXMgbm9uYmxvY2tpbmcgYW5kIGhhcyBubyBk
+YXRhIHRvDQo+IHJlYWQsIHRoZW4gdGhlcmUgc2hvdWxkbuKAmXQgYmUgYSBuZWVkIHRvIHByb2Nl
+c3MgdGhlIGlvdmVjIGF0IGFsbC4NCg0KWW91IGRvbid0IHdhbnQgdG8gZG8gdGhhdCBmb3IgcmVj
+dm1zZygpIGl0c2VsZi4NCkl0IHdpbGwgbm9ybWFsbHkgb25seSBiZSBjYWxsZWQgaWYgcG9sbCgp
+IHJlcG9ydGVkIGRhdGEgaXMgYXZhaWxhYmxlLg0KQWN0dWFsbHkgdGhlIE1TR19XQUlURk9ST05F
+IGZsYWcgY291bGQgYmUgdXNlZCB0byBkbyBhIGNhbGwNCnRvIHZmc19wb2xsKCkgYmVmb3JlIHRo
+ZSBzdWJzZXF1ZW50IGNhbGxzIHRvIF9fc3lzX3JlY3Ztc2coKS4NClRoaXMgd2lsbCB3b3JrIGZv
+ciBub24tYmxvY2tpbmcgc29ja2V0cyAob3IgZXZlbiBjYWxscyB3aXRoIGJvdGgNCk1TR19ET05U
+V0FJVCBhbmQgTVNHX1dBSVRGT1JPTkUgc2V0KS4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQg
+QWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVz
+LCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-Meant to write 'shouldn't be ignored' sorry.
-
-Roger.
