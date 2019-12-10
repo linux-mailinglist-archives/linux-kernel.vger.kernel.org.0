@@ -2,156 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC02117F61
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:06:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0B70117F64
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:06:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfLJFFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 00:05:41 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:1202 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726822AbfLJFFg (ORCPT
+        id S1727199AbfLJFG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 00:06:27 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:46493 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfLJFG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 00:05:36 -0500
-X-UUID: 405eab06d9fa439c9c393a143611d3dc-20191210
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=AdxFy+I7i2jJN+rN5zx7RX8ff9ZkwUeUYe2wFRnYZxg=;
-        b=ltyfZqajvcF/5KVrFhmpV1GQAmj7Im9w9LIDXZa1p3uJF4xMwCz8j4k7u4bGNfpEZS9E/1zwdUk8DALeXKlVAJQLXXtIdGabqiIh/bdh2ytrFTHOirjU9yyW5wZhEmtl+5CWyhPSQFe+pUnYJJVf2FbJQtcDppypHgvn+wR+G1c=;
-X-UUID: 405eab06d9fa439c9c393a143611d3dc-20191210
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 148240179; Tue, 10 Dec 2019 13:05:30 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 10 Dec 2019 13:04:33 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 10 Dec 2019 13:05:22 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v5 7/7] drm/mediatek: apply CMDQ control flow
-Date:   Tue, 10 Dec 2019 13:05:26 +0800
-Message-ID: <20191210050526.4437-8-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191210050526.4437-1-bibby.hsieh@mediatek.com>
-References: <20191210050526.4437-1-bibby.hsieh@mediatek.com>
+        Tue, 10 Dec 2019 00:06:27 -0500
+Received: by mail-pj1-f66.google.com with SMTP id z21so6864694pjq.13
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 21:06:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ur1bt3xTjtkHmcaGa2TtGWJXPFbPuLGPncSr9nhfgIU=;
+        b=dcOCk7/ZdsHF8xtRIQ2ARAIobuNALOOeQ2c0Bg+/US+dqaJ3mwWRX62ZBhfA0Qk7fF
+         OTYggx+k5Bj889hv9EScMPTGasi8B9F43+fXW9cd9MxrFHQd9ML55swAGdohg8Zqzomv
+         mXbGaO8NixOlcRgHkwthiPQ8CNI28HTKklYGwapo3q331N3jLCGD0uFrCRq7NKe0aFKw
+         J4Bigb6yWgnNuvD6Kp5Hc0MLguOHsIbPqwG1WLiIuQHikYVJU22wrqJO/LLlZC6HvgQN
+         D3uKis4U32f5Twfguz7BL/H0toFyoWwTLmbBiCKymUZgKgngSRtjNM4SZqv4/ZdwONOb
+         P4Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ur1bt3xTjtkHmcaGa2TtGWJXPFbPuLGPncSr9nhfgIU=;
+        b=g8ha0yWzL6hal3lGJnNWAS7EO9Kw08ixlJBAVUvo9GWkXtMpF4wessx4hL/wXa0Wg/
+         epFIEZuvam9xOgkVH/0f2YCnw39GCx8yR44j0RL0o7GRKKCh4Gtz7xO9rJV82ZTaPD8N
+         jazWnDfnkdaR94AWLlWI9Lq3Gf8cL8ikiF08+WwdHSCvJv0AkmbMy7kg5TbjuBYl+FBi
+         1KhZh7v6UWmQzJQ6SIYtl+0VW/OmddCI3cthFrxKNVGLa2QVpyHbDFLCE2BWtfVhdrEF
+         EY2vR96CI69NI/lenuwJqVh+Q2AThWTUBLC7q96p767JLn2rqw1zlv8IS2ROu14NjtCb
+         tyNQ==
+X-Gm-Message-State: APjAAAUy/NBfGpJ1wlXHHNQEKZg/jAazl0f9cqQ/oKsH7pmjVUPMKRbT
+        xgPLriXUja+aaXp1vbyKA/0DcZNDZFs=
+X-Google-Smtp-Source: APXvYqwtVx0T/GBthcNljPLvnKI3P3dum7lsbViRGFiBl18i0ByWVNIJ51tPBTD6LluypmeyTyQujQ==
+X-Received: by 2002:a17:90a:ba04:: with SMTP id s4mr3251449pjr.92.1575954386282;
+        Mon, 09 Dec 2019 21:06:26 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1133::11c7? ([2620:10d:c090:180::240])
+        by smtp.gmail.com with ESMTPSA id e27sm1275309pfm.26.2019.12.09.21.06.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2019 21:06:25 -0800 (PST)
+Subject: Re: [block] 48d9b0d431: BUG:kernel_NULL_pointer_dereference,address
+To:     kernel test robot <rong.a.chen@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        lkp@lists.01.org
+References: <20191208154020.GK32275@shao2-debian>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ee156e51-bede-9c58-b48b-31aac65976ea@kernel.dk>
+Date:   Mon, 9 Dec 2019 22:06:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: AEEBE7D522D0684789C27698D7E9A0893C29132C1A89D92F4F2366B10B5230492000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <20191208154020.GK32275@shao2-debian>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VW5saWtlIG90aGVyIFNvQ3MsIE1UODE4MyBkb2VzIG5vdCBoYXZlICJzaGFkb3ciDQpyZWdpc3Rl
-cnMgZm9yIHBlcmZvcm1haW5nIGFuIGF0b21pYyB2aWRlbyBtb2RlDQpzZXQgb3IgcGFnZSBmbGlw
-IGF0IHZibGFuay92c3luYy4NCg0KVGhlIENNRFEgKENvbW1lbmQgUXVldWUpIGluIE1UODE4MyBp
-cyB1c2VkIHRvIGhlbHANCnVwZGF0ZSBhbGwgcmVsZXZhbnQgZGlzcGxheSBjb250cm9sbGVyIHJl
-Z2lzdGVycw0Kd2l0aCBjcml0aWNhbCB0aW1lIGxpbWF0aW9uLg0KDQpTaWduZWQtb2ZmLWJ5OiBZ
-VCBTaGVuIDx5dC5zaGVuQG1lZGlhdGVrLmNvbT4NClNpZ25lZC1vZmYtYnk6IENLIEh1IDxjay5o
-dUBtZWRpYXRlay5jb20+DQpTaWduZWQtb2ZmLWJ5OiBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBl
-bmd1dHJvbml4LmRlPg0KU2lnbmVkLW9mZi1ieTogQmliYnkgSHNpZWggPGJpYmJ5LmhzaWVoQG1l
-ZGlhdGVrLmNvbT4NClNpZ25lZC1vZmYtYnk6IFlvbmdxaWFuZyBOaXUgPHlvbmdxaWFuZy5uaXVA
-bWVkaWF0ZWsuY29tPg0KUmV2aWV3ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+DQot
-LS0NCiBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMgfCA1NiArKysrKysr
-KysrKysrKysrKysrKystLS0tDQogMSBmaWxlIGNoYW5nZWQsIDQ5IGluc2VydGlvbnMoKyksIDcg
-ZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
-X2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCmlu
-ZGV4IDViM2UyNGE3ZWY2Yy4uY2E0ZmM0NzM1ZjlhIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0
-ZWsvbXRrX2RybV9jcnRjLmMNCkBAIC0xMiw2ICsxMiw4IEBADQogI2luY2x1ZGUgPGRybS9kcm1f
-cGxhbmVfaGVscGVyLmg+DQogI2luY2x1ZGUgPGRybS9kcm1fcHJvYmVfaGVscGVyLmg+DQogI2lu
-Y2x1ZGUgPGRybS9kcm1fdmJsYW5rLmg+DQorI2luY2x1ZGUgPGxpbnV4L29mX2FkZHJlc3MuaD4N
-CisjaW5jbHVkZSA8bGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmg+DQogDQogI2luY2x1ZGUg
-Im10a19kcm1fZHJ2LmgiDQogI2luY2x1ZGUgIm10a19kcm1fY3J0Yy5oIg0KQEAgLTQzLDYgKzQ1
-LDkgQEAgc3RydWN0IG10a19kcm1fY3J0YyB7DQogCWJvb2wJCQkJcGVuZGluZ19wbGFuZXM7DQog
-CWJvb2wJCQkJcGVuZGluZ19hc3luY19wbGFuZXM7DQogDQorCXN0cnVjdCBjbWRxX2NsaWVudAkJ
-KmNtZHFfY2xpZW50Ow0KKwl1MzIJCQkJY21kcV9ldmVudDsNCisNCiAJdm9pZCBfX2lvbWVtCQkJ
-KmNvbmZpZ19yZWdzOw0KIAljb25zdCBzdHJ1Y3QgbXRrX21tc3lzX3JlZ19kYXRhICptbXN5c19y
-ZWdfZGF0YTsNCiAJc3RydWN0IG10a19kaXNwX211dGV4CQkqbXV0ZXg7DQpAQCAtMjM0LDYgKzIz
-OSwxMyBAQCBzdHJ1Y3QgbXRrX2RkcF9jb21wICptdGtfZHJtX2RkcF9jb21wX2Zvcl9wbGFuZShz
-dHJ1Y3QgZHJtX2NydGMgKmNydGMsDQogCXJldHVybiBOVUxMOw0KIH0NCiANCisjaWYgSVNfRU5B
-QkxFRChDT05GSUdfTVRLX0NNRFEpDQorc3RhdGljIHZvaWQgZGRwX2NtZHFfY2Ioc3RydWN0IGNt
-ZHFfY2JfZGF0YSBkYXRhKQ0KK3sNCisJY21kcV9wa3RfZGVzdHJveShkYXRhLmRhdGEpOw0KK30N
-CisjZW5kaWYNCisNCiBzdGF0aWMgaW50IG10a19jcnRjX2RkcF9od19pbml0KHN0cnVjdCBtdGtf
-ZHJtX2NydGMgKm10a19jcnRjKQ0KIHsNCiAJc3RydWN0IGRybV9jcnRjICpjcnRjID0gJm10a19j
-cnRjLT5iYXNlOw0KQEAgLTM3NSw3ICszODcsOCBAQCBzdGF0aWMgdm9pZCBtdGtfY3J0Y19kZHBf
-aHdfZmluaShzdHJ1Y3QgbXRrX2RybV9jcnRjICptdGtfY3J0YykNCiAJfQ0KIH0NCiANCi1zdGF0
-aWMgdm9pZCBtdGtfY3J0Y19kZHBfY29uZmlnKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykNCitzdGF0
-aWMgdm9pZCBtdGtfY3J0Y19kZHBfY29uZmlnKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywNCisJCQkJ
-c3RydWN0IGNtZHFfcGt0ICpjbWRxX2hhbmRsZSkNCiB7DQogCXN0cnVjdCBtdGtfZHJtX2NydGMg
-Km10a19jcnRjID0gdG9fbXRrX2NydGMoY3J0Yyk7DQogCXN0cnVjdCBtdGtfY3J0Y19zdGF0ZSAq
-c3RhdGUgPSB0b19tdGtfY3J0Y19zdGF0ZShtdGtfY3J0Yy0+YmFzZS5zdGF0ZSk7DQpAQCAtMzkx
-LDcgKzQwNCw4IEBAIHN0YXRpYyB2b2lkIG10a19jcnRjX2RkcF9jb25maWcoc3RydWN0IGRybV9j
-cnRjICpjcnRjKQ0KIAlpZiAoc3RhdGUtPnBlbmRpbmdfY29uZmlnKSB7DQogCQltdGtfZGRwX2Nv
-bXBfY29uZmlnKGNvbXAsIHN0YXRlLT5wZW5kaW5nX3dpZHRoLA0KIAkJCQkgICAgc3RhdGUtPnBl
-bmRpbmdfaGVpZ2h0LA0KLQkJCQkgICAgc3RhdGUtPnBlbmRpbmdfdnJlZnJlc2gsIDAsIE5VTEwp
-Ow0KKwkJCQkgICAgc3RhdGUtPnBlbmRpbmdfdnJlZnJlc2gsIDAsDQorCQkJCSAgICBjbWRxX2hh
-bmRsZSk7DQogDQogCQlzdGF0ZS0+cGVuZGluZ19jb25maWcgPSBmYWxzZTsNCiAJfQ0KQEAgLTQx
-MSw3ICs0MjUsOCBAQCBzdGF0aWMgdm9pZCBtdGtfY3J0Y19kZHBfY29uZmlnKHN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YykNCiANCiAJCQlpZiAoY29tcCkNCiAJCQkJbXRrX2RkcF9jb21wX2xheWVyX2Nv
-bmZpZyhjb21wLCBsb2NhbF9sYXllciwNCi0JCQkJCQkJICBwbGFuZV9zdGF0ZSwgTlVMTCk7DQor
-CQkJCQkJCSAgcGxhbmVfc3RhdGUsDQorCQkJCQkJCSAgY21kcV9oYW5kbGUpOw0KIAkJCXBsYW5l
-X3N0YXRlLT5wZW5kaW5nLmNvbmZpZyA9IGZhbHNlOw0KIAkJfQ0KIAkJbXRrX2NydGMtPnBlbmRp
-bmdfcGxhbmVzID0gZmFsc2U7DQpAQCAtNDMyLDcgKzQ0Nyw4IEBAIHN0YXRpYyB2b2lkIG10a19j
-cnRjX2RkcF9jb25maWcoc3RydWN0IGRybV9jcnRjICpjcnRjKQ0KIA0KIAkJCWlmIChjb21wKQ0K
-IAkJCQltdGtfZGRwX2NvbXBfbGF5ZXJfY29uZmlnKGNvbXAsIGxvY2FsX2xheWVyLA0KLQkJCQkJ
-CQkgIHBsYW5lX3N0YXRlLCBOVUxMKTsNCisJCQkJCQkJICBwbGFuZV9zdGF0ZSwNCisJCQkJCQkJ
-ICBjbWRxX2hhbmRsZSk7DQogCQkJcGxhbmVfc3RhdGUtPnBlbmRpbmcuYXN5bmNfY29uZmlnID0g
-ZmFsc2U7DQogCQl9DQogCQltdGtfY3J0Yy0+cGVuZGluZ19hc3luY19wbGFuZXMgPSBmYWxzZTsN
-CkBAIC00NDEsNiArNDU3LDcgQEAgc3RhdGljIHZvaWQgbXRrX2NydGNfZGRwX2NvbmZpZyhzdHJ1
-Y3QgZHJtX2NydGMgKmNydGMpDQogDQogc3RhdGljIHZvaWQgbXRrX2RybV9jcnRjX2h3X2NvbmZp
-ZyhzdHJ1Y3QgbXRrX2RybV9jcnRjICptdGtfY3J0YykNCiB7DQorCXN0cnVjdCBjbWRxX3BrdCAq
-Y21kcV9oYW5kbGU7DQogCXN0cnVjdCBkcm1fY3J0YyAqY3J0YyA9ICZtdGtfY3J0Yy0+YmFzZTsN
-CiAJc3RydWN0IG10a19kcm1fcHJpdmF0ZSAqcHJpdiA9IGNydGMtPmRldi0+ZGV2X3ByaXZhdGU7
-DQogCXVuc2lnbmVkIGludCBwZW5kaW5nX3BsYW5lcyA9IDAsIHBlbmRpbmdfYXN5bmNfcGxhbmVz
-ID0gMDsNCkBAIC00NjksOSArNDg2LDE4IEBAIHN0YXRpYyB2b2lkIG10a19kcm1fY3J0Y19od19j
-b25maWcoc3RydWN0IG10a19kcm1fY3J0YyAqbXRrX2NydGMpDQogDQogCWlmIChwcml2LT5kYXRh
-LT5zaGFkb3dfcmVnaXN0ZXIpIHsNCiAJCW10a19kaXNwX211dGV4X2FjcXVpcmUobXRrX2NydGMt
-Pm11dGV4KTsNCi0JCW10a19jcnRjX2RkcF9jb25maWcoY3J0Yyk7DQorCQltdGtfY3J0Y19kZHBf
-Y29uZmlnKGNydGMsIE5VTEwpOw0KIAkJbXRrX2Rpc3BfbXV0ZXhfcmVsZWFzZShtdGtfY3J0Yy0+
-bXV0ZXgpOw0KIAl9DQorI2lmIElTX0VOQUJMRUQoQ09ORklHX01US19DTURRKQ0KKwlpZiAobXRr
-X2NydGMtPmNtZHFfY2xpZW50KSB7DQorCQljbWRxX2hhbmRsZSA9IGNtZHFfcGt0X2NyZWF0ZSht
-dGtfY3J0Yy0+Y21kcV9jbGllbnQsIFBBR0VfU0laRSk7DQorCQljbWRxX3BrdF9jbGVhcl9ldmVu
-dChjbWRxX2hhbmRsZSwgbXRrX2NydGMtPmNtZHFfZXZlbnQpOw0KKwkJY21kcV9wa3Rfd2ZlKGNt
-ZHFfaGFuZGxlLCBtdGtfY3J0Yy0+Y21kcV9ldmVudCk7DQorCQltdGtfY3J0Y19kZHBfY29uZmln
-KGNydGMsIGNtZHFfaGFuZGxlKTsNCisJCWNtZHFfcGt0X2ZsdXNoX2FzeW5jKGNtZHFfaGFuZGxl
-LCBkZHBfY21kcV9jYiwgY21kcV9oYW5kbGUpOw0KKwl9DQorI2VuZGlmDQogCW11dGV4X3VubG9j
-aygmbXRrX2NydGMtPmh3X2xvY2spOw0KIH0NCiANCkBAIC02NDAsOCArNjY2LDggQEAgdm9pZCBt
-dGtfY3J0Y19kZHBfaXJxKHN0cnVjdCBkcm1fY3J0YyAqY3J0Yywgc3RydWN0IG10a19kZHBfY29t
-cCAqY29tcCkNCiAJc3RydWN0IG10a19kcm1fY3J0YyAqbXRrX2NydGMgPSB0b19tdGtfY3J0Yyhj
-cnRjKTsNCiAJc3RydWN0IG10a19kcm1fcHJpdmF0ZSAqcHJpdiA9IGNydGMtPmRldi0+ZGV2X3By
-aXZhdGU7DQogDQotCWlmICghcHJpdi0+ZGF0YS0+c2hhZG93X3JlZ2lzdGVyKQ0KLQkJbXRrX2Ny
-dGNfZGRwX2NvbmZpZyhjcnRjKTsNCisJaWYgKCFwcml2LT5kYXRhLT5zaGFkb3dfcmVnaXN0ZXIg
-JiYgIW10a19jcnRjLT5jbWRxX2NsaWVudCkNCisJCW10a19jcnRjX2RkcF9jb25maWcoY3J0Yywg
-TlVMTCk7DQogDQogCW10a19kcm1fZmluaXNoX3BhZ2VfZmxpcChtdGtfY3J0Yyk7DQogfQ0KQEAg
-LTc4NCw1ICs4MTAsMjEgQEAgaW50IG10a19kcm1fY3J0Y19jcmVhdGUoc3RydWN0IGRybV9kZXZp
-Y2UgKmRybV9kZXYsDQogCXByaXYtPm51bV9waXBlcysrOw0KIAltdXRleF9pbml0KCZtdGtfY3J0
-Yy0+aHdfbG9jayk7DQogDQorI2lmIElTX0VOQUJMRUQoQ09ORklHX01US19DTURRKQ0KKwltdGtf
-Y3J0Yy0+Y21kcV9jbGllbnQgPQ0KKwkJCWNtZHFfbWJveF9jcmVhdGUoZGV2LCBkcm1fY3J0Y19p
-bmRleCgmbXRrX2NydGMtPmJhc2UpLA0KKwkJCQkJIDIwMDApOw0KKwlpZiAoSVNfRVJSKG10a19j
-cnRjLT5jbWRxX2NsaWVudCkpIHsNCisJCWRldl9kYmcoZGV2LCAibXRrX2NydGMgJWQgZmFpbGVk
-IHRvIGNyZWF0ZSBtYWlsYm94IGNsaWVudCwgd3JpdGluZyByZWdpc3RlciBieSBDUFUgbm93XG4i
-LA0KKwkJCWRybV9jcnRjX2luZGV4KCZtdGtfY3J0Yy0+YmFzZSkpOw0KKwkJbXRrX2NydGMtPmNt
-ZHFfY2xpZW50ID0gTlVMTDsNCisJfQ0KKwlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMl9pbmRl
-eChkZXYtPm9mX25vZGUsICJtZWRpYXRlayxnY2UtZXZlbnRzIiwNCisJCQkJCSBkcm1fY3J0Y19p
-bmRleCgmbXRrX2NydGMtPmJhc2UpLA0KKwkJCQkJICZtdGtfY3J0Yy0+Y21kcV9ldmVudCk7DQor
-CWlmIChyZXQpDQorCQlkZXZfZGJnKGRldiwgIm10a19jcnRjICVkIGZhaWxlZCB0byBnZXQgbWVk
-aWF0ZWssZ2NlLWV2ZW50cyBwcm9wZXJ0eVxuIiwNCisJCQlkcm1fY3J0Y19pbmRleCgmbXRrX2Ny
-dGMtPmJhc2UpKTsNCisjZW5kaWYNCiAJcmV0dXJuIDA7DQogfQ0KLS0gDQoyLjE4LjANCg==
+Logan,
+
+Are you looking into this one?
+
+
+On 12/8/19 8:40 AM, kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: 48d9b0d43105e0da2b7c135eedd24e51234fb5e4 ("block: account statistics for passthrough requests")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> in testcase: rcuperf
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	perf_type: tasks
+> 
+> 
+> 
+> on test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> +-------------------------------------------------------+------------+------------+
+> |                                                       | 8148f0b564 | 48d9b0d431 |
+> +-------------------------------------------------------+------------+------------+
+> | boot_successes                                        | 8          | 0          |
+> | boot_failures                                         | 0          | 8          |
+> | BUG:kernel_NULL_pointer_dereference,address           | 0          | 8          |
+> | Oops:#[##]                                            | 0          | 8          |
+> | EIP:blk_account_io_completion                         | 0          | 8          |
+> | EIP:ide_output_data                                   | 0          | 8          |
+> | Kernel_panic-not_syncing:Fatal_exception_in_interrupt | 0          | 8          |
+> +-------------------------------------------------------+------------+------------+
+> 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kernel test robot <rong.a.chen@intel.com>
+> 
+> 
+> [   14.392111] BUG: kernel NULL pointer dereference, address: 000002ac
+> [   14.392607] #PF: supervisor write access in kernel mode
+> [   14.392607] #PF: error_code(0x0002) - not-present page
+> [   14.392607] *pde = 00000000 
+> [   14.392607] Oops: 0002 [#1]
+> [   14.392607] CPU: 0 PID: 237 Comm: kworker/0:1H Not tainted 5.4.0-rc2-00011-g48d9b0d43105e #1
+> [   14.392607] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [   14.392607] Workqueue: kblockd drive_rq_insert_work
+> [   14.392607] EIP: blk_account_io_completion+0x7a/0xf0
+> [   14.392607] Code: 89 54 24 08 31 d2 89 4c 24 04 31 c9 c7 04 24 02 00 00 00 c1 ee 09 e8 f5 21 a6 ff e8 70 5c a7 ff 8b 53 60 8d 04 bd 00 00 00 00 <01> b4 02 ac 02 00 00 8b 9a 88 02 00 00 85 db 74 11 85 d2 74 51 8b
+> [   14.392607] EAX: 00000000 EBX: f5b80000 ECX: 00000000 EDX: 00000000
+> [   14.392607] ESI: 00000000 EDI: 00000000 EBP: f3031e70 ESP: f3031e54
+> [   14.392607] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010046
+> [   14.392607] CR0: 80050033 CR2: 000002ac CR3: 03c25000 CR4: 000406d0
+> [   14.392607] Call Trace:
+> [   14.392607]  <IRQ>
+> [   14.392607]  ? blk_account_io_completion+0x38/0xf0
+> [   14.392607]  blk_update_request+0x85/0x420
+> [   14.392607]  ? _raw_spin_unlock_irqrestore+0x4f/0x60
+> [   14.392607]  ? trace_hardirqs_off+0xca/0xe0
+> [   14.392607]  ? _raw_spin_unlock_irqrestore+0x4f/0x60
+> [   14.392607]  ? complete+0x41/0x50
+> [   14.392607]  ide_end_rq+0x38/0xa0
+> [   14.392607]  ide_complete_rq+0x3d/0x70
+> [   14.392607]  cdrom_newpc_intr+0x258/0xba0
+> [   14.392607]  ? find_held_lock+0x2f/0xa0
+> [   14.392607]  ? cdrom_analyze_sense_data+0x1b0/0x1b0
+> [   14.392607]  ide_intr+0x135/0x250
+> [   14.392607]  __handle_irq_event_percpu+0x3e/0x250
+> [   14.392607]  handle_irq_event_percpu+0x1f/0x50
+> [   14.392607]  handle_irq_event+0x32/0x60
+> [   14.392607]  ? handle_fasteoi_irq+0x160/0x160
+> [   14.392607]  handle_level_irq+0x6c/0x110
+> [   14.392607]  handle_irq+0x72/0xa0
+> [   14.392607]  </IRQ>
+> [   14.392607]  do_IRQ+0x45/0xad
+> [   14.392607]  common_interrupt+0x115/0x11c
+> [   14.392607] EIP: ide_output_data+0xb7/0x140
+> [   14.392607] Code: 00 00 00 0f b7 03 66 89 07 83 c3 02 39 d3 75 f3 83 c4 14 5b 5e 5f 5d c3 8d 76 00 8b 4d ec d1 e9 80 7d f0 00 75 15 89 de 89 fa <f3> 66 6f 83 c4 14 5b 5e 5f 5d c3 8d b6 00 00 00 00 85 c9 74 ee 49
+> [   14.392607] EAX: 00000000 EBX: f5b800ac ECX: 00000000 EDX: 00000170
+> [   14.392607] ESI: f5b800b8 EDI: 00000170 EBP: f6a57dac ESP: f6a57d8c
+> [   14.392607] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010246
+> [   14.392607]  ? print_usage_bug+0x9b/0x1f0
+> [   14.392607]  ? ide_output_data+0xb7/0x140
+> [   14.392607]  ? ide_set_handler+0x42/0x50
+> [   14.392607]  ide_transfer_pc+0x11c/0x2a0
+> [   14.392607]  ? ide_check_atapi_device+0x130/0x130
+> [   14.392607]  ? ide_pc_intr+0x3d0/0x3d0
+> [   14.392607]  ide_issue_pc+0x160/0x250
+> [   14.392607]  ? ide_check_atapi_device+0x130/0x130
+> [   14.392607]  ide_cd_do_request+0x18e/0x3d0
+> [   14.392607]  ide_issue_rq+0x13a/0x6a0
+> [   14.392607]  ? _raw_spin_unlock_irq+0x22/0x30
+> [   14.392607]  ? lockdep_hardirqs_on+0xe4/0x190
+> [   14.392607]  ? _raw_spin_unlock_irq+0x22/0x30
+> [   14.392607]  ? trace_hardirqs_on+0x38/0xe0
+> [   14.392607]  ? drive_rq_insert_work+0x7a/0xf0
+> [   14.392607]  drive_rq_insert_work+0x8a/0xf0
+> [   14.392607]  process_one_work+0x207/0x500
+> [   14.392607]  ? process_one_work+0x16b/0x500
+> [   14.392607]  worker_thread+0x39/0x400
+> [   14.392607]  kthread+0xee/0x110
+> [   14.392607]  ? process_one_work+0x500/0x500
+> [   14.392607]  ? kthread_create_on_node+0x30/0x30
+> [   14.392607]  ret_from_fork+0x1e/0x28
+> [   14.392607] Modules linked in:
+> [   14.392607] CR2: 00000000000002ac
+> [   14.392607] ---[ end trace 2efe0b990b41cd59 ]---
+> 
+> 
+> To reproduce:
+> 
+>         # build kernel
+> 	cd linux
+> 	cp config-5.4.0-rc2-00011-g48d9b0d43105e .config
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=i386 olddefconfig prepare modules_prepare bzImage
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
+> 
+> 
+> 
+> Thanks,
+> Rong Chen
+> 
+
+
+-- 
+Jens Axboe
 
