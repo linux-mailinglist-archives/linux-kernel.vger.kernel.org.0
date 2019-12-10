@@ -2,119 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 711431180A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 07:43:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC0831180B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 07:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfLJGnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 01:43:22 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:32948 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726917AbfLJGnW (ORCPT
+        id S1727385AbfLJGrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 01:47:25 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:11717 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727177AbfLJGrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 01:43:22 -0500
-Received: by mail-pj1-f66.google.com with SMTP id r67so7001191pjb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 22:43:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BEsOQpnU2Fph1cy4J7fXWqX+qA8/k32HrrzkPViDr9g=;
-        b=rKWS+sYVsja9k0hTYRx7AD3FmdiYxmyDQegsZbxb9XSsVmjse2VRHmD+zciVbY9xfd
-         Df1mS1W9/8ZsA4GVQIWMK851Wpq/RDC1D7KDrTFZD7tNqf0pzshtKjLPJfHkL3c5Fs+z
-         PUsrAKqyP1GkR+Vh2SA8as16BNtsRfBKNmqdp/t3/i2dbbVGTQqsYIpsYfHxDrMiX+L0
-         zTE4tXxRLhskmHL/IrAXD3zA8kxQ/IsiTVimAe7BYhO6yxeMPhXSOwmdvgnsu2dJo0pD
-         6yfz739bpjiHyJe9zckZeSWxbYYVdFEDPIPWjJjYRZ+GRkTFoainVrKadvRc5Lx22kxI
-         4uwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BEsOQpnU2Fph1cy4J7fXWqX+qA8/k32HrrzkPViDr9g=;
-        b=iGrG6jgK809kotSkgRpJQQ5nVc9ul5O2sSN57oaj9m0ieVf2EguBz7cz4wijAEuLBF
-         7u1NnREIHtkroWUyJ2QIBMfhoDuHGzfNIcDar7avLGmXx6AAynKVrVNRX1Q9EjSAcdG/
-         tY4cdJbjjopXKeGxqe3BBIdR88PSzfsN4bxOf3BPNSjUV1Es47uH417o/PZRdmCeyjif
-         mD5BnpT4rMlxgoUQ7y41E513BsAa6xww4RMIG+LmRCnacXUeocu6E0g/+LC0mwr8aIdw
-         DCePQHVO0jBoAvrwWqen0qiIzPwXZG8YPZNPDJTE9FM61bOi3jP7cvji/qOeUy0G6edH
-         eqtg==
-X-Gm-Message-State: APjAAAVBHxlDLyjNd2FTQLbgDXNag6ImHZfuNYKJCIk/2EwmI2rToMhG
-        stL9nK8HXDCFH0/3eb+B++gbxg==
-X-Google-Smtp-Source: APXvYqwmAHfbEzPNm/4WgwvG4FJ85rMoFfIuvn1FMXhgED7o/6LqgNh4zD7c3ekP+QYYweyaLz2cHQ==
-X-Received: by 2002:a17:902:6b49:: with SMTP id g9mr34119958plt.156.1575960201667;
-        Mon, 09 Dec 2019 22:43:21 -0800 (PST)
-Received: from localhost ([122.171.112.123])
-        by smtp.gmail.com with ESMTPSA id s7sm1509431pjk.22.2019.12.09.22.43.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Dec 2019 22:43:20 -0800 (PST)
-Date:   Tue, 10 Dec 2019 12:13:19 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "andrew-sh.cheng" <andrew-sh.cheng@mediatek.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Nishanth Menon <nm@ti.com>,
-        srv_heupstream@mediatek.com, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
+        Tue, 10 Dec 2019 01:47:20 -0500
+X-UUID: b7ca566db4f24045947646012bbe6a5d-20191210
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=c+JQZu06rnps/PbFJByt62MWheUf4sOHuIAnwN3BMkM=;
+        b=YPjk6VtJrl8cDG5r3PFAAuYJTRhuGHzoI5atvdK0uCAMQZkpmI1y/0laWaemnzfs+HJwFNkhheNUDTnNFOjca9Y3x+ZYC04r5OYUPsrYdLW4+iE4kGGYAjVHw+Y0WrF38UBdmQRvH+tTPATr5hfG68JIN+RR6mmQkJlAPlq77Io=;
+X-UUID: b7ca566db4f24045947646012bbe6a5d-20191210
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1044536345; Tue, 10 Dec 2019 14:47:13 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 10 Dec 2019 14:46:57 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 10 Dec 2019 14:47:16 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        fan.chen@mediatek.com, devicetree@vger.kernel.org
-Subject: Re: [v5, PATCH 4/5] cpufreq: mediatek: add opp notification for SVS
- support
-Message-ID: <20191210064319.f4ksrxozp3gv4xry@vireshk-i7>
-References: <1574769046-28449-1-git-send-email-andrew-sh.cheng@mediatek.com>
- <1574769046-28449-5-git-send-email-andrew-sh.cheng@mediatek.com>
- <20191127083619.etocnhpyyut3hzwq@vireshk-i7>
- <1575874588.13494.4.camel@mtksdaap41>
+        Rob Herring <robh@kernel.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Yong Wu <yong.wu@mediatek.com>
+Subject: [PATCH v9 0/9] Mediatek MT8183 scpsys support
+Date:   Tue, 10 Dec 2019 14:46:44 +0800
+Message-ID: <1575960413-6900-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1575874588.13494.4.camel@mtksdaap41>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09-12-19, 14:56, andrew-sh.cheng wrote:
-> On Wed, 2019-11-27 at 14:06 +0530, Viresh Kumar wrote:
-> > On 26-11-19, 19:50, Andrew-sh.Cheng wrote:
-> > > +		if (!IS_ERR(opp_item))
-> > > +			dev_pm_opp_put(opp_item);
-> > > +		else
-> > > +			freq = 0;
-> > > +
-> > 
-> > What is the purpose of the above code ?
-> When dev_pm_opp_find_freq_ceil() doesn't find matching opp item, freq
-> value won't be set.
-> Set it as 0 for below checking
-> > 
-> > > +		/* case of current opp is disabled */
-> > > +		if (freq == 0 || freq != info->opp_freq) {
-> > > +			// find an enable opp item
-> > > +			freq = 1;
-> > > +			opp_item = dev_pm_opp_find_freq_ceil(info->cpu_dev,
-> > > +							     &freq);
-> > > +			if (!IS_ERR(opp_item)) {
-> > > +				dev_pm_opp_put(opp_item);
-> > > +				policy = cpufreq_cpu_get(info->opp_cpu);
-> > > +				if (policy) {
-> > > +					cpufreq_driver_target(policy,
-> > > +						freq / 1000,
-> > > +						CPUFREQ_RELATION_L);
-> > 
-> > Why don't you simply call this instead of all the code in the else
-> > block ?
-> These else code is used to check "current opp item is disabled or not".
-> If not, do nothing.
-> If current opp item is disabled, need to find an not-disabled opp item,
-> and set frequency to it.
+VGhpcyBzZXJpZXMgaXMgYmFzZWQgb24gdjUuNS1yYzENCg0KY2hhbmdlcyBzaW5jZSB2NzoNCi0g
+cmV3b3JkIGluIGJpbmRpbmcgZG9jdW1lbnQgW1BBVENIIDAyLzE0XQ0KLSBmaXggZXJyb3IgcmV0
+dXJuIGNoZWNraW5nIGJ1ZyBpbiBzdWJzeXMgY2xvY2sgY29udHJvbCBbUEFUQ0ggMTAvMTRdDQot
+IGFkZCBwb3dlciBkb21haW5zIHByb3Blcml0eSB0byBtZmdjZmcgcGF0Y2ggW1BBVENIIDE0LzE0
+XSBmcm9tDQogIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTExMjYxOTkvDQoN
+CmNoYW5nZXMgc2luY2UgdjY6DQotIHJlbW92ZSB0aGUgcGF0Y2ggb2YgU1BEWCBsaWNlbnNlIGlk
+ZW50aWZpZXIgYmVjYXVzZSBpdCdzIGFscmVhZHkgZml4ZWQNCg0KY2hhbmdlcyBzaW5jZSB2NToN
+Ci0gZml4IGRvY3VtZW50YXRpb24gaW4gW1BBVENIIDA0LzE0XQ0KLSByZW1vdmUgdXNlbGVzcyB2
+YXJpYWJsZSBjaGVja2luZyBhbmQgcmV1c2UgQVBJIG9mIGNsb2NrIGNvbnRyb2wgaW4gW1BBVENI
+IDA2LzE0XQ0KLSBjb2Rpbmcgc3R5bGUgZml4IG9mIGJ1cyBwcm90ZWN0aW9uIGNvbnRyb2wgaW4g
+W1BBVENIIDA4LzE0XQ0KLSBmaXggbmFtaW5nIG9mIG5ldyBhZGRlZCBkYXRhIGluIFtQQVRDSCAw
+OS8xNF0NCi0gc21hbGwgcmVmYWN0b3Igb2YgbXVsdGlwbGUgc3RlcCBidXMgcHJvdGVjdGlvbiBj
+b250cm9sIGluIFtQQVRDSCAxMC8xNF0NCg0KY2hhbmdlcyBzaW5jZSB2NDoNCi0gYWRkIHByb3Bl
+cnR5IHRvIG10ODE4MyBzbWktY29tbW9uDQotIHNlcGVyYXRlIHJlZmFjdG9yIHBhdGNoZXMgYW5k
+IG5ldyBhZGQgZnVuY3Rpb24NCi0gYWRkIHBvd2VyIGNvbnRyb2xsZXIgZGV2aWNlIG5vZGUNCg0K
+V2VpeWkgTHUgKDkpOg0KICBkdC1iaW5kaW5nczogbWVkaWF0ZWs6IEFkZCBwcm9wZXJ0eSB0byBt
+dDgxODMgc21pLWNvbW1vbg0KICBkdC1iaW5kaW5nczogc29jOiBBZGQgTVQ4MTgzIHBvd2VyIGR0
+LWJpbmRpbmdzDQogIHNvYzogbWVkaWF0ZWs6IEFkZCBiYXNpY19jbGtfaWQgdG8gc2NwX3Bvd2Vy
+X2RhdGENCiAgc29jOiBtZWRpYXRlazogQWRkIG11bHRpcGxlIHN0ZXAgYnVzIHByb3RlY3Rpb24g
+Y29udHJvbA0KICBzb2M6IG1lZGlhdGVrOiBBZGQgc3Vic3lzIGNsb2NrIGNvbnRyb2wgZm9yIGJ1
+cyBwcm90ZWN0aW9uDQogIHNvYzogbWVkaWF0ZWs6IEFkZCBleHRyYSBzcmFtIGNvbnRyb2wNCiAg
+c29jOiBtZWRpYXRlazogQWRkIE1UODE4MyBzY3BzeXMgc3VwcG9ydA0KICBhcm02NDogZHRzOiBB
+ZGQgcG93ZXIgY29udHJvbGxlciBkZXZpY2Ugbm9kZSBvZiBNVDgxODMNCiAgYXJtNjQ6IGR0czog
+QWRkIHBvd2VyLWRvbWFpbnMgcHJvcGVyaXR5IHRvIG1mZ2NmZw0KDQogLi4uL21lbW9yeS1jb250
+cm9sbGVycy9tZWRpYXRlayxzbWktY29tbW9uLnR4dCAgICAgfCAgIDIgKy0NCiAuLi4vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9zb2MvbWVkaWF0ZWsvc2Nwc3lzLnR4dCAgICB8ICAyMCArLQ0KIGFyY2gv
+YXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgICAgICAgICAgIHwgIDYzICsrKysN
+CiBkcml2ZXJzL3NvYy9tZWRpYXRlay9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgICB8ICAg
+MiArLQ0KIGRyaXZlcnMvc29jL21lZGlhdGVrL210ay1zY3BzeXMtZXh0LmMgICAgICAgICAgICAg
+IHwgIDk5ICsrKysrKw0KIGRyaXZlcnMvc29jL21lZGlhdGVrL210ay1zY3BzeXMuYyAgICAgICAg
+ICAgICAgICAgIHwgMzg5ICsrKysrKysrKysrKysrKysrKystLQ0KIGluY2x1ZGUvZHQtYmluZGlu
+Z3MvcG93ZXIvbXQ4MTgzLXBvd2VyLmggICAgICAgICAgIHwgIDI2ICsrDQogaW5jbHVkZS9saW51
+eC9zb2MvbWVkaWF0ZWsvc2Nwc3lzLWV4dC5oICAgICAgICAgICAgfCAgMzkgKysrDQogOCBmaWxl
+cyBjaGFuZ2VkLCA2MTQgaW5zZXJ0aW9ucygrKSwgMjYgZGVsZXRpb25zKC0pDQogY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvc29jL21lZGlhdGVrL210ay1zY3BzeXMtZXh0LmMNCiBjcmVhdGUg
+bW9kZSAxMDA2NDQgaW5jbHVkZS9kdC1iaW5kaW5ncy9wb3dlci9tdDgxODMtcG93ZXIuaA0KIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9zY3BzeXMtZXh0LmgN
+Cg==
 
-Right. So this notifier helper of yours receive the opp which is getting
-disabled, why don't you compare its frequency directly to see if the current OPP
-is getting disabled ?
-
--- 
-viresh
