@@ -2,122 +2,403 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ED6D11878C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 429BD1187CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbfLJMDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 07:03:13 -0500
-Received: from out28-49.mail.aliyun.com ([115.124.28.49]:40458 "EHLO
-        out28-49.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727296AbfLJMDM (ORCPT
+        id S1727644AbfLJMNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 07:13:42 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55099 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727528AbfLJMNg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 07:03:12 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.093714|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.525217-0.0198122-0.454971;DS=CONTINUE|ham_system_inform|0.0142513-0.000678578-0.98507;FP=14713798452798378290|3|2|16|0|-1|-1|-1;HT=e01a16378;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=25;RT=25;SR=0;TI=SMTPD_---.GEHd9lh_1575979374;
-Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GEHd9lh_1575979374)
-          by smtp.aliyun-inc.com(10.147.42.197);
-          Tue, 10 Dec 2019 20:03:07 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
-        jhogan@kernel.org, mripard@kernel.org, shawnguo@kernel.org,
-        mark.rutland@arm.com, alexandre.belloni@bootlin.com,
-        ralf@linux-mips.org, heiko@sntech.de, icenowy@aosc.io,
-        ak@linux.intel.com, laurent.pinchart@ideasonboard.com,
-        krzk@kernel.org, geert+renesas@glider.be, paul@crapouillou.net,
-        prasannatsmkumar@gmail.com, keescook@chromium.org,
-        ebiederm@xmission.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, 772753199@qq.com
-Subject: [PATCH v8 3/4] dt-bindings: MIPS: Add Ingenic XBurst based boards.
-Date:   Tue, 10 Dec 2019 20:02:42 +0800
-Message-Id: <1575979363-25956-4-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575979363-25956-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1575979363-25956-1-git-send-email-zhouyanjie@wanyeetech.com>
+        Tue, 10 Dec 2019 07:13:36 -0500
+Received: from 79.184.255.117.ipv4.supernova.orange.pl (79.184.255.117) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id c4d8c0b94484c4a9; Tue, 10 Dec 2019 13:13:31 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Subject: [RFC v2][PATCH 4/9] ACPI: processor: Export acpi_processor_evaluate_cst()
+Date:   Tue, 10 Dec 2019 13:02:43 +0100
+Message-ID: <2468664.3cBljMoXCB@kreacher>
+In-Reply-To: <35821518.IbFVMVmUy3@kreacher>
+References: <35821518.IbFVMVmUy3@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Ingenic XBurst based boards, prepare for later dts.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+The intel_idle driver will be modified to use ACPI _CST subsequently
+and it will need to call acpi_processor_evaluate_cst(), so move that
+function to acpi_processor.c so that it is always present (which is
+required by intel_idle) and export it to modules to allow the ACPI
+processor driver (which is modular) to call it.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
 
-Notes:
-    v1->v2:
-    No change.
-    
-    v2->v3:
-    No change.
-    
-    v3->v4:
-    Adjust the description to make it more reasonable.
-    
-    v4->v5:
-    Adjust item naming to prevent conflicts with
-    subsequent "CU Geo" boards.
-    
-    v5->v6:
-    No change.
-    
-    v6->v7:
-    Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
-    to "周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>" because
-    the old mailbox is in an unstable state.
-    
-    v7->v8:
-    No change.
+No changes from the previous version.
 
- .../devicetree/bindings/mips/ingenic/devices.yaml  | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mips/ingenic/devices.yaml
+---
+ drivers/acpi/acpi_processor.c |  154 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/acpi/processor_idle.c |  139 -------------------------------------
+ include/linux/acpi.h          |    9 ++
+ 3 files changed, 163 insertions(+), 139 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mips/ingenic/devices.yaml b/Documentation/devicetree/bindings/mips/ingenic/devices.yaml
-new file mode 100644
-index 00000000..78dcf6e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mips/ingenic/devices.yaml
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mips/ingenic/devices.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+Index: linux-pm/drivers/acpi/acpi_processor.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpi_processor.c
++++ linux-pm/drivers/acpi/acpi_processor.c
+@@ -729,4 +729,161 @@ bool acpi_processor_claim_cst_control(vo
+ 	return true;
+ }
+ EXPORT_SYMBOL_GPL(acpi_processor_claim_cst_control);
 +
-+title: Ingenic XBurst based Platforms Device Tree Bindings
++/**
++ * acpi_processor_evaluate_cst - Evaluate the processor _CST control method.
++ * @handle: ACPI handle of the processor object containing the _CST.
++ * @cpu: The numeric ID of the target CPU.
++ * @info: Object write the C-states information into.
++ *
++ * Extract the C-state information for the given CPU from the output of the _CST
++ * control method under the corresponding ACPI processor object (or processor
++ * device object) and populate @info with it.
++ *
++ * If any ACPI_ADR_SPACE_FIXED_HARDWARE C-states are found, invoke
++ * acpi_processor_ffh_cstate_probe() to verify them and update the
++ * cpu_cstate_entry data for @cpu.
++ */
++int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
++				struct acpi_processor_power *info)
++{
++	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
++	union acpi_object *cst;
++	acpi_status status;
++	u64 count;
++	int last_index = 0;
++	int i, ret = 0;
 +
-+maintainers:
-+  - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-+description: |
-+  Devices with a Ingenic XBurst CPU shall have the following properties.
++	status = acpi_evaluate_object(handle, "_CST", NULL, &buffer);
++	if (ACPI_FAILURE(status)) {
++		acpi_handle_debug(handle, "No _CST\n");
++		return -ENODEV;
++	}
 +
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
++	cst = buffer.pointer;
 +
-+      - description: Qi Hardware Ben NanoNote
-+        items:
-+          - const: qi,lb60
++	/* There must be at least 2 elements. */
++	if (!cst || cst->type != ACPI_TYPE_PACKAGE || cst->package.count < 2) {
++		acpi_handle_warn(handle, "Invalid _CST output\n");
++		ret = -EFAULT;
++		goto end;
++	}
 +
-+      - description: Game Consoles Worldwide GCW Zero
-+        items:
-+          - const: gcw,zero
++	count = cst->package.elements[0].integer.value;
 +
-+      - description: MIPS Creator CI20
-+        items:
-+          - const: img,ci20
++	/* Validate the number of C-states. */
++	if (count < 1 || count != cst->package.count - 1) {
++		acpi_handle_warn(handle, "Inconsistent _CST data\n");
++		ret = -EFAULT;
++		goto end;
++	}
 +
-+      - description: YSH & ATIL General Board CU Neo
-+        items:
-+          - const: yna,cu1000-neo
-+...
--- 
-2.7.4
++	for (i = 1; i <= count; i++) {
++		union acpi_object *element;
++		union acpi_object *obj;
++		struct acpi_power_register *reg;
++		struct acpi_processor_cx cx;
++
++		/*
++		 * If there is not enough space for all C-states, skip the
++		 * excess ones and log a warning.
++		 */
++		if (last_index >= ACPI_PROCESSOR_MAX_POWER - 1) {
++			acpi_handle_warn(handle,
++					 "No room for more idle states (limit: %d)\n",
++					 ACPI_PROCESSOR_MAX_POWER - 1);
++			break;
++		}
++
++		memset(&cx, 0, sizeof(cx));
++
++		element = &cst->package.elements[i];
++		if (element->type != ACPI_TYPE_PACKAGE)
++			continue;
++
++		if (element->package.count != 4)
++			continue;
++
++		obj = &element->package.elements[0];
++
++		if (obj->type != ACPI_TYPE_BUFFER)
++			continue;
++
++		reg = (struct acpi_power_register *)obj->buffer.pointer;
++
++		obj = &element->package.elements[1];
++		if (obj->type != ACPI_TYPE_INTEGER)
++			continue;
++
++		cx.type = obj->integer.value;
++		/*
++		 * There are known cases in which the _CST output does not
++		 * contain C1, so if the type of the first state found is not
++		 * C1, leave an empty slot for C1 to be filled in later.
++		 */
++		if (i == 1 && cx.type != ACPI_STATE_C1)
++			last_index = 1;
++
++		cx.address = reg->address;
++		cx.index = last_index + 1;
++
++		if (reg->space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
++			if (!acpi_processor_ffh_cstate_probe(cpu, &cx, reg)) {
++				/*
++				 * In the majority of cases _CST describes C1 as
++				 * a FIXED_HARDWARE C-state, but if the command
++				 * line forbids using MWAIT, use CSTATE_HALT for
++				 * C1 regardless.
++				 */
++				if (cx.type == ACPI_STATE_C1 &&
++				    boot_option_idle_override == IDLE_NOMWAIT) {
++					cx.entry_method = ACPI_CSTATE_HALT;
++					snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
++				} else {
++					cx.entry_method = ACPI_CSTATE_FFH;
++				}
++			} else if (cx.type == ACPI_STATE_C1) {
++				/*
++				 * In the special case of C1, FIXED_HARDWARE can
++				 * be handled by executing the HLT instruction.
++				 */
++				cx.entry_method = ACPI_CSTATE_HALT;
++				snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
++			} else {
++				continue;
++			}
++		} else if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
++			cx.entry_method = ACPI_CSTATE_SYSTEMIO;
++			snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI IOPORT 0x%x",
++				 cx.address);
++		} else {
++			continue;
++		}
++
++		if (cx.type == ACPI_STATE_C1)
++			cx.valid = 1;
++
++		obj = &element->package.elements[2];
++		if (obj->type != ACPI_TYPE_INTEGER)
++			continue;
++
++		cx.latency = obj->integer.value;
++
++		obj = &element->package.elements[3];
++		if (obj->type != ACPI_TYPE_INTEGER)
++			continue;
++
++		memcpy(&info->states[++last_index], &cx, sizeof(cx));
++	}
++
++	acpi_handle_info(handle, "Found %d idle states\n", last_index);
++
++	info->count = last_index;
++
++      end:
++	kfree(buffer.pointer);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(acpi_processor_evaluate_cst);
+ #endif /* CONFIG_ACPI_PROCESSOR_CSTATE */
+Index: linux-pm/include/linux/acpi.h
+===================================================================
+--- linux-pm.orig/include/linux/acpi.h
++++ linux-pm/include/linux/acpi.h
+@@ -280,10 +280,19 @@ static inline bool invalid_phys_cpuid(ph
+ /* Validate the processor object's proc_id */
+ bool acpi_duplicate_processor_id(int proc_id);
+ /* Processor _CTS control */
++struct acpi_processor_power;
++
+ #ifdef CONFIG_ACPI_PROCESSOR_CSTATE
+ bool acpi_processor_claim_cst_control(void);
++int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
++				struct acpi_processor_power *info);
+ #else
+ static inline bool acpi_processor_claim_cst_control(void) { return false; }
++static inline int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
++					      struct acpi_processor_power *info)
++{
++	return -ENODEV;
++}
+ #endif
+ 
+ #ifdef CONFIG_ACPI_HOTPLUG_CPU
+Index: linux-pm/drivers/acpi/processor_idle.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/processor_idle.c
++++ linux-pm/drivers/acpi/processor_idle.c
+@@ -297,148 +297,6 @@ static int acpi_processor_get_power_info
+ 	return 0;
+ }
+ 
+-static int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
+-				       struct acpi_processor_power *info)
+-{
+-	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+-	union acpi_object *cst;
+-	acpi_status status;
+-	u64 count;
+-	int last_index = 0;
+-	int i, ret = 0;
+-
+-	status = acpi_evaluate_object(handle, "_CST", NULL, &buffer);
+-	if (ACPI_FAILURE(status)) {
+-		acpi_handle_debug(handle, "No _CST\n");
+-		return -ENODEV;
+-	}
+-
+-	cst = buffer.pointer;
+-
+-	/* There must be at least 2 elements. */
+-	if (!cst || cst->type != ACPI_TYPE_PACKAGE || cst->package.count < 2) {
+-		acpi_handle_warn(handle, "Invalid _CST output\n");
+-		ret = -EFAULT;
+-		goto end;
+-	}
+-
+-	count = cst->package.elements[0].integer.value;
+-
+-	/* Validate the number of C-states. */
+-	if (count < 1 || count != cst->package.count - 1) {
+-		acpi_handle_warn(handle, "Inconsistent _CST data\n");
+-		ret = -EFAULT;
+-		goto end;
+-	}
+-
+-	for (i = 1; i <= count; i++) {
+-		union acpi_object *element;
+-		union acpi_object *obj;
+-		struct acpi_power_register *reg;
+-		struct acpi_processor_cx cx;
+-
+-		/*
+-		 * If there is not enough space for all C-states, skip the
+-		 * excess ones and log a warning.
+-		 */
+-		if (last_index >= ACPI_PROCESSOR_MAX_POWER - 1) {
+-			acpi_handle_warn(handle,
+-					 "No room for more idle states (limit: %d)\n",
+-					 ACPI_PROCESSOR_MAX_POWER - 1);
+-			break;
+-		}
+-
+-		memset(&cx, 0, sizeof(cx));
+-
+-		element = &cst->package.elements[i];
+-		if (element->type != ACPI_TYPE_PACKAGE)
+-			continue;
+-
+-		if (element->package.count != 4)
+-			continue;
+-
+-		obj = &element->package.elements[0];
+-
+-		if (obj->type != ACPI_TYPE_BUFFER)
+-			continue;
+-
+-		reg = (struct acpi_power_register *)obj->buffer.pointer;
+-
+-		obj = &element->package.elements[1];
+-		if (obj->type != ACPI_TYPE_INTEGER)
+-			continue;
+-
+-		cx.type = obj->integer.value;
+-		/*
+-		 * There are known cases in which the _CST output does not
+-		 * contain C1, so if the type of the first state found is not
+-		 * C1, leave an empty slot for C1 to be filled in later.
+-		 */
+-		if (i == 1 && cx.type != ACPI_STATE_C1)
+-			last_index = 1;
+-
+-		cx.address = reg->address;
+-		cx.index = last_index + 1;
+-
+-		if (reg->space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
+-			if (!acpi_processor_ffh_cstate_probe(cpu, &cx, reg)) {
+-				/*
+-				 * In the majority of cases _CST describes C1 as
+-				 * a FIXED_HARDWARE C-state, but if the command
+-				 * line forbids using MWAIT, use CSTATE_HALT for
+-				 * C1 regardless.
+-				 */
+-				if (cx.type == ACPI_STATE_C1 &&
+-				    boot_option_idle_override == IDLE_NOMWAIT) {
+-					cx.entry_method = ACPI_CSTATE_HALT;
+-					snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
+-				} else {
+-					cx.entry_method = ACPI_CSTATE_FFH;
+-				}
+-			} else if (cx.type == ACPI_STATE_C1) {
+-				/*
+-				 * In the special case of C1, FIXED_HARDWARE can
+-				 * be handled by executing the HLT instruction.
+-				 */
+-				cx.entry_method = ACPI_CSTATE_HALT;
+-				snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
+-			} else {
+-				continue;
+-			}
+-		} else if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
+-			cx.entry_method = ACPI_CSTATE_SYSTEMIO;
+-			snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI IOPORT 0x%x",
+-				 cx.address);
+-		} else {
+-			continue;
+-		}
+-
+-		if (cx.type == ACPI_STATE_C1)
+-			cx.valid = 1;
+-
+-		obj = &element->package.elements[2];
+-		if (obj->type != ACPI_TYPE_INTEGER)
+-			continue;
+-
+-		cx.latency = obj->integer.value;
+-
+-		obj = &element->package.elements[3];
+-		if (obj->type != ACPI_TYPE_INTEGER)
+-			continue;
+-
+-		memcpy(&info->states[++last_index], &cx, sizeof(cx));
+-	}
+-
+-	acpi_handle_info(handle, "Found %d idle states\n", last_index);
+-
+-	info->count = last_index;
+-
+-      end:
+-	kfree(buffer.pointer);
+-
+-	return ret;
+-}
+-
+ static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
+ {
+ 	int ret;
+
+
 
