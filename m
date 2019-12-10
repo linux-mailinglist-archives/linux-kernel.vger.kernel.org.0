@@ -2,149 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC5E118D15
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15A60118D27
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 17:00:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbfLJPxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 10:53:25 -0500
-Received: from mail-eopbgr760079.outbound.protection.outlook.com ([40.107.76.79]:26603
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727440AbfLJPxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 10:53:25 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=THWWVtIH3YWxOOincLaeQXvsogzVRiYoNaTE/2KWtH8Dd7vUByafjVHGaFWFQtEfu79SF5mF/829kWkeJ9CUpvaxnB5FbCkwwKQMZ5S8zNf2YrtsKSDjk932UfiblYmAuu1zW6csNyKjknwYtsxIFtsD1DHSS1KUaNZv11dei9vz9KLATLqDzm61lNIBO9UKhP8jvgZlBAFhapTWy+QLglHyBSAgacsWs0mw4X0FEWKG2sbUtrdJZLTxXR/kaUvqN1D4Fvr3AvBnIhfRvLEDV1GUf0HCDLI/xeeLy8B/Y+z/OrN+ZZl/r+7jOdV7+clJQCkwwtxEV2Wky3xHYWy/fA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eYaJdbkcvHB2W8uSfv2vPhWxewGLVvQle2RfCr3tf5I=;
- b=BoM4Ml89jTsjTj+GeVDLtzYushXEItjj3bqq1BtRcD3J0IeUZXZeyH7MhL8EPDKYVzFfs3J/69gLtVz/NI0NNHQCaZka27U7ByW2gDNQp6YaE2HyKO3MJOuZU1R/guCU/xfz4gnHHUlohLMFFGaYHX/kcaTzsLRz8a7KdL9jmoWLKvQIcgm82oXPu+57KXSwZ0wsk2F/ZWbT8VOSI//MmaxzkUAgkeRtvQmLzMZ/3BRYNEQHZfCj8B1sPZQ8nFE5QsHcWxG6vubDbjkF4N71iiXKH8zTHkRWL+6b+yRE20soSRXXNxWmNf+PkN09uxXouI4bSOvV0kbJpcANOA4VLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+        id S1727535AbfLJQAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 11:00:34 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:34678 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbfLJQAd (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 11:00:33 -0500
+Received: by mail-vs1-f67.google.com with SMTP id g15so13435440vsf.1
+        for <Linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 08:00:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eYaJdbkcvHB2W8uSfv2vPhWxewGLVvQle2RfCr3tf5I=;
- b=C5hQ6y5k6o0sBxYH8GLxKP251BUiOhOYkC/IZ1hDgI8Whsq7Iz45cWIZC+VkHMV9QVHi4yJTbmHBg/W7Y4uYN9NIGvyAhKLPNB6oWENvfezhr9SBMK+I/GP6a2pTIW9pRHCrfO/+KgWNsBTdmTfbqzIHbG4YUw6P2Tq3NX/rvRk=
-Received: from MWHPR12MB1358.namprd12.prod.outlook.com (10.169.203.148) by
- MWHPR12MB1456.namprd12.prod.outlook.com (10.172.55.137) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.13; Tue, 10 Dec 2019 15:53:21 +0000
-Received: from MWHPR12MB1358.namprd12.prod.outlook.com
- ([fe80::b94d:fcd8:729d:a94f]) by MWHPR12MB1358.namprd12.prod.outlook.com
- ([fe80::b94d:fcd8:729d:a94f%3]) with mapi id 15.20.2538.012; Tue, 10 Dec 2019
- 15:53:21 +0000
-From:   "Deucher, Alexander" <Alexander.Deucher@amd.com>
-To:     Lukas Wunner <lukas@wunner.de>
-CC:     Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@perex.cz>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: RE: [PATCH] ALSA: hda/hdmi - Fix duplicate unref of pci_dev
-Thread-Topic: [PATCH] ALSA: hda/hdmi - Fix duplicate unref of pci_dev
-Thread-Index: AQHVr19R5YQIlg2NqEC5WtHx1mfv7qezf2rggAAD6ICAAADTMA==
-Date:   Tue, 10 Dec 2019 15:53:20 +0000
-Message-ID: <MWHPR12MB1358449C677259C848AAB11EF75B0@MWHPR12MB1358.namprd12.prod.outlook.com>
-References: <PSXP216MB0438BFEAA0617283A834E11580580@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <77aa6c01aefe1ebc4004e87b0bc714f2759f15c4.1575985006.git.lukas@wunner.de>
- <MWHPR12MB1358AEEBD730A4EDA78894E6F75B0@MWHPR12MB1358.namprd12.prod.outlook.com>
- <20191210154649.o3vsqzrtofhvcjrl@wunner.de>
-In-Reply-To: <20191210154649.o3vsqzrtofhvcjrl@wunner.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Deucher@amd.com; 
-x-originating-ip: [165.204.11.250]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 17cb588d-a833-4fd9-2376-08d77d8914e4
-x-ms-traffictypediagnostic: MWHPR12MB1456:
-x-microsoft-antispam-prvs: <MWHPR12MB14561B747520CDACD6E589B7F75B0@MWHPR12MB1456.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:913;
-x-forefront-prvs: 02475B2A01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(366004)(376002)(346002)(39860400002)(189003)(13464003)(199004)(8676002)(8936002)(55016002)(186003)(81156014)(478600001)(6916009)(86362001)(6506007)(53546011)(26005)(54906003)(2906002)(71200400001)(4326008)(7696005)(9686003)(45080400002)(66446008)(66946007)(76116006)(64756008)(66556008)(66476007)(81166006)(5660300002)(33656002)(316002)(52536014);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1456;H:MWHPR12MB1358.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: gUk4NuWTIar0MSOnTe8yaO5BDjL44eIxfQmP1Ge6yDjmNzJfcKlTLSFOMM34pKlvdRG3SPVpNPBobCbGrVwonG3lOl6ax2bofp71mersWUIelxmrOTougk3T2/NktFXr7EoORLBphWDEEAZQjQVl+fxOP7RfR4HmX60/GND1BLgfLZiJ7FGlHvNATFChIoPrv373MXTzaWPIgxL41RbB/OXrJNa+QJYXj8020/AQgLDIgrj0EABquL5eXBaDfgVOfUnub0+OFASoRtcYmaS2YE5wrdvvNfAfxFgiJyqmbGgJIkRpj6H0nkHDRXP40LFFikn5EUfz0m5i8NS3FVS1l01yRr2f0v8TYOmwlUHS/aURo93pl53jXXqPw28Fsmu1H/rjRtmE4mPMAPI4mjKtC1P/8ilGLROoj1LLPa/dc0kA4KJ7dtNxJd131m8sqodLrq2PNPa/9lAbVTByrhvsbVt/Itx/F9L/dI8NEloWbMLE2R53nFZHURTOpJEfVWqC
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=r4Jrn3VZN19lN+Ke0gy7vLwQPNH/flZIQfr/q3sfjeY=;
+        b=O6ugV7XlgNOv5qkcyw2GW/L3uJMG2r/fEDti0d0aeXW7cro+OOiAMNbhyWcPXT9gQ4
+         Tn2FGfZs9JCThZCM+n/Ru4l9j38yk6aXa1S6QN7RN5G+toGyOyrNACa/WCibtVLSLR+Y
+         FwSFZ6MNqCqqDpLlwU1z18KKqSp4mH+6QGbXsnyWY8WclTghrI+oJAmuo7pk5R1mtuzT
+         b1X5RDGL2jcb9VKSqmEQ6z69Erc0NbIq6wQBsp5UdqBIOaT6Jm8YtB+GatGWUsM7KBby
+         11ZMf/CydaGg9gbR1T0qTyhONtvZGWGqLo5VUQG7jE673xTK4qtsKyBUszFvFVJmKsWd
+         rePg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=r4Jrn3VZN19lN+Ke0gy7vLwQPNH/flZIQfr/q3sfjeY=;
+        b=Wvr+uJMEVoAOxTvVyAo4m+h6pAsMGecvFcjg+NRr+Q4dZivXnC7P+woLXqG9DZRhxr
+         qdA+x639xdHOocs27ahBYBjNpK14Zos4knYEYZrm+5GLoXZ3DOV7bRVgE9V8VeGjMYfv
+         jhQQo6KcBsM41BdkqboQjV/EXW53un5A+SbdD7gqzx4RCj+ngGGIsDYGo9ifHpr7C70n
+         CzLmw2x43faEQMRQdc1OsklV/ug5w/5jycGW8SvxHRVTXbLx/Xp+NzpzoSgHyNMWKU9V
+         Fsj2gqMa/mmCGRpMEn5W7/0vWYiQILPo5UcGtlbGQDXpkEBTn/kyxl9+5YYcyfkTa8oo
+         DX3w==
+X-Gm-Message-State: APjAAAWPuEKsfin0i3JKCr9KJx6jac++CaCsxWfa0ScustWyNiLwwNr+
+        3TCe6splVKw52NFAl/YFH+o=
+X-Google-Smtp-Source: APXvYqzHJ6nHCvqq8ViT0I1LofyDEJSUcRJJnfqKkxrPB6lyJunY7L9AWkyN7c19EFzzSoX231r5Xw==
+X-Received: by 2002:a67:eb86:: with SMTP id e6mr25173664vso.209.1575993631932;
+        Tue, 10 Dec 2019 08:00:31 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id y129sm2554036vky.43.2019.12.10.08.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 08:00:31 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 30A3640352; Tue, 10 Dec 2019 13:00:28 -0300 (-03)
+Date:   Tue, 10 Dec 2019 13:00:28 -0300
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v1 2/2] perf report: support hotkey to let user select
+ any event in group for sorting
+Message-ID: <20191210160028.GA28084@kernel.org>
+References: <20191210083207.31569-1-yao.jin@linux.intel.com>
+ <20191210083207.31569-2-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17cb588d-a833-4fd9-2376-08d77d8914e4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2019 15:53:20.9482
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qR1RGfD024+kNEbAM00XfTdSQRxl1r791b0wEJLRc6gUCohs/jEcUy9hYZvQyqdrpQYhEgbS6/Cf6BUVDeSg2A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1456
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210083207.31569-2-yao.jin@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Lukas Wunner <lukas@wunner.de>
-> Sent: Tuesday, December 10, 2019 10:47 AM
-> To: Deucher, Alexander <Alexander.Deucher@amd.com>
-> Cc: Takashi Iwai <tiwai@suse.de>; Jaroslav Kysela <perex@perex.cz>; Mika
-> Westerberg <mika.westerberg@linux.intel.com>; Bjorn Helgaas
-> <helgaas@kernel.org>; Nicholas Johnson <nicholas.johnson-
-> opensource@outlook.com.au>; alsa-devel@alsa-project.org; linux-
-> kernel@vger.kernel.org; linux-pci@vger.kernel.org
-> Subject: Re: [PATCH] ALSA: hda/hdmi - Fix duplicate unref of pci_dev
->=20
-> On Tue, Dec 10, 2019 at 03:34:27PM +0000, Deucher, Alexander wrote:
-> > > Nicholas Johnson reports a null pointer deref as well as a refcount
-> > > underflow upon hot-removal of a Thunderbolt-attached AMD eGPU.
-> > > He's bisected the issue down to commit 586bc4aab878 ("ALSA: hda/hdmi
-> > > - fix vgaswitcheroo detection for AMD").
-> > >
-> > > The commit iterates over PCI devices using pci_get_class() and
-> > > unreferences each device found, even though pci_get_class()
-> > > subsequently unreferences the device as well.  Fix it.
-> >
-> > The pci_dev_put() a few lines above should probably be dropped as well.
->=20
-> That one looks fine to me.  The refcount is already increased in the call=
-er
-> get_bound_vga() via pci_get_domain_bus_and_slot() and it's increased
-> again in atpx_present() via pci_get_class().  It needs to be decremented =
-in
-> atpx_present() to avoid leaking a ref.
+Em Tue, Dec 10, 2019 at 04:32:07PM +0800, Jin Yao escreveu:
+> When performing "perf report --group", it shows the event group information
+> together. In previous patch, we have supported a new option "--group-sort-idx"
+> to sort the output by the event at the index n in event group.
+> 
+> It would be nice if we can use a hotkey in browser to select a event
+> for sorting.
+> 
+> For example,
+> 
+>   # perf report --group
+> 
+>  Samples: 12K of events 'cpu/instructions,period=2000003/, cpu/cpu-cycles,period=200003/, ...
+>                         Overhead  Command    Shared Object            Symbol
+>   92.19%  98.68%   0.00%  93.30%  mgen       mgen                     [.] LOOP1
+>    3.12%   0.29%   0.00%   0.16%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x0000000000049515
+>    1.56%   0.03%   0.00%   0.04%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494b7
+>    1.56%   0.01%   0.00%   0.00%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494ce
+>    1.56%   0.00%   0.00%   0.00%  mgen       [kernel.kallsyms]        [k] task_tick_fair
+>    0.00%   0.15%   0.00%   0.04%  perf       [kernel.kallsyms]        [k] smp_call_function_single
+>    0.00%   0.13%   0.00%   6.08%  swapper    [kernel.kallsyms]        [k] intel_idle
+>    0.00%   0.03%   0.00%   0.00%  gsd-color  libglib-2.0.so.0.5600.4  [.] g_main_context_check
+>    0.00%   0.03%   0.00%   0.00%  swapper    [kernel.kallsyms]        [k] apic_timer_interrupt
+>    0.00%   0.03%   0.00%   0.00%  swapper    [kernel.kallsyms]        [k] check_preempt_curr
+> 
+> When user press hotkey '3' (event index, starting from 0), it indicates
+> to sort output by the fourth event in group.
+> 
+>   Samples: 12K of events 'cpu/instructions,period=2000003/, cpu/cpu-cycles,period=200003/, ...
+>                         Overhead  Command    Shared Object            Symbol
+>   92.19%  98.68%   0.00%  93.30%  mgen       mgen                     [.] LOOP1
+>    0.00%   0.13%   0.00%   6.08%  swapper    [kernel.kallsyms]        [k] intel_idle
+>    3.12%   0.29%   0.00%   0.16%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x0000000000049515
+>    0.00%   0.00%   0.00%   0.06%  swapper    [kernel.kallsyms]        [k] hrtimer_start_range_ns
+>    1.56%   0.03%   0.00%   0.04%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494b7
+>    0.00%   0.15%   0.00%   0.04%  perf       [kernel.kallsyms]        [k] smp_call_function_single
+>    0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] update_curr
+>    0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] apic_timer_interrupt
+>    0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] native_apic_msr_eoi_write
+>    0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] __update_load_avg_se
+> 
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>  tools/perf/builtin-report.c    |  4 ++--
+>  tools/perf/ui/browsers/hists.c | 21 ++++++++++++++++++++-
+>  tools/perf/ui/keysyms.h        |  1 +
+>  3 files changed, 23 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+> index 729cf7611d8a..02178fc54d67 100644
+> --- a/tools/perf/builtin-report.c
+> +++ b/tools/perf/builtin-report.c
+> @@ -635,7 +635,7 @@ static int report__browse_hists(struct report *rep)
+>  		 * Usually "ret" is the last pressed key, and we only
+>  		 * care if the key notifies us to switch data file.
+>  		 */
+> -		if (ret != K_SWITCH_INPUT_DATA)
+> +		if (ret != K_SWITCH_INPUT_DATA && ret != K_RELOAD)
+>  			ret = 0;
+>  		break;
+>  	case 2:
+> @@ -1538,7 +1538,7 @@ int cmd_report(int argc, const char **argv)
+>  	sort__setup_elide(stdout);
+>  
+>  	ret = __cmd_report(&report);
+> -	if (ret == K_SWITCH_INPUT_DATA) {
+> +	if (ret == K_SWITCH_INPUT_DATA || ret == K_RELOAD) {
+>  		perf_session__delete(session);
+>  		goto repeat;
+>  	} else
+> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+> index d4d3558fdef4..1de2456f27c3 100644
+> --- a/tools/perf/ui/browsers/hists.c
+> +++ b/tools/perf/ui/browsers/hists.c
+> @@ -2876,7 +2876,8 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
+>  	"s             Switch to another data file in PWD\n"
+>  	"t             Zoom into current Thread\n"
+>  	"V             Verbose (DSO names in callchains, etc)\n"
+> -	"/             Filter symbol by name";
+> +	"/             Filter symbol by name\n"
+> +	"0-9           Sort by event n in group";
+>  	static const char top_help[] = HIST_BROWSER_HELP_COMMON
+>  	"P             Print histograms to perf.hist.N\n"
+>  	"t             Zoom into current Thread\n"
+> @@ -2937,6 +2938,24 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
+>  			 * go to the next or previous
+>  			 */
+>  			goto out_free_stack;
+> +		case '0':
 
-I'm not following.  This is part of the same loop as the one you removed.  =
-All we are doing is checking whether the ATPX method exists or not om the p=
-latform.  The pdev may not be the same one as the one in pci_get_domain_bus=
-_and_slot().  The APTX method in the APU's ACPI namespace, not the dGPUs.
+case '0' ... '9':
 
-Alex
+works as well, for instance, in the kernel sources we have:
 
->=20
-> Thanks,
->=20
-> Lukas
->=20
-> > > diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> > > index 35b4526f0d28..b856b89378ac 100644
-> > > --- a/sound/pci/hda/hda_intel.c
-> > > +++ b/sound/pci/hda/hda_intel.c
-> > > @@ -1419,7 +1419,6 @@ static bool atpx_present(void)
-> > >  				return true;
-> > >  			}
-> > >  		}
-> > > -		pci_dev_put(pdev);
-> > >  	}
-> > >  	return false;
-> > >  }
-> > > --
-> > > 2.24.0
+[acme@quaco perf]$ grep 'case.*\.\..*:' */*.c
+block/bio.c:	case 2 ... 4:
+block/bio.c:	case 5 ... 16:
+block/bio.c:	case 17 ... 64:
+block/bio.c:	case 65 ... 128:
+block/bio.c:	case 129 ... BIO_MAX_PAGES:
+block/sed-opal.c:		case 0xbfff ... 0xffff:
+fs/binfmt_elf.c:		case PT_LOPROC ... PT_HIPROC:
+fs/binfmt_elf.c:			case PT_LOPROC ... PT_HIPROC:
+kernel/audit.c:	case AUDIT_FIRST_USER_MSG ... AUDIT_LAST_USER_MSG:
+kernel/audit.c:	case AUDIT_FIRST_USER_MSG2 ... AUDIT_LAST_USER_MSG2:
+kernel/audit.c:	case AUDIT_FIRST_USER_MSG ... AUDIT_LAST_USER_MSG:
+kernel/audit.c:	case AUDIT_FIRST_USER_MSG2 ... AUDIT_LAST_USER_MSG2:
+[acme@quaco perf]$
+
+> +		case '1':
+> +		case '2':
+> +		case '3':
+> +		case '4':
+> +		case '5':
+> +		case '6':
+> +		case '7':
+> +		case '8':
+> +		case '9':
+> +			symbol_conf.group_sort_idx = key - '0';
+> +			if (!symbol_conf.event_group ||
+> +			    symbol_conf.group_sort_idx >= evsel->core.nr_members) {
+> +				continue;
+
+Better to put something on the helpline as:
+
+    The max event group index to sort is N!
+
+And if symbol_conf.event_group isn't set, something like:
+
+    Sort by index only available with group events!
+
+> +			}
+> +
+> +			key = K_RELOAD;
+> +			goto out_free_stack;
+>  		case 'a':
+>  			if (!hists__has(hists, sym)) {
+>  				ui_browser__warning(&browser->b, delay_secs * 2,
+> diff --git a/tools/perf/ui/keysyms.h b/tools/perf/ui/keysyms.h
+> index fbfac29077f2..04cc4e5c031f 100644
+> --- a/tools/perf/ui/keysyms.h
+> +++ b/tools/perf/ui/keysyms.h
+> @@ -25,5 +25,6 @@
+>  #define K_ERROR	 -2
+>  #define K_RESIZE -3
+>  #define K_SWITCH_INPUT_DATA -4
+> +#define K_RELOAD -5
+
+Can you please split the K_RELOAD logic from this patch?
+  
+>  #endif /* _PERF_KEYSYMS_H_ */
+> -- 
+> 2.17.1
+
+-- 
+
+- Arnaldo
