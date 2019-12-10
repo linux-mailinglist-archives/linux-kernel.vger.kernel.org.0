@@ -2,89 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D0E2117FD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:36:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F11E117FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfLJFgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 00:36:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49026 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726085AbfLJFgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 00:36:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 24A7DAC5F;
-        Tue, 10 Dec 2019 05:36:23 +0000 (UTC)
-Subject: Re: [PATCH] xen/blkfront: Adjust indentation in xlvbd_alloc_gendisk
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Stefano Stabellini <stefano.stabellini@eu.citrix.com>,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-References: <20191209201444.33243-1-natechancellor@gmail.com>
- <CAKwvOdmrGGn6f+XBOO3GCm-jVftLsFTUXdbhS9_iJVY03XqCjA@mail.gmail.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <fa48a214-7c12-9123-88d0-00e99359f335@suse.com>
-Date:   Tue, 10 Dec 2019 06:36:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727032AbfLJFgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 00:36:46 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37633 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbfLJFgq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 00:36:46 -0500
+Received: by mail-wr1-f65.google.com with SMTP id w15so18625794wru.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 21:36:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=tyYd3IlsPx9ZBul2P+ZjZ7CFFHCyJYQ4yALrZg+x3Tw=;
+        b=HDKL4YM2eIp+RV9kHoe6YKmY4LTfQ6Lcmb9DSX5ZC8T5XkmUft1A5bMLv3Luj1dL9C
+         fcTHdEgmVJJiqZxN5mKWJwVQqAqmq6jwvrbVqPO6Q2f04ObbM31NJ6jFNUS9zRVPQkLt
+         6zmsQtQtVL5cdgimw4uF5U6NV1nbiPg7Jpr7WeylMBsVlxzzp1D491EAnXDQMeLzYo1N
+         ZkHoWF+0yQFBjYXUJi0kqTTvwrd61zjAOwTbNVOeRNBY22IOJ+IidDM/xi+7ke3+MSd6
+         CX2rKUmj3f67/D3XkXB8R0fMTB2fIEOg/3om6nHfSBjUex2gYM5meE8ZvAQOkjqg4FlP
+         oixQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=tyYd3IlsPx9ZBul2P+ZjZ7CFFHCyJYQ4yALrZg+x3Tw=;
+        b=BbumqL1NQhjATFliaD9rflC5lFukEHZr2on339SWfHXsdTQjVUHq1hH4g4Qr2G1lc4
+         s50bqDvWV4ifYT0sJxyCcg1dtuhRAzgk+7KsVBdFHNpbQPkJcyuldNoCyJErmhlKLUq1
+         rjoWhGr5bazQRJSJcxWEXC1CAJy3xhfEeopBwKnOPWiDnHqkFyGrWeDqQaOs7E07I9fn
+         0wghHRNhNO2AvY2V9E1v5qc0iKH/IFvnps1m05gHCugbOVVc3Qnr0BC3y4VDAIZx2IaR
+         4bRwmrXBTWA3X4lswgD0UKAp5h/ARSKrf/nUevVVsLyfdZxhmrjU1IwuGcpLcXMAIYou
+         RfnQ==
+X-Gm-Message-State: APjAAAVb22ieBg2NBzryAY7JLNS+saE2v/SrlIwTOM3i/nA4d62UL2YN
+        cysfRRCfyntmzHrDs+e4+xgVHIQ/S4zoiWlkNso=
+X-Google-Smtp-Source: APXvYqxa3ZgvLJqvZ1wwvnfCmZ5zdusSKDSTvyByorhD+YH8FG6COGDa+8m5/nieEusYb+VJQ3IdRb11xKk+/J0/NpM=
+X-Received: by 2002:adf:fe8c:: with SMTP id l12mr820045wrr.215.1575956205088;
+ Mon, 09 Dec 2019 21:36:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdmrGGn6f+XBOO3GCm-jVftLsFTUXdbhS9_iJVY03XqCjA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a5d:55c8:0:0:0:0:0 with HTTP; Mon, 9 Dec 2019 21:36:44 -0800 (PST)
+Reply-To: john_mark@mail.com
+From:   "Mr.John Mark" <jm983515@gmail.com>
+Date:   Mon, 9 Dec 2019 18:36:44 -1100
+Message-ID: <CAGdNau52+k3ALHbpw4j3mD93+3E2Smz=oTHn6mRi=eXM3Z8SRg@mail.gmail.com>
+Subject: Good Day My Good Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.12.19 22:07, Nick Desaulniers wrote:
-> On Mon, Dec 9, 2019 at 12:14 PM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
->>
->> Clang warns:
->>
->> ../drivers/block/xen-blkfront.c:1117:4: warning: misleading indentation;
->> statement is not part of the previous 'if' [-Wmisleading-indentation]
->>                  nr_parts = PARTS_PER_DISK;
->>                  ^
->> ../drivers/block/xen-blkfront.c:1115:3: note: previous statement is here
->>                  if (err)
->>                  ^
->>
->> This is because there is a space at the beginning of this line; remove
->> it so that the indentation is consistent according to the Linux kernel
->> coding style and clang no longer warns.
->>
->> While we are here, the previous line has some trailing whitespace; clean
->> that up as well.
->>
->> Fixes: c80a420995e7 ("xen-blkfront: handle Xen major numbers other than XENVBD")
->> Link: https://github.com/ClangBuiltLinux/linux/issues/791
->> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->> ---
->>   drivers/block/xen-blkfront.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
->> index a74d03913822..c02be06c5299 100644
->> --- a/drivers/block/xen-blkfront.c
->> +++ b/drivers/block/xen-blkfront.c
->> @@ -1113,8 +1113,8 @@ static int xlvbd_alloc_gendisk(blkif_sector_t capacity,
-> 
-> While you're here, would you please also removing the single space
-> before the labels in this function?
+Good Day My Good Friend
 
-AFAIK those are intended to be there.
+Let me start by introducing myself I am Mr. John Mark from Burkina
+Faso I have a business proposal ($ 12.5Million) to you. Kindly Contact
+me for more details
 
-Having labels indented by a space makes diff not believe those are
-function declarations. So a patching a function with a label won't show
-the label, but the function in the diff block header.
+Kind Regards
 
-
-Juergen
+John Mark
