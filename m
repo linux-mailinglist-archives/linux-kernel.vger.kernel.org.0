@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E7751199B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:52:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08D37119A59
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:53:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfLJVHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:07:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54174 "EHLO mail.kernel.org"
+        id S1729747AbfLJVwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:52:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727312AbfLJVHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:07:44 -0500
+        id S1727549AbfLJVHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:07:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5CA524687;
-        Tue, 10 Dec 2019 21:07:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29E0724687;
+        Tue, 10 Dec 2019 21:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576012063;
-        bh=uqHLQvzm+xZtTxEjJWFZKxJIQ3F3G+GRncOmGj48G7g=;
+        s=default; t=1576012067;
+        bh=haEPsc2yk+K9gE7Q79DHnfLRnG8eqSnhALg/2VZ68rs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q/XIRrXgOh/bO8GJyWEhRZ4hZxEC/59XYDexXMRhesOrAP8BCxD9BCL+yVrr4BaOR
-         vt5W0qBsuc4m/TKTKVo3CsBBMKe1WkGm2+KPYZvIxNJN1f2dFKfC0enLIf0jMY95nm
-         6lGZU9NP17VDiQV6a3UeCrES31UPh3xnrGVVnjCE=
+        b=gDSbtHDcb5PUAx59sI1U+1ftHFouuLji+F9FdnMLwOl8k05sPzJaQwH8RM+iDvJsg
+         HQy2A+hF6qZQQubYshddlfW1TjBc6uSQFmSbelVF5P2op3AzU8b8jRdqd0rsz1fHjJ
+         1WbxoZq/F2Vtji1H3ITwbLMFdKXzqlYJ9+BEL8xM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 045/350] media: ov6650: Fix stored crop rectangle not in sync with hardware
-Date:   Tue, 10 Dec 2019 16:02:30 -0500
-Message-Id: <20191210210735.9077-6-sashal@kernel.org>
+Cc:     Ben Greear <greearb@candelatech.com>,
+        Antonio Quartulli <antonio.quartulli@kaiwoo.ai>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 048/350] ath10k: fix offchannel tx failure when no ath10k_mac_tx_frm_has_freq
+Date:   Tue, 10 Dec 2019 16:02:33 -0500
+Message-Id: <20191210210735.9077-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
 References: <20191210210735.9077-1-sashal@kernel.org>
@@ -44,56 +45,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: Ben Greear <greearb@candelatech.com>
 
-[ Upstream commit 1463b371aff0682c70141f7521db13cc4bbf3016 ]
+[ Upstream commit cc6df017e55764ffef9819dd9554053182535ffd ]
 
-The driver stores crop rectangle settings supposed to be in line with
-hardware state in a device private structure.  Since the driver initial
-submission, crop rectangle width and height settings are not updated
-correctly when rectangle offset settings are applied on hardware.  If
-an error occurs while the device is updated, the stored settings my no
-longer reflect hardware state and consecutive calls to .get_selection()
-as well as .get/set_fmt() may return incorrect information.  That in
-turn may affect ability of a bridge device to use correct DMA transfer
-settings if such incorrect informamtion on active frame format returned
-by .get/set_fmt() is used.
+Offchannel management frames were failing:
 
-Assuming a failed update of the device means its actual settings haven't
-changed, update crop rectangle width and height settings stored in the
-device private structure correctly while the rectangle offset is
-successfully applied on hardware so the stored values always reflect
-actual hardware state to the extent possible.
+[18099.253732] ath10k_pci 0000:01:00.0: timed out waiting for offchannel skb cf0e3780
+[18102.293686] ath10k_pci 0000:01:00.0: timed out waiting for offchannel skb cf0e3780
+[18105.333653] ath10k_pci 0000:01:00.0: timed out waiting for offchannel skb cf0e3780
+[18108.373712] ath10k_pci 0000:01:00.0: timed out waiting for offchannel skb cf0e3780
+[18111.413687] ath10k_pci 0000:01:00.0: timed out waiting for offchannel skb cf0e36c0
+[18114.453726] ath10k_pci 0000:01:00.0: timed out waiting for offchannel skb cf0e3f00
+[18117.493773] ath10k_pci 0000:01:00.0: timed out waiting for offchannel skb cf0e36c0
+[18120.533631] ath10k_pci 0000:01:00.0: timed out waiting for offchannel skb cf0e3f00
 
-Fixes: 2f6e2404799a ("[media] SoC Camera: add driver for OV6650 sensor")
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+This bug appears to have been added between 4.0 (which works for us),
+and 4.4, which does not work.
+
+I think this is because the tx-offchannel logic gets in a loop when
+ath10k_mac_tx_frm_has_freq(ar) is false, so pkt is never actually
+sent to the firmware for transmit.
+
+This patch fixes the problem on 4.9 for me, and now HS20 clients
+can work again with my firmware.
+
+Antonio: tested with 10.4-3.5.3-00057 on QCA4019 and QCA9888
+
+Signed-off-by: Ben Greear <greearb@candelatech.com>
+Tested-by: Antonio Quartulli <antonio.quartulli@kaiwoo.ai>
+[kvalo@codeaurora.org: improve commit log, remove unneeded parenthesis]
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov6650.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/ath/ath10k/mac.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/media/i2c/ov6650.c b/drivers/media/i2c/ov6650.c
-index 5426fed2574ec..43c3f1b6e19ac 100644
---- a/drivers/media/i2c/ov6650.c
-+++ b/drivers/media/i2c/ov6650.c
-@@ -481,6 +481,7 @@ static int ov6650_set_selection(struct v4l2_subdev *sd,
- 
- 	ret = ov6650_reg_write(client, REG_HSTRT, sel->r.left >> 1);
- 	if (!ret) {
-+		priv->rect.width += priv->rect.left - sel->r.left;
- 		priv->rect.left = sel->r.left;
- 		ret = ov6650_reg_write(client, REG_HSTOP,
- 				       (sel->r.left + sel->r.width) >> 1);
-@@ -490,6 +491,7 @@ static int ov6650_set_selection(struct v4l2_subdev *sd,
- 		ret = ov6650_reg_write(client, REG_VSTRT, sel->r.top >> 1);
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 40889b79fc70d..a40e1a998f4cd 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -3708,7 +3708,7 @@ static int ath10k_mac_tx(struct ath10k *ar,
+ 			 struct ieee80211_vif *vif,
+ 			 enum ath10k_hw_txrx_mode txmode,
+ 			 enum ath10k_mac_tx_path txpath,
+-			 struct sk_buff *skb)
++			 struct sk_buff *skb, bool noque_offchan)
+ {
+ 	struct ieee80211_hw *hw = ar->hw;
+ 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+@@ -3738,10 +3738,10 @@ static int ath10k_mac_tx(struct ath10k *ar,
+ 		}
  	}
- 	if (!ret) {
-+		priv->rect.height += priv->rect.top - sel->r.top;
- 		priv->rect.top = sel->r.top;
- 		ret = ov6650_reg_write(client, REG_VSTOP,
- 				       (sel->r.top + sel->r.height) >> 1);
+ 
+-	if (info->flags & IEEE80211_TX_CTL_TX_OFFCHAN) {
++	if (!noque_offchan && info->flags & IEEE80211_TX_CTL_TX_OFFCHAN) {
+ 		if (!ath10k_mac_tx_frm_has_freq(ar)) {
+-			ath10k_dbg(ar, ATH10K_DBG_MAC, "queued offchannel skb %pK\n",
+-				   skb);
++			ath10k_dbg(ar, ATH10K_DBG_MAC, "mac queued offchannel skb %pK len %d\n",
++				   skb, skb->len);
+ 
+ 			skb_queue_tail(&ar->offchan_tx_queue, skb);
+ 			ieee80211_queue_work(hw, &ar->offchan_tx_work);
+@@ -3803,8 +3803,8 @@ void ath10k_offchan_tx_work(struct work_struct *work)
+ 
+ 		mutex_lock(&ar->conf_mutex);
+ 
+-		ath10k_dbg(ar, ATH10K_DBG_MAC, "mac offchannel skb %pK\n",
+-			   skb);
++		ath10k_dbg(ar, ATH10K_DBG_MAC, "mac offchannel skb %pK len %d\n",
++			   skb, skb->len);
+ 
+ 		hdr = (struct ieee80211_hdr *)skb->data;
+ 		peer_addr = ieee80211_get_DA(hdr);
+@@ -3850,7 +3850,7 @@ void ath10k_offchan_tx_work(struct work_struct *work)
+ 		txmode = ath10k_mac_tx_h_get_txmode(ar, vif, sta, skb);
+ 		txpath = ath10k_mac_tx_h_get_txpath(ar, skb, txmode);
+ 
+-		ret = ath10k_mac_tx(ar, vif, txmode, txpath, skb);
++		ret = ath10k_mac_tx(ar, vif, txmode, txpath, skb, true);
+ 		if (ret) {
+ 			ath10k_warn(ar, "failed to transmit offchannel frame: %d\n",
+ 				    ret);
+@@ -3860,8 +3860,8 @@ void ath10k_offchan_tx_work(struct work_struct *work)
+ 		time_left =
+ 		wait_for_completion_timeout(&ar->offchan_tx_completed, 3 * HZ);
+ 		if (time_left == 0)
+-			ath10k_warn(ar, "timed out waiting for offchannel skb %pK\n",
+-				    skb);
++			ath10k_warn(ar, "timed out waiting for offchannel skb %pK, len: %d\n",
++				    skb, skb->len);
+ 
+ 		if (!peer && tmp_peer_created) {
+ 			ret = ath10k_peer_delete(ar, vdev_id, peer_addr);
+@@ -4097,7 +4097,7 @@ int ath10k_mac_tx_push_txq(struct ieee80211_hw *hw,
+ 		spin_unlock_bh(&ar->htt.tx_lock);
+ 	}
+ 
+-	ret = ath10k_mac_tx(ar, vif, txmode, txpath, skb);
++	ret = ath10k_mac_tx(ar, vif, txmode, txpath, skb, false);
+ 	if (unlikely(ret)) {
+ 		ath10k_warn(ar, "failed to push frame: %d\n", ret);
+ 
+@@ -4378,7 +4378,7 @@ static void ath10k_mac_op_tx(struct ieee80211_hw *hw,
+ 		spin_unlock_bh(&ar->htt.tx_lock);
+ 	}
+ 
+-	ret = ath10k_mac_tx(ar, vif, txmode, txpath, skb);
++	ret = ath10k_mac_tx(ar, vif, txmode, txpath, skb, false);
+ 	if (ret) {
+ 		ath10k_warn(ar, "failed to transmit frame: %d\n", ret);
+ 		if (is_htt) {
 -- 
 2.20.1
 
