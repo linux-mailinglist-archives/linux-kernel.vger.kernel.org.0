@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C82117EA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:02:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF591117EA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:02:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfLJECT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 23:02:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41612 "EHLO mail.kernel.org"
+        id S1727083AbfLJECF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 23:02:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726983AbfLJECB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 23:02:01 -0500
+        id S1726989AbfLJECC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 23:02:02 -0500
 Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1414B214AF;
+        by mail.kernel.org (Postfix) with ESMTPSA id A88DB214D8;
         Tue, 10 Dec 2019 04:02:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575950520;
-        bh=ObLbG95x9eAGieFyHKsQrW0vM0boU/BiidF/qNBqnBU=;
+        s=default; t=1575950521;
+        bh=m2GXoSyuxJbV9GL011u2OK+TshJgf3LR/XQ5uYfnR1Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g+IU/jhlvp9Fl00DYNdw8dcWdbHj9ILYFHTpWF99J3aQk8WmQ3gIotoJHkVccOGT9
-         hu9FgUAUBfmpjOoInMXVAUhU1+iJKa+Xi+Xd+sfRhxwkxO1fv9xWGLWjUOIABUd9J2
-         Jo/PM52veJcstRUE+YTQlciY3LCPEDDFy6WAQt/c=
+        b=Kc/tq1xbJEGaYDK4dsApB34Mss7gP2wVa0IoPZ37YBEHSnL9q75BVdCJdPXH26UTK
+         IqSVkU2/iuxDqAfIzmav4rv7ynSsFEvpRnKL/LEXCxI1k6endaK9M0jqVxEq463UXY
+         VZa1cXLgRDW7QTsPS0X1b5kEBc5SPZ/wbT33gUx8=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 07/10] rcu: Rename sync_rcu_preempt_exp_done() to sync_rcu_exp_done()
-Date:   Mon,  9 Dec 2019 20:01:51 -0800
-Message-Id: <20191210040154.2498-7-paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 08/10] rcu: Update tree_exp.h function-header comments
+Date:   Mon,  9 Dec 2019 20:01:52 -0800
+Message-Id: <20191210040154.2498-8-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191210040122.GA2419@paulmck-ThinkPad-P72>
 References: <20191210040122.GA2419@paulmck-ThinkPad-P72>
@@ -45,106 +45,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-Now that the RCU flavors have been consolidated, there is one common
-function for checking to see if an expedited RCU grace period has
-completed, namely sync_rcu_preempt_exp_done().  Because this function is
-no longer specific to RCU-preempt, this commit removes the "_preempt" from
-its name.  This commit also changes sync_rcu_preempt_exp_done_unlocked()
-to sync_rcu_exp_done_unlocked() for the same reason.
+The function-header comments in kernel/rcu/tree_exp.h have gotten a bit
+out of date, so this commit updates a number of them.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree_exp.h    | 19 +++++++++----------
- kernel/rcu/tree_plugin.h |  4 ++--
- 2 files changed, 11 insertions(+), 12 deletions(-)
+ kernel/rcu/tree_exp.h | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 7a1f093..3923c07 100644
+index 3923c07..1eafbcd 100644
 --- a/kernel/rcu/tree_exp.h
 +++ b/kernel/rcu/tree_exp.h
-@@ -148,7 +148,7 @@ static void __maybe_unused sync_exp_reset_tree(void)
-  *
-  * Caller must hold the specificed rcu_node structure's ->lock
-  */
--static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
-+static bool sync_rcu_exp_done(struct rcu_node *rnp)
- {
- 	raw_lockdep_assert_held_rcu_node(rnp);
- 
-@@ -157,17 +157,16 @@ static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
+@@ -21,7 +21,7 @@ static void rcu_exp_gp_seq_start(void)
  }
  
  /*
-- * Like sync_rcu_preempt_exp_done(), but this function assumes the caller
-- * doesn't hold the rcu_node's ->lock, and will acquire and release the lock
-- * itself
-+ * Like sync_rcu_exp_done(), but this function assumes the caller doesn't
-+ * hold the rcu_node's ->lock, and will acquire and release the lock itself
+- * Return then value that expedited-grace-period counter will have
++ * Return the value that the expedited-grace-period counter will have
+  * at the end of the current grace period.
   */
--static bool sync_rcu_preempt_exp_done_unlocked(struct rcu_node *rnp)
-+static bool sync_rcu_exp_done_unlocked(struct rcu_node *rnp)
+ static __maybe_unused unsigned long rcu_exp_gp_seq_endval(void)
+@@ -39,7 +39,9 @@ static void rcu_exp_gp_seq_end(void)
+ }
+ 
+ /*
+- * Take a snapshot of the expedited-grace-period counter.
++ * Take a snapshot of the expedited-grace-period counter, which is the
++ * earliest value that will indicate that a full grace period has
++ * elapsed since the current time.
+  */
+ static unsigned long rcu_exp_gp_seq_snap(void)
  {
- 	unsigned long flags;
- 	bool ret;
+@@ -143,22 +145,18 @@ static void __maybe_unused sync_exp_reset_tree(void)
+  * Return non-zero if there is no RCU expedited grace period in progress
+  * for the specified rcu_node structure, in other words, if all CPUs and
+  * tasks covered by the specified rcu_node structure have done their bit
+- * for the current expedited grace period.  Works only for preemptible
+- * RCU -- other RCU implementation use other means.
+- *
+- * Caller must hold the specificed rcu_node structure's ->lock
++ * for the current expedited grace period.
+  */
+ static bool sync_rcu_exp_done(struct rcu_node *rnp)
+ {
+ 	raw_lockdep_assert_held_rcu_node(rnp);
+-
+ 	return rnp->exp_tasks == NULL &&
+ 	       READ_ONCE(rnp->expmask) == 0;
+ }
  
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
--	ret = sync_rcu_preempt_exp_done(rnp);
-+	ret = sync_rcu_exp_done(rnp);
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 
- 	return ret;
-@@ -191,7 +190,7 @@ static void __rcu_report_exp_rnp(struct rcu_node *rnp,
+ /*
+- * Like sync_rcu_exp_done(), but this function assumes the caller doesn't
+- * hold the rcu_node's ->lock, and will acquire and release the lock itself
++ * Like sync_rcu_exp_done(), but where the caller does not hold the
++ * rcu_node's ->lock.
+  */
+ static bool sync_rcu_exp_done_unlocked(struct rcu_node *rnp)
+ {
+@@ -180,8 +178,6 @@ static bool sync_rcu_exp_done_unlocked(struct rcu_node *rnp)
+  * which the task was queued or to one of that rcu_node structure's ancestors,
+  * recursively up the tree.  (Calm down, calm down, we do the recursion
+  * iteratively!)
+- *
+- * Caller must hold the specified rcu_node structure's ->lock.
+  */
+ static void __rcu_report_exp_rnp(struct rcu_node *rnp,
+ 				 bool wake, unsigned long flags)
+@@ -189,6 +185,7 @@ static void __rcu_report_exp_rnp(struct rcu_node *rnp,
+ {
  	unsigned long mask;
  
++	raw_lockdep_assert_held_rcu_node(rnp);
  	for (;;) {
--		if (!sync_rcu_preempt_exp_done(rnp)) {
-+		if (!sync_rcu_exp_done(rnp)) {
+ 		if (!sync_rcu_exp_done(rnp)) {
  			if (!rnp->expmask)
- 				rcu_initiate_boost(rnp, flags);
- 			else
-@@ -471,9 +470,9 @@ static void synchronize_sched_expedited_wait(void)
- 	for (;;) {
- 		ret = swait_event_timeout_exclusive(
- 				rcu_state.expedited_wq,
--				sync_rcu_preempt_exp_done_unlocked(rnp_root),
-+				sync_rcu_exp_done_unlocked(rnp_root),
- 				jiffies_stall);
--		if (ret > 0 || sync_rcu_preempt_exp_done_unlocked(rnp_root))
-+		if (ret > 0 || sync_rcu_exp_done_unlocked(rnp_root))
- 			return;
- 		WARN_ON(ret < 0);  /* workqueues should not be signaled. */
- 		if (rcu_cpu_stall_suppress)
-@@ -507,7 +506,7 @@ static void synchronize_sched_expedited_wait(void)
- 			rcu_for_each_node_breadth_first(rnp) {
- 				if (rnp == rnp_root)
- 					continue; /* printed unconditionally */
--				if (sync_rcu_preempt_exp_done_unlocked(rnp))
-+				if (sync_rcu_exp_done_unlocked(rnp))
- 					continue;
- 				pr_cont(" l=%u:%d-%d:%#lx/%c",
- 					rnp->level, rnp->grplo, rnp->grphi,
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index fa08d55..6dbea4b 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -485,7 +485,7 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
- 		empty_norm = !rcu_preempt_blocked_readers_cgp(rnp);
- 		WARN_ON_ONCE(rnp->completedqs == rnp->gp_seq &&
- 			     (!empty_norm || rnp->qsmask));
--		empty_exp = sync_rcu_preempt_exp_done(rnp);
-+		empty_exp = sync_rcu_exp_done(rnp);
- 		smp_mb(); /* ensure expedited fastpath sees end of RCU c-s. */
- 		np = rcu_next_node_entry(t, rnp);
- 		list_del_init(&t->rcu_node_entry);
-@@ -509,7 +509,7 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
- 		 * Note that rcu_report_unblock_qs_rnp() releases rnp->lock,
- 		 * so we must take a snapshot of the expedited state.
- 		 */
--		empty_exp_now = sync_rcu_preempt_exp_done(rnp);
-+		empty_exp_now = sync_rcu_exp_done(rnp);
- 		if (!empty_norm && !rcu_preempt_blocked_readers_cgp(rnp)) {
- 			trace_rcu_quiescent_state_report(TPS("preempt_rcu"),
- 							 rnp->gp_seq,
+@@ -452,6 +449,10 @@ static void sync_rcu_exp_select_cpus(void)
+ 			flush_work(&rnp->rew.rew_work);
+ }
+ 
++/*
++ * Wait for the expedited grace period to elapse, issuing any needed
++ * RCU CPU stall warnings along the way.
++ */
+ static void synchronize_sched_expedited_wait(void)
+ {
+ 	int cpu;
+@@ -781,7 +782,7 @@ static int rcu_print_task_exp_stall(struct rcu_node *rnp)
+  * implementations, it is still unfriendly to real-time workloads, so is
+  * thus not recommended for any sort of common-case code.  In fact, if
+  * you are using synchronize_rcu_expedited() in a loop, please restructure
+- * your code to batch your updates, and then Use a single synchronize_rcu()
++ * your code to batch your updates, and then use a single synchronize_rcu()
+  * instead.
+  *
+  * This has the same semantics as (but is more brutal than) synchronize_rcu().
 -- 
 2.9.5
 
