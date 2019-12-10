@@ -2,117 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C66581185AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:59:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 696C91185D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:06:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbfLJK7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 05:59:51 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7658 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726915AbfLJK7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:59:51 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 76933FF6CC4C6D65F05D;
-        Tue, 10 Dec 2019 18:59:49 +0800 (CST)
-Received: from localhost.localdomain (10.90.53.225) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 10 Dec 2019 18:59:42 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <oded.gabbay@gmail.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <rppt@linux.ibm.com>,
-        <ttayar@habana.ai>, <oshpigelman@habana.ai>, <dbenzoor@habana.ai>,
-        <linux-kernel@vger.kernel.org>
-CC:     <chenwandun@huawei.com>
-Subject: [PATCH] habanalabs: remove variable 'val' set but not used
-Date:   Tue, 10 Dec 2019 19:06:56 +0800
-Message-ID: <1575976016-110900-1-git-send-email-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727207AbfLJLGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:06:44 -0500
+Received: from smtp114.ord1c.emailsrvr.com ([108.166.43.114]:37713 "EHLO
+        smtp114.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726915AbfLJLGn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 06:06:43 -0500
+X-Greylist: delayed 479 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 06:06:42 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=g001.emailsrvr.com;
+        s=20190322-9u7zjiwi; t=1575975523;
+        bh=s930yeVuZ/OBWf+Xggci74+j0vX0OnxEmUgFeVwwphc=;
+        h=Subject:To:From:Date:From;
+        b=Oar1jshLInKThEcIkjd+TTC0hkswIxu8mjRLLJkdqqPyb9/9EzmYS98epw011eOuz
+         quFMLQdzII3KAY7BFOO9EAPPxfPBxlfXj+GFqv1+vV+y1ZqtEJVbNcmrVLygKsbcsS
+         4dydcRmMkOimaloGXfiBr9Zidg1dfW1P1OAMqbTI=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+        s=20190130-41we5z8j; t=1575975523;
+        bh=s930yeVuZ/OBWf+Xggci74+j0vX0OnxEmUgFeVwwphc=;
+        h=Subject:To:From:Date:From;
+        b=Bjj9V8IyStZQSOYzOtC39eOZ+CdyL5otXWSI/4e3msEnu6MaIvFuFWvXfzF7X+RXo
+         56qBkMZ0qzOSakrhprRDxpI3R3GPcCgkrMq9gGv0qMBtA5a+c5+MtIYKARIBMxvta8
+         SwmCoz79zPBh81//PHyG0J4CkQiww5v/W7kGaRko=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp23.relay.ord1c.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 29CA9400EE;
+        Tue, 10 Dec 2019 05:58:41 -0500 (EST)
+X-Sender-Id: abbotti@mev.co.uk
+Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Tue, 10 Dec 2019 05:58:42 -0500
+Subject: Re: [PATCH] staging: comedi: comedi_test: return error when
+ comedi_test_init fails
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Cheah Kok Cheong <thrust73@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20191210091451.23505-1-hslester96@gmail.com>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <ca049de4-92f1-409c-6aa7-9c2ddc336638@mev.co.uk>
+Date:   Tue, 10 Dec 2019 10:58:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191210091451.23505-1-hslester96@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On 10/12/2019 09:14, Chuhong Yuan wrote:
+> comedi_test_init() forgets to return error when it fails.
+> Modify the return value to fix it.
+> 
+> Fixes: 9ff7400bd38c ("Staging: comedi: drivers: comedi_test: Add auto-configuration capability")
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> ---
+>   drivers/staging/comedi/drivers/comedi_test.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/comedi/drivers/comedi_test.c b/drivers/staging/comedi/drivers/comedi_test.c
+> index ef4c7c8a2b71..133ed99a89f1 100644
+> --- a/drivers/staging/comedi/drivers/comedi_test.c
+> +++ b/drivers/staging/comedi/drivers/comedi_test.c
+> @@ -799,12 +799,14 @@ static int __init comedi_test_init(void)
+>   	if (!config_mode) {
+>   		ctcls = class_create(THIS_MODULE, CLASS_NAME);
+>   		if (IS_ERR(ctcls)) {
+> +			ret = PTR_ERR(ctcls);
+>   			pr_warn("comedi_test: unable to create class\n");
+>   			goto clean3;
+>   		}
+>   
+>   		ctdev = device_create(ctcls, NULL, MKDEV(0, 0), NULL, DEV_NAME);
+>   		if (IS_ERR(ctdev)) {
+> +			ret = PTR_ERR(ctdev);
+>   			pr_warn("comedi_test: unable to create device\n");
+>   			goto clean2;
+>   		}
+> @@ -826,7 +828,7 @@ static int __init comedi_test_init(void)
+>   clean3:
+>   	ctcls = NULL;
+>   
+> -	return 0;
+> +	return ret;
+>   }
+>   module_init(comedi_test_init);
+>   
+> 
 
-drivers/misc/habanalabs/goya/goya.c: In function goya_pldm_init_cpu:
-drivers/misc/habanalabs/goya/goya.c:2195:6: warning: variable val set but not used [-Wunused-but-set-variable]
-drivers/misc/habanalabs/goya/goya.c: In function goya_hw_init:
-drivers/misc/habanalabs/goya/goya.c:2505:6: warning: variable val set but not used [-Wunused-but-set-variable]
+I suspect the current behaviour was by design because the module is not 
+completely broken if it fails to create the "comedi_test" device.  The 
+module will just behave as if the "noauto" module parameter (which sets 
+the 'config_mode' variable) was set to "true" if there is an error 
+during class or device creation.  That's probably why the kernel log 
+messages are written with 'pr_warn()' rather than 'pr_err()'.
 
-Fixes: 9494a8dd8d22 ("habanalabs: add h/w queues module")
-Signed-off-by: Chen Wandun <chenwandun@huawei.com>
----
- drivers/misc/habanalabs/goya/goya.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+As long as the core "comedi" module has been loaded with the 
+"comedi_num_legacy_minors" module parameter set to a non-zero value, it 
+would still be possible to configure one of the "legacy" comedi devices 
+to use the "comedi_test" driver via the COMEDI_DEVCONFIG ioctl.
 
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index c8d16aa..7344e8a 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -2192,7 +2192,7 @@ static int goya_push_linux_to_device(struct hl_device *hdev)
- 
- static int goya_pldm_init_cpu(struct hl_device *hdev)
- {
--	u32 val, unit_rst_val;
-+	u32 unit_rst_val;
- 	int rc;
- 
- 	/* Must initialize SRAM scrambler before pushing u-boot to SRAM */
-@@ -2200,14 +2200,14 @@ static int goya_pldm_init_cpu(struct hl_device *hdev)
- 
- 	/* Put ARM cores into reset */
- 	WREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL, CPU_RESET_ASSERT);
--	val = RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
-+	RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
- 
- 	/* Reset the CA53 MACRO */
- 	unit_rst_val = RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
- 	WREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N, CA53_RESET);
--	val = RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
-+	RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
- 	WREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N, unit_rst_val);
--	val = RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
-+	RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
- 
- 	rc = goya_push_uboot_to_device(hdev);
- 	if (rc)
-@@ -2228,7 +2228,7 @@ static int goya_pldm_init_cpu(struct hl_device *hdev)
- 	/* Release ARM core 0 from reset */
- 	WREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL,
- 					CPU_RESET_CORE0_DEASSERT);
--	val = RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
-+	RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
- 
- 	return 0;
- }
-@@ -2502,13 +2502,12 @@ int goya_mmu_init(struct hl_device *hdev)
- static int goya_hw_init(struct hl_device *hdev)
- {
- 	struct asic_fixed_properties *prop = &hdev->asic_prop;
--	u32 val;
- 	int rc;
- 
- 	dev_info(hdev->dev, "Starting initialization of H/W\n");
- 
- 	/* Perform read from the device to make sure device is up */
--	val = RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
-+	RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
- 
- 	/*
- 	 * Let's mark in the H/W that we have reached this point. We check
-@@ -2560,7 +2559,7 @@ static int goya_hw_init(struct hl_device *hdev)
- 		goto disable_queues;
- 
- 	/* Perform read from the device to flush all MSI-X configuration */
--	val = RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
-+	RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
- 
- 	return 0;
- 
+However, returning an error might be preferable here, especially since 
+the comedi core module's "comedi_num_legacy_minors" parameter defaults 
+to zero.
+
+I'm happy with the change of behaviour, but would suggest changing the 
+'pr_warn()' calls to 'pr_err()' to match this change.
+
 -- 
-2.7.4
-
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
