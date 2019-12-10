@@ -2,139 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA66F118968
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:18:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C698118971
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:23:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbfLJNSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 08:18:50 -0500
-Received: from mga01.intel.com ([192.55.52.88]:15353 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbfLJNSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 08:18:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 05:18:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,299,1571727600"; 
-   d="scan'208";a="203184967"
-Received: from txu2-mobl.ccr.corp.intel.com (HELO [10.249.173.162]) ([10.249.173.162])
-  by orsmga007.jf.intel.com with ESMTP; 10 Dec 2019 05:18:47 -0800
-Subject: Re: [PATCH] ACPI/HMAT: Fix the parsing of Cache Associativity and
- Write Policy
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20191202070348.32148-1-tao3.xu@intel.com>
- <CAJZ5v0hqjR5EdrxcdkLUpxseFiizqNjtA3nYdDtZiSt85JiywQ@mail.gmail.com>
- <6dbcdaff-feae-68b9-006d-dd8aec032553@intel.com>
- <CAJZ5v0jYb7XQC7u0rmxF-XVMAsEoOfmD11-FYDvMrZuOuzgyiA@mail.gmail.com>
- <0e4219c3-943a-e416-e5eb-723bed8c9383@intel.com>
- <CAJZ5v0h6_7AoYW5Syk=BUR656eW11A3GjA7uvmTA6ayByOaqBg@mail.gmail.com>
-From:   Tao Xu <tao3.xu@intel.com>
-Message-ID: <82e7361e-256e-002c-6b30-601cec1fad07@intel.com>
-Date:   Tue, 10 Dec 2019 21:18:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0h6_7AoYW5Syk=BUR656eW11A3GjA7uvmTA6ayByOaqBg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727334AbfLJNX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 08:23:27 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37086 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfLJNX1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 08:23:27 -0500
+Received: by mail-wr1-f65.google.com with SMTP id w15so20165112wru.4;
+        Tue, 10 Dec 2019 05:23:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=cBnDmOd1oyAwvS/dO5tRG/7xWRMnlpmBTWuorHo1pdg=;
+        b=S6zlGdOf2taVM7tSfma9ybnx61nuzOAp7XkqvWLHCdLaJBnwwh/xBFqv/dJLT2b286
+         dqAaJj7OTDZHfBJmnAXED9wMc2a5Q86Lau/qG6OAb38OPkgKAuDfmQ86j0cCTZ6XQQgt
+         iz2ZkJSeGLBRXbJkueaNlHreuiLIq36eq6erjWu2iax4mAyINQo9/Wn5/XXtCAOrDWsE
+         Pl+POaPn5FFf7+7jbxvieygirsduRn5HR8iOl7xl+7D41Y5Hq1kxEZkAeBi5Brb2VvLz
+         KEJdIE0npUn8ltDsO7IDNZKOpKeGyeJUh2C5bNJHYBRl8Lbm/Mxa2YYUZZ8s93FxX4+N
+         Fl3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cBnDmOd1oyAwvS/dO5tRG/7xWRMnlpmBTWuorHo1pdg=;
+        b=KZmaLUs5ZiJkRvuOx1VUcDbLzXnnYolgYcUpHjgh+YLs4SCAFXBoLDNfRZsDo2ugqC
+         D4dCWTekBa6qW6Urc1zpbVq9dMI9zpVE1FeX8sfapBbDFLytI6WXB8TNAf9sXKIB7XCl
+         ctTVx6H4M4SNdcE8tNI4U12itf8d8F8ANuAKmTlL44lh2iLNjjywzq+kugaVceH/8DvE
+         OIcWn1Z8fRau2htFcJTKIv1qEyLl/XActv1a2mlbwXd/jtohASnGvP0lfKYYgbFQgNba
+         cIAygq0bWYj8J8VA+tptQ1TFBpt5kys7OlPo6aEs2xh7GAo7ptVfXVIFpXkuDKdzDJ5e
+         u/kw==
+X-Gm-Message-State: APjAAAXU0ZrF0tCIL/L4FE8FaoEzh3ZHqjsZRf6BpsN1iFT+ESmxTxgO
+        E9S9xCopdjMeIoDEUfz48tZxrMyVMQ8=
+X-Google-Smtp-Source: APXvYqzK2JasnRBelbXspNc6ewhYIQKQQzH4s2L6GUsgHLkz3gIP7kiOBBpxBAXF2wVXbsdxtQ32uQ==
+X-Received: by 2002:a5d:558d:: with SMTP id i13mr189956wrv.364.1575984204569;
+        Tue, 10 Dec 2019 05:23:24 -0800 (PST)
+Received: from stbsrv-and-01.and.broadcom.net ([192.19.231.250])
+        by smtp.gmail.com with ESMTPSA id s82sm3101680wms.28.2019.12.10.05.23.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 05:23:24 -0800 (PST)
+From:   Al Cooper <alcooperx@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Al Cooper <alcooperx@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH v3 00/13] phy: usb: Updates to Broadcom STB USB PHY driver
+Date:   Tue, 10 Dec 2019 08:21:19 -0500
+Message-Id: <20191210132132.41509-1-alcooperx@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/2019 4:27 PM, Rafael J. Wysocki wrote:
-> On Tue, Dec 10, 2019 at 9:19 AM Tao Xu <tao3.xu@intel.com> wrote:
->>
->> On 12/10/2019 4:06 PM, Rafael J. Wysocki wrote:
->>> On Tue, Dec 10, 2019 at 2:04 AM Tao Xu <tao3.xu@intel.com> wrote:
->>>>
->>>> On 12/9/2019 6:01 PM, Rafael J. Wysocki wrote:
->>>>> On Mon, Dec 2, 2019 at 8:03 AM Tao Xu <tao3.xu@intel.com> wrote:
->>>>>>
->>>>>> In chapter 5.2.27.5, Table 5-147: Field "Cache Attributes" of
->>>>>> ACPI 6.3 spec: 0 is "None", 1 is "Direct Mapped", 2 is "Complex Cache
->>>>>> Indexing" for Cache Associativity; 0 is "None", 1 is "Write Back",
->>>>>> 2 is "Write Through" for Write Policy.
->>>>>
->>>>> Well, I'm not sure what the connection between the above statement,
->>>>> which is correct AFAICS, and the changes made by the patch is.
->>>>>
->>>>> Is that the *_OTHER symbol names are confusing or something deeper?
->>>>>
->>>>
->>>> Because in include/acpi/actbl1.h:
->>>>
->>>> #define ACPI_HMAT_CA_NONE                     (0)
->>>>
->>>> ACPI_HMAT_CA_NONE is 0, but in include/linux/node.h:
->>>>
->>>>       enum cache_indexing {
->>>>              NODE_CACHE_DIRECT_MAP,
->>>>              NODE_CACHE_INDEXED,
->>>>              NODE_CACHE_OTHER,
->>>>       };
->>>> NODE_CACHE_OTHER is 2, and for otner enum:
->>>>
->>>>             case ACPI_HMAT_CA_DIRECT_MAPPED:
->>>>                     tcache->cache_attrs.indexing = NODE_CACHE_DIRECT_MAP;
->>>>                     break;
->>>>             case ACPI_HMAT_CA_COMPLEX_CACHE_INDEXING:
->>>>                     tcache->cache_attrs.indexing = NODE_CACHE_INDEXED;
->>>>                     break;
->>>> in include/acpi/actbl1.h:
->>>>
->>>>     #define ACPI_HMAT_CA_DIRECT_MAPPED            (1)
->>>>     #define ACPI_HMAT_CA_COMPLEX_CACHE_INDEXING   (2)
->>>>
->>>> but in include/linux/node.h:
->>>>
->>>> NODE_CACHE_DIRECT_MAP is 0, NODE_CACHE_INDEXED is 1. This is incorrect.
->>>
->>> Why is it incorrect?
->>
->> Sorry I paste the wrong pre-define.
->>
->> This is the incorrect line:
->>
->> case ACPI_HMAT_CA_DIRECT_MAPPED:
->> tcache->cache_attrs.indexing = NODE_CACHE_DIRECT_MAP;
->>
->> ACPI_HMAT_CA_DIRECT_MAPPED is 1, NODE_CACHE_DIRECT_MAP is 0. That means
->> if HMAT table input 1 for cache_attrs.indexing, kernel store 0 in
->> cache_attrs.indexing. But in ACPI 6.3, 0 means "None". So for the whole
->> switch codes:
-> 
-> This is a mapping between the ACPI-defined values and the generic ones
-> defined in the kernel.  There is not rule I know of by which they must
-> be the same numbers.  Or is there such a rule which I'm missing?
-> 
-> As long as cache_attrs.indexing is used consistently going forward,
-> the difference between the ACPI-defined numbers and its values
-> shouldn't matter, should it?
-> 
-Yes, it will not influence the ACPI HMAT tables. Only influence is the 
-sysfs, as in 
-https://www.kernel.org/doc/html/latest/admin-guide/mm/numaperf.html:
+This patchset contains various updates to the Broadcom STB USB Driver.
+The updates include:
+- Add support for 7216 and 7211 Broadcom SoCs which use the new
+  Synopsis USB Controller.
+- Add support for USB Wake
+- Add various bug fixes.
 
-# tree sys/devices/system/node/node0/memory_side_cache/
-/sys/devices/system/node/node0/memory_side_cache/
-|-- index1
-|   |-- indexing
-|   |-- line_size
-|   |-- size
-|   `-- write_policy
+v3 - Rebase to v5.5-rc1
 
-indexing is parsed in this file, so it can be read by user-space. 
-Although now there is no user-space tool use this information to do some 
-thing. But I am wondering if it is used in the future, someone use it to 
-show the memory side cache information to user or use it to do 
-performance turning.
+v2 - Changes based on review feedback
+- Add vendor prefix to DT property "syscon-piarbctl"
+- Use standard "wakeup" instead of "wake" for DT "interrupt-names"
+
+Al Cooper (13):
+  phy: usb: EHCI DMA may lose a burst of DMA data for 7255xA0 family
+  phy: usb: Get all drivers that use USB clks using correct
+    enable/disable
+  phy: usb: Put USB phys into IDDQ on suspend to save power in S2 mode
+  phy: usb: Add "wake on" functionality
+  phy: usb: Restructure in preparation for adding 7216 USB support
+  dt-bindings: Add Broadcom STB USB PHY binding document
+  phy: usb: Add support for new Synopsis USB controller on the 7216
+  phy: usb: Add support for new Synopsis USB controller on the 7211b0
+  phy: usb: fix driver to defer on clk_get defer
+  phy: usb: PHY's MDIO registers not accessible without device installed
+  phy: usb: bdc: Fix occasional failure with BDC on 7211
+  phy: usb: USB driver is crashing during S3 resume on 7216
+  phy: usb: Add support for wake and USB low power mode for 7211 S2/S5
+
+ .../bindings/phy/brcm,brcmstb-usb-phy.txt     |  69 ++-
+ drivers/phy/broadcom/Makefile                 |   2 +-
+ .../phy/broadcom/phy-brcm-usb-init-synopsis.c | 414 ++++++++++++++++++
+ drivers/phy/broadcom/phy-brcm-usb-init.c      | 226 +++++-----
+ drivers/phy/broadcom/phy-brcm-usb-init.h      | 148 ++++++-
+ drivers/phy/broadcom/phy-brcm-usb.c           | 269 ++++++++++--
+ 6 files changed, 943 insertions(+), 185 deletions(-)
+ create mode 100644 drivers/phy/broadcom/phy-brcm-usb-init-synopsis.c
+
+-- 
+2.17.1
+
