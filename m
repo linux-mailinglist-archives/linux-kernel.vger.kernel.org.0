@@ -2,137 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66B06117F0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:41:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6164D117F21
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:47:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfLJElB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 23:41:01 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:41799 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbfLJElB (ORCPT
+        id S1727065AbfLJErl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 23:47:41 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36219 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbfLJErj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 23:41:01 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191210044057epoutp022197a69eb2a315f73bbd087b719e5273~e6MYcLU4V0190601906epoutp021
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 04:40:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191210044057epoutp022197a69eb2a315f73bbd087b719e5273~e6MYcLU4V0190601906epoutp021
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575952857;
-        bh=0aHgv6I5n6zloYGGXpmUFbpr1AC6keJ830N7MzWtD3k=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=UIc0pMNn/c04HQj81dkyoHw0KiJGGGU916hHaeNLMSH43iqQV7vQr1yRRCKBgAH+E
-         ZuRWH1E+hMbBF0Dm4nxwB9+U4rJ2zRlbmoWIgm6K9hHaSW/v1iVviO0/tjXTpsLF5z
-         LsrVu76U7uUSS64HgqXUvIAZ4rr87C2eCSznKArc=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191210044056epcas1p469d65f6853c497793675e3e118eb9824~e6MX6O_ng2442824428epcas1p4P;
-        Tue, 10 Dec 2019 04:40:56 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47X6nf3f5vzMqYkY; Tue, 10 Dec
-        2019 04:40:54 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1D.F0.48019.FC12FED5; Tue, 10 Dec 2019 13:40:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191210044046epcas1p3e9343cc918be7dd39f49592cf1047e1c~e6MOp_BNz1727817278epcas1p3I;
-        Tue, 10 Dec 2019 04:40:46 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191210044046epsmtrp282f32f7a7949189d4cbd74e06265cdb2~e6MOpEIsU0529105291epsmtrp2_;
-        Tue, 10 Dec 2019 04:40:46 +0000 (GMT)
-X-AuditID: b6c32a38-23fff7000001bb93-fe-5def21cfdb65
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BB.1A.06569.EC12FED5; Tue, 10 Dec 2019 13:40:46 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191210044046epsmtip14192116ffeb1cff8bdaae28f419c7ab8~e6MOiKLXs1173711737epsmtip1B;
-        Tue, 10 Dec 2019 04:40:46 +0000 (GMT)
-Subject: Re: [PATCH 01/10] extcon: arizona: Correct clean up if
- arizona_identify_headphone fails
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     myungjoo.ham@samsung.com, patches@opensource.cirrus.com,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <c1db1ef9-91e7-0475-8c19-86fd8102cd17@samsung.com>
-Date:   Tue, 10 Dec 2019 13:47:12 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Mon, 9 Dec 2019 23:47:39 -0500
+Received: by mail-pg1-f195.google.com with SMTP id k3so7608978pgc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 20:47:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=txq3LAFK3wOGlutPVrH/f5MoWKzx5UG/2rHrSgg8Ef0=;
+        b=Twub/7dfkfSLtOLxrE276ihuEuvporLf72DEUs3hin3WvhA/s1IXbcI8fgn6bYfEap
+         gu6iY9yK9ZBPgRRsp2Dndk9mrhs3BC8P/iXi7D2zWdBwrEIU3AYdLX3FjoTgwxeJb6n1
+         dheXIk9ucGRFhy5Zr5/DR0A350BnDT96IS57E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=txq3LAFK3wOGlutPVrH/f5MoWKzx5UG/2rHrSgg8Ef0=;
+        b=fl66b7fftqVPU+xPTypzCEx7N8KsQSKnYQUT6nDKa3RiSBB1EOjuhkYfelccrhiShj
+         W4kP2CtqRTL5CwfkZw2qxC9W1E76dOyGjgvbX4rWjCg19jMEy71f446cgr2vWnN9HEPh
+         kGfPDn/Z3xshY7YcN8/zVe3x6Wy57dancFqd1Xi5uS7SCU7BEZT20V4yh15inqkyKLgK
+         UqqFjaZzzdDrLFeCl1R/7gRsYXKEjWnQLda9pkb00/85EfeFBjdgrl0Mb+ChCRGvsYPF
+         BED/TNfIjsXiHNVEFgLpvHXtfHHvVZsLVkdZ7rs7Yy228YRTqdGuU9PAPrK8q/y+zWEE
+         16iA==
+X-Gm-Message-State: APjAAAX5WoZ7OokwKVfeULZNEXUsFhRqQHRPuhlJGCgX8vY2YIdorUOy
+        9rEUw7vMASVCFMEmwQb89NoPvGCi5CE=
+X-Google-Smtp-Source: APXvYqwo4BmaQbSIu9CGUWSB47DJ4jc+UUxqneRNCNhT2QgM4Y9U0WXwRELaH6aJYlTs5Hvw2Ghozg==
+X-Received: by 2002:aa7:8f16:: with SMTP id x22mr33786940pfr.120.1575953258528;
+        Mon, 09 Dec 2019 20:47:38 -0800 (PST)
+Received: from localhost (2001-44b8-1113-6700-e460-0b66-7007-c654.static.ipv6.internode.on.net. [2001:44b8:1113:6700:e460:b66:7007:c654])
+        by smtp.gmail.com with ESMTPSA id c184sm1185254pfa.39.2019.12.09.20.47.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 20:47:37 -0800 (PST)
+From:   Daniel Axtens <dja@axtens.net>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
+        christophe.leroy@c-s.fr, aneesh.kumar@linux.ibm.com,
+        bsingharora@gmail.com
+Cc:     Daniel Axtens <dja@axtens.net>
+Subject: [PATCH v2 2/4] kasan: use MAX_PTRS_PER_* for early shadow
+Date:   Tue, 10 Dec 2019 15:47:12 +1100
+Message-Id: <20191210044714.27265-3-dja@axtens.net>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191210044714.27265-1-dja@axtens.net>
+References: <20191210044714.27265-1-dja@axtens.net>
 MIME-Version: 1.0
-In-Reply-To: <20191209110916.29524-1-ckeepax@opensource.cirrus.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphk+LIzCtJLcpLzFFi42LZdlhTT/e84vtYg1Wt0hZXWjcxWlzeNYfN
-        4nbjCjaLz+/3szqweEyf85/Ro2/LKkaPz5vkApijsm0yUhNTUosUUvOS81My89JtlbyD453j
-        Tc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgLYpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yV
-        UgtScgosC/SKE3OLS/PS9ZLzc60MDQyMTIEKE7IzOs6+ZC34z17xoX0mWwPjNbYuRk4OCQET
-        iXm3jzJ3MXJxCAnsYJToaJnKBuF8YpR4f+g2lPONUWLbocmMMC1L+v5DtexllPhy6TYLhPOe
-        UeLM6vvMIFXCAkkSb59cALNFBIwkPh6/xQRiMwtESyz4vAxsOZuAlsT+FzfAbH4BRYmrPx6D
-        beAVsJP4390AVM/BwSKgKrFyuwdIWFQgTOLkthaoEkGJkzOfsIDYnALOEmue72KBGC8ucevJ
-        fKhV8hLb384BO1RC4AibxNSJ06E+cJG40nKAGcIWlnh1fAs7hC0l8fndXmjAVEusPHmEDaK5
-        g1Fiy/4LrBAJY4n9SyeDHccsoCmxfpc+RFhRYufvuYwQi/kk3n3tYQUpkRDglehoE4IoUZa4
-        /OAuE4QtKbG4vZNtAqPSLCTvzELywiwkL8xCWLaAkWUVo1hqQXFuemqxYYEJcmxvYgSnRC2L
-        HYx7zvkcYhTgYFTi4V3g8C5WiDWxrLgy9xCjBAezkgjv8TagEG9KYmVValF+fFFpTmrxIUZT
-        YGBPZJYSTc4Hpuu8knhDUyNjY2MLE0MzU0NDJXFejh8XY4UE0hNLUrNTUwtSi2D6mDg4pRoY
-        o367y20pkFNg8sm4uLTKMXLzpF4Z8Sd3GUT6L07M3pb52jvtt+K7j5MWFT79MWHP9UVBRuZ3
-        Aj5/N/PY8UPkWKVmZKLLo97FlRka4mKbryyXr5F+suDH+/WZkjG5UisPbty67xTDhOap6ScC
-        l/rotD9a3yN5iHWC1i5zm2mFT++a7LywSiZeRomlOCPRUIu5qDgRAMm2VvSfAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGLMWRmVeSWpSXmKPExsWy7bCSnO45xfexBu++qVtcad3EaHF51xw2
-        i9uNK9gsPr/fz+rA4jF9zn9Gj74tqxg9Pm+SC2CO4rJJSc3JLEst0rdL4MroOPuSteA/e8WH
-        9plsDYzX2LoYOTkkBEwklvT9Z+5i5OIQEtjNKHHjykNGiISkxLSLR4ESHEC2sMThw8UQNW8Z
-        JWYsaWUBqREWSJJ4++QCM4gtImAk8fH4LSYQm1kgWuJS/1cWiIZpjBIdLyaDFbEJaEnsf3ED
-        bDO/gKLE1R+PwZbxCthJ/O9uYAJZxiKgKrFyuwdIWFQgTGLnksdMECWCEidnPgHbyyngLLHm
-        +S4WiF3qEn/mXWKGsMUlbj2ZD3WDvMT2t3OYJzAKz0LSPgtJyywkLbOQtCxgZFnFKJlaUJyb
-        nltsWGCUl1quV5yYW1yal66XnJ+7iREcG1paOxhPnIg/xCjAwajEw+th9y5WiDWxrLgy9xCj
-        BAezkgjv8TagEG9KYmVValF+fFFpTmrxIUZpDhYlcV75/GORQgLpiSWp2ampBalFMFkmDk6p
-        BsbkoHf6l8relyXL8r3XDNpQ1dDSrasl0rWAU+RBjJV3Rfjfp6w/qubrb5+zvZT9QfcS3sAr
-        ibahzjxnouNNNCLf35HJPrPGQqpRN0JqzcGmy032sksiJplcsf/PueHM7L+Ka+4udr9/iStT
-        Rin9mYFQZb23hrmGUMnKQ0ffz/v1Sv+z+MLN65VYijMSDbWYi4oTAXUSQY6JAgAA
-X-CMS-MailID: 20191210044046epcas1p3e9343cc918be7dd39f49592cf1047e1c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191209110925epcas4p3731ec3380f882027824b188439aa3bc9
-References: <CGME20191209110925epcas4p3731ec3380f882027824b188439aa3bc9@epcas4p3.samsung.com>
-        <20191209110916.29524-1-ckeepax@opensource.cirrus.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/9/19 8:09 PM, Charles Keepax wrote:
-> In the error path of arizona_identify_headphone, neither the clamp nor
-> the PM runtime are cleaned up. Add calls to clean up both of these.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->  drivers/extcon/extcon-arizona.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
-> index e970134c95fab..79e9a24101823 100644
-> --- a/drivers/extcon/extcon-arizona.c
-> +++ b/drivers/extcon/extcon-arizona.c
-> @@ -724,6 +724,9 @@ static void arizona_identify_headphone(struct arizona_extcon_info *info)
->  	return;
->  
->  err:
-> +	arizona_extcon_hp_clamp(info, false);
-> +	pm_runtime_put_autosuspend(info->dev);
-> +
->  	regmap_update_bits(arizona->regmap, ARIZONA_ACCESSORY_DETECT_MODE_1,
->  			   ARIZONA_ACCDET_MODE_MASK, ARIZONA_ACCDET_MODE_MIC);
->  
-> 
+This helps with powerpc support, and should have no effect on
+anything else.
 
-Applied these patches in this series. Thanks.
+Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+---
+ include/linux/kasan.h | 6 +++---
+ mm/kasan/init.c       | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index e18fe54969e9..d2f2a4ffcb12 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -15,9 +15,9 @@ struct task_struct;
+ #include <asm/pgtable.h>
+ 
+ extern unsigned char kasan_early_shadow_page[PAGE_SIZE];
+-extern pte_t kasan_early_shadow_pte[PTRS_PER_PTE];
+-extern pmd_t kasan_early_shadow_pmd[PTRS_PER_PMD];
+-extern pud_t kasan_early_shadow_pud[PTRS_PER_PUD];
++extern pte_t kasan_early_shadow_pte[MAX_PTRS_PER_PTE];
++extern pmd_t kasan_early_shadow_pmd[MAX_PTRS_PER_PMD];
++extern pud_t kasan_early_shadow_pud[MAX_PTRS_PER_PUD];
+ extern p4d_t kasan_early_shadow_p4d[MAX_PTRS_PER_P4D];
+ 
+ int kasan_populate_early_shadow(const void *shadow_start,
+diff --git a/mm/kasan/init.c b/mm/kasan/init.c
+index ce45c491ebcd..8b54a96d3b3e 100644
+--- a/mm/kasan/init.c
++++ b/mm/kasan/init.c
+@@ -46,7 +46,7 @@ static inline bool kasan_p4d_table(pgd_t pgd)
+ }
+ #endif
+ #if CONFIG_PGTABLE_LEVELS > 3
+-pud_t kasan_early_shadow_pud[PTRS_PER_PUD] __page_aligned_bss;
++pud_t kasan_early_shadow_pud[MAX_PTRS_PER_PUD] __page_aligned_bss;
+ static inline bool kasan_pud_table(p4d_t p4d)
+ {
+ 	return p4d_page(p4d) == virt_to_page(lm_alias(kasan_early_shadow_pud));
+@@ -58,7 +58,7 @@ static inline bool kasan_pud_table(p4d_t p4d)
+ }
+ #endif
+ #if CONFIG_PGTABLE_LEVELS > 2
+-pmd_t kasan_early_shadow_pmd[PTRS_PER_PMD] __page_aligned_bss;
++pmd_t kasan_early_shadow_pmd[MAX_PTRS_PER_PMD] __page_aligned_bss;
+ static inline bool kasan_pmd_table(pud_t pud)
+ {
+ 	return pud_page(pud) == virt_to_page(lm_alias(kasan_early_shadow_pmd));
+@@ -69,7 +69,7 @@ static inline bool kasan_pmd_table(pud_t pud)
+ 	return false;
+ }
+ #endif
+-pte_t kasan_early_shadow_pte[PTRS_PER_PTE] __page_aligned_bss;
++pte_t kasan_early_shadow_pte[MAX_PTRS_PER_PTE] __page_aligned_bss;
+ 
+ static inline bool kasan_pte_table(pmd_t pmd)
+ {
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.20.1
+
