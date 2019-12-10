@@ -2,164 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1334F1187D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:13:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 883EF1187C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:12:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbfLJMNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 07:13:37 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51166 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbfLJMNc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 07:13:32 -0500
-Received: from 79.184.255.117.ipv4.supernova.orange.pl (79.184.255.117) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 2bc94e7c1cbbb6eb; Tue, 10 Dec 2019 13:13:29 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Subject: [RFC v2][PATCH 7/9] cpuidle: Allow idle states to be disabled by default
-Date:   Tue, 10 Dec 2019 13:07:46 +0100
-Message-ID: <4082336.WN7UBzZTZ7@kreacher>
-In-Reply-To: <35821518.IbFVMVmUy3@kreacher>
-References: <35821518.IbFVMVmUy3@kreacher>
+        id S1727520AbfLJMMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 07:12:47 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7207 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727224AbfLJMMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 07:12:47 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 631AA4F7801B4F2AC67B;
+        Tue, 10 Dec 2019 20:12:45 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 10 Dec 2019 20:12:39 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <masahiroy@kernel.org>
+CC:     <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <anders.roxell@linaro.org>, John Garry <john.garry@huawei.com>
+Subject: [PATCH] merge_config.sh: Add option for allmodconfig
+Date:   Tue, 10 Dec 2019 20:09:14 +0800
+Message-ID: <1575979754-184896-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Recently there has been some work in reporting and fixing bugs in booting
+an allmodconfig kernel - here are a few examples:
 
-In certain situations it may be useful to prevent some idle states
-from being used by default while allowing user space to enable them
-later on.
+https://lore.kernel.org/linux-edac/304df85b-8b56-b77e-1a11-aa23769f2e7c@huawei.com/T/#t
+https://lore.kernel.org/linux-ide/bdf02e03-86a1-3d35-2908-28187f504495@huawei.com/T/#t
+https://lore.kernel.org/netdev/CADYN=9LCPfbpwdTWKw03B22-y3Text=RWXW7XP7wJBHYsMOgrA@mail.gmail.com/
+https://sourceforge.net/p/openipmi/mailman/message/36871567/
 
-For this purpose, introduce a new state flag, CPUIDLE_FLAG_OFF, to
-mark idle states that should be disabled by default, make the core
-set CPUIDLE_STATE_DISABLED_BY_USER for those states at the
-initialization time and add a new state attribute in sysfs,
-"initial_status", to inform user space of the initial status of
-the given idle state ("disabled" if CPUIDLE_FLAG_OFF is set for it,
-"enabled" otherwise).
+If we want to boot an allmodconfig kernel we may still want to force some
+loadable modules built-in, like UART drivers. Or just still turn off some
+configs.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+So add an option to add add fragments to an allmodconfig kernel.
 
-No changes from the previous version.
+Signed-off-by: John Garry <john.garry@huawei.com>
 
----
- Documentation/ABI/testing/sysfs-devices-system-cpu |    6 ++++++
- Documentation/admin-guide/pm/cpuidle.rst           |    3 +++
- drivers/cpuidle/cpuidle.c                          |    6 +++++-
- drivers/cpuidle/sysfs.c                            |   10 ++++++++++
- include/linux/cpuidle.h                            |    1 +
- 5 files changed, 25 insertions(+), 1 deletion(-)
-
-Index: linux-pm/drivers/cpuidle/sysfs.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/sysfs.c
-+++ linux-pm/drivers/cpuidle/sysfs.c
-@@ -327,6 +327,14 @@ static ssize_t store_state_disable(struc
- 	return size;
- }
+diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+index 63c8565206a4..01697fb6dfbe 100755
+--- a/scripts/kconfig/merge_config.sh
++++ b/scripts/kconfig/merge_config.sh
+@@ -23,6 +23,7 @@ clean_up() {
+ usage() {
+ 	echo "Usage: $0 [OPTIONS] [CONFIG [...]]"
+ 	echo "  -h    display this help text"
++	echo "  -a    use allmodconfig instead of alldefconfig"
+ 	echo "  -m    only merge the fragments, do not execute the make command"
+ 	echo "  -n    use allnoconfig instead of alldefconfig"
+ 	echo "  -r    list redundant entries when merging fragments"
+@@ -41,6 +42,11 @@ CONFIG_PREFIX=${CONFIG_-CONFIG_}
  
-+static ssize_t show_state_initial_status(struct cpuidle_state *state,
-+					  struct cpuidle_state_usage *state_usage,
-+					  char *buf)
-+{
-+	return sprintf(buf, "%s\n",
-+		       state->flags & CPUIDLE_FLAG_OFF ? "disabled" : "enabled");
-+}
-+
- define_one_state_ro(name, show_state_name);
- define_one_state_ro(desc, show_state_desc);
- define_one_state_ro(latency, show_state_exit_latency);
-@@ -337,6 +345,7 @@ define_one_state_ro(time, show_state_tim
- define_one_state_rw(disable, show_state_disable, store_state_disable);
- define_one_state_ro(above, show_state_above);
- define_one_state_ro(below, show_state_below);
-+define_one_state_ro(initial_status, show_state_initial_status);
+ while true; do
+ 	case $1 in
++	"-a")
++		ALLTARGET=allmodconfig
++		shift
++		continue
++		;;
+ 	"-n")
+ 		ALLTARGET=allnoconfig
+ 		shift
+@@ -171,6 +177,7 @@ fi
  
- static struct attribute *cpuidle_state_default_attrs[] = {
- 	&attr_name.attr,
-@@ -349,6 +358,7 @@ static struct attribute *cpuidle_state_d
- 	&attr_disable.attr,
- 	&attr_above.attr,
- 	&attr_below.attr,
-+	&attr_initial_status.attr,
- 	NULL
- };
+ # Use the merged file as the starting point for:
+ # alldefconfig: Fills in any missing symbols with Kconfig default
++# allmodconfig: Fills in any missing symbols with =m when loadable
+ # allnoconfig: Fills in any missing symbols with # CONFIG_* is not set
+ make KCONFIG_ALLCONFIG=$TMP_FILE $OUTPUT_ARG $ALLTARGET
  
-Index: linux-pm/include/linux/cpuidle.h
-===================================================================
---- linux-pm.orig/include/linux/cpuidle.h
-+++ linux-pm/include/linux/cpuidle.h
-@@ -77,6 +77,7 @@ struct cpuidle_state {
- #define CPUIDLE_FLAG_COUPLED	BIT(1) /* state applies to multiple cpus */
- #define CPUIDLE_FLAG_TIMER_STOP BIT(2) /* timer is stopped on this state */
- #define CPUIDLE_FLAG_UNUSABLE	BIT(3) /* avoid using this state */
-+#define CPUIDLE_FLAG_OFF	BIT(4) /* disable this state by default */
- 
- struct cpuidle_device_kobj;
- struct cpuidle_state_kobj;
-Index: linux-pm/drivers/cpuidle/cpuidle.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/cpuidle.c
-+++ linux-pm/drivers/cpuidle/cpuidle.c
-@@ -571,10 +571,14 @@ static int __cpuidle_register_device(str
- 	if (!try_module_get(drv->owner))
- 		return -EINVAL;
- 
--	for (i = 0; i < drv->state_count; i++)
-+	for (i = 0; i < drv->state_count; i++) {
- 		if (drv->states[i].flags & CPUIDLE_FLAG_UNUSABLE)
- 			dev->states_usage[i].disable |= CPUIDLE_STATE_DISABLED_BY_DRIVER;
- 
-+		if (drv->states[i].flags & CPUIDLE_FLAG_OFF)
-+			dev->states_usage[i].disable |= CPUIDLE_STATE_DISABLED_BY_USER;
-+	}
-+
- 	per_cpu(cpuidle_devices, dev->cpu) = dev;
- 	list_add(&dev->device_list, &cpuidle_detected_devices);
- 
-Index: linux-pm/Documentation/ABI/testing/sysfs-devices-system-cpu
-===================================================================
---- linux-pm.orig/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ linux-pm/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -196,6 +196,12 @@ Description:
- 		does not reflect it. Likewise, if one enables a deep state but a
- 		lighter state still is disabled, then this has no effect.
- 
-+What:		/sys/devices/system/cpu/cpuX/cpuidle/stateN/initial_status
-+Date:		November 2019
-+KernelVersion:	v5.6
-+Contact:	Linux power management list <linux-pm@vger.kernel.org>
-+Description:
-+		(RO) The initial status of this state, "enabled" or "disabled".
- 
- What:		/sys/devices/system/cpu/cpuX/cpuidle/stateN/residency
- Date:		March 2014
-Index: linux-pm/Documentation/admin-guide/pm/cpuidle.rst
-===================================================================
---- linux-pm.orig/Documentation/admin-guide/pm/cpuidle.rst
-+++ linux-pm/Documentation/admin-guide/pm/cpuidle.rst
-@@ -506,6 +506,9 @@ object corresponding to it, as follows:
- ``disable``
- 	Whether or not this idle state is disabled.
- 
-+``initial_status``
-+	The initial status of this state, "enabled" or "disabled".
-+
- ``latency``
- 	Exit latency of the idle state in microseconds.
- 
-
-
+-- 
+2.17.1
 
