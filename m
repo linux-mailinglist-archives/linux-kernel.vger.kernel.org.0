@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 195641183F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:51:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF86D118403
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:51:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbfLJJu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:50:57 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:37890 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfLJJuz (ORCPT
+        id S1727491AbfLJJvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:51:16 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47096 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfLJJu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:50:55 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBA9om9e055662;
-        Tue, 10 Dec 2019 03:50:48 -0600
+        Tue, 10 Dec 2019 04:50:59 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBA9oqmK004876;
+        Tue, 10 Dec 2019 03:50:52 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575971449;
-        bh=sUMLGT/mWFsl+smrkz3jBEOVCcyWMPDJbgMxSj9wYZ8=;
+        s=ti-com-17Q1; t=1575971452;
+        bh=lhC3vf6rK9axq0zLoFoOH6nCOYCQy/v5ElTNHSVMC78=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=AEfc8eiOPatQBp8FPifX27WhL35oWGiE/YBKClaR2nTsuANIqhtjfhcpprs3Gd9G7
-         FpBKPO+aIGamzfsDZhJS2m7sdB6/6yXCt3C9FSZ9mT2k1cXsYtwmlmwq6i+Hd1+k6E
-         H7B3UU4Al/z36WcCBpyvOzFPdeqVnylw9hBr8wn0=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBA9om9G018282
+        b=jNB9QYMeWu90a6/cq5c2iASF24QjTCy82qzRUExjFmiumYxWwctepj4vW1W6UF6rN
+         osE6Ao5wmEB2XR3rzONFCxgSew5tOgIabumHw+bknqGIGbQbwr/Mg6mpgYkRKXey2b
+         nsSIAUUxLHQX8YfPqWaHTvGPB3KHdpqzu7U11JN8=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBA9oqLg090761
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 10 Dec 2019 03:50:48 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 10 Dec 2019 03:50:52 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 10
- Dec 2019 03:50:48 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ Dec 2019 03:50:51 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 10 Dec 2019 03:50:48 -0600
+ Frontend Transport; Tue, 10 Dec 2019 03:50:51 -0600
 Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBA9oZVm048503;
-        Tue, 10 Dec 2019 03:50:45 -0600
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBA9oZVn048503;
+        Tue, 10 Dec 2019 03:50:49 -0600
 From:   Faiz Abbas <faiz_abbas@ti.com>
 To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-mmc@vger.kernel.org>
 CC:     <kishon@ti.com>, <adrian.hunter@intel.com>, <mark.rutland@arm.com>,
         <robh+dt@kernel.org>, <ulf.hansson@linaro.org>,
         <zhang.chunyan@linaro.org>, <tony@atomide.com>
-Subject: [PATCH v3 3/7] mmc: sdhci-omap: Add using external dma
-Date:   Tue, 10 Dec 2019 15:21:47 +0530
-Message-ID: <20191210095151.15441-4-faiz_abbas@ti.com>
+Subject: [PATCH v3 4/7] mmc: sdhci: Add quirk for disabling DTO during erase command
+Date:   Tue, 10 Dec 2019 15:21:48 +0530
+Message-ID: <20191210095151.15441-5-faiz_abbas@ti.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20191210095151.15441-1-faiz_abbas@ti.com>
 References: <20191210095151.15441-1-faiz_abbas@ti.com>
@@ -58,89 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
+Some controllers might prematurely issue a data timeout during an erase
+command. Add a quirk to disable the interrupt when an erase command is
+issued.
 
-sdhci-omap can support both external dma controller via dmaengine framework
-as well as ADMA which standard SD host controller provides.
-
-Fixes by Faiz Abbas <fazi_abbas@ti.com>:
-1. Switch to DMA slave mode when using external DMA
-2. Add offset to mapbase
-
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- drivers/mmc/host/Kconfig      |  1 +
- drivers/mmc/host/sdhci-omap.c | 16 +++++++++++++++-
- 2 files changed, 16 insertions(+), 1 deletion(-)
+ drivers/mmc/host/sdhci.c | 5 +++++
+ drivers/mmc/host/sdhci.h | 2 ++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 66ba8daa1cbe..89ce19e5755f 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -998,6 +998,7 @@ config MMC_SDHCI_OMAP
- 	depends on MMC_SDHCI_PLTFM && OF
- 	select THERMAL
- 	imply TI_SOC_THERMAL
-+	select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  support present in TI's DRA7 SOCs. The controller supports
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 083e7e053c95..84d85aa743da 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -685,7 +685,11 @@ static int sdhci_omap_enable_dma(struct sdhci_host *host)
- 	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 6f3d4991bee1..b8934c50b9c4 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1532,6 +1532,11 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+ 	/* Initially, a command has no error */
+ 	cmd->error = 0;
  
- 	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_CON);
--	reg |= CON_DMA_MASTER;
-+	reg &= ~CON_DMA_MASTER;
-+	/* Switch to DMA slave mode when using external DMA */
-+	if (!host->use_external_dma)
-+		reg |= CON_DMA_MASTER;
++	if (cmd->opcode == MMC_ERASE &&
++	    (host->quirks2 & SDHCI_QUIRK2_DISABLE_DTO_FOR_ERASE)) {
++		sdhci_set_data_timeout_irq(host, false);
++	}
 +
- 	sdhci_omap_writel(omap_host, SDHCI_OMAP_CON, reg);
+ 	if ((host->quirks2 & SDHCI_QUIRK2_STOP_WITH_TC) &&
+ 	    cmd->opcode == MMC_STOP_TRANSMISSION)
+ 		cmd->flags |= MMC_RSP_BUSY;
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index b28706a1bc6f..beda9afba3a6 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -482,6 +482,8 @@ struct sdhci_host {
+  * block count.
+  */
+ #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
++/* Controller needs to disable DTO for erase command */
++#define SDHCI_QUIRK2_DISABLE_DTO_FOR_ERASE		(1<<19)
  
- 	return 0;
-@@ -1037,6 +1041,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	const struct of_device_id *match;
- 	struct sdhci_omap_data *data;
- 	const struct soc_device_attribute *soc;
-+	struct resource *regs;
- 
- 	match = of_match_device(omap_sdhci_match, dev);
- 	if (!match)
-@@ -1049,6 +1054,10 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	}
- 	offset = data->offset;
- 
-+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!regs)
-+		return -ENXIO;
-+
- 	host = sdhci_pltfm_init(pdev, &sdhci_omap_pdata,
- 				sizeof(*omap_host));
- 	if (IS_ERR(host)) {
-@@ -1065,6 +1074,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	omap_host->timing = MMC_TIMING_LEGACY;
- 	omap_host->flags = data->flags;
- 	host->ioaddr += offset;
-+	host->mapbase = regs->start + offset;
- 
- 	mmc = host->mmc;
- 	sdhci_get_of_property(pdev);
-@@ -1134,6 +1144,10 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	host->mmc_host_ops.execute_tuning = sdhci_omap_execute_tuning;
- 	host->mmc_host_ops.enable_sdio_irq = sdhci_omap_enable_sdio_irq;
- 
-+	/* Switch to external DMA only if there is the "dmas" property */
-+	if (of_find_property(dev->of_node, "dmas", NULL))
-+		sdhci_switch_external_dma(host, true);
-+
- 	ret = sdhci_setup_host(host);
- 	if (ret)
- 		goto err_put_sync;
+ 	int irq;		/* Device IRQ */
+ 	void __iomem *ioaddr;	/* Mapped address */
 -- 
 2.19.2
 
