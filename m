@@ -2,56 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07517118CA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:37:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B807118CAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:37:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfLJPhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 10:37:04 -0500
-Received: from mga11.intel.com ([192.55.52.93]:22276 "EHLO mga11.intel.com"
+        id S1727627AbfLJPhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 10:37:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727380AbfLJPhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 10:37:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 07:37:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,300,1571727600"; 
-   d="scan'208";a="363294114"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga004.jf.intel.com with ESMTP; 10 Dec 2019 07:37:03 -0800
-Date:   Tue, 10 Dec 2019 07:37:03 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        thomas.lendacky@amd.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2] KVM: x86: use CPUID to locate host page table
- reserved bits
-Message-ID: <20191210153702.GA15758@linux.intel.com>
-References: <1575474037-7903-1-git-send-email-pbonzini@redhat.com>
- <20191204154806.GC6323@linux.intel.com>
- <9951afb8-8f91-2fe1-3893-04307fafa570@redhat.com>
+        id S1727486AbfLJPhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 10:37:23 -0500
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B89B622B48
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 15:37:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575992243;
+        bh=1vwTuyeGNMoWzMSycC968byapHd+NyJvdWDj4S+IGzk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tmzVi/9qM6uBnYYEyG0XC7YXoHByQZfteOHBN3MQTZWHeRD4QKCV1uf5IVDVxVbAe
+         0ydyQauqJL5JD7nzoY2w9NE92E7m2Trq62q55XHVaFNmRQ1Z3Yhq4Dre3ExkLmY/65
+         4t3mLfG3K06iteG2xHwmX4KlMsQSvLyVRGDcQKDM=
+Received: by mail-lf1-f54.google.com with SMTP id n25so14138516lfl.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 07:37:22 -0800 (PST)
+X-Gm-Message-State: APjAAAU9MPXILj6rrCS5VeS/PsRXMm5Q/1wRzDG3OtPt7btUEqDBcrS9
+        VUxsZAXRvi9s8uUPtZt/N4EzjouTh3Vf1AJVByE=
+X-Google-Smtp-Source: APXvYqw2TGCWM9w3To7VtUpYrgW5dwe3lTLc9vGX+5JsCfHY9qfQzI77/YfYqCJgCYQdQyc2H+RF2TLfxLxq+1g4uO8=
+X-Received: by 2002:a19:c205:: with SMTP id l5mr18943583lfc.159.1575992240859;
+ Tue, 10 Dec 2019 07:37:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9951afb8-8f91-2fe1-3893-04307fafa570@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20191210145657.105808-1-oleksandr@redhat.com>
+In-Reply-To: <20191210145657.105808-1-oleksandr@redhat.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 10 Dec 2019 16:37:09 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPfN4r+fi5R0GOyvQnQ6yn7hQvi+cScDD5THqF8X0nOX7w@mail.gmail.com>
+Message-ID: <CAJKOXPfN4r+fi5R0GOyvQnQ6yn7hQvi+cScDD5THqF8X0nOX7w@mail.gmail.com>
+Subject: Re: [PATCH RFC] init/Kconfig: enable -O3 for all arches
+To:     Oleksandr Natalenko <oleksandr@redhat.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jessica Yu <jeyu@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        David Howells <dhowells@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 10:19:57AM +0100, Paolo Bonzini wrote:
-> On 04/12/19 16:48, Sean Christopherson wrote:
-> >> +	/*
-> >> +	 * Quite weird to have VMX or SVM but not MAXPHYADDR; probably a VM with
-> >> +	 * custom CPUID.  Proceed with whatever the kernel found since these features
-> >> +	 * aren't virtualizable (SME/SEV also require CPUIDs higher than 0x80000008).
-> > No love for MKTME?  :-D
-> 
-> I admit I didn't check, but does MKTME really require CPUID leaves in
-> the "AMD range"?  (My machines have 0x80000008 as the highest supported
-> leaf in that range).
+On Tue, 10 Dec 2019 at 15:57, Oleksandr Natalenko <oleksandr@redhat.com> wrote:
+>
+> Building a kernel with -O3 may help in hunting bugs like [1] and thus
+> using this switch should not be restricted to one specific arch only.
+>
+> Thus lets expose it. If for some reasone we have to hide it, lets hide
+> it under EXPERT.
 
-Ah, no, I just misunderstood what the blurb in the parentheses was saying.
+You are not hiding it under EXPERT so no need to document in commit
+log theoretical future decisions.
+
+> The commit is made against next-20191210 tag.
+
+This does not belong to commit message. You can put such under the ---
+separator.
+
+Best regards,
+Krzysztof
+
+>
+> [1] https://lore.kernel.org/lkml/673b885183fb64f1cbb3ed2387524077@natalenko.name/
+>
+> Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
+> ---
+>  init/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/init/Kconfig b/init/Kconfig
+> index a34064a031a5..b41b18edb10e 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1228,7 +1228,6 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
+>
+>  config CC_OPTIMIZE_FOR_PERFORMANCE_O3
+>         bool "Optimize more for performance (-O3)"
+> -       depends on ARC
+>         imply CC_DISABLE_WARN_MAYBE_UNINITIALIZED  # avoid false positives
+>         help
+>           Choosing this option will pass "-O3" to your compiler to optimize
+> --
+> 2.24.0
+>
