@@ -2,228 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F91118387
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C60D118388
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfLJJ2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:28:01 -0500
-Received: from emcscan.emc.com.tw ([192.72.220.5]:40061 "EHLO
-        emcscan.emc.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfLJJ2B (ORCPT
+        id S1727295AbfLJJ2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:28:09 -0500
+Received: from sonic308-1.consmr.mail.bf2.yahoo.com ([74.6.130.40]:37938 "EHLO
+        sonic308-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726574AbfLJJ2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:28:01 -0500
-X-IronPort-AV: E=Sophos;i="5.56,253,1539619200"; 
-   d="scan'208";a="33219843"
-Received: from unknown (HELO webmail.emc.com.tw) ([192.168.10.1])
-  by emcscan.emc.com.tw with ESMTP; 10 Dec 2019 17:27:58 +0800
-Received: from 192.168.10.23
-        by webmail.emc.com.tw with MailAudit ESMTP Server V5.0(71507:0:AUTH_RELAY)
-        (envelope-from <johnny.chuang@emc.com.tw>); Tue, 10 Dec 2019 17:27:58 +0800 (CST)
-Received: from 192.168.55.71
-        by webmail.emc.com.tw with Mail2000 ESMTPA Server V7.00(101178:0:AUTH_LOGIN)
-        (envelope-from <johnny.chuang@emc.com.tw>); Tue, 10 Dec 2019 17:27:55 +0800 (CST)
-From:   "Johnny.Chuang" <johnny.chuang@emc.com.tw>
-To:     "'Dmitry Torokhov'" <dmitry.torokhov@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>
-Cc:     =?big5?B?U1RSRDItvbK0Zrxg?= <jennifer.tsai@emc.com.tw>,
-        <james.chen@emc.com.tw>,
-        =?big5?B?J7Hns9W1vic=?= <paul.liang@emc.com.tw>,
-        "'jeff'" <jeff.chuang@emc.com.tw>,
-        =?big5?B?U1RSRDItsviozsBN?= <johnny.chuang@emc.com.tw>
-References: <1575969632-18703-1-git-send-email-johnny.chuang@elan.corp-partner.google.com>
-In-Reply-To: <1575969632-18703-1-git-send-email-johnny.chuang@elan.corp-partner.google.com>
-Subject: [PATCH] Input: elants_i2c - Add Remark ID check flow in firmware update function
-Date:   Tue, 10 Dec 2019 17:27:53 +0800
-Message-ID: <00a901d5af3c$193e9cd0$4bbbd670$@emc.com.tw>
+        Tue, 10 Dec 2019 04:28:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1575970087; bh=6u3qDl6yXWBH9oVBF6VmNFaXPPfmaUEmS0LDo6+oXlw=; h=Date:From:Reply-To:Subject:From:Subject; b=dhcTzaJXlImAv1d9IOQLOBYVfq+a6/AtxxOp9P/3QkEqj6c+D2grGSMjitMouQ0uvwLDXVlgEAq0FbGsnl4HHtYyyeO81fyAEVSFDVFO722agYsA2s+/9qxFJyRHVBRSV9kV06iCQkD1c5GM69VxnkCbzZ/Y5piCnOFQbhe+32rgUjRmqRJHiNgBwosrFj92b0uzEMZeRqpufh1NsTWbdhrrmqq20lPUiAKOL/XysZTubimvGU4KL4WZrn1cssgPohfsDLNlhvbB8O/tNSpcW/7w9wmAkaZrfpgcKq+mgBhdE6F46FvVgdcdvwEnUlkSdkBbxqzISLxqKdY9IOAS+w==
+X-YMail-OSG: OSSOpdoVM1lxPSsJsQuamg8PWxt_nl9kUhSoHmpm8iDHh5ELZSq8LXomBVti4e6
+ 1o6XN1wKXNCHDX1h84pxd59KhtNN6wwWQjyBJV63jXWi.fVbHSvimvylLSNXI0EXzYT6eNgsJB2G
+ 7wOuXpAFFWoAUJxMlmfa.uy34YHoFAprNrPkRE3G2Fa4DUO80r4PIgK7IeQnxQYMVxmVd22D5gyv
+ q8YhwRfTOl7rvNrAu4W6.BufzucNM9b._2eKU8KgyPQ0ewsod.CxWXTyhWgjBOWieF5WXpbYy9jF
+ pDAVuIFJbvq9y2_DJWWn_SkHgbskcz47kTsE0kMO.0DEFWgMYnWvyYFYAZhh7VTfCOcatu6U60aI
+ a.tcVQ761gGF8fpF_YbZFoGu2jsyEG5Aw6ops._1cim5hEQrm1ib8H6CVSrZaCVXJvLIvMJS9ORk
+ pAxC5ee9zmDgQJoT6s1PEvDdvnNIjY8.l.w.KxFdrf0P.Gqo0KpyeiwRtWlzQj9hbcc_mMq0MSA7
+ pR3jyjkc.J4aIk30gFuD3JGpDvf2n6iHK5ture80E8rfC59.ZvOqgJgtyhSePe448KBo3SnOlGjt
+ hGBdCqboFpQj1U95qMI2WcrJzXWKHTERTmKY_bqqxT8U5uCYDgSN2bxXXdfQxojeoP20m6Vsm29h
+ z4FVszR.tBfVL1OXNLbJKAb_DKp1Ge4bKKvro.tRxVNopc5nNLZts4UuecAs7TPxasZQdKPyB2CV
+ 1Xz.joUrIFeSprUbX9znsd4HdYIIhNYFjM.iCVaN67nPiBbD6fiLTuL8ks58qk0EwsTatI40MErL
+ fCo8ssVWnxyy_8AQ53S15ngZ7XM7EyBfLi0AJsX61HP9OlxjUmg3Mp0DsqnBP9jf18goEs0bWBsg
+ P35NreS9Eez11c7nfJ78OTKxPuY_bM2qM2OItUQnhqWQZUK5rQEDw9bfdKuQL8D2oHgbcQxbQYE0
+ ar2tIAOX2nb9SaJpXa4qONUB.cTuwCiam7DXdKqlCrY0vWs1n7QJfpfRavZGGnyoYSSKGu28YS4j
+ JvTy_hmrNrAgGZoMT9HGaFtLINIiPQvsoyiq7Zwo5503rT6c6Ugl7EPrbUEd.PgnxnN5Qf3L2Pd9
+ .11YkxWyDG_hTx90duIqWYn.6QkWXWwCp1zQB3Dwk1vR1t2j_zp7OdgKiivVEpNQ1X.xqZRw7NXB
+ FUmB97KCrOJAG7AGMp3Wv00ExVMdsabj3S9Vh8o38GsEkUyfercYXudG4zWYU0K3RLYPDAMt4YCS
+ dBqkjCWF2fd7qlyFUGEwvU5zl.ecWhAmA_BKqa5ZntkKLrxpRuPZFUHk48OQ6jF8mwDOO5ay7yqH
+ VDZiaUA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Tue, 10 Dec 2019 09:28:07 +0000
+Date:   Tue, 10 Dec 2019 09:28:03 +0000 (UTC)
+From:   Ms Lisa Hugh <lisa.hugh222@gmail.com>
+Reply-To: ms.lisahugh000@gmail.com
+Message-ID: <2044225484.7405135.1575970083815@mail.yahoo.com>
+Subject: I NEED YOUR HELP FOR THIS BUSINESS.
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="big5"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQKU6CCR3y2ZDKNDJHcdSmqZJZrY96Y0pz/A
-Content-Language: zh-tw
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcMDUwMTBcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy01NjY3N2YyZi0xYjJmLTExZWEtOGFiMy03YzVjZjg3NDk0NzhcYW1lLXRlc3RcNTY2NzdmMzEtMWIyZi0xMWVhLThhYjMtN2M1Y2Y4NzQ5NDc4Ym9keS50eHQiIHN6PSI0OTYyIiB0PSIxMzIyMDQ0MzY3MjY2Mjc3ODQiIGg9Imkxc3FFcndSS1dBSGZBbTlZcFdnenpCZzBWUT0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-x-dg-rorf: true
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add Remark ID check flow to firmware update function of
-elan touchscreen driver.
 
-It avoids firmware update with mismatched Remark ID.
 
-This function is supported by our latest version of boot code,
-but it cooperates well with earlier versions.
+Dear Friend,
 
-Our driver will decide if enable Remark ID check with boot code version.
+I am Ms Lisa Hugh work with the department of Audit and accounting manager here in the Bank(B.O.A).
 
-Signed-off-by: Johnny Chuang <johnny.chuang@emc.com.tw>
----
- drivers/input/touchscreen/elants_i2c.c | 77
-++++++++++++++++++++++++++++++----
- 1 file changed, 69 insertions(+), 8 deletions(-)
+Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment and the amount is (US$4.5M DOLLARS).
 
-diff --git a/drivers/input/touchscreen/elants_i2c.c
-b/drivers/input/touchscreen/elants_i2c.c
-index d4ad24e..4911799 100644
---- a/drivers/input/touchscreen/elants_i2c.c
-+++ b/drivers/input/touchscreen/elants_i2c.c
-@@ -59,8 +59,10 @@
- #define CMD_HEADER_WRITE	0x54
- #define CMD_HEADER_READ		0x53
- #define CMD_HEADER_6B_READ	0x5B
-+#define CMD_HEADER_ROM_READ	0x96
- #define CMD_HEADER_RESP		0x52
- #define CMD_HEADER_6B_RESP	0x9B
-+#define CMD_HEADER_ROM_RESP	0x95
- #define CMD_HEADER_HELLO	0x55
- #define CMD_HEADER_REK		0x66
- 
-@@ -200,6 +202,10 @@ static int elants_i2c_execute_command(struct i2c_client
-*client,
- 		expected_response = CMD_HEADER_6B_RESP;
- 		break;
- 
-+	case CMD_HEADER_ROM_READ:
-+		expected_response = CMD_HEADER_ROM_RESP;
-+		break;
-+
- 	default:
- 		dev_err(&client->dev, "%s: invalid command %*ph\n",
- 			__func__, (int)cmd_size, cmd);
-@@ -556,6 +562,8 @@ static int elants_i2c_initialize(struct elants_data *ts)
- 
- 	/* hw version is available even if device in recovery state */
- 	error2 = elants_i2c_query_hw_version(ts);
-+	if (!error2)
-+		error2 = elants_i2c_query_bc_version(ts);
- 	if (!error)
- 		error = error2;
- 
-@@ -564,8 +572,6 @@ static int elants_i2c_initialize(struct elants_data *ts)
- 	if (!error)
- 		error = elants_i2c_query_test_version(ts);
- 	if (!error)
--		error = elants_i2c_query_bc_version(ts);
--	if (!error)
- 		error = elants_i2c_query_ts_info(ts);
- 
- 	if (error)
-@@ -613,39 +619,94 @@ static int elants_i2c_fw_write_page(struct i2c_client
-*client,
- 	return error;
- }
- 
-+static int elants_i2c_validate_remark_id(struct elants_data *ts,
-+					 const struct firmware *fw)
-+{
-+	struct i2c_client *client = ts->client;
-+	int error;
-+	const u8 cmd[] = { CMD_HEADER_ROM_READ, 0x80, 0x1F, 0x00, 0x00, 0x21
-};
-+	u8 resp[6] = { 0 };
-+	u16 ts_remark_id = 0;
-+	u16 fw_remark_id = 0;
-+
-+	/* Compare TS Remark ID and FW Remark ID */
-+	error = elants_i2c_execute_command(client, cmd, sizeof(cmd),
-+					resp, sizeof(resp));
-+	if (error) {
-+		dev_err(&client->dev, "failed to query Remark ID: %d\n",
-error);
-+		return error;
-+	}
-+
-+	ts_remark_id = get_unaligned_be16(&resp[3]);
-+
-+	fw_remark_id = get_unaligned_le16(&fw->data[fw->size - 4]);
-+
-+	if (fw_remark_id != ts_remark_id) {
-+		dev_err(&client->dev,
-+			"Remark ID Mismatched: ts_remark_id=0x%04x,
-fw_remark_id=0x%04x.\n",
-+			ts_remark_id, fw_remark_id);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int elants_i2c_do_update_firmware(struct i2c_client *client,
- 					 const struct firmware *fw,
- 					 bool force)
- {
-+	struct elants_data *ts = i2c_get_clientdata(client);
- 	const u8 enter_iap[] = { 0x45, 0x49, 0x41, 0x50 };
- 	const u8 enter_iap2[] = { 0x54, 0x00, 0x12, 0x34 };
- 	const u8 iap_ack[] = { 0x55, 0xaa, 0x33, 0xcc };
--	const u8 close_idle[] = {0x54, 0x2c, 0x01, 0x01};
-+	const u8 close_idle[] = { 0x54, 0x2c, 0x01, 0x01 };
- 	u8 buf[HEADER_SIZE];
- 	u16 send_id;
- 	int page, n_fw_pages;
- 	int error;
-+	bool check_remark_id = ts->iap_version >= 0x60;
- 
- 	/* Recovery mode detection! */
- 	if (force) {
- 		dev_dbg(&client->dev, "Recovery mode procedure\n");
-+
-+		if (check_remark_id) {
-+			error = elants_i2c_validate_remark_id(ts, fw);
-+			if (error)
-+				return error;
-+		}
-+
- 		error = elants_i2c_send(client, enter_iap2,
-sizeof(enter_iap2));
-+		if (error) {
-+			dev_err(&client->dev, "failed to enter IAP mode:
-%d\n",
-+				error);
-+			return error;
-+		}
- 	} else {
- 		/* Start IAP Procedure */
- 		dev_dbg(&client->dev, "Normal IAP procedure\n");
-+
- 		/* Close idle mode */
- 		error = elants_i2c_send(client, close_idle,
-sizeof(close_idle));
- 		if (error)
- 			dev_err(&client->dev, "Failed close idle: %d\n",
-error);
- 		msleep(60);
-+
- 		elants_i2c_sw_reset(client);
- 		msleep(20);
--		error = elants_i2c_send(client, enter_iap,
-sizeof(enter_iap));
--	}
- 
--	if (error) {
--		dev_err(&client->dev, "failed to enter IAP mode: %d\n",
-error);
--		return error;
-+		if (check_remark_id) {
-+			error = elants_i2c_validate_remark_id(ts, fw);
-+			if (error)
-+				return error;
-+		}
-+
-+		error = elants_i2c_send(client, enter_iap,
-sizeof(enter_iap));
-+		if (error) {
-+			dev_err(&client->dev, "failed to enter IAP mode:
-%d\n",
-+				error);
-+			return error;
-+		}
- 	}
- 
- 	msleep(20);
--- 
-2.7.4
+I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me after success.
 
+Note/ 50% for you why 50% for me after success of the transfer to your bank account.
+
+Below information is what i need from you so will can be reaching each other .
+
+1)Full name ...
+2)Private telephone number...
+3)Age...
+4)Nationality...
+5)Occupation ...
+
+
+Thanks.
+
+Ms Lisa Hugh
