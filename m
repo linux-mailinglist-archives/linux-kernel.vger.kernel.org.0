@@ -2,85 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA3EF119F16
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 00:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4238F119F19
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 00:10:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbfLJXKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 18:10:07 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:34367 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbfLJXKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 18:10:07 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47XbPS55Hkz9sPJ;
-        Wed, 11 Dec 2019 10:10:04 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1576019405;
-        bh=s4kAVRmu0qUkywyluDQQPX3/eJtFL6sVUWz6pbtnLkg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=owDXI36xHWMwOPrx7dl3pP2kAVlhunsk9+rTmeSHQb7jLosb7Y0Nww8UtQ0XB3kkz
-         DSbYquREyGExvkYzuljsh0PJx+4Jqu1CwPmsSA4mJWqBJ8a+njctzOiP3Y6IBQ6Fpc
-         R2m4gyqoKZV+5sLuTI9ba6xxx485WpmhHYRQI6g0pHdM/DRhQDYKPtW5uxmHTI+7oG
-         DRuG0txWlX3N8XQYXlfpQr5QqaH0f18Hizbs6v0on2G6ayiz2Mh+QlAYvHl3AlkGBW
-         sj020lJhd7zaeko9hrzPoAmhfarAD4IgomCajfnEJbTPvG2lx0YR1qcB23nGKaPXoy
-         EgcEWuQRrxzSA==
-Date:   Wed, 11 Dec 2019 10:10:04 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: linux-next: build warning after merge of the gfs2 tree
-Message-ID: <20191211101004.35db8a07@canb.auug.org.au>
+        id S1727328AbfLJXKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 18:10:25 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48608 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbfLJXKY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 18:10:24 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ieodt-00083G-9G; Tue, 10 Dec 2019 23:10:09 +0000
+Date:   Tue, 10 Dec 2019 23:10:09 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Tiezhu Yang <yangtiezhu@loongson.cn>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] fs: introduce is_dot_or_dotdot helper for cleanup
+Message-ID: <20191210231009.GB4203@ZenIV.linux.org.uk>
+References: <1575979801-32569-1-git-send-email-yangtiezhu@loongson.cn>
+ <20191210191912.GA99557@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uBg0EnJmkZOQ2GC8eCmCFzh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210191912.GA99557@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/uBg0EnJmkZOQ2GC8eCmCFzh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 10, 2019 at 11:19:13AM -0800, Eric Biggers wrote:
 
-Hi all,
+> > +static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+> > +{
+> > +	if (unlikely(name[0] == '.')) {
+> > +		if (len < 2 || (len == 2 && name[1] == '.'))
+> > +			return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> 
+> This doesn't handle the len=0 case.  Did you check that none of the users pass
+> in zero-length names?  It looks like fscrypt_fname_disk_to_usr() can, if the
+> directory entry on-disk has a zero-length name.  Currently it will return
+> -EUCLEAN in that case, but with this patch it may think it's the name ".".
+> 
+> So I think there needs to either be a len >= 1 check added, *or* you need to
+> make an argument for why it's okay to not care about the empty name case.
 
-After merging the gfs2 tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Frankly, the only caller that matters in practice is link_path_walk(); _that_
+is by far the hottest path that might make use of that thing.
 
-fs/gfs2/lops.c: In function 'gfs2_find_jhead':
-fs/gfs2/lops.c:536:13: warning: 'bio_chained' may be used uninitialized in =
-this function [-Wmaybe-uninitialized]
-  536 |    if (!bio || (bio_chained && !off)) {
-      |        ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
-
-Introduced by commit
-
-  1ee366c67176 ("gfs2: Another gfs2_find_jhead fix")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uBg0EnJmkZOQ2GC8eCmCFzh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3wJcwACgkQAVBC80lX
-0GyhpQf/SS6rQr9mlG3fPKdI/toUmmkZiEr1kVd/g4xPUs2BMDJBJkjunBpP3ISY
-dVDeXy+M9xMb+tjVqa5juobYgnidNZxRLkT8BBWUTZo0lLF/w+U7nwmaFtJCEIcR
-gApvOYx+ciz2EZvgz49BeG02J0F+geLZJHkuj0S4Jwx1mcKqxjJ3ZHGkEzF2HpuI
-A4HSLykIHT+swWzo+Al60LKabAIz4hgF0bwfiZU9uvy103e025AlBDgfXqIe8YIi
-YFV2N6FqPbdkejVCU5sZskP8DGjFrwK0OJghpp+UUZ0iLofFtYTbMe7NlkRa6MjJ
-2LzLa+sshrdhCzAGmfcP5x7p045Iew==
-=WKg6
------END PGP SIGNATURE-----
-
---Sig_/uBg0EnJmkZOQ2GC8eCmCFzh--
+BTW, the callers that might end up passing 0 for len really ought to take
+a good look at another thing - that name[0] is, in fact, mapped.  Something
+along the lines of
+	if (name + len > end_of_buffer)
+		sod off
+	if (<that function>(name, len))
+		....
+is not enough, for obvious reasons.
