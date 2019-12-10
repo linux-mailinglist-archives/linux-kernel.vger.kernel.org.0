@@ -2,291 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B478919679D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DF8719678B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbgC1Qpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:45:30 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50068 "EHLO mx.sdf.org"
+        id S1728086AbgC1Qow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:44:52 -0400
+Received: from mx.sdf.org ([205.166.94.20]:49729 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727461AbgC1Qp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:45:28 -0400
+        id S1727699AbgC1Qou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:44:50 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhLIs009854
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhMxY005915
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:21 GMT
+        Sat, 28 Mar 2020 16:43:23 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhLiv003379;
-        Sat, 28 Mar 2020 16:43:21 GMT
-Message-Id: <202003281643.02SGhLiv003379@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhM0T009250;
+        Sat, 28 Mar 2020 16:43:22 GMT
+Message-Id: <202003281643.02SGhM0T009250@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Sun, 8 Dec 2019 21:03:28 -0500
-Subject: [RFC PATCH v1 36/50] random: Merge batched entropy buffers
+Date:   Tue, 10 Dec 2019 00:35:14 -0500
+Subject: [RFC PATCH v1 40/50] arch/*/include/asm/stackprotector.h: Use
+ get_random_canary() consistently
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use just one batched entropy buffer for u32 and u64 results,
-saving 72 bytes per CPU.  (On 32-bit platforms, the buffer is
-also shrunk by 4 bytes.)
+... in boot_init_stack_canary().
 
-A further space-saving hack is to note that the buffer is never
-completely full between calls, so the read position can be stored
-in the first byte.
+This is the archetypical example of where the extra security of
+get_random_bytes() is wasted.  The canary is only important as
+long as it's stored in __stack_chk_guard.
 
-The only reason for having two buffers was to avoid dealing with
-unaligned 64-bit fetches, particularly across a buffer refill
-boundary.  This can be handled without increasing code size
-(in fact, this patch saves 78 bytes of text on x86-64).
+It's also a great example of code that has been copied around
+a lot and not updated.
 
-$ size drivers/char/random.o.*
-   text    data     bss     dec     hex filename
-  16966    1461     864   19291    4b5b drivers/char/random.o.old
-  16888    1365     864   19117    4aad drivers/char/random.o.new
-     78      96
+Remove the XOR with LINUX_VERSION_CODE as it's pointless; the inclusion
+of utsname() in init_std_data in the random seeding obviates it.
 
-The magic is an "XOR trick" for combining fresh (i.e. never exposed
-to an attacker) and stale (previously exposed) random data.
+The XOR with the TSC on x86 and mtfb() on powerPC were left in,
+as I haven't proved them redundant yet.  For those, we call
+get_random_long(), xor, and mask manually.
 
-If X and Y are both fresh, then X^Y and Y are also both fresh.
-Exposing X^Y does not expose Y.
+FUNCTIONAL CHANGE: mips and xtensa were changed from 64-bit
+get_random_long() to 56-bit get_random_canary() to match the
+others, in accordance with the logic in CANARY_MASK.
 
-If X is stale, then X^Y is fresh, but after exposing it, Y is stale.
-
-If X is part-fresh and part-stale, then the magic happens:
-X^Y is all fresh, and the corresponding parts of Y become stale.
-
-The effect is that we can fetch a fresh random word from an unaligned
-buffer position by xoring two aligned words.
-
-On some platforms, we could just do an unaligned fetch, but doing
-it this way simplifies buffer underflow handling.
-
-In fact, get_random_u32 could be simplified further since the
-buffer is guaranteed 4-byte aligned, but it's written to allow
-a future byte-aligned variant to be added.
+(We could do 1 bit better and zero *one* of the two high bytes.)
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paulburton@kernel.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Cc: linux-sh@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc:  "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Chris Zankel <chris@zankel.net>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: linux-xtensa@linux-xtensa.org
 ---
- drivers/char/random.c | 150 +++++++++++++++++++++++++++++++-----------
- 1 file changed, 112 insertions(+), 38 deletions(-)
+ arch/arm/include/asm/stackprotector.h     | 9 +++------
+ arch/arm64/include/asm/stackprotector.h   | 8 ++------
+ arch/mips/include/asm/stackprotector.h    | 7 ++-----
+ arch/powerpc/include/asm/stackprotector.h | 6 ++----
+ arch/sh/include/asm/stackprotector.h      | 8 ++------
+ arch/x86/include/asm/stackprotector.h     | 4 ++--
+ arch/xtensa/include/asm/stackprotector.h  | 7 ++-----
+ 7 files changed, 15 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 52dbe0357520b..43c1eb9866de7 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -2400,28 +2400,76 @@ struct ctl_table random_table[] = {
- 
- struct batched_entropy {
- 	union {
--		u64 entropy_u64[CHACHA_BLOCK_SIZE / sizeof(u64)];
--		u32 entropy_u32[CHACHA_BLOCK_SIZE / sizeof(u32)];
-+		u64 entropy64[CHACHA_BLOCK_SIZE / sizeof(u64)];
-+		u32 entropy32[CHACHA_BLOCK_SIZE / sizeof(u32)];
-+		u8 entropy8[CHACHA_BLOCK_SIZE];
-+		u8 position;	/* Offset of last consumed byte */
-+				/* Fresh data starts at position + 1 */
- 	};
--	unsigned int position;
- 	spinlock_t batch_lock;
- };
- 
- /*
-- * Get a random word for internal kernel use only. The quality of the random
-- * number is either as good as RDRAND or as good as /dev/urandom, with the
-- * goal of being quite fast and not depleting entropy. In order to ensure
-- * that the randomness provided by this function is okay, the function
-- * wait_for_random_bytes() should be called and return 0 at least once
-- * at any point prior.
-+ * Get a random word for applications which do not require forward
-+ * secrecy.  There are many such applications in the kernel, which
-+ * can be identified by the lack of a memzero_explicit() to ensure that
-+ * the value remains secret after the kernel is done using it.
-+ *
-+ * The quality of the random numbers is either as good as RDRAND or
-+ * as good as /dev/urandom, with the goal of being quite fast and not
-+ * depleting entropy. In order to ensure that the randomness provided
-+ * by these functions is okay, the function wait_for_random_bytes()
-+ * should be called and return 0 at least once at any point prior.
-+ *
-+ * When RDRAND is not available, we use per-CPU "batched entropy" buffers
-+ * which store up to CHACHA_BLOCK_SIZE bytes of precomputed CRNG output.
-+ * Because we only fill it on demand, it's never completely full between
-+ * calls, and the first byte is re-used to store the offset of the
-+ * available data in the tail of the buffer.
+diff --git a/arch/arm/include/asm/stackprotector.h b/arch/arm/include/asm/stackprotector.h
+index 72a20c3a0a90b..88c66fec1b5f4 100644
+--- a/arch/arm/include/asm/stackprotector.h
++++ b/arch/arm/include/asm/stackprotector.h
+@@ -30,17 +30,14 @@ extern unsigned long __stack_chk_guard;
   */
--static DEFINE_PER_CPU(struct batched_entropy, batched_entropy_u64) = {
--	.batch_lock	= __SPIN_LOCK_UNLOCKED(batched_entropy_u64.lock),
-+static DEFINE_PER_CPU(struct batched_entropy, batched_entropy) = {
-+	.position	= CHACHA_BLOCK_SIZE,
-+	.batch_lock	= __SPIN_LOCK_UNLOCKED(batched_entropy.lock)
- };
- 
-+/**
-+ * get_random_u64 - Generate a random 64-bit value
-+ *
-+ * Return a cryptographically strong random number.  Unlike
-+ * get_random_bytes(), this does not do (expensive!) backtracking
-+ * protection; the value returned can be recovered by a later attacker
-+ * who gains read access to kernel memory.  This is completely fine in
-+ * the very common case that the secret derived from the value returned
-+ * is stored in the kernel for as long as it is valuable.  (E.g. a hash
-+ * salt, an authentication cookie, or a randomized address space.)
-+ *
-+ * It is perfectly safe to expose the output of this generator to
-+ * hostile attackers; backtracking is only relevant to attackers who
-+ * gain access to its input (its internal state).
-+ *
-+ * Uses (only!) the hardware RNG (e.g. RDRAND) if available.
-+ *
-+ * There's an XOR trick which is used in the implementation to deal with
-+ * unaligned buffers without doing unaligned fetches.
-+ *
-+ * If X and Y are fresh random values, then X^Y and Y are also fresh
-+ * random values.  You're not "using Y twice" in any sort of bad way.
-+ *
-+ * If X is a value known to an attacker (or even maliciously chosen
-+ * by an attacker), then X^Y is still fresh.  (But after using it,
-+ * Y is no longer fresh.)
-+ *
-+ * Combining these bytewise, If X is a partially-used word consisting
-+ * of a prefix of attacker-known bytes, and a suffix of fresh bytes,
-+ * then X^Y is fully random, *and* Y now has a prefix which has been
-+ * exposed and a suffix which is still fresh.
-+ *
-+ * Return: A cryptographically strong 64-bit random value.
-+ */
- u64 get_random_u64(void)
+ static __always_inline void boot_init_stack_canary(void)
  {
- 	u64 ret;
-+	size_t pos;
- 	unsigned long flags;
- 	struct batched_entropy *batch;
- 	static void *previous;
-@@ -2437,24 +2485,48 @@ u64 get_random_u64(void)
- 
- 	warn_unseeded_randomness(&previous);
- 
--	batch = raw_cpu_ptr(&batched_entropy_u64);
-+	batch = raw_cpu_ptr(&batched_entropy);
- 	spin_lock_irqsave(&batch->batch_lock, flags);
--	if (batch->position % ARRAY_SIZE(batch->entropy_u64) == 0) {
--		extract_crng((u8 *)batch->entropy_u64);
--		batch->position = 0;
-+	pos = batch->position;
-+	batch->position = (pos + sizeof(ret)) & (CHACHA_BLOCK_SIZE - 1);
-+	/* First partial word (0..7 bytes used) */
-+	pos &= -sizeof(ret);
-+	ret = *(u64 *)(batch->entropy8 + pos);
-+	pos += sizeof(ret);
-+	if (pos == CHACHA_BLOCK_SIZE) {
-+		extract_crng(batch->entropy8);
-+		pos = 0;
- 	}
--	ret = batch->entropy_u64[batch->position++];
-+	/* Second partial word (1..8 bytes used) */
-+	ret ^= *(u64 *)(batch->entropy8 + pos);	/* XOR trick described above */
- 	spin_unlock_irqrestore(&batch->batch_lock, flags);
- 	return ret;
- }
- EXPORT_SYMBOL(get_random_u64);
- 
--static DEFINE_PER_CPU(struct batched_entropy, batched_entropy_u32) = {
--	.batch_lock	= __SPIN_LOCK_UNLOCKED(batched_entropy_u32.lock),
--};
-+/**
-+ * get_random_u32 - Generate a random 32-bit value
-+ *
-+ * Return a cryptographically strong random number.  Unlike
-+ * get_random_bytes(), this does not do (expensive!) backtracking
-+ * protection; the value returned can be recovered by a later attacker
-+ * who gains read access to kernel memory.  This is completely fine in
-+ * the very common case that the secret derived from the value returned
-+ * is stored in the kernel for as long as it is valuable.  (E.g. a hash
-+ * salt, an authentication cookie, or a randomized address space.)
-+ *
-+ * It is perfectly safe to expose the output of this generator to
-+ * hostile attackers; backtracking is only relevant to attackers who
-+ * gain access to its input (its internal state).
-+ *
-+ * Uses (only!) the hardware RNG (e.g. RDRAND) if available.
-+ *
-+ * Return: A cryptographically strong 32-bit random value.
-+ */
- u32 get_random_u32(void)
- {
- 	u32 ret;
-+	size_t pos;
- 	unsigned long flags;
- 	struct batched_entropy *batch;
- 	static void *previous;
-@@ -2464,39 +2536,41 @@ u32 get_random_u32(void)
- 
- 	warn_unseeded_randomness(&previous);
- 
--	batch = raw_cpu_ptr(&batched_entropy_u32);
-+	batch = raw_cpu_ptr(&batched_entropy);
- 	spin_lock_irqsave(&batch->batch_lock, flags);
--	if (batch->position % ARRAY_SIZE(batch->entropy_u32) == 0) {
--		extract_crng((u8 *)batch->entropy_u32);
--		batch->position = 0;
-+	pos = batch->position;
-+	batch->position = (pos + sizeof(ret)) & (CHACHA_BLOCK_SIZE - 1);
-+	/* First partial word (0..7 bytes used) */
-+	pos &= -sizeof(ret);
-+	ret = *(u32 *)(batch->entropy8 + pos);
-+	pos += sizeof(ret);
-+	/* unlikely is defined by gcc as 10% probable.  This is 1/16 */
-+	if (unlikely(pos == CHACHA_BLOCK_SIZE)) {
-+		extract_crng(batch->entropy8);
-+		pos = 0;
- 	}
--	ret = batch->entropy_u32[batch->position++];
-+	/* Second partial word (1..8 bytes used) */
-+	ret ^= *(u32 *)(batch->entropy8 + pos);
- 	spin_unlock_irqrestore(&batch->batch_lock, flags);
- 	return ret;
- }
- EXPORT_SYMBOL(get_random_u32);
- 
- /* It's important to invalidate all potential batched entropy that might
-- * be stored before the crng is initialized, which we can do lazily by
-- * simply resetting the counter to zero so that it's re-extracted on the
-- * next usage. */
-+ * be stored before the crng is initialized.
-+ */
- static void invalidate_batched_entropy(void)
- {
- 	int cpu;
--	unsigned long flags;
- 
- 	for_each_possible_cpu (cpu) {
--		struct batched_entropy *batched_entropy;
-+		struct batched_entropy *batch;
-+		unsigned long flags;
- 
--		batched_entropy = per_cpu_ptr(&batched_entropy_u32, cpu);
--		spin_lock_irqsave(&batched_entropy->batch_lock, flags);
--		batched_entropy->position = 0;
--		spin_unlock(&batched_entropy->batch_lock);
+-	unsigned long canary;
 -
--		batched_entropy = per_cpu_ptr(&batched_entropy_u64, cpu);
--		spin_lock(&batched_entropy->batch_lock);
--		batched_entropy->position = 0;
--		spin_unlock_irqrestore(&batched_entropy->batch_lock, flags);
-+		batch = per_cpu_ptr(&batched_entropy, cpu);
-+		spin_lock_irqsave(&batch->batch_lock, flags);
-+		batch->position = CHACHA_BLOCK_SIZE - 1;
-+		spin_unlock_irqrestore(&batch->batch_lock, flags);
- 	}
+ 	/* Try to get a semi random initial value. */
+-	get_random_bytes(&canary, sizeof(canary));
+-	canary ^= LINUX_VERSION_CODE;
++	unsigned long canary = get_random_canary();
+ 
+ 	current->stack_canary = canary;
+ #ifndef CONFIG_STACKPROTECTOR_PER_TASK
+-	__stack_chk_guard = current->stack_canary;
++	__stack_chk_guard = canary;
+ #else
+-	current_thread_info()->stack_canary = current->stack_canary;
++	current_thread_info()->stack_canary = canary;
+ #endif
  }
  
+diff --git a/arch/arm64/include/asm/stackprotector.h b/arch/arm64/include/asm/stackprotector.h
+index 5884a2b028277..705f60b9df85e 100644
+--- a/arch/arm64/include/asm/stackprotector.h
++++ b/arch/arm64/include/asm/stackprotector.h
+@@ -26,16 +26,12 @@ extern unsigned long __stack_chk_guard;
+  */
+ static __always_inline void boot_init_stack_canary(void)
+ {
+-	unsigned long canary;
+-
+ 	/* Try to get a semi random initial value. */
+-	get_random_bytes(&canary, sizeof(canary));
+-	canary ^= LINUX_VERSION_CODE;
+-	canary &= CANARY_MASK;
++	unsigned long canary = get_random_canary();
+ 
+ 	current->stack_canary = canary;
+ 	if (!IS_ENABLED(CONFIG_STACKPROTECTOR_PER_TASK))
+-		__stack_chk_guard = current->stack_canary;
++		__stack_chk_guard = canary;
+ }
+ 
+ #endif	/* _ASM_STACKPROTECTOR_H */
+diff --git a/arch/mips/include/asm/stackprotector.h b/arch/mips/include/asm/stackprotector.h
+index 68d4be9e12547..6d1e4652152bc 100644
+--- a/arch/mips/include/asm/stackprotector.h
++++ b/arch/mips/include/asm/stackprotector.h
+@@ -28,14 +28,11 @@ extern unsigned long __stack_chk_guard;
+  */
+ static __always_inline void boot_init_stack_canary(void)
+ {
+-	unsigned long canary;
+-
+ 	/* Try to get a semi random initial value. */
+-	get_random_bytes(&canary, sizeof(canary));
+-	canary ^= LINUX_VERSION_CODE;
++	unsigned long canary = get_random_canary();
+ 
+ 	current->stack_canary = canary;
+-	__stack_chk_guard = current->stack_canary;
++	__stack_chk_guard = canary;
+ }
+ 
+ #endif	/* _ASM_STACKPROTECTOR_H */
+diff --git a/arch/powerpc/include/asm/stackprotector.h b/arch/powerpc/include/asm/stackprotector.h
+index 1c8460e235838..76577b72ef736 100644
+--- a/arch/powerpc/include/asm/stackprotector.h
++++ b/arch/powerpc/include/asm/stackprotector.h
+@@ -21,12 +21,10 @@
+  */
+ static __always_inline void boot_init_stack_canary(void)
+ {
+-	unsigned long canary;
+-
+ 	/* Try to get a semi random initial value. */
+-	canary = get_random_canary();
++	unsigned long canary = get_random_long();
++
+ 	canary ^= mftb();
+-	canary ^= LINUX_VERSION_CODE;
+ 	canary &= CANARY_MASK;
+ 
+ 	current->stack_canary = canary;
+diff --git a/arch/sh/include/asm/stackprotector.h b/arch/sh/include/asm/stackprotector.h
+index 35616841d0a1c..a9ef619c8a0ec 100644
+--- a/arch/sh/include/asm/stackprotector.h
++++ b/arch/sh/include/asm/stackprotector.h
+@@ -15,15 +15,11 @@ extern unsigned long __stack_chk_guard;
+  */
+ static __always_inline void boot_init_stack_canary(void)
+ {
+-	unsigned long canary;
+-
+ 	/* Try to get a semi random initial value. */
+-	get_random_bytes(&canary, sizeof(canary));
+-	canary ^= LINUX_VERSION_CODE;
+-	canary &= CANARY_MASK;
++	unsigned long canary = get_random_canary();
+ 
+ 	current->stack_canary = canary;
+-	__stack_chk_guard = current->stack_canary;
++	__stack_chk_guard = canary;
+ }
+ 
+ #endif /* __ASM_SH_STACKPROTECTOR_H */
+diff --git a/arch/x86/include/asm/stackprotector.h b/arch/x86/include/asm/stackprotector.h
+index 91e29b6a86a5e..af74fd3130cf4 100644
+--- a/arch/x86/include/asm/stackprotector.h
++++ b/arch/x86/include/asm/stackprotector.h
+@@ -72,9 +72,9 @@ static __always_inline void boot_init_stack_canary(void)
+ 	 * there it already has some randomness on most systems. Later
+ 	 * on during the bootup the random pool has true entropy too.
+ 	 */
+-	get_random_bytes(&canary, sizeof(canary));
++	canary = get_random_u64();
+ 	tsc = rdtsc();
+-	canary += tsc + (tsc << 32UL);
++	canary += tsc + (tsc << 32);
+ 	canary &= CANARY_MASK;
+ 
+ 	current->stack_canary = canary;
+diff --git a/arch/xtensa/include/asm/stackprotector.h b/arch/xtensa/include/asm/stackprotector.h
+index e368f94fd2af3..9807fd80e5a8e 100644
+--- a/arch/xtensa/include/asm/stackprotector.h
++++ b/arch/xtensa/include/asm/stackprotector.h
+@@ -27,14 +27,11 @@ extern unsigned long __stack_chk_guard;
+  */
+ static __always_inline void boot_init_stack_canary(void)
+ {
+-	unsigned long canary;
+-
+ 	/* Try to get a semi random initial value. */
+-	get_random_bytes(&canary, sizeof(canary));
+-	canary ^= LINUX_VERSION_CODE;
++	unsigned long canary = get_random_canary();
+ 
+ 	current->stack_canary = canary;
+-	__stack_chk_guard = current->stack_canary;
++	__stack_chk_guard = canary;
+ }
+ 
+ #endif	/* _ASM_STACKPROTECTOR_H */
 -- 
 2.26.0
 
