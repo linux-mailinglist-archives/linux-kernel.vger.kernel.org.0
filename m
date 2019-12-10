@@ -2,96 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E331183FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0607118427
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:53:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfLJJvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:51:09 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33618 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbfLJJvH (ORCPT
+        id S1727365AbfLJJws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:52:48 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36474 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727016AbfLJJws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:51:07 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBA9p1c2034989;
-        Tue, 10 Dec 2019 03:51:01 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575971461;
-        bh=UC54qJ82PFOcfq7OoHyUD3NopdFgFjmQjWiGtht1dsE=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ErHg/7cGvE0rBxpLBeiP2ce31mys3koxvPbt01fwRBBk+GioQp2HY/xISSCo1mC1g
-         tC64dUXtsp8iD+aeDS3QNWtC2GdqvRMqi9T7JBtQa76MAgpBfPcB/kfpL9YwZFb7Ud
-         R6X+OgTb99Dx0pGTeebt0hu/N4CjBV8MnZBHr7sA=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBA9p1Xl069653;
-        Tue, 10 Dec 2019 03:51:01 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 10
- Dec 2019 03:51:01 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 10 Dec 2019 03:51:00 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBA9oZVq048503;
-        Tue, 10 Dec 2019 03:50:58 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-CC:     <kishon@ti.com>, <adrian.hunter@intel.com>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <ulf.hansson@linaro.org>,
-        <zhang.chunyan@linaro.org>, <tony@atomide.com>
-Subject: [PATCH v3 7/7] mmc: sdhci-omap: Add am335x and am437x specific compatibles
-Date:   Tue, 10 Dec 2019 15:21:51 +0530
-Message-ID: <20191210095151.15441-8-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20191210095151.15441-1-faiz_abbas@ti.com>
-References: <20191210095151.15441-1-faiz_abbas@ti.com>
+        Tue, 10 Dec 2019 04:52:48 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z3so19288148wru.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:52:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JezLvil0eLO2aw1UzQhJ1XxGiTMbCLIXlqvlGg+T2YE=;
+        b=j/2CmDUm3QIbQshTMgVTX8LcLuPqgtJEbvKgPM+zo8SwqnUr8dyTkxFgSTUcaYnNI1
+         2DG1ShF83ESSZi/exxsPp5NgWf4i9+RW/w7YAHXykOi7NDzBxcyJvmL+XOc1TcVCsqPc
+         J1CqXVmNxQEfHQBtnxaRajM+hYsqwCzFJ5Q4Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=JezLvil0eLO2aw1UzQhJ1XxGiTMbCLIXlqvlGg+T2YE=;
+        b=nIyz7uOoyJA+tPi170p3Pmb4ibMWnf3E8ge8oD89tpKfHE1g0xZF0s1Ifg5QToiNll
+         g5A5kha32c+OHTCmaZc7gkxR7+YkRNCVRHCBl2xhjWn0h1UR2k+MXa8xY/Ly1K63xfL6
+         ebtrm0JXCYP1dr+as+q7xQzstH2l0IATD+shxfIjgeitjp6HFqMh4yX3HKG2LLtIVKsF
+         THDZ0A9UX+3LD5doUrKyCTnco3O4lFQFIl1NDl1X5wyKrB77cwF4PN8mSHl9UUZ02ATM
+         ESG1MjwBstEh4cQVN3oF57MxQL1EjmlFqtqgs+i1h+mYd6KsBP8MP0aokuyIB9Pe9gEK
+         Ofpw==
+X-Gm-Message-State: APjAAAVWK6rssdbXGxYWDrQCFm+qmomkVdGby6XIb6zhVCwmD+xzUSMw
+        mk6DHXK0tenBPcUsu+ANGWyaFw==
+X-Google-Smtp-Source: APXvYqztjH+/E4jJs3q+cB1FhU0Gy5wVXDRkd6pxHK3k2mdTUA/fnMRQd/gLDR7DTlx9yRVXnFiCHg==
+X-Received: by 2002:a5d:620b:: with SMTP id y11mr2122395wru.230.1575971565010;
+        Tue, 10 Dec 2019 01:52:45 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:564b:0:7567:bb67:3d7f:f863])
+        by smtp.gmail.com with ESMTPSA id 62sm2626546wmb.27.2019.12.10.01.52.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 01:52:43 -0800 (PST)
+Date:   Tue, 10 Dec 2019 10:52:41 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "yakui.zhao@intel.com" <yakui.zhao@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] drm/modes: remove unused variables
+Message-ID: <20191210095241.GO624164@phenom.ffwll.local>
+Mail-Followup-To: Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "yakui.zhao@intel.com" <yakui.zhao@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+References: <20191119134706.10893-1-benjamin.gaignard@st.com>
+ <8056f838-3ebf-26db-f5be-3e78d61aa512@suse.de>
+ <f210413f-2d2f-9887-ca3b-a3c48564d9d6@st.com>
+ <87tv6fgkpn.fsf@intel.com>
+ <f3a86fe8-6bf8-6767-2ec5-d6fecd81231f@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f3a86fe8-6bf8-6767-2ec5-d6fecd81231f@st.com>
+X-Operating-System: Linux phenom 5.3.0-2-amd64 
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for new compatible for TI's am335x and am437x devices.
+On Thu, Dec 05, 2019 at 10:23:51AM +0000, Benjamin GAIGNARD wrote:
+> + Zhao Yakui
+> 
+> On 12/5/19 10:55 AM, Jani Nikula wrote:
+> > On Wed, 04 Dec 2019, Benjamin GAIGNARD <benjamin.gaignard@st.com> wrote:
+> >> On 12/4/19 10:35 AM, Thomas Zimmermann wrote:
+> >>> Hi
+> >>>
+> >>> Am 19.11.19 um 14:47 schrieb Benjamin Gaignard:
+> >>>> When compiling with W=1 few warnings about unused variables show up.
+> >>>> This patch removes all the involved variables.
+> >>>>
+> >>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> >>>> ---
+> >>>>    drivers/gpu/drm/drm_modes.c | 22 +++-------------------
+> >>>>    1 file changed, 3 insertions(+), 19 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+> >>>> index 88232698d7a0..aca901aff042 100644
+> >>>> --- a/drivers/gpu/drm/drm_modes.c
+> >>>> +++ b/drivers/gpu/drm/drm_modes.c
+> >>>> @@ -233,7 +233,7 @@ struct drm_display_mode *drm_cvt_mode(struct drm_device *dev, int hdisplay,
+> >>>>    		/* 3) Nominal HSync width (% of line period) - default 8 */
+> >>>>    #define CVT_HSYNC_PERCENTAGE	8
+> >>>>    		unsigned int hblank_percentage;
+> >>>> -		int vsyncandback_porch, vback_porch, hblank;
+> >>>> +		int vsyncandback_porch, hblank;
+> >>>>    
+> >>>>    		/* estimated the horizontal period */
+> >>>>    		tmp1 = HV_FACTOR * 1000000  -
+> >>>> @@ -249,7 +249,6 @@ struct drm_display_mode *drm_cvt_mode(struct drm_device *dev, int hdisplay,
+> >>>>    		else
+> >>>>    			vsyncandback_porch = tmp1;
+> >>>>    		/* 10. Find number of lines in back porch */
+> >>>> -		vback_porch = vsyncandback_porch - vsync;
+> >>>>    		drm_mode->vtotal = vdisplay_rnd + 2 * vmargin +
+> >>>>    				vsyncandback_porch + CVT_MIN_V_PORCH;
+> >>>>    		/* 5) Definition of Horizontal blanking time limitation */
+> >>>> @@ -386,9 +385,8 @@ drm_gtf_mode_complex(struct drm_device *dev, int hdisplay, int vdisplay,
+> >>>>    	int top_margin, bottom_margin;
+> >>>>    	int interlace;
+> >>>>    	unsigned int hfreq_est;
+> >>>> -	int vsync_plus_bp, vback_porch;
+> >>>> -	unsigned int vtotal_lines, vfieldrate_est, hperiod;
+> >>>> -	unsigned int vfield_rate, vframe_rate;
+> >>>> +	int vsync_plus_bp;
+> >>>> +	unsigned int vtotal_lines;
+> >>>>    	int left_margin, right_margin;
+> >>>>    	unsigned int total_active_pixels, ideal_duty_cycle;
+> >>>>    	unsigned int hblank, total_pixels, pixel_freq;
+> >>>> @@ -451,23 +449,9 @@ drm_gtf_mode_complex(struct drm_device *dev, int hdisplay, int vdisplay,
+> >>>>    	/* [V SYNC+BP] = RINT(([MIN VSYNC+BP] * hfreq_est / 1000000)) */
+> >>>>    	vsync_plus_bp = MIN_VSYNC_PLUS_BP * hfreq_est / 1000;
+> >>>>    	vsync_plus_bp = (vsync_plus_bp + 500) / 1000;
+> >>>> -	/*  9. Find the number of lines in V back porch alone: */
+> >>>> -	vback_porch = vsync_plus_bp - V_SYNC_RQD;
+> >>>>    	/*  10. Find the total number of lines in Vertical field period: */
+> >>>>    	vtotal_lines = vdisplay_rnd + top_margin + bottom_margin +
+> >>>>    			vsync_plus_bp + GTF_MIN_V_PORCH;
+> >>>> -	/*  11. Estimate the Vertical field frequency: */
+> >>>> -	vfieldrate_est = hfreq_est / vtotal_lines;
+> >>>> -	/*  12. Find the actual horizontal period: */
+> >>>> -	hperiod = 1000000 / (vfieldrate_rqd * vtotal_lines);
+> >>>> -
+> >>>> -	/*  13. Find the actual Vertical field frequency: */
+> >>>> -	vfield_rate = hfreq_est / vtotal_lines;
+> >>>> -	/*  14. Find the Vertical frame frequency: */
+> >>>> -	if (interlaced)
+> >>>> -		vframe_rate = vfield_rate / 2;
+> >>>> -	else
+> >>>> -		vframe_rate = vfield_rate;
+> >>> The amount of unused code is quite large, which makes me wonder if
+> >>> there's something missing below where these variables are supposed to be
+> >>> used.
+> >>>
+> >>> If these variables can be removed, comments should mention that steps 9
+> >>> and 11 to 14 are being left out. After all, the function is fairly
+> >>> explicit about implementing the GTF algorithm step by step.
+> >>>
+> >>> Best regards
+> >>> Thomas
+> >> If the goal is to keep all the steps then I could prefix all problematic
+> >> variables with __maybe_unused macro.
+> > The effect is the same; it hides a potential bug that should be analyzed
+> > and fixed. If you have the time, please look at the code and figure out
+> > what it's supposed to do, and why isn't it using the information. Look
+> > at git blame and log, was it always so, or did something change?
+> >
+> > The warnings are about potential bugs. The objective or end goal is to
+> > fix the bugs, not to silence the warnings.
+> This code haven't change since it has been added by commit:
+> 26bbdadad356e ("drm/mode: add the GTF algorithm in kernel space")
+> The variables that I'm removing are not used anywhere else.
+> The algorithm is copy from xserver/hw/xfree86/modes/xf86gtf.c where
+> vframe_rate and v_back_porch are used with (void) calls:
+> (void) v_back_porch;
+> (void) v_frame_rate;
+> It is another way avoid the warnings.
+> Note that if you start removing v_frame_rate then vfield_rate becomes 
+> unused, etc...
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- drivers/mmc/host/sdhci-omap.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I'd say we should do the same thing then as xf86 and just mark them up as
+unused. Might be good to double-check with the spec at least whether
+they're really not unused, or whether we have some issue. But given that
+it seems to have worked for ages, I suspect it's all good.
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index c54c864fe419..09ed326d150c 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -888,6 +888,14 @@ static const struct sdhci_omap_data k2g_data = {
- 	.offset = 0x200,
- };
- 
-+static const struct sdhci_omap_data am335_data = {
-+	.offset = 0x200,
-+};
-+
-+static const struct sdhci_omap_data am437_data = {
-+	.offset = 0x200,
-+};
-+
- static const struct sdhci_omap_data dra7_data = {
- 	.offset = 0x200,
- 	.flags	= SDHCI_OMAP_REQUIRE_IODELAY,
-@@ -896,6 +904,8 @@ static const struct sdhci_omap_data dra7_data = {
- static const struct of_device_id omap_sdhci_match[] = {
- 	{ .compatible = "ti,dra7-sdhci", .data = &dra7_data },
- 	{ .compatible = "ti,k2g-sdhci", .data = &k2g_data },
-+	{ .compatible = "ti,am335-sdhci", .data = &am335_data },
-+	{ .compatible = "ti,am437-sdhci", .data = &am437_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, omap_sdhci_match);
+Removing the code otoh feels a bit icky.
+-Daniel
+
+
+> 
+> Benjamin
+> 
+> >
+> > BR,
+> > Jani.
+> >
+> >
+> >> Benjamin
+> >>
+> >>>>    	/*  15. Find number of pixels in left margin: */
+> >>>>    	if (margins)
+> >>>>    		left_margin = (hdisplay_rnd * GTF_MARGIN_PERCENTAGE + 500) /
+> >>>>
+> >> _______________________________________________
+> >> dri-devel mailing list
+> >> dri-devel@lists.freedesktop.org
+> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-2.19.2
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
