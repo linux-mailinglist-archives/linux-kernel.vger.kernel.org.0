@@ -2,118 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B96D118FD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:32:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55F57118FD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:32:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbfLJSce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 13:32:34 -0500
-Received: from mga05.intel.com ([192.55.52.43]:4871 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbfLJScd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 13:32:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 10:32:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,300,1571727600"; 
-   d="scan'208";a="215659578"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 10 Dec 2019 10:32:32 -0800
-Received: from [10.125.249.44] (rsudarik-mobl.ccr.corp.intel.com [10.125.249.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 77D7F5808CC;
-        Tue, 10 Dec 2019 10:32:28 -0800 (PST)
-Subject: Re: [PATCH v2 2/3] perf x86: Add compaction function for uncore
- attributes
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        eranian@google.com, bgregg@netflix.com, ak@linux.intel.com,
-        kan.liang@linux.intel.com, alexander.antonov@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20191210091451.6054-1-roman.sudarikov@linux.intel.com>
- <20191210091451.6054-3-roman.sudarikov@linux.intel.com>
- <20191210103710.GM2844@hirez.programming.kicks-ass.net>
-From:   "Sudarikov, Roman" <roman.sudarikov@linux.intel.com>
-Message-ID: <2a2dea60-4936-3124-4e1c-51aebeb82b95@linux.intel.com>
-Date:   Tue, 10 Dec 2019 21:32:24 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727730AbfLJScn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 13:32:43 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:60857 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727329AbfLJScm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 13:32:42 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iekJH-0004nd-IO; Tue, 10 Dec 2019 19:32:35 +0100
+To:     John Garry <john.garry@huawei.com>
+Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity  for managed interrupt
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-In-Reply-To: <20191210103710.GM2844@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Date:   Tue, 10 Dec 2019 18:32:35 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, <tglx@linutronix.de>,
+        <chenxiang66@hisilicon.com>, <bigeasy@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, <hare@suse.com>, <hch@lst.de>,
+        <axboe@kernel.dk>, <bvanassche@acm.org>, <peterz@infradead.org>,
+        <mingo@redhat.com>
+In-Reply-To: <06d1e2ff-9ec7-2262-25a0-4503cb204b0b@huawei.com>
+References: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
+ <1575642904-58295-2-git-send-email-john.garry@huawei.com>
+ <20191207080335.GA6077@ming.t460p>
+ <78a10958-fdc9-0576-0c39-6079b9749d39@huawei.com>
+ <20191210014335.GA25022@ming.t460p>
+ <28424a58-1159-c3f9-1efb-f1366993afcf@huawei.com>
+ <048746c22898849d28985c0f65cf2c2a@www.loen.fr>
+ <ce1b93c6-8ff9-6106-84af-909ec52d49e5@huawei.com>
+ <6e513d25d8b0c6b95d37a64df0c27b78@www.loen.fr>
+ <06d1e2ff-9ec7-2262-25a0-4503cb204b0b@huawei.com>
+Message-ID: <5caa8414415ab35e74662ac0a30bb4ac@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: john.garry@huawei.com, ming.lei@redhat.com, tglx@linutronix.de, chenxiang66@hisilicon.com, bigeasy@linutronix.de, linux-kernel@vger.kernel.org, hare@suse.com, hch@lst.de, axboe@kernel.dk, bvanassche@acm.org, peterz@infradead.org, mingo@redhat.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.12.2019 13:37, Peter Zijlstra wrote:
-> On Tue, Dec 10, 2019 at 12:14:50PM +0300, roman.sudarikov@linux.intel.com wrote:
->> From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
+On 2019-12-10 12:05, John Garry wrote:
+> On 10/12/2019 11:36, Marc Zyngier wrote:
+>> On 2019-12-10 10:59, John Garry wrote:
+>>>>>
+>>>>> There is no lockup, just a potential performance boost in this 
+>>>>> change.
+>>>>>
+>>>>> My colleague Xiang Chen can provide specifics of the test, as he 
+>>>>> is
+>>>>> the one running it.
+>>>>>
+>>>>> But one key bit of info - which I did not think most relevant 
+>>>>> before
+>>>>> - that is we have 2x SAS controllers running the throughput test 
+>>>>> on
+>>>>> the same host.
+>>>>>
+>>>>> As such, the completion queue interrupts would be spread 
+>>>>> identically
+>>>>> over the CPUs for each controller. I notice that ARM GICv3 ITS
+>>>>> interrupt controller (which we use) does not use the generic irq
+>>>>> matrix allocator, which I think would really help with this.
+>>>>>
+>>>>> Hi Marc,
+>>>>>
+>>>>> Is there any reason for which we couldn't utilise of the generic 
+>>>>> irq
+>>>>> matrix allocator for GICv3?
+>>>>
+>>>
+>>> Hi Marc,
+>>>
+>>>> For a start, the ITS code predates the matrix allocator by about 
+>>>> three
+>>>> years. Also, my understanding of this allocator is that it allows
+>>>> x86 to cope with a very small number of possible interrupt vectors
+>>>> per CPU. The ITS doesn't have such issue, as:
+>>>> 1) the namespace is global, and not per CPU
+>>>> 2) the namespace is *huge*
+>>>> Now, what property of the matrix allocator is the ITS code 
+>>>> missing?
+>>>> I'd be more than happy to improve it.
+>>>
+>>> I think specifically the property that the matrix allocator will 
+>>> try
+>>> to find a CPU for irq affinity which "has the lowest number of 
+>>> managed
+>>> IRQs allocated" - I'm quoting the comment on 
+>>> matrix_find_best_cpu_managed().
+>> But that decision is due to allocation constraints. You can have at 
+>> most
+>> 256 interrupts per CPU, so the allocator tries to balance it.
+>> On the contrary, the ITS does care about how many interrupt target 
+>> any
+>> given CPU. The whole 2^24 interrupt namespace can be thrown at a 
+>> single
+>> CPU.
 >>
->> In current design, there is an implicit assumption that array of pointers
->> to uncore type attributes is NULL terminated. However, not all attributes
->> are mandatory for each Uncore unit type, e.g. "events" is required for
->> IMC but doesn't exist for CHA. That approach correctly supports only one
->> optional attribute which also must be the last in the row.
->> The patch removes limitation by safely removing embedded NULL elements.
->>
->> Co-developed-by: Alexander Antonov <alexander.antonov@intel.com>
->> Signed-off-by: Alexander Antonov <alexander.antonov@intel.com>
->> Signed-off-by: Roman Sudarikov <roman.sudarikov@linux.intel.com>
->> ---
->>   arch/x86/events/intel/uncore.c | 22 ++++++++++++++++++++++
->>   1 file changed, 22 insertions(+)
->>
->> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
->> index 24e120289018..a05352c4fc01 100644
->> --- a/arch/x86/events/intel/uncore.c
->> +++ b/arch/x86/events/intel/uncore.c
->> @@ -923,6 +923,22 @@ static void uncore_types_exit(struct intel_uncore_type **types)
->>   		uncore_type_exit(*types);
->>   }
->>   
->> +static void uncore_type_attrs_compaction(struct intel_uncore_type *type)
->> +{
->> +	int i, j;
->> +	int size = ARRAY_SIZE(type->attr_groups);
->> +
->> +	for (i = 0, j = 0; i < size; i++) {
->> +		if (!type->attr_groups[i])
->> +			continue;
->> +		if (i > j) {
->> +			type->attr_groups[j] = type->attr_groups[i];
->> +			type->attr_groups[i] = NULL;
->> +		}
->> +		j++;
->> +	}
->> +}
-> GregKH had objections to us playing silly games like that and made us
-> use is_visible() for the regular PMU driver. Also see commit:
+>>> The ITS code will make the lowest online CPU in the affinity mask 
+>>> the
+>>> target CPU for the interrupt, which may result in some CPUs 
+>>> handling
+>>> so many interrupts.
+>> If what you want is for the *default* affinity to be spread around,
+>> that should be achieved pretty easily. Let me have a think about how
+>> to do that.
 >
->    baa0c83363c7 ("perf/x86: Use the new pmu::update_attrs attribute group")
+> Cool, I anticipate that it should help my case.
+>
+> I can also seek out some NVMe cards to see how it would help a more
+> "generic" scenario.
 
-Hi Peter,
-
-if I understand correctly, that commit is intended for graceful handling 
-of cases where we need to
-probe hardware first before making decision whether to show or not that 
-particular event for that particular pmu.
-What I'm doing has slightly different context - I'm creating the mapping 
-per pmu type.
-That mapping is not hardware dependent but implementation dependent 
-meaning that if the mapping is not implemented
-for some pmu type, then the mapping attribute has no way to show up 
-following current implementation, right?
-If the mapping is implemented then it shows up for all pmus of that type.
-
-I can rework it following the approach implemented in the commit you 
-mentioned but the benefit is not immediately obvious :-)
+Can you give the following a go? It probably has all kind of warts on
+top of the quality debug information, but I managed to get my D05 and
+a couple of guests to boot with it. It will probably eat your data,
+so use caution! ;-)
 
 Thanks,
-Roman
+
+         M.
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+b/drivers/irqchip/irq-gic-v3-its.c
+index e05673bcd52b..301ee3bc0602 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -177,6 +177,8 @@ static DEFINE_IDA(its_vpeid_ida);
+  #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
+  #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + 
+SZ_128K)
+
++static DEFINE_PER_CPU(atomic_t, cpu_lpi_count);
++
+  static u16 get_its_list(struct its_vm *vm)
+  {
+  	struct its_node *its;
+@@ -1287,42 +1289,76 @@ static void its_unmask_irq(struct irq_data *d)
+  	lpi_update_config(d, 0, LPI_PROP_ENABLED);
+  }
+
++static int its_pick_target_cpu(struct its_device *its_dev, const 
+struct cpumask *cpu_mask)
++{
++	unsigned int cpu = nr_cpu_ids, tmp;
++	int count = S32_MAX;
++
++	for_each_cpu_and(tmp, cpu_mask, cpu_online_mask) {
++		int this_count = per_cpu(cpu_lpi_count, tmp).counter;
++		if (this_count < count) {
++			cpu = tmp;
++		        count = this_count;
++		}
++	}
++
++	return cpu;
++}
++
+  static int its_set_affinity(struct irq_data *d, const struct cpumask 
+*mask_val,
+  			    bool force)
+  {
+-	unsigned int cpu;
+-	const struct cpumask *cpu_mask = cpu_online_mask;
+  	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+-	struct its_collection *target_col;
++	int ret = IRQ_SET_MASK_OK_DONE;
+  	u32 id = its_get_event_id(d);
++	cpumask_var_t tmpmask;
+
+  	/* A forwarded interrupt should use irq_set_vcpu_affinity */
+  	if (irqd_is_forwarded_to_vcpu(d))
+  		return -EINVAL;
+
+-       /* lpi cannot be routed to a redistributor that is on a foreign 
+node */
+-	if (its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
+-		if (its_dev->its->numa_node >= 0) {
+-			cpu_mask = cpumask_of_node(its_dev->its->numa_node);
+-			if (!cpumask_intersects(mask_val, cpu_mask))
+-				return -EINVAL;
++	if (!alloc_cpumask_var(&tmpmask, GFP_KERNEL))
++		return -ENOMEM;
++
++	cpumask_and(tmpmask, mask_val, cpu_online_mask);
++
++	if (its_dev->its->numa_node >= 0)
++		cpumask_and(tmpmask, tmpmask, 
+cpumask_of_node(its_dev->its->numa_node));
++
++	if (cpumask_empty(tmpmask)) {
++		/* LPI cannot be routed to a redistributor that is on a foreign node 
+*/
++		if (its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
++			ret = -EINVAL;
++			goto out;
+  		}
++
++		cpumask_copy(tmpmask, cpu_online_mask);
+  	}
+
+-	cpu = cpumask_any_and(mask_val, cpu_mask);
++	if (!cpumask_test_cpu(its_dev->event_map.col_map[id], tmpmask)) {
++		struct its_collection *target_col;
++		int cpu;
+
+-	if (cpu >= nr_cpu_ids)
+-		return -EINVAL;
++		cpu = its_pick_target_cpu(its_dev, tmpmask);
++		if (cpu >= nr_cpu_ids) {
++			ret = -EINVAL;
++			goto out;
++		}
+
+-	/* don't set the affinity when the target cpu is same as current one 
+*/
+-	if (cpu != its_dev->event_map.col_map[id]) {
++		pr_info("IRQ%d CPU%d -> CPU%d\n",
++			d->irq, its_dev->event_map.col_map[id], cpu);
++		atomic_inc(per_cpu_ptr(&cpu_lpi_count, cpu));
++		atomic_dec(per_cpu_ptr(&cpu_lpi_count,
++				       its_dev->event_map.col_map[id]));
+  		target_col = &its_dev->its->collections[cpu];
+  		its_send_movi(its_dev, target_col, id);
+  		its_dev->event_map.col_map[id] = cpu;
+  		irq_data_update_effective_affinity(d, cpumask_of(cpu));
+  	}
+
+-	return IRQ_SET_MASK_OK_DONE;
++out:
++	free_cpumask_var(tmpmask);
++	return ret;
+  }
+
+  static u64 its_irq_get_msi_base(struct its_device *its_dev)
+@@ -2773,22 +2809,28 @@ static int its_irq_domain_activate(struct 
+irq_domain *domain,
+  {
+  	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+  	u32 event = its_get_event_id(d);
+-	const struct cpumask *cpu_mask = cpu_online_mask;
+-	int cpu;
++	int cpu = nr_cpu_ids;
+
+-	/* get the cpu_mask of local node */
+-	if (its_dev->its->numa_node >= 0)
+-		cpu_mask = cpumask_of_node(its_dev->its->numa_node);
++	/* Find the least loaded CPU on the local node */
++	if (its_dev->its->numa_node >= 0) {
++		cpu = its_pick_target_cpu(its_dev,
++					  cpumask_of_node(its_dev->its->numa_node));
++		if (cpu < 0)
++			return cpu;
+
+-	/* Bind the LPI to the first possible CPU */
+-	cpu = cpumask_first_and(cpu_mask, cpu_online_mask);
+-	if (cpu >= nr_cpu_ids) {
+-		if (its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144)
++		if (cpu >= nr_cpu_ids &&
++		    (its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144))
+  			return -EINVAL;
++	}
+
+-		cpu = cpumask_first(cpu_online_mask);
++	if (cpu >= nr_cpu_ids) {
++		cpu = its_pick_target_cpu(its_dev, cpu_online_mask);
++		if (cpu < 0)
++			return cpu;
+  	}
+
++	pr_info("picked CPU%d IRQ%d\n", cpu, d->irq);
++	atomic_inc(per_cpu_ptr(&cpu_lpi_count, cpu));
+  	its_dev->event_map.col_map[event] = cpu;
+  	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+
+@@ -2803,6 +2845,8 @@ static void its_irq_domain_deactivate(struct 
+irq_domain *domain,
+  	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+  	u32 event = its_get_event_id(d);
+
++	atomic_dec(per_cpu_ptr(&cpu_lpi_count,
++			       its_dev->event_map.col_map[event]));
+  	/* Stop the delivery of interrupts */
+  	its_send_discard(its_dev, event);
+  }
+
+-- 
+Jazz is not dead. It just smells funny...
