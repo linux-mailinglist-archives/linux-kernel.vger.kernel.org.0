@@ -2,100 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B14119D22
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:37:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18E9F119CB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:33:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbfLJWeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:34:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55090 "EHLO mail.kernel.org"
+        id S1728238AbfLJWcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:32:45 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:33624 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729445AbfLJWd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:33:56 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DA682073D;
-        Tue, 10 Dec 2019 22:33:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576017236;
-        bh=MfkPB+3mgjzOlIIfBKi6A47gBvuFAvcm/AU/f2h8Kzc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n+NvDoksCZttz1LjPGXoUkKkDtMpF4Q1zTamhLCanVkFJH7f6rAg4zySa+u6H9Mgk
-         1Jow17LEeLSzWxyevGtwDQ0+QuGUhmorPAH6nHsWyRAML5ujpVKY/85FlHwBSGZD7Z
-         m13Ktq4eSoW1iIuuBUeJ7TVzuA8ntNLwgBqbBQZw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 4.4 33/71] ALSA: hda - Fix pending unsol events at shutdown
-Date:   Tue, 10 Dec 2019 17:32:38 -0500
-Message-Id: <20191210223316.14988-33-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210223316.14988-1-sashal@kernel.org>
-References: <20191210223316.14988-1-sashal@kernel.org>
+        id S1728109AbfLJWcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:32:42 -0500
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ieo3b-0001KO-MX; Tue, 10 Dec 2019 23:32:39 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc:     dianders@chromium.org, linux-bluetooth@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/1] ARM: dts: rockchip: Add brcm bluetooth for rk3288-veyron
+Date:   Tue, 10 Dec 2019 23:32:38 +0100
+Message-ID: <4093066.yl7jOIBBcd@phil>
+In-Reply-To: <20191127223909.253873-2-abhishekpandit@chromium.org>
+References: <20191127223909.253873-1-abhishekpandit@chromium.org> <20191127223909.253873-2-abhishekpandit@chromium.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+Am Mittwoch, 27. November 2019, 23:39:09 CET schrieb Abhishek Pandit-Subedi:
+> This enables the Broadcom uart bluetooth driver on uart0 and gives it
+> ownership of its gpios. In order to use this, you must enable the
+> following kconfig options:
+> - CONFIG_BT_HCIUART_BCM
+> - CONFIG_SERIAL_DEV
+> 
+> This is applicable to rk3288-veyron series boards that use the bcm43540
+> wifi+bt chips.
+> 
+> As part of this change, also refactor the pinctrl across the various
+> boards. All the boards using broadcom bluetooth shouldn't touch the
+> bt_dev_wake pin.
+> 
+> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
 
-[ Upstream commit ca58f55108fee41d87c9123f85ad4863e5de7f45 ]
+applied for 5.6 with Matthias' Rb.
 
-This is an alternative fix attemp for the issue reported in the commit
-caa8422d01e9 ("ALSA: hda: Flush interrupts on disabling") that was
-reverted later due to regressions.  Instead of tweaking the hardware
-disablement order and the enforced irq flushing, do calling
-cancel_work_sync() of the unsol work early enough, and explicitly
-ignore the unsol events during the shutdown by checking the
-bus->shutdown flag.
+Thanks
+Heiko
 
-Fixes: caa8422d01e9 ("ALSA: hda: Flush interrupts on disabling")
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Link: https://lore.kernel.org/r/s5h1ruxt9cz.wl-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/pci/hda/hda_bind.c  | 4 ++++
- sound/pci/hda/hda_intel.c | 3 +++
- 2 files changed, 7 insertions(+)
-
-diff --git a/sound/pci/hda/hda_bind.c b/sound/pci/hda/hda_bind.c
-index 7ea201c05e5da..d0d6dfbfcfdf8 100644
---- a/sound/pci/hda/hda_bind.c
-+++ b/sound/pci/hda/hda_bind.c
-@@ -42,6 +42,10 @@ static void hda_codec_unsol_event(struct hdac_device *dev, unsigned int ev)
- {
- 	struct hda_codec *codec = container_of(dev, struct hda_codec, core);
- 
-+	/* ignore unsol events during shutdown */
-+	if (codec->bus->shutdown)
-+		return;
-+
- 	if (codec->patch_ops.unsol_event)
- 		codec->patch_ops.unsol_event(codec, ev);
- }
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index ef8955abd9186..3e3277100f08a 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -1310,8 +1310,11 @@ static int azx_free(struct azx *chip)
- static int azx_dev_disconnect(struct snd_device *device)
- {
- 	struct azx *chip = device->device_data;
-+	struct hdac_bus *bus = azx_bus(chip);
- 
- 	chip->bus.shutdown = 1;
-+	cancel_work_sync(&bus->unsol_work);
-+
- 	return 0;
- }
- 
--- 
-2.20.1
 
