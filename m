@@ -2,126 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D0161186E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:46:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E84CB118704
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:48:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbfLJLpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 06:45:16 -0500
-Received: from foss.arm.com ([217.140.110.172]:41044 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbfLJLpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:45:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A8BB1FB;
-        Tue, 10 Dec 2019 03:45:14 -0800 (PST)
-Received: from e120937-lin.cambridge.arm.com (e120937-lin.cambridge.arm.com [10.1.197.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B5A93F6CF;
-        Tue, 10 Dec 2019 03:45:13 -0800 (PST)
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, shuah@kernel.org
-Subject: [PATCH v2] selftests: fix build behaviour on targets' failures
-Date:   Tue, 10 Dec 2019 11:44:59 +0000
-Message-Id: <20191210114459.11405-1-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727610AbfLJLsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:48:09 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:43389 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727421AbfLJLsH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 06:48:07 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R351e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0TkXAQar_1575978470;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TkXAQar_1575978470)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 10 Dec 2019 19:47:51 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+To:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        shakeelb@google.com, hannes@cmpxchg.org
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>
+Subject: [PATCH v5 0/8] per lruvec lru_lock for memcg
+Date:   Tue, 10 Dec 2019 19:46:16 +0800
+Message-Id: <1575978384-222381-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, when some of the KSFT subsystems fails to build, the toplevel
-KSFT Makefile just keeps carrying on with the build process.
+Hi all,
 
-This behaviour is expected and desirable especially in the context of a CI
-system running KSelfTest, since it is not always easy to guarantee that the
-most recent and esoteric dependencies are respected across all KSFT TARGETS
-in a timely manner.
+Sorry for send out later.
 
-Unfortunately, as of now, this holds true only if the very last of the
-built subsystems could have been successfully compiled: if the last of
-those subsystem instead failed to build, such failure is taken as the whole
-outcome of the Makefile target and the complete build/install process halts
-even though many other preceding subsytems were in fact already built
-successfully.
+This patchset move lru_lock into lruvec, give a lru_lock for each of
+lruvec, thus bring a lru_lock for each of memcg per node.
 
-Fix the KSFT Makefile behaviour related to all/install targets in order
-to fail as a whole only when the all/install targets have failed for all
-of the requested TARGETS, while succeeding when at least one of TARGETS
-has been successfully built.
+This is the main patch to replace per node lru_lock with per memcg
+lruvec lock.
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
-This patch is based on ksft/fixes branch from:
+We introduces function lock_page_lruvec, which will lock the page's
+memcg and then memcg's lruvec->lru_lock. (Thanks Johannes Weiner,
+Hugh Dickins and Konstantin Khlebnikov suggestion/reminder)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
+According to Daniel Jordan's suggestion, I run 208 'dd' with on 104
+containers on a 2s * 26cores * HT box with a modefied case:
+  https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git/tree/case-lru-file-readtwice
 
-on top of commit (~5.5-rc1):
+With this and later patches, the readtwice performance increases about
+80% with containers, but w/o memcg the readtwice performance drops
+about 5%.(and another 5% drops with the last debug patch). Slighty
+better than v4.(about 6% drop w/o memcg)
 
-99e51aa8f701 Documentation: kunit: add documentation for kunit_tool
+Considering the memcg move task path:
+   mem_cgroup_move_task:
+     mem_cgroup_move_charge:
+	lru_add_drain_all();
+	atomic_inc(&mc.from->moving_account); //ask lruvec's move_lock
+	synchronize_rcu();
+	walk_parge_range: do charge_walk_ops(mem_cgroup_move_charge_pte_range):
+	   isolate_lru_page();
+	   mem_cgroup_move_account(page,)
+		spin_lock(&from->move_lock) 
+		page->mem_cgroup = to;
+		spin_unlock(&from->move_lock) 
+	   putback_lru_page(page)
 
-Building with either:
+to guard 'page->mem_cgroup = to' by to_vec->lru_lock has the similar effect with
+move_lock. So for performance reason, both solutions are same.
 
-make kselftest-install \
-	     KSFT_INSTALL_PATH=/tmp/KSFT \
-	     TARGETS="exec arm64 bpf"
+Thanks Hugh Dickins and Konstantin Khlebnikov, they both brought the same idea
+7 years ago.
 
-make -C tools/testing/selftests  install \
-	     KSFT_INSTALL_PATH=/tmp/KSFT \
-	     TARGETS="exec arm64 bpf"
+Thanks all the comments from Hugh Dickins, Konstantin Khlebnikov, Daniel Jordan, 
+Johannes Weiner, Mel Gorman, Shakeel Butt, Rong Chen, Fengguang Wu, Yun Wang etc.
+and some testing support from Intel 0days!
 
-(with 'bpf' not building clean on my setup in the above case)
+v5,
+  a, locking page's memcg according JohannesW suggestion
+  b, using macro for non memcg, according to Johanness and Metthew's suggestion.
 
-and veryfying that build/install completes if at least one of TARGETS can
-be successfully built, and any successfully built subsystem is installed.
+v4: 
+  a, fix the page->mem_cgroup dereferencing issue, thanks Johannes Weiner
+  b, remove the irqsave flags changes, thanks Metthew Wilcox
+  c, merge/split patches for better understanding and bisection purpose
 
-Changes:
--------
-V1 --> V2
-- rebased on 5.5-rc1
-- rewording commit message
-- dropped RFC tag
----
- tools/testing/selftests/Makefile | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+v3: rebase on linux-next, and fold the relock fix patch into introduceing patch
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index b001c602414b..86b2a3fca04d 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -143,11 +143,13 @@ else
- endif
- 
- all: khdr
--	@for TARGET in $(TARGETS); do		\
--		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		mkdir $$BUILD_TARGET  -p;	\
--		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET;\
--	done;
-+	@ret=1;							\
-+	for TARGET in $(TARGETS); do				\
-+		BUILD_TARGET=$$BUILD/$$TARGET;			\
-+		mkdir $$BUILD_TARGET  -p;			\
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET;	\
-+		ret=$$((ret * $$?));				\
-+	done; exit $$ret;
- 
- run_tests: all
- 	@for TARGET in $(TARGETS); do \
-@@ -196,10 +198,12 @@ ifdef INSTALL_PATH
- 	install -m 744 kselftest/module.sh $(INSTALL_PATH)/kselftest/
- 	install -m 744 kselftest/runner.sh $(INSTALL_PATH)/kselftest/
- 	install -m 744 kselftest/prefix.pl $(INSTALL_PATH)/kselftest/
--	@for TARGET in $(TARGETS); do \
-+	@ret=1;	\
-+	for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
- 		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET INSTALL_PATH=$(INSTALL_PATH)/$$TARGET install; \
--	done;
-+		ret=$$((ret * $$?));		\
-+	done; exit $$ret;
- 
- 	@# Ask all targets to emit their test scripts
- 	echo "#!/bin/sh" > $(ALL_SCRIPT)
+v2: bypass a performance regression bug and fix some function issues
+
+v1: initial version, aim testing show 5% performance increase
+
+
+Alex Shi (7):
+  mm/vmscan: remove unnecessary lruvec adding
+  mm/lru: replace pgdat lru_lock with lruvec lock
+  mm/lru: introduce the relock_page_lruvec function
+  mm/mlock: optimize munlock_pagevec by relocking
+  mm/swap: only change the lru_lock iff page's lruvec is different
+  mm/pgdat: remove pgdat lru_lock
+  mm/lru: debug checking for page memcg moving and lock_page_memcg
+
+Hugh Dickins (1):
+  mm/lru: revise the comments of lru_lock
+
+ Documentation/admin-guide/cgroup-v1/memcg_test.rst | 15 +---
+ Documentation/admin-guide/cgroup-v1/memory.rst     |  6 +-
+ Documentation/trace/events-kmem.rst                |  2 +-
+ Documentation/vm/unevictable-lru.rst               | 22 ++---
+ include/linux/memcontrol.h                         | 63 ++++++++++++++
+ include/linux/mm_types.h                           |  2 +-
+ include/linux/mmzone.h                             |  5 +-
+ mm/compaction.c                                    | 59 ++++++++-----
+ mm/filemap.c                                       |  4 +-
+ mm/huge_memory.c                                   | 18 ++--
+ mm/memcontrol.c                                    | 88 +++++++++++++++-----
+ mm/mlock.c                                         | 28 +++----
+ mm/mmzone.c                                        |  1 +
+ mm/page_alloc.c                                    |  1 -
+ mm/page_idle.c                                     |  7 +-
+ mm/rmap.c                                          |  2 +-
+ mm/swap.c                                          | 75 +++++++----------
+ mm/vmscan.c                                        | 97 ++++++++++++----------
+ 18 files changed, 300 insertions(+), 195 deletions(-)
+
 -- 
-2.17.1
+1.8.3.1
 
