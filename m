@@ -2,82 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A70F21184CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 340781184D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfLJKSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 05:18:55 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46409 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727032AbfLJKSz (ORCPT
+        id S1727333AbfLJKUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 05:20:07 -0500
+Received: from a27-18.smtp-out.us-west-2.amazonses.com ([54.240.27.18]:50886
+        "EHLO a27-18.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727032AbfLJKUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:18:55 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z124so8658352pgb.13
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 02:18:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MjJMrLdfpPJ4Sc3kZhH/VjXjH5+SHZoVHKv3pR43FLk=;
-        b=aGoM1Sg4g9adkhnRSZkca8ipBYqH5zDXO6Sn8dVvkuMuBaD0+kTFKL8siM4sm9zEp7
-         lGLuxvo/M9CNikbqj3KnIxLENsqlMB9CZ8PPWH5BrjONlfLYN1Pc3R5CDMeM0B96mIst
-         p1VtxX7v/OfIUeBmMI+Wkm0Qnpv7Wmi0KqEBGkU9Won8QYiXe83qsocnN3L0z2o3lFyP
-         8ftiMcAZXD8h9ZQkzg/OQiOYqfFuSPDH8PynDld/iot3oJPCg4ol6S+rLBR87MDV1PJB
-         xCVbzdQ8FISzsF9bgU3shE4ipMBny5JTBWws2h6l2pV7y7EHlhjtTatKLqNIupIwgRnI
-         JcaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MjJMrLdfpPJ4Sc3kZhH/VjXjH5+SHZoVHKv3pR43FLk=;
-        b=i1NHEe512IDolywS/rwHv+v+fD2+nxuruAeTUNXdIFODFvyKhqiSzTjg6yuQPu3cPS
-         MSER4YidAeA0YNs3en7KvRe+FAmFESZ6c6eeJh6DJAEUCoexPZgY0uW8keNuKuwjegSz
-         s9sXAmTzqWj9Y1n8mTwu4jC8Gd7ZPsDGr/ZM33EvpyS6Zx/7wG7vI2F6HnR+k27l1PYc
-         GZcdpXModYYju7abVMqUSYQU9SPGMS9rT42YTIKhQxxDxY+Nm6H2AkFXmLCXSXdtnpXd
-         ycu/Hofh/r57DTtrcJqMsbPDuxgdjBiMsISs2cr3YfpIQSp75xVoOedrOCLT/kF/w3aI
-         JS1w==
-X-Gm-Message-State: APjAAAWkCR+uKcujI+FnMdzHy2ItBPie2FPk9tgvMNXUMoqX+cG+t7JP
-        YDFZ47/VETs4NLIGY4lUvTcpAQ==
-X-Google-Smtp-Source: APXvYqxyHPhqMG4TPXyS2uSioe8CvqmwehPnF4vkNuYU85Y8GyvvVGdr/eAXk14Erkx4+waKABZllQ==
-X-Received: by 2002:a63:e648:: with SMTP id p8mr23578874pgj.259.1575973134356;
-        Tue, 10 Dec 2019 02:18:54 -0800 (PST)
-Received: from localhost ([122.171.112.123])
-        by smtp.gmail.com with ESMTPSA id p16sm2723690pgm.8.2019.12.10.02.18.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Dec 2019 02:18:53 -0800 (PST)
-Date:   Tue, 10 Dec 2019 15:48:51 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] firmware: arm_scmi: Make scmi core independent of
- transport type
-Message-ID: <20191210101851.gpayo7bnyf54opyu@vireshk-i7>
-References: <5c545c2866ba075ddb44907940a1dae1d823b8a1.1575019719.git.viresh.kumar@linaro.org>
- <20191203120002.GB4171@bogus>
+        Tue, 10 Dec 2019 05:20:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575973206;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type;
+        bh=0Kb+E+8ZdD4D68+aCTRlNTqRFi3yA4uuBGG8Rr2pQgY=;
+        b=NeYakiUCjcRoxcFOZnt6eDM0Jw6DgF/tnZftTAXzQSXZCBTLtVUHjodLxZvTXBDH
+        Hq9okvn8vJADB+4lLhu1iExlQjDCa2avyXGPQiQ2N28sL2jhNW2J3eUnPftbCBE0sjS
+        8zvVlxy4TRDsGNGGSfBhTwmNwz1AXdSkjIZLROms=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575973206;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type:Feedback-ID;
+        bh=0Kb+E+8ZdD4D68+aCTRlNTqRFi3yA4uuBGG8Rr2pQgY=;
+        b=VuITrJj+QGHSbjoRYgHcNgD5stmzkqoubp1qS/rPYXMmGRDKHEZ+1XFtF503+RoY
+        vZEjZl3cu1aydYOch0/P/dlSIWprQbnvW3xoRg52LTx6/OAKq52uqvIJOIT+pqxMXjJ
+        +VfRIbeZnjfCG+yBJSf+s9Lz9Vf5FAcJAaECBda8=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3419C447AA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Soeren Moch <smoch@web.de>
+Cc:     Wright Feng <wright.feng@cypress.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] brcmfmac: reset two D11 cores if chip has two D11 cores
+References: <20191209223822.27236-1-smoch@web.de>
+        <0101016eef117d24-d6de85e6-6356-4c73-bff4-f787e8c982bc-000000@us-west-2.amazonses.com>
+        <d72831ab-902e-0b69-3008-6eb915784c4d@web.de>
+Date:   Tue, 10 Dec 2019 10:20:06 +0000
+In-Reply-To: <d72831ab-902e-0b69-3008-6eb915784c4d@web.de> (Soeren Moch's
+        message of "Tue, 10 Dec 2019 11:14:22 +0100")
+Message-ID: <0101016eef52b82d-f791d0d8-d317-4050-9e8a-07a3fa7dafd8-000000@us-west-2.amazonses.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203120002.GB4171@bogus>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-SES-Outgoing: 2019.12.10-54.240.27.18
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03-12-19, 12:00, Sudeep Holla wrote:
-> I am more interested in this part. As I am aware the only 2 other
-> transport being discussed is SMC/HVC and new/yet conceptual SPCI(built
-> on top of SMC/HVC). There are already discussions on the list to make
-> former as mailbox[1]. While I see both pros and cons with that approach,
-> there's a need to converge. One main advantage I see with SMC/HVC mailbox
-> is that it can be used with any other client and not just SCMI. Equally,
-> the queuing in the mailbox may not be needed with fast SMC/HVC but may
-> be needed for new SPCI(not yet fully analysed).
- 
-We were also looking for OPTEE based mailbox which is similar to SPCI.
+Soeren Moch <smoch@web.de> writes:
+
+> On 10.12.19 10:08, Kalle Valo wrote:
+>> Soeren Moch <smoch@web.de> writes:
+>>
+>>> From: Wright Feng <wright.feng@cypress.com>
+>>>
+>>> There are two D11 cores in RSDB chips like 4359. We have to reset two
+>>> D11 cores simutaneously before firmware download, or the firmware may
+>>> not be initialized correctly and cause "fw initialized failed" error.
+>>>
+>>> Signed-off-by: Wright Feng <wright.feng@cypress.com>
+>> Soeren's s-o-b missing at least in patches 1, 6 and 7. Please read:
+>>
+>> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#signed-off-by_missing
+>>
+>
+> OK, also for unmodified patches another s-o-b is required.
+
+Yes, every patch you submit needs to have your s-o-b to mark that you
+agree with Developer's Certificate of Origin.
+
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
 
 -- 
-viresh
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
