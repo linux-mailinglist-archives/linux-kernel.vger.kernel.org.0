@@ -2,95 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C63EA11833A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:14:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5F7C118340
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfLJJOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:14:41 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:37260 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbfLJJOl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:14:41 -0500
-Received: by mail-pj1-f66.google.com with SMTP id ep17so7157892pjb.4;
-        Tue, 10 Dec 2019 01:14:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7LJAEL/RYeb/hyqghWxhKEWAkwMEjLLMOZ9drwDPAyM=;
-        b=OLe0T9xnTls3kCryailPhNJaENtGPGHxVRpt2r7ywfQ73fUODwfvOKvXGA6HRRh0Hl
-         89joYDbR7ry9//bdD493PFueHBxAK65WnhzzgIc6S/P1Cvx2oNSSZFzMSJsBcWcY50sy
-         n28aEmBn5zuRaOV1RnnGXFJSuNp32v0a25NcTY885gzTriUEEJR1Wr18eMGLdK3HsYzx
-         fpEaS3w0eXHhrbMy0GTW9FAhGrdPYkPVywNIz7U4f1C8rea+R1PQbYbioBXSoA+t4nan
-         Z5PcySh8ZIBuYjL16jD2wJVpyd30NC7CybbVyvojW5DB0EEh/l4cq005gskkNk+YwDwl
-         lx7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7LJAEL/RYeb/hyqghWxhKEWAkwMEjLLMOZ9drwDPAyM=;
-        b=UsSJprSDrpGBLiYFl6nYBDPFEq3Npp+rWzQ5sE87bjinwLl20O3MnP8WBzkUXUAusb
-         ILTyc/qltJMAf524ogHG1sx2C7t7nK7va0e94XPOzu+6mAYepVRsmPz7i6eKu8ERPeq5
-         Cf3e78eUpjYb+16iM7ETVdoFcKTxHnavjsRvEbYp/iPTtDWykwKrIqhTbJkhKBxOommO
-         ba9rlYtfSLAlVDhyW9hiZTIIfrZCNwDZ97VkIUvqKd+puZOYe/25mPeWjdKjTRHUiDQ0
-         dv6BAhqPQUzLsuJvPbmosWiyTNyYpHGtQgnvVucYVhVZOYwTk+w9KkBl+1Wkzlf28ZXZ
-         SHSQ==
-X-Gm-Message-State: APjAAAUGjT6G3OtX14z6TOSVHNMd6Gl6A9l16YVvTTZCAXWvNsgkkC0v
-        30CXC555NgbDm1KdEE/1OD2oOBOn
-X-Google-Smtp-Source: APXvYqy64m+fUsvCsYgVNQir1Pmsf7+rq5KT/DqucMSXZlRI/g4/twjg0Lx2crxKW6lozBJm+R7xjQ==
-X-Received: by 2002:a17:90a:28a1:: with SMTP id f30mr4288985pjd.77.1575969280420;
-        Tue, 10 Dec 2019 01:14:40 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id bo9sm2150744pjb.21.2019.12.10.01.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 01:14:39 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] media: omap3isp: add checks for devm_regulator_get
-Date:   Tue, 10 Dec 2019 17:14:28 +0800
-Message-Id: <20191210091428.23448-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727326AbfLJJO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:14:56 -0500
+Received: from mga12.intel.com ([192.55.52.136]:29109 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726911AbfLJJO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 04:14:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 01:14:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,299,1571727600"; 
+   d="scan'208";a="244777863"
+Received: from nntpdsd52-183.inn.intel.com ([10.125.52.183])
+  by fmsmga002.fm.intel.com with ESMTP; 10 Dec 2019 01:14:52 -0800
+From:   roman.sudarikov@linux.intel.com
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, eranian@google.com,
+        bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com
+Cc:     alexander.antonov@intel.com, roman.sudarikov@linux.intel.com
+Subject: [PATCH v2 0/3] perf x86: Exposing IO stack to IO PMON mapping through sysfs
+Date:   Tue, 10 Dec 2019 12:14:48 +0300
+Message-Id: <20191210091451.6054-1-roman.sudarikov@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver misses checks for devm_regulator_get().
-Add checks to fix it.
+From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/media/platform/omap3isp/isp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+The previous version can be found at:
+v1: https://lkml.org/lkml/2019/11/26/447
 
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 327c5716922a..ef3502182c3a 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -2312,7 +2312,16 @@ static int isp_probe(struct platform_device *pdev)
- 
- 	/* Regulators */
- 	isp->isp_csiphy1.vdd = devm_regulator_get(&pdev->dev, "vdd-csiphy1");
-+	if (IS_ERR(isp->isp_csiphy1.vdd)) {
-+		ret = PTR_ERR(isp->isp_csiphy1.vdd);
-+		goto error;
-+	}
-+
- 	isp->isp_csiphy2.vdd = devm_regulator_get(&pdev->dev, "vdd-csiphy2");
-+	if (IS_ERR(isp->isp_csiphy2.vdd)) {
-+		ret = PTR_ERR(isp->isp_csiphy2.vdd);
-+		goto error;
-+	}
- 
- 	/* Clocks
- 	 *
+Changes in this revision are:
+v1 -> v2:
+- Fixed process related issues;
+- This patch set includes kernel support for IIO stack to PMON mapping;
+- Stephane raised concerns regarding output format which may require
+code changes in the user space part of the feature only. We will continue 
+output format discussion in the context of user space update.
+
+Intel® Xeon® Scalable processor family (code name Skylake-SP) makes
+significant changes in the integrated I/O (IIO) architecture. The new
+solution introduces IIO stacks which are responsible for managing traffic
+between the PCIe domain and the Mesh domain. Each IIO stack has its own
+PMON block and can handle either DMI port, x16 PCIe root port, MCP-Link
+or various built-in accelerators. IIO PMON blocks allow concurrent
+monitoring of I/O flows up to 4 x4 bifurcation within each IIO stack.
+
+Software is supposed to program required perf counters within each IIO
+stack and gather performance data. The tricky thing here is that IIO PMON
+reports data per IIO stack but users have no idea what IIO stacks are -
+they only know devices which are connected to the platform.
+
+Understanding IIO stack concept to find which IIO stack that particular
+IO device is connected to, or to identify an IIO PMON block to program
+for monitoring specific IIO stack assumes a lot of implicit knowledge
+about given Intel server platform architecture.
+
+This patch set introduces:
+1. An infrastructure for exposing an Uncore unit to Uncore PMON mapping
+   through sysfs-backend;
+2. A new --iiostat mode in perf stat to provide I/O performance metrics
+   per I/O device.
+
+Usage examples:
+
+1. List all devices below IIO stacks
+  ./perf stat --iiostat=show
+
+Sample output w/o libpci:
+
+    S0-RootPort0-uncore_iio_0<00:00.0>
+    S1-RootPort0-uncore_iio_0<81:00.0>
+    S0-RootPort1-uncore_iio_1<18:00.0>
+    S1-RootPort1-uncore_iio_1<86:00.0>
+    S1-RootPort1-uncore_iio_1<88:00.0>
+    S0-RootPort2-uncore_iio_2<3d:00.0>
+    S1-RootPort2-uncore_iio_2<af:00.0>
+    S1-RootPort3-uncore_iio_3<da:00.0>
+
+Sample output with libpci:
+
+    S0-RootPort0-uncore_iio_0<00:00.0 Sky Lake-E DMI3 Registers>
+    S1-RootPort0-uncore_iio_0<81:00.0 Ethernet Controller X710 for 10GbE SFP+>
+    S0-RootPort1-uncore_iio_1<18:00.0 Omni-Path HFI Silicon 100 Series [discrete]>
+    S1-RootPort1-uncore_iio_1<86:00.0 Ethernet Controller XL710 for 40GbE QSFP+>
+    S1-RootPort1-uncore_iio_1<88:00.0 Ethernet Controller XL710 for 40GbE QSFP+>
+    S0-RootPort2-uncore_iio_2<3d:00.0 Ethernet Connection X722 for 10GBASE-T>
+    S1-RootPort2-uncore_iio_2<af:00.0 Omni-Path HFI Silicon 100 Series [discrete]>
+    S1-RootPort3-uncore_iio_3<da:00.0 NVMe Datacenter SSD [Optane]>
+
+2. Collect metrics for all I/O devices below IIO stack
+
+  ./perf stat --iiostat -- dd if=/dev/zero of=/dev/nvme0n1 bs=1M oflag=direct
+    357708+0 records in
+    357707+0 records out
+    375083606016 bytes (375 GB, 349 GiB) copied, 215.381 s, 1.7 GB/s
+
+  Performance counter stats for 'system wide':
+
+     device             Inbound Read(MB)    Inbound Write(MB)    Outbound Read(MB)   Outbound Write(MB)
+    00:00.0                    0                    0                    0                    0
+    81:00.0                    0                    0                    0                    0
+    18:00.0                    0                    0                    0                    0
+    86:00.0                    0                    0                    0                    0
+    88:00.0                    0                    0                    0                    0
+    3b:00.0                    3                    0                    0                    0
+    3c:03.0                    3                    0                    0                    0
+    3d:00.0                    3                    0                    0                    0
+    af:00.0                    0                    0                    0                    0
+    da:00.0               358559                   44                    0                   22
+
+    215.383783574 seconds time elapsed
+
+
+3. Collect metrics for comma separted list of I/O devices 
+
+  ./perf stat --iiostat=da:00.0 -- dd if=/dev/zero of=/dev/nvme0n1 bs=1M oflag=direct
+    381555+0 records in
+    381554+0 records out
+    400088457216 bytes (400 GB, 373 GiB) copied, 374.044 s, 1.1 GB/s
+
+  Performance counter stats for 'system wide':
+
+     device             Inbound Read(MB)    Inbound Write(MB)    Outbound Read(MB)   Outbound Write(MB)
+    da:00.0               382462                   47                    0                   23
+
+    374.045775505 seconds time elapsed
+
+Roman Sudarikov (3):
+  perf x86: Infrastructure for exposing an Uncore unit to PMON mapping
+  perf x86: Add compaction function for uncore attributes
+  perf x86: Exposing an Uncore unit to PMON for Intel Xeon® server
+    platform
+
+ arch/x86/events/intel/uncore.c       |  50 ++++++++-
+ arch/x86/events/intel/uncore.h       |  10 +-
+ arch/x86/events/intel/uncore_snbep.c | 162 +++++++++++++++++++++++++++
+ 3 files changed, 220 insertions(+), 2 deletions(-)
+
+
+base-commit: 219d54332a09e8d8741c1e1982f5eae56099de85
 -- 
-2.24.0
+2.19.1
 
