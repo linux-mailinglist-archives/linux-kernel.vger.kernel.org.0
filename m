@@ -2,111 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2586119C3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:19:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA888119C4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfLJWSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:18:47 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37901 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbfLJWSr (ORCPT
+        id S1727436AbfLJWX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:23:26 -0500
+Received: from a27-55.smtp-out.us-west-2.amazonses.com ([54.240.27.55]:59316
+        "EHLO a27-55.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726883AbfLJWX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:18:47 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p17so4907280wmi.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 14:18:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/xeSJ1vVQGbd+lIc7YdzwAZ3r9lP4F35wcBj4c6Z8vM=;
-        b=B1QR3m2HFzPOE0yEbMaZ1Sv5w1g+5+FM6cKF0BpNVupNgtuHvgoHSP7I3Ziag9IEx1
-         nSVN5CjtjtmnmRmVAxT0qR1PQBTISWoP5nlGxR/74CBAwLEX4RLUCUSjKS0HZ6qS4ybG
-         vew9E7FQWm5s6CIZnCYXKkrVaYcaYteviw9EajeSB26BxomxoMM0kJSvZugp8yj15Lu5
-         fyuej3mOWV8JZDG8Evb4K2KwBo/i78gQ3qjzTw7OedgXfxux3nv7MBeG00X5+hIrC3uB
-         SjgBDVMv5v15UTvH+HkbnSNLb1Dk+kJcuJdLPYH+SlRYf87GGIlcViMdZ3gRriu3pw9Q
-         PxNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/xeSJ1vVQGbd+lIc7YdzwAZ3r9lP4F35wcBj4c6Z8vM=;
-        b=aiqE1pmGQqrn1Io9jEVYmJY6pS+t2tf7p7ITTkf6YP4/BUfQk1Dn7UlN5wDeSN/3MB
-         VB2gqkYtMCHPYrTZ9Zcph61eSCfG9So4VCTTakiiVEJNfY6fz/36aOS2EdbE8pfjRM87
-         dDsNcvCWntG3+Tv4ZThs+8r+722Q1Wu10RCAgKNyDfcxtDL9QZodi5Qkr4udXZGIuzq2
-         W1QyToX/D+VTk68vd1xlyEWBrcLQE+Fv/pOtr+d9v7A9DCiuUAf4vaI5pjkwBFtqOkQl
-         gK2VZOfoWQkKHh/YFI6BbiPKusKhP0QqT/Cef1jJAo1J/0796kYEZhD4CpvoOLa0ZzwJ
-         zlgg==
-X-Gm-Message-State: APjAAAUENceEIkAb3DOBjiEcHQ/p3sHfPKNj9z3oks5WlHX9Y0NOLKcf
-        VSuatJtMJfw3gGKXSrCKmydn5LEhXFoIF4guzdc=
-X-Google-Smtp-Source: APXvYqzLcz+L/kcYgFcxP6XewiOkpSfkoPwGQbtDouaQraSVktzlPiRm+eotTeS8npUt7k71bLFPIMThugyJTYeKi8M=
-X-Received: by 2002:a1c:4454:: with SMTP id r81mr7591380wma.143.1576016324848;
- Tue, 10 Dec 2019 14:18:44 -0800 (PST)
+        Tue, 10 Dec 2019 17:23:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1576016605;
+        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To;
+        bh=5O6ko1wMdH3ZAe3za/gTc6jGmfe6ltuEFSuJCuFhaE4=;
+        b=GLA7OuE3q9Ckno+URVzFLhwwkaR1ZO0GcthJbP9hE3K5Iy3A/R+Y/IjweHZlbnqs
+        IU0rQ3Jjl18qRlEcZxQZBeGL0m4xLxCZIWxAwTbga+xv15hFfTqg5QhJi2oDYSsgpUI
+        CKC02DOEdc9qqI9xzxSx6p1/ZMkQXbdT/g3zgljE=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1576016605;
+        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Feedback-ID;
+        bh=5O6ko1wMdH3ZAe3za/gTc6jGmfe6ltuEFSuJCuFhaE4=;
+        b=OblpijPjBWaUnQ7iMx3O1+gAfDhdKUreQ2A/HCrikRbTsg2II3DukNQ/wKGgSqWG
+        rergx1m0csTGoWf/5M5hZUQVmUjj68p8DKzpzzQnhHyV1OHGYOYpI9pdeFMhBxaLPLA
+        /p4taTWJHMq2Gq9nR+kp23AYTMJxDAQ1LvTpYxWI=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0090BC59948
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Tue, 10 Dec 2019 22:23:25 +0000
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Maulik Shah <mkshah@codeaurora.org>
+Cc:     agross@kernel.org, robh+dt@kernel.org, bjorn.andersson@linaro.org,
+        linus.walleij@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        rnayak@codeaurora.org, lsrao@codeaurora.org, mka@chromium.org,
+        swboyd@chromium.org, evgreen@chromium.org, dianders@chromium.org
+Subject: Re: [PATCH 1/2] pinctrl: qcom: sc7180: Add GPIO wakeup interrupt map
+Message-ID: <0101016ef1e8f0a2-c8311e64-3d6a-4b66-9121-6fa4d0a604df-000000@us-west-2.amazonses.com>
+References: <1572419178-5750-1-git-send-email-mkshah@codeaurora.org>
+ <1572419178-5750-2-git-send-email-mkshah@codeaurora.org>
 MIME-Version: 1.0
-References: <20191210195941.931745-1-arnd@arndb.de>
-In-Reply-To: <20191210195941.931745-1-arnd@arndb.de>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 10 Dec 2019 17:18:31 -0500
-Message-ID: <CADnq5_Ou91nmzTc6mAugpbML4XqrYfSg0jcx7U9yb=X3LSmZiA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: include linux/slab.h where needed
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Eric Yang <Eric.Yang2@amd.com>, Roman Li <Roman.Li@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michael Strauss <michael.strauss@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1572419178-5750-2-git-send-email-mkshah@codeaurora.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-SES-Outgoing: 2019.12.10-54.240.27.55
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied.  Thanks!
+On Wed, Oct 30 2019 at 01:07 -0600, Maulik Shah wrote:
+>GPIOs that can be configured as wakeup sources, have their
+>interrupt lines routed to PDC interrupt controller.
+>
+>Provide the interrupt map of the GPIO to its wakeup capable
+>interrupt parent.
+>
+>Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+Reviewed-by: Lina Iyer <ilina@codeaurora.org>
 
-Alex
-
-On Tue, Dec 10, 2019 at 2:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>---
+> drivers/pinctrl/qcom/pinctrl-sc7180.c | 18 ++++++++++++++++++
+> 1 file changed, 18 insertions(+)
 >
-> Calling kzalloc() and related functions requires the
-> linux/slab.h header to be included:
+>diff --git a/drivers/pinctrl/qcom/pinctrl-sc7180.c b/drivers/pinctrl/qcom/pinctrl-sc7180.c
+>index 6399c8a..8a2b97c 100644
+>--- a/drivers/pinctrl/qcom/pinctrl-sc7180.c
+>+++ b/drivers/pinctrl/qcom/pinctrl-sc7180.c
+>@@ -1097,6 +1097,22 @@ static const struct msm_pingroup sc7180_groups[] = {
+> 	[126] = SDC_QDSD_PINGROUP(sdc2_data, 0x97b000, 9, 0),
+> };
 >
-> drivers/gpu/drm/amd/amdgpu/../display/dc/dcn21/dcn21_resource.c: In function 'dcn21_ipp_create':
-> drivers/gpu/drm/amd/amdgpu/../display/dc/dcn21/dcn21_resource.c:679:3: error: implicit declaration of function 'kzalloc'; did you mean 'd_alloc'? [-Werror=implicit-function-declaration]
->    kzalloc(sizeof(struct dcn10_ipp), GFP_KERNEL);
+>+static const struct msm_gpio_wakeirq_map sc7180_pdc_map[] = {
+>+	{0, 40}, {3, 50}, {4, 42}, {5, 70}, {6, 41}, {9, 35},
+>+	{10, 80}, {11, 51}, {16, 20}, {21, 55}, {22, 90}, {23, 21},
+>+	{24, 61}, {26, 52}, {28, 36}, {30, 100}, {31, 33}, {32, 81},
+>+	{33, 62}, {34, 43}, {36, 91}, {37, 53}, {38, 63}, {39, 72},
+>+	{41, 101}, {42, 7}, {43, 34}, {45, 73}, {47, 82}, {49, 17},
+>+	{52, 109}, {53, 102}, {55, 92}, {56, 56}, {57, 57}, {58, 83},
+>+	{59, 37}, {62, 110}, {63, 111}, {64, 74}, {65, 44}, {66, 93},
+>+	{67, 58}, {68, 112}, {69, 32}, {70, 54}, {72, 59}, {73, 64},
+>+	{74, 71}, {78, 31}, {82, 30}, {85, 103}, {86, 38}, {87, 39},
+>+	{88, 45}, {89, 46}, {90, 47}, {91, 48}, {92, 60}, {93, 49},
+>+	{94, 84}, {95, 94}, {98, 65}, {101, 66}, {104, 67}, {109, 104},
+>+	{110, 68}, {113, 69}, {114, 113}, {115, 108}, {116, 121},
+>+	{117, 114}, {118, 119},
+>+};
+>+
+> static const struct msm_pinctrl_soc_data sc7180_pinctrl = {
+> 	.pins = sc7180_pins,
+> 	.npins = ARRAY_SIZE(sc7180_pins),
+>@@ -1107,6 +1123,8 @@ static const struct msm_pinctrl_soc_data sc7180_pinctrl = {
+> 	.ngpios = 120,
+> 	.tiles = sc7180_tiles,
+> 	.ntiles = ARRAY_SIZE(sc7180_tiles),
+>+	.wakeirq_map = sc7180_pdc_map,
+>+	.nwakeirq_map = ARRAY_SIZE(sc7180_pdc_map),
+> };
 >
-> A lot of other headers also miss a direct include in this file,
-> but this is the only one that causes a problem for now.
+> static int sc7180_pinctrl_probe(struct platform_device *pdev)
+>-- 
+>QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+>of Code Aurora Forum, hosted by The Linux Foundation
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
-> index 906c84e6b49b..af57885bbff2 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
-> @@ -23,6 +23,8 @@
->   *
->   */
->
-> +#include <linux/slab.h>
-> +
->  #include "dm_services.h"
->  #include "dc.h"
->
-> --
-> 2.20.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
