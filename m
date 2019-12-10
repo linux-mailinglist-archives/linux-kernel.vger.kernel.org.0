@@ -2,96 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 867DD118457
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:07:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E09B411845E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:07:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfLJKHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 05:07:17 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40584 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfLJKHR (ORCPT
+        id S1727314AbfLJKHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 05:07:32 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37212 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727242AbfLJKHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:07:17 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iecQ3-0006LC-Jb; Tue, 10 Dec 2019 11:07:03 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 203F61C2905;
-        Tue, 10 Dec 2019 11:07:03 +0100 (CET)
-Date:   Tue, 10 Dec 2019 10:07:03 -0000
-From:   "tip-bot2 for Konstantin Khlebnikov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/MCE/AMD: Do not use rdmsr_safe_on_cpu() in
- smca_configure()
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Borislav Petkov <bp@suse.de>,
-        Yazen Ghannam <yazen.ghannam@amd.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "linux-edac" <linux-edac@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, "x86-ml" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <157252708836.3876.4604398213417262402.stgit@buzz>
-References: <157252708836.3876.4604398213417262402.stgit@buzz>
+        Tue, 10 Dec 2019 05:07:31 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f129so2431104wmf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 02:07:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C/qds3iLdYR3bbvA/Sxj6rrlo3vwcNFPffUebEm2fbs=;
+        b=Vbl/HqYiYF34szVFoZ/lOAuXg6w8DieuguG8Li8kuUfF8x0vmT8I6ofLttsisfAf3U
+         Kt/TUBwsxXfpKBB/Pts1MbO44b2HkGi/FIfp3WQhPUd6gfJOu/lY4GmmC3kTheo013rD
+         XzxD+e4AytfCqM2f9tkMoYc8OFIlMuv3fPoCIyDgtRlE1Kp8GK+0X/f6v204HQ5gPl29
+         vrXfyXCUMiz7hrfzMCLXvDT4zazwA4hvJ9AAG6VsSVk391mlx+pZZn0EEDJuB+NQcIHy
+         mSkwGvTkzrtc3y7nz+FNvX+ncXNDUADgOb+J4+o+6pvm4857taHWoyO48EAegGt+Ib15
+         mF0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C/qds3iLdYR3bbvA/Sxj6rrlo3vwcNFPffUebEm2fbs=;
+        b=reaBimt/R+8pNy/jpra1j9l/nt5H60fVfHpCVUQ3ozCm8nPjASzJPUVZkw9peGwOG8
+         htGu1NQDE+lJI7dhq4wMnHgWCZrXJUlgTXp9qe67YU0fT/VKfIBXV5JeHqz/VSXZsYNw
+         nZEcCajXlYyaZZ/3d/9TPNmJ0phurnQK4amYjtRzvvdO/7w1rUQfJJsNKVoqDoFHxJ+r
+         D/DttclEfTDdk+fe4q/eUmXBRZKhkD028dG9S6lNZ1rXRv+jJoOPu0CgL5yaYuLEBhBs
+         oKbwICKsgxLRAnztAYn93YgZGEz2aqHlTSCwKCZ4RzUNQZYgHEpruYvevJMXsMm/SCes
+         udVg==
+X-Gm-Message-State: APjAAAXDQOBTwWyKxgA/U2uW/MqOrq3jiNPUqSv3ghT+No/MWBQEFKE/
+        kMrPbCzGpA2LRyLmdydqnQG8RyHMlY8=
+X-Google-Smtp-Source: APXvYqxx+f5GIgs3DkVFmMx2x0QZrsO+/ElFSb+ShXJaUYLhsHZtS5J3Z4PxATO+JOOX56k3YYpP3A==
+X-Received: by 2002:a1c:9903:: with SMTP id b3mr4020982wme.139.1575972450291;
+        Tue, 10 Dec 2019 02:07:30 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id s8sm2628622wrt.57.2019.12.10.02.07.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 02:07:29 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] regulator: max77650: add of_match table
+Date:   Tue, 10 Dec 2019 11:07:25 +0100
+Message-Id: <20191210100725.11005-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Message-ID: <157597242302.30329.18337877757273874643.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the ras/core branch of tip:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Commit-ID:     17ba1939e3676417590ec6f7555608e137e1719a
-Gitweb:        https://git.kernel.org/tip/17ba1939e3676417590ec6f7555608e137e1719a
-Author:        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-AuthorDate:    Thu, 31 Oct 2019 16:04:48 +03:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Mon, 09 Dec 2019 14:54:59 +01:00
+We need the of_match table if we want to use the compatible string in
+the pmic's child node and get the regulator driver loaded automatically.
 
-x86/MCE/AMD: Do not use rdmsr_safe_on_cpu() in smca_configure()
-
-The function smca_configure() is called only on the current CPU
-therefore replace rdmsr_safe_on_cpu() with atomic rdmsr_safe() and avoid
-the IPI.
-
- [ bp: Cleanup commit message. ]
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/157252708836.3876.4604398213417262402.stgit@buzz
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/x86/kernel/cpu/mce/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/max77650-regulator.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 5167bd2..e41e3b4 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -269,7 +269,7 @@ static void smca_configure(unsigned int bank, unsigned int cpu)
- 	if (smca_banks[bank].hwid)
- 		return;
+diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/max77650-regulator.c
+index e57fc9197d62..ac89a412f665 100644
+--- a/drivers/regulator/max77650-regulator.c
++++ b/drivers/regulator/max77650-regulator.c
+@@ -386,9 +386,16 @@ static int max77650_regulator_probe(struct platform_device *pdev)
+ 	return 0;
+ }
  
--	if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_IPID(bank), &low, &high)) {
-+	if (rdmsr_safe(MSR_AMD64_SMCA_MCx_IPID(bank), &low, &high)) {
- 		pr_warn("Failed to read MCA_IPID for bank %d\n", bank);
- 		return;
- 	}
++static const struct of_device_id max77650_regulator_of_match[] = {
++	{ .compatible = "maxim,max77650-regulator" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, max77650_regulator_of_match);
++
+ static struct platform_driver max77650_regulator_driver = {
+ 	.driver = {
+ 		.name = "max77650-regulator",
++		.of_match_table = max77650_regulator_of_match,
+ 	},
+ 	.probe = max77650_regulator_probe,
+ };
+-- 
+2.23.0
+
