@@ -2,175 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BBFF11899B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:24:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C07EA1189A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:25:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbfLJNYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 08:24:34 -0500
-Received: from foss.arm.com ([217.140.110.172]:44318 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727730AbfLJNYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 08:24:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39A411045;
-        Tue, 10 Dec 2019 05:24:31 -0800 (PST)
-Received: from DESKTOP-VLO843J.cambridge.arm.com (DESKTOP-VLO843J.cambridge.arm.com [10.1.26.198])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4DD263F52E;
-        Tue, 10 Dec 2019 05:24:30 -0800 (PST)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, heiko@sntech.de, smoch@web.de,
-        linux.amoon@gmail.com, linux-rockchip@lists.infradead.org
-Subject: [PATCH 4/4] mfd: rk808: Convert RK805 to syscore/PM ops
-Date:   Tue, 10 Dec 2019 13:24:33 +0000
-Message-Id: <8642045f0657c9e782cd698eb08777c9d4c10c8d.1575932654.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1575932654.git.robin.murphy@arm.com>
-References: <cover.1575932654.git.robin.murphy@arm.com>
+        id S1727494AbfLJNY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 08:24:57 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:38617 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbfLJNY4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 08:24:56 -0500
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 4wxkjymyrvYDtaXLV3wnwWnmM7qbBQlkZel1+UbW6Ixk6YfU4GFTmtHWThX180tLfzzCHb0ZC6
+ b6KWrHSWCpgQPokrJtJ9XX58ZcGLAA5sLqjJU6+Aq8FizLFmem5lJ+DntbqUXi8Rsg72u/JXGa
+ EMTreU98lD3HBJd1p4C+11FUSZNtSjcqAeRuUVCvaFKfCkg4l5/obxIwsRllGXfiEyDykG+ocI
+ LOl3JIvw9JY0MG7PtTW5kfFf8JAaU8W19PwmDKA2Gexev0142/KBOkAm1EHey/2j7aD9RpYMiY
+ V+M=
+X-IronPort-AV: E=Sophos;i="5.69,299,1571727600"; 
+   d="scan'208";a="59845981"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 10 Dec 2019 06:24:56 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 10 Dec 2019 06:24:55 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Tue, 10 Dec 2019 06:24:56 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <sam@ravnborg.org>, <bbrezillon@kernel.org>, <airlied@linux.ie>,
+        <daniel@ffwll.ch>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <lee.jones@linaro.org>
+CC:     <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 0/5] fixes for atmel-hlcdc
+Date:   Tue, 10 Dec 2019 15:24:42 +0200
+Message-ID: <1575984287-26787-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK805 has the same kind of dual-role sleep/shutdown pin as RK809/RK817,
-so it makes little sense for the driver to have to have two completely
-different mechanisms to handle essentially the same thing. Bring RK805
-in line with the RK809/RK817 flow to clean things up.
+Hi,
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
- drivers/mfd/rk808.c       | 58 +++++++++++++++++----------------------
- include/linux/mfd/rk808.h |  1 -
- 2 files changed, 25 insertions(+), 34 deletions(-)
+I have few fixes for atmel-hlcdc driver in this series as well
+as two reverts.
+Revert "drm: atmel-hlcdc: enable sys_clk during initalization." is
+due to the fix in in patch 2/5.
 
-diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-index 657b8baa3b8a..e88bdb889d3a 100644
---- a/drivers/mfd/rk808.c
-+++ b/drivers/mfd/rk808.c
-@@ -186,7 +186,6 @@ static const struct rk808_reg_data rk805_pre_init_reg[] = {
- 	{RK805_BUCK4_CONFIG_REG, RK805_BUCK3_4_ILMAX_MASK,
- 				 RK805_BUCK4_ILMAX_3500MA},
- 	{RK805_BUCK4_CONFIG_REG, BUCK_ILMIN_MASK, BUCK_ILMIN_400MA},
--	{RK805_GPIO_IO_POL_REG, SLP_SD_MSK, SLEEP_FUN},
- 	{RK805_THERMAL_REG, TEMP_HOTDIE_MSK, TEMP115C},
- };
- 
-@@ -449,21 +448,6 @@ static const struct regmap_irq_chip rk818_irq_chip = {
- 
- static struct i2c_client *rk808_i2c_client;
- 
--static void rk805_device_shutdown_prepare(void)
--{
--	int ret;
--	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
--
--	if (!rk808)
--		return;
--
--	ret = regmap_update_bits(rk808->regmap,
--				 RK805_GPIO_IO_POL_REG,
--				 SLP_SD_MSK, SHUTDOWN_FUN);
--	if (ret)
--		dev_err(&rk808_i2c_client->dev, "Failed to shutdown device!\n");
--}
--
- static void rk808_device_shutdown(void)
- {
- 	int ret;
-@@ -499,17 +483,29 @@ static void rk8xx_syscore_shutdown(void)
- 	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
- 	int ret;
- 
--	if (system_state == SYSTEM_POWER_OFF &&
--	    (rk808->variant == RK809_ID || rk808->variant == RK817_ID)) {
-+	if (system_state != SYSTEM_POWER_OFF)
-+	       return;
-+
-+	switch (rk808->variant) {
-+	case RK805_ID:
-+		ret = regmap_update_bits(rk808->regmap,
-+					 RK805_GPIO_IO_POL_REG,
-+					 SLP_SD_MSK,
-+					 SHUTDOWN_FUN);
-+		break;
-+	case RK809_ID:
-+	case RK817_ID:
- 		ret = regmap_update_bits(rk808->regmap,
- 					 RK817_SYS_CFG(3),
- 					 RK817_SLPPIN_FUNC_MSK,
- 					 SLPPIN_DN_FUN);
--		if (ret) {
--			dev_warn(&rk808_i2c_client->dev,
--				 "Cannot switch to power down function\n");
--		}
-+		break;
-+	default:
-+		return;
- 	}
-+	if (ret)
-+		dev_warn(&rk808_i2c_client->dev,
-+			 "Cannot switch to power down function\n");
- }
- 
- static struct syscore_ops rk808_syscore_ops = {
-@@ -579,7 +575,6 @@ static int rk808_probe(struct i2c_client *client,
- 		nr_pre_init_regs = ARRAY_SIZE(rk805_pre_init_reg);
- 		cells = rk805s;
- 		nr_cells = ARRAY_SIZE(rk805s);
--		rk808->pm_pwroff_prep_fn = rk805_device_shutdown_prepare;
- 		break;
- 	case RK808_ID:
- 		rk808->regmap_cfg = &rk808_regmap_config;
-@@ -658,10 +653,8 @@ static int rk808_probe(struct i2c_client *client,
- 		goto err_irq;
- 	}
- 
--	if (of_property_read_bool(np, "rockchip,system-power-controller")) {
-+	if (of_property_read_bool(np, "rockchip,system-power-controller"))
- 		pm_power_off = rk808_device_shutdown;
--		pm_power_off_prepare = rk808->pm_pwroff_prep_fn;
--	}
- 
- 	return 0;
- 
-@@ -686,13 +679,6 @@ static int rk808_remove(struct i2c_client *client)
- 	if (pm_power_off == rk808_device_shutdown)
- 		pm_power_off = NULL;
- 
--	/**
--	 * As above, check if the pointer is set by us before overwrite.
--	 */
--	if (rk808->pm_pwroff_prep_fn &&
--	    pm_power_off_prepare == rk808->pm_pwroff_prep_fn)
--		pm_power_off_prepare = NULL;
--
- 	return 0;
- }
- 
-@@ -702,6 +688,12 @@ static int __maybe_unused rk8xx_suspend(struct device *dev)
- 	int ret = 0;
- 
- 	switch (rk808->variant) {
-+	case RK805_ID:
-+		ret = regmap_update_bits(rk808->regmap,
-+					 RK805_GPIO_IO_POL_REG,
-+					 SLP_SD_MSK,
-+					 SLEEP_FUN);
-+		break;
- 	case RK809_ID:
- 	case RK817_ID:
- 		ret = regmap_update_bits(rk808->regmap,
-diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-index b038653fa87e..e07f6e61cd38 100644
---- a/include/linux/mfd/rk808.h
-+++ b/include/linux/mfd/rk808.h
-@@ -620,6 +620,5 @@ struct rk808 {
- 	long				variant;
- 	const struct regmap_config	*regmap_cfg;
- 	const struct regmap_irq_chip	*regmap_irq_chip;
--	void				(*pm_pwroff_prep_fn)(void);
- };
- #endif /* __LINUX_REGULATOR_RK808_H */
+Thank you,
+Claudiu Beznea
+
+Claudiu Beznea (5):
+  drm: atmel-hlcdc: use double rate for pixel clock only if supported
+  drm: atmel-hlcdc: enable clock before configuring timing engine
+  mfd: atmel-hlcdc: return in case of error
+  Revert "drm/atmel-hlcdc: allow selecting a higher pixel-clock than
+    requested"
+  Revert "drm: atmel-hlcdc: enable sys_clk during initalization."
+
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 26 ++++++++++----------------
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c   | 19 +------------------
+ drivers/mfd/atmel-hlcdc.c                      | 14 ++++++++++----
+ 3 files changed, 21 insertions(+), 38 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
