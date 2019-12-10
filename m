@@ -2,110 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9891118197
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 08:55:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFF9D118177
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 08:44:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfLJHzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 02:55:22 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:12187 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726062AbfLJHzV (ORCPT
+        id S1727421AbfLJHoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 02:44:21 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38866 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727335AbfLJHoU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 02:55:21 -0500
-X-UUID: fbe1b8f9fdfa449ea7285c67eebc5ec6-20191210
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=JVrSUftnU6zu374DeJmbQdbn/1WkZQorVyvlrHedkhs=;
-        b=J8Hz74skYS0bk9AvTrD9mhRNxhLc3pvsAtBW5vPw3WtPridK15sZIT/xtXMoGkD472VvxtmnWYbvSfenov/4xFZtChoPm4IB/N2xN0roxiYnzIgf+Mrn8BKedQEgUXKgLuWOuTtFWpCqSLFo2rrH3u5CJu6AzTb53xJdH/NWAHE=;
-X-UUID: fbe1b8f9fdfa449ea7285c67eebc5ec6-20191210
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1197431199; Tue, 10 Dec 2019 15:55:17 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 10 Dec 2019 15:54:51 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 10 Dec 2019 15:55:19 +0800
-Message-ID: <1575964515.13210.3.camel@mtksdaap41>
-Subject: Re: [PATCH v2 09/14] soc: mediatek: cmdq: add read_s function
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 10 Dec 2019 15:55:15 +0800
-In-Reply-To: <1574819937-6246-11-git-send-email-dennis-yc.hsieh@mediatek.com>
-References: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-         <1574819937-6246-11-git-send-email-dennis-yc.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 10 Dec 2019 02:44:20 -0500
+Received: by mail-io1-f66.google.com with SMTP id v3so725014ioj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 23:44:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hIsV7YVqTr9LN39nGbpXBWYNxZYF/API4vjBkMRTnwk=;
+        b=Ljb8tg7n90pdawq/mSFektjTKgzTmE7zQum6REv33IhRaHuPe1d9SUFjtSRTKFr2p7
+         PQTUukcvGegnkptM1YRmnXr+B556MHA6AdoZWJ0FHHj4E3yCB8dPnHFmQzR/+GjAHB7Q
+         fetDW20lj789BZBkb0oUyj8+oxtJXcCXrAap3ooXvVGD1CbQpR64kRfOsPBOui/kWwN6
+         uUwh1N9O9JrpixNgeSWkkc2mln9fnCDyU12KpGHykJADPKH0ZRFI0DxSoQpbDlWoydz6
+         ouCO9/RAOx+Z4TDLjJmxC8w8PB1XkHf/TGmSWGi4xoWOBEZnaGFISiUnhU4AgOhQlSE3
+         yzFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hIsV7YVqTr9LN39nGbpXBWYNxZYF/API4vjBkMRTnwk=;
+        b=iBWo1wm6n7xvexhooTvA5LfjCFpqrZq1uf/8pMiJcnQ/KX4DnWvDL4whcOrPJQLcEn
+         +vkAZWBd8N+cUmpwY8Y1mlQsNmaE2rwoO2AfVCcPxfyK+a0fuPPG5mFcIYMP7GCIYnvv
+         W1Up+2X6PXqF6jKL7nKTJP15FopSPD8tEoUVjdi1EelBMagm/FH3OjSTvb3u1U0HE0YF
+         jiJvBGy9xblFGFmD4RDnmJgZfy64JTYl/lYk4ChzhiH7W97o1YvFGp727RcZ2JS3xUyh
+         ahRxcdL6rwt/SLgal/T+gHjLK8rME1rhj/HLBiXaW1EFqEbW3YmRU6DnvALFIP2YkGY0
+         O9Fg==
+X-Gm-Message-State: APjAAAVdf5KxUqosPVH5nbPTcQaGg6AXi6/KougqThjmopxOUcmTHWFo
+        IEyJb7bnJumOW/Q7vhZ8U4BE3sgyJloRmMj5DEE=
+X-Google-Smtp-Source: APXvYqx7x52SHGUCnps+unxtCpneRw981NZJH+EbrlRI3ANRLVcL+vm9mUgkduOPsk30MEnyZmF2DaqDKCxWgGbMDhM=
+X-Received: by 2002:a6b:770b:: with SMTP id n11mr22526006iom.154.1575963860181;
+ Mon, 09 Dec 2019 23:44:20 -0800 (PST)
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20191208041318.3702-1-cai@lca.pw>
+In-Reply-To: <20191208041318.3702-1-cai@lca.pw>
+From:   Ryan Chen <yu.chen.surf@gmail.com>
+Date:   Tue, 10 Dec 2019 15:55:57 +0800
+Message-ID: <CADjb_WRmyE3rRN2sLAh9ZOqAg0E3WeCkj9SwSM9dorvx4TGC2A@mail.gmail.com>
+Subject: Re: [PATCH] x86/resctrl: fix an imbalance in domain_remove_cpu
+To:     Qian Cai <cai@lca.pw>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@kernel.org,
+        Tony Luck <tony.luck@intel.com>, tj@kernel.org,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIERlbm5pczoNCg0KT24gV2VkLCAyMDE5LTExLTI3IGF0IDA5OjU4ICswODAwLCBEZW5uaXMg
-WUMgSHNpZWggd3JvdGU6DQo+IEFkZCByZWFkX3MgZnVuY3Rpb24gaW4gY21kcSBoZWxwZXIgZnVu
-Y3Rpb25zIHdoaWNoIHN1cHBvcnQgcmVhZCB2YWx1ZSBmcm9tDQo+IHJlZ2lzdGVyIG9yIGRtYSBw
-aHlzaWNhbCBhZGRyZXNzIGludG8gZ2NlIGludGVybmFsIHJlZ2lzdGVyLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogRGVubmlzIFlDIEhzaWVoIDxkZW5uaXMteWMuaHNpZWhAbWVkaWF0ZWsuY29tPg0K
-PiAtLS0NCj4gIGRyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jICAgfCAyMCAr
-KysrKysrKysrKysrKysrKysrKw0KPiAgaW5jbHVkZS9saW51eC9tYWlsYm94L210ay1jbWRxLW1h
-aWxib3guaCB8ICAxICsNCj4gIGluY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmgg
-ICAgfCAxMCArKysrKysrKysrDQo+ICAzIGZpbGVzIGNoYW5nZWQsIDMxIGluc2VydGlvbnMoKykN
-Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1oZWxwZXIu
-YyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jDQo+IGluZGV4IDJlZGJj
-MDk1NGQ5Ny4uMmNkNjkzZTM0OTgwIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3NvYy9tZWRpYXRl
-ay9tdGstY21kcS1oZWxwZXIuYw0KPiArKysgYi9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21k
-cS1oZWxwZXIuYw0KPiBAQCAtMjMxLDYgKzIzMSwyNiBAQCBpbnQgY21kcV9wa3Rfd3JpdGVfbWFz
-ayhzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTggc3Vic3lzLA0KPiAgfQ0KPiAgRVhQT1JUX1NZTUJP
-TChjbWRxX3BrdF93cml0ZV9tYXNrKTsNCj4gIA0KPiAraW50IGNtZHFfcGt0X3JlYWRfcyhzdHJ1
-Y3QgY21kcV9wa3QgKnBrdCwgcGh5c19hZGRyX3QgYWRkciwgdTE2IHJlZ19pZHgpDQo+ICt7DQoN
-ClNob3VsZCBhZGRyIGJlIHNoaWZ0ZWQgaW4gbXQ2Nzc5Pw0KDQpSZWdhcmRzLA0KQ0sNCg0KPiAr
-CXN0cnVjdCBjbWRxX2luc3RydWN0aW9uIGluc3QgPSB7IHswfSB9Ow0KPiArCWludCBlcnI7DQo+
-ICsJY29uc3QgdTE2IHNyY19yZWdfaWR4ID0gQ01EUV9TUFJfVEVNUDsNCj4gKw0KPiArCWVyciA9
-IGNtZHFfcGt0X2Fzc2lnbihwa3QsIHNyY19yZWdfaWR4LCBDTURRX0FERFJfSElHSChhZGRyKSk7
-DQo+ICsJaWYgKGVyciA8IDApDQo+ICsJCXJldHVybiBlcnI7DQo+ICsNCj4gKwlpbnN0Lm9wID0g
-Q01EUV9DT0RFX1JFQURfUzsNCj4gKwlpbnN0LmRzdF90ID0gQ01EUV9SRUdfVFlQRTsNCj4gKwlp
-bnN0LnNvcCA9IHNyY19yZWdfaWR4Ow0KPiArCWluc3QucmVnX2RzdCA9IHJlZ19pZHg7DQo+ICsJ
-aW5zdC5hcmdfYiA9IENNRFFfQUREUl9MT1coYWRkcik7DQo+ICsNCj4gKwlyZXR1cm4gY21kcV9w
-a3RfYXBwZW5kX2NvbW1hbmQocGt0LCBpbnN0KTsNCj4gK30NCj4gK0VYUE9SVF9TWU1CT0woY21k
-cV9wa3RfcmVhZF9zKTsNCj4gKw0KPiAgaW50IGNtZHFfcGt0X3dyaXRlX3Moc3RydWN0IGNtZHFf
-cGt0ICpwa3QsIHBoeXNfYWRkcl90IGFkZHIsIHUxNiByZWdfaWR4LA0KPiAgCQkgICAgIHUzMiBt
-YXNrKQ0KPiAgew0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9tYWlsYm94L210ay1jbWRx
-LW1haWxib3guaCBiL2luY2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmgNCj4g
-aW5kZXggOGVmODdlMWJkMDNiLi4zZjZiYzBkZmQ1ZGEgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUv
-bGludXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9t
-YWlsYm94L210ay1jbWRxLW1haWxib3guaA0KPiBAQCAtNTksNiArNTksNyBAQCBlbnVtIGNtZHFf
-Y29kZSB7DQo+ICAJQ01EUV9DT0RFX0pVTVAgPSAweDEwLA0KPiAgCUNNRFFfQ09ERV9XRkUgPSAw
-eDIwLA0KPiAgCUNNRFFfQ09ERV9FT0MgPSAweDQwLA0KPiArCUNNRFFfQ09ERV9SRUFEX1MgPSAw
-eDgwLA0KPiAgCUNNRFFfQ09ERV9XUklURV9TID0gMHg5MCwNCj4gIAlDTURRX0NPREVfV1JJVEVf
-U19NQVNLID0gMHg5MSwNCj4gIAlDTURRX0NPREVfTE9HSUMgPSAweGEwLA0KPiBkaWZmIC0tZ2l0
-IGEvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaCBiL2luY2x1ZGUvbGludXgv
-c29jL21lZGlhdGVrL210ay1jbWRxLmgNCj4gaW5kZXggNTZmZjE5NzAxOTdjLi5iYzI4YTQxZDc3
-ODAgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmgN
-Cj4gKysrIGIvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaA0KPiBAQCAtMTA2
-LDYgKzEwNiwxNiBAQCBpbnQgY21kcV9wa3Rfd3JpdGUoc3RydWN0IGNtZHFfcGt0ICpwa3QsIHU4
-IHN1YnN5cywgdTE2IG9mZnNldCwgdTMyIHZhbHVlKTsNCj4gIGludCBjbWRxX3BrdF93cml0ZV9t
-YXNrKHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1OCBzdWJzeXMsDQo+ICAJCQl1MTYgb2Zmc2V0LCB1
-MzIgdmFsdWUsIHUzMiBtYXNrKTsNCj4gIA0KPiArLyoqDQo+ICsgKiBjbWRxX3BrdF9yZWFkX3Mo
-KSAtIGFwcGVuZCByZWFkX3MgY29tbWFuZCB0byB0aGUgQ01EUSBwYWNrZXQNCj4gKyAqIEBwa3Q6
-CXRoZSBDTURRIHBhY2tldA0KPiArICogQGFkZHI6CXRoZSBwaHlzaWNhbCBhZGRyZXNzIG9mIHJl
-Z2lzdGVyIG9yIGRtYSB0byByZWFkDQo+ICsgKiBAcmVnX2lkeDoJdGhlIENNRFEgaW50ZXJuYWwg
-cmVnaXN0ZXIgSUQgdG8gY2FjaGUgcmVhZCBkYXRhDQo+ICsgKg0KPiArICogUmV0dXJuOiAwIGZv
-ciBzdWNjZXNzOyBlbHNlIHRoZSBlcnJvciBjb2RlIGlzIHJldHVybmVkDQo+ICsgKi8NCj4gK2lu
-dCBjbWRxX3BrdF9yZWFkX3Moc3RydWN0IGNtZHFfcGt0ICpwa3QsIHBoeXNfYWRkcl90IGFkZHIs
-IHUxNiByZWdfaWR4KTsNCj4gKw0KPiAgLyoqDQo+ICAgKiBjbWRxX3BrdF93cml0ZV9zX21hc2so
-KSAtIGFwcGVuZCB3cml0ZV9zIGNvbW1hbmQgdG8gdGhlIENNRFEgcGFja2V0DQo+ICAgKiBAcGt0
-Ogl0aGUgQ01EUSBwYWNrZXQNCg0K
+Hi Qian,
 
+On Sun, Dec 8, 2019 at 12:14 PM Qian Cai <cai@lca.pw> wrote:
+>
+> domain_add_cpu() calls domain_setup_mon_state() only when r->mon_capable
+> is true where it will initialize d->mbm_over. However,
+> domain_remove_cpu() calls cancel_delayed_work(&d->mbm_over) without
+> checking r->mon_capable. Hence, it triggers a debugobjects warning when
+> offlining CPUs because those timer debugobjects are never initialized.
+>
+Could you elaborate a little more on the failure symptom?
+If I understand correctly, the error you described was  due to
+r->mon_capable set to false while is_mbm_enabled() returns true?
+Which means on this platform rdt_mon_features is non zero?
+And in get_rdt_mon_resources() it will invoke rdt_get_mon_l3_config(),
+however the only possible failure to do not set r->mon_capable is that it
+ failed in dom_data_init() due to kcalloc() failure?  Then the logic in
+get_rdt_resources() is that it will ignore the return error if rdt allocate
+feature is supported on this platform?  If this is the case, the r->mon_capable
+is not an indicator for whether the overflow thread has been created, right?
+Can we simply remove the check of r->mon_capable in domain_add_cpu() and
+invoke  domain_setup_mon_state() directly?
+> ODEBUG: assert_init not available (active state 0) object type:
+> timer_list hint: 0x0
+> WARNING: CPU: 143 PID: 789 at lib/debugobjects.c:484
+> debug_print_object+0xfe/0x140
+> Hardware name: HP Synergy 680 Gen9/Synergy 680 Gen9 Compute Module, BIOS
+> I40 05/23/2018
+> RIP: 0010:debug_print_object+0xfe/0x140
+> Call Trace:
+> debug_object_assert_init+0x1f5/0x240
+> del_timer+0x6f/0xf0
+> try_to_grab_pending+0x42/0x3c0
+> cancel_delayed_work+0x7d/0x150
+> resctrl_offline_cpu+0x3c0/0x520
+> cpuhp_invoke_callback+0x197/0x1120
+> cpuhp_thread_fun+0x252/0x2f0
+> smpboot_thread_fn+0x255/0x440
+> kthread+0x1e6/0x210
+> ret_from_fork+0x3a/0x50
+>
+> Fixes: e33026831bdb ("x86/intel_rdt/mbm: Handle counter overflow")
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+>  arch/x86/kernel/cpu/resctrl/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+> index 03eb90d00af0..89049b343c7a 100644
+> --- a/arch/x86/kernel/cpu/resctrl/core.c
+> +++ b/arch/x86/kernel/cpu/resctrl/core.c
+> @@ -618,7 +618,7 @@ static void domain_remove_cpu(int cpu, struct rdt_resource *r)
+>                 if (static_branch_unlikely(&rdt_mon_enable_key))
+>                         rmdir_mondata_subdir_allrdtgrp(r, d->id);
+>                 list_del(&d->list);
+> -               if (is_mbm_enabled())
+> +               if (r->mon_capable && is_mbm_enabled())
+>                         cancel_delayed_work(&d->mbm_over);
+Humm, it looks like there are two places within this function
+invoked cancel_delayed_work(&d->mbm_over),
+why not adding the check for both of them?
+
+thanks,
+Y
