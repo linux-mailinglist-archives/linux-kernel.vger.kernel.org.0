@@ -2,25 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 521A3118E7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 18:04:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1024118E7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 18:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727717AbfLJREu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 12:04:50 -0500
+        id S1727594AbfLJREp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 12:04:45 -0500
 Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:39689 "EHLO
         esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727505AbfLJREq (ORCPT
+        with ESMTP id S1727505AbfLJREo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 12:04:46 -0500
+        Tue, 10 Dec 2019 12:04:44 -0500
 X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 12:04:43 EST
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1575997485;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=bh4wBGVIIt6FwYzD2A/GCbI85tJhoANufsWXt/nPgfs=;
-  b=dJ6qC0dzd3sy7FgfUVdWgwu2PU2g/r5iYfDJitlG0KyQzkMqLwM2ZhIH
-   dqza47hjisGWHvxkvntPmpt4h/QItNzNbD+arxUXABbmbrEppufmDNOzB
-   CbxwnTGLlrHRjgweSVu0PBraKwMP3/tR8r/4z8yLwoF5aM3MfnktozeDB
-   Q=;
+  d=citrix.com; s=securemail; t=1575997484;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=PX5tKIG5LXYHZbMQPwsn5YEgEtw9pEZTLwOmysNDEoE=;
+  b=MmLdcfeXqEq2zeQKcNcn1W1jVFZuSJ6Bc7HYNGeDOavMJi8Zug4Fv8YX
+   gLj8/XW6+uHhbJe3HiXuZUgv6a0TLBNqG/7jUwrPxW85VJuwDNi9W8FEd
+   QlgjtVMWoNqAal/VDIQ3NpsWx6rlQj2qgjfYciQbE86itA/62HA8h/ZXH
+   8=;
 Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=igor.druzhinin@citrix.com; spf=Pass smtp.mailfrom=igor.druzhinin@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
 Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
   authenticity information available from domain of
@@ -48,26 +49,28 @@ Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
   envelope-from="igor.druzhinin@citrix.com";
   x-sender="postmaster@mail.citrix.com";
   x-conformance=sidf_compatible
-IronPort-SDR: o+qsGJbNa3suDdEcZu3nxCsTb15rCj2BGw6qcWZoYcN6ZNwdvNzo9iPbYScjv/dWg3bTyQy/dW
- lL0Pgg9ICBe9RRalAw1H2Scp9tLgd9T2JfWJ1sQYaH0XJl9qF3y5fM1GSKWMJ0vjBhUJx4C0yV
- v+xzNE/uKuQmNRxZrOzGsDkBAiSub/ZMnJTgSOVxLnWnywbp25NOEuE8jw71mx7OiUwe2SrsqR
- QXbDUSexpKbuQOE+iC03alye8by3UapYVcHxnjhItCdHmp+Q0LTCK9491OjvbgpO1Gn929uAhy
- 5wk=
+IronPort-SDR: dEN1p4rXAEv/2vdzGaoR1Ds7OiI8GGfP97MHIwg+llWhb2GSsXhO3eDwRcld91X1oihBQxEAPm
+ Yg2TfF/u/Jh3oQpawQ5WGBSL7kJeiFDH5/IVRYHeIq+q5iLmqd2LEHXNQm3QIHXXXOae90OQMO
+ M/8mN/D89WICfoyU531aS0Y2EU1vJ8uDUwlnQ3LWEFrkIRyDSo5hx7VDk5bkwUdLWDhvg2Bhd5
+ d7QR8DGu2PpBlRkXQ4HMTwRlTllxhiAW89usC7xvJoUKJYCkZznPRPF63HYMJl/z5K1Y2wpxc8
+ wes=
 X-SBRS: 2.7
-X-MesageID: 9479236
+X-MesageID: 9479233
 X-Ironport-Server: esa2.hc3370-68.iphmx.com
 X-Remote-IP: 162.221.158.21
 X-Policy: $RELAYED
 X-IronPort-AV: E=Sophos;i="5.69,300,1571716800"; 
-   d="scan'208";a="9479236"
+   d="scan'208";a="9479233"
 From:   Igor Druzhinin <igor.druzhinin@citrix.com>
 To:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <hare@suse.de>, <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
         "Igor Druzhinin" <igor.druzhinin@citrix.com>
-Subject: [PATCH 0/2] Fixing libfc memory leaks
-Date:   Tue, 10 Dec 2019 16:57:28 +0000
-Message-ID: <1575997050-12959-1-git-send-email-igor.druzhinin@citrix.com>
+Subject: [PATCH 1/2] scsi: libfc: free response frame from GPN_ID
+Date:   Tue, 10 Dec 2019 16:57:29 +0000
+Message-ID: <1575997050-12959-2-git-send-email-igor.druzhinin@citrix.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1575997050-12959-1-git-send-email-igor.druzhinin@citrix.com>
+References: <1575997050-12959-1-git-send-email-igor.druzhinin@citrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,14 +78,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Igor Druzhinin (2):
-  scsi: libfc: free response frame from GPN_ID
-  scsi: libfc: drop extra rport reference in fc_rport_create()
+fc_disc_gpn_id_resp() should be the last function using it so free it
+here to avoid memory leak.
 
- drivers/scsi/libfc/fc_disc.c  | 2 ++
- drivers/scsi/libfc/fc_rport.c | 4 +++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
+---
+ drivers/scsi/libfc/fc_disc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/scsi/libfc/fc_disc.c b/drivers/scsi/libfc/fc_disc.c
+index 9c5f7c9..2b865c6 100644
+--- a/drivers/scsi/libfc/fc_disc.c
++++ b/drivers/scsi/libfc/fc_disc.c
+@@ -628,6 +628,8 @@ static void fc_disc_gpn_id_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 	}
+ out:
+ 	kref_put(&rdata->kref, fc_rport_destroy);
++	if (!IS_ERR(fp))
++		fc_frame_free(fp);
+ }
+ 
+ /**
 -- 
 2.7.4
 
