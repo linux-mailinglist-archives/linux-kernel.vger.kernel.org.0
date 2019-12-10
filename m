@@ -2,99 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B807118CAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:37:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ED95118CBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:38:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbfLJPhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 10:37:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727486AbfLJPhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 10:37:23 -0500
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727641AbfLJPhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 10:37:42 -0500
+Received: from sv2-smtprelay2.synopsys.com ([149.117.73.133]:53730 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727411AbfLJPhk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 10:37:40 -0500
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B89B622B48
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 15:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575992243;
-        bh=1vwTuyeGNMoWzMSycC968byapHd+NyJvdWDj4S+IGzk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tmzVi/9qM6uBnYYEyG0XC7YXoHByQZfteOHBN3MQTZWHeRD4QKCV1uf5IVDVxVbAe
-         0ydyQauqJL5JD7nzoY2w9NE92E7m2Trq62q55XHVaFNmRQ1Z3Yhq4Dre3ExkLmY/65
-         4t3mLfG3K06iteG2xHwmX4KlMsQSvLyVRGDcQKDM=
-Received: by mail-lf1-f54.google.com with SMTP id n25so14138516lfl.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 07:37:22 -0800 (PST)
-X-Gm-Message-State: APjAAAU9MPXILj6rrCS5VeS/PsRXMm5Q/1wRzDG3OtPt7btUEqDBcrS9
-        VUxsZAXRvi9s8uUPtZt/N4EzjouTh3Vf1AJVByE=
-X-Google-Smtp-Source: APXvYqw2TGCWM9w3To7VtUpYrgW5dwe3lTLc9vGX+5JsCfHY9qfQzI77/YfYqCJgCYQdQyc2H+RF2TLfxLxq+1g4uO8=
-X-Received: by 2002:a19:c205:: with SMTP id l5mr18943583lfc.159.1575992240859;
- Tue, 10 Dec 2019 07:37:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20191210145657.105808-1-oleksandr@redhat.com>
-In-Reply-To: <20191210145657.105808-1-oleksandr@redhat.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 10 Dec 2019 16:37:09 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPfN4r+fi5R0GOyvQnQ6yn7hQvi+cScDD5THqF8X0nOX7w@mail.gmail.com>
-Message-ID: <CAJKOXPfN4r+fi5R0GOyvQnQ6yn7hQvi+cScDD5THqF8X0nOX7w@mail.gmail.com>
-Subject: Re: [PATCH RFC] init/Kconfig: enable -O3 for all arches
-To:     Oleksandr Natalenko <oleksandr@redhat.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jessica Yu <jeyu@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        David Howells <dhowells@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 21414405E0;
+        Tue, 10 Dec 2019 15:37:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1575992259; bh=fYuY0lyYqVPq+/KbacWe8P4uzxJ1IsIgZmjZKUwsUeo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bE8Cvb50ctNvJTv8ONaR0ziSsoWGdFlr4d0SeLDUx/4mQ3Ilmc5iXrEYAVNHQweog
+         p0ntUaFjRp3ft9wkJBVkxMzPvKz1pqYRgkufGMWCbwkZ9NXYahiIGpJUYSEa3MsLx5
+         dXAhg+bRyviaj8e27S+X92G+9Q3jKys2PYiITdTiX0HQ63AicK680Y+8jUXtxAFKul
+         oacBoagqV0+wbwg8wsOdPqTzbe5npiUcD5GcOqmPRsHc2Ac9zunPWnadZFIzVBlCQQ
+         tmG3QQSpw2xQzKKbchFJCgFdqQjK6/qaSkL3MQ5S2K0ZlawvtAmMx+VBOOHguMzItY
+         UcK9HmM5/MldA==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 9AAA5A005D;
+        Tue, 10 Dec 2019 15:37:36 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 691303E2CC;
+        Tue, 10 Dec 2019 16:37:36 +0100 (CET)
+From:   Vitor Soares <Vitor.Soares@synopsys.com>
+To:     linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org
+Cc:     Joao.Pinto@synopsys.com, bbrezillon@kernel.org,
+        gregkh@linuxfoundation.org, wsa@the-dreams.de, arnd@arndb.de,
+        broonie@kernel.org, Vitor Soares <Vitor.Soares@synopsys.com>
+Subject: [RFC 0/5] Introduce i3c device userspace interface
+Date:   Tue, 10 Dec 2019 16:37:28 +0100
+Message-Id: <cover.1575977795.git.vitor.soares@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019 at 15:57, Oleksandr Natalenko <oleksandr@redhat.com> wrote:
->
-> Building a kernel with -O3 may help in hunting bugs like [1] and thus
-> using this switch should not be restricted to one specific arch only.
->
-> Thus lets expose it. If for some reasone we have to hide it, lets hide
-> it under EXPERT.
+For today there is no way to use i3c devices from user space and
+the introduction of such API will help developers during the i3c device
+or i3c host controllers development.
 
-You are not hiding it under EXPERT so no need to document in commit
-log theoretical future decisions.
+The i3cdev module is highly based on i2c-dev and yet I tried to address
+the concerns raised in [1].
 
-> The commit is made against next-20191210 tag.
+NOTES:
+- The i3cdev dynamically request an unused major number.
 
-This does not belong to commit message. You can put such under the ---
-separator.
+- The i3c devices are dynamically exposed/removed from dev/ folder based
+  on if they have a device driver bound to it.
 
-Best regards,
-Krzysztof
+- For now, the module exposes i3c devices without device driver on
+  dev/i3c-<bus>-<pid>, but we can change the path to
+  dev/bus/i3c/<bus>-<pid> or dev/i3c/<bus>-<pid>.
 
->
-> [1] https://lore.kernel.org/lkml/673b885183fb64f1cbb3ed2387524077@natalenko.name/
->
-> Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
-> ---
->  init/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/init/Kconfig b/init/Kconfig
-> index a34064a031a5..b41b18edb10e 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1228,7 +1228,6 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
->
->  config CC_OPTIMIZE_FOR_PERFORMANCE_O3
->         bool "Optimize more for performance (-O3)"
-> -       depends on ARC
->         imply CC_DISABLE_WARN_MAYBE_UNINITIALIZED  # avoid false positives
->         help
->           Choosing this option will pass "-O3" to your compiler to optimize
-> --
-> 2.24.0
->
+- As in the i2c subsystem, here it is exposed the i3c_priv_xfer to
+  userspace. I tried to use a dedicated structure as in spidev but I don't
+  see any obvious advantage.
+
+- Since the i3c API only exposes i3c_priv_xfer to devices, for now, the
+  module just makes use of one ioctl(). This can change in the future with
+  the introduction hdr commands or by the need of exposing some CCC
+  commands to the device API (private contract between master-slave).
+  Regarding the i3c device info, some information is already available
+  through sysfs. We can add more device attributes to expose more
+  information or add a dedicated ioctl() request for that purpose or both.
+
+- Similar to i2c, I have also created a tool that you can find in [2]
+  for testing purposes. If you have some time available I would appreciate
+  your feedback about it as well.
+
+[1] https://lkml.org/lkml/2018/11/15/853
+[2] https://github.com/vitor-soares-snps/i3c-tools.git
+
+Vitor Soares (5):
+  i3c: master: export i3c_masterdev_type
+  i3c: master: export i3c_bus_type symbol
+  i3c: device: expose transfer strutures to uapi
+  i3c: master: add i3c_for_each_dev helper
+  i3c: add i3cdev module to expose i3c dev in /dev
+
+ drivers/i3c/Kconfig             |  15 ++
+ drivers/i3c/Makefile            |   1 +
+ drivers/i3c/i3cdev.c            | 438 ++++++++++++++++++++++++++++++++++++++++
+ drivers/i3c/internals.h         |   2 +
+ drivers/i3c/master.c            |  16 +-
+ include/linux/i3c/device.h      |  54 +----
+ include/uapi/linux/i3c/device.h |  66 ++++++
+ include/uapi/linux/i3c/i3cdev.h |  27 +++
+ 8 files changed, 565 insertions(+), 54 deletions(-)
+ create mode 100644 drivers/i3c/i3cdev.c
+ create mode 100644 include/uapi/linux/i3c/device.h
+ create mode 100644 include/uapi/linux/i3c/i3cdev.h
+
+-- 
+2.7.4
+
