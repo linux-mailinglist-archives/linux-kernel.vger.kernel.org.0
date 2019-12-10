@@ -2,62 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D010118BAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B73D118BB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:55:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbfLJOyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 09:54:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbfLJOyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:54:04 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ECC32077B;
-        Tue, 10 Dec 2019 14:54:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575989643;
-        bh=a5BHMVgtPZwxKGzK9Kll2jVkr61mgNawIAex25lud2g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a4TFMfvd0F/X1H5S/tJzVb+P1hLYpiTHlMSKDRBBCcXBeVOGGqNLgg+mV3tvtag5l
-         N8ueB474Z+e04eueZAbwwsInGwdoaAW9Yur5XdhWYcT1M6azCT97/yEpsEp+uNF1ew
-         Gx6y0ozwRqOc9p4OH7WnrTiprj+0O5cEjdC1Bhxs=
-Date:   Tue, 10 Dec 2019 15:54:00 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        Hyunki Koo <kkoos00@naver.com>,
-        HYUN-KI KOO <hyunki00.koo@samsung.com>,
-        Shinbeom Choi <sbeom.choi@samsung.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] tty: serial: samsung: allow driver to be built by
- anyone
-Message-ID: <20191210145400.GA4012141@kroah.com>
-References: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
- <20191210144656.GA11222@pi3>
+        id S1727750AbfLJOzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 09:55:20 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:41533 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727420AbfLJOzT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 09:55:19 -0500
+Received: by mail-ot1-f65.google.com with SMTP id r27so15701560otc.8;
+        Tue, 10 Dec 2019 06:55:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sxfx8pYcfnvd3lqW1qImtgwu7XzTFQuwrY147FPzqGI=;
+        b=YRyoRk57De2c4zcSJKKnR566euN0kLevtMG85WIwzl6M5FpKJB8pwbGP7AXKM/AxNd
+         Nld0WUKfOFGhYIP/P9/7IIHExb8cIuXnM2VW/xex87Lf5HVnpdP+yYZU174NpKDyQRqc
+         2lQt2tl7oYMNaEalKntzAUizrWIu8B49ampjbXzPOC4n2KaUwLcPzTLHIk2VqO4abL8n
+         QjNJ1sFFblQfRywwVVOrgjukQnGbtxQ9ISQBA+XLye86Jh/jJc/lzK6TjDoOQ5pheEkr
+         LmVFfg6HKM+rjMQ2DaOyJQ4QOd2/zeDn5oj/guSfnIwQvfgcJ55XIdh1eE8uDWCdC3U1
+         CXtg==
+X-Gm-Message-State: APjAAAWk81x3IigLOJ6XIdcsylnqR2yoJuBQKGsBAL23Rtm7sziZQ8S+
+        x6acJ/4ojIc5MjGLF5ICbGRdyGWB1Sgva0N0gRY=
+X-Google-Smtp-Source: APXvYqyvpesdaROFU80iQbYfg6jNyZzt/R79xRmZAAQaMqkHwq20yaDGs/xYgnPW9xtctjeHu1wtxLpcUrAqR6E22Hg=
+X-Received: by 2002:a9d:6c81:: with SMTP id c1mr24883423otr.39.1575989718977;
+ Tue, 10 Dec 2019 06:55:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210144656.GA11222@pi3>
+References: <20191030184844.84219-1-edumazet@google.com>
+In-Reply-To: <20191030184844.84219-1-edumazet@google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 10 Dec 2019 15:55:08 +0100
+Message-ID: <CAMuHMdVK=dUxhJh1pjLe4bGn3V=FHJ_90oga0USRBw-wSqd8Pw@mail.gmail.com>
+Subject: Re: [PATCH] dma-debug: increase HASH_SIZE
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 03:46:56PM +0100, Krzysztof Kozlowski wrote:
-> On Tue, Dec 10, 2019 at 03:36:57PM +0100, Greg Kroah-Hartman wrote:
-> > There is no need to tie this driver to only the OMAP platform,
-> 
-> s/OMAP/Exynos/
+On Wed, Oct 30, 2019 at 8:13 PM Eric Dumazet <edumazet@google.com> wrote:
+> With modern NIC, it is not unusual having about ~256,000 active dma
+> mappings. Hash size of 1024 buckets is too small.
+>
+> Forcing full cache line per bucket does not seem useful,
+> especially now that we have a contention on free_entries_lock
+> for allocations and freeing of entries. Better using space
+> to fit more buckets.
+>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  kernel/dma/debug.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+> index 4ad74f5987ea9e95f9bb5e2d1592254e367d24fb..35e2a853bff9c482d789ab331d79aaee07753a97 100644
+> --- a/kernel/dma/debug.c
+> +++ b/kernel/dma/debug.c
+> @@ -27,7 +27,7 @@
+>
+>  #include <asm/sections.h>
+>
+> -#define HASH_SIZE       1024ULL
+> +#define HASH_SIZE       16384ULL
+>  #define HASH_FN_SHIFT   13
+>  #define HASH_FN_MASK    (HASH_SIZE - 1)
+>
+> @@ -87,7 +87,7 @@ typedef bool (*match_fn)(struct dma_debug_entry *, struct dma_debug_entry *);
+>  struct hash_bucket {
+>         struct list_head list;
+>         spinlock_t lock;
+> -} ____cacheline_aligned_in_smp;
+> +};
+>
+>  /* Hash list to save the allocated dma addresses */
+>  static struct hash_bucket dma_entry_hash[HASH_SIZE];
 
-Oops, sorry, was thinking of another driver :)
+JFTR, this increases dma_entry_hash size by 327680 bytes, and pushes
+a few more boards beyond their bootloader-imposed kernel size limits.
 
-> Beside that:
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Disabling CONFIG_DMA_API_DEBUG fixes that.
+Of course the real fix is to fix the bootloaders...
 
-Thanks for the review, will fix up the text in here when I apply this.
+Gr{oetje,eeting}s,
 
-greg k-h
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
