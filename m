@@ -2,103 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD106118C83
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:28:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 941B3118BFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:07:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbfLJP2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 10:28:54 -0500
-Received: from gateway20.websitewelcome.com ([192.185.55.25]:32992 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727411AbfLJP2y (ORCPT
+        id S1727522AbfLJPHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 10:07:42 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40009 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727272AbfLJPHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 10:28:54 -0500
-X-Greylist: delayed 1460 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 10:28:53 EST
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id EA00D400C7341
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 07:54:09 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id eh3ti8BpkOdBHeh3uiHkLq; Tue, 10 Dec 2019 09:04:30 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=di6itqzy1Kz6qTiVDOx+IF2EnF+F8GJNKypw7OnCAyA=; b=erGq0mpwB/ttMA8iQzgnj6nRSo
-        +hvbQTfkTsD27mUp9UFIBDHI+BI28AiDkknua5jG2WGDSkz7QjmuB5pUmnQ1/EPO7bvGAqiFsKNbv
-        7JhHdQOKIZKtC8JbB1o9uqePw2KMJppguDO4R8zIV8Y5RylMmucnrgIRiE6BisnsLJA26BDckQsK3
-        n/V39u4QiRRB1Z+vVH4HML3zdh+fBi1S45x0FatjeCPHrIvfXTboKDEcQ5qx+tdmVqjLulGF1Yp0n
-        wKDvCXjjCiBPdr9SQLESOUzgA1NaxQi96mutVxOeyMV839FA4kIz5aLYzxOnIPWyRU/BHag+gfcKu
-        zH/v63zA==;
-Received: from [187.192.35.14] (port=36632 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ieh3s-000Syo-0a; Tue, 10 Dec 2019 09:04:28 -0600
-Date:   Tue, 10 Dec 2019 09:05:32 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dan Murphy <dmurphy@ti.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sean Nyekjaer <sean@geanix.com>
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] can: tcan45x: Fix inconsistent IS_ERR and PTR_ERR
-Message-ID: <20191210150532.GA12732@embeddedor>
+        Tue, 10 Dec 2019 10:07:42 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i15so15772880oto.7;
+        Tue, 10 Dec 2019 07:07:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gK9WhM7XsDaY+lb7/ANGcV/P86c0uO6eQPbXi7xswFE=;
+        b=eIH4lr9LaBZSeOFhwlWBesw20u7HhJynzzXSFuID/eOnC6umFrgnqgfC26BH4hkwca
+         HWxdcjAC/5PxldYp33FLiAMwANVdV8qrYnAgFWiN/M2sULha8b3XhJPL/pj2C/bndSbZ
+         zI1p9AFepvSShSph8KDRHCDnbQNA8aNi9I7NhfKXs1RaN3w62DTAxQBuc1eiOizIVKA2
+         7wE5qFTCy1LFyzzDk04MWtUv5Xn7IJEweh4ZOKAcGUCP8GyZ0/JYqn9Q7Q05xLl1G/M1
+         cTCs/hWSyTde/n5Pk41XIKLrnmCCw5+5BWkkmVeir/03GbfQTHtIJP2GGFAJt/+NF6N0
+         3OHg==
+X-Gm-Message-State: APjAAAWwIx+eFRKUOyN5B9RlGPFOOPB8iCMCjDgn8g53ZaIpITc82rWD
+        ARRU5segUdovbFVlI/XoShCL0XbGyJNGr79Rz7M=
+X-Google-Smtp-Source: APXvYqwC9TBYwf2pyNK0Qv54QJWthYsUOMkaDtrE0Tk9LHTcQq/Y/VTDQ4Y51lg891cIGW1OjaKmhctBQZh2r1ySNGc=
+X-Received: by 2002:a9d:7984:: with SMTP id h4mr21315284otm.297.1575990461076;
+ Tue, 10 Dec 2019 07:07:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.35.14
-X-Source-L: No
-X-Exim-ID: 1ieh3s-000Syo-0a
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.35.14]:36632
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20191030184844.84219-1-edumazet@google.com> <CAMuHMdVK=dUxhJh1pjLe4bGn3V=FHJ_90oga0USRBw-wSqd8Pw@mail.gmail.com>
+ <CANn89iK5oLcLm2bL=Q5+oTrKrd1q_QkEQpAQSfyjDSSeM22Dfw@mail.gmail.com>
+In-Reply-To: <CANn89iK5oLcLm2bL=Q5+oTrKrd1q_QkEQpAQSfyjDSSeM22Dfw@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 10 Dec 2019 16:07:30 +0100
+Message-ID: <CAMuHMdU2i8XABic0gUbSdCyBW=D3Rm+K+HR5DzUbxm8SpP-rHw@mail.gmail.com>
+Subject: Re: [PATCH] dma-debug: increase HASH_SIZE
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix inconsistent IS_ERR and PTR_ERR in tcan4x5x_parse_config.
+Hi Eric,
 
-The proper pointer to be passed as argument is tcan4x5x->device_wake_gpio.
+On Tue, Dec 10, 2019 at 4:04 PM Eric Dumazet <edumazet@google.com> wrote:
+> On Tue, Dec 10, 2019 at 6:55 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > JFTR, this increases dma_entry_hash size by 327680 bytes, and pushes
+> > a few more boards beyond their bootloader-imposed kernel size limits.
+> >
+> > Disabling CONFIG_DMA_API_DEBUG fixes that.
+> > Of course the real fix is to fix the bootloaders...
+>
+> Maybe we can make the hash size arch-dependent, or better dynamically
+> allocate this memory ?
 
-This bug was detected with the help of Coccinelle.
+Dynamically allocating would be the better solution, IMHO.
 
-Fixes: 2de497356955 ("can: tcan45x: Make wake-up GPIO an optional GPIO")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/can/m_can/tcan4x5x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/net/can/m_can/tcan4x5x.c b/drivers/net/can/m_can/tcan4x5x.c
-index 4e1789ea2bc3..6676ecec48c3 100644
---- a/drivers/net/can/m_can/tcan4x5x.c
-+++ b/drivers/net/can/m_can/tcan4x5x.c
-@@ -355,7 +355,7 @@ static int tcan4x5x_parse_config(struct m_can_classdev *cdev)
- 	tcan4x5x->device_wake_gpio = devm_gpiod_get(cdev->dev, "device-wake",
- 						    GPIOD_OUT_HIGH);
- 	if (IS_ERR(tcan4x5x->device_wake_gpio)) {
--		if (PTR_ERR(tcan4x5x->power) == -EPROBE_DEFER)
-+		if (PTR_ERR(tcan4x5x->device_wake_gpio) == -EPROBE_DEFER)
- 			return -EPROBE_DEFER;
- 
- 		tcan4x5x_disable_wake(cdev);
+                        Geert
+
 -- 
-2.23.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
