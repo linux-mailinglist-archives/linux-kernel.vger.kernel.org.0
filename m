@@ -2,105 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C48D7118344
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D400111835B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:17:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbfLJJPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:15:06 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37491 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbfLJJPD (ORCPT
+        id S1727107AbfLJJRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:17:19 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:50741 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbfLJJRT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:15:03 -0500
-Received: by mail-pf1-f193.google.com with SMTP id s18so8747834pfm.4
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:15:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TDhjwwUSHDyACk0EiHiTW5gF5LNK8IJFMEdCdOncrPE=;
-        b=ghqqpu4Y3uy6hum+ewIVbOYchj5qEMKjfUftHMyfeRmiSE9NmCDJ9vZXizcVLViGxF
-         Uc8K92FzayQgL8W6g/GF5S3scqlogON5s9nQVQ9fJw5fqPwqnmDkJszXcT01LQWAeOSR
-         z41gcw7az9DzaMG+mPFKEBA3Xf+E8ZyUk/EB/kw9B9KdACbunaXvQ2lNNkC6fnG0Z6Yv
-         xUj/45p9resd1DifbIk76ZqlqRb7VIWA0Rgv0/q+pmGLxtwBPtB+plQ6EMPpYGpu0SJK
-         aerFxhbP2AAvZn83JYDGqKsyUGALkIkgL54ICylCzQlj1FHWYUAnukNAedykQv7WYMsx
-         uZmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TDhjwwUSHDyACk0EiHiTW5gF5LNK8IJFMEdCdOncrPE=;
-        b=VlkVDTFmaoIKIIwEuVAGLVqrXPezipOFZL0dC20bvng7xCJ0lrHW6gnwPDzlE94bV8
-         qNYQIQy4hmFJxmpKgJclSl/8bELtTNo8njc+AesRGqaOeoN7QovnQLCRk99pVDUnW6Nq
-         +S12iMkXCPqoPCcb9E2eqVY/y22l4ZEARi0+jBuAkV1XSwECxN/UlVPy24NHqiZST+JT
-         7zMKkiERZQjdUE1gboJLojnSs3E7ZrqSE+bwPHCNRifsfc7nJL+wlc8i1trm01I6ntu1
-         YZ283XpEN8m8fYrLmd/JfsJmnBUcKiWhp+2Tyjcb7h7OBZ/yH+XvrKdLCq9k+I+aG0cY
-         dRZg==
-X-Gm-Message-State: APjAAAVdPnkjPuaJ5TEsGDl7tTyX7Gea6MgNNgq6ynYLx+xV7uWh2O+s
-        S8Y0GORg7Zx05JJe7qAez15RsFxJ
-X-Google-Smtp-Source: APXvYqyXCRbKsNc5R0fJgcZtH0Jj0+LMgA/z2G4Rzo1eZ2DpoBJB/lpl1vKKqc6LG9ozYEpt2/nn2w==
-X-Received: by 2002:a65:66c4:: with SMTP id c4mr23827702pgw.429.1575969302412;
-        Tue, 10 Dec 2019 01:15:02 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id 143sm2478287pfz.67.2019.12.10.01.14.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 01:15:01 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cheah Kok Cheong <thrust73@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] staging: comedi: comedi_test: return error when comedi_test_init fails
-Date:   Tue, 10 Dec 2019 17:14:51 +0800
-Message-Id: <20191210091451.23505-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 10 Dec 2019 04:17:19 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id xBA9F3nk002286;
+        Tue, 10 Dec 2019 18:15:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xBA9F3nk002286
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1575969304;
+        bh=fZSJ9406U2jMjTj0MJPsSAKAuiCbOY7z777j3BlnS64=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZICkPQ0qlKaZ5gvesye64Ajer4Y29LiQHJTthQMyXqWchv1Oz6XlkHQGYD46IHJVb
+         oETXHqu+ORXaEeG2zHFMNaJ8eoHO2Vw5BKDohlNsjkKWCdgyYpZPX2e8Y5c05iVQ+J
+         lpEEVP48mVGbii42pFZXO41SCVxny/qq5XKolD5ekOkNNKd+jsgDOFzwHfL46T1QbH
+         EciXXoHdlaw8FYEn/Qg/Q4d4FhPPrRvw7TM4vumikxXMK6F/dUBL9xdOL3tkht9bc4
+         b+iqdsdNEcaOtiy//c13esKtEgHx/A0AvXUDXTgL4nXUWmmHGDA+5F6DeMQ94K1nGw
+         HD1IxhqkAZl8Q==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org
+Cc:     Dinh Nguyen <dinguyen@kernel.org>, Marek Vasut <marex@denx.de>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: rawnand: denali: add reset controlling
+Date:   Tue, 10 Dec 2019 18:14:53 +0900
+Message-Id: <20191210091453.26346-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-comedi_test_init() forgets to return error when it fails.
-Modify the return value to fix it.
+According to the Denali User's Guide, this IP has two reset signals.
 
-Fixes: 9ff7400bd38c ("Staging: comedi: drivers: comedi_test: Add auto-configuration capability")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+  rst_n:     reset most of FFs in the controller core
+  reg_rst_n: reset all FFs in the register interface, and in the
+             initialization sequence
+
+This commit supports controlling those reset signals, although they
+might be often tied up together in actual SoC integration.
+
+One thing that should be kept in mind is the automated initialization
+sequence (a.k.a. 'bootstrap' process) is kicked off when reg_rst_n is
+deasserted.
+
+When the reset is deasserted, the controller issues a RESET command
+to the chip select 0, and attempts to read out the chip ID, and further
+more, ONFI parameters if it is an ONFI-compliant device. Then, the
+controller sets up the relevant registers based on the detected
+device parameters.
+
+This process is just redundant for Linux because nand_scan_ident()
+probes devices and sets up parameters accordingly. Rather, this hardware
+feature is annoying because it ends up with misdetection due to bugs.
+
+So, commit 0615e7ad5d52 ("mtd: nand: denali: remove Toshiba and Hynix
+specific fixup code") changed the driver to not rely on it.
+
+However, there is no way to prevent it from running. The IP provides
+the 'bootstrap_inhibit_init' port to suppress this sequence, but it is
+usually out of software control, and dependent on SoC implementation.
+As for the Socionext UniPhier platform, LD4 always enables it. For the
+later SoCs, the bootstrap sequence runs depending on the boot mode.
+
+I added usleep_range() to make the driver wait until the sequence
+finishes. Otherwise, the driver would fail to detect the chip due
+to the race between the driver and hardware-controlled sequence.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/staging/comedi/drivers/comedi_test.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/comedi/drivers/comedi_test.c b/drivers/staging/comedi/drivers/comedi_test.c
-index ef4c7c8a2b71..133ed99a89f1 100644
---- a/drivers/staging/comedi/drivers/comedi_test.c
-+++ b/drivers/staging/comedi/drivers/comedi_test.c
-@@ -799,12 +799,14 @@ static int __init comedi_test_init(void)
- 	if (!config_mode) {
- 		ctcls = class_create(THIS_MODULE, CLASS_NAME);
- 		if (IS_ERR(ctcls)) {
-+			ret = PTR_ERR(ctcls);
- 			pr_warn("comedi_test: unable to create class\n");
- 			goto clean3;
- 		}
+ .../devicetree/bindings/mtd/denali-nand.txt   |  7 ++++
+ drivers/mtd/nand/raw/denali_dt.c              | 40 ++++++++++++++++++-
+ 2 files changed, 46 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/mtd/denali-nand.txt b/Documentation/devicetree/bindings/mtd/denali-nand.txt
+index b32aed1db46d..a48b17fb969a 100644
+--- a/Documentation/devicetree/bindings/mtd/denali-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/denali-nand.txt
+@@ -14,6 +14,11 @@ Required properties:
+     interface clock, and the ECC circuit clock.
+   - clock-names: should contain "nand", "nand_x", "ecc"
  
- 		ctdev = device_create(ctcls, NULL, MKDEV(0, 0), NULL, DEV_NAME);
- 		if (IS_ERR(ctdev)) {
-+			ret = PTR_ERR(ctdev);
- 			pr_warn("comedi_test: unable to create device\n");
- 			goto clean2;
- 		}
-@@ -826,7 +828,7 @@ static int __init comedi_test_init(void)
- clean3:
- 	ctcls = NULL;
++Optional properties:
++  - resets: may contain phandles to the controller core reset, the register
++ reset
++  - reset-names: may contain "nand", "reg"
++
+ Sub-nodes:
+   Sub-nodes represent available NAND chips.
  
--	return 0;
-+	return ret;
- }
- module_init(comedi_test_init);
+@@ -46,6 +51,8 @@ nand: nand@ff900000 {
+ 	reg-names = "nand_data", "denali_reg";
+ 	clocks = <&nand_clk>, <&nand_x_clk>, <&nand_ecc_clk>;
+ 	clock-names = "nand", "nand_x", "ecc";
++	resets = <&nand_rst>, <&nand_reg_rst>;
++	reset-names = "nand", "reg";
+ 	interrupts = <0 144 4>;
  
+ 	nand@0 {
+diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
+index 8b779a899dcf..132bc6cc066c 100644
+--- a/drivers/mtd/nand/raw/denali_dt.c
++++ b/drivers/mtd/nand/raw/denali_dt.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
+@@ -14,6 +15,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ 
+ #include "denali.h"
+ 
+@@ -22,6 +24,8 @@ struct denali_dt {
+ 	struct clk *clk;	/* core clock */
+ 	struct clk *clk_x;	/* bus interface clock */
+ 	struct clk *clk_ecc;	/* ECC circuit clock */
++	struct reset_control *rst;	/* core reset */
++	struct reset_control *rst_reg;	/* register reset */
+ };
+ 
+ struct denali_dt_data {
+@@ -151,6 +155,14 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dt->clk_ecc))
+ 		return PTR_ERR(dt->clk_ecc);
+ 
++	dt->rst = devm_reset_control_get_optional_shared(dev, "nand");
++	if (IS_ERR(dt->rst))
++		return PTR_ERR(dt->rst);
++
++	dt->rst_reg = devm_reset_control_get_optional_shared(dev, "reg");
++	if (IS_ERR(dt->rst_reg))
++		return PTR_ERR(dt->rst_reg);
++
+ 	ret = clk_prepare_enable(dt->clk);
+ 	if (ret)
+ 		return ret;
+@@ -166,10 +178,30 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 	denali->clk_rate = clk_get_rate(dt->clk);
+ 	denali->clk_x_rate = clk_get_rate(dt->clk_x);
+ 
+-	ret = denali_init(denali);
++	/*
++	 * Deassert the register reset, and the core reset in this order.
++	 * Deasserting the core reset while the register reset is asserted
++	 * will cause unpredictable behavior in the controller.
++	 */
++	ret = reset_control_deassert(dt->rst_reg);
+ 	if (ret)
+ 		goto out_disable_clk_ecc;
+ 
++	ret = reset_control_deassert(dt->rst);
++	if (ret)
++		goto out_assert_rst_reg;
++
++	/*
++	 * When the reset is deasserted, the initialization sequence is kicked
++	 * (bootstrap process). This will take a while, and the driver must
++	 * wait until it finished in order to avoid unpredictable behavior.
++	 */
++	usleep_range(200, 1000);
++
++	ret = denali_init(denali);
++	if (ret)
++		goto out_assert_rst;
++
+ 	for_each_child_of_node(dev->of_node, np) {
+ 		ret = denali_dt_chip_init(denali, np);
+ 		if (ret) {
+@@ -184,6 +216,10 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 
+ out_remove_denali:
+ 	denali_remove(denali);
++out_assert_rst:
++	reset_control_assert(dt->rst);
++out_assert_rst_reg:
++	reset_control_assert(dt->rst_reg);
+ out_disable_clk_ecc:
+ 	clk_disable_unprepare(dt->clk_ecc);
+ out_disable_clk_x:
+@@ -199,6 +235,8 @@ static int denali_dt_remove(struct platform_device *pdev)
+ 	struct denali_dt *dt = platform_get_drvdata(pdev);
+ 
+ 	denali_remove(&dt->controller);
++	reset_control_assert(dt->rst);
++	reset_control_assert(dt->rst_reg);
+ 	clk_disable_unprepare(dt->clk_ecc);
+ 	clk_disable_unprepare(dt->clk_x);
+ 	clk_disable_unprepare(dt->clk);
 -- 
-2.24.0
+2.17.1
 
