@@ -2,70 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1AEC11984E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:39:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E951198D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729958AbfLJVil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:38:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727656AbfLJVij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:38:39 -0500
-Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A58120828;
-        Tue, 10 Dec 2019 21:38:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576013918;
-        bh=iBgwcqaqBpCkZ0DHrwouNEs/rxFI/NvMwVvKFZ8tIIc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=qGyB7Mw5mj7++nkPwUbmN8unW9QVEE66AAaxgJktpQrNbVTUB6wnS7s4XomiIIxEx
-         GqIzQ4h/13H6Q+Ls7V4JkFS+3BUN/td8y28qqRuo8hIadBzDakFdOU+wtj0OMshJ2L
-         rxTni2l5iz4DvoFrBEijFeVCwIOYN1c/b5+d9Y6U=
-Date:   Tue, 10 Dec 2019 15:38:36 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Subject: Re: [PATCH v12 0/4] PCI: Patch series to improve Thunderbolt
- enumeration
-Message-ID: <20191210213836.GA149297@google.com>
+        id S1728767AbfLJVkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:40:21 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:49723 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727669AbfLJVkS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:40:18 -0500
+Received: from mail-qk1-f175.google.com ([209.85.222.175]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MbSXf-1i8DVp0nqj-00bv4d for <linux-kernel@vger.kernel.org>; Tue, 10 Dec
+ 2019 22:40:16 +0100
+Received: by mail-qk1-f175.google.com with SMTP id z14so7481495qkg.9
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:40:16 -0800 (PST)
+X-Gm-Message-State: APjAAAU3wQe1kzExBy9X5IIjCdrYzJKjlKi7kam84Jfl16lcNTMLVdLS
+        p/CNyJ7sHFbeTIAFS+VSJFaCf6A8zEowzXHm/Oc=
+X-Google-Smtp-Source: APXvYqxUoC6H/HWZMBtDiTF2+IJfRax40MKZBHGh8CU2NKudSB89mZzzFUDhBYEjsX0QO0qaYD1duiXIHE3h8N56nz0=
+X-Received: by 2002:a37:4e4e:: with SMTP id c75mr13322344qkb.3.1576014015095;
+ Tue, 10 Dec 2019 13:40:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PSXP216MB043892C04178AB333F7AF08C80580@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191210203101.2663341-1-arnd@arndb.de> <DM6PR12MB34665D3A13E23D8AA7E2E7919E5B0@DM6PR12MB3466.namprd12.prod.outlook.com>
+ <b552de20-dca5-b5d1-e5e8-4c09bc3fdcb5@amd.com>
+In-Reply-To: <b552de20-dca5-b5d1-e5e8-4c09bc3fdcb5@amd.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 10 Dec 2019 22:39:59 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2qM2Vi9qH5b+REBWp2tpb96CpxjmeGSbc63XfGwD6ozg@mail.gmail.com>
+Message-ID: <CAK8P3a2qM2Vi9qH5b+REBWp2tpb96CpxjmeGSbc63XfGwD6ozg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: fix undefined struct member reference
+To:     "Kazlauskas, Nicholas" <nicholas.kazlauskas@amd.com>
+Cc:     "Liu, Zhan" <Zhan.Liu@amd.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "Liu, Charlene" <Charlene.Liu@amd.com>,
+        "Yang, Eric" <Eric.Yang2@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "Cornij, Nikola" <Nikola.Cornij@amd.com>,
+        "Laktyushkin, Dmytro" <Dmytro.Laktyushkin@amd.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Lei, Jun" <Jun.Lei@amd.com>,
+        "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:IX8poFHkhmWDMtT05CyGRNNlyICIfre20x86D5UgS/CzaHTuJED
+ ZSkbMjlym3LobiOUkDBHJC7of/LSmA2SZqFZU/lnUMKA1rtjcAJLLYHkHdtwRJ+FIPJkXO/
+ RXVqdNm3SLbjkzhKza3y7NAEFeSbQ/oSmoStH4eUEo9DsQwEJEd0rBmYOfD4gdo7Wt6be1J
+ 31A0jjhgPmqP9IPFO9v9Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Y0bKYy13xqM=:K5+KBmK6Pe1eeq0vlqvmUq
+ pPqGAviGh1Zo4SCGhf6I1H2RLJwd62AdNHOdjMP4aWxxq0Pvozrz3ylSrE1YJpN+kxgjZD/4n
+ KfcRW+gSRO8NXSXH7DXtOfP0vyo1imFET6FC1Ak6SeoVau1i3qkq3Kf7mJMN2OhsuxdvQ7RDT
+ 4sTexFuAVkdbXRNlQsYB/QvZX+AqMD3MRBO5VU/8DsPSOOULAlABlMqd/36sJXTsvRPVoUmIA
+ wldqOS1XlCHsYGoz6raTMBLv+Wh19vFyNbkqjIfKoJGRc7UorDdEUE0KwSi0wN1FWCaiHrJbe
+ rGh7a5AenYKZNYIVGN5wYPTRrVMtGI72c701REYkDFIOPUiQhBBuWEYG5hy+QX7eV8ZOzW0xt
+ EzhOWRFuwA7C+oqRAc5hMm22EJ3Autjhbvx+YKPdGAKQt2OQeFNvZpVUmnOhcP58OBRy2AnD3
+ dHbakyB7P+H/dEgZX/UJLqDYDJiskr8L3TQJgJVoMWKb3BpLL7dvZXwXiXT+EAyaoSFfuyNsx
+ 5pHEAZo/xGyRa1J85sVZ6wT5UnEuPyUHvSKp1gS6ZsskdtFnTiFL7I9u6iPlvZXxocvJ8SSMN
+ QSDaH6pGHKL4MsMe+FH1BjNrHyqPuOOn01yHk0oXA8+XgafHPAJyOyA2cm0J2QiF7asLkJVtn
+ BDC0+wEFJ1Al0AYP+hbcIjFQ9khsHlBnlEYdmPuFISTdRqCQyg7gKLyqQrA3nnHTSo1Fhilcr
+ bBf2OyHNkcjNG439K1BJmmrxDpCvxd7v7GtjVHKerF5RGWUnZ0aDJ0D20UYHge8hFx3RwvXqT
+ CXTlNrRgGD6YOTGShqYOFXkyezHlhbhSyDTG/GnTK6mKHFvqlmbW7srhBFiHJCSyJxPgoRd5b
+ eB3e3wvIUvu94fqJVBLA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 12:59:29PM +0000, Nicholas Johnson wrote:
-> Hi all,
-> 
-> Since last time:
-> 	Reverse Christmas tree for a couple of variables
-> 
-> 	Changed while to whilst (sounds more formal, and so that 
-> 	grepping for "while" only brings up code)
-> 
-> 	Made sure they still apply to latest Linux v5.5-rc1
-> 
-> Kind regards,
-> Nicholas
-> 
-> Nicholas Johnson (4):
->   PCI: Consider alignment of hot-added bridges when distributing
->     available resources
->   PCI: In extend_bridge_window() change available to new_size
->   PCI: Change extend_bridge_window() to set resource size directly
->   PCI: Allow extend_bridge_window() to shrink resource if necessary
-> 
->  drivers/pci/setup-bus.c | 182 +++++++++++++++++++---------------------
->  1 file changed, 88 insertions(+), 94 deletions(-)
+On Tue, Dec 10, 2019 at 9:56 PM Kazlauskas, Nicholas
+<nicholas.kazlauskas@amd.com> wrote:
+> On 2019-12-10 3:54 p.m., Liu, Zhan wrote:
 
-Applied to pci/resource for v5.6, thanks!
+> >>
+> >> Fixes: c3d03c5a196f ("drm/amd/display: Include num_vmid and num_dsc
+> >> within NV14's resource caps")
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > Thank you for catching that On my side I kept that flag enabled all the time, so I didn't realize there was a warning hidden here.
+> >
+> > Reviewed-by: Zhan Liu <zhan.liu@amd.com>
+>
+> What tree is this reported on?
+
+This is plain linux-5.5-rc1.
+
+> We dropped this flag whenever building DCN. Sounds like we're missing a
+> patch if you're getting this.
+>
+> So this is a NAK from me for going into amd-staging-drm-next at least.
+
+Fair enough, please revert c3d03c5a196f ("drm/amd/display: Include
+num_vmid and num_dsc within NV14's resource caps") for 5.5-rc2 then.
+
+      Arnd
