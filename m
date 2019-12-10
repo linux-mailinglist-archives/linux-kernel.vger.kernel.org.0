@@ -2,90 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39A09118656
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:33:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 400A211865E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:33:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfLJLdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 06:33:17 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32989 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727162AbfLJLdO (ORCPT
+        id S1727460AbfLJLdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:33:45 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37178 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbfLJLdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:33:14 -0500
-Received: by mail-lj1-f194.google.com with SMTP id 21so19513288ljr.0;
-        Tue, 10 Dec 2019 03:33:12 -0800 (PST)
+        Tue, 10 Dec 2019 06:33:45 -0500
+Received: by mail-wr1-f65.google.com with SMTP id w15so19717079wru.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 03:33:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Blqzm8+uJKvQuA0CbBCrZIVx4YR1ZVnP2Lq7em2cyqU=;
-        b=uIsFRSpXYpbsB3qwKImibSBrF+IbCHbbPYNWQtRgjLODgQxa655ByJ9ezyf2/j/ePL
-         sjmvkt6xMrhPZla7N3ceaPPA7OdaxogjLsFaH6rj5azn6TqPiYWpt1JbkE39GuLCscp4
-         F6ME7wD4sKmEyIj4wDaPpTBKTNT3naSvx9leKdDmhVll46Uu3Pwg6XjNyPkXbX/Ba4IP
-         XwpfN4Jh3Dzw0zZQvXB3YOKMAHyqjQ27fV4ayNDXegz6v2G9VEXj8Bt42wHjbqH685MZ
-         0tVPetmJGl72xiI/XJDoiwH/IuzLdl5VlkF0OshrmhB80WT2X0d49iYo0AZjttu+Q81X
-         GMbA==
-X-Gm-Message-State: APjAAAVjq8/iaM9dL03hCJLpo9s4QaXLpcBkIURWt8j0pC/v36X53eug
-        pdvNwA35mn9G9UGdlHrrzoc=
-X-Google-Smtp-Source: APXvYqyIW5IfmyQIRr8p5hkGBqsmCvU2d723wr+Rta8PDZbIsTTmqLcYTIyuETrZVRpDC52t7Wr7qg==
-X-Received: by 2002:a2e:b0c9:: with SMTP id g9mr9586456ljl.134.1575977591464;
-        Tue, 10 Dec 2019 03:33:11 -0800 (PST)
-Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id i16sm1387353lfo.87.2019.12.10.03.33.09
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5FjJVeyO3t8h7dBh1OV5fyqjNeQvVR1/7i0vehSFQ7Q=;
+        b=SdNy8mJXxAQwBFs58J+/WXSJWszpKCYnwYNNYT4a5WCuP0ZMapJ6UJv3qTt30epR99
+         OuNpt87tnWqi+6KGaNvuRWkPvx8EooGWpUfLDU9wzZCtAT7TY+H3bfocdJyuNc652hIr
+         2Ofy6EA1XRrqRTCziGwLA+WiYlAUMpGNpcmyuYLVSi7TQCAUA4HgePI1uBfdhBBj4rjm
+         scZArcpZn0P3/m1KTYaHeMvFCGmXVSajx7hoDFXk4n9Y4rv6WD9Yx/2iLqfJIG9t+VIP
+         PmQ2CVquRncRyiqO9KLcwlI3ml1oBX2s9rzZDSv1Y5VRhV7H2cNkUZPY/2ua2vDO3kf2
+         YTrA==
+X-Gm-Message-State: APjAAAURbasMriVRbSONr200nc1WtcbLPPdHMo8CUqfzMOxtVxVG2GQQ
+        Ce1I6tEQO7CgfpEZXnx2UO1VZnMQ
+X-Google-Smtp-Source: APXvYqzkugwvlsjND7ToEIirpqoYxESepaGkmHvs85JyAcauF8rYz8Sxxgefxkb/nARkaEk8hRhsRw==
+X-Received: by 2002:adf:c74f:: with SMTP id b15mr2709672wrh.272.1575977623129;
+        Tue, 10 Dec 2019 03:33:43 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id v188sm2784884wma.10.2019.12.10.03.33.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 03:33:09 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@xi.terra>)
-        id 1iedlQ-00010S-4r; Tue, 10 Dec 2019 12:33:12 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Marc Kleine-Budde <mkl@pengutronix.de>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 2/2] can: gs_usb: use descriptors of current altsetting
-Date:   Tue, 10 Dec 2019 12:32:31 +0100
-Message-Id: <20191210113231.3797-3-johan@kernel.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191210113231.3797-1-johan@kernel.org>
-References: <20191210113231.3797-1-johan@kernel.org>
+        Tue, 10 Dec 2019 03:33:42 -0800 (PST)
+Date:   Tue, 10 Dec 2019 12:33:41 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgross@suse.com,
+        william.kucharski@oracle.com, mingo@kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH] mm/hotplug: Only respect mem= parameter during boot stage
+Message-ID: <20191210113341.GG10404@dhcp22.suse.cz>
+References: <20191206150524.14687-1-bhe@redhat.com>
+ <20191209100717.GC6156@dhcp22.suse.cz>
+ <20191210072453.GI2984@MiWiFi-R3L-srv>
+ <20191210102834.GE10404@dhcp22.suse.cz>
+ <20191210104303.GN2984@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210104303.GN2984@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure to always use the descriptors of the current alternate setting
-to avoid future issues when accessing fields that may differ between
-settings.
+On Tue 10-12-19 18:43:03, Baoquan He wrote:
+> On 12/10/19 at 11:28am, Michal Hocko wrote:
+> > On Tue 10-12-19 15:24:53, Baoquan He wrote:
+[...]
+> > > But after system bootup, we should be able to hot add/remove any memory
+> > > board. This should not be restricted by a boot-time kernel parameter
+> > > 'mme='. This is what I am trying to fix.
+> > 
+> > This is a simple statement without any actual explanation on why. Why is
+> > hotplug memory special? What is the usecase? Who would want to use mem
+> > parameter and later expect a memory above the restrected area to be
+> > hotplugable?
+> 
+> The why is 'mem=' is used to restrict the amount of system ram during
+> boot. We have two ways to add system memory, one is installing DIMMs
+> before boot, the other is hot adding memory after boot. Without David's 
+> use case, we may need redefine 'mem=' and change its documentation in
+> kernel-parameters.txt, if we don't want to fix it like this. Otherwise,
+> 'mem=' will limit the system's upper system ram always, that is not
+> expected.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/net/can/usb/gs_usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
-index 2f74f6704c12..a4b4b742c80c 100644
---- a/drivers/net/can/usb/gs_usb.c
-+++ b/drivers/net/can/usb/gs_usb.c
-@@ -918,7 +918,7 @@ static int gs_usb_probe(struct usb_interface *intf,
- 			     GS_USB_BREQ_HOST_FORMAT,
- 			     USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_INTERFACE,
- 			     1,
--			     intf->altsetting[0].desc.bInterfaceNumber,
-+			     intf->cur_altsetting->desc.bInterfaceNumber,
- 			     hconf,
- 			     sizeof(*hconf),
- 			     1000);
-@@ -941,7 +941,7 @@ static int gs_usb_probe(struct usb_interface *intf,
- 			     GS_USB_BREQ_DEVICE_CONFIG,
- 			     USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_INTERFACE,
- 			     1,
--			     intf->altsetting[0].desc.bInterfaceNumber,
-+			     intf->cur_altsetting->desc.bInterfaceNumber,
- 			     dconf,
- 			     sizeof(*dconf),
- 			     1000);
+I really do not see why. It seems a pretty consistent behavior to me.
+Because it essentially cut any memory above the given size. If a new
+hotplugable memory fits into that cap then it just shows up. Quite
+contrary I would consider it unexpected that a memory higher than the
+given mem=XYZ is really there. But I do recognize a real usecase
+mentioned elsewhere which beats the consistency argument here because
+all setups where such a restriction would be really important are
+debugging/workaround AFAICS.
 -- 
-2.24.0
-
+Michal Hocko
+SUSE Labs
