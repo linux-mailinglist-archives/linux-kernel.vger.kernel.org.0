@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7159117E99
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 04:57:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B3F1117E96
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 04:56:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbfLJD4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 22:56:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39484 "EHLO mail.kernel.org"
+        id S1726960AbfLJD4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 22:56:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726888AbfLJD4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726911AbfLJD4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Dec 2019 22:56:48 -0500
 Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D0B5208C3;
+        by mail.kernel.org (Postfix) with ESMTPSA id B10892465C;
         Tue, 10 Dec 2019 03:56:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575950207;
-        bh=GAwpCMjHj5zOD5ZADZVB7AaWi8L+kOa1fve5gphakhA=;
+        s=default; t=1575950208;
+        bh=kszLF0bT7aHHUG9zA3c6FJ6o71gT16dHrEBieWTigng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e7wO3N18BBv9tNklnF6ugGUkqo0TUBzv6+VUhfUIv0xEw91SVPK9eSrO2383wJj/O
-         8HxhggsULAOtwslXAjcRkQ5jDMsOWn8Pnn/02dBFwIOGvA3LU5OvOKOdXVVL48piQD
-         vtRoaQPEuVc5QhGokFztTjg5Lx0kpg7Rq7aLu3Xk=
+        b=ngOj1QsnKGkCZuTnMzSmkk+sYCEJWaE8bRTVgoyvJNA9ID1JkYFyEuQClh4J+OJPQ
+         wwq77yjcFZL4w2HalJxSfHHEOnfL5xrcT4auXDVcfOHOEnmX4WMRS0qZwvRG42JyGi
+         MyOqN9H7wGRAjKEx4sMr+sO4jjod+MUkhZWQc6hg=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -31,11 +31,10 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 6/7] doc: Updated full list of RCU API in whatisRCU.rst
-Date:   Mon,  9 Dec 2019 19:56:40 -0800
-Message-Id: <20191210035641.2226-6-paulmck@kernel.org>
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 7/7] doc: Fix typo s/deference/dereference/
+Date:   Mon,  9 Dec 2019 19:56:41 -0800
+Message-Id: <20191210035641.2226-7-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191210035539.GA792@paulmck-ThinkPad-P72>
 References: <20191210035539.GA792@paulmck-ThinkPad-P72>
@@ -44,60 +43,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This patch updates the list of RCU API in whatisRCU.rst.
-
-Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-Tested-by: Amol Grover <frextrite@gmail.com>
-Tested-by: Phong Tran <tranmanphong@gmail.com>
+Reported-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- Documentation/RCU/whatisRCU.rst | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ Documentation/RCU/lockdep-splat.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
-index 2f6f6eb..c7f147b 100644
---- a/Documentation/RCU/whatisRCU.rst
-+++ b/Documentation/RCU/whatisRCU.rst
-@@ -884,11 +884,14 @@ in docbook.  Here is the list, by category.
- RCU list traversal::
+diff --git a/Documentation/RCU/lockdep-splat.txt b/Documentation/RCU/lockdep-splat.txt
+index 9c01597..b809631 100644
+--- a/Documentation/RCU/lockdep-splat.txt
++++ b/Documentation/RCU/lockdep-splat.txt
+@@ -99,7 +99,7 @@ With this change, the rcu_dereference() is always within an RCU
+ read-side critical section, which again would have suppressed the
+ above lockdep-RCU splat.
  
- 	list_entry_rcu
-+	list_entry_lockless
- 	list_first_entry_rcu
- 	list_next_rcu
- 	list_for_each_entry_rcu
- 	list_for_each_entry_continue_rcu
- 	list_for_each_entry_from_rcu
-+	list_first_or_null_rcu
-+	list_next_or_null_rcu
- 	hlist_first_rcu
- 	hlist_next_rcu
- 	hlist_pprev_rcu
-@@ -902,7 +905,7 @@ RCU list traversal::
- 	hlist_bl_first_rcu
- 	hlist_bl_for_each_entry_rcu
- 
--RCU pointer/list udate::
-+RCU pointer/list update::
- 
- 	rcu_assign_pointer
- 	list_add_rcu
-@@ -912,10 +915,12 @@ RCU pointer/list udate::
- 	hlist_add_behind_rcu
- 	hlist_add_before_rcu
- 	hlist_add_head_rcu
-+	hlist_add_tail_rcu
- 	hlist_del_rcu
- 	hlist_del_init_rcu
- 	hlist_replace_rcu
--	list_splice_init_rcu()
-+	list_splice_init_rcu
-+	list_splice_tail_init_rcu
- 	hlist_nulls_del_init_rcu
- 	hlist_nulls_del_rcu
- 	hlist_nulls_add_head_rcu
+-But in this particular case, we don't actually deference the pointer
++But in this particular case, we don't actually dereference the pointer
+ returned from rcu_dereference().  Instead, that pointer is just compared
+ to the cic pointer, which means that the rcu_dereference() can be replaced
+ by rcu_access_pointer() as follows:
 -- 
 2.9.5
 
