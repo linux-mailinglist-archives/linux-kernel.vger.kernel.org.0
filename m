@@ -2,33 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C25118304
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:07:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B056F118309
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfLJJHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:07:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45722 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726574AbfLJJHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:07:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B8E83AD2B;
-        Tue, 10 Dec 2019 09:07:50 +0000 (UTC)
-Subject: Re: [Patch v2] mm/hotplug: Only respect mem= parameter during boot
- stage
-To:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, mhocko@kernel.org, david@redhat.com,
-        akpm@linux-foundation.org
-References: <20191210084413.21957-1-bhe@redhat.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <d3752014-9db1-9dc6-7268-b510a3dab553@suse.com>
-Date:   Tue, 10 Dec 2019 10:07:50 +0100
+        id S1727083AbfLJJIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:08:34 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36494 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbfLJJIe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 04:08:34 -0500
+Received: by mail-ed1-f66.google.com with SMTP id j17so15308593edp.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:08:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AtN3Q3W1bdf9VARMb6C2iXiiZG+VLqz+9X40+TK0cJI=;
+        b=i1zuOTNupXiKlWynk217tYSihTBbG46uf17LLX13BEdS44JTXmYrBDR9J8wcx7guRO
+         wgNTPGd3onOaq7p+838Q9LeINfaqbihuo/WMX4jVEKNJeCkc2ZF0UB5w2mdPuZoC57aO
+         jTIgy1wBREjUpHJIWdehS0K8HxNTc2uIQEcz6QohaINpCMk1n6bakccFzd/vrFUIsIdK
+         EOVnsx25XiS4em6p7M6F/3ogJOHcNO0EEMJHBgP3ZEXReEN5tWa4HThzhHZ3MjnJG3y3
+         Ykf8oTOoHc4Z2rnFKAJZgQvIUmxFzH3Lcgt7T99EcJDWsNCTjxmTndEWCWMM1ZdpYJUV
+         7CMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AtN3Q3W1bdf9VARMb6C2iXiiZG+VLqz+9X40+TK0cJI=;
+        b=CbvsHr1H8z8fysjAdjeeGNuqqje8jDx/ycYam+CBaCM+gNLjhWkReo/L0lVisXgblw
+         qxXQOVIdHQoGeWE7SZJ1v3IsJAWkB1s8Ve8s/zgLwdk/ObP6eTkjAUrOP5iEl1NOsa5B
+         a7CZ6qvAtzqYoE1hQgp6sIxe5Wic3OfbScTpij6Rj0L+mHrI4mgKC9sr15ekq5SLi0qW
+         uEdlEE8tSrLr1Y6zaBIhmY9wkCd/dMncwtQsGbfJSBXDQ4k2DseDVc07Y0yUeuB+5DME
+         rKYE8yWmb4byfojkAegofMxHMEyXqQjvMM8UtJzTLydrX0bqIbo8DJ3Wz7Lm9qgq+Sa1
+         Mi2Q==
+X-Gm-Message-State: APjAAAXldEcqe6Tz5uXLPepAX/JmCaMjEAz0G99BKLu5sjO4Qo1IKq3E
+        J7a98GLj44kjhO0Je5pLbsv2Rw==
+X-Google-Smtp-Source: APXvYqxrwIVuqeKmvw7IUojlrOQ+phD5fflfDOgKrnwolC/Ge+ZJlFNHMjmWp+R4gKTxRyV6RwmEZg==
+X-Received: by 2002:aa7:da84:: with SMTP id q4mr37653095eds.152.1575968912531;
+        Tue, 10 Dec 2019 01:08:32 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.193])
+        by smtp.googlemail.com with ESMTPSA id cb20sm56832edb.1.2019.12.10.01.08.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2019 01:08:31 -0800 (PST)
+Subject: Re: [PATCH 4/6] dt-bindings: media: venus: describe sdm845 with
+ optional pmdomains
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>
+References: <20191209083824.806-1-stanimir.varbanov@linaro.org>
+ <20191209083824.806-5-stanimir.varbanov@linaro.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <cc6b409f-b562-2034-1f31-e38db267bcd7@linaro.org>
+Date:   Tue, 10 Dec 2019 11:08:30 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <20191210084413.21957-1-bhe@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191209083824.806-5-stanimir.varbanov@linaro.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,34 +70,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.12.19 09:44, Baoquan He wrote:
-> In commit 357b4da50a62 ("x86: respect memory size limiting via mem=
-> parameter") a global varialbe global max_mem_size is added to store
-> the value parsed from 'mem= ', then checked when memory region is
-> added. This truly stops those DIMM from being added into system memory
-> during boot-time.
-> 
-> However, it also limits the later memory hotplug functionality. Any
-> memory board can't be hot added any more if its region is beyond the
-> max_mem_size. System will print error like below:
-> 
-> [  216.387164] acpi PNP0C80:02: add_memory failed
-> [  216.389301] acpi PNP0C80:02: acpi_memory_enable_device() error
-> [  216.392187] acpi PNP0C80:02: Enumeration failure
-> 
->  From document of 'mem= ' parameter, it should be a restriction during
-> boot, but not impact the system memory adding/removing after booting.
-> 
->    mem=nn[KMG]     [KNL,BOOT] Force usage of a specific amount of memory
-> 	          ...
-> 
-> So fix it by also checking if it's during boot-time when restrict memory
-> adding. Otherwise, skip the restriction.
-> 
-> Fixes: 357b4da50a62 ("x86: respect memory size limiting via mem= parameter")
-> Signed-off-by: Baoquan He <bhe@redhat.com>
+Hi,
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Please ignore this patch for now. I forgot to add description for
+power-domain-names property for sdm845. Will fix that in next version.
 
+On 12/9/19 10:38 AM, Stanimir Varbanov wrote:
+> Describe an optional DT binding for sdm845 with power-domain-names
+> and clocks in Venus DT node. After that the binding for sdm845 will
+> have two options, the first will be to describe vcodec clocks and
+> pmdomains in (encoder and decoder) subnodes and the second will be
+> to describe vcodec clocks and pmdomains in the Venus DT node
+> (the parent). Both option will be handled in driver, and the second
+> one will give an opportunity to the driver to dynamically assign
+> vcodec pipelines for every given instance depending on its load.
+> 
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> ---
+>  .../devicetree/bindings/media/qcom,venus.txt  | 22 ++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
+> index b602c4c025e7..69a104fcb8eb 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,venus.txt
+> +++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
+> @@ -35,6 +35,21 @@
+>  		- "iface"	Video accelerator AHB clock
+>  		- "bus"		Video accelerator AXI clock
+>  		- "mbus"	Video MAXI clock
+> +- clock-names:
+> +	Usage: required for sdm845
+> +	Value type: <stringlist>
+> +	Definition: Should contain the following entries:
+> +		- "core"	Core video accelerator clock
+> +		- "iface"	Video accelerator AHB clock
+> +		- "bus"		Video accelerator AXI clock
+> +- clock-names:
+> +	Usage: optional for sdm845
+> +	Value type: <stringlist>
+> +	Definition: Should contain the following entries:
+> +		- "vcodec0_core"	Codec0 core clock
+> +		- "vcodec0_bus"		Codec0 AXI clock
+> +		- "vcodec1_core"	Codec1 core clock
+> +		- "vcoded1_bus"		Codec1 AXI clock
+>  - power-domains:
+>  	Usage: required
+>  	Value type: <prop-encoded-array>
+> @@ -72,7 +87,12 @@ Every of video-encoder or video-decoder subnode should have:
+>  	Value type: <stringlist>
+>  	Definition: Should contain the following entries:
+>  		- "core"	Subcore video accelerator clock
+> -
+> +- clock-names:
+> +	Usage: required for sdm845
+> +	Value type: <stringlist>
+> +	Definition: Should contain the following entries:
+> +		- "core"	Video codec accelerator clock
+> +		- "bus"		Video codec AXI clock
+>  - power-domains:
+>  	Usage: required for msm8996
+>  	Value type: <prop-encoded-array>
+> 
 
-Juergen
+-- 
+regards,
+Stan
