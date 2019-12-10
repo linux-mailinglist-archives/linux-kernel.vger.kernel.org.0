@@ -2,176 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0FBF118EA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 18:12:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E725118EC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 18:19:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbfLJRLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 12:11:44 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44584 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbfLJRLn (ORCPT
+        id S1727840AbfLJRTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 12:19:51 -0500
+Received: from mta03.svc.cra.dublin.eircom.net ([159.134.118.145]:53620 "HELO
+        mta03.svc.cra.dublin.eircom.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1727568AbfLJRTv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 12:11:43 -0500
-Received: by mail-qt1-f193.google.com with SMTP id g17so3410590qtp.11;
-        Tue, 10 Dec 2019 09:11:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7RagCXx4PLk5Qp49HJqKwcJPIWIyspcsm+oNaqdbslM=;
-        b=DoyQL4KcMkvz7vmH3s3eQU8CtblHmOfXtg+ZpUXRAFLGVApTwLQ2X4LxuezG4hPs3o
-         UKninZ55uaTToohw31YCmCgZZlHWGGXsb6JmJ/SodnaPv9Wc/18KczLZWzqO8YbBodrm
-         r8bQr/Rx9Pr5GxFncLGbvR0Y5vRMxfl30/apLikbjSRcHJWYrSJFeuxQ7BmlBCl4xsfv
-         YZu+4Ojivyp+JpHhIKmeuIlNKsP699nBFDzXn4u9aBdwOfIosV/TpukkRIEb3g0kUOEg
-         570HmX9VOtMunjx6aMrD2R92K+rZJIBoNTBihxii1+T5ac+bLA4c8qoR6neDxOOnPoPS
-         F2Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7RagCXx4PLk5Qp49HJqKwcJPIWIyspcsm+oNaqdbslM=;
-        b=C/9UHY8xi4NxIAurarXCrYF15oHUq+OQ81orCLtOTw21ImlzZHtLazkO+CO2Fseqpl
-         VKeXqpZZ0AdYTmBZtDC7YNjlUn/EkiQFIfuvGvpumeHRNELOxro8De6GW6GBuy4upXhP
-         PYzdgAvOHb3XgCfDEebaXH1EvoNBc/jElsUxEPpXNuh4fX6f4qdepx9UgxefdmiFcgU2
-         zmAjxrdBxYPWtFGiZzJSssh7OlXJzO8a274I7LXf5YJ/BKmiJSutnzaHI/rlcl85iowG
-         HXO32FGubX+1RkZ5B9lNI+76NcY1fDciany0GF+49tNx1lZP2tc9/Y2xXDR12Q3je0u1
-         B5Pw==
-X-Gm-Message-State: APjAAAUZwVAK6Px+D7x6xFpvDqR8wlo2VRLYzIeX4+t/YswHiokxoIvt
-        hDIVVFjyqL0sviOGA6o16ep5TjQfbicBykYCxTs=
-X-Google-Smtp-Source: APXvYqzLPd7xnUCFZQkxfqfcRqMNP+6gooOhxuET6H41wpZU3iX8JkGS1BpXXwXN5CihWts8640sLFUibHQugmhtios=
-X-Received: by 2002:ac8:5457:: with SMTP id d23mr29404307qtq.93.1575997901883;
- Tue, 10 Dec 2019 09:11:41 -0800 (PST)
+        Tue, 10 Dec 2019 12:19:51 -0500
+X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 12:19:49 EST
+Received: (qmail 13910 messnum 15604470 invoked from network[213.94.190.12/avas01.vendorsvc.cra.dublin.eircom.net]); 10 Dec 2019 17:13:06 -0000
+Received: from avas01.vendorsvc.cra.dublin.eircom.net (HELO avas01) (213.94.190.12)
+  by mta03.svc.cra.dublin.eircom.net (qp 13910) with SMTP; 10 Dec 2019 17:13:06 -0000
+Received: from vzmbx18.eircom.net ([86.43.60.98])
+        by Cloudmark Gateway with SMTP
+        id ej4MitA5lvSCGej4Mi51KD; Tue, 10 Dec 2019 17:13:06 +0000
+X-Spam-Flag: NO
+X-CNFS-Analysis: v=2.2 cv=Vs1TO6+n c=1 sm=1 tr=0
+ a=e7gqILOnBbllteVy7xBg4A==:117 a=9cW_t1CCXrUA:10 a=FKkrIqjQGGEA:10
+ a=MiHDROX88WQA:10 a=XsXwtkfZSxcA:10 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+ a=jYuv2X4WTcgA:10 a=FWxg0uFRcPoA:10 a=ZZnuYtJkoWoA:10 a=pGLkceISAAAA:8
+ a=nmjYHbsrJ_fA_cQXiN0A:9 a=xaXwE8vu17qer4OG:21 a=QEXdDO2ut3YA:10
+ a=gEGq_ZxYX5wA:10 a=9x9qPMYFPqMA:10 a=jOp76FAq4EzTYovVPNw6:22
+ a=wtkpjSFW-GEsYebB2nHs:22
+Date:   Tue, 10 Dec 2019 17:13:06 +0000 (GMT)
+From:   Ahmed <asde85665@eircom.net>
+Reply-To: o.u.ea234.5@gmail.com
+Message-ID: <407239383.105338.1575997986100.JavaMail.zimbra@eircom.net>
+Subject: Please Respond Urgently.
 MIME-Version: 1.0
-References: <20191210011438.4182911-1-andriin@fb.com> <20191210011438.4182911-12-andriin@fb.com>
- <20191209175745.2d96a1f0@cakuba.netronome.com>
-In-Reply-To: <20191209175745.2d96a1f0@cakuba.netronome.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 10 Dec 2019 09:11:31 -0800
-Message-ID: <CAEf4Bzaow7w+TGyiF67pXn42TumxFZb7Q4BOQPPGfRJdyeY-ig@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 11/15] bpftool: add skeleton codegen command
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Andrii Nakryiko <andriin@fb.com>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <kernel-team@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [196.52.38.33]
+X-Mailer: Zimbra 8.6.0_GA_1242 (zclient/8.6.0_GA_1242)
+Thread-Topic: Please Respond Urgently.
+Thread-Index: dlm48FkdGH7vxNSVmbUiyctuConuaw==
+X-CMAE-Envelope: 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
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 5:57 PM Jakub Kicinski
-<jakub.kicinski@netronome.com> wrote:
->
-> On Mon, 9 Dec 2019 17:14:34 -0800, Andrii Nakryiko wrote:
-> > struct <object-name> {
-> >       /* used by libbpf's skeleton API */
-> >       struct bpf_object_skeleton *skeleton;
-> >       /* bpf_object for libbpf APIs */
-> >       struct bpf_object *obj;
-> >       struct {
-> >               /* for every defined map in BPF object: */
-> >               struct bpf_map *<map-name>;
-> >       } maps;
-> >       struct {
-> >               /* for every program in BPF object: */
-> >               struct bpf_program *<program-name>;
-> >       } progs;
-> >       struct {
-> >               /* for every program in BPF object: */
-> >               struct bpf_link *<program-name>;
-> >       } links;
-> >       /* for every present global data section: */
-> >       struct <object-name>__<one of bss, data, or rodata> {
-> >               /* memory layout of corresponding data section,
-> >                * with every defined variable represented as a struct field
-> >                * with exactly the same type, but without const/volatile
-> >                * modifiers, e.g.:
-> >                */
-> >                int *my_var_1;
-> >                ...
-> >       } *<one of bss, data, or rodata>;
-> > };
->
-> I think I understand how this is useful, but perhaps the problem here
-> is that we're using C for everything, and simple programs for which
-> loading the ELF is majority of the code would be better of being
-> written in a dynamic language like python?  Would it perhaps be a
-> better idea to work on some high-level language bindings than spend
-> time writing code gens and working around limitations of C?
+Greetings,
 
-None of this work prevents Python bindings and other improvements, is
-it? Patches, as always, are greatly appreciated ;)
+With due respect,I need your urgent assistance in transferring the sum of $11.3million to your private account Where this money can be shared between us. By indicating your interest I will send you the full details on how the business will be executed.
 
-This skeleton stuff is not just to save code, but in general to
-simplify and streamline working with BPF program from userspace side.
-Fortunately or not, but there are a lot of real-world applications
-written in C and C++ that could benefit from this, so this is still
-immensely useful. selftests/bpf themselves benefit a lot from this
-work, see few of the last patches in this series.
+Please if you are interested send your reply to  /     o.u.ea234.5@gmail.com 
 
->
-> > This provides great usability improvements:
-> > - no need to look up maps and programs by name, instead just
-> >   my_obj->maps.my_map or my_obj->progs.my_prog would give necessary
-> >   bpf_map/bpf_program pointers, which user can pass to existing libbpf APIs;
-> > - pre-defined places for bpf_links, which will be automatically populated for
-> >   program types that libbpf knows how to attach automatically (currently
-> >   tracepoints, kprobe/kretprobe, raw tracepoint and tracing programs). On
-> >   tearing down skeleton, all active bpf_links will be destroyed (meaning BPF
-> >   programs will be detached, if they are attached). For cases in which libbpf
-> >   doesn't know how to auto-attach BPF program, user can manually create link
-> >   after loading skeleton and they will be auto-detached on skeleton
-> >   destruction:
-> >
-> >       my_obj->links.my_fancy_prog = bpf_program__attach_cgroup_whatever(
-> >               my_obj->progs.my_fancy_prog, <whatever extra param);
-> >
-> > - it's extremely easy and convenient to work with global data from userspace
-> >   now. Both for read-only and read/write variables, it's possible to
-> >   pre-initialize them before skeleton is loaded:
-> >
-> >       skel = my_obj__open(raw_embed_data);
-> >       my_obj->rodata->my_var = 123;
-> >       my_obj__load(skel); /* 123 will be initialization value for my_var */
-> >
-> >   After load, if kernel supports mmap() for BPF arrays, user can still read
-> >   (and write for .bss and .data) variables values, but at that point it will
-> >   be directly mmap()-ed to BPF array, backing global variables. This allows to
-> >   seamlessly exchange data with BPF side. From userspace program's POV, all
-> >   the pointers and memory contents stay the same, but mapped kernel memory
-> >   changes to point to created map.
-> >   If kernel doesn't yet support mmap() for BPF arrays, it's still possible to
-> >   use those data section structs to pre-initialize .bss, .data, and .rodata,
-> >   but after load their pointers will be reset to NULL, allowing user code to
-> >   gracefully handle this condition, if necessary.
-> >
-> > Given a big surface area, skeleton is kept as an experimental non-public
-> > API for now, until more feedback and real-world experience is collected.
->
-> That makes no sense to me. bpftool has the same backward compat
-> requirements as libbpf. You're just pushing the requirements from
-> one component to the other. Feedback and real-world use cases have
-> to be exercised before code is merged to any project with backward
-> compatibility requirements :(
-
-To get this feedback we need to have this functionality adopted. To
-have it adopted, we need it available in tool users already know,
-have, and use. If you feel that "experimental" disclaimer is not
-enough, I guess we can add extra flag to bpftool itself to enable
-experimental functionality, something like:
-
-bpftool --experimental gen skeleton <bla>
-
->
-> Also please run checkpatch on your patches, and fix reverse xmas tree.
-> This is bpftool, not libbpf. Creating a separate tool for this codegen
-> stuff is also an option IMHO.
-
-Sure, will fix few small things checkpatch detected. Will reverse
-christmas-ize all the variables, of course :)
-
-As for separate tool just for this, you are not serious, right? If
-bpftool is not right tool for this, I don't know which one is.
+Best Regards,
+Ahmed Ouedraogo.
