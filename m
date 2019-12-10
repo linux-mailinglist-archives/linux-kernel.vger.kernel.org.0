@@ -2,103 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 523EB119658
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AFF2119654
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:26:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbfLJV0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:26:15 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:59326 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbfLJV0I (ORCPT
+        id S1728761AbfLJV0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:26:10 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41623 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727771AbfLJV0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:26:08 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBALP42H085099;
-        Tue, 10 Dec 2019 21:25:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=LRKUalzriL5ok3aXCwAsAQdRDswfuxXEmRoEL5R3TtY=;
- b=qRuA9OX6Lqg8zmfw57L2wmzOrVMWgVD9OI0uuHugWGpz0CV8TJnGmoNqnr7/dGFNmQNu
- D9HL4m90Vv46Ux8ckl6W/e6ofx9mnh4Bp+m1QJFkI0UeVRqGHxh+WgN1sGEm1ytHIy6x
- JRbMFbaSmf/J5yNWFqMTuGH/TQT3/bAyWvgTJ4/CMqZNQVRo5bZqWTzXyUVIz7ALDB/u
- kY1BHyD0m4u/K+ZR/VNJlt5lL96+BSeuP2ajYHmmDZnDETCDcCH+pmD2Vxk4I7KQpiAR
- HaSbeRCCqkE8AdUzbW8kTLuHiUzPqtObUalrZZY3D8alSwPtjI1DXKtmGVsEnd8YOm0H MA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2wr41q8w2a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 21:25:54 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBALLnFo141716;
-        Tue, 10 Dec 2019 21:25:54 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2wt6bdwp09-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 21:25:53 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBALPrXC020312;
-        Tue, 10 Dec 2019 21:25:53 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 10 Dec 2019 13:25:53 -0800
-Date:   Tue, 10 Dec 2019 13:25:52 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
-        <andreas.gruenbacher@gmail.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>
-Subject: Re: [PATCH] iomap: Export iomap_page_create and
- iomap_set_range_uptodate
-Message-ID: <20191210212552.GC99875@magnolia>
-References: <20191210102916.842-1-agruenba@redhat.com>
- <20191210203252.GA99875@magnolia>
- <CAHpGcMJMgttnXu48wHnP-WqdPkuXBaFd+COKV9XiRP6VrtRUVg@mail.gmail.com>
+        Tue, 10 Dec 2019 16:26:07 -0500
+Received: by mail-pg1-f194.google.com with SMTP id x8so9494763pgk.8
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:26:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P3CtzH8AoZNRV0QZPYFHChpbwIUEtjX+HfgVaCPCW0A=;
+        b=Yi+iiwyyrF3IYMCCzCBjiPMce2oqIFmM0Xe7X7HraruPyvvuHKlt27cS/SnnCG2hw5
+         5oMQEsLdEizNsGATmWxJhL17P3CrGayxm5W6xXSUB9EsGKO5L0am6CiDgj66illqeJZA
+         mDtWxaOARAr9pxMLBrmpZpISvGD8xa5dWuokcVoxjObx10YcKt+BDYQhHqE+C2qf5niv
+         Nno9unu53nGCKBKa1MXv8G8TdFv596C1aMr9ssWcEuAq7ilHnxw5AbBy5b+gb7LNfQN0
+         T01Apo8Ke1kZwbHByG6dz+/NN02QV/h33F2cVGpfGCLBXPVAYhXnqgwZ+s8+XwGLaPYv
+         IwsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P3CtzH8AoZNRV0QZPYFHChpbwIUEtjX+HfgVaCPCW0A=;
+        b=cdyN9+UL6Mz2+wr4OI+P3hj+qVE83Hiu9rxLqd1nZWjxXN96JO65e65CMwwZ/qstTn
+         gkZEoWYvYtNrz+b8tIsf1o03lydTiqkQoFMCp2Veen4Su1dCL4LRfzevop7jlkyQ69fB
+         vkjZEbF4+mi34ngypl2d4h/lVf51onTHC0VjMdbO1L2Ggxvqrcfv8i0eezOJHsvXO4kZ
+         1OEtqCu8u6u9P5LS3VYr+PmtVd6yvBpllwCyFGCMVXkaSoDYPVZc2zOoygJruBmo0nfT
+         L4fH4ZsLAEYfeX4eQIvM5Pod6y0eYIDcu1piZiEJ7AYWlzG/G3Cwg+pgkBgWaWPNFtOa
+         ZBHA==
+X-Gm-Message-State: APjAAAUZpN01O0TbsoTuIqfEW7W2WtXQrCIGc6n0/cCQUNQ/gKAt6Vu5
+        P344oOYVuSHM5Uzt/UERawjkrQ68PKjR4ysW5u9enQ==
+X-Google-Smtp-Source: APXvYqxpquTI2AjFI2FJW7H/UjW477l0ZNP57sYRhalkJYdVRDhwtSnkXMVoH2DkQcUGAGX7ywj1awJ0Yv6fEh5hpRI=
+X-Received: by 2002:a63:480f:: with SMTP id v15mr162738pga.201.1576013166051;
+ Tue, 10 Dec 2019 13:26:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHpGcMJMgttnXu48wHnP-WqdPkuXBaFd+COKV9XiRP6VrtRUVg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9467 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912100176
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9467 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912100177
+References: <20191210210402.8367-1-sashal@kernel.org> <20191210210402.8367-25-sashal@kernel.org>
+In-Reply-To: <20191210210402.8367-25-sashal@kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 10 Dec 2019 13:25:54 -0800
+Message-ID: <CAFd5g45s-cGXp6at4kv+=8v3cuxfbXLPEOKGUfvJ6E+u1caHcA@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.4 025/350] objtool: add kunit_try_catch_throw to
+ the noreturn list
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 09:39:31PM +0100, Andreas Grünbacher wrote:
-> Am Di., 10. Dez. 2019 um 21:33 Uhr schrieb Darrick J. Wong
-> <darrick.wong@oracle.com>:
-> > On Tue, Dec 10, 2019 at 11:29:16AM +0100, Andreas Gruenbacher wrote:
-> > > These two functions are needed by filesystems for converting inline
-> > > ("stuffed") inodes into non-inline inodes.
-> > >
-> > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> >
-> > Looks fine to me... this is a 5.6 change, correct?
-> 
-> Yes, so there's still plenty of time to get things in place until
-> then. I'd like to hear from Christoph if he has any objections. In any
-> case, this patch isn't going to break anything.
+On Tue, Dec 10, 2019 at 1:04 PM Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: Brendan Higgins <brendanhiggins@google.com>
+>
+> [ Upstream commit 33adf80f5b52e3f7c55ad66ffcaaff93c6888aaa ]
+>
+> Fix the following warning seen on GCC 7.3:
+>   kunit/test-test.o: warning: objtool: kunit_test_unsuccessful_try() falls through to next function kunit_test_catch()
+>
+> kunit_try_catch_throw is a function added in the following patch in this
+> series; it allows KUnit, a unit testing framework for the kernel, to
+> bail out of a broken test. As a consequence, it is a new __noreturn
+> function that objtool thinks is broken (as seen above). So fix this
+> warning by adding kunit_try_catch_throw to objtool's noreturn list.
+>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Link: https://www.spinics.net/lists/linux-kbuild/msg21708.html
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-By the way, the other symbols in fs/iomap/ are all EXPORT_SYMBOL_GPL.
-Does gfs2/RH/anyone have a particular requirement for EXPORT_SYMBOL, or
-could we make the new exports _GPL to match the rest?
+I don't think this change should be backported. This patch is to
+ignore an erroneous warning introduced by KUnit; it serves no purpose
+prior to the KUnit patches being merged.
 
---D
-
-> Thanks,
-> Andreas
+> ---
+>  tools/objtool/check.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 044c9a3cb2472..543c068096b12 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -144,6 +144,7 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
+>                 "usercopy_abort",
+>                 "machine_real_restart",
+>                 "rewind_stack_do_exit",
+> +               "kunit_try_catch_throw",
+>         };
+>
+>         if (!func)
+> --
+> 2.20.1
+>
