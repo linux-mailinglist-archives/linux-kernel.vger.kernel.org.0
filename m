@@ -2,142 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ABC8118A8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:15:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 759E7118A94
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:15:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbfLJOPV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 10 Dec 2019 09:15:21 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:46170 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbfLJOPV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:15:21 -0500
-Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727573AbfLJOPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 09:15:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727061AbfLJOPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 09:15:38 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 2C77867A918;
-        Tue, 10 Dec 2019 15:15:18 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail14r.snt-is.com
- (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 10 Dec
- 2019 15:15:17 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Tue, 10 Dec 2019 15:15:17 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-CC:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] arm64: dts: imx8mm: Add missing mux options for UART1 and
- UART2 signals
-Thread-Topic: [PATCH] arm64: dts: imx8mm: Add missing mux options for UART1
- and UART2 signals
-Thread-Index: AQHVr2Q/ATuBSnMk+E+vlzmoNWKRXQ==
-Date:   Tue, 10 Dec 2019 14:15:17 +0000
-Message-ID: <20191210141516.6983-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 2C77867A918.A01D5
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: devicetree@vger.kernel.org, festevam@gmail.com,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org
-X-Spam-Status: No
+        by mail.kernel.org (Postfix) with ESMTPSA id 12884207FF;
+        Tue, 10 Dec 2019 14:15:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575987337;
+        bh=zoKHBYFK7ibeRR/odpe1m4xweRuBfc5NFuh1Z7lmORU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zh7mvxVg1ozMiDGwvPAJorU8QV2ffv9xlj8iZaEZsiLracEhwJt5OGyGIIEhIk2c3
+         d61ELYXUXkQOU0hWo9Z1JG4/cenfPNhG5hKsS0sWso0CXPWbYe8wNGgQJ8CiXezD9w
+         hzaWrcudL13UcQwWEdgEj9m2xo7rhVLPJfbX6/Zs=
+Date:   Tue, 10 Dec 2019 23:15:28 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 01/22] bootconfig: Add Extra Boot Config support
+Message-Id: <20191210231528.853ac9e7f84f2166fd4c4047@kernel.org>
+In-Reply-To: <20191209105403.788f492a@gandalf.local.home>
+References: <157528159833.22451.14878731055438721716.stgit@devnote2>
+        <157528160980.22451.2034344493364709160.stgit@devnote2>
+        <02b132dd-6f50-cf1d-6cc1-ff6bbbcf79cd@infradead.org>
+        <20191209145009.502ece2e58ffab5e31430a0e@kernel.org>
+        <20191209105403.788f492a@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Mon, 9 Dec 2019 10:54:03 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-According to the reference manual and the "Pins Tool" from NXP, the
-signals for UART1 and UART2 can be muxed to the SAI2 and SAI3 pads
-respectively. Let's add the missing options.
+> > > > +config BOOT_CONFIG
+> > > > +	bool "Boot config support"
+> > > > +	select LIBXBC
+> > > > +	default y  
+> > > 
+> > > questionable "default y".
+> > > That needs lots of justification.  
+> > 
+> > OK, I can make it 'n' by default.
+> > 
+> > I thought that was OK because most of the memories for the
+> > bootconfig support were released after initialization.
+> > If user doesn't pass the bootconfig, only the code for
+> > /proc/bootconfig remains on runtime memory.
+> 
+> As 'n' is usually the default, I will argue this should be 'y'!
+> 
+> This is not some new fancy feature, or device that Linus
+> complains about "my X is important!". I will say this X *is* important!
+> This will (I hope) become standard in all kernel configs. One could even
+> argue that there shouldn't even be a config for this at all (forced
+> 'y'). This would hurt more not to have than to have. I would hate to
+> try to load special options only to find out that the kernel was
+> compiled with default configs and this wasn't enabled.
+> 
+> This is extended boot config support that can be useful for most
+> developers. The only ones that should say 'n' are those that are
+> working to get a "tiny" kernel at boot up. As Masami said, the memory
+> is freed after init, thus this should not be an issue for 99.9% of
+> kernel users.
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
- arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Thanks Steve!
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h b/arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h
-index cffa8991880d..5ccc4cc91959 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h
-@@ -430,18 +430,26 @@
- #define MX8MM_IOMUXC_SAI1_MCLK_SIM_M_HRESP                                  0x1AC 0x414 0x000 0x7 0x0
- #define MX8MM_IOMUXC_SAI2_RXFS_SAI2_RX_SYNC                                 0x1B0 0x418 0x000 0x0 0x0
- #define MX8MM_IOMUXC_SAI2_RXFS_SAI5_TX_SYNC                                 0x1B0 0x418 0x4EC 0x1 0x2
-+#define MX8MM_IOMUXC_SAI2_RXFS_UART1_DCE_TX                                 0x1B0 0x418 0x000 0x4 0x0
-+#define MX8MM_IOMUXC_SAI2_RXFS_UART1_DTE_RX                                 0x1B0 0x418 0x4F4 0x4 0x2
- #define MX8MM_IOMUXC_SAI2_RXFS_GPIO4_IO21                                   0x1B0 0x418 0x000 0x5 0x0
- #define MX8MM_IOMUXC_SAI2_RXFS_SIM_M_HSIZE0                                 0x1B0 0x418 0x000 0x7 0x0
- #define MX8MM_IOMUXC_SAI2_RXC_SAI2_RX_BCLK                                  0x1B4 0x41C 0x000 0x0 0x0
- #define MX8MM_IOMUXC_SAI2_RXC_SAI5_TX_BCLK                                  0x1B4 0x41C 0x4E8 0x1 0x2
-+#define MX8MM_IOMUXC_SAI2_RXC_UART1_DCE_RX                                  0x1B4 0x41C 0x4F4 0x4 0x3
-+#define MX8MM_IOMUXC_SAI2_RXC_UART1_DTE_TX                                  0x1B4 0x41C 0x000 0x4 0x0
- #define MX8MM_IOMUXC_SAI2_RXC_GPIO4_IO22                                    0x1B4 0x41C 0x000 0x5 0x0
- #define MX8MM_IOMUXC_SAI2_RXC_SIM_M_HSIZE1                                  0x1B4 0x41C 0x000 0x7 0x0
- #define MX8MM_IOMUXC_SAI2_RXD0_SAI2_RX_DATA0                                0x1B8 0x420 0x000 0x0 0x0
- #define MX8MM_IOMUXC_SAI2_RXD0_SAI5_TX_DATA0                                0x1B8 0x420 0x000 0x1 0x0
-+#define MX8MM_IOMUXC_SAI2_RXD0_UART1_DCE_RTS_B                              0x1B8 0x420 0x4F0 0x4 0x2
-+#define MX8MM_IOMUXC_SAI2_RXD0_UART1_DTE_CTS_B                              0x1B8 0x420 0x000 0x4 0x0
- #define MX8MM_IOMUXC_SAI2_RXD0_GPIO4_IO23                                   0x1B8 0x420 0x000 0x5 0x0
- #define MX8MM_IOMUXC_SAI2_RXD0_SIM_M_HSIZE2                                 0x1B8 0x420 0x000 0x7 0x0
- #define MX8MM_IOMUXC_SAI2_TXFS_SAI2_TX_SYNC                                 0x1BC 0x424 0x000 0x0 0x0
- #define MX8MM_IOMUXC_SAI2_TXFS_SAI5_TX_DATA1                                0x1BC 0x424 0x000 0x1 0x0
-+#define MX8MM_IOMUXC_SAI2_TXFS_UART1_DCE_CTS_B                              0x1BC 0x424 0x000 0x4 0x0
-+#define MX8MM_IOMUXC_SAI2_TXFS_UART1_DTE_RTS_B                              0x1BC 0x424 0x4F0 0x4 0x3
- #define MX8MM_IOMUXC_SAI2_TXFS_GPIO4_IO24                                   0x1BC 0x424 0x000 0x5 0x0
- #define MX8MM_IOMUXC_SAI2_TXFS_SIM_M_HWRITE                                 0x1BC 0x424 0x000 0x7 0x0
- #define MX8MM_IOMUXC_SAI2_TXC_SAI2_TX_BCLK                                  0x1C0 0x428 0x000 0x0 0x0
-@@ -464,21 +472,29 @@
- #define MX8MM_IOMUXC_SAI3_RXC_SAI3_RX_BCLK                                  0x1D0 0x438 0x000 0x0 0x0
- #define MX8MM_IOMUXC_SAI3_RXC_GPT1_CLK                                      0x1D0 0x438 0x000 0x1 0x0
- #define MX8MM_IOMUXC_SAI3_RXC_SAI5_RX_BCLK                                  0x1D0 0x438 0x4D0 0x2 0x2
-+#define MX8MM_IOMUXC_SAI3_RXC_UART2_DCE_CTS_B                               0x1D0 0x438 0x000 0x4 0x0
-+#define MX8MM_IOMUXC_SAI3_RXC_UART2_DTE_RTS_B                               0x1D0 0x438 0x4F8 0x4 0x2
- #define MX8MM_IOMUXC_SAI3_RXC_GPIO4_IO29                                    0x1D0 0x438 0x000 0x5 0x0
- #define MX8MM_IOMUXC_SAI3_RXC_TPSMP_HTRANS1                                 0x1D0 0x438 0x000 0x7 0x0
- #define MX8MM_IOMUXC_SAI3_RXD_SAI3_RX_DATA0                                 0x1D4 0x43C 0x000 0x0 0x0
- #define MX8MM_IOMUXC_SAI3_RXD_GPT1_COMPARE1                                 0x1D4 0x43C 0x000 0x1 0x0
- #define MX8MM_IOMUXC_SAI3_RXD_SAI5_RX_DATA0                                 0x1D4 0x43C 0x4D4 0x2 0x2
-+#define MX8MM_IOMUXC_SAI3_RXD_UART2_DCE_RTS_B                               0x1D4 0x43C 0x4F8 0x4 0x3
-+#define MX8MM_IOMUXC_SAI3_RXD_UART2_DTE_CTS_B                               0x1D4 0x43C 0x000 0x4 0x0
- #define MX8MM_IOMUXC_SAI3_RXD_GPIO4_IO30                                    0x1D4 0x43C 0x000 0x5 0x0
- #define MX8MM_IOMUXC_SAI3_RXD_TPSMP_HDATA0                                  0x1D4 0x43C 0x000 0x7 0x0
- #define MX8MM_IOMUXC_SAI3_TXFS_SAI3_TX_SYNC                                 0x1D8 0x440 0x000 0x0 0x0
- #define MX8MM_IOMUXC_SAI3_TXFS_GPT1_CAPTURE2                                0x1D8 0x440 0x000 0x1 0x0
- #define MX8MM_IOMUXC_SAI3_TXFS_SAI5_RX_DATA1                                0x1D8 0x440 0x4D8 0x2 0x2
-+#define MX8MM_IOMUXC_SAI3_TXFS_UART2_DCE_RX                                 0x1D8 0x440 0x4Fc 0x4 0x2
-+#define MX8MM_IOMUXC_SAI3_TXFS_UART2_DTE_TX                                 0x1D8 0x440 0x000 0x4 0x0
- #define MX8MM_IOMUXC_SAI3_TXFS_GPIO4_IO31                                   0x1D8 0x440 0x000 0x5 0x0
- #define MX8MM_IOMUXC_SAI3_TXFS_TPSMP_HDATA1                                 0x1D8 0x440 0x000 0x7 0x0
- #define MX8MM_IOMUXC_SAI3_TXC_SAI3_TX_BCLK                                  0x1DC 0x444 0x000 0x0 0x0
- #define MX8MM_IOMUXC_SAI3_TXC_GPT1_COMPARE2                                 0x1DC 0x444 0x000 0x1 0x0
- #define MX8MM_IOMUXC_SAI3_TXC_SAI5_RX_DATA2                                 0x1DC 0x444 0x4DC 0x2 0x2
-+#define MX8MM_IOMUXC_SAI3_TXC_UART2_DCE_TX                                  0x1DC 0x444 0x000 0x4 0x0
-+#define MX8MM_IOMUXC_SAI3_TXC_UART2_DTE_RX                                  0x1DC 0x444 0x4Fc 0x4 0x3
- #define MX8MM_IOMUXC_SAI3_TXC_GPIO5_IO0                                     0x1DC 0x444 0x000 0x5 0x0
- #define MX8MM_IOMUXC_SAI3_TXC_TPSMP_HDATA2                                  0x1DC 0x444 0x000 0x7 0x0
- #define MX8MM_IOMUXC_SAI3_TXD_SAI3_TX_DATA0                                 0x1E0 0x448 0x000 0x0 0x0
+Yes, for the users point of view, it is hard to notice that their kernel
+can accept the boot config or not before boot.
+To provide consistent system usability, I think it is better to be enabled
+by default. Anyway, if there is no boot config, almost all buffers and
+code are released after init (except for /proc/bootconfig entry point,
+which will return an empty buffer).
+
+It will increase the binary image size, but it must be small.
+FYI, here is an example of vmlinux (non compressed image)
+
+   text	   data	    bss	    dec	    hex	filename
+16178353	5843418	13324364	35346135	21b56d7	vmlinux
+16183993	5855858	13316172	35356023	21b7d77	vmlinux.xbc
+16187248	5855870	13307980	35351098	21b6a3a	vmlinux.xbc.btt
+
+So, for the extra boot config support, it will increase ~6KB code and
+12KB data, the boot time tracing increase ~3KB code and 12bytes data
+in binary file. 
+
+Thank you,
+
 -- 
-2.17.1
+Masami Hiramatsu <mhiramat@kernel.org>
