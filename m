@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 041B91193A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 694521193AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbfLJVIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:08:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56426 "EHLO mail.kernel.org"
+        id S1728071AbfLJVJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:09:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727947AbfLJVIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:08:46 -0500
+        id S1727555AbfLJVJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:09:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93D2C24684;
-        Tue, 10 Dec 2019 21:08:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91C0A2469E;
+        Tue, 10 Dec 2019 21:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576012125;
-        bh=5EhyCug/9vprCrA0ONIhYKS5pO1gYpNAEwSkpe81XlM=;
+        s=default; t=1576012142;
+        bh=DpWi6ezc5UrqjllVnRmWxaAxXBRUJq+N0u534sJ4NT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXc4yRo0xZT7Ab+373jz10x8xrJCRk575Gs9R3/IDZY0EMZUtoj3vXXF7Wg0MtHtk
-         hDXirvn4TdqQueHeQ06A5Qfucdh0h3VJyQTcxhRS/512CxMrcW+R1L63QSfipFpaCM
-         bqS/+98E+wl8HhTS31uKzWE1J5+UHUw3nmJgazw8=
+        b=DhKitbBzyZfIWkq4nG3dHl/RYY0iN43FzIlPyBMkIGkX8ytsRJZLd1mi+c7J1DLAI
+         0mJvocEd8AqULRXClo3wA2KgMPugoNTy2rEqDLzdMEuu3x6qmmPU5zqnovBPVF6vqk
+         FBIvWgg0NMA22wibg+D0MxjCQzuOpnRYiagpxYKs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aric Cyr <aric.cyr@amd.com>, Anthony Koo <Anthony.Koo@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 095/350] drm/amd/display: Properly round nominal frequency for SPD
-Date:   Tue, 10 Dec 2019 16:03:20 -0500
-Message-Id: <20191210210735.9077-56-sashal@kernel.org>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 107/350] rtw88: coex: Set 4 slot mode for A2DP
+Date:   Tue, 10 Dec 2019 16:03:32 -0500
+Message-Id: <20191210210735.9077-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
 References: <20191210210735.9077-1-sashal@kernel.org>
@@ -45,61 +45,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aric Cyr <aric.cyr@amd.com>
+From: Ping-Ke Shih <pkshih@realtek.com>
 
-[ Upstream commit c59802313e84bede954235b3a5dd0dd5325f49c5 ]
+[ Upstream commit 12078aae453556a88fb46777b7cc5fc97f867b7c ]
 
-[Why]
-Some displays rely on the SPD verticle frequency maximum value.
-Must round the calculated refresh rate to the nearest integer.
+With shallow buffer size, certain BT devices have active
+A2DP flow control to fill buffer frequently. If the slot
+is not at BT side, data can't be sent successfully to BT
+devices, and will cause audio glitch.
 
-[How]
-Round the nominal calculated refresh rate to the nearest whole
-integer.
+To resolve this issue, this commit splits TUs into 4-slots
+instead of 2-slot for all of the A2DP related coexistence
+strategies. That makes BT have higher opportunity to fill
+the A2DP buffer in time, and the audio quality could be
+more stable and smooth.
 
-Signed-off-by: Aric Cyr <aric.cyr@amd.com>
-Reviewed-by: Anthony Koo <Anthony.Koo@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Yan-Hsuan Chuang <yhchuang@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../gpu/drm/amd/display/modules/freesync/freesync.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/net/wireless/realtek/rtw88/coex.c | 24 ++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-index ec70c9b12e1aa..0978c698f0f85 100644
---- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-+++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-@@ -743,6 +743,10 @@ void mod_freesync_build_vrr_params(struct mod_freesync *mod_freesync,
- 	nominal_field_rate_in_uhz =
- 			mod_freesync_calc_nominal_field_rate(stream);
+diff --git a/drivers/net/wireless/realtek/rtw88/coex.c b/drivers/net/wireless/realtek/rtw88/coex.c
+index 793b40bdbf7cc..3e95ad1989123 100644
+--- a/drivers/net/wireless/realtek/rtw88/coex.c
++++ b/drivers/net/wireless/realtek/rtw88/coex.c
+@@ -1308,6 +1308,7 @@ static void rtw_coex_action_bt_inquiry(struct rtw_dev *rtwdev)
+ 	struct rtw_chip_info *chip = rtwdev->chip;
+ 	bool wl_hi_pri = false;
+ 	u8 table_case, tdma_case;
++	u32 slot_type = 0;
  
-+	/* Rounded to the nearest Hz */
-+	nominal_field_rate_in_uhz = 1000000ULL *
-+			div_u64(nominal_field_rate_in_uhz + 500000, 1000000);
-+
- 	min_refresh_in_uhz = in_config->min_refresh_in_uhz;
- 	max_refresh_in_uhz = in_config->max_refresh_in_uhz;
- 
-@@ -996,14 +1000,13 @@ unsigned long long mod_freesync_calc_nominal_field_rate(
- 			const struct dc_stream_state *stream)
- {
- 	unsigned long long nominal_field_rate_in_uhz = 0;
-+	unsigned int total = stream->timing.h_total * stream->timing.v_total;
- 
--	/* Calculate nominal field rate for stream */
-+	/* Calculate nominal field rate for stream, rounded up to nearest integer */
- 	nominal_field_rate_in_uhz = stream->timing.pix_clk_100hz / 10;
- 	nominal_field_rate_in_uhz *= 1000ULL * 1000ULL * 1000ULL;
--	nominal_field_rate_in_uhz = div_u64(nominal_field_rate_in_uhz,
--						stream->timing.h_total);
--	nominal_field_rate_in_uhz = div_u64(nominal_field_rate_in_uhz,
--						stream->timing.v_total);
-+
-+	nominal_field_rate_in_uhz =	div_u64(nominal_field_rate_in_uhz, total);
- 
- 	return nominal_field_rate_in_uhz;
+ 	if (coex_stat->wl_linkscan_proc || coex_stat->wl_hi_pri_task1 ||
+ 	    coex_stat->wl_hi_pri_task2)
+@@ -1318,14 +1319,16 @@ static void rtw_coex_action_bt_inquiry(struct rtw_dev *rtwdev)
+ 		if (wl_hi_pri) {
+ 			table_case = 15;
+ 			if (coex_stat->bt_a2dp_exist &&
+-			    !coex_stat->bt_pan_exist)
++			    !coex_stat->bt_pan_exist) {
++				slot_type = TDMA_4SLOT;
+ 				tdma_case = 11;
+-			else if (coex_stat->wl_hi_pri_task1)
++			} else if (coex_stat->wl_hi_pri_task1) {
+ 				tdma_case = 6;
+-			else if (!coex_stat->bt_page)
++			} else if (!coex_stat->bt_page) {
+ 				tdma_case = 8;
+-			else
++			} else {
+ 				tdma_case = 9;
++			}
+ 		} else if (coex_stat->wl_connected) {
+ 			table_case = 10;
+ 			tdma_case = 10;
+@@ -1361,7 +1364,7 @@ static void rtw_coex_action_bt_inquiry(struct rtw_dev *rtwdev)
+ 	rtw_coex_set_ant_path(rtwdev, false, COEX_SET_ANT_2G);
+ 	rtw_coex_set_rf_para(rtwdev, chip->wl_rf_para_rx[0]);
+ 	rtw_coex_table(rtwdev, table_case);
+-	rtw_coex_tdma(rtwdev, false, tdma_case);
++	rtw_coex_tdma(rtwdev, false, tdma_case | slot_type);
  }
+ 
+ static void rtw_coex_action_bt_hfp(struct rtw_dev *rtwdev)
+@@ -1475,13 +1478,13 @@ static void rtw_coex_action_bt_a2dp(struct rtw_dev *rtwdev)
+ 
+ 	if (efuse->share_ant) {
+ 		/* Shared-Ant */
++		slot_type = TDMA_4SLOT;
++
+ 		if (coex_stat->wl_gl_busy && coex_stat->wl_noisy_level == 0)
+ 			table_case = 10;
+ 		else
+ 			table_case = 9;
+ 
+-		slot_type = TDMA_4SLOT;
+-
+ 		if (coex_stat->wl_gl_busy)
+ 			tdma_case = 13;
+ 		else
+@@ -1585,13 +1588,14 @@ static void rtw_coex_action_bt_a2dp_hid(struct rtw_dev *rtwdev)
+ 
+ 	if (efuse->share_ant) {
+ 		/* Shared-Ant */
++		slot_type = TDMA_4SLOT;
++
+ 		if (coex_stat->bt_ble_exist)
+ 			table_case = 26;
+ 		else
+ 			table_case = 9;
+ 
+ 		if (coex_stat->wl_gl_busy) {
+-			slot_type = TDMA_4SLOT;
+ 			tdma_case = 13;
+ 		} else {
+ 			tdma_case = 14;
+@@ -1794,10 +1798,12 @@ static void rtw_coex_action_wl_linkscan(struct rtw_dev *rtwdev)
+ 	struct rtw_efuse *efuse = &rtwdev->efuse;
+ 	struct rtw_chip_info *chip = rtwdev->chip;
+ 	u8 table_case, tdma_case;
++	u32 slot_type = 0;
+ 
+ 	if (efuse->share_ant) {
+ 		/* Shared-Ant */
+ 		if (coex_stat->bt_a2dp_exist) {
++			slot_type = TDMA_4SLOT;
+ 			table_case = 9;
+ 			tdma_case = 11;
+ 		} else {
+@@ -1818,7 +1824,7 @@ static void rtw_coex_action_wl_linkscan(struct rtw_dev *rtwdev)
+ 	rtw_coex_set_ant_path(rtwdev, true, COEX_SET_ANT_2G);
+ 	rtw_coex_set_rf_para(rtwdev, chip->wl_rf_para_rx[0]);
+ 	rtw_coex_table(rtwdev, table_case);
+-	rtw_coex_tdma(rtwdev, false, tdma_case);
++	rtw_coex_tdma(rtwdev, false, tdma_case | slot_type);
+ }
+ 
+ static void rtw_coex_action_wl_not_connected(struct rtw_dev *rtwdev)
 -- 
 2.20.1
 
