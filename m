@@ -2,85 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C7C3117EBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:07:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E3CD117EC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:11:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbfLJEHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 23:07:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43734 "EHLO mail.kernel.org"
+        id S1726835AbfLJELU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 23:11:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727076AbfLJEHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 23:07:52 -0500
+        id S1726691AbfLJELT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 23:11:19 -0500
 Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E848F24680;
-        Tue, 10 Dec 2019 04:07:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51DA72071E;
+        Tue, 10 Dec 2019 04:11:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575950871;
-        bh=6hVA58dIBEyN/mPJBos2dUyQmVqkjqz0PDuZsQk7yqs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dc3T+9yIJERy9jMjJpVUOTUSeBrvZG1T4FlZKqyraXiZtzzpCgpIbAI63vSWCKgJy
-         myjPU5qZQbFEOqocCn9xkLA8Jhx7R67fhHuFmaRsw3wW0byFlC3tpdFpjaFDxD1hg2
-         I5S+5j7GQ2T2lh+o82w7QHgpeWuaAhy9py4DGcN8=
-From:   paulmck@kernel.org
+        s=default; t=1575951079;
+        bh=cLDeA+wrF3WYK7fsmV00W4JKsOtkiaUGuSWUs4Si49I=;
+        h=Date:From:To:Cc:Subject:Reply-To:From;
+        b=CE5XShxfTcatuFNxXCJ7gtHM2KpvL6OZD0+/zxBenM4mRlFCgDtN+Xxmt8IBOSCrc
+         W1R6ltJim4g6/ZOy1ICnGCw0oYnWX/AUb9NM72RWqLkSs3gkCdD4lyS5bbWvNf0bUG
+         T+twvtdU/BQT19c4M00LywKJsOClM/e/GyTJD4MY=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id E5A3A3522768; Mon,  9 Dec 2019 20:11:18 -0800 (PST)
+Date:   Mon, 9 Dec 2019 20:11:18 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         jiangshanlai@gmail.com, dipankar@in.ibm.com,
         akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 12/12] rcu: Remove unused stop-machine #include
-Date:   Mon,  9 Dec 2019 20:07:41 -0800
-Message-Id: <20191210040741.2943-12-paulmck@kernel.org>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20191210040714.GA2715@paulmck-ThinkPad-P72>
-References: <20191210040714.GA2715@paulmck-ThinkPad-P72>
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/7] kfree_rcu() updates for v5.6
+Message-ID: <20191210041118.GA3115@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+Hello!
 
-Long ago, RCU used the stop-machine mechanism to implement expedited
-grace periods, but no longer does so.  This commit therefore removes
-the no-longer-needed #includes of linux/stop_machine.h.
+The following series disentangles kfree_rcu() from core RCU and also
+provides batching, all courtesy of Joel Fernandes:
 
-Link: https://lwn.net/Articles/805317/
-Reported-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/tree.c | 1 -
- kernel/rcu/tree.h | 1 -
- 2 files changed, 2 deletions(-)
+1.	Add basic support for kfree_rcu() batching.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index d950764..878f62f 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -43,7 +43,6 @@
- #include <uapi/linux/sched/types.h>
- #include <linux/prefetch.h>
- #include <linux/delay.h>
--#include <linux/stop_machine.h>
- #include <linux/random.h>
- #include <linux/trace_events.h>
- #include <linux/suspend.h>
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 9d5986a..ce90c68 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -16,7 +16,6 @@
- #include <linux/cpumask.h>
- #include <linux/seqlock.h>
- #include <linux/swait.h>
--#include <linux/stop_machine.h>
- #include <linux/rcu_node_tree.h>
- 
- #include "rcu_segcblist.h"
--- 
-2.9.5
+2.	Add kfree_rcu() performance tests.
 
+3.	Make kfree_rcu() use a non-atomic ->monitor_todo.
+
+4.	Add multiple in-flight batches of kfree_rcu() work.
+
+5.	Add support for debug_objects debugging for kfree_rcu().
+
+6.	Remove kfree_rcu() special casing and lazy-callback handling.
+
+7.	Remove kfree_call_rcu_nobatch().
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/RCU/stallwarn.txt                 |   11 
+ Documentation/admin-guide/kernel-parameters.txt |   21 +
+ include/linux/rcu_segcblist.h                   |    2 
+ include/linux/rcutiny.h                         |   11 
+ include/linux/rcutree.h                         |    3 
+ include/trace/events/rcu.h                      |   32 --
+ kernel/rcu/rcu.h                                |   27 -
+ kernel/rcu/rcu_segcblist.c                      |   25 -
+ kernel/rcu/rcu_segcblist.h                      |   25 -
+ kernel/rcu/rcuperf.c                            |  191 ++++++++++++--
+ kernel/rcu/srcutree.c                           |    4 
+ kernel/rcu/tiny.c                               |   28 +-
+ kernel/rcu/tree.c                               |  327 ++++++++++++++++++++----
+ kernel/rcu/tree.h                               |    1 
+ kernel/rcu/tree_plugin.h                        |   48 ---
+ kernel/rcu/tree_stall.h                         |    6 
+ kernel/rcu/update.c                             |   10 
+ 17 files changed, 548 insertions(+), 224 deletions(-)
