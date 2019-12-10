@@ -2,121 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA5BE1182CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:51:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71A2C1182D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:52:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfLJIvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 03:51:19 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34128 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfLJIvT (ORCPT
+        id S1726975AbfLJIwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 03:52:53 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40738 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfLJIwx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 03:51:19 -0500
-Received: by mail-wm1-f68.google.com with SMTP id f4so1758986wmj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 00:51:18 -0800 (PST)
+        Tue, 10 Dec 2019 03:52:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c14so19028894wrn.7
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 00:52:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=2OStWiZ8mR/ZrbDoNbmkGBDlxNc16VgMrjrIx0/2wQ0=;
-        b=AO6Z+SWE/wvktK+t5nl2eh8WclDR+xWSngx/QrzYjqLJER/L50nJAcGGJR4+Cj96yY
-         wiO8rRU3JRYY2Ru+FHvRQscPNsk0j2BPCB0CcAjnoHu0+cSVts8aw4eKSW8Z8s8qBx6J
-         ZTPPdgdPqkV4CEUfxMtT549C6Is7PdPrnSuHIglFlo2aZBK7KBlEmASJXczdr/NIlFvV
-         +5KP5XWTCFrA/YyHfdaDtyddRxyFU1DBQmo/zo4JOknFQYos7bWoQFPROnfwBXv4mHeQ
-         +912ddeZT55/L4itwCNWVpMW8pWeG++M1Kgz3pKZAcS7fNK4di4vqyAywZNVGjUAEC5T
-         4WMw==
+        bh=wu72ZcmsFHLVkAALMmbmLhHmQQPjxMnxvhre6csNNNw=;
+        b=Jpct3dZ79bLrJVYVAnUUlQlf9+z5GnfPRqxm1SCkWaAX4EzJW1DvJaHb1kwIoqbS2T
+         x3iqypxU0qLYRpUk16PdsdbC7hDJMPnlljbS9sAmBEj7xerpWHSzo7Vu6DDioD2Sl0R/
+         RtHnkO8jP0Q3zEAflyhfyb0U9435zmG0Eljeu26sigkMCO9Sy7QnwPBqlAfKiUYIq3mx
+         UQYu4oKbrloYniRIIbNrvLgVazCm0gSj+KiZiExfq7Ky64IMfAD3qQkgDyB0ruTnNFZn
+         xO8FOXbKKu4oIy1Y5a7i2yklkS6q0PkPaG/NcvXoMwjVUZPs2ju4LLfsLlMbvyMb/2Ad
+         5qyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=2OStWiZ8mR/ZrbDoNbmkGBDlxNc16VgMrjrIx0/2wQ0=;
-        b=hXQQGWlmoilu6kn05spR8MHcyP0b3Zssl6n/QaSJivejxrRaPdoH2kRS9vB4GnehBX
-         fzdi7DCV9Tige26AeLmi4GqAjl0sSNIj/3mm37tXNweTXRRjq6WZCkE5Xd0UGEB3KXl8
-         OBVBsNGl8O36usvSYv3t9j56NlMiIKxJIFNChnd5Oem3AR+lIENHE1tpXV++BpfwzM5M
-         znqTsX4uoqiWhKkthFDtQQ2qQMRP2Ui1D77SP2pAZon/V9C12IDaJ6BzjB8S33NfTJxY
-         y8eDlKp/4hsxNg+KieQECFho7z1dKMqSI/jDvaKnztVdQiSKSLH3deCEsMTq+lEvpGwx
-         fRSA==
-X-Gm-Message-State: APjAAAXGA6TaB1ge7jtUPUzgeDXVPn8pcUVD8Ayy87zCH4zW0vBcNIJN
-        7nkuyIpPeVUjcV8yb06MkCQV9g==
-X-Google-Smtp-Source: APXvYqymznI8bXpwxJJKQCCpWC4oVPhj0hEsP762lFzOO7HarA6IWezEh7ZXOL05OBPRL642lpSf1g==
-X-Received: by 2002:a05:600c:2383:: with SMTP id m3mr4012089wma.32.1575967877437;
-        Tue, 10 Dec 2019 00:51:17 -0800 (PST)
+        bh=wu72ZcmsFHLVkAALMmbmLhHmQQPjxMnxvhre6csNNNw=;
+        b=egAcU9S+5+mVMPLwoT+VncSBvScxyPCPFinYdaRCwC/5fCoMCwsVmvo8nr0Bgh3YNT
+         BXj+dRS7waTrmztuC5ZdiIXBtd3fp0TIXscaGP87lUW/B7Kva8iq+zGcumuU7EUYv6Ol
+         /6yJi8H07BhQI2PdPWmPVcxgwuVA6CzRjip+wWxy9CazMgkYyPfRGGHt86zDr79Gv349
+         FQyyEjmCdw0efd/RMMkzjsWX5ynmNwLSGUxSuwQbDMAwmq1jhaXE/gSog08hwO3xzLng
+         Ti8KoR6nltz/7LuZiY5YEfcR/e69IFFcshCTuOrH6uRchJiODQkAIhb4mzflHnMQ3jGJ
+         yk6A==
+X-Gm-Message-State: APjAAAWM7UuzDivN4ZVPGW0TV/qB/+eXSB5QVlil3t2oOpWLeYksTDG1
+        Z52g5zhPI9H9DQKt/Sn8AYpCew==
+X-Google-Smtp-Source: APXvYqxNtdqEUf0ybgBiLfNWM/2TgJzzIP+gMMTyOVmPeFHLT7MsWwJUI/pg+ie8aPi1hMxoH7lPLg==
+X-Received: by 2002:adf:f850:: with SMTP id d16mr1853669wrq.161.1575967971012;
+        Tue, 10 Dec 2019 00:52:51 -0800 (PST)
 Received: from dell (h185-20-99-176.host.redstation.co.uk. [185.20.99.176])
-        by smtp.gmail.com with ESMTPSA id h8sm2585037wrx.63.2019.12.10.00.51.16
+        by smtp.gmail.com with ESMTPSA id s15sm2518432wrp.4.2019.12.10.00.52.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 00:51:16 -0800 (PST)
-Date:   Tue, 10 Dec 2019 08:51:11 +0000
+        Tue, 10 Dec 2019 00:52:50 -0800 (PST)
+Date:   Tue, 10 Dec 2019 08:52:43 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mfd: intel_soc_pmic: Rename pwm_backlight pwm-lookup
- to pwm_pmic_backlight
-Message-ID: <20191210085111.GQ3468@dell>
-References: <20191119151818.67531-1-hdegoede@redhat.com>
- <20191119151818.67531-3-hdegoede@redhat.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        stefan@agner.ch, b.galvani@gmail.com, phh@phh.me,
+        letux-kernel@openphoenux.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: mfd: rn5t618: Document optional
+ property interrupts
+Message-ID: <20191210085243.GR3468@dell>
+References: <20191129212045.18325-1-andreas@kemnade.info>
+ <20191129212045.18325-2-andreas@kemnade.info>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191119151818.67531-3-hdegoede@redhat.com>
+In-Reply-To: <20191129212045.18325-2-andreas@kemnade.info>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019, Hans de Goede wrote:
+On Fri, 29 Nov 2019, Andreas Kemnade wrote:
 
-> At least Bay Trail (BYT) and Cherry Trail (CHT) devices can use 1 of 2
-> different PWM controllers for controlling the LCD's backlight brightness.
+> These chips use interrupts for various things like rtc alarm.
 > 
-> Either the one integrated into the PMIC or the one integrated into the
-> SoC (the 1st LPSS PWM controller).
-> 
-> So far in the LPSS code on BYT we have skipped registering the LPSS PWM
-> controller "pwm_backlight" lookup entry when a Crystal Cove PMIC is
-> present, assuming that in this case the PMIC PWM controller will be used.
-> 
-> On CHT we have been relying on only 1 of the 2 PWM controllers being
-> enabled in the DSDT at the same time; and always registered the lookup.
-> 
-> So far this has been working, but the correct way to determine which PWM
-> controller needs to be used is by checking a bit in the VBT table and
-> recently I've learned about 2 different BYT devices:
-> Point of View MOBII TAB-P800W
-> Acer Switch 10 SW5-012
-> 
-> Which use a Crystal Cove PMIC, yet the LCD is connected to the SoC/LPSS
-> PWM controller (and the VBT correctly indicates this), so here our old
-> heuristics fail.
-> 
-> Since only the i915 driver has access to the VBT, this commit renames
-> the "pwm_backlight" lookup entries for the Crystal Cove PMIC's PWM
-> controller to "pwm_pmic_backlight" so that the i915 driver can do a
-> pwm_get() for the right controller depending on the VBT bit, instead of
-> the i915 driver relying on a "pwm_backlight" lookup getting registered
-> which magically points to the right controller.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 > ---
->  drivers/mfd/intel_soc_pmic_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/mfd/rn5t618.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rn5t618.txt b/Documentation/devicetree/bindings/mfd/rn5t618.txt
+> index b74e5e94d1cb..05650e1ab28a 100644
+> --- a/Documentation/devicetree/bindings/mfd/rn5t618.txt
+> +++ b/Documentation/devicetree/bindings/mfd/rn5t618.txt
+> @@ -15,6 +15,7 @@ Required properties:
+>   - reg: the I2C slave address of the device
+>  
+>  Optional properties:
+> + - interrupts: interrupt mapping for IRQ
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Please link to the document that describes it, as below.
+
+NB: Relative paths are usually preferred.
+
+>   - system-power-controller:
+>     See Documentation/devicetree/bindings/power/power-controller.txt
+>  
+> @@ -32,6 +33,8 @@ Example:
+>  	pmic@32 {
+>  		compatible = "ricoh,rn5t618";
+>  		reg = <0x32>;
+> +		interrupt-parent = <&gpio5>;
+> +		interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
+>  		system-power-controller;
+>  
+>  		regulators {
 
 -- 
 Lee Jones [李琼斯]
