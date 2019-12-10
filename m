@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72CFF1199DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:52:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9EE7119A04
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:53:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbfLJVI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:08:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56454 "EHLO mail.kernel.org"
+        id S1729328AbfLJVsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:48:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727115AbfLJVIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:08:47 -0500
+        id S1727954AbfLJVIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:08:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F364E20652;
-        Tue, 10 Dec 2019 21:08:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7093024696;
+        Tue, 10 Dec 2019 21:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576012126;
-        bh=4lvf0WVJkiCaK/sGncCOHh8sp07BDq1hgg2ES55yXR4=;
+        s=default; t=1576012128;
+        bh=7zLsb//lUHhQDy4cBSzI/supsbevb/WRTjAn9ktL5Bg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FAxF2wFt/YxO4vXdFAvoCNe9hOFY5tvSAClWo3rkIVnqb47LpS/O/h6fvlJ/7PU5r
-         PKl52tZfxXUhI2PgUrvCL8XSiDVt9aXnoZHV8oW6XWMfdMbZtcwSpCh9EZJqsEfbNx
-         mpgRa485iIc3hGPw9iBCW0vT7iYwMPavjB4iogMM=
+        b=pIpfc+SdNqhEO7FycEpRyEuIQCNNX1WGlg9bZGG8uXikREKpj6Y+uDTvepBZpor6W
+         eUAuQZD/obpeC0DF0CAcTjuhHD3CRNtuLMuV4YxB3ptop62rU1vcfGPOFCXgsabtxe
+         52gKEJ4mZAiDVl7sy80YMBDi0EFqopWvrdRmpsVE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Josip Pavic <Josip.Pavic@amd.com>,
-        Anthony Koo <Anthony.Koo@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 096/350] drm/amd/display: wait for set pipe mcp command completion
-Date:   Tue, 10 Dec 2019 16:03:21 -0500
-Message-Id: <20191210210735.9077-57-sashal@kernel.org>
+Cc:     Benoit Parrot <bparrot@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 097/350] media: ti-vpe: vpe: fix a v4l2-compliance failure about invalid sizeimage
+Date:   Tue, 10 Dec 2019 16:03:22 -0500
+Message-Id: <20191210210735.9077-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
 References: <20191210210735.9077-1-sashal@kernel.org>
@@ -46,42 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josip Pavic <Josip.Pavic@amd.com>
+From: Benoit Parrot <bparrot@ti.com>
 
-[ Upstream commit 15caeabc5787c15babad7ee444afe9c26df1c8b3 ]
+[ Upstream commit 0bac73adea4df8d34048b38f6ff24dc3e73e90b6 ]
 
-[Why]
-When the driver sends a pipe set command to the DMCU FW, it does not wait
-for the command to complete. This can lead to unpredictable behavior if,
-for example, the driver were to request a pipe disable to the FW via MCP,
-then power down some hardware before the firmware has completed processing
-the command.
+v4l2-compliance fails with this message:
 
-[How]
-Wait for the DMCU FW to finish processing set pipe commands
+   fail: v4l2-test-formats.cpp(463): !pfmt.sizeimage
+   fail: v4l2-test-formats.cpp(736): \
+	Video Capture Multiplanar is valid, \
+	but TRY_FMT failed to return a format
+   test VIDIOC_TRY_FMT: FAIL
 
-Signed-off-by: Josip Pavic <Josip.Pavic@amd.com>
-Reviewed-by: Anthony Koo <Anthony.Koo@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+This failure is causd by the driver failing to handle out range
+'bytesperline' values from user space applications.
+
+VPDMA hardware is limited to 64k line stride (16 bytes aligned, so 65520
+bytes). So make sure the provided or calculated 'bytesperline' is
+smaller than the maximum value.
+
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dce/dce_abm.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/platform/ti-vpe/vpdma.h | 1 +
+ drivers/media/platform/ti-vpe/vpe.c   | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_abm.c b/drivers/gpu/drm/amd/display/dc/dce/dce_abm.c
-index 58bd131d5b484..7700a855d77ce 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_abm.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_abm.c
-@@ -77,6 +77,9 @@ static bool dce_abm_set_pipe(struct abm *abm, uint32_t controller_id)
- 	/* notifyDMCUMsg */
- 	REG_UPDATE(MASTER_COMM_CNTL_REG, MASTER_COMM_INTERRUPT, 1);
+diff --git a/drivers/media/platform/ti-vpe/vpdma.h b/drivers/media/platform/ti-vpe/vpdma.h
+index 28bc941293484..9bacfd6032501 100644
+--- a/drivers/media/platform/ti-vpe/vpdma.h
++++ b/drivers/media/platform/ti-vpe/vpdma.h
+@@ -57,6 +57,7 @@ struct vpdma_data_format {
+ 						 * line stride of source and dest
+ 						 * buffers should be 16 byte aligned
+ 						 */
++#define VPDMA_MAX_STRIDE		65520	/* Max line stride 16 byte aligned */
+ #define VPDMA_DTD_DESC_SIZE		32	/* 8 words */
+ #define VPDMA_CFD_CTD_DESC_SIZE		16	/* 4 words */
  
-+	REG_WAIT(MASTER_COMM_CNTL_REG, MASTER_COMM_INTERRUPT, 0,
-+			1, 80000);
+diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
+index 512660b4ee636..8b14ba4a3d9ea 100644
+--- a/drivers/media/platform/ti-vpe/vpe.c
++++ b/drivers/media/platform/ti-vpe/vpe.c
+@@ -1668,6 +1668,10 @@ static int __vpe_try_fmt(struct vpe_ctx *ctx, struct v4l2_format *f,
+ 		if (stride > plane_fmt->bytesperline)
+ 			plane_fmt->bytesperline = stride;
+ 
++		plane_fmt->bytesperline = clamp_t(u32, plane_fmt->bytesperline,
++						  stride,
++						  VPDMA_MAX_STRIDE);
 +
- 	return true;
- }
+ 		plane_fmt->bytesperline = ALIGN(plane_fmt->bytesperline,
+ 						VPDMA_STRIDE_ALIGN);
  
 -- 
 2.20.1
