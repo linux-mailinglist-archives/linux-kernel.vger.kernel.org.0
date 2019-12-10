@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B62219679A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA0B196778
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:44:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbgC1QpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:45:20 -0400
-Received: from mx.sdf.org ([205.166.94.20]:49956 "EHLO mx.sdf.org"
+        id S1727909AbgC1Qnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:55 -0400
+Received: from mx.sdf.org ([205.166.94.20]:49939 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727805AbgC1Qnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:42 -0400
+        id S1727828AbgC1Qno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:44 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhObs019651
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhMAI029531
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:24 GMT
+        Sat, 28 Mar 2020 16:43:22 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhOi3016886;
-        Sat, 28 Mar 2020 16:43:24 GMT
-Message-Id: <202003281643.02SGhOi3016886@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhMtr029198;
+        Sat, 28 Mar 2020 16:43:22 GMT
+Message-Id: <202003281643.02SGhMtr029198@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Tue, 10 Dec 2019 07:15:55 -0500
-Subject: [RFC PATCH v1 44/50] arm64: ptr auth: Use get_random_u64 instead of
- _bytes
+Date:   Tue, 10 Dec 2019 10:45:27 -0500
+Subject: [RFC PATCH v1 39/50] arm: kexec_file: Avoid temp buffer for RNG seed
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+Cc:     Hsin-Yi Wang <hsinyi@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
         linux-arm-kernel@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
@@ -32,144 +32,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since these are authentication keys, stored in the kernel as long
-as they're important, get_random_u64 is fine.  In particular,
-get_random_bytes has significant per-call overhead, so five
-separate calls is painful.
+After using get_random_bytes(), you want to wipe the buffer
+afterward so the seed remains secret.
 
-This ended up being a more extensive change, since the previous
-code was unrolled and 10 calls to get_random_u64() seems excessive.
-So the code was rearranged to have smaller object size.
-
-Currently fields[i] = { 1 << i, 16 * i } for all i could be computed
-rather than looked up, but the table seemed more future-proof.
-
-For ptrauth_keys_switch(), the MSR instructions must be unrolled and
-are much faster than get_random, so although a similar flags-based
-interface is possible, it's probably not worth it.
+In this case, we can eliminate the temporary buffer entirely.
+fdt_setprop_placeholder returns a pointer to the property value
+buffer, allowing us to put the random data directy in there without
+using a temporary buffer at all.  Faster and less stack all in one.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
+Cc: Hsin-Yi Wang <hsinyi@chromium.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org
 ---
- arch/arm64/include/asm/pointer_auth.h | 20 +++++----
- arch/arm64/kernel/pointer_auth.c      | 62 +++++++++++++++------------
- 2 files changed, 46 insertions(+), 36 deletions(-)
+ arch/arm64/kernel/machine_kexec_file.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
-index 7a24bad1a58b8..b7ef71362a3ae 100644
---- a/arch/arm64/include/asm/pointer_auth.h
-+++ b/arch/arm64/include/asm/pointer_auth.h
-@@ -30,17 +30,19 @@ struct ptrauth_keys {
- 	struct ptrauth_key apga;
- };
+diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+index 7b08bf9499b6b..69e25bb96e3fb 100644
+--- a/arch/arm64/kernel/machine_kexec_file.c
++++ b/arch/arm64/kernel/machine_kexec_file.c
+@@ -106,12 +106,12 @@ static int setup_dtb(struct kimage *image,
  
-+static inline unsigned long ptrauth_keys_supported(void)
-+{
-+	return (system_supports_address_auth() ?
-+			PR_PAC_APIAKEY | PR_PAC_APIBKEY |
-+			PR_PAC_APDAKEY | PR_PAC_APDBKEY : 0) |
-+	       (system_supports_generic_auth() ? PR_PAC_APGAKEY : 0);
-+}
-+
-+void ptrauth_keys_generate(struct ptrauth_keys *keys, unsigned long flags);
-+
- static inline void ptrauth_keys_init(struct ptrauth_keys *keys)
- {
--	if (system_supports_address_auth()) {
--		get_random_bytes(&keys->apia, sizeof(keys->apia));
--		get_random_bytes(&keys->apib, sizeof(keys->apib));
--		get_random_bytes(&keys->apda, sizeof(keys->apda));
--		get_random_bytes(&keys->apdb, sizeof(keys->apdb));
--	}
--
--	if (system_supports_generic_auth())
--		get_random_bytes(&keys->apga, sizeof(keys->apga));
-+	ptrauth_keys_generate(keys, ptrauth_keys_supported());
- }
- 
- #define __ptrauth_key_install(k, v)				\
-diff --git a/arch/arm64/kernel/pointer_auth.c b/arch/arm64/kernel/pointer_auth.c
-index c507b584259d0..1604ed246128c 100644
---- a/arch/arm64/kernel/pointer_auth.c
-+++ b/arch/arm64/kernel/pointer_auth.c
-@@ -7,40 +7,48 @@
- #include <asm/cpufeature.h>
- #include <asm/pointer_auth.h>
- 
-+/*
-+ * Generating crypto-quality random numbers is expensive enough that
-+ * there's no point unrolling this.
-+ */
-+void ptrauth_keys_generate(struct ptrauth_keys *keys, unsigned long flags)
-+{
-+	size_t i;
-+	static const struct {
-+		/*
-+		 * 8 bits is enough for now.  Compiler will complain
-+		 * if/when we need more.
-+		 */
-+		unsigned char flag, offset;
-+	} fields[] = {
-+		{ PR_PAC_APIAKEY, offsetof(struct ptrauth_keys, apia) },
-+		{ PR_PAC_APIBKEY, offsetof(struct ptrauth_keys, apib) },
-+		{ PR_PAC_APDAKEY, offsetof(struct ptrauth_keys, apda) },
-+		{ PR_PAC_APDBKEY, offsetof(struct ptrauth_keys, apdb) },
-+		{ PR_PAC_APGAKEY, offsetof(struct ptrauth_keys, apga) }
-+	};
-+
-+	for (i = 0; i < ARRAY_SIZE(fields); i++) {
-+		if (flags & fields[i].flag) {
-+			struct ptrauth_key *k = (void *)keys + fields[i].offset;
-+			k->lo = get_random_u64();
-+			k->hi = get_random_u64();
-+		}
-+	}
-+}
-+
- int ptrauth_prctl_reset_keys(struct task_struct *tsk, unsigned long arg)
- {
-+	unsigned long supported = ptrauth_keys_supported();
- 	struct ptrauth_keys *keys = &tsk->thread.keys_user;
--	unsigned long addr_key_mask = PR_PAC_APIAKEY | PR_PAC_APIBKEY |
--				      PR_PAC_APDAKEY | PR_PAC_APDBKEY;
--	unsigned long key_mask = addr_key_mask | PR_PAC_APGAKEY;
- 
--	if (!system_supports_address_auth() && !system_supports_generic_auth())
-+	if (!supported || arg & ~supported)
- 		return -EINVAL;
- 
--	if (!arg) {
--		ptrauth_keys_init(keys);
--		ptrauth_keys_switch(keys);
--		return 0;
--	}
--
--	if (arg & ~key_mask)
--		return -EINVAL;
--
--	if (((arg & addr_key_mask) && !system_supports_address_auth()) ||
--	    ((arg & PR_PAC_APGAKEY) && !system_supports_generic_auth()))
--		return -EINVAL;
--
--	if (arg & PR_PAC_APIAKEY)
--		get_random_bytes(&keys->apia, sizeof(keys->apia));
--	if (arg & PR_PAC_APIBKEY)
--		get_random_bytes(&keys->apib, sizeof(keys->apib));
--	if (arg & PR_PAC_APDAKEY)
--		get_random_bytes(&keys->apda, sizeof(keys->apda));
--	if (arg & PR_PAC_APDBKEY)
--		get_random_bytes(&keys->apdb, sizeof(keys->apdb));
--	if (arg & PR_PAC_APGAKEY)
--		get_random_bytes(&keys->apga, sizeof(keys->apga));
-+	if (!arg)
-+		arg = supported;
- 
-+	ptrauth_keys_generate(keys, arg);
- 	ptrauth_keys_switch(keys);
- 
- 	return 0;
+ 	/* add rng-seed */
+ 	if (rng_is_initialized()) {
+-		u8 rng_seed[RNG_SEED_SIZE];
+-		get_random_bytes(rng_seed, RNG_SEED_SIZE);
+-		ret = fdt_setprop(dtb, off, FDT_PROP_RNG_SEED, rng_seed,
+-				RNG_SEED_SIZE);
++		void *rng_seed;
++		ret = fdt_setprop_placeholder(dtb, off, FDT_PROP_RNG_SEED,
++				RNG_SEED_SIZE, &rng_seed);
+ 		if (ret)
+ 			goto out;
++		get_random_bytes(rng_seed, RNG_SEED_SIZE);
+ 	} else {
+ 		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
+ 				FDT_PROP_RNG_SEED);
 -- 
 2.26.0
 
