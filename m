@@ -2,84 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 358F3118C9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:36:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B50F118CA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:36:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfLJPf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 10:35:57 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43210 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbfLJPf5 (ORCPT
+        id S1727578AbfLJPgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 10:36:24 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38188 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbfLJPgY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 10:35:57 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h14so18975pfe.10
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 07:35:57 -0800 (PST)
+        Tue, 10 Dec 2019 10:36:24 -0500
+Received: by mail-oi1-f196.google.com with SMTP id b8so10169080oiy.5
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 07:36:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2fl7MawNYz3ZkzAynbewcYICAZpqfTz/726fJLPlUqY=;
-        b=dLr9mxK51zZV+Yu2FI7AUlxZvrxRgKsin4pzn22uIL01caSkZBm0F9Ej0HqRbj5Ntw
-         iDS6aVTPjxYGrCnHxfnEPz5AupmhMGnJaNwJTqAZscAogtCDNRi3ntrAWDd6j+BA31d/
-         7NN8HG2uotdH5Nd3+DKTuPRACNDQeoB6p/OWfLJbHnG3ssvxaZUBQ7a3hPexwP8R5Mtc
-         EBKv51edPLT/5zNFy9pcCQCOTKJJ4Y6ab0sKXDFvOsWZGqCbOCSV4gXmTF5IdvqzZqdX
-         0e+owlJwnLoGMrXgLvZSoQrSiJBGrWSDpWokCd0zk2HZpmOoGYw2jidyJr5yhDTicMB+
-         Gf8g==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=WlHYJpV9LDx+Kwr6eflFKbZEkhaqyVolWhtkZZvo7vI=;
+        b=HmtzxjKJeWiAUhjNzPV3A+A+4uKypcHodEg1/o0s+EXblhnV8AWvfTaiCqaUc5Ovrf
+         Lpol3HQ1K5hb5GeMgruaiWF2Ucy3w8aG00CKxD7KFvw/FUa3dWVqjWfVUytvPYIyjoXY
+         AVFbHLKZagdBGReZFa5C8xBRM9xs14X+SftS++EmfqQI2YpnedEramWnldF8GVWhMDxA
+         N6qS1MHnwpedtm4d84VNi8HFNxLkT6FNNUjMwjZ08dRhycuqyqyCI/fCU5dNMyHKM+ca
+         //RwJGtSygdlGXiYbRdkwY2evBxVGsj5P4RNiwhbbr0Oj1dDU+UGR34HZ18iIVj9TgZg
+         k0rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2fl7MawNYz3ZkzAynbewcYICAZpqfTz/726fJLPlUqY=;
-        b=sd7t6XyMzJAV996PcsroEWSe0jfhiymLdojR4gshbap61mxQhfuFKyQbUWtVsQRPln
-         V5TmRhtlkYw+UDkIgMVCXWpImOH1+F21jb7MRUhNtxJeswm++U+DpcPUJHmRmM+yWDKH
-         Y0cS6v5Qv7YmKJ9wt93MGqbfE4F6JqMpvdBTF0Y06Ruyd4gh+z0GCRmo8PAqiVS2Y7UY
-         hikQPYZldvJn+mVT/ly0n6xPvXuKhLiuy76wW7deAA8dvumyWNx2g5b18qWYuPH7SBaT
-         0kpcS8ycbE7yrWcq/AwTRjk2mT34qWD9lY9RbWm7anu8d/sxZM7DfNZ+Zl2HwmHsemYP
-         6Weg==
-X-Gm-Message-State: APjAAAUUEaid3ZeqwWiEkYopa81cCUHuMjfvgQORAPctDxTQAms6MBp0
-        1A3f7A0wgNZBt/9QOkMT8O6JAA==
-X-Google-Smtp-Source: APXvYqw+0QHiTBM7Qw/N1xP/7gvnoWtJZQTrHTkAPTM1Ce7db9yrq1cTc2dYcF2z10B/9s1kz9bM6g==
-X-Received: by 2002:aa7:9f9b:: with SMTP id z27mr36066045pfr.102.1575992156359;
-        Tue, 10 Dec 2019 07:35:56 -0800 (PST)
-Received: from cisco ([2601:282:902:b340:b1ae:d960:d4d7:eda9])
-        by smtp.gmail.com with ESMTPSA id e12sm1501838pjs.3.2019.12.10.07.35.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 07:35:55 -0800 (PST)
-Date:   Tue, 10 Dec 2019 08:35:55 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Sargun Dhillon <sargun@sargun.me>,
-        linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jannh@google.com, cyphar@cyphar.com,
-        luto@amacapital.net, viro@zeniv.linux.org.uk,
-        Jed Davis <jld@mozilla.com>,
-        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
-        Emilio Cobos =?iso-8859-1?Q?=C1lvarez?= <ealvarez@mozilla.com>,
-        Florian Weimer <fweimer@redhat.com>
-Subject: Re: [PATCH v2 4/4] samples: Add example of using PTRACE_GETFD in
- conjunction with user trap
-Message-ID: <20191210153555.GD22803@cisco>
-References: <20191209070646.GA32477@ircssh-2.c.rugged-nimbus-611.internal>
- <20191209192959.GB10721@redhat.com>
- <BE3E056F-0147-4A00-8FF7-6CC9DE02A30C@ubuntu.com>
- <20191209204635.GC10721@redhat.com>
- <20191210111051.j5opodgjalqigx6q@wittgenstein>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=WlHYJpV9LDx+Kwr6eflFKbZEkhaqyVolWhtkZZvo7vI=;
+        b=HLlgsNsjXoAs17vcCDfNsYY34YGTfS91f+vggKPCGLwRtBJ60RMRy4QHplDsAPaxgL
+         8acQYhK6CFfHK4XrpDJRRtnuZXpTh61uNz8AiRlWHRVnfFzpNECztYls6VAFzbGjaD74
+         IguN3K1PpHfEfdmuw6MrE/3osL4mooTqyQt5OrILoaR8O9ZztjQzVYreRFp/4MnzKmB1
+         kyzK35BBvjgETsiX4A6AF9Cm52RS1QddpaCLC6+twrXGgETNLteB2lzkfo0+dk2fx7GF
+         glE4TqKz1StAhphOjsdnJaq030jcXeg1+S8vYXsohjDLMJfbZwwssIy1TZx75DWnKQp4
+         4P3Q==
+X-Gm-Message-State: APjAAAW+Nt57Lm24sjVu+rD5YUPHIS6vGkZWhyLu8EgaXKmkk0a5C0MI
+        wb3dsHue8eLomN4nY5a6QPYs0Mcjtb8nX43N0k0=
+X-Google-Smtp-Source: APXvYqykli7gd5rsjr1/XSkwFDQZ6wOd+MqK9k+ryUv7jn3vbCRojg424/vkCGAdZqom6RZ+XfRYQugrg3/Mmy61uCM=
+X-Received: by 2002:a05:6808:218:: with SMTP id l24mr4466968oie.75.1575992183472;
+ Tue, 10 Dec 2019 07:36:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210111051.j5opodgjalqigx6q@wittgenstein>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a4a:4806:0:0:0:0:0 with HTTP; Tue, 10 Dec 2019 07:36:23
+ -0800 (PST)
+Reply-To: cyeden1@gmail.com
+From:   Cynthia Eden <waseemmughal972@gmail.com>
+Date:   Tue, 10 Dec 2019 15:36:23 +0000
+Message-ID: <CAB6=nZMqRgvNzku69MpTfVRh8MTCHsfv3XcuXkF5Kb5C1bMxGA@mail.gmail.com>
+Subject: Hello I have an important information from UNITED NATIONS for
+ you,reply for more details
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 12:10:52PM +0100, Christian Brauner wrote:
->
-> #define SECCOMP_IOCTL_NOTIF_SET_FD	SECCOMP_IOWR(4, <sensible struct>)
-
-There's even some code already for this one:
-https://lore.kernel.org/linux-fsdevel/20180927151119.9989-6-tycho@tycho.ws/
-
-Tycho
+Hello I have an important information from UNITED NATIONS for
+you,reply for more details
