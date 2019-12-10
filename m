@@ -2,114 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B59FB119610
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:25:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 523EB119658
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:26:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbfLJVYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:24:36 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33492 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728723AbfLJVYc (ORCPT
+        id S1729191AbfLJV0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:26:15 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:59326 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727686AbfLJV0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:24:32 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 6so9506321pgk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:24:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=y6ht5YW8dhI/whPoru8OJyyMGM1ELyH7ioiCN142OAA=;
-        b=KHpIsIRJFHpu/RE+iNns/3lFjXjW7dmPCYbVqVy2fJCsmV0QXQ+Sh1tnMDBlQiuHmc
-         dEdTZ91YLJNA0acWzBev8p8U2ZgM+kMxUf+plwKLeldKf/To+yI5l1o4i8w6eTKp67zG
-         5dOPnsWjpA1rf6+HIWCJ+ywJzhdiKHqRCJKdvupaO7nSR4TdgIp4YpeCGEU6UiV3+fdo
-         pD3cHPJrjOAoe4q81m+GIuaF74ThJeM9p4B2vthnNVJV3HZGRmtIY58FYWwYzY33SbtP
-         1bh8dCKk0ZyFnxfk0aH69bVqn3mpPv1B7xR9cPH+XqM+NS6HtwMQBT61qWveHYnZjywR
-         tVaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=y6ht5YW8dhI/whPoru8OJyyMGM1ELyH7ioiCN142OAA=;
-        b=oHRaPEPph2z6/fifyr8v8LJYluXeG0j2EJ4a3owMU2kX4YPlNCp7wIMb6yhFKDD48E
-         mAWGzNCLetgV/KKn6EISqxqN01fOFo55gzrlKGsaOl1GGLVfAaQcqnEfEmYRMy1tZFYs
-         CZ7ACLQAX44FCI0JWUftR30gxgZEpNOEphE39RTmj/sQ+JYMSthBA56EBhq0vC/v0Djd
-         Ye5mANs4KxRXk8ReYKp/S7rsZ2Y69AzWj2QAmHlrUr/IXhXQRgfWxUHUvqTFzwNObMR3
-         p3Ms5rTh9iqNhdvik1byBuZF5RybAfFTILHLy2dKAe0SRYS5UBzh6bAldUYpBePOX5w/
-         6LFQ==
-X-Gm-Message-State: APjAAAWNpIpJn67cpvvpF1+dbO+o29y5R/AbNh5leX4L2S442TXyo3hy
-        xAna8WrtOEoAvSN/iCT+L7Q7bA==
-X-Google-Smtp-Source: APXvYqzC6v4sPSMefQJvm+lNgRpCI17boTVEAvsS1g+uMr6wh21YyjZZNzvkuO7OK4RunNjrL9QxpA==
-X-Received: by 2002:a62:3045:: with SMTP id w66mr8948273pfw.122.1576013071142;
-        Tue, 10 Dec 2019 13:24:31 -0800 (PST)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id v29sm4200264pgl.88.2019.12.10.13.24.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 13:24:30 -0800 (PST)
-Date:   Tue, 10 Dec 2019 13:24:28 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Martin Lau <kafai@fb.com>
-Subject: Re: [PATCH bpf v2] bpftool: Don't crash on missing jited insns or
- ksyms
-Message-ID: <20191210132428.4470a7b0@cakuba.netronome.com>
-In-Reply-To: <87eexbhopo.fsf@toke.dk>
-References: <20191210181412.151226-1-toke@redhat.com>
-        <20191210125457.13f7821a@cakuba.netronome.com>
-        <87eexbhopo.fsf@toke.dk>
-Organization: Netronome Systems, Ltd.
+        Tue, 10 Dec 2019 16:26:08 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBALP42H085099;
+        Tue, 10 Dec 2019 21:25:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=LRKUalzriL5ok3aXCwAsAQdRDswfuxXEmRoEL5R3TtY=;
+ b=qRuA9OX6Lqg8zmfw57L2wmzOrVMWgVD9OI0uuHugWGpz0CV8TJnGmoNqnr7/dGFNmQNu
+ D9HL4m90Vv46Ux8ckl6W/e6ofx9mnh4Bp+m1QJFkI0UeVRqGHxh+WgN1sGEm1ytHIy6x
+ JRbMFbaSmf/J5yNWFqMTuGH/TQT3/bAyWvgTJ4/CMqZNQVRo5bZqWTzXyUVIz7ALDB/u
+ kY1BHyD0m4u/K+ZR/VNJlt5lL96+BSeuP2ajYHmmDZnDETCDcCH+pmD2Vxk4I7KQpiAR
+ HaSbeRCCqkE8AdUzbW8kTLuHiUzPqtObUalrZZY3D8alSwPtjI1DXKtmGVsEnd8YOm0H MA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2wr41q8w2a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Dec 2019 21:25:54 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBALLnFo141716;
+        Tue, 10 Dec 2019 21:25:54 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2wt6bdwp09-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Dec 2019 21:25:53 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBALPrXC020312;
+        Tue, 10 Dec 2019 21:25:53 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Dec 2019 13:25:53 -0800
+Date:   Tue, 10 Dec 2019 13:25:52 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
+        <andreas.gruenbacher@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>
+Subject: Re: [PATCH] iomap: Export iomap_page_create and
+ iomap_set_range_uptodate
+Message-ID: <20191210212552.GC99875@magnolia>
+References: <20191210102916.842-1-agruenba@redhat.com>
+ <20191210203252.GA99875@magnolia>
+ <CAHpGcMJMgttnXu48wHnP-WqdPkuXBaFd+COKV9XiRP6VrtRUVg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHpGcMJMgttnXu48wHnP-WqdPkuXBaFd+COKV9XiRP6VrtRUVg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9467 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912100176
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9467 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912100177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019 22:09:55 +0100, Toke H=C3=B8iland-J=C3=B8rgensen wrote:
-> Jakub Kicinski <jakub.kicinski@netronome.com> writes:
-> > On Tue, 10 Dec 2019 19:14:12 +0100, Toke H=C3=B8iland-J=C3=B8rgensen wr=
-ote: =20
-> >> When the kptr_restrict sysctl is set, the kernel can fail to return
-> >> jited_ksyms or jited_prog_insns, but still have positive values in
-> >> nr_jited_ksyms and jited_prog_len. This causes bpftool to crash when t=
-rying
-> >> to dump the program because it only checks the len fields not the actu=
-al
-> >> pointers to the instructions and ksyms.
-> >>=20
-> >> Fix this by adding the missing checks.
-> >>=20
-> >> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com> =20
+On Tue, Dec 10, 2019 at 09:39:31PM +0100, Andreas Grünbacher wrote:
+> Am Di., 10. Dez. 2019 um 21:33 Uhr schrieb Darrick J. Wong
+> <darrick.wong@oracle.com>:
+> > On Tue, Dec 10, 2019 at 11:29:16AM +0100, Andreas Gruenbacher wrote:
+> > > These two functions are needed by filesystems for converting inline
+> > > ("stuffed") inodes into non-inline inodes.
+> > >
+> > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 > >
-> > Fixes: 71bb428fe2c1 ("tools: bpf: add bpftool")
-> >
-> > and
-> >
-> > Fixes: f84192ee00b7 ("tools: bpftool: resolve calls without using imm f=
-ield")
-> >
-> > ? =20
->=20
-> Yeah, guess so? Although I must admit it's not quite clear to me whether
-> bpftool gets stable backports, or if it follows the "only moving
-> forward" credo of libbpf?
+> > Looks fine to me... this is a 5.6 change, correct?
+> 
+> Yes, so there's still plenty of time to get things in place until
+> then. I'd like to hear from Christoph if he has any objections. In any
+> case, this patch isn't going to break anything.
 
-bpftool does not have a GH repo, and seeing strength of Alexei's
-arguments in the recent discussion - I don't think it will. So no
-reason for bpftool to be "special" =E2=9D=84=EF=B8=8F.
+By the way, the other symbols in fs/iomap/ are all EXPORT_SYMBOL_GPL.
+Does gfs2/RH/anyone have a particular requirement for EXPORT_SYMBOL, or
+could we make the new exports _GPL to match the rest?
 
-Then again seeing Andrii's zeal for pushing the codegen stuff into
-bpftool, maybe Facebook's intention is to make it so.
+--D
 
-Hard to tell what to do when standard practices don't apply, sigh.
-
-> Anyhow, I don't suppose it'll hurt to have the Fixes: tag(s) in there;
-> does Patchwork pick these up (or can you guys do that when you apply
-> this?), or should I resend?
-
-I don't think it does, but perhaps Daniel's scripts do.
-
-Either way I don't think it's worth a resend.
+> Thanks,
+> Andreas
