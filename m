@@ -2,73 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C7C1191BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:20:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C8221191AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:16:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfLJUUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:20:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfLJUUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:20:00 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2385B206EC;
-        Tue, 10 Dec 2019 20:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576009199;
-        bh=JJ3x1a8mkruSyckx5tJ3DK9j0EPWeio+6KT/A/Sw3UA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xFt5ukAS8+sDg60hqQeLefJkJ6aQseO9KDK4vWd2EQeRg18S5AZ7CHZo+Vjna2AIY
-         CYcclTI5J8bUwZ+MXLBIMJoZbuo5EkNhaleTyMjrki0vAkf5O3chbjDlc40xwseWGY
-         BFebRMcF5mGMvNBju1GNLBrkGHAdLNI/3Al0U8Bs=
-Date:   Tue, 10 Dec 2019 21:19:57 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     devel@driverdev.osuosl.org,
-        Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        Sumit Pundir <pundirsumit11@gmail.com>,
-        linux-kernel@vger.kernel.org, David Daney <ddaney.cavm@gmail.com>,
-        "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>,
-        Laura Lazzati <laura.lazzati.15@gmail.com>
-Subject: Re: [PATCH 2/2] staging: octeon-usb: delete the octeon usb host
- controller driver
-Message-ID: <20191210201957.GB4070187@kroah.com>
-References: <20191210091509.3546251-1-gregkh@linuxfoundation.org>
- <20191210091509.3546251-2-gregkh@linuxfoundation.org>
- <20191210193153.GB18225@darkstar.musicnaut.iki.fi>
+        id S1726682AbfLJUQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:16:48 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37871 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbfLJUQs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 15:16:48 -0500
+Received: by mail-ot1-f66.google.com with SMTP id k14so16713501otn.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 12:16:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fSpRuopSQsqIsBCQrngapk7qNizSkn5vIGLeu0YXzok=;
+        b=QLv9j1Kf1pl339xnRMu5I9Hk1ydy8BS8j+X62qrsluuIpkDenW9aIF02vLfXSINlBb
+         ll/3lIgfsmi0GezqLWed6FxZPbFy7G49/y2CU3OvGU0mcQ0pNRdyMAfObdGqDh+JqzvR
+         mal68g8H0Wx8SSafpanwaf/B9n6O/Uvce4Vi1eEuoOMI1cF0OESPDK2QXK6bZIaJ0mlf
+         BtgohwuOnJpGl8MznffMR/kLiYNGfOVZazfVlVVcMcBY5Cnl6+8fsT+nWiSx2+HwLtfX
+         eMolb4Lkwlm7xSbxW1Oi2wR9nJKYGqXG/41u56UdnN0RLhNL/RVeWT0evf7YQJ9YvJOu
+         QeKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fSpRuopSQsqIsBCQrngapk7qNizSkn5vIGLeu0YXzok=;
+        b=kqpjob4n48lUsBXwzAw/hn1RjTDzB6XiOlfWv90Muv2WOqDKaJBL0T2OJ+zm5K+4Uc
+         UraOLkMkhP5JEn84Kw9Fk9Tvpl8Q8gH87DG4Y0XvHlFVzqoEBLM8Eaq8VlwPOFIEcRhM
+         jtbkwyeeOtS55iexxQyz5KLxX73kNE2Hbh4yR1tPMCwYUJ0ApogxoISHh89yqe5Tu7c6
+         IAfxF48mPRm3T+AhfgUNzti1sHap05WHJnMYsrYRscs59pz905bTlH11S96/hg5tAXju
+         hFNmh6ypzOx5Jnc0mt7z6entqbHJ3YCuhu/25ytPPBv9dzCUU4xHZ+YidRBc/UFC1ScK
+         ZLog==
+X-Gm-Message-State: APjAAAVzPJfhAa+toLyFEiq+rPOXxZJm03SD1nhEd2DNFxwC0iLyRC+S
+        YwtRG/5o3cJZGifFKUsRa+gMobRvSTI=
+X-Google-Smtp-Source: APXvYqyaw0qhPHZY2Ts/ktriJuJUipqH6cUesR/fivT044fCZgT4Kq37YFOmki9dXprxX/iI+Sr5zw==
+X-Received: by 2002:a05:6830:1185:: with SMTP id u5mr25528276otq.147.1576009007225;
+        Tue, 10 Dec 2019 12:16:47 -0800 (PST)
+Received: from ?IPv6:2605:6000:e947:6500:6680:99ff:fe6f:cb54? ([2605:6000:e947:6500:6680:99ff:fe6f:cb54])
+        by smtp.googlemail.com with ESMTPSA id v20sm1813200otf.40.2019.12.10.12.16.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Dec 2019 12:16:46 -0800 (PST)
+Subject: Re: [PATCH][resend] sh: kgdb: Mark expected switch fall-throughs
+From:   Rob Landley <rob@landley.net>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <87o8wgy3ra.wl-kuninori.morimoto.gx@renesas.com>
+ <35e63e37-6ec8-8a47-8e18-639c954732e0@landley.net>
+Message-ID: <b220b69e-575d-0530-0f2d-65584df36ea2@landley.net>
+Date:   Tue, 10 Dec 2019 14:20:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210193153.GB18225@darkstar.musicnaut.iki.fi>
+In-Reply-To: <35e63e37-6ec8-8a47-8e18-639c954732e0@landley.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 09:31:54PM +0200, Aaro Koskinen wrote:
-> Hi,
+
+
+On 12/10/19 2:12 PM, Rob Landley wrote:
+> On 12/10/19 2:38 AM, Kuninori Morimoto wrote:
+>>
+>> Hi Andrew
+>>
+>> I'm posting this patch from few month ago,
+>> but it seems SH maintainer is not working in these days...
 > 
-> On Tue, Dec 10, 2019 at 10:15:09AM +0100, Greg Kroah-Hartman wrote:
-> > This driver was merged back in 2013 and shows no progress toward every
-> > being merged into the "correct" part of the kernel.
+> Again, I dunno where you're getting that.
 > 
-> Do you mean all the patches since 2013 were "no progress"? Thanks.
+> (Me, I removed the -Werror...)
 
-I have not seen any proposals to get it out of staging at all.  If the
-only thing left really is just those two simple TODO lines, then why has
-it taken 6 years to do that?
+In fact I looked it up, _I_ didn't remove the -Werror, Rich acked a patch
+removing the -Werror back in August:
 
-> > The code doesn't even build for anyone unless you have the specific
-> > hardware platform selected, so odds are it doesn't even work anymore.
-> 
-> I used it in production almost a decade with no issues with unpatched
-> mainline kernel. All reported issues were fixed. Last kernel I ran
-> was v5.3.
+  https://www.spinics.net/lists/linux-sh/msg55405.html
 
-Then why has it not been merged out of staging?
-
-thanks,
-
-greg k-h
+Rob
