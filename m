@@ -2,51 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B0C118701
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:48:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48530118712
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbfLJLsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 06:48:04 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33206 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727381AbfLJLsB (ORCPT
+        id S1727727AbfLJLsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:48:31 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44717 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727411AbfLJLsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Dec 2019 06:48:01 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n25so13511968lfl.0;
-        Tue, 10 Dec 2019 03:47:59 -0800 (PST)
+Received: by mail-lf1-f67.google.com with SMTP id v201so13420924lfa.11;
+        Tue, 10 Dec 2019 03:48:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fo/kQPoTgufoLl6OwS4X1boPbPzO5kmha82cPWUC2hI=;
-        b=OdNe0vn+8QvjfD8P6ecHAg/78T9yojBKTgVES0rTqrwJ1Zmy20dX2afqpFVknXapY2
-         W3OZQTRXrUhYcPcKcD4IgjlU+ioQDUYOLP1NmWBGHlhvoBsyu8k46DA+eaXWFEcnpe8/
-         zT4i5XuL1KmwBMabU7yV/yN4C86cCw0vxffqwWge9WYZR8gr7/k4ukoviGHai4kOO+Eg
-         1DOfZ/+aI6DCRAsP5FzTGeZ5yZFUfSWHRe/2jCUpcRiIztCGP3nRmEWUr7YKE+Ukuwm2
-         hykpNogYp3dWv6bLP7yr6B1eZtbqtGLOojYHj4Jxa/Q+Un10S7EsdDw2fmvbRN7ccE91
-         cRRA==
-X-Gm-Message-State: APjAAAXJ+LrgAJncIsn7f9e8n0hCcPlHf9ECqnTBt4QSzkR2JZaia4Xb
-        CbOjeZ5acO93W4UQIUzarFmM/hSS
-X-Google-Smtp-Source: APXvYqxRUBIZ41AnH3QnCgB0Q1gJnSjg59UHuxgq9xRqKYyhr1qDqMrwe00Je2S+QZyu/YP+ZLbnuA==
-X-Received: by 2002:ac2:4849:: with SMTP id 9mr18316401lfy.11.1575978478770;
-        Tue, 10 Dec 2019 03:47:58 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5C4SF4dYqrrVgr3TXUeoZ9GHkn69qJJjE9pwXzPrJrg=;
+        b=Si+8ZLYo0AA6ktzMy5qnifeF6iHPmhrrKQGZFW+MWFY6p3HBdRO6AKtVTNG0zHD5dg
+         bcZLhSRdbuzF4Rv3BepQJd4sdJJqGofcdq9wlfhwfJutBsa63y0/3F2EvyZKGJ4fczM4
+         BkCEPKFxvHSDX18Q1Z14EZKyBosjGND3taU4OYOa9bqNQKKPYL2tW7cdTHPxNnqT1EJP
+         nFv9srB69i88zdPrUN7hfgjqCBdXfxbcQC6NN4y21C9dWl6qVDvQnUO5xPn4HUwXH/7I
+         LRmQiczx04H1jWpczSBm5EAqIJcOeLGdnpcj0reRCvAMQn3OWKkk/lNSGHZCEHA5NoPJ
+         v8zw==
+X-Gm-Message-State: APjAAAXnB9NGsgq0Exur1ctRlVzJAkeWNpsTniEYVHC6KW9LB9J/ntCC
+        7/pVcZ0aja8WVHBmlB7W5tZVhGf7
+X-Google-Smtp-Source: APXvYqxzDhvpXC8Gs8pOUopECbJJEaJy4ZsNQJ3HROeJjafJrIC0HjKI+nYfNFhmf3ZJhA1OTxsboA==
+X-Received: by 2002:ac2:4476:: with SMTP id y22mr18829851lfl.169.1575978479262;
+        Tue, 10 Dec 2019 03:47:59 -0800 (PST)
 Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id e21sm1757836lfc.63.2019.12.10.03.47.57
+        by smtp.gmail.com with ESMTPSA id i1sm1640753lji.71.2019.12.10.03.47.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 10 Dec 2019 03:47:58 -0800 (PST)
 Received: from johan by xi.terra with local (Exim 4.92.3)
         (envelope-from <johan@xi.terra>)
-        id 1iedzk-0001LN-An; Tue, 10 Dec 2019 12:48:00 +0100
+        id 1iedzk-0001LQ-Ej; Tue, 10 Dec 2019 12:48:00 +0100
 From:   Johan Hovold <johan@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
         Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
         devel@driverdev.osuosl.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 0/2] staging: fix USB altsetting bugs
-Date:   Tue, 10 Dec 2019 12:47:49 +0100
-Message-Id: <20191210114751.5119-1-johan@kernel.org>
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: [PATCH 1/2] staging: rtl8188eu: fix interface sanity check
+Date:   Tue, 10 Dec 2019 12:47:50 +0100
+Message-Id: <20191210114751.5119-2-johan@kernel.org>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191210114751.5119-1-johan@kernel.org>
+References: <20191210114751.5119-1-johan@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,23 +57,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We had quite a few drivers using the first alternate setting instead of
-the current one when doing descriptor sanity checks. This is mostly an
-issue on kernels with panic_on_warn set due to a WARN() in
-usb_submit_urb(), but since we've started backporting such fixes (e.g.
-as reported by syzbot), I've marked these for stable as well.
+Make sure to use the current alternate setting when verifying the
+interface descriptors to avoid binding to an invalid interface.
 
-Johan
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
 
-
-Johan Hovold (2):
-  staging: rtl8188eu: fix interface sanity check
-  staging: rtl8712: fix interface sanity check
-
+Fixes: c2478d39076b ("staging: r8188eu: Add files for new driver - part 20")
+Cc: stable <stable@vger.kernel.org>     # 3.12
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
  drivers/staging/rtl8188eu/os_dep/usb_intf.c | 2 +-
- drivers/staging/rtl8712/usb_intf.c          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index 4fac9dca798e..a7cac0719b8b 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -70,7 +70,7 @@ static struct dvobj_priv *usb_dvobj_init(struct usb_interface *usb_intf)
+ 	phost_conf = pusbd->actconfig;
+ 	pconf_desc = &phost_conf->desc;
+ 
+-	phost_iface = &usb_intf->altsetting[0];
++	phost_iface = usb_intf->cur_altsetting;
+ 	piface_desc = &phost_iface->desc;
+ 
+ 	pdvobjpriv->NumInterfaces = pconf_desc->bNumInterfaces;
 -- 
 2.24.0
 
