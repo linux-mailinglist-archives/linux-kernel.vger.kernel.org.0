@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8882117EC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A220B117EBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:07:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbfLJEIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 23:08:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43450 "EHLO mail.kernel.org"
+        id S1727116AbfLJEHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 23:07:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726975AbfLJEHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727004AbfLJEHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Dec 2019 23:07:48 -0500
 Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4DD2214D8;
-        Tue, 10 Dec 2019 04:07:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E37B20836;
+        Tue, 10 Dec 2019 04:07:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575950867;
-        bh=1EDFsKq10v2RAcv+ouUFckwgU2L7K+cLnN0yoZBQRvk=;
+        s=default; t=1575950868;
+        bh=d1mJ1n49nNM+kkuO2aLd3FM0NCS6Kt3EjC4AB7e9Ewc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=quOhZVYH43vcx6t9ug2xhRcRopYbRvxgdl1776/UXJlpL/vWZnzlVk3JtOv5u28VY
-         VfVmv3kRYwguiXtdzKaIpUlgo6HCbTXteDTeNlICu2sFayOv/lneapm9djqQpvhA/n
-         ZvEqrK3Tz1dUSb60DgNFMHMlvjSy4WatZtCer6uQ=
+        b=AmISLtgCcWtZ7cS3AeCyDvGdsyBsKy78XqoZjU6p8H1ikH/WWOfchw2rfKJaRgigi
+         5WuYJ8xR07sj65F+0y+MGgo9O9/Xtu1YDIdoZI3PSO3rb4pcH2MDpOR5i1pwC06H+G
+         2RD8xAWEdhvZRAS9WNaW/UCrNwecthxxQs730MSU=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -31,11 +31,11 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Lai Jiangshan <laijs@linux.alibaba.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
         "Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 06/12] rcu: Move gp_state_names[] and gp_state_getname() to tree_stall.h
-Date:   Mon,  9 Dec 2019 20:07:35 -0800
-Message-Id: <20191210040741.2943-6-paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 07/12] rcu: Move rcu_{expedited,normal} definitions into rcupdate.h
+Date:   Mon,  9 Dec 2019 20:07:36 -0800
+Message-Id: <20191210040741.2943-7-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191210040714.GA2715@paulmck-ThinkPad-P72>
 References: <20191210040714.GA2715@paulmck-ThinkPad-P72>
@@ -44,101 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lai Jiangshan <laijs@linux.alibaba.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
 
-Only tree_stall.h needs to get name from GP state, so this commit
-moves the gp_state_names[] array and the gp_state_getname()
-from kernel/rcu/tree.h and kernel/rcu/tree.c, respectively, to
-kernel/rcu/tree_stall.h.  While moving gp_state_names[], this commit
-uses the GCC syntax to ensure that the right string is associated with
-the right CPP macro.
+This commit moves the rcu_{expedited,normal} definitions from
+kernel/rcu/update.c to include/linux/rcupdate.h to make sure they are
+in sync, and also to avoid the following warning from sparse:
 
-Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
-Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+kernel/ksysfs.c:150:5: warning: symbol 'rcu_expedited' was not declared. Should it be static?
+kernel/ksysfs.c:167:5: warning: symbol 'rcu_normal' was not declared. Should it be static?
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree.c       | 10 ----------
- kernel/rcu/tree.h       | 12 ------------
- kernel/rcu/tree_stall.h | 22 ++++++++++++++++++++++
- 3 files changed, 22 insertions(+), 22 deletions(-)
+ include/linux/rcupdate.h | 4 ++++
+ kernel/rcu/update.c      | 2 --
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index ba154a3..bbb60ed 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -529,16 +529,6 @@ static struct rcu_node *rcu_get_root(void)
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index fe47024..bb363796 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -896,4 +896,8 @@ rcu_head_after_call_rcu(struct rcu_head *rhp, rcu_callback_t f)
+ 	return false;
  }
  
- /*
-- * Convert a ->gp_state value to a character string.
-- */
--static const char *gp_state_getname(short gs)
--{
--	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
--		return "???";
--	return gp_state_names[gs];
--}
--
--/*
-  * Send along grace-period-related data for rcutorture diagnostics.
-  */
- void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 54ff989..9d5986a 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -368,18 +368,6 @@ struct rcu_state {
- #define RCU_GP_CLEANUP   7	/* Grace-period cleanup started. */
- #define RCU_GP_CLEANED   8	/* Grace-period cleanup complete. */
- 
--static const char * const gp_state_names[] = {
--	"RCU_GP_IDLE",
--	"RCU_GP_WAIT_GPS",
--	"RCU_GP_DONE_GPS",
--	"RCU_GP_ONOFF",
--	"RCU_GP_INIT",
--	"RCU_GP_WAIT_FQS",
--	"RCU_GP_DOING_FQS",
--	"RCU_GP_CLEANUP",
--	"RCU_GP_CLEANED",
--};
--
- /*
-  * In order to export the rcu_state name to the tracing tools, it
-  * needs to be added in the __tracepoint_string section.
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index c0b8c45..f18adaf 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -279,6 +279,28 @@ static void print_cpu_stall_fast_no_hz(char *cp, int cpu)
- 
- #endif /* #else #ifdef CONFIG_RCU_FAST_NO_HZ */
- 
-+static const char * const gp_state_names[] = {
-+	[RCU_GP_IDLE] = "RCU_GP_IDLE",
-+	[RCU_GP_WAIT_GPS] = "RCU_GP_WAIT_GPS",
-+	[RCU_GP_DONE_GPS] = "RCU_GP_DONE_GPS",
-+	[RCU_GP_ONOFF] = "RCU_GP_ONOFF",
-+	[RCU_GP_INIT] = "RCU_GP_INIT",
-+	[RCU_GP_WAIT_FQS] = "RCU_GP_WAIT_FQS",
-+	[RCU_GP_DOING_FQS] = "RCU_GP_DOING_FQS",
-+	[RCU_GP_CLEANUP] = "RCU_GP_CLEANUP",
-+	[RCU_GP_CLEANED] = "RCU_GP_CLEANED",
-+};
++/* kernel/ksysfs.c definitions */
++extern int rcu_expedited;
++extern int rcu_normal;
 +
-+/*
-+ * Convert a ->gp_state value to a character string.
-+ */
-+static const char *gp_state_getname(short gs)
-+{
-+	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
-+		return "???";
-+	return gp_state_names[gs];
-+}
-+
- /*
-  * Print out diagnostic information for the specified stalled CPU.
-  *
+ #endif /* __LINUX_RCUPDATE_H */
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 1861103..294d357 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -51,9 +51,7 @@
+ #define MODULE_PARAM_PREFIX "rcupdate."
+ 
+ #ifndef CONFIG_TINY_RCU
+-extern int rcu_expedited; /* from sysctl */
+ module_param(rcu_expedited, int, 0);
+-extern int rcu_normal; /* from sysctl */
+ module_param(rcu_normal, int, 0);
+ static int rcu_normal_after_boot;
+ module_param(rcu_normal_after_boot, int, 0);
 -- 
 2.9.5
 
