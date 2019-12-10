@@ -2,108 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AFF2119654
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C200119694
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:28:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbfLJV0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:26:10 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41623 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727771AbfLJV0H (ORCPT
+        id S1727213AbfLJV16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:27:58 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:32854 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728835AbfLJV1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:26:07 -0500
-Received: by mail-pg1-f194.google.com with SMTP id x8so9494763pgk.8
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:26:07 -0800 (PST)
+        Tue, 10 Dec 2019 16:27:52 -0500
+Received: by mail-io1-f67.google.com with SMTP id s25so5715100iob.0;
+        Tue, 10 Dec 2019 13:27:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P3CtzH8AoZNRV0QZPYFHChpbwIUEtjX+HfgVaCPCW0A=;
-        b=Yi+iiwyyrF3IYMCCzCBjiPMce2oqIFmM0Xe7X7HraruPyvvuHKlt27cS/SnnCG2hw5
-         5oMQEsLdEizNsGATmWxJhL17P3CrGayxm5W6xXSUB9EsGKO5L0am6CiDgj66illqeJZA
-         mDtWxaOARAr9pxMLBrmpZpISvGD8xa5dWuokcVoxjObx10YcKt+BDYQhHqE+C2qf5niv
-         Nno9unu53nGCKBKa1MXv8G8TdFv596C1aMr9ssWcEuAq7ilHnxw5AbBy5b+gb7LNfQN0
-         T01Apo8Ke1kZwbHByG6dz+/NN02QV/h33F2cVGpfGCLBXPVAYhXnqgwZ+s8+XwGLaPYv
-         IwsA==
+         :cc:content-transfer-encoding;
+        bh=H5mECpigsi5IoO0Gd/OMlOo5Xgi22xFbljTixm/LvJ8=;
+        b=bbTprTIGy7WRDm/au9WDFJRyIht5M9SgTqsn/gyE+mocmzykvQab24Jh8AiBQhy9mO
+         4h3/EYBeRJK+WS6KuJeUlj3PWkTwabcs2eJ0s8p6MtRiKeOKjs0DNAeEqH7loPWkP+4s
+         zx8ka4wdOgAz/CrkdyCeRczY5tY1nRr+UqVb/LSdYthWiDHaD91NMzpfUfxkwzX27r7I
+         g5k4TjWDvgt1R2nqF98iS3n4NdjTuEdHRAyaz4aBcx48in4266/zivrqfuVsYLvO9tlc
+         OxWeHL2Ng8MMBld4JW+/gAWmupONWBbZS8/ItfF6Y4FL4/nErkmf4tFGHroQNdGx9P4i
+         LLRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P3CtzH8AoZNRV0QZPYFHChpbwIUEtjX+HfgVaCPCW0A=;
-        b=cdyN9+UL6Mz2+wr4OI+P3hj+qVE83Hiu9rxLqd1nZWjxXN96JO65e65CMwwZ/qstTn
-         gkZEoWYvYtNrz+b8tIsf1o03lydTiqkQoFMCp2Veen4Su1dCL4LRfzevop7jlkyQ69fB
-         vkjZEbF4+mi34ngypl2d4h/lVf51onTHC0VjMdbO1L2Ggxvqrcfv8i0eezOJHsvXO4kZ
-         1OEtqCu8u6u9P5LS3VYr+PmtVd6yvBpllwCyFGCMVXkaSoDYPVZc2zOoygJruBmo0nfT
-         L4fH4ZsLAEYfeX4eQIvM5Pod6y0eYIDcu1piZiEJ7AYWlzG/G3Cwg+pgkBgWaWPNFtOa
-         ZBHA==
-X-Gm-Message-State: APjAAAUZpN01O0TbsoTuIqfEW7W2WtXQrCIGc6n0/cCQUNQ/gKAt6Vu5
-        P344oOYVuSHM5Uzt/UERawjkrQ68PKjR4ysW5u9enQ==
-X-Google-Smtp-Source: APXvYqxpquTI2AjFI2FJW7H/UjW477l0ZNP57sYRhalkJYdVRDhwtSnkXMVoH2DkQcUGAGX7ywj1awJ0Yv6fEh5hpRI=
-X-Received: by 2002:a63:480f:: with SMTP id v15mr162738pga.201.1576013166051;
- Tue, 10 Dec 2019 13:26:06 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=H5mECpigsi5IoO0Gd/OMlOo5Xgi22xFbljTixm/LvJ8=;
+        b=G8MR6BmIVFjxchlQEAKbDKpMN8OBNRlk0QinptwOFqaxmoHlc+CgPDT7gJD4fO1Csw
+         do+czHV0/y2LltnRJP3CTEBagTe3AmbcK8fckm33mlBZGn7ZKGhB+xNYLYju499vCvem
+         1G4nJnjxa/EXJ0kltpAw3Il944svZT7CfwDJgHiW4YWzBMonC/kM3zjEsdO2AWx4YqbF
+         MeabCqe3iE4NsPp22kMIN9DzYq7NCXsE7e3931UjqgaUUmj/oojtleGqZ5dRDvkGGGMe
+         ZBuKowVtkAq4fG6E94Se41mC6gNIL2fqzoLDvvqEJefthJeLpcdvvUbguOpWC1WhDsQ8
+         vPoA==
+X-Gm-Message-State: APjAAAVL2EoiEIiVovVqBRF3fqr2T1V0hb1TQIFWKRHZd/NAp1RX3a3h
+        HQkzGgBX/Gg11WhpJ/6wa/z3sOgE2XSYXTW9+KU=
+X-Google-Smtp-Source: APXvYqxxlVGO15l7eYtfNXjfLTjwFKDhTrtm/h/TOVV/jLIopcfB40ClbnrIG3zGec04yiaa6oSt6D9GMyznieRnHDU=
+X-Received: by 2002:a02:a915:: with SMTP id n21mr28189604jam.117.1576013271029;
+ Tue, 10 Dec 2019 13:27:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20191210210402.8367-1-sashal@kernel.org> <20191210210402.8367-25-sashal@kernel.org>
-In-Reply-To: <20191210210402.8367-25-sashal@kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 10 Dec 2019 13:25:54 -0800
-Message-ID: <CAFd5g45s-cGXp6at4kv+=8v3cuxfbXLPEOKGUfvJ6E+u1caHcA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.4 025/350] objtool: add kunit_try_catch_throw to
- the noreturn list
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
+References: <20191210102916.842-1-agruenba@redhat.com> <20191210203252.GA99875@magnolia>
+ <CAHpGcMJMgttnXu48wHnP-WqdPkuXBaFd+COKV9XiRP6VrtRUVg@mail.gmail.com> <20191210212552.GC99875@magnolia>
+In-Reply-To: <20191210212552.GC99875@magnolia>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Tue, 10 Dec 2019 22:27:40 +0100
+Message-ID: <CAHpGcMJxoekJvZqW3=9B7Jfpo43N1XzayY0TQc7eWLjHVwvQXg@mail.gmail.com>
+Subject: Re: [PATCH] iomap: Export iomap_page_create and iomap_set_range_uptodate
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 1:04 PM Sasha Levin <sashal@kernel.org> wrote:
+Am Di., 10. Dez. 2019 um 22:25 Uhr schrieb Darrick J. Wong
+<darrick.wong@oracle.com>:
+> On Tue, Dec 10, 2019 at 09:39:31PM +0100, Andreas Gr=C3=BCnbacher wrote:
+> > Am Di., 10. Dez. 2019 um 21:33 Uhr schrieb Darrick J. Wong
+> > <darrick.wong@oracle.com>:
+> > > On Tue, Dec 10, 2019 at 11:29:16AM +0100, Andreas Gruenbacher wrote:
+> > > > These two functions are needed by filesystems for converting inline
+> > > > ("stuffed") inodes into non-inline inodes.
+> > > >
+> > > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> > >
+> > > Looks fine to me... this is a 5.6 change, correct?
+> >
+> > Yes, so there's still plenty of time to get things in place until
+> > then. I'd like to hear from Christoph if he has any objections. In any
+> > case, this patch isn't going to break anything.
 >
-> From: Brendan Higgins <brendanhiggins@google.com>
->
-> [ Upstream commit 33adf80f5b52e3f7c55ad66ffcaaff93c6888aaa ]
->
-> Fix the following warning seen on GCC 7.3:
->   kunit/test-test.o: warning: objtool: kunit_test_unsuccessful_try() falls through to next function kunit_test_catch()
->
-> kunit_try_catch_throw is a function added in the following patch in this
-> series; it allows KUnit, a unit testing framework for the kernel, to
-> bail out of a broken test. As a consequence, it is a new __noreturn
-> function that objtool thinks is broken (as seen above). So fix this
-> warning by adding kunit_try_catch_throw to objtool's noreturn list.
->
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> Link: https://www.spinics.net/lists/linux-kbuild/msg21708.html
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> By the way, the other symbols in fs/iomap/ are all EXPORT_SYMBOL_GPL.
+> Does gfs2/RH/anyone have a particular requirement for EXPORT_SYMBOL, or
+> could we make the new exports _GPL to match the rest?
 
-I don't think this change should be backported. This patch is to
-ignore an erroneous warning introduced by KUnit; it serves no purpose
-prior to the KUnit patches being merged.
+I don't mind EXPORT_SYMBOL_GPL.
 
-> ---
->  tools/objtool/check.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 044c9a3cb2472..543c068096b12 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -144,6 +144,7 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
->                 "usercopy_abort",
->                 "machine_real_restart",
->                 "rewind_stack_do_exit",
-> +               "kunit_try_catch_throw",
->         };
->
->         if (!func)
-> --
-> 2.20.1
->
+Thanks,
+Andreas
