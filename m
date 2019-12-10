@@ -2,170 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 201CD11917E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:06:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA43011918B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:09:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfLJUGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:06:33 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43662 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbfLJUGd (ORCPT
+        id S1726682AbfLJUJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:09:16 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44541 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfLJUJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:06:33 -0500
-Received: by mail-pl1-f193.google.com with SMTP id q16so285382plr.10
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 12:06:32 -0800 (PST)
+        Tue, 10 Dec 2019 15:09:15 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q10so21538171wrm.11;
+        Tue, 10 Dec 2019 12:09:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KYuCvJCnn+Faxgj02yKxGaH8zvOq4VASGRA5HJAqsCg=;
-        b=MTD9ktrwv9Qe/EGdE/2bZh4yhicS6KKK9nz5TQxiiS1ecQnyibdyrMQY72EQIOhZd/
-         PS9LxNpumkkm6U94oNtI1W0xasDtfC+JQSaLHlLi8/sP/7nUMzha0t11YlEdsJ2KTLHx
-         ngORqYuNTJFAP5OG/HktQQlw9+kLZuB63iEPTZFxyOnaPzPdcgoMOcLbLzxqeNB+MaGb
-         hxsyAAq427/mFeHszAcFuhybujDavy5AqNdde5bsymH127c9hICpStzUAFxAl/Kzb+zb
-         4UngusSLcZvC9XvNpMXnBQvNEQbqCBnftfTmkNl2impvBFgZsGUIBh+8h56xmzcA4zC7
-         bYsw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6AQpS5vqGgn6cf28d0t5hILD50hP2Bm2ar9YDrMWAUM=;
+        b=j54TP/nAwGznoZrN5sbykaR8He5pb7OtuziWr36u24bFjtgGC4fQqmYI7bt0kQ38Qz
+         AIIBe0vVsCM7FpOz0f27YlcWHKCgzIuAx7vTuT4eMaNThvOD+jLiiZDSAkx0gylHcr8R
+         lQ1uKTx1wQOijjR0jD4PsHKZ8GtZ1JqwSElf5tOW344+hb00eWcRKg25W0y9nlwXFTwO
+         4eCh01Ccn+W/AYaYvwNxY7ecHXsrmeWhzU7dg3GtqxJd/YFZpbVffV9zh31G4a8xmoqq
+         acMn+8dd9s/BK4xl7KbvCHa6yaKsJRYFirKOgOPqreB84RBGY39kNaYP+wIVoIe0uNp5
+         6fIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KYuCvJCnn+Faxgj02yKxGaH8zvOq4VASGRA5HJAqsCg=;
-        b=jdh8I4nINyf+hzV4lWHoH4oeCLgdtgdlLYSHCVF1SNZuTV9FPSLrGWsVhthT3XWVZB
-         PnTR8kN6fxOxTtkMp4gWGfYQI4zhGN2qR+G3OjmThZ1cKf+p2bstA7c1cpQ+7cmghgJI
-         ZMEaCgAHvC8XpbMLZZvgVPmnH8MtUQ7lHbxJAjdZZpXcxcMW6wM73UQplJWWQ3LXM0eD
-         S+JnCpvnTqKoPjuM2qb/HSgqI/bHNZWnCqhpFMwkvVbP2SzhzPEA8JyG8mv8OGtJ9kjm
-         UFx3qEz5AJitNgXgFKJ2kReXcTAqh5B9w2pk/+t77/tTc1IKSM0hJfwCHOreAVq8MnPP
-         syVg==
-X-Gm-Message-State: APjAAAXkiO6Qy0o2sD4fYmBUm9dwpHawXRTzT5uKlJKWc3x3lcrCAvsj
-        GWW9ygg3sL43WRv9SRGxLQ13lr0GH8w8MKoaS66eyA==
-X-Google-Smtp-Source: APXvYqytg3awAocSi7YUInZyP1bVBjSPyqFgrC7zY8QdBIKePfmb2aWjEP6W2ZEt7kUcS+0WS6Z8R75KRdXwZP7s//U=
-X-Received: by 2002:a17:90a:1a1a:: with SMTP id 26mr7368500pjk.129.1576008391887;
- Tue, 10 Dec 2019 12:06:31 -0800 (PST)
-MIME-Version: 1.0
-References: <0000000000006ab7cc05994cbae2@google.com> <Pine.LNX.4.44L0.1912101440100.1647-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1912101440100.1647-100000@iolanthe.rowland.org>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 10 Dec 2019 21:06:20 +0100
-Message-ID: <CAAeHK+wY+35uBvr0=FnKsWOj91QhXuVE++V7frn5AihAPLvo5Q@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in usbvision_v4l2_open
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     syzbot <syzbot+c7b0ec009a216143df30@syzkaller.appspotmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
-        USB list <linux-usb@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6AQpS5vqGgn6cf28d0t5hILD50hP2Bm2ar9YDrMWAUM=;
+        b=L2t8D7IEqJB7L3kNpoLLXl73+iiCe/zr4iULV1An5FXx0FNeOZEZAqiiOztLWn2J8e
+         qmkMbeX+RNJr4Jryj51cIgBoeGixYXC/u5FEoLbPv4EAKH3zxKjQkjT/vJ5gQ7KsGA1z
+         8PEw2uWwyikoZ2PZrKmBGxFvmbNbK/N9wi04UGe4nq71XHn5fylyMv3QMC2zKYv3lMnL
+         U5FMbvZWPeRcH8QJBZH3uXC5G1EGrHupZf1N0SRG9Ek8ahvP9fDpES1YzlAvZbDHdFF/
+         4a8PMLr1xU7aXbj6XX6+fp/jCiBs/TMp7sm/Z6hLzR1jzRbzA5TM6yxc90/o4muUFnYi
+         iQKw==
+X-Gm-Message-State: APjAAAVpytTHvBPz+njRzSlg5SlulQaWP/rCzTpIqPBt8Gdfo8aBFJlj
+        3rl/x96KIsAPYpXU3h5oBHE=
+X-Google-Smtp-Source: APXvYqxMVlaHW5ay98kOIFO+brzIC+QLtbbjUCNbwV2fRMJftfklsg7j/ydpu5uw9XjJbdY3Vj3f5Q==
+X-Received: by 2002:adf:dfc1:: with SMTP id q1mr5177155wrn.155.1576008552975;
+        Tue, 10 Dec 2019 12:09:12 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id w19sm4113643wmc.22.2019.12.10.12.09.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 12:09:12 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     kishon@ti.com
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Ray Jui <ray.jui@broadcom.com>, Tejun Heo <tj@kernel.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
+        Parallel ATA drivers)),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
+        bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH 0/2] phy: brcm-sata: Support for 7216
+Date:   Tue, 10 Dec 2019 12:08:50 -0800
+Message-Id: <20191210200852.24945-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 8:48 PM Alan Stern <stern@rowland.harvard.edu> wrote:
->
-> On Mon, 9 Dec 2019, syzbot wrote:
->
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    1f22d15c usb: gadget: add raw-gadget interface
-> > git tree:       https://github.com/google/kasan.git usb-fuzzer
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1296f42ae00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=8ccee2968018adcb
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=c7b0ec009a216143df30
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> >
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+c7b0ec009a216143df30@syzkaller.appspotmail.com
-> >
-> > ==================================================================
-> > BUG: KASAN: use-after-free in __mutex_lock_common
-> > kernel/locking/mutex.c:1043 [inline]
-> > BUG: KASAN: use-after-free in __mutex_lock+0x124d/0x1360
-> > kernel/locking/mutex.c:1106
-> > Read of size 8 at addr ffff8881cad4d8b8 by task v4l_id/4526
-> >
-> > CPU: 0 PID: 4526 Comm: v4l_id Not tainted 5.4.0-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >   __dump_stack lib/dump_stack.c:77 [inline]
-> >   dump_stack+0xef/0x16e lib/dump_stack.c:118
-> >   print_address_description.constprop.0+0x36/0x50 mm/kasan/report.c:374
-> >   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:506
-> >   kasan_report+0xe/0x20 mm/kasan/common.c:638
-> >   __mutex_lock_common kernel/locking/mutex.c:1043 [inline]
-> >   __mutex_lock+0x124d/0x1360 kernel/locking/mutex.c:1106
-> >   usbvision_v4l2_open+0x77/0x340
-> > drivers/media/usb/usbvision/usbvision-video.c:314
-> >   v4l2_open+0x20f/0x3d0 drivers/media/v4l2-core/v4l2-dev.c:423
-> >   chrdev_open+0x219/0x5c0 fs/char_dev.c:414
-> >   do_dentry_open+0x494/0x1120 fs/open.c:797
-> >   do_last fs/namei.c:3412 [inline]
-> >   path_openat+0x142b/0x4030 fs/namei.c:3529
-> >   do_filp_open+0x1a1/0x280 fs/namei.c:3559
-> >   do_sys_open+0x3c0/0x580 fs/open.c:1097
-> >   do_syscall_64+0xb7/0x5b0 arch/x86/entry/common.c:294
-> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> This looks like a race in v4l2_open(): The function drops the
-> videodev_lock mutex before calling the video driver's open routine, and
-> the device can be unregistered during the short time between.
->
-> This patch tries to make the race much more likely to happen, for
-> testing and verification.
->
-> Andrey, will syzbot run the same test with this patch, even though it
-> says it doesn't have a reproducer?
+Hi Kishon,
 
-Hi Alan,
-
-No, unfortunately there's nothing to run if there's no reproducer.
-It's technically possible to run the same program log that triggered
-the bug initially, but since the bug wasn't reproduced with this log
-even without the patch, there isn't much sense in running it with the
-patch applied.
+This patch series adds support for our latest 7216 class of devices
+which are taped out in a 16nm process and use a different SATA PHY AFE
+that requires a custom initialization sequence.
 
 Thanks!
 
->
-> Alan Stern
->
-> #syz test: https://github.com/google/kasan.git 1f22d15c
->
-> Index: usb-devel/drivers/media/usb/usbvision/usbvision-video.c
-> ===================================================================
-> --- usb-devel.orig/drivers/media/usb/usbvision/usbvision-video.c
-> +++ usb-devel/drivers/media/usb/usbvision/usbvision-video.c
-> @@ -1585,6 +1585,7 @@ static void usbvision_disconnect(struct
->                 wake_up_interruptible(&usbvision->wait_frame);
->                 wake_up_interruptible(&usbvision->wait_stream);
->         } else {
-> +               msleep(100);
->                 usbvision_release(usbvision);
->         }
->
-> Index: usb-devel/drivers/media/v4l2-core/v4l2-dev.c
-> ===================================================================
-> --- usb-devel.orig/drivers/media/v4l2-core/v4l2-dev.c
-> +++ usb-devel/drivers/media/v4l2-core/v4l2-dev.c
-> @@ -419,9 +419,10 @@ static int v4l2_open(struct inode *inode
->         video_get(vdev);
->         mutex_unlock(&videodev_lock);
->         if (vdev->fops->open) {
-> -               if (video_is_registered(vdev))
-> +               if (video_is_registered(vdev)) {
-> +                       msleep(200);
->                         ret = vdev->fops->open(filp);
-> -               else
-> +               } else
->                         ret = -ENODEV;
->         }
->
->
+Florian Fainelli (2):
+  dt-bindings: phy: Document BCM7216 SATA PHY compatible string
+  phy: brcm-sata: Implement 7216 initialization sequence
+
+ .../devicetree/bindings/phy/brcm-sata-phy.txt |   1 +
+ drivers/phy/broadcom/phy-brcm-sata.c          | 120 ++++++++++++++++++
+ 2 files changed, 121 insertions(+)
+
+-- 
+2.17.1
+
