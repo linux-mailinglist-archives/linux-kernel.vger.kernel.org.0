@@ -2,58 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6900A117DB3
+	by mail.lfdr.de (Postfix) with ESMTP id D8CE1117DB4
 	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 03:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfLJC2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 21:28:13 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:44877 "EHLO
+        id S1727076AbfLJC2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 21:28:15 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:46484 "EHLO
         mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727018AbfLJC2K (ORCPT
+        with ESMTP id S1726974AbfLJC2L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 21:28:10 -0500
-Received: by mail-il1-f196.google.com with SMTP id z12so14693475iln.11
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 18:28:10 -0800 (PST)
+        Mon, 9 Dec 2019 21:28:11 -0500
+Received: by mail-il1-f196.google.com with SMTP id t17so14671761ilm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 18:28:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HkLmBXFUJUiujXB1umDLKcn6FYwNM55ntuOqjeXmxO4=;
-        b=IO+RysS2qREaZOjem4Y+bzjDm0mibQByZDVSMtz496x9JntanPjqnx9ttRasbVW19c
-         PU5T39saycZeSUnn5odFtZ9uTDCGyrMO6xN2PKG3PyAKqRUf7ZWDi0/3F9yS3PYdDjwb
-         pcxcdycj7W31EV6TJJVFPhXTbUeqdE1sT82d7Z1K0uk9qskZOVw2ozHU06iG9wIFE5i/
-         Jl/GCwG5rztUojB3HMhluBFC5neqdn6wzeDIvhHtvIWGgbX00QDzaR9044phfh3ojLbY
-         OT0IjFcSPqYG2morWPPFlb+inoElJuwkYIraBiijy6eseVOfPyBQLveV01jG8B5cggBD
-         axUw==
+        bh=czlw2v1n44KvBNP8Ri+2G2naF0l2P1nitiHJyK13A/U=;
+        b=o8QhW+SEg/jdK5XN5U4u5sEftKv1IiVT7BLpprM61ysKGNjvdEYxl6XBqgRwOhL71z
+         B6fPFaZ+hhavmO6HANcNoRNIG0siztrx9Eee+jgNEC0HoDMsjyUJKTy3zTXA0KqQ88sH
+         HIw81xabtLRcMxxdof//JE882ftCpb6sGiCYclQzBBS/iU0nQC5CQbIdixLKd3joNgTw
+         YMs1CObgEU4ojh4uvgxiIZmT3MMPTRmB7dcd26IYOIwDghI4jfQNiK4IEKepszvxg0lH
+         qD9Xx1Y6QUH4r7D5Im93w4NduylyAqEyEBbeZUcR1+c5Gq6snSqc7NrHhszsZNbohJam
+         uvUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HkLmBXFUJUiujXB1umDLKcn6FYwNM55ntuOqjeXmxO4=;
-        b=cULjdIYFUkP+7IMWAurJA38ke8UOlM1Ml1F0wHE0nP5ILFIm3UL46izCHBcWTdBA/+
-         UDb/GDHtGmVeQjmfM6f5RSCjDqhJIq60yh+Ua2TT1rbi97IXD1w+zK/7+ceHB/gmpLf5
-         jMC3mZkIbph6fSmqcwLc7tl0iOGWqLn+tCu68swVZZavmP0XJu02xxGlwGbCA5DI+ScE
-         P2Zg+xaB+ic57c3QNtnZyWNKLFCw12UI0dbxSYNLnZdzBcX05daJ7hPxpXioKl9aH3AI
-         R9E7ir3NsnHfL81KGoVZ6QPPzFvu2u6zVqq9DdjWbRW2ND31IwEUFQKmp72XAAM4Jbws
-         Oetw==
-X-Gm-Message-State: APjAAAXyvuqWCtVRLJp0GTWt+jJFkrUSMGN/LbFSjeNE6UjLwj1ZF6a1
-        g15FpMCyATyFcih+pRIwAPJz0Wxy59w=
-X-Google-Smtp-Source: APXvYqx9FTao2PSRrVYGFbF26XVfGzr3fOuwZubPvyh+V0zDuUW0sO5QQVo3S73EoSuhvktA6/f8UA==
-X-Received: by 2002:a92:8395:: with SMTP id p21mr18302022ilk.285.1575944889652;
-        Mon, 09 Dec 2019 18:28:09 -0800 (PST)
+        bh=czlw2v1n44KvBNP8Ri+2G2naF0l2P1nitiHJyK13A/U=;
+        b=DsT90D+LUhYLHC2yQsHFf0T6mFnBMbnPQcQCQgKVE/blpM0gVCZT+KI5K6QvQfbQJ2
+         WnWvholkK4SpzDExCGVQHpmGE+0SbBPfPb3zrdTgaDKEsdK3z/NrRg4LUGffwkW5hr9x
+         f+NC74PZz6OpCQp7tjy355JLOvMiYBy6IO8frQOlnBj9TDJynWkGf0DHjv1jKT+wZICM
+         JAXXoLOSvigbcseqcM1N5kG2KIVxI8UCgh3KJ5N0t7cMbBzD+6peIU8fNyjyFZcs9lZ6
+         /0+kzMG9X76AS5OvExW/bqapZ6vhIA09esmQEeF0CGZDRsW5BNpz+JI4zrcIiSyvRje8
+         /y6w==
+X-Gm-Message-State: APjAAAV35+aZ3Imvt6VmJZFmxTABNsrP8/yWrsggitAXfvzvYBvn4qFv
+        8Vq6Pi8Q9zEkdZ0caQH9puE=
+X-Google-Smtp-Source: APXvYqwz7MJt4Z+kz8L6nnenQiq4A/+cYz7GlV/gJ/IsLmW9B6LxttmvumML8CYMaAxQ4e8mzG2i8Q==
+X-Received: by 2002:a92:1e0c:: with SMTP id e12mr13616006ile.115.1575944891083;
+        Mon, 09 Dec 2019 18:28:11 -0800 (PST)
 Received: from localhost.localdomain (c-24-9-77-57.hsd1.co.comcast.net. [24.9.77.57])
-        by smtp.googlemail.com with ESMTPSA id l9sm334052ioh.77.2019.12.09.18.28.08
+        by smtp.googlemail.com with ESMTPSA id l9sm334052ioh.77.2019.12.09.18.28.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 18:28:09 -0800 (PST)
+        Mon, 09 Dec 2019 18:28:10 -0800 (PST)
 From:   Jim Cromie <jim.cromie@gmail.com>
 To:     jbaron@akamai.com, linux-kernel@vger.kernel.org,
         akpm@linuxfoundation.org
 Cc:     gregkh@linuxfoundation.org, linux@rasmusvillemoes.dk,
-        Jim Cromie <jim.cromie@gmail.com>,
-        kbuild test robot <lkp@intel.com>
-Subject: [PATCH v4 06/16] dyndbg: fix a BUG_ON in ddebug_describe_flags
-Date:   Mon,  9 Dec 2019 19:27:32 -0700
-Message-Id: <20191210022742.822686-7-jim.cromie@gmail.com>
+        Jim Cromie <jim.cromie@gmail.com>
+Subject: [PATCH v4 07/16] dyndbg: refactor parse_linerange out of ddebug_parse_query
+Date:   Mon,  9 Dec 2019 19:27:33 -0700
+Message-Id: <20191210022742.822686-8-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191210022742.822686-1-jim.cromie@gmail.com>
 References: <20191210022742.822686-1-jim.cromie@gmail.com>
@@ -64,124 +63,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ddebug_describe_flags currently fills a caller provided string buffer,
-after testing its size (also passed) in a BUG_ON.  Fix this with a
-struct containing a known-big-enough string buffer, and passing it
-instead.
-
-Also simplify ddebug_describe_flags sig, and de-ref the struct in the
-caller; this makes function reusable (soon) in contexts where flags
-are already unpacked.
-
--v3 fix compile err introduced in patchset grooming.
-Reported-by: kbuild test robot <lkp@intel.com>
+make the code-block reusable to later handle "file foo.c:101-200" etc.
+This should be a 90%+ code-move, with minimal adaptations; reindent,
+and maybe fixes for compile, behavior.
 
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 ---
- lib/dynamic_debug.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+ lib/dynamic_debug.c | 61 +++++++++++++++++++++++++--------------------
+ 1 file changed, 34 insertions(+), 27 deletions(-)
 
 diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-index b5fb0aa0fbc3..49cb24948e12 100644
+index 49cb24948e12..f0cf90e672b8 100644
 --- a/lib/dynamic_debug.c
 +++ b/lib/dynamic_debug.c
-@@ -62,6 +62,8 @@ struct ddebug_iter {
- 	unsigned int idx;
- };
- 
-+struct flagsbuf { char buf[12]; };	/* big enough to hold all the flags */
-+
- static DEFINE_MUTEX(ddebug_lock);
- static LIST_HEAD(ddebug_tables);
- static int verbose;
-@@ -88,21 +90,19 @@ static struct { unsigned flag:8; char opt_char; } opt_array[] = {
- };
- 
- /* format a string into buf[] which describes the _ddebug's flags */
--static char *ddebug_describe_flags(struct _ddebug *dp, char *buf,
--				    size_t maxlen)
-+static char *ddebug_describe_flags(unsigned int flags, struct flagsbuf *fb)
- {
--	char *p = buf;
-+	char *p = fb->buf;
- 	int i;
- 
--	BUG_ON(maxlen < 6);
- 	for (i = 0; i < ARRAY_SIZE(opt_array); ++i)
--		if (dp->flags & opt_array[i].flag)
-+		if (flags & opt_array[i].flag)
- 			*p++ = opt_array[i].opt_char;
--	if (p == buf)
-+	if (p == fb->buf)
- 		*p++ = '_';
- 	*p = '\0';
- 
--	return buf;
-+	return fb->buf;
+@@ -292,6 +292,39 @@ static inline int parse_lineno(const char *str, unsigned int *val)
+ 	return 0;
  }
  
- #define vnpr_info(lvl, fmt, ...)				\
-@@ -142,13 +142,13 @@ static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
-  * logs the changes.  Takes ddebug_lock.
-  */
- static int ddebug_change(const struct ddebug_query *query,
--			unsigned int flags, unsigned int mask)
-+			unsigned int pflags, unsigned int mask)
++static int parse_linerange(struct ddebug_query *query, const char *first)
++{
++	char *last = strchr(first, '-');
++
++	if (query->first_lineno || query->last_lineno) {
++		pr_err("match-spec: line used 2x\n");
++		return -EINVAL;
++	}
++	if (last)
++		*last++ = '\0';
++	if (parse_lineno(first, &query->first_lineno) < 0)
++		return -EINVAL;
++	if (last) {
++		/* range <first>-<last> */
++		if (parse_lineno(last, &query->last_lineno) < 0)
++			return -EINVAL;
++
++		/* special case for last lineno not specified */
++		if (query->last_lineno == 0)
++			query->last_lineno = UINT_MAX;
++
++		if (query->last_lineno < query->first_lineno) {
++			pr_err("last-line:%d < 1st-line:%d\n",
++			       query->last_lineno,
++			       query->first_lineno);
++			return -EINVAL;
++		}
++	} else {
++		query->last_lineno = query->first_lineno;
++	}
++	return 0;
++}
++
+ static int check_set(const char **dest, char *src, char *name)
  {
- 	int i;
- 	struct ddebug_table *dt;
- 	unsigned int newflags;
- 	unsigned int nfound = 0;
--	char flagbuf[10];
-+	struct flagsbuf flags;
- 
- 	/* search for matching ddebugs */
- 	mutex_lock(&ddebug_lock);
-@@ -191,22 +191,21 @@ static int ddebug_change(const struct ddebug_query *query,
- 
- 			nfound++;
- 
--			newflags = (dp->flags & mask) | flags;
-+			newflags = (dp->flags & mask) | pflags;
- 			if (newflags == dp->flags)
- 				continue;
- #ifdef CONFIG_JUMP_LABEL
- 			if (dp->flags & _DPRINTK_FLAGS_PRINT) {
--				if (!(flags & _DPRINTK_FLAGS_PRINT))
-+				if (!(pflags & _DPRINTK_FLAGS_PRINT))
- 					static_branch_disable(&dp->key.dd_key_true);
--			} else if (flags & _DPRINTK_FLAGS_PRINT)
-+			} else if (pflags & _DPRINTK_FLAGS_PRINT)
- 				static_branch_enable(&dp->key.dd_key_true);
- #endif
- 			dp->flags = newflags;
- 			vpr_info("changed %s:%d [%s]%s =%s\n",
- 				 trim_prefix(dp->filename), dp->lineno,
- 				 dt->mod_name, dp->function,
--				 ddebug_describe_flags(dp, flagbuf,
--						       sizeof(flagbuf)));
-+				 ddebug_describe_flags(dp->flags, &flags));
- 		}
- 	}
- 	mutex_unlock(&ddebug_lock);
-@@ -820,7 +819,7 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
- {
- 	struct ddebug_iter *iter = m->private;
- 	struct _ddebug *dp = p;
--	char flagsbuf[10];
-+	struct flagsbuf flags;
- 
- 	v9pr_info("called m=%p p=%p\n", m, p);
- 
-@@ -833,7 +832,7 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
- 	seq_printf(m, "%s:%u [%s]%s =%s \"",
- 		   trim_prefix(dp->filename), dp->lineno,
- 		   iter->table->mod_name, dp->function,
--		   ddebug_describe_flags(dp, flagsbuf, sizeof(flagsbuf)));
-+		   ddebug_describe_flags(dp->flags, &flags));
- 	seq_escape(m, dp->format, "\t\r\n\"");
- 	seq_puts(m, "\"\n");
- 
+ 	int rc = 0;
+@@ -350,34 +383,8 @@ static int ddebug_parse_query(char *words[], int nwords,
+ 							    UNESCAPE_SPECIAL);
+ 			rc = check_set(&query->format, words[i+1], "format");
+ 		} else if (!strcmp(words[i], "line")) {
+-			char *first = words[i+1];
+-			char *last = strchr(first, '-');
+-			if (query->first_lineno || query->last_lineno) {
+-				pr_err("match-spec: line used 2x\n");
+-				return -EINVAL;
+-			}
+-			if (last)
+-				*last++ = '\0';
+-			if (parse_lineno(first, &query->first_lineno) < 0)
++			if (parse_linerange(query, words[i+1]))
+ 				return -EINVAL;
+-			if (last) {
+-				/* range <first>-<last> */
+-				if (parse_lineno(last, &query->last_lineno) < 0)
+-					return -EINVAL;
+-
+-				/* special case for last lineno not specified */
+-				if (query->last_lineno == 0)
+-					query->last_lineno = UINT_MAX;
+-
+-				if (query->last_lineno < query->first_lineno) {
+-					pr_err("last-line:%d < 1st-line:%d\n",
+-						query->last_lineno,
+-						query->first_lineno);
+-					return -EINVAL;
+-				}
+-			} else {
+-				query->last_lineno = query->first_lineno;
+-			}
+ 		} else {
+ 			pr_err("unknown keyword \"%s\"\n", words[i]);
+ 			return -EINVAL;
 -- 
 2.23.0
 
