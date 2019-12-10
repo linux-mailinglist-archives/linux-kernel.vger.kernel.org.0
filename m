@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7474117EBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6E5117EBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 05:08:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfLJEIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 23:08:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43630 "EHLO mail.kernel.org"
+        id S1727177AbfLJEH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 23:07:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727050AbfLJEHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 23:07:50 -0500
+        id S1727067AbfLJEHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 23:07:51 -0500
 Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9822120726;
-        Tue, 10 Dec 2019 04:07:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4164224656;
+        Tue, 10 Dec 2019 04:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1575950870;
-        bh=Jyu8RLllLlNVSv/jmpXsW4PEaKCtWgH/gY+vmMRry4M=;
+        bh=H9rYx0czH4fQK/q1YmaxFub10EO4OctXx4sO0TWZeB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rNgI7Dusv+Vuj/fb0EBgOYiDhW8XtODB/kYW7Cj2M0FoBjWeI9hDySEIx7qUsYWUp
-         j1+Y/nqkFy+QD1FkuJYeHN9V2brP4CO0A7pnB1lTskukg99IwYbSBHAbqvhu/lV2oO
-         jrEkzUVBzywQoObzc2JPT3quU5efm9SpxTNk+LVY=
+        b=XxBnAZhLKbD1s5lgC5Zev7uTqsm6TYubaVAbWLr0Tji4MWYJ6Qfipv2Twx9aC75hP
+         EeRLgXENaTYHS+tDE638QObWBt/IQnNkvCk1S19fd3KFmH6B9WUqaUBd6iMA6Th2Jb
+         RHRSxW4QYSK28htMHsVtbnrvarO0cpk0yNitELDY=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -31,10 +31,11 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 10/12] .mailmap: Add entries for old paulmck@kernel.org addresses
-Date:   Mon,  9 Dec 2019 20:07:39 -0800
-Message-Id: <20191210040741.2943-10-paulmck@kernel.org>
+        Will Deacon <will@kernel.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 11/12] powerpc: Remove comment about read_barrier_depends()
+Date:   Mon,  9 Dec 2019 20:07:40 -0800
+Message-Id: <20191210040741.2943-11-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191210040714.GA2715@paulmck-ThinkPad-P72>
 References: <20191210040714.GA2715@paulmck-ThinkPad-P72>
@@ -43,29 +44,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+From: Will Deacon <will@kernel.org>
 
+'read_barrier_depends()' doesn't exist anymore so stop talking about it.
+
+Signed-off-by: Will Deacon <will@kernel.org>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- .mailmap | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/powerpc/include/asm/barrier.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index c24773d..5f330c5 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -207,6 +207,11 @@ Paolo 'Blaisorblade' Giarrusso <blaisorblade@yahoo.it>
- Patrick Mochel <mochel@digitalimplant.org>
- Paul Burton <paulburton@kernel.org> <paul.burton@imgtec.com>
- Paul Burton <paulburton@kernel.org> <paul.burton@mips.com>
-+Paul Burton <paul.burton@mips.com> <paul.burton@imgtec.com>
-+Paul E. McKenney <paulmck@kernel.org> <paulmck@linux.ibm.com>
-+Paul E. McKenney <paulmck@kernel.org> <paulmck@linux.vnet.ibm.com>
-+Paul E. McKenney <paulmck@kernel.org> <paul.mckenney@linaro.org>
-+Paul E. McKenney <paulmck@kernel.org> <paulmck@us.ibm.com>
- Peter A Jonsson <pj@ludd.ltu.se>
- Peter Oruba <peter@oruba.de>
- Peter Oruba <peter.oruba@amd.com>
+diff --git a/arch/powerpc/include/asm/barrier.h b/arch/powerpc/include/asm/barrier.h
+index fbe8df4..123adce 100644
+--- a/arch/powerpc/include/asm/barrier.h
++++ b/arch/powerpc/include/asm/barrier.h
+@@ -18,8 +18,6 @@
+  * mb() prevents loads and stores being reordered across this point.
+  * rmb() prevents loads being reordered across this point.
+  * wmb() prevents stores being reordered across this point.
+- * read_barrier_depends() prevents data-dependent loads being reordered
+- *	across this point (nop on PPC).
+  *
+  * *mb() variants without smp_ prefix must order all types of memory
+  * operations with one another. sync is the only instruction sufficient
 -- 
 2.9.5
 
