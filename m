@@ -2,95 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BF92118360
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:19:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E614118365
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:19:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfLJJS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:18:57 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:53722 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727007AbfLJJS4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:18:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575969536;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ys5nveUnuHlqyfAjmjcLopzAQQGr7aebD6b5Em3ISs8=;
-        b=g9KFzoEouBX5U0VdPLF6cLmOl4TrVIbvhcPegKYxEkBwIJiKWmt4Q8/5uUEkkCgxU2tsuE
-        DQwLLHJXNls2DPkLKv7bX69heMSDgRoRvfKjPMHcUZmmF7WGlF1h2tzivMrfyPLJjGRIY2
-        aIuHksU35Rf3S6vnPWLG32Jmd1h0ME4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-383--BG5azkIP3S49yX7a7v6PA-1; Tue, 10 Dec 2019 04:18:54 -0500
-Received: by mail-wm1-f70.google.com with SMTP id o135so404449wme.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:18:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ys5nveUnuHlqyfAjmjcLopzAQQGr7aebD6b5Em3ISs8=;
-        b=YJ9Ht8XZZle89xRPXbS2baz1KhhliWAbhdVQiBp2h4trjwOEvm1IdCaVU3JVGUz+e8
-         XHIVlS/NJvgHBPM1Ie9hVCYjNZtQKb46NY0cE0cj3U2sLcUOnGIRNTXJk0bmBtrAteb0
-         69BhUsrEsx0xMzkb9Un+j6CR02Ki3rgPMwhfEKYhKsQ044BmfyUJF8GyKslqDUdhLGPM
-         L4TnWMkK1J/Jp2kP7NQXBwuSTPB8Jlb5089ljczz+59OMRjAfcObi4E1WL+m2kr1wMYc
-         xcF1i4sNX2sCACiXD1Z0j9RYyJyJ6l1AO3JybpF7sBqsZELUTicZCnfT9X9VUw6zXzvE
-         QWSw==
-X-Gm-Message-State: APjAAAWmZ/Zo7my0+mV5Dz/0pmIsRGUy57nAC+e8LGBZQH6LNbDA42Yn
-        LDqpm6prTRJ2+fA7iZXqk6hqYWgfLt/gjSTgAHK+OyztQ1fRN++t2p0D74GCo1FBQKCifykvDmp
-        uqTUWheqAJM+zdG9RJNaRQHZc
-X-Received: by 2002:a1c:a750:: with SMTP id q77mr3754379wme.76.1575969533787;
-        Tue, 10 Dec 2019 01:18:53 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw4nJ+vwaF+bCpT4bALJsG39v2xr4nUwAmxvKVeYBNvjHHX20eM5yfU1XaBY4K1oQQjOdJ04Q==
-X-Received: by 2002:a1c:a750:: with SMTP id q77mr3754346wme.76.1575969533563;
-        Tue, 10 Dec 2019 01:18:53 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9? ([2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9])
-        by smtp.gmail.com with ESMTPSA id r6sm2437618wrq.92.2019.12.10.01.18.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2019 01:18:53 -0800 (PST)
-Subject: Re: [PATCH v2] KVM: x86: use CPUID to locate host page table reserved
- bits
-To:     "Huang, Kai" <kai.huang@intel.com>,
-        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <1575474037-7903-1-git-send-email-pbonzini@redhat.com>
- <8f7e3e87-15dc-2269-f5ee-c3155f91983c@amd.com>
- <2f3d8c9b146301183b891d8a441aa4a5c33b4c9d.camel@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <c1012d42-6e60-66c9-80ea-f6c26db37172@redhat.com>
-Date:   Tue, 10 Dec 2019 10:18:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1727298AbfLJJTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:19:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50872 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726983AbfLJJTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 04:19:07 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D576F2073B;
+        Tue, 10 Dec 2019 09:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575969547;
+        bh=viR6aQSK+CgMvXKVb+9R042jToM9N6CtV3XYKFxogeg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rPT2fOupSrrWNlAManYtIUKMrNgPHN2ZR1NwfbQ+ys94H6NkTOq46FMutmaPMyH54
+         SbhVzBbTYtraEBy1zMuSvvcQGdh893DskolaLHA82JIpMH7F8KJ0n6d9QttJRT6kdf
+         tSGN1nKB0s9N2U/UkW3h+yRuaXT1LJTd69upJcbc=
+Date:   Tue, 10 Dec 2019 10:19:05 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     devel@driverdev.osuosl.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        netdev@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        isdn4linux@listserv.isdn4linux.de,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 1/2] staging: remove isdn capi drivers
+Message-ID: <20191210091905.GA3547805@kroah.com>
+References: <20191209151114.2410762-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <2f3d8c9b146301183b891d8a441aa4a5c33b4c9d.camel@intel.com>
-Content-Language: en-US
-X-MC-Unique: -BG5azkIP3S49yX7a7v6PA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209151114.2410762-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/19 04:53, Huang, Kai wrote:
-> Right. Alghouth both MKTME and SME/SEV reduce physical bits, but they treat
-> those reduced bits differently: MKTME treats those as keyID thus they can be
-> set, but SME/SEV treats those as reserved bits so you cannot set any of them.
+On Mon, Dec 09, 2019 at 04:11:13PM +0100, Arnd Bergmann wrote:
+> As described in drivers/staging/isdn/TODO, the drivers are all
+> assumed to be unmaintained and unused now, with gigaset being the
+> last one to stop being maintained after Paul Bolle lost access
+> to an ISDN network.
 > 
-> Maybe the naming of shadow_phys_bits is a little bit confusing here. The purpose
-> of it was to determine first reserved bits, but not actual physical address bits
-> . Therefore for MKTME it should include the keyID bits, but for SME/SEV it
-> should not.
+> The CAPI subsystem remains for now, as it is still required by
+> bluetooth/cmtp.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  Documentation/ioctl/ioctl-number.rst        |    1 -
 
-Not just the first reserved bit, but _some_ reserved bit such that all
-consecutive bits up to bit 51 are reserved.
+This file is not in 5.5-rc1, what tree did you make this against?
 
-Paolo
+thanks,
 
+greg k-h
