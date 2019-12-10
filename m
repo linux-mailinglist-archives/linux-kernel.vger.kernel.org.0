@@ -2,89 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAC0B11836D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F16DE118372
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfLJJUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:20:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39893 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727003AbfLJJUF (ORCPT
+        id S1727128AbfLJJWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:22:15 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40477 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfLJJWN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:20:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575969605;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/bYiIJtudCWkuxmJ3U7uh+uE9YOFh6uPtLmRweTcPTI=;
-        b=REh/G6RJzAVlizUUO6oZ/eOPkUafjZ57OFEvoE772l1zcGElS4DWFtwzEnvpjEdBWeDTHs
-        skpVHx3vw07BKUnNNKIRFtAfMlPJN/ntcK+F9NX7lQ1iieAAn+Hh/VATAW2Q8LJKWOSkJM
-        xBGzJdV8nnlScJtlRyUq5bPMY23Adf4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-217-3jpxheGdMx-PT6DNDgbP6w-1; Tue, 10 Dec 2019 04:19:59 -0500
-Received: by mail-wm1-f69.google.com with SMTP id o205so764796wmo.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:19:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/bYiIJtudCWkuxmJ3U7uh+uE9YOFh6uPtLmRweTcPTI=;
-        b=SsllXlDkAF3uclbm09gbv0RFQOvzCQEWVldAfz5Yie1Um4RNGmHZSdqjf+5thstzF2
-         +ZMPgFiztiVt2sbxxq6Jmdo7fntzsOFApBqOhJj7r1JdT0UL6F49zWAFWyYS7MBohMX4
-         DJOcEra7k2MPivsor0lb6H17X88I6vgSZDzWd064Bl96Ij5kJPVAjITOpcEPhXIfFXpn
-         IvkeU/EquFOL82+dVIc7jjZg6j+szCBzL3vFmKTBNNe1hAZDh1SUOycXLXwrVW0iq8vt
-         Pz5XQN+nKGknQWhTr3Un7b/YcfwUUvOFSuRXz5JOYM5FRRpbJc1Q+mOaDQDbxKaPSBCm
-         K/nQ==
-X-Gm-Message-State: APjAAAVPZVhPRZlGnuUN/vstFF2kMlBLavXEqUZc3syJsTs82Vg+jJMG
-        XrZTzlYRmwySI8lI1EK4sHTlu1L4eDBOpMqWDyBA7PkupzkYR3yrLrGA6cOL5gj8BWqF/FHUKKY
-        KdVao/+ZKgXk3SxJzUxdjuHoU
-X-Received: by 2002:adf:f803:: with SMTP id s3mr1955414wrp.7.1575969597795;
-        Tue, 10 Dec 2019 01:19:57 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwzDnyT2KZKAXq1IvkcmoircMXuSHIe+B7ZX1hbvwigcGPf4Y/msYzb6HapPfHPkh1RodEdyw==
-X-Received: by 2002:adf:f803:: with SMTP id s3mr1955389wrp.7.1575969597600;
-        Tue, 10 Dec 2019 01:19:57 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9? ([2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9])
-        by smtp.gmail.com with ESMTPSA id m3sm2549644wrs.53.2019.12.10.01.19.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2019 01:19:57 -0800 (PST)
-Subject: Re: [PATCH v2] KVM: x86: use CPUID to locate host page table reserved
- bits
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        thomas.lendacky@amd.com, stable@vger.kernel.org
-References: <1575474037-7903-1-git-send-email-pbonzini@redhat.com>
- <20191204154806.GC6323@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <9951afb8-8f91-2fe1-3893-04307fafa570@redhat.com>
-Date:   Tue, 10 Dec 2019 10:19:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Tue, 10 Dec 2019 04:22:13 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iebiV-0005Wh-IH; Tue, 10 Dec 2019 10:22:03 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 32E291C281A;
+        Tue, 10 Dec 2019 10:22:03 +0100 (CET)
+Date:   Tue, 10 Dec 2019 09:22:02 -0000
+From:   "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86/setup: Enhance the comments
+Cc:     linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20191204154806.GC6323@linux.intel.com>
-Content-Language: en-US
-X-MC-Unique: 3jpxheGdMx-PT6DNDgbP6w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=windows-1252
+Message-ID: <157596972292.29619.10068918068668240468.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/12/19 16:48, Sean Christopherson wrote:
->> +	/*
->> +	 * Quite weird to have VMX or SVM but not MAXPHYADDR; probably a VM with
->> +	 * custom CPUID.  Proceed with whatever the kernel found since these features
->> +	 * aren't virtualizable (SME/SEV also require CPUIDs higher than 0x80000008).
-> No love for MKTME?  :-D
+The following commit has been merged into the x86/cleanups branch of tip:
 
-I admit I didn't check, but does MKTME really require CPUID leaves in
-the "AMD range"?  (My machines have 0x80000008 as the highest supported
-leaf in that range).
+Commit-ID:     360db4ace3117ac1d9936d529f59c653e337b0f5
+Gitweb:        https://git.kernel.org/tip/360db4ace3117ac1d9936d529f59c653e337b0f5
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Mon, 18 Nov 2019 16:03:39 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 10 Dec 2019 09:59:38 +01:00
 
-Paolo
+x86/setup: Enhance the comments
 
+Update various comments, fix outright mistakes and meaningless descriptions.
+
+Also harmonize the style across the file, both in form and in language.
+
+Cc: linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/setup.c | 41 ++++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 7778ee0..b5ac993 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -43,11 +43,11 @@
+ #include <asm/vsyscall.h>
+ 
+ /*
+- * max_low_pfn_mapped: highest direct mapped pfn under 4GB
+- * max_pfn_mapped:     highest direct mapped pfn over 4GB
++ * max_low_pfn_mapped: highest directly mapped pfn < 4 GB
++ * max_pfn_mapped:     highest directly mapped pfn > 4 GB
+  *
+  * The direct mapping only covers E820_TYPE_RAM regions, so the ranges and gaps are
+- * represented by pfn_mapped
++ * represented by pfn_mapped[].
+  */
+ unsigned long max_low_pfn_mapped;
+ unsigned long max_pfn_mapped;
+@@ -57,14 +57,23 @@ RESERVE_BRK(dmi_alloc, 65536);
+ #endif
+ 
+ 
+-static __initdata unsigned long _brk_start = (unsigned long)__brk_base;
+-unsigned long _brk_end = (unsigned long)__brk_base;
++/*
++ * Range of the BSS area. The size of the BSS area is determined
++ * at link time, with RESERVE_BRK*() facility reserving additional
++ * chunks.
++ */
++static __initdata
++unsigned long _brk_start = (unsigned long)__brk_base;
++unsigned long _brk_end   = (unsigned long)__brk_base;
+ 
+ struct boot_params boot_params;
+ 
+ /*
+- * Machine setup..
++ * These are the four main kernel memory regions, we put them into
++ * the resource tree so that kdump tools and other debugging tools
++ * recover it:
+  */
++
+ static struct resource rodata_resource = {
+ 	.name	= "Kernel rodata",
+ 	.start	= 0,
+@@ -95,16 +104,16 @@ static struct resource bss_resource = {
+ 
+ 
+ #ifdef CONFIG_X86_32
+-/* cpu data as detected by the assembly code in head_32.S */
++/* CPU data as detected by the assembly code in head_32.S */
+ struct cpuinfo_x86 new_cpu_data;
+ 
+-/* common cpu data for all cpus */
++/* Common CPU data for all CPUs */
+ struct cpuinfo_x86 boot_cpu_data __read_mostly;
+ EXPORT_SYMBOL(boot_cpu_data);
+ 
+ unsigned int def_to_bigsmp;
+ 
+-/* for MCA, but anyone else can use it if they want */
++/* For MCA, but anyone else can use it if they want */
+ unsigned int machine_id;
+ unsigned int machine_submodel_id;
+ unsigned int BIOS_revision;
+@@ -390,15 +399,15 @@ static void __init memblock_x86_reserve_range_setup_data(void)
+ /*
+  * Keep the crash kernel below this limit.
+  *
+- * On 32 bits earlier kernels would limit the kernel to the low 512 MiB
++ * Earlier 32-bits kernels would limit the kernel to the low 512 MB range
+  * due to mapping restrictions.
+  *
+- * On 64bit, kdump kernel need be restricted to be under 64TB, which is
++ * 64-bit kdump kernels need to be restricted to be under 64 TB, which is
+  * the upper limit of system RAM in 4-level paging mode. Since the kdump
+- * jumping could be from 5-level to 4-level, the jumping will fail if
+- * kernel is put above 64TB, and there's no way to detect the paging mode
+- * of the kernel which will be loaded for dumping during the 1st kernel
+- * bootup.
++ * jump could be from 5-level paging to 4-level paging, the jump will fail if
++ * the kernel is put above 64 TB, and during the 1st kernel bootup there's
++ * no good way to detect the paging mode of the target kernel which will be
++ * loaded for dumping.
+  */
+ #ifdef CONFIG_X86_32
+ # define CRASH_ADDR_LOW_MAX	SZ_512M
+@@ -809,7 +818,7 @@ void __init setup_arch(char **cmdline_p)
+ 	/*
+ 	 * Note: Quark X1000 CPUs advertise PGE incorrectly and require
+ 	 * a cr3 based tlb flush, so the following __flush_tlb_all()
+-	 * will not flush anything because the cpu quirk which clears
++	 * will not flush anything because the CPU quirk which clears
+ 	 * X86_FEATURE_PGE has not been invoked yet. Though due to the
+ 	 * load_cr3() above the TLB has been flushed already. The
+ 	 * quirk is invoked before subsequent calls to __flush_tlb_all()
