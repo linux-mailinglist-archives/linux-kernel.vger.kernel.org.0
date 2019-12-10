@@ -2,76 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11EDE119B75
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:12:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86F8D119BAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:12:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbfLJWIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:08:10 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:50009 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729721AbfLJWIC (ORCPT
+        id S1730308AbfLJWKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:10:38 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4246 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728519AbfLJWKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:08:02 -0500
-Received: by mail-io1-f69.google.com with SMTP id t3so14309731ioj.16
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 14:08:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=GwENJOhReXSoSX4FCZp3Vso0XyIxIAaoh96r/uvXuy4=;
-        b=NBloXL4emu6tqm6wl54gfPkzFst5Y6Ifswd5trCWWcG7DjJWpu3BeM6pYHM0GwOXBb
-         qh0GK3ypi9ZN5YJvY7Nb2eh3W5/Tm/6vXLPUC+DjPZ3V0eCo04KdugZuOqj+mIir+jMJ
-         0UJNoTqzFEj01PeRBVU7o+5LGh6zDnH5gEE3BGjgA0JwN++vYMgIgVJj4kQzo0Z1p2Gg
-         Niz9mnapKS0oEc+keWzSKMrL3gGdaBCHy5lrRu1D8kVWDMR/WJ1IX28tI61c9l7xNt8b
-         jZ9tO4yP65xf01+TlwrS90mAjiFnF1J/8ExnaPHWLmFAn2hq3UG3x6uaTcKjXMCJNWip
-         OTeA==
-X-Gm-Message-State: APjAAAUwh+Eg9+fa1SdpwldFUp8gaB2u9QyIcTvNerUv+ZfliBK0jySO
-        J0Wnt3uNpk69V53lUrNEgr8UaaPDQ6mOA9niAit+TkEUPY6f
-X-Google-Smtp-Source: APXvYqw1nemikCJS5D7M4N4f0bYbahpKkcyiyjQt4kL1XP7Z9X8CJ3ZOIh4k/9LB4ygXcYMr/mw1sHHvGwAuiBpmhzif60YWo58S
+        Tue, 10 Dec 2019 17:10:33 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBAM8Aag048555;
+        Tue, 10 Dec 2019 17:09:56 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wsu3q16b0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Dec 2019 17:09:56 -0500
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id xBAM9rxj078877;
+        Tue, 10 Dec 2019 17:09:56 -0500
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wsu3q16ae-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Dec 2019 17:09:56 -0500
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xBAM58mK007122;
+        Tue, 10 Dec 2019 22:09:55 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02wdc.us.ibm.com with ESMTP id 2wr3q6fk0g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Dec 2019 22:09:54 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBAM9sbL52035866
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Dec 2019 22:09:54 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2DC02C607D;
+        Tue, 10 Dec 2019 22:09:54 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E69DC607B;
+        Tue, 10 Dec 2019 22:09:48 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.178.57])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Tue, 10 Dec 2019 22:09:47 +0000 (GMT)
+References: <1575681159-30356-1-git-send-email-linuxram@us.ibm.com> <1575681159-30356-2-git-send-email-linuxram@us.ibm.com> <1575681159-30356-3-git-send-email-linuxram@us.ibm.com>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Ram Pai <linuxram@us.ibm.com>
+Cc:     mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
+        benh@kernel.crashing.org, david@gibson.dropbear.id.au,
+        paulus@ozlabs.org, mdroth@linux.vnet.ibm.com, hch@lst.de,
+        andmike@us.ibm.com, sukadev@linux.vnet.ibm.com, mst@redhat.com,
+        ram.n.pai@gmail.com, aik@ozlabs.ru, cai@lca.pw, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, leonardo@linux.ibm.com
+Subject: Re: [PATCH v5 2/2] powerpc/pseries/iommu: Use dma_iommu_ops for Secure VM.
+In-reply-to: <1575681159-30356-3-git-send-email-linuxram@us.ibm.com>
+Date:   Tue, 10 Dec 2019 19:09:45 -0300
+Message-ID: <87mubzygra.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9f05:: with SMTP id q5mr234717iot.295.1576015681954;
- Tue, 10 Dec 2019 14:08:01 -0800 (PST)
-Date:   Tue, 10 Dec 2019 14:08:01 -0800
-In-Reply-To: <0000000000005175bf057617c71d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e22b3c059960bebd@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in ip6_tnl_parse_tlv_enc_lim
-From:   syzbot <syzbot+68dce7caebd8543121de@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, ast@kernel.org, boqun.feng@gmail.com,
-        byungchul.park@lge.com, daniel@iogearbox.net, davem@davemloft.net,
-        dledford@redhat.com, jgg@mellanox.com, jgg@ziepe.ca,
-        kernel-team@lge.com, kirill@shutemov.name, kuznet@ms2.inr.ac.ru,
-        leon@kernel.org, leonro@mellanox.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-rdma@vger.kernel.org, mingo@kernel.org,
-        netdev@vger.kernel.org, npiggin@gmail.com, parav@mellanox.com,
-        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        walken@google.com, willy@infradead.org, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-10_07:2019-12-10,2019-12-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ bulkscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
+ mlxlogscore=671 mlxscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912100181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
 
-commit 30471d4b20335d9bd9ae9b2382a1e1e97d18d86d
-Author: Leon Romanovsky <leonro@mellanox.com>
-Date:   Sun Feb 3 12:55:50 2019 +0000
+Hello Ram,
 
-     RDMA/core: Share driver structure size with core
+Ram Pai <linuxram@us.ibm.com> writes:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16b7bb7ae00000
-start commit:   3a5af36b Merge tag '4.19-rc3-smb3-cifs' of git://git.samba..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9c4a80625153107e
-dashboard link: https://syzkaller.appspot.com/bug?extid=68dce7caebd8543121de
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1068a44e400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=146386c6400000
+> Commit edea902c1c1e ("powerpc/pseries/iommu: Don't use dma_iommu_ops on
+> 		secure guests")
+> disabled dma_iommu_ops path, for secure VMs. Disabling dma_iommu_ops
+> path for secure VMs, helped enable dma_direct path.  This enabled
+> support for bounce-buffering through SWIOTLB.  However it fails to
+> operate when IOMMU is enabled, since I/O pages are not TCE mapped.
+>
+> Renable dma_iommu_ops path for pseries Secure VMs.  It handles all
+> cases including, TCE mapping I/O pages, in the presence of a
+> IOMMU.
+>
+> Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+> ---
+>  arch/powerpc/platforms/pseries/iommu.c | 11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+> index 67b5009..4e27d66 100644
+> --- a/arch/powerpc/platforms/pseries/iommu.c
+> +++ b/arch/powerpc/platforms/pseries/iommu.c
+> @@ -36,7 +36,6 @@
+>  #include <asm/udbg.h>
+>  #include <asm/mmzone.h>
+>  #include <asm/plpar_wrappers.h>
+> -#include <asm/svm.h>
+>  #include <asm/ultravisor.h>
+>
+>  #include "pseries.h"
 
-If the result looks correct, please mark the bug fixed by replying with:
+You still need to keep <asm/svm.h>, otherwise there won't be a
+definition of is_secure_guest() when CONFIG_PPC_SVM=n.
 
-#syz fix: RDMA/core: Share driver structure size with core
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
