@@ -2,139 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE4E119A5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:53:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F36119A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:53:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbfLJVwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:52:14 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33514 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729780AbfLJVwK (ORCPT
+        id S1727762AbfLJVx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:53:27 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54308 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726417AbfLJVx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:52:10 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 6so9542004pgk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:52:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=x1llI4VQgR/NNv9VK0TWAuEng4/7tgvnedskGQElizQ=;
-        b=TN/QOr87yPqhW/2lzNiPS+Jz3xhAwg45MFbe+8DISDcdLzuEBd561ejk5h0oCDb20M
-         cyLB2KMxESf4Ub5nYgtAAseJcF8JrG2TpoOOK8qfqxLY6L6KKBaLA7FApvFfMTJYJ/nD
-         rzvsG3Hy5V1bVEoDwP+bo3VLKfoUq4aXJ0+Xo3Cp173dvNPBZF+DAqX8e0nbD2CZKk9O
-         p8kMwBsQHh50nLmmwHguAwJKH8eve5hwTsj2EHRkq2Yn4/MIPkhixNEv6PV5mPIdAWdX
-         BfndNieAlydYIPORzdzVGct5J8O1VK1nNaPidFt04JpeZqNZDd0NoNb9YkalSivZSsmd
-         CHKg==
+        Tue, 10 Dec 2019 16:53:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576014805;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yrizCyo7m7hDOCYKIMvuYeQwoBYzTpaglQGy0pm+RW0=;
+        b=Y2b7bUXniGrVq3V9sotcyzpfli6n94aUeWEDcm98x6lTb6AfkuI9aJt/PbZ2zUMiIuxgyY
+        WskKZ/+DDF9mqROwYRUxZ4GN0Yw1Zip4Ko/SeMNLKvFezRP6JNsg7eqWp86QOWvlYjAFrq
+        sjXRinFC4a0yQDvypIdG5RUnuja/Qk4=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-36-Ji6W44QNMPKu0Pf1ytM6zQ-1; Tue, 10 Dec 2019 16:53:24 -0500
+Received: by mail-qt1-f198.google.com with SMTP id c8so2962019qte.22
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:53:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=x1llI4VQgR/NNv9VK0TWAuEng4/7tgvnedskGQElizQ=;
-        b=tH+G/j6RbBvbksIQ/e219BV8vqD3JrN7forRcm9ebS0zV1HGekGJDZAN9VHaOJdHH/
-         s/uYUTFqWGzy57YADRgPU94KkyPuOc0OsWf+PoNVsOf2t86MMMmSZGuc1G1ohL4wdIk8
-         dm3nw/ob+kdo49StCU8kJbJv7zqMIdofMzpQbR/eI0q/zquu7Ud8fgOD0gQJ29g9L0Ie
-         BwVlnjiULrMN8LNBVET8b3PwPYefL67VxFHsHCx9Xkh9XhZ/Jy88PvFP5YGA9LHdw6bw
-         Sn0q1gC82+Ji0loTRneB7U7lH9IR7qBpPlIG3A/5SVP6DgNUb14JjBkyXBnkOZnGYAFx
-         Oa7A==
-X-Gm-Message-State: APjAAAVJm4ib1Gbals3b0+PonZ/8KslhQuceHkuEypfIHoJmEtFnj55B
-        Y/YeIyZTHkQ+jpwh8u0EwPMOvw==
-X-Google-Smtp-Source: APXvYqxXcor3tR+WOkruu/D28GkGpulVaBRaudEGLcLcwEBe3xdOjEwVkq8bKvNdtbH3cY30xIG6Mg==
-X-Received: by 2002:a63:213:: with SMTP id 19mr329909pgc.160.1576014729720;
-        Tue, 10 Dec 2019 13:52:09 -0800 (PST)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id z13sm3865986pjz.15.2019.12.10.13.52.09
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=haO+hO7zhLiDWtz4v+nZfgg/Acru74GowOg9k9oKdgQ=;
+        b=r3Z54rcTcq2E67sUla7GApV7hZXqgDzSPedWhu758OQsGeHvQgBZ8p3zkeCiv3OSVx
+         /q+s31XV/PlOEetgbTtwTVqRiQ5uyaWWQvCpAAiwsDbXFJOOcSkLOfvOzovtfpZB+Rv8
+         YWtr7lkFmcVfEd07ufthRBrq6TYlnBinflmIc4Db1tmXoXAEghx8EgbE3I+1ZQAkEUdk
+         C2FvWxk+hen1CXLO1Fe7SWdCERFTIw38Fm086utG0RtoIErV5tOXG46ts28pbDabDsK5
+         8HIYmpqw6gGWnBTFB1q6kiNJHndBGcuJP5T6GdJnPCqDagQwqvWIQR22M9JicU/hVpdQ
+         A1Ww==
+X-Gm-Message-State: APjAAAVW+f8yxY73JofSuH0SUl5D32d0Lr+fyzBc7v0zBZ8mVSDUZfxK
+        DaOouuo1sGG/ry6FbwfL3DIXX4lP2UuNTiyvZD5R3CZY3LQS9aprwNVqLtNZLNbh4Zv9hk4tdYb
+        GI7V9Wth5Qfez6uXEkBNkQmNQ
+X-Received: by 2002:a37:7bc7:: with SMTP id w190mr34597382qkc.132.1576014803586;
+        Tue, 10 Dec 2019 13:53:23 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz/l3O2+jkai7Ds7qKKCHV1j/1Q6fIugOHydRaUvmyObOfC1CSUBb8wBoJYsKYM6H1xo9Jc6w==
+X-Received: by 2002:a37:7bc7:: with SMTP id w190mr34597363qkc.132.1576014803352;
+        Tue, 10 Dec 2019 13:53:23 -0800 (PST)
+Received: from redhat.com (bzq-79-181-48-215.red.bezeqint.net. [79.181.48.215])
+        by smtp.gmail.com with ESMTPSA id x126sm1349347qkc.87.2019.12.10.13.53.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 13:52:09 -0800 (PST)
-Date:   Tue, 10 Dec 2019 13:52:05 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Martin Lau <kafai@fb.com>
-Subject: Re: [PATCH bpf v2] bpftool: Don't crash on missing jited insns or
- ksyms
-Message-ID: <20191210135205.529044a4@cakuba.netronome.com>
-In-Reply-To: <20191210213148.kqd6xdvqjkh3zxst@ast-mbp.dhcp.thefacebook.com>
-References: <20191210181412.151226-1-toke@redhat.com>
-        <20191210125457.13f7821a@cakuba.netronome.com>
-        <87eexbhopo.fsf@toke.dk>
-        <20191210132428.4470a7b0@cakuba.netronome.com>
-        <20191210213148.kqd6xdvqjkh3zxst@ast-mbp.dhcp.thefacebook.com>
-Organization: Netronome Systems, Ltd.
+        Tue, 10 Dec 2019 13:53:22 -0800 (PST)
+Date:   Tue, 10 Dec 2019 16:53:17 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
+Message-ID: <20191210164908-mutt-send-email-mst@kernel.org>
+References: <20191129213505.18472-1-peterx@redhat.com>
+ <20191129213505.18472-5-peterx@redhat.com>
+ <1355422f-ab62-9dc3-2b48-71a6e221786b@redhat.com>
+ <a3e83e6b-4bfa-3a6b-4b43-5dd451e03254@redhat.com>
+ <20191210081958-mutt-send-email-mst@kernel.org>
+ <8843d1c8-1c87-e789-9930-77e052bf72f9@redhat.com>
+ <20191210160211.GE3352@xz-x1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20191210160211.GE3352@xz-x1>
+X-MC-Unique: Ji6W44QNMPKu0Pf1ytM6zQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019 13:31:50 -0800, Alexei Starovoitov wrote:
-> On Tue, Dec 10, 2019 at 01:24:28PM -0800, Jakub Kicinski wrote:
-> > On Tue, 10 Dec 2019 22:09:55 +0100, Toke H=C3=B8iland-J=C3=B8rgensen wr=
-ote: =20
-> > > Jakub Kicinski <jakub.kicinski@netronome.com> writes: =20
-> > > > On Tue, 10 Dec 2019 19:14:12 +0100, Toke H=C3=B8iland-J=C3=B8rgense=
-n wrote:   =20
-> > > >> When the kptr_restrict sysctl is set, the kernel can fail to return
-> > > >> jited_ksyms or jited_prog_insns, but still have positive values in
-> > > >> nr_jited_ksyms and jited_prog_len. This causes bpftool to crash wh=
-en trying
-> > > >> to dump the program because it only checks the len fields not the =
-actual
-> > > >> pointers to the instructions and ksyms.
-> > > >>=20
-> > > >> Fix this by adding the missing checks.
-> > > >>=20
-> > > >> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com> =
-  =20
-> > > >
-> > > > Fixes: 71bb428fe2c1 ("tools: bpf: add bpftool")
-> > > >
-> > > > and
-> > > >
-> > > > Fixes: f84192ee00b7 ("tools: bpftool: resolve calls without using i=
-mm field")
-> > > >
-> > > > ?   =20
-> > >=20
-> > > Yeah, guess so? Although I must admit it's not quite clear to me whet=
-her
-> > > bpftool gets stable backports, or if it follows the "only moving
-> > > forward" credo of libbpf? =20
+On Tue, Dec 10, 2019 at 11:02:11AM -0500, Peter Xu wrote:
+> On Tue, Dec 10, 2019 at 02:31:54PM +0100, Paolo Bonzini wrote:
+> > On 10/12/19 14:25, Michael S. Tsirkin wrote:
+> > >> There is no new infrastructure to track the dirty pages---it's just =
+a
+> > >> different way to pass them to userspace.
+> > > Did you guys consider using one of the virtio ring formats?
+> > > Maybe reusing vhost code?
 > >=20
-> > bpftool does not have a GH repo, and seeing strength of Alexei's
-> > arguments in the recent discussion - I don't think it will. So no
-> > reason for bpftool to be "special" =20
+> > There are no used/available entries here, it's unidirectional
+> > (kernel->user).
 >=20
-> bpftool always was and will be a special user of libbpf.
+> Agreed.  Vring could be an overkill IMHO (the whole dirty_ring.c is
+> 100+ LOC only).
 
-There we go again. Making proclamations without any justification or
-explanation.
 
-Maybe there is a language barrier between us, but I wrote the initial
-bpftool code, so I don't see how you (who authored one patch) can say
-what it was or is. Do you mean to say what you intend to make it?
+I guess you don't do polling/ event suppression and other tricks that
+virtio came up with for speed then? Why won't they be helpful for kvm?
+To put it another way, LOC is irrelevant, virtio is already in the
+kernel.
 
-bpftool was intended to be a CLI to BPF _kernel_ interface. libbpf was
-just the library that we all agreed to use moving forward for ELF
-loading.
+Anyway, this is something to be discussed in the cover letter.
 
-I'm not going to argue with you again. You kept bad mouthing iproute2
-and then your only argument was the reviews sometimes take longer than
-24 hours. Which I'm sure you have a lot of experience with:
+> >=20
+> > > If you did and it's not a good fit, this is something good to mention
+> > > in the commit log.
+> > >=20
+> > > I also wonder about performance numbers - any data here?
+> >=20
+> > Yes some numbers would be useful.  Note however that the improvement is
+> > asymptotical, O(#dirtied pages) vs O(#total pages) so it may differ
+> > depending on the workload.
+>=20
+> Yes.  I plan to give some numbers when start to work on the QEMU
+> series (after this lands).  However as Paolo said, those numbers would
+> probably only be with some special case where I know the dirty ring
+> could win.  Frankly speaking I don't even know whether we should
+> change the default logging mode when the QEMU work is done - I feel
+> like the old logging interface is still good in many major cases
+> (small vms, or high dirty rates).  It could be that we just offer
+> another option when the user could consider to solve specific problems.
+>=20
+> Thanks,
+>=20
+> --=20
+> Peter Xu
 
-  iproute2$ git log --author=3DStarov --oneline=20
-4bfe68253670 iptnl: add support for collect_md flag in IPv4 and IPv6 tunnels
-
-  iproute2$ git log --author=3Dfb.com --oneline=20
-3da6d055d93f bpf: add btf func and func_proto kind support
-7a04dd84a7f9 bpf: check map symbol type properly with newer llvm compiler
-73451259daaa tc: fix ipv6 filter selector attribute for some prefix lengths
-0b4ea60b5a48 bpf: Add support for IFLA_XDP_PROG_ID
-4bfe68253670 iptnl: add support for collect_md flag in IPv4 and IPv6 tunnels
-414aeec90f82 ss: Add tcp_info fields data_segs_in/out
-409998c5a4eb iproute: ip-gue/ip-fou manpages
-
-Upstreaming bpftool was a big mistake, but we live and we learn.
