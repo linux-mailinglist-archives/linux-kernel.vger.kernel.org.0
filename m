@@ -2,68 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B3F1117E96
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 04:56:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A705117E9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 04:57:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfLJD4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 22:56:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39328 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbfLJD4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 22:56:48 -0500
-Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B10892465C;
-        Tue, 10 Dec 2019 03:56:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575950208;
-        bh=kszLF0bT7aHHUG9zA3c6FJ6o71gT16dHrEBieWTigng=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ngOj1QsnKGkCZuTnMzSmkk+sYCEJWaE8bRTVgoyvJNA9ID1JkYFyEuQClh4J+OJPQ
-         wwq77yjcFZL4w2HalJxSfHHEOnfL5xrcT4auXDVcfOHOEnmX4WMRS0qZwvRG42JyGi
-         MyOqN9H7wGRAjKEx4sMr+sO4jjod+MUkhZWQc6hg=
-From:   paulmck@kernel.org
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 7/7] doc: Fix typo s/deference/dereference/
-Date:   Mon,  9 Dec 2019 19:56:41 -0800
-Message-Id: <20191210035641.2226-7-paulmck@kernel.org>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20191210035539.GA792@paulmck-ThinkPad-P72>
-References: <20191210035539.GA792@paulmck-ThinkPad-P72>
+        id S1727118AbfLJD5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 22:57:11 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:38470 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbfLJD5J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 22:57:09 -0500
+Received: from [10.28.19.135] (10.28.19.135) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 10 Dec
+ 2019 11:57:40 +0800
+Subject: Re: [PATCH] arm64: dts: a1: add saradc controller
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <linux-iio@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1575358332-44866-1-git-send-email-xingyu.chen@amlogic.com>
+ <7hpngxqfa7.fsf@baylibre.com>
+From:   Xingyu Chen <xingyu.chen@amlogic.com>
+Message-ID: <9a2ddfa3-28f3-7d15-bb25-5b84078b77c7@amlogic.com>
+Date:   Tue, 10 Dec 2019 11:57:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+MIME-Version: 1.0
+In-Reply-To: <7hpngxqfa7.fsf@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-Originating-IP: [10.28.19.135]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+Hi, Kevin
 
-Reported-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- Documentation/RCU/lockdep-splat.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2019/12/10 6:56, Kevin Hilman wrote:
+> Xingyu Chen <xingyu.chen@amlogic.com> writes:
+>
+>> The saradc controller in Meson-A1 is the same as the Meson-G12 series SoCs,
+>> so we use the same compatible string.
+>>
+>> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+>>
+>> ---
+>> This patch is based on A1 clock patchset at [0].
+>>
+>> [0] https://lore.kernel.org/linux-amlogic/20191129144605.182774-1-jian.hu@amlogic.com
+>> ---
+>>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 15 +++++++++++++++
+>>   1 file changed, 15 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+>> index 7210ad0..cad1756 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+>> @@ -93,6 +93,21 @@
+>>   				clock-names = "xtal", "pclk", "baud";
+>>   				status = "disabled";
+>>   			};
+>> +
+>> +			saradc: adc@2c00 {
+>> +				compatible = "amlogic,meson-g12a-saradc",
+>> +					     "amlogic,meson-saradc";
+>> +				reg = <0x0 0x2c00 0x0 0x48>;
+> Why 0x48 here?  AXG uses 0x38 and you're not adding any more registers
+> to this driver.
 
-diff --git a/Documentation/RCU/lockdep-splat.txt b/Documentation/RCU/lockdep-splat.txt
-index 9c01597..b809631 100644
---- a/Documentation/RCU/lockdep-splat.txt
-+++ b/Documentation/RCU/lockdep-splat.txt
-@@ -99,7 +99,7 @@ With this change, the rcu_dereference() is always within an RCU
- read-side critical section, which again would have suppressed the
- above lockdep-RCU splat.
- 
--But in this particular case, we don't actually deference the pointer
-+But in this particular case, we don't actually dereference the pointer
- returned from rcu_dereference().  Instead, that pointer is just compared
- to the cic pointer, which means that the rcu_dereference() can be replaced
- by rcu_access_pointer() as follows:
--- 
-2.9.5
+Thanks for you review.
 
+The saradc introduces 4 new registers (as shown below) begin with g12a 
+platform, and these registers are used
+to save the sampling value of corresponding channel. In other words, we 
+can choose fifo or new registers to save
+sampling value, but it is not supported by the current driver.
+
+dout register  |---> fifo
+                          |---> channel regs -|
+                                                            |--- channel-0
+                                                            |--- channel-1
+                                                            | ...
+                                                            | --- channel-7
+
+AO_SAR_ADC_CHNL01：saving sampling data of channel 0/1
+AO_SAR_ADC_CHNL23:   saving sampling data of channel 2/3
+AO_SAR_ADC_CHNL45:   saving sampling data of channel 4/5
+AO_SAR_ADC_CHNL67:   saving sampling data of channel 6/7
+
+
+This patch use the 0x48 to describe the registers length just follow the 
+file meson-g12-common.dtsi. and it doesn't
+affect the driver because of the mapped regiter length is limited by 
+max_register member in struct regmap_config.
+
+I can replace 0x48 with 0x38 in next patch if necessary.
+
+> Kevin
+>
+> .
+>
