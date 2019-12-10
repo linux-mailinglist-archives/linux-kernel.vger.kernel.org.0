@@ -2,71 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09AAA11921B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9ECB119221
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:34:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfLJUd6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:33:58 -0500
-Received: from mail.nic.cz ([217.31.204.67]:51412 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725999AbfLJUdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:33:54 -0500
-Received: from localhost (unknown [172.20.6.135])
-        by mail.nic.cz (Postfix) with ESMTPSA id 5429F140AC8;
-        Tue, 10 Dec 2019 21:33:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1576010032; bh=gT9/qt/EE7APHbwGwmFdoeHh/5ij9tU8+0uQXcYhjVI=;
-        h=Date:From:To;
-        b=sThtOEeX+qYfIcojZT7f2Vbh9MTdECtF/Ctl0YngNsUBcL6Y7s6S5lCAiP0kfmx/v
-         KAyG5LPOqa6UrjRlit08uN0nTJHjzOo98m/IKDFtXdVfk1tYHqKKb1DttwKCg+MKk+
-         ufKzsCzDzfO82MDF5WYpvs/zZSe04O4Ms945Lx40=
-Date:   Tue, 10 Dec 2019 21:33:51 +0100
-From:   Marek Behun <marek.behun@nic.cz>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Landen Chao <landen.chao@mediatek.com>, f.fainelli@gmail.com,
-        vivien.didelot@savoirfairelinux.com, matthias.bgg@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        davem@davemloft.net, sean.wang@mediatek.com, opensource@vdorst.com,
-        frank-w@public-files.de
-Subject: Re: [PATCH net-next 4/6] net: dsa: mt7530: Add the support of
- MT7531 switch
-Message-ID: <20191210213351.2df6acbf@nic.cz>
-In-Reply-To: <20191210163557.GC27714@lunn.ch>
-References: <cover.1575914275.git.landen.chao@mediatek.com>
-        <6d608dd024edc90b09ba4fe35417b693847f973c.1575914275.git.landen.chao@mediatek.com>
-        <20191210163557.GC27714@lunn.ch>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727101AbfLJUeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:34:21 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:57521 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbfLJUeT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 15:34:19 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1M8hlZ-1iafTh1vDF-004kr7; Tue, 10 Dec 2019 21:34:12 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: mmp: include the correct cputype.h
+Date:   Tue, 10 Dec 2019 21:34:00 +0100
+Message-Id: <20191210203409.2875880-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.100.3 at mail
-X-Virus-Status: Clean
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SHORTCIRCUIT
-        shortcircuit=ham autolearn=disabled version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.nic.cz
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:TYAVyXZgBYEko4NYVCn4X559DV/JN37TG56E9DTOSjQgKZUotME
+ +7SX6MDl243LqHXqdDvEgumQAYCErDA36xAmLWEj8PUEy9hunzEkslRwnZA2MRQu4Ce4ch2
+ i8QQfAihBHYBxnm348B+iQdREe+NBDyg3AXlxUQRt1UxEQHRaYV4cOSKTwu4wbyFEKAt/kp
+ vWWIx6wXTp+ZXCJIEngNA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3HiHdPJVe7M=:7cSklzDdqM2TTJj0lOR2Ub
+ 2g5KEPlXreb/mo5YWw7e3DVba9pcj81DkjylhmMqGnz4i35x2eIAm3o/wiB3HnQ0YucEQAqqV
+ PgRljNhR+iQv8AYEwnq5r63vcNRM6or9YaVlsW0QCatE+5s5IozH1nX9CPmNEWcN8AkffFrmH
+ NiLx601YlWIsRvDdWhjRpErHvQ80OeY1dV98Mv3Fs/ZGxJP/4rD6fVQOBYUMFb7x+J3mo9E5Q
+ JVpc9UHwAt41sUhd2TV55lZsyz2+xQPcbjtR+cyBLmi75bhiF6c/6qjIaRRFGRJ/q3i1+9VI2
+ PsOWOxdkQooTTJh0SdhkH4/5z/8FqcYp2SSzHnN6yW4PVoYpM8Y4dZ7xVVC5SAHZXNDTsjxXM
+ Ra4La6NPVq1fNGyf1VYV7f6FhA59mynJv1DwwTSVGfGlYyVYFxbULfFZUC3qJ6gLpkULO+LYn
+ YJ2XcksLuN6cIDwp+ZFIUSPEzP8Q3duijvExGPXSh1sp4v928MHbgtzRrk8I2F7atpp87I1oU
+ gKUMfPIRlXLHQsMkPsG2R3c5OFBn7r+NmH+VPK+BU3v2vT695goh/1C69Vk7XrDv6Bl1m3eg1
+ sRQMMxgU/O8tq6vwpovXbGoTAjioMKz3GRP2hOXGpN0rl1nJ7tNGZ3BWGwsDuoVYhQdgP+yb+
+ 9hBS9C3rNAfH7Y87iTmbvzY3gK405RMJIk/NmjGRfOmQ48SZQshU+YN1rW1CVJnx+4gzBzPRm
+ YizD6uevSC6aIaZbC+DjiM3i9a7BThnXuy6De6uA3iF7cjlJYgWTlSpF/e4I581SD6aqub1s3
+ p+8R7biP43pV2Y7UiAFxkoi5ny8QD6ylcNSo/UJO6OsKsYSFz3mKE3LCtJvFigIeZwUGOdqz7
+ BNmP5NPjKu3Bbh9kxTBA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019 17:35:57 +0100
-Andrew Lunn <andrew@lunn.ch> wrote:
+The file was moved, causing a build error:
 
-> On Tue, Dec 10, 2019 at 04:14:40PM +0800, Landen Chao wrote:
-> > Add new support for MT7531:
-> > 
-> > MT7531 is the next generation of MT7530. It is also a 7-ports switch with
-> > 5 giga embedded phys, 2 cpu ports, and the same MAC logic of MT7530. Cpu
-> > port 6 only supports HSGMII interface. Cpu port 5 supports either RGMII
-> > or HSGMII in different HW sku.  
-> 
-> Hi Landen
-> 
-> Looking at the code, you seem to treat HSGMII as 2500Base-X. Is this
-> correct? Or is it SGMII over clocked to 2.5Gbps?
-> 
-> 	 Andrew
+In file included from /git/arm-soc/arch/arm/mach-mmp/pxa168.c:28:
+arch/arm/mach-mmp/pxa168.h:22:10: fatal error: cputype.h: No such file or directory
 
-How would that work? Would 10 and 100 be overclocked to 25 and 250?
+Include it from the new location.
+
+Fixes: 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-mmp/pxa168.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-mmp/pxa168.h b/arch/arm/mach-mmp/pxa168.h
+index 6dd17986e360..34f907cd165a 100644
+--- a/arch/arm/mach-mmp/pxa168.h
++++ b/arch/arm/mach-mmp/pxa168.h
+@@ -17,9 +17,9 @@ extern void pxa168_clear_keypad_wakeup(void);
+ #include <linux/platform_data/keypad-pxa27x.h>
+ #include <linux/pxa168_eth.h>
+ #include <linux/platform_data/mv_usb.h>
++#include <linux/soc/mmp/cputype.h>
+ 
+ #include "devices.h"
+-#include "cputype.h"
+ 
+ extern struct mmp_device_desc pxa168_device_uart1;
+ extern struct mmp_device_desc pxa168_device_uart2;
+-- 
+2.20.0
+
