@@ -2,116 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F8D119BAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:12:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C308A119BA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730308AbfLJWKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:10:38 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4246 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728519AbfLJWKd (ORCPT
+        id S1729479AbfLJWKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:10:24 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41114 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728605AbfLJWKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:10:33 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBAM8Aag048555;
-        Tue, 10 Dec 2019 17:09:56 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wsu3q16b0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Dec 2019 17:09:56 -0500
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id xBAM9rxj078877;
-        Tue, 10 Dec 2019 17:09:56 -0500
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wsu3q16ae-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Dec 2019 17:09:56 -0500
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xBAM58mK007122;
-        Tue, 10 Dec 2019 22:09:55 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma02wdc.us.ibm.com with ESMTP id 2wr3q6fk0g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Dec 2019 22:09:54 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBAM9sbL52035866
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 22:09:54 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2DC02C607D;
-        Tue, 10 Dec 2019 22:09:54 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E69DC607B;
-        Tue, 10 Dec 2019 22:09:48 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.178.57])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Tue, 10 Dec 2019 22:09:47 +0000 (GMT)
-References: <1575681159-30356-1-git-send-email-linuxram@us.ibm.com> <1575681159-30356-2-git-send-email-linuxram@us.ibm.com> <1575681159-30356-3-git-send-email-linuxram@us.ibm.com>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Ram Pai <linuxram@us.ibm.com>
-Cc:     mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
-        benh@kernel.crashing.org, david@gibson.dropbear.id.au,
-        paulus@ozlabs.org, mdroth@linux.vnet.ibm.com, hch@lst.de,
-        andmike@us.ibm.com, sukadev@linux.vnet.ibm.com, mst@redhat.com,
-        ram.n.pai@gmail.com, aik@ozlabs.ru, cai@lca.pw, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, leonardo@linux.ibm.com
-Subject: Re: [PATCH v5 2/2] powerpc/pseries/iommu: Use dma_iommu_ops for Secure VM.
-In-reply-to: <1575681159-30356-3-git-send-email-linuxram@us.ibm.com>
-Date:   Tue, 10 Dec 2019 19:09:45 -0300
-Message-ID: <87mubzygra.fsf@morokweng.localdomain>
+        Tue, 10 Dec 2019 17:10:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576015818;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ovr8AOrCcVXk6ps0Yd3R+k9jarJnVZ/R6m24MU31Neg=;
+        b=Pqqc7OHLvlgJLovS9IHJmjbNTH8+nPSXzIN+/TMFoDTfU/i+1ZmaCDPGgS9eWkp4LLZxNA
+        EmFsHRQKH8u0cBymH3EjS2eZQhvDmaSP5kxdAxqcpxiFy25fqeE+9BfYkoQFB5QlkApB4z
+        GjjS7FgG6xWCUHD/+DuVRX5yU0zZWNE=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-156-m9VD7xjPMKGba5fsmBOSgg-1; Tue, 10 Dec 2019 17:10:14 -0500
+Received: by mail-qv1-f72.google.com with SMTP id r8so7838589qvp.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 14:10:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ovr8AOrCcVXk6ps0Yd3R+k9jarJnVZ/R6m24MU31Neg=;
+        b=m822FFudWeJSaabCIZwLpddKn1E6Efi54WwgORrAYRGJAU+TksMmDxZ/DWA6LheClI
+         dH6OUHHIs4HIlKI1LYZFmuBegmiLJAGMjZgKXwC3yVPSnxvufQMSaBtOtWfK56xsQXIG
+         JtMS+jpoQElt3O2zIo8eKCTPdFTpmMW5T/HZnlQ4db9Ogvum4Cp5f39R9ZyRyp1IVPGs
+         eGdIw/TqsFt5kKpvYkohuZH/kPXapry4oaDDufGilFVJvOKMPJTVAAOBd8MVm2gMocGU
+         YcjidPjLqtrg8fnIKj2Kr65WfvSmKj/fQPI8U9qbW0455SAxW3ovRTRzaPSpKybSMwcS
+         Fchw==
+X-Gm-Message-State: APjAAAW50W/b8zss0k3vTGRZ7IRU0+KsswTPiS7UlK+OgDNKVO3rG133
+        lIFUx3OJPgTUfjCeV8JPha1Gk6TchZhVOQX3FBEloq1E3soQPTRwlSvLsbrHAJ+r1w7wRd3eme2
+        6KYn5rrfXCY3M80BbQvK9Ci1r
+X-Received: by 2002:a37:51d4:: with SMTP id f203mr18706qkb.212.1576015814422;
+        Tue, 10 Dec 2019 14:10:14 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwwpNDBUah/JxrSAKxCjiRELPnHOg3DdeD0npoO5tGbThZQTwIdN5FQktw+smPeDV7cbUZ/0w==
+X-Received: by 2002:a37:51d4:: with SMTP id f203mr18680qkb.212.1576015814067;
+        Tue, 10 Dec 2019 14:10:14 -0800 (PST)
+Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id z64sm60335qtc.4.2019.12.10.14.10.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2019 14:10:13 -0800 (PST)
+Subject: Re: Regression in squashfs mount option handling in v5.4
+To:     Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>
+References: <20191130181548.GA28459@gentoo-tp.home>
+ <6af16095-eab0-9e99-6782-374705d545e4@infradead.org>
+ <20191210185002.GA20850@gentoo-tp.home>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <2286b071-76ac-1659-5dba-6381ecb269c6@redhat.com>
+Date:   Tue, 10 Dec 2019 17:10:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-10_07:2019-12-10,2019-12-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- bulkscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
- mlxlogscore=671 mlxscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912100181
+In-Reply-To: <20191210185002.GA20850@gentoo-tp.home>
+Content-Language: en-US
+X-MC-Unique: m9VD7xjPMKGba5fsmBOSgg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/10/19 1:50 PM, Jeremi Piotrowski wrote:
+> On Sat, Nov 30, 2019 at 10:56:47AM -0800, Randy Dunlap wrote:
+>> [adding Cc-s]
+>>
+>> On 11/30/19 10:15 AM, Jeremi Piotrowski wrote:
+>>> Hi,
+>>>
+>>> I'm working on an embedded project which uses 'rauc' as an updater. rauc mounts
+>>> a squashfs image using
+>>>
+>>>    mount -t squashfs -o ro,loop,sizelimit=xxx squashfs.img /mnt
+>>>
+>>> On my system mount is busybox, and busybox does not know the sizelimit
+>>> parameter, so it simply passes it on to the mount syscall. The syscall
+>>> arguments end up being:
+>>>
+>>>    mount("/dev/loop0", "dir", "squashfs", MS_RDONLY|MS_SILENT, "sizelimit=xxx")
+>>>
+>>> Until kernel 5.4 this worked, since 5.4 this returns EINVAL and dmesg contains
+>>> the line "squashfs: Unknown parameter 'sizelimit'". I believe this has to do
+>>> with the conversion of squashfs to the new mount api.
+>>>
+>>> This is an unfortunate regression, and it does not seem like this can be simply
+>>> reverted. What is the suggested course of action?
+>>>
+>>> Please cc me on replies, I'm not subscribed to the list.
+>>>
+>>> Thanks,
+>>> Jeremi
+>>>
+>>
+>>
+>> -- 
+>> ~Randy
+>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Ping. This is preventing me from updating the kernel on my systems.
+> 
 
-Hello Ram,
+Fedora is hitting a similar issue https://bugzilla.redhat.com/show_bug.cgi?id=1781863
 
-Ram Pai <linuxram@us.ibm.com> writes:
+Dec 10 10:04:06 kernel: squashfs: version 4.0 (2009/01/31) Phillip Lougher
+Dec 10 10:04:06 kernel: squashfs: Unknown parameter 'errors'
 
-> Commit edea902c1c1e ("powerpc/pseries/iommu: Don't use dma_iommu_ops on
-> 		secure guests")
-> disabled dma_iommu_ops path, for secure VMs. Disabling dma_iommu_ops
-> path for secure VMs, helped enable dma_direct path.  This enabled
-> support for bounce-buffering through SWIOTLB.  However it fails to
-> operate when IOMMU is enabled, since I/O pages are not TCE mapped.
->
-> Renable dma_iommu_ops path for pseries Secure VMs.  It handles all
-> cases including, TCE mapping I/O pages, in the presence of a
-> IOMMU.
->
-> Signed-off-by: Ram Pai <linuxram@us.ibm.com>
-> ---
->  arch/powerpc/platforms/pseries/iommu.c | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
->
-> diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-> index 67b5009..4e27d66 100644
-> --- a/arch/powerpc/platforms/pseries/iommu.c
-> +++ b/arch/powerpc/platforms/pseries/iommu.c
-> @@ -36,7 +36,6 @@
->  #include <asm/udbg.h>
->  #include <asm/mmzone.h>
->  #include <asm/plpar_wrappers.h>
-> -#include <asm/svm.h>
->  #include <asm/ultravisor.h>
->
->  #include "pseries.h"
+I don't think squashfs ever actually supported the errors parameter
+but it was just silently ignored. It turns out you could can pass
+whatever nonsense you want for parameters so I don't think we can
+reject parameters in the generic case
 
-You still need to keep <asm/svm.h>, otherwise there won't be a
-definition of is_secure_guest() when CONFIG_PPC_SVM=n.
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 138b5b4d621d..7ec20b1f8a53 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -160,8 +160,7 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
+  		return 0;
+  	}
+  
+-	return invalf(fc, "%s: Unknown parameter '%s'",
+-		      fc->fs_type->name, param->key);
++	return 0;
+  }
+  EXPORT_SYMBOL(vfs_parse_fs_param);
 
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
