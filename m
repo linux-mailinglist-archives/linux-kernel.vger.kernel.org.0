@@ -2,95 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3704E117D3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 02:36:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFC88117D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 02:38:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfLJBg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 20:36:29 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36900 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbfLJBg3 (ORCPT
+        id S1726958AbfLJBiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 20:38:02 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:44669 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbfLJBiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 20:36:29 -0500
-Received: by mail-pg1-f196.google.com with SMTP id q127so8041432pga.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 17:36:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3/ArZYKEfjZPBsRcDlrm2bJB7ahGFDYf0VWt4hD0Qjo=;
-        b=Tr+C241trD4TLlSStYX0RZ2/acmkFLvu/V66NWO68Pgsjf+UXw0F/g4w5jP4u51yTC
-         Ka81WTRlzO2b1a8sGcma60AQvixKXlL7KWoi6ioZNPudCQab6TFW6nUrh4JeHRDj9gXh
-         jHxeDC9kvh98tdCZUT8ahK2e3j/ZXtpOgvR/f2SuLRXgab7OWEEIakRHl+jLVpbYHZEK
-         nnTSJJq8shG8KCZGbycub0bPoZPxZ0Aultof8x7cY01uY/eSpqT4qdfOren6OUSnshlu
-         2WIPjFk7VeawrmvbAc3wFL3CU0N0IJnMQaqxn/d63coWAiw8xt7UWz7Y9XqXe6igj/Dq
-         3xIQ==
+        Mon, 9 Dec 2019 20:38:01 -0500
+Received: by mail-il1-f200.google.com with SMTP id h87so13131129ild.11
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 17:38:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3/ArZYKEfjZPBsRcDlrm2bJB7ahGFDYf0VWt4hD0Qjo=;
-        b=pufNpJic14GlILMjBkBGVKS8cyqT5gxA/+myzViBzaFAMPk7dJ9DVY49eTCbpnT1m1
-         XzY9aEbwccxFI/ULxjykfat4Dt3NbojjXq5xHw0EMs57bwwitDgMyBxxo8zmIKgrUC3U
-         WuLpG5NLDVaMOYHnhSmXBPMdMftjIMbr/UVsmZvSKoD+ndWgWaqjob3VbjUScKuBte/A
-         8sr2IXnsaxddO+amMxsTIkMxj7QRALaFPekdY/gsuIJ023icrIVdKTwU+F4Bx33uLwuT
-         2tYh9CerSvAtDGSsoRiY4+L0TeOv94WXYbQgolnoEnYRCtCSzM/cVf5BbEZAmGf6pbaD
-         e/6A==
-X-Gm-Message-State: APjAAAWzassMcYR+p2XIXCEofoyqXKZ9T/+FFSk+2OZenzNKIfDv1YNE
-        zk/iDV34axn8yGaLkCHYf9v/wMW+Xr6LmtDW2S/W1g==
-X-Google-Smtp-Source: APXvYqxwnem1f63bG00bEbGyduZzAk/R1lLierSyTVIwa5R8C6fowLDYtTGyFjeHedADn6m4cS1iXI5NN8u299XjvvA=
-X-Received: by 2002:aa7:9151:: with SMTP id 17mr32836592pfi.3.1575941788095;
- Mon, 09 Dec 2019 17:36:28 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=d/rLwgpGcOLrJAfYzylpfLq8TO3Ppq0ukiadwzb7btY=;
+        b=eRXsF6Zdw/ku8QVjKZaLEWiPhrXQzSjYmJM1YriDrna0cwUOF1hLm15RaTlNm4T7Gk
+         2ozMmnkGkOSFl6UlJhsnxQuFSaLtffw9Hx/pcAJSVsx274oOPneVZ8SUlbCPAo+dLrtZ
+         IR2q2It+jhB3KmCBWEXWfs/yk8R0RI7xwCsJBfDKOdIrzkX6GKcXITpTP9nZQDyUPAXA
+         XQkya/JPCEWb1zbdUPPu6+kIrw69JCp2Cjip03Rodq34bM+Bk8aDPiP/x4rtD/3UjlR8
+         MedhI+ntcX+EzdoHwfl7YQaF1KiasKvQZUXqHPmBLSCbfNu1h1hc7qM6u4B6t54whfNR
+         oVJA==
+X-Gm-Message-State: APjAAAVBPHNLlI5OcRQbURcU3XC4RZHT9iKRgO1dbKuKu88OHiVxh7lz
+        9t4LKePWNGkJzJCf82lLQJ52eX8gc/fzdwxpPEjD5LZduXrE
+X-Google-Smtp-Source: APXvYqx3F0Ru+DmMowW3EN6d2QYATYtlFpjQe/HbQv1AYpW3UNnTiZ8L2MNSyTDTtQA/qzP66Ug/fqFZPiweGeK/5P/FGvCtPAyx
 MIME-Version: 1.0
-References: <20191028155722.23419-1-ndesaulniers@google.com> <002301d58dcb$a9ffaa80$fdfeff80$@codeaurora.org>
-In-Reply-To: <002301d58dcb$a9ffaa80$fdfeff80$@codeaurora.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 9 Dec 2019 17:36:16 -0800
-Message-ID: <CAKwvOdkbTMj92Hj7Z2ucbJY5B_AZgANZhNoeOa2Taa2YTbCQUg@mail.gmail.com>
-Subject: Re: [PATCH] hexagon: work around compiler crash
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Sid Manning <sidneym@quicinc.com>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-hexagon@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        bcain@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:5b12:: with SMTP id v18mr24150486ioh.112.1575941881185;
+ Mon, 09 Dec 2019 17:38:01 -0800 (PST)
+Date:   Mon, 09 Dec 2019 17:38:01 -0800
+In-Reply-To: <00000000000044a65205994a7e13@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000003cc8505994f9036@google.com>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in mem16_serial_out
+From:   syzbot <syzbot+92f32d4e21fb246d31a2@syzkaller.appspotmail.com>
+To:     andriy.shevchenko@linux.intel.com, asierra@xes-inc.com,
+        corbet@lwn.net, ext-kimmo.rautkoski@vaisala.com,
+        gregkh@linuxfoundation.org, jslaby@suse.com,
+        kai.heng.feng@canonical.com, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, mika.westerberg@linux.intel.com,
+        paulburton@kernel.org, peter@hurleysoftware.com, sr@denx.de,
+        syzkaller-bugs@googlegroups.com, yamada.masahiro@socionext.com,
+        yegorslists@googlemail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ akpm, looks like you're picking up hexagon patches? Would you mind
-please grabbing this one, too?
+syzbot has bisected this bug to:
 
-On Mon, Oct 28, 2019 at 1:09 PM Brian Cain <bcain@codeaurora.org> wrote:
->
-> > -----Original Message-----
-> > From: linux-hexagon-owner@vger.kernel.org <linux-hexagon-
-> > owner@vger.kernel.org> On Behalf Of Nick Desaulniers
-> ...
-> > Subject: [PATCH] hexagon: work around compiler crash
-> >
-> > Clang cannot translate the string "r30" into a valid register yet.
-> >
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/755
-> > Suggested-by: Sid Manning <sidneym@quicinc.com>
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
->
-> LGTM.  Thanks, Nick.
->
-> Reviewed-by: Brian Cain <bcain@codeaurora.org>
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/002301d58dcb%24a9ffaa80%24fdfeff80%24%40codeaurora.org.
+commit bd94c4077a0b2ecc35562c294f80f3659ecd8499
+Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed Oct 28 03:46:05 2015 +0000
 
+     serial: support 16-bit register interface for console
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13723196e00000
+start commit:   e42617b8 Linux 5.5-rc1
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=10f23196e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17723196e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3754e2c78c1adb82
+dashboard link: https://syzkaller.appspot.com/bug?extid=92f32d4e21fb246d31a2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=136f7e41e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112b7c82e00000
 
--- 
-Thanks,
-~Nick Desaulniers
+Reported-by: syzbot+92f32d4e21fb246d31a2@syzkaller.appspotmail.com
+Fixes: bd94c4077a0b ("serial: support 16-bit register interface for  
+console")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
