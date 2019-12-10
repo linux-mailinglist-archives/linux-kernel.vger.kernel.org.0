@@ -2,138 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9DFF119123
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 20:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AAEF119110
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 20:53:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfLJTzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 14:55:09 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:43471 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726903AbfLJTzD (ORCPT
+        id S1726783AbfLJTxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 14:53:10 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35814 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfLJTxK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 14:55:03 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MBmDy-1iSdZE09bI-00CCMA; Tue, 10 Dec 2019 20:53:44 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Ben Zhang <benzh@chromium.org>,
-        Curtis Malainey <cujomalainey@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] ASoC: rt5677: add SPI_MASTER dependency
-Date:   Tue, 10 Dec 2019 20:52:26 +0100
-Message-Id: <20191210195333.648018-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 10 Dec 2019 14:53:10 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBAJr32k029399;
+        Tue, 10 Dec 2019 13:53:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576007584;
+        bh=yo7sZxfjugdMo8ZFuedB2icaA5L7ymj3/COg0IqvRm0=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=Gt9zLh2wwit4Fz3gxo8h5LFl0P6nDAAQn8RSp5Ct9uDjRhN0aT3opw2Yuo+n1/XTm
+         9t2Fcrua7foIVe3OCoKtAZFz6d2XvqHwzc8p2zr9TocsuATjMmE0fjHf8IOE6UcsZO
+         wEydWZWtxy74Gmd4DoXa2gbq9h0qZwgZHBRpzE24=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBAJr2oc100175;
+        Tue, 10 Dec 2019 13:53:03 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 10
+ Dec 2019 13:53:03 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 10 Dec 2019 13:53:03 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBAJr3Qp054301;
+        Tue, 10 Dec 2019 13:53:03 -0600
+Date:   Tue, 10 Dec 2019 13:52:30 -0600
+From:   Bin Liu <b-liu@ti.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <od@zcrc.me>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 7/7] usb: musb: jz4740: Disable pullup at init
+Message-ID: <20191210195230.GA16429@iaqt7>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191210171110.62141-1-paul@crapouillou.net>
+ <20191210171110.62141-7-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:FRkHOOKgb97GU78DRa4WO6ybtXkwJBdydEWXHFH0XK6ebufL9xV
- 1EnlNmOIxy2m4DJZpwOSZDYe6VdSkLHIYTkUdRCdxb96bn4+i9aM5HDbv8Y7m7upSqX0g+4
- aZ7pxvErgtXqj88QUP5vZlUGYWZsThHweb+iyAH57kzxC10soq23IhgctvcW1mAt5mudX0M
- ofu4B2dzMSXFkyVJqr7fA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:aRxDfmwkuqQ=:Q5kIO/JyMKhASOEVpBGr79
- mltKx8dNXZy5JN2a10gY5qm3kf02KQ8QYkK/4v3cAdAbmccyzL4DXyE+PKfOKw6YenitwI12c
- 8YbdnsOQ8CJRf8p4rEWHGUvRObVYsyum+gwXLcv7ROZGJT3/G/YCUikha20/xZ/QOXlfAzyia
- 7c+O9S7Q5eND46EM3BY8MWxHHnw6vvaouoJcBvalhn6utMA4Xdyu6sQ8klBKG/OgtzUIK/5f5
- dgV1/mPcAfVkiDLHIOYY33Pv7BbxGikgB3SDFPgfExtJQj9YatmVAE8kJpv7eYxwqZEW9xR2U
- wUG2rEBAkKiD8Wfob5x3p4BZ7vIWifgoOi5pHHimENGsOT+B3UybUI5RUND6zaquO3rBi8evu
- rYtEPAxqZ5pKX8o/t6h14iPnoO/9+X619xrMLQmZMHVYg1lXfFU/da7NavX81GHaMC7DXR8lW
- yVoDxUCfei6PWs8RaBl7o7ewBIyGnUE4uocUG3rbI/SlP78kYT6tpS4PtTKHZQMiv7NbGvII1
- 8/SzVaX+qN+X55J8eYxyg/eCefYiWim8pCMOjrJPOTeNSnV6RCH3iEeHZS48oGJvCIvexLTjY
- tVeasw/P6N94yIWtOgt5S1yqSEgIg0TJvze3ZruHI+ks3QwRINk3gVegkpgUvEBcd4IxFI2yl
- QDOUbechDBC9C1VkFW5voYcKksms6yCQrIFWzOrWWLxhO5Ahg3fDkwe272NzdQXH0pRQrq9nC
- OehoDnS0YYCsMz/8ALLgfgBpT9+mK0KV3838L/HVcBGhGfNBCXig+a9eqoEyQQ6SqIU83x0IQ
- C6Kx99oKCbEHzZkvBlwpEoLaMYnbY5DOCCrIY1KjWrOLqhhrYUQFyfH0Lmn7+kt/a+MbIJtvw
- QFiozHF88wZ3H1Nwewdw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191210171110.62141-7-paul@crapouillou.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_SPI is disabled, the newly added code for the DSP
-firmware loading fails to link:
+Hi,
 
-ERROR: "rt5677_spi_hotword_detected" [sound/soc/codecs/snd-soc-rt5677.ko] undefined!
-ERROR: "rt5677_spi_write" [sound/soc/codecs/snd-soc-rt5677.ko] undefined!
+On Tue, Dec 10, 2019 at 06:11:10PM +0100, Paul Cercueil wrote:
+> The pullup may be already enabled before the driver is initialized.
+> It has to be disabled at init time, as we cannot guarantee that a gadget
+> driver will be bound to the UDC.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>     v3: New patch
+> 
+>  drivers/usb/musb/jz4740.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/usb/musb/jz4740.c b/drivers/usb/musb/jz4740.c
+> index f948eca654f3..1af9e4053312 100644
+> --- a/drivers/usb/musb/jz4740.c
+> +++ b/drivers/usb/musb/jz4740.c
+> @@ -75,6 +75,7 @@ static const struct musb_hdrc_config jz4740_musb_config = {
+>  static int jz4740_musb_init(struct musb *musb)
+>  {
+>  	struct device *dev = musb->controller->parent;
+> +	u8 power;
+>  	int err;
+>  
+>  	if (dev->of_node)
+> @@ -97,6 +98,14 @@ static int jz4740_musb_init(struct musb *musb)
+>  	musb->isr = jz4740_musb_interrupt;
+>  	musb->dma_share_usb_irq = true;
+>  
+> +	/*
+> +	 * If the SoC booted from USB the pullup might still be set.
+> +	 * Disable it until a gadget is bound.
+> +	 */
+> +	power = musb_readb(musb->mregs, MUSB_POWER);
+> +	power &= ~MUSB_POWER_SOFTCONN;
+> +	musb_writeb(musb->mregs, MUSB_POWER, power);
+> +
+>  	return 0;
+>  }
 
-Add a dependency to prevent this configuration.
+It is preferred the glue drivers don't touch the controller core
+registers if possible. Please try the following patch instead.
 
-Note: the does not work with the DT probing, as there is no binding
-for the SPI half of the driver, but nothing seems to be using that
-with the mainline kernel anyway.
+-Bin.
 
-Fixes: 461c623270e4 ("ASoC: rt5677: Load firmware via SPI using delayed work")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/codecs/Kconfig       | 1 +
- sound/soc/intel/boards/Kconfig | 1 +
- sound/soc/mediatek/Kconfig     | 2 +-
- sound/soc/tegra/Kconfig        | 2 +-
- 4 files changed, 4 insertions(+), 2 deletions(-)
+------------- >8 ------------
+t a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+index 683b719c5026..2f9105e8ea38 100644
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2317,6 +2317,9 @@ musb_init_controller(struct device *dev, int nIrq, void __iomem *ctrl)
+        musb_disable_interrupts(musb);
+        musb_writeb(musb->mregs, MUSB_DEVCTL, 0);
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 71b7286d14f2..8e9c461a84f8 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -1047,6 +1047,7 @@ config SND_SOC_RT5670
- 
- config SND_SOC_RT5677
- 	tristate
-+	depends on SPI_MASTER
- 	select REGMAP_I2C
- 	select REGMAP_IRQ
- 
-diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
-index ef20316e83d1..da7f9111f3d3 100644
---- a/sound/soc/intel/boards/Kconfig
-+++ b/sound/soc/intel/boards/Kconfig
-@@ -34,6 +34,7 @@ if SND_SOC_INTEL_HASWELL || SND_SOC_SOF_BROADWELL
- config SND_SOC_INTEL_BDW_RT5677_MACH
- 	tristate "Broadwell with RT5677 codec"
- 	depends on I2C
-+	depends on SPI_MASTER
- 	depends on I2C_DESIGNWARE_PLATFORM || COMPILE_TEST
- 	depends on GPIOLIB || COMPILE_TEST
- 	depends on X86_INTEL_LPSS || COMPILE_TEST
-diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
-index a656d2014127..4699787c93ed 100644
---- a/sound/soc/mediatek/Kconfig
-+++ b/sound/soc/mediatek/Kconfig
-@@ -97,7 +97,7 @@ config SND_SOC_MT8173_RT5650_RT5514
- 
- config SND_SOC_MT8173_RT5650_RT5676
- 	tristate "ASoC Audio driver for MT8173 with RT5650 RT5676 codecs"
--	depends on SND_SOC_MT8173 && I2C
-+	depends on SND_SOC_MT8173 && I2C && SPI_MASTER
- 	select SND_SOC_RT5645
- 	select SND_SOC_RT5677
- 	select SND_SOC_HDMI_CODEC
-diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
-index addadc827b91..df36e84c0116 100644
---- a/sound/soc/tegra/Kconfig
-+++ b/sound/soc/tegra/Kconfig
-@@ -122,7 +122,7 @@ config SND_SOC_TEGRA_MAX98090
- 
- config SND_SOC_TEGRA_RT5677
- 	tristate "SoC Audio support for Tegra boards using a RT5677 codec"
--	depends on SND_SOC_TEGRA && I2C && GPIOLIB
-+	depends on SND_SOC_TEGRA && I2C && GPIOLIB && SPI_MASTER
- 	select SND_SOC_RT5677
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Tegra
--- 
-2.20.0
-
++       /* MUSB_POWER_SOFTCONN might be already set, jz4740 does this. */
++       musb_writeb(musb->mregs, MUSB_POWER, 0);
++
+        /* Init IRQ workqueue before request_irq */
+        INIT_DELAYED_WORK(&musb->irq_work, musb_irq_work);
+        INIT_DELAYED_WORK(&musb->deassert_reset_work, musb_deassert_reset);
