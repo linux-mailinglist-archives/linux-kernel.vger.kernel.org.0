@@ -2,117 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08AE3119E8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17C5D119E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:53:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfLJWvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:51:06 -0500
-Received: from mail-wr1-f54.google.com ([209.85.221.54]:35201 "EHLO
-        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfLJWvF (ORCPT
+        id S1727265AbfLJWxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:53:24 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46605 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbfLJWxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:51:05 -0500
-Received: by mail-wr1-f54.google.com with SMTP id g17so21962127wro.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 14:51:04 -0800 (PST)
+        Tue, 10 Dec 2019 17:53:23 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z124so9601219pgb.13;
+        Tue, 10 Dec 2019 14:53:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Iq7lLPDxZxyyF6K7jckWs0XvEiXpXcXtYgOmBPW0oiE=;
-        b=qfu2d5H7ZzEuxsIddTw+GLtP96qTv+bVqRU7LssVtRfl7wPwS4w08BJpF9+uo823Z6
-         lgtIu5Zvu3K5vC8P59KtpBKs17wDe09XqWmsGZZ1TRMHUZQYTBFSvG3pG+qjKAR0gKuu
-         0AyvkBjFZ76Q7o6WMY8e2YGWNfQQv3IFO9TIYYqP7xvCgJTclaiyc60ZdsXSd/LeGBlW
-         h9mwYwVVenTJpc5dlFc1BZ55IPjWea/q8jbea52IfZUIz6vorwSCcvFsyMZp6EIRmWRZ
-         Y309LnnM/CWkzpkj7gStv4ey/z0MqbIjka9g2kNqRoDx50c+3W1ZphOhc2xsSAsHuXrj
-         m35A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=dUDhi+vrizCDQsGj4pc5jWU26FSBssN6Xxld2hQXfVA=;
+        b=glGU9x02KRDnsK6A5AaLs4rMCnVwW3EE4N4dp/TxbNWO/ZBbszGfmMqnw7HdES9cxE
+         Pja83pvNOaSNHHtCXiYZ0kaTelWQzDvI58yV/FcQCGdLfHbt28xPjw1Tebg1dyojyEzG
+         hpX2QWFSCsknI6nJiriz2OLae7gZRVx8yS5xbR+2tK/sfAKzsTSroqj50MlfedJoDP3S
+         GVw4VIhuNqphzVT311+/nDoVDh/8OiaaBO1hwqD/R3wSsYGOOgqnrRf8G4AuMk0TwTYZ
+         Pylt7PZqspGPlBhBCS5M1yKnd1yJ818brA+OwED6jbXKfRr1jSnI5kfTjxbbY+xXRUoS
+         Vs8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Iq7lLPDxZxyyF6K7jckWs0XvEiXpXcXtYgOmBPW0oiE=;
-        b=tlDNdY608aKp+jqqlHgdgB/m2Ix+TvBzzOE5Zrob0y6kFkuBL+cnDCOXNtF19/fBYY
-         UxdVFfp4C1qiCDY+FNpKd2XZytkaAfTP9UfR2aqMJT+iTAfLby4Ao4wi5xSGwCbs7Ozf
-         apEMncn7cCec9Pvn9wz5KcAKtkA7vIF8Q7qaFrQ7/ZZFA+SxDO7Dvv4zjzf/q4I+2+Oj
-         UYQeAsQJ3jvpb80gJV1V8lggAksMBwfjkucWVAN/CywsHDwDr4XuEPGj+jS2JAf/SzC0
-         HZN+vZ6cyMqJZthkC2Unw4VpopxAIEmOKT3mMsy6yJf9gzAsuUzYhgl5mI6E/0fGRDhd
-         hyAg==
-X-Gm-Message-State: APjAAAW9rzI+wGNPoU7cvX/YnGybSraFEQvHAlfuiBhjmA+nsR0kbKbr
-        AWsbY8BoKmo4CqUXiteRkP4=
-X-Google-Smtp-Source: APXvYqzWRtBZ0UuaeYln6buH5vRRA/W31n533sLUd++FnjhAQcd4ruwcZMQnYcr+kxgYU2wJVc78Cg==
-X-Received: by 2002:a5d:4805:: with SMTP id l5mr5692293wrq.3.1576018263594;
-        Tue, 10 Dec 2019 14:51:03 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id i8sm4884042wro.47.2019.12.10.14.51.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 14:51:02 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Justin Chen <justinpopo6@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
-        ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ARM: brcmstb: Add debug UART entry for 7216
-Date:   Tue, 10 Dec 2019 14:48:56 -0800
-Message-Id: <20191210224859.30899-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=dUDhi+vrizCDQsGj4pc5jWU26FSBssN6Xxld2hQXfVA=;
+        b=bORDvV8CGSoCmpwvFVZsntP8lE6PaXDfs6JLkKNgD+BU1LkSY3LUX2DwRjH3hRr+iJ
+         6EdjFtMbe+MjAuzZI17JGAIjna2qa4dsJww5UlXHpf8NiPSfG9uSHx5cS0MpchzD/2In
+         gBwCgsnAl1an6E156dYjD+g0pd4s78Yl0iWup+IOAXQxvYOe9UzkKLQSflLRe1ZhczW8
+         3TujUOBD18BkVZnNf01G97wpM2PqOetzKMFQumf/LUDBZgggPbKmYRip1dsCC8p02jmI
+         6mq0UtMxaVOmeoin+lXieKRT3vBdhbTGPyFfiqjeitbHGkPamyAyoI4f8nztpdBbTLwH
+         8yLw==
+X-Gm-Message-State: APjAAAWanKK9Cttnvk86gJFEQCIqnrmRL6LuVYqATLqUf2JY/Cb8scF1
+        AxTKY8aOjHc5F4oi8opPvig=
+X-Google-Smtp-Source: APXvYqyaoXewPtk6K9LcJ2BvDJm09Y0mkTH2JS0qcJmsPhCtrlORmEXitFkhZ7Qbka6vFiST/SILVQ==
+X-Received: by 2002:aa7:8658:: with SMTP id a24mr304483pfo.87.1576018402986;
+        Tue, 10 Dec 2019 14:53:22 -0800 (PST)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::3:a25c])
+        by smtp.gmail.com with ESMTPSA id e7sm70381pfe.168.2019.12.10.14.53.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Dec 2019 14:53:22 -0800 (PST)
+Date:   Tue, 10 Dec 2019 14:53:21 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Martin Lau <kafai@fb.com>
+Subject: Re: [PATCH bpf v2] bpftool: Don't crash on missing jited insns or
+ ksyms
+Message-ID: <20191210225320.pymey5md727e4m5x@ast-mbp.dhcp.thefacebook.com>
+References: <20191210181412.151226-1-toke@redhat.com>
+ <20191210125457.13f7821a@cakuba.netronome.com>
+ <87eexbhopo.fsf@toke.dk>
+ <20191210132428.4470a7b0@cakuba.netronome.com>
+ <20191210213148.kqd6xdvqjkh3zxst@ast-mbp.dhcp.thefacebook.com>
+ <20191210135205.529044a4@cakuba.netronome.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191210135205.529044a4@cakuba.netronome.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Justin Chen <justinpopo6@gmail.com>
+On Tue, Dec 10, 2019 at 01:52:05PM -0800, Jakub Kicinski wrote:
+> On Tue, 10 Dec 2019 13:31:50 -0800, Alexei Starovoitov wrote:
+> > On Tue, Dec 10, 2019 at 01:24:28PM -0800, Jakub Kicinski wrote:
+> > > On Tue, 10 Dec 2019 22:09:55 +0100, Toke Høiland-Jørgensen wrote:  
+> > > > Jakub Kicinski <jakub.kicinski@netronome.com> writes:  
+> > > > > On Tue, 10 Dec 2019 19:14:12 +0100, Toke Høiland-Jørgensen wrote:    
+> > > > >> When the kptr_restrict sysctl is set, the kernel can fail to return
+> > > > >> jited_ksyms or jited_prog_insns, but still have positive values in
+> > > > >> nr_jited_ksyms and jited_prog_len. This causes bpftool to crash when trying
+> > > > >> to dump the program because it only checks the len fields not the actual
+> > > > >> pointers to the instructions and ksyms.
+> > > > >> 
+> > > > >> Fix this by adding the missing checks.
+> > > > >> 
+> > > > >> Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>    
+> > > > >
+> > > > > Fixes: 71bb428fe2c1 ("tools: bpf: add bpftool")
+> > > > >
+> > > > > and
+> > > > >
+> > > > > Fixes: f84192ee00b7 ("tools: bpftool: resolve calls without using imm field")
+> > > > >
+> > > > > ?    
+> > > > 
+> > > > Yeah, guess so? Although I must admit it's not quite clear to me whether
+> > > > bpftool gets stable backports, or if it follows the "only moving
+> > > > forward" credo of libbpf?  
+> > > 
+> > > bpftool does not have a GH repo, and seeing strength of Alexei's
+> > > arguments in the recent discussion - I don't think it will. So no
+> > > reason for bpftool to be "special"  
+> > 
+> > bpftool always was and will be a special user of libbpf.
+> 
+> There we go again. Making proclamations without any justification or
+> explanation.
+> 
+> Maybe there is a language barrier between us, but I wrote the initial
+> bpftool code, so I don't see how you (who authored one patch) can say
+> what it was or is. Do you mean to say what you intend to make it?
 
-7216 has the same memory map as 7278 and the same physical address for
-the UART, alias the definition accordingly.
+When code lands it becomes the part of the code that maintainers keep in the
+best shape possible considering contributions from many parties. Original
+author of the code is equal to everyone else who submits patches. The job of
+the maintainer is to mediate folks who contribute the patches. Sounds like you
+expected to own bpftool as a single owner. I don't think kernel is such place.
+In most projects I'm aware of the OWNERS file is discouraged. The kernel is
+such project. The kernel has MAINTAINERS file which lists people most
+knowledgeable in the area and who's job is to keep the code in good shape,
+consider long term growth, etc. Maintainers are not owners of the code.
 
-Signed-off-by: Justin Chen <justinpopo6@gmail.com>
-[florian: expand commit message]
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- arch/arm/include/debug/brcmstb.S | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+bpftool became way more than what it was when initially landed. Just like
+libbpf was implemented mainly by huawei folks and used in perf only. Now perf
+is a minority and original authors are not contributing any more. I'm sure you
+thought of bpftool as cli for sys_bpf only. Well thankfully it outgrew this
+narrow view point. bpftool btf dump file doesn't call sys_bpf at all.
+bpftool perf | net using several other kernel apis. I think it's a good growth
+trajectory for bpftool. More people use it and like it.
 
-diff --git a/arch/arm/include/debug/brcmstb.S b/arch/arm/include/debug/brcmstb.S
-index bf8702ee8f86..132a20c4a676 100644
---- a/arch/arm/include/debug/brcmstb.S
-+++ b/arch/arm/include/debug/brcmstb.S
-@@ -31,6 +31,7 @@
- #define UARTA_7268		UARTA_7255
- #define UARTA_7271		UARTA_7268
- #define UARTA_7278		REG_PHYS_ADDR_V7(0x40c000)
-+#define UARTA_7216		UARTA_7278
- #define UARTA_7364		REG_PHYS_ADDR(0x40b000)
- #define UARTA_7366		UARTA_7364
- #define UARTA_74371		REG_PHYS_ADDR(0x406b00)
-@@ -82,17 +83,18 @@ ARM_BE8(	rev	\rv, \rv )
- 
- 		/* Chip specific detection starts here */
- 20:		checkuart(\rp, \rv, 0x33900000, 3390)
--21:		checkuart(\rp, \rv, 0x72500000, 7250)
--22:		checkuart(\rp, \rv, 0x72550000, 7255)
--23:		checkuart(\rp, \rv, 0x72600000, 7260)
--24:		checkuart(\rp, \rv, 0x72680000, 7268)
--25:		checkuart(\rp, \rv, 0x72710000, 7271)
--26:		checkuart(\rp, \rv, 0x72780000, 7278)
--27:		checkuart(\rp, \rv, 0x73640000, 7364)
--28:		checkuart(\rp, \rv, 0x73660000, 7366)
--29:		checkuart(\rp, \rv, 0x07437100, 74371)
--30:		checkuart(\rp, \rv, 0x74390000, 7439)
--31:		checkuart(\rp, \rv, 0x74450000, 7445)
-+21:		checkuart(\rp, \rv, 0x72160000, 7216)
-+22:		checkuart(\rp, \rv, 0x72500000, 7250)
-+23:		checkuart(\rp, \rv, 0x72550000, 7255)
-+24:		checkuart(\rp, \rv, 0x72600000, 7260)
-+25:		checkuart(\rp, \rv, 0x72680000, 7268)
-+26:		checkuart(\rp, \rv, 0x72710000, 7271)
-+27:		checkuart(\rp, \rv, 0x72780000, 7278)
-+28:		checkuart(\rp, \rv, 0x73640000, 7364)
-+29:		checkuart(\rp, \rv, 0x73660000, 7366)
-+30:		checkuart(\rp, \rv, 0x07437100, 74371)
-+31:		checkuart(\rp, \rv, 0x74390000, 7439)
-+32:		checkuart(\rp, \rv, 0x74450000, 7445)
- 
- 		/* No valid UART found */
- 90:		mov	\rp, #0
--- 
-2.17.1
+> Upstreaming bpftool was a big mistake, but we live and we learn
+
+ok. Not going count on your help anymore.
+Since you're not interesting in helping please don't stall it either.
 
