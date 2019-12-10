@@ -2,195 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B21431195C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:23:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B59FB119610
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:25:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbfLJVXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:23:08 -0500
-Received: from mga01.intel.com ([192.55.52.88]:58948 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727640AbfLJVXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:23:07 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 13:23:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,300,1571727600"; 
-   d="scan'208";a="264656217"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Dec 2019 13:23:06 -0800
-Date:   Tue, 10 Dec 2019 13:23:05 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, jmattson@google.com,
-        yu.c.zhang@linux.intel.com, yu-cheng.yu@intel.com
-Subject: Re: [PATCH v8 4/7] KVM: VMX: Load CET states on vmentry/vmexit
-Message-ID: <20191210212305.GM15758@linux.intel.com>
-References: <20191101085222.27997-1-weijiang.yang@intel.com>
- <20191101085222.27997-5-weijiang.yang@intel.com>
+        id S1729451AbfLJVYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:24:36 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33492 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728723AbfLJVYc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:24:32 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 6so9506321pgk.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:24:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=y6ht5YW8dhI/whPoru8OJyyMGM1ELyH7ioiCN142OAA=;
+        b=KHpIsIRJFHpu/RE+iNns/3lFjXjW7dmPCYbVqVy2fJCsmV0QXQ+Sh1tnMDBlQiuHmc
+         dEdTZ91YLJNA0acWzBev8p8U2ZgM+kMxUf+plwKLeldKf/To+yI5l1o4i8w6eTKp67zG
+         5dOPnsWjpA1rf6+HIWCJ+ywJzhdiKHqRCJKdvupaO7nSR4TdgIp4YpeCGEU6UiV3+fdo
+         pD3cHPJrjOAoe4q81m+GIuaF74ThJeM9p4B2vthnNVJV3HZGRmtIY58FYWwYzY33SbtP
+         1bh8dCKk0ZyFnxfk0aH69bVqn3mpPv1B7xR9cPH+XqM+NS6HtwMQBT61qWveHYnZjywR
+         tVaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=y6ht5YW8dhI/whPoru8OJyyMGM1ELyH7ioiCN142OAA=;
+        b=oHRaPEPph2z6/fifyr8v8LJYluXeG0j2EJ4a3owMU2kX4YPlNCp7wIMb6yhFKDD48E
+         mAWGzNCLetgV/KKn6EISqxqN01fOFo55gzrlKGsaOl1GGLVfAaQcqnEfEmYRMy1tZFYs
+         CZ7ACLQAX44FCI0JWUftR30gxgZEpNOEphE39RTmj/sQ+JYMSthBA56EBhq0vC/v0Djd
+         Ye5mANs4KxRXk8ReYKp/S7rsZ2Y69AzWj2QAmHlrUr/IXhXQRgfWxUHUvqTFzwNObMR3
+         p3Ms5rTh9iqNhdvik1byBuZF5RybAfFTILHLy2dKAe0SRYS5UBzh6bAldUYpBePOX5w/
+         6LFQ==
+X-Gm-Message-State: APjAAAWNpIpJn67cpvvpF1+dbO+o29y5R/AbNh5leX4L2S442TXyo3hy
+        xAna8WrtOEoAvSN/iCT+L7Q7bA==
+X-Google-Smtp-Source: APXvYqzC6v4sPSMefQJvm+lNgRpCI17boTVEAvsS1g+uMr6wh21YyjZZNzvkuO7OK4RunNjrL9QxpA==
+X-Received: by 2002:a62:3045:: with SMTP id w66mr8948273pfw.122.1576013071142;
+        Tue, 10 Dec 2019 13:24:31 -0800 (PST)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id v29sm4200264pgl.88.2019.12.10.13.24.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 13:24:30 -0800 (PST)
+Date:   Tue, 10 Dec 2019 13:24:28 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Martin Lau <kafai@fb.com>
+Subject: Re: [PATCH bpf v2] bpftool: Don't crash on missing jited insns or
+ ksyms
+Message-ID: <20191210132428.4470a7b0@cakuba.netronome.com>
+In-Reply-To: <87eexbhopo.fsf@toke.dk>
+References: <20191210181412.151226-1-toke@redhat.com>
+        <20191210125457.13f7821a@cakuba.netronome.com>
+        <87eexbhopo.fsf@toke.dk>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191101085222.27997-5-weijiang.yang@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 04:52:19PM +0800, Yang Weijiang wrote:
-> "Load {guest,host} CET state" bit controls whether guest/host
-> CET states will be loaded at VM entry/exit. Before doing that,
-> KVM needs to check if CET is both enabled on host and guest.
-> 
-> Note: SHSTK and IBT features share one control MSR:
-> MSR_IA32_{U,S}_CET, which means it's difficult to hide
-> one feature from another in the case of SHSTK != IBT,
-> after discussed in community, it's agreed to allow Guest
-> control two features independently as it won't introduce
-> security hole.
-> 
-> Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> ---
+On Tue, 10 Dec 2019 22:09:55 +0100, Toke H=C3=B8iland-J=C3=B8rgensen wrote:
+> Jakub Kicinski <jakub.kicinski@netronome.com> writes:
+> > On Tue, 10 Dec 2019 19:14:12 +0100, Toke H=C3=B8iland-J=C3=B8rgensen wr=
+ote: =20
+> >> When the kptr_restrict sysctl is set, the kernel can fail to return
+> >> jited_ksyms or jited_prog_insns, but still have positive values in
+> >> nr_jited_ksyms and jited_prog_len. This causes bpftool to crash when t=
+rying
+> >> to dump the program because it only checks the len fields not the actu=
+al
+> >> pointers to the instructions and ksyms.
+> >>=20
+> >> Fix this by adding the missing checks.
+> >>=20
+> >> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com> =20
+> >
+> > Fixes: 71bb428fe2c1 ("tools: bpf: add bpftool")
+> >
+> > and
+> >
+> > Fixes: f84192ee00b7 ("tools: bpftool: resolve calls without using imm f=
+ield")
+> >
+> > ? =20
+>=20
+> Yeah, guess so? Although I must admit it's not quite clear to me whether
+> bpftool gets stable backports, or if it follows the "only moving
+> forward" credo of libbpf?
 
-...
+bpftool does not have a GH repo, and seeing strength of Alexei's
+arguments in the recent discussion - I don't think it will. So no
+reason for bpftool to be "special" =E2=9D=84=EF=B8=8F.
 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index db03d9dc1297..e392e818e7eb 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -44,6 +44,7 @@
->  #include <asm/spec-ctrl.h>
->  #include <asm/virtext.h>
->  #include <asm/vmx.h>
-> +#include <asm/cet.h>
->  
->  #include "capabilities.h"
->  #include "cpuid.h"
-> @@ -2336,7 +2337,8 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
->  	      VM_EXIT_LOAD_IA32_EFER |
->  	      VM_EXIT_CLEAR_BNDCFGS |
->  	      VM_EXIT_PT_CONCEAL_PIP |
-> -	      VM_EXIT_CLEAR_IA32_RTIT_CTL;
-> +	      VM_EXIT_CLEAR_IA32_RTIT_CTL |
-> +	      VM_EXIT_LOAD_HOST_CET_STATE;
->  	if (adjust_vmx_controls(min, opt, MSR_IA32_VMX_EXIT_CTLS,
->  				&_vmexit_control) < 0)
->  		return -EIO;
-> @@ -2360,7 +2362,8 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
->  	      VM_ENTRY_LOAD_IA32_EFER |
->  	      VM_ENTRY_LOAD_BNDCFGS |
->  	      VM_ENTRY_PT_CONCEAL_PIP |
-> -	      VM_ENTRY_LOAD_IA32_RTIT_CTL;
-> +	      VM_ENTRY_LOAD_IA32_RTIT_CTL |
-> +	      VM_ENTRY_LOAD_GUEST_CET_STATE;
->  	if (adjust_vmx_controls(min, opt, MSR_IA32_VMX_ENTRY_CTLS,
->  				&_vmentry_control) < 0)
->  		return -EIO;
-> @@ -2834,6 +2837,9 @@ void vmx_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0)
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->  	unsigned long hw_cr0;
->  
-> +	if (!(cr0 & X86_CR0_WP) && kvm_read_cr4_bits(vcpu, X86_CR4_CET))
-> +		cr0 |= X86_CR0_WP;
+Then again seeing Andrii's zeal for pushing the codegen stuff into
+bpftool, maybe Facebook's intention is to make it so.
 
-Huh?  What's the interaction between CR4.CET and CR0.WP?  If there really
-is some non-standard interaction then it needs to be documented in at least
-the changelog and probably with a comment as well.
+Hard to tell what to do when standard practices don't apply, sigh.
 
-> +
->  	hw_cr0 = (cr0 & ~KVM_VM_CR0_ALWAYS_OFF);
->  	if (enable_unrestricted_guest)
->  		hw_cr0 |= KVM_VM_CR0_ALWAYS_ON_UNRESTRICTED_GUEST;
-> @@ -2936,6 +2942,22 @@ static bool guest_cet_allowed(struct kvm_vcpu *vcpu, u32 feature, u32 mode)
->  	return false;
->  }
->  
-> +bool is_cet_bit_allowed(struct kvm_vcpu *vcpu)
-> +{
-> +	unsigned long cr0;
-> +	bool cet_allowed;
-> +
-> +	cr0 = kvm_read_cr0(vcpu);
-> +	cet_allowed = guest_cet_allowed(vcpu, X86_FEATURE_SHSTK,
-> +					XFEATURE_MASK_CET_USER) ||
-> +		      guest_cet_allowed(vcpu, X86_FEATURE_IBT,
-> +					XFEATURE_MASK_CET_USER);
-> +	if ((cr0 & X86_CR0_WP) && cet_allowed)
-> +		return true;
+> Anyhow, I don't suppose it'll hurt to have the Fixes: tag(s) in there;
+> does Patchwork pick these up (or can you guys do that when you apply
+> this?), or should I resend?
 
-So, attempting to set CR4.CET if CR0.WP=0 takes a #GP?  But attempting
-to clear CR0.WP if CR4.CET=1 is ignored?
+I don't think it does, but perhaps Daniel's scripts do.
 
-> +
-> +	return false;
-> +}
-> +
->  int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
->  {
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> @@ -2976,6 +2998,9 @@ int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
->  			return 1;
->  	}
->  
-> +	if ((cr4 & X86_CR4_CET) && !is_cet_bit_allowed(vcpu))
-> +		return 1;
-> +
->  	if (vmx->nested.vmxon && !nested_cr4_valid(vcpu, cr4))
->  		return 1;
->  
-> @@ -3839,6 +3864,12 @@ void vmx_set_constant_host_state(struct vcpu_vmx *vmx)
->  
->  	if (cpu_has_load_ia32_efer())
->  		vmcs_write64(HOST_IA32_EFER, host_efer);
-> +
-> +	if (cpu_has_load_host_cet_states_ctrl()) {
-> +		vmcs_writel(HOST_S_CET, 0);
-> +		vmcs_writel(HOST_INTR_SSP_TABLE, 0);
-> +		vmcs_writel(HOST_SSP, 0);
-> +	}
->  }
->  
->  void set_cr4_guest_host_mask(struct vcpu_vmx *vmx)
-> @@ -6436,6 +6467,7 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
->  {
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->  	unsigned long cr3, cr4;
-> +	bool cet_allowed;
->  
->  	/* Record the guest's net vcpu time for enforced NMI injections. */
->  	if (unlikely(!enable_vnmi &&
-> @@ -6466,6 +6498,25 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
->  		vmx->loaded_vmcs->host_state.cr3 = cr3;
->  	}
->  
-> +	/* To be aligned with kernel code, only user mode is supported now. */
-> +	cet_allowed = guest_cet_allowed(vcpu, X86_FEATURE_SHSTK,
-> +					XFEATURE_MASK_CET_USER) ||
-> +		      guest_cet_allowed(vcpu, X86_FEATURE_IBT,
-> +					XFEATURE_MASK_CET_USER);
-> +	if (cpu_has_load_guest_cet_states_ctrl() && cet_allowed)
-> +		vmcs_set_bits(VM_ENTRY_CONTROLS,
-> +			      VM_ENTRY_LOAD_GUEST_CET_STATE);
-> +	else
-> +		vmcs_clear_bits(VM_ENTRY_CONTROLS,
-> +				VM_ENTRY_LOAD_GUEST_CET_STATE);
-> +
-> +	if (cpu_has_load_host_cet_states_ctrl() && cet_allowed)
-> +		vmcs_set_bits(VM_EXIT_CONTROLS,
-> +			      VM_EXIT_LOAD_HOST_CET_STATE);
-> +	else
-> +		vmcs_clear_bits(VM_EXIT_CONTROLS,
-> +				VM_EXIT_LOAD_HOST_CET_STATE);
-> +
->  	cr4 = cr4_read_shadow();
->  	if (unlikely(cr4 != vmx->loaded_vmcs->host_state.cr4)) {
->  		vmcs_writel(HOST_CR4, cr4);
-> -- 
-> 2.17.2
-> 
+Either way I don't think it's worth a resend.
