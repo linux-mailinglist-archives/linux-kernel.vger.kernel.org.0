@@ -2,105 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 838A4118FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:48:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A08C11900D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:55:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbfLJSsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 13:48:43 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45230 "EHLO
+        id S1727693AbfLJSzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 13:55:12 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41811 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727663AbfLJSsl (ORCPT
+        with ESMTP id S1727349AbfLJSzL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 13:48:41 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j42so21253247wrj.12;
-        Tue, 10 Dec 2019 10:48:39 -0800 (PST)
+        Tue, 10 Dec 2019 13:55:11 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c9so21329432wrw.8;
+        Tue, 10 Dec 2019 10:55:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=E7cKrmmGLYl3UX+9Kgs62VJkCGwrmZBzege8Q3gWjgc=;
-        b=iuCO9jGJUS34zNLPGCFc6XiHt+/BbhH8alpboxYbDwc2J5Qn7V55ucykh1XWtaNqdH
-         IHs3v5nm3c9pUO+ftEhtwR6MLU+9G7AHKKpaYK+Ezm3z6PQgywoJGODx0YhLfFHpKNjZ
-         V5jP1SmMLWXRBYcgKB3gogxHsyRL7mcfnaB7rXqCwzfXq9Obu5DbRscpZJwiQoIetoHY
-         ZcApdgVCODh5Mrw2yCYs2Tt2vM5Cvrvgjht/dtMuMz33dapaYevO67ZrnvcNUnzYf0Ek
-         +a88yUs3G5hUerJybaXp2bLa6IlDzhwGGsE6Knkk8XbOzGgzpjfcgqrL/H7xXFN7G9x2
-         lqkg==
+        h=from:to:cc:subject:date:message-id;
+        bh=gRtOZdgRT/ANVUaDFwM1DFPPZAUHxCMR/8XqEYr9qfk=;
+        b=mzOOSYaxLUFfQr5wR6FevwJm4qw5wbakB9bwQ+j9HakAuf4lMSDpq0ief8wTekxS0R
+         C9tohH2wZBPnsoFkc9QCHDg0miAOA4Jo2C9AHdXk7PKv2ZcYtYbZ4HJkrGdFcC0oJ9ol
+         uxU6wi6Zoz7SU98JhEqNEHopQ9ZZXOD7UvRZNtUWLLuWFEha0/+w0d+VNxDSyg2tmAZO
+         KVnHOarv9I/45PpvY/eC1A0phRRYL5eYoa3/VM4nCrlLKU9zfaLPr0uL1mAr6qSsk2vg
+         bcipxoOHxIQS2hkKd1UKKkc8Yg8doo5gT6qf8pyy/ACy0JoUX6g1FuAG0P+ocTUDvLTD
+         hbmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E7cKrmmGLYl3UX+9Kgs62VJkCGwrmZBzege8Q3gWjgc=;
-        b=bIf22hKKbj3Pm3Yucrrj+IprVs5+GeHvOItc9Fo50ecbZf2wEdB34YdazYOdwKXnbI
-         kPq4LZKfiQMdnFaX+qcDnwllOiM3YkNcTEEkabOidymIxxW2uKSuzjk2m3BIwH/0ynhH
-         r1Sql9fgDo+3TB+mWQOEoARKJDd46vjgPW7DKIPbh7jhnxwbpu5L2FepisxHdbMaGGoi
-         pP+/WjwrC/Z/crFkApJZOXjFImEyBJusWrMsu0hyZK8qMX7yR4Xo3VL3EcHX+fKSlBRN
-         OsoRilNFJlmUQa/7MwnUJol+qhcZFx3GCLysig2VvUee3MWXgmbSfwR2A7NJOKz1U2TN
-         xpCw==
-X-Gm-Message-State: APjAAAUfroKbtKo2AinRO6VzIV8FFAgggqaRqFzg8fz0+zHlUQ7rTEz7
-        TyFh7GKT1K08VXTWfpy9svbJjfdC
-X-Google-Smtp-Source: APXvYqy34IYSTRjB7G1AWrulLNvwmK+vjlcMXdxa+zYaAYuhQIuKUiSxdsE5J57YtOGVnPe1/RHlAQ==
-X-Received: by 2002:a5d:640d:: with SMTP id z13mr4929264wru.181.1576003718902;
-        Tue, 10 Dec 2019 10:48:38 -0800 (PST)
-Received: from gentoo-tp.home ([2a02:908:1086:7e00:51f1:c7d0:b0cb:4fa2])
-        by smtp.gmail.com with ESMTPSA id 60sm4386114wrn.86.2019.12.10.10.48.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Dec 2019 10:48:37 -0800 (PST)
-Date:   Tue, 10 Dec 2019 19:50:02 +0100
-From:   Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gRtOZdgRT/ANVUaDFwM1DFPPZAUHxCMR/8XqEYr9qfk=;
+        b=FWpiDTphWfvX/kojKky1Bi8/TqwmWxcsOYH/HQuPvBS1DHSSSWHJ2x7xlq/oEyFHBO
+         2QqhlsyTPrZAlqSiuqsi8hhWcBqsnZsBhFOqwnCrcsVYFmuibLjSkELPD0WuJUEJmHJM
+         9RL8NnckfztJaR7qcdflBJLeGAMAyxUpDrSLAA9UW0hZo98RAuDTIeUg0A3LUf5jqiHD
+         xpjJW30rmvoOooJgGyS2VBqRk+/eS5kV90pKVmaw5yqcVB2wZHLma1NxQFqpoKJ/l+wi
+         V0whXakqKOa+m2T5qbkxDyH1dnseb28hQRmCOBiq3AMRZlARf1vspsIAEoWonq+Y05G7
+         /0uQ==
+X-Gm-Message-State: APjAAAU9XQ4yNtuum5MTndjKS+RbmPdkn2cEV+jfLwROphPSsnxB37k/
+        4jUa5YpQUDSeJNy5pBnJ0arY7XoF
+X-Google-Smtp-Source: APXvYqyT+IZZBXlEJY9YdUaBpm1PovK7SsMJmVHMvmSMlo93jKNUo+dnd9ki65HQQpu2LlHM6eCTOw==
+X-Received: by 2002:a5d:5708:: with SMTP id a8mr5224945wrv.79.1576004109818;
+        Tue, 10 Dec 2019 10:55:09 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id e6sm4213536wru.44.2019.12.10.10.55.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 10:55:09 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>
-Subject: Re: Regression in squashfs mount option handling in v5.4
-Message-ID: <20191210185002.GA20850@gentoo-tp.home>
-References: <20191130181548.GA28459@gentoo-tp.home>
- <6af16095-eab0-9e99-6782-374705d545e4@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6af16095-eab0-9e99-6782-374705d545e4@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Tejun Heo <tj@kernel.org>, Jaedon Shin <jaedon.shin@gmail.com>,
+        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
+        Parallel ATA drivers)),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH 0/8] ata: ahci_brcm: Fixes and new device support
+Date:   Tue, 10 Dec 2019 10:53:43 -0800
+Message-Id: <20191210185351.14825-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 30, 2019 at 10:56:47AM -0800, Randy Dunlap wrote:
-> [adding Cc-s]
-> 
-> On 11/30/19 10:15 AM, Jeremi Piotrowski wrote:
-> > Hi,
-> > 
-> > I'm working on an embedded project which uses 'rauc' as an updater. rauc mounts
-> > a squashfs image using
-> > 
-> >   mount -t squashfs -o ro,loop,sizelimit=xxx squashfs.img /mnt
-> > 
-> > On my system mount is busybox, and busybox does not know the sizelimit
-> > parameter, so it simply passes it on to the mount syscall. The syscall
-> > arguments end up being:
-> > 
-> >   mount("/dev/loop0", "dir", "squashfs", MS_RDONLY|MS_SILENT, "sizelimit=xxx")
-> > 
-> > Until kernel 5.4 this worked, since 5.4 this returns EINVAL and dmesg contains
-> > the line "squashfs: Unknown parameter 'sizelimit'". I believe this has to do
-> > with the conversion of squashfs to the new mount api. 
-> > 
-> > This is an unfortunate regression, and it does not seem like this can be simply
-> > reverted. What is the suggested course of action?
-> > 
-> > Please cc me on replies, I'm not subscribed to the list.
-> > 
-> > Thanks,
-> > Jeremi
-> > 
-> 
-> 
-> -- 
-> ~Randy
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Hi Jens,
 
-Ping. This is preventing me from updating the kernel on my systems.
+The first 4 patches are fixes and should ideally be queued up/picked up
+by stable. The last 4 patches add support for BCM7216 which is one of
+our latest devices supported by this driver.
+
+Patch #2 does a few things, but it was pretty badly broken before and it
+is hard not to fix all call sites (probe, suspend, resume) in one shot.
+
+Please let me know if you have any comments.
+
+Thanks!
+
+Florian Fainelli (8):
+  ata: libahci_platform: Export again ahci_platform_<en/dis>able_phys()
+  ata: ahci_brcm: Fix AHCI resources management
+  ata: ahci_brcm: BCM7425 AHCI requires AHCI_HFLAG_DELAY_ENGINE
+  ata: ahci_brcm: Add missing clock management during recovery
+  ata: ahci_brcm: Manage reset line during suspend/resume
+  ata: ahci_brcm: Add a shutdown callback
+  dt-bindings: ata: Document BCM7216 AHCI controller compatible
+  ata: ahci_brcm: Support BCM7216 reset controller name
+
+ .../bindings/ata/brcm,sata-brcm.txt           |   7 +
+ drivers/ata/ahci_brcm.c                       | 167 ++++++++++++++----
+ drivers/ata/libahci_platform.c                |   6 +-
+ include/linux/ahci_platform.h                 |   2 +
+ 4 files changed, 141 insertions(+), 41 deletions(-)
+
+-- 
+2.17.1
+
