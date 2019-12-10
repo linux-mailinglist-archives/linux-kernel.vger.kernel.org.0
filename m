@@ -2,94 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A59AC11892C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:08:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9024811892E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:08:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfLJNID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 08:08:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49068 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727539AbfLJNIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 08:08:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A5E31ABD6;
-        Tue, 10 Dec 2019 13:07:58 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 59801E00E0; Tue, 10 Dec 2019 14:07:58 +0100 (CET)
-Message-Id: <24d3b34bc09a9f32db4df99af58e1ec8abea58f1.1575982069.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1575982069.git.mkubecek@suse.cz>
-References: <cover.1575982069.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net-next v2 2/5] netlink: rename nl80211_validate_nested() to
- nla_validate_nested()
-To:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 10 Dec 2019 14:07:58 +0100 (CET)
+        id S1727598AbfLJNIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 08:08:07 -0500
+Received: from foss.arm.com ([217.140.110.172]:43582 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727577AbfLJNIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 08:08:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68BFA328;
+        Tue, 10 Dec 2019 05:08:03 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D28A73F52E;
+        Tue, 10 Dec 2019 05:08:02 -0800 (PST)
+Date:   Tue, 10 Dec 2019 13:08:01 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     "kernelci.org bot" <bot@kernelci.org>
+Cc:     Olivier Moysan <olivier.moysan@st.com>, mgalka@collabora.com,
+        enric.balletbo@collabora.com, khilman@baylibre.com,
+        tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
+        Brian Austin <brian.austin@cirrus.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Paul Handrigan <Paul.Handrigan@cirrus.com>
+Subject: Re: broonie-sound/for-next bisection: boot on rk3399-gru-kevin
+Message-ID: <20191210130801.GF6110@sirena.org.uk>
+References: <5def94e7.1c69fb81.2751f.190a@mx.google.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="QNDPHrPUIc00TOLW"
+Content-Disposition: inline
+In-Reply-To: <5def94e7.1c69fb81.2751f.190a@mx.google.com>
+X-Cookie: We have ears, earther...FOUR OF THEM!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function nl80211_validate_nested() is not specific to nl80211, it's
-a counterpart to nla_validate_nested_deprecated() with strict validation.
-For consistency with other validation and parse functions, rename it to
-nla_validate_nested().
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
----
- include/net/netlink.h  | 8 ++++----
- net/wireless/nl80211.c | 3 +--
- 2 files changed, 5 insertions(+), 6 deletions(-)
+--QNDPHrPUIc00TOLW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/net/netlink.h b/include/net/netlink.h
-index b140c8f1be22..56c365dc6dc7 100644
---- a/include/net/netlink.h
-+++ b/include/net/netlink.h
-@@ -1735,7 +1735,7 @@ static inline void nla_nest_cancel(struct sk_buff *skb, struct nlattr *start)
- }
- 
- /**
-- * nla_validate_nested - Validate a stream of nested attributes
-+ * __nla_validate_nested - Validate a stream of nested attributes
-  * @start: container attribute
-  * @maxtype: maximum attribute type to be expected
-  * @policy: validation policy
-@@ -1758,9 +1758,9 @@ static inline int __nla_validate_nested(const struct nlattr *start, int maxtype,
- }
- 
- static inline int
--nl80211_validate_nested(const struct nlattr *start, int maxtype,
--			const struct nla_policy *policy,
--			struct netlink_ext_ack *extack)
-+nla_validate_nested(const struct nlattr *start, int maxtype,
-+		    const struct nla_policy *policy,
-+		    struct netlink_ext_ack *extack)
- {
- 	return __nla_validate_nested(start, maxtype, policy,
- 				     NL_VALIDATE_STRICT, extack);
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index da5262b2298b..fa3526592c51 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -12900,8 +12900,7 @@ static int nl80211_vendor_check_policy(const struct wiphy_vendor_command *vcmd,
- 		return -EINVAL;
- 	}
- 
--	return nl80211_validate_nested(attr, vcmd->maxattr, vcmd->policy,
--				       extack);
-+	return nla_validate_nested(attr, vcmd->maxattr, vcmd->policy, extack);
- }
- 
- static int nl80211_vendor_cmd(struct sk_buff *skb, struct genl_info *info)
--- 
-2.24.0
+On Tue, Dec 10, 2019 at 04:51:51AM -0800, kernelci.org bot wrote:
+>     ASoC: cs42l51: add dac mux widget in codec routes
+>    =20
+>     Add "DAC mux" DAPM widget in CS42l51 audio codec routes,
+>     to support DAC mux control and to remove error trace
+>     "DAC Mux has no paths" at widget creation.
+>     Note: ADC path of DAC mux is not routed in this patch.
 
+This doesn't seem right, as far as I can see this device is not present
+on that board (it uses some Realtek and Maxim devices AFAICT).  Is it
+some sort of timing thing?
+
+--QNDPHrPUIc00TOLW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3vmLAACgkQJNaLcl1U
+h9DAzwf/Vl72koOz78QabTLK3qKjJ8J8uxgv87Zxb3NykzHxogKhBYdzFKfA0EpV
+xqY1oCamb7cgAnfGFc8t2WAGC6jhqCZZxmHUQCh74Iy1rh7vJxg2NhuPhAzn6TZX
+S6iprOJsY2QAFVpLJfHmC/Yl55EGihn22H/CO+PaspbCuyGPc2TwwTxnyLQeqFCx
+r1PojQwIdk3VJSTZf4GOfd8ufsPM7K4psVJbtoKCQ3xXkre1j2CszTPv4jso1tGw
+W9YR5uLNxS3rjueAJI56FBNYV48WK3rq9hVgyx9Z5Tc9cynx93aO5cu9n5Midy7W
+lmaqK3rj9MbjHWjhIHmbteP634uwHA==
+=okLz
+-----END PGP SIGNATURE-----
+
+--QNDPHrPUIc00TOLW--
