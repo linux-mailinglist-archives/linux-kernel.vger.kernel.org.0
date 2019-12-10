@@ -2,100 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2959E119C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1BF9119C4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfLJW0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:26:09 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:45695 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbfLJW0I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:26:08 -0500
-Received: from 1.general.cascardo.us.vpn ([10.172.70.58] helo=calabresa)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <cascardo@canonical.com>)
-        id 1ienx8-0002Vk-Vd; Tue, 10 Dec 2019 22:25:59 +0000
-Date:   Tue, 10 Dec 2019 19:25:53 -0300
-From:   Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-To:     Justin Forbes <jmforbes@linuxtx.org>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:BPF (Safe dynamic programs and tools)" 
-        <netdev@vger.kernel.org>, Yonghong Song <yhs@fb.com>,
-        "open list:BPF (Safe dynamic programs and tools)" 
-        <bpf@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        Martin KaFai Lau <kafai@fb.com>,
-        Aurelien Jarno <aurelien@aurel32.net>,
-        debian-kernel@lists.debian.org
-Subject: Re: [PATCH] libbpf: fix readelf output parsing on powerpc with
- recent binutils
-Message-ID: <20191210222553.GA4580@calabresa>
-References: <20191201195728.4161537-1-aurelien@aurel32.net>
- <87zhgbe0ix.fsf@mpe.ellerman.id.au>
- <20191202093752.GA1535@localhost.localdomain>
- <CAFxkdAqg6RaGbRrNN3e_nHfHFR-xxzZgjhi5AnppTxxwdg0VyQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFxkdAqg6RaGbRrNN3e_nHfHFR-xxzZgjhi5AnppTxxwdg0VyQ@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1727183AbfLJW1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:27:06 -0500
+Received: from gate.crashing.org ([63.228.1.57]:50011 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726062AbfLJW1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:27:06 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id xBAMQSkf025639;
+        Tue, 10 Dec 2019 16:26:29 -0600
+Message-ID: <98df321d16adb67c5579ac4b67d845fc0c2c97df.camel@kernel.crashing.org>
+Subject: Re: [RFC/PATCH] printk: Fix preferred console selection with
+ multiple matches
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        AlekseyMakarov <aleksey.makarov@linaro.org>
+Date:   Wed, 11 Dec 2019 09:26:28 +1100
+In-Reply-To: <20191210080154.GJ88619@google.com>
+References: <b8131bf32a5572352561ec7f2457eb61cc811390.camel@kernel.crashing.org>
+         <20191210080154.GJ88619@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 12:58:33PM -0600, Justin Forbes wrote:
-> On Mon, Dec 2, 2019 at 3:37 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
-> >
-> > On Mon, Dec 02, 2019 at 04:53:26PM +1100, Michael Ellerman wrote:
-> > > Aurelien Jarno <aurelien@aurel32.net> writes:
-> > > > On powerpc with recent versions of binutils, readelf outputs an extra
-> > > > field when dumping the symbols of an object file. For example:
-> > > >
-> > > >     35: 0000000000000838    96 FUNC    LOCAL  DEFAULT [<localentry>: 8]     1 btf_is_struct
-> > > >
-> > > > The extra "[<localentry>: 8]" prevents the GLOBAL_SYM_COUNT variable to
-> > > > be computed correctly and causes the checkabi target to fail.
-> > > >
-> > > > Fix that by looking for the symbol name in the last field instead of the
-> > > > 8th one. This way it should also cope with future extra fields.
-> > > >
-> > > > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> > > > ---
-> > > >  tools/lib/bpf/Makefile | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > Thanks for fixing that, it's been on my very long list of test failures
-> > > for a while.
-> > >
-> > > Tested-by: Michael Ellerman <mpe@ellerman.id.au>
-> >
-> > Looks good & also continues to work on x86. Applied, thanks!
+On Tue, 2019-12-10 at 17:01 +0900, Sergey Senozhatsky wrote:
+> On (19/12/10 11:57), Benjamin Herrenschmidt wrote:
+> [..]
+> >  - add_preferred_console is called early to register "uart0". In
+> > our case that happens from acpi_parse_spcr() on arm64 since the
+> > "enable_console" argument is true on that architecture. This causes
+> > "uart0" to become entry 0 of the console_cmdline array.
 > 
-> This actually seems to break horribly on PPC64le with binutils 2.33.1
-> resulting in:
-> Warning: Num of global symbols in sharedobjs/libbpf-in.o (32) does NOT
-> match with num of versioned symbols in libbpf.so (184). Please make
-> sure all LIBBPF_API symbols are versioned in libbpf.map.
+> Hmm, two independent console list configuration sources.
+
+Yes, we've had that for a while. So far it "worked" because the
+explicit calls to add_preferred_console() tends to happen before the
+parsing of the command line, and thus are "overriden" by the latter if
+any.
+
+> [..]
+> > +++ b/kernel/printk/printk.c
+> > @@ -2646,8 +2646,8 @@ void register_console(struct console *newcon)
+> >  		if (i == preferred_console) {
+> >  			newcon->flags |= CON_CONSDEV;
+> >  			has_preferred = true;
+> > +			break;
+> >  		}
+> > -		break;
+> >  	}
+> >  
+> >  	if (!(newcon->flags & CON_ENABLED))
 > 
-> This is the only arch that fails, with x86/arm/aarch64/s390 all
-> building fine.  Reverting this patch allows successful build across
-> all arches.
+> Wouldn't this, basically, mean that we want to match only consoles,
+> which were in the kernel's console= cmdline? IOW, ignore consoles
+> that were placed into consoles list via alternative path - ACPI.
+
+No not exactly. Architectures/platforms use add_preferred_console()
+(such as arm64 with ACPI but powerpc at least does it too) based on
+various factors to select a reasonable "default" for that specific
+platform. Without that the kernel will basically default to the first
+one to register which may not be what you want.
+
+The command line ones however want to override the defaults (provided
+they exist, ie, it's possible that whever is specified on the command
+line doesn't actually exist, and thus shall be ignored. That typically
+happens when there is either no match or ->setup fails).
+
+> Hmm.
 > 
-> Justin
+> The patch may affect setups where alias matching is expected to
+> happen. E.g.:
+> 
+> 	console=uartFOO,BAR
+> 
+> Is 8250 the only console that does alias matching?
 
-Well, I ended up debugging this same issue and had the same fix as Jarno's when
-I noticed his fix was already applied.
+Why would the patch affect this negatively ? Today we stop on the first
+match, mark the driver enabled, and make it preferred if the match
+index matches preferred_console.
 
-I just installed a system with the latest binutils, 2.33.1, and it still breaks
-without such fix. Can you tell what is the output of the following command on
-your system?
+My patch makes us continue searching if it wasnt' the preferred console
+(but we still mark it enabled). Which means either of those two things
+happen:
 
-readelf -s --wide tools/lib/bpf/sharedobjs/libbpf-in.o | cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' | awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $0}' 
+ - No more match or another match that isn't the preferred_console,
+this won't change the existing behaviour.
 
-Cascardo.
+ - Another match that is marked preferred_console, in which case in
+addition to being enabled, the newly registered console will also be
+made the default console (ie, first in the list with CONSDEV set). This
+is actually what we want ! IE. The console matches the last specified
+one on the command line.
+
+Cheers,
+Ben.
+
+> 	-ss
+
