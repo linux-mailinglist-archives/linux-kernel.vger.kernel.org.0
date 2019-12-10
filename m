@@ -2,123 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C94C118DB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 17:38:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82D89118DBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 17:39:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbfLJQiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 11:38:10 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:35654 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbfLJQiJ (ORCPT
+        id S1727668AbfLJQiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 11:38:52 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:34732 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbfLJQiw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 11:38:09 -0500
-Received: by mail-io1-f70.google.com with SMTP id x10so13683471iob.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 08:38:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=iOrSfhGjD3crGxWg8txG1Trmt56uzQTdboXtEEN1UkY=;
-        b=d+CKyYqQ6+aSBgZYz8mWC9WcVjAs+wiD5kMsc1vr73Tp838MbluOE/xKufypPl9cXU
-         qAES5wn4n577LTBm03yFoJoasM8yWt4tGko+tACZGxdWTOdjzCRXn1NhZbpAfYq4ZnOO
-         GRUOwSrSN6Ff4WFF8/fHfDJ7I3i366pUr7zTo2CHlY8YpGrL84Dtes6R0UIsQ4kh5iJ1
-         CXIalfQaow4CpoNrkodvlJhZl1kJMop+SdEcLUdUSrrorFx5cOpBnJiFS7wBHjKwB0wV
-         +BrMytCQ5kAoLpjxaeUY9N6JBMQIBVvlxFnZcZLm8opFd7ODVjQN5WsqYGihOabUWDDd
-         AtHA==
-X-Gm-Message-State: APjAAAWdSYE4iF86hbwLz/w415Nmodzr+4vdR/zOwi+ybfHlecEWCPH3
-        wD8303MxNGHSd+BNY2IsiXsMO3Q5g1Jy1dnRZobapBghhIHQ
-X-Google-Smtp-Source: APXvYqyzCCybQAs8T1hVpKz6YNJke5H2ilNdi2o+Zeipa6Ye97A62wlNi41A48ciLsIYUrwP+NQMLaAvvrG/0tVCfyOYUMWivaKM
+        Tue, 10 Dec 2019 11:38:52 -0500
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ieiX9-000357-Hf; Tue, 10 Dec 2019 16:38:47 +0000
+Date:   Tue, 10 Dec 2019 17:38:46 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
+        Jann Horn <jannh@google.com>, cyphar@cyphar.com,
+        Andy Lutomirski <luto@amacapital.net>, viro@zeniv.linux.org.uk,
+        Jed Davis <jld@mozilla.com>,
+        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
+        Emilio Cobos =?utf-8?Q?=C3=81lvarez?= <ealvarez@mozilla.com>,
+        Florian Weimer <fweimer@redhat.com>
+Subject: Re: [PATCH v2 4/4] samples: Add example of using PTRACE_GETFD in
+ conjunction with user trap
+Message-ID: <20191210163845.6hbbawr6cpt5dp5c@wittgenstein>
+References: <20191209070646.GA32477@ircssh-2.c.rugged-nimbus-611.internal>
+ <20191209192959.GB10721@redhat.com>
+ <BE3E056F-0147-4A00-8FF7-6CC9DE02A30C@ubuntu.com>
+ <20191209204635.GC10721@redhat.com>
+ <20191210111051.j5opodgjalqigx6q@wittgenstein>
+ <CAMp4zn84YQHz62x-nxZFBgMEW9AiMt75q_rO83uaGg=YtyKV-w@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2541:: with SMTP id j1mr26153411ioe.239.1575995889209;
- Tue, 10 Dec 2019 08:38:09 -0800 (PST)
-Date:   Tue, 10 Dec 2019 08:38:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000024db4105995c23cd@google.com>
-Subject: KASAN: user-memory-access Read in insert_char
-From:   syzbot <syzbot+6ff38b320aa51ebe17e6@syzkaller.appspotmail.com>
-To:     daniel.vetter@ffwll.ch, ghalat@redhat.com,
-        gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, nico@fluxnic.net, sam@ravnborg.org,
-        syzkaller-bugs@googlegroups.com, textshell@uchuujin.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMp4zn84YQHz62x-nxZFBgMEW9AiMt75q_rO83uaGg=YtyKV-w@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Dec 10, 2019 at 08:07:45AM -0800, Sargun Dhillon wrote:
+> On Tue, Dec 10, 2019 at 3:10 AM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > [I'm expanding the Cc to a few Firefox and glibc people since we've been
+> >  been talking about replacing SECCOMP_RET_TRAP with
+> >  SECCOMP_RET_USER_NOTIF for a bit now because the useage of
+> >  SECCOMP_RET_TRAP in the broker blocks desirable core glibc changes.
+> >  Even if just for their lurking pleasure. :)]
+> >
+> > On Mon, Dec 09, 2019 at 09:46:35PM +0100, Oleg Nesterov wrote:
+> > > On 12/09, Christian Brauner wrote
+> > >
+> > > I agree, and I won't really argue...
+> > >
+> > > but the changelog in 2/4 says
+> > >
+> > >       The requirement that the tracer has attached to the tracee prior to the
+> > >       capture of the file descriptor may be lifted at a later point.
+> > >
+> > > so may be we should do this right now?
+> >
+> > I think so, yes. This doesn't strike me as premature optimization but
+> > rather as a core design questions.
+> >
+> > >
+> > > plus this part
+> > >
+> > >       @@ -1265,7 +1295,8 @@ SYSCALL_DEFINE4(ptrace, long, request, long, pid, unsigned long, addr,
+> > >               }
+> > >
+> > >               ret = ptrace_check_attach(child, request == PTRACE_KILL ||
+> > >       -                                 request == PTRACE_INTERRUPT);
+> > >       +                                 request == PTRACE_INTERRUPT ||
+> > >       +                                 request == PTRACE_GETFD);
+> > >
+> > > actually means "we do not need ptrace, but we do not know where else we
+> > > can add this fd_install(get_task_file()).
+> >
+> > Right, I totally get your point and I'm not a fan of this being in
+> > ptrace() either.
+> >
+> > The way I see is is that the main use-case for this feature is the
+> > seccomp notifier and I can see this being useful. So the right place to
+> > plumb this into might just be seccomp and specifically on to of the
+> > notifier.
+> > If we don't care about getting and setting fds at random points of
+> > execution it might make sense to add new options to the notify ioctl():
+> >
+> > #define SECCOMP_IOCTL_NOTIF_GET_FD      SECCOMP_IOWR(3, <sensible struct>)
+> > #define SECCOMP_IOCTL_NOTIF_SET_FD      SECCOMP_IOWR(4, <sensible struct>)
+> >
+> > which would let you get and set fds while the supervisee is blocked.
+> >
+> > Christian
+> Doesn't SECCOMP_IOCTL_NOTIF_GET_FD have some ambiguity to it?
 
-syzbot found the following crash on:
+As Tycho mentioned, this is why we have a the tid of the calling task
+but we also have a cookie per request.
+The cookie is useful so that you can do
+- receive request <chocolate> cookie
+- open(/proc/<pid>{/mem})
+- verify <chocolate> cookie still exists
+  - <chocolate> cookie still exists -> file descriptor refers to correct
+    task
+  - <chocolate> cookie gone -> task has been recycled
 
-HEAD commit:    6794862a Merge tag 'for-5.5-rc1-kconfig-tag' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16342b7ae00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=79f79de2a27d3e3d
-dashboard link: https://syzkaller.appspot.com/bug?extid=6ff38b320aa51ebe17e6
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> Specifically, because
+> multiple processes can have the same notifier attached to them? If we
+> choose to go down the
+> route of introducing an ioctl (which I'm not at all opposed to), I
+> would rather do it on pidfd. We
+> can then plumb seccomp notifier to send pidfd instead of raw pid. In
+> the mean time, folks
+> can just open up /proc/${PID}, and do the check cookie dance.
+> 
+> Christian,
+> As the maintainer of pidfd, what do you think?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Let me quote what I wrote to the Mozilla folks today. :)
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6ff38b320aa51ebe17e6@syzkaller.appspotmail.com
+"(One thing that always strikes me is that if my pidfd patches would've
+been ready back when we did the seccomp notifier we could've added a
+pidfd argument to the seccomp notifier kernel struct and if a flag is
+set given back a pidfd alongside the notifier fd. This way none of this
+revalidting the id stuff would've been necessary and you could also
+safely translate from a pidfd into a /proc/<pid> directory to e.g. open
+/proc/<pid>/mem. Anyway, that's not out of scope. One could still
+write a patch for that to add a pidfd argument under a new flag to the
+kernel struct. Should be rather trivial.)"
 
-==================================================================
-BUG: KASAN: user-memory-access in memmove include/linux/string.h:395  
-[inline]
-BUG: KASAN: user-memory-access in scr_memmovew include/linux/vt_buffer.h:68  
-[inline]
-BUG: KASAN: user-memory-access in insert_char+0x206/0x400  
-drivers/tty/vt/vt.c:839
-Read of size 212 at addr 00000000ffffff3a by task syz-executor.4/24537
+So yeah, it crossed my mind. ;)
 
-CPU: 0 PID: 24537 Comm: syz-executor.4 Not tainted 5.5.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  __kasan_report.cold+0x5/0x41 mm/kasan/report.c:510
-  kasan_report+0x12/0x20 mm/kasan/common.c:639
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
-  memmove+0x24/0x50 mm/kasan/common.c:116
-  memmove include/linux/string.h:395 [inline]
-  scr_memmovew include/linux/vt_buffer.h:68 [inline]
-  insert_char+0x206/0x400 drivers/tty/vt/vt.c:839
-  csi_at drivers/tty/vt/vt.c:1964 [inline]
-  do_con_trol+0x41a6/0x61b0 drivers/tty/vt/vt.c:2431
-  do_con_write.part.0+0xfd9/0x1ef0 drivers/tty/vt/vt.c:2797
-  do_con_write drivers/tty/vt/vt.c:2565 [inline]
-  con_write+0x46/0xd0 drivers/tty/vt/vt.c:3135
-  process_output_block drivers/tty/n_tty.c:595 [inline]
-  n_tty_write+0x40e/0x1080 drivers/tty/n_tty.c:2333
-  do_tty_write drivers/tty/tty_io.c:962 [inline]
-  tty_write+0x496/0x7f0 drivers/tty/tty_io.c:1046
-  __vfs_write+0x8a/0x110 fs/read_write.c:494
-  vfs_write+0x268/0x5d0 fs/read_write.c:558
-  ksys_write+0x14f/0x290 fs/read_write.c:611
-  __do_sys_write fs/read_write.c:623 [inline]
-  __se_sys_write fs/read_write.c:620 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:620
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a6f9
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ff24d4d4c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000045a6f9
-RDX: 0000000000000078 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff24d4d56d4
-R13: 00000000004cbbaf R14: 00000000004e5858 R15: 00000000ffffffff
-==================================================================
+I really would like to have this placed under a flag though...
+I very much dislike the idea of receiving any kind of fd
+- _especially a pidfd_ - implicitly.
+So ideally this would be a flag to the receive ioctl(). Kees just got my
+SECCOMP_USER_NOTIF_FLAG_CONTINUE patchset merged for v5.5 which adds the
 
+#define SECCOMP_USER_NOTIF_FLAG_CONTINUE (1UL << 0)
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+flag which when set in the send case (i.e. supervisor -> kernel) will
+cause the syscall to be executed.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+When we add a new flag to get a pidfd it might make sense to rename the
+CONTINUE flag in master before v5.5 is out to
+
+#define SECCOMP_USER_NOTIF_SEND_FLAG_CONTINUE (1UL << 0)
+
+to indicate that it's only valid for the SEND ioctl().
+
+Then we add
+
+#define SECCOMP_USER_NOTIF_RECV_FLAG_PIDFD (1UL << 0)
+
+for v5.6. This way send and receive flags are named differently for
+clarity. (I don't care about the name being long. Other people might
+though _shrug_.)
+
+Christian
