@@ -2,114 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD4A118F8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:13:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE76118F90
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:15:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbfLJSNU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 13:13:20 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:45968 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbfLJSNU (ORCPT
+        id S1727750AbfLJSP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 13:15:29 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:34364 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726771AbfLJSP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 13:13:20 -0500
-Received: by mail-pj1-f65.google.com with SMTP id r11so7697672pjp.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:13:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=4lLGRmsliIpZ0UpKU0IEWW602jVUv7+6lHITbij3O5Y=;
-        b=Ax41RgSauchkK4JBfY5KiQhx0ZqAGsHlTIabiht9+ufmYPy0A/k6fzpIOehD7/e1BZ
-         rVNN9fQqcCTUysbKXiB+vDRvErr1DyzQPtKiTYcJqj2GHjmATSk3qucVeOLVRCkOhEIu
-         K5dAVffJQTTNp4WTUL3ki2V3LvaaviZN1KCbOON0El12ZWTLGoM+UwftSpRs5Plgaxb3
-         JVbzGapJbO730NFVsQnawfZ+KVkgcjfTaxggwi194/nxW0zjNi9K7TZVjJ07vcCzE4r5
-         L/qmEmEiYuVsMLunBZzzlhPYONXzzXDmajP/VEpXPY6582YOziMrl931APa+/HAqnF5W
-         wXGg==
+        Tue, 10 Dec 2019 13:15:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576001728;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6ftqvNo8ypX13fdqkDhRy1P9Zlg2BDYcnsvRebm2MCU=;
+        b=NEpvcY3ScU/ZGOvfeNBYgFvYwQ+JoyG5Cg7wsrlGkEWTazeYOYijL24pFu1lHpRcRIg5kA
+        GRDVJoUBa3vqOqTSrgxbvtWsK7tacppzYT+6hPjJyDdds5yq9xjDAKfCMmRPXfyPQ3Q7Lu
+        kRD2xjlMnUVQ8ounsGx0TUdHqIVGphg=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-219-aUYJOLWRP3aZ1w0GTIi_YQ-1; Tue, 10 Dec 2019 13:15:27 -0500
+Received: by mail-lf1-f70.google.com with SMTP id t8so1255519lfc.21
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:15:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=4lLGRmsliIpZ0UpKU0IEWW602jVUv7+6lHITbij3O5Y=;
-        b=dNBH5Uijm4WPGjQEhta3aMKUPUHRFVqkOtVqZnsFyhxeW8ElZRrmK8N1OXT82xqGnH
-         YOmn71fiWn7uflFYiA47HYHb+whO6PY8IxJ82GetmkBAU4H9EokasnKr/6KMvHaRXpEH
-         U70qvpXVNUT8NtczAXUfy6gmJuGddOtXCUOgiJF4nzKa3ltIU8z6lZYl5njB6vTSRM3X
-         g4P7U72rHBNJbGSsM3ayf+KlzgQRRj6+GGHxBCW/1AtSV4W6PmxUUZHWCI+iWI0D4QEU
-         GQvBMhsuBvuSimMZ+Ue2G8H/X5FLEzaaVZUkw0G1uTwydHr6jtKHAXM6XPPhlHA3hQTj
-         plBg==
-X-Gm-Message-State: APjAAAWhGf9tFTNkGU6LNHJDzDc4/icGsewBZMUBjTpyTT1kUKe4tmaY
-        iW/uW9VC26VYOVHPFd0n5SGvRA==
-X-Google-Smtp-Source: APXvYqxJRm4sHGA5uWrmJ+2D9cTFf8Qb8j2tRTkfuT9957FR3ONic55nbNNuLrP58IxTnaW0jHeS9g==
-X-Received: by 2002:a17:902:b611:: with SMTP id b17mr22648668pls.210.1576001599750;
-        Tue, 10 Dec 2019 10:13:19 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id u123sm1382107pfb.109.2019.12.10.10.13.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Dec 2019 10:13:18 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Anand Moon <linux.amoon@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC-next 0/1] Odroid C2: Enable DVFS for cpu
-In-Reply-To: <CANAwSgQx3LjQe60TGgKyk6B5BD5y1caS2tA+O+GFES7=qCFeKg@mail.gmail.com>
-References: <20191101143126.2549-1-linux.amoon@gmail.com> <7hfthtrvvv.fsf@baylibre.com> <c89791de-0a46-3ce2-b3e2-3640c364cd0f@baylibre.com> <CANAwSgQx3LjQe60TGgKyk6B5BD5y1caS2tA+O+GFES7=qCFeKg@mail.gmail.com>
-Date:   Tue, 10 Dec 2019 10:13:18 -0800
-Message-ID: <7hfthsqcap.fsf@baylibre.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9qaJ0iPUZiPGrRKD6KWzbbPQ9tBJQ6ZNwk2N/6zRMJM=;
+        b=av6RQvmg6EQ3ws30j5ourRyvctMKLmw9oca4/4JOCoC9IWle4agXWms25XixPTpygQ
+         +m9/6nZFBlaZMME5NUUljn9ApWzhdrp+ARMqhDzQriukrq8/4jpeYGOE74TDbrAirzyj
+         OSx72DGyt4sZ9tYbMDG4wsljA/U0SLpg2vZxgC+FHMIEnH08Gv2oi+Spp2DHivYATY1V
+         wnRbfibGT1ESLKryuquvJq2Ugluui/VAT2JcaQmVLuGIUf6YMKKZtXL+8N9L8dJpRD4x
+         qAKPHhuxtmV0drSx5Z9DrgJY1TcXvbw3Nzsz9NRIQkZQ7MQVlHj209NNEBL1n/5qiOre
+         z6fA==
+X-Gm-Message-State: APjAAAWwj8UbcauewuxjCu57iKu4qvB3iwkaHSB43uWVJbwEX8k3S0wc
+        IzkjysDA8FFij51FIbVHTZsaajL3R8x96MKEilGfLz154PILONGX/Kvd0snFNcrdCOOlqtsIkeD
+        2+QIoY75G1Ims44/YQ52zRpJQ
+X-Received: by 2002:ac2:4436:: with SMTP id w22mr19862846lfl.185.1576001725607;
+        Tue, 10 Dec 2019 10:15:25 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxrZAMkKrVX2Pa/3z0mzalv4YSJ1qSkcLpsPezdGIOVxK4wQI2LAemEsfEq3IDhQEOyoph9fw==
+X-Received: by 2002:ac2:4436:: with SMTP id w22mr19862840lfl.185.1576001725439;
+        Tue, 10 Dec 2019 10:15:25 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id b63sm1618343lfg.79.2019.12.10.10.15.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 10:15:24 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id DE1FA181AC8; Tue, 10 Dec 2019 19:15:23 +0100 (CET)
+From:   =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Martin Lau <kafai@fb.com>
+Subject: [PATCH bpf v2] bpftool: Don't crash on missing jited insns or ksyms
+Date:   Tue, 10 Dec 2019 19:14:12 +0100
+Message-Id: <20191210181412.151226-1-toke@redhat.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MC-Unique: aUYJOLWRP3aZ1w0GTIi_YQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anand Moon <linux.amoon@gmail.com> writes:
+When the kptr_restrict sysctl is set, the kernel can fail to return
+jited_ksyms or jited_prog_insns, but still have positive values in
+nr_jited_ksyms and jited_prog_len. This causes bpftool to crash when trying
+to dump the program because it only checks the len fields not the actual
+pointers to the instructions and ksyms.
 
-> Hi Neil / Kevin,
->
-> On Tue, 10 Dec 2019 at 14:13, Neil Armstrong <narmstrong@baylibre.com> wrote:
->>
->> On 09/12/2019 23:12, Kevin Hilman wrote:
->> > Anand Moon <linux.amoon@gmail.com> writes:
->> >
->> >> Some how this patch got lost, so resend this again.
->> >>
->> >> [0] https://patchwork.kernel.org/patch/11136545/
->> >>
->> >> This patch enable DVFS on GXBB Odroid C2.
->> >>
->> >> DVFS has been tested by running the arm64 cpuburn
->> >> [1] https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S
->> >> PM-QA testing
->> >> [2] https://git.linaro.org/power/pm-qa.git [cpufreq testcase]
->> >>
->> >> Tested on latest U-Boot 2019.07-1 (Aug 01 2019 - 23:58:01 +0000) Arch Linux ARM
->> >
->> > Have you tested with the Harkernel u-boot?
->> >
->> > Last I remember, enabling CPUfreq will cause system hangs with the
->> > Hardkernel u-boot because of improperly enabled frequencies, so I'm not
->> > terribly inclined to merge this patch.
->
-> HK u-boot have many issue with loading the kernel, with load address
-> *it's really hard to build the kernel for HK u-boot*,
-> to get the configuration correctly.
->
-> Well I have tested with mainline u-boot with latest ATF .
-> I would prefer mainline u-boot for all the Amlogic SBC, since
-> they sync with latest driver changes.
+Fix this by adding the missing checks.
 
-Yes, we would all prefer mainline u-boot, but the mainline kernel needs
-to support the vendor u-boot that is shipping with the boards.  So
-until Hardkernel (and other vendors) switch to mainline u-boot we do not
-want to have upstream kernel defaults that will not boot with the vendor
-u-boot.
+Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+---
+v2:
+  - The sysctl causing this is kptr_restrict, not bpf_jit_harden; update co=
+mmit
+    msg to get this right (Martin).
 
-We can always support these features, but they just cannot be enabled
-by default.
+ tools/bpf/bpftool/prog.c          | 2 +-
+ tools/bpf/bpftool/xlated_dumper.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Kevin
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index 4535c863d2cd..2ce9c5ba1934 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -493,7 +493,7 @@ static int do_dump(int argc, char **argv)
+=20
+ =09info =3D &info_linear->info;
+ =09if (mode =3D=3D DUMP_JITED) {
+-=09=09if (info->jited_prog_len =3D=3D 0) {
++=09=09if (info->jited_prog_len =3D=3D 0 || !info->jited_prog_insns) {
+ =09=09=09p_info("no instructions returned");
+ =09=09=09goto err_free;
+ =09=09}
+diff --git a/tools/bpf/bpftool/xlated_dumper.c b/tools/bpf/bpftool/xlated_d=
+umper.c
+index 494d7ae3614d..5b91ee65a080 100644
+--- a/tools/bpf/bpftool/xlated_dumper.c
++++ b/tools/bpf/bpftool/xlated_dumper.c
+@@ -174,7 +174,7 @@ static const char *print_call(void *private_data,
+ =09struct kernel_sym *sym;
+=20
+ =09if (insn->src_reg =3D=3D BPF_PSEUDO_CALL &&
+-=09    (__u32) insn->imm < dd->nr_jited_ksyms)
++=09    (__u32) insn->imm < dd->nr_jited_ksyms && dd->jited_ksyms)
+ =09=09address =3D dd->jited_ksyms[insn->imm];
+=20
+ =09sym =3D kernel_syms_search(dd, address);
+--=20
+2.24.0
+
