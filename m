@@ -2,116 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C23A2119D18
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF72E119CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:33:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730122AbfLJWfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:35:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729548AbfLJWe3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:34:29 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8208E2465B;
-        Tue, 10 Dec 2019 22:34:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576017268;
-        bh=iWr8FhlVMl2xbZR/aLjzGNvGy6OCfZbeoGEI9tL1hcs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wMAQjC5z6eHI3W2sPJsOUPLwynB5Tf5zvNUGYUOrKDJFScP8eWuXQYKvER709nUTV
-         jZYZLCkDsQ2NWJHcYm83H0HeLch3UtY4E3m8TZSQYsb6ZxKENozSPWGhnpXUopXJuW
-         a1ZpR0hV+j/Y1ey+qqLdNUUyhoHqePBPT/yAAM0Q=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lianbo Jiang <lijiang@redhat.com>,
-        kbuild test robot <lkp@intel.com>,
-        Borislav Petkov <bp@suse.de>, bhe@redhat.com,
-        d.hatayama@fujitsu.com, dhowells@redhat.com, dyoung@redhat.com,
-        ebiederm@xmission.com, horms@verge.net.au,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        =?UTF-8?q?J=C3=BCrgen=20Gross?= <jgross@suse.com>,
-        kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>, vgoyal@redhat.com,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 60/71] x86/crash: Add a forward declaration of struct kimage
-Date:   Tue, 10 Dec 2019 17:33:05 -0500
-Message-Id: <20191210223316.14988-60-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210223316.14988-1-sashal@kernel.org>
-References: <20191210223316.14988-1-sashal@kernel.org>
+        id S1728507AbfLJWdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:33:20 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:58808 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727683AbfLJWdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:33:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+        Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:Reply-To:Content-ID
+        :Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
+        Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=l5nCDL9ygOAUkfMI19xtYeqlPRqrJq8DhttmTEm6aW8=; b=x3zO7znlJD+0Desk5TPJUwH4zH
+        8sLQF0FvCKSQ68+jTwttTyTuVtF5Fu0u7j9GaxohPhKKNlvDBe/GN7ePxHHCYfkf3YwURFsll0r/r
+        ZzFm9YrCZJ2s5VYHMXNTDBH9YFG9iKFXyhUyKoc7ZWrL9xfhE1xnZtq72n7bdEb6FbtCNWuhjnc0y
+        Agt7gLeB0/UZFgZu8oyy0kchCihvxbfFM7ZeeaUww/TnCBl7vq1rj3s2BSXHOWlVh3+FS6q2wfHpA
+        7lXs3Dudp2TDEuzWX2TlG8N6KGEA5kRR0sRmV+OHJKsm1LRWPIe+B+miJTz8Wm9jDgMArS3LOYD0v
+        F1Oa54Mw==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([2001:4d48:ad52:3201:222:68ff:fe15:37dd]:42694 helo=rmk-PC.armlinux.org.uk)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <rmk@armlinux.org.uk>)
+        id 1ieo42-0004Lp-6r; Tue, 10 Dec 2019 22:33:06 +0000
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <rmk@armlinux.org.uk>)
+        id 1ieo41-00023K-2O; Tue, 10 Dec 2019 22:33:05 +0000
+From:   Russell King <rmk+kernel@armlinux.org.uk>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        Willy Tarreau <w@1wt.eu>, Andrew Lunn <andrew@lunn.ch>,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        maxime.chevallier@bootlin.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH] net: marvell: mvpp2: phylink requires the link interrupt
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1ieo41-00023K-2O@rmk-PC.armlinux.org.uk>
+Date:   Tue, 10 Dec 2019 22:33:05 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lianbo Jiang <lijiang@redhat.com>
+phylink requires the MAC to report when its link status changes when
+operating in inband modes.  Failure to report link status changes
+means that phylink has no idea when the link events happen, which
+results in either the network interface's carrier remaining up or
+remaining permanently down.
 
-[ Upstream commit 112eee5d06007dae561f14458bde7f2a4879ef4e ]
+For example, with a fiber module, if the interface is brought up and
+link is initially established, taking the link down at the far end
+will cut the optical power.  The SFP module's LOS asserts, we
+deactivate the link, and the network interface reports no carrier.
 
-Add a forward declaration of struct kimage to the crash.h header because
-future changes will invoke a crash-specific function from the realmode
-init path and the compiler will complain otherwise like this:
+When the far end is brought back up, the SFP module's LOS deasserts,
+but the MAC may be slower to establish link.  If this happens (which
+in my tests is a certainty) then phylink never hears that the MAC
+has established link with the far end, and the network interface is
+stuck reporting no carrier.  This means the interface is
+non-functional.
 
-  In file included from arch/x86/realmode/init.c:11:
-  ./arch/x86/include/asm/crash.h:5:32: warning: ‘struct kimage’ declared inside\
-   parameter list will not be visible outside of this definition or declaration
-      5 | int crash_load_segments(struct kimage *image);
-        |                                ^~~~~~
-  ./arch/x86/include/asm/crash.h:6:37: warning: ‘struct kimage’ declared inside\
-   parameter list will not be visible outside of this definition or declaration
-      6 | int crash_copy_backup_region(struct kimage *image);
-        |                                     ^~~~~~
-  ./arch/x86/include/asm/crash.h:7:39: warning: ‘struct kimage’ declared inside\
-   parameter list will not be visible outside of this definition or declaration
-      7 | int crash_setup_memmap_entries(struct kimage *image,
-        |
+Avoiding the link interrupt when we have phylink is basically not
+an option, so remove the !port->phylink from the test.
 
- [ bp: Rewrite the commit message. ]
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: bhe@redhat.com
-Cc: d.hatayama@fujitsu.com
-Cc: dhowells@redhat.com
-Cc: dyoung@redhat.com
-Cc: ebiederm@xmission.com
-Cc: horms@verge.net.au
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jürgen Gross <jgross@suse.com>
-Cc: kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: vgoyal@redhat.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191108090027.11082-4-lijiang@redhat.com
-Link: https://lkml.kernel.org/r/201910310233.EJRtTMWP%25lkp@intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Tested-by: Sven Auhagen <sven.auhagen@voleatech.de>
+Tested-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 ---
- arch/x86/include/asm/crash.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/crash.h b/arch/x86/include/asm/crash.h
-index f498411f2500b..1b15304dd0980 100644
---- a/arch/x86/include/asm/crash.h
-+++ b/arch/x86/include/asm/crash.h
-@@ -1,6 +1,8 @@
- #ifndef _ASM_X86_CRASH_H
- #define _ASM_X86_CRASH_H
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 111b3b8239e1..ef44c6979a31 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -3674,7 +3674,7 @@ static int mvpp2_open(struct net_device *dev)
+ 		valid = true;
+ 	}
  
-+struct kimage;
-+
- int crash_load_segments(struct kimage *image);
- int crash_copy_backup_region(struct kimage *image);
- int crash_setup_memmap_entries(struct kimage *image,
+-	if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
++	if (priv->hw_version == MVPP22 && port->link_irq) {
+ 		err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
+ 				  dev->name, port);
+ 		if (err) {
 -- 
 2.20.1
 
