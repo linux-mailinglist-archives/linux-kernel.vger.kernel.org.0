@@ -2,109 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 243CF119DF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:41:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B42C119CC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:33:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729429AbfLJWlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:41:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51994 "EHLO mail.kernel.org"
+        id S1729732AbfLJWdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:33:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728904AbfLJWbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:31:50 -0500
-Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728478AbfLJWdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:33:19 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EDE5206EC;
-        Tue, 10 Dec 2019 22:31:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7128C2073D;
+        Tue, 10 Dec 2019 22:33:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576017110;
-        bh=OWeDD1ggaI7KtD7dXyfUWEhw8ibkokJLLFnshu+t8Bs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=jx/aoNNd4yeJQOJni2d8Jm2bVglXRvoz4EFeLcuMkv+4rwBBQgDPc8e0091THiWqv
-         ByDPON5LbCRk5pfsGKnre0V6A3u0AVAS3HCh4SvEgK46AtHn1Lj4VDYvmleLkrwvjW
-         e7Rs9VJEMWlZSW72/q1C36bfYYi7lcjJcJDvAF2c=
-Date:   Tue, 10 Dec 2019 16:31:48 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     James Sewart <jamessewart@arista.com>
-Cc:     linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Dmitry Safonov <dima@arista.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v6 1/3] PCI: Fix off by one in dma_alias_mask allocation
- size
-Message-ID: <20191210223148.GA166696@google.com>
+        s=default; t=1576017198;
+        bh=DiRCgErLnaPFpDFzZ7O2OQisayRi7QqIXVHj7zFDuXw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fJA7NeihFF7PkPApy56zBaOsM15RZXI3EVqn5G3Ey8/tPYVPRfHpFVUkmDDKSEsBw
+         vhlV5sdmnRgSVrUZdh7y10owGcg0JLRKYde0K5pq1Se23tt4dnxSnFTr+xkNuxKvO6
+         lBjHbl1he1Yo/LTx6OogpfOortYLuAn5yGzhtOMM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sean Paul <seanpaul@chromium.org>, Lyude Paul <lyude@redhat.com>,
+        Todd Previte <tprevite@gmail.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 01/71] drm: mst: Fix query_payload ack reply struct
+Date:   Tue, 10 Dec 2019 17:32:06 -0500
+Message-Id: <20191210223316.14988-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <910070E3-7964-4549-B77F-EC7FC6144503@arista.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Joerg]
+From: Sean Paul <seanpaul@chromium.org>
 
-On Tue, Dec 03, 2019 at 03:43:22PM +0000, James Sewart wrote:
-> The number of possible devfns is 256, add def and correct uses.
-> 
-> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: James Sewart <jamessewart@arista.com>
+[ Upstream commit 268de6530aa18fe5773062367fd119f0045f6e88 ]
 
-I applied these three patches to pci/virtualization for v5.6, thanks!
+Spec says[1] Allocated_PBN is 16 bits
 
-I moved the MAX_NR_DEVFNS from include/linux/pci.h to
-drivers/pci/pci.h since nobody outside drivers/pci needs it.
+[1]- DisplayPort 1.2 Spec, Section 2.11.9.8, Table 2-98
 
-> ---
->  drivers/pci/pci.c    | 2 +-
->  drivers/pci/search.c | 2 +-
->  include/linux/pci.h  | 2 ++
->  3 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index a97e2571a527..d3c83248f3ce 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5876,7 +5876,7 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
->  void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
->  {
->  	if (!dev->dma_alias_mask)
-> -		dev->dma_alias_mask = bitmap_zalloc(U8_MAX, GFP_KERNEL);
-> +		dev->dma_alias_mask = bitmap_zalloc(MAX_NR_DEVFNS, GFP_KERNEL);
->  	if (!dev->dma_alias_mask) {
->  		pci_warn(dev, "Unable to allocate DMA alias mask\n");
->  		return;
-> diff --git a/drivers/pci/search.c b/drivers/pci/search.c
-> index bade14002fd8..9e4dfae47252 100644
-> --- a/drivers/pci/search.c
-> +++ b/drivers/pci/search.c
-> @@ -43,7 +43,7 @@ int pci_for_each_dma_alias(struct pci_dev *pdev,
->  	if (unlikely(pdev->dma_alias_mask)) {
->  		u8 devfn;
->  
-> -		for_each_set_bit(devfn, pdev->dma_alias_mask, U8_MAX) {
-> +		for_each_set_bit(devfn, pdev->dma_alias_mask, MAX_NR_DEVFNS) {
->  			ret = fn(pdev, PCI_DEVID(pdev->bus->number, devfn),
->  				 data);
->  			if (ret)
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 1a6cf19eac2d..6481da29d667 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -57,6 +57,8 @@
->  #define PCI_DEVID(bus, devfn)	((((u16)(bus)) << 8) | (devfn))
->  /* return bus from PCI devid = ((u16)bus_number) << 8) | devfn */
->  #define PCI_BUS_NUM(x) (((x) >> 8) & 0xff)
-> +/* Number of possible devfns. devfns can be from 0.0 to 1f.7 inclusive */
-> +#define MAX_NR_DEVFNS 256
->  
->  /* pci_slot represents a physical slot */
->  struct pci_slot {
-> -- 
-> 2.24.0
-> 
-> 
+Fixes: ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Todd Previte <tprevite@gmail.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190829165223.129662-1-sean@poorly.run
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/drm/drm_dp_mst_helper.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+index f356f9716474a..674472ac067ad 100644
+--- a/include/drm/drm_dp_mst_helper.h
++++ b/include/drm/drm_dp_mst_helper.h
+@@ -303,7 +303,7 @@ struct drm_dp_resource_status_notify {
+ 
+ struct drm_dp_query_payload_ack_reply {
+ 	u8 port_number;
+-	u8 allocated_pbn;
++	u16 allocated_pbn;
+ };
+ 
+ struct drm_dp_sideband_msg_req_body {
+-- 
+2.20.1
+
