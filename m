@@ -2,150 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16FFA118A99
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:16:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C0D9118AA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:19:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfLJOQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 09:16:02 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41259 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbfLJOQC (ORCPT
+        id S1727421AbfLJOTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 09:19:38 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36053 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfLJOTi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:16:02 -0500
-Received: by mail-lj1-f194.google.com with SMTP id h23so20044950ljc.8;
-        Tue, 10 Dec 2019 06:16:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jD+WtoffrchcEdWN7/kMz52aEW8U9ECt9MIhf+NIRt8=;
-        b=laoAr8CsHFTCAMbrW53NWJOiRysmj/Tw3iUdtbteH/C1jXBWCqxzLqBqZop+YNW0xn
-         ngJTfifBTbUxg3TdRFG6SXG4wIxijNGunKGJp8crNWtA+Eq6WZjuyLFIkGGoEFtpwaVO
-         WsNIyitIXpOlZNt8sRajfUQg6QCJm45rBpMUOU8ENx47puUbTwvZXJQ1oTw812UKeIOn
-         R5y7x34rZzRdBdahDx9y9FrRMtihTLp9HZxUqfUWtmwXwnuooHkGaydEfrw9IYkJHYuz
-         aq0cUMDj7XvDuAv4/Df+MqVT5zM3lNPR5UYcZxhRZNkHd7vFAunbZ7fM6SXZ272s8+CV
-         vC7g==
+        Tue, 10 Dec 2019 09:19:38 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so3402744wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 06:19:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jD+WtoffrchcEdWN7/kMz52aEW8U9ECt9MIhf+NIRt8=;
-        b=CtElbGrrXuuVP25K16xfoWGewVmDp+Df3QtzhOouSqOqTrHApZukZlJXVQBzTg89Pg
-         ooI3Cw/pTRXwAtR9P8MtV1Oe2wwFwllRg+2HrC/XdfaVRu0LpGWyUJMbdmhuABY9++M7
-         kH+h+c4pWdEcvaxRgGZmnZ3WWUtNy6YSe+bGaCEzsuhsfQXG2V2ESf3bhVAYDixOocST
-         ECBBR3tCmwTWcdg7PbZVMw/Qmqyt5728Ca3bPRNS46PeTq1nkFlD62h8NTzZhZgIPHTD
-         soQC2pyGnFS9TUDZBjrtQp49gRQCGvyMK276a4w+XZ1XMLThE2hgRGhjvNf49RrgjAlT
-         e7pw==
-X-Gm-Message-State: APjAAAXLtMXRWDYParB/utPNQNO61Li+vc3B0PjqqxQahGlEFk9dplmO
-        ZMcA7DR/F46KIqyf+uuh00Q0qJWn
-X-Google-Smtp-Source: APXvYqzuJICIEMYqEq4hgKpvqtsHTLgg/v7d6kKGG3DNPNP6pIxTUHhXp04kW61Z/4BccLTl5EsbtA==
-X-Received: by 2002:a05:651c:102c:: with SMTP id w12mr20347892ljm.53.1575987359949;
-        Tue, 10 Dec 2019 06:15:59 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id c23sm1819382ljj.78.2019.12.10.06.15.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2019 06:15:59 -0800 (PST)
-Subject: Re: [PATCH v1] sdhci: tegra: Add workaround for Broadcom WiFi
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191210014011.21987-1-digetx@gmail.com>
- <20191210125208.GD2703785@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <61b7a865-6a6f-5edf-7463-cfdd6b20f687@gmail.com>
-Date:   Tue, 10 Dec 2019 17:15:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vvShKcPkNNNZPmf7EcjJYAypgpc9NXZSs5nDPjN1qQA=;
+        b=JtKHQkJI38o9lYxquTSteA0vr7XcA52EXq3NOeF1URT8+Gvh3X6+T0OsRo+f6qI29+
+         bIEs9QfdyTb5tD0FR/8D8N02//Ol93lnWdHjg+ES/s/3Kh0sKYQmEgFUQ1Up7pzbJye8
+         KjOLWY+yP2kmR7JU3lakxZII41RKDFxZLGVFrrw+9J2BJWQHxU8N4yNW7A0qUo43PDaH
+         Ey8mNMeFKk080jTjwbOgmMNuTk5C9iTrKTYE8V1rAU/aBgxOqzYGE703PpgMfLIH8Xbs
+         lTPjX1p23Pxmf7ZINsES93+weonmuawjFJ5/PdVzcG5tDKtQ6PT0ubNqu8dWLj5I9wvU
+         Vg3A==
+X-Gm-Message-State: APjAAAVFMCjbVM0ZJgg2ktj9g1GW8Wp99e2wT+rMaPw+M9QCzj32kwFR
+        0mW6XSrUrfT8K1gkHsSAohU=
+X-Google-Smtp-Source: APXvYqxf446sXqtpzu0nV99LjNCiKJty0osulSpIpx9pagCwolcdBKEWtSanOJVj9s9RvcUKxyVdmA==
+X-Received: by 2002:a1c:f60f:: with SMTP id w15mr5357176wmc.132.1575987576101;
+        Tue, 10 Dec 2019 06:19:36 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id l15sm3380558wrv.39.2019.12.10.06.19.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 06:19:35 -0800 (PST)
+Date:   Tue, 10 Dec 2019 15:19:34 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgross@suse.com,
+        william.kucharski@oracle.com, mingo@kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH] mm/hotplug: Only respect mem= parameter during boot stage
+Message-ID: <20191210141934.GL10404@dhcp22.suse.cz>
+References: <20191206150524.14687-1-bhe@redhat.com>
+ <20191209100717.GC6156@dhcp22.suse.cz>
+ <20191210072453.GI2984@MiWiFi-R3L-srv>
+ <20191210102834.GE10404@dhcp22.suse.cz>
+ <20191210104303.GN2984@MiWiFi-R3L-srv>
+ <20191210113341.GG10404@dhcp22.suse.cz>
+ <20191210125557.GA28917@MiWiFi-R3L-srv>
+ <20191210133202.GJ10404@dhcp22.suse.cz>
+ <20191210140534.GB28917@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <20191210125208.GD2703785@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210140534.GB28917@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-10.12.2019 15:52, Thierry Reding пишет:
-> On Tue, Dec 10, 2019 at 04:40:11AM +0300, Dmitry Osipenko wrote:
->> All Tegra20 boards that have embedded Broadcom WiFi SDIO chip are affected
->> by a problem where WiFi chip reports CCCR v1.10, while it should v1.20.
->> In a result high-speed mode isn't enabled for the WiFi card and this
->> results in a malfunctioning SDIO communication.
->>
->>  brcmfmac: brcmf_sdio_readframes: read 304 bytes from channel 1 failed: -84
->>  brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
->>
->> Downstream kernels are overriding card's CCCR info in SDHCI driver to fix
->> the problem, let's do the same in upstream.
->>
->> The change is inspired by omap_hsmmc_init_card() of OMAP's HSMMC driver,
->> which overrides card's info for the TI wl1251 WiFi.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/mmc/host/sdhci-tegra.c | 28 ++++++++++++++++++++++++++++
->>  1 file changed, 28 insertions(+)
+On Tue 10-12-19 22:05:34, Baoquan He wrote:
+> On 12/10/19 at 02:32pm, Michal Hocko wrote:
+> > On Tue 10-12-19 20:55:57, Baoquan He wrote:
+> > [...]
+> > > Btw, as you said at above, I am confused by the '[KNL,BOOT]', what does
+> > > the 'BOOT' mean in the documentation of 'mem='? I checked all parameters
+> > > with 'BOOT', still don't get it clearly.
+> > 
+> > This is a good question indeed. I have checked closer and this is what
+> > documentation says
+> > Documentation/admin-guide/kernel-parameters.rst
+> > "
+> >         BOOT    Is a boot loader parameter.
+> > 
+> > Parameters denoted with BOOT are actually interpreted by the boot
+> > loader, and have no meaning to the kernel directly.
+> > "
+> > 
+> > and that really doesn't fit, right? So I went to check the full history
+> > git tree just to get to 2.4.0-test5 and no explanation whatsoever.
+> > Fun, isn't it? ;)
 > 
-> This seems like the wrong place to do this. If this is specific to this
-> WiFi SDIO chip this should be handled at the SDIO card or function
-> level. It seems like the SDIO infrastructure doesn't currently allow
-> this because the OF nodes are attached to the card after
-> mmc_sdio_init_card(), whereas it seems like the quirk is already needed
-> during mmc_sdio_init_card().
+> Yeah, very interesting. Finally I got their original purpose from
+> Documentation/x86/boot.rst.
 > 
-> That said, I think we could have some common code that's executed as
-> part of mmc_attach_sdio() (and before mmc_sdio_init_card()).
 > 
-> Actually, it looks like we already have something like that.
-> mmc_sdio_init_card() calls mmc_fixup_device() with sdio_fixup_methods
-> after doing some very basic initialization. Do you know if things start
-> to go wrong before or after that point? It might be worth looking at
-> that SDIO fixup array and add something that would override the CCCR
-> support. That would fix things in a more generic way rather than
-> requiring every host controller driver to duplicate this quirk.
+> Special Command Line Options
+> ============================
+> 
+> If the command line provided by the boot loader is entered by the
+> user, the user may expect the following command line options to work.
+> They should normally not be deleted from the kernel command line even
+> though not all of them are actually meaningful to the kernel.  Boot
+> loader authors who need additional command line options for the boot
+> loader itself should get them registered in
+> Documentation/admin-guide/kernel-parameters.rst to make sure they will not
+> conflict with actual kernel options now or in the future.
+> 
+> ...
+> 
+> So here, [KNL,BOOT], KNL means it's used for kernel, BOOT means it's
+> needed by boot loader.
 
-Hello Thierry,
-
-Thank you very much for the suggestion, looks like indeed it is possible
-to make workaround in a generic way.
-
-Ulf / Adrian, will something like this be acceptable:
-
-diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h
-index 7bd392d55cfa..a6001f210b9e 100644
---- a/drivers/mmc/core/card.h
-+++ b/drivers/mmc/core/card.h
-@@ -150,6 +150,12 @@ static inline void __maybe_unused
-add_limit_rate_quirk(struct mmc_card *card,
- 	card->quirk_max_rate = data;
- }
-
-+static inline void __maybe_unused add_high_speed_quirk(struct mmc_card
-*card,
-+						       int data)
-+{
-+	card->cccr.high_speed = data;
-+}
-+
- /*
-  * Quirk add/remove for MMC products.
-  */
-diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
-index 3dba15bccce2..a824c0caa7fb 100644
---- a/drivers/mmc/core/quirks.h
-+++ b/drivers/mmc/core/quirks.h
-@@ -142,6 +142,9 @@ static const struct mmc_fixup sdio_fixup_methods[] = {
- 	SDIO_FIXUP(SDIO_VENDOR_ID_MARVELL, SDIO_DEVICE_ID_MARVELL_8887WLAN,
- 		   add_limit_rate_quirk, 150000000),
-
-+	SDIO_FIXUP(SDIO_VENDOR_ID_BROADCOM, SDIO_DEVICE_ID_BROADCOM_4329,
-+		   add_high_speed_quirk, 1),
-+
- 	END_FIXUP
- };
-
-[snip]
+OK, that clarifies this a bit. Thanks for referencing to it!
+That should explain how the behavior is not boot time restricted at all
+and the current implementation is actually correct. So a change to it
+should clearly state the new usecase as we have already discussed. In
+case there are bootloaders which really rely on the original strict
+meaning then we should be able to compare cost/benfits of those two
+usecases.
+-- 
+Michal Hocko
+SUSE Labs
