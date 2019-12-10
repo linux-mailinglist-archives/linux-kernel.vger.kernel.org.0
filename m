@@ -2,84 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2257D117C18
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 01:06:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D4D7117C2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 01:09:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfLJAGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 19:06:46 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:52032 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfLJAGq (ORCPT
+        id S1727431AbfLJAJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 19:09:17 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:31776 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726495AbfLJAJR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 19:06:46 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBA04GhW031683;
-        Tue, 10 Dec 2019 00:06:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=3s1yOhxXzIZ2EdKGgerVgQWxqiH1u5YZX4OXhPSEQz4=;
- b=po7ej6FQbAjQODWDACjuUl0jMaMtw9QSVUDT/VQ9cx/FXrKdoQJwApx3gNc0SeBNB5Yq
- kkO7VsiLsPtjIvhnfswH1hO5ZR+Bf5DGyTaPQBHYMLLLIfg0z0tgd08B+rDGv/1wgJf4
- P9GtYwtkw3UqVVjzu+O4W2JOL8tvOhaxzph3Doqai/XYAeRlsM06zHJFY86SsT/puNjN
- SIUapaSsiD0mcR1XOYraQzcOPsKOfAtUBFyREXHYJ3uWjpxxLaDMJnQ8/5mQR9YQ2aJu
- TvSuKFFsGSkTxQUFVbj9gR9ltbiT/9b8inmns5wZ35Oy6IPDaJ4bgk59dtCKA5xh3aBC qw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2wr41q2wq8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 00:06:39 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBA04D5D157892;
-        Tue, 10 Dec 2019 00:06:39 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2wsv8atg4f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 00:06:38 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBA06bIx003934;
-        Tue, 10 Dec 2019 00:06:37 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Dec 2019 16:06:36 -0800
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Don Brace <don.brace@microsemi.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
+        Mon, 9 Dec 2019 19:09:17 -0500
+Date:   10 Dec 2019 09:09:15 +0900
+X-IronPort-AV: E=Sophos;i="5.69,297,1571670000"; 
+   d="scan'208";a="33931092"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Dec 2019 09:09:15 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 68A8F40EAE82;
+        Tue, 10 Dec 2019 09:09:15 +0900 (JST)
+Message-ID: <87o8whyrbo.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     broonie@kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH resend] scsi: smartpqi: add missed free_irq in suspend
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20191203111337.13054-1-hslester96@gmail.com>
-Date:   Mon, 09 Dec 2019 19:06:34 -0500
-In-Reply-To: <20191203111337.13054-1-hslester96@gmail.com> (Chuhong Yuan's
-        message of "Tue, 3 Dec 2019 19:13:37 +0800")
-Message-ID: <yq1fthtoxh1.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=836
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912090190
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=917 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912090191
+Subject: Re: [PATCH] ASoC: simple-card: Don't create separate link when platform is present
+In-Reply-To: <20191209135353.17427-1-daniel.baluta@nxp.com>
+References: <20191209135353.17427-1-daniel.baluta@nxp.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> The driver calls request_irq in resume but does not call free_irq in
-> suspend.
-> Add the missed call to fix it.
+Hi
 
-Microsemi: Please review!
+> In normal sound case all DAIs are detected as CPU-Codec.
+> simple_dai_link_of supports the presence of a platform but it counts
+> it as a CPU DAI resulting in the creation of an extra link.
+> 
+> Adding a platform property to a link description like:
+> 
+> simple-audio-card,dai-link {
+> 	cpu {
+> 		sound-dai = <&sai1>;
+> 	};
+> 	plat {
+> 		sound-dai = <&dsp>;
+> 	};
+> 	codec {
+> 		sound-dai = <&wm8960>;
+> 	}
+> 
+> will result in the creation of two links:
+> 	* sai1 <-> wm8960
+> 	* dsp  <-> wm8960
+> 
+> which is obviously not what we want. We just want one single link
+> with:
+> 	* sai1 <-> wm8960 (and platform set to dsp).
+> 
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Thank you for your help !!
+Best regards
+---
+Kuninori Morimoto
