@@ -2,78 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC7F1181FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3DE11181EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:15:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbfLJIP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 03:15:27 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:21469 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726062AbfLJIO4 (ORCPT
+        id S1727282AbfLJIPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 03:15:10 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36959 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727249AbfLJIPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 03:14:56 -0500
-X-UUID: f9b456136baf42daba0957485d388010-20191210
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=BT+q/z4xoeKXCk+y25bvARvW/z0vRa1uB7kHqAjvpaw=;
-        b=eagJVm76XNgnVVvxDHR4QtcIyynPPYY4k7twyvlRAQeSnsJbABh1afLK+LlxnJ0TM069F+hNNzWXq7ZGru/I+gYhmqZcYCt/SkEYgxdTb0VNE+DIW0hmNAOoJ0i23gobJ3xa7JVRfIfeZcbjwRJSuqwzLBRZBLIFzqSs71VZx1Y=;
-X-UUID: f9b456136baf42daba0957485d388010-20191210
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <landen.chao@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1831961689; Tue, 10 Dec 2019 16:14:48 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 10 Dec 2019 16:14:32 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 10 Dec 2019 16:14:27 +0800
-From:   Landen Chao <landen.chao@mediatek.com>
-To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>,
-        <vivien.didelot@savoirfairelinux.com>, <matthias.bgg@gmail.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <davem@davemloft.net>,
-        <sean.wang@mediatek.com>, <opensource@vdorst.com>,
-        <frank-w@public-files.de>, Landen Chao <landen.chao@mediatek.com>
-Subject: [PATCH net-next 6/6] arm64: dts: mt7622: add mt7531 dsa to bananapi-bpi-r64 board
-Date:   Tue, 10 Dec 2019 16:14:42 +0800
-Message-ID: <62eef5503c117f48d4b41e94fd28d75e123590b4.1575914275.git.landen.chao@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <cover.1575914275.git.landen.chao@mediatek.com>
-References: <cover.1575914275.git.landen.chao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Tue, 10 Dec 2019 03:15:05 -0500
+Received: by mail-pf1-f195.google.com with SMTP id s18so8667454pfm.4;
+        Tue, 10 Dec 2019 00:15:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Z3QbUuDM9pE9qovJUQv76vaNeMVWJZJGqPPOIl/DJQI=;
+        b=ZMseXGCEq9sa+yPcP2XWg92cr3R3iGN9k1fDhp7lI6V0LwLtB3w3Cy+jxmk649eiix
+         iNFBxBOM5jKfJfLjF/3Z40j2S+MjPkWaeJIloYsrNVJE4/W5PrR3/G/3Jxb6+cN0CXfT
+         x9d2UxJtneL3B7Fk9ARSMRQJqE+aPEKhx3Czn2JWuhW3KvyqR0tKSpJITG28Q2ivb74z
+         V+HamfhYBarUxAGXI6BxuybqrAvBUiQoqQhwElSOEcBaNtxzvszpDoYu0aipuYkbsHVP
+         N9Vr2lYojKA/lhOMH2EM22fvsZSpq7NTF4IdegHk+8+ZA8fKj9t6vDsokzrtkxoX85o9
+         F2ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Z3QbUuDM9pE9qovJUQv76vaNeMVWJZJGqPPOIl/DJQI=;
+        b=G0QHcPykocOfzMrHdFUk0g2qx3NttNXSM45lfT/MitnAmSJgFzL2aBZmW7GmhjoARJ
+         59v9vPVA32w3UW+HNJGkPdeDd0g9EJoi9BTexyOHBKn7eN0wPA3Pyw5uJF7/R/dk+InY
+         FMuJHZTjdYlLuQAmLnNHgaBbyyBuozO8A1Lm1oClK9xqF+CilXl8YK+EUEfP/si3KIg0
+         dZ8TvU0WDxe+utoFtpcOsZcFMS4fwUc58UYD7jPL/zFqtqi1ddBCiW5gJtQLzLy0oRcx
+         IJ+0cSwcVQawaGOuGf0u1DooNEueelLo0zwOSNDfENoIh53STKwg12fDMFLpHs77sJgn
+         O13Q==
+X-Gm-Message-State: APjAAAXc3HPdQwvcTJVXkFhjEnJjIdASwkzn32Nqo5jVHU7IvtoTGB1U
+        X0efmEfnvlAk4RcGxyX8YeQ974Dr
+X-Google-Smtp-Source: APXvYqz9cKrg+5oW8XT1VLh+qOPLCiLe9LUKA3h4M93l/m87W87mkm6J1JfCtWcZAaTjl9/J/ZD6SQ==
+X-Received: by 2002:a65:42ca:: with SMTP id l10mr23237968pgp.121.1575965704620;
+        Tue, 10 Dec 2019 00:15:04 -0800 (PST)
+Received: from localhost.localdomain ([240d:1a:90a:7900:1572:c35d:e9db:e357])
+        by smtp.gmail.com with ESMTPSA id q12sm2136741pfh.158.2019.12.10.00.15.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 10 Dec 2019 00:15:04 -0800 (PST)
+From:   frowand.list@gmail.com
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] of: refcount leak when phandle_cache entry replaced
+Date:   Tue, 10 Dec 2019 02:14:53 -0600
+Message-Id: <1575965693-30395-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIG10NzUzMSBkc2EgdG8gYmFuYW5hcGktYnBpLXI2NCBib2FyZCBmb3IgNSBnaWdhIEV0aGVy
-bmV0IHBvcnRzIHN1cHBvcnQuDQoNClNpZ25lZC1vZmYtYnk6IExhbmRlbiBDaGFvIDxsYW5kZW4u
-Y2hhb0BtZWRpYXRlay5jb20+DQotLS0NCiAuLi4vZHRzL21lZGlhdGVrL210NzYyMi1iYW5hbmFw
-aS1icGktcjY0LmR0cyAgfCA1MCArKysrKysrKysrKysrKysrKysrDQogMSBmaWxlIGNoYW5nZWQs
-IDUwIGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVk
-aWF0ZWsvbXQ3NjIyLWJhbmFuYXBpLWJwaS1yNjQuZHRzIGIvYXJjaC9hcm02NC9ib290L2R0cy9t
-ZWRpYXRlay9tdDc2MjItYmFuYW5hcGktYnBpLXI2NC5kdHMNCmluZGV4IDgzZTEwNTkxZTBlNS4u
-ZmZhY2VmZWU4ZTJhIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9t
-dDc2MjItYmFuYW5hcGktYnBpLXI2NC5kdHMNCisrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVk
-aWF0ZWsvbXQ3NjIyLWJhbmFuYXBpLWJwaS1yNjQuZHRzDQpAQCAtMTQzLDYgKzE0Myw1NiBAQA0K
-IAltZGlvOiBtZGlvLWJ1cyB7DQogCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsNCiAJCSNzaXplLWNl
-bGxzID0gPDA+Ow0KKw0KKwkJc3dpdGNoQDAgew0KKwkJCWNvbXBhdGlibGUgPSAibWVkaWF0ZWss
-bXQ3NTMxIjsNCisJCQlyZWcgPSA8MD47DQorCQkJcmVzZXQtZ3Bpb3MgPSA8JnBpbyA1NCAwPjsN
-CisNCisJCQlwb3J0cyB7DQorCQkJCSNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KKwkJCQkjc2l6ZS1j
-ZWxscyA9IDwwPjsNCisNCisJCQkJcG9ydEAwIHsNCisJCQkJCXJlZyA9IDwwPjsNCisJCQkJCWxh
-YmVsID0gIndhbiI7DQorCQkJCX07DQorDQorCQkJCXBvcnRAMSB7DQorCQkJCQlyZWcgPSA8MT47
-DQorCQkJCQlsYWJlbCA9ICJsYW4wIjsNCisJCQkJfTsNCisNCisJCQkJcG9ydEAyIHsNCisJCQkJ
-CXJlZyA9IDwyPjsNCisJCQkJCWxhYmVsID0gImxhbjEiOw0KKwkJCQl9Ow0KKw0KKwkJCQlwb3J0
-QDMgew0KKwkJCQkJcmVnID0gPDM+Ow0KKwkJCQkJbGFiZWwgPSAibGFuMiI7DQorCQkJCX07DQor
-DQorCQkJCXBvcnRANCB7DQorCQkJCQlyZWcgPSA8ND47DQorCQkJCQlsYWJlbCA9ICJsYW4zIjsN
-CisJCQkJfTsNCisNCisJCQkJcG9ydEA2IHsNCisJCQkJCXJlZyA9IDw2PjsNCisJCQkJCWxhYmVs
-ID0gImNwdSI7DQorCQkJCQlldGhlcm5ldCA9IDwmZ21hYzA+Ow0KKwkJCQkJcGh5LW1vZGUgPSAi
-MjUwMGJhc2UteCI7DQorDQorCQkJCQlmaXhlZC1saW5rIHsNCisJCQkJCQlzcGVlZCA9IDwyNTAw
-PjsNCisJCQkJCQlmdWxsLWR1cGxleDsNCisJCQkJCQlwYXVzZTsNCisJCQkJCX07DQorCQkJCX07
-DQorCQkJfTsNCisJCX07DQorDQogCX07DQogfTsNCiANCi0tIA0KMi4xNy4xDQo=
+From: Frank Rowand <frank.rowand@sony.com>
+
+of_find_node_by_phandle() does not do an of_node_put() of the existing
+node in a phandle cache entry when that node is replaced by a new node.
+
+Reported-by: Rob Herring <robh+dt@kernel.org>
+Fixes: b8a9ac1a5b99 ("of: of_node_get()/of_node_put() nodes held in phandle cache")
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+---
+
+Checkpatch will warn about a line over 80 characters.  Let me know
+if that bothers you.
+
+ drivers/of/base.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index db7fbc0c0893..b57a57752294 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -1261,6 +1261,8 @@ struct device_node *of_find_node_by_phandle(phandle handle)
+ 			if (np->phandle == handle &&
+ 			    !of_node_check_flag(np, OF_DETACHED)) {
+ 				if (phandle_cache) {
++					if (phandle_cache[masked_handle])
++						of_node_put(phandle_cache[masked_handle]);
+ 					/* will put when removed from cache */
+ 					of_node_get(np);
+ 					phandle_cache[masked_handle] = np;
+-- 
+Frank Rowand <frank.rowand@sony.com>
 
