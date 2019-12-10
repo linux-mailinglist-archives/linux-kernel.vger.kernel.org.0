@@ -2,94 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E941117CC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 01:57:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD66F117CCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 01:58:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfLJA4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 19:56:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726743AbfLJA4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 19:56:30 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE73720637;
-        Tue, 10 Dec 2019 00:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575939389;
-        bh=BbLBjR8wcrsANoTlWrEqQPyK+DvAKxv254F1InccAcs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uQ6utAA370KB9xY5+qeGGsoo1HH/Hnt/LDZgeHbTSoRMRHkI8VQJNf4H7ZKlSmj42
-         WZSNKaK/IM6JgWSl9QfalBJQuyJfmeZpwpLLwj0NmbsOrQL4FJSoG0TjuPsUzwfCOi
-         N9YkLgu4ONG2hyyuwLyRSMczlQwBZdl/iQWpJ6W0=
-Date:   Mon, 9 Dec 2019 16:56:27 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?ISO-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?ISO-8859-1?Q?J=E9r?= =?ISO-8859-1?Q?=F4me?= Glisse 
-        <jglisse@redhat.com>, Magnus Karlsson <magnus.karlsson@intel.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Christoph Hellwig" <hch@lst.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH v8 17/26] media/v4l2-core: set pages dirty upon
- releasing DMA buffers
-Message-Id: <20191209165627.bf657cb8fdf660e8f91e966c@linux-foundation.org>
-In-Reply-To: <20191209225344.99740-18-jhubbard@nvidia.com>
-References: <20191209225344.99740-1-jhubbard@nvidia.com>
-        <20191209225344.99740-18-jhubbard@nvidia.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1727634AbfLJA5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 19:57:16 -0500
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:59941 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727487AbfLJA5P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Dec 2019 19:57:15 -0500
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 3EDFE22612;
+        Mon,  9 Dec 2019 19:57:14 -0500 (EST)
+Received: from imap26 ([10.202.2.76])
+  by compute7.internal (MEProxy); Mon, 09 Dec 2019 19:57:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alistair23.me;
+         h=mime-version:message-id:in-reply-to:references:date:from:to
+        :cc:subject:content-type; s=fm2; bh=QZSXV0E2wXwjz2l7XHDJiDEjbOAx
+        GZT1UKVhqbaYJS8=; b=fEtJ5hPtvSAdSQ2BivWZ7OUUHuFksOY6CDc7SDdWY04X
+        BaXoOYVrDWqh2qPUm8fH5X0MJlIJeoIAMjSIMWg/5oultj4Wz+mbXUhwF8QQEJVW
+        lFBu5rbkxO1LyGcKPZEW+Vk6gCguhIy9AKqM62AT+ck5dBhy89ZG9/nw2Q+EuDor
+        l0txAnqPecnZQI9psuJPysP6/vNB2rhZsGBkkSWnbQBZfGc7LXOg/KNkILPvYMAI
+        ebHchkssx1W/1Kqc7B3lDkQ0s/czCG+31W8wlIqaDt7CzRmZaC70Tp7oqucG6oqD
+        yvgMm7UZ4wr9eluob6YpoI+NnsUWXBAy9lGelLVZJg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=QZSXV0
+        E2wXwjz2l7XHDJiDEjbOAxGZT1UKVhqbaYJS8=; b=m4YrBQR/R8XYEOxqL7N4cj
+        3h3TFlRcKePgjbCeoMH29mbXXEmDovrya2ovuVSEvgi70R/Io5PsebbxMSs+MQyG
+        AuNCDaKnw9NICmc6uVwmabX30OlrJGvBA/lzk+0cP63GsBH+nEo4P7Jp556m+rlG
+        RtVD46mnbtpQidkAbGpyNqus3+Nxv1fCV5WlkIXvQyGw5xbafnroQ8+YrwieKsAf
+        1VtXSU2QQgHDRm+RaeotgFmRemnGsBgza6nLp6+IecIVrs7WL0qZKQ98+555CnY9
+        mdyNliv/hlnV+nQ98Bs89ZNsb+KWswAEDpTzxUQmDcg4rmRONj8O/LsJ4BlwPKAw
+        ==
+X-ME-Sender: <xms:ae3uXXaMbU9PuTAgFY9hQigs_Z65vPQGS0vt4Fh-3fBHr27Vx9XBjA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudelvddgvdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomheptehlihhs
+    thgrihhruceorghlihhsthgrihhrsegrlhhishhtrghirhdvfedrmhgvqeenucffohhmrg
+    hinhepshhpihhnihgtshdrnhgvthenucfrrghrrghmpehmrghilhhfrhhomheprghlihhs
+    thgrihhrsegrlhhishhtrghirhdvfedrmhgvnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:ae3uXe8mZ2ugEYMZ1BvAjmp-FXJ-774sqs1jLk2FbNVBVJ4lVWJNcg>
+    <xmx:ae3uXRDyMyv3RHp3ckaW3hxkWXBFqA3JWgmKcigXceu9o8aY0SC2mw>
+    <xmx:ae3uXSvOKzSH31YiNKC1NXacEPJFBOdvDKBJikquBXqY-guQIMkOKQ>
+    <xmx:au3uXTAfTPH-TKoOB3XMECe3IqAp5Q2BpJi8Z-QHq7H84ey-UZ_bHg>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 13DBC14200A1; Mon,  9 Dec 2019 19:57:13 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-612-g13027cc-fmstable-20191203v1
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Message-Id: <e5cc3689-14c9-4cb6-bda8-beb6a9e8db7a@www.fastmail.com>
+In-Reply-To: <20191209193729.jfw2z4iqlhrzohse@hendrix.lan>
+References: <20191207192249.8346-1-alistair@alistair23.me>
+ <20191209193729.jfw2z4iqlhrzohse@hendrix.lan>
+Date:   Mon, 09 Dec 2019 16:56:51 -0800
+From:   Alistair <alistair@alistair23.me>
+To:     "Maxime Ripard" <mripard@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, wens@csie.org,
+        "Alistair Francis" <alistair23@gmail.com>
+Subject: =?UTF-8?Q?Re:_[PATCH]_arm64:_allwinner:_Enable_Bluetooth_and_WiFi_on_sop?=
+ =?UTF-8?Q?ine_baseboard?=
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Dec 2019 14:53:35 -0800 John Hubbard <jhubbard@nvidia.com> wrote:
-
-> After DMA is complete, and the device and CPU caches are synchronized,
-> it's still required to mark the CPU pages as dirty, if the data was
-> coming from the device. However, this driver was just issuing a
-> bare put_page() call, without any set_page_dirty*() call.
+On Mon, Dec 9, 2019, at 11:37 AM, Maxime Ripard wrote:
+> On Sat, Dec 07, 2019 at 11:22:49AM -0800, Alistair Francis wrote:
+> > The sopine board has an optional RTL8723BS WiFi + BT module that can be
+> > connected to UART1. Add this to the device tree so that it will work for
+> > users if connected.
+> >
+> > Signed-off-by: Alistair Francis <alistair@alistair23.me>
+> > ---
+> > .../dts/allwinner/sun50i-a64-sopine-baseboard.dts | 14 ++++++++++++++
+> > 1 file changed, 14 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > index 920103ec0046..0a91f9d8ed47 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > @@ -214,6 +214,20 @@ &uart0 {
+> > status = "okay";
+> > };
+> >
+> > +&uart1 {
+> > + pinctrl-names = "default";
+> > + pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
+> > + status = "okay";
+> > +
+> > + bluetooth {
+> > + compatible = "realtek,rtl8723bs-bt";
+> > + reset-gpios = <&r_pio 0 4 GPIO_ACTIVE_LOW>; /* PL4 */
+> > + device-wake-gpios = <&r_pio 0 5 GPIO_ACTIVE_HIGH>; /* PL5 */
+> > + host-wake-gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
+> > + firmware-postfix = "pine64";
+> > + };
+> > +};
+> > +
 > 
-> Fix the problem, by calling set_page_dirty_lock() if the CPU pages
-> were potentially receiving data from the device.
+> Output from checkpatch:
+> total: 10 errors, 11 warnings, 0 checks, 20 lines checked
+
+Sorry, I should have checked that before I posted.
+
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: <stable@vger.kernel.org>
+> More importantly, that binding isn't documented, and doesn't have a
+> driver either.
 
-What are the user-visible effects of this change?
+Ah, I confused myself.
 
-As it's cc:stable I'd normally send this to Linus within 1-2 weeks, or
-sooner.  Please confirm that this is a standalone fix, independent of
-the rest of this series.
+I have some patches that will fix this, but from below it looks like someone else beat me to it.
 
+> 
+> I guess you want to have a look at:
+> https://www.spinics.net/lists/arm-kernel/msg771488.html
 
+Thanks for pointing this out. I will just wait for this to be merged before trying again.
+
+Alistair
+
+> 
+> Maxime
+> 
