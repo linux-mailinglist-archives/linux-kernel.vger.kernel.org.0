@@ -2,137 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACFAF11800D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:56:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BEE0118011
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfLJFzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 00:55:53 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:2831 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfLJFzw (ORCPT
+        id S1727069AbfLJF5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 00:57:22 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37141 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfLJF5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 00:55:52 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5def33600000>; Mon, 09 Dec 2019 21:55:45 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 09 Dec 2019 21:55:50 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 09 Dec 2019 21:55:50 -0800
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
- 2019 05:55:50 +0000
-Received: from [10.2.166.216] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
- 2019 05:55:49 +0000
-Subject: Re: [PATCH v8 20/26] powerpc: book3s64: convert to pin_user_pages()
- and put_user_page()
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191209225344.99740-1-jhubbard@nvidia.com>
- <20191209225344.99740-21-jhubbard@nvidia.com>
- <08f5d716-8b31-b016-4994-19fbe829dc28@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <61e0c3a5-992e-4571-e22d-d63286ce10ec@nvidia.com>
-Date:   Mon, 9 Dec 2019 21:53:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Tue, 10 Dec 2019 00:57:21 -0500
+Received: by mail-qt1-f194.google.com with SMTP id w47so1753938qtk.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 21:57:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=jfNAXQwhZfEavSvS00CAkiq7q52D2V3MiZ0EO57BKJY=;
+        b=HzBPS0OkkYi89kR1c4hURSw8uSGhiT4spz0XeZwmUYU26+c2z5S7Tgxdb9kL25OmpB
+         WkdgqCnhuGolqZheEBDzMgpC9pe5Fg79MuBMvTyI/3caT3YHnciS8M2BWgmXb4NNw4uY
+         ijPVYn/ANyauH3h/tFBwH2V6es88K96FjOUdOmZ+AoOcpCCXR4qOjZKkSpub7kYo59CL
+         5io1Knqs+EjWmDNpkReepMbOtzCWzzXXnm/PtVzMOefOuaQg8xIf0RSG5mEyCW1S15iD
+         e+30Pn+f7S+ZSkDOzin8uR7q8SWK9tufpkIo5dmZjb8aPhgrVNSdxm57iiO8U5voh9Cz
+         akKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=jfNAXQwhZfEavSvS00CAkiq7q52D2V3MiZ0EO57BKJY=;
+        b=igXBJenRPP0ePmauPXlEt/SXrut2zuaUEZIcflPuEkUIqOZXdm4BbMULIttNQMo4j+
+         QDSBwMf3/5BbNAnECkcK3J9K8DAeq37HBXx8ayrKXK4G8UaG5W2QzwlVRldIFGUZ/NQu
+         cJoAIOffUskf1Ew9lAaGr+u2j4B6mq9FIBifniN9LEnjxQM73vkuPjGATrfoxXrbWDtC
+         PdDRauqYp2jHhUWe+3ThgiMnB0XzATUx6XUgIWxg/FY7n+Py3AS5ZYDVWWCp2C+h1oC9
+         DrrdtqlBoxk7suJ6UW1O5i350QePokbFc3vv9pJ3rZ2Jl+aHvdLKPXCbjyCTl8IYZ+rV
+         uLSQ==
+X-Gm-Message-State: APjAAAUchqX/3aDxJeL8aZYHQOo6s9CfsY8KQnGL8mQ8jiZ5g+F40yuT
+        XZumdA8XERxfZaZioJ3Ss/cQQrgQNg54ApXjsrQ=
+X-Google-Smtp-Source: APXvYqxgt2pCZtFz1ilZsuXjufg/ymD76aFknbZQDLeB3fB/XOqFJYMY8bg3W8ozlCdHMPe1e/bcnpNpIAwyq7QyQXc=
+X-Received: by 2002:ac8:35d0:: with SMTP id l16mr28357561qtb.370.1575957440559;
+ Mon, 09 Dec 2019 21:57:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <08f5d716-8b31-b016-4994-19fbe829dc28@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575957345; bh=hOQHo4yBws9X1nqgVCC1VdrUiF9Z86xIO4U2wGVXRCw=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Z0uGtjzdMedDuhQsG1jpU7HmbXe0kx1+9sLgOIk8Tsa+qSKrJwruITPp5YqsEqw/n
-         J6r9xabZ4a9OQN/Wl8LVj9LrtdwAy11ChiFmcjZZVTuORyZEi3yR7n2LRqkwn66Ltr
-         eeIwWiN6PGMYv9eL7SAOfeP4KVVco/4prZuZTjVwpd53jjxNLLJqGfcC9sxeGP6ykt
-         D8DJTJbSiZvX3LC8FmFbEGS2I/TRo6uZZSD6HwdT5k7HU7OxF7PBsCrAkF07RmEA1a
-         ZcPVotCE1aYXgj3rJWRvh8EJXUvCr0vK9kwBlCNWSwhBERf1C6gVTs8+AjkAsxO8km
-         d4nN+/tFy5PPg==
+Received: by 2002:ad4:5011:0:0:0:0:0 with HTTP; Mon, 9 Dec 2019 21:57:20 -0800 (PST)
+Reply-To: miss.aminaibrahim@gmail.com
+From:   "miss.amina ibrahim" <alimanibrahim770@gmail.com>
+Date:   Tue, 10 Dec 2019 05:57:20 +0000
+Message-ID: <CAGPE3s56hXW4oa8jr+KB_z8YwSJoU=D4FvU6JWzt_N_s-8ZT3Q@mail.gmail.com>
+Subject: My Name is Miss Amina Ibrahim from Libya,I am 22 years old
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/9/19 3:46 PM, John Hubbard wrote:
-> On 12/9/19 2:53 PM, John Hubbard wrote:
-> ...
->> @@ -212,10 +211,9 @@ static void mm_iommu_unpin(struct mm_iommu_table_group_mem_t *mem)
->>   		if (!page)
->>   			continue;
->>   
->> -		if (mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY)
->> -			SetPageDirty(page);
->> +		put_user_pages_dirty_lock(&page, 1,
->> +				mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY);
->>   
->> -		put_page(page);
-> 
-> 
-> Correction: this is somehow missing the fixes that resulted from Jan Kara's review (he
-> noted that we can't take a page lock in this context). I must have picked up the
-> wrong version of it, when I rebased for -rc1.
-> 
+My Name is Miss Amina Ibrahim from Libya, I am 22 years old, I am in
+St.Christopher's Parish for refugee in Burkina Faso under United
+Nations High commission for Refugee ,I lost my parents in the recent
+war in  Libya, right now am in Burkina Faso, please save my life i am
+in danger need your help in transferring my inheritance my father left
+behind for me in a Bank in Burkina Faso here,i have every document for
+the transfer, all i need is a foreigner who will stand as the foreign
+partner to my father and beneficiary of the fund. The money deposited
+in the Bank is US10.5 MILLION UNITED STATES DOLLAR) I just need this
+fund to be transfer to your account so that I will come over to your
+country and complete my education as you know that my country have
+been in deep crisis due to the war .and I cannot go back there again
+because I have nobody again all of my family were killed in the war.
+If you are interested to save me and help me receive my inheritance
+fund Please get back to me
 
-Andrew, given that the series is now in -mm, what's the preferred way for me to fix this?
-Send a v9 version of the whole series? Or something else?
-
-I'm still learning the ropes...
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
-> Will fix in the next version (including the commit description). Here's what the
-> corrected hunk will look like:
-> 
-> @@ -215,7 +214,8 @@ static void mm_iommu_unpin(struct mm_iommu_table_group_mem_t *mem)
->                  if (mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY)
->                          SetPageDirty(page);
->   
-> -               put_page(page);
-> +               put_user_page(page);
-> +
->                  mem->hpas[i] = 0;
->          }
->   }
-> 
-> 
-> thanks,
-> 
+Miss Amina IBRAHIM.
