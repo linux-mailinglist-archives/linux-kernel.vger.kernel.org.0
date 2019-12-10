@@ -2,98 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E6A1117D45
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 02:40:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEAF5117D4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 02:41:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfLJBkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 20:40:19 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:38626 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfLJBkT (ORCPT
+        id S1727131AbfLJBk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 20:40:59 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39866 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726538AbfLJBk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 20:40:19 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBA1YOVS103590;
-        Tue, 10 Dec 2019 01:39:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=oyUzKzdeM0sxcJ7Rn8NSTTlnn7CO7NRM2Vib/efPBPs=;
- b=h12ow5T7teHpqRI6Npdj7UzbVXmJKU77i1ypMi9Q13tfEXzCbqI/8nxxi6U+KvUVY7tg
- 5u974DQR736kYxbORtmpntRzpITG2VW8T/xIATmTkLpECXRahq8fsSqlj6NDa9GNnL+z
- QOcm4B4pBSCTDN4QRl3JSzDcdj1LZPRgJuthK/7FF38rAaPzY2D4x/mzkpEirmOuVL7Z
- Ik+fMuiUOkm8A5SfjeL50aQctQmBliPGjCUEq3AjC5pDRwI4SpjB7GVtM29M65dLrAl9
- suwIc07TDWl91LASdYvApd275xT6bt1yJgwmosLvJUPIh/pmn0jLRAEAxuPd0TQgG/7Y rA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2wrw4myy6r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 01:39:55 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBA1cvni170721;
-        Tue, 10 Dec 2019 01:39:55 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2wsv8awr0m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 01:39:55 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBA1dqKd019213;
-        Tue, 10 Dec 2019 01:39:52 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Dec 2019 17:39:51 -0800
-To:     Lee Duncan <LDuncan@suse.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "wubo \(T\)" <wubo40@huawei.com>,
-        "cleech\@redhat.com" <cleech@redhat.com>,
-        "jejb\@linux.ibm.com" <jejb@linux.ibm.com>,
-        "open-iscsi\@googlegroups.com" <open-iscsi@googlegroups.com>,
-        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ulrich Windl <Ulrich.Windl@rz.uni-regensburg.de>,
-        Mingfangsen <mingfangsen@huawei.com>,
-        "liuzhiqiang \(I\)" <liuzhiqiang26@huawei.com>
-Subject: Re: [PATCH V4] scsi: avoid potential deadlock in iscsi_if_rx func
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915E3D4D2@dggeml505-mbx.china.huawei.com>
-        <yq1o8whqem3.fsf@oracle.com>
-        <ccda52ac-2ea7-b0d2-e36e-08f162569c7c@suse.com>
-Date:   Mon, 09 Dec 2019 20:39:49 -0500
-In-Reply-To: <ccda52ac-2ea7-b0d2-e36e-08f162569c7c@suse.com> (Lee Duncan's
-        message of "Tue, 10 Dec 2019 00:40:59 +0000")
-Message-ID: <yq18snlnel6.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Mon, 9 Dec 2019 20:40:59 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e10so17915288ljj.6;
+        Mon, 09 Dec 2019 17:40:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vlZI4rEGeiq9jWtOY0aFxUeSEkD9VPU1bYTxW9kWFdQ=;
+        b=BmJF6QvuU9k+gicud6GQqh3PEAWQm7BMYysarKVmqLASdkf9Y2zuA2/X2c5UPAqrBq
+         5mt5MzpfDukUo5XlzsMHZp0F6wE+pX+BbqLCZm6TEB1VZoO4azosLsQlSNz5ohVmskmj
+         ofagIgmQ/nDydCKMIWjkDlHfEzb7L8sczSGADD4+vb8yE48LLcvdooCU0y86FL/HANB2
+         MrerD/9WjyqPPX3ggAw51HsaMZadtv6CN6NwZQc5bDRT6O6Yp9ZTz8+YjLDy7DcYIGCD
+         YfcWFZNUAB7DLa3YiqNQHpf5twwfAdxPCimo6doMmWi7emJuc5KK/wkQtxcPlaQ00Vn7
+         lNOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vlZI4rEGeiq9jWtOY0aFxUeSEkD9VPU1bYTxW9kWFdQ=;
+        b=a/NWDOy0x6j6279sDqva/SeQLCN4hd/7oMXEVuFptQt8srOYuabapS79gtTbaxpLD9
+         w8DqA7olQonq8OH2YhzCMAVfkwkn7ZR645pMpbu0F2cZlPCHkotiHHmG7L+VnkhWohOx
+         1qO2i3AMYQIhj9aAqNAM2IjL7aA6thsC52sYf8fNNGL3gKtJTuOZZphwwmgWYJgQqpCF
+         4qiYIxkMGD5xnuDZoXk5Z46lmRVXJneX/X5kDsJe6cLv5Wc6sFh/qZzXYnZuzv95gm30
+         82hzc4Uf8iYhuytmrIDTls1QofPmC2i5Za2rBKqjLHHPXY9b7kQ6ZLLqePJ75K4YxuHg
+         sRDg==
+X-Gm-Message-State: APjAAAUCObs5gkvzSCtchGqYp2eoHPwhy3VVyHcy8BKG4jy2a9/Y+j1h
+        xYGOomT8BHTvSx1hZgO0vyF5SEdW
+X-Google-Smtp-Source: APXvYqwq8U1I4QevksCt7+Ui2gdfuQtFkkgMtrKqkyij2iotR9ysDAJHihyh7B9qC1ZNBOAMNUsYEA==
+X-Received: by 2002:a2e:144b:: with SMTP id 11mr18625869lju.216.1575942056544;
+        Mon, 09 Dec 2019 17:40:56 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id r125sm522813lff.70.2019.12.09.17.40.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 17:40:56 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] sdhci: tegra: Add workaround for Broadcom WiFi
+Date:   Tue, 10 Dec 2019 04:40:11 +0300
+Message-Id: <20191210014011.21987-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=797
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912100013
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9466 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=860 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912100013
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+All Tegra20 boards that have embedded Broadcom WiFi SDIO chip are affected
+by a problem where WiFi chip reports CCCR v1.10, while it should v1.20.
+In a result high-speed mode isn't enabled for the WiFi card and this
+results in a malfunctioning SDIO communication.
 
-Lee,
+ brcmfmac: brcmf_sdio_readframes: read 304 bytes from channel 1 failed: -84
+ brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
 
-> My sincere apologies. I told wubo I had already reviewed the patch, so
-> he didn't need another Reviewed-by from me. I see I was wrong.
+Downstream kernels are overriding card's CCCR info in SDHCI driver to fix
+the problem, let's do the same in upstream.
 
-OK.
+The change is inspired by omap_hsmmc_init_card() of OMAP's HSMMC driver,
+which overrides card's info for the TI wl1251 WiFi.
 
-The patch was all mangled so I had to apply the changes by hand. Can't
-say that I'm a big fan of retries going negative but I guess that's just
-personal taste.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Applied to 5.5/scsi-fixes. Thanks!
-
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 7bc950520fd9..2ad87da98f2c 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1501,6 +1501,32 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
+ 	return ret;
+ }
+ 
++static void sdhci_tegra_init_card(struct mmc_host *mmc, struct mmc_card *card)
++{
++	if (card->type == MMC_TYPE_SDIO) {
++		struct device_node *np = mmc_dev(mmc)->of_node;
++
++		np = of_get_compatible_child(np, "brcm,bcm4329-fmac");
++		if (np) {
++			dev_info(mmc_dev(mmc), "found bcm4329\n");
++
++			/*
++			 * All Tegra20 boards that have embedded BCM4329
++			 * chip need to enable high speed for SDIO, otherwise
++			 * further communication with the card doesn't work
++			 * well.
++			 *
++			 * Later BCM43xx chips do not need this workaround,
++			 * but there is no good way to differentiate chip's
++			 * version at this stage and it doesn't cause any
++			 * harm for the later chips.
++			 */
++			card->cccr.high_speed = 1;
++			of_node_put(np);
++		}
++	}
++}
++
+ static int sdhci_tegra_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match;
+@@ -1545,6 +1571,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 		host->mmc_host_ops.execute_tuning =
+ 				tegra_sdhci_execute_hw_tuning;
+ 
++	host->mmc_host_ops.init_card = sdhci_tegra_init_card;
++
+ 	rc = mmc_of_parse(host->mmc);
+ 	if (rc)
+ 		goto err_parse_dt;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.24.0
+
