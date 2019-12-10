@@ -2,101 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EBD2118E4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 17:57:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9F7B118E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 17:58:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbfLJQ5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 11:57:05 -0500
-Received: from relay.sw.ru ([185.231.240.75]:36462 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727545AbfLJQ5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 11:57:05 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104] helo=localhost.localdomain)
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ieio7-0006yx-JX; Tue, 10 Dec 2019 19:56:19 +0300
-Subject: [PATCH RFC 3/3] ext4: Notify block device about fallocate(0)-assigned
- blocks
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Cc:     axboe@kernel.dk, tytso@mit.edu, adilger.kernel@dilger.ca,
-        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
-        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        ktkhai@virtuozzo.com, andrea.parri@amarulasolutions.com,
-        hare@suse.com, tj@kernel.org, ajay.joshi@wdc.com, sagi@grimberg.me,
-        dsterba@suse.com, chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
-        dhowells@redhat.com, asml.silence@gmail.com
-Date:   Tue, 10 Dec 2019 19:56:19 +0300
-Message-ID: <157599697948.12112.3846364542350011691.stgit@localhost.localdomain>
-In-Reply-To: <157599668662.12112.10184894900037871860.stgit@localhost.localdomain>
-References: <157599668662.12112.10184894900037871860.stgit@localhost.localdomain>
-User-Agent: StGit/0.19
+        id S1727634AbfLJQ6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 11:58:36 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29645 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727535AbfLJQ6g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 11:58:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575997114;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kloBvw8RGWK1lP3SGtf1eARoYVSiVMuq6V2S364vtNA=;
+        b=MrvvEQqZ9IjHgdWhnGrLfZ9sNtPcN7QYa1fx9SLjWFrM5vYLWv2tHPpYLgVrzVzLR9Mt93
+        oF0QnKIa1ktTt5G6g2N8U99IPbE+/LcM4C1oABEXzZOzmIG2EYg/Ty5figCyC44hy41q/G
+        mZ4DYI5GFbu5TfY51ILoUVQvk2rjFJA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-310-a3Q0C6xYPXGoFovyHN5gSQ-1; Tue, 10 Dec 2019 11:58:31 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 38AA41005512;
+        Tue, 10 Dec 2019 16:58:30 +0000 (UTC)
+Received: from x1.home (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3154360BE1;
+        Tue, 10 Dec 2019 16:58:25 +0000 (UTC)
+Date:   Tue, 10 Dec 2019 09:58:24 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>
+Subject: Re: [RFC PATCH 1/9] vfio/pci: introduce mediate ops to intercept
+ vfio-pci ops
+Message-ID: <20191210095824.5c4cdad7@x1.home>
+In-Reply-To: <20191210024422.GA27331@joy-OptiPlex-7040>
+References: <20191205032419.29606-1-yan.y.zhao@intel.com>
+        <20191205032536.29653-1-yan.y.zhao@intel.com>
+        <20191205165519.106bd210@x1.home>
+        <20191206075655.GG31791@joy-OptiPlex-7040>
+        <20191206142226.2698a2be@x1.home>
+        <20191209034225.GK31791@joy-OptiPlex-7040>
+        <20191209170339.2cb3d06e@x1.home>
+        <20191210024422.GA27331@joy-OptiPlex-7040>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: a3Q0C6xYPXGoFovyHN5gSQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call sb_issue_assign_range() after extent range was allocated
-on user request. Hopeful, this helps block device to maintain
-its internals in the best way, if this is appliable.
+On Mon, 9 Dec 2019 21:44:23 -0500
+Yan Zhao <yan.y.zhao@intel.com> wrote:
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
- fs/ext4/ext4.h    |    1 +
- fs/ext4/extents.c |   11 +++++++++--
- 2 files changed, 10 insertions(+), 2 deletions(-)
+> > > > > Currently, yes, i40e has build dependency on vfio-pci.
+> > > > > It's like this, if i40e decides to support SRIOV and compiles in vf
+> > > > > related code who depends on vfio-pci, it will also have build dependency
+> > > > > on vfio-pci. isn't it natural?    
+> > > > 
+> > > > No, this is not natural.  There are certainly i40e VF use cases that
+> > > > have no interest in vfio and having dependencies between the two
+> > > > modules is unacceptable.  I think you probably want to modularize the
+> > > > i40e vfio support code and then perhaps register a table in vfio-pci
+> > > > that the vfio-pci code can perform a module request when using a
+> > > > compatible device.  Just and idea, there might be better options.  I
+> > > > will not accept a solution that requires unloading the i40e driver in
+> > > > order to unload the vfio-pci driver.  It's inconvenient with just one
+> > > > NIC driver, imagine how poorly that scales.
+> > > >     
+> > > what about this way:
+> > > mediate driver registers a module notifier and every time when
+> > > vfio_pci is loaded, register to vfio_pci its mediate ops?
+> > > (Just like in below sample code)
+> > > This way vfio-pci is free to unload and this registering only gives
+> > > vfio-pci a name of what module to request.
+> > > After that,
+> > > in vfio_pci_open(), vfio-pci requests the mediate driver. (or puts
+> > > the mediate driver when mediate driver does not support mediating the
+> > > device)
+> > > in vfio_pci_release(), vfio-pci puts the mediate driver.
+> > > 
+> > > static void register_mediate_ops(void)
+> > > {
+> > >         int (*func)(struct vfio_pci_mediate_ops *ops) = NULL;
+> > > 
+> > >         func = symbol_get(vfio_pci_register_mediate_ops);
+> > > 
+> > >         if (func) {
+> > >                 func(&igd_dt_ops);
+> > >                 symbol_put(vfio_pci_register_mediate_ops);
+> > >         }
+> > > }
+> > > 
+> > > static int igd_module_notify(struct notifier_block *self,
+> > >                               unsigned long val, void *data)
+> > > {
+> > >         struct module *mod = data;
+> > >         int ret = 0;
+> > > 
+> > >         switch (val) {
+> > >         case MODULE_STATE_LIVE:
+> > >                 if (!strcmp(mod->name, "vfio_pci"))
+> > >                         register_mediate_ops();
+> > >                 break;
+> > >         case MODULE_STATE_GOING:
+> > >                 break;
+> > >         default:
+> > >                 break;
+> > >         }
+> > >         return ret;
+> > > }
+> > > 
+> > > static struct notifier_block igd_module_nb = {
+> > >         .notifier_call = igd_module_notify,
+> > >         .priority = 0,
+> > > };
+> > > 
+> > > 
+> > > 
+> > > static int __init igd_dt_init(void)
+> > > {
+> > > 	...
+> > > 	register_mediate_ops();
+> > > 	register_module_notifier(&igd_module_nb);
+> > > 	...
+> > > 	return 0;
+> > > }  
+> > 
+> > 
+> > No, this is bad.  Please look at MODULE_ALIAS() and request_module() as
+> > used in the vfio-platform for loading reset driver modules.  I think
+> > the correct approach is that vfio-pci should perform a request_module()
+> > based on the device being probed.  Having the mediation provider
+> > listening for vfio-pci and registering itself regardless of whether we
+> > intend to use it assumes that we will want to use it and assumes that
+> > the mediation provider module is already loaded.  We should be able to
+> > support demand loading of modules that may serve no other purpose than
+> > providing this mediation.  Thanks,  
+> hi Alex
+> Thanks for this message.
+> So is it good to create a separate module as mediation provider driver,
+> and alias its module name to "vfio-pci-mediate-vid-did".
+> Then when vfio-pci probes the device, it requests module of that name ?
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index f8578caba40d..fe2263c00c0e 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -622,6 +622,7 @@ enum {
- 	 * allows jbd2 to avoid submitting data before commit. */
- #define EXT4_GET_BLOCKS_IO_SUBMIT		0x0400
- 
-+#define EXT4_GET_BLOCKS_SUBMIT_ALLOC		0x0800
- /*
-  * The bit position of these flags must not overlap with any of the
-  * EXT4_GET_BLOCKS_*.  They are used by ext4_find_extent(),
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 0e8708b77da6..5f4fc660cbb1 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4490,6 +4490,13 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
- 		ar.len = allocated;
- 
- got_allocated_blocks:
-+	if ((flags & EXT4_GET_BLOCKS_SUBMIT_ALLOC) && sbi->fallocate) {
-+		err = sb_issue_assign_range(inode->i_sb, newblock,
-+			EXT4_C2B(sbi, allocated_clusters), GFP_NOFS);
-+		if (err)
-+			goto free_on_err;
-+	}
-+
- 	/* try to insert new extent into found leaf and return */
- 	ext4_ext_store_pblock(&newex, newblock + offset);
- 	newex.ee_len = cpu_to_le16(ar.len);
-@@ -4506,7 +4513,7 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
- 	if (!err)
- 		err = ext4_ext_insert_extent(handle, inode, &path,
- 					     &newex, flags);
--
-+free_on_err:
- 	if (err && free_on_err) {
- 		int fb_flags = flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE ?
- 			EXT4_FREE_BLOCKS_NO_QUOT_UPDATE : 0;
-@@ -4926,7 +4933,7 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 	lblk = offset >> blkbits;
- 
- 	max_blocks = EXT4_MAX_BLOCKS(len, offset, blkbits);
--	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
-+	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT | EXT4_GET_BLOCKS_SUBMIT_ALLOC;
- 	if (mode & FALLOC_FL_KEEP_SIZE)
- 		flags |= EXT4_GET_BLOCKS_KEEP_SIZE;
- 
+I think this would give us an option to have the mediator as a separate
+module, but not require it.  Maybe rather than a request_module(),
+where if we follow the platform reset example we'd then expect the init
+code for the module to register into a list, we could do a
+symbol_request().  AIUI, this would give us a reference to the symbol
+if the module providing it is already loaded, and request a module
+(perhaps via an alias) if it's not already load.  Thanks,
 
+Alex
 
