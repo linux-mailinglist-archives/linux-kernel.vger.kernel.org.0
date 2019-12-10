@@ -2,262 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C66CB118745
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:53:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A365118769
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:54:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbfLJLv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 06:51:58 -0500
-Received: from onstation.org ([52.200.56.107]:42316 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727681AbfLJLvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:51:55 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id EF4BA3E8F7;
-        Tue, 10 Dec 2019 11:51:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1575978714;
-        bh=30eM9AeN2U7UZiaB8mnsdwLndEUaPhap2fjO0o8/B50=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ISDoyhvpC4VpbMXCaTUeDalAIMymmq+F6jnvBUX6eYmgwaIBnpyahiibx4RihlGTJ
-         XmbE9ENMbzq1qvkK54tU1Y9MnnGb7ib40RUKVKRPlGo7qEyH3LZp6EHzh1xql2ojiI
-         f4n/LaY+uHSbHx+4fnQ8yBu1b+qMP+SnPx02M1Lw=
-Date:   Tue, 10 Dec 2019 06:51:53 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     sboyd@kernel.org, dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/7] clk: qcom: add support for setting the duty cycle
-Message-ID: <20191210115153.GA10298@onstation.org>
-References: <20191205002503.13088-1-masneyb@onstation.org>
- <20191205002503.13088-2-masneyb@onstation.org>
- <0101016eee224b50-8a5545e2-837f-41c2-9574-b385e111a6b3-000000@us-west-2.amazonses.com>
+        id S1727354AbfLJLyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:54:08 -0500
+Received: from mail-eopbgr690075.outbound.protection.outlook.com ([40.107.69.75]:37834
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726957AbfLJLyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 06:54:08 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FZxKa5PAzUCGxlC0pryyf8MimNaXpcPf3lqLVg7AgWXVnQMNpPqFw8hVY28AHuYI+M/BOQRI0xXAjYaOVGjTdnubDBGIOdE/G5Vta/3skfVq3gf0rybi9V2TL4pAYfAIRc1JkaTdcpzRHe+yrJIZvyrCc+ScdLYQNnPNUoJuuW30BULQf6MGh+4hlThxUo68KPftP4mJT28skUzaY3JOmaeAx6hNxfXJtDKGYIPzvNeKtQWcAKfIDuQfy7XKk3lIx7vou0L2K8D/77FXY49ckBtvitbMCxRL1x+arWn8l7qw9wfEijN4CS2/MI67vl1sRi5KsXnMPEkycmR//FKczQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EzBTL6fabqvegSF/Ooo7Qg5j/2xOnygEpuKdiCjuwLo=;
+ b=ghdIShCaiWVdLf4rKNoQg0vZzLEO8/URLRSOtUpY2FKaHNzfEzBUn3XcQDcM1l8IIWKj8OdwR1MqiC0w0CjLaVpBlP2rEpAIq/p4+jPWpdSj2/H8cBTZq4gfB0ujB/9L4kMFujGh3jIix4gG3hHYtjIfXN+ybV1cmZIe2uPv6sYmQ5TaJr/KSbkmBvolXxf2/ebAHJRBlp83HhwChrNmxrseBiDAi/SFnKPIfPyX2hWEscclNmEgDFsSRo2LWov0mD6/eyN9h/2rlBBP/oz3z59UIraBOZJGXLBLv1ty3VZSuCQqh7hyVQej0qeNfMabCyKaTksc7jY/+FLgKDd0bg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=gmail.com smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EzBTL6fabqvegSF/Ooo7Qg5j/2xOnygEpuKdiCjuwLo=;
+ b=nTJF7tn5J0jBwPEG6H8Vw5Em339GHwxw3WWIQO5pQCPEdSFz99gOwTZMXaUHzuLVIpfucTE4voVBI+9grmMLNhT2AymLTOWEjSuZHh1Wfn2nd+p/rbqiK2t7n65iDjZygGeoct4mxIcjjOUPzz6T9Gz3yIH6Q3/oouT6YwMh1tg=
+Received: from BN7PR02CA0019.namprd02.prod.outlook.com (2603:10b6:408:20::32)
+ by DM6PR02MB5547.namprd02.prod.outlook.com (2603:10b6:5:34::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2495.22; Tue, 10 Dec
+ 2019 11:54:04 +0000
+Received: from CY1NAM02FT009.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::203) by BN7PR02CA0019.outlook.office365.com
+ (2603:10b6:408:20::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.14 via Frontend
+ Transport; Tue, 10 Dec 2019 11:54:04 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT009.mail.protection.outlook.com (10.152.75.12) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2495.26
+ via Frontend Transport; Tue, 10 Dec 2019 11:54:03 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1iee5b-0005O0-Gl; Tue, 10 Dec 2019 03:54:03 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1iee5W-0007OP-DB; Tue, 10 Dec 2019 03:53:58 -0800
+Received: from xsj-pvapsmtp01 (mail.xilinx.com [149.199.38.66] (may be forged))
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xBABrr2N026952;
+        Tue, 10 Dec 2019 03:53:53 -0800
+Received: from [172.30.17.107]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1iee5Q-0007N5-Va; Tue, 10 Dec 2019 03:53:53 -0800
+Subject: Re: [PATCH v2 2/2] devicetree: bindings: Add the binding doc for
+ xilinx APM
+To:     shubhrajyoti.datta@gmail.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     michal.simek@xilinx.com, gregkh@linuxfoundation.org,
+        robh+dt@kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+References: <1575901405-3084-1-git-send-email-shubhrajyoti.datta@gmail.com>
+ <1575901405-3084-2-git-send-email-shubhrajyoti.datta@gmail.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <2cbd5530-b050-6c07-de47-984dda9b9dd2@xilinx.com>
+Date:   Tue, 10 Dec 2019 12:53:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0101016eee224b50-8a5545e2-837f-41c2-9574-b385e111a6b3-000000@us-west-2.amazonses.com>
+In-Reply-To: <1575901405-3084-2-git-send-email-shubhrajyoti.datta@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(396003)(376002)(136003)(189003)(199004)(5660300002)(2616005)(356004)(9786002)(426003)(8936002)(107886003)(4326008)(70206006)(8676002)(81156014)(81166006)(478600001)(316002)(31686004)(70586007)(336012)(2906002)(186003)(36756003)(26005)(44832011)(31696002)(42866002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB5547;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 559b7c53-878d-4452-479f-08d77d67a780
+X-MS-TrafficTypeDiagnostic: DM6PR02MB5547:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB554715A67A5A23F43EB0A436C65B0@DM6PR02MB5547.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 02475B2A01
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 4U38Zh1tZ3edPa/H9tow0Nk/BSXFfYAyDi88ozoyDjBJnXS/fg5gSYhSz5B1Qa5/7+GJZ3ZKx6IeruxJsuKsAF5+Vk26jYYcvxv/FFhbEFxPjTAlJrgtr692JnuhktNw26pYQCM/cNbbAKRt0AG/YzqkuWZE0e9gYdkU/J/l4qrM9gcyO4ddLP0UsPljRE0dsrhKkSP6UQYwYHuz1WKrq0iuSCrWj/TK7uDiaJFseO8EeO3H43b5km92rLSulHwDhspAXPUgMWs9cYyU2uBsZfx/CxH6kWlnO5a+OX5Aa9aqSUmjuYSFpQ2ylWVicF2dmMhwwn2I2f/9o9YSfU/OPiDgoM0jteG/BjFO1vFSHuD+gX54p8JFAIaQw4TdM0l+Xli3HBMZRkE93OgFSZPx00kSCVtOlhiK0uooo3QyCyByZQo4Jp7CG4Ruenh1T1cvE7MkugXnmWrPFRG4Hnu/fzl6N0sEl7YVSKYKPgsVjlyu1iNl+e2rH49BgQM9nSeZ
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2019 11:54:03.9798
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 559b7c53-878d-4452-479f-08d77d67a780
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5547
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Taniya,
-
-On Tue, Dec 10, 2019 at 04:47:35AM +0000, Taniya Das wrote:
-> On 12/5/2019 5:54 AM, Brian Masney wrote:
-> > Add support for setting the duty cycle via the D register for the
-> > Qualcomm clocks.
-> > 
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > ---
-> > A few quirks that were noted when varying the speed of CAMSS_GP1_CLK on
-> > msm8974 (Nexus 5 phone):
-> > 
-> >    - The mnd_width is set to 8 bits, however the d width is actually 7
-> >      bits, at least for this clock. I'm not sure about the other clocks.
-> > 
-> >    - When the d register has a value less than 17, the following error
-> >      from update_config() is shown: rcg didn't update its configuration.
-> >      So this patch keeps the value of the d register within the range
-> >      [17, 127].
-> > 
-> > I'm not sure about the relationship of the m, n, and d values,
-> > especially how the 50% duty cycle is calculated by inverting the n
-> > value, so that's why I'm saving the duty cycle ratio for
-> > get_duty_cycle().
-> > 
-> >   drivers/clk/qcom/clk-rcg.h  |  4 +++
-> >   drivers/clk/qcom/clk-rcg2.c | 61 +++++++++++++++++++++++++++++++++++--
-> >   2 files changed, 63 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> > index 78358b81d249..c3b8732cec8f 100644
-> > --- a/drivers/clk/qcom/clk-rcg.h
-> > +++ b/drivers/clk/qcom/clk-rcg.h
-> > @@ -139,6 +139,8 @@ extern const struct clk_ops clk_dyn_rcg_ops;
-> >    * @freq_tbl: frequency table
-> >    * @clkr: regmap clock handle
-> >    * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
-> > + * @duty_cycle_num: Numerator of the duty cycle ratio
-> > + * @duty_cycle_den: Denominator of the duty cycle ratio
-> >    */
-> >   struct clk_rcg2 {
-> >   	u32			cmd_rcgr;
-> > @@ -149,6 +151,8 @@ struct clk_rcg2 {
-> >   	const struct freq_tbl	*freq_tbl;
-> >   	struct clk_regmap	clkr;
-> >   	u8			cfg_off;
-> > +	int			duty_cycle_num;
-> > +	int			duty_cycle_den;
-> >   };
-> >   #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
-> > diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> > index 8f4b9bec2956..8d685baefe50 100644
-> > --- a/drivers/clk/qcom/clk-rcg2.c
-> > +++ b/drivers/clk/qcom/clk-rcg2.c
-> > @@ -258,7 +258,11 @@ static int clk_rcg2_determine_floor_rate(struct clk_hw *hw,
-> >   	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, FLOOR);
-> >   }
-> > -static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> > +static int __clk_rcg2_configure_with_duty_cycle(struct clk_rcg2 *rcg,
-> > +						const struct freq_tbl *f,
-> > +						int d_reg_val,
-> > +						int duty_cycle_num,
-> > +						int duty_cycle_den)
-> >   {
-> >   	u32 cfg, mask;
-> >   	struct clk_hw *hw = &rcg->clkr.hw;
-> > @@ -280,9 +284,12 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> >   			return ret;
-> >   		ret = regmap_update_bits(rcg->clkr.regmap,
-> > -				RCG_D_OFFSET(rcg), mask, ~f->n);
-> > +				RCG_D_OFFSET(rcg), mask, d_reg_val);
-> >   		if (ret)
-> >   			return ret;
-> > +
-> > +		rcg->duty_cycle_num = duty_cycle_num;
-> > +		rcg->duty_cycle_den = duty_cycle_den;
-> >   	}
-> >   	mask = BIT(rcg->hid_width) - 1;
-> > @@ -295,6 +302,12 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> >   					mask, cfg);
-> >   }
-> > +static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> > +{
-> > +	/* Set a 50% duty cycle */
-> > +	return __clk_rcg2_configure_with_duty_cycle(rcg, f, ~f->n, 1, 2);
-> > +}
-> > +
-> >   static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> >   {
-> >   	int ret;
-> > @@ -353,6 +366,32 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
-> >   	return __clk_rcg2_set_rate(hw, rate, FLOOR);
-> >   }
-> > +static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-> > +{
-> > +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> > +
-> > +	duty->num = rcg->duty_cycle_num;
-> > +	duty->den = rcg->duty_cycle_den;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-> > +{
-> > +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> > +	int ret, d_reg_val, mask;
-> > +
-> > +	mask = BIT(rcg->mnd_width - 1) - 1;
-> > +	d_reg_val = mask - (((mask - 17) * duty->num) / duty->den);
-> > +	ret = __clk_rcg2_configure_with_duty_cycle(rcg, rcg->freq_tbl,
-> > +						   d_reg_val, duty->num,
-> > +						   duty->den);
+On 09. 12. 19 15:23, shubhrajyoti.datta@gmail.com wrote:
+> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 > 
-> The duty-cycle calculation is not accurate.
-> There is already a plan to submit the duty-cycle changes from my side.
-
-OK... I assume that the m and n values need to be changed as well. I
-couldn't find any docs online about the meaning of the m, n, and d
-values and how they relate to each other.
-
-Feel free to take over this patch if you find any value in what I posted
-here.
-
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return update_config(rcg);
-> > +}
-> > +
-> >   const struct clk_ops clk_rcg2_ops = {
-> >   	.is_enabled = clk_rcg2_is_enabled,
-> >   	.get_parent = clk_rcg2_get_parent,
-> > @@ -361,6 +400,8 @@ const struct clk_ops clk_rcg2_ops = {
-> >   	.determine_rate = clk_rcg2_determine_rate,
-> >   	.set_rate = clk_rcg2_set_rate,
-> >   	.set_rate_and_parent = clk_rcg2_set_rate_and_parent,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_rcg2_ops);
-> > @@ -372,6 +413,8 @@ const struct clk_ops clk_rcg2_floor_ops = {
-> >   	.determine_rate = clk_rcg2_determine_floor_rate,
-> >   	.set_rate = clk_rcg2_set_floor_rate,
-> >   	.set_rate_and_parent = clk_rcg2_set_floor_rate_and_parent,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
-> > @@ -499,6 +542,8 @@ const struct clk_ops clk_edp_pixel_ops = {
-> >   	.set_rate = clk_edp_pixel_set_rate,
-> >   	.set_rate_and_parent = clk_edp_pixel_set_rate_and_parent,
-> >   	.determine_rate = clk_edp_pixel_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_edp_pixel_ops);
-> > @@ -557,6 +602,8 @@ const struct clk_ops clk_byte_ops = {
-> >   	.set_rate = clk_byte_set_rate,
-> >   	.set_rate_and_parent = clk_byte_set_rate_and_parent,
-> >   	.determine_rate = clk_byte_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_byte_ops);
-> > @@ -627,6 +674,8 @@ const struct clk_ops clk_byte2_ops = {
-> >   	.set_rate = clk_byte2_set_rate,
-> >   	.set_rate_and_parent = clk_byte2_set_rate_and_parent,
-> >   	.determine_rate = clk_byte2_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_byte2_ops);
-> > @@ -717,6 +766,8 @@ const struct clk_ops clk_pixel_ops = {
-> >   	.set_rate = clk_pixel_set_rate,
-> >   	.set_rate_and_parent = clk_pixel_set_rate_and_parent,
-> >   	.determine_rate = clk_pixel_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_pixel_ops);
-> > @@ -804,6 +855,8 @@ const struct clk_ops clk_gfx3d_ops = {
-> >   	.set_rate = clk_gfx3d_set_rate,
-> >   	.set_rate_and_parent = clk_gfx3d_set_rate_and_parent,
-> >   	.determine_rate = clk_gfx3d_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
-> > @@ -942,6 +995,8 @@ const struct clk_ops clk_rcg2_shared_ops = {
-> >   	.determine_rate = clk_rcg2_determine_rate,
-> >   	.set_rate = clk_rcg2_shared_set_rate,
-> >   	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
-> > @@ -1081,6 +1136,8 @@ static const struct clk_ops clk_rcg2_dfs_ops = {
-> >   	.get_parent = clk_rcg2_get_parent,
-> >   	.determine_rate = clk_rcg2_dfs_determine_rate,
-> >   	.recalc_rate = clk_rcg2_dfs_recalc_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> > 
+> Add the devicetree binding for xilinx APM.
 > 
-> Why do you want to support duty-cycle for other RCGs when you are
-> specifically want it for GP clocks only.
-> The DFS can never handle duty-cycle set/get.
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> ---
+> v2:
+> patch added
+> 
+>  .../devicetree/bindings/perf/xilinx_apm.txt        | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/perf/xilinx_apm.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/perf/xilinx_apm.txt b/Documentation/devicetree/bindings/perf/xilinx_apm.txt
+> new file mode 100644
+> index 0000000..a11c82e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/perf/xilinx_apm.txt
+> @@ -0,0 +1,44 @@
+> +* Xilinx AXI Performance monitor IP
+> +
+> +Required properties:
+> +- compatible: "xlnx,axi-perf-monitor"
+> +- interrupts: Should contain APM interrupts.
+> +- interrupt-parent: Must be core interrupt controller.
+> +- reg: Should contain APM registers location and length.
+> +- xlnx,enable-profile: Enables the profile mode.
+> +- xlnx,enable-trace: Enables trace mode.
+> +- xlnx,num-monitor-slots: Maximum number of slots in APM.
+> +- xlnx,enable-event-count: Enable event count.
+> +- xlnx,enable-event-log: Enable event logging.
+> +- xlnx,have-sampled-metric-cnt:Sampled metric counters enabled in APM.
+> +- xlnx,num-of-counters: Number of counters in APM
+> +- xlnx,metric-count-width: Metric Counter width (32/64)
+> +- xlnx,metrics-sample-count-width: Sampled metric counter width
+> +- xlnx,global-count-width: Global Clock counter width
+> +- clocks: Input clock specifier.
+> +
+> +Optional properties:
+> +- xlnx,id-filter-32bit: APM is in 32-bit mode
+> +
+> +Example:
+> +++++++++
+> +
+> +apm: apm@44a00000 {
+> +    compatible = "xlnx,axi-perf-monitor";
+> +    interrupt-parent = <&axi_intc_1>;
+> +    interrupts = <1 2>;
+> +    reg = <0x44a00000 0x1000>;
+> +    clocks = <&clkc 15>;
+> +    xlnx,enable-profile = <0>;
+> +    xlnx,enable-trace = <0>;
+> +    xlnx,num-monitor-slots = <4>;
+> +    xlnx,enable-event-count = <1>;
+> +    xlnx,enable-event-log = <1>;
+> +    xlnx,have-sampled-metric-cnt = <1>;
+> +    xlnx,num-of-counters = <8>;
+> +    xlnx,metric-count-width = <32>;
+> +    xlnx,metrics-sample-count-width = <32>;
+> +    xlnx,global-count-width = <32>;
+> +    xlnx,metric-count-scale = <1>;
+> +    xlnx,id-filter-32bit;
+> +};
+> 
 
-I wrongly assumed that all of variants supported this. I did this
-without any of the hardware documentation.
+If you look at all latest bindings everybody are ask to convert them to
+yaml. That's why please do it too.
 
-Brian
+Thanks,
+Michal
