@@ -2,334 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F559119DB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:40:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73B9A119DD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:40:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730296AbfLJWjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:39:46 -0500
-Received: from gate.crashing.org ([63.228.1.57]:50313 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727484AbfLJWjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:39:44 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id xBAMd6uc026857;
-        Tue, 10 Dec 2019 16:39:07 -0600
-Message-ID: <50d2c44a15960760c6a9d24442a93fa4b31b7594.camel@kernel.crashing.org>
-Subject: Re: [RFC/PATCH] printk: Fix preferred console selection with
- multiple matches
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        AlekseyMakarov <aleksey.makarov@linaro.org>
-Date:   Wed, 11 Dec 2019 09:39:06 +1100
-In-Reply-To: <20191210091502.qoq55fdjad6aixab@pathway.suse.cz>
-References: <b8131bf32a5572352561ec7f2457eb61cc811390.camel@kernel.crashing.org>
-         <20191210091502.qoq55fdjad6aixab@pathway.suse.cz>
+        id S1730558AbfLJWki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:40:38 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41242 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727500AbfLJWkg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:40:36 -0500
+Received: by mail-pf1-f195.google.com with SMTP id s18so568683pfd.8
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 14:40:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=WhKcV9MhcHZ+rIDrMbDQc0mCzV2/LXUFgnxbFQ0koe4=;
+        b=fyRCRyjbRw/ahnal1DJZEhKbTukOYXWTOelfdC8IxlZgyJU+E3zpokgvCb1OZDcZX0
+         jEDUuL8VcXF5Zb0x26s2whsrtlzlfAyiWCiOvfgIznuT7lnviKisWYSUAGwUkKWKtvsR
+         6C4zCpSjJYjo6TgSp3Vp5idWbKVS57L/XUoJFEAYFjul+FGbzK1aeXcoHpFpcbMZZTSu
+         6KxjbQZLq3putByW3nDo65b5EQUTK5bPAVPk9vdsixG1I13zhNmCBAq6cd9QjUVlAOFd
+         FwIHkUCTi73L9mmgrYXepJZs6Ni9rfM56GzZ+SAjWh58R5h9IzpU7QSmtnmb68XxAyDh
+         jY0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WhKcV9MhcHZ+rIDrMbDQc0mCzV2/LXUFgnxbFQ0koe4=;
+        b=P7hzUV3NoV9BU9mF3afT4c3wS497Cgn1wjJP4FOAwV+nzF4KSHojOno4q4bRLTXARj
+         nGm/GExO8Mxr5rR9QMCuM2b8nBf7+Nj+IM8nXIcs+Z5t4ZIqhoCQnC6proRJrw4L5hrx
+         26Yq2v/uhhwV/ky7iTTbZFL+cZl95tgtxuW6VQbHCz7NpniQGb7Mkcq1/eG9fPNsMQpX
+         PE57U2vthDGpCy0ptnhC7/By3Hr47eDGHbNWBpUJ76ACTPLiAEWqyrxrACYwajWIBzPE
+         vOAcyiegeXYhCDgsARzEc6kANAFmg4x+wU1TjdpteTYCCSwMsB4eSUmYvzU9el8+KMrF
+         V41w==
+X-Gm-Message-State: APjAAAWH9Selxzqr869QqkqCjEh24IAaM68LKGV1dbhIw/PHgMn5QLLi
+        mUY+JREtVorRIJ2NyrYMajMELhZUOr82uvq1zNpx8g==
+X-Google-Smtp-Source: APXvYqziJWsPEGOvugy3+CzJsahNAxfE/CC9fJFp4r9R7cQDicZqjz0W5POh7mTSbWDdnZwsIhgGNBtzww4m99wZcsc=
+X-Received: by 2002:a63:480f:: with SMTP id v15mr481015pga.201.1576017635129;
+ Tue, 10 Dec 2019 14:40:35 -0800 (PST)
+MIME-Version: 1.0
+References: <20191206020153.228283-1-brendanhiggins@google.com>
+ <20191206020153.228283-2-brendanhiggins@google.com> <f217945d-ab64-10cc-bb12-3a4d810ff25a@cambridgegreys.com>
+ <CAFd5g45cSKATfw4GKPw6QdhQKDNi=0gcDRjQ7N0T1XrdtSTPrg@mail.gmail.com>
+ <20191207012108.GA220741@google.com> <15f048d3-07ab-61c1-c6e0-0712e626dd33@cambridgegreys.com>
+ <CAFd5g448yZ5nSVLnN0gvsv3jLnhWG+dzJgvH1jdV+s2eTq4wxg@mail.gmail.com>
+ <1785498655.111829.1575936178298.JavaMail.zimbra@nod.at> <87f182c6-82a3-d696-72e4-ddaa781a655b@cambridgegreys.com>
+In-Reply-To: <87f182c6-82a3-d696-72e4-ddaa781a655b@cambridgegreys.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 10 Dec 2019 14:40:24 -0800
+Message-ID: <CAFd5g46osmFBka0X60A+_mmetpreG+abnh_+GQmVrr+PPxrqxg@mail.gmail.com>
+Subject: Re: [RFC v1 1/2] um: drivers: remove support for UML_NET_PCAP
+To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        davidgow <davidgow@google.com>, Jeff Dike <jdike@addtoit.com>,
+        linux-um <linux-um@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-12-10 at 10:15 +0100, Petr Mladek wrote:
-> On Tue 2019-12-10 11:57:26, Benjamin Herrenschmidt wrote:
-> > In the following circumstances, the rule of selecting the console
-> > corresponding to the last "console=" entry on the command line as
-> > the preferred console (CON_CONSDEV, ie, /dev/console) fails. This
-> > is a specific example, but it could happen with different consoles
-> > that have a similar name aliasing mechanism.
-> > 
-> > This tentative fix changes the loop in register_console to continue
-> > matching with the array until the match is actually the preferred
-> > console.
-> 
-> One problem with this is that con->match() callbacks might have
-> side effects. If the console matches, the callback sometimes
-> do some changes in the console driver because it expects
-> that the console is going to be registered and used.
+On Mon, Dec 9, 2019 at 11:14 PM Anton Ivanov
+<anton.ivanov@cambridgegreys.com> wrote:
+>
+> On 10/12/2019 00:02, Richard Weinberger wrote:
+> > ----- Urspr=C3=BCngliche Mail -----
+> >> Von: "Brendan Higgins" <brendanhiggins@google.com>
+> >>> IMHO we should at least mark them as "obsolete" and start preparing t=
+o
+> >>> remove them.
+> >>
+> >> Alright, I will send a patch out which marks the other network drivers
+> >> as "obsolete".
+> >>
+> >> Clarification: Should I mark all UML network devices as "obsolete"
+> >> except for NET_VECTOR? Daemon and MCAST looked to me (I am not a
+> >> networking expert), like they might not be covered by vector.
+> >
+> > No. Why?
+> >
+> > Thanks,
+> > //richard
+> >
+> > _______________________________________________
+> > linux-um mailing list
+> > linux-um@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-um
+> >
+> At least pcap and vde are maintenance issues. They do not even build toda=
+y.
+>
+> Off the top of my head, daemon needs fixes to the switch - it has an
+> O(n) performance hit for n=3D"number of ports" as well as a few other iss=
+ues.
+>
+> Tap has a fully functional replacement
+>
+> Pcap has a fully functional replacement
+>
+> mcast for 2 instances is functionally equivalent to running l2tp or gre
+> back-to-back.
+>
+> IMHO we can start marking some of them as obsolete.
 
-It will still be enabled. I am not changing that. The main issue would
-be if the match callback chokes on being called multiple times.
+It looked to me like this discussion is ongoing; however, it seemed
+like the discussion might be boiling down to *which* drivers should be
+marked obsolete, so I decided to go ahead and send a patch which marks
+everything as deprecated. I figured it would make it easier to focus
+the conversation on what, if anything, should be marked obsolete:
 
-IE. The only change in behaviour I think with my patch is who gets to
-be the default, ie who gets to be first in the list with CONSDEV set.
-There should be no change in who gets enabled.
+https://lore.kernel.org/lkml/20191210223403.244842-1-brendanhiggins@google.=
+com/T/#u
 
-> I have solved the same problem some time ago and we use the following
-> patch in SUSE kernels.
-> 
-> Sigh, I have never send it upstream because it looked too complicated
-> to me. I wanted to clean up the console registration code a bit first,
-> see https://lkml.kernel.org/r/1497358444-30736-1-git-send-email-pmladek@suse.com
-> But it was pretty complicated and it has somehow fallen into cracks.
+Also, Anton, I flat out stole a bunch of your comments on this thread
+to make my commit message. Just respond with the appropriate tags
+(co-developed-by, etc) if you want to be credited for them. As it is,
+I marked you as "suggested-by".
 
-This looks indeed a lot more invasive. Is there any reason why what I
-propose wouldn't work as a first patch that can easily be backported ?
-
-I don't see how it would break anything but I haven't necessarily fully
-understood everything the driver match callbacks might be doing...
-
-We can continue cleaning up from there of course, but I'd be keen on
-having a minimal fix that can go back to stable first.
-
-> Anyway, here is the patch that we use. Could you please check if it
-> works for you as well? Does it make sense, please?
-
-I'll give it a spin. However I don't fully grasp why it's necessarily
-so complicated. Correct me if I'm wrong here but you are trying to
-address two issues in that patch:
-
- - The one I'm trying to address which is that we might "miss" the
-preferred console in the case of multiple matches.
-
- - The fact that when the preferred console isn't found, the one we
-default to (which ends up first in the list) is missing CONSDEV.
-
-Or am I missing something here ?
-
-Now couldnt we just use a combination of my patch and one that sets
-CONSDEV on the first enabled console if not set at the end of
-register_console ?
-
-If later on the preferred one comes in, it will be inserted first with
-CONSDEV and the flag will be removed from the previous first unless I
-misread the code.
-
-Cheers,
-Ben.
-
-> From: Petr Mladek <pmladek@suse.com>
-> Date: Tue, 20 Jun 2017 14:40:34 +0200
-> Subject: printk/console: Correctly mark console that is used when opening /dev/console
-> Patch-mainline: Never, an extensive clean up is being prepared for upstream
-> References: bsc#1040020
-> 
-> showconsole tool shows the real name of tty device associated with
-> /dev/console. It expects that the related console driver has set
-> CON_CONSDEV flag.
-> 
-> On the other hand, kernel ignores CON_CONSDEV flag when it looks
-> for the right driver. Instead, it takes the first driver that
-> has the tty binding (console->device). See tty_lookup_driver()
-> and console_device().
-> 
-> All this works most of the time because kernel puts the driver
-> with CON_CONSDEV flag first into the list. There is almost always
-> registered a real (non-boot) console with this flag set. The real
-> consoles mostly (always?) have tty binding. Boot consoles that
-> might miss the tty binding are always removed unless keep_bootcon
-> command line parameter is used.
-> 
-> The problem is when some consoles are defined on the command line
-> and the preferred one (last one) is not registered from some reason.
-> Note that the consoles might be added to the command line also
-> using ACPI SPCR or device tree. It might happen that, for example,
-> SPCR code and user add the same console using two aliases.
-> Then the first alias matches and we might miss that it matched
-> also with the preferred console.
-> 
-> There was one attempt to fix this by searching the command line
-> from the end and match the preferred alias first. But it caused
-> regressions. For example, ttyS* are taken as aliases as wellhttps://lkml.kernel.org/r/1497358444-30736-1-git-send-email-pmladek@suse.com
-> and kernel messages can appear only on one serial port.
-> The reversed matching caused that the logs suddenly appeared
-> on another serial port.
-> 
-> The right solution is to set CON_CONSDEV flag for the driver
-> used by tty_lookup_driver() even when the preferred console
-> is not registered.
-> 
-> It is a bit complicated because register_console() code is tricky.
-> It expects that only the preferred driver will have CON_CONSDEV
-> flag set. Also it expects that a boot console will stay firsthttps://lkml.kernel.org/r/1497358444-30736-1-git-send-email-pmladek@suse.com
-> in the list until the preferred console is registered. These
-> information are used to make various decisions:
-> 
->     + Use a fallback code when none console is configured on
->       the command line. This code tries to enable any console
->       until a real one is enabled.
-> 
->     + Unregister all boot consoles when the real preferred one
->       is registered. And do not reply the log on the real console
->       to avoid duplicates.
-> 
-> A rather invasive clean up is being prepared for upstream. This
-> patch tries to be as minimalist and do not change the order
-> of consoles as possible.
-> 
-> It keeps the logic about having a boot console first until
-> the real preferred console is registered. But it makes sure
-> that the first console with tty binding (console->device) will
-> have CON_CONSDEV flag set. Let's look at this in more details.
-> 
-> The fallback code in console_register() already works as
-> expected. It sets CON_CONSDEV flag for any console with
-> tty binding.
-> 
-> The code matching all consoles from the command line newly sets
-> CON_CONSDEV flag also for the fist console with the tty binding.
-> But it sets "consdev_fallback" to avoid putting this console
-> first into the list. Remember that we want to keep the boot
-> console first until the preferred is registered. The information
-> about the fallback is used also to avoid doing other actions
-> that need to wait for the preferred console.
-> 
-> The code adding the console into the list of drivers must
-> put non-preferred drivers with tty binding next to the
-> console with CON_CONSDEV set. This is the only change that
-> might change the order of console drivers in the list
-> and eventually cause regressions. But it has an effect only
-> when there are at least three drivers mentioned on the command
-> line, a boot console is registered and the preferred driver
-> is not registered. This should be a corner case.
-> 
-> Finally, unregister_console() sets CON_CONSDEV to first console
-> with tty binding instead of the first one in the list.
-> 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
->  kernel/printk/printk.c | 59 ++++++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 50 insertions(+), 9 deletions(-)
-> 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 94ec1aacea64..b6bb4d362b22 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2662,16 +2662,23 @@ void register_console(struct console *newcon)
->  	int i;
->  	unsigned long flags;
->  	struct console *bcon = NULL;
-> +	struct console *con_consdev = NULL;
->  	struct console_cmdline *c;
->  	static bool has_preferred;
-> +	bool consdev_fallback = false;
->  
-> -	if (console_drivers)
-> -		for_each_console(bcon)
-> +	if (console_drivers) {
-> +		for_each_console(bcon) {
->  			if (WARN(bcon == newcon,
->  					"console '%s%d' already registered\n",
->  					bcon->name, bcon->index))
->  				return;
->  
-> +			if (bcon->flags & CON_CONSDEV && !con_consdev)
-> +				con_consdev = bcon;
-> +		}
-> +	}
-> +
->  	/*
->  	 * before we register a new CON_BOOT console, make sure we don't
->  	 * already have a valid console
-> @@ -2739,8 +2746,17 @@ void register_console(struct console *newcon)
->  
->  		newcon->flags |= CON_ENABLED;
->  		if (i == preferred_console) {
-> +			/* This is the last console on the command line. */
->  			newcon->flags |= CON_CONSDEV;
->  			has_preferred = true;
-> +		} else if (newcon->device && !con_consdev) {
-> +			/*
-> +			 * This is the first console with tty binding. It will
-> +			 * be used for /dev/console when the preferred one
-> +			 * will not get registered for some reason.
-> +			 */
-> +			newcon->flags |= CON_CONSDEV;
-> +			consdev_fallback = true;
->  		}
->  		break;
->  	}
-> @@ -2754,7 +2770,9 @@ void register_console(struct console *newcon)
->  	 * the real console are the same physical device, it's annoying to
->  	 * see the beginning boot messages twice
->  	 */
-> -	if (bcon && ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV))
-> +	if (bcon &&
-> +	    ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV) &&
-> +	    !consdev_fallback)
->  		newcon->flags &= ~CON_PRINTBUFFER;
->  
->  	/*
-> @@ -2762,12 +2780,28 @@ void register_console(struct console *newcon)
->  	 *	preferred driver at the head of the list.
->  	 */
->  	console_lock();
-> -	if ((newcon->flags & CON_CONSDEV) || console_drivers == NULL) {
-> +	if ((newcon->flags & CON_CONSDEV && !consdev_fallback) ||
-> +	     console_drivers == NULL) {
-> +		/* Put the preferred or the first console at the head. */
->  		newcon->next = console_drivers;
->  		console_drivers = newcon;
-> -		if (newcon->next)
-> see 
-> https://lkml.kernel.org/r/1497358444-30736-1-git-send-email-pmladek@suse.com>
-> ; But it was pretty complicated and it has somehow fallen into
-> cracks.
-> This looks indeed a lot more invasive. Is there any reason why what I
-> propose wouldn't work as a first patch that can easily be backported
-> ?
-> I don't see how it would break anything but I haven't necessarily
-> fully understood everything the driver match callbacks might be
-> doing...
-> We can continue cleaning up from there of course, but I'd be keen on
-> having a minimal fix that can go back to stable first.
-> > Anyway, here is the patch that we use. Could you please check if
-> it> works for you as well? Does it make sense, please?
-> I'll give it a spin. Some comments on it at first look though:> 
-> 
-> -			newcon->next->flags &= ~CON_CONSDEV;
-> +		/* Only one console can have CON_CONSDEV flag set */
-> +		if (con_consdev)
-> +			con_consdev->flags &= ~CON_CONSDEV;
-> +	} else if (newcon->device && con_consdev) {
-> +		/*
-> +		 * Keep the driver associated with /dev/console.
-> +		 * We are here only when the console was enabled by the cycle
-> +		 * checking console_cmdline and this is neither preferred
-> +		 * console nor the consdev fallback.
-> +		 */
-> +		newcon->next = con_consdev->next;
-> +		con_consdev->next = newcon;
->  	} else {
-> +		/*
-> +		 * Keep a boot console first until the preferred real one
-> +		 * is registered.
-> +		 */
->  		newcon->next = console_drivers->next;
->  		console_drivers->next = newcon;
->  	}
-> @@ -2808,6 +2842,7 @@ void register_console(struct console *newcon)
->  		newcon->name, newcon->index);
->  	if (bcon &&
->  	    ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV) &&
-> +	    !consdev_fallback &&
->  	    !keep_bootcon) {
->  		/* We need to iterate through all boot consoles, to make
->  		 * sure we print everything out, before we unregister them.
-> @@ -2853,10 +2888,16 @@ int unregister_console(struct console *console)
->  
->  	/*
->  	 * If this isn't the last console and it has CON_CONSDEV set, we
-> -	 * need to set it on the next preferred console.
-> +	 * need to set it on the first console with tty binding.
->  	 */
-> -	if (console_drivers != NULL && console->flags & CON_CONSDEV)
-> -		console_drivers->flags |= CON_CONSDEV;
-> +	if (console_drivers != NULL && console->flags & CON_CONSDEV) {
-> +		for_each_console(a) {
-> +			if (a->device) {
-> +				a->flags |= CON_CONSDEV;
-> +				break;
-> +			}
-> +		}
-> +	}
->  
->  	console->flags &= ~CON_ENABLED;
->  	console_unlock();
-
+Cheers!
