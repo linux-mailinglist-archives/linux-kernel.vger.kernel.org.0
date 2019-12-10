@@ -2,113 +2,331 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A2C1182D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:52:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA761182E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:56:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfLJIwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 03:52:53 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40738 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfLJIwx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 03:52:53 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c14so19028894wrn.7
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 00:52:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=wu72ZcmsFHLVkAALMmbmLhHmQQPjxMnxvhre6csNNNw=;
-        b=Jpct3dZ79bLrJVYVAnUUlQlf9+z5GnfPRqxm1SCkWaAX4EzJW1DvJaHb1kwIoqbS2T
-         x3iqypxU0qLYRpUk16PdsdbC7hDJMPnlljbS9sAmBEj7xerpWHSzo7Vu6DDioD2Sl0R/
-         RtHnkO8jP0Q3zEAflyhfyb0U9435zmG0Eljeu26sigkMCO9Sy7QnwPBqlAfKiUYIq3mx
-         UQYu4oKbrloYniRIIbNrvLgVazCm0gSj+KiZiExfq7Ky64IMfAD3qQkgDyB0ruTnNFZn
-         xO8FOXbKKu4oIy1Y5a7i2yklkS6q0PkPaG/NcvXoMwjVUZPs2ju4LLfsLlMbvyMb/2Ad
-         5qyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=wu72ZcmsFHLVkAALMmbmLhHmQQPjxMnxvhre6csNNNw=;
-        b=egAcU9S+5+mVMPLwoT+VncSBvScxyPCPFinYdaRCwC/5fCoMCwsVmvo8nr0Bgh3YNT
-         BXj+dRS7waTrmztuC5ZdiIXBtd3fp0TIXscaGP87lUW/B7Kva8iq+zGcumuU7EUYv6Ol
-         /6yJi8H07BhQI2PdPWmPVcxgwuVA6CzRjip+wWxy9CazMgkYyPfRGGHt86zDr79Gv349
-         FQyyEjmCdw0efd/RMMkzjsWX5ynmNwLSGUxSuwQbDMAwmq1jhaXE/gSog08hwO3xzLng
-         Ti8KoR6nltz/7LuZiY5YEfcR/e69IFFcshCTuOrH6uRchJiODQkAIhb4mzflHnMQ3jGJ
-         yk6A==
-X-Gm-Message-State: APjAAAWM7UuzDivN4ZVPGW0TV/qB/+eXSB5QVlil3t2oOpWLeYksTDG1
-        Z52g5zhPI9H9DQKt/Sn8AYpCew==
-X-Google-Smtp-Source: APXvYqxNtdqEUf0ybgBiLfNWM/2TgJzzIP+gMMTyOVmPeFHLT7MsWwJUI/pg+ie8aPi1hMxoH7lPLg==
-X-Received: by 2002:adf:f850:: with SMTP id d16mr1853669wrq.161.1575967971012;
-        Tue, 10 Dec 2019 00:52:51 -0800 (PST)
-Received: from dell (h185-20-99-176.host.redstation.co.uk. [185.20.99.176])
-        by smtp.gmail.com with ESMTPSA id s15sm2518432wrp.4.2019.12.10.00.52.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 00:52:50 -0800 (PST)
-Date:   Tue, 10 Dec 2019 08:52:43 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        stefan@agner.ch, b.galvani@gmail.com, phh@phh.me,
-        letux-kernel@openphoenux.org
-Subject: Re: [PATCH v3 1/6] dt-bindings: mfd: rn5t618: Document optional
- property interrupts
-Message-ID: <20191210085243.GR3468@dell>
-References: <20191129212045.18325-1-andreas@kemnade.info>
- <20191129212045.18325-2-andreas@kemnade.info>
+        id S1727065AbfLJI4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 03:56:43 -0500
+Received: from mga07.intel.com ([134.134.136.100]:16990 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726883AbfLJI4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 03:56:43 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 00:56:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,299,1571727600"; 
+   d="scan'208";a="215369490"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.141])
+  by orsmga006.jf.intel.com with ESMTP; 10 Dec 2019 00:56:40 -0800
+Date:   Tue, 10 Dec 2019 16:54:36 +0800
+From:   Xu Yilum <yilun.xu@intel.com>
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fpga: dfl: support multiple opens on feature device node.
+Message-ID: <20191210085435.GA17198@yilunxu-OptiPlex-7050>
+References: <1574054441-1568-1-git-send-email-yilun.xu@intel.com>
+ <20191210020654.GA7171@archbook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191129212045.18325-2-andreas@kemnade.info>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191210020654.GA7171@archbook>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 29 Nov 2019, Andreas Kemnade wrote:
-
-> These chips use interrupts for various things like rtc alarm.
+On Mon, Dec 09, 2019 at 06:06:54PM -0800, Moritz Fischer wrote:
+> Hi Xu,
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  Documentation/devicetree/bindings/mfd/rn5t618.txt | 3 +++
->  1 file changed, 3 insertions(+)
+> Sorry for the delay.
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/rn5t618.txt b/Documentation/devicetree/bindings/mfd/rn5t618.txt
-> index b74e5e94d1cb..05650e1ab28a 100644
-> --- a/Documentation/devicetree/bindings/mfd/rn5t618.txt
-> +++ b/Documentation/devicetree/bindings/mfd/rn5t618.txt
-> @@ -15,6 +15,7 @@ Required properties:
->   - reg: the I2C slave address of the device
->  
->  Optional properties:
-> + - interrupts: interrupt mapping for IRQ
+> On Mon, Nov 18, 2019 at 01:20:41PM +0800, Xu Yilun wrote:
+> > Each DFL functional block, e.g. AFU (Accelerated Function Unit) and FME
+> > (FPGA Management Engine), could implement more than one function within
+> > its region, but current driver only allows one user application to access
+> > it by exclusive open on device node. So this is not convenient and
+> > flexible for userspace applications, as they have to combine lots of
+> > different functions into one single application.
+> I'm not entirely sure how I feel about that, wouldn't the right solution
+> be to create more devices? If this ends up being 100% passthrough
+> basically, VFIO would be a better choice?
 
-Please link to the document that describes it, as below.
+The major issue we want to resolve is how to access the same accelerator by
+multiple applications. As you know, the accelerator is the dynamic region (AFU)
+defined by end user, so we don't know how many sub functions end user will
+implement in the one dynamic region (AFU) of FPGA. So driver can't create devices
+for logic blocks implemented inside dynamic region.
 
-NB: Relative paths are usually preferred.
+We don't want 100% passthrough, but only dynamic region (AFU), because for static
+region part, we can reuse everything, including hardware logics, kernel drivers and
+upper layer stack/lib/app/tools. Use VFIO PCI directly may not be helpful for our case,
+and make the device node to support multiple open seems the simplest solution.
 
->   - system-power-controller:
->     See Documentation/devicetree/bindings/power/power-controller.txt
->  
-> @@ -32,6 +33,8 @@ Example:
->  	pmic@32 {
->  		compatible = "ricoh,rn5t618";
->  		reg = <0x32>;
-> +		interrupt-parent = <&gpio5>;
-> +		interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
->  		system-power-controller;
->  
->  		regulators {
+> > 
+> > This patch removes the limitation here to allow multiple opens to each
+> > feature device node for AFU and FME from userspace applications. If user
+> > still needs exclusive access to these device node, O_EXCL flag must be
+> > issued together with open.
+> Wouldn't you wanna default to have exclusive access, and then allow
+> multiple opens by means of a management interface, maybe?
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I see some examples here which is using O_EXCL flag to indicate exclusive open,
+like nvram misc driver. I feel this may be a regular method to follow, I believe
+if we can save one userspace interface with this, that will be simpler for users
+too.
+
+> > 
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > ---
+> >  drivers/fpga/dfl-afu-main.c | 26 +++++++++++++++-----------
+> >  drivers/fpga/dfl-fme-main.c | 19 ++++++++++++-------
+> >  drivers/fpga/dfl.c          | 15 +++++++++++++--
+> >  drivers/fpga/dfl.h          | 35 +++++++++++++++++++++++++++--------
+> >  4 files changed, 67 insertions(+), 28 deletions(-)
+> > 
+> > diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+> > index e4a34dc..c6e0e07 100644
+> > --- a/drivers/fpga/dfl-afu-main.c
+> > +++ b/drivers/fpga/dfl-afu-main.c
+> > @@ -561,14 +561,16 @@ static int afu_open(struct inode *inode, struct file *filp)
+> >  	if (WARN_ON(!pdata))
+> >  		return -ENODEV;
+> >  
+> > -	ret = dfl_feature_dev_use_begin(pdata);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	dev_dbg(&fdev->dev, "Device File Open\n");
+> > -	filp->private_data = fdev;
+> > +	mutex_lock(&pdata->lock);
+> > +	ret = dfl_feature_dev_use_begin(pdata, filp->f_flags & O_EXCL);
+> > +	if (!ret) {
+> > +		dev_dbg(&fdev->dev, "Device File Opened %d Times\n",
+> > +			dfl_feature_dev_use_count(pdata));
+> Could those be trace events instead?
+
+I investigated a little to see how we use trace to get this info.
+1. config PROFILE_ANNOTATED_BRANCHES in kernel, and add likely()/unlikely()
+   for ret judgement. This adds some overhead to system.
+2. config CONFIG_PROFILE_ALL_BRANCHES, no code change here. This adds
+   great overhead to system.
+3. write a dedicated trace event for this count. I think this is a little
+   too heavy, we need to add extra file for it, but this count is just
+   minor info to the driver.
+
+What's your suggestion for this? Could we just leave the print here for
+simplicity.
+
+
+> > +		filp->private_data = fdev;
+> > +	}
+> > +	mutex_unlock(&pdata->lock);
+> >  
+> > -	return 0;
+> > +	return ret;
+> >  }
+> >  
+> >  static int afu_release(struct inode *inode, struct file *filp)
+> > @@ -581,12 +583,14 @@ static int afu_release(struct inode *inode, struct file *filp)
+> >  	pdata = dev_get_platdata(&pdev->dev);
+> >  
+> >  	mutex_lock(&pdata->lock);
+> > -	__port_reset(pdev);
+> > -	afu_dma_region_destroy(pdata);
+> > -	mutex_unlock(&pdata->lock);
+> > -
+> >  	dfl_feature_dev_use_end(pdata);
+> >  
+> > +	if (!dfl_feature_dev_use_count(pdata)) {
+> > +		__port_reset(pdev);
+> > +		afu_dma_region_destroy(pdata);
+> > +	}
+> > +	mutex_unlock(&pdata->lock);
+> > +
+> >  	return 0;
+> >  }
+> >  
+> > diff --git a/drivers/fpga/dfl-fme-main.c b/drivers/fpga/dfl-fme-main.c
+> > index 7c930e6..fda8623 100644
+> > --- a/drivers/fpga/dfl-fme-main.c
+> > +++ b/drivers/fpga/dfl-fme-main.c
+> > @@ -600,14 +600,16 @@ static int fme_open(struct inode *inode, struct file *filp)
+> >  	if (WARN_ON(!pdata))
+> >  		return -ENODEV;
+> >  
+> > -	ret = dfl_feature_dev_use_begin(pdata);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	dev_dbg(&fdev->dev, "Device File Open\n");
+> > -	filp->private_data = pdata;
+> > +	mutex_lock(&pdata->lock);
+> > +	ret = dfl_feature_dev_use_begin(pdata, filp->f_flags & O_EXCL);
+> > +	if (!ret) {
+> > +		dev_dbg(&fdev->dev, "Device File Opened %d Times\n",
+> > +			dfl_feature_dev_use_count(pdata));
+> > +		filp->private_data = pdata;
+> > +	}
+> > +	mutex_unlock(&pdata->lock);
+> >  
+> > -	return 0;
+> > +	return ret;
+> >  }
+> >  
+> >  static int fme_release(struct inode *inode, struct file *filp)
+> > @@ -616,7 +618,10 @@ static int fme_release(struct inode *inode, struct file *filp)
+> >  	struct platform_device *pdev = pdata->dev;
+> >  
+> >  	dev_dbg(&pdev->dev, "Device File Release\n");
+> > +
+> > +	mutex_lock(&pdata->lock);
+> >  	dfl_feature_dev_use_end(pdata);
+> > +	mutex_unlock(&pdata->lock);
+> >  
+> >  	return 0;
+> >  }
+> > diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> > index 96a2b82..9909948 100644
+> > --- a/drivers/fpga/dfl.c
+> > +++ b/drivers/fpga/dfl.c
+> > @@ -1079,6 +1079,7 @@ static int __init dfl_fpga_init(void)
+> >   */
+> >  int dfl_fpga_cdev_release_port(struct dfl_fpga_cdev *cdev, int port_id)
+> >  {
+> > +	struct dfl_feature_platform_data *pdata;
+> >  	struct platform_device *port_pdev;
+> >  	int ret = -ENODEV;
+> >  
+> > @@ -1093,7 +1094,11 @@ int dfl_fpga_cdev_release_port(struct dfl_fpga_cdev *cdev, int port_id)
+> >  		goto put_dev_exit;
+> >  	}
+> >  
+> > -	ret = dfl_feature_dev_use_begin(dev_get_platdata(&port_pdev->dev));
+> > +	pdata = dev_get_platdata(&port_pdev->dev);
+> > +
+> > +	mutex_lock(&pdata->lock);
+> > +	ret = dfl_feature_dev_use_begin(pdata, true);
+> > +	mutex_unlock(&pdata->lock);
+> >  	if (ret)
+> >  		goto put_dev_exit;
+> >  
+> > @@ -1120,6 +1125,7 @@ EXPORT_SYMBOL_GPL(dfl_fpga_cdev_release_port);
+> >   */
+> >  int dfl_fpga_cdev_assign_port(struct dfl_fpga_cdev *cdev, int port_id)
+> >  {
+> > +	struct dfl_feature_platform_data *pdata;
+> >  	struct platform_device *port_pdev;
+> >  	int ret = -ENODEV;
+> >  
+> > @@ -1138,7 +1144,12 @@ int dfl_fpga_cdev_assign_port(struct dfl_fpga_cdev *cdev, int port_id)
+> >  	if (ret)
+> >  		goto put_dev_exit;
+> >  
+> > -	dfl_feature_dev_use_end(dev_get_platdata(&port_pdev->dev));
+> > +	pdata = dev_get_platdata(&port_pdev->dev);
+> > +
+> > +	mutex_lock(&pdata->lock);
+> > +	dfl_feature_dev_use_end(pdata);
+> > +	mutex_unlock(&pdata->lock);
+> > +
+> >  	cdev->released_port_num--;
+> >  put_dev_exit:
+> >  	put_device(&port_pdev->dev);
+> > diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
+> > index 9f0e656..4a9a33c 100644
+> > --- a/drivers/fpga/dfl.h
+> > +++ b/drivers/fpga/dfl.h
+> > @@ -205,8 +205,6 @@ struct dfl_feature {
+> >  	const struct dfl_feature_ops *ops;
+> >  };
+> >  
+> > -#define DEV_STATUS_IN_USE	0
+> > -
+> >  #define FEATURE_DEV_ID_UNUSED	(-1)
+> >  
+> >  /**
+> > @@ -219,8 +217,9 @@ struct dfl_feature {
+> >   * @dfl_cdev: ptr to container device.
+> >   * @id: id used for this feature device.
+> >   * @disable_count: count for port disable.
+> > + * @excl_open: set on feature device exclusive open.
+> > + * @open_count: count for feature device open.
+> >   * @num: number for sub features.
+> > - * @dev_status: dev status (e.g. DEV_STATUS_IN_USE).
+> >   * @private: ptr to feature dev private data.
+> >   * @features: sub features of this feature dev.
+> >   */
+> > @@ -232,26 +231,46 @@ struct dfl_feature_platform_data {
+> >  	struct dfl_fpga_cdev *dfl_cdev;
+> >  	int id;
+> >  	unsigned int disable_count;
+> > -	unsigned long dev_status;
+> > +	bool excl_open;
+> > +	int open_count;
+> >  	void *private;
+> >  	int num;
+> >  	struct dfl_feature features[0];
+> >  };
+> >  
+> >  static inline
+> 
+> > -int dfl_feature_dev_use_begin(struct dfl_feature_platform_data *pdata)
+> > +int dfl_feature_dev_use_begin(struct dfl_feature_platform_data *pdata,
+> > +			      bool excl)
+> >  {
+> > -	/* Test and set IN_USE flags to ensure file is exclusively used */
+> > -	if (test_and_set_bit_lock(DEV_STATUS_IN_USE, &pdata->dev_status))
+> > +	if (pdata->excl_open)
+> >  		return -EBUSY;
+> >  
+> > +	if (excl) {
+> > +		if (pdata->open_count)
+> > +			return -EBUSY;
+> > +
+> > +		pdata->excl_open = true;
+> > +	}
+> > +	pdata->open_count++;
+> > +
+> >  	return 0;
+> >  }
+> >  
+> >  static inline
+> >  void dfl_feature_dev_use_end(struct dfl_feature_platform_data *pdata)
+> >  {
+> > -	clear_bit_unlock(DEV_STATUS_IN_USE, &pdata->dev_status);
+> > +	pdata->excl_open = false;
+> > +
+> > +	if (WARN_ON(pdata->open_count <= 0))
+> > +		return;
+> > +
+> > +	pdata->open_count--;
+> > +}
+> > +
+> > +static inline
+> Feel free to drop the inline here. Your compiler will figure that out by
+> iteself.
+
+Yes I'll change it.
+
+> > +int dfl_feature_dev_use_count(struct dfl_feature_platform_data *pdata)
+> > +{
+> > +	return pdata->open_count;
+> >  }
+> >  
+> >  static inline
+> > -- 
+> > 2.7.4
+> > 
+> 
+> Again, sorry for the delay,
+> 
+> Moritz
+
+Thanks for take your time out :)
+
+Yilun
