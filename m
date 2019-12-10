@@ -2,124 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 696C91185D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F12E1185BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:02:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfLJLGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 06:06:44 -0500
-Received: from smtp114.ord1c.emailsrvr.com ([108.166.43.114]:37713 "EHLO
-        smtp114.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726915AbfLJLGn (ORCPT
+        id S1727219AbfLJLCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:02:24 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45304 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbfLJLCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:06:43 -0500
-X-Greylist: delayed 479 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 06:06:42 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=g001.emailsrvr.com;
-        s=20190322-9u7zjiwi; t=1575975523;
-        bh=s930yeVuZ/OBWf+Xggci74+j0vX0OnxEmUgFeVwwphc=;
-        h=Subject:To:From:Date:From;
-        b=Oar1jshLInKThEcIkjd+TTC0hkswIxu8mjRLLJkdqqPyb9/9EzmYS98epw011eOuz
-         quFMLQdzII3KAY7BFOO9EAPPxfPBxlfXj+GFqv1+vV+y1ZqtEJVbNcmrVLygKsbcsS
-         4dydcRmMkOimaloGXfiBr9Zidg1dfW1P1OAMqbTI=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-        s=20190130-41we5z8j; t=1575975523;
-        bh=s930yeVuZ/OBWf+Xggci74+j0vX0OnxEmUgFeVwwphc=;
-        h=Subject:To:From:Date:From;
-        b=Bjj9V8IyStZQSOYzOtC39eOZ+CdyL5otXWSI/4e3msEnu6MaIvFuFWvXfzF7X+RXo
-         56qBkMZ0qzOSakrhprRDxpI3R3GPcCgkrMq9gGv0qMBtA5a+c5+MtIYKARIBMxvta8
-         SwmCoz79zPBh81//PHyG0J4CkQiww5v/W7kGaRko=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp23.relay.ord1c.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 29CA9400EE;
-        Tue, 10 Dec 2019 05:58:41 -0500 (EST)
-X-Sender-Id: abbotti@mev.co.uk
-Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Tue, 10 Dec 2019 05:58:42 -0500
-Subject: Re: [PATCH] staging: comedi: comedi_test: return error when
- comedi_test_init fails
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cheah Kok Cheong <thrust73@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20191210091451.23505-1-hslester96@gmail.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <ca049de4-92f1-409c-6aa7-9c2ddc336638@mev.co.uk>
-Date:   Tue, 10 Dec 2019 10:58:40 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 10 Dec 2019 06:02:24 -0500
+Received: by mail-lj1-f196.google.com with SMTP id d20so19321365ljc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 03:02:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=avT8djgaVLUaP/1BXJuTZBwRdJwwah+0AF+tp3FQZPs=;
+        b=Mf3xlkOSDEXkKBh/xlW95jq/ctKWC6+5W25pp6TESvMuNfvypSGAfYHsVnbPTF1cYg
+         RR0YLlmQ0tYBn9eVo9B5cXn5iQtVmIH73aTUt7+x6qyrXUIoBdS4hBRmUK0eZkDmLkAb
+         EGIAlfTwNBPpLzuweZ8Ri86B/UxW1T1ZRDG8hmX5tHJ5Y5Aildo02kJCV0NHR6AdkbLh
+         NBmHSZGnygxVFb9Yn3M+Ft/tELQKD1dHnNiv4mWLZc6mZCvBM+Tsyr0Wp7Sd2MG1aAHj
+         Tq/GviXZQEHaPzhya05BIy0b3HF1EnJFgiDF4nG2cr+QZRR8UVHE0LLUBd9LPIqUTqH1
+         6QoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=avT8djgaVLUaP/1BXJuTZBwRdJwwah+0AF+tp3FQZPs=;
+        b=lmLr/0v1qsw3vEraMBWm79H9umwP4IFOSdysSvSi3zJZ4Y5ziMSEZtPYjhLJqugOSI
+         CLUTekjBHpNSaEd8zxE4KN2yp1OU+NU0zk5uAqVckIf2/iVHjYTYBRD+Fh4GptnfDmgu
+         uA/E58Eojl/HHN8N+/ytOsdIw1azDE5NNvBkWX+PvVH3lqebfehrZhAaS2evN07x01k7
+         9UqymrDhpVuLVyAeBHrI2IMvCLZZF2pMvsb2ssh5j0xNIVeozgnssAgTIBynLFGqp9Pf
+         FBHaOG2l1LZ7kR1C/tHBtxbWtGQ+2244cJZ/xhw0LbM9K3SlELhiwtUxpk8VORji/rrJ
+         J9ow==
+X-Gm-Message-State: APjAAAX3r3gqRNp9oQsqtcvc4W/vdI6k+k59nR2IF9VVafWz+eqN84DA
+        B5APDk3vUzYfjpvZrC4zdQ9Y/CkW/l7Xlo+2Wyk1zQ==
+X-Google-Smtp-Source: APXvYqzdKySfdTeUTqDZf48QC6nKJjVrzelXQbA5XcMaY5YcawhwrWRM8Td38VBdqI6RgEEmwUiYHkXJsa2/pme7HDg=
+X-Received: by 2002:a2e:9a04:: with SMTP id o4mr21104651lji.214.1575975741445;
+ Tue, 10 Dec 2019 03:02:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191210091451.23505-1-hslester96@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20191115234005.GO4614@dread.disaster.area> <20191118092121.GV4131@hirez.programming.kicks-ass.net>
+ <20191118204054.GV4614@dread.disaster.area> <20191120191636.GI4097@hirez.programming.kicks-ass.net>
+ <20191120220313.GC18056@pauld.bos.csb> <20191121132937.GW4114@hirez.programming.kicks-ass.net>
+ <20191209165122.GA27229@linux.vnet.ibm.com> <20191209231743.GA19256@dread.disaster.area>
+ <20191210054330.GF27253@linux.vnet.ibm.com> <CAKfTPtCBxV+az30n8E9fRv_HweN_QPJn_ni961OsKp5xUWUD2A@mail.gmail.com>
+ <20191210101116.GA9139@linux.vnet.ibm.com>
+In-Reply-To: <20191210101116.GA9139@linux.vnet.ibm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 10 Dec 2019 12:02:09 +0100
+Message-ID: <CAKfTPtD1by06eQ=vJhh9SvfegRanSSwQrKPageLGo0OODu9bjg@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/core: Preempt current task in favour of bound kthread
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/2019 09:14, Chuhong Yuan wrote:
-> comedi_test_init() forgets to return error when it fails.
-> Modify the return value to fix it.
-> 
-> Fixes: 9ff7400bd38c ("Staging: comedi: drivers: comedi_test: Add auto-configuration capability")
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> ---
->   drivers/staging/comedi/drivers/comedi_test.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/comedi_test.c b/drivers/staging/comedi/drivers/comedi_test.c
-> index ef4c7c8a2b71..133ed99a89f1 100644
-> --- a/drivers/staging/comedi/drivers/comedi_test.c
-> +++ b/drivers/staging/comedi/drivers/comedi_test.c
-> @@ -799,12 +799,14 @@ static int __init comedi_test_init(void)
->   	if (!config_mode) {
->   		ctcls = class_create(THIS_MODULE, CLASS_NAME);
->   		if (IS_ERR(ctcls)) {
-> +			ret = PTR_ERR(ctcls);
->   			pr_warn("comedi_test: unable to create class\n");
->   			goto clean3;
->   		}
->   
->   		ctdev = device_create(ctcls, NULL, MKDEV(0, 0), NULL, DEV_NAME);
->   		if (IS_ERR(ctdev)) {
-> +			ret = PTR_ERR(ctdev);
->   			pr_warn("comedi_test: unable to create device\n");
->   			goto clean2;
->   		}
-> @@ -826,7 +828,7 @@ static int __init comedi_test_init(void)
->   clean3:
->   	ctcls = NULL;
->   
-> -	return 0;
-> +	return ret;
->   }
->   module_init(comedi_test_init);
->   
-> 
+On Tue, 10 Dec 2019 at 11:11, Srikar Dronamraju
+<srikar@linux.vnet.ibm.com> wrote:
+>
+> * Vincent Guittot <vincent.guittot@linaro.org> [2019-12-10 10:43:46]:
+>
+> > On Tue, 10 Dec 2019 at 06:43, Srikar Dronamraju
+> > <srikar@linux.vnet.ibm.com> wrote:
+> > >
+> > > This is more prone to happen if the current running task is CPU
+> > > intensive and the sched_wake_up_granularity is set to larger value.
+> > > When the sched_wake_up_granularity was relatively small, it was observed
+> > > that the bound thread would complete before the load balancer would have
+> > > chosen to move the cache hot task to a different CPU.
+> > >
+> > > To deal with this situation, the current running task would yield to a
+> > > per CPU bound kthread, provided kthread is not CPU intensive.
+> > >
+> > > /pboffline/hwcct_prg_old/lib/fsperf -t overwrite --noclean -f 5g -b 4k /pboffline
+> > >
+> > > (With sched_wake_up_granularity set to 15ms)
+> >
+> > So you increase sched_wake_up_granularity to a high level to ensure
+> > that current is no preempted by waking thread but then you add a way
+> > to finally preempt it which is somewhat weird IMO
+> >
+>
+> Yes, setting to a smaller value will help mitigate/solve the problem.
+> There may be folks out who have traditionally set a high wake_up_granularity
+> (and have seen better performance with it), who may miss out that when using
+> blk-mq, such settings will cause more harm. And they may continue to see
+> some performance regressions when they move to a lower wake_up_granularity.
+>
+> > Have you tried to increase the priority of workqueue thread  (decrease
+> > nice priority) ? This is the right way to reduce the impact of the
+> > sched_wake_up_granularity on the wakeup of your specific kthread.
+> > Because what you want at the end is keeping a low wakeup granularity
+> > for these io workqueues
+> >
+>
+> Yes, people can tune the priority of workqueue threads and infact it may be
+> easier to set wake_up_granularity to a lower value. However the point is how
+> do we make everyone aware that they are running into a performance issue
+> with a higher wakeup_granularity?
 
-I suspect the current behaviour was by design because the module is not 
-completely broken if it fails to create the "comedi_test" device.  The 
-module will just behave as if the "noauto" module parameter (which sets 
-the 'config_mode' variable) was set to "true" if there is an error 
-during class or device creation.  That's probably why the kernel log 
-messages are written with 'pr_warn()' rather than 'pr_err()'.
+I did the test on my local setup to change the nice priority of io
+workqueue and the active migrations are removed even with high
+wakeup_granularity because IO workqueue can still preempt normal task
+but let other workqueue behave normally.
 
-As long as the core "comedi" module has been loaded with the 
-"comedi_num_legacy_minors" module parameter set to a non-zero value, it 
-would still be possible to configure one of the "legacy" comedi devices 
-to use the "comedi_test" driver via the COMEDI_DEVCONFIG ioctl.
-
-However, returning an error might be preferable here, especially since 
-the comedi core module's "comedi_num_legacy_minors" parameter defaults 
-to zero.
-
-I'm happy with the change of behaviour, but would suggest changing the 
-'pr_warn()' calls to 'pr_err()' to match this change.
-
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+>
+> --
+> Thanks and Regards
+> Srikar Dronamraju
+>
