@@ -2,88 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2446A119327
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:08:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 706451193B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:14:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfLJVHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:07:08 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36523 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbfLJVEH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:04:07 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z3so21728043wru.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:04:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=t5wRb0HVinMm6EfDaWAnO/a1Sj3+z3DX/7PLYloGfXc=;
-        b=OjVkow0SpbjcoF1OWjpltk1vI3YxAw2jQt8Cq6d1x/Btjj1F3u4QeDCqIVyZYELWWn
-         lXo4Q8crVZNDfrrurZiFUJUCwelB3pjClmCwC1fxlalGIcZiAwo5pMgLil3e2tONS9X5
-         v7g3C9cMkECg6NxNdXCychqgWcQNo1wWAF9mk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=t5wRb0HVinMm6EfDaWAnO/a1Sj3+z3DX/7PLYloGfXc=;
-        b=IfyKaxxd54Gx9pkUQod1BbH1eUXpfoy8lq6X/oIvR0Fup29Q2VMXGaAMRFktxyWlxJ
-         3rcO/rmrWneHW5sk5PbrprUW71OiauiWl3IauaOIamqh6BansfT2tny7jtv+4WeJGjJn
-         fgMMw+SG4eTHLoRjGkmienOyf7wVX23QC4dRVWpgL78CPAAcoImwmFLlf0tKPVRd1+YI
-         pb37Zfew3xuU12ppzwAgKZtAor362v1UnKZUBjDMqj8a1AhgeRjk9jNptJopY3aloGsj
-         OXd9zrbk7bWYwhhMmtJp6rZ6b3wadg3kgyiO9VXxO8+20p0kMtzoxgwQLtk0GAhOQdtl
-         tzDg==
-X-Gm-Message-State: APjAAAW9cc5yiYv1hE+LlAQH25BSHjECyobYtmla0lR2hmD2u25fegWw
-        bDQX9Ev/9Zq1na6pNmYJcwdovTHhqLPUcQ==
-X-Google-Smtp-Source: APXvYqy79TBCNpPOmBCd880DGqLHwk7LRohDsnP9Y0U3hQ0Ejrk0NnEgnxTg3iGWHnZTuaLKKdJiTQ==
-X-Received: by 2002:a5d:50d2:: with SMTP id f18mr5456797wrt.366.1576011844881;
-        Tue, 10 Dec 2019 13:04:04 -0800 (PST)
-Received: from localhost ([89.32.122.5])
-        by smtp.gmail.com with ESMTPSA id p10sm4422433wmi.15.2019.12.10.13.04.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 13:04:04 -0800 (PST)
-Date:   Tue, 10 Dec 2019 21:04:03 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     chengkaitao <pilgrimtao@gmail.com>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        akpm@linux-foundation.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        smuchun@gmail.com, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2] mm: cleanup some useless code
-Message-ID: <20191210210403.GA455280@chrisdown.name>
-References: <20191210160450.3395-1-pilgrimtao@gmail.com>
+        id S1728275AbfLJVJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:09:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58592 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728256AbfLJVJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:09:42 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C5D4246BA;
+        Tue, 10 Dec 2019 21:09:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576012182;
+        bh=796UophT8NjBbk/E9gRtRL1R6ZdTfcJ7TBT6/Hu9NoE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1hidc3VzjsmiVaG6wRKYIOHUo59wMRM5M1rrfhYW78YF3e7JOdYqRY2+HdHKdvM2w
+         77tfDQusKyXT7ZVsUgRTBl3gHqOklH4C2d3a+U6PVOotnhYiFXuNAE1Hf2uD6VsubT
+         TqAUyJp8Uqv2vt7A8QHW0HCq122JxeApLE125djQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Chris Chiu <chiu@endlessm.com>,
+        Jes Sorensen <Jes.Sorensen@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 139/350] rtl8xxxu: fix RTL8723BU connection failure issue after warm reboot
+Date:   Tue, 10 Dec 2019 16:04:04 -0500
+Message-Id: <20191210210735.9077-100-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
+References: <20191210210735.9077-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20191210160450.3395-1-pilgrimtao@gmail.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-chengkaitao writes:
->Subject: Re: [PATCH v2] mm: cleanup some useless code
+From: Chris Chiu <chiu@endlessm.com>
 
-Can you please write a more descriptive commit title? Seeing this in the commit 
-history tells the reader nothing, "code" could mean anything from a state 
-machine to a boolean, and "cleanup" could mean anything from some complex 
-refactoring to something trivial like this, and right now I have to look and 
-see the individual commit. This patch is really just deduplication of effort.
+[ Upstream commit 0eeb91ade90ce06d2fa1e2fcb55e3316b64c203c ]
 
-Perhaps:
+The RTL8723BU has problems connecting to AP after each warm reboot.
+Sometimes it returns no scan result, and in most cases, it fails
+the authentication for unknown reason. However, it works totally
+fine after cold reboot.
 
-     mm, memcg: Don't check PageTransHuge before calling hpage_nr_pages
+Compare the value of register SYS_CR and SYS_CLK_MAC_CLK_ENABLE
+for cold reboot and warm reboot, the registers imply that the MAC
+is already powered and thus some procedures are skipped during
+driver initialization. Double checked the vendor driver, it reads
+the SYS_CR and SYS_CLK_MAC_CLK_ENABLE also but doesn't skip any
+during initialization based on them. This commit only tells the
+RTL8723BU to do full initialization without checking MAC status.
 
->It is much simpler to just use hpage_nr_pages for nr_pages and replace
->the local variable by PageTransHuge check directly
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+Signed-off-by: Jes Sorensen <Jes.Sorensen@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.h       | 1 +
+ drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8723b.c | 1 +
+ drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c  | 3 +++
+ 3 files changed, 5 insertions(+)
 
-Heh, calling it "much" simpler seems a bit excessive. I mean, the code is just 
-as readable in both cases, but if it's going to go in, then that's fine. Any 
-merge conflict should be trivial enough to fix.
+diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.h b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.h
+index ade057d868f7e..5e9ce03067de2 100644
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.h
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.h
+@@ -1341,6 +1341,7 @@ struct rtl8xxxu_fileops {
+ 	u8 has_s0s1:1;
+ 	u8 has_tx_report:1;
+ 	u8 gen2_thermal_meter:1;
++	u8 needs_full_init:1;
+ 	u32 adda_1t_init;
+ 	u32 adda_1t_path_on;
+ 	u32 adda_2t_path_on_a;
+diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8723b.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8723b.c
+index ceffe05bd65b2..f3cd314d1a9cf 100644
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8723b.c
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8723b.c
+@@ -1670,6 +1670,7 @@ struct rtl8xxxu_fileops rtl8723bu_fops = {
+ 	.has_s0s1 = 1,
+ 	.has_tx_report = 1,
+ 	.gen2_thermal_meter = 1,
++	.needs_full_init = 1,
+ 	.adda_1t_init = 0x01c00014,
+ 	.adda_1t_path_on = 0x01c00014,
+ 	.adda_2t_path_on_a = 0x01c00014,
+diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+index c6c41fb962ffc..361248e975687 100644
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+@@ -3902,6 +3902,9 @@ static int rtl8xxxu_init_device(struct ieee80211_hw *hw)
+ 	else
+ 		macpower = true;
+ 
++	if (fops->needs_full_init)
++		macpower = false;
++
+ 	ret = fops->power_on(priv);
+ 	if (ret < 0) {
+ 		dev_warn(dev, "%s: Failed power on\n", __func__);
+-- 
+2.20.1
 
->Signed-off-by: Kaitao Cheng <pilgrimtao@gmail.com>
->Acked-by: Michal Hocko <mhocko@suse.com>
-
-I'm indifferent to this patch, but after the title change:
-
-Acked-by: Chris Down <chris@chrisdown.name>
