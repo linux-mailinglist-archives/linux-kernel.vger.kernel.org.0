@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0A03118467
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:08:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD65118470
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 11:09:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfLJKIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 05:08:36 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40949 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbfLJKIg (ORCPT
+        id S1727433AbfLJKI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 05:08:59 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44456 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfLJKI7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:08:36 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so19304889wrn.7
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 02:08:34 -0800 (PST)
+        Tue, 10 Dec 2019 05:08:59 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q10so19306030wrm.11
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 02:08:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=53E6+zgRkhJFW2BBywNsfl5Bmu09Uj7I3LhsYlPv/yI=;
-        b=PclJIQfTM0ArnzA+0SrFj5O66enTwXrsB0tQfetxDJXzjjrrcXYlwzz1iuZxD+Hlst
-         698sdGPLLZrFcLNFVSTmXoG7mMq7cMhokXIrA2nQ5CzB0N2qnaHbWKsWh3Mr8cDxOYE2
-         4lwW4A+bqR33Oy5L/qg+ZdgEUMpwK+x/ypBv7VXNaVnME8bK98ydZnQThf5GmTnb/s1z
-         E2/kUXqDHmq5OWGF4DVXGS2NIocuP01L/9FWH9YLoe6whpeaxAcSUMBZuoe93gzC9C8K
-         M7bpnpGTrwCz6CgKAprOu7Wj1bgaU+k3JwT0zt/P1f8sQPaN0xjYEbth7pqKA8QZuwfh
-         oMfg==
+        bh=CmXraLxcHSpW35myu7I+B9nstgq5MxK4V2VimsmMd8Q=;
+        b=vmvwmGEPJaOfpVKMoAgpHwHqH4DSZ1j/trCMbExQ9xzY7fEc8MS71UlD/1JVFPgsWZ
+         eRnqvF9UeBzTz6JnU/C/H/o8uwNN8vNOD9ywUFJSqgBOfNZ1hcnaymzmzdeRd5xP7PUu
+         SZFChz+Ig08dPyNYi3sLXiO8Vr7sQAKi/F1YI3QSccR6jy9ccSJCCRqgrSPEgRs292I9
+         7V8opH/42799pk0/tj+I1JkkrZQwgSvxPJNcQMb22jgUbq2KTvDg1du8saN5Pz4evSg2
+         FaYnpXmykU+u9Wirep/HHn5hHlFGG7M0iW8YD9ZgbpvVSdcfCkam2RZzv+sK57/iIdGr
+         NYkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=53E6+zgRkhJFW2BBywNsfl5Bmu09Uj7I3LhsYlPv/yI=;
-        b=oBmRWh7JIZpUj/Oie1Y/GzO17NS3+mzGWh8p7OlUSvf2pk7lP+K4UiZwnOrTyIlGkT
-         uKu9o7oa3fPxH4dCwQuFb6E+1FneCqjEajkwYYjp5cAsmFojRbnFNQ82Fxht8892JjF7
-         pO3vGUr7HVgdp9DAYBtQMSb5AeYDAGGyPGDIhp16uZspjlYgVTrgMrA1fbEGiTtjlw7H
-         BcALdbDcfTYzkXGV3RHrf3d9A5A2LPBq7kRUOivAx1Z5/IMjYKfL9kEzLrTdFIL1SzM2
-         Iw3ohzAwdhRn5k+i71qvIgmauvbEFHkONLTzZw6fOJz+wuJ/tp8SaXaJo/uE3Fqmy8C/
-         5vHg==
-X-Gm-Message-State: APjAAAUpOpIG/2tzATIjM4sEnO9weYUeHCAZpcL7jAxXUSvMRUjBxIfY
-        +hOuqixCeS66B8N2InCb3PrZiQ==
-X-Google-Smtp-Source: APXvYqz7GffBLgKokflLsYKh1DdYRrjX5Uq0IhqIeRUDbHP6ssACz2EgED3lcBsxC5OIi70niFkMNQ==
-X-Received: by 2002:adf:f5cb:: with SMTP id k11mr2139960wrp.71.1575972514193;
-        Tue, 10 Dec 2019 02:08:34 -0800 (PST)
+        bh=CmXraLxcHSpW35myu7I+B9nstgq5MxK4V2VimsmMd8Q=;
+        b=uH3q4R26hlhRY6XuF+bzzR9xH3a75BXQAXp/MgmMsoMIR/hF6Ukr+V6gzH3uzXheco
+         yHsxBbdkoUd7MS8Kvm83pxAoPj80baj8IZd9bBtBrwX71WkZglsaAh8K/LAWXOjSZyU7
+         /0A3x06eR3QlcvA4QnIsa3qVjsPBdT2A4RjXdCqcbyMy+iWw6WjofPy0emck3b/GS+4G
+         X9CY40YglHFbn/3gYh4KeDsU0FIka2SXhU0JqeVBNbjFoPRRqOxciriqIkVRLFUx5JB6
+         LfW2bCRX7qWg/KBsd0Jj/2tp0tAj2hhDGNEWqqQd9x9cnieErtqhZyFvoJAinsjyWlcM
+         M91Q==
+X-Gm-Message-State: APjAAAVeU+JnZOmt1hvwZ7Uc6wmeJYdytmyOSbv9hgt+Zqp4PAB3ABjB
+        Gv6RPZyYNbcF4DxCcxkSlyDqJg==
+X-Google-Smtp-Source: APXvYqxXggVqtg2wLF1aAKh1TnH7Vc3phZwAUgHw1rAwoN2bqO5sh1FHO27U1ggc2547SbjFzD9jrg==
+X-Received: by 2002:a5d:4687:: with SMTP id u7mr2234029wrq.176.1575972537067;
+        Tue, 10 Dec 2019 02:08:57 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id z11sm2485533wrt.82.2019.12.10.02.08.33
+        by smtp.gmail.com with ESMTPSA id k13sm2642109wrx.59.2019.12.10.02.08.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 02:08:33 -0800 (PST)
+        Tue, 10 Dec 2019 02:08:56 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH] led: max77650: add of_match table
-Date:   Tue, 10 Dec 2019 11:08:32 +0100
-Message-Id: <20191210100832.11186-1-brgl@bgdev.pl>
+Subject: [PATCH] power: supply: max77650: add of_match table
+Date:   Tue, 10 Dec 2019 11:08:55 +0100
+Message-Id: <20191210100855.11252-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,34 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
 We need the of_match table if we want to use the compatible string in
-the pmic's child node and get the led driver loaded automatically.
+the pmic's child node and get the charger driver loaded automatically.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/leds/leds-max77650.c | 7 +++++++
+ drivers/power/supply/max77650-charger.c | 7 +++++++
  1 file changed, 7 insertions(+)
 
-diff --git a/drivers/leds/leds-max77650.c b/drivers/leds/leds-max77650.c
-index 4c2d0b3c6dad..a0d4b725c917 100644
---- a/drivers/leds/leds-max77650.c
-+++ b/drivers/leds/leds-max77650.c
-@@ -135,9 +135,16 @@ static int max77650_led_probe(struct platform_device *pdev)
- 	return rv;
+diff --git a/drivers/power/supply/max77650-charger.c b/drivers/power/supply/max77650-charger.c
+index 5f9477c5cf5a..d913428bedc0 100644
+--- a/drivers/power/supply/max77650-charger.c
++++ b/drivers/power/supply/max77650-charger.c
+@@ -354,9 +354,16 @@ static int max77650_charger_remove(struct platform_device *pdev)
+ 	return max77650_charger_disable(chg);
  }
  
-+static const struct of_device_id max77650_led_of_match[] = {
-+	{ .compatible = "maxim,max77650-led" },
++static const struct of_device_id max77650_charger_of_match[] = {
++	{ .compatible = "maxim,max77650-charger" },
 +	{ }
 +};
-+MODULE_DEVICE_TABLE(of, max77650_led_of_match);
++MODULE_DEVICE_TABLE(of, max77650_charger_of_match);
 +
- static struct platform_driver max77650_led_driver = {
+ static struct platform_driver max77650_charger_driver = {
  	.driver = {
- 		.name = "max77650-led",
-+		.of_match_table = max77650_led_of_match,
+ 		.name = "max77650-charger",
++		.of_match_table = max77650_charger_of_match,
  	},
- 	.probe = max77650_led_probe,
- };
+ 	.probe = max77650_charger_probe,
+ 	.remove = max77650_charger_remove,
 -- 
 2.23.0
 
