@@ -2,88 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50ED91191D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DB461191D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:24:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfLJUZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:25:03 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:34719 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726500AbfLJUZD (ORCPT
+        id S1726826AbfLJUYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:24:43 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:44113 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfLJUYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:25:03 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N2Ujn-1hanVi3ZEN-013uwN; Tue, 10 Dec 2019 21:24:45 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, wenxu <wenxu@ucloud.cn>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] netfilter: nf_flow_table: fix big-endian integer overflow
-Date:   Tue, 10 Dec 2019 21:24:28 +0100
-Message-Id: <20191210202443.2226043-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 10 Dec 2019 15:24:42 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C61B4886BF;
+        Wed, 11 Dec 2019 09:24:38 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1576009478;
+        bh=cCJ4IOUErdRXpS39JIAoWUSB/QOu2X0QuS4VhmhhzYk=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=ivCMbiiPoyvBkAbJvQMZus7eq8oDUJHfmIBM1N7NGCtQqpKVHsA/ajVC3uOdTstzz
+         jgn0EURerQBdDjnuUlyfyJtmjN599ppzwyI+I1IIVOCHaHl35SNN+Xe7RvWvCPmihJ
+         AWYNw3dF0IARL5nL4XIWO9B0skzGA6/6ArtZQIjr0QLx7fwcnCwgihTX12HbDhRefy
+         o8nuxg4JEPB2pFG5s541HgcoxEN20nwiWNOgxwK3kRXwn/oRaMWSMDsfgJ5hKXIrvH
+         +CUX1Ap9W9ZY8ZYldbOP+/jRD8eNuG/IKy63zPYFayK47MMCA9YmuA11o3yufWD3wQ
+         Yv9kAOoM8yP9g==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5defff050000>; Wed, 11 Dec 2019 09:24:37 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
+ by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
+ Microsoft SMTP Server (TLS) id 15.0.1156.6; Wed, 11 Dec 2019 09:24:33 +1300
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Wed, 11 Dec 2019 09:24:33 +1300
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     "arnd@arndb.de" <arnd@arndb.de>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>
+CC:     "scott.branden@broadcom.com" <scott.branden@broadcom.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "yoshihiro.shimoda.uh@renesas.com" <yoshihiro.shimoda.uh@renesas.com>,
+        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "rjui@broadcom.com" <rjui@broadcom.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] gpio: xgs-iproc: remove __exit annotation for
+ iproc_gpio_remove
+Thread-Topic: [PATCH] gpio: xgs-iproc: remove __exit annotation for
+ iproc_gpio_remove
+Thread-Index: AQHVr5OrBiJXFgirdU+/MD3yYsX4TKey9pWA
+Date:   Tue, 10 Dec 2019 20:24:33 +0000
+Message-ID: <01669f6c5d0e40c7a410da2dcce6c9e825e4a1d4.camel@alliedtelesis.co.nz>
+References: <20191210195414.705239-1-arnd@arndb.de>
+In-Reply-To: <20191210195414.705239-1-arnd@arndb.de>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:8c06:5a00:1627:6912]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E290714BFDB0144FA4F4989701784D39@atlnz.lc>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:3xTpZMsGdsJ1nvxkwus8gSKIRft4mnmZ3W5dayWzUFB6FRVJ1FI
- cwz46I+Cy1sEtLqEq0Bs81PGVd6YGU0+T9slg+xO61J5MkNHgzQkVucoPXu2Rl1OYtnPhlL
- SKS8EmVuhxo2B5J8pcy7UruFW5WMy0YzMinmMcPydbqtFZYySqRQdXCJ/IfEuJvfNEOzScF
- nqhPW1HRXRqSO0nAK7WLA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:YpT9RdGICqo=:t7cyKvd9q7by6YV8Gcm7Rr
- lSjAH7qRhK6341Ntpby4SCy0x2oNBq6xeVvRG4L2WK12QVV0Z0rvxPVAxG4q/XeG27F9ib0Mg
- EIqQrd90vpv8t65DCsq0LJljPZOj4M1/ijuPrQ0mTFzO9w85SUGtQHjNAGYBMJj0g1gsLd7oI
- d8Ljm3zXZetqlNWJtuI3uRtQOvw94acmFFSoFHBXKJRCTUY99oBt0zLEBUqs5KoSCZkOjN8Dj
- gC1x6KKWyTfpHhOKn+qa1+OZld9MPRBMh0Hlb5y1o0LqPE6uJnefXYvQmNEHmxYcJJKMkxBHE
- 6XeoIzFE59HfgUAmv6bvL+rwohPvCWKux8Zw2kTWUREBH+bwjkS64iFopoF6bATPca94Q1hmf
- EhuimIG/GHJAHkG39h4Sh5BK08bDccFk2+gQzMAyHlggyVsTaw+Vm56xUAikMyNPc4CBTSztc
- IbtsenUxhjxJLZ3IPlCOAxiVv4pAo5FrSIo6aFe/2uucQaxa+8mrXl51ORi+WHzwhssKVgqE6
- UxfWkZTMzriH9g2mXscazGTW/mL3oNVS7GsGewUccu/FJOfMZAB72888NMInDb2PZbOAv4i2f
- 3no4y+4Ofmg5admEHQ+FhJroZdk1IGg41ao73cyAwfL4FFMvUw9w5PxhEtix0owcngBS+6oAC
- LidcsC4m4ARnucXpXwlQ24KnmF1C7cRKc0ylUKiyrZpYQng9bClcnQJRmYaaBmW5bXIxPGOji
- /o2qeo4njt7bI1plHQVk7anfNB9ThjpcLBNCNod+wyceQ8Qvg6xlUzayJBFxP5CaxhL35Q5xW
- PKQWJ1wuP8P4I3lcTLL/5y6Ex8Schf/ZRkzraf1Cq4LtTuPIrKcMBrT9g6RuqQQb1mC0knUP2
- 0wumud9eS2tZCkc/hTkg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some configurations, gcc reports an integer overflow:
-
-net/netfilter/nf_flow_table_offload.c: In function 'nf_flow_rule_match':
-net/netfilter/nf_flow_table_offload.c:80:21: error: unsigned conversion from 'int' to '__be16' {aka 'short unsigned int'} changes value from '327680' to '0' [-Werror=overflow]
-   mask->tcp.flags = TCP_FLAG_RST | TCP_FLAG_FIN;
-                     ^~~~~~~~~~~~
-
-From what I can tell, we want the upper 16 bits of these constants,
-so they need to be shifted in cpu-endian mode.
-
-Fixes: c29f74e0df7a ("netfilter: nf_flow_table: hardware offload support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-I'm not sure if this is the correct fix, please check carefully
----
- net/netfilter/nf_flow_table_offload.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netfilter/nf_flow_table_offload.c b/net/netfilter/nf_flow_table_offload.c
-index c54c9a6cc981..24543c45d501 100644
---- a/net/netfilter/nf_flow_table_offload.c
-+++ b/net/netfilter/nf_flow_table_offload.c
-@@ -77,7 +77,7 @@ static int nf_flow_rule_match(struct nf_flow_match *match,
- 	switch (tuple->l4proto) {
- 	case IPPROTO_TCP:
- 		key->tcp.flags = 0;
--		mask->tcp.flags = TCP_FLAG_RST | TCP_FLAG_FIN;
-+		mask->tcp.flags = cpu_to_be16(be32_to_cpu(TCP_FLAG_RST | TCP_FLAG_FIN) >> 16);
- 		match->dissector.used_keys |= BIT(FLOW_DISSECTOR_KEY_TCP);
- 		break;
- 	case IPPROTO_UDP:
--- 
-2.20.0
-
+T24gVHVlLCAyMDE5LTEyLTEwIGF0IDIwOjU0ICswMTAwLCBBcm5kIEJlcmdtYW5uIHdyb3RlOg0K
+PiBXaGVuIGJ1aWx0IGludG8gdGhlIGtlcm5lbCwgdGhlIGRyaXZlciBjYXVzZXMgYSBsaW5rIHBy
+b2JsZW06DQo+IA0KPiBgaXByb2NfZ3Bpb19yZW1vdmUnIHJlZmVyZW5jZWQgaW4gc2VjdGlvbiBg
+LmRhdGEnIG9mIGRyaXZlcnMvZ3Bpby9ncGlvLXhncy1pcHJvYy5vOiBkZWZpbmVkIGluIGRpc2Nh
+cmRlZCBzZWN0aW9uIGAuZXhpdC50ZXh0JyBvZiBkcml2ZXJzL2dwaW8vZ3Bpby14Z3MtaXByb2Mu
+bw0KPiANCj4gUmVtb3ZlIHRoZSBpbmNvcnJlY3QgYW5ub3RhdGlvbi4NCj4gDQo+IEZpeGVzOiA2
+YTQxYjZjNWZjMjAgKCJncGlvOiBBZGQgeGdzLWlwcm9jIGRyaXZlciIpDQo+IFNpZ25lZC1vZmYt
+Ynk6IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+DQoNClJldmlld2VkLWJ5OiBDaHJpcyBQ
+YWNraGFtIDxjaHJpcy5wYWNraGFtQGFsbGllZHRlbGVzaXMuY28ubno+DQoNCldoYXQncyB0aGUg
+Y3VycmVudCBiZXN0IHByYWN0aWNlIHcuci50Ll9faW5pdCBhbmQgX19leGl0PyBJIHNlZW0gdG8N
+CmhhdmUgbWVzc2VkIHRoaXMgdXAgb24gbXVsdGlwbGUgZnJvbnRzLg0KDQo+IC0tLQ0KPiAgZHJp
+dmVycy9ncGlvL2dwaW8teGdzLWlwcm9jLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBp
+bnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+aW8vZ3Bpby14Z3MtaXByb2MuYyBiL2RyaXZlcnMvZ3Bpby9ncGlvLXhncy1pcHJvYy5jDQo+IGlu
+ZGV4IDc3M2U1YzI0MzA5ZS4uYjIxYzJlNDM2YjYxIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dw
+aW8vZ3Bpby14Z3MtaXByb2MuYw0KPiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpby14Z3MtaXByb2Mu
+Yw0KPiBAQCAtMjgwLDcgKzI4MCw3IEBAIHN0YXRpYyBpbnQgaXByb2NfZ3Bpb19wcm9iZShzdHJ1
+Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgCXJldHVybiAwOw0KPiAgfQ0KPiAgDQo+IC1z
+dGF0aWMgaW50IF9fZXhpdCBpcHJvY19ncGlvX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
+ICpwZGV2KQ0KPiArc3RhdGljIGludCBpcHJvY19ncGlvX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1f
+ZGV2aWNlICpwZGV2KQ0KPiAgew0KPiAgCXN0cnVjdCBpcHJvY19ncGlvX2NoaXAgKmNoaXA7DQo+
+ICANCg==
