@@ -2,98 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 879B7118B1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:37:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A0C118B2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:38:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfLJOhn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 09:37:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727681AbfLJOhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:37:40 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20FCB2077B;
-        Tue, 10 Dec 2019 14:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575988659;
-        bh=ZZu6g4CiDeZIBwN4xUg7j+IL9wGtec4FD9ThMJUWWyY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pyVsl2AwF+Rb+dIKagy9ZSrdqWe8rtMZlGi5PL+0o/xJIQXw9ft9eVi4Fu5yj6DvG
-         P47DJ8vavR+vbU3NaJwJRJK+9tkEodLUTSv9iSUzchyepYgHc3XEkKE/oAwh9evvHA
-         +CtUSn845z8GZ/5mJ8qti1oD1GYcDa9C061zVE+M=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-serial@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Hyunki Koo <kkoos00@naver.com>,
-        HYUN-KI KOO <hyunki00.koo@samsung.com>,
-        Shinbeom Choi <sbeom.choi@samsung.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/10] tty: serial: samsung_tty: fix blank line checkpatch warning
-Date:   Tue, 10 Dec 2019 15:37:06 +0100
-Message-Id: <20191210143706.3928480-10-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
-References: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
+        id S1727526AbfLJOin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 09:38:43 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34983 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727420AbfLJOim (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 09:38:42 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j6so20193848lja.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 06:38:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nDCHPQReBntofdAnn2O3tHEDWDHTESE5vX9R+bp/+qE=;
+        b=uOlWfbUxA5UXwqcXYedV/SuV2axkuGm9xKU7ABK6lTkUT4fyN74FMpSrJFptS5tqZW
+         RLWgkIyqU+SQx6MAd/po4ZrUvxRQWurd8JxdtHrRu5Za8TCfjoYfsQ9Zsnduf57G8v5d
+         dR5HC/PopNRnLxx/SY3ZRVt/z+FiBctLn2l3tMlFxeLMSyz6TTSkhIHPLyQ8UV1BSlX8
+         kyJHuyhWbXVF6iwIwk+Il69xb+nyzdXMw+aw8dLBAwvgvPlRyIgHuVoNFnYNTwrCcral
+         nE/xSk7+i2i/8dFW5QUTq3Va5CsAAbuxQE1aPbgWDJgAjKc9KMJCleTCeEpa9m5ZE7L9
+         GzqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nDCHPQReBntofdAnn2O3tHEDWDHTESE5vX9R+bp/+qE=;
+        b=XzFAi+t6lekCqDoFfFdatJa6HYTkrZ0wRWII9f/fJhUjSxUul9NUfTj+ls5e+HWPV+
+         w1u+yhkLh+mx0N5dugPWm0wAQHRHxD9CyCklmad/vOQkHmUzeDNmOF+aJhOYPT3u5Thc
+         zEoxiPcjSSPQYehuNDYFXoyFB41foD350Qxov7hS8vCzhQYAjd/Ck0JupeDqKwP3EF2k
+         jUQY1D+lZyG7JjuWftaE2kcHxncex0usdJRAIu7pGxp9AmP7VwzrRtIYIRDrOCyavpw1
+         jkg0gsOTSkkpaYbH2sizxBk+ihoFW2uhFDUjrjyL3YxQHMHCF7A+RLNmL5YTSH1MJZmi
+         kWPA==
+X-Gm-Message-State: APjAAAXRvAQHoOof3MsFQWRCMqo8d8DBibzTEoQGZ7JotQmpa2Nr+sb+
+        iM1ypZnGClwX3KpvDzFXxmPuB2SULSaVGeY+2ZVAUg==
+X-Google-Smtp-Source: APXvYqweMxaRi1IEGtTTml4mr2+nxOL0DbKH/2SATGEcQ87DZet0Cut1IAAXfjouoPQcl6cKIIOUAwUazVr9VPcqcdg=
+X-Received: by 2002:a2e:2c0a:: with SMTP id s10mr20007991ljs.193.1575988719912;
+ Tue, 10 Dec 2019 06:38:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
+ <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
+ <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
+ <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
+ <CAKfTPtDBtPuvK0NzYC0VZgEhh31drCDN=o+3Hd3fUwoffQg0fw@mail.gmail.com> <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 10 Dec 2019 15:38:28 +0100
+Message-ID: <CAKfTPtASrwDcHUDqHgHP=8brALFv7ncmQuqLvihg4tQsxNUqkw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     DJ Delorie <dj@redhat.com>, David Sterba <dsterba@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-checkpatch is giving a bunch of:
-	WARNING: Missing a blank line after declarations
-messages on this file, so fix up all instances of that issue.
+On Mon, 9 Dec 2019 at 18:48, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> [ Added DJ to the participants, since he seems to be the Fedora make
+> maintainer - DJ, any chance that this absolutely horrid 'make' buf can
+> be fixed in older versions too, not just rawhide? The bugfix is two
+> and a half years old by now, and the bug looks real and very serious ]
+>
+> On Mon, Dec 9, 2019 at 1:54 AM Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > Which version of make should I use to reproduce the problem ?
+>
+> So the problematic one is "make-4.2.1-13.fc30.x86_64" in Fedora 30.
+> I'm assuming it's fairly plain 4.2.1, but I didn't try to look into
+> the source rpm or anything like that.
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hyunki Koo <kkoos00@naver.com>
-Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
-Cc: Shinbeom Choi <sbeom.choi@samsung.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/tty/serial/samsung_tty.c | 3 +++
- 1 file changed, 3 insertions(+)
+I'm using Debian buster and the make package is version: 4.2.1-1.2 for
+arm64. It doesn't have the commit you mentioned below but I don't see
+the problem on my platform and all 8 cpus are used with -j 16 or even
+-j 9
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 4aebed241068..d5c75d288498 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -1543,6 +1543,7 @@ static void s3c24xx_serial_release_port(struct uart_port *port)
- static int s3c24xx_serial_request_port(struct uart_port *port)
- {
- 	const char *name = s3c24xx_serial_portname(port);
-+
- 	return request_mem_region(port->mapbase, MAP_SIZE, name) ? 0 : -EBUSY;
- }
- 
-@@ -1963,6 +1964,7 @@ static inline struct s3c24xx_serial_drv_data *s3c24xx_get_driver_data(
- #ifdef CONFIG_OF
- 	if (pdev->dev.of_node) {
- 		const struct of_device_id *match;
-+
- 		match = of_match_node(s3c24xx_uart_dt_match, pdev->dev.of_node);
- 		return (struct s3c24xx_serial_drv_data *)match->data;
- 	}
-@@ -2109,6 +2111,7 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
- 		/* restore IRQ mask */
- 		if (s3c24xx_serial_has_interrupt_mask(port)) {
- 			unsigned int uintm = 0xf;
-+
- 			if (tx_enabled(port))
- 				uintm &= ~S3C64XX_UINTM_TXD_MSK;
- 			if (rx_enabled(port))
--- 
-2.24.0
+>
+> The working one for me was just the top of -git from
+>
+>     https://git.savannah.gnu.org/git/make.git
+>
+> which is 4.2.92 right now.
+>
+> The fix is presumably commit b552b05 ("[SV 51159] Use a non-blocking
+> read with pselect to avoid hangs") as per Akemi. That is indeed after
+> 4.2.1, and it looks real.
+>
+> Before that commit the buggy jobserver code basically does
+>
+>  (1) use pselect() to wait for readable and see child deaths atomically
+>  (2) use blocking read to get the token
+>
+> and while (1) is atomic, if the child death happens between the two,
+> it goes into the blocking read and has SIGCHLD blocked, so it will try
+> to read the token from the token pipe, but it will never react to the
+> child death - and the child death is what is going to _release_ a
+> token.
+>
+> So what seems to happen is that when the right timing triggers, you
 
+That can explain why I can't see the problem on my platform
+
+> end up with a lot of sub-makes waiting for a token, but they are also
+> all supposed to _release_ a token. So you don't have enough tokens to
+> go around. In the worst case, _everybody_ who has a token is also not
+> releasing it, and then you end up triggering the timeout code (after
+> one second), which will make things really go into a crawl.
+>
+> And by a crawl I mean that worst-case you really end up with just one
+> job per second per sub-make. It will take _hours_ to compile the
+> kernel at that speed, when it normally finishes in 15 minutes on my
+> machine even when I do a from-scratch allmodconfig build.
+>
+> It does seem to be a major bug in the jobserver code. In particular
+> with the trial fair and exclusive wakeup patch that I sent out in the
+> other thread, it seems to be _reliably_ much worse and triggers 100%
+> of the time for me.
+>
+> It's possible that my trial patch is buggy, but everything else looks
+> fine, and with a fixed make the trial patch works for me.
+>
+> I'll include the trial patch here too, I think I cc'd you on the other
+> thread too, but hey..
+>
+> Anyway, it looks like the sync wakeup thing is more of a "get timing
+> right by luck" thing than anything else. Possibly it actually causes
+> the reverse order of reader wakeups more often (ie the most _recent_
+> reader is most likely to get woken up synchronously) and that may be
+> what really ends up masking the jobserver problem, since apparently
+> doing wakeups in the fair and proper order makes things much worse..
+>
+> What a horrible pain that pipe rework ended up being. But I think
+> we're in better shape now than we used to be, it just had very
+> unfortunate timing issues and several real bugs.
+>
+> But sadly, there's no way I can push that fair pipe wakeup thing as
+> long as this horribly buggy version of make is widespread.
+>
+>                  Linus
