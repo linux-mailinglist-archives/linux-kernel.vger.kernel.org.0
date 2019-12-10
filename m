@@ -2,67 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA24118A85
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13FD0118A90
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:15:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfLJOOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 09:14:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:32884 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727324AbfLJOOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:14:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 26925AF79;
-        Tue, 10 Dec 2019 14:14:05 +0000 (UTC)
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH for-5.6 4/4] staging: bcm2835-audio: Drop superfluous ioctl PCM ops
-Date:   Tue, 10 Dec 2019 15:13:56 +0100
-Message-Id: <20191210141356.18074-5-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191210141356.18074-1-tiwai@suse.de>
-References: <20191210141356.18074-1-tiwai@suse.de>
+        id S1727542AbfLJOPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 09:15:33 -0500
+Received: from mga09.intel.com ([134.134.136.24]:15820 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727061AbfLJOPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 09:15:32 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 06:15:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,299,1571727600"; 
+   d="scan'208";a="215453366"
+Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.6])
+  by orsmga006.jf.intel.com with ESMTP; 10 Dec 2019 06:15:31 -0800
+Date:   Tue, 10 Dec 2019 22:15:02 +0800
+From:   kernel test robot <rong.a.chen@intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org
+Subject: Re: [pipe] 3c0edea9b2: lmbench3.PIPE.bandwidth.MB/sec -17.0%
+ regression
+Message-ID: <20191210141502.GQ32275@shao2-debian>
+References: <20191208153949.GJ32275@shao2-debian>
+ <20191209085559.GA5868@dhcp22.suse.cz>
+ <CAHk-=whF0mbvWC=sYKWTrpymmjWkGZcX9hnHgnm1t1M++W66zA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=whF0mbvWC=sYKWTrpymmjWkGZcX9hnHgnm1t1M++W66zA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCM core deals the empty ioctl field now as default.
-Let's kill the redundant lines.
+On Mon, Dec 09, 2019 at 10:35:35AM -0800, Linus Torvalds wrote:
+> On Mon, Dec 9, 2019 at 12:56 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > Huh. How can something like that can even can get merged? No changelog,
+> > no s-o-b?
+> 
+> Yeah, I missed that when pulling.
+> 
+> I wish that had been the only problem we had with that code, but it wasn't.
+> 
+> Anyway, I'm fairly certain the current git head should fix this
+> lmbench3 performance regression too.
+> 
+>                    Linus
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c | 2 --
- 1 file changed, 2 deletions(-)
+Hi Linus,
 
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-index 97726b190bc5..33485184a98a 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-@@ -305,7 +305,6 @@ snd_bcm2835_pcm_pointer(struct snd_pcm_substream *substream)
- static const struct snd_pcm_ops snd_bcm2835_playback_ops = {
- 	.open = snd_bcm2835_playback_open,
- 	.close = snd_bcm2835_playback_close,
--	.ioctl = snd_pcm_lib_ioctl,
- 	.prepare = snd_bcm2835_pcm_prepare,
- 	.trigger = snd_bcm2835_pcm_trigger,
- 	.pointer = snd_bcm2835_pcm_pointer,
-@@ -315,7 +314,6 @@ static const struct snd_pcm_ops snd_bcm2835_playback_ops = {
- static const struct snd_pcm_ops snd_bcm2835_playback_spdif_ops = {
- 	.open = snd_bcm2835_playback_spdif_open,
- 	.close = snd_bcm2835_playback_close,
--	.ioctl = snd_pcm_lib_ioctl,
- 	.prepare = snd_bcm2835_pcm_prepare,
- 	.trigger = snd_bcm2835_pcm_trigger,
- 	.pointer = snd_bcm2835_pcm_pointer,
--- 
-2.16.4
+Sorry for the inconvenience, indeed, the regression has been fixed.
 
+commit:
+  cefa80ced5 ("pipe: Increase the writer-wakeup threshold to reduce context-switch count")
+  3c0edea9b2 ("pipe: Remove sync on wake_ups")
+  6794862a16 ("Merge tag 'for-5.5-rc1-kconfig-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux")
+
+cefa80ced57a2917  3c0edea9b29f9be6c093f236f7  6794862a16ef41f753abd75c03  testcase/testparams/testbox
+----------------  --------------------------  --------------------------  ---------------------------
+         %stddev      change         %stddev      change         %stddev
+             \          |                \          |                \  
+     21204             -17%      17604              23%      26123 ±  3%  lmbench3/performance-development-100%-PIPE-50%-ucode=0x7000019/lkp-bdw-de1
+     21204             -17%      17604              23%      26123        GEO-MEAN lmbench3.PIPE.bandwidth.MB/sec
+
+Best Regards,
+Rong Chen
