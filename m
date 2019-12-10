@@ -2,249 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF019119163
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:01:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 072CF11915C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:01:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfLJUBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:01:46 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46973 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbfLJUBp (ORCPT
+        id S1726874AbfLJUBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:01:16 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:51867 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfLJUBP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:01:45 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z7so21419225wrl.13;
-        Tue, 10 Dec 2019 12:01:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gXxjPhJ3Q7lu/30NWGeVZetMfJAJiDa+9jYWsXuiNY4=;
-        b=QwyahkVI/O2HXvXv01ZnNh5RjagGtwlxGoPp97Kvt1FjORtnBVkybPbcIdhn/TT4z9
-         McqMXz5y0280tJFMD4jzZbp5PXxqILyf876XCWN5b5V5dHyuGFyzXa3XXzmmxrWIoKAp
-         jYwQlKE0XDAUaToLLRYvNuSvinUnoRCe7oM5GH1p6hCA0wvwAxFz1Dv9Ut6yBC9HHfZ9
-         rjFW1blGL6I6LVWNSP9WJftoxojZ0GhrJeq5BY56psiNI871Wws7yWtsZYoLgVUlgt7h
-         mab0mv0siqcdJXH+b6f0XxC1m/eWIoe+e9pxTmjcowk09VrNsPmte+xFOwqsdKp1RhuG
-         B4jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gXxjPhJ3Q7lu/30NWGeVZetMfJAJiDa+9jYWsXuiNY4=;
-        b=nw1uq+LOglhpwOkNgIUYy/xonNTtVG/5J76x/PtXU0/worksVH8wpn7uhs/IjdRmXu
-         BkZ7UBxaZK5sItNG+bHn7IhgfRm1xK+mpTC5cnuOtWuHuCGtPBrGBq+RAEB/4O1Q+5Oe
-         FrSqZ3BxHe39WfRK+CHrAVw0CasWr0O5pkXHcFpijEUbDM/05eVZo6+JoSF0OaKc1WBs
-         HCw0pm/hK956a0IKqzyq68a7yLsvZlIMoKRx+LOOjr7C7q0TYg05fNy3K5QBNm3t5ziG
-         XQxaT6ykTBKPNbmEf7EVPEfObK57vyjg1eRPYwQg3/TxtBsS3tVLPtCjzytLjbyuLDCk
-         +mpA==
-X-Gm-Message-State: APjAAAXTalJwZQ0GlMLf2ubndlvcOJS/9KYaepL+tVNMJ5dMQVuk9eIu
-        mekyw1BcT7kHt3S0uQuYsddl2YUX
-X-Google-Smtp-Source: APXvYqzlwL2JVvC24iFfkTJHpiYHh759+P/FnYILdCUDrTo3HueHBW1pbEbI79hKMfNAMaulXP3iHA==
-X-Received: by 2002:a5d:65c5:: with SMTP id e5mr5190052wrw.311.1576008102576;
-        Tue, 10 Dec 2019 12:01:42 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id z6sm4352255wmz.12.2019.12.10.12.01.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 12:01:41 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jim Quinlan <jim2101024@gmail.com>,
-        Jim Quinlan <im2101024@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
-        ARCHITECTURE),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX
-        ARM ARCHITECTURE)
-Subject: [PATCH 2/2] reset: Add Broadcom STB RESCAL reset controller
-Date:   Tue, 10 Dec 2019 11:59:03 -0800
-Message-Id: <20191210195903.24127-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191210195903.24127-1-f.fainelli@gmail.com>
-References: <20191210195903.24127-1-f.fainelli@gmail.com>
+        Tue, 10 Dec 2019 15:01:15 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MRSdf-1iQ6xB0jJ7-00NPmT; Tue, 10 Dec 2019 21:00:40 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Piotr Sroka <piotrs@cadence.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, kbuild test robot <lkp@intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        YueHaibing <yuehaibing@huawei.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: rawnand: cadence: fix address space mixup
+Date:   Tue, 10 Dec 2019 20:59:55 +0100
+Message-Id: <20191210200014.949529-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:txJklOowuSRLj0koCfpHwgfGy1GnDaqSKN+I1klemQktVt55+vk
+ bZmUdtxS4iQFjc1FoYZvgb+xJpGxxHn78pz0xmXekGDzvWH/CDrOP9kmh5qorGelqV+XNCH
+ GL0HstVAgcyk9+C45VfS3sCwsxgwEz+uipE//D1XPjAXt/JSEhsGM8hC7nLKGHmbvlwmnFB
+ Oa4HqVUMw0L7GwerspFbg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mbiYpSZ6SPE=:3HvWkAOW/EugY9Lv84f9OP
+ B3UlxY8qECwn2z8cz0Fae2n9XvtANC5HTx0fQDIYopO5GyCmQqW2/PLTNapJ1iSi6oM3KaudH
+ 23TjgcsKuOAkLpIdL0BPE0vHjzNgd9Iggv6Pv1tWUg7Vk+QYGQBmyTTbtCaEOiuAODfjQKIzz
+ Yc/p7TbIMQbqS1Bvgfh60f3Wkw4Uy3VA6e3AfepxrO760XhG0gDPPYo2hsGLlesPbpurhx0G7
+ 7WzwnEP0OeYu+TzOcPi143Ox66qi4O83RihWTZ9IgMjtNd3Iyd6LgZrLkDb43naCuDGm5wVZm
+ 5yTm/+PVhIGbGYbw2qMoqYzetq9BhTQkYCV8Pxq2rCfRMbgAhPTDIrznCXRqdKrS2yBfNxqIy
+ gFJbArlc88EqB6ZywlBJ2XSIKKga8g8qi4IgziLSO5AjryXBuxLcJ97BDU+CRsWabsIH3wFeC
+ ZSGWWrj01TMIN71IFJOcr6ihdqzK+FH29qG+NWtI/8u/8QqkE15HXr3FW6dYoz+Yt37Kf+SMw
+ b3SlMEVJ9Gp0+bOjDh1hS0M48CYQllItcJWlSk1DzPimvUYzuGyx5pFQYgsoPcZUfddDFZXOo
+ FvMb1CA8VVu0niNGJEzm3AqWmQhRbznNprA7/3dBXZEBDLJceYPkewJjnouNsdNWGUHDPujbY
+ FGTxRm5vKVI+9D67wmCaEdAhiE2lgUPZgc7isZ4kcmLbYiNwmdNvRNlJzn/edCcGThI+XlPxj
+ A96xDoHaLxaBxp93eQxBavi0XtBjs7txOn7iDq6D5yjob7MDshpLwYAmL5NuSoilwPyruTZ7P
+ ldecQ1xGWZnkZ1egU1Y7F9yW0hSEaVGstioKeupCfPTTQG5omSNmywcCa4pC7EvjS4YvE8ZAF
+ yEI7JSi/Elqr1KAqL1XQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jim Quinlan <jim2101024@gmail.com>
+dma_addr_t and pointers can are not interchangeable, and can
+be different sizes:
 
-On BCM7216 there is a special purpose reset controller named RESCAL
-(reset calibration) which is necessary for SATA and PCIe0/1 to operate
-correctly. This commit adds support for such a reset controller to be
-available.
+drivers/mtd/nand/raw/cadence-nand-controller.c: In function 'cadence_nand_cdma_transfer':
+drivers/mtd/nand/raw/cadence-nand-controller.c:1283:12: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+            (void *)dma_buf, (void *)dma_ctrl_dat,
+            ^
+drivers/mtd/nand/raw/cadence-nand-controller.c:1283:29: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+            (void *)dma_buf, (void *)dma_ctrl_dat,
+                             ^
 
-Signed-off-by: Jim Quinlan <im2101024@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Use dma_addr_t consistently here, which cleans up a couple of casts
+as a side-effect.
+
+Fixes: ec4ba01e894d ("mtd: rawnand: Add new Cadence NAND driver to MTD subsystem")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/reset/Kconfig                |   7 ++
- drivers/reset/Makefile               |   1 +
- drivers/reset/reset-brcmstb-rescal.c | 124 +++++++++++++++++++++++++++
- 3 files changed, 132 insertions(+)
- create mode 100644 drivers/reset/reset-brcmstb-rescal.c
+ .../mtd/nand/raw/cadence-nand-controller.c    | 21 ++++++++-----------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 12f5c897788d..b7cc0a2049d9 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -49,6 +49,13 @@ config RESET_BRCMSTB
- 	  This enables the reset controller driver for Broadcom STB SoCs using
- 	  a SUN_TOP_CTRL_SW_INIT style controller.
+diff --git a/drivers/mtd/nand/raw/cadence-nand-controller.c b/drivers/mtd/nand/raw/cadence-nand-controller.c
+index 3a36285a8d8a..5a2d7e7ffaee 100644
+--- a/drivers/mtd/nand/raw/cadence-nand-controller.c
++++ b/drivers/mtd/nand/raw/cadence-nand-controller.c
+@@ -402,7 +402,7 @@ struct cadence_nand_cdma_desc {
+ 	u16 rsvd2;
  
-+config RESET_BRCMSTB_RESCAL
-+	bool "Broadcom STB RESCAL reset controller"
-+	default ARCH_BRCMSTB || COMPILE_TEST
-+	help
-+	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
-+	  BCM7216.
-+
- config RESET_HSDK
- 	bool "Synopsys HSDK Reset Driver"
- 	depends on HAS_IOMEM
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 00767c03f5f2..1e4291185c52 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_RESET_ATH79) += reset-ath79.o
- obj-$(CONFIG_RESET_AXS10X) += reset-axs10x.o
- obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
- obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
-+obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
- obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
- obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
- obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
-diff --git a/drivers/reset/reset-brcmstb-rescal.c b/drivers/reset/reset-brcmstb-rescal.c
-new file mode 100644
-index 000000000000..58a30e624a14
---- /dev/null
-+++ b/drivers/reset/reset-brcmstb-rescal.c
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2018 Broadcom */
-+
-+
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/types.h>
-+
-+#define BRCM_RESCAL_START	0
-+#define	BRCM_RESCAL_START_BIT	BIT(0)
-+#define BRCM_RESCAL_CTRL	4
-+#define BRCM_RESCAL_STATUS	8
-+#define BRCM_RESCAL_STATUS_BIT	BIT(0)
-+
-+struct brcm_rescal_reset {
-+	void __iomem	*base;
-+	struct device *dev;
-+	struct reset_controller_dev rcdev;
-+};
-+
-+static int brcm_rescal_reset_assert(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
-+{
-+	return 0;
-+}
-+
-+static int brcm_rescal_reset_deassert(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
-+{
-+	struct brcm_rescal_reset *data =
-+		container_of(rcdev, struct brcm_rescal_reset, rcdev);
-+	void __iomem *base = data->base;
-+	const int NUM_RETRIES = 10;
-+	u32 reg;
-+	int i;
-+
-+	reg = readl(base + BRCM_RESCAL_START);
-+	writel(reg | BRCM_RESCAL_START_BIT, base + BRCM_RESCAL_START);
-+	reg = readl(base + BRCM_RESCAL_START);
-+	if (!(reg & BRCM_RESCAL_START_BIT)) {
-+		dev_err(data->dev, "failed to start sata/pcie rescal\n");
-+		return -EIO;
-+	}
-+
-+	reg = readl(base + BRCM_RESCAL_STATUS);
-+	for (i = NUM_RETRIES; i >= 0 &&  !(reg & BRCM_RESCAL_STATUS_BIT); i--) {
-+		udelay(100);
-+		reg = readl(base + BRCM_RESCAL_STATUS);
-+	}
-+	if (!(reg & BRCM_RESCAL_STATUS_BIT)) {
-+		dev_err(data->dev, "timedout on sata/pcie rescal\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	reg = readl(base + BRCM_RESCAL_START);
-+	writel(reg ^ BRCM_RESCAL_START_BIT, base + BRCM_RESCAL_START);
-+	reg = readl(base + BRCM_RESCAL_START);
-+	dev_dbg(data->dev, "sata/pcie rescal success\n");
-+
-+	return 0;
-+}
-+
-+static int brcm_rescal_reset_xlate(struct reset_controller_dev *rcdev,
-+				   const struct of_phandle_args *reset_spec)
-+{
-+	/* This is needed if #reset-cells == 0. */
-+	return 0;
-+}
-+
-+static const struct reset_control_ops brcm_rescal_reset_ops = {
-+	.assert = brcm_rescal_reset_assert,
-+	.deassert = brcm_rescal_reset_deassert,
-+};
-+
-+static int brcm_rescal_reset_probe(struct platform_device *pdev)
-+{
-+	struct brcm_rescal_reset *data;
-+	struct resource *res;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->base = devm_ioremap_resource(&pdev->dev, res);
-+
-+	if (IS_ERR(data->base))
-+		return PTR_ERR(data->base);
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.nr_resets = 1;
-+	data->rcdev.ops = &brcm_rescal_reset_ops;
-+	data->rcdev.of_node = pdev->dev.of_node;
-+	data->rcdev.of_xlate = brcm_rescal_reset_xlate;
-+	data->dev = &pdev->dev;
-+
-+	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-+}
-+
-+static const struct of_device_id brcm_rescal_reset_of_match[] = {
-+	{ .compatible = "brcm,bcm7216-pcie-sata-rescal" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, brcm_rescal_reset_of_match);
-+
-+static struct platform_driver brcm_rescal_reset_driver = {
-+	.probe = brcm_rescal_reset_probe,
-+	.driver = {
-+		.name	= "brcm-rescal-reset",
-+		.of_match_table	= brcm_rescal_reset_of_match,
-+	}
-+};
-+module_platform_driver(brcm_rescal_reset_driver);
-+
-+MODULE_AUTHOR("Broadcom");
-+MODULE_DESCRIPTION("Broadcom Sata/PCIe rescal reset controller");
-+MODULE_LICENSE("GPL v2");
+ 	/* System/host memory address required for data DMA commands. */
+-	u64 memory_pointer;
++	u64 memory_addr;
+ 
+ 	/* Status of operation. */
+ 	u32 status;
+@@ -416,7 +416,7 @@ struct cadence_nand_cdma_desc {
+ 	u32 rsvd4;
+ 
+ 	/* Control data pointer. */
+-	u64 ctrl_data_ptr;
++	u64 ctrl_data_addr;
+ };
+ 
+ /* Interrupt status. */
+@@ -914,8 +914,8 @@ static void cadence_nand_get_caps(struct cdns_nand_ctrl *cdns_ctrl)
+ /* Prepare CDMA descriptor. */
+ static void
+ cadence_nand_cdma_desc_prepare(struct cdns_nand_ctrl *cdns_ctrl,
+-			       char nf_mem, u32 flash_ptr, char *mem_ptr,
+-			       char *ctrl_data_ptr, u16 ctype)
++			       char nf_mem, u32 flash_ptr, dma_addr_t mem_addr,
++			       dma_addr_t ctrl_data_addr, u16 ctype)
+ {
+ 	struct cadence_nand_cdma_desc *cdma_desc = cdns_ctrl->cdma_desc;
+ 
+@@ -931,13 +931,13 @@ cadence_nand_cdma_desc_prepare(struct cdns_nand_ctrl *cdns_ctrl,
+ 	cdma_desc->command_flags |= CDMA_CF_DMA_MASTER;
+ 	cdma_desc->command_flags  |= CDMA_CF_INT;
+ 
+-	cdma_desc->memory_pointer = (uintptr_t)mem_ptr;
++	cdma_desc->memory_addr = mem_addr;
+ 	cdma_desc->status = 0;
+ 	cdma_desc->sync_flag_pointer = 0;
+ 	cdma_desc->sync_arguments = 0;
+ 
+ 	cdma_desc->command_type = ctype;
+-	cdma_desc->ctrl_data_ptr = (uintptr_t)ctrl_data_ptr;
++	cdma_desc->ctrl_data_addr = ctrl_data_addr;
+ }
+ 
+ static u8 cadence_nand_check_desc_error(struct cdns_nand_ctrl *cdns_ctrl,
+@@ -1280,8 +1280,7 @@ cadence_nand_cdma_transfer(struct cdns_nand_ctrl *cdns_ctrl, u8 chip_nr,
+ 	}
+ 
+ 	cadence_nand_cdma_desc_prepare(cdns_ctrl, chip_nr, page,
+-				       (void *)dma_buf, (void *)dma_ctrl_dat,
+-				       ctype);
++				       dma_buf, dma_ctrl_dat, ctype);
+ 
+ 	status = cadence_nand_cdma_send_and_wait(cdns_ctrl, thread_nr);
+ 
+@@ -1358,10 +1357,8 @@ static int cadence_nand_erase(struct nand_chip *chip, u32 page)
+ 	int status;
+ 	u8 thread_nr = cdns_chip->cs[chip->cur_cs];
+ 
+-	cadence_nand_cdma_desc_prepare(cdns_ctrl,
+-				       cdns_chip->cs[chip->cur_cs],
+-				       page, NULL, NULL,
+-				       CDMA_CT_ERASE);
++	cadence_nand_cdma_desc_prepare(cdns_ctrl, cdns_chip->cs[chip->cur_cs],
++				       page, 0, 0, CDMA_CT_ERASE);
+ 	status = cadence_nand_cdma_send_and_wait(cdns_ctrl, thread_nr);
+ 	if (status) {
+ 		dev_err(cdns_ctrl->dev, "erase operation failed\n");
 -- 
-2.17.1
+2.20.0
 
