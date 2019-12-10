@@ -2,88 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D2E4117FEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:47:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B80117FF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:51:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbfLJFrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 00:47:12 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46743 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbfLJFrL (ORCPT
+        id S1727053AbfLJFvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 00:51:19 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12417 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfLJFvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 00:47:11 -0500
-Received: by mail-pl1-f196.google.com with SMTP id k20so6810800pll.13;
-        Mon, 09 Dec 2019 21:47:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4PpU18WVGfu8W1dzcx6BhI1zCSeD4MNelLQRqcNILww=;
-        b=h5ge2jCJXFDHTh1fWNcu/9O+pouL8MOCQbEZhpeRILATJTIZodskMGyfBI0trwPGi9
-         RZaUTiMU+QaERHsiq82S1P5zomu67JjhrxMvp7pmJIUN+c3X53bU7H9m++MkmmE7f1DM
-         mUU5gP1MAfR0M1GnsQQy5AgMzTvwcIkNKALNGg/X0P4KEtvx2GyaeR/fB9T4n+TGmjnv
-         tq3q54IYY9Aug9l8RDTHBAcWSCVh6wjC2cfAchZwxgNlP5i5DsaiBtjjlvY9YSZUL/WE
-         NuuOx0uIGb29R7dROxL2LwG8o+5YM8KrBpP1i8/DlHG7gdgT2mom/aB7MmFbAeIvQW3d
-         FpMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4PpU18WVGfu8W1dzcx6BhI1zCSeD4MNelLQRqcNILww=;
-        b=Ari/iZ1BRjREVkNn9GcCiuQ+KE6R/WLSbfuSm/A1OQgAOmWDOxegKiZEX7V4Wz4lwQ
-         IswtzX5fn9yAMc0PkIXQlbPOC2gkxbNAieRuSU61VarubPHKaLXIEwB31cJ0HZyBiSd3
-         bqgY6MkgavBivJZLgKWbAKbkkpXDsuQqvDhvBJ4uDz9VPKN9V5zHRABJ+GbdxVbkzNrD
-         uTBk5XC7sWlcshTXi3V6g/+uu4gDhs5Jrv+sem0JxGQpBQub6XYsPro0QA1rl7IXpuK2
-         z6hZaxVKQnpg7SWJkjgqL6waTEwTFU/pliCaa5IYb24mn35HeOeMDzFR/7vmr1Fp01nH
-         VdUg==
-X-Gm-Message-State: APjAAAVac5YNbcaOGvBOlWt7QvKYO45Q4AzEtB9uXvuJwqqLsBaFq6pQ
-        F95j84Jj82woPH0Js6mMKMo=
-X-Google-Smtp-Source: APXvYqxXXcF/D0VDW40F8ndwD793QLu7WN4Wy9SPAeh1eHSRmWB3nlsOnuscllQ1evZKi4Vqv4acSg==
-X-Received: by 2002:a17:902:8649:: with SMTP id y9mr33737643plt.67.1575956830540;
-        Mon, 09 Dec 2019 21:47:10 -0800 (PST)
-Received: from localhost.localdomain ([2402:3a80:13a2:ed96:d06d:42a7:9b38:e89c])
-        by smtp.gmail.com with ESMTPSA id s2sm1433072pfb.109.2019.12.09.21.47.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 21:47:10 -0800 (PST)
-From:   madhuparnabhowmik04@gmail.com
-To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        paulmck@kernel.org, joel@joelfernandes.org
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rcu@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-Subject: [PATCH] fs: nfs: dir.c: Fix sparse error
-Date:   Tue, 10 Dec 2019 11:16:39 +0530
-Message-Id: <20191210054639.30003-1-madhuparnabhowmik04@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 10 Dec 2019 00:51:17 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5def324d0000>; Mon, 09 Dec 2019 21:51:10 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 09 Dec 2019 21:51:16 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 09 Dec 2019 21:51:16 -0800
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
+ 2019 05:51:15 +0000
+Received: from [10.2.166.216] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
+ 2019 05:51:14 +0000
+Subject: Re: [PATCH v8 17/26] media/v4l2-core: set pages dirty upon releasing
+ DMA buffers
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        <stable@vger.kernel.org>
+References: <20191209225344.99740-1-jhubbard@nvidia.com>
+ <20191209225344.99740-18-jhubbard@nvidia.com>
+ <20191209165627.bf657cb8fdf660e8f91e966c@linux-foundation.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <fc100f4b-2c14-b56b-488a-e2d54d61d575@nvidia.com>
+Date:   Mon, 9 Dec 2019 21:48:24 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <20191209165627.bf657cb8fdf660e8f91e966c@linux-foundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1575957070; bh=KRjfdSXWCfXtj0zEL6nFRN1GkUl6vp+XI3HBba/YpY8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=jHN/De11w2qJ/2Whqsz+5DRlqwutNcV+vDNiSEKXdDcKWt78VSxoGM0nLPdizxgSb
+         M4m/UOUskWnEyCPODO9f1DYcD6hEBbJk74+kHw/LlXQq1xUnySbFRplwJNaq5NrVaz
+         jsqdkry+cVNaNaRw3VxAVr3+cs8cvcJ783ZVBXMfF/rtOeLzgMzsIx2ydS3WZJvth1
+         OfB3+NCkepaNAqgI1WYky+kXprKnYMmI09kgA9JzYnAnbh34pgq9lGMtxcjGnUZ1yV
+         PAP6rWIOB+cdLSKZhfV+SBX5T+eEKD+BSQbO+Vj2XcjLK4iwQtiCrGuqh1R5ggXhEY
+         xtGKcG+Qp/n6Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+On 12/9/19 4:56 PM, Andrew Morton wrote:
+> On Mon, 9 Dec 2019 14:53:35 -0800 John Hubbard <jhubbard@nvidia.com> wrote:
+> 
+>> After DMA is complete, and the device and CPU caches are synchronized,
+>> it's still required to mark the CPU pages as dirty, if the data was
+>> coming from the device. However, this driver was just issuing a
+>> bare put_page() call, without any set_page_dirty*() call.
+>>
+>> Fix the problem, by calling set_page_dirty_lock() if the CPU pages
+>> were potentially receiving data from the device.
+>>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+>> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+>> Cc: <stable@vger.kernel.org>
+> 
+> What are the user-visible effects of this change?
 
-This patch fixes the following sparse error:
-fs/nfs/dir.c:2353:14: error: incompatible types in comparison expression (different address spaces):
-fs/nfs/dir.c:2353:14:    struct list_head [noderef] <asn:4> *
-fs/nfs/dir.c:2353:14:    struct list_head *
+I'll have to defer to Hans or other experts, because I merely spotted
+this by reading the code.
 
-Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
----
- fs/nfs/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> As it's cc:stable I'd normally send this to Linus within 1-2 weeks, or
+> sooner.  Please confirm that this is a standalone fix, independent of
+> the rest of this series.
+> 
+> 
 
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index e180033e35cf..b69370b6d317 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -2350,7 +2350,7 @@ static int nfs_access_get_cached_rcu(struct inode *inode, const struct cred *cre
- 	rcu_read_lock();
- 	if (nfsi->cache_validity & NFS_INO_INVALID_ACCESS)
- 		goto out;
--	lh = rcu_dereference(nfsi->access_cache_entry_lru.prev);
-+	lh = rcu_dereference(list_tail_rcu(&nfsi->access_cache_entry_lru));
- 	cache = list_entry(lh, struct nfs_access_entry, lru);
- 	if (lh == &nfsi->access_cache_entry_lru ||
- 	    cred != cache->cred)
+Yes, this is a stand-alone fix. Of course, as part of this series, the
+put_page() gets converted to put_user_pages_dirty() in the next patch,
+and that in turn gets renamed to unpin_user_pages_dirty() in a later
+patch. Just so we keep that in mind when moving patches around.
+
+
+thanks,
 -- 
-2.17.1
-
+John Hubbard
+NVIDIA
