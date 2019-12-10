@@ -2,204 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FFC21181AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:06:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C1831181B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:06:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfLJIGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 03:06:20 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:22259 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726364AbfLJIGT (ORCPT
+        id S1727022AbfLJIGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 03:06:45 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:32769 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfLJIGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 03:06:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575965177;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BiwVSVrkVC5x1zEcwCmZ0emg/mFsMseNMfs46qx16pM=;
-        b=DcSTjB+HDsCZOsGU6mizQKAG430HCIana6gUScdszullzDN8QrFW/3Ycv43Y+wO1JtvczP
-        p6Wl2FZnX+i73jEz6r7qRAY/ttrNM0Bz7UqRLgMuBUMZZZAbCdEBhRpZs6P44VKJ8ma+ep
-        OiGLAyR8AciEd+aIWiwHIh4Hmx2Qego=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-192-4ovWJzv0PRWwsIUU_SAzXQ-1; Tue, 10 Dec 2019 03:06:12 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 712341852E23;
-        Tue, 10 Dec 2019 08:06:09 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EB2415D70D;
-        Tue, 10 Dec 2019 08:05:55 +0000 (UTC)
-Date:   Tue, 10 Dec 2019 16:05:50 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Andrea Vai <andrea.vai@unipv.it>
-Cc:     "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        USB list <linux-usb@vger.kernel.org>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Theodore Ts'o <tytso@mit.edu>
-Subject: Re: AW: Slow I/O on USB media after commit
- f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-Message-ID: <20191210080550.GA5699@ming.t460p>
-References: <alpine.LNX.2.21.1.1911271055200.8@nippy.intranet>
- <cb6e84781c4542229a3f31572cef19ab@SVR-IES-MBX-03.mgc.mentorg.com>
- <c1358b840b3a4971aa35a25d8495c2c8953403ea.camel@unipv.it>
- <20191128091712.GD15549@ming.t460p>
- <f82fd5129e3dcacae703a689be60b20a7fedadf6.camel@unipv.it>
- <20191129005734.GB1829@ming.t460p>
- <20191129023555.GA8620@ming.t460p>
- <320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it>
- <20191203022337.GE25002@ming.t460p>
- <8196b014b1a4d91169bf3b0d68905109aeaf2191.camel@unipv.it>
-MIME-Version: 1.0
-In-Reply-To: <8196b014b1a4d91169bf3b0d68905109aeaf2191.camel@unipv.it>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: 4ovWJzv0PRWwsIUU_SAzXQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        Tue, 10 Dec 2019 03:06:44 -0500
+Received: by mail-wr1-f68.google.com with SMTP id b6so18919605wrq.0;
+        Tue, 10 Dec 2019 00:06:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=TrPkwEXfKMcmBJRMNstq7uxjKx3WNx+bbydVyI6MWHE=;
+        b=nWtyrFvDAYkYyZJFWyDb04U2iRVuCXLIWSsQVgMM5vtBaveIFSiKAZTL6II3BjWL/9
+         Uuhx1xzzjRAmkyflJ9d5X1fHwm6+s+DnJqvbNCWUFhjLVOYjica5dgr2OHwnQHJuneIT
+         9JpF05dCR+CcHLB1XhsCcYIITeIZWH2vSgx0KeUxqcOSg24KVR5nVx+ZZnFP3aLm9lkB
+         dCdKYSznWWUsHPwyT7P6FRTyJ7sh7Ob+v7m+z0kh4s8feYBndiWNz6QvofqcfnI6LCnT
+         LO4cZYp9ZGbyGVmxEy21FYfBEdDxSs197KtaSInF/iHLC2qPnc5hu2krrTf2Tz4w9Udk
+         CSMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TrPkwEXfKMcmBJRMNstq7uxjKx3WNx+bbydVyI6MWHE=;
+        b=lVqcy9EkBgdpcIdO7lpM3lJVN3+1UPbjnQtuYoZ16SGsy7olW92m/i5S32eSwLweJ8
+         bQV43n5Qp0sORwyHTIAqTNiXaBH0cJ4v1h7/sU/0AeQP/1lTgkcASg32ONSkJemrqsae
+         +5IsfDiEjL1cDu1XE8iGkzqLXyt1xjE40/GkliumN580TPeNWIyI+VH6f+Rjrp2UuxLE
+         EtfHLaJpsA3uYokDkc+6Ta1PX2euAAdFmKlUZPoqcxmI2FSFj/5N/aKx6IQ4XA76tHqS
+         WvOQZifPUSGFAwZHiIr/PQ+eEhwr5OdAIL9n8jy8YwqSzFKC/z4FyPuTEEmXP2OoBeDG
+         9D8Q==
+X-Gm-Message-State: APjAAAUnNU308O9xnlKK4eX2gZzLHcEMGUxvtv+dx2wNL4NB2aMLQQwQ
+        7ZRsBa5hlUyb2zWc7MHQYUg=
+X-Google-Smtp-Source: APXvYqwvF9vb1Pg/03dTB9bQnN2IbN1gpJnIMJTJQB2WBT2IvDLxvGQ+qQaE01Fk2ySzFRrDqJNniQ==
+X-Received: by 2002:adf:ef92:: with SMTP id d18mr1570233wro.234.1575965202797;
+        Tue, 10 Dec 2019 00:06:42 -0800 (PST)
+Received: from localhost.localdomain (x2f7fae7.dyn.telefonica.de. [2.247.250.231])
+        by smtp.gmail.com with ESMTPSA id a16sm2342587wrt.37.2019.12.10.00.06.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 00:06:42 -0800 (PST)
+From:   SeongJae Park <sj38.park@gmail.com>
+X-Google-Original-From: SeongJae Park <sjpark@amazon.de>
+To:     sjpark@amazon.com
+Cc:     axboe@kernel.dk, konrad.wilk@oracle.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pdurrant@amazon.com, roger.pau@citrix.com, sj38.park@gmail.com,
+        xen-devel@lists.xenproject.org, SeongJae Park <sjpark@amazon.de>
+Subject: [PATCH v5 0/2] xenbus/backend: Add a memory pressure handler callback
+Date:   Tue, 10 Dec 2019 08:06:26 +0000
+Message-Id: <20191210080628.5264-1-sjpark@amazon.de>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 08:35:43AM +0100, Andrea Vai wrote:
-> Il giorno mar, 03/12/2019 alle 10.23 +0800, Ming Lei ha scritto:
-> > On Fri, Nov 29, 2019 at 03:41:01PM +0100, Andrea Vai wrote:
-> > > Il giorno ven, 29/11/2019 alle 10.35 +0800, Ming Lei ha scritto:
-> > > > On Fri, Nov 29, 2019 at 08:57:34AM +0800, Ming Lei wrote:
-> > > >=20
-> > > > > [...]
-> > > >=20
-> > > > > Andrea, can you collect the following log when running the
-> > test
-> > > > > on current new(bad) kernel?
-> > > > >=20
-> > > > > =09/usr/share/bcc/tools/stackcount  -K
-> > blk_mq_make_request
-> > > >=20
-> > > > Instead, please run the following trace, given insert may be
-> > > > called from other paths, such as flush plug:
-> > > >=20
-> > > > =09/usr/share/bcc/tools/stackcount -K t:block:block_rq_insert
-> > >=20
-> > > Attached, for new (patched) bad kernel.
-> > >=20
-> > > Produced by: start the trace script (with the pendrive already
-> > > plugged), wait some seconds, run the test (1 trial, 1 GB), wait
-> > for
-> > > the test to finish, stop the trace.
-> > >=20
-> > > The copy took ~1700 seconds.
-> >=20
-> > See the two path[1][2] of inserting request, and path[1] is
-> > triggered
-> > 4358 times, and the path[2] is triggered 5763 times.
-> >=20
-> > The path[2] is expected behaviour. Not sure path [1] is correct,
-> > given
-> > ext4_release_file() is supposed to be called when this inode is
-> > released. That means the file is closed 4358 times during 1GB file
-> > copying to usb storage.
-> >=20
-> > Cc filesystem list.
-> >=20
-> >=20
-> > [1] insert requests when returning to user mode from syscall
-> >=20
-> >   b'blk_mq_sched_request_inserted'
-> >   b'blk_mq_sched_request_inserted'
-> >   b'dd_insert_requests'
-> >   b'blk_mq_sched_insert_requests'
-> >   b'blk_mq_flush_plug_list'
-> >   b'blk_flush_plug_list'
-> >   b'io_schedule_prepare'
-> >   b'io_schedule'
-> >   b'rq_qos_wait'
-> >   b'wbt_wait'
-> >   b'__rq_qos_throttle'
-> >   b'blk_mq_make_request'
-> >   b'generic_make_request'
-> >   b'submit_bio'
-> >   b'ext4_io_submit'
-> >   b'ext4_writepages'
-> >   b'do_writepages'
-> >   b'__filemap_fdatawrite_range'
-> >   b'ext4_release_file'
-> >   b'__fput'
-> >   b'task_work_run'
-> >   b'exit_to_usermode_loop'
-> >   b'do_syscall_64'
-> >   b'entry_SYSCALL_64_after_hwframe'
-> >     4358
-> >=20
-> > [2] insert requests from writeback wq context
-> >=20
-> >   b'blk_mq_sched_request_inserted'
-> >   b'blk_mq_sched_request_inserted'
-> >   b'dd_insert_requests'
-> >   b'blk_mq_sched_insert_requests'
-> >   b'blk_mq_flush_plug_list'
-> >   b'blk_flush_plug_list'
-> >   b'io_schedule_prepare'
-> >   b'io_schedule'
-> >   b'rq_qos_wait'
-> >   b'wbt_wait'
-> >   b'__rq_qos_throttle'
-> >   b'blk_mq_make_request'
-> >   b'generic_make_request'
-> >   b'submit_bio'
-> >   b'ext4_io_submit'
-> >   b'ext4_bio_write_page'
-> >   b'mpage_submit_page'
-> >   b'mpage_process_page_bufs'
-> >   b'mpage_prepare_extent_to_map'
-> >   b'ext4_writepages'
-> >   b'do_writepages'
-> >   b'__writeback_single_inode'
-> >   b'writeback_sb_inodes'
-> >   b'__writeback_inodes_wb'
-> >   b'wb_writeback'
-> >   b'wb_workfn'
-> >   b'process_one_work'
-> >   b'worker_thread'
-> >   b'kthread'
-> >   b'ret_from_fork'
-> >     5763
-> >=20
-> > Thanks,
-> > Ming
-> >=20
->=20
-> Is there any update on this? Sorry if I am making noise, but I would
-> like to help to improve the kernel (or fix it) if I can help.
-> Otherwise, please let me know how to consider this case,
+Granting pages consumes backend system memory.  In systems configured
+with insufficient spare memory for those pages, it can cause a memory
+pressure situation.  However, finding the optimal amount of the spare
+memory is challenging for large systems having dynamic resource
+utilization patterns.  Also, such a static configuration might lack a
+flexibility.
 
-IMO, the extra write path from exit_to_usermode_loop() isn't expected,
-that should be the reason why write IO order is changed, then performance
-drops on your USB storage.
+To mitigate such problems, this patchset adds a memory reclaim callback
+to 'xenbus_driver' (patch 1) and use it to mitigate the problem in
+'xen-blkback' (patch 2).
 
-We need our fs/ext4 experts to take a look.
+Base Version
+------------
 
-Or can you reproduce the issue on xfs or btrfs?
+This patch is based on v5.4.  A complete tree is also available at my
+public git repo:
+https://github.com/sjp38/linux/tree/blkback_squeezing_v5
 
-Thanks,
-Ming
+
+Patch History
+-------------
+
+Changes from v4
+(https://lore.kernel.org/xen-devel/20191209194305.20828-1-sjpark@amazon.com/)
+ - Remove domain id parameter from the callback (suggested by Jergen Gross)
+
+Changes from v3
+(https://lore.kernel.org/xen-devel/20191209085839.21215-1-sjpark@amazon.com/)
+ - Add general callback in xen_driver and use it (suggested by Juergen
+   Gross)
+
+Changes from v2
+(https://lore.kernel.org/linux-block/af195033-23d5-38ed-b73b-f6e2e3b34541@amazon.com)
+ - Rename the module parameter and variables for brevity (aggressive
+   shrinking -> squeezing)
+
+Changes from v1
+(https://lore.kernel.org/xen-devel/20191204113419.2298-1-sjpark@amazon.com/)
+ - Adjust the description to not use the term, `arbitrarily` (suggested
+   by Paul Durrant)
+ - Specify time unit of the duration in the parameter description,
+   (suggested by Maximilian Heyne)
+ - Change default aggressive shrinking duration from 1ms to 10ms
+ - Merge two patches into one single patch
+
+SeongJae Park (2):
+  xenbus/backend: Add memory pressure handler callback
+  xen/blkback: Squeeze page pools if a memory pressure is detected
+
+ drivers/block/xen-blkback/blkback.c       | 23 +++++++++++++++--
+ drivers/block/xen-blkback/common.h        |  1 +
+ drivers/block/xen-blkback/xenbus.c        |  3 ++-
+ drivers/xen/xenbus/xenbus_probe_backend.c | 31 +++++++++++++++++++++++
+ include/xen/xenbus.h                      |  1 +
+ 5 files changed, 56 insertions(+), 3 deletions(-)
+
+-- 
+2.17.1
 
