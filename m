@@ -2,67 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD290118B63
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4864118B6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:47:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfLJOqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 09:46:13 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:59615 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727145AbfLJOqN (ORCPT
+        id S1727525AbfLJOrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 09:47:01 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37420 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727145AbfLJOrB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:46:13 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ieglb-0002mB-QE; Tue, 10 Dec 2019 14:46:05 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/display: remove duplicated assignment to pointer crtc_state
-Date:   Tue, 10 Dec 2019 14:45:35 +0000
-Message-Id: <20191210144535.341977-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        Tue, 10 Dec 2019 09:47:01 -0500
+Received: by mail-ed1-f68.google.com with SMTP id cy15so16205311edb.4;
+        Tue, 10 Dec 2019 06:47:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YhaZZr/VtnLO8eSaQcdnch7Ah/fM7ZqN8a+3yLWOzB0=;
+        b=TmAhfc5KZel99Qk6C2qwM4/dxmyp0oH1E0QhdgfpEc21/lFhjqnN454inmI9y5OxSS
+         Oi1vaAPU/YXV2R06a51Qw9CvCvjkKzjeCiTLdalavQzQp801QdKpAaQYBi85X5uZ4/UP
+         HjYkp9PlAE6VEsGckbs6q5pAnwsRn3XoZX4+R8xfnK+Me/iHF5P7h5sKw1PhPMJEa2p0
+         7z1V30giJ7clIGROoH+1+xV68e/NVvY4q6khMQDEL9a7aXkC0AyBmR5cMf9bGmpXcL8z
+         msfDDJ9t/KGV7DFazepuHT7LlwbCgrSmflowL113Wds1DKO6/4hoPMvZh4PmUuDwlqY1
+         2uxA==
+X-Gm-Message-State: APjAAAXDLMczuomDg8xnVDo0/CEyzh5ZeKeG85o5x6ZYX4jZaNnlR1ht
+        zIirkQ3PQPd0TxMCmHpTx8A=
+X-Google-Smtp-Source: APXvYqzN26AGf6Gq95ol7usng2Lc94cprpK12qzMUmBicV9faXvBpRLDu6WMkpMOaxtC2z0oN0dWEg==
+X-Received: by 2002:a17:906:5957:: with SMTP id g23mr4155261ejr.187.1575989219144;
+        Tue, 10 Dec 2019 06:46:59 -0800 (PST)
+Received: from pi3 ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id p14sm110628ejr.40.2019.12.10.06.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 06:46:58 -0800 (PST)
+Date:   Tue, 10 Dec 2019 15:46:56 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Hyunki Koo <kkoos00@naver.com>,
+        HYUN-KI KOO <hyunki00.koo@samsung.com>,
+        Shinbeom Choi <sbeom.choi@samsung.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] tty: serial: samsung: allow driver to be built by
+ anyone
+Message-ID: <20191210144656.GA11222@pi3>
+References: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Dec 10, 2019 at 03:36:57PM +0100, Greg Kroah-Hartman wrote:
+> There is no need to tie this driver to only the OMAP platform,
 
-Pointer crtc_state is being assigned twice, one of these is redundant
-and can be removed.
+s/OMAP/Exynos/
 
-Addresses-Coverity: ("Evaluation order violation")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/i915/display/intel_display.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Beside that:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
-index 5c50b7d2db25..f3389d315b19 100644
---- a/drivers/gpu/drm/i915/display/intel_display.c
-+++ b/drivers/gpu/drm/i915/display/intel_display.c
-@@ -17751,7 +17751,7 @@ intel_modeset_setup_hw_state(struct drm_device *dev,
- 
- 	for_each_intel_crtc(&dev_priv->drm, crtc) {
- 		struct intel_crtc_state *crtc_state =
--			crtc_state = to_intel_crtc_state(crtc->base.state);
-+			to_intel_crtc_state(crtc->base.state);
- 
- 		intel_sanitize_crtc(crtc, ctx);
- 		intel_dump_pipe_config(crtc_state, NULL, "[setup_hw_state]");
--- 
-2.24.0
+Best regards,
+Krzysztof
 
+
+> especially for build testing.  So add COMPILE_TEST as an option allowing
+> it to be built on any platform.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Hyunki Koo <kkoos00@naver.com>
+> Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
+> Cc: Shinbeom Choi <sbeom.choi@samsung.com>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-serial@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/tty/serial/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index 99f5da3bf913..c835e10bd97e 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -237,7 +237,7 @@ config SERIAL_CLPS711X_CONSOLE
+>  
+>  config SERIAL_SAMSUNG
+>  	tristate "Samsung SoC serial support"
+> -	depends on PLAT_SAMSUNG || ARCH_EXYNOS
+> +	depends on PLAT_SAMSUNG || ARCH_EXYNOS || COMPILE_TEST
+>  	select SERIAL_CORE
+>  	help
+>  	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
+> -- 
+> 2.24.0
+> 
