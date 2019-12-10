@@ -2,116 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F02941197E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:38:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B362711973D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbfLJVfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:35:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40978 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730228AbfLJVfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:35:20 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48F92214AF;
-        Tue, 10 Dec 2019 21:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576013719;
-        bh=l21FHSd8GPHC4IagFr+tkgZpvOS6I667FH0fdL1bliU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gfo+kuqWwYMIFgdF59zks+uFNNfkqdFpkrbuUz4URYiQXaSaJpdh/X3YwS2i2YzqQ
-         dtQsxa1gbIkSBw1KFipLQA1rXbTLqVUoW+V592ejQa5isn3smZ0Lxuxeq4X7uTW3v4
-         FE+cIdzvY8bcx8FV2+VQHzV26iPrWz+ZzzoEqRxY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lianbo Jiang <lijiang@redhat.com>,
-        kbuild test robot <lkp@intel.com>,
-        Borislav Petkov <bp@suse.de>, bhe@redhat.com,
-        d.hatayama@fujitsu.com, dhowells@redhat.com, dyoung@redhat.com,
-        ebiederm@xmission.com, horms@verge.net.au,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        =?UTF-8?q?J=C3=BCrgen=20Gross?= <jgross@suse.com>,
-        kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>, vgoyal@redhat.com,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 145/177] x86/crash: Add a forward declaration of struct kimage
-Date:   Tue, 10 Dec 2019 16:31:49 -0500
-Message-Id: <20191210213221.11921-145-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210213221.11921-1-sashal@kernel.org>
-References: <20191210213221.11921-1-sashal@kernel.org>
+        id S1728387AbfLJVb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:31:57 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39079 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbfLJVbw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:31:52 -0500
+Received: by mail-pl1-f193.google.com with SMTP id o9so376161plk.6;
+        Tue, 10 Dec 2019 13:31:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=WtDhoZ5ivvcVrikLoCcOpbuCN5K2xI6ePb8PHhBX/qY=;
+        b=bNBHfHD03h3hmMV1w1mftAhHlsANzeRmCm5ntICoRhmQwAgj90TCYu0exwqE/pdhgE
+         GdNZfSlxmS9+MnUMV7dWFoxBeYeAAQf7p2crlgBjwXDwXG1sXMJ6b1MjtryjbQIVfa8o
+         1SX/XqQOGXbyT71gHQYIa2IRm8lwQVeIcfLSC6L0EJSb4weQ0dZWQ4IVIG1HfR5u32U9
+         aDDBA5mO5vSpt3tWu9JReI7ZfKo8J0rhq/a1azkAzqGLiHXA4pg5d+2U8UoGB8QCy25N
+         AU5WmUYt1keRgOs0PN80AM32Fz5sEXch3w0CfnU5IBM5wCHJ0QTur7PEqplqQGIDlFXt
+         Nzbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=WtDhoZ5ivvcVrikLoCcOpbuCN5K2xI6ePb8PHhBX/qY=;
+        b=PthU7trMwPI5ZXqCmeKtyLsdZcrh3Vdx/4PWVmPDTk7pykpqLeJ5f6edfbu68Pgu//
+         mvHgnVpqNyt7vc5pFeIVCFqV00U0W4yyQNZC/RiqTcY+fOvhUN7rK8PwU1B/yuG9wA3w
+         rV7LU7w/C7tG9oJE/++LjXGJ1c5hhUWl/M3uraws3F6+XaTeXA4toUyKohpEQlxW0dfo
+         5NAHc+qnOSBc7Gj7w+9EA9/qCt+TF+RGhK2wiOBTwzqHkZrs92X0Nv/7nhVQ/g1WMr+L
+         mykBDZafrk6q1+OkV+Tm4HZWQ6rUEWUJUZGs/ss7CHBHatziXGQbm0IPSzO8cMJeOVdH
+         +N2g==
+X-Gm-Message-State: APjAAAVM48o/V+aK1nBZihPzmCeW8GgP+hTYVksQKsUtqqvIEYXNJfjr
+        WdiAOY3Ro7Gfmpgp1PzWeE4=
+X-Google-Smtp-Source: APXvYqwfHN9VmCdq6yL7ojouBK+46iwUO9cnHFSBSdaffvPSJZPzqJgNYzlxRmyGh/W0xuYKtbYMlw==
+X-Received: by 2002:a17:90a:8986:: with SMTP id v6mr7783380pjn.63.1576013511889;
+        Tue, 10 Dec 2019 13:31:51 -0800 (PST)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::3:a25c])
+        by smtp.gmail.com with ESMTPSA id o3sm3613026pju.13.2019.12.10.13.31.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Dec 2019 13:31:51 -0800 (PST)
+Date:   Tue, 10 Dec 2019 13:31:50 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Martin Lau <kafai@fb.com>
+Subject: Re: [PATCH bpf v2] bpftool: Don't crash on missing jited insns or
+ ksyms
+Message-ID: <20191210213148.kqd6xdvqjkh3zxst@ast-mbp.dhcp.thefacebook.com>
+References: <20191210181412.151226-1-toke@redhat.com>
+ <20191210125457.13f7821a@cakuba.netronome.com>
+ <87eexbhopo.fsf@toke.dk>
+ <20191210132428.4470a7b0@cakuba.netronome.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191210132428.4470a7b0@cakuba.netronome.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lianbo Jiang <lijiang@redhat.com>
+On Tue, Dec 10, 2019 at 01:24:28PM -0800, Jakub Kicinski wrote:
+> On Tue, 10 Dec 2019 22:09:55 +0100, Toke Høiland-Jørgensen wrote:
+> > Jakub Kicinski <jakub.kicinski@netronome.com> writes:
+> > > On Tue, 10 Dec 2019 19:14:12 +0100, Toke Høiland-Jørgensen wrote:  
+> > >> When the kptr_restrict sysctl is set, the kernel can fail to return
+> > >> jited_ksyms or jited_prog_insns, but still have positive values in
+> > >> nr_jited_ksyms and jited_prog_len. This causes bpftool to crash when trying
+> > >> to dump the program because it only checks the len fields not the actual
+> > >> pointers to the instructions and ksyms.
+> > >> 
+> > >> Fix this by adding the missing checks.
+> > >> 
+> > >> Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>  
+> > >
+> > > Fixes: 71bb428fe2c1 ("tools: bpf: add bpftool")
+> > >
+> > > and
+> > >
+> > > Fixes: f84192ee00b7 ("tools: bpftool: resolve calls without using imm field")
+> > >
+> > > ?  
+> > 
+> > Yeah, guess so? Although I must admit it's not quite clear to me whether
+> > bpftool gets stable backports, or if it follows the "only moving
+> > forward" credo of libbpf?
+> 
+> bpftool does not have a GH repo, and seeing strength of Alexei's
+> arguments in the recent discussion - I don't think it will. So no
+> reason for bpftool to be "special"
 
-[ Upstream commit 112eee5d06007dae561f14458bde7f2a4879ef4e ]
-
-Add a forward declaration of struct kimage to the crash.h header because
-future changes will invoke a crash-specific function from the realmode
-init path and the compiler will complain otherwise like this:
-
-  In file included from arch/x86/realmode/init.c:11:
-  ./arch/x86/include/asm/crash.h:5:32: warning: â€˜struct kimageâ€™ declared inside\
-   parameter list will not be visible outside of this definition or declaration
-      5 | int crash_load_segments(struct kimage *image);
-        |                                ^~~~~~
-  ./arch/x86/include/asm/crash.h:6:37: warning: â€˜struct kimageâ€™ declared inside\
-   parameter list will not be visible outside of this definition or declaration
-      6 | int crash_copy_backup_region(struct kimage *image);
-        |                                     ^~~~~~
-  ./arch/x86/include/asm/crash.h:7:39: warning: â€˜struct kimageâ€™ declared inside\
-   parameter list will not be visible outside of this definition or declaration
-      7 | int crash_setup_memmap_entries(struct kimage *image,
-        |
-
- [ bp: Rewrite the commit message. ]
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: bhe@redhat.com
-Cc: d.hatayama@fujitsu.com
-Cc: dhowells@redhat.com
-Cc: dyoung@redhat.com
-Cc: ebiederm@xmission.com
-Cc: horms@verge.net.au
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: JÃ¼rgen Gross <jgross@suse.com>
-Cc: kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: vgoyal@redhat.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191108090027.11082-4-lijiang@redhat.com
-Link: https://lkml.kernel.org/r/201910310233.EJRtTMWP%25lkp@intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/include/asm/crash.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/include/asm/crash.h b/arch/x86/include/asm/crash.h
-index a7adb2bfbf0b8..6b8ad6fa3979a 100644
---- a/arch/x86/include/asm/crash.h
-+++ b/arch/x86/include/asm/crash.h
-@@ -2,6 +2,8 @@
- #ifndef _ASM_X86_CRASH_H
- #define _ASM_X86_CRASH_H
- 
-+struct kimage;
-+
- int crash_load_segments(struct kimage *image);
- int crash_copy_backup_region(struct kimage *image);
- int crash_setup_memmap_entries(struct kimage *image,
--- 
-2.20.1
+bpftool always was and will be a special user of libbpf.
 
