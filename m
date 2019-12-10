@@ -2,88 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3DE11181EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:15:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF2641181FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:16:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbfLJIPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 03:15:10 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36959 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727249AbfLJIPF (ORCPT
+        id S1727142AbfLJIQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 03:16:16 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:32794 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726890AbfLJIQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 03:15:05 -0500
-Received: by mail-pf1-f195.google.com with SMTP id s18so8667454pfm.4;
-        Tue, 10 Dec 2019 00:15:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Z3QbUuDM9pE9qovJUQv76vaNeMVWJZJGqPPOIl/DJQI=;
-        b=ZMseXGCEq9sa+yPcP2XWg92cr3R3iGN9k1fDhp7lI6V0LwLtB3w3Cy+jxmk649eiix
-         iNFBxBOM5jKfJfLjF/3Z40j2S+MjPkWaeJIloYsrNVJE4/W5PrR3/G/3Jxb6+cN0CXfT
-         x9d2UxJtneL3B7Fk9ARSMRQJqE+aPEKhx3Czn2JWuhW3KvyqR0tKSpJITG28Q2ivb74z
-         V+HamfhYBarUxAGXI6BxuybqrAvBUiQoqQhwElSOEcBaNtxzvszpDoYu0aipuYkbsHVP
-         N9Vr2lYojKA/lhOMH2EM22fvsZSpq7NTF4IdegHk+8+ZA8fKj9t6vDsokzrtkxoX85o9
-         F2ww==
+        Tue, 10 Dec 2019 03:16:16 -0500
+Received: by mail-ot1-f67.google.com with SMTP id d17so14815342otc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 00:16:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Z3QbUuDM9pE9qovJUQv76vaNeMVWJZJGqPPOIl/DJQI=;
-        b=G0QHcPykocOfzMrHdFUk0g2qx3NttNXSM45lfT/MitnAmSJgFzL2aBZmW7GmhjoARJ
-         59v9vPVA32w3UW+HNJGkPdeDd0g9EJoi9BTexyOHBKn7eN0wPA3Pyw5uJF7/R/dk+InY
-         FMuJHZTjdYlLuQAmLnNHgaBbyyBuozO8A1Lm1oClK9xqF+CilXl8YK+EUEfP/si3KIg0
-         dZ8TvU0WDxe+utoFtpcOsZcFMS4fwUc58UYD7jPL/zFqtqi1ddBCiW5gJtQLzLy0oRcx
-         IJ+0cSwcVQawaGOuGf0u1DooNEueelLo0zwOSNDfENoIh53STKwg12fDMFLpHs77sJgn
-         O13Q==
-X-Gm-Message-State: APjAAAXc3HPdQwvcTJVXkFhjEnJjIdASwkzn32Nqo5jVHU7IvtoTGB1U
-        X0efmEfnvlAk4RcGxyX8YeQ974Dr
-X-Google-Smtp-Source: APXvYqz9cKrg+5oW8XT1VLh+qOPLCiLe9LUKA3h4M93l/m87W87mkm6J1JfCtWcZAaTjl9/J/ZD6SQ==
-X-Received: by 2002:a65:42ca:: with SMTP id l10mr23237968pgp.121.1575965704620;
-        Tue, 10 Dec 2019 00:15:04 -0800 (PST)
-Received: from localhost.localdomain ([240d:1a:90a:7900:1572:c35d:e9db:e357])
-        by smtp.gmail.com with ESMTPSA id q12sm2136741pfh.158.2019.12.10.00.15.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 10 Dec 2019 00:15:04 -0800 (PST)
-From:   frowand.list@gmail.com
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] of: refcount leak when phandle_cache entry replaced
-Date:   Tue, 10 Dec 2019 02:14:53 -0600
-Message-Id: <1575965693-30395-1-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l38l0VF8bf24HKe/nGZvjby43vRgIglN8+s8O7VTwDM=;
+        b=gmXKhpm9H2JmhcYQ2LoRbaF5N5zHj7O3mQBUFkw6jQv3LUCVx2rcYBFk03fCSYmkKJ
+         quvPiWLKWi1BofjzWOXQ5yM+J56pMfcUNS79WSSq7qJT5cIzctQi5e8tHgPL+EanEtBc
+         T3ssCqSiqRMD6q9DIytP1NOE6mXVbafHAqsbM46n6A6iPP173aVo4IzMe1jZOejRmb6y
+         TZAswGs9b1YOpPon7MWKgtJoIJ0E+TS83Nm+BPoyok4gIuzGuX1bPQEpJ9JG/KpTaQNk
+         /k/mLLvwM/ekiWvprf0r8fFJUE9lgEqFmigz/b76Y91dyFOKcnX2lcqA18MbKylGXEiT
+         g4GQ==
+X-Gm-Message-State: APjAAAVKGTkHdTdsDPLyRR54xajwDzEVcc7xqFe3ldHaqdMQDiLKvkQB
+        WmfptTpQzuQEqlxgGrnqwadk6ccth05AgrGi3Pg=
+X-Google-Smtp-Source: APXvYqwgxMx0+xiHwT1qjwSWjuqMw2V4ldS6xY+NgkCNvOlFjLtXJmi/Q0s6vnmXqtRCX8j0LceLUfPvxOQDOKzKwR0=
+X-Received: by 2002:a05:6830:91:: with SMTP id a17mr23322883oto.107.1575965775467;
+ Tue, 10 Dec 2019 00:16:15 -0800 (PST)
+MIME-Version: 1.0
+References: <1575946121-30548-1-git-send-email-zhang.lin16@zte.com.cn>
+In-Reply-To: <1575946121-30548-1-git-send-email-zhang.lin16@zte.com.cn>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 10 Dec 2019 09:15:54 +0100
+Message-ID: <CAMuHMdUWeH9u0hP9wCfgb7TJ0nQkbQTPREX+fpTh+ZVrTsCobg@mail.gmail.com>
+Subject: Re: [PATCH] initramfs: forcing panic when kstrdup failed
+To:     zhanglin <zhang.lin16@zte.com.cn>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>, david.engraf@sysgo.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        jiang.xuexin@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+On Tue, Dec 10, 2019 at 3:47 AM zhanglin <zhang.lin16@zte.com.cn> wrote:
+> preventing further undefined behaviour when kstrdup failed.
+>
+> Signed-off-by: zhanglin <zhang.lin16@zte.com.cn>
 
-of_find_node_by_phandle() does not do an of_node_put() of the existing
-node in a phandle cache entry when that node is replaced by a new node.
+Thanks for your patch!
 
-Reported-by: Rob Herring <robh+dt@kernel.org>
-Fixes: b8a9ac1a5b99 ("of: of_node_get()/of_node_put() nodes held in phandle cache")
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
+> @@ -125,6 +125,8 @@ static void __init dir_add(const char *name, time64_t mtime)
+>                 panic("can't allocate dir_entry buffer");
+>         INIT_LIST_HEAD(&de->list);
+>         de->name = kstrdup(name, GFP_KERNEL);
+> +       if (!de->name)
+> +               panic("can't allocate dir_entry.name buffer");
+>         de->mtime = mtime;
+>         list_add(&de->list, &dir_list);
+>  }
+> @@ -340,6 +342,8 @@ static int __init do_name(void)
+>                                 if (body_len)
+>                                         ksys_ftruncate(wfd, body_len);
+>                                 vcollected = kstrdup(collected, GFP_KERNEL);
+> +                               if (!vcollected)
+> +                                       panic("can not allocate vcollected buffer.");
+>                                 state = CopyFile;
+>                         }
+>                 }
 
-Checkpatch will warn about a line over 80 characters.  Let me know
-if that bothers you.
+Do we really need to add more messages for out-of-memory conditions?
+The trend is to remove the printing of those messages, as the memory
+allocation subsystem will have printed a backtrace already anyway.
 
- drivers/of/base.c | 2 ++
- 1 file changed, 2 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index db7fbc0c0893..b57a57752294 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1261,6 +1261,8 @@ struct device_node *of_find_node_by_phandle(phandle handle)
- 			if (np->phandle == handle &&
- 			    !of_node_check_flag(np, OF_DETACHED)) {
- 				if (phandle_cache) {
-+					if (phandle_cache[masked_handle])
-+						of_node_put(phandle_cache[masked_handle]);
- 					/* will put when removed from cache */
- 					of_node_get(np);
- 					phandle_cache[masked_handle] = np;
+                        Geert
+
 -- 
-Frank Rowand <frank.rowand@sony.com>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
