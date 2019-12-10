@@ -2,152 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 165C21181B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC6791181B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 09:06:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfLJIGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 03:06:48 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38215 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfLJIGp (ORCPT
+        id S1726969AbfLJIGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 03:06:40 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36806 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfLJIGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 03:06:45 -0500
-Received: by mail-wr1-f67.google.com with SMTP id y17so18893374wrh.5;
-        Tue, 10 Dec 2019 00:06:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QwGsEms4piE9a2DBjMxlpqS/fTzaKgAUBvTe2FzVG7A=;
-        b=lPza1JEHlTNKLzFDCDRnVo7HF92gkuhkIa1h7FjUOXfSbg8cJNbwj22lMhzGmLWQM9
-         EuWz/6RijlKpCghZcVe3rWIOXVZ+A9aqVJpF6BsEL2ih8fTyYXlYEfgwFVcxcG+UZh0b
-         In2tw6g7OqQrdDqrIU2uDeX8GfA7NdmDamY7upGqhCceTUDRnF0kmdlKLR3NJx75Co12
-         CMcB9hXFxUxJer4fTd1qBw5yf9v4G/6MTQPWhgB+sRzuVRo/hUuVXnquQbiWhxJixdCw
-         1ambSMWkD03j7VE0keCQ0T8J0Bl0P7Q38teIHMQNLfq/p+ufiRsQ8xEwzGBeKIMMBmRP
-         bhMg==
+        Tue, 10 Dec 2019 03:06:40 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i4so14764485otr.3;
+        Tue, 10 Dec 2019 00:06:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=QwGsEms4piE9a2DBjMxlpqS/fTzaKgAUBvTe2FzVG7A=;
-        b=WJou7sMHGbjW+91tCbnsA7ddzFBa/0TmMhEvNFeHkkSLZV0delqg5eNJ3lq8IyPF1l
-         WfAG7i9XfD8p/yazG38UHWmjGhNP+pBxb4ppqWnOHly5uhNbny28BcQS/2YofXDKgD3B
-         vETP4BFp3g08XQtsTQ1dG9GnY3UC27Qcrg9b/NfWz4a09UOAzRsQ78i+8rgTDpeV/Opo
-         5RA+pwXY8gYrWazwC92W5H4r1eSPTvL7pjNNGw/gjPAEnHUwTr1zbgjOSJKhbnAQBgGO
-         2k1XvSA3gD1K4K/xXvDhq2TeRpvCzVCPVqp7ye1TVoA6NCFizGPYCnn4f4si6WmlSv4X
-         /RVw==
-X-Gm-Message-State: APjAAAVLVuZjdb/JzJ7Fuwa7dPdpKCds8pWTwBeQzM+2jF09MO+h1wbV
-        mp2/3j4MosZANOqkWKy7mA0=
-X-Google-Smtp-Source: APXvYqyeW1Ot1SkJg8uOlMtOudbd9EEcZEGOP8qLc0yzxcBnOs2OKqXQe5RAMyAarTVhuIvkXVwDXw==
-X-Received: by 2002:adf:e812:: with SMTP id o18mr1543550wrm.127.1575965204034;
-        Tue, 10 Dec 2019 00:06:44 -0800 (PST)
-Received: from localhost.localdomain (x2f7fae7.dyn.telefonica.de. [2.247.250.231])
-        by smtp.gmail.com with ESMTPSA id a16sm2342587wrt.37.2019.12.10.00.06.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 00:06:43 -0800 (PST)
-From:   SeongJae Park <sj38.park@gmail.com>
-X-Google-Original-From: SeongJae Park <sjpark@amazon.de>
-To:     sjpark@amazon.com
-Cc:     axboe@kernel.dk, konrad.wilk@oracle.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pdurrant@amazon.com, roger.pau@citrix.com, sj38.park@gmail.com,
-        xen-devel@lists.xenproject.org, SeongJae Park <sjpark@amazon.de>
-Subject: [PATCH v5 1/2] xenbus/backend: Add memory pressure handler callback
-Date:   Tue, 10 Dec 2019 08:06:27 +0000
-Message-Id: <20191210080628.5264-2-sjpark@amazon.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191210080628.5264-1-sjpark@amazon.de>
-References: <20191210080628.5264-1-sjpark@amazon.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Eh72hrhAfXUBpQjvGXyz9qtzGmK/pxlzuig7hgG6ycA=;
+        b=DaG0q4J6cZwUcx2kBHBVkShIyeuXB+eBN9fKAwVAxjvBeXLKNWpDaDPoqLQ7vyCQSi
+         CqGD1uVOtSfeoqKj1iro7zE3HIefSjttKinaO5wAY793ketvW7/DHk5GsZN1UCRxJeea
+         NdSs4lulzF2B/WVDYKylwjKf00xBIAH1eBpU7GqRfYWlqTuhct1lDj562uBRi6VvRqom
+         8HDhifTYcDCR7YglscuD63MAqVtckXngNp8/NX3KfbN54y1BuoqFoS96EuYjJBb34RW8
+         GdNvUuWJYGsUhtEDlgY/ZQiMb6HXqfzBgMlTLpJlqAxQG/HqCENkSFanX+4DOjZcdRlQ
+         I7Nw==
+X-Gm-Message-State: APjAAAU0o0zR9MkQwHXFnZVsC462DB8k2FAQ6+Yj4FFSsk1AhRfY8p56
+        AyWCBuR6ot91za2AG9KM6V/pNDaKGNFCo0tWVWo=
+X-Google-Smtp-Source: APXvYqyzzOzuSDhlPeIXG1zuLoSJlV2JCftfF3DCi+q7hk6xZu98OqjQfWqnznLKM5UYWBFyEzRMGADp1OelyVABS3s=
+X-Received: by 2002:a05:6830:95:: with SMTP id a21mr23845111oto.167.1575965199471;
+ Tue, 10 Dec 2019 00:06:39 -0800 (PST)
+MIME-Version: 1.0
+References: <20191202070348.32148-1-tao3.xu@intel.com> <CAJZ5v0hqjR5EdrxcdkLUpxseFiizqNjtA3nYdDtZiSt85JiywQ@mail.gmail.com>
+ <6dbcdaff-feae-68b9-006d-dd8aec032553@intel.com>
+In-Reply-To: <6dbcdaff-feae-68b9-006d-dd8aec032553@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 10 Dec 2019 09:06:27 +0100
+Message-ID: <CAJZ5v0jYb7XQC7u0rmxF-XVMAsEoOfmD11-FYDvMrZuOuzgyiA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI/HMAT: Fix the parsing of Cache Associativity and
+ Write Policy
+To:     Tao Xu <tao3.xu@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Granting pages consumes backend system memory.  In systems configured
-with insufficient spare memory for those pages, it can cause a memory
-pressure situation.  However, finding the optimal amount of the spare
-memory is challenging for large systems having dynamic resource
-utilization patterns.  Also, such a static configuration might lack a
-flexibility.
+On Tue, Dec 10, 2019 at 2:04 AM Tao Xu <tao3.xu@intel.com> wrote:
+>
+> On 12/9/2019 6:01 PM, Rafael J. Wysocki wrote:
+> > On Mon, Dec 2, 2019 at 8:03 AM Tao Xu <tao3.xu@intel.com> wrote:
+> >>
+> >> In chapter 5.2.27.5, Table 5-147: Field "Cache Attributes" of
+> >> ACPI 6.3 spec: 0 is "None", 1 is "Direct Mapped", 2 is "Complex Cache
+> >> Indexing" for Cache Associativity; 0 is "None", 1 is "Write Back",
+> >> 2 is "Write Through" for Write Policy.
+> >
+> > Well, I'm not sure what the connection between the above statement,
+> > which is correct AFAICS, and the changes made by the patch is.
+> >
+> > Is that the *_OTHER symbol names are confusing or something deeper?
+> >
+>
+> Because in include/acpi/actbl1.h:
+>
+> #define ACPI_HMAT_CA_NONE                     (0)
+>
+> ACPI_HMAT_CA_NONE is 0, but in include/linux/node.h:
+>
+>     enum cache_indexing {
+>            NODE_CACHE_DIRECT_MAP,
+>            NODE_CACHE_INDEXED,
+>            NODE_CACHE_OTHER,
+>     };
+> NODE_CACHE_OTHER is 2, and for otner enum:
+>
+>           case ACPI_HMAT_CA_DIRECT_MAPPED:
+>                   tcache->cache_attrs.indexing = NODE_CACHE_DIRECT_MAP;
+>                   break;
+>           case ACPI_HMAT_CA_COMPLEX_CACHE_INDEXING:
+>                   tcache->cache_attrs.indexing = NODE_CACHE_INDEXED;
+>                   break;
+> in include/acpi/actbl1.h:
+>
+>   #define ACPI_HMAT_CA_DIRECT_MAPPED            (1)
+>   #define ACPI_HMAT_CA_COMPLEX_CACHE_INDEXING   (2)
+>
+> but in include/linux/node.h:
+>
+> NODE_CACHE_DIRECT_MAP is 0, NODE_CACHE_INDEXED is 1. This is incorrect.
 
-To mitigate such problems, this commit adds a memory reclaim callback to
-'xenbus_driver'.  Using this facility, 'xenbus' would be able to monitor
-a memory pressure and request specific devices of specific backend
-drivers which causing the given pressure to voluntarily release its
-memory.
+Why is it incorrect?
 
-That said, this commit simply requests every callback registered driver
-to release its memory for every domain, rather than issueing the
-requests to the drivers and the domain in charge.  Such things will be
-done in a futur.  Also, this commit focuses on memory only.  However, it
-would be ablt to be extended for general resources.
-
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- drivers/xen/xenbus/xenbus_probe_backend.c | 31 +++++++++++++++++++++++
- include/xen/xenbus.h                      |  1 +
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
-index b0bed4faf44c..5a5ba29e39df 100644
---- a/drivers/xen/xenbus/xenbus_probe_backend.c
-+++ b/drivers/xen/xenbus/xenbus_probe_backend.c
-@@ -248,6 +248,34 @@ static int backend_probe_and_watch(struct notifier_block *notifier,
- 	return NOTIFY_DONE;
- }
- 
-+static int xenbus_backend_reclaim(struct device *dev, void *data)
-+{
-+	struct xenbus_driver *drv;
-+	if (!dev->driver)
-+		return -ENOENT;
-+	drv = to_xenbus_driver(dev->driver);
-+	if (drv && drv->reclaim)
-+		drv->reclaim(to_xenbus_device(dev));
-+	return 0;
-+}
-+
-+/*
-+ * Returns 0 always because we are using shrinker to only detect memory
-+ * pressure.
-+ */
-+static unsigned long xenbus_backend_shrink_count(struct shrinker *shrinker,
-+				struct shrink_control *sc)
-+{
-+	bus_for_each_dev(&xenbus_backend.bus, NULL, NULL,
-+			xenbus_backend_reclaim);
-+	return 0;
-+}
-+
-+static struct shrinker xenbus_backend_shrinker = {
-+	.count_objects = xenbus_backend_shrink_count,
-+	.seeks = DEFAULT_SEEKS,
-+};
-+
- static int __init xenbus_probe_backend_init(void)
- {
- 	static struct notifier_block xenstore_notifier = {
-@@ -264,6 +292,9 @@ static int __init xenbus_probe_backend_init(void)
- 
- 	register_xenstore_notifier(&xenstore_notifier);
- 
-+	if (register_shrinker(&xenbus_backend_shrinker))
-+		pr_warn("shrinker registration failed\n");
-+
- 	return 0;
- }
- subsys_initcall(xenbus_probe_backend_init);
-diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
-index 869c816d5f8c..cdb075e4182f 100644
---- a/include/xen/xenbus.h
-+++ b/include/xen/xenbus.h
-@@ -104,6 +104,7 @@ struct xenbus_driver {
- 	struct device_driver driver;
- 	int (*read_otherend_details)(struct xenbus_device *dev);
- 	int (*is_ready)(struct xenbus_device *dev);
-+	unsigned (*reclaim)(struct xenbus_device *dev);
- };
- 
- static inline struct xenbus_driver *to_xenbus_driver(struct device_driver *drv)
--- 
-2.17.1
-
+> And same for enum cache_write_policy.
