@@ -2,65 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EB21118BA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:54:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D4E7118B94
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:53:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbfLJOyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 09:54:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:47206 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727758AbfLJOyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:54:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F7B6113E;
-        Tue, 10 Dec 2019 06:54:19 -0800 (PST)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8C6793F67D;
-        Tue, 10 Dec 2019 06:54:18 -0800 (PST)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 15/15] reset: reset-scmi: Match scmi device by both name and protocol id
-Date:   Tue, 10 Dec 2019 14:53:45 +0000
-Message-Id: <20191210145345.11616-16-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191210145345.11616-1-sudeep.holla@arm.com>
-References: <20191210145345.11616-1-sudeep.holla@arm.com>
+        id S1727572AbfLJOxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 09:53:51 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42688 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727145AbfLJOxv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 09:53:51 -0500
+Received: by mail-ed1-f67.google.com with SMTP id e10so16193564edv.9;
+        Tue, 10 Dec 2019 06:53:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=J3ePAvbBtA2GFkH/GUkVyhurDlAL5lGAx4tH8RkORZ0=;
+        b=a+4rIlANegaZfGrr0z1EA3OyuVbIGEiukgPQV0Ht/N/UoF/Qv7Ivexz/eWkhOIJaFD
+         0zEGp3u40fxKxPInDEedaTY3Ci3IpcTXOIZ6ebmhB13bH0zdDrM12m00nXHwOvPmW/1h
+         AN9jY70gJ/X8JNrHiYLxINAIpO/u47STJM2tpR7iOkHw5jaWY/T460kwoFj3ZZWUslgr
+         xDkYfQqb3ZGf6VuvdldeYhzUt8pf3jbi0ycRo7zpP/FpoyM8c7wuM7Y0uLHrsyEKtPhy
+         WkOXbZJval9LobjRfyPV77NkiePTvpCPvNcSHq1Y70zNm+kFItRZlae+FvBeZTCjR3tK
+         ctVQ==
+X-Gm-Message-State: APjAAAW94IISfkdSLTGU8kqpY7dCpeTarHSPDPqj6FAmtauZN6Rg1VJ/
+        +W4qCRl0ytQ0eRQv0YogNnGHyT6v+z0=
+X-Google-Smtp-Source: APXvYqxqRciyed+2OJtA3xXe9pB4A4wCu/SQT8sBJWcQGqcqWcoGcOTuXxH4KgdXVL9C0KXUH+gJ5g==
+X-Received: by 2002:a17:906:3953:: with SMTP id g19mr3940761eje.227.1575989629067;
+        Tue, 10 Dec 2019 06:53:49 -0800 (PST)
+Received: from pi3 ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id x8sm81066eds.88.2019.12.10.06.53.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 06:53:48 -0800 (PST)
+Date:   Tue, 10 Dec 2019 15:53:46 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Hyunki Koo <kkoos00@naver.com>,
+        HYUN-KI KOO <hyunki00.koo@samsung.com>,
+        Shinbeom Choi <sbeom.choi@samsung.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/10] tty: serial: samsung_tty: drop unneded dbg() calls
+Message-ID: <20191210145346.GE11222@pi3>
+References: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
+ <20191210143706.3928480-6-gregkh@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191210143706.3928480-6-gregkh@linuxfoundation.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The scmi bus now has support to match the driver with devices not only
-based on their protocol id but also based on their device name if one is
-available. This was added to cater the need to support multiple devices
-and drivers for the same protocol.
+On Tue, Dec 10, 2019 at 03:37:02PM +0100, Greg Kroah-Hartman wrote:
+> Now that the kernel has ftrace, any debugging calls that just do "made
+> it to this function!" and "leaving this function!" can be removed.
+> 
+> On the quest to move the samsung_tty driver over to use the standard
+> kernel debugging functions, drop these unneeded calls.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Hyunki Koo <kkoos00@naver.com>
+> Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
+> Cc: Shinbeom Choi <sbeom.choi@samsung.com>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-serial@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/tty/serial/samsung_tty.c | 22 ----------------------
+>  1 file changed, 22 deletions(-)
 
-Let us add the name "reset" to scmi_device_id table in the driver so
-that in matches only with device with the same name and protocol id
-SCMI_PROTOCOL_RESET.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/reset/reset-scmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/reset/reset-scmi.c b/drivers/reset/reset-scmi.c
-index b46df80ec6c3..8d3a858e3b19 100644
---- a/drivers/reset/reset-scmi.c
-+++ b/drivers/reset/reset-scmi.c
-@@ -108,7 +108,7 @@ static int scmi_reset_probe(struct scmi_device *sdev)
- }
-
- static const struct scmi_device_id scmi_id_table[] = {
--	{ SCMI_PROTOCOL_RESET },
-+	{ SCMI_PROTOCOL_RESET, "reset" },
- 	{ },
- };
- MODULE_DEVICE_TABLE(scmi, scmi_id_table);
---
-2.17.1
+Best regards,
+Krzysztof
 
