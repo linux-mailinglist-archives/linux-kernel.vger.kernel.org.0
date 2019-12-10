@@ -2,94 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2508A119813
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:39:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCFA211975E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:33:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbfLJVgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:36:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729872AbfLJVf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:35:56 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63D09207FF;
-        Tue, 10 Dec 2019 21:35:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576013756;
-        bh=L+2oSyzaNEcB9ZSY6dtN10o48H5PiwT/LfhvlXc+kwM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SvbAInExnKOX9Dcntaxj3wLzsRuINw6bqSOi3feBxO/Lop+g4F3bE27pMMC6p3Oet
-         uZ8sIdXWMgYzo0dkFLELo5+30PBL+hhV5kskHddYkAsCehjzzJpxGN7AT5l+MD3FRz
-         Y2LDWsST6NjJeAMJLDbi3B69Q1/FIdqkQ1ydrETE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 176/177] perf intel-bts: Does not support AUX area sampling
-Date:   Tue, 10 Dec 2019 16:32:20 -0500
-Message-Id: <20191210213221.11921-176-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210213221.11921-1-sashal@kernel.org>
-References: <20191210213221.11921-1-sashal@kernel.org>
+        id S1728189AbfLJVcj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:32:39 -0500
+Received: from mail-ed1-f53.google.com ([209.85.208.53]:41953 "EHLO
+        mail-ed1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728836AbfLJVce (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:32:34 -0500
+Received: by mail-ed1-f53.google.com with SMTP id c26so17331045eds.8
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:32:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=4Ja+Cy4lz3d7/9D3E5SJdSwFwUmUfYYIZtw7SRnmxMQ=;
+        b=xSLCrrxPejnE0kdt17030quLJkQSeBjnB1vQJo4e7EaofNY9vrZMLRjLWjTUAcCSCT
+         yuxr7DHf+2HvLYOySwaOiOuJZYvB0oesOytWvM4DmGl/IhueidOi+nYm0/KXxlf2GwEa
+         eXFXrese8dp5z5H0DwYhE+Ts7EObyeM8Pthks=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=4Ja+Cy4lz3d7/9D3E5SJdSwFwUmUfYYIZtw7SRnmxMQ=;
+        b=DRW3KqHccQe0VCCoxNaE2HprD5CP75KI9hWRczg4RVj9EduH2F34+Euk2aUsb0gvc2
+         gHo9Z81gVL7gSP3DHHDiyC7OED+L1V7Rgh1rvpA53HBhPtVzBU/dxH6OtWVhliuTyi+T
+         5OXeJC7vPsf76ZYEhHUUU4CvAZzTwtwRpWD9jUeRs6LaG9vwaW9MsJb4zBaeZp4MXY+L
+         vGuwwDgXYVL7j0ItHaj5Dm6itPeoobAbyEFlvYdIJ5Y0dBbEFWojwH+wk1AuudQ8h+w4
+         e2TDy2IZmswLANkdzdNP3+z05WU6HRwMWIfNTlWB3e0pdz74G8R5Vy2ql3rJdMqZ4asG
+         S4tQ==
+X-Gm-Message-State: APjAAAUQb1N/7lCBBnosf6IhzPKiK1a7lsWSESkmIYYfFt39LyQXC1mZ
+        f6PQG/kqVHYfWDHiJ7NUZlYTYA34cWxTouhJ8mRHT/778vGxMw==
+X-Google-Smtp-Source: APXvYqy8VOTXuAbKw0j1c3O8zCSGmAQsSkjj1KkDXdHcwLguds5DtEdZJNT8Hy/+moiMk2YEf22e7OKRLAhqNqpl30A=
+X-Received: by 2002:a17:906:2e47:: with SMTP id r7mr6151354eji.215.1576013552064;
+ Tue, 10 Dec 2019 13:32:32 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+From:   Ivan Babrou <ivan@cloudflare.com>
+Date:   Tue, 10 Dec 2019 13:32:21 -0800
+Message-ID: <CABWYdi2GG3qi6ucxtyk3=Bu1eXi0N9Dow42F4gzi9DUUc3XhLw@mail.gmail.com>
+Subject: Lock contention around unix_gc_lock
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>, hare@suse.com,
+        axboe@kernel.dk, allison@lohutok.net, tglx@linutronix.de,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+Hello,
 
-[ Upstream commit 32a1ece4bdbde24734ab16484bad7316f03fc42d ]
+We're seeing very high contention on unix_gc_lock when a bug in an
+application makes it stop reading incoming messages with inflight unix
+sockets. In our system we churn through a lot of unix sockets and we
+have 96 logical CPUs in the system, so spinlock gets very hot.
 
-Add an error message because Intel BTS does not support AUX area
-sampling.
+I was able to halve overall system throughput with 1024 inflight unix
+sockets, which is the default RLIMIT_NOFILE. This doesn't sound too
+good for isolation, one user should not be able to affect the system
+as much. One might even consider this as DoS vector.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lore.kernel.org/lkml/20191115124225.5247-16-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/perf/arch/x86/util/auxtrace.c  | 2 ++
- tools/perf/arch/x86/util/intel-bts.c | 5 +++++
- 2 files changed, 7 insertions(+)
+There's a lot of time is spent in _raw_spin_unlock_irqrestore, which
+is triggered by wait_for_unix_gc, which in turn is unconditionally
+called from unix_stream_sendmsg:
 
-diff --git a/tools/perf/arch/x86/util/auxtrace.c b/tools/perf/arch/x86/util/auxtrace.c
-index b135af62011ce..c28b6516d41d9 100644
---- a/tools/perf/arch/x86/util/auxtrace.c
-+++ b/tools/perf/arch/x86/util/auxtrace.c
-@@ -36,6 +36,8 @@ struct auxtrace_record *auxtrace_record__init_intel(struct perf_evlist *evlist,
- 
- 	intel_pt_pmu = perf_pmu__find(INTEL_PT_PMU_NAME);
- 	intel_bts_pmu = perf_pmu__find(INTEL_BTS_PMU_NAME);
-+	if (intel_bts_pmu)
-+		intel_bts_pmu->auxtrace = true;
- 
- 	evlist__for_each_entry(evlist, evsel) {
- 		if (intel_pt_pmu && evsel->attr.type == intel_pt_pmu->type)
-diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
-index 781df40b29660..b6120ef8b4a45 100644
---- a/tools/perf/arch/x86/util/intel-bts.c
-+++ b/tools/perf/arch/x86/util/intel-bts.c
-@@ -118,6 +118,11 @@ static int intel_bts_recording_options(struct auxtrace_record *itr,
- 	const struct cpu_map *cpus = evlist->cpus;
- 	bool privileged = geteuid() == 0 || perf_event_paranoid() < 0;
- 
-+	if (opts->auxtrace_sample_mode) {
-+		pr_err("Intel BTS does not support AUX area sampling\n");
-+		return -EINVAL;
-+	}
-+
- 	btsr->evlist = evlist;
- 	btsr->snapshot_mode = opts->auxtrace_snapshot_mode;
- 
--- 
-2.20.1
+ffffffff9f64f3ea _raw_spin_unlock_irqrestore+0xa
+ffffffff9eea6ab0 prepare_to_wait_event+0x70
+ffffffff9f5a4ac6 wait_for_unix_gc+0x76
+ffffffff9f5a182c unix_stream_sendmsg+0x3c
+ffffffff9f4bb7f9 sock_sendmsg+0x39
 
+* https://elixir.bootlin.com/linux/v4.19.80/source/net/unix/af_unix.c#L1849
+
+Even more time is spent in waiting on spinlock because of call to
+unix_gc from unix_release_sock, where condition is having any inflight
+sockets whatsoever:
+
+ffffffff9eeb1758 queued_spin_lock_slowpath+0x158
+ffffffff9f5a4718 unix_gc+0x38
+ffffffff9f5a28f3 unix_release_sock+0x2b3
+ffffffff9f5a2929 unix_release+0x19
+ffffffff9f4b902d __sock_release+0x3d
+ffffffff9f4b90a1 sock_close+0x11
+
+* https://elixir.bootlin.com/linux/v4.19.80/source/net/unix/af_unix.c#L586
+
+Should this condition take the number of inflight sockets into
+account, just like unix_stream_sendmsg does via wait_for_unix_gc?
+
+Static number of inflight sockets that trigger a GC from
+wait_for_unix_gc may also be something that is scaled with system
+size, rather than be a hardcoded value.
+
+I know that our case is a pathological one, but it sounds like
+scalability of garbage collection can be better, especially on systems
+with large number of CPUs.
