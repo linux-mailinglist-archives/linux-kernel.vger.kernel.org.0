@@ -2,72 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A071119220
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FADD119222
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:34:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbfLJUeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:34:17 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:46041 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfLJUeR (ORCPT
+        id S1727143AbfLJUeZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:34:25 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:47468 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbfLJUeY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:34:17 -0500
-Received: by mail-il1-f194.google.com with SMTP id p8so17315786iln.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 12:34:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EINwPsE2o9b6h5y0t6kgOUNqky5nib0p/v1Xe6hDKmc=;
-        b=I+y5aLUWv90/bs4wDnkJybJ03d3qqe40pF4WwlPECm7/Bk82PnjnB33hEe8jy8woEB
-         zztHEiD2drxlz9mUkyz2bWQVt7/ee+xCb7eo1JNU69OsiTp5yFARbWF5QkNFGy3994Tc
-         lSHROKTc+7JyW2dUH1uMe0hPPeZrtA8U5MfvmLZMC6oVHo675XWSNWqHkUJMQ3H84SWP
-         4a1xrl/a7exXXUnOxl2BGMZvvCL12mKyF4MXsAfIzTGhN6E+HQ2YITU2+wR0OSfhKKfk
-         B2kkfvGSnMhpLsEU5T8BaZTgG24un45JrYhgHVbotUyNW13Y/8w4Yn+tkGoSjmSu6yV6
-         +DtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EINwPsE2o9b6h5y0t6kgOUNqky5nib0p/v1Xe6hDKmc=;
-        b=fQUVEKceFS32ZfVTzwE/X7ZfxHS35SwMHi6kAtiVF3sxkLWAV2U6PzNME9rk9INqK2
-         RhrWAUYAEc0pmhCevaD75QE5ZsLDE+t9liyjEzM3w4jmzKUgrFK1Oe/bBskan+yxzshW
-         MwK3JBmHI5a7dZgNIOax4b+KLpjskyJmuz1QI5k/hM4AsbDHqv9XTNRe5ZxiTk2RM2vd
-         hpKNL6pCCI3fav6DemE7n/GBFqUUlPLBxl4kAs5tHhmAvY+MXCkZjYZaGiOvGzOK+aj2
-         LvsIe1OhdxZ/44Oypv7gc0mgagn6xEAvtpCMoDsc9REq/JjKlToFMwfFq3/ztVVvob+J
-         AM3A==
-X-Gm-Message-State: APjAAAWddBr529ZJBWGZunWEmPoXfgsQAvaZnpCGINNyhB2Mta92qnj+
-        ECn5YPFeAtgj4qRcCMK/56LkHHCoeyD52AA5HRw=
-X-Google-Smtp-Source: APXvYqxzyYnXt1ev4ZSaP784KRn0QhAXKh+Y5dGO6ZcL+PEYLLJIMe9IZjwLGVd87ACUvB41iMQ8EMRIktW4tQDJ9D8=
-X-Received: by 2002:a92:4698:: with SMTP id d24mr37036359ilk.104.1576010056697;
- Tue, 10 Dec 2019 12:34:16 -0800 (PST)
+        Tue, 10 Dec 2019 15:34:24 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 960AF20061;
+        Tue, 10 Dec 2019 21:34:20 +0100 (CET)
+Date:   Tue, 10 Dec 2019 21:34:19 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     bbrezillon@kernel.org, airlied@linux.ie, daniel@ffwll.ch,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, lee.jones@linaro.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sandeep Sheriker Mallikarjun 
+        <sandeepsheriker.mallikarjun@microchip.com>
+Subject: Re: [PATCH 5/5] Revert "drm: atmel-hlcdc: enable sys_clk during
+ initalization."
+Message-ID: <20191210203419.GB24756@ravnborg.org>
+References: <1575984287-26787-1-git-send-email-claudiu.beznea@microchip.com>
+ <1575984287-26787-6-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-References: <20191210203149.7115-1-tiny.windzz@gmail.com> <20191210203149.7115-2-tiny.windzz@gmail.com>
-In-Reply-To: <20191210203149.7115-2-tiny.windzz@gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Wed, 11 Dec 2019 04:34:05 +0800
-Message-ID: <CAEExFWtjUSWvgn=zrci=mVTTnqjOcc1WRGSkSSZgR_PbWMv7+A@mail.gmail.com>
-Subject: Re: [PATCH 1/5] nvmem: sunxi_sid: convert to devm_platform_ioremap_resource
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        vz@mleia.com, khilman@baylibre.com,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        andriy.shevchenko@linux.intel.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        mans@mansr.com, treding@nvidia.com, suzuki.poulose@arm.com,
-        bgolaszewski@baylibre.com, tglx@linutronix.de
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1575984287-26787-6-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XYAwZIGsAAAA:8
+        a=vRqltxJg2XVFi9nfVjoA:9 a=CjuIK1q_8ugA:10 a=E8ToXWR_bxluHZ7gmE-Z:22
+        a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no 5/5 in this patchset, a small mistake.
+Hi Cladiu
 
-Thx,
-Yangtao
+On Tue, Dec 10, 2019 at 03:24:47PM +0200, Claudiu Beznea wrote:
+> This reverts commit d2c755e66617620b729041c625a6396c81d1231c.
+> ("drm: atmel-hlcdc: enable sys_clk during initalization."). With
+> commit "drm: atmel-hlcdc: enable clock before configuring timing engine"
+> there is no need for this patch. Code is also simpler.
+> 
+> Cc: Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+
+Getting further in the patches tells me you looked at the
+patch I referenced in previous mail.
+Please squash the two patches together - that would make it
+easier to follow what is done.
+
+With the two patches applied sysclk is enabled only in mode_set_nofb()
+and atomic_enable(). And disabled in atomic_disable().
+This is simpler and we drop the conditionals. Also good.
+So the end result looks OK.
+
+	Sam
+
+> ---
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 19 +------------------
+>  1 file changed, 1 insertion(+), 18 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> index 8dc917a1270b..112aa5066cee 100644
+> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> @@ -721,18 +721,10 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
+>  	dc->hlcdc = dev_get_drvdata(dev->dev->parent);
+>  	dev->dev_private = dc;
+>  
+> -	if (dc->desc->fixed_clksrc) {
+> -		ret = clk_prepare_enable(dc->hlcdc->sys_clk);
+> -		if (ret) {
+> -			dev_err(dev->dev, "failed to enable sys_clk\n");
+> -			goto err_destroy_wq;
+> -		}
+> -	}
+> -
+>  	ret = clk_prepare_enable(dc->hlcdc->periph_clk);
+>  	if (ret) {
+>  		dev_err(dev->dev, "failed to enable periph_clk\n");
+> -		goto err_sys_clk_disable;
+> +		goto err_destroy_wq;
+>  	}
+>  
+>  	pm_runtime_enable(dev->dev);
+> @@ -768,9 +760,6 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
+>  err_periph_clk_disable:
+>  	pm_runtime_disable(dev->dev);
+>  	clk_disable_unprepare(dc->hlcdc->periph_clk);
+> -err_sys_clk_disable:
+> -	if (dc->desc->fixed_clksrc)
+> -		clk_disable_unprepare(dc->hlcdc->sys_clk);
+>  
+>  err_destroy_wq:
+>  	destroy_workqueue(dc->wq);
+> @@ -795,8 +784,6 @@ static void atmel_hlcdc_dc_unload(struct drm_device *dev)
+>  
+>  	pm_runtime_disable(dev->dev);
+>  	clk_disable_unprepare(dc->hlcdc->periph_clk);
+> -	if (dc->desc->fixed_clksrc)
+> -		clk_disable_unprepare(dc->hlcdc->sys_clk);
+>  	destroy_workqueue(dc->wq);
+>  }
+>  
+> @@ -910,8 +897,6 @@ static int atmel_hlcdc_dc_drm_suspend(struct device *dev)
+>  	regmap_read(regmap, ATMEL_HLCDC_IMR, &dc->suspend.imr);
+>  	regmap_write(regmap, ATMEL_HLCDC_IDR, dc->suspend.imr);
+>  	clk_disable_unprepare(dc->hlcdc->periph_clk);
+> -	if (dc->desc->fixed_clksrc)
+> -		clk_disable_unprepare(dc->hlcdc->sys_clk);
+>  
+>  	return 0;
+>  }
+> @@ -921,8 +906,6 @@ static int atmel_hlcdc_dc_drm_resume(struct device *dev)
+>  	struct drm_device *drm_dev = dev_get_drvdata(dev);
+>  	struct atmel_hlcdc_dc *dc = drm_dev->dev_private;
+>  
+> -	if (dc->desc->fixed_clksrc)
+> -		clk_prepare_enable(dc->hlcdc->sys_clk);
+>  	clk_prepare_enable(dc->hlcdc->periph_clk);
+>  	regmap_write(dc->hlcdc->regmap, ATMEL_HLCDC_IER, dc->suspend.imr);
+>  
+> -- 
+> 2.7.4
