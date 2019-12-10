@@ -2,86 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 327B6119292
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:59:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0324D1192A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfLJU7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:59:07 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:34107 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfLJU7H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:59:07 -0500
-Received: from mail-qv1-f45.google.com ([209.85.219.45]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1N6srB-1hfAhC0Qu7-018HpT; Tue, 10 Dec 2019 21:59:05 +0100
-Received: by mail-qv1-f45.google.com with SMTP id b18so4776925qvo.8;
-        Tue, 10 Dec 2019 12:59:04 -0800 (PST)
-X-Gm-Message-State: APjAAAWqwpxGg5heSwzPP9LZKTF2cIC/4vMRdG2wYxS8ALwkky9kijvV
-        I4EnoShgdRPNJ1W66NKACXewhIgTO3RzVseB2Rs=
-X-Google-Smtp-Source: APXvYqxpaP4eHtfb0T1AafOuFFfZMxdK72/d9eCePNosbyemaiai5Ww7g6ZIkMFUlJlmnLpkyxwi/16JxNs8ZYi0oFM=
-X-Received: by 2002:a0c:ead1:: with SMTP id y17mr29359318qvp.210.1576011543816;
- Tue, 10 Dec 2019 12:59:03 -0800 (PST)
+        id S1726903AbfLJVEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:04:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726589AbfLJVEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:04:05 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A78C20838;
+        Tue, 10 Dec 2019 21:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576011844;
+        bh=v6LmL/NeMzNNjx/i1AH1Pv8OWWxPbJ9jR8WnQcgNOWY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jc8+necb4q+c6O2tAsz/U3zbbIw2gqVJwv9OPUduw+6vL87/LqGjHv4XXsknMW1GN
+         jYxlul3FN6YBFNfHEkcx+fIdA4pidMuYLa/2UkcY56l6M87HbX0BWCU5bWbfXSRrIt
+         5bz1uPEMm2wOrQfm80fDoqYEYubo+ViBw4Rm0QUQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dariusz Marcinkiewicz <darekm@google.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Eric Anholt <eric@anholt.net>, Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.4 001/350] drm/vc4/vc4_hdmi: fill in connector info
+Date:   Tue, 10 Dec 2019 15:58:13 -0500
+Message-Id: <20191210210402.8367-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191209151114.2410762-1-arnd@arndb.de> <20191210091905.GA3547805@kroah.com>
-In-Reply-To: <20191210091905.GA3547805@kroah.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 10 Dec 2019 21:58:47 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a21ubUOvKKFYPbC7tqg0wPjBi7iR7ZZP0xTbvvt6=PiEw@mail.gmail.com>
-Message-ID: <CAK8P3a21ubUOvKKFYPbC7tqg0wPjBi7iR7ZZP0xTbvvt6=PiEw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] staging: remove isdn capi drivers
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     driverdevel <devel@driverdev.osuosl.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Networking <netdev@vger.kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        isdn4linux@listserv.isdn4linux.de,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:D9pUZUsP3PpPb4Icu3xX3V1NEKv9UKCFsjj64I2c7yx9hi3iJWg
- MNnd7RDoePmusu72ALj1olzxje35GQjW+l0Wcw+7NSmUlDTbezNsOOOSzWixDuFsIVn0yIV
- /PvQkl5OkQJtnWt02e6DAl+SytEzAavirDIZvAMwiCFg7N/JgfaqBD+uFA6/t0q8qk+HDHJ
- K7c+hyyPAPOZeho4hxExg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:B8OsLQgLUjE=:ErhHW6Jfi5MlFJkQjWeUVz
- UnVB6kaxJtyCPRWpKg/vzrUWGuhaaXvpQ6eXNlYosq3NDM4d3Rci0mIw2029YIZQzTXFCF79z
- ZI+2kqjNyBfK+WgM9tuR84s4pAqWlNefSiwQwNmFcnQPEOqO4OE64XbLQNSnta4ttcGTQQPiV
- hqfIgvs5ZitV876n6WrwT4KiONx+7GgSqdkT2WIM4kA/vSIOTZrkkudnrLRhRzpm3/3TPL6M6
- NEitQv59MHLv3DPf/ZMBokfyIly/NeRIhBzqSdpIoyo5XpwWcfunHzmvIfzchJYxFd3oHOJfY
- lCiPGunlQdqCwdJyFNs7y9umExwfyKedZYtYygB1qMwzUXaACONUw2zsagXMj44d0XoMMH2iO
- wBBMajtTH1k3LY7aX9nAVKr68EQMAzhKmdONbgL4L6Ldbz94LADVZbwR1C9H79vkcy5Ut8BgY
- wcUdrvfzjd+Bp81I0yXDXxAaxCWfUr8HtWJD+VInuEpszG2H0YeAq3ycCL62DbDdpQ/rQp0ar
- 5aT5KoRnXDdfkDHw15bFTiRNvwyTgXNlX+0UlcNG6tF8NJSmzMbNd2aMYrtraTwtg8fKDF9uf
- RLjzplQW6Uv0JHnijvIPKVNDGy4AWw3H2blt00zJvE0kNM2f86/Q4TXYNonGf6PjEpRpwn4YH
- J2xu9ZAnKqllwoK/p/zFYFLitpItJxhjODDAchrvNroC5fLtQVo5ZsCGZJLsqwnFDykRqDt7k
- 5zc4rpMPlsFQFecc/Kca841l0irautLryxcDigYFyVziBHwrnSsZfMKBZ+6rh8kfHS0oedM8q
- AB//cdAOqA4mJ9+Qc0zw1hEE1GM4qvO4omrXAArIZJ+GUnQDgy6uVRnoTH9h+/kedDscchMiz
- PspaQJd+nXa7YBHkB1uA==
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 10:19 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Dec 09, 2019 at 04:11:13PM +0100, Arnd Bergmann wrote:
-> > As described in drivers/staging/isdn/TODO, the drivers are all
-> > assumed to be unmaintained and unused now, with gigaset being the
-> > last one to stop being maintained after Paul Bolle lost access
-> > to an ISDN network.
-> >
-> > The CAPI subsystem remains for now, as it is still required by
-> > bluetooth/cmtp.
-> >
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  Documentation/ioctl/ioctl-number.rst        |    1 -
->
-> This file is not in 5.5-rc1, what tree did you make this against?
+From: Dariusz Marcinkiewicz <darekm@google.com>
 
-This was against v5.4, sending a rebased version now.
+[ Upstream commit 66c2dee4ae10a2d841c40b9dd9c7141eb23eee76 ]
 
-      Arnd
+Fill in the connector info, allowing userspace to associate
+the CEC device with the drm connector.
+
+Tested on a Raspberry Pi 3B.
+
+Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Acked-by: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190823112427.42394-2-hverkuil-cisco@xs4all.nl
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index ee7d4e7b0ee33..0853b980bcb31 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -1285,6 +1285,9 @@ static const struct cec_adap_ops vc4_hdmi_cec_adap_ops = {
+ 
+ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
+ {
++#ifdef CONFIG_DRM_VC4_HDMI_CEC
++	struct cec_connector_info conn_info;
++#endif
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct drm_device *drm = dev_get_drvdata(master);
+ 	struct vc4_dev *vc4 = drm->dev_private;
+@@ -1403,13 +1406,15 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
+ #ifdef CONFIG_DRM_VC4_HDMI_CEC
+ 	hdmi->cec_adap = cec_allocate_adapter(&vc4_hdmi_cec_adap_ops,
+ 					      vc4, "vc4",
+-					      CEC_CAP_TRANSMIT |
+-					      CEC_CAP_LOG_ADDRS |
+-					      CEC_CAP_PASSTHROUGH |
+-					      CEC_CAP_RC, 1);
++					      CEC_CAP_DEFAULTS |
++					      CEC_CAP_CONNECTOR_INFO, 1);
+ 	ret = PTR_ERR_OR_ZERO(hdmi->cec_adap);
+ 	if (ret < 0)
+ 		goto err_destroy_conn;
++
++	cec_fill_conn_info_from_drm(&conn_info, hdmi->connector);
++	cec_s_conn_info(hdmi->cec_adap, &conn_info);
++
+ 	HDMI_WRITE(VC4_HDMI_CPU_MASK_SET, 0xffffffff);
+ 	value = HDMI_READ(VC4_HDMI_CEC_CNTRL_1);
+ 	value &= ~VC4_HDMI_CEC_DIV_CLK_CNT_MASK;
+-- 
+2.20.1
+
