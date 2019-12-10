@@ -2,119 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C19FA118342
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:15:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4487C118345
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:15:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfLJJPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:15:01 -0500
-Received: from a27-11.smtp-out.us-west-2.amazonses.com ([54.240.27.11]:49512
-        "EHLO a27-11.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726911AbfLJJO7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:14:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575969298;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=Ujunv0R/WM+sahEPNbxCRS3Q2pY5WCU98/q3fvcKML8=;
-        b=i4EdORzIKrgPNIfR9Bxyo4wxrK/iL4LfFfJG84rdc3ISY6TqTAsHWUrEiwtuFjRe
-        SSBsMPeXY58DVH1HWQh2aGc7hXmnhPwMEjUM6Js9yaUHafWmkSHshHnk9lqREvsTZ30
-        v20ekgdc7/aotHyNUScJiW1aTFJ/En/J/Metg+1w=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575969298;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-        bh=Ujunv0R/WM+sahEPNbxCRS3Q2pY5WCU98/q3fvcKML8=;
-        b=WVG+KdzY0rjNjihzCNe8vhl7NrlmESxDszVZW6fw9GZX25xMpfEZbEnRFPM5ovOK
-        Stpl7gYID/zKO4gkwZQlXB0isq2WSBZ2soHYPMKlF0VhO2y2EMLU+o+ky9AZ0/RzTyi
-        PerZozhaAnEgDTR1tgnwQn99iClTLKy1w4SMrkPs=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 279BBC447BC
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
-Cc:     Soeren Moch <smoch@web.de>, linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] arm64: dts: rockchip: RockPro64: enable wifi module at sdio0
-References: <20191209223822.27236-1-smoch@web.de> <2668270.pdtvSLGib8@diego>
-        <2cf70216-8d98-4122-4f4e-b8254089a017@web.de>
-        <6162240.GiEx4hqPFh@diego>
-Date:   Tue, 10 Dec 2019 09:14:58 +0000
-In-Reply-To: <6162240.GiEx4hqPFh@diego> ("Heiko \=\?utf-8\?Q\?St\=C3\=BCbner\=22'\?\=
- \=\?utf-8\?Q\?s\?\= message of "Tue, 10
-        Dec 2019 02:18:24 +0100")
-Message-ID: <0101016eef17168b-4b99c805-9c89-4ce6-a4fc-02f5e2b80c6d-000000@us-west-2.amazonses.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        id S1727457AbfLJJPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:15:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51418 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727431AbfLJJPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 04:15:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9FBF1AE5E;
+        Tue, 10 Dec 2019 09:15:03 +0000 (UTC)
+Date:   Tue, 10 Dec 2019 10:15:02 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        AlekseyMakarov <aleksey.makarov@linaro.org>
+Subject: Re: [RFC/PATCH] printk: Fix preferred console selection with
+ multiple matches
+Message-ID: <20191210091502.qoq55fdjad6aixab@pathway.suse.cz>
+References: <b8131bf32a5572352561ec7f2457eb61cc811390.camel@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SES-Outgoing: 2019.12.10-54.240.27.11
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b8131bf32a5572352561ec7f2457eb61cc811390.camel@kernel.crashing.org>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heiko St=C3=BCbner <heiko@sntech.de> writes:
+On Tue 2019-12-10 11:57:26, Benjamin Herrenschmidt wrote:
+> In the following circumstances, the rule of selecting the console
+> corresponding to the last "console=" entry on the command line as
+> the preferred console (CON_CONSDEV, ie, /dev/console) fails. This
+> is a specific example, but it could happen with different consoles
+> that have a similar name aliasing mechanism.
+> 
+> This tentative fix changes the loop in register_console to continue
+> matching with the array until the match is actually the preferred
+> console.
 
-> Hi Soeren,
->
-> Am Dienstag, 10. Dezember 2019, 00:29:21 CET schrieb Soeren Moch:
->> On 10.12.19 00:08, Heiko St=C3=BCbner wrote:
->> > Am Montag, 9. Dezember 2019, 23:38:22 CET schrieb Soeren Moch:
->> >> RockPro64 supports an Ampak AP6359SA based wifi/bt combo module.
->> >> The BCM4359/9 wifi controller in this module is connected to sdio0,
->> >> enable this interface.
->> >>
->> >> Signed-off-by: Soeren Moch <smoch@web.de>
->> >> ---
->> >> Not sure where to place exactly the sdio0 node in the dts because
->> >> existing sd nodes are not sorted alphabetically.
->> >>
->> >> This last patch in this brcmfmac patch series probably should be pick=
-ed
->> >> up by Heiko independently of the rest of this series. It was sent tog=
-ether
->> >> to show how this brcmfmac extension for 4359-sdio support with RSDB is
->> >> used and tested.
->> > node placement looks good so I can apply it, just a general questions
->> > I only got patch 8/8 are patches 1-7 relevant for this one and what ar=
-e they?
->> Patches 1-7 are the patches to support the BCM4359 chipset with SDIO
->> interface in the linux brcmfmac net-wireless driver, see [1].
->>=20
->> So this patch series has 2 parts:
->> patches 1-7: add support for the wifi chipset in the wireless driver,
->> this has to go through net-wireless
->> patch 8: enable the wifi module with this chipset on RockPro64, this pat=
-ch
->
-> Thanks for the clarification :-) .
->
-> As patch 8 "only" does the core sdio node, it doesn't really depend on the
-> earlier ones and you can submit any uart-hooks for bluetooth once the
-> other patches land I guess.
->
->
->> If this was confusing, what would be the ideal way to post such series?
->
-> I think every maintainer has some slightly different perspective on this,
-> but personally I like getting the whole series to follow the discussion b=
-ut
-> also to just see when the driver-side changes get merged, as the dts-parts
-> need to wait for that in a lot of cases.
+One problem with this is that con->match() callbacks might have
+side effects. If the console matches, the callback sometimes
+do some changes in the console driver because it expects
+that the console is going to be registered and used.
 
-FWIW I prefer the same as Heiko. If I don't see all the patches in the
-patchset I start worrying if patchwork lost them, or something, and then
-it takes more time from me to investigate what happened. So I strongly
-recommend sending the whole series to everyone as it saves time.
+I have solved the same problem some time ago and we use the following
+patch in SUSE kernels.
 
---=20
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+Sigh, I have never send it upstream because it looked too complicated
+to me. I wanted to clean up the console registration code a bit first,
+see https://lkml.kernel.org/r/1497358444-30736-1-git-send-email-pmladek@suse.com
+But it was pretty complicated and it has somehow fallen into cracks.
+
+
+Anyway, here is the patch that we use. Could you please check if it
+works for you as well? Does it make sense, please?
+
+From: Petr Mladek <pmladek@suse.com>
+Date: Tue, 20 Jun 2017 14:40:34 +0200
+Subject: printk/console: Correctly mark console that is used when opening /dev/console
+Patch-mainline: Never, an extensive clean up is being prepared for upstream
+References: bsc#1040020
+
+showconsole tool shows the real name of tty device associated with
+/dev/console. It expects that the related console driver has set
+CON_CONSDEV flag.
+
+On the other hand, kernel ignores CON_CONSDEV flag when it looks
+for the right driver. Instead, it takes the first driver that
+has the tty binding (console->device). See tty_lookup_driver()
+and console_device().
+
+All this works most of the time because kernel puts the driver
+with CON_CONSDEV flag first into the list. There is almost always
+registered a real (non-boot) console with this flag set. The real
+consoles mostly (always?) have tty binding. Boot consoles that
+might miss the tty binding are always removed unless keep_bootcon
+command line parameter is used.
+
+The problem is when some consoles are defined on the command line
+and the preferred one (last one) is not registered from some reason.
+Note that the consoles might be added to the command line also
+using ACPI SPCR or device tree. It might happen that, for example,
+SPCR code and user add the same console using two aliases.
+Then the first alias matches and we might miss that it matched
+also with the preferred console.
+
+There was one attempt to fix this by searching the command line
+from the end and match the preferred alias first. But it caused
+regressions. For example, ttyS* are taken as aliases as well
+and kernel messages can appear only on one serial port.
+The reversed matching caused that the logs suddenly appeared
+on another serial port.
+
+The right solution is to set CON_CONSDEV flag for the driver
+used by tty_lookup_driver() even when the preferred console
+is not registered.
+
+It is a bit complicated because register_console() code is tricky.
+It expects that only the preferred driver will have CON_CONSDEV
+flag set. Also it expects that a boot console will stay first
+in the list until the preferred console is registered. These
+information are used to make various decisions:
+
+    + Use a fallback code when none console is configured on
+      the command line. This code tries to enable any console
+      until a real one is enabled.
+
+    + Unregister all boot consoles when the real preferred one
+      is registered. And do not reply the log on the real console
+      to avoid duplicates.
+
+A rather invasive clean up is being prepared for upstream. This
+patch tries to be as minimalist and do not change the order
+of consoles as possible.
+
+It keeps the logic about having a boot console first until
+the real preferred console is registered. But it makes sure
+that the first console with tty binding (console->device) will
+have CON_CONSDEV flag set. Let's look at this in more details.
+
+The fallback code in console_register() already works as
+expected. It sets CON_CONSDEV flag for any console with
+tty binding.
+
+The code matching all consoles from the command line newly sets
+CON_CONSDEV flag also for the fist console with the tty binding.
+But it sets "consdev_fallback" to avoid putting this console
+first into the list. Remember that we want to keep the boot
+console first until the preferred is registered. The information
+about the fallback is used also to avoid doing other actions
+that need to wait for the preferred console.
+
+The code adding the console into the list of drivers must
+put non-preferred drivers with tty binding next to the
+console with CON_CONSDEV set. This is the only change that
+might change the order of console drivers in the list
+and eventually cause regressions. But it has an effect only
+when there are at least three drivers mentioned on the command
+line, a boot console is registered and the preferred driver
+is not registered. This should be a corner case.
+
+Finally, unregister_console() sets CON_CONSDEV to first console
+with tty binding instead of the first one in the list.
+
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ kernel/printk/printk.c | 59 ++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 50 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 94ec1aacea64..b6bb4d362b22 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2662,16 +2662,23 @@ void register_console(struct console *newcon)
+ 	int i;
+ 	unsigned long flags;
+ 	struct console *bcon = NULL;
++	struct console *con_consdev = NULL;
+ 	struct console_cmdline *c;
+ 	static bool has_preferred;
++	bool consdev_fallback = false;
+ 
+-	if (console_drivers)
+-		for_each_console(bcon)
++	if (console_drivers) {
++		for_each_console(bcon) {
+ 			if (WARN(bcon == newcon,
+ 					"console '%s%d' already registered\n",
+ 					bcon->name, bcon->index))
+ 				return;
+ 
++			if (bcon->flags & CON_CONSDEV && !con_consdev)
++				con_consdev = bcon;
++		}
++	}
++
+ 	/*
+ 	 * before we register a new CON_BOOT console, make sure we don't
+ 	 * already have a valid console
+@@ -2739,8 +2746,17 @@ void register_console(struct console *newcon)
+ 
+ 		newcon->flags |= CON_ENABLED;
+ 		if (i == preferred_console) {
++			/* This is the last console on the command line. */
+ 			newcon->flags |= CON_CONSDEV;
+ 			has_preferred = true;
++		} else if (newcon->device && !con_consdev) {
++			/*
++			 * This is the first console with tty binding. It will
++			 * be used for /dev/console when the preferred one
++			 * will not get registered for some reason.
++			 */
++			newcon->flags |= CON_CONSDEV;
++			consdev_fallback = true;
+ 		}
+ 		break;
+ 	}
+@@ -2754,7 +2770,9 @@ void register_console(struct console *newcon)
+ 	 * the real console are the same physical device, it's annoying to
+ 	 * see the beginning boot messages twice
+ 	 */
+-	if (bcon && ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV))
++	if (bcon &&
++	    ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV) &&
++	    !consdev_fallback)
+ 		newcon->flags &= ~CON_PRINTBUFFER;
+ 
+ 	/*
+@@ -2762,12 +2780,28 @@ void register_console(struct console *newcon)
+ 	 *	preferred driver at the head of the list.
+ 	 */
+ 	console_lock();
+-	if ((newcon->flags & CON_CONSDEV) || console_drivers == NULL) {
++	if ((newcon->flags & CON_CONSDEV && !consdev_fallback) ||
++	     console_drivers == NULL) {
++		/* Put the preferred or the first console at the head. */
+ 		newcon->next = console_drivers;
+ 		console_drivers = newcon;
+-		if (newcon->next)
+-			newcon->next->flags &= ~CON_CONSDEV;
++		/* Only one console can have CON_CONSDEV flag set */
++		if (con_consdev)
++			con_consdev->flags &= ~CON_CONSDEV;
++	} else if (newcon->device && con_consdev) {
++		/*
++		 * Keep the driver associated with /dev/console.
++		 * We are here only when the console was enabled by the cycle
++		 * checking console_cmdline and this is neither preferred
++		 * console nor the consdev fallback.
++		 */
++		newcon->next = con_consdev->next;
++		con_consdev->next = newcon;
+ 	} else {
++		/*
++		 * Keep a boot console first until the preferred real one
++		 * is registered.
++		 */
+ 		newcon->next = console_drivers->next;
+ 		console_drivers->next = newcon;
+ 	}
+@@ -2808,6 +2842,7 @@ void register_console(struct console *newcon)
+ 		newcon->name, newcon->index);
+ 	if (bcon &&
+ 	    ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV) &&
++	    !consdev_fallback &&
+ 	    !keep_bootcon) {
+ 		/* We need to iterate through all boot consoles, to make
+ 		 * sure we print everything out, before we unregister them.
+@@ -2853,10 +2888,16 @@ int unregister_console(struct console *console)
+ 
+ 	/*
+ 	 * If this isn't the last console and it has CON_CONSDEV set, we
+-	 * need to set it on the next preferred console.
++	 * need to set it on the first console with tty binding.
+ 	 */
+-	if (console_drivers != NULL && console->flags & CON_CONSDEV)
+-		console_drivers->flags |= CON_CONSDEV;
++	if (console_drivers != NULL && console->flags & CON_CONSDEV) {
++		for_each_console(a) {
++			if (a->device) {
++				a->flags |= CON_CONSDEV;
++				break;
++			}
++		}
++	}
+ 
+ 	console->flags &= ~CON_ENABLED;
+ 	console_unlock();
+-- 
+1.8.5.6
+
