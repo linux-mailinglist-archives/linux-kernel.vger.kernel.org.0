@@ -2,169 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA1B0119D74
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:38:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D52D119CEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 23:35:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730506AbfLJWiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 17:38:04 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:44759 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730018AbfLJWdw (ORCPT
+        id S1730407AbfLJWee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 17:34:34 -0500
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:36047 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730256AbfLJWeW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:33:52 -0500
-Received: by mail-qv1-f66.google.com with SMTP id n8so4890765qvg.11;
-        Tue, 10 Dec 2019 14:33:51 -0800 (PST)
+        Tue, 10 Dec 2019 17:34:22 -0500
+Received: by mail-pf1-f202.google.com with SMTP id y127so769741pfg.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 14:34:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2qVtlYAOtRcz+6F4XJkyiWApaYdPcES7nZQ2donezV0=;
-        b=EHa/DmXt++387JQCZzAsAwfAYUEmAL11dzKPQCqQCESvSPxDAp9WeaxtLh+M31rPi7
-         +upY71bq8lulevUKjgA6jD7B98vHdo96nfbz27BF1g6vYlBe7uQC+tC6A3/alg+/UZpu
-         m5MOJadMJZ+iidQa4Iuvr7I9ngdppnGas9vc4YlJXWqn4rAVM3YG8RGKsYP5fUq6/p46
-         o5McgujVuymvluZyoySMIhBOHZMOvwCQlqzd8k69B3hHDYKNRI2ls2ePzzvP3RMksaoc
-         M2ZonpR+NP5eAuDzh8vMW11hj3+5T62UnOFoeimk5mjr62yeO0zgCAKv/RVSpZFggohR
-         OUHg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=WyGQWTgeim8bwKoFOiUnJz7Undlykbo+pgfr/YAwFko=;
+        b=ZcytyTHhIQ3z3v6rorH//toMRsPrq5A5FEwV+XNywJ6H04iFLGFJcdqgwHMzxpBro/
+         bdSICwm6sSAe6qu0oqcgukb3gxEFT9YmDGTySFtYbVTfoRgDqZyYB00grc+aqUBBVS7q
+         +BlaZOH1enfb1JQ3JYXza1nifzabu4leYZaR21eiWqa/kLkM3KAdkIwILbnzNB085uj7
+         NRnsgZezUcCpnucg2F2O2vc6PATVMrFzi2vcx9RMdOMGfFFJMBOVuR6lf0bOjvW/KQ8G
+         DjrBRaHpw2NRSeIV8Dr+CWIwZnLKa3TW81hpK4xV0wj+yDlw4OX17HViD2vJBXbDdKKx
+         KyJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2qVtlYAOtRcz+6F4XJkyiWApaYdPcES7nZQ2donezV0=;
-        b=Kc69b3ZBf0WQmNyGi8GD+qGTEwnNobcW6+CcODjsuJKWcxM1PizyIpzjxeXWEnjpcG
-         t2F0XmToXszj3xxw7PvCZl8Hxg++OBrPDJnltaFputAkLH0Dz8rBuDBR2rZwWyNycm+3
-         eHbW9xZCSr328mCaJaCWk4kYM5J2TKSLc9yTsYujfAlf+2zaUbkluAuU7/tAPwvFxc0/
-         Ljq64HxJrBGPmWxmFjLUcLiJz9RAYQkLK8poxjDjMtXkYqX8777++piQxdZThxUXcsWk
-         7QGEedFl8DNogY681ZvddWfoSrh5I9Ff1z5PHTsvzkKXGCasrrQIxnO3jDoRJ+q1gqib
-         0xAA==
-X-Gm-Message-State: APjAAAVayoKRZW28YhSj2wvxfZaFkML5RfjPb1XSjuaHmgpoHuLwSkP4
-        5ZeEflpGsCTaIL4SuvfyP8HKghmYoxoPG+/vmCs95A==
-X-Google-Smtp-Source: APXvYqzLdU215RBR+lRJDFtX7NSmzsBYhixAzaNonjFfJXAAbiD83HVZkQwNdg4MVVrQyCITIQ0hr3XoBh8Oe4aRaBE=
-X-Received: by 2002:ad4:4e34:: with SMTP id dm20mr204409qvb.163.1576017230745;
- Tue, 10 Dec 2019 14:33:50 -0800 (PST)
-MIME-Version: 1.0
-References: <20191210011438.4182911-1-andriin@fb.com> <20191210011438.4182911-12-andriin@fb.com>
- <20191209175745.2d96a1f0@cakuba.netronome.com> <CAEf4Bzaow7w+TGyiF67pXn42TumxFZb7Q4BOQPPGfRJdyeY-ig@mail.gmail.com>
- <20191210100536.7a57d5e1@cakuba.netronome.com> <20191210214407.GA3105713@mini-arch>
-In-Reply-To: <20191210214407.GA3105713@mini-arch>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 10 Dec 2019 14:33:39 -0800
-Message-ID: <CAEf4BzbSwoeKVnyJU7EoP86exNj3Eku5_+8MbEieZKt2MqrhbQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 11/15] bpftool: add skeleton codegen command
-To:     Stanislav Fomichev <sdf@fomichev.me>
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <kernel-team@fb.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=WyGQWTgeim8bwKoFOiUnJz7Undlykbo+pgfr/YAwFko=;
+        b=D9ghNAET80HQdxQeBIfvrYvcDM4d+AXlDTJS+6KMlL9qNGJChwqvmVfizHECitAEKl
+         QsVpwVcrgVtR2/z2tWSjT5jCBDUNEPceuJn4IvgiQEgvVsb4fyVfaCt46ebdGjqVmEoX
+         ZUrCTUTzhSdIAF7ioPc7Y96TdKS1GcCmNzpBDGc8XDeLr3CV5SLwN6Vl1786oKNZreUp
+         cLft6IYS6h84bklpzbfW61qJbHuCQWsmWtQPkQ/iG73plN3MGciE+FbLNhbIg2h7zPRN
+         RtElgQ/oKpNL5Lbu6r+IPCHyJFEAwf5HM9+EjQHJIR9S2xoHIBiSUKeSV9pmPkwqUMMb
+         ZF/Q==
+X-Gm-Message-State: APjAAAU40wvJTClG26K1jM7VsC7VjRfwbS/U2Yt0UI8QeOwPyM5zCr7k
+        xjic8UNihz06qPSExiWlGVhc4yZzv7aURTXLWtHBQA==
+X-Google-Smtp-Source: APXvYqzBhm64QQRnyzHjRsE2Z2suVedl3rsxqSuWpTvM5OF8TDVrWA+ITcfgSim81cqyaLNSx01t/VTS7sF0EEFqFx/5dg==
+X-Received: by 2002:a63:ed56:: with SMTP id m22mr453813pgk.261.1576017262168;
+ Tue, 10 Dec 2019 14:34:22 -0800 (PST)
+Date:   Tue, 10 Dec 2019 14:34:03 -0800
+Message-Id: <20191210223403.244842-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
+Subject: [PATCH v1] um: drivers: mark non-vector net transports as obsolete
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com
+Cc:     johannes.berg@intel.com, linux-um@lists.infradead.org,
+        linux-kernel@vger.kernel.org, davidgow@google.com,
+        Brendan Higgins <brendanhiggins@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 1:44 PM Stanislav Fomichev <sdf@fomichev.me> wrote:
->
-> On 12/10, Jakub Kicinski wrote:
-> > On Tue, 10 Dec 2019 09:11:31 -0800, Andrii Nakryiko wrote:
-> > > On Mon, Dec 9, 2019 at 5:57 PM Jakub Kicinski wrote:
-> > > > On Mon, 9 Dec 2019 17:14:34 -0800, Andrii Nakryiko wrote:
-> > > > > struct <object-name> {
-> > > > >       /* used by libbpf's skeleton API */
-> > > > >       struct bpf_object_skeleton *skeleton;
-> > > > >       /* bpf_object for libbpf APIs */
-> > > > >       struct bpf_object *obj;
-> > > > >       struct {
-> > > > >               /* for every defined map in BPF object: */
-> > > > >               struct bpf_map *<map-name>;
-> > > > >       } maps;
-> > > > >       struct {
-> > > > >               /* for every program in BPF object: */
-> > > > >               struct bpf_program *<program-name>;
-> > > > >       } progs;
-> > > > >       struct {
-> > > > >               /* for every program in BPF object: */
-> > > > >               struct bpf_link *<program-name>;
-> > > > >       } links;
-> > > > >       /* for every present global data section: */
-> > > > >       struct <object-name>__<one of bss, data, or rodata> {
-> > > > >               /* memory layout of corresponding data section,
-> > > > >                * with every defined variable represented as a struct field
-> > > > >                * with exactly the same type, but without const/volatile
-> > > > >                * modifiers, e.g.:
-> > > > >                */
-> > > > >                int *my_var_1;
-> > > > >                ...
-> > > > >       } *<one of bss, data, or rodata>;
-> > > > > };
-> > > >
-> > > > I think I understand how this is useful, but perhaps the problem here
-> > > > is that we're using C for everything, and simple programs for which
-> > > > loading the ELF is majority of the code would be better of being
-> > > > written in a dynamic language like python?  Would it perhaps be a
-> > > > better idea to work on some high-level language bindings than spend
-> > > > time writing code gens and working around limitations of C?
-> > >
-> > > None of this work prevents Python bindings and other improvements, is
-> > > it? Patches, as always, are greatly appreciated ;)
-> >
-> > This "do it yourself" shit is not really funny :/
-> >
-> > I'll stop providing feedback on BPF patches if you guy keep saying
-> > that :/ Maybe that's what you want.
-> >
-> > > This skeleton stuff is not just to save code, but in general to
-> > > simplify and streamline working with BPF program from userspace side.
-> > > Fortunately or not, but there are a lot of real-world applications
-> > > written in C and C++ that could benefit from this, so this is still
-> > > immensely useful. selftests/bpf themselves benefit a lot from this
-> > > work, see few of the last patches in this series.
-> >
-> > Maybe those applications are written in C and C++ _because_ there
-> > are no bindings for high level languages. I just wish BPF programming
-> > was less weird and adding some funky codegen is not getting us closer
-> > to that goal.
-> >
-> > In my experience code gen is nothing more than a hack to work around
-> > bad APIs, but experiences differ so that's not a solid argument.
-> *nod*
->
-> We have a nice set of C++ wrappers around libbpf internally, so we can do
-> something like BpfMap<key type, value type> and get a much better interface
-> with type checking. Maybe we should focus on higher level languages instead?
-> We are open to open-sourcing our C++ bits if you want to collaborate.
+UML_NET_VECTOR now supports filters compiled with pcap outside of UML;
+it also supports: EoGRE, EoL2TPv3, RAW (+/- BPF), TAP and BESS.
 
-Python/C++ bindings and API wrappers are an orthogonal concerns here.
-I personally think it would be great to have both Python and C++
-specific API that uses libbpf under the cover. The only debatable
-thing is the logistics: where the source code lives, how it's kept in
-sync with libbpf, how we avoid crippling libbpf itself because
-something is hard or inconvenient to adapt w/ Python, etc.
+While vector drivers are not 1:1 replacements for the existing drivers,
+you can achieve the same topologies and the same connectivity at much
+higher performance (2.5 to 9 Gbit on mid-range Ryzen desktop) - the old
+drivers test out in the 500Mbit range on the same hardware.
 
-The problem I'm trying to solve here is not really C-specific. I don't
-think you can solve it without code generation for C++. How do you
-"generate" BPF program-specific layout of .data, .bss, .rodata, etc
-data sections in such a way, where it's type safe (to the degree that
-language allows that, of course) and is not "stringly-based" API? This
-skeleton stuff provides a natural, convenient and type-safe way to
-work with global data from userspace pretty much at the same level of
-performance and convenience, as from BPF side. How can you achieve
-that w/ C++ without code generation? As for Python, sure you can do
-dynamic lookups based on just the name of property/method, but amount
-of overheads is not acceptable for all applications (and Python itself
-is not acceptable for those applications). In addition to that, C is
-the best way for other less popular languages (e.g., Rust) to leverage
-libbpf without investing lots of effort in re-implementing libbpf in
-Rust.
+For all these reasons, the non-vector based transports are now
+unnecessary, and some, most notably pcap and vde are maintenance
+burdens. Thus, it makes sense to at least start thinking about removing
+the non-vector transports, so for now, mark them as obsolete.
 
-So while having nice high-level language-specific APIs is good, it's not enough.
+Link: https://lore.kernel.org/lkml/15f048d3-07ab-61c1-c6e0-0712e626dd33@cambridgegreys.com/T/#u
+Suggested-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+---
 
->
-> (I assume most of the stuff you have at fb is also non-c and one of
-> c++/python/php/rust/go/whatver).
+I pretty much stole the commit message from Anton's comments in the
+above link. Anton, if you would like me to credit you as a co-developer,
+feel free to respond with the tags and I will include them on the next
+revision.
 
-Yes, C++ using libbpf directly or through very thin wrappers. For
-BCC-based stuff, obviously, we rely on C++ parts of BCC. This struct
-I'm generating is extremely useful for C++ as well, as it gives very
-natural way to access *and initialize* global variables.
+---
+ arch/um/drivers/Kconfig | 81 +++++++++++++++++++++--------------------
+ 1 file changed, 41 insertions(+), 40 deletions(-)
+
+diff --git a/arch/um/drivers/Kconfig b/arch/um/drivers/Kconfig
+index 388096fb45a25..72d4170557820 100644
+--- a/arch/um/drivers/Kconfig
++++ b/arch/um/drivers/Kconfig
+@@ -147,7 +147,7 @@ config UML_NET
+ 	  make use of UML networking.
+ 
+ config UML_NET_ETHERTAP
+-	bool "Ethertap transport"
++	bool "Ethertap transport (obsolete)"
+ 	depends on UML_NET
+ 	help
+ 	  The Ethertap User-Mode Linux network transport allows a single
+@@ -167,14 +167,13 @@ config UML_NET_ETHERTAP
+ 	  has examples of the UML command line to use to enable Ethertap
+ 	  networking.
+ 
+-	  If you'd like to set up an IP network with the host and/or the
+-	  outside world, say Y to this, the Daemon Transport and/or the
+-	  Slip Transport.  You'll need at least one of them, but may choose
+-	  more than one without conflict.  If you don't need UML networking,
+-	  say N.
++	  NOTE: THIS TRANSPORT IS DEPRECATED AND WILL BE REMOVED SOON!!! Please
++	  migrate to UML_NET_VECTOR.
++
++	  If unsure, say N.
+ 
+ config UML_NET_TUNTAP
+-	bool "TUN/TAP transport"
++	bool "TUN/TAP transport (obsolete)"
+ 	depends on UML_NET
+ 	help
+ 	  The UML TUN/TAP network transport allows a UML instance to exchange
+@@ -185,8 +184,13 @@ config UML_NET_TUNTAP
+ 	  To use this transport, your host kernel must have support for TUN/TAP
+ 	  devices, either built-in or as a module.
+ 
++	  NOTE: THIS TRANSPORT IS DEPRECATED AND WILL BE REMOVED SOON!!! Please
++	  migrate to UML_NET_VECTOR.
++
++	  If unsure, say N.
++
+ config UML_NET_SLIP
+-	bool "SLIP transport"
++	bool "SLIP transport (obsolete)"
+ 	depends on UML_NET
+ 	help
+ 	  The slip User-Mode Linux network transport allows a running UML to
+@@ -201,16 +205,13 @@ config UML_NET_SLIP
+ 	  has examples of the UML command line to use to enable slip
+ 	  networking, and details of a few quirks with it.
+ 
+-	  The Ethertap Transport is preferred over slip because of its
+-	  limitations.  If you prefer slip, however, say Y here.  Otherwise
+-	  choose the Multicast transport (to network multiple UMLs on
+-	  multiple hosts), Ethertap (to network with the host and the
+-	  outside world), and/or the Daemon transport (to network multiple
+-	  UMLs on a single host).  You may choose more than one without
+-	  conflict.  If you don't need UML networking, say N.
++	  NOTE: THIS TRANSPORT IS DEPRECATED AND WILL BE REMOVED SOON!!! Please
++	  migrate to UML_NET_VECTOR.
++
++	  If unsure, say N.
+ 
+ config UML_NET_DAEMON
+-	bool "Daemon transport"
++	bool "Daemon transport (obsolete)"
+ 	depends on UML_NET
+ 	help
+ 	  This User-Mode Linux network transport allows one or more running
+@@ -225,13 +226,10 @@ config UML_NET_DAEMON
+ 	  has examples of the UML command line to use to enable Daemon
+ 	  networking.
+ 
+-	  If you'd like to set up a network with other UMLs on a single host,
+-	  say Y.  If you need a network between UMLs on multiple physical
+-	  hosts, choose the Multicast Transport.  To set up a network with
+-	  the host and/or other IP machines, say Y to the Ethertap or Slip
+-	  transports.  You'll need at least one of them, but may choose
+-	  more than one without conflict.  If you don't need UML networking,
+-	  say N.
++	  NOTE: THIS TRANSPORT IS DEPRECATED AND WILL BE REMOVED SOON!!! Please
++	  migrate to UML_NET_VECTOR.
++
++	  If unsure, say N.
+ 
+ config UML_NET_VECTOR
+ 	bool "Vector I/O high performance network devices"
+@@ -245,7 +243,7 @@ config UML_NET_VECTOR
+ 	drivers.
+ 
+ config UML_NET_VDE
+-	bool "VDE transport"
++	bool "VDE transport (obsolete)"
+ 	depends on UML_NET
+ 	help
+ 	This User-Mode Linux network transport allows one or more running
+@@ -263,11 +261,13 @@ config UML_NET_VDE
+ 	That site has a good overview of what VDE is and also examples
+ 	of the UML command line to use to enable VDE networking.
+ 
+-	If you need UML networking with VDE,
+-	say Y.
++	NOTE: THIS TRANSPORT IS DEPRECATED AND WILL BE REMOVED SOON!!! Please
++	migrate to UML_NET_VECTOR.
++
++	If unsure, say N.
+ 
+ config UML_NET_MCAST
+-	bool "Multicast transport"
++	bool "Multicast transport (obsolete)"
+ 	depends on UML_NET
+ 	help
+ 	  This Multicast User-Mode Linux network transport allows multiple
+@@ -284,15 +284,13 @@ config UML_NET_MCAST
+ 	  has examples of the UML command line to use to enable Multicast
+ 	  networking, and notes about the security of this approach.
+ 
+-	  If you need UMLs on multiple physical hosts to communicate as if
+-	  they shared an Ethernet network, say Y.  If you need to communicate
+-	  with other IP machines, make sure you select one of the other
+-	  transports (possibly in addition to Multicast; they're not
+-	  exclusive).  If you don't need to network UMLs say N to each of
+-	  the transports.
++	  NOTE: THIS TRANSPORT IS DEPRECATED AND WILL BE REMOVED SOON!!! Please
++	  migrate to UML_NET_VECTOR.
++
++	  If unsure, say N.
+ 
+ config UML_NET_PCAP
+-	bool "pcap transport"
++	bool "pcap transport (obsolete)"
+ 	depends on UML_NET
+ 	help
+ 	The pcap transport makes a pcap packet stream on the host look
+@@ -304,11 +302,13 @@ config UML_NET_PCAP
+ 	  <http://user-mode-linux.sourceforge.net/old/networking.html>  That site
+ 	  has examples of the UML command line to use to enable this option.
+ 
+-	If you intend to use UML as a network monitor for the host, say
+-	Y here.  Otherwise, say N.
++	NOTE: THIS TRANSPORT IS DEPRECATED AND WILL BE REMOVED SOON!!! Please
++	migrate to UML_NET_VECTOR.
++
++	If unsure, say N.
+ 
+ config UML_NET_SLIRP
+-	bool "SLiRP transport"
++	bool "SLiRP transport (obsolete)"
+ 	depends on UML_NET
+ 	help
+ 	  The SLiRP User-Mode Linux network transport allows a running UML
+@@ -328,9 +328,10 @@ config UML_NET_SLIRP
+ 	  that of a host behind a firewall that masquerades all network
+ 	  connections passing through it (but is less secure).
+ 
+-	  To use this you should first have slirp compiled somewhere
+-	  accessible on the host, and have read its documentation.  If you
+-	  don't need UML networking, say N.
++	  NOTE: THIS TRANSPORT IS DEPRECATED AND WILL BE REMOVED SOON!!! Please
++	  migrate to UML_NET_VECTOR.
++
++	  If unsure, say N.
+ 
+ 	  Startup example: "eth0=slirp,FE:FD:01:02:03:04,/usr/local/bin/slirp"
+ 
+-- 
+2.24.0.525.g8f36a354ae-goog
+
