@@ -2,77 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23FE4118406
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:51:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA08511840C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:51:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfLJJvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:51:19 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:45559 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbfLJJvQ (ORCPT
+        id S1726915AbfLJJv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:51:26 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:34654 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727510AbfLJJvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:51:16 -0500
-Received: by mail-vk1-f193.google.com with SMTP id g7so5376178vkl.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:51:16 -0800 (PST)
+        Tue, 10 Dec 2019 04:51:24 -0500
+Received: by mail-vk1-f195.google.com with SMTP id w67so1696608vkf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:51:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NcOgayy9z/aBI2J3iHtRhOACGybXIm3aEUhJEwhAQls=;
-        b=VEf9Oy/RRgF1tiaCcmB53O77DmqvJkBKqLxP0IpSlUwEAxUm2jSgp33Fzi8yDd/bSo
-         UvmNU20JF6L3z7OXZMQkCE//tL1l7Ufml8oQdJ5HWKzIzuefyEyVKnIV+axY+bSExgJc
-         4I56ZMwqsJDuIJ8blY5/QXluYaoDyu4js+zkfLbVCsdRv4vlvLDkEaxBO38xIR996pDR
-         PZEKcPOaaOCB859PNkvsMwtbUmDOlTqnalPJWj7J7hvR5vSTZ6h/izB4CoZ1wyWgjh1t
-         iKkrP4CAY0QriL1ykih9kiZjT1sSP/+SQbX5zpZOEqMeBZ0dnocwIbG65XOlL85sPB07
-         wydQ==
+        bh=i53YOPIF4tZH71cdZd3N/wfk/VGV4lMlcYM4QZMIJfo=;
+        b=LGd2eC5lkimkmaZ3Njofp0kB/S8H0Wm9blwDIUXk+fSx60a/IysurK9R509dQNx75L
+         3ObbamEzRKIneBG/3e6kK09eD6M2Xjzp9K/ttwArqlEEZT/mnrZDnp0Zb/Rf93Wkgb43
+         asezSds8ySbKZxuyFt0Z6RA8liimQK7jgut6nQnarr9ChA7MWD58yvhdUEXtkrwzeClM
+         Iv44zwEJgd4HJuTuihMbyT7O/fM9TzBF4NVCRmIbTyJR1rXtGskOFUHEbYFeHnT1pi0R
+         j3wPfbEZ9HAoFj+r5+D3glWIVQNGFqGMBh9T3zE0S6+v99QRaz9o6BkDAb3QaNkokKGi
+         aQ7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NcOgayy9z/aBI2J3iHtRhOACGybXIm3aEUhJEwhAQls=;
-        b=V/81xYWIP9oNfQS3NziX258vPi32nUNJ2gOISfOR2SXpe3IKLd4KLea9S4j1mCSQh/
-         4I0FYe7Mw0Hed109QAMilrGIlFHrTLvrAIZVoVz/QQxcANl3kBptJt0c6J28ZlDOXV5Y
-         kr3/BPqXQsEeQwrFqlOkhi9LFxAh5l5I4z48cOhlKOv+84o3DVe7GAXCOUcJb/Od0AeQ
-         uEkXDlwBdm2vXNzNF3NGXysacvb/V5FTgZbFE5Z3Es+mkP5kgV5RAWL+Jt/pZqZcj/Nk
-         noALwnE0vsx+qehmdC7cxmKFW71jUa9AnXHRsrQQ+3yP3A7/2lbObODl7s9LcWFTu2mp
-         MN/A==
-X-Gm-Message-State: APjAAAXjZ0LRYTIhw8X8shbuw7exQiCKtB8dDoHxUcpRJDwKhhYt9s/k
-        Afri/oynIxF/4q+7QZFYel5OTRyZjYiTBZb/74FuTg==
-X-Google-Smtp-Source: APXvYqxzkz3LOZtzyNbuS6mvGvrUGFSaHG3D9TLCl6e41P4rm8M22wzl95/7soAZ90Ipy3g5cEzCsiuWU53RXMrP5ds=
-X-Received: by 2002:ac5:c844:: with SMTP id g4mr28846087vkm.25.1575971475476;
- Tue, 10 Dec 2019 01:51:15 -0800 (PST)
+        bh=i53YOPIF4tZH71cdZd3N/wfk/VGV4lMlcYM4QZMIJfo=;
+        b=eujbnugK8YpRwPOlHtIWZsVXt7XZ3v5wV+0Ye5a2Q4FP3HxiVgMXRWi4bjPZtxQ7yX
+         hHtCbI4psW6A1Vm9v0EdvG8+8uawJ8nTVlY1XKsAWKAckOZmBPfeUhLolJD+s+yTGxGr
+         p/x1uY6E90duQfBj5W6QxXHwlr8WfNGO33GHTM0MnFoZO1obVqK026ctLp+3EFrxdVO6
+         R24/ppOaJCsk1ziD3pEJWYOcwVb7cuanU4HHUPz+L6ZcQgdfOPM45KqU6lmhAbyAi95F
+         RwgZyRLa3o6ldIGP1BLS9hsKnJtzqE+v4lVWx09ynRRoThrfszhIg7TRhaLrVXeQXzi6
+         Q7nw==
+X-Gm-Message-State: APjAAAXR1Ev4JLMAf9xINRFBFqc8pNphyPaiIroENn+lbwBYuI5HpFdi
+        wjNO3Fe/SYT1boNjKoRTwZLc4plxs03/DJ3uB5WcnQ==
+X-Google-Smtp-Source: APXvYqwGViwBl874UU2PS2zg+6cNGxu0DAuVbaL/ZJ6A8w922cBIox0P2HENEKQLpaVxO7zmetO8tUwJQdTAEqPuVu8=
+X-Received: by 2002:a05:6122:5b:: with SMTP id q27mr27979454vkn.43.1575971483143;
+ Tue, 10 Dec 2019 01:51:23 -0800 (PST)
 MIME-Version: 1.0
-References: <0101016eacb256f5-89bd0ec9-5208-41bc-aafe-844c2178e4c1-000000@us-west-2.amazonses.com>
-In-Reply-To: <0101016eacb256f5-89bd0ec9-5208-41bc-aafe-844c2178e4c1-000000@us-west-2.amazonses.com>
+References: <20191128074522.69706-1-ludovic.desroches@microchip.com>
+In-Reply-To: <20191128074522.69706-1-ludovic.desroches@microchip.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 10 Dec 2019 10:50:39 +0100
-Message-ID: <CAPDyKFovbLHe_HOLsjrW2arp1vh6uVoz9TWqcvzZvCtJ6j3P6w@mail.gmail.com>
-Subject: Re: [PATCH V1 1/2] dt-bindings: mmc: sdhci-msm: Add compatible string
- for sc7180
-To:     Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Sayali Lokhande <sayalil@codeaurora.org>, cang@codeaurora.org,
-        Ram Prakash Gupta <rampraka@codeaurora.org>,
+Date:   Tue, 10 Dec 2019 10:50:46 +0100
+Message-ID: <CAPDyKFpCcOxh1+ZniZvxMR=bMCY0S6bk0FAzX2D=GMxMYea_bg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: sdhci-of-at91: new compatible string
+ and update properties
+To:     Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         DTML <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        claudiu.beznea@microchip.com, Eugen.Hristev@microchip.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Nov 2019 at 12:49, Veerabhadrarao Badiganti
-<vbadigan@codeaurora.org> wrote:
+On Thu, 28 Nov 2019 at 08:45, Ludovic Desroches
+<ludovic.desroches@microchip.com> wrote:
 >
-> Add sc7180 SoC specific compatible strings for qcom-sdhci controller.
+> There is a new compatible string for the SAM9X60 sdhci device. It involves
+> an update of the properties about the clocks stuff.
 >
-> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
 Applied for next, thanks!
 
@@ -81,21 +83,51 @@ Uffe
 
 
 > ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
->  1 file changed, 1 insertion(+)
 >
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> index da4edb1..7ee639b 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> @@ -19,6 +19,7 @@ Required properties:
->                 "qcom,msm8996-sdhci", "qcom,sdhci-msm-v4"
->                 "qcom,sdm845-sdhci", "qcom,sdhci-msm-v5"
->                 "qcom,qcs404-sdhci", "qcom,sdhci-msm-v5"
-> +               "qcom,sc7180-sdhci", "qcom,sdhci-msm-v5";
->         NOTE that some old device tree files may be floating around that only
->         have the string "qcom,sdhci-msm-v4" without the SoC compatible string
->         but doing that should be considered a deprecated practice.
+> Changes:
+> - v3: rebase due to conflict with Nicolas' patch
+> - v2: remove the extra example and fix node label
+>
+>  .../devicetree/bindings/mmc/sdhci-atmel.txt         | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> index 503c6dbac1b2..69edfd4d3922 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> @@ -5,11 +5,16 @@ Documentation/devicetree/bindings/mmc/mmc.txt and the properties used by the
+>  sdhci-of-at91 driver.
+>
+>  Required properties:
+> -- compatible:          Must be "atmel,sama5d2-sdhci".
+> +- compatible:          Must be "atmel,sama5d2-sdhci" or "microchip,sam9x60-sdhci".
+>  - clocks:              Phandlers to the clocks.
+> -- clock-names:         Must be "hclock", "multclk", "baseclk";
+> +- clock-names:         Must be "hclock", "multclk", "baseclk" for
+> +                       "atmel,sama5d2-sdhci".
+> +                       Must be "hclock", "multclk" for "microchip,sam9x60-sdhci".
+>
+>  Optional properties:
+> +- assigned-clocks:     The same with "multclk".
+> +- assigned-clock-rates The rate of "multclk" in order to not rely on the
+> +                       gck configuration set by previous components.
+>  - microchip,sdcal-inverted: when present, polarity on the SDCAL SoC pin is
+>    inverted. The default polarity for this signal is described in the datasheet.
+>    For instance on SAMA5D2, the pin is usually tied to the GND with a resistor
+> @@ -17,10 +22,12 @@ Optional properties:
+>
+>  Example:
+>
+> -sdmmc0: sdio-host@a0000000 {
+> +mmc0: sdio-host@a0000000 {
+>         compatible = "atmel,sama5d2-sdhci";
+>         reg = <0xa0000000 0x300>;
+>         interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
+>         clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
+>         clock-names = "hclock", "multclk", "baseclk";
+> +       assigned-clocks = <&sdmmc0_gclk>;
+> +       assigned-clock-rates = <480000000>;
+>  };
 > --
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
+> 2.24.0
 >
