@@ -2,59 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBBD5117D6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 03:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5243E117D78
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 03:04:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbfLJCBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Dec 2019 21:01:42 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:56186 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726605AbfLJCBl (ORCPT
+        id S1726780AbfLJCEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Dec 2019 21:04:37 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:4075 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726538AbfLJCEh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Dec 2019 21:01:41 -0500
-Received: from callcc.thunk.org (guestnat-104-132-34-105.corp.google.com [104.132.34.105] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBA21Ukk012184
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 9 Dec 2019 21:01:32 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 9468A421A48; Mon,  9 Dec 2019 21:01:30 -0500 (EST)
-Date:   Mon, 9 Dec 2019 21:01:30 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Rafael David Tinoco <rafaeldtinoco@ubuntu.com>
-Cc:     ebiggers3@gmail.com, adilger.kernel@dilger.ca,
-        bot+eb13811afcefe99cfe45081054e7883f569f949d@syzkaller.appspotmail.com,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: ppc64el kernel access of bad area
- (ext4_htree_store_dirent->rb_insert_color)
-Message-ID: <20191210020130.GA61323@mit.edu>
-References: <20171219215906.GA12465@gmail.com>
- <20191209132914.907306-1-rafaeldtinoco@ubuntu.com>
+        Mon, 9 Dec 2019 21:04:37 -0500
+X-UUID: daa344a5669b406182fe414abafd401d-20191210
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=IgQuYhZqNMmjibztfb1saVE2u9WvD1IS81QOavynYoU=;
+        b=DW8tM8/Ka3LOpURBGBoTo0BCjYP9AoFYe4okNaeyvDfYnVuIRIyblE1pW80yFo5NO5pIHo3y31TkJdOrrClvLPqexadzDtDBGXDatBbI7eDVPVVxI7KRzfD4+9NHIAEvfJdeT3MDVUcd0GSuGGAlk2ToXJBfVGv1qLbEWpFoBPA=;
+X-UUID: daa344a5669b406182fe414abafd401d-20191210
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1576203821; Tue, 10 Dec 2019 10:04:31 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 10 Dec 2019 10:04:06 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 10 Dec 2019 10:04:11 +0800
+Message-ID: <1575943469.16676.0.camel@mtksdaap41>
+Subject: Re: [PATCH v2 03/14] mailbox: cmdq: support mt6779 gce platform
+ definition
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Tue, 10 Dec 2019 10:04:29 +0800
+In-Reply-To: <1574819937-6246-5-git-send-email-dennis-yc.hsieh@mediatek.com>
+References: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
+         <1574819937-6246-5-git-send-email-dennis-yc.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191209132914.907306-1-rafaeldtinoco@ubuntu.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 10:29:14AM -0300, Rafael David Tinoco wrote:
-> It looks like the same stacktrace that was reported in this thread. This has
-> been reported to ppc64el AND we got a reproducer (ocfs2-tools autopkgtests).
+SGksIERlbm5pczoNCg0KT24gV2VkLCAyMDE5LTExLTI3IGF0IDA5OjU4ICswODAwLCBEZW5uaXMg
+WUMgSHNpZWggd3JvdGU6DQo+IEFkZCBnY2UgdjQgaGFyZHdhcmUgc3VwcG9ydCB3aXRoIGRpZmZl
+cmVudCB0aHJlYWQgbnVtYmVyIGFuZCBzaGlmdC4NCj4gDQoNClJldmlld2VkLWJ5OiBDSyBIdSA8
+Y2suaHVAbWVkaWF0ZWsuY29tPg0KDQo+IFNpZ25lZC1vZmYtYnk6IERlbm5pcyBZQyBIc2llaCA8
+ZGVubmlzLXljLmhzaWVoQG1lZGlhdGVrLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL21haWxib3gv
+bXRrLWNtZHEtbWFpbGJveC5jIHwgMiArKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9u
+cygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWlsYm94
+LmMgYi9kcml2ZXJzL21haWxib3gvbXRrLWNtZHEtbWFpbGJveC5jDQo+IGluZGV4IGQ1NTM2NTYz
+ZmNlMS4uZmQ1MTliNmY1MThiIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL21haWxib3gvbXRrLWNt
+ZHEtbWFpbGJveC5jDQo+ICsrKyBiL2RyaXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmMN
+Cj4gQEAgLTU3MiwxMCArNTcyLDEyIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBj
+bWRxX3BtX29wcyA9IHsNCj4gIA0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBnY2VfcGxhdCBnY2Vf
+cGxhdF92MiA9IHsudGhyZWFkX25yID0gMTYsIC5zaGlmdCA9IDB9Ow0KPiAgc3RhdGljIGNvbnN0
+IHN0cnVjdCBnY2VfcGxhdCBnY2VfcGxhdF92MyA9IHsudGhyZWFkX25yID0gMjQsIC5zaGlmdCA9
+IDB9Ow0KPiArc3RhdGljIGNvbnN0IHN0cnVjdCBnY2VfcGxhdCBnY2VfcGxhdF92NCA9IHsudGhy
+ZWFkX25yID0gMjQsIC5zaGlmdCA9IDN9Ow0KPiAgDQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG9m
+X2RldmljZV9pZCBjbWRxX29mX2lkc1tdID0gew0KPiAgCXsuY29tcGF0aWJsZSA9ICJtZWRpYXRl
+ayxtdDgxNzMtZ2NlIiwgLmRhdGEgPSAodm9pZCAqKSZnY2VfcGxhdF92Mn0sDQo+ICAJey5jb21w
+YXRpYmxlID0gIm1lZGlhdGVrLG10ODE4My1nY2UiLCAuZGF0YSA9ICh2b2lkICopJmdjZV9wbGF0
+X3YzfSwNCj4gKwl7LmNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ2Nzc5LWdjZSIsIC5kYXRhID0g
+KHZvaWQgKikmZ2NlX3BsYXRfdjR9LA0KPiAgCXt9DQo+ICB9Ow0KPiAgDQoNCg==
 
-Can you share your reproducer?  Is it a super-simple reproducer that
-doesn't require a complex setup and which can be triggered in some
-kind of virtual machine (under KVM, etc.)?
-
-> Thread from beginning 2018, so I guess this issue is pretty intermittent but
-> might exist, and, perhaps, its related to specific arches/machines ?
-
-What syzbot reported (a) had no reproducer, (b) only reproduced twice
-on linux-next in 2017, and never since.  So if you're seeing something
-in 2019 in ppc64el, it may not be the same issue.
-
-   	   	       	       	      - Ted
