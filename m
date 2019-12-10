@@ -2,235 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA1F11872D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:52:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE941118723
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:52:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbfLJLvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 06:51:38 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:52890 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727504AbfLJLvf (ORCPT
+        id S1727412AbfLJLvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:51:14 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39195 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbfLJLvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:51:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575978694;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=x85HLpSVXUpESKASgozyJonASmyTtrZ6tatnJUlwI+Y=;
-        b=fwmY4RUNHgViFDe6a6kLc0HjP9yzFkJFhlXnEYEewwhe7XZoqUHx5EQK0hivqgoZxw+HQV
-        KuGc2WkkoDfaMgArapt0zOabg2cbCAJ3umEPKYqOlX0KNse8hyZdmTedNfqr740C9d4L/O
-        zPY8YyXflpdIS+nKImyMkcRSuZqxk6o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-415-gpWyPKUJNL-J9E7vhKGKIA-1; Tue, 10 Dec 2019 06:51:30 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3C78580440F;
-        Tue, 10 Dec 2019 11:51:28 +0000 (UTC)
-Received: from shalem.localdomain.com (unknown [10.36.118.144])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A23065DA60;
-        Tue, 10 Dec 2019 11:51:24 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: [PATCH v10 01/10] efi: Export boot-services code and data as debugfs-blobs
+        Tue, 10 Dec 2019 06:51:14 -0500
+Received: by mail-wr1-f66.google.com with SMTP id y11so19680461wrt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 03:51:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LbaT//1CIWZj7PovMzq7HWVulVly+//fBwXIOhYXXwc=;
+        b=M6jVIcNxsWiSx0G4DH486LOjGMSySbL/rK8GfSc8+rQwZYOdfM0hIU1PvKF8AaUSJI
+         08KxCjCqdIq/JO8lfp1vEcXPA+8r9hei6j7yOVE+8aMmKu6noRaoKXKOvvc5SZ+Ju61T
+         2YTFnkLeIzmo68cW5OQtM1+SsCGxYCCNnAM8vJ+0lQ4xBawva5yWqfm355BlUtoZz0MV
+         taRmME8SIp3aJTeGGoQT0gSFTfr3HfbQIGswiKPyjJSLPlO9NjNSZP/b6myOIbGE7tl+
+         IIFCeyF/y68zlzMnTPs3HgvDfym+NRmjYtz6LYhJzRt+apEluV3o9dknCq1aVVF9KH+r
+         KgBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=LbaT//1CIWZj7PovMzq7HWVulVly+//fBwXIOhYXXwc=;
+        b=QkUEX5kFSFkfmiYPE2cAwPQl+bUf+vvZDWhHWJg2sBkXoEdMsc1LaY8enbc++cE2Jx
+         v5tIoUpUlC9kmcW+vM/Mt1JsYAjq9gALAe1xYwsmTbDS9Qbmd4TDdNnlSRi9H8r/mhRN
+         toFZlNDG3uf5M9DqwJEhMiky/hL8kXGFUWuGubFPiefGRNBzdg4L2+i20UivA+GN53cF
+         EeCwJEvdLmbjqJyPBpjlZ35UUjqDRWoEFGiCn8Gj0E8bSUSTJAFEkFccF5rK4c4Uj+4e
+         tZk/2+RRuFanAVx6oRC4ANGvp8EHTxkL9VtVhcZpYEnQUavC8FpHK8eGXLWSky9K/nYV
+         h/vw==
+X-Gm-Message-State: APjAAAVDpI+uGR6W1Qsg4mUC0q/q9nqcl72YQuDwi3u1eXm8zwh30XYg
+        5d20u1WQE/5niFJJvZTo89PbyvP9ECQ=
+X-Google-Smtp-Source: APXvYqwvFc8Lxa1iFphn/dCM4UiwsnLfnObrmZlv0DxIgU35Zl75XDXezvxqCjfsSoYtNWg8MxqvKw==
+X-Received: by 2002:a5d:5345:: with SMTP id t5mr2925064wrv.0.1575978670794;
+        Tue, 10 Dec 2019 03:51:10 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ed2f:f020:683a:fee4:9950:e8ce? ([2a01:e34:ed2f:f020:683a:fee4:9950:e8ce])
+        by smtp.googlemail.com with ESMTPSA id x26sm2773387wmc.30.2019.12.10.03.51.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2019 03:51:10 -0800 (PST)
+Subject: Re: [PATCH v3 2/2] clocksource/drivers/timer-microchip-pit64b: add
+ Microchip PIT64B support
+To:     Claudiu.Beznea@microchip.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, Nicolas.Ferre@microchip.com,
+        alexandre.belloni@bootlin.com, Ludovic.Desroches@microchip.com,
+        tglx@linutronix.de
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1575470549-702-1-git-send-email-claudiu.beznea@microchip.com>
+ <1575470549-702-3-git-send-email-claudiu.beznea@microchip.com>
+ <19796bfc-144c-8129-2e06-07d882e5e9f5@linaro.org>
+ <3e49256f-9452-cede-5fa8-443c15857e1b@microchip.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <d104a0d3-950d-3132-4bf8-d06ccb7c6f25@linaro.org>
 Date:   Tue, 10 Dec 2019 12:51:08 +0100
-Message-Id: <20191210115117.303935-2-hdegoede@redhat.com>
-In-Reply-To: <20191210115117.303935-1-hdegoede@redhat.com>
-References: <20191210115117.303935-1-hdegoede@redhat.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: gpWyPKUJNL-J9E7vhKGKIA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3e49256f-9452-cede-5fa8-443c15857e1b@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes it is useful to be able to dump the efi boot-services code and
-data. This commit adds these as debugfs-blobs to /sys/kernel/debug/efi,
-but only if efi=3Ddebug is passed on the kernel-commandline as this require=
-s
-not freeing those memory-regions, which costs 20+ MB of RAM.
+On 10/12/2019 12:43, Claudiu.Beznea@microchip.com wrote:
+> 
+> 
+> On 09.12.2019 19:04, Daniel Lezcano wrote:
+>> On 04/12/2019 15:42, Claudiu Beznea wrote:
+>>> Add driver for Microchip PIT64B timer. Timer could be used in continuous
+>>> mode or oneshot mode. The hardware has 2x32 bit registers for period
+>>> emulating a 64 bit timer. The LSB_PR and MSB_PR registers are used to
+>>> set the period value (compare value). TLSB and TMSB keeps the current
+>>> value of the counter. After a compare the TLSB and TMSB register resets.
+>>> The driver uses PIT64B timer for clocksource or clockevent. First
+>>> requested timer would be registered as clockevent, second one would be
+>>> registered as clocksource. Individual PIT64B hardware resources were used
+>>> for clocksource and clockevent to be able to support high resolution
+>>> timers with this hardware implementation.
+>>>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>>> ---
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v8:
--Add pr_warn if there are mode then EFI_DEBUGFS_MAX_BLOBS boot service segm=
-ents
--Document how the boot_service_code? files can be used to check for embedde=
-d
- firmware. Note since this is related to the firmware EFI embedded fw suppo=
-rt,
- these docs are added in the 4th patch of this patch-set, not in this one.
+[ ... ]
 
-Changes in v5:
--Rename the EFI_BOOT_SERVICES flag to EFI_PRESERVE_BS_REGIONS
+>> Also, the 'high' part change may be checked, like:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/tree/drivers/clocksource/timer-imx-sysctr.c?h=bleeding-edge#n51
+> 
+> The IP guarantees that the reading of counter is atomic if
+> MCHP_PIT64B_TLSBR is read first. With this, would you still want to add the
+> check you mention above?
 
-Changes in v4:
--Add new EFI_BOOT_SERVICES flag and use it to determine if the boot-service=
-s
- memory segments are available (and thus if it makes sense to register the
- debugfs bits for them)
+No, sorry I should have read the comment :/
 
-Changes in v2:
--Do not call pr_err on debugfs call failures
----
- arch/x86/platform/efi/efi.c    |  1 +
- arch/x86/platform/efi/quirks.c |  4 +++
- drivers/firmware/efi/efi.c     | 57 ++++++++++++++++++++++++++++++++++
- include/linux/efi.h            |  1 +
- 4 files changed, 63 insertions(+)
+[ ... ]
 
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 38d44f36d5ed..3e5375ee53a0 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -269,6 +269,7 @@ int __init efi_memblock_x86_reserve_range(void)
- =09     efi.memmap.desc_version);
-=20
- =09memblock_reserve(pmap, efi.memmap.nr_map * efi.memmap.desc_size);
-+=09set_bit(EFI_PRESERVE_BS_REGIONS, &efi.flags);
-=20
- =09return 0;
- }
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.=
-c
-index 7675cf754d90..84a9de64e8e1 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -414,6 +414,10 @@ void __init efi_free_boot_services(void)
- =09int num_entries =3D 0;
- =09void *new, *new_md;
-=20
-+=09/* Keep all regions for /sys/kernel/debug/efi */
-+=09if (efi_enabled(EFI_DBG))
-+=09=09return;
-+
- =09for_each_efi_memory_desc(md) {
- =09=09unsigned long long start =3D md->phys_addr;
- =09=09unsigned long long size =3D md->num_pages << EFI_PAGE_SHIFT;
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index d101f072c8f8..7575401e6ea6 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -17,6 +17,7 @@
- #include <linux/kobject.h>
- #include <linux/module.h>
- #include <linux/init.h>
-+#include <linux/debugfs.h>
- #include <linux/device.h>
- #include <linux/efi.h>
- #include <linux/of.h>
-@@ -325,6 +326,59 @@ static __init int efivar_ssdt_load(void)
- static inline int efivar_ssdt_load(void) { return 0; }
- #endif
-=20
-+#ifdef CONFIG_DEBUG_FS
-+
-+#define EFI_DEBUGFS_MAX_BLOBS 32
-+
-+static struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
-+
-+static void __init efi_debugfs_init(void)
-+{
-+=09struct dentry *efi_debugfs;
-+=09efi_memory_desc_t *md;
-+=09char name[32];
-+=09int type_count[EFI_BOOT_SERVICES_DATA + 1] =3D {};
-+=09int i =3D 0;
-+
-+=09efi_debugfs =3D debugfs_create_dir("efi", NULL);
-+=09if (IS_ERR_OR_NULL(efi_debugfs))
-+=09=09return;
-+
-+=09for_each_efi_memory_desc(md) {
-+=09=09switch (md->type) {
-+=09=09case EFI_BOOT_SERVICES_CODE:
-+=09=09=09snprintf(name, sizeof(name), "boot_services_code%d",
-+=09=09=09=09 type_count[md->type]++);
-+=09=09=09break;
-+=09=09case EFI_BOOT_SERVICES_DATA:
-+=09=09=09snprintf(name, sizeof(name), "boot_services_data%d",
-+=09=09=09=09 type_count[md->type]++);
-+=09=09=09break;
-+=09=09default:
-+=09=09=09continue;
-+=09=09}
-+
-+=09=09if (i >=3D EFI_DEBUGFS_MAX_BLOBS) {
-+=09=09=09pr_warn("More then %d EFI boot service segments, only showing fir=
-st %d in debugfs\n",
-+=09=09=09=09EFI_DEBUGFS_MAX_BLOBS, EFI_DEBUGFS_MAX_BLOBS);
-+=09=09=09break;
-+=09=09}
-+
-+=09=09debugfs_blob[i].size =3D md->num_pages << EFI_PAGE_SHIFT;
-+=09=09debugfs_blob[i].data =3D memremap(md->phys_addr,
-+=09=09=09=09=09=09debugfs_blob[i].size,
-+=09=09=09=09=09=09MEMREMAP_WB);
-+=09=09if (!debugfs_blob[i].data)
-+=09=09=09continue;
-+
-+=09=09debugfs_create_blob(name, 0400, efi_debugfs, &debugfs_blob[i]);
-+=09=09i++;
-+=09}
-+}
-+#else
-+static inline void efi_debugfs_init(void) {}
-+#endif
-+
- /*
-  * We register the efi subsystem with the firmware subsystem and the
-  * efivars subsystem with the efi subsystem, if the system was booted with
-@@ -381,6 +435,9 @@ static int __init efisubsys_init(void)
- =09=09goto err_remove_group;
- =09}
-=20
-+=09if (efi_enabled(EFI_DBG) && efi_enabled(EFI_PRESERVE_BS_REGIONS))
-+=09=09efi_debugfs_init();
-+
- =09return 0;
-=20
- err_remove_group:
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 99dfea595c8c..c364106250e9 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1203,6 +1203,7 @@ extern int __init efi_setup_pcdp_console(char *);
- #define EFI_NX_PE_DATA=09=099=09/* Can runtime data regions be mapped non-=
-executable? */
- #define EFI_MEM_ATTR=09=0910=09/* Did firmware publish an EFI_MEMORY_ATTRI=
-BUTES table? */
- #define EFI_MEM_NO_SOFT_RESERVE=0911=09/* Is the kernel configured to igno=
-re soft reservations? */
-+#define EFI_PRESERVE_BS_REGIONS=0912=09/* Are EFI boot-services memory seg=
-ments available? */
-=20
- #ifdef CONFIG_EFI
- /*
---=20
-2.23.0
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
