@@ -2,118 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 630A1118424
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:53:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4ADD1183F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:50:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfLJJwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:52:08 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:33416 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbfLJJwH (ORCPT
+        id S1727249AbfLJJuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:50:50 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:37864 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfLJJuu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:52:07 -0500
-Received: by mail-vs1-f68.google.com with SMTP id n27so12592428vsa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 01:52:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ybsluu38MO5eh/YLSNECYiElz7Q4IKjXe1U2m0DW3pA=;
-        b=zgHuWeY7/innDowtWMwI8fnAseVFKB5h8yAU+F+pXXolVXl7IT59cgR3WjvfyHEKhW
-         1oJBc8pX9KCvwqjcnkqaBTwxHysQW3v4BP42qGr1GA89dxSewio7bUk2jlVDFdS5MNsw
-         tjDpH+kEBA/0avN4I6DtRqv+G+GPp6XyI5rU4VS3cqkpH8P5Ax40K+EH8WfYDK1ACA82
-         L58BwWWTVb46EJwVANNVbkh7gvhikAPoTnL8+pRWF5Q8nR+DrIsPFDhUGp/FtVn49yZp
-         PoI1VeaPwpSrsxY8/BKDruPtuxroFhcqfnCqDCZo/EXdaU8DGyIlqX9ltATOWRYuD+IT
-         aFMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ybsluu38MO5eh/YLSNECYiElz7Q4IKjXe1U2m0DW3pA=;
-        b=ON7c195+cN1emN9ivf3uVN9F0ZvB59sxuY6U6X7EHTpepPQt5GI4/mVKyWgSqF2Fq9
-         oujU2YIpeuZyJAw5Tjq5JunTD9b39hKcXUS0MImpIXHtm6vLl5/qJXfU+3kkMdECvc24
-         T1zbyqg27TmAEpBGX0EG9iBdTs1nC0a1JBVqCMFuWPk440tsPf2mCWIEVHAZOjb8zYWx
-         7YNOfW+YBTHXRaPiu74q8b8owhqkn7Vp78mlHw3yYJyeN/W5lYQ2JrnUEORzUtT6YVVx
-         vXIPS35rdfz3D6SOE7fG+2O3h4gmJ3c90w3YtJnj8KoDcn3FXMKTCNtBx5+UE4dXNXV/
-         eYzQ==
-X-Gm-Message-State: APjAAAVB2TAGwvRkpg+ysGrH40G8cK+4kBEfjqS7y23ip3wEByQ1s5IH
-        q65UQjQRLnCIiFaVtLhnBMQUjSc8qlx5N3cNMoseOQ==
-X-Google-Smtp-Source: APXvYqwWNMYBAQkevXVNBP8cKIcAOSNAKJn6/eATEcFnzDvyeoLn5MqjM1Lw9GooaMA+WqRtf1+QrA4tXx8wiDf2JfA=
-X-Received: by 2002:a67:b649:: with SMTP id e9mr24229005vsm.34.1575971526021;
- Tue, 10 Dec 2019 01:52:06 -0800 (PST)
+        Tue, 10 Dec 2019 04:50:50 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBA9odiL055607;
+        Tue, 10 Dec 2019 03:50:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575971439;
+        bh=3/2/4TqPWi9y2MRMMJxSgZoD8FE5fToV9VA4meBh3OA=;
+        h=From:To:CC:Subject:Date;
+        b=Q8dAHncSrM3uAXx+oqmTTbaP2ZM5fvhRt4JtSZEqGol6IwcOqZPp/qoBlDx7vIOhy
+         6zY1XNZTbZnHKMI6e7YF6hulKH24u7KAUbJo7EKBlzQyObS2KncALKfEFMZfoNqGLr
+         4UBZgD2MzPUBTYyTStApIt+MznIqqof6lUqJoYvg=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBA9odNO018132
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Dec 2019 03:50:39 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 10
+ Dec 2019 03:50:39 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 10 Dec 2019 03:50:39 -0600
+Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBA9oZVj048503;
+        Tue, 10 Dec 2019 03:50:36 -0600
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>
+CC:     <kishon@ti.com>, <adrian.hunter@intel.com>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <ulf.hansson@linaro.org>,
+        <zhang.chunyan@linaro.org>, <tony@atomide.com>
+Subject: [PATCH v3 0/7] Port am335 and am437 devices to sdhci-omap
+Date:   Tue, 10 Dec 2019 15:21:44 +0530
+Message-ID: <20191210095151.15441-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20191204085447.27491-1-linux@rasmusvillemoes.dk>
-In-Reply-To: <20191204085447.27491-1-linux@rasmusvillemoes.dk>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 10 Dec 2019 10:51:30 +0100
-Message-ID: <CAPDyKFqyU1nyVUsuAPC8ZDCm88JOq45aywDM7AqR9vfr0k90jw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-of-esdhc: Revert "mmc: sdhci-of-esdhc: add
- erratum A-009204 support"
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Yinbo Zhu <yinbo.zhu@nxp.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Dec 2019 at 09:54, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
->
-> This reverts commit 5dd195522562542bc6ebe6e7bd47890d8b7ca93c.
->
-> First, the fix seems to be plain wrong, since the erratum suggests
-> waiting 5ms before setting setting SYSCTL[RSTD], but this msleep()
-> happens after the call of sdhci_reset() which is where that bit gets
-> set (if SDHCI_RESET_DATA is in mask).
->
-> Second, walking the whole device tree to figure out if some node has a
-> "fsl,p2020-esdhc" compatible string is hugely expensive - about 70 to
-> 100 us on our mpc8309 board. Walking the device tree is done under a
-> raw_spin_lock, so this is obviously really bad on an -rt system, and a
-> waste of time on all.
->
-> In fact, since esdhc_reset() seems to get called around 100 times per
-> second, that mpc8309 now spends 0.8% of its time determining that
-> it is not a p2020. Whether those 100 calls/s are normal or due to some
-> other bug or misconfiguration, regularly hitting a 100 us
-> non-preemptible window is unacceptable.
->
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+The following add driver patches for porting TI's am335x and am437x
+devices to the sdhci-omap driver.
 
-Applied for fixes and by adding a stable tag, thanks!
+This involves adding external DMA support to sdhci (first 3 patches from
+Chunyan) plus some miscellaneous patches to take care of deviations of
+the controllers from the sdhci model.
 
-Kind regards
-Uffe
+DT changes will be posted in a separate series.
+
+Untested versions of Chunyan's patches were posted before[1].
+
+Tested on: am335x-evm, am335x-boneblack, am335x-sk, am437x-gpevm,
+am43xx-gpevm, am437x-idk, dra7xx-evm, dra72x-evm.
+
+I need some help with testing all the other beaglebone variants and SDIO
+Wifi cards.
+
+v3:
+1. Dropped patch 1 because the tasklet was removed by Adrian in an
+   earlier series.
+2. Added dma bindings in sdhci-omap as optional properties.
+3. Rebased on top of latest mainline.
+
+v2:
+1. sdhci is using two bottom halves. One threaded_rq for card detect and a
+   tasklet for finishing mmc requests. Patch 1 removes the tasklet and
+   moves its function to the threaded_irq. This enables me to
+   terminate_sync() in sdhci_request_done()
+
+2. Factored out common code for between the normal adn external dma case
+
+3. Using existing API sdhci_data_timeout_irq for disabling DTO during
+   erase commands.
+
+4. Fixed subject line for dt-bindings patch.
+
+[1] https://patchwork.kernel.org/project/linux-mmc/list/?series=54897
 
 
-> ---
->
-> The errata sheet for mpc8309 also mentions A-009204, so I'm not at all
-> opposed to having a fix for that. But it needs to be done properly
-> without causing a huge performance or latency impact. We should
-> probably just add a bit to struct sdhci_esdhc which gets initialized
-> in esdhc_init.
->
->  drivers/mmc/host/sdhci-of-esdhc.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-> index 5cca3fa4610b..7f87a90bf56a 100644
-> --- a/drivers/mmc/host/sdhci-of-esdhc.c
-> +++ b/drivers/mmc/host/sdhci-of-esdhc.c
-> @@ -764,9 +764,6 @@ static void esdhc_reset(struct sdhci_host *host, u8 mask)
->         sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->         sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->
-> -       if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc"))
-> -               mdelay(5);
-> -
->         if (mask & SDHCI_RESET_ALL) {
->                 val = sdhci_readl(host, ESDHC_TBCTL);
->                 val &= ~ESDHC_TB_EN;
-> --
-> 2.23.0
->
+Chunyan Zhang (3):
+  dt-bindings: sdhci-omap: Add properties for using external dma
+  mmc: sdhci: add support for using external DMA devices
+  mmc: sdhci-omap: Add using external dma
+
+Faiz Abbas (4):
+  mmc: sdhci: Add quirk for disabling DTO during erase command
+  mmc: sdhci-omap: Add DISABLE_DTO_FOR_ERASE Quirk
+  dt-bindings: sdhci-omap: Add am335x and am437x specific bindings
+  mmc: sdhci-omap: Add am335x and am437x specific compatibles
+
+ .../devicetree/bindings/mmc/sdhci-omap.txt    |  11 +
+ drivers/mmc/host/Kconfig                      |   4 +
+ drivers/mmc/host/sdhci-omap.c                 |  27 +-
+ drivers/mmc/host/sdhci.c                      | 290 ++++++++++++++++--
+ drivers/mmc/host/sdhci.h                      |  10 +
+ 5 files changed, 313 insertions(+), 29 deletions(-)
+
+-- 
+2.19.2
+
