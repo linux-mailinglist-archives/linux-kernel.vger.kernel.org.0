@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAB4C1199DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:52:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 458EE1199DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:52:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfLJVI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:08:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56698 "EHLO mail.kernel.org"
+        id S1728012AbfLJVJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:09:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727480AbfLJVIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:08:54 -0500
+        id S1727555AbfLJVIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:08:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFA85246A0;
-        Tue, 10 Dec 2019 21:08:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 411A7246A1;
+        Tue, 10 Dec 2019 21:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576012133;
-        bh=wFmrpTpKGuWOOHnH6tF+vDWSqyPuVJlOwUZXMTsIoVI=;
+        s=default; t=1576012135;
+        bh=otZ2XpBNGM9vqKhgPacAje6pQSlojqxZHAUN4DW+jHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YONWwQ90K/ZZCxZQYifYX+kFwj+1PJMdLPMRGLF8hOkgmrsaKZPmyodC56IoEmSw5
-         hDGQLxpH0pDe/zmZuas9sK860PEe7uchfd7ILP5ofLMi6shRWqcR4jHxmuGUVuy7Yh
-         WwmeCVWQZJyh67IFvPP0E+2spa147DWDpAPBKpt0=
+        b=cLB9382rjLw457Ctuz8+2DPtIZpNT1hDMPQH5av7/G+qeM7X6rAezo+muJVFNHJqQ
+         rZforpA+4CW3uHwbRhf+cpg42ztYCUtLcEFbyfFQFfDqamKlrocbBd6FiDriU7Mdq6
+         3GU2J1I8lRFzsA+jk8gE6wOBgTLk4ssx953AuKP0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephan Gerhold <stephan@gerhold.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 101/350] extcon: sm5502: Reset registers during initialization
-Date:   Tue, 10 Dec 2019 16:03:26 -0500
-Message-Id: <20191210210735.9077-62-sashal@kernel.org>
+Cc:     Julian Parkin <julian.parkin@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.4 102/350] drm/amd/display: Program DWB watermarks from correct state
+Date:   Tue, 10 Dec 2019 16:03:27 -0500
+Message-Id: <20191210210735.9077-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
 References: <20191210210735.9077-1-sashal@kernel.org>
@@ -43,61 +46,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephan Gerhold <stephan@gerhold.net>
+From: Julian Parkin <julian.parkin@amd.com>
 
-[ Upstream commit 6942635032cfd3e003e980d2dfa4e6323a3ce145 ]
+[ Upstream commit edb922b022c0c94805c4ffad202b3edff83d76f0 ]
 
-On some devices (e.g. Samsung Galaxy A5 (2015)), the bootloader
-seems to keep interrupts enabled for SM5502 when booting Linux.
-Changing the cable state (i.e. plugging in a cable) - until the driver
-is loaded - will therefore produce an interrupt that is never read.
+[Why]
+When diags adds a DWB via a stream update, we calculate MMHUBBUB
+paramaters, but dc->current_state has not yet been updated
+when the DWB programming happens. This leads to overflow on
+high bandwidth tests since the incorrect MMHUBBUB arbitration
+parameters are programmed.
 
-In this situation, the cable state will be stuck forever on the
-initial state because SM5502 stops sending interrupts.
-This can be avoided by clearing those pending interrupts after
-the driver has been loaded.
+[How]
+Pass the updated context down to the (enable|update)_writeback functions
+so that they can use the correct watermarks when programming MMHUBBUB.
 
-One way to do this is to reset all registers to default state
-by writing to SM5502_REG_RESET. This ensures that we start from
-a clean state, with all interrupts disabled.
-
-Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Julian Parkin <julian.parkin@amd.com>
+Reviewed-by: Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/extcon/extcon-sm5502.c | 4 ++++
- drivers/extcon/extcon-sm5502.h | 2 ++
- 2 files changed, 6 insertions(+)
+ drivers/gpu/drm/amd/display/dc/core/dc_stream.c    | 4 ++--
+ drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c | 5 +++--
+ drivers/gpu/drm/amd/display/dc/inc/hw_sequencer.h  | 6 ++++--
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/extcon/extcon-sm5502.c b/drivers/extcon/extcon-sm5502.c
-index dc43847ad2b08..b3d93baf4fc58 100644
---- a/drivers/extcon/extcon-sm5502.c
-+++ b/drivers/extcon/extcon-sm5502.c
-@@ -65,6 +65,10 @@ struct sm5502_muic_info {
- /* Default value of SM5502 register to bring up MUIC device. */
- static struct reg_data sm5502_reg_data[] = {
- 	{
-+		.reg = SM5502_REG_RESET,
-+		.val = SM5502_REG_RESET_MASK,
-+		.invert = true,
-+	}, {
- 		.reg = SM5502_REG_CONTROL,
- 		.val = SM5502_REG_CONTROL_MASK_INT_MASK,
- 		.invert = false,
-diff --git a/drivers/extcon/extcon-sm5502.h b/drivers/extcon/extcon-sm5502.h
-index 9dbb634d213b7..ce1f1ec310c49 100644
---- a/drivers/extcon/extcon-sm5502.h
-+++ b/drivers/extcon/extcon-sm5502.h
-@@ -237,6 +237,8 @@ enum sm5502_reg {
- #define DM_DP_SWITCH_UART			((DM_DP_CON_SWITCH_UART <<SM5502_REG_MANUAL_SW1_DP_SHIFT) \
- 						| (DM_DP_CON_SWITCH_UART <<SM5502_REG_MANUAL_SW1_DM_SHIFT))
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+index bf1d7bb90e0f9..bb09243758fe3 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+@@ -423,10 +423,10 @@ bool dc_stream_add_writeback(struct dc *dc,
  
-+#define SM5502_REG_RESET_MASK			(0x1)
-+
- /* SM5502 Interrupts */
- enum sm5502_irq {
- 	/* INT1 */
+ 		if (dwb->funcs->is_enabled(dwb)) {
+ 			/* writeback pipe already enabled, only need to update */
+-			dc->hwss.update_writeback(dc, stream_status, wb_info);
++			dc->hwss.update_writeback(dc, stream_status, wb_info, dc->current_state);
+ 		} else {
+ 			/* Enable writeback pipe from scratch*/
+-			dc->hwss.enable_writeback(dc, stream_status, wb_info);
++			dc->hwss.enable_writeback(dc, stream_status, wb_info, dc->current_state);
+ 		}
+ 	}
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
+index 1212da12c4144..9108240d3c1b2 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
+@@ -1337,7 +1337,8 @@ bool dcn20_update_bandwidth(
+ static void dcn20_enable_writeback(
+ 		struct dc *dc,
+ 		const struct dc_stream_status *stream_status,
+-		struct dc_writeback_info *wb_info)
++		struct dc_writeback_info *wb_info,
++		struct dc_state *context)
+ {
+ 	struct dwbc *dwb;
+ 	struct mcif_wb *mcif_wb;
+@@ -1354,7 +1355,7 @@ static void dcn20_enable_writeback(
+ 	optc->funcs->set_dwb_source(optc, wb_info->dwb_pipe_inst);
+ 	/* set MCIF_WB buffer and arbitration configuration */
+ 	mcif_wb->funcs->config_mcif_buf(mcif_wb, &wb_info->mcif_buf_params, wb_info->dwb_params.dest_height);
+-	mcif_wb->funcs->config_mcif_arb(mcif_wb, &dc->current_state->bw_ctx.bw.dcn.bw_writeback.mcif_wb_arb[wb_info->dwb_pipe_inst]);
++	mcif_wb->funcs->config_mcif_arb(mcif_wb, &context->bw_ctx.bw.dcn.bw_writeback.mcif_wb_arb[wb_info->dwb_pipe_inst]);
+ 	/* Enable MCIF_WB */
+ 	mcif_wb->funcs->enable_mcif(mcif_wb);
+ 	/* Enable DWB */
+diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw_sequencer.h b/drivers/gpu/drm/amd/display/dc/inc/hw_sequencer.h
+index 3a938cd414ea4..f6cc2d6f576d2 100644
+--- a/drivers/gpu/drm/amd/display/dc/inc/hw_sequencer.h
++++ b/drivers/gpu/drm/amd/display/dc/inc/hw_sequencer.h
+@@ -321,10 +321,12 @@ struct hw_sequencer_funcs {
+ 			struct dc_state *context);
+ 	void (*update_writeback)(struct dc *dc,
+ 			const struct dc_stream_status *stream_status,
+-			struct dc_writeback_info *wb_info);
++			struct dc_writeback_info *wb_info,
++			struct dc_state *context);
+ 	void (*enable_writeback)(struct dc *dc,
+ 			const struct dc_stream_status *stream_status,
+-			struct dc_writeback_info *wb_info);
++			struct dc_writeback_info *wb_info,
++			struct dc_state *context);
+ 	void (*disable_writeback)(struct dc *dc,
+ 			unsigned int dwb_pipe_inst);
+ #endif
 -- 
 2.20.1
 
