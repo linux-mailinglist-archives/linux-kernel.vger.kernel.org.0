@@ -2,123 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEB6E119693
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:28:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 410981196B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:28:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbfLJV1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:27:54 -0500
-Received: from mga07.intel.com ([134.134.136.100]:7237 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727656AbfLJV1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:27:49 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 13:27:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
-   d="scan'208";a="264657141"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Dec 2019 13:27:48 -0800
-Date:   Tue, 10 Dec 2019 13:27:48 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, jmattson@google.com,
-        yu.c.zhang@linux.intel.com, yu-cheng.yu@intel.com
-Subject: Re: [PATCH v8 6/7] KVM: X86: Load guest fpu state when accessing
- MSRs managed by XSAVES
-Message-ID: <20191210212748.GN15758@linux.intel.com>
-References: <20191101085222.27997-1-weijiang.yang@intel.com>
- <20191101085222.27997-7-weijiang.yang@intel.com>
+        id S1728762AbfLJV2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:28:43 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46296 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728645AbfLJV2j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:28:39 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y14so448807pfm.13
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:28:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=pIRKF4dHpqchckl72/YpmRs/BI55M7i7L1pucxA2z4E=;
+        b=a093tOG7PusILFWMBFDVZ0S7cjLimPfDS0Zqh5j+gZZf0kucIbzeOm1CZHw/ZFdKMP
+         c5BZhT8yU9LDGIwsJooldnJGpXIUeCdvKvmVTV1/7tGguspn6r67Ymp9MWE3b5ABeEX3
+         MyMvr8rIAhVm4hFS2bpB0VRnNTI9K2aV6dFJnWzCGJ8HOgVy/DnlT2wfZlwVitnqMf1P
+         Izu35iju3ABwkITiAmB6sjvuy0B4D8pxDxbRtihc+tHVaMVUuZKCDNImkk/IPBFMpKcQ
+         ustlUOQPP84kvEv6q34WV3vdg+12dH5JvZzffPU87O63e/lZhpaNqSMeg8mFJh11e3fs
+         c3jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=pIRKF4dHpqchckl72/YpmRs/BI55M7i7L1pucxA2z4E=;
+        b=GT98UEsyO0J6xZ6VS6lgByhB4mnHTcoGzTD7JsGPEI3Or657xRvO0cFBzcFYPLYcWp
+         N8jQT10eqqmU2hqEDofvsCy3UkM3iCdV/rfgpSVTlHi5jaEz2lcNTIyeMtGICgqkBTxs
+         Zrnl0Q+ANKgy3Jwy71wa6KUccnHo70KlqaahZ0SEf5SGkpOrh7+1IprjZ5TMfPHyw83/
+         dBcLCvun1tmiMzryGhlUow1s2mD9VjjkOzOPEm4Sj7jBzYaJSwjCYHZX1I9RE+Mvu+Gk
+         BlauKkS5Bf7rqz8XcE2x08xEoSeBjGHem3ZVSIjKO3AcmVCjqeOVva4bORF+xUCJFilN
+         FqnQ==
+X-Gm-Message-State: APjAAAUjm8jOfg/EnifCENs9VL7k0tzMrpukDX55R9XjeFuQS1f3ORRX
+        iX/OkVwmWT6jMSeK7/N6matI2VbBDOw=
+X-Google-Smtp-Source: APXvYqxRq/2Ns0jfcbuRphOE4p7vfQeBo99PSUxKfImVcOh2PMEHsuUBN+Tqjb4WlMMGrECKyUA6ww==
+X-Received: by 2002:a63:e608:: with SMTP id g8mr190645pgh.448.1576013318350;
+        Tue, 10 Dec 2019 13:28:38 -0800 (PST)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id k4sm4629761pfk.11.2019.12.10.13.28.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 13:28:38 -0800 (PST)
+Date:   Tue, 10 Dec 2019 13:28:34 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Andrii Nakryiko <andriin@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, oss-drivers@netronome.com
+Subject: Re: [oss-drivers] [PATCH AUTOSEL 5.4 326/350] bpf: Switch bpf_map
+ ref counter to atomic64_t so bpf_map_inc() never fails
+Message-ID: <20191210132834.157d5fc5@cakuba.netronome.com>
+In-Reply-To: <20191210210735.9077-287-sashal@kernel.org>
+References: <20191210210735.9077-1-sashal@kernel.org>
+        <20191210210735.9077-287-sashal@kernel.org>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191101085222.27997-7-weijiang.yang@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 04:52:21PM +0800, Yang Weijiang wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Tue, 10 Dec 2019 16:07:11 -0500, Sasha Levin wrote:
+> From: Andrii Nakryiko <andriin@fb.com>
 > 
-> A handful of CET MSRs are not context switched through "traditional"
-> methods, e.g. VMCS or manual switching, but rather are passed through
-> to the guest and are saved and restored by XSAVES/XRSTORS, i.e. the
-> guest's FPU state.
+> [ Upstream commit 1e0bd5a091e5d9e0f1d5b0e6329b87bb1792f784 ]
 > 
-> Load the guest's FPU state if userspace is accessing MSRs whose values
-> are managed by XSAVES so that the MSR helper, e.g. vmx_{get,set}_msr(),
-> can simply do {RD,WR}MSR to access the guest's value.
-> 
-> Note that guest_cpuid_has() is not queried as host userspace is allowed
-> to access MSRs that have not been exposed to the guest, e.g. it might do
-> KVM_SET_MSRS prior to KVM_SET_CPUID2.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Yang Weijiang <weijiang.yang@intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> ---
->  arch/x86/kvm/x86.c | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 540490d5385f..6275a75d5802 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -104,6 +104,8 @@ static void enter_smm(struct kvm_vcpu *vcpu);
->  static void __kvm_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags);
->  static void store_regs(struct kvm_vcpu *vcpu);
->  static int sync_regs(struct kvm_vcpu *vcpu);
-> +static void kvm_load_guest_fpu(struct kvm_vcpu *vcpu);
-> +static void kvm_put_guest_fpu(struct kvm_vcpu *vcpu);
->  
->  struct kvm_x86_ops *kvm_x86_ops __read_mostly;
->  EXPORT_SYMBOL_GPL(kvm_x86_ops);
-> @@ -3000,6 +3002,12 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  }
->  EXPORT_SYMBOL_GPL(kvm_get_msr_common);
->  
-> +static bool is_xsaves_msr(u32 index)
-> +{
-> +	return index == MSR_IA32_U_CET ||
-> +	       (index >= MSR_IA32_PL0_SSP && index <= MSR_IA32_PL3_SSP);
-> +}
-> +
->  /*
->   * Read or write a bunch of msrs. All parameters are kernel addresses.
->   *
-> @@ -3010,11 +3018,22 @@ static int __msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs *msrs,
->  		    int (*do_msr)(struct kvm_vcpu *vcpu,
->  				  unsigned index, u64 *data))
->  {
-> +	bool fpu_loaded = false;
->  	int i;
-> +	const u64 cet_bits = XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL;
-> +	bool cet_xss = kvm_supported_xss() & cet_bits;
->  
-> -	for (i = 0; i < msrs->nmsrs; ++i)
-> +	for (i = 0; i < msrs->nmsrs; ++i) {
-> +		if (!fpu_loaded && cet_xss &&
-> +		    is_xsaves_msr(entries[i].index)) {
-> +			kvm_load_guest_fpu(vcpu);
+> 92117d8443bc ("bpf: fix refcnt overflow") turned refcounting of bpf_map into
+> potentially failing operation, when refcount reaches BPF_MAX_REFCNT limit
+> (32k). Due to using 32-bit counter, it's possible in practice to overflow
+> refcounter and make it wrap around to 0, causing erroneous map free, while
+> there are still references to it, causing use-after-free problems.
 
-This needs to also check for a non-NULL @vcpu.  KVM_GET_MSR can be called
-on the VM to invoke do_get_msr_feature().
+I don't think this is a bug fix, the second sentence here is written
+in a quite confusing way, but there is no bug.
 
-> +			fpu_loaded = true;
-> +		}
->  		if (do_msr(vcpu, entries[i].index, &entries[i].data))
->  			break;
-> +	}
-> +	if (fpu_loaded)
-> +		kvm_put_guest_fpu(vcpu);
->  
->  	return i;
->  }
-> -- 
-> 2.17.2
-> 
+Could you drop? I don't think it's worth the backporting pain since it
+changes bpf_map_inc().
