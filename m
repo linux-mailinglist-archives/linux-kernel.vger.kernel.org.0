@@ -2,94 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD96118C87
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 228AD118D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 17:00:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfLJP3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 10:29:55 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:38452 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbfLJP3y (ORCPT
+        id S1727518AbfLJQAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 11:00:08 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:60069 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbfLJQAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 10:29:54 -0500
-Received: by mail-pj1-f68.google.com with SMTP id l4so7546385pjt.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 07:29:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=2m22tRgRbycGVEq+HVbXDKyMLb2WG5FY05Buaglo9kM=;
-        b=r0JdLzmkZyMw5U1N8SSKuKPpSPZBRu+iwEoZMlFIyi3yWca1kiu95uT/H40Ku4JEJs
-         UAQhPgiiUxurKjHE7cRJ9UtwxYVm3UUHbNseBlL3mGf0snPT5C8543snsENdosoncC/G
-         cRb7kVJEhBZQWIsstysaGrcbiHO1lWsE4PzmbdtaVrdq1JR4uFle9Q1ohNcc6tN1Bivv
-         FdB7q3gH8oCkmrjwjh7A+kAhy3zWozUQccExZiS5xkxcoE/5SW53nLIhOz77LJ2aCuNc
-         BSNM8roab+j3D6+RVyFZAzuNMpFJiaL7D/HjXi/jBHsShi8WmUvuWzgYxehLtFFIVevf
-         FL+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=2m22tRgRbycGVEq+HVbXDKyMLb2WG5FY05Buaglo9kM=;
-        b=BZ0oHql41PvKXdsP1LpdN/tOdSxA3xT91eIb7f0R+H7Q++MOVIQ0WxLU28KBaupbMC
-         fJMnPImDgQK6kgeD7UsaYn0wpp0yY+GJkY6PBEHO06IFMkfLBpfPPaqNc2fIdh8YQSKU
-         fG1tE92h65ON32DMRBnZoGPN+j0BU8aqqBNT/5Inyz9jbBcw6gopzt7TR6SqGPKVVqaz
-         SrjeWfowyrsA7V5IqN4PtYsvh/kJBjAKYjFnIfM/46ufgu8Bqw0WhBWJ2cEYCoikdtkJ
-         bsSSKRxOfDz39/lGyHT3keUr9JXz+sBlEXcqMVCWc8zSOU1eIyB8e7ikXCkQMt8Y5Kdw
-         QFdw==
-X-Gm-Message-State: APjAAAWcdSEkSiGfgJP/mCNr4UcTOGpyo1ddBBTI3z6pTn3O4414M9M3
-        Jd4pKn3G6GSdhfkedUULmEJb7A==
-X-Google-Smtp-Source: APXvYqyHQzkzTLkwLjbXtc6sUNJJurnhyP/lLslash6Z9KOPtwCs7R/U0YPczA84LkoNP5xz0hxYvg==
-X-Received: by 2002:a17:902:b68c:: with SMTP id c12mr35217696pls.126.1575991793962;
-        Tue, 10 Dec 2019 07:29:53 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:1ef2:1854:f81f:5bdb:c33c? ([2601:646:c200:1ef2:1854:f81f:5bdb:c33c])
-        by smtp.gmail.com with ESMTPSA id j18sm3743530pfn.112.2019.12.10.07.29.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2019 07:29:53 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] x86-64/entry: add instruction suffix to SYSRET
-Date:   Tue, 10 Dec 2019 07:29:52 -0800
-Message-Id: <08B92B44-CCA9-4B83-B9CC-F1601D44B73F@amacapital.net>
-References: <cbecab05-9e95-5dec-ef81-499617c153a6@suse.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-In-Reply-To: <cbecab05-9e95-5dec-ef81-499617c153a6@suse.com>
-To:     Jan Beulich <JBeulich@suse.com>
-X-Mailer: iPhone Mail (17A878)
+        Tue, 10 Dec 2019 11:00:07 -0500
+X-Greylist: delayed 4166 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 11:00:02 EST
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.2) with ESMTPS id xBAEoGvA023784
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 10 Dec 2019 06:50:16 -0800 (PST)
+Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 10 Dec
+ 2019 06:50:15 -0800
+Subject: Re: [PATCH net/tipc] Replace rcu_swap_protected() with
+ rcu_replace_pointer()
+To:     <paulmck@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <jon.maloy@ericsson.com>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <tipc-discussion@lists.sourceforge.net>,
+        <torvalds@linux-foundation.org>, <mingo@kernel.org>,
+        <kernel-team@fb.com>
+References: <20191210033146.GA32522@paulmck-ThinkPad-P72>
+From:   Ying Xue <ying.xue@windriver.com>
+Message-ID: <0e565b68-ece1-5ae6-bb5d-710163fb8893@windriver.com>
+Date:   Tue, 10 Dec 2019 22:36:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191210033146.GA32522@paulmck-ThinkPad-P72>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.224.155.90]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/10/19 11:31 AM, Paul E. McKenney wrote:
+> This commit replaces the use of rcu_swap_protected() with the more
+> intuitively appealing rcu_replace_pointer() as a step towards removing
+> rcu_swap_protected().
+> 
+> Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Jon Maloy <jon.maloy@ericsson.com>
+> Cc: Ying Xue <ying.xue@windriver.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: <netdev@vger.kernel.org>
+> Cc: <tipc-discussion@lists.sourceforge.net>
+> 
+> diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
+> index 990a872..64cf831 100644
+> --- a/net/tipc/crypto.c
+> +++ b/net/tipc/crypto.c
+> @@ -258,7 +258,7 @@ static char *tipc_key_change_dump(struct tipc_key old, struct tipc_key new,
+>  	rcu_dereference_protected((rcu_ptr), lockdep_is_held(lock))
+>  
+>  #define tipc_aead_rcu_swap(rcu_ptr, ptr, lock)				\
+> -	rcu_swap_protected((rcu_ptr), (ptr), lockdep_is_held(lock))
+> +	rcu_replace_pointer((rcu_ptr), (ptr), lockdep_is_held(lock))
 
+(ptr) = rcu_replace_pointer((rcu_ptr), (ptr), lockdep_is_held(lock))
 
-> On Dec 10, 2019, at 2:48 AM, Jan Beulich <JBeulich@suse.com> wrote:
->=20
-> =EF=BB=BFOmitting suffixes from instructions in AT&T mode is bad practice w=
-hen
-> operand size cannot be determined by the assembler from register
-> operands, and is likely going to be warned about by upstream gas in the
-> future. Add the missing suffix here.
->=20
-> Signed-off-by: Jan Beulich <jbeulich@suse.com>
->=20
-> --- a/arch/x86/entry/entry_64.S
-> +++ b/arch/x86/entry/entry_64.S
-> @@ -1728,7 +1728,7 @@ END(nmi)
-> SYM_CODE_START(ignore_sysret)
->    UNWIND_HINT_EMPTY
->    mov    $-ENOSYS, %eax
-> -    sysret
-> +    sysretl
+>  
+>  #define tipc_aead_rcu_replace(rcu_ptr, ptr, lock)			\
+>  do {									\
+> @@ -1189,7 +1189,7 @@ static bool tipc_crypto_key_try_align(struct tipc_crypto *rx, u8 new_pending)
+>  
+>  	/* Move passive key if any */
+>  	if (key.passive) {
+> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
+> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2, &rx->lock);
 
-Isn=E2=80=99t the default sysretq?  sysretl looks more correct, but that sug=
-gests that your changelog is wrong.
+tipc_aead_rcu_swap() is only called here in TIPC module. If we use
+rcu_replace_pointer() to switch pointers instead of calling
+tipc_aead_rcu_swap() macro, I think we should completely remove
+tipc_aead_rcu_swap().
 
-Is this code even reachable?
-
-> SYM_CODE_END(ignore_sysret)
-> #endif
->=20
+>  		x = (key.passive - key.pending + new_pending) % KEY_MAX;
+>  		new_passive = (x <= 0) ? x + KEY_MAX : x;
+>  	}
+> 
