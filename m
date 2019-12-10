@@ -2,125 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 984AA11813C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 08:20:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FE3C118140
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 08:21:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfLJHUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 02:20:53 -0500
-Received: from ivanoab7.miniserver.com ([37.128.132.42]:50036 "EHLO
-        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbfLJHUx (ORCPT
+        id S1727374AbfLJHV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 02:21:27 -0500
+Received: from twhmllg4.macronix.com ([122.147.135.202]:59910 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbfLJHV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 02:20:53 -0500
-Received: from tun252.jain.kot-begemot.co.uk ([192.168.18.6] helo=jain.kot-begemot.co.uk)
-        by www.kot-begemot.co.uk with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1ieZpC-0001PM-0K; Tue, 10 Dec 2019 07:20:51 +0000
-Received: from sleer.kot-begemot.co.uk ([192.168.3.72])
-        by jain.kot-begemot.co.uk with esmtps (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1ieZp9-0002xH-E2; Tue, 10 Dec 2019 07:20:49 +0000
-Subject: Re: [PATCH v1] uml: remove support for CONFIG_STATIC_LINK
-To:     Richard Weinberger <richard@nod.at>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        linux-um <linux-um@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, davidgow@google.com
-References: <20191209230248.227508-1-brendanhiggins@google.com>
- <1406826345.111805.1575933346955.JavaMail.zimbra@nod.at>
-From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Organization: Cambridge Greys
-Message-ID: <2eecf4dc-eb96-859a-a015-1a4f388b57a2@cambridgegreys.com>
-Date:   Tue, 10 Dec 2019 07:20:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Tue, 10 Dec 2019 02:21:26 -0500
+Received: from twhfm1p2.macronix.com (twhfm1p2.macronix.com [172.17.20.92])
+        by TWHMLLG4.macronix.com with ESMTP id xBA7LH4e024326;
+        Tue, 10 Dec 2019 15:21:17 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
+        by Forcepoint Email with ESMTP id 37D7791CBB9A5183FF28;
+        Tue, 10 Dec 2019 15:21:18 +0800 (CST)
+In-Reply-To: <20f3873f-66eb-3af9-c50d-1321a859093d@ti.com>
+References: <1573808288-19365-1-git-send-email-masonccyang@mxic.com.tw> <1573808288-19365-3-git-send-email-masonccyang@mxic.com.tw> <3f514579-d3a4-1319-a55a-265a3f1ce00e@ti.com> <OFFE6363DF.95763BC3-ON482584CB.002A47E5-482584CB.002BAA8C@mxic.com.tw> <20f3873f-66eb-3af9-c50d-1321a859093d@ti.com>
+To:     "Vignesh Raghavendra" <vigneshr@ti.com>
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        computersforpeace@gmail.com, dwmw2@infradead.org,
+        juliensu@mxic.com.tw, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at,
+        tudor.ambarus@microchip.com
+Subject: Re: [PATCH 2/4] mtd: spi-nor: Add support for Octal 8D-8D-8D mode
 MIME-Version: 1.0
-In-Reply-To: <1406826345.111805.1575933346955.JavaMail.zimbra@nod.at>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -1.0
-X-Spam-Score: -1.0
-X-Clacks-Overhead: GNU Terry Pratchett
+X-KeepSent: 5ED38CB6:65E10D03-482584CC:002846EC;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OF5ED38CB6.65E10D03-ON482584CC.002846EC-482584CC.00286710@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Tue, 10 Dec 2019 15:21:18 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/12/10 PM 03:21:18,
+        Serialize complete at 2019/12/10 PM 03:21:18
+Content-Type: text/plain; charset="US-ASCII"
+X-MAIL: TWHMLLG4.macronix.com xBA7LH4e024326
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2019 23:15, Richard Weinberger wrote:
-> ----- Ursprüngliche Mail -----
->> Von: "Brendan Higgins" <brendanhiggins@google.com>
->> An: "Jeff Dike" <jdike@addtoit.com>, "richard" <richard@nod.at>, "anton ivanov" <anton.ivanov@cambridgegreys.com>
->> CC: "Johannes Berg" <johannes.berg@intel.com>, "linux-um" <linux-um@lists.infradead.org>, "linux-kernel"
->> <linux-kernel@vger.kernel.org>, davidgow@google.com, "Brendan Higgins" <brendanhiggins@google.com>
->> Gesendet: Dienstag, 10. Dezember 2019 00:02:48
->> Betreff: [PATCH v1] uml: remove support for CONFIG_STATIC_LINK
+
+Hi Vignesh,
+
+
+> >> On 15/11/19 2:28 pm, Mason Yang wrote:
+> >>> According to JESD216C (JEDEC Basic Flash Parameter Table 18th DWORD)
+> >>> Octal DTR(8D-8D-8D) command and command extension (00b: same, 01b: 
+> > inverse)
+> >>> to add extension command mode in spi_nor struct and to add write_cr2
+> >>> (Write CFG Reg 2) for 8-8-8/8D-8D-8D mode sequences enable.
+> >>>
+> >>
+> >> But I don't see any code setting "nor->ext_cmd_mode" based on BFPT?
+> >>
+> >> Any new feature that we add to spi-nor should make use of 
+autodiscovery
+> >> feature made possible by SFDP tables. Could you modify the patch to
+> >> discover capabilities supported by flash and opcodes to be used from
+> >> SFDP table?
+> > 
+> > Got it but our device will return a empty SFDP table.
+> > 
 > 
->> CONFIG_STATIC_LINK appears to have been broken since before v4.20. It
->> doesn't play nice with CONFIG_UML_NET_VECTOR=y:
->>
->> /usr/bin/ld: arch/um/drivers/vector_user.o: in function
->> `user_init_socket_fds': vector_user.c:(.text+0x430): warning: Using
->> 'getaddrinfo' in statically linked applications requires at runtime the
->> shared libraries from the glibc version used for linking
-> 
-> This is nothing serious.
-> 
->> And it seems to break the ptrace check:
->>
->> Checking that ptrace can change system call numbers...check_ptrace :
->> child exited with exitcode 6, while expecting 0; status 0x67f
->> [1]    126822 abort      ./linux mem=256M
-> 
-> Didn't we fix that already?
-
-Yes we did - I commented on this.
-
-> 
->> (Apparently, a patch was recently discussed that fixes this - around
->> v5.5-rc1[1] - but the fact that this was broken for over a year
->> remains.)
->>
->> According to Anton, PCAP throws even more warnings, and the resulting
->> binary isn't really even static anyway, so there is really no point in
->> keeping this config around[2].
-> 
-> What?
-> Anton, please explain. Why is it not static when build with CONFIG_STATIC_LINK?
-
-
-LIBC itself tries to dynamic load stuff internally.
-
-It is beyond our control and it claims that it will work only on EXACTLY 
-the same version of libc library as the one used for static link.
-
-So you get a not-exactly static binary which is not properly moveable 
-between systems.
-
-This is specifically in the name resolution, etc parts of libc which all 
-of: pcap, vector, vde, etc rely on.
-
-Another alternative is to turn off static specifically for those.
-
-Further to this - any properly written piece of networking code which 
-uses the newer functions for name/service resolution will have the same 
-problem. You can be static only if you do everything "manually" the old way.
-
-> 
-> Thanks,
-> //richard
-> 
-> _______________________________________________
-> linux-um mailing list
-> linux-um@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-um
+> If flash you tested on does not support JEDEC 216C then don't mention
+> about it. Above commit message gives an impression that flash in JEDEC
+> 216C compliant.
 > 
 
+okay, got it.
 
--- 
-Anton R. Ivanov
-Cambridgegreys Limited. Registered in England. Company Number 10273661
-https://www.cambridgegreys.com/
+> >>
+> >>
+> >>> Define the relevant macrons and enum to add such modes and make sure
+> >>> op->xxx.dtr fields, command nbytes and extension command are 
+properly
+> >>> filled and unmask DTR and X-X-X modes in 
+> > spi_nor_spimem_adjust_hwcaps()
+> >>> so that DTR and X-X-X support detection is done through
+> >>> spi_mem_supports_op().
+> >>>
+> [...]
+> >>> @@ -404,6 +436,30 @@ static int read_sr(struct spi_nor *nor)
+> >>>                 SPI_MEM_OP_NO_DUMMY,
+> >>>                 SPI_MEM_OP_DATA_IN(1, nor->bouncebuf, 1));
+> >>>
+> >>
+> >> This is not based on the latest tree.
+> >>
+> >>> +      if (spi_nor_protocol_is_8_8_8(nor->read_proto)) {
+> >>> +         op.cmd.buswidth = 8;
+> >>> +         op.addr.buswidth = 8;
+> >>> +         op.dummy.buswidth = 8;
+> >>> +         op.data.buswidth = 8;
+> >>> +         op.cmd.nbytes = 2;
+> >>> +         op.addr.nbytes = 4;
+> >>> +         op.dummy.nbytes = 4;
+> >>> +         op.addr.val = 0;
+> >>
+> >> This is not scalable... There will be bunch of if...else ladders when 
+we
+> >> want to support other X-X-X modes... Can't these be derived from
+> >> nor->reg_proto? And then borrow the logic from 
+> > spi_nor_spimem_read_data()?
+> >>
+> > 
+> > Got it !
+> > 
+> >>
+> >> Could you have a look at Boris's initial submission to add 8-8-8 mode 
+at
+> >> https://patchwork.kernel.org/cover/10638055/ ?
+> >> You could use that series as the base for your changes/additions.
+> > 
+> > Got it.
+> > My idea is to support 8D-8D-8D mode with a minimum patches because 
+> > there is no define for 1D-1D-1D, 2D-2D-2D and 4D-4D-4D mode in JEDEC 
+> > if I am right.
+> > 
+> 
+> JESD251-A1 does talk about 4S-4D-4D right? Also none of the JEDEC
+> standards prohibit flash vendors from supporting other X-X-X modes.
+> 
+> I think you haven't thought about bigger picture here. Flash devices
+> that support other mode exist today and we would need the framework to
+> be built such that these modes can be added in future.
+> 
+> I suggest you start with Boris's series [1] as base and port it to
+> latest kernel. Isn't that series alone enough to support Macronix Octal
+> flashes at least?
+> If required, you could also always include additional patches adding new
+> features.
+
+okay.
+
+> 
+> [1] https://patchwork.kernel.org/cover/10638055/
+> 
+> -- 
+> Regards
+> Vignesh
+
+thanks for your time & comments.
+Mason
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
+
+
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
