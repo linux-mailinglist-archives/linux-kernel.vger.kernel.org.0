@@ -2,214 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE091186B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:43:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 519BD1186C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 12:44:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfLJLnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 06:43:41 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:45142 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfLJLnk (ORCPT
+        id S1727727AbfLJLoq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 06:44:46 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41939 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbfLJLop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:43:40 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBABhWOr067827;
-        Tue, 10 Dec 2019 05:43:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575978212;
-        bh=QVZ0wHLNfOTgyXe90BMNnzRWTBciR4aHMQdWEYvTevE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=AsiY/Hlka56aVuv34FILts0AwzVsHHoxnVD4angwjRccHFomvwSSYq61P4aF026So
-         zsZ9keday0kh1VZ8QaDbF527B/+6tLHLbVa9eV/bqcIG4UatvUn2ck4Y5eK5M73dY0
-         JCk4j7ZSfKWegEA0XOZTGmZJjYQ0cpH2hkvVmYGw=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBABhWOq112454;
-        Tue, 10 Dec 2019 05:43:32 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 10
- Dec 2019 05:43:32 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 10 Dec 2019 05:43:32 -0600
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBABhTrE113714;
-        Tue, 10 Dec 2019 05:43:30 -0600
-Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am65: Add OSPI DT node
-To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191210093619.22481-1-vigneshr@ti.com>
- <20191210093619.22481-2-vigneshr@ti.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <0f3a083d-8beb-2206-8aa9-84ace17ca6d3@ti.com>
-Date:   Tue, 10 Dec 2019 17:13:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Tue, 10 Dec 2019 06:44:45 -0500
+Received: by mail-lj1-f196.google.com with SMTP id h23so19485254ljc.8;
+        Tue, 10 Dec 2019 03:44:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sUHnZpA/wNmoInYgusvk70ynWZByhnZO00JpHi1dxX0=;
+        b=a1Lxgj/Hd9z+Y+l6L96g027WUIu0stJmBbbdQFlbjaaslpHWagTdw4NfXFid23saX1
+         Okhtj6LV5hzEdjR7s4ViiLBcaUQgRNVbewX2OBTGJc7pbGRJ3xlnXk+mruCronBqW8NX
+         YdCuOlc5S8+Z41HbIs2PG0bGMZUi7CxiZYchDO/Osg4WvQyRzt5WX0U8/lnyEFXi6LM8
+         cTLiSdq82hekRfnu1LOEN8AfmBTgDNtH9j9nMF+b1zCFgRTA9zGIfZsQgaYGejKhCn5i
+         bBVYfYwD2gMTobHWCEQly8z1EFBZLy4GU3Qoo8AyelaKXgQS7KGlZDnLUOki5WryE3WS
+         xJzQ==
+X-Gm-Message-State: APjAAAUKsZOy1B0jqPwP51qB6bwIwxUHaiM6urw7DPw0qWO9hlpl7Iaq
+        8vP4gC8G3azYnZiJhvlaRhHBVYyT
+X-Google-Smtp-Source: APXvYqz/qd4zR0TA6WGZrUyUNn0MN3E258bJN3+Vu1vmpFMckaJz8h0H66PIEDZPKd2zv2YAtUzT6A==
+X-Received: by 2002:a05:651c:152:: with SMTP id c18mr19992369ljd.146.1575978282744;
+        Tue, 10 Dec 2019 03:44:42 -0800 (PST)
+Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
+        by smtp.gmail.com with ESMTPSA id y14sm1638043ljk.46.2019.12.10.03.44.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 03:44:42 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@xi.terra>)
+        id 1iedwa-0001HY-89; Tue, 10 Dec 2019 12:44:44 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
+        Arend van Spriel <arend@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Jes Sorensen <Jes.Sorensen@redhat.com>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        Siva Rebbagondla <siva8118@gmail.com>,
+        Daniel Drake <dsd@gentoo.org>,
+        Ulrich Kunitz <kune@deine-taler.de>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 0/7] wireless: fix USB altsetting bugs
+Date:   Tue, 10 Dec 2019 12:44:19 +0100
+Message-Id: <20191210114426.4713-1-johan@kernel.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191210093619.22481-2-vigneshr@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+We had quite a few drivers using the first alternate setting instead of
+the current one when doing descriptor sanity checks. This is mostly an
+issue on kernels with panic_on_warn set due to a WARN() in
+usb_submit_urb(), but since we've started backporting such fixes (e.g.
+as reported by syzbot), I've marked these for stable as well.
 
-On 10/12/19 3:06 pm, Vignesh Raghavendra wrote:
-> AM654 SoC has two Cadence OSPI controller instances under Flash
-> subsystem (FSS). Add DT nodes for the same.
-> 
-
-
-Please ignore this patch... I missed to update Device IDs, will post a
-v2. Sorry for the noise
-
-Regards
-Vignesh
+Johan
 
 
-> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-> ---
->  arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       | 38 +++++++++++++++++++
->  arch/arm64/boot/dts/ti/k3-am65.dtsi           | 11 +++++-
->  .../arm64/boot/dts/ti/k3-am654-base-board.dts | 36 ++++++++++++++++++
->  3 files changed, 83 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-> index 7bdf5342f58f..aec720f35578 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-> @@ -95,4 +95,42 @@ adc {
->  			compatible = "ti,am654-adc", "ti,am3359-adc";
->  		};
->  	};
-> +
-> +	fss: fss@47000000 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		ospi0: spi@47040000 {
-> +			compatible = "ti,am654-ospi", "cdns,qspi-nor";
-> +			reg = <0x0 0x47040000 0x0 0x100>,
-> +				<0x5 0x00000000 0x1 0x0000000>;
-> +			interrupts = <GIC_SPI 552 IRQ_TYPE_LEVEL_HIGH>;
-> +			cdns,fifo-depth = <256>;
-> +			cdns,fifo-width = <4>;
-> +			cdns,trigger-address = <0x50000000>;
-> +			clocks = <&k3_clks 55 5>;
-> +			assigned-clocks = <&k3_clks 55 5>;
-> +			assigned-clock-parents = <&k3_clks 55 7>;
-> +			assigned-clock-rates = <166666666>;
-> +			power-domains = <&k3_pds 55 TI_SCI_PD_EXCLUSIVE>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +		};
-> +
-> +		ospi1: spi@47050000 {
-> +			compatible = "ti,am654-ospi", "cdns,qspi-nor";
-> +			reg = <0x0 0x47050000 0x0 0x100>,
-> +				<0x7 0x00000000 0x1 0x00000000>;
-> +			interrupts = <GIC_SPI 553 IRQ_TYPE_LEVEL_HIGH>;
-> +			cdns,fifo-depth = <256>;
-> +			cdns,fifo-width = <4>;
-> +			cdns,trigger-address = <0x58000000>;
-> +			clocks = <&k3_clks 55 16>;
-> +			power-domains = <&k3_pds 55 TI_SCI_PD_EXCLUSIVE>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +		};
-> +	};
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am65.dtsi b/arch/arm64/boot/dts/ti/k3-am65.dtsi
-> index 6dfccd5d56c8..d38720bc2551 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am65.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am65.dtsi
-> @@ -80,7 +80,11 @@ cbass_main: interconnect@100000 {
->  			 <0x00 0x42040000 0x00 0x42040000 0x00 0x03ac2400>,
->  			 <0x00 0x45100000 0x00 0x45100000 0x00 0x00c24000>,
->  			 <0x00 0x46000000 0x00 0x46000000 0x00 0x00200000>,
-> -			 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>;
-> +			 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>,
-> +			 <0x00 0x50000000 0x00 0x50000000 0x00 0x8000000>,
-> +			 <0x00 0x70000000 0x00 0x70000000 0x00 0x200000>,
-> +			 <0x05 0x00000000 0x05 0x00000000 0x01 0x0000000>,
-> +			 <0x07 0x00000000 0x07 0x00000000 0x01 0x0000000>;
->  
->  		cbass_mcu: interconnect@28380000 {
->  			compatible = "simple-bus";
-> @@ -94,7 +98,10 @@ cbass_mcu: interconnect@28380000 {
->  				 <0x00 0x42040000 0x00 0x42040000 0x00 0x03ac2400>, /* WKUP */
->  				 <0x00 0x45100000 0x00 0x45100000 0x00 0x00c24000>, /* MMRs, remaining NAVSS */
->  				 <0x00 0x46000000 0x00 0x46000000 0x00 0x00200000>, /* CPSW */
-> -				 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>; /* OSPI space 1 */
-> +				 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>, /* OSPI space 1 */
-> +				 <0x00 0x50000000 0x00 0x50000000 0x00 0x8000000>, /*  FSS OSPI0 data region 1 */
-> +				 <0x05 0x00000000 0x05 0x00000000 0x01 0x0000000>, /* FSS OSPI0 data region 3*/
-> +				 <0x07 0x00000000 0x07 0x00000000 0x01 0x0000000>; /* FSS OSPI1 data region 3*/
->  
->  			cbass_wakeup: interconnect@42040000 {
->  				compatible = "simple-bus";
-> diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-> index 8a85b482ad31..94bec7aa9baf 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-> @@ -69,6 +69,22 @@ AM65X_WKUP_IOPAD(0x0030, PIN_INPUT, 7) /* (R5) WKUP_GPIO0_24 */
->  			AM65X_WKUP_IOPAD(0x003c, PIN_INPUT, 7) /* (P2) WKUP_GPIO0_27 */
->  		>;
->  	};
-> +
-> +	mcu_fss0_ospi0_pins_default: mcu-fss0-ospi0-pins_default {
-> +		pinctrl-single,pins = <
-> +			AM65X_WKUP_IOPAD(0x0000, PIN_OUTPUT, 0) /* (V1) MCU_OSPI0_CLK */
-> +			AM65X_WKUP_IOPAD(0x0008, PIN_INPUT, 0)	 /* (U2) MCU_OSPI0_DQS */
-> +			AM65X_WKUP_IOPAD(0x000c, PIN_INPUT, 0)  /* (U4) MCU_OSPI0_D0 */
-> +			AM65X_WKUP_IOPAD(0x0010, PIN_INPUT, 0)  /* (U5) MCU_OSPI0_D1 */
-> +			AM65X_WKUP_IOPAD(0x0014, PIN_INPUT, 0)  /* (T2) MCU_OSPI0_D2 */
-> +			AM65X_WKUP_IOPAD(0x0018, PIN_INPUT, 0)  /* (T3) MCU_OSPI0_D3 */
-> +			AM65X_WKUP_IOPAD(0x001c, PIN_INPUT, 0)  /* (T4) MCU_OSPI0_D4 */
-> +			AM65X_WKUP_IOPAD(0x0020, PIN_INPUT, 0)  /* (T5) MCU_OSPI0_D5 */
-> +			AM65X_WKUP_IOPAD(0x0024, PIN_INPUT, 0)  /* (R2) MCU_OSPI0_D6 */
-> +			AM65X_WKUP_IOPAD(0x0028, PIN_INPUT, 0)  /* (R3) MCU_OSPI0_D7 */
-> +			AM65X_WKUP_IOPAD(0x002c, PIN_OUTPUT, 0) /* (R4) MCU_OSPI0_CSn0 */
-> +		>;
-> +	};
->  };
->  
->  &main_pmx0 {
-> @@ -339,3 +355,23 @@ &mailbox0_cluster10 {
->  &mailbox0_cluster11 {
->  	status = "disabled";
->  };
-> +
-> +&ospi0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mcu_fss0_ospi0_pins_default>;
-> +
-> +	flash@0{
-> +		compatible = "jedec,spi-nor";
-> +		reg = <0x0>;
-> +		spi-tx-bus-width = <1>;
-> +		spi-rx-bus-width = <8>;
-> +		spi-max-frequency = <40000000>;
-> +		cdns,tshsl-ns = <60>;
-> +		cdns,tsd2d-ns = <60>;
-> +		cdns,tchsh-ns = <60>;
-> +		cdns,tslch-ns = <60>;
-> +		cdns,read-delay = <0>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +	};
-> +};
-> 
+Johan Hovold (7):
+  ath9k: fix storage endpoint lookup
+  at76c50x-usb: fix endpoint debug message
+  brcmfmac: fix interface sanity check
+  orinoco_usb: fix interface sanity check
+  rtl8xxxu: fix interface sanity check
+  rsi_91x_usb: fix interface sanity check
+  zd1211rw: fix storage endpoint lookup
+
+ drivers/net/wireless/ath/ath9k/hif_usb.c               | 2 +-
+ drivers/net/wireless/atmel/at76c50x-usb.c              | 2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 4 ++--
+ drivers/net/wireless/intersil/orinoco/orinoco_usb.c    | 4 ++--
+ drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c  | 2 +-
+ drivers/net/wireless/rsi/rsi_91x_usb.c                 | 2 +-
+ drivers/net/wireless/zydas/zd1211rw/zd_usb.c           | 2 +-
+ 7 files changed, 9 insertions(+), 9 deletions(-)
 
 -- 
-Regards
-Vignesh
+2.24.0
+
