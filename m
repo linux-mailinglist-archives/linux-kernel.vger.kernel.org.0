@@ -2,91 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C08E118FF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:46:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 412E2118FF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:47:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbfLJSqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 13:46:37 -0500
-Received: from foss.arm.com ([217.140.110.172]:53626 "EHLO foss.arm.com"
+        id S1727685AbfLJSrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 13:47:11 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:39430 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbfLJSqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 13:46:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 774761FB;
-        Tue, 10 Dec 2019 10:46:36 -0800 (PST)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A7543F6CF;
-        Tue, 10 Dec 2019 10:46:35 -0800 (PST)
-Date:   Tue, 10 Dec 2019 18:46:33 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Cristian Marussi <cristian.marussi@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] firmware: arm_scmi: Make scmi core independent of
- transport type
-Message-ID: <20191210184633.GC20962@bogus>
-References: <5c545c2866ba075ddb44907940a1dae1d823b8a1.1575019719.git.viresh.kumar@linaro.org>
- <71417ba8-b844-ac96-bcad-4bf48fa8b869@arm.com>
- <20191210053448.ugjzbp2puzvnm37f@vireshk-i7>
+        id S1726771AbfLJSrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 13:47:11 -0500
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1iekXN-00086y-OQ; Tue, 10 Dec 2019 11:47:10 -0700
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1iekXL-0006H8-U5; Tue, 10 Dec 2019 11:47:07 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        kernel test robot <rong.a.chen@intel.com>
+Date:   Tue, 10 Dec 2019 11:47:04 -0700
+Message-Id: <20191210184704.24081-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210053448.ugjzbp2puzvnm37f@vireshk-i7>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, axboe@kernel.dk, hch@lst.de, torvalds@linux-foundation.org, logang@deltatee.com, rong.a.chen@intel.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: [PATCH] block: fix NULL pointer dereference in account statistics with IDE
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 11:04:48AM +0530, Viresh Kumar wrote:
-> On 09-12-19, 18:13, Cristian Marussi wrote:
-> > On 29/11/2019 09:31, Viresh Kumar wrote:
+The IDE driver creates some passthru requests which never get
+submitted to the block layer in such a way that blk_account_io_start()
+gets called. However, the driver still calls __blk_mq_end_request() in
+ide_end_rq() which will call blk_account_io_completion() which tries
+to dereferences req->part which is never set. See ide_prep_sense() for
+an example of where these requests come from.
 
-[...]
+To fix this, blk_account_io_completion() and blk_account_io_done()
+should do nothing if req->part is not set.
 
-> > >  	desc = of_device_get_match_data(dev);
-> > >  	if (!desc)
-> > >  		return -EINVAL;
-> >
-> > This scmi_desc struct descriptor is retrieved from  of_match_table .data and points to
-> > the driver-provided scmi_generic_desc
-> >
-> > static const struct scmi_desc scmi_generic_desc = {
-> >         .max_rx_timeout_ms = 30,        /* We may increase this if required */
-> >         .max_msg = 20,          /* Limited by MBOX_TX_QUEUE_LEN */
-> >         .max_msg_size = 128,
-> > };
-> >
-> > Is not this kind of information possibly (maybe partially) related to the selected
-> > transport, and as such it should be also provided dynamically by the chosen transport
-> > layer at probe time, like the transport_ops, instead of being hard-coded in
-> > this driver ?
->
-> I had my doubts about this thing and I missed checking it out.
->
-> @Sudeep: Is this information completely mailbox specific ? Should I move it to
-> mailbox.c here ?
->
+The back trace of this bug is:
 
-May be to some/small extent.
+    BUG: kernel NULL pointer dereference, address: 000002ac
+    #PF: supervisor write access in kernel mode
+    #PF: error_code(0x0002) - not-present page
+    *pde = 00000000
+    Oops: 0002 [#1]
+    CPU: 0 PID: 237 Comm: kworker/0:1H Not tainted
+    5.4.0-rc2-00011-g48d9b0d43105e #1
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1
+    04/01/2014
+    Workqueue: kblockd drive_rq_insert_work
+    EIP: blk_account_io_completion+0x7a/0xf0
+    Code: 89 54 24 08 31 d2 89 4c 24 04 31 c9 c7 04 24 02 00 00 00 c1 ee
+    09 e8 f5 21 a6 ff e8 70 5c a7 ff 8b 53 60 8d 04 bd 00 00 00 00 <01> b4
+    02 ac 02 00 00 8b 9a 88 02 00 00 85 db 74 11 85 d2 74 51 8b
+    EAX: 00000000 EBX: f5b80000 ECX: 00000000 EDX: 00000000
+    ESI: 00000000 EDI: 00000000 EBP: f3031e70 ESP: f3031e54
+    DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010046
+    CR0: 80050033 CR2: 000002ac CR3: 03c25000 CR4: 000406d0
+    Call Trace:
+     <IRQ>
+      blk_update_request+0x85/0x420
+      ide_end_rq+0x38/0xa0
+      ide_complete_rq+0x3d/0x70
+      cdrom_newpc_intr+0x258/0xba0
+      ide_intr+0x135/0x250
+      __handle_irq_event_percpu+0x3e/0x250
+      handle_irq_event_percpu+0x1f/0x50
+      handle_irq_event+0x32/0x60
+      handle_level_irq+0x6c/0x110
+      handle_irq+0x72/0xa0
+      </IRQ>
+      do_IRQ+0x45/0xad
+      common_interrupt+0x115/0x11c
 
-1. max_rx_timeout_ms is firmware dependent, maximum time it expects to
-   complete a synchronous request or acknowledge async request(worst case value).
-2. max_msg_size is maximum size of the buffer we need to allocate, mostly
-   based on the specification and we don't have any more that 0x80. But
-   the custom/vendor specific protocols may wary and hence I thought of
-   keeping it configurable for platforms.
-3. max_msg is the maximum number of messages the transport can support.
-   This is currently based on the mailbox layer. For SMC/HVC we can have
-   upto nr_cpus, something different for spci/optee. We must be able to
-   make it transport independent if required.
+Fixes: 48d9b0d43105 ("block: account statistics for passthrough requests")
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+---
+ block/blk-core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-   This is mainly used to pre-allocate number of (tx/rx) buffers.
+diff --git a/block/blk-core.c b/block/blk-core.c
+index a1e228752083..68c309ce6735 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -1310,7 +1310,7 @@ EXPORT_SYMBOL_GPL(blk_rq_err_bytes);
+ 
+ void blk_account_io_completion(struct request *req, unsigned int bytes)
+ {
+-	if (blk_do_io_stat(req)) {
++	if (req->part && blk_do_io_stat(req)) {
+ 		const int sgrp = op_stat_group(req_op(req));
+ 		struct hd_struct *part;
+ 
+@@ -1328,7 +1328,8 @@ void blk_account_io_done(struct request *req, u64 now)
+ 	 * normal IO on queueing nor completion.  Accounting the
+ 	 * containing request is enough.
+ 	 */
+-	if (blk_do_io_stat(req) && !(req->rq_flags & RQF_FLUSH_SEQ)) {
++	if (req->part && blk_do_io_stat(req) &&
++	    !(req->rq_flags & RQF_FLUSH_SEQ)) {
+ 		const int sgrp = op_stat_group(req_op(req));
+ 		struct hd_struct *part;
+ 
+-- 
+2.20.1
 
---
-Regards,
-Sudeep
