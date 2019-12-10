@@ -2,77 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78E3B1187C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9C301187DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:14:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfLJMNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 07:13:30 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:58063 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727224AbfLJMNa (ORCPT
+        id S1727680AbfLJMOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 07:14:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56660 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727310AbfLJMOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 07:13:30 -0500
-Received: from 79.184.255.117.ipv4.supernova.orange.pl (79.184.255.117) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 5435d2d466e1b89a; Tue, 10 Dec 2019 13:13:28 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Subject: [RFC v2][PATCH 9/9] intel_idle: Add module parameter to prevent ACPI _CST from being used
-Date:   Tue, 10 Dec 2019 13:13:14 +0100
-Message-ID: <2442105.UMyhRX9LH8@kreacher>
-In-Reply-To: <35821518.IbFVMVmUy3@kreacher>
-References: <35821518.IbFVMVmUy3@kreacher>
+        Tue, 10 Dec 2019 07:14:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=F0mMCaOeB48CYx+gzJAQm0OX3KEZmwC3GLdDDtsdGeI=; b=gKt+N1udFVuqZkm9Q1WZ3ZTtq
+        m6mEP1vzuDG7lRrkUHUk9W5Q25t2lE02ARnkE0GsL6HUxtKVyMVsmD69mBnwxcUjP2Edu9sY+HOzQ
+        wp9rknr6v6/StM6PehdiSu8gd9AYCB1GHOQT3B+s3EiKs1vmbuj+pFnExJbFPY3ur26X0lbFGOtxi
+        j9EoQWf5wVv+4XnpyPPOSG+WstVGVHqjfFG/AVLC4iZQfdpBj51vljYYo6gk2h6UMDsQFhgEc3Vem
+        BIEMkdxpCz94rs5SA0CkuIfFvviiNAYPh55wbdMtUckmgJOjExrqcdhE1KRgqw17dQOr0Cdmp9edZ
+        IvyvlHLJA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ieeOc-00009F-9f; Tue, 10 Dec 2019 12:13:42 +0000
+Date:   Tue, 10 Dec 2019 04:13:42 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] fs: introduce is_dot_or_dotdot helper for cleanup
+Message-ID: <20191210121342.GH32169@bombadil.infradead.org>
+References: <1575979801-32569-1-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1575979801-32569-1-git-send-email-yangtiezhu@loongson.cn>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Dec 10, 2019 at 08:10:01PM +0800, Tiezhu Yang wrote:
+> There exists many similar and duplicate codes to check "." and "..",
+> so introduce is_dot_or_dotdot helper to make the code more clean.
+> 
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 
-Add a new module parameter called "no_acpi" to the intel_idle driver
-to allow the driver to be prevented from using ACPI _CST via kernel
-command line.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/idle/intel_idle.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
-Index: linux-pm/drivers/idle/intel_idle.c
-===================================================================
---- linux-pm.orig/drivers/idle/intel_idle.c
-+++ linux-pm/drivers/idle/intel_idle.c
-@@ -1138,6 +1138,10 @@ static bool intel_idle_max_cstate_reache
- #ifdef CONFIG_ACPI_PROCESSOR_CSTATE
- #include <acpi/processor.h>
- 
-+static bool no_acpi __read_mostly;
-+module_param(no_acpi, bool, 0444);
-+MODULE_PARM_DESC(no_acpi, "Do not use ACPI _CST for building the idle states list");
-+
- static struct acpi_processor_power acpi_state_table;
- 
- /**
-@@ -1167,6 +1171,11 @@ static bool intel_idle_acpi_cst_extract(
- {
- 	unsigned int cpu;
- 
-+	if (no_acpi) {
-+		pr_debug("Not allowed to use ACPI _CST\n");
-+		return false;
-+	}
-+
- 	for_each_possible_cpu(cpu) {
- 		struct acpi_processor *pr = per_cpu(processors, cpu);
- 
-
-
-
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
