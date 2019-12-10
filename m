@@ -2,79 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D694A119657
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:26:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B1011958E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 22:21:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbfLJV0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 16:26:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727805AbfLJVZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:25:42 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2917020836;
-        Tue, 10 Dec 2019 21:25:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576013141;
-        bh=pFS7/13JJX6dO6lO1moac4r+EqYfl0x/LCkLPyn44F0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nwhAXtJa6KWw/XyFMap3oikMC2KgQKdTrFxRvCYKQW9Zw96/KjaSmZiQyEUDU6Cfr
-         AMlHHTupMJeyv+rfHVlDfPzFOAaD77HaaH/bFUXdBmtc7CgYVNT8Cznp+WB37SFShq
-         KqTflBQStgimyKtHwL/pvqvwhbZz1RoUiuM9QlXc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Max Gurtovoy <maxg@mellanox.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 025/292] IB/iser: bound protection_sg size by data_sg size
-Date:   Tue, 10 Dec 2019 16:20:44 -0500
-Message-Id: <20191210212511.11392-25-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210212511.11392-1-sashal@kernel.org>
-References: <20191210212511.11392-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1728955AbfLJVVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 16:21:37 -0500
+Received: from mail-pj1-f74.google.com ([209.85.216.74]:40373 "EHLO
+        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727070AbfLJVVf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:21:35 -0500
+Received: by mail-pj1-f74.google.com with SMTP id x16so10445284pjq.7
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 13:21:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=lYWJU9mvbN8ZZQpV5vaQjJWA70IiddBps1EyTVgkqkw=;
+        b=NfH2O+lryCV2AegD49JGcu6PkPoGlRhKASnh0FYIZV8uRkL7ubtmdT+H8B5kdISW0i
+         15kPrDgWYFbv2pVFrkCR6iEYgJ6ggyFR6I74zpZ00YE1JkZYw5TUN7nT12CKzKpUkbu1
+         Z9H1VaO+v28ZJH4Q5NsiYvWwwrN7UHm0oF7KvptbH/DNMDYLme3MhPBB/DF1vFYyOxDO
+         PbXpjlPOngLIafacL67+0yc9eAHPcQlMzgNsPh5segouTJOFE60sEK+wyZH3t8vhKe4p
+         Teo0fUTgeXBZMMqpBklZryfrVj02Dv/YBmWlCCTNEFrQcOvDwrzWwXVKMiNrF1QoOEuD
+         z3zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=lYWJU9mvbN8ZZQpV5vaQjJWA70IiddBps1EyTVgkqkw=;
+        b=ktpIwri5Ri4xhJ5X6kaalVlBO/sARSXoWDzNdG24in+GPtv7G+7YFsn7OK6qH2hnes
+         Bjk/YCcpI3HylbBIhzb7xdOTH4IEK8wJMyhQ7bNHjIcBLFA0fzNvgtVCMgrquwyGJRhE
+         WqkLMqmKwVPhSQjMKPX1LKGPJS52WEdvPUQL+J3T54eLrPJqIEXWRC0br+9Dd4A2iKxr
+         Q9a3oj2LwQJGyKABdv7qpcdiiV787VfyXRe0nZgMLsDEB32W9znTcH9SebWU1YOQz4az
+         CuRO4kLjlxazynn2JEXlTnc2Dfa1cw91D0GuCI7FjTgIrfnw1Qtt2wkLHOZmWSNEMUIv
+         pKgA==
+X-Gm-Message-State: APjAAAVWsWJfmIF2M8sL7JfxdMHvnNGl89tUUM2jUxHxWA7s3XOhQtJd
+        bm6bCVfeD3gNFA/EFpYA5sfqVDffWva/7Xsh2rsEXw==
+X-Google-Smtp-Source: APXvYqxvcAlmugwFUoHQj5y95SwQMNbPwznXe1OSMy95bIkfqfMmVov6bZ97VOQQ0xZzCtGkz7j6YZCmoaxW0K4PakU7yQ==
+X-Received: by 2002:a63:fd43:: with SMTP id m3mr192307pgj.164.1576012894761;
+ Tue, 10 Dec 2019 13:21:34 -0800 (PST)
+Date:   Tue, 10 Dec 2019 13:21:08 -0800
+Message-Id: <20191210212108.222514-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
+Subject: [PATCH v1] uml: make CONFIG_STATIC_LINK actually static
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com
+Cc:     johannes.berg@intel.com, linux-um@lists.infradead.org,
+        linux-kernel@vger.kernel.org, davidgow@google.com,
+        Brendan Higgins <brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Gurtovoy <maxg@mellanox.com>
+Currently, CONFIG_STATIC_LINK can be enabled with options which cannot
+be statically linked, namely UML_NET_VECTOR, UML_NET_VDE, and
+UML_NET_PCAP; this is because glibc tries to load NSS which does not
+support being statically linked. So make CONFIG_STATIC_LINK depend on
+!UML_NET_VECTOR && !UML_NET_VDE && !UML_NET_PCAP.
 
-[ Upstream commit 7718cf03c3ce4b6ebd90107643ccd01c952a1fce ]
-
-In case we don't set the sg_prot_tablesize, the scsi layer assign the
-default size (65535 entries). We should limit this size since we should
-take into consideration the underlaying device capability. This cap is
-considered when calculating the sg_tablesize. Otherwise, for example,
-we can get that /sys/block/sdb/queue/max_segments is 128 and
-/sys/block/sdb/queue/max_integrity_segments is 65535.
-
-Link: https://lore.kernel.org/r/1569359027-10987-1-git-send-email-maxg@mellanox.com
-Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Link: https://lore.kernel.org/lkml/f658f317-be54-ed75-8296-c373c2dcc697@cambridgegreys.com/#t
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- drivers/infiniband/ulp/iser/iscsi_iser.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/um/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.c b/drivers/infiniband/ulp/iser/iscsi_iser.c
-index 2e72fc5af1573..c4c015c604465 100644
---- a/drivers/infiniband/ulp/iser/iscsi_iser.c
-+++ b/drivers/infiniband/ulp/iser/iscsi_iser.c
-@@ -646,6 +646,7 @@ iscsi_iser_session_create(struct iscsi_endpoint *ep,
- 		if (ib_conn->pi_support) {
- 			u32 sig_caps = ib_dev->attrs.sig_prot_cap;
+diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+index 2a6d04fcb3e91..1ddc8745123f2 100644
+--- a/arch/um/Kconfig
++++ b/arch/um/Kconfig
+@@ -63,6 +63,7 @@ source "arch/$(HEADER_ARCH)/um/Kconfig"
  
-+			shost->sg_prot_tablesize = shost->sg_tablesize;
- 			scsi_host_set_prot(shost, iser_dif_prot_caps(sig_caps));
- 			scsi_host_set_guard(shost, SHOST_DIX_GUARD_IP |
- 						   SHOST_DIX_GUARD_CRC);
+ config STATIC_LINK
+ 	bool "Force a static link"
++	depends on !UML_NET_VECTOR && !UML_NET_VDE && !UML_NET_PCAP
+ 	default n
+ 	help
+ 	  This option gives you the ability to force a static link of UML.
+@@ -72,6 +73,9 @@ config STATIC_LINK
+ 	  Additionally, this option enables using higher memory spaces (up to
+ 	  2.75G) for UML.
+ 
++	  NOTE: This option is incompatible with some networking features which
++	  depend on features that require being dynamically loaded (like NSS).
++
+ config LD_SCRIPT_STATIC
+ 	bool
+ 	default y
 -- 
-2.20.1
+2.24.0.525.g8f36a354ae-goog
 
