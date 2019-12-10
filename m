@@ -2,131 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DAB91191D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:24:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B7A1191FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfLJUYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:24:51 -0500
-Received: from mga14.intel.com ([192.55.52.115]:46899 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726500AbfLJUYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:24:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 12:24:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,300,1571727600"; 
-   d="scan'208";a="203317843"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga007.jf.intel.com with ESMTP; 10 Dec 2019 12:24:49 -0800
-Date:   Tue, 10 Dec 2019 12:29:36 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        Joe Perches <joe@perches.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v5 0/8] VT-d Native Shared virtual memory cleanup and
- fixes
-Message-ID: <20191210122936.4e110666@jacob-builder>
-In-Reply-To: <8a437e65-f380-d5c8-6615-a4d9d3ef1c56@linux.intel.com>
-References: <1575316709-54903-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20191209091415.0a733af6@jacob-builder>
-        <8a437e65-f380-d5c8-6615-a4d9d3ef1c56@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726892AbfLJUa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:30:29 -0500
+Received: from mail-eopbgr760041.outbound.protection.outlook.com ([40.107.76.41]:43374
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726364AbfLJUa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 15:30:28 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ixkWlwjs5SaChlehXYg0ZhubwqjE54XeFJywMvSB5gLONFvgVh8yrWgsvalgUQl/hOF/RSTtZgsIXAK447TBDpot4NzUlKB0Z21ef5aeIJRkpxW3Dv0VXQrkbe9BfX2EgoE3PG6XFC0sawDpfRckfOv170NAklI4AhdSGAUp1+XqLkpI0L6+/Z0tKGyV1P8NM4toKibJpYc892oI624uCylAEuWLyqj/OQpxwmmYDeclSI6DI940EZAxv6N/NsA1i2XxOQ8UU7w+oiwi8ne8UjeSvfpT5HdqPPRCArbhHyRmd1dMBPMDhjtcQ1+Ob9O4G8u9S3fvDGAMu5vF9YnBkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dCyvppKbKI0qwsCNf/PsfxLZC0SBZCyE6Yrsf7k+GlE=;
+ b=Ndbk4+J8k3HSQ5sj6RaP1Sk7fz2PQ7PkXLf8Akhc8s4Z8Dm7txx2B50lX80ik9bYlNeQfMM6hLzz/w430IPCcgKf/XwL1a2GZkjkASG1R8j2QV9USIpPKzP94Hikt7Urky8bclv0/QcXctXrXeuqFGw27sBOi4PkLaw73N3ss7Xo8MZCIEkme4xvmt4ALAsjTfsOqxdJV8C+F9LsyYAfeMGEdbd2a/OryicicXMAQNt6xcqGIA5r/5a8TbKcwmy1hx7NBAcjIV9D1FtwlfgPC/iK+IUewgfRBM2EKvZBKfpV8lWY5xZXVptHWD1fl82mweGEGww3USou6bg69g/bTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dCyvppKbKI0qwsCNf/PsfxLZC0SBZCyE6Yrsf7k+GlE=;
+ b=QIL3h0O4IfO75c5n5V7YQsQq2GKzcqm4qAPtpsZc13iFLLK1R6R7RPjwu9udm5SmTz1EnfiVgzfe8z1nEPC5QFJLKKqITu3oiMtjJJKF5PCgFssDjPjAIZcFb0YIZY/CNztIZ6z9gEmeYCENEGHPhs+nuwuVlaLRrTpQJPHEKUU=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Nicholas.Kazlauskas@amd.com; 
+Received: from BYAPR12MB3560.namprd12.prod.outlook.com (20.178.197.10) by
+ BYAPR12MB2744.namprd12.prod.outlook.com (20.176.255.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.20; Tue, 10 Dec 2019 20:30:26 +0000
+Received: from BYAPR12MB3560.namprd12.prod.outlook.com
+ ([fe80::81f8:ed8a:e30e:adb0]) by BYAPR12MB3560.namprd12.prod.outlook.com
+ ([fe80::81f8:ed8a:e30e:adb0%7]) with mapi id 15.20.2516.018; Tue, 10 Dec 2019
+ 20:30:25 +0000
+Subject: Re: [PATCH] drm/amd/display: include linux/slab.h where needed
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Eric Yang <Eric.Yang2@amd.com>, Roman Li <Roman.Li@amd.com>,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Michael Strauss <michael.strauss@amd.com>,
+        dri-devel@lists.freedesktop.org,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+References: <20191210195941.931745-1-arnd@arndb.de>
+From:   "Kazlauskas, Nicholas" <nicholas.kazlauskas@amd.com>
+Message-ID: <cded03ab-40fe-a904-7b1f-5b3623bb7af4@amd.com>
+Date:   Tue, 10 Dec 2019 15:30:21 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+In-Reply-To: <20191210195941.931745-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YTBPR01CA0015.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:14::28) To BYAPR12MB3560.namprd12.prod.outlook.com
+ (2603:10b6:a03:ae::10)
+MIME-Version: 1.0
+X-Originating-IP: [165.204.55.250]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 887df509-16fd-41ff-be5d-08d77dafc9bc
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2744:|BYAPR12MB2744:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BYAPR12MB2744545568DF8001C71C663AEC5B0@BYAPR12MB2744.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-Forefront-PRVS: 02475B2A01
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(366004)(136003)(376002)(39860400002)(199004)(189003)(2906002)(36756003)(4001150100001)(54906003)(52116002)(2616005)(26005)(53546011)(316002)(6506007)(81166006)(81156014)(110136005)(8676002)(66476007)(31686004)(8936002)(478600001)(31696002)(86362001)(4326008)(186003)(6666004)(66946007)(66556008)(6512007)(5660300002)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2744;H:BYAPR12MB3560.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PhVw+sDhY+X6TWmj8G1oWP3GlXom8fireg8F24HBnvkORYa2m0LfHN+W0Q2a0uWZlweH4xl/RD9zvfRgy3XLwqnybfqyCMiQt4sXUqyaTnC9Q92t4bQJgzMldt+YpciPR03Mvrbl9DcJPHYaWEJzLtNkiN2BvJIzlXdQwbxdYyzOPNHPs4pAqeqFOL6pRHyTCjpSqoviCSUvScPnlDUq3VYyOgFDi7njzMQY4eNooLoq0DCH/QV5C0BwtQO/3HgEqRw7AX4rZNSYRCN7Y+8Zx2THzdMYM9Sfjn4Zs7PecZwqIZrDrdQO7XlGfpMWolLooG8brtZmaP96gyDB4X/bdkf5peP/1fkUGN5eLky21B+mDZr4C7qYOjBAqxowyfr3yjg77Bc1UPNCO4BCm2b/B8n2LqjayhL7t5FndfRJw7l/mDGPGKDYn55gbofF4qtH
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 887df509-16fd-41ff-be5d-08d77dafc9bc
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2019 20:30:25.7041
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MvmUZm89pFyTxanMR3yIaoqnIf1ESN7jQ8YpEzDim+l3hT8wtlMNquy8zLj76sVrDiVeIHGvqArYva5QDjgipA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2744
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019 09:14:07 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
-
-> Hi Jacob,
+On 2019-12-10 2:59 p.m., Arnd Bergmann wrote:
+> Calling kzalloc() and related functions requires the
+> linux/slab.h header to be included:
 > 
-> This has been queued for internal test. I will forward it to Joerg if
-> everything goes well (probably around rc4).
+> drivers/gpu/drm/amd/amdgpu/../display/dc/dcn21/dcn21_resource.c: In function 'dcn21_ipp_create':
+> drivers/gpu/drm/amd/amdgpu/../display/dc/dcn21/dcn21_resource.c:679:3: error: implicit declaration of function 'kzalloc'; did you mean 'd_alloc'? [-Werror=implicit-function-declaration]
+>     kzalloc(sizeof(struct dcn10_ipp), GFP_KERNEL);
 > 
-Thanks for the confirmation. I will send out further patches based on
-this series.
-
-
-> Best regards,
-> -baolu
+> A lot of other headers also miss a direct include in this file,
+> but this is the only one that causes a problem for now.
 > 
-> On 12/10/19 1:14 AM, Jacob Pan wrote:
-> > Hi Joerg and Baolu,
-> > 
-> > Any more comments on this series? I rebased it on v5.5-rc1 without
-> > changes.
-> > 
-> > 
-> > Thanks,
-> > 
-> > Jacob
-> > 
-> > On Mon,  2 Dec 2019 11:58:21 -0800
-> > Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
-> >   
-> >> Mostly extracted from nested SVA/SVM series based on review
-> >> comments of v7. https://lkml.org/lkml/2019/10/24/852
-> >>
-> >> This series also adds a few important fixes for native use of SVA.
-> >> Nested SVA new code will be submitted separately as a smaller set.
-> >> Based on the core branch of IOMMU tree staged for v5.5, where
-> >> common APIs for vSVA were applied.
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git core
-> >>
-> >> Changelog:
-> >> v5	- Regrouped patch 6 and 8, added comments suggested by
-> >> Joe Perches v4	- Commit message fix
-> >>
-> >> V3
-> >> 	- Squashed 1/10 & 2/10
-> >> 	- Deleted "8/10 Fix PASID cache flush" from this series
-> >> 	- Addressed reviews from Eric Auger and Baolu
-> >> V2
-> >> 	- Coding style fixes based on Baolu's input, no functional
-> >> change
-> >> 	- Added Acked-by tags.
-> >>
-> >> Thanks,
-> >>
-> >> Jacob
-> >>
-> >>
-> >> *** BLURB HERE ***
-> >>
-> >> Jacob Pan (8):
-> >>    iommu/vt-d: Fix CPU and IOMMU SVM feature matching checks
-> >>    iommu/vt-d: Match CPU and IOMMU paging mode
-> >>    iommu/vt-d: Reject SVM bind for failed capability check
-> >>    iommu/vt-d: Avoid duplicated code for PASID setup
-> >>    iommu/vt-d: Fix off-by-one in PASID allocation
-> >>    iommu/vt-d: Replace Intel specific PASID allocator with IOASID
-> >>    iommu/vt-d: Avoid sending invalid page response
-> >>    iommu/vt-d: Misc macro clean up for SVM
-> >>
-> >>   drivers/iommu/Kconfig       |   1 +
-> >>   drivers/iommu/intel-iommu.c |  23 +++----
-> >>   drivers/iommu/intel-pasid.c |  96 ++++++++------------------
-> >>   drivers/iommu/intel-svm.c   | 163
-> >> +++++++++++++++++++++++++-------------------
-> >> include/linux/intel-iommu.h |   5 +- 5 files changed, 135
-> >> insertions(+), 153 deletions(-)
-> >>  
-> > 
-> > [Jacob Pan]
-> >   
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-[Jacob Pan]
+What version of the kernel are you building?
+
+We have:
+
+#include <linux/slab.h>
+
+in os_types.h which gets included as part of this file:
+
+#include <dc.h> -> #include <dc_types.h> -> #include <os_types.h>
+
+Nicholas Kazlauskas
+
+> ---
+>   drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
+> index 906c84e6b49b..af57885bbff2 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
+> @@ -23,6 +23,8 @@
+>    *
+>    */
+>   
+> +#include <linux/slab.h>
+> +
+>   #include "dm_services.h"
+>   #include "dc.h"
+>   
+> 
+
