@@ -2,127 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 412E2118FF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:47:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42DD6118FFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:48:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfLJSrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 13:47:11 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:39430 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbfLJSrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 13:47:11 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iekXN-00086y-OQ; Tue, 10 Dec 2019 11:47:10 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iekXL-0006H8-U5; Tue, 10 Dec 2019 11:47:07 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        kernel test robot <rong.a.chen@intel.com>
-Date:   Tue, 10 Dec 2019 11:47:04 -0700
-Message-Id: <20191210184704.24081-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727730AbfLJSsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 13:48:39 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46946 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbfLJSsi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 13:48:38 -0500
+Received: by mail-lf1-f65.google.com with SMTP id f15so13749848lfl.13
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:48:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BOSCVw9bioi+5hxnz7bz/OpGazg6+xs3kBeEbrtXG48=;
+        b=Pcg4dJHJx81bsDelVo2J311YXVKJfxTmtD9q4K/3ixqYZ3o9fcUZASvkvpmsNECc2m
+         goyWlV33/Y8CabpTc3jtAu198H4wWXtuNEOLsTX9j6W1blZgb9ZTwXUjsO0keytLEoFo
+         HSRPniaTF99B5LfPCNLoU/RQTDtXK0m3ygND4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BOSCVw9bioi+5hxnz7bz/OpGazg6+xs3kBeEbrtXG48=;
+        b=jO3S8pzTEcM6pCeOx/tR/2hbiQ0NR1iq7g59NIKOZkrVjUnFD+XVRsUvWtUSPohYf7
+         pXiTWrue4UGZY8P6kNAw8RdBiwRJSJDxFRAKPQy5AoiZz8f7D7nK3IkIp2U6qpaFj1gh
+         Iq53hdbjKftc7ZsBja2EOLBPCtFjb1bq+8gT0DtJFdHFXLhCwxfIixwuUGV9dtmt8+8z
+         5aFJ6q+721vLGEQwjPQBrFfgVcN1LZzWeSw6xsJJovQo5ijW2NSgosYSTwG785nlHpmL
+         H52UanuyMSFSLCUDHl34JIEZzDsMGinWLk81W/iwMaTK0h2Y9jOpDL9Z+k+uJrHo4qMD
+         rLAA==
+X-Gm-Message-State: APjAAAXpEyfXwTJOwLEE6HOeZ/FlwQ7/jqB8Ykdo9cxzvwawDhfK3QdR
+        ZJ7Z01MGbqvdwZC7GzP9aRsU81zYWGA=
+X-Google-Smtp-Source: APXvYqzomwaaHIXctcQoYmBZzzidNSKnULCQrfiWxyzRzThbPRF4rwhaj8WBVXxgujhd0Tzm29lL6Q==
+X-Received: by 2002:a19:cc49:: with SMTP id c70mr13042717lfg.73.1576003716094;
+        Tue, 10 Dec 2019 10:48:36 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id v14sm2246685ljv.105.2019.12.10.10.48.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2019 10:48:34 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id i23so2116235lfo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:48:34 -0800 (PST)
+X-Received: by 2002:a19:23cb:: with SMTP id j194mr8691484lfj.79.1576003713698;
+ Tue, 10 Dec 2019 10:48:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, axboe@kernel.dk, hch@lst.de, torvalds@linux-foundation.org, logang@deltatee.com, rong.a.chen@intel.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH] block: fix NULL pointer dereference in account statistics with IDE
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20191107000917.1092409-1-bjorn.andersson@linaro.org> <20191107000917.1092409-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20191107000917.1092409-3-bjorn.andersson@linaro.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 10 Dec 2019 10:47:57 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5mLSqsJzj=DtesH3G68_wSKUr8rZ5iubOerimQmZKegA@mail.gmail.com>
+Message-ID: <CAE=gft5mLSqsJzj=DtesH3G68_wSKUr8rZ5iubOerimQmZKegA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] phy: qcom-qmp: Increase PHY ready timeout
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IDE driver creates some passthru requests which never get
-submitted to the block layer in such a way that blk_account_io_start()
-gets called. However, the driver still calls __blk_mq_end_request() in
-ide_end_rq() which will call blk_account_io_completion() which tries
-to dereferences req->part which is never set. See ide_prep_sense() for
-an example of where these requests come from.
+On Wed, Nov 6, 2019 at 4:09 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> It's typical for the QHP PHY to take slightly above 1ms to initialize,
+> so increase the timeout of the PHY ready check to 10ms - as already done
+> in the downstream PCIe driver.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-To fix this, blk_account_io_completion() and blk_account_io_done()
-should do nothing if req->part is not set.
+Tested-by: Evan Green <evgreen@chromium.org>
 
-The back trace of this bug is:
-
-    BUG: kernel NULL pointer dereference, address: 000002ac
-    #PF: supervisor write access in kernel mode
-    #PF: error_code(0x0002) - not-present page
-    *pde = 00000000
-    Oops: 0002 [#1]
-    CPU: 0 PID: 237 Comm: kworker/0:1H Not tainted
-    5.4.0-rc2-00011-g48d9b0d43105e #1
-    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1
-    04/01/2014
-    Workqueue: kblockd drive_rq_insert_work
-    EIP: blk_account_io_completion+0x7a/0xf0
-    Code: 89 54 24 08 31 d2 89 4c 24 04 31 c9 c7 04 24 02 00 00 00 c1 ee
-    09 e8 f5 21 a6 ff e8 70 5c a7 ff 8b 53 60 8d 04 bd 00 00 00 00 <01> b4
-    02 ac 02 00 00 8b 9a 88 02 00 00 85 db 74 11 85 d2 74 51 8b
-    EAX: 00000000 EBX: f5b80000 ECX: 00000000 EDX: 00000000
-    ESI: 00000000 EDI: 00000000 EBP: f3031e70 ESP: f3031e54
-    DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010046
-    CR0: 80050033 CR2: 000002ac CR3: 03c25000 CR4: 000406d0
-    Call Trace:
-     <IRQ>
-      blk_update_request+0x85/0x420
-      ide_end_rq+0x38/0xa0
-      ide_complete_rq+0x3d/0x70
-      cdrom_newpc_intr+0x258/0xba0
-      ide_intr+0x135/0x250
-      __handle_irq_event_percpu+0x3e/0x250
-      handle_irq_event_percpu+0x1f/0x50
-      handle_irq_event+0x32/0x60
-      handle_level_irq+0x6c/0x110
-      handle_irq+0x72/0xa0
-      </IRQ>
-      do_IRQ+0x45/0xad
-      common_interrupt+0x115/0x11c
-
-Fixes: 48d9b0d43105 ("block: account statistics for passthrough requests")
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- block/blk-core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index a1e228752083..68c309ce6735 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1310,7 +1310,7 @@ EXPORT_SYMBOL_GPL(blk_rq_err_bytes);
- 
- void blk_account_io_completion(struct request *req, unsigned int bytes)
- {
--	if (blk_do_io_stat(req)) {
-+	if (req->part && blk_do_io_stat(req)) {
- 		const int sgrp = op_stat_group(req_op(req));
- 		struct hd_struct *part;
- 
-@@ -1328,7 +1328,8 @@ void blk_account_io_done(struct request *req, u64 now)
- 	 * normal IO on queueing nor completion.  Accounting the
- 	 * containing request is enough.
- 	 */
--	if (blk_do_io_stat(req) && !(req->rq_flags & RQF_FLUSH_SEQ)) {
-+	if (req->part && blk_do_io_stat(req) &&
-+	    !(req->rq_flags & RQF_FLUSH_SEQ)) {
- 		const int sgrp = op_stat_group(req_op(req));
- 		struct hd_struct *part;
- 
--- 
-2.20.1
-
+Should this have a Fixes tag for 14ced7e3a1ae9 ("phy: qcom-qmp:
+Correct ready status, again")?
