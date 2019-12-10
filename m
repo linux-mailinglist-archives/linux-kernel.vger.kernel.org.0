@@ -2,99 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2CF51183B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:36:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DB201183C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:38:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfLJJgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:36:16 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:45254 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727291AbfLJJgP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:36:15 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBA9aCG4130984;
-        Tue, 10 Dec 2019 03:36:12 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575970572;
-        bh=WGtf1IKDe8ENBK+5xcPhUCNaggU+OnMoFiPYYV9HOwg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=cy5BJsHXeyVzi7MYSE4OakI/GqWb15wr0Ov94TLB8vvbrvqe/ox0y75fFCIA1WEB6
-         HY6itZpz6VA7moWHJvTNC6P0D0Vhx6JGtn55Nj81PdJAZnpuuhXsRK5mWvJTXg2g2R
-         OQgxsTPZPFbYPId+LeHCUqFxh1TTH40CG6jw2ENc=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBA9aCAi124687
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 10 Dec 2019 03:36:12 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 10
- Dec 2019 03:36:11 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 10 Dec 2019 03:36:11 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBA9a9qj023647;
-        Tue, 10 Dec 2019 03:36:10 -0600
-Subject: Re: [PATCH] mmc: sdhci: Update the tuning failed messages to pr_debug
- level
-To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>
-References: <20191206114326.15856-1-faiz_abbas@ti.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <9199c781-399b-8b7e-8454-6d67f41f48bb@ti.com>
-Date:   Tue, 10 Dec 2019 15:07:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727116AbfLJJis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:38:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726915AbfLJJir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 04:38:47 -0500
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4C8420663;
+        Tue, 10 Dec 2019 09:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575970726;
+        bh=x8aJSKAR2dIcqW/3ygcQgBy7sFiK4/Pal+Rxa3TK9bs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G2wZbUfdFX5wnoE/mSAwvP5ItTCOw02h6V/j2Gvd9/c8HLEU97Tsgd2+g7rQjFO2G
+         JalyFsWwXq63jgAWnCu23skt6W7K1HVeyXNiBWfQ7jkmrMfjq82r7XnlWn4mZiMCuA
+         Cy5tHjk+7PtkNt/w35f+OckD5so4qhG66KVaBaBo=
+Date:   Tue, 10 Dec 2019 10:38:43 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] arm64: dts: allwinner: Convert license to SPDX
+ identifier
+Message-ID: <20191210093843.qoypomttr4b7kbep@gilmour.lan>
+References: <20191209182024.20509-1-peron.clem@gmail.com>
+ <20191209182024.20509-2-peron.clem@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191206114326.15856-1-faiz_abbas@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191209182024.20509-2-peron.clem@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Cl=E9ment,
 
-On 06/12/19 5:13 pm, Faiz Abbas wrote:
-> Tuning support in DDR50 speed mode was added in SD Specifications Part1
-> Physical Layer Specification v3.01. Its not possible to distinguish
-> between v3.00 and v3.01 from the SCR and that is why since
-> commit 4324f6de6d2e ("mmc: core: enable CMD19 tuning for DDR50 mode")
-> tuning failures are ignored in DDR50 speed mode.
-> 
-> Cards compatible with v3.00 don't respond to CMD19 in DDR50 and this
-> error gets printed during enumeration and also if retune is triggered at
-> any time during operation. Update the printk level to pr_debug so that
-> these errors don't lead to false error reports.
-> 
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+On Mon, Dec 09, 2019 at 07:20:23PM +0100, Cl=E9ment P=E9ron wrote:
+> Use a shorter SPDX identifier instead of pasting the
+> whole license.
+>
+> Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
 > ---
->  drivers/mmc/host/sdhci.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 296d955ede59..42a9c8179da7 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -2417,8 +2417,8 @@ static int __sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
->  		sdhci_send_tuning(host, opcode);
->  
->  		if (!host->tuning_done) {
-> -			pr_info("%s: Tuning timeout, falling back to fixed sampling clock\n",
-> -				mmc_hostname(host->mmc));
-> +			pr_debug("%s: Tuning timeout, falling back to fixed sampling clock\n",
-> +				 mmc_hostname(host->mmc));
->  			sdhci_abort_tuning(host, opcode);
->  			return -ETIMEDOUT;
->  		}
-> 
+>  arch/arm64/boot/dts/allwinner/axp803.dtsi     | 39 +------------------
+>  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 39 +------------------
+>  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 39 +------------------
+>  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 39 +------------------
+>  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 39 +------------------
+>  .../dts/allwinner/sun50i-a64-pine64-plus.dts  | 39 +------------------
+>  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 39 +------------------
+>  .../allwinner/sun50i-a64-sopine-baseboard.dts | 39 +------------------
+>  .../boot/dts/allwinner/sun50i-a64-sopine.dtsi | 39 +------------------
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 39 +------------------
+>  .../allwinner/sun50i-h5-nanopi-neo-plus2.dts  | 39 +------------------
+>  .../dts/allwinner/sun50i-h5-nanopi-neo2.dts   | 39 +------------------
+>  .../dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 39 +------------------
+>  .../allwinner/sun50i-h5-orangepi-prime.dts    | 39 +------------------
+>  .../sun50i-h5-orangepi-zero-plus2.dts         | 39 +------------------
+>  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  | 39 +------------------
+>  16 files changed, 16 insertions(+), 608 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/axp803.dtsi b/arch/arm64/boot/=
+dts/allwinner/axp803.dtsi
+> index f0349ef4bfdd..0e13e75132ac 100644
+> --- a/arch/arm64/boot/dts/allwinner/axp803.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/axp803.dtsi
+> @@ -1,43 +1,6 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR X11)
+>  /*
+>   * Copyright 2017 Icenowy Zheng <icenowy@aosc.xyz>
+> - *
+> - * This file is dual-licensed: you can use it either under the terms
+> - * of the GPL or the X11 license, at your option. Note that this dual
+> - * licensing only applies to this file, and not this project as a
+> - * whole.
+> - *
+> - *  a) This file is free software; you can redistribute it and/or
+> - *     modify it under the terms of the GNU General Public License as
+> - *     published by the Free Software Foundation; either version 2 of the
+> - *     License, or (at your option) any later version.
+> - *
+> - *     This file is distributed in the hope that it will be useful,
+> - *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - *     GNU General Public License for more details.
+> - *
+> - * Or, alternatively,
+> - *
+> - *  b) Permission is hereby granted, free of charge, to any person
+> - *     obtaining a copy of this software and associated documentation
+> - *     files (the "Software"), to deal in the Software without
+> - *     restriction, including without limitation the rights to use,
+> - *     copy, modify, merge, publish, distribute, sublicense, and/or
+> - *     sell copies of the Software, and to permit persons to whom the
+> - *     Software is furnished to do so, subject to the following
+> - *     conditions:
+> - *
+> - *     The above copyright notice and this permission notice shall be
+> - *     included in all copies or substantial portions of the Software.
+> - *
+> - *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> - *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> - *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> - *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> - *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> - *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> - *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> - *     OTHER DEALINGS IN THE SOFTWARE.
+>   */
 
-Gentle ping.
+Thanks for sending a new iteration of this. I had a look at the
+licenses texts associated to the SPDX tag in the LICENSES folder, and
+it turns out that the tag we should be using for that text is
+MIT. While we mention X11 in the header, the text associated to the
+X11 license isn't the one we have in our headers.
 
-Thanks,
-Faiz
+I guess we should make very clear in the commit log that even though
+the tag now reports MIT, this maps to the same license text and is not
+therefore a license change.
+
+Thanks!
+Maxime
