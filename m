@@ -2,122 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C97119F77
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 00:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AABF9119F69
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 00:30:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfLJXfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 18:35:31 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37658 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbfLJXf0 (ORCPT
+        id S1727347AbfLJXaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 18:30:46 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:36633 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725999AbfLJXaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 18:35:26 -0500
-Received: by mail-wr1-f65.google.com with SMTP id w15so22109824wru.4
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 15:35:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bz/VQlnz1v5AapS+5W6yfHgO6/GtfVjJurkUMo3Qj+c=;
-        b=XMiO3uR/UOvB8/0OkYcGo0WzEqQthD3zK9VQDl1SgddDSMaOSCwhiuLqBrm5kd2LDq
-         LCvn5ToNLJXtSnw1XMcptooNxusKlNCtsIbm3VgOfIx3Z/Rs6/KdC9/f67x8YYFarIJY
-         8AiQIBM2DvN+jLNA+pMpQoJ0m6Ruj3zlMSM+/vDcKu25b97NDbSG4TOJp7dqJKkT4I3I
-         Vz7nvOQ8ZvgLcUTFUY4d75hKbjjUYtL1y09agbpek9YYyq9xH/ozZskvupcHIMOCaCRa
-         kjNR1yRdDlw8Ow4sorCd+JTxm0+OAyVPZtRTYaZKE5G1Stk8SEAvE0z/ul2rGUl0uqBF
-         O1og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bz/VQlnz1v5AapS+5W6yfHgO6/GtfVjJurkUMo3Qj+c=;
-        b=rh75pJW9wBRPdWVUwwsDTDrUO2L9/lRCU5PflRm7ycqmu+oNiiVBbX8UCh2iVt8oGY
-         4hIYddq330cu97d5bsvMfrJtlwaKbd//SMrK11Rx7YTnYUn5GKF8/igHF4bhUfI14B47
-         Gx3vRj8C2q+ofntoGxJTBu5LGdOfAFSMWyB2jzCj7Z6N6FqH5asdkdXiLm9KdfcV12lH
-         P3QrxLsk0dvr1I0sXKq0jliMdVlDIU2q2bRi/KYiKUDbfw7g/A6oNxhIitQvR2oT8Gvh
-         VUkqR5MBeyC5c2550JdzSQaT/6yI3G/KHUszpJkttTm81lgBdv4lxDGwkbAqwbmBwKdo
-         3iPQ==
-X-Gm-Message-State: APjAAAUwJ4cYd1VAQO+vkbyOkSz7yhtUJmfbcMG3RqT/80XwrI9lbSQH
-        Fspv3R4kV7s+rucZwxBxjUY=
-X-Google-Smtp-Source: APXvYqwIv3ahhcp5oA0qthC+C2oIZVWxnkywGlQdzWkYiCi0KoHVvw+BTTuKL/H1IUVai4VYIn36Uw==
-X-Received: by 2002:adf:ebc1:: with SMTP id v1mr85673wrn.351.1576020925098;
-        Tue, 10 Dec 2019 15:35:25 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id n16sm59478wro.88.2019.12.10.15.35.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 15:35:24 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
-        ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/4] soc: bcm: brcmstb: biuctrl: Update programming for 7211
-Date:   Tue, 10 Dec 2019 15:30:43 -0800
-Message-Id: <20191210233043.15193-5-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191210233043.15193-1-f.fainelli@gmail.com>
-References: <20191210233043.15193-1-f.fainelli@gmail.com>
+        Tue, 10 Dec 2019 18:30:46 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id A872122627;
+        Tue, 10 Dec 2019 18:30:44 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Tue, 10 Dec 2019 18:30:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=KewIFKwD0k1qZtpv8/vXSRFOEyol5yj
+        yCj+BNo+n0KQ=; b=cgpB9lst8+3l5mRDQ3IEKYJP8mRmKqsQHbS9WT+5OBxKoyo
+        0jbY5bLqMXyhv+ioPdmaOW17z1aU1LYJFMOaygIN1fR5C6hD0V20hMo3BT1LlzLA
+        IFG7ukqYAz84x4IY5BZ9rHr/LlXmLJvlQSKl5oOyQIXoyu9JNXJMrYYJ0e9pgqtB
+        wpLokJZ9pn9rf1f0jECc40WAKf9ZnJa9/w4Vckq9bRM6D2EQSHG/lWl7CrecQ8Sq
+        +VmUofEt2v/MRHcRs5Jwg7oO/EILnXoFUVbuvhMpSecrKX6NlW0mqMnjx/Q3vNS3
+        D0LSNz8YUsXo7Miwi1GN0zEVANPGe3tnPG+RcQg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=KewIFK
+        wD0k1qZtpv8/vXSRFOEyol5yjyCj+BNo+n0KQ=; b=rMYazVOwcL2T/FbaAPnmYz
+        D7NeDJOu5c9BanlfZi2xOoEcLtm4Y4TD4jTiQxdZWAuyUOMFXk6pDSnknI4x38Lu
+        tJ0nQ12FAqaQN/mX3vdTal8CZhXTG2aDLeOcD7e/k0ejsTrKYzvgJKQ/gZV8QM52
+        kqxr/s+IfBN3UbXkFOwF4NC4IKvS1cQo1KJ7/c2jOHyXQmM2zXo+yf6MNmx/0Zyl
+        MafMOJJpplZFsQpJp4jLQc5AMKLRKphdscC/UAgJhpYmBvi1Kmf5ULWutDPQs1AD
+        kg6pT/Lintk1AotWOI1QaTi+SertEteS3iw/Ano7y4fGmMlkxbD3eSiKVCMLPymQ
+        ==
+X-ME-Sender: <xms:oyrwXbX5h3bcQzK2DXOMAW8HNHvBsiI5Cw0JFwXweYJ-nj5-eD7A0w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudelgedgtdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:oyrwXbf6xOV5QTAYLLJmzVLmiVzjJntDeC9Gxnl5X6edn89nmRNomw>
+    <xmx:oyrwXWyJhlRmEslO2GvRoY6pRmofVGsNHtmrvfXGU3YZsWRoNTiHyQ>
+    <xmx:oyrwXeESoUgQX5dfbVu4_HfW6xkNOCkSNstbdpHRrcXN81s-iyEDow>
+    <xmx:pCrwXdf5OC7zCLBhZGpyIiWJFRlRpNyfBH46x4hEBkrV_EXNYzbu0A>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 219FCE00A2; Tue, 10 Dec 2019 18:30:43 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-679-g1f7ccac-fmstable-20191210v1
+Mime-Version: 1.0
+Message-Id: <e8d37ccd-ffe3-4969-b2db-9519e68da086@www.fastmail.com>
+In-Reply-To: <1575566112-11658-2-git-send-email-eajames@linux.ibm.com>
+References: <1575566112-11658-1-git-send-email-eajames@linux.ibm.com>
+ <1575566112-11658-2-git-send-email-eajames@linux.ibm.com>
+Date:   Wed, 11 Dec 2019 10:02:22 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, "Jason Cooper" <jason@lakedaemon.net>,
+        linux-aspeed@lists.ozlabs.org, "Marc Zyngier" <maz@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
+        mark.rutland@arm.com, "Joel Stanley" <joel@jms.id.au>
+Subject: =?UTF-8?Q?Re:_[PATCH_v2_01/12]_dt-bindings:_interrupt-controller:_Add_As?=
+ =?UTF-8?Q?peed_SCU_interrupt_controller?=
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a matching entry for 7211 which can be programmed with the same
-BIUCTRL settings as other Brahma-B53 based SoCs. While at it, rename the
-function to include a72 in the name to reflect this applies to both
-types of 64-bit capable CPUs that we support (Brahma-B53 and
-Cortex-A72).
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/soc/bcm/brcmstb/biuctrl.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/soc/bcm/brcmstb/biuctrl.c b/drivers/soc/bcm/brcmstb/biuctrl.c
-index d766577bc5d4..61731e01f94b 100644
---- a/drivers/soc/bcm/brcmstb/biuctrl.c
-+++ b/drivers/soc/bcm/brcmstb/biuctrl.c
-@@ -107,7 +107,8 @@ static int __init mcp_write_pairing_set(void)
- 	return 0;
- }
- 
--static const u32 b53_mach_compat[] = {
-+static const u32 a72_b53_mach_compat[] = {
-+	0x7211,
- 	0x7216,
- 	0x7255,
- 	0x7260,
-@@ -116,19 +117,19 @@ static const u32 b53_mach_compat[] = {
- 	0x7278,
- };
- 
--static void __init mcp_b53_set(void)
-+static void __init mcp_a72_b53_set(void)
- {
- 	unsigned int i;
- 	u32 reg;
- 
- 	reg = brcmstb_get_family_id();
- 
--	for (i = 0; i < ARRAY_SIZE(b53_mach_compat); i++) {
--		if (BRCM_ID(reg) == b53_mach_compat[i])
-+	for (i = 0; i < ARRAY_SIZE(a72_b53_mach_compat); i++) {
-+		if (BRCM_ID(reg) == a72_b53_mach_compat[i])
- 			break;
- 	}
- 
--	if (i == ARRAY_SIZE(b53_mach_compat))
-+	if (i == ARRAY_SIZE(a72_b53_mach_compat))
- 		return;
- 
- 	/* Set all 3 MCP interfaces to 8 credits */
-@@ -261,7 +262,7 @@ static int __init brcmstb_biuctrl_init(void)
- 		return ret;
- 	}
- 
--	mcp_b53_set();
-+	mcp_a72_b53_set();
- #ifdef CONFIG_PM_SLEEP
- 	register_syscore_ops(&brcmstb_cpu_credit_syscore_ops);
- #endif
--- 
-2.17.1
+On Fri, 6 Dec 2019, at 03:45, Eddie James wrote:
+> Document the Aspeed SCU interrupt controller and add an include file
+> for the interrupts it provides.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> Changes since v1:
+>  - Remove 'reg' required property.
 
+Hmm, I have a series that rearranges the SCU bindings to fix up some
+issues we have with dtc warnings. I'm happy for this to go in now as it's
+consistent with what we have as my patches are not yet merged,  but
+we should circle back later.
+
+Acked-by: Andrew Jeffery <andrew@aj.id.au>
