@@ -2,84 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3738119186
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:07:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7570119196
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 21:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfLJUHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 15:07:33 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46277 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbfLJUHc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:07:32 -0500
-Received: by mail-oi1-f193.google.com with SMTP id a124so10988077oii.13
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 12:07:32 -0800 (PST)
+        id S1726771AbfLJULa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 15:11:30 -0500
+Received: from mail-eopbgr1400130.outbound.protection.outlook.com ([40.107.140.130]:2513
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726364AbfLJULa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 15:11:30 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TENl+fk5ps4GBjrb7J4Ksn6hAyjTO87eVTOoy8gRy8YuKncvDCSSOPfMBCpT9whYQ+ihaDWu5bcEofkOjwKn4elKYI34q1Rgk4UrufpV/HH6No5E1XFPq0O9d/JlYtBdqyrC6XQrCqq3+7MlDranKfkW0Z3XV8OI9UmJ3vGwYkaS4vkuQ+ayhGbqK64c2bCZgdLq9u2H4GEUSWs0MAcSeGmCVgXHb7c6wZCJbY6fAgep97TLZX79ouJUir+x40uSTx1rLeFmJW0Lb8zGqSFiNaWpDmeRJivtF5SfEbInKNqHOVXyY1wA4soZfeQfvnjVNyVkm2sW3Yofg+ed5c8BfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xtkc3FFrT8Ge0fFYbXzKM91r3Fb4uYCErErWY2NKvIQ=;
+ b=IS9iLhtwP4vvqYrrxrrDWOrmfNY2jF2vohyMuxrWKWRyfrabgjhDcZLiakp27kX34inw3ILGfK/ympT4zWRhRnzhul8z+qQ1szM28jjIxXr0OVFK3s40VFV9ILglvp7zQoaDgIkAAn8H7gLsZdaTElPWxVkwbyNZEFjO8T4Obe0CbzsXjwiqzIbxhrBcGUzwKC78nLx5umd6M0Hfo+uTJnflJegaahDNoQ3bSsq8SY++M05QSRpvU+ZvRLLUpjkwD/JSAhaDIIrbbc6WfkQkZJi6qo4p6syNawhVomTLKI3gLL90kQ8JGZu1X+2XDZLrDbX3253G1/BXKscPP33mVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uQ5MRu7eBmHm6OUR1kwdbNENkUMzLBkNbzI6ewewfew=;
-        b=QFhl7FGH4yA/EbDNh1tBvUtjp++JicNkBw3DI3RZqee01B04Au/qmKS3Xhe1MHcy4O
-         ECOdiTwlIsP+XNKNVO15a4iowSTfQeQ/g2wtPzddiGndpmXwL30rHoIVk3OcgT5+KHFL
-         mV4d4CyJIKaRjL6KBD6PxtcxGo8Lhq0fRDs6IWX5zPTuVPRGUAu2VvwLgMK7nSCpDgI5
-         VvJ3FWJa/UsBY8xavAWhFP7VMuhS0FxHMiNEvEx6JRnEHKEG4odz+hhxRaKipFMLCNXF
-         TJxFrCwWn8XjhXw+ZZHjWfv7ZBvqQTKMqpyfxyap6U7Ri+65xeqpPwIXvGcW1TLOg76b
-         Y+rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uQ5MRu7eBmHm6OUR1kwdbNENkUMzLBkNbzI6ewewfew=;
-        b=K0OBAGQC7ZI+XEvHNTy2jYCdTbwwaQ72YQN35XBaMWNVLIkbnAwY0jwpAFmChy2ZX9
-         o9FtjBwA97ArCRI+zxlXt5x9LBFQdrk2VDUXVJ9H59WFYCbCUn8Ol5opNGLZYfkryioR
-         PLQpQbOzTHMOGcvWGbOOkxDo1AJgdj3viNvUjgvED3ljoMJGp26YafAHA9xwXh4PzP7q
-         j1vEnw3774vgH0s8dMSdx9petqYuYQbwpAiwe5xcnqzUKnqo6IRSqVijr7VLA5I1ioqj
-         3Ns/4OUrsSTXE8KgrlFrUIzG9XFcYtP3/xRnCypf0LlkWdIyHVnnwZs3pAsySY7bE4dj
-         BwqQ==
-X-Gm-Message-State: APjAAAW42tpeJqSTOA/prsj3mIvHUB3fk6KQaqhLkzG77DkxyjqdZgOI
-        jhIZdae9CtKhoL37DW8ov8uO3cIyEv4=
-X-Google-Smtp-Source: APXvYqz5nQOo/8Xd2Gow6+zdGyPViUZp2xjc9+dGPEHwXmsSqAF5+nQC6/w6YTilfrBBZnw6M4SOTg==
-X-Received: by 2002:a05:6808:210:: with SMTP id l16mr597004oie.95.1576008451827;
-        Tue, 10 Dec 2019 12:07:31 -0800 (PST)
-Received: from ?IPv6:2605:6000:e947:6500:6680:99ff:fe6f:cb54? ([2605:6000:e947:6500:6680:99ff:fe6f:cb54])
-        by smtp.googlemail.com with ESMTPSA id m2sm1728359oim.13.2019.12.10.12.07.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Dec 2019 12:07:31 -0800 (PST)
-Subject: Re: [PATCH][resend] sh: kgdb: Mark expected switch fall-throughs
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <87muc1yqip.wl-kuninori.morimoto.gx@renesas.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <4b099e66-973a-8e75-9f62-801fc3b2f594@landley.net>
-Date:   Tue, 10 Dec 2019 14:10:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <87muc1yqip.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=utf-8
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xtkc3FFrT8Ge0fFYbXzKM91r3Fb4uYCErErWY2NKvIQ=;
+ b=ZdBShLQ7v7bKozHxIlC8FqZxUHPum0dxJY1HN1+SYAmJ1Wqu5dDkh21FYQKGuD5TNkVJmsE+7/pse83dnBbMpmoyY+2/FQfaT+Ygusk4fe84crmgmFiQbJEPmNjW634wJbXWtWf9zyO+8xR7ZzC7jptKJm9Wg+N+S32b7xPV85w=
+Received: from OSAPR01MB3025.jpnprd01.prod.outlook.com (52.134.248.22) by
+ OSAPR01MB3105.jpnprd01.prod.outlook.com (52.134.248.202) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.14; Tue, 10 Dec 2019 20:11:25 +0000
+Received: from OSAPR01MB3025.jpnprd01.prod.outlook.com
+ ([fe80::52c:1c46:6bf0:f01f]) by OSAPR01MB3025.jpnprd01.prod.outlook.com
+ ([fe80::52c:1c46:6bf0:f01f%4]) with mapi id 15.20.2516.018; Tue, 10 Dec 2019
+ 20:11:25 +0000
+From:   Vincent Cheng <vincent.cheng.xh@renesas.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Richard Cochran <richardcochran@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Yangbo Lu <yangbo.lu@nxp.com>,
+        Antonio Borneo <antonio.borneo@st.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ptp: clockmatrix: add I2C dependency
+Thread-Topic: [PATCH] ptp: clockmatrix: add I2C dependency
+Thread-Index: AQHVr5QAx2lSMFz0fk6orfzUzEVPlqezzMcA
+Date:   Tue, 10 Dec 2019 20:11:25 +0000
+Message-ID: <20191210201111.GA20611@renesas.com>
+References: <20191210195648.811120-1-arnd@arndb.de>
+In-Reply-To: <20191210195648.811120-1-arnd@arndb.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [173.195.53.163]
+x-clientproxiedby: BYAPR05CA0006.namprd05.prod.outlook.com
+ (2603:10b6:a03:c0::19) To OSAPR01MB3025.jpnprd01.prod.outlook.com
+ (2603:1096:604:2::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vincent.cheng.xh@renesas.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ec537052-0f92-4956-68b3-08d77dad2209
+x-ms-traffictypediagnostic: OSAPR01MB3105:
+x-microsoft-antispam-prvs: <OSAPR01MB3105557C481FCA4363CB9AABD25B0@OSAPR01MB3105.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 02475B2A01
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(376002)(39860400002)(136003)(366004)(396003)(199004)(189003)(2616005)(5660300002)(8936002)(52116002)(1076003)(6512007)(2906002)(66476007)(6506007)(33656002)(6486002)(71200400001)(66556008)(8676002)(316002)(6916009)(54906003)(64756008)(4326008)(186003)(66446008)(26005)(86362001)(81156014)(81166006)(66946007)(478600001)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB3105;H:OSAPR01MB3025.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ErJ7pia/t9FKIa2qws7WflJ5X3ONLOCJHWWGHxpBnJm2dPLBgl4mDtU2Y/rAWVN+AEMBo5bHdlGDe7mPXUEwzfa6A4QtEo1wm9KBOrUPdYzUzk2awL1nBrQtH2j+IKWds9pwDY3Opnrqu9904IdoYXVC1IHr0ycwbkCsgjIVphHDZNH2+CkKBjyKCMJr9kf4J5cw90zzpLcHl6KRzZiOIl1/vXoAEiKI4xayT/j9ZbXgmhGxAg/dho/T71bIBZseIDNZaLOaMVffkvc3KwvmHndY0i/tkJHBMpKIQsLQFEeiLMC9YwcJfRu0hVk4QjTFpEkc2HE3cDO5xrA9or1VwUglKNUK/6kCX4IaO+dhI3Wee+eUxXj84TvkxfG0R80/rrKshug7HMHlXDnkul15TDaZyVAvQ2cvilw2Nuh5TLVsDcSPP3+C1Cz+ki2vjz9T
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <861C0A262AFA624491479A97B5F79F13@jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec537052-0f92-4956-68b3-08d77dad2209
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2019 20:11:25.3248
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QXn98qYNjiGbhRfvzaSMEIBLf2o1SuKyq2TLyR9DddNGPHPzZ3wy2WROXcEZFznrofue+jpE/ic54viOteIe1sM/uDUMsnlgoXYTHxI+6AU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/9/19 6:26 PM, Kuninori Morimoto wrote:
-> 
-> Hi Greg
-> 
-> I'm posting this patch from few month ago,
-> but it seems SH ML maintainer is not working in these days...
-
-There's two of them and they both are? (I spoke to Rich on IRC last week?)
-
-Rob
+T24gVHVlLCBEZWMgMTAsIDIwMTkgYXQgMDI6NTY6MzRQTSBFU1QsIEFybmQgQmVyZ21hbm4gd3Jv
+dGU6DQo+V2l0aG91dCBJMkMsIHdlIGdldCBhIGxpbmsgZmFpbHVyZToNCj4NCj5kcml2ZXJzL3B0
+cC9wdHBfY2xvY2ttYXRyaXgubzogSW4gZnVuY3Rpb24gYGlkdGNtX3hmZXIuaXNyYS4zJzoNCj5w
+dHBfY2xvY2ttYXRyaXguYzooLnRleHQrMHhjYyk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8gYGky
+Y190cmFuc2ZlcicNCj5kcml2ZXJzL3B0cC9wdHBfY2xvY2ttYXRyaXgubzogSW4gZnVuY3Rpb24g
+YGlkdGNtX2RyaXZlcl9pbml0JzoNCj5wdHBfY2xvY2ttYXRyaXguYzooLmluaXQudGV4dCsweDE0
+KTogdW5kZWZpbmVkIHJlZmVyZW5jZSB0byBgaTJjX3JlZ2lzdGVyX2RyaXZlcicNCj5kcml2ZXJz
+L3B0cC9wdHBfY2xvY2ttYXRyaXgubzogSW4gZnVuY3Rpb24gYGlkdGNtX2RyaXZlcl9leGl0JzoN
+Cj5wdHBfY2xvY2ttYXRyaXguYzooLmV4aXQudGV4dCsweDEwKTogdW5kZWZpbmVkIHJlZmVyZW5j
+ZSB0byBgaTJjX2RlbF9kcml2ZXInDQo+DQo+Rml4ZXM6IDNhNmJhN2RjNzc5OSAoInB0cDogQWRk
+IGEgcHRwIGNsb2NrIGRyaXZlciBmb3IgSURUIENsb2NrTWF0cml4LiIpDQo+U2lnbmVkLW9mZi1i
+eTogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4NCj4tLS0NCj4gZHJpdmVycy9wdHAvS2Nv
+bmZpZyB8IDIgKy0NCj4gMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9u
+KC0pDQo+DQo+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvcHRwL0tjb25maWcgYi9kcml2ZXJzL3B0cC9L
+Y29uZmlnDQo+aW5kZXggZGMzZDhlY2I0MjMxLi5lMzc3OTdjMGE4NWMgMTAwNjQ0DQo+LS0tIGEv
+ZHJpdmVycy9wdHAvS2NvbmZpZw0KPisrKyBiL2RyaXZlcnMvcHRwL0tjb25maWcNCj5AQCAtMTA3
+LDcgKzEwNyw3IEBAIGNvbmZpZyBQVFBfMTU4OF9DTE9DS19LVk0NCj4gDQo+IGNvbmZpZyBQVFBf
+MTU4OF9DTE9DS19JRFRDTQ0KPiAJdHJpc3RhdGUgIklEVCBDTE9DS01BVFJJWCBhcyBQVFAgY2xv
+Y2siDQo+LQlkZXBlbmRzIG9uIFBUUF8xNTg4X0NMT0NLDQo+KwlkZXBlbmRzIG9uIFBUUF8xNTg4
+X0NMT0NLICYmIEkyQw0KPiAJZGVmYXVsdCBuDQo+IAloZWxwDQo+IAkgIFRoaXMgZHJpdmVyIGFk
+ZHMgc3VwcG9ydCBmb3IgdXNpbmcgSURUIENMT0NLTUFUUklYKFRNKSBhcyBhIFBUUA0KPi0tIA0K
+DQpTb3JyeSwgdGhhdCB3YXMgZmxhZ2dlZCBieSAia2J1aWxkIHRlc3Qgcm9ib3QiIE5vdiAyNS4N
+Cg0KSSB3YXMgaW4gdGhlIHByb2Nlc3Mgb2YgY3JlYXRpbmcgYSBwYXRjaCBzZXJpZXMgd2l0aCBv
+dGhlciB1cGRhdGVzLA0KYnV0IHlvdSBiZWF0IG1lIHRvIHRoZSBwdW5jaC4gIFRoYW5rLXlvdS4N
+Cg0KUmV2aWV3ZWQtYnk6IFZpbmNlbnQgQ2hlbmcgIDx2aW5jZW50LmNoZW5nLnhoQHJlbmVzYXMu
+Y29tPg0KDQpSZWdhcmRzLA0KVmluY2VudA0K
