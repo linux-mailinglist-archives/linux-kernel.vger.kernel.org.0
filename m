@@ -2,119 +2,313 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B57C811879D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:05:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 130DF1187C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 13:13:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbfLJMFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 07:05:24 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2170 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727224AbfLJMFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 07:05:23 -0500
-Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id C2BBDA83A5038B61B74C;
-        Tue, 10 Dec 2019 12:05:21 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml708-cah.china.huawei.com (10.201.108.49) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 10 Dec 2019 12:05:21 +0000
-Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 10 Dec
- 2019 12:05:21 +0000
-Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity
- for managed interrupt
-To:     Marc Zyngier <maz@kernel.org>
-CC:     Ming Lei <ming.lei@redhat.com>, <tglx@linutronix.de>,
-        <chenxiang66@hisilicon.com>, <bigeasy@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, <hare@suse.com>, <hch@lst.de>,
-        <axboe@kernel.dk>, <bvanassche@acm.org>, <peterz@infradead.org>,
-        <mingo@redhat.com>
-References: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
- <1575642904-58295-2-git-send-email-john.garry@huawei.com>
- <20191207080335.GA6077@ming.t460p>
- <78a10958-fdc9-0576-0c39-6079b9749d39@huawei.com>
- <20191210014335.GA25022@ming.t460p>
- <28424a58-1159-c3f9-1efb-f1366993afcf@huawei.com>
- <048746c22898849d28985c0f65cf2c2a@www.loen.fr>
- <ce1b93c6-8ff9-6106-84af-909ec52d49e5@huawei.com>
- <6e513d25d8b0c6b95d37a64df0c27b78@www.loen.fr>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <06d1e2ff-9ec7-2262-25a0-4503cb204b0b@huawei.com>
-Date:   Tue, 10 Dec 2019 12:05:20 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727577AbfLJMNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 07:13:35 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41772 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727224AbfLJMNc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 07:13:32 -0500
+Received: from 79.184.255.117.ipv4.supernova.orange.pl (79.184.255.117) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id 785dde6ab70efc65; Tue, 10 Dec 2019 13:13:30 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Subject: [RFC v2][PATCH 6/9] intel_idle: Use ACPI _CST for processor models without C-state tables
+Date:   Tue, 10 Dec 2019 13:06:25 +0100
+Message-ID: <3789365.7kqZenubyC@kreacher>
+In-Reply-To: <35821518.IbFVMVmUy3@kreacher>
+References: <35821518.IbFVMVmUy3@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <6e513d25d8b0c6b95d37a64df0c27b78@www.loen.fr>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-ClientProxiedBy: lhreml728-chm.china.huawei.com (10.201.108.79) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/2019 11:36, Marc Zyngier wrote:
-> On 2019-12-10 10:59, John Garry wrote:
->>>>
->>>> There is no lockup, just a potential performance boost in this change.
->>>>
->>>> My colleague Xiang Chen can provide specifics of the test, as he is
->>>> the one running it.
->>>>
->>>> But one key bit of info - which I did not think most relevant before
->>>> - that is we have 2x SAS controllers running the throughput test on
->>>> the same host.
->>>>
->>>> As such, the completion queue interrupts would be spread identically
->>>> over the CPUs for each controller. I notice that ARM GICv3 ITS
->>>> interrupt controller (which we use) does not use the generic irq
->>>> matrix allocator, which I think would really help with this.
->>>>
->>>> Hi Marc,
->>>>
->>>> Is there any reason for which we couldn't utilise of the generic irq
->>>> matrix allocator for GICv3?
->>>
->>
->> Hi Marc,
->>
->>> For a start, the ITS code predates the matrix allocator by about three
->>> years. Also, my understanding of this allocator is that it allows
->>> x86 to cope with a very small number of possible interrupt vectors
->>> per CPU. The ITS doesn't have such issue, as:
->>> 1) the namespace is global, and not per CPU
->>> 2) the namespace is *huge*
->>> Now, what property of the matrix allocator is the ITS code missing?
->>> I'd be more than happy to improve it.
->>
->> I think specifically the property that the matrix allocator will try
->> to find a CPU for irq affinity which "has the lowest number of managed
->> IRQs allocated" - I'm quoting the comment on 
->> matrix_find_best_cpu_managed().
-> 
-> But that decision is due to allocation constraints. You can have at most
-> 256 interrupts per CPU, so the allocator tries to balance it.
-> 
-> On the contrary, the ITS does care about how many interrupt target any
-> given CPU. The whole 2^24 interrupt namespace can be thrown at a single
-> CPU.
-> 
->> The ITS code will make the lowest online CPU in the affinity mask the
->> target CPU for the interrupt, which may result in some CPUs handling
->> so many interrupts.
-> 
-> If what you want is for the *default* affinity to be spread around,
-> that should be achieved pretty easily. Let me have a think about how
-> to do that.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Cool, I anticipate that it should help my case.
+Modify the intel_idle driver to get the C-states information from ACPI
+_CST if the processor model is not recognized by it.
 
-I can also seek out some NVMe cards to see how it would help a more 
-"generic" scenario.
+The processor is still required to support MWAIT and the information
+from ACPI _CST will only be used if all of the C-states listed by
+_CST are of the ACPI_CSTATE_FFH type (which means that they are
+expected to be entered via MWAIT).
 
-Cheers,
-John
+Moreover, the driver assumes that the _CST information is the same
+for all CPUs in the system, so it is sufficient to evaluate _CST for
+one of them and extract the common list of C-states from there.
+Also _CST is evaluated once at the system initialization time and
+the driver does not respond to _CST change notifications (that can
+be changed in the future).
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+Changes from the previous version:
+
+ - Append "_ACPI" to the names of the C-states coming from _CST.
+ - For ACPI C-states types other than C1 set target_residency as 4 times
+   the exit latency (which is closer to the numbers used by intel_idle for
+   "known" processors).
+
+---
+ drivers/idle/intel_idle.c |  181 ++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 153 insertions(+), 28 deletions(-)
+
+Index: linux-pm/drivers/idle/intel_idle.c
+===================================================================
+--- linux-pm.orig/drivers/idle/intel_idle.c
++++ linux-pm/drivers/idle/intel_idle.c
+@@ -41,6 +41,7 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/acpi.h>
+ #include <linux/kernel.h>
+ #include <linux/cpuidle.h>
+ #include <linux/tick.h>
+@@ -1111,6 +1112,120 @@ static const struct x86_cpu_id intel_idl
+ 	{}
+ };
+ 
++#define INTEL_CPU_FAM6_MWAIT \
++	{ X86_VENDOR_INTEL, 6, X86_MODEL_ANY, X86_FEATURE_MWAIT, 0 }
++
++static const struct x86_cpu_id intel_mwait_ids[] __initconst = {
++	INTEL_CPU_FAM6_MWAIT,
++	{}
++};
++
++static bool intel_idle_max_cstate_reached(int cstate)
++{
++	if (cstate + 1 > max_cstate) {
++		pr_info("max_cstate %d reached\n", max_cstate);
++		return true;
++	}
++	return false;
++}
++
++#ifdef CONFIG_ACPI_PROCESSOR_CSTATE
++#include <acpi/processor.h>
++
++static struct acpi_processor_power acpi_state_table;
++
++/**
++ * intel_idle_cst_usable - Check if the _CST information can be used.
++ *
++ * Check if all of the C-states listed by _CST in the max_cstate range are
++ * ACPI_CSTATE_FFH, which means that they should be entered via MWAIT.
++ */
++static bool intel_idle_cst_usable(void)
++{
++	int cstate, limit;
++
++	limit = min_t(int, min_t(int, CPUIDLE_STATE_MAX, max_cstate + 1),
++		      acpi_state_table.count);
++
++	for (cstate = 1; cstate < limit; cstate++) {
++		struct acpi_processor_cx *cx = &acpi_state_table.states[cstate];
++
++		if (cx->entry_method != ACPI_CSTATE_FFH)
++			return false;
++	}
++
++	return true;
++}
++
++static bool intel_idle_acpi_cst_extract(void)
++{
++	unsigned int cpu;
++
++	for_each_possible_cpu(cpu) {
++		struct acpi_processor *pr = per_cpu(processors, cpu);
++
++		if (!pr)
++			continue;
++
++		if (acpi_processor_evaluate_cst(pr->handle, cpu, &acpi_state_table))
++			continue;
++
++		acpi_state_table.count++;
++
++		if (!intel_idle_cst_usable())
++			continue;
++
++		if (!acpi_processor_claim_cst_control()) {
++			acpi_state_table.count = 0;
++			return false;
++		}
++
++		return true;
++	}
++
++	pr_debug("ACPI _CST not found or not usable\n");
++	return false;
++}
++
++static void intel_idle_init_cstates_acpi(struct cpuidle_driver *drv)
++{
++	int cstate, limit = min_t(int, CPUIDLE_STATE_MAX, acpi_state_table.count);
++
++	/*
++	 * If limit > 0, intel_idle_cst_usable() has returned 'true', so all of
++	 * the interesting states are ACPI_CSTATE_FFH.
++	 */
++	for (cstate = 1; cstate < limit; cstate++) {
++		struct acpi_processor_cx *cx;
++		struct cpuidle_state *state;
++
++		if (intel_idle_max_cstate_reached(cstate))
++			break;
++
++		cx = &acpi_state_table.states[cstate];
++
++		state = &drv->states[drv->state_count++];
++
++		snprintf(state->name, CPUIDLE_NAME_LEN, "C%d_ACPI", cstate);
++		strlcpy(state->desc, cx->desc, CPUIDLE_DESC_LEN);
++		state->exit_latency = cx->latency;
++		state->target_residency = cx->latency;
++		if (cx->type > ACPI_STATE_C1)
++			state->target_residency *= 4;
++
++		state->flags = MWAIT2flg(cx->address);
++		if (cx->type > ACPI_STATE_C2)
++			state->flags |= CPUIDLE_FLAG_TLB_FLUSHED;
++
++		state->enter = intel_idle;
++		state->enter_s2idle = intel_idle_s2idle;
++	}
++}
++#else /* !CONFIG_ACPI_PROCESSOR_CSTATE */
++static inline bool intel_idle_acpi_cst_extract(void) { return false; }
++static inline void intel_idle_init_cstates_acpi(struct cpuidle_driver *drv) { }
++#endif /* !CONFIG_ACPI_PROCESSOR_CSTATE */
++
+ /*
+  * intel_idle_probe()
+  */
+@@ -1125,17 +1240,15 @@ static int __init intel_idle_probe(void)
+ 	}
+ 
+ 	id = x86_match_cpu(intel_idle_ids);
+-	if (!id) {
+-		if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL &&
+-		    boot_cpu_data.x86 == 6)
+-			pr_debug("does not run on family %d model %d\n",
+-				 boot_cpu_data.x86, boot_cpu_data.x86_model);
+-		return -ENODEV;
+-	}
+-
+-	if (!boot_cpu_has(X86_FEATURE_MWAIT)) {
+-		pr_debug("Please enable MWAIT in BIOS SETUP\n");
+-		return -ENODEV;
++	if (id) {
++		if (!boot_cpu_has(X86_FEATURE_MWAIT)) {
++			pr_debug("Please enable MWAIT in BIOS SETUP\n");
++			return -ENODEV;
++		}
++	} else {
++		id = x86_match_cpu(intel_mwait_ids);
++		if (!id)
++			return -ENODEV;
+ 	}
+ 
+ 	if (boot_cpu_data.cpuid_level < CPUID_MWAIT_LEAF)
+@@ -1151,7 +1264,10 @@ static int __init intel_idle_probe(void)
+ 	pr_debug("MWAIT substates: 0x%x\n", mwait_substates);
+ 
+ 	icpu = (const struct idle_cpu *)id->driver_data;
+-	cpuidle_state_table = icpu->state_table;
++	if (icpu)
++		cpuidle_state_table = icpu->state_table;
++	else if (!intel_idle_acpi_cst_extract())
++		return -ENODEV;
+ 
+ 	pr_debug("v" INTEL_IDLE_VERSION " model 0x%X\n",
+ 		 boot_cpu_data.x86_model);
+@@ -1333,31 +1449,19 @@ static void intel_idle_state_table_updat
+ 	}
+ }
+ 
+-/*
+- * intel_idle_cpuidle_driver_init()
+- * allocate, initialize cpuidle_states
+- */
+-static void __init intel_idle_cpuidle_driver_init(void)
++static void intel_idle_init_cstates_icpu(struct cpuidle_driver *drv)
+ {
+ 	int cstate;
+-	struct cpuidle_driver *drv = &intel_idle_driver;
+-
+-	intel_idle_state_table_update();
+-
+-	cpuidle_poll_state_init(drv);
+-	drv->state_count = 1;
+ 
+ 	for (cstate = 0; cstate < CPUIDLE_STATE_MAX; ++cstate) {
+ 		unsigned int mwait_hint;
+ 
+-		if (!cpuidle_state_table[cstate].enter &&
+-		    !cpuidle_state_table[cstate].enter_s2idle)
++		if (intel_idle_max_cstate_reached(cstate))
+ 			break;
+ 
+-		if (cstate + 1 > max_cstate) {
+-			pr_info("max_cstate %d reached\n", max_cstate);
++		if (!cpuidle_state_table[cstate].enter &&
++		    !cpuidle_state_table[cstate].enter_s2idle)
+ 			break;
+-		}
+ 
+ 		/* If marked as unusable, skip this state. */
+ 		if (cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_UNUSABLE) {
+@@ -1380,6 +1484,24 @@ static void __init intel_idle_cpuidle_dr
+ 	}
+ }
+ 
++/*
++ * intel_idle_cpuidle_driver_init()
++ * allocate, initialize cpuidle_states
++ */
++static void __init intel_idle_cpuidle_driver_init(void)
++{
++	struct cpuidle_driver *drv = &intel_idle_driver;
++
++	intel_idle_state_table_update();
++
++	cpuidle_poll_state_init(drv);
++	drv->state_count = 1;
++
++	if (icpu)
++		intel_idle_init_cstates_icpu(drv);
++	else
++		intel_idle_init_cstates_acpi(drv);
++}
+ 
+ /*
+  * intel_idle_cpu_init()
+@@ -1398,6 +1520,9 @@ static int intel_idle_cpu_init(unsigned
+ 		return -EIO;
+ 	}
+ 
++	if (!icpu)
++		return 0;
++
+ 	if (icpu->auto_demotion_disable_flags)
+ 		auto_demotion_disable();
+ 
+
+
+
