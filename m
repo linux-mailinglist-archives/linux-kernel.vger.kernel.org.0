@@ -2,350 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAEF6117FEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:49:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACFAF11800D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfLJFtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 00:49:20 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:50171 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbfLJFtU (ORCPT
+        id S1727118AbfLJFzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 00:55:53 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:2831 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfLJFzw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 00:49:20 -0500
-Received: from [10.28.19.135] (10.28.19.135) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 10 Dec
- 2019 13:49:42 +0800
-Subject: Re: [PATCH v4 2/2] watchdog: add meson secure watchdog driver
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Qianggui Song <qianggui.song@amlogic.com>,
-        <linux-watchdog@vger.kernel.org>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-kernel@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <1574685218-31164-1-git-send-email-xingyu.chen@amlogic.com>
- <1574685218-31164-3-git-send-email-xingyu.chen@amlogic.com>
- <53661e11-b5b2-b2e8-47b6-9b357beff375@roeck-us.net>
-From:   Xingyu Chen <xingyu.chen@amlogic.com>
-Message-ID: <05503ac6-c43b-0dcd-03b6-6fc8d1545f52@amlogic.com>
-Date:   Tue, 10 Dec 2019 13:49:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Tue, 10 Dec 2019 00:55:52 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5def33600000>; Mon, 09 Dec 2019 21:55:45 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 09 Dec 2019 21:55:50 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 09 Dec 2019 21:55:50 -0800
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
+ 2019 05:55:50 +0000
+Received: from [10.2.166.216] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
+ 2019 05:55:49 +0000
+Subject: Re: [PATCH v8 20/26] powerpc: book3s64: convert to pin_user_pages()
+ and put_user_page()
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20191209225344.99740-1-jhubbard@nvidia.com>
+ <20191209225344.99740-21-jhubbard@nvidia.com>
+ <08f5d716-8b31-b016-4994-19fbe829dc28@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <61e0c3a5-992e-4571-e22d-d63286ce10ec@nvidia.com>
+Date:   Mon, 9 Dec 2019 21:53:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <53661e11-b5b2-b2e8-47b6-9b357beff375@roeck-us.net>
+In-Reply-To: <08f5d716-8b31-b016-4994-19fbe829dc28@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-Originating-IP: [10.28.19.135]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1575957345; bh=hOQHo4yBws9X1nqgVCC1VdrUiF9Z86xIO4U2wGVXRCw=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Z0uGtjzdMedDuhQsG1jpU7HmbXe0kx1+9sLgOIk8Tsa+qSKrJwruITPp5YqsEqw/n
+         J6r9xabZ4a9OQN/Wl8LVj9LrtdwAy11ChiFmcjZZVTuORyZEi3yR7n2LRqkwn66Ltr
+         eeIwWiN6PGMYv9eL7SAOfeP4KVVco/4prZuZTjVwpd53jjxNLLJqGfcC9sxeGP6ykt
+         D8DJTJbSiZvX3LC8FmFbEGS2I/TRo6uZZSD6HwdT5k7HU7OxF7PBsCrAkF07RmEA1a
+         ZcPVotCE1aYXgj3rJWRvh8EJXUvCr0vK9kwBlCNWSwhBERf1C6gVTs8+AjkAsxO8km
+         d4nN+/tFy5PPg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Guenter
+On 12/9/19 3:46 PM, John Hubbard wrote:
+> On 12/9/19 2:53 PM, John Hubbard wrote:
+> ...
+>> @@ -212,10 +211,9 @@ static void mm_iommu_unpin(struct mm_iommu_table_group_mem_t *mem)
+>>   		if (!page)
+>>   			continue;
+>>   
+>> -		if (mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY)
+>> -			SetPageDirty(page);
+>> +		put_user_pages_dirty_lock(&page, 1,
+>> +				mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY);
+>>   
+>> -		put_page(page);
+> 
+> 
+> Correction: this is somehow missing the fixes that resulted from Jan Kara's review (he
+> noted that we can't take a page lock in this context). I must have picked up the
+> wrong version of it, when I rebased for -rc1.
+> 
 
-On 2019/12/9 22:44, Guenter Roeck wrote:
-> On 11/25/19 4:33 AM, Xingyu Chen wrote:
->> The watchdog controller on the Meson-A/C series SoCs is moved to secure
->> world, watchdog operation needs to be done in secure EL3 mode via ATF,
->> Non-secure world can call SMC instruction to trap to AFT for watchdog
->> operation.
->>
->> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
->> ---
->>   drivers/watchdog/Kconfig         |  16 +++
->>   drivers/watchdog/Makefile        |   1 +
->>   drivers/watchdog/meson_sec_wdt.c | 207 
->> +++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 224 insertions(+)
->>   create mode 100644 drivers/watchdog/meson_sec_wdt.c
->>
->> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
->> index 58e7c10..e305fba 100644
->> --- a/drivers/watchdog/Kconfig
->> +++ b/drivers/watchdog/Kconfig
->> @@ -826,6 +826,22 @@ config MESON_GXBB_WATCHDOG
->>         To compile this driver as a module, choose M here: the
->>         module will be called meson_gxbb_wdt.
->>   +config MESON_SEC_WATCHDOG
->> +    tristate "Amlogic Meson Secure watchdog support"
->> +    depends on MESON_SM
->> +    select WATCHDOG_CORE
->> +    help
->> +      The watchdog controller on the Meson-A/C series SoCs is moved to
->> +      secure world, watchdog operation needs to be done in secure EL3
->> +      mode via ATF, non-secure world can call SMC instruction to trap
->> +      to ATF for the watchdog operation.
->> +
->> +      Say Y here if watchdog controller on Meson SoCs is located in
->> +      secure world.
->> +
->> +      To compile this driver as a module, choose M here: the
->> +      module will be called meson_sec_wdt.
->> +
->>   config MESON_WATCHDOG
->>       tristate "Amlogic Meson SoCs watchdog support"
->>       depends on ARCH_MESON || COMPILE_TEST
->> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
->> index 2ee352b..5e6b73d 100644
->> --- a/drivers/watchdog/Makefile
->> +++ b/drivers/watchdog/Makefile
->> @@ -78,6 +78,7 @@ obj-$(CONFIG_QCOM_WDT) += qcom-wdt.o
->>   obj-$(CONFIG_BCM_KONA_WDT) += bcm_kona_wdt.o
->>   obj-$(CONFIG_TEGRA_WATCHDOG) += tegra_wdt.o
->>   obj-$(CONFIG_MESON_GXBB_WATCHDOG) += meson_gxbb_wdt.o
->> +obj-$(CONFIG_MESON_SEC_WATCHDOG) += meson_sec_wdt.o
->>   obj-$(CONFIG_MESON_WATCHDOG) += meson_wdt.o
->>   obj-$(CONFIG_MEDIATEK_WATCHDOG) += mtk_wdt.o
->>   obj-$(CONFIG_DIGICOLOR_WATCHDOG) += digicolor_wdt.o
->> diff --git a/drivers/watchdog/meson_sec_wdt.c 
->> b/drivers/watchdog/meson_sec_wdt.c
->> new file mode 100644
->> index 00000000..c022d6d
->> --- /dev/null
->> +++ b/drivers/watchdog/meson_sec_wdt.c
->> @@ -0,0 +1,207 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +/*
->> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
->> + * Author: Xingyu Chen <xingyu.chen@amlogic.com>
->> + *
->> + */
->> +#include <linux/err.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/types.h>
->> +#include <linux/watchdog.h>
->> +#include <linux/firmware/meson/meson_sm.h>
->> +
->> +#define MESON_SIP_WDT_DISABLE        0x1
->> +#define MESON_SIP_WDT_ENABLE        0x2
->> +#define MESON_SIP_WDT_PING        0x3
->> +#define MESON_SIP_WDT_INIT        0x4
->> +#define MESON_SIP_WDT_RESETNOW        0x5
->> +#define MESON_SIP_WDT_SETTIMEOUT    0x6
->> +#define MESON_SIP_WDT_GETTIMELEFT    0x7
->> +
->> +#define DEFAULT_TIMEOUT            30 /* seconds */
->> +
->> +/*
->> + * Watchdog timer tick is set to 1ms in secfw side, and tick count is
->> + * stored in the bit[16-31] of WATCHDOG_CNT register, so the maximum
->> + * timeout value is 0xffff ms.
->> + */
->> +#define MAX_TIMEOUT_MS            0xFFFF
->> +#define DRV_NAME            "meson-sec-wdt"
->> +
->> +static struct platform_device *platform_device;
->> +struct meson_sec_wdt {
->> +    struct watchdog_device wdt_dev;
->> +    struct meson_sm_firmware *fw;
->> +};
->> +
->> +static int meson_sec_wdt_start(struct watchdog_device *wdt_dev)
->> +{
->> +    struct meson_sec_wdt *data = watchdog_get_drvdata(wdt_dev);
->> +
->> +    return meson_sm_call(data->fw, SM_A1_WATCHDOG_OPS, NULL,
->> +                 MESON_SIP_WDT_ENABLE, 0, 0, 0, 0);
->> +}
->> +
->> +static int meson_sec_wdt_stop(struct watchdog_device *wdt_dev)
->> +{
->> +    struct meson_sec_wdt *data = watchdog_get_drvdata(wdt_dev);
->> +
->> +    return meson_sm_call(data->fw, SM_A1_WATCHDOG_OPS, NULL,
->> +                 MESON_SIP_WDT_DISABLE, 0, 0, 0, 0);
->> +}
->> +
->> +static int meson_sec_wdt_ping(struct watchdog_device *wdt_dev)
->> +{
->> +    struct meson_sec_wdt *data = watchdog_get_drvdata(wdt_dev);
->> +
->> +    return meson_sm_call(data->fw, SM_A1_WATCHDOG_OPS, NULL,
->> +                 MESON_SIP_WDT_PING, 0, 0, 0, 0);
->> +}
->> +
->> +static int meson_sec_wdt_set_timeout(struct watchdog_device *wdt_dev,
->> +                     unsigned int timeout)
->> +{
->> +    struct meson_sec_wdt *data = watchdog_get_drvdata(wdt_dev);
->> +
->> +    wdt_dev->timeout = timeout;
->> +
->> +    return meson_sm_call(data->fw, SM_A1_WATCHDOG_OPS, NULL,
->> +                 MESON_SIP_WDT_SETTIMEOUT,
->> +                 wdt_dev->timeout * 1000, 0, 0, 0);
->> +}
->> +
->> +static unsigned int meson_sec_wdt_get_timeleft(struct 
->> watchdog_device *wdt_dev)
->> +{
->> +    int ret;
->> +    unsigned int timeleft;
->> +    struct meson_sec_wdt *data = watchdog_get_drvdata(wdt_dev);
->> +
->> +    ret = meson_sm_call(data->fw, SM_A1_WATCHDOG_OPS, &timeleft,
->> +                MESON_SIP_WDT_GETTIMELEFT, 0, 0, 0, 0);
->> +
->> +    if (ret)
->> +        return 0;
->> +
->> +    return timeleft;
->> +}
->> +
->> +static const struct watchdog_ops meson_sec_wdt_ops = {
->> +    .start = meson_sec_wdt_start,
->> +    .stop = meson_sec_wdt_stop,
->> +    .ping = meson_sec_wdt_ping,
->> +    .set_timeout = meson_sec_wdt_set_timeout,
->> +    .get_timeleft = meson_sec_wdt_get_timeleft,
->> +};
->> +
->> +static const struct watchdog_info meson_sec_wdt_info = {
->> +    .identity = "Meson Secure Watchdog Timer",
->> +    .options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | 
->> WDIOF_MAGICCLOSE,
->> +};
->> +
->> +static int __maybe_unused meson_sec_wdt_resume(struct device *dev)
->> +{
->> +    struct meson_sec_wdt *data = dev_get_drvdata(dev);
->> +
->> +    if (watchdog_active(&data->wdt_dev))
->> +        return meson_sec_wdt_start(&data->wdt_dev);
->> +
->> +    return 0;
->> +}
->> +
->> +static int __maybe_unused meson_sec_wdt_suspend(struct device *dev)
->> +{
->> +    struct meson_sec_wdt *data = dev_get_drvdata(dev);
->> +
->> +    if (watchdog_active(&data->wdt_dev))
->> +        return meson_sec_wdt_stop(&data->wdt_dev);
->> +
->> +    return 0;
->> +}
->> +
->> +static const struct dev_pm_ops meson_sec_wdt_pm_ops = {
->> +    SET_SYSTEM_SLEEP_PM_OPS(meson_sec_wdt_suspend, 
->> meson_sec_wdt_resume)
->> +};
->> +
->> +static int meson_sec_wdt_probe(struct platform_device *pdev)
->> +{
->> +    struct device *dev = &pdev->dev;
->> +    struct meson_sec_wdt *data;
->> +    struct device_node *sm_np;
->> +    int ret;
->> +
->> +    data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> +    if (!data)
->> +        return -ENOMEM;
->> +
->> +    sm_np = of_find_compatible_node(NULL, NULL, 
->> "amlogic,meson-gxbb-sm");
->> +    if (!sm_np) {
->> +        dev_err(&pdev->dev, "no secure-monitor node\n");
->> +        return -EINVAL;
->> +    }
->> +
->> +    data->fw = meson_sm_get(sm_np);
->> +    of_node_put(sm_np);
->> +    if (!data->fw)
->> +        return -EPROBE_DEFER;
->> +
->> +    platform_set_drvdata(pdev, data);
->> +
->> +    data->wdt_dev.parent = dev;
->> +    data->wdt_dev.info = &meson_sec_wdt_info;
->> +    data->wdt_dev.ops = &meson_sec_wdt_ops;
->> +    data->wdt_dev.max_hw_heartbeat_ms = MAX_TIMEOUT_MS;
->> +    data->wdt_dev.min_timeout = 1;
->> +    data->wdt_dev.timeout = DEFAULT_TIMEOUT;
->> +    watchdog_set_drvdata(&data->wdt_dev, data);
->> +
->> +    ret = meson_sm_call(data->fw, SM_A1_WATCHDOG_OPS, NULL,
->> +                MESON_SIP_WDT_INIT,
->> +                data->wdt_dev.timeout * 1000, 0, 0, 0);
->> +    if (ret)
->> +        return ret;
->> +
->> +    watchdog_stop_on_reboot(&data->wdt_dev);
->> +
->> +    return devm_watchdog_register_device(dev, &data->wdt_dev);
->> +}
->> +
->> +static struct platform_driver meson_sec_wdt_driver = {
->> +    .probe    = meson_sec_wdt_probe,
->> +    .driver = {
->> +        .name = DRV_NAME,
->> +        .pm = &meson_sec_wdt_pm_ops,
->> +    },
->> +};
->> +
->> +static int __init meson_sec_wdt_init(void)
->> +{
->> +    int ret;
->> +
->> +    ret = platform_driver_register(&meson_sec_wdt_driver);
->> +    if (ret)
->> +        return ret;
->> +
->> +    platform_device = platform_device_register_simple(DRV_NAME,
->> +                              -1, NULL, 0);
->> +    if (IS_ERR(platform_device)) {
->> +        ret = PTR_ERR(platform_device);
->> +        platform_driver_unregister(&meson_sec_wdt_driver);
->> +    }
->> +
->> +    return ret;
->> +}
->> +
->> +static void __exit meson_sec_wdt_exit(void)
->> +{
->> +    platform_device_unregister(platform_device);
->> +    platform_driver_unregister(&meson_sec_wdt_driver);
->> +}
->> +
->> +module_init(meson_sec_wdt_init);
->> +module_exit(meson_sec_wdt_exit);
->> +
->
-> Driver instantiation is wrong. It tries to instantiate itself as soon
-> as the module is loaded and then it bails out in the probe funmction.
-> It should be instantiated either through a devicetree node or through
-> some platform code, but it should not instantiate itself. If there
-> is no watchdog node, the driver needs to be instantiated from
-> drivers/firmware/meson/meson_sm.c.
->
-> Guenter
->
-Thanks for your suggestion.
+Andrew, given that the series is now in -mm, what's the preferred way for me to fix this?
+Send a v9 version of the whole series? Or something else?
 
-In next version, I will instantiated device and introduce "timeout-sec" 
-property through a dts node.
+I'm still learning the ropes...
 
->> +MODULE_AUTHOR("Xingyu Chen <xingyu.chen@amlogic.com>");
->> +MODULE_DESCRIPTION("Amlogic Secure Watchdog Timer Driver");
->> +MODULE_LICENSE("Dual MIT/GPL");
->>
->
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
->
-> .
->
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+> Will fix in the next version (including the commit description). Here's what the
+> corrected hunk will look like:
+> 
+> @@ -215,7 +214,8 @@ static void mm_iommu_unpin(struct mm_iommu_table_group_mem_t *mem)
+>                  if (mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY)
+>                          SetPageDirty(page);
+>   
+> -               put_page(page);
+> +               put_user_page(page);
+> +
+>                  mem->hpas[i] = 0;
+>          }
+>   }
+> 
+> 
+> thanks,
+> 
