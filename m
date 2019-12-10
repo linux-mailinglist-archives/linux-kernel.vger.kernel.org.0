@@ -2,115 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C549118949
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7197A118954
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 14:10:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbfLJNJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 08:09:49 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51691 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727541AbfLJNJs (ORCPT
+        id S1727652AbfLJNKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 08:10:36 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:37570 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727453AbfLJNKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 08:09:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575983387;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=z1m4l6D3s+2g8XxkMBtJ4pgp0ukAmRJI6+mhxccXIzk=;
-        b=hlSv/r5MNr4Vl/FxYocNS3uHINq0UEwyhdU3iJucUI706wn6xQJmn4rq6VO8CBWQx5jIRA
-        KJTuKWcsWrGt9AGcZdRTpKqIflShXz+kOOos/cuvP96fJx07GEYt4DAegMkkm2ILWukba4
-        Ez/cQ1SEY5vodIJqW47TPnFwdWS4pWY=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-293-b5gIHD82NGSun5koszxZWQ-1; Tue, 10 Dec 2019 08:09:46 -0500
-Received: by mail-qv1-f72.google.com with SMTP id p9so6744769qvq.22
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 05:09:46 -0800 (PST)
+        Tue, 10 Dec 2019 08:10:36 -0500
+Received: by mail-vk1-f194.google.com with SMTP id r8so440182vkl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 05:10:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lVuDrelJPHkT9KjZ+yDkGHPcSIBa+aRtmSKrEhYG/dg=;
+        b=FkJVWWwLlkLimTQI3PF07ng13Kkz6tT/cnvbsrPYSceRuIpgNc93hnqtDw9GvrPFFf
+         nmjJrKLbp3RcmbcVbjD/ac2fkzVYaGrswWyLMyJ+hc7RNoHWVpI/Kz4ddb9/Jw2L1tDN
+         mDhxtEvHdCpq+sM3dTxfgp9uuLOZajcNwwhnwpNpZnyAfKFpPK24qLwZ8+5gvd3YNVhs
+         EdtVkov/qinLdqE/8hQtpwKenxVbWmbX3d9qK7CLtkMgz47hlJnLQGG8l3v9U3mcNoJ2
+         guw7pGK2nRjvRTqWc0Ddq/3lBGLVPX4j7fqRjeOJStj2d8w8mIygrgICXcJG+ez4eLLL
+         Dsxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=arAx5zhnIVjaTnukE0oB8KOOT1PX3zCb62NUiTGRsxo=;
-        b=mJbZM5UIWAL6aWC7fQWIGOWXuNjWLNVhI6E4R3WE7HDXseiPKzubo4dA9VB2HdamFE
-         7n/vNzR076W5wbiUefT+ZRI28vP0G6BQ7W06J7ISZkUMh239LdV/LpddkeeO+W8ET6Yv
-         X4BkgyYvk+9StVpkTb7zE9X0vAQpLxBxyl9UYk03DvweSGb8UmStoK4l/QhD8Eu9mcJk
-         cjcXgzBDdqCXK6Xq2OZsFN0jtv+D4usL2GwzC6Npc55sZdh/v6osqC/UHqTCe0ocjm/R
-         gdefy4BL+5Tb4lbCFiV90FIBjMEkAr2yZAhCBe3l0Y9mcyEtM95PSMM+3Tc/2KfUHL6W
-         eqfw==
-X-Gm-Message-State: APjAAAVBk95LsIp+YXBgHTeYQyMy7vUI2bWJ2CkvjN11ReaBAwu0jobI
-        8d1Ya55Jr3+PsiRhOssYtalPVMaTnuDDhX1zhi5tbCpM2Ec4rGJYVfJMDmwKI3Cj8OZWT4fc4Fj
-        RJB7RuVa/B/cS6aK2boH4lYxV
-X-Received: by 2002:ac8:1c4e:: with SMTP id j14mr968376qtk.300.1575983385753;
-        Tue, 10 Dec 2019 05:09:45 -0800 (PST)
-X-Google-Smtp-Source: APXvYqx0NdqPQY5+CMuG066RsSLy1C9s67XUjynq5xyNWeBMJDtPlMed8sZPRLdRNcHBm75IprM/Dw==
-X-Received: by 2002:ac8:1c4e:: with SMTP id j14mr968365qtk.300.1575983385613;
-        Tue, 10 Dec 2019 05:09:45 -0800 (PST)
-Received: from redhat.com (bzq-79-181-48-215.red.bezeqint.net. [79.181.48.215])
-        by smtp.gmail.com with ESMTPSA id w29sm1102558qtc.72.2019.12.10.05.09.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 05:09:44 -0800 (PST)
-Date:   Tue, 10 Dec 2019 08:09:40 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     linux-kernel@vger.kernel.org, Julio Faracco <jcfaracco@gmail.com>
-Cc:     netdev@vger.kernel.org, davem@davemloft.net, mst@redhat.com,
-        jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        dnmendes76@gmail.com
-Subject: [PATCH net-next v11 2/3] mlx4: use new txqueue timeout argument
-Message-ID: <20191210130837.47913-3-mst@redhat.com>
-References: <20191210130837.47913-1-mst@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lVuDrelJPHkT9KjZ+yDkGHPcSIBa+aRtmSKrEhYG/dg=;
+        b=Czzr9pvrzv8BrgLsPCx+uap0lIdmBKKikHj6dMrB+9r9qiKfR5LPZvdARYr3Ka/LOK
+         0DTpbrrO27w43dS3o1obwStKOkNEd9a85lVel+Tl27cEdU8R/HT4zXoYeoCJzAi9lTPb
+         JZdT6+p3rJlchHzVCN2L0NRZ4SP4aQfSBzaz4tdq/9ZhMXhHs/q5F0qdLZiB0VPVwdyr
+         MUKu2+xPaANBLAG7j1++QJWQ7RJmF2OjNYQqYwigqpf8MH2bp1uvgxrMwhydo9fdsryt
+         kUD2DVl0btC/G2WRhE4B/YUfps6TjYcNb0mrBaNPNrw38ZolpzACLmTp77Cj4aepS5gW
+         b7GQ==
+X-Gm-Message-State: APjAAAUyWPa6uJnsQJgXE5EgXzZIha6FgcqOBzMEfwA3LEThWKx/rmbq
+        60PMnnYc3astrZBgu9decDeZ6PyLP+mCasJ0NL2gow==
+X-Google-Smtp-Source: APXvYqx62Xqzh3c0mIH6kQ/su9SdAbn5smF6vBQMUWq+uiu4POpJzI6T7keATd4/cB4wTjJCdip4MUdM+0kElg2eDkY=
+X-Received: by 2002:a1f:4541:: with SMTP id s62mr9019157vka.59.1575983434909;
+ Tue, 10 Dec 2019 05:10:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191210130837.47913-1-mst@redhat.com>
-X-Mailer: git-send-email 2.22.0.678.g13338e74b8
-X-Mutt-Fcc: =sent
-X-MC-Unique: b5gIHD82NGSun5koszxZWQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+References: <20191206114326.15856-1-faiz_abbas@ti.com>
+In-Reply-To: <20191206114326.15856-1-faiz_abbas@ti.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 10 Dec 2019 14:09:59 +0100
+Message-ID: <CAPDyKFr-3RZUPS596HE2+Hu-FxhQ5e1Sv8DbeUtt5qLOjuxU8w@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci: Update the tuning failed messages to pr_debug level
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+On Fri, 6 Dec 2019 at 12:42, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>
+> Tuning support in DDR50 speed mode was added in SD Specifications Part1
+> Physical Layer Specification v3.01. Its not possible to distinguish
+> between v3.00 and v3.01 from the SCR and that is why since
+> commit 4324f6de6d2e ("mmc: core: enable CMD19 tuning for DDR50 mode")
+> tuning failures are ignored in DDR50 speed mode.
+>
+> Cards compatible with v3.00 don't respond to CMD19 in DDR50 and this
+> error gets printed during enumeration and also if retune is triggered at
+> any time during operation. Update the printk level to pr_debug so that
+> these errors don't lead to false error reports.
+>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/e=
-thernet/mellanox/mlx4/en_netdev.c
-index 71c083960a87..43dcbd8214c6 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-@@ -1367,20 +1367,14 @@ static void mlx4_en_tx_timeout(struct net_device *d=
-ev, unsigned int txqueue)
- {
- =09struct mlx4_en_priv *priv =3D netdev_priv(dev);
- =09struct mlx4_en_dev *mdev =3D priv->mdev;
--=09int i;
-+=09struct mlx4_en_tx_ring *tx_ring =3D priv->tx_ring[TX][txqueue];
-=20
- =09if (netif_msg_timer(priv))
- =09=09en_warn(priv, "Tx timeout called on port:%d\n", priv->port);
-=20
--=09for (i =3D 0; i < priv->tx_ring_num[TX]; i++) {
--=09=09struct mlx4_en_tx_ring *tx_ring =3D priv->tx_ring[TX][i];
--
--=09=09if (!netif_tx_queue_stopped(netdev_get_tx_queue(dev, i)))
--=09=09=09continue;
--=09=09en_warn(priv, "TX timeout on queue: %d, QP: 0x%x, CQ: 0x%x, Cons: 0x=
-%x, Prod: 0x%x\n",
--=09=09=09i, tx_ring->qpn, tx_ring->sp_cqn,
--=09=09=09tx_ring->cons, tx_ring->prod);
--=09}
-+=09en_warn(priv, "TX timeout on queue: %d, QP: 0x%x, CQ: 0x%x, Cons: 0x%x,=
- Prod: 0x%x\n",
-+=09=09txqueue, tx_ring->qpn, tx_ring->sp_cqn,
-+=09=09tx_ring->cons, tx_ring->prod);
-=20
- =09priv->port_stats.tx_timeout++;
- =09en_dbg(DRV, priv, "Scheduling watchdog\n");
---=20
-MST
+Applied for fixes and by adding a stable tag, thanks!
 
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/mmc/host/sdhci.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 296d955ede59..42a9c8179da7 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -2417,8 +2417,8 @@ static int __sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
+>                 sdhci_send_tuning(host, opcode);
+>
+>                 if (!host->tuning_done) {
+> -                       pr_info("%s: Tuning timeout, falling back to fixed sampling clock\n",
+> -                               mmc_hostname(host->mmc));
+> +                       pr_debug("%s: Tuning timeout, falling back to fixed sampling clock\n",
+> +                                mmc_hostname(host->mmc));
+>                         sdhci_abort_tuning(host, opcode);
+>                         return -ETIMEDOUT;
+>                 }
+> --
+> 2.19.2
+>
