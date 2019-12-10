@@ -2,72 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BEE0118011
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 06:57:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 079D611802E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 07:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfLJF5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 00:57:22 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37141 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbfLJF5V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 00:57:21 -0500
-Received: by mail-qt1-f194.google.com with SMTP id w47so1753938qtk.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2019 21:57:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=jfNAXQwhZfEavSvS00CAkiq7q52D2V3MiZ0EO57BKJY=;
-        b=HzBPS0OkkYi89kR1c4hURSw8uSGhiT4spz0XeZwmUYU26+c2z5S7Tgxdb9kL25OmpB
-         WkdgqCnhuGolqZheEBDzMgpC9pe5Fg79MuBMvTyI/3caT3YHnciS8M2BWgmXb4NNw4uY
-         ijPVYn/ANyauH3h/tFBwH2V6es88K96FjOUdOmZ+AoOcpCCXR4qOjZKkSpub7kYo59CL
-         5io1Knqs+EjWmDNpkReepMbOtzCWzzXXnm/PtVzMOefOuaQg8xIf0RSG5mEyCW1S15iD
-         e+30Pn+f7S+ZSkDOzin8uR7q8SWK9tufpkIo5dmZjb8aPhgrVNSdxm57iiO8U5voh9Cz
-         akKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=jfNAXQwhZfEavSvS00CAkiq7q52D2V3MiZ0EO57BKJY=;
-        b=igXBJenRPP0ePmauPXlEt/SXrut2zuaUEZIcflPuEkUIqOZXdm4BbMULIttNQMo4j+
-         QDSBwMf3/5BbNAnECkcK3J9K8DAeq37HBXx8ayrKXK4G8UaG5W2QzwlVRldIFGUZ/NQu
-         cJoAIOffUskf1Ew9lAaGr+u2j4B6mq9FIBifniN9LEnjxQM73vkuPjGATrfoxXrbWDtC
-         PdDRauqYp2jHhUWe+3ThgiMnB0XzATUx6XUgIWxg/FY7n+Py3AS5ZYDVWWCp2C+h1oC9
-         DrrdtqlBoxk7suJ6UW1O5i350QePokbFc3vv9pJ3rZ2Jl+aHvdLKPXCbjyCTl8IYZ+rV
-         uLSQ==
-X-Gm-Message-State: APjAAAUchqX/3aDxJeL8aZYHQOo6s9CfsY8KQnGL8mQ8jiZ5g+F40yuT
-        XZumdA8XERxfZaZioJ3Ss/cQQrgQNg54ApXjsrQ=
-X-Google-Smtp-Source: APXvYqxgt2pCZtFz1ilZsuXjufg/ymD76aFknbZQDLeB3fB/XOqFJYMY8bg3W8ozlCdHMPe1e/bcnpNpIAwyq7QyQXc=
-X-Received: by 2002:ac8:35d0:: with SMTP id l16mr28357561qtb.370.1575957440559;
- Mon, 09 Dec 2019 21:57:20 -0800 (PST)
+        id S1727018AbfLJGHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 01:07:15 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49460 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725942AbfLJGHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 01:07:14 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 35A159D4EFD3133DFE18;
+        Tue, 10 Dec 2019 14:07:11 +0800 (CST)
+Received: from HGHY4Z004218071.china.huawei.com (10.133.224.57) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 10 Dec 2019 14:07:00 +0800
+From:   Xiang Zheng <zhengxiang9@huawei.com>
+To:     <bhelgaas@google.com>, <willy@infradead.org>
+CC:     <zhengxiang9@huawei.com>, <wangxiongfeng2@huawei.com>,
+        <wanghaibin.wang@huawei.com>, <guoheyi@huawei.com>,
+        <yebiaoxiang@huawei.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <rjw@rjwysocki.net>,
+        <tglx@linutronix.de>, <guohanjun@huawei.com>,
+        <yangyingliang@huawei.com>
+Subject: [PATCH v3] PCI: Lock the pci_cfg_wait queue for the consistency of data
+Date:   Tue, 10 Dec 2019 11:15:27 +0800
+Message-ID: <20191210031527.40136-1-zhengxiang9@huawei.com>
+X-Mailer: git-send-email 2.15.1.windows.2
 MIME-Version: 1.0
-Received: by 2002:ad4:5011:0:0:0:0:0 with HTTP; Mon, 9 Dec 2019 21:57:20 -0800 (PST)
-Reply-To: miss.aminaibrahim@gmail.com
-From:   "miss.amina ibrahim" <alimanibrahim770@gmail.com>
-Date:   Tue, 10 Dec 2019 05:57:20 +0000
-Message-ID: <CAGPE3s56hXW4oa8jr+KB_z8YwSJoU=D4FvU6JWzt_N_s-8ZT3Q@mail.gmail.com>
-Subject: My Name is Miss Amina Ibrahim from Libya,I am 22 years old
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.133.224.57]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Name is Miss Amina Ibrahim from Libya, I am 22 years old, I am in
-St.Christopher's Parish for refugee in Burkina Faso under United
-Nations High commission for Refugee ,I lost my parents in the recent
-war in  Libya, right now am in Burkina Faso, please save my life i am
-in danger need your help in transferring my inheritance my father left
-behind for me in a Bank in Burkina Faso here,i have every document for
-the transfer, all i need is a foreigner who will stand as the foreign
-partner to my father and beneficiary of the fund. The money deposited
-in the Bank is US10.5 MILLION UNITED STATES DOLLAR) I just need this
-fund to be transfer to your account so that I will come over to your
-country and complete my education as you know that my country have
-been in deep crisis due to the war .and I cannot go back there again
-because I have nobody again all of my family were killed in the war.
-If you are interested to save me and help me receive my inheritance
-fund Please get back to me
+7ea7e98fd8d0 ("PCI: Block on access to temporarily unavailable pci
+device") suggests that the "pci_lock" is sufficient, and all the
+callers of pci_wait_cfg() are wrapped with the "pci_lock".
 
-Miss Amina IBRAHIM.
+However, since the commit cdcb33f98244 ("PCI: Avoid possible deadlock on
+pci_lock and p->pi_lock") merged, the accesses to the pci_cfg_wait queue
+are not safe anymore. This would cause kernel panic in a very low chance
+(See more detailed information from the below link). A "pci_lock" is
+insufficient and we need to hold an additional queue lock while read/write
+the wait queue.
+
+So let's use the add_wait_queue()/remove_wait_queue() instead of
+__add_wait_queue()/__remove_wait_queue(). Also move the wait queue
+functionality around the "schedule()" function to avoid reintroducing
+the deadlock addressed by "cdcb33f98244".
+
+Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
+Cc: Heyi Guo <guoheyi@huawei.com>
+Cc: Biaoxiang Ye <yebiaoxiang@huawei.com>
+Link: https://lore.kernel.org/linux-pci/79827f2f-9b43-4411-1376-b9063b67aee3@huawei.com/
+---
+
+v3:
+  Improve the commit subject and message.
+
+v2:
+  Move the wait queue functionality around the "schedule()".
+
+---
+ drivers/pci/access.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+index 2fccb5762c76..09342a74e5ea 100644
+--- a/drivers/pci/access.c
++++ b/drivers/pci/access.c
+@@ -207,14 +207,14 @@ static noinline void pci_wait_cfg(struct pci_dev *dev)
+ {
+ 	DECLARE_WAITQUEUE(wait, current);
+ 
+-	__add_wait_queue(&pci_cfg_wait, &wait);
+ 	do {
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+ 		raw_spin_unlock_irq(&pci_lock);
++		add_wait_queue(&pci_cfg_wait, &wait);
+ 		schedule();
++		remove_wait_queue(&pci_cfg_wait, &wait);
+ 		raw_spin_lock_irq(&pci_lock);
+ 	} while (dev->block_cfg_access);
+-	__remove_wait_queue(&pci_cfg_wait, &wait);
+ }
+ 
+ /* Returns 0 on success, negative values indicate error. */
+-- 
+2.19.1
+
+
