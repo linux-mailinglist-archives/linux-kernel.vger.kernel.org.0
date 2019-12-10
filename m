@@ -2,79 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEFA2118B96
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:54:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D010118BAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 15:55:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbfLJOyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 09:54:03 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:36983 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbfLJOyD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:54:03 -0500
-X-Originating-IP: 90.76.143.236
-Received: from localhost (lfbn-1-2078-236.w90-76.abo.wanadoo.fr [90.76.143.236])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 650D260006;
-        Tue, 10 Dec 2019 14:54:00 +0000 (UTC)
-Date:   Tue, 10 Dec 2019 15:53:59 +0100
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        Willy Tarreau <w@1wt.eu>, Andrew Lunn <andrew@lunn.ch>,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        maxime.chevallier@bootlin.com,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: mvpp2: fix condition for setting up link
- interrupt
-Message-ID: <20191210145359.GA90089@kwain>
-References: <20190124131803.14038-1-tbogendoerfer@suse.de>
- <20190124155137.GD482@lunn.ch>
- <20190124160741.jady3r2e4dme7c4m@e5254000004ec.dyn.armlinux.org.uk>
- <20190125083720.GK3662@kwain>
- <20191208164235.GT1344@shell.armlinux.org.uk>
+        id S1727625AbfLJOyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 09:54:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727492AbfLJOyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 09:54:04 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ECC32077B;
+        Tue, 10 Dec 2019 14:54:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575989643;
+        bh=a5BHMVgtPZwxKGzK9Kll2jVkr61mgNawIAex25lud2g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a4TFMfvd0F/X1H5S/tJzVb+P1hLYpiTHlMSKDRBBCcXBeVOGGqNLgg+mV3tvtag5l
+         N8ueB474Z+e04eueZAbwwsInGwdoaAW9Yur5XdhWYcT1M6azCT97/yEpsEp+uNF1ew
+         Gx6y0ozwRqOc9p4OH7WnrTiprj+0O5cEjdC1Bhxs=
+Date:   Tue, 10 Dec 2019 15:54:00 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Hyunki Koo <kkoos00@naver.com>,
+        HYUN-KI KOO <hyunki00.koo@samsung.com>,
+        Shinbeom Choi <sbeom.choi@samsung.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] tty: serial: samsung: allow driver to be built by
+ anyone
+Message-ID: <20191210145400.GA4012141@kroah.com>
+References: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
+ <20191210144656.GA11222@pi3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191208164235.GT1344@shell.armlinux.org.uk>
+In-Reply-To: <20191210144656.GA11222@pi3>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell,
-
-On Sun, Dec 08, 2019 at 04:42:36PM +0000, Russell King - ARM Linux admin wrote:
+On Tue, Dec 10, 2019 at 03:46:56PM +0100, Krzysztof Kozlowski wrote:
+> On Tue, Dec 10, 2019 at 03:36:57PM +0100, Greg Kroah-Hartman wrote:
+> > There is no need to tie this driver to only the OMAP platform,
 > 
-> Today, I received an email from Willy Tarreau about this issue which
-> persists to this day with mainline kernels.
-> 
-> Willy reminded me that I've been carrying a fix for this, but because
-> of your concerns as stated above, I haven't bothered submitting it
-> through fear of causing regressions (which you seem to know about):
-> 
->    http://git.armlinux.org.uk/cgit/linux-arm.git/commit/?h=mvpp2&id=67ef3bff255b26cc0d6def8ca99c4e8ae9937727
-> 
-> Just like Thomas' case, the current code is broken for phylink when
-> in-band negotiation is being used - such as with the 1G/2.5G SFP
-> slot on the Macchiatobin.
-> 
-> It seems that resolving the issue has stalled.  Can I merge my patch,
-> or could you state exactly what the problems are with it so that
-> someone else can look into the issues please?
+> s/OMAP/Exynos/
 
-Yes, please merge your patch (the one dropping the check on
-'!port->phylink'), I've been using it for months. I answered that patch
-submission back then[1] but it seems it was lost somehow :)
+Oops, sorry, was thinking of another driver :)
 
-Thanks!
-Antoine
+> Beside that:
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-[1] https://www.spinics.net/lists/netdev/msg555697.html
+Thanks for the review, will fix up the text in here when I apply this.
 
--- 
-Antoine Ténart, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+greg k-h
