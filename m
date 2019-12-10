@@ -2,159 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB5AF118CA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:36:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B5B3118C9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 16:35:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbfLJPgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 10:36:06 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52106 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727380AbfLJPgG (ORCPT
+        id S1727495AbfLJPft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 10:35:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40070 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbfLJPfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 10:36:06 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBAFa3HJ139778
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:36:05 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wt2ktbsad-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:36:04 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <linuxram@us.ibm.com>;
-        Tue, 10 Dec 2019 15:35:54 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 10 Dec 2019 15:35:50 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBAFZmlZ32571458
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 15:35:48 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 61FBCA405F;
-        Tue, 10 Dec 2019 15:35:48 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D778A4054;
-        Tue, 10 Dec 2019 15:35:45 +0000 (GMT)
-Received: from oc0525413822.ibm.com (unknown [9.80.204.137])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 10 Dec 2019 15:35:44 +0000 (GMT)
-Date:   Tue, 10 Dec 2019 07:35:42 -0800
-From:   Ram Pai <linuxram@us.ibm.com>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
-        benh@kernel.crashing.org, david@gibson.dropbear.id.au,
-        paulus@ozlabs.org, mdroth@linux.vnet.ibm.com, hch@lst.de,
-        andmike@us.ibm.com, sukadev@linux.vnet.ibm.com, mst@redhat.com,
-        ram.n.pai@gmail.com, cai@lca.pw, tglx@linutronix.de,
-        bauerman@linux.ibm.com, linux-kernel@vger.kernel.org,
-        leonardo@linux.ibm.com
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <1575681159-30356-1-git-send-email-linuxram@us.ibm.com>
- <1575681159-30356-2-git-send-email-linuxram@us.ibm.com>
- <ed0f048c-bb40-c6c6-887c-ef68c9e411a2@ozlabs.ru>
- <20191210051244.GB5702@oc0525413822.ibm.com>
- <c4b48f55-e4e3-222a-0aa0-9b4783e19584@ozlabs.ru>
+        Tue, 10 Dec 2019 10:35:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lZYXwP0ni4XYi2YYlu9VVenpwLLmSfDHgkVywliZ2Ew=; b=TKSE5/SV3Q4191WpyeITcbWKB
+        XZEL2twvP0MmrdwQqFpY/fHrfQbsJlr20oT+TNxookvYrvDmzxNtio+KSt956Okbk1TllUeWJaRIr
+        Sc1x4KYpvNyibbf3FFOFBwqspqc1x2+vpyfM8DdwJN3kO+q1PZOl3GFz+N1jQNVGFDWEfZkIRhH1F
+        j1Yq0zI9C+aJ6AlqeD7nkZ+9yNCVCGG8nEi5O5tfS3vFVoOZYTh4MQ4i4Vg3R7FqkMNWVEgdmOiHe
+        y5lYgVu8Tybf9Wl/2vp60WvN1KxEnJ1myRBjH12NWFeqPSKsGCfht9hEO3xn52ERr6gd5qOpmUwAC
+        OJvkxljlQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iehYC-0003Rl-1Z; Tue, 10 Dec 2019 15:35:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DD69C305DD6;
+        Tue, 10 Dec 2019 16:34:26 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 66E2229E07076; Tue, 10 Dec 2019 16:35:46 +0100 (CET)
+Date:   Tue, 10 Dec 2019 16:35:46 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH 2/2] perf/x86/intel/bts: Fix the use of page_private()
+Message-ID: <20191210153546.GO2844@hirez.programming.kicks-ass.net>
+References: <20191205142853.28894-1-alexander.shishkin@linux.intel.com>
+ <20191205142853.28894-3-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c4b48f55-e4e3-222a-0aa0-9b4783e19584@ozlabs.ru>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19121015-0020-0000-0000-000003963F28
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121015-0021-0000-0000-000021ED80FB
-Message-Id: <20191210153542.GB5709@oc0525413822.ibm.com>
-Subject: RE: [PATCH v5 1/2] powerpc/pseries/iommu: Share the per-cpu TCE page with
- the hypervisor.
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-10_03:2019-12-10,2019-12-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=18 spamscore=0
- mlxscore=0 adultscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 bulkscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1912100133
+In-Reply-To: <20191205142853.28894-3-alexander.shishkin@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 04:32:10PM +1100, Alexey Kardashevskiy wrote:
+On Thu, Dec 05, 2019 at 05:28:53PM +0300, Alexander Shishkin wrote:
+> Commit
 > 
+>   8062382c8dbe2 ("perf/x86/intel/bts: Add BTS PMU driver")
 > 
-> On 10/12/2019 16:12, Ram Pai wrote:
-> > On Tue, Dec 10, 2019 at 02:07:36PM +1100, Alexey Kardashevskiy wrote:
-> >>
-> >>
-> >> On 07/12/2019 12:12, Ram Pai wrote:
-> >>> H_PUT_TCE_INDIRECT hcall uses a page filled with TCE entries, as one of
-> >>> its parameters.  On secure VMs, hypervisor cannot access the contents of
-> >>> this page since it gets encrypted.  Hence share the page with the
-> >>> hypervisor, and unshare when done.
-> >>
-> >>
-> >> I thought the idea was to use H_PUT_TCE and avoid sharing any extra
-> >> pages. There is small problem that when DDW is enabled,
-> >> FW_FEATURE_MULTITCE is ignored (easy to fix); I also noticed complains
-> >> about the performance on slack but this is caused by initial cleanup of
-> >> the default TCE window (which we do not use anyway) and to battle this
-> >> we can simply reduce its size by adding
-> > 
-> > something that takes hardly any time with H_PUT_TCE_INDIRECT,  takes
-> > 13secs per device for H_PUT_TCE approach, during boot. This is with a
-> > 30GB guest. With larger guest, the time will further detoriate.
+> uses page_private(page) without checking the PagePrivate(page) first,
+
+Well, arguably it did check it, but you didn't like that WARN ;-)
+
+> which seems like a potential bug, considering that page->private aliases
+> with other stuff in struct page.
 > 
+> Fix this by checking PagePrivate() first.
 > 
-> No it will not, I checked. The time is the same for 2GB and 32GB guests-
-> the delay is caused by clearing the small DMA window which is small by
-> the space mapped (1GB) but quite huge in TCEs as it uses 4K pages; and
-> for DDW window + emulated devices the IOMMU page size will be 2M/16M/1G
-> (depends on the system) so the number of TCEs is much smaller.
-
-I cant get your results.  What changes did you make to get it?
-
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Fixes: 8062382c8dbe2 ("perf/x86/intel/bts: Add BTS PMU driver")
+> ---
+>  arch/x86/events/intel/bts.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
 > 
-> 
-> > 
-> >>
-> >> -global
-> >> spapr-pci-host-bridge.dma_win_size=0x4000000
-> > 
-> > This option, speeds it up tremendously.  But than should this option be
-> > enabled in qemu by default?  only for secure VMs? for both VMs?
-> 
-> 
-> As discussed in slack, by default we do not need to clear the entire TCE
-> table and we only have to map swiotlb buffer using the small window. It
-> is a guest kernel change only. Thanks,
+> diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+> index d53b4fb86d87..9e4da1c5a129 100644
+> --- a/arch/x86/events/intel/bts.c
+> +++ b/arch/x86/events/intel/bts.c
+> @@ -63,9 +63,17 @@ struct bts_buffer {
+>  
+>  static struct pmu bts_pmu;
+>  
+> +static int buf_nr_pages(struct page *page)
+> +{
+> +	if (!PagePrivate(page))
+> +		return 1;
+> +
+> +	return 1 << page_private(page);
+> +}
 
-Can you tell me what code you are talking about here.  Where is the TCE
-table getting cleared? What code needs to be changed to not clear it?
-
-Is the code in tce_buildmulti_pSeriesLP(), the one that does the clear
-aswell?
-
->
->
-
-But before I close, you have not told me clearly, what is the problem
-with;  'share the page, make the H_PUT_INDIRECT_TCE hcall, unshare the page'.
-
-
-Remember this is the same page that is earmarked for doing
-H_PUT_INDIRECT_TCE, not by my patch, but its already earmarked by the
-existing code. So it not some random buffer that is picked. Second 
-this page is temporarily shared and unshared, it does not stay shared
-for life.  It does not slow the boot. it does not need any
-special command line options on the qemu.
-
-Shared pages technology was put in place, exactly for the purpose of
-sharing data with the hypervisor.  We are using this technology exactly
-for that purpose.  And finally I agreed with your concern of having
-shared pages staying around.  Hence i addressed that concern, by
-unsharing the page.  At this point, I fail to understand your concern.
-
-
-RP
-
+Yes, that seems like a sensible helper.
