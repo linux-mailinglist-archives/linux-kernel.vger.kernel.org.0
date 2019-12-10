@@ -2,225 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2523811842C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:54:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B35311842E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 10:54:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbfLJJxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 04:53:13 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38665 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbfLJJxM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 04:53:12 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1iecCP-0007sy-B0; Tue, 10 Dec 2019 10:52:57 +0100
-Message-ID: <e46037cf54fb107d1f5d1ea0d618e3b4eeab1af0.camel@pengutronix.de>
-Subject: Re: [PATCH] mtd: rawnand: denali: add reset controlling
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mtd@lists.infradead.org
-Cc:     Dinh Nguyen <dinguyen@kernel.org>, Marek Vasut <marex@denx.de>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 10 Dec 2019 10:52:55 +0100
-In-Reply-To: <20191210091453.26346-1-yamada.masahiro@socionext.com>
-References: <20191210091453.26346-1-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1727272AbfLJJxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 04:53:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38936 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727003AbfLJJxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 04:53:33 -0500
+Received: from localhost (unknown [106.201.45.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AF9B2073B;
+        Tue, 10 Dec 2019 09:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575971612;
+        bh=kQ4Yqn5rZEIEiY/c0Ohg3wcxPWdObo1pmjuNVLFurVo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IYE5RDL/pEvqabyAgmoMjF675Qqla4hiQ+3Gjypdu823XOYNXXj/Nm8GA7A3kW8QU
+         hrGAEGOOKxsdqwmi9tJQ5KVqzh51+lFK4vx1IsMJluFx1mHWin5OO/Hi5xUZdl7q47
+         zkwGKpxKTN9SbhBRaYh+d25p6g81ORoXp0BvZC08=
+Date:   Tue, 10 Dec 2019 15:23:27 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Dave Jiang <dave.jiang@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
+Subject: Re: [PATCH 1/5] dmaengine: Store module owner in dma_device struct
+Message-ID: <20191210095327.GA2536@vkoul-mobl>
+References: <20191112055540.GY952516@vkoul-mobl>
+ <5ca7ef5d-dda7-e36c-1d40-ef67612d2ac4@deltatee.com>
+ <20191114045555.GJ952516@vkoul-mobl>
+ <fa45de06-089f-367c-7816-2ee040e41d24@deltatee.com>
+ <20191122052010.GO82508@vkoul-mobl>
+ <4c03b5c6-6f25-2753-22b9-7cdcb4f8b527@intel.com>
+ <CAPcyv4iOjSX=Diw3Gs0Xnpe4HmVZ0xxD_13aQcCMomqUJWr58A@mail.gmail.com>
+ <dd40f8ff-62bb-648c-eb65-7e335cde6138@deltatee.com>
+ <CAPcyv4gnvQsAen0DUW3o4Kv1WPW28Q00+mxBowUN8yMy6Kmgvw@mail.gmail.com>
+ <3ae58ea7-5cab-23f9-512f-bec30410ff6f@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ae58ea7-5cab-23f9-512f-bec30410ff6f@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+On 22-11-19, 14:42, Dave Jiang wrote:
+> 
+> 
+> On 11/22/19 2:01 PM, Dan Williams wrote:
+> > On Fri, Nov 22, 2019 at 12:56 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+> > > 
+> > > 
+> > > 
+> > > On 2019-11-22 1:50 p.m., Dan Williams wrote:
+> > > > On Fri, Nov 22, 2019 at 8:53 AM Dave Jiang <dave.jiang@intel.com> wrote:
+> > > > > 
+> > > > > 
+> > > > > 
+> > > > > On 11/21/19 10:20 PM, Vinod Koul wrote:
+> > > > > > On 14-11-19, 10:03, Logan Gunthorpe wrote:
+> > > > > > > 
+> > > > > > > 
+> > > > > > > On 2019-11-13 9:55 p.m., Vinod Koul wrote:
+> > > > > > > > > But that's the problem. We can't expect our users to be "nice" and not
+> > > > > > > > > unbind when the driver is in use. Killing the kernel if the user
+> > > > > > > > > unexpectedly unbinds is not acceptable.
+> > > > > > > > 
+> > > > > > > > And that is why we review the code and ensure this does not happen and
+> > > > > > > > behaviour is as expected
+> > > > > > > 
+> > > > > > > Yes, but the current code can kill the kernel when the driver is unbound.
+> > > > > > > 
+> > > > > > > > > > > I suspect this is less of an issue for most devices as they wouldn't
+> > > > > > > > > > > normally be unbound while in use (for example there's really no reason
+> > > > > > > > > > > to ever unbind IOAT seeing it's built into the system). Though, the fact
+> > > > > > > > > > > is, the user could unbind these devices at anytime and we don't want to
+> > > > > > > > > > > panic if they do.
+> > > > > > > > > > 
+> > > > > > > > > > There are many drivers which do modules so yes I am expecting unbind and
+> > > > > > > > > > even a bind following that to work
+> > > > > > > > > 
+> > > > > > > > > Except they will panic if they unbind while in use, so that's a
+> > > > > > > > > questionable definition of "work".
+> > > > > > > > 
+> > > > > > > > dmaengine core has module reference so while they are being used they
+> > > > > > > > won't be removed (unless I complete misread the driver core behaviour)
+> > > > > > > 
+> > > > > > > Yes, as I mentioned in my other email, holding a module reference does
+> > > > > > > not prevent the driver from being unbound. Any driver can be unbound by
+> > > > > > > the user at any time without the module being removed.
+> > > > > > 
+> > > > > > That sounds okay then.
+> > > > > 
+> > > > > I'm actually glad Logan is putting some work in addressing this. I also
+> > > > > ran into the same issue as well dealing with unbinds on my new driver.
+> > > > 
+> > > > This was an original mistake of the dmaengine implementation that
+> > > > Vinod inherited. Module pinning is distinct from preventing device
+> > > > unbind which ultimately can't be prevented. Longer term I think we
+> > > > need to audit dmaengine consumers to make sure they are prepared for
+> > > > the driver to be removed similar to how other request based drivers
+> > > > can gracefully return an error status when the device goes away rather
+> > > > than crashing.
 
-On Tue, 2019-12-10 at 18:14 +0900, Masahiro Yamada wrote:
-> According to the Denali User's Guide, this IP has two reset signals.
-> 
->   rst_n:     reset most of FFs in the controller core
->   reg_rst_n: reset all FFs in the register interface, and in the
->              initialization sequence
-> 
-> This commit supports controlling those reset signals, although they
-> might be often tied up together in actual SoC integration.
-> 
-> One thing that should be kept in mind is the automated initialization
-> sequence (a.k.a. 'bootstrap' process) is kicked off when reg_rst_n is
-> deasserted.
-> 
-> When the reset is deasserted, the controller issues a RESET command
-> to the chip select 0, and attempts to read out the chip ID, and further
-> more, ONFI parameters if it is an ONFI-compliant device. Then, the
-> controller sets up the relevant registers based on the detected
-> device parameters.
-> 
-> This process is just redundant for Linux because nand_scan_ident()
-> probes devices and sets up parameters accordingly. Rather, this hardware
-> feature is annoying because it ends up with misdetection due to bugs.
-> 
-> So, commit 0615e7ad5d52 ("mtd: nand: denali: remove Toshiba and Hynix
-> specific fixup code") changed the driver to not rely on it.
-> 
-> However, there is no way to prevent it from running. The IP provides
-> the 'bootstrap_inhibit_init' port to suppress this sequence, but it is
-> usually out of software control, and dependent on SoC implementation.
-> As for the Socionext UniPhier platform, LD4 always enables it. For the
-> later SoCs, the bootstrap sequence runs depending on the boot mode.
-> 
-> I added usleep_range() to make the driver wait until the sequence
-> finishes. Otherwise, the driver would fail to detect the chip due
-> to the race between the driver and hardware-controlled sequence.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  .../devicetree/bindings/mtd/denali-nand.txt   |  7 ++++
->  drivers/mtd/nand/raw/denali_dt.c              | 40 ++++++++++++++++++-
->  2 files changed, 46 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/denali-nand.txt b/Documentation/devicetree/bindings/mtd/denali-nand.txt
-> index b32aed1db46d..a48b17fb969a 100644
-> --- a/Documentation/devicetree/bindings/mtd/denali-nand.txt
-> +++ b/Documentation/devicetree/bindings/mtd/denali-nand.txt
-> @@ -14,6 +14,11 @@ Required properties:
->      interface clock, and the ECC circuit clock.
->    - clock-names: should contain "nand", "nand_x", "ecc"
->  
-> +Optional properties:
-> +  - resets: may contain phandles to the controller core reset, the register
-> + reset
-> +  - reset-names: may contain "nand", "reg"
-> +
->  Sub-nodes:
->    Sub-nodes represent available NAND chips.
->  
-> @@ -46,6 +51,8 @@ nand: nand@ff900000 {
->  	reg-names = "nand_data", "denali_reg";
->  	clocks = <&nand_clk>, <&nand_x_clk>, <&nand_ecc_clk>;
->  	clock-names = "nand", "nand_x", "ecc";
-> +	resets = <&nand_rst>, <&nand_reg_rst>;
-> +	reset-names = "nand", "reg";
->  	interrupts = <0 144 4>;
->  
->  	nand@0 {
+Right finally wrapping my head of static dmaengine devices! we can
+indeed have devices going away, but me wondering why this should be
+handled in subsystems! Should the driver core not be doing this instead?
+Would it be not a safe behaviour for unplug to unload the driver and
+thus give a chance to unbind from subsystems too...
 
-According to Documentation/devicetree/bindings/submitting-patches.txt
-this part should be a separate patch.
 
-> diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
-> index 8b779a899dcf..132bc6cc066c 100644
-> --- a/drivers/mtd/nand/raw/denali_dt.c
-> +++ b/drivers/mtd/nand/raw/denali_dt.c
-> @@ -6,6 +6,7 @@
->   */
->  
->  #include <linux/clk.h>
-> +#include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
->  #include <linux/ioport.h>
-> @@ -14,6 +15,7 @@
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> +#include <linux/reset.h>
->  
->  #include "denali.h"
->  
-> @@ -22,6 +24,8 @@ struct denali_dt {
->  	struct clk *clk;	/* core clock */
->  	struct clk *clk_x;	/* bus interface clock */
->  	struct clk *clk_ecc;	/* ECC circuit clock */
-> +	struct reset_control *rst;	/* core reset */
-> +	struct reset_control *rst_reg;	/* register reset */
->  };
->  
->  struct denali_dt_data {
-> @@ -151,6 +155,14 @@ static int denali_dt_probe(struct platform_device *pdev)
->  	if (IS_ERR(dt->clk_ecc))
->  		return PTR_ERR(dt->clk_ecc);
->  
-> +	dt->rst = devm_reset_control_get_optional_shared(dev, "nand");
-> +	if (IS_ERR(dt->rst))
-> +		return PTR_ERR(dt->rst);
-> +
-> +	dt->rst_reg = devm_reset_control_get_optional_shared(dev, "reg");
-> +	if (IS_ERR(dt->rst_reg))
-> +		return PTR_ERR(dt->rst_reg);
-> +
->  	ret = clk_prepare_enable(dt->clk);
->  	if (ret)
->  		return ret;
-> @@ -166,10 +178,30 @@ static int denali_dt_probe(struct platform_device *pdev)
->  	denali->clk_rate = clk_get_rate(dt->clk);
->  	denali->clk_x_rate = clk_get_rate(dt->clk_x);
->  
-> -	ret = denali_init(denali);
-> +	/*
-> +	 * Deassert the register reset, and the core reset in this order.
-> +	 * Deasserting the core reset while the register reset is asserted
-> +	 * will cause unpredictable behavior in the controller.
-> +	 */
-> +	ret = reset_control_deassert(dt->rst_reg);
->  	if (ret)
->  		goto out_disable_clk_ecc;
->  
-> +	ret = reset_control_deassert(dt->rst);
-> +	if (ret)
-> +		goto out_assert_rst_reg;
-> +
-> +	/*
-> +	 * When the reset is deasserted, the initialization sequence is kicked
-> +	 * (bootstrap process). This will take a while, and the driver must
-> +	 * wait until it finished in order to avoid unpredictable behavior.
-> +	 */
-> +	usleep_range(200, 1000);
-> +
-> +	ret = denali_init(denali);
-> +	if (ret)
-> +		goto out_assert_rst;
-> +
->  	for_each_child_of_node(dev->of_node, np) {
->  		ret = denali_dt_chip_init(denali, np);
->  		if (ret) {
-> @@ -184,6 +216,10 @@ static int denali_dt_probe(struct platform_device *pdev)
->  
->  out_remove_denali:
->  	denali_remove(denali);
-> +out_assert_rst:
-> +	reset_control_assert(dt->rst);
-> +out_assert_rst_reg:
-> +	reset_control_assert(dt->rst_reg);
->  out_disable_clk_ecc:
->  	clk_disable_unprepare(dt->clk_ecc);
->  out_disable_clk_x:
-> @@ -199,6 +235,8 @@ static int denali_dt_remove(struct platform_device *pdev)
->  	struct denali_dt *dt = platform_get_drvdata(pdev);
->  
->  	denali_remove(&dt->controller);
-> +	reset_control_assert(dt->rst);
-> +	reset_control_assert(dt->rst_reg);
->  	clk_disable_unprepare(dt->clk_ecc);
->  	clk_disable_unprepare(dt->clk_x);
->  	clk_disable_unprepare(dt->clk);
+> > > Yes, but that will be a big project because there are a lot of drivers.
+> > 
+> > Oh yes, in fact I think it's something that can only reasonably be
+> > considered for new consumers.
+> > 
+> > > But I think the dmaengine common code needs to support removal properly,
+> > > which essentially means changing how all the drivers allocate and free
+> > > their structures, among other things.
+> > > 
+> > > The one saving grace is that most of the drivers are for SOCs which
+> > > can't be physically removed and there's really no use-case for the user
+> > > to call unbind.
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+yeah only a small set of drivers would need this for now!
 
-for the driver part.
+> > Yes, the SOC case is not so much my concern as the generic offload use
+> > cases, especially if those offloads are in a similar hotplug domain as
+> > a cpu.
+> 
+> It becomes a bigger issue when "channels" can be reconfigured and can come
+> and go in a hot plug fashion.
 
-regards
-Philipp
-
+-- 
+~Vinod
