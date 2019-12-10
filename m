@@ -2,81 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42DD6118FFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:48:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5170119005
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2019 19:50:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbfLJSsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 13:48:39 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46946 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbfLJSsi (ORCPT
+        id S1727659AbfLJSu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 13:50:27 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42231 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbfLJSu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 13:48:38 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f15so13749848lfl.13
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:48:37 -0800 (PST)
+        Tue, 10 Dec 2019 13:50:26 -0500
+Received: by mail-lj1-f194.google.com with SMTP id e28so21059532ljo.9
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:50:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=BOSCVw9bioi+5hxnz7bz/OpGazg6+xs3kBeEbrtXG48=;
-        b=Pcg4dJHJx81bsDelVo2J311YXVKJfxTmtD9q4K/3ixqYZ3o9fcUZASvkvpmsNECc2m
-         goyWlV33/Y8CabpTc3jtAu198H4wWXtuNEOLsTX9j6W1blZgb9ZTwXUjsO0keytLEoFo
-         HSRPniaTF99B5LfPCNLoU/RQTDtXK0m3ygND4=
+        bh=mhPkURPg18zPOPI/1FqeW1rV9nEBHkw5+GGSGuxTI4A=;
+        b=XyfR7eHFBm0pQiVF/MBhH4Y9RLm8rlxOZfr59pForZKkiWu/GxNadDjF0QjXgF1b+D
+         dCr7Mn6GoehwEgEdze6xus1SV6FmBuG2QuqFyZ4BiL1Xx8Udn6w3SAW0orvrJV6dzRXs
+         wRm6BHNZTeHCa2gcLH6vFruPmyg39jRkwQIEE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=BOSCVw9bioi+5hxnz7bz/OpGazg6+xs3kBeEbrtXG48=;
-        b=jO3S8pzTEcM6pCeOx/tR/2hbiQ0NR1iq7g59NIKOZkrVjUnFD+XVRsUvWtUSPohYf7
-         pXiTWrue4UGZY8P6kNAw8RdBiwRJSJDxFRAKPQy5AoiZz8f7D7nK3IkIp2U6qpaFj1gh
-         Iq53hdbjKftc7ZsBja2EOLBPCtFjb1bq+8gT0DtJFdHFXLhCwxfIixwuUGV9dtmt8+8z
-         5aFJ6q+721vLGEQwjPQBrFfgVcN1LZzWeSw6xsJJovQo5ijW2NSgosYSTwG785nlHpmL
-         H52UanuyMSFSLCUDHl34JIEZzDsMGinWLk81W/iwMaTK0h2Y9jOpDL9Z+k+uJrHo4qMD
-         rLAA==
-X-Gm-Message-State: APjAAAXpEyfXwTJOwLEE6HOeZ/FlwQ7/jqB8Ykdo9cxzvwawDhfK3QdR
-        ZJ7Z01MGbqvdwZC7GzP9aRsU81zYWGA=
-X-Google-Smtp-Source: APXvYqzomwaaHIXctcQoYmBZzzidNSKnULCQrfiWxyzRzThbPRF4rwhaj8WBVXxgujhd0Tzm29lL6Q==
-X-Received: by 2002:a19:cc49:: with SMTP id c70mr13042717lfg.73.1576003716094;
-        Tue, 10 Dec 2019 10:48:36 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id v14sm2246685ljv.105.2019.12.10.10.48.34
+        bh=mhPkURPg18zPOPI/1FqeW1rV9nEBHkw5+GGSGuxTI4A=;
+        b=r+xFWqK83EhcRvefC+uXCaCgdndyQnFyWqJsDt37ilGySjGJ+AeZRvE8SxcWELttUa
+         zeWY6gKsO9PHuAN6CIc3K1oUc4d3Hg1hOZPGblLLV7xDiy6RC7ahPWwzdNuHO8guPl8f
+         wEXLu62hPmfx1414t6AFdNxNFpd7da5szSmbK2x5/q9tssY1TGMEeHEm+7FuRu2ArJX0
+         ouOIBJzociO+Az0t2Lrc8Ld863UCVu6ClDHN2Db5+emfg22qaM2OQseVAvvomu1Pe3Ue
+         9kN2m8jGlPgBnGCVR0Fjq0WKl4N4nuAkZnjbL0imVe4a28Nc2/i7e6e637Ma1nD1PvaX
+         +mSg==
+X-Gm-Message-State: APjAAAXGEapR94Ji53AK9L1nnz+qZbMUgZQpVH7tCTv9H4gk6/3D74Tc
+        Stb3tykdOxSM5M0HCFMf8dh6WXjdsYg=
+X-Google-Smtp-Source: APXvYqwyvKxx2xHyMWMEQg6ArWyMg757eMOa2McP3iyA5St+rTYTQb8Ts4c1C4MOM4Yh45MDj0VbfA==
+X-Received: by 2002:a2e:81c7:: with SMTP id s7mr3912137ljg.3.1576003824457;
+        Tue, 10 Dec 2019 10:50:24 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id f11sm2494592lfa.9.2019.12.10.10.50.23
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2019 10:48:34 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id i23so2116235lfo.7
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:48:34 -0800 (PST)
-X-Received: by 2002:a19:23cb:: with SMTP id j194mr8691484lfj.79.1576003713698;
- Tue, 10 Dec 2019 10:48:33 -0800 (PST)
+        Tue, 10 Dec 2019 10:50:23 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id k8so21051886ljh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 10:50:23 -0800 (PST)
+X-Received: by 2002:a05:651c:285:: with SMTP id b5mr21619655ljo.14.1576003823222;
+ Tue, 10 Dec 2019 10:50:23 -0800 (PST)
 MIME-Version: 1.0
-References: <20191107000917.1092409-1-bjorn.andersson@linaro.org> <20191107000917.1092409-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20191107000917.1092409-3-bjorn.andersson@linaro.org>
+References: <20191209135934.1.Iaaf3ad8a27b00f2f2bc333486a1ecc9985bb5170@changeid>
+In-Reply-To: <20191209135934.1.Iaaf3ad8a27b00f2f2bc333486a1ecc9985bb5170@changeid>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 10 Dec 2019 10:47:57 -0800
-X-Gmail-Original-Message-ID: <CAE=gft5mLSqsJzj=DtesH3G68_wSKUr8rZ5iubOerimQmZKegA@mail.gmail.com>
-Message-ID: <CAE=gft5mLSqsJzj=DtesH3G68_wSKUr8rZ5iubOerimQmZKegA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] phy: qcom-qmp: Increase PHY ready timeout
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+Date:   Tue, 10 Dec 2019 10:49:47 -0800
+X-Gmail-Original-Message-ID: <CAE=gft665cOomO50oevNuG-=vtBzDfraR+ojjURuhxyFOt+UtA@mail.gmail.com>
+Message-ID: <CAE=gft665cOomO50oevNuG-=vtBzDfraR+ojjURuhxyFOt+UtA@mail.gmail.com>
+Subject: Re: [PATCH] phy: ufs-qcom: Invert PCS ready logic for SDM845 UFS
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Can Guo <cang@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
+        Andy Gross <agross@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 4:09 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+On Mon, Dec 9, 2019 at 2:00 PM Evan Green <evgreen@chromium.org> wrote:
 >
-> It's typical for the QHP PHY to take slightly above 1ms to initialize,
-> so increase the timeout of the PHY ready check to 10ms - as already done
-> in the downstream PCIe driver.
+> The SDM845 UFS phy seems to want to do a low transition to become
+> ready, rather than a high transition. Without this, I am unable to
+> enumerate UFS on SDM845 when booted from USB.
 >
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Fixes: 14ced7e3a1a ('phy: qcom-qmp: Correct ready status, again')
+>
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+> ---
+>
+> Bjorn,
+> At this point I'm super confused on what the correct behavior
+> should be. Lack of documentation doesn't help. I'm worried that this
+> change breaks UFS on some other platforms, so I'm hoping you or some
+> PHY folks might have some advice on what the right thing to do is.
 
-Tested-by: Evan Green <evgreen@chromium.org>
-
-Should this have a Fixes tag for 14ced7e3a1ae9 ("phy: qcom-qmp:
-Correct ready status, again")?
+Disregard this patch. Bjorn pointed me to the patch below, which is
+the right fix for my issue:
+https://lore.kernel.org/linux-arm-msm/20191107000917.1092409-3-bjorn.andersson@linaro.org/
