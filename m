@@ -2,98 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 740D411B9AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB7E11B9BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:12:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730939AbfLKRKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 12:10:17 -0500
-Received: from sonic301-22.consmr.mail.gq1.yahoo.com ([98.137.64.148]:36024
-        "EHLO sonic301-22.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730129AbfLKRKQ (ORCPT
+        id S1730867AbfLKRMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 12:12:14 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:59149 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730612AbfLKRMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 12:10:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1576084215; bh=zh+Qq4KKIZBWaPq05JcdqJTq0ZIdb2xT9gPdRoh6Iu4=; h=Date:From:To:Cc:Subject:References:From:Subject; b=Z+uVRsdHOXjOjjD9kXgyXgiLKGsj3ENObF3fxk7XwSy5K80VnFlmWQ4RYKetMSFs0vYkLW+LzHhOghKRoY2OoA6sa5kwxCrJwy7dCBCSBr8zyBNP+T4C22OTdEnxxICWIRkkHw9/kSByzfdu62QDKpe3pQFPmGV6QO/zh/Pt7l0mtjbAh2nki4PCXinp574TEXo0dHWm/NqyAYpL7qg+/fkQIK90+Ou7AAQ6/kTxpppRi14EScK12dij6bajPtWdkhIYrBHIA54URZ0k9YSN6arXRJg1dlfTCVxfW6Lh/zc4GDdWfv+qcDJFhx+F3V0V/8CG1YMlVusWrWoogYtQQg==
-X-YMail-OSG: WG8ijLUVM1kklRgyAHjAJW0GX8ixNnkB.BQrGKakTRErvtKWMMgVhn1zd2ZVceK
- NdtyTOS.pE0VJ3X0j0YcdgenF4f3E_Yz8F7H4SiHQlMn5m46Lj8i.j3Q4_g9ONYm4OauQq9L0m_K
- ERLQxrsbAqEL.T1z9NKHmvAjaVpHVbZZ2rPNOzPMzunok6QfhV7miYZhGWkUgf3Gx2az1pYr_8Bz
- w_7K8OLUTex5GtLM38kK9sHSgvU8Gf_CGNX94RcTscCpUhhrCPqdjovKewaDtTojK17UE20OKDL8
- ygnY5ed_cA6oT27gzyKcf55Lwr4_551HdcvJc16AW9.yf3p60aboUwMZNGKDkgxG5RFw5CFlouXo
- 3ya7tVxa3LaxAEgZiWb0Lb9MAXPNqpC0DB53NMyfW9Os70jG9ibKkMz_DYvxyKmph1GynRg5KLqE
- ovsNgOiXXYKkoplpnKDnzOuAP9t9DQXggapzFvR2rSuSZdXTYlv3t00Ob_rvk6KNkAVY1W0rBJb7
- Dc9encw4cYxTopFCQ5j_aAnv4kBE4bXtI6PQhptegeACwIbLRAqv9CuPlrhEwWbNYXIB8g4zp6I_
- jYKBNbK4oBUjUk7YcHi2gPqUd.U2uFmhBNM8sbzlGPrkeFKy6fFEJt41Mkfi_6lGbn_aofA8xIJZ
- ceY9hSCoUtBN_4EWIeT75aHow2.J4N98eW2NgkW_4.k2fdgDVMWcseihOeyxCx2RFkbxsd9KdLsg
- j_glcQtModUuCYoNeNR6JvZkLpvyLURWiL050PEwLk.vRMBr0_l_AGCz0OmYpPbR9jCNAyfdEhhl
- KtPQ0J98Q2PqhDx1.a1U5tY_aSnis19.hlcB9oV1Kkq_yHaVbnERSdp3dFVlISxTo_Ki6bzDNdTm
- 9SbyWYt3quGH6JFZaYcV4dmqOHH_uvEjJqcQL2gPmpsDBeXfEVkUlswcR4LVD9Zt19LSJK5wTsO6
- PBjIXfgDnE4HETtrwZijzELnoRTbj6hl18XmBEmV7wHbe4i4WUYyKZ3MFfRia6CX96e.uCYd3gEu
- 8IQcrQeSNQvsrFvwdrsgDdBOEd4LDndHg5JmRwFncasxCmzt_m.4ETAJYcjFPQMrOntdflK5lIFb
- AzKm.lz.TSGFbxX9io7cq_.IpF7aEZ.JOxffZdntPQ3O.QIUfzDMkzzudZuvJLgrBCodCEVSzOIX
- ffrXtZ5wkcWoANy8mBzvR1VQ91jSswxIPPTvH671QZrrpaC8ei5arEUFB3LMXSw68UPLwE4_zUSE
- hnHs6gNXvtyynnkdkTyWZ2BFitDQUBhyYbuM4A81pAGH80hI_NIRfbtR7tq8aH4iP6MmsBRncc3m
- _33mUcV_GPkTNmc_Xme5PPcskO6boB2jFJmNE1AQrqWIT6ZsO1FgPHA6oJzzeZNxFgYx83jARxwL
- loPCHanaSMSkb
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Wed, 11 Dec 2019 17:10:15 +0000
-Received: by smtp413.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 78b50f606b195eafc3a6178574d6a883;
-          Wed, 11 Dec 2019 17:10:09 +0000 (UTC)
-Date:   Thu, 12 Dec 2019 01:09:58 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Michael <fedora.dm0@gmail.com>,
-        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        Wang Li <wangli74@huawei.com>
-Subject: [GIT PULL] erofs fixes for 5.5-rc2
-Message-ID: <20191211170950.GA16027@hsiangkao-HP-ZHAN-66-Pro-G1>
+        Wed, 11 Dec 2019 12:12:14 -0500
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 3B76F23E21;
+        Wed, 11 Dec 2019 18:12:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1576084331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ohz81SjZe6gFLPc5Ph1X3XNnqxjcs7aG++kYioy2jnU=;
+        b=V4+/p/sisQZV37Uda6bmGtr3rqwlyMYtZw0lEk9rD8fQ7L9LHkRfmp4mbhjOFXgARBr8yu
+        QBA+eteWJMakBFePbrZId5JlCDs1ulzRHISzb68qdMm/9XyEo+Kfw+OQquA30AkGGCZmsF
+        fRXeWQQVdqS9YOV5WSH4W/sUerWjmBo=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH v3] arm64: dts: ls1028a: fix reboot node
+Date:   Wed, 11 Dec 2019 18:11:45 +0100
+Message-Id: <20191211171145.14736-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-References: <20191211170950.GA16027.ref@hsiangkao-HP-ZHAN-66-Pro-G1>
-X-Mailer: WebService/1.1.14728 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+X-Spam-Level: ******
+X-Rspamd-Server: web
+X-Spam-Status: Yes, score=6.40
+X-Spam-Score: 6.40
+X-Rspamd-Queue-Id: 3B76F23E21
+X-Spamd-Result: default: False [6.40 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[8];
+         MID_CONTAINS_FROM(1.00)[];
+         NEURAL_HAM(-0.00)[-0.689];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:31334, ipnet:2a02:810c::/31, country:DE];
+         SUSPICIOUS_RECIPS(1.50)[]
+X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The reboot register isn't located inside the DCFG controller, but in its
+own RST controller. Fix it.
 
-Could you consider these fixes for this 5.5 round?
+Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
 
-Mainly address a regression reported by David recently observed
-together with overlayfs due to the improper return value of listxattr()
-without xattr. Update outdated expressions in document as well.
+changes since v2:
+ - rebase to shawnguo/linux/for-next
 
-Thanks,
-Gao Xiang
+changes since v1:
+ - add fixes tag
+ - remove "ls1028a-rst" compatible string, because there is no actual
+   driver for it. It just use the syscon driver.
 
-The following changes since commit 219d54332a09e8d8741c1e1982f5eae56099de85:
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-  Linux 5.4 (2019-11-24 16:32:01 -0800)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 261663f4a2db..301a76e441fc 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -88,7 +88,7 @@
+ 
+ 	reboot {
+ 		compatible ="syscon-reboot";
+-		regmap = <&dcfg>;
++		regmap = <&rst>;
+ 		offset = <0xb0>;
+ 		mask = <0x02>;
+ 	};
+@@ -178,6 +178,12 @@
+ 			big-endian;
+ 		};
+ 
++		rst: syscon@1e60000 {
++			compatible = "syscon";
++			reg = <0x0 0x1e60000 0x0 0x10000>;
++			little-endian;
++		};
++
+ 		scfg: syscon@1fc0000 {
+ 			compatible = "fsl,ls1028a-scfg", "syscon";
+ 			reg = <0x0 0x1fc0000 0x0 0x10000>;
+-- 
+2.20.1
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-5.5-rc2-fixes
-
-for you to fetch changes up to ffafde478309af01b2a495ecaf203125abfb35bd:
-
-  erofs: update documentation (2019-12-08 21:37:01 +0800)
-
-----------------------------------------------------------------
-Changes since last update:
-
-- Fix improper return value of listxattr() with no xattr;
-
-- Keep up documentation with latest code.
-
-----------------------------------------------------------------
-Gao Xiang (2):
-      erofs: zero out when listxattr is called with no xattr
-      erofs: update documentation
-
- Documentation/filesystems/erofs.txt | 27 ++++++++++++++-------------
- fs/erofs/xattr.c                    |  2 ++
- 2 files changed, 16 insertions(+), 13 deletions(-)
