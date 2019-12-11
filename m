@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B63B11B093
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18AC511AEC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732806AbfLKPYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:24:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55302 "EHLO mail.kernel.org"
+        id S1730241AbfLKPIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:08:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732648AbfLKPYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:24:04 -0500
+        id S1730209AbfLKPIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:08:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 559312077B;
-        Wed, 11 Dec 2019 15:24:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62C8F2173E;
+        Wed, 11 Dec 2019 15:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077843;
-        bh=H98GnpD26pXvlIkDV9eWewTvkBxdUfTpH83ifvp4PdQ=;
+        s=default; t=1576076881;
+        bh=g0jZFLX0yEtJ0KaPzUCHs3PLRu4okm5m+F3MyeYYZog=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ez0uS6PVVXP257HIK7cSxC/fCVDozFyTqtAJC0YbOCRRHi+TQEKRB4xu81VsDAqYM
-         EqgWoAJ1LcbL9BqVFP4KNRxfrr+ywAR/PzYilV+rRYCycUc0olbe3M2/roWaI5gkiE
-         3YR98RRVWM4EjO1/W/BIwbPVeWdlUKE37SmAT58k=
+        b=e13qp+H361NGk/DEMx1c9XX7DS2r6i8cVsqWlX9OQ1KeLxMuFsUWzRKG1Hcp0zvrH
+         Yg3oaE6Gn99NW5kf8Ox9khGF7MTpnWC5wsdkI6pcQTrkCfGUb4i5AtJQmaVJWzq7MB
+         WQPyGSG21hpXyP9CCSrN7I02mUkhmcxb9ewtQ3TI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 155/243] tcp: fix off-by-one bug on aborting window-probing socket
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.4 26/92] io_uring: fix missing kmap() declaration on powerpc
 Date:   Wed, 11 Dec 2019 16:05:17 +0100
-Message-Id: <20191211150349.632370408@linuxfoundation.org>
+Message-Id: <20191211150231.381410778@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,38 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 3976535af0cb9fe34a55f2ffb8d7e6b39a2f8188 ]
+commit aa4c3967756c6c576a38a23ac511be211462a6b7 upstream.
 
-Previously there is an off-by-one bug on determining when to abort
-a stalled window-probing socket. This patch fixes that so it is
-consistent with tcp_write_timeout().
+Christophe reports that current master fails building on powerpc with
+this error:
 
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+   CC      fs/io_uring.o
+fs/io_uring.c: In function ‘loop_rw_iter’:
+fs/io_uring.c:1628:21: error: implicit declaration of function ‘kmap’
+[-Werror=implicit-function-declaration]
+     iovec.iov_base = kmap(iter->bvec->bv_page)
+                      ^
+fs/io_uring.c:1628:19: warning: assignment makes pointer from integer
+without a cast [-Wint-conversion]
+     iovec.iov_base = kmap(iter->bvec->bv_page)
+                    ^
+fs/io_uring.c:1643:4: error: implicit declaration of function ‘kunmap’
+[-Werror=implicit-function-declaration]
+     kunmap(iter->bvec->bv_page);
+     ^
+
+which is caused by a missing highmem.h include. Fix it by including
+it.
+
+Fixes: 311ae9e159d8 ("io_uring: fix dead-hung for non-iter fixed rw")
+Reported-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Tested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ipv4/tcp_timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/io_uring.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-index c719a41d2eba2..50b15e1c633b4 100644
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -378,7 +378,7 @@ static void tcp_probe_timer(struct sock *sk)
- 			return;
- 	}
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -70,6 +70,7 @@
+ #include <linux/nospec.h>
+ #include <linux/sizes.h>
+ #include <linux/hugetlb.h>
++#include <linux/highmem.h>
  
--	if (icsk->icsk_probes_out > max_probes) {
-+	if (icsk->icsk_probes_out >= max_probes) {
- abort:		tcp_write_err(sk);
- 	} else {
- 		/* Only send another probe if we didn't close things up. */
--- 
-2.20.1
-
+ #include <uapi/linux/io_uring.h>
+ 
 
 
