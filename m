@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6967111B04D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:21:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6CC511AEBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732460AbfLKPV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:21:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51698 "EHLO mail.kernel.org"
+        id S1730116AbfLKPHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:07:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729663AbfLKPVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:21:24 -0500
+        id S1730076AbfLKPHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:07:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A69362465B;
-        Wed, 11 Dec 2019 15:21:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38F7720663;
+        Wed, 11 Dec 2019 15:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077684;
-        bh=e5Qqv5i5bfqv3rMEEajILf48eFNYMkElgLOHDwmN5zE=;
+        s=default; t=1576076863;
+        bh=lLytQxX7qdL6iU0dEIKBgm6bxyJ3D/XPmqK/cZk5ARA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AdYl+sDuTyZNhtpr1wmcj/Qa92xRyUsP3fGpQPVlC/Wuj1K8vPRNVb1ub+Y1Zv1vt
-         2T5TCGUfE5/Lbx4GdII36Lsijy1BNcWDV5xT/XNfu3UiLN1AIHLq+nJ253c+/ausSi
-         UDS0f87OxrK695OTBkxhSsCszmceDAz7EhDHo/tg=
+        b=L2OpVGEDDSlICJ4KZigthYH5XKeatgIZCPOwwsFWA6hV3Sj/mMbN5PpMLivvn8BuZ
+         aR84DlKD9sMSKv7E9E28mH3sV8ceGdzUmfrK/lvv5fivGB+ZdvjA8soZzP7vUupONs
+         OG2WpjdNDhOP33G37XVGPXLMt6aOkUGJCsKhez4c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 131/243] can: xilinx: fix return type of ndo_start_xmit function
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 5.4 02/92] arm64: tegra: Fix active-low warning for Jetson TX1 regulator
 Date:   Wed, 11 Dec 2019 16:04:53 +0100
-Message-Id: <20191211150347.972455063@linuxfoundation.org>
+Message-Id: <20191211150222.535121261@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-[ Upstream commit 81de0cd60fd492575b24d97667f38b8b833fb058 ]
+commit 1e5e929c009559bd7e898ac8e17a5d01037cb057 upstream.
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+Commit 34993594181d ("arm64: tegra: Enable HDMI on Jetson TX1")
+added a regulator for HDMI on the Jetson TX1 platform. This regulator
+has an active high enable, but the GPIO specifier for enabling the
+regulator incorrectly defines it as active-low. This causes the
+following warning to occur on boot ...
 
-Found by coccinelle.
+ WARNING KERN regulator@10 GPIO handle specifies active low - ignored
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The fixed-regulator binding does not use the active-low flag from the
+gpio specifier and purely relies of the presence of the
+'enable-active-high' property to determine if it is active high or low
+(if this property is omitted). Fix this warning by setting the GPIO
+to active-high in the GPIO specifier which aligns with the presense of
+the 'enable-active-high' property.
+
+Fixes: 34993594181d ("arm64: tegra: Enable HDMI on Jetson TX1")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/can/xilinx_can.c | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/xilinx_can.c b/drivers/net/can/xilinx_can.c
-index 3df23487487f7..b01c6da4dd814 100644
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -612,7 +612,7 @@ static int xcan_start_xmit_mailbox(struct sk_buff *skb, struct net_device *ndev)
-  *
-  * Return: NETDEV_TX_OK on success and NETDEV_TX_BUSY when the tx queue is full
-  */
--static int xcan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-+static netdev_tx_t xcan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct xcan_priv *priv = netdev_priv(ndev);
- 	int ret;
--- 
-2.20.1
-
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1612,7 +1612,7 @@
+ 			regulator-name = "VDD_HDMI_5V0";
+ 			regulator-min-microvolt = <5000000>;
+ 			regulator-max-microvolt = <5000000>;
+-			gpio = <&exp1 12 GPIO_ACTIVE_LOW>;
++			gpio = <&exp1 12 GPIO_ACTIVE_HIGH>;
+ 			enable-active-high;
+ 			vin-supply = <&vdd_5v0_sys>;
+ 		};
 
 
