@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9AA11B940
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:55:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59C3911B944
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:55:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730653AbfLKQzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:55:06 -0500
-Received: from foss.arm.com ([217.140.110.172]:39432 "EHLO foss.arm.com"
+        id S1730734AbfLKQzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:55:16 -0500
+Received: from foss.arm.com ([217.140.110.172]:39450 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbfLKQzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:55:06 -0500
+        id S1727118AbfLKQzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 11:55:16 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 600D630E;
-        Wed, 11 Dec 2019 08:55:05 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AEA930E;
+        Wed, 11 Dec 2019 08:55:15 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4AF93F52E;
-        Wed, 11 Dec 2019 08:55:04 -0800 (PST)
-Date:   Wed, 11 Dec 2019 16:55:03 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF4CF3F52E;
+        Wed, 11 Dec 2019 08:55:14 -0800 (PST)
+Date:   Wed, 11 Dec 2019 16:55:13 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: max77650: add of_match table" to the regulator tree
-In-Reply-To: <20191210100725.11005-1-brgl@bgdev.pl>
-Message-Id: <applied-20191210100725.11005-1-brgl@bgdev.pl>
+To:     Aditya Pakki <pakki001@umn.edu>
+Cc:     kjlu@umn.edu, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        pakki001@umn.edu
+Subject: Applied "spi: dw: Avoid BUG_ON() in case of host failure" to the spi tree
+In-Reply-To: <20191205231421.9333-1-pakki001@umn.edu>
+Message-Id: <applied-20191205231421.9333-1-pakki001@umn.edu>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -33,11 +34,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: max77650: add of_match table
+   spi: dw: Avoid BUG_ON() in case of host failure
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.6
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -58,42 +59,36 @@ to this mail.
 Thanks,
 Mark
 
-From 100a21100bbb2bbc82fc4273e152c96e5c6c5d12 Mon Sep 17 00:00:00 2001
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Tue, 10 Dec 2019 11:07:25 +0100
-Subject: [PATCH] regulator: max77650: add of_match table
+From 169f9acae08685d4f2a6fd32983958d44e10905d Mon Sep 17 00:00:00 2001
+From: Aditya Pakki <pakki001@umn.edu>
+Date: Thu, 5 Dec 2019 17:14:21 -0600
+Subject: [PATCH] spi: dw: Avoid BUG_ON() in case of host failure
 
-We need the of_match table if we want to use the compatible string in
-the pmic's child node and get the regulator driver loaded automatically.
+If dws is NULL in dw_spi_host_add(), we return the error to the
+upper callers instead of crashing. The patch replaces BUG_ON by
+returning -EINVAL to the caller.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Link: https://lore.kernel.org/r/20191210100725.11005-1-brgl@bgdev.pl
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Link: https://lore.kernel.org/r/20191205231421.9333-1-pakki001@umn.edu
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/max77650-regulator.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/spi/spi-dw.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/max77650-regulator.c
-index e57fc9197d62..ac89a412f665 100644
---- a/drivers/regulator/max77650-regulator.c
-+++ b/drivers/regulator/max77650-regulator.c
-@@ -386,9 +386,16 @@ static int max77650_regulator_probe(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
+index a92aa5cd4fbe..a160d9a141ea 100644
+--- a/drivers/spi/spi-dw.c
++++ b/drivers/spi/spi-dw.c
+@@ -460,7 +460,8 @@ int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
+ 	struct spi_controller *master;
+ 	int ret;
  
-+static const struct of_device_id max77650_regulator_of_match[] = {
-+	{ .compatible = "maxim,max77650-regulator" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, max77650_regulator_of_match);
-+
- static struct platform_driver max77650_regulator_driver = {
- 	.driver = {
- 		.name = "max77650-regulator",
-+		.of_match_table = max77650_regulator_of_match,
- 	},
- 	.probe = max77650_regulator_probe,
- };
+-	BUG_ON(dws == NULL);
++	if (!dws)
++		return -EINVAL;
+ 
+ 	master = spi_alloc_master(dev, 0);
+ 	if (!master)
 -- 
 2.20.1
 
