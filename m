@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B77C11B232
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C546611B22F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:34:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387585AbfLKP2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:28:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33828 "EHLO mail.kernel.org"
+        id S2387596AbfLKP2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:28:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387509AbfLKP15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:27:57 -0500
+        id S2387512AbfLKP17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:27:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C31632465B;
-        Wed, 11 Dec 2019 15:27:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4A602467A;
+        Wed, 11 Dec 2019 15:27:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078076;
-        bh=/u13mj4dQXc8/OvMb5WuTa4PoenXQs6Y8XQYTXC0M2c=;
+        s=default; t=1576078077;
+        bh=R7eY9aHdrcCt7uzhurYIB7GJmkTeGmIKSQ3WZRcxiD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mTXkhJe9yhAiJ+BQqNIT17zyvW6aCgSVkBs182PzoWFZWf1NYHtAIitZha7IoZo2r
-         DRZSybdmugKuTzNp/eoH/0dNFgLq8lodibnm4y7BcNfvSYofA2ukminRoqPdMRiE1N
-         F8KvmolJIVTYiYT4FHys0N0KjApV7YOvPdmLqZSw=
+        b=jG4YodmOpIcc9B00/nc0VJmISlUsjA11KjiA7XA4I3QZ4Quw0CYbuCOy44XXPU8nN
+         rVfawpCrhuCtQXet3/meivWsrFlNkDezgonZ+K3CYBxXw2qsvhi9GCkuUV+PGxW3kz
+         jo11BuL+rThxDIQ1X9FuSK4AufZeISKeZR4haM80=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chengguang Xu <cgxu519@mykernel.net>, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 67/79] f2fs: choose hardlimit when softlimit is larger than hardlimit in f2fs_statfs_project()
-Date:   Wed, 11 Dec 2019 10:26:31 -0500
-Message-Id: <20191211152643.23056-67-sashal@kernel.org>
+Cc:     Erhard Furtner <erhard_f@mailbox.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 68/79] of: unittest: fix memory leak in attach_node_and_children
+Date:   Wed, 11 Dec 2019 10:26:32 -0500
+Message-Id: <20191211152643.23056-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
 References: <20191211152643.23056-1-sashal@kernel.org>
@@ -44,89 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chengguang Xu <cgxu519@mykernel.net>
+From: Erhard Furtner <erhard_f@mailbox.org>
 
-[ Upstream commit 909110c060f22e65756659ec6fa957ae75777e00 ]
+[ Upstream commit 2aacace6dbbb6b6ce4e177e6c7ea901f389c0472 ]
 
-Setting softlimit larger than hardlimit seems meaningless
-for disk quota but currently it is allowed. In this case,
-there may be a bit of comfusion for users when they run
-df comamnd to directory which has project quota.
+In attach_node_and_children memory is allocated for full_name via
+kasprintf. If the condition of the 1st if is not met the function
+returns early without freeing the memory. Add a kfree() to fix that.
 
-For example, we set 20M softlimit and 10M hardlimit of
-block usage limit for project quota of test_dir(project id 123).
+This has been detected with kmemleak:
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=205327
 
-[root@hades f2fs]# repquota -P -a
-*** Report for project quotas on device /dev/nvme0n1p8
-Block grace time: 7days; Inode grace time: 7days
-Block limits File limits
-Project used soft hard grace used soft hard grace
-----------------------------------------------------------------------
-0 -- 4 0 0 1 0 0
-123 +- 10248 20480 10240 2 0 0
+It looks like the leak was introduced by this commit:
+Fixes: 5babefb7f7ab ("of: unittest: allow base devicetree to have symbol metadata")
 
-The result of df command as below:
-
-[root@hades f2fs]# df -h /mnt/f2fs/test
-Filesystem Size Used Avail Use% Mounted on
-/dev/nvme0n1p8 20M 11M 10M 51% /mnt/f2fs
-
-Even though it looks like there is another 10M free space to use,
-if we write new data to diretory test(inherit project id),
-the write will fail with errno(-EDQUOT).
-
-After this patch, the df result looks like below.
-
-[root@hades f2fs]# df -h /mnt/f2fs/test
-Filesystem Size Used Avail Use% Mounted on
-/dev/nvme0n1p8 10M 10M 0 100% /mnt/f2fs
-
-Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Erhard Furtner <erhard_f@mailbox.org>
+Reviewed-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Tyrel Datwyler <tyreld@linux.ibm.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ drivers/of/unittest.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7a9cc64f5ca37..662c7de58b990 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1148,9 +1148,13 @@ static int f2fs_statfs_project(struct super_block *sb,
- 		return PTR_ERR(dquot);
- 	spin_lock(&dquot->dq_dqb_lock);
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 68f52966bbc04..808571f7f6ef9 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -1133,8 +1133,10 @@ static void attach_node_and_children(struct device_node *np)
+ 	full_name = kasprintf(GFP_KERNEL, "%pOF", np);
  
--	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
--		 dquot->dq_dqb.dqb_bsoftlimit :
--		 dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
-+	limit = 0;
-+	if (dquot->dq_dqb.dqb_bsoftlimit)
-+		limit = dquot->dq_dqb.dqb_bsoftlimit;
-+	if (dquot->dq_dqb.dqb_bhardlimit &&
-+			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
-+		limit = dquot->dq_dqb.dqb_bhardlimit;
-+
- 	if (limit && buf->f_blocks > limit) {
- 		curblock = dquot->dq_dqb.dqb_curspace >> sb->s_blocksize_bits;
- 		buf->f_blocks = limit;
-@@ -1159,9 +1163,13 @@ static int f2fs_statfs_project(struct super_block *sb,
- 			 (buf->f_blocks - curblock) : 0;
- 	}
+ 	if (!strcmp(full_name, "/__local_fixups__") ||
+-	    !strcmp(full_name, "/__fixups__"))
++	    !strcmp(full_name, "/__fixups__")) {
++		kfree(full_name);
+ 		return;
++	}
  
--	limit = dquot->dq_dqb.dqb_isoftlimit ?
--		dquot->dq_dqb.dqb_isoftlimit :
--		dquot->dq_dqb.dqb_ihardlimit;
-+	limit = 0;
-+	if (dquot->dq_dqb.dqb_isoftlimit)
-+		limit = dquot->dq_dqb.dqb_isoftlimit;
-+	if (dquot->dq_dqb.dqb_ihardlimit &&
-+			(!limit || dquot->dq_dqb.dqb_ihardlimit < limit))
-+		limit = dquot->dq_dqb.dqb_ihardlimit;
-+
- 	if (limit && buf->f_files > limit) {
- 		buf->f_files = limit;
- 		buf->f_ffree =
+ 	dup = of_find_node_by_path(full_name);
+ 	kfree(full_name);
 -- 
 2.20.1
 
