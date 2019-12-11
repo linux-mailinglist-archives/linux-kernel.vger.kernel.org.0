@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B1C11AEB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:07:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A151511B05C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:22:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729982AbfLKPHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:07:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54580 "EHLO mail.kernel.org"
+        id S1730606AbfLKPWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:22:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729912AbfLKPH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:07:29 -0500
+        id S1731800AbfLKPWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:22:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8648320663;
-        Wed, 11 Dec 2019 15:07:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F47A2073D;
+        Wed, 11 Dec 2019 15:22:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076848;
-        bh=pQakcmBqFDRLENctK9bfXEUWLJiw418Ya1RuBaWljTQ=;
+        s=default; t=1576077722;
+        bh=MXdq6v4VdAeAT1IaLq5MUg/YDKhiJOWxehovXYVbj9M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kZlALQH7DcptGfsmLHOoNW5xNfaT03U85iw+Swets9M8vP/edZN/qOkP5pnlHZvpe
-         1CFvQ010aE/BFdJQeDX0PA72MjM9YFq6oTtLdPdt2yG/fYK58OJJTTziSvgyrOqmEN
-         gkoeoZrnhSLvJKpQ/GPiolKykp0J8HW7w3p8MTlc=
+        b=lCqu6FmYmoYh9lXvqt2mQnK9RbMhr4Ki73s+vd9cNAJhiHDgclTlyeDiLuE48zYMU
+         COp2bvwTXa9PmJ0CauWfLgXQ5lNslUzFhONM2u0NRyw25x1jkjaxEPLouGLDoYnDWc
+         EkBifJwTHl7xbMDeaQPo3XVp1w19V6BPbaQRgcNA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: [PATCH 5.4 14/92] serial: pl011: Fix DMA ->flush_buffer()
-Date:   Wed, 11 Dec 2019 16:05:05 +0100
-Message-Id: <20191211150225.289829149@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 144/243] net/x25: fix null_x25_address handling
+Date:   Wed, 11 Dec 2019 16:05:06 +0100
+Message-Id: <20191211150348.887008369@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,73 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+From: Martin Schiller <ms@dev.tdt.de>
 
-commit f6a196477184b99a31d16366a8e826558aa11f6d upstream.
+[ Upstream commit 06137619f061f498c2924f6543fa45b7d39f0501 ]
 
-PL011's ->flush_buffer() implementation releases and reacquires the port
-lock.  Due to a race condition here, data can end up being added to the
-circular buffer but neither being discarded nor being sent out.  This
-leads to, for example, tcdrain(2) waiting indefinitely.
+o x25_find_listener(): the compare for the null_x25_address was wrong.
+   We have to check the x25_addr of the listener socket instead of the
+   x25_addr of the incomming call.
 
-Process A                       Process B
+ o x25_bind(): it was not possible to bind a socket to null_x25_address
 
-uart_flush_buffer()
- - acquire lock
- - circ_clear
- - pl011_flush_buffer()
- -- release lock
- -- dmaengine_terminate_all()
-
-                                uart_write()
-                                - acquire lock
-                                - add chars to circ buffer
-                                - start_tx()
-                                -- start DMA
-                                - release lock
-
- -- acquire lock
- -- turn off DMA
- -- release lock
-
-                                // Data in circ buffer but DMA is off
-
-According to the comment in the code, the releasing of the lock around
-dmaengine_terminate_all() is to avoid a deadlock with the DMA engine
-callback.  However, since the time this code was written, the DMA engine
-API documentation seems to have been clarified to say that
-dmaengine_terminate_all() (in the identically implemented but
-differently named dmaengine_terminate_async() variant) does not wait for
-any running complete callback to be completed and can even be called
-from a complete callback.  So there is no possibility of deadlock if the
-DMA engine driver implements this API correctly.
-
-So we should be able to just remove this release and reacquire of the
-lock to prevent the aforementioned race condition.
-
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191118092547.32135-1-vincent.whitchurch@axis.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/amba-pl011.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ net/x25/af_x25.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -813,10 +813,8 @@ __acquires(&uap->port.lock)
- 	if (!uap->using_tx_dma)
- 		return;
+diff --git a/net/x25/af_x25.c b/net/x25/af_x25.c
+index 3150648206b68..20a511398389d 100644
+--- a/net/x25/af_x25.c
++++ b/net/x25/af_x25.c
+@@ -288,7 +288,7 @@ static struct sock *x25_find_listener(struct x25_address *addr,
+ 	sk_for_each(s, &x25_list)
+ 		if ((!strcmp(addr->x25_addr,
+ 			x25_sk(s)->source_addr.x25_addr) ||
+-				!strcmp(addr->x25_addr,
++				!strcmp(x25_sk(s)->source_addr.x25_addr,
+ 					null_x25_address.x25_addr)) &&
+ 					s->sk_state == TCP_LISTEN) {
+ 			/*
+@@ -685,11 +685,15 @@ static int x25_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+ 		goto out;
+ 	}
  
--	/* Avoid deadlock with the DMA engine callback */
--	spin_unlock(&uap->port.lock);
--	dmaengine_terminate_all(uap->dmatx.chan);
--	spin_lock(&uap->port.lock);
-+	dmaengine_terminate_async(uap->dmatx.chan);
+-	len = strlen(addr->sx25_addr.x25_addr);
+-	for (i = 0; i < len; i++) {
+-		if (!isdigit(addr->sx25_addr.x25_addr[i])) {
+-			rc = -EINVAL;
+-			goto out;
++	/* check for the null_x25_address */
++	if (strcmp(addr->sx25_addr.x25_addr, null_x25_address.x25_addr)) {
 +
- 	if (uap->dmatx.queued) {
- 		dma_unmap_sg(uap->dmatx.chan->device->dev, &uap->dmatx.sg, 1,
- 			     DMA_TO_DEVICE);
++		len = strlen(addr->sx25_addr.x25_addr);
++		for (i = 0; i < len; i++) {
++			if (!isdigit(addr->sx25_addr.x25_addr[i])) {
++				rc = -EINVAL;
++				goto out;
++			}
+ 		}
+ 	}
+ 
+-- 
+2.20.1
+
 
 
