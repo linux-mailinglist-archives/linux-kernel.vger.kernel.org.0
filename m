@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C76E911AFD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:16:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACA3311AFDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:18:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731485AbfLKPQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:16:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43968 "EHLO mail.kernel.org"
+        id S1731991AbfLKPRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:17:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731934AbfLKPQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:16:44 -0500
+        id S1731979AbfLKPRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:17:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 970BD22B48;
-        Wed, 11 Dec 2019 15:16:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9EE824658;
+        Wed, 11 Dec 2019 15:17:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077404;
-        bh=Qcp/95hKgiUmF3weNB1n/j5vx2wAk9FNB3Kh8AoxmL0=;
+        s=default; t=1576077428;
+        bh=2AS1A87NUSa4PIiydpIvNtQkPx9HzA4w4FQEbZAn4iY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LP147eR3y9T02X6RWk5yfiaQn8VY0HoXfr4e7ygu9YLzyN97ysZZ8VQAV8xz8z9Mg
-         gzPzaNwx632Qiu2jsGgioKMhRXv3+mqX+sxIRLCDflDy2n/qbIarHHoqPvghcXq49X
-         2a3+mX4NUdsBrzk47diq+lzm/iiIDktu8nFK2Huo=
+        b=YJD0uw0ujt1WmJGAsvdPbXGBQqas1W8wmvsnQC3FukQC/o9AYr4jTlPf8+xJBpfTW
+         l31BWk9OA3NE1zv0Lsc2MTA2RZc+Z62VmbmyXsyDQG+NmG41Npoy4XjJaV7l/noijW
+         MMDN9FuUErKT9ngb0RFIOwpL/vTP2YNcLL4jz5v8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 026/243] i2c: core: fix use after free in of_i2c_notify
-Date:   Wed, 11 Dec 2019 16:03:08 +0100
-Message-Id: <20191211150340.658900581@linuxfoundation.org>
+Subject: [PATCH 4.19 028/243] cxgb4vf: fix memleak in mac_hlist initialization
+Date:   Wed, 11 Dec 2019 16:03:10 +0100
+Message-Id: <20191211150340.765909315@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,41 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wenyang@linux.alibaba.com>
+From: Arjun Vynipadath <arjun@chelsio.com>
 
-[ Upstream commit a4c2fec16f5e6a5fee4865e6e0e91e2bc2d10f37 ]
+[ Upstream commit 24357e06ba511ad874d664d39475dbb01c1ca450 ]
 
-We can't use "adap->dev" after it has been freed.
+mac_hlist was initialized during adapter_up, which will be called
+every time a vf device is first brought up, or every time when device
+is brought up again after bringing all devices down. This means our
+state of previous list is lost, causing a memleak if entries are
+present in the list. To fix that, move list init to the condition
+that performs initial one time adapter setup.
 
-Fixes: 5bf4fa7daea6 ("i2c: break out OF support into separate file")
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/i2c-core-of.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
-index 0f01cdba9d2c6..14d4884996968 100644
---- a/drivers/i2c/i2c-core-of.c
-+++ b/drivers/i2c/i2c-core-of.c
-@@ -253,14 +253,14 @@ static int of_i2c_notify(struct notifier_block *nb, unsigned long action,
- 		}
+diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+index ff84791a0ff85..972dc7bd721d9 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+@@ -722,6 +722,10 @@ static int adapter_up(struct adapter *adapter)
  
- 		client = of_i2c_register_device(adap, rd->dn);
--		put_device(&adap->dev);
--
- 		if (IS_ERR(client)) {
- 			dev_err(&adap->dev, "failed to create client for '%pOF'\n",
- 				 rd->dn);
-+			put_device(&adap->dev);
- 			of_node_clear_flag(rd->dn, OF_POPULATED);
- 			return notifier_from_errno(PTR_ERR(client));
- 		}
-+		put_device(&adap->dev);
- 		break;
- 	case OF_RECONFIG_CHANGE_REMOVE:
- 		/* already depopulated? */
+ 		if (adapter->flags & USING_MSIX)
+ 			name_msix_vecs(adapter);
++
++		/* Initialize hash mac addr list*/
++		INIT_LIST_HEAD(&adapter->mac_hlist);
++
+ 		adapter->flags |= FULL_INIT_DONE;
+ 	}
+ 
+@@ -747,8 +751,6 @@ static int adapter_up(struct adapter *adapter)
+ 	enable_rx(adapter);
+ 	t4vf_sge_start(adapter);
+ 
+-	/* Initialize hash mac addr list*/
+-	INIT_LIST_HEAD(&adapter->mac_hlist);
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
