@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D203E11B137
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3D311B138
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:30:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731393AbfLKP3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:29:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36330 "EHLO mail.kernel.org"
+        id S2387928AbfLKP3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:29:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732574AbfLKP30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:29:26 -0500
+        id S2387879AbfLKP31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:29:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36A7F24688;
-        Wed, 11 Dec 2019 15:29:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D3812465B;
+        Wed, 11 Dec 2019 15:29:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078165;
-        bh=aZPXr4/ZDp5NfMbxTl2BUiejXP49eJKCX13lfLw+5c4=;
+        s=default; t=1576078166;
+        bh=g8kxsHDM1Xv8XjTmikpgJjaMib4xUu9DDNMw/+DsTBY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1AamEP02gN/JEp1kwaNAwH5LvgYsfjxW1Pn861xd75nFf2Ukb2DSDdeY00hJ56tXs
-         Ib96vGwIxBB8RJm38cu2GwrBGktWPUxX5zwE4+e7TOwDVEJtTDw3ZtdMVreoGzkjaZ
-         KeRVg0XyBy/+mSM66tBdOJox/Kh5MFRvNdGRNABc=
+        b=ECXfowsjdcvnaSIy15Al6MYSreY3N7owgmBruWdGp09OxGjeAjiWLhQkRzGNFb58B
+         v7d3AVw0d3g39X0NrC20P71po/eaxY40SchXx3RxGYpghhKFgoRA68li5A+LEFj8Be
+         /O4Z88H3tVRBTngxhGOY7bAV7iiH5JmCYTXcMor8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.com>,
-        linux-scsi@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 50/58] cdrom: respect device capabilities during opening action
-Date:   Wed, 11 Dec 2019 10:28:23 -0500
-Message-Id: <20191211152831.23507-50-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 51/58] perf script: Fix brstackinsn for AUXTRACE
+Date:   Wed, 11 Dec 2019 10:28:24 -0500
+Message-Id: <20191211152831.23507-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152831.23507-1-sashal@kernel.org>
 References: <20191211152831.23507-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,64 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Diego Elio Pettenò <flameeyes@flameeyes.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-[ Upstream commit 366ba7c71ef77c08d06b18ad61b26e2df7352338 ]
+[ Upstream commit 0cd032d3b5fcebf5454315400ab310746a81ca53 ]
 
-Reading the TOC only works if the device can play audio, otherwise
-these commands fail (and possibly bring the device to an unhealthy
-state.)
+brstackinsn must be allowed to be set by the user when AUX area data has
+been captured because, in that case, the branch stack might be
+synthesized on the fly. This fixes the following error:
 
-Similarly, cdrom_mmc3_profile() should only be called if the device
-supports generic packet commands.
+Before:
 
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-scsi@vger.kernel.org
-Signed-off-by: Diego Elio Pettenò <flameeyes@flameeyes.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+  $ perf record -e '{intel_pt//,cpu/mem_inst_retired.all_loads,aux-sample-size=8192/pp}:u' grep -rqs jhgjhg /boot
+  [ perf record: Woken up 19 times to write data ]
+  [ perf record: Captured and wrote 2.274 MB perf.data ]
+  $ perf script -F +brstackinsn --xed --itrace=i1usl100 | head
+  Display of branch stack assembler requested, but non all-branch filter set
+  Hint: run 'perf record -b ...'
+
+After:
+
+  $ perf record -e '{intel_pt//,cpu/mem_inst_retired.all_loads,aux-sample-size=8192/pp}:u' grep -rqs jhgjhg /boot
+  [ perf record: Woken up 19 times to write data ]
+  [ perf record: Captured and wrote 2.274 MB perf.data ]
+  $ perf script -F +brstackinsn --xed --itrace=i1usl100 | head
+            grep 13759 [002]  8091.310257:       1862                                        instructions:uH:      5641d58069eb bmexec+0x86b (/bin/grep)
+        bmexec+2485:
+        00005641d5806b35                        jnz 0x5641d5806bd0              # MISPRED
+        00005641d5806bd0                        movzxb  (%r13,%rdx,1), %eax
+        00005641d5806bd6                        add %rdi, %rax
+        00005641d5806bd9                        movzxb  -0x1(%rax), %edx
+        00005641d5806bdd                        cmp %rax, %r14
+        00005641d5806be0                        jnb 0x5641d58069c0              # MISPRED
+        mismatch of LBR data and executable
+        00005641d58069c0                        movzxb  (%r13,%rdx,1), %edi
+
+Fixes: 48d02a1d5c13 ("perf script: Add 'brstackinsn' for branch stacks")
+Reported-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lore.kernel.org/lkml/20191127095322.15417-1-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cdrom/cdrom.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ tools/perf/builtin-script.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index 90dd8e7291dab..1c90da4af94ff 100644
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -995,6 +995,12 @@ static void cdrom_count_tracks(struct cdrom_device_info *cdi, tracktype *tracks)
- 	tracks->xa = 0;
- 	tracks->error = 0;
- 	cd_dbg(CD_COUNT_TRACKS, "entering cdrom_count_tracks\n");
-+
-+	if (!CDROM_CAN(CDC_PLAY_AUDIO)) {
-+		tracks->error = CDS_NO_INFO;
-+		return;
-+	}
-+
- 	/* Grab the TOC header so we can see how many tracks there are */
- 	ret = cdi->ops->audio_ioctl(cdi, CDROMREADTOCHDR, &header);
- 	if (ret) {
-@@ -1161,7 +1167,8 @@ int cdrom_open(struct cdrom_device_info *cdi, struct block_device *bdev,
- 		ret = open_for_data(cdi);
- 		if (ret)
- 			goto err;
--		cdrom_mmc3_profile(cdi);
-+		if (CDROM_CAN(CDC_GENERIC_PACKET))
-+			cdrom_mmc3_profile(cdi);
- 		if (mode & FMODE_WRITE) {
- 			ret = -EROFS;
- 			if (cdrom_open_write(cdi))
-@@ -2878,6 +2885,9 @@ int cdrom_get_last_written(struct cdrom_device_info *cdi, long *last_written)
- 	   it doesn't give enough information or fails. then we return
- 	   the toc contents. */
- use_toc:
-+	if (!CDROM_CAN(CDC_PLAY_AUDIO))
-+		return -ENOSYS;
-+
- 	toc.cdte_format = CDROM_MSF;
- 	toc.cdte_track = CDROM_LEADOUT;
- 	if ((ret = cdi->ops->audio_ioctl(cdi, CDROMREADTOCENTRY, &toc)))
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 76789523429ad..09c4380bc2255 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -355,7 +355,7 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
+ 		       "selected. Hence, no address to lookup the source line number.\n");
+ 		return -EINVAL;
+ 	}
+-	if (PRINT_FIELD(BRSTACKINSN) &&
++	if (PRINT_FIELD(BRSTACKINSN) && !allow_user_set &&
+ 	    !(perf_evlist__combined_branch_type(session->evlist) &
+ 	      PERF_SAMPLE_BRANCH_ANY)) {
+ 		pr_err("Display of branch stack assembler requested, but non all-branch filter set\n"
 -- 
 2.20.1
 
