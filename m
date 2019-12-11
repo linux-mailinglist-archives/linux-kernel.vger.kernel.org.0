@@ -2,278 +2,242 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A83A211A140
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:18:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8422811A146
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:20:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbfLKCSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 21:18:33 -0500
-Received: from mga06.intel.com ([134.134.136.31]:10408 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbfLKCSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:18:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 18:18:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
-   d="scan'208";a="363452407"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by orsmga004.jf.intel.com with ESMTP; 10 Dec 2019 18:18:28 -0800
-Date:   Wed, 11 Dec 2019 10:19:51 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        yu-cheng.yu@intel.com
-Subject: Re: [PATCH v8 7/7] KVM: X86: Add user-space access interface for CET
- MSRs
-Message-ID: <20191211021951.GE12845@local-michael-cet-test>
-References: <20191101085222.27997-1-weijiang.yang@intel.com>
- <20191101085222.27997-8-weijiang.yang@intel.com>
- <20191210215859.GO15758@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210215859.GO15758@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1727699AbfLKCUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 21:20:38 -0500
+Received: from mail.loongson.cn ([114.242.206.163]:59050 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727302AbfLKCUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 21:20:37 -0500
+Received: from linux.localdomain (unknown [123.138.236.242])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxrxdqUvBdi2oJAA--.59S2;
+        Wed, 11 Dec 2019 10:20:26 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Tyler Hicks <tyhicks@canonical.com>
+Cc:     linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
+Date:   Wed, 11 Dec 2019 10:20:01 +0800
+Message-Id: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9DxrxdqUvBdi2oJAA--.59S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtF18ZF4rZrW5Jw1ftrW3GFg_yoW7Zr4UpF
+        sxJF97trs7GryY9r95tr1fCr1Yv3s7Wr17GrZxGa4vy34aqrn5XrWIvry09wn3JFWDX3Z0
+        ga98G34rCFy5JFJanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUPEb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4
+        vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28I
+        cVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx
+        0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwAC
+        I402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Gr1l42
+        xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1l
+        x2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14
+        v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IY
+        x2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I
+        8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73
+        UjIFyTuYvjxUgwSlUUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 01:58:59PM -0800, Sean Christopherson wrote:
-> On Fri, Nov 01, 2019 at 04:52:22PM +0800, Yang Weijiang wrote:
-> > There're two different places storing Guest CET states, states
-> > managed with XSAVES/XRSTORS, as restored/saved
-> > in previous patch, can be read/write directly from/to the MSRs.
-> > For those stored in VMCS fields, they're access via vmcs_read/
-> > vmcs_write.
-> > 
-> >  
-> > +#define CET_MSR_RSVD_BITS_1    0x3
-> > +#define CET_MSR_RSVD_BITS_2   (0xF << 6)
-> > +
-> > +static bool cet_msr_write_allowed(struct kvm_vcpu *vcpu, struct msr_data *msr)
-> > +{
-> > +	u32 index = msr->index;
-> > +	u64 data = msr->data;
-> > +	u32 high_word = data >> 32;
-> > +
-> > +	if ((index == MSR_IA32_U_CET || index == MSR_IA32_S_CET) &&
-> > +	    (data & CET_MSR_RSVD_BITS_2))
-> > +		return false;
-> > +
-> > +	if (is_64_bit_mode(vcpu)) {
-> > +		if (is_noncanonical_address(data & PAGE_MASK, vcpu))
-> 
-> I don't think this is correct.  MSRs that contain an address usually only
-> fault on a non-canonical value and do the non-canonical check regardless
-> of mode.  E.g. VM-Enter's consistency checks on SYSENTER_E{I,S}P only care
-> about a canonical address and are not dependent on mode, and SYSENTER
-> itself states that bits 63:32 are ignored in 32-bit mode.  I assume the
-> same is true here.
-The spec. reads like this:  Must be machine canonical when written on
-parts that support 64 bit mode. On parts that do not support 64 bit mode, the bits 63:32 are
-reserved and must be 0.  
+There exists many similar and duplicate codes to check "." and "..",
+so introduce is_dot_or_dotdot helper to make the code more clean.
 
-> If that is indeed the case, what about adding these to the common canonical
-> check in __kvm_set_msr()?  That'd cut down on the boilerplate here and
-> might make it easier to audit KVM's canonical checks.
-> 
-> > +			return false;
-> > +		else if ((index == MSR_IA32_PL0_SSP ||
-> > +			  index == MSR_IA32_PL1_SSP ||
-> > +			  index == MSR_IA32_PL2_SSP ||
-> > +			  index == MSR_IA32_PL3_SSP) &&
-> > +			  (data & CET_MSR_RSVD_BITS_1))
-> > +			return false;
-> > +	} else {
-> > +		if (msr->index == MSR_IA32_INT_SSP_TAB)
-> > +			return false;
-> > +		else if ((index == MSR_IA32_U_CET ||
-> > +			  index == MSR_IA32_S_CET ||
-> > +			  index == MSR_IA32_PL0_SSP ||
-> > +			  index == MSR_IA32_PL1_SSP ||
-> > +			  index == MSR_IA32_PL2_SSP ||
-> > +			  index == MSR_IA32_PL3_SSP) &&
-> > +			  (high_word & ~0ul))
-> > +			return false;
-> > +	}
-> > +
-> > +	return true;
-> > +}
-> 
-> This helper seems like overkill, e.g. it's filled with index-specific
-> checks, but is called from code that has already switched on the index.
-> Open coding the individual checks is likely more readable and would require
-> less code, especially if the canonical checks are cleaned up.
->
-I'm afraid if the checks are not wrapped in a helper, there're many
-repeat checking-code, that's why I'm using a wrapper.
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
 
-> > +
-> > +static bool cet_msr_access_allowed(struct kvm_vcpu *vcpu, struct msr_data *msr)
-> > +{
-> > +	u64 kvm_xss;
-> > +	u32 index = msr->index;
-> > +
-> > +	if (is_guest_mode(vcpu))
-> > +		return false;
-> 
-> I may have missed this in an earlier discussion, does CET not support
-> nesting?
->
-I don't want to make CET avaible to nested guest at time being, first to
-make it available to L1 guest first. So I need to avoid exposing any CET
-CPUID/MSRs to a nested guest.
+v5:
+  - remove "qname" variable in fscrypt_fname_disk_to_usr()
+  - modify "len < 2" to "len == 1" in is_dot_or_dotdot()
 
-> > +
-> > +	kvm_xss = kvm_supported_xss();
-> > +
-> > +	switch (index) {
-> > +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> > +		if (!boot_cpu_has(X86_FEATURE_SHSTK))
-> > +			return false;
-> > +		if (!msr->host_initiated) {
-> > +			if (!guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
-> > +				return false;
-> > +		} else {
-> 
-> This looks wrong, WRMSR from the guest only checks CPUID, it doesn't check
-> kvm_xss.
-> 
-OOPs, I need to add the check, thank you!
+v4:
+  - rename is_dot_dotdot() to is_dot_or_dotdot()
 
-> > +			if (index == MSR_IA32_PL3_SSP) {
-> > +				if (!(kvm_xss & XFEATURE_MASK_CET_USER))
-> > +					return false;
-> > +			} else {
-> > +				if (!(kvm_xss & XFEATURE_MASK_CET_KERNEL))
-> > +					return false;
-> > +			}
-> > +		}
-> > +		break;
-> > +	case MSR_IA32_U_CET:
-> > +	case MSR_IA32_S_CET:
-> 
-> Rather than bundle everything in a single access_allowed() helper, it might
-> be easier to have separate helpers for each class of MSR.   Except for the
-> guest_mode() check, there's no overlap between the classes.
->
-Sure, let me double check the code.
+v3:
+  - use "name" and "len" as arguments instead of qstr
+  - move is_dot_dotdot() to include/linux/namei.h
 
-> > +		if (!boot_cpu_has(X86_FEATURE_SHSTK) &&
-> > +		    !boot_cpu_has(X86_FEATURE_IBT))
-> > +			return false;
-> > +
-> > +		if (!msr->host_initiated) {
-> > +			if (!guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) &&
-> > +			    !guest_cpuid_has(vcpu, X86_FEATURE_IBT))
-> > +				return false;
-> > +		} else if (index == MSR_IA32_U_CET &&
-> > +			   !(kvm_xss & XFEATURE_MASK_CET_USER))
-> 
-> Same comment about guest not checking kvm_xss.
->
-OK.
+v2:
+  - use the better performance implementation of is_dot_dotdot
+  - make it static inline and move it to include/linux/fs.h
 
-> > +			return false;
-> > +		break;
-> > +	case MSR_IA32_INT_SSP_TAB:
-> > +		if (!boot_cpu_has(X86_FEATURE_SHSTK))
-> > +			return false;
-> > +
-> > +		if (!msr->host_initiated &&
-> > +		    !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
-> > +			return false;
-> > +		break;
-> > +	default:
-> > +		return false;
-> > +	}
-> > +	return true;
-> > +}
-> >  /*
-> >   * Reads an msr value (of 'msr_index') into 'pdata'.
-> >   * Returns 0 on success, non-0 otherwise.
-> > @@ -1788,6 +1880,26 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> >  		else
-> >  			msr_info->data = vmx->pt_desc.guest.addr_a[index / 2];
-> >  		break;
-> > +	case MSR_IA32_S_CET:
-> > +		if (!cet_msr_access_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		msr_info->data = vmcs_readl(GUEST_S_CET);
-> > +		break;
-> > +	case MSR_IA32_INT_SSP_TAB:
-> > +		if (!cet_msr_access_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		msr_info->data = vmcs_readl(GUEST_INTR_SSP_TABLE);
-> > +		break;
-> > +	case MSR_IA32_U_CET:
-> > +		if (!cet_msr_access_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		rdmsrl(MSR_IA32_U_CET, msr_info->data);
-> > +		break;
-> > +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> > +		if (!cet_msr_access_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		rdmsrl(msr_info->index, msr_info->data);
-> > +		break;
-> >  	case MSR_TSC_AUX:
-> >  		if (!msr_info->host_initiated &&
-> >  		    !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
-> > @@ -2039,6 +2151,34 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> >  		else
-> >  			vmx->pt_desc.guest.addr_a[index / 2] = data;
-> >  		break;
-> > +	case MSR_IA32_S_CET:
-> > +		if (!cet_msr_access_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		if (!cet_msr_write_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		vmcs_writel(GUEST_S_CET, data);
-> > +		break;
-> > +	case MSR_IA32_INT_SSP_TAB:
-> > +		if (!cet_msr_access_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		if (!cet_msr_write_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		vmcs_writel(GUEST_INTR_SSP_TABLE, data);
-> > +		break;
-> > +	case MSR_IA32_U_CET:
-> > +		if (!cet_msr_access_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		if (!cet_msr_write_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		wrmsrl(MSR_IA32_U_CET, data);
-> > +		break;
-> > +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> > +		if (!cet_msr_access_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		if (!cet_msr_write_allowed(vcpu, msr_info))
-> > +			return 1;
-> > +		wrmsrl(msr_info->index, data);
-> > +		break;
-> >  	case MSR_TSC_AUX:
-> >  		if (!msr_info->host_initiated &&
-> >  		    !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 6275a75d5802..1bbe4550da90 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -1143,6 +1143,9 @@ static u32 msrs_to_save[] = {
-> >  	MSR_IA32_RTIT_ADDR1_A, MSR_IA32_RTIT_ADDR1_B,
-> >  	MSR_IA32_RTIT_ADDR2_A, MSR_IA32_RTIT_ADDR2_B,
-> >  	MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
-> > +	MSR_IA32_XSS, MSR_IA32_U_CET, MSR_IA32_S_CET,
-> > +	MSR_IA32_PL0_SSP, MSR_IA32_PL1_SSP, MSR_IA32_PL2_SSP,
-> > +	MSR_IA32_PL3_SSP, MSR_IA32_INT_SSP_TAB,
-> >  };
-> >  
-> >  static unsigned num_msrs_to_save;
-> > -- 
-> > 2.17.2
-> > 
+ fs/crypto/fname.c     | 17 +++--------------
+ fs/ecryptfs/crypto.c  | 12 +-----------
+ fs/f2fs/f2fs.h        | 11 -----------
+ fs/f2fs/hash.c        |  3 ++-
+ fs/namei.c            |  6 ++----
+ include/linux/namei.h | 10 ++++++++++
+ 6 files changed, 18 insertions(+), 41 deletions(-)
+
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index 3da3707..bb41f5d 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -11,21 +11,11 @@
+  * This has not yet undergone a rigorous security audit.
+  */
+ 
++#include <linux/namei.h>
+ #include <linux/scatterlist.h>
+ #include <crypto/skcipher.h>
+ #include "fscrypt_private.h"
+ 
+-static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+-{
+-	if (str->len == 1 && str->name[0] == '.')
+-		return true;
+-
+-	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
+-		return true;
+-
+-	return false;
+-}
+-
+ /**
+  * fname_encrypt() - encrypt a filename
+  *
+@@ -252,10 +242,9 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
+ 			const struct fscrypt_str *iname,
+ 			struct fscrypt_str *oname)
+ {
+-	const struct qstr qname = FSTR_TO_QSTR(iname);
+ 	struct fscrypt_digested_name digested_name;
+ 
+-	if (fscrypt_is_dot_dotdot(&qname)) {
++	if (is_dot_or_dotdot(iname->name, iname->len)) {
+ 		oname->name[0] = '.';
+ 		oname->name[iname->len - 1] = '.';
+ 		oname->len = iname->len;
+@@ -323,7 +312,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ 	memset(fname, 0, sizeof(struct fscrypt_name));
+ 	fname->usr_fname = iname;
+ 
+-	if (!IS_ENCRYPTED(dir) || fscrypt_is_dot_dotdot(iname)) {
++	if (!IS_ENCRYPTED(dir) || is_dot_or_dotdot(iname->name, iname->len)) {
+ 		fname->disk_name.name = (unsigned char *)iname->name;
+ 		fname->disk_name.len = iname->len;
+ 		return 0;
+diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+index f91db24..c3bcbf0 100644
+--- a/fs/ecryptfs/crypto.c
++++ b/fs/ecryptfs/crypto.c
+@@ -1991,16 +1991,6 @@ int ecryptfs_encrypt_and_encode_filename(
+ 	return rc;
+ }
+ 
+-static bool is_dot_dotdot(const char *name, size_t name_size)
+-{
+-	if (name_size == 1 && name[0] == '.')
+-		return true;
+-	else if (name_size == 2 && name[0] == '.' && name[1] == '.')
+-		return true;
+-
+-	return false;
+-}
+-
+ /**
+  * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher text name to decoded plaintext
+  * @plaintext_name: The plaintext name
+@@ -2027,7 +2017,7 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
+ 
+ 	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES) &&
+ 	    !(mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)) {
+-		if (is_dot_dotdot(name, name_size)) {
++		if (is_dot_or_dotdot(name, name_size)) {
+ 			rc = ecryptfs_copy_filename(plaintext_name,
+ 						    plaintext_name_size,
+ 						    name, name_size);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5a888a0..3d5e684 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2767,17 +2767,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
+ 	return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
+ }
+ 
+-static inline bool is_dot_dotdot(const struct qstr *str)
+-{
+-	if (str->len == 1 && str->name[0] == '.')
+-		return true;
+-
+-	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
+-		return true;
+-
+-	return false;
+-}
+-
+ static inline bool f2fs_may_extent_tree(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
+index 5bc4dcd..ef155c2 100644
+--- a/fs/f2fs/hash.c
++++ b/fs/f2fs/hash.c
+@@ -15,6 +15,7 @@
+ #include <linux/cryptohash.h>
+ #include <linux/pagemap.h>
+ #include <linux/unicode.h>
++#include <linux/namei.h>
+ 
+ #include "f2fs.h"
+ 
+@@ -82,7 +83,7 @@ static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
+ 	if (fname && !fname->disk_name.name)
+ 		return cpu_to_le32(fname->hash);
+ 
+-	if (is_dot_dotdot(name_info))
++	if (is_dot_or_dotdot(name, len))
+ 		return 0;
+ 
+ 	/* Initialize the default seed for the hash checksum functions */
+diff --git a/fs/namei.c b/fs/namei.c
+index d6c91d1..f3a4439 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2451,10 +2451,8 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
+ 	if (!len)
+ 		return -EACCES;
+ 
+-	if (unlikely(name[0] == '.')) {
+-		if (len < 2 || (len == 2 && name[1] == '.'))
+-			return -EACCES;
+-	}
++	if (is_dot_or_dotdot(name, len))
++		return -EACCES;
+ 
+ 	while (len--) {
+ 		unsigned int c = *(const unsigned char *)name++;
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 7fe7b87..0fd9315 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -92,4 +92,14 @@ retry_estale(const long error, const unsigned int flags)
+ 	return error == -ESTALE && !(flags & LOOKUP_REVAL);
+ }
+ 
++static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
++{
++	if (unlikely(name[0] == '.')) {
++		if (len == 1 || (len == 2 && name[1] == '.'))
++			return true;
++	}
++
++	return false;
++}
++
+ #endif /* _LINUX_NAMEI_H */
+-- 
+2.1.0
+
