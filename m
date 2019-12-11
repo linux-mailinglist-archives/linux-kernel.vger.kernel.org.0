@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02C1E11AEF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1954811B0BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:26:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730638AbfLKPJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:09:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57714 "EHLO mail.kernel.org"
+        id S1732731AbfLKPZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:25:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbfLKPJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:09:37 -0500
+        id S1732716AbfLKPZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:25:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 399232465B;
-        Wed, 11 Dec 2019 15:09:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0F4F2173E;
+        Wed, 11 Dec 2019 15:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076976;
-        bh=139vf3DfrbkU/P4JhYzf52gZ3HQgEWtbHarbgTFRTQU=;
+        s=default; t=1576077942;
+        bh=cZpitACy2KXnabzudAg8l5hYZuEEYB2y4ZV+QDVz0gA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zul2SulS4U/oQJpR0RzxztOcyxXg/xNqLQPmykcmMO7Jlnua40/bcyU6+JwRHuTQv
-         6M/Qj6cwEcgl+UIKbKm/0/7lFlqHYoOhbRLE7AJvmEhCsdDEjrRUj1PPpKUtziokZq
-         aTDnVFSM82ogFnybkLxaqfv7dhsSsUEFQAdcoPXA=
+        b=vbDz181FPXVf5MmuIYp78hG7wE2KThSdBwpCL7lzStdMVLXXUm0pdNVn+VJHxQb94
+         ObtdIvf5xTf9NT+LX8T2DPFwMdADNkT0pdKYeQZChf6VXAEHtfA50ZZZ5wCLyzFGwd
+         aHCmg1z6QvMWhDGqKXVqrsTt8k17VTm4lbgw3YVo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Reto Buerki <reet@codelabs.ch>
-Subject: [PATCH 5.4 62/92] KVM: nVMX: Always write vmcs02.GUEST_CR3 during nested VM-Enter
-Date:   Wed, 11 Dec 2019 16:05:53 +0100
-Message-Id: <20191211150251.817846556@linuxfoundation.org>
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 192/243] ARM: dts: sunxi: Fix PMU compatible strings
+Date:   Wed, 11 Dec 2019 16:05:54 +0100
+Message-Id: <20191211150352.132077034@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,93 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Rob Herring <robh@kernel.org>
 
-commit 04f11ef45810da5ae2542dd78cc353f3761bd2cb upstream.
+[ Upstream commit 5719ac19fc32d892434939c1756c2f9a8322e6ef ]
 
-Write the desired L2 CR3 into vmcs02.GUEST_CR3 during nested VM-Enter
-instead of deferring the VMWRITE until vmx_set_cr3().  If the VMWRITE
-is deferred, then KVM can consume a stale vmcs02.GUEST_CR3 when it
-refreshes vmcs12->guest_cr3 during nested_vmx_vmexit() if the emulated
-VM-Exit occurs without actually entering L2, e.g. if the nested run
-is squashed because nested VM-Enter (from L1) is putting L2 into HLT.
+"arm,cortex-a15-pmu" is not a valid fallback compatible string for an
+Cortex-A7 PMU, so drop it.
 
-Note, the above scenario can occur regardless of whether L1 is
-intercepting HLT, e.g. L1 can intercept HLT and then re-enter L2 with
-vmcs.GUEST_ACTIVITY_STATE=HALTED.  But practically speaking, a VMM will
-likely put a guest into HALTED if and only if it's not intercepting HLT.
-
-In an ideal world where EPT *requires* unrestricted guest (and vice
-versa), VMX could handle CR3 similar to how it handles RSP and RIP,
-e.g. mark CR3 dirty and conditionally load it at vmx_vcpu_run().  But
-the unrestricted guest silliness complicates the dirty tracking logic
-to the point that explicitly handling vmcs02.GUEST_CR3 during nested
-VM-Enter is a simpler overall implementation.
-
-Cc: stable@vger.kernel.org
-Reported-and-tested-by: Reto Buerki <reet@codelabs.ch>
-Tested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx/nested.c |   10 ++++++++++
- arch/x86/kvm/vmx/vmx.c    |   10 +++++++---
- 2 files changed, 17 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/sun6i-a31.dtsi | 2 +-
+ arch/arm/boot/dts/sun7i-a20.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -2418,6 +2418,16 @@ static int prepare_vmcs02(struct kvm_vcp
- 				entry_failure_code))
- 		return -EINVAL;
+diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
+index debc0bf22ea3b..76924fa42bbc3 100644
+--- a/arch/arm/boot/dts/sun6i-a31.dtsi
++++ b/arch/arm/boot/dts/sun6i-a31.dtsi
+@@ -201,7 +201,7 @@
+ 	};
  
-+	/*
-+	 * Immediately write vmcs02.GUEST_CR3.  It will be propagated to vmcs12
-+	 * on nested VM-Exit, which can occur without actually running L2 and
-+	 * thus without hitting vmx_set_cr3(), e.g. if L1 is entering L2 with
-+	 * vmcs12.GUEST_ACTIVITYSTATE=HLT, in which case KVM will intercept the
-+	 * transition to HLT instead of running L2.
-+	 */
-+	if (enable_ept)
-+		vmcs_writel(GUEST_CR3, vmcs12->guest_cr3);
-+
- 	/* Late preparation of GUEST_PDPTRs now that EFER and CRs are set. */
- 	if (load_guest_pdptrs_vmcs12 && nested_cpu_has_ept(vmcs12) &&
- 	    is_pae_paging(vcpu)) {
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -2995,6 +2995,7 @@ u64 construct_eptp(struct kvm_vcpu *vcpu
- void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
- {
- 	struct kvm *kvm = vcpu->kvm;
-+	bool update_guest_cr3 = true;
- 	unsigned long guest_cr3;
- 	u64 eptp;
+ 	pmu {
+-		compatible = "arm,cortex-a7-pmu", "arm,cortex-a15-pmu";
++		compatible = "arm,cortex-a7-pmu";
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 73e789a133de1..355619dce7994 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -183,7 +183,7 @@
+ 	};
  
-@@ -3011,15 +3012,18 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu,
- 			spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
- 		}
- 
--		if (enable_unrestricted_guest || is_paging(vcpu) ||
--		    is_guest_mode(vcpu))
-+		/* Loading vmcs02.GUEST_CR3 is handled by nested VM-Enter. */
-+		if (is_guest_mode(vcpu))
-+			update_guest_cr3 = false;
-+		else if (enable_unrestricted_guest || is_paging(vcpu))
- 			guest_cr3 = kvm_read_cr3(vcpu);
- 		else
- 			guest_cr3 = to_kvm_vmx(kvm)->ept_identity_map_addr;
- 		ept_load_pdptrs(vcpu);
- 	}
- 
--	vmcs_writel(GUEST_CR3, guest_cr3);
-+	if (update_guest_cr3)
-+		vmcs_writel(GUEST_CR3, guest_cr3);
- }
- 
- int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+ 	pmu {
+-		compatible = "arm,cortex-a7-pmu", "arm,cortex-a15-pmu";
++		compatible = "arm,cortex-a7-pmu";
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+ 	};
+-- 
+2.20.1
+
 
 
