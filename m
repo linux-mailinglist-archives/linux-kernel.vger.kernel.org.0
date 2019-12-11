@@ -2,178 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 470E211A3D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 06:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C5111A3F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 06:33:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbfLKFZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 00:25:02 -0500
-Received: from mail-eopbgr760040.outbound.protection.outlook.com ([40.107.76.40]:2326
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725973AbfLKFZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 00:25:01 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=npaeydtLWPECzF0Lz8wQQ21Qt8pnGzGmfzcRRee+nfiTVZmt9JB20zdYf7/yMIgdqtsOS4gbpluszPdPPE7kM1d/ndD5ozsGyAndJcEZ1+c04w8ujXhTsolZg0TK50qLw5ErNpXKS0UgB32RT/Au7YYm8QfkYM5wXwp4ZiP1RXRw3hdAYqBEea9q78cYCAXghATWhisDC9hkK0OGju+WS89r/WvAvJrLC5xOML31bhNDTwPgO1Cuaixyg18rR5IbbVi7h6wEkro1IBFutrOohxXWlW7mzRhb0i69CkjSIX57jb+HCLICtr6fvOXxhLgrAyb7B21039sdY9Ecl/TzoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O9nVuvmEHgKw9QnSUut2Jb27U2Nhe+2pVKZYgEO3c8s=;
- b=Kn66H4wq6joQz/j3QkAgeuyJ5sEP4kLUHuj7KG40OPTi4QCr+InBB3daJQUnkmzk3IF4oWboD4nrLVVkpjOIimkQqyyf1N7OIBt25uIJyYXSoASLxKCSSeGwxoALwCVV6Sx27JZEb3AD2J9Z/im+goXS8M1HIWCw+mHZTf8O+BIdGfPBtgWXTYfAE7FNnafZQXbqqPGFkd2irHX1vzcblHjUQi9GSyyySMVPNF5sDuqwaxZUbalrnB2dAqgEup+GTaPnDSZ0QbY0+N0GOu6ZCYX/R3gt3xL6AVkjLeDZHlGK9cDkI6fhKCbfpXLVMFWdkLEEd0dSe01A/evzLu1IaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O9nVuvmEHgKw9QnSUut2Jb27U2Nhe+2pVKZYgEO3c8s=;
- b=o+/ASf+S9bCraexFt04M5ULVPsZDjAX12Ng2ygVqSCtW431yWGpcwang9aueRRnw8qFwAnyQSHz+467If6FeqKNaQVgjTOYw56NHSA4xDQgvMbxF0AAWoDLoVrMurIFG25dQErI6G8PvSnU7O+zi70CegYMvk6kn6o+YWVEU848=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
-Received: from MN2PR12MB3870.namprd12.prod.outlook.com (10.255.237.93) by
- MN2PR12MB3214.namprd12.prod.outlook.com (20.179.83.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.13; Wed, 11 Dec 2019 05:24:55 +0000
-Received: from MN2PR12MB3870.namprd12.prod.outlook.com
- ([fe80::354e:13c8:116b:1261]) by MN2PR12MB3870.namprd12.prod.outlook.com
- ([fe80::354e:13c8:116b:1261%7]) with mapi id 15.20.2516.018; Wed, 11 Dec 2019
- 05:24:55 +0000
-From:   Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH] x86/fpu: Warn only when CPU-provided sizes less than
- struct declaration
-To:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        jon.grimm@amd.com,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>
-References: <1575363688-36727-1-git-send-email-suravee.suthikulpanit@amd.com>
- <b63e2111-b0c6-a716-3d99-88f91ad64e1d@intel.com>
- <68bdd6f0-a229-433a-9234-303a3b02b092@amd.com>
- <4b20cff5-6e16-3599-4fc1-4f51d7c18d1d@intel.com>
-Message-ID: <7a8fe748-2c57-295a-e6ed-8969c41462aa@amd.com>
-Date:   Wed, 11 Dec 2019 12:24:42 +0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-In-Reply-To: <4b20cff5-6e16-3599-4fc1-4f51d7c18d1d@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: KU1PR03CA0017.apcprd03.prod.outlook.com
- (2603:1096:802:18::29) To MN2PR12MB3870.namprd12.prod.outlook.com
- (2603:10b6:208:166::29)
+        id S1726613AbfLKFds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 00:33:48 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:54020 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfLKFds (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 00:33:48 -0500
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id xBB5XhoM016835;
+        Wed, 11 Dec 2019 14:33:44 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com xBB5XhoM016835
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576042424;
+        bh=69MyOS9aB1VcMJQYBz4dgojoS/Cbyu8xTjZZlTo6P5s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mgu6WfR0mgo5KyWtmdw5tLsuYQv4aDvzYvAYL/FF6aKwitb+xpd2Iccpnpy4qfOx2
+         G3ymr5lmhl9TigDpw+HUoZfEKUmfsCNXZ5I/lSK8vkg5n73qmKmAmhRLzxpsSx75U2
+         3S4+0labv7jYO48OzAhz7YZf5pxn+yoYKWXkvsSN0w4+7lobN2fMk610fFy8j/1tok
+         N5DUIBLWFyapuODtcjscxnidwWWJ3C0ZjfgDcIl9meS4hyLUvxZ9Y6FOZfUJBLA0dX
+         M1Pv3ZHLpe2GaCZ/LvC9+ZAaQc5mVbPsaEmrfDgwIg+hG/niR5emvFKJc4YggsN7gl
+         35epSYACyPcgw==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id x4so14901102vsx.10;
+        Tue, 10 Dec 2019 21:33:44 -0800 (PST)
+X-Gm-Message-State: APjAAAUFelvNG32QuDLInDnU+NhbSZ0r5dLaVRcAbiakao5FZ4ZR/Sgk
+        cX+UNp1+pA0rBdiqbXk9dSkV+Ig4BVqNYRIfsEE=
+X-Google-Smtp-Source: APXvYqzYoHUVIlV/XW+Q2IY7Q2C/pTURAM6hfqTX45LYS7ruzZE+8z43DRnEhuY1r5s7UGS385e2a0eKXf67N6ShWA8=
+X-Received: by 2002:a67:7ac4:: with SMTP id v187mr1028357vsc.181.1576042422892;
+ Tue, 10 Dec 2019 21:33:42 -0800 (PST)
 MIME-Version: 1.0
-X-Originating-IP: [165.204.80.7]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 10211dec-e980-4942-70eb-08d77dfa74e1
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3214:|MN2PR12MB3214:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR12MB32142A876C8C728753F0922EF35A0@MN2PR12MB3214.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1060;
-X-Forefront-PRVS: 024847EE92
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(366004)(376002)(346002)(39860400002)(199004)(189003)(53546011)(31686004)(31696002)(6512007)(186003)(26005)(6506007)(54906003)(81156014)(316002)(2906002)(6486002)(66946007)(5660300002)(36756003)(66556008)(66476007)(81166006)(4326008)(6666004)(44832011)(2616005)(8936002)(478600001)(86362001)(8676002)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3214;H:MN2PR12MB3870.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TCLqPPZ8ddVfClCW7h/I0t9OB1cGbregWRSoVS6ujAhIsTbhFZhfGpbKyWpbOtyMur7ueZOR1/JNTZRCg/qPzFUFDVdd+GZy1wg5IgDP3qrYAluvfRQad32wyk4W3Y0Whu8CDTc1peBs9z5vyaq1JnB0Cwra1KodPSse4leuflYyKYxcxu6Fx+bW8guYCdgGmAyLoOuZ7Rd0hc7wVfD6iHkygRDsko3J3mHhoLypkp6ME+4VODNxfoyU8HlDUPHj77aiJaj9yUQXhTTQq6X+HSfU62jbpnlwEeWwS0VQOuRt1SRpE4YMIyIzqDoj/osEnp7ivPncFNrQDEEhePMHo+RyXBI95GQLRTh1NqciJEYUnjEbVY62efolrddvY6BfdnzdgCxwhREZFeag1HwGGyJGwoAfXVTq1KBYQiBruvv9/r1FNrCtwLE6vbeLJkct
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10211dec-e980-4942-70eb-08d77dfa74e1
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2019 05:24:55.4670
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nx7xSxgHkwKC+XpgSq4uqXS1Ewq0ok6hyiDLTMbG2O7ma2X+uNouG1/f5TYaWbxD5UUDC98Jtkcm+rax0wy1bw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3214
+References: <20191210091453.26346-1-yamada.masahiro@socionext.com> <MN2PR11MB4509B418D54E8DC7D3BE7DD2CC5A0@MN2PR11MB4509.namprd11.prod.outlook.com>
+In-Reply-To: <MN2PR11MB4509B418D54E8DC7D3BE7DD2CC5A0@MN2PR11MB4509.namprd11.prod.outlook.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 11 Dec 2019 14:33:07 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQnuR0fv6Nv5y=GxHxv8nhDB5K32TyG4G-WyOtJqyh0mg@mail.gmail.com>
+Message-ID: <CAK7LNAQnuR0fv6Nv5y=GxHxv8nhDB5K32TyG4G-WyOtJqyh0mg@mail.gmail.com>
+Subject: Re: [PATCH] mtd: rawnand: denali: add reset controlling
+To:     "Tan, Ley Foon" <ley.foon.tan@intel.com>
+Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Dinh Nguyen <dinguyen@kernel.org>, Marek Vasut <marex@denx.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave
-
-On 12/6/19 10:28 PM, Dave Hansen wrote:
-> On 12/6/19 12:14 AM, Suravee Suthikulpanit wrote:
->> On 12/4/19 12:27 AM, Dave Hansen wrote:
->>> On 12/3/19 1:01 AM, Suravee Suthikulpanit wrote:
->>>> The current XCHECK_SZ macro warns if the XFEATURE size reported
->>>> by CPUID does not match the size of kernel structure. However, depending
->>>> on the hardware implementation, CPUID can report the XSAVE state size
->>>> larger than the size of C structures defined for each of the XSAVE state
->>>> due to padding.
->>>
->>> We have existing architecture for padding.  See xfeature_is_aligned(),
->>> for instance.  Are you saying that there are implementations out there
->>> that do padding which is not otherwise enumerated and that they do it
->>> within the size of the enumerated stat
->> Yes, the implementation includes the padding size within the size of
->> the enumerated state. This results in the reported size larger than
->> the amount needed by the feature.
-
-Actually, please allow me clarify my understanding for this part.
-
-When you referred to "the existing architecture for padding", IIUC,
-that's the XSAVE state size, offset, and alignment of each extended
-feature reported by the CPUID Fn 0Dh E[A|B|C]X. By "padding", do you
-mean the additional area included as part of alignment?
-
-> I don't think we've ever had XSAVE state that differed in size between
-> implementations.  This kind of thing ensures that we can't have any
-> statically-defined inspection into the XSAVE state.
+On Wed, Dec 11, 2019 at 2:23 PM Tan, Ley Foon <ley.foon.tan@intel.com> wrote:
 >
-> It also increases the amount of blind trust that we have in the CPU
-> implementations.  However, those warnings were specifically added at
-> Ingo's behest (IIRC) to reduce our blind trust in the CPU.
-> 
+>
+>
+> > -----Original Message-----
+> > From: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Sent: Tuesday, December 10, 2019 5:15 PM
+> > To: linux-mtd@lists.infradead.org
+> > Cc: Dinh Nguyen <dinguyen@kernel.org>; Marek Vasut <marex@denx.de>;
+> > Tan, Ley Foon <ley.foon.tan@intel.com>; Masahiro Yamada
+> > <yamada.masahiro@socionext.com>; Mark Rutland
+> > <mark.rutland@arm.com>; Miquel Raynal <miquel.raynal@bootlin.com>;
+> > Philipp Zabel <p.zabel@pengutronix.de>; Richard Weinberger
+> > <richard@nod.at>; Rob Herring <robh+dt@kernel.org>; Vignesh
+> > Raghavendra <vigneshr@ti.com>; devicetree@vger.kernel.org; linux-
+> > kernel@vger.kernel.org
+> > Subject: [PATCH] mtd: rawnand: denali: add reset controlling
+> >
+> > According to the Denali User's Guide, this IP has two reset signals.
+> >
+> >   rst_n:     reset most of FFs in the controller core
+> >   reg_rst_n: reset all FFs in the register interface, and in the
+> >              initialization sequence
+> >
+> > This commit supports controlling those reset signals, although they might be
+> > often tied up together in actual SoC integration.
+> >
+> > One thing that should be kept in mind is the automated initialization
+> > sequence (a.k.a. 'bootstrap' process) is kicked off when reg_rst_n is
+> > deasserted.
+> >
+> > When the reset is deasserted, the controller issues a RESET command to the
+> > chip select 0, and attempts to read out the chip ID, and further more, ONFI
+> > parameters if it is an ONFI-compliant device. Then, the controller sets up the
+> > relevant registers based on the detected device parameters.
+> >
+> > This process is just redundant for Linux because nand_scan_ident() probes
+> > devices and sets up parameters accordingly. Rather, this hardware feature is
+> > annoying because it ends up with misdetection due to bugs.
+> >
+> > So, commit 0615e7ad5d52 ("mtd: nand: denali: remove Toshiba and Hynix
+> > specific fixup code") changed the driver to not rely on it.
+> >
+> > However, there is no way to prevent it from running. The IP provides the
+> > 'bootstrap_inhibit_init' port to suppress this sequence, but it is usually out of
+> > software control, and dependent on SoC implementation.
+> > As for the Socionext UniPhier platform, LD4 always enables it. For the later
+> > SoCs, the bootstrap sequence runs depending on the boot mode.
+> >
+> > I added usleep_range() to make the driver wait until the sequence finishes.
+> > Otherwise, the driver would fail to detect the chip due to the race between
+> > the driver and hardware-controlled sequence.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  .../devicetree/bindings/mtd/denali-nand.txt   |  7 ++++
+> >  drivers/mtd/nand/raw/denali_dt.c              | 40 ++++++++++++++++++-
+> >  2 files changed, 46 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mtd/denali-nand.txt
+> > b/Documentation/devicetree/bindings/mtd/denali-nand.txt
+> > index b32aed1db46d..a48b17fb969a 100644
+> > --- a/Documentation/devicetree/bindings/mtd/denali-nand.txt
+> > +++ b/Documentation/devicetree/bindings/mtd/denali-nand.txt
+> > @@ -14,6 +14,11 @@ Required properties:
+> >      interface clock, and the ECC circuit clock.
+> >    - clock-names: should contain "nand", "nand_x", "ecc"
+> >
+> > +Optional properties:
+> > +  - resets: may contain phandles to the controller core reset, the
+> > +register  reset
+> > +  - reset-names: may contain "nand", "reg"
+> > +
+> >  Sub-nodes:
+> >    Sub-nodes represent available NAND chips.
+> >
+> > @@ -46,6 +51,8 @@ nand: nand@ff900000 {
+> >       reg-names = "nand_data", "denali_reg";
+> >       clocks = <&nand_clk>, <&nand_x_clk>, <&nand_ecc_clk>;
+> >       clock-names = "nand", "nand_x", "ecc";
+> > +     resets = <&nand_rst>, <&nand_reg_rst>;
+> > +     reset-names = "nand", "reg";
+> >       interrupts = <0 144 4>;
+> >
+> >       nand@0 {
+> > diff --git a/drivers/mtd/nand/raw/denali_dt.c
+> > b/drivers/mtd/nand/raw/denali_dt.c
+> > index 8b779a899dcf..132bc6cc066c 100644
+> > --- a/drivers/mtd/nand/raw/denali_dt.c
+> > +++ b/drivers/mtd/nand/raw/denali_dt.c
+> > @@ -6,6 +6,7 @@
+> >   */
+> >
+> >  #include <linux/clk.h>
+> > +#include <linux/delay.h>
+> >  #include <linux/err.h>
+> >  #include <linux/io.h>
+> >  #include <linux/ioport.h>
+> > @@ -14,6 +15,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/of_device.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/reset.h>
+> >
+> >  #include "denali.h"
+> >
+> > @@ -22,6 +24,8 @@ struct denali_dt {
+> >       struct clk *clk;        /* core clock */
+> >       struct clk *clk_x;      /* bus interface clock */
+> >       struct clk *clk_ecc;    /* ECC circuit clock */
+> > +     struct reset_control *rst;      /* core reset */
+> > +     struct reset_control *rst_reg;  /* register reset */
+> >  };
+> >
+> >  struct denali_dt_data {
+> > @@ -151,6 +155,14 @@ static int denali_dt_probe(struct platform_device
+> > *pdev)
+> >       if (IS_ERR(dt->clk_ecc))
+> >               return PTR_ERR(dt->clk_ecc);
+> >
+> > +     dt->rst = devm_reset_control_get_optional_shared(dev, "nand");
+> > +     if (IS_ERR(dt->rst))
+> > +             return PTR_ERR(dt->rst);
+> > +
+> > +     dt->rst_reg = devm_reset_control_get_optional_shared(dev, "reg");
+> > +     if (IS_ERR(dt->rst_reg))
+> > +             return PTR_ERR(dt->rst_reg);
+> Will it trigger error if dts doesn't have "nand" or "reg" for reset-name?
+> SOCFPGA dts doesn't have this.
 
-I am not quite sure what you meant by "statically-defined inspection" and
-"blind trust".
 
->>>> Such case should be safe and should not need to generate warning
->>>> message.
->>>
->>> I've seen these error messages trip before, but only on pre-production
->>> processors with goofy microcode.  I'd be really suspicious that this is
->>> just papering over a processor issue.  Or, that perhaps the compacted
->>> form works but the standard form is broken somehow.
->>
->> I have verified with the HW folks and the have confirmed that this is
->> to be expected.
-> 
->  From a review perspective, I'd really appreciate being able to have a
-> concrete discussion about exactly which state this is and exactly how
-> much padding we are talking about and *why* the existing padding
-> architecture can't be used.  I'd also want guarantees about this state
-> not getting used for any real state, *ever*.
+No.
+These are optional resets.
 
-Here is the warning message:
+If they are not found in DT,
+the driver will skip the reset controlling.
 
-     ------------[ cut here ]------------
-     XFEATURE_PKRU: struct is 8 bytes, cpu state 32 bytes
-     WARNING: CPU: 0 PID: 0 at arch/x86/kernel/fpu/xstate.c:558 fpu__init_system_xstate+0x2b5/0x8ea
-     .......
+Of course, you can add them to your DT later
+if you want the driver to take care of the resets.
 
-In this case, the feature is PKRU (feature enum 9), and CPUID 0Dh instruction reports
-eax:0x20 (size), ebx:0x340 (offset), ecx:0(aligned). The warning is due to the 32-byte size
-is more than the 8 bytes required for struct pkru_state.
 
-What I have been told (by HW folks) is that the hardware reports 32 bytes for PKRU feature
-to account for additional padding (24 bytes) required to maintain offset for the XSAVE data
-in compact form where:
 
-     offset of the next component = offset of current component +
-                                    size of current component
-
-In this case, the hardware adds the padding needed before the offset of the subsequent
-feature into the PKRU xsave state size.
-
-Please correct me if I am wrong, but I believe this is similar to the case
-mentioned in the commit ef78f2a4bf84 ('x86/fpu: Check CPU-provided sizes against struct declarations'),
-where it mentions inconsistency b/w the MPX 'bndcsr' state and the C structures.
-
-However, my point is that it should not need to warn if the xsave size is greater than
-the size of the C structure.
-
-Thanks,
-Suravee
+Best Regards
+Masahiro Yamada
