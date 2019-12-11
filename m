@@ -2,200 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F346811A061
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:16:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66E6611A077
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:28:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbfLKBQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 20:16:22 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:38067 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbfLKBQW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 20:16:22 -0500
-Received: by mail-pj1-f68.google.com with SMTP id l4so8218257pjt.5;
-        Tue, 10 Dec 2019 17:16:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=rCjmuwdX9VxfrJW96q0Pn6Kl1LaCaUN5yA+3sx0sci8=;
-        b=Q7KS2OyjSso0tnnM+Jg97xqNHVBE/99Bs8Z5BKAHSMdmJHa3MvRRoQ16QGfSU1k3SX
-         BPtUdztm2lPhGwHZaBvOfQyOk58AN4b4T0u8sMjapWdsWnK67belDEW37UaEZaoHg5jY
-         A80/WkRFlESBtM4uB7Z0AubHXydxAVSz07klbYoWkfn6Z680Q5CuhQCGLeSAHfETo9CW
-         uT3gYX3B5pOUhM/wqqrcKOJkZCJfPXMQACHws5ZMHK81ELS3dcrKzYXf66vN5K8fkhXy
-         mxhcpD4iKteTmjNpP7apwqf30KPslU0iTdcXSRHnsc2gKTmfxqlNEmodoXdwAx/czxHn
-         fptw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=rCjmuwdX9VxfrJW96q0Pn6Kl1LaCaUN5yA+3sx0sci8=;
-        b=sTaUUSgcCquaGccqIE1uo04+ghIhc6x7HAoMYxxC5anITVcB7NPCB+kjgVw5VgpdM5
-         vsXGRFt9tktWH13+6aHVIHAf6us7np3V2QtXPHXjGeWj18PSIQL6jKHztwnCPcW/2JFG
-         3Xf2tcVZrPj9+D+5KA+EKqc6bqdqjFbgl7Ki8F2I7ADN2YZO4LLehxSkDpFPZP4SLKio
-         CuMPAhKwJJuTWYFFQN0c5asjvW1/5CQjYyRlRUTjCb/niBS6Ac8YU7YOKY4zrDoAnv33
-         Bsy2cs3n+ulRzYb8alvlHv5Gh6KhfT6dPgXax1U1zhRzs7BHapS/c2OtrcrRLwWgbAuo
-         JWaA==
-X-Gm-Message-State: APjAAAV+WcCva+Xp4un+fFB7kb1/djBQ00IWPTwxjTGnzXAghW83aiOZ
-        /pItP2uiyQEekR4jc5PhPWQ=
-X-Google-Smtp-Source: APXvYqx7za/8a59lShrbf7a2PwFUPMXtSFvPyw+oBcUvd+rJ1W2+osFsfVw/fxoruwNDVMSchYzM8g==
-X-Received: by 2002:a17:90a:a4cb:: with SMTP id l11mr478116pjw.47.1576026981243;
-        Tue, 10 Dec 2019 17:16:21 -0800 (PST)
-Received: from sol (220-235-124-2.dyn.iinet.net.au. [220.235.124.2])
-        by smtp.gmail.com with ESMTPSA id o12sm265495pfg.152.2019.12.10.17.16.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Dec 2019 17:16:20 -0800 (PST)
-Date:   Wed, 11 Dec 2019 09:16:15 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bamvor Jian Zhang <bamv2005@gmail.com>
-Subject: Re: [PATCH] gpio: gpio-mockup: Fix usage of new GPIO_LINE_DIRECTION
-Message-ID: <20191211011615.GA9373@sol>
-References: <20191210021525.13455-1-warthog618@gmail.com>
- <CAMRc=Md4PmbcGAKxP1LG08bREtWCtsXbt=ZgL50PrizF4F4pxg@mail.gmail.com>
- <20191210145515.GB3509@sol>
+        id S1727235AbfLKB1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 20:27:55 -0500
+Received: from mga17.intel.com ([192.55.52.151]:32077 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726362AbfLKB1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 20:27:54 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 17:27:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="245060376"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.9])
+  by fmsmga002.fm.intel.com with ESMTP; 10 Dec 2019 17:27:52 -0800
+Date:   Tue, 10 Dec 2019 20:19:41 -0500
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>
+Subject: Re: [RFC PATCH 1/9] vfio/pci: introduce mediate ops to intercept
+ vfio-pci ops
+Message-ID: <20191211011941.GB28339@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20191205032419.29606-1-yan.y.zhao@intel.com>
+ <20191205032536.29653-1-yan.y.zhao@intel.com>
+ <20191205165519.106bd210@x1.home>
+ <20191206075655.GG31791@joy-OptiPlex-7040>
+ <20191206142226.2698a2be@x1.home>
+ <20191209034225.GK31791@joy-OptiPlex-7040>
+ <20191209170339.2cb3d06e@x1.home>
+ <20191210024422.GA27331@joy-OptiPlex-7040>
+ <20191210095824.5c4cdad7@x1.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191210145515.GB3509@sol>
+In-Reply-To: <20191210095824.5c4cdad7@x1.home>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 10:55:15PM +0800, Kent Gibson wrote:
-> On Tue, Dec 10, 2019 at 03:11:12PM +0100, Bartosz Golaszewski wrote:
-> > wt., 10 gru 2019 o 03:15 Kent Gibson <warthog618@gmail.com> napisał(a):
-> > >
-> > > Restore the external behavior of gpio-mockup to what it was prior to the
-> > > change to using GPIO_LINE_DIRECTION.
-> > >
-> > > Signed-off-by: Kent Gibson <warthog618@gmail.com>
-> > > ---
-> > >
-> > > Fix a regression introduced in v5.5-rc1.
-> > >
-> > > The change to GPIO_LINE_DIRECTION reversed the polarity of the
-> > > dir field within gpio-mockup.c, but overlooked inverting the value on
-> > > initialization and when returned by gpio_mockup_get_direction.
-> > > The latter is a bug.
-> > > The former is a problem for tests which assume initial conditions,
-> > > specifically the mockup used to initialize chips with all lines as inputs.
-> > > That superficially appeared to be the case after the previous patch due
-> > > to the bug in gpio_mockup_get_direction.
-> > >
-> > >  drivers/gpio/gpio-mockup.c | 7 +++++--
-> > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-> > > index 56d647a30e3e..c4fdc192ea4e 100644
-> > > --- a/drivers/gpio/gpio-mockup.c
-> > > +++ b/drivers/gpio/gpio-mockup.c
-> > > @@ -226,7 +226,7 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
-> > >         int direction;
-> > >
-> > >         mutex_lock(&chip->lock);
-> > > -       direction = !chip->lines[offset].dir;
-> > > +       direction = chip->lines[offset].dir;
-> > >         mutex_unlock(&chip->lock);
-> > >
-> > >         return direction;
-> > > @@ -395,7 +395,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
-> > >         struct gpio_chip *gc;
-> > >         struct device *dev;
-> > >         const char *name;
-> > > -       int rv, base;
-> > > +       int rv, base, i;
-> > >         u16 ngpio;
-> > >
-> > >         dev = &pdev->dev;
-> > > @@ -447,6 +447,9 @@ static int gpio_mockup_probe(struct platform_device *pdev)
-> > >         if (!chip->lines)
-> > >                 return -ENOMEM;
-> > >
-> > > +       for (i = 0; i < gc->ngpio; i++)
-> > > +               chip->lines[i].dir = GPIO_LINE_DIRECTION_IN;
-> > > +
-> > >         if (device_property_read_bool(dev, "named-gpio-lines")) {
-> > >                 rv = gpio_mockup_name_lines(dev, chip);
-> > >                 if (rv)
-> > > --
-> > > 2.24.0
-> > >
-> > 
-> > Hi Kent,
-> > 
-> > I was applying and testing your libgpiod series and noticed that the
-> > gpio-tools tests fail after applying patches 16 & 17 (with linux
-> > v5.5-rc1). Is this fix related to this?
-> > 
+On Wed, Dec 11, 2019 at 12:58:24AM +0800, Alex Williamson wrote:
+> On Mon, 9 Dec 2019 21:44:23 -0500
+> Yan Zhao <yan.y.zhao@intel.com> wrote:
 > 
-> I don't think so.  I've only been able to trip this problem with a
-> couple of corner cases in my Go uapi test suite.
-> I have been unable to reproduce it with the tools as it requires
-> multiple requests with the same chip fd, including an as-is, to trip.
+> > > > > > Currently, yes, i40e has build dependency on vfio-pci.
+> > > > > > It's like this, if i40e decides to support SRIOV and compiles in vf
+> > > > > > related code who depends on vfio-pci, it will also have build dependency
+> > > > > > on vfio-pci. isn't it natural?    
+> > > > > 
+> > > > > No, this is not natural.  There are certainly i40e VF use cases that
+> > > > > have no interest in vfio and having dependencies between the two
+> > > > > modules is unacceptable.  I think you probably want to modularize the
+> > > > > i40e vfio support code and then perhaps register a table in vfio-pci
+> > > > > that the vfio-pci code can perform a module request when using a
+> > > > > compatible device.  Just and idea, there might be better options.  I
+> > > > > will not accept a solution that requires unloading the i40e driver in
+> > > > > order to unload the vfio-pci driver.  It's inconvenient with just one
+> > > > > NIC driver, imagine how poorly that scales.
+> > > > >     
+> > > > what about this way:
+> > > > mediate driver registers a module notifier and every time when
+> > > > vfio_pci is loaded, register to vfio_pci its mediate ops?
+> > > > (Just like in below sample code)
+> > > > This way vfio-pci is free to unload and this registering only gives
+> > > > vfio-pci a name of what module to request.
+> > > > After that,
+> > > > in vfio_pci_open(), vfio-pci requests the mediate driver. (or puts
+> > > > the mediate driver when mediate driver does not support mediating the
+> > > > device)
+> > > > in vfio_pci_release(), vfio-pci puts the mediate driver.
+> > > > 
+> > > > static void register_mediate_ops(void)
+> > > > {
+> > > >         int (*func)(struct vfio_pci_mediate_ops *ops) = NULL;
+> > > > 
+> > > >         func = symbol_get(vfio_pci_register_mediate_ops);
+> > > > 
+> > > >         if (func) {
+> > > >                 func(&igd_dt_ops);
+> > > >                 symbol_put(vfio_pci_register_mediate_ops);
+> > > >         }
+> > > > }
+> > > > 
+> > > > static int igd_module_notify(struct notifier_block *self,
+> > > >                               unsigned long val, void *data)
+> > > > {
+> > > >         struct module *mod = data;
+> > > >         int ret = 0;
+> > > > 
+> > > >         switch (val) {
+> > > >         case MODULE_STATE_LIVE:
+> > > >                 if (!strcmp(mod->name, "vfio_pci"))
+> > > >                         register_mediate_ops();
+> > > >                 break;
+> > > >         case MODULE_STATE_GOING:
+> > > >                 break;
+> > > >         default:
+> > > >                 break;
+> > > >         }
+> > > >         return ret;
+> > > > }
+> > > > 
+> > > > static struct notifier_block igd_module_nb = {
+> > > >         .notifier_call = igd_module_notify,
+> > > >         .priority = 0,
+> > > > };
+> > > > 
+> > > > 
+> > > > 
+> > > > static int __init igd_dt_init(void)
+> > > > {
+> > > > 	...
+> > > > 	register_mediate_ops();
+> > > > 	register_module_notifier(&igd_module_nb);
+> > > > 	...
+> > > > 	return 0;
+> > > > }  
+> > > 
+> > > 
+> > > No, this is bad.  Please look at MODULE_ALIAS() and request_module() as
+> > > used in the vfio-platform for loading reset driver modules.  I think
+> > > the correct approach is that vfio-pci should perform a request_module()
+> > > based on the device being probed.  Having the mediation provider
+> > > listening for vfio-pci and registering itself regardless of whether we
+> > > intend to use it assumes that we will want to use it and assumes that
+> > > the mediation provider module is already loaded.  We should be able to
+> > > support demand loading of modules that may serve no other purpose than
+> > > providing this mediation.  Thanks,  
+> > hi Alex
+> > Thanks for this message.
+> > So is it good to create a separate module as mediation provider driver,
+> > and alias its module name to "vfio-pci-mediate-vid-did".
+> > Then when vfio-pci probes the device, it requests module of that name ?
 > 
+> I think this would give us an option to have the mediator as a separate
+> module, but not require it.  Maybe rather than a request_module(),
+> where if we follow the platform reset example we'd then expect the init
+> code for the module to register into a list, we could do a
+> symbol_request().  AIUI, this would give us a reference to the symbol
+> if the module providing it is already loaded, and request a module
+> (perhaps via an alias) if it's not already load.  Thanks,
+> 
+ok. got it!
+Thank you :)
 
-It turns out that I can reproduce the bug with my gpiod tools:
-
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# uname -a
-Linux firefly 5.5.0-rc1 #23 SMP Mon Dec 9 16:26:33 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# modprobe gpio-mockup gpio_mockup_ranges=-1,4
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# ./gpiodctl get gpiochip0 1
-0
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# ./gpiodctl info
-gpiochip0 - 4 lines:
-	line   0:     unnamed      unused   input  active-high
-	line   1:     unnamed      unused   input  active-high
-	line   2:     unnamed      unused   input  active-high
-	line   3:     unnamed      unused   input  active-high
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# ./gpiodctl get --as-is gpiochip0 1
-0
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# ./gpiodctl info
-gpiochip0 - 4 lines:
-	line   0:     unnamed      unused   input  active-high
-	line   1:     unnamed      unused  output  active-high
-	line   2:     unnamed      unused   input  active-high
-	line   3:     unnamed      unused   input  active-high
-
-Note that the line 1 direction has flipped for no reason.
-
-With the patched kernel that doesn't happen:
-
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# uname -a
-Linux firefly 5.5.0-rc1+ #27 SMP Tue Dec 10 01:07:59 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# modprobe gpio-mockup gpio_mockup_ranges=-1,4
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# ./gpiodctl get gpiochip0 1
-0
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# ./gpiodctl info
-gpiochip0 - 4 lines:
-	line   0:     unnamed      unused   input  active-high
-	line   1:     unnamed      unused   input  active-high
-	line   2:     unnamed      unused   input  active-high
-	line   3:     unnamed      unused   input  active-high
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# ./gpiodctl get --as-is gpiochip0 1
-0
-root@firefly:/home/kent/gpiod/cmd/gpiodctl# ./gpiodctl info
-gpiochip0 - 4 lines:
-	line   0:     unnamed      unused   input  active-high
-	line   1:     unnamed      unused   input  active-high
-	line   2:     unnamed      unused   input  active-high
-	line   3:     unnamed      unused   input  active-high
-
-
-I would prefer to demonstrate this with the libgpiod tools, but they
-don't support as-is on gets.  I recall suggesting adding it and you
-asking why - who would need it.  This is a concrete example of my
-response at the time - so you can exercise the full API for testing.
-
-Cheers,
-Kent.
-
+Yan
