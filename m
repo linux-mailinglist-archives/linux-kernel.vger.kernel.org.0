@@ -2,108 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B0FD11AAE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:32:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E723811AB0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:36:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbfLKMbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 07:31:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51198 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729406AbfLKMbo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 07:31:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3R2DK7HvOJXWBjGxheTnCh1+oyh0A3xwV1bV88LUreM=; b=aglqWHi18wn3lAH9Lx5D/B4kie
-        lJrNLFF2pxctrEMnYBHJIEBPv58Uj2A/vOKGdU8ZDPpr8FRStCEj0aezmWfn31MarEVKYHnc5yWex
-        o4z0fl0klPQ5ega9cW16Tu2P2HCSxYvHoFGZ/aWVIoOt9c2cHZ/FcPuq3kEZvabVEq+Eq+I6OrTPN
-        dtIJQP6gNNjFP/E6MFesMAcqOR3T40Ryem7Xr9dYn2tgznxlX8JgvxiQghvD3NSRLSueGnFntUOfM
-        DcFRhZWamjcLkkYGEgDd2rlXeZIGbLC0EEw5Fjo3t1fgIYGg3VCHsMJ6tJw05K20y5rLuhDQqO5CI
-        wITu+cqA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1if192-0001Pf-Bl; Wed, 11 Dec 2019 12:31:08 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 026FB307093;
-        Wed, 11 Dec 2019 13:29:44 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 605A920137CBF; Wed, 11 Dec 2019 13:31:02 +0100 (CET)
-Message-Id: <20191211122956.629995180@infradead.org>
-User-Agent: quilt/0.65
-Date:   Wed, 11 Dec 2019 13:07:30 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Helge Deller <deller@gmx.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Nick Hu <nickhu@andestech.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: [PATCH 17/17] riscv/tlb: Fix __p*_free_tlb()
-References: <20191211120713.360281197@infradead.org>
+        id S1729211AbfLKMga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 07:36:30 -0500
+Received: from mga02.intel.com ([134.134.136.20]:3068 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728128AbfLKMga (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 07:36:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 04:36:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="220446098"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.211.25]) ([10.254.211.25])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Dec 2019 04:36:27 -0800
+Subject: Re: [PATCH v2 1/3] perf report: Change sort order by a specified
+ event in group
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20191211073036.31504-1-yao.jin@linux.intel.com>
+ <20191211113815.GB12087@krava>
+ <6ba174a8-309e-9410-e6ea-ac7bb7187757@linux.intel.com>
+ <20191211121453.GC12087@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <ae8d58b9-36a4-533e-323e-0a81a6ccdd6d@linux.intel.com>
+Date:   Wed, 11 Dec 2019 20:36:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20191211121453.GC12087@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like regular pages, page directories need to observe the
-following order:
 
- 1) unhook
- 2) TLB invalidate
- 3) free
 
-to ensure it is safe against concurrent accesses.
+On 12/11/2019 8:14 PM, Jiri Olsa wrote:
+> On Wed, Dec 11, 2019 at 08:01:44PM +0800, Jin, Yao wrote:
+>>
+>>
+>> On 12/11/2019 7:38 PM, Jiri Olsa wrote:
+>>> On Wed, Dec 11, 2019 at 03:30:34PM +0800, Jin Yao wrote:
+>>>
+>>> SNIP
+>>>
+>>>> +
+>>>> +static int __hpp__group_sort_idx(struct hist_entry *a, struct hist_entry *b,
+>>>> +				 hpp_field_fn get_field, int idx)
+>>>> +{
+>>>> +	struct evsel *evsel = hists_to_evsel(a->hists);
+>>>> +	u64 *fields_a, *fields_b;
+>>>> +	int cmp, nr_members, ret, i;
+>>>> +
+>>>> +	cmp = field_cmp(get_field(a), get_field(b));
+>>>> +	if (!perf_evsel__is_group_event(evsel))
+>>>> +		return cmp;
+>>>> +
+>>>> +	nr_members = evsel->core.nr_members;
+>>>> +	ret = pair_fields_alloc(a, b, get_field, nr_members,
+>>>> +			      &fields_a, &fields_b);
+>>>> +	if (ret) {
+>>>> +		ret = cmp;
+>>>> +		goto out;
+>>>> +	}
+>>>> +
+>>>> +	for (i = 1; i < nr_members; i++) {
+>>>> +		if (i == idx) {
+>>>> +			ret = field_cmp(fields_a[i], fields_b[i]);
+>>>> +			if (ret)
+>>>> +				goto out;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	if (cmp) {
+>>>> +		ret = cmp;
+>>>> +		goto out;
+>>>> +	}
+>>>> +
+>>>> +	for (i = 1; i < nr_members; i++) {
+>>>> +		if (i != idx) {
+>>>> +			ret = field_cmp(fields_a[i], fields_b[i]);
+>>>> +			if (ret)
+>>>> +				goto out;
+>>>> +		}
+>>>
+>>> hi,
+>>> I'm missing why we compare the fields for 2nd time in here
+>>>
+>>> thanks,
+>>> jirka
+>>>
+>>
+>> Hi,
+>>
+>> I think we may continue comparing the remaining of fields if the index field
+>> is equal. :)
+> 
+> aah, I missed it's actualy == used in the first one ;-)
+> 
+> why don't you just call it directly?
+> 
+> 	ret = field_cmp(fields_a[idx], fields_b[idx])
+> 	if (ret)
+> 		goto out;
+> 
+> jirka
+> 
 
-Since RISC-V has page based PMDs, no software walkers and IPI based
-TLB invalidation, it can use the simple tlb_remove_page() based
-freeer.
+Oh, yes, we can use simpler code. For example,
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/riscv/include/asm/pgalloc.h |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+	if (idx >= 1 && idx < nr_members) {
+		ret = field_cmp(fields_a[idx], fields_b[idx]);
+		if (ret)
+			goto out;
+	}
 
---- a/arch/riscv/include/asm/pgalloc.h
-+++ b/arch/riscv/include/asm/pgalloc.h
-@@ -73,14 +73,15 @@ static inline void pmd_free(struct mm_st
- 	free_page((unsigned long)pmd);
- }
- 
--#define __pmd_free_tlb(tlb, pmd, addr)  pmd_free((tlb)->mm, pmd)
-+#define __pmd_free_tlb(tlb, pmd, addr)	\
-+	tlb_remove_table((tlb), virt_to_page(pmd))
- 
- #endif /* __PAGETABLE_PMD_FOLDED */
- 
--#define __pte_free_tlb(tlb, pte, buf)   \
--do {                                    \
--	pgtable_pte_page_dtor(pte);     \
--	tlb_remove_page((tlb), pte);    \
-+#define __pte_free_tlb(tlb, pte, buf)	\
-+do {					\
-+	pgtable_pte_page_dtor(pte);	\
-+	tlb_remove_table((tlb), (pte));	\
- } while (0)
- #endif /* CONFIG_MMU */
- 
-
+Thanks
+Jin Yao
 
