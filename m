@@ -2,115 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE8D11B255
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4045211B268
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:36:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388136AbfLKPfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:35:25 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35738 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388098AbfLKPfU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:35:20 -0500
-Received: by mail-qt1-f196.google.com with SMTP id s8so6631484qte.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:35:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EEZbVUZTmwHpEhj5IiLNVT7HoJJ6hK9o2EwOkcWd0R0=;
-        b=ByyfeRJbC64U8giuaSJyBfvkHapBhK2qAxMJttshjcpu4q7X5Gfa5KndB3Rsx+FfUi
-         2f5Chh4ed41jCL/yUvEAObJLLvxAKzSB3oX9f4i85dEtBwM69NnnT1HWQccG3lMNxg2B
-         0HxtpM2Bu3pbI0Mll/70NUJy6kuGduaNXfpbgt550b3TM2wZOmIXmZmDdat432CbG13Y
-         QnOUIs7h+1UPahghLzsw89qEGjuu+VUedXyzVqknuDAvXHP5Xm8tsXdnalMqEsczvEva
-         l2NRBcXAfvXC70PbdFm3ngvap4BqrNr7M9AZr7YXRhuTCxeiTPjTNLqUt1SKt0BGxnlV
-         ti+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EEZbVUZTmwHpEhj5IiLNVT7HoJJ6hK9o2EwOkcWd0R0=;
-        b=p3AjVzn4ecbKAKxev+riDCpfdmQ2L+zWVRcG38TSn+5zKO9b1bBHlaYGaRGvciLQ9I
-         twAn8ZkXyYx9CAD153rLP2CC/7uJuJstXd62QN1iIYRK7jePaCTgC5fWOf2bzM9KBBOk
-         DAdNNEyI3elXY7Ha6Co/47TLrpS2OIxkMuAkaShTlVouc2+zPQAT2+6ef0bQU4HtlQGt
-         /raBBmnxd7vEKt2TNbTf3zqHyT4GpTlCvC7OXzTFyiQ8XDpYz8ntAfzJ3ph9qeP5M8+M
-         Oaxr/iFbkaAE/cjUdJgTSGaKJs8qjaLNQLX72TbZZ7CaBrmwCvmg/lxhYzSMgPsySb59
-         HWtw==
-X-Gm-Message-State: APjAAAWLSaTQhSymqQNqnWfA4EPro2zjEtWCj0oRB4YdoFz0mF7JbUIg
-        nytewZRLHY7rBFwwCVHeuYvACQyD2fMQ8en/lZSW/Q==
-X-Google-Smtp-Source: APXvYqzPgmO02LvwPR3MASeJmUeTLUSOMZa+8nNfTg7jaNAriHFXi9CTAzkRdwS2y9fl/VgOUeUZWqYTOIkuaCIyzmE=
-X-Received: by 2002:aed:2465:: with SMTP id s34mr3283883qtc.158.1576078518501;
- Wed, 11 Dec 2019 07:35:18 -0800 (PST)
+        id S2388284AbfLKPgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:36:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388248AbfLKPfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:35:54 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 897C12467A;
+        Wed, 11 Dec 2019 15:35:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576078553;
+        bh=YVUZ/vc6IgD6/Q26ftSCQsbJ+vLqmFJ2jTNAXrSTNDU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SBwJHwSRgLJy69gVIVwZ4kbL4nYD5NZiRVa2hRm79107sA1YrrF9ZWFkFhkjCjtmZ
+         E+CeShI53VgNln7NizWztinctv+FA2J+D1wEn9vnOB7pWChm2Icswh8xdZp4ezsAyR
+         GwCqER1Iw+UkkyiNlP0SRKGyz6PIeQ1Qceq9clG4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 40/42] s390/cpum_sf: Check for SDBT and SDB consistency
+Date:   Wed, 11 Dec 2019 10:35:08 -0500
+Message-Id: <20191211153510.23861-40-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191211153510.23861-1-sashal@kernel.org>
+References: <20191211153510.23861-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <CAAeHK+wFBYX8-L-D8w_nep3W=QjYoLAZbc=-0eoWK684wnuayA@mail.gmail.com>
- <Pine.LNX.4.44L0.1912111010490.1549-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1912111010490.1549-100000@iolanthe.rowland.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 11 Dec 2019 16:35:07 +0100
-Message-ID: <CACT4Y+aTq7iThhikGNGKsLF61RHcWMY5mh=oTGc6FHv02f1BBQ@mail.gmail.com>
-Subject: Re: Re: KASAN: use-after-free Read in usbvision_v4l2_open
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        syzbot <syzbot+7fa38a608b1075dfd634@syzkaller.appspotmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        linux-media@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 4:15 PM Alan Stern <stern@rowland.harvard.edu> wrote
->
-> On Wed, 11 Dec 2019, Andrey Konovalov wrote:
->
-> > On Tue, Dec 10, 2019 at 9:17 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > >
-> > > On Tue, 10 Dec 2019, syzbot wrote:
-> > >
-> > > > > On Mon, 9 Dec 2019, syzbot wrote:
-> > > >
-> > > > >> Hello,
-> > > >
-> > > > >> syzbot found the following crash on:
-> > > >
-> > > > >> HEAD commit:    1f22d15c usb: gadget: add raw-gadget interface
-> > > > >> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> > > > >> console output: https://syzkaller.appspot.com/x/log.txt?x=1296f42ae00000
-> > > > >> kernel config:
-> > > > >> https://syzkaller.appspot.com/x/.config?x=8ccee2968018adcb
-> > > > >> dashboard link:
-> > > > >> https://syzkaller.appspot.com/bug?extid=c7b0ec009a216143df30
-> > > > >> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > >
-> > > > >> Unfortunately, I don't have any reproducer for this crash yet.
-> > > >
-> > > > >> IMPORTANT: if you fix the bug, please add the following tag to the
-> > > > >> commit:
-> > > > >> Reported-by: syzbot+c7b0ec009a216143df30@syzkaller.appspotmail.com
->
-> > > > This crash does not have a reproducer. I cannot test it.
-> > >
-> > > Let's try the same patch with a different bug report -- one that has a
-> > > reproducer.  I assume that syzbot gets the bug identity from the
-> > > email's From: line (which has been updated acoordingly) rather than the
-> > > Subject: line.
-> >
-> > Did you get a response for this test? I see the test attempt on the
-> > dashboard (the patch failed to build), but I didn't get an email with
-> > the result.
->
-> No response so far.  On the other hand, syzbot has been a bit slow to
-> respond to my tests recently (typical turnaround time is several
-> hours).  I don't know what's going on.
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-The system is busy with bisections. Patch testing takes precedence
-over bisection, but only after the current one finished. Bisections
-can take a long time, up to days. The way it all works is a total hack
-that one can put together in a few days.
+[ Upstream commit 247f265fa502e7b17a0cb0cc330e055a36aafce4 ]
+
+Each SBDT is located at a 4KB page and contains 512 entries.
+Each entry of a SDBT points to a SDB, a 4KB page containing
+sampled data. The last entry is a link to another SDBT page.
+
+When an event is created the function sequence executed is:
+
+  __hw_perf_event_init()
+  +--> allocate_buffers()
+       +--> realloc_sampling_buffers()
+	    +---> alloc_sample_data_block()
+
+Both functions realloc_sampling_buffers() and
+alloc_sample_data_block() allocate pages and the allocation
+can fail. This is handled correctly and all allocated
+pages are freed and error -ENOMEM is returned to the
+top calling function. Finally the event is not created.
+
+Once the event has been created, the amount of initially
+allocated SDBT and SDB can be too low. This is detected
+during measurement interrupt handling, where the amount
+of lost samples is calculated. If the number of lost samples
+is too high considering sampling frequency and already allocated
+SBDs, the number of SDBs is enlarged during the next execution
+of cpumsf_pmu_enable().
+
+If more SBDs need to be allocated, functions
+
+       realloc_sampling_buffers()
+       +---> alloc-sample_data_block()
+
+are called to allocate more pages. Page allocation may fail
+and the returned error is ignored. A SDBT and SDB setup
+already exists.
+
+However the modified SDBTs and SDBs might end up in a situation
+where the first entry of an SDBT does not point to an SDB,
+but another SDBT, basicly an SBDT without payload.
+This can not be handled by the interrupt handler, where an SDBT
+must have at least one entry pointing to an SBD.
+
+Add a check to avoid SDBTs with out payload (SDBs) when enlarging
+the buffer setup.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/s390/kernel/perf_cpum_sf.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
+index f46e5c0cb6d95..02476d2333df3 100644
+--- a/arch/s390/kernel/perf_cpum_sf.c
++++ b/arch/s390/kernel/perf_cpum_sf.c
+@@ -185,7 +185,7 @@ static int realloc_sampling_buffer(struct sf_buffer *sfb,
+ 				   unsigned long num_sdb, gfp_t gfp_flags)
+ {
+ 	int i, rc;
+-	unsigned long *new, *tail;
++	unsigned long *new, *tail, *tail_prev = NULL;
+ 
+ 	if (!sfb->sdbt || !sfb->tail)
+ 		return -EINVAL;
+@@ -224,6 +224,7 @@ static int realloc_sampling_buffer(struct sf_buffer *sfb,
+ 			sfb->num_sdbt++;
+ 			/* Link current page to tail of chain */
+ 			*tail = (unsigned long)(void *) new + 1;
++			tail_prev = tail;
+ 			tail = new;
+ 		}
+ 
+@@ -233,10 +234,22 @@ static int realloc_sampling_buffer(struct sf_buffer *sfb,
+ 		 * issue, a new realloc call (if required) might succeed.
+ 		 */
+ 		rc = alloc_sample_data_block(tail, gfp_flags);
+-		if (rc)
++		if (rc) {
++			/* Undo last SDBT. An SDBT with no SDB at its first
++			 * entry but with an SDBT entry instead can not be
++			 * handled by the interrupt handler code.
++			 * Avoid this situation.
++			 */
++			if (tail_prev) {
++				sfb->num_sdbt--;
++				free_page((unsigned long) new);
++				tail = tail_prev;
++			}
+ 			break;
++		}
+ 		sfb->num_sdb++;
+ 		tail++;
++		tail_prev = new = NULL;	/* Allocated at least one SBD */
+ 	}
+ 
+ 	/* Link sampling buffer to its origin */
+-- 
+2.20.1
+
