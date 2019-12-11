@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDB1111B7E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:11:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E280511B7B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:10:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388444AbfLKQK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:10:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60642 "EHLO mail.kernel.org"
+        id S1730345AbfLKPMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:12:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730328AbfLKPLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:11:51 -0500
+        id S1730988AbfLKPLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:11:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C4022173E;
-        Wed, 11 Dec 2019 15:11:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BD7B24656;
+        Wed, 11 Dec 2019 15:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077111;
-        bh=3AC9YLPT4sFT5BYDbu5+f0dgyOFyXPBT2s0ZPrDyeuw=;
+        s=default; t=1576077113;
+        bh=4k5lCqv1h3YYH4AA9kIguuzaH3ELRVcCQ2qK2QzcEjQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m4QWtC+/O2UJyMgHS2JdAIQZV6tOLXT9dyuoJJ8OTvKhqHJlWmGA2IkcRAwy8pue7
-         neejc7q5sEQcKyTb0b2qOYuxVG6aqO4XGzB1ReZG8Kzg6ckwowp9OVHVX3cI5Ir8pU
-         d0K2nwaDevbZ3OCDwgA9+psKY40xN32TwgRIioMc=
+        b=uljg34GtFlAKrQtXkCJzEls34IpKrsQx3ke8+zsWDv+vHIZjQT9mUXYFprqEyaMQ2
+         dBLhLw2AW5AcIFn74F6Bjs6AOkID46kY6F7Vdb/c7KwBh1s4YRhOZGPaXfNe7bSjR3
+         JoEMgTXXPVZ88CNr8+jKNBWFiUQfe+2hFwRQMooc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 021/105] exportfs_decode_fh(): negative pinned may become positive without the parent locked
-Date:   Wed, 11 Dec 2019 16:05:10 +0100
-Message-Id: <20191211150226.989775102@linuxfoundation.org>
+Subject: [PATCH 5.3 022/105] audit_get_nd(): dont unlock parent too early
+Date:   Wed, 11 Dec 2019 16:05:11 +0100
+Message-Id: <20191211150227.393353419@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
 References: <20191211150221.153659747@linuxfoundation.org>
@@ -45,64 +45,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit a2ece088882666e1dc7113744ac912eb161e3f87 ]
+[ Upstream commit 69924b89687a2923e88cc42144aea27868913d0e ]
+
+if the child has been negative and just went positive
+under us, we want coherent d_is_positive() and ->d_inode.
+Don't unlock the parent until we'd done that work...
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/exportfs/expfs.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+ kernel/audit_watch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index f0e549783caf9..ba6de72a3e34a 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -519,26 +519,33 @@ struct dentry *exportfs_decode_fh(struct vfsmount *mnt, struct fid *fid,
- 		 * inode is actually connected to the parent.
- 		 */
- 		err = exportfs_get_name(mnt, target_dir, nbuf, result);
--		if (!err) {
--			inode_lock(target_dir->d_inode);
--			nresult = lookup_one_len(nbuf, target_dir,
--						 strlen(nbuf));
--			inode_unlock(target_dir->d_inode);
--			if (!IS_ERR(nresult)) {
--				if (nresult->d_inode) {
--					dput(result);
--					result = nresult;
--				} else
--					dput(nresult);
--			}
-+		if (err) {
-+			dput(target_dir);
-+			goto err_result;
- 		}
- 
-+		inode_lock(target_dir->d_inode);
-+		nresult = lookup_one_len(nbuf, target_dir, strlen(nbuf));
-+		if (!IS_ERR(nresult)) {
-+			if (unlikely(nresult->d_inode != result->d_inode)) {
-+				dput(nresult);
-+				nresult = ERR_PTR(-ESTALE);
-+			}
-+		}
-+		inode_unlock(target_dir->d_inode);
- 		/*
- 		 * At this point we are done with the parent, but it's pinned
- 		 * by the child dentry anyway.
- 		 */
- 		dput(target_dir);
- 
-+		if (IS_ERR(nresult)) {
-+			err = PTR_ERR(nresult);
-+			goto err_result;
-+		}
-+		dput(result);
-+		result = nresult;
-+
- 		/*
- 		 * And finally make sure the dentry is actually acceptable
- 		 * to NFSD.
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 1f31c2f1e6fc1..4508d5e0cf696 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -351,12 +351,12 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
+ 	struct dentry *d = kern_path_locked(watch->path, parent);
+ 	if (IS_ERR(d))
+ 		return PTR_ERR(d);
+-	inode_unlock(d_backing_inode(parent->dentry));
+ 	if (d_is_positive(d)) {
+ 		/* update watch filter fields */
+ 		watch->dev = d->d_sb->s_dev;
+ 		watch->ino = d_backing_inode(d)->i_ino;
+ 	}
++	inode_unlock(d_backing_inode(parent->dentry));
+ 	dput(d);
+ 	return 0;
+ }
 -- 
 2.20.1
 
