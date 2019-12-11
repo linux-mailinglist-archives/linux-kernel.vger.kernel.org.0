@@ -2,81 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D0311A8AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 11:13:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EB5411A8B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 11:15:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728793AbfLKKNG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 05:13:06 -0500
-Received: from foss.arm.com ([217.140.110.172]:52332 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728480AbfLKKNG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 05:13:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AEAF1FB;
-        Wed, 11 Dec 2019 02:13:05 -0800 (PST)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 521A83F6CF;
-        Wed, 11 Dec 2019 02:13:04 -0800 (PST)
-Date:   Wed, 11 Dec 2019 10:13:02 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 13/15] cpufreq: scmi: Match scmi device by both name and
- protocol id
-Message-ID: <20191211101302.GD20962@bogus>
-References: <20191210145345.11616-1-sudeep.holla@arm.com>
- <20191210145345.11616-14-sudeep.holla@arm.com>
- <20191211023909.7iun7kdk6pjkync6@vireshk-i7>
+        id S1728833AbfLKKPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 05:15:05 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:23253 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728104AbfLKKPF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 05:15:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1576059304; x=1607595304;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=QAxEg8wAMpeQpGJaY0emkukCqNQsOl8+HnDT4r3pg28=;
+  b=r4k5bDE+O6EnMs0orPfb0e4hrclInphNptcIF9f+mHDUTxfAb8YfTOF5
+   7N/F99pZjPYNIRxcN0ul26xg/rZtuMqkeUCORz39zSfNOEBI5uuFvh7fX
+   rfWYOYp9SYBndo5Ege/ehN3zvx0ejmz5jqNIujhYlu/8muyySCfx9cT/x
+   g=;
+IronPort-SDR: TlUAzD03+db+XnCJ5SOx7jg8iAfAJAsCWzYeaF5UYwd4Ir/j6CHWtxsj3vujq21Oo9aEwN3lFc
+ ATTxI2ku0eEg==
+X-IronPort-AV: E=Sophos;i="5.69,301,1571702400"; 
+   d="scan'208";a="8587630"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-62350142.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 11 Dec 2019 10:15:03 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1e-62350142.us-east-1.amazon.com (Postfix) with ESMTPS id 27B06A29F7;
+        Wed, 11 Dec 2019 10:15:01 +0000 (UTC)
+Received: from EX13D32EUC004.ant.amazon.com (10.43.164.121) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 11 Dec 2019 10:15:00 +0000
+Received: from EX13D32EUC003.ant.amazon.com (10.43.164.24) by
+ EX13D32EUC004.ant.amazon.com (10.43.164.121) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 11 Dec 2019 10:15:00 +0000
+Received: from EX13D32EUC003.ant.amazon.com ([10.43.164.24]) by
+ EX13D32EUC003.ant.amazon.com ([10.43.164.24]) with mapi id 15.00.1367.000;
+ Wed, 11 Dec 2019 10:14:59 +0000
+From:   "Durrant, Paul" <pdurrant@amazon.com>
+To:     =?iso-8859-1?Q?Roger_Pau_Monn=E9?= <roger.pau@citrix.com>
+CC:     "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
+Subject: RE: [Xen-devel] [PATCH v2 2/4] xenbus: limit when state is forced to
+ closed
+Thread-Topic: [Xen-devel] [PATCH v2 2/4] xenbus: limit when state is forced to
+ closed
+Thread-Index: AQHVr029Jnf5zy5/UEOnUavFsd58GKe0trGAgAABW5A=
+Date:   Wed, 11 Dec 2019 10:14:59 +0000
+Message-ID: <86a7d140501047028c49736c43fe547c@EX13D32EUC003.ant.amazon.com>
+References: <20191210113347.3404-1-pdurrant@amazon.com>
+ <20191210113347.3404-3-pdurrant@amazon.com>
+ <20191211100627.GI980@Air-de-Roger>
+In-Reply-To: <20191211100627.GI980@Air-de-Roger>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.166.120]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211023909.7iun7kdk6pjkync6@vireshk-i7>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 08:09:09AM +0530, Viresh Kumar wrote:
-> On 10-12-19, 14:53, Sudeep Holla wrote:
-> > The scmi bus now has support to match the driver with devices not only
-> > based on their protocol id but also based on their device name if one is
-> > available. This was added to cater the need to support multiple devices
-> > and drivers for the same protocol.
+> -----Original Message-----
+> From: Roger Pau Monn=E9 <roger.pau@citrix.com>
+> Sent: 11 December 2019 10:06
+> To: Durrant, Paul <pdurrant@amazon.com>
+> Cc: xen-devel@lists.xenproject.org; linux-kernel@vger.kernel.org; Juergen
+> Gross <jgross@suse.com>; Stefano Stabellini <sstabellini@kernel.org>;
+> Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Subject: Re: [Xen-devel] [PATCH v2 2/4] xenbus: limit when state is force=
+d
+> to closed
+>=20
+> On Tue, Dec 10, 2019 at 11:33:45AM +0000, Paul Durrant wrote:
+> > If a driver probe() fails then leave the xenstore state alone. There is
+> no
+> > reason to modify it as the failure may be due to transient resource
+> > allocation issues and hence a subsequent probe() may succeed.
 > >
-> > Let us add the name "cpufreq" to scmi_device_id table in the driver so
-> > that in matches only with device with the same name and protocol id
-> > SCMI_PROTOCOL_PERF. This will help to add "devfreq" device/driver.
+> > If the driver supports re-binding then only force state to closed durin=
+g
+> > remove() only in the case when the toolstack may need to clean up. This
+> can
+> > be detected by checking whether the state in xenstore has been set to
+> > closing prior to device removal.
 > >
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Cc: linux-pm@vger.kernel.org
-> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > ---
-> >  drivers/cpufreq/scmi-cpufreq.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-> > index e6182c89df79..61623e2ff149 100644
-> > --- a/drivers/cpufreq/scmi-cpufreq.c
-> > +++ b/drivers/cpufreq/scmi-cpufreq.c
-> > @@ -261,7 +261,7 @@ static void scmi_cpufreq_remove(struct scmi_device *sdev)
-> >  }
-> >
-> >  static const struct scmi_device_id scmi_id_table[] = {
-> > -	{ SCMI_PROTOCOL_PERF },
-> > +	{ SCMI_PROTOCOL_PERF, "cpufreq" },
-> >  	{ },
-> >  };
-> >  MODULE_DEVICE_TABLE(scmi, scmi_id_table);
->
-> Applied. Thanks.
+> > NOTE: Re-bind support is indicated by new boolean in struct
+> xenbus_driver,
+> >       which defaults to false. Subsequent patches will add support to
+> >       some backend drivers.
+>=20
+> My intention was to specify whether you want to close the
+> backends on unbind in sysfs, so that an user can decide at runtime,
+> rather than having a hardcoded value in the driver.
+>=20
+> Anyway, I'm less sure whether such runtime tunable is useful at all,
+> so let's leave it out and can always be added afterwards. At the end
+> of day a user wrongly doing a rmmod blkback can always recover
+> gracefully by loading blkback again with your proposed approach to
+> leave connections open on module removal.
+>=20
+> Sorry for the extra work.
+>=20
 
-This will break the build without patch 1/15, so preferably must go as
-part of the series. Sorry for not missing to specify that detail.
+Does this mean you don't think the extra driver flag is necessary any more?=
+ NB: now that xenbus actually takes module references you can't accidentall=
+y rmmod any more :-)
 
---
-Regards,
-Sudeep
+  Paul
