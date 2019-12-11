@@ -2,86 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5AB011B50D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F54811B519
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732606AbfLKPvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:51:36 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33162 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731900AbfLKPvc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:51:32 -0500
-Received: by mail-lf1-f65.google.com with SMTP id n25so17139324lfl.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:51:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JVxmozJr3Sta+dSiA5lZFDUNBwlmE17tc5tCYYXFj2Q=;
-        b=GpBur+eo0Do65A3e8co1yh/LE3h06kNXdEALUBAEFcAlBOf9nWZEDO3y1FkdM9V5ka
-         4jlTdMeRt4xf1pBeNK8nNeLree17dsViqpPE+IW89ovKqSQMGDIphCn3JksAnXJbVPIe
-         lhPYTkVdqtiIoy+G3FGu5qvf0IlIHmS4B8uQKYz+vUGIL6fH4+3ysE24YbI7+r7OpRQf
-         rk3eNbEYrGOidiQWR29W4IK+z/2NayrRBdjX1Ddgmmhcqyc/wHru+nyevCbc4BMXBigP
-         DoE5xrRZXmXZqBWjZX8gBAmZQwkiJ5J1M8nQ41xOHV6VMfz/GD88HU+6PkAFpFRBd1ZP
-         /srw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JVxmozJr3Sta+dSiA5lZFDUNBwlmE17tc5tCYYXFj2Q=;
-        b=MNuI1kq4nMb4pU3uqVk8vfv87JcLFTvIiPwkhhictRa6DAJqH5PgZCLhFbb+2hHHQq
-         PeqYisNjh5ZBUYsx02H43Qk1quFgU71h65GGZZQayxwmsdxh+GwNGg9jc3USIDwurwu1
-         dG08XhnzEhLbuuCNFhchC44jknvGGNjQhLMwozKs1JOVg5IiTJzKU3MLwdZIowjdXfJf
-         O56VK4Nd0+vaxdC2gNETJ10/PXgVpXSnm54lv5Xounw5ol9hl7EgpLHpL501WEfI+TWn
-         dwWljAHzCPuAV026L/h+B9Ga4002TJGMKmTX+oFXgD3NR6noYQHD9dOcChdLNXL/dV9S
-         VZ6A==
-X-Gm-Message-State: APjAAAWv4k+MODebDjSp30oWuS2sqjNgd3hT+CaiSHGzblUAM1BQWg3R
-        blApOhTlOk/O9XFOJ52Aj3sQ4w==
-X-Google-Smtp-Source: APXvYqxFU9Gc4o96yvCowJhC05DT/oUFClz+R86rUP1Pi66OB6W2qTh5Rg/bUqLE/VDQ0YCk4DoVSA==
-X-Received: by 2002:ac2:5ec3:: with SMTP id d3mr2647396lfq.176.1576079490855;
-        Wed, 11 Dec 2019 07:51:30 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id 30sm1594935ljv.99.2019.12.11.07.51.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 07:51:30 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id BF295101218; Wed, 11 Dec 2019 18:51:30 +0300 (+03)
-Date:   Wed, 11 Dec 2019 18:51:30 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Mircea CIRJALIU - MELIU <mcirjaliu@bitdefender.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "aarcange@redhat.com" <aarcange@redhat.com>
-Subject: Re: [RFC PATCH v1 1/4] mm/remote_mapping: mirror a process address
- space
-Message-ID: <20191211155130.gk5qcuahzo2w3qyh@box>
-References: <DB7PR02MB3979DB548160D2D9D25FE5ADBB5A0@DB7PR02MB3979.eurprd02.prod.outlook.com>
+        id S1732741AbfLKPv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:51:57 -0500
+Received: from mga18.intel.com ([134.134.136.126]:5282 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730499AbfLKPvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:51:54 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 07:51:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="225568792"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga002.jf.intel.com with ESMTP; 11 Dec 2019 07:51:51 -0800
+Date:   Wed, 11 Dec 2019 07:51:51 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     linmiaohe <linmiaohe@huawei.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, vkuznets@redhat.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH 6/6] KVM: Fix some writing mistakes
+Message-ID: <20191211155151.GB5044@linux.intel.com>
+References: <1576045585-8536-1-git-send-email-linmiaohe@huawei.com>
+ <1576045585-8536-7-git-send-email-linmiaohe@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DB7PR02MB3979DB548160D2D9D25FE5ADBB5A0@DB7PR02MB3979.eurprd02.prod.outlook.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1576045585-8536-7-git-send-email-linmiaohe@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 09:29:17AM +0000, Mircea CIRJALIU - MELIU wrote:
-> Use a device to inspect another process address space via page table mirroring.
-> Give this device a source process PID via an ioctl(), then use mmap()
-> to analyze the source process address space like an ordinary file.
-> Process address space mirroring is limited to anon VMAs.
-> The device mirrors page tables on demand (faults) and invalidates them
-> by listening to MMU notifier events.
+On Wed, Dec 11, 2019 at 02:26:25PM +0800, linmiaohe wrote:
+> From: Miaohe Lin <linmiaohe@huawei.com>
+> 
+> Fix some writing mistakes in the comments.
+> 
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h | 2 +-
+>  arch/x86/kvm/vmx/vmx.c          | 2 +-
+>  virt/kvm/kvm_main.c             | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 159a28512e4c..efba864ed42d 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -606,7 +606,7 @@ struct kvm_vcpu_arch {
+>  	 * Paging state of an L2 guest (used for nested npt)
+>  	 *
+>  	 * This context will save all necessary information to walk page tables
+> -	 * of the an L2 guest. This context is only initialized for page table
+> +	 * of the L2 guest. This context is only initialized for page table
 
-It's way to brief to justify the new interface. Use cases? Why current
-intefaces are not enough?
+I'd whack "the" instead of "and", i.e. ...walk page tables of an L2 guest,
+as KVM isn't limited to just one L2 guest.
 
-There's nothing in the description that would convince me to look at the
-code.
+>  	 * walking and not for faulting since we never handle l2 page faults on
 
--- 
- Kirill A. Shutemov
+While you're here, want to change "l2" to "L2"?
+
+>  	 * the host.
+>  	 */
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 1be3854f1090..dae712c8785e 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -1922,7 +1922,7 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  }
+>  
+>  /*
+> - * Writes msr value into into the appropriate "register".
+> + * Writes msr value into the appropriate "register".
+>   * Returns 0 on success, non-0 otherwise.
+>   * Assumes vcpu_load() was already called.
+>   */
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index f0501272268f..1a6d5ebd5c42 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1519,7 +1519,7 @@ static inline int check_user_page_hwpoison(unsigned long addr)
+>  /*
+>   * The fast path to get the writable pfn which will be stored in @pfn,
+>   * true indicates success, otherwise false is returned.  It's also the
+> - * only part that runs if we can are in atomic context.
+> + * only part that runs if we can in atomic context.
+
+This should remove "can" instead of "are", i.e. ...part that runs if we are
+in atomic context.  The comment is calling out that hva_to_pfn() will return
+immediately if hva_to_pfn_fast() and the kernel is atomic context.
+
+>   */
+>  static bool hva_to_pfn_fast(unsigned long addr, bool write_fault,
+>  			    bool *writable, kvm_pfn_t *pfn)
+> -- 
+> 2.19.1
+> 
