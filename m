@@ -2,174 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E82911B2B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:39:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE0A311B322
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388332AbfLKPhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:37:41 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:46744 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387713AbfLKPhh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:37:37 -0500
-Received: by mail-pj1-f67.google.com with SMTP id z21so9049649pjq.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:37:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=mZyjjAAc7yNANmoebBsT963AofjY/s84X8vsLTIrpD4=;
-        b=K30i6dN5IfT1gG+6PGpefroyqGIpo4g4XmXSr85BsjYcaE88tQFwI33Ovorlgz2ABC
-         FZMpdjij1HpLqDarqrAR48u/z2XVLxf68TnO6laeWh58YG9jR16KBBpjlflEUeuPmVOs
-         MMiE4Z69y4R+Ow5o1jQM/OGtDXgnQZG+oH6Ni96mfqqoRoipYsqyaMoSpAY+9hLDWDIz
-         ug1/Jl1bdYElBVegTmWiGgTmdmpYkmhUDFVMAJVlv94FS4Mo4/tWB9yvbW04RB6zj5S5
-         0aPsdhA1ysrLqUJmjegxg1Twxm1vDhc1dC3kl6hZuZ4GIa55Rrk8kQ151DpmSYFbDhKJ
-         WFVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=mZyjjAAc7yNANmoebBsT963AofjY/s84X8vsLTIrpD4=;
-        b=JQYRnyovjGC5awAdHmMh0yU9jDRMwJ4ahs/P9gWfR+mPujK/AGId2Dawb69sCRXaWO
-         6KAr5Vf60De1SM7qrqjx7+YN7jcaFXjCnE7xDrcElfWNk8k4s68XTehdR8LaYVrarCeT
-         T1WEdBaOYrW7iqkT0q63+jT0dyml94xsopE5d/G4eV7NKyOkBSDstYDOQxZc1+nezJB7
-         G3PT0dz+1kHxMXry9DbEdcbOlKoh2YanZDp6prgv2gGuD6mY5fz7evSJ8jH82fmjFcZ9
-         p4gOTyRGdLRqAPO31mSt1eD4loNk64IO+vymzvTm4xS6JnUVSJ/XUqgcs+c1RaBRkV+a
-         Ld0g==
-X-Gm-Message-State: APjAAAXturEY96UK2AmPG+qEyI8nzl04jvKNeHKpVXpnar/RgN8l/P74
-        DgaqlulPAVEcG1zLHXV0qswDaw==
-X-Google-Smtp-Source: APXvYqyfHdj5Wju5tHjYhtBozUgo+eKxaW7VtMGL10rLo9NwZ5f8ANm6rWjTtpKXW6rwsYnvY5BNVg==
-X-Received: by 2002:a17:902:b18e:: with SMTP id s14mr4008320plr.261.1576078656416;
-        Wed, 11 Dec 2019 07:37:36 -0800 (PST)
-Received: from [10.83.42.232] ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id w11sm3150883pgs.60.2019.12.11.07.37.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Dec 2019 07:37:35 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v6 2/3] PCI: Add parameter nr_devfns to pci_add_dma_alias
-From:   James Sewart <jamessewart@arista.com>
-In-Reply-To: <20191210223745.GA167002@google.com>
-Date:   Wed, 11 Dec 2019 15:37:30 +0000
-Cc:     linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Dmitry Safonov <dima@arista.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <826A0459-FA8D-4BDB-A342-CE46974466DF@arista.com>
-References: <20191210223745.GA167002@google.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        id S2388308AbfLKPiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:38:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48540 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388215AbfLKPiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:38:15 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84AEC222C4;
+        Wed, 11 Dec 2019 15:38:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576078695;
+        bh=hon6A9klB+m9g7Vf6dP4zanubdHbEyoXgoOWgLB5qeM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OJskQAM1Wn9F5rbaeWvbJBXOzDH+N/k2zs+4wdy6yLu9krH1oxF9q/6JNq4q+2H4L
+         oJVUjoIxXRtA4mz9dolmQPoe2vBiBeoxDalPIWfAFogV8htLo3wmpKL9pVTqSUg6wp
+         JOlNm9kVOeRf5h8HYHXddRUsSBlc6TZdz03gZ3t0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>,
+        MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 01/37] scsi: mpt3sas: Fix clear pending bit in ioctl status
+Date:   Wed, 11 Dec 2019 10:37:37 -0500
+Message-Id: <20191211153813.24126-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
 
+[ Upstream commit 782b281883caf70289ba6a186af29441a117d23e ]
 
-> On 10 Dec 2019, at 22:37, Bjorn Helgaas <helgaas@kernel.org> wrote:
->=20
-> [+cc Joerg]
->=20
-> On Tue, Dec 03, 2019 at 03:43:53PM +0000, James Sewart wrote:
->> pci_add_dma_alias can now be used to create a dma alias for a range =
-of
->> devfns.
->>=20
->> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
->> Signed-off-by: James Sewart <jamessewart@arista.com>
->> ---
->> drivers/pci/pci.c    | 22 +++++++++++++++++-----
->> drivers/pci/quirks.c | 14 +++++++-------
->> include/linux/pci.h  |  2 +-
->> 3 files changed, 25 insertions(+), 13 deletions(-)
->=20
-> Heads up Joerg: I also updated drivers/iommu/amd_iommu.c (this is the
-> one reported by the kbuild test robot) and removed the printk there
-> that prints the same thing as the one in pci_add_dma_alias(), and I
-> updated a PCI quirk that was merged after this patch was posted.
->=20
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index d3c83248f3ce..dbb01aceafda 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -5857,7 +5857,8 @@ int pci_set_vga_state(struct pci_dev *dev, bool =
-decode,
->> /**
->>  * pci_add_dma_alias - Add a DMA devfn alias for a device
->>  * @dev: the PCI device for which alias is added
->> - * @devfn: alias slot and function
->> + * @devfn_from: alias slot and function
->> + * @nr_devfns: Number of subsequent devfns to alias
->>  *
->>  * This helper encodes an 8-bit devfn as a bit number in =
-dma_alias_mask
->>  * which is used to program permissible bus-devfn source addresses =
-for DMA
->> @@ -5873,8 +5874,13 @@ int pci_set_vga_state(struct pci_dev *dev, =
-bool decode,
->>  * cannot be left as a userspace activity).  DMA aliases should =
-therefore
->>  * be configured via quirks, such as the PCI fixup header quirk.
->>  */
->> -void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
->> +void pci_add_dma_alias(struct pci_dev *dev, u8 devfn_from, unsigned =
-nr_devfns)
->> {
->> +	int devfn_to;
->> +
->> +	nr_devfns =3D min(nr_devfns, (unsigned)MAX_NR_DEVFNS);
->> +	devfn_to =3D devfn_from + nr_devfns - 1;
->=20
-> I made this look like:
->=20
-> +       devfn_to =3D min(devfn_from + nr_devfns - 1,
-> +                      (unsigned) MAX_NR_DEVFNS - 1);
->=20
-> so devfn_from=3D0xf0, nr_devfns=3D0x20 doesn't cause devfn_to to wrap
-> around.
->=20
-> I did keep Logan's reviewed-by, so let me know if I broke something.
+When user issues diag register command from application with required size,
+and if driver unable to allocate the memory, then it will fail the register
+command. While failing the register command, driver is not currently
+clearing MPT3_CMD_PENDING bit in ctl_cmds.status variable which was set
+before trying to allocate the memory. As this bit is set, subsequent
+register command will be failed with BUSY status even when user wants to
+register the trace buffer will less memory.
 
-I think nr_devfns still needs updating as it is used for bitmap_set.=20
-Although thinking about it now we should limit the number to alias to be=20=
+Clear MPT3_CMD_PENDING bit in ctl_cmds.status before returning the diag
+register command with no memory status.
 
-maximum (MAX_NR_DEVFNS - devfn_from), so that we don=E2=80=99t set past =
-the end of=20
-the bitmap:
+Link: https://lore.kernel.org/r/1568379890-18347-4-git-send-email-sreekanth.reddy@broadcom.com
+Signed-off-by: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- nr_devfns =3D min(nr_devfns, (unsigned) MAX_NR_DEVFNS - devfn_from);
-
-I think with this change we wont need to clip devfn_to.
-
->=20
->> 	if (!dev->dma_alias_mask)
->> 		dev->dma_alias_mask =3D bitmap_zalloc(MAX_NR_DEVFNS, =
-GFP_KERNEL);
->> 	if (!dev->dma_alias_mask) {
->> @@ -5882,9 +5888,15 @@ void pci_add_dma_alias(struct pci_dev *dev, u8 =
-devfn)
->> 		return;
->> 	}
->>=20
->> -	set_bit(devfn, dev->dma_alias_mask);
->> -	pci_info(dev, "Enabling fixed DMA alias to %02x.%d\n",
->> -		 PCI_SLOT(devfn), PCI_FUNC(devfn));
->> +	bitmap_set(dev->dma_alias_mask, devfn_from, nr_devfns);
->> +
->> +	if (nr_devfns =3D=3D 1)
->> +		pci_info(dev, "Enabling fixed DMA alias to %02x.%d\n",
->> +				PCI_SLOT(devfn_from), =
-PCI_FUNC(devfn_from));
->> +	else if(nr_devfns > 1)
->> +		pci_info(dev, "Enabling fixed DMA alias for devfn range =
-from %02x.%d to %02x.%d\n",
->> +				PCI_SLOT(devfn_from), =
-PCI_FUNC(devfn_from),
->> +				PCI_SLOT(devfn_to), PCI_FUNC(devfn_to));
->> }
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index 4ccde5a05b701..7874b989d2f4b 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -1456,7 +1456,8 @@ _ctl_diag_register_2(struct MPT3SAS_ADAPTER *ioc,
+ 			    " for diag buffers, requested size(%d)\n",
+ 			    ioc->name, __func__, request_data_sz);
+ 			mpt3sas_base_free_smid(ioc, smid);
+-			return -ENOMEM;
++			rc = -ENOMEM;
++			goto out;
+ 		}
+ 		ioc->diag_buffer[buffer_type] = request_data;
+ 		ioc->diag_buffer_sz[buffer_type] = request_data_sz;
+-- 
+2.20.1
 
