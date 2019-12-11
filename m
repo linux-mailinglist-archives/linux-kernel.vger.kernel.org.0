@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB47811B017
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:20:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D6F11B019
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:20:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731971AbfLKPT0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:19:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48032 "EHLO mail.kernel.org"
+        id S1732230AbfLKPTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:19:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732202AbfLKPTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:19:19 -0500
+        id S1732069AbfLKPT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:19:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5384B2073D;
-        Wed, 11 Dec 2019 15:19:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC59E22527;
+        Wed, 11 Dec 2019 15:19:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077558;
-        bh=JMtLdH5N/pRayjeq4ysU3riAaYpsmdHp8ifQ324osZ0=;
+        s=default; t=1576077569;
+        bh=DblNtOlOXMic2UX+YtMOAQCLq+20Yq5B7SO904kLcQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SdJ8QPzXoSP6NtHR5Y3CPvFlTNHVUHINSvDU4XhM9CLX5HUI2uQATsM4vw6uZmkrg
-         gTz1vklvUY8hC1ysFUhSI1v3IveN0kB67ZvzpGg0MR6bjb/B4ei2Wt8lQS044/rjso
-         iqJLn038SPIEveDL4TGmrIpLbZB+DnzyULPmNqbU=
+        b=ohAz7YmqGd5+uRKfKw/hMla3SWbxX2R9CZWHLzHSlpxX9WMookvS6QKDf17jd+Lbf
+         w/pHR+T8EhLOPTD4ZYm6RTRJYnh0GF1WQ6tsAbCbPClKG0bfiC985GfStNq2vdIgCU
+         mtOgs0+ilHRzHRgNnpPYhdY3UeOVNdR+kWXoRcXI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Torbjorn Jansson <torbjorn.jansson@mbox200.swipnet.se>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 085/243] rtc: dt-binding: abx80x: fix resistance scale
-Date:   Wed, 11 Dec 2019 16:04:07 +0100
-Message-Id: <20191211150344.849599665@linuxfoundation.org>
+Subject: [PATCH 4.19 088/243] media: pulse8-cec: return 0 when invalidating the logical address
+Date:   Wed, 11 Dec 2019 16:04:10 +0100
+Message-Id: <20191211150345.052181393@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,29 +46,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baruch Siach <baruch@tkos.co.il>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-[ Upstream commit 73852e56827f5cb5db9d6e8dd8191fc2f2e8f424 ]
+[ Upstream commit 2e84eb9affac43eeaf834992888b72426a8cd442 ]
 
-The abracon,tc-resistor property value is in kOhm.
+Return 0 when invalidating the logical address. The cec core produces
+a warning for drivers that do this.
 
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reported-by: Torbjorn Jansson <torbjorn.jansson@mbox200.swipnet.se>
+Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/rtc/abracon,abx80x.txt | 2 +-
+ drivers/media/usb/pulse8-cec/pulse8-cec.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/rtc/abracon,abx80x.txt b/Documentation/devicetree/bindings/rtc/abracon,abx80x.txt
-index be789685a1c24..18b892d010d87 100644
---- a/Documentation/devicetree/bindings/rtc/abracon,abx80x.txt
-+++ b/Documentation/devicetree/bindings/rtc/abracon,abx80x.txt
-@@ -27,4 +27,4 @@ and valid to enable charging:
+diff --git a/drivers/media/usb/pulse8-cec/pulse8-cec.c b/drivers/media/usb/pulse8-cec/pulse8-cec.c
+index 350635826aaed..6e3bdd71e273b 100644
+--- a/drivers/media/usb/pulse8-cec/pulse8-cec.c
++++ b/drivers/media/usb/pulse8-cec/pulse8-cec.c
+@@ -585,7 +585,7 @@ unlock:
+ 	else
+ 		pulse8->config_pending = true;
+ 	mutex_unlock(&pulse8->config_lock);
+-	return err;
++	return log_addr == CEC_LOG_ADDR_INVALID ? 0 : err;
+ }
  
-  - "abracon,tc-diode": should be "standard" (0.6V) or "schottky" (0.3V)
-  - "abracon,tc-resistor": should be <0>, <3>, <6> or <11>. 0 disables the output
--                          resistor, the other values are in ohm.
-+                          resistor, the other values are in kOhm.
+ static int pulse8_cec_adap_transmit(struct cec_adapter *adap, u8 attempts,
 -- 
 2.20.1
 
