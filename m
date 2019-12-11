@@ -2,52 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC0C711A69B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:17:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F148C11A69F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:17:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728464AbfLKJRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 04:17:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728432AbfLKJQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 04:16:59 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA294214AF;
-        Wed, 11 Dec 2019 09:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576055819;
-        bh=kj+qx89zaMyUD9oKXKDD+HUhzoTArIEgWz6C9wC7zmU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UP4FUUL+vK4L0G6KVpix9Cu83sXXr3LhOX75HqqwfyZJdiIqZ2nxINgjgJQTFtQ0g
-         XyPTM3m8duiAKuetKlnjzRxmUyXSOpwqqYKBszj2ONjRN/ulR5TwCkkIHNWvdjqcsC
-         RYGUhxOKFHMmOL6AJt81RihL9VxD04513YFRPOAA=
-Date:   Wed, 11 Dec 2019 17:16:50 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Li Yang <leoyang.li@nxp.com>, Yuantian Tang <andy.tang@nxp.com>
-Subject: Re: [PATCH v2 2/5] arm64: dts: ls1028a: add missing sai nodes
-Message-ID: <20191211091649.GW15858@dragon>
-References: <20191209234350.18994-1-michael@walle.cc>
- <20191209234350.18994-3-michael@walle.cc>
+        id S1728483AbfLKJRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 04:17:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56376 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726983AbfLKJRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 04:17:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 57636AB89;
+        Wed, 11 Dec 2019 09:17:41 +0000 (UTC)
+Date:   Wed, 11 Dec 2019 10:17:40 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        AlekseyMakarov <aleksey.makarov@linaro.org>
+Subject: Re: [RFC/PATCH] printk: Fix preferred console selection with
+ multiple matches
+Message-ID: <20191211091740.p6bgjy7sy75maenw@pathway.suse.cz>
+References: <b8131bf32a5572352561ec7f2457eb61cc811390.camel@kernel.crashing.org>
+ <20191210091502.qoq55fdjad6aixab@pathway.suse.cz>
+ <50d2c44a15960760c6a9d24442a93fa4b31b7594.camel@kernel.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191209234350.18994-3-michael@walle.cc>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <50d2c44a15960760c6a9d24442a93fa4b31b7594.camel@kernel.crashing.org>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 12:43:47AM +0100, Michael Walle wrote:
-> The LS1028A has six SAI cores.
+On Wed 2019-12-11 09:39:06, Benjamin Herrenschmidt wrote:
+> On Tue, 2019-12-10 at 10:15 +0100, Petr Mladek wrote:
+> > On Tue 2019-12-10 11:57:26, Benjamin Herrenschmidt wrote:
+> > > In the following circumstances, the rule of selecting the console
+> > > corresponding to the last "console=" entry on the command line as
+> > > the preferred console (CON_CONSDEV, ie, /dev/console) fails. This
+> > > is a specific example, but it could happen with different consoles
+> > > that have a similar name aliasing mechanism.
+> > > 
+> > > This tentative fix changes the loop in register_console to continue
+> > > matching with the array until the match is actually the preferred
+> > > console.
+> > 
+> > One problem with this is that con->match() callbacks might have
+> > side effects. If the console matches, the callback sometimes
+> > do some changes in the console driver because it expects
+> > that the console is going to be registered and used.
 > 
-> Signed-off-by: Michael Walle <michael@walle.cc>
+> It will still be enabled. I am not changing that. The main issue would
+> be if the match callback chokes on being called multiple times.
 
-Applied, thanks.
+And this would exactly happen as pointed out by Sergey. match() does
+also some setup operations. I would be scared to call them twice.
+
+> This looks indeed a lot more invasive. Is there any reason why what I
+> propose wouldn't work as a first patch that can easily be backported ?
+
+Your solution is not acceptable because it might cause calling
+match() more times.
+
+The reverse search of list of console does not work for ttySX
+consoles because the number is omitted when matching. And the messages
+will appear only on the first matched serial console. There is
+a paragraph about this in the commit message of my patch.
+
+
+> We can continue cleaning up from there of course, but I'd be keen on
+> having a minimal fix that can go back to stable first.
+
+I would be fine to take my patch as is and do the clean up later.
+It seems that more users are affected by the problem. The clean up
+might be complicated and prone to regressions.
+
+The question is how far back you would like to go. The changes
+in register_console() are rare. Everybody is scared to touch
+this mess ;-) And it is prone to regressions.
+
+> I'll give it a spin. However I don't fully grasp why it's necessarily
+> so complicated. Correct me if I'm wrong here but you are trying to
+> address two issues in that patch:
+> 
+>  - The one I'm trying to address which is that we might "miss" the
+> preferred console in the case of multiple matches.
+> 
+>  - The fact that when the preferred console isn't found, the one we
+> default to (which ends up first in the list) is missing CONSDEV.
+
+My patch is primary fixing this 2nd problem. It fixes showconsole
+tool to work correctly. But it covers also the 1st one. It might
+be possible to split it when needed. But I think that you could
+not easily fix the 1st problem without solving the 2nd one.
+
+The best solution would be to split the match() and setup
+functionality. It would be really appreciated. But it is a lot
+of work. And it might be hard to backport.
+
+Best Regards,
+Petr
