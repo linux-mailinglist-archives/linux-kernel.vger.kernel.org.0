@@ -2,146 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15E8111A11A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5155D11A0F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:01:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfLKCKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 21:10:31 -0500
-Received: from f0-dek.dektech.com.au ([210.10.221.142]:32928 "EHLO
-        mail.dektech.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726417AbfLKCKa (ORCPT
+        id S1727460AbfLKCBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 21:01:52 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35373 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbfLKCBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:10:30 -0500
-X-Greylist: delayed 584 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 21:10:28 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mail.dektech.com.au (Postfix) with ESMTP id 753A144473;
-        Wed, 11 Dec 2019 13:00:42 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dektech.com.au;
-         h=content-language:x-mailer:content-transfer-encoding
-        :content-type:content-type:mime-version:message-id:date:date
-        :subject:subject:in-reply-to:references:from:from:received
-        :received:received; s=mail_dkim; t=1576029642; bh=l2BCh4INk9Xjpe
-        9P/beFH/83GOUPTtLsM+aYAl/XV6c=; b=nCYEQBF61ryWA+OV6FDSLHaFumv+df
-        zbbjBAzawtlgOH2nvOCmwh+5Qm0UyIMZeYEg/jsCofyODFaPszM6F+DdjaYqPwjC
-        MFI7L8Lcfs+OWjFex/2uLvsHEQY83EkQChNCiTyvVGGVho+XXrC+MIybahToejdD
-        h1E35TKiFSMqk=
-X-Virus-Scanned: amavisd-new at dektech.com.au
-Received: from mail.dektech.com.au ([127.0.0.1])
-        by localhost (mail2.dektech.com.au [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id xnnyoYZzpIOv; Wed, 11 Dec 2019 13:00:42 +1100 (AEDT)
-Received: from mail.dektech.com.au (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.dektech.com.au (Postfix) with ESMTPS id 400704BBFB;
-        Wed, 11 Dec 2019 13:00:41 +1100 (AEDT)
-Received: from VNLAP288VNPC (unknown [14.161.14.188])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.dektech.com.au (Postfix) with ESMTPSA id 908CF44473;
-        Wed, 11 Dec 2019 13:00:40 +1100 (AEDT)
-From:   "Tuong Lien Tong" <tuong.t.lien@dektech.com.au>
-To:     "'Ying Xue'" <ying.xue@windriver.com>, <paulmck@kernel.org>
-Cc:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mingo@kernel.org>, <tipc-discussion@lists.sourceforge.net>,
-        <kernel-team@fb.com>, <torvalds@linux-foundation.org>,
-        <davem@davemloft.net>
-References: <20191210033146.GA32522@paulmck-ThinkPad-P72> <0e565b68-ece1-5ae6-bb5d-710163fb8893@windriver.com> <20191210223825.GS2889@paulmck-ThinkPad-P72> <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
-In-Reply-To: <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
-Subject: RE: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected() with rcu_replace_pointer()
-Date:   Wed, 11 Dec 2019 09:00:39 +0700
-Message-ID: <707801d5afc6$cac68190$605384b0$@dektech.com.au>
+        Tue, 10 Dec 2019 21:01:52 -0500
+Received: by mail-pl1-f196.google.com with SMTP id s10so752754plp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 18:01:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z1y/LTXMqZQ7+fbUeIxen+lHLUxUeQ6tnCSwfKzyG/M=;
+        b=qlUENcu0E0Q9DLS7cfJlDkXjHaDctO9pXEp/m8Ll6UVPyzHzjS8G6sHF4FhvrNiqQ8
+         eLseGys7dWSaxlj/2YZOROOTrx6XX0dcOV8XoEcRtEB47TvgzZoaxUjLtOLRw/sHnkzK
+         BlsiQA8MfBEgQ/dlOQTIHtWvw3NjxFK1j6HAYYpFDlqaaC9udPapLmcfR/I3abK+XUEb
+         iEeOeAS25uN9TVQ1aDzOYY26VPRUi640Rp9eNzVupyMPYKHYWCo5JvuiK64gVCycyGuM
+         3NVzT1FSO69jgn4wl45z9ikbIdmpaulQ6XXfuHC5MzaGNjALunj15nlxGJlb7vdtsIvg
+         48/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z1y/LTXMqZQ7+fbUeIxen+lHLUxUeQ6tnCSwfKzyG/M=;
+        b=lg0Sil/KvdzZyJuAM774e1g6768jNV3kj655IFERjYeovN0JqZl3wDku3acs9F57/i
+         WacemaF//VNKTebTsN0yKSnkZZZtkxq9QPPx8vu78gxgZEk6oYg3FhXl0/SMft7uj3kk
+         xXlBgoCHLKp782E0g58StAL2+0w74XbsRTydN5oD5Dp8TJp4MEZjf/ZteBp3q8VbPB3u
+         0/ABDuP/SUk+JhfTUKRRscaJm8aa5YatnAWMpKYPQ1msw5O29E2HszXfvVOvNm6ilNod
+         qsOUp6eHXbKz5EQnzoi8cSgHqIyYchGVJtsAzA6lP1oFhhBdQSmIHxsX9KgAWnCtudWa
+         Sfwg==
+X-Gm-Message-State: APjAAAU+OMeu1JO9z+JJsHsKxPBEPb3eGaUeewnNCf8VmVvZyDQv19hF
+        P24HfaTOw2C1ZyFuvs4TlW8=
+X-Google-Smtp-Source: APXvYqz8XeHXRQ9xOYxzySujw7BiUgaSGG0Z3Ie2DUqY0b4OF07uw8hWBSjjxrAEzytnkWCRsl/SDw==
+X-Received: by 2002:a17:902:fe8b:: with SMTP id x11mr604022plm.83.1576029711685;
+        Tue, 10 Dec 2019 18:01:51 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
+        by smtp.gmail.com with ESMTPSA id c18sm295405pgj.24.2019.12.10.18.01.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 18:01:50 -0800 (PST)
+Date:   Wed, 11 Dec 2019 11:01:49 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC/PATCH] printk: Fix preferred console selection with
+ multiple matches
+Message-ID: <20191211020149.GN88619@google.com>
+References: <b8131bf32a5572352561ec7f2457eb61cc811390.camel@kernel.crashing.org>
+ <20191210080154.GJ88619@google.com>
+ <98df321d16adb67c5579ac4b67d845fc0c2c97df.camel@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHn7R6lm2O6ODufE4ZTwpx6e2ZmvgEdJvCUAq0d++oCtrNyxadbqMjw
-Content-Language: en-us
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <98df321d16adb67c5579ac4b67d845fc0c2c97df.camel@kernel.crashing.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ying, Paul,
-
-Please see my comments inline. Thanks!
-
-BR/Tuong
-
------Original Message-----
-From: Ying Xue <ying.xue@windriver.com> 
-Sent: Wednesday, December 11, 2019 8:32 AM
-To: paulmck@kernel.org
-Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; mingo@kernel.org;
-tipc-discussion@lists.sourceforge.net; kernel-team@fb.com;
-torvalds@linux-foundation.org; davem@davemloft.net
-Subject: Re: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected()
-with rcu_replace_pointer()
-
-On 12/11/19 6:38 AM, Paul E. McKenney wrote:
-> commit 4ee8e2c68b076867b7a5af82a38010fffcab611c
-> Author: Paul E. McKenney <paulmck@kernel.org>
-> Date:   Mon Dec 9 19:13:45 2019 -0800
+On (19/12/11 09:26), Benjamin Herrenschmidt wrote:
+[..]
+> No not exactly. Architectures/platforms use add_preferred_console()
+> (such as arm64 with ACPI but powerpc at least does it too) based on
+> various factors to select a reasonable "default" for that specific
+> platform. Without that the kernel will basically default to the first
+> one to register which may not be what you want.
 > 
->     net/tipc: Replace rcu_swap_protected() with rcu_replace_pointer()
->     
->     This commit replaces the use of rcu_swap_protected() with the more
->     intuitively appealing rcu_replace_pointer() as a step towards removing
->     rcu_swap_protected().
->     
->     Link:
-https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4g
-g6Hw@mail.gmail.com/
->     Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
->     Reported-by: kbuild test robot <lkp@intel.com>
->     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
->     Cc: Jon Maloy <jon.maloy@ericsson.com>
->     Cc: Ying Xue <ying.xue@windriver.com>
->     Cc: "David S. Miller" <davem@davemloft.net>
->     Cc: <netdev@vger.kernel.org>
->     Cc: <tipc-discussion@lists.sourceforge.net>
+> The command line ones however want to override the defaults (provided
+> they exist, ie, it's possible that whever is specified on the command
+> line doesn't actually exist, and thus shall be ignored. That typically
+> happens when there is either no match or ->setup fails).
 > 
-
-Acked-by: Ying Xue <ying.xue@windriver.com>
-
-> diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
-> index 990a872..978d2db 100644
-> --- a/net/tipc/crypto.c
-> +++ b/net/tipc/crypto.c
-> @@ -257,9 +257,6 @@ static char *tipc_key_change_dump(struct tipc_key old,
-struct tipc_key new,
->  #define tipc_aead_rcu_ptr(rcu_ptr, lock)				\
->  	rcu_dereference_protected((rcu_ptr), lockdep_is_held(lock))
->  
-> -#define tipc_aead_rcu_swap(rcu_ptr, ptr, lock)
-\
-> -	rcu_swap_protected((rcu_ptr), (ptr), lockdep_is_held(lock))
-> -
->  #define tipc_aead_rcu_replace(rcu_ptr, ptr, lock)			\
->  do {									\
->  	typeof(rcu_ptr) __tmp = rcu_dereference_protected((rcu_ptr),	\
-> @@ -1189,7 +1186,7 @@ static bool tipc_crypto_key_try_align(struct
-tipc_crypto *rx, u8 new_pending)
->  
->  	/* Move passive key if any */
->  	if (key.passive) {
-> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
-> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2,
-&rx->lock);
-The 3rd parameter should be the lockdep condition checking instead of the
-spinlock's pointer i.e. "lockdep_is_held(&rx->lock)"?
-That's why I'd prefer to use the 'tipc_aead_rcu_swap ()' macro, which is
-clear & concise at least for the context here. It might be re-used later as
-well...
-
->  		x = (key.passive - key.pending + new_pending) % KEY_MAX;
->  		new_passive = (x <= 0) ? x + KEY_MAX : x;
->  	}
+> > Hmm.
+> > 
+> > The patch may affect setups where alias matching is expected to
+> > happen. E.g.:
+> > 
+> > 	console=uartFOO,BAR
+> > 
+> > Is 8250 the only console that does alias matching?
 > 
+> Why would the patch affect this negatively ? Today we stop on the first
+> match, mark the driver enabled, and make it preferred if the match
+> index matches preferred_console.
 
+As far as I know, ->match() does not only match but also does ->setup().
+If we have two console list entries that match (one via aliasing and one
+via exact match) then the console driver is setup twice. Do all console
+drivers handle it? [double setup]
 
-_______________________________________________
-tipc-discussion mailing list
-tipc-discussion@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/tipc-discussion
+If we could perform simple alias matching, without ->setup() call, and
+exact matching (strcmp()), and then, if newcon would match two entries,
+we would pick up the last matching entry and configure newcon only once.
 
+This changes the order, tho.
+
+[..]
+>  - Another match that is marked preferred_console, in which case in
+> addition to being enabled, the newly registered console will also be
+> made the default console (ie, first in the list with CONSDEV set). This
+> is actually what we want ! IE. The console matches the last specified
+> one on the command line.
+
+Well, it still looks to me that what you want is to "ignore alias
+match and prefer exact match".
+
+	-ss
