@@ -2,64 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC23A11A399
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 05:55:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4FB111A38C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 05:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfLKEzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 23:55:41 -0500
-Received: from mail.windriver.com ([147.11.1.11]:38048 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbfLKEzl (ORCPT
+        id S1726860AbfLKEpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 23:45:52 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:14334 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726631AbfLKEpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 23:55:41 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTPS id xBB4tJbv010057
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 10 Dec 2019 20:55:19 -0800 (PST)
-Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 10 Dec
- 2019 20:55:18 -0800
-Subject: Re: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected()
- with rcu_replace_pointer()
-To:     Tuong Lien Tong <tuong.t.lien@dektech.com.au>, <paulmck@kernel.org>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mingo@kernel.org>, <tipc-discussion@lists.sourceforge.net>,
-        <kernel-team@fb.com>, <torvalds@linux-foundation.org>,
-        <davem@davemloft.net>
-References: <20191210033146.GA32522@paulmck-ThinkPad-P72>
- <0e565b68-ece1-5ae6-bb5d-710163fb8893@windriver.com>
- <20191210223825.GS2889@paulmck-ThinkPad-P72>
- <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
- <707801d5afc6$cac68190$605384b0$@dektech.com.au>
-From:   Ying Xue <ying.xue@windriver.com>
-Message-ID: <db88d33f-8e25-8859-84ec-3372a108c759@windriver.com>
-Date:   Wed, 11 Dec 2019 12:42:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 10 Dec 2019 23:45:51 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBB4gsWW047236
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 23:45:50 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wthkh6rpy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 23:45:50 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
+        Wed, 11 Dec 2019 04:45:48 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Dec 2019 04:45:45 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBB4ji1i32571542
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Dec 2019 04:45:44 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A93A5205F;
+        Wed, 11 Dec 2019 04:45:44 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0A48B52054;
+        Wed, 11 Dec 2019 04:45:44 +0000 (GMT)
+Received: from [9.81.199.13] (unknown [9.81.199.13])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 8817EA0131;
+        Wed, 11 Dec 2019 15:45:40 +1100 (AEDT)
+Subject: Re: [ANNOUNCE] Call for Sessions - linux.conf.au 2020 Kernel Miniconf
+ - Deadline Extended
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     lwn@lwn.net
+References: <b15cd04a-b7d0-f14c-38e4-6204858425db@linux.ibm.com>
+Date:   Wed, 11 Dec 2019 15:45:41 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <707801d5afc6$cac68190$605384b0$@dektech.com.au>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <b15cd04a-b7d0-f14c-38e4-6204858425db@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.224.155.90]
+X-TM-AS-GCONF: 00
+x-cbid: 19121104-4275-0000-0000-0000038DCF5B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19121104-4276-0000-0000-000038A18277
+Message-Id: <488cb7d8-b42e-bc7f-0ba3-2e24cad205ad@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-10_08:2019-12-10,2019-12-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 mlxscore=0 suspectscore=0
+ spamscore=0 mlxlogscore=912 bulkscore=0 phishscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912110040
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/19 10:00 AM, Tuong Lien Tong wrote:
->>  
->>  	/* Move passive key if any */
->>  	if (key.passive) {
->> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
->> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2,
-> &rx->lock);
-> The 3rd parameter should be the lockdep condition checking instead of the
-> spinlock's pointer i.e. "lockdep_is_held(&rx->lock)"?
-> That's why I'd prefer to use the 'tipc_aead_rcu_swap ()' macro, which is
-> clear & concise at least for the context here. It might be re-used later as
-> well...
+On 16/10/19 6:52 pm, Andrew Donnellan wrote:
+> LCA2020 Kernel Miniconf - Gold Coast, Queensland, Australia - 2020-01-14
+> ------------------------------------------------------------------------
+> 
+> ******
+> 
+> LCA Kernel Miniconf submissions open!
+> 
+> Submissions close: 2019-12-08 (early submissions until 2019-11-17)
+
+This deadline has been extended to 2019-12-22, but may close early once 
+we have accepted enough talks.
+
+
+Andrew
+
+
+> 
+> Submissions: https://linux.conf.au/proposals/submit/kernel-miniconf/
+> 
+> More info: https://lca-kernel.ozlabs.org/2020-cfs.html
+> 
+> ******
+> 
+> linux.conf.au 2020 will be held at the Gold Coast Convention and 
+> Exhibition Centre, from 13-17 January 2020. The Kernel Miniconf is 
+> returning once again to discuss all things kernel.
+> 
+> The Kernel Miniconf is a single-day miniconf track about everything 
+> related to the kernel and low-level systems programming.
+> 
+> The Kernel Miniconf will focus on a variety of kernel-related topics - 
+> technical presentations on up-and-coming kernel developments, the future 
+> direction of the kernel, and kernel development community and process 
+> matters. Past Kernel Miniconfs have included technical talks on topics 
+> such as memory management, RCU, scheduling and filesystems, as well as 
+> talks on Linux kernel community topics such as licensing and Linux 
+> kernel development process.
+> 
+> We invite submissions on anything related to kernel and low-level 
+> systems programming. We welcome submissions from developers of all 
+> levels of experience in the kernel community, covering a broad range of 
+> topics. The focus of the miniconf will primarily be on Linux, however 
+> non-Linux talks of sufficient interest to a primarily Linux audience 
+> will be considered.
+> 
+> Early Close Date: 2019-11-17, midnight Anywhere on Earth (UTC-12)
+> Final Close Date: 2019-12-08, midnight Anywhere on Earth (UTC-12)
+> Submissions: https://linux.conf.au/proposals/submit/kernel-miniconf/
+> 
+> ** For more information: http://lca-kernel.ozlabs.org/2020-cfs.html **
 > 
 
-Right. The 3rd parameter of rcu_replace_pointer() should be
-"lockdep_is_held(&rx->lock)" instead of "&rx->lock".
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+ajd@linux.ibm.com             IBM Australia Limited
+
