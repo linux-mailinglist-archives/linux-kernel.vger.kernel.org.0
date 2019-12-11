@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6CC511AEBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3318D11AECC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730116AbfLKPHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:07:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54936 "EHLO mail.kernel.org"
+        id S1730307AbfLKPIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:08:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730076AbfLKPHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:07:44 -0500
+        id S1729513AbfLKPIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:08:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38F7720663;
-        Wed, 11 Dec 2019 15:07:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3B022173E;
+        Wed, 11 Dec 2019 15:08:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076863;
-        bh=lLytQxX7qdL6iU0dEIKBgm6bxyJ3D/XPmqK/cZk5ARA=;
+        s=default; t=1576076892;
+        bh=jsS+mafvUDdazFn243kdG/M6SPwWy7C9orpXvZRhJUE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L2OpVGEDDSlICJ4KZigthYH5XKeatgIZCPOwwsFWA6hV3Sj/mMbN5PpMLivvn8BuZ
-         aR84DlKD9sMSKv7E9E28mH3sV8ceGdzUmfrK/lvv5fivGB+ZdvjA8soZzP7vUupONs
-         OG2WpjdNDhOP33G37XVGPXLMt6aOkUGJCsKhez4c=
+        b=zUJjvpBNROHoVT2G4ZQjlyEcQgBsM24aC2aRTa1Pu1k4y3LgalnyWQZHqKnc8Kakl
+         2otBtPj3J5k+P6eiQgc6+ZBgk3qS6NBY0aob26bMiCl9CHfiaFrboC30kDNIvrxF6A
+         tn1z7apFSWjBamib6EFnaJcEUzx8UXEjAgBzP2WE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: [PATCH 5.4 02/92] arm64: tegra: Fix active-low warning for Jetson TX1 regulator
-Date:   Wed, 11 Dec 2019 16:04:53 +0100
-Message-Id: <20191211150222.535121261@linuxfoundation.org>
+Subject: [PATCH 5.4 03/92] arm64: tegra: Fix active-low warning for Jetson Xavier regulator
+Date:   Wed, 11 Dec 2019 16:04:54 +0100
+Message-Id: <20191211150222.702353122@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
 References: <20191211150221.977775294@linuxfoundation.org>
@@ -45,42 +45,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jon Hunter <jonathanh@nvidia.com>
 
-commit 1e5e929c009559bd7e898ac8e17a5d01037cb057 upstream.
+commit d440538e5f219900a9fc9d96fd10727b4d2b3c48 upstream.
 
-Commit 34993594181d ("arm64: tegra: Enable HDMI on Jetson TX1")
-added a regulator for HDMI on the Jetson TX1 platform. This regulator
-has an active high enable, but the GPIO specifier for enabling the
-regulator incorrectly defines it as active-low. This causes the
-following warning to occur on boot ...
+Commit 4fdbfd60a3a2 ("arm64: tegra: Add PCIe slot supply information
+in p2972-0000 platform") added regulators for the PCIe slot on the
+Jetson Xavier platform. One of these regulators has an active-low enable
+and this commit incorrectly added an active-low specifier for the GPIO
+which causes the following warning to occur on boot ...
 
- WARNING KERN regulator@10 GPIO handle specifies active low - ignored
+ WARNING KERN regulator@3 GPIO handle specifies active low - ignored
 
 The fixed-regulator binding does not use the active-low flag from the
 gpio specifier and purely relies of the presence of the
 'enable-active-high' property to determine if it is active high or low
 (if this property is omitted). Fix this warning by setting the GPIO
-to active-high in the GPIO specifier which aligns with the presense of
-the 'enable-active-high' property.
+to active-high in the GPIO specifier. Finally, remove the
+'enable-active-low' as this is not a valid property.
 
-Fixes: 34993594181d ("arm64: tegra: Enable HDMI on Jetson TX1")
+Fixes: 4fdbfd60a3a2 ("arm64: tegra: Add PCIe slot supply information in p2972-0000 platform")
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1612,7 +1612,7 @@
- 			regulator-name = "VDD_HDMI_5V0";
- 			regulator-min-microvolt = <5000000>;
- 			regulator-max-microvolt = <5000000>;
--			gpio = <&exp1 12 GPIO_ACTIVE_LOW>;
-+			gpio = <&exp1 12 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 			vin-supply = <&vdd_5v0_sys>;
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+@@ -309,9 +309,8 @@
+ 			regulator-name = "VDD_12V";
+ 			regulator-min-microvolt = <1200000>;
+ 			regulator-max-microvolt = <1200000>;
+-			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 1) GPIO_ACTIVE_LOW>;
++			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 1) GPIO_ACTIVE_HIGH>;
+ 			regulator-boot-on;
+-			enable-active-low;
  		};
+ 	};
+ };
 
 
