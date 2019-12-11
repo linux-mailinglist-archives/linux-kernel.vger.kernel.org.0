@@ -2,128 +2,419 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4056911A32B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 04:48:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D5A411A328
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 04:47:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfLKDsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 22:48:00 -0500
-Received: from 60-251-196-230.HINET-IP.hinet.net ([60.251.196.230]:13803 "EHLO
-        ironport.ite.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfLKDsA (ORCPT
+        id S1727330AbfLKDq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 22:46:58 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:59499 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726718AbfLKDq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 22:48:00 -0500
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 11 Dec 2019 11:47:58 +0800
-Received: from csbcas.internal.ite.com.tw (csbmail1.internal.ite.com.tw [192.168.65.58])
-        by mse.ite.com.tw with ESMTP id xBB3lr6k079450;
-        Wed, 11 Dec 2019 11:47:53 +0800 (GMT-8)
-        (envelope-from allen.chen@ite.com.tw)
-Received: from CSBMAIL1.internal.ite.com.tw (192.168.65.58) by
- CSBMAIL1.internal.ite.com.tw (192.168.65.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Wed, 11 Dec 2019 11:47:52 +0800
-Received: from CSBMAIL1.internal.ite.com.tw ([fe80::2cba:f37c:ac09:f33f]) by
- CSBMAIL1.internal.ite.com.tw ([fe80::2cba:f37c:ac09:f33f%22]) with mapi id
- 15.01.1713.004; Wed, 11 Dec 2019 11:47:52 +0800
-From:   <allen.chen@ite.com.tw>
-To:     <jani.nikula@linux.intel.com>
-CC:     <Jau-Chih.Tseng@ite.com.tw>, <maxime.ripard@bootlin.com>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <airlied@linux.ie>, <pihsun@chromium.org>, <sean@poorly.run>
-Subject: RE: [PATCH] drm/edid: fixup EDID 1.3 and 1.4 judge reduced-blanking
- timings logic
-Thread-Topic: [PATCH] drm/edid: fixup EDID 1.3 and 1.4 judge reduced-blanking
- timings logic
-Thread-Index: AQHVr0p4ZifVjR0QMU2oZureDdE7SKe0TGNQ
-Date:   Wed, 11 Dec 2019 03:47:52 +0000
-Message-ID: <75e96653559c4cf8a3b0f22dd611ef9b@ite.com.tw>
-References: <1574761572-26585-1-git-send-email-allen.chen@ite.com.tw>
- <87r21ce8rp.fsf@intel.com>
-In-Reply-To: <87r21ce8rp.fsf@intel.com>
-Accept-Language: en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [192.168.70.14]
-x-tm-snts-smtp: 8E5F65DFF2ADCBDEC829C5E1CBF1DB7DE2C3BCFE0E6EAB230CC4249425D7C13C2000:8
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MAIL: mse.ite.com.tw xBB3lr6k079450
+        Tue, 10 Dec 2019 22:46:58 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id B7E6F22454;
+        Tue, 10 Dec 2019 22:46:56 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Tue, 10 Dec 2019 22:46:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=96eX+RfQkRD7AXlBhDUQK8CqAzSRDM2
+        x0sPBievi7CY=; b=olP89U3dWVt1llGjUeUMby0mvtvguEZRgLA8S+KsUCcK1W8
+        2Apyufm1LB8JRG4Ab73H905k6sp870sSM+S/xPXqtJOGiBPbTsN2nETXA2kP/rk9
+        g2Ji0mwJJHVOmuMy9lwAbTBNaQiE399zLwIOcrkfhaDnwDZMhSx4MB+1DLMrfA0H
+        vg0b90DWo3pbutPEj9s5TTAgw/k8hzwbZ/HhA+/MOMsaXAusuG0Z114xxntWm28/
+        SJN7JrPAm3bjaYPdlyuiPzxwyGJnO4CMQ+ps8fV249vPcUMnR4wgnUIsc6YcBgPn
+        JJ9//UnZMBvHdgXI2wQybxAFmdM9TOgnXtW9SaA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=96eX+R
+        fQkRD7AXlBhDUQK8CqAzSRDM2x0sPBievi7CY=; b=gYtUAIM6/B0NL+64BP4ovO
+        w/0kdUZViYSCgXLK7038ofsU8wqTboYg1el8sbrBT47JdEaj+0yzK9cRa5+D094c
+        KxIKQ0zZXw4BziYEoiL7ZzdkCBckolzyXIjbFh8DPX1uNZWBKW+D6XieGr/7GlmS
+        JomuFGBlJcccxu96kqgj1rJ83aruU15stYhLeS3XFZr7nJskwbcvxk/A/YoyzzQP
+        s3TBwhf4IXWmgGdB17cYE0ZiaozBxmIybexSZOhYlRK4+D4GJl0XyluTLEpOkr35
+        vZz+Z6WZz2HqFODrL98lsIT51gWlgc+19QuyFBorLfUDwUXZVCs6x9ZHlgmnGpRQ
+        ==
+X-ME-Sender: <xms:sGbwXQQ-0UMZrnduEvEknFIfSdtzN9KUBfhzx13eJ66Lak4AH9A2Ag>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudelgedgheehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
+    rhfuihiivgepud
+X-ME-Proxy: <xmx:sGbwXQAETYD_mQ09RzBB_h3hIIEAN7dcuxh-Rpg2gRmcTGP-gKVilA>
+    <xmx:sGbwXQGQpm2jS3BQdfJKAQFswAgZVKshozsYjCgRVBlVjbTTK5v0Tw>
+    <xmx:sGbwXaCk54KrrU3A8Kg9qZs4s2DNQCGY4adZOEnPsb-zNsCiWiojXg>
+    <xmx:sGbwXU8poIZauyqS28FPwh4xp7mHxFbi-fCDJ71X4O7pmlSs6So1wA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 7CD71E00A2; Tue, 10 Dec 2019 22:46:56 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-679-g1f7ccac-fmstable-20191210v1
+Mime-Version: 1.0
+Message-Id: <d97de592-d3c6-4683-ab36-4ea2e8bd27b7@www.fastmail.com>
+In-Reply-To: <1575566112-11658-8-git-send-email-eajames@linux.ibm.com>
+References: <1575566112-11658-1-git-send-email-eajames@linux.ibm.com>
+ <1575566112-11658-8-git-send-email-eajames@linux.ibm.com>
+Date:   Wed, 11 Dec 2019 14:18:35 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, "Jason Cooper" <jason@lakedaemon.net>,
+        linux-aspeed@lists.ozlabs.org, "Marc Zyngier" <maz@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
+        mark.rutland@arm.com, "Joel Stanley" <joel@jms.id.au>
+Subject: Re: [PATCH v2 07/12] drivers/soc: xdma: Add user interface
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSmFuaQ0KDQpUaGFua3MgZm9yIHlvdXIgaGVscCBhbmQgSSB3aWxsIGZvbGxvdyB5b3VyIHN1
-Z2dlc3Rpb24gdG8gbW9kaWZ5IHRoZSBwYXRjaC4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
-LS0NCkZyb206IEphbmkgTmlrdWxhIFttYWlsdG86amFuaS5uaWt1bGFAbGludXguaW50ZWwuY29t
-XSANClNlbnQ6IFR1ZXNkYXksIERlY2VtYmVyIDEwLCAyMDE5IDc6MTAgUE0NClRvOiBBbGxlbiBD
-aGVuICizr6xmpnQpDQpDYzogSmF1LUNoaWggVHNlbmcgKLS/rEy0vCk7IE1heGltZSBSaXBhcmQ7
-IEFsbGVuIENoZW4gKLOvrGamdCk7IG9wZW4gbGlzdDsgb3BlbiBsaXN0OkRSTSBEUklWRVJTOyBE
-YXZpZCBBaXJsaWU7IFBpLUhzdW4gU2hpaDsgU2VhbiBQYXVsDQpTdWJqZWN0OiBSZTogW1BBVENI
-XSBkcm0vZWRpZDogZml4dXAgRURJRCAxLjMgYW5kIDEuNCBqdWRnZSByZWR1Y2VkLWJsYW5raW5n
-IHRpbWluZ3MgbG9naWMNCg0KT24gVHVlLCAyNiBOb3YgMjAxOSwgYWxsZW4gPGFsbGVuLmNoZW5A
-aXRlLmNvbS50dz4gd3JvdGU6DQo+IEFjY29yZGluZyB0byBWRVNBIEVOSEFOQ0VEIEVYVEVOREVE
-IERJU1BMQVkgSURFTlRJRklDQVRJT04gREFUQSBTVEFOREFSRA0KPiAoRGVmaW5lcyBFRElEIFN0
-cnVjdHVyZSBWZXJzaW9uIDEsIFJldmlzaW9uIDQpIHBhZ2U6IDM5DQo+IEhvdyB0byBkZXRlcm1p
-bmUgd2hldGhlciB0aGUgbW9uaXRvciBzdXBwb3J0IFJCIHRpbWluZyBvciBub3Q/DQo+IEVESUQg
-MS40DQo+IEZpcnN0OiAgcmVhZCBkZXRhaWxlZCB0aW1pbmcgZGVzY3JpcHRvciBhbmQgbWFrZSBz
-dXJlIGJ5dGUgMCA9IDB4MDAsDQo+IAlieXRlIDEgPSAweDAwLCBieXRlIDIgPSAweDAwIGFuZCBi
-eXRlIDMgPSAweEZEDQo+IFNlY29uZDogcmVhZCBFRElEIGJpdCAwIGluIGZlYXR1cmUgc3VwcG9y
-dCBieXRlIGF0IGFkZHJlc3MgMThoID0gMQ0KPiAJYW5kIGRldGFpbGVkIHRpbWluZyBkZXNjcmlw
-dG9yIGJ5dGUgMTAgPSAweDA0DQo+IFRoaXJkOiAgaWYgRURJRCBiaXQgMCBpbiBmZWF0dXJlIHN1
-cHBvcnQgYnl0ZSA9IDEgJiYNCj4gCWRldGFpbGVkIHRpbWluZyBkZXNjcmlwdG9yIGJ5dGUgMTAg
-PSAweDA0DQo+IAl0aGVuIHdlIGNhbiBjaGVjayBieXRlIDE1LCBpZiBiaXQgNCBpbiBieXRlIDE1
-ID0gMSBpcyBzdXBwb3J0IFJCDQo+ICAgICAgICAgaWYgRURJRCBiaXQgMCBpbiBmZWF0dXJlIHN1
-cHBvcnQgYnl0ZSAhPSAxIHx8DQo+IAlkZXRhaWxlZCB0aW1pbmcgZGVzY3JpcHRvciBieXRlIDEw
-ICE9IDB4MDQsDQo+IAl0aGVuIGJ5dGUgMTUgY2FuIG5vdCBiZSB1c2VkDQo+DQo+IFRoZSBsaW51
-eCBjb2RlIGlzX3JiIGZ1bmN0aW9uIG5vdCBmb2xsb3cgdGhlIFZFU0EncyBydWxlDQo+DQo+IFNp
-Z25lZC1vZmYtYnk6IEFsbGVuIENoZW4gPGFsbGVuLmNoZW5AaXRlLmNvbS50dz4NCj4gUmVwb3J0
-ZWQtYnk6IGtidWlsZCB0ZXN0IHJvYm90IDxsa3BAaW50ZWwuY29tPg0KPiAtLS0NCj4gIGRyaXZl
-cnMvZ3B1L2RybS9kcm1fZWRpZC5jIHwgMzYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-LS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMzAgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMo
-LSkNCj4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2RybV9lZGlkLmMNCj4gaW5kZXggZjU5MjZiZi4uZTExZTU4NSAxMDA2NDQNCj4g
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
-L2RybV9lZGlkLmMNCj4gQEAgLTkzLDYgKzkzLDEyIEBAIHN0cnVjdCBkZXRhaWxlZF9tb2RlX2Ns
-b3N1cmUgew0KPiAgCWludCBtb2RlczsNCj4gIH07DQo+ICANCj4gK3N0cnVjdCBlZGlkX3N1cHBv
-cnRfcmJfY2xvc3VyZSB7DQo+ICsJc3RydWN0IGVkaWQgKmVkaWQ7DQo+ICsJYm9vbCB2YWxpZF9z
-dXBwb3J0X3JiOw0KPiArCWJvb2wgc3VwcG9ydF9yYjsNCj4gK307DQo+ICsNCj4gICNkZWZpbmUg
-TEVWRUxfRE1UCTANCj4gICNkZWZpbmUgTEVWRUxfR1RGCTENCj4gICNkZWZpbmUgTEVWRUxfR1RG
-MgkyDQo+IEBAIC0yMDE3LDIzICsyMDIzLDQxIEBAIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICpk
-cm1fbW9kZV9maW5kX2RtdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LA0KPiAgCX0NCj4gIH0NCj4g
-IA0KPiArc3RhdGljIGJvb2wNCj4gK2lzX2Rpc3BsYXlfZGVzY3JpcHRvcihjb25zdCB1OCAqciwg
-dTggdGFnKQ0KPiArew0KPiArCXJldHVybiAoIXJbMF0gJiYgIXJbMV0gJiYgIXJbMl0gJiYgclsz
-XSA9PSB0YWcpID8gdHJ1ZSA6IGZhbHNlOw0KPiArfQ0KPiArDQo+ICBzdGF0aWMgdm9pZA0KPiAg
-aXNfcmIoc3RydWN0IGRldGFpbGVkX3RpbWluZyAqdCwgdm9pZCAqZGF0YSkNCj4gIHsNCj4gIAl1
-OCAqciA9ICh1OCAqKXQ7DQo+IC0JaWYgKHJbM10gPT0gRURJRF9ERVRBSUxfTU9OSVRPUl9SQU5H
-RSkNCj4gLQkJaWYgKHJbMTVdICYgMHgxMCkNCj4gLQkJCSooYm9vbCAqKWRhdGEgPSB0cnVlOw0K
-PiArCXN0cnVjdCBlZGlkX3N1cHBvcnRfcmJfY2xvc3VyZSAqY2xvc3VyZSA9IGRhdGE7DQo+ICsJ
-c3RydWN0IGVkaWQgKmVkaWQgPSBjbG9zdXJlLT5lZGlkOw0KPiArDQo+ICsJaWYgKGlzX2Rpc3Bs
-YXlfZGVzY3JpcHRvcihyLCBFRElEX0RFVEFJTF9NT05JVE9SX1JBTkdFKSkgew0KPiArCQlpZiAo
-ZWRpZC0+ZmVhdHVyZXMgJiBCSVQoMCkgJiYgclsxMF0gPT0gQklUKDIpKSB7DQoNCkknbGwgdHJ5
-IHRvIGV4cGxhaW4gbXkgb3JpZ2luYWwgY29tbWVudCBhZ2Fpbi4NCg0KQ29uc2lkZXIgZWRpZC0+
-ZmVhdHVyZXMgJiBCSVQoMCkuIEl0IHJlbWFpbnMgdW5jaGFuZ2VkIGFjcm9zcyB0aGUNCml0ZXJh
-dGlvbi4gVGhlIGNvZGUgd2lsbCBvbmx5IGNoYW5nZSBhbnl0aGluZyBpZiBlZGlkLT5mZWF0dXJl
-cyAmDQpCSVQoMCkuDQoNCj4gKwkJCWNsb3N1cmUtPnZhbGlkX3N1cHBvcnRfcmIgPSB0cnVlOw0K
-PiArCQkJY2xvc3VyZS0+c3VwcG9ydF9yYiA9IChyWzE1XSAmIDB4MTApID8gdHJ1ZSA6IGZhbHNl
-Ow0KDQpZb3UgY291bGQgY29tYmluZSB0aGVzZSB0byBlLmcuIGEgc2luZ2xlIGludC4NCg0KCWlm
-IChyWzEwXSA9PSBCSVQoMikpIHsNCgkJaW50ICpyZXQgPSBkYXRhOw0KCQkqcmV0ID0gISEoclsx
-NV0gJiAweDEwKTsNCgl9DQoNCj4gKwkJfQ0KPiArCX0NCj4gIH0NCj4gIA0KPiAgLyogRURJRCAx
-LjQgZGVmaW5lcyB0aGlzIGV4cGxpY2l0bHkuICBGb3IgRURJRCAxLjMsIHdlIGd1ZXNzLCBiYWRs
-eS4gKi8NCj4gIHN0YXRpYyBib29sDQo+ICBkcm1fbW9uaXRvcl9zdXBwb3J0c19yYihzdHJ1Y3Qg
-ZWRpZCAqZWRpZCkNCj4gIHsNCj4gKwlzdHJ1Y3QgZWRpZF9zdXBwb3J0X3JiX2Nsb3N1cmUgY2xv
-c3VyZSA9IHsNCj4gKwkJLmVkaWQgPSBlZGlkLA0KPiArCQkudmFsaWRfc3VwcG9ydF9yYiA9IGZh
-bHNlLA0KPiArCQkuc3VwcG9ydF9yYiA9IGZhbHNlLA0KPiArCX07DQo+ICsNCj4gIAlpZiAoZWRp
-ZC0+cmV2aXNpb24gPj0gNCkgew0KPiAtCQlib29sIHJldCA9IGZhbHNlOw0KPiAtCQlkcm1fZm9y
-X2VhY2hfZGV0YWlsZWRfYmxvY2soKHU4ICopZWRpZCwgaXNfcmIsICZyZXQpOw0KPiAtCQlyZXR1
-cm4gcmV0Ow0KPiArCQlkcm1fZm9yX2VhY2hfZGV0YWlsZWRfYmxvY2soKHU4ICopZWRpZCwgaXNf
-cmIsICZjbG9zdXJlKTsNCj4gKwkJaWYgKGNsb3N1cmUudmFsaWRfc3VwcG9ydF9yYikNCj4gKwkJ
-CXJldHVybiBjbG9zdXJlLnN1cHBvcnRfcmI7DQoNCkhlcmUsIHlvdSdkIGRvOg0KDQogICAgICAg
-IGlmIChlZGlkLT5mZWF0dXJlcyAmIEJJVCgwKSkgew0KICAgICAgICAJaW50IHJldCA9IC0xOw0K
-CQlkcm1fZm9yX2VhY2hfZGV0YWlsZWRfYmxvY2soKHU4ICopZWRpZCwgaXNfcmIsICZyZXQpOw0K
-ICAgICAgICAgICAgICAgIGlmIChyZXQgIT0gLTEpDQogICAgICAgICAgICAgICAgCXJldHVybiBy
-ZXQ7DQoJfQ0KDQoNCj4gIAl9DQo+ICANCj4gIAlyZXR1cm4gKChlZGlkLT5pbnB1dCAmIERSTV9F
-RElEX0lOUFVUX0RJR0lUQUwpICE9IDApOw0KDQotLSANCkphbmkgTmlrdWxhLCBJbnRlbCBPcGVu
-IFNvdXJjZSBHcmFwaGljcyBDZW50ZXINCg==
+
+
+On Fri, 6 Dec 2019, at 03:45, Eddie James wrote:
+> This commits adds a miscdevice to provide a user interface to the XDMA
+> engine. The interface provides the write operation to start DMA
+> operations. The DMA parameters are passed as the data to the write call.
+> The actual data to transfer is NOT passed through write. Note that both
+> directions of DMA operation are accomplished through the write command;
+> BMC to host and host to BMC.
+> 
+> The XDMA engine is restricted to only accessing the reserved memory
+> space on the AST2500, typically used by the VGA. For this reason, the
+> VGA memory space is pooled and allocated with genalloc. Users calling
+> mmap allocate pages from this pool for their usage. The space allocated
+> by a client will be the space used in the DMA operation. For an
+> "upstream" (BMC to host) operation, the data in the client's area will
+> be transferred to the host. For a "downstream" (host to BMC) operation,
+> the host data will be placed in the client's memory area.
+
+Given the comments on earlier patches we should reconsider descriptions
+of the VGA area in this paragraph.
+
+> 
+> Poll is also provided in order to determine when the DMA operation is
+> complete for non-blocking IO.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+> Changes since v1:
+>  - Add file_lock comment
+>  - Bring user reset up to date with new reset method
+> 
+>  drivers/soc/aspeed/aspeed-xdma.c | 224 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 224 insertions(+)
+> 
+> diff --git a/drivers/soc/aspeed/aspeed-xdma.c b/drivers/soc/aspeed/aspeed-xdma.c
+> index a9b3eeb..d4b96a7 100644
+> --- a/drivers/soc/aspeed/aspeed-xdma.c
+> +++ b/drivers/soc/aspeed/aspeed-xdma.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/io.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/mfd/syscon.h>
+> +#include <linux/miscdevice.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  #include <linux/of_device.h>
+> @@ -206,6 +207,8 @@ struct aspeed_xdma {
+>  	struct clk *clock;
+>  	struct reset_control *reset;
+>  
+> +	/* file_lock serializes reads of current_client */
+> +	struct mutex file_lock;
+>  	struct aspeed_xdma_client *current_client;
+>  
+>  	/* start_lock protects cmd_idx, cmdq, and the state of the engine */
+> @@ -227,6 +230,8 @@ struct aspeed_xdma {
+>  	dma_addr_t cmdq_vga_phys;
+>  	void *cmdq_vga_virt;
+>  	struct gen_pool *vga_pool;
+> +
+> +	struct miscdevice misc;
+>  };
+>  
+>  struct aspeed_xdma_client {
+> @@ -517,6 +522,207 @@ static irqreturn_t aspeed_xdma_pcie_irq(int irq, 
+> void *arg)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static ssize_t aspeed_xdma_write(struct file *file, const char __user *buf,
+> +				 size_t len, loff_t *offset)
+> +{
+> +	int rc;
+> +	struct aspeed_xdma_op op;
+> +	struct aspeed_xdma_client *client = file->private_data;
+> +	struct aspeed_xdma *ctx = client->ctx;
+> +	u32 offs = client->phys ? (client->phys - ctx->vga_phys) :
+> +		XDMA_CMDQ_SIZE;
+> +
+> +	if (len != sizeof(op))
+> +		return -EINVAL;
+> +
+> +	rc = copy_from_user(&op, buf, len);
+> +	if (rc)
+> +		return rc;
+> +
+> +	if (op.direction == ASPEED_XDMA_DIRECTION_RESET) {
+> +		unsigned long flags;
+> +
+> +		spin_lock_irqsave(&ctx->reset_lock, flags);
+> +		if (ctx->in_reset) {
+> +			spin_unlock_irqrestore(&ctx->reset_lock, flags);
+> +			return len;
+> +		}
+> +
+> +		ctx->in_reset = true;
+> +		spin_unlock_irqrestore(&ctx->reset_lock, flags);
+> +
+> +		mutex_lock(&ctx->start_lock);
+> +
+> +		aspeed_xdma_reset(ctx);
+> +
+> +		mutex_unlock(&ctx->start_lock);
+> +
+> +		return len;
+> +	} else if (op.direction > ASPEED_XDMA_DIRECTION_RESET) {
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (op.len > ctx->vga_size - offs)
+> +		return -EINVAL;
+
+I'm wondering if we can rearrange the code to move the sanity checks to the
+top of the function, so this and the `op.direction >
+ASPEED_XDMA_DIRECTION_RESET` case.
+
+The check above should fail for the reset case as well, I expect op.len should
+be set to zero in that case. But I still think that jamming the reset command
+into a "direction" concept feels broken, so as mentioned on an earlier patch
+I'd prefer we move that distraction out to a separate patch.
+
+> +
+> +	if (file->f_flags & O_NONBLOCK) {
+> +		if (!mutex_trylock(&ctx->file_lock))
+> +			return -EAGAIN;
+> +
+> +		if (ctx->current_client) {
+> +			mutex_unlock(&ctx->file_lock);
+> +			return -EAGAIN;
+
+I think EBUSY is better here.
+
+> +		}
+> +	} else {
+> +		mutex_lock(&ctx->file_lock);
+> +
+> +		rc = wait_event_interruptible(ctx->wait, !ctx->current_client);
+> +		if (rc) {
+> +			mutex_unlock(&ctx->file_lock);
+> +			return -EINTR;
+> +		}
+> +	}
+> +
+> +	aspeed_xdma_start(ctx, &op, ctx->vga_phys + offs, client);
+> +
+> +	mutex_unlock(&ctx->file_lock);
+
+You've used file_lock here to protect aspeed_xdma_start() but start_lock
+above to protect aspeed_xdma_reset(), so it seems one client can disrupt
+another by resetting the engine while a DMA is in progress?
+
+> +
+> +	if (!(file->f_flags & O_NONBLOCK)) {
+> +		rc = wait_event_interruptible(ctx->wait, !client->in_progress);
+> +		if (rc)
+> +			return -EINTR;
+> +
+> +		if (client->error)
+> +			return -EIO;
+> +	}
+> +
+> +	return len;
+> +}
+> +
+> +static __poll_t aspeed_xdma_poll(struct file *file,
+> +				 struct poll_table_struct *wait)
+> +{
+> +	__poll_t mask = 0;
+> +	__poll_t req = poll_requested_events(wait);
+> +	struct aspeed_xdma_client *client = file->private_data;
+> +	struct aspeed_xdma *ctx = client->ctx;
+> +
+> +	if (req & (EPOLLIN | EPOLLRDNORM)) {
+> +		if (client->in_progress)
+> +			poll_wait(file, &ctx->wait, wait);
+> +
+> +		if (!client->in_progress) {
+> +			if (client->error)
+> +				mask |= EPOLLERR;
+> +			else
+> +				mask |= EPOLLIN | EPOLLRDNORM;
+> +		}
+> +	}
+> +
+> +	if (req & (EPOLLOUT | EPOLLWRNORM)) {
+> +		if (ctx->current_client)
+> +			poll_wait(file, &ctx->wait, wait);
+> +
+> +		if (!ctx->current_client)
+> +			mask |= EPOLLOUT | EPOLLWRNORM;
+> +	}
+> +
+> +	return mask;
+> +}
+> +
+> +static void aspeed_xdma_vma_close(struct vm_area_struct *vma)
+> +{
+> +	struct aspeed_xdma_client *client = vma->vm_private_data;
+> +
+> +	gen_pool_free(client->ctx->vga_pool, (unsigned long)client->virt,
+> +		      client->size);
+
+What assurance do we have that a DMA isn't in progress? With non-blocking
+IO we could easily start one then close the file descriptor, which would cause
+havoc if the physical range is reused by a subsequent mapping.
+
+> +
+> +	client->virt = NULL;
+> +	client->phys = 0;
+> +	client->size = 0;
+> +}
+> +
+> +static const struct vm_operations_struct aspeed_xdma_vm_ops = {
+> +	.close =	aspeed_xdma_vma_close,
+> +};
+> +
+> +static int aspeed_xdma_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +	int rc;
+> +	struct aspeed_xdma_client *client = file->private_data;
+> +	struct aspeed_xdma *ctx = client->ctx;
+> +
+> +	/* restrict file to one mapping */
+> +	if (client->size)
+> +		return -ENOMEM;
+> +
+> +	client->size = vma->vm_end - vma->vm_start;
+> +	client->virt = gen_pool_dma_alloc(ctx->vga_pool, client->size,
+> +					  &client->phys);
+> +	if (!client->virt) {
+> +		client->phys = 0;
+> +		client->size = 0;
+> +		return -ENOMEM;
+> +	}
+> +
+> +	vma->vm_pgoff = (client->phys - ctx->vga_phys) >> PAGE_SHIFT;
+> +	vma->vm_ops = &aspeed_xdma_vm_ops;
+> +	vma->vm_private_data = client;
+> +	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+> +
+> +	rc = io_remap_pfn_range(vma, vma->vm_start, client->phys >> PAGE_SHIFT,
+> +				client->size, vma->vm_page_prot);
+> +	if (rc) {
+> +		gen_pool_free(ctx->vga_pool, (unsigned long)client->virt,
+> +			      client->size);
+> +
+> +		client->virt = NULL;
+> +		client->phys = 0;
+> +		client->size = 0;
+> +		return rc;
+> +	}
+> +
+> +	dev_dbg(ctx->dev, "mmap: v[%08lx] to p[%08x], s[%08x]\n",
+> +		vma->vm_start, (u32)client->phys, client->size);
+> +
+> +	return 0;
+> +}
+> +
+> +static int aspeed_xdma_open(struct inode *inode, struct file *file)
+> +{
+> +	struct miscdevice *misc = file->private_data;
+> +	struct aspeed_xdma *ctx = container_of(misc, struct aspeed_xdma, misc);
+> +	struct aspeed_xdma_client *client = kzalloc(sizeof(*client),
+> +						    GFP_KERNEL);
+> +
+> +	if (!client)
+> +		return -ENOMEM;
+> +
+> +	client->ctx = ctx;
+> +	file->private_data = client;
+> +	return 0;
+> +}
+> +
+> +static int aspeed_xdma_release(struct inode *inode, struct file *file)
+> +{
+> +	struct aspeed_xdma_client *client = file->private_data;
+> +
+> +	if (client->ctx->current_client == client)
+> +		client->ctx->current_client = NULL;
+
+Shouldn't we also cancel the DMA op? This seems like a DoS risk: set up
+a non-blocking, large downstream transfer then close the client. Also risks
+scribbling on memory we no-longer own given we don't cancel/wait for
+completion in vm close callback?
+
+> +
+> +	kfree(client);
+> +	return 0;
+> +}
+> +
+> +static const struct file_operations aspeed_xdma_fops = {
+> +	.owner			= THIS_MODULE,
+> +	.write			= aspeed_xdma_write,
+> +	.poll			= aspeed_xdma_poll,
+> +	.mmap			= aspeed_xdma_mmap,
+> +	.open			= aspeed_xdma_open,
+> +	.release		= aspeed_xdma_release,
+> +};
+> +
+>  static int aspeed_xdma_probe(struct platform_device *pdev)
+>  {
+>  	int irq;
+> @@ -539,6 +745,7 @@ static int aspeed_xdma_probe(struct platform_device *pdev)
+>  	ctx->chip = md;
+>  	ctx->dev = dev;
+>  	platform_set_drvdata(pdev, ctx);
+> +	mutex_init(&ctx->file_lock);
+>  	mutex_init(&ctx->start_lock);
+>  	INIT_WORK(&ctx->reset_work, aspeed_xdma_reset_work);
+>  	spin_lock_init(&ctx->reset_lock);
+> @@ -678,6 +885,22 @@ static int aspeed_xdma_probe(struct platform_device *pdev)
+>  
+>  	aspeed_xdma_init_eng(ctx);
+>  
+> +	ctx->misc.minor = MISC_DYNAMIC_MINOR;
+> +	ctx->misc.fops = &aspeed_xdma_fops;
+> +	ctx->misc.name = "aspeed-xdma";
+> +	ctx->misc.parent = dev;
+> +	rc = misc_register(&ctx->misc);
+> +	if (rc) {
+> +		dev_err(dev, "Failed to register xdma miscdevice.\n");
+> +
+> +		gen_pool_free(ctx->vga_pool, (unsigned long)ctx->cmdq_vga_virt,
+> +			      XDMA_CMDQ_SIZE);
+> +
+> +		reset_control_assert(ctx->reset);
+> +		clk_disable_unprepare(ctx->clock);
+> +		return rc;
+> +	}
+> +
+>  	/*
+>  	 * This interrupt could fire immediately so only request it once the
+>  	 * engine and driver are initialized.
+> @@ -699,6 +922,7 @@ static int aspeed_xdma_remove(struct platform_device *pdev)
+>  {
+>  	struct aspeed_xdma *ctx = platform_get_drvdata(pdev);
+>  
+> +	misc_deregister(&ctx->misc);
+>  	gen_pool_free(ctx->vga_pool, (unsigned long)ctx->cmdq_vga_virt,
+>  		      XDMA_CMDQ_SIZE);
+>  
+> -- 
+> 1.8.3.1
+> 
+>
