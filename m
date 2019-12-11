@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C7F511BD64
+	by mail.lfdr.de (Postfix) with ESMTP id CB88511BD65
 	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 20:47:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbfLKTqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 14:46:44 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:54510 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728729AbfLKTqm (ORCPT
+        id S1729476AbfLKTq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 14:46:57 -0500
+Received: from mail-yw1-f73.google.com ([209.85.161.73]:42066 "EHLO
+        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729219AbfLKTqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 14:46:42 -0500
-Received: by mail-pf1-f201.google.com with SMTP id v14so1261980pfm.21
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 11:46:41 -0800 (PST)
+        Wed, 11 Dec 2019 14:46:46 -0500
+Received: by mail-yw1-f73.google.com with SMTP id l5so7291084ywf.9
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 11:46:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=A53ZaoyxJN+P/x/wFOv9wV4eF+QY9qPjvQKuh7OFwuU=;
-        b=bj6k8Bc7Ef+j+rl6hUKv99wGBXII19pyqdKKrJI0g1qkHNJltGp6k0JofsUtU0Kfp5
-         zqAhCWh68oY3h93QzByhJEA8pU1o8YBJo+oZ4HSt1YsvpskpVpaUEo0vSulRMxSeCpcr
-         VZMZA/5XiHkKoc65RR/BTzy/O5rbh4JTkFVhARzzljaJcGSBo6eIXI40pSDGc9OWm4nY
-         2DNHHpbEB4SbXmkypEr5D7aJOGGv7GJAj7D9dia2t2v0LIph2fUasLu3FP/R3OHplmre
-         9qq6Pms+e1Jc5fZJodLfVRV3xImJzyCRQUsXrnZDuOPRBmbuOJFlmaGZ1+ax43KuK2ZG
-         CN3g==
+        bh=BhTHWYgCSRQtEgCb1BylwBRcg/1kvg/B2oRKXg+gQaY=;
+        b=NRKfFcdG6A4G5+sdQcP18SbNkmh1K5xiATWt/eiHVv9xZBDxllX9SQzVn3rHMvyDMI
+         h9ijXt1EyeVoQLowMSJ9qHQonptwYiDR999p8WI/NbxSmfeEW560BMDGtqnLrnI0sPwj
+         dWO7Lb+b7vDByHnu80y56OMFS74unO9AiAeKUqJ0vSMzRPrDoX+2vxJIOkcF4czGQIVk
+         cs//fejmn//AmRtVHtYQQZZD42rXDK7Sqh0V/aOx1dkYN6ZoOTEovpRoD5TTApC9HbHt
+         AGb60H2zF8iTMLIMtdGA3symGnVQ2NmGN3sJvM3wzsuq/ygQd1XoNRh29TwLP/ySIf+N
+         HvYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=A53ZaoyxJN+P/x/wFOv9wV4eF+QY9qPjvQKuh7OFwuU=;
-        b=YyXir6tVLvBGOwKe0wmnA+MISjn1jxUvUqdasooco/Zsu3f+lhzpGb75vEpvJbMpAt
-         FV/1fK4eczDn80FGBRZ3XewoITNPPtUIxEfBoIwctmy67YUN6Omv6E3RlaxS1emuXEVD
-         Smv7aqtz2a34rTy+G3fiyGirVRcvHns/WNLEU3o4QIyekRApRKOgvk4XPlTpHXiWlZyy
-         9IFU4ExrnFfqGhLSilqTQ6xtSc0qkDAaltpTVH45OpTqP4yTZi8ByoTpIlNhyLHU1jKg
-         S4EbBeVKydCMklu+CTwYD6FbaNDrsqGGrWU5q4lXYUrEIYCmw7H5wt2mYESjQS/xuNE4
-         GYhg==
-X-Gm-Message-State: APjAAAXatdVXBa5u0unN2ABJ80sMAz2Q9qp5un8+hgp/8cxZJ3DA+CsF
-        NqpDTCrxT0daggqV5azgp0Mrd4+n
-X-Google-Smtp-Source: APXvYqxkWLsqIgmvHQiiMFxw4ZXKOkzE0dbenXYUwgiP/rqdexXMIIwgADKdnZ2MnxRj90Xlrt1a1MLn
-X-Received: by 2002:a63:c013:: with SMTP id h19mr6078212pgg.447.1576093601550;
- Wed, 11 Dec 2019 11:46:41 -0800 (PST)
-Date:   Wed, 11 Dec 2019 14:46:04 -0500
+        bh=BhTHWYgCSRQtEgCb1BylwBRcg/1kvg/B2oRKXg+gQaY=;
+        b=uGmy2rwUQs166UpREeoRIvqUE6COthJGaplT6YtPezeynByN/aPVioTM8lckQTcA3S
+         PA0oz2jfKpmI+aPYHGmH4ftlcZKMDvj4j/X/SzpDxWMdNl9GgUDnQ05dDRb3KIM2AgqV
+         hGBBt1/CLGeI7Smm1M36wgyFqB/NeYBx4PXsnrhCMd1FkRqNxdmBTbGvT6zaXEqC4noa
+         vXE+lwmvu6rMauNG5g1qGG9FePPyf7bJeMhhNTKdQO1ZIWjZ3KQ8IAOW+QTf4COBTW6/
+         OlRw/4wQN/tSAoSthyCrBhIfK8GHMJBb4SNt9/cMIUUkt/RdQJDA22XI3hEnkaVhWyHo
+         UkiA==
+X-Gm-Message-State: APjAAAUJkGIdgNSyVrNpVhPIpFmDIFqi4c0uj10yAl9bh6xHH0X97b2D
+        19ugquI98Z/UiYjh7u3spda+Hq+v
+X-Google-Smtp-Source: APXvYqx33A6l+F0JL5LmhA7761ThPciJW7aU6oekLpGrNCPEgTSjL2GCjb/RsgaRNTGpE4W3vmLLvwV3
+X-Received: by 2002:a81:2441:: with SMTP id k62mr1238554ywk.214.1576093605695;
+ Wed, 11 Dec 2019 11:46:45 -0800 (PST)
+Date:   Wed, 11 Dec 2019 14:46:05 -0500
 In-Reply-To: <20191211194606.87940-1-brho@google.com>
-Message-Id: <20191211194606.87940-2-brho@google.com>
+Message-Id: <20191211194606.87940-3-brho@google.com>
 Mime-Version: 1.0
 References: <20191211194606.87940-1-brho@google.com>
 X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
-Subject: [PATCH 1/3] iommu/vt-d: skip RMRR entries that fail the sanity check
+Subject: [PATCH 2/3] iommu/vt-d: treat unmapped RMRR entries as sane
 From:   Barret Rhoden <brho@google.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -64,37 +64,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RMRR entries describe memory regions that are DMA targets for devices
-outside the kernel's control.
+The RMRR sanity check is to confirm that the memory pointed to by the
+RMRR entry is not used by the kernel.  e820 RESERVED memory will not be
+used.  However, there are ranges of physical memory that are not covered
+by the e820 table at all.  The kernel will not use this memory, either.
 
-RMRR entries that fail the sanity check are pointing to regions of
-memory that the firmware did not tell the kernel are reserved or
-otherwise should not be used.
-
-Instead of aborting DMAR processing, this commit skips these RMRR
-entries.  They will not be mapped into the IOMMU, but the IOMMU can
-still be utilized.  If anything, when the IOMMU is on, those devices
-will not be able to clobber RAM that the kernel has allocated from those
-regions.
+This commit expands the sanity check to treat memory that is not in any
+e820 entry as safe.
 
 Signed-off-by: Barret Rhoden <brho@google.com>
 ---
- drivers/iommu/intel-iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/iommu.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index f168cd8ee570..f7e09244c9e4 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -4316,7 +4316,7 @@ int __init dmar_parse_one_rmrr(struct acpi_dmar_header *header, void *arg)
- 	rmrr = (struct acpi_dmar_reserved_memory *)header;
- 	ret = arch_rmrr_sanity_check(rmrr);
- 	if (ret)
--		return ret;
+diff --git a/arch/x86/include/asm/iommu.h b/arch/x86/include/asm/iommu.h
+index bf1ed2ddc74b..7e9f0c2f975f 100644
+--- a/arch/x86/include/asm/iommu.h
++++ b/arch/x86/include/asm/iommu.h
+@@ -20,6 +20,8 @@ arch_rmrr_sanity_check(struct acpi_dmar_reserved_memory *rmrr)
+ 
+ 	if (e820__mapped_all(start, end, E820_TYPE_RESERVED))
+ 		return 0;
++	if (!e820__mapped_any(start, end, 0))
 +		return 0;
  
- 	rmrru = kzalloc(sizeof(*rmrru), GFP_KERNEL);
- 	if (!rmrru)
+ 	pr_err(FW_BUG "No firmware reserved region can cover this RMRR [%#018Lx-%#018Lx], contact BIOS vendor for fixes\n",
+ 	       start, end - 1);
 -- 
 2.24.0.525.g8f36a354ae-goog
 
