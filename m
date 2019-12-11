@@ -2,100 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D15C811BC33
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:51:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3EF611BC3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:52:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbfLKSvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:51:22 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:57306 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbfLKSvW (ORCPT
+        id S1728029AbfLKSwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:52:03 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:36958 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfLKSwC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:51:22 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1743420B718B;
-        Wed, 11 Dec 2019 10:51:21 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1743420B718B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576090281;
-        bh=JXcaJWRtMHzI+YncpvA5z0porrWb2hzaFcDdpjNMbq4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L/rDi9jYTLNRZ5MRbIDQ96GGZ6leSGWtgwqzvFF44SFKKDpfAfNalBQARd/VHEqN3
-         DpPguyVn46cInn5mkg+8JUpoCbtI0aznnzuRrJfx8zx/dPn7VO3RynPM8fFLPTN6fM
-         DTevOSeWdnCf85jUXK6JVLxa6s/lCdFfWyHoKy8w=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: [PATCH v2 2/2] IMA: Call workqueue functions to measure queued keys
-Date:   Wed, 11 Dec 2019 10:51:16 -0800
-Message-Id: <20191211185116.2740-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191211185116.2740-1-nramas@linux.microsoft.com>
-References: <20191211185116.2740-1-nramas@linux.microsoft.com>
+        Wed, 11 Dec 2019 13:52:02 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBBIpsJV013774;
+        Wed, 11 Dec 2019 12:51:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576090314;
+        bh=NGkRU2Rru73pDZ43AWGQgWsNa4Qi8VLb3sLZ4mmUd7g=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=TtlqmxBOSVEqSa2lGQNDWNaJbGnl48/Mumf4cyWORqbEuomsMZdi1/b+6XDeJ02Sa
+         Izikl0KISNDE4fCP1Ngbw6jFBNzCcmsayC1T03tHIXZJUaXX4aNnGH+NP+1STLGddz
+         NrzkBkb4AJyjHlY5ohc54kUvo5J+Jyyj802t8As4=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBBIpsq5006883
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Dec 2019 12:51:54 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 11
+ Dec 2019 12:51:53 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 11 Dec 2019 12:51:53 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBBIprqU026549;
+        Wed, 11 Dec 2019 12:51:53 -0600
+Date:   Wed, 11 Dec 2019 12:51:19 -0600
+From:   Bin Liu <b-liu@ti.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <od@zcrc.me>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Artur Rojek <contact@artur-rojek.eu>
+Subject: Re: [PATCH v3 1/7] usb: musb: dma: Correct parameter passed to IRQ
+ handler
+Message-ID: <20191211185119.GC16429@iaqt7>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Artur Rojek <contact@artur-rojek.eu>
+References: <20191210171110.62141-1-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191210171110.62141-1-paul@crapouillou.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Measuring keys requires a custom IMA policy to be loaded.
-Keys should be queued for measurement if a custom IMA policy
-is not yet loaded. Keys queued for measurement, if any, should be
-processed when a custom IMA policy is loaded.
+On Tue, Dec 10, 2019 at 06:11:04PM +0100, Paul Cercueil wrote:
+> The IRQ handler was passed a pointer to a struct dma_controller, but the
+> argument was then casted to a pointer to a struct musb_dma_controller.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Tested-by: Artur Rojek <contact@artur-rojek.eu>
+> ---
 
-This patch updates the IMA hook function ima_post_key_create_or_update()
-to queue the key if a custom IMA policy has not yet been loaded.
-And, ima_update_policy() function, which is called when
-a custom IMA policy is loaded, is updated to process queued keys.
+I added the Fixes tag, and queued for next v5.5 -rc. Thanks.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima_asymmetric_keys.c | 8 ++++++++
- security/integrity/ima/ima_policy.c          | 3 +++
- 2 files changed, 11 insertions(+)
-
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index ba01e04ec025..61b801ff3747 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -140,6 +140,8 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 				   const void *payload, size_t payload_len,
- 				   unsigned long flags, bool create)
- {
-+	bool queued = false;
-+
- 	/* Only asymmetric keys are handled by this hook. */
- 	if (key->type != &key_type_asymmetric)
- 		return;
-@@ -147,6 +149,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 	if (!payload || (payload_len == 0))
- 		return;
- 
-+	if (!ima_process_keys)
-+		queued = ima_queue_key(keyring, payload, payload_len);
-+
-+	if (queued)
-+		return;
-+
- 	/*
- 	 * keyring->description points to the name of the keyring
- 	 * (such as ".builtin_trusted_keys", ".ima", etc.) to
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index a4dde9d575b2..04b9c6c555de 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -807,6 +807,9 @@ void ima_update_policy(void)
- 		kfree(arch_policy_entry);
- 	}
- 	ima_update_policy_flag();
-+
-+	/* Custom IMA policy has been loaded */
-+	ima_process_queued_keys();
- }
- 
- /* Keep the enumeration in sync with the policy_tokens! */
--- 
-2.17.1
-
+-Bin.
