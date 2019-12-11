@@ -2,117 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B4411B51B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B91E11B579
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:54:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732786AbfLKPwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:52:01 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:44318 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732274AbfLKPv5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:51:57 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBBFpsoN086679;
-        Wed, 11 Dec 2019 09:51:54 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576079514;
-        bh=S4bP18sWt9PdB574Es/xG9xm4co/SVmYIRkd4NjN7Mc=;
-        h=From:To:CC:Subject:Date;
-        b=Fhu8rDtsj4xPAeq455IHuahaTHo8BxykS+6EH19peSRW6dawz+izwoOmzAcc9TOlh
-         rKjdzZW2NSq1Nse2Ggsc2HCufMA5HHMwff9ZWVieZ2r/1d2U9LBcuhQ+laaWQWKVLx
-         DUxTnahBK654itz3o1v4wr/PZdwugjg3vyXjUCzo=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBBFps8Y062541
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 11 Dec 2019 09:51:54 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 11
- Dec 2019 09:51:54 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 11 Dec 2019 09:51:54 -0600
-Received: from a0132425.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBBFpprs030125;
-        Wed, 11 Dec 2019 09:51:52 -0600
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, <dannenberg@ti.com>,
-        <linux-omap@vger.kernel.org>
-Subject: [PATCH] spi: spi-ti-qspi: Fix a bug when accessing non default CS
-Date:   Wed, 11 Dec 2019 21:22:16 +0530
-Message-ID: <20191211155216.30212-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.24.0
+        id S1732913AbfLKPyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:54:06 -0500
+Received: from mail.monom.org ([188.138.9.77]:55848 "EHLO mail.monom.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730284AbfLKPyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:54:05 -0500
+Received: from mail.monom.org (localhost [127.0.0.1])
+        by filter.mynetwork.local (Postfix) with ESMTP id EB052500796;
+        Wed, 11 Dec 2019 16:54:02 +0100 (CET)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.monom.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.5 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.2
+Received: from [192.168.154.174] (b9168f78.cgn.dg-w.de [185.22.143.120])
+        by mail.monom.org (Postfix) with ESMTPSA id 76B80500243;
+        Wed, 11 Dec 2019 16:54:02 +0100 (CET)
+Subject: Re: Patch "mm, vmstat: make quiet_vmstat lighter" has been added to
+ the 4.4-stable tree
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        "zhangyi (F)" <yi.zhang@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        cl@linux.com, mgalbraith@suse.de, mhocko@suse.com,
+        torvalds@linux-foundation.org, umgwanakikbuti@gmail.com,
+        stable-commits@vger.kernel.org,
+        "Wangkefeng (Maro)" <wangkefeng.wang@huawei.com>,
+        Xie XiuQi <xiexiuqi@huawei.com>
+References: <156442332854185@kroah.com>
+ <e4bd396a-1a10-1387-aa3f-4d61d31ab7b6@huawei.com>
+ <20191211144614.GA637714@kroah.com>
+From:   Daniel Wagner <wagi@monom.org>
+Message-ID: <40460b0c-7fb0-a19d-3684-cb020e226a3f@monom.org>
+Date:   Wed, 11 Dec 2019 16:54:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20191211144614.GA637714@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When switching ChipSelect from default CS0 to any other CS, driver fails
-to update the bits in system control module register that control which
-CS is mapped for MMIO access. This causes reads to fail when driver
-tries to access QSPI flash on CS1/2/3.
+Hi,
 
-Fix this by updating appropriate bits whenever active CS changes.
+On 2019-12-11 15:46, Greg KH wrote:
+> On Wed, Dec 11, 2019 at 10:32:49PM +0800, zhangyi (F) wrote:
+>> We find a performance degradation under lmbench af_unix[1] test case after
+>> mergeing this patch on my x86 qemu 4.4 machine. The test result is basically
+>> stable for each teses.
+>>
+>> Host machine: CPU: Intel(R) Xeon(R) CPU E5-2690 v3
+>>                CPU(s): 48
+>>                MEM: 193047 MB
+>>
+>> Guest machine:  CPU: QEMU Virtual CPU version 2.5+
+>>                  CPU(s): 8
+>>                  MEM: 26065 MB
+>>
+>>    Before this patch:
+>>    [root@localhost ~]# lmbench-3.0-a9/bin/x86_64-linux-gnu/lat_unix -P 1
+>>    AF_UNIX sock stream latency: 133.7073 microseconds
+>>
+>>    After this patch:
+>>    [root@localhost ~]# lmbench-3.0-a9/bin/x86_64-linux-gnu/lat_unix -P 1
+>>    AF_UNIX sock stream latency: 156.4722 microseconds
+>>
+>> If we set task to a constant cpu, the degradation does not appear.
+>>
+>>    Before this patch:
+>>    [root@localhost ~]# lmbench-3.0-a9/bin/x86_64-linux-gnu/lat_unix -P 1
+>>    AF_UNIX sock stream latency: 17.9296 microseconds
+>>
+>>    After this patch:
+>>    [root@localhost ~]# lmbench-3.0-a9/bin/x86_64-linux-gnu/lat_unix -P 1
+>>    AF_UNIX sock stream latency: 17.7500 microseconds
+>>
+>> We also test it on the aarch64 hi1215 machine with 8 cpu cores.
+>>
+>>    Before this patch:
+>>    [root@localhost ~]# ./lat_unix -P 1
+>>    AF_UNIX sock stream latency: 30.7 microseconds
+>>
+>>    After this patch:
+>>    [root@localhost ~]# ./lat_unix -P 1
+>>    AF_UNIX sock stream latency: 37.5 microseconds
+>>
+>> Accessories included my reproduce config for x86 qemu. Any thoughts?
+> 
+> This fixes a bug, as reported by Daniel Wagner.  So it's probably better
+> to have a stable system instead of a broken one, right?  :)
+> 
+> Daniel can provide more information if needed.
 
-Reported-by: Andreas Dannenberg <dannenberg@ti.com>
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
----
- drivers/spi/spi-ti-qspi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+IIRC, this patch got necessary because  bdf3c006b9a2 ("vmstat: make 
+vmstat_updater deferrable again and shut down on idle") was added to 
+stable. Without it v4.4-rt is not working at all.
 
-diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
-index 3cb65371ae3b..66dcb6128539 100644
---- a/drivers/spi/spi-ti-qspi.c
-+++ b/drivers/spi/spi-ti-qspi.c
-@@ -62,6 +62,7 @@ struct ti_qspi {
- 	u32 dc;
- 
- 	bool mmap_enabled;
-+	int current_cs;
- };
- 
- #define QSPI_PID			(0x0)
-@@ -487,6 +488,7 @@ static void ti_qspi_enable_memory_map(struct spi_device *spi)
- 				   MEM_CS_EN(spi->chip_select));
- 	}
- 	qspi->mmap_enabled = true;
-+	qspi->current_cs = spi->chip_select;
- }
- 
- static void ti_qspi_disable_memory_map(struct spi_device *spi)
-@@ -498,6 +500,7 @@ static void ti_qspi_disable_memory_map(struct spi_device *spi)
- 		regmap_update_bits(qspi->ctrl_base, qspi->ctrl_reg,
- 				   MEM_CS_MASK, 0);
- 	qspi->mmap_enabled = false;
-+	qspi->current_cs = -1;
- }
- 
- static void ti_qspi_setup_mmap_read(struct spi_device *spi, u8 opcode,
-@@ -543,7 +546,7 @@ static int ti_qspi_exec_mem_op(struct spi_mem *mem,
- 
- 	mutex_lock(&qspi->list_lock);
- 
--	if (!qspi->mmap_enabled)
-+	if (!qspi->mmap_enabled || qspi->current_cs != mem->spi->chip_select)
- 		ti_qspi_enable_memory_map(mem->spi);
- 	ti_qspi_setup_mmap_read(mem->spi, op->cmd.opcode, op->data.buswidth,
- 				op->addr.nbytes, op->dummy.nbytes);
-@@ -799,6 +802,7 @@ static int ti_qspi_probe(struct platform_device *pdev)
- 		}
- 	}
- 	qspi->mmap_enabled = false;
-+	qspi->current_cs = -1;
- 
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (!ret)
--- 
-2.24.0
+ > What about when you run your tests on a 4.9 or newer kernel that
+ > already has this integrated?
 
+That said, I was going through all changes in vmstat.c upstream and we 
+backported almost all changes to v4.4 at that point. So if this is a 
+really giving you a performance hit, I suspect you would see it upstream 
+as well.
+
+Thanks,
+Daniel
