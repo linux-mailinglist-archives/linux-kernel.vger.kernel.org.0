@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF24611AF04
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58BB911B09E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:24:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730725AbfLKPKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:10:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58412 "EHLO mail.kernel.org"
+        id S1731087AbfLKPYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:24:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730707AbfLKPKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:10:11 -0500
+        id S1732853AbfLKPYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:24:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB8C0208C3;
-        Wed, 11 Dec 2019 15:10:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C07AD208C3;
+        Wed, 11 Dec 2019 15:24:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077011;
-        bh=CVHkUPIndhn4PNASNpRZonNaGG8cSqrmhz/kpyIiTJc=;
+        s=default; t=1576077870;
+        bh=XBJTvZjbIXOfZw8tC3yi2Zx/CYqWuv5K5CCCecTh0JE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RXS4xjeAwtyFyA29fRUPveBOGSkq2ksAo66QKX4m2hBK9l6i3zMveGyGCXYALdHob
-         EeqoHeLYUSQA3L562t913yrpSg7mSmt//pz5OdO4T8fvMsvKKY7lmRlbnsCpQ0Ixep
-         5QfvAeQahYRmfzEBdC1Kq4II279pdhi/C/TzsGyY=
+        b=akKonOdUL6NzQ6NY8mzXSQDoZnD+FNKgpJr1fpP+yIXOsos8CEBgcwNI/xp7Duyvt
+         blzeD/+4i1Sgbu5Z/xBEtGWdJGO6b3Fd38CTts4QDFyxdy6393bsAOcLwambdiGH+C
+         +8995PKrYx8JpwjjL3WnqykPt/tW1tuOxOkwsM2U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.4 74/92] crypto: user - fix memory leak in crypto_report
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 203/243] ALSA: hda - Add mute led support for HP ProBook 645 G4
 Date:   Wed, 11 Dec 2019 16:06:05 +0100
-Message-Id: <20191211150258.044181599@linuxfoundation.org>
+Message-Id: <20191211150352.889847693@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit ffdde5932042600c6807d46c1550b28b0db6a3bc upstream.
+commit e190de6941db14813032af87873f5550ad5764fe upstream.
 
-In crypto_report, a new skb is created via nlmsg_new(). This skb should
-be released if crypto_report_alg() fails.
+Mic mute led does not work on HP ProBook 645 G4.
+We can use CXT_FIXUP_MUTE_LED_GPIO fixup to support it.
 
-Fixes: a38f7907b926 ("crypto: Add userspace configuration API")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Link: https://lore.kernel.org/r/20191120082035.18937-1-kai.heng.feng@canonical.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/crypto_user_base.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/crypto/crypto_user_base.c
-+++ b/crypto/crypto_user_base.c
-@@ -213,8 +213,10 @@ static int crypto_report(struct sk_buff
- drop_alg:
- 	crypto_mod_put(alg);
- 
--	if (err)
-+	if (err) {
-+		kfree_skb(skb);
- 		return err;
-+	}
- 
- 	return nlmsg_unicast(net->crypto_nlsk, skb, NETLINK_CB(in_skb).portid);
- }
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -923,6 +923,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x837f, "HP ProBook 470 G5", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x103c, 0x8402, "HP ProBook 645 G4", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x8456, "HP Z2 G4 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x8457, "HP Z2 G4 mini", CXT_FIXUP_HP_MIC_NO_PRESENCE),
 
 
