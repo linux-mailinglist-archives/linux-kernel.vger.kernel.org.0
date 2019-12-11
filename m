@@ -2,67 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 674F311A571
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:52:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A6411A579
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:53:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbfLKHwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 02:52:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbfLKHwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 02:52:44 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 161C4214AF;
-        Wed, 11 Dec 2019 07:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576050763;
-        bh=LBIqLK2WI1wJ48nl0OtgepNbLnIiVSjGWVS9d/AMdkI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kIDywd3xBb/97BHqNRljkjz3SraoayzZG068eYJ0XfnRd+u5zPQ3Qx9kR03f1FBcS
-         RySU0MCh3xFryON8XsPQsodbhk2hu+cjerzM7MFxFB9XVJ79/HyBzJp/vvgJmBc7da
-         cyHOUGs9TDUWK18PiYJ641r07a0JxWl8KaVcoWZ4=
-Date:   Wed, 11 Dec 2019 08:52:41 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 103/177] rfkill: allocate static minor
-Message-ID: <20191211075241.GM398293@kroah.com>
-References: <20191210213221.11921-1-sashal@kernel.org>
- <20191210213221.11921-103-sashal@kernel.org>
+        id S1728309AbfLKHxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 02:53:06 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46925 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728169AbfLKHxF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 02:53:05 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z124so10338158pgb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 23:53:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Vq55uCFLXhs3ZCSCodzVz5wONq66uwh2dV8Oy9WTDz8=;
+        b=mDpPrJUIJYVjmkFpHxpy8F+FfeM2Sf0eRg2mKlBjIBRg79fki0bKHRnGHhKDS1OkqD
+         glzMZlBnoEQUisCdLNsAXUMWBVBvMbJ1566H6YnJusL0fXZLIzqPLSFQg02wdS+HDAEo
+         O7+N/WYTenkxyNFM81aueTTgPKkChCyX7vkK7dkrZYXvx1DHBv/8hFWjya/VnacJOBMB
+         YrwDotElYm1xJPjQyWGND4Jxi38L9FP7ZEUaHqMtPTtyt6jFH3nChpHHL9OD71r0muGs
+         n5VIgyKIq8tz5fmJfefzuTgo4TmVRs9Q2e0AxHhAHG4FXgkh9liXoGAZu7CICxQarxcO
+         pqww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Vq55uCFLXhs3ZCSCodzVz5wONq66uwh2dV8Oy9WTDz8=;
+        b=uVSog0vYOEZrEC6E5bHyI7VKc9+R+xBKKWeadXO4+6ak36wmyfDky65nKaOaI002zw
+         ThRid+1Luo/nZKcaWXjavWH1735/xnMPcWykSpryDrnEru86z7lhowSsB/IiA8vnGM+b
+         YGwZsgtCEBQpiLoM8wPUAz+irnR1d+/V6WDw2LSw71N8dnvFNvBENcF7jhYGYIK7SIf9
+         3rxUNshHthiYKjRRxOuvipMD7/WCmqrRkUxAFwb02OqsZuCYuKudo24dS+fHyXvFScMb
+         6/V+DoAbpuw6RlGQCwiTkAPGe9kvxdn1nZpOtrZak9rttyloW/puXbzXlsJmjg/NMtLs
+         Y81g==
+X-Gm-Message-State: APjAAAWVRkEGPd96fEUkyAW4DH040/Ua6vfXCHpyOvdP+UcCaQZCQ8HD
+        yGDJFP6UpB2Ebe1IvE8iBezK1ujYnD0=
+X-Google-Smtp-Source: APXvYqy+EwwCZr87pLcH/OaBsG6YcTrm8FJBCrW1oGk3rxl2DyThWcKGgcSXC0PubcIcgwCKCIJ5Jw==
+X-Received: by 2002:a63:5512:: with SMTP id j18mr2484410pgb.189.1576050784012;
+        Tue, 10 Dec 2019 23:53:04 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id j16sm1689171pfi.165.2019.12.10.23.53.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 23:53:03 -0800 (PST)
+Date:   Tue, 10 Dec 2019 23:53:01 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rakesh Pillai <pillair@codeaurora.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: sc7180: Make MSA memory fixed for wifi
+Message-ID: <20191211075301.GI3143381@builder>
+References: <0101016ed035d185-20f04863-0f38-41b7-b88d-76bc36e4dcf9-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191210213221.11921-103-sashal@kernel.org>
+In-Reply-To: <0101016ed035d185-20f04863-0f38-41b7-b88d-76bc36e4dcf9-000000@us-west-2.amazonses.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 04:31:07PM -0500, Sasha Levin wrote:
-> From: Marcel Holtmann <marcel@holtmann.org>
-> 
-> [ Upstream commit 8670b2b8b029a6650d133486be9d2ace146fd29a ]
-> 
-> udev has a feature of creating /dev/<node> device-nodes if it finds
-> a devnode:<node> modalias. This allows for auto-loading of modules that
-> provide the node. This requires to use a statically allocated minor
-> number for misc character devices.
-> 
-> However, rfkill uses dynamic minor numbers and prevents auto-loading
-> of the module. So allocate the next static misc minor number and use
-> it for rfkill.
-> 
-> Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-> Link: https://lore.kernel.org/r/20191024174042.19851-1-marcel@holtmann.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  include/linux/miscdevice.h | 1 +
->  net/rfkill/core.c          | 9 +++++++--
->  2 files changed, 8 insertions(+), 2 deletions(-)
+On Wed 04 Dec 01:20 PST 2019, Rakesh Pillai wrote:
 
-Not needed here :)
+> The MSA memory is at a fixed offset, which will be
+> a part of reserved memory. Add this flag to indicate
+> that wifi in sc7180 will use a fixed memory for MSA.
+> 
+> Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+> ---
+> This patchet is dependent on the below changes
+> arm64: dts: qcom: sc7180: Add WCN3990 WLAN module device node (https://lore.kernel.org/patchwork/patch/1162434/)
+
+As mentioned for that patch, squash this change into that patch please.
+
+Regards,
+Bjorn
+
+> dt: bindings: add dt entry flag to skip SCM call for msa region (https://patchwork.ozlabs.org/patch/1192725/)
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180-idp.dts | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> index 8a6a760..b2ca143f 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> @@ -250,6 +250,7 @@
+>  
+>  &wifi {
+>  	status = "okay";
+> +	qcom,msa_fixed_perm;
+>  };
+>  
+>  /* PINCTRL - additions to nodes defined in sc7180.dtsi */
+> -- 
+> 2.7.4
+> 
