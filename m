@@ -2,271 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A1E911A5B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 09:15:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D25C411A5B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 09:18:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbfLKIPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 03:15:54 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37750 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728141AbfLKIPx (ORCPT
+        id S1728294AbfLKISV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 03:18:21 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51259 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727298AbfLKISS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 03:15:53 -0500
-Received: by mail-pg1-f194.google.com with SMTP id q127so10400669pga.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 00:15:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YdakCL0bZVEMnpfC8eRQK9vZ26HEglM/xaYHaiS1zJM=;
-        b=CHN1RTJBH3nnK5LFrX45/kr13tXK8lvxSXxTNF6ymxG3Or+h+uJhXLw5HbcTdafh9Q
-         X6BJCG5YTnQm4E5vVxJTnClYhw7L/Jn7R+oVANG+YFHSDtrdxIDXnPagruIFuXr0e755
-         hVWEjFjuAmCz4i/SKj5sugVIIsm/BSgHPzkKG/j9OgonIalH9VxjSwNNfg2166tzM9l9
-         9A4FxdnMcgQFoDVuQpGu6XVuTMP4ZU0DAkRH/ftGEudsHHVl1oE8IH/Qpzn8zB0tRZIf
-         snxcTwlF3qBDYrg3S6r5Y4HKhCy0HfU5yEeqj8tIWgAfdpGq1G82iyqi5C4ldE9Fe0lo
-         xj0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=YdakCL0bZVEMnpfC8eRQK9vZ26HEglM/xaYHaiS1zJM=;
-        b=qzeZVLgKQkWhhjOYZccb/gEJE2sYSEp4tg729XKtDI30YhwL6i6nzeAp7/wnVJ6BF6
-         a4Z8prQ+BXEgfgGppgp3X9ZJfpbZ/8FrNjXTEBWvCU85dq9kTaFWCUV2WEyVqGGZ5b3W
-         DPQRjB3gUgyP4SooHmVeOEBtNAFz/DhJXNXhdhRWzVXJlKoCzV7xtG4Bzb/O1QvB0gt2
-         zZb0oCa87Jvld/JE477MzRZSitOGpUvok6vj3yST5zVxIW6eMUtf+PUi2DCbRW7bLzoy
-         g+xXV0jG9+qhapdJVNg71FToIVEm0lV/5lY3Fw5zKpgV/92jiofZ1GG2Qd9McBIJ5eHK
-         hkLw==
-X-Gm-Message-State: APjAAAVKxofpbrsAnemYi9Zr/2GT4Hy5a54mJeylxN4NgKBODpAVePyf
-        cpOrnyhJdEfhh9fKvTHDGAIGiw==
-X-Google-Smtp-Source: APXvYqynMjx0kdZzHVvQ04aEcahgvUdCFIzWRa1acOWy0X8oB/A7XlwGv0b1SL6O5vSnJ7reVusPLg==
-X-Received: by 2002:aa7:94b0:: with SMTP id a16mr2357275pfl.35.1576052152376;
-        Wed, 11 Dec 2019 00:15:52 -0800 (PST)
-Received: from [10.61.2.175] ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id 200sm1756493pfz.121.2019.12.11.00.15.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 00:15:51 -0800 (PST)
-Subject: Re: [PATCH v5 1/2] powerpc/pseries/iommu: Share the per-cpu TCE page
- with the hypervisor.
-To:     Ram Pai <linuxram@us.ibm.com>
-Cc:     mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
-        benh@kernel.crashing.org, david@gibson.dropbear.id.au,
-        paulus@ozlabs.org, mdroth@linux.vnet.ibm.com, hch@lst.de,
-        andmike@us.ibm.com, sukadev@linux.vnet.ibm.com, mst@redhat.com,
-        ram.n.pai@gmail.com, cai@lca.pw, tglx@linutronix.de,
-        bauerman@linux.ibm.com, linux-kernel@vger.kernel.org,
-        leonardo@linux.ibm.com
-References: <1575681159-30356-1-git-send-email-linuxram@us.ibm.com>
- <1575681159-30356-2-git-send-email-linuxram@us.ibm.com>
- <ed0f048c-bb40-c6c6-887c-ef68c9e411a2@ozlabs.ru>
- <20191210051244.GB5702@oc0525413822.ibm.com>
- <c4b48f55-e4e3-222a-0aa0-9b4783e19584@ozlabs.ru>
- <20191210153542.GB5709@oc0525413822.ibm.com>
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
-Autocrypt: addr=aik@ozlabs.ru; keydata=
- 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
-Message-ID: <90f6019b-d756-7f33-21b0-bb49c1c842da@ozlabs.ru>
-Date:   Wed, 11 Dec 2019 19:15:44 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <20191210153542.GB5709@oc0525413822.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 11 Dec 2019 03:18:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576052297;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=MSCatYr1K7gbKR20Rl2b+FcJa0Soyo5HWbQNxR4Y05o=;
+        b=cO9oaEGlC1JwBZKSko4MG4YY7k2wy2j3HDMHcqvsNj8tBWr4dFvcC0q5eD9nXqzZidbhp0
+        Ox1azZzaYUIyeAx9/B2DYGYdceuH9mWRg1X/W8unYP0mDfUqFBxFxedO4Qni3ZyttMot6q
+        VXrm03hgVKDNJzt9ecLQ57AKyY5VBIQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-232-8paW8KCSOO-xypeXDDW1kw-1; Wed, 11 Dec 2019 03:18:16 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AFEF7800D41;
+        Wed, 11 Dec 2019 08:18:14 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-67.ams2.redhat.com [10.36.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 73B1F5C1B0;
+        Wed, 11 Dec 2019 08:18:11 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id C084D16E2D; Wed, 11 Dec 2019 09:18:10 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     gurchetansingh@chromium.org, Gerd Hoffmann <kraxel@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/2] drm/shmem: add support for per object caching attributes
+Date:   Wed, 11 Dec 2019 09:18:09 +0100
+Message-Id: <20191211081810.20079-2-kraxel@redhat.com>
+In-Reply-To: <20191211081810.20079-1-kraxel@redhat.com>
+References: <20191211081810.20079-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: 8paW8KCSOO-xypeXDDW1kw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add caching field to drm_gem_shmem_object to specify the cachine
+attributes for mappings.  Add helper function to tweak pgprot
+accordingly.  Switch vmap and mmap functions to the new helper.
 
+Set caching to write-combine when creating the object so behavior
+doesn't change by default.  Drivers can override that later if
+needed.
 
-On 11/12/2019 02:35, Ram Pai wrote:
-> On Tue, Dec 10, 2019 at 04:32:10PM +1100, Alexey Kardashevskiy wrote:
->>
->>
->> On 10/12/2019 16:12, Ram Pai wrote:
->>> On Tue, Dec 10, 2019 at 02:07:36PM +1100, Alexey Kardashevskiy wrote:
->>>>
->>>>
->>>> On 07/12/2019 12:12, Ram Pai wrote:
->>>>> H_PUT_TCE_INDIRECT hcall uses a page filled with TCE entries, as one of
->>>>> its parameters.  On secure VMs, hypervisor cannot access the contents of
->>>>> this page since it gets encrypted.  Hence share the page with the
->>>>> hypervisor, and unshare when done.
->>>>
->>>>
->>>> I thought the idea was to use H_PUT_TCE and avoid sharing any extra
->>>> pages. There is small problem that when DDW is enabled,
->>>> FW_FEATURE_MULTITCE is ignored (easy to fix); I also noticed complains
->>>> about the performance on slack but this is caused by initial cleanup of
->>>> the default TCE window (which we do not use anyway) and to battle this
->>>> we can simply reduce its size by adding
->>>
->>> something that takes hardly any time with H_PUT_TCE_INDIRECT,  takes
->>> 13secs per device for H_PUT_TCE approach, during boot. This is with a
->>> 30GB guest. With larger guest, the time will further detoriate.
->>
->>
->> No it will not, I checked. The time is the same for 2GB and 32GB guests-
->> the delay is caused by clearing the small DMA window which is small by
->> the space mapped (1GB) but quite huge in TCEs as it uses 4K pages; and
->> for DDW window + emulated devices the IOMMU page size will be 2M/16M/1G
->> (depends on the system) so the number of TCEs is much smaller.
-> 
-> I cant get your results.  What changes did you make to get it?
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/drm/drm_gem_shmem_helper.h     | 12 ++++++++++++
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 24 +++++++++++++++++++++---
+ 2 files changed, 33 insertions(+), 3 deletions(-)
 
+diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem=
+_helper.h
+index 6748379a0b44..9d6e02c6205f 100644
+--- a/include/drm/drm_gem_shmem_helper.h
++++ b/include/drm/drm_gem_shmem_helper.h
+@@ -17,6 +17,11 @@ struct drm_mode_create_dumb;
+ struct drm_printer;
+ struct sg_table;
+=20
++enum drm_gem_shmem_caching {
++=09DRM_GEM_SHMEM_CACHED =3D 1,
++=09DRM_GEM_SHMEM_WC,
++};
++
+ /**
+  * struct drm_gem_shmem_object - GEM object backed by shmem
+  */
+@@ -83,6 +88,11 @@ struct drm_gem_shmem_object {
+ =09 * The address are un-mapped when the count reaches zero.
+ =09 */
+ =09unsigned int vmap_use_count;
++
++=09/**
++=09 * @caching: caching attributes for mappings.
++=09 */
++=09enum drm_gem_shmem_caching caching;
+ };
+=20
+ #define to_drm_gem_shmem_obj(obj) \
+@@ -130,6 +140,8 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *=
+dev,
+=20
+ struct sg_table *drm_gem_shmem_get_pages_sgt(struct drm_gem_object *obj);
+=20
++pgprot_t drm_gem_shmem_caching(struct drm_gem_shmem_object *shmem, pgprot_=
+t prot);
++
+ /**
+  * DRM_GEM_SHMEM_DRIVER_OPS - Default shmem GEM operations
+  *
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_g=
+em_shmem_helper.c
+index a421a2eed48a..5bb94e130a50 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -76,6 +76,7 @@ struct drm_gem_shmem_object *drm_gem_shmem_create(struct =
+drm_device *dev, size_t
+ =09mutex_init(&shmem->pages_lock);
+ =09mutex_init(&shmem->vmap_lock);
+ =09INIT_LIST_HEAD(&shmem->madv_list);
++=09shmem->caching =3D DRM_GEM_SHMEM_WC;
+=20
+ =09/*
+ =09 * Our buffers are kept pinned, so allocating them
+@@ -256,9 +257,11 @@ static void *drm_gem_shmem_vmap_locked(struct drm_gem_=
+shmem_object *shmem)
+=20
+ =09if (obj->import_attach)
+ =09=09shmem->vaddr =3D dma_buf_vmap(obj->import_attach->dmabuf);
+-=09else
++=09else {
++=09=09pgprot_t prot =3D drm_gem_shmem_caching(shmem, PAGE_KERNEL);
+ =09=09shmem->vaddr =3D vmap(shmem->pages, obj->size >> PAGE_SHIFT,
+-=09=09=09=09    VM_MAP, pgprot_writecombine(PAGE_KERNEL));
++=09=09=09=09    VM_MAP, prot);
++=09}
+=20
+ =09if (!shmem->vaddr) {
+ =09=09DRM_DEBUG_KMS("Failed to vmap pages\n");
+@@ -540,7 +543,8 @@ int drm_gem_shmem_mmap(struct drm_gem_object *obj, stru=
+ct vm_area_struct *vma)
+ =09}
+=20
+ =09vma->vm_flags |=3D VM_MIXEDMAP | VM_DONTEXPAND;
+-=09vma->vm_page_prot =3D pgprot_writecombine(vm_get_page_prot(vma->vm_flag=
+s));
++=09vma->vm_page_prot =3D vm_get_page_prot(vma->vm_flags);
++=09vma->vm_page_prot =3D drm_gem_shmem_caching(shmem, vma->vm_page_prot);
+ =09vma->vm_page_prot =3D pgprot_decrypted(vma->vm_page_prot);
+ =09vma->vm_ops =3D &drm_gem_shmem_vm_ops;
+=20
+@@ -683,3 +687,17 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device =
+*dev,
+ =09return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
++
++pgprot_t drm_gem_shmem_caching(struct drm_gem_shmem_object *shmem, pgprot_=
+t prot)
++{
++=09switch (shmem->caching) {
++=09case DRM_GEM_SHMEM_CACHED:
++=09=09return prot;
++=09case DRM_GEM_SHMEM_WC:
++=09=09return pgprot_writecombine(prot);
++=09default:
++=09=09WARN_ON_ONCE(1);
++=09=09return prot;
++=09}
++}
++EXPORT_SYMBOL_GPL(drm_gem_shmem_caching);
+--=20
+2.18.1
 
-Get what? I passed "-m 2G" and "-m 32G", got the same time - 13s spent
-in clearing the default window and the huge window took a fraction of a
-second to create and map.
-
-
->>>>
->>>> -global
->>>> spapr-pci-host-bridge.dma_win_size=0x4000000
->>>
->>> This option, speeds it up tremendously.  But than should this option be
->>> enabled in qemu by default?  only for secure VMs? for both VMs?
->>
->>
->> As discussed in slack, by default we do not need to clear the entire TCE
->> table and we only have to map swiotlb buffer using the small window. It
->> is a guest kernel change only. Thanks,
-> 
-> Can you tell me what code you are talking about here.  Where is the TCE
-> table getting cleared? What code needs to be changed to not clear it?
-
-
-pci_dma_bus_setup_pSeriesLP()
-	iommu_init_table()
-		iommu_table_clear()
-			for () tbl->it_ops->get()
-
-We do not really need to clear it there, we only need it for VFIO with
-IOMMU SPAPR TCE v1 which reuses these tables but there are
-iommu_take_ownership/iommu_release_ownership to clear these tables. I'll
-send a patch for this.
-
-
-> Is the code in tce_buildmulti_pSeriesLP(), the one that does the clear
-> aswell?
-
-
-This one does not need to clear TCEs as this creates a window of known
-size and maps it all.
-
-Well, actually, it only maps actual guest RAM, if there are gaps in RAM,
-then TCEs for the gaps will have what hypervisor had there (which is
-zeroes, qemu/kvm clears it anyway).
-
-
-> But before I close, you have not told me clearly, what is the problem
-> with;  'share the page, make the H_PUT_INDIRECT_TCE hcall, unshare the page'.
-
-Between share and unshare you have a (tiny) window of opportunity to
-attack the guest. No, I do not know how exactly.
-
-For example, the hypervisor does a lot of PHB+PCI hotplug-unplug with
-64bit devices - each time this will create a huge window which will
-share/unshare the same page.  No, I do not know how exactly how this can
-be exploited either, we cannot rely of what you or myself know today. My
-point is that we should not be sharing pages at all unless we really
-really have to, and this does not seem to be the case.
-
-But since this seems to an acceptable compromise anyway,
-
-Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-
-
-
-
-
-> Remember this is the same page that is earmarked for doing
-> H_PUT_INDIRECT_TCE, not by my patch, but its already earmarked by the
-> existing code. So it not some random buffer that is picked. Second 
-> this page is temporarily shared and unshared, it does not stay shared
-> for life.  It does not slow the boot. it does not need any
-> special command line options on the qemu.
->> Shared pages technology was put in place, exactly for the purpose of
-> sharing data with the hypervisor.  We are using this technology exactly
-> for that purpose.  And finally I agreed with your concern of having
-> shared pages staying around.  Hence i addressed that concern, by
-> unsharing the page.  At this point, I fail to understand your concern.
-
-
-
-
--- 
-Alexey
