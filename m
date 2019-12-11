@@ -2,164 +2,453 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F04011B647
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:00:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CC2311B827
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:13:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732897AbfLKP7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:59:46 -0500
-Received: from mx3.freesources.org ([195.34.172.217]:50360 "EHLO
-        mx3.freesources.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731566AbfLKP7k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:59:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=freesources.org; s=20160526; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ZwVE5juKkzQjBKLyl8yXtzZwBbAcQhSDRQj4XVyVfGc=; b=CTZByf3hS2dWOQCVX5WFVmY4Lx
-        aUpNx+ksxgcm1yn/GQhZ8QdwPaPxpeUfnRdAvR4dt0k76hxJ5Zxu8EWKNCdcCC8NISLkYmbeyLeV+
-        eL01w9h2Oc8vSL+eL9Ddi/kTJLjQNOx2GJY6bUyP5UDxRHr4nkeKSXl4N+RjnsH2xZZg=;
-Received: from anon-43-116.vpn.ipredator.se ([46.246.43.116])
-        by mx3.freesources.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <jonas@freesources.org>)
-        id 1if4Oi-0004tF-LI; Wed, 11 Dec 2019 15:59:32 +0000
-Subject: Re: [PATCH 0/2] PM: Add a switch for disabling/enabling sync() before
- suspend
-From:   Jonas Meurer <jonas@freesources.org>
-To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Tim Dittler <tim.dittler@systemli.org>,
-        Yannik Sembritzki <yannik@sembritzki.me>
-References: <1ee5b9ef-f30e-3fde-2325-ba516a96ced5@freesources.org>
-Autocrypt: addr=jonas@freesources.org; prefer-encrypt=mutual; keydata=
- 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
- 2SCIHpzHfm/mpRL2
-Message-ID: <f94b4603-f438-b516-af53-c919f392ae3c@freesources.org>
-Date:   Wed, 11 Dec 2019 16:59:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1730928AbfLKQMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:12:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56644 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730482AbfLKPIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:08:55 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1870222C4;
+        Wed, 11 Dec 2019 15:08:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576076934;
+        bh=/FjlNjSUJAfBIWHfskICqHVbbfG78y8PF1JsD8ipeis=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jr6qiitdHt8hGzMqFH2T3ph46yfUS305QLjt+1DCFyzlhQwZCpvVxcLZdNeCVTPMz
+         rYxH5EI2UzJxbG5wK3jcCQzqNVuOlnYnsl44hDbFdPd/DqXbi1tsqaThHLXfBkMvWK
+         rso71OsY5WnqM7Ux/dfdCbTaUmnY4zsXow8A4vjE=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 5.4 00/92] 5.4.3-stable review
+Date:   Wed, 11 Dec 2019 16:04:51 +0100
+Message-Id: <20191211150221.977775294@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <1ee5b9ef-f30e-3fde-2325-ba516a96ced5@freesources.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-5.4.3-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-5.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 5.4.3-rc1
+X-KernelTest-Deadline: 2019-12-13T15:03+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This is the start of the stable review cycle for the 5.4.3 release.
+There are 92 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Jonas Meurer:
-> Hello,
-> 
-> Introduce a new run-time sysfs switch to disable/enable sync() before
-> system suspend. This is useful to avoid races and deadlocks if block
-> devices have been suspended before, e.g. by 'cryptsetup luksSuspend'.
-> 
-> The second patch changes the behaviour of build-time switch
-> 'CONFIG_SUSPEND_SKIP_SYNC' accordingly, using the build-time switch value
-> as default for our new run-time switch '/sys/power/sync_on_suspend'.
-> 
-> Jonas Meurer (2):
->   PM: Add a switch for disabling/enabling sync() before suspend
->   PM: CONFIG_SUSPEND_SKIP_SYNC sets default for '/sys/power/sync_on_suspend'
-> 
->  Documentation/ABI/testing/sysfs-power | 15 +++++++++++++++
->  include/linux/suspend.h               |  2 ++
->  kernel/power/Kconfig                  |  5 ++++-
->  kernel/power/main.c                   | 33 +++++++++++++++++++++++++++++++++
->  kernel/power/suspend.c                |  2 +-
->  5 files changed, 55 insertions(+), 2 deletions(-)
+Responses should be made by Fri, 13 Dec 2019 14:56:06 +0000.
+Anything received after that time might be too late.
 
-Any chance to get a review/comment on this patch? What's the next
-logical steps to get it merged?
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.3-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+and the diffstat can be found below.
 
-Cheers
- jonas
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 5.4.3-rc1
+
+Jann Horn <jannh@google.com>
+    binder: Handle start==NULL in binder_update_page_range()
+
+Jann Horn <jannh@google.com>
+    binder: Prevent repeated use of ->mmap() via NULL mapping
+
+Jann Horn <jannh@google.com>
+    binder: Fix race between mmap() and binder_alloc_print_pages()
+
+Je Yen Tam <je.yen.tam@ni.com>
+    Revert "serial/8250: Add support for NI-Serial PXI/PXIe+485 devices"
+
+Nicolas Pitre <nico@fluxnic.net>
+    vcs: prevent write access to vcsu devices
+
+Wei Wang <wvw@google.com>
+    thermal: Fix deadlock in thermal thermal_zone_device_check
+
+Jan Kara <jack@suse.cz>
+    iomap: Fix pipe page leakage during splicing
+
+Jan Kara <jack@suse.cz>
+    bdev: Refresh bdev size for disks without partitioning
+
+Jan Kara <jack@suse.cz>
+    bdev: Factor out bdev revalidation into a common helper
+
+Marcel Holtmann <marcel@holtmann.org>
+    rfkill: allocate static minor
+
+Viresh Kumar <viresh.kumar@linaro.org>
+    RDMA/qib: Validate ->show()/store() callbacks before calling them
+
+Johan Hovold <johan@kernel.org>
+    can: ucan: fix non-atomic allocation in completion handler
+
+Gregory CLEMENT <gregory.clement@bootlin.com>
+    spi: Fix NULL pointer when setting SPI_CS_HIGH for GPIO CS
+
+Gregory CLEMENT <gregory.clement@bootlin.com>
+    spi: Fix SPI_CS_HIGH setting when using native and GPIO CS
+
+Gregory CLEMENT <gregory.clement@bootlin.com>
+    spi: atmel: Fix CS high support
+
+Patrice Chotard <patrice.chotard@st.com>
+    spi: stm32-qspi: Fix kernel oops when unbinding driver
+
+Frieder Schrempf <frieder.schrempf@kontron.de>
+    spi: spi-fsl-qspi: Clear TDH bits in FLSHCR register
+
+Navid Emamdoost <navid.emamdoost@gmail.com>
+    crypto: user - fix memory leak in crypto_reportstat
+
+Navid Emamdoost <navid.emamdoost@gmail.com>
+    crypto: user - fix memory leak in crypto_report
+
+Ard Biesheuvel <ard.biesheuvel@linaro.org>
+    crypto: ecdh - fix big endian bug in ECC library
+
+Mark Salter <msalter@redhat.com>
+    crypto: ccp - fix uninitialized list head
+
+Ard Biesheuvel <ard.biesheuvel@linaro.org>
+    crypto: geode-aes - switch to skcipher for cbc(aes) fallback
+
+Ayush Sawal <ayush.sawal@chelsio.com>
+    crypto: af_alg - cast ki_complete ternary op to int
+
+Tudor Ambarus <tudor.ambarus@microchip.com>
+    crypto: atmel-aes - Fix IV handling when req->nbytes < ivsize
+
+Christian Lamparter <chunkeey@gmail.com>
+    crypto: crypto4xx - fix double-free in crypto4xx_destroy_sdr
+
+Sean Christopherson <sean.j.christopherson@intel.com>
+    KVM: x86: Grab KVM's srcu lock when setting nested state
+
+Sean Christopherson <sean.j.christopherson@intel.com>
+    KVM: x86: Remove a spurious export of a static function
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: x86: fix presentation of TSX feature in ARCH_CAPABILITIES
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: x86: do not modify masked bits of shared MSRs
+
+Zenghui Yu <yuzenghui@huawei.com>
+    KVM: arm/arm64: vgic: Don't rely on the wrong pending table
+
+Sean Christopherson <sean.j.christopherson@intel.com>
+    KVM: nVMX: Always write vmcs02.GUEST_CR3 during nested VM-Enter
+
+Greg Kurz <groug@kaod.org>
+    KVM: PPC: Book3S HV: XIVE: Set kvm->arch.xive when VPs are allocated
+
+Greg Kurz <groug@kaod.org>
+    KVM: PPC: Book3S HV: XIVE: Fix potential page leak on error path
+
+Greg Kurz <groug@kaod.org>
+    KVM: PPC: Book3S HV: XIVE: Free previous EQ page when setting up a new one
+
+Marek Szyprowski <m.szyprowski@samsung.com>
+    arm64: dts: exynos: Revert "Remove unneeded address space mapping for soc node"
+
+Catalin Marinas <catalin.marinas@arm.com>
+    arm64: Validate tagged addresses in access_ok() called from kernel threads
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    drm/i810: Prevent underflow in ioctl
+
+Sean Paul <seanpaul@chromium.org>
+    drm: damage_helper: Fix race checking plane->state->fb
+
+Johan Hovold <johan@kernel.org>
+    drm/msm: fix memleak on release
+
+Jan Kara <jack@suse.cz>
+    jbd2: Fix possible overflow in jbd2_log_space_left()
+
+Tejun Heo <tj@kernel.org>
+    kernfs: fix ino wrap-around detection
+
+J. Bruce Fields <bfields@redhat.com>
+    nfsd: restore NFSv3 ACL support
+
+Trond Myklebust <trondmy@gmail.com>
+    nfsd: Ensure CLONE persists data and metadata changes to the target file
+
+Jouni Hogander <jouni.hogander@unikie.com>
+    can: slcan: Fix use-after-free Read in slcan_open
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    tty: vt: keyboard: reject invalid keycodes
+
+Pavel Shilovsky <pshilov@microsoft.com>
+    CIFS: Fix SMB2 oplock break processing
+
+Pavel Shilovsky <pshilov@microsoft.com>
+    CIFS: Fix NULL-pointer dereference in smb2_push_mandatory_locks
+
+Kai-Heng Feng <kai.heng.feng@canonical.com>
+    x86/PCI: Avoid AMD FCH XHCI USB PME# from D0 defect
+
+Joerg Roedel <jroedel@suse.de>
+    x86/mm/32: Sync only to VMALLOC_END in vmalloc_sync_all()
+
+Sean Young <sean@mess.org>
+    media: rc: mark input device as pointing stick
+
+Navid Emamdoost <navid.emamdoost@gmail.com>
+    Input: Fix memory leak in psxpad_spi_probe
+
+Mike Leach <mike.leach@linaro.org>
+    coresight: etm4x: Fix input validation for sysfs.
+
+Hans de Goede <hdegoede@redhat.com>
+    Input: goodix - add upside-down quirk for Teclast X89 tablet
+
+Hans Verkuil <hverkuil-cisco@xs4all.nl>
+    Input: synaptics-rmi4 - don't increment rmiaddr for SMBus transfers
+
+Lucas Stach <l.stach@pengutronix.de>
+    Input: synaptics-rmi4 - re-enable IRQs in f34v7_do_reflash
+
+Hans Verkuil <hverkuil-cisco@xs4all.nl>
+    Input: synaptics - switch another X1 Carbon 6 to RMI/SMbus
+
+Bibby Hsieh <bibby.hsieh@mediatek.com>
+    soc: mediatek: cmdq: fixup wrong input order of write api
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hda: Modify stream stripe mask only when needed
+
+Kai-Heng Feng <kai.heng.feng@canonical.com>
+    ALSA: hda - Add mute led support for HP ProBook 645 G4
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: oss: Avoid potential buffer overflows
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hda/realtek - Fix inverted bass GPIO pin on Acer 8951G
+
+Kailang Yang <kailang@realtek.com>
+    ALSA: hda/realtek - Dell headphone has noise on unmute for ALC236
+
+Hui Wang <hui.wang@canonical.com>
+    ALSA: hda/realtek - Enable the headset-mic on a Xiaomi's laptop
+
+Jian-Hong Pan <jian-hong@endlessm.com>
+    ALSA: hda/realtek - Enable internal speaker of ASUS UX431FLC
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    SUNRPC: Avoid RPC delays when exiting suspend
+
+Jens Axboe <axboe@kernel.dk>
+    io_uring: ensure req->submit is copied when req is deferred
+
+Jens Axboe <axboe@kernel.dk>
+    io_uring: fix missing kmap() declaration on powerpc
+
+Miklos Szeredi <mszeredi@redhat.com>
+    fuse: verify attributes
+
+Miklos Szeredi <mszeredi@redhat.com>
+    fuse: verify write return
+
+Miklos Szeredi <mszeredi@redhat.com>
+    fuse: verify nlink
+
+Miklos Szeredi <mszeredi@redhat.com>
+    fuse: fix leak of fuse_io_priv
+
+Jens Axboe <axboe@kernel.dk>
+    io_uring: transform send/recvmsg() -ERESTARTSYS to -EINTR
+
+Pavel Begunkov <asml.silence@gmail.com>
+    io_uring: fix dead-hung for non-iter fixed rw
+
+Ulf Hansson <ulf.hansson@linaro.org>
+    mwifiex: Re-work support for SDIO HW reset
+
+Chuhong Yuan <hslester96@gmail.com>
+    serial: ifx6x60: add missed pm_runtime_disable
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    serial: 8250_dw: Avoid double error messaging when IRQ absent
+
+Fabrice Gasnier <fabrice.gasnier@st.com>
+    serial: stm32: fix clearing interrupt error flags
+
+Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+    serial: serial_core: Perform NULL checks for break_ctl ops
+
+Vincent Whitchurch <vincent.whitchurch@axis.com>
+    serial: pl011: Fix DMA ->flush_buffer()
+
+Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+    tty: serial: msm_serial: Fix flow control
+
+Peng Fan <peng.fan@nxp.com>
+    tty: serial: fsl_lpuart: use the sg count from dma_map_sg
+
+Frank Wunderlich <frank-w@public-files.de>
+    serial: 8250-mtk: Use platform_get_irq_optional() for optional irq
+
+Michał Mirosław <mirq-linux@rere.qmqm.pl>
+    usb: gadget: u_serial: add missing port entry locking
+
+Paul Burton <paulburton@kernel.org>
+    staging/octeon: Use stubs for MIPS && !CAVIUM_OCTEON_SOC
+
+Jon Hunter <jonathanh@nvidia.com>
+    mailbox: tegra: Fix superfluous IRQ error message
+
+Dmitry Safonov <0x7f454c46@gmail.com>
+    time: Zero the upper 32-bits in __kernel_timespec on 32-bit
+
+Arnd Bergmann <arnd@arndb.de>
+    lp: fix sparc64 LPSETTIMEOUT ioctl
+
+Tuowen Zhao <ztuowen@gmail.com>
+    sparc64: implement ioremap_uc
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf scripts python: exported-sql-viewer.py: Fix use of TRUE with SQLite
+
+Jon Hunter <jonathanh@nvidia.com>
+    arm64: tegra: Fix 'active-low' warning for Jetson Xavier regulator
+
+Jon Hunter <jonathanh@nvidia.com>
+    arm64: tegra: Fix 'active-low' warning for Jetson TX1 regulator
+
+Navid Emamdoost <navid.emamdoost@gmail.com>
+    rsi: release skb if rsi_prepare_beacon fails
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |   6 +-
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |   6 +-
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   3 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   2 +-
+ arch/arm64/include/asm/uaccess.h                   |   7 +-
+ arch/powerpc/kvm/book3s_xive.c                     |  11 +-
+ arch/powerpc/kvm/book3s_xive_native.c              |  46 ++--
+ arch/sparc/include/asm/io_64.h                     |   1 +
+ arch/x86/kvm/vmx/nested.c                          |  10 +
+ arch/x86/kvm/vmx/vmx.c                             |  10 +-
+ arch/x86/kvm/x86.c                                 |  17 +-
+ arch/x86/mm/fault.c                                |   2 +-
+ arch/x86/pci/fixup.c                               |  11 +
+ crypto/af_alg.c                                    |   2 +-
+ crypto/crypto_user_base.c                          |   4 +-
+ crypto/crypto_user_stat.c                          |   4 +-
+ crypto/ecc.c                                       |   3 +-
+ drivers/android/binder_alloc.c                     |  41 +--
+ drivers/char/lp.c                                  |   4 +
+ drivers/crypto/amcc/crypto4xx_core.c               |   6 +-
+ drivers/crypto/atmel-aes.c                         |  53 ++--
+ drivers/crypto/ccp/ccp-dmaengine.c                 |   1 +
+ drivers/crypto/geode-aes.c                         |  57 ++--
+ drivers/crypto/geode-aes.h                         |   2 +-
+ drivers/gpu/drm/drm_damage_helper.c                |   8 +-
+ drivers/gpu/drm/i810/i810_dma.c                    |   4 +-
+ drivers/gpu/drm/msm/msm_debugfs.c                  |   6 +-
+ .../hwtracing/coresight/coresight-etm4x-sysfs.c    |  21 +-
+ drivers/infiniband/hw/qib/qib_sysfs.c              |   6 +
+ drivers/input/joystick/psxpad-spi.c                |   2 +-
+ drivers/input/mouse/synaptics.c                    |   1 +
+ drivers/input/rmi4/rmi_f34v7.c                     |   3 +
+ drivers/input/rmi4/rmi_smbus.c                     |   2 -
+ drivers/input/touchscreen/goodix.c                 |   9 +
+ drivers/mailbox/tegra-hsp.c                        |   4 +-
+ drivers/media/rc/rc-main.c                         |   1 +
+ drivers/net/can/slcan.c                            |   1 +
+ drivers/net/can/usb/ucan.c                         |   2 +-
+ drivers/net/wireless/marvell/mwifiex/main.c        |   5 +-
+ drivers/net/wireless/marvell/mwifiex/main.h        |   1 +
+ drivers/net/wireless/marvell/mwifiex/sdio.c        |  33 ++-
+ drivers/net/wireless/rsi/rsi_91x_mgmt.c            |   1 +
+ drivers/soc/mediatek/mtk-cmdq-helper.c             |   2 +-
+ drivers/spi/spi-atmel.c                            |   6 +-
+ drivers/spi/spi-fsl-qspi.c                         |  38 ++-
+ drivers/spi/spi-stm32-qspi.c                       |   3 +-
+ drivers/spi/spi.c                                  |  19 +-
+ drivers/staging/octeon/octeon-ethernet.h           |   2 +-
+ drivers/staging/octeon/octeon-stubs.h              |   5 +-
+ drivers/thermal/thermal_core.c                     |   4 +-
+ drivers/tty/serial/8250/8250_dw.c                  |   8 +-
+ drivers/tty/serial/8250/8250_mtk.c                 |   2 +-
+ drivers/tty/serial/8250/8250_pci.c                 | 292 +--------------------
+ drivers/tty/serial/amba-pl011.c                    |   6 +-
+ drivers/tty/serial/fsl_lpuart.c                    |   4 +-
+ drivers/tty/serial/ifx6x60.c                       |   3 +
+ drivers/tty/serial/msm_serial.c                    |   6 +-
+ drivers/tty/serial/serial_core.c                   |   2 +-
+ drivers/tty/serial/stm32-usart.c                   |   6 +-
+ drivers/tty/vt/keyboard.c                          |   2 +-
+ drivers/tty/vt/vc_screen.c                         |   3 +
+ drivers/usb/gadget/function/u_serial.c             |   2 +
+ fs/block_dev.c                                     |  37 +--
+ fs/cifs/file.c                                     |   7 +-
+ fs/cifs/smb2misc.c                                 |   7 +-
+ fs/fuse/dir.c                                      |  25 +-
+ fs/fuse/file.c                                     |   6 +-
+ fs/fuse/fuse_i.h                                   |   2 +
+ fs/fuse/readdir.c                                  |   2 +-
+ fs/io_uring.c                                      |  27 +-
+ fs/iomap/direct-io.c                               |   9 +-
+ fs/kernfs/dir.c                                    |   5 +-
+ fs/nfsd/nfs4proc.c                                 |   3 +-
+ fs/nfsd/nfssvc.c                                   |   3 +-
+ fs/nfsd/vfs.c                                      |   8 +-
+ fs/nfsd/vfs.h                                      |   2 +-
+ include/linux/jbd2.h                               |   4 +-
+ include/linux/kernfs.h                             |   1 +
+ include/linux/miscdevice.h                         |   1 +
+ include/sound/hdaudio.h                            |   1 +
+ kernel/time/time.c                                 |   3 +-
+ net/rfkill/core.c                                  |   9 +-
+ net/sunrpc/sched.c                                 |   2 +-
+ sound/core/oss/linear.c                            |   2 +
+ sound/core/oss/mulaw.c                             |   2 +
+ sound/core/oss/route.c                             |   2 +
+ sound/hda/hdac_stream.c                            |  19 +-
+ sound/pci/hda/patch_conexant.c                     |   1 +
+ sound/pci/hda/patch_hdmi.c                         |   5 +
+ sound/pci/hda/patch_realtek.c                      |  35 +--
+ tools/perf/scripts/python/exported-sql-viewer.py   |  10 +-
+ virt/kvm/arm/vgic/vgic-v3.c                        |   6 +-
+ 93 files changed, 523 insertions(+), 561 deletions(-)
+
 
