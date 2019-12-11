@@ -2,499 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 499B711BD59
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 20:46:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 906CB11BD7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 20:51:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbfLKTqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 14:46:48 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:28904 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728690AbfLKTqn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 14:46:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576093600;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=3qY336YVhOisKsBhjzpuV+5gUAxhMyqDZ4hKcxoTLL0=;
-        b=E8/JRcd7xq3jfRPKHydCfBSTziHvmhFng0tAxXUHe+4hPojOtT2gwS0V3ChQUEhlQkhk59
-        tztJu6xXpZGDE/NchJ76NaYbxPrn9z9Ni05HHvwwZDq5q6UGV5ZfjNH6PrvDACHQ8HW/PF
-        y7vYaQdncuKToZnsm5P97eUg6xMMAeY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-85-W71ovQ7RPBCGghd1FlsSUA-1; Wed, 11 Dec 2019 14:46:37 -0500
-X-MC-Unique: W71ovQ7RPBCGghd1FlsSUA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C524D101355C;
-        Wed, 11 Dec 2019 19:46:35 +0000 (UTC)
-Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C9995C1C3;
-        Wed, 11 Dec 2019 19:46:32 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v2] hugetlbfs: Disable softIRQ when taking hugetlb_lock
-Date:   Wed, 11 Dec 2019 14:46:15 -0500
-Message-Id: <20191211194615.18502-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+        id S1726953AbfLKTvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 14:51:16 -0500
+Received: from mout.web.de ([212.227.17.12]:49595 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbfLKTvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 14:51:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1576093853;
+        bh=hzgISNNaUu//e7yvJjxs5kVmRlCQlucX6OJJUnlXLbI=;
+        h=X-UI-Sender-Class:In-Reply-To:References:Date:From:To:Cc:Subject;
+        b=NyjiD/fAJzOBIDkRO65YpYt/yG5Wc6IIz2Ymp4oKyupisKqQncDsYI8q33LgmEOzS
+         d/u1b4THWqULimwscB1qlThg6qJNrlDSNzLjQAHXIBq7w6QXC3zwOGdf3EoJZROvrU
+         nW3LzuK2BkvasXqXsL7cPMLgW0WNQI7jWEmhI54g=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from auth1-smtp.messagingengine.com ([66.111.4.227]) by smtp.web.de
+ (mrweb101 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 0LyUsk-1hcuPS2cII-015rca; Wed, 11 Dec 2019 20:50:52 +0100
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 9C391221C2;
+        Wed, 11 Dec 2019 14:50:50 -0500 (EST)
+Received: from imap5 ([10.202.2.55])
+  by compute3.internal (MEProxy); Wed, 11 Dec 2019 14:50:50 -0500
+X-ME-Sender: <xms:mkjxXW3-UJhzF4z4diV9KCAtAaql1zZhqNm1TYLJIf-bGwDafKARig>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudelhedguddvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvufgtsehttdertderreejnecuhfhrohhmpedfofgr
+    lhhtvgcuufhkrghruhhpkhgvfdcuoehmrghlthgvshhkrghruhhpkhgvseifvggsrdguvg
+    eqnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrghlthgvshhkrghruhhpkhgvodhmvghs
+    mhhtphgruhhthhhpvghrshhonhgrlhhithihqddutddujedtfedvleeiqdduuddvgedvke
+    eiledqmhgrlhhtvghskhgrrhhuphhkvgeppeifvggsrdguvgesfhgrshhtmhgrihhlrdhf
+    mhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:mkjxXdU3s1KDjXcxB_de3Ihd5AozaGgM0QFVvw8hwhEMpFiYmno_XQ>
+    <xmx:mkjxXZ4Qfyr-TQ8qjne1d4xt4Ax2YGAOPc3qFVxTY5FRv3zFxbIchA>
+    <xmx:mkjxXcIQr6XJTvetsdXLXAjIZKUVxTwBUbYAzbfNdIqMvNVqVZhTKQ>
+    <xmx:mkjxXRH3IQGdkGwpQo62MQs4YelCUpxjWGq8mhQvHE_CbKg_OLnZyw>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 1B35C5C009B; Wed, 11 Dec 2019 14:50:50 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-679-g1f7ccac-fmstable-20191210v1
+Mime-Version: 1.0
+Message-Id: <5c4f61c5-2b76-448e-9c64-99912f1437db@www.fastmail.com>
+In-Reply-To: <20191211134446.GK2810@hirez.programming.kicks-ass.net>
+References: <20191204235238.10764-1-malteskarupke@web.de>
+ <20191206153129.GI2844@hirez.programming.kicks-ass.net>
+ <20191206173705.GE2871@hirez.programming.kicks-ass.net>
+ <81f9229b-76f8-495c-97b5-12bffee06b37@www.fastmail.com>
+ <20191211134446.GK2810@hirez.programming.kicks-ass.net>
+Date:   Wed, 11 Dec 2019 14:48:12 -0500
+From:   "Malte Skarupke" <malteskarupke@web.de>
+To:     "Peter Zijlstra" <peterz@infradead.org>
+Cc:     "Thomas Gleixner" <tglx@linutronix.de>, mingo@redhat.com,
+        dvhart@infradead.org, linux-kernel@vger.kernel.org,
+        malteskarupke@fastmail.fm
+Subject: =?UTF-8?Q?Re:_[PATCH]_futex:_Support_smaller_futexes_of_one_byte_or_two_?=
+ =?UTF-8?Q?byte_size.?=
+Content-Type: text/plain
+X-Provags-ID: V03:K1:rdh92avsENXvBU6gqcUlNTLTJGz6SIKRqSdHGm3nxdadPOhBwWM
+ ixMYFKWjMPp2PO+iY2IYNqU6494GIp2zKFfD2Bm/1+NIGLjqXOiIjNR2o52zaG4mna0B2za
+ x8AJQ7zDo7Y4JBAUM+UBif+aqrdVSJEP8+vf60dssb3z08RVKp02w60InKF3HN1lEw82fdk
+ vtLqOzATYfC6MwTr6yMpw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:lEjh+1KmKvo=:3tnQKxEOBOZ3IPUQEFc2vA
+ 6txvPNBBRWRNVuCKXr1XneuSDt+moET3gOmjYRjich8okYffQiwWQ4ANPGp5ITL8wlPIVLMgT
+ B0VQhTmaSUBHRoUZNBpAPaX7tdNTCc6uxsktBpU2PXGh3UwAOBdGhHbM0FlHrpoelB165kTh8
+ AYiAIaWYwyQnEa/bjKlW2peyu8IlQSt2w1JtQz9jVcVXF21aPz4UPQvnWjoOE+Cj2Wi/G9jma
+ wuW2YpGu38KJ0mqvC12m2Pq43veNnDkMXZ42XrUolUWILHRA1NYCKZufTT9OVJy20ANrGwXyU
+ HyQO2HPUVUeTHJAL4E6UHNI+mkPG6Dlbb0LGBv28nEVOXG2GAE4JKGs0Yx962ooRv5pyiWb24
+ BC7fXzg1GeHGnCPV2sTlZpOPxdc+KFl0IRhFPDPKIu9l6wth0qoHJbHS+yh87w6fm3Xrkrpxo
+ rz3RaCpdmO9B4Z/PPi0jNy0AxEwhIGPFCXhOwqP+7T2HC4xdhjByUbKOEJwDY+menYB90fsWY
+ QuK8UKIoJvvoscgYVwdQEtlS9JcSrf8nYrjSaB43QMDMgx/cVZUIjGS18k5JKfVDX8Hd+QUJF
+ Wdl91daAoLTfVAR2cW1hcfxbBpvAH2fNbOYTw+F0UyEf2pZi22SJEPSl+uE2vOBYpvdrKmHTf
+ WzWAWxb8yzxe9cPA1KHGRa9yXF4PXI3Gp02MPPuBt5oe4ny9B0hU/6wtQdDCd75uuy0PxpGnu
+ U+pAvPLD0L1vLx65TycyS9rTCpXTaHEz3lBmeMBODX0ZRkhtZWQUoXL3Kyp6Ogtd6C1AyOrv5
+ j0J1fAFNADs1Np0eHlzINss88lH3pRabQGxdBpEy3y0D9FBH53N2ErLK6vX4RBveM+sbE/Rp7
+ 5fblAbQpJpYNxkIwkKZDAT214N9Zs2spbr5XyPsBDlo9IBcBQ+xdG32sDrB5i2RokRSk554s0
+ JUJqg4r2yCij9JByOuLhcxD1ZNCNDZSiwswo69kucMh76ls/Jz/aVSbBf8CFx89jb4S5H1T46
+ 9XJF+dFGVJ2p7m9adEoit5yAgsec1p+sHxYI8xJTN+FjqD1I+7E7HRe6r9tano1DHqmvNlhMk
+ GwhxEWF7wLGFjXYGSm0ZxutMSipVY4J5o4BR1KmFv6gNkBDAPBBytnUKUDJY6pyC1mhkgSnLE
+ VUlGjCZLZfrVyjwFWZUyHAjqIOmN40p5aJZDUPtKBJ9uwlwc5Fxt6lpMcE5ugkBaL8urFniXr
+ kHP08hr9LV1Wl8ei9AFSbZJsWZGhMI1v1SJIu36pTOP9Sqs7IuIGJOkBjJ7k=
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following lockdep splat was observed when a certain hugetlbfs test
-was run:
 
-[  612.388273] ================================
-[  612.411273] WARNING: inconsistent lock state
-[  612.432273] 4.18.0-159.el8.x86_64+debug #1 Tainted: G        W --------- -  -
-[  612.469273] --------------------------------
-[  612.489273] inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-[  612.517273] swapper/30/0 [HC0[0]:SC1[1]:HE1:SE0] takes:
-[  612.541273] ffffffff9acdc038 (hugetlb_lock){+.?.}, at: free_huge_page+0x36f/0xaa0
-[  612.576273] {SOFTIRQ-ON-W} state was registered at:
-[  612.598273]   lock_acquire+0x14f/0x3b0
-[  612.616273]   _raw_spin_lock+0x30/0x70
-[  612.634273]   __nr_hugepages_store_common+0x11b/0xb30
-[  612.657273]   hugetlb_sysctl_handler_common+0x209/0x2d0
-[  612.681273]   proc_sys_call_handler+0x37f/0x450
-[  612.703273]   vfs_write+0x157/0x460
-[  612.719273]   ksys_write+0xb8/0x170
-[  612.736273]   do_syscall_64+0xa5/0x4d0
-[  612.753273]   entry_SYSCALL_64_after_hwframe+0x6a/0xdf
-[  612.777273] irq event stamp: 691296
-[  612.794273] hardirqs last  enabled at (691296): [<ffffffff99bb034b>] _raw_spin_unlock_irqrestore+0x4b/0x60
-[  612.839273] hardirqs last disabled at (691295): [<ffffffff99bb0ad2>] _raw_spin_lock_irqsave+0x22/0x81
-[  612.882273] softirqs last  enabled at (691284): [<ffffffff97ff0c63>] irq_enter+0xc3/0xe0
-[  612.922273] softirqs last disabled at (691285): [<ffffffff97ff0ebe>] irq_exit+0x23e/0x2b0
-[  612.962273]
-[  612.962273] other info that might help us debug this:
-[  612.993273]  Possible unsafe locking scenario:
-[  612.993273]
-[  613.020273]        CPU0
-[  613.031273]        ----
-[  613.042273]   lock(hugetlb_lock);
-[  613.057273]   <Interrupt>
-[  613.069273]     lock(hugetlb_lock);
-[  613.085273]
-[  613.085273]  *** DEADLOCK ***
-      :
-[  613.245273] Call Trace:
-[  613.256273]  <IRQ>
-[  613.265273]  dump_stack+0x9a/0xf0
-[  613.281273]  mark_lock+0xd0c/0x12f0
-[  613.297273]  ? print_shortest_lock_dependencies+0x80/0x80
-[  613.322273]  ? sched_clock_cpu+0x18/0x1e0
-[  613.341273]  __lock_acquire+0x146b/0x48c0
-[  613.360273]  ? trace_hardirqs_on+0x10/0x10
-[  613.379273]  ? trace_hardirqs_on_caller+0x27b/0x580
-[  613.401273]  lock_acquire+0x14f/0x3b0
-[  613.419273]  ? free_huge_page+0x36f/0xaa0
-[  613.440273]  _raw_spin_lock+0x30/0x70
-[  613.458273]  ? free_huge_page+0x36f/0xaa0
-[  613.477273]  free_huge_page+0x36f/0xaa0
-[  613.495273]  bio_check_pages_dirty+0x2fc/0x5c0
-[  613.516273]  clone_endio+0x17f/0x670 [dm_mod]
-[  613.536273]  ? disable_discard+0x90/0x90 [dm_mod]
-[  613.558273]  ? bio_endio+0x4ba/0x930
-[  613.575273]  ? blk_account_io_completion+0x400/0x530
-[  613.598273]  blk_update_request+0x276/0xe50
-[  613.617273]  scsi_end_request+0x7b/0x6a0
-[  613.636273]  ? lock_downgrade+0x6f0/0x6f0
-[  613.654273]  scsi_io_completion+0x1c6/0x1570
-[  613.674273]  ? sd_completed_bytes+0x3a0/0x3a0 [sd_mod]
-[  613.698273]  ? scsi_mq_requeue_cmd+0xc0/0xc0
-[  613.718273]  blk_done_softirq+0x22e/0x350
-[  613.737273]  ? blk_softirq_cpu_dead+0x230/0x230
-[  613.758273]  __do_softirq+0x23d/0xad8
-[  613.776273]  irq_exit+0x23e/0x2b0
-[  613.792273]  do_IRQ+0x11a/0x200
-[  613.806273]  common_interrupt+0xf/0xf
-[  613.823273]  </IRQ>
+Am Mi, 11. Dez 2019, um 08:44, schrieb Peter Zijlstra:
+> See, I disagree. The WAIT/WAKE pair is an implementation of the MONITOR
+> pattern. Similar to x86's MONITOR/MWAIT or ARMv8's LDXR/WFE.
 
-Since hugetlb_lock can be taken from both process and softIRQ contexts,
-we need to protect the lock from nested locking by disabling softIRQ
-using spin_lock_bh() before taking it.
+That is a good way of putting it. It's not the mental model I had of futex=
+es,
+but I can see how under that mental model a WAKE that doesn't wake an
+overlapping futex is inconsistent. (my mental model was a memory compariso=
+n
+followed by a hashtable store. The WAKE has to pass the same hash key to
+find anything)
 
-Currently, only free_huge_page() is known to be called from softIRQ
-context.
+The question of whether to pass a size to WAKE or not is not something I c=
+are
+about (as I said, my first version did pass a size to WAKE) so I will chan=
+ge
+my code to require a size in WAKE. I have my opinions about which one I pr=
+efer
+but if I can't convince you then that shouldn't hold back the change. But
+a sized WAKE does open up a few questions:
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- mm/hugetlb.c | 100 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 55 insertions(+), 45 deletions(-)
+1. It would be easy for me to verify that sizes match when the address tha=
+t's
+   passed in is the same address. Meaning a WAIT with 8 bits but a WAKE wi=
+th
+   16 bits on the same address would return -EINVAL. But it's harder to
+   validate a similar mismatch on overlapping futexes. Meaning a 32 bit WA=
+IT
+   on @ptr and a 8 bit WAKE on @ptr+1 would just return 0.
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ac65bb5e38ac..5426f59683d9 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -59,7 +59,9 @@ static bool __initdata parsed_valid_hugepagesz = true;
- 
- /*
-  * Protects updates to hugepage_freelists, hugepage_activelist, nr_huge_pages,
-- * free_huge_pages, and surplus_huge_pages.
-+ * free_huge_pages, and surplus_huge_pages. These protected data can be
-+ * accessed from both process and softIRQ contexts. Therefore, the spinlock
-+ * needs to be acquired with softIRQ disabled to prevent nested locking.
-  */
- DEFINE_SPINLOCK(hugetlb_lock);
- 
-@@ -1175,7 +1177,7 @@ void free_huge_page(struct page *page)
- 			restore_reserve = true;
- 	}
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	clear_page_huge_active(page);
- 	hugetlb_cgroup_uncharge_page(hstate_index(h),
- 				     pages_per_huge_page(h), page);
-@@ -1196,18 +1198,18 @@ void free_huge_page(struct page *page)
- 		arch_clear_hugepage_flags(page);
- 		enqueue_huge_page(h, page);
- 	}
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- }
- 
- static void prep_new_huge_page(struct hstate *h, struct page *page, int nid)
- {
- 	INIT_LIST_HEAD(&page->lru);
- 	set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	set_hugetlb_cgroup(page, NULL);
- 	h->nr_huge_pages++;
- 	h->nr_huge_pages_node[nid]++;
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- }
- 
- static void prep_compound_gigantic_page(struct page *page, unsigned int order)
-@@ -1438,7 +1440,7 @@ int dissolve_free_huge_page(struct page *page)
- 	if (!PageHuge(page))
- 		return 0;
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	if (!PageHuge(page)) {
- 		rc = 0;
- 		goto out;
-@@ -1466,7 +1468,7 @@ int dissolve_free_huge_page(struct page *page)
- 		rc = 0;
- 	}
- out:
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 	return rc;
- }
- 
-@@ -1508,16 +1510,16 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
- 	if (hstate_is_gigantic(h))
- 		return NULL;
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	if (h->surplus_huge_pages >= h->nr_overcommit_huge_pages)
- 		goto out_unlock;
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 
- 	page = alloc_fresh_huge_page(h, gfp_mask, nid, nmask, NULL);
- 	if (!page)
- 		return NULL;
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	/*
- 	 * We could have raced with the pool size change.
- 	 * Double check that and simply deallocate the new page
-@@ -1527,7 +1529,7 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
- 	 */
- 	if (h->surplus_huge_pages >= h->nr_overcommit_huge_pages) {
- 		SetPageHugeTemporary(page);
--		spin_unlock(&hugetlb_lock);
-+		spin_unlock_bh(&hugetlb_lock);
- 		put_page(page);
- 		return NULL;
- 	} else {
-@@ -1536,7 +1538,7 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
- 	}
- 
- out_unlock:
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 
- 	return page;
- }
-@@ -1591,10 +1593,10 @@ struct page *alloc_huge_page_node(struct hstate *h, int nid)
- 	if (nid != NUMA_NO_NODE)
- 		gfp_mask |= __GFP_THISNODE;
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	if (h->free_huge_pages - h->resv_huge_pages > 0)
- 		page = dequeue_huge_page_nodemask(h, gfp_mask, nid, NULL);
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 
- 	if (!page)
- 		page = alloc_migrate_huge_page(h, gfp_mask, nid, NULL);
-@@ -1608,17 +1610,17 @@ struct page *alloc_huge_page_nodemask(struct hstate *h, int preferred_nid,
- {
- 	gfp_t gfp_mask = htlb_alloc_mask(h);
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	if (h->free_huge_pages - h->resv_huge_pages > 0) {
- 		struct page *page;
- 
- 		page = dequeue_huge_page_nodemask(h, gfp_mask, preferred_nid, nmask);
- 		if (page) {
--			spin_unlock(&hugetlb_lock);
-+			spin_unlock_bh(&hugetlb_lock);
- 			return page;
- 		}
- 	}
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 
- 	return alloc_migrate_huge_page(h, gfp_mask, preferred_nid, nmask);
- }
-@@ -1664,7 +1666,7 @@ static int gather_surplus_pages(struct hstate *h, int delta)
- 
- 	ret = -ENOMEM;
- retry:
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 	for (i = 0; i < needed; i++) {
- 		page = alloc_surplus_huge_page(h, htlb_alloc_mask(h),
- 				NUMA_NO_NODE, NULL);
-@@ -1681,7 +1683,7 @@ static int gather_surplus_pages(struct hstate *h, int delta)
- 	 * After retaking hugetlb_lock, we need to recalculate 'needed'
- 	 * because either resv_huge_pages or free_huge_pages may have changed.
- 	 */
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	needed = (h->resv_huge_pages + delta) -
- 			(h->free_huge_pages + allocated);
- 	if (needed > 0) {
-@@ -1719,12 +1721,12 @@ static int gather_surplus_pages(struct hstate *h, int delta)
- 		enqueue_huge_page(h, page);
- 	}
- free:
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 
- 	/* Free unnecessary surplus pages to the buddy allocator */
- 	list_for_each_entry_safe(page, tmp, &surplus_list, lru)
- 		put_page(page);
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 
- 	return ret;
- }
-@@ -1738,7 +1740,7 @@ static int gather_surplus_pages(struct hstate *h, int delta)
-  *    the reservation.  As many as unused_resv_pages may be freed.
-  *
-  * Called with hugetlb_lock held.  However, the lock could be dropped (and
-- * reacquired) during calls to cond_resched_lock.  Whenever dropping the lock,
-+ * reacquired) around calls to cond_resched().  Whenever dropping the lock,
-  * we must make sure nobody else can claim pages we are in the process of
-  * freeing.  Do this by ensuring resv_huge_page always is greater than the
-  * number of huge pages we plan to free when dropping the lock.
-@@ -1775,7 +1777,11 @@ static void return_unused_surplus_pages(struct hstate *h,
- 		unused_resv_pages--;
- 		if (!free_pool_huge_page(h, &node_states[N_MEMORY], 1))
- 			goto out;
--		cond_resched_lock(&hugetlb_lock);
-+		if (need_resched()) {
-+			spin_unlock_bh(&hugetlb_lock);
-+			cond_resched();
-+			spin_lock_bh(&hugetlb_lock);
-+		}
- 	}
- 
- out:
-@@ -1994,7 +2000,7 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
- 	if (ret)
- 		goto out_subpool_put;
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	/*
- 	 * glb_chg is passed to indicate whether or not a page must be taken
- 	 * from the global free pool (global change).  gbl_chg == 0 indicates
-@@ -2002,7 +2008,7 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
- 	 */
- 	page = dequeue_huge_page_vma(h, vma, addr, avoid_reserve, gbl_chg);
- 	if (!page) {
--		spin_unlock(&hugetlb_lock);
-+		spin_unlock_bh(&hugetlb_lock);
- 		page = alloc_buddy_huge_page_with_mpol(h, vma, addr);
- 		if (!page)
- 			goto out_uncharge_cgroup;
-@@ -2010,12 +2016,12 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
- 			SetPagePrivate(page);
- 			h->resv_huge_pages--;
- 		}
--		spin_lock(&hugetlb_lock);
-+		spin_lock_bh(&hugetlb_lock);
- 		list_move(&page->lru, &h->hugepage_activelist);
- 		/* Fall through */
- 	}
- 	hugetlb_cgroup_commit_charge(idx, pages_per_huge_page(h), h_cg, page);
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 
- 	set_page_private(page, (unsigned long)spool);
- 
-@@ -2269,7 +2275,7 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
- 	else
- 		return -ENOMEM;
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 
- 	/*
- 	 * Check for a node specific request.
-@@ -2300,7 +2306,7 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
- 	 */
- 	if (hstate_is_gigantic(h) && !IS_ENABLED(CONFIG_CONTIG_ALLOC)) {
- 		if (count > persistent_huge_pages(h)) {
--			spin_unlock(&hugetlb_lock);
-+			spin_unlock_bh(&hugetlb_lock);
- 			NODEMASK_FREE(node_alloc_noretry);
- 			return -EINVAL;
- 		}
-@@ -2329,14 +2335,14 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
- 		 * page, free_huge_page will handle it by freeing the page
- 		 * and reducing the surplus.
- 		 */
--		spin_unlock(&hugetlb_lock);
-+		spin_unlock_bh(&hugetlb_lock);
- 
- 		/* yield cpu to avoid soft lockup */
- 		cond_resched();
- 
- 		ret = alloc_pool_huge_page(h, nodes_allowed,
- 						node_alloc_noretry);
--		spin_lock(&hugetlb_lock);
-+		spin_lock_bh(&hugetlb_lock);
- 		if (!ret)
- 			goto out;
- 
-@@ -2366,7 +2372,11 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
- 	while (min_count < persistent_huge_pages(h)) {
- 		if (!free_pool_huge_page(h, nodes_allowed, 0))
- 			break;
--		cond_resched_lock(&hugetlb_lock);
-+		if (need_resched()) {
-+			spin_unlock_bh(&hugetlb_lock);
-+			cond_resched();
-+			spin_lock_bh(&hugetlb_lock);
-+		}
- 	}
- 	while (count < persistent_huge_pages(h)) {
- 		if (!adjust_pool_surplus(h, nodes_allowed, 1))
-@@ -2374,7 +2384,7 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
- 	}
- out:
- 	h->max_huge_pages = persistent_huge_pages(h);
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 
- 	NODEMASK_FREE(node_alloc_noretry);
- 
-@@ -2528,9 +2538,9 @@ static ssize_t nr_overcommit_hugepages_store(struct kobject *kobj,
- 	if (err)
- 		return err;
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	h->nr_overcommit_huge_pages = input;
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 
- 	return count;
- }
-@@ -2978,9 +2988,9 @@ int hugetlb_overcommit_handler(struct ctl_table *table, int write,
- 		goto out;
- 
- 	if (write) {
--		spin_lock(&hugetlb_lock);
-+		spin_lock_bh(&hugetlb_lock);
- 		h->nr_overcommit_huge_pages = tmp;
--		spin_unlock(&hugetlb_lock);
-+		spin_unlock_bh(&hugetlb_lock);
- 	}
- out:
- 	return ret;
-@@ -3071,7 +3081,7 @@ static int hugetlb_acct_memory(struct hstate *h, long delta)
- {
- 	int ret = -ENOMEM;
- 
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	/*
- 	 * When cpuset is configured, it breaks the strict hugetlb page
- 	 * reservation as the accounting is done on a global variable. Such
-@@ -3104,7 +3114,7 @@ static int hugetlb_acct_memory(struct hstate *h, long delta)
- 		return_unused_surplus_pages(h, (unsigned long) -delta);
- 
- out:
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 	return ret;
- }
- 
-@@ -4970,7 +4980,7 @@ bool isolate_huge_page(struct page *page, struct list_head *list)
- 	bool ret = true;
- 
- 	VM_BUG_ON_PAGE(!PageHead(page), page);
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	if (!page_huge_active(page) || !get_page_unless_zero(page)) {
- 		ret = false;
- 		goto unlock;
-@@ -4978,17 +4988,17 @@ bool isolate_huge_page(struct page *page, struct list_head *list)
- 	clear_page_huge_active(page);
- 	list_move_tail(&page->lru, list);
- unlock:
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 	return ret;
- }
- 
- void putback_active_hugepage(struct page *page)
- {
- 	VM_BUG_ON_PAGE(!PageHead(page), page);
--	spin_lock(&hugetlb_lock);
-+	spin_lock_bh(&hugetlb_lock);
- 	set_page_huge_active(page);
- 	list_move_tail(&page->lru, &(page_hstate(page))->hugepage_activelist);
--	spin_unlock(&hugetlb_lock);
-+	spin_unlock_bh(&hugetlb_lock);
- 	put_page(page);
- }
- 
-@@ -5016,11 +5026,11 @@ void move_hugetlb_state(struct page *oldpage, struct page *newpage, int reason)
- 		SetPageHugeTemporary(oldpage);
- 		ClearPageHugeTemporary(newpage);
- 
--		spin_lock(&hugetlb_lock);
-+		spin_lock_bh(&hugetlb_lock);
- 		if (h->surplus_huge_pages_node[old_nid]) {
- 			h->surplus_huge_pages_node[old_nid]--;
- 			h->surplus_huge_pages_node[new_nid]++;
- 		}
--		spin_unlock(&hugetlb_lock);
-+		spin_unlock_bh(&hugetlb_lock);
- 	}
- }
--- 
-2.18.1
+   This might theoretically lead to problems if we ever want to have the
+   semantics of MONITOR/MWAIT in the future, because I'm saying that that
+   last mismatch does not wake anything and is not an error. This will mak=
+e
+   it hard to change the semantics in the future. Are we OK with that?
 
+2. If we are OK with that, there are questions about what to do about weir=
+d
+   uses like a 8 bit WAIT and a 32 bit WAIT on the same address. An 8 bit
+   WAKE on the same address should now probably just wake the 8 bit WAIT, =
+but
+   a second 8 bit WAKE would then return an error because there is a
+   mismatching size. This is confusing so my first thought is to just disa=
+llow
+   all mixing of sizes, even among waiters. It seems unlikely that this wi=
+ll
+   ever be needed.
+
+3. Implementing the full semantics of MONITOR/MWAIT would give obvious ans=
+wers
+   to both of these questions, and I think I could even do it without slow=
+ing
+   down futexes too much. (just use the address/4 as the hash key so that =
+all
+   potentially overlapping futexes hash to the same bucket) But it would a=
+lso
+   open up new questions. Like what happens if you call a 32 bit WAKE with
+   val=3D1, meaning wake up one sleeper, but it overlaps with two 16 bit f=
+utexes?
+   Does it wake one sleeper in both of them? That would be consistent with
+   MONITOR/MWAIT behavior, but it would contradict the current documentati=
+on.
+   (which might be OK because it would only do so for new behavior)
+
+
+My current thinking for these is as follows, in reverse order:
+
+3. I would not implement the full MONITOR/MWAIT behavior. It's not require=
+d
+for my use case, it would definitely add a small amount of overhead, and i=
+t
+bothers me that adjacent 8 bit futexes would hash to the same bucket. (at
+least they would if I can't come up with another way of implementing it) A=
+ll
+I want is smaller mutexes and the behavior required by the C++ standard, s=
+o I
+don't need new semantics for that.
+
+2. I will disallow all operations that pass a different size for the same
+address. That includes disallowing an 8 bit WAIT followed by a 32 bit WAIT=
+ on
+the same address.
+
+1. I will only verify that the size matches if the same address was passed=
+.
+Overlapping futexes are not detected and will not raise an error.
+
+This will lead to an inconsistent implementation in the MONITOR/MWAIT ment=
+al
+model, but it leads to a consistent implementation in the comparison+hasht=
+able
+mental model. It will have the same behavior as my initial patch except th=
+at
+all operations will error out if a size mismatch is detected.
+
+Please let me know if this is OK with you. I don't think that this gains u=
+s
+anything over having an unsized WAKE, but if this is what others want, I c=
+an
+write the code. If we instead want the full MONITOR/MWAIT semantics, I can
+probably also make that happen with a very small slowdown compared to the
+current code. I just need to know if that's what you want.
+
+Thanks,
+
+Malte
+
+=2D-
+  Malte Skarupke
+  malteskarupke@web.de
