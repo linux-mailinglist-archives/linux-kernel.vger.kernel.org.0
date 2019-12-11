@@ -2,101 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F3911BE37
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 21:46:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D12F211BE55
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 21:49:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfLKUqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 15:46:11 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32225 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726925AbfLKUqH (ORCPT
+        id S1727068AbfLKUsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 15:48:19 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:36767 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbfLKUsS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 15:46:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576097166;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RdRBEoYxRIkuYEuDHr3V4GvXlKW2Lf5ylOPLl+U6EFw=;
-        b=JeERaHUwD4cdloIb60iZKQcRP/DhF9rYJAvhT0MYmN7hOip+6OSmzh4vVUNkX0jI7s3o2P
-        noGp2YMr4kcl2bJxTyO7CdeoY7KjqcLni85/KVIyeHpMwDvArgpJUFAqdWMjcIDCM57t3x
-        Sndyo50ztMJ4Eeoju3zKDs86XPIkd9A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-345-kBsvBemiNpC3wBla7JKNyw-1; Wed, 11 Dec 2019 15:46:03 -0500
-X-MC-Unique: kBsvBemiNpC3wBla7JKNyw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2BC1C1883534;
-        Wed, 11 Dec 2019 20:46:02 +0000 (UTC)
-Received: from ovpn-116-192.phx2.redhat.com (ovpn-116-192.phx2.redhat.com [10.3.116.192])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A1DA60BB1;
-        Wed, 11 Dec 2019 20:46:01 +0000 (UTC)
-Message-ID: <9a4db39373cf4acaf91ef6db92df116b74fef992.camel@redhat.com>
-Subject: Re: [PATCH] timers/nohz: Update nohz load even if tick already
- stopped
-From:   Scott Wood <swood@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Wed, 11 Dec 2019 14:46:01 -0600
-In-Reply-To: <20191030133130.GY4097@hirez.programming.kicks-ass.net>
-References: <20191028150716.22890-1-frederic@kernel.org>
-         <20191029100506.GJ4114@hirez.programming.kicks-ass.net>
-         <52d963553deda810113accd8d69b6dffdb37144f.camel@redhat.com>
-         <20191030133130.GY4097@hirez.programming.kicks-ass.net>
-Organization: Red Hat
+        Wed, 11 Dec 2019 15:48:18 -0500
+Received: by mail-pf1-f201.google.com with SMTP id 6so1269610pfv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 12:48:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=2gC640IyhH5dA8WbV5f5/xeewX2HczJxP4vBYhavCEY=;
+        b=QOXWFSPQYjnuJDMP0a4El8Kh5ujIbG0XtwVP1iVHds8uiUZsbjpHgG5WPdWl96GsCo
+         q7mpMlt3B9pzVIYZHTKFtDCCu4Cvr0XBTzrrkwca0VvGL/x98Agf/uml2HXIsWn03J/l
+         WoO+n1BkNjMXj+5AkWjhI5FAQqE+nZbr7cOSbOohyp/aWnmAVnsqkkfHpvoi7r8vgBUH
+         sH301tcL19NGm1CgMJX76L3AFHahIWAjDQj43FZ32PTFZktgX/o2GS8BxEahhUYaBGVK
+         7rzzv81Tk+0hZarU6nZi777LGxgGHFMLeu7JUR5JgFrTckNSQF4iBL6hi9nBElJsQ6iE
+         /HjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=2gC640IyhH5dA8WbV5f5/xeewX2HczJxP4vBYhavCEY=;
+        b=MLRy3Tma0mA82o8nNCUMPtEQZVNIO6GwGz5Mdruo/aAiQqVuHIpASNUG1PBYF594L6
+         AKoIOmW8Ig8B0uUiq8Kt8Qij1ySX7ruEeDrp8UjgJSYRY2d4OUD/0QwCqrrB8lKSxC1a
+         SO6pONqybZYvozTJFRsw6dEfGYSwJ25MXZRuDPwgRFsEyeoNErFuwb1hFgc6n+t1YLiS
+         +eaEKem9Veui33XX1pWtfIQunXV9yCdtMGWkOihDQcbihJupl2GcC8oxFYlfPLK+syBV
+         /x+3XWkVoiZZB16QQODx0Suybw6Ud2Wz0ENMPKI4jd2YYcCE2XyCar6JdWUYSZxCkOPM
+         Awvw==
+X-Gm-Message-State: APjAAAWOJgoOXe1/NRtEiXscQIRS/W2U0jYh3J3mixZ6LyAJaa49ffUH
+        cDiNEOcffVxwVREsIYfqXKRkbJE8zxz5
+X-Google-Smtp-Source: APXvYqwOL7uivEwokJX5aYM9537r8vrIEKgGR7nmvHWO9lF7B4kYZsHBsBQwsuUkGzh4uQRzcSr4YlBVlX8t
+X-Received: by 2002:a63:c804:: with SMTP id z4mr6386725pgg.440.1576097297767;
+ Wed, 11 Dec 2019 12:48:17 -0800 (PST)
+Date:   Wed, 11 Dec 2019 12:47:40 -0800
+Message-Id: <20191211204753.242298-1-pomonis@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
+Subject: [PATCH v2 00/13] KVM: x86: Extend Spectre-v1 mitigation
+From:   Marios Pomonis <pomonis@google.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Finco <nifi@google.com>, Andrew Honig <ahonig@google.com>,
+        Marios Pomonis <pomonis@google.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-30 at 14:31 +0100, Peter Zijlstra wrote:
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index eb42b71faab9..d02d1b8f40af 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3660,21 +3660,17 @@ static void sched_tick_remote(struct work_struct
-> *work)
->  	u64 delta;
->  	int os;
->  
-> -	/*
-> -	 * Handle the tick only if it appears the remote CPU is running in
-> full
-> -	 * dynticks mode. The check is racy by nature, but missing a tick or
-> -	 * having one too much is no big deal because the scheduler tick
-> updates
-> -	 * statistics and checks timeslices in a time-independent way,
-> regardless
-> -	 * of when exactly it is running.
-> -	 */
-> -	if (idle_cpu(cpu) || !tick_nohz_tick_stopped_cpu(cpu))
-> +	if (!tick_nohz_tick_stopped_cpu(cpu))
->  		goto out_requeue;
->  
->  	rq_lock_irq(rq, &rf);
-> -	curr = rq->curr;
-> -	if (is_idle_task(curr) || cpu_is_offline(cpu))
-> +	/*
-> +	 * We must not call calc_load_nohz_remote() when not in NOHZ mode.
-> +	 */
-> +	if (cpu_is_offline(cpu) || !tick_nohz_tick_stopped(cpu))
->  		goto out_unlock;
+From: Nick Finco <nifi@google.com>
 
-Is it really a problem if calc_load_nohz_remote() gets called in
-non-NOHZ?  It won't race due to rq lock -- and we're already mixing
-remote and non-remote updates because the normal tick timer can still be
-run while "stopped".
+This extends the Spectre-v1 mitigation introduced in
+commit 75f139aaf896 ("KVM: x86: Add memory barrier on vmcs field lookup")
+and commit 085331dfc6bb ("x86/kvm: Update spectre-v1 mitigation") in light
+of the Spectre-v1/L1TF combination described here:
+https://xenbits.xen.org/xsa/advisory-289.html
 
--Scott
+As reported in the link, an attacker can use the cache-load part of a
+Spectre-v1 gadget to bring memory into the L1 cache, then use L1TF to
+leak the loaded memory. Note that this attack is not fully mitigated by
+core scheduling; firstly when "kvm-intel.vmentry_l1d_flush" is not set
+to "always", an attacker could use L1TF on the same thread that loaded the
+memory values in the cache on paths that do not flush the L1 cache on
+VMEntry. Otherwise, an attacker could perform this attack using a
+collusion of two sibling hyperthreads: one that loads memory values in
+the cache during VMExit handling and another that performs L1TF to leak
+them.
+
+This patch uses array_index_nospec() to prevent index computations from
+causing speculative loads into the L1 cache. These cases involve a
+bounds check followed by a memory read using the index; this is more
+common than the full Spectre-v1 pattern. In some cases, the index
+computation can be eliminated entirely by small amounts of refactoring.
+
+Marios Pomonis (13):
+  KVM: x86: Protect x86_decode_insn from Spectre-v1/L1TF attacks
+  KVM: x86: Protect kvm_hv_msr_[get|set]_crash_data() from
+    Spectre-v1/L1TF attacks
+  KVM: x86: Refactor picdev_write() to prevent Spectre-v1/L1TF attacks
+  KVM: x86: Protect ioapic_read_indirect() from Spectre-v1/L1TF attacks
+  KVM: x86: Protect ioapic_write_indirect() from Spectre-v1/L1TF attacks
+  KVM: x86: Protect kvm_lapic_reg_write() from Spectre-v1/L1TF attacks
+  KVM: x86: Protect MSR-based index computations in
+    fixed_msr_to_seg_unit()
+  KVM: x86: Protect MSR-based index computations in pmu.h
+  KVM: x86: Protect MSR-based index computations from Spectre-v1/L1TF
+    attacks in x86.c
+  KVM: x86: Protect memory accesses from Spectre-v1/L1TF attacks in
+    x86.c
+  KVM: x86: Protect exit_reason from being used in Spectre-v1/L1TF
+    attacks
+  KVM: x86: Protect DR-based index computations from Spectre-v1/L1TF
+    attacks
+  KVM: x86: Protect pmu_intel.c from Spectre-v1/L1TF attacks
+
+ arch/x86/kvm/emulate.c       | 11 ++++--
+ arch/x86/kvm/hyperv.c        | 10 +++--
+ arch/x86/kvm/i8259.c         |  6 ++-
+ arch/x86/kvm/ioapic.c        | 15 +++++---
+ arch/x86/kvm/lapic.c         | 13 +++++--
+ arch/x86/kvm/mtrr.c          |  8 +++-
+ arch/x86/kvm/pmu.h           | 18 +++++++--
+ arch/x86/kvm/vmx/pmu_intel.c | 24 ++++++++----
+ arch/x86/kvm/vmx/vmx.c       | 71 +++++++++++++++++++++---------------
+ arch/x86/kvm/x86.c           | 18 +++++++--
+ 10 files changed, 129 insertions(+), 65 deletions(-)
+
+-- 
+2.24.0.393.g34dc348eaf-goog
 
