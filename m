@@ -2,136 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFFAD11A51A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:31:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6604E11A51C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:31:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbfLKHbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 02:31:17 -0500
-Received: from mga01.intel.com ([192.55.52.88]:35977 "EHLO mga01.intel.com"
+        id S1728130AbfLKHbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 02:31:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727901AbfLKHbQ (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 02:31:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 23:31:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
-   d="scan'208";a="238435825"
-Received: from kbl.sh.intel.com ([10.239.159.163])
-  by fmsmga004.fm.intel.com with ESMTP; 10 Dec 2019 23:31:14 -0800
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v2 3/3] perf report: support hotkey to let user select any event for sorting
-Date:   Wed, 11 Dec 2019 15:30:36 +0800
-Message-Id: <20191211073036.31504-3-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191211073036.31504-1-yao.jin@linux.intel.com>
-References: <20191211073036.31504-1-yao.jin@linux.intel.com>
+        id S1727829AbfLKHbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 02:31:40 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 088F92077B;
+        Wed, 11 Dec 2019 07:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576049499;
+        bh=hzi59ZxXCtn7N9u9Q1/ZsXgqE+JPAgMDiGZkiykAq3Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AqhM4EM74IqmrdcSyqwzP0zvfddYOBw3VGWlO7KbkNlDcEnsH8Fd4foqvb3+v5FHj
+         oi0/VcKwejR8KAsItACMcW/2Dy6QV4sIwLlJwJJJhRz839G+2Tua+hHqhNpJqkFQ1C
+         /SWUpgJYJbIKDlpVeCoFvY3VKardOOuIBvifC6rU=
+Date:   Wed, 11 Dec 2019 08:31:36 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Scott Schafer <schaferjscott@gmail.com>
+Cc:     devel@driverdev.osuosl.org, GR-Linux-NIC-Dev@marvell.com,
+        Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: qlge: Fix multiple WARNING and CHECK relating
+ to formatting
+Message-ID: <20191211073136.GB397938@kroah.com>
+References: <20191211014759.4749-1-schaferjscott@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211014759.4749-1-schaferjscott@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When performing "perf report --group", it shows the event group information
-together. In previous patch, we have supported a new option "--group-sort-idx"
-to sort the output by the event at the index n in event group.
+On Tue, Dec 10, 2019 at 07:47:59PM -0600, Scott Schafer wrote:
+> CHECK: Please don't use multiple blank lines
+> CHECK: Blank lines aren't necessary before a close brace '}'
+> CHECK: Blank lines aren't necessary after an open brace '{'
+> WARNING: Missing a blank line after declarations
+> CHECK: No space is necessary after a cast
+> CHECK: braces {} should be used on all arms of this statement
+> CHECK: Unbalanced braces around else statement
+> WARNING: please, no space before tabs
+> CHECK: spaces preferred around that '/' (ctx:VxV)
+> CHECK: spaces preferred around that '+' (ctx:VxV)
+> CHECK: spaces preferred around that '%' (ctx:VxV)
+> CHECK: spaces preferred around that '|' (ctx:VxV)
+> CHECK: spaces preferred around that '*' (ctx:VxV)
+> WARNING: Unnecessary space before function pointer arguments
+> WARNING: please, no spaces at the start of a line
+> WARNING: Block comments use a trailing */ on a separate line
+> ERROR: trailing whitespace
+> 
+> In files qlge.h, qlge_dbg.c, qlge_ethtool.c, qlge_main.c, and qlge_mpi.c
+> 
+> Signed-off-by: Scott Schafer <schaferjscott@gmail.com>
+> ---
+>  drivers/staging/qlge/qlge.h         |  45 ++++++-------
+>  drivers/staging/qlge/qlge_dbg.c     |  41 ++++++-----
+>  drivers/staging/qlge/qlge_ethtool.c |  20 ++++--
+>  drivers/staging/qlge/qlge_main.c    | 101 ++++++++++++++--------------
+>  drivers/staging/qlge/qlge_mpi.c     |  37 +++++-----
+>  5 files changed, 125 insertions(+), 119 deletions(-)
 
-It would be nice if we can use a hotkey in browser to select a event
-to sort.
+Hi,
 
-For example,
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-  # perf report --group
+You are receiving this message because of the following common error(s)
+as indicated below:
 
- Samples: 12K of events 'cpu/instructions,period=2000003/, cpu/cpu-cycles,period=200003/, ...
-                        Overhead  Command    Shared Object            Symbol
-  92.19%  98.68%   0.00%  93.30%  mgen       mgen                     [.] LOOP1
-   3.12%   0.29%   0.00%   0.16%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x0000000000049515
-   1.56%   0.03%   0.00%   0.04%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494b7
-   1.56%   0.01%   0.00%   0.00%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494ce
-   1.56%   0.00%   0.00%   0.00%  mgen       [kernel.kallsyms]        [k] task_tick_fair
-   0.00%   0.15%   0.00%   0.04%  perf       [kernel.kallsyms]        [k] smp_call_function_single
-   0.00%   0.13%   0.00%   6.08%  swapper    [kernel.kallsyms]        [k] intel_idle
-   0.00%   0.03%   0.00%   0.00%  gsd-color  libglib-2.0.so.0.5600.4  [.] g_main_context_check
-   0.00%   0.03%   0.00%   0.00%  swapper    [kernel.kallsyms]        [k] apic_timer_interrupt
-   0.00%   0.03%   0.00%   0.00%  swapper    [kernel.kallsyms]        [k] check_preempt_curr
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
 
-When user press hotkey '3' (event index, starting from 0), it indicates
-to sort output by the forth event in group.
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-  Samples: 12K of events 'cpu/instructions,period=2000003/, cpu/cpu-cycles,period=200003/, ...
-                        Overhead  Command    Shared Object            Symbol
-  92.19%  98.68%   0.00%  93.30%  mgen       mgen                     [.] LOOP1
-   0.00%   0.13%   0.00%   6.08%  swapper    [kernel.kallsyms]        [k] intel_idle
-   3.12%   0.29%   0.00%   0.16%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x0000000000049515
-   0.00%   0.00%   0.00%   0.06%  swapper    [kernel.kallsyms]        [k] hrtimer_start_range_ns
-   1.56%   0.03%   0.00%   0.04%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494b7
-   0.00%   0.15%   0.00%   0.04%  perf       [kernel.kallsyms]        [k] smp_call_function_single
-   0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] update_curr
-   0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] apic_timer_interrupt
-   0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] native_apic_msr_eoi_write
-   0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] __update_load_avg_se
+thanks,
 
- v2:
- ---
- 1. Report warning at helpline when index is invalid.
- 2. Report warning at helpline when it's not group event.
- 3. Use "case '0' ... '9'" to refine the code
- 4. Split K_RELOAD implementation to another patch.
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/ui/browsers/hists.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index d4d3558fdef4..b9288a1385dd 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2876,7 +2876,8 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
- 	"s             Switch to another data file in PWD\n"
- 	"t             Zoom into current Thread\n"
- 	"V             Verbose (DSO names in callchains, etc)\n"
--	"/             Filter symbol by name";
-+	"/             Filter symbol by name\n"
-+	"0-9           Sort by event n in group";
- 	static const char top_help[] = HIST_BROWSER_HELP_COMMON
- 	"P             Print histograms to perf.hist.N\n"
- 	"t             Zoom into current Thread\n"
-@@ -2937,6 +2938,28 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
- 			 * go to the next or previous
- 			 */
- 			goto out_free_stack;
-+		case '0' ... '9':
-+			if (!symbol_conf.event_group ||
-+			    evsel->core.nr_members < 2) {
-+				snprintf(buf, sizeof(buf),
-+					 "Sort by index only available with group events!");
-+				helpline = buf;
-+				continue;
-+			}
-+
-+			symbol_conf.group_sort_idx = key - '0';
-+
-+			if (symbol_conf.group_sort_idx >= evsel->core.nr_members) {
-+				snprintf(buf, sizeof(buf),
-+					 "Max event group index to sort is %d (index from 0 to %d)",
-+					 evsel->core.nr_members - 1,
-+					 evsel->core.nr_members - 1);
-+				helpline = buf;
-+				continue;
-+			}
-+
-+			key = K_RELOAD;
-+			goto out_free_stack;
- 		case 'a':
- 			if (!hists__has(hists, sym)) {
- 				ui_browser__warning(&browser->b, delay_secs * 2,
--- 
-2.17.1
-
+greg k-h's patch email bot
