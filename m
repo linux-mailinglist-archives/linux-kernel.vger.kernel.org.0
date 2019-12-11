@@ -2,98 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D3AC11A4EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:13:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F33411A4E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:12:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbfLKHNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 02:13:11 -0500
-Received: from a27-11.smtp-out.us-west-2.amazonses.com ([54.240.27.11]:58514
-        "EHLO a27-11.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725800AbfLKHNL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 02:13:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1576048390;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        bh=e4VFfWEMUXIjMa+iwXkArSXrLtzbwfCJw62x90LK0WQ=;
-        b=gULcBt1fRiW56Mf4gmLA/gtpJqgGEmdjvUtzo0tH36ngeWmYu8AV+5xFLe0I91gP
-        KT4rdU92bGR66wxVQeY7hcZrX90OR13j6U1+Y1bsSZ2bTWge8S36hLqWKcScuoeFJQK
-        XM/t6blRUKZF3XjKC5ZE+oEgkdepOIgZFma4buTA=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1576048390;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:Feedback-ID;
-        bh=e4VFfWEMUXIjMa+iwXkArSXrLtzbwfCJw62x90LK0WQ=;
-        b=Hv7nCKaW3k8fzh8uhQU/7gwPu2ZjuPDTMEr6CFX5fY3PoZFEIgDoSkKPKoaittVP
-        ZRwLWqsS3LBjYs410bKgJNeMaOJEhK6q93UQOtcZA+y/JOFt8qPgVjkWa4V9EqkUpuv
-        rzHf6M02sXw/69pjXjo9ZZiO28qwFrb1ZhKSGKuE=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 52939C447BB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, dianders@chromium.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 2/2] arm64: dts: sc7180: Add aliases for all i2c and spi devices
-Date:   Wed, 11 Dec 2019 07:13:10 +0000
-Message-ID: <0101016ef3cdf035-81663ddb-2978-4369-a621-d4a80c768911-000000@us-west-2.amazonses.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576048353-21154-1-git-send-email-rnayak@codeaurora.org>
-References: <1576048353-21154-1-git-send-email-rnayak@codeaurora.org>
-X-SES-Outgoing: 2019.12.11-54.240.27.11
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+        id S1727945AbfLKHMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 02:12:08 -0500
+Received: from szxga08-in.huawei.com ([45.249.212.255]:42522 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726487AbfLKHMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 02:12:08 -0500
+Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id 4ACD0B87F982C67764B5;
+        Wed, 11 Dec 2019 15:12:02 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 11 Dec 2019 15:12:01 +0800
+Received: from architecture4 (10.160.196.180) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Wed, 11 Dec 2019 15:12:01 +0800
+Date:   Wed, 11 Dec 2019 15:17:11 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        <linux-fsdevel@vger.kernel.org>, <ecryptfs@vger.kernel.org>,
+        <linux-fscrypt@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
+Message-ID: <20191211071711.GA231266@architecture4>
+References: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
+ <20191211024858.GB732@sol.localdomain>
+ <febbd7eb-5e53-6e7c-582d-5b224e441e37@loongson.cn>
+ <20191211044723.GC4203@ZenIV.linux.org.uk>
+ <4a90aaa9-18c8-f0a7-19e4-1c5bd5915a28@loongson.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <4a90aaa9-18c8-f0a7-19e4-1c5bd5915a28@loongson.cn>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.160.196.180]
+X-ClientProxiedBy: dggeme715-chm.china.huawei.com (10.1.199.111) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add aliases for all i2c and spi nodes
+On Wed, Dec 11, 2019 at 02:38:34PM +0800, Tiezhu Yang wrote:
+> On 12/11/2019 12:47 PM, Al Viro wrote:
+> > On Wed, Dec 11, 2019 at 11:59:40AM +0800, Tiezhu Yang wrote:
+> > 
+> > > static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+> > > {
+> > >          if (len == 1 && name[0] == '.')
+> > >                  return true;
+> > > 
+> > >          if (len == 2 && name[0] == '.' && name[1] == '.')
+> > >                  return true;
+> > > 
+> > >          return false;
+> > > }
+> > > 
+> > > Hi Matthew,
+> > > 
+> > > How do you think? I think the performance influence is very small
+> > > due to is_dot_or_dotdot() is a such short static inline function.
+> > It's a very short inline function called on a very hot codepath.
+> > Often.
+> > 
+> > I mean it - it's done literally for every pathname component of
+> > every pathname passed to a syscall.
+> 
+> OK. I understand. Let us do not use the helper function in fs/namei.c,
+> just use the following implementation for other callers:
+> 
+> static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+> {
+>         if (len >= 1 && unlikely(name[0] == '.')) {
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 88db1f5..eb02cd1 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -18,6 +18,29 @@
- 
- 	chosen { };
- 
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		i2c5 = &i2c5;
-+		i2c6 = &i2c6;
-+		i2c7 = &i2c7;
-+		i2c8 = &i2c8;
-+		i2c9 = &i2c9;
-+		i2c10 = &i2c10;
-+		i2c11 = &i2c11;
-+		spi0 = &spi0;
-+		spi1 = &spi1;
-+		spi3 = &spi3;
-+		spi5 = &spi5;
-+		spi6 = &spi6;
-+		spi8 = &spi8;
-+		spi10 = &spi10;
-+		spi11 = &spi11;
-+	};
-+
- 	clocks {
- 		xo_board: xo-board {
- 			compatible = "fixed-clock";
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+And I suggest drop "unlikely" here since files start with prefix
+'.' (plus specical ".", "..") are not as uncommon as you expected...
 
+
+Thanks,
+Gao Xiang
+
+
+>                 if (len < 2 || (len == 2 && name[1] == '.'))
+>                         return true;
+>         }
+> 
+>         return false;
+> }
+> 
+> Special thanks for Matthew, Darrick, Al and Eric.
+> If you have any more suggestion, please let me know.
+> 
+> Thanks,
+> 
+> Tiezhu Yang
+> 
