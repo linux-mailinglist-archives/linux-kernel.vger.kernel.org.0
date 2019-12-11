@@ -2,92 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 357AE11A011
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 01:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1C8311A00A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 01:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbfLKAgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 19:36:35 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33785 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbfLKAgb (ORCPT
+        id S1726970AbfLKAfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 19:35:05 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:58113 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725999AbfLKAfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 19:36:31 -0500
-Received: by mail-pf1-f195.google.com with SMTP id y206so851420pfb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 16:36:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YgLOEq+b3z3/DTsjuxwC7KLaORE8dq4xMxztFesSO1E=;
-        b=dDPPKNbrgbLGmMbRNeNgFCRoeauYBwrY00fbTjRfRSmxMpI2OpLj9AtyX7y2oPRgR6
-         d4I5SVqsBlXmaqb1+77ddPC5CfFwyJMR96XAaSBkO1Vrqw1lgldlKHJA2puQAKdgKKiM
-         NU/GaCpRjAa/67cieZTL6Nn4UliUEpYmfjKF8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YgLOEq+b3z3/DTsjuxwC7KLaORE8dq4xMxztFesSO1E=;
-        b=AK82Xu2H72vYlyn2YpkZiddImmBk4VT2KeRLjwV06MWUNCbiy8HbJnJA07idxVre5+
-         VdclUA8A756ydGJbtrVx9hQiLTuccxU5jNEQEHitbj9YzyF2mflfPJnjPrvG/JhxYKSL
-         sa6wckM2k9/FKoZxyCe/Rh2/l9dt2c0nIGSof0VYxhZkDhVLxbG921WpFtkQk1sYbjci
-         kiZ2VFf0Hkr0KmE/0CM0oOZYIm+Wz43XwZDVW0SBbgnfLZP4NKEOtgCDY0PATeNebswQ
-         wkpiHDs6F3VlqAXHes/fT9EevMYlx6gA/Spx6zviMkf+fNshKDbCsCDzJXMXsAooYZEH
-         Psbw==
-X-Gm-Message-State: APjAAAUpyL14cltVa/GNvR1q0h9ZkedGqdAVn/EKvUBoqg/GNsVn3gmJ
-        wsnoumYoI/WYBEzWaqOOcATcXg==
-X-Google-Smtp-Source: APXvYqzDHrJPYBFC/4ZRlo6kMRGcctk9Da8+L6mFYu9ZNYUFhmEDZGFglvH1i+JoExCrNLitCmIaUA==
-X-Received: by 2002:aa7:9145:: with SMTP id 5mr779281pfi.74.1576024590404;
-        Tue, 10 Dec 2019 16:36:30 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id d38sm159954pgd.59.2019.12.10.16.36.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 16:36:29 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     mka@chromium.org, Roja Rani Yarubandi <rojay@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 2/2] arm64: dts: sc7180: Add a comment to i2c7 about external pullup
-Date:   Tue, 10 Dec 2019 16:35:40 -0800
-Message-Id: <20191210163530.2.I8d4cbb3d7ac5824f8e950c53038df8c27a512905@changeid>
-X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
-In-Reply-To: <20191210163530.1.I69a6c29e08924229d160b651769c84508a07b3c6@changeid>
-References: <20191210163530.1.I69a6c29e08924229d160b651769c84508a07b3c6@changeid>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 10 Dec 2019 19:35:04 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id C95E622629;
+        Tue, 10 Dec 2019 19:35:03 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Tue, 10 Dec 2019 19:35:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=NI44Wa9n9XY9sVpFNNGT2BAwDse+De5
+        /jHraPGHHLz8=; b=I8fMm6JGaKDu+9ncpgFK4AXBl3Z+crBkaNb444ZbkinmghR
+        uv8QUKBykuELhcthzfcBuJsGi8x4Gw0/VHIkLvYKmi7Bzv+6xS4jIMQJE5gIlUj/
+        QhbnSrq6A74yB2F9ERcUD2na/vMYZln7layKkpEU7qsfo+ldVEfNbk3kUnwA+zPF
+        tDo+dIxaNaNdKnyaoUVN+GJ2oh7lWxveP37wb0Z61CN7iSn1NWx59vlIQdgXO6XM
+        /MUgYxQGDnHWchPz6Xbn82wn1IJLCrSMXTWl1p/UQr2z6tsbxkGEdL4uxxObHZ17
+        vFNHtL/XlPecmRE3D3ouX4DfiOH4rMFdS6gkYmQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=NI44Wa
+        9n9XY9sVpFNNGT2BAwDse+De5/jHraPGHHLz8=; b=lD4FxQjnHOM6XgeemnR14e
+        NseT9zSu+5wqozw6FRA0IQuWf6CuIItq2YnlY8VOqxd0UNJb7gkDvY9C3wIemkGa
+        +SheZvskq9wq0kYfalBaLHG0cTLJwcF9hoxHabk9tNAh3z1sPazte3/nspANqn/d
+        UIAiDD+grKt8jbbGg3FGR+z6GiPtzMMIMstxjP7osGubt/sFElN94C98z9SKwKS/
+        YzkfkN9/LvqeBWjjSsipJuLEhPWt9A6XVHORGKvYztmGPwZV/t8NvYANuAezTkXL
+        A9Xy1yhi6+x3/5mFVJ1JDRviNpUboIr++gRC7Gojg5N2oyGVfjytV3dKbdnZ0dQA
+        ==
+X-ME-Sender: <xms:tjnwXR5zVMJzXzPfiOE3Yy4dz-Q40r1gT0BKJLfA7Qcy9UWw-1sFfQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudelgedgudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:tjnwXfSrGIsprKvmqsWjpQ7rkQgzaLd33RwNo9W7V03pwWDukWPZDA>
+    <xmx:tjnwXZl8qP9wOwdNkm73WDUNTi3gsdgG0T_zmlvtVMOCEqgQUsuS4Q>
+    <xmx:tjnwXWI0jGMj7TSp31wWNxYi9KnBBf4p6nhZVFZ7tBm0yD4oIx5b6w>
+    <xmx:tznwXeILkJOA0ji12SVaBaPutOphOwKe_LGkcAPmtXrYpeh3nlJl7g>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id BB4F4E00AF; Tue, 10 Dec 2019 19:35:02 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-679-g1f7ccac-fmstable-20191210v1
+Mime-Version: 1.0
+Message-Id: <beb61d28-7284-44bb-8da8-2fb0b8a4ab5a@www.fastmail.com>
+In-Reply-To: <1575566112-11658-4-git-send-email-eajames@linux.ibm.com>
+References: <1575566112-11658-1-git-send-email-eajames@linux.ibm.com>
+ <1575566112-11658-4-git-send-email-eajames@linux.ibm.com>
+Date:   Wed, 11 Dec 2019 11:06:42 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, "Jason Cooper" <jason@lakedaemon.net>,
+        linux-aspeed@lists.ozlabs.org, "Marc Zyngier" <maz@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
+        mark.rutland@arm.com, "Joel Stanley" <joel@jms.id.au>
+Subject: =?UTF-8?Q?Re:_[PATCH_v2_03/12]_ARM:_dts:_aspeed:_ast2500:_Add_SCU_interr?=
+ =?UTF-8?Q?upt_controller?=
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make i2c7 symmetric with the other i2c busses and comment that we have
-no internal pull because there is an external one.
 
-Fixes: ba3fc6496366 ("arm64: dts: sc7180: Add qupv3_0 and qupv3_1")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
 
- arch/arm64/boot/dts/qcom/sc7180-idp.dts | 2 ++
- 1 file changed, 2 insertions(+)
+On Fri, 6 Dec 2019, at 03:45, Eddie James wrote:
+> Add a node for the interrupt controller provided by the SCU.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+>  arch/arm/boot/dts/aspeed-g5.dtsi | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+> index a259c63..df44022 100644
+> --- a/arch/arm/boot/dts/aspeed-g5.dtsi
+> +++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+> @@ -216,8 +216,9 @@
+>  			syscon: syscon@1e6e2000 {
+>  				compatible = "aspeed,ast2500-scu", "syscon", "simple-mfd";
+>  				reg = <0x1e6e2000 0x1a8>;
+> +				ranges = <0 0x1e6e2000 0x1a8>;
+>  				#address-cells = <1>;
+> -				#size-cells = <0>;
+> +				#size-cells = <1>;
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-index 5eab3a282eba..05d30a56eca9 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-@@ -311,6 +311,8 @@ &qup_i2c7_default {
- 	pinconf {
- 		pins = "gpio6", "gpio7";
- 		drive-strength = <2>;
-+
-+		/* Has external pullup */
- 		bias-disable;
- 	};
- };
--- 
-2.24.0.525.g8f36a354ae-goog
+You're no-longer adding a reg property to the interrupt controller node below so the
+hunk above is unnecessary.
 
+Andrew
+
+>  				#clock-cells = <1>;
+>  				#reset-cells = <1>;
+>  
+> @@ -231,6 +232,13 @@
+>  					compatible = "aspeed,ast2500-p2a-ctrl";
+>  					status = "disabled";
+>  				};
+> +
+> +				scu_ic: interrupt-controller@18 {
+> +					#interrupt-cells = <1>;
+> +					compatible = "aspeed,ast2500-scu-ic";
+> +					interrupts = <21>;
+> +					interrupt-controller;
+> +				};
+>  			};
+>  
+>  			rng: hwrng@1e6e2078 {
+> -- 
+> 1.8.3.1
+> 
+>
