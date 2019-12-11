@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BDD711B70E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:05:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3165A11B81B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:12:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388877AbfLKQFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:05:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35564 "EHLO mail.kernel.org"
+        id S1730479AbfLKPIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:08:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730429AbfLKPM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:57 -0500
+        id S1730468AbfLKPIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:08:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D4692467D;
-        Wed, 11 Dec 2019 15:12:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83BCA222C4;
+        Wed, 11 Dec 2019 15:08:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077176;
-        bh=pQakcmBqFDRLENctK9bfXEUWLJiw418Ya1RuBaWljTQ=;
+        s=default; t=1576076929;
+        bh=uDFUA9JX959zDWtIDmfvG05ifKToXnSxeZF2PdDumeE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rFEYRj8RxbU1sKEEgPuDcs0/drDd/uO7o2nZh8flGXnoR09hukvZBlCyALN3z/ThW
-         dH4lSfD3IfSpT8BRYitil0O1YPhi4fz5g757K/CdhviS1sFu6z8BgzpBMCgk89c0Cp
-         uTY0NY3eKr5jbxToAwQfVK2wQpQKt0KYBk6Pnjms=
+        b=RAmm5Qj2cFxxuX4kvV5sYrLn7BcG7vSTwXadHtwUoPEsFN0dlNwcURL1VIJNuj5Qm
+         sC3vPBi+a3sM6KKrdh3IdQMQkA2F4EW928eGgVJPHnuT9B3NURhLnissMup0ykmq2c
+         OJDRnpw9mlRV14sNkDeYUrrmPETPnAhWVhPO4Ruk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: [PATCH 5.3 010/105] serial: pl011: Fix DMA ->flush_buffer()
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 5.4 08/92] mailbox: tegra: Fix superfluous IRQ error message
 Date:   Wed, 11 Dec 2019 16:04:59 +0100
-Message-Id: <20191211150223.556547365@linuxfoundation.org>
+Message-Id: <20191211150223.724847486@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,73 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-commit f6a196477184b99a31d16366a8e826558aa11f6d upstream.
+commit c745da8d4320c49e54662c0a8f7cb6b8204f44c4 upstream.
 
-PL011's ->flush_buffer() implementation releases and reacquires the port
-lock.  Due to a race condition here, data can end up being added to the
-circular buffer but neither being discarded nor being sent out.  This
-leads to, for example, tcdrain(2) waiting indefinitely.
+Commit 7723f4c5ecdb ("driver core: platform: Add an error message to
+platform_get_irq*()") added an error message to avoid drivers having
+to print an error message when IRQ lookup fails. However, there are
+some cases where IRQs are optional and so new optional versions of
+the platform_get_irq*() APIs have been added for these cases.
 
-Process A                       Process B
+The IRQs for Tegra HSP module are optional because not all instances
+of the module have the doorbell and all of the shared interrupts.
+Hence, since the above commit was applied the following error messages
+are now seen on Tegra194 ...
 
-uart_flush_buffer()
- - acquire lock
- - circ_clear
- - pl011_flush_buffer()
- -- release lock
- -- dmaengine_terminate_all()
+ ERR KERN tegra-hsp c150000.hsp: IRQ doorbell not found
+ ERR KERN tegra-hsp c150000.hsp: IRQ shared0 not found
 
-                                uart_write()
-                                - acquire lock
-                                - add chars to circ buffer
-                                - start_tx()
-                                -- start DMA
-                                - release lock
+The Tegra HSP driver deliberately does not fail if these are not found
+and so fix the above errors by updating the Tegra HSP driver to use
+the platform_get_irq_byname_optional() API.
 
- -- acquire lock
- -- turn off DMA
- -- release lock
-
-                                // Data in circ buffer but DMA is off
-
-According to the comment in the code, the releasing of the lock around
-dmaengine_terminate_all() is to avoid a deadlock with the DMA engine
-callback.  However, since the time this code was written, the DMA engine
-API documentation seems to have been clarified to say that
-dmaengine_terminate_all() (in the identically implemented but
-differently named dmaengine_terminate_async() variant) does not wait for
-any running complete callback to be completed and can even be called
-from a complete callback.  So there is no possibility of deadlock if the
-DMA engine driver implements this API correctly.
-
-So we should be able to just remove this release and reacquire of the
-lock to prevent the aforementioned race condition.
-
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191118092547.32135-1-vincent.whitchurch@axis.com
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20191011083459.11551-1-jonathanh@nvidia.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/amba-pl011.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/mailbox/tegra-hsp.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -813,10 +813,8 @@ __acquires(&uap->port.lock)
- 	if (!uap->using_tx_dma)
- 		return;
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -657,7 +657,7 @@ static int tegra_hsp_probe(struct platfo
+ 	hsp->num_db = (value >> HSP_nDB_SHIFT) & HSP_nINT_MASK;
+ 	hsp->num_si = (value >> HSP_nSI_SHIFT) & HSP_nINT_MASK;
  
--	/* Avoid deadlock with the DMA engine callback */
--	spin_unlock(&uap->port.lock);
--	dmaengine_terminate_all(uap->dmatx.chan);
--	spin_lock(&uap->port.lock);
-+	dmaengine_terminate_async(uap->dmatx.chan);
-+
- 	if (uap->dmatx.queued) {
- 		dma_unmap_sg(uap->dmatx.chan->device->dev, &uap->dmatx.sg, 1,
- 			     DMA_TO_DEVICE);
+-	err = platform_get_irq_byname(pdev, "doorbell");
++	err = platform_get_irq_byname_optional(pdev, "doorbell");
+ 	if (err >= 0)
+ 		hsp->doorbell_irq = err;
+ 
+@@ -677,7 +677,7 @@ static int tegra_hsp_probe(struct platfo
+ 			if (!name)
+ 				return -ENOMEM;
+ 
+-			err = platform_get_irq_byname(pdev, name);
++			err = platform_get_irq_byname_optional(pdev, name);
+ 			if (err >= 0) {
+ 				hsp->shared_irqs[i] = err;
+ 				count++;
 
 
