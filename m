@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F18C411B5B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:56:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E98D11B568
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:53:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731144AbfLKPQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:16:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43944 "EHLO mail.kernel.org"
+        id S1732689AbfLKPxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:53:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731927AbfLKPQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:16:42 -0500
+        id S1732032AbfLKPSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:18:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 255BB22B48;
-        Wed, 11 Dec 2019 15:16:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08BF4208C3;
+        Wed, 11 Dec 2019 15:18:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077401;
-        bh=alt0cE64um7geTG1ykx+Ul4Wk8Q7Jv+jdze3bmdFT80=;
+        s=default; t=1576077531;
+        bh=feQS4pO3IZR4NgvroCLND+ukQaE9cpjpXMmzEaAd84Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S/SnUsih4ZmMopVEhVYtLzLS2PJ8q6NV1bDaje9NsZpo3PRxqiUDUjhsRUpy2FmOD
-         0lAZKdp7d+Q7EvRa4woKC0Lj0HNvCGJ2IMclrrjovR51zce/VIps9FKwNWe+5GRMnM
-         rJN46qcMphKC/7/62Mna8HkEWXJMe48N1inF8O/w=
+        b=tGRZj/cX+wR7r0YNTY1hNqxHGjUvk5MnvIPrlZKsKYjqJN1nw0vPHFUaMYRmvuSoY
+         Pv0d6TAZN7EmN5741wjp2Y6Nh+arTjDLQp7l+H7+m61fCDPEMLocaOjMQVxPls9Vfj
+         6ic9a4rg24c8YLm4IryJRwOD9UOBlsp6p430cakA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 025/243] net: ep93xx_eth: fix mismatch of request_mem_region in remove
-Date:   Wed, 11 Dec 2019 16:03:07 +0100
-Message-Id: <20191211150340.606983620@linuxfoundation.org>
+Subject: [PATCH 4.19 027/243] serial: core: Allow processing sysrq at port unlock time
+Date:   Wed, 11 Dec 2019 16:03:09 +0100
+Message-Id: <20191211150340.712620949@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,44 +43,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 3df70afe8d33f4977d0e0891bdcfb639320b5257 ]
+[ Upstream commit d6e1935819db0c91ce4a5af82466f3ab50d17346 ]
 
-The driver calls release_resource in remove to match request_mem_region
-in probe, which is incorrect.
-Fix it by using the right one, release_mem_region.
+Right now serial drivers process sysrq keys deep in their character
+receiving code.  This means that they've already grabbed their
+port->lock spinlock.  This can end up getting in the way if we've go
+to do serial stuff (especially kgdb) in response to the sysrq.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Serial drivers have various hacks in them to handle this.  Looking at
+'8250_port.c' you can see that the console_write() skips locking if
+we're in the sysrq handler.  Looking at 'msm_serial.c' you can see
+that the port lock is dropped around uart_handle_sysrq_char().
+
+It turns out that these hacks aren't exactly perfect.  If you have
+lockdep turned on and use something like the 8250_port hack you'll get
+a splat that looks like:
+
+  WARNING: possible circular locking dependency detected
+  [...] is trying to acquire lock:
+  ... (console_owner){-.-.}, at: console_unlock+0x2e0/0x5e4
+
+  but task is already holding lock:
+  ... (&port_lock_key){-.-.}, at: serial8250_handle_irq+0x30/0xe4
+
+  which lock already depends on the new lock.
+
+  the existing dependency chain (in reverse order) is:
+
+  -> #1 (&port_lock_key){-.-.}:
+         _raw_spin_lock_irqsave+0x58/0x70
+         serial8250_console_write+0xa8/0x250
+         univ8250_console_write+0x40/0x4c
+         console_unlock+0x528/0x5e4
+         register_console+0x2c4/0x3b0
+         uart_add_one_port+0x350/0x478
+         serial8250_register_8250_port+0x350/0x3a8
+         dw8250_probe+0x67c/0x754
+         platform_drv_probe+0x58/0xa4
+         really_probe+0x150/0x294
+         driver_probe_device+0xac/0xe8
+         __driver_attach+0x98/0xd0
+         bus_for_each_dev+0x84/0xc8
+         driver_attach+0x2c/0x34
+         bus_add_driver+0xf0/0x1ec
+         driver_register+0xb4/0x100
+         __platform_driver_register+0x60/0x6c
+         dw8250_platform_driver_init+0x20/0x28
+	 ...
+
+  -> #0 (console_owner){-.-.}:
+         lock_acquire+0x1e8/0x214
+         console_unlock+0x35c/0x5e4
+         vprintk_emit+0x230/0x274
+         vprintk_default+0x7c/0x84
+         vprintk_func+0x190/0x1bc
+         printk+0x80/0xa0
+         __handle_sysrq+0x104/0x21c
+         handle_sysrq+0x30/0x3c
+         serial8250_read_char+0x15c/0x18c
+         serial8250_rx_chars+0x34/0x74
+         serial8250_handle_irq+0x9c/0xe4
+         dw8250_handle_irq+0x98/0xcc
+         serial8250_interrupt+0x50/0xe8
+         ...
+
+  other info that might help us debug this:
+
+   Possible unsafe locking scenario:
+
+         CPU0                    CPU1
+         ----                    ----
+    lock(&port_lock_key);
+                                 lock(console_owner);
+                                 lock(&port_lock_key);
+    lock(console_owner);
+
+   *** DEADLOCK ***
+
+The hack used in 'msm_serial.c' doesn't cause the above splats but it
+seems a bit ugly to unlock / lock our spinlock deep in our irq
+handler.
+
+It seems like we could defer processing the sysrq until the end of the
+interrupt handler right after we've unlocked the port.  With this
+scheme if a whole batch of sysrq characters comes in one irq then we
+won't handle them all, but that seems like it should be a fine
+compromise.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cirrus/ep93xx_eth.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/linux/serial_core.h | 37 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cirrus/ep93xx_eth.c b/drivers/net/ethernet/cirrus/ep93xx_eth.c
-index 13dfdfca49fc7..edc1d19c9c02e 100644
---- a/drivers/net/ethernet/cirrus/ep93xx_eth.c
-+++ b/drivers/net/ethernet/cirrus/ep93xx_eth.c
-@@ -767,6 +767,7 @@ static int ep93xx_eth_remove(struct platform_device *pdev)
- {
- 	struct net_device *dev;
- 	struct ep93xx_priv *ep;
-+	struct resource *mem;
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index 406edae44ca30..3460b15a26078 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -173,6 +173,7 @@ struct uart_port {
+ 	struct console		*cons;			/* struct console, if any */
+ #if defined(CONFIG_SERIAL_CORE_CONSOLE) || defined(SUPPORT_SYSRQ)
+ 	unsigned long		sysrq;			/* sysrq timeout */
++	unsigned int		sysrq_ch;		/* char for sysrq */
+ #endif
  
- 	dev = platform_get_drvdata(pdev);
- 	if (dev == NULL)
-@@ -782,8 +783,8 @@ static int ep93xx_eth_remove(struct platform_device *pdev)
- 		iounmap(ep->base_addr);
- 
- 	if (ep->res != NULL) {
--		release_resource(ep->res);
--		kfree(ep->res);
-+		mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		release_mem_region(mem->start, resource_size(mem));
+ 	/* flags must be updated while holding port mutex */
+@@ -482,8 +483,42 @@ uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
  	}
+ 	return 0;
+ }
++static inline int
++uart_prepare_sysrq_char(struct uart_port *port, unsigned int ch)
++{
++	if (port->sysrq) {
++		if (ch && time_before(jiffies, port->sysrq)) {
++			port->sysrq_ch = ch;
++			port->sysrq = 0;
++			return 1;
++		}
++		port->sysrq = 0;
++	}
++	return 0;
++}
++static inline void
++uart_unlock_and_check_sysrq(struct uart_port *port, unsigned long irqflags)
++{
++	int sysrq_ch;
++
++	sysrq_ch = port->sysrq_ch;
++	port->sysrq_ch = 0;
++
++	spin_unlock_irqrestore(&port->lock, irqflags);
++
++	if (sysrq_ch)
++		handle_sysrq(sysrq_ch);
++}
+ #else
+-#define uart_handle_sysrq_char(port,ch) ({ (void)port; 0; })
++static inline int
++uart_handle_sysrq_char(struct uart_port *port, unsigned int ch) { return 0; }
++static inline int
++uart_prepare_sysrq_char(struct uart_port *port, unsigned int ch) { return 0; }
++static inline void
++uart_unlock_and_check_sysrq(struct uart_port *port, unsigned long irqflags)
++{
++	spin_unlock_irqrestore(&port->lock, irqflags);
++}
+ #endif
  
- 	free_netdev(dev);
+ /*
 -- 
 2.20.1
 
