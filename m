@@ -2,98 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4130F11BF61
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 22:47:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 936EC11BF72
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 22:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfLKVop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 16:44:45 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33248 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbfLKVop (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 16:44:45 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 6so21369pgk.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 13:44:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=wkoNjmei5sIfxNKYIytd7zHyeLv+b+a83ECcT+r0WWE=;
-        b=eQhg4POUvSGfKDGmAfB3LhOnH9J0IJrxgIKZW7BGANMGUuByHKI+JnZLshJIG0WwcC
-         V5XHdW9lyQ0MxV4oCh5vmk6QOnMheyWSd7MtrBaQHzvG2phA2M+va7PryK+uMB/BaSC1
-         JVWjqwGDON2r046aP2D7HY9T/KlpEDvS7obk3LFAZSBSudOxMJvscBD73p+L02Li55xF
-         dmlNUnmolqzRBTmLtafIo/dt1oBuYT5nyE2kXVQNrbWoaowAaA5J+QAgxVr49uGPT8sR
-         AaOoPPhahDkiwf2miU8uH2JKMezkJfZyWM0/ojhYFkbC62EPJia6RoaCK0Oy74n9WXMU
-         zJLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=wkoNjmei5sIfxNKYIytd7zHyeLv+b+a83ECcT+r0WWE=;
-        b=RaoymNurZzyhC2KYsrjRR7xg7mOA0TT5nDX+AlNfHXzglU7D9y+4mSkqX30XjEiUOL
-         Q5MxR0jJl5UVcCwWDHLeU/1ufQKY19waRfpyt0VGjEcX8k/6sEuZSijgxgV7pasHf7VD
-         5vGZ8UWPATTmHphhLh1eduwP/jZE1GZ2faURLXFLQvDv8Z9JjD7Wimh3gnle3BbrkvOD
-         axBd5dYaMoX9NduNTMsRhWGiL1x3xeVBeIzcJnQb1qJz+wcMXj6Z96NAVY/Zm7g6vgUU
-         6HN/u/il+L7ba6tvfNNFJ4zeHzlLZUNdbNfLUspIVgamMo9iLRPnM9zEgpQlQwpCWitK
-         MK8Q==
-X-Gm-Message-State: APjAAAWa3YbIRI1/IaHHJU1a5trwnKGGNucSpPAWhG7/hdUGCy+PrXIH
-        nyJmzAiQDgIeDgVl1Z8XOTI8og==
-X-Google-Smtp-Source: APXvYqw05tLSLBYBI71/bzNSgwOhxYrohKf19gPgNhSmYuZNKVWRhCaiynvJ1ckIYvm66/35qDD51Q==
-X-Received: by 2002:a62:7541:: with SMTP id q62mr6091794pfc.256.1576100684673;
-        Wed, 11 Dec 2019 13:44:44 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id y38sm3951314pgk.33.2019.12.11.13.44.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 13:44:43 -0800 (PST)
-Date:   Wed, 11 Dec 2019 13:44:43 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Ilya Dryomov <idryomov@gmail.com>
-cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Edward Chron <echron@arista.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] mm/oom: fix pgtables units mismatch in Killed process
- message
-In-Reply-To: <20191211202830.1600-1-idryomov@gmail.com>
-Message-ID: <alpine.DEB.2.21.1912111343050.97034@chino.kir.corp.google.com>
-References: <20191211202830.1600-1-idryomov@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726824AbfLKVye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 16:54:34 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:36682 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726313AbfLKVyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 16:54:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=6yDIvGoEIdyIxWF4uOpwl8SQIQb1Tz6fEiyEFR/vABg=; b=btsGbM8jl3/83x2vaz+Bu9vkPR
+        oncI5rXnHyzJHeeQG4CCOneCvIO9dpFec6j6+bvJQGjUfznYKnEEK4O7LdAFeYerGMSWh4bFHK3YG
+        YpypQ31UjiTHMg6pfxgOmaDhZgyx7y2XAAsOEFHWPZSoN+/J8WstATNPi04+nJ26OWb4=;
+Received: from p5dcc331a.dip0.t-ipconnect.de ([93.204.51.26] helo=eeepc)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1if9w9-0002EV-Up; Wed, 11 Dec 2019 22:54:26 +0100
+Received: from andi by eeepc with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1if9w5-00005W-CD; Wed, 11 Dec 2019 22:54:21 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rtc@vger.kernel.org, stefan@agner.ch, b.galvani@gmail.com,
+        phh@phh.me, letux-kernel@openphoenux.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v4 0/5] Add rtc support for rn5t618 mfd 
+Date:   Wed, 11 Dec 2019 22:54:04 +0100
+Message-Id: <20191211215409.32764-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Dec 2019, Ilya Dryomov wrote:
+In the variant RC5T619 the mfd has an RTC. This patchset adds
+support for it. To do so it adds the missing register defines in 
+rn5t618.h and general irq handling for that.
+It seems that the irq definitions are the same except missing RTC
+but due to missing ability to test that I do not add them here.
 
-> pr_err() expects kB, but mm_pgtables_bytes() returns the number of
-> bytes.  As everything else is printed in kB, I chose to fix the value
-> rather than the string.
-> 
-> Before:
-> 
-> [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
-> ...
-> [   1878]  1000  1878   217253   151144  1269760        0             0 python
-> ...
-> Out of memory: Killed process 1878 (python) total-vm:869012kB, anon-rss:604572kB, file-rss:4kB, shmem-rss:0kB, UID:1000 pgtables:1269760kB oom_score_adj:0
-> 
-> After:
-> 
-> [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
-> ...
-> [   1436]  1000  1436   217253   151890  1294336        0             0 python
-> ...
-> Out of memory: Killed process 1436 (python) total-vm:869012kB, anon-rss:607516kB, file-rss:44kB, shmem-rss:0kB, UID:1000 pgtables:1264kB oom_score_adj:0
-> 
-> Fixes: 70cb6d267790 ("mm/oom: add oom_score_adj and pgtables to Killed process message")
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+The rtc driver itself is based on 
+https://github.com/kobolabs/Kobo-Reader/blob/master/hw/imx6sll-clara/kernel.tar.bz2
+but heavily reworked.
 
-Acked-by: David Rientjes <rientjes@google.com>
+It was tested on the Kobo Clara HD.
 
-I'd also suggest a
+Changes in v4:
+- use macros for IRQ definitions
+- merge rn5t618-core.c and rn5t618-irq.c
 
-Cc: stable@vger.kernel.org # 5.4
+Changes in v3:
+- alignment cleanup
+- output cleanup, remove useless toggling of alarm flag in rtc probe
+- updated bindings description, so patch 1/5 becomes 2/6 and so on
+
+Changes in v2:
+- no dead code in irq code
+- various improvements and cleanups in rtc driver itself
+
+Andreas Kemnade (5):
+  dt-bindings: mfd: rn5t618: Document optional property interrupts
+  mfd: rn5t618: add IRQ support
+  mfd: rn5t618: add RTC related registers
+  mfd: rn5t618: add more subdevices
+  rtc: rc5t619: add ricoh rc5t619 RTC driver
+
+ Documentation/devicetree/bindings/mfd/rn5t618.txt |   4 +
+ drivers/mfd/Kconfig                               |   1 +
+ drivers/mfd/rn5t618.c                             | 106 +++++-
+ drivers/rtc/Kconfig                               |  10 +
+ drivers/rtc/Makefile                              |   1 +
+ drivers/rtc/rtc-rc5t619.c                         | 444 ++++++++++++++++++++++
+ include/linux/mfd/rn5t618.h                       |  26 ++
+ 7 files changed, 590 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/rtc/rtc-rc5t619.c
+
+-- 
+2.11.0
+
