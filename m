@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC88C11B7EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:11:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D69711B66D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:01:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730791AbfLKPKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:10:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58902 "EHLO mail.kernel.org"
+        id S1731459AbfLKPNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:13:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730423AbfLKPKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:10:34 -0500
+        id S1731387AbfLKPNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FD8320663;
-        Wed, 11 Dec 2019 15:10:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 653B724680;
+        Wed, 11 Dec 2019 15:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077034;
-        bh=B3UhKAqWVlq8iHx8Xvx/hiWVPkC7YtwfvTyR+6T9d2A=;
+        s=default; t=1576077197;
+        bh=sThiPnci4T/GbAaieAjV2/NYiH/63xnXFMXZsH0FKeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WkeWgF6110CxtOMRW2l6LDcGGL5m35REe7AN2vRjrZB1CME9px4yvemnbaTcARk0n
-         0jKgCh6p99I8GpNXUWjPwtS0WY1PCVhMyfOn7/1As4QUtDssRb7W4+j5O/V4baz3hf
-         RUHDbv8j9UVGfiGxJsvWLhwEA76vPToG40VzREzk=
+        b=k4sMYHp7P0r44rpgps5C3EcaXNGIIGr6pFKX4J2Gzog35LTGczs6MpiircHOSPHxv
+         7tSMpqtufBUIMk9Opg4VLDcHvepiiS9iaeXurgR13CY+zJ3OU2RrgMi4p8xsLdG3A+
+         VKdBP7eKEnJO6yMKGlzuuqHWPyj70/7YPlfiFZl0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+19340dff067c2d3835c0@syzkaller.appspotmail.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 5.4 48/92] tty: vt: keyboard: reject invalid keycodes
-Date:   Wed, 11 Dec 2019 16:05:39 +0100
-Message-Id: <20191211150242.689131251@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Pobega <mpobega@neverware.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.3 054/105] ALSA: hda: Modify stream stripe mask only when needed
+Date:   Wed, 11 Dec 2019 16:05:43 +0100
+Message-Id: <20191211150242.706861940@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
+References: <20191211150221.153659747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +43,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit b2b2dd71e0859436d4e05b2f61f86140250ed3f8 upstream.
+commit e38e486d66e2a3b902768fd71c32dbf10f77e1cb upstream.
 
-Do not try to handle keycodes that are too big, otherwise we risk doing
-out-of-bounds writes:
+The recent commit in HD-audio stream management for changing the
+stripe control seems causing a regression on some platforms.  The
+stripe control is currently used only by HDMI codec, and applying the
+stripe mask unconditionally may lead to scratchy and static noises as
+seen on some MacBooks.
 
-BUG: KASAN: global-out-of-bounds in clear_bit include/asm-generic/bitops-instrumented.h:56 [inline]
-BUG: KASAN: global-out-of-bounds in kbd_keycode drivers/tty/vt/keyboard.c:1411 [inline]
-BUG: KASAN: global-out-of-bounds in kbd_event+0xe6b/0x3790 drivers/tty/vt/keyboard.c:1495
-Write of size 8 at addr ffffffff89a1b2d8 by task syz-executor108/1722
-...
- kbd_keycode drivers/tty/vt/keyboard.c:1411 [inline]
- kbd_event+0xe6b/0x3790 drivers/tty/vt/keyboard.c:1495
- input_to_handler+0x3b6/0x4c0 drivers/input/input.c:118
- input_pass_values.part.0+0x2e3/0x720 drivers/input/input.c:145
- input_pass_values drivers/input/input.c:949 [inline]
- input_set_keycode+0x290/0x320 drivers/input/input.c:954
- evdev_handle_set_keycode_v2+0xc4/0x120 drivers/input/evdev.c:882
- evdev_do_ioctl drivers/input/evdev.c:1150 [inline]
+For addressing the regression, this patch changes the stream
+management code to apply the stripe mask conditionally only when the
+codec driver requested.
 
-In this case we were dealing with a fuzzed HID device that declared over
-12K buttons, and while HID layer should not be reporting to us such big
-keycodes, we should also be defensive and reject invalid data ourselves as
-well.
-
-Reported-by: syzbot+19340dff067c2d3835c0@syzkaller.appspotmail.com
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191122204220.GA129459@dtor-ws
+Fixes: 9b6f7e7a296e ("ALSA: hda: program stripe bits for controller")
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204477
+Tested-by: Michael Pobega <mpobega@neverware.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191202074947.1617-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/keyboard.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/sound/hdaudio.h    |    1 +
+ sound/hda/hdac_stream.c    |   19 ++++++++++++-------
+ sound/pci/hda/patch_hdmi.c |    5 +++++
+ 3 files changed, 18 insertions(+), 7 deletions(-)
 
---- a/drivers/tty/vt/keyboard.c
-+++ b/drivers/tty/vt/keyboard.c
-@@ -1491,7 +1491,7 @@ static void kbd_event(struct input_handl
+--- a/include/sound/hdaudio.h
++++ b/include/sound/hdaudio.h
+@@ -504,6 +504,7 @@ struct hdac_stream {
+ 	bool prepared:1;
+ 	bool no_period_wakeup:1;
+ 	bool locked:1;
++	bool stripe:1;			/* apply stripe control */
  
- 	if (event_type == EV_MSC && event_code == MSC_RAW && HW_RAW(handle->dev))
- 		kbd_rawcode(value);
--	if (event_type == EV_KEY)
-+	if (event_type == EV_KEY && event_code <= KEY_MAX)
- 		kbd_keycode(event_code, value, HW_RAW(handle->dev));
+ 	/* timestamp */
+ 	unsigned long start_wallclk;	/* start + minimum wallclk */
+--- a/sound/hda/hdac_stream.c
++++ b/sound/hda/hdac_stream.c
+@@ -96,12 +96,14 @@ void snd_hdac_stream_start(struct hdac_s
+ 			      1 << azx_dev->index,
+ 			      1 << azx_dev->index);
+ 	/* set stripe control */
+-	if (azx_dev->substream)
+-		stripe_ctl = snd_hdac_get_stream_stripe_ctl(bus, azx_dev->substream);
+-	else
+-		stripe_ctl = 0;
+-	snd_hdac_stream_updateb(azx_dev, SD_CTL_3B, SD_CTL_STRIPE_MASK,
+-				stripe_ctl);
++	if (azx_dev->stripe) {
++		if (azx_dev->substream)
++			stripe_ctl = snd_hdac_get_stream_stripe_ctl(bus, azx_dev->substream);
++		else
++			stripe_ctl = 0;
++		snd_hdac_stream_updateb(azx_dev, SD_CTL_3B, SD_CTL_STRIPE_MASK,
++					stripe_ctl);
++	}
+ 	/* set DMA start and interrupt mask */
+ 	snd_hdac_stream_updateb(azx_dev, SD_CTL,
+ 				0, SD_CTL_DMA_START | SD_INT_MASK);
+@@ -118,7 +120,10 @@ void snd_hdac_stream_clear(struct hdac_s
+ 	snd_hdac_stream_updateb(azx_dev, SD_CTL,
+ 				SD_CTL_DMA_START | SD_INT_MASK, 0);
+ 	snd_hdac_stream_writeb(azx_dev, SD_STS, SD_INT_MASK); /* to be sure */
+-	snd_hdac_stream_updateb(azx_dev, SD_CTL_3B, SD_CTL_STRIPE_MASK, 0);
++	if (azx_dev->stripe) {
++		snd_hdac_stream_updateb(azx_dev, SD_CTL_3B, SD_CTL_STRIPE_MASK, 0);
++		azx_dev->stripe = 0;
++	}
+ 	azx_dev->running = false;
+ }
+ EXPORT_SYMBOL_GPL(snd_hdac_stream_clear);
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -31,6 +31,7 @@
+ #include <sound/hda_codec.h>
+ #include "hda_local.h"
+ #include "hda_jack.h"
++#include "hda_controller.h"
  
- 	spin_unlock(&kbd_event_lock);
+ static bool static_hdmi_pcm;
+ module_param(static_hdmi_pcm, bool, 0644);
+@@ -1226,6 +1227,10 @@ static int hdmi_pcm_open(struct hda_pcm_
+ 	per_pin->cvt_nid = per_cvt->cvt_nid;
+ 	hinfo->nid = per_cvt->cvt_nid;
+ 
++	/* flip stripe flag for the assigned stream if supported */
++	if (get_wcaps(codec, per_cvt->cvt_nid) & AC_WCAP_STRIPE)
++		azx_stream(get_azx_dev(substream))->stripe = 1;
++
+ 	snd_hda_set_dev_select(codec, per_pin->pin_nid, per_pin->dev_id);
+ 	snd_hda_codec_write_cache(codec, per_pin->pin_nid, 0,
+ 			    AC_VERB_SET_CONNECT_SEL,
 
 
