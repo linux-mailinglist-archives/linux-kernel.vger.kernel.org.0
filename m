@@ -2,107 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40FE311A0FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E914011A11C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:13:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbfLKCEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 21:04:55 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:32077 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726364AbfLKCEz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:04:55 -0500
-X-UUID: c0e289d8c5a64e7384b49c4353133d96-20191211
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=wg0RWtXnuazbnyWqaYUsInjXzTF5INnndGMTSvzSNXg=;
-        b=VY3oVp/kL+4z2JOIh6bbMIsWlTardtrptRq8k9S4xbwlHMFQhmFX6w1QBYXwA4lPtmAOBafnMXubU2L5qZncv3+adK1yTBkxszBKyb7X1+KbwN9wdT+5UAnkAqyyIE7/RrSrkfKFhR1P8neRM0mH7qGyXWVTwSlhjrWfoAfzhFU=;
-X-UUID: c0e289d8c5a64e7384b49c4353133d96-20191211
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 599611083; Wed, 11 Dec 2019 10:04:49 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 11 Dec 2019 10:04:22 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 11 Dec 2019 10:04:43 +0800
-Message-ID: <1576029887.19653.17.camel@mtksdaap41>
-Subject: Re: [PATCH v2 13/14] soc: mediatek: cmdq: add wait no clear event
- function
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 11 Dec 2019 10:04:47 +0800
-In-Reply-To: <1574819937-6246-15-git-send-email-dennis-yc.hsieh@mediatek.com>
-References: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-         <1574819937-6246-15-git-send-email-dennis-yc.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        id S1727527AbfLKCNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 21:13:15 -0500
+Received: from mga04.intel.com ([192.55.52.120]:52878 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726062AbfLKCNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 21:13:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 18:13:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="225352973"
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 10 Dec 2019 18:13:12 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@linux.intel.com, kevin.tian@intel.com,
+        yi.l.liu@intel.com, yi.y.sun@intel.com,
+        Peter Xu <peterx@redhat.com>, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v3 0/6] Use 1st-level for IOVA translation
+Date:   Wed, 11 Dec 2019 10:12:13 +0800
+Message-Id: <20191211021219.8997-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIERlbm5pczoNCg0KT24gV2VkLCAyMDE5LTExLTI3IGF0IDA5OjU4ICswODAwLCBEZW5uaXMg
-WUMgSHNpZWggd3JvdGU6DQo+IEFkZCB3YWl0IG5vIGNsZWFyIGV2ZW50IGZ1bmN0aW9uIGluIGNt
-ZHEgaGVscGVyIGZ1bmN0aW9ucyB0byB3YWl0IHNwZWNpZmljDQo+IGV2ZW50IHdpdGhvdXQgY2xl
-YXIgdG8gMCBhZnRlciByZWNlaXZlIGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogRGVubmlzIFlD
-IEhzaWVoIDxkZW5uaXMteWMuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMv
-c29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jIHwgMTUgKysrKysrKysrKysrKysrDQo+ICBp
-bmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oICB8IDEwICsrKysrKysrKysNCj4g
-IDIgZmlsZXMgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jIGIvZHJpdmVycy9zb2MvbWVkaWF0
-ZWsvbXRrLWNtZHEtaGVscGVyLmMNCj4gaW5kZXggMTBhOWI0NDgxZTU4Li42ZjI3MGZhZGZiNTAg
-MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jDQo+
-ICsrKyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jDQo+IEBAIC0zMzAs
-NiArMzMwLDIxIEBAIGludCBjbWRxX3BrdF93ZmUoc3RydWN0IGNtZHFfcGt0ICpwa3QsIHUxNiBl
-dmVudCkNCj4gIH0NCj4gIEVYUE9SVF9TWU1CT0woY21kcV9wa3Rfd2ZlKTsNCj4gIA0KPiAraW50
-IGNtZHFfcGt0X3dhaXRfbm9fY2xlYXIoc3RydWN0IGNtZHFfcGt0ICpwa3QsIHUxNiBldmVudCkN
-Cj4gK3sNCj4gKwlzdHJ1Y3QgY21kcV9pbnN0cnVjdGlvbiBpbnN0ID0geyB7MH0gfTsNCj4gKw0K
-PiArCWlmIChldmVudCA+PSBDTURRX01BWF9FVkVOVCkNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+
-ICsNCj4gKwlpbnN0Lm9wID0gQ01EUV9DT0RFX1dGRTsNCj4gKwlpbnN0LnZhbHVlID0gQ01EUV9X
-RkVfV0FJVCB8IENNRFFfV0ZFX1dBSVRfVkFMVUU7DQo+ICsJaW5zdC5ldmVudCA9IGV2ZW50Ow0K
-PiArDQo+ICsJcmV0dXJuIGNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKHBrdCwgaW5zdCk7DQo+ICt9
-DQo+ICtFWFBPUlRfU1lNQk9MKGNtZHFfcGt0X3dhaXRfbm9fY2xlYXIpOw0KDQpTbyB0aGUgd2Fp
-dCBjb21tYW5kIGhhcyB0d28gdmVyc2lvbiwgb25lIGlzIHdhaXQgYW5kIHRoZW4gY2xlYXIgZXZl
-bnQsDQphbm90aGVyIGlzIHdhaXQgYW5kIG5vdCBjbGVhciBldmVudC4gVGhlIG5hbWUgb2YgY21k
-cV9wa3Rfd2ZlKCkgaXMgJ3dhaXQNCmZvciBldmVudCcsIHNvIGl0J3MgdHJpdmlhbCB0aGF0IHdl
-IHRoaW5rIGl0IGRvZXMgbm90IGNsZWFyIGV2ZW50LiBJJ3ZlDQp0aHJlZSBzdWdnZXN0aW9uIGZv
-ciB0aGlzOg0KDQoxLiBMZXQgY21kcV9wa3Rfd2ZlKCkgd2FpdCBhbmQgbm90IGNsZWFyIGV2ZW50
-LCBhbmQNCmNtZHFfcGt0X3dmZV9jbGVhcl9ldmVudCgpIHdhaXQgYW5kIGNsZWFyIGV2ZW50Lg0K
-DQpvciANCjIuIExldCBjbWRxX3BrdF93ZmUoKSBoYXMgYSBwYXJhbWV0ZXIgdG8gaW5kaWNhdGUg
-dGhhdCBjbGVhciBldmVudCBvcg0Kbm90IGFmdGVyIHdhaXQuDQoNCm9yDQozLiBMZXQgY21kcV9w
-a3Rfd2ZlKCkgd2FpdCBhbmQgbm90IGNsZWFyIGV2ZW50LCBhbmQgbm90IHByb3ZpZGUgd2FpdCBh
-bmQNCmNsZWFyIGV2ZW50IHZlcnNpb24uIEZvciBEUk0gYW5kIE1EUCwgSSB0aGluayBib3RoIGp1
-c3QgbmVlZCB3YWl0IGFuZA0Kbm90IGNsZWFyIGV2ZW50Lg0KDQpSZWdhcmRzLA0KQ0sNCg0KDQo+
-ICsNCj4gIGludCBjbWRxX3BrdF9jbGVhcl9ldmVudChzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2
-IGV2ZW50KQ0KPiAgew0KPiAgCXN0cnVjdCBjbWRxX2luc3RydWN0aW9uIGluc3QgPSB7IHswfSB9
-Ow0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaCBi
-L2luY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmgNCj4gaW5kZXggZDE1ZDhjOTQx
-OTkyLi40MGJjNjFhZDhkMzEgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvc29jL21lZGlh
-dGVrL210ay1jbWRxLmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNt
-ZHEuaA0KPiBAQCAtMTQ5LDYgKzE0OSwxNiBAQCBpbnQgY21kcV9wa3Rfd3JpdGVfc192YWx1ZShz
-dHJ1Y3QgY21kcV9wa3QgKnBrdCwgZG1hX2FkZHJfdCBhZGRyLA0KPiAgICovDQo+ICBpbnQgY21k
-cV9wa3Rfd2ZlKHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYgZXZlbnQpOw0KPiAgDQo+ICsvKioN
-Cj4gKyAqIGNtZHFfcGt0X3dhaXRfbm9fY2xlYXIoKSAtIEFwcGVuZCB3YWl0IGZvciBldmVudCBj
-b21tYW5kIHRvIHRoZSBDTURRIHBhY2tldCwNCj4gKyAqCQkJICAgICAgd2l0aG91dCB1cGRhdGUg
-ZXZlbnQgdG8gMCBhZnRlciByZWNlaXZlIGl0Lg0KPiArICogQHBrdDoJdGhlIENNRFEgcGFja2V0
-DQo+ICsgKiBAZXZlbnQ6CXRoZSBkZXNpcmVkIGV2ZW50IHR5cGUgdG8gd2FpdA0KPiArICoNCj4g
-KyAqIFJldHVybjogMCBmb3Igc3VjY2VzczsgZWxzZSB0aGUgZXJyb3IgY29kZSBpcyByZXR1cm5l
-ZA0KPiArICovDQo+ICtpbnQgY21kcV9wa3Rfd2FpdF9ub19jbGVhcihzdHJ1Y3QgY21kcV9wa3Qg
-KnBrdCwgdTE2IGV2ZW50KTsNCj4gKw0KPiAgLyoqDQo+ICAgKiBjbWRxX3BrdF9jbGVhcl9ldmVu
-dCgpIC0gYXBwZW5kIGNsZWFyIGV2ZW50IGNvbW1hbmQgdG8gdGhlIENNRFEgcGFja2V0DQo+ICAg
-KiBAcGt0Ogl0aGUgQ01EUSBwYWNrZXQNCg0K
+Intel VT-d in scalable mode supports two types of page tables
+for DMA translation: the first level page table and the second
+level page table. The first level page table uses the same
+format as the CPU page table, while the second level page table
+keeps compatible with previous formats. The software is able
+to choose any one of them for DMA remapping according to the use
+case.
+
+This patchset aims to move IOVA (I/O Virtual Address) translation
+to 1st-level page table in scalable mode. This will simplify vIOMMU
+(IOMMU simulated by VM hypervisor) design by using the two-stage
+translation, a.k.a. nested mode translation.
+
+As Intel VT-d architecture offers caching mode, guest IOVA (GIOVA)
+support is currently implemented in a shadow page manner. The device
+simulation software, like QEMU, has to figure out GIOVA->GPA mappings
+and write them to a shadowed page table, which will be used by the
+physical IOMMU. Each time when mappings are created or destroyed in
+vIOMMU, the simulation software has to intervene. Hence, the changes
+on GIOVA->GPA could be shadowed to host.
+
+
+     .-----------.
+     |  vIOMMU   |
+     |-----------|                 .--------------------.
+     |           |IOTLB flush trap |        QEMU        |
+     .-----------. (map/unmap)     |--------------------|
+     |GIOVA->GPA |---------------->|    .------------.  |
+     '-----------'                 |    | GIOVA->HPA |  |
+     |           |                 |    '------------'  |
+     '-----------'                 |                    |
+                                   |                    |
+                                   '--------------------'
+                                                |
+            <------------------------------------
+            |
+            v VFIO/IOMMU API
+      .-----------.
+      |  pIOMMU   |
+      |-----------|
+      |           |
+      .-----------.
+      |GIOVA->HPA |
+      '-----------'
+      |           |
+      '-----------'
+
+In VT-d 3.0, scalable mode is introduced, which offers two-level
+translation page tables and nested translation mode. Regards to
+GIOVA support, it can be simplified by 1) moving the GIOVA support
+over 1st-level page table to store GIOVA->GPA mapping in vIOMMU,
+2) binding vIOMMU 1st level page table to the pIOMMU, 3) using pIOMMU
+second level for GPA->HPA translation, and 4) enable nested (a.k.a.
+dual-stage) translation in host. Compared with current shadow GIOVA
+support, the new approach makes the vIOMMU design simpler and more
+efficient as we only need to flush the pIOMMU IOTLB and possible
+device-IOTLB when an IOVA mapping in vIOMMU is torn down.
+
+     .-----------.
+     |  vIOMMU   |
+     |-----------|                 .-----------.
+     |           |IOTLB flush trap |   QEMU    |
+     .-----------.    (unmap)      |-----------|
+     |GIOVA->GPA |---------------->|           |
+     '-----------'                 '-----------'
+     |           |                       |
+     '-----------'                       |
+           <------------------------------
+           |      VFIO/IOMMU          
+           |  cache invalidation and  
+           | guest gpd bind interfaces
+           v
+     .-----------.
+     |  pIOMMU   |
+     |-----------|
+     .-----------.
+     |GIOVA->GPA |<---First level
+     '-----------'
+     | GPA->HPA  |<---Scond level
+     '-----------'
+     '-----------'
+
+This patch applies the first level page table for IOVA translation
+unless the DOMAIN_ATTR_NESTING domain attribution has been set.
+Setting of this attribution means the second level will be used to
+map gPA (guest physical address) to hPA (host physical address), and
+the mappings between gVA (guest virtual address) and gPA will be
+maintained by the guest with the page table address binding to host's
+first level.
+
+Based-on-idea-by: Ashok Raj <ashok.raj@intel.com>
+Based-on-idea-by: Kevin Tian <kevin.tian@intel.com>
+Based-on-idea-by: Liu Yi L <yi.l.liu@intel.com>
+Based-on-idea-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Based-on-idea-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+Based-on-idea-by: Lu Baolu <baolu.lu@linux.intel.com>
+
+Change log:
+
+v2->v3:
+ - The previous version was posted here
+   https://lkml.org/lkml/2019/11/27/1831
+ - Accept Jacob's suggestion on merging two page tables.
+
+ v1->v2
+ - The first series was posted here
+   https://lkml.org/lkml/2019/9/23/297
+ - Use per domain page table ops to handle different page tables.
+ - Use first level for DMA remapping by default on both bare metal
+   and vm guest.
+ - Code refine according to code review comments for v1.
+
+Lu Baolu (6):
+  iommu/vt-d: Identify domains using first level page table
+  iommu/vt-d: Add set domain DOMAIN_ATTR_NESTING attr
+  iommu/vt-d: Add PASID_FLAG_FL5LP for first-level pasid setup
+  iommu/vt-d: Setup pasid entries for iova over first level
+  iommu/vt-d: Flush PASID-based iotlb for iova over first level
+  iommu/vt-d: Use iova over first level
+
+ drivers/iommu/dmar.c        |  41 ++++++++
+ drivers/iommu/intel-iommu.c | 185 ++++++++++++++++++++++++++++++++----
+ drivers/iommu/intel-pasid.c |   7 +-
+ drivers/iommu/intel-pasid.h |   6 ++
+ drivers/iommu/intel-svm.c   |   8 +-
+ include/linux/intel-iommu.h |  12 ++-
+ 6 files changed, 231 insertions(+), 28 deletions(-)
+
+-- 
+2.17.1
 
