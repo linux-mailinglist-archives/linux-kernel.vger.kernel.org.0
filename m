@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9C4011B586
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:54:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3098C11B589
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:54:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732038AbfLKPRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:17:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45052 "EHLO mail.kernel.org"
+        id S1729950AbfLKPRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:17:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731717AbfLKPRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:17:35 -0500
+        id S1729663AbfLKPRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:17:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCE0020663;
-        Wed, 11 Dec 2019 15:17:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E0B4208C3;
+        Wed, 11 Dec 2019 15:17:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077455;
-        bh=DskxH4nDed/fTxBnpZHfThwnlrqdlMuYDLk36DG9sts=;
+        s=default; t=1576077462;
+        bh=XUHcoykyLvckV5PdmDnupnL1JXiN65tjng30i/Gu1Bo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1NmM2Z0Fv9OVasN2t/Zw4KtxqnHetGAIWJVV8ihTCIzfok8iriTMMb7B5vffzAvGt
-         N1EPaGxBeeb5831RZur0pNdNncv6Csd7fb31hee8yfiMOf63o9H8ZM1+D4YMG9jRZ8
-         jhZlibYu4DnMmaHyIf88wAFkA1Wwavrb5w2xhCqA=
+        b=UKp33KiCyzx5QmK3hInmxziN3ToTVxKR/vp+tl91F/9NGj5mPNjyA5GguHuEteuKh
+         6RlDT8AnlRn214otlxqyEb3PReKTzPGiMWTJy80QLCqdvjYyjV7xVxqqraB7W7JJnz
+         aVvcbrdg9GSYX8hDJeOUxx3O0N8XKrWihMv6CXQ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alice Michael <alice.michael@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 046/243] virtchnl: Fix off by one error
-Date:   Wed, 11 Dec 2019 16:03:28 +0100
-Message-Id: <20191211150342.217595902@linuxfoundation.org>
+Subject: [PATCH 4.19 048/243] clk: rockchip: fix rk3188 sclk_mac_lbtest parameter ordering
+Date:   Wed, 11 Dec 2019 16:03:30 +0100
+Message-Id: <20191211150342.346050237@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -45,40 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alice Michael <alice.michael@intel.com>
+From: Heiko Stuebner <heiko@sntech.de>
 
-[ Upstream commit 843faff87af261bf55eda719a06087af0486a168 ]
+[ Upstream commit ac8cb53829a6ba119082e067f5bc8fab3611ce6a ]
 
-When calculating the valid length for a VIRTCHNL_OP_ENABLE_CHANNELS
-message, we accidentally allowed messages with one extra
-virtchnl_channel_info structure on the end. This happened due
-to an off by one error, because we forgot that valid_len already
-accounted for one virtchnl_channel_info structure, so we need to
-subtract one from the num_tc value.
+Similar to commit a9f0c0e56371 ("clk: rockchip: fix rk3188 sclk_smc
+gate data") there is one other gate clock in the rk3188 clock driver
+with a similar wrong ordering, the sclk_mac_lbtest. So fix it as well.
 
-Signed-off-by: Alice Michael <alice.michael@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/avf/virtchnl.h | 4 ++--
+ drivers/clk/rockchip/clk-rk3188.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/avf/virtchnl.h b/include/linux/avf/virtchnl.h
-index 212b3822d1804..92d179fb6d59e 100644
---- a/include/linux/avf/virtchnl.h
-+++ b/include/linux/avf/virtchnl.h
-@@ -798,8 +798,8 @@ virtchnl_vc_validate_vf_msg(struct virtchnl_version_info *ver, u32 v_opcode,
- 		if (msglen >= valid_len) {
- 			struct virtchnl_tc_info *vti =
- 				(struct virtchnl_tc_info *)msg;
--			valid_len += vti->num_tc *
--				sizeof(struct virtchnl_channel_info);
-+			valid_len += (vti->num_tc - 1) *
-+				     sizeof(struct virtchnl_channel_info);
- 			if (vti->num_tc == 0)
- 				err_msg_format = true;
- 		}
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 9a6ad5a4cdf06..2ca7e2be2f09e 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -362,8 +362,8 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 			RK2928_CLKGATE_CON(2), 5, GFLAGS),
+ 	MUX(SCLK_MAC, "sclk_macref", mux_sclk_macref_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(21), 4, 1, MFLAGS),
+-	GATE(0, "sclk_mac_lbtest", "sclk_macref",
+-			RK2928_CLKGATE_CON(2), 12, 0, GFLAGS),
++	GATE(0, "sclk_mac_lbtest", "sclk_macref", 0,
++			RK2928_CLKGATE_CON(2), 12, GFLAGS),
+ 
+ 	COMPOSITE(0, "hsadc_src", mux_pll_src_gpll_cpll_p, 0,
+ 			RK2928_CLKSEL_CON(22), 0, 1, MFLAGS, 8, 8, DFLAGS,
 -- 
 2.20.1
 
