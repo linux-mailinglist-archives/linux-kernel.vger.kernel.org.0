@@ -2,97 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A229511BD1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 20:34:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD86B11BD95
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 21:02:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbfLKTer (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 14:34:47 -0500
-Received: from mga07.intel.com ([134.134.136.100]:13650 "EHLO mga07.intel.com"
+        id S1727093AbfLKUCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 15:02:24 -0500
+Received: from mga02.intel.com ([134.134.136.20]:39328 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbfLKTep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 14:34:45 -0500
+        id S1726463AbfLKUCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 15:02:24 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 11:34:44 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 12:02:23 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,303,1571727600"; 
-   d="scan'208";a="245403889"
-Received: from xshen14-linux.bj.intel.com ([10.238.155.105])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Dec 2019 11:34:41 -0800
-From:   Xiaochen Shen <xiaochen.shen@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        tony.luck@intel.com, fenghua.yu@intel.com,
-        reinette.chatre@intel.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, pei.p.jia@intel.com,
-        xiaochen.shen@intel.com
-Subject: [PATCH RESEND] x86/resctrl: Check monitoring static key in MBM overflow handler
-Date:   Thu, 12 Dec 2019 04:05:05 +0800
-Message-Id: <1576094705-13660-1-git-send-email-xiaochen.shen@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1576086103-11640-1-git-send-email-xiaochen.shen@intel.com>
-References: <1576086103-11640-1-git-send-email-xiaochen.shen@intel.com>
+   d="scan'208";a="207815737"
+Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.172])
+  by orsmga008.jf.intel.com with ESMTP; 11 Dec 2019 12:02:23 -0800
+From:   Gayatri Kammela <gayatri.kammela@intel.com>
+To:     linux-pm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, charles.d.prestopine@intel.com,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Zhang rui <rui.zhang@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH v1] thermal/intel: intel_pch_thermal: Add Comet Lake (CML) platform support
+Date:   Wed, 11 Dec 2019 12:00:43 -0800
+Message-Id: <20191211200043.4985-1-gayatri.kammela@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, there are three static keys in resctrl file system:
-rdt_mon_enable_key and rdt_alloc_enable_key indicate if monitoring
-feature and allocation feature is enabled respectively. rdt_enable_key
-is enabled when either monitoring feature or allocation feature is
-enabled.
+Add Comet Lake to the list of the platforms to support intel_pch_thermal
+driver.
 
-If no monitoring feature is supported (either hardware doesn't support
-monitoring feature or the feature is disabled by kernel command line
-option "rdt="), rdt_enable_key is still enabled but rdt_mon_enable_key
-is disabled.
-
-MBM is a monitoring feature. MBM overflow handler intends to check if
-monitoring feature is not enabled for fast return. So the accurate check
-here is to check rdt_mon_enable_key instead of rdt_enable_key.
-
-Fixes: e33026831bdb ("x86/intel_rdt/mbm: Handle counter overflow")
-Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
+Cc: Zhang rui <rui.zhang@intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/internal.h | 1 +
- arch/x86/kernel/cpu/resctrl/monitor.c  | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/thermal/intel/intel_pch_thermal.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index e49b77283924..181c992f448c 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -57,6 +57,7 @@ static inline struct rdt_fs_context *rdt_fc2context(struct fs_context *fc)
- }
+diff --git a/drivers/thermal/intel/intel_pch_thermal.c b/drivers/thermal/intel/intel_pch_thermal.c
+index 4f0bb8f502e1..9356f3a7f961 100644
+--- a/drivers/thermal/intel/intel_pch_thermal.c
++++ b/drivers/thermal/intel/intel_pch_thermal.c
+@@ -23,6 +23,7 @@
+ #define PCH_THERMAL_DID_SKL_H	0xA131 /* Skylake PCH 100 series */
+ #define PCH_THERMAL_DID_CNL	0x9Df9 /* CNL PCH */
+ #define PCH_THERMAL_DID_CNL_H	0xA379 /* CNL-H PCH */
++#define PCH_THERMAL_DID_CML_H	0X06F9 /* CML-H PCH */
  
- DECLARE_STATIC_KEY_FALSE(rdt_enable_key);
-+DECLARE_STATIC_KEY_FALSE(rdt_mon_enable_key);
+ /* Wildcat Point-LP  PCH Thermal registers */
+ #define WPT_TEMP	0x0000	/* Temperature */
+@@ -272,6 +273,7 @@ enum board_ids {
+ 	board_wpt,
+ 	board_skl,
+ 	board_cnl,
++	board_cml,
+ };
  
- /**
-  * struct mon_evt - Entry in the event list of a resource
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 397206f23d14..773124b0e18a 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -514,7 +514,7 @@ void mbm_handle_overflow(struct work_struct *work)
+ static const struct board_info {
+@@ -294,6 +296,10 @@ static const struct board_info {
+ 		.name = "pch_cannonlake",
+ 		.ops = &pch_dev_ops_wpt,
+ 	},
++	[board_cml] = {
++		.name = "pch_cometlake",
++		.ops = &pch_dev_ops_wpt,
++	}
+ };
  
- 	mutex_lock(&rdtgroup_mutex);
- 
--	if (!static_branch_likely(&rdt_enable_key))
-+	if (!static_branch_likely(&rdt_mon_enable_key))
- 		goto out_unlock;
- 
- 	d = get_domain_from_cpu(cpu, &rdt_resources_all[RDT_RESOURCE_L3]);
-@@ -543,7 +543,7 @@ void mbm_setup_overflow_handler(struct rdt_domain *dom, unsigned long delay_ms)
- 	unsigned long delay = msecs_to_jiffies(delay_ms);
- 	int cpu;
- 
--	if (!static_branch_likely(&rdt_enable_key))
-+	if (!static_branch_likely(&rdt_mon_enable_key))
- 		return;
- 	cpu = cpumask_any(&dom->cpu_mask);
- 	dom->mbm_work_cpu = cpu;
+ static int intel_pch_thermal_probe(struct pci_dev *pdev,
+@@ -398,6 +404,8 @@ static const struct pci_device_id intel_pch_thermal_id[] = {
+ 		.driver_data = board_cnl, },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCH_THERMAL_DID_CNL_H),
+ 		.driver_data = board_cnl, },
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCH_THERMAL_DID_CML_H),
++		.driver_data = board_cml, },
+ 	{ 0, },
+ };
+ MODULE_DEVICE_TABLE(pci, intel_pch_thermal_id);
 -- 
-1.8.3.1
+2.17.1
 
