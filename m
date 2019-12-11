@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A9F511B347
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:41:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B77C11B232
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:34:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388282AbfLKPls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:41:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33800 "EHLO mail.kernel.org"
+        id S2387585AbfLKP2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:28:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733179AbfLKP1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:27:54 -0500
+        id S2387509AbfLKP15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:27:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2FCD24671;
-        Wed, 11 Dec 2019 15:27:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C31632465B;
+        Wed, 11 Dec 2019 15:27:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078074;
-        bh=Lmchv2zluPAuLaPCeDYi0HgXg3aUPCYzmqEYwJ2OVE4=;
+        s=default; t=1576078076;
+        bh=/u13mj4dQXc8/OvMb5WuTa4PoenXQs6Y8XQYTXC0M2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lsQJRAz15todzXEE5S3XaKSByKQnwZJuJwxFKl/u2r/2edKKB2c9FnFb97sBpAT1g
-         CyCzss3oX6TaQLtgDR+SPHr1Qw1F/Jv7DwdTMAFe/y/cIIv3oPhfOWRAIaYW5EYFh9
-         tXOG3zRUGFMIwd/5xwwnkWQ3SgEZdGLyaCenQc+A=
+        b=mTXkhJe9yhAiJ+BQqNIT17zyvW6aCgSVkBs182PzoWFZWf1NYHtAIitZha7IoZo2r
+         DRZSybdmugKuTzNp/eoH/0dNFgLq8lodibnm4y7BcNfvSYofA2ukminRoqPdMRiE1N
+         F8KvmolJIVTYiYT4FHys0N0KjApV7YOvPdmLqZSw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 65/79] scripts/kallsyms: fix definitely-lost memory leak
-Date:   Wed, 11 Dec 2019 10:26:29 -0500
-Message-Id: <20191211152643.23056-65-sashal@kernel.org>
+Cc:     Chengguang Xu <cgxu519@mykernel.net>, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.19 67/79] f2fs: choose hardlimit when softlimit is larger than hardlimit in f2fs_statfs_project()
+Date:   Wed, 11 Dec 2019 10:26:31 -0500
+Message-Id: <20191211152643.23056-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
 References: <20191211152643.23056-1-sashal@kernel.org>
@@ -42,46 +44,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Chengguang Xu <cgxu519@mykernel.net>
 
-[ Upstream commit 21915eca088dc271c970e8351290e83d938114ac ]
+[ Upstream commit 909110c060f22e65756659ec6fa957ae75777e00 ]
 
-build_initial_tok_table() overwrites unused sym_entry to shrink the
-table size. Before the entry is overwritten, table[i].sym must be freed
-since it is malloc'ed data.
+Setting softlimit larger than hardlimit seems meaningless
+for disk quota but currently it is allowed. In this case,
+there may be a bit of comfusion for users when they run
+df comamnd to directory which has project quota.
 
-This fixes the 'definitely lost' report from valgrind. I ran valgrind
-against x86_64_defconfig of v5.4-rc8 kernel, and here is the summary:
+For example, we set 20M softlimit and 10M hardlimit of
+block usage limit for project quota of test_dir(project id 123).
 
-[Before the fix]
+[root@hades f2fs]# repquota -P -a
+*** Report for project quotas on device /dev/nvme0n1p8
+Block grace time: 7days; Inode grace time: 7days
+Block limits File limits
+Project used soft hard grace used soft hard grace
+----------------------------------------------------------------------
+0 -- 4 0 0 1 0 0
+123 +- 10248 20480 10240 2 0 0
 
-  LEAK SUMMARY:
-     definitely lost: 53,184 bytes in 2,874 blocks
+The result of df command as below:
 
-[After the fix]
+[root@hades f2fs]# df -h /mnt/f2fs/test
+Filesystem Size Used Avail Use% Mounted on
+/dev/nvme0n1p8 20M 11M 10M 51% /mnt/f2fs
 
-  LEAK SUMMARY:
-     definitely lost: 0 bytes in 0 blocks
+Even though it looks like there is another 10M free space to use,
+if we write new data to diretory test(inherit project id),
+the write will fail with errno(-EDQUOT).
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+After this patch, the df result looks like below.
+
+[root@hades f2fs]# df -h /mnt/f2fs/test
+Filesystem Size Used Avail Use% Mounted on
+/dev/nvme0n1p8 10M 10M 0 100% /mnt/f2fs
+
+Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kallsyms.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/super.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 31ed7f3f0e157..4b2711c23f4ed 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -491,6 +491,8 @@ static void build_initial_tok_table(void)
- 				table[pos] = table[i];
- 			learn_symbol(table[pos].sym, table[pos].len);
- 			pos++;
-+		} else {
-+			free(table[i].sym);
- 		}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 7a9cc64f5ca37..662c7de58b990 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1148,9 +1148,13 @@ static int f2fs_statfs_project(struct super_block *sb,
+ 		return PTR_ERR(dquot);
+ 	spin_lock(&dquot->dq_dqb_lock);
+ 
+-	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
+-		 dquot->dq_dqb.dqb_bsoftlimit :
+-		 dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
++	limit = 0;
++	if (dquot->dq_dqb.dqb_bsoftlimit)
++		limit = dquot->dq_dqb.dqb_bsoftlimit;
++	if (dquot->dq_dqb.dqb_bhardlimit &&
++			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
++		limit = dquot->dq_dqb.dqb_bhardlimit;
++
+ 	if (limit && buf->f_blocks > limit) {
+ 		curblock = dquot->dq_dqb.dqb_curspace >> sb->s_blocksize_bits;
+ 		buf->f_blocks = limit;
+@@ -1159,9 +1163,13 @@ static int f2fs_statfs_project(struct super_block *sb,
+ 			 (buf->f_blocks - curblock) : 0;
  	}
- 	table_cnt = pos;
+ 
+-	limit = dquot->dq_dqb.dqb_isoftlimit ?
+-		dquot->dq_dqb.dqb_isoftlimit :
+-		dquot->dq_dqb.dqb_ihardlimit;
++	limit = 0;
++	if (dquot->dq_dqb.dqb_isoftlimit)
++		limit = dquot->dq_dqb.dqb_isoftlimit;
++	if (dquot->dq_dqb.dqb_ihardlimit &&
++			(!limit || dquot->dq_dqb.dqb_ihardlimit < limit))
++		limit = dquot->dq_dqb.dqb_ihardlimit;
++
+ 	if (limit && buf->f_files > limit) {
+ 		buf->f_files = limit;
+ 		buf->f_ffree =
 -- 
 2.20.1
 
