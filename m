@@ -2,331 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15BB511AA3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 12:52:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4642D11AA48
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 12:55:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbfLKLwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 06:52:47 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43189 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbfLKLwr (ORCPT
+        id S1729121AbfLKLz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 06:55:26 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:55717 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727477AbfLKLzZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 06:52:47 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h14so1693340pfe.10;
-        Wed, 11 Dec 2019 03:52:46 -0800 (PST)
+        Wed, 11 Dec 2019 06:55:25 -0500
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: Xca9Va4L8bZ06TH98A+wzzQJYp4w/1UuCAAQdmLHeopb2tkZnpxALjWAnc6ILkoe3501/TynwX
+ whWgtbhj+cM7SgYgh9A8gLjDPlsoyYiGlZodGF2IhLAl+8xEDOzUqUQ8NfhmKZjxrTO6NX3Cri
+ L7I/okdKioKPHYoyKLpcOBDnrdhP34SvqERpD5pm082ToOMNVPyS+Ohw6NCgozhjwxMxMJPxRX
+ hSClFMJ5GzbxGhHvqGs+t7MYkJgNRCXebs+8x2fZsafKnpSRqnTC/WgIy3Hv6obnWq0/otntL9
+ J18=
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="59983848"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Dec 2019 04:55:23 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 11 Dec 2019 04:55:23 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Wed, 11 Dec 2019 04:55:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K+v7fgsOZqDTH63k/T5WRIpx2On21z+Lk2GrNvxln4FvZtNQwUefxaODsTaZ1GMrmGW0VEV2HW1bgvKc60+tUHGmIrThaCAaqEqMZK/rVbscPom5kZT5ZcJ27BIWvy/vQpmqHj8Nfwhsa/Tsf0YVcoSug1tGleTa/Gfm1Ndz2SLjGebg9qHc0wsl+zKjn4YyV1l2k1mmcSYaLliR8Wj0CHEPgSR+eTUo6/rWY3uIQfpUKF62eZP85w0e+gjiFc2aUOACv3Y9Tv2ap8BrDUAwKjTGdRe6cHJufymaYhhqjh5JtVrritl441MRYx4nDz16uWRNj9NeztwkxnAav2KLRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q7bjXlBAyX6EXBKcW3knaX8HA4PAzbyuoW6oX6cclVc=;
+ b=SArq66iz2KrJkZYqcakJ2bhb2VDsP2BsIvSGotQNheZ0ZQTH3NpdxSle6VT+Epa/TvS8FBtnmsdWqXqdYC3/qYTLpNNUpk9nDXmWSlMGDDTXT565LZbx9x7Pj6q6go3TmktiMSNUOj2+hgJJCHYrfO/DJqG5gImAGjRGHg476BJkuTWjdc/UgrzCekUJun2whniN7/Hk0kpf/cerK4KGTl/9Gl1oUJ36co3Fyb55Sc5eyuvySF42RbnU0sIfCuxPD+jru8HLeJcAr212otpRDcI0CSY+0SUrSu1p988ED0x4thFH+h2feSTh1++7uaGjEKIAquSsT+22XnxcC34Liw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version:in-reply-to
-         :content-transfer-encoding;
-        bh=qDkPsnClEwsaZ/4lhBqPxrhOwU6JcbKWkRLVYSCvQK4=;
-        b=eMe5S5zDq+VTfnxibncKoFQEQlcfBjcRwg9GmoFREM/g0onWvwT5movdt2pX3mmh/8
-         gFOK0ygW3yFoRH7mKmJ2+YDFzk+2kZRXNHVU46RDtMd1wq4ocUWFYqOCbVAi9aFeznOI
-         q/zc8PIknmlxTL9FlLPcyd78Dbi3wx17cavRHwzFIioxPxl/z7av7rqXlxboU1VfNpjR
-         OsCdgANa11sdVAffCBQmLeNSZ6bmbA0g4CZ+ApdCOmShZC1hl4tTTu3wxtWN0OGVKQU/
-         mre4a9jIL7mCdR/5ixtHlzAmlAW+ua1uV0ABbnK7JlOuAGxQfTYiXDWb6M0LFYdhqy6g
-         gl6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :in-reply-to:content-transfer-encoding;
-        bh=qDkPsnClEwsaZ/4lhBqPxrhOwU6JcbKWkRLVYSCvQK4=;
-        b=fej+WWyXjsAvOX4b9Wrq1BiXgvzS7m0KKvnDgGLcUHIYY5PILzE3vNrCWEhYFe3+9J
-         T7BLQqXNXYMJgr/h0he4a1QSsS1VCw0+2sJ1M4xV9GpfqY4j+O6BI5PhpYLt0M89NfkR
-         yRMqqYomehL5v8bh7tf0csKpshGFauU3DUESj9+9u9BXlXbES0vkkU6H3ECU3huJGPg8
-         AP/Ld8X8N24kyE2NkCbRaK2zsaEXzr1pKGyW8wD2697s/Iyfqvy6tMKvfCBvPsElO6K7
-         rB/jrZFfQHDyUYxPOymdx2WvuRUEqwrpk4jZyi/aUmsB0rElOngv+WI/gb+LhnZY5DIw
-         8Gpw==
-X-Gm-Message-State: APjAAAVZIZev9iduBmw6Sp81Jp/kVWgJ/estSrOoSmrRiaLo8Imq74OD
-        JTwOet1v0OZa2nuj1GaegpQ=
-X-Google-Smtp-Source: APXvYqw/OhKHhEbLUZsszvV6wrMFMMtTA4dJn/ybQO88doHyVVc5PwVXB8RMM0wYqi7Dw2SnpPUuXA==
-X-Received: by 2002:a62:1dcb:: with SMTP id d194mr3286991pfd.66.1576065166047;
-        Wed, 11 Dec 2019 03:52:46 -0800 (PST)
-Received: from localhost.localdomain ([12.176.148.120])
-        by smtp.gmail.com with ESMTPSA id z26sm2563926pgu.80.2019.12.11.03.52.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Dec 2019 03:52:45 -0800 (PST)
-From:   SeongJae Park <sj38.park@gmail.com>
-To:     =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>
-Cc:     sjpark@amazon.com, axboe@kernel.dk, konrad.wilk@oracle.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pdurrant@amazon.com, xen-devel@lists.xenproject.org,
-        SeongJae Park <sjpark@amazon.de>
-Subject: Re: Re: Re: [PATCH v5 2/2] xen/blkback: Squeeze page pools if a memory pressure is detected
-Date:   Wed, 11 Dec 2019 12:52:38 +0100
-Message-Id: <20191211115238.14645-1-sj38.park@gmail.com>
-X-Mailer: git-send-email 2.17.2
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q7bjXlBAyX6EXBKcW3knaX8HA4PAzbyuoW6oX6cclVc=;
+ b=Z6Jeu9u5kR8DigXSSsdhU+UpLjpRkoHlAb8u6krteJ5SslDJazfZP/8RjbdQnzVD6dHKXUfDPU8lqaRJMexwT2gcwDxp4mD4LFJ4CupToBz7thjO7pWKK4lTJ6Yj9ZZxnPwIqrmh4DpIrZzzyKHC9mGKVblFbGx2sGmvrqyrLE4=
+Received: from DM6PR11MB3225.namprd11.prod.outlook.com (20.176.120.224) by
+ DM6PR11MB3625.namprd11.prod.outlook.com (20.178.230.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.14; Wed, 11 Dec 2019 11:55:21 +0000
+Received: from DM6PR11MB3225.namprd11.prod.outlook.com
+ ([fe80::ed7d:d06f:7d55:cbe2]) by DM6PR11MB3225.namprd11.prod.outlook.com
+ ([fe80::ed7d:d06f:7d55:cbe2%6]) with mapi id 15.20.2538.012; Wed, 11 Dec 2019
+ 11:55:21 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <sam@ravnborg.org>
+CC:     <bbrezillon@kernel.org>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <Ludovic.Desroches@microchip.com>, <lee.jones@linaro.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <Sandeep.Sheriker@microchip.com>
+Subject: Re: [PATCH 5/5] Revert "drm: atmel-hlcdc: enable sys_clk during
+ initalization."
+Thread-Topic: [PATCH 5/5] Revert "drm: atmel-hlcdc: enable sys_clk during
+ initalization."
+Thread-Index: AQHVsBnYQZ15xrGMOEKSh87APGOhBA==
+Date:   Wed, 11 Dec 2019 11:55:20 +0000
+Message-ID: <67fab980-1371-2658-4b32-b101a248498d@microchip.com>
+References: <1575984287-26787-1-git-send-email-claudiu.beznea@microchip.com>
+ <1575984287-26787-6-git-send-email-claudiu.beznea@microchip.com>
+ <20191210203419.GB24756@ravnborg.org>
+In-Reply-To: <20191210203419.GB24756@ravnborg.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR01CA0089.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:10e::30) To DM6PR11MB3225.namprd11.prod.outlook.com
+ (2603:10b6:5:5b::32)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tagtoolbar-keys: D20191211135513350
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7d181a78-47f8-41d8-34db-08d77e30ffa2
+x-ms-traffictypediagnostic: DM6PR11MB3625:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR11MB3625BEDE354F46DC248DF019875A0@DM6PR11MB3625.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 024847EE92
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(199004)(189003)(86362001)(52116002)(6486002)(31696002)(36756003)(107886003)(6512007)(4326008)(66946007)(66446008)(71200400001)(66556008)(64756008)(66476007)(54906003)(6916009)(81156014)(81166006)(31686004)(53546011)(5660300002)(6506007)(186003)(26005)(498600001)(2906002)(2616005)(8676002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR11MB3625;H:DM6PR11MB3225.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: WHz0Y/NBJZFSam1plUDgw9YLsjynCKdJZgJ6HdBLUFz76jDh1Gi5mqPMAmvuo2TOm1+JFDuDIh1k93jRKjwe8RsTaobT73+/ag+PtPJ7/s32/ThN3DcZrNk3hYmsWmMCOUmX9/XV+ePlDWOpYaumoE59X0oTVRVNfo4Hm5flmpFGF4Nh1BMnPKLqChH/6l/WViKkiHzlgfcxAZDAr4IuWgQxZbx8MUnWMRSIF6pWLVvshHdRfAzKJnYk/A6OMyFKEoc0a0Ty4OZZg6d4qup9AmCXbaUbjLsHfAXvx0HzgtX/nFyXuexevYFwaRrDLwMyhIwYhSuCLvpwzvRz7MuvgN6mR3V5qqzYl6StwkjeMAdpVVSlrTkY2J1RxV39/ntNbucG7Ev8F1TP9HgJnPYY2Hxz6Wc2lVJkgdixq+CZQomQ+bVs+G6cwHFvaYzJlQxG
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <675EA5625499E548A9C443A2306EB68C@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20191211111444.GL980@Air-de-Roger> (raw)
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d181a78-47f8-41d8-34db-08d77e30ffa2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2019 11:55:20.9624
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IEFXlJz3PuG0G4Kk1E589xrQzWzhPrSDfrLI0s304muV/UF1abvWkTFWL/0O3ViSDToyZNoxUYXOLcTq0/vcfHK5/1C1GV25T3+mgHzWy2w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB3625
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Dec 2019 12:14:44 +0100 "Roger Pau Monné" <roger.pau@citrix.com> wrote:
-
-> 
-> I see that you have already sent v6, for future iterations can you
-> please wait until the conversation on the previous version has been
-> settled?
-> 
-> I'm still replying to your replies to v5, and hence you should hold off
-> sending v6 until we get some kind of conclusion/agreement.
-
-Sorry, I was inpatient.
-
-> 
-> On Wed, Dec 11, 2019 at 05:08:12AM +0100, SeongJae Park wrote:
-> > On Tue, 10 Dec 2019 12:04:32 +0100 "Roger Pau Monné" <roger.pau@citrix.com> wrote:
-> > 
-> > > > Each `blkif` has a free pages pool for the grant mapping.  The size of
-> > > > the pool starts from zero and be increased on demand while processing
-> > > > the I/O requests.  If current I/O requests handling is finished or 100
-> > > > milliseconds has passed since last I/O requests handling, it checks and
-> > > > shrinks the pool to not exceed the size limit, `max_buffer_pages`.
-> > > > 
-> > > > Therefore, `blkfront` running guests can cause a memory pressure in the
-> > > > `blkback` running guest by attaching a large number of block devices and
-> > > > inducing I/O.
-> > > 
-> > > Hm, I don't think this is actually true. blkfront cannot attach an
-> > > arbitrary number of devices, blkfront is just a frontend for a device
-> > > that's instantiated by the Xen toolstack, so it's the toolstack the one
-> > > that controls the amount of PV block devices.
-> > 
-> > Right, the problem can occur only if it is mis-configured so that the frontend
-> > running guests can attach a large number of devices which is enough to cause
-> > the memory pressure.  I tried to explain it in below paragraph, but seems above
-> > paragraph is a little bit confusing.  I will wordsmith the sentence in the next
-> > version.
-> 
-> I would word it along these lines:
-> 
-> "Host administrators can cause memory pressure in blkback by attaching
-> a large number of block devices and inducing I/O."
-
-Hmm, much better :)
-
-> 
-> > > 
-> > > > System administrators can avoid such problematic
-> > > > situations by limiting the maximum number of devices each guest can
-> > > > attach.  However, finding the optimal limit is not so easy.  Improper
-> > > > set of the limit can results in the memory pressure or a resource
-> > > > underutilization.  This commit avoids such problematic situations by
-> > > > squeezing the pools (returns every free page in the pool to the system)
-> > > > for a while (users can set this duration via a module parameter) if a
-> > > > memory pressure is detected.
-> > > > 
-> > > > Discussions
-> > > > ===========
-> > > > 
-> > > > The `blkback`'s original shrinking mechanism returns only pages in the
-> > > > pool, which are not currently be used by `blkback`, to the system.  In
-> > > > other words, the pages are not mapped with foreign pages.  Because this
-> > >                         ^ that               ^ granted
-> > > > commit is changing only the shrink limit but uses the mechanism as is,
-> > > > this commit does not introduce improper mappings related security
-> > > > issues.
-> > > 
-> > > That last sentence is hard to parse. I think something like:
-> > > 
-> > > "Because this commit is changing only the shrink limit but still uses the
-> > > same freeing mechanism it does not touch pages which are currently
-> > > mapping grants."
-> > > 
-> > > > 
-> > > > Once a memory pressure is detected, this commit keeps the squeezing
-> > > > limit for a user-specified time duration.  The duration should be
-> > > > neither too long nor too short.  If it is too long, the squeezing
-> > > > incurring overhead can reduce the I/O performance.  If it is too short,
-> > > > `blkback` will not free enough pages to reduce the memory pressure.
-> > > > This commit sets the value as `10 milliseconds` by default because it is
-> > > > a short time in terms of I/O while it is a long time in terms of memory
-> > > > operations.  Also, as the original shrinking mechanism works for at
-> > > > least every 100 milliseconds, this could be a somewhat reasonable
-> > > > choice.  I also tested other durations (refer to the below section for
-> > > > more details) and confirmed that 10 milliseconds is the one that works
-> > > > best with the test.  That said, the proper duration depends on actual
-> > > > configurations and workloads.  That's why this commit is allowing users
-> > >                                                         ^ allows
-> > > > to set it as their optimal value via the module parameter.
-> > > 
-> > > ... to set the duration as a module parameter.
-> > 
-> > Thank you for great suggestions, I will apply those.
-> > 
-> > > 
-> > > > 
-> > > > Memory Pressure Test
-> > > > ====================
-> > > > 
-> > > > To show how this commit fixes the memory pressure situation well, I
-> > > > configured a test environment on a xen-running virtualization system.
-> > > > On the `blkfront` running guest instances, I attach a large number of
-> > > > network-backed volume devices and induce I/O to those.  Meanwhile, I
-> > > > measure the number of pages that swapped in and out on the `blkback`
-> > > > running guest.  The test ran twice, once for the `blkback` before this
-> > > > commit and once for that after this commit.  As shown below, this commit
-> > > > has dramatically reduced the memory pressure:
-> > > > 
-> > > >                 pswpin  pswpout
-> > > 
-> > > I assume pswpin means 'pages swapped in' and pswpout 'pages swapped
-> > > out'. Might be good to add a note to that effect.
-> > 
-> > Good point!  I will add the note.
-> > 
-> > > 
-> > > >     before      76,672  185,799
-> > > >     after          212    3,325
-> > > > 
-> > > > Optimal Aggressive Shrinking Duration
-> > > > -------------------------------------
-> > > > 
-> > > > To find a best squeezing duration, I repeated the test with three
-> > > > different durations (1ms, 10ms, and 100ms).  The results are as below:
-> > > > 
-> > > >     duration    pswpin  pswpout
-> > > >     1           852     6,424
-> > > >     10          212     3,325
-> > > >     100         203     3,340
-> > > > 
-> > > > As expected, the memory pressure has decreased as the duration is
-> > > > increased, but the reduction stopped from the `10ms`.  Based on this
-> > > > results, I chose the default duration as 10ms.
-> > > > 
-> > > > Performance Overhead Test
-> > > > =========================
-> > > > 
-> > > > This commit could incur I/O performance degradation under severe memory
-> > > > pressure because the squeezing will require more page allocations per
-> > > > I/O.  To show the overhead, I artificially made a worst-case squeezing
-> > > > situation and measured the I/O performance of a `blkfront` running
-> > > > guest.
-> > > > 
-> > > > For the artificial squeezing, I set the `blkback.max_buffer_pages` using
-> > > > the `/sys/module/xen_blkback/parameters/max_buffer_pages` file.  We set
-> > > > the value to `1024` and `0`.  The `1024` is the default value.  Setting
-> > > > the value as `0` is same to a situation doing the squeezing always
-> > > > (worst-case).
-> > > > 
-> > > > For the I/O performance measurement, I use a simple `dd` command.
-> > > > 
-> > > > Default Performance
-> > > > -------------------
-> > > > 
-> > > >     [dom0]# echo 1024 > /sys/module/xen_blkback/parameters/max_buffer_pages
-> > > >     [instance]$ for i in {1..5}; do dd if=/dev/zero of=file bs=4k count=$((256*512)); sync; done
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 11.7257 s, 45.8 MB/s
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 13.8827 s, 38.7 MB/s
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 13.8781 s, 38.7 MB/s
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 13.8737 s, 38.7 MB/s
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 13.8702 s, 38.7 MB/s
-> 
-> While this is useful, it's kind of too verbose IMO. If you need to do
-> this kind of performance comparisons I would recommend using ministat
-> (available at least on Debian and FreeBSD) in order to plot the
-> results and give the std deviation and statistical difference given a
-> confidence level.
-> 
-> The output of ministat can be pasted in the commit message, since it's
-> a text based tool.
-
-Nice suggestion.  I will use it.
-
-> 
-> > > > 
-> > > > Worst-case Performance
-> > > > ----------------------
-> > > > 
-> > > >     [dom0]# echo 0 > /sys/module/xen_blkback/parameters/max_buffer_pages
-> > > >     [instance]$ for i in {1..5}; do dd if=/dev/zero of=file bs=4k count=$((256*512)); sync; done
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 11.7257 s, 45.8 MB/s
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 13.878 s, 38.7 MB/s
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 13.8746 s, 38.7 MB/s
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 13.8786 s, 38.7 MB/s
-> > > >     131072+0 records in
-> > > >     131072+0 records out
-> > > >     536870912 bytes (537 MB) copied, 13.8749 s, 38.7 MB/s
-> > > > 
-> > > > In short, even worst case squeezing makes no visible performance
-> > > > degradation.
-> > > 
-> > > I would argue that with a ~40MB/s throughput you won't see any
-> > > performance difference at all regardless of the size of the pool of
-> > > free pages or the amount of persistent grants because the bottleneck is
-> > > on the storage performance itself.
-> > > 
-> > > You need to test this using nullblk or some kind of fast storage, or
-> > > else the above figures are not going to reflect any changes you make
-> > > because they are hidden by the poor performance of the underlying
-> > > storage.
-> > 
-> > Yes, agree that.  My test is just a minimal check for my environment.  I will
-> > note the points and concerns in the commit message.
-> 
-> I'm afraid that just adding a note about this concerns is not enough.
-> 
-> We should make sure that this change doesn't regress the current
-> performance of fast storage backends, and hence I have to ask you to
-> test with null_blk or a fast storage and provide the figures.
-
-Ok, I will try it.
-
-> 
-> > > 
-> > > > I think this is due to the slow speed of the I/O.  In
-> > > > other words, the additional page allocation overhead is hidden under the
-> > > > much slower I/O latency.
-> > > > 
-> > > > Nevertheless, pleaset note that this is just a very simple and minimal
-> > > > test.
-> > > 
-> > > I would like to add that IMO this is papering over an existing issue,
-> > > which is how pages to be used to map grants are allocated. Grant
-> > > mappings _shouldn't_ consume RAM pages in the first place, and IIRC
-> > > the fact that they do is because Linux balloons out memory in order to
-> > > re-use those pages to map grants and have a valid page struct.
-> > > 
-> > > A way to solve this would be to hotplug a fake memory region and use
-> > > it in order to map grant pages, without having to balloon out RAM
-> > > regions. At the end of day on a PV domain mapping a grant should just
-> > > require virtual address space.
-> > > 
-> > > This is going to get even worse for PVH that requires a physical memory
-> > > address in order to map a grant, but that's another story.
-> > 
-> > Yes, as Paul also pointed out and suggested, we should consider a structural
-> > solution in a big picture.  Until the big change is ready, this simple solution
-> > would work as a point fix.
-> 
-> Getting a proper solution would be my preference, in the mean time I
-> guess it's fine to accept such a bodge, as it's pretty small and
-> non-intrusive.
-
-Thanks,
-SeongJae Park
-
-> 
-> Thanks, Roger.
-> 
+DQoNCk9uIDEwLjEyLjIwMTkgMjI6MzQsIFNhbSBSYXZuYm9yZyB3cm90ZToNCj4gRVhURVJOQUwg
+RU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Ug
+a25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBIaSBDbGFkaXUNCj4gDQo+IE9uIFR1ZSwg
+RGVjIDEwLCAyMDE5IGF0IDAzOjI0OjQ3UE0gKzAyMDAsIENsYXVkaXUgQmV6bmVhIHdyb3RlOg0K
+Pj4gVGhpcyByZXZlcnRzIGNvbW1pdCBkMmM3NTVlNjY2MTc2MjBiNzI5MDQxYzYyNWE2Mzk2Yzgx
+ZDEyMzFjLg0KPj4gKCJkcm06IGF0bWVsLWhsY2RjOiBlbmFibGUgc3lzX2NsayBkdXJpbmcgaW5p
+dGFsaXphdGlvbi4iKS4gV2l0aA0KPj4gY29tbWl0ICJkcm06IGF0bWVsLWhsY2RjOiBlbmFibGUg
+Y2xvY2sgYmVmb3JlIGNvbmZpZ3VyaW5nIHRpbWluZyBlbmdpbmUiDQo+PiB0aGVyZSBpcyBubyBu
+ZWVkIGZvciB0aGlzIHBhdGNoLiBDb2RlIGlzIGFsc28gc2ltcGxlci4NCj4+DQo+PiBDYzogU2Fu
+ZGVlcCBTaGVyaWtlciBNYWxsaWthcmp1biA8c2FuZGVlcHNoZXJpa2VyLm1hbGxpa2FyanVuQG1p
+Y3JvY2hpcC5jb20+DQo+PiBTaWduZWQtb2ZmLWJ5OiBDbGF1ZGl1IEJlem5lYSA8Y2xhdWRpdS5i
+ZXpuZWFAbWljcm9jaGlwLmNvbT4NCj4gDQo+IEdldHRpbmcgZnVydGhlciBpbiB0aGUgcGF0Y2hl
+cyB0ZWxscyBtZSB5b3UgbG9va2VkIGF0IHRoZQ0KPiBwYXRjaCBJIHJlZmVyZW5jZWQgaW4gcHJl
+dmlvdXMgbWFpbC4NCj4gUGxlYXNlIHNxdWFzaCB0aGUgdHdvIHBhdGNoZXMgdG9nZXRoZXIgLSB0
+aGF0IHdvdWxkIG1ha2UgaXQNCj4gZWFzaWVyIHRvIGZvbGxvdyB3aGF0IGlzIGRvbmUuDQoNCldv
+dWxkbid0IHRoaXMgbGVhZCB0byBhIHBhdGNoIGRvaW5nIDIgdGhpbmdzPw0KMS8gZml4IHRoZSB0
+aW1lb3V0IG9mIHRoZSB0aW1pbmcgZW5naW5lIGFmdGVyIHNldHRpbmcgcGl4ZWwgY2xvY2sgd2hp
+Y2ggaXMNCiAgIGZyb20gdGhlIGJlZ2lubmluZyBvZiB0aGUgZHJpdmVyIGFuZCBoYXMgbm90aGlu
+ZyB0byBkbyB3aXRoIHBhdGNoDQogICByZXZlcnRlZCBoZXJlIChidXQsIGFjdHVhbGx5IHdlIHdv
+dWxkbid0IGhhZCByZWFjaCB0aGUgcG9pbnQgb2YNCiAgIGludHJvZHVjaW5nIHRoZSBwYXRjaCBy
+ZXZlcnRlZCBoZXJlIHdpdGggdGhhdCBmaXgpDQoyLyByZXZlcnQgYSBwcmV2aW91cyBmdW5jdGlv
+bmFsaXR5IGFzIGEgcmVzdWx0IG9mIGZpeGluZyB0aGUgdGltZW91dC4NCg0KV2l0aCB0aGlzIGlu
+IG1pbmQgd291bGQgeW91IHN0aWxsIHdhbnQgdG8gc3F1YXNoIHRoZW0/DQoNClRoYW5rIHlvdSwN
+CkNsYXVkaXUgQmV6bmVhDQoNCj4gDQo+IFdpdGggdGhlIHR3byBwYXRjaGVzIGFwcGxpZWQgc3lz
+Y2xrIGlzIGVuYWJsZWQgb25seSBpbiBtb2RlX3NldF9ub2ZiKCkNCj4gYW5kIGF0b21pY19lbmFi
+bGUoKS4gQW5kIGRpc2FibGVkIGluIGF0b21pY19kaXNhYmxlKCkuDQo+IFRoaXMgaXMgc2ltcGxl
+ciBhbmQgd2UgZHJvcCB0aGUgY29uZGl0aW9uYWxzLiBBbHNvIGdvb2QuDQo+IFNvIHRoZSBlbmQg
+cmVzdWx0IGxvb2tzIE9LLg0KPiANCj4gICAgICAgICBTYW0NCj4gDQo+PiAtLS0NCj4+ICBkcml2
+ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYyB8IDE5ICstLS0tLS0tLS0t
+LS0tLS0tLS0NCj4+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDE4IGRlbGV0aW9u
+cygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRt
+ZWxfaGxjZGNfZGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19k
+Yy5jDQo+PiBpbmRleCA4ZGM5MTdhMTI3MGIuLjExMmFhNTA2NmNlZSAxMDA2NDQNCj4+IC0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5jDQo+PiArKysgYi9k
+cml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYw0KPj4gQEAgLTcyMSwx
+OCArNzIxLDEwIEBAIHN0YXRpYyBpbnQgYXRtZWxfaGxjZGNfZGNfbG9hZChzdHJ1Y3QgZHJtX2Rl
+dmljZSAqZGV2KQ0KPj4gICAgICAgZGMtPmhsY2RjID0gZGV2X2dldF9kcnZkYXRhKGRldi0+ZGV2
+LT5wYXJlbnQpOw0KPj4gICAgICAgZGV2LT5kZXZfcHJpdmF0ZSA9IGRjOw0KPj4NCj4+IC0gICAg
+IGlmIChkYy0+ZGVzYy0+Zml4ZWRfY2xrc3JjKSB7DQo+PiAtICAgICAgICAgICAgIHJldCA9IGNs
+a19wcmVwYXJlX2VuYWJsZShkYy0+aGxjZGMtPnN5c19jbGspOw0KPj4gLSAgICAgICAgICAgICBp
+ZiAocmV0KSB7DQo+PiAtICAgICAgICAgICAgICAgICAgICAgZGV2X2VycihkZXYtPmRldiwgImZh
+aWxlZCB0byBlbmFibGUgc3lzX2Nsa1xuIik7DQo+PiAtICAgICAgICAgICAgICAgICAgICAgZ290
+byBlcnJfZGVzdHJveV93cTsNCj4+IC0gICAgICAgICAgICAgfQ0KPj4gLSAgICAgfQ0KPj4gLQ0K
+Pj4gICAgICAgcmV0ID0gY2xrX3ByZXBhcmVfZW5hYmxlKGRjLT5obGNkYy0+cGVyaXBoX2Nsayk7
+DQo+PiAgICAgICBpZiAocmV0KSB7DQo+PiAgICAgICAgICAgICAgIGRldl9lcnIoZGV2LT5kZXYs
+ICJmYWlsZWQgdG8gZW5hYmxlIHBlcmlwaF9jbGtcbiIpOw0KPj4gLSAgICAgICAgICAgICBnb3Rv
+IGVycl9zeXNfY2xrX2Rpc2FibGU7DQo+PiArICAgICAgICAgICAgIGdvdG8gZXJyX2Rlc3Ryb3lf
+d3E7DQo+PiAgICAgICB9DQo+Pg0KPj4gICAgICAgcG1fcnVudGltZV9lbmFibGUoZGV2LT5kZXYp
+Ow0KPj4gQEAgLTc2OCw5ICs3NjAsNiBAQCBzdGF0aWMgaW50IGF0bWVsX2hsY2RjX2RjX2xvYWQo
+c3RydWN0IGRybV9kZXZpY2UgKmRldikNCj4+ICBlcnJfcGVyaXBoX2Nsa19kaXNhYmxlOg0KPj4g
+ICAgICAgcG1fcnVudGltZV9kaXNhYmxlKGRldi0+ZGV2KTsNCj4+ICAgICAgIGNsa19kaXNhYmxl
+X3VucHJlcGFyZShkYy0+aGxjZGMtPnBlcmlwaF9jbGspOw0KPj4gLWVycl9zeXNfY2xrX2Rpc2Fi
+bGU6DQo+PiAtICAgICBpZiAoZGMtPmRlc2MtPmZpeGVkX2Nsa3NyYykNCj4+IC0gICAgICAgICAg
+ICAgY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGRjLT5obGNkYy0+c3lzX2Nsayk7DQo+Pg0KPj4gIGVy
+cl9kZXN0cm95X3dxOg0KPj4gICAgICAgZGVzdHJveV93b3JrcXVldWUoZGMtPndxKTsNCj4+IEBA
+IC03OTUsOCArNzg0LDYgQEAgc3RhdGljIHZvaWQgYXRtZWxfaGxjZGNfZGNfdW5sb2FkKHN0cnVj
+dCBkcm1fZGV2aWNlICpkZXYpDQo+Pg0KPj4gICAgICAgcG1fcnVudGltZV9kaXNhYmxlKGRldi0+
+ZGV2KTsNCj4+ICAgICAgIGNsa19kaXNhYmxlX3VucHJlcGFyZShkYy0+aGxjZGMtPnBlcmlwaF9j
+bGspOw0KPj4gLSAgICAgaWYgKGRjLT5kZXNjLT5maXhlZF9jbGtzcmMpDQo+PiAtICAgICAgICAg
+ICAgIGNsa19kaXNhYmxlX3VucHJlcGFyZShkYy0+aGxjZGMtPnN5c19jbGspOw0KPj4gICAgICAg
+ZGVzdHJveV93b3JrcXVldWUoZGMtPndxKTsNCj4+ICB9DQo+Pg0KPj4gQEAgLTkxMCw4ICs4OTcs
+NiBAQCBzdGF0aWMgaW50IGF0bWVsX2hsY2RjX2RjX2RybV9zdXNwZW5kKHN0cnVjdCBkZXZpY2Ug
+KmRldikNCj4+ICAgICAgIHJlZ21hcF9yZWFkKHJlZ21hcCwgQVRNRUxfSExDRENfSU1SLCAmZGMt
+PnN1c3BlbmQuaW1yKTsNCj4+ICAgICAgIHJlZ21hcF93cml0ZShyZWdtYXAsIEFUTUVMX0hMQ0RD
+X0lEUiwgZGMtPnN1c3BlbmQuaW1yKTsNCj4+ICAgICAgIGNsa19kaXNhYmxlX3VucHJlcGFyZShk
+Yy0+aGxjZGMtPnBlcmlwaF9jbGspOw0KPj4gLSAgICAgaWYgKGRjLT5kZXNjLT5maXhlZF9jbGtz
+cmMpDQo+PiAtICAgICAgICAgICAgIGNsa19kaXNhYmxlX3VucHJlcGFyZShkYy0+aGxjZGMtPnN5
+c19jbGspOw0KPj4NCj4+ICAgICAgIHJldHVybiAwOw0KPj4gIH0NCj4+IEBAIC05MjEsOCArOTA2
+LDYgQEAgc3RhdGljIGludCBhdG1lbF9obGNkY19kY19kcm1fcmVzdW1lKHN0cnVjdCBkZXZpY2Ug
+KmRldikNCj4+ICAgICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0gZGV2X2dldF9kcnZk
+YXRhKGRldik7DQo+PiAgICAgICBzdHJ1Y3QgYXRtZWxfaGxjZGNfZGMgKmRjID0gZHJtX2Rldi0+
+ZGV2X3ByaXZhdGU7DQo+Pg0KPj4gLSAgICAgaWYgKGRjLT5kZXNjLT5maXhlZF9jbGtzcmMpDQo+
+PiAtICAgICAgICAgICAgIGNsa19wcmVwYXJlX2VuYWJsZShkYy0+aGxjZGMtPnN5c19jbGspOw0K
+Pj4gICAgICAgY2xrX3ByZXBhcmVfZW5hYmxlKGRjLT5obGNkYy0+cGVyaXBoX2Nsayk7DQo+PiAg
+ICAgICByZWdtYXBfd3JpdGUoZGMtPmhsY2RjLT5yZWdtYXAsIEFUTUVMX0hMQ0RDX0lFUiwgZGMt
+PnN1c3BlbmQuaW1yKTsNCj4+DQo+PiAtLQ0KPj4gMi43LjQNCj4gDQo=
