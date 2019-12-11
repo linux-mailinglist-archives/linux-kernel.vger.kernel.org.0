@@ -2,43 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35EC411B060
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:22:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0491D11AEB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:07:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732571AbfLKPWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:22:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52746 "EHLO mail.kernel.org"
+        id S1730075AbfLKPHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:07:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730966AbfLKPWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:22:10 -0500
+        id S1730010AbfLKPHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:07:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 035672077B;
-        Wed, 11 Dec 2019 15:22:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DF4B20663;
+        Wed, 11 Dec 2019 15:07:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077729;
-        bh=+KgFr1WTVtExSSrgWrvLQz3fY25SyK3dsgybXHRYDL0=;
+        s=default; t=1576076858;
+        bh=LKxzpUfyF+oYSQX+FKuJTBK46/nO+5dzYVqWq0NnofU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QHarXUEvp2nRrZTTHLC2FaU6mBS/8zeMectnTuAORi6v6P9HWjbKn/J8TJvbTM90v
-         qacgLn0gCrK+WcZBb2cAO2UWKBCLdKUapnRHWm5zJ1/T/vWX2Duh2FoDV6tQpgjy2/
-         FuZRd3xlcLOQp7nyjLxA7mKTIgoip5tybnCwAQOA=
+        b=XbP8AwfAjPxu/DGbMEvlz+0xgga6ge+hui840zxyHN2pcjA6BQ/rVIE0whCRUmpkZ
+         xcrV1gJ5pIFjaFqP32U0J1nZiRZCwVkl8fogWblXo0LdP6LI1rQdywNxJsAsEGCrlo
+         3QeMwCymzKkWzk8nNWa45oHvyIvomQ/n4++U6Dw8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Rob Herring <robh@kernel.org>,
-        Wenzhen Yu <wenzhen.yu@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 147/243] clk: mediatek: Drop more __init markings for driver probe
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH 5.4 18/92] serial: ifx6x60: add missed pm_runtime_disable
 Date:   Wed, 11 Dec 2019 16:05:09 +0100
-Message-Id: <20191211150349.092000983@linuxfoundation.org>
+Message-Id: <20191211150226.990625436@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,46 +42,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 553604c041b8c18cd6a8e1d785a77f3e4be61cdb ]
+commit 50b2b571c5f3df721fc81bf9a12c521dfbe019ba upstream.
 
-This function is called from driver probe, which isn't the same as
-__init code because driver probe can happen later. Drop the __init
-marking here to fix this potential problem.
+The driver forgets to call pm_runtime_disable in remove.
+Add the missed calls to fix it.
 
-Cc: Sean Wang <sean.wang@mediatek.com>
-Cc: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Wenzhen Yu <wenzhen.yu@mediatek.com>
-Cc: Weiyi Lu <weiyi.lu@mediatek.com>
-Fixes: 2fc0a509e4ee ("clk: mediatek: add clock support for MT7622 SoC")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191118024833.21587-1-hslester96@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/clk/mediatek/clk-mt7622.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/mediatek/clk-mt7622.c
-+++ b/drivers/clk/mediatek/clk-mt7622.c
-@@ -513,7 +513,7 @@ static const struct mtk_gate peri_clks[]
- 	GATE_PERI1(CLK_PERI_IRTX_PD, "peri_irtx_pd", "irtx_sel", 2),
- };
- 
--static struct mtk_composite infra_muxes[] __initdata = {
-+static struct mtk_composite infra_muxes[] = {
- 	MUX(CLK_INFRA_MUX1_SEL, "infra_mux1_sel", infra_mux1_parents,
- 	    0x000, 2, 2),
- };
-@@ -652,7 +652,7 @@ static int mtk_topckgen_init(struct plat
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
- 
--static int __init mtk_infrasys_init(struct platform_device *pdev)
-+static int mtk_infrasys_init(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
- 	struct clk_onecell_data *clk_data;
+---
+ drivers/tty/serial/ifx6x60.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/tty/serial/ifx6x60.c
++++ b/drivers/tty/serial/ifx6x60.c
+@@ -1230,6 +1230,9 @@ static int ifx_spi_spi_remove(struct spi
+ 	struct ifx_spi_device *ifx_dev = spi_get_drvdata(spi);
+ 	/* stop activity */
+ 	tasklet_kill(&ifx_dev->io_work_tasklet);
++
++	pm_runtime_disable(&spi->dev);
++
+ 	/* free irq */
+ 	free_irq(gpio_to_irq(ifx_dev->gpio.reset_out), ifx_dev);
+ 	free_irq(gpio_to_irq(ifx_dev->gpio.srdy), ifx_dev);
 
 
