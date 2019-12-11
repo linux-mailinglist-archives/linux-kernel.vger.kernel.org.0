@@ -2,106 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C55DB11B46D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EE7311B63F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:00:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732951AbfLKP0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:26:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59422 "EHLO mail.kernel.org"
+        id S1731531AbfLKPN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:13:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732801AbfLKP0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:26:17 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731407AbfLKPNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:23 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E595122527;
-        Wed, 11 Dec 2019 15:26:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E50C52467E;
+        Wed, 11 Dec 2019 15:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077976;
-        bh=yKYyV8WCc8qaM7E40q6OGjSrK/U8pEFIfTyF9vhkoGY=;
+        s=default; t=1576077202;
+        bh=BZ0oz8NjKl7UrehNzTIeGh2lJAIqcAF9T36DM21l1JA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pq+m8OxVp9cmy0WGvCmLoP/oOTJpL9J9icDjaTiHJLEeTJpPetIGSJIbWBSBfN1Uu
-         Wrek7ZjmTy+TOMqQnapHASv7NSU6/81uQLwpiY+ZSLn+KNgy2cKCgq2GCIHICPADOM
-         y0E3HYtFVPVLuVr9hNVVtx/ZSDhSK+28WSI5X4KE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 4.19 243/243] binder: Handle start==NULL in binder_update_page_range()
-Date:   Wed, 11 Dec 2019 16:06:45 +0100
-Message-Id: <20191211150355.743952632@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
-User-Agent: quilt/0.66
+        b=luMowHQWyuxZ5H6or+1O9/X6HSoxVxA9AzhjWLue8/BSUpQw7A5GERGunsiJULyB8
+         WceqPf51itmbx4NaAWkN98kjrF8pRI/o8eNGEE5BOxaxwZdnzf2kul0ghJUE5U4Af2
+         oxU114/eBVNs/y3/bY1F6qXkNbz+U/lvsn4Fhdwo=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Joel Stanley <joel@jms.id.au>,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Sasha Levin <sashal@kernel.org>, linux-watchdog@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 085/134] watchdog: aspeed: Fix clock behaviour for ast2600
+Date:   Wed, 11 Dec 2019 10:11:01 -0500
+Message-Id: <20191211151150.19073-85-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
+References: <20191211151150.19073-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Joel Stanley <joel@jms.id.au>
 
-commit 2a9edd056ed4fbf9d2e797c3fc06335af35bccc4 upstream.
+[ Upstream commit c04571251b3d842096f1597f5d4badb508be016d ]
 
-The old loop wouldn't stop when reaching `start` if `start==NULL`, instead
-continuing backwards to index -1 and crashing.
+The ast2600 no longer uses bit 4 in the control register to indicate a
+1MHz clock (It now controls whether this watchdog is reset by a SOC
+reset). This means we do not want to set it. It also does not need to be
+set for the ast2500, as it is read-only on that SoC.
 
-Luckily you need to be highly privileged to map things at NULL, so it's not
-a big problem.
+The comment next to the clock rate selection wandered away from where it
+was set, so put it back next to the register setting it's describing.
 
-Fix it by adjusting the loop so that the loop variable is always in bounds.
-
-This patch is deliberately minimal to simplify backporting, but IMO this
-function could use a refactor. The jump labels in the second loop body are
-horrible (the error gotos should be jumping to free_range instead), and
-both loops would look nicer if they just iterated upwards through indices.
-And the up_read()+mmput() shouldn't be duplicated like that.
-
-Cc: stable@vger.kernel.org
-Fixes: 457b9a6f09f0 ("Staging: android: add binder driver")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/r/20191018205631.248274-3-jannh@google.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: b3528b487448 ("watchdog: aspeed: Add support for AST2600")
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Reviewed-by: Cédric Le Goater <clg@kaod.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20191108032905.22463-1-joel@jms.id.au
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/android/binder_alloc.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/watchdog/aspeed_wdt.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -295,8 +295,7 @@ static int binder_update_page_range(stru
- 	return 0;
+diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+index 4ec0906bf12c0..7e00960651fa2 100644
+--- a/drivers/watchdog/aspeed_wdt.c
++++ b/drivers/watchdog/aspeed_wdt.c
+@@ -258,11 +258,6 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(wdt->base))
+ 		return PTR_ERR(wdt->base);
  
- free_range:
--	for (page_addr = end - PAGE_SIZE; page_addr >= start;
--	     page_addr -= PAGE_SIZE) {
-+	for (page_addr = end - PAGE_SIZE; 1; page_addr -= PAGE_SIZE) {
- 		bool ret;
- 		size_t index;
+-	/*
+-	 * The ast2400 wdt can run at PCLK, or 1MHz. The ast2500 only
+-	 * runs at 1MHz. We chose to always run at 1MHz, as there's no
+-	 * good reason to have a faster watchdog counter.
+-	 */
+ 	wdt->wdd.info = &aspeed_wdt_info;
+ 	wdt->wdd.ops = &aspeed_wdt_ops;
+ 	wdt->wdd.max_hw_heartbeat_ms = WDT_MAX_TIMEOUT_MS;
+@@ -278,7 +273,16 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	config = ofdid->data;
  
-@@ -309,6 +308,8 @@ free_range:
- 		WARN_ON(!ret);
+-	wdt->ctrl = WDT_CTRL_1MHZ_CLK;
++	/*
++	 * On clock rates:
++	 *  - ast2400 wdt can run at PCLK, or 1MHz
++	 *  - ast2500 only runs at 1MHz, hard coding bit 4 to 1
++	 *  - ast2600 always runs at 1MHz
++	 *
++	 * Set the ast2400 to run at 1MHz as it simplifies the driver.
++	 */
++	if (of_device_is_compatible(np, "aspeed,ast2400-wdt"))
++		wdt->ctrl = WDT_CTRL_1MHZ_CLK;
  
- 		trace_binder_free_lru_end(alloc, index);
-+		if (page_addr == start)
-+			break;
- 		continue;
- 
- err_vm_insert_page_failed:
-@@ -318,7 +319,8 @@ err_map_kernel_failed:
- 		page->page_ptr = NULL;
- err_alloc_page_failed:
- err_page_ptr_cleared:
--		;
-+		if (page_addr == start)
-+			break;
- 	}
- err_no_vma:
- 	if (mm) {
-
+ 	/*
+ 	 * Control reset on a per-device basis to ensure the
+-- 
+2.20.1
 
