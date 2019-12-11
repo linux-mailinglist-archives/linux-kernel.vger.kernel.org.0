@@ -2,119 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5510B11BF0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 22:21:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C8511BF12
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 22:23:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfLKVVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 16:21:13 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:40411 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbfLKVUv (ORCPT
+        id S1726614AbfLKVXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 16:23:15 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35996 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbfLKVXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 16:20:51 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MhCq4-1i2E1j40qQ-00eMD8; Wed, 11 Dec 2019 22:20:34 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>
-Cc:     Baolin Wang <baolin.wang7@gmail.com>, y2038@lists.linaro.org,
-        linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v7 9/9] ALSA: bump uapi version numbers
-Date:   Wed, 11 Dec 2019 22:20:25 +0100
-Message-Id: <20191211212025.1981822-10-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191211212025.1981822-1-arnd@arndb.de>
-References: <20191211212025.1981822-1-arnd@arndb.de>
+        Wed, 11 Dec 2019 16:23:15 -0500
+Received: by mail-pg1-f193.google.com with SMTP id k3so10717898pgc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 13:23:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PiR4x9CoXnfWfCbQNTlgRP9ROMJUyaR0E0re5tOFBZ8=;
+        b=ic5e0TCqEoJNzj9fGsZQ5N9SAW1l1zgvcZjd56LeFf5mo1wulGCYmSTCjH4ILs0YEe
+         l0mfUZXXjf3ooPnzRT1O5RQkCzKRkw3aqkN6c2aPB9HdsQAWkzDvP0cx/iGQbWP2t3pu
+         OlFJpnzJ8dCIZifbJ784hdGKIMOGG7yVROYcG8TJl58+nHOnsMoJJT25BopTVvv3IMg0
+         S30euSGIGuRb5eKE8njTHIQT51IW4VwwnkkUIrzA4M5bZFNYAkPcWIKJKhk5HR8BLGEx
+         OdYbcmbLDNTSUSpgsSTjJLijaP52w2E5/t0+bLYB1g51M7v/881bd8pQZo7cFN8SWmSx
+         F1cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PiR4x9CoXnfWfCbQNTlgRP9ROMJUyaR0E0re5tOFBZ8=;
+        b=MHCjype4xqVoXLLo5UXhpfCf2dsgvEaC+9bHvC5/87b6zG2RWagiA4KQJLC9ybMNBG
+         XjsDcfa0CiUEVar6VCAM4ysBeRGtBWQ4x3MCnNDB/mtbrUD945MTmZWd5fvWE7zGDexj
+         tid8Jf4mYFi0yxjDj9lR+EKk+myQVkwrm/S542RibTPuK9e0YGw6SvJszsjEW2rzhN4e
+         J0MKEaH93yu9ujHaDgfhy24NZ+YQk6VjDGwnpiaolQSjgpBoRLQzH5EEVD7zpTIt4y68
+         5+q0wSYe7k05c0LYQWglbibnKlMnXkFZEu7LlpXBCTs0Sjj9KRH9vyueSUn7eSWLSqra
+         ooTw==
+X-Gm-Message-State: APjAAAWlk28Uy7dWpd0l4l9ES7h9ah8QHyZeiXkAJtvMncKNgQD/zMNN
+        otlnO+dtcgyO0IHUIIRP+3H7tg==
+X-Google-Smtp-Source: APXvYqwrFaHj1syZQej9q7UGHjSQjK/MJs091CunWjBi0pCJ3ZbBj0eGGn30dTwTAbwGEIu9ylCCTQ==
+X-Received: by 2002:a65:5cc2:: with SMTP id b2mr6457132pgt.171.1576099394769;
+        Wed, 11 Dec 2019 13:23:14 -0800 (PST)
+Received: from debian ([122.164.82.31])
+        by smtp.gmail.com with ESMTPSA id i3sm4270815pfg.94.2019.12.11.13.23.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2019 13:23:13 -0800 (PST)
+Date:   Thu, 12 Dec 2019 02:53:05 +0530
+From:   Jeffrin Jose <jeffrin@rajagiritech.edu.in>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        jeffrin@rajagiritech.edu.in
+Subject: Re: [PATCH 5.3 000/105] 5.3.16-stable review
+Message-ID: <20191211212305.GA2676@debian>
+References: <20191211150221.153659747@linuxfoundation.org>
+ <20191211161605.GA4849@debian>
+ <20191211182852.GA715826@kroah.com>
+ <20191211192232.GA14178@debian>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:lCktzJYozNs3B0kWxyrFoZnS1JrDshoD0BgAOOtPca5RzXgAQmc
- l2W4MPeCpp+inIq/7xjx/JNBcdZMsOMO+ZGxkgXmmlTdZIz4PmlxmfS9CnXtK5JOYnXIzNl
- 7hd+IjJQcFknL4nQjrbDyV6y+M1TgsPkdrQKscsHLB8MBvVeNLTPTo0P/axUvyUXy0JEzPV
- QEBxYIL+LVVq/qBET8lWQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Me9XM8idYBw=:PpSHMQCjMCOePdCjSzUNcb
- XIhHkC5twEGrwaTXmoAViaEsJuuZsIwshSMm6rS69sQgmCDyGt347t9xcufhQOdjfPVY5Lz5X
- VvOeVZRHdH9iS7YdcUMpGvcci0+u35WxvX5V6wzI810OhowCUd4oAh7oD2pGuiCTQF6buCV9q
- ZRh64e0TzMHnXVJnR5S5K1/g2IWA8VNYj+72lmzR7Nce+Ne3nE86anPtQeOdse93DqM4VFsAl
- m/IV/o+vOscmgzwqbmLRs1Rcfen/AR8FY6d/vIF+v5VkFhRRJTBcW3s44CEvuJsXZBT4VbH+9
- XZr8p8C2stni19yy6007gcRA8Ttlx68V6bdLnBhu/1jAvn5ESFo/zuM6FlOkrNm6/MkO2Y8wv
- UuLSwXT0eZydx8d9jRuZH/sO5Asdec0mcNmUFI/VXq8MsXNOcQDqg19mG1EEh7NbFKXcM+uaJ
- pqRduztWV0RSwx6a9PrYCy9/5YpbGrYsv3/+uEJaTjyMnXfZ63C6ErvnlwJWleH1OMj9fiqZE
- bJAZE0t/nIFNdJCxk1U4WKdfC7fLxv8Vum1nvTVpgztuyit5L1/VNyQRy31W/cjm4d5/ngM/8
- 6usvnt3rvtp/svkTjBTrza+o2wYrCph66B4WcQjZ7Xe3xfbYqyq20+pHlHlh0lmJSyZfPiXzc
- fgoXbV1z4mRKNcEgHaIatcBTzDEKtPY+2/XblOWVSjYGc9m2zO6TErjus1qUC9Fm5o3rRXPwL
- 6XwPGoLyRME5cZcqzCO+7NN1Emwk6/vuNHRXJIODICPF50HXVowfoimva+aG87VWGVS4K0YkK
- Hk2qQswi1SjfY5SvMz+DoN9/i/AayNLXUfflLc3jFM4e9W/ceY7JAdvRhJd7AQDrGHxzz8G1I
- Pc5XxChsunG7YtGvMWHA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211192232.GA14178@debian>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change SNDRV_PCM_VERSION, SNDRV_RAWMIDI_VERSION and SNDRV_TIMER_VERSION
-to indicate the addition of the time64 version of the mmap interface and
-these ioctl commands:
+On Thu, Dec 12, 2019 at 12:52:32AM +0530, Jeffrin Jose wrote:
+> On Wed, Dec 11, 2019 at 07:28:52PM +0100, Greg Kroah-Hartman wrote:
+> > that's really odd.  How are you building this, from the git tree, or the
+> > tarball generated?
+> git tree
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> 
+> 
+> > And I still see that file in the 5.3 tree, what do you mean it was
+> > deleted?
+> 
+> may be during "git checkout linux-5.3.y" or may be i did "git pull" inside that branch
+> 
+> that was a git status which showed "D" at the start of a few lines
+> and one of that lines showed that file.
+> i also checked that path locally and found it was not there
+>
 
-SNDRV_PCM_IOCTL_SYNC
-SNDRV_RAWMIDI_IOCTL_STATUS
-SNDRV_PCM_IOCTL_STATUS
-SNDRV_PCM_IOCTL_STATUS_EXT
-SNDRV_TIMER_IOCTL_TREAD
-SNDRV_TIMER_IOCTL_STATUS
+i downloaded the tree to another directory.
+i compiled the kernel and it was a success
 
-32-bit applications built with 64-bit time_t require both the headers
-and the running kernel to support at least the new API version. When
-built with earlier kernel headers, some of these may not work
-correctly, so applications are encouraged to fail compilation like
-
- #if SNDRV_PCM_VERSION < SNDRV_PROTOCOL_VERSION(2, 0, 15)
- extern int __fail_build_for_time_64[sizeof(long) - sizeof(time_t)];
- #endif
-
-or provide their own updated copy of the header file.
-At runtime, the interface is unchanged for 32-bit time_t, but new
-kernels are required to work with user compiled with 64-bit time_t.
-
-A runtime check can be used to detect old kernel versions and
-warn about those.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/uapi/sound/asound.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
-index df9983e7ead5..e6a958b8aff1 100644
---- a/include/uapi/sound/asound.h
-+++ b/include/uapi/sound/asound.h
-@@ -156,7 +156,7 @@ struct snd_hwdep_dsp_image {
-  *                                                                           *
-  *****************************************************************************/
- 
--#define SNDRV_PCM_VERSION		SNDRV_PROTOCOL_VERSION(2, 0, 14)
-+#define SNDRV_PCM_VERSION		SNDRV_PROTOCOL_VERSION(2, 0, 15)
- 
- typedef unsigned long snd_pcm_uframes_t;
- typedef signed long snd_pcm_sframes_t;
-@@ -710,7 +710,7 @@ enum {
-  *  Raw MIDI section - /dev/snd/midi??
-  */
- 
--#define SNDRV_RAWMIDI_VERSION		SNDRV_PROTOCOL_VERSION(2, 0, 0)
-+#define SNDRV_RAWMIDI_VERSION		SNDRV_PROTOCOL_VERSION(2, 0, 1)
- 
- enum {
- 	SNDRV_RAWMIDI_STREAM_OUTPUT = 0,
-@@ -766,7 +766,7 @@ struct snd_rawmidi_status {
-  *  Timer section - /dev/snd/timer
-  */
- 
--#define SNDRV_TIMER_VERSION		SNDRV_PROTOCOL_VERSION(2, 0, 6)
-+#define SNDRV_TIMER_VERSION		SNDRV_PROTOCOL_VERSION(2, 0, 7)
- 
- enum {
- 	SNDRV_TIMER_CLASS_NONE = -1,
--- 
-2.20.0
+--
+soffware engineer
+rajagiri school of engineering and technology
 
