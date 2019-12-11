@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8FC711AB96
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 14:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5907711ABB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 14:11:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbfLKNJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 08:09:42 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:51960 "EHLO
+        id S1729681AbfLKNKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 08:10:38 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:12210 "EHLO
         mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729423AbfLKNJl (ORCPT
+        by vger.kernel.org with ESMTP id S1728912AbfLKNJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 08:09:41 -0500
+        Wed, 11 Dec 2019 08:09:44 -0500
 Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBBD48ZK020455;
-        Wed, 11 Dec 2019 05:09:32 -0800
+        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBBD4Bee020469;
+        Wed, 11 Dec 2019 05:09:31 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=8dPc8HV9TrFMT2zWUu2V0r2dTxDGBHKNWQh8P5/K+sk=;
- b=GiFu6jK1+kokL2WHxngEroM21gO4yYaWIrZL3KADOYLaZIzlZOa5LV3s4El0neIwQZzb
- 1TzWrcByL6t+5DiS7NWTCfYG8Dk+a046UKfXB7eERn/j578QBEj4lsCiWkrd8p+T3qzj
- 33BHwZqYb2XndC5I5C3/lr0r6jCBOWyaO1osxQafom3Wqe/Vc+8n6mmiNLty9HA8zvaW
- MAh6AGfXQpL3PpFjykVJ1EZvfz/QaB4iHvUQlzEVnMHptWDuOcOqmm+4COYJmWJOO42G
- BhQD/RP0rmPbwdMDzYEhnV7esdMouRicf5A34L2yACvmOzAxlJW48FMYYSOv8dbql+YB Fg== 
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2048.outbound.protection.outlook.com [104.47.66.48])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2wr9dfp689-1
+ bh=A71GnE9au1Zk8JhbrK/vkGU/jJdQUGIGvVnNNAp1d+Y=;
+ b=Mv+8Ay9sMEpOYeFyWwy/LFZtFdooFQu6GuJLmHv1wutQZJMQGuaoAszWmMME7Lt71Wyj
+ yEj+6Z4ppwcvykYByfQFfErtz8tKG9bOiWpiDs3U+MTKLmUzw/8EYuav1T+YW4i+O0be
+ 6He2hPuDLlgUukB0OiJ5yWt3DOINMdO9/6NwrOnjDEbGw+YY0pt9MWz6zjhOZA/ADFIP
+ GFz1IUrsjvtVPCZPax7TQRwqIbeUr2CAszOiT4grez/i8FmvA1c9hMBM0sw5Gx5xveYO
+ qX0wvhCVvJ00/IA39J/5qZ2jxuYgkORty+B0dBJ4SnGVAMPnCp+s2t4MXJPdgRQL1rD9 WA== 
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2175.outbound.protection.outlook.com [104.47.59.175])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2wr9dfp688-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Wed, 11 Dec 2019 05:09:31 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i3oilsVoenDOpucWZhuaR81m3U8lonHYK2wFwSISpVFXUWfgXDrySJE0zue3DM3L/Ky4Ksh9Tu/uFz1CGYTNtBmuG6W71VF08sbkoIFZpqmBR10BlVXdqdL/40wnBuiI/YKGw8SrLhqM1+UxU5+x/y2TbDEP9Rv8Q8PziwZb5+JaXzCpGYRSjfWsHVxeTL76WRpx7XL02RcSKtxRpNQzGxLS6vqD7nHe5XQHxMxm5UEH++cRXX2nUcmmaB5hXuXjz/WVCq5F/VB8K7QpWZ6WDAjvjml//dw2b/9cZJBKKRBmEqNZU3WPgeRWvy6maHTYEe9K4UGtcbqgeD4jQJXfeA==
+ b=UBDN8uWHytzOT6w8/OmPVwQMQm9XcN5VpGhR2Wr1sOAyIaoTLj8EdzxCozM/9Buni3FkeN27UH5LsR86JFGBXZo3L3Q65eNwqRSYFm3GVbM6T2iXEe4/7nsUuKu63crd14d57ajOWocCYbN1lDo/Igl2KzP/OJ3inb4twWEuLgZQ/7fBKZw3IrHG5FGSVyXPvY38RHqFrVTmp7lb8CQeqz7LvSnz7IJ4wG3sYsBntbrakTXaOG5jbeU54n3uvzJNbQhlMGcpsBuZeRH9ByoGqXDHto6NuE+Tk7S1RwkAJhwS7LwNxCOObsXtpa1osIvGkIONbMGiM3aDBoS6SxD9tQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8dPc8HV9TrFMT2zWUu2V0r2dTxDGBHKNWQh8P5/K+sk=;
- b=A+jbwdQSE4jiHr09sQkf9JKJQnhh1VYMx3KCZ8JNCUj0I+emf7nosrpvZB24kiisUqyrl7T9rjdYBE1As2uHaCyCBhRinXmM8OLhPdXOjmJfgXpAuRGJja21gumSethtxOUVhIrNTfd1UWDqlPm5y94nSFJ+W3L8dwUvMl9clYyQEuhE0G6ywigePlvmv+FOFwQ3xoN9r7sxAmzYDDQKY1+eG73z7kFX/WNiooSDaO8+gZgsF4qOgeAr8y+3FZ8tJ/vBwUhPSwvVUYxUNm0J5Pzp2fIJbXG7hEtLSPl+JpR2wRaJp437mqBBmgAoSZ2ll0X3t/QLtYqXUVN1smn/Kg==
+ bh=A71GnE9au1Zk8JhbrK/vkGU/jJdQUGIGvVnNNAp1d+Y=;
+ b=NUqB2F1WllpjSOugoEDJx7ccFZYeB4W87OA7QN8F8I08vDtxSTndTg7xHqO6mmfiCMsZULAiTvGUp5pu/6S3V0S/s0L17Lw64H7TaHy/puUfgw2/SumXP4tr7WRoxOl2aiVO2iz09gyVma1kMi58N2s7xb01hIVuyKEYNxSffxNqwInM+Ch32le8VGnKlS5Sf5yq+IuccNsJGbH3gdmtnyWi7oTq4sLn+rlWQJfmwrBDVptlXsOJRBMpgsRvFTgK19mSjIaiGwEo5vqdeogzW8XHCQC0/Ug0MhmQa9p4F3H48dnuR5CByUp6Jy3Wo3z+kytB2VM0GEDL6mXrWcttYQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  199.43.4.28) smtp.rcpttodomain=ti.com smtp.mailfrom=cadence.com; dmarc=pass
  (p=none sp=none pct=100) action=none header.from=cadence.com; dkim=none
@@ -42,41 +42,40 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8dPc8HV9TrFMT2zWUu2V0r2dTxDGBHKNWQh8P5/K+sk=;
- b=7oZFwpJL9/VfQat+8X+MhWNeM4Jr6vHsZsBHG0cg2snef3PqKR3VCCQgZsGFUZm2KSuNh1atmZahhaZPzKwOTxwsEmcrzQxuvB5Hv5ZhprrxhUgel5kv/ZCNKnzw7fePAdtKTNRJRBbzfeH2OtPouMz2vdDfUQXBxg5V3adEk+U=
-Received: from CY1PR07CA0027.namprd07.prod.outlook.com
- (2a01:111:e400:c60a::37) by BN7PR07MB4291.namprd07.prod.outlook.com
- (2603:10b6:406:b2::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2538.16; Wed, 11 Dec
- 2019 13:09:28 +0000
-Received: from DM6NAM12FT035.eop-nam12.prod.protection.outlook.com
- (2a01:111:f400:fe59::204) by CY1PR07CA0027.outlook.office365.com
- (2a01:111:e400:c60a::37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.14 via Frontend
+ bh=A71GnE9au1Zk8JhbrK/vkGU/jJdQUGIGvVnNNAp1d+Y=;
+ b=rJHSb6XLQ/P4snm581A20nhB+fih+28wHZ0kkyXfJwIH5OXLj/7XLMGwG3+LzsvDIRosZzSy9JnHE0UGINBk3NB5empYaY0t/zTllFOWngsNgkFlpNiSyn6wj894JLa4lxEBY2o/Yjvl5mBvF2UivrHsyirLev4l8gNi/mvGj88=
+Received: from DM5PR07CA0044.namprd07.prod.outlook.com (2603:10b6:3:16::30) by
+ BN7PR07MB4849.namprd07.prod.outlook.com (2603:10b6:406:ef::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.14; Wed, 11 Dec 2019 13:09:28 +0000
+Received: from DM6NAM12FT057.eop-nam12.prod.protection.outlook.com
+ (2a01:111:f400:fe59::208) by DM5PR07CA0044.outlook.office365.com
+ (2603:10b6:3:16::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2538.15 via Frontend
  Transport; Wed, 11 Dec 2019 13:09:28 +0000
 Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
  199.43.4.28 as permitted sender) receiver=protection.outlook.com;
  client-ip=199.43.4.28; helo=rmmaillnx1.cadence.com;
 Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- DM6NAM12FT035.mail.protection.outlook.com (10.13.179.29) with Microsoft SMTP
+ DM6NAM12FT057.mail.protection.outlook.com (10.13.178.73) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.18 via Frontend Transport; Wed, 11 Dec 2019 13:09:27 +0000
+ 15.20.2495.18 via Frontend Transport; Wed, 11 Dec 2019 13:09:28 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id xBBD9L5b006811
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id xBBD9L5c006811
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 11 Dec 2019 08:09:25 -0500
+        Wed, 11 Dec 2019 08:09:26 -0500
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Wed, 11 Dec 2019 14:09:21 +0100
+ 15.0.1367.3; Wed, 11 Dec 2019 14:09:22 +0100
 Received: from vleu-orange.cadence.com (10.160.88.83) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Wed, 11 Dec 2019 14:09:21 +0100
+ 15.0.1367.3 via Frontend Transport; Wed, 11 Dec 2019 14:09:22 +0100
 Received: from vleu-orange.cadence.com (localhost.localdomain [127.0.0.1])
-        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id xBBD9Ln8011597;
-        Wed, 11 Dec 2019 14:09:21 +0100
+        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id xBBD9Mnr011616;
+        Wed, 11 Dec 2019 14:09:22 +0100
 Received: (from yamonkar@localhost)
-        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id xBBD9LMV011585;
+        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id xBBD9LaD011610;
         Wed, 11 Dec 2019 14:09:21 +0100
 From:   Yuti Amonkar <yamonkar@cadence.com>
 To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
@@ -84,9 +83,9 @@ To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 CC:     <jsarha@ti.com>, <tomi.valkeinen@ti.com>, <praneeth@ti.com>,
         <mparab@cadence.com>, <sjakhade@cadence.com>,
         <yamonkar@cadence.com>
-Subject: [RESEND PATCH v1 02/15] dt-bindings:phy: Convert Cadence MHDP PHY bindings to YAML.
-Date:   Wed, 11 Dec 2019 14:09:07 +0100
-Message-ID: <1576069760-11473-3-git-send-email-yamonkar@cadence.com>
+Subject: [RESEND PATCH v1 03/15] phy: cadence-dp: Rename to phy-cadence-torrent
+Date:   Wed, 11 Dec 2019 14:09:08 +0100
+Message-ID: <1576069760-11473-4-git-send-email-yamonkar@cadence.com>
 X-Mailer: git-send-email 2.4.5
 In-Reply-To: <1576069760-11473-1-git-send-email-yamonkar@cadence.com>
 References: <1576069760-11473-1-git-send-email-yamonkar@cadence.com>
@@ -94,29 +93,29 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(346002)(376002)(136003)(36092001)(199004)(189003)(478600001)(426003)(76130400001)(336012)(70206006)(107886003)(26826003)(70586007)(8676002)(81156014)(81166006)(5660300002)(110136005)(86362001)(54906003)(2906002)(186003)(4326008)(42186006)(8936002)(36756003)(2616005)(26005)(356004)(6666004)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4291;H:rmmaillnx1.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(376002)(346002)(39860400002)(36092001)(189003)(199004)(81166006)(81156014)(478600001)(2616005)(8676002)(26005)(336012)(426003)(26826003)(186003)(8936002)(2906002)(6666004)(4326008)(42186006)(316002)(356004)(107886003)(54906003)(70586007)(70206006)(86362001)(36756003)(5660300002)(110136005)(76130400001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4849;H:rmmaillnx1.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 080cb062-a984-447f-aad4-08d77e3b5a21
-X-MS-TrafficTypeDiagnostic: BN7PR07MB4291:
-X-Microsoft-Antispam-PRVS: <BN7PR07MB4291C604AA12EDD4CE45EF0BD25A0@BN7PR07MB4291.namprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
+X-MS-Office365-Filtering-Correlation-Id: b12433d4-b429-4865-b057-08d77e3b5a6d
+X-MS-TrafficTypeDiagnostic: BN7PR07MB4849:
+X-Microsoft-Antispam-PRVS: <BN7PR07MB484994C0B6E15562FA299E13D25A0@BN7PR07MB4849.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2000;
 X-Forefront-PRVS: 024847EE92
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Z2XZvNTM7I1qN6dWpsXr2xY0joYL00XX+DSBXwHGmzclQFH0yfvyhCRIO0cQ9x7At8D/bz4qme7sOymHGzzqHv5ovZ/WvI0iAuZ5SjjsuY32eNHTe3qlZAFYpX7Oru1T5MAVA1jYPaKMMZ2TTm40AMa42q6/yFrez/WH6+ZzCtigJKzYhVIBh3XqEbmsMgaMthgYjUPC4n2mdGyzgWNkyDif6X50A4SihYPoLD8tVAMxb+FXXs4p/maQM9UjV2a6tJSrz2PdKqS683LmVc15ThU4s5uB2NUqXpiBXClAV4TjtJKLydpZkx0xveZOfeFWfLXuq4wujhNEqdhOSLBABYqBBggtTzkjR5+Us/nSATk+nYcyTUuCYjmk7ffwzP79BiFtVeG1ay7IdinNfFh7AhrNmkuZ8aRRyZep2FfZ4mFrO/MWS0FH3I0nPKLb0DfpFwWSSPBArNDgXNjgzp0+erzqclXuPcbFL6TnnwZ8U6ercg44Y6bl1pht2HPuLyw/Ng7XjDqxbtoa84JXaVI9e2ZHI0srRsHIYy7Ni8H4YlM=
+X-Microsoft-Antispam-Message-Info: vowH8tU7U1byKLzyPtUtUGEEqEmmUiTo8YNjDbiK4BWeI5TbJSau16UrZhcjkbGVNavO+Qk/ZTEwKBfRDXynpjxRXVhfIIZ9+9kvy7AyWJwGdBB3DZM0dDHkizfw7rZTlBDV0SwlAAGnVAX4ULjtZtOMafsdsctv30ak5JVgat0op0wFH4Zx1CceTP4qeAIfj3mpPmQUR2faWmL3C0+jj7ht5W2QdZSGrRs9+oFovpB88guP0F8tgxHiD0U+QO2BkjkbjAZOcOL2tiWZ7CV9mES3mYSwy7l/A5k5H1mzhHm28D8x149Nf2yeRxyyObvqf99JBWHPJlU/TyXeTjLCqN1ydE+bdJ4LfyvckzROMTDaDdq38KtQyE5RDR9OQWmnM6MOFmcY8QWy9+Ed5TWr5QDiw5pKZ72pNYpQ+6ut9DpLwcVuyu2KsRLavQaCPS9WhGTEzY60bE3tk9LbntPcbA/8iLSABEPVYWQrkc6o2dRBoFKF1MnDkKI7V0HX6vXo
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2019 13:09:27.5870
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2019 13:09:28.0862
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 080cb062-a984-447f-aad4-08d77e3b5a21
+X-MS-Exchange-CrossTenant-Network-Message-Id: b12433d4-b429-4865-b057-08d77e3b5a6d
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4291
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4849
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
  definitions=2019-12-11_03:2019-12-11,2019-12-11 signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 mlxscore=0
  malwarescore=0 suspectscore=0 phishscore=0 impostorscore=0 spamscore=0
- priorityscore=1501 adultscore=0 bulkscore=0 clxscore=1015 mlxlogscore=926
+ priorityscore=1501 adultscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999
  lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-1910280000 definitions=main-1912110111
 Sender: linux-kernel-owner@vger.kernel.org
@@ -124,117 +123,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- Convert the MHDP PHY devicetree bindings to yaml schemas.
-- Rename DP PHY to have generic Torrent PHY nomrnclature.
-- Rename compatible string from "cdns,dp-phy" to "cdns,torrent-phy".
+Rename Cadence DP PHY driver from phy-cadence-dp to phy-cadence-torrent
+to make it more generic for future use. Modifiy Makefile and Kconfig
+accordingly. Also, change driver compatible from "cdns,dp-phy" to
+"cdns,torrent-phy".
 
 Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
 ---
- .../devicetree/bindings/phy/phy-cadence-dp.txt     | 30 ------------
- .../bindings/phy/phy-cadence-torrent.yaml          | 57 ++++++++++++++++++++++
- 2 files changed, 57 insertions(+), 30 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
- create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+ drivers/phy/cadence/Kconfig                                     | 6 +++---
+ drivers/phy/cadence/Makefile                                    | 2 +-
+ drivers/phy/cadence/{phy-cadence-dp.c => phy-cadence-torrent.c} | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+ rename drivers/phy/cadence/{phy-cadence-dp.c => phy-cadence-torrent.c} (99%)
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt b/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
-deleted file mode 100644
-index 7f49fd54e..0000000
---- a/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
-+++ /dev/null
-@@ -1,30 +0,0 @@
--Cadence MHDP DisplayPort SD0801 PHY binding
--===========================================
--
--This binding describes the Cadence SD0801 PHY hardware included with
--the Cadence MHDP DisplayPort controller.
--
---------------------------------------------------------------------------------
--Required properties (controller (parent) node):
--- compatible	: Should be "cdns,dp-phy"
--- reg		: Defines the following sets of registers in the parent
--		  mhdp device:
--			- Offset of the DPTX PHY configuration registers
--			- Offset of the SD0801 PHY configuration registers
--- #phy-cells	: from the generic PHY bindings, must be 0.
--
--Optional properties:
--- num_lanes	: Number of DisplayPort lanes to use (1, 2 or 4)
--- max_bit_rate	: Maximum DisplayPort link bit rate to use, in Mbps (2160,
--		  2430, 2700, 3240, 4320, 5400 or 8100)
---------------------------------------------------------------------------------
--
--Example:
--	dp_phy: phy@f0fb030a00 {
--		compatible = "cdns,dp-phy";
--		reg = <0xf0 0xfb030a00 0x0 0x00000040>,
--		      <0xf0 0xfb500000 0x0 0x00100000>;
--		num_lanes = <4>;
--		max_bit_rate = <8100>;
--		#phy-cells = <0>;
--	};
-diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-new file mode 100644
-index 0000000..4fa9d0a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-@@ -0,0 +1,57 @@
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/phy/phy-cadence-torrent.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Cadence Torrent SD0801 PHY binding for DisplayPort
-+
-+description:
-+  This binding describes the Cadence SD0801 PHY hardware included with
-+  the Cadence MHDP DisplayPort controller.
-+
-+maintainers:
-+  - Swapnil Jakhade <sjakhade@cadence.com>
-+  - Yuti Amonkar <yamonkar@cadence.com>
-+
-+properties:
-+  compatible:
-+    const: cdns,torrent-phy
-+
-+  reg:
-+    items:
-+      - description: Offset of the DPTX PHY configuration registers.
-+      - description: Offset of the SD0801 PHY configuration registers.
-+
-+  "#phy-cells":
-+    const: 0
-+
-+  num_lanes:
-+    description:
-+      Number of DisplayPort lanes.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [1, 2, 4]
-+
-+  max_bit_rate:
-+    description:
-+      Maximum DisplayPort link bit rate to use, in Mbps
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [2160, 2430, 2700, 3240, 4320, 5400, 8100]
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#phy-cells"
-+
-+examples:
-+  - |
-+    dp_phy: phy@f0fb030a00 {
-+          compatible = "cdns,torrent-phy";
-+          reg = <0xf0 0xfb030a00 0x0 0x00000040>,
-+                <0xf0 0xfb500000 0x0 0x00100000>;
-+          num_lanes = <4>;
-+          max_bit_rate = <8100>;
-+          #phy-cells = <0>;
-+    };
-+...
+diff --git a/drivers/phy/cadence/Kconfig b/drivers/phy/cadence/Kconfig
+index b2db916d..4595458 100644
+--- a/drivers/phy/cadence/Kconfig
++++ b/drivers/phy/cadence/Kconfig
+@@ -3,13 +3,13 @@
+ # Phy drivers for Cadence PHYs
+ #
+ 
+-config PHY_CADENCE_DP
+-	tristate "Cadence MHDP DisplayPort PHY driver"
++config PHY_CADENCE_TORRENT
++	tristate "Cadence Torrent PHY driver"
+ 	depends on OF
+ 	depends on HAS_IOMEM
+ 	select GENERIC_PHY
+ 	help
+-	  Support for Cadence MHDP DisplayPort PHY.
++	  Support for Cadence Torrent PHY.
+ 
+ config PHY_CADENCE_DPHY
+ 	tristate "Cadence D-PHY Support"
+diff --git a/drivers/phy/cadence/Makefile b/drivers/phy/cadence/Makefile
+index 8f89560..6a7ffc6 100644
+--- a/drivers/phy/cadence/Makefile
++++ b/drivers/phy/cadence/Makefile
+@@ -1,4 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-obj-$(CONFIG_PHY_CADENCE_DP)	+= phy-cadence-dp.o
++obj-$(CONFIG_PHY_CADENCE_TORRENT)	+= phy-cadence-torrent.o
+ obj-$(CONFIG_PHY_CADENCE_DPHY)	+= cdns-dphy.o
+ obj-$(CONFIG_PHY_CADENCE_SIERRA)	+= phy-cadence-sierra.o
+diff --git a/drivers/phy/cadence/phy-cadence-dp.c b/drivers/phy/cadence/phy-cadence-torrent.c
+similarity index 99%
+rename from drivers/phy/cadence/phy-cadence-dp.c
+rename to drivers/phy/cadence/phy-cadence-torrent.c
+index bc10cb2..beb80f7 100644
+--- a/drivers/phy/cadence/phy-cadence-dp.c
++++ b/drivers/phy/cadence/phy-cadence-torrent.c
+@@ -521,7 +521,7 @@ static int cdns_dp_phy_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id cdns_dp_phy_of_match[] = {
+ 	{
+-		.compatible = "cdns,dp-phy"
++		.compatible = "cdns,torrent-phy"
+ 	},
+ 	{}
+ };
 -- 
 2.7.4
 
