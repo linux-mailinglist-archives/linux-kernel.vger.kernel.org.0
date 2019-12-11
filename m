@@ -2,80 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79D3911AB56
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3C2F11AB5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:56:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbfLKMyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 07:54:25 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:59031 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729298AbfLKMyZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 07:54:25 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N4Qg2-1hgpT044jG-011S0Q; Wed, 11 Dec 2019 13:54:13 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] PM / devfreq: tegra: add COMMON_CLK dependency
-Date:   Wed, 11 Dec 2019 13:54:04 +0100
-Message-Id: <20191211125411.1857250-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1729313AbfLKM4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 07:56:42 -0500
+Received: from relay.sw.ru ([185.231.240.75]:46022 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727402AbfLKM4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 07:56:42 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1if1Wl-00067R-Gc; Wed, 11 Dec 2019 15:55:40 +0300
+Subject: [PATCH RFC v2 3/3] ext4: Notify block device about
+ fallocate(0)-assigned blocks
+To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Cc:     axboe@kernel.dk, tytso@mit.edu, adilger.kernel@dilger.ca,
+        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
+        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
+        dhowells@redhat.com, asml.silence@gmail.com
+References: <157599668662.12112.10184894900037871860.stgit@localhost.localdomain>
+ <157599697948.12112.3846364542350011691.stgit@localhost.localdomain>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <766824cc-8b40-aa8d-4f94-e015bc8122d4@virtuozzo.com>
+Date:   Wed, 11 Dec 2019 15:55:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:sP9VUyPZgvStU62dAlKy08xLXzFdkJka9Q5nGaK/wb5wuFnVPT8
- shTcHY3PhXY8zJATgm8XtoMAoKopzMg4scNkDssxMTottbiV+AtePfeHxDbwfaB1CItv/fy
- gu0mspEk19RgqnyEcz89MvnD773Ztm2tCKryufHQosrXloVVV9Zs71C1ErMAHeXisjbUSam
- M9GZpT/B9Fu6kTVh/RS4A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:zg9yD6HNEx8=:N1kwQltLc4Jwr/NpJXDYkL
- Fkxc/q4nBsRp08NfLNz7d+/ka0ccgZ5FO1bL4Tppbtd5Wm9PX4DKpnea0edq2tx78b/3y/mGy
- 8oziLFjz9ussoBPJ5ywnJEZ9UvbIA45VDK5TqM1bUscsFgirSGlLoq64fAFR0w44fEeZX6fUY
- Z8iTA/l+st5VU/rPwCmwLbIpMu3QSN/leTDp7OAAFWqlV6IQ+TvGxF1ZVt3lUpYfMgE10R10z
- ZVWUuD9YMiCpXah0k9zg8icSU6xqLfW3pI2jdDBAmQHHbSMprxcRk/9REYnNmjNFOu4wELJm7
- BfSjml6NuU3MB1WOoHqIgTdtHrZkr//40Ywg3yj+SHkEuMHxMcgSNeTsNRDSuejUlr1OCLxR0
- 8KT8uUNVLYkdTNS9ITsZdbewu9ajK/pyt8rtAlmuraly6jMDbfQc+WVhGadEsXnlCUtD7IjwK
- d7mD8bw6QBvvUG1RgyEZnXN+v1ujWx/lSfPExow19CeDUJIpvxlDI+R3EjHDWZ2dVjKJmw/kz
- sn5vEaPTIljeNvZBKCtuCS72BJRxhrwWr0xvnS7Z/5+byP/aaVljtB7+6Fpn4zPp25O0h9MFx
- hJT0UFgBRWHT8uKV7z805WGQS72SCzwucuk7aEH4LaEw20MtL6q0kcNS4DhxHpWpH80TxZ+CW
- aXeqg4TJ6QcIDM2J2K65we5JtM6Gv9rx8+XqmwULdpArs8+SQiyV3bfs8jQOfPi/yNALnoaM9
- 5mwD+qESf+hqG9grrTQUzELPy7+KgDk1wZSy3yJeMiYfjQZs3nx+Kvdq2edhYj6EGhXWTOBlb
- dJdqyRs4uIfHTy4SXMYh2sh+sSOxNUGTkYgp55rusxKcHQsmsmNSChqRiJm3hRyU6ys8crtoi
- uzIXydiJRqTYTiGhznCQ==
+In-Reply-To: <157599697948.12112.3846364542350011691.stgit@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compile-testing this driver fails if CONFIG_COMMON_CLK is not set:
+[I missed debug hunk appeared in v1. Please, see correct patch below]
 
-drivers/devfreq/tegra30-devfreq.o: In function `tegra_devfreq_target':
-tegra30-devfreq.c:(.text+0x164): undefined reference to `clk_set_min_rate'
+Call sb_issue_assign_range() after extent range was allocated
+on user request. Hopeful, this helps block device to maintain
+its internals in the best way, if this is appliable.
 
-Fixes: 35f8dbc72721 ("PM / devfreq: tegra: Enable COMPILE_TEST for the driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 ---
- drivers/devfreq/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ext4/ext4.h    |    1 +
+ fs/ext4/extents.c |   11 +++++++++--
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index defe1d438710..f712c3de0876 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -98,6 +98,7 @@ config ARM_TEGRA_DEVFREQ
- 		ARCH_TEGRA_132_SOC || ARCH_TEGRA_124_SOC || \
- 		ARCH_TEGRA_210_SOC || \
- 		COMPILE_TEST
-+	depends on COMMON_CLK
- 	select PM_OPP
- 	help
- 	  This adds the DEVFREQ driver for the Tegra family of SoCs.
--- 
-2.20.0
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index f8578caba40d..fe2263c00c0e 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -622,6 +622,7 @@ enum {
+ 	 * allows jbd2 to avoid submitting data before commit. */
+ #define EXT4_GET_BLOCKS_IO_SUBMIT		0x0400
+ 
++#define EXT4_GET_BLOCKS_SUBMIT_ALLOC		0x0800
+ /*
+  * The bit position of these flags must not overlap with any of the
+  * EXT4_GET_BLOCKS_*.  They are used by ext4_find_extent(),
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 0e8708b77da6..68335e1d6893 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4490,6 +4490,13 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+ 		ar.len = allocated;
+ 
+ got_allocated_blocks:
++	if ((flags & EXT4_GET_BLOCKS_SUBMIT_ALLOC)) {
++		err = sb_issue_assign_range(inode->i_sb, newblock,
++			EXT4_C2B(sbi, allocated_clusters), GFP_NOFS);
++		if (err)
++			goto free_on_err;
++	}
++
+ 	/* try to insert new extent into found leaf and return */
+ 	ext4_ext_store_pblock(&newex, newblock + offset);
+ 	newex.ee_len = cpu_to_le16(ar.len);
+@@ -4506,7 +4513,7 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+ 	if (!err)
+ 		err = ext4_ext_insert_extent(handle, inode, &path,
+ 					     &newex, flags);
+-
++free_on_err:
+ 	if (err && free_on_err) {
+ 		int fb_flags = flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE ?
+ 			EXT4_FREE_BLOCKS_NO_QUOT_UPDATE : 0;
+@@ -4926,7 +4933,7 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ 	lblk = offset >> blkbits;
+ 
+ 	max_blocks = EXT4_MAX_BLOCKS(len, offset, blkbits);
+-	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
++	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT | EXT4_GET_BLOCKS_SUBMIT_ALLOC;
+ 	if (mode & FALLOC_FL_KEEP_SIZE)
+ 		flags |= EXT4_GET_BLOCKS_KEEP_SIZE;
+ 
 
