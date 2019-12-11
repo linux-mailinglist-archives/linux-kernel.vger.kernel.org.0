@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1E6E11B097
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:24:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 030CB11AF00
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:10:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732836AbfLKPYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:24:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55586 "EHLO mail.kernel.org"
+        id S1730695AbfLKPKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:10:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732824AbfLKPYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:24:17 -0500
+        id S1730163AbfLKPJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:09:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 895A52173E;
-        Wed, 11 Dec 2019 15:24:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9280A208C3;
+        Wed, 11 Dec 2019 15:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077857;
-        bh=nbZ7fQzT29Io1UH8chLzIhDm13EYvBMWrrF8VxGouZA=;
+        s=default; t=1576076998;
+        bh=0qytjjZWSM6P7mpZ8ddmpF2SU5ZT8/Uf1JWrhNBExQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bXyUy39DSeaSy+LzqsPqGIh8UfNwe/KtNcGFNPZEDbdU0B9QiWAEkZZv8YnS+w1MS
-         +LCFsw4++I74n/TdAcDKeEbAvwQ1rWe3Gc6sZtYnGQz8jhmpVMIkUYQroea4Bjd8Cp
-         9Eho9Lc5kkHRqtwF5fKA5L9IH++P7jrIpdS6J/pU=
+        b=Z5WUYSuR9sa9sA+YVDi1j04hMbmhGx8nhoGy/PJemgG25UNX1/q3+jIue0D/qQY0o
+         opDaqdSrSDc6nel7j132armvUrlx+0GSUMw2YuAPTmj88VSLBLz9Bs6guR6t8ugMFR
+         6VIrqIvZ76Jyr4HUBHWbnvCi3jHgdlqjXEt87Z/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arijit Banerjee <arijit@rubrik.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 198/243] fuse: verify attributes
+        stable@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.4 69/92] crypto: atmel-aes - Fix IV handling when req->nbytes < ivsize
 Date:   Wed, 11 Dec 2019 16:06:00 +0100
-Message-Id: <20191211150352.544263323@linuxfoundation.org>
+Message-Id: <20191211150255.196031923@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,121 +44,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-commit eb59bd17d2fa6e5e84fba61a5ebdea984222e6d5 upstream.
+commit 86ef1dfcb561473fbf5e199d58d18c55554d78be upstream.
 
-If a filesystem returns negative inode sizes, future reads on the file were
-causing the cpu to spin on truncate_pagecache.
+commit 394a9e044702 ("crypto: cfb - add missing 'chunksize' property")
+adds a test vector where the input length is smaller than the IV length
+(the second test vector). This revealed a NULL pointer dereference in
+the atmel-aes driver, that is caused by passing an incorrect offset in
+scatterwalk_map_and_copy() when atmel_aes_complete() is called.
 
-Create a helper to validate the attributes.  This now does two things:
+Do not save the IV in req->info of ablkcipher_request (or equivalently
+req->iv of skcipher_request) when req->nbytes < ivsize, because the IV
+will not be further used.
 
- - check the file mode
- - check if the file size fits in i_size without overflowing
+While touching the code, modify the type of ivsize from int to
+unsigned int, to comply with the return type of
+crypto_ablkcipher_ivsize().
 
-Reported-by: Arijit Banerjee <arijit@rubrik.com>
-Fixes: d8a5ba45457e ("[PATCH] FUSE - core")
-Cc: <stable@vger.kernel.org> # v2.6.14
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 91308019ecb4 ("crypto: atmel-aes - properly set IV after {en,de}crypt")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dir.c    |   24 +++++++++++++++++-------
- fs/fuse/fuse_i.h |    2 ++
- 2 files changed, 19 insertions(+), 7 deletions(-)
+ drivers/crypto/atmel-aes.c |   53 +++++++++++++++++++++++++--------------------
+ 1 file changed, 30 insertions(+), 23 deletions(-)
 
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -234,7 +234,8 @@ static int fuse_dentry_revalidate(struct
- 		kfree(forget);
- 		if (ret == -ENOMEM)
- 			goto out;
--		if (ret || (outarg.attr.mode ^ inode->i_mode) & S_IFMT)
-+		if (ret || fuse_invalid_attr(&outarg.attr) ||
-+		    (outarg.attr.mode ^ inode->i_mode) & S_IFMT)
- 			goto invalid;
+--- a/drivers/crypto/atmel-aes.c
++++ b/drivers/crypto/atmel-aes.c
+@@ -490,6 +490,29 @@ static inline bool atmel_aes_is_encrypt(
+ static void atmel_aes_authenc_complete(struct atmel_aes_dev *dd, int err);
+ #endif
  
- 		forget_all_cached_acls(inode);
-@@ -297,6 +298,12 @@ int fuse_valid_type(int m)
- 		S_ISBLK(m) || S_ISFIFO(m) || S_ISSOCK(m);
- }
- 
-+bool fuse_invalid_attr(struct fuse_attr *attr)
++static void atmel_aes_set_iv_as_last_ciphertext_block(struct atmel_aes_dev *dd)
 +{
-+	return !fuse_valid_type(attr->mode) ||
-+		attr->size > LLONG_MAX;
++	struct ablkcipher_request *req = ablkcipher_request_cast(dd->areq);
++	struct atmel_aes_reqctx *rctx = ablkcipher_request_ctx(req);
++	struct crypto_ablkcipher *ablkcipher = crypto_ablkcipher_reqtfm(req);
++	unsigned int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
++
++	if (req->nbytes < ivsize)
++		return;
++
++	if (rctx->mode & AES_FLAGS_ENCRYPT) {
++		scatterwalk_map_and_copy(req->info, req->dst,
++					 req->nbytes - ivsize, ivsize, 0);
++	} else {
++		if (req->src == req->dst)
++			memcpy(req->info, rctx->lastc, ivsize);
++		else
++			scatterwalk_map_and_copy(req->info, req->src,
++						 req->nbytes - ivsize,
++						 ivsize, 0);
++	}
 +}
 +
- int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
- 		     struct fuse_entry_out *outarg, struct inode **inode)
+ static inline int atmel_aes_complete(struct atmel_aes_dev *dd, int err)
  {
-@@ -328,7 +335,7 @@ int fuse_lookup_name(struct super_block
- 	err = -EIO;
- 	if (!outarg->nodeid)
- 		goto out_put_forget;
--	if (!fuse_valid_type(outarg->attr.mode))
-+	if (fuse_invalid_attr(&outarg->attr))
- 		goto out_put_forget;
+ #ifdef CONFIG_CRYPTO_DEV_ATMEL_AUTHENC
+@@ -500,26 +523,8 @@ static inline int atmel_aes_complete(str
+ 	clk_disable(dd->iclk);
+ 	dd->flags &= ~AES_FLAGS_BUSY;
  
- 	*inode = fuse_iget(sb, outarg->nodeid, outarg->generation,
-@@ -451,7 +458,8 @@ static int fuse_create_open(struct inode
- 		goto out_free_ff;
+-	if (!dd->ctx->is_aead) {
+-		struct ablkcipher_request *req =
+-			ablkcipher_request_cast(dd->areq);
+-		struct atmel_aes_reqctx *rctx = ablkcipher_request_ctx(req);
+-		struct crypto_ablkcipher *ablkcipher =
+-			crypto_ablkcipher_reqtfm(req);
+-		int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
+-
+-		if (rctx->mode & AES_FLAGS_ENCRYPT) {
+-			scatterwalk_map_and_copy(req->info, req->dst,
+-				req->nbytes - ivsize, ivsize, 0);
+-		} else {
+-			if (req->src == req->dst) {
+-				memcpy(req->info, rctx->lastc, ivsize);
+-			} else {
+-				scatterwalk_map_and_copy(req->info, req->src,
+-					req->nbytes - ivsize, ivsize, 0);
+-			}
+-		}
+-	}
++	if (!dd->ctx->is_aead)
++		atmel_aes_set_iv_as_last_ciphertext_block(dd);
  
- 	err = -EIO;
--	if (!S_ISREG(outentry.attr.mode) || invalid_nodeid(outentry.nodeid))
-+	if (!S_ISREG(outentry.attr.mode) || invalid_nodeid(outentry.nodeid) ||
-+	    fuse_invalid_attr(&outentry.attr))
- 		goto out_free_ff;
+ 	if (dd->is_async)
+ 		dd->areq->complete(dd->areq, err);
+@@ -1125,10 +1130,12 @@ static int atmel_aes_crypt(struct ablkci
+ 	rctx->mode = mode;
  
- 	ff->fh = outopen.fh;
-@@ -558,7 +566,7 @@ static int create_new_entry(struct fuse_
- 		goto out_put_forget_req;
+ 	if (!(mode & AES_FLAGS_ENCRYPT) && (req->src == req->dst)) {
+-		int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
++		unsigned int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
  
- 	err = -EIO;
--	if (invalid_nodeid(outarg.nodeid))
-+	if (invalid_nodeid(outarg.nodeid) || fuse_invalid_attr(&outarg.attr))
- 		goto out_put_forget_req;
- 
- 	if ((outarg.attr.mode ^ mode) & S_IFMT)
-@@ -918,7 +926,8 @@ static int fuse_do_getattr(struct inode
- 	args.out.args[0].value = &outarg;
- 	err = fuse_simple_request(fc, &args);
- 	if (!err) {
--		if ((inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
-+		if (fuse_invalid_attr(&outarg.attr) ||
-+		    (inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
- 			make_bad_inode(inode);
- 			err = -EIO;
- 		} else {
-@@ -1230,7 +1239,7 @@ static int fuse_direntplus_link(struct f
- 
- 	if (invalid_nodeid(o->nodeid))
- 		return -EIO;
--	if (!fuse_valid_type(o->attr.mode))
-+	if (fuse_invalid_attr(&o->attr))
- 		return -EIO;
- 
- 	fc = get_fuse_conn(dir);
-@@ -1707,7 +1716,8 @@ int fuse_do_setattr(struct dentry *dentr
- 		goto error;
+-		scatterwalk_map_and_copy(rctx->lastc, req->src,
+-			(req->nbytes - ivsize), ivsize, 0);
++		if (req->nbytes >= ivsize)
++			scatterwalk_map_and_copy(rctx->lastc, req->src,
++						 req->nbytes - ivsize,
++						 ivsize, 0);
  	}
  
--	if ((inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
-+	if (fuse_invalid_attr(&outarg.attr) ||
-+	    (inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
- 		make_bad_inode(inode);
- 		err = -EIO;
- 		goto error;
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -909,6 +909,8 @@ void fuse_ctl_remove_conn(struct fuse_co
-  */
- int fuse_valid_type(int m);
- 
-+bool fuse_invalid_attr(struct fuse_attr *attr);
-+
- /**
-  * Is current process allowed to perform filesystem operation?
-  */
+ 	return atmel_aes_handle_queue(dd, &req->base);
 
 
