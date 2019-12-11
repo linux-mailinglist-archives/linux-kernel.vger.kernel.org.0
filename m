@@ -2,135 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4FB711BEF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 22:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9283411BF04
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 22:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfLKVSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 16:18:05 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58002 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726141AbfLKVSF (ORCPT
+        id S1726953AbfLKVUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 16:20:55 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:60249 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726856AbfLKVUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 16:18:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576099084;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=1gkHAV6AkdXG94RN9Oij+HZ41qo1cez84ILH4J7NqOk=;
-        b=K9i6wuikcNLVc8b5rdQgvLCVsWR/RSB3Kp4tEpXp+Mf4nQn6R8WSVmlLR+lm2f++m8l/eE
-        Y5ubjEIaqZI0HIXaLQMrEWSvQhitXxt0Yuk3AHyvvq+aR0gfWinWj+k8eBv+PKl8Dx8v+R
-        q800ZZAusEc9NTHZ42s4TqwmNinbTSk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-149-TDBzj13RNbGsMxE6IW3x0Q-1; Wed, 11 Dec 2019 16:18:01 -0500
-X-MC-Unique: TDBzj13RNbGsMxE6IW3x0Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C32791005502;
-        Wed, 11 Dec 2019 21:17:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 639875DA2C;
-        Wed, 11 Dec 2019 21:17:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, marc.dionne@auristor.com,
-        jsbillings@jsbillings.org, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] afs: Miscellaneous fixes
+        Wed, 11 Dec 2019 16:20:51 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mo7eX-1hvNKe05hz-00pfxP; Wed, 11 Dec 2019 22:20:31 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>
+Cc:     Baolin Wang <baolin.wang7@gmail.com>, y2038@lists.linaro.org,
+        linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v7 0/8] Fix year 2038 issue for sound subsystem
+Date:   Wed, 11 Dec 2019 22:20:16 +0100
+Message-Id: <20191211212025.1981822-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <11742.1576099077.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 11 Dec 2019 21:17:57 +0000
-Message-ID: <11743.1576099077@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:EUNjsuCMFvOfLutRxMiDpsrdBNUjEnJY9WYrs7u4SgqHOEMtTQr
+ jKDw6lqSni3FNWrx9XXBtARvrFjizsPEn+nvMSqjRiUsg3ZVQj5wvBXHcHmQM3fA5rPV9if
+ eYFnSj/RbNur4cr2575gxtU+YinZnOGoTz45bXqganXcTY5kaJbKg79OiNzWJmilpZt/dLE
+ PYXDEHBOpgA+AEPnJu4vQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Hf3kE9BGNcs=:p0QD8vySsZB9EGU/RjRvgy
+ xeY3HbWJqQZqGkE1pQaqjDvABo0/GR/Ns+kAzHhWT9ohkisvw9jwxjF6sZ9wRcUDM4QL/M6rM
+ 4NoxYJW/D97waBIuUlIYg40eGtQClNXXw2DSJw+SJg0hIsV1XO/p0OzI77Q/Nc7MEs2HOo70S
+ zG5h+4hLqoTqoarczPc2/KPkhzzsLnVO7oQ53qK9ft6x3R8btAQZOM0PiHNX0iujI7awU/Tfw
+ uovBcm9JPVHTgXdUaLN1hkT+3vEq+bAo8W391fIlE3NyT5vXh3LN3+rbk2GpsISWzb79zYmdD
+ qhnGXrqhBMWfQR1bQEJQ2PWYU3FcRK7oKxU5/PmqekVnAGXQsxWAPFn2Nghnx34ZB6Eewlydb
+ dsz26qSiWhx9fvKomDqcL5B1+rwyK+qpjbNXgigZSJqEL9lI4YNjDC42F+iEKmVa7mzqBT8B8
+ AdJ6pxdnfkmiLb85MNKZwsS+VslP47mB7GIFFG4RjRppllExpjtJ1pw5nRh5Xi1GkoPh88wwW
+ rs537Xk+8pGtALK2lkaLqZ1AlrSCvvJ8UbGq/vkSTYu1GL6d2jp44878OYnXyCfSoktUbhViK
+ Atv/eZo0Bg3k/1xEAsCf7I8W+rjywf7SFmcUKU5/TKDOBZ5SVgtzUaMk5rO3y2qtpOmubyK2k
+ VQZ6Eh6i8ya8+y5rVuFF7tR4mz+9lnzCd/6ZAxApqS8fQqDfLWqMc8nPvoT5RQAp5g5P4Zksh
+ 8jpQuqazHE2imnDdS/oZxBmTPZxpbl/73mlj3zzkTXOPxzrHNSNaSDHMmsCQESSFIL0Y9Qr/M
+ Rj0VVgWLNPsMZHNaeO0Xnr/H7s5w8DJ2An16pLQf+mGx34j07juW+0ak7ghgfZoFpwIsQOoBT
+ isbIYlnWryBuBavmxqYQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+This is a series I worked on with Baolin in 2017 and 2018, but we
+never quite managed to finish up the last pieces. During the
+ALSA developer meetup at ELC-E 2018 in Edinburgh, a decision was
+made to go with this approach for keeping best compatibility
+with existing source code, and then I failed to follow up by
+resending the patches.
 
-Can you pull these fixes for AFS plus one patch to make debugging easier:
+Now I have patches for all remaining time_t uses in the kernel,
+so it's absolutely time to revisit them. I have done more
+review of the patches myself and found a couple of minor issues
+that I have fixed up, otherwise the series is still the same as
+before.
 
- (1) Fix how addresses are matched to server records.  This is currently
-     incorrect which means cache invalidation callbacks from the server
-     don't necessarily get delivered correctly.  This causes stale data an=
-d
-     metadata to be seen under some circumstances.
+Conceptually, the idea of these patches is:
 
- (2) Make the dynamic root superblock R/W so that rpm/dnf can reapply the
-     SELinux label to it when upgrading the Fedora filesystem-afs package.
-     If the filesystem is R/O, this fails and the upgrade fails.
+- 64-bit applications should see no changes at all, neither
+  compile-time nor run-time.
 
-     It might be better in future to allow setxattr from an LSM to bypass
-     the R/O protections, if only for pseudo-filesystems.
+- 32-bit code compiled with a 64-bit time_t currently
+  does not work with ALSA, and requires kernel changes and/or
+  sound/asound.h changes
 
- (3) Fix the parsing of mountpoint strings.  The mountpoint object has to
-     have a terminal dot, whereas the source/device string passed to mount
-     should not.  This confuses type-forcing suffix detection leading to
-     the wrong volume variant being mounted.
+- Most 32-bit code using these interfaces will work correctly
+  on a modified kernel, with or without the uapi header changes.
 
- (4) Make lookups in the dynamic root superblock for creation events (such
-     as mkdir) fail with EOPNOTSUPP rather than something like EEXIST.  Th=
-e
-     dynamic root only allows implicit creation by the ->lookup() method -
-     and only if the target cell exists.
+- 32-bit code using SNDRV_TIMER_IOCTL_TREAD requires the
+  updated header file for 64-bit time_t support
 
- (5) Fix the looking up of an AFS superblock to include the cell in the
-     matching key - otherwise all volumes with the same ID number are
-     treated as the same thing, irrespective of which cell they're in.
+- 32-bit i386 user space with 64-bit time_t is broken for
+  SNDRV_PCM_IOCTL_STATUS, SNDRV_RAWMIDI_IOCTL_STATUS and
+  SNDRV_PCM_IOCTL_SYNC_PTR because of i386 alignment. This is also
+  addressed by the updated uapi header.
 
- (6) Show the volume name of each volume in the volume records displayed i=
-n
-     /proc/net/afs/<cell>/volumes.  This proved useful in debugging (5) as
-     it provides a way to map the volume IDs to names, where the names are
-     what appear in /proc/mounts.
+- PCM mmap is currently supported on native x86 kernels
+  (both 32-bit and 64-bit) but not for compat mode. This series breaks
+  the 32-bit native mmap support for 32-bit time_t, but instead allows
+  it for 64-bit time_t on both native and compat kernels. This seems to
+  be the best trade-off, as mmap support is optional already, and most
+  32-bit code runs in compat mode anyway.
 
-Patch (6) can be dropped and deferred to the next merge window if you'd
-prefer as it's not strictly a fix.
+- I've tried to avoid breaking compilation of 32-bit code
+  as much as possible. Anything that does break however is likely code
+  that is already broken on 64-bit time_t and needs source changes to
+  fix them.
 
-David
+I hope I addressed all review comments by now, so please pull this
+for linux-5.6.
+
+A git branch with the same contents is available for testing at [1].
+
+     Arnd
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git y2038-alsa-v7
+[2] https://lore.kernel.org/lkml/CAK8P3a2Os66+iwQYf97qh05W2JP8rmWao8zmKoHiXqVHvyYAJA@mail.gmail.com/T/#m6519cb07cfda08adf1dedea6596bb98892b4d5dc
+
+Changes since v6: (Arnd):
+ - Add a patch to update the API versions
+ - Hide a timespec reference in #ifndef __KERNEL__ to remove the
+   last reference to time_t
+ - Use a more readable way to do padding and describe it in the
+   changelog
+ - Rebase to linux-5.5-rc1, changing include/sound/soc-component.h                   
+   and sound/drivers/aloop.c as needed.
+
+Changes since v5 (Arnd):
+ - Rebased to linux-5.4-rc4
+ - Updated to completely remove timespec and time_t references from alsa
+ - found and fixed a few bugs
+
+Changes since v4 (Baolin):
+ - Add patch 5 to change trigger_tstamp member of struct snd_pcm_runtime.
+ - Add patch 8 to change internal timespec.
+ - Add more explanation in commit message.
+ - Use ktime_get_real_ts64() in patch 6.
+ - Split common code out into a separate function in patch 6.
+ - Fix tu->tread bug in patch 6 and remove #if __BITS_PER_LONG == 64 macro.
+
+Changes since v3:
+ - Move struct snd_pcm_status32 to pcm.h file.
+ - Modify comments and commit message.
+ - Add new patch2 ~ patch6.
+
+Changes since v2:
+ - Renamed all structures to make clear.
+ - Remove CONFIG_X86_X32 macro and introduced new compat_snd_pcm_status64_x86_32.
+
+Changes since v1:
+ - Add one macro for struct snd_pcm_status_32 which only active in 32bits kernel.
+ - Convert pcm_compat.c to use struct snd_pcm_status_64.
+ - Convert pcm_native.c to use struct snd_pcm_status_64.
 ---
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35=
-a:
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+Arnd Bergmann (3):
+  ALSA: move snd_pcm_ioctl_sync_ptr_compat into pcm_native.c
+  ALSA: add new 32-bit layout for snd_pcm_mmap_status/control
+  ALSA: bump uapi version numbers
 
-are available in the Git repository at:
+Baolin Wang (6):
+  ALSA: Replace timespec with timespec64
+  ALSA: Avoid using timespec for struct snd_timer_status
+  ALSA: Avoid using timespec for struct snd_ctl_elem_value
+  ALSA: Avoid using timespec for struct snd_pcm_status
+  ALSA: Avoid using timespec for struct snd_rawmidi_status
+  ALSA: Avoid using timespec for struct snd_timer_tread
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/afs-fixes-20191211
+ include/sound/pcm.h               |  74 ++++++--
+ include/sound/soc-component.h     |   4 +-
+ include/sound/timer.h             |   4 +-
+ include/uapi/sound/asound.h       | 145 +++++++++++++--
+ sound/core/pcm.c                  |  12 +-
+ sound/core/pcm_compat.c           | 282 ++++++++----------------------
+ sound/core/pcm_lib.c              |  38 ++--
+ sound/core/pcm_native.c           | 226 +++++++++++++++++++++---
+ sound/core/rawmidi.c              | 132 +++++++++++---
+ sound/core/rawmidi_compat.c       |  87 +++------
+ sound/core/timer.c                | 229 ++++++++++++++++++------
+ sound/core/timer_compat.c         |  62 +------
+ sound/drivers/aloop.c             |   2 +-
+ sound/pci/hda/hda_controller.c    |  10 +-
+ sound/soc/intel/skylake/skl-pcm.c |   4 +-
+ 15 files changed, 817 insertions(+), 494 deletions(-)
 
-for you to fetch changes up to 50559800b76a7a2a46da303100da639536261808:
-
-  afs: Show volume name in /proc/net/afs/<cell>/volumes (2019-12-11 17:48:=
-20 +0000)
-
-----------------------------------------------------------------
-AFS fixes
-
-----------------------------------------------------------------
-David Howells (5):
-      afs: Fix SELinux setting security label on /afs
-      afs: Fix mountpoint parsing
-      afs: Fix creation calls in the dynamic root to fail with EOPNOTSUPP
-      afs: Fix missing cell comparison in afs_test_super()
-      afs: Show volume name in /proc/net/afs/<cell>/volumes
-
-Marc Dionne (1):
-      afs: Fix afs_find_server lookups for ipv4 peers
-
- fs/afs/dynroot.c |  3 +++
- fs/afs/mntpt.c   |  6 ++++--
- fs/afs/proc.c    |  7 ++++---
- fs/afs/server.c  | 21 ++++++++-------------
- fs/afs/super.c   |  2 +-
- 5 files changed, 20 insertions(+), 19 deletions(-)
+-- 
+2.20.0
 
