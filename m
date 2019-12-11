@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6CDF11B1C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:32:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CFCA11B1BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:32:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388037AbfLKPcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:32:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35340 "EHLO mail.kernel.org"
+        id S2387563AbfLKPce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:32:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387748AbfLKP2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:28:55 -0500
+        id S1732958AbfLKP25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:28:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45AE12467F;
-        Wed, 11 Dec 2019 15:28:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 274A724680;
+        Wed, 11 Dec 2019 15:28:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078134;
-        bh=R2iSsoYheVYUJsesqHMqyMD9vLzWbpg826TUGxQWD5g=;
+        s=default; t=1576078137;
+        bh=DrqW3VBnqbEBqqgF7gTtPyfSthVTP9D9rl1FaytQWFk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GSBexvDXOTEhpP/G4sNTUxZZFm00mYZX75nfAaSbA+nk5b4jVsXxASy0BC1rrf6Cp
-         wYHCEb5P0ZBmqQQguRhk582BoMVWxloWI0v0L4kQdWLDSpulb1FSoax95SiNGnrqkB
-         SX96cDxMdVdL3vrNRPW8S7dhAacogvKG2h8RlTKk=
+        b=SuJoRqT4zOnW7AiNtABDKCFgAu6k8MgObOC9LLF5Qqh1UtZXYNqeDQbj2lQ+Z0PtN
+         1NAeVRweGzoJAYcPAAXkNKCM/C7HHp10JnkYgBAsTzUU/+/rDWDaNjo89U6bfsrlvz
+         LVwfqAqZVuSoagAlBgZ184Vv3/7F6mXkQaOvE3Fk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-mips@linux-mips.org
-Subject: [PATCH AUTOSEL 4.14 22/58] irqchip/irq-bcm7038-l1: Enable parent IRQ if necessary
-Date:   Wed, 11 Dec 2019 10:27:55 -0500
-Message-Id: <20191211152831.23507-22-sashal@kernel.org>
+Cc:     Lee Jones <lee.jones@linaro.org>, Barry Song <Baohua.Song@csr.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 24/58] mfd: mfd-core: Honour Device Tree's request to disable a child-device
+Date:   Wed, 11 Dec 2019 10:27:57 -0500
+Message-Id: <20191211152831.23507-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152831.23507-1-sashal@kernel.org>
 References: <20191211152831.23507-1-sashal@kernel.org>
@@ -43,36 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
 
-[ Upstream commit 27eebb60357ed5aa6659442f92907c0f7368d6ae ]
+[ Upstream commit 6b5c350648b857047b47acf74a57087ad27d6183 ]
 
-If the 'brcm,irq-can-wake' property is specified, make sure we also
-enable the corresponding parent interrupt we are attached to.
+Until now, MFD has assumed all child devices passed to it (via
+mfd_cells) are to be registered. It does not take into account
+requests from Device Tree and the like to disable child devices
+on a per-platform basis.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20191024201415.23454-4-f.fainelli@gmail.com
+Well now it does.
+
+Link: https://www.spinics.net/lists/arm-kernel/msg366309.html
+Link: https://lkml.org/lkml/2019/8/22/1350
+
+Reported-by: Barry Song <Baohua.Song@csr.com>
+Reported-by: Stephan Gerhold <stephan@gerhold.net>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Tested-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-bcm7038-l1.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/mfd/mfd-core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
-index 0b9a8b709abf8..b32988cac80c6 100644
---- a/drivers/irqchip/irq-bcm7038-l1.c
-+++ b/drivers/irqchip/irq-bcm7038-l1.c
-@@ -284,6 +284,10 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
- 		pr_err("failed to map parent interrupt %d\n", parent_irq);
- 		return -EINVAL;
- 	}
-+
-+	if (of_property_read_bool(dn, "brcm,irq-can-wake"))
-+		enable_irq_wake(parent_irq);
-+
- 	irq_set_chained_handler_and_data(parent_irq, bcm7038_l1_irq_handle,
- 					 intc);
- 
+diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+index 5c8ed2150c8bf..fae7bfe7a21a1 100644
+--- a/drivers/mfd/mfd-core.c
++++ b/drivers/mfd/mfd-core.c
+@@ -178,6 +178,11 @@ static int mfd_add_device(struct device *parent, int id,
+ 	if (parent->of_node && cell->of_compatible) {
+ 		for_each_child_of_node(parent->of_node, np) {
+ 			if (of_device_is_compatible(np, cell->of_compatible)) {
++				if (!of_device_is_available(np)) {
++					/* Ignore disabled devices error free */
++					ret = 0;
++					goto fail_alias;
++				}
+ 				pdev->dev.of_node = np;
+ 				pdev->dev.fwnode = &np->fwnode;
+ 				break;
 -- 
 2.20.1
 
