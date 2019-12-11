@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 559FC11B553
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:53:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D36A11B54B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:53:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731819AbfLKPTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:19:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
+        id S1732039AbfLKPT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:19:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732235AbfLKPTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:19:35 -0500
+        id S1732280AbfLKPTv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:19:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0032022527;
-        Wed, 11 Dec 2019 15:19:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD22D2073D;
+        Wed, 11 Dec 2019 15:19:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077574;
-        bh=bbylV87ISiyzUqa66aTLnN5hnkrRKN68Zlx6JHsytXM=;
+        s=default; t=1576077591;
+        bh=JGrtMphqEBRe4KazNKPmtnlXLbIa9M3zw4sRGZJzVmI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hw97IeEfsyc5C5B6Uv3UzYr2fSo4BcXIMlH8uRNiwQMzpjnu8Pf0kYtE2DGFA9QgR
-         mc37pHzWsEygZHml7y/ksZZVoe72vMee5PknktlOOFPPO08r9Qv+bZc6drwn2wuOqn
-         SbAkpi4xQSdsWJU7DBY1nef3hdjzcgjRY9W6EMzM=
+        b=2iV/p+Pe6ErL4l/OGIGgQi/jfSQDRs8SlLClBWF5ZwTNSZf+iodipsOTi6CsXWMtn
+         dnY6jCLvtPvAvSAHuyMIGLZ22TVI88cyRjvaD8I7SmPKe2LvMWQOyJveUGzi7iFFFd
+         tgzTpKMIimRy+j62tdVos2nfc3UE2j2fp6p6rkY8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 090/243] iwlwifi: fix cfg structs for 22000 with different RF modules
-Date:   Wed, 11 Dec 2019 16:04:12 +0100
-Message-Id: <20191211150345.191327127@linuxfoundation.org>
+Subject: [PATCH 4.19 096/243] net: qualcomm: rmnet: move null check on dev before dereferecing it
+Date:   Wed, 11 Dec 2019 16:04:18 +0100
+Message-Id: <20191211150345.597562936@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -43,88 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit b1bbc1a636505ebdd6336ff781e417123226d4f7 ]
+[ Upstream commit 3c18aa1464f9232d6abac8d7b4540f61b0658d62 ]
 
-We have to choose different configuration and different firmwares
-depending on the external RF module that is installed.  Since the
-external module is not represented in the PCI IDs, we need to change
-the configuration at runtime, after checking the RF ID of the module
-installed.  We have a bit of a mess in the code that does this,
-because it applies cfg's according to the RF ID only, ignoring the
-integrated module that is in use.
+Currently dev is dereferenced by the call dev_net(dev) before dev is null
+checked.  Fix this by null checking dev before the potential null
+pointer dereference.
 
-Fix that for some devices by adding correct configurations for them
-and not ignoring the integrated module's type when making the
-decision.
+Detected by CoverityScan, CID#1462955 ("Dereference before null check")
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: 23790ef12082 ("net: qualcomm: rmnet: Allow to configure flags for existing devices")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/wireless/intel/iwlwifi/cfg/22000.c    |  1 -
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c |  2 +-
- .../net/wireless/intel/iwlwifi/pcie/trans.c   | 22 +++++++++++++++++--
- 3 files changed, 21 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/cfg/22000.c b/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
-index a0de61aa0feff..d7335fabd9294 100644
---- a/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
-+++ b/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
-@@ -321,7 +321,6 @@ MODULE_FIRMWARE(IWL_22000_HR_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_22000_JF_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_22000_HR_A_F0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_22000_HR_B_F0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
--MODULE_FIRMWARE(IWL_22000_QU_B_HR_B_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_22000_HR_B_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_22000_JF_B0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_22000_HR_A0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-index 0982bd99b1c3c..844a1009484f6 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@ -888,7 +888,7 @@ static const struct pci_device_id iwl_hw_card_ids[] = {
- 	{IWL_PCI_DEVICE(0x34F0, 0x0040, iwl22000_2ax_cfg_hr)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x0070, iwl22000_2ax_cfg_hr)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x0078, iwl22000_2ax_cfg_hr)},
--	{IWL_PCI_DEVICE(0x34F0, 0x0310, iwl22000_2ac_cfg_jf)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x0310, iwl22000_2ax_cfg_hr)},
- 	{IWL_PCI_DEVICE(0x40C0, 0x0000, iwl22560_2ax_cfg_su_cdb)},
- 	{IWL_PCI_DEVICE(0x40C0, 0x0010, iwl22560_2ax_cfg_su_cdb)},
- 	{IWL_PCI_DEVICE(0x40c0, 0x0090, iwl22560_2ax_cfg_su_cdb)},
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-index f89d43bc7d4bd..4f5571123f70a 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -3415,8 +3415,26 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
- #if IS_ENABLED(CONFIG_IWLMVM)
- 	trans->hw_rf_id = iwl_read32(trans, CSR_HW_RF_ID);
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
+index f66d1255e36a2..4c476fac78358 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
+@@ -301,10 +301,13 @@ static int rmnet_changelink(struct net_device *dev, struct nlattr *tb[],
+ 	struct rmnet_port *port;
+ 	u16 mux_id;
  
--	if (CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
--	    CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_HR)) {
-+	if (cfg == &iwl22000_2ax_cfg_hr) {
-+		if (CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
-+		    CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_HR)) {
-+			trans->cfg = &iwl22000_2ax_cfg_hr;
-+		} else if (CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
-+			   CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_JF)) {
-+			trans->cfg = &iwl22000_2ax_cfg_jf;
-+		} else if (CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
-+			   CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_HRCDB)) {
-+			IWL_ERR(trans, "RF ID HRCDB is not supported\n");
-+			ret = -EINVAL;
-+			goto out_no_pci;
-+		} else {
-+			IWL_ERR(trans, "Unrecognized RF ID 0x%08x\n",
-+				CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id));
-+			ret = -EINVAL;
-+			goto out_no_pci;
-+		}
-+	} else if (CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
-+		   CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_HR)) {
- 		u32 hw_status;
++	if (!dev)
++		return -ENODEV;
++
+ 	real_dev = __dev_get_by_index(dev_net(dev),
+ 				      nla_get_u32(tb[IFLA_LINK]));
  
- 		hw_status = iwl_read_prph(trans, UMAG_GEN_HW_STATUS);
+-	if (!real_dev || !dev || !rmnet_is_real_dev_registered(real_dev))
++	if (!real_dev || !rmnet_is_real_dev_registered(real_dev))
+ 		return -ENODEV;
+ 
+ 	port = rmnet_get_port_rtnl(real_dev);
 -- 
 2.20.1
 
