@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08B7711B4E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:51:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C7111B5D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732697AbfLKPXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:23:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54158 "EHLO mail.kernel.org"
+        id S1730119AbfLKPPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:15:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732686AbfLKPXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:23:15 -0500
+        id S1731598AbfLKPOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:14:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8B7C2073D;
-        Wed, 11 Dec 2019 15:23:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D561524682;
+        Wed, 11 Dec 2019 15:14:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077795;
-        bh=NzS+thb2zRhKzX02D+ejkXOi1iRJq/6D5XAXZ6VOCSc=;
+        s=default; t=1576077252;
+        bh=2j01xrxU82dvx7hc0Z9HeqJbY1k1vJAGGnbMsKIBhaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jM6yLucs6esBVqxUoclVP/rNQlTzcf7gX6KT4XWAX7fnqgDxQSytKM2SlU6n0g6MM
-         7D8vYBpxIkUBU0QCjwvotFLBTCk6egI0OSFYfobd8ZYZzkHgGRcWJvSn2+0k1Fs0S2
-         THe7bqqwIBzZzAJYBhDRP7nohlGTT+SneIJAYYRo=
+        b=B9PnWj4+dPe787OHLrW3zogRQ0fFNCdvXN1dPXGvfKu3gJbJpgczJ35UHhPMAwKNA
+         0wEJ471Ak1gRUbONMJimr2tKCbOW3RHYPVbit9ItyXFoizqO9Pwq8cImrTmAE2OnML
+         OvAnK/H6do5W7bUlSHhYYeoPwtHTWc8vQnqHxe9k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 173/243] MIPS: OCTEON: cvmx_pko_mem_debug8: use oldest forward compatible definition
-Date:   Wed, 11 Dec 2019 16:05:35 +0100
-Message-Id: <20191211150350.856090608@linuxfoundation.org>
+        Andres Freund <andres@anarazel.de>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.3 047/105] io_uring: ensure req->submit is copied when req is deferred
+Date:   Wed, 11 Dec 2019 16:05:36 +0100
+Message-Id: <20191211150240.986496848@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
+References: <20191211150221.153659747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +43,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 1c6121c39677175bd372076020948e184bad4b6b ]
+There's an issue with deferred requests through drain, where if we do
+need to defer, we're not copying over the sqe_submit state correctly.
+This can result in using uninitialized data when we then later go and
+submit the deferred request, like this check in __io_submit_sqe():
 
-cn58xx is compatible with cn50xx, so use the latter.
+         if (unlikely(s->index >= ctx->sq_entries))
+                 return -EINVAL;
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-[paul.burton@mips.com: s/cn52xx/cn50xx/ in commit message.]
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+with 's' being uninitialized, we can randomly fail this check. Fix this
+by copying sqe_submit state when we defer a request.
+
+Because it was fixed as part of a cleanup series in mainline, before
+anyone realized we had this issue. That removed the separate states
+of ->index vs ->submit.sqe. That series is not something I was
+comfortable putting into stable, hence the much simpler addition.
+Here's the patch in the series that fixes the same issue:
+
+commit cf6fd4bd559ee61a4454b161863c8de6f30f8dca
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Mon Nov 25 23:14:39 2019 +0300
+
+    io_uring: inline struct sqe_submit
+
+Reported-by: Andres Freund <andres@anarazel.de>
+Reported-by: Tomáš Chaloupka
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c | 2 +-
- arch/mips/include/asm/octeon/cvmx-pko.h            | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/io_uring.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c b/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c
-index 8241fc6aa17d8..3839feba68f20 100644
---- a/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c
-+++ b/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c
-@@ -266,7 +266,7 @@ int cvmx_cmd_queue_length(cvmx_cmd_queue_id_t queue_id)
- 		} else {
- 			union cvmx_pko_mem_debug8 debug8;
- 			debug8.u64 = cvmx_read_csr(CVMX_PKO_MEM_DEBUG8);
--			return debug8.cn58xx.doorbell;
-+			return debug8.cn50xx.doorbell;
- 		}
- 	case CVMX_CMD_QUEUE_ZIP:
- 	case CVMX_CMD_QUEUE_DFA:
-diff --git a/arch/mips/include/asm/octeon/cvmx-pko.h b/arch/mips/include/asm/octeon/cvmx-pko.h
-index 5f47f76ed510a..20eb9c46a75ab 100644
---- a/arch/mips/include/asm/octeon/cvmx-pko.h
-+++ b/arch/mips/include/asm/octeon/cvmx-pko.h
-@@ -611,7 +611,7 @@ static inline void cvmx_pko_get_port_status(uint64_t port_num, uint64_t clear,
- 		pko_reg_read_idx.s.index = cvmx_pko_get_base_queue(port_num);
- 		cvmx_write_csr(CVMX_PKO_REG_READ_IDX, pko_reg_read_idx.u64);
- 		debug8.u64 = cvmx_read_csr(CVMX_PKO_MEM_DEBUG8);
--		status->doorbell = debug8.cn58xx.doorbell;
-+		status->doorbell = debug8.cn50xx.doorbell;
- 	}
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1787,7 +1787,7 @@ static int io_poll_add(struct io_kiocb *
  }
  
--- 
-2.20.1
-
+ static int io_req_defer(struct io_ring_ctx *ctx, struct io_kiocb *req,
+-			const struct io_uring_sqe *sqe)
++			struct sqe_submit *s)
+ {
+ 	struct io_uring_sqe *sqe_copy;
+ 
+@@ -1805,7 +1805,8 @@ static int io_req_defer(struct io_ring_c
+ 		return 0;
+ 	}
+ 
+-	memcpy(sqe_copy, sqe, sizeof(*sqe_copy));
++	memcpy(&req->submit, s, sizeof(*s));
++	memcpy(sqe_copy, s->sqe, sizeof(*sqe_copy));
+ 	req->submit.sqe = sqe_copy;
+ 
+ 	INIT_WORK(&req->work, io_sq_wq_submit_work);
+@@ -2114,7 +2115,7 @@ static int io_queue_sqe(struct io_ring_c
+ {
+ 	int ret;
+ 
+-	ret = io_req_defer(ctx, req, s->sqe);
++	ret = io_req_defer(ctx, req, s);
+ 	if (ret) {
+ 		if (ret != -EIOCBQUEUED) {
+ 			io_free_req(req);
 
 
