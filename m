@@ -2,107 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B5FE11BAF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:04:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DAF511BAFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731010AbfLKSEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:04:15 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43059 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730334AbfLKSEO (ORCPT
+        id S1730835AbfLKSGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:06:06 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:34095 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730281AbfLKSGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:04:14 -0500
-Received: by mail-io1-f68.google.com with SMTP id s2so23602758iog.10
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 10:04:14 -0800 (PST)
+        Wed, 11 Dec 2019 13:06:06 -0500
+Received: by mail-yb1-f195.google.com with SMTP id k17so9392996ybp.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 10:06:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lk2kHwOIGMIgDPaSWiDXXQawNgoxO/02PTT5MTHKBSk=;
-        b=oBg4iX5BFblswDGY+ml4KpSu9P9MZzXv04sTj8aWJf/VNEZfCNpb1QRgyiF4L+TAhq
-         vRmS0y1d6uDaeh07IjDEuYCwYKbW/ysvqPeXzgbvXkAczQYlCltxJedTvXM+OTPEFvu/
-         XneacJuDxO1F0RmpEFe5D17tm1Gpq2YxaFOK0=
+        bh=Mzph4oRYSdP4XB6lnmsVX28t3uDJtwjo66piREwlnZo=;
+        b=CJ3seZm3TNcFL0JuYlD82O0DXLlJhLI2L0gi5h5SiNm2+s8CUp6Q8oweDq3/j38gpI
+         8tF1VvFdOXPaLMnJlwyE0+6HFdWAWF3tnAGlg7ZHd/VKihXM1V08GEOVE30822XMdn3I
+         dbFmsuJVyT64fcZSYlUTIXoNE3Huf8Nv9z5HDdOerv35oorKROPYxJ+V3Q1miJ1+bUCK
+         xDSHV6xMMTNN9n4Yt8cm5Ci7Dz+BgSTPbiECkALqzUHeRtihEJGe57bCcsf5nIeATGo8
+         7S4ssremZfvXcWA3rmNmKy6q00iTjk02pBPOBq3meSfS8dDy5el9GO388Xt/a0c6macK
+         Ab1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lk2kHwOIGMIgDPaSWiDXXQawNgoxO/02PTT5MTHKBSk=;
-        b=OEk/qOX+FW4OsWGQTCoy/m3GkGLLWxHE696ztzj9MkDCJUVPkAYzXZAGlwQLzvb1pz
-         eswI9dJAor/2v9DMtQiLwoPGmm1SeC4F0sMZlsSv10iwz34DVjsBT9nUOsNp/JrR6f4y
-         /7H8uxPfwrN2xQUa6qBniiQ0WAnL9oaM+6oSaAvw6EqJ35Ch2444RPNCjjZhl7AYdBGx
-         6718Er//X1tlClRqjXdtLfj8BdhF0mB4hvpfNQF/wj1PGbgDxNWeFeWlH5T5Sh/cB3rH
-         8sCx8ZSTFIEn7dGeVL049o247qBm6yypTLYZN/AhASpZvofTO5oiwf5uJl1Ga/UoQI+Y
-         WD/A==
-X-Gm-Message-State: APjAAAV7FuncONQsNIjYYSFEoWuJpqwb2gJC75FV148z4V4snrUCBr+/
-        ENuwuLtjKqth63oqJ2QZtEP23ViCK1Q=
-X-Google-Smtp-Source: APXvYqwaN3nLHsu/llF1bkSmTdyIngsMJZNzW6pm2r/X9jao6Xe+yfhC7AmrUpNID9pCrdecoiCjtg==
-X-Received: by 2002:a05:6602:2346:: with SMTP id r6mr3769426iot.133.1576087454106;
-        Wed, 11 Dec 2019 10:04:14 -0800 (PST)
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com. [209.85.166.43])
-        by smtp.gmail.com with ESMTPSA id m18sm671456ioj.74.2019.12.11.10.04.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 10:04:13 -0800 (PST)
-Received: by mail-io1-f43.google.com with SMTP id x1so23622138iop.7
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 10:04:13 -0800 (PST)
-X-Received: by 2002:a6b:5503:: with SMTP id j3mr3620512iob.142.1576087452757;
- Wed, 11 Dec 2019 10:04:12 -0800 (PST)
+        bh=Mzph4oRYSdP4XB6lnmsVX28t3uDJtwjo66piREwlnZo=;
+        b=D9mWxSyQv+l2iiU6C8cIDD7DhIaVqN0Y/A8/lI+SfFeZRFufdR1YgCfXaNsLpGa9Tm
+         IFjXXS/f9qlbzAEarjBtPeHfkU6X1RfOMj4U0vPeW0xpCt/bn305a6Rv6wcYpqRvipib
+         atoMmxLZZIHv8uAdwbgKTHicJ7+3Fkb+tWyo6brHDX8FYiSMuO8kArEsicPMFiMQWOq6
+         Zbg8gDeBQpqxhF7c5yOsfhtSCWfEWsUjwArYkSW0p60F/tK9R4iPdP8MYlLokhu3GYd/
+         QPp/bF76UGrkHAyfyYFxp0CYkCjXWQ4EWPoEEcklHcRXPvIbqY8sR1FRVmtoEIige7Ld
+         WdtA==
+X-Gm-Message-State: APjAAAVvFTiF99dTlVkf/eXPE+ihDVRQ63UmvkmUBeSMjPlFb5wg+nud
+        WxCd3sCIcmlV7DEJnsBnCp5KmxT/mUlkdOE4gGXQeg==
+X-Google-Smtp-Source: APXvYqyO2/s0U2KFrlOdyOXWx12vh5Q2gWo9cY+d2QONSuipAFzpcXSOZnRUQukVA1QPy8HGFOxXm4YZ6Tzhcq5W7Bg=
+X-Received: by 2002:a25:5008:: with SMTP id e8mr940654ybb.277.1576087564293;
+ Wed, 11 Dec 2019 10:06:04 -0800 (PST)
 MIME-Version: 1.0
-References: <1576041834-23084-1-git-send-email-rnayak@codeaurora.org>
- <0101016ef36a9118-f2919277-effa-4cd5-adf8-bbc8016f31df-000000@us-west-2.amazonses.com>
- <20191211063829.GC3143381@builder> <0101016ef3c8e061-462507db-9d6f-4ead-8740-73b08ed97574-000000@us-west-2.amazonses.com>
-In-Reply-To: <0101016ef3c8e061-462507db-9d6f-4ead-8740-73b08ed97574-000000@us-west-2.amazonses.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 11 Dec 2019 10:04:01 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=VHaFYsqt+3-jgJo8JWKxfRvgR_D-qP5e=TGq8h_f43EA@mail.gmail.com>
-Message-ID: <CAD=FV=VHaFYsqt+3-jgJo8JWKxfRvgR_D-qP5e=TGq8h_f43EA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: sc7180: Add new qup functions
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LinusW <linus.walleij@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>
+References: <20191210210735.9077-1-sashal@kernel.org> <20191210210735.9077-238-sashal@kernel.org>
+ <CABXOdTdO16V4AtO1t=BwXW2=HAtT6CYoSddmrn5T2qZP9hs0eQ@mail.gmail.com> <20191211175651.GK4516@linux.intel.com>
+In-Reply-To: <20191211175651.GK4516@linux.intel.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Wed, 11 Dec 2019 10:05:52 -0800
+Message-ID: <CABXOdTcsnAVaPo-492tVPtjOYMbNtu2Zvz4GwSBGcDEHAMGw5Q@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.4 277/350] tpm: Add a flag to indicate TPM power
+ is managed by firmware
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "# v4 . 10+" <stable@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-integrity@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, Dec 10, 2019 at 11:07 PM Rajendra Nayak <rnayak@codeaurora.org> wrote:
+On Wed, Dec 11, 2019 at 9:57 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
 >
-> On 12/11/2019 12:08 PM, Bjorn Andersson wrote:
-> > On Tue 10 Dec 21:24 PST 2019, Rajendra Nayak wrote:
+> On Tue, Dec 10, 2019 at 01:32:15PM -0800, Guenter Roeck wrote:
+> > On Tue, Dec 10, 2019 at 1:12 PM Sasha Levin <sashal@kernel.org> wrote:
+> > >
+> > > From: Stephen Boyd <swboyd@chromium.org>
+> > >
+> > > [ Upstream commit 2e2ee5a2db06c4b81315514b01d06fe5644342e9 ]
+> > >
+> > > On some platforms, the TPM power is managed by firmware and therefore we
+> > > don't need to stop the TPM on suspend when going to a light version of
+> > > suspend such as S0ix ("freeze" suspend state). Add a chip flag,
+> > > TPM_CHIP_FLAG_FIRMWARE_POWER_MANAGED, to indicate this so that certain
+> > > platforms can probe for the usage of this light suspend and avoid
+> > > touching the TPM state across suspend/resume.
+> > >
 > >
-> >> on sc7180 we have cases where multiple functions from the same
-> >> qup instance share the same pin. This is true for qup02/04/11 and qup13.
-> >> Add new function names to distinguish which qup function to use.
-> >>
-> >> The device tree files for this platform haven't landed in mainline yet,
-> >> so there aren't any users upstream who should break with this change
-> >> in function names, however, anyone using the devicetree files that were
-> >> posted on the lists and using these specific function names will need
-> >> to update their changes.
+> > Are the patches needed to support CR50 (which need this patch) going
+> > to be applied to v5.4.y as well ? If not, what is the purpose of
+> > applying this patch to v5.4.y ?
 > >
-> > I don't think this paragraph adds value to the git log, but the patch
-> > looks good.
+> > Thanks,
+> > Guenter
 >
-> Right, I should have mentioned that bit after the --- so its not in the
-> changelog :/
+> Thanks Guenter. I think not.
 >
-> Linus, do you want me to resend with that paragraph moved below --- ?
+Thought so. In that case this patch should be dropped.
 
-Personally I find this type of info useful even in the changelog
-itself.  Without it someone inspecting this change would wonder why it
-was OK to change the device tree bindings without an attempt at
-backward compatibility.  I suppose they could always go back to the
-mailing list and track down the history, but why is it bad to be in
-the changelog?
-
-In any case, if everyone hates it in the change log I won't stand in
-the way, so regardless of which way folks go on that:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Guenter
