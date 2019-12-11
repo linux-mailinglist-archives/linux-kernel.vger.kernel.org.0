@@ -2,224 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E09711A85B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:58:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08FA611A863
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:59:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbfLKJ6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 04:58:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58456 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728743AbfLKJ6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 04:58:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E16ECB038;
-        Wed, 11 Dec 2019 09:58:34 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 9009CE00B7; Wed, 11 Dec 2019 10:58:34 +0100 (CET)
-Message-Id: <7aa9bf09b8007967b9aa1c48b3c342fd36bcc8b4.1576057593.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1576057593.git.mkubecek@suse.cz>
-References: <cover.1576057593.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net-next v3 5/5] ethtool: provide link mode names as a string
- set
-To:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 11 Dec 2019 10:58:34 +0100 (CET)
+        id S1728866AbfLKJ7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 04:59:00 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52587 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728027AbfLKJ67 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 04:58:59 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1ieyll-0002rK-EC; Wed, 11 Dec 2019 10:58:57 +0100
+Message-ID: <60952c5ac36510ff5be0733b15352828e0f2e41f.camel@pengutronix.de>
+Subject: Re: [PATCH RFC 2/2] memory: add Renesas RPC-IF driver
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mason Yang <masonccyang@mxic.com.tw>,
+        linux-spi@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Date:   Wed, 11 Dec 2019 10:58:53 +0100
+In-Reply-To: <4db876ed-1ccc-e3be-311d-30cd52f40259@cogentembedded.com>
+References: <cb7022c9-0059-4eb2-7910-aab42124fa1c@cogentembedded.com>
+         <4db876ed-1ccc-e3be-311d-30cd52f40259@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike e.g. netdev features, the ethtool ioctl interface requires link mode
-table to be in sync between kernel and userspace for userspace to be able
-to display and set all link modes supported by kernel. The way arbitrary
-length bitsets are implemented in netlink interface, this will be no longer
-needed.
+Hi Sergei,
 
-To allow userspace to access all link modes running kernel supports, add
-table of ethernet link mode names and make it available as a string set to
-userspace GET_STRSET requests. Add build time check to make sure names
-are defined for all modes declared in enum ethtool_link_mode_bit_indices.
+On Tue, 2019-12-10 at 22:39 +0300, Sergei Shtylyov wrote:
+[...]
+> --- /dev/null
+> +++ linux/drivers/memory/renesas-rpc-if.c
+> @@ -0,0 +1,590 @@
+[...]
+> +int rpcif_io_xfer(struct rpcif *rpc)
+> +{
+[...]
+> +	default:
+> +		regmap_write(rpc->regmap, RPCIF_SMENR, rpc->enable);
+> +		regmap_write(rpc->regmap, RPCIF_SMCR,
+> +			     rpc->smcr | RPCIF_SMCR_SPIE);
+> +		ret = wait_msg_xfer_end(rpc);
+> +		if (ret)
+> +			goto err_out;
+> +	}
+> +
+> +exit:
+> +	pm_runtime_put(rpc->dev);
+> +	return ret;
+> +
+> +err_out:
+> +	ret = reset_control_reset(rpc->rstc);
 
-Once the string set is available, make it also accessible via ioctl.
+If wait_msg_xfer_end() returned an error, but the reset succeeds, this
+will cause rpcif_io_xfer() to report success as well. I suspect you do
+not want to overwrite ret at this point.
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
----
- include/uapi/linux/ethtool.h |  2 +
- net/ethtool/common.c         | 86 ++++++++++++++++++++++++++++++++++++
- net/ethtool/common.h         |  5 +++
- net/ethtool/ioctl.c          |  6 +++
- 4 files changed, 99 insertions(+)
+> +	rpcif_hw_init(rpc, rpc->bus_size == 2);
+> +	goto exit;
+> +}
+> +EXPORT_SYMBOL(rpcif_io_xfer);
 
-diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
-index d4591792f0b4..f44155840b07 100644
---- a/include/uapi/linux/ethtool.h
-+++ b/include/uapi/linux/ethtool.h
-@@ -593,6 +593,7 @@ struct ethtool_pauseparam {
-  * @ETH_SS_RSS_HASH_FUNCS: RSS hush function names
-  * @ETH_SS_PHY_STATS: Statistic names, for use with %ETHTOOL_GPHYSTATS
-  * @ETH_SS_PHY_TUNABLES: PHY tunable names
-+ * @ETH_SS_LINK_MODES: link mode names
-  */
- enum ethtool_stringset {
- 	ETH_SS_TEST		= 0,
-@@ -604,6 +605,7 @@ enum ethtool_stringset {
- 	ETH_SS_TUNABLES,
- 	ETH_SS_PHY_STATS,
- 	ETH_SS_PHY_TUNABLES,
-+	ETH_SS_LINK_MODES,
- };
- 
- /**
-diff --git a/net/ethtool/common.c b/net/ethtool/common.c
-index 8b5e11e7e0a6..0a8728565356 100644
---- a/net/ethtool/common.c
-+++ b/net/ethtool/common.c
-@@ -83,3 +83,89 @@ phy_tunable_strings[__ETHTOOL_PHY_TUNABLE_COUNT][ETH_GSTRING_LEN] = {
- 	[ETHTOOL_PHY_FAST_LINK_DOWN] = "phy-fast-link-down",
- 	[ETHTOOL_PHY_EDPD]	= "phy-energy-detect-power-down",
- };
-+
-+#define __LINK_MODE_NAME(speed, type, duplex) \
-+	#speed "base" #type "/" #duplex
-+#define __DEFINE_LINK_MODE_NAME(speed, type, duplex) \
-+	[ETHTOOL_LINK_MODE(speed, type, duplex)] = \
-+	__LINK_MODE_NAME(speed, type, duplex)
-+#define __DEFINE_SPECIAL_MODE_NAME(_mode, _name) \
-+	[ETHTOOL_LINK_MODE_ ## _mode ## _BIT] = _name
-+
-+const char link_mode_names[][ETH_GSTRING_LEN] = {
-+	__DEFINE_LINK_MODE_NAME(10, T, Half),
-+	__DEFINE_LINK_MODE_NAME(10, T, Full),
-+	__DEFINE_LINK_MODE_NAME(100, T, Half),
-+	__DEFINE_LINK_MODE_NAME(100, T, Full),
-+	__DEFINE_LINK_MODE_NAME(1000, T, Half),
-+	__DEFINE_LINK_MODE_NAME(1000, T, Full),
-+	__DEFINE_SPECIAL_MODE_NAME(Autoneg, "Autoneg"),
-+	__DEFINE_SPECIAL_MODE_NAME(TP, "TP"),
-+	__DEFINE_SPECIAL_MODE_NAME(AUI, "AUI"),
-+	__DEFINE_SPECIAL_MODE_NAME(MII, "MII"),
-+	__DEFINE_SPECIAL_MODE_NAME(FIBRE, "FIBRE"),
-+	__DEFINE_SPECIAL_MODE_NAME(BNC, "BNC"),
-+	__DEFINE_LINK_MODE_NAME(10000, T, Full),
-+	__DEFINE_SPECIAL_MODE_NAME(Pause, "Pause"),
-+	__DEFINE_SPECIAL_MODE_NAME(Asym_Pause, "Asym_Pause"),
-+	__DEFINE_LINK_MODE_NAME(2500, X, Full),
-+	__DEFINE_SPECIAL_MODE_NAME(Backplane, "Backplane"),
-+	__DEFINE_LINK_MODE_NAME(1000, KX, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, KX4, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, KR, Full),
-+	__DEFINE_SPECIAL_MODE_NAME(10000baseR_FEC, "10000baseR_FEC"),
-+	__DEFINE_LINK_MODE_NAME(20000, MLD2, Full),
-+	__DEFINE_LINK_MODE_NAME(20000, KR2, Full),
-+	__DEFINE_LINK_MODE_NAME(40000, KR4, Full),
-+	__DEFINE_LINK_MODE_NAME(40000, CR4, Full),
-+	__DEFINE_LINK_MODE_NAME(40000, SR4, Full),
-+	__DEFINE_LINK_MODE_NAME(40000, LR4, Full),
-+	__DEFINE_LINK_MODE_NAME(56000, KR4, Full),
-+	__DEFINE_LINK_MODE_NAME(56000, CR4, Full),
-+	__DEFINE_LINK_MODE_NAME(56000, SR4, Full),
-+	__DEFINE_LINK_MODE_NAME(56000, LR4, Full),
-+	__DEFINE_LINK_MODE_NAME(25000, CR, Full),
-+	__DEFINE_LINK_MODE_NAME(25000, KR, Full),
-+	__DEFINE_LINK_MODE_NAME(25000, SR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, CR2, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, KR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, KR4, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, SR4, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, CR4, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, LR4_ER4, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, SR2, Full),
-+	__DEFINE_LINK_MODE_NAME(1000, X, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, CR, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, SR, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, LR, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, LRM, Full),
-+	__DEFINE_LINK_MODE_NAME(10000, ER, Full),
-+	__DEFINE_LINK_MODE_NAME(2500, T, Full),
-+	__DEFINE_LINK_MODE_NAME(5000, T, Full),
-+	__DEFINE_SPECIAL_MODE_NAME(FEC_NONE, "None"),
-+	__DEFINE_SPECIAL_MODE_NAME(FEC_RS, "RS"),
-+	__DEFINE_SPECIAL_MODE_NAME(FEC_BASER, "BASER"),
-+	__DEFINE_LINK_MODE_NAME(50000, KR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, SR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, CR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, LR_ER_FR, Full),
-+	__DEFINE_LINK_MODE_NAME(50000, DR, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, KR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, SR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, CR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, LR2_ER2_FR2, Full),
-+	__DEFINE_LINK_MODE_NAME(100000, DR2, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, KR4, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, SR4, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, LR4_ER4_FR4, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, DR4, Full),
-+	__DEFINE_LINK_MODE_NAME(200000, CR4, Full),
-+	__DEFINE_LINK_MODE_NAME(100, T1, Full),
-+	__DEFINE_LINK_MODE_NAME(1000, T1, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, KR8, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, SR8, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, LR8_ER8_FR8, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, DR8, Full),
-+	__DEFINE_LINK_MODE_NAME(400000, CR8, Full),
-+};
-+static_assert(ARRAY_SIZE(link_mode_names) == __ETHTOOL_LINK_MODE_MASK_NBITS);
-diff --git a/net/ethtool/common.h b/net/ethtool/common.h
-index 336566430be4..bbb788908cb1 100644
---- a/net/ethtool/common.h
-+++ b/net/ethtool/common.h
-@@ -5,6 +5,10 @@
- 
- #include <linux/ethtool.h>
- 
-+/* compose link mode index from speed, type and duplex */
-+#define ETHTOOL_LINK_MODE(speed, type, duplex) \
-+	ETHTOOL_LINK_MODE_ ## speed ## base ## type ## _ ## duplex ## _BIT
-+
- extern const char
- netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN];
- extern const char
-@@ -13,5 +17,6 @@ extern const char
- tunable_strings[__ETHTOOL_TUNABLE_COUNT][ETH_GSTRING_LEN];
- extern const char
- phy_tunable_strings[__ETHTOOL_PHY_TUNABLE_COUNT][ETH_GSTRING_LEN];
-+extern const char link_mode_names[][ETH_GSTRING_LEN];
- 
- #endif /* _ETHTOOL_COMMON_H */
-diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-index b262db5a1d91..aed2c2cf1623 100644
---- a/net/ethtool/ioctl.c
-+++ b/net/ethtool/ioctl.c
-@@ -154,6 +154,9 @@ static int __ethtool_get_sset_count(struct net_device *dev, int sset)
- 	    !ops->get_ethtool_phy_stats)
- 		return phy_ethtool_get_sset_count(dev->phydev);
- 
-+	if (sset == ETH_SS_LINK_MODES)
-+		return __ETHTOOL_LINK_MODE_MASK_NBITS;
-+
- 	if (ops->get_sset_count && ops->get_strings)
- 		return ops->get_sset_count(dev, sset);
- 	else
-@@ -178,6 +181,9 @@ static void __ethtool_get_strings(struct net_device *dev,
- 	else if (stringset == ETH_SS_PHY_STATS && dev->phydev &&
- 		 !ops->get_ethtool_phy_stats)
- 		phy_ethtool_get_strings(dev->phydev, data);
-+	else if (stringset == ETH_SS_LINK_MODES)
-+		memcpy(data, link_mode_names,
-+		       __ETHTOOL_LINK_MODE_MASK_NBITS * ETH_GSTRING_LEN);
- 	else
- 		/* ops->get_strings is valid because checked earlier */
- 		ops->get_strings(dev, stringset, data);
--- 
-2.24.0
+regards
+Philipp
 
