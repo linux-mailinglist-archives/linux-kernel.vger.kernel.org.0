@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B77CE11B75A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:07:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD3A511B7A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:09:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731123AbfLKPM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:12:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33018 "EHLO mail.kernel.org"
+        id S1731804AbfLKQJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:09:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731048AbfLKPMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:06 -0500
+        id S1730703AbfLKPMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:12:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD5D1222C4;
-        Wed, 11 Dec 2019 15:12:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 643E522B48;
+        Wed, 11 Dec 2019 15:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077126;
-        bh=VPD4dyWy+JKVBUwjhXVuIu5XtWvfaTIKqFTi8EFeecE=;
+        s=default; t=1576077128;
+        bh=II8nkJraDvslJudv4jma/RouXM7QGwblB9oSjvMRg2U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BLyllEteWQVMePWLqSLFXyFDdevUZUqH1ubY4A1AVEPo+6wEymTLFuQDTXlcNqrv2
-         T4dSRrCkijgrZWtwSM0coSyx2mfZS8UvTOB1D95PvTG2xTJ9qYaQX4IyRaLdWjJQM3
-         F++68EvOL8SOxa3fYhHSeSDSiLjY6795fTmf35Ew=
+        b=c4BkSiNTo1IJTPZ4BG1TGtFnYEofgwJ78TaDaGMTe0GwqYQka2Ff4VZBVV4g6RjVC
+         lCPQp4O2dqxtQ+n5Gv3FjAeyiURQAYlf+kvjwgZRZGAFV4ekXp/5WYk16SbD6CFdv3
+         1tG07t9EEcdvyFw0THeD5do85p7gdYk/n/krt7LE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiaodong Xu <stid.smth@gmail.com>,
-        Bo Chen <chenborfc@163.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 026/105] xfrm: release device reference for invalid state
-Date:   Wed, 11 Dec 2019 16:05:15 +0100
-Message-Id: <20191211150229.289266937@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>, Hannes Reinecke <hare@suse.de>,
+        Junichi Nomura <j-nomura@ce.jp.nec.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 027/105] block: check bi_size overflow before merge
+Date:   Wed, 11 Dec 2019 16:05:16 +0100
+Message-Id: <20191211150229.642179241@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
 References: <20191211150221.153659747@linuxfoundation.org>
@@ -45,60 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaodong Xu <stid.smth@gmail.com>
+From: Junichi Nomura <j-nomura@ce.jp.nec.com>
 
-[ Upstream commit 4944a4b1077f74d89073624bd286219d2fcbfce3 ]
+[ Upstream commit e3a5d8e386c3fb973fa75f2403622a8f3640ec06 ]
 
-An ESP packet could be decrypted in async mode if the input handler for
-this packet returns -EINPROGRESS in xfrm_input(). At this moment the device
-reference in skb is held. Later xfrm_input() will be invoked again to
-resume the processing.
-If the transform state is still valid it would continue to release the
-device reference and there won't be a problem; however if the transform
-state is not valid when async resumption happens, the packet will be
-dropped while the device reference is still being held.
-When the device is deleted for some reason and the reference to this
-device is not properly released, the kernel will keep logging like:
+__bio_try_merge_page() may merge a page to bio without bio_full() check
+and cause bi_size overflow.
 
-unregister_netdevice: waiting for ppp2 to become free. Usage count = 1
+The overflow typically ends up with sd_init_command() warning on zero
+segment request with call trace like this:
 
-The issue is observed when running IPsec traffic over a PPPoE device based
-on a bridge interface. By terminating the PPPoE connection on the server
-end for multiple times, the PPPoE device on the client side will eventually
-get stuck on the above warning message.
+    ------------[ cut here ]------------
+    WARNING: CPU: 2 PID: 1986 at drivers/scsi/scsi_lib.c:1025 scsi_init_io+0x156/0x180
+    CPU: 2 PID: 1986 Comm: kworker/2:1H Kdump: loaded Not tainted 5.4.0-rc7 #1
+    Workqueue: kblockd blk_mq_run_work_fn
+    RIP: 0010:scsi_init_io+0x156/0x180
+    RSP: 0018:ffffa11487663bf0 EFLAGS: 00010246
+    RAX: 00000000002be0a0 RBX: ffff8e6e9ff30118 RCX: 0000000000000000
+    RDX: 00000000ffffffe1 RSI: 0000000000000000 RDI: ffff8e6e9ff30118
+    RBP: ffffa11487663c18 R08: ffffa11487663d28 R09: ffff8e6e9ff30150
+    R10: 0000000000000001 R11: 0000000000000000 R12: ffff8e6e9ff30000
+    R13: 0000000000000001 R14: ffff8e74a1cf1800 R15: ffff8e6e9ff30000
+    FS:  0000000000000000(0000) GS:ffff8e6ea7680000(0000) knlGS:0000000000000000
+    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    CR2: 00007fff18cf0fe8 CR3: 0000000659f0a001 CR4: 00000000001606e0
+    Call Trace:
+     sd_init_command+0x326/0xb40 [sd_mod]
+     scsi_queue_rq+0x502/0xaa0
+     ? blk_mq_get_driver_tag+0xe7/0x120
+     blk_mq_dispatch_rq_list+0x256/0x5a0
+     ? elv_rb_del+0x24/0x30
+     ? deadline_remove_request+0x7b/0xc0
+     blk_mq_do_dispatch_sched+0xa3/0x140
+     blk_mq_sched_dispatch_requests+0xfb/0x170
+     __blk_mq_run_hw_queue+0x81/0x130
+     blk_mq_run_work_fn+0x1b/0x20
+     process_one_work+0x179/0x390
+     worker_thread+0x4f/0x3e0
+     kthread+0x105/0x140
+     ? max_active_store+0x80/0x80
+     ? kthread_bind+0x20/0x20
+     ret_from_fork+0x35/0x40
+    ---[ end trace f9036abf5af4a4d3 ]---
+    blk_update_request: I/O error, dev sdd, sector 2875552 op 0x1:(WRITE) flags 0x0 phys_seg 0 prio class 0
+    XFS (sdd1): writeback error on sector 2875552
 
-This patch will check the async mode first and continue to release device
-reference in async resumption, before it is dropped due to invalid state.
+__bio_try_merge_page() should check the overflow before actually doing
+merge.
 
-v2: Do not assign address family from outer_mode in the transform if the
-state is invalid
-
-v3: Release device reference in the error path instead of jumping to resume
-
-Fixes: 4ce3dbe397d7b ("xfrm: Fix xfrm_input() to verify state is valid when (encap_type < 0)")
-Signed-off-by: Xiaodong Xu <stid.smth@gmail.com>
-Reported-by: Bo Chen <chenborfc@163.com>
-Tested-by: Bo Chen <chenborfc@163.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: 07173c3ec276c ("block: enable multipage bvecs")
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_input.c | 3 +++
- 1 file changed, 3 insertions(+)
+ block/bio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-index 6088bc2dc11e3..fcd4b1f36e669 100644
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -480,6 +480,9 @@ int xfrm_input(struct sk_buff *skb, int nexthdr, __be32 spi, int encap_type)
- 			else
- 				XFRM_INC_STATS(net,
- 					       LINUX_MIB_XFRMINSTATEINVALID);
-+
-+			if (encap_type == -1)
-+				dev_put(skb->dev);
- 			goto drop;
- 		}
+diff --git a/block/bio.c b/block/bio.c
+index 299a0e7651ec0..31d56e7e2ce05 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -769,7 +769,7 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+ 	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+ 		return false;
  
+-	if (bio->bi_vcnt > 0) {
++	if (bio->bi_vcnt > 0 && !bio_full(bio, len)) {
+ 		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
+ 
+ 		if (page_is_mergeable(bv, page, len, off, same_page)) {
 -- 
 2.20.1
 
