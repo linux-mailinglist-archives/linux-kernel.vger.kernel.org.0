@@ -2,122 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC5411B57C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:54:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FA6111B597
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:54:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732972AbfLKPyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:54:15 -0500
-Received: from foss.arm.com ([217.140.110.172]:36624 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731887AbfLKPyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:54:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2A2B31B;
-        Wed, 11 Dec 2019 07:54:11 -0800 (PST)
-Received: from [10.1.194.43] (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 88EAD3F52E;
-        Wed, 11 Dec 2019 07:54:08 -0800 (PST)
-Subject: Re: [PATCH v16 13/25] mm: pagewalk: Don't lock PTEs for
- walk_page_range_novma()
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Mark Rutland <Mark.Rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Will Deacon <will@kernel.org>,
-        "Liang, Kan" <kan.liang@linux.intel.com>, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, kbuild-all@lists.01.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20191206135316.47703-14-steven.price@arm.com>
- <201912101842.KIXI4yCg%lkp@intel.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <e0fd5594-fb4e-9ead-e582-544f47cb1f8b@arm.com>
-Date:   Wed, 11 Dec 2019 15:54:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1732481AbfLKPyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:54:51 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45866 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731796AbfLKPyp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:54:45 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 203so17043063lfa.12
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:54:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pNpk4oXfDNHca9JX4JXRKtvQeEv6BIYEvqyTZhw9VO4=;
+        b=0voqs/p2IwXU8GClGbWYDwhurKNgEFA6KIZecdCes+hnpGciBbWjIg1UwkTEJAA3Vf
+         VnCSlslqpNg410p8Pupt2jJ/S6Fv8fiAsUSyMC+0yIvF1kDLeTUXrbQVhcyFogAOTtVU
+         9ka3v+FIcXQ4SledqdLrVQ3yBMLBrUNo3gkCV8wImUpHJmwfnES9xmdjuMhu5LqH09S4
+         Qs6JR9VRLkDmX+IELmVugpPoW5+oPH10T3cR2/qozsXkvr955YDsGhhwun8YAkCOjyju
+         1L34U5u3KXLXgjKlkeH+qy+areSkxkz3yt2mfAxxGrLbGEQIOw8Qpg+mj2PLIV5Jj9YK
+         ngnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pNpk4oXfDNHca9JX4JXRKtvQeEv6BIYEvqyTZhw9VO4=;
+        b=LHJP6PJTHeSIGdHJI1Hx9y8SzZWRGXvM8a5XjVTUEI8F1UXO7dda7tSXP5KYbKUkFx
+         jsZxuEXH/3zhwAAVKN2BzADIGOQooNaLEAdMha9OXffAfoCK+yAxSZU/qkWpCK82Nc6z
+         1GKmBwwNxHWDJM/AMJiERk1PngIC62KHIOt9A7b/K01FbQDg53KxaC7yzWqLukT/E600
+         iIfK7m8yshK1HIsNmRF82Mp6uufznaOtJ/lpWQ0cXZWARif0qcvU56k0mQrQd7k2LSvu
+         KumtqRIPNx8z/nnARVIviz/Bp3b3hKn35HWm0OvLbtHwJSZy9HJvZcnSYP5M+PLuitgY
+         5aHA==
+X-Gm-Message-State: APjAAAXV5+8QR81efwvUEXp9L5C2YIEHG4jP/G2f68GaL3X+99o5uvaa
+        Bn/sbYFLCtFouxbDLkxNtfoH3Q==
+X-Google-Smtp-Source: APXvYqz84+KK003VsOsEluRtdv+DNGgcMmqgCuu+nFqEFdjyLl8a4FngY/HtxgoY5gucbWBBtMiNXQ==
+X-Received: by 2002:a19:6455:: with SMTP id b21mr2535676lfj.45.1576079684121;
+        Wed, 11 Dec 2019 07:54:44 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id w17sm1398565lfn.22.2019.12.11.07.54.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2019 07:54:43 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 154CF101218; Wed, 11 Dec 2019 18:54:44 +0300 (+03)
+Date:   Wed, 11 Dec 2019 18:54:44 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Mircea CIRJALIU - MELIU <mcirjaliu@bitdefender.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+Subject: Re: [RFC PATCH v1 3/4] thp: fix huge page zapping for special PMDs
+Message-ID: <20191211155444.nx4o363rlskmvyhr@box>
+References: <DB7PR02MB3979BC324920A783BD5BB721BB5A0@DB7PR02MB3979.eurprd02.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <201912101842.KIXI4yCg%lkp@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB7PR02MB3979BC324920A783BD5BB721BB5A0@DB7PR02MB3979.eurprd02.prod.outlook.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/2019 11:23, kbuild test robot wrote:
-> Hi Steven,
-> 
-> I love your patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v5.5-rc1 next-20191209]
-> [cannot apply to arm64/for-next/core tip/x86/mm]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Steven-Price/Generic-page-walk-and-ptdump/20191208-035831
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git ad910e36da4ca3a1bd436989f632d062dda0c921
-> reproduce:
->         # apt-get install sparse
->         # sparse version: v0.6.1-101-g82dee2e-dirty
->         make ARCH=x86_64 allmodconfig
->         make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> 
-> sparse warnings: (new ones prefixed by >>)
-> 
->>> include/linux/spinlock.h:378:9: sparse: sparse: context imbalance in 'walk_pte_range' - unexpected unlock
+On Wed, Dec 11, 2019 at 09:29:20AM +0000, Mircea CIRJALIU - MELIU wrote:
+> When calling zap_vma_ptes() on VM_PFNMAP VMAs involving huge mappings,
 
-I believe this is a false positive (although the trace here is useless).
-This patch adds a conditional lock/unlock:
+Do we have such VMAs?
 
-pte = walk->no_vma ? pte_offset_map(pmd, addr) :
-		     pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
-...
-if (!walk->no_vma)
-	spin_unlock(ptl);
-pte_unmap(pte);
-
-I'm not sure how to match sparse happy about that. Is the only option to
-have two versions of the walk_pte_range() function? One which takes the
-lock and one which doesn't.
-
-Steve
-
-> vim +/walk_pte_range +378 include/linux/spinlock.h
-> 
-> c2f21ce2e31286 Thomas Gleixner 2009-12-02  375  
-> 3490565b633c70 Denys Vlasenko  2015-07-13  376  static __always_inline void spin_unlock(spinlock_t *lock)
-> c2f21ce2e31286 Thomas Gleixner 2009-12-02  377  {
-> c2f21ce2e31286 Thomas Gleixner 2009-12-02 @378  	raw_spin_unlock(&lock->rlock);
-> c2f21ce2e31286 Thomas Gleixner 2009-12-02  379  }
-> c2f21ce2e31286 Thomas Gleixner 2009-12-02  380  
-> 
-> :::::: The code at line 378 was first introduced by commit
-> :::::: c2f21ce2e31286a0a32f8da0a7856e9ca1122ef3 locking: Implement new raw_spinlock
-> 
-> :::::: TO: Thomas Gleixner <tglx@linutronix.de>
-> :::::: CC: Thomas Gleixner <tglx@linutronix.de>
-> 
-> ---
-> 0-DAY kernel test infrastructure                 Open Source Technology Center
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-
+-- 
+ Kirill A. Shutemov
