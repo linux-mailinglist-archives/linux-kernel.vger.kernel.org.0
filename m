@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A6FC11B078
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7AFA11AEF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732675AbfLKPXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:23:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53898 "EHLO mail.kernel.org"
+        id S1730608AbfLKPJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:09:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732184AbfLKPXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:23:05 -0500
+        id S1729469AbfLKPJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:09:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9AD0208C3;
-        Wed, 11 Dec 2019 15:23:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35CCB2173E;
+        Wed, 11 Dec 2019 15:09:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077784;
-        bh=3aXXUP6CSHv5npCS0f3X5zHZNaBwI9CZNedUZywSiRg=;
+        s=default; t=1576076966;
+        bh=6rSHqQOKRJDP5GDgm2zXS+ZfuDLtPuPcrmNNgsXGsn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BmgFo2DH4Kt4jERr7/Cfv7Ynh/cFGM0g95M/+MceK3NWdebHW2koh8EeReCkYoVpR
-         Dj1LMdJFvJg8z965uynS46zf9GoQbrVn7YRqsMcTL/isPDjGj1wbIEwwMkpQmMjRYq
-         WzLbpKc4AERf/jEr7sVtNQDyVM/a5BCp2fXqz338=
+        b=Vnsy1gCllHvh9AZ8euBbrfTQUWoirv2zDaVkFCD+xZePtezJyuYOrp+/DOlkGAnA8
+         VGV2PXn07WfFdGT1D2cuCuKaj/zyYGbbvtWSHWPc9axWPg5qbMRg6jHeSZg+iqmRE+
+         NR0lD5g0fdBrmV9+3xsuiXDciKtIZ1k5gROIz/Gg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 169/243] pstore/ram: Avoid NULL deref in ftrace merging failure path
-Date:   Wed, 11 Dec 2019 16:05:31 +0100
-Message-Id: <20191211150350.589883633@linuxfoundation.org>
+        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>
+Subject: [PATCH 5.4 41/92] coresight: etm4x: Fix input validation for sysfs.
+Date:   Wed, 11 Dec 2019 16:05:32 +0100
+Message-Id: <20191211150240.186092611@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +44,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: Mike Leach <mike.leach@linaro.org>
 
-[ Upstream commit 8665569e97dd52920713b95675409648986b5b0d ]
+commit 2fe6899e36aa174abefd017887f9cfe0cb60c43a upstream.
 
-Given corruption in the ftrace records, it might be possible to allocate
-tmp_prz without assigning prz to it, but still marking it as needing to
-be freed, which would cause at least a NULL dereference.
+A number of issues are fixed relating to sysfs input validation:-
 
-smatch warnings:
-fs/pstore/ram.c:340 ramoops_pstore_read() error: we previously assumed 'prz' could be null (see line 255)
+1) bb_ctrl_store() - incorrect compare of bit select field to absolute
+value. Reworked per ETMv4 specification.
+2) seq_event_store() - incorrect mask value - register has two
+event values.
+3) cyc_threshold_store() - must mask with max before checking min
+otherwise wrapped values can set illegal value below min.
+4) res_ctrl_store() - update to mask off all res0 bits.
 
-https://lists.01.org/pipermail/kbuild-all/2018-December/055528.html
+Reviewed-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Mike Leach <mike.leach@linaro.org>
+Fixes: a77de2637c9eb ("coresight: etm4x: moving sysFS entries to a dedicated file")
+Cc: stable <stable@vger.kernel.org> # 4.9+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Link: https://lore.kernel.org/r/20191104181251.26732-6-mathieu.poirier@linaro.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 2fbea82bbb89 ("pstore: Merge per-CPU ftrace records into one")
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/pstore/ram.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwtracing/coresight/coresight-etm4x-sysfs.c |   21 ++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index 015d74ee31a03..631ae057ab537 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -301,6 +301,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
- 					  GFP_KERNEL);
- 			if (!tmp_prz)
- 				return -ENOMEM;
-+			prz = tmp_prz;
- 			free_prz = true;
+--- a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
+@@ -652,10 +652,13 @@ static ssize_t cyc_threshold_store(struc
  
- 			while (cxt->ftrace_read_cnt < cxt->max_ftrace_cnt) {
-@@ -323,7 +324,6 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
- 					goto out;
- 			}
- 			record->id = 0;
--			prz = tmp_prz;
- 		}
- 	}
+ 	if (kstrtoul(buf, 16, &val))
+ 		return -EINVAL;
++
++	/* mask off max threshold before checking min value */
++	val &= ETM_CYC_THRESHOLD_MASK;
+ 	if (val < drvdata->ccitmin)
+ 		return -EINVAL;
  
--- 
-2.20.1
-
+-	config->ccctlr = val & ETM_CYC_THRESHOLD_MASK;
++	config->ccctlr = val;
+ 	return size;
+ }
+ static DEVICE_ATTR_RW(cyc_threshold);
+@@ -686,14 +689,16 @@ static ssize_t bb_ctrl_store(struct devi
+ 		return -EINVAL;
+ 	if (!drvdata->nr_addr_cmp)
+ 		return -EINVAL;
++
+ 	/*
+-	 * Bit[7:0] selects which address range comparator is used for
+-	 * branch broadcast control.
++	 * Bit[8] controls include(1) / exclude(0), bits[0-7] select
++	 * individual range comparators. If include then at least 1
++	 * range must be selected.
+ 	 */
+-	if (BMVAL(val, 0, 7) > drvdata->nr_addr_cmp)
++	if ((val & BIT(8)) && (BMVAL(val, 0, 7) == 0))
+ 		return -EINVAL;
+ 
+-	config->bb_ctrl = val;
++	config->bb_ctrl = val & GENMASK(8, 0);
+ 	return size;
+ }
+ static DEVICE_ATTR_RW(bb_ctrl);
+@@ -1324,8 +1329,8 @@ static ssize_t seq_event_store(struct de
+ 
+ 	spin_lock(&drvdata->spinlock);
+ 	idx = config->seq_idx;
+-	/* RST, bits[7:0] */
+-	config->seq_ctrl[idx] = val & 0xFF;
++	/* Seq control has two masks B[15:8] F[7:0] */
++	config->seq_ctrl[idx] = val & 0xFFFF;
+ 	spin_unlock(&drvdata->spinlock);
+ 	return size;
+ }
+@@ -1580,7 +1585,7 @@ static ssize_t res_ctrl_store(struct dev
+ 	if (idx % 2 != 0)
+ 		/* PAIRINV, bit[21] */
+ 		val &= ~BIT(21);
+-	config->res_ctrl[idx] = val;
++	config->res_ctrl[idx] = val & GENMASK(21, 0);
+ 	spin_unlock(&drvdata->spinlock);
+ 	return size;
+ }
 
 
