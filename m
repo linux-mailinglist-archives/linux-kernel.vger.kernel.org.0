@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B05811B3E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:44:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D64811B36A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732507AbfLKPot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:44:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32918 "EHLO mail.kernel.org"
+        id S2387455AbfLKP1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:27:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733311AbfLKP1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:27:21 -0500
+        id S1733063AbfLKP1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:27:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3E97208C3;
-        Wed, 11 Dec 2019 15:27:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21EB224671;
+        Wed, 11 Dec 2019 15:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078040;
-        bh=ZmJpT0QJu4bQzY5tktS/+rXG1KwmPIrI12vB8Pg1sic=;
+        s=default; t=1576078042;
+        bh=UNiTk+f8fE9Yz8lhsQdrFBLP5bg3jUY8qkUscn+BsVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B9GULrxQ7tKbANPj9ntBhVrxUD0oPMOHeQWh+d16iUKbsFJmws5VPsT8DmtzY+wpx
-         HMflo7zetxRQWgwrj9caj6x1vvo7vdlTzl9RxqhNN0Qy8JBN2o9jtcIJljpyzD/O0X
-         5kyvhj+m1X7Bf2mfusYwdqibfsRwrkH0343C0OQU=
+        b=byX56x9yKEvGMaPN82OMwHr52hwGn3bwCJqFi4JBE1rPoupLDp4p3clHcZZ6tgRbx
+         BytbWSDZu/+pIkltDbkZ+B7aTdDZsmHwo7jLIQ+o0tgJK8f6WRy5d2sW/PDkq7Tztw
+         ypw0VwrmTrH1pAgtMI65mGXEfUyJuF80MOn6n6vA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 34/79] fs/quota: handle overflows of sysctl fs.quota.* and report as unsigned long
-Date:   Wed, 11 Dec 2019 10:25:58 -0500
-Message-Id: <20191211152643.23056-34-sashal@kernel.org>
+Cc:     Kars de Jong <jongk@linux-m68k.org>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 36/79] scsi: zorro_esp: Limit DMA transfers to 65536 bytes (except on Fastlane)
+Date:   Wed, 11 Dec 2019 10:26:00 -0500
+Message-Id: <20191211152643.23056-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
 References: <20191211152643.23056-1-sashal@kernel.org>
@@ -42,145 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Kars de Jong <jongk@linux-m68k.org>
 
-[ Upstream commit 6fcbcec9cfc7b3c6a2c1f1a23ebacedff7073e0a ]
+[ Upstream commit 02f7e9f351a9de95577eafdc3bd413ed1c3b589f ]
 
-Quota statistics counted as 64-bit per-cpu counter. Reading sums per-cpu
-fractions as signed 64-bit int, filters negative values and then reports
-lower half as signed 32-bit int.
+When using this driver on a Blizzard 1260, there were failures whenever DMA
+transfers from the SCSI bus to memory of 65535 bytes were followed by a DMA
+transfer of 1 byte. This caused the byte at offset 65535 to be overwritten
+with 0xff. The Blizzard hardware can't handle single byte DMA transfers.
 
-Result may looks like:
+Besides this issue, limiting the DMA length to something that is not a
+multiple of the page size is very inefficient on most file systems.
 
-fs.quota.allocated_dquots = 22327
-fs.quota.cache_hits = -489852115
-fs.quota.drops = -487288718
-fs.quota.free_dquots = 22083
-fs.quota.lookups = -486883485
-fs.quota.reads = 22327
-fs.quota.syncs = 335064
-fs.quota.writes = 3088689
+It seems this limit was chosen because the DMA transfer counter of the ESP
+by default is 16 bits wide, thus limiting the length to 65535 bytes.
+However, the value 0 means 65536 bytes, which is handled by the ESP and the
+Blizzard just fine. It is also the default maximum used by esp_scsi when
+drivers don't provide their own dma_length_limit() function.
 
-Values bigger than 2^31-1 reported as negative.
+The limit of 65536 bytes can be used by all boards except the Fastlane. The
+old driver used a limit of 65532 bytes (0xfffc), which is reintroduced in
+this patch.
 
-All counters except "allocated_dquots" and "free_dquots" are monotonic,
-thus they should be reported as is without filtering negative values.
-
-Kernel doesn't have generic helper for 64-bit sysctl yet,
-let's use at least unsigned long.
-
-Link: https://lore.kernel.org/r/157337934693.2078.9842146413181153727.stgit@buzz
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: b7ded0e8b0d1 ("scsi: zorro_esp: Limit DMA transfers to 65535 bytes")
+Link: https://lore.kernel.org/r/20191112175523.23145-1-jongk@linux-m68k.org
+Signed-off-by: Kars de Jong <jongk@linux-m68k.org>
+Reviewed-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/quota/dquot.c      | 29 +++++++++++++++++------------
- include/linux/quota.h |  2 +-
- 2 files changed, 18 insertions(+), 13 deletions(-)
+ drivers/scsi/zorro_esp.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index dd1783ea7003c..e1e35bc9e497e 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -2852,68 +2852,73 @@ EXPORT_SYMBOL(dquot_quotactl_sysfile_ops);
- static int do_proc_dqstats(struct ctl_table *table, int write,
- 		     void __user *buffer, size_t *lenp, loff_t *ppos)
+diff --git a/drivers/scsi/zorro_esp.c b/drivers/scsi/zorro_esp.c
+index be79127db5946..6a5b547eae590 100644
+--- a/drivers/scsi/zorro_esp.c
++++ b/drivers/scsi/zorro_esp.c
+@@ -245,7 +245,14 @@ static int fastlane_esp_irq_pending(struct esp *esp)
+ static u32 zorro_esp_dma_length_limit(struct esp *esp, u32 dma_addr,
+ 					u32 dma_len)
  {
--	unsigned int type = (int *)table->data - dqstats.stat;
-+	unsigned int type = (unsigned long *)table->data - dqstats.stat;
-+	s64 value = percpu_counter_sum(&dqstats.counter[type]);
+-	return dma_len > 0xFFFF ? 0xFFFF : dma_len;
++	return dma_len > (1U << 16) ? (1U << 16) : dma_len;
++}
 +
-+	/* Filter negative values for non-monotonic counters */
-+	if (value < 0 && (type == DQST_ALLOC_DQUOTS ||
-+			  type == DQST_FREE_DQUOTS))
-+		value = 0;
- 
- 	/* Update global table */
--	dqstats.stat[type] =
--			percpu_counter_sum_positive(&dqstats.counter[type]);
--	return proc_dointvec(table, write, buffer, lenp, ppos);
-+	dqstats.stat[type] = value;
-+	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
++static u32 fastlane_esp_dma_length_limit(struct esp *esp, u32 dma_addr,
++					u32 dma_len)
++{
++	/* The old driver used 0xfffc as limit, so do that here too */
++	return dma_len > 0xfffc ? 0xfffc : dma_len;
  }
  
- static struct ctl_table fs_dqstats_table[] = {
- 	{
- 		.procname	= "lookups",
- 		.data		= &dqstats.stat[DQST_LOOKUPS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "drops",
- 		.data		= &dqstats.stat[DQST_DROPS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "reads",
- 		.data		= &dqstats.stat[DQST_READS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "writes",
- 		.data		= &dqstats.stat[DQST_WRITES],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "cache_hits",
- 		.data		= &dqstats.stat[DQST_CACHE_HITS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "allocated_dquots",
- 		.data		= &dqstats.stat[DQST_ALLOC_DQUOTS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "free_dquots",
- 		.data		= &dqstats.stat[DQST_FREE_DQUOTS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
- 	{
- 		.procname	= "syncs",
- 		.data		= &dqstats.stat[DQST_SYNCS],
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0444,
- 		.proc_handler	= do_proc_dqstats,
- 	},
-diff --git a/include/linux/quota.h b/include/linux/quota.h
-index f32dd270b8e3f..27aab84fcbaac 100644
---- a/include/linux/quota.h
-+++ b/include/linux/quota.h
-@@ -263,7 +263,7 @@ enum {
- };
- 
- struct dqstats {
--	int stat[_DQST_DQSTAT_LAST];
-+	unsigned long stat[_DQST_DQSTAT_LAST];
- 	struct percpu_counter counter[_DQST_DQSTAT_LAST];
- };
- 
+ static void zorro_esp_reset_dma(struct esp *esp)
+@@ -818,7 +825,7 @@ static const struct esp_driver_ops fastlane_esp_ops = {
+ 	.unmap_single		= zorro_esp_unmap_single,
+ 	.unmap_sg		= zorro_esp_unmap_sg,
+ 	.irq_pending		= fastlane_esp_irq_pending,
+-	.dma_length_limit	= zorro_esp_dma_length_limit,
++	.dma_length_limit	= fastlane_esp_dma_length_limit,
+ 	.reset_dma		= zorro_esp_reset_dma,
+ 	.dma_drain		= zorro_esp_dma_drain,
+ 	.dma_invalidate		= fastlane_esp_dma_invalidate,
 -- 
 2.20.1
 
