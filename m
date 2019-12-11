@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E742D11B805
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:12:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD51011B7FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:11:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730736AbfLKPKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:10:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58436 "EHLO mail.kernel.org"
+        id S1731096AbfLKQLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:11:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730719AbfLKPKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:10:14 -0500
+        id S1730788AbfLKPKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:10:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58978208C3;
-        Wed, 11 Dec 2019 15:10:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 700C420663;
+        Wed, 11 Dec 2019 15:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077013;
-        bh=6aGjWXNISs2WJ1JMWExV1XkKDkJddOHQDLaxBAQHG4M=;
+        s=default; t=1576077039;
+        bh=BDdofaY6adLzh+aiE2siZmvcN4d0i4rzca5O/HR38n0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zyfb33I7o40i3WIUS/ULI13gY53ojwjrUOzy5CLy+knE837gXG5F4eHLC5Jueo/wH
-         3Tt7giCoohHZAZaU3CZG5li1huQucwiqdj6RAgM3/dhF7HpVB9vR8+GHfz9WEoGBxY
-         qx3mxIfnHbHMvT7RFPjsePzuxSjngkcb0l/BSGLk=
+        b=F93vYbUwQu3ExgnSyaJG4JhmLsAbH0VVrsAgeiyi8DITggV12FiiW8PdT1USNxS8t
+         6Q4f6NmxMvcGL288fiR1FMMtRBgGCUc4OMMxIukiy/k6OH/DBycXzd+Up/08TedYnX
+         HxTHhIxYXkZi67Dq699XcUPVVGGKOXa6wMKC6XY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.4 75/92] crypto: user - fix memory leak in crypto_reportstat
-Date:   Wed, 11 Dec 2019 16:06:06 +0100
-Message-Id: <20191211150258.359953926@linuxfoundation.org>
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.4 79/92] spi: Fix SPI_CS_HIGH setting when using native and GPIO CS
+Date:   Wed, 11 Dec 2019 16:06:10 +0100
+Message-Id: <20191211150259.338195387@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
 References: <20191211150221.977775294@linuxfoundation.org>
@@ -44,37 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-commit c03b04dcdba1da39903e23cc4d072abf8f68f2dd upstream.
+commit 3e5ec1db8bfee845d9f8560d1c64aeaccd586398 upstream.
 
-In crypto_reportstat, a new skb is created by nlmsg_new(). This skb is
-leaked if crypto_reportstat_alg() fails. Required release for skb is
-added.
+When improving the CS GPIO support at core level, the SPI_CS_HIGH
+has been enabled for all the CS lines used for a given SPI controller.
 
-Fixes: cac5818c25d0 ("crypto: user - Implement a generic crypto statistics")
+However, the SPI framework allows to have on the same controller native
+CS and GPIO CS. The native CS may not support the SPI_CS_HIGH, so they
+should not be setup automatically.
+
+With this patch the setting is done only for the CS that will use a
+GPIO as CS
+
+Fixes: f3186dd87669 ("spi: Optionally use GPIO descriptors for CS GPIOs")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Link: https://lore.kernel.org/r/20191018152929.3287-1-gregory.clement@bootlin.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/crypto_user_stat.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/spi/spi.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/crypto/crypto_user_stat.c
-+++ b/crypto/crypto_user_stat.c
-@@ -328,8 +328,10 @@ int crypto_reportstat(struct sk_buff *in
- drop_alg:
- 	crypto_mod_put(alg);
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1711,15 +1711,7 @@ static int of_spi_parse_dt(struct spi_co
+ 		spi->mode |= SPI_3WIRE;
+ 	if (of_property_read_bool(nc, "spi-lsb-first"))
+ 		spi->mode |= SPI_LSB_FIRST;
+-
+-	/*
+-	 * For descriptors associated with the device, polarity inversion is
+-	 * handled in the gpiolib, so all chip selects are "active high" in
+-	 * the logical sense, the gpiolib will invert the line if need be.
+-	 */
+-	if (ctlr->use_gpio_descriptors)
+-		spi->mode |= SPI_CS_HIGH;
+-	else if (of_property_read_bool(nc, "spi-cs-high"))
++	if (of_property_read_bool(nc, "spi-cs-high"))
+ 		spi->mode |= SPI_CS_HIGH;
  
--	if (err)
-+	if (err) {
-+		kfree_skb(skb);
- 		return err;
-+	}
+ 	/* Device DUAL/QUAD mode */
+@@ -1783,6 +1775,14 @@ static int of_spi_parse_dt(struct spi_co
+ 	}
+ 	spi->chip_select = value;
  
- 	return nlmsg_unicast(net->crypto_nlsk, skb, NETLINK_CB(in_skb).portid);
- }
++	/*
++	 * For descriptors associated with the device, polarity inversion is
++	 * handled in the gpiolib, so all gpio chip selects are "active high"
++	 * in the logical sense, the gpiolib will invert the line if need be.
++	 */
++	if ((ctlr->use_gpio_descriptors) && ctlr->cs_gpiods[spi->chip_select])
++		spi->mode |= SPI_CS_HIGH;
++
+ 	/* Device speed */
+ 	rc = of_property_read_u32(nc, "spi-max-frequency", &value);
+ 	if (rc) {
 
 
