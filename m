@@ -2,88 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFDDA11B269
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E82911B2B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:39:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387556AbfLKPgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:36:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731642AbfLKPf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:35:59 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAA8A22B48;
-        Wed, 11 Dec 2019 15:35:58 +0000 (UTC)
-Date:   Wed, 11 Dec 2019 10:35:57 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sven Schnelle <svens@stackframe.org>
-Cc:     linux-trace-devel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>
-Subject: Re: ftrace histogram sorting broken on BE architecures
-Message-ID: <20191211103557.7bed6928@gandalf.local.home>
-In-Reply-To: <20191211123316.GD12147@stackframe.org>
-References: <20191211123316.GD12147@stackframe.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2388332AbfLKPhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:37:41 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:46744 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387713AbfLKPhh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:37:37 -0500
+Received: by mail-pj1-f67.google.com with SMTP id z21so9049649pjq.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:37:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=mZyjjAAc7yNANmoebBsT963AofjY/s84X8vsLTIrpD4=;
+        b=K30i6dN5IfT1gG+6PGpefroyqGIpo4g4XmXSr85BsjYcaE88tQFwI33Ovorlgz2ABC
+         FZMpdjij1HpLqDarqrAR48u/z2XVLxf68TnO6laeWh58YG9jR16KBBpjlflEUeuPmVOs
+         MMiE4Z69y4R+Ow5o1jQM/OGtDXgnQZG+oH6Ni96mfqqoRoipYsqyaMoSpAY+9hLDWDIz
+         ug1/Jl1bdYElBVegTmWiGgTmdmpYkmhUDFVMAJVlv94FS4Mo4/tWB9yvbW04RB6zj5S5
+         0aPsdhA1ysrLqUJmjegxg1Twxm1vDhc1dC3kl6hZuZ4GIa55Rrk8kQ151DpmSYFbDhKJ
+         WFVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=mZyjjAAc7yNANmoebBsT963AofjY/s84X8vsLTIrpD4=;
+        b=JQYRnyovjGC5awAdHmMh0yU9jDRMwJ4ahs/P9gWfR+mPujK/AGId2Dawb69sCRXaWO
+         6KAr5Vf60De1SM7qrqjx7+YN7jcaFXjCnE7xDrcElfWNk8k4s68XTehdR8LaYVrarCeT
+         T1WEdBaOYrW7iqkT0q63+jT0dyml94xsopE5d/G4eV7NKyOkBSDstYDOQxZc1+nezJB7
+         G3PT0dz+1kHxMXry9DbEdcbOlKoh2YanZDp6prgv2gGuD6mY5fz7evSJ8jH82fmjFcZ9
+         p4gOTyRGdLRqAPO31mSt1eD4loNk64IO+vymzvTm4xS6JnUVSJ/XUqgcs+c1RaBRkV+a
+         Ld0g==
+X-Gm-Message-State: APjAAAXturEY96UK2AmPG+qEyI8nzl04jvKNeHKpVXpnar/RgN8l/P74
+        DgaqlulPAVEcG1zLHXV0qswDaw==
+X-Google-Smtp-Source: APXvYqyfHdj5Wju5tHjYhtBozUgo+eKxaW7VtMGL10rLo9NwZ5f8ANm6rWjTtpKXW6rwsYnvY5BNVg==
+X-Received: by 2002:a17:902:b18e:: with SMTP id s14mr4008320plr.261.1576078656416;
+        Wed, 11 Dec 2019 07:37:36 -0800 (PST)
+Received: from [10.83.42.232] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id w11sm3150883pgs.60.2019.12.11.07.37.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Dec 2019 07:37:35 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v6 2/3] PCI: Add parameter nr_devfns to pci_add_dma_alias
+From:   James Sewart <jamessewart@arista.com>
+In-Reply-To: <20191210223745.GA167002@google.com>
+Date:   Wed, 11 Dec 2019 15:37:30 +0000
+Cc:     linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Dmitry Safonov <dima@arista.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <826A0459-FA8D-4BDB-A342-CE46974466DF@arista.com>
+References: <20191210223745.GA167002@google.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Dec 2019 13:33:16 +0100
-Sven Schnelle <svens@stackframe.org> wrote:
 
-> Hi List,
 
-Hi Sven,
+> On 10 Dec 2019, at 22:37, Bjorn Helgaas <helgaas@kernel.org> wrote:
+>=20
+> [+cc Joerg]
+>=20
+> On Tue, Dec 03, 2019 at 03:43:53PM +0000, James Sewart wrote:
+>> pci_add_dma_alias can now be used to create a dma alias for a range =
+of
+>> devfns.
+>>=20
+>> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+>> Signed-off-by: James Sewart <jamessewart@arista.com>
+>> ---
+>> drivers/pci/pci.c    | 22 +++++++++++++++++-----
+>> drivers/pci/quirks.c | 14 +++++++-------
+>> include/linux/pci.h  |  2 +-
+>> 3 files changed, 25 insertions(+), 13 deletions(-)
+>=20
+> Heads up Joerg: I also updated drivers/iommu/amd_iommu.c (this is the
+> one reported by the kbuild test robot) and removed the printk there
+> that prints the same thing as the one in pci_add_dma_alias(), and I
+> updated a PCI quirk that was merged after this patch was posted.
+>=20
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index d3c83248f3ce..dbb01aceafda 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -5857,7 +5857,8 @@ int pci_set_vga_state(struct pci_dev *dev, bool =
+decode,
+>> /**
+>>  * pci_add_dma_alias - Add a DMA devfn alias for a device
+>>  * @dev: the PCI device for which alias is added
+>> - * @devfn: alias slot and function
+>> + * @devfn_from: alias slot and function
+>> + * @nr_devfns: Number of subsequent devfns to alias
+>>  *
+>>  * This helper encodes an 8-bit devfn as a bit number in =
+dma_alias_mask
+>>  * which is used to program permissible bus-devfn source addresses =
+for DMA
+>> @@ -5873,8 +5874,13 @@ int pci_set_vga_state(struct pci_dev *dev, =
+bool decode,
+>>  * cannot be left as a userspace activity).  DMA aliases should =
+therefore
+>>  * be configured via quirks, such as the PCI fixup header quirk.
+>>  */
+>> -void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
+>> +void pci_add_dma_alias(struct pci_dev *dev, u8 devfn_from, unsigned =
+nr_devfns)
+>> {
+>> +	int devfn_to;
+>> +
+>> +	nr_devfns =3D min(nr_devfns, (unsigned)MAX_NR_DEVFNS);
+>> +	devfn_to =3D devfn_from + nr_devfns - 1;
+>=20
+> I made this look like:
+>=20
+> +       devfn_to =3D min(devfn_from + nr_devfns - 1,
+> +                      (unsigned) MAX_NR_DEVFNS - 1);
+>=20
+> so devfn_from=3D0xf0, nr_devfns=3D0x20 doesn't cause devfn_to to wrap
+> around.
+>=20
+> I did keep Logan's reviewed-by, so let me know if I broke something.
 
-> 
-> i was looking into a ftracetest failure on s390:
-> 
-> # ./ftracetest test.d/trigger/trigger-hist.tc
-> === Ftrace unit tests ===
-> [1] event trigger - test histogram trigger	[FAIL]
-> [2] (instance)  event trigger - test histogram trigger	[FAIL]
-> 
-> from the -vvv log: ++ fail 'sort param on sched_process_fork did not work'
-> 
-> # cat events/sched/sched_process_fork/hist
-> 
-> # event histogram
-> #
-> # trigger info: hist:keys=parent_pid,child_pid:vals=hitcount:sort=child_pid:size=2048 [active]
-> #
-> 
-> { parent_pid:       1406, child_pid:       1428 } hitcount:          1
-> { parent_pid:       1406, child_pid:       1430 } hitcount:          1
-> { parent_pid:       1406, child_pid:       1427 } hitcount:          1
-> { parent_pid:       1406, child_pid:       1432 } hitcount:          1
-> { parent_pid:       1406, child_pid:       1431 } hitcount:          1
-> { parent_pid:       1406, child_pid:       1429 } hitcount:          1
-> 
-> So the test is right, the entries are not sorted. After digging into the
-> ftrace code i noticed that integer values always get extended to 64 bit
-> in event_hist_trigger(), but cmp_entries_key() from tracing_map.c uses the
-> type of the field (which is a pid_t, and therefore 4 bytes).
-> 
-> On Little Endian this doesn't hurt, but on BE s390 this makes the compare
-> function compare 4 zero bytes, which is the reason why sorting doesn't
-> work. As a test i forced the compare function used in cmp_entries_key() to
-> tracing_map_cmp_s64(), which made the ftrace tests pass.
-> 
-> I also tested this on 64 bit parisc with the same results, so the architecture
-> doesn't seem make a difference (besides LE vs. BE)
-> 
-> Any thoughts on how to fix this? I'm not sure whether i fully understand the
-> ftrace maps... ;-)
+I think nr_devfns still needs updating as it is used for bitmap_set.=20
+Although thinking about it now we should limit the number to alias to be=20=
 
-Your analysis makes sense. I'll take a deeper look at it.
+maximum (MAX_NR_DEVFNS - devfn_from), so that we don=E2=80=99t set past =
+the end of=20
+the bitmap:
 
-Thanks for reporting it!
+ nr_devfns =3D min(nr_devfns, (unsigned) MAX_NR_DEVFNS - devfn_from);
 
--- Steve
+I think with this change we wont need to clip devfn_to.
+
+>=20
+>> 	if (!dev->dma_alias_mask)
+>> 		dev->dma_alias_mask =3D bitmap_zalloc(MAX_NR_DEVFNS, =
+GFP_KERNEL);
+>> 	if (!dev->dma_alias_mask) {
+>> @@ -5882,9 +5888,15 @@ void pci_add_dma_alias(struct pci_dev *dev, u8 =
+devfn)
+>> 		return;
+>> 	}
+>>=20
+>> -	set_bit(devfn, dev->dma_alias_mask);
+>> -	pci_info(dev, "Enabling fixed DMA alias to %02x.%d\n",
+>> -		 PCI_SLOT(devfn), PCI_FUNC(devfn));
+>> +	bitmap_set(dev->dma_alias_mask, devfn_from, nr_devfns);
+>> +
+>> +	if (nr_devfns =3D=3D 1)
+>> +		pci_info(dev, "Enabling fixed DMA alias to %02x.%d\n",
+>> +				PCI_SLOT(devfn_from), =
+PCI_FUNC(devfn_from));
+>> +	else if(nr_devfns > 1)
+>> +		pci_info(dev, "Enabling fixed DMA alias for devfn range =
+from %02x.%d to %02x.%d\n",
+>> +				PCI_SLOT(devfn_from), =
+PCI_FUNC(devfn_from),
+>> +				PCI_SLOT(devfn_to), PCI_FUNC(devfn_to));
+>> }
+
