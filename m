@@ -2,116 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AE9C11B65F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:00:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9976411B66A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:00:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733121AbfLKQAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:00:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37812 "EHLO mail.kernel.org"
+        id S2387447AbfLKQAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:00:53 -0500
+Received: from hall.aurel32.net ([195.154.113.88]:41108 "EHLO hall.aurel32.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730981AbfLKPNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:13:48 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B28822B48;
-        Wed, 11 Dec 2019 15:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077227;
-        bh=XVLFkUxvPr4SxI4Dxl0LIajKkAizRQoeefyUhnfbFRU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yd/Vh+eFNp1LT7KiLPAf0cTZDtR3XOXwpuVXHW0CdmckMdG8RhBw4tnGVe02AQ8we
-         DekCnV2SuQ4JyHcFtm4BGsmefl4N/C+8D81yrRX8pqFKQ2LMhJHnuuFD7PB83l3EIb
-         lEYhbqY6g00X2UMsfaOoeQAnBzSiuBPx6WZ/FEc4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 106/134] tools/power/x86/intel-speed-select: Ignore missing config level
-Date:   Wed, 11 Dec 2019 10:11:22 -0500
-Message-Id: <20191211151150.19073-106-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
-References: <20191211151150.19073-1-sashal@kernel.org>
+        id S1731491AbfLKQAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 11:00:45 -0500
+Received: from aurel32 by hall.aurel32.net with local (Exim 4.92)
+        (envelope-from <aurelien@aurel32.net>)
+        id 1if4Pk-0008An-F6; Wed, 11 Dec 2019 17:00:36 +0100
+Date:   Wed, 11 Dec 2019 17:00:36 +0100
+From:   Aurelien Jarno <aurelien@aurel32.net>
+To:     Justin Forbes <jmforbes@linuxtx.org>
+Cc:     Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:BPF (Safe dynamic programs and tools)" 
+        <netdev@vger.kernel.org>, Yonghong Song <yhs@fb.com>,
+        "open list:BPF (Safe dynamic programs and tools)" 
+        <bpf@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        debian-kernel@lists.debian.org
+Subject: Re: [PATCH] libbpf: fix readelf output parsing on powerpc with
+ recent binutils
+Message-ID: <20191211160036.GV2974@aurel32.net>
+Mail-Followup-To: Justin Forbes <jmforbes@linuxtx.org>,
+        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>, Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:BPF (Safe dynamic programs and tools)" <netdev@vger.kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        "open list:BPF (Safe dynamic programs and tools)" <bpf@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, Martin KaFai Lau <kafai@fb.com>,
+        debian-kernel@lists.debian.org
+References: <20191201195728.4161537-1-aurelien@aurel32.net>
+ <87zhgbe0ix.fsf@mpe.ellerman.id.au>
+ <20191202093752.GA1535@localhost.localdomain>
+ <CAFxkdAqg6RaGbRrNN3e_nHfHFR-xxzZgjhi5AnppTxxwdg0VyQ@mail.gmail.com>
+ <20191210222553.GA4580@calabresa>
+ <CAFxkdAp6Up0qSyp0sH0O1yD+5W3LvY-+-iniBrorcz2pMV+y-g@mail.gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFxkdAp6Up0qSyp0sH0O1yD+5W3LvY-+-iniBrorcz2pMV+y-g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+On 2019-12-11 09:33, Justin Forbes wrote:
+> On Tue, Dec 10, 2019 at 4:26 PM Thadeu Lima de Souza Cascardo
+> <cascardo@canonical.com> wrote:
+> >
+> > On Tue, Dec 10, 2019 at 12:58:33PM -0600, Justin Forbes wrote:
+> > > On Mon, Dec 2, 2019 at 3:37 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+> > > >
+> > > > On Mon, Dec 02, 2019 at 04:53:26PM +1100, Michael Ellerman wrote:
+> > > > > Aurelien Jarno <aurelien@aurel32.net> writes:
+> > > > > > On powerpc with recent versions of binutils, readelf outputs an extra
+> > > > > > field when dumping the symbols of an object file. For example:
+> > > > > >
+> > > > > >     35: 0000000000000838    96 FUNC    LOCAL  DEFAULT [<localentry>: 8]     1 btf_is_struct
+> > > > > >
+> > > > > > The extra "[<localentry>: 8]" prevents the GLOBAL_SYM_COUNT variable to
+> > > > > > be computed correctly and causes the checkabi target to fail.
+> > > > > >
+> > > > > > Fix that by looking for the symbol name in the last field instead of the
+> > > > > > 8th one. This way it should also cope with future extra fields.
+> > > > > >
+> > > > > > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> > > > > > ---
+> > > > > >  tools/lib/bpf/Makefile | 4 ++--
+> > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > Thanks for fixing that, it's been on my very long list of test failures
+> > > > > for a while.
+> > > > >
+> > > > > Tested-by: Michael Ellerman <mpe@ellerman.id.au>
+> > > >
+> > > > Looks good & also continues to work on x86. Applied, thanks!
+> > >
+> > > This actually seems to break horribly on PPC64le with binutils 2.33.1
+> > > resulting in:
+> > > Warning: Num of global symbols in sharedobjs/libbpf-in.o (32) does NOT
+> > > match with num of versioned symbols in libbpf.so (184). Please make
+> > > sure all LIBBPF_API symbols are versioned in libbpf.map.
+> > >
+> > > This is the only arch that fails, with x86/arm/aarch64/s390 all
+> > > building fine.  Reverting this patch allows successful build across
+> > > all arches.
+> > >
+> > > Justin
+> >
+> > Well, I ended up debugging this same issue and had the same fix as Jarno's when
+> > I noticed his fix was already applied.
+> >
+> > I just installed a system with the latest binutils, 2.33.1, and it still breaks
+> > without such fix. Can you tell what is the output of the following command on
+> > your system?
+> >
+> > readelf -s --wide tools/lib/bpf/sharedobjs/libbpf-in.o | cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' | awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $0}'
+> >
+> 
+> readelf -s --wide tools/lib/bpf/sharedobjs/libbpf-in.o | cut -d "@"
+> -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' | awk '/GLOBAL/ && /DEFAULT/ &&
+> !/UND/ {print $0}'
+>    373: 00000000000141bc  1376 FUNC    GLOBAL DEFAULT    1 libbpf_num_possible_cpus [<localentry>: 8]
+>    375: 000000000001869c   176 FUNC    GLOBAL DEFAULT    1 btf__free [<localentry>: 8]
 
-[ Upstream commit 20183ccd3e4d01d23b0a01fe9f3ee73fbae312fa ]
+It seems that in your case the localentry part is added after the symbol
+name. That doesn't match what is done in upstream binutils:
 
-It is possible that certain config levels are not available, even
-if the max level includes the level. There can be missing levels in
-some platforms. So ignore the level when called for information dump
-for all levels and fail if specifically ask for the missing level.
+https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=binutils/readelf.c;hb=refs/heads/master#l11485
 
-Here the changes is to continue reading information about other levels
-even if we fail to get information for the current level. But use the
-"processed" flag to indicate the failure. When the "processed" flag is
-not set, don't dump information about that level.
+Which version of binutils are you using? It looks like your version has
+been modified to workaround this exact issue.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/power/x86/intel-speed-select/isst-core.c    | 8 ++++----
- tools/power/x86/intel-speed-select/isst-display.c | 3 ++-
- 2 files changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/tools/power/x86/intel-speed-select/isst-core.c b/tools/power/x86/intel-speed-select/isst-core.c
-index 6dee5332c9d37..fde3f9cefc6db 100644
---- a/tools/power/x86/intel-speed-select/isst-core.c
-+++ b/tools/power/x86/intel-speed-select/isst-core.c
-@@ -553,7 +553,6 @@ int isst_get_process_ctdp(int cpu, int tdp_level, struct isst_pkg_ctdp *pkg_dev)
- 			     i);
- 		ctdp_level = &pkg_dev->ctdp_level[i];
- 
--		ctdp_level->processed = 1;
- 		ctdp_level->level = i;
- 		ctdp_level->control_cpu = cpu;
- 		ctdp_level->pkg_id = get_physical_package_id(cpu);
-@@ -561,7 +560,10 @@ int isst_get_process_ctdp(int cpu, int tdp_level, struct isst_pkg_ctdp *pkg_dev)
- 
- 		ret = isst_get_ctdp_control(cpu, i, ctdp_level);
- 		if (ret)
--			return ret;
-+			continue;
-+
-+		pkg_dev->processed = 1;
-+		ctdp_level->processed = 1;
- 
- 		ret = isst_get_tdp_info(cpu, i, ctdp_level);
- 		if (ret)
-@@ -614,8 +616,6 @@ int isst_get_process_ctdp(int cpu, int tdp_level, struct isst_pkg_ctdp *pkg_dev)
- 		}
- 	}
- 
--	pkg_dev->processed = 1;
--
- 	return 0;
- }
- 
-diff --git a/tools/power/x86/intel-speed-select/isst-display.c b/tools/power/x86/intel-speed-select/isst-display.c
-index 40346d534f789..b11575c3e8864 100644
---- a/tools/power/x86/intel-speed-select/isst-display.c
-+++ b/tools/power/x86/intel-speed-select/isst-display.c
-@@ -314,7 +314,8 @@ void isst_ctdp_display_information(int cpu, FILE *outf, int tdp_level,
- 	char value[256];
- 	int i, base_level = 1;
- 
--	print_package_info(cpu, outf);
-+	if (pkg_dev->processed)
-+		print_package_info(cpu, outf);
- 
- 	for (i = 0; i <= pkg_dev->levels; ++i) {
- 		struct isst_pkg_ctdp_level_info *ctdp_level;
 -- 
-2.20.1
-
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                 http://www.aurel32.net
