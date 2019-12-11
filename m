@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00CBE11AF35
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:12:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35EC411B060
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:22:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730624AbfLKPLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:11:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60512 "EHLO mail.kernel.org"
+        id S1732571AbfLKPWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:22:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730504AbfLKPLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:11:47 -0500
+        id S1730966AbfLKPWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:22:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E4312173E;
-        Wed, 11 Dec 2019 15:11:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 035672077B;
+        Wed, 11 Dec 2019 15:22:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077105;
-        bh=i0jMtDCTHVYMDyPPt+5DCAj8ZJVgjtyo0kPjoSUaZO0=;
+        s=default; t=1576077729;
+        bh=+KgFr1WTVtExSSrgWrvLQz3fY25SyK3dsgybXHRYDL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OIqF5i9x9tdls1qpNjCi2TbdqQopXtAq2plrWNR6+q1L5R1jQF9MVjDoLCXgFerwR
-         m05XPoEbNY65mDLjne+l1VZt8EOR97UzjX7xhOKzbLlBytv+3e+AVnnJjeeo3g9P5M
-         Eew2isvCHKkkOB3XQahqcy0OL81G3sCxkE/SlSvo=
+        b=QHarXUEvp2nRrZTTHLC2FaU6mBS/8zeMectnTuAORi6v6P9HWjbKn/J8TJvbTM90v
+         qacgLn0gCrK+WcZBb2cAO2UWKBCLdKUapnRHWm5zJ1/T/vWX2Duh2FoDV6tQpgjy2/
+         FuZRd3xlcLOQp7nyjLxA7mKTIgoip5tybnCwAQOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mordechay Goodstein <mordechay.goodstein@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Rob Herring <robh@kernel.org>,
+        Wenzhen Yu <wenzhen.yu@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 019/105] iwlwifi: pcie: dont consider IV len in A-MSDU
-Date:   Wed, 11 Dec 2019 16:05:08 +0100
-Message-Id: <20191211150226.390827048@linuxfoundation.org>
+Subject: [PATCH 4.19 147/243] clk: mediatek: Drop more __init markings for driver probe
+Date:   Wed, 11 Dec 2019 16:05:09 +0100
+Message-Id: <20191211150349.092000983@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,90 +48,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mordechay Goodstein <mordechay.goodstein@intel.com>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit cb1a4badf59275eb7221dcec621e8154917eabd1 ]
+[ Upstream commit 553604c041b8c18cd6a8e1d785a77f3e4be61cdb ]
 
->From gen2 PN is totally offloaded to hardware (also the space for the
-IV isn't part of the skb).  As you can see in mvm/mac80211.c:3545, the
-MAC for cipher types CCMP/GCMP doesn't set
-IEEE80211_KEY_FLAG_PUT_IV_SPACE for gen2 NICs.
+This function is called from driver probe, which isn't the same as
+__init code because driver probe can happen later. Drop the __init
+marking here to fix this potential problem.
 
-This causes all the AMSDU data to be corrupted with cipher enabled.
-
-Signed-off-by: Mordechay Goodstein <mordechay.goodstein@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Sean Wang <sean.wang@mediatek.com>
+Cc: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Wenzhen Yu <wenzhen.yu@mediatek.com>
+Cc: Weiyi Lu <weiyi.lu@mediatek.com>
+Fixes: 2fc0a509e4ee ("clk: mediatek: add clock support for MT7622 SoC")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- .../net/wireless/intel/iwlwifi/pcie/tx-gen2.c | 20 +++++++------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ drivers/clk/mediatek/clk-mt7622.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c b/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
-index 9ef6b8fe03c1b..0fbf8c1d5c98b 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
-@@ -252,27 +252,23 @@ static int iwl_pcie_gen2_build_amsdu(struct iwl_trans *trans,
- 	struct ieee80211_hdr *hdr = (void *)skb->data;
- 	unsigned int snap_ip_tcp_hdrlen, ip_hdrlen, total_len, hdr_room;
- 	unsigned int mss = skb_shinfo(skb)->gso_size;
--	u16 length, iv_len, amsdu_pad;
-+	u16 length, amsdu_pad;
- 	u8 *start_hdr;
- 	struct iwl_tso_hdr_page *hdr_page;
- 	struct page **page_ptr;
- 	struct tso_t tso;
+--- a/drivers/clk/mediatek/clk-mt7622.c
++++ b/drivers/clk/mediatek/clk-mt7622.c
+@@ -513,7 +513,7 @@ static const struct mtk_gate peri_clks[]
+ 	GATE_PERI1(CLK_PERI_IRTX_PD, "peri_irtx_pd", "irtx_sel", 2),
+ };
  
--	/* if the packet is protected, then it must be CCMP or GCMP */
--	iv_len = ieee80211_has_protected(hdr->frame_control) ?
--		IEEE80211_CCMP_HDR_LEN : 0;
--
- 	trace_iwlwifi_dev_tx(trans->dev, skb, tfd, sizeof(*tfd),
- 			     &dev_cmd->hdr, start_len, 0);
+-static struct mtk_composite infra_muxes[] __initdata = {
++static struct mtk_composite infra_muxes[] = {
+ 	MUX(CLK_INFRA_MUX1_SEL, "infra_mux1_sel", infra_mux1_parents,
+ 	    0x000, 2, 2),
+ };
+@@ -652,7 +652,7 @@ static int mtk_topckgen_init(struct plat
+ 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ }
  
- 	ip_hdrlen = skb_transport_header(skb) - skb_network_header(skb);
- 	snap_ip_tcp_hdrlen = 8 + ip_hdrlen + tcp_hdrlen(skb);
--	total_len = skb->len - snap_ip_tcp_hdrlen - hdr_len - iv_len;
-+	total_len = skb->len - snap_ip_tcp_hdrlen - hdr_len;
- 	amsdu_pad = 0;
- 
- 	/* total amount of header we may need for this A-MSDU */
- 	hdr_room = DIV_ROUND_UP(total_len, mss) *
--		(3 + snap_ip_tcp_hdrlen + sizeof(struct ethhdr)) + iv_len;
-+		(3 + snap_ip_tcp_hdrlen + sizeof(struct ethhdr));
- 
- 	/* Our device supports 9 segments at most, it will fit in 1 page */
- 	hdr_page = get_page_hdr(trans, hdr_room);
-@@ -283,14 +279,12 @@ static int iwl_pcie_gen2_build_amsdu(struct iwl_trans *trans,
- 	start_hdr = hdr_page->pos;
- 	page_ptr = (void *)((u8 *)skb->cb + trans_pcie->page_offs);
- 	*page_ptr = hdr_page->page;
--	memcpy(hdr_page->pos, skb->data + hdr_len, iv_len);
--	hdr_page->pos += iv_len;
- 
- 	/*
--	 * Pull the ieee80211 header + IV to be able to use TSO core,
-+	 * Pull the ieee80211 header to be able to use TSO core,
- 	 * we will restore it for the tx_status flow.
- 	 */
--	skb_pull(skb, hdr_len + iv_len);
-+	skb_pull(skb, hdr_len);
- 
- 	/*
- 	 * Remove the length of all the headers that we don't actually
-@@ -365,8 +359,8 @@ static int iwl_pcie_gen2_build_amsdu(struct iwl_trans *trans,
- 		}
- 	}
- 
--	/* re -add the WiFi header and IV */
--	skb_push(skb, hdr_len + iv_len);
-+	/* re -add the WiFi header */
-+	skb_push(skb, hdr_len);
- 
- 	return 0;
- 
--- 
-2.20.1
-
+-static int __init mtk_infrasys_init(struct platform_device *pdev)
++static int mtk_infrasys_init(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct clk_onecell_data *clk_data;
 
 
