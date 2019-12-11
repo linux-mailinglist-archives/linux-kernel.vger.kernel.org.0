@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C7111B5D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:57:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 800A711B605
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:58:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730119AbfLKPPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:15:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39130 "EHLO mail.kernel.org"
+        id S1731988AbfLKP6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:58:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731598AbfLKPOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:14:12 -0500
+        id S1730488AbfLKPOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:14:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D561524682;
-        Wed, 11 Dec 2019 15:14:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DB3D24658;
+        Wed, 11 Dec 2019 15:14:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077252;
-        bh=2j01xrxU82dvx7hc0Z9HeqJbY1k1vJAGGnbMsKIBhaE=;
+        s=default; t=1576077281;
+        bh=73y6llFQMMIZCQOShezk0KW2VUlhcWIdRCpboFMbUQs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B9PnWj4+dPe787OHLrW3zogRQ0fFNCdvXN1dPXGvfKu3gJbJpgczJ35UHhPMAwKNA
-         0wEJ471Ak1gRUbONMJimr2tKCbOW3RHYPVbit9ItyXFoizqO9Pwq8cImrTmAE2OnML
-         OvAnK/H6do5W7bUlSHhYYeoPwtHTWc8vQnqHxe9k=
+        b=D4REs6tj9TLnSwAH1IkyFAzkQgEv4AnZ7mB9x3mYxgM3tjm/i852ReLVG6Hv+jWvX
+         eKcbFOp/xw264X0g+QwWZG7ap5PrObrvwv90irYqINYyQGaeEtMuzMZMI0VD9I+z44
+         JL1KcChbXwVmCGTT80l04pVwYvdiqa/gzbajxzVU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andres Freund <andres@anarazel.de>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.3 047/105] io_uring: ensure req->submit is copied when req is deferred
-Date:   Wed, 11 Dec 2019 16:05:36 +0100
-Message-Id: <20191211150240.986496848@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 5.3 048/105] SUNRPC: Avoid RPC delays when exiting suspend
+Date:   Wed, 11 Dec 2019 16:05:37 +0100
+Message-Id: <20191211150241.052599321@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
 References: <20191211150221.153659747@linuxfoundation.org>
@@ -43,69 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-There's an issue with deferred requests through drain, where if we do
-need to defer, we're not copying over the sqe_submit state correctly.
-This can result in using uninitialized data when we then later go and
-submit the deferred request, like this check in __io_submit_sqe():
+commit 66eb3add452aa1be65ad536da99fac4b8f620b74 upstream.
 
-         if (unlikely(s->index >= ctx->sq_entries))
-                 return -EINVAL;
+Jon Hunter: "I have been tracking down another suspend/NFS related
+issue where again I am seeing random delays exiting suspend. The delays
+can be up to a couple minutes in the worst case and this is causing a
+suspend test we have to fail."
 
-with 's' being uninitialized, we can randomly fail this check. Fix this
-by copying sqe_submit state when we defer a request.
+Change the use of a deferrable work to a standard delayed one.
 
-Because it was fixed as part of a cleanup series in mainline, before
-anyone realized we had this issue. That removed the separate states
-of ->index vs ->submit.sqe. That series is not something I was
-comfortable putting into stable, hence the much simpler addition.
-Here's the patch in the series that fixes the same issue:
-
-commit cf6fd4bd559ee61a4454b161863c8de6f30f8dca
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Mon Nov 25 23:14:39 2019 +0300
-
-    io_uring: inline struct sqe_submit
-
-Reported-by: Andres Freund <andres@anarazel.de>
-Reported-by: Tomáš Chaloupka
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Fixes: 7e0a0e38fcfea ("SUNRPC: Replace the queue timer with a delayed work function")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/io_uring.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/sunrpc/sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1787,7 +1787,7 @@ static int io_poll_add(struct io_kiocb *
+--- a/net/sunrpc/sched.c
++++ b/net/sunrpc/sched.c
+@@ -260,7 +260,7 @@ static void __rpc_init_priority_wait_que
+ 	rpc_reset_waitqueue_priority(queue);
+ 	queue->qlen = 0;
+ 	queue->timer_list.expires = 0;
+-	INIT_DEFERRABLE_WORK(&queue->timer_list.dwork, __rpc_queue_timer_fn);
++	INIT_DELAYED_WORK(&queue->timer_list.dwork, __rpc_queue_timer_fn);
+ 	INIT_LIST_HEAD(&queue->timer_list.list);
+ 	rpc_assign_waitqueue_name(queue, qname);
  }
- 
- static int io_req_defer(struct io_ring_ctx *ctx, struct io_kiocb *req,
--			const struct io_uring_sqe *sqe)
-+			struct sqe_submit *s)
- {
- 	struct io_uring_sqe *sqe_copy;
- 
-@@ -1805,7 +1805,8 @@ static int io_req_defer(struct io_ring_c
- 		return 0;
- 	}
- 
--	memcpy(sqe_copy, sqe, sizeof(*sqe_copy));
-+	memcpy(&req->submit, s, sizeof(*s));
-+	memcpy(sqe_copy, s->sqe, sizeof(*sqe_copy));
- 	req->submit.sqe = sqe_copy;
- 
- 	INIT_WORK(&req->work, io_sq_wq_submit_work);
-@@ -2114,7 +2115,7 @@ static int io_queue_sqe(struct io_ring_c
- {
- 	int ret;
- 
--	ret = io_req_defer(ctx, req, s->sqe);
-+	ret = io_req_defer(ctx, req, s);
- 	if (ret) {
- 		if (ret != -EIOCBQUEUED) {
- 			io_free_req(req);
 
 
