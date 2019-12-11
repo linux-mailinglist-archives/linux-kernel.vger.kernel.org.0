@@ -2,95 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C8311A668
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:00:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50E5A11A672
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:05:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbfLKJAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 04:00:48 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:39249 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbfLKJAs (ORCPT
+        id S1728369AbfLKJFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 04:05:35 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:29561 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725973AbfLKJFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 04:00:48 -0500
-Received: by mail-il1-f195.google.com with SMTP id n1so4230238ilm.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 01:00:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2+SYstpsmRi699Er2ILUdweEKga8FQwyz0HU6eHs/8I=;
-        b=IwHbmKd13ezqDoJQKy/R4uH/seWKHnooxINFFwbmpezCSMZljv4E3PCroyLKAWIN0f
-         sGEIRZgER84lrSw1/zoEEqb7RtskZH042OKXa1zJ4mu9xZ7rF0dHfh7ZoRiY3M2nWut2
-         YfRLREnbFrp1LzcjUoDZNPmvTEkm+MZMQD2zun/vCuFa+OSWOWy5xsE671nkA3AGhnzE
-         qE2q9UpXoBaLX25CWWGbZc8tp8kVGFtFvDI+bZvgOx5NFhgNytMaCOBf5bxI08Ibzoqb
-         aSmZ0SWiqvfvHczdB4CnqJu/KSXEUYQyaMtxeVxxD4wPtdrlvITbaupnu3ZExEUducyE
-         Y7mw==
+        Wed, 11 Dec 2019 04:05:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576055133;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PenXlg+BC3zbnqNl3XULuIWWyu7R9w15XW00KbpnuWU=;
+        b=UoeO61fdvoqPK+NfieeiO8B2OsRV+JH5SoBKeBXg6eF/pkYTxCmGgLPCnAqAoYeiwXbwIV
+        n+pmx1Tl68JUG2MR2DH19a3qfjaEKkisEfPhRhEvZ50eNtuCdnTWPmJkQetCOvmRkX2rNR
+        d51C5sl3eL9sNz/6w6PIP5UsmaJ6knA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-396-v_vkADSEPJCXfLIlpawvCg-1; Wed, 11 Dec 2019 04:05:32 -0500
+Received: by mail-wm1-f69.google.com with SMTP id t4so876188wmf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 01:05:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2+SYstpsmRi699Er2ILUdweEKga8FQwyz0HU6eHs/8I=;
-        b=qO8jThveD4TK7EoZdDgtBZlMsfiWuzEQEkrtEnY6C6BKSvbImtHGCQQoGM8tPxYgFa
-         jrIfErQJBBB6Al63oXQcHXSIv1MOFNQ0CeD+ovDI2RlVkmAIf3of8Q2rqjWx7tjLMCdE
-         NNLLV7Q26rlTCqpcY4bQM6FknP6FDGQedQ/JmbBKJGd9FjXP2lWS+/0LBjwchhpAkur4
-         8lG1gtpTQrUevAEIdv5DnbKoXRLkyuNt6QW/5Eds3thdpOXzTUS63W3gLAAV8xDWLr2P
-         TNpJV/UYXC/JWKCzwEpS1/F8cVbOGX7rIW00HDmWOYFAqc8NrgmcMFggzEOjzVocJgxa
-         j1Hw==
-X-Gm-Message-State: APjAAAU71JqMUB582ur4y3kso0MWCfzQLJx3n2Dk5jwQuiFYObznXBjQ
-        v4+CIcGbQzDubcG3sv4M5YdztRCn23saQ+mVGunj8A==
-X-Google-Smtp-Source: APXvYqyS8LbG6E9XAOLBdtoQz17koiZIDdSIvdrNjQdPQytPutaWJbkQvz86NlpCKRGX6jndFGkwt+ExRsJ4XqsAthk=
-X-Received: by 2002:a92:49d1:: with SMTP id k78mr2145697ilg.6.1576054846070;
- Wed, 11 Dec 2019 01:00:46 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PenXlg+BC3zbnqNl3XULuIWWyu7R9w15XW00KbpnuWU=;
+        b=F+uVz2VOzTO6JjMJwUCwWtAmUqAmcf62nf2j2b13M6K5d84tcL14vkhb3rDfyXQkm3
+         YzAc8lWToJZcGyP4LF2lW8opIkX2FRXaJhRaqRKyhiVtoe6Aq0YUNGU2YmMgMbFTf6gY
+         pH+YCXytDP27BHVY5uwNVczQosxAI3SWq8CpkesksNiHvvw6AzeKG31ZjpjR4Qc+6IMX
+         PHAs6k2pG0UcRP7l/uRXN8uo+PZuwHSelP0dvaB1Zt4TqlEc+SVgwvYO6XfB5Ibw9usW
+         /o92t98iFVx5aPqo0ysqQwnF2RKIq/lvHZ5biBkccO0bwFs15/fiIsJ326dVyl0VQBIH
+         w1Lw==
+X-Gm-Message-State: APjAAAWqg4l+jvN444GRy6t4/5aJNIE26rMuRItRhCdkjRLhTpgxmugC
+        DqIi14Icw1fEcFBl2/sfBzIpnG1rixJE4WrLof6bsrjvtFeo0kNaFX6TosRlZ2G5cRoiJ54rPTe
+        tKzozFgKy+/LSwO7h48WFyNuF
+X-Received: by 2002:a1c:9e58:: with SMTP id h85mr2336500wme.77.1576055130956;
+        Wed, 11 Dec 2019 01:05:30 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzJswQMpAiJ3AaINMEQKXGXjrGFZxuu0EXkQGiD96eH1Lvt/2POIUge3oCgHe+0Q+Koq339fA==
+X-Received: by 2002:a1c:9e58:: with SMTP id h85mr2336471wme.77.1576055130639;
+        Wed, 11 Dec 2019 01:05:30 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9? ([2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9])
+        by smtp.gmail.com with ESMTPSA id u18sm1479960wrt.26.2019.12.11.01.05.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 01:05:29 -0800 (PST)
+Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
+To:     "Michael S. Tsirkin" <mst@redhat.com>, Peter Xu <peterx@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+References: <20191129213505.18472-1-peterx@redhat.com>
+ <20191129213505.18472-5-peterx@redhat.com>
+ <1355422f-ab62-9dc3-2b48-71a6e221786b@redhat.com>
+ <a3e83e6b-4bfa-3a6b-4b43-5dd451e03254@redhat.com>
+ <20191210081958-mutt-send-email-mst@kernel.org>
+ <8843d1c8-1c87-e789-9930-77e052bf72f9@redhat.com>
+ <20191210160211.GE3352@xz-x1> <20191210164908-mutt-send-email-mst@kernel.org>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <1597a424-9f62-824b-5308-c9622127d658@redhat.com>
+Date:   Wed, 11 Dec 2019 10:05:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <20191211004631.8756-1-warthog618@gmail.com>
-In-Reply-To: <20191211004631.8756-1-warthog618@gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 11 Dec 2019 10:00:35 +0100
-Message-ID: <CAMRc=Mcr668LQVB5yUBdn523UdV4aYUrSYCg1VEokBTTuNxhdA@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: gpio-mockup: Fix usage of new GPIO_LINE_DIRECTION
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bamvor Jian Zhang <bamv2005@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191210164908-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+X-MC-Unique: v_vkADSEPJCXfLIlpawvCg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 11 gru 2019 o 01:46 Kent Gibson <warthog618@gmail.com> napisa=C5=
-=82(a):
->
-> Restore the external behavior of gpio-mockup to what it was prior to the
-> change to using GPIO_LINE_DIRECTION.
->
-> Fixes: e42615ec233b ("gpio: Use new GPIO_LINE_DIRECTION")
-> Signed-off-by: Kent Gibson <warthog618@gmail.com>
-> ---
->
-> Changes v1 -> v2:
->  - add Fixes tag.
->
-> Fix a regression introduced in v5.5-rc1.
->
-> The change to GPIO_LINE_DIRECTION reversed the polarity of the
-> dir field within gpio-mockup.c, but overlooked inverting the value on
-> initialization and when returned by gpio_mockup_get_direction.
-> The latter is a bug.
-> The former is a problem for tests which assume initial conditions,
-> specifically the mockup used to initialize chips with all lines as inputs=
-.
-> That superficially appeared to be the case after the previous patch due
-> to the bug in gpio_mockup_get_direction.
->
->  drivers/gpio/gpio-mockup.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
+On 10/12/19 22:53, Michael S. Tsirkin wrote:
+> On Tue, Dec 10, 2019 at 11:02:11AM -0500, Peter Xu wrote:
+>> On Tue, Dec 10, 2019 at 02:31:54PM +0100, Paolo Bonzini wrote:
+>>> On 10/12/19 14:25, Michael S. Tsirkin wrote:
+>>>>> There is no new infrastructure to track the dirty pages---it's just a
+>>>>> different way to pass them to userspace.
+>>>> Did you guys consider using one of the virtio ring formats?
+>>>> Maybe reusing vhost code?
+>>>
+>>> There are no used/available entries here, it's unidirectional
+>>> (kernel->user).
+>>
+>> Agreed.  Vring could be an overkill IMHO (the whole dirty_ring.c is
+>> 100+ LOC only).
+> 
+> I guess you don't do polling/ event suppression and other tricks that
+> virtio came up with for speed then?
 
-Applied for fixes.
+There are no interrupts either, so no need for event suppression.  You
+have vmexits when the ring gets full (and that needs to be synchronous),
+but apart from that the migration thread will poll the rings once when
+it needs to send more pages.
 
-Thanks!
-Bartosz
+Paolo
+
