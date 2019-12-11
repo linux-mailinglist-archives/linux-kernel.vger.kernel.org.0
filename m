@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D8CF11B7E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:11:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6865111B7F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:11:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730574AbfLKPLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:11:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59768 "EHLO mail.kernel.org"
+        id S1730833AbfLKPKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:10:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730892AbfLKPLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:11:14 -0500
+        id S1730816AbfLKPKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:10:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B074222C4;
-        Wed, 11 Dec 2019 15:11:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8ECF320663;
+        Wed, 11 Dec 2019 15:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077074;
-        bh=+FZXhK99v5zXMtFE3KEO3IcpSqvMG8CoGH2tNdMAtdE=;
+        s=default; t=1576077048;
+        bh=c3vBMZp+lpXGhPTzAWD4guEpdgOH6VJJjvfEyhqNDmI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UvyaojnSJM0AboVEIlHZyJSj66HoRQhi6vuIw3AZKddBDHxwNVJDdCzEG+1VeG7Xj
-         jynziLpZeQzXhJmR3WL54fX/mzusMZQqLGJBMTD0iJezuAR4DPQk44pr5w99+2b7LL
-         kfkJ8Y8h4VzCvyBNbQzfwV+XgFiQbE7CDReqRH04=
+        b=J8uGp8pYXRneQEdzUqEF6IC0amuQsMckTEaC9kzcrR1w2beO3mSzB21IWbebSUwn/
+         EC4ZRu3l5pGA2RHtD4fHKsao5xR8Xl0oPVLG/JJ1UFd8RZBfquhfXXTT5Rq6ViBUYa
+         lyCcSpRRpJ4N/H8U2vz1w6wSTxMvdnjdpGirdh/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Wang <wvw@google.com>,
-        Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH 5.4 87/92] thermal: Fix deadlock in thermal thermal_zone_device_check
-Date:   Wed, 11 Dec 2019 16:06:18 +0100
-Message-Id: <20191211150302.037884152@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 5.4 90/92] binder: Fix race between mmap() and binder_alloc_print_pages()
+Date:   Wed, 11 Dec 2019 16:06:21 +0100
+Message-Id: <20191211150302.985282552@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
 References: <20191211150221.977775294@linuxfoundation.org>
@@ -43,96 +43,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Wang <wvw@google.com>
+From: Jann Horn <jannh@google.com>
 
-commit 163b00cde7cf2206e248789d2780121ad5e6a70b upstream.
+commit 8eb52a1ee37aafd9b796713aa0b3ab9cbc455be3 upstream.
 
-1851799e1d29 ("thermal: Fix use-after-free when unregistering thermal zone
-device") changed cancel_delayed_work to cancel_delayed_work_sync to avoid
-a use-after-free issue. However, cancel_delayed_work_sync could be called
-insides the WQ causing deadlock.
+binder_alloc_print_pages() iterates over
+alloc->pages[0..alloc->buffer_size-1] under alloc->mutex.
+binder_alloc_mmap_handler() writes alloc->pages and alloc->buffer_size
+without holding that lock, and even writes them before the last bailout
+point.
 
-[54109.642398] c0   1162 kworker/u17:1   D    0 11030      2 0x00000000
-[54109.642437] c0   1162 Workqueue: thermal_passive_wq thermal_zone_device_check
-[54109.642447] c0   1162 Call trace:
-[54109.642456] c0   1162  __switch_to+0x138/0x158
-[54109.642467] c0   1162  __schedule+0xba4/0x1434
-[54109.642480] c0   1162  schedule_timeout+0xa0/0xb28
-[54109.642492] c0   1162  wait_for_common+0x138/0x2e8
-[54109.642511] c0   1162  flush_work+0x348/0x40c
-[54109.642522] c0   1162  __cancel_work_timer+0x180/0x218
-[54109.642544] c0   1162  handle_thermal_trip+0x2c4/0x5a4
-[54109.642553] c0   1162  thermal_zone_device_update+0x1b4/0x25c
-[54109.642563] c0   1162  thermal_zone_device_check+0x18/0x24
-[54109.642574] c0   1162  process_one_work+0x3cc/0x69c
-[54109.642583] c0   1162  worker_thread+0x49c/0x7c0
-[54109.642593] c0   1162  kthread+0x17c/0x1b0
-[54109.642602] c0   1162  ret_from_fork+0x10/0x18
-[54109.643051] c0   1162 kworker/u17:2   D    0 16245      2 0x00000000
-[54109.643067] c0   1162 Workqueue: thermal_passive_wq thermal_zone_device_check
-[54109.643077] c0   1162 Call trace:
-[54109.643085] c0   1162  __switch_to+0x138/0x158
-[54109.643095] c0   1162  __schedule+0xba4/0x1434
-[54109.643104] c0   1162  schedule_timeout+0xa0/0xb28
-[54109.643114] c0   1162  wait_for_common+0x138/0x2e8
-[54109.643122] c0   1162  flush_work+0x348/0x40c
-[54109.643131] c0   1162  __cancel_work_timer+0x180/0x218
-[54109.643141] c0   1162  handle_thermal_trip+0x2c4/0x5a4
-[54109.643150] c0   1162  thermal_zone_device_update+0x1b4/0x25c
-[54109.643159] c0   1162  thermal_zone_device_check+0x18/0x24
-[54109.643167] c0   1162  process_one_work+0x3cc/0x69c
-[54109.643177] c0   1162  worker_thread+0x49c/0x7c0
-[54109.643186] c0   1162  kthread+0x17c/0x1b0
-[54109.643195] c0   1162  ret_from_fork+0x10/0x18
-[54109.644500] c0   1162 cat             D    0  7766      1 0x00000001
-[54109.644515] c0   1162 Call trace:
-[54109.644524] c0   1162  __switch_to+0x138/0x158
-[54109.644536] c0   1162  __schedule+0xba4/0x1434
-[54109.644546] c0   1162  schedule_preempt_disabled+0x80/0xb0
-[54109.644555] c0   1162  __mutex_lock+0x3a8/0x7f0
-[54109.644563] c0   1162  __mutex_lock_slowpath+0x14/0x20
-[54109.644575] c0   1162  thermal_zone_get_temp+0x84/0x360
-[54109.644586] c0   1162  temp_show+0x30/0x78
-[54109.644609] c0   1162  dev_attr_show+0x5c/0xf0
-[54109.644628] c0   1162  sysfs_kf_seq_show+0xcc/0x1a4
-[54109.644636] c0   1162  kernfs_seq_show+0x48/0x88
-[54109.644656] c0   1162  seq_read+0x1f4/0x73c
-[54109.644664] c0   1162  kernfs_fop_read+0x84/0x318
-[54109.644683] c0   1162  __vfs_read+0x50/0x1bc
-[54109.644692] c0   1162  vfs_read+0xa4/0x140
-[54109.644701] c0   1162  SyS_read+0xbc/0x144
-[54109.644708] c0   1162  el0_svc_naked+0x34/0x38
-[54109.845800] c0   1162 D 720.000s 1->7766->7766 cat [panic]
+Unfortunately we can't take the alloc->mutex in the ->mmap() handler
+because mmap_sem can be taken while alloc->mutex is held.
+So instead, we have to locklessly check whether the binder_alloc has been
+fully initialized with binder_alloc_get_vma(), like in
+binder_alloc_new_buf_locked().
 
-Fixes: 1851799e1d29 ("thermal: Fix use-after-free when unregistering thermal zone device")
+Fixes: 8ef4665aa129 ("android: binder: Add page usage in binder stats")
 Cc: stable@vger.kernel.org
-Signed-off-by: Wei Wang <wvw@google.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Link: https://lore.kernel.org/r/20191018205631.248274-1-jannh@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thermal/thermal_core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/android/binder_alloc.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -304,7 +304,7 @@ static void thermal_zone_device_set_poll
- 				 &tz->poll_queue,
- 				 msecs_to_jiffies(delay));
- 	else
--		cancel_delayed_work_sync(&tz->poll_queue);
-+		cancel_delayed_work(&tz->poll_queue);
- }
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -841,14 +841,20 @@ void binder_alloc_print_pages(struct seq
+ 	int free = 0;
  
- static void monitor_thermal_zone(struct thermal_zone_device *tz)
-@@ -1414,7 +1414,7 @@ void thermal_zone_device_unregister(stru
- 
- 	mutex_unlock(&thermal_list_lock);
- 
--	thermal_zone_device_set_polling(tz, 0);
-+	cancel_delayed_work_sync(&tz->poll_queue);
- 
- 	thermal_set_governor(tz, NULL);
- 
+ 	mutex_lock(&alloc->mutex);
+-	for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
+-		page = &alloc->pages[i];
+-		if (!page->page_ptr)
+-			free++;
+-		else if (list_empty(&page->lru))
+-			active++;
+-		else
+-			lru++;
++	/*
++	 * Make sure the binder_alloc is fully initialized, otherwise we might
++	 * read inconsistent state.
++	 */
++	if (binder_alloc_get_vma(alloc) != NULL) {
++		for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
++			page = &alloc->pages[i];
++			if (!page->page_ptr)
++				free++;
++			else if (list_empty(&page->lru))
++				active++;
++			else
++				lru++;
++		}
+ 	}
+ 	mutex_unlock(&alloc->mutex);
+ 	seq_printf(m, "  pages: %d:%d:%d\n", active, lru, free);
 
 
