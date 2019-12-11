@@ -2,101 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5AE11BC30
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E23DB11BBD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:37:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbfLKSup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:50:45 -0500
-Received: from mga14.intel.com ([192.55.52.115]:34199 "EHLO mga14.intel.com"
+        id S1729634AbfLKShl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:37:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbfLKSup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:50:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 10:36:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,302,1571727600"; 
-   d="scan'208";a="215864506"
-Received: from tstruk-mobl1.jf.intel.com (HELO [10.7.196.67]) ([10.7.196.67])
-  by orsmga006.jf.intel.com with ESMTP; 11 Dec 2019 10:36:15 -0800
-Subject: Re: [PROBLEM]: WARNING: lock held when returning to user space!
- (5.4.1 #16 Tainted: G )
-To:     Jeffrin Jose <jeffrin@rajagiritech.edu.in>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Will Deacon <will@kernel.org>, peterz@infradead.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca
-References: <20191207173420.GA5280@debian>
- <20191209103432.GC3306@willie-the-truck>
- <20191209202552.GK19243@linux.intel.com>
- <34e5340f-de75-f20e-7898-6142eac45c13@intel.com>
- <20191211151701.GA3643@debian>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Autocrypt: addr=tadeusz.struk@intel.com; keydata=
- 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
-Message-ID: <00804293-7f60-0ac1-fe01-0143eb508a2b@intel.com>
-Date:   Wed, 11 Dec 2019 10:36:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1728128AbfLKShl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 13:37:41 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [199.201.64.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B79420836;
+        Wed, 11 Dec 2019 18:37:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576089460;
+        bh=1gXvBUogE2AAfBihgg+EAwI3LDxBCsXa5+dajF/kmjg=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=hUmBWcOiez6O+QK8DycrGZ2NKd6Z3nHXV/0pJfua9Gta8moied6bv+yOJn7bQ1X6D
+         8fW9F20i/hua59a3OBG/PBntIQRbzkfqyaZejLwlyso3iA4FAq6g7K4AB/NXh4eBk9
+         WaEpX1g0e5s3Mko+AB+T+4cDjVmCzvR5FRAiAIJ0=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id B94B535203C6; Wed, 11 Dec 2019 10:37:38 -0800 (PST)
+Date:   Wed, 11 Dec 2019 10:37:38 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Shane M Seymour <shane.seymour@hpe.com>,
+        Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Roy Luo <royluo@google.com>, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH tip/core/rcu 01/12] rcu: Remove rcu_swap_protected()
+Message-ID: <20191211183738.GA5190@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191210040714.GA2715@paulmck-ThinkPad-P72>
+ <20191210040741.2943-1-paulmck@kernel.org>
+ <yq1a77zmt4a.fsf@oracle.com>
+ <20191211035122.GC2889@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-In-Reply-To: <20191211151701.GA3643@debian>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211035122.GC2889@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/19 7:17 AM, Jeffrin Jose wrote:
-> above patch shows errors when i try to apply it.
-> --------------------x------------------------x------------------
-> error: git diff header lacks filename information when removing 1 leading pathname component (line 2)
-> when i did  related to this "diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c"
-> i get another error
-> error: corrupt patch at line 27
-> ----------------------x------------------------x-----------------
+On Tue, Dec 10, 2019 at 07:51:22PM -0800, Paul E. McKenney wrote:
+> On Tue, Dec 10, 2019 at 10:35:49PM -0500, Martin K. Petersen wrote:
+> > 
+> > Paul,
+> > 
+> > > Now that the calls to rcu_swap_protected() have been replaced by
+> > > rcu_replace_pointer(), this commit removes rcu_swap_protected().
+> > 
+> > It appears there are two callers remaining in Linus' master. Otherwise
+> > looks good to me.
 > 
-> i use "git apply"
+> I did queue a fix for one of them, and thank you for calling my
+> attention to the new one.  This commit should hit -next soon, so
+> hopefully this will discourage further additions.  ;-)
+> 
+> > Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> 
+> Thank you!
 
-Hi,
-This was just a copy and paste that wasn't meant to be applied.
-If you want to try it please use the patch that I sent later:
-https://patchwork.kernel.org/patch/11283317/
+And here is the patch for the new one.
 
-Thanks,
--- 
-Tadeusz
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit 10699d92c906707d679e28b099cd798a519b4f51
+Author: Paul E. McKenney <paulmck@kernel.org>
+Date:   Wed Dec 11 10:30:21 2019 -0800
+
+    wireless/mediatek: Replace rcu_swap_protected() with rcu_replace_pointer()
+    
+    This commit replaces the use of rcu_swap_protected() with the more
+    intuitively appealing rcu_replace_pointer() as a step towards removing
+    rcu_swap_protected().
+    
+    Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+    Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Reported-by: "Martin K. Petersen" <martin.petersen@oracle.com>
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+    Cc: Felix Fietkau <nbd@nbd.name>
+    Cc: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
+    Cc: Ryder Lee <ryder.lee@mediatek.com>
+    Cc: Roy Luo <royluo@google.com>
+    Cc: Kalle Valo <kvalo@codeaurora.org>
+    Cc: "David S. Miller" <davem@davemloft.net>
+    Cc: Matthias Brugger <matthias.bgg@gmail.com>
+    Cc: <linux-wireless@vger.kernel.org>
+    Cc: <netdev@vger.kernel.org>
+    Cc: <linux-arm-kernel@lists.infradead.org>
+    Cc: <linux-mediatek@lists.infradead.org>
+
+diff --git a/drivers/net/wireless/mediatek/mt76/agg-rx.c b/drivers/net/wireless/mediatek/mt76/agg-rx.c
+index 53b5a4b..80986ce 100644
+--- a/drivers/net/wireless/mediatek/mt76/agg-rx.c
++++ b/drivers/net/wireless/mediatek/mt76/agg-rx.c
+@@ -281,8 +281,8 @@ void mt76_rx_aggr_stop(struct mt76_dev *dev, struct mt76_wcid *wcid, u8 tidno)
+ {
+ 	struct mt76_rx_tid *tid = NULL;
+ 
+-	rcu_swap_protected(wcid->aggr[tidno], tid,
+-			   lockdep_is_held(&dev->mutex));
++	tid = rcu_swap_protected(wcid->aggr[tidno], tid,
++				 lockdep_is_held(&dev->mutex));
+ 	if (tid) {
+ 		mt76_rx_aggr_shutdown(dev, tid);
+ 		kfree_rcu(tid, rcu_head);
