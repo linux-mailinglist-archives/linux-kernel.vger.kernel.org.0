@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0402811B82D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:13:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 334FE11B72C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbfLKPIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:08:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56122 "EHLO mail.kernel.org"
+        id S2388900AbfLKQGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:06:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730390AbfLKPIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:08:30 -0500
+        id S1731216AbfLKPMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:12:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE9052173E;
-        Wed, 11 Dec 2019 15:08:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FC422465B;
+        Wed, 11 Dec 2019 15:12:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076910;
-        bh=qReXZGxJuGdgUXSaVN4MZEA7GugGgsymGRN9k2R1I+0=;
+        s=default; t=1576077163;
+        bh=ugpmlOyr7TaG72VcGP0lAPfC8pVHr4pczswXTIfCbl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GIdoloNltExgtXqjf6IhoH6lh11vdntcBMwWJ82EvEONPmso7UCniAVGqP6aFMZYB
-         IQ1iuX+69pd6fphHFKX1JPWFcOCNtwgiX5SRuAax72GWaT+Q2L/2MgPnl90sHF7Zdx
-         PFhjUely0D2qjM8JT1uJeWlknBtN0016PehOO4x8=
+        b=vc0EfWpcv/rtU3Z2GkxywbTXa5uLhZPbzeuYy9ys16/JewZL8kiaqedhwP2SGc/23
+         daN1YtdwSAjk9NRsrhHfw5ZbDB3NdWtl9s8y6Yt5T7U/uhKIxtg5ocftJxmSxGk+w7
+         KcswZOmhsqoH7Z1eEuyt8uN/JN17xb9ZxyWtTZFI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH 5.4 36/92] soc: mediatek: cmdq: fixup wrong input order of write api
-Date:   Wed, 11 Dec 2019 16:05:27 +0100
-Message-Id: <20191211150238.148582799@linuxfoundation.org>
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 039/105] net: hns3: reallocate SSU buffer size when pfc_en changes
+Date:   Wed, 11 Dec 2019 16:05:28 +0100
+Message-Id: <20191211150236.251208894@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
+References: <20191211150221.153659747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bibby Hsieh <bibby.hsieh@mediatek.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-commit 47b6b604b2bf396e110e7c2e074fef459bf07b4f upstream.
+[ Upstream commit aea8cfb35a82d6c2f3517c86694933ba766635e5 ]
 
-Fixup a issue was caused by the previous fixup patch.
+When a TC's PFC is disabled or enabled, the RX private buffer for
+this TC need to be changed too, otherwise this may cause packet
+dropped problem.
 
-Fixes: 1a92f989126e ("soc: mediatek: cmdq: reorder the parameter")
+This patch fixes it by calling hclge_buffer_alloc to reallocate
+buffer when pfc_en changes.
 
-Link: https://lore.kernel.org/r/20191127165428.19662-1-matthias.bgg@gmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: cacde272dd00 ("net: hns3: Add hclge_dcb module for the support of DCB feature")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/mediatek/mtk-cmdq-helper.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c  | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
---- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-+++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -155,7 +155,7 @@ int cmdq_pkt_write_mask(struct cmdq_pkt
- 		err = cmdq_pkt_append_command(pkt, CMDQ_CODE_MASK, 0, ~mask);
- 		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
- 	}
--	err |= cmdq_pkt_write(pkt, value, subsys, offset_mask);
-+	err |= cmdq_pkt_write(pkt, subsys, offset_mask, value);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+index bac4ce13f6ae4..d9136a199d8db 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+@@ -302,6 +302,7 @@ static int hclge_ieee_setpfc(struct hnae3_handle *h, struct ieee_pfc *pfc)
+ 	struct hclge_vport *vport = hclge_get_vport(h);
+ 	struct hclge_dev *hdev = vport->back;
+ 	u8 i, j, pfc_map, *prio_tc;
++	int ret;
  
- 	return err;
+ 	if (!(hdev->dcbx_cap & DCB_CAP_DCBX_VER_IEEE) ||
+ 	    hdev->flag & HCLGE_FLAG_MQPRIO_ENABLE)
+@@ -327,7 +328,21 @@ static int hclge_ieee_setpfc(struct hnae3_handle *h, struct ieee_pfc *pfc)
+ 
+ 	hclge_tm_pfc_info_update(hdev);
+ 
+-	return hclge_pause_setup_hw(hdev, false);
++	ret = hclge_pause_setup_hw(hdev, false);
++	if (ret)
++		return ret;
++
++	ret = hclge_notify_client(hdev, HNAE3_DOWN_CLIENT);
++	if (ret)
++		return ret;
++
++	ret = hclge_buffer_alloc(hdev);
++	if (ret) {
++		hclge_notify_client(hdev, HNAE3_UP_CLIENT);
++		return ret;
++	}
++
++	return hclge_notify_client(hdev, HNAE3_UP_CLIENT);
  }
+ 
+ /* DCBX configuration */
+-- 
+2.20.1
+
 
 
