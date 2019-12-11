@@ -2,109 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26ED211A69D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:17:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48CFD11A687
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:13:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbfLKJR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 04:17:27 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:27866 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726983AbfLKJR1 (ORCPT
+        id S1728383AbfLKJNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 04:13:41 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39616 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbfLKJNk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 04:17:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576055845;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3D9+DxR55aT8isgzR0NmN2S4cLz7LDrDrCDjDym5Lmw=;
-        b=OB/cDp9m4cjXt+InrzQ4ZrU5gpDdMS7TaQf0gEyfX+tAX2A9gBFe/hSoU6t35nZiFaV5qO
-        SxzfUfJ17LdXEAW9i5ZY6Gg9nB8mdvYodhqnkfmBfalsxaODDSv85WMt3tBDnPU0sjfFMK
-        klVqJK4hp0oD9OlZDqMYd97XQGZ6Mps=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-417-dGKTayoOOp-hfTQ39DxaHA-1; Wed, 11 Dec 2019 04:17:24 -0500
-Received: by mail-wm1-f71.google.com with SMTP id p2so2146973wma.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 01:17:24 -0800 (PST)
+        Wed, 11 Dec 2019 04:13:40 -0500
+Received: by mail-pl1-f193.google.com with SMTP id o9so1179369plk.6
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 01:13:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sslab.ics.keio.ac.jp; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=5nDWGTJv3DbBm5FdVeD/qbyjSVi8fiYI1J1aTvInS6M=;
+        b=baXc8w8nzDdnAn1X5x3/tXmyNv/eBgdY9U47+D3NnLnuzBUvfe0uu/R4Q5z/pTisYu
+         p/7Ens/ifRT8KyRkVf4smSl4zjYLfvP0CWknhY/f6fj/T4g0lw+NRp+L+/FSPfyLftIE
+         KqcxDaWi5RLesdO8w53supuouTtW354DyTAHM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3D9+DxR55aT8isgzR0NmN2S4cLz7LDrDrCDjDym5Lmw=;
-        b=mf8ykhIGOUR4g7RrGHr9hIA8xeRP54WCseuDeg9toWen96Wam3uR7Npb8mH996hJT+
-         ZNOS1y0esnYnrut+LponbYDyjDNeZweYrO4AVgng57CgL3WAiun11Bu2/4tlp8gkD1b0
-         /eiNzF1H4P5Pcjem09nkkJ6DrMQxGyr5aBwb6MIwyE/CJ7wV0guFixDrk69xqK60eus5
-         c+pdIKjxqqeQwXQkiqtJSG7NYsyGVT0S2UmqKhOtscdP0F218DQ6KQ0n6J8tvRAavswh
-         b4OFxTsUJDDtUIsKPuDKcFBAA187Gol5UvMZnYz+Tf8a8TKqR6CxpFM1mgmg/LfAI8EM
-         Tc/Q==
-X-Gm-Message-State: APjAAAVtM+TDrua8yBv1m3MqHkTRk0HvZChRPPjuI+oCnRrT/xyxqRGK
-        QFpfCi6g2bklQTDyNjgpi/qxx70ct/8t7GCDS26vZZ1JuU2z+5KhE9K+PGD49fS3uL+aWUHpfnl
-        t2qHS7pN4H1HBc3ptB66DqbLY
-X-Received: by 2002:a7b:c936:: with SMTP id h22mr2260258wml.115.1576055843218;
-        Wed, 11 Dec 2019 01:17:23 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyDgCob433Db0I04qpsUB8UPAdNFpNw1LiUtYCYQae7vpJwK2lrbtOi8uXyJ8INBI/BCX2BpQ==
-X-Received: by 2002:a7b:c936:: with SMTP id h22mr2232931wml.115.1576055524198;
-        Wed, 11 Dec 2019 01:12:04 -0800 (PST)
-Received: from t460s.bristot.redhat.com (host100-201-dynamic.10-87-r.retail.telecomitalia.it. [87.10.201.100])
-        by smtp.gmail.com with ESMTPSA id 25sm809486wmi.32.2019.12.11.01.12.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 01:12:03 -0800 (PST)
-Subject: Re: [PATCH -tip 1/2] x86/alternative: Sync bp_patching update for
- avoiding NULL pointer exception
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org,
-        alexei.starovoitov@gmail.com
-References: <157483420094.25881.9190014521050510942.stgit@devnote2>
- <157483421229.25881.15314414408559963162.stgit@devnote2>
- <20191209143940.GI2810@hirez.programming.kicks-ass.net>
- <20191211014401.2f0c27f259a83d1f32aa6f2e@kernel.org>
- <20191210173209.GP2844@hirez.programming.kicks-ass.net>
- <20191211000943.GG2871@hirez.programming.kicks-ass.net>
- <20191211170919.54f6546d294f8a45c0a176c7@kernel.org>
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-Message-ID: <19e2a826-d62e-a4f5-8059-b4d9c11a8ca6@redhat.com>
-Date:   Wed, 11 Dec 2019 10:12:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20191211170919.54f6546d294f8a45c0a176c7@kernel.org>
-Content-Language: en-US
-X-MC-Unique: dGKTayoOOp-hfTQ39DxaHA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5nDWGTJv3DbBm5FdVeD/qbyjSVi8fiYI1J1aTvInS6M=;
+        b=TXwzooFmHgM3zvtigMCaGkLSt0nS3JRWYYkB5g4+YfG4UV0rFuD+MnQovuxFd4MsS9
+         TI/ReQZHXT+iRORO2hl6az6e4SvSTvGg7tQvpIeyuHeHmCR9ytT7KL8wf/FTa9qduJvN
+         6diukl/j8Uv4R4SVGjKiOGxxoOZGRo5KzXwyarXJ/LN4dxtpnkdGpwAHy58fsjmkDWV7
+         mDq2NlFe6DdV+3OSSZkIqJpiNiqgEaIyBiP4jLE9kZYaUNQEjBCHG8jsxki2LDOyNMVk
+         YjdHgm+Q+7QHeNnVxRe1L9cNTdPzWPZULedHN7UIJZLuzq1EZ16s/2I3umRtv1pJhtiQ
+         8JBg==
+X-Gm-Message-State: APjAAAVXOXDAqrgyWjel1y3RKXidIZM0y0BK6GICm2dmqMlhRVRagRTS
+        1x3zy1Ap0AMEw/32bl0qJdzvyA==
+X-Google-Smtp-Source: APXvYqyQaxhd16NIqEa4d2RbhVoJqAmzk0TvXPSGmOAsDzosGYrVXsAEPjtlDNgDcJWED+R9ZtqD8w==
+X-Received: by 2002:a17:90a:fb45:: with SMTP id iq5mr2318402pjb.93.1576055619868;
+        Wed, 11 Dec 2019 01:13:39 -0800 (PST)
+Received: from brooklyn.i.sslab.ics.keio.ac.jp (sslab-relay.ics.keio.ac.jp. [131.113.126.173])
+        by smtp.googlemail.com with ESMTPSA id r20sm2047161pgu.89.2019.12.11.01.13.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2019 01:13:39 -0800 (PST)
+From:   Keita Suzuki <keitasuzuki.park@sslab.ics.keio.ac.jp>
+Cc:     keitasuzuki.park@sslab.ics.keio.ac.jp,
+        takafumi.kubota1012@sslab.ics.keio.ac.jp,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] tracing: Avoid memory leak in process_system_preds()
+Date:   Wed, 11 Dec 2019 09:12:58 +0000
+Message-Id: <20191211091258.11310-1-keitasuzuki.park@sslab.ics.keio.ac.jp>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/2019 09:09, Masami Hiramatsu wrote:
-> Hi Peter,
-> 
-> On Wed, 11 Dec 2019 01:09:43 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
->> On Tue, Dec 10, 2019 at 06:32:09PM +0100, Peter Zijlstra wrote:
->>
->>> I feel that is actually more complicated...  Let me try to see if I can
->>> simplify things.
->> How is this then?
-> This looks perfectly good to me :)
-> 
-> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+When failing in the allocation of filter_item, process_system_preds()
+goes to fail_mem, where the allocated filter is freed.
 
-Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+However, this leads to memory leak of filter->filter_string and
+filter->prog, which is allocated before and in process_preds().
+This bug has been detected by kmemleak as well.
 
-too!
+Fix this by changing kfree to __free_fiter.
 
-Thanks!
--- Daniel
+unreferenced object 0xffff8880658007c0 (size 32):
+  comm "bash", pid 579, jiffies 4295096372 (age 17.752s)
+  hex dump (first 32 bytes):
+    63 6f 6d 6d 6f 6e 5f 70 69 64 20 20 3e 20 31 30  common_pid  > 10
+    00 00 00 00 00 00 00 00 65 73 00 00 00 00 00 00  ........es......
+  backtrace:
+    [<0000000067441602>] kstrdup+0x2d/0x60
+    [<00000000141cf7b7>] apply_subsystem_event_filter+0x378/0x932
+    [<000000009ca32334>] subsystem_filter_write+0x5a/0x90
+    [<0000000072da2bee>] vfs_write+0xe1/0x240
+    [<000000004f14f473>] ksys_write+0xb4/0x150
+    [<00000000a968b4a0>] do_syscall_64+0x6d/0x1e0
+    [<000000001a189f40>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+unreferenced object 0xffff888060c22d00 (size 64):
+  comm "bash", pid 579, jiffies 4295096372 (age 17.752s)
+  hex dump (first 32 bytes):
+    01 00 00 00 00 00 00 00 00 e8 d7 41 80 88 ff ff  ...........A....
+    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000b8c1b109>] process_preds+0x243/0x1820
+    [<000000003972c7f0>] apply_subsystem_event_filter+0x3be/0x932
+    [<000000009ca32334>] subsystem_filter_write+0x5a/0x90
+    [<0000000072da2bee>] vfs_write+0xe1/0x240
+    [<000000004f14f473>] ksys_write+0xb4/0x150
+    [<00000000a968b4a0>] do_syscall_64+0x6d/0x1e0
+    [<000000001a189f40>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+unreferenced object 0xffff888041d7e800 (size 512):
+  comm "bash", pid 579, jiffies 4295096372 (age 17.752s)
+  hex dump (first 32 bytes):
+    70 bc 85 97 ff ff ff ff 0a 00 00 00 00 00 00 00  p...............
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000001e04af34>] process_preds+0x71a/0x1820
+    [<000000003972c7f0>] apply_subsystem_event_filter+0x3be/0x932
+    [<000000009ca32334>] subsystem_filter_write+0x5a/0x90
+    [<0000000072da2bee>] vfs_write+0xe1/0x240
+    [<000000004f14f473>] ksys_write+0xb4/0x150
+    [<00000000a968b4a0>] do_syscall_64+0x6d/0x1e0
+    [<000000001a189f40>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Signed-off-by: Keita Suzuki <keitasuzuki.park@sslab.ics.keio.ac.jp>
+---
+ kernel/trace/trace_events_filter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index c9a74f82b14a..bf44f6bbd0c3 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1662,7 +1662,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
+ 	parse_error(pe, FILT_ERR_BAD_SUBSYS_FILTER, 0);
+ 	return -EINVAL;
+  fail_mem:
+-	kfree(filter);
++	__free_filter(filter);
+ 	/* If any call succeeded, we still need to sync */
+ 	if (!fail)
+ 		tracepoint_synchronize_unregister();
+-- 
+2.17.1
 
