@@ -2,123 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3469E11BB83
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:17:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9F0C11BB85
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:18:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731319AbfLKSRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:17:39 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38251 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbfLKSRi (ORCPT
+        id S1731260AbfLKSSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:18:02 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37345 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729877AbfLKSSB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:17:38 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p17so8045656wmi.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 10:17:37 -0800 (PST)
+        Wed, 11 Dec 2019 13:18:01 -0500
+Received: by mail-io1-f67.google.com with SMTP id k24so23662064ioc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 10:18:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gdbdOJGDr6s2TB3vkGkLojy6hKiZ0+eS72V/GX35qQM=;
-        b=g44yxhTp8JdnuxE9OcIrpnMwYX/4KkBpg/3xgew18mzg4Xaqb7jyrdjlRCxZRniDTM
-         i8C0/tzDKBo7wRNB/6DaNihgzh2GJ0IFWEJHOTseCRdDOwFl/UEb9aznheriv/ZzzhH8
-         0EPPEOZmsFEbFt5ZeiRyUmi7eaOj4GSrbaVNgqaipJp4WfJ4RBOSSWVBs1Uy2SS0bi4h
-         KpgGZYQCUQdXw3gb2TvgFU027R8KuKh40IeQbYrhfbU50FstnGdaUC2zaTa/mSMdbR15
-         QKWEB3uvbYV2YeUEKO6GHbtov+vhkhmA2Nwfi5sgH3JRjarkHI1DZt0+GaWb/IBdrM0T
-         AKwA==
+         :cc;
+        bh=aSC20v3ZZ7Kn1pHo0qwS4Ke00bNlSDQ6xPcCLk1Bks8=;
+        b=DLg1Ex1x9EZ6ClCxY4Pwm79pVYYhk7uoSmXnuv6VTILCuD4AWEfjlu1UuKiQYKA4ud
+         XANl0JGCsKGJ6OX+2oYHjuAEGAX91bwsI4j+e68HRuGH1F9ZiAte76EvvwgmSa4uv3oj
+         PpWXe8CXxhgAJNw8dlv9IyFxA0uN4pZ20pVks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gdbdOJGDr6s2TB3vkGkLojy6hKiZ0+eS72V/GX35qQM=;
-        b=BQ2asSWVZDFDjFct4tjZz/FHLxbaF21jdChv2BEov9qstlO9QaJaMlA8mmbPuodp5p
-         KCEJredJJ1eQz4iKeao0o0jZ82qztDXb1iwu/wLdl0isJCEHU9yBHiG/BXASPw/vnfFL
-         6tzJDcFa5jUsVqTB/W2qPJscDgHXrpN2cDPj085i4fWv8zJBLM40VPlumT65i6SyJwSK
-         Jb4V5NwTBQbkoa2scIH2ds0vyXEdoTC1p504VVLX5WWj1CB2Kg5ygGLR25IjJm15U0cK
-         xMBLM9KEccBvVnHTqCINWNNt4mTkqMHm5REBLFmG5rjaSHiIrSdvVpObas8zVCN4VG7B
-         e6BQ==
-X-Gm-Message-State: APjAAAUjmyFrYyEVNOOqmP5ZALjvPdIahn5c7em77sAkXk3RoZsB8/fC
-        jip1yxzeiq0maB2Gw5hdxHagO+VavB4UvbRUfE2O2A==
-X-Google-Smtp-Source: APXvYqziD3eVTLC2Yu/hIEeHVWWceML2RIHpK3CmqYNaiptFEscdd0Np5Zqo+EY0L9JVk59rH8xnwSL0WzgLNv2sMmc=
-X-Received: by 2002:a1c:2083:: with SMTP id g125mr1260281wmg.89.1576088256672;
- Wed, 11 Dec 2019 10:17:36 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=aSC20v3ZZ7Kn1pHo0qwS4Ke00bNlSDQ6xPcCLk1Bks8=;
+        b=aQcYi+DSWh489E/V2ONk2bbjzJc6rf0+0ON36aetr3dT0BGf1Br3Qn2a76pHrvFDR3
+         UuUUQuZXHkG8MX+fM6Orf5zY8o+U86OWyZebnEisDasyeGSRcuCLZ2Xmn4KTNpRox0Hh
+         ylLV6FRVWApFk9iJDnjVd/onNQuSPpXhGCByqLM0SMM9NsIIeCe2sQKDXW1kAArXxUph
+         nTZ37Gv/5wZQlUdNipbIACVbA6wv97Eb0rNI3G5qPsyB8mVJKPWdtUL361CD1+Jb5azN
+         BYRZkONeluIMqgb0vEEYFz0lR5e8HU3jNTPvFuQyE3RDbwPGj6K6wMQ5Xb0qSL5MT4no
+         usWQ==
+X-Gm-Message-State: APjAAAWoYjasnV7HPLj7lJfOSa98fSA/xYu+FykSQFWicoOEE3hqEJNo
+        a4CQNrr3arvbAKI1MI0SCXlfag18/2w=
+X-Google-Smtp-Source: APXvYqxe7Fzn/vUFHa5IC74ZCOhYfecH8Pky0wAFIm0d+zOFuom7j7jlaTmJR0fZ1LcrWTUhdubZYw==
+X-Received: by 2002:a6b:fc01:: with SMTP id r1mr3509171ioh.33.1576088280967;
+        Wed, 11 Dec 2019 10:18:00 -0800 (PST)
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com. [209.85.166.171])
+        by smtp.gmail.com with ESMTPSA id v17sm927097ilh.12.2019.12.11.10.18.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 10:18:00 -0800 (PST)
+Received: by mail-il1-f171.google.com with SMTP id z12so20268809iln.11
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 10:18:00 -0800 (PST)
+X-Received: by 2002:a92:1547:: with SMTP id v68mr4237963ilk.58.1576088279911;
+ Wed, 11 Dec 2019 10:17:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20191211170632.GD14821@zn.tnic> <BC48F4AD-8330-4ED6-8BE8-254C835506A5@amacapital.net>
- <20191211172945.GE14821@zn.tnic>
-In-Reply-To: <20191211172945.GE14821@zn.tnic>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Wed, 11 Dec 2019 10:17:25 -0800
-Message-ID: <CALCETrXuJMBawUy3DTQfE4qLb822d9491er9-hd971BtBsPFNw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/4] x86/traps: Print address on #GP
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
+References: <0101016ef3cdac32-1353f7d8-b973-4881-86ec-589d50849765-000000@us-west-2.amazonses.com>
+In-Reply-To: <0101016ef3cdac32-1353f7d8-b973-4881-86ec-589d50849765-000000@us-west-2.amazonses.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 11 Dec 2019 10:17:48 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=V+yM5bfHPpkwC1-DUmq4fbDCKiN-+JzVQH2VWjQJ=wYg@mail.gmail.com>
+Message-ID: <CAD=FV=V+yM5bfHPpkwC1-DUmq4fbDCKiN-+JzVQH2VWjQJ=wYg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: sc7180: Remove additional spi chip select muxes
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
+        Stephen Boyd <swboyd@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 9:29 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Wed, Dec 11, 2019 at 09:22:30AM -0800, Andy Lutomirski wrote:
-> > Could we spare a few extra bytes to make this more readable?  I can nev=
-er keep track of which number is the oops count, which is the cpu, and whic=
-h is the error code.  How about:
-> >
-> > OOPS 1: general protection blah blah blah (CPU 0)
-> >
-> > and put in the next couple lines =E2=80=9C#GP(0)=E2=80=9D.
->
-> Well, right now it is:
->
-> [    2.470492] general protection fault, probably for non-canonical addre=
-ss 0xdfff000000000001: 0000 [#1] PREEMPT SMP
-> [    2.471615] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc1+ #6
->
-> and the CPU is on the second line, the error code is before the number -
-> [#1] - in that case.
->
-> If we pull the number in front, we can do:
->
-> [    2.470492] [#1] general protection fault, probably for non-canonical =
-address 0xdfff000000000001: 0000 PREEMPT SMP
-> [    2.471615] [#1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc1+ =
-#6
->
-> and this way you know that the error code is there, after the first
-> line's description.
+Hi,
 
-Hmm, I like that.
-
+On Tue, Dec 10, 2019 at 11:12 PM Rajendra Nayak <rnayak@codeaurora.org> wrote:
 >
-> I guess we can do:
+> remove the additional CS muxes that were added by default for
+> spi so every board using sc7180 does not have to override it.
 >
-> [    2.470492] [#1] general protection fault, probably for non-canonical =
-address 0xdfff000000000001 Error Code: 0000 PREEMPT SMP
->
-> to make it even more explicit...
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 
-I like this too.
+In theory we could add some extra pinmux configs that boards could
+reference if they want to use those chip selects (as long as we keep
+them out of the "default"), but it's also fine to wait until someone
+has an actual need for it.
 
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> https://people.kernel.org/tglx/notes-about-netiquette
-
-
-
---=20
-Andy Lutomirski
-AMA Capital Management, LLC
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
