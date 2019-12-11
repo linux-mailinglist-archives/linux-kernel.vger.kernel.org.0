@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8123E11AED5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FB0F11B072
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:22:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730397AbfLKPIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:08:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55978 "EHLO mail.kernel.org"
+        id S1732646AbfLKPWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:22:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730359AbfLKPIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:08:25 -0500
+        id S1732630AbfLKPWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:22:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8AAE2173E;
-        Wed, 11 Dec 2019 15:08:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C64EA2073D;
+        Wed, 11 Dec 2019 15:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076905;
-        bh=mgQz3hISDSTI/qa7VNP2JguPcWL435cEwUX2fjxYZQg=;
+        s=default; t=1576077768;
+        bh=sBp0YHgt70jpnj3jI0N7+0m0ZK2YV5St8lYmC2G7qZE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H7GKCYzZDu3CSLSArQqM1TjM3XEa0t1uIMPQN9uflpk83p2YUSbJSmCo+geywq30g
-         BwiROUnvM6DKHYZaiItIMnf8BDxNBp3C4xWOPUE/n9wkGpjtxKoj3dGgmjbmdvlb2o
-         HbiAIuccYFSTQInfkJSgijWUnCo+3J8eoorM/48k=
+        b=JaL1puFx465wH96rLpkoFRK1HxTOKafX4J9KaqNRB2Tb5C/nm1j8R0O3sJpLGnFmp
+         bb6wCJJehNLq4wTWfpbAs4HeIHA+iOnFz+OaB0bRJvF1dh3l7FVB/Sn7gb5LQESLnn
+         A3nWsAFLTMTO79DoZIZ4oUAtEiJzYVMGrW6WNXNI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.4 34/92] ALSA: hda - Add mute led support for HP ProBook 645 G4
-Date:   Wed, 11 Dec 2019 16:05:25 +0100
-Message-Id: <20191211150237.642090137@linuxfoundation.org>
+        stable@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 164/243] clk: qcom: Fix MSM8998 resets
+Date:   Wed, 11 Dec 2019 16:05:26 +0100
+Message-Id: <20191211150350.236425961@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Jeffrey Hugo <jhugo@codeaurora.org>
 
-commit e190de6941db14813032af87873f5550ad5764fe upstream.
+[ Upstream commit 4f89f7b59a6ea17e81cff212c18a0b580ff5ff27 ]
 
-Mic mute led does not work on HP ProBook 645 G4.
-We can use CXT_FIXUP_MUTE_LED_GPIO fixup to support it.
+The offsets for the defined BCR reset registers does not match the hardware
+documentation.  Update the values to match the hardware documentation.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191120082035.18937-1-kai.heng.feng@canonical.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: b5f5f525c547 (clk: qcom: Add MSM8998 Global Clock Control (GCC) driver)
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/qcom/gcc-msm8998.c | 38 +++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -910,6 +910,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x837f, "HP ProBook 470 G5", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
-+	SND_PCI_QUIRK(0x103c, 0x8402, "HP ProBook 645 G4", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x8456, "HP Z2 G4 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x8457, "HP Z2 G4 mini", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index cd937ce6aaaf6..5fd6662a1beac 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -2743,25 +2743,25 @@ static struct gdsc *gcc_msm8998_gdscs[] = {
+ };
+ 
+ static const struct qcom_reset_map gcc_msm8998_resets[] = {
+-	[GCC_BLSP1_QUP1_BCR] = { 0x102400 },
+-	[GCC_BLSP1_QUP2_BCR] = { 0x110592 },
+-	[GCC_BLSP1_QUP3_BCR] = { 0x118784 },
+-	[GCC_BLSP1_QUP4_BCR] = { 0x126976 },
+-	[GCC_BLSP1_QUP5_BCR] = { 0x135168 },
+-	[GCC_BLSP1_QUP6_BCR] = { 0x143360 },
+-	[GCC_BLSP2_QUP1_BCR] = { 0x155648 },
+-	[GCC_BLSP2_QUP2_BCR] = { 0x163840 },
+-	[GCC_BLSP2_QUP3_BCR] = { 0x172032 },
+-	[GCC_BLSP2_QUP4_BCR] = { 0x180224 },
+-	[GCC_BLSP2_QUP5_BCR] = { 0x188416 },
+-	[GCC_BLSP2_QUP6_BCR] = { 0x196608 },
+-	[GCC_PCIE_0_BCR] = { 0x438272 },
+-	[GCC_PDM_BCR] = { 0x208896 },
+-	[GCC_SDCC2_BCR] = { 0x81920 },
+-	[GCC_SDCC4_BCR] = { 0x90112 },
+-	[GCC_TSIF_BCR] = { 0x221184 },
+-	[GCC_UFS_BCR] = { 0x479232 },
+-	[GCC_USB_30_BCR] = { 0x61440 },
++	[GCC_BLSP1_QUP1_BCR] = { 0x19000 },
++	[GCC_BLSP1_QUP2_BCR] = { 0x1b000 },
++	[GCC_BLSP1_QUP3_BCR] = { 0x1d000 },
++	[GCC_BLSP1_QUP4_BCR] = { 0x1f000 },
++	[GCC_BLSP1_QUP5_BCR] = { 0x21000 },
++	[GCC_BLSP1_QUP6_BCR] = { 0x23000 },
++	[GCC_BLSP2_QUP1_BCR] = { 0x26000 },
++	[GCC_BLSP2_QUP2_BCR] = { 0x28000 },
++	[GCC_BLSP2_QUP3_BCR] = { 0x2a000 },
++	[GCC_BLSP2_QUP4_BCR] = { 0x2c000 },
++	[GCC_BLSP2_QUP5_BCR] = { 0x2e000 },
++	[GCC_BLSP2_QUP6_BCR] = { 0x30000 },
++	[GCC_PCIE_0_BCR] = { 0x6b000 },
++	[GCC_PDM_BCR] = { 0x33000 },
++	[GCC_SDCC2_BCR] = { 0x14000 },
++	[GCC_SDCC4_BCR] = { 0x16000 },
++	[GCC_TSIF_BCR] = { 0x36000 },
++	[GCC_UFS_BCR] = { 0x75000 },
++	[GCC_USB_30_BCR] = { 0xf000 },
+ };
+ 
+ static const struct regmap_config gcc_msm8998_regmap_config = {
+-- 
+2.20.1
+
 
 
