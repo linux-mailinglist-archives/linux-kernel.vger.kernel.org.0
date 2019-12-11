@@ -2,81 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B78E711AE6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C9211AE71
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:55:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729428AbfLKOyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 09:54:15 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:41921 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727554AbfLKOyO (ORCPT
+        id S1729600AbfLKOy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 09:54:57 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55851 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728370AbfLKOyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 09:54:14 -0500
+        Wed, 11 Dec 2019 09:54:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576076053;
+        s=mimecast20190719; t=1576076093;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ZTML3ZY4XajEGIMXTQF+X7InEuyoASYWfqymLI5iBaw=;
-        b=ZLZifJk6o0dit61gUTp1Hd+hqFUEa+RcY3jSwIO2/DSSQeGS7gA4zCnJHwowBwGqpWHv8d
-        xIYITfJW146nrfh/7eTAirsP2fzV1gDUacn1QLyZa/zu5jJNSf4ebXmZGC4OlYuv1XwWP9
-        izJw1VhYi2MnQWqkGCB2GRUySGhEvnY=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-220-DVoJXowfP86mApff4D3yew-1; Wed, 11 Dec 2019 09:54:12 -0500
-Received: by mail-qt1-f197.google.com with SMTP id b24so4558289qtp.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 06:54:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=62xWb0cf1MCXJ37uAv39v37rLn99Ssaq3pAFUpU9gao=;
-        b=EJd2epFKWiBv116zyFEP3xv/wwcGDKQy6WkEXs7yzCqvKaCChX+v+1gjx1Wi+Unh5Z
-         4FIKGTD8qEaMKAKoOenenKMz6DmWAtvCGtQelqGm+iIDcenX+2Dkzy+yYzzHKGWDbwZM
-         QqUq93YeRTaTEXBjKBV+EDtFdYMWMZ2GhMujuhov4oa97VGwid2ffv4n2NXPl++ye1NU
-         QSHbBIVcQ65uY9mW5p96CAFXboX9tnvuc9sFurABT93UiWWOKqxKYoUrx+flO5gGyxMk
-         ooWXGMWtR4per2AJBfhWwadBaPJGfWtzOiNiUhvaWiqpt7P8JsdohC6arwkv4mFrCEfc
-         ok2A==
-X-Gm-Message-State: APjAAAU4Cqvis6YIDZEL4YBI5SXY7QopEUlGZiXZaglCuBBbPlBJ8emC
-        LkLhDXwMJnj3pD+iug68y7cMEalya9z36UsX6+97DaDlVN3AM70XOG36TmJ5yk/0ebM4RETVX7a
-        NmArUcgaXjZ9bu1Tk5ruXhuoc
-X-Received: by 2002:a0c:d4aa:: with SMTP id u39mr3348809qvh.76.1576076052100;
-        Wed, 11 Dec 2019 06:54:12 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy6Z1czXLZJjBLnmWHepFgS8gviQBQkXR+INEflNGPDvrBHCj0nHMpXc8tT4MJlNfYGagK0Vw==
-X-Received: by 2002:a0c:d4aa:: with SMTP id u39mr3348791qvh.76.1576076051828;
-        Wed, 11 Dec 2019 06:54:11 -0800 (PST)
-Received: from xz-x1 ([2607:9880:19c0:3f::2])
-        by smtp.gmail.com with ESMTPSA id g16sm727342qkk.61.2019.12.11.06.54.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 06:54:11 -0800 (PST)
-Date:   Wed, 11 Dec 2019 09:54:04 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-Message-ID: <20191211145404.GC48697@xz-x1>
-References: <20191129213505.18472-1-peterx@redhat.com>
- <20191129213505.18472-5-peterx@redhat.com>
- <1355422f-ab62-9dc3-2b48-71a6e221786b@redhat.com>
- <a3e83e6b-4bfa-3a6b-4b43-5dd451e03254@redhat.com>
- <20191210081958-mutt-send-email-mst@kernel.org>
- <8843d1c8-1c87-e789-9930-77e052bf72f9@redhat.com>
- <20191210160211.GE3352@xz-x1>
- <20191210164908-mutt-send-email-mst@kernel.org>
- <1597a424-9f62-824b-5308-c9622127d658@redhat.com>
- <20191211075413-mutt-send-email-mst@kernel.org>
+        bh=VKMysQNz3mfKWf0j//V+OPBl+nUoNAG3+S9K2zyK5z4=;
+        b=KcIjVlltcgtpFgsro8cb+R2pDO3jmQYrakUWQcimarq/69arw0LA98Mpuf7oTY0t85vEWP
+        GVWekbVjCtXrlyUlOd+fg8AW4WbAJ0hFwxIClhxDi3iBS16jWq79PCjANcsyNwRq+Jq1oX
+        1GPFf2RQOA29r3D4f1VAGpU7XFpDw3c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-45-SbcqDtOEMA2V9my8zz4x5A-1; Wed, 11 Dec 2019 09:54:46 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C88DE100A172;
+        Wed, 11 Dec 2019 14:54:44 +0000 (UTC)
+Received: from krava (unknown [10.43.17.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 85A7560BE0;
+        Wed, 11 Dec 2019 14:54:42 +0000 (UTC)
+Date:   Wed, 11 Dec 2019 15:54:40 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     John Garry <john.garry@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, mark.rutland@arm.com,
+        will@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Linuxarm <linuxarm@huawei.com>, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCHES] Fix 'perf top' breakage on architectures not providing
+ get_cpuid() Re: perf top for arm64?
+Message-ID: <20191211145440.GD25474@krava>
+References: <1573045254-39833-1-git-send-email-john.garry@huawei.com>
+ <20191106140036.GA6259@kernel.org>
+ <418023e7-a50d-cb6f-989f-2e6d114ce5d8@huawei.com>
+ <20191210163655.GG14123@krava>
+ <952dc484-2739-ee65-f41c-f0198850ab10@huawei.com>
+ <20191210170841.GA23357@krava>
+ <9a31536b-f266-e305-1107-2f745d0a33e3@huawei.com>
+ <20191210195113.GD13965@kernel.org>
+ <20191211133319.GA15181@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20191211075413-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-MC-Unique: DVoJXowfP86mApff4D3yew-1
+In-Reply-To: <20191211133319.GA15181@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: SbcqDtOEMA2V9my8zz4x5A-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,39 +69,189 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 08:04:36AM -0500, Michael S. Tsirkin wrote:
-> On Wed, Dec 11, 2019 at 10:05:28AM +0100, Paolo Bonzini wrote:
-> > On 10/12/19 22:53, Michael S. Tsirkin wrote:
-> > > On Tue, Dec 10, 2019 at 11:02:11AM -0500, Peter Xu wrote:
-> > >> On Tue, Dec 10, 2019 at 02:31:54PM +0100, Paolo Bonzini wrote:
-> > >>> On 10/12/19 14:25, Michael S. Tsirkin wrote:
-> > >>>>> There is no new infrastructure to track the dirty pages---it's ju=
-st a
-> > >>>>> different way to pass them to userspace.
-> > >>>> Did you guys consider using one of the virtio ring formats?
-> > >>>> Maybe reusing vhost code?
-> > >>>
-> > >>> There are no used/available entries here, it's unidirectional
-> > >>> (kernel->user).
-> > >>
-> > >> Agreed.  Vring could be an overkill IMHO (the whole dirty_ring.c is
-> > >> 100+ LOC only).
-> > >=20
-> > > I guess you don't do polling/ event suppression and other tricks that
-> > > virtio came up with for speed then?
+On Wed, Dec 11, 2019 at 10:33:19AM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Dec 10, 2019 at 04:51:13PM -0300, Arnaldo Carvalho de Melo escrev=
+eu:
+> > Em Tue, Dec 10, 2019 at 05:17:56PM +0000, John Garry escreveu:
+> > > On 10/12/2019 17:08, Jiri Olsa wrote:
+> > > > On Tue, Dec 10, 2019 at 04:52:52PM +0000, John Garry wrote:
+> > > > > On 10/12/2019 16:36, Jiri Olsa wrote:
+> > > > > > On Tue, Dec 10, 2019 at 04:13:49PM +0000, John Garry wrote:
+> > > > > > > I find to my surprise that "perf top" does not work for arm64=
+:
 >=20
-> I looked at the code finally, there's actually available, and fetched is
-> exactly like used. Not saying existing code is a great fit for you as
-> you have an extra slot parameter to pass and it's reversed as compared
-> to vhost, with kernel being the driver and userspace the device (even
-> though vringh might fit, yet needs to be updated to support packed rings
-> though).  But sticking to an existing format is a good idea IMHO,
-> or if not I think it's not a bad idea to add some justification.
+> > > > > > > root@ubuntu:/home/john/linux# tools/perf/perf top
+> > > > > > > Couldn't read the cpuid for this machine: No such file or dir=
+ectory
+>=20
+> > > > > > there was recent change that check on cpuid and quits:
+> > > > > >     608127f73779 perf top: Initialize perf_env->cpuid, needed b=
+y the per arch annotation init routine
+>=20
+> > > > > ok, this is new code. I obviously didn't check the git history...
+>=20
+> > > > > But, apart from this, there are many other places where get_cpuid=
+() is
+> > > > > called. I wonder what else we're missing out on, and whether we s=
+hould still
+> > > > > add it.
+>=20
+> > > > right, I was just wondering how come vendor events are working for =
+you,
+> > > > but realized we have get_cpuid_str being called in there ;-)
+>=20
+> > > > I think we should add it as you have it prepared already,
+> > > > could you post it with bigger changelog that would explain
+> > > > where it's being used for arm?
+>=20
+> > > ok, I can look to do that.
+>=20
+> > > But, as you know, we still need to fix perf top for other architectur=
+es
+> > > affected.
+>=20
+> > Right, I need to make that just a pr_debug() message and then check in
+> > the annotation code when that is needed to see if it is set, if not,
+> > then show a popup error message and refuse to do whatever annotation
+> > feature requires that.
+>=20
+> > Anyway, your patch should make sense and provide info that the ARM64
+> > annotation may use now or in the future.
+>=20
+> So can you take a look at the two patches below and provide me Acked-by
+> and/or Reviewed-by and/or Tested-by?
 
-Right, I'll add a small paragraph in the next cover letter to justify.
+looks good to me, but don't have arm server at the moment..
 
-Thanks,
+Acked-by: Jiri Olsa <jolsa@redhat.com>
 
---=20
-Peter Xu
+thanks,
+jirka
+
+>=20
+>=20
+> From 53c6cde6a71a1a9283763bd2e938b229b50c2cd5 Mon Sep 17 00:00:00 2001
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date: Wed, 11 Dec 2019 10:09:24 -0300
+> Subject: [PATCH 1/2] perf arch: Make the default get_cpuid() return compa=
+tible
+>  error
+>=20
+> Some of the functions calling get_cpuid() propagate back the error it
+> returns, and all are using errno (positive) values, make the weak
+> default get_cpuid() function return ENOSYS to be consistent and to allow
+> checking if this is an arch not providing this function or if a provided
+> one is having trouble getting the cpuid, to decide if the warning should
+> be provided to the user or just a debug message should be emitted.
+>=20
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: John Garry <john.garry@huawei.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Link: https://lkml.kernel.org/n/tip-lxwjr0cd2eggzx04a780ffrv@git.kernel.o=
+rg
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/util/header.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> index becc2d109423..4d39a75551a0 100644
+> --- a/tools/perf/util/header.c
+> +++ b/tools/perf/util/header.c
+> @@ -850,7 +850,7 @@ int __weak strcmp_cpuid_str(const char *mapcpuid, con=
+st char *cpuid)
+>   */
+>  int __weak get_cpuid(char *buffer __maybe_unused, size_t sz __maybe_unus=
+ed)
+>  {
+> -=09return -1;
+> +=09return ENOSYS; /* Not implemented */
+>  }
+> =20
+>  static int write_cpuid(struct feat_fd *ff,
+> --=20
+> 2.21.0
+>=20
+> From c6c6a3e2eb6982e37294abcac389effd298cf730 Mon Sep 17 00:00:00 2001
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date: Wed, 11 Dec 2019 10:21:59 -0300
+> Subject: [PATCH 2/2] perf top: Do not bail out when perf_env__read_cpuid(=
+)
+>  returns ENOSYS
+>=20
+> 'perf top' stopped working on hw architectures that do not provide a
+> get_cpuid() implementation and thus fallback to the weak get_cpuid()
+> default function.
+>=20
+> This is done because at annotation time we may need it in the arch
+> specific annotation init routine, but that is only being used by arches
+> that do provide a get_cpuid() implementation:
+>=20
+>   $ find tools/  -name "*.[ch]" | xargs grep 'evlist->env'
+>   tools/perf/builtin-top.c:=09top.evlist->env =3D &perf_env;
+>   tools/perf/util/evsel.c:=09=09return evsel->evlist->env;
+>   tools/perf/util/s390-cpumsf.c:=09sf->machine_type =3D s390_cpumsf_get_t=
+ype(session->evlist->env->cpuid);
+>   tools/perf/util/header.c:=09session->evlist->env =3D &header->env;
+>   tools/perf/util/sample-raw.c:=09const char *arch_pf =3D perf_env__arch(=
+evlist->env);
+>   $
+>=20
+>   $ find tools/perf/arch  -name "*.[ch]" | xargs grep -w get_cpuid
+>   tools/perf/arch/x86/util/auxtrace.c:=09ret =3D get_cpuid(buffer, sizeof=
+(buffer));
+>   tools/perf/arch/x86/util/header.c:get_cpuid(char *buffer, size_t sz)
+>   tools/perf/arch/powerpc/util/header.c:get_cpuid(char *buffer, size_t sz=
+)
+>   tools/perf/arch/s390/util/header.c: * Implementation of get_cpuid().
+>   tools/perf/arch/s390/util/header.c:int get_cpuid(char *buffer, size_t s=
+z)
+>   tools/perf/arch/s390/util/header.c:=09if (buf && get_cpuid(buf, 128))
+>   $
+>=20
+> For 'report' or 'script', i.e. tools working on perf.data files, that is
+> setup while reading the header, its just top that needs to explicitely
+> read it at tool start.
+>=20
+> Reported-by: John Garry <john.garry@huawei.com>
+> Analysed-by: Jiri Olsa <jolsa@kernel.org>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Link: https://lkml.kernel.org/n/tip-lxwjr0cd2eggzx04a780ffrv@git.kernel.o=
+rg
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/builtin-top.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+> index dc80044bc46f..795e353de095 100644
+> --- a/tools/perf/builtin-top.c
+> +++ b/tools/perf/builtin-top.c
+> @@ -1568,9 +1568,13 @@ int cmd_top(int argc, const char **argv)
+>  =09 */
+>  =09status =3D perf_env__read_cpuid(&perf_env);
+>  =09if (status) {
+> -=09=09pr_err("Couldn't read the cpuid for this machine: %s\n",
+> -=09=09       str_error_r(errno, errbuf, sizeof(errbuf)));
+> -=09=09goto out_delete_evlist;
+> +=09=09/*
+> +=09=09 * Some arches do not provide a get_cpuid(), so just use pr_debug,=
+ otherwise
+> +=09=09 * warn the user explicitely.
+> +=09=09 */
+> +=09=09eprintf(status =3D=3D ENOSYS ? 1 : 0, verbose,
+> +=09=09=09"Couldn't read the cpuid for this machine: %s\n",
+> +=09=09=09str_error_r(errno, errbuf, sizeof(errbuf)));
+>  =09}
+>  =09top.evlist->env =3D &perf_env;
+> =20
+> --=20
+> 2.21.0
+>=20
 
