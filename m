@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F369A11B507
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4328611B4E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:51:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388673AbfLKPvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:51:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53582 "EHLO mail.kernel.org"
+        id S1732243AbfLKPXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:23:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730942AbfLKPWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:22:46 -0500
+        id S1732311AbfLKPW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:22:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DF5F2073D;
-        Wed, 11 Dec 2019 15:22:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D8BA2073D;
+        Wed, 11 Dec 2019 15:22:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077765;
-        bh=CcZhakCIMboJHRq885kXaqNWw2YlSndi/14wUaMrV5A=;
+        s=default; t=1576077776;
+        bh=pfK74v3YmtA8H49th10aE3QUou3ru2WOeyG21yIhRK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y8QJ+amryeCrO8dSNWIFieZMB7RhR9LQucvOZrz5qoDqpOGsCNim9iBy2GhOe0+FH
-         Y3fHkN1wWbwgSL1YMdC5nhngJcaQJwL910LkA4/DG7P2DhLNxdcpfVFhKkYqPqyB0o
-         5hDf0I8I6ejVHrrINJHRpYEvod9GMVAp7Qg1XsTQ=
+        b=1N245TRkyTHPinFymACc36oM4Gni2waSXu+OSVAu5jOdrVIFGuJ0Rg7wh4Cn6cjr/
+         IB9H72GoMZT5b7GC+L+/hi8s6SPiyuBH9rcoD9vLFjeBJDnOdhU2ciK7TCfoHHoAC0
+         tRRVwgzQXwBEqcrJLYNSDHcg7nU78QOCCJiM0k6g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 163/243] clk: sunxi-ng: h3/h5: Fix CSI_MCLK parent
-Date:   Wed, 11 Dec 2019 16:05:25 +0100
-Message-Id: <20191211150350.166033020@linuxfoundation.org>
+        stable@vger.kernel.org, David Teigland <teigland@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 167/243] dlm: fix invalid cluster name warning
+Date:   Wed, 11 Dec 2019 16:05:29 +0100
+Message-Id: <20191211150350.457147152@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -43,34 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: David Teigland <teigland@redhat.com>
 
-[ Upstream commit 7bb7d29cffdd24bf419516d14b6768591e74069e ]
+[ Upstream commit 3595c559326d0b660bb088a88e22e0ca630a0e35 ]
 
-The third parent of CSI_MCLK is PLL_PERIPH1, not PLL_PERIPH0.
-Fix it.
+The warning added in commit 3b0e761ba83
+  "dlm: print log message when cluster name is not set"
 
-Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+did not account for the fact that lockspaces created
+from userland do not supply a cluster name, so bogus
+warnings are printed every time a userland lockspace
+is created.
+
+Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/dlm/user.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 77ed0b0ba6819..61e3ba12773ea 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -475,7 +475,7 @@ static const char * const csi_sclk_parents[] = { "pll-periph0", "pll-periph1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(csi_sclk_clk, "csi-sclk", csi_sclk_parents,
- 				 0x134, 16, 4, 24, 3, BIT(31), 0);
+diff --git a/fs/dlm/user.c b/fs/dlm/user.c
+index 13f29409600bb..3c84c62dadb7b 100644
+--- a/fs/dlm/user.c
++++ b/fs/dlm/user.c
+@@ -25,6 +25,7 @@
+ #include "lvb_table.h"
+ #include "user.h"
+ #include "ast.h"
++#include "config.h"
  
--static const char * const csi_mclk_parents[] = { "osc24M", "pll-video", "pll-periph0" };
-+static const char * const csi_mclk_parents[] = { "osc24M", "pll-video", "pll-periph1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(csi_mclk_clk, "csi-mclk", csi_mclk_parents,
- 				 0x134, 0, 5, 8, 3, BIT(15), 0);
+ static const char name_prefix[] = "dlm";
+ static const struct file_operations device_fops;
+@@ -404,7 +405,7 @@ static int device_create_lockspace(struct dlm_lspace_params *params)
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
  
+-	error = dlm_new_lockspace(params->name, NULL, params->flags,
++	error = dlm_new_lockspace(params->name, dlm_config.ci_cluster_name, params->flags,
+ 				  DLM_USER_LVB_LEN, NULL, NULL, NULL,
+ 				  &lockspace);
+ 	if (error)
 -- 
 2.20.1
 
