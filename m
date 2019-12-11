@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2010D11B599
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:54:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E259411B5A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731968AbfLKPRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:17:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44306 "EHLO mail.kernel.org"
+        id S1731890AbfLKPQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:16:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731790AbfLKPRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:17:00 -0500
+        id S1731878AbfLKPQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:16:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2BD720663;
-        Wed, 11 Dec 2019 15:16:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3961E24658;
+        Wed, 11 Dec 2019 15:16:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077420;
-        bh=pQakcmBqFDRLENctK9bfXEUWLJiw418Ya1RuBaWljTQ=;
+        s=default; t=1576077378;
+        bh=xcdkye4lRun+480vOvUlfnWMlKXPKn42zOyCFXCoA4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dPfBQtc5C5gW9FUpZS7Dhe9+/DCn/3dsO/pk5Vv8VdtYcFwGxYMM6yO4syIBJ1fco
-         HDIwwaEgltlOBVhOc/efmJsM36NraZuWNNYgtPhtplNEEyHked7RVf+6jefe56rhs9
-         CXI/+NUHpVJNQY1KuVTXrTK8Z1WSY69b/7dlklso=
+        b=pQtnC6gWT34Z2kO21vINO/K507BiYVkv0Lg2q2AtRcK0odSlRbicQ02v+akRssdi0
+         AN12tBfoDrgFTFDZ9W+1sqt6ZZPSwECLCrMYjxEKhXg7f/1VYDAsWk8FGU6msVuaBm
+         Gem4iS0B/0fKaIwQM5xUSr1NJ76o0loTU7rzpx7w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: [PATCH 4.19 008/243] serial: pl011: Fix DMA ->flush_buffer()
-Date:   Wed, 11 Dec 2019 16:02:50 +0100
-Message-Id: <20191211150339.685757300@linuxfoundation.org>
+        stable@vger.kernel.org, Xiaodong Xu <stid.smth@gmail.com>,
+        Bo Chen <chenborfc@163.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 017/243] xfrm: release device reference for invalid state
+Date:   Wed, 11 Dec 2019 16:02:59 +0100
+Message-Id: <20191211150340.183928044@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -43,73 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+From: Xiaodong Xu <stid.smth@gmail.com>
 
-commit f6a196477184b99a31d16366a8e826558aa11f6d upstream.
+[ Upstream commit 4944a4b1077f74d89073624bd286219d2fcbfce3 ]
 
-PL011's ->flush_buffer() implementation releases and reacquires the port
-lock.  Due to a race condition here, data can end up being added to the
-circular buffer but neither being discarded nor being sent out.  This
-leads to, for example, tcdrain(2) waiting indefinitely.
+An ESP packet could be decrypted in async mode if the input handler for
+this packet returns -EINPROGRESS in xfrm_input(). At this moment the device
+reference in skb is held. Later xfrm_input() will be invoked again to
+resume the processing.
+If the transform state is still valid it would continue to release the
+device reference and there won't be a problem; however if the transform
+state is not valid when async resumption happens, the packet will be
+dropped while the device reference is still being held.
+When the device is deleted for some reason and the reference to this
+device is not properly released, the kernel will keep logging like:
 
-Process A                       Process B
+unregister_netdevice: waiting for ppp2 to become free. Usage count = 1
 
-uart_flush_buffer()
- - acquire lock
- - circ_clear
- - pl011_flush_buffer()
- -- release lock
- -- dmaengine_terminate_all()
+The issue is observed when running IPsec traffic over a PPPoE device based
+on a bridge interface. By terminating the PPPoE connection on the server
+end for multiple times, the PPPoE device on the client side will eventually
+get stuck on the above warning message.
 
-                                uart_write()
-                                - acquire lock
-                                - add chars to circ buffer
-                                - start_tx()
-                                -- start DMA
-                                - release lock
+This patch will check the async mode first and continue to release device
+reference in async resumption, before it is dropped due to invalid state.
 
- -- acquire lock
- -- turn off DMA
- -- release lock
+v2: Do not assign address family from outer_mode in the transform if the
+state is invalid
 
-                                // Data in circ buffer but DMA is off
+v3: Release device reference in the error path instead of jumping to resume
 
-According to the comment in the code, the releasing of the lock around
-dmaengine_terminate_all() is to avoid a deadlock with the DMA engine
-callback.  However, since the time this code was written, the DMA engine
-API documentation seems to have been clarified to say that
-dmaengine_terminate_all() (in the identically implemented but
-differently named dmaengine_terminate_async() variant) does not wait for
-any running complete callback to be completed and can even be called
-from a complete callback.  So there is no possibility of deadlock if the
-DMA engine driver implements this API correctly.
-
-So we should be able to just remove this release and reacquire of the
-lock to prevent the aforementioned race condition.
-
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191118092547.32135-1-vincent.whitchurch@axis.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 4ce3dbe397d7b ("xfrm: Fix xfrm_input() to verify state is valid when (encap_type < 0)")
+Signed-off-by: Xiaodong Xu <stid.smth@gmail.com>
+Reported-by: Bo Chen <chenborfc@163.com>
+Tested-by: Bo Chen <chenborfc@163.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/amba-pl011.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ net/xfrm/xfrm_input.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -813,10 +813,8 @@ __acquires(&uap->port.lock)
- 	if (!uap->using_tx_dma)
- 		return;
- 
--	/* Avoid deadlock with the DMA engine callback */
--	spin_unlock(&uap->port.lock);
--	dmaengine_terminate_all(uap->dmatx.chan);
--	spin_lock(&uap->port.lock);
-+	dmaengine_terminate_async(uap->dmatx.chan);
+diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
+index d5635908587f4..82b0a99ee1f43 100644
+--- a/net/xfrm/xfrm_input.c
++++ b/net/xfrm/xfrm_input.c
+@@ -246,6 +246,9 @@ int xfrm_input(struct sk_buff *skb, int nexthdr, __be32 spi, int encap_type)
+ 			else
+ 				XFRM_INC_STATS(net,
+ 					       LINUX_MIB_XFRMINSTATEINVALID);
 +
- 	if (uap->dmatx.queued) {
- 		dma_unmap_sg(uap->dmatx.chan->device->dev, &uap->dmatx.sg, 1,
- 			     DMA_TO_DEVICE);
++			if (encap_type == -1)
++				dev_put(skb->dev);
+ 			goto drop;
+ 		}
+ 
+-- 
+2.20.1
+
 
 
