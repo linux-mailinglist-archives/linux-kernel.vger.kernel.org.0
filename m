@@ -2,54 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68D6911A2EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 04:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D09F11A2F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 04:21:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbfLKDSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 22:18:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54964 "EHLO mail.kernel.org"
+        id S1727230AbfLKDVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 22:21:04 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:49031 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727059AbfLKDSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 22:18:12 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1726687AbfLKDVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 22:21:04 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76DC020836;
-        Wed, 11 Dec 2019 03:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576034291;
-        bh=kLxDvysWfIkrsHjdaUyETI6sk4hgGH41h30oWXgMtZY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Aoe/Pi0EhdH/Wd6om7KZ13rv4vRlkKEO4OPEDvYo3wsTTbbbaOR0q/M7A1UeQXAak
-         doHbNeuvVNZJ/y8l7yGpGQNUgYT9CjUXSSN2+ZrH/LrwOW1DwPzQUGdUNepHNg/Duk
-         rJTQiSoLw84yO5iwLm95dcyd77t6uCDkzcj5xsTs=
-Date:   Wed, 11 Dec 2019 11:18:03 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] arm64: dts: lx2160a: add EMDIO1 and phy nodes
-Message-ID: <20191211031802.GH15858@dragon>
-References: <20191204165828.29893-1-ioana.ciornei@nxp.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Xhz15Fchz9sR7;
+        Wed, 11 Dec 2019 14:21:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1576034461;
+        bh=lltzgu2HV7j5rxYl5lhex07J61NitzEC2ZoE4pCHpIg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HmRTRhxcZ9grRCSEYT2/9DRrMDDdddr0z1TdOQtRwQOw9zmNu9Ix9dhNSthsEKFnu
+         Anvpom5GkRcAEwQoNDc4dPEULUz5QwX0LkqAm02kHtUUZzR8MSJM1Amf2YonnDImrt
+         /uk6uNIHEaaHltb0+Bbm1gVT1+xxE6HNZHc/6ypjvf+LYa2LM0pHesTDwAWG9SO+FL
+         8jzKlZAn0book0XDxuEFc7x2/UOtqWxXxqqwi9LopBId7sOxFKLE3cab3tWUgnPipv
+         Qzg+hWK5bC4XiMPrpJyDbKO3pTOpbrMoyE/WfzZjiZtDnir0F5ajXeZ4+qPoZt2Crz
+         AH2gio3AJgdfg==
+Date:   Wed, 11 Dec 2019 14:21:00 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the cpufreq-arm
+ tree
+Message-ID: <20191211142100.423ef8b0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204165828.29893-1-ioana.ciornei@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; boundary="Sig_/YJZo=hBYa+PDgd8yq.d8AT0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 06:58:26PM +0200, Ioana Ciornei wrote:
-> This patch set adds the External MDIO1 node and the two
-> RGMII PHYs connected to it.
-> 
-> Changes in v2:
->  - added a newline between nodes in 2/2
->  - moved the WRIOP node (sorted by unit address) in 1/2
-> 
-> Ioana Ciornei (2):
->   arm64: dts: lx2160a: add emdio1 node
->   arm64: dts: lx2160a: add RGMII phy nodes
+--Sig_/YJZo=hBYa+PDgd8yq.d8AT0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied both, thanks.
+Hi all,
+
+Commit
+
+  dfb3f45d17b6 ("cpufreq: scmi: Match scmi device by both name and protocol=
+ id")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YJZo=hBYa+PDgd8yq.d8AT0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3wYJwACgkQAVBC80lX
+0GyUAwf/VIgHycApPnRen02Fqa5tcvRjO4MwWBJn5AWUEM01CHmt/u38yLFT5r5U
+HV/zAvol5YYgskpBh63MSpzIrlqdJkQ19hKlsmvqWiaCBzN08YLht7fuy9QBf2gU
+HPu5aLY+06XI22pJas5EF9nI8c7BDrsvdaOsafCT+zZ1kyxflAetJcdU2nmKjlw9
+pqPsB3IeJ/dBJDhSGgdrH93uNmMN8NGGDZJqmhWxqHiiSwCMz0XFzmUwJhL8EdIw
+QNeNiCKPxZfTNUonsJjgIAY2dkmQpEzTVQ8FWU/iUYbXdwuNTrfind2OeW8jopp3
+Kar68MufKyNMdmia0EsEfj3Xu1usnw==
+=1Fr0
+-----END PGP SIGNATURE-----
+
+--Sig_/YJZo=hBYa+PDgd8yq.d8AT0--
