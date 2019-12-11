@@ -2,73 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A458111A909
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 11:38:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C2711A8F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 11:33:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbfLKKiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 05:38:46 -0500
-Received: from smtp21.cstnet.cn ([159.226.251.21]:40482 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727496AbfLKKip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 05:38:45 -0500
-X-Greylist: delayed 419 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Dec 2019 05:38:43 EST
-Received: from localhost.localdomain (unknown [159.226.5.100])
-        by APP-01 (Coremail) with SMTP id qwCowACnrrp+xfBdniUxAw--.217S3;
-        Wed, 11 Dec 2019 18:31:27 +0800 (CST)
-From:   Xu Wang <vulab@iscas.ac.cn>
-To:     peppe.cavallaro@st.com
-Cc:     alexandre.torgue@st.com, joabreu@synopsys.com, davem@davemloft.net,
-        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] stmmac: platform: Remove unnecessary conditions
-Date:   Wed, 11 Dec 2019 10:31:24 +0000
-Message-Id: <1576060284-12371-1-git-send-email-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: qwCowACnrrp+xfBdniUxAw--.217S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7GFyrAFWDCw1UWF4DZr45Awb_yoWDAwcE93
-        W29FnxGF1UJF90kw47Kr43ur92vFyDuF1rJF1DXFW3A34kXas8JFZ8uryUA3WxC342vF9r
-        Gwn3KF17A3sxGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbw8YjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4
-        A2jsIEc7CjxVAFwI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I
-        3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxV
-        WUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAF
-        wI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcI
-        k0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
-        Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07je1v3UUUUU=
-X-Originating-IP: [159.226.5.100]
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBAoBA102SyGETgAAsH
+        id S1728900AbfLKKdL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Dec 2019 05:33:11 -0500
+Received: from mga11.intel.com ([192.55.52.93]:10005 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728857AbfLKKdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 05:33:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 02:33:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="220421591"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Dec 2019 02:33:10 -0800
+Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 11 Dec 2019 02:33:10 -0800
+Received: from shsmsx107.ccr.corp.intel.com (10.239.4.96) by
+ FMSMSX113.amr.corp.intel.com (10.18.116.7) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 11 Dec 2019 02:33:10 -0800
+Received: from shsmsx108.ccr.corp.intel.com ([169.254.8.46]) by
+ SHSMSX107.ccr.corp.intel.com ([169.254.9.164]) with mapi id 14.03.0439.000;
+ Wed, 11 Dec 2019 18:33:08 +0800
+From:   "Zhang, Rui" <rui.zhang@intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: RE: [PATCH] cpuidle: Drop unnecessary type cast in
+ cpuidle_poll_time()
+Thread-Topic: [PATCH] cpuidle: Drop unnecessary type cast in
+ cpuidle_poll_time()
+Thread-Index: AQHVsA4SzXyZ814bMUGo9YuVyvCTvKe0vHWA
+Date:   Wed, 11 Dec 2019 10:33:07 +0000
+Message-ID: <744357E9AAD1214791ACBA4B0B90926377677DF1@SHSMSX108.ccr.corp.intel.com>
+References: <9680649.eAqxiQ8Vpk@kreacher>
+In-Reply-To: <9680649.eAqxiQ8Vpk@kreacher>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWM0MmMxZjItMGMyNS00MzQxLWIwZmYtNWIwMmMzZTFiOTVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiV3ZjVUF2M25mQVpiUW1BYXpya3lRZGRQZDhLZXU2NGRZbnpRMU9GXC9RSDZGM2RPa1hUZVBSSE12RDlENTlMTmwifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove conditions where if and else branch are identical.
-This issue is detected by coccinelle.
 
-Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 2 --
- 1 file changed, 2 deletions(-)
+> -----Original Message-----
+> From: linux-pm-owner@vger.kernel.org [mailto:linux-pm-
+> owner@vger.kernel.org] On Behalf Of Rafael J. Wysocki
+> Sent: Wednesday, December 11, 2019 6:31 PM
+> To: Linux PM <linux-pm@vger.kernel.org>
+> Cc: LKML <linux-kernel@vger.kernel.org>; Daniel Lezcano
+> <daniel.lezcano@linaro.org>
+> Subject: [PATCH] cpuidle: Drop unnecessary type cast in cpuidle_poll_time()
+> 
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> The data type of the target_residency_ns field in struct cpuidle_state is u64,
+> so it does not need to be cast into u64.
+> 
+> Get read of the unnecessary type cast.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index bedaff0..1d26691 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -229,8 +229,6 @@ static int stmmac_mtl_setup(struct platform_device *pdev,
- 		plat->tx_sched_algorithm = MTL_TX_ALGORITHM_WFQ;
- 	else if (of_property_read_bool(tx_node, "snps,tx-sched-dwrr"))
- 		plat->tx_sched_algorithm = MTL_TX_ALGORITHM_DWRR;
--	else if (of_property_read_bool(tx_node, "snps,tx-sched-sp"))
--		plat->tx_sched_algorithm = MTL_TX_ALGORITHM_SP;
- 	else
- 		plat->tx_sched_algorithm = MTL_TX_ALGORITHM_SP;
- 
--- 
-2.7.4
+s/read/rid
+
+thanks,
+rui
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> On top of the linux-next branch of linux-pm.git from today.
+> 
+> ---
+>  drivers/cpuidle/cpuidle.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Index: linux-pm/drivers/cpuidle/cpuidle.c
+> ==============================================================
+> =====
+> --- linux-pm.orig/drivers/cpuidle/cpuidle.c
+> +++ linux-pm/drivers/cpuidle/cpuidle.c
+> @@ -381,7 +381,7 @@ u64 cpuidle_poll_time(struct cpuidle_dri
+>  		if (dev->states_usage[i].disable)
+>  			continue;
+> 
+> -		limit_ns = (u64)drv->states[i].target_residency_ns;
+> +		limit_ns = drv->states[i].target_residency_ns;
+>  		break;
+>  	}
+> 
+> 
+> 
 
