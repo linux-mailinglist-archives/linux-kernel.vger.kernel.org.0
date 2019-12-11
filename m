@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 203D911AFD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C76E911AFD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:16:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731649AbfLKPQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:16:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43836 "EHLO mail.kernel.org"
+        id S1731485AbfLKPQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:16:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731919AbfLKPQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:16:37 -0500
+        id S1731934AbfLKPQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:16:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31A622465B;
-        Wed, 11 Dec 2019 15:16:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 970BD22B48;
+        Wed, 11 Dec 2019 15:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077396;
-        bh=sujIkRHrGw4eY/KTasIs6iMCrU8CKRJ35rDad+eWp1U=;
+        s=default; t=1576077404;
+        bh=Qcp/95hKgiUmF3weNB1n/j5vx2wAk9FNB3Kh8AoxmL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=up//WdcJkiTIsnKL+OABL6l822FIeCm7C8dVl5P7+/Op4MP74yZXPKHDAJ1i01ExY
-         2lIjtFh0LsG2kN7f3viKG9zzr/m0Hr/fgCBTa0ZzgYZwIk/qgxWr5jqDd7bn4TFsL3
-         N3GlE/AKP/SWwLoQ9v0qPGb0NY7LtZ7rsC/tW0Dw=
+        b=LP147eR3y9T02X6RWk5yfiaQn8VY0HoXfr4e7ygu9YLzyN97ysZZ8VQAV8xz8z9Mg
+         gzPzaNwx632Qiu2jsGgioKMhRXv3+mqX+sxIRLCDflDy2n/qbIarHHoqPvghcXq49X
+         2a3+mX4NUdsBrzk47diq+lzm/iiIDktu8nFK2Huo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 023/243] selftests: kvm: fix build with glibc >= 2.30
-Date:   Wed, 11 Dec 2019 16:03:05 +0100
-Message-Id: <20191211150340.502096048@linuxfoundation.org>
+Subject: [PATCH 4.19 026/243] i2c: core: fix use after free in of_i2c_notify
+Date:   Wed, 11 Dec 2019 16:03:08 +0100
+Message-Id: <20191211150340.658900581@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,51 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Wen Yang <wenyang@linux.alibaba.com>
 
-[ Upstream commit e37f9f139f62deddff90c7298ae3a85026a71067 ]
+[ Upstream commit a4c2fec16f5e6a5fee4865e6e0e91e2bc2d10f37 ]
 
-Glibc-2.30 gained gettid() wrapper, selftests fail to compile:
+We can't use "adap->dev" after it has been freed.
 
-lib/assert.c:58:14: error: static declaration of ‘gettid’ follows non-static declaration
-   58 | static pid_t gettid(void)
-      |              ^~~~~~
-In file included from /usr/include/unistd.h:1170,
-                 from include/test_util.h:18,
-                 from lib/assert.c:10:
-/usr/include/bits/unistd_ext.h:34:16: note: previous declaration of ‘gettid’ was here
-   34 | extern __pid_t gettid (void) __THROW;
-      |                ^~~~~~
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 5bf4fa7daea6 ("i2c: break out OF support into separate file")
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/kvm/lib/assert.c | 4 ++--
+ drivers/i2c/i2c-core-of.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/lib/assert.c b/tools/testing/selftests/kvm/lib/assert.c
-index cd01144d27c8d..d306677065699 100644
---- a/tools/testing/selftests/kvm/lib/assert.c
-+++ b/tools/testing/selftests/kvm/lib/assert.c
-@@ -56,7 +56,7 @@ static void test_dump_stack(void)
- #pragma GCC diagnostic pop
- }
+diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+index 0f01cdba9d2c6..14d4884996968 100644
+--- a/drivers/i2c/i2c-core-of.c
++++ b/drivers/i2c/i2c-core-of.c
+@@ -253,14 +253,14 @@ static int of_i2c_notify(struct notifier_block *nb, unsigned long action,
+ 		}
  
--static pid_t gettid(void)
-+static pid_t _gettid(void)
- {
- 	return syscall(SYS_gettid);
- }
-@@ -73,7 +73,7 @@ test_assert(bool exp, const char *exp_str,
- 		fprintf(stderr, "==== Test Assertion Failure ====\n"
- 			"  %s:%u: %s\n"
- 			"  pid=%d tid=%d - %s\n",
--			file, line, exp_str, getpid(), gettid(),
-+			file, line, exp_str, getpid(), _gettid(),
- 			strerror(errno));
- 		test_dump_stack();
- 		if (fmt) {
+ 		client = of_i2c_register_device(adap, rd->dn);
+-		put_device(&adap->dev);
+-
+ 		if (IS_ERR(client)) {
+ 			dev_err(&adap->dev, "failed to create client for '%pOF'\n",
+ 				 rd->dn);
++			put_device(&adap->dev);
+ 			of_node_clear_flag(rd->dn, OF_POPULATED);
+ 			return notifier_from_errno(PTR_ERR(client));
+ 		}
++		put_device(&adap->dev);
+ 		break;
+ 	case OF_RECONFIG_CHANGE_REMOVE:
+ 		/* already depopulated? */
 -- 
 2.20.1
 
