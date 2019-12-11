@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D07D11B08C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:23:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C862E11AEED
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732768AbfLKPXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:23:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54900 "EHLO mail.kernel.org"
+        id S1730572AbfLKPJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:09:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731717AbfLKPXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:23:46 -0500
+        id S1729481AbfLKPJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:09:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31C842173E;
-        Wed, 11 Dec 2019 15:23:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1EF92464B;
+        Wed, 11 Dec 2019 15:09:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077825;
-        bh=JsIC5CV+h7wmbyXfmTd2M9dfvD94GrrUw0tE3n+hI6c=;
+        s=default; t=1576076958;
+        bh=W0VANgufBlokocbYrRF/dsFVIFjy6aAmV9Ao17Jfg4U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ab8KXeiSwkRioeV5ze3WK+kWit0Pjyw92J3vQuohRIFkamkc4ufX4ElAsdJy7BZKD
-         s7a0bvxcmTV7Gci7pdYMXgRlcqUjBcw7RF85orUspLg6TVZJ2xnYc9KKIiUG271JPa
-         Pah3KkM+hPlHfzXe6FfOj9/bg3ShiRcJQzcYNHkE=
+        b=si1mhh958vUVvVscgQTW5fgwDMKJdgy/8eDMFmqk2ogrjF2iuYB1lE/T8oPlkDsb9
+         +MyXM0T8rVIrhfr+aVunJWzuk2RWxyxqlV4ZGtjG8zYCoqvqvaGm3BbEmeJu2f1lhY
+         oy6aAdVJi0NKBgAID9EfiS6rcnv8qylypSEQf/2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 184/243] mlxsw: spectrum_router: Relax GRE decap matching check
-Date:   Wed, 11 Dec 2019 16:05:46 +0100
-Message-Id: <20191211150351.589776296@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Subject: [PATCH 5.4 56/92] drm/i810: Prevent underflow in ioctl
+Date:   Wed, 11 Dec 2019 16:05:47 +0100
+Message-Id: <20191211150247.145887780@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nir Dotan <nird@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit da93d2913fdf43d5cde3c5a53ac9cc29684d5c7c ]
+commit 4f69851fbaa26b155330be35ce8ac393e93e7442 upstream.
 
-GRE decap offload is configured when local routes prefix correspond to the
-local address of one of the offloaded GRE tunnels. The matching check was
-found to be too strict, such that for a flat GRE configuration, in which
-the overlay and underlay traffic share the same non-default VRF, decap flow
-was not offloaded.
+The "used" variables here come from the user in the ioctl and it can be
+negative.  It could result in an out of bounds write.
 
-Relax the check for decap flow offloading. A match occurs if the local
-address of the tunnel matches the local route address while both share the
-same VRF table.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191004102251.GC823@mwanda
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 4607f6d26950 ("mlxsw: spectrum_router: Support IPv4 underlay decap")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/gpu/drm/i810/i810_dma.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-index 3f54b3ca38bad..44b6c2ac5961d 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-@@ -1215,15 +1215,12 @@ mlxsw_sp_ipip_entry_matches_decap(struct mlxsw_sp *mlxsw_sp,
- {
- 	u32 ul_tb_id = l3mdev_fib_table(ul_dev) ? : RT_TABLE_MAIN;
- 	enum mlxsw_sp_ipip_type ipipt = ipip_entry->ipipt;
--	struct net_device *ipip_ul_dev;
+--- a/drivers/gpu/drm/i810/i810_dma.c
++++ b/drivers/gpu/drm/i810/i810_dma.c
+@@ -728,7 +728,7 @@ static void i810_dma_dispatch_vertex(str
+ 	if (nbox > I810_NR_SAREA_CLIPRECTS)
+ 		nbox = I810_NR_SAREA_CLIPRECTS;
  
- 	if (mlxsw_sp->router->ipip_ops_arr[ipipt]->ul_proto != ul_proto)
- 		return false;
+-	if (used > 4 * 1024)
++	if (used < 0 || used > 4 * 1024)
+ 		used = 0;
  
--	ipip_ul_dev = __mlxsw_sp_ipip_netdev_ul_dev_get(ipip_entry->ol_dev);
- 	return mlxsw_sp_ipip_entry_saddr_matches(mlxsw_sp, ul_proto, ul_dip,
--						 ul_tb_id, ipip_entry) &&
--	       (!ipip_ul_dev || ipip_ul_dev == ul_dev);
-+						 ul_tb_id, ipip_entry);
- }
+ 	if (sarea_priv->dirty)
+@@ -1048,7 +1048,7 @@ static void i810_dma_dispatch_mc(struct
+ 	if (u != I810_BUF_CLIENT)
+ 		DRM_DEBUG("MC found buffer that isn't mine!\n");
  
- /* Given decap parameters, find the corresponding IPIP entry. */
--- 
-2.20.1
-
+-	if (used > 4 * 1024)
++	if (used < 0 || used > 4 * 1024)
+ 		used = 0;
+ 
+ 	sarea_priv->dirty = 0x7f;
 
 
