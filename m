@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F90911B6AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D1A311B6BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:02:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731368AbfLKPNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:13:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35918 "EHLO mail.kernel.org"
+        id S2387433AbfLKQCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:02:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731325AbfLKPNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:13:04 -0500
+        id S1730908AbfLKPNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD60324685;
-        Wed, 11 Dec 2019 15:13:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BAFB2467C;
+        Wed, 11 Dec 2019 15:13:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077184;
-        bh=LKxzpUfyF+oYSQX+FKuJTBK46/nO+5dzYVqWq0NnofU=;
+        s=default; t=1576077186;
+        bh=5xNR6jI9+0OjgRnmsvUhBM684dKe2zQ9o5G22OtrEhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wu6QFAw6csWGikgjKJxzABrsyOVU4HJm6N32Ds37sZTBR6El6+7qZoE79fKstF3vg
-         cZFx1wmzEUL+51BEvtdUplbbnUZCrOL9LNE9K6gXObQzKRFxX/k60jHEy4E46DTzFq
-         tfbyq/0FSzGLlhDiEeuaD35TtnZOfA6GrkgpXmio=
+        b=LAiDJCai6UOxF7paoO3wRuWRRuqBkmbTNw/sgYTfsrjKd+Jmux5FghjDLMGwmuzEO
+         ZZZgiJ/1P9ioBPIDj4iIJgFGIdph2WG0og0SInu9qqfxhknktOh7aqRRIe4s65xr1F
+         jXGUZLRcZrbj/BuZq75u4ns50IKmtTWsRUOuy1CU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH 5.3 013/105] serial: ifx6x60: add missed pm_runtime_disable
-Date:   Wed, 11 Dec 2019 16:05:02 +0100
-Message-Id: <20191211150224.089045896@linuxfoundation.org>
+        stable@vger.kernel.org, Guillem Jover <guillem@hadrons.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 014/105] aio: Fix io_pgetevents() struct __compat_aio_sigset layout
+Date:   Wed, 11 Dec 2019 16:05:03 +0100
+Message-Id: <20191211150224.289343749@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
 References: <20191211150221.153659747@linuxfoundation.org>
@@ -42,33 +44,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Guillem Jover <guillem@hadrons.org>
 
-commit 50b2b571c5f3df721fc81bf9a12c521dfbe019ba upstream.
+[ Upstream commit 97eba80fcca754856d09e048f469db22773bec68 ]
 
-The driver forgets to call pm_runtime_disable in remove.
-Add the missed calls to fix it.
+This type is used to pass the sigset_t from userland to the kernel,
+but it was using the kernel native pointer type for the member
+representing the compat userland pointer to the userland sigset_t.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191118024833.21587-1-hslester96@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This messes up the layout, and makes the kernel eat up both the
+userland pointer and the size members into the kernel pointer, and
+then reads garbage into the kernel sigsetsize. Which makes the sigset_t
+size consistency check fail, and consequently the syscall always
+returns -EINVAL.
 
+This breaks both libaio and strace on 32-bit userland running on 64-bit
+kernels. And there are apparently no users in the wild of the current
+broken layout (at least according to codesearch.debian.org and a brief
+check over github.com search). So it looks safe to fix this directly
+in the kernel, instead of either letting userland deal with this
+permanently with the additional overhead or trying to make the syscall
+infer what layout userland used, even though this is also being worked
+around in libaio to temporarily cope with kernels that have not yet
+been fixed.
+
+We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
+
+Fixes: 7a074e96dee6 ("aio: implement io_pgetevents")
+Signed-off-by: Guillem Jover <guillem@hadrons.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/ifx6x60.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/aio.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/tty/serial/ifx6x60.c
-+++ b/drivers/tty/serial/ifx6x60.c
-@@ -1230,6 +1230,9 @@ static int ifx_spi_spi_remove(struct spi
- 	struct ifx_spi_device *ifx_dev = spi_get_drvdata(spi);
- 	/* stop activity */
- 	tasklet_kill(&ifx_dev->io_work_tasklet);
-+
-+	pm_runtime_disable(&spi->dev);
-+
- 	/* free irq */
- 	free_irq(gpio_to_irq(ifx_dev->gpio.reset_out), ifx_dev);
- 	free_irq(gpio_to_irq(ifx_dev->gpio.srdy), ifx_dev);
+diff --git a/fs/aio.c b/fs/aio.c
+index 01e0fb9ae45ae..0d9a559d488c1 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -2179,7 +2179,7 @@ SYSCALL_DEFINE5(io_getevents_time32, __u32, ctx_id,
+ #ifdef CONFIG_COMPAT
+ 
+ struct __compat_aio_sigset {
+-	compat_sigset_t __user	*sigmask;
++	compat_uptr_t		sigmask;
+ 	compat_size_t		sigsetsize;
+ };
+ 
+@@ -2193,7 +2193,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
+ 		struct old_timespec32 __user *, timeout,
+ 		const struct __compat_aio_sigset __user *, usig)
+ {
+-	struct __compat_aio_sigset ksig = { NULL, };
++	struct __compat_aio_sigset ksig = { 0, };
+ 	struct timespec64 t;
+ 	bool interrupted;
+ 	int ret;
+@@ -2204,7 +2204,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
+ 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
+ 		return -EFAULT;
+ 
+-	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
++	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2228,7 +2228,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
+ 		struct __kernel_timespec __user *, timeout,
+ 		const struct __compat_aio_sigset __user *, usig)
+ {
+-	struct __compat_aio_sigset ksig = { NULL, };
++	struct __compat_aio_sigset ksig = { 0, };
+ 	struct timespec64 t;
+ 	bool interrupted;
+ 	int ret;
+@@ -2239,7 +2239,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
+ 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
+ 		return -EFAULT;
+ 
+-	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
++	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.20.1
+
 
 
