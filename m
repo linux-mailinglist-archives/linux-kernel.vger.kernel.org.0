@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BF5511B5A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:56:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 715E711B5CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:56:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731300AbfLKPPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:15:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40746 "EHLO mail.kernel.org"
+        id S1732539AbfLKP4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:56:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729955AbfLKPPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:15:01 -0500
+        id S1731798AbfLKPP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:15:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8DAB24654;
-        Wed, 11 Dec 2019 15:14:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72ED92467D;
+        Wed, 11 Dec 2019 15:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077300;
-        bh=bEPZPVL0vaFMoN9AWWf5BU7pfcm6B55ATdt3z0aCsvE=;
+        s=default; t=1576077328;
+        bh=0qytjjZWSM6P7mpZ8ddmpF2SU5ZT8/Uf1JWrhNBExQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KQApkc+Sb+2lnhOSH4dwYhmmmW4qG8nXgIsZfH+1pmxVrtQuUIaXjtB+1KcJ62Y12
-         Nw1JpemlS0qObvBxUa4y5gbrNc0hHBeFLjYibZm5kVZXmgoB3dYzzG/4Q3n2h/bcvD
-         82ZkPFxsvNuPNpGJA7a0filYaPddI/KzMWwIMvgM=
+        b=u/taWUxab3qHl+yME7baGA7Apwye8SG9cEP1toq4pmuj2C3t/hQXCxbMLB6UrNtT5
+         Z9NMF4WvnTa55Bp7Ts3UbQTx3lmzdqLE+RJbscNE0Iz51/jR0Rc4HNFYOGm3aEVupP
+         ZUPCAphsdO3OBO1pwc3CYucyC8AqfRuOqxLQavgk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
+        stable@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.3 085/105] crypto: crypto4xx - fix double-free in crypto4xx_destroy_sdr
-Date:   Wed, 11 Dec 2019 16:06:14 +0100
-Message-Id: <20191211150258.847739471@linuxfoundation.org>
+Subject: [PATCH 5.3 086/105] crypto: atmel-aes - Fix IV handling when req->nbytes < ivsize
+Date:   Wed, 11 Dec 2019 16:06:15 +0100
+Message-Id: <20191211150259.473884315@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
 References: <20191211150221.153659747@linuxfoundation.org>
@@ -43,43 +44,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-commit 746c908c4d72e49068ab216c3926d2720d71a90d upstream.
+commit 86ef1dfcb561473fbf5e199d58d18c55554d78be upstream.
 
-This patch fixes a crash that can happen during probe
-when the available dma memory is not enough (this can
-happen if the crypto4xx is built as a module).
+commit 394a9e044702 ("crypto: cfb - add missing 'chunksize' property")
+adds a test vector where the input length is smaller than the IV length
+(the second test vector). This revealed a NULL pointer dereference in
+the atmel-aes driver, that is caused by passing an incorrect offset in
+scatterwalk_map_and_copy() when atmel_aes_complete() is called.
 
-The descriptor window mapping would end up being free'd
-twice, once in crypto4xx_build_pdr() and the second time
-in crypto4xx_destroy_sdr().
+Do not save the IV in req->info of ablkcipher_request (or equivalently
+req->iv of skcipher_request) when req->nbytes < ivsize, because the IV
+will not be further used.
 
-Fixes: 5d59ad6eea82 ("crypto: crypto4xx - fix crypto4xx_build_pdr, crypto4xx_build_sdr leak")
+While touching the code, modify the type of ivsize from int to
+unsigned int, to comply with the return type of
+crypto_ablkcipher_ivsize().
+
+Fixes: 91308019ecb4 ("crypto: atmel-aes - properly set IV after {en,de}crypt")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/amcc/crypto4xx_core.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/crypto/atmel-aes.c |   53 +++++++++++++++++++++++++--------------------
+ 1 file changed, 30 insertions(+), 23 deletions(-)
 
---- a/drivers/crypto/amcc/crypto4xx_core.c
-+++ b/drivers/crypto/amcc/crypto4xx_core.c
-@@ -365,12 +365,8 @@ static u32 crypto4xx_build_sdr(struct cr
- 		dma_alloc_coherent(dev->core_dev->device,
- 			PPC4XX_SD_BUFFER_SIZE * PPC4XX_NUM_SD,
- 			&dev->scatter_buffer_pa, GFP_ATOMIC);
--	if (!dev->scatter_buffer_va) {
--		dma_free_coherent(dev->core_dev->device,
--				  sizeof(struct ce_sd) * PPC4XX_NUM_SD,
--				  dev->sdr, dev->sdr_pa);
-+	if (!dev->scatter_buffer_va)
- 		return -ENOMEM;
--	}
+--- a/drivers/crypto/atmel-aes.c
++++ b/drivers/crypto/atmel-aes.c
+@@ -490,6 +490,29 @@ static inline bool atmel_aes_is_encrypt(
+ static void atmel_aes_authenc_complete(struct atmel_aes_dev *dd, int err);
+ #endif
  
- 	for (i = 0; i < PPC4XX_NUM_SD; i++) {
- 		dev->sdr[i].ptr = dev->scatter_buffer_pa +
++static void atmel_aes_set_iv_as_last_ciphertext_block(struct atmel_aes_dev *dd)
++{
++	struct ablkcipher_request *req = ablkcipher_request_cast(dd->areq);
++	struct atmel_aes_reqctx *rctx = ablkcipher_request_ctx(req);
++	struct crypto_ablkcipher *ablkcipher = crypto_ablkcipher_reqtfm(req);
++	unsigned int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
++
++	if (req->nbytes < ivsize)
++		return;
++
++	if (rctx->mode & AES_FLAGS_ENCRYPT) {
++		scatterwalk_map_and_copy(req->info, req->dst,
++					 req->nbytes - ivsize, ivsize, 0);
++	} else {
++		if (req->src == req->dst)
++			memcpy(req->info, rctx->lastc, ivsize);
++		else
++			scatterwalk_map_and_copy(req->info, req->src,
++						 req->nbytes - ivsize,
++						 ivsize, 0);
++	}
++}
++
+ static inline int atmel_aes_complete(struct atmel_aes_dev *dd, int err)
+ {
+ #ifdef CONFIG_CRYPTO_DEV_ATMEL_AUTHENC
+@@ -500,26 +523,8 @@ static inline int atmel_aes_complete(str
+ 	clk_disable(dd->iclk);
+ 	dd->flags &= ~AES_FLAGS_BUSY;
+ 
+-	if (!dd->ctx->is_aead) {
+-		struct ablkcipher_request *req =
+-			ablkcipher_request_cast(dd->areq);
+-		struct atmel_aes_reqctx *rctx = ablkcipher_request_ctx(req);
+-		struct crypto_ablkcipher *ablkcipher =
+-			crypto_ablkcipher_reqtfm(req);
+-		int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
+-
+-		if (rctx->mode & AES_FLAGS_ENCRYPT) {
+-			scatterwalk_map_and_copy(req->info, req->dst,
+-				req->nbytes - ivsize, ivsize, 0);
+-		} else {
+-			if (req->src == req->dst) {
+-				memcpy(req->info, rctx->lastc, ivsize);
+-			} else {
+-				scatterwalk_map_and_copy(req->info, req->src,
+-					req->nbytes - ivsize, ivsize, 0);
+-			}
+-		}
+-	}
++	if (!dd->ctx->is_aead)
++		atmel_aes_set_iv_as_last_ciphertext_block(dd);
+ 
+ 	if (dd->is_async)
+ 		dd->areq->complete(dd->areq, err);
+@@ -1125,10 +1130,12 @@ static int atmel_aes_crypt(struct ablkci
+ 	rctx->mode = mode;
+ 
+ 	if (!(mode & AES_FLAGS_ENCRYPT) && (req->src == req->dst)) {
+-		int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
++		unsigned int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
+ 
+-		scatterwalk_map_and_copy(rctx->lastc, req->src,
+-			(req->nbytes - ivsize), ivsize, 0);
++		if (req->nbytes >= ivsize)
++			scatterwalk_map_and_copy(rctx->lastc, req->src,
++						 req->nbytes - ivsize,
++						 ivsize, 0);
+ 	}
+ 
+ 	return atmel_aes_handle_queue(dd, &req->base);
 
 
