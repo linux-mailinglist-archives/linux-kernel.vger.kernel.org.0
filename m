@@ -2,36 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50FAD11AFCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:16:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A351111AFCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:16:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731684AbfLKPQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:16:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43386 "EHLO mail.kernel.org"
+        id S1731911AbfLKPQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:16:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731885AbfLKPQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:16:21 -0500
+        id S1731892AbfLKPQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:16:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C34AE2465B;
-        Wed, 11 Dec 2019 15:16:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5171208C3;
+        Wed, 11 Dec 2019 15:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077381;
-        bh=8NshHneGRG7k7YiIYNZXeV+IEn+KbPHnQmV0vh4/T0Q=;
+        s=default; t=1576077389;
+        bh=zwqM+wS2Wryn1l8lu7xVA8FqBKoSghxz/FEIeQeJyFE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jZqvbsQ3Ux2ycB5LibTjXQc3ZHj1Mwi/eVUVYlnEEdJY4rn3vytNTTS6Tj4ijtaIS
-         dCP7PfTmnwGGDv30tGN3hgV6VLmzppuYwhAw0ivNRu1SJNMZk4SszYhOG27EYmXmsp
-         9iohi45kBnpTGyYjeW0HHYQ+P66nwEOvU8wb7xIE=
+        b=G5DGcmlEPi0eUXklVsHDeJ9CscfBxi33HHzngaoevYb6g2TzbarvKzw7cLgv0X+Ve
+         L0lDuWlwZ6zihGt689p5gbt6oF5bE5AkDmGT/iKEXR0mZNTWC/N1aL5Z3juYVOZU1W
+         c3xbCch+jG9N7FhrgDGl3A126Bj0oBvnC+wyv+co=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 018/243] Input: cyttsp4_core - fix use after free bug
-Date:   Wed, 11 Dec 2019 16:03:00 +0100
-Message-Id: <20191211150340.237192688@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 020/243] perf/core: Consistently fail fork on allocation failures
+Date:   Wed, 11 Dec 2019 16:03:02 +0100
+Message-Id: <20191211150340.342470865@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,49 +54,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-[ Upstream commit 79aae6acbef16f720a7949f8fc6ac69816c79d62 ]
+[ Upstream commit 697d877849d4b34ab58d7078d6930bad0ef6fc66 ]
 
-The device md->input is used after it is released. Setting the device
-data to NULL is unnecessary as the device is never used again. Instead,
-md->input should be assigned NULL to avoid accessing the freed memory
-accidently. Besides, checking md->si against NULL is superfluous as it
-points to a variable address, which cannot be NULL.
+Commit:
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Link: https://lore.kernel.org/r/1572936379-6423-1-git-send-email-bianpan2016@163.com
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+  313ccb9615948 ("perf: Allocate context task_ctx_data for child event")
+
+makes the inherit path skip over the current event in case of task_ctx_data
+allocation failure. This, however, is inconsistent with allocation failures
+in perf_event_alloc(), which would abort the fork.
+
+Correct this by returning an error code on task_ctx_data allocation
+failure and failing the fork in that case.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: https://lkml.kernel.org/r/20191105075702.60319-1-alexander.shishkin@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/cyttsp4_core.c | 7 -------
- 1 file changed, 7 deletions(-)
+ kernel/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
-index 727c3232517cd..c84ee739a8d50 100644
---- a/drivers/input/touchscreen/cyttsp4_core.c
-+++ b/drivers/input/touchscreen/cyttsp4_core.c
-@@ -2000,11 +2000,6 @@ static int cyttsp4_mt_probe(struct cyttsp4 *cd)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 625ba462e5bbd..460d5fd3ec4e4 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11377,7 +11377,7 @@ inherit_event(struct perf_event *parent_event,
+ 						   GFP_KERNEL);
+ 		if (!child_ctx->task_ctx_data) {
+ 			free_event(child_event);
+-			return NULL;
++			return ERR_PTR(-ENOMEM);
+ 		}
+ 	}
  
- 	/* get sysinfo */
- 	md->si = &cd->sysinfo;
--	if (!md->si) {
--		dev_err(dev, "%s: Fail get sysinfo pointer from core p=%p\n",
--			__func__, md->si);
--		goto error_get_sysinfo;
--	}
- 
- 	rc = cyttsp4_setup_input_device(cd);
- 	if (rc)
-@@ -2014,8 +2009,6 @@ static int cyttsp4_mt_probe(struct cyttsp4 *cd)
- 
- error_init_input:
- 	input_free_device(md->input);
--error_get_sysinfo:
--	input_set_drvdata(md->input, NULL);
- error_alloc_failed:
- 	dev_err(dev, "%s failed.\n", __func__);
- 	return rc;
 -- 
 2.20.1
 
