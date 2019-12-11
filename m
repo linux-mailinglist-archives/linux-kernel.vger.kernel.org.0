@@ -2,95 +2,530 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEAFC11BCF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 20:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3AE11BD23
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 20:39:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729841AbfLKT20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 14:28:26 -0500
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:47032 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729793AbfLKT2Y (ORCPT
+        id S1727064AbfLKTi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 14:38:58 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43174 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbfLKTi6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 14:28:24 -0500
-Received: by mail-pf1-f202.google.com with SMTP id w127so2697462pfb.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 11:28:23 -0800 (PST)
+        Wed, 11 Dec 2019 14:38:58 -0500
+Received: by mail-lj1-f195.google.com with SMTP id a13so25408787ljm.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 11:38:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Z9cyJ6q/dRKwszgWPK/I6HD4udk/HngreENNBBFw7AE=;
-        b=R4J+hp7ameLmcKBvWd1R3GHgVQMiqDLeCk+xK86P/IRMuh6UmJa9Faa5uqjS4kWyFg
-         lL/VL+0yiQSVCjjou1PYLwUk5n8YWw+5HFdP2a92aB7l5OvSR7njVCuEuEU7ILdNksTE
-         2IpI6glhHVDy6eNg96ttbF925uLPxi+VoHZCb7VWblcUGDkMrvhzGjACHIWT/UqDBsaz
-         ONTjf5w9eu8EeVbm9tB0FOcag12BKE6rhip+RYd5P8VyZ62mxl0MZ8QED5kQRVYL1c0H
-         UQ1HaAdchOoT2M+AZajZrwAWD8PvQ9W1PwBcEmzwoAJM3GxLhGO1mshgQ2QK1+Gs3kcV
-         wa7w==
+        bh=mCFBeOM7voY1Ap11AuqjB0+8nGe8UCHSkrpkRbOs5Ew=;
+        b=mgYXhIwqY2wQSccMDOUbOyikGEbtRMsAkjSRmXtyRnv6J8O+j3l4+72bkVAO4tN+E/
+         uBM2uS703083d5xdjOFFu/1f0HUidbSIDLHr5yEXBiadR1mWfxqz6masOyEvq9v37Jzq
+         wyqX1KqDlHSwLc9aIgjNvp8sZBRhDw3/Fydpw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Z9cyJ6q/dRKwszgWPK/I6HD4udk/HngreENNBBFw7AE=;
-        b=ng0R+N+VtQ3XKeWjTkS1psCnjRB5pHWads9ma21vBi3vYqMpzx+shJLEw2RttLPpOj
-         sqNSEPVptl9KbUL4AtJlj8Qzh30d73qsLvCz8G9KZ/vy5w04x4Wxhw5pncPQnqm6ccUk
-         v0Z0UwO0bFSsTDmgyiQbK5yngflVeLxxRfqLAeK9kFJJ8Tl3YHVe63uLrht061WLF5vy
-         XDZOglo/xcajadG15T9hGC7dGxYkeNbIZoVNRiGg3e76iUeQDYqjHQwrNN1EWZDSo/E+
-         mArwD1RqclnEVvBaLvPbQPRLBszuUWxFa3u6zy+6m3p9XSfQRIrlqa+G5PnZtnI92kLj
-         26gw==
-X-Gm-Message-State: APjAAAWq4o7eTT48QNZXxQmHjbaBEuRNtoNryIcDOjvALBRJe/m1S09x
-        SnytRKtLmMuM2dK47Vw8se0d1cxbW2A9gKppNSjhWw==
-X-Google-Smtp-Source: APXvYqyYij4yV+DXbejSHZeng6BXYHuLudblK+kNmIhwXq4dmlZ+ZGkXmoMKknhbAuxQ+DE/c95Qal0IVJbWFYYgdCBmMg==
-X-Received: by 2002:a63:28a:: with SMTP id 132mr5883273pgc.165.1576092502945;
- Wed, 11 Dec 2019 11:28:22 -0800 (PST)
-Date:   Wed, 11 Dec 2019 11:27:42 -0800
-In-Reply-To: <20191211192742.95699-1-brendanhiggins@google.com>
-Message-Id: <20191211192742.95699-8-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20191211192742.95699-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
-Subject: [PATCH v1 7/7] fsi: aspeed: add unspecified HAS_IOMEM dependency
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, Jeremy Kerr <jk@ozlabs.org>,
-        Alistar Popple <alistair@popple.id.au>,
-        Eddie James <eajames@linux.ibm.com>
-Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        davidgow@google.com, Brendan Higgins <brendanhiggins@google.com>,
-        linux-fsi@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mCFBeOM7voY1Ap11AuqjB0+8nGe8UCHSkrpkRbOs5Ew=;
+        b=aBW9CFdzZQsuXC9aJlbPCNPdv+eGbFqFt+oAXUu9UqtwCMt8X+Lz4gjjylrdHiywp3
+         vIajP8p9O79vUfxhg5o9eqCLOWK3mcmgjgrkF3VedwXGMHgdhSHP2kcECma/sLSYALLe
+         7xBN3FkD8Y18u6gQTm/uMectMvtJ2q2dRjFz8NHAqo7F1sIvNLdyENVYHUwCtZTZkOUB
+         OwlY7c0FaYnrn4umaMu81F3+1mm4bCSNlKDc5QBzzkb6SZSauoUuQIDQ3cgGqCiQBWjN
+         6ql0gIZpJ9tXWc4cKkrVXLSLYME6vNF8CUanxV8/1lHtPUWBcGfI3txLfLj234cvlZC2
+         4Olw==
+X-Gm-Message-State: APjAAAUFT2Un04C3ZsB6Fc+ZQ2VW0KhdN1RxuR556R+qIaWtEUC7LgNF
+        hZupV48v/+aF7mHq/16lS/lWscM9B4w=
+X-Google-Smtp-Source: APXvYqwiUK60W4fl2GN6lf0d2RqYUEktOu1Mh38L+VB/I0mmTJst0qQ7nskFkJ+4LqJ6S5m0ou4GHw==
+X-Received: by 2002:a2e:824a:: with SMTP id j10mr3440224ljh.209.1576093133964;
+        Wed, 11 Dec 2019 11:38:53 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id g85sm1699442lfd.66.2019.12.11.11.38.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 11:38:53 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id 9so17611633lfq.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 11:38:53 -0800 (PST)
+X-Received: by 2002:ac2:52a3:: with SMTP id r3mr3390323lfm.189.1576092793705;
+ Wed, 11 Dec 2019 11:33:13 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1575529553.git.saiprakash.ranjan@codeaurora.org> <0101016ed57a6311-e815485c-4b77-4342-a3de-203673941602-000000@us-west-2.amazonses.com>
+In-Reply-To: <0101016ed57a6311-e815485c-4b77-4342-a3de-203673941602-000000@us-west-2.amazonses.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 11 Dec 2019 11:32:37 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5JvCegmrjkKuxYr9dgASPFCkgy97O1XGRyKDF6xT=BMA@mail.gmail.com>
+Message-ID: <CAE=gft5JvCegmrjkKuxYr9dgASPFCkgy97O1XGRyKDF6xT=BMA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drivers: edac: Add EDAC support for Kryo CPU caches
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rrichter@marvell.com>,
+        linux-edac@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>, tsoni@codeaurora.org,
+        psodagud@codeaurora.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently CONFIG_FSI_MASTER_ASPEED=y implicitly depends on
-CONFIG_HAS_IOMEM=y; consequently, on architectures without IOMEM we get
-the following build error:
+Hi Sai,
 
-ld: drivers/fsi/fsi-master-aspeed.o: in function `fsi_master_aspeed_probe':
-drivers/fsi/fsi-master-aspeed.c:436: undefined reference to `devm_ioremap_resource'
+On Thu, Dec 5, 2019 at 1:53 AM Sai Prakash Ranjan
+<saiprakash.ranjan@codeaurora.org> wrote:
+>
+> Kryo{3,4}XX CPU cores implement RAS extensions to support
+> Error Correcting Code(ECC). Currently all Kryo{3,4}XX CPU
+> cores (gold/silver a.k.a big/LITTLE) support ECC via RAS.
+> This adds an interrupt based driver for those CPUs and
+> provides an optional polling of error recording system
+> registers.
+>
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> ---
+>  MAINTAINERS                   |   7 +
+>  drivers/edac/Kconfig          |  20 +
+>  drivers/edac/Makefile         |   1 +
+>  drivers/edac/qcom_kryo_edac.c | 679 ++++++++++++++++++++++++++++++++++
+>  4 files changed, 707 insertions(+)
+>  create mode 100644 drivers/edac/qcom_kryo_edac.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c2d80079dccc..f58c93f963f6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6049,6 +6049,13 @@ L:       linux-edac@vger.kernel.org
+>  S:     Maintained
+>  F:     drivers/edac/qcom_edac.c
+>
+> +EDAC-KRYO-QCOM
+> +M:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> +L:     linux-arm-msm@vger.kernel.org
+> +L:     linux-edac@vger.kernel.org
+> +S:     Maintained
+> +F:     drivers/edac/qcom_kryo_edac.c
+> +
+>  EDIROL UA-101/UA-1000 DRIVER
+>  M:     Clemens Ladisch <clemens@ladisch.de>
+>  L:     alsa-devel@alsa-project.org (moderated for non-subscribers)
+> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+> index 417dad635526..cd78ac2917c9 100644
+> --- a/drivers/edac/Kconfig
+> +++ b/drivers/edac/Kconfig
+> @@ -508,6 +508,26 @@ config EDAC_QCOM
+>           For debugging issues having to do with stability and overall system
+>           health, you should probably say 'Y' here.
+>
+> +config EDAC_QCOM_KRYO
+> +       tristate "QCOM Kryo EDAC for CPU L1/L2/L3-SCU caches"
+> +       depends on ARCH_QCOM && ARM64_RAS_EXTN
+> +       help
+> +         Support for Error detection and correction on Kryo Gold and Silver CPU
+> +         cores with RAS extensions. Currently it detects and reports all Single
+> +         Bit Errors (SBEs) and Double Bit Errors (DBEs).
+> +
+> +         For debugging issues having to do with stability and overall system
+> +         health, you should probably say 'Y' here.
+> +
+> +config EDAC_QCOM_KRYO_POLL
+> +       depends on EDAC_QCOM_KRYO
+> +       bool "Poll on Kryo ECC registers"
+> +       help
+> +         This option chooses whether or not you want to poll on the Kryo ECC
+> +         registers. When this is enabled, the polling rate can be set as a
+> +         module parameter. By default, it will call the polling function every
+> +         second.
+> +
+>  config EDAC_ASPEED
+>         tristate "Aspeed AST 2500 SoC"
+>         depends on MACH_ASPEED_G5
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index d77200c9680b..29edcfa6ec0e 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -85,5 +85,6 @@ obj-$(CONFIG_EDAC_SYNOPSYS)           += synopsys_edac.o
+>  obj-$(CONFIG_EDAC_XGENE)               += xgene_edac.o
+>  obj-$(CONFIG_EDAC_TI)                  += ti_edac.o
+>  obj-$(CONFIG_EDAC_QCOM)                        += qcom_edac.o
+> +obj-$(CONFIG_EDAC_QCOM_KRYO)           += qcom_kryo_edac.o
+>  obj-$(CONFIG_EDAC_ASPEED)              += aspeed_edac.o
+>  obj-$(CONFIG_EDAC_BLUEFIELD)           += bluefield_edac.o
+> diff --git a/drivers/edac/qcom_kryo_edac.c b/drivers/edac/qcom_kryo_edac.c
+> new file mode 100644
+> index 000000000000..05b60ad3cb0e
+> --- /dev/null
+> +++ b/drivers/edac/qcom_kryo_edac.c
+> @@ -0,0 +1,679 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/cpu_pm.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/smp.h>
+> +
+> +#include <asm/cputype.h>
+> +#include <asm/sysreg.h>
+> +
+> +#include "edac_device.h"
+> +#include "edac_mc.h"
+> +
+> +#define DRV_NAME               "qcom_kryo_edac"
+> +
+> +/*
+> + * ARM Cortex-A55, Cortex-A75, Cortex-A76 TRM Chapter B3.3
+> + * ARM DSU TRM Chapter B2.3
+> + * CFI = Corrected Fault Handling interrupt, FI = Fault handling interrupt
+> + * UI = Uncorrected error recovery interrupt, ED = Error Detection
+> + */
+> +#define KRYO_ERRXCTLR_ED       BIT(0)
+> +#define KRYO_ERRXCTLR_UI       BIT(2)
+> +#define KRYO_ERRXCTLR_FI       BIT(3)
+> +#define KRYO_ERRXCTLR_CFI      BIT(8)
+> +#define KRYO_ERRXCTLR_ENABLE   (KRYO_ERRXCTLR_CFI | KRYO_ERRXCTLR_FI | \
+> +                                KRYO_ERRXCTLR_UI | KRYO_ERRXCTLR_ED)
+> +
+> +/*
+> + * ARM Cortex-A55, Cortex-A75, Cortex-A76 TRM Chapter B3.4
+> + * ARM DSU TRM Chapter B2.4
+> + */
+> +#define KRYO_ERRXFR_ED         GENMASK(1, 0)
+> +#define KRYO_ERRXFR_DE         GENMASK(3, 2)
+> +#define KRYO_ERRXFR_UI         GENMASK(5, 4)
+> +#define KRYO_ERRXFR_FI         GENMASK(7, 6)
+> +#define KRYO_ERRXFR_UE         GENMASK(9, 8)
+> +#define KRYO_ERRXFR_CFI                GENMASK(11, 10)
+> +#define KRYO_ERRXFR_CEC                GENMASK(14, 12)
+> +#define KRYO_ERRXFR_RP         BIT(15)
+> +#define KRYO_ERRXFR_SUPPORTED  (KRYO_ERRXFR_ED | KRYO_ERRXFR_DE | \
+> +                                KRYO_ERRXFR_UI | KRYO_ERRXFR_FI | \
+> +                                KRYO_ERRXFR_UE | KRYO_ERRXFR_CFI | \
+> +                                KRYO_ERRXFR_CEC | KRYO_ERRXFR_RP)
+> +
+> +/*
+> + * ARM Cortex-A55, Cortex-A75, Cortex-A76 TRM Chapter B3.5
+> + * ARM DSU TRM Chapter B2.5
+> + */
+> +#define KRYO_ERRXMISC0_CECR    GENMASK_ULL(38, 32)
+> +#define KRYO_ERRXMISC0_CECO    GENMASK_ULL(46, 40)
+> +
+> +/* ARM Cortex-A76 TRM Chapter B3.5 */
+> +#define KRYO_ERRXMISC0_UNIT    GENMASK(3, 0)
+> +#define KRYO_ERRXMISC0_LVL     GENMASK(3, 1)
+> +
+> +/* ARM Cortex-A76 TRM Chapter B3.10 has SERR bitfields 4:0
+> + * but Cortex-A55, Cortex-A75 and DSU TRM has SERR bitfields 7:0.
+> + * Since max error record is 21, we can use bitfields 4:0 for
+> + * Kryo{3,4}XX CPUs.
+> + */
+> +#define KRYO_ERRXSTATUS_SERR   GENMASK(4, 0)
+> +#define KRYO_ERRXSTATUS_DE     BIT(23)
+> +#define KRYO_ERRXSTATUS_CE     GENMASK(25, 24)
+> +#define KRYO_ERRXSTATUS_MV     BIT(26)
+> +#define KRYO_ERRXSTATUS_UE     BIT(29)
+> +#define KRYO_ERRXSTATUS_VALID  BIT(30)
+> +
+> +/* ARM Cortex-A76 TRM Chapter B3.5
+> + * IC = Instruction Cache, DC = Data Cache
+> + */
+> +#define KRYO_L1_UNIT_IC                0x1
+> +#define KRYO_L2_UNIT_TLB       0x2
+> +#define KRYO_L1_UNIT_DC                0x4
+> +#define KRYO_L2_UNIT           0x8
+> +
+> +/*
+> + * ARM Cortex-A55 TRM Chapter B2.36
+> + * ARM Cortex-A75, Cortex-A76 TRM Chapter B2.37
+> + */
+> +#define KRYO_ERR_RECORD_L1_L2  0x0
+> +#define KRYO_ERR_RECORD_L3     0x1
+> +
+> +/* ARM DSU TRM Chapter B2.10 */
+> +#define BUS_ERROR              0x12
+> +
+> +/* QCOM Kryo CPU part numbers */
+> +#define KRYO3XX_GOLD           0x802
+> +#define KRYO4XX_GOLD           0x804
+> +#define KRYO4XX_SILVER_V1      0x803
+> +#define KRYO4XX_SILVER_V2      0x805
+> +
+> +#define KRYO_EDAC_MSG_MAX      256
+> +
+> +static int poll_msec = 1000;
+> +module_param(poll_msec, int, 0444);
+> +
+> +enum {
+> +       KRYO_L1 = 0,
+> +       KRYO_L2,
+> +       KRYO_L3,
+> +};
+> +
+> +/* CE = Corrected Error, UE = Uncorrected Error, DE = Deferred Error */
+> +enum {
 
-Fix the build error by adding the unspecified dependency.
+No name?
 
-Reported-by: Brendan Higgins <brendanhiggins@google.com>
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
----
- drivers/fsi/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+> +       KRYO_L1_CE = 0,
+> +       KRYO_L1_UE,
+> +       KRYO_L1_DE,
+> +       KRYO_L2_CE,
+> +       KRYO_L2_UE,
+> +       KRYO_L2_DE,
+> +       KRYO_L3_CE,
+> +       KRYO_L3_UE,
+> +       KRYO_L3_DE,
+> +};
+> +
+> +struct error_record {
+> +       u32 error_code;
+> +       const char *error_msg;
+> +};
+> +
+> +struct error_type {
+> +       void (*fn)(struct edac_device_ctl_info *edev_ctl,
+> +                  int inst_nr, int block_nr, const char *msg);
+> +       const char *msg;
+> +};
+> +
+> +/*
+> + * ARM Cortex-A55, Cortex-A75, Cortex-A76 TRM Chapter B3.10
+> + * ARM DSU TRM Chapter B2.10
+> + */
+> +static const struct error_record serror_record[] = {
+> +       { 0x1,  "Errors due to fault injection"         },
+> +       { 0x2,  "ECC error from internal data buffer"   },
+> +       { 0x6,  "ECC error on cache data RAM"           },
+> +       { 0x7,  "ECC error on cache tag or dirty RAM"   },
+> +       { 0x8,  "Parity error on TLB data RAM"          },
+> +       { 0x9,  "Parity error on TLB tag RAM"           },
+> +       { 0x12, "Error response for a cache copyback"   },
+> +       { 0x15, "Deferred error not supported"          },
+> +};
+> +
+> +static const struct error_type err_type[] = {
+> +       { edac_device_handle_ce, "Kryo L1 Corrected Error"      },
+> +       { edac_device_handle_ue, "Kryo L1 Uncorrected Error"    },
+> +       { edac_device_handle_ue, "Kryo L1 Deferred Error"       },
+> +       { edac_device_handle_ce, "Kryo L2 Corrected Error"      },
+> +       { edac_device_handle_ue, "Kryo L2 Uncorrected Error"    },
+> +       { edac_device_handle_ue, "Kryo L2 Deferred Error"       },
+> +       { edac_device_handle_ce, "L3 Corrected Error"           },
+> +       { edac_device_handle_ue, "L3 Uncorrected Error"         },
+> +       { edac_device_handle_ue, "L3 Deferred Error"            },
+> +};
 
-diff --git a/drivers/fsi/Kconfig b/drivers/fsi/Kconfig
-index 92ce6d85802cc..4cc0e630ab79b 100644
---- a/drivers/fsi/Kconfig
-+++ b/drivers/fsi/Kconfig
-@@ -55,6 +55,7 @@ config FSI_MASTER_AST_CF
- 
- config FSI_MASTER_ASPEED
- 	tristate "FSI ASPEED master"
-+	depends on HAS_IOMEM
- 	help
- 	 This option enables a FSI master that is present behind an OPB bridge
- 	 in the AST2600.
--- 
-2.24.0.525.g8f36a354ae-goog
+A comment is warranted to indicate that err_type is indexed by the
+enum, as this would be easy to mess up in later changes.
 
+> +
+> +static struct edac_device_ctl_info __percpu *edac_dev;
+> +static struct edac_device_ctl_info *drv_edev_ctl;
+> +
+> +static const char *get_error_msg(u64 errxstatus)
+> +{
+> +       const struct error_record *rec;
+> +       u32 errxstatus_serr;
+> +
+> +       errxstatus_serr = FIELD_GET(KRYO_ERRXSTATUS_SERR, errxstatus);
+> +
+> +       for (rec = serror_record; rec->error_code; rec++) {
+
+It looks like you expect the table to be zero terminated, but it's
+not. Add the missing zero entry.
+
+> +               if (errxstatus_serr == rec->error_code)
+> +                       return rec->error_msg;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +static void dump_syndrome_reg(int error_type, int level,
+> +                             u64 errxstatus, u64 errxmisc,
+> +                             struct edac_device_ctl_info *edev_ctl)
+> +{
+> +       char msg[KRYO_EDAC_MSG_MAX];
+> +       const char *error_msg;
+> +       int cpu;
+> +
+> +       cpu = raw_smp_processor_id();
+> +
+> +       error_msg = get_error_msg(errxstatus);
+> +       if (!error_msg)
+> +               return;
+> +
+> +       snprintf(msg, KRYO_EDAC_MSG_MAX,
+> +                "CPU%d: %s, ERRXSTATUS_EL1:%#llx ERRXMISC0_EL1:%#llx, %s",
+> +                cpu, err_type[error_type].msg, errxstatus, errxmisc,
+> +                error_msg);
+> +
+> +       err_type[error_type].fn(edev_ctl, 0, level, msg);
+> +}
+> +
+> +static void kryo_check_err_type(u64 errxstatus, u64 errxmisc,
+> +                               struct edac_device_ctl_info *edev_ctl,
+> +                               int level)
+> +{
+> +       u32 errxstatus_ue, errxstatus_ce, errxstatus_de;
+> +
+> +       errxstatus_ce = FIELD_GET(KRYO_ERRXSTATUS_CE, errxstatus);
+> +       errxstatus_ue = FIELD_GET(KRYO_ERRXSTATUS_UE, errxstatus);
+> +       errxstatus_de = FIELD_GET(KRYO_ERRXSTATUS_DE, errxstatus);
+> +
+> +       switch (level) {
+> +       case KRYO_L1:
+> +               if (errxstatus_ce)
+> +                       dump_syndrome_reg(KRYO_L1_CE, level, errxstatus,
+> +                                         errxmisc, edev_ctl);
+> +               else if (errxstatus_ue)
+> +                       dump_syndrome_reg(KRYO_L1_UE, level, errxstatus,
+> +                                         errxmisc, edev_ctl);
+> +               else if (errxstatus_de)
+> +                       dump_syndrome_reg(KRYO_L1_DE, level, errxstatus,
+> +                                         errxmisc, edev_ctl);
+> +               else
+> +                       edac_printk(KERN_ERR, DRV_NAME, "Unknown error\n");
+> +               break;
+> +       case KRYO_L2:
+> +               if (errxstatus_ce)
+> +                       dump_syndrome_reg(KRYO_L2_CE, level, errxstatus,
+> +                                         errxmisc, edev_ctl);
+> +               else if (errxstatus_ue)
+> +                       dump_syndrome_reg(KRYO_L2_UE, level, errxstatus,
+> +                                         errxmisc, edev_ctl);
+> +               else if (errxstatus_de)
+> +                       dump_syndrome_reg(KRYO_L2_DE, level, errxstatus,
+> +                                         errxmisc, edev_ctl);
+> +               else
+> +                       edac_printk(KERN_ERR, DRV_NAME, "Unknown error\n");
+> +               break;
+> +       case KRYO_L3:
+> +               if (errxstatus_ce)
+> +                       dump_syndrome_reg(KRYO_L3_CE, level, errxstatus,
+> +                                         errxmisc, edev_ctl);
+> +               else if (errxstatus_ue)
+> +                       dump_syndrome_reg(KRYO_L3_UE, level, errxstatus,
+> +                                         errxmisc, edev_ctl);
+> +               else if (errxstatus_de)
+> +                       dump_syndrome_reg(KRYO_L3_DE, level, errxstatus,
+> +                                         errxmisc, edev_ctl);
+> +               else
+> +                       edac_printk(KERN_ERR, DRV_NAME, "Unknown error\n");
+> +               break;
+> +       default:
+> +               edac_printk(KERN_ERR, DRV_NAME, "Unknown level\n");
+> +       }
+> +}
+> +
+> +static inline void kryo_clear_error(u64 errxstatus)
+> +{
+> +       write_sysreg_s(errxstatus, SYS_ERXSTATUS_EL1);
+> +       isb();
+
+Is the isb() necessary? If so, why not a dsb as well?
+
+> +}
+> +
+> +static void kryo_parse_l1_l2_cache_error(u64 errxstatus, u64 errxmisc,
+> +                                        struct edac_device_ctl_info *edev_ctl,
+> +                                        int cpu)
+> +{
+> +       u32 part_num = read_cpuid_part_number();
+> +
+> +       switch (part_num) {
+> +       /* Kryo3XX gold CPU cores do not have a UNIT bitfield */
+> +       case KRYO3XX_GOLD:
+> +       case KRYO4XX_SILVER_V1:
+> +       case KRYO4XX_SILVER_V2:
+> +               switch (FIELD_GET(KRYO_ERRXMISC0_LVL, errxmisc)) {
+> +               case KRYO_L1:
+> +                       kryo_check_err_type(errxstatus, errxmisc,
+> +                                           edev_ctl, KRYO_L1);
+> +                       break;
+> +               case KRYO_L2:
+> +                       kryo_check_err_type(errxstatus, errxmisc,
+> +                                           edev_ctl, KRYO_L2);
+> +                       break;
+> +               default:
+> +                       edac_printk(KERN_ERR, DRV_NAME,
+> +                                   "silver cpu:%d unknown error: %lu\n", cpu,
+> +                                   FIELD_GET(KRYO_ERRXMISC0_LVL, errxmisc));
+> +               }
+> +               break;
+> +       /* Kryo4XX gold CPU cores have a UNIT bitfield to identify levels */
+> +       case KRYO4XX_GOLD:
+> +               switch (FIELD_GET(KRYO_ERRXMISC0_UNIT, errxmisc)) {
+> +               case KRYO_L1_UNIT_DC:
+> +               case KRYO_L1_UNIT_IC:
+> +                       kryo_check_err_type(errxstatus, errxmisc,
+> +                                           edev_ctl, KRYO_L1);
+> +                       break;
+> +               case KRYO_L2_UNIT:
+> +               case KRYO_L2_UNIT_TLB:
+> +                       kryo_check_err_type(errxstatus, errxmisc,
+> +                                           edev_ctl, KRYO_L2);
+> +                       break;
+> +               default:
+> +                       edac_printk(KERN_ERR, DRV_NAME,
+> +                                   "gold cpu:%d unknown error: %lu\n", cpu,
+> +                                   FIELD_GET(KRYO_ERRXMISC0_UNIT, errxmisc));
+> +               }
+> +               break;
+> +       default:
+> +               edac_printk(KERN_ERR, DRV_NAME,
+> +                           "Error in matching cpu%d with part num:%u\n",
+> +                           cpu, part_num);
+> +       }
+> +}
+> +
+> +static inline bool kryo_check_regs_valid(u64 errxstatus)
+> +{
+> +       /* Check if status and misc regs are valid */
+> +       if (!(FIELD_GET(KRYO_ERRXSTATUS_VALID, errxstatus)) ||
+> +           !(FIELD_GET(KRYO_ERRXSTATUS_MV, errxstatus)))
+> +               return false;
+> +
+> +       return true;
+> +}
+> +
+> +static void kryo_check_l1_l2_ecc(void *info)
+> +{
+> +       struct edac_device_ctl_info *edev_ctl = info;
+> +       u64 errxstatus;
+> +       u64 errxmisc;
+> +       int cpu;
+> +
+> +       cpu = smp_processor_id();
+> +       /* We know record 0 is L1 and L2 */
+> +       write_sysreg_s(0, SYS_ERRSELR_EL1);
+> +       isb();
+
+Another isb I'm not sure about. Is this meant to provide a barrier
+between ERRSELR and ERXSTATUS? Wouldn't that be dsb, not isb?
+
+> +
+> +       errxstatus = read_sysreg_s(SYS_ERXSTATUS_EL1);
+> +       if (!kryo_check_regs_valid(errxstatus))
+> +               return;
+> +
+> +       errxmisc = read_sysreg_s(SYS_ERXMISC0_EL1);
+> +       /* Check if L1/L2 error */
+> +       if (!(FIELD_GET(KRYO_ERRXMISC0_LVL, errxmisc) == KRYO_L1) &&
+> +           !(FIELD_GET(KRYO_ERRXMISC0_LVL, errxmisc) == KRYO_L2))
+> +               return;
+> +
+> +       kryo_parse_l1_l2_cache_error(errxstatus, errxmisc, edev_ctl, cpu);
+> +       kryo_clear_error(errxstatus);
+> +}
+> +
