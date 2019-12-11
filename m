@@ -2,88 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4E0F11BD81
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 20:53:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A91B11BD8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 20:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfLKTxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 14:53:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726345AbfLKTxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 14:53:02 -0500
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727079AbfLKT5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 14:57:49 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:38603 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfLKT5s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 14:57:48 -0500
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50AC0222C4;
-        Wed, 11 Dec 2019 19:53:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576093981;
-        bh=y19maRtWwVQFWVhwa3u7o+m6LVOIsxRzQxftwBneXRA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KGNgHImha5d+ESZ/IJYUXTSgAMUJ62et0UphLgQSA4lvWfjvLBNDcF3nRn3BjnAZF
-         ZdO8NY+yadtc+sTEnqnBWqHueFL41XHW9I34lxWq+lQK5tCmLYjh37a+DhiEL/QeHX
-         QywbYkh0FEiaYDwHXGETVmkRhcAjKVUNsLdDznfI=
-Received: by mail-qk1-f177.google.com with SMTP id r14so12581700qke.13;
-        Wed, 11 Dec 2019 11:53:01 -0800 (PST)
-X-Gm-Message-State: APjAAAUlhGm/lJfyTEKK/zG5FVnp6QauLFfRN+PgBCHJK8pCkCz9Dbe7
-        PtEQYT9BXD7kJzbpzDdCnhGcAQGRxknU99THxw==
-X-Google-Smtp-Source: APXvYqzVkZGwMq5ckUx1CJq8f6u6AcQxonLAnwW1KXsKrKeqNeJGszYLXKDW6houMOzevVZ2dhsm2zCBnN3+qHaqRJM=
-X-Received: by 2002:a37:85c4:: with SMTP id h187mr4719586qkd.223.1576093980385;
- Wed, 11 Dec 2019 11:53:00 -0800 (PST)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 25D5823D06;
+        Wed, 11 Dec 2019 20:57:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1576094266;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=pBddhS/axkFN9xuqKepHUAlLgUVkbXFMjGqDKWGgil4=;
+        b=uDTaHM1c9Ge3fnx1CI4glGrwNO0zT16r1zuGcPycseCp6epInYYjxCHRXEw0rx4+dWjhmb
+        QoZWj7bixM/w1MFHQSwubuSVNQugDU8ABKWc9PzRK8aEtHT7jHzTpo6rEYQH/BiWKILdLe
+        TXMxac5IfMeBY411/OZvoR/pUXLE29A=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Yogesh Gaur <yogeshgaur.83@gmail.com>,
+        Ashish Kumar <ashish.kumar@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH] spi: nxp-fspi: Ensure width is respected in spi-mem operations
+Date:   Wed, 11 Dec 2019 20:57:30 +0100
+Message-Id: <20191211195730.26794-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191211150021.20125-1-benjamin.gaignard@st.com>
-In-Reply-To: <20191211150021.20125-1-benjamin.gaignard@st.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 11 Dec 2019 13:52:48 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJKWoX_kY2kSieOA-wXO5xKtDbhXPMCjg-d4FHHEvOmHg@mail.gmail.com>
-Message-ID: <CAL_JsqJKWoX_kY2kSieOA-wXO5xKtDbhXPMCjg-d4FHHEvOmHg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pwm: fix nodename pattern
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+X-Spam-Level: ******
+X-Rspamd-Server: web
+X-Spam-Status: Yes, score=6.40
+X-Spam-Score: 6.40
+X-Rspamd-Queue-Id: 25D5823D06
+X-Spamd-Result: default: False [6.40 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         RCPT_COUNT_FIVE(0.00)[6];
+         DKIM_SIGNED(0.00)[];
+         MID_CONTAINS_FROM(1.00)[];
+         NEURAL_HAM(-0.00)[-0.680];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:31334, ipnet:2a02:810c::/31, country:DE];
+         FREEMAIL_CC(0.00)[gmail.com,nxp.com,kernel.org,walle.cc];
+         SUSPICIOUS_RECIPS(1.50)[]
+X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 9:00 AM Benjamin Gaignard
-<benjamin.gaignard@st.com> wrote:
->
-> Typical pwm nodes should be named pwm@xxx.
-> The pattern shouldn't match nodes named pwm-xxx to avoid
-> conflicts with pinmux or pwm-fan nodes.
+Make use of a core helper to ensure the desired width is respected
+when calling spi-mem operators.
 
-It only matches pwm-$(a-hex-number), not any string, so that shouldn't
-be a problem. This is needed for things like GPIO based devices (not
-just PWMs) which don't have any address.
+Otherwise only the SPI controller will be matched with the flash chip,
+which might lead to wrong widths. Also consider the width specified by
+the user in the device tree.
 
-Pinmux nodes are going to need to adopt some sort of standard pattern
-we can match on.
+Fixes: a5356aef6a90 ("spi: spi-mem: Add driver for NXP FlexSPI controller")
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/spi/spi-nxp-fspi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  Documentation/devicetree/bindings/pwm/pwm.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm.yaml b/Documentation/devicetree/bindings/pwm/pwm.yaml
-> index fa4f9de92090..29b86886c282 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm.yaml
-> +++ b/Documentation/devicetree/bindings/pwm/pwm.yaml
-> @@ -11,7 +11,7 @@ maintainers:
->
->  properties:
->    $nodename:
-> -    pattern: "^pwm(@.*|-[0-9a-f])*$"
-> +    pattern: "^pwm(@.*[0-9a-f])*$"
->
->    "#pwm-cells":
->      description:
-> --
-> 2.15.0
->
+diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+index c36bb1bb464e..8c5084a3a617 100644
+--- a/drivers/spi/spi-nxp-fspi.c
++++ b/drivers/spi/spi-nxp-fspi.c
+@@ -439,7 +439,7 @@ static bool nxp_fspi_supports_op(struct spi_mem *mem,
+ 	    op->data.nbytes > f->devtype_data->txfifo)
+ 		return false;
+ 
+-	return true;
++	return spi_mem_default_supports_op(mem, op);
+ }
+ 
+ /* Instead of busy looping invoke readl_poll_timeout functionality. */
+-- 
+2.20.1
+
