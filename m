@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE9C811B052
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:21:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 454A911B053
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:21:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732211AbfLKPVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:21:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51966 "EHLO mail.kernel.org"
+        id S1732500AbfLKPVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:21:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732466AbfLKPVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:21:35 -0500
+        id S1731843AbfLKPVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:21:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A31022527;
-        Wed, 11 Dec 2019 15:21:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0189322527;
+        Wed, 11 Dec 2019 15:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077694;
-        bh=YHffAVzO53Mk2+ObzZ0K8rxtywwRmIrlOpEu3DE0RqQ=;
+        s=default; t=1576077700;
+        bh=UV2G6q/DXBthsE3ae57WamEql2zCNb2Q2GjMnMRBGkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LNk0NlWS0/JydKNwB0L5oGo2FSEiuqPhyPZi7gmgEC+Myhh5S2XL/JkbeYsZE27Gv
-         G5X+67tmf76AMdyzdRjn+98Drk6PpRxHjnQ0NkGK75wCARBjLslYUgFeZf9RoHKLY5
-         FIlu0/+TmV2FmiGLMy5Rqas0DM9VkbdgMwb6r7cc=
+        b=WVtOquf2oudfARqi89sn3/KsjQWYysEwZDWuXJ0m58z4Ma4JA/pzs8g/4gleSf+aL
+         PoKGktQ5kHpTbpK2d57QCM4Ql7yirxLMeQoLeAhuTibWRt4/w0pJdLilsGFa9KrfGa
+         iEVXNYCBkLO8JSwk5RBVkW335ePwd9fMuX2njb8Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonghong Song <yhs@fb.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 135/243] tools: bpftool: fix a bitfield pretty print issue
-Date:   Wed, 11 Dec 2019 16:04:57 +0100
-Message-Id: <20191211150348.264327551@linuxfoundation.org>
+Subject: [PATCH 4.19 137/243] gpio: OF: Parse MMC-specific CD and WP properties
+Date:   Wed, 11 Dec 2019 16:04:59 +0100
+Message-Id: <20191211150348.405211936@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -45,100 +46,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghong Song <yhs@fb.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 528bff0cdb6649f97f2c4802e4ac7a4b50645f2f ]
+[ Upstream commit 81c85ec15a1946f2e347ec0bf66936121eb97ce7 ]
 
-Commit b12d6ec09730 ("bpf: btf: add btf print functionality")
-added btf pretty print functionality to bpftool.
-There is a problem though in printing a bitfield whose type
-has modifiers.
+When retrieveing CD (card detect) and WP (write protect)
+GPIO handles from the device tree, make sure to assign
+them active low by default unless the "cd-inverted" or
+"wp-inverted" properties are set. These properties mean
+that respective signal is active HIGH since the SDHCI
+specification stipulates that this kind of signals
+should be treated as active LOW.
 
-For example, for a type like
-  typedef int ___int;
-  struct tmp_t {
-          int a:3;
-          ___int b:3;
-  };
-Suppose we have a map
-  struct bpf_map_def SEC("maps") tmpmap = {
-          .type = BPF_MAP_TYPE_HASH,
-          .key_size = sizeof(__u32),
-          .value_size = sizeof(struct tmp_t),
-          .max_entries = 1,
-  };
-and the hash table is populated with one element with
-key 0 and value (.a = 1 and .b = 2).
+If the twocell GPIO flag is also specified as active
+low, well that's nice and we will silently ignore the
+tautological specification.
 
-In BTF, the struct member "b" will have a type "typedef" which
-points to an int type. The current implementation does not
-pass the bit offset during transition from typedef to int type,
-hence incorrectly print the value as
-  $ bpftool m d id 79
-  [{
-          "key": 0,
-          "value": {
-              "a": 0x1,
-              "b": 0x1
-          }
-      }
-  ]
+If however the GPIO line is specified as active low
+in the GPIO flasg cell and "cd-inverted" or "wp-inverted"
+is also specified, the latter takes precedence and we
+print a warning.
 
-This patch fixed the issue by carrying bit_offset along the type
-chain during bit_field print. The correct result can be printed as
-  $ bpftool m d id 76
-  [{
-          "key": 0,
-          "value": {
-              "a": 0x1,
-              "b": 0x2
-          }
-      }
-  ]
+The current effect on the MMC slot-gpio core are as
+follows:
 
-The kernel pretty print is implemented correctly and does not
-have this issue.
+For CD GPIOs: no effect. The current code in
+mmc/core/host.c calls mmc_gpiod_request_cd() with
+the "override_active_level" argument set to true,
+which means that whatever the GPIO descriptor
+thinks about active low/high will be ignored, the
+core will use the MMC_CAP2_CD_ACTIVE_HIGH to keep
+track of this and reads the raw value from the
+GPIO descriptor, totally bypassing gpiolibs inversion
+semantics. I plan to clean this up at a later point
+passing the handling of inversion semantics over
+to gpiolib, so this patch prepares the ground for
+that.
 
-Fixes: b12d6ec09730 ("bpf: btf: add btf print functionality")
-Signed-off-by: Yonghong Song <yhs@fb.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fow WP GPIOs: this is probably fixing a bug, because
+the code in mmc/core/host.c calls mmc_gpiod_request_ro()
+with the "override_active_level" argument set to false,
+which means it will respect the inversion semantics of
+the gpiolib and ignore the MMC_CAP2_RO_ACTIVE_HIGH
+flag for everyone using this through device tree.
+However the code in host.c confusingly goes to great
+lengths setting up the MMC_CAP2_RO_ACTIVE_HIGH flag
+from the GPIO descriptor and by reading the "wp-inverted"
+property of the node. As far as I can tell this is all
+in vain and the inversion is broken: device trees that
+use "wp-inverted" do not work as intended, instead the
+only way to actually get inversion on a line is by
+setting the second cell flag to GPIO_ACTIVE_HIGH (which
+will be the default) or GPIO_ACTIVE_LOW if they want
+the proper MMC semantics. Presumably all device trees do
+this right but we need to parse and handle this properly.
+
+Cc: linux-mmc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/bpf/bpftool/btf_dumper.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib-of.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/tools/bpf/bpftool/btf_dumper.c b/tools/bpf/bpftool/btf_dumper.c
-index 55bc512a18318..e4e6e2b3fd847 100644
---- a/tools/bpf/bpftool/btf_dumper.c
-+++ b/tools/bpf/bpftool/btf_dumper.c
-@@ -32,7 +32,7 @@ static void btf_dumper_ptr(const void *data, json_writer_t *jw,
- }
- 
- static int btf_dumper_modifier(const struct btf_dumper *d, __u32 type_id,
--			       const void *data)
-+			       __u8 bit_offset, const void *data)
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index e0f149bdf98ff..1147ad968fd75 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -60,6 +60,45 @@ static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
+ static void of_gpio_flags_quirks(struct device_node *np,
+ 				 enum of_gpio_flags *flags)
  {
- 	int actual_type_id;
- 
-@@ -40,7 +40,7 @@ static int btf_dumper_modifier(const struct btf_dumper *d, __u32 type_id,
- 	if (actual_type_id < 0)
- 		return actual_type_id;
- 
--	return btf_dumper_do_type(d, actual_type_id, 0, data);
-+	return btf_dumper_do_type(d, actual_type_id, bit_offset, data);
- }
- 
- static void btf_dumper_enum(const void *data, json_writer_t *jw)
-@@ -237,7 +237,7 @@ static int btf_dumper_do_type(const struct btf_dumper *d, __u32 type_id,
- 	case BTF_KIND_VOLATILE:
- 	case BTF_KIND_CONST:
- 	case BTF_KIND_RESTRICT:
--		return btf_dumper_modifier(d, type_id, data);
-+		return btf_dumper_modifier(d, type_id, bit_offset, data);
- 	default:
- 		jsonw_printf(d->jw, "(unsupported-kind");
- 		return -EINVAL;
++	/*
++	 * Handle MMC "cd-inverted" and "wp-inverted" semantics.
++	 */
++	if (IS_ENABLED(CONFIG_MMC)) {
++		if (of_property_read_bool(np, "cd-gpios")) {
++			if (of_property_read_bool(np, "cd-inverted")) {
++				if (*flags & OF_GPIO_ACTIVE_LOW) {
++					/* "cd-inverted" takes precedence */
++					*flags &= ~OF_GPIO_ACTIVE_LOW;
++					pr_warn("%s GPIO handle specifies CD active low - ignored\n",
++						of_node_full_name(np));
++				}
++			} else {
++				/*
++				 * Active low is the default according to the
++				 * SDHCI specification. If the GPIO handle
++				 * specifies the same thing - good.
++				 */
++				*flags |= OF_GPIO_ACTIVE_LOW;
++			}
++		}
++		if (of_property_read_bool(np, "wp-gpios")) {
++			if (of_property_read_bool(np, "wp-inverted")) {
++				/* "wp-inverted" takes precedence */
++				if (*flags & OF_GPIO_ACTIVE_LOW) {
++					*flags &= ~OF_GPIO_ACTIVE_LOW;
++					pr_warn("%s GPIO handle specifies WP active low - ignored\n",
++						of_node_full_name(np));
++				}
++			} else {
++				/*
++				 * Active low is the default according to the
++				 * SDHCI specification. If the GPIO handle
++				 * specifies the same thing - good.
++				 */
++				*flags |= OF_GPIO_ACTIVE_LOW;
++			}
++		}
++	}
+ 	/*
+ 	 * Some GPIO fixed regulator quirks.
+ 	 * Note that active low is the default.
 -- 
 2.20.1
 
