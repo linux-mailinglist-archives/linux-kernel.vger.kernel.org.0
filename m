@@ -2,132 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59B8B11B770
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E2F311B787
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:09:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732959AbfLKQHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:07:55 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45036 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387491AbfLKQHt (ORCPT
+        id S2388922AbfLKQIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:08:18 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54485 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731122AbfLKQIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:07:49 -0500
-Received: by mail-pf1-f194.google.com with SMTP id d199so2012751pfd.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 08:07:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netflix.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=3m2cv863s8gDC9b4gczbkHnW6KALvnxLaZRbbOr5EDY=;
-        b=LyIeA2xaZWzOA7roATJ7wOnCVKwtKgpBO3VoMArqM2ym3/ANWTerF07FYN2TV3cOsG
-         eRpqJmnsND8zVybXKxatKjjHq9LF0sOb234twkZ1eVyWHSisv4QIxcCSrkOdN+gT672r
-         WLRVQlDYhV1mJX0yRCItRpJx6P97jrR6GwTqA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=3m2cv863s8gDC9b4gczbkHnW6KALvnxLaZRbbOr5EDY=;
-        b=HdT22wYEPOrNynaSSBUed6HZcBprBl8g8kqqJmHp5QpO13W/cn+o3K69JNOEOvE9+V
-         5fLfnquecKj/02b8vmfUKW2VDwkMebM7bGuYA6NNJUq16vOQWWtCnA7BvnvVQSSoYeHw
-         RmqD6B85/kWQh1J5ddAvHlhL6Rh57f7Q/Pv7+CFQoRnt3g7SWMErOlz4ap1O40zq4XiC
-         rq5xQpkEILC7/DCMkfl1VrN7AikwqRO+4i8YRjdONSdhmgZ6vnOJ9QajyUEOkJ1tNp1Z
-         hNJ/P9zNcnJRTf7ADYy1R782eyGqjCok/FpyZD566ZldUPrJZKOwlCOTbBkj/r9/d2OD
-         L7fA==
-X-Gm-Message-State: APjAAAXI6ryRGN9PMzzbrfHdu0kOrJG99YXM1dkHiEPnN99x7ynCxIN6
-        O/STcxlM2EZVBlzneu8ClaSN4A==
-X-Google-Smtp-Source: APXvYqwid8x3Q9/FYkWqmBmg2Ic0uiKvx9kozxuCJzOmp9sPbJRrH2eVEj44LbX1eUPAMbNlnPgn3Q==
-X-Received: by 2002:a65:66d7:: with SMTP id c23mr5140529pgw.40.1576080468679;
-        Wed, 11 Dec 2019 08:07:48 -0800 (PST)
-Received: from laul-mmarchini.netflix.com ([207.38.45.92])
-        by smtp.gmail.com with ESMTPSA id s60sm3079280pjb.3.2019.12.11.08.07.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 08:07:48 -0800 (PST)
-From:   Matheus Marchini <mmarchini@netflix.com>
-To:     linux-perf-users@vger.kernel.org
-Cc:     jkoch@netflix.com, khlebnikov@yandex-team.ru,
-        Matheus Marchini <mmarchini@netflix.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Changbin Du <changbin.du@intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        John Keeping <john@metanate.com>,
-        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] perf map: fix infinite loop on map_groups__fixup_overlappings
-Date:   Wed, 11 Dec 2019 08:07:31 -0800
-Message-Id: <20191211160734.18087-1-mmarchini@netflix.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 11 Dec 2019 11:08:13 -0500
+Received: from callcc.thunk.org (guestnat-104-132-34-105.corp.google.com [104.132.34.105] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBBG7jbj026860
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Dec 2019 11:07:46 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id A4C13421A48; Wed, 11 Dec 2019 11:07:45 -0500 (EST)
+Date:   Wed, 11 Dec 2019 11:07:45 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Andrea Vai <andrea.vai@unipv.it>,
+        "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        USB list <linux-usb@vger.kernel.org>,
+        SCSI development list <linux-scsi@vger.kernel.org>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Hans Holmberg <Hans.Holmberg@wdc.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: AW: Slow I/O on USB media after commit
+ f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
+Message-ID: <20191211160745.GA129186@mit.edu>
+References: <20191128091712.GD15549@ming.t460p>
+ <f82fd5129e3dcacae703a689be60b20a7fedadf6.camel@unipv.it>
+ <20191129005734.GB1829@ming.t460p>
+ <20191129023555.GA8620@ming.t460p>
+ <320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it>
+ <20191203022337.GE25002@ming.t460p>
+ <8196b014b1a4d91169bf3b0d68905109aeaf2191.camel@unipv.it>
+ <20191210080550.GA5699@ming.t460p>
+ <20191211024137.GB61323@mit.edu>
+ <20191211040058.GC6864@ming.t460p>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211040058.GC6864@ming.t460p>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some cases, when using perf inject and there are JIT_CODE_MOVE
-records in the jitdump file, perf will end up in an infinite loop on
-map_groups__fixup_overlappings, which will keep allocating memory
-indefinitely. This issue was observed on Node.js (with changes to
-generate JIT_CODE_MOVE records) and on Java.
+On Wed, Dec 11, 2019 at 12:00:58PM +0800, Ming Lei wrote:
+> I didn't reproduce the issue in my test environment, and follows
+> Andrea's test commands[1]:
+> 
+>   mount UUID=$uuid /mnt/pendrive 2>&1 |tee -a $logfile
+>   SECONDS=0
+>   cp $testfile /mnt/pendrive 2>&1 |tee -a $logfile
+>   umount /mnt/pendrive 2>&1 |tee -a $logfile
+> 
+> The 'cp' command supposes to open/close the file just once, however
+> ext4_release_file() & write pages is observed to run for 4358 times
+> when executing the above 'cp' test.
 
-This issue started to occur after 6a9405b56c274 (perf map:
-Optimize maps__fixup_overlappings()). To prevent it from happening,
-partially revert those changes without losing the optimizations
-introduced in it.
+Why are we sure the ext4_release_file() / _fput() is coming from the
+cp command, as opposed to something else that might be running on the
+system under test?  _fput() is called by the kernel when the last
+reference to a struct file is released.  (Specifically, if you have a
+fd which is dup'ed, it's only when the last fd corresponding to the
+struct file is closed, and the struct file is about to be released,
+does the file system's f_ops->release function get called.)
 
-Signed-off-by: Matheus Marchini <mmarchini@netflix.com>
----
- tools/perf/util/map.c | 17 +++++++++++++++++
- tools/perf/util/map.h |  1 +
- 2 files changed, 18 insertions(+)
+So the first question I'd ask is whether there is anything else going
+on the system, and whether the writes are happening to the USB thumb
+drive, or to some other storage device.  And if there is something
+else which is writing to the pendrive, maybe that's why no one else
+has been able to reproduce the OP's complaint....
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 744bfbaf35cf..8918fdb8ddab 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -781,6 +781,21 @@ static void __map_groups__insert(struct map_groups *mg, struct map *map)
- 	__maps__insert(&mg->maps, map);
- }
- 
-+int map__overlap(struct map *l, struct map *r)
-+{
-+	if (l->start > r->start) {
-+		struct map *t = l;
-+
-+		l = r;
-+		r = t;
-+	}
-+
-+	if (l->end > r->start)
-+		return 1;
-+
-+	return 0;
-+}
-+
- int map_groups__fixup_overlappings(struct map_groups *mg, struct map *map, FILE *fp)
- {
- 	struct maps *maps = &mg->maps;
-@@ -821,6 +836,8 @@ int map_groups__fixup_overlappings(struct map_groups *mg, struct map *map, FILE
- 		 */
- 		if (pos->start >= map->end)
- 			break;
-+		if (!map__overlap(map, pos))
-+			continue;
- 
- 		if (verbose >= 2) {
- 
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 5e8899883231..1383571437aa 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -132,6 +132,7 @@ static inline void __map__zput(struct map **map)
- 
- #define map__zput(map) __map__zput(&map)
- 
-+int map__overlap(struct map *l, struct map *r);
- size_t map__fprintf(struct map *map, FILE *fp);
- size_t map__fprintf_dsoname(struct map *map, FILE *fp);
- char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
--- 
-2.17.1
-
+    	      	 	    	     - Ted
