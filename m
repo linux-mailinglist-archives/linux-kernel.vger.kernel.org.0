@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2BD311B474
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:48:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C55DB11B46D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733303AbfLKPrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:47:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59164 "EHLO mail.kernel.org"
+        id S1732951AbfLKP0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:26:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733080AbfLKP0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:26:11 -0500
+        id S1732801AbfLKP0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:26:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44A4F222C4;
-        Wed, 11 Dec 2019 15:26:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E595122527;
+        Wed, 11 Dec 2019 15:26:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077970;
-        bh=MtFn0xzkL4jTgKuMDJEhK74IZuC3f1IDzLRwoiosD5E=;
+        s=default; t=1576077976;
+        bh=yKYyV8WCc8qaM7E40q6OGjSrK/U8pEFIfTyF9vhkoGY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G/Vopgy8HI9kgub2Pk0AOOUKjg/ohn4bX2KkSqmBzfjPDg2vBiN8ZuHoatjYdkBsO
-         XJz6+/MIlAxychEuKeUQGBRa2RB4/j4Hnf6Eoj4pMyMEeebDLjZ1UrLGVOaDVlFB0G
-         sw1UdHB0u/6LzegkK+Fr0ZLu0FmFiyLMnRER8gX4=
+        b=Pq+m8OxVp9cmy0WGvCmLoP/oOTJpL9J9icDjaTiHJLEeTJpPetIGSJIbWBSBfN1Uu
+         Wrek7ZjmTy+TOMqQnapHASv7NSU6/81uQLwpiY+ZSLn+KNgy2cKCgq2GCIHICPADOM
+         y0E3HYtFVPVLuVr9hNVVtx/ZSDhSK+28WSI5X4KE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Or Cohen <orcohen@paloaltonetworks.com>,
-        Nicolas Pitre <npitre@baylibre.com>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 4.19 241/243] vcs: prevent write access to vcsu devices
-Date:   Wed, 11 Dec 2019 16:06:43 +0100
-Message-Id: <20191211150355.607717902@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 4.19 243/243] binder: Handle start==NULL in binder_update_page_range()
+Date:   Wed, 11 Dec 2019 16:06:45 +0100
+Message-Id: <20191211150355.743952632@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,38 +43,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Pitre <nico@fluxnic.net>
+From: Jann Horn <jannh@google.com>
 
-commit 0c9acb1af77a3cb8707e43f45b72c95266903cee upstream.
+commit 2a9edd056ed4fbf9d2e797c3fc06335af35bccc4 upstream.
 
-Commit d21b0be246bf ("vt: introduce unicode mode for /dev/vcs") guarded
-against using devices containing attributes as this is not yet
-implemented. It however failed to guard against writes to any devices
-as this is also unimplemented.
+The old loop wouldn't stop when reaching `start` if `start==NULL`, instead
+continuing backwards to index -1 and crashing.
 
-Reported-by: Or Cohen <orcohen@paloaltonetworks.com>
-Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-Cc: <stable@vger.kernel.org> # v4.19+
-Cc: Jiri Slaby <jslaby@suse.com>
-Fixes: d21b0be246bf ("vt: introduce unicode mode for /dev/vcs")
-Link: https://lore.kernel.org/r/nycvar.YSQ.7.76.1911051030580.30289@knanqh.ubzr
+Luckily you need to be highly privileged to map things at NULL, so it's not
+a big problem.
+
+Fix it by adjusting the loop so that the loop variable is always in bounds.
+
+This patch is deliberately minimal to simplify backporting, but IMO this
+function could use a refactor. The jump labels in the second loop body are
+horrible (the error gotos should be jumping to free_range instead), and
+both loops would look nicer if they just iterated upwards through indices.
+And the up_read()+mmput() shouldn't be duplicated like that.
+
+Cc: stable@vger.kernel.org
+Fixes: 457b9a6f09f0 ("Staging: android: add binder driver")
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Link: https://lore.kernel.org/r/20191018205631.248274-3-jannh@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vc_screen.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/android/binder_alloc.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/tty/vt/vc_screen.c
-+++ b/drivers/tty/vt/vc_screen.c
-@@ -437,6 +437,9 @@ vcs_write(struct file *file, const char
- 	size_t ret;
- 	char *con_buf;
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -295,8 +295,7 @@ static int binder_update_page_range(stru
+ 	return 0;
  
-+	if (use_unicode(inode))
-+		return -EOPNOTSUPP;
-+
- 	con_buf = (char *) __get_free_page(GFP_KERNEL);
- 	if (!con_buf)
- 		return -ENOMEM;
+ free_range:
+-	for (page_addr = end - PAGE_SIZE; page_addr >= start;
+-	     page_addr -= PAGE_SIZE) {
++	for (page_addr = end - PAGE_SIZE; 1; page_addr -= PAGE_SIZE) {
+ 		bool ret;
+ 		size_t index;
+ 
+@@ -309,6 +308,8 @@ free_range:
+ 		WARN_ON(!ret);
+ 
+ 		trace_binder_free_lru_end(alloc, index);
++		if (page_addr == start)
++			break;
+ 		continue;
+ 
+ err_vm_insert_page_failed:
+@@ -318,7 +319,8 @@ err_map_kernel_failed:
+ 		page->page_ptr = NULL;
+ err_alloc_page_failed:
+ err_page_ptr_cleared:
+-		;
++		if (page_addr == start)
++			break;
+ 	}
+ err_no_vma:
+ 	if (mm) {
 
 
