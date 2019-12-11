@@ -2,168 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFEED11AA71
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:07:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AA9211AA76
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:07:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbfLKMH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 07:07:26 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:54067 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbfLKMH0 (ORCPT
+        id S1729157AbfLKMHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 07:07:41 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:52118 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727888AbfLKMHk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 07:07:26 -0500
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="Claudiu.Beznea@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: tDegTIlqnBaqIrKux3j6hOyK/molOMSxyaI9XcPNoRh4YJN3HkvFDp1Q6QpDchojkDkwAS2juE
- jJmtW16Idvgc21qjnfE09qMJLQ2o6zlHDfdTp1QHc/tfZfbDQOq8rv6yNcSGWFcWw9cskFOM8y
- 7CIy9fzLdk/zBDXgOryLvN4iUiFSVMLh3CTsYhirJT7g0gTJE6I6pUpepoBF3t2Y25Y7Bt+O8c
- 98NhnOG2kKHoRFn9dn648SYzDJpZJ/Q7ztldWidvF/Rkh00djMwVVG6w2Kc0hdZ3h+UXMlgy+T
- X5Y=
-X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
-   d="scan'208";a="57351278"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Dec 2019 05:07:24 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 11 Dec 2019 05:07:30 -0700
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Wed, 11 Dec 2019 05:07:21 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WYeR3YjmNjwtrOwW2vJSCt7EobsISI2cZnmws28UMoBx/rAGzpnDTHR9rOPE7aDkfFPyc2a+id/afd/orxMlmehL3tbKV51M4s0ByEEj3Wuy/QA6DHUG3QpM/QJZ+Ido0yy7GkbonN3TbR6MR8YoHyfszg2VAyb/WbwwBim+EgyX03P6mnyjCyyCYU1st4WfKmmvSGwT6s8iy+PYg8TXRdqGsAqsToUB7csLH/3PlnWeTutHLX/q1RkgoMj1HvC6GW9BoEsoDWk7rUtzgqGk7/cxKEclofjFdbnVR9X+bBRoagotS6BSsctoNsWxKvD4qBDPZFz5DAt2xPO9oeHXcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7Z2NdoZaZ9/uYx9re3ADms1h0r7WpMlgy2iv26bUc/Y=;
- b=XZyccruARxxd/+m6MzKjS8CvELkb0wzT6P/9Kefy6Yek9S9lJf/qB9uFB6wekrjiC9ihOcX5xe/WDPsgYyQ65itTNK4b8LcDZvTGTbhv0lxtlDLDnMyQeWDpeZjRV7cvTlcKJKcTWlQFWVxp3crGB20mncWLyCMsZ4V9mWxCWeGRtSEBXBtxw7f8k/nVliq4o4q1fMmlEj8d12cIV1YVBKc7Oc1oCNZLdUmaUDeex+tgKW4WKqZ8iQAvtCKLskCj28DWiafkAALqaWDolXl9h7x6H0PCwhGsfednbR+CRT0ha5A6BI+NH26+QmANQjTAhm0V5EGUaHq3tVVj/ifLiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7Z2NdoZaZ9/uYx9re3ADms1h0r7WpMlgy2iv26bUc/Y=;
- b=CiZQEuabrxVd4tOGsijWBvjgTXpeJdaTbq7AzoauHxFU754DKAsR7ywimgReXA5MRApxxW3qtgRddwZ0OFqyD4MiKZZbuvQnC90qMgCxftvaNL9+Zyz/RIaZaXLlEzOSaecBMwPhzmpOAI7+pOVyJRvkjXG17zScmtsjMkZ70sM=
-Received: from DM6PR11MB3225.namprd11.prod.outlook.com (20.176.120.224) by
- DM6PR11MB2538.namprd11.prod.outlook.com (20.176.95.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.18; Wed, 11 Dec 2019 12:07:18 +0000
-Received: from DM6PR11MB3225.namprd11.prod.outlook.com
- ([fe80::ed7d:d06f:7d55:cbe2]) by DM6PR11MB3225.namprd11.prod.outlook.com
- ([fe80::ed7d:d06f:7d55:cbe2%6]) with mapi id 15.20.2538.012; Wed, 11 Dec 2019
- 12:07:18 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <sam@ravnborg.org>
-CC:     <alexandre.belloni@bootlin.com>, <bbrezillon@kernel.org>,
-        <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <Ludovic.Desroches@microchip.com>,
-        <daniel@ffwll.ch>, <lee.jones@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/5] mfd: atmel-hlcdc: return in case of error
-Thread-Topic: [PATCH 3/5] mfd: atmel-hlcdc: return in case of error
-Thread-Index: AQHVsBuEbmezCvtdS02ZCsl69qCn1w==
-Date:   Wed, 11 Dec 2019 12:07:18 +0000
-Message-ID: <99b559e2-4621-dec3-8c6c-b7a36f9ef07e@microchip.com>
-References: <1575984287-26787-1-git-send-email-claudiu.beznea@microchip.com>
- <1575984287-26787-4-git-send-email-claudiu.beznea@microchip.com>
- <20191210203716.GC24756@ravnborg.org>
-In-Reply-To: <20191210203716.GC24756@ravnborg.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: FR2P281CA0018.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a::28) To DM6PR11MB3225.namprd11.prod.outlook.com
- (2603:10b6:5:5b::32)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tagtoolbar-keys: D20191211140711496
-x-originating-ip: [94.177.32.156]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: adfa8810-18cf-4764-361e-08d77e32ab78
-x-ms-traffictypediagnostic: DM6PR11MB2538:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR11MB2538CA980E9F767FECED8DF4875A0@DM6PR11MB2538.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 024847EE92
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(366004)(376002)(396003)(136003)(189003)(199004)(86362001)(52116002)(66946007)(2616005)(478600001)(8676002)(36756003)(26005)(66556008)(81156014)(8936002)(81166006)(66476007)(186003)(6916009)(6486002)(64756008)(6512007)(5660300002)(71200400001)(54906003)(31696002)(31686004)(66446008)(4326008)(316002)(966005)(6506007)(2906002)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR11MB2538;H:DM6PR11MB3225.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: b6mt6xgDkthwJBuL/3o2pii5letnQTr6Yfngqs8A43CWL7sR33+fvxgoJr7SINITyuamrbrJ2uKL0DKkPwQP+8LuJJAY78S1tjRXxQXuauO40O3sPGX7wEau+9Ts/QRpFCq8MT9GQmrF6pJRTBZhSIQiW++OMsRfkvxdc6VEosgrDNfiw17JtGKAkX1t1ksmlJEJZNJ68GKpoFBg7ADzKyNJ+PnF7k0zjZaLHxZxQGqaNiX9DO4tTFPovE6S68W0IYNvcb6LWWHiayl/opFUw1eoFZ3ni3bjfKDqSrRYz7P+NlLky5epY+xtBz5JVk7Pj35u/2W1nmm6Y2HmfepLn6q2tSKREj/tLmwhxuvHnisF8TBga8+n9Up/E+YgyVxwOvug5xxZGn4gR/OWqu3E15WSh0u4Wl6Amj8dNaGOI3ZvppkZMdMSgZ/eRdB2yuVDvTPKvcs7+HcvXR0N/uwI8SvW3DEaiV1cQaj0SdFFm4M=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3F858CEA95E15745A056EA7BAC76D287@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 11 Dec 2019 07:07:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576066059;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=E9JAWT7IGWHEcd/WlfE+7KxAF6KcvMxIfi/mtHIiMZY=;
+        b=fwAGBfZTuGJaw4UiDAnVjbgJx+xFRwaBUfjjqBsMmwJQLlkVRKgMwLkSytzkVfp7pxtSnt
+        s4iZ64fMkfXVP20sWQ2fiiU8RERVIVk8pPlOPniWQNU4+ug8oDh0Zd9/auFv3EFa0WGgVR
+        K3EysG+9Ucc87jLI9HNyme8008QNljk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-146-rAXCa65cO06Lllj2RyUgBg-1; Wed, 11 Dec 2019 07:07:34 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EB609DB32;
+        Wed, 11 Dec 2019 12:07:32 +0000 (UTC)
+Received: from [10.36.117.148] (ovpn-117-148.ams2.redhat.com [10.36.117.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ECE0B5DA70;
+        Wed, 11 Dec 2019 12:07:29 +0000 (UTC)
+Subject: Re: [RFC PATCH 2/4] mm/hotplug: Expose is_mem_section_removable() and
+ offline_pages()
+To:     lantianyu1986@gmail.com, kys@microsoft.com, haiyangz@microsoft.com,
+        sthemmin@microsoft.com, sashal@kernel.org,
+        akpm@linux-foundation.org, michael.h.kelley@microsoft.com
+Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, vkuznets@redhat.com, eric.devolder@oracle.com
+References: <20191210154611.10958-1-Tianyu.Lan@microsoft.com>
+ <20191210154611.10958-3-Tianyu.Lan@microsoft.com>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ mQINBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABtCREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT6JAlgEEwEIAEICGwMFCQlmAYAGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheAFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl3pImkCGQEACgkQTd4Q
+ 9wD/g1o+VA//SFvIHUAvul05u6wKv/pIR6aICPdpF9EIgEU448g+7FfDgQwcEny1pbEzAmiw
+ zAXIQ9H0NZh96lcq+yDLtONnXk/bEYWHHUA014A1wqcYNRY8RvY1+eVHb0uu0KYQoXkzvu+s
+ Dncuguk470XPnscL27hs8PgOP6QjG4jt75K2LfZ0eAqTOUCZTJxA8A7E9+XTYuU0hs7QVrWJ
+ jQdFxQbRMrYz7uP8KmTK9/Cnvqehgl4EzyRaZppshruKMeyheBgvgJd5On1wWq4ZUV5PFM4x
+ II3QbD3EJfWbaJMR55jI9dMFa+vK7MFz3rhWOkEx/QR959lfdRSTXdxs8V3zDvChcmRVGN8U
+ Vo93d1YNtWnA9w6oCW1dnDZ4kgQZZSBIjp6iHcA08apzh7DPi08jL7M9UQByeYGr8KuR4i6e
+ RZI6xhlZerUScVzn35ONwOC91VdYiQgjemiVLq1WDDZ3B7DIzUZ4RQTOaIWdtXBWb8zWakt/
+ ztGhsx0e39Gvt3391O1PgcA7ilhvqrBPemJrlb9xSPPRbaNAW39P8ws/UJnzSJqnHMVxbRZC
+ Am4add/SM+OCP0w3xYss1jy9T+XdZa0lhUvJfLy7tNcjVG/sxkBXOaSC24MFPuwnoC9WvCVQ
+ ZBxouph3kqc4Dt5X1EeXVLeba+466P1fe1rC8MbcwDkoUo65Ag0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAGJAiUEGAECAA8FAlXLn5ECGwwFCQlmAYAACgkQTd4Q
+ 9wD/g1qA6w/+M+ggFv+JdVsz5+ZIc6MSyGUozASX+bmIuPeIecc9UsFRatc91LuJCKMkD9Uv
+ GOcWSeFpLrSGRQ1Z7EMzFVU//qVs6uzhsNk0RYMyS0B6oloW3FpyQ+zOVylFWQCzoyyf227y
+ GW8HnXunJSC+4PtlL2AY4yZjAVAPLK2l6mhgClVXTQ/S7cBoTQKP+jvVJOoYkpnFxWE9pn4t
+ H5QIFk7Ip8TKr5k3fXVWk4lnUi9MTF/5L/mWqdyIO1s7cjharQCstfWCzWrVeVctpVoDfJWp
+ 4LwTuQ5yEM2KcPeElLg5fR7WB2zH97oI6/Ko2DlovmfQqXh9xWozQt0iGy5tWzh6I0JrlcxJ
+ ileZWLccC4XKD1037Hy2FLAjzfoWgwBLA6ULu0exOOdIa58H4PsXtkFPrUF980EEibUp0zFz
+ GotRVekFAceUaRvAj7dh76cToeZkfsjAvBVb4COXuhgX6N4pofgNkW2AtgYu1nUsPAo+NftU
+ CxrhjHtLn4QEBpkbErnXQyMjHpIatlYGutVMS91XTQXYydCh5crMPs7hYVsvnmGHIaB9ZMfB
+ njnuI31KBiLUks+paRkHQlFcgS2N3gkRBzH7xSZ+t7Re3jvXdXEzKBbQ+dC3lpJB0wPnyMcX
+ FOTT3aZT7IgePkt5iC/BKBk3hqKteTnJFeVIT7EC+a6YUFg=
+Organization: Red Hat GmbH
+Message-ID: <6f2d8968-b08d-b659-85fd-aa381e9a0f58@redhat.com>
+Date:   Wed, 11 Dec 2019 13:07:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: adfa8810-18cf-4764-361e-08d77e32ab78
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2019 12:07:18.7680
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OajKFdksAQEww7OoP9rRYHZ5IpWqM7SrUUEuCN2L2Gpm6XPkHFe0X2LuDwBIfbGPk8bMNMARHIj9LUKSrJXUxh6TU17hWRfwm+x/rc+tQFw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB2538
+In-Reply-To: <20191210154611.10958-3-Tianyu.Lan@microsoft.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: rAXCa65cO06Lllj2RyUgBg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgU2FtLA0KDQpPbiAxMC4xMi4yMDE5IDIyOjM3LCBTYW0gUmF2bmJvcmcgd3JvdGU6DQo+IEhp
-IENsYXVkaXUuDQo+IA0KPiBPbiBUdWUsIERlYyAxMCwgMjAxOSBhdCAwMzoyNDo0NVBNICswMjAw
-LCBDbGF1ZGl1IEJlem5lYSB3cm90ZToNCj4+IEZvciBITENEQyB0aW1pbmcgZW5naW5lIGNvbmZp
-Z3VyYXRpb25zIGJpdCBBVE1FTF9ITENEQ19TSVAgb2YNCj4+IEFUTUVMX0hMQ0RDX1NSIG5lZWRz
-IHRvIGNoZWNrZWQgaWYgaXQgaXMgZXF1YWwgd2l0aCB6ZXJvIGJlZm9yZSBhcHBseWluZw0KPj4g
-bmV3IGNvbmZpZ3VyYXRpb24gdG8gdGltaW5nIGVuZ2luZS4gSW4gY2FzZSBvZiB0aW1lb3V0IHRo
-ZXJlIGlzIG5vDQo+PiBpbmRpY2F0b3IgYWJvdXQgdGhpcywgc28sIHJldHVybiB3aXRoIGVycm9y
-IGluIGNhc2Ugb2YgdGltZW91dCBpbg0KPj4gcmVnbWFwX2F0bWVsX2hsY2RjX3JlZ193cml0ZSgp
-IGFuZCBhbHNvIHByaW50IGEgbWVzc2FnZSBhYm91dCB0aGlzLg0KPj4NCj4+IFNpZ25lZC1vZmYt
-Ynk6IENsYXVkaXUgQmV6bmVhIDxjbGF1ZGl1LmJlem5lYUBtaWNyb2NoaXAuY29tPg0KPj4gLS0t
-DQo+PiAgZHJpdmVycy9tZmQvYXRtZWwtaGxjZGMuYyB8IDE0ICsrKysrKysrKystLS0tDQo+PiAg
-MSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+Pg0KPj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWZkL2F0bWVsLWhsY2RjLmMgYi9kcml2ZXJzL21mZC9hdG1l
-bC1obGNkYy5jDQo+PiBpbmRleCA2NDAxM2M1N2E5MjAuLjE5ZjFkYmViOGJjZCAxMDA2NDQNCj4+
-IC0tLSBhL2RyaXZlcnMvbWZkL2F0bWVsLWhsY2RjLmMNCj4+ICsrKyBiL2RyaXZlcnMvbWZkL2F0
-bWVsLWhsY2RjLmMNCj4+IEBAIC0zOSwxMCArMzksMTYgQEAgc3RhdGljIGludCByZWdtYXBfYXRt
-ZWxfaGxjZGNfcmVnX3dyaXRlKHZvaWQgKmNvbnRleHQsIHVuc2lnbmVkIGludCByZWcsDQo+Pg0K
-Pj4gICAgICAgaWYgKHJlZyA8PSBBVE1FTF9ITENEQ19ESVMpIHsNCj4+ICAgICAgICAgICAgICAg
-dTMyIHN0YXR1czsNCj4+IC0NCj4+IC0gICAgICAgICAgICAgcmVhZGxfcG9sbF90aW1lb3V0X2F0
-b21pYyhocmVnbWFwLT5yZWdzICsgQVRNRUxfSExDRENfU1IsDQo+PiAtICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgc3RhdHVzLCAhKHN0YXR1cyAmIEFUTUVMX0hMQ0RDX1NJ
-UCksDQo+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMSwgMTAwKTsN
-Cj4+ICsgICAgICAgICAgICAgaW50IHJldDsNCj4+ICsNCj4+ICsgICAgICAgICAgICAgcmV0ID0g
-cmVhZGxfcG9sbF90aW1lb3V0X2F0b21pYyhocmVnbWFwLT5yZWdzICsgQVRNRUxfSExDRENfU1Is
-DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RhdHVz
-LA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICEoc3Rh
-dHVzICYgQVRNRUxfSExDRENfU0lQKSwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAxLCAxMDApOw0KPj4gKyAgICAgICAgICAgICBpZiAocmV0KSB7DQo+
-PiArICAgICAgICAgICAgICAgICAgICAgcHJfZXJyKCJUaW1lb3V0IHdhaXRpbmcgZm9yIEFUTUVM
-X0hMQ0RDX1NJUFxuIik7DQo+PiArICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4g
-Q29uc2lkZXIgYWRkaW5nIGRldmljZSAqIHRvIGF0bWVsX2hsY2RjX3JlZ21hcCAtIHNvIHlvdSBj
-YW4gdXNlDQo+IGRldl9lcnIoKSBoZXJlLiBUaGlzIG1ha2VzIGl0IG9idmlvdXMgd2hhdCBkZXZp
-Y2UgdGhpcyBjb21lcyBmcm9tLg0KDQpPSyEgSSdsbCBkbyBpdCBpbiB2Mi4NCg0KPiANCj4gICAg
-ICAgICBTYW0NCj4gDQo+PiArICAgICAgICAgICAgIH0NCj4+ICAgICAgIH0NCj4+DQo+PiAgICAg
-ICB3cml0ZWwodmFsLCBocmVnbWFwLT5yZWdzICsgcmVnKTsNCj4+IC0tDQo+PiAyLjcuNA0KPiAN
-Cj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gbGlu
-dXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8v
-bGludXgtYXJtLWtlcm5lbA0KPiANCg==
+On 10.12.19 16:46, lantianyu1986@gmail.com wrote:
+> From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+>=20
+> Hyper-V driver adds memory hot remove function and will use
+> these interfaces in Hyper-V balloon driver which may be built
+> as a module. Expose these function.
+
+This patches misses a detailed description how these interfaces will be
+used. Also, you should CC people on the actual magic where it will be used.
+
+I found it via https://lkml.org/lkml/2019/12/10/767
+
+If I am not wrong (un)lock_device_hotplug() is not exposed to kernel
+modules for a good reason - your patch seems to ignore that if I am not
+wrong.
+
+>=20
+> Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> ---
+>  mm/memory_hotplug.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 07e5c67f48a8..4b358ebcc3d7 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1191,6 +1191,7 @@ bool is_mem_section_removable(unsigned long start_p=
+fn, unsigned long nr_pages)
+>  =09/* All pageblocks in the memory block are likely to be hot-removable =
+*/
+>  =09return true;
+>  }
+> +EXPORT_SYMBOL_GPL(is_mem_section_removable);
+> =20
+>  /*
+>   * Confirm all pages in a range [start, end) belong to the same zone.
+> @@ -1612,6 +1613,7 @@ int offline_pages(unsigned long start_pfn, unsigned=
+ long nr_pages)
+>  {
+>  =09return __offline_pages(start_pfn, start_pfn + nr_pages);
+>  }
+> +EXPORT_SYMBOL_GPL(offline_pages);
+> =20
+>  static int check_memblock_offlined_cb(struct memory_block *mem, void *ar=
+g)
+>  {
+>=20
+
+No, I don't think exposing the latter is desired. We already have one
+other in-tree user that I _really_ want to get rid of. Memory should be
+offlined in memory block granularity via the core only. Memory offlining
+can be triggered in a clean way via device_offline(&mem->dev).
+
+a) It conflicts with activity from user space. Especially, this "manual
+fixup" of the memory block state is just nasty.
+b) Locking issues: Memory offlining requires the device hotplug lock.
+This lock is not exposed and we don't want to expose it.
+c) There are still cases where offline_pages() will loop for all
+eternity and only signals can kick it out.
+
+E.g., have a look at how I with virtio-mem want to achieve that:
+https://lkml.org/lkml/2019/9/19/476
+
+I think something like that would be *much* cleaner. What could be even
+better for your use case is doing it similarly to virtio-mem:
+
+1. Try to alloc_contig_range() the memory block you want to remove. This
+will not loop forever but fail in a nice way early. See
+https://lkml.org/lkml/2019/9/19/467
+
+2. Allow to offline that memory block by marking the memory
+PageOffline() and dropping the refcount. See
+https://lkml.org/lkml/2019/9/19/470, I will send a new RFC v4 soon that
+includes the suggestion from Michal.
+
+3. Offline+remove the memory block using a clean interface. See
+https://lkml.org/lkml/2019/9/19/476
+
+No looping forever, no races with user space, no messing with memory
+block states.
+
+NACK on exporting offline_pages(), but I am not a Maintainer, so ... :)
+
+--=20
+Thanks,
+
+David / dhildenb
+
