@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7071A11B0C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:26:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 698D511AEFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732908AbfLKPZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:25:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58416 "EHLO mail.kernel.org"
+        id S1730664AbfLKPJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:09:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732875AbfLKPZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:25:50 -0500
+        id S1730144AbfLKPJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:09:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DCA12173E;
-        Wed, 11 Dec 2019 15:25:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3019A20663;
+        Wed, 11 Dec 2019 15:09:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077949;
-        bh=hlKtOFs0Tkkrzuq59CYpvYtvrfwPDLYLWxEY2yL9gfE=;
+        s=default; t=1576076990;
+        bh=r8OnRhrZrO0rkWsOkCTHv81pDLBzk258kfToqCeMcnA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=znCMKt2BN40dcH5MSFdfQbUT0NR5H5bcJXbhYNfb7rzVBFNgbIQE2xmsKWP89FYbe
-         x6cFoXt2jh1xVRmR9c7LJqVsm/Fb5MsmHJcCRPAqoh8l61gXFO75o8E/eFK6PWGkuJ
-         kYfDbkhiutxuIRbq1xz3hym3WaI0OOE1eetDhgdY=
+        b=fwoCRMgwFs6xzF5pN50fHH1nmZ/p6WdjTQ52oy7pEcQ23OmsJ872IfTzbp72FYAA/
+         nPel/Raiqoft9+MZdJbeXMol3jUHNhacu6eg3wypiZsqsJcA2eSqgwLJdGhOU9VJ5+
+         QwQ6/ToREE1rmETAZ/7qZC2uEH0jgX913Rk4Km/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
-        Igor Russkikh <igor.russkikh@aquantia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 195/243] net: aquantia: fix RSS table and key sizes
-Date:   Wed, 11 Dec 2019 16:05:57 +0100
-Message-Id: <20191211150352.342346580@linuxfoundation.org>
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.4 67/92] KVM: x86: Grab KVMs srcu lock when setting nested state
+Date:   Wed, 11 Dec 2019 16:05:58 +0100
+Message-Id: <20191211150253.981289150@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-[ Upstream commit 474fb1150d40780e71f0b569aeac4f375df3af3d ]
+commit ad5996d9a0e8019c3ae5151e687939369acfe044 upstream.
 
-Set RSS indirection table and RSS hash key sizes to their real size.
+Acquire kvm->srcu for the duration of ->set_nested_state() to fix a bug
+where nVMX derefences ->memslots without holding ->srcu or ->slots_lock.
 
-Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
-Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The other half of nested migration, ->get_nested_state(), does not need
+to acquire ->srcu as it is a purely a dump of internal KVM (and CPU)
+state to userspace.
+
+Detected as an RCU lockdep splat that is 100% reproducible by running
+KVM's state_test selftest with CONFIG_PROVE_LOCKING=y.  Note that the
+failing function, kvm_is_visible_gfn(), is only checking the validity of
+a gfn, it's not actually accessing guest memory (which is more or less
+unsupported during vmx_set_nested_state() due to incorrect MMU state),
+i.e. vmx_set_nested_state() itself isn't fundamentally broken.  In any
+case, setting nested state isn't a fast path so there's no reason to go
+out of our way to avoid taking ->srcu.
+
+  =============================
+  WARNING: suspicious RCU usage
+  5.4.0-rc7+ #94 Not tainted
+  -----------------------------
+  include/linux/kvm_host.h:626 suspicious rcu_dereference_check() usage!
+
+               other info that might help us debug this:
+
+  rcu_scheduler_active = 2, debug_locks = 1
+  1 lock held by evmcs_test/10939:
+   #0: ffff88826ffcb800 (&vcpu->mutex){+.+.}, at: kvm_vcpu_ioctl+0x85/0x630 [kvm]
+
+  stack backtrace:
+  CPU: 1 PID: 10939 Comm: evmcs_test Not tainted 5.4.0-rc7+ #94
+  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+  Call Trace:
+   dump_stack+0x68/0x9b
+   kvm_is_visible_gfn+0x179/0x180 [kvm]
+   mmu_check_root+0x11/0x30 [kvm]
+   fast_cr3_switch+0x40/0x120 [kvm]
+   kvm_mmu_new_cr3+0x34/0x60 [kvm]
+   nested_vmx_load_cr3+0xbd/0x1f0 [kvm_intel]
+   nested_vmx_enter_non_root_mode+0xab8/0x1d60 [kvm_intel]
+   vmx_set_nested_state+0x256/0x340 [kvm_intel]
+   kvm_arch_vcpu_ioctl+0x491/0x11a0 [kvm]
+   kvm_vcpu_ioctl+0xde/0x630 [kvm]
+   do_vfs_ioctl+0xa2/0x6c0
+   ksys_ioctl+0x66/0x70
+   __x64_sys_ioctl+0x16/0x20
+   do_syscall_64+0x54/0x200
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  RIP: 0033:0x7f59a2b95f47
+
+Fixes: 8fcc4b5923af5 ("kvm: nVMX: Introduce KVM_CAP_NESTED_STATE")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/aquantia/atlantic/aq_cfg.h | 4 ++--
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kvm/x86.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h b/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
-index 91eb8910b1c99..90a0e1d0d6221 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
-@@ -42,8 +42,8 @@
- #define AQ_CFG_IS_LRO_DEF           1U
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4427,6 +4427,7 @@ long kvm_arch_vcpu_ioctl(struct file *fi
+ 	case KVM_SET_NESTED_STATE: {
+ 		struct kvm_nested_state __user *user_kvm_nested_state = argp;
+ 		struct kvm_nested_state kvm_state;
++		int idx;
  
- /* RSS */
--#define AQ_CFG_RSS_INDIRECTION_TABLE_MAX  128U
--#define AQ_CFG_RSS_HASHKEY_SIZE           320U
-+#define AQ_CFG_RSS_INDIRECTION_TABLE_MAX  64U
-+#define AQ_CFG_RSS_HASHKEY_SIZE           40U
+ 		r = -EINVAL;
+ 		if (!kvm_x86_ops->set_nested_state)
+@@ -4450,7 +4451,9 @@ long kvm_arch_vcpu_ioctl(struct file *fi
+ 		    && !(kvm_state.flags & KVM_STATE_NESTED_GUEST_MODE))
+ 			break;
  
- #define AQ_CFG_IS_RSS_DEF           1U
- #define AQ_CFG_NUM_RSS_QUEUES_DEF   AQ_CFG_VECS_DEF
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-index 4f34808f1e064..8cc34b0bedc3a 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-@@ -44,7 +44,7 @@ static void aq_nic_rss_init(struct aq_nic_s *self, unsigned int num_rss_queues)
- 	struct aq_rss_parameters *rss_params = &cfg->aq_rss;
- 	int i = 0;
- 
--	static u8 rss_key[40] = {
-+	static u8 rss_key[AQ_CFG_RSS_HASHKEY_SIZE] = {
- 		0x1e, 0xad, 0x71, 0x87, 0x65, 0xfc, 0x26, 0x7d,
- 		0x0d, 0x45, 0x67, 0x74, 0xcd, 0x06, 0x1a, 0x18,
- 		0xb6, 0xc1, 0xf0, 0xc7, 0xbb, 0x18, 0xbe, 0xf8,
--- 
-2.20.1
-
++		idx = srcu_read_lock(&vcpu->kvm->srcu);
+ 		r = kvm_x86_ops->set_nested_state(vcpu, user_kvm_nested_state, &kvm_state);
++		srcu_read_unlock(&vcpu->kvm->srcu, idx);
+ 		break;
+ 	}
+ 	case KVM_GET_SUPPORTED_HV_CPUID: {
 
 
