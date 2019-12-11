@@ -2,52 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F9EB11A471
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 07:26:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65E2411A475
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 07:26:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfLKG0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 01:26:17 -0500
-Received: from mga07.intel.com ([134.134.136.100]:19962 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726676AbfLKG0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 01:26:17 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 22:26:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
-   d="scan'208";a="225400285"
-Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
-  by orsmga002.jf.intel.com with ESMTP; 10 Dec 2019 22:26:14 -0800
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH 2/2] perf/x86/intel/bts: Fix the use of page_private()
-In-Reply-To: <20191211002334.GS2844@hirez.programming.kicks-ass.net>
-References: <20191205142853.28894-1-alexander.shishkin@linux.intel.com> <20191205142853.28894-3-alexander.shishkin@linux.intel.com> <20191211002334.GS2844@hirez.programming.kicks-ass.net>
-Date:   Wed, 11 Dec 2019 08:26:13 +0200
-Message-ID: <87h827cr96.fsf@ashishki-desk.ger.corp.intel.com>
+        id S1727874AbfLKG0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 01:26:50 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7215 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726676AbfLKG0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 01:26:48 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 52BEC7B47CD224B69C03;
+        Wed, 11 Dec 2019 14:26:45 +0800 (CST)
+Received: from huawei.com (10.175.105.18) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Dec 2019
+ 14:26:38 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
+        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
+        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>
+CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+Subject: [PATCH 0/6] Fix various comment errors
+Date:   Wed, 11 Dec 2019 14:26:19 +0800
+Message-ID: <1576045585-8536-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.175.105.18]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Zijlstra <peterz@infradead.org> writes:
+From: Miaohe Lin <linmiaohe@huawei.com>
 
->>  static size_t buf_size(struct page *page)
->>  {
->> -	return 1 << (PAGE_SHIFT + page_private(page));
->> +	return 1 << (PAGE_SHIFT + buf_nr_pages(page));
->
-> Hurmph, shouldn't that be:
->
-> 	return buf_nr_pages(page) * PAGE_SIZE;
->
-> ?
+Fix various comment mistakes, such as typo, grammar mistake, out-dated
+function name, writing error and so on. It is a bit tedious and many
+thanks for review in advance.
 
-True, that one's broken.
+Miaohe Lin (6):
+  KVM: Fix some wrong function names in comment
+  KVM: Fix some out-dated function names in comment
+  KVM: Fix some comment typos and missing parentheses
+  KVM: Fix some grammar mistakes
+  KVM: hyperv: Fix some typos in vcpu unimpl info
+  KVM: Fix some writing mistakes
+
+ arch/x86/include/asm/kvm_host.h       | 2 +-
+ arch/x86/kvm/hyperv.c                 | 6 +++---
+ arch/x86/kvm/ioapic.c                 | 2 +-
+ arch/x86/kvm/lapic.c                  | 4 ++--
+ arch/x86/kvm/vmx/nested.c             | 2 +-
+ arch/x86/kvm/vmx/vmcs_shadow_fields.h | 4 ++--
+ arch/x86/kvm/vmx/vmx.c                | 8 ++++----
+ virt/kvm/kvm_main.c                   | 6 +++---
+ 8 files changed, 17 insertions(+), 17 deletions(-)
+
+-- 
+2.19.1
+
