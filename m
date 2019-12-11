@@ -2,147 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC69211A098
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 075AD11A09C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:42:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfLKBkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 20:40:39 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21578 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727333AbfLKBkj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 20:40:39 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBB1acZk031288
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 20:40:38 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wsu3q6j5j-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 20:40:37 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 11 Dec 2019 01:40:35 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 11 Dec 2019 01:40:31 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBB1dmil37749236
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Dec 2019 01:39:48 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 63141A404D;
-        Wed, 11 Dec 2019 01:40:30 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2179CA4040;
-        Wed, 11 Dec 2019 01:40:29 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.214.111])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 11 Dec 2019 01:40:29 +0000 (GMT)
-Subject: Re: [PATCH v1 2/2] IMA: Call workqueue functions to measure queued
- keys
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Date:   Tue, 10 Dec 2019 20:40:28 -0500
-In-Reply-To: <20191206012936.2814-3-nramas@linux.microsoft.com>
-References: <20191206012936.2814-1-nramas@linux.microsoft.com>
-         <20191206012936.2814-3-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19121101-4275-0000-0000-0000038DC884
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121101-4276-0000-0000-000038A17B60
-Message-Id: <1576028428.4579.78.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-10_08:2019-12-10,2019-12-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- bulkscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
- mlxlogscore=999 mlxscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912110013
+        id S1727256AbfLKBmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 20:42:07 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37168 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726417AbfLKBmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 20:42:06 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D323C4F4F6E34CA96FF6;
+        Wed, 11 Dec 2019 09:42:03 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 11 Dec
+ 2019 09:42:01 +0800
+Subject: Re: [f2fs-dev] [PATCH 6/6] f2fs: set I_LINKABLE early to avoid wrong
+ access by vfs
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20191209222345.1078-1-jaegeuk@kernel.org>
+ <20191209222345.1078-6-jaegeuk@kernel.org>
+ <88dcbca9-3757-a440-ed73-9d99a56b816c@huawei.com>
+ <20191211012121.GA52962@jaegeuk-macbookpro.roam.corp.google.com>
+ <00ced682-9522-236d-4078-4c8f2e348d39@huawei.com>
+ <20191211013124.GB57416@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <dd2021ff-6968-43ad-d8b2-3689668cd79e@huawei.com>
+Date:   Wed, 11 Dec 2019 09:42:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20191211013124.GB57416@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-12-05 at 17:29 -0800, Lakshmi Ramasubramanian wrote:
-> Measuring keys requires a custom IMA policy to be loaded.
-> Keys should be queued for measurement if a custom IMA policy
-> is not yet loaded. Keys queued for measurement, if any, should be
-> processed when a custom IMA policy is loaded.
+On 2019/12/11 9:31, Jaegeuk Kim wrote:
+> On 12/11, Chao Yu wrote:
+>> On 2019/12/11 9:21, Jaegeuk Kim wrote:
+>>> On 12/10, Chao Yu wrote:
+>>>> On 2019/12/10 6:23, Jaegeuk Kim wrote:
+>>>>> This patch moves setting I_LINKABLE early in rename2(whiteout) to avoid the
+>>>>> below warning.
+>>>>>
+>>>>> [ 3189.163385] WARNING: CPU: 3 PID: 59523 at fs/inode.c:358 inc_nlink+0x32/0x40
+>>>>> [ 3189.246979] Call Trace:
+>>>>> [ 3189.248707]  f2fs_init_inode_metadata+0x2d6/0x440 [f2fs]
+>>>>> [ 3189.251399]  f2fs_add_inline_entry+0x162/0x8c0 [f2fs]
+>>>>> [ 3189.254010]  f2fs_add_dentry+0x69/0xe0 [f2fs]
+>>>>> [ 3189.256353]  f2fs_do_add_link+0xc5/0x100 [f2fs]
+>>>>> [ 3189.258774]  f2fs_rename2+0xabf/0x1010 [f2fs]
+>>>>> [ 3189.261079]  vfs_rename+0x3f8/0xaa0
+>>>>> [ 3189.263056]  ? tomoyo_path_rename+0x44/0x60
+>>>>> [ 3189.265283]  ? do_renameat2+0x49b/0x550
+>>>>> [ 3189.267324]  do_renameat2+0x49b/0x550
+>>>>> [ 3189.269316]  __x64_sys_renameat2+0x20/0x30
+>>>>> [ 3189.271441]  do_syscall_64+0x5a/0x230
+>>>>> [ 3189.273410]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>>>> [ 3189.275848] RIP: 0033:0x7f270b4d9a49
+>>>>>
+>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> ---
+>>>>>  fs/f2fs/namei.c | 27 +++++++++++++--------------
+>>>>>  1 file changed, 13 insertions(+), 14 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>>>>> index a1c507b0b4ac..5d9584281935 100644
+>>>>> --- a/fs/f2fs/namei.c
+>>>>> +++ b/fs/f2fs/namei.c
+>>>>> @@ -797,6 +797,7 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+>>>>>  
+>>>>>  	if (whiteout) {
+>>>>>  		f2fs_i_links_write(inode, false);
+>>>>> +		inode->i_state |= I_LINKABLE;
+>>>>>  		*whiteout = inode;
+>>>>>  	} else {
+>>>>>  		d_tmpfile(dentry, inode);
+>>>>> @@ -867,6 +868,12 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>>>>>  			F2FS_I(old_dentry->d_inode)->i_projid)))
+>>>>>  		return -EXDEV;
+>>>>>  
+>>>>> +	if (flags & RENAME_WHITEOUT) {
+>>>>> +		err = f2fs_create_whiteout(old_dir, &whiteout);
+>>>>> +		if (err)
+>>>>> +			return err;
+>>>>> +	}
+>>>>
+>>>> To record quota info correctly, we need to create whiteout inode after
+>>>> dquot_initialize(old_dir)?
+>>>
+>>> __f2fs_tmpfile() will do it.
+>>
+>> Okay.
+>>
+>> Any comments on below question?
+>>
+>>>
+>>>>
+>>>>> +
+>>>>>  	err = dquot_initialize(old_dir);
+>>>>>  	if (err)
+>>>>>  		goto out;
+>>>>> @@ -898,17 +905,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>>>>>  		}
+>>>>>  	}
+>>>>>  
+>>>>> -	if (flags & RENAME_WHITEOUT) {
+>>>>> -		err = f2fs_create_whiteout(old_dir, &whiteout);
+>>>>> -		if (err)
+>>>>> -			goto out_dir;
+>>>>> -	}
+>>>>> -
+>>>>>  	if (new_inode) {
+>>>>>  
+>>>>>  		err = -ENOTEMPTY;
+>>>>>  		if (old_dir_entry && !f2fs_empty_dir(new_inode))
+>>>>> -			goto out_whiteout;
+>>>>> +			goto out_dir;
+>>>>>  
+>>>>>  		err = -ENOENT;
+>>>>>  		new_entry = f2fs_find_entry(new_dir, &new_dentry->d_name,
+>>>>> @@ -916,7 +917,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>>>>>  		if (!new_entry) {
+>>>>>  			if (IS_ERR(new_page))
+>>>>>  				err = PTR_ERR(new_page);
+>>>>> -			goto out_whiteout;
+>>>>> +			goto out_dir;
+>>>>>  		}
+>>>>>  
+>>>>>  		f2fs_balance_fs(sbi, true);
+>>>>> @@ -948,7 +949,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>>>>>  		err = f2fs_add_link(new_dentry, old_inode);
+>>>>>  		if (err) {
+>>>>>  			f2fs_unlock_op(sbi);
+>>>>> -			goto out_whiteout;
+>>>>> +			goto out_dir;
+>>>>>  		}
+>>>>>  
+>>>>>  		if (old_dir_entry)
+>>>>> @@ -972,7 +973,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>>>>>  				if (IS_ERR(old_page))
+>>>>>  					err = PTR_ERR(old_page);
+>>>>>  				f2fs_unlock_op(sbi);
+>>>>> -				goto out_whiteout;
+>>>>> +				goto out_dir;
+>>>>>  			}
+>>>>>  		}
+>>>>>  	}
+>>>>> @@ -991,7 +992,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>>>>>  	f2fs_delete_entry(old_entry, old_page, old_dir, NULL);
+>>>>>  
+>>>>>  	if (whiteout) {
+>>>>> -		whiteout->i_state |= I_LINKABLE;
+>>>>>  		set_inode_flag(whiteout, FI_INC_LINK);
+>>>>>  		err = f2fs_add_link(old_dentry, whiteout);
+>>>>
+>>>> [ 3189.256353]  f2fs_do_add_link+0xc5/0x100 [f2fs]
+>>>> [ 3189.258774]  f2fs_rename2+0xabf/0x1010 [f2fs]
+>>>>
+>>>> Does the call stack point here? if so, we have set I_LINKABLE before
+>>>> f2fs_add_link(), why the warning still be triggered?
+>>
+>> Am I missing something?
 > 
-> This patch updates the IMA hook function ima_post_key_create_or_update()
-> to queue the key if a custom IMA policy has not yet been loaded.
-> And, ima_update_policy() function, which is called when
-> a custom IMA policy is loaded, is updated to process queued keys.
+> Not sure exactly tho, I suspect some races before/after unlock_new_inode().
+
+Alright, I doubt some races on whiteout->i_state updating, as we set I_LINKABLE
+w/o holding inode.i_lock.
+
+Could you have a try with holding i_lock?
+
+Thanks,
+
 > 
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> ---
->  security/integrity/ima/ima_asymmetric_keys.c | 9 +++++++++
->  security/integrity/ima/ima_policy.c          | 6 ++++++
->  2 files changed, 15 insertions(+)
+>>
+>> Thanks,
+>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>  		if (err)
+>>>>> @@ -1027,15 +1027,14 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>>>>>  	f2fs_unlock_op(sbi);
+>>>>>  	if (new_page)
+>>>>>  		f2fs_put_page(new_page, 0);
+>>>>> -out_whiteout:
+>>>>> -	if (whiteout)
+>>>>> -		iput(whiteout);
+>>>>>  out_dir:
+>>>>>  	if (old_dir_entry)
+>>>>>  		f2fs_put_page(old_dir_page, 0);
+>>>>>  out_old:
+>>>>>  	f2fs_put_page(old_page, 0);
+>>>>>  out:
+>>>>> +	if (whiteout)
+>>>>> +		iput(whiteout);
+>>>>>  	return err;
+>>>>>  }
+>>>>>  
+>>>>>
+>>> .
+>>>
+> .
 > 
-> diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-> index fbdbe9c261cb..510b29d17a7b 100644
-> --- a/security/integrity/ima/ima_asymmetric_keys.c
-> +++ b/security/integrity/ima/ima_asymmetric_keys.c
-> @@ -155,6 +155,8 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
->  				   const void *payload, size_t payload_len,
->  				   unsigned long flags, bool create)
->  {
-> +	bool key_queued = false;
-> +
->  	/* Only asymmetric keys are handled by this hook. */
->  	if (key->type != &key_type_asymmetric)
->  		return;
-> @@ -162,6 +164,13 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
->  	if (!payload || (payload_len == 0))
->  		return;
->  
-> +	if (!ima_process_keys_for_measurement)
-> +		key_queued = ima_queue_key_for_measurement(keyring, payload,
-> +							   payload_len);
-> +
-> +	if (key_queued)
-> +		return;
-> +
->  	/*
->  	 * keyring->description points to the name of the keyring
->  	 * (such as ".builtin_trusted_keys", ".ima", etc.) to
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 73030a69d546..4dc8fb9957ac 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -808,6 +808,12 @@ void ima_update_policy(void)
->  		kfree(arch_policy_entry);
->  	}
->  	ima_update_policy_flag();
-> +
-> +	/*
-> +	 * Custom IMA policies have been setup.
-
-^has been loaded.
-
-> +	 * Process key(s) queued up for measurement now.
-
-The function name ima_process_queued_keys_for_measurement() provides a
-clear indication that the keys will be processed.  We don't comment
-the obvious.  Please remove the above comment.
-
-Mimi
-
-> +	 */
-> +	ima_process_queued_keys_for_measurement();
->  }
->  
->  /* Keep the enumeration in sync with the policy_tokens! */
-
