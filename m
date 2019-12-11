@@ -2,125 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A018C11B79A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:09:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FD1111B7AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:09:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730191AbfLKQI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:08:59 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39938 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731164AbfLKQIz (ORCPT
+        id S2388956AbfLKQJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:09:30 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51084 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388444AbfLKQJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:08:55 -0500
-Received: by mail-lf1-f65.google.com with SMTP id i23so4674832lfo.7
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 08:08:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7tqplQQb9CHWGQTUQAovBElvDHnJZMbpYf+CcpC4kqQ=;
-        b=wcCk/jTnkASJR6Sp/LYKO/aXJ7GWZ8rt2oRypmgmWabEkCBK/cKu2NrwVq/17FV8tI
-         t8yWfb8AWXbvEC/SrExJq/b1iu5pzWFwfpyvs6DaxjS4mHCuqftAMSTM+KRfYHSxUwjv
-         rGQaDG8b8/7PtjZd8u88TM+BiNgMFo7S/W8OZINIzpJJ4eRtGG5eCE6PmW8CmIaH5F8d
-         XqRYgOE582W9iKhrrr8OR5UcKjnMscE3yjhUAou7rAYKCERvfVpsIBRG+djXzSoJgKlG
-         eketxGshmv8KyDlmzBI1mFELQnNUOH9w8fYc2ITrvlY7hd9sLE55fL+XxkmcymfpWGaF
-         /jhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=7tqplQQb9CHWGQTUQAovBElvDHnJZMbpYf+CcpC4kqQ=;
-        b=MC0XANGILo+zFsQoc2FvdPiV7GIId53PUq1fLJ2KOLE37wCMIf/c5x2d6NDlLInRRq
-         vuXwJ7VBig3ObHdONW6hEjwoufgXFEwzlXKrSNqEb2cnqNomD1II//gYlNfrTJxRLhHT
-         L35mdeHOSoDkg6H+RtCU3OBGUUXSglWK68Rt25wu0+28yeQdHxD0YfWLluu4ID+RD+DH
-         Jd0RokOMp76d3WSTyKaquW8SssnfJjXn2itCuADnfTLzKgjDd8w1c5uSeRzN6voS6wyi
-         DUp6OupSYyRhWVuAUcPpAjcTpgtmYIuyMykYdqSV9aVkGKE9idBVnvhOSKhGI29JUoZG
-         RHIA==
-X-Gm-Message-State: APjAAAV3AIpObQb4BqBvAi3r5H8thsWV7ZYZOLbEEJkv+z34ptQSqT3Q
-        TqQ85/tw/omq7riWQHKI3OW4hw==
-X-Google-Smtp-Source: APXvYqw6vroN4zWGsiE3et8xvPmJr20vyWmpeLQ82KdA0bF4KoKWTmc/RVLOq511WAvgGFLqkk/0uA==
-X-Received: by 2002:ac2:5ec3:: with SMTP id d3mr2706348lfq.176.1576080533659;
-        Wed, 11 Dec 2019 08:08:53 -0800 (PST)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:8d8:12fe:a87e:d4b8:621e:2b62])
-        by smtp.gmail.com with ESMTPSA id h24sm1407649ljl.80.2019.12.11.08.08.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Dec 2019 08:08:52 -0800 (PST)
-Subject: Re: [PATCH RFC 0/2] Add Renesas RPC-IF support
-To:     Chris Brandt <Chris.Brandt@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
-References: <cb7022c9-0059-4eb2-7910-aab42124fa1c@cogentembedded.com>
- <TY1PR01MB156234F5B44BB43D3DCA98128A5A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <03a630e2-280f-98b7-a9c8-6533716720e5@cogentembedded.com>
-Date:   Wed, 11 Dec 2019 19:08:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <TY1PR01MB156234F5B44BB43D3DCA98128A5A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Wed, 11 Dec 2019 11:09:28 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBBG7f0a064751
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 11:09:26 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wtfbxm554-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 11:09:25 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <sourabhjain@linux.ibm.com>;
+        Wed, 11 Dec 2019 16:09:22 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Dec 2019 16:09:18 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBBG9GQ735389666
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Dec 2019 16:09:16 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69801A405F;
+        Wed, 11 Dec 2019 16:09:16 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5C95FA4054;
+        Wed, 11 Dec 2019 16:09:14 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.85.74.172])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Dec 2019 16:09:14 +0000 (GMT)
+From:   Sourabh Jain <sourabhjain@linux.ibm.com>
+To:     mpe@ellerman.id.au
+Cc:     mahesh@linux.vnet.ibm.com, hbathini@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
+        gregkh@linuxfoundation.org,
+        Sourabh Jain <sourabhjain@linux.ibm.com>
+Subject: [PATCH v6 0/6] reorganize and add FADump sysfs files
+Date:   Wed, 11 Dec 2019 21:39:04 +0530
+X-Mailer: git-send-email 2.17.2
+X-TM-AS-GCONF: 00
+x-cbid: 19121116-4275-0000-0000-0000038E019B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19121116-4276-0000-0000-000038A1B827
+Message-Id: <20191211160910.21656-1-sourabhjain@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-11_04:2019-12-11,2019-12-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1912110136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HEllo
+Currently, FADump sysfs files are present inside /sys/kernel directory.
+But as the number of FADump sysfs file increases it is not a good idea to
+push all of them in /sys/kernel directory. It is better to have separate
+directory to keep all the FADump sysfs files.
 
-On 12/11/2019 05:33 PM, Chris Brandt wrote:
+Patch series reorganizes the FADump sysfs files and avail all the existing
+FADump sysfs files present inside /sys/kernel into a new directory
+/sys/kernel/fadump. The backward compatibility is maintained by adding a
+symlink for every sysfs file that has moved to new location. Also a new
+FADump sys interface is added to get the amount of memory reserved by FADump
+for saving the crash dump.
 
->> Here's a set of 2 patches against Linus' repo. Renesas Reduced Pin Count
->> Interface (RPC-IF) allows a SPI flash or HyperFlash connected to the SoC to
->> be accessed via the external address space read mode or the manual mode.
-> 
-> Looking at this driver, all it is are APIs. Meaning another driver is 
-> needed to sit in between the MTD layer and this HW driver layer.
+Changelog:
+v1 -> v5:
+  - https://lists.ozlabs.org/pipermail/linuxppc-dev/2019-December/201642.html
 
-   Between the hardware and SPI, and between the hardware and HyperFlash
-infrastructure. There's a lot of the common hardware code common between
-these 2 driver areas.
+v5 -> v6
+  - Unregister FADump if fadump group creation fails.
+  - Remove fadump_enabled symlink if fadump_registered symlink
+    creation fails.
+  - Removed CREATE_SYMLINK macro.
 
-> In the driver that I did, if the "RPC" HW is going to be used to control
-> a SPI Flash device, it registered a spi controller and then the MTD 
-> layer could access the device just like any other SPI controller driver. No
-> additional drivers are needed.
+Sourabh Jain (6):
+  Documentation/ABI: add ABI documentation for /sys/kernel/fadump_*
+  sysfs: wrap __compat_only_sysfs_link_entry_to_kobj function to change
+    the symlink name
+  powerpc/fadump: reorganize /sys/kernel/fadump_* sysfs files
+  powerpc/powernv: move core and fadump_release_opalcore under new
+    kobject
+  Documentation/ABI: mark /sys/kernel/fadump_* sysfs files deprecated
+  powerpc/fadump: sysfs for fadump memory reservation
 
-   We're already been thru that with Mason's patch -- I don't want the code
-duplicated between 2 drivers.
+ .../ABI/obsolete/sysfs-kernel-fadump_enabled  |   9 ++
+ .../obsolete/sysfs-kernel-fadump_registered   |  10 ++
+ .../obsolete/sysfs-kernel-fadump_release_mem  |  10 ++
+ .../sysfs-kernel-fadump_release_opalcore      |   9 ++
+ Documentation/ABI/testing/sysfs-kernel-fadump |  40 ++++++
+ .../powerpc/firmware-assisted-dump.rst        |  28 +++-
+ arch/powerpc/kernel/fadump.c                  | 127 +++++++++++++-----
+ arch/powerpc/platforms/powernv/opal-core.c    |  55 +++++---
+ fs/sysfs/group.c                              |  28 +++-
+ include/linux/sysfs.h                         |  12 ++
+ 10 files changed, 270 insertions(+), 58 deletions(-)
+ create mode 100644 Documentation/ABI/obsolete/sysfs-kernel-fadump_enabled
+ create mode 100644 Documentation/ABI/obsolete/sysfs-kernel-fadump_registered
+ create mode 100644 Documentation/ABI/obsolete/sysfs-kernel-fadump_release_mem
+ create mode 100644 Documentation/ABI/removed/sysfs-kernel-fadump_release_opalcore
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump
 
-> Looking at the hyperbus driver that is in drivers/mtd/hyperbus/, it 
-> seems that if the "RPC" HW is going to be used to control HyperFlash, then 
+-- 
+2.17.2
 
-   Sure. But the code controlling RPC hardware is largely the same b/w 2 cases.
-
-> all you would need to do is register a hyperbus controller using 
-> hyperbus_register_device(). Then the MTD layer could read/write the flash using 
-> normal MTD CFI interface.
-
-   That's what I do (the current realization makes too many assumptions about
-the HF hardware (both direct read and write). 
-
-> Why do you think you need another layer in between the HW driver and the
-> MTD layer?
-
-   Because we don't want any duplicated code. Also, think about DT -- it
-describes the hardware, not the driver configuration.
-
-> Is your goal to make a multi-layered system where the HW jumps back and forth
-> in between operating modes at runtime? I'm not sure of the use case for all of
-> this.
-
-   My goal is to prevent the code duplication (and keep DT sane too).
-
-> Chris
-
-MBR, Sergei
