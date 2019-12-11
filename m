@@ -2,62 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBA4C11B412
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63EEC11B443
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:47:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388698AbfLKPpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:45:52 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:45577 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733217AbfLKPps (ORCPT
+        id S1730371AbfLKPqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:46:44 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42060 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733015AbfLKPqi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:45:48 -0500
-Received: by mail-il1-f195.google.com with SMTP id p8so19791512iln.12
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:45:48 -0800 (PST)
+        Wed, 11 Dec 2019 10:46:38 -0500
+Received: by mail-lf1-f66.google.com with SMTP id y19so17034496lfl.9;
+        Wed, 11 Dec 2019 07:46:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wanFKaczLMfU3OqUb1JjxMoDgH35GgWk6HMwR/6djLs=;
-        b=Hboi8tbgl13q5vXUiMA/tDWO1s3G8Dq3gtiHOGlv4UapdWcbWC0azlmd5VpIMEZ7a0
-         dX02VAzyiD35CB4N0/L4fDo8Tx1jojLrV1nn8pm77iKJlTBN/YVNVVftSJnOnC2ViMVT
-         OKFJ6dmmynQpt5Nvf2dkTutchpxyv7w0cPr+Y=
+        bh=Hb49b1TTgt6OexHutblEuNW1wSf9d52k2K2OJyi3uuU=;
+        b=PkDYur5uKLoW9VhvC2aZGxAYkKOERHduE37OR7NaumcyTiSKtWlWnL0YhAPocF4gyW
+         i/2Ma5FcnPrB9FHWe3iICD5xAY3QajO+jJbaVQH6KWtwutz8e9PQj5v0KAyH2cpvEZmG
+         wSdlkeBQXijgqdUDXTVJmK81fJ9UGojdfW+++x+d7hsPy+uaKYFYjdTM5X0ql9xutYaT
+         7JcsaOhLlylyP4SqXdy3Kx05UKW323rSrU8cWgU/xU+MPxyIin2Qq/7wxNN/tmEfhfKo
+         wIz0CBYRJgoEliIMaZmtHcB/2GJ+86fimeFGh2DjuJVshD2g2NT7hPjvo5bGyFv7wH5I
+         kNxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=wanFKaczLMfU3OqUb1JjxMoDgH35GgWk6HMwR/6djLs=;
-        b=FjF9blbBWmufCVv83dkKtGK/QZRT1w8KROsUcKP2UAmji/wP/wx5leoGHbxurOxBnG
-         qLtY/jsVZBVih7Dx6cG7WxMFrd9JOIpxr6q6aeDzB4GCeb9eackDlMqnamoDZN5Xcv2Z
-         TVgwa8tlygqyA4+VoanrBWVyHIY1CEEzYXVE845FH2z7T4qxT1u3EE+8ZM9JSmCAFygl
-         F4SNDn7Y+Mw5fOMmUkQWUADYwO/sZFRvv8Pww3XAsEe0DTlOZCpS2e5ww7cbMw56JoqX
-         AU2jwuGV1VsrUi8p/ZWplohtLKTxE85LYrlw9/HenIWnVv8IlPPg7zYsDq80HA1R0yZ9
-         /l3g==
-X-Gm-Message-State: APjAAAX549HxlUszSnVYAerRhNr4YRmcYPaYCM9PBoVLOGx+Gay3L3rC
-        DS3RWLAuneJqdzm/VhCVABhlZA==
-X-Google-Smtp-Source: APXvYqwWxzDOaxYOxAqGjbjnSVqOCnFFvbbl+B7Ipdp0CLZzaOiNlZCqCL98ytaVistSY/tSdVlAGQ==
-X-Received: by 2002:a92:3591:: with SMTP id c17mr3771724ilf.264.1576079147826;
-        Wed, 11 Dec 2019 07:45:47 -0800 (PST)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id x25sm586120iob.76.2019.12.11.07.45.46
+        bh=Hb49b1TTgt6OexHutblEuNW1wSf9d52k2K2OJyi3uuU=;
+        b=fzmGHuonwjDtWGtc8fOggXuzriJXy6bCYJ2bkx+EGXddVNhXZvXyTc3WlOKaatR5bT
+         YrN7KqU0aWycsIguwp1Io+X+3Ufx0Dwx0dTC3J+4VYvyXzCc0s67AnJFBSK0HRaNDnz+
+         OP+zgxzfxYHMxcpYmNmHWIW1WpHNfN9/lcsqoSAO/MDJaT6MpHYc+6F1JfHy7j255k1q
+         n2miyR/hqWoyS+gGWjBb1xNcKQyoAw/fgh98k9FnbNl0bDzLI5ubM7wZX9RWsS9OPEhB
+         p2xI/YREhD+12cmE3OFlj7QaQhI3MOgHRSpHByhwVdpjCJQaebCC+/yR6zoJF+xGKjv4
+         xUlw==
+X-Gm-Message-State: APjAAAX4LQbEicAwEYH6qHuk8cOAjVDxjAx5ZrZdTIrxpeNt7m/HPv+e
+        ZzF65briUAZwFTZEkwzDhz0IY8+/
+X-Google-Smtp-Source: APXvYqy67rQ6NDMYoPXkX1ni2G1d870R9UN7KWCu2PvsM+xokjKjbXFrB2RpHDe1scGGslddP6CKJg==
+X-Received: by 2002:ac2:4909:: with SMTP id n9mr2693030lfi.21.1576079195882;
+        Wed, 11 Dec 2019 07:46:35 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id e12sm1403826ljj.17.2019.12.11.07.46.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 07:45:47 -0800 (PST)
-Subject: Re: Linux 5.5=rc1 kselftest rseq test build failure
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     linux-kselftest <linux-kselftest@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <2d53b409-31e0-2245-e163-1ab26f52c841@linuxfoundation.org>
- <1871753014.2121.1576077544796.JavaMail.zimbra@efficios.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <c6b703ef-8481-23bc-0b4c-dfb8d48da74f@linuxfoundation.org>
-Date:   Wed, 11 Dec 2019 08:45:46 -0700
+        Wed, 11 Dec 2019 07:46:35 -0800 (PST)
+Subject: Re: [PATCH v1] sdhci: tegra: Add workaround for Broadcom WiFi
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191210014011.21987-1-digetx@gmail.com>
+ <CAPDyKFpMe09PNQqinvvidF+wfASx2nuvgf7=Hx5+cGni8pdcRA@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <28045442-6a1c-1e0b-0dfe-c36fa9de149a@gmail.com>
+Date:   Wed, 11 Dec 2019 18:46:34 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1871753014.2121.1576077544796.JavaMail.zimbra@efficios.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAPDyKFpMe09PNQqinvvidF+wfASx2nuvgf7=Hx5+cGni8pdcRA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,48 +71,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/19 8:19 AM, Mathieu Desnoyers wrote:
-> ----- On Dec 10, 2019, at 7:27 PM, Shuah Khan skhan@linuxfoundation.org wrote:
-> 
->> Hi Mathieu,
->>
->> I am seeing rseq test build failure on Linux 5.5-rc1.
->>
->> gcc -O2 -Wall -g -I./ -I../../../../usr/include/ -L./ -Wl,-rpath=./
->> param_test.c -lpthread -lrseq -o ...tools/testing/selftests/rseq/param_test
->> param_test.c:18:21: error: static declaration of ‘gettid’ follows
->> non-static declaration
->>     18 | static inline pid_t gettid(void)
->>        |                     ^~~~~~
->> In file included from /usr/include/unistd.h:1170,
->>                   from param_test.c:11:
->> /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:34:16: note: previous
->> declaration of ‘gettid’ was here
->>     34 | extern __pid_t gettid (void) __THROW;
->>        |                ^~~~~~
->> make: *** [Makefile:28: ...tools/testing/selftests/rseq/param_test] Error 1
->>
->>
->> The following obvious change fixes it. However, there could be reason
->> why this was defined here. If you think this is the right fix, I can
->> send the patch. I started seeing this with gcc version 9.2.1 20191008
-> 
-> This issue is caused by introduction of "gettid()" in glibc 2.30. I don't
-> think we want to introduce a build dependency on glibc 2.30 for kernel
-> selftests. Removing the gettid() symbol as you propose here will break
-> build environments with glibc < 2.30.
-> 
-> We could eventually try to figure out whether the glibc headers implement
-> gettid() at build time (not sure how), or we could simply rename our own
-> "gettid()" to "rseq_gettid()", thus removing the namespace clash with
-> glibc.
-> 
-> I can propose a patch renaming gettid() to rseq_gettid() is that approach
-> is OK with you.
-> 
+Hello Ulf,
 
-Looks like you already have a patch to do this. I see it in my Inbox.
-I could take that.
+11.12.2019 11:11, Ulf Hansson пишет:
+> On Tue, 10 Dec 2019 at 02:40, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> All Tegra20 boards that have embedded Broadcom WiFi SDIO chip are affected
+>> by a problem where WiFi chip reports CCCR v1.10, while it should v1.20.
+>> In a result high-speed mode isn't enabled for the WiFi card and this
+>> results in a malfunctioning SDIO communication.
+> 
+> Does that also mean SDIO_SPEED_SHS bit is set when reading SDIO_CCCR_SPEED?
 
-thanks,
--- Shuah
+Yes, the SDIO_SPEED_SHS bit is set.
+
+>>  brcmfmac: brcmf_sdio_readframes: read 304 bytes from channel 1 failed: -84
+>>  brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
+>>
+>> Downstream kernels are overriding card's CCCR info in SDHCI driver to fix
+>> the problem, let's do the same in upstream.
+>>
+>> The change is inspired by omap_hsmmc_init_card() of OMAP's HSMMC driver,
+>> which overrides card's info for the TI wl1251 WiFi.
+> 
+> This is a temporary solution and should be replaced by doing the DT
+> parsing during
+> 
+> So, yes, let's see if we can use a card quirk instead. That's the first option.
+> 
+> A second option is simply to parse the DT subnode for a new DT
+> property during mmc_sdio_init_card(). Along the lines of what we do
+> for the broken-hpi DT binding for eMMC.
+
+Let's try the first option. My understanding is that the problem affects
+only the specific model of the WiFi chip and it's not a board-specific
+problem. I'll add Broadcom driver people to CC for the next version of
+the patch, maybe they'll have something to say.
+
+[snip]
