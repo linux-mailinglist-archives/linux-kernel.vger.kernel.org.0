@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8387211B111
+	by mail.lfdr.de (Postfix) with ESMTP id F362811B112
 	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:28:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387558AbfLKP2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:28:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33648 "EHLO mail.kernel.org"
+        id S1733235AbfLKP2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:28:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387478AbfLKP1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:27:49 -0500
+        id S2387491AbfLKP1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:27:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B8092465B;
-        Wed, 11 Dec 2019 15:27:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE2CA2465B;
+        Wed, 11 Dec 2019 15:27:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078068;
-        bh=VunT9qqXftIM0TA+5tBJ+7ay5ekF88EW/zThG/hjKjI=;
+        s=default; t=1576078073;
+        bh=8mtBwPBN3NtL3DgrPx4KHMNZWOYFzJum+MD9APM3m5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1UXYTCTFPKqlJCcKgr+EHpyWeU30Cy5ABPgtU1Ki+HGqQGF7hBNTNoFdxiFfqxqyE
-         bj33/mH5xLSPxxDAFd8wicuqpz2EOIHWOUzbv0UF6EyTxvWHciu2ux9+iX7dW5Kn0M
-         D8/X75z21wQETUs2fm3osA+rvAffLeyUvkH11xw0=
+        b=g7C8YSim/gWdGO/LsxResYqRSHvXJSf4YEnhzNsmns5wsLkals9U400wIBvMZPtd5
+         qUwmhcvJy0AkLlyRqaO7faTf5HA1d419Zu+UpRIHcx8iZVWYjba5oEtYAlBP1rKkng
+         pCQMs256CfAPS2tTwJtYme9LkEaq2idPRKfGQ9DA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Finn Thain <fthain@telegraphics.com.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 60/79] scsi: NCR5380: Add disconnect_mask module parameter
-Date:   Wed, 11 Dec 2019 10:26:24 -0500
-Message-Id: <20191211152643.23056-60-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 64/79] apparmor: fix unsigned len comparison with less than zero
+Date:   Wed, 11 Dec 2019 10:26:28 -0500
+Message-Id: <20191211152643.23056-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
 References: <20191211152643.23056-1-sashal@kernel.org>
@@ -44,52 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 0b7a223552d455bcfba6fb9cfc5eef2b5fce1491 ]
+[ Upstream commit 00e0590dbaec6f1bcaa36a85467d7e3497ced522 ]
 
-Add a module parameter to inhibit disconnect/reselect for individual
-targets. This gains compatibility with Aztec PowerMonster SCSI/SATA
-adapters with buggy firmware. (No fix is available from the vendor.)
+The sanity check in macro update_for_len checks to see if len
+is less than zero, however, len is a size_t so it can never be
+less than zero, so this sanity check is a no-op.  Fix this by
+making len a ssize_t so the comparison will work and add ulen
+that is a size_t copy of len so that the min() macro won't
+throw warnings about comparing different types.
 
-Apparently these adapters pass-through the product/vendor of the attached
-SATA device. Since they can't be identified from the response to an INQUIRY
-command, a device blacklist flag won't work.
-
-Cc: Michael Schmitz <schmitzmic@gmail.com>
-Link: https://lore.kernel.org/r/993b17545990f31f9fa5a98202b51102a68e7594.1573875417.git.fthain@telegraphics.com.au
-Reviewed-and-tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Addresses-Coverity: ("Macro compares unsigned to 0")
+Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/NCR5380.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ security/apparmor/label.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index 8ec68dcc0cc4a..95a3e3bf2b431 100644
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -129,6 +129,9 @@
- #define NCR5380_release_dma_irq(x)
- #endif
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index ba11bdf9043aa..2469549842d24 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -1462,11 +1462,13 @@ static inline bool use_label_hname(struct aa_ns *ns, struct aa_label *label,
+ /* helper macro for snprint routines */
+ #define update_for_len(total, len, size, str)	\
+ do {					\
++	size_t ulen = len;		\
++					\
+ 	AA_BUG(len < 0);		\
+-	total += len;			\
+-	len = min(len, size);		\
+-	size -= len;			\
+-	str += len;			\
++	total += ulen;			\
++	ulen = min(ulen, size);		\
++	size -= ulen;			\
++	str += ulen;			\
+ } while (0)
  
-+static unsigned int disconnect_mask = ~0;
-+module_param(disconnect_mask, int, 0444);
-+
- static int do_abort(struct Scsi_Host *);
- static void do_reset(struct Scsi_Host *);
- static void bus_reset_cleanup(struct Scsi_Host *);
-@@ -946,7 +949,8 @@ static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
- 	int err;
- 	bool ret = true;
- 	bool can_disconnect = instance->irq != NO_IRQ &&
--			      cmd->cmnd[0] != REQUEST_SENSE;
-+			      cmd->cmnd[0] != REQUEST_SENSE &&
-+			      (disconnect_mask & BIT(scmd_id(cmd)));
+ /**
+@@ -1601,7 +1603,7 @@ int aa_label_snxprint(char *str, size_t size, struct aa_ns *ns,
+ 	struct aa_ns *prev_ns = NULL;
+ 	struct label_it i;
+ 	int count = 0, total = 0;
+-	size_t len;
++	ssize_t len;
  
- 	NCR5380_dprint(NDEBUG_ARBITRATION, instance);
- 	dsprintk(NDEBUG_ARBITRATION, instance, "starting arbitration, id = %d\n",
+ 	AA_BUG(!str && size != 0);
+ 	AA_BUG(!label);
 -- 
 2.20.1
 
