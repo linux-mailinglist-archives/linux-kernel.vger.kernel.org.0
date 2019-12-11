@@ -2,160 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 692AC11B333
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:41:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB1C811B37D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388623AbfLKPlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:41:18 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:57964 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387726AbfLKPlL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:41:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lO4lPUU3yozgRp45+WR5yZ6Lr7mr+pvaSnPUniJcXZg=; b=A9gHP+61nuGUbn7GlmdCVpH66
-        KTe9R13efOXveVDz2gmC8VO9TzQAyn1P+YDBo+OxhinXeDa3LXczNqu3ye86chPS7skYtz7lO6Jmm
-        IvLonYDhnxRLtU1DPz7JMYcInhttZ5qS4h1dwGauImiOlOdJsW42J1mitbFwu0QEeon3griwZwVCE
-        O4HFOhs8LQVKiXUGcS896438TthZQllEpw4Y9huE+i/HLciiIjMWU7rwtKiQpH8q37A4y3SBcCJyx
-        xibPRbLjA50GCrjX5xwSbLWW1WUxyVWPGvJZ5u5VGu9B/tgxAcRWlLqyDM76ZLB+6NpIq5pEZlHiS
-        fzqZw08GQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1if46n-0007Jx-Cm; Wed, 11 Dec 2019 15:41:01 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C501E30798D;
-        Wed, 11 Dec 2019 16:39:38 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B970D20137C8F; Wed, 11 Dec 2019 16:40:58 +0100 (CET)
-Date:   Wed, 11 Dec 2019 16:40:58 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Marcelo Tosatti <mtosatti@redhat.com>,
+        id S2388682AbfLKPmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:42:54 -0500
+Received: from foss.arm.com ([217.140.110.172]:35326 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388672AbfLKPmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:42:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B055430E;
+        Wed, 11 Dec 2019 07:42:49 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 094183F52E;
+        Wed, 11 Dec 2019 07:42:49 -0800 (PST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        =?UTF-8?q?Kristina=20Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <namit@vmware.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] smp: Allow smp_call_function_single_async() to insert
- locked csd
-Message-ID: <20191211154058.GO2827@hirez.programming.kicks-ass.net>
-References: <20191204204823.1503-1-peterx@redhat.com>
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [PATCH v4 00/12] arm64: ARMv8.5-A: Branch Target Identification support
+Date:   Wed, 11 Dec 2019 15:41:54 +0000
+Message-Id: <20191211154206.46260-1-broonie@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204204823.1503-1-peterx@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 03:48:23PM -0500, Peter Xu wrote:
-> Previously we will raise an warning if we want to insert a csd object
-> which is with the LOCK flag set, and if it happens we'll also wait for
-> the lock to be released.  However, this operation does not match
-> perfectly with how the function is named - the name with "_async"
-> suffix hints that this function should not block, while we will.
-> 
-> This patch changed this behavior by simply return -EBUSY instead of
-> waiting, at the meantime we allow this operation to happen without
-> warning the user to change this into a feature when the caller wants
-> to "insert a csd object, if it's there, just wait for that one".
-> 
-> This is pretty safe because in flush_smp_call_function_queue() for
-> async csd objects (where csd->flags&SYNC is zero) we'll first do the
-> unlock then we call the csd->func().  So if we see the csd->flags&LOCK
-> is true in smp_call_function_single_async(), then it's guaranteed that
-> csd->func() will be called after this smp_call_function_single_async()
-> returns -EBUSY.
-> 
-> Update the comment of the function too to refect this.
-> 
-> CC: Marcelo Tosatti <mtosatti@redhat.com>
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Nadav Amit <namit@vmware.com>
-> CC: Josh Poimboeuf <jpoimboe@redhat.com>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: Peter Zijlstra <peterz@infradead.org>
-> CC: linux-kernel@vger.kernel.org
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
-> 
-> The story starts from a test where we've encountered the WARN_ON() on
-> a customized kernel and the csd_wait() took merely forever to
-> complete (so we've got a WARN_ON plusing a hang host).  The current
-> solution (which is downstream-only for now) is that from the caller's
-> side we use a boolean to store whether the csd is executed, we do:
-> 
->   if (atomic_cmpxchg(&in_progress, 0, 1))
->     smp_call_function_single_async(..);
-> 
-> While at the end of csd->func() we clear the bit.  However imho that's
-> mostly what csd->flags&LOCK is doing.  So I'm thinking maybe it would
-> worth it to raise this patch for upstream too so that it might help
-> other users of smp_call_function_single_async() when they need the
-> same semantic (and, I do think we shouldn't wait in _async()s...)
+This patch implements support for ARMv8.5-A Branch Target Identification
+(BTI), which is a control flow integrity protection feature introduced
+as part of the ARMv8.5-A extensions.
 
-hrtick_start() seems to employ something similar.
+This is mainly a repost based on v5.5-rc1.
 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
+Changes:
 
-duplicate tag :-)
+v4:
+ - Dropped patch fixing existing documentation as it has already been merged.
+ - Convert WARN_ON() to WARN_ON_ONCE() in "ELF: Add ELF program property
+   parsing support".
+ - Added display of guarded pages to ptdump.
+ - Updated for conversion of exception handling from assembler to C.
 
-> ---
->  kernel/smp.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/smp.c b/kernel/smp.c
-> index 7dbcb402c2fc..dd31e8228218 100644
-> --- a/kernel/smp.c
-> +++ b/kernel/smp.c
-> @@ -329,6 +329,11 @@ EXPORT_SYMBOL(smp_call_function_single);
->   * (ie: embedded in an object) and is responsible for synchronizing it
->   * such that the IPIs performed on the @csd are strictly serialized.
->   *
-> + * If the function is called with one csd which has not yet been
-> + * processed by previous call to smp_call_function_single_async(), the
-> + * function will return immediately with -EBUSY showing that the csd
-> + * object is still in progress.
-> + *
->   * NOTE: Be careful, there is unfortunately no current debugging facility to
->   * validate the correctness of this serialization.
->   */
-> @@ -338,14 +343,17 @@ int smp_call_function_single_async(int cpu, call_single_data_t *csd)
->  
->  	preempt_disable();
->  
-> -	/* We could deadlock if we have to wait here with interrupts disabled! */
-> -	if (WARN_ON_ONCE(csd->flags & CSD_FLAG_LOCK))
-> -		csd_lock_wait(csd);
-> +	if (csd->flags & CSD_FLAG_LOCK) {
-> +		err = -EBUSY;
-> +		goto out;
-> +	}
->  
->  	csd->flags = CSD_FLAG_LOCK;
->  	smp_wmb();
->  
->  	err = generic_exec_single(cpu, csd, csd->func, csd->info);
-> +
-> +out:
->  	preempt_enable();
->  
->  	return err;
+Notes:
 
-Yes.. I think this will work.
+ * GCC 9 can compile backwards-compatible BTI-enabled code with
+   -mbranch-protection=bti or -mbranch-protection=standard.
 
-I worry though; usage such as in __blk_mq_complete_request() /
-raise_blk_irq(), which explicitly clears csd.flags before calling it
-seems more dangerous than usual.
+ * Binutils trunk supports the new ELF note, but this wasn't in a release
+   the last time I posted this series.  (The situation _might_ have changed
+   in the meantime...)
 
-liquidio_napi_drv_callback() does that same.
+   Creation of a BTI-enabled binary requires _everything_ linked in to
+   be BTI-enabled.  For now ld --force-bti can be used to override this,
+   but some things may break until the required C library support is in
+   place.
+
+   There is no straightforward way to mark a .s file as BTI-enabled:
+   scraping the output from gcc -S works as a quick hack for now.
+
+   readelf -n can be used to examing the program properties in an ELF
+   file.
+
+ * Runtime mmap() and mprotect() can be used to enable BTI on a
+   page-by-page basis using the new PROT_BTI, but the code in the
+   affected pages still needs to be written or compiled to contain the
+   appopriate BTI landing pads.
+
+Dave Martin (11):
+  ELF: UAPI and Kconfig additions for ELF program properties
+  ELF: Add ELF program property parsing support
+  mm: Reserve asm-generic prot flag 0x10 for arch use
+  arm64: Basic Branch Target Identification support
+  elf: Allow arch to tweak initial mmap prot flags
+  arm64: elf: Enable BTI at exec based on ELF program properties
+  arm64: BTI: Decode BYTPE bits when printing PSTATE
+  arm64: unify native/compat instruction skipping
+  arm64: traps: Shuffle code to eliminate forward declarations
+  arm64: BTI: Reset BTYPE when skipping emulated instructions
+  KVM: arm64: BTI: Reset BTYPE when skipping emulated instructions
+
+Mark Brown (1):
+  arm64: mm: Display guarded pages in ptdump
+
+ Documentation/arm64/cpu-feature-registers.rst |   2 +
+ Documentation/arm64/elf_hwcaps.rst            |   4 +
+ arch/arm64/Kconfig                            |  29 ++++
+ arch/arm64/include/asm/cpucaps.h              |   3 +-
+ arch/arm64/include/asm/cpufeature.h           |   6 +
+ arch/arm64/include/asm/elf.h                  |  50 ++++++
+ arch/arm64/include/asm/esr.h                  |   2 +-
+ arch/arm64/include/asm/exception.h            |   1 +
+ arch/arm64/include/asm/hwcap.h                |   1 +
+ arch/arm64/include/asm/kvm_emulate.h          |   6 +-
+ arch/arm64/include/asm/mman.h                 |  37 +++++
+ arch/arm64/include/asm/pgtable-hwdef.h        |   1 +
+ arch/arm64/include/asm/pgtable.h              |   2 +-
+ arch/arm64/include/asm/ptrace.h               |   8 +
+ arch/arm64/include/asm/sysreg.h               |   4 +
+ arch/arm64/include/uapi/asm/hwcap.h           |   1 +
+ arch/arm64/include/uapi/asm/mman.h            |   9 ++
+ arch/arm64/include/uapi/asm/ptrace.h          |   1 +
+ arch/arm64/kernel/cpufeature.c                |  33 ++++
+ arch/arm64/kernel/cpuinfo.c                   |   1 +
+ arch/arm64/kernel/entry-common.c              |  11 ++
+ arch/arm64/kernel/process.c                   |  36 ++++-
+ arch/arm64/kernel/ptrace.c                    |   2 +-
+ arch/arm64/kernel/signal.c                    |  16 ++
+ arch/arm64/kernel/syscall.c                   |  18 +++
+ arch/arm64/kernel/traps.c                     | 127 +++++++--------
+ arch/arm64/mm/dump.c                          |   5 +
+ fs/Kconfig.binfmt                             |   6 +
+ fs/binfmt_elf.c                               | 145 +++++++++++++++++-
+ fs/compat_binfmt_elf.c                        |   4 +
+ include/linux/elf.h                           |  43 ++++++
+ include/linux/mm.h                            |   3 +
+ include/uapi/asm-generic/mman-common.h        |   1 +
+ include/uapi/linux/elf.h                      |  11 ++
+ 34 files changed, 554 insertions(+), 75 deletions(-)
+ create mode 100644 arch/arm64/include/asm/mman.h
+ create mode 100644 arch/arm64/include/uapi/asm/mman.h
+
+-- 
+2.20.1
 
