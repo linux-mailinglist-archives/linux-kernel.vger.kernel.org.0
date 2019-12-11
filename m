@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1206F11B78D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:09:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95AE111B83E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:14:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388912AbfLKQIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:08:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33480 "EHLO mail.kernel.org"
+        id S1729703AbfLKPIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:08:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730717AbfLKPMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:15 -0500
+        id S1730209AbfLKPIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:08:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2142A24658;
-        Wed, 11 Dec 2019 15:12:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83A2822527;
+        Wed, 11 Dec 2019 15:08:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077134;
-        bh=NqacZIeY751Sk6P9cZCPH3F55m9l65RSJBYodqLMxuc=;
+        s=default; t=1576076885;
+        bh=tbvVXASyep4qZkQz8fvqos3iAOlx2UlpqiDrH02qsu4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YJoNaUjoNpLlRuIXUuAJsWLZ66tumSy9mDGwhZCyngo4KUrP7xRelydL/+dfAK+f8
-         B0GZ2sw7rU2NIZDTDOA4A+ibwW1GhDMwznpnbdf5NbA74LK0tSXy766hEXAO9NkDVD
-         j3RbCQEpCVGfPYjVEyXXiDpSKY1lxDdrJweZaJIs=
+        b=odN7gTqVPjiEZhy87bgNFV6aUgKXTOPaaMGN6TqbexOcChaiMa6u1quT9EiNyt766
+         sgUOg+siKPBHnMMNRbMvqX6VJUGpqEI+0Dz5hY2oLR716Hi8BPJv3vBlDNdvr14tCD
+         /IVz5CiSHIDIjLeOHNwGxmyLdrIVRQ2VU+6slRUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
-        akpm@linux-foundation.org, bigeasy@linutronix.de, cl@linux.com,
-        keescook@chromium.org, penberg@kernel.org, rientjes@google.com,
-        thgarnie@google.com, tytso@mit.edu, will@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 029/105] sched/core: Avoid spurious lock dependencies
+        Andres Freund <andres@anarazel.de>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.4 27/92] io_uring: ensure req->submit is copied when req is deferred
 Date:   Wed, 11 Dec 2019 16:05:18 +0100
-Message-Id: <20191211150230.036214995@linuxfoundation.org>
+Message-Id: <20191211150231.942529314@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,67 +43,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit ff51ff84d82aea5a889b85f2b9fb3aa2b8691668 ]
+There's an issue with deferred requests through drain, where if we do
+need to defer, we're not copying over the sqe_submit state correctly.
+This can result in using uninitialized data when we then later go and
+submit the deferred request, like this check in __io_submit_sqe():
 
-While seemingly harmless, __sched_fork() does hrtimer_init(), which,
-when DEBUG_OBJETS, can end up doing allocations.
+         if (unlikely(s->index >= ctx->sq_entries))
+                 return -EINVAL;
 
-This then results in the following lock order:
+with 's' being uninitialized, we can randomly fail this check. Fix this
+by copying sqe_submit state when we defer a request.
 
-  rq->lock
-    zone->lock.rlock
-      batched_entropy_u64.lock
+Because it was fixed as part of a cleanup series in mainline, before
+anyone realized we had this issue. That removed the separate states
+of ->index vs ->submit.sqe. That series is not something I was
+comfortable putting into stable, hence the much simpler addition.
+Here's the patch in the series that fixes the same issue:
 
-Which in turn causes deadlocks when we do wakeups while holding that
-batched_entropy lock -- as the random code does.
+commit cf6fd4bd559ee61a4454b161863c8de6f30f8dca
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Mon Nov 25 23:14:39 2019 +0300
 
-Solve this by moving __sched_fork() out from under rq->lock. This is
-safe because nothing there relies on rq->lock, as also evident from the
-other __sched_fork() callsite.
+    io_uring: inline struct sqe_submit
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Qian Cai <cai@lca.pw>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: akpm@linux-foundation.org
-Cc: bigeasy@linutronix.de
-Cc: cl@linux.com
-Cc: keescook@chromium.org
-Cc: penberg@kernel.org
-Cc: rientjes@google.com
-Cc: thgarnie@google.com
-Cc: tytso@mit.edu
-Cc: will@kernel.org
-Fixes: b7d5dc21072c ("random: add a spinlock_t to struct batched_entropy")
-Link: https://lkml.kernel.org/r/20191001091837.GK4536@hirez.programming.kicks-ass.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Andres Freund <andres@anarazel.de>
+Reported-by: Tomáš Chaloupka
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/sched/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/io_uring.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index fffe790d98bb2..9a839798851c2 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5874,10 +5874,11 @@ void init_idle(struct task_struct *idle, int cpu)
- 	struct rq *rq = cpu_rq(cpu);
- 	unsigned long flags;
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2039,7 +2039,7 @@ add:
+ }
  
-+	__sched_fork(0, idle);
-+
- 	raw_spin_lock_irqsave(&idle->pi_lock, flags);
- 	raw_spin_lock(&rq->lock);
+ static int io_req_defer(struct io_ring_ctx *ctx, struct io_kiocb *req,
+-			const struct io_uring_sqe *sqe)
++			struct sqe_submit *s)
+ {
+ 	struct io_uring_sqe *sqe_copy;
  
--	__sched_fork(0, idle);
- 	idle->state = TASK_RUNNING;
- 	idle->se.exec_start = sched_clock();
- 	idle->flags |= PF_IDLE;
--- 
-2.20.1
-
+@@ -2057,7 +2057,8 @@ static int io_req_defer(struct io_ring_c
+ 		return 0;
+ 	}
+ 
+-	memcpy(sqe_copy, sqe, sizeof(*sqe_copy));
++	memcpy(&req->submit, s, sizeof(*s));
++	memcpy(sqe_copy, s->sqe, sizeof(*sqe_copy));
+ 	req->submit.sqe = sqe_copy;
+ 
+ 	INIT_WORK(&req->work, io_sq_wq_submit_work);
+@@ -2425,7 +2426,7 @@ static int io_queue_sqe(struct io_ring_c
+ {
+ 	int ret;
+ 
+-	ret = io_req_defer(ctx, req, s->sqe);
++	ret = io_req_defer(ctx, req, s);
+ 	if (ret) {
+ 		if (ret != -EIOCBQUEUED) {
+ 			io_free_req(req);
+@@ -2452,7 +2453,7 @@ static int io_queue_link_head(struct io_
+ 	 * list.
+ 	 */
+ 	req->flags |= REQ_F_IO_DRAIN;
+-	ret = io_req_defer(ctx, req, s->sqe);
++	ret = io_req_defer(ctx, req, s);
+ 	if (ret) {
+ 		if (ret != -EIOCBQUEUED) {
+ 			io_free_req(req);
 
 
