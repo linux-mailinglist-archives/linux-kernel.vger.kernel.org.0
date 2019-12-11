@@ -2,84 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B2C811B3DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:44:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBA4C11B412
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:45:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388503AbfLKPof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:44:35 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39603 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732174AbfLKPob (ORCPT
+        id S2388698AbfLKPpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:45:52 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:45577 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733217AbfLKPps (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:44:31 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e10so24589926ljj.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:44:30 -0800 (PST)
+        Wed, 11 Dec 2019 10:45:48 -0500
+Received: by mail-il1-f195.google.com with SMTP id p8so19791512iln.12
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:45:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XdzBTtaNquqJQQc4imgAleeVldIWzikxbiqcx5Oj4Uw=;
-        b=G2E2Di2yoRVC6LiYhg1kO50cH34YBeUkTvPVd13zyFgGT5Zhg5360ZibuMIwXzjzZT
-         x4RiYwW9WBQI4t5kV+nbfqmKJPgz3nEu/Ok4dxgoc7DZqCrMPUustH30XN1suYlnEOKN
-         qSs+GuTWkYCPlMdMRJUtL7WvIn7cs594EGRqqvxKMvO3GEybm9jv82wo8Mn2/VqwMqxE
-         KXW1WBNB42/ak4h0bBQwEC/4bP+zQP3pUgvQNe+eq8+TJLAcHJVyjkJsm1KHurbFMSTl
-         9gQ2vhMXWr3Gw4CrbO87BXw1zG/y++JkWskieWBimgUr+G07/l3wZy9bukniaD1h9hSP
-         JB+g==
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wanFKaczLMfU3OqUb1JjxMoDgH35GgWk6HMwR/6djLs=;
+        b=Hboi8tbgl13q5vXUiMA/tDWO1s3G8Dq3gtiHOGlv4UapdWcbWC0azlmd5VpIMEZ7a0
+         dX02VAzyiD35CB4N0/L4fDo8Tx1jojLrV1nn8pm77iKJlTBN/YVNVVftSJnOnC2ViMVT
+         OKFJ6dmmynQpt5Nvf2dkTutchpxyv7w0cPr+Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XdzBTtaNquqJQQc4imgAleeVldIWzikxbiqcx5Oj4Uw=;
-        b=blcRU3ERtxBb9HlBDRX0HylIIjaqWR0Ce+HEgxgUc3IWWxZvX8dAW8rf7N9sYegYjZ
-         THBx/eLkR8Nqx6RFrcqnIEQ4MdpRy5WSDn7al3mPZ7ncrom+hIV7cNL/QqNpjjOrXKgv
-         XxIXP1sk8uJzCShO/kDgIMAKs4lzb3b2CeqeYjIdnMlvVhBbnbr//XokcsviBBvHGckS
-         SNw5mOis4l5YY2HTJUvF8IOH1rYzFr2aviMzWg+I/RXf8OFjY3xr9g3O5UcxLl1rMtXd
-         59WIFMCtnrJ+lfdc8yqeyPlLfUK4QbI5Kfs27N93wp9mOmkgbLV591j1ILKz3WYV/V2p
-         fjbA==
-X-Gm-Message-State: APjAAAU9aOiMy+hMp/Suy9E7wGo9q2NddssxX8TiaKDsppa8RFwdrlaL
-        dZWsFzkyVdVrWxvpX5Gber6Bdw==
-X-Google-Smtp-Source: APXvYqwSQs81SgJhtxgOyKyhGTp7SwuA3qzUk/Yet+/zmbJc38BOSBCKb5y1J1lYoQveRVIKsu2I3A==
-X-Received: by 2002:a2e:814e:: with SMTP id t14mr2470350ljg.149.1576079069978;
-        Wed, 11 Dec 2019 07:44:29 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id d25sm1400170ljj.51.2019.12.11.07.44.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 07:44:29 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id A073E101218; Wed, 11 Dec 2019 18:44:29 +0300 (+03)
-Date:   Wed, 11 Dec 2019 18:44:29 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Mircea CIRJALIU - MELIU <mcirjaliu@bitdefender.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "aarcange@redhat.com" <aarcange@redhat.com>
-Subject: Re: [RFC PATCH v1 2/4] mm: also set VMA in khugepaged range
- invalidation
-Message-ID: <20191211154429.7tscxcqk725guyce@box>
-References: <DB7PR02MB3979E79A7ADF7E7B2F397418BB5A0@DB7PR02MB3979.eurprd02.prod.outlook.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wanFKaczLMfU3OqUb1JjxMoDgH35GgWk6HMwR/6djLs=;
+        b=FjF9blbBWmufCVv83dkKtGK/QZRT1w8KROsUcKP2UAmji/wP/wx5leoGHbxurOxBnG
+         qLtY/jsVZBVih7Dx6cG7WxMFrd9JOIpxr6q6aeDzB4GCeb9eackDlMqnamoDZN5Xcv2Z
+         TVgwa8tlygqyA4+VoanrBWVyHIY1CEEzYXVE845FH2z7T4qxT1u3EE+8ZM9JSmCAFygl
+         F4SNDn7Y+Mw5fOMmUkQWUADYwO/sZFRvv8Pww3XAsEe0DTlOZCpS2e5ww7cbMw56JoqX
+         AU2jwuGV1VsrUi8p/ZWplohtLKTxE85LYrlw9/HenIWnVv8IlPPg7zYsDq80HA1R0yZ9
+         /l3g==
+X-Gm-Message-State: APjAAAX549HxlUszSnVYAerRhNr4YRmcYPaYCM9PBoVLOGx+Gay3L3rC
+        DS3RWLAuneJqdzm/VhCVABhlZA==
+X-Google-Smtp-Source: APXvYqwWxzDOaxYOxAqGjbjnSVqOCnFFvbbl+B7Ipdp0CLZzaOiNlZCqCL98ytaVistSY/tSdVlAGQ==
+X-Received: by 2002:a92:3591:: with SMTP id c17mr3771724ilf.264.1576079147826;
+        Wed, 11 Dec 2019 07:45:47 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id x25sm586120iob.76.2019.12.11.07.45.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 07:45:47 -0800 (PST)
+Subject: Re: Linux 5.5=rc1 kselftest rseq test build failure
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     linux-kselftest <linux-kselftest@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <2d53b409-31e0-2245-e163-1ab26f52c841@linuxfoundation.org>
+ <1871753014.2121.1576077544796.JavaMail.zimbra@efficios.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <c6b703ef-8481-23bc-0b4c-dfb8d48da74f@linuxfoundation.org>
+Date:   Wed, 11 Dec 2019 08:45:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB7PR02MB3979E79A7ADF7E7B2F397418BB5A0@DB7PR02MB3979.eurprd02.prod.outlook.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1871753014.2121.1576077544796.JavaMail.zimbra@efficios.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 09:29:21AM +0000, Mircea CIRJALIU - MELIU wrote:
-> MMU notifier client may need the VMA for extra info.
-> This change is needed by the remote mapping feature that inspects anon VMAs
-> with huge mappings. 
+On 12/11/19 8:19 AM, Mathieu Desnoyers wrote:
+> ----- On Dec 10, 2019, at 7:27 PM, Shuah Khan skhan@linuxfoundation.org wrote:
+> 
+>> Hi Mathieu,
+>>
+>> I am seeing rseq test build failure on Linux 5.5-rc1.
+>>
+>> gcc -O2 -Wall -g -I./ -I../../../../usr/include/ -L./ -Wl,-rpath=./
+>> param_test.c -lpthread -lrseq -o ...tools/testing/selftests/rseq/param_test
+>> param_test.c:18:21: error: static declaration of ‘gettid’ follows
+>> non-static declaration
+>>     18 | static inline pid_t gettid(void)
+>>        |                     ^~~~~~
+>> In file included from /usr/include/unistd.h:1170,
+>>                   from param_test.c:11:
+>> /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:34:16: note: previous
+>> declaration of ‘gettid’ was here
+>>     34 | extern __pid_t gettid (void) __THROW;
+>>        |                ^~~~~~
+>> make: *** [Makefile:28: ...tools/testing/selftests/rseq/param_test] Error 1
+>>
+>>
+>> The following obvious change fixes it. However, there could be reason
+>> why this was defined here. If you think this is the right fix, I can
+>> send the patch. I started seeing this with gcc version 9.2.1 20191008
+> 
+> This issue is caused by introduction of "gettid()" in glibc 2.30. I don't
+> think we want to introduce a build dependency on glibc 2.30 for kernel
+> selftests. Removing the gettid() symbol as you propose here will break
+> build environments with glibc < 2.30.
+> 
+> We could eventually try to figure out whether the glibc headers implement
+> gettid() at build time (not sure how), or we could simply rename our own
+> "gettid()" to "rseq_gettid()", thus removing the namespace clash with
+> glibc.
+> 
+> I can propose a patch renaming gettid() to rseq_gettid() is that approach
+> is OK with you.
+> 
 
-The change itself is okay, but commit message should be better.
+Looks like you already have a patch to do this. I see it in my Inbox.
+I could take that.
 
-Do we have any user of mmu notifiers in current kernel that affected by
-the missing vma here?
-
-And subject starting with 'also' looks wrong to me.
-
--- 
- Kirill A. Shutemov
+thanks,
+-- Shuah
