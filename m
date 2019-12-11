@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2AFC11B530
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0C7D11B532
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732388AbfLKPUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:20:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50500 "EHLO mail.kernel.org"
+        id S1731525AbfLKPVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:21:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732383AbfLKPUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:20:50 -0500
+        id S1732401AbfLKPU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:20:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E35B22B48;
-        Wed, 11 Dec 2019 15:20:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97E5022B48;
+        Wed, 11 Dec 2019 15:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077649;
-        bh=PeYVoadsImi2LxPr0Kktv0Z4St0GaLqXgrkc7XGOcIg=;
+        s=default; t=1576077658;
+        bh=77xwrJu3iw/lj0VEKXGjYKTaKrhvkfdALuPcALj+K2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ntG4J+v077pu4H7WnKYGw5XV6h+3eot8MA9h5il9t8pJirD9P3gYz0rn3jTbnc7Cz
-         yZHOA1l6AqXZg5nQ2uhcTNmexlNnt3gKRAIhs10KCyW2Hltue2aj0IqTwODkM+2YBB
-         LqD823ksRLF59qTuzTJv1EcaNCRs5Uk+XBhwXcg4=
+        b=VFZ4vr2QyHfE10I5+Z/kDed8enZC8bdsk44E5LIQeb2UrHb8IDgV+xr59utuCb5Br
+         6UjgMK/ZRJ2EgeOh2gIlqM5pmR6ILFmmA+rPLTNh400Mn09IY1y9QShmkNT5RTOoq8
+         RyLho3tvbn3EafDcavDCWIythsl8km+RZssmegW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 119/243] sctp: increase sk_wmem_alloc when head->truesize is increased
-Date:   Wed, 11 Dec 2019 16:04:41 +0100
-Message-Id: <20191211150347.164875650@linuxfoundation.org>
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 122/243] ARM: dts: sun4i: Fix gpio-keys warning
+Date:   Wed, 11 Dec 2019 16:04:44 +0100
+Message-Id: <20191211150347.368304042@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -45,40 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-[ Upstream commit 0d32f17717e65e76cbdb248374dd162acdfe2fff ]
+[ Upstream commit c9b543404c5e1fd51a7ac375294519be5064bf80 ]
 
-I changed to count sk_wmem_alloc by skb truesize instead of 1 to
-fix the sk_wmem_alloc leak caused by later truesize's change in
-xfrm in Commit 02968ccf0125 ("sctp: count sk_wmem_alloc by skb
-truesize in sctp_packet_transmit").
+Fix the 'unnecessary #address-cells/#size-cells without "ranges" or child
+"reg" property' DTC warning for the gpio-keys DT node on A10 boards.
 
-But I should have also increased sk_wmem_alloc when head->truesize
-is increased in sctp_packet_gso_append() as xfrm does. Otherwise,
-sctp gso packet will cause sk_wmem_alloc underflow.
-
-Fixes: 02968ccf0125 ("sctp: count sk_wmem_alloc by skb truesize in sctp_packet_transmit")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sctp/output.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/sun4i-a10-inet9f-rev03.dts | 2 --
+ arch/arm/boot/dts/sun4i-a10-pcduino.dts      | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/net/sctp/output.c b/net/sctp/output.c
-index b0e74a3e77ec5..025f48e14a91f 100644
---- a/net/sctp/output.c
-+++ b/net/sctp/output.c
-@@ -410,6 +410,7 @@ static void sctp_packet_gso_append(struct sk_buff *head, struct sk_buff *skb)
- 	head->truesize += skb->truesize;
- 	head->data_len += skb->len;
- 	head->len += skb->len;
-+	refcount_add(skb->truesize, &head->sk->sk_wmem_alloc);
+diff --git a/arch/arm/boot/dts/sun4i-a10-inet9f-rev03.dts b/arch/arm/boot/dts/sun4i-a10-inet9f-rev03.dts
+index 221acd10f6c84..2f0d966f39ad8 100644
+--- a/arch/arm/boot/dts/sun4i-a10-inet9f-rev03.dts
++++ b/arch/arm/boot/dts/sun4i-a10-inet9f-rev03.dts
+@@ -63,8 +63,6 @@
+ 		compatible = "gpio-keys-polled";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&key_pins_inet9f>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 		poll-interval = <20>;
  
- 	__skb_header_release(skb);
- }
+ 		left-joystick-left {
+diff --git a/arch/arm/boot/dts/sun4i-a10-pcduino.dts b/arch/arm/boot/dts/sun4i-a10-pcduino.dts
+index b97a0f2f20b97..d82a604f3d9c7 100644
+--- a/arch/arm/boot/dts/sun4i-a10-pcduino.dts
++++ b/arch/arm/boot/dts/sun4i-a10-pcduino.dts
+@@ -76,8 +76,6 @@
+ 
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 
+ 		back {
+ 			label = "Key Back";
 -- 
 2.20.1
 
