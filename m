@@ -2,114 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E854311B442
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF7AF11B464
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731012AbfLKPql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:46:41 -0500
-Received: from mga03.intel.com ([134.134.136.65]:39228 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732678AbfLKPqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:46:39 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 07:46:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
-   d="scan'208";a="414898225"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga006.fm.intel.com with ESMTP; 11 Dec 2019 07:46:37 -0800
-Date:   Wed, 11 Dec 2019 07:46:37 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH 3/6] KVM: Fix some comment typos and missing parentheses
-Message-ID: <20191211154637.GA5044@linux.intel.com>
-References: <1576045585-8536-1-git-send-email-linmiaohe@huawei.com>
- <1576045585-8536-4-git-send-email-linmiaohe@huawei.com>
+        id S2387499AbfLKPrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:47:17 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:45768 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732195AbfLKPrP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:47:15 -0500
+Received: by mail-il1-f193.google.com with SMTP id p8so19796090iln.12
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:47:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=K5tV1Nbe1r0pXJnCPxMbOe7kndEwjfC++jBrsJjlTJ4=;
+        b=g97qMAEbDugNtjFu0nHCUBg9SghaU0t+zHk415SH3KffcD+76x9KR/wGKzyJlghYjV
+         ZqBcIcHDB7QU+L/tIYtHk5SAM09kJoFZGmyGS5Ooifd9ZgOAORfwgmi5ER0zgOt7I63G
+         DLic0hIJ0fhlRyD+vF87026NYmQsa9Q+hngCA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K5tV1Nbe1r0pXJnCPxMbOe7kndEwjfC++jBrsJjlTJ4=;
+        b=U6+E6k634/H7OD07PnyUG5+Wv4iMILxla5lzmeaB2A37MitleR4+3HSeL7xXJuLbM9
+         eIjcQQjjOr3xMXnBHM+mKhY6IcaIsDZdtKPdBwXvrQuSuQeuy04tcHUZox/1iPY3rReQ
+         QGbO+Ot0io7oqXkcimvJar7vvTfXndDb9RJf0RKTcL/4ErBlVX1uieGlTc4rEqC2qrPB
+         AE4f5IwTKollv9/At75T52TagpG7QE5T2UqgAmXT/jJ5Xt6yy/L+JG2dz1+U7DEMyRw4
+         JDjuZexN1Eys8n0Y7uO2i8D+QcQ6RTB+v2FesjBrnYMNNkvbPuu0INo92I5D7SY7Gu6G
+         0nDw==
+X-Gm-Message-State: APjAAAU4UoZTLyD9wMhanlD7BX0PTTeZy5wdJPBxNAb/tAqd+I20vNO8
+        0KwHqP4+OOBg75NP/jv0aTMjlg==
+X-Google-Smtp-Source: APXvYqwhpn/QF1wbC4mB0ya8wkAJ3m32nxicCLfymqByaY87HWI497bwVXALV2E51FptLj56RfQm5Q==
+X-Received: by 2002:a92:d18a:: with SMTP id z10mr3864672ilz.48.1576079234387;
+        Wed, 11 Dec 2019 07:47:14 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id u23sm808618ila.27.2019.12.11.07.47.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 07:47:13 -0800 (PST)
+Subject: Re: [PATCH for 5.4 0/3] Restartable Sequences Fixes
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        paulmck <paulmck@linux.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Paul Turner <pjt@google.com>,
+        linux-api <linux-api@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20190917182959.16333-1-mathieu.desnoyers@efficios.com>
+ <211848436.2172.1576078102568.JavaMail.zimbra@efficios.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <b67930c1-c8e0-124f-9a88-6ecace27317c@linuxfoundation.org>
+Date:   Wed, 11 Dec 2019 08:47:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1576045585-8536-4-git-send-email-linmiaohe@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <211848436.2172.1576078102568.JavaMail.zimbra@efficios.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 02:26:22PM +0800, linmiaohe wrote:
-> From: Miaohe Lin <linmiaohe@huawei.com>
+On 12/11/19 8:28 AM, Mathieu Desnoyers wrote:
+> Hi Thomas,
 > 
-> Fix some typos and add missing parentheses in the comments.
+> I thought those rseq fixes posted in September were in the -tip tree, but it
+> seems that they never made it to mainline.
 > 
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  arch/x86/kvm/hyperv.c     | 2 +-
->  arch/x86/kvm/lapic.c      | 2 +-
->  arch/x86/kvm/vmx/nested.c | 2 +-
->  arch/x86/kvm/vmx/vmx.c    | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
+> Now Shuah Khan noticed the issue with gettid() compatibility with glibc
+> 2.30+. This series contained that fix.
 > 
-> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-> index c7d4640b7b1c..a48d5708f1f8 100644
-> --- a/arch/x86/kvm/hyperv.c
-> +++ b/arch/x86/kvm/hyperv.c
-> @@ -1122,7 +1122,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
->  			return 1;
->  
->  		/*
-> -		 * Clear apic_assist portion of f(struct hv_vp_assist_page
-> +		 * Clear apic_assist portion of struct hv_vp_assist_page
->  		 * only, there can be valuable data in the rest which needs
->  		 * to be preserved e.g. on migration.
->  		 */
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 679692b55f6d..ea402e741bd5 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -969,7 +969,7 @@ bool kvm_irq_delivery_to_apic_fast(struct kvm *kvm, struct kvm_lapic *src,
->   * - For single-destination interrupts, handle it in posted mode
->   * - Else if vector hashing is enabled and it is a lowest-priority
->   *   interrupt, handle it in posted mode and use the following mechanism
-> - *   to find the destinaiton vCPU.
-> + *   to find the destination vCPU.
->   *	1. For lowest-priority interrupts, store all the possible
->   *	   destination vCPUs in an array.
->   *	2. Use "guest vector % max number of destination vCPUs" to find
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 7b01ef1d87e6..63ab49de324d 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -3427,7 +3427,7 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
->  
->  /*
->   * On a nested exit from L2 to L1, vmcs12.guest_cr0 might not be up-to-date
-> - * because L2 may have changed some cr0 bits directly (CRO_GUEST_HOST_MASK).
-> + * because L2 may have changed some cr0 bits directly (CR0_GUEST_HOST_MASK).
+> Should I re-post it, or is this series on track to get into mainline
+> at some point ?
+> 
 
-Holy cow this one is hard to see :-)
+It will be great this can make it into 5.5-rc2 or so.
 
->   * This function returns the new value we should put in vmcs12.guest_cr0.
->   * It's not enough to just return the vmcs02 GUEST_CR0. Rather,
->   *  1. Bits that neither L0 nor L1 trapped, were set directly by L2 and are now
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index bf24fbb2056c..1be3854f1090 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6720,7 +6720,7 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
->  	 * If PML is turned on, failure on enabling PML just results in failure
->  	 * of creating the vcpu, therefore we can simplify PML logic (by
->  	 * avoiding dealing with cases, such as enabling PML partially on vcpus
-> -	 * for the guest, etc.
-> +	 * for the guest), etc.
->  	 */
->  	if (enable_pml) {
->  		vmx->pml_pg = alloc_page(GFP_KERNEL_ACCOUNT | __GFP_ZERO);
-> -- 
-> 2.19.1
-> 
+thanks,
+-- Shuah
+
