@@ -2,133 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B128C11C05B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 00:09:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4264C11C071
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 00:12:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfLKXJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 18:09:26 -0500
-Received: from mail-wm1-f53.google.com ([209.85.128.53]:50681 "EHLO
-        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfLKXJ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 18:09:26 -0500
-Received: by mail-wm1-f53.google.com with SMTP id a5so172223wmb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 15:09:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:mime-version:message-id:user-agent
-         :content-transfer-encoding;
-        bh=+KVhInttHCk8aRWpkeHbpGDkcc8DqG9qr5lNYLpkB+Q=;
-        b=LkIlXSQRRleORMf3k4j0Yyq3SEEQdW30hvs2l5wJXpnGm69OqLRRVJob9A3Tv+sOBc
-         C2LsnoWYQouQmOCMHz0YcNUVUFe0at5s3R4zEbXXN05Uahkehc68iWqp3pchzQ6DkToA
-         EduMtgvVyBtiTG2y+7OPSnJ9rxXA3DuJ0MR/bUZaboged666N06XhMRYOMGhhOLa1wG+
-         MFAzmVIaalwXJunMEG8nH5pDja0AOXcw0Xwbt2f8MmNIGcWuEq15fNWi4OfRgzSGjYE4
-         tGz4w5hZ08Uv5lwSJ5WcF0GtKcBEmyySGiPHRXKOx4EyhP9aI4fAYg2aBxWc4LTmdVf2
-         P2qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:mime-version:message-id
-         :user-agent:content-transfer-encoding;
-        bh=+KVhInttHCk8aRWpkeHbpGDkcc8DqG9qr5lNYLpkB+Q=;
-        b=R1i1pdKfdHUtMa6KWUdWxXXgnEKaGdPeZidxe01d7M1QBo3D36wKuL7HP3PA85CV92
-         wpo+4j1vHPmgB6/nvuy9Nvryr7GNcb+ArwFztY/+NdLA0blOupFFLEmOFFu2JkTJrzIE
-         LggngvN97MBC0A0lKbvicpfnqThsBUYAn0QVx+k+ApN6vMy4eGlRzdl6VkQOBzVSUUZK
-         l8dJggDT2Q4qrOw5TTe/vuwF5nFF5tvdpxE7hEj4mCnfhINzZdN/DqMOvkiF1iYHJtm5
-         NES6rdNOQjw433vu37OWfYe8lA5E0CgpcGlsflzB4LSzQxY4grQvUOaH1IqWoRFyJY5k
-         hP0Q==
-X-Gm-Message-State: APjAAAXoZ7HxSop6XFE2ChBSMlTwH9zOslZMf5u9kdnz7xlzuQCofL8L
-        cDBztzWfz3xhaKfGOYiewQ0=
-X-Google-Smtp-Source: APXvYqzAA/fAeD8EPJ/WI2sdbDUFp8a+mD4mhBG/9aHEwPbxk3D6EVao+Y4pWSOQ8ZmApUr9WXpj8A==
-X-Received: by 2002:a7b:c85a:: with SMTP id c26mr2579892wml.107.1576105763974;
-        Wed, 11 Dec 2019 15:09:23 -0800 (PST)
-Received: from localhost ([5.59.90.131])
-        by smtp.gmail.com with ESMTPSA id 16sm4025978wmi.0.2019.12.11.15.09.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 15:09:23 -0800 (PST)
-From:   Vicente Bergas <vicencb@gmail.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Heiko Stuebner <heiko@sntech.de>
-Cc:     <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: WARNING: CPU: 3 PID: 1 at =?iso-8859-1?Q?=5F=5Fflush=5Fwork.isra.47+0x22c/0x248?=
-Date:   Thu, 12 Dec 2019 00:09:21 +0100
+        id S1727035AbfLKXMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 18:12:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34406 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726930AbfLKXMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 18:12:40 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [199.201.64.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2777206A5;
+        Wed, 11 Dec 2019 23:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576105959;
+        bh=zIr4wfCzPm70JepTVSen7DkYLaPuuCoE5VaW7velGx8=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=SIBIGInDZ0NyrWydrX3ejGAnp4hx8EGzVlMsi1eIgzd4UIJXXmwG66cKzFBrGOk8q
+         wVntzCym0vtZJO5eQVwqRI5Y+drxHs0QrVOzSxdFg+x6M5gMNLqg1O6GTO/O0t/Lhk
+         yMCYMO6TDoltu1BaPvqrXVxZX+XdhH8cSeNsnV9A=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 50CB435203C6; Wed, 11 Dec 2019 15:12:39 -0800 (PST)
+Date:   Wed, 11 Dec 2019 15:12:39 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Shane M Seymour <shane.seymour@hpe.com>,
+        Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Roy Luo <royluo@google.com>, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH tip/core/rcu 01/12] rcu: Remove rcu_swap_protected()
+Message-ID: <20191211231239.GK2889@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191210040714.GA2715@paulmck-ThinkPad-P72>
+ <20191210040741.2943-1-paulmck@kernel.org>
+ <yq1a77zmt4a.fsf@oracle.com>
+ <20191211035122.GC2889@paulmck-ThinkPad-P72>
+ <20191211183738.GA5190@paulmck-ThinkPad-P72>
+ <1911b7fa-c8d4-e34b-020d-3346a56f29d6@gmail.com>
 MIME-Version: 1.0
-Message-ID: <5708082a-680f-4107-aaf8-a39d76037d77@gmail.com>
-User-Agent: Trojita
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1911b7fa-c8d4-e34b-020d-3346a56f29d6@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-since v5.5-rc1 four equal consecutive traces appeared that seem related to
-rockchip sound. As i wasn't sure to whom sent the report just added
-everybody from
-./scripts/get_maintainer.pl sound/soc/rockchip/rk3399_gru_sound.c
-which is the file containg one of the functions in the trace.
+On Wed, Dec 11, 2019 at 08:09:11PM +0100, Matthias Brugger wrote:
+> 
+> 
+> On 11/12/2019 19:37, Paul E. McKenney wrote:
+> > On Tue, Dec 10, 2019 at 07:51:22PM -0800, Paul E. McKenney wrote:
+> >> On Tue, Dec 10, 2019 at 10:35:49PM -0500, Martin K. Petersen wrote:
+> >>>
+> >>> Paul,
+> >>>
+> >>>> Now that the calls to rcu_swap_protected() have been replaced by
+> >>>> rcu_replace_pointer(), this commit removes rcu_swap_protected().
+> >>>
+> >>> It appears there are two callers remaining in Linus' master. Otherwise
+> >>> looks good to me.
+> >>
+> >> I did queue a fix for one of them, and thank you for calling my
+> >> attention to the new one.  This commit should hit -next soon, so
+> >> hopefully this will discourage further additions.  ;-)
+> >>
+> >>> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> >>
+> >> Thank you!
+> > 
+> > And here is the patch for the new one.
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > commit 10699d92c906707d679e28b099cd798a519b4f51
+> > Author: Paul E. McKenney <paulmck@kernel.org>
+> > Date:   Wed Dec 11 10:30:21 2019 -0800
+> > 
+> >     wireless/mediatek: Replace rcu_swap_protected() with rcu_replace_pointer()
+> >     
+> >     This commit replaces the use of rcu_swap_protected() with the more
+> >     intuitively appealing rcu_replace_pointer() as a step towards removing
+> >     rcu_swap_protected().
+> >     
+> >     Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+> >     Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> >     Reported-by: "Martin K. Petersen" <martin.petersen@oracle.com>
+> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> >     Cc: Felix Fietkau <nbd@nbd.name>
+> >     Cc: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
+> >     Cc: Ryder Lee <ryder.lee@mediatek.com>
+> >     Cc: Roy Luo <royluo@google.com>
+> >     Cc: Kalle Valo <kvalo@codeaurora.org>
+> >     Cc: "David S. Miller" <davem@davemloft.net>
+> >     Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> >     Cc: <linux-wireless@vger.kernel.org>
+> >     Cc: <netdev@vger.kernel.org>
+> >     Cc: <linux-arm-kernel@lists.infradead.org>
+> >     Cc: <linux-mediatek@lists.infradead.org>
+> > 
+> > diff --git a/drivers/net/wireless/mediatek/mt76/agg-rx.c b/drivers/net/wireless/mediatek/mt76/agg-rx.c
+> > index 53b5a4b..80986ce 100644
+> > --- a/drivers/net/wireless/mediatek/mt76/agg-rx.c
+> > +++ b/drivers/net/wireless/mediatek/mt76/agg-rx.c
+> > @@ -281,8 +281,8 @@ void mt76_rx_aggr_stop(struct mt76_dev *dev, struct mt76_wcid *wcid, u8 tidno)
+> >  {
+> >  	struct mt76_rx_tid *tid = NULL;
+> >  
+> > -	rcu_swap_protected(wcid->aggr[tidno], tid,
+> > -			   lockdep_is_held(&dev->mutex));
+> > +	tid = rcu_swap_protected(wcid->aggr[tidno], tid,
+> > +				 lockdep_is_held(&dev->mutex));
+> 
+> I suppose you meant: rcu_replace_pointer() here.
 
-By the way, sound works fine. After all traces, there is this message that
-could also be related:
-[    0.625354] da7219 8-001a: Using default DAI clk names: da7219-dai-wclk,=20=
+Indeed I did, and thank you for catching this!  Bad patch day here.  :-/
 
-da7219-dai-bclk
+Update below...
 
-Regards,
-  Vicente.
+							Thanx, Paul
 
-[    0.607955] ------------[ cut here ]------------
-[    0.607967] WARNING: CPU: 3 PID: 1 at __flush_work.isra.47+0x22c/0x248
-[    0.607972] CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc1 #1
-[    0.607973] Hardware name: Google Kevin (DT)
-[    0.607977] pstate: 00000005 (nzcv daif -PAN -UAO)
-[    0.607980] pc : __flush_work.isra.47+0x22c/0x248
-[    0.607982] lr : flush_delayed_work+0x34/0x58
-[    0.607984] sp : ffff80001004b950
-[    0.607985] x29: ffff80001004b950 x28: ffff8000109f47c8=20
-[    0.607989] x27: ffff800010b29890 x26: ffff800010acfdf0=20
-[    0.607992] x25: 0000000000000003 x24: 0000000000000001=20
-[    0.607994] x23: ffff0000f2779f00 x22: ffff800010c974f0=20
-[    0.607997] x21: 0000000000000000 x20: ffff800010c7ca48=20
-[    0.608000] x19: ffff0000f277f698 x18: 0000000000000014=20
-[    0.608003] x17: 000000007dad679e x16: 00000000be8a3c7e=20
-[    0.608006] x15: 0000000072509968 x14: 0000000000000000=20
-[    0.608008] x13: 0000000000000000 x12: 0000000000000000=20
-[    0.608011] x11: 0000000000000008 x10: 0101010101010101=20
-[    0.608014] x9 : 0000000000000000 x8 : 7f7f7f7f7f7f7f7f=20
-[    0.608017] x7 : ffff0000f3975800 x6 : 0080808080808080=20
-[    0.608019] x5 : dead000000000100 x4 : dead000000000122=20
-[    0.608022] x3 : 0000000000000000 x2 : 0000000000000000=20
-[    0.608025] x1 : 0000000000000000 x0 : ffff0000f277f698=20
-[    0.608028] Call trace:
-[    0.608031]  __flush_work.isra.47+0x22c/0x248
-[    0.608034]  flush_delayed_work+0x34/0x58
-[    0.608040]  soc_free_pcm_runtime.part.19+0x40/0x60
-[    0.608043]  snd_soc_remove_dai_link+0x54/0x60
-[    0.608047]  soc_cleanup_card_resources+0x160/0x298
-[    0.608050]  snd_soc_bind_card+0x248/0x978
-[    0.608053]  snd_soc_register_card+0xf0/0x108
-[    0.608057]  devm_snd_soc_register_card+0x40/0x90
-[    0.608061]  rockchip_sound_probe+0x210/0x2e8
-[    0.608066]  platform_drv_probe+0x50/0xa0
-[    0.608070]  really_probe+0xd8/0x2f0
-[    0.608073]  driver_probe_device+0x54/0xe8
-[    0.608075]  device_driver_attach+0x6c/0x78
-[    0.608078]  __driver_attach+0x68/0xe8
-[    0.608082]  bus_for_each_dev+0x60/0x98
-[    0.608085]  driver_attach+0x20/0x28
-[    0.608088]  bus_add_driver+0x170/0x1d0
-[    0.608091]  driver_register+0x60/0x110
-[    0.608093]  __platform_driver_register+0x44/0x50
-[    0.608098]  rockchip_sound_driver_init+0x18/0x20
-[    0.608102]  do_one_initcall+0x70/0x148
-[    0.608105]  kernel_init_freeable+0x1b4/0x254
-[    0.608109]  kernel_init+0x10/0xfc
-[    0.608113]  ret_from_fork+0x10/0x18
-[    0.608117] ---[ end trace fc1c70d7fb870a47 ]---
+------------------------------------------------------------------------
 
+commit ad5572b091429a45e863acaa6a36cf396d44f58d
+Author: Paul E. McKenney <paulmck@kernel.org>
+Date:   Wed Dec 11 10:30:21 2019 -0800
+
+    wireless/mediatek: Replace rcu_swap_protected() with rcu_replace_pointer()
+    
+    This commit replaces the use of rcu_swap_protected() with the more
+    intuitively appealing rcu_replace_pointer() as a step towards removing
+    rcu_swap_protected().
+    
+    Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+    Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Reported-by: "Martin K. Petersen" <martin.petersen@oracle.com>
+    [ paulmck: Apply Matthias Brugger feedback. ]
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+    Reviewed-by: "Martin K. Petersen" <martin.petersen@oracle.com>
+    Cc: Felix Fietkau <nbd@nbd.name>
+    Cc: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
+    Cc: Ryder Lee <ryder.lee@mediatek.com>
+    Cc: Roy Luo <royluo@google.com>
+    Cc: Kalle Valo <kvalo@codeaurora.org>
+    Cc: "David S. Miller" <davem@davemloft.net>
+    Cc: Matthias Brugger <matthias.bgg@gmail.com>
+    Cc: <linux-wireless@vger.kernel.org>
+    Cc: <netdev@vger.kernel.org>
+    Cc: <linux-arm-kernel@lists.infradead.org>
+    Cc: <linux-mediatek@lists.infradead.org>
+
+diff --git a/drivers/net/wireless/mediatek/mt76/agg-rx.c b/drivers/net/wireless/mediatek/mt76/agg-rx.c
+index 53b5a4b..59c1878 100644
+--- a/drivers/net/wireless/mediatek/mt76/agg-rx.c
++++ b/drivers/net/wireless/mediatek/mt76/agg-rx.c
+@@ -281,8 +281,8 @@ void mt76_rx_aggr_stop(struct mt76_dev *dev, struct mt76_wcid *wcid, u8 tidno)
+ {
+ 	struct mt76_rx_tid *tid = NULL;
+ 
+-	rcu_swap_protected(wcid->aggr[tidno], tid,
+-			   lockdep_is_held(&dev->mutex));
++	tid = rcu_replace_pointer(wcid->aggr[tidno], tid,
++				  lockdep_is_held(&dev->mutex));
+ 	if (tid) {
+ 		mt76_rx_aggr_shutdown(dev, tid);
+ 		kfree_rcu(tid, rcu_head);
