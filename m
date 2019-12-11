@@ -2,110 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53B4311B181
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:31:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2F0211B159
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387425AbfLKPa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:30:57 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:46182 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387867AbfLKP3X (ORCPT
+        id S1731365AbfLKPaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:30:11 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:61065 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387751AbfLKPaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:29:23 -0500
-Received: by mail-pj1-f67.google.com with SMTP id z21so9041500pjq.13;
-        Wed, 11 Dec 2019 07:29:22 -0800 (PST)
+        Wed, 11 Dec 2019 10:30:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pfDhDYFuoXDrqHRE8i/08ZQEyfFGj50C9cMmD8Jy2MA=;
-        b=j5C0uyFcwXKjxMT2bhJ14CbB+fZCEQxShkK6p3Cf93qQ6BpSTKh005B5VD2g3OiyqF
-         /wNRFMf+eDpSe4TXNqE6yRjbz6RybfTWfb6JvF2sgW3j1ebFqzHfH+knhZW5LWMcLU9Q
-         PPkMZlifZ3WANqTGfezf8poByuNPftyfj2T8ipV3B9YeSB8ICKW5MsA6kddHfyed3zGU
-         vic5lX9Flai49PViVVxoFnEQJ1pk/ccakyFpoYFqPpU1m9xHZDAyiQ7nU9kNfJZthfG6
-         7ElzzegodjoKVuaP+P5wut6UEuDXichyFzp4GyPgvDzsqKx4ZybnxVzEt/Nh+yrpsJgq
-         kRqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pfDhDYFuoXDrqHRE8i/08ZQEyfFGj50C9cMmD8Jy2MA=;
-        b=oAp9Da0cQAxIH33xtPRmHHU7hXcNi2uBWg1Og5bnOhBOKc+hnHLVtlcYxFnwXbX6zF
-         GEAaDkOqYoCsnjDS7bBWqirQhwVzj3p5jhoz5pUi3vNFcmz6OmMvfPehP1gwtNkj/FpT
-         3z3ypD6JonJ5HP91wt3V+mi5Gijz7NOU3juy/RKKTpDlY2pn7/Po+PHgd0kGvbEAGgXe
-         mIA42Asn90P5z94ZdBFE/amZfAWQw9qJf/c+w5LheJuK4rW2BZ+nyJjdkdZV1XmA+VBP
-         Wl6qpuDs65zuO7ZGQ45BENZByisPuxDaop07kTF9tryPX0BH4JedGPDxS5qhAqjTERnc
-         FSBQ==
-X-Gm-Message-State: APjAAAWG8fEtXNby/te4Lw1NUEZdGAC01iU/5E+FSAUQshH+DOm7Ksp/
-        6G6y8LdeLPeY7Putejvd+94YB7/nGUFqXoZE64E=
-X-Google-Smtp-Source: APXvYqwlR/tF5FA23iHp/eaMoUPuaCaCPBgDqm77FVGRFefN3YELGs3EmpG2NGeQvAJUc/yD31OEVyNePT/dpDkApsU=
-X-Received: by 2002:a17:90a:b10b:: with SMTP id z11mr4272497pjq.132.1576078162498;
- Wed, 11 Dec 2019 07:29:22 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1576078207; x=1607614207;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=iUa3rMrxmsbf7wqyelx7uKp4w0L5PGnWaAJKZ1+2hRA=;
+  b=cTSKbM41K5a+TpaQu2fopTrSOifueqCyPZ1HkG+kaBqU9sgD8BOFjW+c
+   Msa66gq/9iug/gF0j0UOq7wByZ465T0LMJXKpqvpO2iTY8+FrD+IykA/t
+   PpD7nvTh8VKzBh73ZEArTRgYzb7g5tiOaboJHp4x/dZne5eFlzJ55s1qw
+   c=;
+IronPort-SDR: k+ahKTZHIO0ciIGn4hMaP6zVJRPspOxO/cgWgiMFZcQpLsQqkQ6c1rHpCPrZg2+A0/TfDf2Ix1
+ 0d4IQXOJvoNw==
+X-IronPort-AV: E=Sophos;i="5.69,301,1571702400"; 
+   d="scan'208";a="8046829"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-69849ee2.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 11 Dec 2019 15:30:06 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2a-69849ee2.us-west-2.amazon.com (Postfix) with ESMTPS id 2B8E7A245B;
+        Wed, 11 Dec 2019 15:30:05 +0000 (UTC)
+Received: from EX13D32EUC001.ant.amazon.com (10.43.164.159) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 11 Dec 2019 15:30:04 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (10.43.162.135) by
+ EX13D32EUC001.ant.amazon.com (10.43.164.159) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 11 Dec 2019 15:30:03 +0000
+Received: from u2f063a87eabd5f.cbg10.amazon.com (10.125.106.135) by
+ mail-relay.amazon.com (10.43.162.232) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Wed, 11 Dec 2019 15:30:01 +0000
+From:   Paul Durrant <pdurrant@amazon.com>
+To:     <xen-devel@lists.xenproject.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Paul Durrant <pdurrant@amazon.com>,
+        Juergen Gross <jgross@suse.com>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Subject: [PATCH v3 1/4] xenbus: move xenbus_dev_shutdown() into frontend code...
+Date:   Wed, 11 Dec 2019 15:29:53 +0000
+Message-ID: <20191211152956.5168-2-pdurrant@amazon.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191211152956.5168-1-pdurrant@amazon.com>
+References: <20191211152956.5168-1-pdurrant@amazon.com>
 MIME-Version: 1.0
-References: <1576075099-3441-1-git-send-email-akinobu.mita@gmail.com> <1576075099-3441-3-git-send-email-akinobu.mita@gmail.com>
-In-Reply-To: <1576075099-3441-3-git-send-email-akinobu.mita@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 11 Dec 2019 17:29:12 +0200
-Message-ID: <CAHp75Vfq4KqNAGY4ivveR7D0Z1fA1EOFT+oL9+f+Ak2jikCTVg@mail.gmail.com>
-Subject: Re: [PATCH v3 02/12] ACPI: thermal: switch to use <linux/units.h> helpers
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        linux-hwmon@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sujith Thomas <sujith.thomas@intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 4:39 PM Akinobu Mita <akinobu.mita@gmail.com> wrote:
->
-> This switches the ACPI thermal zone driver to use celsius_to_deci_kelvin(),
-> deci_kelvin_to_celsius(), and deci_kelvin_to_millicelsius_with_offset() in
-> <linux/units.h> instead of helpers in <linux/thermal.h>.
->
-> This is preparation for centralizing the kelvin to/from Celsius conversion
-> helpers in <linux/units.h>.
+...and make it static
 
->  #include <linux/reboot.h>
->  #include <linux/device.h>
->  #include <linux/thermal.h>
+xenbus_dev_shutdown() is seemingly intended to cause clean shutdown of PV
+frontends when a guest is rebooted. Indeed the function waits for a
+conpletion which is only set by a call to xenbus_frontend_closed().
 
-> +#include <linux/units.h>
+This patch removes the shutdown() method from backends and moves
+xenbus_dev_shutdown() from xenbus_probe.c into xenbus_probe_frontend.c,
+renaming it appropriately and making it static.
 
-Can we try to keep *some* order, i.e. put this after acpi.h below?
+NOTE: In the case where the backend is running in a driver domain, the
+      toolstack should have already terminated any frontends that may be
+      using it (since Xen does not support re-startable PV driver domains)
+      so xenbus_dev_shutdown() should never be called.
 
->  #include <linux/acpi.h>
->  #include <linux/workqueue.h>
->  #include <linux/uaccess.h>
+Signed-off-by: Paul Durrant <pdurrant@amazon.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+---
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+---
+ drivers/xen/xenbus/xenbus.h                |  2 --
+ drivers/xen/xenbus/xenbus_probe.c          | 23 ---------------------
+ drivers/xen/xenbus/xenbus_probe_backend.c  |  1 -
+ drivers/xen/xenbus/xenbus_probe_frontend.c | 24 +++++++++++++++++++++-
+ 4 files changed, 23 insertions(+), 27 deletions(-)
 
->                         } else if (crt > 0) {
-> -                               unsigned long crt_k = CELSIUS_TO_DECI_KELVIN(crt);
-> +                               unsigned long crt_k =
-> +                                       celsius_to_deci_kelvin(crt);
-
-It used to be one line, why do two?
-
->         pr_info(PREFIX "%s [%s] (%ld C)\n", acpi_device_name(device),
-> -               acpi_device_bid(device), DECI_KELVIN_TO_CELSIUS(tz->temperature));
-> +               acpi_device_bid(device),
-> +               deci_kelvin_to_celsius(tz->temperature));
-
-Ditto.
-
+diff --git a/drivers/xen/xenbus/xenbus.h b/drivers/xen/xenbus/xenbus.h
+index d75a2385b37c..5f5b8a7d5b80 100644
+--- a/drivers/xen/xenbus/xenbus.h
++++ b/drivers/xen/xenbus/xenbus.h
+@@ -116,8 +116,6 @@ int xenbus_probe_devices(struct xen_bus_type *bus);
+ 
+ void xenbus_dev_changed(const char *node, struct xen_bus_type *bus);
+ 
+-void xenbus_dev_shutdown(struct device *_dev);
+-
+ int xenbus_dev_suspend(struct device *dev);
+ int xenbus_dev_resume(struct device *dev);
+ int xenbus_dev_cancel(struct device *dev);
+diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+index c21be6e9d38a..5aa29396c9e3 100644
+--- a/drivers/xen/xenbus/xenbus_probe.c
++++ b/drivers/xen/xenbus/xenbus_probe.c
+@@ -281,29 +281,6 @@ int xenbus_dev_remove(struct device *_dev)
+ }
+ EXPORT_SYMBOL_GPL(xenbus_dev_remove);
+ 
+-void xenbus_dev_shutdown(struct device *_dev)
+-{
+-	struct xenbus_device *dev = to_xenbus_device(_dev);
+-	unsigned long timeout = 5*HZ;
+-
+-	DPRINTK("%s", dev->nodename);
+-
+-	get_device(&dev->dev);
+-	if (dev->state != XenbusStateConnected) {
+-		pr_info("%s: %s: %s != Connected, skipping\n",
+-			__func__, dev->nodename, xenbus_strstate(dev->state));
+-		goto out;
+-	}
+-	xenbus_switch_state(dev, XenbusStateClosing);
+-	timeout = wait_for_completion_timeout(&dev->down, timeout);
+-	if (!timeout)
+-		pr_info("%s: %s timeout closing device\n",
+-			__func__, dev->nodename);
+- out:
+-	put_device(&dev->dev);
+-}
+-EXPORT_SYMBOL_GPL(xenbus_dev_shutdown);
+-
+ int xenbus_register_driver_common(struct xenbus_driver *drv,
+ 				  struct xen_bus_type *bus,
+ 				  struct module *owner, const char *mod_name)
+diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
+index b0bed4faf44c..14876faff3b0 100644
+--- a/drivers/xen/xenbus/xenbus_probe_backend.c
++++ b/drivers/xen/xenbus/xenbus_probe_backend.c
+@@ -198,7 +198,6 @@ static struct xen_bus_type xenbus_backend = {
+ 		.uevent		= xenbus_uevent_backend,
+ 		.probe		= xenbus_dev_probe,
+ 		.remove		= xenbus_dev_remove,
+-		.shutdown	= xenbus_dev_shutdown,
+ 		.dev_groups	= xenbus_dev_groups,
+ 	},
+ };
+diff --git a/drivers/xen/xenbus/xenbus_probe_frontend.c b/drivers/xen/xenbus/xenbus_probe_frontend.c
+index a7d90a719cea..8a1650bbe18f 100644
+--- a/drivers/xen/xenbus/xenbus_probe_frontend.c
++++ b/drivers/xen/xenbus/xenbus_probe_frontend.c
+@@ -126,6 +126,28 @@ static int xenbus_frontend_dev_probe(struct device *dev)
+ 	return xenbus_dev_probe(dev);
+ }
+ 
++static void xenbus_frontend_dev_shutdown(struct device *_dev)
++{
++	struct xenbus_device *dev = to_xenbus_device(_dev);
++	unsigned long timeout = 5*HZ;
++
++	DPRINTK("%s", dev->nodename);
++
++	get_device(&dev->dev);
++	if (dev->state != XenbusStateConnected) {
++		pr_info("%s: %s: %s != Connected, skipping\n",
++			__func__, dev->nodename, xenbus_strstate(dev->state));
++		goto out;
++	}
++	xenbus_switch_state(dev, XenbusStateClosing);
++	timeout = wait_for_completion_timeout(&dev->down, timeout);
++	if (!timeout)
++		pr_info("%s: %s timeout closing device\n",
++			__func__, dev->nodename);
++ out:
++	put_device(&dev->dev);
++}
++
+ static const struct dev_pm_ops xenbus_pm_ops = {
+ 	.suspend	= xenbus_dev_suspend,
+ 	.resume		= xenbus_frontend_dev_resume,
+@@ -146,7 +168,7 @@ static struct xen_bus_type xenbus_frontend = {
+ 		.uevent		= xenbus_uevent_frontend,
+ 		.probe		= xenbus_frontend_dev_probe,
+ 		.remove		= xenbus_dev_remove,
+-		.shutdown	= xenbus_dev_shutdown,
++		.shutdown	= xenbus_frontend_dev_shutdown,
+ 		.dev_groups	= xenbus_dev_groups,
+ 
+ 		.pm		= &xenbus_pm_ops,
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1
+
