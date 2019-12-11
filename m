@@ -2,59 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A624611BAC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:57:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B2B511BA6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:37:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730813AbfLKR5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 12:57:49 -0500
-Received: from mga14.intel.com ([192.55.52.115]:28533 "EHLO mga14.intel.com"
+        id S1729880AbfLKRhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 12:37:14 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:56382 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729228AbfLKR5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 12:57:49 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 09:37:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,302,1571727600"; 
-   d="scan'208";a="225610402"
-Received: from cmclough-mobl.ger.corp.intel.com (HELO localhost) ([10.251.85.152])
-  by orsmga002.jf.intel.com with ESMTP; 11 Dec 2019 09:37:13 -0800
-Date:   Wed, 11 Dec 2019 19:37:12 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        arnd@arndb.de
-Subject: Re: [PATCH V2] tpm_tis_spi: use new `delay` structure for SPI
- transfer delays
-Message-ID: <20191211173700.GE4516@linux.intel.com>
-References: <20191204080049.32701-1-alexandru.ardelean@analog.com>
- <20191210065619.7395-1-alexandru.ardelean@analog.com>
+        id S1727334AbfLKRhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 12:37:14 -0500
+Received: from zn.tnic (p200300EC2F094900329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:4900:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 17A371EC0591;
+        Wed, 11 Dec 2019 18:37:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1576085833;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=/fQSVH4e2kOh1ufr5QULeFyUccGwjWVFvNcXOqos5bc=;
+        b=j3MRlnLTHkMRuZ7QpudWgF6/T2UqokFtYoPNG1Yr0vcl1cqrwaFFEOLLDsNTjKXHlPyDjl
+        /jMUop/434oLwmjhI+9f8A5KEov4WxhHidW2RpmlC1NnHXoHJ+iN8wMXGjCRkXFIIgHyfG
+        Y80o5U8gGTn+LK4dKb3lkvYKayZF+7E=
+Date:   Wed, 11 Dec 2019 18:37:12 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jann Horn <jannh@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: Re: [PATCH v6 4/4] x86/kasan: Print original address on #GP
+Message-ID: <20191211173711.GF14821@zn.tnic>
+References: <20191209143120.60100-1-jannh@google.com>
+ <20191209143120.60100-4-jannh@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191210065619.7395-1-alexandru.ardelean@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20191209143120.60100-4-jannh@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 08:56:19AM +0200, Alexandru Ardelean wrote:
-> In a recent change to the SPI subsystem [1], a new `delay` struct was added
-> to replace the `delay_usecs`. This change replaces the current `delay_usecs`
-> with `delay` for this driver.
-> 
-> The `spi_transfer_delay_exec()` function [in the SPI framework] makes sure
-> that both `delay_usecs` & `delay` are used (in this order to preserve
-> backwards compatibility).
-> 
-> [1] commit bebcfd272df6485 ("spi: introduce `delay` field for
-> `spi_transfer` + spi_transfer_delay_exec()")
+On Mon, Dec 09, 2019 at 03:31:20PM +0100, Jann Horn wrote:
+>  arch/x86/kernel/traps.c     | 12 ++++++++++-
+>  arch/x86/mm/kasan_init_64.c | 21 -------------------
+>  include/linux/kasan.h       |  6 ++++++
+>  mm/kasan/report.c           | 40 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 57 insertions(+), 22 deletions(-)
 
-Not sure why you use ` and not '?
+I need a KASAN person ACK here, I'd guess.
 
-/Jarkko
+> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> index c8b4ae6aed5b..7813592b4fb3 100644
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -37,6 +37,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/smp.h>
+>  #include <linux/io.h>
+> +#include <linux/kasan.h>
+>  #include <asm/stacktrace.h>
+>  #include <asm/processor.h>
+>  #include <asm/debugreg.h>
+> @@ -589,6 +590,8 @@ do_general_protection(struct pt_regs *regs, long error_code)
+>  	if (!user_mode(regs)) {
+>  		enum kernel_gp_hint hint = GP_NO_HINT;
+>  		unsigned long gp_addr;
+> +		unsigned long flags;
+> +		int sig;
+>  
+>  		if (fixup_exception(regs, X86_TRAP_GP, error_code, 0))
+>  			return;
+> @@ -621,7 +624,14 @@ do_general_protection(struct pt_regs *regs, long error_code)
+>  				 "maybe for address",
+>  				 gp_addr);
+>  
+> -		die(desc, regs, error_code);
+> +		flags = oops_begin();
+> +		sig = SIGSEGV;
+> +		__die_header(desc, regs, error_code);
+> +		if (hint == GP_NON_CANONICAL)
+> +			kasan_non_canonical_hook(gp_addr);
+> +		if (__die_body(desc, regs, error_code))
+> +			sig = 0;
+> +		oops_end(flags, regs, sig);
+
+Instead of opencoding it like this, can we add a
+
+	die_addr(desc, regs, error_code, gp_addr);
+
+to arch/x86/kernel/dumpstack.c and call it from here:
+
+	if (hint != GP_NON_CANONICAL)
+		gp_addr = 0;
+
+	die_addr(desc, regs, error_code, gp_addr);
+
+This way you won't need to pass down to die_addr() the hint too - you
+code into gp_addr whether it was non-canonical or not.
+
+The
+
++       if (addr < KASAN_SHADOW_OFFSET)
++               return;
+
+check in kasan_non_canonical_hook() would then catch it when addr == 0.
+
+Hmmm?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
