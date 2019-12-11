@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8822011B90F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:44:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F9A311B910
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:45:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730685AbfLKQoq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:44:46 -0500
-Received: from foss.arm.com ([217.140.110.172]:38676 "EHLO foss.arm.com"
+        id S1730755AbfLKQoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:44:54 -0500
+Received: from foss.arm.com ([217.140.110.172]:38688 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730570AbfLKQok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:44:40 -0500
+        id S1730593AbfLKQol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 11:44:41 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE490106F;
-        Wed, 11 Dec 2019 08:44:39 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D616211B3;
+        Wed, 11 Dec 2019 08:44:40 -0800 (PST)
 Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DA1E83F52E;
-        Wed, 11 Dec 2019 08:44:38 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F1ED33F52E;
+        Wed, 11 Dec 2019 08:44:39 -0800 (PST)
 From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
         dietmar.eggemann@arm.com
-Subject: [RFC PATCH 5/7] sched/topology: Make {lowest/highest}_flag_domain() work with > 1 flags
-Date:   Wed, 11 Dec 2019 16:43:59 +0000
-Message-Id: <20191211164401.5013-6-valentin.schneider@arm.com>
+Subject: [RFC PATCH 6/7] sched/fair: Split select_task_rq_fair want_affine logic
+Date:   Wed, 11 Dec 2019 16:44:00 +0000
+Message-Id: <20191211164401.5013-7-valentin.schneider@arm.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191211164401.5013-1-valentin.schneider@arm.com>
 References: <20191211164401.5013-1-valentin.schneider@arm.com>
@@ -34,104 +34,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some cases, select_task_rq_fair() ends up looking for the highest domain
-with both SD_LOAD_BALANCE and one of SD_BALANCE_{WAKE, FORK, EXEC}.
-This is pretty much a highest_flag_domain() call, but that latter
-can only cope with a single flag.
+The domain loop within select_task_rq_fair() depends on a few bits of
+input, namely the SD flag we're looking for and whether we want_affine.
 
-Make the existing helpers cope with being passed more than one flag. While
-at it, rename them to make their newfound powers explicit.
+For !want_affine, the domain loop will walk up the hierarchy to reach the
+highest domain with both SD_LOAD_BALANCE and the requested sd_flag
+(SD_BALANCE_{WAKE, FORK, EXEC}) set.
+In other words, that's a call to highest_flags_domain() for these two
+flags. Note that this is a static information wrt a given SD hierarchy,
+so we can cache that - but that comes in a later patch to ease reviewing.
+
+For want_affine, we'll walk up the hierarchy to reach the first domain
+with SD_LOAD_BALANCE, SD_WAKE_AFFINE, and that spans the tasks's prev_cpu.
+We still save a pointer to the last visited domain that had the requested
+sd_flag set (and SD_LOAD_BALANCE), which means that if we fail to go
+through the affine condition (e.g. no domain had SD_WAKE_AFFINE) we'll use
+the same SD as we would have found if we had !want_affine.
+
+Split the domain loop in !want_affine and want_affine paths. As it is,
+this leads to two domain walks instead of a single one, but stay tuned for
+the next patch.
 
 Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- kernel/sched/sched.h    | 23 ++++++++++++++++-------
- kernel/sched/topology.c |  8 ++++----
- 2 files changed, 20 insertions(+), 11 deletions(-)
+ kernel/sched/fair.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 62efc0443cac..233b3d41e347 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1340,20 +1340,20 @@ extern void sched_ttwu_pending(void);
- #define for_each_lower_domain(sd) for (; sd; sd = sd->child)
- 
- /**
-- * highest_flag_domain - Return highest sched_domain containing flag.
-+ * highest_flags_domain - Return highest sched_domain containing flags.
-  * @cpu:	The CPU whose highest level of sched domain is to
-  *		be returned.
-- * @flag:	The flag to check for the highest sched_domain
-+ * @flags:	The flags to check for the highest sched_domain
-  *		for the given CPU.
-  *
-- * Returns the highest sched_domain of a CPU which contains the given flag.
-+ * Returns the highest sched_domain of a CPU which contains all given flags.
-  */
--static inline struct sched_domain *highest_flag_domain(int cpu, int flag)
-+static inline struct sched_domain *highest_flags_domain(int cpu, int flags)
- {
- 	struct sched_domain *sd, *hsd = NULL;
- 
- 	for_each_domain(cpu, sd) {
--		if (!(sd->flags & flag))
-+		if (!((sd->flags & flags) == flags))
- 			break;
- 		hsd = sd;
- 	}
-@@ -1361,12 +1361,21 @@ static inline struct sched_domain *highest_flag_domain(int cpu, int flag)
- 	return hsd;
- }
- 
--static inline struct sched_domain *lowest_flag_domain(int cpu, int flag)
-+/**
-+ * lowest_flags_domain - Return lowest sched_domain containing flags.
-+ * @cpu:	The CPU whose lowest level of sched domain is to
-+ *		be returned.
-+ * @flags:	The flags to check for the lowest sched_domain
-+ *		for the given CPU.
-+ *
-+ * Returns the lowest sched_domain of a CPU which contains all given flags.
-+ */
-+static inline struct sched_domain *lowest_flags_domain(int cpu, int flags)
- {
- 	struct sched_domain *sd;
- 
- 	for_each_domain(cpu, sd) {
--		if (sd->flags & flag)
-+		if ((sd->flags & flags) == flags)
- 			break;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 30e8d357a24f..ea875c7c82d7 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6370,29 +6370,36 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
  	}
  
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 6ec1e595b1d4..f0d2a15fd10b 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -631,7 +631,7 @@ static void update_top_cache_domain(int cpu)
- 	int id = cpu;
- 	int size = 1;
+ 	rcu_read_lock();
++
++	sd = highest_flags_domain(cpu, sd_flag | SD_LOAD_BALANCE);
++
++	/*
++	 * If !want_affine, we just look for the highest domain where
++	 * sd_flag is set.
++	 */
++	if (!want_affine)
++		goto scan;
++
++	/*
++	 * Otherwise we look for the lowest domain with SD_WAKE_AFFINE and that
++	 * spans both 'cpu' and 'prev_cpu'.
++	 */
+ 	for_each_domain(cpu, tmp) {
+ 		if (!(tmp->flags & SD_LOAD_BALANCE))
+ 			break;
  
--	sd = highest_flag_domain(cpu, SD_SHARE_PKG_RESOURCES);
-+	sd = highest_flags_domain(cpu, SD_SHARE_PKG_RESOURCES);
- 	if (sd) {
- 		id = cpumask_first(sched_domain_span(sd));
- 		size = cpumask_weight(sched_domain_span(sd));
-@@ -643,13 +643,13 @@ static void update_top_cache_domain(int cpu)
- 	per_cpu(sd_llc_id, cpu) = id;
- 	rcu_assign_pointer(per_cpu(sd_llc_shared, cpu), sds);
+-		/*
+-		 * If both 'cpu' and 'prev_cpu' are part of this domain,
+-		 * cpu is a valid SD_WAKE_AFFINE target.
+-		 */
+-		if (want_affine && (tmp->flags & SD_WAKE_AFFINE) &&
++		if ((tmp->flags & SD_WAKE_AFFINE) &&
+ 		    cpumask_test_cpu(prev_cpu, sched_domain_span(tmp))) {
+ 			if (cpu != prev_cpu)
+ 				new_cpu = wake_affine(tmp, p, cpu, prev_cpu, sync);
  
--	sd = lowest_flag_domain(cpu, SD_NUMA);
-+	sd = lowest_flags_domain(cpu, SD_NUMA);
- 	rcu_assign_pointer(per_cpu(sd_numa, cpu), sd);
+-			sd = NULL; /* Prefer wake_affine over balance flags */
++			/* Prefer wake_affine over SD lookup */
++			sd = NULL;
+ 			break;
+ 		}
+-
+-		if (tmp->flags & sd_flag)
+-			sd = tmp;
+-		else if (!want_affine)
+-			break;
+ 	}
  
--	sd = highest_flag_domain(cpu, SD_ASYM_PACKING);
-+	sd = highest_flags_domain(cpu, SD_ASYM_PACKING);
- 	rcu_assign_pointer(per_cpu(sd_asym_packing, cpu), sd);
- 
--	sd = lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY);
-+	sd = lowest_flags_domain(cpu, SD_ASYM_CPUCAPACITY);
- 	rcu_assign_pointer(per_cpu(sd_asym_cpucapacity, cpu), sd);
- }
- 
++scan:
+ 	if (unlikely(sd)) {
+ 		/* Slow path */
+ 		new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
 -- 
 2.24.0
 
