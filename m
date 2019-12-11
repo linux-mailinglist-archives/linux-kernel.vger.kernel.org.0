@@ -2,87 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01F911BDB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 21:17:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 600D311BDBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 21:17:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfLKURO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 15:17:14 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44607 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbfLKURN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 15:17:13 -0500
-Received: by mail-ot1-f68.google.com with SMTP id x3so1046140oto.11;
-        Wed, 11 Dec 2019 12:17:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2kOog/nxmL5zIFNNZZ90lVnWQmMNdsJ1FgZwu+X6u8U=;
-        b=qroOTdSGjBnF/60li+TuHa+8dCRKY25ODdu7bVvGciJObQ2fJxH0MxRcqH3Wpb9WA4
-         jkAk8jeFsgdNK5YDlsY+TdIWH5tInQfu5JWtsbhYsTyveucQyL5gZjGmLmDoprsmSLBb
-         /oyywQkiTYZRv3WteBX6UJYKqkd6WlgUgiG14yom+TJUJ48WVuTpkEismQh2/MPSG1yD
-         aVHT9T+cLLx0mK0m0dJUJ1wB9GMiQPlbs0Et4VuIGs4FEZolGAe9IQHrdu7eHW4ejzYX
-         z5k3lNarNH4OjO7MZBjf3F+mXFe1CM5dX4KJuoFjoD/jL93d69JJ8qYxGC3UMqf7WslN
-         mZmQ==
-X-Gm-Message-State: APjAAAVbNgzQhaJ5YmbloMqr1e1Phhp0DD7fPn3Ft5UCzxdcDIo5OBWx
-        nUtwn0g+zPmZpaFeOld4WA==
-X-Google-Smtp-Source: APXvYqyjqnX8GcW1vg1KWzt1cWhIj1i9DfZ54zAp7YBQMZxmrNN0sMbcKww8+nEKrb4E2rBtiJyDsQ==
-X-Received: by 2002:a05:6830:1e7c:: with SMTP id m28mr3868872otr.131.1576095432613;
-        Wed, 11 Dec 2019 12:17:12 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u11sm1154757oie.53.2019.12.11.12.17.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 12:17:12 -0800 (PST)
-Date:   Wed, 11 Dec 2019 14:17:11 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>,
-        kernel test robot <lkp@intel.com>, kernel-team@android.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] of/platform: Unconditionally pause/resume sync state
-  during kernel init
-Message-ID: <20191211201711.GA19428@bogus>
-References: <20191209193119.147056-1-saravanak@google.com>
+        id S1727602AbfLKUR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 15:17:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726411AbfLKUR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 15:17:28 -0500
+Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6BBF20836;
+        Wed, 11 Dec 2019 20:17:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576095447;
+        bh=4r2Iy5r3yltzkOi+Ue/uCbrEJloSfsHyNrQQPZ6a91M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=K4rsURO1d1nG/9CUOU21PXHxDAlfjKTIYvivgtNsYl2RHhWnxioV5ZWBR5AvTs0VK
+         ouL+9ULhlT2NOagYYFpOiUEp/E5LJNw/znAZJQl9HBw5tUbqd5CwjrZ8AfaYQk25T8
+         Zm3bYJLHCtPdebAetY0QRpkGCgDR477M8hji3lBA=
+Date:   Wed, 11 Dec 2019 14:17:25 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] pcie: Add quirk for the Arm Neoverse N1SDP platform
+Message-ID: <20191211201725.GA30513@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191209193119.147056-1-saravanak@google.com>
+In-Reply-To: <20191211110049.54a2d6f3@donnerap.cambridge.arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  9 Dec 2019 11:31:19 -0800, Saravana Kannan wrote:
-> Commit 5e6669387e22 ("of/platform: Pause/resume sync state during init
-> and of_platform_populate()") paused/resumed sync state during init only
-> if Linux had parsed and populated a devicetree.
+On Wed, Dec 11, 2019 at 11:00:49AM +0000, Andre Przywara wrote:
+> On Tue, 10 Dec 2019 08:41:15 -0600
+> Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Mon, Dec 09, 2019 at 04:06:38PM +0000, Andre Przywara wrote:
+> > > From: Deepak Pandey <Deepak.Pandey@arm.com>
+> > > 
+> > > The Arm N1SDP SoC suffers from some PCIe integration issues, most
+> > > prominently config space accesses to not existing BDFs being answered
+> > > with a bus abort, resulting in an SError.  
+> > 
+> > Can we tease this apart a little more?  Linux doesn't program all the
+> > bits that control error signaling, so even on hardware that works
+> > perfectly, much of this behavior is determined by what firmware did.
+> > I wonder if Linux could be more careful about this.
+> > 
+> > "Bus abort" is not a term used in PCIe.
 > 
-> However, the check for that (of_have_populated_dt()) can change after
-> of_platform_default_populate_init() executes.  One example of this is
-> when devicetree unittests are enabled.  This causes an unmatched
-> pause/resume of sync state. To avoid this, just unconditionally
-> pause/resume sync state during init.
+> Yes, sorry, that was my sloppy term, also aiming more at the CPU
+> side of the bus, between the cores and the RC.
+>
+> >  IIUC, a config read to a
+> > device that doesn't exist should terminate with an Unsupported Request
+> > completion, e.g., see the implementation note in PCIe r5.0 sec 2.3.1.
 > 
-> Fixes: 5e6669387e22 ("of/platform: Pause/resume sync state during init and of_platform_populate()")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> Reviewed-by: Frank Rowand <frowand.list@gmail.com>
-> ---
+> Yes, that's what Lorenzo mentioned as well.
 > 
-> v1->v2:
-> - Updated the commit text to address Frank's comments
-> - Added Frank's R-b
-> v2->v3:
-> - Added this change log to address Greg's comments
+> > The UR should be an uncorrectable non-fatal error (Table 6-5), and
+> > Figures 6-2 and 6-3 show how it should be handled and when it should
+> > be signaled as a system error.  In case you don't have a copy of the
+> > spec, I extracted those two figures and put them at [1].
 > 
->  drivers/of/platform.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
+> Thanks for that.
+> So in the last few months we tossed several ideas around how to
+> work-around this without kernel intervention, all of them turned out
+> to be not working. There are indeed registers in the RC that
+> influence error reporting to the CPU side, but even if we could
+> suppress (or catch) the SError, we can't recover and fixup the read
+> transaction to the CPU. Even Lorenzo gave up on this ;-) As far as I
+> understood this, there are gates missing which are supposed to
+> translate this specific UR into a valid "all-1s" response.
 
-Applied, thanks.
+But the commit log says firmware scanned the bus (catching the
+SErrors).  Shouldn't Linux be able to catch them the same way?
 
-Rob
+The "all-1s" response directly from hardware is typical of most
+platforms, but I don't think it's strictly required by the PCIe spec
+and I don't think it's absolutely essential even to Linux.  If you can
+catch the SErrors, isn't there a way for software to fabricate that
+all-1s data and continue after the read?
+
+> > Even ECAM compliance is not really minor -- if this controller were
+> > fully compliant with the spec, you would need ZERO Linux changes to
+> > support it.  Every quirk like this means additional maintenance
+> > burden, and it's not just a one-time thing.  It means old kernels that
+> > *should* "just work" on your system will not work unless somebody
+> > backports the quirk.
+> 
+> I am well aware of that, and we had quite some discussions
+> internally, with quite some opposition.  ...
+
+The main point is that *future* silicon should be designed to avoid
+this issue.  I hope at least that part was not controversial.
+
+If we want to take advantage of the generic PCI code supplied by
+Linux, we have to expect that the hardware will play by the rules of
+PCI.
+
+Bjorn
