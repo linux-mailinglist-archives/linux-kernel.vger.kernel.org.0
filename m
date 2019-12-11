@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C400C11AFA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:14:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6810C11B07D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:23:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbfLKPOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:14:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37712 "EHLO mail.kernel.org"
+        id S1732706AbfLKPXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:23:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730448AbfLKPNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:13:44 -0500
+        id S1732695AbfLKPXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:23:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3FF32465C;
-        Wed, 11 Dec 2019 15:13:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2989C208C3;
+        Wed, 11 Dec 2019 15:23:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077223;
-        bh=34+cUa3MGnMCqTQUnF3QD+tWh95FD6XBhUFLhlsOcnQ=;
+        s=default; t=1576077797;
+        bh=iBaeBTi4gm6B265A0WfKfXom3ys8x5RM8gWVd8rslJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h89My+4L9ZLVxs/M7LD77g2LZfPn0dfqlN1+L/XovrI1q68sjF271fH9Z+wSgl6Pp
-         31H3py0Va+XPcDCG8Ak/e9UsjGV9WlcSGkjR1GoPS2ylWVk7KtZDJLzYHTmvpLE46M
-         BIL3EO8bDZlpH4ZWM2n3caz8YXzjAHCqR9r19XJc=
+        b=wY2NG67Aiz+leRq1bFtNeChr9wI9m9i3VjBscAOuJzawVEPWFWYdNlb4+rSx5By3v
+         F8KM/mhqIfb1pvysBRAMEl6qW/b/Xw+UG5aPhaMfDiO9E7EBL5vq7QRFMOcsMcWi4l
+         OK4iKmJkx46zQN+Boprhx0KFPG7qzedlQ3fRxrfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arijit Banerjee <arijit@rubrik.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.3 046/105] fuse: verify attributes
-Date:   Wed, 11 Dec 2019 16:05:35 +0100
-Message-Id: <20191211150240.151473315@linuxfoundation.org>
+        stable@vger.kernel.org, zhengbin <zhengbin13@huawei.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 174/243] nfsd: Return EPERM, not EACCES, in some SETATTR cases
+Date:   Wed, 11 Dec 2019 16:05:36 +0100
+Message-Id: <20191211150350.922075473@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,124 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: zhengbin <zhengbin13@huawei.com>
 
-commit eb59bd17d2fa6e5e84fba61a5ebdea984222e6d5 upstream.
+[ Upstream commit 255fbca65137e25b12bced18ec9a014dc77ecda0 ]
 
-If a filesystem returns negative inode sizes, future reads on the file were
-causing the cpu to spin on truncate_pagecache.
+As the man(2) page for utime/utimes states, EPERM is returned when the
+second parameter of utime or utimes is not NULL, the caller's effective UID
+does not match the owner of the file, and the caller is not privileged.
 
-Create a helper to validate the attributes.  This now does two things:
+However, in a NFS directory mounted from knfsd, it will return EACCES
+(from nfsd_setattr-> fh_verify->nfsd_permission).  This patch fixes
+that.
 
- - check the file mode
- - check if the file size fits in i_size without overflowing
-
-Reported-by: Arijit Banerjee <arijit@rubrik.com>
-Fixes: d8a5ba45457e ("[PATCH] FUSE - core")
-Cc: <stable@vger.kernel.org> # v2.6.14
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/dir.c     |   22 ++++++++++++++++------
- fs/fuse/fuse_i.h  |    2 ++
- fs/fuse/readdir.c |    2 +-
- 3 files changed, 19 insertions(+), 7 deletions(-)
+ fs/nfsd/vfs.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -214,7 +214,8 @@ static int fuse_dentry_revalidate(struct
- 		kfree(forget);
- 		if (ret == -ENOMEM)
- 			goto out;
--		if (ret || (outarg.attr.mode ^ inode->i_mode) & S_IFMT)
-+		if (ret || fuse_invalid_attr(&outarg.attr) ||
-+		    (outarg.attr.mode ^ inode->i_mode) & S_IFMT)
- 			goto invalid;
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index b53e76391e525..4fe8db3149506 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -396,10 +396,23 @@ nfsd_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp, struct iattr *iap,
+ 	bool		get_write_count;
+ 	bool		size_change = (iap->ia_valid & ATTR_SIZE);
  
- 		forget_all_cached_acls(inode);
-@@ -272,6 +273,12 @@ int fuse_valid_type(int m)
- 		S_ISBLK(m) || S_ISFIFO(m) || S_ISSOCK(m);
- }
- 
-+bool fuse_invalid_attr(struct fuse_attr *attr)
-+{
-+	return !fuse_valid_type(attr->mode) ||
-+		attr->size > LLONG_MAX;
-+}
+-	if (iap->ia_valid & (ATTR_ATIME | ATTR_MTIME | ATTR_SIZE))
++	if (iap->ia_valid & ATTR_SIZE) {
+ 		accmode |= NFSD_MAY_WRITE|NFSD_MAY_OWNER_OVERRIDE;
+-	if (iap->ia_valid & ATTR_SIZE)
+ 		ftype = S_IFREG;
++	}
 +
- int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
- 		     struct fuse_entry_out *outarg, struct inode **inode)
- {
-@@ -303,7 +310,7 @@ int fuse_lookup_name(struct super_block
- 	err = -EIO;
- 	if (!outarg->nodeid)
- 		goto out_put_forget;
--	if (!fuse_valid_type(outarg->attr.mode))
-+	if (fuse_invalid_attr(&outarg->attr))
- 		goto out_put_forget;
++	/*
++	 * If utimes(2) and friends are called with times not NULL, we should
++	 * not set NFSD_MAY_WRITE bit. Otherwise fh_verify->nfsd_permission
++	 * will return EACCESS, when the caller's effective UID does not match
++	 * the owner of the file, and the caller is not privileged. In this
++	 * situation, we should return EPERM(notify_change will return this).
++	 */
++	if (iap->ia_valid & (ATTR_ATIME | ATTR_MTIME)) {
++		accmode |= NFSD_MAY_OWNER_OVERRIDE;
++		if (!(iap->ia_valid & (ATTR_ATIME_SET | ATTR_MTIME_SET)))
++			accmode |= NFSD_MAY_WRITE;
++	}
  
- 	*inode = fuse_iget(sb, outarg->nodeid, outarg->generation,
-@@ -427,7 +434,8 @@ static int fuse_create_open(struct inode
- 		goto out_free_ff;
- 
- 	err = -EIO;
--	if (!S_ISREG(outentry.attr.mode) || invalid_nodeid(outentry.nodeid))
-+	if (!S_ISREG(outentry.attr.mode) || invalid_nodeid(outentry.nodeid) ||
-+	    fuse_invalid_attr(&outentry.attr))
- 		goto out_free_ff;
- 
- 	ff->fh = outopen.fh;
-@@ -535,7 +543,7 @@ static int create_new_entry(struct fuse_
- 		goto out_put_forget_req;
- 
- 	err = -EIO;
--	if (invalid_nodeid(outarg.nodeid))
-+	if (invalid_nodeid(outarg.nodeid) || fuse_invalid_attr(&outarg.attr))
- 		goto out_put_forget_req;
- 
- 	if ((outarg.attr.mode ^ mode) & S_IFMT)
-@@ -895,7 +903,8 @@ static int fuse_do_getattr(struct inode
- 	args.out.args[0].value = &outarg;
- 	err = fuse_simple_request(fc, &args);
- 	if (!err) {
--		if ((inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
-+		if (fuse_invalid_attr(&outarg.attr) ||
-+		    (inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
- 			make_bad_inode(inode);
- 			err = -EIO;
- 		} else {
-@@ -1518,7 +1527,8 @@ int fuse_do_setattr(struct dentry *dentr
- 		goto error;
- 	}
- 
--	if ((inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
-+	if (fuse_invalid_attr(&outarg.attr) ||
-+	    (inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
- 		make_bad_inode(inode);
- 		err = -EIO;
- 		goto error;
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1008,6 +1008,8 @@ void fuse_ctl_remove_conn(struct fuse_co
-  */
- int fuse_valid_type(int m);
- 
-+bool fuse_invalid_attr(struct fuse_attr *attr);
-+
- /**
-  * Is current process allowed to perform filesystem operation?
-  */
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -184,7 +184,7 @@ static int fuse_direntplus_link(struct f
- 
- 	if (invalid_nodeid(o->nodeid))
- 		return -EIO;
--	if (!fuse_valid_type(o->attr.mode))
-+	if (fuse_invalid_attr(&o->attr))
- 		return -EIO;
- 
- 	fc = get_fuse_conn(dir);
+ 	/* Callers that do fh_verify should do the fh_want_write: */
+ 	get_write_count = !fhp->fh_dentry;
+-- 
+2.20.1
+
 
 
