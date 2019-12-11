@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB17811B48D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:49:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 676E211B490
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732721AbfLKPYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:24:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56106 "EHLO mail.kernel.org"
+        id S1732901AbfLKPYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:24:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732870AbfLKPYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:24:41 -0500
+        id S1732886AbfLKPYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:24:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 840052465A;
-        Wed, 11 Dec 2019 15:24:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6B9C2077B;
+        Wed, 11 Dec 2019 15:24:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077881;
-        bh=keoRuJZDtPV9Cj0nbieyCEu76X/Jj26sIem2+X/AXJs=;
+        s=default; t=1576077886;
+        bh=cQnHYqMKMnTnO6m2mJKlDYRQy3IpoH92Ix9Topw/7fc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uzpvCTx9LjCoBNQ0A8rnw22qpWzrpLyeEkQ3DtVzKFXM3QjbgfXKuOKStha1LkzMg
-         Xjefbq4ZTLqqHL9u+rX5sFsBRwLq7jZcwc/UNU+yP22L40pGdkPqbUx1dxnvhRq2MZ
-         cx6lIk/I/lI2qLCk+amAgALdyNmMqMHAB+UBXFwg=
+        b=uk5c8sQ+uscbXDNvSF0hQ0tEZbVeJumB8hfWablHMkrqGc39E0C6a11w9KjfV+3gY
+         BC2ocYWI+ZjaLiK5uRMwAOkWZm7x0oWLpz5LWY8+BNlCxp0w28to+otEq0AxZpY7HV
+         2HjIJaynu0e9FofgoMUoNzuDN/GAGZNPBHV1yoGQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 207/243] Input: goodix - add upside-down quirk for Teclast X89 tablet
-Date:   Wed, 11 Dec 2019 16:06:09 +0100
-Message-Id: <20191211150353.155465383@linuxfoundation.org>
+        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>
+Subject: [PATCH 4.19 208/243] coresight: etm4x: Fix input validation for sysfs.
+Date:   Wed, 11 Dec 2019 16:06:10 +0100
+Message-Id: <20191211150353.224230883@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,43 +44,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Mike Leach <mike.leach@linaro.org>
 
-commit df5b5e555b356662a5e4a23c6774fdfce8547d54 upstream.
+commit 2fe6899e36aa174abefd017887f9cfe0cb60c43a upstream.
 
-The touchscreen on the Teclast X89 is mounted upside down in relation to
-the display orientation (the touchscreen itself is mounted upright, but the
-display is mounted upside-down). Add a quirk for this so that we send
-coordinates which match the display orientation.
+A number of issues are fixed relating to sysfs input validation:-
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Bastien Nocera <hadess@hadess.net>
-Link: https://lore.kernel.org/r/20191202085636.6650-1-hdegoede@redhat.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+1) bb_ctrl_store() - incorrect compare of bit select field to absolute
+value. Reworked per ETMv4 specification.
+2) seq_event_store() - incorrect mask value - register has two
+event values.
+3) cyc_threshold_store() - must mask with max before checking min
+otherwise wrapped values can set illegal value below min.
+4) res_ctrl_store() - update to mask off all res0 bits.
+
+Reviewed-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Mike Leach <mike.leach@linaro.org>
+Fixes: a77de2637c9eb ("coresight: etm4x: moving sysFS entries to a dedicated file")
+Cc: stable <stable@vger.kernel.org> # 4.9+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Link: https://lore.kernel.org/r/20191104181251.26732-6-mathieu.poirier@linaro.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/touchscreen/goodix.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/hwtracing/coresight/coresight-etm4x-sysfs.c |   21 ++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -128,6 +128,15 @@ static const unsigned long goodix_irq_fl
- static const struct dmi_system_id rotated_screen[] = {
- #if defined(CONFIG_DMI) && defined(CONFIG_X86)
- 	{
-+		.ident = "Teclast X89",
-+		.matches = {
-+			/* tPAD is too generic, also match on bios date */
-+			DMI_MATCH(DMI_BOARD_VENDOR, "TECLAST"),
-+			DMI_MATCH(DMI_BOARD_NAME, "tPAD"),
-+			DMI_MATCH(DMI_BIOS_DATE, "12/19/2014"),
-+		},
-+	},
-+	{
- 		.ident = "WinBook TW100",
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "WinBook"),
+--- a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
+@@ -655,10 +655,13 @@ static ssize_t cyc_threshold_store(struc
+ 
+ 	if (kstrtoul(buf, 16, &val))
+ 		return -EINVAL;
++
++	/* mask off max threshold before checking min value */
++	val &= ETM_CYC_THRESHOLD_MASK;
+ 	if (val < drvdata->ccitmin)
+ 		return -EINVAL;
+ 
+-	config->ccctlr = val & ETM_CYC_THRESHOLD_MASK;
++	config->ccctlr = val;
+ 	return size;
+ }
+ static DEVICE_ATTR_RW(cyc_threshold);
+@@ -689,14 +692,16 @@ static ssize_t bb_ctrl_store(struct devi
+ 		return -EINVAL;
+ 	if (!drvdata->nr_addr_cmp)
+ 		return -EINVAL;
++
+ 	/*
+-	 * Bit[7:0] selects which address range comparator is used for
+-	 * branch broadcast control.
++	 * Bit[8] controls include(1) / exclude(0), bits[0-7] select
++	 * individual range comparators. If include then at least 1
++	 * range must be selected.
+ 	 */
+-	if (BMVAL(val, 0, 7) > drvdata->nr_addr_cmp)
++	if ((val & BIT(8)) && (BMVAL(val, 0, 7) == 0))
+ 		return -EINVAL;
+ 
+-	config->bb_ctrl = val;
++	config->bb_ctrl = val & GENMASK(8, 0);
+ 	return size;
+ }
+ static DEVICE_ATTR_RW(bb_ctrl);
+@@ -1329,8 +1334,8 @@ static ssize_t seq_event_store(struct de
+ 
+ 	spin_lock(&drvdata->spinlock);
+ 	idx = config->seq_idx;
+-	/* RST, bits[7:0] */
+-	config->seq_ctrl[idx] = val & 0xFF;
++	/* Seq control has two masks B[15:8] F[7:0] */
++	config->seq_ctrl[idx] = val & 0xFFFF;
+ 	spin_unlock(&drvdata->spinlock);
+ 	return size;
+ }
+@@ -1585,7 +1590,7 @@ static ssize_t res_ctrl_store(struct dev
+ 	if (idx % 2 != 0)
+ 		/* PAIRINV, bit[21] */
+ 		val &= ~BIT(21);
+-	config->res_ctrl[idx] = val;
++	config->res_ctrl[idx] = val & GENMASK(21, 0);
+ 	spin_unlock(&drvdata->spinlock);
+ 	return size;
+ }
 
 
