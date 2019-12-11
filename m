@@ -2,202 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4615611B913
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:45:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1C6B11B925
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:47:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbfLKQpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:45:07 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56739 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730315AbfLKQpG (ORCPT
+        id S1730997AbfLKQre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:47:34 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:38710 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726444AbfLKQrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:45:06 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1if56e-0003fN-Rr; Wed, 11 Dec 2019 17:44:56 +0100
-Message-ID: <fe8b8b2aac6d92a1d7ffc32ea012db9898ab6857.camel@pengutronix.de>
-Subject: Re: [PATCH v6 2/2] watchdog: mtk_wdt: mt8183: Add reset controller
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Jiaxin Yu <jiaxin.yu@mediatek.com>, yong.liang@mediatek.com,
-        wim@linux-watchdog.org, linux@roeck-us.net, matthias.bgg@gmail.com,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
-Cc:     yingjoe.chen@mediatek.com, sboyd@kernel.org
-Date:   Wed, 11 Dec 2019 17:44:55 +0100
-In-Reply-To: <1576081356-18298-3-git-send-email-jiaxin.yu@mediatek.com>
-References: <1576081356-18298-1-git-send-email-jiaxin.yu@mediatek.com>
-         <1576081356-18298-3-git-send-email-jiaxin.yu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 11 Dec 2019 11:47:16 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id A22A020B7187;
+        Wed, 11 Dec 2019 08:47:14 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A22A020B7187
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1576082834;
+        bh=bpH4gIXpzAcdIozESRcRKx6mvknc8pVzGB6PuaEbjCw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T3thVxeJ2oi+gfCPzxyqGYzb+GtbbqDb6zXeR3kN5XyyzQ8bxDURUBUpaS7uU0CA4
+         urHXl+njHTrZxCnCovY7zzVO+B8KZGQTXAveV3bGR51N+UMa14pK/BStslI71rC+9p
+         qCmJvWtzBvXmyI08igCYaaO/fQy+aAWRKwpk1FB0=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Subject: [PATCH v11 0/6] KEYS: Measure keys when they are created or updated
+Date:   Wed, 11 Dec 2019 08:47:01 -0800
+Message-Id: <20191211164707.4698-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Keys created or updated in the system are currently not measured.
+Therefore an attestation service, for instance, would not be able to
+attest whether or not the trusted keys keyring(s), for instance, contain
+only known good (trusted) keys.
 
-On Thu, 2019-12-12 at 00:22 +0800, Jiaxin Yu wrote:
-> From: "yong.liang" <yong.liang@mediatek.com>
-> 
-> Add reset controller API in watchdog driver.
-> Besides watchdog, MTK toprgu module alsa provide sub-system (eg, audio,
-> camera, codec and connectivity) software reset functionality.
+IMA measures system files, command line arguments passed to kexec,
+boot aggregate, etc. It can be used to measure keys as well.
+But there is no mechanism available in the kernel for IMA to
+know when a key is created or updated.
 
-Do any of the listed sub-systems use the reset_control_reset()
-functionality? Is there no delay requirement between assert and
-deassert? Otherwise it would be safer not to implement the .reset()
-operation at all.
+This change aims to address measuring keys created or updated
+in the system.
 
-> 
-> Signed-off-by: yong.liang <yong.liang@mediatek.com>
-> ---
->  drivers/watchdog/Kconfig   |   1 +
->  drivers/watchdog/mtk_wdt.c | 109 ++++++++++++++++++++++++++++++++++++-
->  2 files changed, 109 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 2e07caab9db2..629249fe5305 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -717,6 +717,7 @@ config MEDIATEK_WATCHDOG
->  	tristate "Mediatek SoCs watchdog support"
->  	depends on ARCH_MEDIATEK || COMPILE_TEST
->  	select WATCHDOG_CORE
-> +	select RESET_CONTROLLER
->  	help
->  	  Say Y here to include support for the watchdog timer
->  	  in Mediatek SoCs.
-> diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
-> index 9c3d0033260d..667380031dfd 100644
-> --- a/drivers/watchdog/mtk_wdt.c
-> +++ b/drivers/watchdog/mtk_wdt.c
-> @@ -9,6 +9,9 @@
->   * Based on sunxi_wdt.c
->   */
->  
-> +#include <dt-bindings/reset-controller/mt2712-resets.h>
-> +#include <dt-bindings/reset-controller/mt8183-resets.h>
-> +#include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/init.h>
->  #include <linux/io.h>
-> @@ -16,10 +19,12 @@
->  #include <linux/module.h>
->  #include <linux/moduleparam.h>
->  #include <linux/of.h>
-> +#include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
+To achieve the above the following changes have been made:
 
-What is this required for?
+ - Added a new IMA hook namely, ima_post_key_create_or_update, which
+   measures the key. This IMA hook is called from key_create_or_update
+   function. The key measurement can be controlled through IMA policy.
 
->  #include <linux/types.h>
->  #include <linux/watchdog.h>
-> -#include <linux/delay.h>
->
->  #define WDT_MAX_TIMEOUT		31
->  #define WDT_MIN_TIMEOUT		1
-> @@ -44,6 +49,9 @@
->  #define WDT_SWRST		0x14
->  #define WDT_SWRST_KEY		0x1209
->  
-> +#define WDT_SWSYSRST		0x18U
-> +#define WDT_SWSYS_RST_KEY	0x88000000
-> +
->  #define DRV_NAME		"mtk-wdt"
->  #define DRV_VERSION		"1.0"
->  
-> @@ -53,8 +61,97 @@ static unsigned int timeout;
->  struct mtk_wdt_dev {
->  	struct watchdog_device wdt_dev;
->  	void __iomem *wdt_base;
-> +	spinlock_t lock; /* protects WDT_SWSYSRST reg */
-> +	struct reset_controller_dev rcdev;
-> +};
-> +
-> +struct mtk_wdt_data {
-> +	int infracfg_sw_rst_num;
+   A new IMA policy function KEY_CHECK has been added to measure keys.
+   "keyrings=" option can be specified for KEY_CHECK to limit
+   measuring the keys loaded onto the specified keyrings only.
 
-This is not used at all, better remove it.
+   uid can be specified to further restrict key measurement for keys
+   created by specific user.
 
-> +	int toprgu_sw_rst_num;
-> +};
-> +
-> +static const struct mtk_wdt_data mt2712_data = {
-> +	.toprgu_sw_rst_num = MT2712_TOPRGU_SW_RST_NUM,
-> +};
-> +
-> +static const struct mtk_wdt_data mt8183_data = {
-> +	.infracfg_sw_rst_num = MT8183_INFRACFG_SW_RST_NUM,
+   # measure keys loaded onto any keyring
+   measure func=KEY_CHECK
 
-Same as above.
+   # measure keys loaded onto the IMA keyring only for root user
+   measure func=KEY_CHECK uid=0 keyring=".ima"
 
-> +	.toprgu_sw_rst_num = MT8183_TOPRGU_SW_RST_NUM,
-> +};
-> +
-> +static int toprgu_reset_update(struct reset_controller_dev *rcdev,
-> +			       unsigned long id, bool assert)
-> +{
-> +	unsigned int tmp;
-> +	unsigned long flags;
-> +
+   # measure keys on the BUILTIN and IMA keyrings into a different PCR
+   measure func=KEY_CHECK keyring=".builtin_trusted_keys|.ima" pcr=11
 
-This empty line can be removed.
+Testing performed:
 
-> +	struct mtk_wdt_dev *data =
-> +		 container_of(rcdev, struct mtk_wdt_dev, rcdev);
-> +
-> +	spin_lock_irqsave(&data->lock, flags);
-> +
-> +	tmp = readl(data->wdt_base + WDT_SWSYSRST);
-> +	if (assert)
-> +		tmp |= BIT(id);
-> +	else
-> +		tmp &= ~BIT(id);
-> +	tmp |= WDT_SWSYS_RST_KEY;
-> +	writel(tmp, data->wdt_base + WDT_SWSYSRST);
-> +
-> +	spin_unlock_irqrestore(&data->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int toprgu_reset_assert(struct reset_controller_dev *rcdev,
-> +			       unsigned long id)
-> +{
-> +	return toprgu_reset_update(rcdev, id, true);
-> +}
-> +
-> +static int toprgu_reset_deassert(struct reset_controller_dev *rcdev,
-> +				 unsigned long id)
-> +{
-> +	return toprgu_reset_update(rcdev, id, false);
-> +}
-> +
-> +static int toprgu_reset(struct reset_controller_dev *rcdev,
-> +			unsigned long id)
-> +{
-> +	int ret;
-> +
-> +	ret = toprgu_reset_assert(rcdev, id);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return toprgu_reset_deassert(rcdev, id);
-> +}
+  * Booted the kernel with this change.
+  * When KEY_CHECK policy is set IMA measures keys loaded
+    onto any keyring (keyrings= option not specified).
+  * Keys are not measured when KEY_CHECK is not set.
+  * When keyrings= option is specified for KEY_CHECK then only the keys
+    loaded onto a keyring specified in the option is measured.
+  * When uid is specified in the policy the key is measured
+    only when the current user id matches the one given in the policy.
+  * Added a new key to a keyring.
+    => Added keys to .ima and .evm keyrings.
+  * Added the same key again.
+    => Add the same key to .ima and .evm keyrings.
 
-As mentioned above, is this needed? Does this work for all modules?
-Only implement this if you are sure both are true.
+Change Log:
 
-regards
-Philipp
+  v11:
+
+  => Rebased the changes to v5.5-rc1
+  => Check user id (uid) before checking keyring in ima_match_keyring()
+  => Updated patch descriptions per Mimi's feedback.
+
+  v10:
+
+  => Added check for user id (uid) in ima_match_keyring()
+  => Updated ima_match_keyring() function to use strsep() to
+     check for keyring match.
+  => Edited key measurement validation description.
+
+  v9:
+
+  => Changed the measured key data from just the public key to
+     the entire payload passed to key_create_or_update() function.
+     This payload is the certificate from which the key is created
+     or updated by key_create_or_update() function.
+  => Added check in process_buffer_measurement() to return
+     immediately if ima_policy_flag is set to zero.
+
+  v8:
+
+  => Updated ima_match_keyring() function to check for
+     whole keyring name match.
+  => Used CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE instead of
+     CONFIG_KEYS to build ima_asymmetric_keys.c and enable
+     the IMA hook to measure keys since this config handles
+     the required build time dependencies better.
+  => Updated patch description to illustrate verification
+     of key measurement.
+
+  v7:
+
+  => Removed CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS option and used
+     CONFIG_KEYS instead for ima_asymmetric_keys.c
+  => Added the patches related to "keyrings=" option support to
+     this patch set.
+
+  v6:
+
+  => Rebased the changes to v5.4-rc7
+  => Renamed KEYRING_CHECK to KEY_CHECK per Mimi's suggestion.
+  => Excluded the patches that add support for limiting key
+     measurement to specific keyrings ("keyrings=" option
+     for "measure func=KEY_CHECK" in the IMA policy).
+     Also, excluded the patches that add support for deferred
+     processing of keys (queue support).
+     These patches will be added in separate patch sets later.
+
+  v5:
+
+  => Reorganized the patches to add measurement of keys through
+     the IMA hook without any queuing and then added queuing support.
+  => Updated the queuing functions to minimize code executed inside mutex.
+  => Process queued keys after custom IMA policies have been applied.
+
+  v4:
+
+  => Rebased the changes to v5.4-rc3
+  => Applied the following dependent patch set first
+     and then added new changes.
+  https://lore.kernel.org/linux-integrity/1572492694-6520-1-git-send-email-zohar@linux.ibm.com
+  => Refactored the patch set to separate out changes related to
+     func KEYRING_CHECK and options keyrings into different patches.
+  => Moved the functions to queue and dequeue keys for measurement
+     from ima_queue.c to a new file ima_asymmetric_keys.c.
+  => Added a new config namely CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
+     to compile ima_asymmetric_keys.c
+
+  v3:
+
+  => Added KEYRING_CHECK for measuring keys. This can optionally specify
+     keyrings to measure.
+  => Updated ima_get_action() and related functions to return
+     the keyrings if specified in the policy.
+  => process_buffer_measurement() function is updated to take keyring
+     as a parameter. The key will be measured if the policy includes
+     the keyring in the list of measured keyrings. If the policy does not
+     specify any keyrings then all keys are measured.
+
+  v2:
+
+  => Per suggestion from Mimi reordered the patch set to first
+     enable measuring keys added or updated in the system.
+     And, then scope the measurement to keys added to 
+     builtin_trusted_keys keyring through ima policy.
+  => Removed security_key_create_or_update function and instead
+     call ima hook, to measure the key, directly from 
+     key_create_or_update function.
+
+  v1:
+
+  => LSM function for key_create_or_update. It calls ima.
+  => Added ima hook for measuring keys
+  => ima measures keys based on ima policy.
+
+  v0:
+
+  => Added LSM hook for key_create_or_update.
+  => Measure keys added to builtin or secondary trusted keys keyring.
+
+Lakshmi Ramasubramanian (6):
+  IMA: Check IMA policy flag
+  IMA: Add KEY_CHECK func to measure keys
+  IMA: Define an IMA hook to measure keys
+  KEYS: Call the IMA hook to measure keys
+  IMA: Add support to limit measuring keys
+  IMA: Read keyrings= option from the IMA policy
+
+ Documentation/ABI/testing/ima_policy         | 16 +++-
+ include/linux/ima.h                          | 14 +++
+ security/integrity/ima/Makefile              |  1 +
+ security/integrity/ima/ima.h                 |  9 +-
+ security/integrity/ima/ima_api.c             |  8 +-
+ security/integrity/ima/ima_appraise.c        |  4 +-
+ security/integrity/ima/ima_asymmetric_keys.c | 58 ++++++++++++
+ security/integrity/ima/ima_main.c            | 12 ++-
+ security/integrity/ima/ima_policy.c          | 95 ++++++++++++++++++--
+ security/keys/key.c                          | 10 +++
+ 10 files changed, 207 insertions(+), 20 deletions(-)
+ create mode 100644 security/integrity/ima/ima_asymmetric_keys.c
+
+-- 
+2.17.1
 
