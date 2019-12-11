@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09AC211B06B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:22:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30FDF11AECE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732617AbfLKPWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:22:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53308 "EHLO mail.kernel.org"
+        id S1730323AbfLKPIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:08:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732177AbfLKPWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:22:33 -0500
+        id S1729278AbfLKPIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:08:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 569E9214AF;
-        Wed, 11 Dec 2019 15:22:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72E872173E;
+        Wed, 11 Dec 2019 15:08:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077752;
-        bh=ClgqZHzhsPuOhhKHmA7iAkuNWjv/c05qXLW7ILvQ8LE=;
+        s=default; t=1576076894;
+        bh=dfBN0JpNhbOS3zuVAm30SX6P4WlLeQoI4uqQ0vxob+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ntFZF0Lj5Q03D8ohrp7nOjKxv2l+BcqwXlaKCtD4e9gConwX6jaFvWX56fRtU/mhf
-         xhdvbFjn/N9zZqTu43VHdEQ0qCRQraReZ3OERBf0FTETrB/HaJC0zSzPjOynSa3sEk
-         cfHwKcx3XyT+iW3NPcuEYBt9jjQU4K/DoB2ZyDXg=
+        b=pp5ZrphCk2yEJElrHvoigNwyMTIbg76LQXpva8nDpE6JTcha9i+kjiYuzoSLG8Gqm
+         YcuGY12jhvVNR+aaKpH1Ps3KHHCyd6YiP7XkyWtKkK5Ef6IYQKBs1Vz94KO54SQfBz
+         I+7+6leMEwII/MNg8bFW9bwtF47ZbsUK1wBFVMlI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 158/243] modpost: skip ELF local symbols during section mismatch check
-Date:   Wed, 11 Dec 2019 16:05:20 +0100
-Message-Id: <20191211150349.832644988@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 30/92] ALSA: hda/realtek - Enable the headset-mic on a Xiaomis laptop
+Date:   Wed, 11 Dec 2019 16:05:21 +0100
+Message-Id: <20191211150234.019191065@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,96 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Walmsley <paul.walmsley@sifive.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-[ Upstream commit a4d26f1a0958bb1c2b60c6f1e67c6f5d43e2647b ]
+commit 695d1ec3994f9de2cefae80ee2087c95d2e5a2f3 upstream.
 
-During development of a serial console driver with a gcc 8.2.0
-toolchain for RISC-V, the following modpost warning appeared:
+The headset on this machine is not defined, after applying the quirk
+ALC256_FIXUP_ASUS_HEADSET_MIC, the headset-mic works well
 
-----
-WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
-The variable .LANCHOR1 references
-the function __init sifive_serial_console_setup()
-If the reference is valid then annotate the
-variable with __init* or __refdata (see linux/init.h) or name the variable:
-*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
-----
+BugLink: https://bugs.launchpad.net/bugs/1846148
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Link: https://lore.kernel.org/r/20191121025427.8856-1-hui.wang@canonical.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-".LANCHOR1" is an ELF local symbol, automatically created by gcc's section
-anchor generation code:
-
-https://gcc.gnu.org/onlinedocs/gccint/Anchored-Addresses.html
-
-https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/varasm.c;h=cd9591a45617464946dcf9a126dde277d9de9804;hb=9fb89fa845c1b2e0a18d85ada0b077c84508ab78#l7473
-
-This was verified by compiling the kernel with -fno-section-anchors
-and observing that the ".LANCHOR1" ELF local symbol disappeared, and
-modpost no longer warned about the section mismatch.  The serial
-driver code idiom triggering the warning is standard Linux serial
-driver practice that has a specific whitelist inclusion in modpost.c.
-
-I'm neither a modpost nor an ELF expert, but naively, it doesn't seem
-useful for modpost to report section mismatch warnings caused by ELF
-local symbols by default.  Local symbols have compiler-generated
-names, and thus bypass modpost's whitelisting algorithm, which relies
-on the presence of a non-autogenerated symbol name.  This increases
-the likelihood that false positive warnings will be generated (as in
-the above case).
-
-Thus, disable section mismatch reporting on ELF local symbols.  The
-rationale here is similar to that of commit 2e3a10a1551d ("ARM: avoid
-ARM binutils leaking ELF local symbols") and of similar code already
-present in modpost.c:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/mod/modpost.c?h=v4.19-rc4&id=7876320f88802b22d4e2daf7eb027dd14175a0f8#n1256
-
-This third version of the patch implements a suggestion from Masahiro
-Yamada <yamada.masahiro@socionext.com> to restructure the code as an
-additional pattern matching step inside secref_whitelist(), and
-further improves the patch description.
-
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Signed-off-by: Paul Walmsley <paul@pwsan.com>
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/mod/modpost.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 858cbe56b1006..91a80036c05d5 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1163,6 +1163,14 @@ static const struct sectioncheck *section_mismatch(
-  *   fromsec = text section
-  *   refsymname = *.constprop.*
-  *
-+ * Pattern 6:
-+ *   Hide section mismatch warnings for ELF local symbols.  The goal
-+ *   is to eliminate false positive modpost warnings caused by
-+ *   compiler-generated ELF local symbol names such as ".LANCHOR1".
-+ *   Autogenerated symbol names bypass modpost's "Pattern 2"
-+ *   whitelisting, which relies on pattern-matching against symbol
-+ *   names to work.  (One situation where gcc can autogenerate ELF
-+ *   local symbols is when "-fsection-anchors" is used.)
-  **/
- static int secref_whitelist(const struct sectioncheck *mismatch,
- 			    const char *fromsec, const char *fromsym,
-@@ -1201,6 +1209,10 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
- 	    match(fromsym, optim_symbols))
- 		return 0;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -7256,6 +7256,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x9e54, "LENOVO NB", ALC269_FIXUP_LENOVO_EAPD),
+ 	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MACH-WX9", ALC256_FIXUP_HUAWEI_MACH_WX9_PINS),
+ 	SND_PCI_QUIRK(0x1b7d, 0xa831, "Ordissimo EVE2 ", ALC269VB_FIXUP_ORDISSIMO_EVE2), /* Also known as Malata PC-B1303 */
++	SND_PCI_QUIRK(0x1d72, 0x1901, "RedmiBook 14", ALC256_FIXUP_ASUS_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x10ec, 0x118c, "Medion EE4254 MD62100", ALC256_FIXUP_MEDION_HEADSET_NO_PRESENCE),
  
-+	/* Check for pattern 6 */
-+	if (strstarts(fromsym, ".L"))
-+		return 0;
-+
- 	return 1;
- }
- 
--- 
-2.20.1
-
+ #if 0
 
 
