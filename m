@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A60E511B534
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDEBD11B55D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732520AbfLKPwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:52:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50264 "EHLO mail.kernel.org"
+        id S1732170AbfLKPTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:19:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731986AbfLKPUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:20:42 -0500
+        id S1732040AbfLKPTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:19:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0F6122527;
-        Wed, 11 Dec 2019 15:20:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 296C72073D;
+        Wed, 11 Dec 2019 15:19:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077642;
-        bh=wPH1ASaSFlhbjvw8DtlszMkLA3HruIqPfzIMd5a2MLQ=;
+        s=default; t=1576077540;
+        bh=I7dfkIHF5V4Hy/ZBCDGLy3Rm64lZ3kJnViQhLq5YtOA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UtUYzfjTW7Mwq2LBWkDA86sMP5rpmgQs8+2d79uzvq6PDBQplEhpMbH6shCeCIg+v
-         bwrCWdm8My5pgl/Q6CfkhocukLqg1FZ8R+Np/kcCB3mEATY04CR3kJ72lOxhrasGCZ
-         APkbahywqTUuJaRPqImfMvvWkCI/78cEhN7q4g3w=
+        b=wRCghWcAIl4LlYK53cwQk1oY6POIjUIZXjhp888LgPM6lKKQAw/YR1Khhf7SvMw6B
+         312XmrXqMAz4KVDAizGb4tLwTy7XNAwbSv6B4BRXxVVfKs03z1N5O1aqwTQ3Mj/elW
+         9vTsc+m1/yNcenpTKc+ZpIB2n/wPisWGUCCUqX8I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiumei Mu <xmu@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 067/243] sctp: count sk_wmem_alloc by skb truesize in sctp_packet_transmit
-Date:   Wed, 11 Dec 2019 16:03:49 +0100
-Message-Id: <20191211150343.622625855@linuxfoundation.org>
+Subject: [PATCH 4.19 078/243] iomap: readpages doesnt zero page tail beyond EOF
+Date:   Wed, 11 Dec 2019 16:04:00 +0100
+Message-Id: <20191211150344.373359469@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -45,75 +45,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Dave Chinner <dchinner@redhat.com>
 
-[ Upstream commit 02968ccf0125d39b08ecef5946300a8a873c0942 ]
+[ Upstream commit 8c110d43c6bca4b24dd13272a9d4e0ba6f2ec957 ]
 
-Now sctp increases sk_wmem_alloc by 1 when doing set_owner_w for the
-skb allocked in sctp_packet_transmit and decreases by 1 when freeing
-this skb.
+When we read the EOF page of the file via readpages, we need
+to zero the region beyond EOF that we either do not read or
+should not contain data so that mmap does not expose stale data to
+user applications.
 
-But when this skb goes through networking stack, some subcomponents
-might change skb->truesize and add the same amount on sk_wmem_alloc.
-However sctp doesn't know the amount to decrease by, it would cause
-a leak on sk->sk_wmem_alloc and the sock can never be freed.
+However, iomap_adjust_read_range() fails to detect EOF correctly,
+and so fsx on 1k block size filesystems fails very quickly with
+mapreads exposing data beyond EOF. There are two problems here.
 
-Xiumei found this issue when it hit esp_output_head() by using sctp
-over ipsec, where skb->truesize is added and so is sk->sk_wmem_alloc.
+Firstly, when calculating the end block of the EOF byte, we have
+to round the size by one to avoid a block aligned EOF from reporting
+a block too large. i.e. a size of 1024 bytes is 1 block, which in
+index terms is block 0. Therefore we have to calculate the end block
+from (isize - 1), not isize.
 
-Since sctp has used sk_wmem_queued to count for writable space since
-Commit cd305c74b0f8 ("sctp: use sk_wmem_queued to check for writable
-space"), it's ok to fix it by counting sk_wmem_alloc by skb truesize
-in sctp_packet_transmit.
+The second bug is determining if the current page spans EOF, and so
+whether we need split it into two half, one for the IO, and the
+other for zeroing. Unfortunately, the code that checks whether
+we should split the block doesn't actually check if we span EOF, it
+just checks if the read spans the /offset in the page/ that EOF
+sits on. So it splits every read into two if EOF is not page
+aligned, regardless of whether we are reading the EOF block or not.
 
-Fixes: cac2661c53f3 ("esp4: Avoid skb_cow_data whenever possible")
-Reported-by: Xiumei Mu <xmu@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Hence we need to restrict the "does the read span EOF" check to
+just the page that spans EOF, not every page we read.
+
+This patch results in correct EOF detection through readpages:
+
+xfs_vm_readpages:     dev 259:0 ino 0x43 nr_pages 24
+xfs_iomap_found:      dev 259:0 ino 0x43 size 0x66c00 offset 0x4f000 count 98304 type hole startoff 0x13c startblock 1368 blockcount 0x4
+iomap_readpage_actor: orig pos 323584 pos 323584, length 4096, poff 0 plen 4096, isize 420864
+xfs_iomap_found:      dev 259:0 ino 0x43 size 0x66c00 offset 0x50000 count 94208 type hole startoff 0x140 startblock 1497 blockcount 0x5c
+iomap_readpage_actor: orig pos 327680 pos 327680, length 94208, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 331776 pos 331776, length 90112, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 335872 pos 335872, length 86016, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 339968 pos 339968, length 81920, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 344064 pos 344064, length 77824, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 348160 pos 348160, length 73728, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 352256 pos 352256, length 69632, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 356352 pos 356352, length 65536, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 360448 pos 360448, length 61440, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 364544 pos 364544, length 57344, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 368640 pos 368640, length 53248, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 372736 pos 372736, length 49152, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 376832 pos 376832, length 45056, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 380928 pos 380928, length 40960, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 385024 pos 385024, length 36864, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 389120 pos 389120, length 32768, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 393216 pos 393216, length 28672, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 397312 pos 397312, length 24576, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 401408 pos 401408, length 20480, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 405504 pos 405504, length 16384, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 409600 pos 409600, length 12288, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 413696 pos 413696, length 8192, poff 0 plen 4096, isize 420864
+iomap_readpage_actor: orig pos 417792 pos 417792, length 4096, poff 0 plen 3072, isize 420864
+iomap_readpage_actor: orig pos 420864 pos 420864, length 1024, poff 3072 plen 1024, isize 420864
+
+As you can see, it now does full page reads until the last one which
+is split correctly at the block aligned EOF, reading 3072 bytes and
+zeroing the last 1024 bytes. The original version of the patch got
+this right, but it got another case wrong.
+
+The EOF detection crossing really needs to the the original length
+as plen, while it starts at the end of the block, will be shortened
+as up-to-date blocks are found on the page. This means "orig_pos +
+plen" no longer points to the end of the page, and so will not
+correctly detect EOF crossing. Hence we have to use the length
+passed in to detect this partial page case:
+
+xfs_filemap_fault:    dev 259:1 ino 0x43  write_fault 0
+xfs_vm_readpage:      dev 259:1 ino 0x43 nr_pages 1
+xfs_iomap_found:      dev 259:1 ino 0x43 size 0x2cc00 offset 0x2c000 count 4096 type hole startoff 0xb0 startblock 282 blockcount 0x4
+iomap_readpage_actor: orig pos 180224 pos 181248, length 4096, poff 1024 plen 2048, isize 183296
+xfs_iomap_found:      dev 259:1 ino 0x43 size 0x2cc00 offset 0x2cc00 count 1024 type hole startoff 0xb3 startblock 285 blockcount 0x1
+iomap_readpage_actor: orig pos 183296 pos 183296, length 1024, poff 3072 plen 1024, isize 183296
+
+Heere we see a trace where the first block on the EOF page is up to
+date, hence poff = 1024 bytes. The offset into the page of EOF is
+3072, so the range we want to read is 1024 - 3071, and the range we
+want to zero is 3072 - 4095. You can see this is split correctly
+now.
+
+This fixes the stale data beyond EOF problem that fsx quickly
+uncovers on 1k block size filesystems.
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sctp/output.c | 21 +--------------------
- 1 file changed, 1 insertion(+), 20 deletions(-)
+ fs/iomap.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/net/sctp/output.c b/net/sctp/output.c
-index 08601223b0bfa..b0e74a3e77ec5 100644
---- a/net/sctp/output.c
-+++ b/net/sctp/output.c
-@@ -399,25 +399,6 @@ finish:
- 	return retval;
- }
- 
--static void sctp_packet_release_owner(struct sk_buff *skb)
--{
--	sk_free(skb->sk);
--}
--
--static void sctp_packet_set_owner_w(struct sk_buff *skb, struct sock *sk)
--{
--	skb_orphan(skb);
--	skb->sk = sk;
--	skb->destructor = sctp_packet_release_owner;
--
--	/*
--	 * The data chunks have already been accounted for in sctp_sendmsg(),
--	 * therefore only reserve a single byte to keep socket around until
--	 * the packet has been transmitted.
--	 */
--	refcount_inc(&sk->sk_wmem_alloc);
--}
--
- static void sctp_packet_gso_append(struct sk_buff *head, struct sk_buff *skb)
+diff --git a/fs/iomap.c b/fs/iomap.c
+index 0ff0f8ca3b197..caa45f73967cf 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -150,13 +150,14 @@ static void
+ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
+ 		loff_t *pos, loff_t length, unsigned *offp, unsigned *lenp)
  {
- 	if (SCTP_OUTPUT_CB(head)->last == head)
-@@ -604,7 +585,7 @@ int sctp_packet_transmit(struct sctp_packet *packet, gfp_t gfp)
- 	if (!head)
- 		goto out;
- 	skb_reserve(head, packet->overhead + MAX_HEADER);
--	sctp_packet_set_owner_w(head, sk);
-+	skb_set_owner_w(head, sk);
++	loff_t orig_pos = *pos;
++	loff_t isize = i_size_read(inode);
+ 	unsigned block_bits = inode->i_blkbits;
+ 	unsigned block_size = (1 << block_bits);
+ 	unsigned poff = offset_in_page(*pos);
+ 	unsigned plen = min_t(loff_t, PAGE_SIZE - poff, length);
+ 	unsigned first = poff >> block_bits;
+ 	unsigned last = (poff + plen - 1) >> block_bits;
+-	unsigned end = offset_in_page(i_size_read(inode)) >> block_bits;
  
- 	/* set sctp header */
- 	sh = skb_push(head, sizeof(struct sctphdr));
+ 	/*
+ 	 * If the block size is smaller than the page size we need to check the
+@@ -191,8 +192,12 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
+ 	 * handle both halves separately so that we properly zero data in the
+ 	 * page cache for blocks that are entirely outside of i_size.
+ 	 */
+-	if (first <= end && last > end)
+-		plen -= (last - end) * block_size;
++	if (orig_pos <= isize && orig_pos + length > isize) {
++		unsigned end = offset_in_page(isize - 1) >> block_bits;
++
++		if (first <= end && last > end)
++			plen -= (last - end) * block_size;
++	}
+ 
+ 	*offp = poff;
+ 	*lenp = plen;
 -- 
 2.20.1
 
