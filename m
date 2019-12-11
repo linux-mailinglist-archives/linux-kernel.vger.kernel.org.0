@@ -2,161 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFCAB11BB69
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:16:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3469E11BB83
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:17:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731235AbfLKSQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:16:18 -0500
-Received: from mout.gmx.net ([212.227.15.15]:39169 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731439AbfLKSQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:16:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1576088173;
-        bh=yGINRQU++szqyB2dKBcwmy5FgTVWGIaMocWgfU3OpZk=;
-        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
-        b=WWDt9XZEi3S6SXY5qmL3/enuSGMx15Et6BVrEQs+IRQGXj9cZthRtkn4+8gWtAdYb
-         cKndhlhx/yRtHSzlVtO/djyBJpIVOfQDHh7fgntsCppzRrXAdkGXE5mvxgAMyZ2zyd
-         B55fM2Gnx+72/qfego3DPJA9mtwLGjuMR8LdhLPU=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.178.24] ([95.112.79.148]) by mail.gmx.com (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MXXyP-1iDuSo2uRb-00Yx08; Wed, 11
- Dec 2019 19:16:13 +0100
-To:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Cc:     Linux Kernel <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Toralf_F=c3=b6rster?= <toralf.foerster@gmx.de>
-Subject: BTRFS with kernel 5.4.1: df -h shows 0 Bytes available but btrfs
- tells me that there are 1.06 TiB free
-Autocrypt: addr=toralf.foerster@gmx.de; prefer-encrypt=mutual; keydata=
- mQSuBFKhflgRDADrUSTZ9WJm+pL686syYr9SrBnaqul7zWKSq8XypEq0RNds0nEtAyON96pD
- xuMj26LNztqsEA0sB69PQq4yHno0TxA5+Fe3ulrDxAGBftSPgo/rpVKB//d6B8J8heyBlbiV
- y1TpPrOh3BEWzfqw6MyRwzxnRq6LlrRpiCRa/qAuxJXZ9HTEOVcLbeA6EdvLEBscz5Ksj/eH
- 9Q3U97jr26sjFROwJ8YVUg+JKzmjQfvGmVOChmZqDb8WZJIE7yV6lJaPmuO4zXJxPyB3Ip6J
- iXor1vyBZYeTcf1eiMYAkaW0xRMYslZzV5RpUnwDIIXs4vLKt9W9/vzFS0Aevp8ysLEXnjjm
- e88iTtN5/wgVoRugh7hG8maZCdy3ArZ8SfjxSDNVsSdeisYQ3Tb4jRMlOr6KGwTUgQT2exyC
- 2noq9DcBX0itNlX2MaLL/pPdrgUVz+Oui3Q4mCNC8EprhPz+Pj2Jw0TwAauZqlb1IdxfG5fD
- tFmV8VvG3BAE2zeGTS8sJycBAI+waDPhP5OptN8EyPGoLc6IwzHb9FsDa5qpwLpRiRcjDADb
- oBfXDt8vmH6Dg0oUYpqYyiXx7PmS/1z2WNLV+/+onAWV28tmFXd1YzYXlt1+koX57k7kMQbR
- rggc0C5erweKl/frKgCbBcLw+XjMuYk3KbMqb/wgwy74+V4Fd59k0ig7TrAfKnUFu1w40LHh
- RoSFKeNso114zi/oia8W3Rtr3H2u177A8PC/A5N34PHjGzQz11dUiJfFvQAi0tXO+WZkNj3V
- DSSSVYZdffGMGC+pu4YOypz6a+GjfFff3ruV5XGzF3ws2CiPPXWN7CDQK54ZEh2dDsAeskRu
- kE/olD2g5vVLtS8fpsM2rYkuDjiLHA6nBYtNECWwDB0ChH+Q6cIJNfp9puDxhWpUEpcLxKc+
- pD4meP1EPd6qNvIdbMLTlPZ190uhXYwWtO8JTCw5pLkpvRjYODCyCgk0ZQyTgrTUKOi/qaBn
- ChV2x7Wk5Uv5Kf9DRf1v5YzonO8GHbFfVInJmA7vxCN3a4D9pXPCSFjNEb6fjVhqqNxN8XZE
- GfpKPBMMAIKNhcutwFR7VMqtB0YnhwWBij0Nrmv22+yXzPGsGoQ0QzJ/FfXBZmgorA3V0liL
- 9MGbGMwOovMAc56Zh9WfqRM8gvsItEZK8e0voSiG3P/9OitaSe8bCZ3ZjDSWm5zEC2ZOc1Pw
- VO1pOVgrTGY0bZ+xaI9Dx1WdiSCm1eL4BPcJbaXSNjRza2KFokKj+zpSmG5E36Kdn13VJxhV
- lWySzJ0x6s4eGVu8hDT4pkNpQUJXjzjSSGBy5SIwX+fNkDiXEuLLj2wlV23oUfCrMdTIyXu9
- Adn9ECc+vciNsCuSrYH4ut7gX0Rfh89OJj7bKLmSeJq2UdlU3IYmaBHqTmeXg84tYB2gLXaI
- MrEpMzvGxuxPpATNLhgBKf70QeJr8Wo8E0lMufX7ShKbBZyeMdFY5L3HBt0I7e4ev+FoLMzc
- FA9RuY9q5miLe9GJb7dyb/R89JNWNSG4tUCYcwxSkijaprBOsoMKK4Yfsz9RuNfYCn1HNykW
- 1aC2Luct4lcLPtg44LQ1VG9yYWxmIEbDtnJzdGVyIChteSAybmQga2V5KSA8dG9yYWxmLmZv
- ZXJzdGVyQGdteC5kZT6IgQQTEQgAKQUCUqF+WAIbIwUJEswDAAcLCQgHAwIBBhUIAgkKCwQW
- AgMBAh4BAheAAAoJEMTqzd4AdulO06EBAIBfWzAIRkMwpCEhY4ZHexa4Ge8C/ql/sBiW8+na
- FxbZAP9z0OgF2zcorcfdttWw0aolhmUBlOf14FWXYDEkHKrmlbkEDQRSoX5YEBAA2tKn0qf0
- kVKRPxCs8AledIwNuVcTplm9MQ+KOZBomOQz8PKru8WXXstQ6RA43zg2Q2WU//ly1sG9WwJN
- Mzbo5d+8+KqgBD0zKKM+sfTLi1zIH3QmeplEHzyv2gN6fe8CuIhCsVhTNTFgaBTXm/aEUvTI
- zn7DIhatKmtGYjSmIwRKP8KuUDF/vQ1UQUvKVJX3/Z0bBXFY8VF/2qYXZRdj+Hm8mhRtmopQ
- oTHTWd+vaT7WqTnvHqKzTPIm++GxjoWjchhtFTfYZDkkF1ETc18YXXT1aipZCI3BvZRCP4HT
- hiAC5Y0aITZKfHtrjKt13sg7KTw4rpCcNgo67IQmyPBOsu2+ddEUqWDrem/zcFYQ360dzBfY
- tJx2oSspVZ4g8pFrvCccdShx3DyVshZWkwHAsxMUES+Bs2LLgFTcGUlD4Z5O9AyjRR8FTndU
- 7Xo9M+sz3jsiccDYYlieSDD0Yx8dJZzAadFRTjBFHBDA7af1IWnGA6JY07ohnH8XzmRNbVFB
- /8E6AmFA6VpYG/SY02LAD9YGFdFRlEnN7xIDsLFbbiyvMY4LbjB91yBdPtaNQokYqA+uVFwO
- inHaLQVOfDo1JDwkXtqaSSUuWJyLkwTzqABNpBszw9jcpdXwwxXJMY6xLT0jiP8TxNU8EbjM
- TeC+CYMHaJoMmArKJ8VmTerMZFsAAwUQAJ3vhEE+6s+wreHpqh/NQPWL6Ua5losTCVxY1snB
- 3WXF6y9Qo6lWducVhDGNHjRRRJZihVHdqsXt8ZHz8zPjnusB+Fp6xxO7JUy3SvBWHbbBuheS
- fxxEPaRnWXEygI2JchSOKSJ8Dfeeu4H1bySt15uo4ryAJnZ+jPntwhncClxUJUYVMCOdk1PG
- j0FvWeCZFcQ+bapiZYNtju6BEs9OI73g9tiiioV1VTyuupnE+C/KTCpeI5wAN9s6PJ9LfYcl
- jOiTn+037ybQZROv8hVJ53jZafyvYJ/qTUnfDhkClv3SqskDtJGJ84BPKK5h3/U3y06lWFoi
- wrE22plnEUQDIjKWBHutns0qTF+HtdGpGo79xAlIqMXPafJhLS4zukeCvFDPW2PV3A3RKU7C
- /CbgGj/KsF6iPQXYkfF/0oexgP9W9BDSMdAFhbc92YbwNIctBp2Trh2ZEkioeU0ZMJqmqD3Z
- De/N0S87CA34PYmVuTRt/HFSx9KA4bAWJjTuq2jwJNcQVXTrbUhy2Et9rhzBylFrA3nuZHWf
- 4Li6vBHn0bLP/8hos1GANVRMHudJ1x3hN68TXU8gxpjBkZkAUJwt0XThgIA3O8CiwEGs6aam
- oxxAJrASyu6cKI8VznuhPOQ9XdeAAXBg5F0hH/pQ532qH7zL9Z4lZ+DKHIp4AREawXNxiGYE
- GBEIAA8FAlKhflgCGwwFCRLMAwAACgkQxOrN3gB26U7PNwEAg6z1II04TFWGV6m8lR/0ZsDO
- 15C9fRjklQTFemdCJugA+PvUpIsYgyqSb3OVodAWn4rnnVxPCHgDsANrWVgTO3w=
-Message-ID: <9df7f98b-271f-8b1d-f360-00a737d49911@gmx.de>
-Date:   Wed, 11 Dec 2019 19:16:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1731319AbfLKSRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:17:39 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38251 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbfLKSRi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 13:17:38 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p17so8045656wmi.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 10:17:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=gdbdOJGDr6s2TB3vkGkLojy6hKiZ0+eS72V/GX35qQM=;
+        b=g44yxhTp8JdnuxE9OcIrpnMwYX/4KkBpg/3xgew18mzg4Xaqb7jyrdjlRCxZRniDTM
+         i8C0/tzDKBo7wRNB/6DaNihgzh2GJ0IFWEJHOTseCRdDOwFl/UEb9aznheriv/ZzzhH8
+         0EPPEOZmsFEbFt5ZeiRyUmi7eaOj4GSrbaVNgqaipJp4WfJ4RBOSSWVBs1Uy2SS0bi4h
+         KpgGZYQCUQdXw3gb2TvgFU027R8KuKh40IeQbYrhfbU50FstnGdaUC2zaTa/mSMdbR15
+         QKWEB3uvbYV2YeUEKO6GHbtov+vhkhmA2Nwfi5sgH3JRjarkHI1DZt0+GaWb/IBdrM0T
+         AKwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=gdbdOJGDr6s2TB3vkGkLojy6hKiZ0+eS72V/GX35qQM=;
+        b=BQ2asSWVZDFDjFct4tjZz/FHLxbaF21jdChv2BEov9qstlO9QaJaMlA8mmbPuodp5p
+         KCEJredJJ1eQz4iKeao0o0jZ82qztDXb1iwu/wLdl0isJCEHU9yBHiG/BXASPw/vnfFL
+         6tzJDcFa5jUsVqTB/W2qPJscDgHXrpN2cDPj085i4fWv8zJBLM40VPlumT65i6SyJwSK
+         Jb4V5NwTBQbkoa2scIH2ds0vyXEdoTC1p504VVLX5WWj1CB2Kg5ygGLR25IjJm15U0cK
+         xMBLM9KEccBvVnHTqCINWNNt4mTkqMHm5REBLFmG5rjaSHiIrSdvVpObas8zVCN4VG7B
+         e6BQ==
+X-Gm-Message-State: APjAAAUjmyFrYyEVNOOqmP5ZALjvPdIahn5c7em77sAkXk3RoZsB8/fC
+        jip1yxzeiq0maB2Gw5hdxHagO+VavB4UvbRUfE2O2A==
+X-Google-Smtp-Source: APXvYqziD3eVTLC2Yu/hIEeHVWWceML2RIHpK3CmqYNaiptFEscdd0Np5Zqo+EY0L9JVk59rH8xnwSL0WzgLNv2sMmc=
+X-Received: by 2002:a1c:2083:: with SMTP id g125mr1260281wmg.89.1576088256672;
+ Wed, 11 Dec 2019 10:17:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+References: <20191211170632.GD14821@zn.tnic> <BC48F4AD-8330-4ED6-8BE8-254C835506A5@amacapital.net>
+ <20191211172945.GE14821@zn.tnic>
+In-Reply-To: <20191211172945.GE14821@zn.tnic>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Wed, 11 Dec 2019 10:17:25 -0800
+Message-ID: <CALCETrXuJMBawUy3DTQfE4qLb822d9491er9-hd971BtBsPFNw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/4] x86/traps: Print address on #GP
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:llQP24DdraPE2rf9G3Iloui7iQfhqHXXiz2KFEC234o1T41SzNH
- CRt1C29WRKe9ykqmHizdeEEZxEdM4CqtFE3AOTHiGH+10PgpBV1e8QP4zZPHup08BqcxPAh
- CEAIWB4zt224HaaynqyPLUC7ds1O78h49OyogMSwyck1DqUdLyQI7GA0+9OjhZ+4vosRdVc
- ELqphhvC9Wtgb1wxOJQlQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:LlnyD8R28a4=:wHcOfx5faCHxy9BpFpWQCO
- iJFKxmjBZio83qKpv919ODpKtUeB7rViGpC6sD/FSbRMQtUugOsu4wBmLYbkZKToaiT75czbC
- F1Vw80s42iMmLriaEgba5i/PEN/tmt2d1Bfw4lTGU9CkDpq/7veI0IrTdSc7Bcr6Zy4kvfsBJ
- 63AwKxY6VREJ2xEUQJaxo2+JIOrgZEHnnA8HsyE3QLkTbpAYTx9/CaFMXAZsznFjhE9usEiyH
- m0/SrmJwjuo+TIuGOYTTgEo61KKxv1hIr3k06k/Z8N9ovu5vRnMZ7mIJK/cYceXeBD9h+lAVK
- +X0lp9PAwwL5adg8MFm++nwEaV4Jue0/s/ikdo+yI+k2sIpaXJ0PnmCs3kg1mzNZVuABExgbh
- TJdfz8PRNKInZVj9F+aznzj+Op8qlMDWJdlTmhArOBBhQF1TMmoQC9ojxOISMTUf/21wgkrXu
- TtbvZ8thDhtf6XAWx0EstsOHYmgUBbnAiMe8LEPS0MlfFUndDyae8UASgnG8gJW4ypD5U/fqM
- jdLJT66QHKpS+WIel3bGg1H9NuQECnk82euQRJv99sfh5x8cFK3csMWzVnnprSho7k5USEjCo
- wf2sl8rW1A+bFUguEt0SNMi7aNAlEPZ0n6ib3RJ1B23CuCHOaDMriaXgfSIfY0HoftvlQL2kF
- aYpnPLpWHfK8/GqpjyztFL+PAvTnjBXvVpvfsXUWT3/aSB1C+r19YWGAX5Ixbaf/vCHsXXucm
- P2ol/BsIfcBGguhdyU5nTsNoh2NYw1pLl68JNudjga6W3IikgEPfXRfeINVbc5A+PrCJHqJjQ
- bsKs2eLQuRvi7aUXeWfEWyMbbJbSkIUdX7OTX8rZKsT3ax8Aqs2rG2GzwMe9cA8lRMsYEfoGT
- k1lB4JVH3oOzd57WUglStyK4xv7cM0WvM0WpJKK07ypbmvluzcV3SC4aViAsYbr5QH/C8Spt2
- 5vu5biUp+Nf850EfLkFWvAIs5YXdG+qF4XFBgATGbSYBpwjWEA7tgSHKwhJ2QI0WqNn4CF7sw
- 7pDJOj0rxmHczZwIPUfm/765y0MJd3qGfrI3aPZK6UFfWd8zewNg7EHrKHKRQJF80BTioM3+8
- OUzXzn/zDx04+J39FmRHl7dN3UAo06vUzqOAgZCVwLB8ITVVPx0eBLdaTFE/YJ3WWET8sc0In
- g4X++RJsdTeBg2xfI1YA8p5q2Mg9P5dLM8vfC9Y7b9kzlH/qEMBJgPAFNkt2+fCyvs1FlgdU2
- TraoLr3upmoP1pEQOR04TrdxgPwIf+QkECjEXp4va26lg4tChZm73+qftrbc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since 5.4 (5.3.xy was fine) I do get every few days:
+On Wed, Dec 11, 2019 at 9:29 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Wed, Dec 11, 2019 at 09:22:30AM -0800, Andy Lutomirski wrote:
+> > Could we spare a few extra bytes to make this more readable?  I can nev=
+er keep track of which number is the oops count, which is the cpu, and whic=
+h is the error code.  How about:
+> >
+> > OOPS 1: general protection blah blah blah (CPU 0)
+> >
+> > and put in the next couple lines =E2=80=9C#GP(0)=E2=80=9D.
+>
+> Well, right now it is:
+>
+> [    2.470492] general protection fault, probably for non-canonical addre=
+ss 0xdfff000000000001: 0000 [#1] PREEMPT SMP
+> [    2.471615] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc1+ #6
+>
+> and the CPU is on the second line, the error code is before the number -
+> [#1] - in that case.
+>
+> If we pull the number in front, we can do:
+>
+> [    2.470492] [#1] general protection fault, probably for non-canonical =
+address 0xdfff000000000001: 0000 PREEMPT SMP
+> [    2.471615] [#1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc1+ =
+#6
+>
+> and this way you know that the error code is there, after the first
+> line's description.
 
-# df -h /home/tinderbox/img1
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/sda5       1.7T  614G     0 100% /home/tinderbox/img1
+Hmm, I like that.
+
+>
+> I guess we can do:
+>
+> [    2.470492] [#1] general protection fault, probably for non-canonical =
+address 0xdfff000000000001 Error Code: 0000 PREEMPT SMP
+>
+> to make it even more explicit...
+
+I like this too.
+
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
 
 
-# btrfs filesystem usage /home/tinderbox/img1
-Overall:
-    Device size:                   1.66TiB
-    Device allocated:            614.02GiB
-    Device unallocated:            1.06TiB
-    Device missing:                  0.00B
-    Used:                        613.38GiB
-    Free (estimated):              1.06TiB      (min: 543.50GiB)
-    Data ratio:                       1.00
-    Metadata ratio:                   2.00
-    Global reserve:              512.00MiB      (used: 0.00B)
 
-Data,RAID0: Size:566.00GiB, Used:565.50GiB (99.91%)
-   /dev/sda5     283.00GiB
-   /dev/sdb1     283.00GiB
-
-Metadata,RAID1: Size:24.00GiB, Used:23.94GiB (99.76%)
-   /dev/sda5      24.00GiB
-   /dev/sdb1      24.00GiB
-
-System,RAID1: Size:8.00MiB, Used:64.00KiB (0.78%)
-   /dev/sda5       8.00MiB
-   /dev/sdb1       8.00MiB
-
-Unallocated:
-   /dev/sda5     542.99GiB
-   /dev/sdb1     542.99GiB
-
-
-This is a hardened Gentoo linux acting as a QA build bot for their package=
-s:
-
-# uname -a
-Linux mr-fox 5.4.2 #2 SMP Thu Dec 5 01:18:19 CET 2019 x86_64 Intel(R) Xeon=
-(R) CPU E5-1650 v3 @ 3.50GHz GenuineIntel GNU/Linux
-
-
-I do appreciate hints to overcome this situation.
-
-=2D-
-Toralf
+--=20
+Andy Lutomirski
+AMA Capital Management, LLC
