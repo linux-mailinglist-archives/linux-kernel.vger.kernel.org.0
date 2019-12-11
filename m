@@ -2,92 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C58411B9F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D546111BA1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:22:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbfLKRU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 12:20:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730823AbfLKRU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 12:20:28 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 296862073D;
-        Wed, 11 Dec 2019 17:20:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576084827;
-        bh=JHuvTlW3jgbnrHg+UAFqzVHC4Yp7D0o0CKpG2cSfsDs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=L5buTqSpIyBJ5O27cxhTPHfsjWBHU/TFDWCSzbb/yFLNAwYdIwIMK43SuH3x0pMCh
-         Iy18U2IRquRRZaQcgJ/G9xR4YD5/fol2nJTeh3Ulq+Eyq1Ftfb7zqGIkTa1dZwzOc4
-         ku9cwf+9MRwdPFkJqJjC9RJi+GrGq/RlFEh/9TRw=
-Subject: Re: [PATCH 2/2] kselftest: Support old perl versions
-To:     Kees Cook <keescook@chromium.org>,
-        SeongJae Park <sjpark@amazon.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sj38.park@gmail.com, SeongJae Park <sjpark@amazon.de>,
-        shuah <shuah@kernel.org>
-References: <20191202114221.827-1-sjpark@amazon.com>
- <20191202114221.827-2-sjpark@amazon.com> <201912071047.D7BDF3DD9F@keescook>
-From:   shuah <shuah@kernel.org>
-Message-ID: <5e9eb477-6889-e85a-5d4e-a10bfaf8966b@kernel.org>
-Date:   Wed, 11 Dec 2019 10:20:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <201912071047.D7BDF3DD9F@keescook>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1731021AbfLKRWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 12:22:34 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42648 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730393AbfLKRWd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 12:22:33 -0500
+Received: by mail-pg1-f196.google.com with SMTP id s64so4352529pgb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 09:22:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=spw+W66PwysKgYjLUTMzmWWpPtpOjK/KGVzC9TUKzdw=;
+        b=PbO4pb1guyauqOSSQFQWZ3G12I2ugsUQjrHJOjpkw+PWbC0W7o9eoK0OzI4kIn1ycF
+         dVTtKgqJ9CCSEKlC3Bwn/EriDTtXP75qP6H5kC+8n6Bl7GYGeHgM9dXg4BTsHGwamkD3
+         Tcw8KvbxM8vXCrGpxPRpHXDXc/tXK7U7kg6eHZi5onuQPxHztHAd6y+1VWF3hDgosxxp
+         9gicct8DNIqiNU912wmZ6OKkukyg14AgshMRuPt6uaXGGJeKq3SNgz/xN20vkeK3ptYk
+         HOoAWOc29MRzEyBe+t6K3BABQy6b3PBVCXiHm8lNpjFsU3CwhGwZzKDJP1/M98qn8ADL
+         Gfeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=spw+W66PwysKgYjLUTMzmWWpPtpOjK/KGVzC9TUKzdw=;
+        b=J8CbmtABIcUffur9WUqxz+FPPB+NBTZiGoVej9qLmA+wCNkco2YUvAoWOrP6ce0HXg
+         vGX9TlY05rw5sOSAmKcH+5xsadVj/K5gVVqh1esmAi9b1aa80jeKTo3ZhdBgwTrOldvT
+         9V5ANpQre/oKL7pqiiqRYszUP/3yHkge1K+zoQFqkeBMNIxEnV7adI6XdcAd78SNcCiO
+         0oZHGkunFoyFVNbnnvSVPjuITob1aEcbedT4T3fNFbSfvwbwKdUgnUn+JZDN2KEJnH42
+         bmluErEauA4TyYwIgTqpyH+KvSG8fHFxXeFBsHLZZnavvNa94XYVvNLGMgsLsSc+YUKr
+         d2Vw==
+X-Gm-Message-State: APjAAAX5mAFyVSiC7qq7VJncrd99rGK3dBt8BltwaJKdYGWE2O9fjgW7
+        lJhvOHde81avgV5YUEqSHL6JMg==
+X-Google-Smtp-Source: APXvYqzLKkz3flFJAsLfXqLq1D/8jKbb+4Ox1/+wU2wtbh9y3mHgBV2cTIFxazZBDm0nWiQyivAj4w==
+X-Received: by 2002:a05:6a00:9c:: with SMTP id c28mr4977641pfj.234.1576084952380;
+        Wed, 11 Dec 2019 09:22:32 -0800 (PST)
+Received: from ?IPv6:2600:1010:b005:489c:fc8f:334b:9230:8615? ([2600:1010:b005:489c:fc8f:334b:9230:8615])
+        by smtp.gmail.com with ESMTPSA id y29sm3742573pfo.155.2019.12.11.09.22.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 09:22:31 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v6 2/4] x86/traps: Print address on #GP
+Date:   Wed, 11 Dec 2019 09:22:30 -0800
+Message-Id: <BC48F4AD-8330-4ED6-8BE8-254C835506A5@amacapital.net>
+References: <20191211170632.GD14821@zn.tnic>
+Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+In-Reply-To: <20191211170632.GD14821@zn.tnic>
+To:     Borislav Petkov <bp@alien8.de>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/19 11:47 AM, Kees Cook wrote:
-> On Mon, Dec 02, 2019 at 12:42:21PM +0100, SeongJae Park wrote:
->> From: SeongJae Park <sjpark@amazon.de>
->>
->> On an old perl such as v5.10.1, `kselftest/prefix.pl` gives below error
->> message:
->>
->>      Can't locate object method "autoflush" via package "IO::Handle" at kselftest/prefix.pl line 10.
->>
->> This commit fixes the error by explicitly specifying the use of the
->> `IO::Handle` package.
->>
->> Signed-off-by: SeongJae Park <sjpark@amazon.de>
-> 
-> Good catch!
-> 
-> Acked-by: Kees Cook <keescook@chromium.org>
-> 
-> -Kees
-> 
->> ---
->>   tools/testing/selftests/kselftest/prefix.pl | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/tools/testing/selftests/kselftest/prefix.pl b/tools/testing/selftests/kselftest/prefix.pl
->> index ec7e48118183..31f7c2a0a8bd 100755
->> --- a/tools/testing/selftests/kselftest/prefix.pl
->> +++ b/tools/testing/selftests/kselftest/prefix.pl
->> @@ -3,6 +3,7 @@
->>   # Prefix all lines with "# ", unbuffered. Command being piped in may need
->>   # to have unbuffering forced with "stdbuf -i0 -o0 -e0 $cmd".
->>   use strict;
->> +use IO::Handle;
->>   
->>   binmode STDIN;
->>   binmode STDOUT;
->> -- 
->> 2.17.1
->>
-> 
 
-Applying to fixes for next 5.5-rc
 
-thanks,
--- Shuah
+> On Dec 11, 2019, at 9:06 AM, Borislav Petkov <bp@alien8.de> wrote:
+>=20
+> =EF=BB=BFOn Mon, Dec 09, 2019 at 03:31:18PM +0100, Jann Horn wrote:
+>>    I have already sent a patch to syzkaller that relaxes their parsing of=
+ GPF
+>>    messages (https://github.com/google/syzkaller/commit/432c7650) such th=
+at
+>>    changes like the one in this patch don't break it.
+>>    That patch has already made its way into syzbot's syzkaller instances
+>>    according to <https://syzkaller.appspot.com/upstream>.
+>=20
+> Ok, cool.
+>=20
+> I still think we should do the oops number marking, though, as it has
+> more benefits than just syzkaller scanning for it. The first oops has alwa=
+ys
+> been of crucial importance so having the number in there:
+>=20
+> [    2.542218] [1] general protection fault while derefing a non-canonical=
+ address 0xdfff000000000001: 0000 [#1] PREEMPT SMP
+>        ^
+>=20
+> would make eyeballing oopses even easier. Basically the same reason why
+> you're doing this enhancement. :)
+>=20
+
+Could we spare a few extra bytes to make this more readable?  I can never ke=
+ep track of which number is the oops count, which is the cpu, and which is t=
+he error code.  How about:
+
+OOPS 1: general protection blah blah blah (CPU 0)
+
+and put in the next couple lines =E2=80=9C#GP(0)=E2=80=9D.
+
+> So let me know if you don't have time to do it or you don't care about
+> it etc, and I'll have a look. Independent of those patches, of course -
+> those look good so far.
+>=20
+> Thx.
+>=20
+> --=20
+> Regards/Gruss,
+>    Boris.
+>=20
+> https://people.kernel.org/tglx/notes-about-netiquette
