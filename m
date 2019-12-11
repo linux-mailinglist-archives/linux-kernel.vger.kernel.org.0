@@ -2,73 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9403711A0A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:44:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ED4311A0B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:47:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfLKBoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 20:44:17 -0500
-Received: from mga03.intel.com ([134.134.136.65]:22190 "EHLO mga03.intel.com"
+        id S1727403AbfLKBr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 20:47:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726364AbfLKBoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 20:44:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 17:44:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
-   d="scan'208";a="264705584"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Dec 2019 17:44:13 -0800
-Date:   Wed, 11 Dec 2019 09:45:36 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        yu-cheng.yu@intel.com
-Subject: Re: [PATCH v8 2/7] KVM: VMX: Define CET VMCS fields and #CP flag
-Message-ID: <20191211014536.GB12845@local-michael-cet-test>
-References: <20191101085222.27997-1-weijiang.yang@intel.com>
- <20191101085222.27997-3-weijiang.yang@intel.com>
- <20191210210044.GK15758@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210210044.GK15758@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1726532AbfLKBr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 20:47:27 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 021B2205ED;
+        Wed, 11 Dec 2019 01:47:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576028847;
+        bh=aJEBHOJgbmW5u/PI+IDmgyBqpJA+BGn7BUCYF8lBBXI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=a4TeTJ8lJl8q2dLF6mL0GpmczoEuiJsnjXjb9qT5uG5YEyb5hp2C9lNnNhFyLBLB2
+         031Y12L8dQGuzjXBTdQPX+qPEUotS1ySZN21FJ3Zx0yaT5gq3Tjon5oFgMy6hOLPph
+         knl2US3pMczsLrw/0BNFyQN54wFMElQ3kUNz4c4k=
+Date:   Tue, 10 Dec 2019 17:47:26 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     dan.carpenter@oracle.com, will@kernel.org, ebiederm@xmission.com,
+        linux-arch@vger.kernel.org, security@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] execve: warn if process starts with executable stack
+Message-Id: <20191210174726.101e434df59b6aec8a53cca1@linux-foundation.org>
+In-Reply-To: <20191208171918.GC19716@avx2>
+References: <20191208171918.GC19716@avx2>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 01:00:44PM -0800, Sean Christopherson wrote:
-> On Fri, Nov 01, 2019 at 04:52:17PM +0800, Yang Weijiang wrote:
-> > CET(Control-flow Enforcement Technology) is an upcoming Intel(R)
-> > processor feature that blocks Return/Jump-Oriented Programming(ROP)
-> > attacks. It provides the following capabilities to defend
-> > against ROP/JOP style control-flow subversion attacks:
-> > 
-> >  	return (1U << vector) & exception_has_error_code;
-> >  }
-> > @@ -298,7 +298,8 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, unsigned long cr2,
-> >   * Right now, no XSS states are used on x86 platform,
-> >   * expand the macro for new features.
+On Sun, 8 Dec 2019 20:19:18 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+
+> There were few episodes of silent downgrade to an executable stack over
+> years:
 > 
-> I assume this comment needs to be updated?
->
-I'm not sure which features in upstream code are using xsaves bits,
-should I go like this:
-In future, other XSS state bits can be added here to make them available
-to guest? 
-> >   */
-> > -#define KVM_SUPPORTED_XSS	0
-> > +#define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_USER \
-> > +				| XFEATURE_MASK_CET_KERNEL)
-> >  
-> >  extern u64 host_xcr0;
-> >  
-> > -- 
-> > 2.17.2
-> > 
+> 1) linking innocent looking assembly file will silently add executable
+>    stack if proper linker options is not given as well:
+> 
+> 	$ cat f.S
+> 	.intel_syntax noprefix
+> 	.text
+> 	.globl f
+> 	f:
+> 	        ret
+> 
+> 	$ cat main.c
+> 	void f(void);
+> 	int main(void)
+> 	{
+> 	        f();
+> 	        return 0;
+> 	}
+> 
+> 	$ gcc main.c f.S
+> 	$ readelf -l ./a.out
+> 	  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+>                          0x0000000000000000 0x0000000000000000  RWE    0x10
+> 			 					 ^^^
+> 
+> 2) converting C99 nested function into a closure
+> https://nullprogram.com/blog/2019/11/15/
+> 
+> 	void intsort2(int *base, size_t nmemb, _Bool invert)
+> 	{
+> 	    int cmp(const void *a, const void *b)
+> 	    {
+> 	        int r = *(int *)a - *(int *)b;
+> 	        return invert ? -r : r;
+> 	    }
+> 	    qsort(base, nmemb, sizeof(*base), cmp);
+> 	}
+> 
+> will silently require stack trampolines while non-closure version will not.
+> 
+> Without doubt this behaviour is documented somewhere, add a warning so that
+> developers and users can at least notice. After so many years of x86_64 having
+> proper executable stack support it should not cause too many problems.
+
+hm, OK, let's give it a trial run.
+
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -761,6 +761,11 @@ int setup_arg_pages(struct linux_binprm *bprm,
+>  		goto out_unlock;
+>  	BUG_ON(prev != vma);
+>  
+> +	if (unlikely(vm_flags & VM_EXEC)) {
+> +		pr_warn_once("process '%pD4' started with executable stack\n",
+> +			     bprm->file);
+> +	}
+> +
+>  	/* Move stack pages down in memory. */
+>  	if (stack_shift) {
+>  		ret = shift_arg_pages(vma, stack_shift);
+
+What are poor users supposed to do if this message comes out? 
+Hopefully google the message and end up at this thread.  What do you
+want to tell them?
+
