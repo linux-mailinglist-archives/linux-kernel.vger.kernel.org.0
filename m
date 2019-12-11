@@ -2,91 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8C8911B6DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:04:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60C4011B6D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:04:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388851AbfLKQDt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:03:49 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:47730 "EHLO vps0.lunn.ch"
+        id S2388829AbfLKQDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:03:30 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:37834 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388821AbfLKQD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:03:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=JC7q0sPt/GRGBIf2Uf74AucDMKhObwoznRVXHT//S3Q=; b=ZlQJFkn9tJIjt29SdqX1PpHMRK
-        pTityYajvTA/tvyRey6gPYVYmEMxu+G/zBPejLTSbFE2Gk7trOW6/vtgjB2OYyQNsFRHWIlhLGhAt
-        8vM8PVrbairl+z8kzRcI2CVzx2R/PJ4fLSR6P9XQMuonoOFZfQ+VuhuGKM3oVwbJLIFk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1if4SP-0005m0-6C; Wed, 11 Dec 2019 17:03:21 +0100
+        id S1730957AbfLKQDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 11:03:24 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 47Y1td2hxmzW9;
+        Wed, 11 Dec 2019 17:03:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1576080201; bh=Ikv5AJJhaGvKrnyC7mUPeJgkvCtgUEaTu7zd0aqxlLs=;
+        h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
+        b=Jubjc+TYmgIGzoOJa8ZjH7Tph9hGlFcnMmu3I4CN8muzcVDBbuidTBk4IfBDSlI48
+         gEA3UJvTvi1aX2iu4Qyo/cBrlic5YPja3g+Ot43vrB7wJr76xz+HxVJRTQ/9lB1ulo
+         rRfbFrsHkyY2lTnnJ9x233mMMHh/k1z9f+72hEe481UlGW7ueX6KwzYlhotJ9V4uG/
+         RNo+j4JLZmMJrIa89Q6ImPvYuA5NOjsf2XgVaasM+eK2JdtuqaRzdTZ/HXsPzFbCd4
+         8l8RfqusnrxgYtpOmUPeU/YmpLGZQGFb23F//3Yo6HsZscf6dW6+Kjf2FdxeZFfDbx
+         1lb7zBqYaGgvA==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
 Date:   Wed, 11 Dec 2019 17:03:21 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Chng, Jack Ping" <jack.ping.chng@linux.intel.com>,
-        devel@driverdev.osuosl.org, cheol.yong.kim@intel.com,
-        andriy.shevchenko@intel.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mallikarjunax.reddy@linux.intel.com,
-        davem@davemloft.net
-Subject: Re: FW: [PATCH v2] staging: intel-gwdpa: gswip: Introduce Gigabit
- Ethernet Switch (GSWIP) device driver
-Message-ID: <20191211160321.GA21225@lunn.ch>
-References: <5f85180573a3fb20238d6a340cdd990f140ed6f0.1576054234.git.jack.ping.chng@intel.com>
- <20191211092738.GA505511@kroah.com>
- <BYAPR11MB317606F8BE2B60C4BAD872F1DE5A0@BYAPR11MB3176.namprd11.prod.outlook.com>
- <c26e56cf-eb04-5992-252a-e66f6029d6ac@linux.intel.com>
- <20191211121724.GA514307@kroah.com>
+Message-Id: <82f3e18f260a3f372944401d12f8f92bd64bc9d2.1576079249.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <cover.1576079249.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1576079249.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v2 1/9] input: elants: document some registers and values
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211121724.GA514307@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     linux-input@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-kernel@vger.kernel.org, Henrik Rydberg <rydberg@bitmath.org>,
+        James Chen <james.chen@emc.com.tw>,
+        Johnny Chuang <johnny.chuang@emc.com.tw>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh-dt@kernel.org>,
+        Scott Liu <scott.liu@emc.com.tw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > We are trying to upstream the datapath code for Intel new NoC gateway
-> > (please refer to intel-gwdpa.txt at the end of the patch). It consists of
-> > ethernet, WIFI and passive optics handling. Since the code is quite huge, we
-> > have broken it into parts for internal review.
-> > 
-> > As we have seen past upstream example such as fsl/dpaa, we thought that it
-> > is better for us to start the upstreaming of the driver into staging folder
-> > to get feedback from the community.
-> > 
-> > Is this the right approach? Or do we upstream all the drivers into
-> > drivers/soc folder when we have all the drivers ready?
-> 
-> Why is drivers/soc/ the place to put networking drivers?
-> 
-> Please please please work with the Intel Linux kernel developers who
-> know how to do this type of thing and do not require the kernel
-> community to teach you all the proper development model and methods
-> here.
+Add information found in downstream kernels, to make the code less
+magic.
 
-I see a lot in common with dpaa2 here. You have a non traditional
-hardware architecture. That means it does not nicely fit into the tree
-as other drivers do.
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+---
+ drivers/input/touchscreen/elants_i2c.c | 29 +++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-There also appears to of been a huge amount of code development behind
-closed doors, same as dpaa2. And because of the non traditional
-architecture, you have had to make all sorts of design decisions. And
-because that happened behind closed door, i'm sure some are
-wrong. dpaa2 has been in staging for around 2 1/2 years now. It takes
-that amount of time to discuss how non traditional hardware should be
-supported in Linux, an re-write the drivers as needed because of the
-wrong design decisions.
+diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
+index d4ad24ea54c8..887888c53996 100644
+--- a/drivers/input/touchscreen/elants_i2c.c
++++ b/drivers/input/touchscreen/elants_i2c.c
+@@ -77,7 +77,11 @@
+ 
+ #define HEADER_REPORT_10_FINGER	0x62
+ 
+-/* Header (4 bytes) plus 3 fill 10-finger packets */
++/* Power state */
++#define PWR_STATE_DEEP_SLEEP	0
++#define PWR_STATE_NORMAL	1
++
++/* Header (4 bytes) plus 3 full 10-finger packets */
+ #define MAX_PACKET_SIZE		169
+ 
+ #define BOOT_TIME_DELAY_MS	50
+@@ -87,10 +91,21 @@
+ #define E_ELAN_INFO_BC_VER	0x10
+ #define E_ELAN_INFO_TEST_VER	0xE0
+ #define E_ELAN_INFO_FW_ID	0xF0
++#define E_POWER_MODE		0x40
++#define E_POWER_STATE		0x50
++#define E_INFO_X_RES		0x60
++#define E_INFO_Y_RES		0x63
+ #define E_INFO_OSR		0xD6
+ #define E_INFO_PHY_SCAN		0xD7
+ #define E_INFO_PHY_DRIVER	0xD8
+ 
++/* FW write command, 0x54 0x?? 0x0, 0x01 */
++#define E_POWER_MODE_BATTERY	0x40
++#define E_POWER_MODE_AC		0x41
++#define E_POWER_MODE_USB	0x42
++#define E_POWER_STATE_SLEEP	0x50
++#define E_POWER_STATE_RESUME	0x58
++
+ #define MAX_RETRIES		3
+ #define MAX_FW_UPDATE_RETRIES	30
+ 
+@@ -231,8 +246,8 @@ static int elants_i2c_calibrate(struct elants_data *ts)
+ {
+ 	struct i2c_client *client = ts->client;
+ 	int ret, error;
+-	static const u8 w_flashkey[] = { 0x54, 0xC0, 0xE1, 0x5A };
+-	static const u8 rek[] = { 0x54, 0x29, 0x00, 0x01 };
++	static const u8 w_flashkey[] = { CMD_HEADER_WRITE, 0xC0, 0xE1, 0x5A };
++	static const u8 rek[] = { CMD_HEADER_WRITE, 0x29, 0x00, 0x01 };
+ 	static const u8 rek_resp[] = { CMD_HEADER_REK, 0x66, 0x66, 0x66 };
+ 
+ 	disable_irq(client->irq);
+@@ -1295,7 +1310,9 @@ static int __maybe_unused elants_i2c_suspend(struct device *dev)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct elants_data *ts = i2c_get_clientdata(client);
+-	const u8 set_sleep_cmd[] = { 0x54, 0x50, 0x00, 0x01 };
++	const u8 set_sleep_cmd[] = {
++		CMD_HEADER_WRITE, E_POWER_STATE_SLEEP, 0x00, 0x01
++	};
+ 	int retry_cnt;
+ 	int error;
+ 
+@@ -1332,7 +1349,9 @@ static int __maybe_unused elants_i2c_resume(struct device *dev)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct elants_data *ts = i2c_get_clientdata(client);
+-	const u8 set_active_cmd[] = { 0x54, 0x58, 0x00, 0x01 };
++	const u8 set_active_cmd[] = {
++		CMD_HEADER_WRITE, E_POWER_STATE_RESUME, 0x00, 0x01
++	};
+ 	int retry_cnt;
+ 	int error;
+ 
+-- 
+2.20.1
 
-I kind of expect you are going to have a similar experience. So as
-well as getting the Intel Linux kernel developers involved for process
-and architecture support, you might want to look at how the dpaa2
-drivers have evolved, what they got wrong, what they got right. How is
-your hardware similar and different. And look at what parts of dpaa2
-have moved out of staging, and maybe consider that code as a good
-model to follow.
-
-      Andrew
