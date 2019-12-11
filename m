@@ -2,76 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 681A211BBB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:28:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2394D11BBB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:27:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbfLKS2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:28:13 -0500
-Received: from mailgw02.mediatek.com ([216.200.240.185]:58549 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731155AbfLKS2J (ORCPT
+        id S1730703AbfLKS1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:27:45 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39040 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729230AbfLKS1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:28:09 -0500
-X-UUID: 51a9bce2e8cd4f61ab5a3414b952c729-20191211
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=DayJ7MQWQ4RP+Xy9OFTguKUS9uFN/Vn4kGqH3oJR+Hs=;
-        b=RjHN9U0eQTpQs/XOW7GXxK7+TRHWYSLdznZmKzSoGVyKknnlsf8ILFhfqLBjAXp82huinTHDXuejodmE9mX/qzTQ++4N4pKaJ4BsSBlUg79tmtgrg0WlXUD4iYvkAvPzkHsJGRX90CZqzL21iAz/OhpSzm8O0AWPb1WdxdQqpiU=;
-X-UUID: 51a9bce2e8cd4f61ab5a3414b952c729-20191211
-Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw02.mediatek.com
-        (envelope-from <landen.chao@mediatek.com>)
-        (musrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 766005550; Wed, 11 Dec 2019 10:28:05 -0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS62DR.mediatek.inc (172.29.94.18) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 11 Dec 2019 10:27:43 -0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 12 Dec 2019 02:27:23 +0800
-Message-ID: <1576088846.23763.80.camel@mtksdccf07>
-Subject: Re: [PATCH net-next 5/6] arm64: dts: mt7622: add mt7531 dsa to
- mt7622-rfb1 board
-From:   Landen Chao <landen.chao@mediatek.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "vivien.didelot@savoirfairelinux.com" 
-        <vivien.didelot@savoirfairelinux.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        "opensource@vdorst.com" <opensource@vdorst.com>,
-        "frank-w@public-files.de" <frank-w@public-files.de>
-Date:   Thu, 12 Dec 2019 02:27:26 +0800
-In-Reply-To: <20191210165149.GF27714@lunn.ch>
-References: <cover.1575914275.git.landen.chao@mediatek.com>
-         <7f5a690281664a0fe47cfe7726f26d7f6211d015.1575914275.git.landen.chao@mediatek.com>
-         <20191210165149.GF27714@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Wed, 11 Dec 2019 13:27:44 -0500
+Received: by mail-ed1-f67.google.com with SMTP id v16so20245652edy.6;
+        Wed, 11 Dec 2019 10:27:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ff7CQdMliIKDFZWCzAdUrG86rvuqf7GP0H4SQLsLeJ8=;
+        b=r3g2M0sQFfeGY4gsIr9J3WhVNjQbv7Otg+2XlGUBUML2ETTFS6Jg0vbTasWuuIXXY5
+         s1j5tGolNK1l7vGhuCylD7roW9TidmAZhKM8z6UAJAcqBvqq6hMLXa0OHei4mFBXS+0L
+         +gKvd4QRYwIl7x6223f2WQfGa7sGU1CeyoeYcl8UfagdyGeGF9jWWDSoKjgYsDQT+nL8
+         kD6wqj17tj6J+Y+1h8wAR8lYDem3i5sUm0JGvzFfi1SXM+VbtfP864kl+bdK/aPfFgEW
+         YKUGzOEQk1ERKcHaCrz/q7TT6FWM3HmRcYFs7gMaNA+dMpQxNrQ76wOQjnQdXFPlFlns
+         bqhQ==
+X-Gm-Message-State: APjAAAV1LvXu4QlcRXgsUGE8hxVPShfmpuu7gvHDTOp5HKex/cgV/aN3
+        tGllvvg7dS3fCdnmmi4toOs=
+X-Google-Smtp-Source: APXvYqyJ7PblsCZH6vXzuWl2i8OZSvSR9RTMyV0zfdp9izG/UcT0/mLxk6V7A62vz392qKGcAPOvrg==
+X-Received: by 2002:a17:906:a950:: with SMTP id hh16mr4812284ejb.75.1576088862984;
+        Wed, 11 Dec 2019 10:27:42 -0800 (PST)
+Received: from kozik-lap ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id x15sm64891edl.48.2019.12.11.10.27.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Dec 2019 10:27:42 -0800 (PST)
+Date:   Wed, 11 Dec 2019 19:27:39 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] pinctrl: samsung: Enable compile test for build
+ coverage
+Message-ID: <20191211182739.GA6931@kozik-lap>
+References: <20191209163937.8156-1-krzk@kernel.org>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191209163937.8156-1-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTEyLTExIGF0IDAwOjUxICswODAwLCBBbmRyZXcgTHVubiB3cm90ZToNCj4g
-PiArCQkJCXBvcnRANiB7DQo+ID4gKwkJCQkJcmVnID0gPDY+Ow0KPiA+ICsJCQkJCWxhYmVsID0g
-ImNwdSI7DQo+ID4gKwkJCQkJZXRoZXJuZXQgPSA8JmdtYWMwPjsNCj4gPiArCQkJCQlwaHktbW9k
-ZSA9ICIyNTAwYmFzZS14IjsNCj4gPiArDQo+ID4gKwkJCQkJZml4ZWQtbGluayB7DQo+ID4gKwkJ
-CQkJCXNwZWVkID0gPDI1MDA+Ow0KPiA+ICsJCQkJCQlmdWxsLWR1cGxleDsNCj4gPiArCQkJCQkJ
-cGF1c2U7DQo+ID4gKwkJCQkJfTsNCj4gDQo+IFRoaXMgZml4ZWQtbGluayBzaG91bGQgbm90IGJl
-IG5lZWRlZC4gVGhlIERTQSBkcml2ZXIgaXMgc3VwcG9zZWQgdG8NCj4gY29uZmlndXJlIHRoZSBD
-UFUgcG9ydCB0byBpdHMgZmFzdGVzdCBzcGVlZCBieSBkZWZhdWx0LiAyNTAwIGlzDQo+IHRoZSBm
-YXN0ZXN0IHNwZWVkIGEgMjUwMEJhc2UtWCBsaW5rIGNhbiBkby4uLg0KSSdsbCBhZGQgdGhlIGNw
-dSBwb3J0IGxvZ2ljIHRvIHVzZSB0aGUgZmFzdGVzdCBzcGVlZCBieSBkZWZhdWx0Lg0KSXQgYWxz
-byBuZWVkcyB0byBtb2RpZnkgdGhlIG10NzUzeF9waHlsaW5rX21hY19jb25maWcoKSBsb2dpYy4N
-Cg0KTGFuZGVuDQo+IA0KPiAgICAgQW5kcmV3DQoNCg==
+On Mon, Dec 09, 2019 at 05:39:36PM +0100, Krzysztof Kozlowski wrote:
+> The Samsung pinctrl drivers require only GPIOLIB and OF for building.
+> The should be buildable on all architectures so enable COMPILE_TEST.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/pinctrl/samsung/Kconfig | 8 +++++---
+
+Applied both to my tree. I'll send them to you Linus later in pull
+request (unless 0-day catches some build failures).
+
+Best regards,
+Krzysztof
 
