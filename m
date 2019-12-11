@@ -2,204 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C3311A082
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFCDD11A0B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:45:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfLKBb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 20:31:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51928 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726417AbfLKBb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 20:31:26 -0500
-Received: from localhost (unknown [104.132.0.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD32F2073B;
-        Wed, 11 Dec 2019 01:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576027884;
-        bh=ayrRyJnyptOfktmNxEljwT35wIELYQ7274jJUpAhJaM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=z4vtjpUtYFXF+JqrxopTyU2W8dgJK7H9xczwTosw1BBFVKkcn/tUh5pBTwfAK8y+6
-         ojDE+1cq+MRY4Zg9SzvV3x6+XGZOkHbCe1aBYOWXPg7I8cnlUIpj71mtBfjSfFGSL3
-         3d8IBdO5ztUND3XEpq1RAfKx4CaRtt8hCqf3/3Fk=
-Date:   Tue, 10 Dec 2019 17:31:24 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 6/6] f2fs: set I_LINKABLE early to avoid wrong
- access by vfs
-Message-ID: <20191211013124.GB57416@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20191209222345.1078-1-jaegeuk@kernel.org>
- <20191209222345.1078-6-jaegeuk@kernel.org>
- <88dcbca9-3757-a440-ed73-9d99a56b816c@huawei.com>
- <20191211012121.GA52962@jaegeuk-macbookpro.roam.corp.google.com>
- <00ced682-9522-236d-4078-4c8f2e348d39@huawei.com>
+        id S1727427AbfLKBpk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 20:45:40 -0500
+Received: from mail.windriver.com ([147.11.1.11]:51372 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfLKBpk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 20:45:40 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTPS id xBB1io9N011413
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 10 Dec 2019 17:44:51 -0800 (PST)
+Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 10 Dec
+ 2019 17:44:50 -0800
+Subject: Re: [PATCH net/tipc] Replace rcu_swap_protected() with
+ rcu_replace_pointer()
+To:     <paulmck@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <jon.maloy@ericsson.com>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <tipc-discussion@lists.sourceforge.net>,
+        <torvalds@linux-foundation.org>, <mingo@kernel.org>,
+        <kernel-team@fb.com>
+References: <20191210033146.GA32522@paulmck-ThinkPad-P72>
+ <0e565b68-ece1-5ae6-bb5d-710163fb8893@windriver.com>
+ <20191210223825.GS2889@paulmck-ThinkPad-P72>
+From:   Ying Xue <ying.xue@windriver.com>
+Message-ID: <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
+Date:   Wed, 11 Dec 2019 09:31:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00ced682-9522-236d-4078-4c8f2e348d39@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20191210223825.GS2889@paulmck-ThinkPad-P72>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.224.155.90]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11, Chao Yu wrote:
-> On 2019/12/11 9:21, Jaegeuk Kim wrote:
-> > On 12/10, Chao Yu wrote:
-> >> On 2019/12/10 6:23, Jaegeuk Kim wrote:
-> >>> This patch moves setting I_LINKABLE early in rename2(whiteout) to avoid the
-> >>> below warning.
-> >>>
-> >>> [ 3189.163385] WARNING: CPU: 3 PID: 59523 at fs/inode.c:358 inc_nlink+0x32/0x40
-> >>> [ 3189.246979] Call Trace:
-> >>> [ 3189.248707]  f2fs_init_inode_metadata+0x2d6/0x440 [f2fs]
-> >>> [ 3189.251399]  f2fs_add_inline_entry+0x162/0x8c0 [f2fs]
-> >>> [ 3189.254010]  f2fs_add_dentry+0x69/0xe0 [f2fs]
-> >>> [ 3189.256353]  f2fs_do_add_link+0xc5/0x100 [f2fs]
-> >>> [ 3189.258774]  f2fs_rename2+0xabf/0x1010 [f2fs]
-> >>> [ 3189.261079]  vfs_rename+0x3f8/0xaa0
-> >>> [ 3189.263056]  ? tomoyo_path_rename+0x44/0x60
-> >>> [ 3189.265283]  ? do_renameat2+0x49b/0x550
-> >>> [ 3189.267324]  do_renameat2+0x49b/0x550
-> >>> [ 3189.269316]  __x64_sys_renameat2+0x20/0x30
-> >>> [ 3189.271441]  do_syscall_64+0x5a/0x230
-> >>> [ 3189.273410]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >>> [ 3189.275848] RIP: 0033:0x7f270b4d9a49
-> >>>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> ---
-> >>>  fs/f2fs/namei.c | 27 +++++++++++++--------------
-> >>>  1 file changed, 13 insertions(+), 14 deletions(-)
-> >>>
-> >>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> >>> index a1c507b0b4ac..5d9584281935 100644
-> >>> --- a/fs/f2fs/namei.c
-> >>> +++ b/fs/f2fs/namei.c
-> >>> @@ -797,6 +797,7 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
-> >>>  
-> >>>  	if (whiteout) {
-> >>>  		f2fs_i_links_write(inode, false);
-> >>> +		inode->i_state |= I_LINKABLE;
-> >>>  		*whiteout = inode;
-> >>>  	} else {
-> >>>  		d_tmpfile(dentry, inode);
-> >>> @@ -867,6 +868,12 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >>>  			F2FS_I(old_dentry->d_inode)->i_projid)))
-> >>>  		return -EXDEV;
-> >>>  
-> >>> +	if (flags & RENAME_WHITEOUT) {
-> >>> +		err = f2fs_create_whiteout(old_dir, &whiteout);
-> >>> +		if (err)
-> >>> +			return err;
-> >>> +	}
-> >>
-> >> To record quota info correctly, we need to create whiteout inode after
-> >> dquot_initialize(old_dir)?
-> > 
-> > __f2fs_tmpfile() will do it.
+On 12/11/19 6:38 AM, Paul E. McKenney wrote:
+> commit 4ee8e2c68b076867b7a5af82a38010fffcab611c
+> Author: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Mon Dec 9 19:13:45 2019 -0800
 > 
-> Okay.
+>     net/tipc: Replace rcu_swap_protected() with rcu_replace_pointer()
+>     
+>     This commit replaces the use of rcu_swap_protected() with the more
+>     intuitively appealing rcu_replace_pointer() as a step towards removing
+>     rcu_swap_protected().
+>     
+>     Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+>     Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+>     Reported-by: kbuild test robot <lkp@intel.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>     Cc: Jon Maloy <jon.maloy@ericsson.com>
+>     Cc: Ying Xue <ying.xue@windriver.com>
+>     Cc: "David S. Miller" <davem@davemloft.net>
+>     Cc: <netdev@vger.kernel.org>
+>     Cc: <tipc-discussion@lists.sourceforge.net>
 > 
-> Any comments on below question?
-> 
-> > 
-> >>
-> >>> +
-> >>>  	err = dquot_initialize(old_dir);
-> >>>  	if (err)
-> >>>  		goto out;
-> >>> @@ -898,17 +905,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >>>  		}
-> >>>  	}
-> >>>  
-> >>> -	if (flags & RENAME_WHITEOUT) {
-> >>> -		err = f2fs_create_whiteout(old_dir, &whiteout);
-> >>> -		if (err)
-> >>> -			goto out_dir;
-> >>> -	}
-> >>> -
-> >>>  	if (new_inode) {
-> >>>  
-> >>>  		err = -ENOTEMPTY;
-> >>>  		if (old_dir_entry && !f2fs_empty_dir(new_inode))
-> >>> -			goto out_whiteout;
-> >>> +			goto out_dir;
-> >>>  
-> >>>  		err = -ENOENT;
-> >>>  		new_entry = f2fs_find_entry(new_dir, &new_dentry->d_name,
-> >>> @@ -916,7 +917,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >>>  		if (!new_entry) {
-> >>>  			if (IS_ERR(new_page))
-> >>>  				err = PTR_ERR(new_page);
-> >>> -			goto out_whiteout;
-> >>> +			goto out_dir;
-> >>>  		}
-> >>>  
-> >>>  		f2fs_balance_fs(sbi, true);
-> >>> @@ -948,7 +949,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >>>  		err = f2fs_add_link(new_dentry, old_inode);
-> >>>  		if (err) {
-> >>>  			f2fs_unlock_op(sbi);
-> >>> -			goto out_whiteout;
-> >>> +			goto out_dir;
-> >>>  		}
-> >>>  
-> >>>  		if (old_dir_entry)
-> >>> @@ -972,7 +973,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >>>  				if (IS_ERR(old_page))
-> >>>  					err = PTR_ERR(old_page);
-> >>>  				f2fs_unlock_op(sbi);
-> >>> -				goto out_whiteout;
-> >>> +				goto out_dir;
-> >>>  			}
-> >>>  		}
-> >>>  	}
-> >>> @@ -991,7 +992,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >>>  	f2fs_delete_entry(old_entry, old_page, old_dir, NULL);
-> >>>  
-> >>>  	if (whiteout) {
-> >>> -		whiteout->i_state |= I_LINKABLE;
-> >>>  		set_inode_flag(whiteout, FI_INC_LINK);
-> >>>  		err = f2fs_add_link(old_dentry, whiteout);
-> >>
-> >> [ 3189.256353]  f2fs_do_add_link+0xc5/0x100 [f2fs]
-> >> [ 3189.258774]  f2fs_rename2+0xabf/0x1010 [f2fs]
-> >>
-> >> Does the call stack point here? if so, we have set I_LINKABLE before
-> >> f2fs_add_link(), why the warning still be triggered?
-> 
-> Am I missing something?
 
-Not sure exactly tho, I suspect some races before/after unlock_new_inode().
+Acked-by: Ying Xue <ying.xue@windriver.com>
 
+> diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
+> index 990a872..978d2db 100644
+> --- a/net/tipc/crypto.c
+> +++ b/net/tipc/crypto.c
+> @@ -257,9 +257,6 @@ static char *tipc_key_change_dump(struct tipc_key old, struct tipc_key new,
+>  #define tipc_aead_rcu_ptr(rcu_ptr, lock)				\
+>  	rcu_dereference_protected((rcu_ptr), lockdep_is_held(lock))
+>  
+> -#define tipc_aead_rcu_swap(rcu_ptr, ptr, lock)				\
+> -	rcu_swap_protected((rcu_ptr), (ptr), lockdep_is_held(lock))
+> -
+>  #define tipc_aead_rcu_replace(rcu_ptr, ptr, lock)			\
+>  do {									\
+>  	typeof(rcu_ptr) __tmp = rcu_dereference_protected((rcu_ptr),	\
+> @@ -1189,7 +1186,7 @@ static bool tipc_crypto_key_try_align(struct tipc_crypto *rx, u8 new_pending)
+>  
+>  	/* Move passive key if any */
+>  	if (key.passive) {
+> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
+> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2, &rx->lock);
+>  		x = (key.passive - key.pending + new_pending) % KEY_MAX;
+>  		new_passive = (x <= 0) ? x + KEY_MAX : x;
+>  	}
 > 
-> Thanks,
-> 
-> >>
-> >> Thanks,
-> >>
-> >>>  		if (err)
-> >>> @@ -1027,15 +1027,14 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >>>  	f2fs_unlock_op(sbi);
-> >>>  	if (new_page)
-> >>>  		f2fs_put_page(new_page, 0);
-> >>> -out_whiteout:
-> >>> -	if (whiteout)
-> >>> -		iput(whiteout);
-> >>>  out_dir:
-> >>>  	if (old_dir_entry)
-> >>>  		f2fs_put_page(old_dir_page, 0);
-> >>>  out_old:
-> >>>  	f2fs_put_page(old_page, 0);
-> >>>  out:
-> >>> +	if (whiteout)
-> >>> +		iput(whiteout);
-> >>>  	return err;
-> >>>  }
-> >>>  
-> >>>
-> > .
-> > 
