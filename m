@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9173611AEF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02C1E11AEF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730627AbfLKPJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:09:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57660 "EHLO mail.kernel.org"
+        id S1730638AbfLKPJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:09:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730618AbfLKPJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:09:34 -0500
+        id S1730141AbfLKPJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:09:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA9F424658;
-        Wed, 11 Dec 2019 15:09:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 399232465B;
+        Wed, 11 Dec 2019 15:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076974;
-        bh=gmWCkjQVPPfidX2Tuqq9EuA+KCH/LpIU+IvlQpr4yBA=;
+        s=default; t=1576076976;
+        bh=139vf3DfrbkU/P4JhYzf52gZ3HQgEWtbHarbgTFRTQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ukgpba1zmRgVgi+kexOs6SFCJf4AbWaNmweLNx0VDN52OT+vP2hzyqlEiufbkyyCg
-         ZDpw7m9Vfmzh8IZhBhwqS5xH2JmgY5Fuy+4MA9emKOqcziX+Ib103A0MJsvWpKFhJX
-         3rdkuGP9rNyDZnwOhSS+d0UVVkvxzIdtbnlw4KdE=
+        b=Zul2SulS4U/oQJpR0RzxztOcyxXg/xNqLQPmykcmMO7Jlnua40/bcyU6+JwRHuTQv
+         6M/Qj6cwEcgl+UIKbKm/0/7lFlqHYoOhbRLE7AJvmEhCsdDEjrRUj1PPpKUtziokZq
+         aTDnVFSM82ogFnybkLxaqfv7dhsSsUEFQAdcoPXA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Paul Mackerras <paulus@ozlabs.org>
-Subject: [PATCH 5.4 61/92] KVM: PPC: Book3S HV: XIVE: Set kvm->arch.xive when VPs are allocated
-Date:   Wed, 11 Dec 2019 16:05:52 +0100
-Message-Id: <20191211150250.436265473@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Reto Buerki <reet@codelabs.ch>
+Subject: [PATCH 5.4 62/92] KVM: nVMX: Always write vmcs02.GUEST_CR3 during nested VM-Enter
+Date:   Wed, 11 Dec 2019 16:05:53 +0100
+Message-Id: <20191211150251.817846556@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
 References: <20191211150221.977775294@linuxfoundation.org>
@@ -44,84 +47,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kurz <groug@kaod.org>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit e7d71c943040c23f2fd042033d319f56e84f845b upstream.
+commit 04f11ef45810da5ae2542dd78cc353f3761bd2cb upstream.
 
-If we cannot allocate the XIVE VPs in OPAL, the creation of a XIVE or
-XICS-on-XIVE device is aborted as expected, but we leave kvm->arch.xive
-set forever since the release method isn't called in this case. Any
-subsequent tentative to create a XIVE or XICS-on-XIVE for this VM will
-thus always fail (DoS). This is a problem for QEMU since it destroys
-and re-creates these devices when the VM is reset: the VM would be
-restricted to using the much slower emulated XIVE or XICS forever.
+Write the desired L2 CR3 into vmcs02.GUEST_CR3 during nested VM-Enter
+instead of deferring the VMWRITE until vmx_set_cr3().  If the VMWRITE
+is deferred, then KVM can consume a stale vmcs02.GUEST_CR3 when it
+refreshes vmcs12->guest_cr3 during nested_vmx_vmexit() if the emulated
+VM-Exit occurs without actually entering L2, e.g. if the nested run
+is squashed because nested VM-Enter (from L1) is putting L2 into HLT.
 
-As an alternative to adding rollback, do not assign kvm->arch.xive before
-making sure the XIVE VPs are allocated in OPAL.
+Note, the above scenario can occur regardless of whether L1 is
+intercepting HLT, e.g. L1 can intercept HLT and then re-enter L2 with
+vmcs.GUEST_ACTIVITY_STATE=HALTED.  But practically speaking, a VMM will
+likely put a guest into HALTED if and only if it's not intercepting HLT.
 
-Cc: stable@vger.kernel.org # v5.2
-Fixes: 5422e95103cf ("KVM: PPC: Book3S HV: XIVE: Replace the 'destroy' method by a 'release' method")
-Signed-off-by: Greg Kurz <groug@kaod.org>
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+In an ideal world where EPT *requires* unrestricted guest (and vice
+versa), VMX could handle CR3 similar to how it handles RSP and RIP,
+e.g. mark CR3 dirty and conditionally load it at vmx_vcpu_run().  But
+the unrestricted guest silliness complicates the dirty tracking logic
+to the point that explicitly handling vmcs02.GUEST_CR3 during nested
+VM-Enter is a simpler overall implementation.
+
+Cc: stable@vger.kernel.org
+Reported-and-tested-by: Reto Buerki <reet@codelabs.ch>
+Tested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/book3s_xive.c        |   11 +++++------
- arch/powerpc/kvm/book3s_xive_native.c |    2 +-
- 2 files changed, 6 insertions(+), 7 deletions(-)
+ arch/x86/kvm/vmx/nested.c |   10 ++++++++++
+ arch/x86/kvm/vmx/vmx.c    |   10 +++++++---
+ 2 files changed, 17 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/kvm/book3s_xive.c
-+++ b/arch/powerpc/kvm/book3s_xive.c
-@@ -2005,6 +2005,10 @@ static int kvmppc_xive_create(struct kvm
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -2418,6 +2418,16 @@ static int prepare_vmcs02(struct kvm_vcp
+ 				entry_failure_code))
+ 		return -EINVAL;
  
- 	pr_devel("Creating xive for partition\n");
- 
-+	/* Already there ? */
-+	if (kvm->arch.xive)
-+		return -EEXIST;
++	/*
++	 * Immediately write vmcs02.GUEST_CR3.  It will be propagated to vmcs12
++	 * on nested VM-Exit, which can occur without actually running L2 and
++	 * thus without hitting vmx_set_cr3(), e.g. if L1 is entering L2 with
++	 * vmcs12.GUEST_ACTIVITYSTATE=HLT, in which case KVM will intercept the
++	 * transition to HLT instead of running L2.
++	 */
++	if (enable_ept)
++		vmcs_writel(GUEST_CR3, vmcs12->guest_cr3);
 +
- 	xive = kvmppc_xive_get_device(kvm, type);
- 	if (!xive)
- 		return -ENOMEM;
-@@ -2014,12 +2018,6 @@ static int kvmppc_xive_create(struct kvm
- 	xive->kvm = kvm;
- 	mutex_init(&xive->lock);
+ 	/* Late preparation of GUEST_PDPTRs now that EFER and CRs are set. */
+ 	if (load_guest_pdptrs_vmcs12 && nested_cpu_has_ept(vmcs12) &&
+ 	    is_pae_paging(vcpu)) {
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -2995,6 +2995,7 @@ u64 construct_eptp(struct kvm_vcpu *vcpu
+ void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+ {
+ 	struct kvm *kvm = vcpu->kvm;
++	bool update_guest_cr3 = true;
+ 	unsigned long guest_cr3;
+ 	u64 eptp;
  
--	/* Already there ? */
--	if (kvm->arch.xive)
--		ret = -EEXIST;
--	else
--		kvm->arch.xive = xive;
--
- 	/* We use the default queue size set by the host */
- 	xive->q_order = xive_native_default_eq_shift();
- 	if (xive->q_order < PAGE_SHIFT)
-@@ -2039,6 +2037,7 @@ static int kvmppc_xive_create(struct kvm
- 	if (ret)
- 		return ret;
+@@ -3011,15 +3012,18 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu,
+ 			spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+ 		}
  
-+	kvm->arch.xive = xive;
- 	return 0;
+-		if (enable_unrestricted_guest || is_paging(vcpu) ||
+-		    is_guest_mode(vcpu))
++		/* Loading vmcs02.GUEST_CR3 is handled by nested VM-Enter. */
++		if (is_guest_mode(vcpu))
++			update_guest_cr3 = false;
++		else if (enable_unrestricted_guest || is_paging(vcpu))
+ 			guest_cr3 = kvm_read_cr3(vcpu);
+ 		else
+ 			guest_cr3 = to_kvm_vmx(kvm)->ept_identity_map_addr;
+ 		ept_load_pdptrs(vcpu);
+ 	}
+ 
+-	vmcs_writel(GUEST_CR3, guest_cr3);
++	if (update_guest_cr3)
++		vmcs_writel(GUEST_CR3, guest_cr3);
  }
  
---- a/arch/powerpc/kvm/book3s_xive_native.c
-+++ b/arch/powerpc/kvm/book3s_xive_native.c
-@@ -1095,7 +1095,6 @@ static int kvmppc_xive_native_create(str
- 	dev->private = xive;
- 	xive->dev = dev;
- 	xive->kvm = kvm;
--	kvm->arch.xive = xive;
- 	mutex_init(&xive->mapping_lock);
- 	mutex_init(&xive->lock);
- 
-@@ -1116,6 +1115,7 @@ static int kvmppc_xive_native_create(str
- 	if (ret)
- 		return ret;
- 
-+	kvm->arch.xive = xive;
- 	return 0;
- }
- 
+ int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
 
 
