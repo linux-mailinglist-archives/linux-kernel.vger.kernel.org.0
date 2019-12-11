@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7343D11AEF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CCBC11B0BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:26:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730662AbfLKPJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:09:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57858 "EHLO mail.kernel.org"
+        id S1733051AbfLKPZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:25:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730177AbfLKPJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:09:45 -0500
+        id S1732734AbfLKPZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:25:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7064D22B48;
-        Wed, 11 Dec 2019 15:09:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA213208C3;
+        Wed, 11 Dec 2019 15:25:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076984;
-        bh=TQTDf8uMGZaMCrhwqddDGr70A0eN8FQyvw+Bojojpcs=;
+        s=default; t=1576077947;
+        bh=BBUTOnmzbk679WZo0LdMjfkFx6maVge5rDaTs4qGywU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LrmO6YumTuEx2NXR3BkfdgSBej2yGRq2jOvphU39TrYUV8Blvd48Jpv9P8g5Pfgj5
-         0R3wK4AS5YWS5Hg/e3gNx7VDtiUqeDxaHphfyh0efDsi36OzGgaYOehWC7qAbhB1YK
-         E6RXOBBSXVBJ2VurDAbIEv9w1ZVLBeQq/VZ77HrI=
+        b=cex+7JipgkkLZq2lmh0kW58r75noTOTc/N9KtMxCLrwZvvxi+jJsRa3q+o6zGN9un
+         LOcYYBGmQrGNPdbgk2tZDzyXraPynL3AZ69ukx+QpgdI2uHoExGa8IB4as+/0vr+1v
+         RvN/fAxiFL5I8XK0r+YNV1rdP7t+3QRXYOiJnzK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 65/92] KVM: x86: fix presentation of TSX feature in ARCH_CAPABILITIES
+        stable@vger.kernel.org, Helen Koike <helen.koike@collabora.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 194/243] media: vimc: fix start stream when link is disabled
 Date:   Wed, 11 Dec 2019 16:05:56 +0100
-Message-Id: <20191211150252.913746294@linuxfoundation.org>
+Message-Id: <20191211150352.274427125@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Helen Fornazier <helen.koike@collabora.com>
 
-commit cbbaa2727aa3ae9e0a844803da7cef7fd3b94f2b upstream.
+[ Upstream commit e159b6074c82fe31b79aad672e02fa204dbbc6d8 ]
 
-KVM does not implement MSR_IA32_TSX_CTRL, so it must not be presented
-to the guests.  It is also confusing to have !ARCH_CAP_TSX_CTRL_MSR &&
-!RTM && ARCH_CAP_TAA_NO: lack of MSR_IA32_TSX_CTRL suggests TSX was not
-hidden (it actually was), yet the value says that TSX is not vulnerable
-to microarchitectural data sampling.  Fix both.
+If link is disabled, media_entity_remote_pad returns NULL, causing a
+NULL pointer deference.
+Ignore links that are not enabled instead.
 
-Cc: stable@vger.kernel.org
-Tested-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/x86.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/media/platform/vimc/vimc-common.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1328,12 +1328,18 @@ static u64 kvm_get_arch_capabilities(voi
- 	 * If TSX is disabled on the system, guests are also mitigated against
- 	 * TAA and clear CPU buffer mitigation is not required for guests.
- 	 */
--	if (boot_cpu_has_bug(X86_BUG_TAA) && boot_cpu_has(X86_FEATURE_RTM) &&
--	    (data & ARCH_CAP_TSX_CTRL_MSR))
-+	if (!boot_cpu_has(X86_FEATURE_RTM))
-+		data &= ~ARCH_CAP_TAA_NO;
-+	else if (!boot_cpu_has_bug(X86_BUG_TAA))
-+		data |= ARCH_CAP_TAA_NO;
-+	else if (data & ARCH_CAP_TSX_CTRL_MSR)
- 		data &= ~ARCH_CAP_MDS_NO;
+diff --git a/drivers/media/platform/vimc/vimc-common.c b/drivers/media/platform/vimc/vimc-common.c
+index 204aa6f554e4d..fa8435ac2b1ae 100644
+--- a/drivers/media/platform/vimc/vimc-common.c
++++ b/drivers/media/platform/vimc/vimc-common.c
+@@ -241,6 +241,8 @@ int vimc_pipeline_s_stream(struct media_entity *ent, int enable)
  
-+	/* KVM does not emulate MSR_IA32_TSX_CTRL.  */
-+	data &= ~ARCH_CAP_TSX_CTRL_MSR;
- 	return data;
- }
-+EXPORT_SYMBOL_GPL(kvm_get_arch_capabilities);
+ 		/* Start the stream in the subdevice direct connected */
+ 		pad = media_entity_remote_pad(&ent->pads[i]);
++		if (!pad)
++			continue;
  
- static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
- {
+ 		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			return -EINVAL;
+-- 
+2.20.1
+
 
 
