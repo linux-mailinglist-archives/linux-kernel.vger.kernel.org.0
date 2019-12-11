@@ -2,34 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E7AA11B11D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:28:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66F0411B120
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:29:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733156AbfLKP2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:28:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35016 "EHLO mail.kernel.org"
+        id S2387745AbfLKP2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:28:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387704AbfLKP2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:28:44 -0500
+        id S2387458AbfLKP2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:28:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A9F72465B;
-        Wed, 11 Dec 2019 15:28:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E25B42467D;
+        Wed, 11 Dec 2019 15:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078123;
-        bh=Dkvv5C2yuzz6i9OHp8E4g3HqdPqGabSxN/nzvOCSarg=;
+        s=default; t=1576078130;
+        bh=Jviwh3vJgi74E19q35hueu7i1yLk6agFMCkrNyCram8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IAqb0sbDu+3Kq9kXbSn333sGwubd0qGQutwLTKnvmjTuFsgxyZJY0j0afCVt/lAWI
-         Ps9S8KlXpiQV0GrD1Z3L5StQOo0AkdWhew9wsWGfUlIHUe5GqxArgKb408CZGYYsth
-         Mdnd+1/Hx9SRzCb+VT9D7xBpjYF1KO757MS0vSd0=
+        b=wPkQRG/DR6vEAhG8jLN5Dlutju6DQUl5t+pl6F0o+P4vWSMlha8bWVWaGaL+rHNJl
+         /0pep8otd8aabXzk5ShBePna+nNemODl8LR974X4Nc5Zy9Sq/AxMtPmGH9fMDq4LLJ
+         6iMHUIZZSveRkFf4nN8un9zmzAoJ/qFQEQVrQfDc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.14 11/58] powerpc/tools: Don't quote $objdump in scripts
-Date:   Wed, 11 Dec 2019 10:27:44 -0500
-Message-Id: <20191211152831.23507-11-sashal@kernel.org>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 18/58] scsi: tracing: Fix handling of TRANSFER LENGTH == 0 for READ(6) and WRITE(6)
+Date:   Wed, 11 Dec 2019 10:27:51 -0500
+Message-Id: <20191211152831.23507-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152831.23507-1-sashal@kernel.org>
 References: <20191211152831.23507-1-sashal@kernel.org>
@@ -42,65 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit e44ff9ea8f4c8a90c82f7b85bd4f5e497c841960 ]
+[ Upstream commit f6b8540f40201bff91062dd64db8e29e4ddaaa9d ]
 
-Some of our scripts are passed $objdump and then call it as
-"$objdump". This doesn't work if it contains spaces because we're
-using ccache, for example you get errors such as:
+According to SBC-2 a TRANSFER LENGTH field of zero means that 256 logical
+blocks must be transferred. Make the SCSI tracing code follow SBC-2.
 
-  ./arch/powerpc/tools/relocs_check.sh: line 48: ccache ppc64le-objdump: No such file or directory
-  ./arch/powerpc/tools/unrel_branch_check.sh: line 26: ccache ppc64le-objdump: No such file or directory
-
-Fix it by not quoting the string when we expand it, allowing the shell
-to do the right thing for us.
-
-Fixes: a71aa05e1416 ("powerpc: Convert relocs_check to a shell script using grep")
-Fixes: 4ea80652dc75 ("powerpc/64s: Tool to flag direct branches from unrelocated interrupt vectors")
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191024004730.32135-1-mpe@ellerman.id.au
+Fixes: bf8162354233 ("[SCSI] add scsi trace core functions and put trace points")
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Douglas Gilbert <dgilbert@interlog.com>
+Link: https://lore.kernel.org/r/20191105215553.185018-1-bvanassche@acm.org
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/tools/relocs_check.sh       | 2 +-
- arch/powerpc/tools/unrel_branch_check.sh | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/scsi_trace.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/tools/relocs_check.sh b/arch/powerpc/tools/relocs_check.sh
-index ec2d5c835170a..d6c16e7faa387 100755
---- a/arch/powerpc/tools/relocs_check.sh
-+++ b/arch/powerpc/tools/relocs_check.sh
-@@ -23,7 +23,7 @@ objdump="$1"
- vmlinux="$2"
+diff --git a/drivers/scsi/scsi_trace.c b/drivers/scsi/scsi_trace.c
+index 0ff083bbf5b1f..617a607375908 100644
+--- a/drivers/scsi/scsi_trace.c
++++ b/drivers/scsi/scsi_trace.c
+@@ -30,15 +30,18 @@ static const char *
+ scsi_trace_rw6(struct trace_seq *p, unsigned char *cdb, int len)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+-	sector_t lba = 0, txlen = 0;
++	u32 lba = 0, txlen;
  
- bad_relocs=$(
--"$objdump" -R "$vmlinux" |
-+$objdump -R "$vmlinux" |
- 	# Only look at relocation lines.
- 	grep -E '\<R_' |
- 	# These relocations are okay
-diff --git a/arch/powerpc/tools/unrel_branch_check.sh b/arch/powerpc/tools/unrel_branch_check.sh
-index 1e972df3107ee..77114755dc6f2 100755
---- a/arch/powerpc/tools/unrel_branch_check.sh
-+++ b/arch/powerpc/tools/unrel_branch_check.sh
-@@ -18,14 +18,14 @@ vmlinux="$2"
- #__end_interrupts should be located within the first 64K
+ 	lba |= ((cdb[1] & 0x1F) << 16);
+ 	lba |=  (cdb[2] << 8);
+ 	lba |=   cdb[3];
+-	txlen = cdb[4];
++	/*
++	 * From SBC-2: a TRANSFER LENGTH field set to zero specifies that 256
++	 * logical blocks shall be read (READ(6)) or written (WRITE(6)).
++	 */
++	txlen = cdb[4] ? cdb[4] : 256;
  
- end_intr=0x$(
--"$objdump" -R "$vmlinux" -d --start-address=0xc000000000000000		\
-+$objdump -R "$vmlinux" -d --start-address=0xc000000000000000           \
- 		 --stop-address=0xc000000000010000 |
- grep '\<__end_interrupts>:' |
- awk '{print $1}'
- )
+-	trace_seq_printf(p, "lba=%llu txlen=%llu",
+-			 (unsigned long long)lba, (unsigned long long)txlen);
++	trace_seq_printf(p, "lba=%u txlen=%u", lba, txlen);
+ 	trace_seq_putc(p, 0);
  
- BRANCHES=$(
--"$objdump" -R "$vmlinux" -D --start-address=0xc000000000000000		\
-+$objdump -R "$vmlinux" -D --start-address=0xc000000000000000           \
- 		--stop-address=${end_intr} |
- grep -e "^c[0-9a-f]*:[[:space:]]*\([0-9a-f][0-9a-f][[:space:]]\)\{4\}[[:space:]]*b" |
- grep -v '\<__start_initialization_multiplatform>' |
+ 	return ret;
 -- 
 2.20.1
 
