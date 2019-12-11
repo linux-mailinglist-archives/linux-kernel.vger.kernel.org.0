@@ -2,88 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773BA11BEC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 22:02:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D81811BED5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 22:05:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfLKVCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 16:02:15 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:39611 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbfLKVCM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 16:02:12 -0500
-Received: by mail-pj1-f65.google.com with SMTP id v93so65462pjb.6;
-        Wed, 11 Dec 2019 13:02:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4x089GCW851wB44OMyqqrKLGIDjDoejo+eqllaL+RO8=;
-        b=DVhZZmb1Ph8PNvtFOTR1oLnqYgtXOKOimqKsQvbZaNkfqksw9W4XLv+agXbU3UNlqZ
-         T0fjMvF9d+WiK5foM9BMC5F8TDRxGQTl59GNQdVK7yAmIfhWwMeVSVjapzIFxVqp/OmA
-         zVaJMoLEaFWnenDaaLBMWsB0abNfWzSEEQiAOxhyE0J93Boa4E9KTlH0FZ0pVPorZd19
-         hBoe8mWPuAgJi0uR/7X2KLDx7uKyQ+DyN7Ox/0wFrVes1CB9gRl91sjKjRR2zI0zxAhq
-         5MPWn9unRJBLrDGyN8zTCZMIVR1W5VOQWPWW/ynoHzAdjC7Zd9QSpEtQscuiXFNWfN7m
-         lgAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=4x089GCW851wB44OMyqqrKLGIDjDoejo+eqllaL+RO8=;
-        b=tTX7bEJOgNBCYK1bC76O3bDZdv+h/dmo2UvoEcTJ+vdL8/7ukSbXcpZsUSBwzTlJRz
-         DjF0gZUH2jO3lEB4eNbqTymIt+fm/tH2ohzDnHS+MUZyTq9pwlQ7FHdCujoQIbMLZFE7
-         0U+OH0HnFY7zNKmWYX9+8SmFueYgLhuqWWs57nx1eQ1wEiO51M/FxbTeS5UpIcXbH7Ra
-         NpKbcVaVMQTk4f0luYiAE0HmgysmXEBeDKQbBKLy6Lkh6EE05wSU22v3MAVl2YjJEHUh
-         5OvjeFIBokpChSi+LHGZX9dyEzYgj5DarZY+wCIvxFkfW0KI7v9NjBMQKwEC8jxgXxq2
-         uM4g==
-X-Gm-Message-State: APjAAAVBbod+B6kckPTyYtD4q8qgfbZvPq84OeKWiybKvYblPg7uPsqo
-        rUyhF20Deot2kRxDcU36SbsDvwgT
-X-Google-Smtp-Source: APXvYqyyY/Dbrnw0FV5dlFmqhznPeyzwP+1Mj66Anb+Yn3qsn7WOSC0uSzUmLG18uUkb4Xk/7GPAYA==
-X-Received: by 2002:a17:90a:c385:: with SMTP id h5mr5729970pjt.122.1576098131406;
-        Wed, 11 Dec 2019 13:02:11 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id g19sm4062137pfh.134.2019.12.11.13.02.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 13:02:10 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-watchdog@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-mips@linux-mips.org, Paul Burton <paulburton@kernel.org>,
-        Denis Efremov <efremov@linux.com>
-Subject: [PATCH 2/2] watchdog: Relax dependencies for CONFIG_WDT_MTX1
-Date:   Wed, 11 Dec 2019 13:02:04 -0800
-Message-Id: <20191211210204.31579-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191211210204.31579-1-f.fainelli@gmail.com>
-References: <20191211210204.31579-1-f.fainelli@gmail.com>
+        id S1726592AbfLKVFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 16:05:53 -0500
+Received: from ms.lwn.net ([45.79.88.28]:58294 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726141AbfLKVFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 16:05:53 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 603E97DF;
+        Wed, 11 Dec 2019 21:05:52 +0000 (UTC)
+Date:   Wed, 11 Dec 2019 14:05:51 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 24/24] Documentation: document ioctl interfaces better
+Message-ID: <20191211140551.00520269@lwn.net>
+In-Reply-To: <20191211204306.1207817-25-arnd@arndb.de>
+References: <20191211204306.1207817-1-arnd@arndb.de>
+        <20191211204306.1207817-25-arnd@arndb.de>
+Organization: LWN.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have dropped the inclusion of a machine specific header, we
-can allow the driver to be compile tested beyond just MIPS.
+On Wed, 11 Dec 2019 21:42:58 +0100
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Documentation/process/botching-up-ioctls.rst was orignally
+> written as a blog post for DRM driver writers, so it it misses
+> some points while going into a lot of detail on others.
+> 
+> Try to provide a replacement that addresses typical issues
+> across a wider range of subsystems, and follows the style of
+> the core-api documentation better.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 1679e0dc869b..982897ff074e 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -1651,7 +1651,7 @@ config JZ4740_WDT
- 
- config WDT_MTX1
- 	tristate "MTX-1 Hardware Watchdog"
--	depends on MIPS_MTX1 || (MIPS && COMPILE_TEST)
-+	depends on MIPS_MTX1 || COMPILE_TEST
- 	help
- 	  Hardware driver for the MTX-1 boards. This is a watchdog timer that
- 	  will reboot the machine after a 100 seconds timer expired.
--- 
-2.17.1
+Thanks for improving the docs!  I have a few nits outside of the content
+itself.
 
+>  Documentation/core-api/index.rst |   1 +
+>  Documentation/core-api/ioctl.rst | 250 +++++++++++++++++++++++++++++++
+>  2 files changed, 251 insertions(+)
+>  create mode 100644 Documentation/core-api/ioctl.rst
+
+So you left the old document in place; was that intentional?
+
+> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+> index ab0eae1c153a..3f28b2f668be 100644
+> --- a/Documentation/core-api/index.rst
+> +++ b/Documentation/core-api/index.rst
+> @@ -39,6 +39,7 @@ Core utilities
+>     ../RCU/index
+>     gcc-plugins
+>     symbol-namespaces
+> +   ioctl
+>  
+>  
+>  Interfaces for kernel debugging
+> diff --git a/Documentation/core-api/ioctl.rst b/Documentation/core-api/ioctl.rst
+> new file mode 100644
+> index 000000000000..cb2c86ae63e7
+> --- /dev/null
+> +++ b/Documentation/core-api/ioctl.rst
+> @@ -0,0 +1,250 @@
+> +======================
+> +ioctl based interfaces
+> +======================
+> +
+> +:c:func:`ioctl` is the most common way for applications to interface
+
+Please don't use :c:func: anymore.  If you just say "ioctl()" the right
+thing will happen (which is nothing here, since there isn't anything that
+makes sense to link to in the internal kernel context).
+
+We need a checkpatch rule for :c:func: I guess.
+
+Similarly, later on you have:
+
+> +Timeout values and timestamps should ideally use CLOCK_MONOTONIC time,
+> +as returned by ``ktime_get_ns()`` or ``ktime_get_ts64()``.  Unlike
+> +CLOCK_REALTIME, this makes the timestamps immune from jumping backwards
+> +or forwards due to leap second adjustments and clock_settime() calls.
+
+Making those functions ``literal`` will defeat the automatic
+cross-referencing.  Better to just say ktime_get_ns() without quotes.
+
+[...]
+
+> +* On the x86-32 (i386) architecture, the alignment of 64-bit variables
+> +  is only 32 bit, but they are naturally aligned on most other
+> +  architectures including x86-64. This means a structure like
+> +
+> +  ::
+
+You don't need the extra lines here; just say "...a structure like::"
+
+> +    struct foo {
+> +        __u32 a;
+> +        __u64 b;
+> +        __u32 c;
+> +    };
+> +
+
+Thanks,
+
+jon
