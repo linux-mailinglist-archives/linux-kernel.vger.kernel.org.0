@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD71711B09B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:24:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF24611AF04
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732854AbfLKPYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:24:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55790 "EHLO mail.kernel.org"
+        id S1730725AbfLKPKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:10:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732843AbfLKPY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:24:28 -0500
+        id S1730707AbfLKPKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:10:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 477422173E;
-        Wed, 11 Dec 2019 15:24:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB8C0208C3;
+        Wed, 11 Dec 2019 15:10:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077867;
-        bh=YOOKKu7KZKalCYc9fcrbvluf+Q6hWobR9h7/kUaryYI=;
+        s=default; t=1576077011;
+        bh=CVHkUPIndhn4PNASNpRZonNaGG8cSqrmhz/kpyIiTJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QlRW1LRgc+YUiwXFePBrjLlysEWkGCY+IL6T1eiYD0ifAHnx/sWvkfRcr0mO/zCXp
-         +ZKlsqVFmqRxT/8qKH35jJ2wlXBUzSlxcBWyj84rIStFduC8xWDgq3I17MmqqtgrVr
-         k7UYPQktpzfEO/80H5o4jO1DE5FTPQdM4ABMSSLU=
+        b=RXS4xjeAwtyFyA29fRUPveBOGSkq2ksAo66QKX4m2hBK9l6i3zMveGyGCXYALdHob
+         EeqoHeLYUSQA3L562t913yrpSg7mSmt//pz5OdO4T8fvMsvKKY7lmRlbnsCpQ0Ixep
+         5QfvAeQahYRmfzEBdC1Kq4II279pdhi/C/TzsGyY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 202/243] ALSA: pcm: oss: Avoid potential buffer overflows
-Date:   Wed, 11 Dec 2019 16:06:04 +0100
-Message-Id: <20191211150352.821623102@linuxfoundation.org>
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.4 74/92] crypto: user - fix memory leak in crypto_report
+Date:   Wed, 11 Dec 2019 16:06:05 +0100
+Message-Id: <20191211150258.044181599@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,64 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 4cc8d6505ab82db3357613d36e6c58a297f57f7c upstream.
+commit ffdde5932042600c6807d46c1550b28b0db6a3bc upstream.
 
-syzkaller reported an invalid access in PCM OSS read, and this seems
-to be an overflow of the internal buffer allocated for a plugin.
-Since the rate plugin adjusts its transfer size dynamically, the
-calculation for the chained plugin might be bigger than the given
-buffer size in some extreme cases, which lead to such an buffer
-overflow as caught by KASAN.
+In crypto_report, a new skb is created via nlmsg_new(). This skb should
+be released if crypto_report_alg() fails.
 
-Fix it by limiting the max transfer size properly by checking against
-the destination size in each plugin transfer callback.
-
-Reported-by: syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com
+Fixes: a38f7907b926 ("crypto: Add userspace configuration API")
 Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191204144824.17801-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/linear.c |    2 ++
- sound/core/oss/mulaw.c  |    2 ++
- sound/core/oss/route.c  |    2 ++
- 3 files changed, 6 insertions(+)
+ crypto/crypto_user_base.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/core/oss/linear.c
-+++ b/sound/core/oss/linear.c
-@@ -107,6 +107,8 @@ static snd_pcm_sframes_t linear_transfer
- 		}
- 	}
- #endif
-+	if (frames > dst_channels[0].frames)
-+		frames = dst_channels[0].frames;
- 	convert(plugin, src_channels, dst_channels, frames);
- 	return frames;
- }
---- a/sound/core/oss/mulaw.c
-+++ b/sound/core/oss/mulaw.c
-@@ -269,6 +269,8 @@ static snd_pcm_sframes_t mulaw_transfer(
- 		}
- 	}
- #endif
-+	if (frames > dst_channels[0].frames)
-+		frames = dst_channels[0].frames;
- 	data = (struct mulaw_priv *)plugin->extra_data;
- 	data->func(plugin, src_channels, dst_channels, frames);
- 	return frames;
---- a/sound/core/oss/route.c
-+++ b/sound/core/oss/route.c
-@@ -57,6 +57,8 @@ static snd_pcm_sframes_t route_transfer(
- 		return -ENXIO;
- 	if (frames == 0)
- 		return 0;
-+	if (frames > dst_channels[0].frames)
-+		frames = dst_channels[0].frames;
+--- a/crypto/crypto_user_base.c
++++ b/crypto/crypto_user_base.c
+@@ -213,8 +213,10 @@ static int crypto_report(struct sk_buff
+ drop_alg:
+ 	crypto_mod_put(alg);
  
- 	nsrcs = plugin->src_format.channels;
- 	ndsts = plugin->dst_format.channels;
+-	if (err)
++	if (err) {
++		kfree_skb(skb);
+ 		return err;
++	}
+ 
+ 	return nlmsg_unicast(net->crypto_nlsk, skb, NETLINK_CB(in_skb).portid);
+ }
 
 
