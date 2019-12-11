@@ -2,128 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C3C11AA96
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:17:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 577E011AA9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:20:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbfLKMR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 07:17:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727365AbfLKMR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 07:17:28 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729204AbfLKMUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 07:20:09 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22167 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729117AbfLKMUH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 07:20:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576066806;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Aya/nycTrUQ34itusmCkgEMEDKSIN7dICC56yrlcxiA=;
+        b=RX5+qDSux4bEGHeDt/pP8WfypqDIXYIad1G6OwYm2MDaSaCnkUuUD3pwNOPQWzLulICW85
+        PIPxk6+Jcin/P5m1C7AzAeF2RyOe+iycFbrLGiUDGf7WV6SlZyOhxSrFT5FrtsgJBYuyaT
+        8kGYqrdwnZ6CwMw+0RI/NjnYtcKYp5s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-134-VbEHjdUdNpma6zsmh9Vx_A-1; Wed, 11 Dec 2019 07:20:02 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ADEA214D8;
-        Wed, 11 Dec 2019 12:17:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576066646;
-        bh=1n4dRkvvdCKETj6YqGunEjOSbdyLrGPyEqXt3M6/6wg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=THftVLfHvoU6YrX83eDiFEHMqmQzvJgd5DeuwSKhX2F4lhHXMy+pikZZxyRETijp3
-         kESWxqIVEK0BKR/gxeZZm9zuT6lD22QmeIKDUw9Cp0JkHxatXzo3qrCedCfutgWWAH
-         IZpPzdBjNzNsHQheWPxZC3At7oJRHln1BdIH3CcA=
-Date:   Wed, 11 Dec 2019 13:17:24 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Chng, Jack Ping" <jack.ping.chng@linux.intel.com>
-Cc:     devel@driverdev.osuosl.org, cheol.yong.kim@intel.com,
-        andriy.shevchenko@intel.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mallikarjunax.reddy@linux.intel.com,
-        davem@davemloft.net
-Subject: Re: FW: [PATCH v2] staging: intel-gwdpa: gswip: Introduce Gigabit
- Ethernet Switch (GSWIP) device driver
-Message-ID: <20191211121724.GA514307@kroah.com>
-References: <5f85180573a3fb20238d6a340cdd990f140ed6f0.1576054234.git.jack.ping.chng@intel.com>
- <20191211092738.GA505511@kroah.com>
- <BYAPR11MB317606F8BE2B60C4BAD872F1DE5A0@BYAPR11MB3176.namprd11.prod.outlook.com>
- <c26e56cf-eb04-5992-252a-e66f6029d6ac@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c26e56cf-eb04-5992-252a-e66f6029d6ac@linux.intel.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 64BE5800D4C;
+        Wed, 11 Dec 2019 12:20:01 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-67.ams2.redhat.com [10.36.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B25719756;
+        Wed, 11 Dec 2019 12:19:58 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 3DB3616E2D; Wed, 11 Dec 2019 13:19:57 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     tzimmermann@suse.de, gurchetansingh@chromium.org,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/4] drm: add pgprot callback to drm_gem_object_funcs
+Date:   Wed, 11 Dec 2019 13:19:53 +0100
+Message-Id: <20191211121957.18637-2-kraxel@redhat.com>
+In-Reply-To: <20191211121957.18637-1-kraxel@redhat.com>
+References: <20191211121957.18637-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: VbEHjdUdNpma6zsmh9Vx_A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 06:37:42PM +0800, Chng, Jack Ping wrote:
-> Hi Greg,
-> 
-> > -----Original Message-----
-> > From: Greg KH <gregkh@linuxfoundation.org>
-> > Sent: Wednesday, December 11, 2019 5:28 PM
-> > To: Chng, Jack Ping <jack.ping.chng@intel.com>
-> > Cc: devel@driverdev.osuosl.org; Kim, Cheol Yong <cheol.yong.kim@intel.com>; Shevchenko, Andriy <andriy.shevchenko@intel.com>; netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Amireddy Mallikarjuna reddy <mallikarjunax.reddy@linux.intel.com>; davem@davemloft.net
-> > Subject: Re: [PATCH v2] staging: intel-gwdpa: gswip: Introduce Gigabit Ethernet Switch (GSWIP) device driver
-> > 
-> > On Wed, Dec 11, 2019 at 04:57:28PM +0800, Jack Ping CHNG wrote:
-> > > This driver enables the Intel's LGM SoC GSWIP block.
-> > > GSWIP is a core module tailored for L2/L3/L4+ data plane and QoS functions.
-> > > It allows CPUs and other accelerators connected to the SoC datapath to
-> > > enqueue and dequeue packets through DMAs.
-> > > Most configuration values are stored in tables such as Parsing and
-> > > Classification Engine tables, Buffer Manager tables and Pseudo MAC
-> > > tables.
-> > Odd line wrapping :(
-> > 
-> > > Signed-off-by: Jack Ping CHNG <jack.ping.chng@intel.com>
-> > > Signed-off-by: Amireddy Mallikarjuna reddy
-> > > <mallikarjunax.reddy@linux.intel.com>
-> > > ---
-> > > Changes on v2:
-> > > - Renamed intel-dpa to intel-gwdpa
-> > > - Added intel-gwdpa.txt(Intel Gateway Datapath Architecture)
-> > > - Added TODO (upstream plan)
-> > 
-> > > +Upstream plan
-> > > +--------------
-> > > +
-> > > +      GSWIP  CQM  PP  DPM     DCDP
-> > > +        |     |    |   |        |
-> > > +        |     |    |   |        |
-> > > +        V     V    V   V        V
-> > > +        -------------------------------------( drivers/staging/intel-gwdpa/* )
-> > > +                            |  (move to soc folder)
-> > > +                            V
-> > > +                    -------------------------(
-> > > + drivers/soc/intel/gwdpa-*/* )
-> > > +
-> > > +                            Eth driver  Wireless/
-> > > +                                |       WAN driver
-> > > +                                |         |
-> > > +                                V         V
-> > > +                             ----------------( drivers/net/ethernet/intel )
-> > > +                                             ( drivers/net/wireless )
-> > > +                                             ( drivers/net/wan)
-> > > +
-> > > +* Each driver will have a TODO list.
-> > Again, what kind of plan is this?  It's just a "these files need to be moved to this location" plan?
-> > 
-> > Why not do that today?
-> > 
-> > What is keeping this code from being accepted in the "correct" place today?  And why do you want it in staging?  You know it takes even more work to do things here, right?  Are you ready to sign up for that work (hint, you didn't add your names to the MAINTAINER file, so I worry about that...)
-> 
-> Thanks for the reply.
-> 
-> We are trying to upstream the datapath code for Intel new NoC gateway
-> (please refer to intel-gwdpa.txt at the end of the patch). It consists of
-> ethernet, WIFI and passive optics handling. Since the code is quite huge, we
-> have broken it into parts for internal review.
-> 
-> As we have seen past upstream example such as fsl/dpaa, we thought that it
-> is better for us to start the upstreaming of the driver into staging folder
-> to get feedback from the community.
-> 
-> Is this the right approach? Or do we upstream all the drivers into
-> drivers/soc folder when we have all the drivers ready?
+The callback allows drivers and helpers to tweak pgprot for mappings.
+This is especially helpful when using shmem helpers.  It allows drivers
+to switch mappings from writecombine (default) to something else (cached
+for example) on a per-object base without having to supply their own
+mmap() and vmap() functions.
 
-Why is drivers/soc/ the place to put networking drivers?
+The patch also adds two implementations for the callback, for cached and
+writecombine mappings, and the drm_gem_pgprot() function to update
+pgprot for a given object, using the new &drm_gem_object_funcs.pgprot
+callback if available.
 
-Please please please work with the Intel Linux kernel developers who
-know how to do this type of thing and do not require the kernel
-community to teach you all the proper development model and methods
-here.
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/drm/drm_gem.h     | 15 +++++++++++++
+ drivers/gpu/drm/drm_gem.c | 46 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 60 insertions(+), 1 deletion(-)
 
-thanks,
+diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+index 0b375069cd48..5beef7226e69 100644
+--- a/include/drm/drm_gem.h
++++ b/include/drm/drm_gem.h
+@@ -163,6 +163,17 @@ struct drm_gem_object_funcs {
+ =09 */
+ =09int (*mmap)(struct drm_gem_object *obj, struct vm_area_struct *vma);
+=20
++=09/**
++=09 * @pgprot:
++=09 *
++=09 * Tweak pgprot as needed, typically used to set cache bits.
++=09 *
++=09 * This callback is optional.
++=09 *
++=09 * If unset drm_gem_pgprot_wc() will be used.
++=09 */
++=09pgprot_t (*pgprot)(struct drm_gem_object *obj, pgprot_t prot);
++
+ =09/**
+ =09 * @vm_ops:
+ =09 *
+@@ -350,6 +361,10 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsig=
+ned long obj_size,
+ =09=09     struct vm_area_struct *vma);
+ int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+=20
++pgprot_t drm_gem_pgprot_cached(struct drm_gem_object *obj, pgprot_t prot);
++pgprot_t drm_gem_pgprot_wc(struct drm_gem_object *obj, pgprot_t prot);
++pgprot_t drm_gem_pgprot(struct drm_gem_object *obj, pgprot_t prot);
++
+ /**
+  * drm_gem_object_get - acquire a GEM buffer object reference
+  * @obj: GEM buffer object
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 56f42e0f2584..1c468fe8e342 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -1119,7 +1119,8 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsi=
+gned long obj_size,
+ =09=09=09return -EINVAL;
+=20
+ =09=09vma->vm_flags |=3D VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
+-=09=09vma->vm_page_prot =3D pgprot_writecombine(vm_get_page_prot(vma->vm_f=
+lags));
++=09=09vma->vm_page_prot =3D vm_get_page_prot(vma->vm_flags);
++=09=09vma->vm_page_prot =3D drm_gem_pgprot(obj, vma->vm_page_prot);
+ =09=09vma->vm_page_prot =3D pgprot_decrypted(vma->vm_page_prot);
+ =09}
+=20
+@@ -1210,6 +1211,49 @@ int drm_gem_mmap(struct file *filp, struct vm_area_s=
+truct *vma)
+ }
+ EXPORT_SYMBOL(drm_gem_mmap);
+=20
++/**
++ * drm_gem_mmap - update pgprot for objects needing a cachable mapping.
++ * @obj: the GEM object.
++ * @prot: page attributes.
++ *
++ * This function can be used as &drm_gem_object_funcs.pgprot callback.
++ */
++pgprot_t drm_gem_pgprot_cached(struct drm_gem_object *obj, pgprot_t prot)
++{
++=09return prot;
++}
++EXPORT_SYMBOL(drm_gem_pgprot_cached);
++
++/**
++ * drm_gem_mmap - update pgprot for objects needing a wc mapping.
++ * @obj: the GEM object.
++ * @prot: page attributes.
++ *
++ * This function can be used as &drm_gem_object_funcs.pgprot callback.
++ */
++pgprot_t drm_gem_pgprot_wc(struct drm_gem_object *obj, pgprot_t prot)
++{
++=09return pgprot_writecombine(prot);
++}
++EXPORT_SYMBOL(drm_gem_pgprot_wc);
++
++/**
++ * drm_gem_mmap - update pgprot for a given gem object.
++ * @obj: the GEM object.
++ * @prot: page attributes.
++ *
++ * This function updates pgprot according to the needs of the given
++ * object.  If present &drm_gem_object_funcs.pgprot callback will be
++ * used, otherwise drm_gem_pgprot_wc() is called.
++ */
++pgprot_t drm_gem_pgprot(struct drm_gem_object *obj, pgprot_t prot)
++{
++=09if (obj->funcs->pgprot)
++=09=09return obj->funcs->pgprot(obj, prot);
++=09return drm_gem_pgprot_wc(obj, prot);
++}
++EXPORT_SYMBOL(drm_gem_pgprot);
++
+ void drm_gem_print_info(struct drm_printer *p, unsigned int indent,
+ =09=09=09const struct drm_gem_object *obj)
+ {
+--=20
+2.18.1
 
-greg k-h
