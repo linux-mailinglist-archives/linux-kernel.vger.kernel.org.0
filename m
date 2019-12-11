@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4448911B692
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:01:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1972911B684
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:01:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731704AbfLKQBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:01:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36792 "EHLO mail.kernel.org"
+        id S1732325AbfLKQB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:01:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731411AbfLKPNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:13:24 -0500
+        id S1731430AbfLKPNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1574E24656;
-        Wed, 11 Dec 2019 15:13:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFBD824671;
+        Wed, 11 Dec 2019 15:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077204;
-        bh=Ur/viyuBEyZ5mqbdrZIIH5xEqPh/48fUizwmkULdx4o=;
+        s=default; t=1576077210;
+        bh=OcyEzfTXpAYKuruNL2d1bm6fV7j6InQkUk4GWQFj5q4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xaFJuEPcATQr3gajjFdK81T2jXtUe/ZD+k2Z0IwMHQDaLbRTYTcOIpv3XfDTykEj9
-         q3tfUDXjFbnIByX5sz9X2/QF743gd5dQOYV26PUqffvcC4DbAJUOGhoept9HbpIyaU
-         i0IinKA4rMKJ6ba8TsLurhL1+H60LdBzwR2d1QhA=
+        b=2EIrP/pahzTQwqhtdqIKIVRPUEqoGCTY+zN5y87zWKpsM4wGrrKkUpwj3LkC7L1Os
+         sw6nINEHGS0AxWNiDqb+RyltlcvFExAsLdmAOYclzz+IxJiy+ZAddLc7upMZzVlxby
+         ejLfhArf3QFLOo/PY5XNPeF6WF8M21ln3Kim88E0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Julia Cartwright <julia@ni.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Tim Sander <tim@krieglstein.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Sasha Levin <sashal@kernel.org>, linux-watchdog@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 086/134] watchdog: prevent deferral of watchdogd wakeup on RT
-Date:   Wed, 11 Dec 2019 10:11:02 -0500
-Message-Id: <20191211151150.19073-86-sashal@kernel.org>
+Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bean Huo <beanhuo@micron.com>, Can Guo <cang@codeaurora.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 092/134] scsi: ufs: Fix error handing during hibern8 enter
+Date:   Wed, 11 Dec 2019 10:11:08 -0500
+Message-Id: <20191211151150.19073-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
 References: <20191211151150.19073-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -47,90 +46,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julia Cartwright <julia@ni.com>
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-[ Upstream commit a19f89335f4bda3d77d991c96583e3e51856acbb ]
+[ Upstream commit 6d303e4b19d694cdbebf76bcdb51ada664ee953d ]
 
-When PREEMPT_RT is enabled, all hrtimer expiry functions are
-deferred for execution into the context of ksoftirqd unless otherwise
-annotated.
+During clock gating (ufshcd_gate_work()), we first put the link hibern8 by
+calling ufshcd_uic_hibern8_enter() and if ufshcd_uic_hibern8_enter()
+returns success (0) then we gate all the clocks.  Now let’s zoom in to what
+ufshcd_uic_hibern8_enter() does internally: It calls
+__ufshcd_uic_hibern8_enter() and if failure is encountered, link recovery
+shall put the link back to the highest HS gear and returns success (0) to
+ufshcd_uic_hibern8_enter() which is the issue as link is still in active
+state due to recovery!  Now ufshcd_uic_hibern8_enter() returns success to
+ufshcd_gate_work() and hence it goes ahead with gating the UFS clock while
+link is still in active state hence I believe controller would raise UIC
+error interrupts. But when we service the interrupt, clocks might have
+already been disabled!
 
-Deferring the expiry of the hrtimer used by the watchdog core, however,
-is a waste, as the callback does nothing but queue a kthread work item
-and wakeup watchdogd.
+This change fixes for this by returning failure from
+__ufshcd_uic_hibern8_enter() if recovery succeeds as link is still not in
+hibern8, upon receiving the error ufshcd_hibern8_enter() would initiate
+retry to put the link state back into hibern8.
 
-It's worst then that, too: the deferral through ksoftirqd also means
-that for correct behavior a user must adjust the scheduling parameters
-of both watchdogd _and_ ksoftirqd, which is unnecessary and has other
-side effects (like causing unrelated expiry functions to execute at
-potentially elevated priority).
-
-Instead, mark the hrtimer used by the watchdog core as being _HARD to
-allow it's execution directly from hardirq context.  The work done in
-this expiry function is well-bounded and minimal.
-
-A user still must adjust the scheduling parameters of the watchdogd
-to be correct w.r.t. their application needs.
-
-Link: https://lkml.kernel.org/r/0e02d8327aeca344096c246713033887bc490dd7.1538089180.git.julia@ni.com
-Cc: Guenter Roeck <linux@roeck-us.net>
-Reported-and-tested-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Reported-by: Tim Sander <tim@krieglstein.org>
-Signed-off-by: Julia Cartwright <julia@ni.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-[bigeasy: use only HRTIMER_MODE_REL_HARD]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20191105144506.clyadjbvnn7b7b2m@linutronix.de
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Link: https://lore.kernel.org/r/1573798172-20534-8-git-send-email-cang@codeaurora.org
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Reviewed-by: Bean Huo <beanhuo@micron.com>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/watchdog_dev.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-index dbd2ad4c92948..d3acc0a7256ca 100644
---- a/drivers/watchdog/watchdog_dev.c
-+++ b/drivers/watchdog/watchdog_dev.c
-@@ -158,7 +158,8 @@ static inline void watchdog_update_worker(struct watchdog_device *wdd)
- 		ktime_t t = watchdog_next_keepalive(wdd);
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 358ff7b015680..0036dcffc4a90 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -3885,15 +3885,24 @@ static int __ufshcd_uic_hibern8_enter(struct ufs_hba *hba)
+ 			     ktime_to_us(ktime_sub(ktime_get(), start)), ret);
  
- 		if (t > 0)
--			hrtimer_start(&wd_data->timer, t, HRTIMER_MODE_REL);
-+			hrtimer_start(&wd_data->timer, t,
-+				      HRTIMER_MODE_REL_HARD);
- 	} else {
- 		hrtimer_cancel(&wd_data->timer);
+ 	if (ret) {
++		int err;
++
+ 		dev_err(hba->dev, "%s: hibern8 enter failed. ret = %d\n",
+ 			__func__, ret);
+ 
+ 		/*
+-		 * If link recovery fails then return error so that caller
+-		 * don't retry the hibern8 enter again.
++		 * If link recovery fails then return error code returned from
++		 * ufshcd_link_recovery().
++		 * If link recovery succeeds then return -EAGAIN to attempt
++		 * hibern8 enter retry again.
+ 		 */
+-		if (ufshcd_link_recovery(hba))
+-			ret = -ENOLINK;
++		err = ufshcd_link_recovery(hba);
++		if (err) {
++			dev_err(hba->dev, "%s: link recovery failed", __func__);
++			ret = err;
++		} else {
++			ret = -EAGAIN;
++		}
+ 	} else
+ 		ufshcd_vops_hibern8_notify(hba, UIC_CMD_DME_HIBER_ENTER,
+ 								POST_CHANGE);
+@@ -3907,7 +3916,7 @@ static int ufshcd_uic_hibern8_enter(struct ufs_hba *hba)
+ 
+ 	for (retries = UIC_HIBERN8_ENTER_RETRIES; retries > 0; retries--) {
+ 		ret = __ufshcd_uic_hibern8_enter(hba);
+-		if (!ret || ret == -ENOLINK)
++		if (!ret)
+ 			goto out;
  	}
-@@ -177,7 +178,7 @@ static int __watchdog_ping(struct watchdog_device *wdd)
- 	if (ktime_after(earliest_keepalive, now)) {
- 		hrtimer_start(&wd_data->timer,
- 			      ktime_sub(earliest_keepalive, now),
--			      HRTIMER_MODE_REL);
-+			      HRTIMER_MODE_REL_HARD);
- 		return 0;
- 	}
- 
-@@ -971,7 +972,7 @@ static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
- 		return -ENODEV;
- 
- 	kthread_init_work(&wd_data->work, watchdog_ping_work);
--	hrtimer_init(&wd_data->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	hrtimer_init(&wd_data->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
- 	wd_data->timer.function = watchdog_timer_expired;
- 
- 	if (wdd->id == 0) {
-@@ -1019,7 +1020,8 @@ static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
- 		__module_get(wdd->ops->owner);
- 		kref_get(&wd_data->kref);
- 		if (handle_boot_enabled)
--			hrtimer_start(&wd_data->timer, 0, HRTIMER_MODE_REL);
-+			hrtimer_start(&wd_data->timer, 0,
-+				      HRTIMER_MODE_REL_HARD);
- 		else
- 			pr_info("watchdog%d running and kernel based pre-userspace handler disabled\n",
- 				wdd->id);
+ out:
 -- 
 2.20.1
 
