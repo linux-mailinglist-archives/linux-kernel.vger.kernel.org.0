@@ -2,61 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70B7111BE8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 21:50:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93BEC11BEA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 21:55:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfLKUuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 15:50:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbfLKUuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 15:50:22 -0500
-Subject: Re: [GIT PULL] erofs fixes for 5.5-rc2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576097421;
-        bh=In2OppxUUmMhw77Nh597V626V7rNMRFuadsOqSA+vXc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=mHrh2Qv1J/uKZr+j6A30SXVsvPImlXoSI1gexIdQDc6E7aZ9jM8YQGTfBSOG59vjs
-         mzxlCCZeVSzbhJXQZJRfP6QM4qGmKuu2lse/aMStqDeGqOuO0Sq0ALH1QIPuAaQ+nb
-         tfDxENO8aC/bS0roDISpnheby8MbWcqbKrvjrY3I=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191211170950.GA16027@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20191211170950.GA16027.ref@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20191211170950.GA16027@hsiangkao-HP-ZHAN-66-Pro-G1>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191211170950.GA16027@hsiangkao-HP-ZHAN-66-Pro-G1>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git
- tags/erofs-for-5.5-rc2-fixes
-X-PR-Tracked-Commit-Id: ffafde478309af01b2a495ecaf203125abfb35bd
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 687dec9b94599b19e218f89fd034d6449c3ff57c
-Message-Id: <157609742192.20554.6170432426388502768.pr-tracker-bot@kernel.org>
-Date:   Wed, 11 Dec 2019 20:50:21 +0000
-To:     Gao Xiang <hsiangkao@aol.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Michael <fedora.dm0@gmail.com>,
-        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        Wang Li <wangli74@huawei.com>
+        id S1726860AbfLKUzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 15:55:41 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32093 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726524AbfLKUzk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 15:55:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576097739;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YERAg9zwlW99Y5d6Zau5OzoqnwXAmUQo/8T8E4AEHCw=;
+        b=LsPpftn2wPN/Df4S6UsrGFPvdlEA3FbtdBcZABqzufvQaX+zc4TjwP8PBbGMgrqV2CD6Cy
+        iIn2BPo8lHer3h16lJ7zcKq5SfGcMWqIE5xXyDxGQJpOHM2cRnJYTo0pvemccyB4nwTVKb
+        jhN3RyAe0PlYoa/akq/XMKBChUZquU8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-235-uuDI_FbZPDqgFNLXyzO4HA-1; Wed, 11 Dec 2019 15:55:36 -0500
+X-MC-Unique: uuDI_FbZPDqgFNLXyzO4HA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3FBF6800D41;
+        Wed, 11 Dec 2019 20:55:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 637DF5D6A3;
+        Wed, 11 Dec 2019 20:55:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
+References: <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com> <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk> <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com> <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com> <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, David Sterba <dsterba@suse.cz>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9416.1576097731.1@warthog.procyon.org.uk>
+Date:   Wed, 11 Dec 2019 20:55:31 +0000
+Message-ID: <9417.1576097731@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 12 Dec 2019 01:09:58 +0800:
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-5.5-rc2-fixes
+> DavidH, give these a look:
+> 
+>   85190d15f4ea pipe: don't use 'pipe_wait() for basic pipe IO
+>   a28c8b9db8a1 pipe: remove 'waiting_writers' merging logic
+>   f467a6a66419 pipe: fix and clarify pipe read wakeup logic
+>   1b6b26ae7053 pipe: fix and clarify pipe write wakeup logic
+>   ad910e36da4c pipe: fix poll/select race introduced by the pipe rework
+> 
+> the top two of which are purely "I'm fed up looking at this code, this
+> needs to go" kind of changes.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/687dec9b94599b19e218f89fd034d6449c3ff57c
+They look reasonable.
 
-Thank you!
+Is it worth reverting:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+	commit f94df9890e98f2090c6a8d70c795134863b70201
+	Add wake_up_interruptible_sync_poll_locked()
+
+since you changed the code that was calling that new function and so it's no
+longer called?
+
+David
+
