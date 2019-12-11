@@ -2,118 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC95811A054
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:06:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB2811A05D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:07:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbfLKBGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 20:06:22 -0500
-Received: from mail-eopbgr20080.outbound.protection.outlook.com ([40.107.2.80]:10886
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726362AbfLKBGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 20:06:22 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FVqLXKOrQzJK2OANme7zss5w1WCYHjm1x08B8d1JXt9jjzOGdotLa88SiQWYmT69hbzRqFRzoLNtbumyXhjCiCIqiyokYHrVOJ8XshRkOv2rrSv/eUIURwAvPiS7qIT0EByQk0wqNdbo28ZZOrnTKFbwyxeV7/AkJRmqgKQRXzd6cNVIrKnAkakMl71txvHFvmFBoFGjmTCtvFPX/oucdtm3TIMG4UdsP7vlPX87y5je4IpywjpgWc/1Fytsc9AprafACibWiDJbWq7COLCA1DBRa18JAnP/DDLp5alF6Zt5t7rUQT3s+QWRWJBMnbJlORfamXFCQjO4XlPrJsCX5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lP2NOVOLsq+AI4DJZBETqqWXxPuUTGlYLuEPgi11Fc8=;
- b=Ux8VZQT99jzwUT+flkhcEzHJSwC09alhbRJ/RaZBUcOEgwW5qh8jJ47+UoFRqInsBcQ+ks2g7gaFhi+MN4y/mC5JpE+bOimv8Gk+B3XJIJy0gIYTE+lgOxcxW7Tl6f7cbO1NPPAKz7b6xJyQygjHUSvfGEF2Gq6NK2GA6omTOCQVYJTjWd7p9acwU/D1MqNs7JMzSKJfT623+9YnluDoSXPhobkrTXl6jqn85PHc4vet4CISY4XJg6hgaz2hopxAgvTiHku1tOmbQHendTR/7MvshdrRLhyJzRK1aTktq/wKaNnPWUvYquwZGVG9MQcOUPuqHrrzXAGxO4FKj17acA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lP2NOVOLsq+AI4DJZBETqqWXxPuUTGlYLuEPgi11Fc8=;
- b=T3SunRuLE2uoNcRJikVzZCJlxbTDqKXvwqStdwFuDnwmqh6HMdxcXdu7B8GHJTSo0CV1L8K6BrwSxTG68bvR2E66nJlaTxV4y74f74eE1kGA08JR6rpKqOOLzhrHxiEWOS0QmPpgw/YiMLb5hdwWcsQfhHzAjeg0zk8kTi8DrRk=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3818.eurprd04.prod.outlook.com (52.134.71.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.14; Wed, 11 Dec 2019 01:06:17 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::b5ce:fe6b:6c06:fdb1]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::b5ce:fe6b:6c06:fdb1%6]) with mapi id 15.20.2516.018; Wed, 11 Dec 2019
- 01:06:17 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 1/3] ARM: dts: imx6ul-14x14-evk: Add sensors' GPIO
- regulator
-Thread-Topic: [PATCH 1/3] ARM: dts: imx6ul-14x14-evk: Add sensors' GPIO
- regulator
-Thread-Index: AQHVikhFrshNJnCYpE+PA285m4wtLae0aMuQ
-Date:   Wed, 11 Dec 2019 01:06:17 +0000
-Message-ID: <DB3PR0402MB3916D3DB4C0CE0017FC2D4B1F55A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1571906920-29966-1-git-send-email-Anson.Huang@nxp.com>
- <VI1PR04MB7023CD288FCC57806F067FD9EE5B0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB7023CD288FCC57806F067FD9EE5B0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 15fc07c5-c717-429c-19be-08d77dd65379
-x-ms-traffictypediagnostic: DB3PR0402MB3818:|DB3PR0402MB3818:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB38183E1B1397BA05D21BA1BAF55A0@DB3PR0402MB3818.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 024847EE92
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(366004)(136003)(346002)(39860400002)(199004)(189003)(4326008)(186003)(26005)(8936002)(7696005)(44832011)(55016002)(53546011)(2906002)(66556008)(64756008)(9686003)(76116006)(33656002)(66476007)(8676002)(52536014)(478600001)(66446008)(54906003)(110136005)(6506007)(81156014)(66946007)(86362001)(316002)(71200400001)(81166006)(5660300002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3818;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: rK9Ow2rWuvLI5y5L7F3yKKlUdFO81DFXaG6YwzlR/wqLfbYID9cpZ+ma/IgLCEH+860w9xw/r6hmYslwNXfRjODe5Uw88ncT+9Hh1O1FIMouZ9wowmUUkQS/KuIx8lr6R3Jb4a8VKcV0tsnNM6/Bny4KSzx4shsNBv+eVlmSozjk56Z7tFp+TKy+6dOStXkIyHe37XOSEas2WErJ6xvL80oi3mIcTaJeynpdDsQvjR2boKEWRtz2reHSAcpbb1MTVos+PnJm1h8ucqVhRxO5dJuxIJskjX0U7srO80DK6KPQefkeXOeBla75LjCTYmCxwQctO27/U3bK89GUszmEdt7bfsCBgI9JoH6CCHUbFQb2gA3ZtVjsS358lR23NPzjrs8kr6ntVKWZ86JdBwwRWIC1Uy12MLr2S3u+iZcRder3ge7M8IdaWdAc4DXW+H5oX52lOti56kDo5/P3Gen/xLezBZL5Zi2bJgHLwBN2mDnUM+A5Yf5V8dHgCCaECCde
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727199AbfLKBG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 20:06:58 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34533 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727119AbfLKBG5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 20:06:57 -0500
+Received: by mail-lf1-f68.google.com with SMTP id l18so15315691lfc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 17:06:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T3U5Ton5GkI2QD9NYugFaf5BRq2pqUxCkGGQRfb840Q=;
+        b=R5p8cM1REpNhwNG/S5JozlDrfWJgObKwfHJFLWfvYis1Ng08mRoAMlI0ycQSAeEcd6
+         zeaPJeZGj7VhZvnEdIa+scrFuK0MppI/lpyBTfgIMcgTtliSBQrIhjZP5YFFE3kQCxWM
+         fnMjAPdttTJzRAwTscCs7zhgii0RJlQ54lIy8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T3U5Ton5GkI2QD9NYugFaf5BRq2pqUxCkGGQRfb840Q=;
+        b=t12dWmNEzeZmmp5e5p1BmTs2Sy5J/snYMzhiatejVRECYig9j5dL2+0WjbKhcJRN0l
+         5/D5fhlkc8D84aO8MPOC65hTdF5j1vVquDy73TtZsL5XS7GOlIeo8/kmOVgHF3EaN/5d
+         N9+XkXD+9Jk0TfDeoBtp4ltyxwWK3/vestJznfRQxvFa1h9SFAPxLt0lazrRXGn2/qIP
+         47sk49BBhqoGKIFjwOwXSTiSmVK+anSyduHr6ZqOg5XIK0aeRZXwAKcAA03zneGwxbQY
+         eeCeUiGzkshi+lOL+Lw/AO9M0ghqNp1L2gu33QdiC0ZMYBqoHZXVL/7VMdB9/kde4/bI
+         b2WA==
+X-Gm-Message-State: APjAAAUSoUsA+BUmZRLGxRxV65Li2+mFzZiE+54qL5KoQY2VKlfFqhS1
+        6ZLBr6AVj+p5bgjTJcJjgJydYWFT6wc=
+X-Google-Smtp-Source: APXvYqxPXnq+5qLS4xw5ZkJ5K4eoEEuEBCrc7EfTDvgcMoD8oxKyQn6W2dWR7ota5s7jnjgAmCUW0Q==
+X-Received: by 2002:ac2:465e:: with SMTP id s30mr473363lfo.134.1576026414509;
+        Tue, 10 Dec 2019 17:06:54 -0800 (PST)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id j19sm235378lfb.90.2019.12.10.17.06.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2019 17:06:54 -0800 (PST)
+Received: by mail-lf1-f49.google.com with SMTP id 9so15283580lfq.10
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 17:06:53 -0800 (PST)
+X-Received: by 2002:a05:6512:1dd:: with SMTP id f29mr478455lfp.106.1576026413534;
+ Tue, 10 Dec 2019 17:06:53 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15fc07c5-c717-429c-19be-08d77dd65379
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2019 01:06:17.1963
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BCaaHA9awY1rthJBpTjgea/HzcOllJKqIjJnocFJPVo/PyqhJG+U/O/bQ5cUwORy/ej12Qf+C/dwesh4llL3Ww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3818
+References: <20191210085759.14763-1-kraxel@redhat.com>
+In-Reply-To: <20191210085759.14763-1-kraxel@redhat.com>
+From:   Gurchetan Singh <gurchetansingh@chromium.org>
+Date:   Tue, 10 Dec 2019 17:06:42 -0800
+X-Gmail-Original-Message-ID: <CAAfnVB=prUDgkPjZdB9QcA9XHdcBCQSPcf4mBL75LG8QJ4D=0Q@mail.gmail.com>
+Message-ID: <CAAfnVB=prUDgkPjZdB9QcA9XHdcBCQSPcf4mBL75LG8QJ4D=0Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/virtio: fix mmap page attributes
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzNdIEFSTTogZHRzOiBpbXg2dWwtMTR4MTQtZXZr
-OiBBZGQgc2Vuc29ycycgR1BJTw0KPiByZWd1bGF0b3INCj4gDQo+IE9uIDI0LjEwLjIwMTkgMTE6
-NTEsIEFuc29uIEh1YW5nIHdyb3RlOg0KPiA+IE9uIGkuTVg2VUwgMTR4MTQgRVZLIGJvYXJkLCBz
-ZW5zb3JzJyBwb3dlciBhcmUgY29udHJvbGxlZCBieQ0KPiA+IEdQSU81X0lPMDIsIGFkZCBHUElP
-IHJlZ3VsYXRvciBmb3Igc2Vuc29ycyB0byBtYW5hZ2UgdGhlaXIgcG93ZXIuDQo+ID4NCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gDQo+IEZv
-ciBtZSB0aGlzIGJyZWFrcyBuZXR3b3JrIGJvb3Qgb24gaW14NnVsIGV2aywgcmVsZXZhbnQgbG9n
-IHNuaXBwZXQgaXMgdGhpczoNCj4gDQo+ICAgICAgZmVjIDIwYjQwMDAuZXRoZXJuZXQgZXRoMDog
-VW5hYmxlIHRvIGNvbm5lY3QgdG8gcGh5DQo+ICAgICAgSVAtQ29uZmlnOiBGYWlsZWQgdG8gb3Bl
-biBldGgwDQo+IA0KPiBMb29raW5nIGF0IHNjaGVtYXRpY3MgKFNQRi0yODYxNl9DMi5wZGYpIEkg
-c2VlIHRoYXQgU05WU19UQU1QRVIyIHBpbiBpcw0KPiBjb25uZWN0ZWQgdG8gUEVSSV9QV1JFTiB3
-aGljaCBjb250cm9scyBWUEVSSV8zVjMgd2hpY2ggaXMgdXNlZCBhY3Jvc3MNCj4gdGhlIGJvYXJk
-Og0KPiAgICogU2Vuc29ycyAoVlNFTlNPUl8zVjMpDQo+ICAgKiBFdGhlcm5ldCAoVkVORVRfM1Yz
-KQ0KPiAgICogQmx1ZXRvb3RoDQo+ICAgKiBDQU4NCj4gICAqIEFyZHVpbm8gaGVhZGVyDQo+ICAg
-KiBDYW1lcmENCj4gDQo+IE1heWJlIHRoZXJlIGFyZSBib2FyZCByZXZpc2lvbiBkaWZmZXJlbmNl
-cz8gQXMgZmFyIGFzIEkgY2FuIHRlbGwgdGhpcyByZWd1bGF0b3INCj4gaXMgbm90IHNwZWNpZmlj
-IHRvIHNlbnNvcnMgc28gaXQgc2hvdWxkIGJlIGFsd2F5cyBvbi4NCg0KWW91IGFyZSBjb3JyZWN0
-LCB0aGlzIHJlZ3VsYXRvciBjb250cm9scyBtYW55IG90aGVyIHBlcmlwaGVyYWxzLCBJIHNob3Vs
-ZCBtYWtlIGl0IGFsd2F5cyBPTiBmb3Igbm93DQp0byBtYWtlIHN1cmUgTk9UIGJyZWFrIG90aGVy
-IHBlcmlwaGVyYWwsIGFuZCBhZnRlciBhbGwgb3RoZXIgcGVyaXBoZXJhbHMgY29udHJvbGxlZA0K
-YnkgdGhpcyByZWd1bGF0b3IgaGF2ZSBhZGRlZCB0aGlzIHJlZ3VsYXRvciBtYW5hZ2VtZW50LCB0
-aGVuIHRoZSBhbHdheXMgT04gY2FuIGJlDQpyZW1vdmVkLg0KDQpUaGFua3MsDQpBbnNvbg0K
+On Tue, Dec 10, 2019 at 12:58 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+>
+> virtio-gpu uses cached mappings.  shmem helpers use writecombine though.
+> So roll our own mmap function, wrapping drm_gem_shmem_mmap(), to tweak
+> vm_page_prot accordingly.
+>
+> Reported-by: Gurchetan Singh <gurchetansingh@chromium.org>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_object.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+> index 017a9e0fc3bb..158610902054 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_object.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+> @@ -75,6 +75,22 @@ static void virtio_gpu_free_object(struct drm_gem_object *obj)
+>         drm_gem_shmem_free_object(obj);
+>  }
+>
+> +static int virtio_gpu_gem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+> +{
+> +       pgprot_t prot;
+> +       int ret;
+> +
+> +       ret = drm_gem_shmem_mmap(obj, vma);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       /* virtio-gpu needs normal caching, so clear writecombine */
+> +       prot = vm_get_page_prot(vma->vm_flags);
+> +       prot = pgprot_decrypted(prot);
+> +       vma->vm_page_prot = prot;
+> +       return 0;
+> +}
+> +
+>  static const struct drm_gem_object_funcs virtio_gpu_gem_funcs = {
+>         .free = virtio_gpu_free_object,
+>         .open = virtio_gpu_gem_object_open,
+> @@ -86,7 +102,7 @@ static const struct drm_gem_object_funcs virtio_gpu_gem_funcs = {
+>         .get_sg_table = drm_gem_shmem_get_sg_table,
+>         .vmap = drm_gem_shmem_vmap,
+
+Do we need vmap/vmunap?  It seems optionable and also uses non-cacheable memory?
+
+>         .vunmap = drm_gem_shmem_vunmap,
+> -       .mmap = &drm_gem_shmem_mmap,
+> +       .mmap = &virtio_gpu_gem_mmap,
+
+Why the &virtio_gpu_gem_mmap?  Shouldn't just virtio_gpu_gem_mmap work?
+
+
+
+>  };
+>
+>  struct drm_gem_object *virtio_gpu_create_object(struct drm_device *dev,
+> --
+> 2.18.1
+>
