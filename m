@@ -2,131 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C37DD11B561
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:53:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13B6E11B467
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:47:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732351AbfLKPxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:53:31 -0500
-Received: from mail.efficios.com ([167.114.142.138]:42358 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732008AbfLKPTH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:19:07 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 72F5E68774F;
-        Wed, 11 Dec 2019 10:19:05 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id WKPvfOPdR2rD; Wed, 11 Dec 2019 10:19:05 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0CCDE68774C;
-        Wed, 11 Dec 2019 10:19:05 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0CCDE68774C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1576077545;
-        bh=Els775lt7VbhSm6uez8HB9AuwfSHPUeqxVvc2FSjROM=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=cFiH4KIf5SmtmlttI/719OAaw5HhviY/mN++Yv4CSa7+yfMW60UxEA3/qxiIY5Y1A
-         Y+cdtg/ZAp1QbbvoVCTQhfvNoW4kOWZAK8yuJSPMPkQbw8dY8S0RuWZz1IOGGB6rEj
-         jC9R2ziP+ftZmh6YFaSBYSVZajd8QMLaiDMS3BH3y6YQR4H3ai3z9ci7jucs/OwJmd
-         GOy25GT8X7IxiDJGnu16+HKvbUJQvdzegYEVDGOIAwvoGrRVOutv2bB/1n74HrzyWC
-         xue0vzmAOv2CpkCYFIzELK320wBqCwD5MBloLBrjGQdj65x4cn6KOyrkkOSdWiUoGN
-         Ohz66cAHcADPA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id yRR1NrW5C_RV; Wed, 11 Dec 2019 10:19:04 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id EB0FA687740;
-        Wed, 11 Dec 2019 10:19:04 -0500 (EST)
-Date:   Wed, 11 Dec 2019 10:19:04 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     linux-kselftest <linux-kselftest@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1871753014.2121.1576077544796.JavaMail.zimbra@efficios.com>
-In-Reply-To: <2d53b409-31e0-2245-e163-1ab26f52c841@linuxfoundation.org>
-References: <2d53b409-31e0-2245-e163-1ab26f52c841@linuxfoundation.org>
-Subject: Re: Linux 5.5=rc1 kselftest rseq test build failure
+        id S2387661AbfLKPrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:47:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60190 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732689AbfLKP0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:26:47 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8B362173E;
+        Wed, 11 Dec 2019 15:26:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576078006;
+        bh=fACRZaa/+j6olVsYvjPHFq5EnO3bUVwKGg4PqMminCo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SaY5Nh7ZS0lS1WKbHR6I23sGrjUVBICx07qVAfT63l+G18Y249X6IqQZrjWBrc1RD
+         ebvfbAEL/74UtX6WWidEZoV2mHUBoWXRyWwe0DjDmOoi1EvsOEltFdoopyXCzU+Lnd
+         IsUykZDaNmLw2xSA1nFNy5iRHmYIqrrlt9H4qGQg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>,
+        MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 02/79] scsi: mpt3sas: Fix clear pending bit in ioctl status
+Date:   Wed, 11 Dec 2019 10:25:26 -0500
+Message-Id: <20191211152643.23056-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
+References: <20191211152643.23056-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.15_GA_3888 (ZimbraWebClient - FF70 (Linux)/8.8.15_GA_3890)
-Thread-Topic: Linux 5.5=rc1 kselftest rseq test build failure
-Thread-Index: M//PaePCYQ98sUQtyT/D1GN/cpAq9A==
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Dec 10, 2019, at 7:27 PM, Shuah Khan skhan@linuxfoundation.org wro=
-te:
+From: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
 
-> Hi Mathieu,
->=20
-> I am seeing rseq test build failure on Linux 5.5-rc1.
->=20
-> gcc -O2 -Wall -g -I./ -I../../../../usr/include/ -L./ -Wl,-rpath=3D./
-> param_test.c -lpthread -lrseq -o ...tools/testing/selftests/rseq/param_te=
-st
-> param_test.c:18:21: error: static declaration of =E2=80=98gettid=E2=80=99=
- follows
-> non-static declaration
->    18 | static inline pid_t gettid(void)
->       |                     ^~~~~~
-> In file included from /usr/include/unistd.h:1170,
->                  from param_test.c:11:
-> /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:34:16: note: previous
-> declaration of =E2=80=98gettid=E2=80=99 was here
->    34 | extern __pid_t gettid (void) __THROW;
->       |                ^~~~~~
-> make: *** [Makefile:28: ...tools/testing/selftests/rseq/param_test] Error=
- 1
->=20
->=20
-> The following obvious change fixes it. However, there could be reason
-> why this was defined here. If you think this is the right fix, I can
-> send the patch. I started seeing this with gcc version 9.2.1 20191008
+[ Upstream commit 782b281883caf70289ba6a186af29441a117d23e ]
 
-This issue is caused by introduction of "gettid()" in glibc 2.30. I don't
-think we want to introduce a build dependency on glibc 2.30 for kernel
-selftests. Removing the gettid() symbol as you propose here will break
-build environments with glibc < 2.30.
+When user issues diag register command from application with required size,
+and if driver unable to allocate the memory, then it will fail the register
+command. While failing the register command, driver is not currently
+clearing MPT3_CMD_PENDING bit in ctl_cmds.status variable which was set
+before trying to allocate the memory. As this bit is set, subsequent
+register command will be failed with BUSY status even when user wants to
+register the trace buffer will less memory.
 
-We could eventually try to figure out whether the glibc headers implement
-gettid() at build time (not sure how), or we could simply rename our own
-"gettid()" to "rseq_gettid()", thus removing the namespace clash with
-glibc.
+Clear MPT3_CMD_PENDING bit in ctl_cmds.status before returning the diag
+register command with no memory status.
 
-I can propose a patch renaming gettid() to rseq_gettid() is that approach
-is OK with you.
+Link: https://lore.kernel.org/r/1568379890-18347-4-git-send-email-sreekanth.reddy@broadcom.com
+Signed-off-by: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index 5e8c059ce2c92..07345016fd9c7 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -1597,7 +1597,8 @@ _ctl_diag_register_2(struct MPT3SAS_ADAPTER *ioc,
+ 			    " for diag buffers, requested size(%d)\n",
+ 			    ioc->name, __func__, request_data_sz);
+ 			mpt3sas_base_free_smid(ioc, smid);
+-			return -ENOMEM;
++			rc = -ENOMEM;
++			goto out;
+ 		}
+ 		ioc->diag_buffer[buffer_type] = request_data;
+ 		ioc->diag_buffer_sz[buffer_type] = request_data_sz;
+-- 
+2.20.1
 
-Mathieu
-
-
->=20
-> diff --git a/tools/testing/selftests/rseq/param_test.c
-> b/tools/testing/selftests/rseq/param_test.c
-> index eec2663261f2..18a0fa1235a7 100644
-> --- a/tools/testing/selftests/rseq/param_test.c
-> +++ b/tools/testing/selftests/rseq/param_test.c
-> @@ -15,11 +15,6 @@
->  #include <errno.h>
->  #include <stddef.h>
->=20
-> -static inline pid_t gettid(void)
-> -{
-> -       return syscall(__NR_gettid);
-> -}
-> -
->=20
-> thanks,
-> -- Shuah
-
---=20
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
