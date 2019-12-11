@@ -2,65 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5802011A38F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 05:47:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A2E211A3A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 06:06:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfLKErp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 23:47:45 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52522 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbfLKErp (ORCPT
+        id S1726691AbfLKFG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 00:06:57 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:40411 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfLKFG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 23:47:45 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ietuF-0004dd-CH; Wed, 11 Dec 2019 04:47:23 +0000
-Date:   Wed, 11 Dec 2019 04:47:23 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
+        Wed, 11 Dec 2019 00:06:56 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id xBB56RdY030450;
+        Wed, 11 Dec 2019 14:06:27 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com xBB56RdY030450
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576040787;
+        bh=YtASyUS1UyPV1rSLOWOP9wW3Od7ds2m3vN7ApaY5Vfk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wETvnV3eobnEfUxcfdrivgO82tMV7fypCJBC97uKPCtRZvBqSnX+wRrmycB4wcwqr
+         2LdRYpXlhvJJ4JfIQiSnT2CV47XRCFdMX2db1cudzBBl2pftJTTF8EzLKQPTCmi0Vx
+         BM1cZThZlpcfGGh9E6w0IWhzkivvtHIEWTsegbU36FRY3koZVJf3Si99IIAMB7dNhV
+         MjkLuruE26sH3PuCfkVLTzkkbr76wOEY9TGwONrfv1SXKvVqqMvwtWKMopwPwvxj4O
+         VdAc6J2/qbev64v/DwyvDY8TueYY369O0WvBJQFTyaNHtD/Zli95wugqYqRQWiEp1A
+         /6uPLEXMOZIXA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
-Message-ID: <20191211044723.GC4203@ZenIV.linux.org.uk>
-References: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
- <20191211024858.GB732@sol.localdomain>
- <febbd7eb-5e53-6e7c-582d-5b224e441e37@loongson.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <febbd7eb-5e53-6e7c-582d-5b224e441e37@loongson.cn>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Subject: [PATCH] ARM: dts: uniphier: add pinmux nodes for I2C ch5, ch6
+Date:   Wed, 11 Dec 2019 14:06:26 +0900
+Message-Id: <20191211050626.862-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 11:59:40AM +0800, Tiezhu Yang wrote:
+The next generation SoC can connect on-board slave devices via
+I2C ch5 and ch6.
 
-> static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
-> {
->         if (len == 1 && name[0] == '.')
->                 return true;
-> 
->         if (len == 2 && name[0] == '.' && name[1] == '.')
->                 return true;
-> 
->         return false;
-> }
-> 
-> Hi Matthew,
-> 
-> How do you think? I think the performance influence is very small
-> due to is_dot_or_dotdot() is a such short static inline function.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-It's a very short inline function called on a very hot codepath.
-Often.
+ arch/arm/boot/dts/uniphier-pinctrl.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-I mean it - it's done literally for every pathname component of
-every pathname passed to a syscall.
+diff --git a/arch/arm/boot/dts/uniphier-pinctrl.dtsi b/arch/arm/boot/dts/uniphier-pinctrl.dtsi
+index 1fee5ffbfb9c..bfdfb764b25b 100644
+--- a/arch/arm/boot/dts/uniphier-pinctrl.dtsi
++++ b/arch/arm/boot/dts/uniphier-pinctrl.dtsi
+@@ -106,6 +106,16 @@
+ 		function = "i2c4";
+ 	};
+ 
++	pinctrl_i2c5: i2c5 {
++		groups = "i2c5";
++		function = "i2c5";
++	};
++
++	pinctrl_i2c6: i2c6 {
++		groups = "i2c6";
++		function = "i2c6";
++	};
++
+ 	pinctrl_nand: nand {
+ 		groups = "nand";
+ 		function = "nand";
+-- 
+2.17.1
+
