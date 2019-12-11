@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CF6411B7BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:10:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 138F511B7C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:10:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731043AbfLKPMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:12:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60832 "EHLO mail.kernel.org"
+        id S2388923AbfLKQKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:10:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731012AbfLKPL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:11:58 -0500
+        id S1731021AbfLKPMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:12:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A86AB2173E;
-        Wed, 11 Dec 2019 15:11:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D07CC24656;
+        Wed, 11 Dec 2019 15:11:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077117;
-        bh=XebHkKGdyvyJe9x4eWTtKYtITQBxEm2abSNYs2wk4TQ=;
+        s=default; t=1576077119;
+        bh=9aVOr5YMp5qkCguEkmhoOuFYBr5UtslEpupsxFKkGVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JcAB0e/CbI8YBwYoehpJzcMMFVSJPlxthIpWlIb3ITPx+a2Tq5j2G4L/Vb03IY/BK
-         uOeT37i8wuZBPoLb2EPNMu5evyRJ1QuYPSv/ts5OuXA5fVOivSCB/funX9BkxPu/Vq
-         XCWSglvn6f+fJtDDx57aIGAQp1a4N4eM+StGtKt0=
+        b=z9Yit/7z1LYJTn9tjCbAv/o4seIGe961ysDvyjJxLgmIS0EBV2IFAbvoJon3OzYyT
+         ULdByIYoiEmeiD1j+SB4Pn3IQRVKf9f/lgc2YeFoUBV/WhOZzC9gM+Mri0zTtJalNv
+         nVmOU+3C36Eiy85v4/H72HU0Pp7sLyUDYAg2kKfE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anson Huang <Anson.Huang@nxp.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 006/134] gpio: mxc: Only get the second IRQ when there is more than one IRQ
-Date:   Wed, 11 Dec 2019 10:09:42 -0500
-Message-Id: <20191211151150.19073-6-sashal@kernel.org>
+Cc:     Evan Green <evgreen@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 008/134] Input: atmel_mxt_ts - disable IRQ across suspend
+Date:   Wed, 11 Dec 2019 10:09:44 -0500
+Message-Id: <20191211151150.19073-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
 References: <20191211151150.19073-1-sashal@kernel.org>
@@ -43,61 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Evan Green <evgreen@chromium.org>
 
-[ Upstream commit c8f3d144004dd3f471ffd414690d15a005e4acd6 ]
+[ Upstream commit 463fa44eec2fef50d111ed0199cf593235065c04 ]
 
-On some of i.MX SoCs like i.MX8QXP, there is ONLY one IRQ for each
-GPIO bank, so it is better to check the IRQ count before getting
-second IRQ to avoid below error message during probe:
+Across suspend and resume, we are seeing error messages like the following:
 
-[    1.070908] gpio-mxc 5d080000.gpio: IRQ index 1 not found
-[    1.077420] gpio-mxc 5d090000.gpio: IRQ index 1 not found
-[    1.083766] gpio-mxc 5d0a0000.gpio: IRQ index 1 not found
-[    1.090122] gpio-mxc 5d0b0000.gpio: IRQ index 1 not found
-[    1.096470] gpio-mxc 5d0c0000.gpio: IRQ index 1 not found
-[    1.102804] gpio-mxc 5d0d0000.gpio: IRQ index 1 not found
-[    1.109144] gpio-mxc 5d0e0000.gpio: IRQ index 1 not found
-[    1.115475] gpio-mxc 5d0f0000.gpio: IRQ index 1 not found
+atmel_mxt_ts i2c-PRP0001:00: __mxt_read_reg: i2c transfer failed (-121)
+atmel_mxt_ts i2c-PRP0001:00: Failed to read T44 and T5 (-121)
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+This occurs because the driver leaves its IRQ enabled. Upon resume, there
+is an IRQ pending, but the interrupt is serviced before both the driver and
+the underlying I2C bus have been resumed. This causes EREMOTEIO errors.
+
+Disable the IRQ in suspend, and re-enable it on resume. If there are cases
+where the driver enters suspend with interrupts disabled, that's a bug we
+should fix separately.
+
+Signed-off-by: Evan Green <evgreen@chromium.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mxc.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/input/touchscreen/atmel_mxt_ts.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 7907a87558662..c77d474185f31 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -411,6 +411,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct mxc_gpio_port *port;
-+	int irq_count;
- 	int irq_base;
- 	int err;
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 24c4b691b1c99..ae60442efda0d 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -3156,6 +3156,8 @@ static int __maybe_unused mxt_suspend(struct device *dev)
  
-@@ -426,9 +427,15 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(port->base))
- 		return PTR_ERR(port->base);
+ 	mutex_unlock(&input_dev->mutex);
  
--	port->irq_high = platform_get_irq(pdev, 1);
--	if (port->irq_high < 0)
--		port->irq_high = 0;
-+	irq_count = platform_irq_count(pdev);
-+	if (irq_count < 0)
-+		return irq_count;
++	disable_irq(data->irq);
 +
-+	if (irq_count > 1) {
-+		port->irq_high = platform_get_irq(pdev, 1);
-+		if (port->irq_high < 0)
-+			port->irq_high = 0;
-+	}
+ 	return 0;
+ }
  
- 	port->irq = platform_get_irq(pdev, 0);
- 	if (port->irq < 0)
+@@ -3168,6 +3170,8 @@ static int __maybe_unused mxt_resume(struct device *dev)
+ 	if (!input_dev)
+ 		return 0;
+ 
++	enable_irq(data->irq);
++
+ 	mutex_lock(&input_dev->mutex);
+ 
+ 	if (input_dev->users)
 -- 
 2.20.1
 
