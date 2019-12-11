@@ -2,145 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F1D611A2E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 04:17:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC71511A2ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 04:18:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfLKDRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 22:17:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727059AbfLKDRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 22:17:53 -0500
-Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C8DE20836;
-        Wed, 11 Dec 2019 03:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576034272;
-        bh=+YcxndZMyPJlutMO+HDeqVbIBmhcahLQYT/Qc077ev0=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=NPftQfmwQr+msZd7MLaHlkkmDDM9r3b1WcrArFX6G6DOWsqrNNZEFCykv5GR+SXS7
-         Y0m8TIlBCSKbPRm9OCly8PYNNvRZzNK2aBhry6DU68nHtDL8JS1mPkZj2yJ+POz9lv
-         3covE9eb0GMP7EeVETkjzcTFA+jc12RKE/0yHndc=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 8FDD4352276C; Tue, 10 Dec 2019 19:17:51 -0800 (PST)
-Date:   Tue, 10 Dec 2019 19:17:51 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Tuong Lien Tong <tuong.t.lien@dektech.com.au>
-Cc:     'Ying Xue' <ying.xue@windriver.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        tipc-discussion@lists.sourceforge.net, kernel-team@fb.com,
-        torvalds@linux-foundation.org, davem@davemloft.net
-Subject: Re: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected()
- with rcu_replace_pointer()
-Message-ID: <20191211031751.GZ2889@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191210033146.GA32522@paulmck-ThinkPad-P72>
- <0e565b68-ece1-5ae6-bb5d-710163fb8893@windriver.com>
- <20191210223825.GS2889@paulmck-ThinkPad-P72>
- <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
- <707801d5afc6$cac68190$605384b0$@dektech.com.au>
+        id S1727511AbfLKDSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 22:18:18 -0500
+Received: from owa.iluvatar.ai ([103.91.158.24]:16137 "EHLO smg.iluvatar.ai"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727059AbfLKDSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 22:18:17 -0500
+X-AuditID: 0a650161-773ff700000078a3-ac-5df076848390
+Received: from owa.iluvatar.ai (s-10-101-1-102.iluvatar.local [10.101.1.102])
+        by smg.iluvatar.ai (Symantec Messaging Gateway) with SMTP id F8.A1.30883.48670FD5; Wed, 11 Dec 2019 12:54:28 +0800 (HKT)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; d=iluvatar.ai; s=key_2018;
+        c=relaxed/relaxed; t=1576034299; h=from:subject:to:date:message-id;
+        bh=bYKUznT4W57bS0w+T6BvMvEPKsggqZyWXbpiDvbJE74=;
+        b=dDyq48lpR/3YBYdXRA+cbnHkUx74pNktqUzP0Bmr9avcFO8j9OoFpW1G4ukWb4Dd8wvBIH7O9s9
+        whuI5AcwxHqFLCP+E0WNjEpv+E1UyQZmW1DgCMvtVcRssZxqkOo8yZc6nnqwHIyjN+z/szFYt1nE9
+        GTqNpUIcYvoeLRVmwjE=
+Received: from hsj-Precision-5520.iluvatar.local (10.101.199.253) by
+ S-10-101-1-102.iluvatar.local (10.101.1.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1415.2; Wed, 11 Dec 2019 11:18:16 +0800
+From:   Huang Shijie <sjhuang@iluvatar.ai>
+To:     <jbaron@akamai.com>
+CC:     <linux-kernel@vger.kernel.org>, <1537577747@qq.com>,
+        Huang Shijie <sjhuang@iluvatar.ai>
+Subject: [PATCH v3] lib/dynamic_debug: make better dynamic log output
+Date:   Wed, 11 Dec 2019 11:17:56 +0800
+Message-ID: <20191211031756.10631-1-sjhuang@iluvatar.ai>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191209094437.14866-1-sjhuang@iluvatar.ai>
+References: <20191209094437.14866-1-sjhuang@iluvatar.ai>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <707801d5afc6$cac68190$605384b0$@dektech.com.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.101.199.253]
+X-ClientProxiedBy: S-10-101-1-102.iluvatar.local (10.101.1.102) To
+ S-10-101-1-102.iluvatar.local (10.101.1.102)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsXClcqYpttS9iHW4N8SPYvJVw+wWcxYfJzV
+        4vKuOWwOzB6Tjyxg9rj1bC2rx+dNcgHMUVw2Kak5mWWpRfp2CVwZ57t+shb85K+4dW0jewPj
+        e54uRk4OCQETiZMvt7F0MXJxCAmcYJT487qHBSTBLCAhcfDFC2aQBIvAWyaJyaums0NUtTFJ
+        nOldwQpSxSagITH3xF2gKg4OEQFxiffzXSGaYyXmdu1jBrGFBVwl+ts2MoHYLAKqEo+OrwWz
+        eQUsJHa83cQMcYW8xOoNB8BsTgFLiUNX34DVCAHVXJh3iRmiXlDi5MwnLCCrhAQUJF6s1IJo
+        VZJYsncWE4RdKPH95V2WCYxCs5C8MAtJ9wJGplWM/MW56XqZOaVliSWJRXqJmZsYIUGbuIPx
+        RudLvUOMAhyMSjy8AuffxwqxJpYVV+YeYpTgYFYS4T3e9i5WiDclsbIqtSg/vqg0J7X4EKM0
+        B4uSOK/Qv6cxQgLpiSWp2ampBalFMFkmDk6pBiaV3kepB47VRMrtyM/e/fP/V1XeBXdfH8iw
+        dHRqVqzjeRKXEsHolSMe0jLFOfqJoH5s9SYrYwuZSfbbjeO1U/LY3+5ryE+779J3NDWr23n+
+        LJGV8Wu8rvwOu/b6Tl5CxPRPzeySTZ3cXBPleTtNL+ZubuV5Mdnm/+eUb8u6191S3ftPK9Am
+        s0stae7tvBMHQ76tK+NWuW5wPGvZ8vgVCVdKAuW22qad63wtv7j1XZLCxl2erRu14revXe+d
+        Kq0Z3+F27nyom951te2fXSvn/PRoa3G8cIovP5Fl68STrmbM4SuFlGredMnE3tKxVdsi/OXc
+        l8IFGjN4zxzhslPZFMXKobX43hINcQNvfpHTSizFGYmGWsxFxYkAOSqQzdcCAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 09:00:39AM +0700, Tuong Lien Tong wrote:
-> Hi Ying, Paul,
-> 
-> Please see my comments inline. Thanks!
+The driver strings, device name and net device name are not changed for
+the driver's dynamic log output. But dynamic_emit_prefix() which contains
+the function names may change when the function names are changed.
 
-Good catch!
+So the patch makes the better dynamic log output.
 
-> BR/Tuong
-> 
-> -----Original Message-----
-> From: Ying Xue <ying.xue@windriver.com> 
-> Sent: Wednesday, December 11, 2019 8:32 AM
-> To: paulmck@kernel.org
-> Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; mingo@kernel.org;
-> tipc-discussion@lists.sourceforge.net; kernel-team@fb.com;
-> torvalds@linux-foundation.org; davem@davemloft.net
-> Subject: Re: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected()
-> with rcu_replace_pointer()
-> 
-> On 12/11/19 6:38 AM, Paul E. McKenney wrote:
-> > commit 4ee8e2c68b076867b7a5af82a38010fffcab611c
-> > Author: Paul E. McKenney <paulmck@kernel.org>
-> > Date:   Mon Dec 9 19:13:45 2019 -0800
-> > 
-> >     net/tipc: Replace rcu_swap_protected() with rcu_replace_pointer()
-> >     
-> >     This commit replaces the use of rcu_swap_protected() with the more
-> >     intuitively appealing rcu_replace_pointer() as a step towards removing
-> >     rcu_swap_protected().
-> >     
-> >     Link:
-> https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4g
-> g6Hw@mail.gmail.com/
-> >     Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> >     Reported-by: kbuild test robot <lkp@intel.com>
-> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> >     Cc: Jon Maloy <jon.maloy@ericsson.com>
-> >     Cc: Ying Xue <ying.xue@windriver.com>
-> >     Cc: "David S. Miller" <davem@davemloft.net>
-> >     Cc: <netdev@vger.kernel.org>
-> >     Cc: <tipc-discussion@lists.sourceforge.net>
-> 
-> Acked-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
+---
+v2 -- > v3:
+	change the net log and ibdev log
+---
+ lib/dynamic_debug.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-As in the following?  If so, I will be very happy to apply your Acked-by.
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 4c0855120704e7a578dc6862ae57babf6dc9bc77
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Mon Dec 9 19:13:45 2019 -0800
-
-    net/tipc: Replace rcu_swap_protected() with rcu_replace_pointer()
-    
-    This commit replaces the use of rcu_swap_protected() with the more
-    intuitively appealing rcu_replace_pointer() as a step towards removing
-    rcu_swap_protected().
-    
-    Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
-    Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-    Reported-by: kbuild test robot <lkp@intel.com>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-    [ paulmck: Updated based on Ying Xue and Tuong Lien Tong feedback. ]
-    Cc: Jon Maloy <jon.maloy@ericsson.com>
-    Cc: Ying Xue <ying.xue@windriver.com>
-    Cc: "David S. Miller" <davem@davemloft.net>
-    Cc: <netdev@vger.kernel.org>
-    Cc: <tipc-discussion@lists.sourceforge.net>
-
-diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
-index 990a872..39a13b4 100644
---- a/net/tipc/crypto.c
-+++ b/net/tipc/crypto.c
-@@ -258,7 +258,7 @@ static char *tipc_key_change_dump(struct tipc_key old, struct tipc_key new,
- 	rcu_dereference_protected((rcu_ptr), lockdep_is_held(lock))
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index c60409138e13..762f718fecd9 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -589,9 +589,9 @@ void __dynamic_dev_dbg(struct _ddebug *descriptor,
+ 	} else {
+ 		char buf[PREFIX_SIZE];
  
- #define tipc_aead_rcu_swap(rcu_ptr, ptr, lock)				\
--	rcu_swap_protected((rcu_ptr), (ptr), lockdep_is_held(lock))
-+	rcu_replace_pointer((rcu_ptr), (ptr), lockdep_is_held(lock))
- 
- #define tipc_aead_rcu_replace(rcu_ptr, ptr, lock)			\
- do {									\
-@@ -1189,7 +1189,7 @@ static bool tipc_crypto_key_try_align(struct tipc_crypto *rx, u8 new_pending)
- 
- 	/* Move passive key if any */
- 	if (key.passive) {
--		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
-+		tmp2 = tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
- 		x = (key.passive - key.pending + new_pending) % KEY_MAX;
- 		new_passive = (x <= 0) ? x + KEY_MAX : x;
+-		dev_printk_emit(LOGLEVEL_DEBUG, dev, "%s%s %s: %pV",
+-				dynamic_emit_prefix(descriptor, buf),
++		dev_printk_emit(LOGLEVEL_DEBUG, dev, "%s %s %s: %pV",
+ 				dev_driver_string(dev), dev_name(dev),
++				dynamic_emit_prefix(descriptor, buf),
+ 				&vaf);
  	}
+ 
+@@ -619,11 +619,11 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
+ 		char buf[PREFIX_SIZE];
+ 
+ 		dev_printk_emit(LOGLEVEL_DEBUG, dev->dev.parent,
+-				"%s%s %s %s%s: %pV",
+-				dynamic_emit_prefix(descriptor, buf),
++				"%s %s %s %s %s: %pV",
+ 				dev_driver_string(dev->dev.parent),
+ 				dev_name(dev->dev.parent),
+ 				netdev_name(dev), netdev_reg_state(dev),
++				dynamic_emit_prefix(descriptor, buf),
+ 				&vaf);
+ 	} else if (dev) {
+ 		printk(KERN_DEBUG "%s%s: %pV", netdev_name(dev),
+@@ -655,11 +655,11 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
+ 		char buf[PREFIX_SIZE];
+ 
+ 		dev_printk_emit(LOGLEVEL_DEBUG, ibdev->dev.parent,
+-				"%s%s %s %s: %pV",
+-				dynamic_emit_prefix(descriptor, buf),
++				"%s %s %s %s: %pV",
+ 				dev_driver_string(ibdev->dev.parent),
+ 				dev_name(ibdev->dev.parent),
+ 				dev_name(&ibdev->dev),
++				dynamic_emit_prefix(descriptor, buf),
+ 				&vaf);
+ 	} else if (ibdev) {
+ 		printk(KERN_DEBUG "%s: %pV", dev_name(&ibdev->dev), &vaf);
+-- 
+2.17.1
+
