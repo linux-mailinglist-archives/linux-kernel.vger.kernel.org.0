@@ -2,173 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E312911B1DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:33:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E03C11B1E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:33:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387847AbfLKPdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:33:15 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37891 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387423AbfLKPdI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:33:08 -0500
-Received: by mail-oi1-f193.google.com with SMTP id b8so13585956oiy.5;
-        Wed, 11 Dec 2019 07:33:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f5P25Si4pv99iP0qrSos6mF+77maXmQ/ZDO3HXBpXqE=;
-        b=PhQlpAuA19DEAcAgEFVx4qZBSt7waJ118aKV4TsU0dW++tEKwIk1fg6GDhlIGZHVrv
-         frMNXHxEyR63eUjLgicOFX74lex63afl/PHWUXpLY1yowmN/7Ab3KuTV1+fFsLjPSdN/
-         ORZDTBoxPa7hI3UAL3bCA+v0cwRipHJnYc2/pBD+lGeaS5lgTFqMBLRwrSKTfZ51fJuy
-         IyojJ3qnNwvuqAUuqd/pQOUZDJv44GOTs3CEYtEnfCITMil/EnNlMr75UEXrFqMJ4+VP
-         AsMuYsMN9Tru4yeZLd1xYd5zhoZxKtqgIXgant3NS5TDQ+pOiyhlgAuRcRFp45a41NRU
-         ojPw==
-X-Gm-Message-State: APjAAAVVegURNP1D3OxfHZ0FjqT/cbxI1Jos7bO3/lzYIxg9Kf3o3RRn
-        9LSW/eg1TTRjrHrVwYvVOXXuP+e2JsgIs+YgZ8I=
-X-Google-Smtp-Source: APXvYqxil2EmaM/dqweJcHtTfhDUlmKjy65GEn4NAbcDsfU0ROdt5CGKYoFFIB85oAv4vVN8I6Umv8ahu6gIC52KruA=
-X-Received: by 2002:aca:48cd:: with SMTP id v196mr3341766oia.102.1576078387298;
- Wed, 11 Dec 2019 07:33:07 -0800 (PST)
+        id S2388059AbfLKPdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:33:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387423AbfLKPdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:33:17 -0500
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63A042077B;
+        Wed, 11 Dec 2019 15:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576078396;
+        bh=23YlAnpt744eiuxvp4LvcKrabFlhDLD+8Q8Ilp9BmqY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HlGrVixYom2ssG9+XLm7A52FHM9+bgKtLuuQ/18ur59yNWaULj75MFKcI3PpKX+2Z
+         7RmrdC8S2f81L+VlreVej0IgovZwco6qqLgr56mFuqRenY+ugnDwhXB2KJYQ7cNYEQ
+         7c2A37KwttEs2TgM4ezgBcYg1z9jEEe3EbnQS1dY=
+Received: by mail-wm1-f49.google.com with SMTP id a5so1811783wmb.0;
+        Wed, 11 Dec 2019 07:33:16 -0800 (PST)
+X-Gm-Message-State: APjAAAXRVsL7zN+BmSoXnfowql2oSzZvpAR+M2zBmhIra1ZdteboF06Y
+        5zvAhd6FNjrhMOk5rbd2+nlw2BZ8hKUu/bbMZ7U=
+X-Google-Smtp-Source: APXvYqwjSC19g0o0KY/WlIEeOOsXoviY4IAXr7g5yUJbzDXE4omBhvNmA6CAL+nCmUBxUwEofGEO2mzo6hRqBLipPL4=
+X-Received: by 2002:a05:600c:2409:: with SMTP id 9mr356922wmp.109.1576078394867;
+ Wed, 11 Dec 2019 07:33:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20190502123220.3016-1-geert+renesas@glider.be> <20190502123220.3016-2-geert+renesas@glider.be>
-In-Reply-To: <20190502123220.3016-2-geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 11 Dec 2019 16:32:36 +0100
-Message-ID: <CAMuHMdU2atxUFCMFJNsgVWak+Z1YcTm8BrKtk66cpXu16K+_tA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] dt-bindings: interrupt-controller: Add Renesas
- RZ/A1 Interrupt Controller
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20191211104152.26496-1-wens@kernel.org> <28dfaeab-73cd-041b-9894-776064d13245@arm.com>
+In-Reply-To: <28dfaeab-73cd-041b-9894-776064d13245@arm.com>
+From:   Chen-Yu Tsai <wens@kernel.org>
+Date:   Wed, 11 Dec 2019 23:33:05 +0800
+X-Gmail-Original-Message-ID: <CAGb2v640NEj+WK_zj-LouvwkLTVrwyMgWGq_xdU8qJkOKF0FFQ@mail.gmail.com>
+Message-ID: <CAGb2v640NEj+WK_zj-LouvwkLTVrwyMgWGq_xdU8qJkOKF0FFQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dma-api: fix max_pfn off-by-one error in __dma_supported()
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Chen-Yu Tsai <wens@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        stable <stable@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Thu, May 2, 2019 at 2:32 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Add DT bindings for the Renesas RZ/A1 Interrupt Controller.
+On Wed, Dec 11, 2019 at 9:41 PM Robin Murphy <robin.murphy@arm.com> wrote:
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On 11/12/2019 10:41 am, Chen-Yu Tsai wrote:
+> > From: Chen-Yu Tsai <wens@csie.org>
+> >
+> > max_pfn, as set in arch/arm/mm/init.c:
+> >
+> >      static void __init find_limits(unsigned long *min,
+> >                                  unsigned long *max_low,
+> >                                  unsigned long *max_high)
+> >      {
+> >           *max_low = PFN_DOWN(memblock_get_current_limit());
+> >           *min = PFN_UP(memblock_start_of_DRAM());
+> >           *max_high = PFN_DOWN(memblock_end_of_DRAM());
+> >      }
+> >
+> > with memblock_end_of_DRAM() pointing to the next byte after DRAM. As
+> > such, max_pfn points to the PFN after the end of DRAM.
+> >
+> > Thus when using max_pfn to check DMA masks, we should subtract one
+> > when checking DMA ranges against it.
+> >
+> > Commit 8bf1268f48ad ("ARM: dma-api: fix off-by-one error in
+> > __dma_supported()") fixed the same issue, but missed this spot.
+> >
+> > This issue was found while working on the sun4i-csi v4l2 driver on the
+> > Allwinner R40 SoC. On Allwinner SoCs, DRAM is offset at 0x40000000,
+> > and we are starting to use of_dma_configure() with the "dma-ranges"
+> > property in the device tree to have the DMA API handle the offset.
+> >
+> > In this particular instance, dma-ranges was set to the same range as
+> > the actual available (2 GiB) DRAM. The following error appeared when
+> > the driver attempted to allocate a buffer:
+> >
+> >      sun4i-csi 1c09000.csi: Coherent DMA mask 0x7fffffff (pfn 0x40000-0xc0000)
+> >      covers a smaller range of system memory than the DMA zone pfn 0x0-0xc0001
+> >      sun4i-csi 1c09000.csi: dma_alloc_coherent of size 307200 failed
+> >
+> > Fixing the off-by-one error makes things work.
+> >
+> > Fixes: 11a5aa32562e ("ARM: dma-mapping: check DMA mask against available memory")
+> > Fixes: 9f28cde0bc64 ("ARM: another fix for the DMA mapping checks")
+> > Fixes: ab746573c405 ("ARM: dma-mapping: allow larger DMA mask than supported")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >   arch/arm/mm/dma-mapping.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> > index e822af0d9219..f4daafdbac56 100644
+> > --- a/arch/arm/mm/dma-mapping.c
+> > +++ b/arch/arm/mm/dma-mapping.c
+> > @@ -227,12 +227,12 @@ static int __dma_supported(struct device *dev, u64 mask, bool warn)
+> >        * Translate the device's DMA mask to a PFN limit.  This
+> >        * PFN number includes the page which we can DMA to.
+> >        */
+> > -     if (dma_to_pfn(dev, mask) < max_dma_pfn) {
+> > +     if (dma_to_pfn(dev, mask) < max_dma_pfn - 1) {
+>
+> I think this correction actually wants to happen a couple of lines up in
+> the definition:
+>
+>         unsigned long max_dma_pfn = min(max_pfn, arm_dma_pfn_limit);
+>
+> max_pfn is indeed an exclusive limit, but AFAICS arm_dma_pfn_limit is
+> inclusive, so none of these "+1"s and "-1"s can be entirely right for
+> both cases.
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
-> @@ -0,0 +1,43 @@
-> +DT bindings for the Renesas RZ/A1 Interrupt Controller
-> +
-> +The RZ/A1 Interrupt Controller is a front-end for the GIC found on Renesas
-> +RZ/A1 and RZ/A2 SoCs:
-> +  - IRQ sense select for 8 external interrupts, 1:1-mapped to 8 GIC SPI
-> +    interrupts,
-> +  - NMI edge select.
-> +
-> +Required properties:
-> +  - compatible: Must be "renesas,<soctype>-irqc", and "renesas,rza1-irqc" as
-> +               fallback.
-> +               Examples with soctypes are:
-> +                 - "renesas,r7s72100-irqc" (RZ/A1H)
-> +                 - "renesas,r7s9210-irqc" (RZ/A2M)
-> +  - #interrupt-cells: Must be 2 (an interrupt index and flags, as defined
-> +                                in interrupts.txt in this directory)
-> +  - #address-cells: Must be zero
-> +  - interrupt-controller: Marks the device as an interrupt controller
-> +  - reg: Base address and length of the memory resource used by the interrupt
-> +         controller
-> +  - interrupt-map: Specifies the mapping from external interrupts to GIC
-> +                  interrupts
-> +  - interrupt-map-mask: Must be <7 0>
-> +
-> +Example:
-> +
-> +       irqc: interrupt-controller@fcfef800 {
-> +               compatible = "renesas,r7s72100-irqc", "renesas,rza1-irqc";
-> +               #interrupt-cells = <2>;
-> +               #address-cells = <0>;
-> +               interrupt-controller;
-> +               reg = <0xfcfef800 0x6>;
-> +               interrupt-map =
-> +                       <0 0 &gic GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-> +                       <1 0 &gic GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> +                       <2 0 &gic GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-> +                       <3 0 &gic GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-> +                       <4 0 &gic GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-> +                       <5 0 &gic GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-> +                       <6 0 &gic GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-> +                       <7 0 &gic GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> +               interrupt-map-mask = <7 0>;
-> +       };
+You're absolutely right. I'll fix it and send a v2 out.
 
-"make dtbs_check" does not like this example:
+Thanks
 
-arch/arm/boot/dts/r7s72100-rskrza1.dt.yaml:
-interrupt-controller@fcfef800: {'compatible':
-['renesas,r7s72100-irqc', 'renesas,rza1-irqc'], '#interrupt-cells':
-[[2]], '#address-cells': [[0]], 'interrupt-controller': True, 'reg':
-[[4244568064, 6]], 'interrupt-map': [[0, 0, 3, 0, 0, 4], [1, 0, 3, 0,
-1, 4], [2, 0, 3, 0, 2, 4], [3, 0, 3, 0, 3, 4], [4, 0, 3, 0, 4, 4], [5,
-0, 3, 0, 5, 4], [6, 0, 3, 0, 6, 4], [7, 0, 3, 0, 7, 4]],
-'interrupt-map-mask': [[7, 0]], 'phandle': [[27]], '$nodename':
-['interrupt-controller@fcfef800']} is valid under each of {'required':
-['interrupt-map']}, {'required': ['interrupt-controller']}
-{'oneOf': [{'required': ['interrupt-controller']},
-           {'required': ['interrupt-map']}]}
+ChenYu
 
-as it considers interrupt-controller and interrupt-map mutually-exclusive.
-
-This comes from
-dt-schema/meta-schemas/interrupts.yaml:
-
-    dependencies:
-      interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
-      '#interrupt-cells':
-        oneOf:
-          - required:
-              - interrupt-controller
-          - required:
-              - interrupt-map
-
-and/or dt-schema/schemas/interrupt-controller.yaml:
-
-    dependencies:
-      interrupt-controller: ['#interrupt-cells']
-      interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
-      "#interrupt-cells":
-        oneOf:
-          - required:
-              - interrupt-controller
-          - required:
-              - interrupt-map
-
-Removing the "interrupt-controller" property fixes the warning, but
-impacts the logic in of_irq_parse_raw().
-
-Is there something wrong with the base schema?
-Or perhaps this will just be be fixed by converting renesas,rza1-irqc.txt
-to yaml?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Robin.
+>
+> >               if (warn)
+> >                       dev_warn(dev, "Coherent DMA mask %#llx (pfn %#lx-%#lx) covers a smaller range of system memory than the DMA zone pfn 0x0-%#lx\n",
+> >                                mask,
+> >                                dma_to_pfn(dev, 0), dma_to_pfn(dev, mask) + 1,
+> > -                              max_dma_pfn + 1);
+> > +                              max_dma_pfn);
+> >               return 0;
+> >       }
+> >
+> >
