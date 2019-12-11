@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7A2811AEE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F010C11B086
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:23:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730552AbfLKPJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:09:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57002 "EHLO mail.kernel.org"
+        id S1730605AbfLKPXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:23:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729838AbfLKPJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:09:08 -0500
+        id S1730107AbfLKPXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:23:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28EFB208C3;
-        Wed, 11 Dec 2019 15:09:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAF752073D;
+        Wed, 11 Dec 2019 15:23:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076947;
-        bh=HbMd7WR1Iqjuo3U0Y+yhR9SUlBwKgxfMYe6dRq6iaYM=;
+        s=default; t=1576077818;
+        bh=KHVjQquwnf4qMCOdHbfWO0pkNtbfAIXbCMPdkUNfzCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qh1mACDAaDyohNfhm6hxGnFzDdMOOKRxUpdq15x6sPCC42S9zVCHqI1yuwpC9l+Dq
-         hmTTY+ALD2cujODzu1YejfnRjbakh+ciLlyNMrwGV33oK7nl4IB5qy6U9XUXgZdJkJ
-         ejJn5qvVCMIUxxcCglKHyoA+tGSdAoO2ez6u09Jk=
+        b=eDzyr/GyQ+d3xwgU/ebR3gmLDqXVTFtSCi6pM/4w40cXC11yKLIt17svvasy3dK07
+         gL2BcY3gMNW4VrvSo9K5DeQSvXX2zunq//XKmT4H1g1KBzBBenmQ3hzSomURDVh+lU
+         f7WPsf16y6mCVI4AWtIMggFdXe/5W71Di0efthSE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 5.4 52/92] kernfs: fix ino wrap-around detection
+        stable@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 181/243] clk: qcom: gcc-msm8998: Disable halt check of UFS clocks
 Date:   Wed, 11 Dec 2019 16:05:43 +0100
-Message-Id: <20191211150243.838957125@linuxfoundation.org>
+Message-Id: <20191211150351.388861450@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,63 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit e23f568aa63f64cd6b355094224cc9356c0f696b upstream.
+[ Upstream commit 2abf856202fd3e4883e4c518acaa9a023b0dbe54 ]
 
-When the 32bit ino wraps around, kernfs increments the generation
-number to distinguish reused ino instances.  The wrap-around detection
-tests whether the allocated ino is lower than what the cursor but the
-cursor is pointing to the next ino to allocate so the condition never
-triggers.
+Drop the halt check of the UFS symbol clocks, in accordance with other
+platforms. This makes clk_disable_unused() happy and makes it possible
+to turn the clocks on again without an error.
 
-Fix it by remembering the last ino and comparing against that.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Fixes: 4a3ef68acacf ("kernfs: implement i_generation")
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/kernfs/dir.c        |    5 ++---
- include/linux/kernfs.h |    1 +
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/gcc-msm8998.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -622,7 +622,6 @@ static struct kernfs_node *__kernfs_new_
- {
- 	struct kernfs_node *kn;
- 	u32 gen;
--	int cursor;
- 	int ret;
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index 5fd6662a1beac..4e23973b6cd16 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -2402,7 +2402,7 @@ static struct clk_branch gcc_ufs_phy_aux_clk = {
  
- 	name = kstrdup_const(name, GFP_KERNEL);
-@@ -635,11 +634,11 @@ static struct kernfs_node *__kernfs_new_
+ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
+ 	.halt_reg = 0x75014,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x75014,
+ 		.enable_mask = BIT(0),
+@@ -2415,7 +2415,7 @@ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
  
- 	idr_preload(GFP_KERNEL);
- 	spin_lock(&kernfs_idr_lock);
--	cursor = idr_get_cursor(&root->ino_idr);
- 	ret = idr_alloc_cyclic(&root->ino_idr, kn, 1, 0, GFP_ATOMIC);
--	if (ret >= 0 && ret < cursor)
-+	if (ret >= 0 && ret < root->last_ino)
- 		root->next_generation++;
- 	gen = root->next_generation;
-+	root->last_ino = ret;
- 	spin_unlock(&kernfs_idr_lock);
- 	idr_preload_end();
- 	if (ret < 0)
---- a/include/linux/kernfs.h
-+++ b/include/linux/kernfs.h
-@@ -187,6 +187,7 @@ struct kernfs_root {
+ static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
+ 	.halt_reg = 0x7605c,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x7605c,
+ 		.enable_mask = BIT(0),
+@@ -2428,7 +2428,7 @@ static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
  
- 	/* private fields, do not use outside kernfs proper */
- 	struct idr		ino_idr;
-+	u32			last_ino;
- 	u32			next_generation;
- 	struct kernfs_syscall_ops *syscall_ops;
- 
+ static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
+ 	.halt_reg = 0x75010,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x75010,
+ 		.enable_mask = BIT(0),
+-- 
+2.20.1
+
 
 
