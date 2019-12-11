@@ -2,123 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D6611B275
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:36:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE8D11B255
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:35:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387853AbfLKPg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:36:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387694AbfLKPfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:35:52 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75EF824658;
-        Wed, 11 Dec 2019 15:35:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078552;
-        bh=IG9kGKLljauydAeaT7R+w9w3rEQaS3pDBysxhkF6U/4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UF42BdtbS1pePRehXJOwk+2QEAUoI+bMlC/uX9d1p/IWqBlfPiM0/SGxAGwXaTR27
-         UhxaYqUmTBuk2nEE/bYKdK13GY+5DVmKzWCCM5cQYqBmmnbwbUvTyEdlTOCwjyJ3Sq
-         SKJQoBSyybNtVcJfC/EV/RCtgwfWRfuow+5xVJdA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.9 39/42] libfdt: define INT32_MAX and UINT32_MAX in libfdt_env.h
-Date:   Wed, 11 Dec 2019 10:35:07 -0500
-Message-Id: <20191211153510.23861-39-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211153510.23861-1-sashal@kernel.org>
-References: <20191211153510.23861-1-sashal@kernel.org>
+        id S2388136AbfLKPfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:35:25 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35738 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388098AbfLKPfU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:35:20 -0500
+Received: by mail-qt1-f196.google.com with SMTP id s8so6631484qte.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:35:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EEZbVUZTmwHpEhj5IiLNVT7HoJJ6hK9o2EwOkcWd0R0=;
+        b=ByyfeRJbC64U8giuaSJyBfvkHapBhK2qAxMJttshjcpu4q7X5Gfa5KndB3Rsx+FfUi
+         2f5Chh4ed41jCL/yUvEAObJLLvxAKzSB3oX9f4i85dEtBwM69NnnT1HWQccG3lMNxg2B
+         0HxtpM2Bu3pbI0Mll/70NUJy6kuGduaNXfpbgt550b3TM2wZOmIXmZmDdat432CbG13Y
+         QnOUIs7h+1UPahghLzsw89qEGjuu+VUedXyzVqknuDAvXHP5Xm8tsXdnalMqEsczvEva
+         l2NRBcXAfvXC70PbdFm3ngvap4BqrNr7M9AZr7YXRhuTCxeiTPjTNLqUt1SKt0BGxnlV
+         ti+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EEZbVUZTmwHpEhj5IiLNVT7HoJJ6hK9o2EwOkcWd0R0=;
+        b=p3AjVzn4ecbKAKxev+riDCpfdmQ2L+zWVRcG38TSn+5zKO9b1bBHlaYGaRGvciLQ9I
+         twAn8ZkXyYx9CAD153rLP2CC/7uJuJstXd62QN1iIYRK7jePaCTgC5fWOf2bzM9KBBOk
+         DAdNNEyI3elXY7Ha6Co/47TLrpS2OIxkMuAkaShTlVouc2+zPQAT2+6ef0bQU4HtlQGt
+         /raBBmnxd7vEKt2TNbTf3zqHyT4GpTlCvC7OXzTFyiQ8XDpYz8ntAfzJ3ph9qeP5M8+M
+         Oaxr/iFbkaAE/cjUdJgTSGaKJs8qjaLNQLX72TbZZ7CaBrmwCvmg/lxhYzSMgPsySb59
+         HWtw==
+X-Gm-Message-State: APjAAAWLSaTQhSymqQNqnWfA4EPro2zjEtWCj0oRB4YdoFz0mF7JbUIg
+        nytewZRLHY7rBFwwCVHeuYvACQyD2fMQ8en/lZSW/Q==
+X-Google-Smtp-Source: APXvYqzPgmO02LvwPR3MASeJmUeTLUSOMZa+8nNfTg7jaNAriHFXi9CTAzkRdwS2y9fl/VgOUeUZWqYTOIkuaCIyzmE=
+X-Received: by 2002:aed:2465:: with SMTP id s34mr3283883qtc.158.1576078518501;
+ Wed, 11 Dec 2019 07:35:18 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <CAAeHK+wFBYX8-L-D8w_nep3W=QjYoLAZbc=-0eoWK684wnuayA@mail.gmail.com>
+ <Pine.LNX.4.44L0.1912111010490.1549-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1912111010490.1549-100000@iolanthe.rowland.org>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 11 Dec 2019 16:35:07 +0100
+Message-ID: <CACT4Y+aTq7iThhikGNGKsLF61RHcWMY5mh=oTGc6FHv02f1BBQ@mail.gmail.com>
+Subject: Re: Re: KASAN: use-after-free Read in usbvision_v4l2_open
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        syzbot <syzbot+7fa38a608b1075dfd634@syzkaller.appspotmail.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+On Wed, Dec 11, 2019 at 4:15 PM Alan Stern <stern@rowland.harvard.edu> wrote
+>
+> On Wed, 11 Dec 2019, Andrey Konovalov wrote:
+>
+> > On Tue, Dec 10, 2019 at 9:17 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> > >
+> > > On Tue, 10 Dec 2019, syzbot wrote:
+> > >
+> > > > > On Mon, 9 Dec 2019, syzbot wrote:
+> > > >
+> > > > >> Hello,
+> > > >
+> > > > >> syzbot found the following crash on:
+> > > >
+> > > > >> HEAD commit:    1f22d15c usb: gadget: add raw-gadget interface
+> > > > >> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > > > >> console output: https://syzkaller.appspot.com/x/log.txt?x=1296f42ae00000
+> > > > >> kernel config:
+> > > > >> https://syzkaller.appspot.com/x/.config?x=8ccee2968018adcb
+> > > > >> dashboard link:
+> > > > >> https://syzkaller.appspot.com/bug?extid=c7b0ec009a216143df30
+> > > > >> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > >
+> > > > >> Unfortunately, I don't have any reproducer for this crash yet.
+> > > >
+> > > > >> IMPORTANT: if you fix the bug, please add the following tag to the
+> > > > >> commit:
+> > > > >> Reported-by: syzbot+c7b0ec009a216143df30@syzkaller.appspotmail.com
+>
+> > > > This crash does not have a reproducer. I cannot test it.
+> > >
+> > > Let's try the same patch with a different bug report -- one that has a
+> > > reproducer.  I assume that syzbot gets the bug identity from the
+> > > email's From: line (which has been updated acoordingly) rather than the
+> > > Subject: line.
+> >
+> > Did you get a response for this test? I see the test attempt on the
+> > dashboard (the patch failed to build), but I didn't get an email with
+> > the result.
+>
+> No response so far.  On the other hand, syzbot has been a bit slow to
+> respond to my tests recently (typical turnaround time is several
+> hours).  I don't know what's going on.
 
-[ Upstream commit a8de1304b7df30e3a14f2a8b9709bb4ff31a0385 ]
-
-The DTC v1.5.1 added references to (U)INT32_MAX.
-
-This is no problem for user-space programs since <stdint.h> defines
-(U)INT32_MAX along with (u)int32_t.
-
-For the kernel space, libfdt_env.h needs to be adjusted before we
-pull in the changes.
-
-In the kernel, we usually use s/u32 instead of (u)int32_t for the
-fixed-width types.
-
-Accordingly, we already have S/U32_MAX for their max values.
-So, we should not add (U)INT32_MAX to <linux/limits.h> any more.
-
-Instead, add them to the in-kernel libfdt_env.h to compile the
-latest libfdt.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/boot/compressed/libfdt_env.h | 4 +++-
- arch/powerpc/boot/libfdt_env.h        | 2 ++
- include/linux/libfdt_env.h            | 3 +++
- 3 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
-index 005bf4ff1b4cb..f3ddd4f599e3e 100644
---- a/arch/arm/boot/compressed/libfdt_env.h
-+++ b/arch/arm/boot/compressed/libfdt_env.h
-@@ -1,11 +1,13 @@
- #ifndef _ARM_LIBFDT_ENV_H
- #define _ARM_LIBFDT_ENV_H
- 
-+#include <linux/limits.h>
- #include <linux/types.h>
- #include <linux/string.h>
- #include <asm/byteorder.h>
- 
--#define INT_MAX			((int)(~0U>>1))
-+#define INT32_MAX	S32_MAX
-+#define UINT32_MAX	U32_MAX
- 
- typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
-diff --git a/arch/powerpc/boot/libfdt_env.h b/arch/powerpc/boot/libfdt_env.h
-index 0b3db6322c793..5f2cb1c53e151 100644
---- a/arch/powerpc/boot/libfdt_env.h
-+++ b/arch/powerpc/boot/libfdt_env.h
-@@ -5,6 +5,8 @@
- #include <string.h>
- 
- #define INT_MAX			((int)(~0U>>1))
-+#define UINT32_MAX		((u32)~0U)
-+#define INT32_MAX		((s32)(UINT32_MAX >> 1))
- 
- #include "of.h"
- 
-diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
-index 8850e243c9406..bd0a55821177a 100644
---- a/include/linux/libfdt_env.h
-+++ b/include/linux/libfdt_env.h
-@@ -6,6 +6,9 @@
- 
- #include <asm/byteorder.h>
- 
-+#define INT32_MAX	S32_MAX
-+#define UINT32_MAX	U32_MAX
-+
- typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
- typedef __be64 fdt64_t;
--- 
-2.20.1
-
+The system is busy with bisections. Patch testing takes precedence
+over bisection, but only after the current one finished. Bisections
+can take a long time, up to days. The way it all works is a total hack
+that one can put together in a few days.
