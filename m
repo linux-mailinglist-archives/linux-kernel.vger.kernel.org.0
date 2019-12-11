@@ -2,154 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2A6A11BB31
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:13:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFCAB11BB69
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:16:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730862AbfLKSNU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:13:20 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:44546 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfLKSNU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:13:20 -0500
-Received: by mail-ua1-f66.google.com with SMTP id d6so9210730uam.11;
-        Wed, 11 Dec 2019 10:13:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=bd29n+OqWQHmjiv4UohToE6LWwboTOECsuyuIZjyFLc=;
-        b=dzpYPy2oARzQ0iGcjAca12/c3TTFocSLbTgbg/ooUwOW9F1VR/s8PE802ilhjbtbRG
-         ZxZXzRCuD3aeCJMDBJMi+/K4t4OLrFjj6sqgbkVhCr3LetOWTSRVc1MReJhuDoHq6bkC
-         UESo9BKJOPpJqPOWlstJIqMNAjD8ylNJmoLWN5qPTkNv/CwYL1C63i8c85RMwVN0lcIm
-         g7vNBpE8X1MtiFYNeliW0xkJ3fcTpB2UQiBMdh32QcEzGSy5bZHEhP8m8tRDOQ4qdkO0
-         xiVBKBLLNB1q/0OtE43sxjPEguFRhbA3k2oUx6CMWz15YMV5xoL0AdbmIJ+ADJrq3lIN
-         7qbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bd29n+OqWQHmjiv4UohToE6LWwboTOECsuyuIZjyFLc=;
-        b=nC7E8SADC5KgvP0pePtMl1liNfoQ60iUQ1GS7tr9bfkuKIZ5owimD1GMmKKIiieIKP
-         dCoYST/yAzkwekwJVjNaf3ScRRU4U4DRP+Rx81jPo6hE6sJApvFZG7abcOittq3ZEcrP
-         cglp4tyOWn6KSymZumlzN2LccERUfKlyHEHSZDANPRGN16YS5hqx80OosOD4YMxgzAl+
-         m4/miPU0U1kOKU5siciIoZQX9+uVGqY0/g3HI4ku+jFqetFCdBShslMdtUdV0xo66eWi
-         CKnTBRArkXctwfUqU/tVvfxbezNlm0nS+qlzwI/eHBTJ6xRtbS7gsGND7MnCAvyIKGxY
-         wi4g==
-X-Gm-Message-State: APjAAAUmrCMTcCZiCAynv5gZBl73HywTwIGGOCSv1A6jViAVG3w392X+
-        8ibdhP4ExO9Lcm6E5yrHb5S6EgQb
-X-Google-Smtp-Source: APXvYqxOgC4TDxo+oV7b8znqWdp8cjvcMF9KAx5I/dgbEEczsw6rGRWj7qsgndiJMGC4M0PwYjPDqw==
-X-Received: by 2002:ab0:6418:: with SMTP id x24mr4509581uao.40.1576087999267;
-        Wed, 11 Dec 2019 10:13:19 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([177.195.211.59])
-        by smtp.gmail.com with ESMTPSA id f22sm1635454vso.8.2019.12.11.10.13.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 10:13:18 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 37CD340352; Wed, 11 Dec 2019 15:13:13 -0300 (-03)
-Date:   Wed, 11 Dec 2019 15:13:13 -0300
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     Matheus Marchini <mmarchini@netflix.com>,
-        linux-perf-users@vger.kernel.org, jkoch@netflix.com,
-        khlebnikov@yandex-team.ru, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Changbin Du <changbin.du@intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        John Keeping <john@metanate.com>,
-        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf map: fix infinite loop on
- map_groups__fixup_overlappings
-Message-ID: <20191211181313.GE13965@kernel.org>
-References: <20191211160734.18087-1-mmarchini@netflix.com>
+        id S1731235AbfLKSQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:16:18 -0500
+Received: from mout.gmx.net ([212.227.15.15]:39169 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731439AbfLKSQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 13:16:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1576088173;
+        bh=yGINRQU++szqyB2dKBcwmy5FgTVWGIaMocWgfU3OpZk=;
+        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
+        b=WWDt9XZEi3S6SXY5qmL3/enuSGMx15Et6BVrEQs+IRQGXj9cZthRtkn4+8gWtAdYb
+         cKndhlhx/yRtHSzlVtO/djyBJpIVOfQDHh7fgntsCppzRrXAdkGXE5mvxgAMyZ2zyd
+         B55fM2Gnx+72/qfego3DPJA9mtwLGjuMR8LdhLPU=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.178.24] ([95.112.79.148]) by mail.gmx.com (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MXXyP-1iDuSo2uRb-00Yx08; Wed, 11
+ Dec 2019 19:16:13 +0100
+To:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Cc:     Linux Kernel <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?Q?Toralf_F=c3=b6rster?= <toralf.foerster@gmx.de>
+Subject: BTRFS with kernel 5.4.1: df -h shows 0 Bytes available but btrfs
+ tells me that there are 1.06 TiB free
+Autocrypt: addr=toralf.foerster@gmx.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9df7f98b-271f-8b1d-f360-00a737d49911@gmx.de>
+Date:   Wed, 11 Dec 2019 19:16:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211160734.18087-1-mmarchini@netflix.com>
-X-Url:  http://acmel.wordpress.com
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:llQP24DdraPE2rf9G3Iloui7iQfhqHXXiz2KFEC234o1T41SzNH
+ CRt1C29WRKe9ykqmHizdeEEZxEdM4CqtFE3AOTHiGH+10PgpBV1e8QP4zZPHup08BqcxPAh
+ CEAIWB4zt224HaaynqyPLUC7ds1O78h49OyogMSwyck1DqUdLyQI7GA0+9OjhZ+4vosRdVc
+ ELqphhvC9Wtgb1wxOJQlQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LlnyD8R28a4=:wHcOfx5faCHxy9BpFpWQCO
+ iJFKxmjBZio83qKpv919ODpKtUeB7rViGpC6sD/FSbRMQtUugOsu4wBmLYbkZKToaiT75czbC
+ F1Vw80s42iMmLriaEgba5i/PEN/tmt2d1Bfw4lTGU9CkDpq/7veI0IrTdSc7Bcr6Zy4kvfsBJ
+ 63AwKxY6VREJ2xEUQJaxo2+JIOrgZEHnnA8HsyE3QLkTbpAYTx9/CaFMXAZsznFjhE9usEiyH
+ m0/SrmJwjuo+TIuGOYTTgEo61KKxv1hIr3k06k/Z8N9ovu5vRnMZ7mIJK/cYceXeBD9h+lAVK
+ +X0lp9PAwwL5adg8MFm++nwEaV4Jue0/s/ikdo+yI+k2sIpaXJ0PnmCs3kg1mzNZVuABExgbh
+ TJdfz8PRNKInZVj9F+aznzj+Op8qlMDWJdlTmhArOBBhQF1TMmoQC9ojxOISMTUf/21wgkrXu
+ TtbvZ8thDhtf6XAWx0EstsOHYmgUBbnAiMe8LEPS0MlfFUndDyae8UASgnG8gJW4ypD5U/fqM
+ jdLJT66QHKpS+WIel3bGg1H9NuQECnk82euQRJv99sfh5x8cFK3csMWzVnnprSho7k5USEjCo
+ wf2sl8rW1A+bFUguEt0SNMi7aNAlEPZ0n6ib3RJ1B23CuCHOaDMriaXgfSIfY0HoftvlQL2kF
+ aYpnPLpWHfK8/GqpjyztFL+PAvTnjBXvVpvfsXUWT3/aSB1C+r19YWGAX5Ixbaf/vCHsXXucm
+ P2ol/BsIfcBGguhdyU5nTsNoh2NYw1pLl68JNudjga6W3IikgEPfXRfeINVbc5A+PrCJHqJjQ
+ bsKs2eLQuRvi7aUXeWfEWyMbbJbSkIUdX7OTX8rZKsT3ax8Aqs2rG2GzwMe9cA8lRMsYEfoGT
+ k1lB4JVH3oOzd57WUglStyK4xv7cM0WvM0WpJKK07ypbmvluzcV3SC4aViAsYbr5QH/C8Spt2
+ 5vu5biUp+Nf850EfLkFWvAIs5YXdG+qF4XFBgATGbSYBpwjWEA7tgSHKwhJ2QI0WqNn4CF7sw
+ 7pDJOj0rxmHczZwIPUfm/765y0MJd3qGfrI3aPZK6UFfWd8zewNg7EHrKHKRQJF80BTioM3+8
+ OUzXzn/zDx04+J39FmRHl7dN3UAo06vUzqOAgZCVwLB8ITVVPx0eBLdaTFE/YJ3WWET8sc0In
+ g4X++RJsdTeBg2xfI1YA8p5q2Mg9P5dLM8vfC9Y7b9kzlH/qEMBJgPAFNkt2+fCyvs1FlgdU2
+ TraoLr3upmoP1pEQOR04TrdxgPwIf+QkECjEXp4va26lg4tChZm73+qftrbc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Dec 11, 2019 at 08:07:31AM -0800, Matheus Marchini escreveu:
-> In some cases, when using perf inject and there are JIT_CODE_MOVE
-> records in the jitdump file, perf will end up in an infinite loop on
-> map_groups__fixup_overlappings, which will keep allocating memory
-> indefinitely. This issue was observed on Node.js (with changes to
-> generate JIT_CODE_MOVE records) and on Java.
-> 
-> This issue started to occur after 6a9405b56c274 (perf map:
-> Optimize maps__fixup_overlappings()). To prevent it from happening,
-> partially revert those changes without losing the optimizations
-> introduced in it.
+Since 5.4 (5.3.xy was fine) I do get every few days:
 
-Konstantin, can you please take a look and provide your Acked-by or
-Reviewed-by?
+# df -h /home/tinderbox/img1
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda5       1.7T  614G     0 100% /home/tinderbox/img1
 
-- Arnaldo
- 
-> Signed-off-by: Matheus Marchini <mmarchini@netflix.com>
-> ---
->  tools/perf/util/map.c | 17 +++++++++++++++++
->  tools/perf/util/map.h |  1 +
->  2 files changed, 18 insertions(+)
-> 
-> diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-> index 744bfbaf35cf..8918fdb8ddab 100644
-> --- a/tools/perf/util/map.c
-> +++ b/tools/perf/util/map.c
-> @@ -781,6 +781,21 @@ static void __map_groups__insert(struct map_groups *mg, struct map *map)
->  	__maps__insert(&mg->maps, map);
->  }
->  
-> +int map__overlap(struct map *l, struct map *r)
-> +{
-> +	if (l->start > r->start) {
-> +		struct map *t = l;
-> +
-> +		l = r;
-> +		r = t;
-> +	}
-> +
-> +	if (l->end > r->start)
-> +		return 1;
-> +
-> +	return 0;
-> +}
-> +
->  int map_groups__fixup_overlappings(struct map_groups *mg, struct map *map, FILE *fp)
->  {
->  	struct maps *maps = &mg->maps;
-> @@ -821,6 +836,8 @@ int map_groups__fixup_overlappings(struct map_groups *mg, struct map *map, FILE
->  		 */
->  		if (pos->start >= map->end)
->  			break;
-> +		if (!map__overlap(map, pos))
-> +			continue;
->  
->  		if (verbose >= 2) {
->  
-> diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-> index 5e8899883231..1383571437aa 100644
-> --- a/tools/perf/util/map.h
-> +++ b/tools/perf/util/map.h
-> @@ -132,6 +132,7 @@ static inline void __map__zput(struct map **map)
->  
->  #define map__zput(map) __map__zput(&map)
->  
-> +int map__overlap(struct map *l, struct map *r);
->  size_t map__fprintf(struct map *map, FILE *fp);
->  size_t map__fprintf_dsoname(struct map *map, FILE *fp);
->  char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
-> -- 
-> 2.17.1
 
--- 
+# btrfs filesystem usage /home/tinderbox/img1
+Overall:
+    Device size:                   1.66TiB
+    Device allocated:            614.02GiB
+    Device unallocated:            1.06TiB
+    Device missing:                  0.00B
+    Used:                        613.38GiB
+    Free (estimated):              1.06TiB      (min: 543.50GiB)
+    Data ratio:                       1.00
+    Metadata ratio:                   2.00
+    Global reserve:              512.00MiB      (used: 0.00B)
 
-- Arnaldo
+Data,RAID0: Size:566.00GiB, Used:565.50GiB (99.91%)
+   /dev/sda5     283.00GiB
+   /dev/sdb1     283.00GiB
+
+Metadata,RAID1: Size:24.00GiB, Used:23.94GiB (99.76%)
+   /dev/sda5      24.00GiB
+   /dev/sdb1      24.00GiB
+
+System,RAID1: Size:8.00MiB, Used:64.00KiB (0.78%)
+   /dev/sda5       8.00MiB
+   /dev/sdb1       8.00MiB
+
+Unallocated:
+   /dev/sda5     542.99GiB
+   /dev/sdb1     542.99GiB
+
+
+This is a hardened Gentoo linux acting as a QA build bot for their package=
+s:
+
+# uname -a
+Linux mr-fox 5.4.2 #2 SMP Thu Dec 5 01:18:19 CET 2019 x86_64 Intel(R) Xeon=
+(R) CPU E5-1650 v3 @ 3.50GHz GenuineIntel GNU/Linux
+
+
+I do appreciate hints to overcome this situation.
+
+=2D-
+Toralf
