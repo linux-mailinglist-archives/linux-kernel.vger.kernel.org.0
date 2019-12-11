@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D69711B66D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:01:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F392111B69C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:02:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731459AbfLKPNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:13:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36562 "EHLO mail.kernel.org"
+        id S1731719AbfLKQCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:02:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731387AbfLKPNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:13:18 -0500
+        id S1731392AbfLKPNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 653B724680;
-        Wed, 11 Dec 2019 15:13:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE4C324654;
+        Wed, 11 Dec 2019 15:13:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077197;
-        bh=sThiPnci4T/GbAaieAjV2/NYiH/63xnXFMXZsH0FKeo=;
+        s=default; t=1576077200;
+        bh=4NKs7tQw3LXnO0L0L8lRwGZzSBngV+dsz24ny3qk0IM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k4sMYHp7P0r44rpgps5C3EcaXNGIIGr6pFKX4J2Gzog35LTGczs6MpiircHOSPHxv
-         7tSMpqtufBUIMk9Opg4VLDcHvepiiS9iaeXurgR13CY+zJ3OU2RrgMi4p8xsLdG3A+
-         VKdBP7eKEnJO6yMKGlzuuqHWPyj70/7YPlfiFZl0=
+        b=HWpoOmkzC9NmI++1zjU25fEk/4L1PrkzMyrVJKAXfv4xYljCgy3GCo/QKRNeq8kuv
+         ntE0C3DJJxLuX6DhyAuAv+7uLA+GY0ptgFC/fKsN6s0i0WNulrPImfybXGZ6Xnqzqk
+         xnosCMKUNa8LY/OrouMv8qfr4QZPNJVPGUeL7XHc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Pobega <mpobega@neverware.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.3 054/105] ALSA: hda: Modify stream stripe mask only when needed
-Date:   Wed, 11 Dec 2019 16:05:43 +0100
-Message-Id: <20191211150242.706861940@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 5.3 055/105] Input: synaptics - switch another X1 Carbon 6 to RMI/SMbus
+Date:   Wed, 11 Dec 2019 16:05:44 +0100
+Message-Id: <20191211150242.914314392@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
 References: <20191211150221.153659747@linuxfoundation.org>
@@ -43,99 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit e38e486d66e2a3b902768fd71c32dbf10f77e1cb upstream.
+commit fc1156f373e3927e0dcf06678906c367588bfdd6 upstream.
 
-The recent commit in HD-audio stream management for changing the
-stripe control seems causing a regression on some platforms.  The
-stripe control is currently used only by HDMI codec, and applying the
-stripe mask unconditionally may lead to scratchy and static noises as
-seen on some MacBooks.
+Some Lenovo X1 Carbon Gen 6 laptops report LEN0091. Add this
+to the smbus_pnp_ids list.
 
-For addressing the regression, this patch changes the stream
-management code to apply the stripe mask conditionally only when the
-codec driver requested.
-
-Fixes: 9b6f7e7a296e ("ALSA: hda: program stripe bits for controller")
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204477
-Tested-by: Michael Pobega <mpobega@neverware.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191202074947.1617-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191119105118.54285-2-hverkuil-cisco@xs4all.nl
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/sound/hdaudio.h    |    1 +
- sound/hda/hdac_stream.c    |   19 ++++++++++++-------
- sound/pci/hda/patch_hdmi.c |    5 +++++
- 3 files changed, 18 insertions(+), 7 deletions(-)
+ drivers/input/mouse/synaptics.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/sound/hdaudio.h
-+++ b/include/sound/hdaudio.h
-@@ -504,6 +504,7 @@ struct hdac_stream {
- 	bool prepared:1;
- 	bool no_period_wakeup:1;
- 	bool locked:1;
-+	bool stripe:1;			/* apply stripe control */
- 
- 	/* timestamp */
- 	unsigned long start_wallclk;	/* start + minimum wallclk */
---- a/sound/hda/hdac_stream.c
-+++ b/sound/hda/hdac_stream.c
-@@ -96,12 +96,14 @@ void snd_hdac_stream_start(struct hdac_s
- 			      1 << azx_dev->index,
- 			      1 << azx_dev->index);
- 	/* set stripe control */
--	if (azx_dev->substream)
--		stripe_ctl = snd_hdac_get_stream_stripe_ctl(bus, azx_dev->substream);
--	else
--		stripe_ctl = 0;
--	snd_hdac_stream_updateb(azx_dev, SD_CTL_3B, SD_CTL_STRIPE_MASK,
--				stripe_ctl);
-+	if (azx_dev->stripe) {
-+		if (azx_dev->substream)
-+			stripe_ctl = snd_hdac_get_stream_stripe_ctl(bus, azx_dev->substream);
-+		else
-+			stripe_ctl = 0;
-+		snd_hdac_stream_updateb(azx_dev, SD_CTL_3B, SD_CTL_STRIPE_MASK,
-+					stripe_ctl);
-+	}
- 	/* set DMA start and interrupt mask */
- 	snd_hdac_stream_updateb(azx_dev, SD_CTL,
- 				0, SD_CTL_DMA_START | SD_INT_MASK);
-@@ -118,7 +120,10 @@ void snd_hdac_stream_clear(struct hdac_s
- 	snd_hdac_stream_updateb(azx_dev, SD_CTL,
- 				SD_CTL_DMA_START | SD_INT_MASK, 0);
- 	snd_hdac_stream_writeb(azx_dev, SD_STS, SD_INT_MASK); /* to be sure */
--	snd_hdac_stream_updateb(azx_dev, SD_CTL_3B, SD_CTL_STRIPE_MASK, 0);
-+	if (azx_dev->stripe) {
-+		snd_hdac_stream_updateb(azx_dev, SD_CTL_3B, SD_CTL_STRIPE_MASK, 0);
-+		azx_dev->stripe = 0;
-+	}
- 	azx_dev->running = false;
- }
- EXPORT_SYMBOL_GPL(snd_hdac_stream_clear);
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -31,6 +31,7 @@
- #include <sound/hda_codec.h>
- #include "hda_local.h"
- #include "hda_jack.h"
-+#include "hda_controller.h"
- 
- static bool static_hdmi_pcm;
- module_param(static_hdmi_pcm, bool, 0644);
-@@ -1226,6 +1227,10 @@ static int hdmi_pcm_open(struct hda_pcm_
- 	per_pin->cvt_nid = per_cvt->cvt_nid;
- 	hinfo->nid = per_cvt->cvt_nid;
- 
-+	/* flip stripe flag for the assigned stream if supported */
-+	if (get_wcaps(codec, per_cvt->cvt_nid) & AC_WCAP_STRIPE)
-+		azx_stream(get_azx_dev(substream))->stripe = 1;
-+
- 	snd_hda_set_dev_select(codec, per_pin->pin_nid, per_pin->dev_id);
- 	snd_hda_codec_write_cache(codec, per_pin->pin_nid, 0,
- 			    AC_VERB_SET_CONNECT_SEL,
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -172,6 +172,7 @@ static const char * const smbus_pnp_ids[
+ 	"LEN0071", /* T480 */
+ 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
+ 	"LEN0073", /* X1 Carbon G5 (Elantech) */
++	"LEN0091", /* X1 Carbon 6 */
+ 	"LEN0092", /* X1 Carbon 6 */
+ 	"LEN0093", /* T480 */
+ 	"LEN0096", /* X280 */
 
 
