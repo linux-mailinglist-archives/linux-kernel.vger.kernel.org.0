@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE7BD11B5C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:56:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CA4B11B46A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:47:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732169AbfLKP4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:56:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41954 "EHLO mail.kernel.org"
+        id S1733125AbfLKP01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:26:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731810AbfLKPPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:15:35 -0500
+        id S1732930AbfLKP0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:26:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F66320663;
-        Wed, 11 Dec 2019 15:15:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C4EE2468B;
+        Wed, 11 Dec 2019 15:26:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077334;
-        bh=9zpLNPI5XZRFD6601chy04kpn9vCfjMzRQc3/zkWmVo=;
+        s=default; t=1576077983;
+        bh=eM2BvaAeVIR6VoD+IWHBkf4/DhnPi/pyyS9VshuaJ20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dUCuCDmT0fgzRvZ3wnTRBIbP9ytenK+NxA6Gg7pAsGhFsvSdGK6p4YF36fvf7Fuj5
-         rqZseSo88KQ7n0+9F7CMHFU8vCMidYOK1c4i2+FLR5QknkI7L8ePl+ShawJ66cbeBz
-         A4X2i6Pj1g15aTTikKfxNOgtvXs++q9g/Q/utNCc=
+        b=m8oQlvtjxvGahCJk8WQr8QyxWNzrkhiRbfN/dthi/r1/zh5MyGwMDrIBF5kxnazJ4
+         4nza8Pok8wobwE8q+v+6V53+i2hX3kYH6rpuUZiI8eqW0/BBucxKwaKHo4GNDCJKvj
+         a4jCUBmwH8hwYqqDOR7/ofki66ME/b5CiB/gofRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 5.3 105/105] binder: Handle start==NULL in binder_update_page_range()
+        stable@vger.kernel.org, Sahaj Sarup <sahajsarup@gmail.com>,
+        Mark Salter <msalter@redhat.com>,
+        Gary R Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 232/243] crypto: ccp - fix uninitialized list head
 Date:   Wed, 11 Dec 2019 16:06:34 +0100
-Message-Id: <20191211150306.382349788@linuxfoundation.org>
+Message-Id: <20191211150354.993549658@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,65 +45,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Mark Salter <msalter@redhat.com>
 
-commit 2a9edd056ed4fbf9d2e797c3fc06335af35bccc4 upstream.
+commit 691505a803a7f223b2af621848d581259c61f77d upstream.
 
-The old loop wouldn't stop when reaching `start` if `start==NULL`, instead
-continuing backwards to index -1 and crashing.
+A NULL-pointer dereference was reported in fedora bz#1762199 while
+reshaping a raid6 array after adding a fifth drive to an existing
+array.
 
-Luckily you need to be highly privileged to map things at NULL, so it's not
-a big problem.
+[   47.343549] md/raid:md0: raid level 6 active with 3 out of 5 devices, algorithm 2
+[   47.804017] md0: detected capacity change from 0 to 7885289422848
+[   47.822083] Unable to handle kernel read from unreadable memory at virtual address 0000000000000000
+...
+[   47.940477] CPU: 1 PID: 14210 Comm: md0_raid6 Tainted: G        W         5.2.18-200.fc30.aarch64 #1
+[   47.949594] Hardware name: AMD Overdrive/Supercharger/To be filled by O.E.M., BIOS ROD1002C 04/08/2016
+[   47.958886] pstate: 00400085 (nzcv daIf +PAN -UAO)
+[   47.963668] pc : __list_del_entry_valid+0x2c/0xa8
+[   47.968366] lr : ccp_tx_submit+0x84/0x168 [ccp]
+[   47.972882] sp : ffff00001369b970
+[   47.976184] x29: ffff00001369b970 x28: ffff00001369bdb8
+[   47.981483] x27: 00000000ffffffff x26: ffff8003b758af70
+[   47.986782] x25: ffff8003b758b2d8 x24: ffff8003e6245818
+[   47.992080] x23: 0000000000000000 x22: ffff8003e62450c0
+[   47.997379] x21: ffff8003dfd6add8 x20: 0000000000000003
+[   48.002678] x19: ffff8003e6245100 x18: 0000000000000000
+[   48.007976] x17: 0000000000000000 x16: 0000000000000000
+[   48.013274] x15: 0000000000000000 x14: 0000000000000000
+[   48.018572] x13: ffff7e000ef83a00 x12: 0000000000000001
+[   48.023870] x11: ffff000010eff998 x10: 00000000000019a0
+[   48.029169] x9 : 0000000000000000 x8 : ffff8003e6245180
+[   48.034467] x7 : 0000000000000000 x6 : 000000000000003f
+[   48.039766] x5 : 0000000000000040 x4 : ffff8003e0145080
+[   48.045064] x3 : dead000000000200 x2 : 0000000000000000
+[   48.050362] x1 : 0000000000000000 x0 : ffff8003e62450c0
+[   48.055660] Call trace:
+[   48.058095]  __list_del_entry_valid+0x2c/0xa8
+[   48.062442]  ccp_tx_submit+0x84/0x168 [ccp]
+[   48.066615]  async_tx_submit+0x224/0x368 [async_tx]
+[   48.071480]  async_trigger_callback+0x68/0xfc [async_tx]
+[   48.076784]  ops_run_biofill+0x178/0x1e8 [raid456]
+[   48.081566]  raid_run_ops+0x248/0x818 [raid456]
+[   48.086086]  handle_stripe+0x864/0x1208 [raid456]
+[   48.090781]  handle_active_stripes.isra.0+0xb0/0x278 [raid456]
+[   48.096604]  raid5d+0x378/0x618 [raid456]
+[   48.100602]  md_thread+0xa0/0x150
+[   48.103905]  kthread+0x104/0x130
+[   48.107122]  ret_from_fork+0x10/0x18
+[   48.110686] Code: d2804003 f2fbd5a3 eb03003f 54000320 (f9400021)
+[   48.116766] ---[ end trace 23f390a527f7ad77 ]---
 
-Fix it by adjusting the loop so that the loop variable is always in bounds.
+ccp_tx_submit is passed a dma_async_tx_descriptor which is contained in
+a ccp_dma_desc and adds it to a ccp channel's pending list:
 
-This patch is deliberately minimal to simplify backporting, but IMO this
-function could use a refactor. The jump labels in the second loop body are
-horrible (the error gotos should be jumping to free_range instead), and
-both loops would look nicer if they just iterated upwards through indices.
-And the up_read()+mmput() shouldn't be duplicated like that.
+	list_del(&desc->entry);
+	list_add_tail(&desc->entry, &chan->pending);
 
-Cc: stable@vger.kernel.org
-Fixes: 457b9a6f09f0 ("Staging: android: add binder driver")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/r/20191018205631.248274-3-jannh@google.com
+The problem is that desc->entry may be uninitialized in the
+async_trigger_callback path where the descriptor was gotten
+from ccp_prep_dma_interrupt which got it from ccp_alloc_dma_desc
+which doesn't initialize the desc->entry list head. So, just
+initialize the list head to avoid the problem.
+
+Cc: <stable@vger.kernel.org>
+Reported-by: Sahaj Sarup <sahajsarup@gmail.com>
+Signed-off-by: Mark Salter <msalter@redhat.com>
+Acked-by: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/android/binder_alloc.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/crypto/ccp/ccp-dmaengine.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -277,8 +277,7 @@ static int binder_update_page_range(stru
- 	return 0;
- 
- free_range:
--	for (page_addr = end - PAGE_SIZE; page_addr >= start;
--	     page_addr -= PAGE_SIZE) {
-+	for (page_addr = end - PAGE_SIZE; 1; page_addr -= PAGE_SIZE) {
- 		bool ret;
- 		size_t index;
- 
-@@ -291,6 +290,8 @@ free_range:
- 		WARN_ON(!ret);
- 
- 		trace_binder_free_lru_end(alloc, index);
-+		if (page_addr == start)
-+			break;
- 		continue;
- 
- err_vm_insert_page_failed:
-@@ -298,7 +299,8 @@ err_vm_insert_page_failed:
- 		page->page_ptr = NULL;
- err_alloc_page_failed:
- err_page_ptr_cleared:
--		;
-+		if (page_addr == start)
-+			break;
- 	}
- err_no_vma:
- 	if (mm) {
+--- a/drivers/crypto/ccp/ccp-dmaengine.c
++++ b/drivers/crypto/ccp/ccp-dmaengine.c
+@@ -340,6 +340,7 @@ static struct ccp_dma_desc *ccp_alloc_dm
+ 	desc->tx_desc.flags = flags;
+ 	desc->tx_desc.tx_submit = ccp_tx_submit;
+ 	desc->ccp = chan->ccp;
++	INIT_LIST_HEAD(&desc->entry);
+ 	INIT_LIST_HEAD(&desc->pending);
+ 	INIT_LIST_HEAD(&desc->active);
+ 	desc->status = DMA_IN_PROGRESS;
 
 
