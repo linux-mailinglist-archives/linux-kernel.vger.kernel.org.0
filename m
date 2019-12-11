@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4693F11B526
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0062411B51F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732165AbfLKPVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:21:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51292 "EHLO mail.kernel.org"
+        id S1732471AbfLKPVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:21:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732167AbfLKPVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:21:11 -0500
+        id S1732312AbfLKPV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:21:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 030732073D;
-        Wed, 11 Dec 2019 15:21:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E7B822527;
+        Wed, 11 Dec 2019 15:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077670;
-        bh=5Sp5yUHgoMyXmrbW9X9JdEoez6QcUp6xJ50vpCzx0b0=;
+        s=default; t=1576077686;
+        bh=2WtK5+o5+VGs1ikguea/UPfLL2YIwjkHhUqcuAEvgwY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hk1qsV43cV4abeYPFzmDHZz17e4IVyNGUWz67mOxqDBj373Y3dKvcTOQC5AEr9HBT
-         2/AmZA2hhmw17zHgtybEd0beckBsoygSuv5Pg9Um1flBBhuZsZ67NoywAHUT0R4MLo
-         8OQb1g9GTMOjnVYn+1OTDYqi46AtAkWKtUGuEnz4=
+        b=qai0+xZBffS9AVj9H0edGnu3ssjzv+yqhLEmknp3zhhjY6WZNL5GF6sL50oetXW+T
+         y8GBDymn2nb7buOeGVnEI5M3IFMQLiSCKVyV28YCGJSoxkAHvnQ07jWecq/PqhHpt3
+         tXv6ASPwcRsvOrVCtM+JVDPoVYFfzhTGtZhnnm6c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 127/243] ARM: dts: sun8i: a23/a33: Fix OPP DTC warnings
-Date:   Wed, 11 Dec 2019 16:04:49 +0100
-Message-Id: <20191211150347.699074067@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 132/243] nfsd: fix a warning in __cld_pipe_upcall()
+Date:   Wed, 11 Dec 2019 16:04:54 +0100
+Message-Id: <20191211150348.040647637@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -43,71 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
+From: Scott Mayhew <smayhew@redhat.com>
 
-[ Upstream commit a858f569b80a69076c521532a289097af905cf1e ]
+[ Upstream commit b493fd31c0b89d9453917e977002de58bebc3802 ]
 
-DTC will emit a warning on our OPPs nodes for the common DTSI between the
-A23 and A33 since those nodes use the frequency as unit addresses, but
-don't have a matching reg property.
+__cld_pipe_upcall() emits a "do not call blocking ops when
+!TASK_RUNNING" warning due to the dput() call in rpc_queue_upcall().
+Fix it by using a completion instead of hand coding the wait.
 
-Fix this by moving the frequency to the node name instead.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sun8i-h3.dtsi              | 6 +++---
- arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ fs/nfsd/nfs4recover.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index f0096074a4678..97de6ad133dc2 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -47,19 +47,19 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp@648000000 {
-+		opp-648000000 {
- 			opp-hz = /bits/ 64 <648000000>;
- 			opp-microvolt = <1040000 1040000 1300000>;
- 			clock-latency-ns = <244144>; /* 8 32k periods */
- 		};
- 
--		opp@816000000 {
-+		opp-816000000 {
- 			opp-hz = /bits/ 64 <816000000>;
- 			opp-microvolt = <1100000 1100000 1300000>;
- 			clock-latency-ns = <244144>; /* 8 32k periods */
- 		};
- 
--		opp@1008000000 {
-+		opp-1008000000 {
- 			opp-hz = /bits/ 64 <1008000000>;
- 			opp-microvolt = <1200000 1200000 1300000>;
- 			clock-latency-ns = <244144>; /* 8 32k periods */
-diff --git a/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts b/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
-index 0dbdb29a8fff9..ee7ce3752581b 100644
---- a/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
-+++ b/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
-@@ -103,13 +103,13 @@
+diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+index 9c247fa1e9594..5188f9f70c78c 100644
+--- a/fs/nfsd/nfs4recover.c
++++ b/fs/nfsd/nfs4recover.c
+@@ -662,7 +662,7 @@ struct cld_net {
+ struct cld_upcall {
+ 	struct list_head	 cu_list;
+ 	struct cld_net		*cu_net;
+-	struct task_struct	*cu_task;
++	struct completion	 cu_done;
+ 	struct cld_msg		 cu_msg;
  };
  
- &cpu0_opp_table {
--	opp@1104000000 {
-+	opp-1104000000 {
- 		opp-hz = /bits/ 64 <1104000000>;
- 		opp-microvolt = <1320000>;
- 		clock-latency-ns = <244144>; /* 8 32k periods */
- 	};
+@@ -671,23 +671,18 @@ __cld_pipe_upcall(struct rpc_pipe *pipe, struct cld_msg *cmsg)
+ {
+ 	int ret;
+ 	struct rpc_pipe_msg msg;
++	struct cld_upcall *cup = container_of(cmsg, struct cld_upcall, cu_msg);
  
--	opp@1200000000 {
-+	opp-1200000000 {
- 		opp-hz = /bits/ 64 <1200000000>;
- 		opp-microvolt = <1320000>;
- 		clock-latency-ns = <244144>; /* 8 32k periods */
+ 	memset(&msg, 0, sizeof(msg));
+ 	msg.data = cmsg;
+ 	msg.len = sizeof(*cmsg);
+ 
+-	/*
+-	 * Set task state before we queue the upcall. That prevents
+-	 * wake_up_process in the downcall from racing with schedule.
+-	 */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	ret = rpc_queue_upcall(pipe, &msg);
+ 	if (ret < 0) {
+-		set_current_state(TASK_RUNNING);
+ 		goto out;
+ 	}
+ 
+-	schedule();
++	wait_for_completion(&cup->cu_done);
+ 
+ 	if (msg.errno < 0)
+ 		ret = msg.errno;
+@@ -754,7 +749,7 @@ cld_pipe_downcall(struct file *filp, const char __user *src, size_t mlen)
+ 	if (copy_from_user(&cup->cu_msg, src, mlen) != 0)
+ 		return -EFAULT;
+ 
+-	wake_up_process(cup->cu_task);
++	complete(&cup->cu_done);
+ 	return mlen;
+ }
+ 
+@@ -769,7 +764,7 @@ cld_pipe_destroy_msg(struct rpc_pipe_msg *msg)
+ 	if (msg->errno >= 0)
+ 		return;
+ 
+-	wake_up_process(cup->cu_task);
++	complete(&cup->cu_done);
+ }
+ 
+ static const struct rpc_pipe_ops cld_upcall_ops = {
+@@ -900,7 +895,7 @@ restart_search:
+ 			goto restart_search;
+ 		}
+ 	}
+-	new->cu_task = current;
++	init_completion(&new->cu_done);
+ 	new->cu_msg.cm_vers = CLD_UPCALL_VERSION;
+ 	put_unaligned(cn->cn_xid++, &new->cu_msg.cm_xid);
+ 	new->cu_net = cn;
 -- 
 2.20.1
 
