@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02F1211AFC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D4111AFC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:16:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731857AbfLKPQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:16:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42924 "EHLO mail.kernel.org"
+        id S1731863AbfLKPQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:16:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731642AbfLKPQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:16:05 -0500
+        id S1731858AbfLKPQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:16:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF77A24654;
-        Wed, 11 Dec 2019 15:16:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E7F62465B;
+        Wed, 11 Dec 2019 15:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077365;
-        bh=wy3YIPHob0rwT7NgwqV/wiFK4T5Z5pn4dDmhgqJTP9I=;
+        s=default; t=1576077367;
+        bh=2Km62UTxAR2gppwCyblHhbvH1CTPz7TLqpLVTsiCnWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R4h7PuR/S/13hpMmpRZz0Cex/aSBG1c95vAjK+irYQvwV27vCAWz9Jbn2h3NBeFgM
-         HVAjks5T6wQvTwpl9Jd6tpB6lT7T7+qt/BTAlpZhClQoVA7Ss7bmGFOp/gZTa0+BB3
-         qjKVMUyv3QwjapINZHXBbzzoZvTpSrD/w773MWEA=
+        b=S3qUBtJNTaQjSEtfDHvqumZpX6N0WiFZ6qT+x6oJ2WCiOV22y68K3BVbxXLEoKTnD
+         SK5+vBBmBpXN9UlDrmBKbV6fnrehp9vZyqLrmCE929eoOdvLFWFus0YkCu5ynYxEu3
+         KWxk7TmcriFmIYidFOl/c/44sqc7etm1hOBVQ1iY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sirong Wang <wangsirong@huawei.com>,
-        Weihang Li <liweihang@hisilicon.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Mordechay Goodstein <mordechay.goodstein@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 012/243] RDMA/hns: Correct the value of HNS_ROCE_HEM_CHUNK_LEN
-Date:   Wed, 11 Dec 2019 16:02:54 +0100
-Message-Id: <20191211150339.921079116@linuxfoundation.org>
+Subject: [PATCH 4.19 013/243] iwlwifi: pcie: dont consider IV len in A-MSDU
+Date:   Wed, 11 Dec 2019 16:02:55 +0100
+Message-Id: <20191211150339.973968349@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -45,37 +46,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sirong Wang <wangsirong@huawei.com>
+From: Mordechay Goodstein <mordechay.goodstein@intel.com>
 
-[ Upstream commit 531eb45b3da4267fc2a64233ba256c8ffb02edd2 ]
+[ Upstream commit cb1a4badf59275eb7221dcec621e8154917eabd1 ]
 
-Size of pointer to buf field of struct hns_roce_hem_chunk should be
-considered when calculating HNS_ROCE_HEM_CHUNK_LEN, or sg table size will
-be larger than expected when allocating hem.
+>From gen2 PN is totally offloaded to hardware (also the space for the
+IV isn't part of the skb).  As you can see in mvm/mac80211.c:3545, the
+MAC for cipher types CCMP/GCMP doesn't set
+IEEE80211_KEY_FLAG_PUT_IV_SPACE for gen2 NICs.
 
-Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
-Link: https://lore.kernel.org/r/1572575610-52530-2-git-send-email-liweihang@hisilicon.com
-Signed-off-by: Sirong Wang <wangsirong@huawei.com>
-Signed-off-by: Weihang Li <liweihang@hisilicon.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+This causes all the AMSDU data to be corrupted with cipher enabled.
+
+Signed-off-by: Mordechay Goodstein <mordechay.goodstein@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hns/hns_roce_hem.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../net/wireless/intel/iwlwifi/pcie/tx-gen2.c | 20 +++++++------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hem.h b/drivers/infiniband/hw/hns/hns_roce_hem.h
-index e8850d59e7804..a94444db3045a 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hem.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_hem.h
-@@ -54,7 +54,7 @@ enum {
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c b/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
+index 316e2ba0c34d7..7b1dff92b7094 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
+@@ -242,27 +242,23 @@ static int iwl_pcie_gen2_build_amsdu(struct iwl_trans *trans,
+ 	struct ieee80211_hdr *hdr = (void *)skb->data;
+ 	unsigned int snap_ip_tcp_hdrlen, ip_hdrlen, total_len, hdr_room;
+ 	unsigned int mss = skb_shinfo(skb)->gso_size;
+-	u16 length, iv_len, amsdu_pad;
++	u16 length, amsdu_pad;
+ 	u8 *start_hdr;
+ 	struct iwl_tso_hdr_page *hdr_page;
+ 	struct page **page_ptr;
+ 	struct tso_t tso;
  
- #define HNS_ROCE_HEM_CHUNK_LEN	\
- 	 ((256 - sizeof(struct list_head) - 2 * sizeof(int)) /	 \
--	 (sizeof(struct scatterlist)))
-+	 (sizeof(struct scatterlist) + sizeof(void *)))
+-	/* if the packet is protected, then it must be CCMP or GCMP */
+-	iv_len = ieee80211_has_protected(hdr->frame_control) ?
+-		IEEE80211_CCMP_HDR_LEN : 0;
+-
+ 	trace_iwlwifi_dev_tx(trans->dev, skb, tfd, sizeof(*tfd),
+ 			     &dev_cmd->hdr, start_len, 0);
  
- #define check_whether_bt_num_3(type, hop_num) \
- 	(type < HEM_TYPE_MTT && hop_num == 2)
+ 	ip_hdrlen = skb_transport_header(skb) - skb_network_header(skb);
+ 	snap_ip_tcp_hdrlen = 8 + ip_hdrlen + tcp_hdrlen(skb);
+-	total_len = skb->len - snap_ip_tcp_hdrlen - hdr_len - iv_len;
++	total_len = skb->len - snap_ip_tcp_hdrlen - hdr_len;
+ 	amsdu_pad = 0;
+ 
+ 	/* total amount of header we may need for this A-MSDU */
+ 	hdr_room = DIV_ROUND_UP(total_len, mss) *
+-		(3 + snap_ip_tcp_hdrlen + sizeof(struct ethhdr)) + iv_len;
++		(3 + snap_ip_tcp_hdrlen + sizeof(struct ethhdr));
+ 
+ 	/* Our device supports 9 segments at most, it will fit in 1 page */
+ 	hdr_page = get_page_hdr(trans, hdr_room);
+@@ -273,14 +269,12 @@ static int iwl_pcie_gen2_build_amsdu(struct iwl_trans *trans,
+ 	start_hdr = hdr_page->pos;
+ 	page_ptr = (void *)((u8 *)skb->cb + trans_pcie->page_offs);
+ 	*page_ptr = hdr_page->page;
+-	memcpy(hdr_page->pos, skb->data + hdr_len, iv_len);
+-	hdr_page->pos += iv_len;
+ 
+ 	/*
+-	 * Pull the ieee80211 header + IV to be able to use TSO core,
++	 * Pull the ieee80211 header to be able to use TSO core,
+ 	 * we will restore it for the tx_status flow.
+ 	 */
+-	skb_pull(skb, hdr_len + iv_len);
++	skb_pull(skb, hdr_len);
+ 
+ 	/*
+ 	 * Remove the length of all the headers that we don't actually
+@@ -355,8 +349,8 @@ static int iwl_pcie_gen2_build_amsdu(struct iwl_trans *trans,
+ 		}
+ 	}
+ 
+-	/* re -add the WiFi header and IV */
+-	skb_push(skb, hdr_len + iv_len);
++	/* re -add the WiFi header */
++	skb_push(skb, hdr_len);
+ 
+ 	return 0;
+ 
 -- 
 2.20.1
 
