@@ -2,84 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CBCD14E8C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 07:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C42414E8DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 07:40:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbgAaGXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 01:23:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52778 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbgAaGXv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 01:23:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1++zzGV6QkWMWMT/4u5YKU2pHSpkvi0FTAouJWOgaWQ=; b=g3y+GoEc9kZTB4RdA+dfNTO81
-        uUCGBV1IhvklrE4xmWsd4chMSgGQWP6SH3n/sUs/WPFsuKy7IIRUh/V1k9kPdtDQ7+wQbrmjWe4M/
-        T8I0xGaxhl5YjTX3lVaUjsyiPjadjjskrO/WWhx1LBWbbhisFz/Xla4o9iyc4XhqFxGs07rOqGhdS
-        A3tT2BCG+xi8mSPFFK8Fpyvz2Q6NpfrgGjtne7EJ00Db828M/dFnk7o+CyRmWC95pDm4Zk/BTdsl6
-        iAJvpmRLeCtEoQIm+Jm8HGeOldA3TRKdURn5y6VcDavodgzVtyENQe+MIF6ciY3Mx1sE7uUcVWyds
-        NChhE2kPw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ixPiR-00036o-HH; Fri, 31 Jan 2020 06:23:43 +0000
-Date:   Thu, 30 Jan 2020 22:23:43 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, axboe@kernel.dk, tytso@mit.edu,
-        adilger.kernel@dilger.ca, Chaitanya.Kulkarni@wdc.com,
-        darrick.wong@oracle.com, ming.lei@redhat.com, osandov@fb.com,
-        jthumshirn@suse.de, minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
-        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com
-Subject: Re: [PATCH block v2 2/3] block: Add support for REQ_NOZERO flag
-Message-ID: <20200131062343.GA6267@infradead.org>
-References: <157917805422.88675.6477661554332322975.stgit@localhost.localdomain>
- <157917816325.88675.16481772163916741596.stgit@localhost.localdomain>
- <yq14kwpibf6.fsf@oracle.com>
+        id S1728053AbgAaGkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 01:40:41 -0500
+Received: from mga02.intel.com ([134.134.136.20]:64027 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725815AbgAaGkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 01:40:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 22:40:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,384,1574150400"; 
+   d="scan'208";a="309925480"
+Received: from wtczc53028gn.jf.intel.com (HELO localhost.localdomain) ([10.54.87.17])
+  by orsmga001.jf.intel.com with ESMTP; 30 Jan 2020 22:40:40 -0800
+From:   christopher.s.hall@intel.com
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, mingo@redhat.com,
+        x86@kernel.org, jacob.e.keller@intel.com, richardcochran@gmail.com,
+        davem@davemloft.net, sean.v.kelley@intel.com
+Cc:     Christopher Hall <christopher.s.hall@intel.com>
+Subject: [Intel PMC TGPIO Driver 0/5] Add support for Intel PMC Time GPIO Driver with PHC interface changes to support additional H/W Features
+Date:   Wed, 11 Dec 2019 13:48:47 -0800
+Message-Id: <20191211214852.26317-1-christopher.s.hall@intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq14kwpibf6.fsf@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 01:14:05AM -0500, Martin K. Petersen wrote:
-> I find there is some dissonance between using BLKDEV_ZERO_ALLOCATE to
-> describe this operation in one case and REQ_NOZERO in the other.
-> 
-> I understand why not zeroing is important in your case. However, I think
-> the allocation aspect is semantically more important. Also, in the case
-> of SCSI, the allocated blocks will typically appear zeroed. So from that
-> perspective REQ_NOZERO doesn't really make sense. I would really prefer
-> to use REQ_ALLOCATE to describe this operation. I agree that "do not
-> write every block" is important too. I just don't have a good suggestion
-> for how to express that as an additional qualifier to REQ_ALLOCATE_?.
+From: Christopher Hall <christopher.s.hall@intel.com>
 
-Agreed.  Nevermind the problem of a REQ_OP_WRITE_ZEROES operations with
-a NOZERO flag causing a massive confusion to the reader.
+Upcoming Intel platforms will have Time-Aware GPIO (TGPIO) hardware.
+The TGPIO logic is driven by the Always Running Timer (ART) that's
+related to TSC using CPUID[15H] (See Intel SDM Invariant
+Time-Keeping).
 
-> Also, adding to the confusion: In the context of SCSI, ANCHOR requires
-> UNMAP. So my head hurts a bit when I read REQ_NOZERO|REQ_NOUNMAP and
-> have to translate that into ANCHOR|UNMAP.
-> 
-> Longer term, I think we should consider introducing REQ_OP_SINGLE_RANGE
-> or something like that as an umbrella operation that can be used to
-> describe zeroing, allocating, and other things that operate on a single
-> LBA range with no payload. Thus removing both the writiness and the
-> zeroness from the existing REQ_OP_WRITE_ZEROES conduit.
+The ART frequency is not adjustable. In order, to implement output
+adjustments an additional edge-timestamp API is added, as well, as
+a periodic output frequency adjustment API. Togther, these implement
+equivalent functionality to the existing SYS_OFFSET_* and frequency
+adjustment APIs.
 
-What is the benefit of a multipler there?  Given all this flags
-confusion I'm almost tempted to just split up REQ_OP_WRITE_ZEROES into
-REQ_OP_ALLOCATE ("cheap") and REQ_OP_WRITE_ZEROES ("potentially
-expensive") and just let the caller handle the difference.  Everytime
-we try to encode semantic differences into flags we're eventually
-running into trouble.  Sais the person that added REQ_UNMAP..
+The TGPIO hardware doesn't implement interrupts. For TGPIO input, the
+output edge-timestamp API is re-used to implement a user-space polling
+interface. For periodic input (e.g. PPS) this is fairly efficient,
+requiring only a marginally faster poll rate than the input event
+frequency.
+
+Acknowledgment: Portions of the driver code were authored by Felipe
+Balbi <balbi@kernel.org>
+
+=======================================================================
+
+Christopher Hall (5):
+  drivers/ptp: Add Enhanced handling of reserve fields
+  drivers/ptp: Add PEROUT2 ioctl frequency adjustment interface
+  drivers/ptp: Add user-space input polling interface
+  x86/tsc: Add TSC support functions to support ART driven Time-Aware
+    GPIO
+  drivers/ptp: Add PMC Time-Aware GPIO Driver
+
+ arch/x86/include/asm/tsc.h        |   6 +
+ arch/x86/kernel/tsc.c             | 116 +++-
+ drivers/ptp/Kconfig               |  13 +
+ drivers/ptp/Makefile              |   1 +
+ drivers/ptp/ptp-intel-pmc-tgpio.c | 867 ++++++++++++++++++++++++++++++
+ drivers/ptp/ptp_chardev.c         |  86 ++-
+ drivers/ptp/ptp_clock.c           |  13 +
+ include/linux/ptp_clock_kernel.h  |   2 +
+ include/uapi/linux/ptp_clock.h    |  26 +-
+ 9 files changed, 1099 insertions(+), 31 deletions(-)
+ create mode 100644 drivers/ptp/ptp-intel-pmc-tgpio.c
+
+-- 
+2.21.0
+
