@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAF2D11B764
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97B4111B711
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:05:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387431AbfLKQHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:07:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34260 "EHLO mail.kernel.org"
+        id S1730659AbfLKPMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:12:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731155AbfLKPMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:31 -0500
+        id S1731184AbfLKPMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:12:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 044EF2467D;
-        Wed, 11 Dec 2019 15:12:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E4F8208C3;
+        Wed, 11 Dec 2019 15:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077150;
-        bh=QoVN+P9+xdGb6qaKlf/1i1RsDFqo704BUrWg5HC1kvQ=;
+        s=default; t=1576077155;
+        bh=i6bwU4k5km/tQMwuOoi84zsapnp/3wetQ4uiUCbzzic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KCqSxwH0Lj9L0XjLbRng2GyAWN9XBSdAnAmOKuKdDkys/qGx1FM1OkY8LQ4AmJPDm
-         Uaexj02u7xhkP6ziS47OCfubncCYm82Z+y7e2tkXkOjnH/IDTlPOT162shhBZKgE7y
-         e3zeEGa5AABIbHyuZqFLSwmAgKIkmzrnsxH5CGek=
+        b=MrTYt0YBJEjq32nw0oatJyGlzimt58qyJWDfQkeDbv0ZdWS7ANbq+x61CIOOyV4rb
+         Jo0btyV5/mvzvO5/toIt2R59sdAogoXI+MOXEic83+ZhrpYvneQQxMa7B/VE5i7pX/
+         H+03RRqxA3j2Tl6yIpcZcQsjKAbNd3nHkpzZnoco=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 035/105] selftests: kvm: fix build with glibc >= 2.30
-Date:   Wed, 11 Dec 2019 16:05:24 +0100
-Message-Id: <20191211150233.955493927@linuxfoundation.org>
+Subject: [PATCH 5.3 036/105] rbd: silence bogus uninitialized warning in rbd_object_map_update_finish()
+Date:   Wed, 11 Dec 2019 16:05:25 +0100
+Message-Id: <20191211150234.019427732@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
 References: <20191211150221.153659747@linuxfoundation.org>
@@ -44,51 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-[ Upstream commit e37f9f139f62deddff90c7298ae3a85026a71067 ]
+[ Upstream commit 633739b2fedb6617d782ca252797b7a8ad754347 ]
 
-Glibc-2.30 gained gettid() wrapper, selftests fail to compile:
+Some versions of gcc (so far 6.3 and 7.4) throw a warning:
 
-lib/assert.c:58:14: error: static declaration of ‘gettid’ follows non-static declaration
-   58 | static pid_t gettid(void)
-      |              ^~~~~~
-In file included from /usr/include/unistd.h:1170,
-                 from include/test_util.h:18,
-                 from lib/assert.c:10:
-/usr/include/bits/unistd_ext.h:34:16: note: previous declaration of ‘gettid’ was here
-   34 | extern __pid_t gettid (void) __THROW;
-      |                ^~~~~~
+  drivers/block/rbd.c: In function 'rbd_object_map_callback':
+  drivers/block/rbd.c:2124:21: warning: 'current_state' may be used uninitialized in this function [-Wmaybe-uninitialized]
+        (current_state == OBJECT_EXISTS && state == OBJECT_EXISTS_CLEAN))
+  drivers/block/rbd.c:2092:23: note: 'current_state' was declared here
+    u8 state, new_state, current_state;
+                          ^~~~~~~~~~~~~
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+It's bogus because all current_state accesses are guarded by
+has_current_state.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reviewed-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/kvm/lib/assert.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/rbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kvm/lib/assert.c b/tools/testing/selftests/kvm/lib/assert.c
-index 4911fc77d0f6a..d1cf9f6e0e6bc 100644
---- a/tools/testing/selftests/kvm/lib/assert.c
-+++ b/tools/testing/selftests/kvm/lib/assert.c
-@@ -55,7 +55,7 @@ static void test_dump_stack(void)
- #pragma GCC diagnostic pop
- }
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index c8fb886aebd4e..64e364c4a0fb8 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -2089,7 +2089,7 @@ static int rbd_object_map_update_finish(struct rbd_obj_request *obj_req,
+ 	struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
+ 	struct ceph_osd_data *osd_data;
+ 	u64 objno;
+-	u8 state, new_state, current_state;
++	u8 state, new_state, uninitialized_var(current_state);
+ 	bool has_current_state;
+ 	void *p;
  
--static pid_t gettid(void)
-+static pid_t _gettid(void)
- {
- 	return syscall(SYS_gettid);
- }
-@@ -72,7 +72,7 @@ test_assert(bool exp, const char *exp_str,
- 		fprintf(stderr, "==== Test Assertion Failure ====\n"
- 			"  %s:%u: %s\n"
- 			"  pid=%d tid=%d - %s\n",
--			file, line, exp_str, getpid(), gettid(),
-+			file, line, exp_str, getpid(), _gettid(),
- 			strerror(errno));
- 		test_dump_stack();
- 		if (fmt) {
 -- 
 2.20.1
 
