@@ -2,46 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2317411B0A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:25:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB9A911AF19
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732918AbfLKPYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:24:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56334 "EHLO mail.kernel.org"
+        id S1730860AbfLKPLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:11:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732906AbfLKPYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:24:52 -0500
+        id S1730849AbfLKPK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:10:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40892208C3;
-        Wed, 11 Dec 2019 15:24:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB37E2173E;
+        Wed, 11 Dec 2019 15:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077891;
-        bh=ff0QTGzeYj8UTsK1lZeu7l1UwpxXfyO2RNO2yWWQ4W8=;
+        s=default; t=1576077058;
+        bh=Xc0eyKlXnbwXsBZJnAPM3DHLQ9UKo918HSZqaDGVZZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2OwYYKsY+ulFoCYYv5yi6rPl4KetTKUWb6tJVqXcKAWX0qcwUYchhBgXvtCUm5Cwv
-         fBNGufbyCGl3T+88g453oUsuiasy97+yPbfJdv0hBpGNaKcqTsX3p72sPYHM2xyn02
-         d7jc+u5ANTorVInVVklaXuvypQjiZE0in9cKYLuQ=
+        b=YOjUEZpMu5K2Tx0S+UXMWZ1FRB/u6mDWhJb774YaoF23roee3ONxy5mVK4VP7Uics
+         nDLElvV3Pu4B6Wbfrn5ROEMHC+pSJCD9Ci6tyh4W+0PDgfaK8UC4GNzfW7F8e9e6Dg
+         PoWF/bj7jveDkf4gw1gOYlMW27G3wqF6ZC0Ehd50=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Joerg Roedel <jroedel@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 210/243] x86/mm/32: Sync only to VMALLOC_END in vmalloc_sync_all()
+        stable@vger.kernel.org,
+        Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
+        Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Johan Hovold <johan@kernel.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 5.4 81/92] can: ucan: fix non-atomic allocation in completion handler
 Date:   Wed, 11 Dec 2019 16:06:12 +0100
-Message-Id: <20191211150353.514527388@linuxfoundation.org>
+Message-Id: <20191211150300.171772638@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,93 +47,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Johan Hovold <johan@kernel.org>
 
-commit 9a62d20027da3164a22244d9f022c0c987261687 upstream.
+commit 870db5d1015c8bd63e93b579e857223c96249ff7 upstream.
 
-The job of vmalloc_sync_all() is to help the lazy freeing of vmalloc()
-ranges: before such vmap ranges are reused we make sure that they are
-unmapped from every task's page tables.
+USB completion handlers are called in atomic context and must
+specifically not allocate memory using GFP_KERNEL.
 
-This is really easy on pagetable setups where the kernel page tables
-are shared between all tasks - this is the case on 32-bit kernels
-with SHARED_KERNEL_PMD = 1.
-
-But on !SHARED_KERNEL_PMD 32-bit kernels this involves iterating
-over the pgd_list and clearing all pmd entries in the pgds that
-are cleared in the init_mm.pgd, which is the reference pagetable
-that the vmalloc() code uses.
-
-In that context the current practice of vmalloc_sync_all() iterating
-until FIX_ADDR_TOP is buggy:
-
-        for (address = VMALLOC_START & PMD_MASK;
-             address >= TASK_SIZE_MAX && address < FIXADDR_TOP;
-             address += PMD_SIZE) {
-                struct page *page;
-
-Because iterating up to FIXADDR_TOP will involve a lot of non-vmalloc
-address ranges:
-
-	VMALLOC -> PKMAP -> LDT -> CPU_ENTRY_AREA -> FIX_ADDR
-
-This is mostly harmless for the FIX_ADDR and CPU_ENTRY_AREA ranges
-that don't clear their pmds, but it's lethal for the LDT range,
-which relies on having different mappings in different processes,
-and 'synchronizing' them in the vmalloc sense corrupts those
-pagetable entries (clearing them).
-
-This got particularly prominent with PTI, which turns SHARED_KERNEL_PMD
-off and makes this the dominant mapping mode on 32-bit.
-
-To make LDT working again vmalloc_sync_all() must only iterate over
-the volatile parts of the kernel address range that are identical
-between all processes.
-
-So the correct check in vmalloc_sync_all() is "address < VMALLOC_END"
-to make sure the VMALLOC areas are synchronized and the LDT
-mapping is not falsely overwritten.
-
-The CPU_ENTRY_AREA and the FIXMAP area are no longer synced either,
-but this is not really a proplem since their PMDs get established
-during bootup and never change.
-
-This change fixes the ldt_gdt selftest in my setup.
-
-[ mingo: Fixed up the changelog to explain the logic and modified the
-         copying to only happen up until VMALLOC_END. ]
-
-Reported-by: Borislav Petkov <bp@suse.de>
-Tested-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Cc: <stable@vger.kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: hpa@zytor.com
-Fixes: 7757d607c6b3: ("x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32")
-Link: https://lkml.kernel.org/r/20191126111119.GA110513@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 9f2d3eae88d2 ("can: ucan: add driver for Theobroma Systems UCAN devices")
+Cc: stable <stable@vger.kernel.org>     # 4.19
+Cc: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>
+Cc: Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/fault.c |    2 +-
+ drivers/net/can/usb/ucan.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -281,7 +281,7 @@ void vmalloc_sync_all(void)
- 		return;
+--- a/drivers/net/can/usb/ucan.c
++++ b/drivers/net/can/usb/ucan.c
+@@ -792,7 +792,7 @@ resubmit:
+ 			  up);
  
- 	for (address = VMALLOC_START & PMD_MASK;
--	     address >= TASK_SIZE_MAX && address < FIXADDR_TOP;
-+	     address >= TASK_SIZE_MAX && address < VMALLOC_END;
- 	     address += PMD_SIZE) {
- 		struct page *page;
+ 	usb_anchor_urb(urb, &up->rx_urbs);
+-	ret = usb_submit_urb(urb, GFP_KERNEL);
++	ret = usb_submit_urb(urb, GFP_ATOMIC);
  
+ 	if (ret < 0) {
+ 		netdev_err(up->netdev,
 
 
