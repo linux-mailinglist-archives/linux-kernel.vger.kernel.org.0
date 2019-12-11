@@ -2,55 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE82011BBCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA84A11BBC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:33:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbfLKSeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:34:12 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:29366 "EHLO 1wt.eu"
+        id S1730494AbfLKSdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:33:33 -0500
+Received: from foss.arm.com ([217.140.110.172]:42776 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726856AbfLKSeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:34:12 -0500
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id xBBIO1oW032484;
-        Wed, 11 Dec 2019 19:24:01 +0100
-Date:   Wed, 11 Dec 2019 19:24:01 +0100
-From:   Willy Tarreau <w@1wt.eu>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        dan.carpenter@oracle.com, will@kernel.org, ebiederm@xmission.com,
-        linux-arch@vger.kernel.org, security@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] execve: warn if process starts with executable stack
-Message-ID: <20191211182401.GF31670@1wt.eu>
-References: <20191208171918.GC19716@avx2>
- <20191210174726.101e434df59b6aec8a53cca1@linux-foundation.org>
- <20191211072225.GB3700@avx2>
- <20191211095937.GB31670@1wt.eu>
- <20191211181933.GA3919@avx2>
+        id S1729955AbfLKSdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 13:33:32 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC9AC31B;
+        Wed, 11 Dec 2019 10:33:31 -0800 (PST)
+Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9F41E3F6CF;
+        Wed, 11 Dec 2019 10:33:30 -0800 (PST)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     joro@8bytes.org, hch@lst.de
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        stephan@gerhold.net, natechancellor@gmail.com,
+        nsaenzjulienne@suse.de, arnd@arndb.de
+Subject: [PATCH v2] iommu/dma: Rationalise types for DMA masks
+Date:   Wed, 11 Dec 2019 18:33:26 +0000
+Message-Id: <00d1ddf9439a8c79fb561b0fc740bddf9e6fe6b1.1576089015.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.23.0.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211181933.GA3919@avx2>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 09:19:33PM +0300, Alexey Dobriyan wrote:
-> Reports are better be done by people who know what they are doing, as in
-> understand what executable stack is and what does it mean in reality.
-> 
-> > Otherwise it will just go to /dev/null with all warning about bad blocks
-> > on USB sticks and CPU core throttling under high temperature.
-> 
-> That's fine. You don't want bugreports from people who don't know what
-> is executable stack. Every security bug bounty program is flooded by
-> such people. This is why message is worded in a neutral way.
+Since iommu_dma_alloc_iova() combines incoming masks with the u64 bus
+limit, it makes more sense to pass them around in their native u64
+rather than converting to dma_addr_t early. Do that, and resolve the
+remaining type discrepancy against the domain geometry with a cheeky
+cast to keep things simple.
 
-Well we definitely don't have the same experience with user reports. I
-was just suggesting, but since you apparently already have all the
-responses you needed, I'm even wondering why the warning remains.
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
 
-Willy
+v2: Reworked from "iommu/dma: Use a better type for dma_limit"
+
+ drivers/iommu/dma-iommu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 0cc702a70a96..6e573d1cb8bf 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -399,7 +399,7 @@ static int dma_info_to_prot(enum dma_data_direction dir, bool coherent,
+ }
+ 
+ static dma_addr_t iommu_dma_alloc_iova(struct iommu_domain *domain,
+-		size_t size, dma_addr_t dma_limit, struct device *dev)
++		size_t size, u64 dma_limit, struct device *dev)
+ {
+ 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+ 	struct iova_domain *iovad = &cookie->iovad;
+@@ -424,7 +424,7 @@ static dma_addr_t iommu_dma_alloc_iova(struct iommu_domain *domain,
+ 	dma_limit = min_not_zero(dma_limit, dev->bus_dma_limit);
+ 
+ 	if (domain->geometry.force_aperture)
+-		dma_limit = min(dma_limit, domain->geometry.aperture_end);
++		dma_limit = min(dma_limit, (u64)domain->geometry.aperture_end);
+ 
+ 	/* Try to get PCI devices a SAC address */
+ 	if (dma_limit > DMA_BIT_MASK(32) && dev_is_pci(dev))
+@@ -477,7 +477,7 @@ static void __iommu_dma_unmap(struct device *dev, dma_addr_t dma_addr,
+ }
+ 
+ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+-		size_t size, int prot, dma_addr_t dma_mask)
++		size_t size, int prot, u64 dma_mask)
+ {
+ 	struct iommu_domain *domain = iommu_get_dma_domain(dev);
+ 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+-- 
+2.23.0.dirty
+
