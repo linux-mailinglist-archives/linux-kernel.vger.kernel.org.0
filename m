@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE36011B55F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:53:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1803111B555
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:53:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731572AbfLKPTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:19:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47718 "EHLO mail.kernel.org"
+        id S1731769AbfLKPTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:19:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732183AbfLKPTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:19:09 -0500
+        id S1732195AbfLKPTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:19:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B2512073D;
-        Wed, 11 Dec 2019 15:19:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2AFF2465B;
+        Wed, 11 Dec 2019 15:19:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077548;
-        bh=ZWq1Lc77NiXidFXGIZ92vEpsjRzsESPxWGQ82ejVK3k=;
+        s=default; t=1576077556;
+        bh=yQEPvGzlhbcnX9ZQ96qD836OfgT8GScDCFHzaTP2QZ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tc3vGzWgPQyYPIXvvb7Ct9wLvBEkXZUk+D8EtDZNq6gqSoplza56lKYhE98vp1Cwe
-         jhAF5UpHZX0SfcpYyzhBDGvTKL48lPIr+h9cr/BVLqOuAVmp+MA04G0FjPrlThS+Rh
-         hNhMAzfFHMaWYkTzjNtGb5oM50CWxpr83yZGvKH0=
+        b=gpkNvM34fQl42C48QvDWEApasDxbbkoNj0k6SNnW1rKtiTrn5JmDWQYUnbRGau74G
+         1hdXqiQ9cPJccI6YhNCoV5FxN9DIlXOAQ5F0ElyWCgKcfpGhqo6YQxw5D3PpINKvki
+         SHLoi4aVKN6BZIPsXYyI4oJfI9aw3TjvnDw/a+3o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 081/243] net/smc: use after free fix in smc_wr_tx_put_slot()
-Date:   Wed, 11 Dec 2019 16:04:03 +0100
-Message-Id: <20191211150344.576230307@linuxfoundation.org>
+Subject: [PATCH 4.19 084/243] rtc: max8997: Fix the returned value in case of error in max8997_rtc_read_alarm()
+Date:   Wed, 11 Dec 2019 16:04:06 +0100
+Message-Id: <20191211150344.781117917@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,42 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ursula Braun <ursula.braun@linux.ibm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit e438bae43c1e08e688c09c410407b59fc1c173b4 ]
+[ Upstream commit 41ef3878203cd9218d92eaa07df4b85a2cb128fb ]
 
-In smc_wr_tx_put_slot() field pend->idx is used after being
-cleared. That means always idx 0 is cleared in the wr_tx_mask.
-This results in a broken administration of available WR send
-payload buffers.
+In case of error, we return 0.
+This is spurious and not consistent with the other functions of the driver.
+Propagate the error code instead.
 
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/smc/smc_wr.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-max8997.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/smc/smc_wr.c b/net/smc/smc_wr.c
-index 3c458d2798557..c2694750a6a8a 100644
---- a/net/smc/smc_wr.c
-+++ b/net/smc/smc_wr.c
-@@ -215,12 +215,14 @@ int smc_wr_tx_put_slot(struct smc_link *link,
+diff --git a/drivers/rtc/rtc-max8997.c b/drivers/rtc/rtc-max8997.c
+index 08c661a332ec0..20e50d9fdf882 100644
+--- a/drivers/rtc/rtc-max8997.c
++++ b/drivers/rtc/rtc-max8997.c
+@@ -215,7 +215,7 @@ static int max8997_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
  
- 	pend = container_of(wr_pend_priv, struct smc_wr_tx_pend, priv);
- 	if (pend->idx < link->wr_tx_cnt) {
-+		u32 idx = pend->idx;
-+
- 		/* clear the full struct smc_wr_tx_pend including .priv */
- 		memset(&link->wr_tx_pends[pend->idx], 0,
- 		       sizeof(link->wr_tx_pends[pend->idx]));
- 		memset(&link->wr_tx_bufs[pend->idx], 0,
- 		       sizeof(link->wr_tx_bufs[pend->idx]));
--		test_and_clear_bit(pend->idx, link->wr_tx_mask);
-+		test_and_clear_bit(idx, link->wr_tx_mask);
- 		return 1;
- 	}
+ out:
+ 	mutex_unlock(&info->lock);
+-	return 0;
++	return ret;
+ }
  
+ static int max8997_rtc_stop_alarm(struct max8997_rtc_info *info)
 -- 
 2.20.1
 
