@@ -2,131 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CDC411A615
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 09:42:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AE2111A61E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 09:42:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfLKImM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 03:42:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727253AbfLKImM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 03:42:12 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728428AbfLKIm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 03:42:26 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31174 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728338AbfLKIm0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 03:42:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576053744;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L9o29vWs9png9IbME4oN9NDlGatipOh6x0DCXnHJuIk=;
+        b=NIGW18dNXPwodTeQlvFMXttrEa1AHZLHjUlfOWU4vJjPvj9ugp0kP2tWKVMPQy6C9pGlVP
+        7LJeV3CxF9ynvax+NdDgheEGcg34SZWq/UMJm8KUo3SW1/EIb9v6O+IMS4U6hLwbmBM8vI
+        qbLiLXxBBl3JFKdlxBMffV2yzwjWApQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-396-iPLJMWKoPZK38Zq5HMW8AQ-1; Wed, 11 Dec 2019 03:42:21 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F74A2173E;
-        Wed, 11 Dec 2019 08:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576053731;
-        bh=12jKiiiaTPJVxoIxfBVZKjvh7sNdAl/aAKNfpHkRhdU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=swKuW/IgImJjrMJnaup1i8Q9gJ5Jrl2bK1s/YXT6H0BhZ5uPbzQkPS+FVn9GyrXUF
-         hv1llrXy4Fy6NinQt6jF+XtCVhSioMGadwM9RoN5LOq3Q4d7PNVW5XTiiAIi6Q2Kyr
-         gflwJBJ6Fzgki1GK+O1TCsA8vh2fvWOkeMswEzV0=
-Date:   Wed, 11 Dec 2019 09:42:06 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Scott Schafer <schaferjscott@gmail.com>
-Cc:     devel@driverdev.osuosl.org, netdev@vger.kernel.org,
-        GR-Linux-NIC-Dev@marvell.com, linux-kernel@vger.kernel.org,
-        Manish Chopra <manishc@marvell.com>
-Subject: Re: [PATCH] staging: qlge: Fix multiple WARNING and CHECK relating
- to formatting
-Message-ID: <20191211084206.GA483343@kroah.com>
-References: <20191211014759.4749-1-schaferjscott@gmail.com>
- <20191211073136.GB397938@kroah.com>
- <20191211082839.GA13244@karen>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211082839.GA13244@karen>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 88CDF18B9FC6;
+        Wed, 11 Dec 2019 08:42:20 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-67.ams2.redhat.com [10.36.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 726F86364F;
+        Wed, 11 Dec 2019 08:42:17 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 625F316E2D; Wed, 11 Dec 2019 09:42:16 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     gurchetansingh@chromium.org, Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/3] drm/virtio: skip set_scanout if framebuffer didn't change
+Date:   Wed, 11 Dec 2019 09:42:14 +0100
+Message-Id: <20191211084216.25405-2-kraxel@redhat.com>
+In-Reply-To: <20191211084216.25405-1-kraxel@redhat.com>
+References: <20191211084216.25405-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: iPLJMWKoPZK38Zq5HMW8AQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 02:28:39AM -0600, Scott Schafer wrote:
-> On Wed, Dec 11, 2019 at 08:31:36AM +0100, Greg Kroah-Hartman wrote:
-> > On Tue, Dec 10, 2019 at 07:47:59PM -0600, Scott Schafer wrote:
-> > > CHECK: Please don't use multiple blank lines
-> > > CHECK: Blank lines aren't necessary before a close brace '}'
-> > > CHECK: Blank lines aren't necessary after an open brace '{'
-> > > WARNING: Missing a blank line after declarations
-> > > CHECK: No space is necessary after a cast
-> > > CHECK: braces {} should be used on all arms of this statement
-> > > CHECK: Unbalanced braces around else statement
-> > > WARNING: please, no space before tabs
-> > > CHECK: spaces preferred around that '/' (ctx:VxV)
-> > > CHECK: spaces preferred around that '+' (ctx:VxV)
-> > > CHECK: spaces preferred around that '%' (ctx:VxV)
-> > > CHECK: spaces preferred around that '|' (ctx:VxV)
-> > > CHECK: spaces preferred around that '*' (ctx:VxV)
-> > > WARNING: Unnecessary space before function pointer arguments
-> > > WARNING: please, no spaces at the start of a line
-> > > WARNING: Block comments use a trailing */ on a separate line
-> > > ERROR: trailing whitespace
-> > > 
-> > > In files qlge.h, qlge_dbg.c, qlge_ethtool.c, qlge_main.c, and qlge_mpi.c
-> > > 
-> > > Signed-off-by: Scott Schafer <schaferjscott@gmail.com>
-> > > ---
-> > >  drivers/staging/qlge/qlge.h         |  45 ++++++-------
-> > >  drivers/staging/qlge/qlge_dbg.c     |  41 ++++++-----
-> > >  drivers/staging/qlge/qlge_ethtool.c |  20 ++++--
-> > >  drivers/staging/qlge/qlge_main.c    | 101 ++++++++++++++--------------
-> > >  drivers/staging/qlge/qlge_mpi.c     |  37 +++++-----
-> > >  5 files changed, 125 insertions(+), 119 deletions(-)
-> > 
-> > Hi,
-> > 
-> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-> > a patch that has triggered this response.  He used to manually respond
-> > to these common problems, but in order to save his sanity (he kept
-> > writing the same thing over and over, yet to different people), I was
-> > created.  Hopefully you will not take offence and will fix the problem
-> > in your patch and resubmit it so that it can be accepted into the Linux
-> > kernel tree.
-> > 
-> > You are receiving this message because of the following common error(s)
-> > as indicated below:
-> > 
-> > - Your patch did many different things all at once, making it difficult
-> >   to review.  All Linux kernel patches need to only do one thing at a
-> >   time.  If you need to do multiple things (such as clean up all coding
-> >   style issues in a file/driver), do it in a sequence of patches, each
-> >   one doing only one thing.  This will make it easier to review the
-> >   patches to ensure that they are correct, and to help alleviate any
-> >   merge issues that larger patches can cause.
-> > 
-> > If you wish to discuss this problem further, or you have questions about
-> > how to resolve this issue, please feel free to respond to this email and
-> > Greg will reply once he has dug out from the pending patches received
-> > from other developers.
-> > 
-> > thanks,
-> > 
-> > greg k-h's patch email bot
-> 
-> I was wondering how I would go about chaning the patch.
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/virtio/virtgpu_plane.c | 31 ++++++++++++++------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-Break it up into "one patch per logical change".
+diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virti=
+o/virtgpu_plane.c
+index bc4bc4475a8c..a0f91658c2bc 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_plane.c
++++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
+@@ -151,20 +151,23 @@ static void virtio_gpu_primary_plane_update(struct dr=
+m_plane *plane,
+ =09if (bo->dumb)
+ =09=09virtio_gpu_update_dumb_bo(vgdev, bo, plane->state);
+=20
+-=09DRM_DEBUG("handle 0x%x, crtc %dx%d+%d+%d, src %dx%d+%d+%d\n",
+-=09=09  bo->hw_res_handle,
+-=09=09  plane->state->crtc_w, plane->state->crtc_h,
+-=09=09  plane->state->crtc_x, plane->state->crtc_y,
+-=09=09  plane->state->src_w >> 16,
+-=09=09  plane->state->src_h >> 16,
+-=09=09  plane->state->src_x >> 16,
+-=09=09  plane->state->src_y >> 16);
+-=09virtio_gpu_cmd_set_scanout(vgdev, output->index,
+-=09=09=09=09   bo->hw_res_handle,
+-=09=09=09=09   plane->state->src_w >> 16,
+-=09=09=09=09   plane->state->src_h >> 16,
+-=09=09=09=09   plane->state->src_x >> 16,
+-=09=09=09=09   plane->state->src_y >> 16);
++=09if (plane->state->fb !=3D old_state->fb) {
++=09=09DRM_DEBUG("handle 0x%x, crtc %dx%d+%d+%d, src %dx%d+%d+%d\n",
++=09=09=09  bo->hw_res_handle,
++=09=09=09  plane->state->crtc_w, plane->state->crtc_h,
++=09=09=09  plane->state->crtc_x, plane->state->crtc_y,
++=09=09=09  plane->state->src_w >> 16,
++=09=09=09  plane->state->src_h >> 16,
++=09=09=09  plane->state->src_x >> 16,
++=09=09=09  plane->state->src_y >> 16);
++=09=09virtio_gpu_cmd_set_scanout(vgdev, output->index,
++=09=09=09=09=09   bo->hw_res_handle,
++=09=09=09=09=09   plane->state->src_w >> 16,
++=09=09=09=09=09   plane->state->src_h >> 16,
++=09=09=09=09=09   plane->state->src_x >> 16,
++=09=09=09=09=09   plane->state->src_y >> 16);
++=09}
++
+ =09virtio_gpu_cmd_resource_flush(vgdev, bo->hw_res_handle,
+ =09=09=09=09      plane->state->src_x >> 16,
+ =09=09=09=09      plane->state->src_y >> 16,
+--=20
+2.18.1
 
-See the many other patchsets on this mailing list for examples of how
-this is done.
-
-> I know I should switch to a patchset but how would I go about doing
-> that?
-
-What exactly do you mean by "how"?
-
-> Also where would I place the new patches?
-
-You email them here :)
-
-> Would I, create a new patch series or would I split the patch into new
-> (smaller) patches and reply to this thread?
-
-Just a whole new patch series is good.
-
-thanks,
-
-greg k-h
