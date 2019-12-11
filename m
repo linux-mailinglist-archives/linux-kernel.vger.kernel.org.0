@@ -2,83 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2101411BB17
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FDB811BB1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:10:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731077AbfLKSJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:09:45 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42477 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731046AbfLKSJn (ORCPT
+        id S1731117AbfLKSJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:09:58 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60326 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730486AbfLKSJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:09:43 -0500
-Received: by mail-ed1-f67.google.com with SMTP id e10so20184899edv.9;
-        Wed, 11 Dec 2019 10:09:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ILp2Lf5P15MYbkV7ek1FJDOE0NtqRWE6/NU2Ipca/04=;
-        b=uVTl6HIOGVQ8MZQ1GLPSbu4MARErsCM7KoITJ7LRkp50tXD2e4hHj7k5u++WuKNtJo
-         FEhlYyN3G1MCCpK8W+p3zZh4tqQ3ET+fkWzoVoEtk8fXARmrLiGDHt7QSc59utV/KILE
-         TrlAFmW/XrRUWwn6jzfwRc6ELr/grQ5OKtB1EvqN6T3CEQhuudXW8McMbZ0Qk7EjuczJ
-         ejeoW9gPB8kB5xDL+pux0b61tAymTktJLyGXfO8ztEM75iciPV5LWTnYDxYaBl9YSBn1
-         j/pjcPk4Ds/k+ttKV4SQtHdF6zhB56Ir2jkzQGvcveEtdOGfxWSzSBQ+ZxLO074sepU4
-         xAkw==
-X-Gm-Message-State: APjAAAUi8ZDtxRbo8ezFcDnJzRxzUCvgpmo30wAnU83gqLvMqtIXR93C
-        LwttezGz4MDyfrAXasDthWM=
-X-Google-Smtp-Source: APXvYqxbSc/1pMrFp7jj1xrbhKuiKUxJi3QB/0yA0bRIjtn2bO+hRfiUZUax+luAzlnxU6ZmzIqDVQ==
-X-Received: by 2002:a05:6402:1350:: with SMTP id y16mr4911656edw.176.1576087781772;
-        Wed, 11 Dec 2019 10:09:41 -0800 (PST)
-Received: from kozik-lap ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id o30sm64065edc.61.2019.12.11.10.09.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Dec 2019 10:09:41 -0800 (PST)
-Date:   Wed, 11 Dec 2019 19:09:38 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Lukasz Luba <l.luba@partner.samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: exynos_defconfig: Bring back explicitly wanted
- options
-Message-ID: <20191211180938.GA6690@kozik-lap>
-References: <CGME20191205200017epcas5p446f5f29988e34d939601287a7517fdfe@epcas5p4.samsung.com>
- <20191205200006.5164-1-krzk@kernel.org>
- <08916577-3218-ecd4-a8e2-ab4fbff5332b@samsung.com>
+        Wed, 11 Dec 2019 13:09:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576087796;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to; bh=DjdU2OmaeCrCML7Z3SM+Bw8StC7ApXHGySv/mxZQmdI=;
+        b=E1t0M/Yg84qsH76YAqRuUJzLrOcHshKvmeRWwO3mv0zjfqQs/rxKBjEl/S1Fb0ssF9Xc4H
+        NeXDnr4LM3DdDTejEKPtO+cgX/igIWBnVbf8UkNpvpzi1Gc19rKlyOYES1sHV0GI/rn2qI
+        MjOuEhl5uWxV/qqmpqpr2SSg93wEBnE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-203-sfvTOy9pNgO7qN-050Z9RA-1; Wed, 11 Dec 2019 13:09:51 -0500
+X-MC-Unique: sfvTOy9pNgO7qN-050Z9RA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 935FB8CB827;
+        Wed, 11 Dec 2019 18:09:49 +0000 (UTC)
+Received: from greed.delorie.com (ovpn-116-25.phx2.redhat.com [10.3.116.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5DA6AA7EB;
+        Wed, 11 Dec 2019 18:09:49 +0000 (UTC)
+Received: from greed.delorie.com.redhat.com (localhost [127.0.0.1])
+        by greed.delorie.com (8.14.7/8.14.7) with ESMTP id xBBI9i8x004393;
+        Wed, 11 Dec 2019 13:09:45 -0500
+From:   DJ Delorie <dj@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     vincent.guittot@linaro.org, dsterba@suse.cz, dhowells@redhat.com,
+        ebiggers@kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, mingo@kernel.org
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+In-Reply-To: <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com> (message from Linus Torvalds on Mon, 9 Dec 2019 09:48:27 -0800)
+Date:   Wed, 11 Dec 2019 13:09:44 -0500
+Message-ID: <xnpngusphz.fsf@greed.delorie.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <08916577-3218-ecd4-a8e2-ab4fbff5332b@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 09:01:07AM +0100, Marek Szyprowski wrote:
-> Hi Krzyszotof,
-> 
-> On 05.12.2019 21:00, Krzysztof Kozlowski wrote:
-> > Few options KALLSYMS_ALL, SCSI, PM_DEVFREQ and mutex/spinlock debugging
-> > were removed with savedefconfig because they were selected by other
-> > options.  However these are user-visible options and they might not be
-> > selected in the future.  Exactly this happened with commit 0e4a459f56c3
-> > ("tracing: Remove unnecessary DEBUG_FS dependency") removing the
-> > dependency between DEBUG_FS and TRACING.
-> >
-> > To avoid losing these options in the future, explicitly mention them in
-> > defconfig.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> I will not mind adding:
-> 
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+> [ Added DJ to the participants, since he seems to be the Fedora make
+> maintainer - DJ, any chance that this absolutely horrid 'make' buf can
+> be fixed in older versions too, not just rawhide? The bugfix is two
+> and a half years old by now, and the bug looks real and very serious ]
 
-Applied.
+Builds for F30 and F31 are in bodhi, waiting on testing and karma...
+https://bodhi.fedoraproject.org/updates/FEDORA-2019-bd81ed62bf
+https://bodhi.fedoraproject.org/updates/FEDORA-2019-a056aa61d4
 
-Best regards,
-Krzysztof
+F29 is already EOL.
 
