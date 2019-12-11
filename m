@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D993F11B7C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C99AC11B771
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:08:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732941AbfLKQJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:09:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32854 "EHLO mail.kernel.org"
+        id S1730806AbfLKPMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:12:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731038AbfLKPMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:03 -0500
+        id S1731012AbfLKPMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:12:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0906B222C4;
-        Wed, 11 Dec 2019 15:12:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F5C724658;
+        Wed, 11 Dec 2019 15:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077122;
-        bh=5C/O1Y703mdhztcjxnZWuVL7WWvHetvvVRi+sDBEqzo=;
+        s=default; t=1576077126;
+        bh=IEDH//bhdQztlOqOo+cfwWB4wM8CT2ZDR64ODrpGXpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bleo0jiUuV0BqDC9nLBQbczrKREJJMl+OAML+hKAC6hTq1kCXFYkdY5fBXLn1105o
-         XpW/d8fgMDQuVv2cZfYLXgV6LOYP2SXnA7PcQPu4cci1E2h7m6jI7Sg6q9mSvMWlCk
-         YG91ZaZIWYTOJMmw6SrlkUDm7Bl0HMZM40CUsZQY=
+        b=ASfCZsr8aNmgPSL1M+6kupNFfLQJvSZgKsM//pdyMqHr1sDp/5vZb7GauO0pEltxE
+         7H1gJwjf/cng57mgJFVyGVCowkZrx8HoMgglqGjQmgPom2nTTxVg+RAByr3/PNkkeL
+         V0vRDMZlBUgiZtzbv9e9MOQCM6l7v2sryYUu260k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 011/134] tools/power/x86/intel-speed-select: Remove warning for unused result
-Date:   Wed, 11 Dec 2019 10:09:47 -0500
-Message-Id: <20191211151150.19073-11-sashal@kernel.org>
+Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 014/134] iommu: rockchip: Free domain on .domain_free
+Date:   Wed, 11 Dec 2019 10:09:50 -0500
+Message-Id: <20191211151150.19073-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
 References: <20191211151150.19073-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,51 +48,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-[ Upstream commit abd120e3bdf3dd72ba1ed9ac077a861e0e3dc43a ]
+[ Upstream commit 42bb97b80f2e3bf592e3e99d109b67309aa1b30e ]
 
-Fix warning for:
-isst-config.c: In function ‘set_cpu_online_offline’:
-isst-config.c:221:3: warning: ignoring return value of ‘write’,
-declared with attribute warn_unused_result [-Wunused-result]
-   write(fd, "1\n", 2);
+IOMMU domain resource life is well-defined, managed
+by .domain_alloc and .domain_free.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Therefore, domain-specific resources shouldn't be tied to
+the device life, but instead to its domain.
+
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/x86/intel-speed-select/isst-config.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/iommu/rockchip-iommu.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 2a9890c8395a4..21fcfe621d3aa 100644
---- a/tools/power/x86/intel-speed-select/isst-config.c
-+++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -169,7 +169,7 @@ int get_topo_max_cpus(void)
- static void set_cpu_online_offline(int cpu, int state)
- {
- 	char buffer[128];
--	int fd;
-+	int fd, ret;
+diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+index 4dcbf68dfda43..0df091934361b 100644
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -980,13 +980,13 @@ static struct iommu_domain *rk_iommu_domain_alloc(unsigned type)
+ 	if (!dma_dev)
+ 		return NULL;
  
- 	snprintf(buffer, sizeof(buffer),
- 		 "/sys/devices/system/cpu/cpu%d/online", cpu);
-@@ -179,9 +179,12 @@ static void set_cpu_online_offline(int cpu, int state)
- 		err(-1, "%s open failed", buffer);
+-	rk_domain = devm_kzalloc(dma_dev, sizeof(*rk_domain), GFP_KERNEL);
++	rk_domain = kzalloc(sizeof(*rk_domain), GFP_KERNEL);
+ 	if (!rk_domain)
+ 		return NULL;
  
- 	if (state)
--		write(fd, "1\n", 2);
-+		ret = write(fd, "1\n", 2);
- 	else
--		write(fd, "0\n", 2);
-+		ret = write(fd, "0\n", 2);
-+
-+	if (ret == -1)
-+		perror("Online/Offline: Operation failed\n");
+ 	if (type == IOMMU_DOMAIN_DMA &&
+ 	    iommu_get_dma_cookie(&rk_domain->domain))
+-		return NULL;
++		goto err_free_domain;
  
- 	close(fd);
+ 	/*
+ 	 * rk32xx iommus use a 2 level pagetable.
+@@ -1021,6 +1021,8 @@ err_free_dt:
+ err_put_cookie:
+ 	if (type == IOMMU_DOMAIN_DMA)
+ 		iommu_put_dma_cookie(&rk_domain->domain);
++err_free_domain:
++	kfree(rk_domain);
+ 
+ 	return NULL;
  }
+@@ -1049,6 +1051,7 @@ static void rk_iommu_domain_free(struct iommu_domain *domain)
+ 
+ 	if (domain->type == IOMMU_DOMAIN_DMA)
+ 		iommu_put_dma_cookie(&rk_domain->domain);
++	kfree(rk_domain);
+ }
+ 
+ static int rk_iommu_add_device(struct device *dev)
 -- 
 2.20.1
 
