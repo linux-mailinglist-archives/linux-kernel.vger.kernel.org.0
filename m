@@ -2,153 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB13E11A0C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:53:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C2511A0D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:55:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfLKBxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 20:53:04 -0500
-Received: from mga06.intel.com ([134.134.136.31]:8970 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726062AbfLKBxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 20:53:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 17:53:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
-   d="scan'208";a="203392706"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by orsmga007.jf.intel.com with ESMTP; 10 Dec 2019 17:53:01 -0800
-Date:   Wed, 11 Dec 2019 09:54:23 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        yu-cheng.yu@intel.com
-Subject: Re: [PATCH v8 4/7] KVM: VMX: Load CET states on vmentry/vmexit
-Message-ID: <20191211015423.GC12845@local-michael-cet-test>
-References: <20191101085222.27997-1-weijiang.yang@intel.com>
- <20191101085222.27997-5-weijiang.yang@intel.com>
- <20191210212305.GM15758@linux.intel.com>
+        id S1727639AbfLKBzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 20:55:24 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:56463 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726062AbfLKBzG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 20:55:06 -0500
+X-UUID: 7d516bc1105e42bcb6573526910758b2-20191211
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=aX14XFV3v9enjNQQukse3rEThkp/4nt3pqUfFtZISK0=;
+        b=QWc+PiQ2lsv3Iiw4sm5UWbhpF2+cc7E5zuY3fqc7AR2BifNmE+IWS23zN4P6R/LmxYORdq8gQfEDJ6++4DKc3X5euxw0gb52uXX4wkl0uCozwm/Yl6ogaahqGsI9eOxbrM5q0sGmc8Ehsz4m40I1WZL801GM4rx/1ml4APRSxCI=;
+X-UUID: 7d516bc1105e42bcb6573526910758b2-20191211
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <min.guo@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1438635444; Wed, 11 Dec 2019 09:54:53 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 11 Dec 2019 09:54:40 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 11 Dec 2019 09:54:45 +0800
+From:   <min.guo@mediatek.com>
+To:     Bin Liu <b-liu@ti.com>, Rob Herring <robh+dt@kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <tony@atomide.com>,
+        <hdegoede@redhat.com>, Min Guo <min.guo@mediatek.com>
+Subject: [PATCH v9 0/6] Add MediaTek MUSB Controller Driver
+Date:   Wed, 11 Dec 2019 09:54:40 +0800
+Message-ID: <20191211015446.11477-1-min.guo@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210212305.GM15758@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: B8A45FEE1BDC471EAE20714BD3FF23139CF6460935F71E7158ABA2C0EDD2E4BD2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 01:23:05PM -0800, Sean Christopherson wrote:
-> On Fri, Nov 01, 2019 at 04:52:19PM +0800, Yang Weijiang wrote:
-> > @@ -2834,6 +2837,9 @@ void vmx_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0)
-> >  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> >  	unsigned long hw_cr0;
-> >  
-> > +	if (!(cr0 & X86_CR0_WP) && kvm_read_cr4_bits(vcpu, X86_CR4_CET))
-> > +		cr0 |= X86_CR0_WP;
-> 
-> Huh?  What's the interaction between CR4.CET and CR0.WP?  If there really
-> is some non-standard interaction then it needs to be documented in at least
-> the changelog and probably with a comment as well.
->
-The processor does not allow CR4.CET to be set if CR0.WP = 0 (similarly, it does not allow CR0.WP to be
-cleared while CR4.CET = 1).
+RnJvbTogTWluIEd1byA8bWluLmd1b0BtZWRpYXRlay5jb20+DQoNClRoZXNlIHBhdGNoZXMgaW50
+cm9kdWNlIHRoZSBNZWRpYVRlayBNVVNCIGNvbnRyb2xsZXIgZHJpdmVyLg0KDQpUaGUgZHJpdmVy
+IGNhbiBiZSBjb25maWd1cmVkIGFzIER1YWwtUm9sZSBEZXZpY2UgKERSRCksDQpQZXJpcGhlcmFs
+IE9ubHkgYW5kIEhvc3QgT25seSBtb2Rlcy4gVGhpcyBoYXMgYmVlZCB0ZXN0ZWQgb24NCk1UMjcw
+MSB3aXRoIGEgdmFyaWV0eSBvZiBkZXZpY2VzIGluIGhvc3QgbW9kZSBhbmQgd2l0aCB0aGUgDQpm
+X21hc3MgZ2FkZ2V0IGRyaXZlciBpbiBwZXJpcGhlcmFsIG1vZGUsIHBsdWdnaW5nIG90ZyBjYWJs
+ZXMNCmluL291dCBhIGxvdCBvZiB0aW1lcyBpbiBhbGwgcG9zc2libGUgaW1hZ2luYWJsZSBwbHVn
+IG9yZGVycy4NCg0KY2hhbmdlcyBpbiB2OToNCmNoYW5nZXMgb2YgZHQtYmluZGluZ3MgYW5kIERU
+UzoNCjEuIEFkZCB1c2Itcm9sZS1zd2l0Y2gNCjIuIFJlbW92ZSBsYWJlbCBvZiB1c2IgY29ubmVj
+dG9yIGNoaWxkIG5vZGUNCjMuIENoYW5nZSB1c2IgY29ubmVjdG9yIGNoaWxkIG5vZGUgY29tcGF0
+aWJsZSBhcyAiZ3Bpby11c2ItYi1jb25uZWN0b3IiLCAidXNiLWItY29ubmVjdG9yIjsNCg0KY2hh
+bmdlcyBpbiB2ODoNCmNoYW5nZXMgb2YgZHQtYmluZGluZ3M6DQoxLkFkZCByZXZpZXdlZCBieSBS
+b2INCg0KY2hhbmdlcyBpbiB2NzoNCmNoYW5nZXMgb2YgZHQtYmluZGluZ3MgYW5kIERUUzoNCjEu
+IENoYW5nZSBjb21wYXRpYmxlIHN0cmluZw0KMi4gQ2hhbmdlIHVzYiBjb25uZWN0b3IgY2hpbGQg
+bm9kZSBjb21wYXRpYmxlIGFzICJncGlvLXVzYi1iLWNvbm5lY3RvciIgDQoNCmNoYW5nZXMgaW4g
+djY6DQpjaGFuZ2VzIG9mIGR0LWJpbmRpbmdzOg0KMS4gTW9kaWZ5IHVzYiBjb25uZWN0b3IgY2hp
+bGQgbm9kZQ0KY2hhbmdlcyBvZiBEVFM6DQoxLiBNb2RpZnkgdXNiIGNvbm5lY3RvciBjaGlsZCBu
+b2RlDQpjaGFuZ2VzIG9mIGRyaXZlcjoNCjEuIEFkZCBvZl9wbGF0Zm9ybV9wb3B1bGF0ZSBpbiBw
+cm9iZSB0byBwb3B1bGF0ZSBjb25uZWN0b3IgcGxhdGZvcm1fZGV2aWNlcw0KICAgZnJvbSBkZXZp
+Y2UgdHJlZSBkYXRhDQoyLiBSZXBsYWNlIGV4dGNvbiB3aXRoIHVzYiByb2xlIHN3aXRjaCBtZWNo
+YW5pc20gdG8gc3VwcG9ydCBkdWFsLXJvbGUgbW9kZSwNCiAgIGRlcGVuZHMgb24gWzFdDQozLiBS
+ZW1vdmUgc2V0IHZidXMgZnVuY3Rpb24NCg0KICAgIFsxXSBbdjYsMDkvMTBdIHVzYjogcm9sZXM6
+IGFkZCBVU0IgVHlwZS1CIEdQSU8gY29ubmVjdG9yIGRyaXZlcg0KICAgICAgICBodHRwczovL3Bh
+dGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEwOTY2MzYxLw0KDQpjaGFuZ2VzIGluIHY1Og0KY2hh
+bmdlcyBvZiBkdC1iaW5kaW5ncyBzdWdnZXN0ZWQgYnkgUm9iOg0KMS4gTW9kaWZ5IGNvbXBhdGli
+bGUgYXMgDQotIGNvbXBhdGlibGUgOiBzaG91bGQgYmUgb25lIG9mOg0KICAgICAgICAgICAgICAg
+Im1lZGlhdGVrLG10LTI3MDEiDQogICAgICAgICAgICAgICAuLi4NCiAgICAgICAgICAgICAgIGZv
+bGxvd2VkIGJ5ICJtZWRpYXRlayxtdGstbXVzYiINCjIuIEFkZCB1c2IgY29ubmVjdG9yIGNoaWxk
+IG5vZGUNCmNoYW5nZXMgb2YgRFRTOg0KMS4gQWRkIHVzYiBjb25uZWN0b3IgY2hpbGQgbm9kZQ0K
+Y2hhbmdlcyBvZiBkcml2ZXIgc3VnZ2VzdGVkIGJ5IEJpbjoNCjEuIFJlcGxhY2UgbXVzYl9yZWFk
+YigpIHdpdGggbXVzYl9jbGVhcmIoKSB0byBjbGVhciBkbWEgcGVuZGluZyBpbnRlcnJ1cHRzDQoy
+LiBSZXBsYWNlIG11c2JfcmVhZGIoKSB3aXRoIG11c2JfY2xlYXJiKCkgdG8gY2xlYXIgY29tbW9u
+L3R4L3J4IHBlbmRpbmcgaW50ZXJydXB0cw0KMy4gTWFrZSBtdXNiX2NsZWFyYi93KCkgcmV0dXJu
+IHRoZSB2YWx1ZSBvZiBtdXNiX3JlYWRiL3coKQ0KDQpjaGFuZ2VzIGluIHY0Og0KY2hhbmdlcyBv
+ZiBkdC1iaW5kaW5ncyBzdWdnZXN0ZWQgYnkgU2VyZ2VpOg0KMS4gU3RyaW5nIGFsaWdubWVudA0K
+Y2hhbmdlcyBvZiBkcml2ZXIgc3VnZ2VzdGVkIGJ5IFRvbnkgYW5kIEJpbjoNCjEuIEFkZCBhIG5l
+dyBwYXRjaCBmb3Igc2V0L2dldF90b2dnbGUoKQ0KMi4gQWRkIGEgbmV3IHBhdGNoIGZvciBub2ly
+cSB0eXBlIG9mIGRtYQ0KMy4gQWRkIGEgbmV3IHBhdGNoIG11c2JfY2xlYXJiL3coKQ0KNC4gQWJv
+bmRvbiBwYXRjaCAidXNiOiBtdXNiOiBEZWxldGUgdGhlIGNvbnN0IGF0dHJpYnV0ZSBvZiBhZGRy
+IHBhcmFtZXRlciBpbiByZWFkYi93L2wgaG9va3MiDQoNCmNoYW5nZXMgaW4gdjM6DQpjaGFuZ2Vz
+IG9mIGRyaXZlciBzdWdnZXN0ZWQgYnkgQmluOg0KMS4gQWRkIGEgbmV3IHBhdGNoIGZvciBtdXNi
+X3JlYWRiL3cvbCgpIHRvIHJlbW92ZSBjb25zdCBhdHRyaWJ1dGUgDQoyLiBVc2UgaXNfb3V0IGFz
+IGZ1bmN0aW9uIHBhcmFtZXRlciBpbiBzZXRfdG9nZ2xlL2dldF90b2dnbGUoKSBob29rcw0KMy4g
+UmVtb3ZlICd1OC91MTYgZGF0YScgcGFyYW1ldGVyIGluIGNsZWFyYi93KCkgaG9va3MNCjQuIFJl
+bW92ZSBtdXNiX2RlZmF1bHRfY2xlYXJiL3coKQ0KNS4gUmVwbGFjZSBtdXNiX3JlYWRiL3coKSB3
+aXRoIG11c2JfY2xlYXJiL3coKSB0byBjbGVhciBwZW5kaW5nIGludGVycnVwdHMgDQo2LiBBZGQg
+Y29tbWVudHMgdG8gY2xlYXJiL3coKSBob29rcw0KNy4gUmVwbGFjZSBtdXNiX3NhdmVfdG9nZ2xl
+KCkgd2l0aCBtdXNiLT5pby5nZXRfdG9nZ2xlKCkNCjguIFJlcGxhY2UgbXVzYl9zZXRfdG9nZ2xl
+KCkgd2l0aCBtdXNiLT5pby5zZXRfdG9nZ2xlKCkNCg0KY2hhbmdlcyBpbiB2MjoNCmNoYW5nZXMg
+b2YgZHQtYmluZGluZ3Mgc3VnZ2VzdGVkIGJ5IFJvYiBhbmQgQmluOg0KMS4gTW9kaWZ5IERSQyB0
+byBEUkQNCjIuIERyb3AgdGhlICI8c29jLW1vZGVsPi1tdXNiIiBpbiBjb21wYXRpYmxlDQozLiBS
+ZW1vdmUgcGh5LW5hbWVzDQo0LiBBZGQgc3BhY2UgYWZ0ZXIgY29tbWEgaW4gY2xvY2stbmFtZXMN
+CmR0c2k6DQoxLiBSZW1vdmUgcGh5LW5hbWVzDQpjaGFuZ2VzIG9mIGRyaXZlciBzdWdnZXN0ZWQg
+YnkgQmluOg0KMS4gQWRkIGEgbmV3IHBhdGNoIGZvciBtdXNiX3NldF90b2dnbGUNCjIuIEFkZCBz
+dW1tYXJpemUgb2YgTWVkaWFUZWsgbXVzYiBjb250cm9sbGVyIGRpZmZlcmVuY2VzIGluIHRoZSBj
+b21taXQgbG9nDQozLiBBYm9uZG9uIHBhdGNoICJ1c2I6IG11c2I6IE1vdmUgbXVzYmhzZG1hIG1h
+Y3JvIGRlZmluaXRpb24gdG8gbXVzYl9kbWEuaCINCjQuIEFkZCAifHwgQ09NUElMRV9URVNUIiBp
+biBLY29uZmlnDQo1LiBBZGQgbXVzYl9jbGVhcmIoKSBhbmQgbXVzYl9jbGVhcncoKSBob29rcw0K
+Ni4gQWRkIGdldF90b2dnbGUoKSBhbmQgc2V0X3RvZ2dsZSgpIGhvb2tzDQo3LiBSZXBsYWNlIG11
+c2JfcmVhZGwoKSB3aXRoIG11c2JfcmVhZHcoKSB0byByZWFkIDE2Yml0IHRvZ2dsZSByZWdpc3Rl
+cg0KOC4gTW92ZSBNZWRpYVRlaydzIHByaXZhdGUgdG9nZ2xlIHJlZ2lzdGVycyBmcm9tIG11c2Jf
+cmVncy5oIHRvIG1lZGlhdGVrLmMNCjkuIENyZWF0ZSBtdXNiaHNfZG1hX2NvbnRyb2xsZXJfY3Jl
+YXRlX25vaXJxKCkNCg0KTWluIEd1byAoNik6DQogIGR0LWJpbmRpbmdzOiB1c2I6IG11c2I6IEFk
+ZCBzdXBwb3J0IGZvciBNZWRpYVRlayBtdXNiIGNvbnRyb2xsZXINCiAgYXJtOiBkdHM6IG10Mjcw
+MTogQWRkIHVzYjIgZGV2aWNlIG5vZGVzDQogIHVzYjogbXVzYjogQWRkIGdldC9zZXQgdG9nZ2xl
+IGhvb2tzDQogIHVzYjogbXVzYjogQWRkIG5vaXJxIHR5cGUgb2YgZG1hIGNyZWF0ZSBpbnRlcmZh
+Y2UNCiAgdXNiOiBtdXNiOiBBZGQgbXVzYl9jbGVhcmIvdygpIGludGVyZmFjZQ0KICB1c2I6IG11
+c2I6IEFkZCBzdXBwb3J0IGZvciBNZWRpYVRlayBtdXNiIGNvbnRyb2xsZXINCg0KIC4uLi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL3VzYi9tZWRpYXRlayxtdXNiLnR4dCB8ICA1NyArKw0KIGFyY2gvYXJt
+L2Jvb3QvZHRzL210MjcwMS1ldmIuZHRzICAgICAgICAgICAgICB8ICAyMSArDQogYXJjaC9hcm0v
+Ym9vdC9kdHMvbXQyNzAxLmR0c2kgICAgICAgICAgICAgICAgIHwgIDMzICsNCiBkcml2ZXJzL3Vz
+Yi9tdXNiL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgfCAgIDkgKy0NCiBkcml2ZXJzL3Vz
+Yi9tdXNiL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKw0KIGRyaXZlcnMvdXNi
+L211c2IvbWVkaWF0ZWsuYyAgICAgICAgICAgICAgICAgICB8IDU4MiArKysrKysrKysrKysrKysr
+KysNCiBkcml2ZXJzL3VzYi9tdXNiL211c2JfY29yZS5jICAgICAgICAgICAgICAgICAgfCAgNzQg
+KystDQogZHJpdmVycy91c2IvbXVzYi9tdXNiX2NvcmUuaCAgICAgICAgICAgICAgICAgIHwgIDEz
+ICstDQogZHJpdmVycy91c2IvbXVzYi9tdXNiX2RtYS5oICAgICAgICAgICAgICAgICAgIHwgICA5
+ICsNCiBkcml2ZXJzL3VzYi9tdXNiL211c2JfaG9zdC5jICAgICAgICAgICAgICAgICAgfCAgNDYg
+Ky0NCiBkcml2ZXJzL3VzYi9tdXNiL211c2JfaW8uaCAgICAgICAgICAgICAgICAgICAgfCAgMTIg
+Ky0NCiBkcml2ZXJzL3VzYi9tdXNiL211c2Joc2RtYS5jICAgICAgICAgICAgICAgICAgfCAgNTYg
+Ky0NCiBkcml2ZXJzL3VzYi9tdXNiL3N1bnhpLmMgICAgICAgICAgICAgICAgICAgICAgfCAgIDQg
+Ky0NCiBkcml2ZXJzL3VzYi9tdXNiL3R1c2I2MDEwLmMgICAgICAgICAgICAgICAgICAgfCAgIDIg
+Ky0NCiAxNCBmaWxlcyBjaGFuZ2VkLCA4NDcgaW5zZXJ0aW9ucygrKSwgNzIgZGVsZXRpb25zKC0p
+DQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy91
+c2IvbWVkaWF0ZWssbXVzYi50eHQNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy91c2IvbXVz
+Yi9tZWRpYXRlay5jDQoNCi0tIA0KMi4yNC4wDQo=
 
-> > +
-> >  	hw_cr0 = (cr0 & ~KVM_VM_CR0_ALWAYS_OFF);
-> >  	if (enable_unrestricted_guest)
-> >  		hw_cr0 |= KVM_VM_CR0_ALWAYS_ON_UNRESTRICTED_GUEST;
-> > @@ -2936,6 +2942,22 @@ static bool guest_cet_allowed(struct kvm_vcpu *vcpu, u32 feature, u32 mode)
-> >  	return false;
-> >  }
-> >  
-> > +bool is_cet_bit_allowed(struct kvm_vcpu *vcpu)
-> > +{
-> > +	unsigned long cr0;
-> > +	bool cet_allowed;
-> > +
-> > +	cr0 = kvm_read_cr0(vcpu);
-> > +	cet_allowed = guest_cet_allowed(vcpu, X86_FEATURE_SHSTK,
-> > +					XFEATURE_MASK_CET_USER) ||
-> > +		      guest_cet_allowed(vcpu, X86_FEATURE_IBT,
-> > +					XFEATURE_MASK_CET_USER);
-> > +	if ((cr0 & X86_CR0_WP) && cet_allowed)
-> > +		return true;
-> 
-> So, attempting to set CR4.CET if CR0.WP=0 takes a #GP?  But attempting
-> to clear CR0.WP if CR4.CET=1 is ignored?
-> 
-Per above words in spec., inject #GP to guest in either case?
-
-> > +
-> > +	return false;
-> > +}
-> > +
-> >  int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
-> >  {
-> >  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> > @@ -2976,6 +2998,9 @@ int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
-> >  			return 1;
-> >  	}
-> >  
-> > +	if ((cr4 & X86_CR4_CET) && !is_cet_bit_allowed(vcpu))
-> > +		return 1;
-> > +
-> >  	if (vmx->nested.vmxon && !nested_cr4_valid(vcpu, cr4))
-> >  		return 1;
-> >  
-> > @@ -3839,6 +3864,12 @@ void vmx_set_constant_host_state(struct vcpu_vmx *vmx)
-> >  
-> >  	if (cpu_has_load_ia32_efer())
-> >  		vmcs_write64(HOST_IA32_EFER, host_efer);
-> > +
-> > +	if (cpu_has_load_host_cet_states_ctrl()) {
-> > +		vmcs_writel(HOST_S_CET, 0);
-> > +		vmcs_writel(HOST_INTR_SSP_TABLE, 0);
-> > +		vmcs_writel(HOST_SSP, 0);
-> > +	}
-> >  }
-> >  
-> >  void set_cr4_guest_host_mask(struct vcpu_vmx *vmx)
-> > @@ -6436,6 +6467,7 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
-> >  {
-> >  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> >  	unsigned long cr3, cr4;
-> > +	bool cet_allowed;
-> >  
-> >  	/* Record the guest's net vcpu time for enforced NMI injections. */
-> >  	if (unlikely(!enable_vnmi &&
-> > @@ -6466,6 +6498,25 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
-> >  		vmx->loaded_vmcs->host_state.cr3 = cr3;
-> >  	}
-> >  
-> > +	/* To be aligned with kernel code, only user mode is supported now. */
-> > +	cet_allowed = guest_cet_allowed(vcpu, X86_FEATURE_SHSTK,
-> > +					XFEATURE_MASK_CET_USER) ||
-> > +		      guest_cet_allowed(vcpu, X86_FEATURE_IBT,
-> > +					XFEATURE_MASK_CET_USER);
-> > +	if (cpu_has_load_guest_cet_states_ctrl() && cet_allowed)
-> > +		vmcs_set_bits(VM_ENTRY_CONTROLS,
-> > +			      VM_ENTRY_LOAD_GUEST_CET_STATE);
-> > +	else
-> > +		vmcs_clear_bits(VM_ENTRY_CONTROLS,
-> > +				VM_ENTRY_LOAD_GUEST_CET_STATE);
-> > +
-> > +	if (cpu_has_load_host_cet_states_ctrl() && cet_allowed)
-> > +		vmcs_set_bits(VM_EXIT_CONTROLS,
-> > +			      VM_EXIT_LOAD_HOST_CET_STATE);
-> > +	else
-> > +		vmcs_clear_bits(VM_EXIT_CONTROLS,
-> > +				VM_EXIT_LOAD_HOST_CET_STATE);
-> > +
-> >  	cr4 = cr4_read_shadow();
-> >  	if (unlikely(cr4 != vmx->loaded_vmcs->host_state.cr4)) {
-> >  		vmcs_writel(HOST_CR4, cr4);
-> > -- 
-> > 2.17.2
-> > 
