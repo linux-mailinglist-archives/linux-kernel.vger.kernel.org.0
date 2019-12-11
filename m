@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F05111AEBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:07:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97B9B11B096
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:24:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730096AbfLKPHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:07:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54882 "EHLO mail.kernel.org"
+        id S1732830AbfLKPYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:24:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730076AbfLKPHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:07:41 -0500
+        id S1732428AbfLKPYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:24:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B34C020663;
-        Wed, 11 Dec 2019 15:07:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88611222C4;
+        Wed, 11 Dec 2019 15:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076861;
-        bh=2iLlGMrkETmSLochaz1pSpins8fUVRRprn5VD23TrUM=;
+        s=default; t=1576077852;
+        bh=Kwz4p3q0xjiBMR4tx+Z2hf0uv4OjZCHsCcNDLY1JdEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hBPDON/QeMDl5YXMoN3sWsdOTNpqscPoE6+o87pq6AcX+0eCRAgcB6eaEUS1Bouch
-         qdzrmyMRXNKOuyWN4l3WRsGX8PTwL54Qcbj9xZMPgfv3R1Ec1BdZQOGuDlGTACQ7bO
-         y4jRlVbKsUZ52olKzg7pdoo9EXwwuOSfpDXi+mUs=
+        b=KvS18ZiQAwsJSpg4KdERMdhr1hyhGAQCgnKsQV/3Sp66auZVTnCfmEasijRkIDisK
+         IJlscV/+iHouwuSx9m1gNgEHEFqxz6zmSFPpW2ceG8sH2wIcmMVyftpP3wOufn8cCo
+         o/XmYmdtRWiLWVZTGUnWcPdSb0lSbrvgRGiGLqs4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.4 19/92] mwifiex: Re-work support for SDIO HW reset
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 148/243] soc: renesas: r8a77970-sysc: Correct names of A2DP/A2CN power domains
 Date:   Wed, 11 Dec 2019 16:05:10 +0100
-Message-Id: <20191211150227.375343546@linuxfoundation.org>
+Message-Id: <20191211150349.160913026@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,137 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit cdb2256f795e8e78cc43f32d091695b127dfb4df upstream.
+[ Upstream commit b5eb730e031acaba2d25e8f522ac5966a70885ae ]
 
-The SDIO HW reset procedure in mwifiex_sdio_card_reset_work() is broken,
-when the SDIO card is shared with another SDIO func driver. This is the
-case when the Bluetooth btmrvl driver is being used in combination with
-mwifiex. More precisely, when mwifiex_sdio_card_reset_work() runs to resets
-the SDIO card, the btmrvl driver doesn't get notified about it. Beyond that
-point, the btmrvl driver will fail to communicate with the SDIO card.
+The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Feb 28, 2018)
+renamed the A2IR2 and A2IR3 power domains on R-Car V3M to A2DP resp.
+A2CN.
 
-This is a generic problem for SDIO func drivers sharing an SDIO card, which
-are about to be addressed in subsequent changes to the mmc core and the
-mmc_hw_reset() interface. In principle, these changes means the
-mmc_hw_reset() interface starts to return 1 if the are multiple drivers for
-the SDIO card, as to indicate to the caller that the reset needed to be
-scheduled asynchronously through a hotplug mechanism of the SDIO card.
+As these definitions are not yet used from DT, they can just be renamed.
 
-Let's prepare the mwifiex driver to support the upcoming new behaviour of
-mmc_hw_reset(), which means extending the mwifiex_sdio_card_reset_work() to
-support the asynchronous SDIO HW reset path. This also means, we need to
-allow the ->remove() callback to run, without waiting for the FW to be
-loaded. Additionally, during system suspend, mwifiex_sdio_suspend() may be
-called when a reset has been scheduled, but waiting to be executed. In this
-scenario let's simply return -EBUSY to abort the suspend process, as to
-allow the reset to be completed first.
+While at it, fix the indentation of the A3IR definition.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Tested-by: Douglas Anderson <dianders@chromium.org>
-Cc: stable@vger.kernel.org # v5.4+
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 833bdb47c826a1a6 ("dt-bindings: power: add R8A77970 SYSC power domain definitions")
+Fixes: bab9b2a74fe9da96 ("soc: renesas: rcar-sysc: add R8A77970 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/mwifiex/main.c |    5 +++-
- drivers/net/wireless/marvell/mwifiex/main.h |    1 
- drivers/net/wireless/marvell/mwifiex/sdio.c |   33 ++++++++++++++++++----------
- 3 files changed, 27 insertions(+), 12 deletions(-)
+ drivers/soc/renesas/r8a77970-sysc.c       | 4 ++--
+ include/dt-bindings/power/r8a77970-sysc.h | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/main.c
-+++ b/drivers/net/wireless/marvell/mwifiex/main.c
-@@ -631,6 +631,7 @@ static int _mwifiex_fw_dpc(const struct
+diff --git a/drivers/soc/renesas/r8a77970-sysc.c b/drivers/soc/renesas/r8a77970-sysc.c
+index caf894f193edc..77422baa7a56a 100644
+--- a/drivers/soc/renesas/r8a77970-sysc.c
++++ b/drivers/soc/renesas/r8a77970-sysc.c
+@@ -27,8 +27,8 @@ static const struct rcar_sysc_area r8a77970_areas[] __initconst = {
+ 	{ "a3ir",	0x180, 0, R8A77970_PD_A3IR,	R8A77970_PD_ALWAYS_ON },
+ 	{ "a2ir0",	0x400, 0, R8A77970_PD_A2IR0,	R8A77970_PD_A3IR },
+ 	{ "a2ir1",	0x400, 1, R8A77970_PD_A2IR1,	R8A77970_PD_A3IR },
+-	{ "a2ir2",	0x400, 2, R8A77970_PD_A2IR2,	R8A77970_PD_A3IR },
+-	{ "a2ir3",	0x400, 3, R8A77970_PD_A2IR3,	R8A77970_PD_A3IR },
++	{ "a2dp",	0x400, 2, R8A77970_PD_A2DP,	R8A77970_PD_A3IR },
++	{ "a2cn",	0x400, 3, R8A77970_PD_A2CN,	R8A77970_PD_A3IR },
+ 	{ "a2sc0",	0x400, 4, R8A77970_PD_A2SC0,	R8A77970_PD_A3IR },
+ 	{ "a2sc1",	0x400, 5, R8A77970_PD_A2SC1,	R8A77970_PD_A3IR },
+ };
+diff --git a/include/dt-bindings/power/r8a77970-sysc.h b/include/dt-bindings/power/r8a77970-sysc.h
+index bf54779d16252..9eaf824b15826 100644
+--- a/include/dt-bindings/power/r8a77970-sysc.h
++++ b/include/dt-bindings/power/r8a77970-sysc.h
+@@ -19,10 +19,10 @@
+ #define R8A77970_PD_CR7			13
+ #define R8A77970_PD_CA53_SCU		21
+ #define R8A77970_PD_A2IR0		23
+-#define R8A77970_PD_A3IR			24
++#define R8A77970_PD_A3IR		24
+ #define R8A77970_PD_A2IR1		27
+-#define R8A77970_PD_A2IR2		28
+-#define R8A77970_PD_A2IR3		29
++#define R8A77970_PD_A2DP		28
++#define R8A77970_PD_A2CN		29
+ #define R8A77970_PD_A2SC0		30
+ #define R8A77970_PD_A2SC1		31
  
- 	mwifiex_drv_get_driver_version(adapter, fmt, sizeof(fmt) - 1);
- 	mwifiex_dbg(adapter, MSG, "driver_version = %s\n", fmt);
-+	adapter->is_up = true;
- 	goto done;
- 
- err_add_intf:
-@@ -1469,6 +1470,7 @@ int mwifiex_shutdown_sw(struct mwifiex_a
- 	mwifiex_deauthenticate(priv, NULL);
- 
- 	mwifiex_uninit_sw(adapter);
-+	adapter->is_up = false;
- 
- 	if (adapter->if_ops.down_dev)
- 		adapter->if_ops.down_dev(adapter);
-@@ -1730,7 +1732,8 @@ int mwifiex_remove_card(struct mwifiex_a
- 	if (!adapter)
- 		return 0;
- 
--	mwifiex_uninit_sw(adapter);
-+	if (adapter->is_up)
-+		mwifiex_uninit_sw(adapter);
- 
- 	if (adapter->irq_wakeup >= 0)
- 		device_init_wakeup(adapter->dev, false);
---- a/drivers/net/wireless/marvell/mwifiex/main.h
-+++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -1017,6 +1017,7 @@ struct mwifiex_adapter {
- 
- 	/* For synchronizing FW initialization with device lifecycle. */
- 	struct completion *fw_done;
-+	bool is_up;
- 
- 	bool ext_scan;
- 	u8 fw_api_ver;
---- a/drivers/net/wireless/marvell/mwifiex/sdio.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sdio.c
-@@ -444,6 +444,9 @@ static int mwifiex_sdio_suspend(struct d
- 		return 0;
- 	}
- 
-+	if (!adapter->is_up)
-+		return -EBUSY;
-+
- 	mwifiex_enable_wake(adapter);
- 
- 	/* Enable the Host Sleep */
-@@ -2220,22 +2223,30 @@ static void mwifiex_sdio_card_reset_work
- 	struct sdio_func *func = card->func;
- 	int ret;
- 
-+	/* Prepare the adapter for the reset. */
- 	mwifiex_shutdown_sw(adapter);
-+	clear_bit(MWIFIEX_IFACE_WORK_DEVICE_DUMP, &card->work_flags);
-+	clear_bit(MWIFIEX_IFACE_WORK_CARD_RESET, &card->work_flags);
- 
--	/* power cycle the adapter */
-+	/* Run a HW reset of the SDIO interface. */
- 	sdio_claim_host(func);
--	mmc_hw_reset(func->card->host);
-+	ret = mmc_hw_reset(func->card->host);
- 	sdio_release_host(func);
- 
--	/* Previous save_adapter won't be valid after this. We will cancel
--	 * pending work requests.
--	 */
--	clear_bit(MWIFIEX_IFACE_WORK_DEVICE_DUMP, &card->work_flags);
--	clear_bit(MWIFIEX_IFACE_WORK_CARD_RESET, &card->work_flags);
--
--	ret = mwifiex_reinit_sw(adapter);
--	if (ret)
--		dev_err(&func->dev, "reinit failed: %d\n", ret);
-+	switch (ret) {
-+	case 1:
-+		dev_dbg(&func->dev, "SDIO HW reset asynchronous\n");
-+		complete_all(adapter->fw_done);
-+		break;
-+	case 0:
-+		ret = mwifiex_reinit_sw(adapter);
-+		if (ret)
-+			dev_err(&func->dev, "reinit failed: %d\n", ret);
-+		break;
-+	default:
-+		dev_err(&func->dev, "SDIO HW reset failed: %d\n", ret);
-+		break;
-+	}
- }
- 
- /* This function read/write firmware */
+-- 
+2.20.1
+
 
 
