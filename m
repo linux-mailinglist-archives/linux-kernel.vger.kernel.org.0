@@ -2,60 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2006811A016
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 01:37:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 813C511A01C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 01:40:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbfLKAhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 19:37:18 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44322 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbfLKAhR (ORCPT
+        id S1727205AbfLKAkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 19:40:08 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37139 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbfLKAkH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 19:37:17 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19so21883155lji.11
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 16:37:16 -0800 (PST)
+        Tue, 10 Dec 2019 19:40:07 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u17so21970944lja.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 16:40:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=M5fozyjIYmS/BTIpsdI1ELrEKUgvuQ2Q2YpvirtYHFk=;
-        b=BcjuOgLYEULEkvnSEZEFZyVqO9tjz4WwDOrrlR+J6z6ZGNHtyg2EYf/Zs1j3Xql8EZ
-         nBts8BTvVIRW0JEB2yfchCF4g46IL2zbex8fpgGN1HKpfRxGu7tTHIHIm6Su65BOB6VG
-         DIsl0MaSaiCTgLFWYEQAdQT5EhvXSFx2iSi0d66o5Jxoqin9M9r1Nyo6TH6mjj5wGqUi
-         Conxd2xm/VptOo8+TD7PXlAdRXRY4rFZQkYgpYf4HUDI3DX5isXtMKJW/V7AmKQE//VU
-         hn7/3vplEf6bJTd3eG96g9u2oxf95RWizhawTQUygu2yEPPW4lfi+hZvShEYserCeRIk
-         FxbA==
+        bh=+6mwPhn94U0FJCp8N/iLCGyoYPPPkFesQi/ZLGlNabg=;
+        b=DzWEDMV6zFCN5CPxuB98wPU/lUNXV9fCtKG8vCaJDjqrBnuzhjUaeFZ1+la3wXQNbZ
+         8/1piJtHwCYSk/iJH2vOcrQprWHzccO/cVI8fc6j9HT3nMHYJPMp50W2ZbayjxlZafpm
+         OEJRafmYkmHflbQUtOlcyMahRvYz91/Hf3goXN6Zz+WIFvhQesbfOgF9knBF8WlES3+4
+         fSxUmiSMjXRfs+mEUZbI+ocT2kGtWBHBQ/Q7pfc/glkE9HXO7uVV1HvthjvSH71AzryA
+         0t0LBbJSLwDUNu6noDycU/vAunTwuYiBsh7EDK/8nri5y9zn1jgRN8DduJjuRD3zSQA6
+         fmiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=M5fozyjIYmS/BTIpsdI1ELrEKUgvuQ2Q2YpvirtYHFk=;
-        b=BpR/LgkEHflq2083qpuvJQMwf3uUMKZhzqZMgNpsQVXGxW4z+GasUEmevQIiSjTiiJ
-         LF8FQ3kXUCZgePa6CWRL8Sh5umDCpGHE+b1CoT6RvpLAdH2eziQU1FkBl7zVacsDO1YC
-         6hfEWuUn4yUh0miPQcXGEwDxo7cQDgCiOJxnDx3lJ6qFFUf1OPneSfDXzDsfNlwFRO3f
-         YCA4u/t63MhWLsBcs28JcH+85t2Gfc58pxvEGcW+HI2DXUGEC+N5Slr+SIZ4yEo/PN3h
-         GjUaN2IDrPQo0WTmlYTUBOQVYAszlqvXL1sKStJrG1burPgsSxbdyv7zYyl080fWPD0k
-         02eQ==
-X-Gm-Message-State: APjAAAUvrBLg7vWpFJ/repdmTTDaB2VTAVuDaLUCAwAb1JBT31gR/n+7
-        xAugHvrhi4f4dcVJz1I1KiAq6oFnJchTKqRHhfd5iA==
-X-Google-Smtp-Source: APXvYqzaiOv4PPiUmhxXF4TwhB8RZgaRZzj7pK+Yv2jU0m6s3z6YbcqbvvsvbDjTA/1YqXWlxl8S4u658HmPr70nbjM=
-X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr68223ljm.233.1576024635474;
- Tue, 10 Dec 2019 16:37:15 -0800 (PST)
+        bh=+6mwPhn94U0FJCp8N/iLCGyoYPPPkFesQi/ZLGlNabg=;
+        b=sJlw3QutarhsxVIpDcf3WxEISgZg+4Y2JQ73phwx3ZoztY3MOssJNQ5HkOeC4dUE8c
+         MfNdvLGl9fhQHmplaLWxsT0DF9aEtjQY9GOgkcCKfq722kenitpf6ooa3fzI2zzKD1vK
+         cEeYuA4EEHMqLijDoYAS/bDbZ/M6K682meWaR0w51/T3FY3dmQiQdf5Dq2eNEZHmkNBv
+         iW45/mRULz/vOnNrc9KhrLViyxHl0v+GPq8R6sJvDpk8UN6xws35Ps3fLPQYd42m1+pN
+         dg7S9hDyDam7Az/g3r7a3rWFDFe+gGnp1MG5nfYW/S2zpCqc9Bqu5vDr+WpkwhfQ+9rP
+         CPjQ==
+X-Gm-Message-State: APjAAAXu83EtOH/LWdnDArl61NSb+F0Ek6UaRnnVvIIgxXKIGf3SIjM5
+        tkuKXKv8jTNfsHkGLZEhV84FEFfliR5T8v/2OGFnXxuGlj0=
+X-Google-Smtp-Source: APXvYqz+5hSx8AyIO68PLEgCzJXxNiyGKQgrsukDLUqC8J76DV8xgyxi+ERIJqysr1OXhO0gL6QnXeuXk3A1jZ6O+EM=
+X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr93491ljm.218.1576024805657;
+ Tue, 10 Dec 2019 16:40:05 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1575925023.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <cover.1575925023.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1575925023.git.mirq-linux@rere.qmqm.pl> <56d2568cd45a13c738e2804d04348566a8ee8d03.1575925023.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <56d2568cd45a13c738e2804d04348566a8ee8d03.1575925023.git.mirq-linux@rere.qmqm.pl>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 11 Dec 2019 01:37:03 +0100
-Message-ID: <CACRpkdbTqxzXnLE7uQ=MrqV-BoP5gpZtX07gsHyCr++ah3s65Q@mail.gmail.com>
-Subject: Re: [PATCH 0/4] mmc: simplify WP/CD GPIO handling
+Date:   Wed, 11 Dec 2019 01:39:54 +0100
+Message-ID: <CACRpkdZ0mk2dWBnWh+mRmBy2t-ALONtvv23Hr-2o8LD8CPYtgg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] gpio: add gpiod_toggle_active_low()
 To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 Cc:     linux-mmc <linux-mmc@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,21 +66,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Mon, Dec 9, 2019 at 10:09 PM Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.=
 qmqm.pl> wrote:
 
-> This series removes convoluted handling of inverted CD and WP lines in
-> SD/MMC host drivers when using GPIOs.
+> Add possibility to toggle active-low flag of a gpio descriptor. This is
+> useful for compatibility code, where defaults are inverted vs DT gpio
+> flags or the active-low flag is taken from elsewhere.
 >
-> First patch, sent separately earlier, adds gpiod_toggle_active_low() to
-> switch line inversion flag in the gpiod structure. Next two patches
-> modify WP and CD initialization to apply all the inversions onto gpiod's
-> active-low flag. Final patch removes now-unused argument from init functi=
-ons.
+> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 
-I like the approach, as much as I liked my own idea to centralize
-all DT quirks and hide them in gpiolib-of.c I can see how this
-makes it easier to solve the final hurdles in the MMC framework
-and contain it better.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-If it also works I'm happy for Ulf to merge all of this!
+Proliferating APIs isn't good but I think this is the lesser evil
+given the mess there is in the MMC subsystem for this stuff.
+
+Maybe I can make a second attempt to move all polarity
+toggling back to gpiolib-of.c and remove the API after this
+has landed, hehe ;)
 
 Yours,
 Linus Walleij
