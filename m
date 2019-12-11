@@ -2,97 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A75311AD00
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:06:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFBF611ACD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:04:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730001AbfLKOFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 09:05:02 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44176 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729877AbfLKOFA (ORCPT
+        id S1729871AbfLKODR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 09:03:17 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:59020 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729845AbfLKODP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 09:05:00 -0500
-Received: by mail-pg1-f193.google.com with SMTP id x7so10812801pgl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 06:05:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cUUCtvV6dE7G+n+i4G2mZsNxXxqu2jZTcnec8ASN3Qc=;
-        b=rfjIOhRvPOYZ/dAXmCNf7a/TIjgXPUapHGuKnYw1EHqnxyIuWXwJdZ7OZ8vo5foJ4U
-         hipSjIC9xJF3uHK0K3sSyzjumI8s+p9XQbvx86oz/grSzOQ78igqPg9uOy+ACckg8He+
-         SnsZAvNfSZa3nxwuSgQ5q4zG/hFZt6EPR27tfVe+lrNtRkEjths8Y/cVTlR7XuL/DHU+
-         +VKpUKy0Ry1OIwFa4v3J+zZXHcsQgIwFekUdX6jtfacTftC7jRakvkh/6CD+FRbD/8/5
-         RKcsbuFt7fJjanI4qw7AVy4+gSvzQ4TXkF9C+wC/MVcLuyPuQuz91aFZjttOlxX0WFDA
-         O9eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cUUCtvV6dE7G+n+i4G2mZsNxXxqu2jZTcnec8ASN3Qc=;
-        b=XujxVRb7pP1hTmtkjqAyTfEdH6Pdta5xakyLMmmP+19TYG1DNWagOCilvBLRNPXpXd
-         Ny94KmqbPPihCiakKO4Zmm1CTjsqT3KVSJgM8LWccATlPBA25+Gr6MvzBJU9snVmTnhq
-         /obGhc1woIkK+xnBEm6a09hmPqMQOFY541tcDCsvt34gvSLBGKgy0JfCPoWZa8TZKnwU
-         v+7zaiNAaQsZAfCFwTqDVwZ39IdVrdVL0tA/FxK+21ryqNdCUd+9C5YQos/JpzA505cs
-         1Tzfgv4BW8SV7ii8NfF++Hh2oYi88sWTzsY1ZnMFMSN+CFyzmuCGBkOGMEg01YEV8+fD
-         /LLw==
-X-Gm-Message-State: APjAAAWP2k6iKZlhI7FoZhWGQ0yVzD/FgTbeYp3baC7phwa3r9sxjbFS
-        MAj3VHn/U8MG1UXg01TgLPU=
-X-Google-Smtp-Source: APXvYqw91JEsFIrGZNMXi9Usn6ggISlqDCZqbfwZNdXS+nPBATkP7rouWQW4phJsTFq+yy3p1gZxhQ==
-X-Received: by 2002:a62:ee09:: with SMTP id e9mr3734785pfi.243.1576073100169;
-        Wed, 11 Dec 2019 06:05:00 -0800 (PST)
-Received: from localhost.localdomain (c-67-165-113-11.hsd1.wa.comcast.net. [67.165.113.11])
-        by smtp.gmail.com with ESMTPSA id o12sm3489656pfg.152.2019.12.11.06.04.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 06:04:58 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Chris Healy <cphealy@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] ARM: dts: vf610-zii-scu4-aib: Add node for switch watchdog
-Date:   Wed, 11 Dec 2019 06:04:44 -0800
-Message-Id: <20191211140444.7076-2-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191211140444.7076-1-andrew.smirnov@gmail.com>
-References: <20191211140444.7076-1-andrew.smirnov@gmail.com>
+        Wed, 11 Dec 2019 09:03:15 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBBE2b0g050797;
+        Wed, 11 Dec 2019 08:02:37 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576072957;
+        bh=bcyBGbO4wvsS0lpmPcVyZHoazDhW9nqnboevNW7KZ4U=;
+        h=From:To:CC:Subject:Date;
+        b=OZk2zuOhYH7MewgYe76IdtFV/pl2zbG0nV24r4iHujE8TiB5WfOSz7334+46XCA6r
+         aNKsVCPjggUD9SrQHtz0gGVTg1Iz94DoFa+je6VrRe+zdp0dSGz2zKucLH8MNTk5RK
+         2atL4CDU5V5/q6M7nrRexzhRLfvzyeIoycSwLVe4=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBBE2aKJ098221;
+        Wed, 11 Dec 2019 08:02:36 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 11
+ Dec 2019 08:02:36 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 11 Dec 2019 08:02:36 -0600
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBBE2afk007398;
+        Wed, 11 Dec 2019 08:02:36 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v4 00/10] ARM: dts: dra7: add cal nodes 
+Date:   Wed, 11 Dec 2019 08:05:48 -0600
+Message-ID: <20191211140558.10407-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add I2C child node for switch watchdog present on SCU4.
+This patch series adds the needed clkctrl and ty-sysc nodes for CAL module.
+It also adds support for the module in related dtsi and dts for DRA72,
+DRA76 and AM654 SoC.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/arm/boot/dts/vf610-zii-scu4-aib.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes since v3:
+- Added Tony's ack
+- Added Rob's ack
+- In all 3 .dts patch removed unneeded cal 'status = "ok"' lines 
 
-diff --git a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
-index a02c7ea3b92d..b642520199ba 100644
---- a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
-+++ b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
-@@ -536,6 +536,11 @@
- 	pinctrl-0 = <&pinctrl_i2c1>;
- 	status = "okay";
- 
-+	watchdog@38 {
-+		compatible = "zii,rave-wdt";
-+		reg = <0x38>;
-+	};
-+
- 	adc@4a {
- 		compatible = "adi,adt7411";
- 		reg = <0x4a>;
+Changes since v2:
+- Add non-standard clock node naming to commit message as per Tony's
+  comment
+
+Changes since v1:
+- Fix clock name to make it generic
+- Updated the binding to use ti,camerrx-control instead of sycon_camerrx
+- Split off the clk code into its own patch
+- Add clk mailing list as requested
+
+Benoit Parrot (10):
+  clk: ti: dra7: add cam clkctrl data
+  ARM: dts: dra7: add cam clkctrl node
+  ARM: OMAP: DRA7xx: Make CAM clock domain SWSUP only
+  ARM: dts: dra7-l4: Add ti-sysc node for CAM
+  ARM: dts: DRA72: Add CAL dtsi node
+  arm: dts: dra72-evm-common: Add entries for the CSI2 cameras
+  arm: dtsi: dra76x: Add CAL dtsi node
+  arm: dts: dra76-evm: Add CAL and OV5640 nodes
+  arm64: dts: k3-am65-main Add CAL node
+  arm64: dts: k3-am654-base-board: Add CSI2 OV5640 camera
+
+ arch/arm/boot/dts/dra7-l4.dtsi                | 43 ++++++++++++++++---
+ arch/arm/boot/dts/dra72-evm-common.dtsi       | 31 +++++++++++++
+ arch/arm/boot/dts/dra72x.dtsi                 | 42 ++++++++++++++++++
+ arch/arm/boot/dts/dra76-evm.dts               | 35 +++++++++++++++
+ arch/arm/boot/dts/dra76x.dtsi                 | 42 ++++++++++++++++++
+ arch/arm/boot/dts/dra7xx-clocks.dtsi          | 14 ++++++
+ arch/arm/mach-omap2/clockdomains7xx_data.c    |  2 +-
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      | 22 ++++++++++
+ .../arm64/boot/dts/ti/k3-am654-base-board.dts | 32 ++++++++++++++
+ drivers/clk/ti/clk-7xx.c                      | 19 ++++++++
+ include/dt-bindings/clock/dra7.h              | 10 +++++
+ 11 files changed, 285 insertions(+), 7 deletions(-)
+
 -- 
-2.21.0
+2.17.1
 
