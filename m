@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0DD211AFC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:16:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F74611AFC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:16:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731849AbfLKPQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:16:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42784 "EHLO mail.kernel.org"
+        id S1731853AbfLKPQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:16:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730511AbfLKPQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:16:00 -0500
+        id S1730511AbfLKPQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:16:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACA7C24654;
-        Wed, 11 Dec 2019 15:15:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24EE720663;
+        Wed, 11 Dec 2019 15:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077360;
-        bh=LKxzpUfyF+oYSQX+FKuJTBK46/nO+5dzYVqWq0NnofU=;
+        s=default; t=1576077362;
+        bh=uXh2vBvBRQO36GgVX8ar8zmIAph80dMhJHJkUXgaPvw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y4wRKojmpmZQJtI4+GfZFfbY/jD6/TSuB1pytcnb+nWwoe19QklBPUraI87RhbeGP
-         lj4JpsaxXwBy7bXsZUl6fIJ1Ff4VUPEka1DT6HPYIpwPAjjsd42NwUXc0aFo4W+Hsy
-         8MiZt3gxiiDeOFp6ELenqoeLoSBHfVXblK4CGG3E=
+        b=1hxwVOYHrIgi1jvF9vjj/fqMcezjeXr8n1G1BAymBxh1JBzUqUEq6f873X6EQg+rd
+         m5AeiDsZzVfxtl33H/bfnK1Lmn1aeaXwLZbiS8mnP6V/nlb5LghQS/apfkWAswzdiy
+         kHaasG3gfUu4l1VuKqIlSc7nrwv2n7RZa8Bt/9Xc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH 4.19 010/243] serial: ifx6x60: add missed pm_runtime_disable
-Date:   Wed, 11 Dec 2019 16:02:52 +0100
-Message-Id: <20191211150339.803625613@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 011/243] autofs: fix a leak in autofs_expire_indirect()
+Date:   Wed, 11 Dec 2019 16:02:53 +0100
+Message-Id: <20191211150339.868438289@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -42,33 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 50b2b571c5f3df721fc81bf9a12c521dfbe019ba upstream.
+[ Upstream commit 03ad0d703df75c43f78bd72e16124b5b94a95188 ]
 
-The driver forgets to call pm_runtime_disable in remove.
-Add the missed calls to fix it.
+if the second call of should_expire() in there ends up
+grabbing and returning a new reference to dentry, we need
+to drop it before continuing.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191118024833.21587-1-hslester96@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/ifx6x60.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/autofs/expire.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serial/ifx6x60.c
-+++ b/drivers/tty/serial/ifx6x60.c
-@@ -1230,6 +1230,9 @@ static int ifx_spi_spi_remove(struct spi
- 	struct ifx_spi_device *ifx_dev = spi_get_drvdata(spi);
- 	/* stop activity */
- 	tasklet_kill(&ifx_dev->io_work_tasklet);
-+
-+	pm_runtime_disable(&spi->dev);
-+
- 	/* free irq */
- 	free_irq(gpio_to_irq(ifx_dev->gpio.reset_out), ifx_dev);
- 	free_irq(gpio_to_irq(ifx_dev->gpio.srdy), ifx_dev);
+diff --git a/fs/autofs/expire.c b/fs/autofs/expire.c
+index 28d9c2b1b3bb3..70e9afe589fbf 100644
+--- a/fs/autofs/expire.c
++++ b/fs/autofs/expire.c
+@@ -501,9 +501,10 @@ static struct dentry *autofs_expire_indirect(struct super_block *sb,
+ 		 */
+ 		how &= ~AUTOFS_EXP_LEAVES;
+ 		found = should_expire(expired, mnt, timeout, how);
+-		if (!found || found != expired)
+-			/* Something has changed, continue */
++		if (found != expired) { // something has changed, continue
++			dput(found);
+ 			goto next;
++		}
+ 
+ 		if (expired != dentry)
+ 			dput(dentry);
+-- 
+2.20.1
+
 
 
