@@ -2,46 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B91E11B579
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:54:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC5411B57C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:54:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732913AbfLKPyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:54:06 -0500
-Received: from mail.monom.org ([188.138.9.77]:55848 "EHLO mail.monom.org"
+        id S1732972AbfLKPyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:54:15 -0500
+Received: from foss.arm.com ([217.140.110.172]:36624 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730284AbfLKPyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:54:05 -0500
-Received: from mail.monom.org (localhost [127.0.0.1])
-        by filter.mynetwork.local (Postfix) with ESMTP id EB052500796;
-        Wed, 11 Dec 2019 16:54:02 +0100 (CET)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.monom.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.2
-Received: from [192.168.154.174] (b9168f78.cgn.dg-w.de [185.22.143.120])
-        by mail.monom.org (Postfix) with ESMTPSA id 76B80500243;
-        Wed, 11 Dec 2019 16:54:02 +0100 (CET)
-Subject: Re: Patch "mm, vmstat: make quiet_vmstat lighter" has been added to
- the 4.4-stable tree
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        cl@linux.com, mgalbraith@suse.de, mhocko@suse.com,
-        torvalds@linux-foundation.org, umgwanakikbuti@gmail.com,
-        stable-commits@vger.kernel.org,
-        "Wangkefeng (Maro)" <wangkefeng.wang@huawei.com>,
-        Xie XiuQi <xiexiuqi@huawei.com>
-References: <156442332854185@kroah.com>
- <e4bd396a-1a10-1387-aa3f-4d61d31ab7b6@huawei.com>
- <20191211144614.GA637714@kroah.com>
-From:   Daniel Wagner <wagi@monom.org>
-Message-ID: <40460b0c-7fb0-a19d-3684-cb020e226a3f@monom.org>
-Date:   Wed, 11 Dec 2019 16:54:01 +0100
+        id S1731887AbfLKPyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:54:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2A2B31B;
+        Wed, 11 Dec 2019 07:54:11 -0800 (PST)
+Received: from [10.1.194.43] (e112269-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 88EAD3F52E;
+        Wed, 11 Dec 2019 07:54:08 -0800 (PST)
+Subject: Re: [PATCH v16 13/25] mm: pagewalk: Don't lock PTEs for
+ walk_page_range_novma()
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Mark Rutland <Mark.Rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Will Deacon <will@kernel.org>,
+        "Liang, Kan" <kan.liang@linux.intel.com>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, kbuild-all@lists.01.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20191206135316.47703-14-steven.price@arm.com>
+ <201912101842.KIXI4yCg%lkp@intel.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <e0fd5594-fb4e-9ead-e582-544f47cb1f8b@arm.com>
+Date:   Wed, 11 Dec 2019 15:54:06 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191211144614.GA637714@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <201912101842.KIXI4yCg%lkp@intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,68 +52,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 2019-12-11 15:46, Greg KH wrote:
-> On Wed, Dec 11, 2019 at 10:32:49PM +0800, zhangyi (F) wrote:
->> We find a performance degradation under lmbench af_unix[1] test case after
->> mergeing this patch on my x86 qemu 4.4 machine. The test result is basically
->> stable for each teses.
->>
->> Host machine: CPU: Intel(R) Xeon(R) CPU E5-2690 v3
->>                CPU(s): 48
->>                MEM: 193047 MB
->>
->> Guest machine:  CPU: QEMU Virtual CPU version 2.5+
->>                  CPU(s): 8
->>                  MEM: 26065 MB
->>
->>    Before this patch:
->>    [root@localhost ~]# lmbench-3.0-a9/bin/x86_64-linux-gnu/lat_unix -P 1
->>    AF_UNIX sock stream latency: 133.7073 microseconds
->>
->>    After this patch:
->>    [root@localhost ~]# lmbench-3.0-a9/bin/x86_64-linux-gnu/lat_unix -P 1
->>    AF_UNIX sock stream latency: 156.4722 microseconds
->>
->> If we set task to a constant cpu, the degradation does not appear.
->>
->>    Before this patch:
->>    [root@localhost ~]# lmbench-3.0-a9/bin/x86_64-linux-gnu/lat_unix -P 1
->>    AF_UNIX sock stream latency: 17.9296 microseconds
->>
->>    After this patch:
->>    [root@localhost ~]# lmbench-3.0-a9/bin/x86_64-linux-gnu/lat_unix -P 1
->>    AF_UNIX sock stream latency: 17.7500 microseconds
->>
->> We also test it on the aarch64 hi1215 machine with 8 cpu cores.
->>
->>    Before this patch:
->>    [root@localhost ~]# ./lat_unix -P 1
->>    AF_UNIX sock stream latency: 30.7 microseconds
->>
->>    After this patch:
->>    [root@localhost ~]# ./lat_unix -P 1
->>    AF_UNIX sock stream latency: 37.5 microseconds
->>
->> Accessories included my reproduce config for x86 qemu. Any thoughts?
+On 10/12/2019 11:23, kbuild test robot wrote:
+> Hi Steven,
 > 
-> This fixes a bug, as reported by Daniel Wagner.  So it's probably better
-> to have a stable system instead of a broken one, right?  :)
+> I love your patch! Perhaps something to improve:
 > 
-> Daniel can provide more information if needed.
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on v5.5-rc1 next-20191209]
+> [cannot apply to arm64/for-next/core tip/x86/mm]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Steven-Price/Generic-page-walk-and-ptdump/20191208-035831
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git ad910e36da4ca3a1bd436989f632d062dda0c921
+> reproduce:
+>         # apt-get install sparse
+>         # sparse version: v0.6.1-101-g82dee2e-dirty
+>         make ARCH=x86_64 allmodconfig
+>         make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> 
+> sparse warnings: (new ones prefixed by >>)
+> 
+>>> include/linux/spinlock.h:378:9: sparse: sparse: context imbalance in 'walk_pte_range' - unexpected unlock
 
-IIRC, this patch got necessary because  bdf3c006b9a2 ("vmstat: make 
-vmstat_updater deferrable again and shut down on idle") was added to 
-stable. Without it v4.4-rt is not working at all.
+I believe this is a false positive (although the trace here is useless).
+This patch adds a conditional lock/unlock:
 
- > What about when you run your tests on a 4.9 or newer kernel that
- > already has this integrated?
+pte = walk->no_vma ? pte_offset_map(pmd, addr) :
+		     pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
+...
+if (!walk->no_vma)
+	spin_unlock(ptl);
+pte_unmap(pte);
 
-That said, I was going through all changes in vmstat.c upstream and we 
-backported almost all changes to v4.4 at that point. So if this is a 
-really giving you a performance hit, I suspect you would see it upstream 
-as well.
+I'm not sure how to match sparse happy about that. Is the only option to
+have two versions of the walk_pte_range() function? One which takes the
+lock and one which doesn't.
 
-Thanks,
-Daniel
+Steve
+
+> vim +/walk_pte_range +378 include/linux/spinlock.h
+> 
+> c2f21ce2e31286 Thomas Gleixner 2009-12-02  375  
+> 3490565b633c70 Denys Vlasenko  2015-07-13  376  static __always_inline void spin_unlock(spinlock_t *lock)
+> c2f21ce2e31286 Thomas Gleixner 2009-12-02  377  {
+> c2f21ce2e31286 Thomas Gleixner 2009-12-02 @378  	raw_spin_unlock(&lock->rlock);
+> c2f21ce2e31286 Thomas Gleixner 2009-12-02  379  }
+> c2f21ce2e31286 Thomas Gleixner 2009-12-02  380  
+> 
+> :::::: The code at line 378 was first introduced by commit
+> :::::: c2f21ce2e31286a0a32f8da0a7856e9ca1122ef3 locking: Implement new raw_spinlock
+> 
+> :::::: TO: Thomas Gleixner <tglx@linutronix.de>
+> :::::: CC: Thomas Gleixner <tglx@linutronix.de>
+> 
+> ---
+> 0-DAY kernel test infrastructure                 Open Source Technology Center
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
