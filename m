@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3F9811AF47
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:12:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE19D11AF4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:13:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbfLKPMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:12:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32964 "EHLO mail.kernel.org"
+        id S1730799AbfLKPMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:12:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731039AbfLKPMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:05 -0500
+        id S1731093AbfLKPMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:12:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18F20208C3;
-        Wed, 11 Dec 2019 15:12:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71BCC208C3;
+        Wed, 11 Dec 2019 15:12:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077124;
-        bh=za5x0gKKJydKjxfapHivmpXqDyIB5gTeC2ysaPAS+RU=;
+        s=default; t=1576077140;
+        bh=k2Dj0WU/+DPd2o2LyxT3Kvk5a1GvCFmVhVA7nBIYlqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=koMbm9jlBsbDUD5X7KyhEW1r61E6Suj67FNuxIlsW/zREujZJyxNJtSP+K9obMpan
-         1d+BPnsmd34S/WLo+TP1IRAC6JB8KnX9EjOzsKPoTIpFGUXiDS/BtwInJGVWNaGLhI
-         70FDkgqs5L3hB41g6p0AnBy2bDD4EypqcxLUh2TU=
+        b=a7hrtaqSOs1QwnQRYtDMsw/wlKqIZtebOl9CnkVPAzn1ZIUraKdmojcx76smfJvcV
+         22mGAYfqeFo/vtxU+cKit52ZiX0WwfASIB7YeHp3b5K2GH2bs20mc7ziIr/GH+O5qP
+         kSCUkv7OIaGexKPg6w1n6SjfY3CSKLfUYwGqlGog=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com,
-        =?UTF-8?q?Andreas=20Gr=C3=BCnbacher?= 
-        <andreas.gruenbacher@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 013/134] splice: only read in as much information as there is pipe buffer space
-Date:   Wed, 11 Dec 2019 10:09:49 -0500
-Message-Id: <20191211151150.19073-13-sashal@kernel.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 5.4 027/134] powerpc/tools: Don't quote $objdump in scripts
+Date:   Wed, 11 Dec 2019 10:10:03 -0500
+Message-Id: <20191211151150.19073-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
 References: <20191211151150.19073-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,65 +42,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 3253d9d093376d62b4a56e609f15d2ec5085ac73 ]
+[ Upstream commit e44ff9ea8f4c8a90c82f7b85bd4f5e497c841960 ]
 
-Andreas Grünbacher reports that on the two filesystems that support
-iomap directio, it's possible for splice() to return -EAGAIN (instead of
-a short splice) if the pipe being written to has less space available in
-its pipe buffers than the length supplied by the calling process.
+Some of our scripts are passed $objdump and then call it as
+"$objdump". This doesn't work if it contains spaces because we're
+using ccache, for example you get errors such as:
 
-Months ago we fixed splice_direct_to_actor to clamp the length of the
-read request to the size of the splice pipe.  Do the same to do_splice.
+  ./arch/powerpc/tools/relocs_check.sh: line 48: ccache ppc64le-objdump: No such file or directory
+  ./arch/powerpc/tools/unrel_branch_check.sh: line 26: ccache ppc64le-objdump: No such file or directory
 
-Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
-Reported-by: syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com
-Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-Reviewed-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Fix it by not quoting the string when we expand it, allowing the shell
+to do the right thing for us.
+
+Fixes: a71aa05e1416 ("powerpc: Convert relocs_check to a shell script using grep")
+Fixes: 4ea80652dc75 ("powerpc/64s: Tool to flag direct branches from unrelocated interrupt vectors")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191024004730.32135-1-mpe@ellerman.id.au
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/splice.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/powerpc/tools/relocs_check.sh       | 2 +-
+ arch/powerpc/tools/unrel_branch_check.sh | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 98412721f0562..e509239d7e06a 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -945,12 +945,13 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
- 	WARN_ON_ONCE(pipe->nrbufs != 0);
+diff --git a/arch/powerpc/tools/relocs_check.sh b/arch/powerpc/tools/relocs_check.sh
+index 2b4e959caa365..7b9fe0a567cf3 100755
+--- a/arch/powerpc/tools/relocs_check.sh
++++ b/arch/powerpc/tools/relocs_check.sh
+@@ -20,7 +20,7 @@ objdump="$1"
+ vmlinux="$2"
  
- 	while (len) {
-+		unsigned int pipe_pages;
- 		size_t read_len;
- 		loff_t pos = sd->pos, prev_pos = pos;
+ bad_relocs=$(
+-"$objdump" -R "$vmlinux" |
++$objdump -R "$vmlinux" |
+ 	# Only look at relocation lines.
+ 	grep -E '\<R_' |
+ 	# These relocations are okay
+diff --git a/arch/powerpc/tools/unrel_branch_check.sh b/arch/powerpc/tools/unrel_branch_check.sh
+index 1e972df3107ee..77114755dc6f2 100755
+--- a/arch/powerpc/tools/unrel_branch_check.sh
++++ b/arch/powerpc/tools/unrel_branch_check.sh
+@@ -18,14 +18,14 @@ vmlinux="$2"
+ #__end_interrupts should be located within the first 64K
  
- 		/* Don't try to read more the pipe has space for. */
--		read_len = min_t(size_t, len,
--				 (pipe->buffers - pipe->nrbufs) << PAGE_SHIFT);
-+		pipe_pages = pipe->buffers - pipe->nrbufs;
-+		read_len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
- 		ret = do_splice_to(in, &pos, pipe, read_len, flags);
- 		if (unlikely(ret <= 0))
- 			goto out_release;
-@@ -1180,8 +1181,15 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+ end_intr=0x$(
+-"$objdump" -R "$vmlinux" -d --start-address=0xc000000000000000		\
++$objdump -R "$vmlinux" -d --start-address=0xc000000000000000           \
+ 		 --stop-address=0xc000000000010000 |
+ grep '\<__end_interrupts>:' |
+ awk '{print $1}'
+ )
  
- 		pipe_lock(opipe);
- 		ret = wait_for_space(opipe, flags);
--		if (!ret)
-+		if (!ret) {
-+			unsigned int pipe_pages;
-+
-+			/* Don't try to read more the pipe has space for. */
-+			pipe_pages = opipe->buffers - opipe->nrbufs;
-+			len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
-+
- 			ret = do_splice_to(in, &offset, opipe, len, flags);
-+		}
- 		pipe_unlock(opipe);
- 		if (ret > 0)
- 			wakeup_pipe_readers(opipe);
+ BRANCHES=$(
+-"$objdump" -R "$vmlinux" -D --start-address=0xc000000000000000		\
++$objdump -R "$vmlinux" -D --start-address=0xc000000000000000           \
+ 		--stop-address=${end_intr} |
+ grep -e "^c[0-9a-f]*:[[:space:]]*\([0-9a-f][0-9a-f][[:space:]]\)\{4\}[[:space:]]*b" |
+ grep -v '\<__start_initialization_multiplatform>' |
 -- 
 2.20.1
 
