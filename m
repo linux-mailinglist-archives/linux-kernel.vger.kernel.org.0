@@ -2,38 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F1B811AECA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B4A311AF52
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:13:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730290AbfLKPIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:08:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55606 "EHLO mail.kernel.org"
+        id S1731199AbfLKPMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:12:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729513AbfLKPIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:08:10 -0500
+        id S1731095AbfLKPMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:12:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E48624654;
-        Wed, 11 Dec 2019 15:08:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3E3424654;
+        Wed, 11 Dec 2019 15:12:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076890;
-        bh=tr+1e9o/dxv8AaZA9vfOB+7WeDev9gn5MoZi7rZXbX8=;
+        s=default; t=1576077140;
+        bh=3+7wmKB4YLchn/gq4IOx0SBRYWWn2klYIBGCU1dHamg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k2ftVIMd5/FYXH7LT5wpeEYccrlXAs6S6sG6R0WRvVohFrnIeQVeB+xxbQY6q2zJm
-         Yin+lqJvP1zUjYv5prPI70nkZeMenRNm0YCNw2RS+o1JdsCHOJKQF3j3encc6cDIA9
-         sImmEFknkvjdfu5D4mO29oYqhSR95lO0ebFpePGU=
+        b=DoGOnSbDPDSoeQvkpA2CflPacQ+tice8Ok3UM56rJ+z6tKykCoMeThda4/sYOIqVQ
+         gpJY+3JtehaQsURp4yW5HRKsFE0yQ/ydEPSh2AxoBaXiwNA7S83HqhgympBx3IIElP
+         ft3tc7AdDTJ519R/cnecCzU7Fb4Vt2lwzQbs1XNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.4 29/92] ALSA: hda/realtek - Enable internal speaker of ASUS UX431FLC
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 031/105] perf/core: Consistently fail fork on allocation failures
 Date:   Wed, 11 Dec 2019 16:05:20 +0100
-Message-Id: <20191211150232.944154973@linuxfoundation.org>
+Message-Id: <20191211150231.320144857@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
+References: <20191211150221.153659747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +54,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit 436e25505f3458cc92c7f3c985e9cbc198a98209 upstream.
+[ Upstream commit 697d877849d4b34ab58d7078d6930bad0ef6fc66 ]
 
-Laptops like ASUS UX431FLC and UX431FL can share the same audio quirks.
-But UX431FLC needs one more step to enable the internal speaker: Pull
-the GPIO from CODEC to initialize the AMP.
+Commit:
 
-Fixes: 60083f9e94b2 ("ALSA: hda/realtek - Enable internal speaker & headset mic of ASUS UX431FL")
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191125093405.5702-1-jian-hong@endlessm.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  313ccb9615948 ("perf: Allocate context task_ctx_data for child event")
 
+makes the inherit path skip over the current event in case of task_ctx_data
+allocation failure. This, however, is inconsistent with allocation failures
+in perf_event_alloc(), which would abort the fork.
+
+Correct this by returning an error code on task_ctx_data allocation
+failure and failing the fork in that case.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: https://lkml.kernel.org/r/20191105075702.60319-1-alexander.shishkin@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_realtek.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ kernel/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5892,6 +5892,7 @@ enum {
- 	ALC299_FIXUP_PREDATOR_SPK,
- 	ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC,
- 	ALC256_FIXUP_MEDION_HEADSET_NO_PRESENCE,
-+	ALC294_FIXUP_ASUS_INTSPK_GPIO,
- };
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 53173883513c1..25942e43b8d48 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11719,7 +11719,7 @@ inherit_event(struct perf_event *parent_event,
+ 						   GFP_KERNEL);
+ 		if (!child_ctx->task_ctx_data) {
+ 			free_event(child_event);
+-			return NULL;
++			return ERR_PTR(-ENOMEM);
+ 		}
+ 	}
  
- static const struct hda_fixup alc269_fixups[] = {
-@@ -6982,6 +6983,13 @@ static const struct hda_fixup alc269_fix
- 		.chained = true,
- 		.chain_id = ALC256_FIXUP_ASUS_HEADSET_MODE
- 	},
-+	[ALC294_FIXUP_ASUS_INTSPK_GPIO] = {
-+		.type = HDA_FIXUP_FUNC,
-+		/* The GPIO must be pulled to initialize the AMP */
-+		.v.func = alc_fixup_gpio4,
-+		.chained = true,
-+		.chain_id = ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC
-+	},
- };
- 
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -7141,7 +7149,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x1043, 0x1427, "Asus Zenbook UX31E", ALC269VB_FIXUP_ASUS_ZENBOOK),
- 	SND_PCI_QUIRK(0x1043, 0x1517, "Asus Zenbook UX31A", ALC269VB_FIXUP_ASUS_ZENBOOK_UX31A),
- 	SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DMIC),
--	SND_PCI_QUIRK(0x1043, 0x17d1, "ASUS UX431FL", ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC),
-+	SND_PCI_QUIRK(0x1043, 0x17d1, "ASUS UX431FL", ALC294_FIXUP_ASUS_INTSPK_GPIO),
- 	SND_PCI_QUIRK(0x1043, 0x18b1, "Asus MJ401TA", ALC256_FIXUP_ASUS_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
- 	SND_PCI_QUIRK(0x1043, 0x1a30, "ASUS X705UD", ALC256_FIXUP_ASUS_MIC),
+-- 
+2.20.1
+
 
 
