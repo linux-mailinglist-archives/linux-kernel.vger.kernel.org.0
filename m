@@ -2,112 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F33411A4E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A8B11A4F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:19:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfLKHMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 02:12:08 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:42522 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726487AbfLKHMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 02:12:08 -0500
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 4ACD0B87F982C67764B5;
-        Wed, 11 Dec 2019 15:12:02 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 11 Dec 2019 15:12:01 +0800
-Received: from architecture4 (10.160.196.180) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Wed, 11 Dec 2019 15:12:01 +0800
-Date:   Wed, 11 Dec 2019 15:17:11 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        <linux-fsdevel@vger.kernel.org>, <ecryptfs@vger.kernel.org>,
-        <linux-fscrypt@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
-Message-ID: <20191211071711.GA231266@architecture4>
-References: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
- <20191211024858.GB732@sol.localdomain>
- <febbd7eb-5e53-6e7c-582d-5b224e441e37@loongson.cn>
- <20191211044723.GC4203@ZenIV.linux.org.uk>
- <4a90aaa9-18c8-f0a7-19e4-1c5bd5915a28@loongson.cn>
+        id S1727836AbfLKHTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 02:19:49 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44962 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbfLKHTs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 02:19:48 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q10so22797632wrm.11
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 23:19:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ypLvgvGtDw9j9CPyIJrLnPSn6hKTQUTD19ZeLZRvxyc=;
+        b=l/p43d/nyC2Il3XgYnTbQBZzH91ar6R7qhAFoSM0+yk6c7oNFKaTJLd98O7asmmSVv
+         IHqFaj3mSxWEG8kMXqB+g0iPXEqOgegmpMQJVRCNcF15Pn5vYJgrDXvTwPlwB89hmlSZ
+         lQPraPHoZnF1rvR6/it9bAcLiYoDz6foEnrlAoYSzTIVIZFR8rz/dLzw73MzsZVy15RS
+         XGvhXJDc9WT2CAt9pYO8c8w0Cs6zqqcL/ZE1+UidC/MzDJwjm2KcPL7KM1GVZTa7dZSk
+         w4gx1XNjLedQCetFLLF0VCKs7Em8tvnXtMHG8BJyVBE3Pt4U1R5Gtm4Ki2Jz4fYzuynL
+         T7Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ypLvgvGtDw9j9CPyIJrLnPSn6hKTQUTD19ZeLZRvxyc=;
+        b=k5d6xGg1v8TUdH34t0HORvewDv4+GYFOJgeryJnZlMOKxh4BDIPYUlAUIOFcZGgjYQ
+         u+Y8ih3vKSkS3hZD76TnJHBfogmMBgDf6pOdKB5Y+Ppkv0dyIMu0HXAE1NOvrh7hYLfQ
+         czuuWtvMPkDjjzoHdcYEQO/PAgQMPbj1UXWAiYGMG61i+poa6bCJSpMYfZhUFibVCanG
+         VhJhbdFvWoDbDQXAhEAiFJt2GjV+ETEn2KgbeSXyNuxUEFY7eD0J9dMmxIDPooc1KH5j
+         ZpB2Qj/9TueON1ouhO71g7qRdh3o8i1knzr1yZB5eb3kfKL8VZrQ1nrhcUnzW6i512dP
+         VEMA==
+X-Gm-Message-State: APjAAAWaZ/MMHqpWqgKSdXbreTX4Ic94yxI8dp4zcBJvzoFJxSCgWtJF
+        02t9ggZUdhlyD4UOO68sEA==
+X-Google-Smtp-Source: APXvYqwR7YJ7wiLAIU/BCwXHX5tud0RNbgFhw976ys2u0UlpO6zQkFrDshf9aFEW9bmtPzv7BlEcxg==
+X-Received: by 2002:adf:e2cf:: with SMTP id d15mr1936907wrj.225.1576048786403;
+        Tue, 10 Dec 2019 23:19:46 -0800 (PST)
+Received: from avx2 ([46.53.249.49])
+        by smtp.gmail.com with ESMTPSA id s8sm1203367wrt.57.2019.12.10.23.19.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 23:19:45 -0800 (PST)
+Date:   Wed, 11 Dec 2019 10:19:43 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ELF: don't copy ELF header around
+Message-ID: <20191211071943.GA3700@avx2>
+References: <20191208171242.GA19716@avx2>
+ <20191210175611.d615f21e177d5a550a8926f0@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4a90aaa9-18c8-f0a7-19e4-1c5bd5915a28@loongson.cn>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.160.196.180]
-X-ClientProxiedBy: dggeme715-chm.china.huawei.com (10.1.199.111) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191210175611.d615f21e177d5a550a8926f0@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 02:38:34PM +0800, Tiezhu Yang wrote:
-> On 12/11/2019 12:47 PM, Al Viro wrote:
-> > On Wed, Dec 11, 2019 at 11:59:40AM +0800, Tiezhu Yang wrote:
+On Tue, Dec 10, 2019 at 05:56:11PM -0800, Andrew Morton wrote:
+> On Sun, 8 Dec 2019 20:12:42 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> 
+> > ELF header is read into bprm->buf[] by generic execve code.
 > > 
-> > > static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
-> > > {
-> > >          if (len == 1 && name[0] == '.')
-> > >                  return true;
-> > > 
-> > >          if (len == 2 && name[0] == '.' && name[1] == '.')
-> > >                  return true;
-> > > 
-> > >          return false;
-> > > }
-> > > 
-> > > Hi Matthew,
-> > > 
-> > > How do you think? I think the performance influence is very small
-> > > due to is_dot_or_dotdot() is a such short static inline function.
-> > It's a very short inline function called on a very hot codepath.
-> > Often.
-> > 
-> > I mean it - it's done literally for every pathname component of
-> > every pathname passed to a syscall.
+> > Save a memcpy and allocate just one header for the interpreter instead
+> > of two headers (64 bytes instead of 128 on 64-bit).
 > 
-> OK. I understand. Let us do not use the helper function in fs/namei.c,
-> just use the following implementation for other callers:
-> 
-> static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
-> {
->         if (len >= 1 && unlikely(name[0] == '.')) {
+> Hard to review.  Why were there two copies in the first place?
 
+That's a good question. Both can live on stack in fact
+but [rsp+disp32] addressing generates a lot of bloat (few KB).
 
-And I suggest drop "unlikely" here since files start with prefix
-'.' (plus specical ".", "..") are not as uncommon as you expected...
+> Because of the need to modify the caller's version when we do
+> `loc->elf_ex.e_entry += load_bias', yes?  Any other place?
 
+No, but I'll double check. It was written this way presumably to not
+allocate one more stack variable.
 
-Thanks,
-Gao Xiang
+> Local variable `loc' can go away now, yes?
 
+It can.
 
->                 if (len < 2 || (len == 2 && name[1] == '.'))
->                         return true;
->         }
-> 
->         return false;
-> }
-> 
-> Special thanks for Matthew, Darrick, Al and Eric.
-> If you have any more suggestion, please let me know.
-> 
-> Thanks,
-> 
-> Tiezhu Yang
-> 
+I have big plans to get rid of all allocations in the common case
+and "fetch" headers from pagecache. This is why all headers better to be
+"const" which this patch partially progresses to.
