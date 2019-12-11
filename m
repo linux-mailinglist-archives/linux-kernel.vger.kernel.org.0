@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6850E11AEEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC1CE11B090
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:24:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730090AbfLKPJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:09:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57408 "EHLO mail.kernel.org"
+        id S1732779AbfLKPX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:23:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729994AbfLKPJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:09:25 -0500
+        id S1732620AbfLKPXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:23:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFAAE24658;
-        Wed, 11 Dec 2019 15:09:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64DCD2173E;
+        Wed, 11 Dec 2019 15:23:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076964;
-        bh=ATBWun4wWF0hfWPoCuDAJUpd6PpKWorGF7fWEHv5zi8=;
+        s=default; t=1576077833;
+        bh=98Jbf77nAwt1fSG0qBVGdDEDkG9mLiiWzrCEKzaMeNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yYGsdJg4JM0LQeLp595HCLSVUt7oZzX/AfTJERpfshakCAFRk306v9Wh7dAc43bTe
-         +S1VQ7NCFQvN7wGes7L291WitMmDuqlGZJ1Qkvf+b/WPjk1TpJjxuddwFxgX7Gt7If
-         zM7Lb7IStYFsnEJDKa9h4ariRYvwRx7xnv6aV538=
+        b=0kAs7iDx+3D8fXHsVaNtp4+GIsWjHP1RRFOyPgwQxRZkwKNlAzxcwL9zFvKCa2CmJ
+         9zgFSc1OZ2azKb4/NryBDE//DYUkJYAsW6FH0pAcCQ5xK18iAmBtbOB/E1HjIaRcgO
+         11+zmwi/4vC1GKqJefARFBTcifx02ClibB1KbAf8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 5.4 58/92] arm64: dts: exynos: Revert "Remove unneeded address space mapping for soc node"
+        stable@vger.kernel.org, Gary Leshner <Gary.S.Leshner@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 187/243] IB/hfi1: Close VNIC sdma_progress sleep window
 Date:   Wed, 11 Dec 2019 16:05:49 +0100
-Message-Id: <20191211150247.546562289@linuxfoundation.org>
+Message-Id: <20191211150351.796033556@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,81 +46,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit bed903167ae5b5532eda5d7db26de451bd232da5 upstream.
+[ Upstream commit 18912c4524385dd6532c682cb9d4f6aa39ba8d47 ]
 
-Commit ef72171b3621 ("arm64: dts: exynos: Remove unneeded address space
-mapping for soc node") changed the address and size cells in root node from
-2 to 1, but /memory nodes for the affected boards were not updated. This
-went unnoticed on Exynos5433-based TM2(e) boards, because they use u-boot,
-which updates /memory node to the correct values. On the other hand, the
-mentioned commit broke boot on Exynos7-based Espresso board, which
-bootloader doesn't touch /memory node at all.
+The call to sdma_progress() is called outside the wait lock.
 
-This patch reverts commit ef72171b3621 ("arm64: dts: exynos: Remove
-unneeded address space mapping for soc node"), so Exynos5433 and Exynos7
-SoCs again matches other ARM64 platforms with 64bit mappings in root
-node.
+In this case, there is a race condition where sdma_progress() can return
+false and the sdma_engine can idle.  If that happens, there will be no
+more sdma interrupts to cause the wakeup and the vnic_sdma xmit will hang.
 
-Reported-by: Alim Akhtar <alim.akhtar@samsung.com>
-Fixes: ef72171b3621 ("arm64: dts: exynos: Remove unneeded address space mapping for soc node")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: <stable@vger.kernel.org> # 5.3.x: 72ddcf6aa224 arm64: dts: exynos: Move GPU under /soc node for Exynos5433
-Cc: <stable@vger.kernel.org> # 5.3.x: ede87c3a2bdb arm64: dts: exynos: Move GPU under /soc node for Exynos7
-Cc: <stable@vger.kernel.org> # 4.18.x
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix by moving the lock to enclose the sdma_progress() call.
 
+Also, delete the tx_retry. The need for this was removed by:
+commit bcad29137a97 ("IB/hfi1: Serve the most starved iowait entry first")
+
+Fixes: 64551ede6cd1 ("IB/hfi1: VNIC SDMA support")
+Reviewed-by: Gary Leshner <Gary.S.Leshner@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi |    6 +++---
- arch/arm64/boot/dts/exynos/exynos7.dtsi    |    6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/infiniband/hw/hfi1/vnic_sdma.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -18,8 +18,8 @@
+diff --git a/drivers/infiniband/hw/hfi1/vnic_sdma.c b/drivers/infiniband/hw/hfi1/vnic_sdma.c
+index c3c96c5869ed4..718dcdef946ee 100644
+--- a/drivers/infiniband/hw/hfi1/vnic_sdma.c
++++ b/drivers/infiniband/hw/hfi1/vnic_sdma.c
+@@ -57,7 +57,6 @@
  
- / {
- 	compatible = "samsung,exynos5433";
--	#address-cells = <1>;
--	#size-cells = <1>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
+ #define HFI1_VNIC_TXREQ_NAME_LEN   32
+ #define HFI1_VNIC_SDMA_DESC_WTRMRK 64
+-#define HFI1_VNIC_SDMA_RETRY_COUNT 1
  
- 	interrupt-parent = <&gic>;
+ /*
+  * struct vnic_txreq - VNIC transmit descriptor
+@@ -67,7 +66,6 @@
+  * @pad: pad buffer
+  * @plen: pad length
+  * @pbc_val: pbc value
+- * @retry_count: tx retry count
+  */
+ struct vnic_txreq {
+ 	struct sdma_txreq       txreq;
+@@ -77,8 +75,6 @@ struct vnic_txreq {
+ 	unsigned char           pad[HFI1_VNIC_MAX_PAD];
+ 	u16                     plen;
+ 	__le64                  pbc_val;
+-
+-	u32                     retry_count;
+ };
  
-@@ -311,7 +311,7 @@
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--		ranges;
-+		ranges = <0x0 0x0 0x0 0x18000000>;
+ static void vnic_sdma_complete(struct sdma_txreq *txreq,
+@@ -196,7 +192,6 @@ int hfi1_vnic_send_dma(struct hfi1_devdata *dd, u8 q_idx,
+ 	ret = build_vnic_tx_desc(sde, tx, pbc);
+ 	if (unlikely(ret))
+ 		goto free_desc;
+-	tx->retry_count = 0;
  
- 		chipid@10000000 {
- 			compatible = "samsung,exynos4210-chipid";
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -12,8 +12,8 @@
- / {
- 	compatible = "samsung,exynos7";
- 	interrupt-parent = <&gic>;
--	#address-cells = <1>;
--	#size-cells = <1>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
+ 	ret = sdma_send_txreq(sde, &vnic_sdma->wait, &tx->txreq,
+ 			      vnic_sdma->pkts_sent);
+@@ -238,14 +233,14 @@ static int hfi1_vnic_sdma_sleep(struct sdma_engine *sde,
+ 	struct hfi1_vnic_sdma *vnic_sdma =
+ 		container_of(wait, struct hfi1_vnic_sdma, wait);
+ 	struct hfi1_ibdev *dev = &vnic_sdma->dd->verbs_dev;
+-	struct vnic_txreq *tx = container_of(txreq, struct vnic_txreq, txreq);
  
- 	aliases {
- 		pinctrl0 = &pinctrl_alive;
-@@ -98,7 +98,7 @@
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--		ranges;
-+		ranges = <0 0 0 0x18000000>;
+-	if (sdma_progress(sde, seq, txreq))
+-		if (tx->retry_count++ < HFI1_VNIC_SDMA_RETRY_COUNT)
+-			return -EAGAIN;
++	write_seqlock(&dev->iowait_lock);
++	if (sdma_progress(sde, seq, txreq)) {
++		write_sequnlock(&dev->iowait_lock);
++		return -EAGAIN;
++	}
  
- 		chipid@10000000 {
- 			compatible = "samsung,exynos4210-chipid";
+ 	vnic_sdma->state = HFI1_VNIC_SDMA_Q_DEFERRED;
+-	write_seqlock(&dev->iowait_lock);
+ 	if (list_empty(&vnic_sdma->wait.list))
+ 		iowait_queue(pkts_sent, wait, &sde->dmawait);
+ 	write_sequnlock(&dev->iowait_lock);
+-- 
+2.20.1
+
 
 
