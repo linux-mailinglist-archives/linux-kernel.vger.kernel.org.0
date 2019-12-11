@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 449B911B03B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6E1511B03E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:21:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732396AbfLKPUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:20:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50586 "EHLO mail.kernel.org"
+        id S1732402AbfLKPU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:20:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732121AbfLKPUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:20:53 -0500
+        id S1732121AbfLKPU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:20:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB10F2465C;
-        Wed, 11 Dec 2019 15:20:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16B6622527;
+        Wed, 11 Dec 2019 15:20:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077652;
-        bh=kB4e3pgdX5avATnnjByo+dKmmI8eRu5xSq64oDIVJq4=;
+        s=default; t=1576077655;
+        bh=xjFHwy3tKm92+fBMltwUj/RklLKzz/nTDFtDUYRkT7Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A3kkHf4Cv8GuDix/BK03PXSp99rQMMJu4PVbY8EIYhrikF4wzaeLWz4RiOzn8H8l0
-         9G8YTzki4h6hgsWR06VpMhpmmF/E61IHuaOYsUfVlgOdOT4vBG85hAYjrIeoi9n379
-         zBT+HXv+zEV5tKINQeLwkjNw9fOD4Cl2QRmaUIJY=
+        b=KO5zD5EwugBx/Ix0aV2IwJZGkX+tI8GV0hhgBcnLd3VPzo73wur1c8H5qqknQj4K1
+         FcW0a9GRrZI4Z6LgXn+GgOLPh+jTLXIqGVzOwzDndXE2ciS8A1Xs+ao3vH35oBXwAT
+         6XysL7uxfx8sqnqPD1KFDwQtZWYg80Dd1zGL3y54=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org,
+        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 120/243] iommu/amd: Fix line-break in error log reporting
-Date:   Wed, 11 Dec 2019 16:04:42 +0100
-Message-Id: <20191211150347.232612062@linuxfoundation.org>
+Subject: [PATCH 4.19 121/243] ASoC: rsnd: tidyup registering method for rsnd_kctrl_new()
+Date:   Wed, 11 Dec 2019 16:04:43 +0100
+Message-Id: <20191211150347.300543701@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -43,102 +47,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-[ Upstream commit 1a21ee1aabf7ff9484f2eb122476d80c7f60a620 ]
+[ Upstream commit 9c698e8481a15237a5b1db5f8391dd66d59e42a4 ]
 
-With the switch to dev_err for reporting errors from the
-iommu log there was an unwanted newline introduced. The
-reason was that the reporting was done in multiple dev_err()
-calls, and dev_err adds a newline after every call.
+Current rsnd dvc.c is using flags to avoid duplicating register for
+MIXer case. OTOH, commit e894efef9ac7 ("ASoC: core: add support to card
+rebind") allows to rebind sound card without rebinding all drivers.
 
-Fix it by printing the log messages with only one dev_err()
-call.
+Because of above patch and dvc.c flags, it can't re-register kctrl if
+only sound card was rebinded, because dvc is keeping old flags.
+(Of course it will be no problem if rsnd driver also be rebinded,
+but it is not purpose of above patch).
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+This patch checks current card registered kctrl when registering.
+In MIXer case, it can avoid duplicate register if card already has same
+kctrl. In rebind case, it can re-register kctrl because card registered
+kctl had been removed when unbinding.
+
+This patch is updated version of commit b918f1bc7f1ce ("ASoC: rsnd: DVC
+kctrl sets once")
+
+Reported-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ sound/soc/sh/rcar/core.c | 12 ++++++++++++
+ sound/soc/sh/rcar/dvc.c  |  8 --------
+ 2 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index fe18804a50083..9991386fb7000 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -549,7 +549,7 @@ static void amd_iommu_report_page_fault(u16 devid, u16 domain_id,
- 		dev_data = get_dev_data(&pdev->dev);
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 15a31820df169..99cd52b9ff228 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1344,6 +1344,18 @@ int rsnd_kctrl_new(struct rsnd_mod *mod,
+ 	};
+ 	int ret;
  
- 	if (dev_data && __ratelimit(&dev_data->rs)) {
--		dev_err(&pdev->dev, "AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x%04x address=0x%016llx flags=0x%04x]\n",
-+		dev_err(&pdev->dev, "Event logged [IO_PAGE_FAULT domain=0x%04x address=0x%016llx flags=0x%04x]\n",
- 			domain_id, address, flags);
- 	} else if (printk_ratelimit()) {
- 		pr_err("AMD-Vi: Event logged [IO_PAGE_FAULT device=%02x:%02x.%x domain=0x%04x address=0x%016llx flags=0x%04x]\n",
-@@ -589,43 +589,41 @@ retry:
- 	if (type == EVENT_TYPE_IO_FAULT) {
- 		amd_iommu_report_page_fault(devid, pasid, address, flags);
- 		return;
--	} else {
--		dev_err(dev, "AMD-Vi: Event logged [");
- 	}
++	/*
++	 * 1) Avoid duplicate register (ex. MIXer case)
++	 * 2) re-register if card was rebinded
++	 */
++	list_for_each_entry(kctrl, &card->controls, list) {
++		struct rsnd_kctrl_cfg *c = kctrl->private_data;
++
++		if (strcmp(kctrl->id.name, name) == 0 &&
++		    c->mod == mod)
++			return 0;
++	}
++
+ 	if (size > RSND_MAX_CHANNELS)
+ 		return -EINVAL;
  
- 	switch (type) {
- 	case EVENT_TYPE_ILL_DEV:
--		dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
-+		dev_err(dev, "Event logged [ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			pasid, address, flags);
- 		dump_dte_entry(devid);
- 		break;
- 	case EVENT_TYPE_DEV_TAB_ERR:
--		dev_err(dev, "DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
-+		dev_err(dev, "Event logged [DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
- 			"address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			address, flags);
- 		break;
- 	case EVENT_TYPE_PAGE_TAB_ERR:
--		dev_err(dev, "PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x domain=0x%04x address=0x%016llx flags=0x%04x]\n",
-+		dev_err(dev, "Event logged [PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x domain=0x%04x address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			pasid, address, flags);
- 		break;
- 	case EVENT_TYPE_ILL_CMD:
--		dev_err(dev, "ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
-+		dev_err(dev, "Event logged [ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
- 		dump_command(address);
- 		break;
- 	case EVENT_TYPE_CMD_HARD_ERR:
--		dev_err(dev, "COMMAND_HARDWARE_ERROR address=0x%016llx flags=0x%04x]\n",
-+		dev_err(dev, "Event logged [COMMAND_HARDWARE_ERROR address=0x%016llx flags=0x%04x]\n",
- 			address, flags);
- 		break;
- 	case EVENT_TYPE_IOTLB_INV_TO:
--		dev_err(dev, "IOTLB_INV_TIMEOUT device=%02x:%02x.%x address=0x%016llx]\n",
-+		dev_err(dev, "Event logged [IOTLB_INV_TIMEOUT device=%02x:%02x.%x address=0x%016llx]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			address);
- 		break;
- 	case EVENT_TYPE_INV_DEV_REQ:
--		dev_err(dev, "INVALID_DEVICE_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
-+		dev_err(dev, "Event logged [INVALID_DEVICE_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			pasid, address, flags);
- 		break;
-@@ -633,12 +631,12 @@ retry:
- 		pasid = ((event[0] >> 16) & 0xFFFF)
- 			| ((event[1] << 6) & 0xF0000);
- 		tag = event[1] & 0x03FF;
--		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
-+		dev_err(dev, "Event logged [INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			pasid, address, flags);
- 		break;
- 	default:
--		dev_err(dev, "UNKNOWN event[0]=0x%08x event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
-+		dev_err(dev, "Event logged [UNKNOWN event[0]=0x%08x event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
- 			event[0], event[1], event[2], event[3]);
- 	}
+diff --git a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
+index 2b16e0ce6bc53..024ece46bf685 100644
+--- a/sound/soc/sh/rcar/dvc.c
++++ b/sound/soc/sh/rcar/dvc.c
+@@ -40,11 +40,8 @@ struct rsnd_dvc {
+ 	struct rsnd_kctrl_cfg_s ren;	/* Ramp Enable */
+ 	struct rsnd_kctrl_cfg_s rup;	/* Ramp Rate Up */
+ 	struct rsnd_kctrl_cfg_s rdown;	/* Ramp Rate Down */
+-	u32 flags;
+ };
+ 
+-#define KCTRL_INITIALIZED	(1 << 0)
+-
+ #define rsnd_dvc_get(priv, id) ((struct rsnd_dvc *)(priv->dvc) + id)
+ #define rsnd_dvc_nr(priv) ((priv)->dvc_nr)
+ 
+@@ -227,9 +224,6 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
+ 	int channels = rsnd_rdai_channels_get(rdai);
+ 	int ret;
+ 
+-	if (rsnd_flags_has(dvc, KCTRL_INITIALIZED))
+-		return 0;
+-
+ 	/* Volume */
+ 	ret = rsnd_kctrl_new_m(mod, io, rtd,
+ 			is_play ?
+@@ -285,8 +279,6 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	rsnd_flags_set(dvc, KCTRL_INITIALIZED);
+-
+ 	return 0;
+ }
  
 -- 
 2.20.1
