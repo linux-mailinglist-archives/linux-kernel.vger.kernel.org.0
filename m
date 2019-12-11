@@ -2,102 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB98B11A256
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BE3911A2CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbfLKC4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 21:56:17 -0500
-Received: from mail-eopbgr150042.outbound.protection.outlook.com ([40.107.15.42]:30626
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727773AbfLKC4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:56:13 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iKyptkDMC6kf14OlXhIWbyWl+NlOILrqnCEb9EgvFbLwGarFTZWkD8p4zMtp5NBH8YC6GPbG27+IZdLvMIXKItJBhr20+ZSkcAch8oEcbS/+CLfPKZcAt1AlTT1Ily96/M9OFLx7sU2VC4zobD2tOjj5HGRmLDQG57fRnbPt9dzNllQBcyeVT9HGryN8IY0S0vcka2uSdjjp8aMwMhe0sL97rDk/zWQa7O8kp1bfpuqBa67fBKhAOKdZepBX+3B7gq1HAVUCUY+qWz23/vudt7QpEMCTB3bIq6rn+lwQvMMj/DcmEQE4BVhCPoYANbPrOk0+mtFRCV13UMC2BccNsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JZi1/tjHPZERF/sLRbseIK60zddEkMWCBQnRaqr2kJM=;
- b=VucAaQTJvzmo1nGzWhfr09pKwKg5PhGSDpdawhAvXfUkYYQcHc3O6Q1Kiyi0Eem7GqUykneoy3WdfH2j5lbZrSfceYK+F3ShhOE0Dvk9VTvbynh5xGRGIK78jRwJp8YqqQv+SaisNRM5swjxp49W2DonHuttwMNXUG6WjUQPsBXdXxbLTBHq2lg+rE+L5YIC+qZhdkvll9MgIQisk12fld1mDbhpXzaeDrHvOcIikdAb4CxGEjRAK0QaBtfwnJEK2CxNQYfR7QkMXv+OK+CYL+vThp6saQMvwirRKln0AaOB8/3xufrDa4HVTslxXEGxcqAq87CGIPQG3i/8cxiMDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JZi1/tjHPZERF/sLRbseIK60zddEkMWCBQnRaqr2kJM=;
- b=YntiJRpM8aIqsqcdLbJUJQG6JJ9tsZwNQ11tK6DzRvLKClN5VrpwB20g79fW94TMaNA0uNZMZBHXqJbBzjL3mlufdPa4AjRbVkwkOXrEEpg2swQEqs1pPkGxm+8aIfH6ilqR6Fksg9pL4SHdz0mW4+i/Z4JXWEQACmM+IBUCS4E=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3884.eurprd04.prod.outlook.com (52.134.71.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.17; Wed, 11 Dec 2019 02:56:10 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::b5ce:fe6b:6c06:fdb1]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::b5ce:fe6b:6c06:fdb1%6]) with mapi id 15.20.2516.018; Wed, 11 Dec 2019
- 02:56:10 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] ARM: imx: Enable ARM_ERRATA_814220 for i.MX6UL and i.MX7D
-Thread-Topic: [PATCH] ARM: imx: Enable ARM_ERRATA_814220 for i.MX6UL and
- i.MX7D
-Thread-Index: AQHVqaz9uTC5Ekq7lkSM85gAnNButKe0RmUAgAADO9A=
-Date:   Wed, 11 Dec 2019 02:56:10 +0000
-Message-ID: <DB3PR0402MB3916FD7E76C669D620D91842F55A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1575358720-27624-1-git-send-email-Anson.Huang@nxp.com>
- <20191211024413.GF15858@dragon>
-In-Reply-To: <20191211024413.GF15858@dragon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 40cdaad7-0621-401d-d88a-08d77de5ad75
-x-ms-traffictypediagnostic: DB3PR0402MB3884:|DB3PR0402MB3884:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB3884207A11407CDE25599F44F55A0@DB3PR0402MB3884.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1051;
-x-forefront-prvs: 024847EE92
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(376002)(366004)(39860400002)(346002)(189003)(199004)(9686003)(478600001)(54906003)(55016002)(26005)(7696005)(8936002)(4326008)(66476007)(316002)(86362001)(8676002)(4744005)(6916009)(33656002)(6506007)(186003)(44832011)(66946007)(76116006)(64756008)(66556008)(2906002)(66446008)(81156014)(81166006)(71200400001)(5660300002)(52536014);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3884;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: yby8cyqCd/RRdnBcZopFYNSTGx6spa9APmiQMgIqdUrCMMOnNU6e7faJLX1MlxfkT2O3L3NSrFByBxULjXjlsG46tYyxlnQjGlZWQde7zKowBfd0OCNeDDk6QsnVtGG9BKQFCU6YwH4/Es1OOpNf7t3+pmNnEpm8DRJXhY2clagiQFv2XbFj1qjauNIDCNgn54ZF+Ms7N8SDMKmphRB2hScn34ysz7TgOd2MIBsEmilc8fFcujCcVAk2iQuesARFS2YgYzsSqj7ukPdGKYbxh/4dPfNNt8Q9/lI8gXBELdUrO2TY0qGxB/ryzvzwm5RdVZEV5FpMwglRbnki4HcvEHiDIBH4hhQTu5iG8k2HCFp9yQqZVtTwGhGy8719GGMyEye6xXkbGBatUcINhksViUOuApUhcw81GbXYuWZR4TlqtyMp4gLvXuuKQcXNDfRT
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40cdaad7-0621-401d-d88a-08d77de5ad75
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2019 02:56:10.5729
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yuDEkjvCA7l88w5ZTmImo/GxwIzFB78azd2L2F6wGbUZT37WuD78wDcv15uf7dQ+dA8OZuGXLxkJwpdMqP8Pig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3884
+        id S1727817AbfLKC7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 21:59:00 -0500
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:40273 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727197AbfLKC7A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 21:59:00 -0500
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from yuvalav@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 11 Dec 2019 04:58:58 +0200
+Received: from sw-mtx-008.mtx.labs.mlnx (sw-mtx-008.mtx.labs.mlnx [10.9.150.35])
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id xBB2wv6U003700;
+        Wed, 11 Dec 2019 04:58:58 +0200
+Received: from sw-mtx-008.mtx.labs.mlnx (localhost [127.0.0.1])
+        by sw-mtx-008.mtx.labs.mlnx (8.14.7/8.14.7) with ESMTP id xBB2wuAl018882;
+        Wed, 11 Dec 2019 04:58:56 +0200
+Received: (from yuvalav@localhost)
+        by sw-mtx-008.mtx.labs.mlnx (8.14.7/8.14.7/Submit) id xBB2wt3s018881;
+        Wed, 11 Dec 2019 04:58:55 +0200
+From:   Yuval Avnery <yuvalav@mellanox.com>
+Cc:     jiri@mellanox.com, jakub.kicinski@netronome.com,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yuval Avnery <yuvalav@mellanox.com>
+Subject: [PATCH net-next] netdevsim: Add max_vfs to bus_dev
+Date:   Wed, 11 Dec 2019 04:58:53 +0200
+Message-Id: <1576033133-18845-1-git-send-email-yuvalav@mellanox.com>
+X-Mailer: git-send-email 1.8.3.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gQVJNOiBpbXg6IEVuYWJsZSBBUk1fRVJSQVRBXzgx
-NDIyMCBmb3IgaS5NWDZVTA0KPiBhbmQgaS5NWDdEDQo+IA0KPiBPbiBUdWUsIERlYyAwMywgMjAx
-OSBhdCAwMzozODo0MFBNICswODAwLCBBbnNvbiBIdWFuZyB3cm90ZToNCj4gPiBpLk1YNlVMIGFu
-ZCBpLk1YN0QgaGF2ZSBDb3J0ZXgtQTcgaW5zaWRlLCBuZWVkIHRvIGVuYWJsZQ0KPiA+IEFSTV9F
-UlJBVEFfODE0MjIwIGZvciBwcm9wZXIgd29ya2Fyb3VuZC4NCj4gDQo+IENhbiB3ZSBicmllZmx5
-IGRlc2NyaWJlIHRoZSBBUk1fRVJSQVRBXzgxNDIyMCBpbiB0aGUgY29tbWl0IGxvZz8NCg0KRG9u
-ZSBpbiBWMi4NCg0KVGhhbmtzLA0KQW5zb24NCg==
+Currently there is no limit to the number of VFs netdevsim can enable.
+In a real systems this value exist and used by driver.
+Fore example, Some features might need to consider this value when
+allocating memory.
+
+Signed-off-by: Yuval Avnery <yuvalav@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+---
+ drivers/net/netdevsim/bus.c       | 39 +++++++++++++++++++++++--------
+ drivers/net/netdevsim/netdevsim.h |  1 +
+ 2 files changed, 30 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/netdevsim/bus.c b/drivers/net/netdevsim/bus.c
+index 6aeed0c600f8..f1a0171080cb 100644
+--- a/drivers/net/netdevsim/bus.c
++++ b/drivers/net/netdevsim/bus.c
+@@ -26,9 +26,9 @@ static struct nsim_bus_dev *to_nsim_bus_dev(struct device *dev)
+ static int nsim_bus_dev_vfs_enable(struct nsim_bus_dev *nsim_bus_dev,
+ 				   unsigned int num_vfs)
+ {
+-	nsim_bus_dev->vfconfigs = kcalloc(num_vfs,
+-					  sizeof(struct nsim_vf_config),
+-					  GFP_KERNEL);
++	if (nsim_bus_dev->max_vfs < num_vfs)
++		return -ENOMEM;
++
+ 	if (!nsim_bus_dev->vfconfigs)
+ 		return -ENOMEM;
+ 	nsim_bus_dev->num_vfs = num_vfs;
+@@ -38,8 +38,6 @@ static int nsim_bus_dev_vfs_enable(struct nsim_bus_dev *nsim_bus_dev,
+ 
+ static void nsim_bus_dev_vfs_disable(struct nsim_bus_dev *nsim_bus_dev)
+ {
+-	kfree(nsim_bus_dev->vfconfigs);
+-	nsim_bus_dev->vfconfigs = NULL;
+ 	nsim_bus_dev->num_vfs = 0;
+ }
+ 
+@@ -154,22 +152,29 @@ static struct device_type nsim_bus_dev_type = {
+ };
+ 
+ static struct nsim_bus_dev *
+-nsim_bus_dev_new(unsigned int id, unsigned int port_count);
++nsim_bus_dev_new(unsigned int id, unsigned int port_count,
++		 unsigned int max_vfs);
++
++#define NSIM_BUS_DEV_MAX_VFS 4
+ 
+ static ssize_t
+ new_device_store(struct bus_type *bus, const char *buf, size_t count)
+ {
+ 	struct nsim_bus_dev *nsim_bus_dev;
+ 	unsigned int port_count;
++	unsigned int max_vfs;
+ 	unsigned int id;
+ 	int err;
+ 
+-	err = sscanf(buf, "%u %u", &id, &port_count);
++	err = sscanf(buf, "%u %u %u", &id, &port_count, &max_vfs);
+ 	switch (err) {
+ 	case 1:
+ 		port_count = 1;
+ 		/* fall through */
+ 	case 2:
++		max_vfs = NSIM_BUS_DEV_MAX_VFS;
++		/* fall through */
++	case 3:
+ 		if (id > INT_MAX) {
+ 			pr_err("Value of \"id\" is too big.\n");
+ 			return -EINVAL;
+@@ -179,7 +184,7 @@ new_device_store(struct bus_type *bus, const char *buf, size_t count)
+ 		pr_err("Format for adding new device is \"id port_count\" (uint uint).\n");
+ 		return -EINVAL;
+ 	}
+-	nsim_bus_dev = nsim_bus_dev_new(id, port_count);
++	nsim_bus_dev = nsim_bus_dev_new(id, port_count, max_vfs);
+ 	if (IS_ERR(nsim_bus_dev))
+ 		return PTR_ERR(nsim_bus_dev);
+ 
+@@ -267,7 +272,8 @@ static struct bus_type nsim_bus = {
+ };
+ 
+ static struct nsim_bus_dev *
+-nsim_bus_dev_new(unsigned int id, unsigned int port_count)
++nsim_bus_dev_new(unsigned int id, unsigned int port_count,
++		 unsigned int max_vfs)
+ {
+ 	struct nsim_bus_dev *nsim_bus_dev;
+ 	int err;
+@@ -284,12 +290,24 @@ nsim_bus_dev_new(unsigned int id, unsigned int port_count)
+ 	nsim_bus_dev->dev.type = &nsim_bus_dev_type;
+ 	nsim_bus_dev->port_count = port_count;
+ 	nsim_bus_dev->initial_net = current->nsproxy->net_ns;
++	nsim_bus_dev->max_vfs = max_vfs;
++
++	nsim_bus_dev->vfconfigs = kcalloc(nsim_bus_dev->max_vfs,
++					  sizeof(struct nsim_vf_config),
++					  GFP_KERNEL);
++	if (!nsim_bus_dev->vfconfigs) {
++		err = -ENOMEM;
++		goto err_nsim_bus_dev_id_free;
++	}
+ 
+ 	err = device_register(&nsim_bus_dev->dev);
+ 	if (err)
+-		goto err_nsim_bus_dev_id_free;
++		goto err_nsim_vfconfigs_free;
++
+ 	return nsim_bus_dev;
+ 
++err_nsim_vfconfigs_free:
++	kfree(nsim_bus_dev->vfconfigs);
+ err_nsim_bus_dev_id_free:
+ 	ida_free(&nsim_bus_dev_ids, nsim_bus_dev->dev.id);
+ err_nsim_bus_dev_free:
+@@ -301,6 +319,7 @@ static void nsim_bus_dev_del(struct nsim_bus_dev *nsim_bus_dev)
+ {
+ 	device_unregister(&nsim_bus_dev->dev);
+ 	ida_free(&nsim_bus_dev_ids, nsim_bus_dev->dev.id);
++	kfree(nsim_bus_dev->vfconfigs);
+ 	kfree(nsim_bus_dev);
+ }
+ 
+diff --git a/drivers/net/netdevsim/netdevsim.h b/drivers/net/netdevsim/netdevsim.h
+index 94df795ef4d3..e2049856add8 100644
+--- a/drivers/net/netdevsim/netdevsim.h
++++ b/drivers/net/netdevsim/netdevsim.h
+@@ -238,6 +238,7 @@ struct nsim_bus_dev {
+ 	struct net *initial_net; /* Purpose of this is to carry net pointer
+ 				  * during the probe time only.
+ 				  */
++	unsigned int max_vfs;
+ 	unsigned int num_vfs;
+ 	struct nsim_vf_config *vfconfigs;
+ };
+-- 
+2.17.1
+
