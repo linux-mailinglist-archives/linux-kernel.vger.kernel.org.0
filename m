@@ -2,113 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3FBA11A512
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:27:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48F3611A521
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 08:32:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbfLKH1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 02:27:24 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57987 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfLKH1Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 02:27:24 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iewP4-0006T3-E2; Wed, 11 Dec 2019 08:27:22 +0100
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iewP3-0004Eh-6N; Wed, 11 Dec 2019 08:27:21 +0100
-Date:   Wed, 11 Dec 2019 08:27:21 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/3] ARM: dts: imx6ul-14x14-evk: Add sensors' GPIO
- regulator
-Message-ID: <20191211072721.ze6yn2felxyae5eb@pengutronix.de>
-References: <1571906920-29966-1-git-send-email-Anson.Huang@nxp.com>
- <VI1PR04MB7023CD288FCC57806F067FD9EE5B0@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <DB3PR0402MB3916D3DB4C0CE0017FC2D4B1F55A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+        id S1727894AbfLKHco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 02:32:44 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7669 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725800AbfLKHcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 02:32:43 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 107B07834A358239494C;
+        Wed, 11 Dec 2019 15:32:40 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 11 Dec 2019 15:32:32 +0800
+From:   Hanjun Guo <guohanjun@huawei.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Hanjun Guo <guohanjun@huawei.com>
+Subject: [PATCH] arm64: armv8_deprecated: update the comments of armv8_deprecated_init()
+Date:   Wed, 11 Dec 2019 15:27:33 +0800
+Message-ID: <1576049253-60950-1-git-send-email-guohanjun@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB3PR0402MB3916D3DB4C0CE0017FC2D4B1F55A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 08:22:06 up 25 days, 22:40, 33 users,  load average: 0.00, 0.00,
- 0.00
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-12-11 01:06, Anson Huang wrote:
-> 
-> 
-> > Subject: Re: [PATCH 1/3] ARM: dts: imx6ul-14x14-evk: Add sensors' GPIO
-> > regulator
-> > 
-> > On 24.10.2019 11:51, Anson Huang wrote:
-> > > On i.MX6UL 14x14 EVK board, sensors' power are controlled by
-> > > GPIO5_IO02, add GPIO regulator for sensors to manage their power.
-> > >
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > 
-> > For me this breaks network boot on imx6ul evk, relevant log snippet is this:
-> > 
-> >      fec 20b4000.ethernet eth0: Unable to connect to phy
-> >      IP-Config: Failed to open eth0
-> > 
-> > Looking at schematics (SPF-28616_C2.pdf) I see that SNVS_TAMPER2 pin is
-> > connected to PERI_PWREN which controls VPERI_3V3 which is used across
-> > the board:
-> >   * Sensors (VSENSOR_3V3)
-> >   * Ethernet (VENET_3V3)
-> >   * Bluetooth
-> >   * CAN
-> >   * Arduino header
-> >   * Camera
-> > 
-> > Maybe there are board revision differences? As far as I can tell this regulator
-> > is not specific to sensors so it should be always on.
-> 
-> You are correct, this regulator controls many other peripherals, I should make it always ON for now
-> to make sure NOT break other peripheral, and after all other peripherals controlled
-> by this regulator have added this regulator management, then the always ON can be
-> removed.
+In commit c0d8832e78cb ("arm64: Ensure the instruction emulation is
+ready for userspace"), armv8_deprecated_init() was promoted to
+core_initcall() but the comments were left unchanged, update it now.
 
-IMHO marking the regulator as always on shouldn't be the fix. Is it to
-much work to add all required regulators? At least please add a comment
-which describes the need of the always-on property.
+Spotted by some random reading of the code.
 
-Regards,
-  Marco 
+Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
+---
+ arch/arm64/kernel/armv8_deprecated.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Thanks,
-> Anson
-
+diff --git a/arch/arm64/kernel/armv8_deprecated.c b/arch/arm64/kernel/armv8_deprecated.c
+index ca158be..3f6fcf2 100644
+--- a/arch/arm64/kernel/armv8_deprecated.c
++++ b/arch/arm64/kernel/armv8_deprecated.c
+@@ -618,7 +618,8 @@ static int t16_setend_handler(struct pt_regs *regs, u32 instr)
+ };
+ 
+ /*
+- * Invoked as late_initcall, since not needed before init spawned.
++ * Invoked as core_initcall, which can guarantee that the instruction
++ * emulation is ready for userspace.
+  */
+ static int __init armv8_deprecated_init(void)
+ {
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+1.7.12.4
+
