@@ -2,83 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C46311A5BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 09:18:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA9411A5B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 09:18:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbfLKISY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 03:18:24 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:42709 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728250AbfLKISV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 03:18:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576052299;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qvtkLdUSetwh2LM7748b/AtFetYeaJ3ZQNHZjoVf5YE=;
-        b=RWgqfe6aYpQGw+kaQO9KjXjfwVsH4c1+5hlkWagoLvUf+A6NLrx10/ZvoFjo6oS4r+CjHS
-        ETBPVuGk3zz310F5Pliuw0zpLVL6QZhivPWJqiHFzYccup1v1GLZWFCODqEyCW+yxf5yOq
-        qTewbsi1STlRj9c/fX+FpU/7ZwnVVQ0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-270-Cbc1t8c6NBaxf1aZQKiJ0A-1; Wed, 11 Dec 2019 03:18:15 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728157AbfLKISR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 03:18:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727298AbfLKISR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 03:18:17 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A2631801E72;
-        Wed, 11 Dec 2019 08:18:14 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-67.ams2.redhat.com [10.36.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 89C7410013A1;
-        Wed, 11 Dec 2019 08:18:11 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id D8E871747D; Wed, 11 Dec 2019 09:18:10 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     gurchetansingh@chromium.org, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/2] drm/virtio: fix mmap page attributes
-Date:   Wed, 11 Dec 2019 09:18:10 +0100
-Message-Id: <20191211081810.20079-3-kraxel@redhat.com>
-In-Reply-To: <20191211081810.20079-1-kraxel@redhat.com>
-References: <20191211081810.20079-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: Cbc1t8c6NBaxf1aZQKiJ0A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C69020652;
+        Wed, 11 Dec 2019 08:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576052297;
+        bh=AMX2uELmZXc9JMz1ZWkm2WGiRI+cSmDE7Gcp+CImNNs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gz12lYuFWJWlmv5qypG1JMFKv9my/1gUc+04R83nktw3i8iKYDVVHkfAZL9OgFXsc
+         ktan+5WFlUEOwKmyxBT7TKicY6RUxV+qYOuixSBhkdn8FD+13Uy8tOLQNYgh2y9bFp
+         S34QlzAG0iwNWv+sH0I7yC3rrVD3691DySoIQdB4=
+Date:   Wed, 11 Dec 2019 09:18:14 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Simon Schwartz <kern.simon@theschwartz.xyz>
+Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] driver core: Prevent overflow from causing infinite loops
+Message-ID: <20191211081814.GA433262@kroah.com>
+References: <2201ce63a2a171ffd2ed14e867875316efcf71db.camel@theschwartz.xyz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2201ce63a2a171ffd2ed14e867875316efcf71db.camel@theschwartz.xyz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-virtio-gpu uses cached mappings, set shmem->caching accordingly.
+On Tue, Dec 10, 2019 at 05:41:37PM -0500, Simon Schwartz wrote:
+> num_resources in the platform_device struct is declared as a u32.
+> The for loops that iterate over num_resources use an int as the counter,
+> which can cause infinite loops on architectures with smaller ints.
 
-Reported-by: Gurchetan Singh <gurchetansingh@chromium.org>
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_object.c | 1 +
- 1 file changed, 1 insertion(+)
+What arch is that that has so many resources and yet is only a 32bit
+system?
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virt=
-io/virtgpu_object.c
-index 017a9e0fc3bb..a0b5e5195816 100644
---- a/drivers/gpu/drm/virtio/virtgpu_object.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_object.c
-@@ -118,6 +118,7 @@ int virtio_gpu_object_create(struct virtio_gpu_device *=
-vgdev,
- =09shmem_obj =3D drm_gem_shmem_create(vgdev->ddev, params->size);
- =09if (IS_ERR(shmem_obj))
- =09=09return PTR_ERR(shmem_obj);
-+=09shmem_obj->caching =3D DRM_GEM_SHMEM_CACHED;
- =09bo =3D gem_to_virtio_gpu_obj(&shmem_obj->base);
-=20
- =09ret =3D virtio_gpu_resource_id_get(vgdev, &bo->hw_res_handle);
---=20
-2.18.1
+thanks,
 
+greg k-h
