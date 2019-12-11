@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D0E11B0E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:27:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5A411B0E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:27:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733172AbfLKP0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:26:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60148 "EHLO mail.kernel.org"
+        id S1732883AbfLKP0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:26:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730318AbfLKP0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:26:46 -0500
+        id S1733168AbfLKP0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:26:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF40822B48;
-        Wed, 11 Dec 2019 15:26:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18D792465A;
+        Wed, 11 Dec 2019 15:26:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078005;
-        bh=OSFAwokhjVj4dINBlboHHTQOSgmlkV+Ovz0AurH0rXU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=k7V7ZbpoyX42slyLqO6GVgf++h2gfXIJK6s+5e7kDkDFUPEnr8EjDtocQZueY5yyP
-         liNW9vGli1dImkE3CUSwV+KmbHq4Rqv5P00w4ICnx/rqJoQ2TcHWYc/3bFNA91HOkq
-         E6KO77lWbU1Q6lUu4CorTiCwbo2cN2wHX3F2qDwI=
+        s=default; t=1576078008;
+        bh=T9ks6T+rhopzS3sRezOIMYMOUnsrEE3XWDB5kr4AmDQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zyDCT0QgZN04P61IuLr8XwlKFI5sVr6jhv7xrhF64tzjeLOongkouvKGLKoSk8rXz
+         dtkIRwauXm6D5NP9soagBIY25M9rEox4mmoPPy4TowhLP0gv0ZPa/mKczrigme8Qx6
+         Dr01nuwTSsItyep+DmAVz0QVUznPdPOXodu+a2Jk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Smart <jsmart2021@gmail.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 01/79] scsi: lpfc: Fix discovery failures when target device connectivity bounces
-Date:   Wed, 11 Dec 2019 10:25:25 -0500
-Message-Id: <20191211152643.23056-1-sashal@kernel.org>
+Cc:     Evan Green <evgreen@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 04/79] Input: atmel_mxt_ts - disable IRQ across suspend
+Date:   Wed, 11 Dec 2019 10:25:28 -0500
+Message-Id: <20191211152643.23056-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
+References: <20191211152643.23056-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -42,57 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Evan Green <evgreen@chromium.org>
 
-[ Upstream commit 3f97aed6117c7677eb16756c4ec8b86000fd5822 ]
+[ Upstream commit 463fa44eec2fef50d111ed0199cf593235065c04 ]
 
-An issue was seen discovering all SCSI Luns when a target device undergoes
-link bounce.
+Across suspend and resume, we are seeing error messages like the following:
 
-The driver currently does not qualify the FC4 support on the target.
-Therefore it will send a SCSI PRLI and an NVMe PRLI. The expectation is
-that the target will reject the PRLI if it is not supported. If a PRLI
-times out, the driver will retry. The driver will not proceed with the
-device until both SCSI and NVMe PRLIs are resolved.  In the failure case,
-the device is FCP only and does not respond to the NVMe PRLI, thus
-initiating the wait/retry loop in the driver.  During that time, a RSCN is
-received (device bounced) causing the driver to issue a GID_FT.  The GID_FT
-response comes back before the PRLI mess is resolved and it prematurely
-cancels the PRLI retry logic and leaves the device in a STE_PRLI_ISSUE
-state. Discovery with the target never completes or resets.
+atmel_mxt_ts i2c-PRP0001:00: __mxt_read_reg: i2c transfer failed (-121)
+atmel_mxt_ts i2c-PRP0001:00: Failed to read T44 and T5 (-121)
 
-Fix by resetting the node state back to STE_NPR_NODE when GID_FT completes,
-thereby restarting the discovery process for the node.
+This occurs because the driver leaves its IRQ enabled. Upon resume, there
+is an IRQ pending, but the interrupt is serviced before both the driver and
+the underlying I2C bus have been resumed. This causes EREMOTEIO errors.
 
-Link: https://lore.kernel.org/r/20190922035906.10977-10-jsmart2021@gmail.com
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Disable the IRQ in suspend, and re-enable it on resume. If there are cases
+where the driver enters suspend with interrupts disabled, that's a bug we
+should fix separately.
+
+Signed-off-by: Evan Green <evgreen@chromium.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_hbadisc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/input/touchscreen/atmel_mxt_ts.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index b36b3da323a0a..5d657178c2b98 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -5231,9 +5231,14 @@ lpfc_setup_disc_node(struct lpfc_vport *vport, uint32_t did)
- 			/* If we've already received a PLOGI from this NPort
- 			 * we don't need to try to discover it again.
- 			 */
--			if (ndlp->nlp_flag & NLP_RCV_PLOGI)
-+			if (ndlp->nlp_flag & NLP_RCV_PLOGI &&
-+			    !(ndlp->nlp_type &
-+			     (NLP_FCP_TARGET | NLP_NVME_TARGET)))
- 				return NULL;
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index a7ace07e179e2..e8f98de60df3a 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -3162,6 +3162,8 @@ static int __maybe_unused mxt_suspend(struct device *dev)
  
-+			ndlp->nlp_prev_state = ndlp->nlp_state;
-+			lpfc_nlp_set_state(vport, ndlp, NLP_STE_NPR_NODE);
+ 	mutex_unlock(&input_dev->mutex);
+ 
++	disable_irq(data->irq);
 +
- 			spin_lock_irq(shost->host_lock);
- 			ndlp->nlp_flag |= NLP_NPR_2B_DISC;
- 			spin_unlock_irq(shost->host_lock);
+ 	return 0;
+ }
+ 
+@@ -3174,6 +3176,8 @@ static int __maybe_unused mxt_resume(struct device *dev)
+ 	if (!input_dev)
+ 		return 0;
+ 
++	enable_irq(data->irq);
++
+ 	mutex_lock(&input_dev->mutex);
+ 
+ 	if (input_dev->users)
 -- 
 2.20.1
 
