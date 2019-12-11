@@ -2,53 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3AC611A0E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22F1211A0EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbfLKB4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 20:56:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32858 "EHLO mail.kernel.org"
+        id S1727491AbfLKB5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 20:57:41 -0500
+Received: from mga04.intel.com ([192.55.52.120]:51942 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726364AbfLKB4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 20:56:13 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A8952073B;
-        Wed, 11 Dec 2019 01:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576029373;
-        bh=Sk4uVwuwCozaP6GWjot/AfsuSZwy7kGd1tNOFl3HdEE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=viHJWrw6dnBTLNJAlnTTTCXUBPY/AAezOr5ANnkCY1ILOt9belasqE9waKAStsfj2
-         lAqdcgsPegyJEOm8LhehFb922rQtjDPpOJO5a1r/t0Pf5NocUn4MSJO4LBSBQPcKLy
-         aWwzkSdpOHeZOvFf9ec0D9ACpeedFNUEawVBk5co=
-Date:   Tue, 10 Dec 2019 17:56:11 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ELF: don't copy ELF header around
-Message-Id: <20191210175611.d615f21e177d5a550a8926f0@linux-foundation.org>
-In-Reply-To: <20191208171242.GA19716@avx2>
-References: <20191208171242.GA19716@avx2>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726417AbfLKB5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 20:57:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 17:57:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="225349071"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 10 Dec 2019 17:57:37 -0800
+Cc:     baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
+        Peter Xu <peterx@redhat.com>, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yi Sun <yi.y.sun@linux.intel.com>
+Subject: Re: [PATCH v2 5/8] iommu/vt-d: Add first level page table interfaces
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <20191128022550.9832-1-baolu.lu@linux.intel.com>
+ <20191128022550.9832-6-baolu.lu@linux.intel.com>
+ <20191202152732.3d9c6589@jacob-builder>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <8fd5d2fe-51c7-3ee7-fcda-625082e23040@linux.intel.com>
+Date:   Wed, 11 Dec 2019 09:56:53 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+In-Reply-To: <20191202152732.3d9c6589@jacob-builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 8 Dec 2019 20:12:42 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+Hi Jacob,
 
-> ELF header is read into bprm->buf[] by generic execve code.
+On 12/3/19 7:27 AM, Jacob Pan wrote:
+> On Thu, 28 Nov 2019 10:25:47 +0800
+> Lu Baolu <baolu.lu@linux.intel.com> wrote:
 > 
-> Save a memcpy and allocate just one header for the interpreter instead
-> of two headers (64 bytes instead of 128 on 64-bit).
+>> This adds functions to manipulate first level page tables
+>> which could be used by a scalale mode capable IOMMU unit.
+>>
+> FL and SL page tables are very similar, and I presume we are not using
+> all the flag bits in FL paging structures for DMA mapping. Are there
+> enough relevant differences to warrant a new set of helper functions
+> for FL? Or we can merge into one.
 
-Hard to review.  Why were there two copies in the first place?  Because
-of the need to modify the caller's version when we do
-`loc->elf_ex.e_entry += load_bias', yes?  Any other place?
+I evaluated your suggestion these days. It turned out that your
+suggestion make code simpler and easier for maintainence. Thank you for
+the comment and I will send out a new version for review soon.
 
-Local variable `loc' can go away now, yes?
+Best regards,
+baolu
