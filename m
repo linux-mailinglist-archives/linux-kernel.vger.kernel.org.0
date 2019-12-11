@@ -2,34 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB7511B6A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:02:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4448911B692
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:01:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732245AbfLKQCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:02:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36458 "EHLO mail.kernel.org"
+        id S1731704AbfLKQBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:01:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730718AbfLKPNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:13:15 -0500
+        id S1731411AbfLKPNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B98DD208C3;
-        Wed, 11 Dec 2019 15:13:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1574E24656;
+        Wed, 11 Dec 2019 15:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077195;
-        bh=ViHz5u/uWxAOrJktt1S26vphXYtLoGqBe2iwBCprXmk=;
+        s=default; t=1576077204;
+        bh=Ur/viyuBEyZ5mqbdrZIIH5xEqPh/48fUizwmkULdx4o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WMmUr6uuHX81ebmL47D4A0pqfLMTDzLNF164li1pay9osVOK+CO4DIIucfrji0ah0
-         jBsWH/JTPxScloN/WJZTCIrCmuc+6A4oz251/FzuZLxrSkzIAnXmKjTvGTdgPzacUd
-         9T1eB6SXBx9C9hQYBZ9rHRsuWU8Qs7vOyEKhCSnY=
+        b=xaFJuEPcATQr3gajjFdK81T2jXtUe/ZD+k2Z0IwMHQDaLbRTYTcOIpv3XfDTykEj9
+         q3tfUDXjFbnIByX5sz9X2/QF743gd5dQOYV26PUqffvcC4DbAJUOGhoept9HbpIyaU
+         i0IinKA4rMKJ6ba8TsLurhL1+H60LdBzwR2d1QhA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>, Jiri Kosina <jkosina@suse.cz>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 078/134] HID: logitech-hidpp: Silence intermittent get_battery_capacity errors
-Date:   Wed, 11 Dec 2019 10:10:54 -0500
-Message-Id: <20191211151150.19073-78-sashal@kernel.org>
+Cc:     Julia Cartwright <julia@ni.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Tim Sander <tim@krieglstein.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Sasha Levin <sashal@kernel.org>, linux-watchdog@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 086/134] watchdog: prevent deferral of watchdogd wakeup on RT
+Date:   Wed, 11 Dec 2019 10:11:02 -0500
+Message-Id: <20191211151150.19073-86-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
 References: <20191211151150.19073-1-sashal@kernel.org>
@@ -42,44 +47,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Julia Cartwright <julia@ni.com>
 
-[ Upstream commit 61005d65b6c7dcf61c19516e6ebe5acc02d2cdda ]
+[ Upstream commit a19f89335f4bda3d77d991c96583e3e51856acbb ]
 
-My Logitech M185 (PID:4038) 2.4 GHz wireless HID++ mouse is causing
-intermittent errors like these in the log:
+When PREEMPT_RT is enabled, all hrtimer expiry functions are
+deferred for execution into the context of ksoftirqd unless otherwise
+annotated.
 
-[11091.034857] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
-[12388.031260] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
-[16613.718543] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
-[23529.938728] logitech-hidpp-device 0003:046D:4038.0006: hidpp20_batterylevel_get_battery_capacity: received protocol error 0x09
+Deferring the expiry of the hrtimer used by the watchdog core, however,
+is a waste, as the callback does nothing but queue a kthread work item
+and wakeup watchdogd.
 
-We are already silencing error-code 0x09 (HIDPP_ERROR_RESOURCE_ERROR)
-errors in other places, lets do the same in
-hidpp20_batterylevel_get_battery_capacity to remove these harmless,
-but scary looking errors from the dmesg output.
+It's worst then that, too: the deferral through ksoftirqd also means
+that for correct behavior a user must adjust the scheduling parameters
+of both watchdogd _and_ ksoftirqd, which is unnecessary and has other
+side effects (like causing unrelated expiry functions to execute at
+potentially elevated priority).
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Instead, mark the hrtimer used by the watchdog core as being _HARD to
+allow it's execution directly from hardirq context.  The work done in
+this expiry function is well-bounded and minimal.
+
+A user still must adjust the scheduling parameters of the watchdogd
+to be correct w.r.t. their application needs.
+
+Link: https://lkml.kernel.org/r/0e02d8327aeca344096c246713033887bc490dd7.1538089180.git.julia@ni.com
+Cc: Guenter Roeck <linux@roeck-us.net>
+Reported-and-tested-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Reported-by: Tim Sander <tim@krieglstein.org>
+Signed-off-by: Julia Cartwright <julia@ni.com>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+[bigeasy: use only HRTIMER_MODE_REL_HARD]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20191105144506.clyadjbvnn7b7b2m@linutronix.de
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-logitech-hidpp.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/watchdog/watchdog_dev.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index 8e91e2f06cb4f..cd9193078525b 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -1102,6 +1102,9 @@ static int hidpp20_batterylevel_get_battery_capacity(struct hidpp_device *hidpp,
- 	ret = hidpp_send_fap_command_sync(hidpp, feature_index,
- 					  CMD_BATTERY_LEVEL_STATUS_GET_BATTERY_LEVEL_STATUS,
- 					  NULL, 0, &response);
-+	/* Ignore these intermittent errors */
-+	if (ret == HIDPP_ERROR_RESOURCE_ERROR)
-+		return -EIO;
- 	if (ret > 0) {
- 		hid_err(hidpp->hid_dev, "%s: received protocol error 0x%02x\n",
- 			__func__, ret);
+diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
+index dbd2ad4c92948..d3acc0a7256ca 100644
+--- a/drivers/watchdog/watchdog_dev.c
++++ b/drivers/watchdog/watchdog_dev.c
+@@ -158,7 +158,8 @@ static inline void watchdog_update_worker(struct watchdog_device *wdd)
+ 		ktime_t t = watchdog_next_keepalive(wdd);
+ 
+ 		if (t > 0)
+-			hrtimer_start(&wd_data->timer, t, HRTIMER_MODE_REL);
++			hrtimer_start(&wd_data->timer, t,
++				      HRTIMER_MODE_REL_HARD);
+ 	} else {
+ 		hrtimer_cancel(&wd_data->timer);
+ 	}
+@@ -177,7 +178,7 @@ static int __watchdog_ping(struct watchdog_device *wdd)
+ 	if (ktime_after(earliest_keepalive, now)) {
+ 		hrtimer_start(&wd_data->timer,
+ 			      ktime_sub(earliest_keepalive, now),
+-			      HRTIMER_MODE_REL);
++			      HRTIMER_MODE_REL_HARD);
+ 		return 0;
+ 	}
+ 
+@@ -971,7 +972,7 @@ static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
+ 		return -ENODEV;
+ 
+ 	kthread_init_work(&wd_data->work, watchdog_ping_work);
+-	hrtimer_init(&wd_data->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(&wd_data->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+ 	wd_data->timer.function = watchdog_timer_expired;
+ 
+ 	if (wdd->id == 0) {
+@@ -1019,7 +1020,8 @@ static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
+ 		__module_get(wdd->ops->owner);
+ 		kref_get(&wd_data->kref);
+ 		if (handle_boot_enabled)
+-			hrtimer_start(&wd_data->timer, 0, HRTIMER_MODE_REL);
++			hrtimer_start(&wd_data->timer, 0,
++				      HRTIMER_MODE_REL_HARD);
+ 		else
+ 			pr_info("watchdog%d running and kernel based pre-userspace handler disabled\n",
+ 				wdd->id);
 -- 
 2.20.1
 
