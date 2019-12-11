@@ -2,203 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E51D11A408
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 06:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4899511A421
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 06:55:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLKFvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 00:51:07 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44769 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbfLKFvG (ORCPT
+        id S1727834AbfLKFzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 00:55:01 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:35000 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725973AbfLKFyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 00:51:06 -0500
-Received: by mail-pl1-f195.google.com with SMTP id bh2so953065plb.11
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 21:51:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=lLapnIIb6lVWR88dgYwHj0pEFw/ZzVii/Ej9vRXRHTM=;
-        b=mROG/HOXnDdmgjbz5J5ouZ0n9b8BoMdcOxlbXxqEDlEjoAq7Dntbf93vu7bBjTHium
-         kAR7DNGI1KuqmYjaldUi0+7gcE227rB4ZIq9u73q2ekVwwKsF7fNWMrljGVA3U8Cx2zc
-         /3zNmHq33VSz2DEMoqccgdoWCigZiyKx+gaqz4PZJGFrGsrx+FqpUo0lT4gbAgDWjvRc
-         8rkIqPoeMva5PCorMQUOOARnM7YrnvsEKcY2qShZwkBEyJCKOb7Glgv3iVJWE0hx+l4a
-         oYR3satfkmDNaLOG4317KCiIXwzqulGwWmnW/YIK0rjquaVMKbN31pnBC43kBCFdelbQ
-         40dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=lLapnIIb6lVWR88dgYwHj0pEFw/ZzVii/Ej9vRXRHTM=;
-        b=mJTKRQHLbB7qrn99uD/pS2CMHLQdDOYo0pF/8pXwNyk10/w1JSVD9QyCS81cMVdpHE
-         K+hSy41HtVAllCKkLnTd0Rnk1xfGjLl5OF1CAYnmaRx2GjIYpKw5lQ/I4iQfh1cEA4Yd
-         7udp8NmDnqCka+2xMBfle6lvb7Z/kzw/KSwEVIATE5Tboy0vrhuFQwwpcqHh6j6BsZ5Y
-         PnpjGvq77WxVX8X/C2OhCJrR2Ot2p68p7qQXPMOrM0/cJUs/ECrzoYIAGYZB8ZOXQYqD
-         DMxDmmITdvTVATS9aNKlVzsq8zsmcYpzGTzClGsveR7j+4ktQF4Y5LL4NvmBlefAnHYX
-         2wiw==
-X-Gm-Message-State: APjAAAXl3aJdEEg2NULDtUj14ZQV+RCSXiwl2nGXFZszeRSVqtBvV12F
-        giQI1GPSbBJMX/CU296LnWrOFQ==
-X-Google-Smtp-Source: APXvYqzb6DmUBn52QUZxXvhWxCspFS4mNZV2nAvBl5SaYNTj0HvIx72deigYfD3dWXLAJ2R1ktVXxg==
-X-Received: by 2002:a17:90a:2808:: with SMTP id e8mr1537917pjd.63.1576043465746;
-        Tue, 10 Dec 2019 21:51:05 -0800 (PST)
-Received: from ?IPv6:240e:362:417:e00:d1ed:4eb5:7aae:41c8? ([240e:362:417:e00:d1ed:4eb5:7aae:41c8])
-        by smtp.gmail.com with ESMTPSA id u1sm988461pfn.133.2019.12.10.21.50.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Dec 2019 21:51:04 -0800 (PST)
-Subject: Re: [RESEND PATCH v9 2/4] uacce: add uacce driver
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        jonathan.cameron@huawei.com, grant.likely@arm.com,
-        jean-philippe <jean-philippe@linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        guodong.xu@linaro.org, linux-accelerators@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>
-References: <1575945755-27380-3-git-send-email-zhangfei.gao@linaro.org>
- <201912110600.7K87vvu4%lkp@intel.com>
-From:   zhangfei <zhangfei.gao@linaro.org>
-Message-ID: <9aa3ec9b-6ca3-c8cc-a381-5445d34d0ed5@linaro.org>
-Date:   Wed, 11 Dec 2019 13:50:23 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 11 Dec 2019 00:54:54 -0500
+X-UUID: 18846f4ba71044ba9c908b5f9c501de1-20191211
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=8qhhdoDqZ+CygTdbYi8g0Gw9RSr1TQM9pKMrc5q2zEY=;
+        b=JmrzCBN2MdKqL7vvN2PnVdOS+pKcLPb5fHssSPthAL1Aa0MBuif9rkMBB8aKjkobvdBa+guB+PO440BH1Q1rhrHCrOfvOKV5iaqNn0zX+n6pU1N3KzLki5AAMtjKo9gLKfShAXdb6q1FkxyngPl+sGaZZHtqNZjqsgduv2cbI50=;
+X-UUID: 18846f4ba71044ba9c908b5f9c501de1-20191211
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 974004315; Wed, 11 Dec 2019 13:54:44 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 11 Dec 2019 13:54:31 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 11 Dec 2019 13:54:37 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v5 01/11] dt-bindings: phy-mtk-tphy: add two optional properties for u2phy
+Date:   Wed, 11 Dec 2019 13:54:13 +0800
+Message-ID: <1576043663-14240-1-git-send-email-chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-In-Reply-To: <201912110600.7K87vvu4%lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 93C3912FB354FF2DFCC9DDD3570751E44B5EE4DE40033869E5414810FA15E18F2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+QWRkIHR3byBvcHRpb25hbCBwcm9wZXJ0aWVzLCBvbmUgZm9yIHR1bmluZyBKLUsgdm9sdGFnZSBi
+eSBJTlRSLA0KYW5vdGhlciBmb3IgZGlzY29ubmVjdCB0aHJlc2hvbGQsIGJvdGggb2YgdGhlbSBh
+cmUgcmVsYXRlZCB3aXRoDQpjb25uZWN0IGRldGVjdGlvbg0KDQpTaWduZWQtb2ZmLWJ5OiBDaHVu
+ZmVuZyBZdW4gPGNodW5mZW5nLnl1bkBtZWRpYXRlay5jb20+DQpBY2tlZC1ieTogUm9iIEhlcnJp
+bmcgPHJvYmhAa2VybmVsLm9yZz4NCi0tLQ0KdjU6IGFkZCBhY2tlZC1ieSBSb2INCg0KdjQ6IG5v
+IGNoYW5nZXMNCg0KdjM6IGNoYW5nZSBjb21taXQgbG9nDQoNCnYyOiBjaGFuZ2UgZGVzY3JpcHRp
+b24NCi0tLQ0KIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waHkvcGh5LW10ay10
+cGh5LnR4dCB8IDIgKysNCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQoNCmRpZmYg
+LS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3BoeS1tdGstdHBo
+eS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3BoeS1tdGstdHBo
+eS50eHQNCmluZGV4IGE1ZjdhNGYwZGJjMS4uY2U2YWJmYmRmYmUxIDEwMDY0NA0KLS0tIGEvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9waHktbXRrLXRwaHkudHh0DQorKysg
+Yi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3BoeS1tdGstdHBoeS50eHQN
+CkBAIC01Miw2ICs1Miw4IEBAIE9wdGlvbmFsIHByb3BlcnRpZXMgKFBIWV9UWVBFX1VTQjIgcG9y
+dCAoY2hpbGQpIG5vZGUpOg0KIC0gbWVkaWF0ZWssZXllLXZydAk6IHUzMiwgdGhlIHNlbGVjdGlv
+biBvZiBWUlQgcmVmZXJlbmNlIHZvbHRhZ2UNCiAtIG1lZGlhdGVrLGV5ZS10ZXJtCTogdTMyLCB0
+aGUgc2VsZWN0aW9uIG9mIEhTX1RYIFRFUk0gcmVmZXJlbmNlIHZvbHRhZ2UNCiAtIG1lZGlhdGVr
+LGJjMTIJOiBib29sLCBlbmFibGUgQkMxMiBvZiB1MnBoeSBpZiBzdXBwb3J0IGl0DQorLSBtZWRp
+YXRlayxkaXNjdGgJOiB1MzIsIHRoZSBzZWxlY3Rpb24gb2YgZGlzY29ubmVjdCB0aHJlc2hvbGQN
+CistIG1lZGlhdGVrLGludHIJOiB1MzIsIHRoZSBzZWxlY3Rpb24gb2YgaW50ZXJuYWwgUiAocmVz
+aXN0YW5jZSkNCiANCiBFeGFtcGxlOg0KIA0KLS0gDQoyLjI0LjANCg==
 
-
-On 2019/12/11 上午8:09, kbuild test robot wrote:
-> Hi Zhangfei,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on cryptodev/master]
-> [also build test ERROR on crypto/master char-misc/char-misc-testing v5.5-rc1 next-20191210]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->
-> url:    https://github.com/0day-ci/linux/commits/Zhangfei-Gao/Add-uacce-module-for-Accelerator/20191210-160210
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-> config: sparc64-allmodconfig (attached as .config)
-> compiler: sparc64-linux-gcc (GCC) 7.5.0
-> reproduce:
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # save the attached .config to linux build tree
->          GCC_VERSION=7.5.0 make.cross ARCH=sparc64
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
->     drivers/misc/uacce/uacce.c:112:15: error: variable 'uacce_sva_ops' has initializer but incomplete type
->      static struct iommu_sva_ops uacce_sva_ops = {
->                    ^~~~~~~~~~~~~
->     drivers/misc/uacce/uacce.c:113:3: error: 'struct iommu_sva_ops' has no member named 'mm_exit'
->       .mm_exit = uacce_sva_exit,
->        ^~~~~~~
->     drivers/misc/uacce/uacce.c:113:13: warning: excess elements in struct initializer
->       .mm_exit = uacce_sva_exit,
->                  ^~~~~~~~~~~~~~
->     drivers/misc/uacce/uacce.c:113:13: note: (near initialization for 'uacce_sva_ops')
->     drivers/misc/uacce/uacce.c: In function 'uacce_mm_get':
->     drivers/misc/uacce/uacce.c:144:12: error: implicit declaration of function 'iommu_sva_bind_device'; did you mean 'bus_find_device'? [-Werror=implicit-function-declaration]
->        handle = iommu_sva_bind_device(uacce->parent, mm, uacce_mm);
->                 ^~~~~~~~~~~~~~~~~~~~~
->                 bus_find_device
->     drivers/misc/uacce/uacce.c:144:10: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
->        handle = iommu_sva_bind_device(uacce->parent, mm, uacce_mm);
->               ^
->     drivers/misc/uacce/uacce.c:148:9: error: implicit declaration of function 'iommu_sva_set_ops'; did you mean 'iommu_setup_dma_ops'? [-Werror=implicit-function-declaration]
->        ret = iommu_sva_set_ops(handle, &uacce_sva_ops);
->              ^~~~~~~~~~~~~~~~~
->              iommu_setup_dma_ops
->     drivers/misc/uacce/uacce.c:152:21: error: implicit declaration of function 'iommu_sva_get_pasid' [-Werror=implicit-function-declaration]
->        uacce_mm->pasid = iommu_sva_get_pasid(handle);
->                          ^~~~~~~~~~~~~~~~~~~
->>> drivers/misc/uacce/uacce.c:153:26: error: 'IOMMU_PASID_INVALID' undeclared (first use in this function); did you mean 'HV_MSIVALID_INVALID'?
->        if (uacce_mm->pasid == IOMMU_PASID_INVALID)
->                               ^~~~~~~~~~~~~~~~~~~
->                               HV_MSIVALID_INVALID
->     drivers/misc/uacce/uacce.c:153:26: note: each undeclared identifier is reported only once for each function it appears in
->     drivers/misc/uacce/uacce.c:168:3: error: implicit declaration of function 'iommu_sva_unbind_device'; did you mean 'bus_find_device'? [-Werror=implicit-function-declaration]
->        iommu_sva_unbind_device(handle);
->        ^~~~~~~~~~~~~~~~~~~~~~~
->        bus_find_device
->     drivers/misc/uacce/uacce.c: At top level:
->>> drivers/misc/uacce/uacce.c:274:21: error: variable 'uacce_vm_ops' has initializer but incomplete type
->      static const struct vm_operations_struct uacce_vm_ops = {
->                          ^~~~~~~~~~~~~~~~~~~~
->>> drivers/misc/uacce/uacce.c:275:3: error: 'const struct vm_operations_struct' has no member named 'close'
->       .close = uacce_vma_close,
->        ^~~~~
->     drivers/misc/uacce/uacce.c:275:11: warning: excess elements in struct initializer
->       .close = uacce_vma_close,
->                ^~~~~~~~~~~~~~~
->     drivers/misc/uacce/uacce.c:275:11: note: (near initialization for 'uacce_vm_ops')
->     drivers/misc/uacce/uacce.c: In function 'uacce_fops_mmap':
->>> drivers/misc/uacce/uacce.c:295:19: error: 'VM_DONTCOPY' undeclared (first use in this function)
->       vma->vm_flags |= VM_DONTCOPY | VM_DONTEXPAND | VM_WIPEONFORK;
->                        ^~~~~~~~~~~
->>> drivers/misc/uacce/uacce.c:295:33: error: 'VM_DONTEXPAND' undeclared (first use in this function); did you mean 'VM_DONTCOPY'?
->       vma->vm_flags |= VM_DONTCOPY | VM_DONTEXPAND | VM_WIPEONFORK;
->                                      ^~~~~~~~~~~~~
->                                      VM_DONTCOPY
->>> drivers/misc/uacce/uacce.c:295:49: error: 'VM_WIPEONFORK' undeclared (first use in this function)
->       vma->vm_flags |= VM_DONTCOPY | VM_DONTEXPAND | VM_WIPEONFORK;
->                                                      ^~~~~~~~~~~~~
->     drivers/misc/uacce/uacce.c: In function 'uacce_alloc':
->     drivers/misc/uacce/uacce.c:502:9: error: implicit declaration of function 'iommu_dev_enable_feature'; did you mean 'module_enable_ro'? [-Werror=implicit-function-declaration]
->        ret = iommu_dev_enable_feature(parent, IOMMU_DEV_FEAT_SVA);
->              ^~~~~~~~~~~~~~~~~~~~~~~~
->              module_enable_ro
->     drivers/misc/uacce/uacce.c:502:42: error: 'IOMMU_DEV_FEAT_SVA' undeclared (first use in this function); did you mean 'NOMMU_VMFLAGS'?
->        ret = iommu_dev_enable_feature(parent, IOMMU_DEV_FEAT_SVA);
->                                               ^~~~~~~~~~~~~~~~~~
->                                               NOMMU_VMFLAGS
->     drivers/misc/uacce/uacce.c:530:3: error: implicit declaration of function 'iommu_dev_disable_feature'; did you mean 'module_disable_ro'? [-Werror=implicit-function-declaration]
->        iommu_dev_disable_feature(uacce->parent, IOMMU_DEV_FEAT_SVA);
->        ^~~~~~~~~~~~~~~~~~~~~~~~~
->        module_disable_ro
->     drivers/misc/uacce/uacce.c: In function 'uacce_remove':
->     drivers/misc/uacce/uacce.c:592:44: error: 'IOMMU_DEV_FEAT_SVA' undeclared (first use in this function); did you mean 'NOMMU_VMFLAGS'?
->        iommu_dev_disable_feature(uacce->parent, IOMMU_DEV_FEAT_SVA);
->                                                 ^~~~~~~~~~~~~~~~~~
->                                                 NOMMU_VMFLAGS
->     drivers/misc/uacce/uacce.c: At top level:
->     drivers/misc/uacce/uacce.c:112:29: error: storage size of 'uacce_sva_ops' isn't known
->      static struct iommu_sva_ops uacce_sva_ops = {
->                                  ^~~~~~~~~~~~~
->>> drivers/misc/uacce/uacce.c:274:42: error: storage size of 'uacce_vm_ops' isn't known
->
-The build issue can be solved by
--#include <linux/dma-iommu.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/iommu.h>
-
-Since CONFIG_IOMMU_DMA is not defined in the arch.
-include/linux/dma-iommu.h
-#ifdef CONFIG_IOMMU_DMA
-#include <linux/dma-mapping.h>
-#include <linux/iommu.h>
-
-Will update later.
-
-Thanks
