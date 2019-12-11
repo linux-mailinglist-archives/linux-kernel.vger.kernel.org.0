@@ -2,306 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 626EA11AE28
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:47:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CC8311AE1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:46:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730066AbfLKOrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 09:47:00 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33329 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729370AbfLKOqx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 09:46:53 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191211144651euoutp01c20e69bb536b438dc49d86130c39dbbb~fWGsp0Zas1954619546euoutp01C
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 14:46:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191211144651euoutp01c20e69bb536b438dc49d86130c39dbbb~fWGsp0Zas1954619546euoutp01C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576075611;
-        bh=jPVQGv2B63dkrb4xPXViL+0AtlLT78bLnq0v7ybfs38=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=THjkas/MzYhyi5bxqtCiFaTMibrLiG6/ck6oyH1BG9YDd+R0tv75XJyMeZIH2Z3Uc
-         Cqb6KktBqHRIYoiJmozBgSLRRo8su4NtNjz4qtYJyLCPMFdXUie/JzePoGOJ64PTnI
-         WCMy3cUoT1Q0+9I6X+VX/ESrMMr24h7OiDpZmNcQ=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191211144651eucas1p2a3b9c45b1a4754c000c8860c82504333~fWGr_xD2d0794007940eucas1p2Z;
-        Wed, 11 Dec 2019 14:46:51 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id E4.2F.61286.B5101FD5; Wed, 11
-        Dec 2019 14:46:51 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac~fWGroaE5d1014710147eucas1p2R;
-        Wed, 11 Dec 2019 14:46:50 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191211144650eusmtrp26bb810620493b236aed5f8ff33c1102f~fWGrnsfxn0169801698eusmtrp29;
-        Wed, 11 Dec 2019 14:46:50 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-93-5df1015b3e91
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 42.AA.07950.A5101FD5; Wed, 11
-        Dec 2019 14:46:50 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191211144649eusmtip1181d94ddc9fa416ac400580ecdc322e8~fWGq4HQtg0888708887eusmtip19;
-        Wed, 11 Dec 2019 14:46:49 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 4/4] usb: usb3503: Convert to use GPIO descriptors
-Date:   Wed, 11 Dec 2019 15:46:38 +0100
-Message-Id: <20191211144638.24676-5-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191211144638.24676-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSaUhUURjlzntv3nNw5DkjeF1KGigryAWjLqWSYfGEjET6k0015XPBlRnX
-        /iTuDikmSpNmiYqW+5bOaGkuOamD44JmkFppoImWS4Yams9n9u+c757znXMvl8Ik7whrKjg8
-        ilWGK0JlQhHe3LsxeMoPLMud+uoxNDizhaN6TS2BBjqWcJTWXoijpJJaITIa60iU+6dcgBpm
-        xgk02vpUiEaThgHSGNsFqLgsBUPVPZMkSkx2QakZZQRqrEkj0UaXUXDBnCn5PYUxdV8rCUaX
-        P0kyDRUZQubT+Gsh01FYRTKNpQ+Y5L4OnMlqqgDMasPha6IbIld/NjQ4hlU6ut8RBTXNNJOR
-        z53i1vtniQSgt1cDEwrSp2FZTjGpBiJKQr8AcGzTIOTJGoCFKZ2AU0noVQBnJwLVgNpzpHQf
-        5zXlAC63aIgDw8v1MZwzCGlnqF5U722yoKsA3MrU4BzB6E0MflxI2VsrpS/B9JphgsM4fRQW
-        pGcJOCym3WCHYRvwBe1gZd1bjIs2od1hbmc8twfSUySc07ZjvMYTjpa0EzyWwu/6JpLHtnBH
-        91zAG5IA/DJYTfLkIYCjiZr9hPOwW8+1oHbrnYC1rY782AMWJJUD/s5mcGLRnBtjuzCn+THG
-        j8UwPVXCq4/BfH3NQWzn0Mh+NQbOf9DsP+kjALOW10E2sMv/H1YEQAWwZKNVYYGsyjmcjXVQ
-        KcJU0eGBDvciwhrA7uca2NavaMGvkbtdgKaAzFRc1PJDLiEUMar4sC4AKUxmIdanLsklYn9F
-        /H1WGXFbGR3KqrqADYXLLMUuxfNyCR2oiGJDWDaSVf47FVAm1gmAiF9jv32WHrnlsXnWNQAa
-        SqdEcQYm08tautC2vWgXaz70ZvqJp2vUZWfCtsAqxnD1kK7HNK/FLLvc1jck8fq01n/55pXq
-        wYDGZ4IKey9v77lZn9Bz/WfmrH76OW29d7R55aOd1Y2PFOM+F92KVhql9XnyhZh5Ue96W6Fv
-        snEnW4arghTOJzGlSvEXORxtJVgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsVy+t/xu7pRjB9jDTqeaFqce/ybxWLjjPWs
-        Fqf3v2OxaN83l8WiefF6Novz5zewW0z5s5zJYtPja6wWl3fNYbO43HyR0WLG+X1MFouWtTJb
-        rD1yl92iqcXYoq1zGavF5nXt7BY/D51nchD0WPz9HrPHhkerWT12zrrL7rFpVSebx51re9g8
-        9s9dw+6xeUm9R8vJ/SwefVtWMXp83iQXwBWlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqln
-        aGwea2VkqqRvZ5OSmpNZllqkb5egl7Hl8Tb2gvkGFd9OPWFtYDyu3sXIwSEhYCLReliji5GL
-        Q0hgKaPE0yfHmLsYOYHiMhInpzWwQtjCEn+udbFBFH1ilFh9ajNYgk3AUKLrLURCRGADo8SZ
-        909YQBLMAk0sEicPqYDYwgKuEh3rLoI1sAioSszu6GMCsXkFbCX2n/nHCLFBXmL1hgPMIBdx
-        CthJTDlYCRIWAiq5N+kQ2wRGvgWMDKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECo2jbsZ9b
-        djB2vQs+xCjAwajEw7tg+/tYIdbEsuLK3EOMEhzMSiK8x9vexQrxpiRWVqUW5ccXleakFh9i
-        NAW6aSKzlGhyPjDC80riDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQnlqRmp6YWpBbB9DFxcEo1
-        MKpknr333+BegsOc+Rc3p//yKv4fKy7yJ4zvc3qNimDDs6hMP2XXmflvzFO3b1j3al7Jxcdi
-        PZ+nc9sILFq0ZsUBuWU50oUfL3/kfKkw94LmGu/JOy9NFM7Z9OdFrcv869ffP1PdLPfmjahc
-        2pH7BuK8xQYCxis2xiZ92/r3TvOOz8ftumqVZj5TYinOSDTUYi4qTgQArFTau7gCAAA=
-X-CMS-MailID: 20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac
-References: <20191211144638.24676-1-m.szyprowski@samsung.com>
-        <CGME20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac@eucas1p2.samsung.com>
+        id S1729299AbfLKOqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 09:46:48 -0500
+Received: from foss.arm.com ([217.140.110.172]:60634 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727457AbfLKOqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 09:46:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 592621FB;
+        Wed, 11 Dec 2019 06:46:47 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C72223F67D;
+        Wed, 11 Dec 2019 06:46:45 -0800 (PST)
+Date:   Wed, 11 Dec 2019 14:46:43 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     John Garry <john.garry@huawei.com>, Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, will@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linuxarm <linuxarm@huawei.com>, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCHES] Fix 'perf top' breakage on architectures not providing
+ get_cpuid() Re: perf top for arm64?
+Message-ID: <20191211144643.GC35097@lakrids.cambridge.arm.com>
+References: <1573045254-39833-1-git-send-email-john.garry@huawei.com>
+ <20191106140036.GA6259@kernel.org>
+ <418023e7-a50d-cb6f-989f-2e6d114ce5d8@huawei.com>
+ <20191210163655.GG14123@krava>
+ <952dc484-2739-ee65-f41c-f0198850ab10@huawei.com>
+ <20191210170841.GA23357@krava>
+ <9a31536b-f266-e305-1107-2f745d0a33e3@huawei.com>
+ <20191210195113.GD13965@kernel.org>
+ <20191211133319.GA15181@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211133319.GA15181@kernel.org>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+On Wed, Dec 11, 2019 at 10:33:19AM -0300, Arnaldo Carvalho de Melo wrote:
+> So can you take a look at the two patches below and provide me Acked-by
+> and/or Reviewed-by and/or Tested-by?
 
-This converts the USB3503 to pick GPIO descriptors from the
-device tree instead of iteratively picking out GPIO number
-references and then referencing these from the global GPIO
-numberspace.
+I just gave this a spin. With vanilla v5.5-rc1 perf top behaves as John
+reported, and with these applied atop perf works as expected:
 
-The USB3503 is only used from device tree among the in-tree
-platforms. If board files would still desire to use it they can
-provide machine descriptor tables.
+Tested-by: Mark Rutland <mark.rutland@arm.com>
 
-Make sure to preserve semantics such as the reset delay
-introduced by Stefan.
+From scaning the code, the only other user of get_cpuid() that ends up
+giving up is perf kvm, but AFAICT that never supported arm64, so that
+looks sound to me:
 
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-[mszyprow: invert the logic behind reset GPIO line]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/usb/misc/usb3503.c            | 94 ++++++++++-----------------
- include/linux/platform_data/usb3503.h |  3 -
- 2 files changed, 35 insertions(+), 62 deletions(-)
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 
-diff --git a/drivers/usb/misc/usb3503.c b/drivers/usb/misc/usb3503.c
-index 72f39a9751b5..116bd789e568 100644
---- a/drivers/usb/misc/usb3503.c
-+++ b/drivers/usb/misc/usb3503.c
-@@ -7,11 +7,10 @@
- 
- #include <linux/clk.h>
- #include <linux/i2c.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/module.h>
--#include <linux/of_gpio.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/usb3503.h>
- #include <linux/regmap.h>
-@@ -47,19 +46,19 @@ struct usb3503 {
- 	struct device		*dev;
- 	struct clk		*clk;
- 	u8	port_off_mask;
--	int	gpio_intn;
--	int	gpio_reset;
--	int	gpio_connect;
-+	struct gpio_desc	*intn;
-+	struct gpio_desc 	*reset;
-+	struct gpio_desc 	*connect;
- 	bool	secondary_ref_clk;
- };
- 
- static int usb3503_reset(struct usb3503 *hub, int state)
- {
--	if (!state && gpio_is_valid(hub->gpio_connect))
--		gpio_set_value_cansleep(hub->gpio_connect, 0);
-+	if (!state && hub->connect)
-+		gpiod_set_value_cansleep(hub->connect, 0);
- 
--	if (gpio_is_valid(hub->gpio_reset))
--		gpio_set_value_cansleep(hub->gpio_reset, state);
-+	if (hub->reset)
-+		gpiod_set_value_cansleep(hub->reset, !state);
- 
- 	/* Wait T_HUBINIT == 4ms for hub logic to stabilize */
- 	if (state)
-@@ -115,8 +114,8 @@ static int usb3503_connect(struct usb3503 *hub)
- 		}
- 	}
- 
--	if (gpio_is_valid(hub->gpio_connect))
--		gpio_set_value_cansleep(hub->gpio_connect, 1);
-+	if (hub->connect)
-+		gpiod_set_value_cansleep(hub->connect, 1);
- 
- 	hub->mode = USB3503_MODE_HUB;
- 	dev_info(dev, "switched to HUB mode\n");
-@@ -163,13 +162,11 @@ static int usb3503_probe(struct usb3503 *hub)
- 	int err;
- 	u32 mode = USB3503_MODE_HUB;
- 	const u32 *property;
-+	enum gpiod_flags flags;
- 	int len;
- 
- 	if (pdata) {
- 		hub->port_off_mask	= pdata->port_off_mask;
--		hub->gpio_intn		= pdata->gpio_intn;
--		hub->gpio_connect	= pdata->gpio_connect;
--		hub->gpio_reset		= pdata->gpio_reset;
- 		hub->mode		= pdata->initial_mode;
- 	} else if (np) {
- 		u32 rate = 0;
-@@ -230,59 +227,38 @@ static int usb3503_probe(struct usb3503 *hub)
- 			}
- 		}
- 
--		hub->gpio_intn	= of_get_named_gpio(np, "intn-gpios", 0);
--		if (hub->gpio_intn == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
--		hub->gpio_connect = of_get_named_gpio(np, "connect-gpios", 0);
--		if (hub->gpio_connect == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
--		hub->gpio_reset = of_get_named_gpio(np, "reset-gpios", 0);
--		if (hub->gpio_reset == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
- 		of_property_read_u32(np, "initial-mode", &mode);
- 		hub->mode = mode;
- 	}
- 
--	if (hub->port_off_mask && !hub->regmap)
--		dev_err(dev, "Ports disabled with no control interface\n");
--
--	if (gpio_is_valid(hub->gpio_intn)) {
--		int val = hub->secondary_ref_clk ? GPIOF_OUT_INIT_LOW :
--						   GPIOF_OUT_INIT_HIGH;
--		err = devm_gpio_request_one(dev, hub->gpio_intn, val,
--					    "usb3503 intn");
--		if (err) {
--			dev_err(dev,
--				"unable to request GPIO %d as interrupt pin (%d)\n",
--				hub->gpio_intn, err);
--			return err;
--		}
--	}
--
--	if (gpio_is_valid(hub->gpio_connect)) {
--		err = devm_gpio_request_one(dev, hub->gpio_connect,
--				GPIOF_OUT_INIT_LOW, "usb3503 connect");
--		if (err) {
--			dev_err(dev,
--				"unable to request GPIO %d as connect pin (%d)\n",
--				hub->gpio_connect, err);
--			return err;
--		}
--	}
--
--	if (gpio_is_valid(hub->gpio_reset)) {
--		err = devm_gpio_request_one(dev, hub->gpio_reset,
--				GPIOF_OUT_INIT_LOW, "usb3503 reset");
-+	if (hub->secondary_ref_clk)
-+		flags = GPIOD_OUT_LOW;
-+	else
-+		flags = GPIOD_OUT_HIGH;
-+	hub->intn = devm_gpiod_get_optional(dev, "intn", flags);
-+	if (IS_ERR(hub->intn))
-+		return PTR_ERR(hub->intn);
-+	if (hub->intn)
-+		gpiod_set_consumer_name(hub->intn, "usb3503 intn");
-+
-+	hub->connect = devm_gpiod_get_optional(dev, "connect", GPIOD_OUT_LOW);
-+	if (IS_ERR(hub->connect))
-+		return PTR_ERR(hub->connect);
-+	if (hub->connect)
-+		gpiod_set_consumer_name(hub->connect, "usb3503 connect");
-+
-+	hub->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(hub->reset))
-+		return PTR_ERR(hub->reset);
-+	if (hub->reset) {
- 		/* Datasheet defines a hardware reset to be at least 100us */
- 		usleep_range(100, 10000);
--		if (err) {
--			dev_err(dev,
--				"unable to request GPIO %d as reset pin (%d)\n",
--				hub->gpio_reset, err);
--			return err;
--		}
-+		gpiod_set_consumer_name(hub->reset, "usb3503 reset");
- 	}
- 
-+	if (hub->port_off_mask && !hub->regmap)
-+		dev_err(dev, "Ports disabled with no control interface\n");
-+
- 	usb3503_switch_mode(hub, hub->mode);
- 
- 	dev_info(dev, "%s: probed in %s mode\n", __func__,
-diff --git a/include/linux/platform_data/usb3503.h b/include/linux/platform_data/usb3503.h
-index e049d51c1353..d01ef97ddf36 100644
---- a/include/linux/platform_data/usb3503.h
-+++ b/include/linux/platform_data/usb3503.h
-@@ -17,9 +17,6 @@ enum usb3503_mode {
- struct usb3503_platform_data {
- 	enum usb3503_mode	initial_mode;
- 	u8	port_off_mask;
--	int	gpio_intn;
--	int	gpio_connect;
--	int	gpio_reset;
- };
- 
- #endif
--- 
-2.17.1
+Thanks,
+Mark.
 
+> From 53c6cde6a71a1a9283763bd2e938b229b50c2cd5 Mon Sep 17 00:00:00 2001
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date: Wed, 11 Dec 2019 10:09:24 -0300
+> Subject: [PATCH 1/2] perf arch: Make the default get_cpuid() return compatible
+>  error
+> 
+> Some of the functions calling get_cpuid() propagate back the error it
+> returns, and all are using errno (positive) values, make the weak
+> default get_cpuid() function return ENOSYS to be consistent and to allow
+> checking if this is an arch not providing this function or if a provided
+> one is having trouble getting the cpuid, to decide if the warning should
+> be provided to the user or just a debug message should be emitted.
+> 
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: John Garry <john.garry@huawei.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Link: https://lkml.kernel.org/n/tip-lxwjr0cd2eggzx04a780ffrv@git.kernel.org
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/util/header.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> index becc2d109423..4d39a75551a0 100644
+> --- a/tools/perf/util/header.c
+> +++ b/tools/perf/util/header.c
+> @@ -850,7 +850,7 @@ int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+>   */
+>  int __weak get_cpuid(char *buffer __maybe_unused, size_t sz __maybe_unused)
+>  {
+> -	return -1;
+> +	return ENOSYS; /* Not implemented */
+>  }
+>  
+>  static int write_cpuid(struct feat_fd *ff,
+> -- 
+> 2.21.0
+> 
+> From c6c6a3e2eb6982e37294abcac389effd298cf730 Mon Sep 17 00:00:00 2001
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date: Wed, 11 Dec 2019 10:21:59 -0300
+> Subject: [PATCH 2/2] perf top: Do not bail out when perf_env__read_cpuid()
+>  returns ENOSYS
+> 
+> 'perf top' stopped working on hw architectures that do not provide a
+> get_cpuid() implementation and thus fallback to the weak get_cpuid()
+> default function.
+> 
+> This is done because at annotation time we may need it in the arch
+> specific annotation init routine, but that is only being used by arches
+> that do provide a get_cpuid() implementation:
+> 
+>   $ find tools/  -name "*.[ch]" | xargs grep 'evlist->env'
+>   tools/perf/builtin-top.c:	top.evlist->env = &perf_env;
+>   tools/perf/util/evsel.c:		return evsel->evlist->env;
+>   tools/perf/util/s390-cpumsf.c:	sf->machine_type = s390_cpumsf_get_type(session->evlist->env->cpuid);
+>   tools/perf/util/header.c:	session->evlist->env = &header->env;
+>   tools/perf/util/sample-raw.c:	const char *arch_pf = perf_env__arch(evlist->env);
+>   $
+> 
+>   $ find tools/perf/arch  -name "*.[ch]" | xargs grep -w get_cpuid
+>   tools/perf/arch/x86/util/auxtrace.c:	ret = get_cpuid(buffer, sizeof(buffer));
+>   tools/perf/arch/x86/util/header.c:get_cpuid(char *buffer, size_t sz)
+>   tools/perf/arch/powerpc/util/header.c:get_cpuid(char *buffer, size_t sz)
+>   tools/perf/arch/s390/util/header.c: * Implementation of get_cpuid().
+>   tools/perf/arch/s390/util/header.c:int get_cpuid(char *buffer, size_t sz)
+>   tools/perf/arch/s390/util/header.c:	if (buf && get_cpuid(buf, 128))
+>   $
+> 
+> For 'report' or 'script', i.e. tools working on perf.data files, that is
+> setup while reading the header, its just top that needs to explicitely
+> read it at tool start.
+> 
+> Reported-by: John Garry <john.garry@huawei.com>
+> Analysed-by: Jiri Olsa <jolsa@kernel.org>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Link: https://lkml.kernel.org/n/tip-lxwjr0cd2eggzx04a780ffrv@git.kernel.org
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/builtin-top.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+> index dc80044bc46f..795e353de095 100644
+> --- a/tools/perf/builtin-top.c
+> +++ b/tools/perf/builtin-top.c
+> @@ -1568,9 +1568,13 @@ int cmd_top(int argc, const char **argv)
+>  	 */
+>  	status = perf_env__read_cpuid(&perf_env);
+>  	if (status) {
+> -		pr_err("Couldn't read the cpuid for this machine: %s\n",
+> -		       str_error_r(errno, errbuf, sizeof(errbuf)));
+> -		goto out_delete_evlist;
+> +		/*
+> +		 * Some arches do not provide a get_cpuid(), so just use pr_debug, otherwise
+> +		 * warn the user explicitely.
+> +		 */
+> +		eprintf(status == ENOSYS ? 1 : 0, verbose,
+> +			"Couldn't read the cpuid for this machine: %s\n",
+> +			str_error_r(errno, errbuf, sizeof(errbuf)));
+>  	}
+>  	top.evlist->env = &perf_env;
+>  
+> -- 
+> 2.21.0
+> 
