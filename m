@@ -2,87 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BBF211A13D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:17:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B2211A144
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:19:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfLKCRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 21:17:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49476 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726500AbfLKCRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:17:41 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B743206EC;
-        Wed, 11 Dec 2019 02:17:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576030660;
-        bh=nsAKjl153J0JJUCjGK9PiMgZyuqUToi/dFZG+kBnD8Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FB4e1hbKhPhj0z40cj0Hmp0JwXqAAWSkrUd6Gu3DIpVTKk9P0tLagZQwdKff4I755
-         HdwmwRM+w1AUJZ1p0iOldxPBwPpgWx65e0HyRMuogibSzFwMcudvXh9e0y/QTzyvnS
-         p+BpHxjJP5i7DLd9syIB+TI0U5bZebie0jVv3s7k=
-Date:   Wed, 11 Dec 2019 10:17:23 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] arm64: dts: ls1028a: fix reboot node
-Message-ID: <20191211021722.GA15858@dragon>
-References: <20191123000709.13162-1-michael@walle.cc>
- <20191209034722.GZ3365@dragon>
- <67346b48fa7e236ea31e3ecb1a108f28@walle.cc>
+        id S1727690AbfLKCTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 21:19:40 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:59657 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727302AbfLKCTj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 21:19:39 -0500
+X-UUID: 165e4f02be654651ba7986a8681e7bd2-20191211
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=rhfdqi2eRRPOmkQEKUGmuq54EZ73uOUii6nqn78dZ8M=;
+        b=q50bYmGYPizR+0jps0AvO/uOh8KtsxOOYaIgX10598imLcEZpN6cXQfF6TQuBAyS0jEsnOiK986JSxCyf2pLOC/tzMvO568Obf+hYDAblDvwVcFHe1iPILfiA7SVOtxL2Y9NK7gKhU2R3drDXwyLHha1CEDDxomlz1hhMETlSHY=;
+X-UUID: 165e4f02be654651ba7986a8681e7bd2-20191211
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <hsin-hsiung.wang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 267267415; Wed, 11 Dec 2019 10:19:35 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 11 Dec 2019 10:19:26 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 11 Dec 2019 10:19:35 +0800
+Message-ID: <1576030774.24528.2.camel@mtksdaap41>
+Subject: Re: [PATCH v6 5/6] rtc: mt6397: fix alarm register overwrite
+From:   Hsin-hsiung Wang <hsin-hsiung.wang@mediatek.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Ran Bi <ran.bi@mediatek.com>
+Date:   Wed, 11 Dec 2019 10:19:34 +0800
+In-Reply-To: <20191210164139.GT1463890@piout.net>
+References: <1575639183-17606-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <1575639183-17606-6-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <20191210164139.GT1463890@piout.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67346b48fa7e236ea31e3ecb1a108f28@walle.cc>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 10:02:02AM +0100, Michael Walle wrote:
-> Am 2019-12-09 04:47, schrieb Shawn Guo:
-> >On Sat, Nov 23, 2019 at 01:07:09AM +0100, Michael Walle wrote:
-> >>The reboot register isn't located inside the DCFG controller,
-> >>but in its
-> >>own RST controller. Fix it.
-> >>
-> >>Signed-off-by: Michael Walle <michael@walle.cc>
-> >>---
-> >> arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 8 +++++++-
-> >> 1 file changed, 7 insertions(+), 1 deletion(-)
-> >>
-> >>diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> >>b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> >>index 72b9a75976a1..dc75534a4754 100644
-> >>--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> >>+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> >>@@ -102,7 +102,7 @@
-> >>
-> >> 	reboot {
-> >> 		compatible ="syscon-reboot";
-> >>-		regmap = <&dcfg>;
-> >>+		regmap = <&rst>;
-> >> 		offset = <0xb0>;
-> >> 		mask = <0x02>;
-> >> 	};
-> >>@@ -161,6 +161,12 @@
-> >> 			big-endian;
-> >> 		};
-> >>
-> >>+		rst: syscon@1e60000 {
-> >>+			compatible = "fsl,ls1028a-rst", "syscon";
-> >
-> >Compatible "fsl,ls1028a-rst" seems undocumented?
-> 
-> it is the same with fsl,ls1028a-scfg and fsl,ls1028a-dcfg. So maybe
-> I should just drop the "fsl,ls1028a-rst". What do you think?
+SGksDQoNCk9uIFR1ZSwgMjAxOS0xMi0xMCBhdCAxNzo0MSArMDEwMCwgQWxleGFuZHJlIEJlbGxv
+bmkgd3JvdGU6DQo+IEhpLA0KPiANCj4gT24gMDYvMTIvMjAxOSAyMTozMzowMiswODAwLCBIc2lu
+LUhzaXVuZyBXYW5nIHdyb3RlOg0KPiA+IEZyb206IFJhbiBCaSA8cmFuLmJpQG1lZGlhdGVrLmNv
+bT4NCj4gPiANCj4gPiBBbGFybSByZWdpc3RlcnMgaGlnaCBieXRlIHdhcyByZXNlcnZlZCBmb3Ig
+b3RoZXIgZnVuY3Rpb25zLg0KPiA+IFRoaXMgYWRkIG1hc2sgaW4gYWxhcm0gcmVnaXN0ZXJzIG9w
+ZXJhdGlvbiBmdW5jdGlvbnMuDQo+ID4gVGhpcyBhbHNvIGZpeCBlcnJvciBjb25kaXRpb24gaW4g
+aW50ZXJydXB0IGhhbmRsZXIuDQo+ID4gDQo+ID4gRml4ZXM6IGZjMjk3OTExOGYzZiAoInJ0Yzog
+bWVkaWF0ZWs6IEFkZCBNVDYzOTcgUlRDIGRyaXZlciIpDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1i
+eTogUmFuIEJpIDxyYW4uYmlAbWVkaWF0ZWsuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEhzaW4t
+SHNpdW5nIFdhbmcgPGhzaW4taHNpdW5nLndhbmdAbWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+
+ICBkcml2ZXJzL3J0Yy9ydGMtbXQ2Mzk3LmMgfCA0NyArKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKystLS0tLS0tLS0tLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMzMgaW5zZXJ0aW9u
+cygrKSwgMTQgZGVsZXRpb25zKC0pDQo+ID4gDQo+IA0KPiBDYW4geW91IHJlYmFzZSB0aGF0IG9u
+ZSBvbiB0b3Agb2YgdjUuNS1yYzEgc29vbj8gSSdsbCBpbmNsdWRlIGl0IGluIC1maXhlcy4NCj4g
+DQpTdXJlLCBJIHdpbGwgc2VuZCB0aGUgbmV4dCB2ZXJzaW9uIGxhdGVyLg0KDQo+ID4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvcnRjL3J0Yy1tdDYzOTcuYyBiL2RyaXZlcnMvcnRjL3J0Yy1tdDYzOTcu
+Yw0KPiA+IGluZGV4IDcwNDIyOWUuLmIyMTZiZGMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9y
+dGMvcnRjLW10NjM5Ny5jDQo+ID4gKysrIGIvZHJpdmVycy9ydGMvcnRjLW10NjM5Ny5jDQo+ID4g
+QEAgLTQ3LDYgKzQ3LDE0IEBADQo+ID4gIA0KPiA+ICAjZGVmaW5lIFJUQ19BTF9TRUMJCTB4MDAx
+OA0KPiA+ICANCj4gPiArI2RlZmluZSBSVENfQUxfU0VDX01BU0sJCTB4MDAzZg0KPiA+ICsjZGVm
+aW5lIFJUQ19BTF9NSU5fTUFTSwkJMHgwMDNmDQo+ID4gKyNkZWZpbmUgUlRDX0FMX0hPVV9NQVNL
+CQkweDAwMWYNCj4gPiArI2RlZmluZSBSVENfQUxfRE9NX01BU0sJCTB4MDAxZg0KPiA+ICsjZGVm
+aW5lIFJUQ19BTF9ET1dfTUFTSwkJMHgwMDA3DQo+ID4gKyNkZWZpbmUgUlRDX0FMX01USF9NQVNL
+CQkweDAwMGYNCj4gPiArI2RlZmluZSBSVENfQUxfWUVBX01BU0sJCTB4MDA3Zg0KPiA+ICsNCj4g
+PiAgI2RlZmluZSBSVENfUEROMgkJMHgwMDJlDQo+ID4gICNkZWZpbmUgUlRDX1BETjJfUFdST05f
+QUxBUk0JQklUKDQpDQo+ID4gIA0KPiA+IEBAIC0xMDMsNyArMTExLDcgQEAgc3RhdGljIGlycXJl
+dHVybl90IG10a19ydGNfaXJxX2hhbmRsZXJfdGhyZWFkKGludCBpcnEsIHZvaWQgKmRhdGEpDQo+
+ID4gIAkJaXJxZW4gPSBpcnFzdGEgJiB+UlRDX0lSUV9FTl9BTDsNCj4gPiAgCQltdXRleF9sb2Nr
+KCZydGMtPmxvY2spOw0KPiA+ICAJCWlmIChyZWdtYXBfd3JpdGUocnRjLT5yZWdtYXAsIHJ0Yy0+
+YWRkcl9iYXNlICsgUlRDX0lSUV9FTiwNCj4gPiAtCQkJCSBpcnFlbikgPCAwKQ0KPiA+ICsJCQkJ
+IGlycWVuKSA9PSAwKQ0KPiA+ICAJCQltdGtfcnRjX3dyaXRlX3RyaWdnZXIocnRjKTsNCj4gPiAg
+CQltdXRleF91bmxvY2soJnJ0Yy0+bG9jayk7DQo+ID4gIA0KPiA+IEBAIC0yMjUsMTIgKzIzMywx
+MiBAQCBzdGF0aWMgaW50IG10a19ydGNfcmVhZF9hbGFybShzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0
+cnVjdCBydGNfd2thbHJtICphbG0pDQo+ID4gIAlhbG0tPnBlbmRpbmcgPSAhIShwZG4yICYgUlRD
+X1BETjJfUFdST05fQUxBUk0pOw0KPiA+ICAJbXV0ZXhfdW5sb2NrKCZydGMtPmxvY2spOw0KPiA+
+ICANCj4gPiAtCXRtLT50bV9zZWMgPSBkYXRhW1JUQ19PRkZTRVRfU0VDXTsNCj4gPiAtCXRtLT50
+bV9taW4gPSBkYXRhW1JUQ19PRkZTRVRfTUlOXTsNCj4gPiAtCXRtLT50bV9ob3VyID0gZGF0YVtS
+VENfT0ZGU0VUX0hPVVJdOw0KPiA+IC0JdG0tPnRtX21kYXkgPSBkYXRhW1JUQ19PRkZTRVRfRE9N
+XTsNCj4gPiAtCXRtLT50bV9tb24gPSBkYXRhW1JUQ19PRkZTRVRfTVRIXTsNCj4gPiAtCXRtLT50
+bV95ZWFyID0gZGF0YVtSVENfT0ZGU0VUX1lFQVJdOw0KPiA+ICsJdG0tPnRtX3NlYyA9IGRhdGFb
+UlRDX09GRlNFVF9TRUNdICYgUlRDX0FMX1NFQ19NQVNLOw0KPiA+ICsJdG0tPnRtX21pbiA9IGRh
+dGFbUlRDX09GRlNFVF9NSU5dICYgUlRDX0FMX01JTl9NQVNLOw0KPiA+ICsJdG0tPnRtX2hvdXIg
+PSBkYXRhW1JUQ19PRkZTRVRfSE9VUl0gJiBSVENfQUxfSE9VX01BU0s7DQo+ID4gKwl0bS0+dG1f
+bWRheSA9IGRhdGFbUlRDX09GRlNFVF9ET01dICYgUlRDX0FMX0RPTV9NQVNLOw0KPiA+ICsJdG0t
+PnRtX21vbiA9IGRhdGFbUlRDX09GRlNFVF9NVEhdICYgUlRDX0FMX01USF9NQVNLOw0KPiA+ICsJ
+dG0tPnRtX3llYXIgPSBkYXRhW1JUQ19PRkZTRVRfWUVBUl0gJiBSVENfQUxfWUVBX01BU0s7DQo+
+ID4gIA0KPiA+ICAJdG0tPnRtX3llYXIgKz0gUlRDX01JTl9ZRUFSX09GRlNFVDsNCj4gPiAgCXRt
+LT50bV9tb24tLTsNCj4gPiBAQCAtMjUxLDE0ICsyNTksMjUgQEAgc3RhdGljIGludCBtdGtfcnRj
+X3NldF9hbGFybShzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBydGNfd2thbHJtICphbG0pDQo+
+ID4gIAl0bS0+dG1feWVhciAtPSBSVENfTUlOX1lFQVJfT0ZGU0VUOw0KPiA+ICAJdG0tPnRtX21v
+bisrOw0KPiA+ICANCj4gPiAtCWRhdGFbUlRDX09GRlNFVF9TRUNdID0gdG0tPnRtX3NlYzsNCj4g
+PiAtCWRhdGFbUlRDX09GRlNFVF9NSU5dID0gdG0tPnRtX21pbjsNCj4gPiAtCWRhdGFbUlRDX09G
+RlNFVF9IT1VSXSA9IHRtLT50bV9ob3VyOw0KPiA+IC0JZGF0YVtSVENfT0ZGU0VUX0RPTV0gPSB0
+bS0+dG1fbWRheTsNCj4gPiAtCWRhdGFbUlRDX09GRlNFVF9NVEhdID0gdG0tPnRtX21vbjsNCj4g
+PiAtCWRhdGFbUlRDX09GRlNFVF9ZRUFSXSA9IHRtLT50bV95ZWFyOw0KPiA+IC0NCj4gPiAgCW11
+dGV4X2xvY2soJnJ0Yy0+bG9jayk7DQo+ID4gKwlyZXQgPSByZWdtYXBfYnVsa19yZWFkKHJ0Yy0+
+cmVnbWFwLCBydGMtPmFkZHJfYmFzZSArIFJUQ19BTF9TRUMsDQo+ID4gKwkJCSAgICAgICBkYXRh
+LCBSVENfT0ZGU0VUX0NPVU5UKTsNCj4gPiArCWlmIChyZXQgPCAwKQ0KPiA+ICsJCWdvdG8gZXhp
+dDsNCj4gPiArDQo+ID4gKwlkYXRhW1JUQ19PRkZTRVRfU0VDXSA9ICgoZGF0YVtSVENfT0ZGU0VU
+X1NFQ10gJiB+KFJUQ19BTF9TRUNfTUFTSykpIHwNCj4gPiArCQkJCSh0bS0+dG1fc2VjICYgUlRD
+X0FMX1NFQ19NQVNLKSk7DQo+ID4gKwlkYXRhW1JUQ19PRkZTRVRfTUlOXSA9ICgoZGF0YVtSVENf
+T0ZGU0VUX01JTl0gJiB+KFJUQ19BTF9NSU5fTUFTSykpIHwNCj4gPiArCQkJCSh0bS0+dG1fbWlu
+ICYgUlRDX0FMX01JTl9NQVNLKSk7DQo+ID4gKwlkYXRhW1JUQ19PRkZTRVRfSE9VUl0gPSAoKGRh
+dGFbUlRDX09GRlNFVF9IT1VSXSAmIH4oUlRDX0FMX0hPVV9NQVNLKSkgfA0KPiA+ICsJCQkJKHRt
+LT50bV9ob3VyICYgUlRDX0FMX0hPVV9NQVNLKSk7DQo+ID4gKwlkYXRhW1JUQ19PRkZTRVRfRE9N
+XSA9ICgoZGF0YVtSVENfT0ZGU0VUX0RPTV0gJiB+KFJUQ19BTF9ET01fTUFTSykpIHwNCj4gPiAr
+CQkJCSh0bS0+dG1fbWRheSAmIFJUQ19BTF9ET01fTUFTSykpOw0KPiA+ICsJZGF0YVtSVENfT0ZG
+U0VUX01USF0gPSAoKGRhdGFbUlRDX09GRlNFVF9NVEhdICYgfihSVENfQUxfTVRIX01BU0spKSB8
+DQo+ID4gKwkJCQkodG0tPnRtX21vbiAmIFJUQ19BTF9NVEhfTUFTSykpOw0KPiA+ICsJZGF0YVtS
+VENfT0ZGU0VUX1lFQVJdID0gKChkYXRhW1JUQ19PRkZTRVRfWUVBUl0gJiB+KFJUQ19BTF9ZRUFf
+TUFTSykpIHwNCj4gPiArCQkJCSh0bS0+dG1feWVhciAmIFJUQ19BTF9ZRUFfTUFTSykpOw0KPiA+
+ICsNCj4gPiAgCWlmIChhbG0tPmVuYWJsZWQpIHsNCj4gPiAgCQlyZXQgPSByZWdtYXBfYnVsa193
+cml0ZShydGMtPnJlZ21hcCwNCj4gPiAgCQkJCQlydGMtPmFkZHJfYmFzZSArIFJUQ19BTF9TRUMs
+DQo+ID4gLS0gDQo+ID4gMi42LjQNCj4gDQoNCg==
 
-Drop it or document it.  I'm fine with either way.
-
-Shawn
