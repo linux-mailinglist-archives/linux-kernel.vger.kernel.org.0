@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA55A11B4F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:51:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1555C11B59D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:56:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733062AbfLKPuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:50:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54416 "EHLO mail.kernel.org"
+        id S1731808AbfLKPPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:15:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732163AbfLKPXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:23:25 -0500
+        id S1730557AbfLKPOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:14:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A75B52073D;
-        Wed, 11 Dec 2019 15:23:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D45BA20663;
+        Wed, 11 Dec 2019 15:14:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077805;
-        bh=Jl4QxbO6L+qoP/p1ka54CawFUBq3dsH+5MInaQdTOIM=;
+        s=default; t=1576077289;
+        bh=LeAPWS1q/KOLDpGgVEacQrTfjk9Ai/9gmAc+kjSCoTs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y1OKR1QMN0VlFF+eJGzNn43pbPkvCCC6HLPTq2Ft8ots8fbrK/za3rmsIP6yo92rf
-         eRNo1TmaJeWM/AUhAlaWAIowIkoGN8ENSaNDqaeANd+JOHPc57UgIhizXMCo7znu1n
-         Eb4KR/HzLqsMoleu3RtbJRntZbjt9t2Js0sKvVqo=
+        b=tt03TsElVNQgJmvaWCFtNx4mhuQInA4JMR2ZsV4Yv03Y3K6MSbj1tJ+DZiSyeD3ux
+         e5Yt/rD6r8hEQwg6fcycmbAnNqK/zyHe8RN4AvMz930zcy/1voHF+RMwY07t0ei2TZ
+         jLzpz3IR4feSHfxCfTg/ogncmJO1yOAhpTBFsgUE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 177/243] ARM: dts: sun8i: h3: Fix the system-control register range
-Date:   Wed, 11 Dec 2019 16:05:39 +0100
-Message-Id: <20191211150351.120418760@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.3 051/105] ALSA: hda/realtek - Dell headphone has noise on unmute for ALC236
+Date:   Wed, 11 Dec 2019 16:05:40 +0100
+Message-Id: <20191211150242.248145590@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
+References: <20191211150221.153659747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+From: Kailang Yang <kailang@realtek.com>
 
-[ Upstream commit 925c5afd78c40169c7e0e6adec52d5119ff43751 ]
+commit e1e8c1fdce8b00fce08784d9d738c60ebf598ebc upstream.
 
-Unlike in previous generations, the system-control register range is not
-limited to a size of 0x30 on the H3. In particular, the EMAC clock
-configuration register (accessed through syscon) is at offset 0x30 in
-that range.
+headphone have noise even the volume is very small.
+Let it fill up pcbeep hidden register to default value.
+The issue was gone.
 
-Extend the register size to its full range (0x1000) as a result.
+Fixes: 4344aec84bd8 ("ALSA: hda/realtek - New codec support for ALC256")
+Fixes: 736f20a70608 ("ALSA: hda/realtek - Add support for ALC236/ALC3204")
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/9ae47f23a64d4e41a9c81e263cd8a250@realtek.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sun8i-h3.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index 97de6ad133dc2..9233ba30a857c 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -122,7 +122,7 @@
- 	soc {
- 		system-control@1c00000 {
- 			compatible = "allwinner,sun8i-h3-system-control";
--			reg = <0x01c00000 0x30>;
-+			reg = <0x01c00000 0x1000>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
--- 
-2.20.1
-
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -367,9 +367,7 @@ static void alc_fill_eapd_coef(struct hd
+ 	case 0x10ec0215:
+ 	case 0x10ec0233:
+ 	case 0x10ec0235:
+-	case 0x10ec0236:
+ 	case 0x10ec0255:
+-	case 0x10ec0256:
+ 	case 0x10ec0257:
+ 	case 0x10ec0282:
+ 	case 0x10ec0283:
+@@ -381,6 +379,11 @@ static void alc_fill_eapd_coef(struct hd
+ 	case 0x10ec0300:
+ 		alc_update_coef_idx(codec, 0x10, 1<<9, 0);
+ 		break;
++	case 0x10ec0236:
++	case 0x10ec0256:
++		alc_write_coef_idx(codec, 0x36, 0x5757);
++		alc_update_coef_idx(codec, 0x10, 1<<9, 0);
++		break;
+ 	case 0x10ec0275:
+ 		alc_update_coef_idx(codec, 0xe, 0, 1<<0);
+ 		break;
 
 
