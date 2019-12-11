@@ -2,169 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D0AE11AE26
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:47:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC41011AE18
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730005AbfLKOq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 09:46:56 -0500
-Received: from mail-dm6nam11on2073.outbound.protection.outlook.com ([40.107.223.73]:6248
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729278AbfLKOqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 09:46:51 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J+rcO7bTCQIKPxX8gERUX6cz/7MAtwWtVRZAKLxGKmhjpR38ttm3K4ZWs84Y7zP97RzkuEDNmclPhu67Rn0Rc3nep4fXNdHcigItpTl5w9DjMx2KW5E7lPlB6kxZrKZkX55juC25jkLLgIvr3Mou3wDZwwjlq9NDwoIUdBaep7r3WR6HrpLwIQ1B8TQ7w+Ls++SV5c6sIB7TjKivrAVW98Wq6AL8Z6xjlyJPgH3ZPAbuWacdu1+kd2KhYBI58z+oyHcGye5X47g8N58TPtHP+yRPmWE0p3eDDCghHOL9j3yfQ1fcVg40iTa/QX33X9uraF+GxNNF4oW5bSh3egxp2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hdv3xy29Ew/4mwo89L0xX6a2q6ZWQwmDFj9NDkwLk3c=;
- b=loLVyd+Qlz046zjbDxbbFP5vKYP4IP1yQZL+o7BwlnfyGdiuD9Gncn2CX/SVgFDcLneB1W5DRGM9J2mu80qZN2r2NHGIxtMmsZuo5x5C0FERLxCcAKfSeCEBlOtPTgvY3CMsUw05+JgpmGsNdd/Pav2c67QHZK9/h2wKn6vdBm2pcmK3ktTeRMZnvcP7SFaQlvnSNeKpc60uPhoAr82wcUZ63AxX7NMY1fTeXiY3zAl5bx2rdbwzA27cH9iJGi2MkD2K018sSNKHiljI6N7PdMV5FvEuMxqup6In2J2l0viAgLSFZmmVC61cXjfckZeSkJzwaUUKNVp1b63gAA5Rig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
+        id S1729444AbfLKOq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 09:46:28 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:30422 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728912AbfLKOq2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 09:46:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hdv3xy29Ew/4mwo89L0xX6a2q6ZWQwmDFj9NDkwLk3c=;
- b=Wn15tCuqROGkjSZ09yo2fGdby/PJ6tS9LDCeI5h6Oj+qHRoGjYG+FAQbJLafPSrcrEqpzkT7J6JI6535RU4jMaJuC05ewLUfsNsj3coqVFzeY/FuBCfKEseWatIv+zbqrr/4lVEbXeGO0/KhcqMp3tFk+fY/elbtyTF3tchFWSc=
-Received: from CH2PR02MB7000.namprd02.prod.outlook.com (20.180.9.216) by
- CH2PR02MB6039.namprd02.prod.outlook.com (10.255.156.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.17; Wed, 11 Dec 2019 14:46:07 +0000
-Received: from CH2PR02MB7000.namprd02.prod.outlook.com
- ([fe80::5d66:1c32:4c41:b087]) by CH2PR02MB7000.namprd02.prod.outlook.com
- ([fe80::5d66:1c32:4c41:b087%3]) with mapi id 15.20.2516.018; Wed, 11 Dec 2019
- 14:46:07 +0000
-From:   Radhey Shyam Pandey <radheys@xilinx.com>
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        "nick.graumann@gmail.com" <nick.graumann@gmail.com>,
-        "andrea.merello@gmail.com" <andrea.merello@gmail.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1576075588; x=1607611588;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=yX3oSoR6TBImS5lRmB1xGYyR2f+Pk/mDp104+QOmgJo=;
+  b=lx4vUFUf5drnr1kDOSAWoQSfJy977atCPheTYDK3jscaxMEyPkYylE39
+   sKVh+IayINuSuFBYNYxDav52dES5ddAxZAqupb+Jp9u7VkQ/uyyNqhQeO
+   iB8bZC4QqvKW9zSVbkiutzxFR5lpezuU63p/1Hbn0KpjRR+bZ9Ia42SKC
+   A=;
+IronPort-SDR: uLasZyrwu23OcFpkaOLsIOM+tba5m6FMNk0q33Ru+puHsXunBhnLqx7ggbGHQnk93w2f7fgB7f
+ OjmZdDQku2KA==
+X-IronPort-AV: E=Sophos;i="5.69,301,1571702400"; 
+   d="scan'208";a="12919276"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2b-4e24fd92.us-west-2.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 11 Dec 2019 14:46:17 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2b-4e24fd92.us-west-2.amazon.com (Postfix) with ESMTPS id 05480A1D09;
+        Wed, 11 Dec 2019 14:46:13 +0000 (UTC)
+Received: from EX13D32EUC004.ant.amazon.com (10.43.164.121) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 11 Dec 2019 14:46:13 +0000
+Received: from EX13D32EUC003.ant.amazon.com (10.43.164.24) by
+ EX13D32EUC004.ant.amazon.com (10.43.164.121) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 11 Dec 2019 14:46:12 +0000
+Received: from EX13D32EUC003.ant.amazon.com ([10.43.164.24]) by
+ EX13D32EUC003.ant.amazon.com ([10.43.164.24]) with mapi id 15.00.1367.000;
+ Wed, 11 Dec 2019 14:46:12 +0000
+From:   "Durrant, Paul" <pdurrant@amazon.com>
+To:     "Durrant, Paul" <pdurrant@amazon.com>,
+        =?utf-8?B?Um9nZXIgUGF1IE1vbm7DqQ==?= <roger.pau@citrix.com>
+CC:     Jens Axboe <axboe@kernel.dk>, Juergen Gross <jgross@suse.com>,
+        "Stefano Stabellini" <sstabellini@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        git <git@xilinx.com>
-Subject: RE: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
- dma_terminate_all
-Thread-Topic: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
- dma_terminate_all
-Thread-Index: AQHVo1uM5nn5YHd560C/NFUjbNUe6Key97yAgAIaTxA=
-Date:   Wed, 11 Dec 2019 14:46:06 +0000
-Message-ID: <CH2PR02MB70009D78EA8C487BFFA54964C75A0@CH2PR02MB7000.namprd02.prod.outlook.com>
-References: <1574664121-13451-1-git-send-email-radhey.shyam.pandey@xilinx.com>
- <20191210060113.GP82508@vkoul-mobl>
-In-Reply-To: <20191210060113.GP82508@vkoul-mobl>
-Accept-Language: en-US
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: RE: [PATCH v2 4/4] xen-blkback: support dynamic unbind/bind
+Thread-Topic: [PATCH v2 4/4] xen-blkback: support dynamic unbind/bind
+Thread-Index: AQHVr02/5BDvv90j7UOwWq+aSG/tNqe0wbIAgAABJICAAED8cA==
+Date:   Wed, 11 Dec 2019 14:46:11 +0000
+Message-ID: <c5a9cf1d080046b0b2d9e9a5579aeb75@EX13D32EUC003.ant.amazon.com>
+References: <20191210113347.3404-1-pdurrant@amazon.com>
+ <20191210113347.3404-5-pdurrant@amazon.com>
+ <20191211104550.GJ980@Air-de-Roger>
+ <93f85e6b45eb4286b34ae12ea726038c@EX13D32EUC003.ant.amazon.com>
+In-Reply-To: <93f85e6b45eb4286b34ae12ea726038c@EX13D32EUC003.ant.amazon.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ef0dec40-0481-4d15-5cd0-08d77e48daea
-x-ms-traffictypediagnostic: CH2PR02MB6039:|CH2PR02MB6039:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR02MB60398A17E15599DA0D2CCBA1C75A0@CH2PR02MB6039.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3513;
-x-forefront-prvs: 024847EE92
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(136003)(346002)(39860400002)(366004)(13464003)(199004)(189003)(53546011)(6506007)(26005)(33656002)(7696005)(52536014)(186003)(71200400001)(5660300002)(54906003)(66476007)(4326008)(64756008)(66946007)(76116006)(6916009)(8676002)(9686003)(478600001)(86362001)(316002)(107886003)(81166006)(66556008)(8936002)(2906002)(81156014)(55016002)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6039;H:CH2PR02MB7000.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: PUn7PqYLM3gQYoFo5910B6QAXDsjEa8Y11OSjEEgiiVEua5rbGsUxlrR7/KiV3+WDYfs0qtWPb8bOvzBROAqU1yzazf3JkBplxuhiN4+bjg8iYQnr7f7GlCcat88R/ZEhH5fpjpNlMMpTHrpWvgNbM8gZARUYiwPDCnvKyiyqHp61Ywp2cXgIjoukTsRV2GoqRdBmCXS+67pXH3v9S/d1vy7h7tR6/tQ2WB0i+lSb97IRxE3hcCuwnqmnuMdvyk4xnHPeOu5teKLI656qnp+e6H0kcS+FLKH0JuCc0AfwWTwNZKkGLGz1eYP7MZgULvH1rSBXN3POy9WAFhtbWhA0q0EUx4ts9xsK5gdB2R4Jv18N7LwFlT4IPXcwRZTkb66DphpsG5AtuYp5HfPGnPQriznE/25AVAfrAv3zrUEmFcqGvmeD+z97tM8Nvylhlh1Jl/57h8V551Xerc2ymx9OqThjNLokSObCz2q2kQs2XF7ic/U0uU5a+45emoHvjq4
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.164.172]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef0dec40-0481-4d15-5cd0-08d77e48daea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2019 14:46:06.9820
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: C/y7fQpR/hiFMEAHvZue0wZq0viLsZsFdSRQSo6+6vqeIwqOvEafgGsAnvQDbV8hVNJTAcWegITq5NwGaSOk1w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6039
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Vinod Koul <vkoul@kernel.org>
-> Sent: Tuesday, December 10, 2019 11:31 AM
-> To: Radhey Shyam Pandey <radheys@xilinx.com>
-> Cc: dan.j.williams@intel.com; Michal Simek <michals@xilinx.com>;
-> nick.graumann@gmail.com; andrea.merello@gmail.com; Appana Durga
-> Kedareswara Rao <appanad@xilinx.com>; mcgrof@kernel.org;
-> dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org; git
-> <git@xilinx.com>
-> Subject: Re: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
-> dma_terminate_all
->=20
-> On 25-11-19, 12:12, Radhey Shyam Pandey wrote:
-> > Reset DMA channel after stop to ensure that pending transfers and
-> > FIFOs in the datapath are flushed or completed. It fixes intermittent
-> > data verification failure reported by xilinx dma test client.
-> >
-> > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> > ---
-> >  drivers/dma/xilinx/xilinx_dma.c | 17 +++++++++--------
-> >  1 file changed, 9 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/dma/xilinx/xilinx_dma.c
-> > b/drivers/dma/xilinx/xilinx_dma.c index a9c5d5c..6f1539c 100644
-> > --- a/drivers/dma/xilinx/xilinx_dma.c
-> > +++ b/drivers/dma/xilinx/xilinx_dma.c
-> > @@ -2404,16 +2404,17 @@ static int xilinx_dma_terminate_all(struct
-> dma_chan *dchan)
-> >  	u32 reg;
-> >  	int err;
-> >
-> > -	if (chan->cyclic)
-> > -		xilinx_dma_chan_reset(chan);
->=20
-> So reset is required for non cyclic cases as well now?
-
-Yes. In absence of reset in non-cyclic case, when dmatest client
-driver is stressed and loaded/unloaded multiple times we see dma=20
-data comparison failures. Possibly IP is prefetching/holding the
-previous state and reset ensures a clean state on each iteration.
->=20
-> > -
-> > -	err =3D chan->stop_transfer(chan);
-> > -	if (err) {
-> > -		dev_err(chan->dev, "Cannot stop channel %p: %x\n",
-> > -			chan, dma_ctrl_read(chan,
-> XILINX_DMA_REG_DMASR));
-> > -		chan->err =3D true;
-> > +	if (!chan->cyclic) {
-> > +		err =3D chan->stop_transfer(chan);
->=20
-> no stop for cyclic now..?
-After reset stop is not needed, so for the cyclic mode we only do reset.
-
->=20
-> > +		if (err) {
-> > +			dev_err(chan->dev, "Cannot stop channel %p: %x\n",
-> > +				chan, dma_ctrl_read(chan,
-> > +				XILINX_DMA_REG_DMASR));
-> > +			chan->err =3D true;
-> > +		}
-> >  	}
-> >
-> > +	xilinx_dma_chan_reset(chan);
-> >  	/* Remove and free all of the descriptors in the lists */
-> >  	xilinx_dma_free_descriptors(chan);
-> >  	chan->idle =3D true;
-> > --
-> > 2.7.4
->=20
-> --
-> ~Vinod
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+YmxvY2sveGVuLWJsa2JhY2sveGVuYnVzLmMgYi9kcml2ZXJzL2Jsb2NrL3hlbi0NCj4gPiBibGti
+YWNrL3hlbmJ1cy5jDQo+ID4gPiBpbmRleCBlOGM1YzU0ZTFkMjYuLjEzZDA5NjMwYjIzNyAxMDA2
+NDQNCj4gPiA+IC0tLSBhL2RyaXZlcnMvYmxvY2sveGVuLWJsa2JhY2sveGVuYnVzLmMNCj4gPiA+
+ICsrKyBiL2RyaXZlcnMvYmxvY2sveGVuLWJsa2JhY2sveGVuYnVzLmMNCj4gPiA+IEBAIC0xODEs
+NiArMTgxLDggQEAgc3RhdGljIGludCB4ZW5fYmxraWZfbWFwKHN0cnVjdCB4ZW5fYmxraWZfcmlu
+Zw0KPiA+ICpyaW5nLCBncmFudF9yZWZfdCAqZ3JlZiwNCj4gPiA+ICB7DQo+ID4gPiAgCWludCBl
+cnI7DQo+ID4gPiAgCXN0cnVjdCB4ZW5fYmxraWYgKmJsa2lmID0gcmluZy0+YmxraWY7DQo+ID4g
+PiArCXN0cnVjdCBibGtpZl9jb21tb25fc3JpbmcgKnNyaW5nX2NvbW1vbjsNCj4gPiA+ICsJUklO
+R19JRFggcnNwX3Byb2QsIHJlcV9wcm9kOw0KPiA+ID4NCj4gPiA+ICAJLyogQWxyZWFkeSBjb25u
+ZWN0ZWQgdGhyb3VnaD8gKi8NCj4gPiA+ICAJaWYgKHJpbmctPmlycSkNCj4gPiA+IEBAIC0xOTEs
+NDYgKzE5Myw2NiBAQCBzdGF0aWMgaW50IHhlbl9ibGtpZl9tYXAoc3RydWN0IHhlbl9ibGtpZl9y
+aW5nDQo+ID4gKnJpbmcsIGdyYW50X3JlZl90ICpncmVmLA0KPiA+ID4gIAlpZiAoZXJyIDwgMCkN
+Cj4gPiA+ICAJCXJldHVybiBlcnI7DQo+ID4gPg0KPiA+ID4gKwlzcmluZ19jb21tb24gPSAoc3Ry
+dWN0IGJsa2lmX2NvbW1vbl9zcmluZyAqKXJpbmctPmJsa19yaW5nOw0KPiA+ID4gKwlyc3BfcHJv
+ZCA9IFJFQURfT05DRShzcmluZ19jb21tb24tPnJzcF9wcm9kKTsNCj4gPiA+ICsJcmVxX3Byb2Qg
+PSBSRUFEX09OQ0Uoc3JpbmdfY29tbW9uLT5yZXFfcHJvZCk7DQo+ID4gPiArDQo+ID4gPiAgCXN3
+aXRjaCAoYmxraWYtPmJsa19wcm90b2NvbCkgew0KPiA+ID4gIAljYXNlIEJMS0lGX1BST1RPQ09M
+X05BVElWRToNCj4gPiA+ICAJew0KPiA+ID4gLQkJc3RydWN0IGJsa2lmX3NyaW5nICpzcmluZzsN
+Cj4gPiA+IC0JCXNyaW5nID0gKHN0cnVjdCBibGtpZl9zcmluZyAqKXJpbmctPmJsa19yaW5nOw0K
+PiA+ID4gLQkJQkFDS19SSU5HX0lOSVQoJnJpbmctPmJsa19yaW5ncy5uYXRpdmUsIHNyaW5nLA0K
+PiA+ID4gLQkJCSAgICAgICBYRU5fUEFHRV9TSVpFICogbnJfZ3JlZnMpOw0KPiA+ID4gKwkJc3Ry
+dWN0IGJsa2lmX3NyaW5nICpzcmluZ19uYXRpdmUgPQ0KPiA+ID4gKwkJCShzdHJ1Y3QgYmxraWZf
+c3JpbmcgKilyaW5nLT5ibGtfcmluZzsNCj4gPg0KPiA+IEkgdGhpbmsgeW91IGNhbiBjb25zdGlm
+eSBib3RoIHNyaW5nX25hdGl2ZSBhbmQgc3JpbmdfY29tbW9uIChhbmQgdGhlDQo+ID4gb3RoZXIg
+aW5zdGFuY2VzIGJlbG93KS4NCj4gDQo+IFllcywgSSBjYW4gZG8gdGhhdC4gSSBkb24ndCB0aGlu
+ayB0aGUgbWFjcm9zIHdvdWxkIG1pbmQuDQo+IA0KDQpTcG9rZSB0byBzb29uLiBUaGV5IGRvIG1p
+bmQsIG9mIGNvdXJzZSwgYmVjYXVzZSB0aGUgc3JpbmcgcG9pbnRlciBpbiB0aGUgZnJvbnQvYmFj
+ayByaW5nIGlzIG5vdCAoYW5kIHNob3VsZCBub3QpIGJlIGNvbnN0LiBJIGNhbiBjb25zdCBzcmlu
+Z19jb21tb24gYnV0IG5vIG90aGVycy4NCg0KICBQYXVsDQo=
