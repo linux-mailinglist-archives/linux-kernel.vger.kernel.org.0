@@ -2,121 +2,299 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9642411AA0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 12:39:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1DF711AA13
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 12:42:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbfLKLjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 06:39:24 -0500
-Received: from foss.arm.com ([217.140.110.172]:55042 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729098AbfLKLjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 06:39:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A2E931B;
-        Wed, 11 Dec 2019 03:39:21 -0800 (PST)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EE0DD3F6CF;
-        Wed, 11 Dec 2019 03:39:19 -0800 (PST)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@kernel.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, patrick.bellasi@matbug.net,
-        qperret@google.com, qais.yousef@arm.com, morten.rasmussen@arm.com
-Subject: [PATCH v3 5/5] sched/fair: Make EAS wakeup placement consider uclamp restrictions
-Date:   Wed, 11 Dec 2019 11:38:51 +0000
-Message-Id: <20191211113851.24241-6-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191211113851.24241-1-valentin.schneider@arm.com>
-References: <20191211113851.24241-1-valentin.schneider@arm.com>
+        id S1728935AbfLKLmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 06:42:43 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:40196 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727365AbfLKLmn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 06:42:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=upVO43a9Ci5B5se9s37thb0usXFTi2WSd9CirMnPlUI=; b=eGxKFcH/4423IzJF91pk4eaie
+        adHLOhIkDXN9vgQoAlTHZqRQe8mjyy7W1Jg7K/sZ19MzI7eml0mybh4WxnpA0Bkn/H8VjWN/8stZz
+        3lridy+yMPYPiYuKjL1uwaX7V24i3QwpQUxWckpE7C/ACtZoXqA5iBN6Y12HOxK+jcPcqIQdNEeKd
+        aQrEPOYPquoxrRtowk8mpWLC5wh/y0AlZ3HVfqvyyfWEzhOhbhEeDG9L5fBPkgC+bZ+fdNzHGkLzt
+        /Vem5a8+pXG9vyFa2BfVj/dx5YjoNEgSzbFx0QE5QB3bp8yUlQvW7gnO7ueSHm1hCbDTBx562XZWb
+        LmXzo2p3g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51518)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1if0O2-00088j-1L; Wed, 11 Dec 2019 11:42:34 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1if0Ny-0005pI-I4; Wed, 11 Dec 2019 11:42:30 +0000
+Date:   Wed, 11 Dec 2019 11:42:30 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Peng Ma <peng.ma@nxp.com>
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux@rempel-privat.de" <linux@rempel-privat.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: Re: [EXT] Re: [PATCH] i2c: imx: Defer probing if EDMA not available
+Message-ID: <20191211114230.GC25745@shell.armlinux.org.uk>
+References: <20191127071136.5240-1-peng.ma@nxp.com>
+ <20191128100613.GI25745@shell.armlinux.org.uk>
+ <VI1PR04MB4431CF7F051F9439C84F84FAED5A0@VI1PR04MB4431.eurprd04.prod.outlook.com>
+ <20191211104347.GA25745@shell.armlinux.org.uk>
+ <VI1PR04MB44313AA19A4F81BA1AD9BC5CED5A0@VI1PR04MB4431.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <VI1PR04MB44313AA19A4F81BA1AD9BC5CED5A0@VI1PR04MB4431.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-task_fits_capacity() has just been made uclamp-aware, and
-find_energy_efficient_cpu() needs to go through the same treatment.
+On Wed, Dec 11, 2019 at 11:22:00AM +0000, Peng Ma wrote:
+> 
+> 
+> >-----Original Message-----
+> >From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+> >Sent: 2019年12月11日 18:44
+> >To: Peng Ma <peng.ma@nxp.com>
+> >Cc: festevam@gmail.com; s.hauer@pengutronix.de;
+> >linux-kernel@vger.kernel.org; linux@rempel-privat.de; dl-linux-imx
+> ><linux-imx@nxp.com>; kernel@pengutronix.de; shawnguo@kernel.org;
+> >linux-arm-kernel@lists.infradead.org; linux-i2c@vger.kernel.org
+> >Subject: Re: [EXT] Re: [PATCH] i2c: imx: Defer probing if EDMA not available
+> >
+> >Caution: EXT Email
+> >
+> >On Wed, Dec 11, 2019 at 10:25:26AM +0000, Peng Ma wrote:
+> >> Hi Russell,
+> >>
+> >> I am sorry to reply late, thanks for your patient reminding, Please
+> >> see my comments inline.
+> >>
+> >> Best Regards,
+> >> Peng
+> >> >-----Original Message-----
+> >> >From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+> >> >Sent: 2019年11月28日 18:06
+> >> >To: Peng Ma <peng.ma@nxp.com>
+> >> >Cc: linux@rempel-privat.de; kernel@pengutronix.de;
+> >> >shawnguo@kernel.org; s.hauer@pengutronix.de;
+> >> >linux-kernel@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>;
+> >> >festevam@gmail.com; linux-arm-kernel@lists.infradead.org;
+> >> >linux-i2c@vger.kernel.org
+> >> >Subject: [EXT] Re: [PATCH] i2c: imx: Defer probing if EDMA not
+> >> >available
+> >> >
+> >> >Caution: EXT Email
+> >> >
+> >> >On Wed, Nov 27, 2019 at 07:12:09AM +0000, Peng Ma wrote:
+> >> >> EDMA may be not available or defered due to dependencies on other
+> >> >> modules, If these scenarios is encountered, we should defer probing.
+> >> >
+> >> >This has been tried before in this form, and it causes regressions.
+> >> >
+> >> >> Signed-off-by: Peng Ma <peng.ma@nxp.com>
+> >> >> ---
+> >> >>  drivers/i2c/busses/i2c-imx.c | 16 +++++++++++-----
+> >> >>  1 file changed, 11 insertions(+), 5 deletions(-)
+> >> >>
+> >> >> diff --git a/drivers/i2c/busses/i2c-imx.c
+> >> >> b/drivers/i2c/busses/i2c-imx.c index 40111a3..c2b0693 100644
+> >> >> --- a/drivers/i2c/busses/i2c-imx.c
+> >> >> +++ b/drivers/i2c/busses/i2c-imx.c
+> >> >> @@ -369,8 +369,8 @@ static void i2c_imx_reset_regs(struct
+> >> >> imx_i2c_struct *i2c_imx)  }
+> >> >>
+> >> >>  /* Functions for DMA support */
+> >> >> -static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+> >> >> -                                             dma_addr_t
+> >> >phy_addr)
+> >> >> +static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+> >> >> +                            dma_addr_t phy_addr)
+> >> >>  {
+> >> >>       struct imx_i2c_dma *dma;
+> >> >>       struct dma_slave_config dma_sconfig; @@ -379,7 +379,7 @@
+> >> >> static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+> >> >>
+> >> >>       dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
+> >> >>       if (!dma)
+> >> >> -             return;
+> >> >> +             return -ENOMEM;
+> >> >>
+> >> >>       dma->chan_tx = dma_request_chan(dev, "tx");
+> >> >>       if (IS_ERR(dma->chan_tx)) {
+> >> >> @@ -424,7 +424,7 @@ static void i2c_imx_dma_request(struct
+> >> >imx_i2c_struct *i2c_imx,
+> >> >>       dev_info(dev, "using %s (tx) and %s (rx) for DMA transfers\n",
+> >> >>               dma_chan_name(dma->chan_tx),
+> >> >> dma_chan_name(dma->chan_rx));
+> >> >>
+> >> >> -     return;
+> >> >> +     return 0;
+> >> >>
+> >> >>  fail_rx:
+> >> >>       dma_release_channel(dma->chan_rx);
+> >> >> @@ -432,6 +432,8 @@ static void i2c_imx_dma_request(struct
+> >> >imx_i2c_struct *i2c_imx,
+> >> >>       dma_release_channel(dma->chan_tx);
+> >> >>  fail_al:
+> >> >>       devm_kfree(dev, dma);
+> >> >> +
+> >> >> +     return ret;
+> >> >
+> >> >Some platforms don't have EDMA.  Doesn't this force everyone who
+> >> >wants I2C to have DMA?  The last attempt at this had:
+> >> >
+> >> >        /* return successfully if there is no dma support */
+> >> >        return ret == -ENODEV ? 0 : ret;
+> >> >
+> >> >here because of exactly this.
+> >> >
+> >> >>  }
+> >> >>
+> >> >>  static void i2c_imx_dma_callback(void *arg) @@ -1605,10 +1607,14
+> >> >> @@ static int i2c_imx_probe(struct platform_device *pdev)
+> >> >>       dev_info(&i2c_imx->adapter.dev, "IMX I2C adapter
+> >> >> registered\n");
+> >> >>
+> >> >>       /* Init DMA config if supported */
+> >> >> -     i2c_imx_dma_request(i2c_imx, phy_addr);
+> >> >> +     ret = i2c_imx_dma_request(i2c_imx, phy_addr);
+> >> >> +     if (ret == -EPROBE_DEFER)
+> >> >> +             goto i2c_adapter_remove;
+> >> >
+> >> >This happens _after_ the adapter has been published to the rest of the
+> >kernel.
+> >> >Claiming resources after publication is racy - the adapter may be in
+> >> >use by a request at this point.  Secondly, there's been problems with
+> >> >this causing regressions when EDMA is built as a module and i2c-imx is
+> >built-in.
+> >> >
+> >> >See e8c220fac415 ("Revert "i2c: imx: improve the error handling in
+> >> >i2c_imx_dma_request()"") when exactly what you're proposing was tried
+> >> >and ended up having to be reverted.
+> >> >
+> >> >AFAIK nothing has changed since, so merely reinstating the known to
+> >> >be broken code, thereby reintroducing the same (and more) problems,
+> >> >isn't going to be acceptable.
+> >> >
+> >> >Sorry, but this gets a big NAK from me.
+> >> >
+> >> [Peng Ma] I saw the revert commit e8c220fac415 and understand your
+> >concerns.
+> >> I scan the i2c-imx.c driver, All platforms that use i2c driver and
+> >> support dma use an eDMA engine, So I change the code(compare with last
+> >patch) as follows, please review and give me your precious comments.
+> >> Thanks very much.
+> >>
+> >> diff --git a/drivers/i2c/busses/i2c-imx.c
+> >> b/drivers/i2c/busses/i2c-imx.c index 12f7934fddb4..6cafee52dd67 100644
+> >> --- a/drivers/i2c/busses/i2c-imx.c
+> >> +++ b/drivers/i2c/busses/i2c-imx.c
+> >> @@ -1605,8 +1605,11 @@ static int i2c_imx_probe(struct platform_device
+> >> *pdev)
+> >>
+> >>         /* Init DMA config if supported */
+> >>         ret = i2c_imx_dma_request(i2c_imx, phy_addr);
+> >> -       if (ret == -EPROBE_DEFER)
+> >> +       if (ret == -EPROBE_DEFER) {
+> >> +#if    IS_BUILTIN(CONFIG_FSL_EDMA)
+> >>                 goto i2c_adapter_remove;
+> >> +#endif
+> >> +       }
+> >
+> >You haven't understood _why_ the problem occurs, you're just attempting to
+> >patch around it. You're hacking the code, rather than engineering the code.
+> >
+> >The infinite deferred probe occurs because:
+> >
+> >- i2c-imx is attempted to be probed.
+> >- i2c-imx sets up the hardware, and then calls
+> >  i2c_add_numbered_adapter()
+> >- i2c_add_numbered_adapter() publishes the bus to the world, and then
+> >  searches DT for any children to create - and it finds some and
+> >  creates them.
+> >- the children devices are matched to their drivers, which bind.  This
+> >  triggers a deferred probe to be scheduled.
+> >- back in the i2c-imx driver, we get to i2c_imx_dma_request(), which
+> >  fails, and you return -EPROBE_DEFER.
+> >- the i2c-imx driver probe actions are unwound, and probe exits.
+> >- the driver core processes the deferred probe request, finds the
+> >  i2c-imx device(s) on the deferred probe list, and attempts to
+> >  probe them.  Goto the top of this list.
+> >
+> [Peng Ma] Thanks for your quick reply, No, I don't think so, when first,second,third...... time probe failed, the i2c_del_adapter will be called(it will remove the i2c children device). I think if We build-in EDMA, after EDMA probe successful, the deffer probe of i2c will probe with no return -EPROBE_DEFER.
 
-Things are somewhat different here however - using the task max clamp isn't
-sufficient. Consider the following setup:
+Yes, i2c_del_adapter will be called, but that is neither here nor there.
+The deferred probe is triggered by _any_ driver binding.  The facts are:
 
-  The target runqueue, rq:
-    rq.cpu_capacity_orig = 512
-    rq.cfs.avg.util_avg = 200
-    rq.uclamp.max = 768 // the max p.uclamp.max of all enqueued p's is 768
+i2c_add_numbered_adapter() creates devices.
+These new devices get bound to drivers.
+As soon as any one of those devices binds to a driver, deferred probing
+is triggered.
+When i2c_imx_probe() returns -EPROBE_DEFER, it will be added to the list
+of devices to be re-probed by the deferred probing.
 
-  The waking task, p (not yet enqueued on rq):
-    p.util_est = 600
-    p.uclamp.max = 100
+> So you say " Goto the top of this list " just i2c drive probe failed with i2c_imx_dma_request() return -EPROBE_DEFER,
+> If the EDMA build-in and probe successful this case not happened. Now I am worried about EDMA failed to probe, your case is correct.
 
-Now, consider the following code which doesn't use the rq clamps:
+You are assuming that EDMA has successfully probed. What if EDMA hasn't
+been probed yet, because it has been deferred for some other reason (e.g.
+a clock)?
 
-  util = uclamp_task_util(p);
-  // Does the task fit in the spare CPU capacity?
-  cpu = cpu_of(rq);
-  fits_capacity(util, cpu_capacity(cpu) - cpu_util(cpu))
+The fact is, the way i2c-imx is structured at present, it is unsafe to
+propagate the EPROBE_DEFER error code from i2c_imx_dma_request() under
+ANY CIRCUMSTANCES.
 
-This would lead to:
+> >If, for whatever reason, i2c_imx_dma_request() ever returns -EPROBE_DEFER,
+> >the above loop WILL happen.
+> >
+> >The FUNDAMENTAL rule of kernel programming is that you do NOT publish
+> >before you have completed setup.  i2c-imx violates that rule as the probe
+> >function is ordered at present.
+> >
+> [Peng Ma] Yes, I agree, but kernel provide the deffer probe and for the platform devices we don't decide who probe first.
 
-  util = 100;
-  fits_capacity(100, 512 - 200)
+So, because the kernel provides a facility, you think it's fine to
+create infinite loops using it?
 
-fits_capacity() would return true. However, enqueuing p on that CPU *will*
-cause it to become overutilized since rq clamp values are max-aggregated,
-so we'd remain with
+> >i2c-imx has been written for i2c_imx_dma_request() to be safe to call after the
+> >device has been published, but with the current probe function order, it is
+> >unsafe to propagate the EPROBE_DEFER return value for the reason above.
+> >For the reason the original attempt got reverted.
+> >
+> >So, if you want to do this (and yes, I'd also encourage it to be conditional on
+> >EDMA being built-in, as I2C is commonly used as a way to get at RTCs, which
+> >are read before kernel modules can be loaded) then you MUST move
+> >i2c_imx_dma_request() before
+> >i2c_add_numbered_adapter() to avoid the infinite loop.
+> >
+> [Peng Ma] To do this, the i2c devices not probe and i2c adapter not register before edma probe.
 
-  rq.uclamp.max = 768
+Which is the correct behaviour, rather than having the kernel cycle
+through creating i2c devices, probing i2c drivers, tearing down the
+i2c devices and repeating endlessly.
 
-which comes from the other tasks already enqueued on rq. Thus, we could
-select a high enough frequency to reach beyond 0.8 * 512 utilization
-(== overutilized) after enqueuing p on rq. What find_energy_efficient_cpu()
-needs here is uclamp_rq_util_with() which lets us peek at the future
-utilization landscape, including rq-wide uclamp values.
+Until you see this, sorry, no, you can't propagate the return value
+from i2c_imx_dma_request().  We've tried it, it's caused regressions,
+and a problem has been identified that you don't seem to be willing
+to recognise _as_ a serious problem with the approach you're trying
+to re-implement.
 
-Make find_energy_efficient_cpu() use uclamp_rq_util_with() for its
-fits_capacity() check. This is in line with what compute_energy() ends up
-using for estimating utilization.
-
-Suggested-by: Quentin Perret <qperret@google.com>
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
----
- kernel/sched/fair.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a9c93c5427bf..956d9578935a 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6282,9 +6282,18 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- 			if (!cpumask_test_cpu(cpu, p->cpus_ptr))
- 				continue;
- 
--			/* Skip CPUs that will be overutilized. */
- 			util = cpu_util_next(cpu, p, cpu);
- 			cpu_cap = capacity_of(cpu);
-+			spare_cap = cpu_cap - util;
-+
-+			/*
-+			 * Skip CPUs that cannot satisfy the capacity request.
-+			 * IOW, placing the task there would make the CPU
-+			 * overutilized. Take uclamp into account to see how
-+			 * much capacity we can get out of the CPU; this is
-+			 * aligned with schedutil_cpu_util().
-+			 */
-+			util = uclamp_rq_util_with(cpu_rq(cpu), util, p);
- 			if (!fits_capacity(util, cpu_cap))
- 				continue;
- 
-@@ -6299,7 +6308,6 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- 			 * Find the CPU with the maximum spare capacity in
- 			 * the performance domain
- 			 */
--			spare_cap = cpu_cap - util;
- 			if (spare_cap > max_spare_cap) {
- 				max_spare_cap = spare_cap;
- 				max_spare_cap_cpu = cpu;
 -- 
-2.24.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
