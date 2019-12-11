@@ -2,80 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D105C11AD28
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:18:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1CFD11AD14
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:11:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729814AbfLKOSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 09:18:05 -0500
-Received: from mailgw02.mediatek.com ([216.200.240.185]:34817 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729671AbfLKOSF (ORCPT
+        id S1729728AbfLKOLO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 09:11:14 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:46177 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729513AbfLKOLN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 09:18:05 -0500
-X-Greylist: delayed 307 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Dec 2019 09:18:05 EST
-X-UUID: 8624b81f66794d988dc55291a6f9872d-20191211
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=Axc6RlNHq3r5/GnAxxkyvJrrLbwxm4JZnBh/iubqg2g=;
-        b=WbANH9bYzqKU4Qs01Ukn8js+r5f8MbEjNt2YUOmrd+4dH1EUWHoeSRT23noh7xATcAUgWLA0dOpeNHH3ePSVC9qHWwXaczN1czCLKJrJyVlH2UuxGNiz7jkRrogCHYsyPgVjOVqQDdx5NbI5YWP9MN2xMuxagFE77qgsR4MXu6g=;
-X-UUID: 8624b81f66794d988dc55291a6f9872d-20191211
-Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw02.mediatek.com
-        (envelope-from <landen.chao@mediatek.com>)
-        (musrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 118975065; Wed, 11 Dec 2019 06:12:55 -0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS62N2.mediatek.inc (172.29.193.42) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 11 Dec 2019 06:11:45 -0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 11 Dec 2019 22:10:42 +0800
-Message-ID: <1576073444.23763.11.camel@mtksdccf07>
-Subject: Re: [PATCH net-next 3/6] dt-bindings: net: dsa: add new MT7531
- binding to support MT7531
-From:   Landen Chao <landen.chao@mediatek.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "vivien.didelot@savoirfairelinux.com" 
-        <vivien.didelot@savoirfairelinux.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        "opensource@vdorst.com" <opensource@vdorst.com>,
-        "frank-w@public-files.de" <frank-w@public-files.de>
-Date:   Wed, 11 Dec 2019 22:10:44 +0800
-In-Reply-To: <20191210162010.GB27714@lunn.ch>
-References: <cover.1575914275.git.landen.chao@mediatek.com>
-         <1c382fd916b66bfe3ce8ef18c12f954dbcbddbbc.1575914275.git.landen.chao@mediatek.com>
-         <20191210162010.GB27714@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Wed, 11 Dec 2019 09:11:13 -0500
+Received: by mail-qv1-f66.google.com with SMTP id t9so5752877qvh.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 06:11:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Ta+6MM6D+biy14RzUXKQFU4frN1QN7bX59TjidDQ1Ek=;
+        b=jpLroIGD4XesTUubu/IJRf7DlTeyOXwE7adzlRUO5TqlJ9l4E+1hCXh0WACL6mNGNf
+         b5VpFlf0ZLRek+QPyNyko0dzHkf/Y3V4ae0aqJmG3LVuzBe5uCyedmw6UfSq25/a8nmO
+         UnVl4OdF1El1jzDfxqWXjCAiiXQDC22xfgO1Yg3+KKkl4sG6nfikxUzJ+WpnsNcq0ksf
+         1XHMwy/Elc/2AhsR6RttC2YrI4RVEqus5r/BdJQpoXGZ3xRWohP88b1uP5lfW8Q4J+3e
+         DSya9GHMryvunQLhAEds4EKo+eHk3fw61ZaYbzOiCRkhlQ2ui5izeSe1sRqnCq/QEQgZ
+         juCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=Ta+6MM6D+biy14RzUXKQFU4frN1QN7bX59TjidDQ1Ek=;
+        b=gTKqUrJzMYAKHX4i83+TLeH7mRN3Y74hBuxCEk8erjPCwcxzFSZ2y3YgpQIhJOpUNr
+         xfgyP7ZiyUlTp6mucBQJkiFDzBoO27h7LNI4QLVuQwGb9Lsj89JvFWejsiyQew1son5L
+         dDVqTM2gRgdq5gf2C670AarjY2e9e/b4zwBW4yKUgPfaMRO/AErpolgqUhgSJGVjbFOb
+         XCwNmVlvMoeNj6+jUl3RAZJU4iOJT9L0lyqlK72/jCKKDx/N/Is31TfnkfspqeMMQTAv
+         aYLPNgHnFOYiSmQ4PJ2VgFtunB7Or+jpQsMHOUVQ0VlUFvbrd9sWIwApyK9Ntkds0eSN
+         5vTw==
+X-Gm-Message-State: APjAAAXysP2vAE+BDLyHn9Nov/Ra1gkjxS2hDkFbEgdCy3cCkIsel8qm
+        AC8xehK7/P+TOMrMmJXXGEjsHhoVtOF7WOJIUhI=
+X-Google-Smtp-Source: APXvYqxtSCiqBM2hIdCw31RF3NuaGjR7D4iyWXJxNlV/z24C67GAYfj5toZaV1M3cX6wpEN+GbWp/YuUhR06B/yjn1o=
+X-Received: by 2002:a0c:f54b:: with SMTP id p11mr3125590qvm.201.1576073472945;
+ Wed, 11 Dec 2019 06:11:12 -0800 (PST)
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Received: by 2002:ad4:4242:0:0:0:0:0 with HTTP; Wed, 11 Dec 2019 06:11:12
+ -0800 (PST)
+Reply-To: michellegoodman45@gmail.com
+From:   Michelle Goodman <michellegoodman358@gmail.com>
+Date:   Wed, 11 Dec 2019 14:11:12 +0000
+Message-ID: <CAAnwc9smTyhJd9o5vNnm5a4r5eJuj3KdmOayTQumA+H7CSFJhA@mail.gmail.com>
+Subject: From Michelle
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQW5kcmV3LA0KDQpPbiBXZWQsIDIwMTktMTItMTEgYXQgMDA6MjAgKzA4MDAsIEFuZHJldyBM
-dW5uIHdyb3RlOg0KPiA+ICtFeGFtcGxlIDQ6DQo+ID4gKw0KPiA+ICsmZXRoIHsNCj4gPiArCWdt
-YWMwOiBtYWNAMCB7DQo+ID4gKwkJY29tcGF0aWJsZSA9ICJtZWRpYXRlayxldGgtbWFjIjsNCj4g
-PiArCQlyZWcgPSA8MD47DQo+ID4gKwkJcGh5LW1vZGUgPSAiMjUwMGJhc2UteCI7DQo+ID4gKw0K
-PiA+ICsJCWZpeGVkLWxpbmsgew0KPiA+ICsJCQlzcGVlZCA9IDwxMDAwPjsNCj4gPiArCQkJZnVs
-bC1kdXBsZXg7DQo+ID4gKwkJCXBhdXNlOw0KPiA+ICsJCX07DQo+ID4gKwl9Ow0KPiANCj4gMjUw
-MEJhc2UtWCwgYnV0IGZpeGVkIGxpbmsgc3BlZWQgMTAwMD8NCmZpeGVkLWxpbmsgc3BlZWQgc2hv
-dWxkIGJlIDI1MDAuIEkgd2lsbCB1cGRhdGUgaXQuDQo+IA0KPiA+ICsJCQkJcG9ydEA2IHsNCj4g
-PiArCQkJCQlyZWcgPSA8Nj47DQo+ID4gKwkJCQkJbGFiZWwgPSAiY3B1IjsNCj4gPiArCQkJCQll
-dGhlcm5ldCA9IDwmZ21hYzA+Ow0KPiA+ICsJCQkJCXBoeS1tb2RlID0gIjI1MDBiYXNlLXgiOw0K
-PiA+ICsNCj4gPiArCQkJCQlmaXhlZC1saW5rIHsNCj4gPiArCQkJCQkJc3BlZWQgPSA8MTAwMD47
-DQo+ID4gKwkJCQkJCWZ1bGwtZHVwbGV4Ow0KPiA+ICsJCQkJCQlwYXVzZTsNCj4gPiArCQkJCQl9
-Ow0KPiANCj4gU2FtZSBoZXJlIQ0KSSB3aWxsIHVwZGF0ZSBpdCBvciByZW1vdmUgZml4ZWQtbGlu
-ayBibG9jayBhcyB0aGUgZGlzY3Vzc2lvbiBpbiBkdHMNCnRocmVhZC4NCj4gDQo+ICAgICAgQW5k
-cmV3DQoNCnJlZ2FyZHMgTGFuZGVuDQo=
-
+Hallo liebe hoffnung du hast meine nachricht erhalten ich brauche
+deine dringende antwort jetzt m=C3=B6chte ich dein freund antworten zur=C3=
+=BCck
+Vielen Dank
+Michelle
