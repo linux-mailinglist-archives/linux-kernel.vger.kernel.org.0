@@ -2,81 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E6511A255
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:56:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB98B11A256
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfLKC4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728165AbfLKC4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 21:56:17 -0500
+Received: from mail-eopbgr150042.outbound.protection.outlook.com ([40.107.15.42]:30626
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727773AbfLKC4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Dec 2019 21:56:13 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:57980 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727865AbfLKC4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:56:09 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ECDBA1A0599;
-        Wed, 11 Dec 2019 03:56:07 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6E0FF1A057A;
-        Wed, 11 Dec 2019 03:56:03 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9C68F402AE;
-        Wed, 11 Dec 2019 10:55:57 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, tglx@linutronix.de,
-        gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2] ARM: imx: Enable ARM_ERRATA_814220 for i.MX6UL and i.MX7D
-Date:   Wed, 11 Dec 2019 10:53:36 +0800
-Message-Id: <1576032816-23373-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iKyptkDMC6kf14OlXhIWbyWl+NlOILrqnCEb9EgvFbLwGarFTZWkD8p4zMtp5NBH8YC6GPbG27+IZdLvMIXKItJBhr20+ZSkcAch8oEcbS/+CLfPKZcAt1AlTT1Ily96/M9OFLx7sU2VC4zobD2tOjj5HGRmLDQG57fRnbPt9dzNllQBcyeVT9HGryN8IY0S0vcka2uSdjjp8aMwMhe0sL97rDk/zWQa7O8kp1bfpuqBa67fBKhAOKdZepBX+3B7gq1HAVUCUY+qWz23/vudt7QpEMCTB3bIq6rn+lwQvMMj/DcmEQE4BVhCPoYANbPrOk0+mtFRCV13UMC2BccNsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JZi1/tjHPZERF/sLRbseIK60zddEkMWCBQnRaqr2kJM=;
+ b=VucAaQTJvzmo1nGzWhfr09pKwKg5PhGSDpdawhAvXfUkYYQcHc3O6Q1Kiyi0Eem7GqUykneoy3WdfH2j5lbZrSfceYK+F3ShhOE0Dvk9VTvbynh5xGRGIK78jRwJp8YqqQv+SaisNRM5swjxp49W2DonHuttwMNXUG6WjUQPsBXdXxbLTBHq2lg+rE+L5YIC+qZhdkvll9MgIQisk12fld1mDbhpXzaeDrHvOcIikdAb4CxGEjRAK0QaBtfwnJEK2CxNQYfR7QkMXv+OK+CYL+vThp6saQMvwirRKln0AaOB8/3xufrDa4HVTslxXEGxcqAq87CGIPQG3i/8cxiMDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JZi1/tjHPZERF/sLRbseIK60zddEkMWCBQnRaqr2kJM=;
+ b=YntiJRpM8aIqsqcdLbJUJQG6JJ9tsZwNQ11tK6DzRvLKClN5VrpwB20g79fW94TMaNA0uNZMZBHXqJbBzjL3mlufdPa4AjRbVkwkOXrEEpg2swQEqs1pPkGxm+8aIfH6ilqR6Fksg9pL4SHdz0mW4+i/Z4JXWEQACmM+IBUCS4E=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3884.eurprd04.prod.outlook.com (52.134.71.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.17; Wed, 11 Dec 2019 02:56:10 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::b5ce:fe6b:6c06:fdb1]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::b5ce:fe6b:6c06:fdb1%6]) with mapi id 15.20.2516.018; Wed, 11 Dec 2019
+ 02:56:10 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] ARM: imx: Enable ARM_ERRATA_814220 for i.MX6UL and i.MX7D
+Thread-Topic: [PATCH] ARM: imx: Enable ARM_ERRATA_814220 for i.MX6UL and
+ i.MX7D
+Thread-Index: AQHVqaz9uTC5Ekq7lkSM85gAnNButKe0RmUAgAADO9A=
+Date:   Wed, 11 Dec 2019 02:56:10 +0000
+Message-ID: <DB3PR0402MB3916FD7E76C669D620D91842F55A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1575358720-27624-1-git-send-email-Anson.Huang@nxp.com>
+ <20191211024413.GF15858@dragon>
+In-Reply-To: <20191211024413.GF15858@dragon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 40cdaad7-0621-401d-d88a-08d77de5ad75
+x-ms-traffictypediagnostic: DB3PR0402MB3884:|DB3PR0402MB3884:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB3PR0402MB3884207A11407CDE25599F44F55A0@DB3PR0402MB3884.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1051;
+x-forefront-prvs: 024847EE92
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(376002)(366004)(39860400002)(346002)(189003)(199004)(9686003)(478600001)(54906003)(55016002)(26005)(7696005)(8936002)(4326008)(66476007)(316002)(86362001)(8676002)(4744005)(6916009)(33656002)(6506007)(186003)(44832011)(66946007)(76116006)(64756008)(66556008)(2906002)(66446008)(81156014)(81166006)(71200400001)(5660300002)(52536014);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3884;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: yby8cyqCd/RRdnBcZopFYNSTGx6spa9APmiQMgIqdUrCMMOnNU6e7faJLX1MlxfkT2O3L3NSrFByBxULjXjlsG46tYyxlnQjGlZWQde7zKowBfd0OCNeDDk6QsnVtGG9BKQFCU6YwH4/Es1OOpNf7t3+pmNnEpm8DRJXhY2clagiQFv2XbFj1qjauNIDCNgn54ZF+Ms7N8SDMKmphRB2hScn34ysz7TgOd2MIBsEmilc8fFcujCcVAk2iQuesARFS2YgYzsSqj7ukPdGKYbxh/4dPfNNt8Q9/lI8gXBELdUrO2TY0qGxB/ryzvzwm5RdVZEV5FpMwglRbnki4HcvEHiDIBH4hhQTu5iG8k2HCFp9yQqZVtTwGhGy8719GGMyEye6xXkbGBatUcINhksViUOuApUhcw81GbXYuWZR4TlqtyMp4gLvXuuKQcXNDfRT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40cdaad7-0621-401d-d88a-08d77de5ad75
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2019 02:56:10.5729
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yuDEkjvCA7l88w5ZTmImo/GxwIzFB78azd2L2F6wGbUZT37WuD78wDcv15uf7dQ+dA8OZuGXLxkJwpdMqP8Pig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3884
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ARM_ERRATA_814220 has below description:
-
-The v7 ARM states that all cache and branch predictor maintenance
-operations that do not specify an address execute, relative to
-each other, in program order.
-However, because of this erratum, an L2 set/way cache maintenance
-operation can overtake an L1 set/way cache maintenance operation.
-This ERRATA only affected the Cortex-A7 and present in r0p2, r0p3,
-r0p4, r0p5.
-
-i.MX6UL and i.MX7D have Cortex-A7 r0p5 inside, need to enable
-ARM_ERRATA_814220 for proper workaround.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V1:
-	- Add errata description and ARM core version in commit message.
----
- arch/arm/mach-imx/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-index 593bf15..4326c8f 100644
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@ -520,6 +520,7 @@ config SOC_IMX6UL
- 	bool "i.MX6 UltraLite support"
- 	select PINCTRL_IMX6UL
- 	select SOC_IMX6
-+	select ARM_ERRATA_814220
- 
- 	help
- 	  This enables support for Freescale i.MX6 UltraLite processor.
-@@ -556,6 +557,7 @@ config SOC_IMX7D
- 	select PINCTRL_IMX7D
- 	select SOC_IMX7D_CA7 if ARCH_MULTI_V7
- 	select SOC_IMX7D_CM4 if ARM_SINGLE_ARMV7M
-+	select ARM_ERRATA_814220
- 	help
- 		This enables support for Freescale i.MX7 Dual processor.
- 
--- 
-2.7.4
-
+DQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gQVJNOiBpbXg6IEVuYWJsZSBBUk1fRVJSQVRBXzgx
+NDIyMCBmb3IgaS5NWDZVTA0KPiBhbmQgaS5NWDdEDQo+IA0KPiBPbiBUdWUsIERlYyAwMywgMjAx
+OSBhdCAwMzozODo0MFBNICswODAwLCBBbnNvbiBIdWFuZyB3cm90ZToNCj4gPiBpLk1YNlVMIGFu
+ZCBpLk1YN0QgaGF2ZSBDb3J0ZXgtQTcgaW5zaWRlLCBuZWVkIHRvIGVuYWJsZQ0KPiA+IEFSTV9F
+UlJBVEFfODE0MjIwIGZvciBwcm9wZXIgd29ya2Fyb3VuZC4NCj4gDQo+IENhbiB3ZSBicmllZmx5
+IGRlc2NyaWJlIHRoZSBBUk1fRVJSQVRBXzgxNDIyMCBpbiB0aGUgY29tbWl0IGxvZz8NCg0KRG9u
+ZSBpbiBWMi4NCg0KVGhhbmtzLA0KQW5zb24NCg==
