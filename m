@@ -2,98 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96CAF11B2DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B77A11B318
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:41:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388539AbfLKPjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:39:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
+        id S2388543AbfLKPku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:40:50 -0500
+Received: from mga07.intel.com ([134.134.136.100]:59322 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388510AbfLKPiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:38:54 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32BD621556;
-        Wed, 11 Dec 2019 15:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078734;
-        bh=0dHmXHVoe35w3CbscuWbiqYfBAr3lfs6fu8O53lEqQg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xxqWETJtuaI9o2PdTaRbwuJyDeU5zT8gMaXRU4bVSVd1oM3XAcGGzOySM/BdAFf+P
-         TvGL6TDeeP3lyQhnR5LRJTZbsm0Afw73+BoSnS1jg0w3gpfPreNp3OZ0hgYxP3ZhHY
-         K33HpZp/5T4baQfHjY1lnQc4FZs4UiixgrkDfBGw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Chris Down <chris@chrisdown.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 37/37] kernel: sysctl: make drop_caches write-only
-Date:   Wed, 11 Dec 2019 10:38:13 -0500
-Message-Id: <20191211153813.24126-37-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211153813.24126-1-sashal@kernel.org>
-References: <20191211153813.24126-1-sashal@kernel.org>
+        id S1733115AbfLKPkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:40:45 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 07:40:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="245326651"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga002.fm.intel.com with SMTP; 11 Dec 2019 07:40:38 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 11 Dec 2019 17:40:37 +0200
+Date:   Wed, 11 Dec 2019 17:40:37 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Thomas Anderson <thomasanderson@google.com>
+Cc:     Bhawanpreet Lakha <Bhawanpreet.lakha@amd.com>,
+        Harry Wentland <hwentlan@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>, Sean Pau <sean@poorly.run>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/edid: Increase size of VDB and CMDB bitmaps to 256
+ bits
+Message-ID: <20191211154037.GI1208@intel.com>
+References: <20191210221048.83628-1-thomasanderson@google.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191210221048.83628-1-thomasanderson@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Weiner <hannes@cmpxchg.org>
+On Tue, Dec 10, 2019 at 02:10:48PM -0800, Thomas Anderson wrote:
+> CEA-861-G adds modes up to 219, so increase the size of the
+> maps in preparation for adding the new modes to drm_edid.c.
+> 
+> Signed-off-by: Thomas Anderson <thomasanderson@google.com>
 
-[ Upstream commit 204cb79ad42f015312a5bbd7012d09c93d9b46fb ]
+Thanks. lgtm. Pushed to drm-misc-next.
 
-Currently, the drop_caches proc file and sysctl read back the last value
-written, suggesting this is somehow a stateful setting instead of a
-one-time command.  Make it write-only, like e.g.  compact_memory.
+PS. I do wonder a bit if we should consider a more economical way to
+track this stuff. Not really sure how many bits we can realistically
+expect to be set in these bitmasks...
 
-While mitigating a VM problem at scale in our fleet, there was confusion
-about whether writing to this file will permanently switch the kernel into
-a non-caching mode.  This influences the decision making in a tense
-situation, where tens of people are trying to fix tens of thousands of
-affected machines: Do we need a rollback strategy?  What are the
-performance implications of operating in a non-caching state for several
-days?  It also caused confusion when the kernel team said we may need to
-write the file several times to make sure it's effective ("But it already
-reads back 3?").
+> ---
+>  include/drm/drm_connector.h | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+> index 5f8c3389d46f..17b728d9c73d 100644
+> --- a/include/drm/drm_connector.h
+> +++ b/include/drm/drm_connector.h
+> @@ -188,19 +188,19 @@ struct drm_hdmi_info {
+>  
+>  	/**
+>  	 * @y420_vdb_modes: bitmap of modes which can support ycbcr420
+> -	 * output only (not normal RGB/YCBCR444/422 outputs). There are total
+> -	 * 107 VICs defined by CEA-861-F spec, so the size is 128 bits to map
+> -	 * upto 128 VICs;
+> +	 * output only (not normal RGB/YCBCR444/422 outputs). The max VIC
+> +	 * defined by the CEA-861-G spec is 219, so the size is 256 bits to map
+> +	 * up to 256 VICs.
+>  	 */
+> -	unsigned long y420_vdb_modes[BITS_TO_LONGS(128)];
+> +	unsigned long y420_vdb_modes[BITS_TO_LONGS(256)];
+>  
+>  	/**
+>  	 * @y420_cmdb_modes: bitmap of modes which can support ycbcr420
+> -	 * output also, along with normal HDMI outputs. There are total 107
+> -	 * VICs defined by CEA-861-F spec, so the size is 128 bits to map upto
+> -	 * 128 VICs;
+> +	 * output also, along with normal HDMI outputs. The max VIC defined by
+> +	 * the CEA-861-G spec is 219, so the size is 256 bits to map up to 256
+> +	 * VICs.
+>  	 */
+> -	unsigned long y420_cmdb_modes[BITS_TO_LONGS(128)];
+> +	unsigned long y420_cmdb_modes[BITS_TO_LONGS(256)];
+>  
+>  	/** @y420_cmdb_map: bitmap of SVD index, to extraxt vcb modes */
+>  	u64 y420_cmdb_map;
+> -- 
+> 2.24.0.525.g8f36a354ae-goog
 
-Link: http://lkml.kernel.org/r/20191031221602.9375-1-hannes@cmpxchg.org
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Chris Down <chris@chrisdown.name>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/sysctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 24c7fe8608d02..c2dddd335d064 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1357,7 +1357,7 @@ static struct ctl_table vm_table[] = {
- 		.procname	= "drop_caches",
- 		.data		= &sysctl_drop_caches,
- 		.maxlen		= sizeof(int),
--		.mode		= 0644,
-+		.mode		= 0200,
- 		.proc_handler	= drop_caches_sysctl_handler,
- 		.extra1		= &one,
- 		.extra2		= &four,
 -- 
-2.20.1
-
+Ville Syrjälä
+Intel
