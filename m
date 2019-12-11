@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02FE111AEFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:10:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7071A11B0C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:26:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730681AbfLKPKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:10:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57914 "EHLO mail.kernel.org"
+        id S1732908AbfLKPZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:25:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730266AbfLKPJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:09:48 -0500
+        id S1732875AbfLKPZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:25:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F5E7208C3;
-        Wed, 11 Dec 2019 15:09:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DCA12173E;
+        Wed, 11 Dec 2019 15:25:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076988;
-        bh=tYIjukdyNWyys5Q405CowLe8RQsi4SABNuXFZgXNvno=;
+        s=default; t=1576077949;
+        bh=hlKtOFs0Tkkrzuq59CYpvYtvrfwPDLYLWxEY2yL9gfE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1C/7QaiWdqRBMDsc760zF7Bj/spt3svT0OrGoYOdUKBnSuQN8OQiS7POOffwCXg+v
-         Iq5twRj7VE6xvj2qVHpZ7hETvZYRkMLw1uc/1mev1XWOG53JvGq5XvKbX5PUQqTRMJ
-         ZXSn7eKoisV6AwqJH8deAxruC2i4jwv6HbImk6iI=
+        b=znCMKt2BN40dcH5MSFdfQbUT0NR5H5bcJXbhYNfb7rzVBFNgbIQE2xmsKWP89FYbe
+         x6cFoXt2jh1xVRmR9c7LJqVsm/Fb5MsmHJcCRPAqoh8l61gXFO75o8E/eFK6PWGkuJ
+         kYfDbkhiutxuIRbq1xz3hym3WaI0OOE1eetDhgdY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 66/92] KVM: x86: Remove a spurious export of a static function
+        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 195/243] net: aquantia: fix RSS table and key sizes
 Date:   Wed, 11 Dec 2019 16:05:57 +0100
-Message-Id: <20191211150253.903314849@linuxfoundation.org>
+Message-Id: <20191211150352.342346580@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,33 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
 
-commit 24885d1d79e2e83d49201aeae0bc59f1402fd4f1 upstream.
+[ Upstream commit 474fb1150d40780e71f0b569aeac4f375df3af3d ]
 
-A recent change inadvertently exported a static function, which results
-in modpost throwing a warning.  Fix it.
+Set RSS indirection table and RSS hash key sizes to their real size.
 
-Fixes: cbbaa2727aa3 ("KVM: x86: fix presentation of TSX feature in ARCH_CAPABILITIES")
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/x86.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_cfg.h | 4 ++--
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1339,7 +1339,6 @@ static u64 kvm_get_arch_capabilities(voi
- 	data &= ~ARCH_CAP_TSX_CTRL_MSR;
- 	return data;
- }
--EXPORT_SYMBOL_GPL(kvm_get_arch_capabilities);
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h b/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
+index 91eb8910b1c99..90a0e1d0d6221 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
+@@ -42,8 +42,8 @@
+ #define AQ_CFG_IS_LRO_DEF           1U
  
- static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
- {
+ /* RSS */
+-#define AQ_CFG_RSS_INDIRECTION_TABLE_MAX  128U
+-#define AQ_CFG_RSS_HASHKEY_SIZE           320U
++#define AQ_CFG_RSS_INDIRECTION_TABLE_MAX  64U
++#define AQ_CFG_RSS_HASHKEY_SIZE           40U
+ 
+ #define AQ_CFG_IS_RSS_DEF           1U
+ #define AQ_CFG_NUM_RSS_QUEUES_DEF   AQ_CFG_VECS_DEF
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+index 4f34808f1e064..8cc34b0bedc3a 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+@@ -44,7 +44,7 @@ static void aq_nic_rss_init(struct aq_nic_s *self, unsigned int num_rss_queues)
+ 	struct aq_rss_parameters *rss_params = &cfg->aq_rss;
+ 	int i = 0;
+ 
+-	static u8 rss_key[40] = {
++	static u8 rss_key[AQ_CFG_RSS_HASHKEY_SIZE] = {
+ 		0x1e, 0xad, 0x71, 0x87, 0x65, 0xfc, 0x26, 0x7d,
+ 		0x0d, 0x45, 0x67, 0x74, 0xcd, 0x06, 0x1a, 0x18,
+ 		0xb6, 0xc1, 0xf0, 0xc7, 0xbb, 0x18, 0xbe, 0xf8,
+-- 
+2.20.1
+
 
 
