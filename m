@@ -2,162 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB81F11A61F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 09:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5F811A628
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 09:43:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbfLKIm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 03:42:27 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:38749 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727253AbfLKIm0 (ORCPT
+        id S1728353AbfLKInL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 03:43:11 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:42178 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfLKInL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 03:42:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576053745;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KtoovQXBmt77VoBhVg39A0Jd/NXJUkCNUGS6KQcNFkc=;
-        b=GFSYfH/esJg01S8a5WewPmnQh8H/uJvU+a0pF+ozyaWIzI/z9lbpFDZmZBkUjyHWXnuG5h
-        0d/52Os8AdLiRRBAi6UIdaIP/asGNVw/e0MMGYcgE3r2VtjUvZ91fSkazTNdbw8Iia4rW/
-        iNUwwXs98vL1JufKW1AKuGWNLyOrl+k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-51-2Jw60vDsMoSH9xfXdMSoEA-1; Wed, 11 Dec 2019 03:42:22 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 94B3F800D5B;
-        Wed, 11 Dec 2019 08:42:20 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-67.ams2.redhat.com [10.36.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 75C0610013A1;
-        Wed, 11 Dec 2019 08:42:17 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id AAD5617536; Wed, 11 Dec 2019 09:42:16 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     gurchetansingh@chromium.org, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/3] virtio-gpu: use damage info for display updates.
-Date:   Wed, 11 Dec 2019 09:42:16 +0100
-Message-Id: <20191211084216.25405-4-kraxel@redhat.com>
-In-Reply-To: <20191211084216.25405-1-kraxel@redhat.com>
-References: <20191211084216.25405-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: 2Jw60vDsMoSH9xfXdMSoEA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 11 Dec 2019 03:43:11 -0500
+Received: by mail-qv1-f68.google.com with SMTP id q19so5388402qvy.9
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 00:43:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kQeuS19F3KEdXprKaRD06DcqpTfUguGJp+E8RkyDNtI=;
+        b=VY1fSL/r1auTchjXjG0GETcmGWwfB6GldDBRZEGQMdCt01QI+QDkI5MX4VcXg7L7wO
+         66TA7vnLMgNXMvyBNu2p7xpoM5a1z0pNR9tqxuMfwdJS01Q2hoGyGEhqwhX/5Ad0GFbw
+         ULfKzKKfXzAtKfcrL+k3sOKWghQew0fgrir9DFyL8L0dyWjJADv4wo0bB+LQmh+IfYjc
+         Prc7AYw3r9RECIRa0RpTe1NWrtp52LD7UGVwNT5fdFDr4GXlQmwnyQDghOVnPwPFDHEc
+         TrrhNe281AuSSH6gWug9aKmokDALzvt8A84ynyoX27sQS+4FoaAtjzxC7nvUOM8m9lKO
+         GFYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kQeuS19F3KEdXprKaRD06DcqpTfUguGJp+E8RkyDNtI=;
+        b=fvuvbeAW7DeX9KRNX+DsOvcWY9RPA4MivRpX+UKpXFytOs8wtWdEkMHA+FYT0QsXO3
+         rt1Yl3vqM68z8JLlAqjZQQ6nnuBf0GNTeS2LonNdb1ITXA7DhzPYPeckNaH3Pvo0QmrA
+         m3b0FOpECxpQbJ7uXE1xFg86f7aP2KW+tNZiEyqrE17U9hbQoJfmTclKykqnYy+OSN0F
+         IYpzbVWgVCJI2GdImW4X6CEeeRC2qHhXnQ7V1Suki+XB2zjptiAkI0L15hF2RTbinp5b
+         4bTWn/HltCOyoBsPMcxwiEvmMMuvfW+OGAlqHSNaWVbTszXpgHrXwPUj5nugJ5YaHd3z
+         hZmg==
+X-Gm-Message-State: APjAAAXmIaVcSBq8uoJyhxzzbCtkLZ6zmhITcu4m/sS9aV0sMeoK3BUz
+        3af2ZHbj7BJswwTz7AK8zqo1wghUnisddMptKIQ=
+X-Google-Smtp-Source: APXvYqweaMiD2ZiXWYey5K6krVHrwXhWFdg3f53tPr8UKp9ZC0L6v7VCyZwhxpxHXFGNXWM7pLmO5OrULXovRSxi0gI=
+X-Received: by 2002:a05:6214:108a:: with SMTP id o10mr1831132qvr.246.1576053790054;
+ Wed, 11 Dec 2019 00:43:10 -0800 (PST)
+MIME-Version: 1.0
+References: <20191028121043.22934-1-hch@lst.de> <alpine.DEB.2.21.9999.1910301311240.6452@viisi.sifive.com>
+ <20191031155222.GA7270@lst.de> <alpine.DEB.2.21.9999.1911221817010.14532@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1911221817010.14532@viisi.sifive.com>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Wed, 11 Dec 2019 16:42:33 +0800
+Message-ID: <CAEbi=3e4dzDex=zU2Bwvi+b=Jwz2NsT4fZPcT_o8umnJaub3Mg@mail.gmail.com>
+Subject: Re: RISC-V nommu support v6
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Palmer Dabbelt <palmer@sifive.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_plane.c | 41 +++++++++++++++-----------
- 1 file changed, 24 insertions(+), 17 deletions(-)
+Paul Walmsley <paul.walmsley@sifive.com> =E6=96=BC 2019=E5=B9=B411=E6=9C=88=
+23=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=8810:24=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> On Thu, 31 Oct 2019, Christoph Hellwig wrote:
+>
+> > On Wed, Oct 30, 2019 at 01:21:21PM -0700, Paul Walmsley wrote:
+> > > I tried building this series from your git branch mentioned above, an=
+d
+> > > booted it with a buildroot userspace built from your custom buildroot
+> > > tree.  Am seeing some segmentation faults from userspace (below).
+> > >
+> > > Am still planning to merge your patches.
+> > >
+> > > But I'm wondering whether you are seeing these segmentation faults al=
+so?
+> > > Or is it something that might be specific to my test setup?
+> >
+> > I just built a fresh image using make -j4 with that report and it works
+> > perfectly fine with my tree.
+>
+> Another colleague just gave this a quick test, following your instruction=
+s
+> as I did.  He encountered the same segmentation faulting issue.  Might be
+> worth taking a look at this once v5.5-rc1 is released.  Could be a
+> userspace issue, though.
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virti=
-o/virtgpu_plane.c
-index 2e0d14e005db..1a0fbbb91ec7 100644
---- a/drivers/gpu/drm/virtio/virtgpu_plane.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
-@@ -24,6 +24,7 @@
-  */
-=20
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_damage_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_plane_helper.h>
-=20
-@@ -103,22 +104,26 @@ static int virtio_gpu_plane_atomic_check(struct drm_p=
-lane *plane,
- }
-=20
- static void virtio_gpu_update_dumb_bo(struct virtio_gpu_device *vgdev,
--=09=09=09=09      struct virtio_gpu_object *bo,
--=09=09=09=09      struct drm_plane_state *state)
-+=09=09=09=09      struct drm_plane_state *state,
-+=09=09=09=09      struct drm_rect *rect)
- {
-+=09struct virtio_gpu_object *bo =3D
-+=09=09gem_to_virtio_gpu_obj(state->fb->obj[0]);
- =09struct virtio_gpu_object_array *objs;
-+=09uint32_t w =3D rect->x2 - rect->x1;
-+=09uint32_t h =3D rect->y2 - rect->y1;
-+=09uint32_t x =3D rect->x1 + (state->src_x >> 16);
-+=09uint32_t y =3D rect->y1 + (state->src_y >> 16);
-+=09uint32_t off =3D x * state->fb->format->cpp[0] +
-+=09=09y * state->fb->pitches[0];
-=20
- =09objs =3D virtio_gpu_array_alloc(1);
- =09if (!objs)
- =09=09return;
- =09virtio_gpu_array_add_obj(objs, &bo->base.base);
--=09virtio_gpu_cmd_transfer_to_host_2d
--=09=09(vgdev, 0,
--=09=09 state->src_w >> 16,
--=09=09 state->src_h >> 16,
--=09=09 state->src_x >> 16,
--=09=09 state->src_y >> 16,
--=09=09 objs, NULL);
-+
-+=09virtio_gpu_cmd_transfer_to_host_2d(vgdev, off, w, h, x, y,
-+=09=09=09=09=09   objs, NULL);
- }
-=20
- static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
-@@ -127,8 +132,8 @@ static void virtio_gpu_primary_plane_update(struct drm_=
-plane *plane,
- =09struct drm_device *dev =3D plane->dev;
- =09struct virtio_gpu_device *vgdev =3D dev->dev_private;
- =09struct virtio_gpu_output *output =3D NULL;
--=09struct virtio_gpu_framebuffer *vgfb;
- =09struct virtio_gpu_object *bo;
-+=09struct drm_rect rect;
-=20
- =09if (plane->state->crtc)
- =09=09output =3D drm_crtc_to_virtio_gpu_output(plane->state->crtc);
-@@ -146,12 +151,14 @@ static void virtio_gpu_primary_plane_update(struct dr=
-m_plane *plane,
- =09=09return;
- =09}
-=20
-+=09if (!drm_atomic_helper_damage_merged(old_state, plane->state, &rect))
-+=09=09return;
-+
- =09virtio_gpu_disable_notify(vgdev);
-=20
--=09vgfb =3D to_virtio_gpu_framebuffer(plane->state->fb);
--=09bo =3D gem_to_virtio_gpu_obj(vgfb->base.obj[0]);
-+=09bo =3D gem_to_virtio_gpu_obj(plane->state->fb->obj[0]);
- =09if (bo->dumb)
--=09=09virtio_gpu_update_dumb_bo(vgdev, bo, plane->state);
-+=09=09virtio_gpu_update_dumb_bo(vgdev, plane->state, &rect);
-=20
- =09if (plane->state->fb !=3D old_state->fb) {
- =09=09DRM_DEBUG("handle 0x%x, crtc %dx%d+%d+%d, src %dx%d+%d+%d\n",
-@@ -171,10 +178,10 @@ static void virtio_gpu_primary_plane_update(struct dr=
-m_plane *plane,
- =09}
-=20
- =09virtio_gpu_cmd_resource_flush(vgdev, bo->hw_res_handle,
--=09=09=09=09      plane->state->src_x >> 16,
--=09=09=09=09      plane->state->src_y >> 16,
--=09=09=09=09      plane->state->src_w >> 16,
--=09=09=09=09      plane->state->src_h >> 16);
-+=09=09=09=09      (plane->state->src_x >> 16) + rect.x1,
-+=09=09=09=09      (plane->state->src_y >> 16) + rect.y1,
-+=09=09=09=09      rect.x2 - rect.x1,
-+=09=09=09=09      rect.y2 - rect.y1);
-=20
- =09virtio_gpu_enable_notify(vgdev);
- }
---=20
-2.18.1
+Hi Christoph,
 
+I think it should be replaced with this macro for cores without S-mode.
+
+diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+index 9bca97ffb67a..5c8b24bf4e4e 100644
+--- a/arch/riscv/kernel/head.S
++++ b/arch/riscv/kernel/head.S
+@@ -248,7 +248,7 @@ ENTRY(reset_regs)
+        li      t4, 0
+        li      t5, 0
+        li      t6, 0
+-       csrw    sscratch, 0
++       csrw    CSR_SCRATCH, 0
+
+ #ifdef CONFIG_FPU
+        csrr    t0, CSR_MISA
