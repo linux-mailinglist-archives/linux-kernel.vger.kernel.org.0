@@ -2,152 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41EFA11B924
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:47:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D3CE11B937
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:53:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730965AbfLKQra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:47:30 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:38792 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730824AbfLKQrQ (ORCPT
+        id S1730348AbfLKQxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:53:01 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36455 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730058AbfLKQxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:47:16 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id AA0D620B71BB;
-        Wed, 11 Dec 2019 08:47:15 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AA0D620B71BB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576082835;
-        bh=XL88Vyq69uD2pl0nExPMLilfhDE8tdQEbj9zo0Wa5NA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dFtXTBJIxJwwevkTyVqEt4tRKzRUKw7bRODCTXMiY9o2hHbzrbeg3HQgxGM4RiMlV
-         6dAsgUAQ36YcU/QkmwMzJTJ6m+NdoUpUgDUJ3GRHGf63lMAOsh+pOWBRJ7eVjpmAg/
-         mhNE/94ZWL5HN6jqVUrDqdvnqNxodyMvs3yWF6YI=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: [PATCH v11 6/6] IMA: Read keyrings= option from the IMA policy
-Date:   Wed, 11 Dec 2019 08:47:07 -0800
-Message-Id: <20191211164707.4698-7-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191211164707.4698-1-nramas@linux.microsoft.com>
-References: <20191211164707.4698-1-nramas@linux.microsoft.com>
+        Wed, 11 Dec 2019 11:53:00 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so7742770wma.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 08:52:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxtx.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fl7Is/227Xkupce2trJJJrsnTq1Teu4U8XUaGw3152I=;
+        b=cWBLp/GPZGoKuBJ8dsv+TMZRrbzBXSstVTLxIXi/BlmooE6meRq08qQmG9rZWE5M9o
+         GXWeAMB/Sex87iLqvlE0lzp+xzgwpzYZDUqI2SAb08d7tXVBNJcwqEdG9fI5zJhjNXBk
+         4AzRV2ZAnelvnFparpQcFZvUl54U4nGcDFBqM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fl7Is/227Xkupce2trJJJrsnTq1Teu4U8XUaGw3152I=;
+        b=VqJ98ASJnfdJFaAUMjRci0Hnmg597lAcfrkFv2fgBcSJcle5UPn3f9scnt6eh7wDmj
+         U/O/GyffjSYXAiwqhpINOBfasTEZ2CxXXKzXBEYwC+85oy+qJaUsY1qeThHH1RQbHY04
+         di1WEnZChYCfHNpm82WlSZTV7quKTDlfLekwTeiSbiftiUCcJAnBK88YCkJ2TL8XqFRl
+         fc67y0qQaF8STPiDBnOoa3QbeTXfbDnL9qXLrRooGnDL56NX2WqivYSeAfRHRLusklfC
+         wTRycvr6d8Tk2qg8MC9rEDUbLcPQmRPxp6uc2OXpZ3i5Ot2QwZqe6sp6aKi3gZDIpjgT
+         lQ1w==
+X-Gm-Message-State: APjAAAUmmqjOhbH6Yp6K5lACjm4EMKVapgCdwP0VcG3LY2OKcE8MfERb
+        snz3u01+a9xKv83rY4pe/EFy6jfZbno4Dp0b7oQz7A==
+X-Google-Smtp-Source: APXvYqxQ/81XeKvFtm1/WNxQRu/wNJRlqT0NFJHNgcrVecBqhjXTNjZXqgLQYu8pNL92MJEv7xeKM3Lw3lZAYTcReXo=
+X-Received: by 2002:a7b:c389:: with SMTP id s9mr841991wmj.7.1576083177581;
+ Wed, 11 Dec 2019 08:52:57 -0800 (PST)
+MIME-Version: 1.0
+References: <20191201195728.4161537-1-aurelien@aurel32.net>
+ <87zhgbe0ix.fsf@mpe.ellerman.id.au> <20191202093752.GA1535@localhost.localdomain>
+ <CAFxkdAqg6RaGbRrNN3e_nHfHFR-xxzZgjhi5AnppTxxwdg0VyQ@mail.gmail.com>
+ <20191210222553.GA4580@calabresa> <CAFxkdAp6Up0qSyp0sH0O1yD+5W3LvY-+-iniBrorcz2pMV+y-g@mail.gmail.com>
+ <20191211160133.GB4580@calabresa>
+In-Reply-To: <20191211160133.GB4580@calabresa>
+From:   Justin Forbes <jmforbes@linuxtx.org>
+Date:   Wed, 11 Dec 2019 10:52:46 -0600
+Message-ID: <CAFxkdAp9OGjJS1Sdny+TiG2+zU4n0Nj+ZVrZt5J6iVsS_zqqcw@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: fix readelf output parsing on powerpc with recent binutils
+To:     Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:BPF (Safe dynamic programs and tools)" 
+        <netdev@vger.kernel.org>, Yonghong Song <yhs@fb.com>,
+        "open list:BPF (Safe dynamic programs and tools)" 
+        <bpf@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Aurelien Jarno <aurelien@aurel32.net>,
+        debian-kernel@lists.debian.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read "keyrings=" option, if specified in the IMA policy, and store in
-the list of IMA rules when the configured IMA policy is read.
+On Wed, Dec 11, 2019 at 10:01 AM Thadeu Lima de Souza Cascardo
+<cascardo@canonical.com> wrote:
+>
+> On Wed, Dec 11, 2019 at 09:33:53AM -0600, Justin Forbes wrote:
+> > On Tue, Dec 10, 2019 at 4:26 PM Thadeu Lima de Souza Cascardo
+> > <cascardo@canonical.com> wrote:
+> > >
+> > > On Tue, Dec 10, 2019 at 12:58:33PM -0600, Justin Forbes wrote:
+> > > > On Mon, Dec 2, 2019 at 3:37 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+> > > > >
+> > > > > On Mon, Dec 02, 2019 at 04:53:26PM +1100, Michael Ellerman wrote:
+> > > > > > Aurelien Jarno <aurelien@aurel32.net> writes:
+> > > > > > > On powerpc with recent versions of binutils, readelf outputs an extra
+> > > > > > > field when dumping the symbols of an object file. For example:
+> > > > > > >
+> > > > > > >     35: 0000000000000838    96 FUNC    LOCAL  DEFAULT [<localentry>: 8]     1 btf_is_struct
+> > > > > > >
+> > > > > > > The extra "[<localentry>: 8]" prevents the GLOBAL_SYM_COUNT variable to
+> > > > > > > be computed correctly and causes the checkabi target to fail.
+> > > > > > >
+> > > > > > > Fix that by looking for the symbol name in the last field instead of the
+> > > > > > > 8th one. This way it should also cope with future extra fields.
+> > > > > > >
+> > > > > > > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> > > > > > > ---
+> > > > > > >  tools/lib/bpf/Makefile | 4 ++--
+> > > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > >
+> > > > > > Thanks for fixing that, it's been on my very long list of test failures
+> > > > > > for a while.
+> > > > > >
+> > > > > > Tested-by: Michael Ellerman <mpe@ellerman.id.au>
+> > > > >
+> > > > > Looks good & also continues to work on x86. Applied, thanks!
+> > > >
+> > > > This actually seems to break horribly on PPC64le with binutils 2.33.1
+> > > > resulting in:
+> > > > Warning: Num of global symbols in sharedobjs/libbpf-in.o (32) does NOT
+> > > > match with num of versioned symbols in libbpf.so (184). Please make
+> > > > sure all LIBBPF_API symbols are versioned in libbpf.map.
+> > > >
+> > > > This is the only arch that fails, with x86/arm/aarch64/s390 all
+> > > > building fine.  Reverting this patch allows successful build across
+> > > > all arches.
+> > > >
+> > > > Justin
+> > >
+> > > Well, I ended up debugging this same issue and had the same fix as Jarno's when
+> > > I noticed his fix was already applied.
+> > >
+> > > I just installed a system with the latest binutils, 2.33.1, and it still breaks
+> > > without such fix. Can you tell what is the output of the following command on
+> > > your system?
+> > >
+> > > readelf -s --wide tools/lib/bpf/sharedobjs/libbpf-in.o | cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' | awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $0}'
+> > >
+> >
+> > readelf -s --wide tools/lib/bpf/sharedobjs/libbpf-in.o | cut -d "@"
+> > -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' | awk '/GLOBAL/ && /DEFAULT/ &&
+> > !/UND/ {print $0}'
+> >    373: 00000000000141bc  1376 FUNC    GLOBAL DEFAULT    1
+> > libbpf_num_possible_cpus [<localentry>: 8]
+> >    375: 000000000001869c   176 FUNC    GLOBAL DEFAULT    1 btf__free
+> > [<localentry>: 8]
+> [...]
+>
+> This is a patch on binutils carried by Fedora:
+>
+> https://src.fedoraproject.org/rpms/binutils/c/b8265c46f7ddae23a792ee8306fbaaeacba83bf8
+>
+> " b8265c Have readelf display extra symbol information at the end of the line. "
+>
+> It has the following comment:
+>
+> # FIXME:    The proper fix would be to update the scripts that are expecting
+> #           a fixed output from readelf.  But it seems that some of them are
+> #           no longer being maintained.
+>
+> This commit is from 2017, had it been on binutils upstream, maybe the situation
+> right now would be different.
+>
+> Honestly, it seems the best way out is to filter the other information in the
+> libbpf Makefile.
+>
+> Does the following patch work for you?
+>
+>
+> diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
+> index 56ce6292071b..e6f99484d7d5 100644
+> --- a/tools/lib/bpf/Makefile
+> +++ b/tools/lib/bpf/Makefile
+> @@ -145,6 +145,7 @@ PC_FILE             := $(addprefix $(OUTPUT),$(PC_FILE))
+>
+>  GLOBAL_SYM_COUNT = $(shell readelf -s --wide $(BPF_IN_SHARED) | \
+>                            cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' | \
+> +                          sed 's/\[.*\]//' | \
+>                            awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$8}' | \
+>                            sort -u | wc -l)
+>  VERSIONED_SYM_COUNT = $(shell readelf -s --wide $(OUTPUT)libbpf.so | \
+> @@ -217,6 +218,7 @@ check_abi: $(OUTPUT)libbpf.so
+>                      "versioned in $(VERSION_SCRIPT)." >&2;              \
+>                 readelf -s --wide $(OUTPUT)libbpf-in.o |                 \
+>                     cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' |   \
+> +                   sed 's/\[.*\]//' |                                   \
+>                     awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$8}'|   \
+>                     sort -u > $(OUTPUT)libbpf_global_syms.tmp;           \
+>                 readelf -s --wide $(OUTPUT)libbpf.so |                   \
 
-This patch defines a new policy token enum namely Opt_keyrings
-and an option flag IMA_KEYRINGS for reading "keyrings=" option
-from the IMA policy.
+This patch was against the older version, but when updated for current
+5.5-rc1, it does indeed work for me.
 
-Updated ima_parse_rule() to parse "keyrings=" option in the policy.
-Updated ima_policy_show() to display "keyrings=" option.
-
-The following example illustrates how key measurement can be verified.
-
-Sample "key" measurement rule in the IMA policy:
-
-measure func=KEY_CHECK uid=0 keyrings=.ima|.evm template=ima-buf
-
-Display "key" measurement in the IMA measurement list:
-
-cat /sys/kernel/security/ima/ascii_runtime_measurements
-
-10 faf3...e702 ima-buf sha256:27c915b8ddb9fae7214cf0a8a7043cc3eeeaa7539bcb136f8427067b5f6c3b7b .ima 308202863082...4aee
-
-Verify "key" measurement data for a key added to ".ima" keyring:
-
-cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | grep -m 1 "\.ima" | cut -d' ' -f 6 | xxd -r -p |tee ima-cert.der | sha256sum | cut -d' ' -f 1
-
-The output of the above command should match the template hash
-of the first "key" measurement entry in the IMA measurement list for
-the key added to ".ima" keyring.
-
-The file namely "ima-cert.der" generated by the above command
-should be a valid x509 certificate (in DER format) and should match
-the one that was used to import the key to the ".ima" keyring.
-The certificate file can be verified using openssl tool.
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima_policy.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index cca87c499c4f..a4dde9d575b2 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -34,6 +34,7 @@
- #define IMA_EUID	0x0080
- #define IMA_PCR		0x0100
- #define IMA_FSNAME	0x0200
-+#define IMA_KEYRINGS	0x0400
- 
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -820,7 +821,8 @@ enum {
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag,
--	Opt_permit_directio, Opt_pcr, Opt_template, Opt_err
-+	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
-+	Opt_err
- };
- 
- static const match_table_t policy_tokens = {
-@@ -856,6 +858,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
-+	{Opt_keyrings, "keyrings=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -1105,6 +1108,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			result = 0;
- 			entry->flags |= IMA_FSNAME;
- 			break;
-+		case Opt_keyrings:
-+			ima_log_string(ab, "keyrings", args[0].from);
-+
-+			if ((entry->keyrings) ||
-+			    (entry->action != MEASURE) ||
-+			    (entry->func != KEY_CHECK)) {
-+				result = -EINVAL;
-+				break;
-+			}
-+			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
-+			if (!entry->keyrings) {
-+				result = -ENOMEM;
-+				break;
-+			}
-+			result = 0;
-+			entry->flags |= IMA_KEYRINGS;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1480,6 +1500,13 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_KEYRINGS) {
-+		if (entry->keyrings != NULL)
-+			snprintf(tbuf, sizeof(tbuf), "%s", entry->keyrings);
-+		seq_printf(m, pt(Opt_keyrings), tbuf);
-+		seq_puts(m, " ");
-+	}
-+
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
--- 
-2.17.1
-
+Thanks,
+Justin
