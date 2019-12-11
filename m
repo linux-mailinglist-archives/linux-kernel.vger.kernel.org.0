@@ -2,81 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDDAD11B38D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:43:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3206E11B3A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:44:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388632AbfLKPn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:43:26 -0500
-Received: from foss.arm.com ([217.140.110.172]:35658 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387846AbfLKPnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:43:18 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4613630E;
-        Wed, 11 Dec 2019 07:43:18 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 93B5C3F52E;
-        Wed, 11 Dec 2019 07:43:17 -0800 (PST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        =?UTF-8?q?Kristina=20Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [PATCH v4 12/12] arm64: mm: Display guarded pages in ptdump
-Date:   Wed, 11 Dec 2019 15:42:06 +0000
-Message-Id: <20191211154206.46260-13-broonie@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211154206.46260-1-broonie@kernel.org>
-References: <20191211154206.46260-1-broonie@kernel.org>
+        id S2388766AbfLKPn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:43:57 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48272 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388750AbfLKPnw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:43:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fbVP3GO5TFya8NWOJb7Dgy0hxavImfzE2eK5UngY8Ac=; b=dT6kxVSFdCksVqKKxmEQrpRgx
+        8j7nQlD3Y53CAmIuUQNzRGcF0+mBrf2PB8fh35nl9jDugd4IbKpijkwhp/K6MkSE37DCaYdKC/fkm
+        MUosO3b0ux0UJeLtLbtS360YNNEZ9rkAAL3UoAfWtlb9HTj/ytw0ekCeUsuRBQjMX+M93d8Brpuru
+        fIgPCAKqK3VlbMWJJcSRxnc2vXrYjqmnLxGDyk/fkk0IBiU09ydf4vGUiGQSP8I8OY9MxhZG07Hye
+        m6YUo9o0P5T08fCo0oKOvf30C7DURyP+kxN6eXFY/t/CB+8MQr7ZSErgHkPCxn/DmEsqPS7YwFeBv
+        Yb3uXrcAw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1if49T-0006lP-C2; Wed, 11 Dec 2019 15:43:47 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 82E5F3077F4;
+        Wed, 11 Dec 2019 16:42:24 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E36CA20137C8F; Wed, 11 Dec 2019 16:43:44 +0100 (CET)
+Date:   Wed, 11 Dec 2019 16:43:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Jingfeng Xie <xiejingfeng@linux.alibaba.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] psi: two division fixes
+Message-ID: <20191211154344.GP2827@hirez.programming.kicks-ass.net>
+References: <20191203183524.41378-1-hannes@cmpxchg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191203183524.41378-1-hannes@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v8.5-BTI introduces the GP field in stage 1 translation tables which
-indicates that blocks and pages with it set are guarded pages for which
-branch target identification checks should be performed. Decode this
-when dumping the page tables to aid debugging.
+On Tue, Dec 03, 2019 at 01:35:22PM -0500, Johannes Weiner wrote:
+> Hi Peter,
+> 
+> here is a patch that should fix the rare div0 crashes reported by
+> Jingfeng, and a second patch for a div32-with-64-bit-divisor issue
+> spotted during code review.
+> 
+> Can you please take a look and route them through the scheduler tree?
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/mm/dump.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-index 0a920b538a89..880bd5160dc2 100644
---- a/arch/arm64/mm/dump.c
-+++ b/arch/arm64/mm/dump.c
-@@ -143,6 +143,11 @@ static const struct prot_bits pte_bits[] = {
- 		.val	= PTE_UXN,
- 		.set	= "UXN",
- 		.clear	= "   ",
-+	}, {
-+		.mask	= PTE_GP,
-+		.val	= PTE_GP,
-+		.set	= "GP",
-+		.clear	= "  ",
- 	}, {
- 		.mask	= PTE_ATTRINDX_MASK,
- 		.val	= PTE_ATTRINDX(MT_DEVICE_nGnRnE),
--- 
-2.20.1
-
+Will do, Thanks!
