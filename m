@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 741D211AF03
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD71711B09B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:24:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730715AbfLKPKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:10:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58340 "EHLO mail.kernel.org"
+        id S1732854AbfLKPYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:24:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730700AbfLKPKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:10:09 -0500
+        id S1732843AbfLKPY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:24:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6381F22B48;
-        Wed, 11 Dec 2019 15:10:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 477422173E;
+        Wed, 11 Dec 2019 15:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077008;
-        bh=wytKeplqK/AKhB4cIpXTYLqEbmNYTJ0B2BTWnB98EBQ=;
+        s=default; t=1576077867;
+        bh=YOOKKu7KZKalCYc9fcrbvluf+Q6hWobR9h7/kUaryYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uY5bbTU7YC4c7zUYgF+8vtS3C4wEb4/XZdg1zZsy4M65WUtqeCixty0KGrefioE9E
-         vy6fmlmzM4Y62SsPeQfsu6BtLU1io3PAQClIIk7b3rTNKars3pLFcHiN3MvVCutMcK
-         7UDc/2ZU0JysScYJc+/kecgGJ+HhB045IjhF5ScM=
+        b=QlRW1LRgc+YUiwXFePBrjLlysEWkGCY+IL6T1eiYD0ifAHnx/sWvkfRcr0mO/zCXp
+         +ZKlsqVFmqRxT/8qKH35jJ2wlXBUzSlxcBWyj84rIStFduC8xWDgq3I17MmqqtgrVr
+         k7UYPQktpzfEO/80H5o4jO1DE5FTPQdM4ABMSSLU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.4 73/92] crypto: ecdh - fix big endian bug in ECC library
+        stable@vger.kernel.org,
+        syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 202/243] ALSA: pcm: oss: Avoid potential buffer overflows
 Date:   Wed, 11 Dec 2019 16:06:04 +0100
-Message-Id: <20191211150257.641511332@linuxfoundation.org>
+Message-Id: <20191211150352.821623102@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit f398243e9fd6a3a059c1ea7b380c40628dbf0c61 upstream.
+commit 4cc8d6505ab82db3357613d36e6c58a297f57f7c upstream.
 
-The elliptic curve arithmetic library used by the EC-DH KPP implementation
-assumes big endian byte order, and unconditionally reverses the byte
-and word order of multi-limb quantities. On big endian systems, the byte
-reordering is not necessary, while the word ordering needs to be retained.
+syzkaller reported an invalid access in PCM OSS read, and this seems
+to be an overflow of the internal buffer allocated for a plugin.
+Since the rate plugin adjusts its transfer size dynamically, the
+calculation for the chained plugin might be bigger than the given
+buffer size in some extreme cases, which lead to such an buffer
+overflow as caught by KASAN.
 
-So replace the __swab64() invocation with a call to be64_to_cpu() which
-should do the right thing for both little and big endian builds.
+Fix it by limiting the max transfer size properly by checking against
+the destination size in each plugin transfer callback.
 
-Fixes: 3c4b23901a0c ("crypto: ecdh - Add ECDH software support")
-Cc: <stable@vger.kernel.org> # v4.9+
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-by: syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191204144824.17801-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/ecc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/core/oss/linear.c |    2 ++
+ sound/core/oss/mulaw.c  |    2 ++
+ sound/core/oss/route.c  |    2 ++
+ 3 files changed, 6 insertions(+)
 
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -1284,10 +1284,11 @@ EXPORT_SYMBOL(ecc_point_mult_shamir);
- static inline void ecc_swap_digits(const u64 *in, u64 *out,
- 				   unsigned int ndigits)
- {
-+	const __be64 *src = (__force __be64 *)in;
- 	int i;
- 
- 	for (i = 0; i < ndigits; i++)
--		out[i] = __swab64(in[ndigits - 1 - i]);
-+		out[i] = be64_to_cpu(src[ndigits - 1 - i]);
+--- a/sound/core/oss/linear.c
++++ b/sound/core/oss/linear.c
+@@ -107,6 +107,8 @@ static snd_pcm_sframes_t linear_transfer
+ 		}
+ 	}
+ #endif
++	if (frames > dst_channels[0].frames)
++		frames = dst_channels[0].frames;
+ 	convert(plugin, src_channels, dst_channels, frames);
+ 	return frames;
  }
+--- a/sound/core/oss/mulaw.c
++++ b/sound/core/oss/mulaw.c
+@@ -269,6 +269,8 @@ static snd_pcm_sframes_t mulaw_transfer(
+ 		}
+ 	}
+ #endif
++	if (frames > dst_channels[0].frames)
++		frames = dst_channels[0].frames;
+ 	data = (struct mulaw_priv *)plugin->extra_data;
+ 	data->func(plugin, src_channels, dst_channels, frames);
+ 	return frames;
+--- a/sound/core/oss/route.c
++++ b/sound/core/oss/route.c
+@@ -57,6 +57,8 @@ static snd_pcm_sframes_t route_transfer(
+ 		return -ENXIO;
+ 	if (frames == 0)
+ 		return 0;
++	if (frames > dst_channels[0].frames)
++		frames = dst_channels[0].frames;
  
- static int __ecc_is_key_valid(const struct ecc_curve *curve,
+ 	nsrcs = plugin->src_format.channels;
+ 	ndsts = plugin->dst_format.channels;
 
 
