@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC5DB11AF43
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:12:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22D9911AEC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731069AbfLKPMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:12:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32806 "EHLO mail.kernel.org"
+        id S1730201AbfLKPIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:08:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731028AbfLKPMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:01 -0500
+        id S1730170AbfLKPH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:07:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA36F24682;
-        Wed, 11 Dec 2019 15:12:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5700922B48;
+        Wed, 11 Dec 2019 15:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077121;
-        bh=VuytPSLb+8F9+jtnOgEB06wArOxY6MKT/sSY+vsFQLM=;
+        s=default; t=1576076876;
+        bh=dXQVMFhSGEw7T+9WILp/lPQV9hSx1Pd5Ln5VX+6r5XQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=woLE8CYuVpCYwjYWJyZR27S1ED/xkHi1eZc8RUJkvc2fiyUL8OiQgtMs0oEy/1P+k
-         wO4LwJOkgYztFHKBtmRiLsprKlSt44sjQ7kSf0E60MVVhtztUnfvF/NUdPEVUIfDMM
-         KakSyxsRKchfU3k2CBdfcqG4oVRiqGeG1qi7vO30=
+        b=QjzPlwOgADRY47BA3qb4pwfALONBfw4gpApi9BnTcPPrYOcGxJ0MDpCB2xkLbQKqP
+         EXI6/MVOTa6h1vN2L1KUZwjG1iqcaBCMCTDX2FFSr2Mvaxx3kprvDkv5R9JTKDQbaF
+         4IaLhkQMsOvd4jUefQNC19mIo0w1WjjODsLV8e9w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 025/105] NFC: nxp-nci: Fix NULL pointer dereference after I2C communication error
-Date:   Wed, 11 Dec 2019 16:05:14 +0100
-Message-Id: <20191211150229.013991971@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.4 24/92] fuse: verify write return
+Date:   Wed, 11 Dec 2019 16:05:15 +0100
+Message-Id: <20191211150229.716710056@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,72 +42,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephan Gerhold <stephan@gerhold.net>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-[ Upstream commit a71a29f50de1ef97ab55c151a1598eb12dde379d ]
+commit 8aab336b14c115c6bf1d4baeb9247e41ed9ce6de upstream.
 
-I2C communication errors (-EREMOTEIO) during the IRQ handler of nxp-nci
-result in a NULL pointer dereference at the moment:
+Make sure filesystem is not returning a bogus number of bytes written.
 
-    BUG: kernel NULL pointer dereference, address: 0000000000000000
-    Oops: 0002 [#1] PREEMPT SMP NOPTI
-    CPU: 1 PID: 355 Comm: irq/137-nxp-nci Not tainted 5.4.0-rc6 #1
-    RIP: 0010:skb_queue_tail+0x25/0x50
-    Call Trace:
-     nci_recv_frame+0x36/0x90 [nci]
-     nxp_nci_i2c_irq_thread_fn+0xd1/0x285 [nxp_nci_i2c]
-     ? preempt_count_add+0x68/0xa0
-     ? irq_forced_thread_fn+0x80/0x80
-     irq_thread_fn+0x20/0x60
-     irq_thread+0xee/0x180
-     ? wake_threads_waitq+0x30/0x30
-     kthread+0xfb/0x130
-     ? irq_thread_check_affinity+0xd0/0xd0
-     ? kthread_park+0x90/0x90
-     ret_from_fork+0x1f/0x40
+Fixes: ea9b9907b82a ("fuse: implement perform_write")
+Cc: <stable@vger.kernel.org> # v2.6.26
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Afterward the kernel must be rebooted to work properly again.
-
-This happens because it attempts to call nci_recv_frame() with skb == NULL.
-However, unlike nxp_nci_fw_recv_frame(), nci_recv_frame() does not have any
-NULL checks for skb, causing the NULL pointer dereference.
-
-Change the code to call only nxp_nci_fw_recv_frame() in case of an error.
-Make sure to log it so it is obvious that a communication error occurred.
-The error above then becomes:
-
-    nxp-nci_i2c i2c-NXP1001:00: NFC: Read failed with error -121
-    nci: __nci_request: wait_for_completion_interruptible_timeout failed 0
-    nxp-nci_i2c i2c-NXP1001:00: NFC: Read failed with error -121
-
-Fixes: 6be88670fc59 ("NFC: nxp-nci_i2c: Add I2C support to NXP NCI driver")
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/nxp-nci/i2c.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/fuse/file.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/nfc/nxp-nci/i2c.c b/drivers/nfc/nxp-nci/i2c.c
-index 4aeb3861b4095..6c468899f2ffe 100644
---- a/drivers/nfc/nxp-nci/i2c.c
-+++ b/drivers/nfc/nxp-nci/i2c.c
-@@ -225,8 +225,10 @@ static irqreturn_t nxp_nci_i2c_irq_thread_fn(int irq, void *phy_id)
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1098,6 +1098,8 @@ static ssize_t fuse_send_write_pages(str
+ 	ia->write.in.flags = fuse_write_flags(iocb);
  
- 	if (r == -EREMOTEIO) {
- 		phy->hard_fault = r;
--		skb = NULL;
--	} else if (r < 0) {
-+		if (info->mode == NXP_NCI_MODE_FW)
-+			nxp_nci_fw_recv_frame(phy->ndev, NULL);
-+	}
-+	if (r < 0) {
- 		nfc_err(&client->dev, "Read failed with error %d\n", r);
- 		goto exit_irq_handled;
- 	}
--- 
-2.20.1
-
+ 	err = fuse_simple_request(fc, &ap->args);
++	if (!err && ia->write.out.size > count)
++		err = -EIO;
+ 
+ 	offset = ap->descs[0].offset;
+ 	count = ia->write.out.size;
 
 
