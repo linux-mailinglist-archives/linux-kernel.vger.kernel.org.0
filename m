@@ -2,63 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01CCE11B939
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:53:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D9AA11B940
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:55:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730602AbfLKQxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:53:24 -0500
-Received: from foss.arm.com ([217.140.110.172]:39086 "EHLO foss.arm.com"
+        id S1730653AbfLKQzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:55:06 -0500
+Received: from foss.arm.com ([217.140.110.172]:39432 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730058AbfLKQxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:53:24 -0500
+        id S1727118AbfLKQzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 11:55:06 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06AEC30E;
-        Wed, 11 Dec 2019 08:53:24 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 579783F52E;
-        Wed, 11 Dec 2019 08:53:23 -0800 (PST)
-Subject: Re: [RFC PATCH 4/7] sched/fair: Dissociate wakeup decisions from SD
- flag value
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com
-References: <20191211164401.5013-1-valentin.schneider@arm.com>
- <20191211164401.5013-5-valentin.schneider@arm.com>
-Message-ID: <26381004-06f5-a006-1e30-49e5e3d4f8d8@arm.com>
-Date:   Wed, 11 Dec 2019 16:53:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191211164401.5013-5-valentin.schneider@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 600D630E;
+        Wed, 11 Dec 2019 08:55:05 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4AF93F52E;
+        Wed, 11 Dec 2019 08:55:04 -0800 (PST)
+Date:   Wed, 11 Dec 2019 16:55:03 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: max77650: add of_match table" to the regulator tree
+In-Reply-To: <20191210100725.11005-1-brgl@bgdev.pl>
+Message-Id: <applied-20191210100725.11005-1-brgl@bgdev.pl>
+X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/2019 16:43, Valentin Schneider wrote:
-> @@ -6396,9 +6396,8 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
->  	if (unlikely(sd)) {
->  		/* Slow path */
->  		new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
-> -	} else if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
-> +	} else if (wake_flags & WF_TTWU) { /* XXX always ? */
+The patch
 
-While I'm at it, Dietmar pointed out to me that this is only really
-relevant to forkees and execees when a NULL domain is attached to the CPU
-(since sd_init() unconditionally sets SD_BALANCE_{FORK, EXEC}). So this
-only makes a difference when the SD hierarchy hasn't been built / is being
-rebuilt, or when cpusets are involved.
+   regulator: max77650: add of_match table
 
-So perhaps we could make that an unconditional else, or make forkees/execees
-bail out earlier.
+has been applied to the regulator tree at
 
->  		/* Fast path */
-> -
->  		new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
->  
->  		if (want_affine)
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 100a21100bbb2bbc82fc4273e152c96e5c6c5d12 Mon Sep 17 00:00:00 2001
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Tue, 10 Dec 2019 11:07:25 +0100
+Subject: [PATCH] regulator: max77650: add of_match table
+
+We need the of_match table if we want to use the compatible string in
+the pmic's child node and get the regulator driver loaded automatically.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Link: https://lore.kernel.org/r/20191210100725.11005-1-brgl@bgdev.pl
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/max77650-regulator.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/max77650-regulator.c
+index e57fc9197d62..ac89a412f665 100644
+--- a/drivers/regulator/max77650-regulator.c
++++ b/drivers/regulator/max77650-regulator.c
+@@ -386,9 +386,16 @@ static int max77650_regulator_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct of_device_id max77650_regulator_of_match[] = {
++	{ .compatible = "maxim,max77650-regulator" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, max77650_regulator_of_match);
++
+ static struct platform_driver max77650_regulator_driver = {
+ 	.driver = {
+ 		.name = "max77650-regulator",
++		.of_match_table = max77650_regulator_of_match,
+ 	},
+ 	.probe = max77650_regulator_probe,
+ };
+-- 
+2.20.1
+
