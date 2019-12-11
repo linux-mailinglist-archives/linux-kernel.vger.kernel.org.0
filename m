@@ -2,103 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F02611A176
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:39:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A35911A186
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:41:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfLKCjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 21:39:13 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43021 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbfLKCjM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:39:12 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h14so982925pfe.10
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 18:39:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lkeETUhQ3f8lWNeTP8ytVN52+By7QmgfsOQEQVp/5Bk=;
-        b=QiQikR6kEHX9KZ1Ty8ohFw4WHZKRp4hr1Qd30w5/P5llrwO/ghQvr5AVO96DGVV/iQ
-         zUlSw9bd3ZcVlEopdECizjka55M5lzl/Wf/45NGHMMsJQLOW/TrmVP788fJsQQ70A7T0
-         xBSdCDZV8jPuHHsFDM3Mssemmmu/UydbPzPAKKrV9z67P+iaSLPmDdiQn77BrVmU88TZ
-         r5yjmGbkbcMEBx5HFS6LgJll/Z8K9vMyK4PlxQEBw7UQ2BYt+cNA6N9u36EVxMZWWjM+
-         txxz4bz5rM3o1QfR4C+p67D6MKRGg9p85mESLdzx0CPcdazh5iyhqbaWgD1TJ8gFWqG1
-         8dHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lkeETUhQ3f8lWNeTP8ytVN52+By7QmgfsOQEQVp/5Bk=;
-        b=jBmcZTWCoOrQHGun22n0bZ5ZFOFC1MnEr7TSHct8UWRnVp46tAK93CTmsr1kf849J+
-         NmdZHGVdGY9VfgAag1jw4Dys0QLvcD84mtTMfIS5TxqtHPNJJwaty2nb73BOhSTWk6ys
-         uZALiyGPR4DW1VLynWG8o4NxtCIoVQGGWp5sPTk2aFIEUI41v/Ymwl4ucHAOGLd3Prnv
-         xHkqxVKYGe1PTUvK3S39/5qc+U9l2EVGv1ViKQsh+JISBI+2GMoWHOkoIUdISdxw+2Tf
-         WpT3hpFqC29KzgcMUN62ddIH2wWlPBh0RvhV4BGofaq1Fv2cxjo05sERt/5BNAEzfXOR
-         VmVg==
-X-Gm-Message-State: APjAAAU35r01yKCdM0bOE2bn8dwr5lFpPh8c3rHSzH6inQzQfTMBea07
-        U/WJnvOBKajGWTzpg88xE9PYOA==
-X-Google-Smtp-Source: APXvYqwv4FD7npjWh+xM8yEtWzQSvRX+xQWGcV0kVvGQhmKaR0MAmXhCirrzY7eQKyfmK8n6ahuV9g==
-X-Received: by 2002:a63:364d:: with SMTP id d74mr1504299pga.408.1576031951864;
-        Tue, 10 Dec 2019 18:39:11 -0800 (PST)
-Received: from localhost ([122.171.112.123])
-        by smtp.gmail.com with ESMTPSA id 200sm398800pfz.121.2019.12.10.18.39.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Dec 2019 18:39:11 -0800 (PST)
-Date:   Wed, 11 Dec 2019 08:09:09 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 13/15] cpufreq: scmi: Match scmi device by both name and
- protocol id
-Message-ID: <20191211023909.7iun7kdk6pjkync6@vireshk-i7>
-References: <20191210145345.11616-1-sudeep.holla@arm.com>
- <20191210145345.11616-14-sudeep.holla@arm.com>
+        id S1727810AbfLKClP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 21:41:15 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:27735 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726619AbfLKCk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 21:40:58 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 47Xh4k56Xjz5F;
+        Wed, 11 Dec 2019 03:40:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1576032055; bh=x3MUuU0TTk4NVDu60Q9m0xNK1f0k/ifJulmoJP3sWMQ=;
+        h=Date:From:Subject:To:Cc:From;
+        b=pWnAxCl4umvjSVlm81F+0heStwLn1rgt4s7hjrkw33x79NdEpZiSVMev0rTJOwqoo
+         mOr8XYVUpQ9fl+N1hcH2uJbPJ5+aOZZydgtsPXYseKwKu5yPzayQUcfA4Ch/c6wUHi
+         s/ce5vRvKrMqG1B9xA8Xv5BZ7ItXb05sk1KBQ0Cot9p1j/Pronk+0EqkJM8zUBc938
+         0f8fB7+VCL/LFale0QzJrcLu4rFIkPXS+Qs4FJKff+yWvG64ZeiJM2AWyER66is6Lk
+         Za5cdVnw0QMeiEoie+Nxm42w6kLaEbpJlz8Y4mB4bbXDvNDH1CiTs/d7euJDKE1iwP
+         IEkAJCpKjtXkA==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
+Date:   Wed, 11 Dec 2019 03:40:54 +0100
+Message-Id: <cover.1576031636.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v2 0/4] mmc: simplify WP/CD GPIO handling
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210145345.11616-14-sudeep.holla@arm.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     linux-mmc@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-12-19, 14:53, Sudeep Holla wrote:
-> The scmi bus now has support to match the driver with devices not only
-> based on their protocol id but also based on their device name if one is
-> available. This was added to cater the need to support multiple devices
-> and drivers for the same protocol.
-> 
-> Let us add the name "cpufreq" to scmi_device_id table in the driver so
-> that in matches only with device with the same name and protocol id
-> SCMI_PROTOCOL_PERF. This will help to add "devfreq" device/driver.
-> 
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/cpufreq/scmi-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-> index e6182c89df79..61623e2ff149 100644
-> --- a/drivers/cpufreq/scmi-cpufreq.c
-> +++ b/drivers/cpufreq/scmi-cpufreq.c
-> @@ -261,7 +261,7 @@ static void scmi_cpufreq_remove(struct scmi_device *sdev)
->  }
-> 
->  static const struct scmi_device_id scmi_id_table[] = {
-> -	{ SCMI_PROTOCOL_PERF },
-> +	{ SCMI_PROTOCOL_PERF, "cpufreq" },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(scmi, scmi_id_table);
+This series removes convoluted handling of inverted CD and WP lines in
+SD/MMC host drivers when using GPIOs.
 
-Applied. Thanks.
+First patch adds an API: gpiod_toggle_active_low() that switches line
+inversion flag in the gpiod structure. Next two patches modify MMC
+host's WP and CD initialization to apply all the inversions onto
+gpiod's active-low flag. Final patch removes now-unused argument from
+init functions.
+
+x86 allyesconfig build-tested. 
+
+v2: move argument removal in sdhci-esdhc-imx.c to last patch
+
+Michał Mirosław (4):
+  gpio: add gpiod_toggle_active_low()
+  mmc: rework wp-gpio handling
+  mmc: rework cd-gpio handling
+  mmc: remove mmc_gpiod_request_*(invert_gpio)
+
+ drivers/gpio/gpiolib-of.c          | 21 -------------------
+ drivers/gpio/gpiolib.c             | 11 ++++++++++
+ drivers/mmc/core/host.c            | 33 ++++++++----------------------
+ drivers/mmc/core/slot-gpio.c       | 31 ++++++++++------------------
+ drivers/mmc/host/davinci_mmc.c     |  4 ++--
+ drivers/mmc/host/mmc_spi.c         |  4 ++--
+ drivers/mmc/host/mmci.c            |  4 ++--
+ drivers/mmc/host/pxamci.c          | 12 +++++------
+ drivers/mmc/host/s3cmci.c          |  4 ++--
+ drivers/mmc/host/sdhci-acpi.c      |  2 +-
+ drivers/mmc/host/sdhci-esdhc-imx.c | 15 +++++++-------
+ drivers/mmc/host/sdhci-pci-core.c  |  4 ++--
+ drivers/mmc/host/sdhci-sirf.c      |  2 +-
+ drivers/mmc/host/sdhci-spear.c     |  2 +-
+ drivers/mmc/host/tmio_mmc_core.c   |  2 +-
+ include/linux/gpio/consumer.h      |  7 +++++++
+ include/linux/mmc/slot-gpio.h      |  5 ++---
+ 17 files changed, 67 insertions(+), 96 deletions(-)
 
 -- 
-viresh
+2.20.1
+
