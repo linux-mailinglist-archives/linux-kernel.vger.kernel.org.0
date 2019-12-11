@@ -2,241 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F4BF11B183
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:31:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50EE211B161
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387949AbfLKPbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:31:04 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:40792 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387473AbfLKPa7 (ORCPT
+        id S2387833AbfLKPa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:30:26 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44181 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387557AbfLKPaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:30:59 -0500
+        Wed, 11 Dec 2019 10:30:20 -0500
+Received: by mail-qk1-f195.google.com with SMTP id w127so8156047qkb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:30:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1576078259; x=1607614259;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=N22hyGYPk1JoqY1Qt0Vz9EReiYVT9fCIbFq3JobjLc4=;
-  b=ZAt7m5R4wlVOi42u6PT6RReA/pxDSMQGBSBOYV/Cth66ihR6T1xGnkdi
-   8qYYT4Xch5ZHL6UX8PPyLf+0JHdaJHM8KQNnnqwjrzmlGey3l7Do00p3+
-   WWYJ2foddSBgVMqGg49e4yF2tU1sMl8fp4j0Pn/i5+iDhGjphMlIzhZ8t
-   Y=;
-IronPort-SDR: J9/38YbMpalD44EqUzMsZ76zibWP7tf+mT+iXkGgPFEVIRtKljVza3qOgqGg0rbr/3/l0JZmLp
- 5vb/yvqk5YQQ==
-X-IronPort-AV: E=Sophos;i="5.69,301,1571702400"; 
-   d="scan'208";a="12930184"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2b-81e76b79.us-west-2.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 11 Dec 2019 15:30:47 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2b-81e76b79.us-west-2.amazon.com (Postfix) with ESMTPS id 7A6AFA2173;
-        Wed, 11 Dec 2019 15:30:46 +0000 (UTC)
-Received: from EX13D32EUB002.ant.amazon.com (10.43.166.114) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 11 Dec 2019 15:30:14 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (10.43.162.135) by
- EX13D32EUB002.ant.amazon.com (10.43.166.114) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 11 Dec 2019 15:30:13 +0000
-Received: from u2f063a87eabd5f.cbg10.amazon.com (10.125.106.135) by
- mail-relay.amazon.com (10.43.162.232) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Wed, 11 Dec 2019 15:30:10 +0000
-From:   Paul Durrant <pdurrant@amazon.com>
-To:     <xen-devel@lists.xenproject.org>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Paul Durrant <pdurrant@amazon.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        "Stefano Stabellini" <sstabellini@kernel.org>
-Subject: [PATCH v3 4/4] xen-blkback: support dynamic unbind/bind
-Date:   Wed, 11 Dec 2019 15:29:56 +0000
-Message-ID: <20191211152956.5168-5-pdurrant@amazon.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211152956.5168-1-pdurrant@amazon.com>
-References: <20191211152956.5168-1-pdurrant@amazon.com>
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7gIWTbNCIzJwL9xUV5DD3mPfI7Jx6t2VjpSZrx1r784=;
+        b=vYZAFWNOCXrTdUXacREX512Q1z9yDyARAcKw3YXP92ObelIWEgxEkn2uK5+eYh6Xll
+         5azZ2vZrN0W7AYcHJ5PPZ5Y16505hme4EKPIlf3c9Mb+FYPl4tYcg1rClPgoUB4Sn8DA
+         BG97fdDQW5BxlUQHf387cnIkiA0Miyi7c6ikFC7G/OQhXZP6AH6GzUd2nn0UTEapB5nU
+         7TTE+fCOftymUTuxRpLo5zDOFBu3hgMlWq+ScX8SMfmlJz63wIVNzw5ZjqI6zhbHFUbW
+         itdKSZzBzk3AvaRQc7NKT9Cjmu13FDnMEO2pnzNiEOztmPMOObrIJkKtkacVTrL/eJJR
+         p+pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7gIWTbNCIzJwL9xUV5DD3mPfI7Jx6t2VjpSZrx1r784=;
+        b=l7504RZ0DaaIJ5c3CvXxkBsiT75x3PE0kPqvYmThHupXLYgAXO5wWC7BWGC5iK9TVU
+         kuCDgBRkr9czm4DHVFhNPCtBAdbGTBHZZ9NPmYEGxFnkPIj0mvKi2cXcmycm7/xU83NW
+         MDH7bsHFBPOf8fq1z4mLzj9x2uHKdyU4CaWvXDoJfr3zUv+konDElKlSAbbTD/RNcHdE
+         VUKswA/hVUVGPMqNbI3JJxX7ERtuDDuEudSDmq5q8Bgybwq7quhe6d05Wf3n77F+IabD
+         WRZPjFcxEgXsGp5rD7DEbQhTL5wj0ciG6Hg1Dzo008EwyYMlWqbBHNSlvjkmn89sUOs7
+         3Cug==
+X-Gm-Message-State: APjAAAWt/+D68q7dyRjnWBPDdmNF8Dk8ShkyqXV8GS6qFXftXB1qCmq3
+        mszzKg759fg3oHonnsqVH/nTGX1/otXVZ2ugJV7q3w==
+X-Google-Smtp-Source: APXvYqzKhG7/NQuJEPIGWplJ6Qbn0BjctBewhELQS7qEq/VHgtqAruzctcA9KxpZaclkS1lWbstLjUi/z9EMJAeU+LA=
+X-Received: by 2002:ae9:eb48:: with SMTP id b69mr3401822qkg.43.1576078219045;
+ Wed, 11 Dec 2019 07:30:19 -0800 (PST)
 MIME-Version: 1.0
+References: <CAAeHK+wY+35uBvr0=FnKsWOj91QhXuVE++V7frn5AihAPLvo5Q@mail.gmail.com>
+ <Pine.LNX.4.44L0.1912101508470.1647-100000@iolanthe.rowland.org> <CAAeHK+xTjUdP5D+DzRD-ZBd-8MmhWxT5n=CqO5u37FrEy6T-8Q@mail.gmail.com>
+In-Reply-To: <CAAeHK+xTjUdP5D+DzRD-ZBd-8MmhWxT5n=CqO5u37FrEy6T-8Q@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 11 Dec 2019 16:30:06 +0100
+Message-ID: <CACT4Y+ZSmwr4y2VrUxZSvFCL0Ws4cp6T5FwyVRg_CqhCf354HQ@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in usbvision_v4l2_open
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        syzbot <syzbot+c7b0ec009a216143df30@syzkaller.appspotmail.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
+        USB list <linux-usb@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By simply re-attaching to shared rings during connect_ring() rather than
-assuming they are freshly allocated (i.e assuming the counters are zero)
-it is possible for vbd instances to be unbound and re-bound from and to
-(respectively) a running guest.
+On Wed, Dec 11, 2019 at 3:23 PM Andrey Konovalov <andreyknvl@google.com> wrote:
+>
+> On Tue, Dec 10, 2019 at 9:13 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> >
+> > On Tue, 10 Dec 2019, Andrey Konovalov wrote:
+> >
+> > > On Tue, Dec 10, 2019 at 8:48 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> >
+> > > > This looks like a race in v4l2_open(): The function drops the
+> > > > videodev_lock mutex before calling the video driver's open routine, and
+> > > > the device can be unregistered during the short time between.
+> > > >
+> > > > This patch tries to make the race much more likely to happen, for
+> > > > testing and verification.
+> > > >
+> > > > Andrey, will syzbot run the same test with this patch, even though it
+> > > > says it doesn't have a reproducer?
+> > >
+> > > Hi Alan,
+> > >
+> > > No, unfortunately there's nothing to run if there's no reproducer.
+> > > It's technically possible to run the same program log that triggered
+> > > the bug initially, but since the bug wasn't reproduced with this log
+> > > even without the patch, there isn't much sense in running it with the
+> > > patch applied.
+> >
+> > Actually it does make sense.  That bug was caused by a race, and the
+> > patch tries to make the race much more likely to happen, so the same
+> > test should fail again.
+> >
+> > But never mind; I'll try a different approach.  There's another syzbot
+> > bug report, one with a reproducer, and with this patch in place it
+> > should trigger the same race.  I'll try submitting it that way.
+> >
+> > By the way, do you know why syzbot sent _two_ reply messages?  One with
+> > message ID <00000000000031a0af05995eca0b@google.com> and the other with
+> > message ID <000000000000441a4205995eca11@google.com>?  It seems like
+> > overkill.
+>
+> Hm, I'm not sure. Dmitry?
 
-This has been tested by running:
-
-while true;
-  do fio --name=randwrite --ioengine=libaio --iodepth=16 \
-  --rw=randwrite --bs=4k --direct=1 --size=1G --verify=crc32;
-  done
-
-in a PV guest whilst running:
-
-while true;
-  do echo vbd-$DOMID-$VBD >unbind;
-  echo unbound;
-  sleep 5;
-  echo vbd-$DOMID-$VBD >bind;
-  echo bound;
-  sleep 3;
-  done
-
-in dom0 from /sys/bus/xen-backend/drivers/vbd to continuously unbind and
-re-bind its system disk image.
-
-This is a highly useful feature for a backend module as it allows it to be
-unloaded and re-loaded (i.e. updated) without requiring domUs to be halted.
-This was also tested by running:
-
-while true;
-  do echo vbd-$DOMID-$VBD >unbind;
-  echo unbound;
-  sleep 5;
-  rmmod xen-blkback;
-  echo unloaded;
-  sleep 1;
-  modprobe xen-blkback;
-  echo bound;
-  cd $(pwd);
-  sleep 3;
-  done
-
-in dom0 whilst running the same loop as above in the (single) PV guest.
-
-Some (less stressful) testing has also been done using a Windows HVM guest
-with the latest 9.0 PV drivers installed.
-
-Signed-off-by: Paul Durrant <pdurrant@amazon.com>
----
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: "Roger Pau Monné" <roger.pau@citrix.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-
-v3:
- - Constify sring_common and re-work error handling in xen_blkif_map()
-
-v2:
- - Apply a sanity check to the value of rsp_prod and fail the re-attach
-   if it is implausible
- - Set allow_rebind to prevent ring from being closed on unbind
- - Update test workload from dd to fio (with verification)
----
- drivers/block/xen-blkback/xenbus.c | 56 ++++++++++++++++++++----------
- 1 file changed, 38 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index 59d576d27ca7..0d4097bdff3f 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -190,6 +190,9 @@ static int xen_blkif_map(struct xen_blkif_ring *ring, grant_ref_t *gref,
- {
- 	int err;
- 	struct xen_blkif *blkif = ring->blkif;
-+	const struct blkif_common_sring *sring_common;
-+	RING_IDX rsp_prod, req_prod;
-+	unsigned int size;
- 
- 	/* Already connected through? */
- 	if (ring->irq)
-@@ -200,46 +203,62 @@ static int xen_blkif_map(struct xen_blkif_ring *ring, grant_ref_t *gref,
- 	if (err < 0)
- 		return err;
- 
-+	sring_common = (struct blkif_common_sring *)ring->blk_ring;
-+	rsp_prod = READ_ONCE(sring_common->rsp_prod);
-+	req_prod = READ_ONCE(sring_common->req_prod);
-+
- 	switch (blkif->blk_protocol) {
- 	case BLKIF_PROTOCOL_NATIVE:
- 	{
--		struct blkif_sring *sring;
--		sring = (struct blkif_sring *)ring->blk_ring;
--		BACK_RING_INIT(&ring->blk_rings.native, sring,
--			       XEN_PAGE_SIZE * nr_grefs);
-+		struct blkif_sring *sring_native =
-+			(struct blkif_sring *)ring->blk_ring;
-+
-+		BACK_RING_ATTACH(&ring->blk_rings.native, sring_native,
-+				 rsp_prod, XEN_PAGE_SIZE * nr_grefs);
-+		size = __RING_SIZE(sring_native, XEN_PAGE_SIZE * nr_grefs);
- 		break;
- 	}
- 	case BLKIF_PROTOCOL_X86_32:
- 	{
--		struct blkif_x86_32_sring *sring_x86_32;
--		sring_x86_32 = (struct blkif_x86_32_sring *)ring->blk_ring;
--		BACK_RING_INIT(&ring->blk_rings.x86_32, sring_x86_32,
--			       XEN_PAGE_SIZE * nr_grefs);
-+		struct blkif_x86_32_sring *sring_x86_32 =
-+			(struct blkif_x86_32_sring *)ring->blk_ring;
-+
-+		BACK_RING_ATTACH(&ring->blk_rings.x86_32, sring_x86_32,
-+				 rsp_prod, XEN_PAGE_SIZE * nr_grefs);
-+		size = __RING_SIZE(sring_x86_32, XEN_PAGE_SIZE * nr_grefs);
- 		break;
- 	}
- 	case BLKIF_PROTOCOL_X86_64:
- 	{
--		struct blkif_x86_64_sring *sring_x86_64;
--		sring_x86_64 = (struct blkif_x86_64_sring *)ring->blk_ring;
--		BACK_RING_INIT(&ring->blk_rings.x86_64, sring_x86_64,
--			       XEN_PAGE_SIZE * nr_grefs);
-+		struct blkif_x86_64_sring *sring_x86_64 =
-+			(struct blkif_x86_64_sring *)ring->blk_ring;
-+
-+		BACK_RING_ATTACH(&ring->blk_rings.x86_64, sring_x86_64,
-+				 rsp_prod, XEN_PAGE_SIZE * nr_grefs);
-+		size = __RING_SIZE(sring_x86_64, XEN_PAGE_SIZE * nr_grefs);
- 		break;
- 	}
- 	default:
- 		BUG();
- 	}
- 
-+	err = -EIO;
-+	if (req_prod - rsp_prod > size)
-+		goto fail;
-+
- 	err = bind_interdomain_evtchn_to_irqhandler(blkif->domid, evtchn,
- 						    xen_blkif_be_int, 0,
- 						    "blkif-backend", ring);
--	if (err < 0) {
--		xenbus_unmap_ring_vfree(blkif->be->dev, ring->blk_ring);
--		ring->blk_rings.common.sring = NULL;
--		return err;
--	}
-+	if (err < 0)
-+		goto fail;
- 	ring->irq = err;
- 
- 	return 0;
-+
-+fail:
-+	xenbus_unmap_ring_vfree(blkif->be->dev, ring->blk_ring);
-+	ring->blk_rings.common.sring = NULL;
-+	return err;
- }
- 
- static int xen_blkif_disconnect(struct xen_blkif *blkif)
-@@ -1131,7 +1150,8 @@ static struct xenbus_driver xen_blkbk_driver = {
- 	.ids  = xen_blkbk_ids,
- 	.probe = xen_blkbk_probe,
- 	.remove = xen_blkbk_remove,
--	.otherend_changed = frontend_changed
-+	.otherend_changed = frontend_changed,
-+	.allow_rebind = true,
- };
- 
- int xen_blkif_xenbus_init(void)
--- 
-2.20.1
-
+I would assume it received 2 emails (second from syzkaller-bugs@
+mailing list) and deduplication logic did not work somehow. So it
+replied to both.
