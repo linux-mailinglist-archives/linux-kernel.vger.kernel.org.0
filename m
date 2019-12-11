@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2210011B0DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:27:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21FA411B0DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:27:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733153AbfLKP0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:26:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59940 "EHLO mail.kernel.org"
+        id S1733160AbfLKP0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:26:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732849AbfLKP0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:26:35 -0500
+        id S1733151AbfLKP0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:26:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5715E2173E;
-        Wed, 11 Dec 2019 15:26:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF8B524658;
+        Wed, 11 Dec 2019 15:26:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077994;
-        bh=R3PzLCaQxu/5uzwlhPBNV+2f/XzqMhM97bQjyE6C6FA=;
+        s=default; t=1576077997;
+        bh=CUq/QJulsZE6gr8Sp5//TUm3pgrhKTYBsdvSjudCuyc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dU+l8kdY9wYOtZiQrzCrrlFHcm0p7nYAbFf/nNPHU0tzpoEZtkdOLVO5D/Z4+Va9V
-         2IEli08ZiDn29HdyxxIUj1pWneoU7fDaZKqhAWKZV+mhO0lYn1aWp6aXJR+d9Iaz8E
-         vynPmb5REI503hn5xKMzMu3m4F7EfBKoHvpEDGA0=
+        b=iRTCsvNmfmLR1DW91h2hWKy7GeBjymv+5HNwwbhesvxlnWhmlqHTP5xPPAMc+QRly
+         +gHuAPl8okBFSurAMjl+5TJ5VXKV6t423OGM8grgQs3XI7aXl0v9PP0SQ6m7cM0li8
+         449tGvdsHey6A1qB2XEpTiyYAA9brpzTZQBnNUus=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sharvari Harisangam <sharvari@marvell.com>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Brian Norris <briannorris@google.com>
-Subject: [PATCH 4.19 236/243] mwifiex: update set_mac_address logic
-Date:   Wed, 11 Dec 2019 16:06:38 +0100
-Message-Id: <20191211150355.265549381@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
+        Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Johan Hovold <johan@kernel.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.19 237/243] can: ucan: fix non-atomic allocation in completion handler
+Date:   Wed, 11 Dec 2019 16:06:39 +0100
+Message-Id: <20191211150355.333300351@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -45,42 +47,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sharvari Harisangam <sharvari@marvell.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 7afb94da3cd8a28ed7ae268143117bf1ac8a3371 upstream.
+commit 870db5d1015c8bd63e93b579e857223c96249ff7 upstream.
 
-In set_mac_address, driver check for interfaces with same bss_type
-For first STA entry, this would return 3 interfaces since all priv's have
-bss_type as 0 due to kzalloc. Thus mac address gets changed for STA
-unexpected. This patch adds check for first STA and avoids mac address
-change. This patch also adds mac_address change for p2p based on bss_num
-type.
+USB completion handlers are called in atomic context and must
+specifically not allocate memory using GFP_KERNEL.
 
-Signed-off-by: Sharvari Harisangam <sharvari@marvell.com>
-Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Cc: Brian Norris <briannorris@google.com>
+Fixes: 9f2d3eae88d2 ("can: ucan: add driver for Theobroma Systems UCAN devices")
+Cc: stable <stable@vger.kernel.org>     # 4.19
+Cc: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>
+Cc: Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/marvell/mwifiex/main.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/can/usb/ucan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/main.c
-+++ b/drivers/net/wireless/marvell/mwifiex/main.c
-@@ -960,10 +960,10 @@ int mwifiex_set_mac_address(struct mwifi
+--- a/drivers/net/can/usb/ucan.c
++++ b/drivers/net/can/usb/ucan.c
+@@ -796,7 +796,7 @@ resubmit:
+ 			  up);
  
- 		mac_addr = old_mac_addr;
+ 	usb_anchor_urb(urb, &up->rx_urbs);
+-	ret = usb_submit_urb(urb, GFP_KERNEL);
++	ret = usb_submit_urb(urb, GFP_ATOMIC);
  
--		if (priv->bss_type == MWIFIEX_BSS_TYPE_P2P)
-+		if (priv->bss_type == MWIFIEX_BSS_TYPE_P2P) {
- 			mac_addr |= BIT_ULL(MWIFIEX_MAC_LOCAL_ADMIN_BIT);
--
--		if (mwifiex_get_intf_num(priv->adapter, priv->bss_type) > 1) {
-+			mac_addr += priv->bss_num;
-+		} else if (priv->adapter->priv[0] != priv) {
- 			/* Set mac address based on bss_type/bss_num */
- 			mac_addr ^= BIT_ULL(priv->bss_type + 8);
- 			mac_addr += priv->bss_num;
+ 	if (ret < 0) {
+ 		netdev_err(up->netdev,
 
 
