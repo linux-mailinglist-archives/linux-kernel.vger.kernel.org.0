@@ -2,136 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2482E11BB0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:09:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2101411BB17
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 19:09:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730786AbfLKSJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 13:09:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:41938 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbfLKSJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:09:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7208C31B;
-        Wed, 11 Dec 2019 10:09:35 -0800 (PST)
-Received: from [10.1.197.50] (e120937-lin.cambridge.arm.com [10.1.197.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E72FF3F6CF;
-        Wed, 11 Dec 2019 10:09:34 -0800 (PST)
-Subject: Re: [PATCH 10/15] firmware: arm_scmi: Drop logging individual scmi
- protocol version
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20191210145345.11616-1-sudeep.holla@arm.com>
- <20191210145345.11616-11-sudeep.holla@arm.com>
-From:   Cristian Marussi <cristian.marussi@arm.com>
-Message-ID: <a5116e8e-d667-a7d5-fbb3-7f8bd19573b8@arm.com>
-Date:   Wed, 11 Dec 2019 18:09:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1731077AbfLKSJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 13:09:45 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42477 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731046AbfLKSJn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 13:09:43 -0500
+Received: by mail-ed1-f67.google.com with SMTP id e10so20184899edv.9;
+        Wed, 11 Dec 2019 10:09:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ILp2Lf5P15MYbkV7ek1FJDOE0NtqRWE6/NU2Ipca/04=;
+        b=uVTl6HIOGVQ8MZQ1GLPSbu4MARErsCM7KoITJ7LRkp50tXD2e4hHj7k5u++WuKNtJo
+         FEhlYyN3G1MCCpK8W+p3zZh4tqQ3ET+fkWzoVoEtk8fXARmrLiGDHt7QSc59utV/KILE
+         TrlAFmW/XrRUWwn6jzfwRc6ELr/grQ5OKtB1EvqN6T3CEQhuudXW8McMbZ0Qk7EjuczJ
+         ejeoW9gPB8kB5xDL+pux0b61tAymTktJLyGXfO8ztEM75iciPV5LWTnYDxYaBl9YSBn1
+         j/pjcPk4Ds/k+ttKV4SQtHdF6zhB56Ir2jkzQGvcveEtdOGfxWSzSBQ+ZxLO074sepU4
+         xAkw==
+X-Gm-Message-State: APjAAAUi8ZDtxRbo8ezFcDnJzRxzUCvgpmo30wAnU83gqLvMqtIXR93C
+        LwttezGz4MDyfrAXasDthWM=
+X-Google-Smtp-Source: APXvYqxbSc/1pMrFp7jj1xrbhKuiKUxJi3QB/0yA0bRIjtn2bO+hRfiUZUax+luAzlnxU6ZmzIqDVQ==
+X-Received: by 2002:a05:6402:1350:: with SMTP id y16mr4911656edw.176.1576087781772;
+        Wed, 11 Dec 2019 10:09:41 -0800 (PST)
+Received: from kozik-lap ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id o30sm64065edc.61.2019.12.11.10.09.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Dec 2019 10:09:41 -0800 (PST)
+Date:   Wed, 11 Dec 2019 19:09:38 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Lukasz Luba <l.luba@partner.samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: exynos_defconfig: Bring back explicitly wanted
+ options
+Message-ID: <20191211180938.GA6690@kozik-lap>
+References: <CGME20191205200017epcas5p446f5f29988e34d939601287a7517fdfe@epcas5p4.samsung.com>
+ <20191205200006.5164-1-krzk@kernel.org>
+ <08916577-3218-ecd4-a8e2-ab4fbff5332b@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20191210145345.11616-11-sudeep.holla@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <08916577-3218-ecd4-a8e2-ab4fbff5332b@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/2019 14:53, Sudeep Holla wrote:
-> SCMI firmware and individual protocol versions and other attributes are
-> now exposed as device attributes through sysfs entries. These debug logs
-> can be dropped as the same information is available through sysfs.
+On Fri, Dec 06, 2019 at 09:01:07AM +0100, Marek Szyprowski wrote:
+> Hi Krzyszotof,
 > 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/firmware/arm_scmi/clock.c   | 3 ---
->  drivers/firmware/arm_scmi/perf.c    | 3 ---
->  drivers/firmware/arm_scmi/power.c   | 3 ---
->  drivers/firmware/arm_scmi/reset.c   | 3 ---
->  drivers/firmware/arm_scmi/sensors.c | 3 ---
->  5 files changed, 15 deletions(-)
+> On 05.12.2019 21:00, Krzysztof Kozlowski wrote:
+> > Few options KALLSYMS_ALL, SCSI, PM_DEVFREQ and mutex/spinlock debugging
+> > were removed with savedefconfig because they were selected by other
+> > options.  However these are user-visible options and they might not be
+> > selected in the future.  Exactly this happened with commit 0e4a459f56c3
+> > ("tracing: Remove unnecessary DEBUG_FS dependency") removing the
+> > dependency between DEBUG_FS and TRACING.
+> >
+> > To avoid losing these options in the future, explicitly mention them in
+> > defconfig.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> I will not mind adding:
 > 
 
-LGTM.
+Applied.
 
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-
-
-Cristian
-
-
-> diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-> index b68736ae7f88..ce8cbefb0aa6 100644
-> --- a/drivers/firmware/arm_scmi/clock.c
-> +++ b/drivers/firmware/arm_scmi/clock.c
-> @@ -326,9 +326,6 @@ static int scmi_clock_protocol_init(struct scmi_device *dev)
-> 
->  	scmi_version_get(handle, SCMI_PROTOCOL_CLOCK, &version);
-> 
-> -	dev_dbg(handle->dev, "Clock Version %d.%d\n",
-> -		PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
-> -
->  	cinfo = devm_kzalloc(handle->dev, sizeof(*cinfo), GFP_KERNEL);
->  	if (!cinfo)
->  		return -ENOMEM;
-> diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-> index 8a02dc453894..2ad3bc792692 100644
-> --- a/drivers/firmware/arm_scmi/perf.c
-> +++ b/drivers/firmware/arm_scmi/perf.c
-> @@ -720,9 +720,6 @@ static int scmi_perf_protocol_init(struct scmi_device *dev)
-> 
->  	scmi_version_get(handle, SCMI_PROTOCOL_PERF, &version);
-> 
-> -	dev_dbg(handle->dev, "Performance Version %d.%d\n",
-> -		PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
-> -
->  	pinfo = devm_kzalloc(handle->dev, sizeof(*pinfo), GFP_KERNEL);
->  	if (!pinfo)
->  		return -ENOMEM;
-> diff --git a/drivers/firmware/arm_scmi/power.c b/drivers/firmware/arm_scmi/power.c
-> index 6267111e38e6..29d72fa7d085 100644
-> --- a/drivers/firmware/arm_scmi/power.c
-> +++ b/drivers/firmware/arm_scmi/power.c
-> @@ -195,9 +195,6 @@ static int scmi_power_protocol_init(struct scmi_device *dev)
-> 
->  	scmi_version_get(handle, SCMI_PROTOCOL_POWER, &version);
-> 
-> -	dev_dbg(handle->dev, "Power Version %d.%d\n",
-> -		PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
-> -
->  	pinfo = devm_kzalloc(handle->dev, sizeof(*pinfo), GFP_KERNEL);
->  	if (!pinfo)
->  		return -ENOMEM;
-> diff --git a/drivers/firmware/arm_scmi/reset.c b/drivers/firmware/arm_scmi/reset.c
-> index 76f1cee85a06..a49155628ccf 100644
-> --- a/drivers/firmware/arm_scmi/reset.c
-> +++ b/drivers/firmware/arm_scmi/reset.c
-> @@ -205,9 +205,6 @@ static int scmi_reset_protocol_init(struct scmi_device *dev)
-> 
->  	scmi_version_get(handle, SCMI_PROTOCOL_RESET, &version);
-> 
-> -	dev_dbg(handle->dev, "Reset Version %d.%d\n",
-> -		PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
-> -
->  	pinfo = devm_kzalloc(handle->dev, sizeof(*pinfo), GFP_KERNEL);
->  	if (!pinfo)
->  		return -ENOMEM;
-> diff --git a/drivers/firmware/arm_scmi/sensors.c b/drivers/firmware/arm_scmi/sensors.c
-> index fb3bed4cb171..61e12f2fb587 100644
-> --- a/drivers/firmware/arm_scmi/sensors.c
-> +++ b/drivers/firmware/arm_scmi/sensors.c
-> @@ -286,9 +286,6 @@ static int scmi_sensors_protocol_init(struct scmi_device *dev)
-> 
->  	scmi_version_get(handle, SCMI_PROTOCOL_SENSOR, &version);
-> 
-> -	dev_dbg(handle->dev, "Sensor Version %d.%d\n",
-> -		PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
-> -
->  	sinfo = devm_kzalloc(handle->dev, sizeof(*sinfo), GFP_KERNEL);
->  	if (!sinfo)
->  		return -ENOMEM;
-> --
-> 2.17.1
-> 
+Best regards,
+Krzysztof
 
