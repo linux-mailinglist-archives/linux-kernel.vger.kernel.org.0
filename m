@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0005011B3E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:44:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1577E11B3F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:45:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387403AbfLKP1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:27:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32810 "EHLO mail.kernel.org"
+        id S2388416AbfLKPpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:45:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733277AbfLKP1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:27:14 -0500
+        id S1733297AbfLKP1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:27:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78DEB2173E;
-        Wed, 11 Dec 2019 15:27:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E73C24654;
+        Wed, 11 Dec 2019 15:27:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078034;
-        bh=Xz/t/wynjo2NZjJEq2TcF4WrFDzLp8R080s7lDhb/L0=;
+        s=default; t=1576078038;
+        bh=9nk9rerF5dfHiQn04M8FxiEiugeF+MWThlhBeVFyJJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q8pGDaDoNJ/3LDQgU4yx/u+hF/BmUindDh0+KM9eo5BoxzAlx85oTqsBtsSnuEtCb
-         efQk3zQxJ9LWmHk+gPm963srPKXX5lNdOBd+WKbSFtmID4N8h6KFXL18VMoTanehfy
-         tLV/awA/yAVxQByXhKnXUl9Ji13f9PVsQc/TYJbU=
+        b=u9hWx4arBjZeAk+AUc8BcppDpYLI1fdayXRZ2YHEq1SaV2q6fJIS7bvi0l2Ri9n9M
+         Qu24Tmaqr7NwrVPwTmAT4do1Yx3dPfykAhOXik6vvzMtw7sAVE1b0cn6SliHJIUyjv
+         x1oTRd907YjtBbT2nshAn+tf1BOd+owXeSPCJvPg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chao Yu <yuchao0@huawei.com>, Eric Biggers <ebiggers@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 28/79] f2fs: fix to update dir's i_pino during cross_rename
-Date:   Wed, 11 Dec 2019 10:25:52 -0500
-Message-Id: <20191211152643.23056-28-sashal@kernel.org>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 32/79] irqchip: ingenic: Error out if IRQ domain creation failed
+Date:   Wed, 11 Dec 2019 10:25:56 -0500
+Message-Id: <20191211152643.23056-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
 References: <20191211152643.23056-1-sashal@kernel.org>
@@ -44,92 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit 2a60637f06ac94869b2e630eaf837110d39bf291 ]
+[ Upstream commit 52ecc87642f273a599c9913b29fd179c13de457b ]
 
-As Eric reported:
+If we cannot create the IRQ domain, the driver should fail to probe
+instead of succeeding with just a warning message.
 
-RENAME_EXCHANGE support was just added to fsstress in xfstests:
-
-	commit 65dfd40a97b6bbbd2a22538977bab355c5bc0f06
-	Author: kaixuxia <xiakaixu1987@gmail.com>
-	Date:   Thu Oct 31 14:41:48 2019 +0800
-
-	    fsstress: add EXCHANGE renameat2 support
-
-This is causing xfstest generic/579 to fail due to fsck.f2fs reporting errors.
-I'm not sure what the problem is, but it still happens even with all the
-fs-verity stuff in the test commented out, so that the test just runs fsstress.
-
-generic/579 23s ... 	[10:02:25]
-[    7.745370] run fstests generic/579 at 2019-11-04 10:02:25
-_check_generic_filesystem: filesystem on /dev/vdc is inconsistent
-(see /results/f2fs/results-default/generic/579.full for details)
- [10:02:47]
-Ran: generic/579
-Failures: generic/579
-Failed 1 of 1 tests
-Xunit report: /results/f2fs/results-default/result.xml
-
-Here's the contents of 579.full:
-
-_check_generic_filesystem: filesystem on /dev/vdc is inconsistent
-*** fsck.f2fs output ***
-[ASSERT] (__chk_dots_dentries:1378)  --> Bad inode number[0x24] for '..', parent parent ino is [0xd10]
-
-The root cause is that we forgot to update directory's i_pino during
-cross_rename, fix it.
-
-Fixes: 32f9bc25cbda0 ("f2fs: support ->rename2()")
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Tested-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/1570015525-27018-3-git-send-email-zhouyanjie@zoho.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/namei.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-ingenic.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 6b23dcbf52f45..0ace2c2e3de93 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -948,7 +948,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	if (!old_dir_entry || whiteout)
- 		file_lost_pino(old_inode);
- 	else
--		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
-+		/* adjust dir's i_pino to pass fsck check */
-+		f2fs_i_pino_write(old_inode, new_dir->i_ino);
- 	up_write(&F2FS_I(old_inode)->i_sem);
+diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
+index 2ff08986b5361..be6923abf9a4d 100644
+--- a/drivers/irqchip/irq-ingenic.c
++++ b/drivers/irqchip/irq-ingenic.c
+@@ -117,6 +117,14 @@ static int __init ingenic_intc_of_init(struct device_node *node,
+ 		goto out_unmap_irq;
+ 	}
  
- 	old_inode->i_ctime = current_time(old_inode);
-@@ -1103,7 +1104,11 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	f2fs_set_link(old_dir, old_entry, old_page, new_inode);
++	domain = irq_domain_add_legacy(node, num_chips * 32,
++				       JZ4740_IRQ_BASE, 0,
++				       &irq_domain_simple_ops, NULL);
++	if (!domain) {
++		err = -ENOMEM;
++		goto out_unmap_base;
++	}
++
+ 	for (i = 0; i < num_chips; i++) {
+ 		/* Mask all irqs */
+ 		writel(0xffffffff, intc->base + (i * CHIP_SIZE) +
+@@ -143,14 +151,11 @@ static int __init ingenic_intc_of_init(struct device_node *node,
+ 				       IRQ_NOPROBE | IRQ_LEVEL);
+ 	}
  
- 	down_write(&F2FS_I(old_inode)->i_sem);
--	file_lost_pino(old_inode);
-+	if (!old_dir_entry)
-+		file_lost_pino(old_inode);
-+	else
-+		/* adjust dir's i_pino to pass fsck check */
-+		f2fs_i_pino_write(old_inode, new_dir->i_ino);
- 	up_write(&F2FS_I(old_inode)->i_sem);
+-	domain = irq_domain_add_legacy(node, num_chips * 32, JZ4740_IRQ_BASE, 0,
+-				       &irq_domain_simple_ops, NULL);
+-	if (!domain)
+-		pr_warn("unable to register IRQ domain\n");
+-
+ 	setup_irq(parent_irq, &intc_cascade_action);
+ 	return 0;
  
- 	old_dir->i_ctime = current_time(old_dir);
-@@ -1118,7 +1123,11 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	f2fs_set_link(new_dir, new_entry, new_page, old_inode);
- 
- 	down_write(&F2FS_I(new_inode)->i_sem);
--	file_lost_pino(new_inode);
-+	if (!new_dir_entry)
-+		file_lost_pino(new_inode);
-+	else
-+		/* adjust dir's i_pino to pass fsck check */
-+		f2fs_i_pino_write(new_inode, old_dir->i_ino);
- 	up_write(&F2FS_I(new_inode)->i_sem);
- 
- 	new_dir->i_ctime = current_time(new_dir);
++out_unmap_base:
++	iounmap(intc->base);
+ out_unmap_irq:
+ 	irq_dispose_mapping(parent_irq);
+ out_free:
 -- 
 2.20.1
 
