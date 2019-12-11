@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACA3311AFDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:18:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B557711AFE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:18:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731991AbfLKPRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:17:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44454 "EHLO mail.kernel.org"
+        id S1732045AbfLKPRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:17:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731979AbfLKPRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:17:08 -0500
+        id S1729663AbfLKPRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:17:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9EE824658;
-        Wed, 11 Dec 2019 15:17:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 531EB24682;
+        Wed, 11 Dec 2019 15:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077428;
-        bh=2AS1A87NUSa4PIiydpIvNtQkPx9HzA4w4FQEbZAn4iY=;
+        s=default; t=1576077457;
+        bh=V80Xt/F5molGZym4VsMs8r/TwMbFXOPehtRwwyqzMC0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YJD0uw0ujt1WmJGAsvdPbXGBQqas1W8wmvsnQC3FukQC/o9AYr4jTlPf8+xJBpfTW
-         l31BWk9OA3NE1zv0Lsc2MTA2RZc+Z62VmbmyXsyDQG+NmG41Npoy4XjJaV7l/noijW
-         MMDN9FuUErKT9ngb0RFIOwpL/vTP2YNcLL4jz5v8=
+        b=U+yMSgwkJD/gcLI1UFUoCZ9NS6CIghrbqN0k/qv7k/8myNOaPSFWsjgmOt1KXWH+f
+         Hi86mFVY2nm7iRPr3e0n7C7+gzfvU5F3OiHNUCs3LnfYhowjArB+yHFxg2QGtUeh+h
+         HVBhvEX8bWbIp8Wzu7H7YPHg1SwcYRsgrZbOyvuM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 028/243] cxgb4vf: fix memleak in mac_hlist initialization
-Date:   Wed, 11 Dec 2019 16:03:10 +0100
-Message-Id: <20191211150340.765909315@linuxfoundation.org>
+Subject: [PATCH 4.19 029/243] iwlwifi: mvm: synchronize TID queue removal
+Date:   Wed, 11 Dec 2019 16:03:11 +0100
+Message-Id: <20191211150340.826896898@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -45,47 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 24357e06ba511ad874d664d39475dbb01c1ca450 ]
+[ Upstream commit 06bc6f6ed4ae0246a5e52094d1be90906a1361c7 ]
 
-mac_hlist was initialized during adapter_up, which will be called
-every time a vf device is first brought up, or every time when device
-is brought up again after bringing all devices down. This means our
-state of previous list is lost, causing a memleak if entries are
-present in the list. To fix that, move list init to the condition
-that performs initial one time adapter setup.
+When we mark a TID as no longer having a queue, there's no
+guarantee the TX path isn't using this txq_id right now,
+having accessed it just before we reset the value. To fix
+this, add synchronize_net() when we change the TIDs from
+having a queue to not having one, so that we can then be
+sure that the TX path is no longer accessing that queue.
 
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/sta.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
-index ff84791a0ff85..972dc7bd721d9 100644
---- a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
-@@ -722,6 +722,10 @@ static int adapter_up(struct adapter *adapter)
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
+index 04ea516bddcc0..e850aa504b608 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
+@@ -440,6 +440,16 @@ static int iwl_mvm_remove_sta_queue_marking(struct iwl_mvm *mvm, int queue)
  
- 		if (adapter->flags & USING_MSIX)
- 			name_msix_vecs(adapter);
+ 	rcu_read_unlock();
+ 
++	/*
++	 * The TX path may have been using this TXQ_ID from the tid_data,
++	 * so make sure it's no longer running so that we can safely reuse
++	 * this TXQ later. We've set all the TIDs to IWL_MVM_INVALID_QUEUE
++	 * above, but nothing guarantees we've stopped using them. Thus,
++	 * without this, we could get to iwl_mvm_disable_txq() and remove
++	 * the queue while still sending frames to it.
++	 */
++	synchronize_net();
 +
-+		/* Initialize hash mac addr list*/
-+		INIT_LIST_HEAD(&adapter->mac_hlist);
-+
- 		adapter->flags |= FULL_INIT_DONE;
- 	}
- 
-@@ -747,8 +751,6 @@ static int adapter_up(struct adapter *adapter)
- 	enable_rx(adapter);
- 	t4vf_sge_start(adapter);
- 
--	/* Initialize hash mac addr list*/
--	INIT_LIST_HEAD(&adapter->mac_hlist);
- 	return 0;
+ 	return disable_agg_tids;
  }
  
 -- 
