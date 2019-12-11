@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7862E11B820
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A91D111B681
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbfLKPJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:09:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57318 "EHLO mail.kernel.org"
+        id S2387890AbfLKQBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:01:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729481AbfLKPJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:09:21 -0500
+        id S1730970AbfLKPNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A3BC222C4;
-        Wed, 11 Dec 2019 15:09:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0608424654;
+        Wed, 11 Dec 2019 15:13:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076960;
-        bh=rVwHSdF1S7JYEeKe0HR7QEXKgXHVfwcBcfN5qKNNnMQ=;
+        s=default; t=1576077213;
+        bh=YEsL8fnV5oRLJ3Z306dsBmpxsyykbyKz9/Cdu3UFYAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KFHH4tGXt5Bhnmtn+9gPk8OmmF+a9WRnjHqNNy6CSFEgnRZlGE22ok4oiAk46l9QC
-         WGHSd40gptVlaPjh8yGuJprdjV491FoS0V5Dtix+xzgLWBi3oGXJ7rk1q2fGvA/27Z
-         wfuItKbdFv93kpOIO5VMd9Q1dp9Se03leHFKeXIM=
+        b=vkOScIMLeoZq1mxGQybnWTGoGngPfkMhvQ1RKyCPx98Wll8FBrAzp05T4X0gOnRi6
+         bpDrHv1R/Arv2OxiJ/Foh0fIEQDX2qeqR+YJuTmG8z818KgK2ru1uyLuyG4JsyFfb1
+         CzeBzy/KEtQLV/oNG9jI/sjPV2FAQhDlsG3pn6YQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Evgenii Stepanov <eugenis@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 5.4 57/92] arm64: Validate tagged addresses in access_ok() called from kernel threads
-Date:   Wed, 11 Dec 2019 16:05:48 +0100
-Message-Id: <20191211150247.321136840@linuxfoundation.org>
+        stable@vger.kernel.org, emamd001@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 5.3 060/105] Input: Fix memory leak in psxpad_spi_probe
+Date:   Wed, 11 Dec 2019 16:05:49 +0100
+Message-Id: <20191211150245.026703773@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
+References: <20191211150221.153659747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit df325e05a682e9c624f471835c35bd3f870d5e8c upstream.
+In the implementation of psxpad_spi_probe() the allocated memory for
+pdev is leaked if psxpad_spi_init_ff() or input_register_polled_device()
+fail. The solution is using device managed allocation, like the one used
+for pad. Perform the allocation using
+devm_input_allocate_polled_device().
 
-__range_ok(), invoked from access_ok(), clears the tag of the user
-address only if CONFIG_ARM64_TAGGED_ADDR_ABI is enabled and the thread
-opted in to the relaxed ABI. The latter sets the TIF_TAGGED_ADDR thread
-flag. In the case of asynchronous I/O (e.g. io_submit()), the
-access_ok() may be called from a kernel thread. Since kernel threads
-don't have TIF_TAGGED_ADDR set, access_ok() will fail for valid tagged
-user addresses. Example from the ffs_user_copy_worker() thread:
-
-	use_mm(io_data->mm);
-	ret = ffs_copy_to_iter(io_data->buf, ret, &io_data->data);
-	unuse_mm(io_data->mm);
-
-Relax the __range_ok() check to always untag the user address if called
-in the context of a kernel thread. The user pointers would have already
-been checked via aio_setup_rw() -> import_{single_range,iovec}() at the
-time of the asynchronous I/O request.
-
-Fixes: 63f0c6037965 ("arm64: Introduce prctl() options to control the tagged user addresses ABI")
-Cc: <stable@vger.kernel.org> # 5.4.x-
-Cc: Will Deacon <will@kernel.org>
-Reported-by: Evgenii Stepanov <eugenis@google.com>
-Tested-by: Evgenii Stepanov <eugenis@google.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 8be193c7b1f4 ("Input: add support for PlayStation 1/2 joypads connected via SPI")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/include/asm/uaccess.h |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/input/joystick/psxpad-spi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -62,8 +62,13 @@ static inline unsigned long __range_ok(c
- {
- 	unsigned long ret, limit = current_thread_info()->addr_limit;
+--- a/drivers/input/joystick/psxpad-spi.c
++++ b/drivers/input/joystick/psxpad-spi.c
+@@ -292,7 +292,7 @@ static int psxpad_spi_probe(struct spi_d
+ 	if (!pad)
+ 		return -ENOMEM;
  
-+	/*
-+	 * Asynchronous I/O running in a kernel thread does not have the
-+	 * TIF_TAGGED_ADDR flag of the process owning the mm, so always untag
-+	 * the user address before checking.
-+	 */
- 	if (IS_ENABLED(CONFIG_ARM64_TAGGED_ADDR_ABI) &&
--	    test_thread_flag(TIF_TAGGED_ADDR))
-+	    (current->flags & PF_KTHREAD || test_thread_flag(TIF_TAGGED_ADDR)))
- 		addr = untagged_addr(addr);
- 
- 	__chk_user_ptr(addr);
+-	pdev = input_allocate_polled_device();
++	pdev = devm_input_allocate_polled_device(&spi->dev);
+ 	if (!pdev) {
+ 		dev_err(&spi->dev, "failed to allocate input device\n");
+ 		return -ENOMEM;
 
 
