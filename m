@@ -2,234 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2EE11A0F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:00:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15E8111A11A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:10:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfLKCA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 21:00:28 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:46120 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbfLKCA2 (ORCPT
+        id S1727472AbfLKCKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 21:10:31 -0500
+Received: from f0-dek.dektech.com.au ([210.10.221.142]:32928 "EHLO
+        mail.dektech.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726417AbfLKCKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:00:28 -0500
-Received: by mail-il1-f194.google.com with SMTP id t17so17951873ilm.13
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 18:00:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KPuoiuDNoBypEAM8Lz9cHX9/+wFHQgQuzldUjfKUDfU=;
-        b=Hc8+WJ7I5SkbhfyyJ1GG9HanLO2qTGWVPrbxgqsX1v+pNfYx13yWRVsKlYBw1BN9po
-         ymyGxs2o27HAo+NjD4QVmVQF6PB4hM8lPALOguzJDRO343lWcHs+/LdF44PECDcldWTk
-         JjapM1p/BsjTSCd2mTywgbsa4pSjZ+R6kmowrPT4V/HTOmK0oxWLok8JIRSeY61EfKuR
-         AxxfMZDu2/K416bxmqM3fDDZXT4/XWbS7WoKuzLSvChxtQ4weCiGVBFsDFctMPYlIG3R
-         R0L40npXRAaCN+6d83Y/Oi1ALJ2SiqE3t/wUpHBsncDWPV8G09/xmPzhWdAQxpN1azeZ
-         KiPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KPuoiuDNoBypEAM8Lz9cHX9/+wFHQgQuzldUjfKUDfU=;
-        b=olFIdpY8DCPZpOK5hLpsHxh6EgDKIISzm7FYTAnw3Bk63SOsR+iml1RP/BjFHYBHEW
-         uJ1y/DnK8+xPnwZOUJ8WsxWFhogVN/2CYrn2vnFkwqjaFsO9+2WXBmGYOuJFQzFKNKfa
-         Myhjyfs+/GhpoAm/s/SZSf1PmYrLyu52+TjTX5bF7scxMf93r7TPpAFpR/4NJZXDjNz1
-         Ug8NSwA3LjwgSxJgkaDHcspt3B+p0Mhl5EBvzDgX1zjy/wS0BlTanlCUwnTuV6UTlx1V
-         prAtmDP776zGems9XDIbE9lRz0VoqzktaGvQ5gaf21qBPAvg94G8HT/4ONevrhW6N/ae
-         aueg==
-X-Gm-Message-State: APjAAAX7p4CzTQheAU9WUs8oMq8P9GUeFpNvzsaqnVPF2WTUpjkysIZd
-        7a8TTaEnykAgTok8vbcw/irEbjKyS2b+8aYElNI=
-X-Google-Smtp-Source: APXvYqylaGqxl3kuUUGeA/LM6tIleUnS7lkYsGc2qrtlbxfaSliAIXHMcgnoSIKSORsU/xc/hzwyPUpbTpUlqWR44h4=
-X-Received: by 2002:a92:5d92:: with SMTP id e18mr746775ilg.75.1576029627000;
- Tue, 10 Dec 2019 18:00:27 -0800 (PST)
+        Tue, 10 Dec 2019 21:10:30 -0500
+X-Greylist: delayed 584 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 21:10:28 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.dektech.com.au (Postfix) with ESMTP id 753A144473;
+        Wed, 11 Dec 2019 13:00:42 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dektech.com.au;
+         h=content-language:x-mailer:content-transfer-encoding
+        :content-type:content-type:mime-version:message-id:date:date
+        :subject:subject:in-reply-to:references:from:from:received
+        :received:received; s=mail_dkim; t=1576029642; bh=l2BCh4INk9Xjpe
+        9P/beFH/83GOUPTtLsM+aYAl/XV6c=; b=nCYEQBF61ryWA+OV6FDSLHaFumv+df
+        zbbjBAzawtlgOH2nvOCmwh+5Qm0UyIMZeYEg/jsCofyODFaPszM6F+DdjaYqPwjC
+        MFI7L8Lcfs+OWjFex/2uLvsHEQY83EkQChNCiTyvVGGVho+XXrC+MIybahToejdD
+        h1E35TKiFSMqk=
+X-Virus-Scanned: amavisd-new at dektech.com.au
+Received: from mail.dektech.com.au ([127.0.0.1])
+        by localhost (mail2.dektech.com.au [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id xnnyoYZzpIOv; Wed, 11 Dec 2019 13:00:42 +1100 (AEDT)
+Received: from mail.dektech.com.au (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.dektech.com.au (Postfix) with ESMTPS id 400704BBFB;
+        Wed, 11 Dec 2019 13:00:41 +1100 (AEDT)
+Received: from VNLAP288VNPC (unknown [14.161.14.188])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.dektech.com.au (Postfix) with ESMTPSA id 908CF44473;
+        Wed, 11 Dec 2019 13:00:40 +1100 (AEDT)
+From:   "Tuong Lien Tong" <tuong.t.lien@dektech.com.au>
+To:     "'Ying Xue'" <ying.xue@windriver.com>, <paulmck@kernel.org>
+Cc:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mingo@kernel.org>, <tipc-discussion@lists.sourceforge.net>,
+        <kernel-team@fb.com>, <torvalds@linux-foundation.org>,
+        <davem@davemloft.net>
+References: <20191210033146.GA32522@paulmck-ThinkPad-P72> <0e565b68-ece1-5ae6-bb5d-710163fb8893@windriver.com> <20191210223825.GS2889@paulmck-ThinkPad-P72> <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
+In-Reply-To: <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
+Subject: RE: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected() with rcu_replace_pointer()
+Date:   Wed, 11 Dec 2019 09:00:39 +0700
+Message-ID: <707801d5afc6$cac68190$605384b0$@dektech.com.au>
 MIME-Version: 1.0
-References: <20191209115746.12953-1-smoch@web.de> <CANAwSgS9ixhyOE2QYQ3CetA=BUVebMan2=9xBKF=U3YXAwCHNQ@mail.gmail.com>
- <6e380c0a-007d-22db-af26-19defaf1ae83@fivetechno.de> <8377b8d6-8b4d-0605-4c61-fb61b4aebf91@web.de>
-In-Reply-To: <8377b8d6-8b4d-0605-4c61-fb61b4aebf91@web.de>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Wed, 11 Dec 2019 07:30:15 +0530
-Message-ID: <CANAwSgQhPtBy-npPJgOAqieF7doGmaX3U35m95ktR2qAWVbf5w@mail.gmail.com>
-Subject: Re: [PATCH] mfd: rk808: Always use poweroff when requested
-To:     Soeren Moch <smoch@web.de>
-Cc:     Markus Reichl <m.reichl@fivetechno.de>,
-        linux-rockchip@lists.infradead.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHn7R6lm2O6ODufE4ZTwpx6e2ZmvgEdJvCUAq0d++oCtrNyxadbqMjw
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi Soeren,
+Hi Ying, Paul,
 
-On Tue, 10 Dec 2019 at 22:10, Soeren Moch <smoch@web.de> wrote:
->
->
->
-> On 10.12.19 13:55, Markus Reichl wrote:
-> > Hi Anand,
-> >
-> > Am 10.12.19 um 13:42 schrieb Anand Moon:
-> >> Hi Soeren,
-> >>
-> >> On Mon, 9 Dec 2019 at 17:28, Soeren Moch <smoch@web.de> wrote:
-> >>>
-> >>> With the device tree property "rockchip,system-power-controller" we
-> >>> explicitly request to use this PMIC to power off the system. So alway=
-s
-> >>> register our poweroff function, even if some other handler (probably
-> >>> PSCI poweroff) was registered before.
-> >>>
-> >>> Signed-off-by: Soeren Moch <smoch@web.de>
-> >>> ---
-> >>> Cc: Lee Jones <lee.jones@linaro.org>
-> >>> Cc: Heiko Stuebner <heiko@sntech.de>
-> >>> Cc: linux-arm-kernel@lists.infradead.org
-> >>> Cc: linux-rockchip@lists.infradead.org
-> >>> Cc: linux-kernel@vger.kernel.org
-> >>> ---
-> >>>  drivers/mfd/rk808.c | 11 ++---------
-> >>>  1 file changed, 2 insertions(+), 9 deletions(-)
-> >>>
-> >>> diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-> >>> index a69a6742ecdc..616e44e7ef98 100644
-> >>> --- a/drivers/mfd/rk808.c
-> >>> +++ b/drivers/mfd/rk808.c
-> >>> @@ -550,7 +550,7 @@ static int rk808_probe(struct i2c_client *client,
-> >>>         const struct mfd_cell *cells;
-> >>>         int nr_pre_init_regs;
-> >>>         int nr_cells;
-> >>> -       int pm_off =3D 0, msb, lsb;
-> >>> +       int msb, lsb;
-> >>>         unsigned char pmic_id_msb, pmic_id_lsb;
-> >>>         int ret;
-> >>>         int i;
-> >>> @@ -674,16 +674,9 @@ static int rk808_probe(struct i2c_client *client=
-,
-> >>>                 goto err_irq;
-> >>>         }
-> >>>
-> >>> -       pm_off =3D of_property_read_bool(np,
-> >>> -                               "rockchip,system-power-controller");
-> >>> -       if (pm_off && !pm_power_off) {
-> >>> +       if (of_property_read_bool(np,
-> >>> "rockchip,system-power-controller")) {
-> >>>                 rk808_i2c_client =3D client;
-> >>>                 pm_power_off =3D rk808->pm_pwroff_fn;
-> >>> -       }
-> >>> -
-> >>> -       if (pm_off && !pm_power_off_prepare) {
-> >>> -               if (!rk808_i2c_client)
-> >>> -                       rk808_i2c_client =3D client;
-> >>>                 pm_power_off_prepare =3D rk808->pm_pwroff_prep_fn;
-> >>>         }
-> >>>
-> >>
-> >> I gave this a try on my Rock960 and Odroid N1
-> >> both got kernel panic below.
-> >
-> > I see the same on rk3399-roc-pc.
-> This is no panic, it's a harmless warning.
+Please see my comments inline. Thanks!
 
-Ok but my device do not come up cleanly after that, it get stuck in
-u-boot in next boot.
+BR/Tuong
 
-> The i2c core nowadays expects a specially marked i2c transfer function
-> late in the powerdown cycle:
+-----Original Message-----
+From: Ying Xue <ying.xue@windriver.com> 
+Sent: Wednesday, December 11, 2019 8:32 AM
+To: paulmck@kernel.org
+Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; mingo@kernel.org;
+tipc-discussion@lists.sourceforge.net; kernel-team@fb.com;
+torvalds@linux-foundation.org; davem@davemloft.net
+Subject: Re: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected()
+with rcu_replace_pointer()
 
-You can look into similar commit.
-d785334a0d5deff30a487c74324b842d2179553d (mfd: s2mps11: Add manual
-shutdown method for Odroid XU3)
+On 12/11/19 6:38 AM, Paul E. McKenney wrote:
+> commit 4ee8e2c68b076867b7a5af82a38010fffcab611c
+> Author: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Mon Dec 9 19:13:45 2019 -0800
+> 
+>     net/tipc: Replace rcu_swap_protected() with rcu_replace_pointer()
+>     
+>     This commit replaces the use of rcu_swap_protected() with the more
+>     intuitively appealing rcu_replace_pointer() as a step towards removing
+>     rcu_swap_protected().
+>     
+>     Link:
+https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4g
+g6Hw@mail.gmail.com/
+>     Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+>     Reported-by: kbuild test robot <lkp@intel.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>     Cc: Jon Maloy <jon.maloy@ericsson.com>
+>     Cc: Ying Xue <ying.xue@windriver.com>
+>     Cc: "David S. Miller" <davem@davemloft.net>
+>     Cc: <netdev@vger.kernel.org>
+>     Cc: <tipc-discussion@lists.sourceforge.net>
+> 
 
->
-> diff --git a/drivers/i2c/busses/i2c-rk3x.c b/drivers/i2c/busses/i2c-rk3x.=
-c
-> index 1a33007b03e9..cec115e0afa4 100644
-> --- a/drivers/i2c/busses/i2c-rk3x.c
-> +++ b/drivers/i2c/busses/i2c-rk3x.c
-> @@ -1126,6 +1126,7 @@ static u32 rk3x_i2c_func(struct i2c_adapter *adap)
->
->  static const struct i2c_algorithm rk3x_i2c_algorithm =3D {
->      .master_xfer        =3D rk3x_i2c_xfer,
-> +    .master_xfer_atomic    =3D rk3x_i2c_xfer, /* usable for PMIC powerof=
-f */
->      .functionality        =3D rk3x_i2c_func,
->  };
->
-> ---
-> It is only used for powerdown. The regular i2c xfer function works.
->
-> Heiko, should I send a formal patch for that?
->
-> Soeren
->
-> >
-> >>
-> >> [   58.305868] xhci-hcd xhci-hcd.0.auto: USB bus 5 deregistered
-> >> [   58.306747] reboot: Power down
-> >> [   58.307106] ------------[ cut here ]------------
-> >> [   58.307510] No atomic I2C transfer handler for 'i2c-0'
-> >> [   58.308007] WARNING: CPU: 0 PID: 1 at drivers/i2c/i2c-core.h:41
-> >> i2c_transfer+0xe4/0xf8
-> >> [   58.308696] Modules linked in: snd_soc_hdmi_codec dw_hdmi_i2s_audio
-> >> rockchipdrm analogix_dp brcmfmac nvme dw_mipi_dsi nvme_core dw_hdmi
-> >> panfrost cec brcmutil drm_kms_helper gpu_sched cfg80211 hci_uart drm
-> >> btbcm crct10dif_ce snd_soc_simple_card bluetooth snd_soc_rockchip_i2s
-> >> snd_soc_simple_card_utils snd_soc_rockchip_pcm phy_rockchip_pcie
-> >> ecdh_generic rtc_rk808 ecc pcie_rockchip_host rfkill rockchip_thermal
-> >> ip_tables x_tables ipv6 nf_defrag_ipv6
-> >> [   58.312150] CPU: 0 PID: 1 Comm: shutdown Not tainted
-> >> 5.5.0-rc1-dirty #1
-> >> [   58.312725] Hardware name: 96boards Rock960 (DT)
-> >> [   58.313131] pstate: 60000085 (nZCv daIf -PAN -UAO)
-> >> [   58.313551] pc : i2c_transfer+0xe4/0xf8
-> >> [   58.313889] lr : i2c_transfer+0xe4/0xf8
-> >> [   58.314225] sp : ffff80001004bb00
-> >> [   58.314516] x29: ffff80001004bb00 x28: ffff00007d208000
-> >> [   58.314981] x27: 0000000000000000 x26: 0000000000000000
-> >> [   58.315446] x25: 0000000000000000 x24: 0000000000000008
-> >> [   58.315910] x23: 0000000000000000 x22: ffff80001004bc74
-> >> [   58.316375] x21: 0000000000000002 x20: ffff80001004bb58
-> >> [   58.316841] x19: ffff0000784f0880 x18: 0000000000000010
-> >> [   58.317305] x17: 0000000000000001 x16: 0000000000000019
-> >> [   58.317770] x15: ffffffffffffffff x14: ffff8000118398c8
-> >> [   58.318236] x13: ffff80009004b867 x12: ffff80001004b86f
-> >> [   58.318701] x11: ffff800011851000 x10: ffff80001004b7f0
-> >> [   58.319166] x9 : 00000000ffffffd0 x8 : ffff800010699ad8
-> >> [   58.319631] x7 : 0000000000000265 x6 : ffff800011a20be9
-> >> [   58.320096] x5 : 0000000000000000 x4 : 0000000000000000
-> >> [   58.320561] x3 : 00000000ffffffff x2 : ffff800011851ab8
-> >> [   58.321026] x1 : d375c0d4f4751f00 x0 : 0000000000000000
-> >> [   58.321491] Call trace:
-> >> [   58.321710]  i2c_transfer+0xe4/0xf8
-> >> [   58.322020]  regmap_i2c_read+0x5c/0x98
-> >> [   58.322350]  _regmap_raw_read+0xcc/0x138
-> >> [   58.322694]  _regmap_bus_read+0x3c/0x70
-> >> [   58.323034]  _regmap_read+0x60/0xe0
-> >> [   58.323341]  _regmap_update_bits+0xc8/0x108
-> >> [   58.323707]  regmap_update_bits_base+0x60/0x90
-> >> [   58.324099]  rk808_device_shutdown+0x38/0x50
-> >> [   58.324476]  machine_power_off+0x24/0x30
-> >> [   58.324823]  kernel_power_off+0x64/0x70
-> >> [   58.325159]  __do_sys_reboot+0x15c/0x240
-> >> [   58.325504]  __arm64_sys_reboot+0x20/0x28
-> >> [   58.325858]  el0_svc_common.constprop.2+0x88/0x150
-> >> [   58.326279]  el0_svc_handler+0x20/0x80
-> >> [   58.326607]  el0_sync_handler+0x118/0x188
-> >> [   58.326960]  el0_sync+0x140/0x180
-> >> [   58.327251] ---[ end trace b1de39d03d724d01 ]---
-> >>
-> >> -Anand
-> >>
-> >> _______________________________________________
-> >> Linux-rockchip mailing list
-> >> Linux-rockchip@lists.infradead.org
-> >> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-> >>
-> >
-> > Gru=C3=9F,
->
--Anand
+Acked-by: Ying Xue <ying.xue@windriver.com>
+
+> diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
+> index 990a872..978d2db 100644
+> --- a/net/tipc/crypto.c
+> +++ b/net/tipc/crypto.c
+> @@ -257,9 +257,6 @@ static char *tipc_key_change_dump(struct tipc_key old,
+struct tipc_key new,
+>  #define tipc_aead_rcu_ptr(rcu_ptr, lock)				\
+>  	rcu_dereference_protected((rcu_ptr), lockdep_is_held(lock))
+>  
+> -#define tipc_aead_rcu_swap(rcu_ptr, ptr, lock)
+\
+> -	rcu_swap_protected((rcu_ptr), (ptr), lockdep_is_held(lock))
+> -
+>  #define tipc_aead_rcu_replace(rcu_ptr, ptr, lock)			\
+>  do {									\
+>  	typeof(rcu_ptr) __tmp = rcu_dereference_protected((rcu_ptr),	\
+> @@ -1189,7 +1186,7 @@ static bool tipc_crypto_key_try_align(struct
+tipc_crypto *rx, u8 new_pending)
+>  
+>  	/* Move passive key if any */
+>  	if (key.passive) {
+> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
+> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2,
+&rx->lock);
+The 3rd parameter should be the lockdep condition checking instead of the
+spinlock's pointer i.e. "lockdep_is_held(&rx->lock)"?
+That's why I'd prefer to use the 'tipc_aead_rcu_swap ()' macro, which is
+clear & concise at least for the context here. It might be re-used later as
+well...
+
+>  		x = (key.passive - key.pending + new_pending) % KEY_MAX;
+>  		new_passive = (x <= 0) ? x + KEY_MAX : x;
+>  	}
+> 
+
+
+_______________________________________________
+tipc-discussion mailing list
+tipc-discussion@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/tipc-discussion
+
