@@ -2,162 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E6611A077
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:28:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB7811A06C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 02:21:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfLKB1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 20:27:55 -0500
-Received: from mga17.intel.com ([192.55.52.151]:32077 "EHLO mga17.intel.com"
+        id S1727346AbfLKBVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 20:21:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbfLKB1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 20:27:54 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 17:27:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
-   d="scan'208";a="245060376"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.9])
-  by fmsmga002.fm.intel.com with ESMTP; 10 Dec 2019 17:27:52 -0800
-Date:   Tue, 10 Dec 2019 20:19:41 -0500
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "He, Shaopeng" <shaopeng.he@intel.com>
-Subject: Re: [RFC PATCH 1/9] vfio/pci: introduce mediate ops to intercept
- vfio-pci ops
-Message-ID: <20191211011941.GB28339@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20191205032419.29606-1-yan.y.zhao@intel.com>
- <20191205032536.29653-1-yan.y.zhao@intel.com>
- <20191205165519.106bd210@x1.home>
- <20191206075655.GG31791@joy-OptiPlex-7040>
- <20191206142226.2698a2be@x1.home>
- <20191209034225.GK31791@joy-OptiPlex-7040>
- <20191209170339.2cb3d06e@x1.home>
- <20191210024422.GA27331@joy-OptiPlex-7040>
- <20191210095824.5c4cdad7@x1.home>
+        id S1726362AbfLKBVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 20:21:23 -0500
+Received: from localhost (unknown [104.132.0.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 609562073B;
+        Wed, 11 Dec 2019 01:21:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576027282;
+        bh=4s4oxL7XVcpXrJCAiCJ8CAjgQd6K4Rfti23V7t2oJfI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=X81nwpqRdIxAA8X1PG8lS8in0dN1bDx5DbfkOLabOAUm0tRuRlbNR4FvCPCh5Ui12
+         m2SaTIPIrcTTwl2VdOuWZ6DpJlytsAUhGPud6elCiF+Ioe+8qMUB5DK2nJAORCXWeM
+         bg2TUaRQHDoOpovqnDt9VUZp6xy12itwPGuGkAss=
+Date:   Tue, 10 Dec 2019 17:21:21 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 6/6] f2fs: set I_LINKABLE early to avoid wrong
+ access by vfs
+Message-ID: <20191211012121.GA52962@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20191209222345.1078-1-jaegeuk@kernel.org>
+ <20191209222345.1078-6-jaegeuk@kernel.org>
+ <88dcbca9-3757-a440-ed73-9d99a56b816c@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191210095824.5c4cdad7@x1.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <88dcbca9-3757-a440-ed73-9d99a56b816c@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 12:58:24AM +0800, Alex Williamson wrote:
-> On Mon, 9 Dec 2019 21:44:23 -0500
-> Yan Zhao <yan.y.zhao@intel.com> wrote:
+On 12/10, Chao Yu wrote:
+> On 2019/12/10 6:23, Jaegeuk Kim wrote:
+> > This patch moves setting I_LINKABLE early in rename2(whiteout) to avoid the
+> > below warning.
+> > 
+> > [ 3189.163385] WARNING: CPU: 3 PID: 59523 at fs/inode.c:358 inc_nlink+0x32/0x40
+> > [ 3189.246979] Call Trace:
+> > [ 3189.248707]  f2fs_init_inode_metadata+0x2d6/0x440 [f2fs]
+> > [ 3189.251399]  f2fs_add_inline_entry+0x162/0x8c0 [f2fs]
+> > [ 3189.254010]  f2fs_add_dentry+0x69/0xe0 [f2fs]
+> > [ 3189.256353]  f2fs_do_add_link+0xc5/0x100 [f2fs]
+> > [ 3189.258774]  f2fs_rename2+0xabf/0x1010 [f2fs]
+> > [ 3189.261079]  vfs_rename+0x3f8/0xaa0
+> > [ 3189.263056]  ? tomoyo_path_rename+0x44/0x60
+> > [ 3189.265283]  ? do_renameat2+0x49b/0x550
+> > [ 3189.267324]  do_renameat2+0x49b/0x550
+> > [ 3189.269316]  __x64_sys_renameat2+0x20/0x30
+> > [ 3189.271441]  do_syscall_64+0x5a/0x230
+> > [ 3189.273410]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > [ 3189.275848] RIP: 0033:0x7f270b4d9a49
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/namei.c | 27 +++++++++++++--------------
+> >  1 file changed, 13 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> > index a1c507b0b4ac..5d9584281935 100644
+> > --- a/fs/f2fs/namei.c
+> > +++ b/fs/f2fs/namei.c
+> > @@ -797,6 +797,7 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+> >  
+> >  	if (whiteout) {
+> >  		f2fs_i_links_write(inode, false);
+> > +		inode->i_state |= I_LINKABLE;
+> >  		*whiteout = inode;
+> >  	} else {
+> >  		d_tmpfile(dentry, inode);
+> > @@ -867,6 +868,12 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  			F2FS_I(old_dentry->d_inode)->i_projid)))
+> >  		return -EXDEV;
+> >  
+> > +	if (flags & RENAME_WHITEOUT) {
+> > +		err = f2fs_create_whiteout(old_dir, &whiteout);
+> > +		if (err)
+> > +			return err;
+> > +	}
 > 
-> > > > > > Currently, yes, i40e has build dependency on vfio-pci.
-> > > > > > It's like this, if i40e decides to support SRIOV and compiles in vf
-> > > > > > related code who depends on vfio-pci, it will also have build dependency
-> > > > > > on vfio-pci. isn't it natural?    
-> > > > > 
-> > > > > No, this is not natural.  There are certainly i40e VF use cases that
-> > > > > have no interest in vfio and having dependencies between the two
-> > > > > modules is unacceptable.  I think you probably want to modularize the
-> > > > > i40e vfio support code and then perhaps register a table in vfio-pci
-> > > > > that the vfio-pci code can perform a module request when using a
-> > > > > compatible device.  Just and idea, there might be better options.  I
-> > > > > will not accept a solution that requires unloading the i40e driver in
-> > > > > order to unload the vfio-pci driver.  It's inconvenient with just one
-> > > > > NIC driver, imagine how poorly that scales.
-> > > > >     
-> > > > what about this way:
-> > > > mediate driver registers a module notifier and every time when
-> > > > vfio_pci is loaded, register to vfio_pci its mediate ops?
-> > > > (Just like in below sample code)
-> > > > This way vfio-pci is free to unload and this registering only gives
-> > > > vfio-pci a name of what module to request.
-> > > > After that,
-> > > > in vfio_pci_open(), vfio-pci requests the mediate driver. (or puts
-> > > > the mediate driver when mediate driver does not support mediating the
-> > > > device)
-> > > > in vfio_pci_release(), vfio-pci puts the mediate driver.
-> > > > 
-> > > > static void register_mediate_ops(void)
-> > > > {
-> > > >         int (*func)(struct vfio_pci_mediate_ops *ops) = NULL;
-> > > > 
-> > > >         func = symbol_get(vfio_pci_register_mediate_ops);
-> > > > 
-> > > >         if (func) {
-> > > >                 func(&igd_dt_ops);
-> > > >                 symbol_put(vfio_pci_register_mediate_ops);
-> > > >         }
-> > > > }
-> > > > 
-> > > > static int igd_module_notify(struct notifier_block *self,
-> > > >                               unsigned long val, void *data)
-> > > > {
-> > > >         struct module *mod = data;
-> > > >         int ret = 0;
-> > > > 
-> > > >         switch (val) {
-> > > >         case MODULE_STATE_LIVE:
-> > > >                 if (!strcmp(mod->name, "vfio_pci"))
-> > > >                         register_mediate_ops();
-> > > >                 break;
-> > > >         case MODULE_STATE_GOING:
-> > > >                 break;
-> > > >         default:
-> > > >                 break;
-> > > >         }
-> > > >         return ret;
-> > > > }
-> > > > 
-> > > > static struct notifier_block igd_module_nb = {
-> > > >         .notifier_call = igd_module_notify,
-> > > >         .priority = 0,
-> > > > };
-> > > > 
-> > > > 
-> > > > 
-> > > > static int __init igd_dt_init(void)
-> > > > {
-> > > > 	...
-> > > > 	register_mediate_ops();
-> > > > 	register_module_notifier(&igd_module_nb);
-> > > > 	...
-> > > > 	return 0;
-> > > > }  
-> > > 
-> > > 
-> > > No, this is bad.  Please look at MODULE_ALIAS() and request_module() as
-> > > used in the vfio-platform for loading reset driver modules.  I think
-> > > the correct approach is that vfio-pci should perform a request_module()
-> > > based on the device being probed.  Having the mediation provider
-> > > listening for vfio-pci and registering itself regardless of whether we
-> > > intend to use it assumes that we will want to use it and assumes that
-> > > the mediation provider module is already loaded.  We should be able to
-> > > support demand loading of modules that may serve no other purpose than
-> > > providing this mediation.  Thanks,  
-> > hi Alex
-> > Thanks for this message.
-> > So is it good to create a separate module as mediation provider driver,
-> > and alias its module name to "vfio-pci-mediate-vid-did".
-> > Then when vfio-pci probes the device, it requests module of that name ?
-> 
-> I think this would give us an option to have the mediator as a separate
-> module, but not require it.  Maybe rather than a request_module(),
-> where if we follow the platform reset example we'd then expect the init
-> code for the module to register into a list, we could do a
-> symbol_request().  AIUI, this would give us a reference to the symbol
-> if the module providing it is already loaded, and request a module
-> (perhaps via an alias) if it's not already load.  Thanks,
-> 
-ok. got it!
-Thank you :)
+> To record quota info correctly, we need to create whiteout inode after
+> dquot_initialize(old_dir)?
 
-Yan
+__f2fs_tmpfile() will do it.
+
+> 
+> > +
+> >  	err = dquot_initialize(old_dir);
+> >  	if (err)
+> >  		goto out;
+> > @@ -898,17 +905,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  		}
+> >  	}
+> >  
+> > -	if (flags & RENAME_WHITEOUT) {
+> > -		err = f2fs_create_whiteout(old_dir, &whiteout);
+> > -		if (err)
+> > -			goto out_dir;
+> > -	}
+> > -
+> >  	if (new_inode) {
+> >  
+> >  		err = -ENOTEMPTY;
+> >  		if (old_dir_entry && !f2fs_empty_dir(new_inode))
+> > -			goto out_whiteout;
+> > +			goto out_dir;
+> >  
+> >  		err = -ENOENT;
+> >  		new_entry = f2fs_find_entry(new_dir, &new_dentry->d_name,
+> > @@ -916,7 +917,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  		if (!new_entry) {
+> >  			if (IS_ERR(new_page))
+> >  				err = PTR_ERR(new_page);
+> > -			goto out_whiteout;
+> > +			goto out_dir;
+> >  		}
+> >  
+> >  		f2fs_balance_fs(sbi, true);
+> > @@ -948,7 +949,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  		err = f2fs_add_link(new_dentry, old_inode);
+> >  		if (err) {
+> >  			f2fs_unlock_op(sbi);
+> > -			goto out_whiteout;
+> > +			goto out_dir;
+> >  		}
+> >  
+> >  		if (old_dir_entry)
+> > @@ -972,7 +973,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  				if (IS_ERR(old_page))
+> >  					err = PTR_ERR(old_page);
+> >  				f2fs_unlock_op(sbi);
+> > -				goto out_whiteout;
+> > +				goto out_dir;
+> >  			}
+> >  		}
+> >  	}
+> > @@ -991,7 +992,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  	f2fs_delete_entry(old_entry, old_page, old_dir, NULL);
+> >  
+> >  	if (whiteout) {
+> > -		whiteout->i_state |= I_LINKABLE;
+> >  		set_inode_flag(whiteout, FI_INC_LINK);
+> >  		err = f2fs_add_link(old_dentry, whiteout);
+> 
+> [ 3189.256353]  f2fs_do_add_link+0xc5/0x100 [f2fs]
+> [ 3189.258774]  f2fs_rename2+0xabf/0x1010 [f2fs]
+> 
+> Does the call stack point here? if so, we have set I_LINKABLE before
+> f2fs_add_link(), why the warning still be triggered?
+> 
+> Thanks,
+> 
+> >  		if (err)
+> > @@ -1027,15 +1027,14 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  	f2fs_unlock_op(sbi);
+> >  	if (new_page)
+> >  		f2fs_put_page(new_page, 0);
+> > -out_whiteout:
+> > -	if (whiteout)
+> > -		iput(whiteout);
+> >  out_dir:
+> >  	if (old_dir_entry)
+> >  		f2fs_put_page(old_dir_page, 0);
+> >  out_old:
+> >  	f2fs_put_page(old_page, 0);
+> >  out:
+> > +	if (whiteout)
+> > +		iput(whiteout);
+> >  	return err;
+> >  }
+> >  
+> > 
