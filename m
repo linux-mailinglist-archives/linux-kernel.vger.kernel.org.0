@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 826F711B7EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:11:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE7D211B7E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:11:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbfLKPLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:11:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59664 "EHLO mail.kernel.org"
+        id S1730895AbfLKPLO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:11:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730880AbfLKPLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:11:09 -0500
+        id S1730264AbfLKPLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:11:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BCD6208C3;
-        Wed, 11 Dec 2019 15:11:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C62A424654;
+        Wed, 11 Dec 2019 15:11:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077068;
-        bh=UpBlCeV7bfd29ME9bJvtWmZPHusiY1X6vU4HD458FMU=;
+        s=default; t=1576077071;
+        bh=npnDyANGudtfyjzeUNt85NO+xvI9VzCqSiWB+t0mvG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bfWF0/+FNGlyeTjcxzEocltUFI5s5UyaDUuvs5pKXe+HMTCThE6jU4Chf76FkHUFr
-         S4+w0VKm5VuKg+SblrJo+Kr6P6Gn4AMGb+ir2Jqr5U1siwtD3U649m43d86axgr7fK
-         PtTscdLYx4SjBs6suGtos8uvWv2vsBQbIl2LhtPM=
+        b=0kjaIGC+2xENpTluVEnpXTgTvBpK8GPmZqiRc1opFhTFTqr3YlSIx+5tUGDSPx0Sm
+         KBP/6RSPaXNyqVuwmz3z5ImNN8ZMaz5hdymmU4HUiji54AP8tH/H5jZLNt/uoXpnpa
+         fAvpvfeyMrQtWjC7rsXx5cQyBt1ez4ns+72b4VpU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Laura Abbott <labbott@redhat.com>
-Subject: [PATCH 5.4 85/92] bdev: Refresh bdev size for disks without partitioning
-Date:   Wed, 11 Dec 2019 16:06:16 +0100
-Message-Id: <20191211150301.478486571@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+991400e8eba7e00a26e1@syzkaller.appspotmail.com,
+        Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 5.4 86/92] iomap: Fix pipe page leakage during splicing
+Date:   Wed, 11 Dec 2019 16:06:17 +0100
+Message-Id: <20191211150301.783180819@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
 References: <20191211150221.977775294@linuxfoundation.org>
@@ -45,61 +48,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kara <jack@suse.cz>
 
-commit cba22d86e0a10b7070d2e6a7379dbea51aa0883c upstream.
+commit 419e9c38aa075ed0cd3c13d47e15954b686bcdb6 upstream.
 
-Currently, block device size in not updated on second and further open
-for block devices where partition scan is disabled. This is particularly
-annoying for example for DVD drives as that means block device size does
-not get updated once the media is inserted into a drive if the device is
-already open when inserting the media. This is actually always the case
-for example when pktcdvd is in use.
+When splicing using iomap_dio_rw() to a pipe, we may leak pipe pages
+because bio_iov_iter_get_pages() records that the pipe will have full
+extent worth of data however if file size is not block size aligned
+iomap_dio_rw() returns less than what bio_iov_iter_get_pages() set up
+and splice code gets confused leaking a pipe page with the file tail.
 
-Fix the problem by revalidating block device size on every open even for
-devices with partition scan disabled.
+Handle the situation similarly to the old direct IO implementation and
+revert iter to actually returned read amount which makes iter consistent
+with value returned from iomap_dio_rw() and thus the splice code is
+happy.
 
+Fixes: ff6a9292e6f6 ("iomap: implement direct I/O")
+CC: stable@vger.kernel.org
+Reported-by: syzbot+991400e8eba7e00a26e1@syzkaller.appspotmail.com
 Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Cc: Laura Abbott <labbott@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/block_dev.c |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ fs/iomap/direct-io.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1403,11 +1403,7 @@ static void flush_disk(struct block_devi
- 		       "resized disk %s\n",
- 		       bdev->bd_disk ? bdev->bd_disk->disk_name : "");
- 	}
--
--	if (!bdev->bd_disk)
--		return;
--	if (disk_part_scan_enabled(bdev->bd_disk))
--		bdev->bd_invalidated = 1;
-+	bdev->bd_invalidated = 1;
- }
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -497,8 +497,15 @@ iomap_dio_rw(struct kiocb *iocb, struct
+ 		}
+ 		pos += ret;
  
- /**
-@@ -1514,10 +1510,15 @@ static void __blkdev_put(struct block_de
+-		if (iov_iter_rw(iter) == READ && pos >= dio->i_size)
++		if (iov_iter_rw(iter) == READ && pos >= dio->i_size) {
++			/*
++			 * We only report that we've read data up to i_size.
++			 * Revert iter to a state corresponding to that as
++			 * some callers (such as splice code) rely on it.
++			 */
++			iov_iter_revert(iter, pos - dio->i_size);
+ 			break;
++		}
+ 	} while ((count = iov_iter_count(iter)) > 0);
+ 	blk_finish_plug(&plug);
  
- static void bdev_disk_changed(struct block_device *bdev, bool invalidate)
- {
--	if (invalidate)
--		invalidate_partitions(bdev->bd_disk, bdev);
--	else
--		rescan_partitions(bdev->bd_disk, bdev);
-+	if (disk_part_scan_enabled(bdev->bd_disk)) {
-+		if (invalidate)
-+			invalidate_partitions(bdev->bd_disk, bdev);
-+		else
-+			rescan_partitions(bdev->bd_disk, bdev);
-+	} else {
-+		check_disk_size_change(bdev->bd_disk, bdev, !invalidate);
-+		bdev->bd_invalidated = 0;
-+	}
- }
- 
- /*
 
 
