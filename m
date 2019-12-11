@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 798B711B513
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1E8711B50F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732494AbfLKPVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:21:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52014 "EHLO mail.kernel.org"
+        id S1732522AbfLKPVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:21:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732482AbfLKPVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:21:38 -0500
+        id S1732354AbfLKPVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:21:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F0AE22527;
-        Wed, 11 Dec 2019 15:21:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89CE922B48;
+        Wed, 11 Dec 2019 15:21:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077697;
-        bh=5d51ygvNrdY94fbcMcCKNXOd5JNbqHT4k5/Lie++wmQ=;
+        s=default; t=1576077708;
+        bh=SzMJyPNV6wAQy+vcTNqjI8o8y4jxA+AfKRf1/AMgt8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qpjOJg7ZgR+w2dy6zeJqoZA120FRUOhcAcJwUeH7dMZxFnFG0LDUpBAuAKVvT+kke
-         +RG//ngZJG696zA7a5oCCCg/get2FugoK6SR8HVaPmPvj0l2vz8xkZ/LorTnD/Cnlz
-         9X53jLwvo7EWET6yOOfQnalrgaZHTaM/fjPg/eJk=
+        b=pDLRmmjHX2E4jfcXJMu7hJSyJdNmI2hPxoMH1PAUE0j/EaTYYT8+QdOR4I3JGFMLe
+         qtL30LL2VzNRk3Yl5QzI7viRdF2rlew4aCQo0g3mj2XbVWzjLKzKqjaooq9tsdfpUv
+         cLjMA2v+0IQPsrHoV+I+bsrLZXu40ZvB1U3seQS0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young_X <YangX92@hotmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 136/243] ASoC: au8540: use 64-bit arithmetic instead of 32-bit
-Date:   Wed, 11 Dec 2019 16:04:58 +0100
-Message-Id: <20191211150348.334788913@linuxfoundation.org>
+Subject: [PATCH 4.19 139/243] arm64: dts: meson-gxl-libretech-cc: fix GPIO lines names
+Date:   Wed, 11 Dec 2019 16:05:01 +0100
+Message-Id: <20191211150348.543346964@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,39 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Young_X <YangX92@hotmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-[ Upstream commit cd7fdc45bc69a62b4e22c6e875f1f1aea566256d ]
+[ Upstream commit 11fa9774612decea87144d7f950a9c53a4fe3050 ]
 
-Add suffix ULL to constant 256 in order to give the compiler complete
-information about the proper arithmetic to use.
+The gpio line names were set in the pinctrl node instead of the gpio node,
+at the time it was merged, it worked, but was obviously wrong.
+This patch moves the properties to the gpio nodes.
 
-Notice that such constant is used in a context that expects an
-expression of type u64 (64 bits, unsigned) and the following
-expression is currently being evaluated using 32-bit arithmetic:
-
-    256 * fs * 2 * mclk_src_scaling[i].param
-
-Signed-off-by: Young_X <YangX92@hotmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 47884c5c746e ("ARM64: dts: meson-gxl-libretech-cc: Add GPIO lines names")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/nau8540.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/nau8540.c b/sound/soc/codecs/nau8540.c
-index e3c8cd17daf2d..4dd1a609756be 100644
---- a/sound/soc/codecs/nau8540.c
-+++ b/sound/soc/codecs/nau8540.c
-@@ -585,7 +585,7 @@ static int nau8540_calc_fll_param(unsigned int fll_in,
- 	fvco_max = 0;
- 	fvco_sel = ARRAY_SIZE(mclk_src_scaling);
- 	for (i = 0; i < ARRAY_SIZE(mclk_src_scaling); i++) {
--		fvco = 256 * fs * 2 * mclk_src_scaling[i].param;
-+		fvco = 256ULL * fs * 2 * mclk_src_scaling[i].param;
- 		if (fvco > NAU_FVCO_MIN && fvco < NAU_FVCO_MAX &&
- 			fvco_max < fvco) {
- 			fvco_max = fvco;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index 90a56af967a7f..b4dfb9afdef86 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -163,7 +163,7 @@
+ 	};
+ };
+ 
+-&pinctrl_aobus {
++&gpio_ao {
+ 	gpio-line-names = "UART TX",
+ 			  "UART RX",
+ 			  "Blue LED",
+@@ -178,7 +178,7 @@
+ 			  "7J1 Header Pin15";
+ };
+ 
+-&pinctrl_periphs {
++&gpio {
+ 	gpio-line-names = /* Bank GPIOZ */
+ 			  "", "", "", "", "", "", "",
+ 			  "", "", "", "", "", "", "",
 -- 
 2.20.1
 
