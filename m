@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B6711AFA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:14:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5408311AFA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:14:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731636AbfLKPOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:14:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37538 "EHLO mail.kernel.org"
+        id S1730635AbfLKPOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:14:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731473AbfLKPNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:13:40 -0500
+        id S1731477AbfLKPNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCECD24671;
-        Wed, 11 Dec 2019 15:13:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F14172467D;
+        Wed, 11 Dec 2019 15:13:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077219;
-        bh=xZEIST2/HgaO23PjJOPNxsu/fBMAas1f2zAOn7G+6DI=;
+        s=default; t=1576077220;
+        bh=cFlcOaw/qeAJPWdJSsqw24Ge7bVtfzcVX8YUgBDsENU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=177v0ndSHPD3bhqUv0cl5y7e8rPw81zSssIaV4TeDrJ30badgNbLG9AAmyYupqsf6
-         8Uq0EJjssbm1jonWq3bhQC8t/bscK3zGyXTGF5c7QbMruS5KD4vAZmIy5Qv9NSXIGd
-         5+0Om9kTdVAgIz6KxQWdZt6NKeRJ4H3OePK53IwE=
+        b=Cx0Fm+0xFhx0u8MmnffK3wrj9vAeY2TtbACdhsbRxsTz1so6QVBwTwM/qE1F+Y7Va
+         y/jnMo3suLJdxioMb8EKRE8bU2X7DVAugqXwjYKBNgnClr+xI2CBuk3VnuRU8OK8rm
+         zH04YPDDKQE0pLcZXAypg7WYUIPskT7JcvKVoun8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.4 099/134] f2fs: Fix deadlock in f2fs_gc() context during atomic files handling
-Date:   Wed, 11 Dec 2019 10:11:15 -0500
-Message-Id: <20191211151150.19073-99-sashal@kernel.org>
+Cc:     Omer Shpigelman <oshpigelman@habana.ai>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 100/134] habanalabs: skip VA block list update in reset flow
+Date:   Wed, 11 Dec 2019 10:11:16 -0500
+Message-Id: <20191211151150.19073-100-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
 References: <20191211151150.19073-1-sashal@kernel.org>
@@ -44,128 +43,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Omer Shpigelman <oshpigelman@habana.ai>
 
-[ Upstream commit 677017d196ba2a4cfff13626b951cc9a206b8c7c ]
+[ Upstream commit 71c5e55e7c077fa17c42fbda91a8d14322825c44 ]
 
-The FS got stuck in the below stack when the storage is almost
-full/dirty condition (when FG_GC is being done).
+Reduce context close time by skipping the VA block free list update in
+order to avoid hard reset with open contexts.
+Reset with open contexts can potentially lead to a kernel crash as the
+generic pool of the MMU hops is destroyed while it is not empty because
+some unmap operations are not done.
+The commit affect mainly when running on simulator.
 
-schedule_timeout
-io_schedule_timeout
-congestion_wait
-f2fs_drop_inmem_pages_all
-f2fs_gc
-f2fs_balance_fs
-__write_node_page
-f2fs_fsync_node_pages
-f2fs_do_sync_file
-f2fs_ioctl
-
-The root cause for this issue is there is a potential infinite loop
-in f2fs_drop_inmem_pages_all() for the case where gc_failure is true
-and when there an inode whose i_gc_failures[GC_FAILURE_ATOMIC] is
-not set. Fix this by keeping track of the total atomic files
-currently opened and using that to exit from this condition.
-
-Fix-suggested-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h    |  1 +
- fs/f2fs/file.c    |  1 +
- fs/f2fs/segment.c | 21 +++++++++++++++------
- 3 files changed, 17 insertions(+), 6 deletions(-)
+ drivers/misc/habanalabs/memory.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f078cd20dab88..9046432b87c2d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1289,6 +1289,7 @@ struct f2fs_sb_info {
- 	unsigned int gc_mode;			/* current GC state */
- 	unsigned int next_victim_seg[2];	/* next segment in victim section */
- 	/* for skip statistic */
-+	unsigned int atomic_files;              /* # of opened atomic file */
- 	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
- 	unsigned long long skipped_gc_rwsem;		/* FG_GC only */
+diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
+index 365fb0cb8dfff..22566b75ca50c 100644
+--- a/drivers/misc/habanalabs/memory.c
++++ b/drivers/misc/habanalabs/memory.c
+@@ -965,17 +965,19 @@ init_page_pack_err:
+  *
+  * @ctx                 : current context
+  * @vaddr               : device virtual address to unmap
++ * @ctx_free            : true if in context free flow, false otherwise.
+  *
+  * This function does the following:
+  * - Unmap the physical pages related to the given virtual address
+  * - return the device virtual block to the virtual block list
+  */
+-static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
++static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr, bool ctx_free)
+ {
+ 	struct hl_device *hdev = ctx->hdev;
+ 	struct hl_vm_phys_pg_pack *phys_pg_pack = NULL;
+ 	struct hl_vm_hash_node *hnode = NULL;
+ 	struct hl_userptr *userptr = NULL;
++	struct hl_va_range *va_range;
+ 	enum vm_type_t *vm_type;
+ 	u64 next_vaddr, i;
+ 	u32 page_size;
+@@ -1003,6 +1005,7 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
  
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 29bc0a542759a..8ed8e4328bd1a 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1890,6 +1890,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- 	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
- 	if (list_empty(&fi->inmem_ilist))
- 		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
-+	sbi->atomic_files++;
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
- 
- 	/* add inode in inmem_list first and set atomic_file */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8087095814819..7d85784012678 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -288,6 +288,8 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
- 	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
- 	struct inode *inode;
- 	struct f2fs_inode_info *fi;
-+	unsigned int count = sbi->atomic_files;
-+	unsigned int looped = 0;
- next:
- 	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
- 	if (list_empty(head)) {
-@@ -296,22 +298,26 @@ next:
- 	}
- 	fi = list_first_entry(head, struct f2fs_inode_info, inmem_ilist);
- 	inode = igrab(&fi->vfs_inode);
-+	if (inode)
-+		list_move_tail(&fi->inmem_ilist, head);
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
- 
- 	if (inode) {
- 		if (gc_failure) {
--			if (fi->i_gc_failures[GC_FAILURE_ATOMIC])
--				goto drop;
--			goto skip;
-+			if (!fi->i_gc_failures[GC_FAILURE_ATOMIC])
-+				goto skip;
+ 	if (*vm_type == VM_TYPE_USERPTR) {
+ 		is_userptr = true;
++		va_range = &ctx->host_va_range;
+ 		userptr = hnode->ptr;
+ 		rc = init_phys_pg_pack_from_userptr(ctx, userptr,
+ 				&phys_pg_pack);
+@@ -1014,6 +1017,7 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
  		}
--drop:
- 		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
- 		f2fs_drop_inmem_pages(inode);
-+skip:
- 		iput(inode);
- 	}
--skip:
- 	congestion_wait(BLK_RW_ASYNC, HZ/50);
- 	cond_resched();
-+	if (gc_failure) {
-+		if (++looped >= count)
-+			return;
+ 	} else if (*vm_type == VM_TYPE_PHYS_PACK) {
+ 		is_userptr = false;
++		va_range = &ctx->dram_va_range;
+ 		phys_pg_pack = hnode->ptr;
+ 	} else {
+ 		dev_warn(hdev->dev,
+@@ -1052,12 +1056,18 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
+ 
+ 	mutex_unlock(&ctx->mmu_lock);
+ 
+-	if (add_va_block(hdev,
+-			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
+-			vaddr,
+-			vaddr + phys_pg_pack->total_size - 1))
+-		dev_warn(hdev->dev, "add va block failed for vaddr: 0x%llx\n",
+-				vaddr);
++	/*
++	 * No point in maintaining the free VA block list if the context is
++	 * closing as the list will be freed anyway
++	 */
++	if (!ctx_free) {
++		rc = add_va_block(hdev, va_range, vaddr,
++					vaddr + phys_pg_pack->total_size - 1);
++		if (rc)
++			dev_warn(hdev->dev,
++					"add va block failed for vaddr: 0x%llx\n",
++					vaddr);
 +	}
- 	goto next;
- }
  
-@@ -327,13 +333,16 @@ void f2fs_drop_inmem_pages(struct inode *inode)
- 		mutex_unlock(&fi->inmem_lock);
+ 	atomic_dec(&phys_pg_pack->mapping_cnt);
+ 	kfree(hnode);
+@@ -1189,8 +1199,8 @@ int hl_mem_ioctl(struct hl_fpriv *hpriv, void *data)
+ 		break;
+ 
+ 	case HL_MEM_OP_UNMAP:
+-		rc = unmap_device_va(ctx,
+-				args->in.unmap.device_virt_addr);
++		rc = unmap_device_va(ctx, args->in.unmap.device_virt_addr,
++					false);
+ 		break;
+ 
+ 	default:
+@@ -1620,7 +1630,7 @@ void hl_vm_ctx_fini(struct hl_ctx *ctx)
+ 		dev_dbg(hdev->dev,
+ 			"hl_mem_hash_node of vaddr 0x%llx of asid %d is still alive\n",
+ 			hnode->vaddr, ctx->asid);
+-		unmap_device_va(ctx, hnode->vaddr);
++		unmap_device_va(ctx, hnode->vaddr, true);
  	}
  
--	clear_inode_flag(inode, FI_ATOMIC_FILE);
- 	fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
- 	stat_dec_atomic_write(inode);
- 
- 	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
- 	if (!list_empty(&fi->inmem_ilist))
- 		list_del_init(&fi->inmem_ilist);
-+	if (f2fs_is_atomic_file(inode)) {
-+		clear_inode_flag(inode, FI_ATOMIC_FILE);
-+		sbi->atomic_files--;
-+	}
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
- }
- 
+ 	spin_lock(&vm->idr_lock);
 -- 
 2.20.1
 
