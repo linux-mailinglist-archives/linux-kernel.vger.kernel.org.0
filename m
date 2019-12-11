@@ -2,105 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B3511A34E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 05:03:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8792911A354
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 05:09:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbfLKEDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 23:03:00 -0500
-Received: from gate.crashing.org ([63.228.1.57]:48317 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726831AbfLKEC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 23:02:59 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id xBB422AG012504;
-        Tue, 10 Dec 2019 22:02:03 -0600
-Message-ID: <38b543cb91e936d7bd9f8885e585dd55032d83a4.camel@kernel.crashing.org>
-Subject: Re: [RFC/PATCH] printk: Fix preferred console selection with
- multiple matches
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Dec 2019 15:02:02 +1100
-In-Reply-To: <20191211020149.GN88619@google.com>
-References: <b8131bf32a5572352561ec7f2457eb61cc811390.camel@kernel.crashing.org>
-         <20191210080154.GJ88619@google.com>
-         <98df321d16adb67c5579ac4b67d845fc0c2c97df.camel@kernel.crashing.org>
-         <20191211020149.GN88619@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727613AbfLKEJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 23:09:01 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:53182 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfLKEJB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 23:09:01 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBB442Pp179945;
+        Wed, 11 Dec 2019 04:08:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=NsytSED1IdKLk5zj6xtHrR0U2YjxCSjKc6zTpdZVg4Q=;
+ b=I2EwFONYap60CNgUAo3T/+I6fxoUgXpkeedOuHbGWnRe5I51yYyxDxB8z3fhUhTIdVGq
+ ZPQ20I86VGh4Ks5AIiQkfmCZSiUm2M+rVhq8A5eMzeo92Hc5GvFOWSxTQKjS1masJky8
+ BF1Khtt7o1kq+eQH6iBB/6ZxQBxkmaKv+727ppF+maxHdFucRZRQCN2u/5bou3oCcpJg
+ ioYfSZgw5GArinBEWHxPE3bCgu/+01fPXDzZra81hUuj2utqRw1m2IA4Uu5IXTpDfOV1
+ x7GuNkXCLQ1HudrnJb0A0U7kyq/qwGyE6TVil26Fp7vvoMABI6Ogw9yBwiCuLiRgrghy sQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2wrw4n6x8t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Dec 2019 04:08:36 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBB4462h010025;
+        Wed, 11 Dec 2019 04:08:36 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2wte9b9sm1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Dec 2019 04:08:36 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBB48YKM022438;
+        Wed, 11 Dec 2019 04:08:35 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Dec 2019 20:08:07 -0800
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org
+Subject: Re: [PATCH 0/1] Summary: hwmon driver for temperature sensors on SATA drives
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191209052119.32072-1-linux@roeck-us.net>
+Date:   Tue, 10 Dec 2019 23:08:04 -0500
+In-Reply-To: <20191209052119.32072-1-linux@roeck-us.net> (Guenter Roeck's
+        message of "Sun, 8 Dec 2019 21:21:18 -0800")
+Message-ID: <yq15zinmrmj.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9467 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912110034
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9467 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912110034
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-12-11 at 11:01 +0900, Sergey Senozhatsky wrote:
-> On (19/12/11 09:26), Benjamin Herrenschmidt wrote:
-> 
 
-> As far as I know, ->match() does not only match but also does ->setup().
-> If we have two console list entries that match (one via aliasing and one
-> via exact match) then the console driver is setup twice. Do all console
-> drivers handle it? [double setup]
+Hi Guenter,
 
-I don't think it's an issue but I may be wrong. I had a quick look
-at some of the drivers and I don't really see why they would break but
-I couldn't look at them all and I might be mistaken.
+> The most recent attempt was [1] by Linus Walleij. It went through a total
+> of seven iterations. At the end, it was rejected for a number of reasons;
+> see the provided link for details. This implementation resides in the
+> SCSI core. It originally resided in libata but was moved to SCSI per
+> maintainer request, where it was ultimately rejected.
 
-We could skip setup if the console is already enabled but I would
-advise against that since the two calls might have different options
-(the firmware baud rate could be different from the command line one
-for example) and we want the options for the last one.
+While I am sure I come across as a curmudgeon, regressions is a major
+concern for me. That, and making sure we pick the right architecture. I
+thought we were making good progress in that department when Linus
+abandoned the effort.
 
-> If we could perform simple alias matching, without ->setup() call, and
-> exact matching (strcmp()), and then, if newcon would match two entries,
-> we would pick up the last matching entry and configure newcon only once.
-> 
-> This changes the order, tho.
+> The feedback on this approach suggests to use the SCSI Temperature log
+> page [0x0d] as means to access drive temperature information. It is
+> unknown if this is implemented in any real SCSI drive.
 
-Walking the array backwards might just be what we want actually for the
-case at hand, but of course if some platforms or driver call
-add_preferred_console *after* the command line parsing, then it will
-break those.
+Almost every SCSI drive has it.
 
-Simple alias matching would require re-working all the match()
-callbacks. That said I think it was a mistake to begin with to have
-them include setup(). Those should have remained separate.
+> The feedback also suggests to obtain temperature from ATA drives,
+> convert it into the SCSI temperature log page in libata-scsi, and to
+> use that information in a hardware monitoring driver. The format and
+> method to do this is documented in [3]. This is not currently
+> implemented in the Linux kernel.
 
-What about a compromise here:
+Correct, but I have no qualms over exporting the SCSI temperature log
+page. The devices that export that page are generally well-behaved.
 
-Instead of walking the array and testing for preferred_console as we do
-so, we first test the array entry pointed to by preferred_console
-(doing both match & setup as today) and if that doesn't work, fallback
-to our existing mechanism ?
+My concerns are wrt. identifying whether SMART data is available for
+USB/UAS. I am not too worried about ATA and "real" SCSI (ignoring RAID
+controllers that hide the real drives in various ways).
 
-It would be a first step. It wouldn't fix all cases but would be
-something reasonable to backport.
+I am not sure why the SCSI temperature log page parsing would be
+complex. I will have to go check smartmontools to see what that is all
+about. The spec is as simple as can be.
 
-Another approach woudl be to pass to add_preferred_console an argument
-"bool user_specified" which we would use to set a CON_USER flag.
+Anyway. I think the overall approach wrt. SCT and falling back to
+well-known SMART fields is reasonably sane and fine for libata. But I
+don't understand the pushback wrt. using the SCSI temperature log page
+as a conduit. I think it would be fine if this worked out of the box for
+both SCSI and ATA drives.
 
-We could then do a two-pass lookup of the array where we first only
-match user specified entries, then match the rest.
+The elephant in the room remains USB. And coming up with a way we can
+reliably detect whether it is safe to start poking at the device to
+discover if SMART is provided. If we eventually want to pursue USB, I
+think your heuristic stuff needs to be a library that can be leveraged
+by both libata and USB. But that doesn't have to be part of the initial
+effort.
 
-> [..]
-> >  - Another match that is marked preferred_console, in which case in
-> > addition to being enabled, the newly registered console will also be
-> > made the default console (ie, first in the list with CONSDEV set). This
-> > is actually what we want ! IE. The console matches the last specified
-> > one on the command line.
-> 
-> Well, it still looks to me that what you want is to "ignore alias
-> match and prefer exact match".
+And finally, my concerns wrt. reacting to bad sensors remain. Not too
+familiar with hwmon, but I would still like any actions based on
+reported temperatures to be under user control and not the kernel.
 
-We don't want to ignore the alias match. But we do want to prefer the
-exact match. We still want to keep the fallback to the alias match.
-
-Cheers,
-Ben.
-
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
