@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AEAB11AF22
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:11:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0043711AEAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:07:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730930AbfLKPL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:11:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59970 "EHLO mail.kernel.org"
+        id S1729696AbfLKPHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:07:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729797AbfLKPLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:11:25 -0500
+        id S1729144AbfLKPHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:07:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 483F522B48;
-        Wed, 11 Dec 2019 15:11:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82080208C3;
+        Wed, 11 Dec 2019 15:07:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077084;
-        bh=iCe981dpQcbeniIuJo78yCB5icEWgktPbevCe92sIE4=;
+        s=default; t=1576076835;
+        bh=1zkA7yqeQ2Mxa55z37h26z1TWshV0LM+nelUIVNp/Uc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0EazbO5qBnKV5m1s07bSuR3gyCqzGFekAg3kJQ+dqt3Q4YP5SQqtiVbq9BTSs2oNm
-         NxC2nRqL+Egt3K1RwNPw7M3GfpJlzEojFi3EuqIf55U9dPfsG4+QFPXJgsrhqRRrEe
-         +Gt4ejIRNoCN83j3lLpcywY/6wWmUgpHDzyi1NBE=
+        b=BKmoNsP8j9BWJQ9HStwG2yxcIco5Mm6NE4Aq5cebi2pPtZNuUK0QNoKpa2jtj9KYz
+         YCmIFBU4hnxjMXTnidYSMFeS1Fgtw+iqwhyJq9jjWZzn9H2ShKlbsDh6ofQ/H47vH/
+         +ZVhmESIfCEZC2Im5wp9wvC2CApCLLpPjBbhLKdQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.3 003/105] perf scripts python: exported-sql-viewer.py: Fix use of TRUE with SQLite
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.4 01/92] rsi: release skb if rsi_prepare_beacon fails
 Date:   Wed, 11 Dec 2019 16:04:52 +0100
-Message-Id: <20191211150222.212877093@linuxfoundation.org>
+Message-Id: <20191211150222.272642017@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,59 +46,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit af833988c088d3fed3e7188e7c3dd9ca17178dc3 upstream.
+commit d563131ef23cbc756026f839a82598c8445bc45f upstream.
 
-Prior to version 3.23 SQLite does not support TRUE or FALSE, so always
-use 1 and 0 for SQLite.
+In rsi_send_beacon, if rsi_prepare_beacon fails the allocated skb should
+be released.
 
-Fixes: 26c11206f433 ("perf scripts python: exported-sql-viewer.py: Use new 'has_calls' column")
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org # v5.3+
-Link: http://lore.kernel.org/lkml/20191113120206.26957-1-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-[Adrian: backported to v5.3, v5.4]
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/scripts/python/exported-sql-viewer.py |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/wireless/rsi/rsi_91x_mgmt.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/tools/perf/scripts/python/exported-sql-viewer.py
-+++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -625,7 +625,7 @@ class CallGraphRootItem(CallGraphLevelIt
- 		self.query_done = True
- 		if_has_calls = ""
- 		if IsSelectable(glb.db, "comms", columns = "has_calls"):
--			if_has_calls = " WHERE has_calls = TRUE"
-+			if_has_calls = " WHERE has_calls = " + glb.dbref.TRUE
- 		query = QSqlQuery(glb.db)
- 		QueryExec(query, "SELECT id, comm FROM comms" + if_has_calls)
- 		while query.next():
-@@ -905,7 +905,7 @@ class CallTreeRootItem(CallGraphLevelIte
- 		self.query_done = True
- 		if_has_calls = ""
- 		if IsSelectable(glb.db, "comms", columns = "has_calls"):
--			if_has_calls = " WHERE has_calls = TRUE"
-+			if_has_calls = " WHERE has_calls = " + glb.dbref.TRUE
- 		query = QSqlQuery(glb.db)
- 		QueryExec(query, "SELECT id, comm FROM comms" + if_has_calls)
- 		while query.next():
-@@ -3509,6 +3509,12 @@ class DBRef():
- 	def __init__(self, is_sqlite3, dbname):
- 		self.is_sqlite3 = is_sqlite3
- 		self.dbname = dbname
-+		self.TRUE = "TRUE"
-+		self.FALSE = "FALSE"
-+		# SQLite prior to version 3.23 does not support TRUE and FALSE
-+		if self.is_sqlite3:
-+			self.TRUE = "1"
-+			self.FALSE = "0"
- 
- 	def Open(self, connection_name):
- 		dbname = self.dbname
+--- a/drivers/net/wireless/rsi/rsi_91x_mgmt.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mgmt.c
+@@ -1756,6 +1756,7 @@ static int rsi_send_beacon(struct rsi_co
+ 		skb_pull(skb, (64 - dword_align_bytes));
+ 	if (rsi_prepare_beacon(common, skb)) {
+ 		rsi_dbg(ERR_ZONE, "Failed to prepare beacon\n");
++		dev_kfree_skb(skb);
+ 		return -EINVAL;
+ 	}
+ 	skb_queue_tail(&common->tx_queue[MGMT_BEACON_Q], skb);
 
 
