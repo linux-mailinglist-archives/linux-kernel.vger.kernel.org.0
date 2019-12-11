@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3AE511B08A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:23:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C82C511AEEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:09:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732339AbfLKPXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:23:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54824 "EHLO mail.kernel.org"
+        id S1730565AbfLKPJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:09:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732749AbfLKPXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:23:43 -0500
+        id S1729481AbfLKPJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:09:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB2862077B;
-        Wed, 11 Dec 2019 15:23:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B562208C3;
+        Wed, 11 Dec 2019 15:09:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077823;
-        bh=397+llq5b8ShLmAi4cOwDwNlPSEvwZuhmZI3njME1mE=;
+        s=default; t=1576076952;
+        bh=2G4Bl/xqP/dd7SjrZsEOEoYlNf1aFFYxNs8ztnSFFbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rT0ISnsA83GDqkAbVEa/316zdxxAx8FORpYs2EppsNCrVcrFO+Aeu/xrf2z+IiUzF
-         e2Xryjnn4wuk1oRiGAzWfZYWkgj4W2EWoRiMhMWpxSvGvTP2+WG0vthe+l47ErHvyZ
-         8TupCzo0e7uqHm+cAJ36QdGxYKVUrbsq5o4qxn0c=
+        b=e8dim312IJ/kQot/bD5bq2eTinFl6Md2/QwqmJQJs+f2lJJesPwYCFj59TwHlul25
+         n1yatfvlWjzd177/O9Z8a79YfAD4GOMBSW+p2plSJ3GqMx+0/JRrUXLwbH0FIBBArd
+         J3R5TEGSTzEQzwCFXiGoQAD2hsIIpyX70zzDcqJs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 183/243] soc: renesas: r8a77990-sysc: Fix initialization order of 3DG-{A,B}
+        stable@vger.kernel.org, Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH 5.4 54/92] drm/msm: fix memleak on release
 Date:   Wed, 11 Dec 2019 16:05:45 +0100
-Message-Id: <20191211150351.521599663@linuxfoundation.org>
+Message-Id: <20191211150245.038759780@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,69 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit b0d7fbf8b174168c580bb310964c3c809e5569a9 ]
+commit a64fc11b9a520c55ca34d82e5ca32274f49b6b15 upstream.
 
-The workaround for the wrong hierarchy of the 3DG-{A,B} power
-domains on R-Car E3 ES1.0 corrected the parent domains.
-However, the 3DG-{A,B} power domains were still initialized and powered
-in the wrong order, causing 3DG operation to fail.
+If a process is interrupted while accessing the "gpu" debugfs file and
+the drm device struct_mutex is contended, release() could return early
+and fail to free related resources.
 
-Fix this by changing the order in the table at runtime, when running on
-an affected SoC.
+Note that the return value from release() is ignored.
 
-Fixes: 086b399965a7ee7e ("soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 4f776f4511c7 ("drm/msm/gpu: Convert the GPU show function to use the GPU state")
+Cc: stable <stable@vger.kernel.org>     # 4.18
+Cc: Jordan Crouse <jcrouse@codeaurora.org>
+Cc: Rob Clark <robdclark@gmail.com>
+Reviewed-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191010131333.23635-2-johan@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/soc/renesas/r8a77990-sysc.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+ drivers/gpu/drm/msm/msm_debugfs.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/soc/renesas/r8a77990-sysc.c b/drivers/soc/renesas/r8a77990-sysc.c
-index 15579ebc5ed20..664b244eb1dd9 100644
---- a/drivers/soc/renesas/r8a77990-sysc.c
-+++ b/drivers/soc/renesas/r8a77990-sysc.c
-@@ -28,19 +28,6 @@ static struct rcar_sysc_area r8a77990_areas[] __initdata = {
- 	{ "3dg-b",	0x100, 1, R8A77990_PD_3DG_B,	R8A77990_PD_3DG_A },
- };
- 
--static void __init rcar_sysc_fix_parent(struct rcar_sysc_area *areas,
--					unsigned int num_areas, u8 id,
--					int new_parent)
--{
--	unsigned int i;
+--- a/drivers/gpu/drm/msm/msm_debugfs.c
++++ b/drivers/gpu/drm/msm/msm_debugfs.c
+@@ -47,12 +47,8 @@ static int msm_gpu_release(struct inode
+ 	struct msm_gpu_show_priv *show_priv = m->private;
+ 	struct msm_drm_private *priv = show_priv->dev->dev_private;
+ 	struct msm_gpu *gpu = priv->gpu;
+-	int ret;
 -
--	for (i = 0; i < num_areas; i++)
--		if (areas[i].isr_bit == id) {
--			areas[i].parent = new_parent;
--			return;
--		}
--}
--
- /* Fixups for R-Car E3 ES1.0 revision */
- static const struct soc_device_attribute r8a77990[] __initconst = {
- 	{ .soc_id = "r8a77990", .revision = "ES1.0" },
-@@ -50,12 +37,10 @@ static const struct soc_device_attribute r8a77990[] __initconst = {
- static int __init r8a77990_sysc_init(void)
- {
- 	if (soc_device_match(r8a77990)) {
--		rcar_sysc_fix_parent(r8a77990_areas,
--				     ARRAY_SIZE(r8a77990_areas),
--				     R8A77990_PD_3DG_A, R8A77990_PD_3DG_B);
--		rcar_sysc_fix_parent(r8a77990_areas,
--				     ARRAY_SIZE(r8a77990_areas),
--				     R8A77990_PD_3DG_B, R8A77990_PD_ALWAYS_ON);
-+		/* Fix incorrect 3DG hierarchy */
-+		swap(r8a77990_areas[7], r8a77990_areas[8]);
-+		r8a77990_areas[7].parent = R8A77990_PD_ALWAYS_ON;
-+		r8a77990_areas[8].parent = R8A77990_PD_3DG_B;
- 	}
+-	ret = mutex_lock_interruptible(&show_priv->dev->struct_mutex);
+-	if (ret)
+-		return ret;
  
- 	return 0;
--- 
-2.20.1
-
++	mutex_lock(&show_priv->dev->struct_mutex);
+ 	gpu->funcs->gpu_state_put(show_priv->state);
+ 	mutex_unlock(&show_priv->dev->struct_mutex);
+ 
 
 
