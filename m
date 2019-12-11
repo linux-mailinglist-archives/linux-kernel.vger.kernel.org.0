@@ -2,131 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EE5811AA2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 12:47:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E02F511AA28
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 12:46:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbfLKLrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 06:47:23 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:39898 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbfLKLrX (ORCPT
+        id S1729023AbfLKLqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 06:46:45 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40598 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727365AbfLKLqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 06:47:23 -0500
-Received: by mail-vk1-f194.google.com with SMTP id x199so6695013vke.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 03:47:22 -0800 (PST)
+        Wed, 11 Dec 2019 06:46:45 -0500
+Received: by mail-lf1-f68.google.com with SMTP id i23so3982490lfo.7
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 03:46:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KPw4BWkTUh66N/l+oHgRw2epWlItk5ePmLSBKI5Tyjc=;
-        b=fLp0q+Aq+pCU0RkbRVrb2N2a9Cbry6BHuCOylVJULtiPiEObiSOxp/zavD8nzE+zj5
-         lKyW0NHDPZ0wyI2Z9BVSwsGC29TKNdK8TOKRQdV2ICMjyhsvO2bGHVWapjhh/k6lyHgp
-         4AL6rw3TQQnY6t3Zl8z9oJ4GdUKiSRVij2DWsfvZDXfk7GomIsw45hb55Y9zE9UTW+j6
-         TOwDPrUo/s0V38hskklMtX9r46NWjQHRUmSZm7NxUXfwLOvEIoz/6AufILKs6XIXdsm8
-         PKYRhpob37eGDMbF3pU5G4FSkNKnqZvW1/9POYZoYBcKlRQxtekSjqiGzYeL7s4sc/WE
-         VR1w==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mU5uShffkkUuqjaXRfA5AyLsxcErVHsMKowOFfb75hQ=;
+        b=zcHHeaTLvHfHpCWJyg3PhVsxOXpKeAB0hFltPzOamTwKIdlKvokdjC6vkLZwbtkx6h
+         b6l7MSjQM+DsflXK0Ig9WrATipwkVXF16mUAZGzOxvyfhQqwhhXGgVcdhNkhTm9UbcSN
+         yHUSpPgrQw6Onv/y9OM7udR1LqBvBwFxkjFW5LZUvY/oUfgCVJ/TCFZ+cYy8bT7skhxc
+         uN+Uvy5UdXU4a0FycFFTdH2A0ApI+WrVjUNI2FfE1kbVBEKNGg3JxbV9/B9P7mw+6Snn
+         H1tfKWFJtY8BLqwGVnw7K+6Yd97MAeX7bVWczb/W1nUImod1Zu/4XYKU9VKRBL2JrOsH
+         VTBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KPw4BWkTUh66N/l+oHgRw2epWlItk5ePmLSBKI5Tyjc=;
-        b=sMh+4jJv6jBeZf1bLC90w1UhVmCgcy7lKT3om2LqlvgLAkv4VGwpubh6YNRDSLgfL/
-         0aXXrYGkykdg2aGijPcxr9Ol4pLtEm+iIG39kF6CWQj8r9vh4VXlc7pgLeRZh/uJWBBo
-         somaLt8J3gruhRMblOFAyC12AHmYhNApteljb5+MtteQ9xkRKP5Rt9ywsGiXuw9e3aiO
-         b2nZMgJYmg6b8HE4YT4VdAKgy3LAtk+v64TltwtsjeTstwCC0Tq9t5x9oQ9nI2yxLNKQ
-         WR6MrMeDo8h9nHTQXfPCHcuSqSFTPBVDkWlTdF/5fij0sqBPYv72Zcl5R5yr+YE5Gj7Y
-         Ypkw==
-X-Gm-Message-State: APjAAAWl5GKYyHevTDIzYFiR/xDfFg/7nD3s65ngokaIlXinmvNdCC0u
-        BXgLo3rjStWShTGAeEvb6dlxwUCGETmzUGMDs9A+yQ==
-X-Google-Smtp-Source: APXvYqy2WV0o0WTeidYaegKNg5xN9HKD7exGZ7ITgPnsyD2ep/rt00HnH9Ugu3XPBwH9a3J2kYJwc5f02NtnzlPD5SU=
-X-Received: by 2002:a1f:3fcd:: with SMTP id m196mr2975528vka.28.1576064841951;
- Wed, 11 Dec 2019 03:47:21 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mU5uShffkkUuqjaXRfA5AyLsxcErVHsMKowOFfb75hQ=;
+        b=RVsGIKp3DInGiFd7zwY08clSF0tXvn/dH/H8UigbqHShxgHZT80qtvMUDyIjLwSyiM
+         hLxO7BdFi/jMNdF2XSbRi12IzYfkpHSdytqnek+4015u/ZicZAGxhbUA6JjWqJA5Yxp/
+         zbqzZ7vW36wILz2gRE9O7cvvgGZhY0d9z1AiJ+zJtTRRbHMvBs+p3gJsIbMDQZT6LVqf
+         DDdBNrMHc7F45ebd9w6b5gHpHxYh/XlQWyV2QMbkApuZhjw3n/cvePZAODFtpG6z6n9y
+         kmFQaHKoY5N7Bum9guwBuNrUeA4Oyaa0h4THWlg9QslkdDas5ionkbK5zafd06BFCpb4
+         jl4g==
+X-Gm-Message-State: APjAAAUPEVnDVEbpy/kuJd6kG9JDHJLeTwfWuqcux5Yc4wYlFsV0uG0+
+        j0p44Fqudk43MTyAko4H1ZrWiA==
+X-Google-Smtp-Source: APXvYqyq2xHKfwdPFg2pgKMjnqroaBqDcyYOnY/IyUdDNfLIXDcetPW5zcDVr3bBa5hSQvk6TpOz3A==
+X-Received: by 2002:ac2:4849:: with SMTP id 9mr1897305lfy.11.1576064803523;
+        Wed, 11 Dec 2019 03:46:43 -0800 (PST)
+Received: from genomnajs.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id y72sm1073719lfa.12.2019.12.11.03.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2019 03:46:42 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     lee.jones@linaro.org, linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH] mfd: ab8500: Fix ab8500-clk typo
+Date:   Wed, 11 Dec 2019 12:46:39 +0100
+Message-Id: <20191211114639.748463-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <1575966995-13757-1-git-send-email-kevin3.tang@gmail.com>
- <1575966995-13757-5-git-send-email-kevin3.tang@gmail.com> <CACvgo50Hgbb8ywX2RgFqkitxwBG64EhP9g1TSxgLkQf-6L6soA@mail.gmail.com>
- <CAFPSGXZMmfeBxkNhuNR59bX26_69_y5C13P7qY-UawVDa7Q3Jw@mail.gmail.com>
-In-Reply-To: <CAFPSGXZMmfeBxkNhuNR59bX26_69_y5C13P7qY-UawVDa7Q3Jw@mail.gmail.com>
-From:   Emil Velikov <emil.l.velikov@gmail.com>
-Date:   Wed, 11 Dec 2019 11:46:06 +0000
-Message-ID: <CACvgo50wCKq76Wj0xjJcuWxz5gvaOSbj1Hz8-Vi6eOSGH106yg@mail.gmail.com>
-Subject: Re: [PATCH RFC 4/8] drm/sprd: add Unisoc's drm display controller driver
-To:     tang pengchuan <kevin3.tang@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Dec 2019 at 09:18, tang pengchuan <kevin3.tang@gmail.com> wrote:
->
-> Hi
->
-> Emil Velikov <emil.l.velikov@gmail.com> =E4=BA=8E2019=E5=B9=B412=E6=9C=88=
-11=E6=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8A=E5=8D=881:14=E5=86=99=E9=81=93=EF=
-=BC=9A
->>
->> Hi Kevin,
->>
->> On Tue, 10 Dec 2019 at 08:41, Kevin Tang <kevin3.tang@gmail.com> wrote:
->> >
->> > From: Kevin Tang <kevin.tang@unisoc.com>
->> >
->> > Adds DPU(Display Processor Unit) support for the Unisoc's display subs=
-ystem.
->> > It's support multi planes, scaler, rotation, PQ(Picture Quality) and m=
-ore.
->> >
->> > Cc: Orson Zhai <orsonzhai@gmail.com>
->> > Cc: Baolin Wang <baolin.wang@linaro.org>
->> > Cc: Chunyan Zhang <zhang.lyra@gmail.com>
->> > Signed-off-by: Kevin Tang <kevin.tang@unisoc.com>
->> > ---
->> >  drivers/gpu/drm/sprd/Makefile       |    6 +-
->> >  drivers/gpu/drm/sprd/disp_lib.c     |  290 +++++++
->> >  drivers/gpu/drm/sprd/disp_lib.h     |   40 +
->> >  drivers/gpu/drm/sprd/dpu/Makefile   |    8 +
->> >  drivers/gpu/drm/sprd/dpu/dpu_r2p0.c | 1464 ++++++++++++++++++++++++++=
-+++++++++
->> >  drivers/gpu/drm/sprd/sprd_dpu.c     | 1152 ++++++++++++++++++++++++++=
-+
->> >  drivers/gpu/drm/sprd/sprd_dpu.h     |  217 ++++++
->> >  7 files changed, 3176 insertions(+), 1 deletion(-)
->>
->> As we can see from the diff stat this patch is huge. So it would be fair=
-ly hard
->> to provide meaningful review as-is.
->>
->> One can combine my earlier suggestion (to keep modeset/atomic out of 2/8=
-), with
->> the following split:
->>  - 4/8 add basic atomic modeset support - one format, one rotation 0, no=
- extra
->>  attributes
->>  - 5/8 add extra formats
->>  - 6/8 add extra rotation support
->>  - ... add custom attributes
->
-> Ok, i will split this patch, upstream modeset and atomic at first. clock,=
- gloabl, enhance, extra
-> attributes  and so on will be upload later.
+Commit f4d41ad84433 ("mfd: ab8500: Example using new OF_MFD_CELL MACRO")
+has a typo error renaming "ab8500-clk" to "abx500-clk"
+with the result att ALSA SoC audio broke as the clock
+driver was not probing anymore. Fixed it up.
 
-Amazing thank you. Please apply the similar logic and split patch 6/8
-- that patch is twice larger than this one.
+Cc: Stephan Gerhold <stephan@gerhold.net>
+Fixes: f4d41ad84433 ("mfd: ab8500: Example using new OF_MFD_CELL MACRO")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/mfd/ab8500-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Some small general requests - please use plain text emails (see [1])
-and trim unrelated fragments when replying.
-Otherwise it is very easy to miss the comment that you and others have made=
-.
+diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
+index bafc729fc434..3c6fda68e6bc 100644
+--- a/drivers/mfd/ab8500-core.c
++++ b/drivers/mfd/ab8500-core.c
+@@ -631,8 +631,8 @@ static const struct mfd_cell ab8500_devs[] = {
+ 		    NULL, NULL, 0, 0, "stericsson,ab8500-ext-regulator"),
+ 	OF_MFD_CELL("ab8500-regulator",
+ 		    NULL, NULL, 0, 0, "stericsson,ab8500-regulator"),
+-	OF_MFD_CELL("abx500-clk",
+-		    NULL, NULL, 0, 0, "stericsson,abx500-clk"),
++	OF_MFD_CELL("ab8500-clk",
++		    NULL, NULL, 0, 0, "stericsson,ab8500-clk"),
+ 	OF_MFD_CELL("ab8500-gpadc",
+ 		    NULL, NULL, 0, 0, "stericsson,ab8500-gpadc"),
+ 	OF_MFD_CELL("ab8500-rtc",
+-- 
+2.23.0
 
-HTH
-Emil
-
-[1] https://www.lifewire.com/how-to-send-a-message-in-plain-text-from-gmail=
--1171963
