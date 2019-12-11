@@ -2,84 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A5AA11BA74
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:38:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A624611BAC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:57:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730179AbfLKRiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 12:38:05 -0500
-Received: from mailgw01.mediatek.com ([216.200.240.184]:48911 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729912AbfLKRiE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 12:38:04 -0500
-X-UUID: d81845a974bf4976925fb686cac3625e-20191211
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=1G2ecBdsGiCmLvqUgkfBXFA90ZxkA0MFjUV6DWvTWiU=;
-        b=DGwWSWUpOHud9U+BecPSZboTGtDN5+pl0bibZT0pvigmxn/OxFgM2hdKQfzgIkbgTdICIdqDJodzNWyLbb3MUsUQJzA1hUZANcIGQIyoAkkYPoxuQVyRuVeRASpaIEHiICrbSoDTpFRARrOSbLzqielxESeWNnEEA9JkI2/ij5M=;
-X-UUID: d81845a974bf4976925fb686cac3625e-20191211
-Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw01.mediatek.com
-        (envelope-from <landen.chao@mediatek.com>)
-        (musrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 217714657; Wed, 11 Dec 2019 09:38:01 -0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS62N1.mediatek.inc (172.29.193.41) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 11 Dec 2019 09:36:52 -0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 12 Dec 2019 01:35:41 +0800
-Message-ID: <1576085745.23763.53.camel@mtksdccf07>
-Subject: Re: [PATCH net-next 4/6] net: dsa: mt7530: Add the support of
- MT7531 switch
-From:   Landen Chao <landen.chao@mediatek.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "vivien.didelot@savoirfairelinux.com" 
-        <vivien.didelot@savoirfairelinux.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        "opensource@vdorst.com" <opensource@vdorst.com>,
-        "frank-w@public-files.de" <frank-w@public-files.de>
-Date:   Thu, 12 Dec 2019 01:35:45 +0800
-In-Reply-To: <20191210163557.GC27714@lunn.ch>
-References: <cover.1575914275.git.landen.chao@mediatek.com>
-         <6d608dd024edc90b09ba4fe35417b693847f973c.1575914275.git.landen.chao@mediatek.com>
-         <20191210163557.GC27714@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1730813AbfLKR5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 12:57:49 -0500
+Received: from mga14.intel.com ([192.55.52.115]:28533 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729228AbfLKR5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 12:57:49 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 09:37:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,302,1571727600"; 
+   d="scan'208";a="225610402"
+Received: from cmclough-mobl.ger.corp.intel.com (HELO localhost) ([10.251.85.152])
+  by orsmga002.jf.intel.com with ESMTP; 11 Dec 2019 09:37:13 -0800
+Date:   Wed, 11 Dec 2019 19:37:12 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        arnd@arndb.de
+Subject: Re: [PATCH V2] tpm_tis_spi: use new `delay` structure for SPI
+ transfer delays
+Message-ID: <20191211173700.GE4516@linux.intel.com>
+References: <20191204080049.32701-1-alexandru.ardelean@analog.com>
+ <20191210065619.7395-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210065619.7395-1-alexandru.ardelean@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQW5kcmV3LA0KDQpPbiBXZWQsIDIwMTktMTItMTEgYXQgMDA6MzUgKzA4MDAsIEFuZHJldyBM
-dW5uIHdyb3RlOg0KPiBPbiBUdWUsIERlYyAxMCwgMjAxOSBhdCAwNDoxNDo0MFBNICswODAwLCBM
-YW5kZW4gQ2hhbyB3cm90ZToNCj4gPiBBZGQgbmV3IHN1cHBvcnQgZm9yIE1UNzUzMToNCj4gPiAN
-Cj4gPiBNVDc1MzEgaXMgdGhlIG5leHQgZ2VuZXJhdGlvbiBvZiBNVDc1MzAuIEl0IGlzIGFsc28g
-YSA3LXBvcnRzIHN3aXRjaCB3aXRoDQo+ID4gNSBnaWdhIGVtYmVkZGVkIHBoeXMsIDIgY3B1IHBv
-cnRzLCBhbmQgdGhlIHNhbWUgTUFDIGxvZ2ljIG9mIE1UNzUzMC4gQ3B1DQo+ID4gcG9ydCA2IG9u
-bHkgc3VwcG9ydHMgSFNHTUlJIGludGVyZmFjZS4gQ3B1IHBvcnQgNSBzdXBwb3J0cyBlaXRoZXIg
-UkdNSUkNCj4gPiBvciBIU0dNSUkgaW4gZGlmZmVyZW50IEhXIHNrdS4NCj4gDQo+IEhpIExhbmRl
-bg0KPiANCj4gTG9va2luZyBhdCB0aGUgY29kZSwgeW91IHNlZW0gdG8gdHJlYXQgSFNHTUlJIGFz
-IDI1MDBCYXNlLVguIElzIHRoaXMNCj4gY29ycmVjdD8gT3IgaXMgaXQgU0dNSUkgb3ZlciBjbG9j
-a2VkIHRvIDIuNUdicHM/DQpBZnRlciByZS1yZWFkIE1UNzYyMiB0cmVhZFswXSBhZ2FpbiwgYW5k
-IGFjY29yZGluZyB0byB0aGUgY29uZmlndXJhYmxlDQpwYXJ0IG9mIHRoaXMgSVAsIGl0IGlzIGNs
-b3NlciB0byAyNTAwQmFzZS1YIGRlZmluaXRpb246DQpgYFBIWV9JTlRFUkZBQ0VfTU9ERV8yNTAw
-QkFTRVhgYA0KICAgIFRoaXMgZGVmaW5lcyBhIHZhcmlhbnQgb2YgMTAwMEJBU0UtWCB3aGljaCBp
-cyBjbG9ja2VkIDIuNSB0aW1lcw0KZmFzdGVyLCB0aGFuIHRoZSA4MDIuMyBzdGFuZGFyZCBnaXZp
-bmcgYSBmaXhlZCBiaXQgcmF0ZSBvZiAzLjEyNUdiYXVkLg0KDQpJZiBIU0dNSUkgbWVhbnMgU0dN
-SUkgb3ZlciBjbG9ja2VkIHRvIDIuNUdicHMsIHRoZSBpbnRyb2R1Y3Rpb24gbmVlZHMgdG8NCmJl
-IGNoYW5nZWQgdG8gInN1cHBvcnQgU0dNSUkvMTAwMEJhc2UtWC8yNTAwQmFzZS14Ii4NCg0KWzBd
-Og0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMTA1NzUyNy8NCj4gDQo+IAkg
-QW5kcmV3DQoNClJlZ2FyZHMgTGFuZGVuDQo=
+On Tue, Dec 10, 2019 at 08:56:19AM +0200, Alexandru Ardelean wrote:
+> In a recent change to the SPI subsystem [1], a new `delay` struct was added
+> to replace the `delay_usecs`. This change replaces the current `delay_usecs`
+> with `delay` for this driver.
+> 
+> The `spi_transfer_delay_exec()` function [in the SPI framework] makes sure
+> that both `delay_usecs` & `delay` are used (in this order to preserve
+> backwards compatibility).
+> 
+> [1] commit bebcfd272df6485 ("spi: introduce `delay` field for
+> `spi_transfer` + spi_transfer_delay_exec()")
 
+Not sure why you use ` and not '?
+
+/Jarkko
