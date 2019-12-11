@@ -2,89 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C34C11ABBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 14:11:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 261BF11ABC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 14:12:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbfLKNLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 08:11:39 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32869 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729468AbfLKNLi (ORCPT
+        id S1729576AbfLKNMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 08:12:02 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37518 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729475AbfLKNMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 08:11:38 -0500
-Received: by mail-lj1-f194.google.com with SMTP id 21so24042535ljr.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 05:11:37 -0800 (PST)
+        Wed, 11 Dec 2019 08:12:01 -0500
+Received: by mail-lj1-f196.google.com with SMTP id u17so23999283lja.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 05:12:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=UY+imPHDB8WeevZ0Flfagq9t3Ob1szdVUH2cd1S5NF8=;
-        b=Q4o6YOLsW1sg2YAloOsKqiOH61baSZ9/0R6Sxy9Avq5UlIlLgBLwrRJtipworvGBNr
-         9CzSXMaAR0/tqz7clfV2+x1vYorpIT99So4h8WOJB8eqdUyN5C9HffgpoQuW1lNGpqIM
-         52hQAVAOhjzkuI9qn48QdvVVH+94bX3usMg7RA4n/Wjx8YzNtr0L4X875myUU9QyTbFW
-         rV4sdNHJaniFPUnRX5wT/6oy11Vxm0+6GUFvohEqjtb1p+e42SviBxgv+3r6r4omj81l
-         2mgQdliHL18UKGmO21ERl3HbIt6BDsrKghajzsHlpmufSAmPC3a5POLHdxN6a4Aw5E9g
-         dS1Q==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=5/0ZBikutXWOJ31rU6hg6aGxrvJUH76bQXGJKKYojpY=;
+        b=iK6h1Cg9FdlrPFU87KU+xLgNHXCKK2p6RA6z+BCM9m46/6FXKCWr9VdZJgPRmO66xu
+         evRnLRN5L5pZjfpi1CYMKrYL5uNE4hbF3EW/KiGtcBdfnirsd6HBm8/N8O91xuSxq3m4
+         4tuA/Yh18sNwVpmDHSCbI5DhEM78lOIGIJ/q/Ne+mUqGmRwCOk1ikfM88r4dYduuZq3z
+         IZIP8PVmFN8OG9p0SQsyzaA4+e7TrHQpMkLRjn0jETB4bZZw6PzOAB8R7V9g04kYC0sO
+         bsHNrJD3PuQ3q6KL4MVELAxSd1OT6KWpK+j7sLGfDvM+KOoOMoLgGUsRI5KkyQgTF1fD
+         PWhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=UY+imPHDB8WeevZ0Flfagq9t3Ob1szdVUH2cd1S5NF8=;
-        b=qx50Aw5179NdTY2nHtkXdxq6McJKn/dDjRmPFnwRQCdyVAC+tDG7Y8RmWu9aUamD+2
-         58rVfxUWjoxjK8UbOeItoNHuqiAluiZxo/sktqdMfwtHZ8xuSB/89w/NR00v7ymh2Y3J
-         xgzXixpoojbEU4CcRRAtWk4l2knBg9MIUJr1fHHMy9EW9CsoJ/dnB77eQTwp4DB+E5kW
-         4md6P5wmux607QwIJBVGI+Riy/K5vdu2KlYsp0rhalcGqQdeeRo+du3Q9IpeLbXRjo1t
-         TX6bti2a360NFhv83LZaOf2KjyIrFfEbhwbMjKcCcod/GpqgftTZcnYk4gSFwiJv9G0a
-         XQ3Q==
-X-Gm-Message-State: APjAAAVaAv8VNzCsHwgjiZUtRS6z39LCGS4nJhC0ayrKf58VM8sToHX0
-        ElUJW/9a/e2WZ7XGeND5qDsdQ14e2YqX6Y8FPR4=
-X-Google-Smtp-Source: APXvYqzhYhFMAwiTD5/K5UZBsByu6W1X9YrnKi4YESeXhBDQePUbmOOmJNcYs7ivQ5doiods0kAWgoYUAsH/sA+Rvyw=
-X-Received: by 2002:a2e:924e:: with SMTP id v14mr1987126ljg.7.1576069896460;
- Wed, 11 Dec 2019 05:11:36 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=5/0ZBikutXWOJ31rU6hg6aGxrvJUH76bQXGJKKYojpY=;
+        b=TvED+Ljk2X/spcGfNSeVUpoieI7Gk1NtFVizxz49C912g3DaH3trh2G5uBOXymGcSM
+         BTuxmeVEibMs9yv02MtOn2u1ZeV87+huHgf/A550+X7yU7N6PxApdmLXI7OphyEPOWMl
+         WOFOUThRwj9rq9HzroV65YfhEaciFLpU1cagR40okaPu/3SJcakaZM/ORlga1/ZF5xoY
+         B7QW8KVjWz8uAP+4KsBVN8ssrbne2iJ/dvv106nmCFWy0biBnuVIXLYi0r9ieWfji0mD
+         S2wNu1kKsW8O1uem6WlkKCguNjYnSk8gIYHnqWVGlvU7pVq90Mg9+UD3Zn96r3ekfQ36
+         Qzpg==
+X-Gm-Message-State: APjAAAW2oVOxESyVGfhS85QnusPQDuYUqRtOkSC4Cy9vXjKiF2D2D6ZA
+        LOK4/ioWPprR0wPC/0Ae2t+FE8c0KbxThXVE2/8aCQgxino=
+X-Google-Smtp-Source: APXvYqxV71KfxBzviOwWllK6shghdv8YHUIv9XyXgcb4RhWO6/nelJ3QmezJ0qgqVLjMmFB+OYMCg9vSV7ZxrPqx7lE=
+X-Received: by 2002:a2e:844e:: with SMTP id u14mr2055375ljh.183.1576069919462;
+ Wed, 11 Dec 2019 05:11:59 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:ab3:5718:0:0:0:0:0 with HTTP; Wed, 11 Dec 2019 05:11:35
- -0800 (PST)
-Reply-To: goodluckafavour1@gmail.com
-From:   Ruben Jim <rubenjim111@gmail.com>
-Date:   Wed, 11 Dec 2019 14:11:35 +0100
-Message-ID: <CAESfuKXtCwrZ99cT17yM+JKD-qCE-S+7kvogD=vdXmgJbzTFXA@mail.gmail.com>
-Subject: Contact for your ATM card payment
-To:     undisclosed-recipients:;
+From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Date:   Wed, 11 Dec 2019 21:11:46 +0800
+Message-ID: <CAFH1YnMX5oYUT7-_swssWgxQvzKTZUzvOmREBOh5vhfvqX1vNA@mail.gmail.com>
+Subject: [PATCH] ttyprintk: fix a potential sleeping in interrupt context issue
+To:     linux-kernel@vger.kernel.org,
+        syzbot+2eeef62ee31f9460ad65@syzkaller.appspotmail.com
+Cc:     arnd@arndb.de, gregkh@linuxfoundation.org, bp@alien8.de,
+        john.wanghui@huawei.com, keescook@chromium.org,
+        kernelfans@gmail.com, len.brown@intel.com, mingo@redhat.com,
+        peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
+        zhangshaokun@hisilicon.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attn: Dear
+Google syzbot reports:
+BUG: sleeping function called from invalid context at
+kernel/locking/mutex.c:938
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 0, name: swapper/1
+1 lock held by swapper/1/0:
+...
+Call Trace:
+  <IRQ>
+  dump_stack+0x197/0x210
+  ___might_sleep.cold+0x1fb/0x23e
+  __might_sleep+0x95/0x190
+  __mutex_lock+0xc5/0x13c0
+  mutex_lock_nested+0x16/0x20
+  tpk_write+0x5d/0x340
+  resync_tnc+0x1b6/0x320
+  call_timer_fn+0x1ac/0x780
+  run_timer_softirq+0x6c3/0x1790
+  __do_softirq+0x262/0x98c
+  irq_exit+0x19b/0x1e0
+  smp_apic_timer_interrupt+0x1a3/0x610
+  apic_timer_interrupt+0xf/0x20
+  </IRQ>
 
-This is to inform you that your outstanding Inheritance fund valued at
-$8.900,000, 00. (Eight Million nine Hundred Thousand USA Dollars) Have
-been approved for immediate payment by the Director Telex/Foreign
-Operation Through ATM CARD Payment system which you will make a
-withdrawal of your fund in any ATM machine in your Country.
+This patch fix it by using spinlock in process context instead of
+mutex and having interrupt disabled in critical section.
 
-Now, you are advice to contact the UBA Bank of Benin with the
-following information stated below, Contact immediate for your ATM
-card payment will be delivered to you.
+Reported-by: syzbot+2eeef62ee31f9460ad65@syzkaller.appspotmail.com
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+---
+ drivers/char/ttyprintk.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-It will cost you only  $198
+diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
+index 4f24e46ebe7c..56db949a7b70 100644
+--- a/drivers/char/ttyprintk.c
++++ b/drivers/char/ttyprintk.c
+@@ -15,10 +15,11 @@
+ #include <linux/serial.h>
+ #include <linux/tty.h>
+ #include <linux/module.h>
++#include <linux/spinlock.h>
 
-UBA Bank ATM Payment Department.
-Contact Person: Mr Goodluck Favour
-Email: goodluckafavour1@gmail.com
+ struct ttyprintk_port {
+  struct tty_port port;
+- struct mutex port_write_mutex;
++ spinlock_t spinlock;
+ };
 
-Contact with your below information to proceed by delivering your ATM
-card through your postal address.
+ static struct ttyprintk_port tpk_port;
+@@ -99,11 +100,12 @@ static int tpk_open(struct tty_struct *tty,
+struct file *filp)
+ static void tpk_close(struct tty_struct *tty, struct file *filp)
+ {
+  struct ttyprintk_port *tpkp = tty->driver_data;
++ unsigned long flags;
+
+- mutex_lock(&tpkp->port_write_mutex);
++ spin_lock_irqsave(&tpkp->spinlock, flags);
+  /* flush tpk_printk buffer */
+  tpk_printk(NULL, 0);
+- mutex_unlock(&tpkp->port_write_mutex);
++ spin_unlock_irqrestore(&tpkp->spinlock, flags);
+
+  tty_port_close(&tpkp->port, tty, filp);
+ }
+@@ -115,13 +117,14 @@ static int tpk_write(struct tty_struct *tty,
+  const unsigned char *buf, int count)
+ {
+  struct ttyprintk_port *tpkp = tty->driver_data;
++ unsigned long flags;
+  int ret;
 
 
-1::Your full name::
-2::Your home address were you them to send the atmcard::
-3::Current occupation::
-4::Age::
-5::Your current home telephone number/mobile phone number::
-6::A Copy of your identification::
-7::Your Country::
+  /* exclusive use of tpk_printk within this tty */
+- mutex_lock(&tpkp->port_write_mutex);
++ spin_lock_irqsave(&tpkp->spinlock, flags);
+  ret = tpk_printk(buf, count);
+- mutex_unlock(&tpkp->port_write_mutex);
++ spin_unlock_irqrestore(&tpkp->spinlock, flags);
 
-Regards,
-Ruben Jim.
-Director Telex/Foreign Operation. UBA
+  return ret;
+ }
+@@ -171,7 +174,7 @@ static int __init ttyprintk_init(void)
+ {
+  int ret = -ENOMEM;
+
+- mutex_init(&tpk_port.port_write_mutex);
++ spin_lock_init(&tpk_port.spinlock);
+
+  ttyprintk_driver = tty_alloc_driver(1,
+  TTY_DRIVER_RESET_TERMIOS |
+--
+2.23.0
