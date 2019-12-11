@@ -2,143 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C96AD11A32A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 04:47:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED2A911A331
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 04:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfLKDrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 22:47:08 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:48843 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726718AbfLKDrI (ORCPT
+        id S1727217AbfLKDvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 22:51:14 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:36336 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfLKDvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 22:47:08 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id D945622373;
-        Tue, 10 Dec 2019 22:47:06 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Tue, 10 Dec 2019 22:47:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=brTnepl9m5s/ksfArYTl/Nhn+h2HCCY
-        jrL1gHLQabRI=; b=Aa0ceLCufNUZeaOvxMekuQdZ6rTZrqXpZUtfb1HcEHbolDE
-        NvFp56/ta9wB5Bi98c09ELWGUzc5ky0KEFrxA7cXpN6STjSs3yu8WjEkR0VSsfM6
-        zKoyT2sIxjgxGiPqszM2BBhZBmAClQsVptbqFV+yJhn+H0t+G5JuiVn+CRuYtJ+n
-        QQXVJVEVRAbuZ+iFoImw6q1zVXFeZSqyYOdMTDvbwEscPisgHv1QJHsfNca7N6/u
-        Eu9Kt0oSNu5MjJ6fEBbuYhkKx73ySeNMwSJZg1JJ247WEBsOvFwvOjNkltgeiqDH
-        ttGlwrNdm7V4y+vZToxaKWuQ8rWGxO9k6z0ckOQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=brTnep
-        l9m5s/ksfArYTl/Nhn+h2HCCYjrL1gHLQabRI=; b=ApLBdml7EgXKEBemGF6g+i
-        8WaU1pQv9lgcmYuhO3vLeKF7N9SCSw+Ei1nXEcbMeiGBYNCrRpqWHM7txYkBCZ/1
-        V4Wwtlm8On2Ui3mTmaVpW30k0xKfvDUg1avmGYP8wct3zocQ3ELrzRbqWivmwGRA
-        gA2f/Sgpo/1MhuZP/F4TH7fFEZrSwTAOSJIGPi6LnnRBmmyuP1dpVhuJ1LL0ad1F
-        GH/jNUan/rfTat/0GVDvAB+5QJDbtn4akZvikB54p4rYux1Tt654NulErtcTOItA
-        O6yo3LvsbHcb9Ndd/bEBfLxqHql6HRIEZsPrmVhnSSMVV8ZPdJHoLVVoYEbvZcYw
-        ==
-X-ME-Sender: <xms:umbwXcLW2pAVcnjhoYa--3sMmbdEnaxe4sZAoaL2-e7MBOT3g901Zw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudelgedgheehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgepvd
-X-ME-Proxy: <xmx:umbwXaimatRuH5D7BzyUWD2zkCeDcvK9eb4gndzlf_yLxyKPY4lyOw>
-    <xmx:umbwXYuebxEBGSwAlb5JObPQMygTRkrQPavki8p8fjelv3iQe59xSA>
-    <xmx:umbwXcj5didO8Wg2faiIquBOB2EikzTL68BYjD_Xyp2QXekqT6Tavg>
-    <xmx:umbwXcj4wTsXn8iPDE5GJEEledoM4pU_Cr1845Jb94LgXatzYTGmUQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id AFEF0E00A2; Tue, 10 Dec 2019 22:47:06 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-679-g1f7ccac-fmstable-20191210v1
-Mime-Version: 1.0
-Message-Id: <5086ee4b-bddb-40c1-9841-005b233f837b@www.fastmail.com>
-In-Reply-To: <1575566112-11658-10-git-send-email-eajames@linux.ibm.com>
-References: <1575566112-11658-1-git-send-email-eajames@linux.ibm.com>
- <1575566112-11658-10-git-send-email-eajames@linux.ibm.com>
-Date:   Wed, 11 Dec 2019 14:18:45 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Eddie James" <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, "Jason Cooper" <jason@lakedaemon.net>,
-        linux-aspeed@lists.ozlabs.org, "Marc Zyngier" <maz@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
-        mark.rutland@arm.com, "Joel Stanley" <joel@jms.id.au>
-Subject: Re: [PATCH v2 09/12] ARM: dts: aspeed: ast2600: Add XDMA Engine
-Content-Type: text/plain
+        Tue, 10 Dec 2019 22:51:13 -0500
+Received: by mail-pj1-f65.google.com with SMTP id n96so8366654pjc.3;
+        Tue, 10 Dec 2019 19:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version:in-reply-to
+         :content-transfer-encoding;
+        bh=w9o4gMDR79zJbq+/ILGvB1xN+aaga7BtIGFfI8prB5M=;
+        b=cb2c4Qu1c1VKdo14t+tdEIreffodBdWgrfZOnau+8AaTsPYBHxEDq2ozEzFFz/pEXz
+         1Pz5xgaVxS7aheHrbjvMvC0DfUNyVafnjbnzBHpv7NUksimAVRA4gVCZVj8Ydn64MoVb
+         CSt+5FDPXEO6+HIN1gVgL2lUTUC0OSJJD+IC0nahZy4jbR2rtY9d53t++mdn3OYc1Jj9
+         PAQUqBaUzQA1lWISbOFvz5im/enk1rQV5SA86x8ZF0GMnO3BK7HOp+osbtQhfGOBFXHm
+         gKXy/czYdBvRWV7jv/jpcYv/8/AfbBfxTfHGyhIYxJrKgDDf18qfGpkIS34S2xVClL79
+         X7dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :in-reply-to:content-transfer-encoding;
+        bh=w9o4gMDR79zJbq+/ILGvB1xN+aaga7BtIGFfI8prB5M=;
+        b=Fa9/NQ616nFX+TBgw/Sf8v1bTWPQ4DWe/H4DVPrnlCWW7n7gCOTvsdCv6U/5ChU3/W
+         nAQl3KE/faPj9UP92wstvUdsxheKDQqsbs2BmlTBNoqrrmk4JOu8hFnX2iILWrrgbdXq
+         K0wBT+e5NuV8N+fDf1k+1glmKKWZeN6wYXo5mtLfkObHHmrxd6mj3lYWwnbuPWUu1B0u
+         8zlUlqc/DA/8lWgFt3GDdqmcqXLHGhn0Tj59NkXhpxijBIKI4xtl5G4jvwQH/zQ6uk4l
+         Ga9QOz0jegBt9DQMVuhrI83L97cPiQUL0ID4emRTCoANrKW7NmzNPLkTE5DWoRJS0cJf
+         KvKw==
+X-Gm-Message-State: APjAAAWawWc4hUaUwA/nhTy27IfGx05Go60ACqxK+oj9AktRTFydz83m
+        opy+Ddga/zYJ53//3NPVABI=
+X-Google-Smtp-Source: APXvYqwV5LToqYXF+yA4cMixtRX1yiBntc+ibWAwq4CQnG/WEECa7yTzQkoSqPhBeU9QcWl0npySrg==
+X-Received: by 2002:a17:902:6909:: with SMTP id j9mr1012338plk.136.1576036272826;
+        Tue, 10 Dec 2019 19:51:12 -0800 (PST)
+Received: from localhost.localdomain ([12.176.148.120])
+        by smtp.gmail.com with ESMTPSA id u3sm501061pga.72.2019.12.10.19.51.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Dec 2019 19:51:11 -0800 (PST)
+From:   SeongJae Park <sj38.park@gmail.com>
+To:     roger.pau@citrix.com
+Cc:     sjpark@amazon.com, axboe@kernel.dk, konrad.wilk@oracle.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pdurrant@amazon.com, xen-devel@lists.xenproject.org,
+        SeongJae Park <sjpark@amazon.de>, sj38.park@gmail.com
+Subject: Re: Re: [PATCH v5 1/2] xenbus/backend: Add memory pressure handler callback
+Date:   Wed, 11 Dec 2019 04:50:58 +0100
+Message-Id: <20191211035058.11479-1-sj38.park@gmail.com>
+X-Mailer: git-send-email 2.17.2
+MIME-Version: 1.0
+In-Reply-To: <20191210101635.GD980@Air-de-Roger>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 10 Dec 2019 11:16:35 +0100 "Roger Pau Monné" <roger.pau@citrix.com> wrote:
 
-
-On Fri, 6 Dec 2019, at 03:45, Eddie James wrote:
-> Add a node for the XDMA engine with all the necessary information. Also
-> add a simple syscon node for the SDRAM memory controller.
+> > Granting pages consumes backend system memory.  In systems configured
+> > with insufficient spare memory for those pages, it can cause a memory
+> > pressure situation.  However, finding the optimal amount of the spare
+> > memory is challenging for large systems having dynamic resource
+> > utilization patterns.  Also, such a static configuration might lack a
 > 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> ---
-> Changes since v1:
->  - Add a syscon SDRAM controller
->  - Add various properties to XDMA node
+> s/lack a/lack/
 > 
->  arch/arm/boot/dts/aspeed-g6.dtsi | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+> > flexibility.
+> > 
+> > To mitigate such problems, this commit adds a memory reclaim callback to
+> > 'xenbus_driver'.  Using this facility, 'xenbus' would be able to monitor
+> > a memory pressure and request specific devices of specific backend
 > 
-> diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
-> index ead336e..514d685 100644
-> --- a/arch/arm/boot/dts/aspeed-g6.dtsi
-> +++ b/arch/arm/boot/dts/aspeed-g6.dtsi
-> @@ -3,6 +3,7 @@
->  
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/clock/ast2600-clock.h>
-> +#include <dt-bindings/interrupt-controller/aspeed-scu-ic.h>
->  
->  / {
->  	model = "Aspeed BMC";
-> @@ -265,6 +266,11 @@
->  			status = "disabled";
->  		};
->  
-> +		sdmc: sdram@1e6e0000 {
-> +			compatible = "syscon";
-> +			reg = <0x1e6e0000 0xb8>;
-> +		};
-> +
-
-Hopefully we can drop this. We also need to figure out how whatever the solution is interacts
-with the EDAC driver.
-
->  		apb {
->  			compatible = "simple-bus";
->  			#address-cells = <1>;
-> @@ -311,6 +317,19 @@
->  				quality = <100>;
->  			};
->  
-> +			xdma: xdma@1e6e7000 {
-> +				compatible = "aspeed,ast2600-xdma";
-> +				reg = <0x1e6e7000 0x100>;
-> +				clocks = <&syscon ASPEED_CLK_GATE_BCLK>;
-> +				resets = <&syscon ASPEED_RESET_DEV_XDMA>;
-> +				interrupts-extended = <&gic GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-> +						      <&scu_ic0 ASPEED_AST2600_SCU_IC0_PCIE_PERST_LO_TO_HI>;
-> +				pcie-device = "bmc";
-> +				scu = <&syscon>;
-> +				sdmc = <&sdmc>;
-
-sdmc property should go away also.
-
-> +				status = "disabled";
-> +			};
-> +
->  			gpio0: gpio@1e780000 {
->  				#gpio-cells = <2>;
->  				gpio-controller;
-> -- 
-> 1.8.3.1
+> s/monitor a/monitor/
 > 
->
+> > drivers which causing the given pressure to voluntarily release its
+> 
+> ...which are causing...
+> 
+> > memory.
+> > 
+> > That said, this commit simply requests every callback registered driver
+> > to release its memory for every domain, rather than issueing the
+> 
+> s/issueing/issuing/
+> 
+> > requests to the drivers and the domain in charge.  Such things will be
+> 
+> I'm afraid I don't understand the "domain in charge" part of this
+> sentence.
+> 
+> > done in a futur.  Also, this commit focuses on memory only.  However, it
+> 
+> ... done in a future change. Also I think the period after only should
+> be removed in order to tie both sentences together.
+> 
+> > would be ablt to be extended for general resources.
+> 
+> s/ablt/able/
+> 
+> > 
+> > Signed-off-by: SeongJae Park <sjpark@amazon.de>
+> > ---
+> >  drivers/xen/xenbus/xenbus_probe_backend.c | 31 +++++++++++++++++++++++
+> >  include/xen/xenbus.h                      |  1 +
+> >  2 files changed, 32 insertions(+)
+> > 
+> > diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
+> > index b0bed4faf44c..5a5ba29e39df 100644
+> > --- a/drivers/xen/xenbus/xenbus_probe_backend.c
+> > +++ b/drivers/xen/xenbus/xenbus_probe_backend.c
+> > @@ -248,6 +248,34 @@ static int backend_probe_and_watch(struct notifier_block *notifier,
+> >  	return NOTIFY_DONE;
+> >  }
+> >  
+> > +static int xenbus_backend_reclaim(struct device *dev, void *data)
+> > +{
+> > +	struct xenbus_driver *drv;
+> 
+> Newline and const.
+> 
+> > +	if (!dev->driver)
+> > +		return -ENOENT;
+> > +	drv = to_xenbus_driver(dev->driver);
+> > +	if (drv && drv->reclaim)
+> > +		drv->reclaim(to_xenbus_device(dev));
+> 
+> You seem to completely ignore the return of the reclaim hook...
+> 
+> > +	return 0;
+> > +}
+> > +
+> > +/*
+> > + * Returns 0 always because we are using shrinker to only detect memory
+> > + * pressure.
+> > + */
+> > +static unsigned long xenbus_backend_shrink_count(struct shrinker *shrinker,
+> > +				struct shrink_control *sc)
+> > +{
+> > +	bus_for_each_dev(&xenbus_backend.bus, NULL, NULL,
+> > +			xenbus_backend_reclaim);
+> > +	return 0;
+> > +}
+> > +
+> > +static struct shrinker xenbus_backend_shrinker = {
+> > +	.count_objects = xenbus_backend_shrink_count,
+> > +	.seeks = DEFAULT_SEEKS,
+> > +};
+> > +
+> >  static int __init xenbus_probe_backend_init(void)
+> >  {
+> >  	static struct notifier_block xenstore_notifier = {
+> > @@ -264,6 +292,9 @@ static int __init xenbus_probe_backend_init(void)
+> >  
+> >  	register_xenstore_notifier(&xenstore_notifier);
+> >  
+> > +	if (register_shrinker(&xenbus_backend_shrinker))
+> > +		pr_warn("shrinker registration failed\n");
+> > +
+> >  	return 0;
+> >  }
+> >  subsys_initcall(xenbus_probe_backend_init);
+> > diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+> > index 869c816d5f8c..cdb075e4182f 100644
+> > --- a/include/xen/xenbus.h
+> > +++ b/include/xen/xenbus.h
+> > @@ -104,6 +104,7 @@ struct xenbus_driver {
+> >  	struct device_driver driver;
+> >  	int (*read_otherend_details)(struct xenbus_device *dev);
+> >  	int (*is_ready)(struct xenbus_device *dev);
+> > +	unsigned (*reclaim)(struct xenbus_device *dev);
+> 
+> ... hence I wonder why it's returning an unsigned when it's just
+> ignored.
+> 
+> IMO it should return an int to signal errors, and the return should be
+> ignored.
+
+I first thought similarly and set the callback to return something.  However,
+as this callback is called to simply notify the memory pressure and ask the
+driver to free its memory as many as possible, I couldn't easily imagine what
+kind of errors that need to be handled by its caller can occur in the callback,
+especially because current blkback's callback implementation has no such error.
+So, if you and others agree, I would like to simply set the return type to
+'void' for now and defer the error handling to a future change.
+
+> 
+> Also, I think it would preferable for this function to take an extra
+> parameter to describe the resource the driver should attempt to free
+> (ie: memory or interrupts for example). I'm however not able to find
+> any existing Linux type to describe such resources.
+
+Yes, such extention would be the right direction.  However, because there is no
+existing Linux type to describe the type of resources to reclaim as you also
+mentioned, there could be many different opinions about its implementation
+detail.  In my opinion, it could be also possible to simply add another
+callback for another resource type.  That said, because currently we have an
+use case and an implementation for the memory pressure only, I would like to
+let it as is for now and defer the extension as a future work, if you and
+others have no objection.
+
+
+Thanks,
+SeongJae Park
+
+> 
+> Thanks, Roger.
+> 
+> 
