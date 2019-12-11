@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C81A11AED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA49A11B071
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:22:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbfLKPI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:08:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55910 "EHLO mail.kernel.org"
+        id S1732638AbfLKPWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:22:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730345AbfLKPIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:08:23 -0500
+        id S1729512AbfLKPWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:22:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35E2224654;
-        Wed, 11 Dec 2019 15:08:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE43C208C3;
+        Wed, 11 Dec 2019 15:22:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076902;
-        bh=YOOKKu7KZKalCYc9fcrbvluf+Q6hWobR9h7/kUaryYI=;
+        s=default; t=1576077763;
+        bh=mAf0WnQYeLV7ICC6KqevtF7PXWLFmXkLFXBJEdViVAY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N48M83QtKx+Pyniqy29iC9eDBg4UN03c5LOfBExsbVOL2xRYSpeuZiKBc9uU8ttAW
-         N++Ye4rJWmuKrHc2iek/wndNI9NCmCV2v1WG3xUwI6Nq2ap66n1WhiIKaUmsMHpglZ
-         2KojgWrYCfnOhU2G3/Hl90NAJkeuAPFhFj8u5DAI=
+        b=qldft/SXKn4MhWme+jV+Yr2OFSDLJE3AoLt7QAYPgkD1/1t+LWpvhUOL6HyRa0FIq
+         rspJxqB53ydY933VL02tQqkvH+H7gSi0lXa88bti8yv4MnCeEnYP3cGbgjqRpuEN5B
+         XnGMGG4jvLEYRZ7nB+4aRP55YP1qIO0YuUXt3m1I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.4 33/92] ALSA: pcm: oss: Avoid potential buffer overflows
+        stable@vger.kernel.org, Jianxin Pan <jianxin.pan@amlogic.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 162/243] clk: meson: meson8b: fix the offset of vid_pll_dcos N value
 Date:   Wed, 11 Dec 2019 16:05:24 +0100
-Message-Id: <20191211150236.252442286@linuxfoundation.org>
+Message-Id: <20191211150350.098521030@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,64 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-commit 4cc8d6505ab82db3357613d36e6c58a297f57f7c upstream.
+[ Upstream commit 376d8c45bd6ac79f02ecf9ca1606dc5d1b271bc0 ]
 
-syzkaller reported an invalid access in PCM OSS read, and this seems
-to be an overflow of the internal buffer allocated for a plugin.
-Since the rate plugin adjusts its transfer size dynamically, the
-calculation for the chained plugin might be bigger than the given
-buffer size in some extreme cases, which lead to such an buffer
-overflow as caught by KASAN.
+Unlike the other PLLs on Meson8b the N value "vid_pll_dco" (a better
+name would be hdmi_pll_dco or - as the datasheet calls it - HPLL) is
+located at HHI_VID_PLL_CNTL[14:10] instead of [13:9].
+This results in an incorrect calculation of the rate of this PLL because
+the value seen by the kernel is double the actual N (divider) value.
+Update the offset of the N value to fix the calculation of the PLL rate.
 
-Fix it by limiting the max transfer size properly by checking against
-the destination size in each plugin transfer callback.
-
-Reported-by: syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191204144824.17801-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 28b9fcd016126e ("clk: meson8b: Add support for Meson8b clocks")
+Reported-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://lkml.kernel.org/r/20181202214220.7715-2-martin.blumenstingl@googlemail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/oss/linear.c |    2 ++
- sound/core/oss/mulaw.c  |    2 ++
- sound/core/oss/route.c  |    2 ++
- 3 files changed, 6 insertions(+)
+ drivers/clk/meson/meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/oss/linear.c
-+++ b/sound/core/oss/linear.c
-@@ -107,6 +107,8 @@ static snd_pcm_sframes_t linear_transfer
- 		}
- 	}
- #endif
-+	if (frames > dst_channels[0].frames)
-+		frames = dst_channels[0].frames;
- 	convert(plugin, src_channels, dst_channels, frames);
- 	return frames;
- }
---- a/sound/core/oss/mulaw.c
-+++ b/sound/core/oss/mulaw.c
-@@ -269,6 +269,8 @@ static snd_pcm_sframes_t mulaw_transfer(
- 		}
- 	}
- #endif
-+	if (frames > dst_channels[0].frames)
-+		frames = dst_channels[0].frames;
- 	data = (struct mulaw_priv *)plugin->extra_data;
- 	data->func(plugin, src_channels, dst_channels, frames);
- 	return frames;
---- a/sound/core/oss/route.c
-+++ b/sound/core/oss/route.c
-@@ -57,6 +57,8 @@ static snd_pcm_sframes_t route_transfer(
- 		return -ENXIO;
- 	if (frames == 0)
- 		return 0;
-+	if (frames > dst_channels[0].frames)
-+		frames = dst_channels[0].frames;
- 
- 	nsrcs = plugin->src_format.channels;
- 	ndsts = plugin->dst_format.channels;
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 9d79ff857d83e..e90af556ff90f 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -144,7 +144,7 @@ static struct clk_regmap meson8b_vid_pll = {
+ 		},
+ 		.n = {
+ 			.reg_off = HHI_VID_PLL_CNTL,
+-			.shift   = 9,
++			.shift   = 10,
+ 			.width   = 5,
+ 		},
+ 		.od = {
+-- 
+2.20.1
+
 
 
