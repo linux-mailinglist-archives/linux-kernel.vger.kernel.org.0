@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AEF111B3E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:45:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89EAB11B3EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733265AbfLKP1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:27:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60698 "EHLO mail.kernel.org"
+        id S1733290AbfLKP1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:27:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733230AbfLKP1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:27:04 -0500
+        id S1733237AbfLKP1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:27:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C7242467D;
-        Wed, 11 Dec 2019 15:27:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E353522527;
+        Wed, 11 Dec 2019 15:27:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078023;
-        bh=z63DRufKh+HaVrDTfZRb6x5UHAIAw5yQ6olP9JxInJw=;
+        s=default; t=1576078025;
+        bh=eYZh47n3f+uDVa5bwWIUkO99bKEECO7YiEbSdp9Mo2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EkK3vQ5bUnCxGjljoJ5Th9vOM8DELEAsWK5gWI/Ufj7PqZQvK6b8CD5Vmz6SNLinw
-         /5016riBYGFZw57493eq0Vqyy+9rNXVw7bzZoXj/gWMet520Zk08oaxiKpszIrcTQU
-         7v7aJLMQ8OqBYjon/xEv73/cLMwmsNxFcF1M7wAc=
+        b=YZa70nUuJyfg5irmC3sq8bN8LVmQwIl4v/DxnknSDFZVXiHi/Vfw3Na3h0HfaGAAX
+         mC1ey67QqBxDELqTD+qDKXNEViB8+2vK02nYrWrS02iqwSy27wqO0QZeCOk2A8zO/2
+         xGYPCbXzzdDR+uzqygUWntcF6fXxgq8vsNSk0sg4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Schiller <ms@dev.tdt.de>, Pavel Machek <pavel@ucw.cz>,
-        Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 18/79] leds: trigger: netdev: fix handling on interface rename
-Date:   Wed, 11 Dec 2019 10:25:42 -0500
-Message-Id: <20191211152643.23056-18-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 20/79] clocksource/drivers/timer-of: Use unique device name instead of timer
+Date:   Wed, 11 Dec 2019 10:25:44 -0500
+Message-Id: <20191211152643.23056-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
 References: <20191211152643.23056-1-sashal@kernel.org>
@@ -42,58 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Schiller <ms@dev.tdt.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 5f820ed52371b4f5d8c43c93f03408d0dbc01e5b ]
+[ Upstream commit 4411464d6f8b5e5759637235a6f2b2a85c2be0f1 ]
 
-The NETDEV_CHANGENAME code is not "unneeded" like it is stated in commit
-4cb6560514fa ("leds: trigger: netdev: fix refcnt leak on interface
-rename").
+If a hardware-specific driver does not provide a name, the timer-of core
+falls back to device_node.name.  Due to generic DT node naming policies,
+that name is almost always "timer", and thus doesn't identify the actual
+timer used.
 
-The event was accidentally misinterpreted equivalent to
-NETDEV_UNREGISTER, but should be equivalent to NETDEV_REGISTER.
+Fix this by using device_node.full_name instead, which includes the unit
+addrees.
 
-This was the case in the original code from the openwrt project.
+Example impact on /proc/timer_list:
 
-Otherwise, you are unable to set netdev led triggers for (non-existent)
-netdevices, which has to be renamed. This is the case, for example, for
-ppp interfaces in openwrt.
+    -Clock Event Device: timer
+    +Clock Event Device: timer@fcfec400
 
-Fixes: 06f502f57d0d ("leds: trigger: Introduce a NETDEV trigger")
-Fixes: 4cb6560514fa ("leds: trigger: netdev: fix refcnt leak on interface rename")
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20191016144747.29538-3-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/trigger/ledtrig-netdev.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clocksource/timer-of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 136f86a1627d1..d5e774d830215 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -302,10 +302,12 @@ static int netdev_trig_notify(struct notifier_block *nb,
- 		container_of(nb, struct led_netdev_data, notifier);
+diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
+index 06ed88a2a8a0d..6e2cb3693ed89 100644
+--- a/drivers/clocksource/timer-of.c
++++ b/drivers/clocksource/timer-of.c
+@@ -199,7 +199,7 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ 	}
  
- 	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE
--	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER)
-+	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER
-+	    && evt != NETDEV_CHANGENAME)
- 		return NOTIFY_DONE;
+ 	if (!to->clkevt.name)
+-		to->clkevt.name = np->name;
++		to->clkevt.name = np->full_name;
  
- 	if (!(dev == trigger_data->net_dev ||
-+	      (evt == NETDEV_CHANGENAME && !strcmp(dev->name, trigger_data->device_name)) ||
- 	      (evt == NETDEV_REGISTER && !strcmp(dev->name, trigger_data->device_name))))
- 		return NOTIFY_DONE;
+ 	to->np = np;
  
-@@ -315,6 +317,7 @@ static int netdev_trig_notify(struct notifier_block *nb,
- 
- 	clear_bit(NETDEV_LED_MODE_LINKUP, &trigger_data->mode);
- 	switch (evt) {
-+	case NETDEV_CHANGENAME:
- 	case NETDEV_REGISTER:
- 		if (trigger_data->net_dev)
- 			dev_put(trigger_data->net_dev);
 -- 
 2.20.1
 
