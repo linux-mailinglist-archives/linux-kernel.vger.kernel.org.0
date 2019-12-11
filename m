@@ -2,197 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2D5511AA2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 12:47:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E63911AA33
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 12:49:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbfLKLq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 06:46:59 -0500
-Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:53448 "EHLO
-        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbfLKLq6 (ORCPT
+        id S1729059AbfLKLtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 06:49:06 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:49254 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727477AbfLKLtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 06:46:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1576064819;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P2MU3njNrfLJrdt+eLEGCcK2Oa2o5yX8/PbMswCYaNY=;
-  b=Gj91FSbu2p3T7aec5OjUxskshJUpOD44qW5++mOO4/aCuQo4yvK0LVWi
-   RNTAv2X+KvSJgOXKtO/njmW3eZlxjT0xQs1nXCfaryp4u4p48NfeOHQ0B
-   AmRVa13lmu4uJhtB8yYdMH6Ym3U8iSyHvkyZ7iI88qXQtZEMFpKNnz4+u
-   k=;
-Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
-  receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
-  roger.pau@citrix.com designates 162.221.158.21 as permitted
-  sender) identity=mailfrom; client-ip=162.221.158.21;
-  receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: +HzPxT1PiH2ZjG1A/5a+YfO0CQqZIrbFt+4gfS5zEDuQYbwMbYZYsNOOKCizsr554KZiOjCygs
- lC2iM+TIgx2nXizoG7CSDvtJnMffNrKLFkPiCOxaZV7OnKRWcZraFooL9oay3qh/l9F12vzA22
- GlaJKSzUlO7b0z0fwM1eZc6/6QrTXWc+AsVZnSJvm3l741QORu7LTBzAyuGFDVuzkUPKRb+l50
- OxylbBCvU/JBgcN5Pu/VNJuqpoyKvQ0mgmGJVaIwgzQyYjS7NnTS1r3DryE40Ex1bVlu8ASGoG
- +eA=
-X-SBRS: 2.7
-X-MesageID: 9513342
-X-Ironport-Server: esa3.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.69,301,1571716800"; 
-   d="scan'208";a="9513342"
-Date:   Wed, 11 Dec 2019 12:46:51 +0100
-From:   Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-To:     SeongJae Park <sj38.park@gmail.com>
-CC:     <jgross@suse.com>, <axboe@kernel.dk>, <konrad.wilk@oracle.com>,
-        "SeongJae Park" <sjpark@amazon.de>, <pdurrant@amazon.com>,
-        <sjpark@amazon.com>, <xen-devel@lists.xenproject.org>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/3] xenbus/backend: Add memory pressure handler
- callback
-Message-ID: <20191211114651.GN980@Air-de-Roger>
-References: <20191211042428.5961-1-sjpark@amazon.de>
- <20191211042657.6037-1-sjpark@amazon.de>
+        Wed, 11 Dec 2019 06:49:05 -0500
+X-AuditID: c0a8fbf4-183ff70000001fa6-9a-5df0d7ae1537
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 34.B2.08102.EA7D0FD5; Wed, 11 Dec 2019 12:49:02 +0100 (CET)
+Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Wed, 11 Dec 2019 12:48:56 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+Subject: Re: [PATCH v6 12/15] rtc: bd70528 add BD71828 support
+Thread-Topic: [PATCH v6 12/15] rtc: bd70528 add BD71828 support
+Thread-Index: AQHVsAgtLDOE1gVnBUinFPzstDImkqe0vi8AgAAC8oA=
+Date:   Wed, 11 Dec 2019 11:48:56 +0000
+Message-ID: <830dad816b6d7f375e7c821e8e435931d1cd4afa.camel@fi.rohmeurope.com>
+References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+         <16a2492d4c70a80628dbf1a64a85c5b554c7f6e4.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+         <20191211113828.GW1463890@piout.net>
+In-Reply-To: <20191211113828.GW1463890@piout.net>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0A0135D61D3D4542ABB9B3608955BE32@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191211042657.6037-1-sjpark@amazon.de>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL03.citrite.net (10.69.22.127)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxjfuff23gN49VBwHOo08266OSOORJOTxTkX5nb5ZzHRZK8QvI47
+        SoS2uS0bbv/gCNWiM+jAzQaq1qIMG6sFHyMwXcOzGpQOCmaiKyKJOis6wfkY7t4Whb/Od77f
+        63zJdyCtr+MMsMBkkxWTVCiwicy5+icnlh0bGMt5u/GHBcTT28+RbdHDHPlvTwdHHtQGGVId
+        GWHJyLltgOxv69GRHeebdKTskI8lf548zpBr4+2ATPRtp0jV0yMUubfzqo4ctHsY0rj/KSB/
+        NNew5OTfxwDpONrHkrqBXorU1HUx5O59B0V6g2tJdTDKkaFgO0vKegdpUt7axpHJ8AmG7Or5
+        aM180evyAvHJ4z1AvDtYzoku73fir84hTvQ3OFjxSriFFc/Wejnx0K4fdeLEhd2MOHrQx4id
+        g6cp8SfXI0r07WwDYv3Rh5z4j3/BOvR50qpNku3r9QX5puWrNyYZw6eyLMN0yeVLIaoU9NEV
+        IAFitAKHIj9zFSAR6lE/wK7AMzZ+6QK4vO+6ikDIolW44jKnCVJRFnZdtDMah0a/JeEbVQdi
+        TiloNf634fYU6T0cqqli4vU7+N54S4zDoEXYPzAc8+TRx7ijZyr4PMB3fLcpjZOAMnHpmJ/V
+        aoDmY0dpNNanURr2jz7UxV+NsKfl4tQEc/HN65NTfQG3Poowmj+NlmBf8/K4dA3eXjPMxeuF
+        uGpHJFbzKBl37xthKsHLzhkJzmm1c4baOUPtnKE+AHQNABdJBYX5kk3OzFDk4gzFbCxSjy/N
+        RX4QX7sHZ8CzQHYAUBAEQDqkhLk83T2Wo5+9yZy3xShZjblKcaFsDQAMaSGV77RHc/R8nrTl
+        W1kxP4fmQUZI49+I7M7RIy1rsyxbZOU5+gqEAua5ftU0WZHz5ZKvCgpt0zAFEzTzREOqVTbl
+        yYpUbDPmauuRa1X3Q4NmqbmWsCrnrRapSO3GpUGwFFberHXTsK22zk3rGZPZJBvSeLuWhDSq
+        sdj0IugWSINASOHdmtEs9e+98LmlRlBqhCNPG81qk6YhQylo8Fa+u6G1uvnS1tnu9O55uGRF
+        lhC6L7c8HvZcG+0SGqO/eyLuiGWyiZQ3dW6YsL/efuRKwgdnK7t/Wfm9dOGzJVdXfug3LD3z
+        ycDE0J2y9GV0fcberW9mfTMJx19ljKHjn4b3/WXI/uKlU4eT39+4+DXY5ECG7M1z8N4bGYtS
+        sGMtLTBWo5T5Fq1Ypf8B6qHyojgEAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 04:26:57AM +0000, SeongJae Park wrote:
-> Granting pages consumes backend system memory.  In systems configured
-> with insufficient spare memory for those pages, it can cause a memory
-> pressure situation.  However, finding the optimal amount of the spare
-                                                              ^ s/the//
-> memory is challenging for large systems having dynamic resource
-> utilization patterns.  Also, such a static configuration might lack
-> flexibility.
-> 
-> To mitigate such problems, this commit adds a memory reclaim callback to
-> 'xenbus_driver'.  If a memory pressure is detected, 'xenbus' requests
-                       ^ s/a//
-> every backend driver to volunarily release its memory.
-> 
-> Note that it would be able to improve the callback facility for more
-                        ^ possible
-> sophisticated handlings of general pressures.  For example, it would be
-                ^ handling of resource starvation.
-> possible to monitor the memory consumption of each device and issue the
-> release requests to only devices which causing the pressure.  Also, the
-> callback could be extended to handle not only memory, but general
-> resources.  Nevertheless, this version of the implementation defers such
-> sophisticated goals as a future work.
-> 
-> Reviewed-by: Juergen Gross <jgross@suse.com>
-> Signed-off-by: SeongJae Park <sjpark@amazon.de>
-> ---
->  drivers/xen/xenbus/xenbus_probe_backend.c | 32 +++++++++++++++++++++++
->  include/xen/xenbus.h                      |  1 +
->  2 files changed, 33 insertions(+)
-> 
-> diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
-> index b0bed4faf44c..aedbe2198de5 100644
-> --- a/drivers/xen/xenbus/xenbus_probe_backend.c
-> +++ b/drivers/xen/xenbus/xenbus_probe_backend.c
-> @@ -248,6 +248,35 @@ static int backend_probe_and_watch(struct notifier_block *notifier,
->  	return NOTIFY_DONE;
->  }
->  
-> +static int xenbus_backend_reclaim(struct device *dev, void *data)
-
-No need for the xenbus_ prefix since it's a static function, ie:
-backend_reclaim_memory should be fine IMO.
-
-> +{
-> +	struct xenbus_driver *drv;
-
-I've asked for this variable to be constified in v5, is it not
-possible to make it const?
-
-> +
-> +	if (!dev->driver)
-> +		return 0;
-> +	drv = to_xenbus_driver(dev->driver);
-> +	if (drv && drv->reclaim)
-> +		drv->reclaim(to_xenbus_device(dev));
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Returns 0 always because we are using shrinker to only detect memory
-> + * pressure.
-> + */
-> +static unsigned long xenbus_backend_shrink_count(struct shrinker *shrinker,
-> +				struct shrink_control *sc)
-> +{
-> +	bus_for_each_dev(&xenbus_backend.bus, NULL, NULL,
-> +			xenbus_backend_reclaim);
-> +	return 0;
-> +}
-> +
-> +static struct shrinker xenbus_backend_shrinker = {
-
-I would drop the xenbus prefix, and I think it's not possible to
-constify this due to register_shrinker expecting a non-const
-parameter?
-
-> +	.count_objects = xenbus_backend_shrink_count,
-> +	.seeks = DEFAULT_SEEKS,
-> +};
-> +
->  static int __init xenbus_probe_backend_init(void)
->  {
->  	static struct notifier_block xenstore_notifier = {
-> @@ -264,6 +293,9 @@ static int __init xenbus_probe_backend_init(void)
->  
->  	register_xenstore_notifier(&xenstore_notifier);
->  
-> +	if (register_shrinker(&xenbus_backend_shrinker))
-> +		pr_warn("shrinker registration failed\n");
-
-Can you add a xenbus prefix to the error message? Or else it's hard to
-know which subsystem is complaining when you see such message on the
-log. ie: "xenbus: shrinker ..."
-
-> +
->  	return 0;
->  }
->  subsys_initcall(xenbus_probe_backend_init);
-> diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
-> index 869c816d5f8c..196260017666 100644
-> --- a/include/xen/xenbus.h
-> +++ b/include/xen/xenbus.h
-> @@ -104,6 +104,7 @@ struct xenbus_driver {
->  	struct device_driver driver;
->  	int (*read_otherend_details)(struct xenbus_device *dev);
->  	int (*is_ready)(struct xenbus_device *dev);
-> +	void (*reclaim)(struct xenbus_device *dev);
-
-reclaim_memory (if Juergen agrees).
-
-Thanks, Roger.
+SGVsbG8gQWxleGFuZHJlLA0KDQpPbiBXZWQsIDIwMTktMTItMTEgYXQgMTI6MzggKzAxMDAsIEFs
+ZXhhbmRyZSBCZWxsb25pIHdyb3RlOg0KPiBIaSwNCj4gDQo+IEkganVzdCByZWFsaXNlZCB0aGUg
+c3ViamVjdCBpcyBtaXNzaW5nIGEgY29sb24sIGl0IHNob3VsZCBiZToNCj4gDQo+IHJ0YzogYmQ3
+MDUyODogYWRkIEJENzE4Mjggc3VwcG9ydA0KDQpSaWdodC4gVGhhbmtzIGZvciBwb2ludGluZyBp
+dCBvdXQgOikNCg0KPiBQbGVhc2UgZml4IGl0IGluIGNhc2UgeW91IGV2ZXIgaGF2ZSB0byByZXNl
+bmQgZm9yIGFub3RoZXIgcmVhc29uLg0KDQpXaWxsIGRvIDopDQoNCkJyLA0KCU1hdHRpIFZhaXR0
+aW5lbg0KDQo=
