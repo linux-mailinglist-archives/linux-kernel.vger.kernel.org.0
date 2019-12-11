@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0734811B60C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:58:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9A111B4B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:50:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731829AbfLKP60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:58:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39710 "EHLO mail.kernel.org"
+        id S1732761AbfLKPtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:49:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731622AbfLKPOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:14:23 -0500
+        id S1732853AbfLKPYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:24:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8412024658;
-        Wed, 11 Dec 2019 15:14:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 832C9208C3;
+        Wed, 11 Dec 2019 15:24:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077262;
-        bh=+cME4i6w/HOFktWu1TlD6KxQeCzpussbdm5Do3MnTqU=;
+        s=default; t=1576077876;
+        bh=TxFF3dCzgNZSD/LydwsZgVZni2PRmnqkI8Is8MlGsmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tyl9MfwXBvpxg1V4YzqTuVdHcIxuW4mC0nwXdh62WGasmg6TJYfS6iV2sxhzRiG6/
-         awFKwLXYoe9+KUT+i4h34fbGRoBxf1J0doICI7wAGQdHU1p9+p7lz1OX6HKXvB8fut
-         YldzVThHE5IGct7L2AGj4gC5M4lXFNtHwoDDs380=
+        b=NUtDKExSN/43UmRVDiq6LkF0GspToMs6L8+5yJ+4fo2sRKqxUOXJaTR7H+c8p/c/0
+         +Fq1DLbel73Yi/TxosPe0Odpo+bD9bdfdF8wR+fjAENL+J2lDsyOb85tgH5/oW9SZS
+         5iqAclKyHzW/2k94IQjt/VFapLQ1nEeDIpN0Ej04=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Paul Mackerras <paulus@ozlabs.org>
-Subject: [PATCH 5.3 077/105] KVM: PPC: Book3S HV: XIVE: Fix potential page leak on error path
-Date:   Wed, 11 Dec 2019 16:06:06 +0100
-Message-Id: <20191211150256.520751612@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 205/243] Input: synaptics-rmi4 - re-enable IRQs in f34v7_do_reflash
+Date:   Wed, 11 Dec 2019 16:06:07 +0100
+Message-Id: <20191211150353.022799599@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kurz <groug@kaod.org>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-commit 30486e72093ea2e594f44876b7a445c219449bce upstream.
+commit 86bcd3a12999447faad60ec59c2d64d18d8e61ac upstream.
 
-We need to check the host page size is big enough to accomodate the
-EQ. Let's do this before taking a reference on the EQ page to avoid
-a potential leak if the check fails.
+F34 is a bit special as it reinitializes the device and related driver
+structs during the firmware update. This clears the fn_irq_mask which
+will then prevent F34 from receiving further interrupts, leading to
+timeouts during the firmware update. Make sure to reinitialize the
+IRQ enables at the appropriate times.
 
-Cc: stable@vger.kernel.org # v5.2
-Fixes: 13ce3297c576 ("KVM: PPC: Book3S HV: XIVE: Add controls for the EQ configuration")
-Signed-off-by: Greg Kurz <groug@kaod.org>
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+The issue is in F34 code, but the commit in the fixes tag exposed the
+issue, as before this commit things would work by accident.
+
+Fixes: 363c53875aef (Input: synaptics-rmi4 - avoid processing unknown IRQs)
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Link: https://lore.kernel.org/r/20191129133514.23224-1-l.stach@pengutronix.de
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/book3s_xive_native.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/input/rmi4/rmi_f34v7.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/kvm/book3s_xive_native.c
-+++ b/arch/powerpc/kvm/book3s_xive_native.c
-@@ -637,12 +637,6 @@ static int kvmppc_xive_native_set_queue_
+--- a/drivers/input/rmi4/rmi_f34v7.c
++++ b/drivers/input/rmi4/rmi_f34v7.c
+@@ -1192,6 +1192,9 @@ int rmi_f34v7_do_reflash(struct f34_data
+ {
+ 	int ret;
  
- 	srcu_idx = srcu_read_lock(&kvm->srcu);
- 	gfn = gpa_to_gfn(kvm_eq.qaddr);
--	page = gfn_to_page(kvm, gfn);
--	if (is_error_page(page)) {
--		srcu_read_unlock(&kvm->srcu, srcu_idx);
--		pr_err("Couldn't get queue page %llx!\n", kvm_eq.qaddr);
--		return -EINVAL;
--	}
- 
- 	page_size = kvm_host_page_size(kvm, gfn);
- 	if (1ull << kvm_eq.qshift > page_size) {
-@@ -651,6 +645,13 @@ static int kvmppc_xive_native_set_queue_
- 		return -EINVAL;
- 	}
- 
-+	page = gfn_to_page(kvm, gfn);
-+	if (is_error_page(page)) {
-+		srcu_read_unlock(&kvm->srcu, srcu_idx);
-+		pr_err("Couldn't get queue page %llx!\n", kvm_eq.qaddr);
-+		return -EINVAL;
-+	}
++	f34->fn->rmi_dev->driver->set_irq_bits(f34->fn->rmi_dev,
++					       f34->fn->irq_mask);
 +
- 	qaddr = page_to_virt(page) + (kvm_eq.qaddr & ~PAGE_MASK);
- 	srcu_read_unlock(&kvm->srcu, srcu_idx);
+ 	rmi_f34v7_read_queries_bl_version(f34);
  
+ 	f34->v7.image = fw->data;
 
 
