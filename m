@@ -2,157 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCC511B9A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:09:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 387A511B9B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 18:10:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730802AbfLKRJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 12:09:22 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2181 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729512AbfLKRJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 12:09:22 -0500
-Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 0AD9CE01575F78853AA3;
-        Wed, 11 Dec 2019 17:09:20 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 11 Dec 2019 17:09:19 +0000
-Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 11 Dec
- 2019 17:09:19 +0000
-Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity
- for managed interrupt
-To:     Ming Lei <ming.lei@redhat.com>
-CC:     <tglx@linutronix.de>, <chenxiang66@hisilicon.com>,
-        <bigeasy@linutronix.de>, <linux-kernel@vger.kernel.org>,
-        <maz@kernel.org>, <hare@suse.com>, <hch@lst.de>, <axboe@kernel.dk>,
-        <bvanassche@acm.org>, <peterz@infradead.org>, <mingo@redhat.com>
-References: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
- <1575642904-58295-2-git-send-email-john.garry@huawei.com>
- <20191207080335.GA6077@ming.t460p>
- <78a10958-fdc9-0576-0c39-6079b9749d39@huawei.com>
- <20191210014335.GA25022@ming.t460p>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <0ad37515-c22d-6857-65a2-cc28256a8afa@huawei.com>
-Date:   Wed, 11 Dec 2019 17:09:18 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1730907AbfLKRKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 12:10:16 -0500
+Received: from sonic301-22.consmr.mail.gq1.yahoo.com ([98.137.64.148]:41740
+        "EHLO sonic301-22.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730107AbfLKRKQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 12:10:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1576084215; bh=zh+Qq4KKIZBWaPq05JcdqJTq0ZIdb2xT9gPdRoh6Iu4=; h=Date:From:To:Cc:Subject:References:From:Subject; b=Z+uVRsdHOXjOjjD9kXgyXgiLKGsj3ENObF3fxk7XwSy5K80VnFlmWQ4RYKetMSFs0vYkLW+LzHhOghKRoY2OoA6sa5kwxCrJwy7dCBCSBr8zyBNP+T4C22OTdEnxxICWIRkkHw9/kSByzfdu62QDKpe3pQFPmGV6QO/zh/Pt7l0mtjbAh2nki4PCXinp574TEXo0dHWm/NqyAYpL7qg+/fkQIK90+Ou7AAQ6/kTxpppRi14EScK12dij6bajPtWdkhIYrBHIA54URZ0k9YSN6arXRJg1dlfTCVxfW6Lh/zc4GDdWfv+qcDJFhx+F3V0V/8CG1YMlVusWrWoogYtQQg==
+X-YMail-OSG: WG8ijLUVM1kklRgyAHjAJW0GX8ixNnkB.BQrGKakTRErvtKWMMgVhn1zd2ZVceK
+ NdtyTOS.pE0VJ3X0j0YcdgenF4f3E_Yz8F7H4SiHQlMn5m46Lj8i.j3Q4_g9ONYm4OauQq9L0m_K
+ ERLQxrsbAqEL.T1z9NKHmvAjaVpHVbZZ2rPNOzPMzunok6QfhV7miYZhGWkUgf3Gx2az1pYr_8Bz
+ w_7K8OLUTex5GtLM38kK9sHSgvU8Gf_CGNX94RcTscCpUhhrCPqdjovKewaDtTojK17UE20OKDL8
+ ygnY5ed_cA6oT27gzyKcf55Lwr4_551HdcvJc16AW9.yf3p60aboUwMZNGKDkgxG5RFw5CFlouXo
+ 3ya7tVxa3LaxAEgZiWb0Lb9MAXPNqpC0DB53NMyfW9Os70jG9ibKkMz_DYvxyKmph1GynRg5KLqE
+ ovsNgOiXXYKkoplpnKDnzOuAP9t9DQXggapzFvR2rSuSZdXTYlv3t00Ob_rvk6KNkAVY1W0rBJb7
+ Dc9encw4cYxTopFCQ5j_aAnv4kBE4bXtI6PQhptegeACwIbLRAqv9CuPlrhEwWbNYXIB8g4zp6I_
+ jYKBNbK4oBUjUk7YcHi2gPqUd.U2uFmhBNM8sbzlGPrkeFKy6fFEJt41Mkfi_6lGbn_aofA8xIJZ
+ ceY9hSCoUtBN_4EWIeT75aHow2.J4N98eW2NgkW_4.k2fdgDVMWcseihOeyxCx2RFkbxsd9KdLsg
+ j_glcQtModUuCYoNeNR6JvZkLpvyLURWiL050PEwLk.vRMBr0_l_AGCz0OmYpPbR9jCNAyfdEhhl
+ KtPQ0J98Q2PqhDx1.a1U5tY_aSnis19.hlcB9oV1Kkq_yHaVbnERSdp3dFVlISxTo_Ki6bzDNdTm
+ 9SbyWYt3quGH6JFZaYcV4dmqOHH_uvEjJqcQL2gPmpsDBeXfEVkUlswcR4LVD9Zt19LSJK5wTsO6
+ PBjIXfgDnE4HETtrwZijzELnoRTbj6hl18XmBEmV7wHbe4i4WUYyKZ3MFfRia6CX96e.uCYd3gEu
+ 8IQcrQeSNQvsrFvwdrsgDdBOEd4LDndHg5JmRwFncasxCmzt_m.4ETAJYcjFPQMrOntdflK5lIFb
+ AzKm.lz.TSGFbxX9io7cq_.IpF7aEZ.JOxffZdntPQ3O.QIUfzDMkzzudZuvJLgrBCodCEVSzOIX
+ ffrXtZ5wkcWoANy8mBzvR1VQ91jSswxIPPTvH671QZrrpaC8ei5arEUFB3LMXSw68UPLwE4_zUSE
+ hnHs6gNXvtyynnkdkTyWZ2BFitDQUBhyYbuM4A81pAGH80hI_NIRfbtR7tq8aH4iP6MmsBRncc3m
+ _33mUcV_GPkTNmc_Xme5PPcskO6boB2jFJmNE1AQrqWIT6ZsO1FgPHA6oJzzeZNxFgYx83jARxwL
+ loPCHanaSMSkb
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Wed, 11 Dec 2019 17:10:15 +0000
+Received: by smtp413.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 78b50f606b195eafc3a6178574d6a883;
+          Wed, 11 Dec 2019 17:10:09 +0000 (UTC)
+Date:   Thu, 12 Dec 2019 01:09:58 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Michael <fedora.dm0@gmail.com>,
+        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        Wang Li <wangli74@huawei.com>
+Subject: [GIT PULL] erofs fixes for 5.5-rc2
+Message-ID: <20191211170950.GA16027@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
-In-Reply-To: <20191210014335.GA25022@ming.t460p>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-ClientProxiedBy: lhreml728-chm.china.huawei.com (10.201.108.79) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191211170950.GA16027.ref@hsiangkao-HP-ZHAN-66-Pro-G1>
+X-Mailer: WebService/1.1.14728 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/2019 01:43, Ming Lei wrote:
->>>> For when the interrupt is managed, allow the threaded part to run on all
->>>> cpus in the irq affinity mask.
->>> I remembered that performance drop is observed by this approach in some
->>> test.
->>  From checking the thread about the NVMe interrupt swamp, just switching to
->> threaded handler alone degrades performance. I didn't see any specific
->> results for this change from Long Li -https://lkml.org/lkml/2019/8/21/128
+Hi Linus,
 
-Hi Ming,
+Could you consider these fixes for this 5.5 round?
 
-> I am pretty clear the reason for Azure, which is caused by aggressive interrupt
-> coalescing, and this behavior shouldn't be very common, and it can be
-> addressed by the following patch:
-
-I am running some NVMe perf tests with Marc's patch.
-
-I see this almost always eventually (with or without that patch):
-
-[   66.018140] rcu: INFO: rcu_preempt self-detected stall on CPU2% done] 
-[5058MB/0KB/0KB /s] [1295K/0/0 iops] [eta 01m:39s]
-[   66.023885] rcu: 12-....: (5250 ticks this GP) 
-idle=182/1/0x4000000000000004 softirq=517/517 fqs=2529
-[   66.033306] (t=5254 jiffies g=733 q=2241)
-[   66.037394] Task dump for CPU 12:
-[   66.040696] fio             R  running task        0   798    796 
-0x00000002
-[   66.047733] Call trace:
-[   66.050173]  dump_backtrace+0x0/0x1a0
-[   66.053823]  show_stack+0x14/0x20
-[   66.057126]  sched_show_task+0x164/0x1a0
-[   66.061036]  dump_cpu_task+0x40/0x2e8
-[   66.064686]  rcu_dump_cpu_stacks+0xa0/0xe0
-[   66.068769]  rcu_sched_clock_irq+0x6d8/0xaa8
-[   66.073027]  update_process_times+0x2c/0x50
-[   66.077198]  tick_sched_handle.isra.14+0x30/0x50
-[   66.081802]  tick_sched_timer+0x48/0x98
-[   66.085625]  __hrtimer_run_queues+0x120/0x1b8
-[   66.089968]  hrtimer_interrupt+0xd4/0x250
-[   66.093966]  arch_timer_handler_phys+0x28/0x40
-[   66.098398]  handle_percpu_devid_irq+0x80/0x140
-[   66.102915]  generic_handle_irq+0x24/0x38
-[   66.106911]  __handle_domain_irq+0x5c/0xb0
-[   66.110995]  gic_handle_irq+0x5c/0x148
-[   66.114731]  el1_irq+0xb8/0x180
-[   66.117858]  efi_header_end+0x94/0x234
-[   66.121595]  irq_exit+0xd0/0xd8
-[   66.124724]  __handle_domain_irq+0x60/0xb0
-[   66.128806]  gic_handle_irq+0x5c/0x148
-[   66.132542]  el0_irq_naked+0x4c/0x54
-[   97.152870] rcu: INFO: rcu_preempt self-detected stall on CPU8% done] 
-[4736MB/0KB/0KB /s] [1212K/0/0 iops] [eta 01m:08s]
-[   97.158616] rcu: 8-....: (1 GPs behind) idle=08e/1/0x4000000000000002 
-softirq=462/505 fqs=2621
-[   97.167414] (t=5253 jiffies g=737 q=5507)
-[   97.171498] Task dump for CPU 8:
-[pu_task+0x40/0x2e8
-[   97.198705]  rcu_dump_cpu_stacks+0xa0/0xe0
-[   97.202788]  rcu_sched_clock_irq+0x6d8/0xaa8
-[   97.207046]  update_process_times+0x2c/0x50
-[   97.211217]  tick_sched_handle.isra.14+0x30/0x50
-[   97.215820]  tick_sched_timer+0x48/0x98
-[   97.219644]  __hrtimer_run_queues+0x120/0x1b8
-[   97.223989]  hrtimer_interrupt+0xd4/0x250
-[   97.227987]  arch_timer_handler_phys+0x28/0x40
-[   97.232418]  handle_percpu_devid_irq+0x80/0x140
-[   97.236935]  generic_handle_irq+0x24/0x38
-[   97.240931]  __handle_domain_irq+0x5c/0xb0
-[   97.245015]  gic_handle_irq+0x5c/0x148
-[   97.248751]  el1_irq+0xb8/0x180
-[   97.251880]  find_busiest_group+0x18c/0x9e8
-[   97.256050]  load_balance+0x154/0xb98
-[   97.259700]  rebalance_domains+0x1cc/0x2f8
-[   97.263783]  run_rebalance_domains+0x78/0xe0
-[   97.268040]  efi_header_end+0x114/0x234
-[   97.271864]  run_ksoftirqd+0x38/0x48
-[   97.275427]  smpboot_thread_fn+0x16c/0x270
-[   97.279511]  kthread+0x118/0x120
-[   97.282726]  ret_from_fork+0x10/0x18
-[   97.286289] Task dump for CPU 12:
-[   97.289591] kworker/12:1    R  running task        0   570      2 
-0x0000002a
-[   97.296634] Workqueue:  0x0 (mm_percpu_wq)
-[   97.300718] Call trace:
-[   97.303152]  __switch_to+0xbc/0x218
-[   97.306632]  page_wait_table+0x1500/0x1800
-
-Would this be the same interrupt "swamp" issue?
-
-> 
-> http://lists.infradead.org/pipermail/linux-nvme/2019-November/028008.html
-> 
-
-What is the status of these patches? I did not see them in mainline.
-
-> Then please share your lockup story, such as, which HBA/drivers, test steps,
-> if you complete IOs from multiple disks(LUNs) on single CPU, if you have
-> multiple queues, how many active LUNs involved in the test, ...
-> 
-> 
+Mainly address a regression reported by David recently observed
+together with overlayfs due to the improper return value of listxattr()
+without xattr. Update outdated expressions in document as well.
 
 Thanks,
-John
+Gao Xiang
 
+The following changes since commit 219d54332a09e8d8741c1e1982f5eae56099de85:
+
+  Linux 5.4 (2019-11-24 16:32:01 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-5.5-rc2-fixes
+
+for you to fetch changes up to ffafde478309af01b2a495ecaf203125abfb35bd:
+
+  erofs: update documentation (2019-12-08 21:37:01 +0800)
+
+----------------------------------------------------------------
+Changes since last update:
+
+- Fix improper return value of listxattr() with no xattr;
+
+- Keep up documentation with latest code.
+
+----------------------------------------------------------------
+Gao Xiang (2):
+      erofs: zero out when listxattr is called with no xattr
+      erofs: update documentation
+
+ Documentation/filesystems/erofs.txt | 27 ++++++++++++++-------------
+ fs/erofs/xattr.c                    |  2 ++
+ 2 files changed, 16 insertions(+), 13 deletions(-)
