@@ -2,89 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B78FD11BE98
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 21:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F3911BE37
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 21:46:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfLKUwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 15:52:36 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:45499 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbfLKUwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 15:52:36 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726960AbfLKUqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 15:46:11 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32225 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726925AbfLKUqH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 15:46:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576097166;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RdRBEoYxRIkuYEuDHr3V4GvXlKW2Lf5ylOPLl+U6EFw=;
+        b=JeERaHUwD4cdloIb60iZKQcRP/DhF9rYJAvhT0MYmN7hOip+6OSmzh4vVUNkX0jI7s3o2P
+        noGp2YMr4kcl2bJxTyO7CdeoY7KjqcLni85/KVIyeHpMwDvArgpJUFAqdWMjcIDCM57t3x
+        Sndyo50ztMJ4Eeoju3zKDs86XPIkd9A=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-345-kBsvBemiNpC3wBla7JKNyw-1; Wed, 11 Dec 2019 15:46:03 -0500
+X-MC-Unique: kBsvBemiNpC3wBla7JKNyw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Y87T6bYYz9sR7;
-        Thu, 12 Dec 2019 07:44:53 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1576097094;
-        bh=o188grKvGRAXTTRAnmYypQCL6OQC91z4G0LRS+LQ9yk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=EuQ7lqAmd3k+ojpEH+8KqWwFGDWHUsTdx1Zcrqh3raGhv9MX6BkdqzivE5WryIgDe
-         K4kUiXms+3EeC/P3wt+pceKXQ6ug2yROahey3oXcZ40iVxRrKar59p7SpowBJUUEtq
-         ptaZ6QYFsXG65fnumWzDRv7LgGhvrCkjNt408QfGWGGhr/P5LcYqxaW2hC4vC5cTLA
-         47S/fJATL7XHAQOcA+CIr4h/fTwGrzWXyA4vRkVEat7msmrvf8xMDGscEG3tLb/3ka
-         ALZcJq5J+8laRUppDg+Yt99tSeEKOg6lZR3QS+rZsUM06iOGYBogqrlB5SSUpAb4YC
-         VxfVK5qM7uoVw==
-Date:   Thu, 12 Dec 2019 07:44:51 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kbuild test robot <lkp@intel.com>
-Subject: linux-next: Fixes tag needs some work in the rcu tree
-Message-ID: <20191212074451.18c69a64@canb.auug.org.au>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2BC1C1883534;
+        Wed, 11 Dec 2019 20:46:02 +0000 (UTC)
+Received: from ovpn-116-192.phx2.redhat.com (ovpn-116-192.phx2.redhat.com [10.3.116.192])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A1DA60BB1;
+        Wed, 11 Dec 2019 20:46:01 +0000 (UTC)
+Message-ID: <9a4db39373cf4acaf91ef6db92df116b74fef992.camel@redhat.com>
+Subject: Re: [PATCH] timers/nohz: Update nohz load even if tick already
+ stopped
+From:   Scott Wood <swood@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 11 Dec 2019 14:46:01 -0600
+In-Reply-To: <20191030133130.GY4097@hirez.programming.kicks-ass.net>
+References: <20191028150716.22890-1-frederic@kernel.org>
+         <20191029100506.GJ4114@hirez.programming.kicks-ass.net>
+         <52d963553deda810113accd8d69b6dffdb37144f.camel@redhat.com>
+         <20191030133130.GY4097@hirez.programming.kicks-ass.net>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gzX7T1NyZWQ1_=iUBWQx_tN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gzX7T1NyZWQ1_=iUBWQx_tN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2019-10-30 at 14:31 +0100, Peter Zijlstra wrote:
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index eb42b71faab9..d02d1b8f40af 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3660,21 +3660,17 @@ static void sched_tick_remote(struct work_struct
+> *work)
+>  	u64 delta;
+>  	int os;
+>  
+> -	/*
+> -	 * Handle the tick only if it appears the remote CPU is running in
+> full
+> -	 * dynticks mode. The check is racy by nature, but missing a tick or
+> -	 * having one too much is no big deal because the scheduler tick
+> updates
+> -	 * statistics and checks timeslices in a time-independent way,
+> regardless
+> -	 * of when exactly it is running.
+> -	 */
+> -	if (idle_cpu(cpu) || !tick_nohz_tick_stopped_cpu(cpu))
+> +	if (!tick_nohz_tick_stopped_cpu(cpu))
+>  		goto out_requeue;
+>  
+>  	rq_lock_irq(rq, &rf);
+> -	curr = rq->curr;
+> -	if (is_idle_task(curr) || cpu_is_offline(cpu))
+> +	/*
+> +	 * We must not call calc_load_nohz_remote() when not in NOHZ mode.
+> +	 */
+> +	if (cpu_is_offline(cpu) || !tick_nohz_tick_stopped(cpu))
+>  		goto out_unlock;
 
-Hi all,
+Is it really a problem if calc_load_nohz_remote() gets called in
+non-NOHZ?  It won't race due to rq lock -- and we're already mixing
+remote and non-remote updates because the normal tick timer can still be
+run while "stopped".
 
-In commit
+-Scott
 
-  3b570f534011 ("rcutorture: The rcu_boot_ended variable can be static")
-
-Fixes tag
-
-  Fixes: 68ce6668914d ("rcutorture: Suppress forward-progress complaints du=
-ring early boot")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: 7e1204f7a29e ("rcutorture: Suppress forward-progress complaints duri=
-ng early boot")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gzX7T1NyZWQ1_=iUBWQx_tN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3xVUMACgkQAVBC80lX
-0GxyZgf+PaAQQyzo3lOH6jxw7T5/sY4vo1MgQmqOER8XrHwGOvP7UC1BW1dBhmTb
-x5GqMGIaTSUKgqt0RjeSJwdrwvQ8owd6je/YA7acRgPoHvB6XjCJ8srMgGUtQLXd
-Bojdu8NJvDR9f7/kt1fty57rnV2h1HKptK4Uyxx/DiAwtpKN2j+Dm31Abn/ELmcZ
-a5Q91UiC54iqb4YDO+hSBmPfMHwlLdB4rwvvfA7W5nkEJnqmlv6m1Us2JCjSOV+h
-3vUMpbb5atb7jeRTPXnSoEJiMf0fcWrNEcBpOipl7Z8FxRQMqtA+eYe8VuP+xUcL
-lXifHls8qcdge/I88SaIGc5+mfddRQ==
-=/OSC
------END PGP SIGNATURE-----
-
---Sig_/gzX7T1NyZWQ1_=iUBWQx_tN--
