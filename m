@@ -2,149 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 376B211A721
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5028C11A728
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 10:32:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbfLKJap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 04:30:45 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35344 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728404AbfLKJao (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 04:30:44 -0500
-Received: by mail-qt1-f193.google.com with SMTP id s8so5710621qte.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 01:30:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2BC+9/TiZfps/b95kJW4uBoQA4KaDxSNdYTJBUn4gCs=;
-        b=NPdllIBA+bj+UStDT7bl1Rv1PclFC4OqrdpoNdXo7cz0Mj3FkjxI7pucjAVFANaogi
-         NffE55LMj+mJ4LTVFm3bo448ejF9005PtfGOKoL+yTsoq5GKf6d0nGG27QNWKnRCeR0N
-         p9x0u0eR+7IbL+Q6djt0iTdnKLCIC3O6fdu2+FXFF20Ghki/CCvNgGlK2G6q7JTApE73
-         it0Wf6/UpiTErJcyhUgIPY4BHonA5IkzXb9j2/d0yRW8o99nrsbIYRxYpNzgVy0E6A/3
-         vTglo5Mm4bq6+Ay6AKQU8yPUea8RGK3cdIxqXAqKlbCktXdNOBxZxzbzJB8yfqSQnjrL
-         j5qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2BC+9/TiZfps/b95kJW4uBoQA4KaDxSNdYTJBUn4gCs=;
-        b=eO9CFYw0L7OAVYjoKPIurOT8fKiB31IYDU2eEpFYTk6zIaydevyicAsc3r/CbdO12R
-         m7dgUbHX4OjDpNkjXyMwZP2Onpj4LxcudZ5zUj1nLwKYJRwqnOWrUS1q5Pyv7w9Vsd1z
-         VbdMN9yW4cwxuCg5cJJQ1xjAg0e18EoP4cpIaDtgG1el8rxjhNtNF0smeiH4nfxnD9Li
-         +qVlBtXGfGyGDUgrFLI74SujJNSXRh5hYBUFp0c9nxy7YtsqZXgfReqZkFNsk9+UbRVa
-         SeNW0i5F+HtsbdnF4O7htqZdGH5Tqyy4kM4JGmyxNyx6ANjFlizGD2K/XOPZ3XmR/Zwg
-         jdpg==
-X-Gm-Message-State: APjAAAVy/Mdt/h560HFTmXB6ihzM7SweWFVz502t2XD2OqbNPtf9jYTF
-        jNICcy9DGexN7nSJDJEtHuEyegePuxnkxAuXPOf7Xg==
-X-Google-Smtp-Source: APXvYqxaTP18w6zc4VO5j7KsdsiDxibQ8t/74TgQNa6gYF+g7p5dJRc/VEErwcCQJiSS7ym4scFbWgWHFE2Li4AvAc4=
-X-Received: by 2002:ac8:6691:: with SMTP id d17mr1791217qtp.57.1576056643909;
- Wed, 11 Dec 2019 01:30:43 -0800 (PST)
+        id S1728532AbfLKJb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 04:31:59 -0500
+Received: from mga05.intel.com ([192.55.52.43]:48558 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727829AbfLKJb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 04:31:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 01:31:58 -0800
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="207613299"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 01:31:54 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "S\, Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Qian Cai <cai@lca.pw>, Ingo Molnar <mingo@kernel.org>,
+        Dave Airlie <airlied@linux.ie>
+Subject: Re: linux-next: build failure after merge of the drm-intel tree
+In-Reply-To: <20191210094224.4a294cb7@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20191210093957.5120f717@canb.auug.org.au> <20191210094224.4a294cb7@canb.auug.org.au>
+Date:   Wed, 11 Dec 2019 11:31:51 +0200
+Message-ID: <87a77z4394.fsf@intel.com>
 MIME-Version: 1.0
-References: <1575451330-11112-1-git-send-email-peng.fan@nxp.com>
- <1575451330-11112-2-git-send-email-peng.fan@nxp.com> <20191204100925.sjp6cztozlm5qm6y@pengutronix.de>
-In-Reply-To: <20191204100925.sjp6cztozlm5qm6y@pengutronix.de>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 11 Dec 2019 10:30:33 +0100
-Message-ID: <CAMpxmJWMSnTB6JF8vOCmQzE3swWhbx8uwNEzU=qf49L26QCDPQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] gpio: bcm-kona: use platform_irq_count
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Peng Fan <peng.fan@nxp.com>,
-        "rjui@broadcom.com" <rjui@broadcom.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "sbranden@broadcom.com" <sbranden@broadcom.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 4 gru 2019 o 11:09 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+On Tue, 10 Dec 2019, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> On Wed, Dec 04, 2019 at 09:24:39AM +0000, Peng Fan wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > platform_irq_count() is the more generic way (independent of
-> > device trees) to determine the count of available interrupts. So
-> > use this instead.
-> >
-> > As platform_irq_count() might return an error code (which
-> > of_irq_count doesn't) some additional handling is necessary.
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >
-> > V3:
-> >  Use %pe
+> [Just adding Dave Airlie to the cc list]
 >
-> Great. Note that with %pe there is a dependency on commit 57f5677e535b
-> ("printf: add support for printing symbolic error names") which was
-> applied during the current merge window.
->
+> On Tue, 10 Dec 2019 09:39:57 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the drm-intel tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
 
-Why would %pe be better in this case? The function returned an int -
-why convert it to a pointer?
+FYI, I've now backmerged drm-next and thus v5.5-rc1 to
+drm-intel-next-queued, resolving the conflict.
 
-Bart
+BR,
+Jani.
 
-> > V2:
-> >  Update commit log, and add err handling
-> >  Not tested, just code inspection
-> >
-> >
-> >  drivers/gpio/gpio-bcm-kona.c | 12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.=
-c
-> > index 4122683eb1f9..baee8c3f06ad 100644
-> > --- a/drivers/gpio/gpio-bcm-kona.c
-> > +++ b/drivers/gpio/gpio-bcm-kona.c
-> > @@ -19,7 +19,6 @@
-> >  #include <linux/io.h>
-> >  #include <linux/gpio/driver.h>
-> >  #include <linux/of_device.h>
-> > -#include <linux/of_irq.h>
-> >  #include <linux/init.h>
-> >  #include <linux/irqdomain.h>
-> >  #include <linux/irqchip/chained_irq.h>
-> > @@ -586,11 +585,18 @@ static int bcm_kona_gpio_probe(struct platform_de=
-vice *pdev)
-> >
-> >       kona_gpio->gpio_chip =3D template_chip;
-> >       chip =3D &kona_gpio->gpio_chip;
-> > -     kona_gpio->num_bank =3D of_irq_count(dev->of_node);
-> > -     if (kona_gpio->num_bank =3D=3D 0) {
-> > +     ret =3D platform_irq_count(pdev);
-> > +     if (!ret) {
-> >               dev_err(dev, "Couldn't determine # GPIO banks\n");
-> >               return -ENOENT;
-> > +     } else if (ret < 0) {
-> > +             if (ret !=3D -EPROBE_DEFER)
-> > +                     dev_err(dev, "Couldn't determine GPIO banks: (%pe=
-)\n",
-> > +                             ERR_PTR(ret));
->
-> I'd say drop either the colon or the parenthesis.
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | https://www.pengutronix.de/ =
-|
+
+>> 
+>> In file included from include/linux/spinlock_types.h:18,
+>>                  from include/linux/mutex.h:16,
+>>                  from include/linux/kernfs.h:12,
+>>                  from include/linux/sysfs.h:16,
+>>                  from include/linux/kobject.h:20,
+>>                  from include/linux/of.h:17,
+>>                  from include/linux/irqdomain.h:35,
+>>                  from include/linux/acpi.h:13,
+>>                  from drivers/gpu/drm/i915/i915_drv.c:30:
+>> drivers/gpu/drm/i915/gem/i915_gem_object.h: In function 'i915_gem_object_pin_pages':
+>> include/linux/lockdep.h:635:2: error: too many arguments to function 'lock_release'
+>>   635 |  lock_release(&(lock)->dep_map, 0, _THIS_IP_);  \
+>>       |  ^~~~~~~~~~~~
+>> drivers/gpu/drm/i915/gem/i915_gem_object.h:294:2: note: in expansion of macro 'might_lock_nested'
+>>   294 |  might_lock_nested(&obj->mm.lock, I915_MM_GET_PAGES);
+>>       |  ^~~~~~~~~~~~~~~~~
+>> include/linux/lockdep.h:352:13: note: declared here
+>>   352 | extern void lock_release(struct lockdep_map *lock, unsigned long ip);
+>>       |             ^~~~~~~~~~~~
+>> In file included from include/linux/spinlock_types.h:18,
+>>                  from include/linux/spinlock.h:83,
+>>                  from include/linux/mmzone.h:8,
+>>                  from include/linux/gfp.h:6,
+>>                  from include/linux/slab.h:15,
+>>                  from drivers/gpu/drm/i915/i915_irq.c:32:
+>> drivers/gpu/drm/i915/gem/i915_gem_object.h: In function 'i915_gem_object_pin_pages':
+>> include/linux/lockdep.h:635:2: error: too many arguments to function 'lock_release'
+>>   635 |  lock_release(&(lock)->dep_map, 0, _THIS_IP_);  \
+>>       |  ^~~~~~~~~~~~
+>> drivers/gpu/drm/i915/gem/i915_gem_object.h:294:2: note: in expansion of macro 'might_lock_nested'
+>>   294 |  might_lock_nested(&obj->mm.lock, I915_MM_GET_PAGES);
+>>       |  ^~~~~~~~~~~~~~~~~
+>> include/linux/lockdep.h:352:13: note: declared here
+>>   352 | extern void lock_release(struct lockdep_map *lock, unsigned long ip);
+>>       |             ^~~~~~~~~~~~
+>> 
+>> Caused by commit
+>> 
+>>   e692b4021a2e ("lockdep: add might_lock_nested()")
+>> 
+>> interacting with commit
+>> 
+>>   5facae4f3549 ("locking/lockdep: Remove unused @nested argument from lock_release()")
+>> 
+>> from Linus' tree.
+>> 
+>> I have applied the following merge fix patch for today:
+>> 
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Tue, 10 Dec 2019 09:37:07 +1100
+>> Subject: [PATCH] lockdep: fix up for lock_release API change
+>> 
+>> ---
+>>  include/linux/lockdep.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+>> index 5bbfd5866081..664f52c6dd4c 100644
+>> --- a/include/linux/lockdep.h
+>> +++ b/include/linux/lockdep.h
+>> @@ -632,7 +632,7 @@ do {									\
+>>  	typecheck(struct lockdep_map *, &(lock)->dep_map);		\
+>>  	lock_acquire(&(lock)->dep_map, subclass, 0, 1, 1, NULL,		\
+>>  		     _THIS_IP_);					\
+>> -	lock_release(&(lock)->dep_map, 0, _THIS_IP_);		\
+>> +	lock_release(&(lock)->dep_map, _THIS_IP_);			\
+>>  } while (0)
+>>  
+>>  #define lockdep_assert_irqs_enabled()	do {				\
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
