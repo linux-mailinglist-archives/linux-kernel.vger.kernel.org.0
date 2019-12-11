@@ -2,87 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF88111AA59
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 12:59:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB85C11AA6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:01:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfLKL7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 06:59:11 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:37382 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727365AbfLKL7L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 06:59:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576065550;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1MJ/fwuQR4t72zOTPK9wMDKlEy/poZs/KypX6iUojPE=;
-        b=IKdKrh/UWy1Sc+RwHR0y9ojYKC4XJJDgtyTIQVtnu5KscOLwB9JsueOeyKcRXl168EEiD/
-        5TeH+Cu4X/L7g9D50FJmubRVMVkjAnbsg7cKCGPeJYANg5RTmGLLxktc3AhWNG8ZiZR8DK
-        RmQElv3F0ngr2xCYjyh9RiGVU/vVgcY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-323-2FEyLIKVOxWoD7oWFM6o2w-1; Wed, 11 Dec 2019 06:59:08 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EFBF718552A1;
-        Wed, 11 Dec 2019 11:59:06 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E168263BCE;
-        Wed, 11 Dec 2019 11:59:06 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id D105083701;
-        Wed, 11 Dec 2019 11:59:06 +0000 (UTC)
-Date:   Wed, 11 Dec 2019 06:59:06 -0500 (EST)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>
-Message-ID: <1494038413.477288.1576065546815.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20191210113737.4016-5-johan@kernel.org>
-References: <20191210113737.4016-1-johan@kernel.org> <20191210113737.4016-5-johan@kernel.org>
-Subject: Re: [PATCH 4/7] Input: gtco: fix endpoint sanity check
+        id S1728997AbfLKMBr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 07:01:47 -0500
+Received: from mga01.intel.com ([192.55.52.88]:58459 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727851AbfLKMBr (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 07:01:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 04:01:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="220436400"
+Received: from leileihe-mobl.ccr.corp.intel.com (HELO [10.254.211.25]) ([10.254.211.25])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Dec 2019 04:01:44 -0800
+Subject: Re: [PATCH v2 1/3] perf report: Change sort order by a specified
+ event in group
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20191211073036.31504-1-yao.jin@linux.intel.com>
+ <20191211113815.GB12087@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <6ba174a8-309e-9410-e6ea-ac7bb7187757@linux.intel.com>
+Date:   Wed, 11 Dec 2019 20:01:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-X-Originating-IP: [10.40.205.203, 10.4.195.10]
-Thread-Topic: Input: gtco: fix endpoint sanity check
-Thread-Index: 3V9+GHLYaSjQ6iE6ppPbHQZjaM9agA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: 2FEyLIKVOxWoD7oWFM6o2w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191211113815.GB12087@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks, Johan! A fix for a bug indeed.
 
-Best regards,
-Vladis Dronov | Red Hat, Inc. | The Core Kernel | Senior Software Engineer
 
------ Original Message -----
-> From: "Johan Hovold" <johan@kernel.org>
-> To: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
-> Cc: linux-input@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, "Johan Hovold"
-> <johan@kernel.org>, "stable" <stable@vger.kernel.org>, "Vladis Dronov" <vdronov@redhat.com>
-> Sent: Tuesday, December 10, 2019 12:37:34 PM
-> Subject: [PATCH 4/7] Input: gtco: fix endpoint sanity check
+On 12/11/2019 7:38 PM, Jiri Olsa wrote:
+> On Wed, Dec 11, 2019 at 03:30:34PM +0800, Jin Yao wrote:
 > 
-> The driver was checking the number of endpoints of the first alternate
-> setting instead of the current one, something which could lead to the
-> driver binding to an invalid interface.
+> SNIP
 > 
-> This in turn could cause the driver to misbehave or trigger a WARN() in
-> usb_submit_urb() that kernels with panic_on_warn set would choke on.
+>> +
+>> +static int __hpp__group_sort_idx(struct hist_entry *a, struct hist_entry *b,
+>> +				 hpp_field_fn get_field, int idx)
+>> +{
+>> +	struct evsel *evsel = hists_to_evsel(a->hists);
+>> +	u64 *fields_a, *fields_b;
+>> +	int cmp, nr_members, ret, i;
+>> +
+>> +	cmp = field_cmp(get_field(a), get_field(b));
+>> +	if (!perf_evsel__is_group_event(evsel))
+>> +		return cmp;
+>> +
+>> +	nr_members = evsel->core.nr_members;
+>> +	ret = pair_fields_alloc(a, b, get_field, nr_members,
+>> +			      &fields_a, &fields_b);
+>> +	if (ret) {
+>> +		ret = cmp;
+>> +		goto out;
+>> +	}
+>> +
+>> +	for (i = 1; i < nr_members; i++) {
+>> +		if (i == idx) {
+>> +			ret = field_cmp(fields_a[i], fields_b[i]);
+>> +			if (ret)
+>> +				goto out;
+>> +		}
+>> +	}
+>> +
+>> +	if (cmp) {
+>> +		ret = cmp;
+>> +		goto out;
+>> +	}
+>> +
+>> +	for (i = 1; i < nr_members; i++) {
+>> +		if (i != idx) {
+>> +			ret = field_cmp(fields_a[i], fields_b[i]);
+>> +			if (ret)
+>> +				goto out;
+>> +		}
 > 
-> Fixes: 162f98dea487 ("Input: gtco - fix crash on detecting device without
-> endpoints")
-> Cc: stable <stable@vger.kernel.org>     # 4.6
-> Cc: Vladis Dronov <vdronov@redhat.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+> hi,
+> I'm missing why we compare the fields for 2nd time in here
+> 
+> thanks,
+> jirka
+> 
 
+Hi,
+
+I think we may continue comparing the remaining of fields if the index 
+field is equal. :)
+
+Thanks
+Jin Yao
