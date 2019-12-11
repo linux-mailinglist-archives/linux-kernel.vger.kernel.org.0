@@ -2,180 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2F6211AC57
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 14:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A0B011AC5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 14:46:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729655AbfLKNpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 08:45:34 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:37335 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729029AbfLKNpd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 08:45:33 -0500
-Received: by mail-vs1-f68.google.com with SMTP id x18so15770243vsq.4;
-        Wed, 11 Dec 2019 05:45:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=h6iaaC/ZysMWw2yq1ayAfJEWzcGD5SfpZw0LM+PG5Xc=;
-        b=IdruJzk2JNyzcV97HrSSa2wrfDo+1xFfhqhgOmCWs6L1Fs7uXDy4W7mTo6uQOi1gCN
-         M/BtB7crbkEHU2eAUlc77fV7Vtwtvnog1q276H2kD4xGjR9rUIWp5LIy2PdDNY8qvylS
-         Gz9LZ8FAJapQxirsBBHPreFi2+OyFEnKChkbM79brca4MoBBZIBhouKwkqGp4ob79wFR
-         m9nOUrqnQ7Ayg/JajABHR54XxHcqhZeooSEG1I1GJqsPzDyerO6EMZeJbi0Sotd9J2mi
-         zTs1KjgrEMDib/4WAo5DPnDzwAawrx57TiRi/MlY9TuHCMvY0F7oaEzX4cdWaBroMehn
-         V2Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=h6iaaC/ZysMWw2yq1ayAfJEWzcGD5SfpZw0LM+PG5Xc=;
-        b=k72y+zy/lsh5mSutsF6HISRc2L9apHoGiohryuZJCPumAAwCjrWeoaG38hL+N1Wm+p
-         6k868Gvo2PAduJ6JKzfRdJjJ8IaZO78Ij13BvPd+cT571E7Ck11MPzJkXv7QOAalIczk
-         sRd1g1dqNpBExUQhiCQWTpsvgWSKOAB17RRSqzf6IY6HxnpMuxcgPtpSrlLDYDvTsRFw
-         DhFXrRhTAB3P6CdkfxsRpqCLweWN+3HndjL2nMqrGY9Tm9Smuekj/BJuf0+ADFcbM3GT
-         jDEtZggk+gvUhirO60eNgvJs75IYGgSqKrLTxxtB8wO/23wMdz5fdnD3H6g8jL8sx8S1
-         qahw==
-X-Gm-Message-State: APjAAAV16H0yBefuY1EnK2R4gZrfI5aSkzaOSsQSdrIAqEW9nLOlzy6k
-        3jBysirfrfh6mI7PslYXX30=
-X-Google-Smtp-Source: APXvYqx6WVGS/Ds8lX1CGUdz9o9yog/QyPFPEZBmir10Exu7My2T3F/QnIcVL8VtU3LFtHsoKMA1dQ==
-X-Received: by 2002:a67:d592:: with SMTP id m18mr2716755vsj.85.1576071932181;
-        Wed, 11 Dec 2019 05:45:32 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id r1sm1021823vsi.33.2019.12.11.05.45.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 05:45:31 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id DDF2140352; Wed, 11 Dec 2019 10:45:28 -0300 (-03)
-Date:   Wed, 11 Dec 2019 10:45:28 -0300
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     Kajol Jain <kjain@linux.ibm.com>, Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Subject: Re: [PATCH] tools/perf/metricgroup: Fix printing event names of
- metric group with multiple events
-Message-ID: <20191211134528.GC15181@kernel.org>
-References: <20191120084059.24458-1-kjain@linux.ibm.com>
- <ed80bcc2-a507-bcf8-9084-181b18b6a95f@linux.ibm.com>
+        id S1729694AbfLKNqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 08:46:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54136 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728128AbfLKNp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 08:45:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B7846AD66;
+        Wed, 11 Dec 2019 13:45:57 +0000 (UTC)
+Date:   Wed, 11 Dec 2019 14:45:57 +0100
+From:   Libor Pechacek <lpechacek@suse.cz>
+To:     Vasily Gorbik <gor@linux.ibm.com>, Miroslav Benes <mbenes@suse.cz>
+Cc:     heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        jpoimboe@redhat.com, joe.lawrence@redhat.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jikos@kernel.org, pmladek@suse.com, nstange@suse.de,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] s390/livepatch: Implement reliable stack tracing
+ for the consistency model
+Message-ID: <20191211134557.GC4080@fm.suse.cz>
+References: <20191106095601.29986-5-mbenes@suse.cz>
+ <cover.thread-a0061f.your-ad-here.call-01575012971-ext-9115@work.hours>
+ <alpine.LSU.2.21.1911291522140.23789@pobox.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ed80bcc2-a507-bcf8-9084-181b18b6a95f@linux.ibm.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <alpine.LSU.2.21.1911291522140.23789@pobox.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Dec 04, 2019 at 12:25:22PM +0530, Ravi Bangoria escreveu:
+On Fri 29-11-19 19:16:38, Miroslav Benes wrote:
+> On Fri, 29 Nov 2019, Vasily Gorbik wrote:
+[...]
+> > https://github.com/lpechacek/qa_test_klp seems outdated. I was able to
+> > fix and run some tests of it but haven't had time to figure out all of
+> > them. Is there a version that would run on top of current Linus tree?
 > 
-> 
-> On 11/20/19 2:10 PM, Kajol Jain wrote:
-> > Commit f01642e4912b ("perf metricgroup: Support multiple
-> > events for metricgroup") introduced support for multiple events
-> > in a metric group. But with the current upstream, metric events
-> > names are not printed properly
-> > 
-> > In power9 platform:
-> > command:# ./perf stat --metric-only -M translation -C 0 -I 1000 sleep 2
-> >       1.000208486
-> >       2.000368863
-> >       2.001400558
-> > 
-> > Similarly in skylake platform:
-> > command:./perf stat --metric-only -M Power -I 1000
-> >       1.000579994
-> >       2.002189493
-> > 
-> > With current upstream version, issue is with event name comparison
-> > logic in find_evsel_group(). Current logic is to compare events
-> > belonging to a metric group to the events in perf_evlist.
-> > Since the break statement is missing in the loop used for comparison
-> > between metric group and perf_evlist events, the loop continues to
-> > execute even after getting a pattern match, and end up in discarding
-> > the matches.
-> > Incase of single metric event belongs to metric group, its working fine,
-> > because in case of single event once it compare all events it reaches to
-> > end of perf_evlist.
-> > 
-> > Example for single metric event in power9 platform
-> > command:# ./perf stat --metric-only  -M branches_per_inst -I 1000 sleep 1
-> >       1.000094653                  0.2
-> >       1.001337059                  0.0
-> > 
-> > Patch fixes the issue by making sure once we found all events
-> > belongs to that metric event matched in find_evsel_group(), we
-> > successfully break from that loop by adding corresponding condition.
-> > 
-> > With this patch:
-> > In power9 platform:
-> > 
-> > command:# ./perf stat --metric-only -M translation -C 0 -I 1000 sleep 2
-> > result:#           time derat_4k_miss_rate_percent  derat_4k_miss_ratio
-> >       derat_miss_ratio derat_64k_miss_rate_percent derat_64k_miss_ratio
-> >           dslb_miss_rate_percent islb_miss_rate_percent
-> >       1.000135672                         0.0                  0.3
-> >                    1.0                          0.0                  0.2
-> >                   0.0                     0.0
-> >       2.000380617                         0.0                  0.0
-> >                                                0.0                  0.0
-> >                  0.0                     0.0
-> > 
-> > command:# ./perf stat --metric-only -M Power -I 1000
-> > 
-> > Similarly in skylake platform:
-> > result:#           time    Turbo_Utilization    C3_Core_Residency
-> >              C6_Core_Residency    C7_Core_Residency     C2_Pkg_Residency
-> >               C3_Pkg_Residency     C6_Pkg_Residency     C7_Pkg_Residency
-> >       1.000563580                  0.3                  0.0
-> >                    2.6                44.2                 21.9
-> >                    0.0                  0.0                  0.0
-> >       2.002235027                  0.4                  0.0
-> >                    2.7           43.0                 20.7
-> >                    0.0                  0.0               0.0
-> > 
-> > Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
-> > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > Cc: Andi Kleen <ak@linux.intel.com>
-> > Cc: Jiri Olsa <jolsa@kernel.org>
-> > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Jin Yao <yao.jin@linux.intel.com>
-> > Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-> > Cc: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-> > Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> 
-> Fixes: f01642e4912b ("perf metricgroup: Support multiple events for metricgroup")
-> Reviewed-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Ah, sorry. I should have mentioned that. The code became outdated with 
+> recent upstream changes. Libor is working on the updates (CCed).
 
-Tested on a Skylake machine and applied.
+qa_test_klp has been refreshed. Feel free to test and report issues.
 
-> But while looking at the patch, I found that, commit f01642e4912b
-> has (again) screwed up logic for metric with overlapping events.
+Thanks!
 
-Is someone looking into this?
- 
->   $ sudo ./perf stat -M UPI,IPC sleep 1
-> 
->    Performance counter stats for 'sleep 1':
-> 
->            948,650      uops_retired.retire_slots
->            866,182      inst_retired.any          #      0.7 IPC
->            866,182      inst_retired.any
->          1,175,671      cpu_clk_unhalted.thread
-> 
-> This also needs to be fixed.
-> 
-> Ravi
-
+Libor
 -- 
-
-- Arnaldo
+Libor Pechacek
+SUSE Labs                                Remember to have fun...
