@@ -2,119 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E98211A3F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 06:38:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D047411A403
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 06:47:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfLKFfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 00:35:09 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34425 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfLKFfJ (ORCPT
+        id S1726759AbfLKFrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 00:47:33 -0500
+Received: from conuserg-10.nifty.com ([210.131.2.77]:23023 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbfLKFrd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 00:35:09 -0500
-Received: by mail-pl1-f196.google.com with SMTP id x17so955766pln.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 21:35:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2OO7/mhUSy6qobOmjDi9q9vof+DP3uQZkiBVuacLKKk=;
-        b=P0fDarWXXzotrsEuyawGcdziLBTOsrIYSry5uGgXRfzDcHHAkK+viauFdTpnQ4yve8
-         1xgWmcCiSjeQDpwG24LIJ4yhJS3Kg2pFn1yTG/QrccPysq4l+cLFFd/agHx/9Z728n37
-         iYskg5KWq81OaEPY5Ji0YbDdIO3IZ1pGTTaVth6r2xNC9dhcbf7y07X70s9rFMCN33/v
-         IYjvIe1K3xt10Bv3LW2HnVpj3zkqDbnNpDi373F715xMbuxTQNGWFlkqyasSKU/mJvHo
-         OSWrQ9VkbMxXS8kEOGlMHtxWdsAuJtIxSFxp5BW0NgnvFhACqFcQ3Uw6xnEBG6uq+gPw
-         PWEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2OO7/mhUSy6qobOmjDi9q9vof+DP3uQZkiBVuacLKKk=;
-        b=gs4lNz48Yjh2JDoszxTEU1XxdMEk88HSDulq+Wygv7WU3BHYWj3VjubGI0yHEIqtPy
-         wv3AWVYYTmXBqfvEkPZf26d9jPnpz4uHLAjeKOOmM3Grd+0wdynXYcF7pHQhOEGbzOce
-         aBm92/2EQlI2Sf12m5WZECrwuueRJWA+n64BTY99zBD8Qu2IOy6h8bCPWg3JADOD6yVI
-         uGXw45O+4gqvNOUmGcHIbuoBZdDSTo9aOQNUuTSTuj1NTznT3oQUj3JqUliGbytd/10a
-         uSoBv3Co+ITk/x44zt1XsPLyR4lQ3ARtGQsbVZFwnC+Pt680TQCCPVxog3cZ6u+qOITt
-         KjnQ==
-X-Gm-Message-State: APjAAAUYWQWlSG0hOAHDNx6+LJz1HxwMPnx2+eWd5N8xAQlTLgdSjANp
-        SXokHhtmABq3XyCLD5ua744=
-X-Google-Smtp-Source: APXvYqzs5IaM4QXj9sDAUMc2e5r8pCcEJ1XckzsWRuzDpDHC5KaA+/JP+VjHheuXLslNWhkU8rHkWg==
-X-Received: by 2002:a17:902:c509:: with SMTP id o9mr1358256plx.112.1576042508773;
-        Tue, 10 Dec 2019 21:35:08 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
-        by smtp.gmail.com with ESMTPSA id n188sm876052pga.84.2019.12.10.21.35.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 21:35:07 -0800 (PST)
-Date:   Wed, 11 Dec 2019 14:35:05 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC/PATCH] printk: Fix preferred console selection with
- multiple matches
-Message-ID: <20191211053505.GO88619@google.com>
-References: <b8131bf32a5572352561ec7f2457eb61cc811390.camel@kernel.crashing.org>
- <20191210080154.GJ88619@google.com>
- <98df321d16adb67c5579ac4b67d845fc0c2c97df.camel@kernel.crashing.org>
- <20191211020149.GN88619@google.com>
- <38b543cb91e936d7bd9f8885e585dd55032d83a4.camel@kernel.crashing.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38b543cb91e936d7bd9f8885e585dd55032d83a4.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 11 Dec 2019 00:47:33 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id xBB5jdVa019523;
+        Wed, 11 Dec 2019 14:45:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com xBB5jdVa019523
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576043141;
+        bh=UxDx8RnuQhkTN8+zyVJvCjCQ3hY035WRmN5rhX+qiCg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=abIzf/VHWf80xkCNM9Nq9l7bCTZhTmzvAGgpyGNxWkKxeNhSUY0HzAoJS1K5AHGZx
+         qcghRfQPNCejAohtVrKvGe/1q2hkoB7P1vRWONc2sa3mkdinujSyiHWkpZaoDcHVT2
+         zLPKf8piCsaFj9Z/2bobrErHtgQrZf7eTZhphVaG76AjykCd1sXuqDV4q+Y4tejqhZ
+         wZfufdLfCb6ZEkfRpHSeyvPdwg4bWncJdnoa0uyZE0hiubTf/osHL2jjna/WnDaNk1
+         nEwqKSCGynuEPXml7xxwpm/HF52oewbK7/qwron40H4rYnyHkUjYBlZuDcRXj5UonQ
+         V6RaKNL1cLNvQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org
+Cc:     Dinh Nguyen <dinguyen@kernel.org>, Marek Vasut <marex@denx.de>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-binding: mtd: denali_dt: document reset property
+Date:   Wed, 11 Dec 2019 14:45:37 +0900
+Message-Id: <20191211054538.8283-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (19/12/11 15:02), Benjamin Herrenschmidt wrote:
-> On Wed, 2019-12-11 at 11:01 +0900, Sergey Senozhatsky wrote:
-> > On (19/12/11 09:26), Benjamin Herrenschmidt wrote:
-> > 
-[..]
-> > If we could perform simple alias matching, without ->setup() call, and
-> > exact matching (strcmp()), and then, if newcon would match two entries,
-> > we would pick up the last matching entry and configure newcon only once.
-> > 
-> > This changes the order, tho.
-> 
-> Walking the array backwards might just be what we want actually for the
-> case at hand, but of course if some platforms or driver call
-> add_preferred_console *after* the command line parsing, then it will
-> break those.
+According to the Denali NAND Flash Memory Controller User's Guide,
+this IP has two reset signals.
 
-Reverse loop sounds like a nice idea. But yes I guess this can break
-things.
+  rst_n:     reset most of FFs in the controller core
+  reg_rst_n: reset all FFs in the register interface, and in the
+             initialization sequencer
 
-> Simple alias matching would require re-working all the match()
-> callbacks. That said I think it was a mistake to begin with to have
-> them include setup(). Those should have remained separate.
+This commit specifies those reset signals.
 
-Agreed. strcmp(alias) and strcmp(exact name) are the same things.
-The latter does "match" and setup() as separate steps, but the former
-does both at once.
+It is possible to control them separately from the IP point of view
+although they might be often tied up together in actual SoC integration.
 
-> What about a compromise here:
->
-> Instead of walking the array and testing for preferred_console as we do
-> so, we first test the array entry pointed to by preferred_console
-> (doing both match & setup as today) and if that doesn't work, fallback
-> to our existing mechanism ?
+At least for the upstream platforms, Altera/Intel SOCFPGA and Socionext
+UniPhier, the reset controller seems to provide only 1-bit control for
+the NAND controller. If it is the case, the resets property should
+reference to the same phandles for "nand" and "reg" resets, like this:
 
-This may do the trick.
-And perform preferred_console fast-path configuration only if
-`has_preferred' is false.
+    resets = <&nand_rst>, <&nand_rst>;
+    reset-names = "nand", "reg";
 
-> > Well, it still looks to me that what you want is to "ignore alias
-> > match and prefer exact match".
->
-> We don't want to ignore the alias match. But we do want to prefer the
-> exact match. We still want to keep the fallback to the alias match.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Yeah, "prefer" is the key word here.
+Changes in v2:
+ - Split into two patches
 
-	-ss
+ Documentation/devicetree/bindings/mtd/denali-nand.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mtd/denali-nand.txt b/Documentation/devicetree/bindings/mtd/denali-nand.txt
+index b32aed1db46d..98916a84bbf6 100644
+--- a/Documentation/devicetree/bindings/mtd/denali-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/denali-nand.txt
+@@ -14,6 +14,11 @@ Required properties:
+     interface clock, and the ECC circuit clock.
+   - clock-names: should contain "nand", "nand_x", "ecc"
+ 
++Optional properties:
++  - resets: may contain phandles to the controller core reset, the register
++    reset
++  - reset-names: may contain "nand", "reg"
++
+ Sub-nodes:
+   Sub-nodes represent available NAND chips.
+ 
+@@ -46,6 +51,8 @@ nand: nand@ff900000 {
+ 	reg-names = "nand_data", "denali_reg";
+ 	clocks = <&nand_clk>, <&nand_x_clk>, <&nand_ecc_clk>;
+ 	clock-names = "nand", "nand_x", "ecc";
++	resets = <&nand_rst>, <&nand_reg_rst>;
++	reset-names = "nand", "reg";
+ 	interrupts = <0 144 4>;
+ 
+ 	nand@0 {
+-- 
+2.17.1
+
