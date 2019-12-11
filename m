@@ -2,49 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B4A311AF52
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09AC211B06B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731199AbfLKPMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:12:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33728 "EHLO mail.kernel.org"
+        id S1732617AbfLKPWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:22:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbfLKPMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:21 -0500
+        id S1732177AbfLKPWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:22:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3E3424654;
-        Wed, 11 Dec 2019 15:12:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 569E9214AF;
+        Wed, 11 Dec 2019 15:22:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077140;
-        bh=3+7wmKB4YLchn/gq4IOx0SBRYWWn2klYIBGCU1dHamg=;
+        s=default; t=1576077752;
+        bh=ClgqZHzhsPuOhhKHmA7iAkuNWjv/c05qXLW7ILvQ8LE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DoGOnSbDPDSoeQvkpA2CflPacQ+tice8Ok3UM56rJ+z6tKykCoMeThda4/sYOIqVQ
-         gpJY+3JtehaQsURp4yW5HRKsFE0yQ/ydEPSh2AxoBaXiwNA7S83HqhgympBx3IIElP
-         ft3tc7AdDTJ519R/cnecCzU7Fb4Vt2lwzQbs1XNo=
+        b=ntFZF0Lj5Q03D8ohrp7nOjKxv2l+BcqwXlaKCtD4e9gConwX6jaFvWX56fRtU/mhf
+         xhdvbFjn/N9zZqTu43VHdEQ0qCRQraReZ3OERBf0FTETrB/HaJC0zSzPjOynSa3sEk
+         cfHwKcx3XyT+iW3NPcuEYBt9jjQU4K/DoB2ZyDXg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 031/105] perf/core: Consistently fail fork on allocation failures
+        stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
+        Paul Walmsley <paul@pwsan.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 158/243] modpost: skip ELF local symbols during section mismatch check
 Date:   Wed, 11 Dec 2019 16:05:20 +0100
-Message-Id: <20191211150231.320144857@linuxfoundation.org>
+Message-Id: <20191211150349.832644988@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,52 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Paul Walmsley <paul.walmsley@sifive.com>
 
-[ Upstream commit 697d877849d4b34ab58d7078d6930bad0ef6fc66 ]
+[ Upstream commit a4d26f1a0958bb1c2b60c6f1e67c6f5d43e2647b ]
 
-Commit:
+During development of a serial console driver with a gcc 8.2.0
+toolchain for RISC-V, the following modpost warning appeared:
 
-  313ccb9615948 ("perf: Allocate context task_ctx_data for child event")
+----
+WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
+The variable .LANCHOR1 references
+the function __init sifive_serial_console_setup()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+----
 
-makes the inherit path skip over the current event in case of task_ctx_data
-allocation failure. This, however, is inconsistent with allocation failures
-in perf_event_alloc(), which would abort the fork.
+".LANCHOR1" is an ELF local symbol, automatically created by gcc's section
+anchor generation code:
 
-Correct this by returning an error code on task_ctx_data allocation
-failure and failing the fork in that case.
+https://gcc.gnu.org/onlinedocs/gccint/Anchored-Addresses.html
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: https://lkml.kernel.org/r/20191105075702.60319-1-alexander.shishkin@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/varasm.c;h=cd9591a45617464946dcf9a126dde277d9de9804;hb=9fb89fa845c1b2e0a18d85ada0b077c84508ab78#l7473
+
+This was verified by compiling the kernel with -fno-section-anchors
+and observing that the ".LANCHOR1" ELF local symbol disappeared, and
+modpost no longer warned about the section mismatch.  The serial
+driver code idiom triggering the warning is standard Linux serial
+driver practice that has a specific whitelist inclusion in modpost.c.
+
+I'm neither a modpost nor an ELF expert, but naively, it doesn't seem
+useful for modpost to report section mismatch warnings caused by ELF
+local symbols by default.  Local symbols have compiler-generated
+names, and thus bypass modpost's whitelisting algorithm, which relies
+on the presence of a non-autogenerated symbol name.  This increases
+the likelihood that false positive warnings will be generated (as in
+the above case).
+
+Thus, disable section mismatch reporting on ELF local symbols.  The
+rationale here is similar to that of commit 2e3a10a1551d ("ARM: avoid
+ARM binutils leaking ELF local symbols") and of similar code already
+present in modpost.c:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/mod/modpost.c?h=v4.19-rc4&id=7876320f88802b22d4e2daf7eb027dd14175a0f8#n1256
+
+This third version of the patch implements a suggestion from Masahiro
+Yamada <yamada.masahiro@socionext.com> to restructure the code as an
+additional pattern matching step inside secref_whitelist(), and
+further improves the patch description.
+
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/mod/modpost.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 53173883513c1..25942e43b8d48 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11719,7 +11719,7 @@ inherit_event(struct perf_event *parent_event,
- 						   GFP_KERNEL);
- 		if (!child_ctx->task_ctx_data) {
- 			free_event(child_event);
--			return NULL;
-+			return ERR_PTR(-ENOMEM);
- 		}
- 	}
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 858cbe56b1006..91a80036c05d5 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1163,6 +1163,14 @@ static const struct sectioncheck *section_mismatch(
+  *   fromsec = text section
+  *   refsymname = *.constprop.*
+  *
++ * Pattern 6:
++ *   Hide section mismatch warnings for ELF local symbols.  The goal
++ *   is to eliminate false positive modpost warnings caused by
++ *   compiler-generated ELF local symbol names such as ".LANCHOR1".
++ *   Autogenerated symbol names bypass modpost's "Pattern 2"
++ *   whitelisting, which relies on pattern-matching against symbol
++ *   names to work.  (One situation where gcc can autogenerate ELF
++ *   local symbols is when "-fsection-anchors" is used.)
+  **/
+ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 			    const char *fromsec, const char *fromsym,
+@@ -1201,6 +1209,10 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 	    match(fromsym, optim_symbols))
+ 		return 0;
+ 
++	/* Check for pattern 6 */
++	if (strstarts(fromsym, ".L"))
++		return 0;
++
+ 	return 1;
+ }
  
 -- 
 2.20.1
