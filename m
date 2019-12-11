@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29BED11AFAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:15:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E4B11AFB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:15:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbfLKPPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:15:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38666 "EHLO mail.kernel.org"
+        id S1730933AbfLKPPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:15:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730652AbfLKPOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:14:04 -0500
+        id S1731585AbfLKPOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:14:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F28624654;
-        Wed, 11 Dec 2019 15:14:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F3AC2465C;
+        Wed, 11 Dec 2019 15:14:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077243;
-        bh=eXagK1phPOAzsaZb6CGtWx8s8oj9kQaDgR9EuNIdy4g=;
+        s=default; t=1576077249;
+        bh=2PlYeuMl+pQ40hi98kVKuffiABfW5E7NEm5+J9Tr5AA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k5Zy3SERYZEg4XqhI1gsNwycuHv4NknklT5kC7TBzBFCgjxrF56rLLSifPxTmrfma
-         FKJNN/q1DeolwzH7Pxsxbnj61RzEK8+yKYQb93CWQNxjPaaySjZuxAypuFcxMQyEQ7
-         +nainWv7CGYcEzf651ZtKwDfVloxw8dKOSZluXt0=
+        b=SmF3eJKV6BYJLol+9VqodH0Zng/d6vw+BnVPJeP1HDyezFxTCuCQWV3f6hW+VklX5
+         cGsE/tOiAu2Y+GLEskBE+mm7qN0gOw1iNr3MVvk5/cxPxZzxyCTXii1/22jorYW6fl
+         YfWzW0tlYMHcJ4hhayXBw/ZRGRYoicQ2xcDG56U8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 121/134] perf script: Fix brstackinsn for AUXTRACE
-Date:   Wed, 11 Dec 2019 10:11:37 -0500
-Message-Id: <20191211151150.19073-121-sashal@kernel.org>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 126/134] s390/unwind: filter out unreliable bogus %r14
+Date:   Wed, 11 Dec 2019 10:11:42 -0500
+Message-Id: <20191211151150.19073-126-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
 References: <20191211151150.19073-1-sashal@kernel.org>
@@ -44,64 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 0cd032d3b5fcebf5454315400ab310746a81ca53 ]
+[ Upstream commit bf018ee644897d7982e1b8dd8b15e97db6e1a4da ]
 
-brstackinsn must be allowed to be set by the user when AUX area data has
-been captured because, in that case, the branch stack might be
-synthesized on the fly. This fixes the following error:
+Currently unwinder unconditionally returns %r14 from the first frame
+pointed by %r15 from pt_regs. A task could be interrupted when a function
+already allocated this frame (if it needs it) for its callees or to
+store local variables. In that case this frame would contain random
+values from stack or values stored there by a callee. As we are only
+interested in %r14 to get potential return address, skip bogus return
+addresses which doesn't belong to kernel text.
 
-Before:
+This helps to avoid duplicating filtering logic in unwider users, most
+of which use unwind_get_return_address() and would choke on bogus 0
+address returned by it otherwise.
 
-  $ perf record -e '{intel_pt//,cpu/mem_inst_retired.all_loads,aux-sample-size=8192/pp}:u' grep -rqs jhgjhg /boot
-  [ perf record: Woken up 19 times to write data ]
-  [ perf record: Captured and wrote 2.274 MB perf.data ]
-  $ perf script -F +brstackinsn --xed --itrace=i1usl100 | head
-  Display of branch stack assembler requested, but non all-branch filter set
-  Hint: run 'perf record -b ...'
-
-After:
-
-  $ perf record -e '{intel_pt//,cpu/mem_inst_retired.all_loads,aux-sample-size=8192/pp}:u' grep -rqs jhgjhg /boot
-  [ perf record: Woken up 19 times to write data ]
-  [ perf record: Captured and wrote 2.274 MB perf.data ]
-  $ perf script -F +brstackinsn --xed --itrace=i1usl100 | head
-            grep 13759 [002]  8091.310257:       1862                                        instructions:uH:      5641d58069eb bmexec+0x86b (/bin/grep)
-        bmexec+2485:
-        00005641d5806b35                        jnz 0x5641d5806bd0              # MISPRED
-        00005641d5806bd0                        movzxb  (%r13,%rdx,1), %eax
-        00005641d5806bd6                        add %rdi, %rax
-        00005641d5806bd9                        movzxb  -0x1(%rax), %edx
-        00005641d5806bdd                        cmp %rax, %r14
-        00005641d5806be0                        jnb 0x5641d58069c0              # MISPRED
-        mismatch of LBR data and executable
-        00005641d58069c0                        movzxb  (%r13,%rdx,1), %edi
-
-Fixes: 48d02a1d5c13 ("perf script: Add 'brstackinsn' for branch stacks")
-Reported-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lore.kernel.org/lkml/20191127095322.15417-1-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-script.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/kernel/unwind_bc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 6dba8b728d232..3983d6ccd14df 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -448,7 +448,7 @@ static int perf_evsel__check_attr(struct evsel *evsel,
- 		       "selected. Hence, no address to lookup the source line number.\n");
- 		return -EINVAL;
- 	}
--	if (PRINT_FIELD(BRSTACKINSN) &&
-+	if (PRINT_FIELD(BRSTACKINSN) && !allow_user_set &&
- 	    !(perf_evlist__combined_branch_type(session->evlist) &
- 	      PERF_SAMPLE_BRANCH_ANY)) {
- 		pr_err("Display of branch stack assembler requested, but non all-branch filter set\n"
+diff --git a/arch/s390/kernel/unwind_bc.c b/arch/s390/kernel/unwind_bc.c
+index a8204f952315d..6e609b13c0cec 100644
+--- a/arch/s390/kernel/unwind_bc.c
++++ b/arch/s390/kernel/unwind_bc.c
+@@ -60,6 +60,11 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		ip = READ_ONCE_NOCHECK(sf->gprs[8]);
+ 		reliable = false;
+ 		regs = NULL;
++		if (!__kernel_text_address(ip)) {
++			/* skip bogus %r14 */
++			state->regs = NULL;
++			return unwind_next_frame(state);
++		}
+ 	} else {
+ 		sf = (struct stack_frame *) state->sp;
+ 		sp = READ_ONCE_NOCHECK(sf->back_chain);
 -- 
 2.20.1
 
