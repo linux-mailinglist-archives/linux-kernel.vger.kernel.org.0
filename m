@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B93211B091
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2312911AEC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731195AbfLKPYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:24:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55136 "EHLO mail.kernel.org"
+        id S1730186AbfLKPH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:07:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732420AbfLKPX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:23:56 -0500
+        id S1730170AbfLKPHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:07:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D73A42077B;
-        Wed, 11 Dec 2019 15:23:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D39AB24654;
+        Wed, 11 Dec 2019 15:07:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077836;
-        bh=03Nh+NVS2P8g7+6KLFx/BlAGRm0adVFqyvzFBF/ZCaM=;
+        s=default; t=1576076874;
+        bh=gXARI7YL3GAncgeBJs6Fnde+C0qoulYIfCAepgl0a+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mnoiHWbIuHOwfO2HdaER92CO44znXNosQZdYuqWg2UWwnc3W1W4W+8dAz/iCAsP6Y
-         JdUY/btaN7URUeu9ybEDOvJ/o3e1qt0rw50Z2QyRg0ar2/d6VOcqZcOOfiyLzB8siY
-         VBWPISwzMcexe05x1EY1mP5vMrvJVgmo4UZipqXI=
+        b=DjN02p9d87S1TB63/SOGswWXArTm6HdrXcG2MdXKI7jdm03J/JgBDDIZ0tdHrX+aq
+         Q0T5c2pVLfYGIwuCrnYHGnCDH+XQuZbmI+NCUmSrXwy5IOGVAlzfjsH7/LkYFIzYga
+         ZAHpBbXeWSYL8cIAINsTHlsIgL4Oa8VheWikTdm4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean-Louis Dupond <jean-louis@dupond.be>,
-        Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 152/243] tcp: make tcp_space() aware of socket backlog
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.4 23/92] fuse: verify nlink
 Date:   Wed, 11 Dec 2019 16:05:14 +0100
-Message-Id: <20191211150349.433232970@linuxfoundation.org>
+Message-Id: <20191211150229.424302645@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
+In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
+References: <20191211150221.977775294@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,50 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-[ Upstream commit 85bdf7db5b53cdcc7a901db12bcb3d0063e3866d ]
+commit c634da718db9b2fac201df2ae1b1b095344ce5eb upstream.
 
-Jean-Louis Dupond reported poor iscsi TCP receive performance
-that we tracked to backlog drops.
+When adding a new hard link, make sure that i_nlink doesn't overflow.
 
-Apparently we fail to send window updates reflecting the
-fact that we are under stress.
+Fixes: ac45d61357e8 ("fuse: fix nlink after unlink")
+Cc: <stable@vger.kernel.org> # v3.4
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Note that we might lack a proper window increase when
-backlog is fully processed, since __release_sock() clears
-sk->sk_backlog.len _after_ all skbs have been processed.
-
-This should not matter in practice. If we had a significant
-load through socket backlog, we are in a dangerous
-situation.
-
-Reported-by: Jean-Louis Dupond <jean-louis@dupond.be>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Tested-by: Jean-Louis Dupond<jean-louis@dupond.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/tcp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fuse/dir.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index abcf53a6db045..3f4223a550d92 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1353,7 +1353,7 @@ static inline int tcp_win_from_space(const struct sock *sk, int space)
- /* Note: caller must be prepared to deal with negative returns */
- static inline int tcp_space(const struct sock *sk)
- {
--	return tcp_win_from_space(sk, sk->sk_rcvbuf -
-+	return tcp_win_from_space(sk, sk->sk_rcvbuf - sk->sk_backlog.len -
- 				  atomic_read(&sk->sk_rmem_alloc));
- }
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -862,7 +862,8 @@ static int fuse_link(struct dentry *entr
  
--- 
-2.20.1
-
+ 		spin_lock(&fi->lock);
+ 		fi->attr_version = atomic64_inc_return(&fc->attr_version);
+-		inc_nlink(inode);
++		if (likely(inode->i_nlink < UINT_MAX))
++			inc_nlink(inode);
+ 		spin_unlock(&fi->lock);
+ 		fuse_invalidate_attr(inode);
+ 		fuse_update_ctime(inode);
 
 
