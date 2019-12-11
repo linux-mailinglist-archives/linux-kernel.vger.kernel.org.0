@@ -2,140 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F0E611AC37
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 14:40:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7C0D11AC42
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 14:40:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729552AbfLKNkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 08:40:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729511AbfLKNkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 08:40:08 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43F5820836;
-        Wed, 11 Dec 2019 13:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576071607;
-        bh=JmU9lT2aWf0Wn3bEyB4ZKSGlHGmR+w0e61SJPR6LqLc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HPBijh1Yscn9yAB6bCVK5OpbsOxkor/iISyx/UUr4OQQ+2D4+dW1tgQqzycTtctE0
-         +Amfnyp60DO0hsjDlpwUWAT9LrukrP0YKMc8F2cVIi1Vlk2CXkdaoEFuDcfMpDB8Pz
-         qErlo/0SSpbxt0knX3Q/NsQVcOxGoVciCkO/vpMw=
-Date:   Wed, 11 Dec 2019 14:40:05 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        syzbot+2eeef62ee31f9460ad65@syzkaller.appspotmail.com,
-        arnd@arndb.de, bp@alien8.de, john.wanghui@huawei.com,
-        keescook@chromium.org, kernelfans@gmail.com, len.brown@intel.com,
-        mingo@redhat.com, peterz@infradead.org, tglx@linutronix.de,
-        x86@kernel.org, zhangshaokun@hisilicon.com
-Subject: Re: [PATCH] ttyprintk: fix a potential sleeping in interrupt context
- issue
-Message-ID: <20191211134005.GA523125@kroah.com>
-References: <CAFH1YnMX5oYUT7-_swssWgxQvzKTZUzvOmREBOh5vhfvqX1vNA@mail.gmail.com>
+        id S1729710AbfLKNkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 08:40:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52272 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729694AbfLKNk3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 08:40:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=TO/NQu43CwshSv+vhfJaELWZCqACamoqyzyHY52rGyI=; b=Hm5ukJbKRW/dIRfBb/2QNZWe2
+        Vae7uQ8jSnwfWdaHao9+Puztkj99WQrJ7zQDtxi3TKPOo51rd+fWVnahFZcDzJMLSfqaeCVOxY8r8
+        hSDFkS06G9RcE/1zSS+DssYsnx/A7E90d2pwJo7gUwe3HnBcGCaB6EInTzmXq7MjnqZrB6PQ9l80I
+        7ew0MBvO3B1tKmL5VXVbKgHK2ypAVx9SJpNzWZYDva4N0EkaT4mjOj0OdxLfNDh2Hm0LJ+ExnAOxv
+        /fglK8GQjc+Ilwz9wP2d/9ugBdBSYMjmgf/rR71BiJvLC/FiZ8ANkzJvpE2LyxvPeev4t3IujdjyX
+        vbRr8RJTA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1if2Du-00050n-Qc; Wed, 11 Dec 2019 13:40:14 +0000
+Date:   Wed, 11 Dec 2019 05:40:14 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Tiezhu Yang <yangtiezhu@loongson.cn>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
+Message-ID: <20191211134014.GM32169@bombadil.infradead.org>
+References: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
+ <20191211024858.GB732@sol.localdomain>
+ <febbd7eb-5e53-6e7c-582d-5b224e441e37@loongson.cn>
+ <20191211044723.GC4203@ZenIV.linux.org.uk>
+ <4a90aaa9-18c8-f0a7-19e4-1c5bd5915a28@loongson.cn>
+ <20191211071711.GA231266@architecture4>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFH1YnMX5oYUT7-_swssWgxQvzKTZUzvOmREBOh5vhfvqX1vNA@mail.gmail.com>
+In-Reply-To: <20191211071711.GA231266@architecture4>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 09:11:46PM +0800, Zhenzhong Duan wrote:
-> Google syzbot reports:
-> BUG: sleeping function called from invalid context at
-> kernel/locking/mutex.c:938
-> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 0, name: swapper/1
-> 1 lock held by swapper/1/0:
-> ...
-> Call Trace:
->   <IRQ>
->   dump_stack+0x197/0x210
->   ___might_sleep.cold+0x1fb/0x23e
->   __might_sleep+0x95/0x190
->   __mutex_lock+0xc5/0x13c0
->   mutex_lock_nested+0x16/0x20
->   tpk_write+0x5d/0x340
->   resync_tnc+0x1b6/0x320
->   call_timer_fn+0x1ac/0x780
->   run_timer_softirq+0x6c3/0x1790
->   __do_softirq+0x262/0x98c
->   irq_exit+0x19b/0x1e0
->   smp_apic_timer_interrupt+0x1a3/0x610
->   apic_timer_interrupt+0xf/0x20
->   </IRQ>
+On Wed, Dec 11, 2019 at 03:17:11PM +0800, Gao Xiang wrote:
+> > static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+> > {
+> >         if (len >= 1 && unlikely(name[0] == '.')) {
 > 
-> This patch fix it by using spinlock in process context instead of
-> mutex and having interrupt disabled in critical section.
 > 
-> Reported-by: syzbot+2eeef62ee31f9460ad65@syzkaller.appspotmail.com
-> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-> ---
->  drivers/char/ttyprintk.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
-> index 4f24e46ebe7c..56db949a7b70 100644
-> --- a/drivers/char/ttyprintk.c
-> +++ b/drivers/char/ttyprintk.c
-> @@ -15,10 +15,11 @@
->  #include <linux/serial.h>
->  #include <linux/tty.h>
->  #include <linux/module.h>
-> +#include <linux/spinlock.h>
-> 
->  struct ttyprintk_port {
->   struct tty_port port;
-> - struct mutex port_write_mutex;
-> + spinlock_t spinlock;
->  };
-> 
->  static struct ttyprintk_port tpk_port;
-> @@ -99,11 +100,12 @@ static int tpk_open(struct tty_struct *tty,
-> struct file *filp)
->  static void tpk_close(struct tty_struct *tty, struct file *filp)
->  {
->   struct ttyprintk_port *tpkp = tty->driver_data;
-> + unsigned long flags;
-> 
-> - mutex_lock(&tpkp->port_write_mutex);
-> + spin_lock_irqsave(&tpkp->spinlock, flags);
->   /* flush tpk_printk buffer */
->   tpk_printk(NULL, 0);
-> - mutex_unlock(&tpkp->port_write_mutex);
-> + spin_unlock_irqrestore(&tpkp->spinlock, flags);
-> 
->   tty_port_close(&tpkp->port, tty, filp);
->  }
+> And I suggest drop "unlikely" here since files start with prefix
+> '.' (plus specical ".", "..") are not as uncommon as you expected...
 
-
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- Your patch is malformed (tabs converted to spaces, linewrapped, etc.)
-  and can not be applied.  Please read the file,
-  Documentation/email-clients.txt in order to fix this.
-
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+They absolutely are uncommon.  Even if you just consider
+/home/willy/kernel/linux/.git/config, only one of those six path elements
+starts with a '.'.
