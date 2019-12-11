@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79A8311AEAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:07:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9C1811B056
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:22:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729763AbfLKPHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:07:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54342 "EHLO mail.kernel.org"
+        id S1732533AbfLKPVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:21:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729144AbfLKPHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:07:19 -0500
+        id S1732519AbfLKPVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:21:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 064A4208C3;
-        Wed, 11 Dec 2019 15:07:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C12B24654;
+        Wed, 11 Dec 2019 15:21:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076837;
-        bh=S1YkN6O6yv6W4P5KTj8GXvZtQ4bxmpqDV3ZgFsMXh38=;
+        s=default; t=1576077710;
+        bh=AuO2UOvlPaxYHtlinuhycueMnHBJl4u9wwv8x9a8bHo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IIJxPTHvH4qVtjIgqJ2oz3jsAQK9k/0EcUO7EmzzpU3EIo2E997VkOPdFQNYX7WDa
-         u3O5yutQb6TZn+q0KpMCX5nHwjMCavuaGAngAO0yRrEjR7iCeM283ltcI1xjeq5D0j
-         oldSpx/GA0q4p40gWWGUfMt46ZJdJK3s031MkHf8=
+        b=qhIKingFlRlSzYs2v3iEMMWqMnwV5y60rvQ1RjVI7YTGgdR4/nnCxlQtpGOO5LjEb
+         O4tXXRlBqVCBiThhg0y1+PN15wtmkmxfNFPuHt/RHwEBqVSxTJzSIU33+jA6ufKPez
+         dCMcWpVpNjc3gKLddmOfotrZ8/rDOCrVuPKRBKGo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 5.4 10/92] usb: gadget: u_serial: add missing port entry locking
-Date:   Wed, 11 Dec 2019 16:05:01 +0100
-Message-Id: <20191211150224.106028704@linuxfoundation.org>
+        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 140/243] arm64: dts: meson-gxbb-nanopi-k2: fix GPIO lines names
+Date:   Wed, 11 Dec 2019 16:05:02 +0100
+Message-Id: <20191211150348.611213827@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-References: <20191211150221.977775294@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-commit daf82bd24e308c5a83758047aff1bd81edda4f11 upstream.
+[ Upstream commit f0783f5edb52af14ecaae6c5ce4f38e0a358f5d8 ]
 
-gserial_alloc_line() misses locking (for a release barrier) while
-resetting port entry on TTY allocation failure. Fix this.
+The gpio line names were set in the pinctrl node instead of the gpio node,
+at the time it was merged, it worked, but was obviously wrong.
+This patch moves the properties to the gpio nodes.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Tested-by: Ladislav Michl <ladis@linux-mips.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 12ada0513d7a ("ARM64: dts: meson-gxbb-nanopi-k2: Add GPIO lines names")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/u_serial.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/gadget/function/u_serial.c
-+++ b/drivers/usb/gadget/function/u_serial.c
-@@ -1239,8 +1239,10 @@ int gserial_alloc_line(unsigned char *li
- 				__func__, port_num, PTR_ERR(tty_dev));
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index cbe99bd4e06d2..8cd50b75171de 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -191,7 +191,7 @@
+ 	pinctrl-names = "default";
+ };
  
- 		ret = PTR_ERR(tty_dev);
-+		mutex_lock(&ports[port_num].lock);
- 		port = ports[port_num].port;
- 		ports[port_num].port = NULL;
-+		mutex_unlock(&ports[port_num].lock);
- 		gserial_free_port(port);
- 		goto err;
- 	}
+-&pinctrl_aobus {
++&gpio_ao {
+ 	gpio-line-names = "UART TX", "UART RX", "Power Control", "Power Key In",
+ 			  "VCCK En", "CON1 Header Pin31",
+ 			  "I2S Header Pin6", "IR In", "I2S Header Pin7",
+@@ -201,7 +201,7 @@
+ 			  "";
+ };
+ 
+-&pinctrl_periphs {
++&gpio {
+ 	gpio-line-names = /* Bank GPIOZ */
+ 			  "Eth MDIO", "Eth MDC", "Eth RGMII RX Clk",
+ 			  "Eth RX DV", "Eth RX D0", "Eth RX D1", "Eth RX D2",
+-- 
+2.20.1
+
 
 
