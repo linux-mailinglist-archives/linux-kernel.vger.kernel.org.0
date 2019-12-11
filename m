@@ -2,98 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE30D11A388
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 05:37:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC23A11A399
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 05:55:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfLKEh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 23:37:58 -0500
-Received: from a27-185.smtp-out.us-west-2.amazonses.com ([54.240.27.185]:46526
-        "EHLO a27-185.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726631AbfLKEh6 (ORCPT
+        id S1727085AbfLKEzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 23:55:41 -0500
+Received: from mail.windriver.com ([147.11.1.11]:38048 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726613AbfLKEzl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 23:37:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1576039077;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=TZs1q5iCCLqj3ymqIoenTw7yehpn45zKyXEbFODyeuA=;
-        b=bRSo4UIzhLqXSQiMUpCL6p5TDJq4VaLEjlqUjqhTrPat0w1a8hd/HjmmGfBWw8u4
-        Pr1gdX4xjYMoPb1veiIVBGPaLz0N2fKmR0qj9oM3rnqR9mxBwjyDj5NEx2KAuyVxefy
-        aFxeH3M9MnND7dZ/qBe/KUV+SNQlvuD+N0yAihhM=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1576039077;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-        bh=TZs1q5iCCLqj3ymqIoenTw7yehpn45zKyXEbFODyeuA=;
-        b=YE690hR21SN8LgNOB4LCfarF8BEAdo4jAcPMsllIF02VU62kqnd3gabsOUn1CZGl
-        HSZ8SFd4NpQhUuSGYAJDytIa5baO1rlCQNWfWgEKOHHzUATjp6XF5ZVQX2OHCz9Ppra
-        Os51dMIDt/qKt3czwgKaUGW1iOKUvilx8MCpF6zw=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 35A2EC447AC
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH 2/2] arm64: dts: sc7180: Add a comment to i2c7 about
- external pullup
-To:     Douglas Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     mka@chromium.org, Roja Rani Yarubandi <rojay@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20191210163530.1.I69a6c29e08924229d160b651769c84508a07b3c6@changeid>
- <20191210163530.2.I8d4cbb3d7ac5824f8e950c53038df8c27a512905@changeid>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <0101016ef33fd5d9-8367442a-f863-4f64-9787-f49c716156e5-000000@us-west-2.amazonses.com>
-Date:   Wed, 11 Dec 2019 04:37:57 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Tue, 10 Dec 2019 23:55:41 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTPS id xBB4tJbv010057
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 10 Dec 2019 20:55:19 -0800 (PST)
+Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 10 Dec
+ 2019 20:55:18 -0800
+Subject: Re: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected()
+ with rcu_replace_pointer()
+To:     Tuong Lien Tong <tuong.t.lien@dektech.com.au>, <paulmck@kernel.org>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mingo@kernel.org>, <tipc-discussion@lists.sourceforge.net>,
+        <kernel-team@fb.com>, <torvalds@linux-foundation.org>,
+        <davem@davemloft.net>
+References: <20191210033146.GA32522@paulmck-ThinkPad-P72>
+ <0e565b68-ece1-5ae6-bb5d-710163fb8893@windriver.com>
+ <20191210223825.GS2889@paulmck-ThinkPad-P72>
+ <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
+ <707801d5afc6$cac68190$605384b0$@dektech.com.au>
+From:   Ying Xue <ying.xue@windriver.com>
+Message-ID: <db88d33f-8e25-8859-84ec-3372a108c759@windriver.com>
+Date:   Wed, 11 Dec 2019 12:42:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191210163530.2.I8d4cbb3d7ac5824f8e950c53038df8c27a512905@changeid>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <707801d5afc6$cac68190$605384b0$@dektech.com.au>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SES-Outgoing: 2019.12.11-54.240.27.185
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+X-Originating-IP: [128.224.155.90]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 12/11/2019 6:05 AM, Douglas Anderson wrote:
-> Make i2c7 symmetric with the other i2c busses and comment that we have
-> no internal pull because there is an external one.
-> 
-> Fixes: ba3fc6496366 ("arm64: dts: sc7180: Add qupv3_0 and qupv3_1")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-
-Reviewed-by: Rajendra Nayak <rnayak@codeaurora.org>
-
-> 
->   arch/arm64/boot/dts/qcom/sc7180-idp.dts | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> index 5eab3a282eba..05d30a56eca9 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> @@ -311,6 +311,8 @@ &qup_i2c7_default {
->   	pinconf {
->   		pins = "gpio6", "gpio7";
->   		drive-strength = <2>;
-> +
-> +		/* Has external pullup */
->   		bias-disable;
->   	};
->   };
+On 12/11/19 10:00 AM, Tuong Lien Tong wrote:
+>>  
+>>  	/* Move passive key if any */
+>>  	if (key.passive) {
+>> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
+>> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2,
+> &rx->lock);
+> The 3rd parameter should be the lockdep condition checking instead of the
+> spinlock's pointer i.e. "lockdep_is_held(&rx->lock)"?
+> That's why I'd prefer to use the 'tipc_aead_rcu_swap ()' macro, which is
+> clear & concise at least for the context here. It might be re-used later as
+> well...
 > 
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Right. The 3rd parameter of rcu_replace_pointer() should be
+"lockdep_is_held(&rx->lock)" instead of "&rx->lock".
