@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5D3111B121
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50A4211B122
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:29:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732997AbfLKP24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:28:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35332 "EHLO mail.kernel.org"
+        id S2387776AbfLKP3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:29:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387747AbfLKP2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:28:54 -0500
+        id S2387755AbfLKP24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:28:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A73024679;
-        Wed, 11 Dec 2019 15:28:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44C3E2465B;
+        Wed, 11 Dec 2019 15:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078133;
-        bh=9qi0Vwie+buiv8A4uoB+Ur69kss0x8GOvFjlySI8X5Y=;
+        s=default; t=1576078135;
+        bh=bsg/VW+c7VbzS5saOXbczBiyZhGFxVOLbYz4eTd0b2k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RvGEHbonjv96pMOII1B4EREjEtW98rzb2a9Iged+fLy3D6WkcDxtyPlVf+YvQQkL4
-         i8MulSBgxawRjv8aFHdANv4Z62SlY8KGb7DZsxESYleHfGgLjXDBn0hPAyWxcpzpg7
-         Tw86VKBK7ckvl27BE5xoRZvfbAGdme2L7XCVR46s=
+        b=yVOpeA+omJDcqY9LWVxC+qbXkpguhsCKHevZT5oUSMCGjRqjGZuVUc3FkLrPNtVbk
+         58lW4fOxz7iX6qD81AfnROClzQz7bEgDpAyUzpppVxpcrry2bCbV6a9P53zMx/pcoL
+         Bg1/HQYcMHNdWzz1l7JGPLpSyXUH5x5uWm4coGgA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 21/58] clk: qcom: Allow constant ratio freq tables for rcg
-Date:   Wed, 11 Dec 2019 10:27:54 -0500
-Message-Id: <20191211152831.23507-21-sashal@kernel.org>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 23/58] irqchip: ingenic: Error out if IRQ domain creation failed
+Date:   Wed, 11 Dec 2019 10:27:56 -0500
+Message-Id: <20191211152831.23507-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211152831.23507-1-sashal@kernel.org>
 References: <20191211152831.23507-1-sashal@kernel.org>
@@ -43,62 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit efd164b5520afd6fb2883b68e0d408a7de29c491 ]
+[ Upstream commit 52ecc87642f273a599c9913b29fd179c13de457b ]
 
-Some RCGs (the gfx_3d_src_clk in msm8998 for example) are basically just
-some constant ratio from the input across the entire frequency range.  It
-would be great if we could specify the frequency table as a single entry
-constant ratio instead of a long list, ie:
+If we cannot create the IRQ domain, the driver should fail to probe
+instead of succeeding with just a warning message.
 
-	{ .src = P_GPUPLL0_OUT_EVEN, .pre_div = 3 },
-        { }
-
-So, lets support that.
-
-We need to fix a corner case in qcom_find_freq() where if the freq table
-is non-null, but has no frequencies, we end up returning an "entry" before
-the table array, which is bad.  Then, we need ignore the freq from the
-table, and instead base everything on the requested freq.
-
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Link: https://lkml.kernel.org/r/20191031185715.15504-1-jeffrey.l.hugo@gmail.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/1570015525-27018-3-git-send-email-zhouyanjie@zoho.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg2.c | 2 ++
- drivers/clk/qcom/common.c   | 3 +++
- 2 files changed, 5 insertions(+)
+ drivers/irqchip/irq-ingenic.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 1a0985ae20d2e..a93439242565d 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -212,6 +212,8 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
- 	p = clk_hw_get_parent_by_index(hw, index);
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		if (f->pre_div) {
-+			if (!rate)
-+				rate = req->rate;
- 			rate /= 2;
- 			rate *= f->pre_div + 1;
- 		}
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 28ceaf1e99371..ae9352f7706d4 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -37,6 +37,9 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
- 	if (!f)
- 		return NULL;
+diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
+index fc5953dea509a..b2e16dca76a60 100644
+--- a/drivers/irqchip/irq-ingenic.c
++++ b/drivers/irqchip/irq-ingenic.c
+@@ -117,6 +117,14 @@ static int __init ingenic_intc_of_init(struct device_node *node,
+ 		goto out_unmap_irq;
+ 	}
  
-+	if (!f->freq)
-+		return f;
++	domain = irq_domain_add_legacy(node, num_chips * 32,
++				       JZ4740_IRQ_BASE, 0,
++				       &irq_domain_simple_ops, NULL);
++	if (!domain) {
++		err = -ENOMEM;
++		goto out_unmap_base;
++	}
 +
- 	for (; f->freq; f++)
- 		if (rate <= f->freq)
- 			return f;
+ 	for (i = 0; i < num_chips; i++) {
+ 		/* Mask all irqs */
+ 		writel(0xffffffff, intc->base + (i * CHIP_SIZE) +
+@@ -143,14 +151,11 @@ static int __init ingenic_intc_of_init(struct device_node *node,
+ 				       IRQ_NOPROBE | IRQ_LEVEL);
+ 	}
+ 
+-	domain = irq_domain_add_legacy(node, num_chips * 32, JZ4740_IRQ_BASE, 0,
+-				       &irq_domain_simple_ops, NULL);
+-	if (!domain)
+-		pr_warn("unable to register IRQ domain\n");
+-
+ 	setup_irq(parent_irq, &intc_cascade_action);
+ 	return 0;
+ 
++out_unmap_base:
++	iounmap(intc->base);
+ out_unmap_irq:
+ 	irq_dispose_mapping(parent_irq);
+ out_free:
 -- 
 2.20.1
 
