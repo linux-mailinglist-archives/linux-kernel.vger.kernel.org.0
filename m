@@ -2,111 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AB9611A160
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:34:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66DB311A16F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 03:36:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbfLKCeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Dec 2019 21:34:02 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:35816 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbfLKCeC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:34:02 -0500
-Received: by mail-il1-f194.google.com with SMTP id g12so18083395ild.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2019 18:34:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iEKzTuCqR7pNiiQwEPYEy8kcmr1QVizqhrNITFAc66g=;
-        b=jhitx4aRBOOz+jmv2AdxMTyqInT1bcrJpJQrh2AujwgKjCk7x80bT0oiDqPkvTISqQ
-         VrBBCyTpvQeSo7dTn6TGKeeBekh7krkbUT/+1rwJp9fjTg+daD1Tb3jNrZkOGzm1D4on
-         Man28nmAuAeeDJtWUMKkJx51s8TauUwWxFLrICSSBE316NILVKWpSYlYOoVIO9PDmnFb
-         ABJtdiBmhEFMvhz+N3VZGM5xiWp2fzeZWIjYuaiaX9IT3cO+Y4395HQCyHACRXdyKj6E
-         4b880AaNKmyxDxQzOyorITa2vuUTbVvAkAbshJ0KRN2p6Ur37qO/k9+WLCF8EM3c/TWG
-         n7fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iEKzTuCqR7pNiiQwEPYEy8kcmr1QVizqhrNITFAc66g=;
-        b=pZU9j0t0qJvze8iVSA72uTHnCXdUvsx2m/0IUzI8/+AD37cLGmA23RRUZJ4/RbtKWW
-         7OfNo/LxwMBy0qBItq7AFftuCTiMkbwwGPQcuRyJ0GFSW1k92EF4KHQN6zqdHtqtCISM
-         E8fBY8nZx5MuvmYKAHss7JzPUP+duRRHPvn4GkPj7TfBLWJ5mqZZltqOg/PjlHlZljsC
-         BBEjEVA4nkh/7bXMbYCzQnAIlZYVkTlGP2yPFb4osJqwOi+6rlHst4H35CEhjavIELKO
-         9PsD6ZpUsemy3cxfIbnGmNlk+2+MzIvA/VTNONvZ7f9keJFdfnmzGUSKlLI1jTTlxaHk
-         oY2w==
-X-Gm-Message-State: APjAAAVVoRnUb+aNN1ujzRrZGNQh5M7vMHQxB1jLh+10nFRsJblh3HfN
-        uC47XHrbU/YLwnHhT20XNH4QxQzwuuHSuM4Fv08=
-X-Google-Smtp-Source: APXvYqyiQ0K2uymzvEliQKKGQlUjrB9uGQcWoNfdP49kozTiunn3j2aLL8/7xYJJ45Sdd8cPvRBMm2S64IigQd+05ls=
-X-Received: by 2002:a92:8d4e:: with SMTP id s75mr885642ild.172.1576031641683;
- Tue, 10 Dec 2019 18:34:01 -0800 (PST)
+        id S1727626AbfLKCgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Dec 2019 21:36:53 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39882 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726619AbfLKCgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Dec 2019 21:36:53 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C76F92176297C62AADC0;
+        Wed, 11 Dec 2019 10:36:50 +0800 (CST)
+Received: from [127.0.0.1] (10.173.222.27) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Dec 2019
+ 10:36:41 +0800
+Subject: Re: perf top for arm64?
+To:     Jiri Olsa <jolsa@redhat.com>, John Garry <john.garry@huawei.com>
+CC:     <mark.rutland@arm.com>, <peterz@infradead.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        <linux-kernel@vger.kernel.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <mingo@redhat.com>,
+        <namhyung@kernel.org>, <will@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <wanghaibin.wang@huawei.com>
+References: <1573045254-39833-1-git-send-email-john.garry@huawei.com>
+ <20191106140036.GA6259@kernel.org>
+ <418023e7-a50d-cb6f-989f-2e6d114ce5d8@huawei.com>
+ <20191210163655.GG14123@krava>
+ <952dc484-2739-ee65-f41c-f0198850ab10@huawei.com>
+ <20191210170841.GA23357@krava>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <0870e660-2511-ced0-7402-5ff389c4c281@huawei.com>
+Date:   Wed, 11 Dec 2019 10:36:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-References: <20190925043800.726-1-navid.emamdoost@gmail.com> <CAEkB2ESR+GictT00W95pADAeakAuLrTECqUxEt=b7TG2x=FgVw@mail.gmail.com>
-In-Reply-To: <CAEkB2ESR+GictT00W95pADAeakAuLrTECqUxEt=b7TG2x=FgVw@mail.gmail.com>
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Date:   Tue, 10 Dec 2019 20:33:50 -0600
-Message-ID: <CAEkB2ETfnejEiOeOWU1LdSW+SoovdqXOeJX+C=HK9=jMZDP0Ag@mail.gmail.com>
-Subject: Re: [PATCH] drm/vmwgfx: prevent memory leak in vmw_cmdbuf_res_add
-To:     VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     Navid Emamdoost <emamd001@umn.edu>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191210170841.GA23357@krava>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.222.27]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping ...
+Hi John,
 
-On Thu, Nov 21, 2019 at 12:17 PM Navid Emamdoost
-<navid.emamdoost@gmail.com> wrote:
->
-> On Tue, Sep 24, 2019 at 11:38 PM Navid Emamdoost
-> <navid.emamdoost@gmail.com> wrote:
-> >
-> > In vmw_cmdbuf_res_add if drm_ht_insert_item fails the allocated memory
-> > for cres should be released.
-> >
-> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
->
-> Would you please review this patch?
->
-> Thanks,
->
-> > ---
-> >  drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
-> > index 4ac55fc2bf97..44d858ce4ce7 100644
-> > --- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
-> > +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
-> > @@ -209,8 +209,10 @@ int vmw_cmdbuf_res_add(struct vmw_cmdbuf_res_manager *man,
-> >
-> >         cres->hash.key = user_key | (res_type << 24);
-> >         ret = drm_ht_insert_item(&man->resources, &cres->hash);
-> > -       if (unlikely(ret != 0))
-> > +       if (unlikely(ret != 0)) {
-> > +               kfree(cres);
-> >                 goto out_invalid_key;
-> > +       }
-> >
-> >         cres->state = VMW_CMDBUF_RES_ADD;
-> >         cres->res = vmw_resource_reference(res);
-> > --
-> > 2.17.1
-> >
->
->
-> --
-> Navid.
+On 2019/12/11 1:08, Jiri Olsa wrote:
+> On Tue, Dec 10, 2019 at 04:52:52PM +0000, John Garry wrote:
+>> On 10/12/2019 16:36, Jiri Olsa wrote:
+>>> On Tue, Dec 10, 2019 at 04:13:49PM +0000, John Garry wrote:
+>>>> Hi all,
+>>>>
+>>>> I find to my surprise that "perf top" does not work for arm64:
+>>>>
+>>>> root@ubuntu:/home/john/linux# tools/perf/perf top
+>>>> Couldn't read the cpuid for this machine: No such file or directory
+>>>
+>>
+>> Hi Jirka,
+>>
+>>> there was recent change that check on cpuid and quits:
+>>>     608127f73779 perf top: Initialize perf_env->cpuid, needed by the per arch annotation init routine
+>>>
+>>
+>> ok, this is new code. I obviously didn't check the git history...
+>>
+>> But, apart from this, there are many other places where get_cpuid() is
+>> called. I wonder what else we're missing out on, and whether we should still
+>> add it.
+> 
+> right, I was just wondering how come vendor events are working for you,
+> but realized we have get_cpuid_str being called in there ;-)
+> 
+> I think we should add it as you have it prepared already,
+> could you post it with bigger changelog that would explain
+> where it's being used for arm?
+
+I've also seen the similar problem when I was looking to add support
+for 'perf kvm stat' on arm64 [1] (which though got stuck due to some
+other reasons for a very long time :(
+
+It would be great if your patch can address this issue!
 
 
+[1] https://lore.kernel.org/patchwork/patch/1087531/
 
--- 
-Navid.
+
+Thanks,
+Zenghui
+
