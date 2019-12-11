@@ -2,65 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F43011B89D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:23:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9A611B8A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:23:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730603AbfLKQXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:23:01 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:55630 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1730571AbfLKQW7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:22:59 -0500
-Received: (qmail 4502 invoked by uid 2102); 11 Dec 2019 11:22:58 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 11 Dec 2019 11:22:58 -0500
-Date:   Wed, 11 Dec 2019 11:22:58 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Dmitry Vyukov <dvyukov@google.com>
-cc:     Andrey Konovalov <andreyknvl@google.com>,
-        syzbot <syzbot+c7b0ec009a216143df30@syzkaller.appspotmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: KASAN: use-after-free Read in usbvision_v4l2_open
-In-Reply-To: <CACT4Y+ZSmwr4y2VrUxZSvFCL0Ws4cp6T5FwyVRg_CqhCf354HQ@mail.gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1912111111510.1549-100000@iolanthe.rowland.org>
+        id S1730671AbfLKQX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 11:23:27 -0500
+Received: from mga05.intel.com ([192.55.52.43]:17304 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730062AbfLKQX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 11:23:27 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 08:23:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,301,1571727600"; 
+   d="scan'208";a="264926006"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by FMSMGA003.fm.intel.com with SMTP; 11 Dec 2019 08:23:23 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 11 Dec 2019 18:23:22 +0200
+Date:   Wed, 11 Dec 2019 18:23:22 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] drm/i915: remove redundant checks for a null fb
+ pointer
+Message-ID: <20191211162322.GL1208@intel.com>
+References: <20191210142349.333171-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191210142349.333171-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Dec 2019, Dmitry Vyukov wrote:
-
-> > > By the way, do you know why syzbot sent _two_ reply messages?  One with
-> > > message ID <00000000000031a0af05995eca0b@google.com> and the other with
-> > > message ID <000000000000441a4205995eca11@google.com>?  It seems like
-> > > overkill.
-> >
-> > Hm, I'm not sure. Dmitry?
+On Tue, Dec 10, 2019 at 02:23:49PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> I would assume it received 2 emails (second from syzkaller-bugs@
-> mailing list) and deduplication logic did not work somehow. So it
-> replied to both.
+> A prior check and return when pointer fb is null makes
+> subsequent null checks on fb redundant.  Remove the redundant
+> null checks.
+> 
+> Addresses-Coverity: ("Logically dead code")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/i915/i915_debugfs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+> index 062e5bef637a..a48478be6e8f 100644
+> --- a/drivers/gpu/drm/i915/i915_debugfs.c
+> +++ b/drivers/gpu/drm/i915/i915_debugfs.c
+> @@ -2600,8 +2600,8 @@ static void intel_plane_hw_info(struct seq_file *m, struct intel_plane *plane)
+>  		       plane_state->hw.rotation);
+>  
+>  	seq_printf(m, "\t\thw: fb=%d,%s,%dx%d, visible=%s, src=" DRM_RECT_FP_FMT ", dst=" DRM_RECT_FMT ", rotation=%s\n",
+> -		   fb ? fb->base.id : 0, fb ? format_name.str : "n/a",
+> -		   fb ? fb->width : 0, fb ? fb->height : 0,
+> +		   fb->base.id, format_name.str,
+> +		   fb->width, fb->height,
 
-Does that mean when I send in a test request, it's better to omit 
-syzkaller-bugs from the CC: list?
+Thanks.
 
-Also, whatever did happen to the most recent test request (the one sent 
-to syzbot+7fa38a608b1075dfd634 even though it was meant to test the 
-bug reported by syzbot+c7b0ec009a216143df30)?  Did it truly fail to 
-build?  I can't find anything about it in the dashboard link for either 
-bug report, and I haven't gotten a reply from syzbot.
+Pushed to drm-intel-next-queued.
 
-Alan Stern
+>  		   yesno(plane_state->uapi.visible),
+>  		   DRM_RECT_FP_ARG(&plane_state->uapi.src),
+>  		   DRM_RECT_ARG(&plane_state->uapi.dst),
+> -- 
+> 2.24.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
+-- 
+Ville Syrjälä
+Intel
