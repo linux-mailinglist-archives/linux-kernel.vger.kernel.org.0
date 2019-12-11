@@ -2,104 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A211D11B0CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:26:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4239311AF3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:12:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733094AbfLKP0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:26:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59258 "EHLO mail.kernel.org"
+        id S1730294AbfLKPL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:11:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733086AbfLKP0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:26:13 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730985AbfLKPLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:11:54 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C50702077B;
-        Wed, 11 Dec 2019 15:26:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 733F020663;
+        Wed, 11 Dec 2019 15:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077973;
-        bh=0cOWgBEJE46qjR9ep9p3bmW4dApd6hg4u3c71hbanV4=;
+        s=default; t=1576077113;
+        bh=GOBp+qS3FGkY90AMsI0PqPGQZH9s+19M68+rUesgz1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XrDgccvuNzSyBmJAHoreAjkDRAlrV5e7oC4sjT9TJPJRXt9nbarpalV3BxAln9bnl
-         W8rCca3R22fgcuHKt9UbnAYFMemfK/00tP79tUCgHcmQi9L2zeXUUjeBsr9GB7oWdL
-         HUkpmhMk5cW+D67ZXxEvzI04aWLAaCiblE5XlBJw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 4.19 242/243] binder: Fix race between mmap() and binder_alloc_print_pages()
-Date:   Wed, 11 Dec 2019 16:06:44 +0100
-Message-Id: <20191211150355.674743562@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
-References: <20191211150339.185439726@linuxfoundation.org>
-User-Agent: quilt/0.66
+        b=YY7f+nwY0323TP/LEOPXOrug3nDnGK8TftXberIN2X+ynNxY2CWg89LPQJUE5Yu6n
+         mtqHO0u2+OTm/kHzyEl4dgaFgboXBxhH1JYkS3quzcDIOZw+Xre2jILH1RuQMJi4kE
+         NqMboqzq42YH1YfCIXm/E4gCUsZ84butVdhzzjdA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 002/134] scsi: lpfc: Fix discovery failures when target device connectivity bounces
+Date:   Wed, 11 Dec 2019 10:09:38 -0500
+Message-Id: <20191211151150.19073-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
+References: <20191211151150.19073-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: James Smart <jsmart2021@gmail.com>
 
-commit 8eb52a1ee37aafd9b796713aa0b3ab9cbc455be3 upstream.
+[ Upstream commit 3f97aed6117c7677eb16756c4ec8b86000fd5822 ]
 
-binder_alloc_print_pages() iterates over
-alloc->pages[0..alloc->buffer_size-1] under alloc->mutex.
-binder_alloc_mmap_handler() writes alloc->pages and alloc->buffer_size
-without holding that lock, and even writes them before the last bailout
-point.
+An issue was seen discovering all SCSI Luns when a target device undergoes
+link bounce.
 
-Unfortunately we can't take the alloc->mutex in the ->mmap() handler
-because mmap_sem can be taken while alloc->mutex is held.
-So instead, we have to locklessly check whether the binder_alloc has been
-fully initialized with binder_alloc_get_vma(), like in
-binder_alloc_new_buf_locked().
+The driver currently does not qualify the FC4 support on the target.
+Therefore it will send a SCSI PRLI and an NVMe PRLI. The expectation is
+that the target will reject the PRLI if it is not supported. If a PRLI
+times out, the driver will retry. The driver will not proceed with the
+device until both SCSI and NVMe PRLIs are resolved.  In the failure case,
+the device is FCP only and does not respond to the NVMe PRLI, thus
+initiating the wait/retry loop in the driver.  During that time, a RSCN is
+received (device bounced) causing the driver to issue a GID_FT.  The GID_FT
+response comes back before the PRLI mess is resolved and it prematurely
+cancels the PRLI retry logic and leaves the device in a STE_PRLI_ISSUE
+state. Discovery with the target never completes or resets.
 
-Fixes: 8ef4665aa129 ("android: binder: Add page usage in binder stats")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/r/20191018205631.248274-1-jannh@google.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix by resetting the node state back to STE_NPR_NODE when GID_FT completes,
+thereby restarting the discovery process for the node.
 
+Link: https://lore.kernel.org/r/20190922035906.10977-10-jsmart2021@gmail.com
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/android/binder_alloc.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ drivers/scsi/lpfc/lpfc_hbadisc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -880,14 +880,20 @@ void binder_alloc_print_pages(struct seq
- 	int free = 0;
+diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+index 749286acdc173..f7c205e1da485 100644
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -5405,9 +5405,14 @@ lpfc_setup_disc_node(struct lpfc_vport *vport, uint32_t did)
+ 			/* If we've already received a PLOGI from this NPort
+ 			 * we don't need to try to discover it again.
+ 			 */
+-			if (ndlp->nlp_flag & NLP_RCV_PLOGI)
++			if (ndlp->nlp_flag & NLP_RCV_PLOGI &&
++			    !(ndlp->nlp_type &
++			     (NLP_FCP_TARGET | NLP_NVME_TARGET)))
+ 				return NULL;
  
- 	mutex_lock(&alloc->mutex);
--	for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
--		page = &alloc->pages[i];
--		if (!page->page_ptr)
--			free++;
--		else if (list_empty(&page->lru))
--			active++;
--		else
--			lru++;
-+	/*
-+	 * Make sure the binder_alloc is fully initialized, otherwise we might
-+	 * read inconsistent state.
-+	 */
-+	if (binder_alloc_get_vma(alloc) != NULL) {
-+		for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
-+			page = &alloc->pages[i];
-+			if (!page->page_ptr)
-+				free++;
-+			else if (list_empty(&page->lru))
-+				active++;
-+			else
-+				lru++;
-+		}
- 	}
- 	mutex_unlock(&alloc->mutex);
- 	seq_printf(m, "  pages: %d:%d:%d\n", active, lru, free);
-
++			ndlp->nlp_prev_state = ndlp->nlp_state;
++			lpfc_nlp_set_state(vport, ndlp, NLP_STE_NPR_NODE);
++
+ 			spin_lock_irq(shost->host_lock);
+ 			ndlp->nlp_flag |= NLP_NPR_2B_DISC;
+ 			spin_unlock_irq(shost->host_lock);
+-- 
+2.20.1
 
