@@ -2,124 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B429D11B596
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:54:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A73D11B564
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:53:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732279AbfLKPys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:54:48 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46145 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731993AbfLKPRK (ORCPT
+        id S1732575AbfLKPxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:53:36 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39782 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731780AbfLKPTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:17:10 -0500
-Received: by mail-pf1-f196.google.com with SMTP id y14so1943517pfm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:17:10 -0800 (PST)
+        Wed, 11 Dec 2019 10:19:00 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d5so5836071wmb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 07:18:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lHzHnQGhN5tP71FlaevdaIuAFnoogD+yCbRZ8NYHtWo=;
-        b=sSUCr5hqdCnnJt3WZvMu8bQU7Alg+WbM4uglsvmVb980MLMQFRtNLsJzPhYRv4n0gG
-         KXONx1ZAMX4/7WbSKCNagj90q6wvdN9CclU6teSEllyr5FcVF7BpAwsW0jIpQIbxf6Qv
-         v3F+DTZ3ZUWhtf00PqhlFpjL7PnZlKru+3VvT6mMi88LBB0Ra2NaxzG/zBPThRa4BRlc
-         hRHYsP69ktcVYKUeJlXmsdltQT3NBYzL2/p6ittL41wHpn9lbcK4kA4arPLlUdfmWFkX
-         xTx0Vi0qjZZIprIpiQrnwGq/FEKDbW0eXek4SDpku8jp11WuSUqDuGjIQgJx2w2zoyw7
-         2gDA==
+         :content-disposition:in-reply-to;
+        bh=qbeJjKW4nbf0Chq8HrmirNCO/t8cTX+VWEBs6JApRCM=;
+        b=sIxKfhz7W+XGG4A+6rFofyi3ZHJBmXvcd0/Lmofb8xlLjnFgZ0CEgeCNzsjg9nLaZm
+         2HJpmBkNxcmbYYlRemzPJyHRp2BtaBvLcbHeA5L3tTBIgIzquuFqTfjhMVTnuEu4yVei
+         iFR5wcNTGEO4KVaGnW3ezQ5vkRDCyqrAE0WiGgo+Yx/5sD316WPFgmqypIV1utZrCclf
+         jwvV6hs/7mEZilmGoyybo9f5s41Mf7FCQdiiBWnIyygYpvCyBqO5rrDLcsJfGQTQ8dZY
+         Rpi1NmEz6cDl/RUWtlIL8Zdon43y26OrmdUdlZFz/LpYffsTTpNz4e9QoACgaFzjJ159
+         NnVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lHzHnQGhN5tP71FlaevdaIuAFnoogD+yCbRZ8NYHtWo=;
-        b=ACMFrXYAYounqQQJ9oLWEKayw7NKukFixiXKC5SVZknYPI0qwdylzDtOzfy+vZIc67
-         Lb9AmyaiqIwg+PA07Flz23vocQhkNnIXNaxSuo3V52aflwTdRBO2L7PQeIsDbkMjAMCo
-         EA9DtIODgceISYijxSaKngYML2C19+wSyX977NL5X/Y3Hk5r/hfvRmGpN/KyvHFokWBg
-         Zu08bjO+eqA7HoJ2VgIcF86fzPCH8STALr46Z0TqT+Pm/Dn9ZhO16ZLAABQb+FXnX0ga
-         EAgQg/aiQqosdkexH+Yx+5/XA3py9hL3gQF5IcTsvfqtPmLNYaZTzJqy/sKtDfGOdMAJ
-         GPZw==
-X-Gm-Message-State: APjAAAUjo80hpWLEOfjyUhYoXGxr8Q3W0rgzs1P6Dqmt2OhXkkKvRh6b
-        3jm49PNUCpz5I2oVhL1vQCMbZeAGZqg=
-X-Google-Smtp-Source: APXvYqxEy3hDiJI2lA1gpQG3Xx+YjI+4Pit9SHQzetSX/fKg3dymirOozItGH0VMVlafiz0cwPFbfw==
-X-Received: by 2002:a65:66c8:: with SMTP id c8mr4884729pgw.161.1576077429375;
-        Wed, 11 Dec 2019 07:17:09 -0800 (PST)
-Received: from debian ([122.164.82.31])
-        by smtp.gmail.com with ESMTPSA id t8sm3757537pfq.92.2019.12.11.07.17.05
+         :mime-version:content-disposition:in-reply-to;
+        bh=qbeJjKW4nbf0Chq8HrmirNCO/t8cTX+VWEBs6JApRCM=;
+        b=S77GG2cdwE1btWectwSMrh+PNFxq/Gi+3Y86Y6xHLXorSwxcMrWD8/p/77c+iF8CvD
+         ZESW4TxYw58ZsmyrR1+Ho9xetzgUwtigir41EdI6L6FwGFtR6bjwk0ClDWyKVAOsFNB9
+         xkOjvsYXKfeTa8uVoeXb2NNrsQ6slsbW5lwjHOfiA89x3zjuR+UYI+5merQJzANyja3E
+         H116qQN2ilDZUz1HIeTnv5GNhMJzFdYm+SETaJ+v3beaX7rua8s/bnAq6YyLpx3RbpBj
+         ZbdKaHcD6bTbrXDMirgJORf+7pvgqH9eC8FWIKT7pXWpHvfNdp/04Dlk1iEz7SZZz5of
+         QZnQ==
+X-Gm-Message-State: APjAAAWmgYQbAW3RZgEoshdyDcTq7f7DZsvt2PirC5G3S+iao+Gg7Yo0
+        PMs1JtajxblDqZ4eolyl4GmJNA==
+X-Google-Smtp-Source: APXvYqwMPPc+4B4dB6jAQ8b+5nRg9tYQcN/aezgiVC9EtiwmXqwgIMdUoTdUwZTp4c6n3StHD7jnxA==
+X-Received: by 2002:a7b:cb15:: with SMTP id u21mr354499wmj.25.1576077539024;
+        Wed, 11 Dec 2019 07:18:59 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id x132sm6891747wmg.0.2019.12.11.07.18.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 07:17:08 -0800 (PST)
-Date:   Wed, 11 Dec 2019 20:47:01 +0530
-From:   Jeffrin Jose <jeffrin@rajagiritech.edu.in>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Will Deacon <will@kernel.org>, peterz@infradead.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        jeffrin@rajagiritech.edu.in
-Subject: Re: [PROBLEM]: WARNING: lock held when returning to user space!
- (5.4.1 #16 Tainted: G )
-Message-ID: <20191211151701.GA3643@debian>
-References: <20191207173420.GA5280@debian>
- <20191209103432.GC3306@willie-the-truck>
- <20191209202552.GK19243@linux.intel.com>
- <34e5340f-de75-f20e-7898-6142eac45c13@intel.com>
+        Wed, 11 Dec 2019 07:18:58 -0800 (PST)
+Date:   Wed, 11 Dec 2019 15:18:56 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, Will Deacon <will@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sh: kgdb: Mark expected switch fall-throughs
+Message-ID: <20191211151856.krh7jbrl5vsa7imq@holly.lan>
+References: <87o8wgy3ra.wl-kuninori.morimoto.gx@renesas.com>
+ <87muc0y3q4.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34e5340f-de75-f20e-7898-6142eac45c13@intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <87muc0y3q4.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c
-> b/drivers/char/tpm/tpm-dev-common.c
-> index 2ec47a69a2a6..47f1c0c5c8de 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -61,6 +61,12 @@ static void tpm_dev_async_work(struct work_struct *work)
+On Tue, Dec 10, 2019 at 05:39:00PM +0900, Kuninori Morimoto wrote:
 > 
->  	mutex_lock(&priv->buffer_mutex);
->  	priv->command_enqueued = false;
-> +	ret = tpm_try_get_ops(priv->chip);
-> +	if (ret) {
-> +		priv->response_length = ret;
-> +		goto out;
-> +	}
-> +
->  	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
->  			       sizeof(priv->data_buffer));
->  	tpm_put_ops(priv->chip);
-> @@ -68,6 +74,7 @@ static void tpm_dev_async_work(struct work_struct *work)
->  		priv->response_length = ret;
->  		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
->  	}
-> +out:
->  	mutex_unlock(&priv->buffer_mutex);
->  	wake_up_interruptible(&priv->async_wait);
->  }
-> @@ -205,6 +212,7 @@ ssize_t tpm_common_write(struct file *file, const
-> char __user *buf,
->  		priv->command_enqueued = true;
->  		queue_work(tpm_dev_wq, &priv->async_work);
->  		mutex_unlock(&priv->buffer_mutex);
-> +		tpm_put_ops(priv->chip);
->  		return size;
->  	}
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > 
+> Mark switch cases where we are expecting to fall through.
 > 
+> This patch fixes the following error:
 > 
+> LINUX/arch/sh/kernel/kgdb.c: In function 'kgdb_arch_handle_exception':
+> LINUX/arch/sh/kernel/kgdb.c:267:6: error: this statement may fall through [-Werror=implicit-fallthrough=]
+> if (kgdb_hex2long(&ptr, &addr))
+> ^
+> LINUX/arch/sh/kernel/kgdb.c:269:2: note: here
+> case 'D':
+> ^~~~
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> ---
+>  arch/sh/kernel/kgdb.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/sh/kernel/kgdb.c b/arch/sh/kernel/kgdb.c
+> index 6d61f8c..0d5f3c9 100644
+> --- a/arch/sh/kernel/kgdb.c
+> +++ b/arch/sh/kernel/kgdb.c
+> @@ -266,6 +266,7 @@ int kgdb_arch_handle_exception(int e_vector, int signo, int err_code,
+>  		ptr = &remcomInBuffer[1];
+>  		if (kgdb_hex2long(&ptr, &addr))
+>  			linux_regs->pc = addr;
+> +		/* fallthrough */
+
+Since v5.5-rc1 there is the fallthrough pseudo keyword to document
+these cases:
+https://elixir.bootlin.com/linux/v5.5-rc1/source/Documentation/process/coding-style.rst#L59
+
+
+Daniel.
+
+
+>  	case 'D':
+>  	case 'k':
+>  		atomic_set(&kgdb_cpu_doing_single_step, -1);
 > -- 
-> Tadeusz
-
-above patch shows errors when i try to apply it.
---------------------x------------------------x------------------
-error: git diff header lacks filename information when removing 1 leading pathname component (line 2)
-when i did  related to this "diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c"
-i get another error
-error: corrupt patch at line 27
-----------------------x------------------------x-----------------
-
-i use "git apply"
-
---
-software engineer
-rajagiri school of engineering and technology
+> 2.7.4
+> 
