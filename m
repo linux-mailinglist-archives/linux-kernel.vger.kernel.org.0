@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6E1511B03E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21BFD11B03F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:21:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732402AbfLKPU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:20:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50670 "EHLO mail.kernel.org"
+        id S1732412AbfLKPVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:21:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732121AbfLKPU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:20:57 -0500
+        id S1731850AbfLKPVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:21:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16B6622527;
-        Wed, 11 Dec 2019 15:20:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 191FD2467A;
+        Wed, 11 Dec 2019 15:20:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077655;
-        bh=xjFHwy3tKm92+fBMltwUj/RklLKzz/nTDFtDUYRkT7Q=;
+        s=default; t=1576077660;
+        bh=Akr5z4nXc7Wq89WJ0i/DW8zdQvzfWbQSOGyngKtx9zE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KO5zD5EwugBx/Ix0aV2IwJZGkX+tI8GV0hhgBcnLd3VPzo73wur1c8H5qqknQj4K1
-         FcW0a9GRrZI4Z6LgXn+GgOLPh+jTLXIqGVzOwzDndXE2ciS8A1Xs+ao3vH35oBXwAT
-         6XysL7uxfx8sqnqPD1KFDwQtZWYg80Dd1zGL3y54=
+        b=wq0/Yt4hhxvRdNOJTqO2iKXVNsXJZ8sTha127JQWj1EORaCAdviQ2/AKTXua9IrAV
+         iKAJcyfXuXMc0QzfXH7JTTSgCYXUqtnP8RrcO4BlpZkCFsMg2m67o+OmG88hU1jfAl
+         QV2HTfZfAJiffDrmEDZEwfYOyjJjVWcU1Qhj2+I8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 121/243] ASoC: rsnd: tidyup registering method for rsnd_kctrl_new()
-Date:   Wed, 11 Dec 2019 16:04:43 +0100
-Message-Id: <20191211150347.300543701@linuxfoundation.org>
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 123/243] ARM: dts: sun4i: Fix HDMI output DTC warning
+Date:   Wed, 11 Dec 2019 16:04:45 +0100
+Message-Id: <20191211150347.434243635@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -47,96 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-[ Upstream commit 9c698e8481a15237a5b1db5f8391dd66d59e42a4 ]
+[ Upstream commit 123b796d3fac60d69a3737d81901ab483c4efd6e ]
 
-Current rsnd dvc.c is using flags to avoid duplicating register for
-MIXer case. OTOH, commit e894efef9ac7 ("ASoC: core: add support to card
-rebind") allows to rebind sound card without rebinding all drivers.
+Our HDMI output endpoint on the A10 DTSI has a warning under DTC: "graph
+node has single child node 'endpoint', #address-cells/#size-cells are not
+necessary". Fix this by removing those properties.
 
-Because of above patch and dvc.c flags, it can't re-register kctrl if
-only sound card was rebinded, because dvc is keeping old flags.
-(Of course it will be no problem if rsnd driver also be rebinded,
-but it is not purpose of above patch).
-
-This patch checks current card registered kctrl when registering.
-In MIXer case, it can avoid duplicate register if card already has same
-kctrl. In rebind case, it can re-register kctrl because card registered
-kctl had been removed when unbinding.
-
-This patch is updated version of commit b918f1bc7f1ce ("ASoC: rsnd: DVC
-kctrl sets once")
-
-Reported-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
-Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sh/rcar/core.c | 12 ++++++++++++
- sound/soc/sh/rcar/dvc.c  |  8 --------
- 2 files changed, 12 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/sun4i-a10.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 15a31820df169..99cd52b9ff228 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -1344,6 +1344,18 @@ int rsnd_kctrl_new(struct rsnd_mod *mod,
- 	};
- 	int ret;
+diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+index 3d62a89507207..5d46bb0139fad 100644
+--- a/arch/arm/boot/dts/sun4i-a10.dtsi
++++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+@@ -530,8 +530,6 @@
+ 				};
  
-+	/*
-+	 * 1) Avoid duplicate register (ex. MIXer case)
-+	 * 2) re-register if card was rebinded
-+	 */
-+	list_for_each_entry(kctrl, &card->controls, list) {
-+		struct rsnd_kctrl_cfg *c = kctrl->private_data;
-+
-+		if (strcmp(kctrl->id.name, name) == 0 &&
-+		    c->mod == mod)
-+			return 0;
-+	}
-+
- 	if (size > RSND_MAX_CHANNELS)
- 		return -EINVAL;
- 
-diff --git a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
-index 2b16e0ce6bc53..024ece46bf685 100644
---- a/sound/soc/sh/rcar/dvc.c
-+++ b/sound/soc/sh/rcar/dvc.c
-@@ -40,11 +40,8 @@ struct rsnd_dvc {
- 	struct rsnd_kctrl_cfg_s ren;	/* Ramp Enable */
- 	struct rsnd_kctrl_cfg_s rup;	/* Ramp Rate Up */
- 	struct rsnd_kctrl_cfg_s rdown;	/* Ramp Rate Down */
--	u32 flags;
- };
- 
--#define KCTRL_INITIALIZED	(1 << 0)
--
- #define rsnd_dvc_get(priv, id) ((struct rsnd_dvc *)(priv->dvc) + id)
- #define rsnd_dvc_nr(priv) ((priv)->dvc_nr)
- 
-@@ -227,9 +224,6 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
- 	int channels = rsnd_rdai_channels_get(rdai);
- 	int ret;
- 
--	if (rsnd_flags_has(dvc, KCTRL_INITIALIZED))
--		return 0;
--
- 	/* Volume */
- 	ret = rsnd_kctrl_new_m(mod, io, rtd,
- 			is_play ?
-@@ -285,8 +279,6 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
- 	if (ret < 0)
- 		return ret;
- 
--	rsnd_flags_set(dvc, KCTRL_INITIALIZED);
--
- 	return 0;
- }
- 
+ 				hdmi_out: port@1 {
+-					#address-cells = <1>;
+-					#size-cells = <0>;
+ 					reg = <1>;
+ 				};
+ 			};
 -- 
 2.20.1
 
