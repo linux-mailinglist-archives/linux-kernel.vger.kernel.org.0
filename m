@@ -2,146 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B162211A912
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 11:40:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E7911A918
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 11:42:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbfLKKkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 05:40:46 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:13360 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728856AbfLKKkp (ORCPT
+        id S1728973AbfLKKmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 05:42:03 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:40665 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728030AbfLKKmD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 05:40:45 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBBAbp9e003963;
-        Wed, 11 Dec 2019 05:40:29 -0500
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2173.outbound.protection.outlook.com [104.47.57.173])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2wrb1sbw5h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 Dec 2019 05:40:29 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f40k4T8kvimUQZQKg/53wKwTbqLoretq3G86atjLSdHdfwTQQmNmyTWUV47R9lG0XXOVYeCAIXpbtwsqDGoU7E/Y50kEAHvKgSxUyvPt44o7OMIUFMf/KIMePsO8JjGQA0gBmDfLrJhGZkXuHZvbci7dLvd+XJJjxp+XN0i+rTZgGTAvr/ly5YbgC8S3QRBFcTgp/ntePROSn5Guz5A0xebBY1WeX/Om7pyB3bIEU38qcLYc8TyE8F7/bEZ40/cn1Vx4sEX545W0PrCAmrsF0zFAShdQcCOeW/RR1PCDWn6NX92QLMB+NdddyRS8uyt4BhLsPO8LIfdWPpvr5yR8QA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VOAsGeXJzYMjXwebW8VZT+rkYhJTmYh4DphJVoTMPrA=;
- b=gqo0jnaBQ32S5pnxl+0Dmgy7SypuixNzVCQ1dseiRJtm4dUuVO9vgFFiHoItjtchIOxsF7qweaksAjJ6n2Mg0yeFNYoFqUmkaUvbGWjlWNWs+Q/ja9jMswRKNXQXj7tGYdfh1EPtfQ0uFt3T85b8DYqz/jwQF5NOmt1Ri2Wj6Uq97RztorYk6LUQi2DRtoN4TWceyfIU3igfvfRX0sSPgxCrpEAQCvRrCS37t02yUYhM0s73LAO0mzJ+LCZhiNfsv6lPRU6JW1viz+rOkNKnBVXr/kKPTVMASMvhhTVqI7CH6uNysYgcIN8Odj4OfYQsizVUNQU/l7TG/BwzXXrsFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.55) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
+        Wed, 11 Dec 2019 05:42:03 -0500
+Received: by mail-il1-f195.google.com with SMTP id b15so18997471ila.7;
+        Wed, 11 Dec 2019 02:42:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VOAsGeXJzYMjXwebW8VZT+rkYhJTmYh4DphJVoTMPrA=;
- b=ntQOm+Y7QSThAINwj4gctYfg36QMQqS1B8vEanvMOLJtlSMd4BUpMtZb539EtNL0vwL+AIe7Abyc4FuYNrvS3xAj+NlZgoR6OpX+9vZwmX0CbVKkE3ia/IvSvYOvavLPy5kkLFzI0yLg41pdImZD2LqPpcwXi/tfMrKfazjOjwc=
-Received: from BN6PR03CA0001.namprd03.prod.outlook.com (2603:10b6:404:23::11)
- by BL0PR03MB4228.namprd03.prod.outlook.com (2603:10b6:208:68::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.14; Wed, 11 Dec
- 2019 10:40:28 +0000
-Received: from SN1NAM02FT035.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::205) by BN6PR03CA0001.outlook.office365.com
- (2603:10b6:404:23::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2538.15 via Frontend
- Transport; Wed, 11 Dec 2019 10:40:28 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- SN1NAM02FT035.mail.protection.outlook.com (10.152.72.145) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2538.14
- via Frontend Transport; Wed, 11 Dec 2019 10:40:27 +0000
-Received: from ASHBMBX9.ad.analog.com ([10.64.17.110])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id xBBAeQnk014620
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 11 Dec 2019 02:40:27 -0800
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Wed, 11 Dec
- 2019 05:40:26 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Wed, 11 Dec 2019 05:40:26 -0500
-Received: from saturn.ad.analog.com ([10.48.65.121])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id xBBAeOTT006799;
-        Wed, 11 Dec 2019 05:40:24 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH] iio: buffer-dmaengine: Add module information
-Date:   Wed, 11 Dec 2019 12:41:47 +0200
-Message-ID: <20191211104147.13368-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ytdBVhk/qhHIU0f1ejIbJ7Mj79TlpQjDmvTTuwp3S/w=;
+        b=kOm19GDwtrHwCIEW2BVH8UFPDw9yPqTLsunbaXqDGj8DbJC4FeLahCOjAkBmfU8jdq
+         wlCP5QKmvhJzEGgRObxhFZqvpWiWfgbhA2rJQlVa+c1qcr2VGMOunxaVzcb3B//KeX32
+         oVP5L12yfCwgZGBOrX5n7wnQ/mW3lEUH84HuypEIDoZGMUiAOtWCSqL/4qjn8Cu5Xbvd
+         UUFyq0WuaYJTyaQ+qFnFZM/ag7JkZE0chQK0S8iH5rc+sv4RJxXT9VFTBhYsd4Xj5xmE
+         jku0y7RZm8ZfYNo2z8sqpTmN3POmLJaolkukjqI89zqQsqf1wMaqekHud4CRRVefPxFa
+         6XXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ytdBVhk/qhHIU0f1ejIbJ7Mj79TlpQjDmvTTuwp3S/w=;
+        b=b0iZUfnNZeEN30Q0FDH3ml5rMT2uStFnV0r9C3IPyOI8YlauugLVmK3ou9+7Zln21i
+         gvVqTDAMp4y9Gowh9VAMlmWRg88QuFRL7QwkI91fwlaQuc1KJf9bsXO50kcdph2KRmSS
+         8GhNpQzIui4oAw3zPy31a+nfhfhkF0d7crAFXbwdDyu0lAqQufkeDO2D7bqaTKpeMZz4
+         3SudhUoOQpe+G2zSBu55YV3Qd4qVgzujDcUw4T1PSy3+X99ZNMhrNZ8zVUVfDHC+tY8o
+         2BVaL3B/7ruS7Fm1LeH8TJxPJVLKCMzoyE3TZj4PAIP0f/UAMJ8VJusU1Fh+DTJBt2Gg
+         f7Fg==
+X-Gm-Message-State: APjAAAW7VWKmOqIlOIMcbU7DD9e6zd1SEM72J0XjEoXEFbyDv8UC1KYF
+        k09nhva/Rd3opx/icsicSlrN9T0K6AotSTaygMg=
+X-Google-Smtp-Source: APXvYqzIxiN8rtHbQW0oVmIRPfEAsZq+Jg6CQUNJF2OQPs6YegAImh5AqiNO0lzZwdGY8+YC11yEKidsfRdIltG2fDE=
+X-Received: by 2002:a92:5d92:: with SMTP id e18mr2311277ilg.75.1576060922553;
+ Wed, 11 Dec 2019 02:42:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(136003)(396003)(189003)(199004)(7636002)(107886003)(2616005)(426003)(186003)(4326008)(70206006)(336012)(7696005)(54906003)(110136005)(26005)(478600001)(316002)(8676002)(1076003)(70586007)(5660300002)(86362001)(6666004)(8936002)(356004)(2906002)(36756003)(246002)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR03MB4228;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3a0d2847-65ee-4ba0-6dd3-08d77e26898b
-X-MS-TrafficTypeDiagnostic: BL0PR03MB4228:
-X-Microsoft-Antispam-PRVS: <BL0PR03MB42281834D1D70AF902763B91F95A0@BL0PR03MB4228.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
-X-Forefront-PRVS: 024847EE92
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: j4rnd7VPNc0W4mMB98bXOiKylJ1zjqUiNCkud0WVPVzD2lCzNP1jNAcjlKZqgc4eIDtmVArkPFOUbGng/iqkK+jUoxN2rwBihLtnKipXqfSNsq7GX6g6Cd73jR6C5trekilTDtgY3QMMwppsTdo6kXqd0K28EVSxyo2XL7Cmwp9qxYgesmeTZWiX9TZ7efpL/wNgcj/ahN0JKVL/FupUb9RAgzUXMTJcfmH2h22aROPay+HNAzPgX7+W+8HlpfjR/Cg/f/BuUGTUm2xTD2XUu0WUzFIVtwA/5k3JUqeS7BJIKlGfKxqAHIQuJCIDr2/sKdB1HykQbqjucKalloalzcbw1758VUAQ5r9jBf25DOEPAFP+qN0xfTLHFnnTg3QQz1S11iyWpmBzOIX0/nB0Cpa3HWkcf1ehfg+T3iO+oVXD/dpNAXo5hYY04FTu/Aob
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2019 10:40:27.6486
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a0d2847-65ee-4ba0-6dd3-08d77e26898b
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR03MB4228
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-11_02:2019-12-11,2019-12-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- impostorscore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
- adultscore=0 phishscore=0 suspectscore=2 mlxscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912110093
+References: <20191211084112.971-1-linux.amoon@gmail.com> <20191211084112.971-2-linux.amoon@gmail.com>
+In-Reply-To: <20191211084112.971-2-linux.amoon@gmail.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Wed, 11 Dec 2019 16:11:51 +0530
+Message-ID: <CANAwSgRLCNUxmiaRNBSQ9ysAFs+RpnbBqZGZ4bq4=BzdnPRR2g@mail.gmail.com>
+Subject: Re: [PATCHv1 1/3] arm64: dts: amlogic: adds crypto hardware node for
+ GXBB SoCs
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+Hi Neil,
 
-Make sure that the industrialio-buffer-dmaengine has proper license
-information so it can be build as a module and loaded without tainting the
-kernel.
+On Wed, 11 Dec 2019 at 14:11, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> This patch adds the crypto hardware node for all GXBB SoCs.
+>
+> Cc: Corentin Labbe <clabbe@baylibre.com>
+> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> Tested on Odroid C2 GXBB
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> index 0cb40326b0d3..bac8fbfd4f01 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> @@ -14,6 +14,16 @@ / {
+>         compatible = "amlogic,meson-gxbb";
+>
+>         soc {
+> +               crypto: crypto@c883e000 {
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/iio/buffer/industrialio-buffer-dmaengine.c | 5 +++++
- 1 file changed, 5 insertions(+)
+My mistake I got this reg value wrong, as per the
+"S905_Public_Datasheet_V1.1.4" [0]
+it should be *0xda832000 + offset*4*
+I changes this at my end but I get kernel panic on loading the module.
 
-diff --git a/drivers/iio/buffer/industrialio-buffer-dmaengine.c b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-index b7b5a934e9b2..e0b92f3dec0e 100644
---- a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-+++ b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-@@ -10,6 +10,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/spinlock.h>
- #include <linux/err.h>
-+#include <linux/module.h>
- 
- #include <linux/iio/iio.h>
- #include <linux/iio/buffer.h>
-@@ -206,3 +207,7 @@ void iio_dmaengine_buffer_free(struct iio_buffer *buffer)
- 	iio_buffer_put(buffer);
- }
- EXPORT_SYMBOL_GPL(iio_dmaengine_buffer_free);
-+
-+MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
-+MODULE_DESCRIPTION("DMA buffer for the IIO framework");
-+MODULE_LICENSE("GPL");
--- 
-2.20.1
+# sudo modprobe tcrypt sec=1 mode=500
 
+It's looks like the crypto node is wrongly configured.
+
+> +                       compatible = "amlogic,gxbb-crypto";
+> +                       reg = <0x0 0xc883e000 0x0 0x36>;
+> +                       interrupts = <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
+> +                                    <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>;
+> +                       clocks = <&clkc CLKID_BLKMV>;
+> +                       clock-names = "blkmv";
+> +                       status = "okay";
+> +               };
+> +
+>                 usb0_phy: phy@c0000000 {
+>                         compatible = "amlogic,meson-gxbb-usb2-phy";
+>                         #phy-cells = <0>;
+> --
+> 2.24.0
+>
+
+[0] https://dn.odroid.com/S905/DataSheet/S905_Public_Datasheet_V1.1.4.pdf
+
+-Anand
