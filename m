@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D0DA11B80A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:12:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38AFC11B7FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 17:11:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731022AbfLKQLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 11:11:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58758 "EHLO mail.kernel.org"
+        id S1730785AbfLKPKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:10:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730755AbfLKPK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:10:27 -0500
+        id S1730742AbfLKPKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:10:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28DF424654;
-        Wed, 11 Dec 2019 15:10:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24EB92465A;
+        Wed, 11 Dec 2019 15:10:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077026;
-        bh=bOEKlkM0Bu6aFMQUWVJmuPimpJcF6y2YbSZcnZpYxnM=;
+        s=default; t=1576077031;
+        bh=yNEKqnYFfGAB5VCK7Vas/fD9z/qwhU9RBGBWkm0MGc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fsyPp5aEMcAsneJZ7VGXDpA9x37TO7BC4jXjkQhYNu4VDWCFgw4P7i7mfiex3pLrG
-         GN/7SGospIxNWIoe9HxlXzYehFti/lSIqc3D/ZWXieVV0TeuVy8d3Y69BMHkvbJiw4
-         N/ywpVpCudeft1vCvMeOv+yVk5n8bPXGjlg7oNU8=
+        b=qlwPnirUse6CJShR5USW1ZNidFcwluPf+4lfoPbYUKB5G4QG2+oOwducn+CxxbUs4
+         F3Aiq7XlE6ZPyWMyJeCGdQlRr2kcOWUIFLpUIzfwjcKmToqTtPe6il0tMGkctS2TzU
+         nszwZe2rkSD0M8JDeO1h+XhaXpJ7DzMW8dYxekWo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 5.4 45/92] x86/PCI: Avoid AMD FCH XHCI USB PME# from D0 defect
-Date:   Wed, 11 Dec 2019 16:05:36 +0100
-Message-Id: <20191211150242.248948929@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 5.4 47/92] CIFS: Fix SMB2 oplock break processing
+Date:   Wed, 11 Dec 2019 16:05:38 +0100
+Message-Id: <20191211150242.515175605@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
 References: <20191211150221.977775294@linuxfoundation.org>
@@ -44,53 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit 7e8ce0e2b036dbc6617184317983aea4f2c52099 upstream.
+commit fa9c2362497fbd64788063288dc4e74daf977ebb upstream.
 
-The AMD FCH USB XHCI Controller advertises support for generating PME#
-while in D0.  When in D0, it does signal PME# for USB 3.0 connect events,
-but not for USB 2.0 or USB 1.1 connect events, which means the controller
-doesn't wake correctly for those events.
+Even when mounting modern protocol version the server may be
+configured without supporting SMB2.1 leases and the client
+uses SMB2 oplock to optimize IO performance through local caching.
 
-  00:10.0 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] FCH USB XHCI Controller [1022:7914] (rev 20) (prog-if 30 [XHCI])
-        Subsystem: Dell FCH USB XHCI Controller [1028:087e]
-        Capabilities: [50] Power Management version 3
-                Flags: PMEClk- DSI- D1- D2- AuxCurrent=0mA PME(D0+,D1-,D2-,D3hot+,D3cold+)
+However there is a problem in oplock break handling that leads
+to missing a break notification on the client who has a file
+opened. It latter causes big latencies to other clients that
+are trying to open the same file.
 
-Clear PCI_PM_CAP_PME_D0 in dev->pme_support to indicate the device will not
-assert PME# from D0 so we don't rely on it.
+The problem reproduces when there are multiple shares from the
+same server mounted on the client. The processing code tries to
+match persistent and volatile file ids from the break notification
+with an open file but it skips all share besides the first one.
+Fix this by looking up in all shares belonging to the server that
+issued the oplock break.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203673
-Link: https://lore.kernel.org/r/20190902145252.32111-1-kai.heng.feng@canonical.com
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/pci/fixup.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/cifs/smb2misc.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/arch/x86/pci/fixup.c
-+++ b/arch/x86/pci/fixup.c
-@@ -589,6 +589,17 @@ static void pci_fixup_amd_ehci_pme(struc
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_AMD, 0x7808, pci_fixup_amd_ehci_pme);
- 
- /*
-+ * Device [1022:7914]
-+ * When in D0, PME# doesn't get asserted when plugging USB 2.0 device.
-+ */
-+static void pci_fixup_amd_fch_xhci_pme(struct pci_dev *dev)
-+{
-+	dev_info(&dev->dev, "PME# does not work under D0, disabling it\n");
-+	dev->pme_support &= ~(PCI_PM_CAP_PME_D0 >> PCI_PM_CAP_PME_SHIFT);
-+}
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_AMD, 0x7914, pci_fixup_amd_fch_xhci_pme);
+--- a/fs/cifs/smb2misc.c
++++ b/fs/cifs/smb2misc.c
+@@ -673,10 +673,10 @@ smb2_is_valid_oplock_break(char *buffer,
+ 	spin_lock(&cifs_tcp_ses_lock);
+ 	list_for_each(tmp, &server->smb_ses_list) {
+ 		ses = list_entry(tmp, struct cifs_ses, smb_ses_list);
 +
-+/*
-  * Apple MacBook Pro: Avoid [mem 0x7fa00000-0x7fbfffff]
-  *
-  * Using the [mem 0x7fa00000-0x7fbfffff] region, e.g., by assigning it to
+ 		list_for_each(tmp1, &ses->tcon_list) {
+ 			tcon = list_entry(tmp1, struct cifs_tcon, tcon_list);
+ 
+-			cifs_stats_inc(&tcon->stats.cifs_stats.num_oplock_brks);
+ 			spin_lock(&tcon->open_file_lock);
+ 			list_for_each(tmp2, &tcon->openFileList) {
+ 				cfile = list_entry(tmp2, struct cifsFileInfo,
+@@ -688,6 +688,8 @@ smb2_is_valid_oplock_break(char *buffer,
+ 					continue;
+ 
+ 				cifs_dbg(FYI, "file id match, oplock break\n");
++				cifs_stats_inc(
++				    &tcon->stats.cifs_stats.num_oplock_brks);
+ 				cinode = CIFS_I(d_inode(cfile->dentry));
+ 				spin_lock(&cfile->file_info_lock);
+ 				if (!CIFS_CACHE_WRITE(cinode) &&
+@@ -720,9 +722,6 @@ smb2_is_valid_oplock_break(char *buffer,
+ 				return true;
+ 			}
+ 			spin_unlock(&tcon->open_file_lock);
+-			spin_unlock(&cifs_tcp_ses_lock);
+-			cifs_dbg(FYI, "No matching file for oplock break\n");
+-			return true;
+ 		}
+ 	}
+ 	spin_unlock(&cifs_tcp_ses_lock);
 
 
