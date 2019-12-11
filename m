@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 378A611AEDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:08:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79A8311AEAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:07:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730495AbfLKPI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:08:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56594 "EHLO mail.kernel.org"
+        id S1729763AbfLKPHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:07:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729654AbfLKPIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:08:52 -0500
+        id S1729144AbfLKPHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:07:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F070724658;
-        Wed, 11 Dec 2019 15:08:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 064A4208C3;
+        Wed, 11 Dec 2019 15:07:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576076931;
-        bh=KY+MWFGnauWcY/Zv39yLl7TdEnCbPv7rV5WnpBMm7rY=;
+        s=default; t=1576076837;
+        bh=S1YkN6O6yv6W4P5KTj8GXvZtQ4bxmpqDV3ZgFsMXh38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v0mpuGxkU89kyYiSJkg9gOgSpER07suWA0DORGCOgfPSCDq1JEzNoOpkQ8Y0efssj
-         2cDCjPWrTbJuOIpDa555L3hH335lbPhNtoh+fVfw+JaDJgLO9vB2poVIy8S5m50ly3
-         xpxewzsGn3eQj2y6EiTw86UNmVBvbBHPhKmhtcFE=
+        b=IIJxPTHvH4qVtjIgqJ2oz3jsAQK9k/0EcUO7EmzzpU3EIo2E997VkOPdFQNYX7WDa
+         u3O5yutQb6TZn+q0KpMCX5nHwjMCavuaGAngAO0yRrEjR7iCeM283ltcI1xjeq5D0j
+         oldSpx/GA0q4p40gWWGUfMt46ZJdJK3s031MkHf8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 5.4 09/92] staging/octeon: Use stubs for MIPS && !CAVIUM_OCTEON_SOC
-Date:   Wed, 11 Dec 2019 16:05:00 +0100
-Message-Id: <20191211150223.848490134@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 5.4 10/92] usb: gadget: u_serial: add missing port entry locking
+Date:   Wed, 11 Dec 2019 16:05:01 +0100
+Message-Id: <20191211150224.106028704@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
 References: <20191211150221.977775294@linuxfoundation.org>
@@ -46,67 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Burton <paul.burton@mips.com>
+From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-commit 17a29fea086ba18b000d28439bd5cb4f2b0a527b upstream.
+commit daf82bd24e308c5a83758047aff1bd81edda4f11 upstream.
 
-When building for a non-Cavium MIPS system with COMPILE_TEST=y, the
-Octeon ethernet driver hits a number of issues due to use of macros
-provided only for CONFIG_CAVIUM_OCTEON_SOC=y configurations. For
-example:
+gserial_alloc_line() misses locking (for a release barrier) while
+resetting port entry on TTY allocation failure. Fix this.
 
-  drivers/staging/octeon/ethernet-rx.c:190:6: error:
-    'CONFIG_CAVIUM_OCTEON_CVMSEG_SIZE' undeclared (first use in this function)
-  drivers/staging/octeon/ethernet-rx.c:472:25: error:
-    'OCTEON_IRQ_WORKQ0' undeclared (first use in this function)
-
-These come from various asm/ headers that a non-Octeon build will be
-using a non-Octeon version of.
-
-Fix this by using the octeon-stubs.h header for non-Cavium MIPS builds,
-and only using the real asm/octeon/ headers when building a Cavium
-Octeon kernel configuration.
-
-This requires that octeon-stubs.h doesn't redefine XKPHYS_TO_PHYS, which
-is defined for MIPS by asm/addrspace.h which is pulled in by many other
-common asm/ headers.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-URL: https://lore.kernel.org/linux-mips/CAMuHMdXvu+BppwzsU9imNWVKea_hoLcRt9N+a29Q-QsjW=ip2g@mail.gmail.com/
-Fixes: 171a9bae68c7 ("staging/octeon: Allow test build on !MIPS")
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-Cc: David S. Miller <davem@davemloft.net>
-Link: https://lore.kernel.org/r/20191007231741.2012860-1-paul.burton@mips.com
-Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Tested-by: Ladislav Michl <ladis@linux-mips.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/staging/octeon/octeon-ethernet.h |    2 +-
- drivers/staging/octeon/octeon-stubs.h    |    5 ++++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/octeon/octeon-ethernet.h
-+++ b/drivers/staging/octeon/octeon-ethernet.h
-@@ -14,7 +14,7 @@
- #include <linux/of.h>
- #include <linux/phy.h>
+---
+ drivers/usb/gadget/function/u_serial.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/usb/gadget/function/u_serial.c
++++ b/drivers/usb/gadget/function/u_serial.c
+@@ -1239,8 +1239,10 @@ int gserial_alloc_line(unsigned char *li
+ 				__func__, port_num, PTR_ERR(tty_dev));
  
--#ifdef CONFIG_MIPS
-+#ifdef CONFIG_CAVIUM_OCTEON_SOC
- 
- #include <asm/octeon/octeon.h>
- 
---- a/drivers/staging/octeon/octeon-stubs.h
-+++ b/drivers/staging/octeon/octeon-stubs.h
-@@ -1,5 +1,8 @@
- #define CONFIG_CAVIUM_OCTEON_CVMSEG_SIZE	512
--#define XKPHYS_TO_PHYS(p)			(p)
-+
-+#ifndef XKPHYS_TO_PHYS
-+# define XKPHYS_TO_PHYS(p)			(p)
-+#endif
- 
- #define OCTEON_IRQ_WORKQ0 0
- #define OCTEON_IRQ_RML 0
+ 		ret = PTR_ERR(tty_dev);
++		mutex_lock(&ports[port_num].lock);
+ 		port = ports[port_num].port;
+ 		ports[port_num].port = NULL;
++		mutex_unlock(&ports[port_num].lock);
+ 		gserial_free_port(port);
+ 		goto err;
+ 	}
 
 
