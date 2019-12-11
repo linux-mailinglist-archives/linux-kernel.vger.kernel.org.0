@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 715E711B5CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:56:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29DA611B496
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732539AbfLKP4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:56:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41772 "EHLO mail.kernel.org"
+        id S1732722AbfLKPZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:25:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731798AbfLKPP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:15:29 -0500
+        id S1732926AbfLKPY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:24:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72ED92467D;
-        Wed, 11 Dec 2019 15:15:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE60724658;
+        Wed, 11 Dec 2019 15:24:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077328;
-        bh=0qytjjZWSM6P7mpZ8ddmpF2SU5ZT8/Uf1JWrhNBExQo=;
+        s=default; t=1576077899;
+        bh=v+sWtlARkp7pEjZCr67ok4GUfzy/pMIxtzAZLAoB/BE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u/taWUxab3qHl+yME7baGA7Apwye8SG9cEP1toq4pmuj2C3t/hQXCxbMLB6UrNtT5
-         Z9NMF4WvnTa55Bp7Ts3UbQTx3lmzdqLE+RJbscNE0Iz51/jR0Rc4HNFYOGm3aEVupP
-         ZUPCAphsdO3OBO1pwc3CYucyC8AqfRuOqxLQavgk=
+        b=VhdvbNovXKLRr0QL1IsEiDewp52TEz2MmXFaWKNykyVyM+Jg9Z8REx1oyB0zf+Xzd
+         MVEom6Y7y9ZM/M40cusco0VraUaCEuhvT+rZVQkuug3dNWfNPyl6HKN4vlvdGn1FRk
+         BhYT7Q6VxSdkughEyH2p1inl/aW7Ta+jQ8KmoA80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.3 086/105] crypto: atmel-aes - Fix IV handling when req->nbytes < ivsize
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Julien Floret <julien.floret@6wind.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.19 213/243] xfrm interface: avoid corruption on changelink
 Date:   Wed, 11 Dec 2019 16:06:15 +0100
-Message-Id: <20191211150259.473884315@linuxfoundation.org>
+Message-Id: <20191211150353.723385635@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191211150221.153659747@linuxfoundation.org>
-References: <20191211150221.153659747@linuxfoundation.org>
+In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
+References: <20191211150339.185439726@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,110 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-commit 86ef1dfcb561473fbf5e199d58d18c55554d78be upstream.
+commit e9e7e85d75f3731079ffd77c1a66f037aef04fe7 upstream.
 
-commit 394a9e044702 ("crypto: cfb - add missing 'chunksize' property")
-adds a test vector where the input length is smaller than the IV length
-(the second test vector). This revealed a NULL pointer dereference in
-the atmel-aes driver, that is caused by passing an incorrect offset in
-scatterwalk_map_and_copy() when atmel_aes_complete() is called.
+The new parameters must not be stored in the netdev_priv() before
+validation, it may corrupt the interface. Note also that if data is NULL,
+only a memset() is done.
 
-Do not save the IV in req->info of ablkcipher_request (or equivalently
-req->iv of skcipher_request) when req->nbytes < ivsize, because the IV
-will not be further used.
+$ ip link add xfrm1 type xfrm dev lo if_id 1
+$ ip link add xfrm2 type xfrm dev lo if_id 2
+$ ip link set xfrm1 type xfrm dev lo if_id 2
+RTNETLINK answers: File exists
+$ ip -d link list dev xfrm1
+5: xfrm1@lo: <NOARP> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/none 00:00:00:00:00:00 brd 00:00:00:00:00:00 promiscuity 0 minmtu 68 maxmtu 1500
+    xfrm if_id 0x2 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535
 
-While touching the code, modify the type of ivsize from int to
-unsigned int, to comply with the return type of
-crypto_ablkcipher_ivsize().
+=> "if_id 0x2"
 
-Fixes: 91308019ecb4 ("crypto: atmel-aes - properly set IV after {en,de}crypt")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: f203b76d7809 ("xfrm: Add virtual xfrm interfaces")
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Tested-by: Julien Floret <julien.floret@6wind.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/atmel-aes.c |   53 +++++++++++++++++++++++++--------------------
- 1 file changed, 30 insertions(+), 23 deletions(-)
+ net/xfrm/xfrm_interface.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/crypto/atmel-aes.c
-+++ b/drivers/crypto/atmel-aes.c
-@@ -490,6 +490,29 @@ static inline bool atmel_aes_is_encrypt(
- static void atmel_aes_authenc_complete(struct atmel_aes_dev *dd, int err);
- #endif
- 
-+static void atmel_aes_set_iv_as_last_ciphertext_block(struct atmel_aes_dev *dd)
-+{
-+	struct ablkcipher_request *req = ablkcipher_request_cast(dd->areq);
-+	struct atmel_aes_reqctx *rctx = ablkcipher_request_ctx(req);
-+	struct crypto_ablkcipher *ablkcipher = crypto_ablkcipher_reqtfm(req);
-+	unsigned int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
-+
-+	if (req->nbytes < ivsize)
-+		return;
-+
-+	if (rctx->mode & AES_FLAGS_ENCRYPT) {
-+		scatterwalk_map_and_copy(req->info, req->dst,
-+					 req->nbytes - ivsize, ivsize, 0);
-+	} else {
-+		if (req->src == req->dst)
-+			memcpy(req->info, rctx->lastc, ivsize);
-+		else
-+			scatterwalk_map_and_copy(req->info, req->src,
-+						 req->nbytes - ivsize,
-+						 ivsize, 0);
-+	}
-+}
-+
- static inline int atmel_aes_complete(struct atmel_aes_dev *dd, int err)
+--- a/net/xfrm/xfrm_interface.c
++++ b/net/xfrm/xfrm_interface.c
+@@ -674,12 +674,12 @@ static int xfrmi_changelink(struct net_d
+ 			   struct nlattr *data[],
+ 			   struct netlink_ext_ack *extack)
  {
- #ifdef CONFIG_CRYPTO_DEV_ATMEL_AUTHENC
-@@ -500,26 +523,8 @@ static inline int atmel_aes_complete(str
- 	clk_disable(dd->iclk);
- 	dd->flags &= ~AES_FLAGS_BUSY;
+-	struct xfrm_if *xi = netdev_priv(dev);
+ 	struct net *net = dev_net(dev);
++	struct xfrm_if_parms p;
++	struct xfrm_if *xi;
  
--	if (!dd->ctx->is_aead) {
--		struct ablkcipher_request *req =
--			ablkcipher_request_cast(dd->areq);
--		struct atmel_aes_reqctx *rctx = ablkcipher_request_ctx(req);
--		struct crypto_ablkcipher *ablkcipher =
--			crypto_ablkcipher_reqtfm(req);
--		int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
+-	xfrmi_netlink_parms(data, &xi->p);
 -
--		if (rctx->mode & AES_FLAGS_ENCRYPT) {
--			scatterwalk_map_and_copy(req->info, req->dst,
--				req->nbytes - ivsize, ivsize, 0);
--		} else {
--			if (req->src == req->dst) {
--				memcpy(req->info, rctx->lastc, ivsize);
--			} else {
--				scatterwalk_map_and_copy(req->info, req->src,
--					req->nbytes - ivsize, ivsize, 0);
--			}
--		}
--	}
-+	if (!dd->ctx->is_aead)
-+		atmel_aes_set_iv_as_last_ciphertext_block(dd);
- 
- 	if (dd->is_async)
- 		dd->areq->complete(dd->areq, err);
-@@ -1125,10 +1130,12 @@ static int atmel_aes_crypt(struct ablkci
- 	rctx->mode = mode;
- 
- 	if (!(mode & AES_FLAGS_ENCRYPT) && (req->src == req->dst)) {
--		int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
-+		unsigned int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
- 
--		scatterwalk_map_and_copy(rctx->lastc, req->src,
--			(req->nbytes - ivsize), ivsize, 0);
-+		if (req->nbytes >= ivsize)
-+			scatterwalk_map_and_copy(rctx->lastc, req->src,
-+						 req->nbytes - ivsize,
-+						 ivsize, 0);
+-	xi = xfrmi_locate(net, &xi->p);
++	xfrmi_netlink_parms(data, &p);
++	xi = xfrmi_locate(net, &p);
+ 	if (!xi) {
+ 		xi = netdev_priv(dev);
+ 	} else {
+@@ -687,7 +687,7 @@ static int xfrmi_changelink(struct net_d
+ 			return -EEXIST;
  	}
  
- 	return atmel_aes_handle_queue(dd, &req->base);
+-	return xfrmi_update(xi, &xi->p);
++	return xfrmi_update(xi, &p);
+ }
+ 
+ static size_t xfrmi_get_size(const struct net_device *dev)
 
 
