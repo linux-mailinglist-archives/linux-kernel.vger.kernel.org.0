@@ -2,126 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7F2011ACA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 14:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B464811ACFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 15:06:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbfLKN7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 08:59:37 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34541 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729513AbfLKN7h (ORCPT
+        id S1729992AbfLKOFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 09:05:00 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:43228 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729982AbfLKOE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 08:59:37 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t2so24173867wrr.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 05:59:35 -0800 (PST)
+        Wed, 11 Dec 2019 09:04:58 -0500
+Received: by mail-pj1-f66.google.com with SMTP id g4so8973815pjs.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 06:04:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=STaNEtWndnwuAqqhmXVnDhNs+/7QG3rCPR52EQWWaas=;
-        b=H8UZouchmiK0Y13YNR0SwBb+PKetsAbTms3YnTspLwes/xLjaIGRijl06ZP9T/cWhL
-         eL0jssfAK++uUWsJ+aOMGrdnzq5QH1jQtnzTzB7dj1tfmDziq8+BoZkfyIlaxdyE9CCM
-         GhWR+kt0PNgI+E5NjbSENGvL/yWvUasNFalqQGuFTAFdKkC7vMpxIs0RUu9RsRN0lvuu
-         uH8cbM+Pt3j+q9QsbwWwSwa/iQB592ABHABHAEDd1WH8FCeLFHyQOdCaCqYOEyAhFTlU
-         P/ODSOaB2X7AKgLJo11KL20XSy761EVB73m9jR6fgcPYgmX0mTlkwrTkUagSHh22wNFG
-         qEYA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UuYwx4FSzyLc9U1xa0BZGom1pgq8tugsRTYhO5cDG3M=;
+        b=PYVSQx64S9qCKQW5/VoLb1Dfu5FCANe/WwCYgMrLw68aBbp1xG/lcwq7mn5cQHYTsI
+         MDAPb6c9L1Yz82iophl6y5FwYZEeoko/Dcw4tAxaC0D0tegsbw512X92+8iauX9yg6PV
+         t/d1EK920x08nLMdgl6I6pmxJNQKV0mmNqUay1Du8fdV4Ul8RkT+VVWXoH8O9b8fyDHJ
+         jX2AjHFDB4KWcLfQSQXiKXC/SV1mWvpNqAdmSqwf1Mo51UoN96SKiUFhWG2ZE3vyDJBT
+         psDGGXUVxVYFO7VRRuDb1kB/Czx9bjjaF6sNyOGk7nc+vDsXqUJt6GIsnvjhJKZLoADC
+         xsyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=STaNEtWndnwuAqqhmXVnDhNs+/7QG3rCPR52EQWWaas=;
-        b=C1N4v/fz2eCmDlFHwmgpNneY1V41SRxtf01C3czB9mUuTeMdpgr7OgL4aVWSzvMx7A
-         KGhJOxiSo7DLPb5qaBzFLTy3F/RcPaPnd9EV2fnUCXH2wXMjeoX+V0pHyNCXszXRuQTE
-         sSkFR7TDTid59bNXDFszdDlUhZjOsV16jCmYSgYHKQwUMU1RnPOkxIe1h82XMe4PeD/T
-         kRFkssd3qr1iPjKkNJCAQ+PDm9fEecE0WCQQxKsp0fi+PGgrhZeVUiRzhHOe1X/puWt5
-         IWMCytDaJyNHTRLiggQ/EZJ10PoTr0MxlMGDXWKIQxafQzwTdO+ebVTez/S3eByfKah3
-         hNRQ==
-X-Gm-Message-State: APjAAAWjaYbdfFW05AuLyBru3L2ya0xsw2Etuub7ZzZxZOJTDSusnlyx
-        +06Nr6XCAPRhc6huV5BYIoWYtLVVqKvHBDZJukFlWg==
-X-Google-Smtp-Source: APXvYqxrnY22qG46E2qM1V+u18BpTO3sW9wSH/3ZXlho4UR4T0gYJ7K7pbXJtIkZxgRF9nLpKcVXc1X1jYSASiOVKoA=
-X-Received: by 2002:a5d:46c1:: with SMTP id g1mr3933196wrs.200.1576072774421;
- Wed, 11 Dec 2019 05:59:34 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UuYwx4FSzyLc9U1xa0BZGom1pgq8tugsRTYhO5cDG3M=;
+        b=gxIVsbBycOEDhXWX4ovZO8mFojoNRhUiYDXUu8rEomh+yNdhDG/Kqi+VCLleN+AKlt
+         ZR4N4cBSC+Dh7n2O+16QCKnPtFsCnWfpzzhOtBUqNgaLA/tCitg5ANW41A2el64gZvZZ
+         lMQcjiRAeTd0xSVm3EbXvAH024WuExyKqpqgOkZgj6bW0gCUW0nHoIPbz8cNvFK69zEZ
+         MkL8E2VrcAShUAo5NkDs9nsilVIcTuHV6A0nuAOKJzXtlrEla9ixmkZm+8xg5Y605yEJ
+         VHCuy3Eg8U9oGFu4+ff00D5+bdCMW8BXvRT60x0YQJphO/8GHzgAn1i6iThZRD4Arlyt
+         08yA==
+X-Gm-Message-State: APjAAAVlxAkAlw1wI+8lWw86dJVmE+6PUeU/USH7X/+GASSDNgyiu5lJ
+        5MtpPQu/exkIgqYygOj1m4E=
+X-Google-Smtp-Source: APXvYqyOYK6C8UMov6vErx0/6/xfChBgejaGNR6iloblC4SH/KvL/ZwlKkh475bl99B63WdJu+zxIA==
+X-Received: by 2002:a17:902:8216:: with SMTP id x22mr3374184pln.334.1576073097671;
+        Wed, 11 Dec 2019 06:04:57 -0800 (PST)
+Received: from localhost.localdomain (c-67-165-113-11.hsd1.wa.comcast.net. [67.165.113.11])
+        by smtp.gmail.com with ESMTPSA id o12sm3489656pfg.152.2019.12.11.06.04.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2019 06:04:56 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Chris Healy <cphealy@gmail.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] ARM: dts: vf610-zii-scu4-aib: Use generic names for DT nodes
+Date:   Wed, 11 Dec 2019 06:04:43 -0800
+Message-Id: <20191211140444.7076-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20191211133951.401933-1-arnd@arndb.de>
-In-Reply-To: <20191211133951.401933-1-arnd@arndb.de>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 11 Dec 2019 14:59:23 +0100
-Message-ID: <CAKv+Gu8yaz8uekq3taUaxWOs95yVB_tRaoKM0N2EBKSzWOhExw@mail.gmail.com>
-Subject: Re: [PATCH] gcc-plugins: make it possible to disable
- CONFIG_GCC_PLUGINS again
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Emese Revfy <re.emese@gmail.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Dec 2019 at 14:40, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> I noticed that randconfig builds with gcc no longer produce a lot of
-> ccache hits, unlike with clang, and traced this back to plugins
-> now being enabled unconditionally if they are supported.
->
-> I am now working around this by adding
->
->    export CCACHE_COMPILERCHECK=/usr/bin/size -A %compiler%
->
-> to my top-level Makefile. This changes the heuristic that ccache uses
-> to determine whether the plugins are the same after a 'make clean'.
->
-> However, it also seems that being able to just turn off the plugins is
-> generally useful, at least for build testing it adds noticeable overhead
-> but does not find a lot of bugs additional bugs, and may be easier for
-> ccache users than my workaround.
->
-> Fixes: 9f671e58159a ("security: Create "kernel hardening" config area")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The devicetree specification recommends using generic node names.
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Some ZII dts files already follow such recommendation, but some don't,
+so use generic node names for consistency among the ZII dts files.
 
-> ---
->  scripts/gcc-plugins/Kconfig | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
->
-> diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-> index d33de0b9f4f5..e3569543bdac 100644
-> --- a/scripts/gcc-plugins/Kconfig
-> +++ b/scripts/gcc-plugins/Kconfig
-> @@ -14,8 +14,8 @@ config HAVE_GCC_PLUGINS
->           An arch should select this symbol if it supports building with
->           GCC plugins.
->
-> -config GCC_PLUGINS
-> -       bool
-> +menuconfig GCC_PLUGINS
-> +       bool "GCC plugins"
->         depends on HAVE_GCC_PLUGINS
->         depends on PLUGIN_HOSTCC != ""
->         default y
-> @@ -25,8 +25,7 @@ config GCC_PLUGINS
->
->           See Documentation/core-api/gcc-plugins.rst for details.
->
-> -menu "GCC plugins"
-> -       depends on GCC_PLUGINS
-> +if GCC_PLUGINS
->
->  config GCC_PLUGIN_CYC_COMPLEXITY
->         bool "Compute the cyclomatic complexity of a function" if EXPERT
-> @@ -113,4 +112,4 @@ config GCC_PLUGIN_ARM_SSP_PER_TASK
->         bool
->         depends on GCC_PLUGINS && ARM
->
-> -endmenu
-> +endif
-> --
-> 2.20.0
->
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Cory Tusar <cory.tusar@zii.aero>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Changes since [v1]:
+
+    - Rebased on top of 12/05 linux-next
+
+    - Added "ARM: dts: vf610-zii-scu4-aib: Add node for switch
+      watchdog" to this series, which was previously accidental and
+      implicit prerequisite for this patch
+
+[v1] lore.kernel.org/lkml/20190824002747.14610-1-andrew.smirnov@gmail.com
+
+ arch/arm/boot/dts/vf610-zii-scu4-aib.dts | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
+index d7caf618f980..a02c7ea3b92d 100644
+--- a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
++++ b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
+@@ -407,7 +407,7 @@
+ 	pinctrl-0 = <&pinctrl_dspi1>;
+ 	status = "okay";
+ 
+-	spi-flash@0 {
++	flash@0 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "jedec,spi-nor";
+@@ -420,7 +420,7 @@
+ 		};
+ 	};
+ 
+-	spi-flash@1 {
++	flash@1 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "jedec,spi-nor";
+@@ -509,7 +509,7 @@
+ 		#gpio-cells = <2>;
+ 	};
+ 
+-	lm75@48 {
++	temp-sensor@48 {
+ 		compatible = "national,lm75";
+ 		reg = <0x48>;
+ 	};
+@@ -524,7 +524,7 @@
+ 		reg = <0x52>;
+ 	};
+ 
+-	ds1682@6b {
++	elapsed-time-recorder@6b {
+ 		compatible = "dallas,ds1682";
+ 		reg = <0x6b>;
+ 	};
+@@ -536,7 +536,7 @@
+ 	pinctrl-0 = <&pinctrl_i2c1>;
+ 	status = "okay";
+ 
+-	adt7411@4a {
++	adc@4a {
+ 		compatible = "adi,adt7411";
+ 		reg = <0x4a>;
+ 	};
+@@ -548,7 +548,7 @@
+ 	pinctrl-0 = <&pinctrl_i2c2>;
+ 	status = "okay";
+ 
+-	gpio9: sx1503q@20 {
++	gpio9: io-expander@20 {
+ 		compatible = "semtech,sx1503q";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_sx1503_20>;
+@@ -559,12 +559,12 @@
+ 		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
+ 	};
+ 
+-	lm75@4e {
++	temp-sensor@4e {
+ 		compatible = "national,lm75";
+ 		reg = <0x4e>;
+ 	};
+ 
+-	lm75@4f {
++	temp-sensor@4f {
+ 		compatible = "national,lm75";
+ 		reg = <0x4f>;
+ 	};
+@@ -576,17 +576,17 @@
+ 		reg = <0x23>;
+ 	};
+ 
+-	adt7411@4a {
++	adc@4a {
+ 		compatible = "adi,adt7411";
+ 		reg = <0x4a>;
+ 	};
+ 
+-	at24c08@54 {
++	eeprom@54 {
+ 		compatible = "atmel,24c08";
+ 		reg = <0x54>;
+ 	};
+ 
+-	tca9548@70 {
++	i2c-mux@70 {
+ 		compatible = "nxp,pca9548";
+ 		pinctrl-names = "default";
+ 		#address-cells = <1>;
+@@ -625,7 +625,7 @@
+ 		};
+ 	};
+ 
+-	tca9548@71 {
++	i2c-mux@71 {
+ 		compatible = "nxp,pca9548";
+ 		pinctrl-names = "default";
+ 		reg = <0x71>;
+-- 
+2.21.0
+
