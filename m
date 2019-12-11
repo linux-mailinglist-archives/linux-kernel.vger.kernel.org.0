@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4AB811B4C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A5711B4C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:50:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732789AbfLKPYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:24:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55200 "EHLO mail.kernel.org"
+        id S1732371AbfLKPYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:24:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732777AbfLKPX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:23:59 -0500
+        id S1731052AbfLKPYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:24:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6561622B48;
-        Wed, 11 Dec 2019 15:23:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E08F42077B;
+        Wed, 11 Dec 2019 15:24:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077838;
-        bh=wPJ8Eff7+YJjxgaQlzD1lfkJRng/4VLIGf6uMqVMwxY=;
+        s=default; t=1576077841;
+        bh=PFVwbF3UVf3POamPzm8tB9yZN5Lk4YJ4DVrIeQQMQmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IZwvCCVM+GVfiaEVGME276GaOS9XtprO+G3EVzKNVCfOM4e5Uibm1iymz7LaNGCln
-         zL2uwtjQe0NKnN7kGe3jYbEQMmPAxPrqFnx7FFDxytBN4RXUzItpD54+o1kD0Lf2jK
-         eekM3MtGZLW73N5KrL2KeVRnTdu4rCt6KONllMVA=
+        b=1xA7BgoxC8aZzI9oYVX0ODUiCuFh+EILLPn5tWIG90UufrpXaFuPtM7WXJo+R0/Op
+         rx4nkPE3jSMF9OFdhZHij70vadKX8yxJvUt/SclX2SaozHRVgz5LgT5q/Tdi8U4ysU
+         iGbobum0k/jjlbtGzdn0hCtWo8eNit5hI3Xy6Zy4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Pavel Machek <pavel@ucw.cz>, Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>, Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 153/243] ARM: dts: mmp2: fix the gpio interrupt cell number
-Date:   Wed, 11 Dec 2019 16:05:15 +0100
-Message-Id: <20191211150349.499772685@linuxfoundation.org>
+Subject: [PATCH 4.19 154/243] ARM: dts: realview-pbx: Fix duplicate regulator nodes
+Date:   Wed, 11 Dec 2019 16:05:16 +0100
+Message-Id: <20191211150349.565781731@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -44,34 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit 400583983f8a8e95ec02c9c9e2b50188753a87fb ]
+[ Upstream commit 7f4b001b7f6e0480b5bdab9cd8ce1711e43e5cb5 ]
 
-gpio-pxa uses two cell to encode the interrupt source: the pin number
-and the trigger type. Adjust the device node accordingly.
+There's a bug in dtc in checking for duplicate node names when there's
+another section (e.g. "/ { };"). In this case, skeleton.dtsi provides
+another section. Upon removal of skeleton.dtsi, the dtb fails to build
+due to a duplicate node 'fixedregulator@0'. As both nodes were pretty
+much the same 3.3V fixed regulator, it hasn't really mattered. Fix this
+by renaming the nodes to something unique. In the process, drop the
+unit-address which shouldn't be present wtihout reg property.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/mmp2.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/arm-realview-pbx.dtsi | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 47e5b63339d18..e95deed6a7973 100644
---- a/arch/arm/boot/dts/mmp2.dtsi
-+++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -180,7 +180,7 @@
- 				clocks = <&soc_clocks MMP2_CLK_GPIO>;
- 				resets = <&soc_clocks MMP2_CLK_GPIO>;
- 				interrupt-controller;
--				#interrupt-cells = <1>;
-+				#interrupt-cells = <2>;
- 				ranges;
+diff --git a/arch/arm/boot/dts/arm-realview-pbx.dtsi b/arch/arm/boot/dts/arm-realview-pbx.dtsi
+index a5676697ff3b7..916a97734f84c 100644
+--- a/arch/arm/boot/dts/arm-realview-pbx.dtsi
++++ b/arch/arm/boot/dts/arm-realview-pbx.dtsi
+@@ -44,7 +44,7 @@
+ 	};
  
- 				gcb0: gpio@d4019000 {
+ 	/* The voltage to the MMC card is hardwired at 3.3V */
+-	vmmc: fixedregulator@0 {
++	vmmc: regulator-vmmc {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vmmc";
+ 		regulator-min-microvolt = <3300000>;
+@@ -52,7 +52,7 @@
+ 		regulator-boot-on;
+         };
+ 
+-	veth: fixedregulator@0 {
++	veth: regulator-veth {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "veth";
+ 		regulator-min-microvolt = <3300000>;
+@@ -567,4 +567,3 @@
+ 		};
+ 	};
+ };
+-
 -- 
 2.20.1
 
