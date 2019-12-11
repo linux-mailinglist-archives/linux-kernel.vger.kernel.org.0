@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5DE11B4F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D93F11B4BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 16:50:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732952AbfLKPuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 10:50:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54932 "EHLO mail.kernel.org"
+        id S1732821AbfLKPYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 10:24:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732762AbfLKPXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:23:48 -0500
+        id S1732528AbfLKPYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:24:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A23692077B;
-        Wed, 11 Dec 2019 15:23:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EFAB2077B;
+        Wed, 11 Dec 2019 15:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077828;
-        bh=XlcuPom1v922VlL6KJOeBwrfX/62As98LqKkl/hH6o0=;
+        s=default; t=1576077854;
+        bh=b56PFEeGkiCfb2X9l/TBqID3iIqi2RojuknxJjSz31I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=urYEtcDQZbKLm3LwjzovLfWx4kPgBVRmV0FgW9UOA6UAAqUiO6RVHKLI+LRlD/8HP
-         oUswRi1yXx9l8khhEWh9qfoquu4hO/x+u7Pbxa1sh52gRdu/+3E013ycq8uj2Hptyp
-         t8JPfqZxB6ypdKg/SHlZD9p7Y5G3zYq56t0HnkV4=
+        b=h39LAysbmJNtgxaGFxBCIddPc/NqJ9SRfr55umG2cxfQmYpGTQxW2ZGEOJDC0r4oN
+         b9Z8IFCshxUVZIHLJGLN0szgFwcZ7cdVCslJrCwcHmpHlw1vlSvzx1ZdCfGXEU3USj
+         a1pQDFR4tDptD0ugN9UJ04A3sBW9IBW4THSWvFc8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 185/243] ARM: dts: sun8i: a23/a33: Fix up RTC device node
-Date:   Wed, 11 Dec 2019 16:05:47 +0100
-Message-Id: <20191211150351.658072828@linuxfoundation.org>
+        stable@vger.kernel.org, Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 189/243] usb: mtu3: fix dbginfo in qmu_tx_zlp_error_handler
+Date:   Wed, 11 Dec 2019 16:05:51 +0100
+Message-Id: <20191211150351.930947776@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191211150339.185439726@linuxfoundation.org>
 References: <20191211150339.185439726@linuxfoundation.org>
@@ -43,44 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit f6f4422532ad9ec9380a9936ed16b30922066a50 ]
+[ Upstream commit f770e3bc236ee954a3b4052bdf55739e26ee25db ]
 
-The RTC module on the A23 was claimed to be the same as on the A31, when
-in fact it is not. The A31 does not have an RTC external clock output,
-and its internal RC oscillator's average clock rate is not in the same
-range. The A33's RTC is the same as the A23.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-This patch fixes the compatible string and clock properties to conform
-to the updated bindings. The register range is also fixed.
+drivers/usb/mtu3/mtu3_qmu.c: In function 'qmu_tx_zlp_error_handler':
+drivers/usb/mtu3/mtu3_qmu.c:385:22: warning:
+ variable 'req' set but not used [-Wunused-but-set-variable]
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+It seems dbginfo original intention is print 'req' other than 'mreq'
+
+Acked-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sun8i-a23-a33.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/mtu3/mtu3_qmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-index c16ffcc4db7da..5616333c0e0e3 100644
---- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-@@ -565,11 +565,11 @@
- 		};
+diff --git a/drivers/usb/mtu3/mtu3_qmu.c b/drivers/usb/mtu3/mtu3_qmu.c
+index ff62ba2321779..326b40747128c 100644
+--- a/drivers/usb/mtu3/mtu3_qmu.c
++++ b/drivers/usb/mtu3/mtu3_qmu.c
+@@ -427,7 +427,7 @@ static void qmu_tx_zlp_error_handler(struct mtu3 *mtu, u8 epnum)
+ 		return;
+ 	}
  
- 		rtc: rtc@1f00000 {
--			compatible = "allwinner,sun6i-a31-rtc";
--			reg = <0x01f00000 0x54>;
-+			compatible = "allwinner,sun8i-a23-rtc";
-+			reg = <0x01f00000 0x400>;
- 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
--			clock-output-names = "osc32k";
-+			clock-output-names = "osc32k", "osc32k-out";
- 			clocks = <&ext_osc32k>;
- 			#clock-cells = <1>;
- 		};
+-	dev_dbg(mtu->dev, "%s send ZLP for req=%p\n", __func__, mreq);
++	dev_dbg(mtu->dev, "%s send ZLP for req=%p\n", __func__, req);
+ 
+ 	mtu3_clrbits(mbase, MU3D_EP_TXCR0(mep->epnum), TX_DMAREQEN);
+ 
 -- 
 2.20.1
 
