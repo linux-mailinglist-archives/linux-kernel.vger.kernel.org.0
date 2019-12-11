@@ -2,63 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B8B411AAC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:30:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B96A11AAF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2019 13:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbfLKMaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 07:30:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40000 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727477AbfLKMaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 07:30:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BDB67AE50;
-        Wed, 11 Dec 2019 12:30:04 +0000 (UTC)
-Subject: Re: [PATCH v6 1/3] xenbus/backend: Add memory pressure handler
- callback
-To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        SeongJae Park <sj38.park@gmail.com>
-Cc:     axboe@kernel.dk, konrad.wilk@oracle.com,
-        SeongJae Park <sjpark@amazon.de>, pdurrant@amazon.com,
-        sjpark@amazon.com, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191211042428.5961-1-sjpark@amazon.de>
- <20191211042657.6037-1-sjpark@amazon.de> <20191211114651.GN980@Air-de-Roger>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <f626a29c-e307-38c8-b08d-471ad9b871e4@suse.com>
-Date:   Wed, 11 Dec 2019 13:30:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <20191211114651.GN980@Air-de-Roger>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1729506AbfLKMcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 07:32:19 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55136 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbfLKMcQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 07:32:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=U00e+4tun2sB5OFJt+4Nz4j/tQMLxpbE5HmgeSygRhM=; b=JEbYtLe2QQvWJBZw3kBcMpX6n
+        tBAowmpgFsrFe7dQcrlHu9enNYfiUdOacOl+zgv9Z7u5yxCQfPgW1KDmFDYKYNHo7wP8e8Gn/VD91
+        P6W+j2nko7cfaiMzf7fa5+icEmAyPH+OeD48Q7Tb9a02oV2anaEO2ed4eWyaEpMJ2FRm/2WEdzU+e
+        tpZ9QxwqHDedNrfp7E7sZDfYPfJgNwq+0RMZ6t8mmKvK42MJuIQIL+yEGI4vgC8qPuwOuFgOJalTm
+        pcAgXmi3Erb2xhoErSz/fm84DLDPRynDbGbQ5pgdgXS53L2uhmgqym1lZ+mBWIaWTlTf8/zrj6IUL
+        xNleP0tpg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1if190-0003sf-JO; Wed, 11 Dec 2019 12:31:06 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7A6D8305E21;
+        Wed, 11 Dec 2019 13:29:42 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 184BC2026E819; Wed, 11 Dec 2019 13:31:02 +0100 (CET)
+Message-Id: <20191211120713.360281197@infradead.org>
+User-Agent: quilt/0.65
+Date:   Wed, 11 Dec 2019 13:07:13 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will@kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Helge Deller <deller@gmx.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Nick Hu <nickhu@andestech.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: [PATCH 00/17] Fixup page directory freeing
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.12.19 12:46, Roger Pau Monné wrote:
-> On Wed, Dec 11, 2019 at 04:26:57AM +0000, SeongJae Park wrote:
->> +
->>   	return 0;
->>   }
->>   subsys_initcall(xenbus_probe_backend_init);
->> diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
->> index 869c816d5f8c..196260017666 100644
->> --- a/include/xen/xenbus.h
->> +++ b/include/xen/xenbus.h
->> @@ -104,6 +104,7 @@ struct xenbus_driver {
->>   	struct device_driver driver;
->>   	int (*read_otherend_details)(struct xenbus_device *dev);
->>   	int (*is_ready)(struct xenbus_device *dev);
->> +	void (*reclaim)(struct xenbus_device *dev);
-> 
-> reclaim_memory (if Juergen agrees).
+Hi All,
 
-I do agree.
+While fixing a silly bug on SH (patch #1), I realized that even with the
+trivial patch to restore prior behaviour, page directory freeing was still
+broken.
 
+The thing is, on anything SMP, freeing page directories should observe the
+exact same order as normal page freeing:
 
-Juergen
+ 1) unhook page/directory
+ 2) TLB invalidate
+ 3) free page/directory
+
+Without this any concurrent page-table walk could end up with a Use-after-Free.
+This is esp. trivial for anything that has software page-table walkers
+(HAVE_FAST_GUP / software TLB fill) or the hardware caches partial page-walks
+(ie. caches page directories).
+
+Even on UP this might give issues, since mmu_gather is preemptible these days.
+An interrupt or preempted task accessing user pages might stumble into the free
+page if the hardware caches page directories.
+
+So I've converted everything to always observe the above order, simply so we
+don't have to worry about it.
+
+If however I've been over zealous and your arch/mmu really doesn't need this
+and you're offended by this potentially superfluous code, please let me know
+and I'll replace the patch with one that adds a comment describing your
+rationale for why it is not needed.
+
+Also included are some patches that rename/document some of the mmu gather
+options.
+
