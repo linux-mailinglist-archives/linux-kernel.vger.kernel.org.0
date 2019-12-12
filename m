@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C10BA11C293
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:45:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1ECF11C29F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:46:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbfLLBpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 20:45:17 -0500
+        id S1727804AbfLLBp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 20:45:56 -0500
 Received: from mga02.intel.com ([134.134.136.20]:65192 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727558AbfLLBpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:45:14 -0500
+        id S1727589AbfLLBpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 20:45:16 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 17:45:14 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 17:45:16 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,303,1571727600"; 
-   d="scan'208";a="296446043"
+   d="scan'208";a="296446059"
 Received: from gjang-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.252.207.37])
-  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2019 17:45:12 -0800
+  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2019 17:45:14 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v5 01/11] soundwire: sdw_slave: add probe_complete structure and new fields
-Date:   Wed, 11 Dec 2019 19:44:57 -0600
-Message-Id: <20191212014507.28050-2-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v5 02/11] soundwire: sdw_slave: add enumeration_complete structure
+Date:   Wed, 11 Dec 2019 19:44:58 -0600
+Message-Id: <20191212014507.28050-3-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191212014507.28050-1-pierre-louis.bossart@linux.intel.com>
 References: <20191212014507.28050-1-pierre-louis.bossart@linux.intel.com>
@@ -43,76 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a Slave device becomes synchronized with the bus, it may report
-its presence in PING frames, as well as optionally asserting an
-in-band PREQ signal.
+When the Master starts the bus (be it during the initial boot or
+system resume), it usually performs a HardReset to make sure
+electrical levels are correct, then enables the control channel.
 
-The bus driver will detect a new Device0, start the enumeration
-process and assign it a non-zero device number. The SoundWire
-enumeration provides an arbitration to deal with multiple Slaves
-reporting ATTACHED at the same time. The bus driver will also invoke
-the driver .probe() callback associated with this device. The probe()
-depends on the Linux device core, which handles the match operations
-and may result in modules being loaded.
+While the PM framework guarantees that the Slave devices will only
+become 'active' once the Master completes the bus initialization,
+there is still a risk of a race condition: the Slave enumeration is
+handled in a separate interrupt thread triggered by hardware status
+changes, so the Slave device may not be ready to accept commands when
+the Slave driver tries to access the registers and restore settings in
+its resume or pm_runtime_resume callbacks. In those cases, any
+read/write commands from/to the Slave device will result in a timeout.
 
-Once the non-zero device number is programmed, the Slave will report
-its new status in PING frames and the Master hardware will typically
-report this status change with an interrupt. At this point, the
-.update_status() callback of the codec driver will be invoked (usually
-from an interrupt thread or workqueue scheduled from the interrupt
-thread).
+This patch adds an enumeration_complete structure. When the bus is
+goes through a HardReset sequence and restarted, the Slave will be
+marked as UNATTACHED, which will result in a call to
+init_completion().
 
-The first race condition which can happen is between the .probe(),
-which allocates the resources, and .update_status() where
-initializations are typically handled. The .probe() is only called
-once during the initial boot, while .update_status() will be called
-for every bus hardware reset and if the Slave device loses
-synchronization (an unlikely event but with non-zero probability).
+When the Slave reports its presence during PING frames as a non-zero
+Device, the Master hardware will issue an interrupt and the bus driver
+will invoke complete(). The order between init_completion()/complete()
+is predictable since this is a Master-initiated transition.
 
-The time difference between the end of the enumeration process and a
-change of status reported by the hardware may be as small as one
-SoundWire PING frame. The scheduling of the interrupt thread, which
-invokes .update_status() is not deterministic, but can be small enough
-to create a race condition. With a 48 kHz frame rate and ideal
-scheduling cases, the .probe() may be pre-empted within double-digit
-microseconds.
-
-Since there is no guarantee that the .probe() completes by the time
-.update_status() is invoked as a result of an interrupt, it's not
-unusual for the .update_status() to rely on data structures that have
-not been allocated yet, leading to kernel oopses.
-
-This patch adds a probe_complete utility, which is used in the
-sdw_update_slave_status() routine. The codec driver does not need to
-do anything and can safely assume all resources are allocated in its
-update_status() callback.
+The Slave driver may use wait_for_completion() in its resume callback.
+When regmap is used, the Slave driver will typically set its regmap in
+cache-only mode on suspend, then on resume block on
+wait_for_completion(&enumeration_complete) to guarantee it is safe to
+start read/write transactions. It may then exit the cache-only mode
+and use a regmap_sync to restore settings. All these steps are
+optional, their use completely depends on the Slave device
+capabilities and how the Slave driver is implemented.
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- include/linux/soundwire/sdw.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ include/linux/soundwire/sdw.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index 28745b9ba279..cb1db4a7475d 100644
+index cb1db4a7475d..3fa8d875b16b 100644
 --- a/include/linux/soundwire/sdw.h
 +++ b/include/linux/soundwire/sdw.h
-@@ -547,6 +547,10 @@ struct sdw_slave_ops {
-  * @node: node for bus list
-  * @port_ready: Port ready completion flag for each Slave port
-  * @dev_num: Device Number assigned by Bus
-+ * @probed: boolean tracking driver state
-+ * @probe_complete: completion utility to control potential races
-+ * on startup between driver probe/initialization and SoundWire
-+ * Slave state changes/implementation-defined interrupts
+@@ -551,6 +551,9 @@ struct sdw_slave_ops {
+  * @probe_complete: completion utility to control potential races
+  * on startup between driver probe/initialization and SoundWire
+  * Slave state changes/implementation-defined interrupts
++ * @enumeration_complete: completion utility to control potential races
++ * on startup between device enumeration and read/write access to the
++ * Slave device
   */
  struct sdw_slave {
  	struct sdw_slave_id id;
-@@ -561,6 +565,8 @@ struct sdw_slave {
- 	struct list_head node;
- 	struct completion *port_ready;
+@@ -567,6 +570,7 @@ struct sdw_slave {
  	u16 dev_num;
-+	bool probed;
-+	struct completion probe_complete;
+ 	bool probed;
+ 	struct completion probe_complete;
++	struct completion enumeration_complete;
  };
  
  #define dev_to_sdw_dev(_dev) container_of(_dev, struct sdw_slave, dev)
