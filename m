@@ -2,150 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2292411C5DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 07:13:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18E2B11C5CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 07:07:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727927AbfLLGNT convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Dec 2019 01:13:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35182 "EHLO mx1.suse.de"
+        id S1727896AbfLLGHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 01:07:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33802 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726784AbfLLGNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 01:13:18 -0500
+        id S1726784AbfLLGHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 01:07:09 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D00DEB2E3;
-        Thu, 12 Dec 2019 06:13:16 +0000 (UTC)
-Date:   Wed, 11 Dec 2019 22:06:50 -0800
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v2] hugetlbfs: Disable softIRQ when taking hugetlb_lock
-Message-ID: <20191212060650.ftqq27ftutxpc5hq@linux-p48b>
-Mail-Followup-To: Mike Kravetz <mike.kravetz@oracle.com>,
-        Waiman Long <longman@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@kernel.org>
-References: <20191211194615.18502-1-longman@redhat.com>
- <4fbc39a9-2c9c-4c2c-2b13-a548afe6083c@oracle.com>
- <32d2d4f2-83b9-2e40-05e2-71cd07e01b80@redhat.com>
- <0fcce71f-bc20-0ea3-b075-46592c8d533d@oracle.com>
+        by mx1.suse.de (Postfix) with ESMTP id CAD5EB2C2;
+        Thu, 12 Dec 2019 06:07:07 +0000 (UTC)
+Subject: Re: [PATCH v3 4/4] xen-blkback: support dynamic unbind/bind
+To:     Paul Durrant <pdurrant@amazon.com>, xen-devel@lists.xenproject.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+References: <20191211152956.5168-1-pdurrant@amazon.com>
+ <20191211152956.5168-5-pdurrant@amazon.com>
+From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Message-ID: <d3c61bd0-c29f-bb73-f637-158c7541a5f3@suse.com>
+Date:   Thu, 12 Dec 2019 07:07:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <0fcce71f-bc20-0ea3-b075-46592c8d533d@oracle.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191211152956.5168-5-pdurrant@amazon.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Dec 2019, Mike Kravetz wrote:
->The workqueue approach would address both soft and hard irq context issues.
->As a result, I too think this is the approach we should explore.  Since there
->is more than one lock involved, this also is reason for a work queue approach.
->
->I'll take a look at initial workqueue implementation.  However, I have not
->dealt with workqueues in some time so it may take few days to evaluate.
+On 11.12.19 16:29, Paul Durrant wrote:
+> By simply re-attaching to shared rings during connect_ring() rather than
+> assuming they are freshly allocated (i.e assuming the counters are zero)
+> it is possible for vbd instances to be unbound and re-bound from and to
+> (respectively) a running guest.
+> 
+> This has been tested by running:
+> 
+> while true;
+>    do fio --name=randwrite --ioengine=libaio --iodepth=16 \
+>    --rw=randwrite --bs=4k --direct=1 --size=1G --verify=crc32;
+>    done
+> 
+> in a PV guest whilst running:
+> 
+> while true;
+>    do echo vbd-$DOMID-$VBD >unbind;
+>    echo unbound;
+>    sleep 5;
+>    echo vbd-$DOMID-$VBD >bind;
+>    echo bound;
+>    sleep 3;
+>    done
+> 
+> in dom0 from /sys/bus/xen-backend/drivers/vbd to continuously unbind and
+> re-bind its system disk image.
+> 
+> This is a highly useful feature for a backend module as it allows it to be
+> unloaded and re-loaded (i.e. updated) without requiring domUs to be halted.
+> This was also tested by running:
+> 
+> while true;
+>    do echo vbd-$DOMID-$VBD >unbind;
+>    echo unbound;
+>    sleep 5;
+>    rmmod xen-blkback;
+>    echo unloaded;
+>    sleep 1;
+>    modprobe xen-blkback;
+>    echo bound;
+>    cd $(pwd);
+>    sleep 3;
+>    done
+> 
+> in dom0 whilst running the same loop as above in the (single) PV guest.
+> 
+> Some (less stressful) testing has also been done using a Windows HVM guest
+> with the latest 9.0 PV drivers installed.
+> 
+> Signed-off-by: Paul Durrant <pdurrant@amazon.com>
 
-I'm thinking of something like the following; it at least passes all ltp
-hugetlb related testcases.
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Thanks,
-Davidlohr
 
-----8<------------------------------------------------------------------
-[PATCH] mm/hugetlb: defer free_huge_page() to a workqueue
-
-There have been deadlock reports[1, 2] where put_page is called
-from softirq context and this causes trouble with the hugetlb_lock,
-as well as potentially the subpool lock.
-
-For such an unlikely scenario, lets not add irq dancing overhead
-to the lock+unlock operations, which could incur in expensive
-instruction dependencies, particularly when considering hard-irq
-safety. For example PUSHF+POPF on x86.
-
-Instead, just use a workqueue and do the free_huge_page() in regular
-task context.
-
-[1] https://lore.kernel.org/lkml/20191211194615.18502-1-longman@redhat.com/
-[2] https://lore.kernel.org/lkml/20180905112341.21355-1-aneesh.kumar@linux.ibm.com/
-
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- mm/hugetlb.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ac65bb5e38ac..737108d8d637 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1136,8 +1136,17 @@ static inline void ClearPageHugeTemporary(struct page *page)
- 	page[2].mapping = NULL;
- }
- 
--void free_huge_page(struct page *page)
-+static struct workqueue_struct *hugetlb_free_page_wq;
-+struct hugetlb_free_page_work {
-+	struct page *page;
-+	struct work_struct work;
-+};
-+
-+static void free_huge_page_workfn(struct work_struct *work)
- {
-+	struct page *page = container_of(work,
-+					 struct hugetlb_free_page_work,
-+					 work)->page;
- 	/*
- 	 * Can't pass hstate in here because it is called from the
- 	 * compound page destructor.
-@@ -1197,6 +1206,27 @@ void free_huge_page(struct page *page)
- 		enqueue_huge_page(h, page);
- 	}
- 	spin_unlock(&hugetlb_lock);
-+
-+}
-+
-+/*
-+ * While unlikely, free_huge_page() can be at least called from
-+ * softirq context, defer freeing such that the hugetlb_lock and
-+ * spool->lock need not have to deal with irq dances just for this.
-+ */
-+void free_huge_page(struct page *page)
-+{
-+	struct hugetlb_free_page_work work;
-+
-+	work.page = page;
-+	INIT_WORK_ONSTACK(&work.work, free_huge_page_workfn);
-+	queue_work(hugetlb_free_page_wq, &work.work);
-+
-+	/*
-+	 * Wait until free_huge_page is done.
-+	 */
-+	flush_work(&work.work);
-+	destroy_work_on_stack(&work.work);
- }
- 
- static void prep_new_huge_page(struct hstate *h, struct page *page, int nid)
-@@ -2816,6 +2846,12 @@ static int __init hugetlb_init(void)
- 
- 	for (i = 0; i < num_fault_mutexes; i++)
- 		mutex_init(&hugetlb_fault_mutex_table[i]);
-+
-+	hugetlb_free_page_wq = alloc_workqueue("hugetlb_free_page_wq",
-+					       WQ_MEM_RECLAIM, 0);
-+	if (!hugetlb_free_page_wq)
-+		return -ENOMEM;
-+
- 	return 0;
- }
- subsys_initcall(hugetlb_init);
--- 
-2.16.4
+Juergen
