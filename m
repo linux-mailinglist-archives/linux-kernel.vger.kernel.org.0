@@ -2,198 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B733711C7ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 09:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB25F11C82A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 09:24:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbfLLIXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 03:23:13 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41674 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728227AbfLLIXL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 03:23:11 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191212082309euoutp0252b802c0e12df4beefd9a558888a2dde~fkg9oA_U30201802018euoutp02a
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 08:23:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191212082309euoutp0252b802c0e12df4beefd9a558888a2dde~fkg9oA_U30201802018euoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576138989;
-        bh=xDuUwadBE0kt6XD5tpV9niV0Sfcra9cZCGe37EaX0/M=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=sXQ/5gg76ekNpnTPQ1fb4LfibDiGSUv2OiZ3gjnsP/I2ksc/3ut3iaDqxtPncKO5z
-         UOkFDRt4hZyy9AY6LHyPvXjwDvjR4Ai2VZej9/qJubKcdGA/mjCfbTMauWZ+wOJmzr
-         sJM5XDsiMZo+YahRa6vVPcij0ORtaxb8WTwWSpxw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191212082309eucas1p2af50b8b384d69135943d01c85ea17868~fkg9SAd2k3081030810eucas1p2J;
-        Thu, 12 Dec 2019 08:23:09 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 5D.FB.61286.CE8F1FD5; Thu, 12
-        Dec 2019 08:23:09 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191212082308eucas1p1e0ce843cf3e6f6beba6beffff1c999dc~fkg88jml61415614156eucas1p1Q;
-        Thu, 12 Dec 2019 08:23:08 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191212082308eusmtrp14d7cdb21a52724346d6433f7de391a8e~fkg87Bd9E2511325113eusmtrp1I;
-        Thu, 12 Dec 2019 08:23:08 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-e7-5df1f8ec466a
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 14.DF.08375.CE8F1FD5; Thu, 12
-        Dec 2019 08:23:08 +0000 (GMT)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191212082307eusmtip2ef9e20e1d2ac9ca1378d7108f3a0814f~fkg75OO_w0288302883eusmtip2F;
-        Thu, 12 Dec 2019 08:23:07 +0000 (GMT)
-Subject: Re: [PATCH v2 4/4] usb: usb3503: Convert to use GPIO descriptors
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <f33fe872-50cf-c33b-ea6c-cfffb82c57a7@samsung.com>
-Date:   Thu, 12 Dec 2019 09:23:07 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <1576116600.21256.3.camel@mhfsdcap03>
-Content-Transfer-Encoding: 7bit
+        id S1728375AbfLLIYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 03:24:30 -0500
+Received: from mail-eopbgr1300129.outbound.protection.outlook.com ([40.107.130.129]:22542
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728270AbfLLIY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 03:24:27 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L4Md8h0mMUfJKRveZyw0KHP07oPuKJcamDTLXlW0oRcz2uNv+i8xVL2YZ0Yq+zz1+ndGgBNCrP8r2KCjAGl1weUHq1FrbsNgjuBbgpZ/wSOILc+vyAZqVudsnAjHQwGbP+ZhcD3wsQr99uJAGSyxcum1V7IeFmQSbSEUiup5g833W2F7RrqcDkP+bRaipRwbZHvHV+50GwEvu2w3BckijbHdNAgP7WoP2IkeN+OrHPnh9Ci4cmbonR6kXslOGqX/ohYtMa9pNPGIKMCj/x37Ua8szvG4qDeZH0y/GuRFcHnlVCRWAAPEOSEYSvKgAXUXZLZJ3B8CC7TXT9hV8zAX+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3vSGZHAwjerDdd8ZpBXiH7g0Q41bL1LDWA0sX3fVoxE=;
+ b=XWDmOl4FRqOv/JGDdh9+gYQtNyBRqZhqWYPrk06rwnXTvpmabOizd8GckPHt6pwwrnDPnkW9NbHyfmvCcBIGW0UTdSpx5lhdIVN2NMrgoUKjkPaQTuljzoQsLSXqqbBY0w9qMsqHmfIYachXVf6FLNlQyFSEXsHjLkhkMXAiqv62M7TTd18y9cm/VBb4ocHIebzGi53/TWLrT6s5wkd1lLEXsSfJUXpaWRaZ/Bcnycgs14T+2cKvjRavA+7yfoSBy2iwf0d6czJhK4fM89c3S99G+5WaKjcutCHZXUN7sIR5mUPeZjP50/a87EdRnSuC2aDcwGwjabDCywLNDMpWUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3vSGZHAwjerDdd8ZpBXiH7g0Q41bL1LDWA0sX3fVoxE=;
+ b=EkN3XCVayGOqu7v3Kq0XYr+DwG6BLW6zMuzhP+YofnOdWtJ3alV1YgxohDd6p1Ucz6c4impksrPHgQc6nSfGG9w8PZLgrsmeWL86u/7zjZ+11gAMoeuR4ty5hEuUlZhgkTxukjOpav/G/EmvZAY+HmiRY+E3FcbQoHDRp0e5V9M=
+Received: from PS1P15301MB0346.APCP153.PROD.OUTLOOK.COM (10.255.67.139) by
+ PS1P15301MB0345.APCP153.PROD.OUTLOOK.COM (10.255.67.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2559.0; Thu, 12 Dec 2019 08:24:18 +0000
+Received: from PS1P15301MB0346.APCP153.PROD.OUTLOOK.COM
+ ([fe80::c5bb:5af:a6b6:9f2d]) by PS1P15301MB0346.APCP153.PROD.OUTLOOK.COM
+ ([fe80::c5bb:5af:a6b6:9f2d%7]) with mapi id 15.20.2559.008; Thu, 12 Dec 2019
+ 08:24:18 +0000
+From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
+To:     vkuznets <vkuznets@redhat.com>,
+        "lantianyu1986@gmail.com" <lantianyu1986@gmail.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>
+CC:     "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "eric.devolder@oracle.com" <eric.devolder@oracle.com>
+Subject: RE: [EXTERNAL] Re: [RFC PATCH 3/4] Hyper-V/Balloon: Call add_memory()
+ with dm_device.ha_lock.
+Thread-Topic: [EXTERNAL] Re: [RFC PATCH 3/4] Hyper-V/Balloon: Call
+ add_memory() with dm_device.ha_lock.
+Thread-Index: AQHVsDNJjhlisRM1nUS25YM4WFt2Tqe2KWOA
+Date:   Thu, 12 Dec 2019 08:24:18 +0000
+Message-ID: <PS1P15301MB03469867575D76C2C8977AB192550@PS1P15301MB0346.APCP153.PROD.OUTLOOK.COM>
+References: <20191210154611.10958-1-Tianyu.Lan@microsoft.com>
+ <20191210154611.10958-4-Tianyu.Lan@microsoft.com>
+ <87pnguc3ln.fsf@vitty.brq.redhat.com>
+In-Reply-To: <87pnguc3ln.fsf@vitty.brq.redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0iTURj27Lvsczk9TXMvFQmzBCU1rexE2UUKPiGqH0UQTFv5oZbO2tSy
-        HyVaS4dGpZBOrVBRW3k3MzPFS05bOC8QdjEqLSyYaWoXisj5WfnveZ/nPOd5n8PhKIWdWc7F
-        ahMFnVYTp2JldGP3jz5/+/cp9TrzVQnpG/1Jk9q8aoZY2yZocqm1iCbpJdUssdlqpCT3V7mE
-        1I0+Y8hQcyFLhtIHEMmztUpIcdlFiqRdWE8MmWUMqa+6JCU/OmySHZgv+faa4mve3WH4B6YR
-        KV9nzmT5V89aWL6t6K6Ury89z1/obaP5yw1mxE/XrdovOyzbGiXExSYLusBtR2QxmaVG5mSB
-        55mvPQY2FeUojMiZA7wB8mfGWQdW4AoEI5NKI5LN4RkE9/K7WHGYRvD0qVn611FQ83lBKEcw
-        NtmHxMGOYLx1Zk7hOHccDo+KfB0GD7wWDNabEscZCltpyJ4xMQ6BxUFgtBvns+V4GzRPfJjH
-        NF4Do7ZWqeOeZVgNGeUx4pGl0Js/RjtoZxwMxT0qB01hL7hvL6RErIQXY2IU4HwOnj9PR+LS
-        u2BybEoiYnf4ZGlYKLMSrDlZtGhIR/C2r1IqDlkIhtLyFtxboNMywDiSKewL1c2BIr0TRmz9
-        83sCdoVh+1JxCVe41nidEmk5ZBgWXtoHTJaqf7Ht/YPUFaQyLWpmWlTHtKiO6X/uLUSbkVJI
-        0sdHC/ogrXA6QK+J1ydpowOOJcTXoblPaP1t+dKEZgePdiDMIZWL/M2KKbWC0STrU+I7EHCU
-        ykNuMUyoFfIoTcpZQZcQqUuKE/QdaAVHq5Ty9cUf1QocrUkUTgjCSUH3V5VwzstT0UVqqzwv
-        Nbh9k3fkqff7eBe37qzcIxHsxiXa4eJH68I6W/zc6Ojjw04Pz23O3h3otCdXGVDQe72+Vni8
-        9/aBNM/Z7vBDqzcc3FhpFmqvbO/KkQ5RDb+bZtkKtj/72KlQ8sQlpOVloU9Ry88bibXKKM9v
-        ER58Y6p3tVdoiPp7WJe/q4rWx2iC/CidXvMHRW6lGYADAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkleLIzCtJLcpLzFFi42I5/e/4Pd03Pz7GGuzsULM49/g3i8XGGetZ
-        LU7vf8di0b5vLotF8+L1bBbnz29gt5jyZzmTxabH11gtLu+aw2Zxufkio8WM8/uYLBYta2W2
-        aGoxtmjrXMZqsXldO7vFz0PnmRwEPBZ/v8fsseHRalaPnbPusntsWtXJ5nHn2h42j/1z17B7
-        bF5S79Fycj+LR9+WVYwenzfJBXBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZ
-        mSrp29mkpOZklqUW6dsl6GV0LuliLZgtVvHtRBtbA+NkoS5GTg4JAROJ2Rves3UxcnEICSxl
-        lHi84SoLREJG4uS0BlYIW1jiz7UuqKLXjBIr7h5i6mLk4BAW8JTYO1cTpEZEQEei7fR8JpAa
-        ZoHzLBLPbj9lhWh4yyjR8OEzG0gVm4ChRNfbLjCbV8BOYte7Z2A2i4CqxOPz+9hBbFGBWInv
-        Kz8xQtQISpyc+YQFZBmngJHEohNKIGFmATOJeZsfMkPY8hLb386BssUlbj2ZzzSBUWgWku5Z
-        SFpmIWmZhaRlASPLKkaR1NLi3PTcYkO94sTc4tK8dL3k/NxNjMDo33bs5+YdjJc2Bh9iFOBg
-        VOLh7ZD8GCvEmlhWXJl7iFGCg1lJhPd427tYId6UxMqq1KL8+KLSnNTiQ4ymQL9NZJYSTc4H
-        Jqa8knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TBycUg2M0ipLku6qq3Wf
-        mL3OcsU5Lb95ylMOHFtzXPlOj8zKQuPHmmdTzb6H9n22rMuT7e2eYnm2f/YSww7RLsszcd7x
-        x1Ya1t6vdXVetf9w19mD776d3Ghw+5rYoqz/Z+7mtxV7eGslvXnzyv9GrgzPokuRmU+Mj7LK
-        G5ut05r+YM8uo/3WMru2XiiZo8RSnJFoqMVcVJwIAOpMfpcUAwAA
-X-CMS-MailID: 20191212082308eucas1p1e0ce843cf3e6f6beba6beffff1c999dc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191211145231eucas1p29d4e0ed105274c79682b48a613b45904
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191211145231eucas1p29d4e0ed105274c79682b48a613b45904
-References: <20191211145054.24835-1-m.szyprowski@samsung.com>
-        <CGME20191211145231eucas1p29d4e0ed105274c79682b48a613b45904@eucas1p2.samsung.com>
-        <20191211145226.25074-1-m.szyprowski@samsung.com>
-        <1576116600.21256.3.camel@mhfsdcap03>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=tiala@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-12-12T08:24:13.0861288Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=fd7516c9-1daa-4b92-9e4c-17e8a0ab05a2;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tianyu.Lan@microsoft.com; 
+x-originating-ip: [167.220.255.55]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: d48fe011-8ea1-410a-6a1c-08d77edcaec5
+x-ms-traffictypediagnostic: PS1P15301MB0345:|PS1P15301MB0345:|PS1P15301MB0345:
+x-ms-exchange-transport-forked: True
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <PS1P15301MB0345AD072E00784747A5464F92550@PS1P15301MB0345.APCP153.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:2582;
+x-forefront-prvs: 0249EFCB0B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(39860400002)(136003)(366004)(199004)(189003)(81166006)(81156014)(8676002)(8936002)(7696005)(10290500003)(71200400001)(6636002)(33656002)(66556008)(64756008)(66946007)(66476007)(52536014)(66446008)(26005)(54906003)(9686003)(110136005)(186003)(8990500004)(478600001)(316002)(55016002)(4326008)(86362001)(5660300002)(6506007)(76116006)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:PS1P15301MB0345;H:PS1P15301MB0346.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2ps7vlrsb5xBXsbAPoa8Sg+QEurwG4VBr3HAdaPtrjYTwJd7h+/a7f3XBoz9Ku8TKZG7ELq6YUmFO6QHlv0D5knnYQzrhHsG1tmCdPWCQ1OcLlAx3rJTpHMPEhariKIDm7K+fgyuDStaMo6OLBZnLVAgCnnK8Orlt8dr1uUQzEhaysdxLgONk3jlqqIBkNxG7I6azvk5rvGTcoYVdSnmmKtA/1AAoUZglf+2aiEYixypZJRILbrxCTkFBEgif1yC17y3mfrfkD0YmhmeZzkcDvxn1yCBh9T/97RJVw5lkSvPa1B6brdbu1jUi6S1KL+hDyeghwBxH2bo+rlDiWfUaE2ZGQ3hvUW7x8dP2TO9o+rm5Qlm70dK0ZUhoTc2BluSXEcesOZq6HZnQ+sTRa+vJDs/IFRZwnQPmiRPhBYxNEcy8/m+NXOgpSoMm8LGTCXP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d48fe011-8ea1-410a-6a1c-08d77edcaec5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2019 08:24:18.2355
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: imjxGrHBLF6S2++oQaNHVOhZj81n5WBHuVAuurkQuzui1bcaReROZvRZmPxaefZ2ATE/8tS/DrXYNeNoBwFqqA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1P15301MB0345
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chunfeng,
+Hi Vitaly:
+	Thanks for your review.
+> From: Vitaly Kuznetsov <vkuznets@redhat.com>=20
+> > From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> > @@ -771,8 +767,13 @@ static void hv_online_page(struct page *pg,
+> unsigned int order)
+> >  	struct hv_hotadd_state *has;
+> >  	unsigned long flags;
+> >  	unsigned long pfn =3D page_to_pfn(pg);
+> > +	int unlocked;
+> > +
+> > +	if (dm_device.lock_thread !=3D current) {
+>=20
+> With lock_thread checking you're trying to protect against taking the spi=
+nlock
+> twice (when this is called from add_memory()) but why not just check that
+> spin_is_locked() AND we sit on the same CPU as the VMBus channel
+> attached to the balloon device?
 
-On 12.12.2019 03:10, Chunfeng Yun wrote:
-> On Wed, 2019-12-11 at 15:52 +0100, Marek Szyprowski wrote:
->> From: Linus Walleij <linus.walleij@linaro.org>
->>
->> This converts the USB3503 to pick GPIO descriptors from the
->> device tree instead of iteratively picking out GPIO number
->> references and then referencing these from the global GPIO
->> numberspace.
->>
->> The USB3503 is only used from device tree among the in-tree
->> platforms. If board files would still desire to use it they can
->> provide machine descriptor tables.
->>
->> Make sure to preserve semantics such as the reset delay
->> introduced by Stefan.
->>
->> Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
->> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->> Cc: Stefan Agner <stefan@agner.ch>
->> Cc: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> [mszyprow: invert the logic behind reset GPIO line]
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/usb/misc/usb3503.c            | 94 ++++++++++-----------------
->>   include/linux/platform_data/usb3503.h |  3 -
->>   2 files changed, 35 insertions(+), 62 deletions(-)
->>
->> diff --git a/drivers/usb/misc/usb3503.c b/drivers/usb/misc/usb3503.c
->> index 72f39a9751b5..116bd789e568 100644
->> --- a/drivers/usb/misc/usb3503.c
->> +++ b/drivers/usb/misc/usb3503.c
->> @@ -7,11 +7,10 @@
->>   
->>   #include <linux/clk.h>
->>   #include <linux/i2c.h>
->> -#include <linux/gpio.h>
->> +#include <linux/gpio/consumer.h>
->>   #include <linux/delay.h>
->>   #include <linux/slab.h>
->>   #include <linux/module.h>
->> -#include <linux/of_gpio.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/platform_data/usb3503.h>
->>   #include <linux/regmap.h>
->> @@ -47,19 +46,19 @@ struct usb3503 {
->>   	struct device		*dev;
->>   	struct clk		*clk;
->>   	u8	port_off_mask;
->> -	int	gpio_intn;
->> -	int	gpio_reset;
->> -	int	gpio_connect;
->> +	struct gpio_desc	*intn;
->> +	struct gpio_desc 	*reset;
->> +	struct gpio_desc 	*connect;
->>   	bool	secondary_ref_clk;
->>   };
->>   
->>   static int usb3503_reset(struct usb3503 *hub, int state)
->>   {
->> -	if (!state && gpio_is_valid(hub->gpio_connect))
->> -		gpio_set_value_cansleep(hub->gpio_connect, 0);
->> +	if (!state && hub->connect)
->> +		gpiod_set_value_cansleep(hub->connect, 0);
->>   
->> -	if (gpio_is_valid(hub->gpio_reset))
->> -		gpio_set_value_cansleep(hub->gpio_reset, state);
->> +	if (hub->reset)
->> +		gpiod_set_value_cansleep(hub->reset, !state);
-> What about preparing another patch for @state before this path?
+Yes, that's another approach.
+>=20
+> > +		spin_lock_irqsave(&dm_device.ha_lock, flags);
+> > +		unlocked =3D 1;
+> > +	}
+>=20
+> We set unlocked to '1' when we're actually locked, aren't we?
 
-In such case the driver will be broken after such patch until a 
-conversion to descriptor based GPIO api is done.
+The "unlocked" means ha_lock isn't hold before calling hv_online_page().
 
-...
+>=20
+> >
+> > -	spin_lock_irqsave(&dm_device.ha_lock, flags);
+> >  	list_for_each_entry(has, &dm_device.ha_region_list, list) {
+> >  		/* The page belongs to a different HAS. */
+> >  		if ((pfn < has->start_pfn) ||
+> > @@ -782,7 +783,9 @@ static void hv_online_page(struct page *pg,
+> unsigned int order)
+> >  		hv_bring_pgs_online(has, pfn, 1UL << order);
+> >  		break;
+> >  	}
+> > -	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+> > +
+> > +	if (unlocked)
+> > +		spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+> >  }
+> >
+> >  static int pfn_covered(unsigned long start_pfn, unsigned long
+> > pfn_cnt) @@ -860,6 +863,7 @@ static unsigned long
+> handle_pg_range(unsigned long pg_start,
+> >  		pg_start);
+> >
+> >  	spin_lock_irqsave(&dm_device.ha_lock, flags);
+> > +	dm_device.lock_thread =3D current;
+> >  	list_for_each_entry(has, &dm_device.ha_region_list, list) {
+> >  		/*
+> >  		 * If the pfn range we are dealing with is not in the current
+> @@
+> > -912,9 +916,7 @@ static unsigned long handle_pg_range(unsigned long
+> pg_start,
+> >  			} else {
+> >  				pfn_cnt =3D size;
+> >  			}
+> > -			spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+> >  			hv_mem_hot_add(has->ha_end_pfn, size, pfn_cnt,
+> has);
+> > -			spin_lock_irqsave(&dm_device.ha_lock, flags);
+>=20
+> Apart from the deadlock you mention in the commit message, add_memory
+> does lock_device_hotplug()/unlock_device_hotplug() which is a mutex. If
+> I'm not mistaken you now take the mutext under a spinlock
+> (&dm_device.ha_lock). Not good.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Yes, you are right. I missed this. I will try other way. Nice catch. Thanks=
+.
+
+>=20
+>=20
+> >  		}
+> >  		/*
+> >  		 * If we managed to online any pages that were given to us,
+> @@
+> > -923,6 +925,7 @@ static unsigned long handle_pg_range(unsigned long
+> pg_start,
+> >  		res =3D has->covered_end_pfn - old_covered_state;
+> >  		break;
+> >  	}
+> > +	dm_device.lock_thread =3D NULL;
+> >  	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+> >
+> >  	return res;
+>=20
+> --
+> Vitaly
 
