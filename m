@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2D7A11C351
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:38:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04A1E11C357
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:39:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbfLLCip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 21:38:45 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:18212 "EHLO
+        id S1727827AbfLLCjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 21:39:02 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:8008 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727705AbfLLCip (ORCPT
+        by vger.kernel.org with ESMTP id S1727705AbfLLCjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 21:38:45 -0500
-Date:   12 Dec 2019 11:38:43 +0900
+        Wed, 11 Dec 2019 21:39:01 -0500
+Date:   12 Dec 2019 11:38:59 +0900
 X-IronPort-AV: E=Sophos;i="5.69,304,1571670000"; 
-   d="scan'208";a="34173703"
+   d="scan'208";a="34173740"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 12 Dec 2019 11:38:43 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Dec 2019 11:38:59 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 74A3140061BC;
-        Thu, 12 Dec 2019 11:38:43 +0900 (JST)
-Message-ID: <87wob2clos.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DB03240061BC;
+        Thu, 12 Dec 2019 11:38:59 +0900 (JST)
+Message-ID: <87v9qmcloc.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH] sh: add missing EXPORT_SYMBOL() for __delay
+Subject: [PATCH] sh: add missing DECLARE_EXPORT() for __ashiftrt_r4_2x
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>,
@@ -38,28 +38,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-__delay() is used from kernel module.
-We need EXPORT_SYMBOL(), otherwise we will get compile error.
+__ashiftrt_r4_2x is used from kernel module.
+We need DECLARE_EXPORT(), otherwise we will get compile error.
 
-ERROR: "__delay" [drivers/net/phy/mdio-cavium.ko] undefined!
+ERROR: "__ashiftrt_r4_25" [drivers/iio/pressure/bmp280.ko] undefined!
+ERROR: "__ashiftrt_r4_26" [drivers/iio/dac/ad5764.ko] undefined!
+ERROR: "__ashiftrt_r4_26" [drivers/iio/accel/mma7660.ko] undefined!
+ERROR: "__ashiftrt_r4_25" [drivers/iio/accel/dmard06.ko] undefined!
+ERROR: "__ashiftrt_r4_26" [drivers/iio/accel/bma220_spi.ko] undefined!
+ERROR: "__ashiftrt_r4_25" [drivers/crypto/hisilicon/sec/hisi_sec.ko] undefined!
+ERROR: "__ashiftrt_r4_26" [drivers/rtc/rtc-x1205.ko] undefined!
+ERROR: "__ashiftrt_r4_25" [drivers/rtc/rtc-pcf85063.ko] undefined!
+ERROR: "__ashiftrt_r4_25" [drivers/rtc/rtc-pcf2123.ko] undefined!
+ERROR: "__ashiftrt_r4_25" [drivers/input/tablet/gtco.ko] undefined!
+ERROR: "__ashiftrt_r4_26" [drivers/input/mouse/psmouse.ko] undefined!
+ERROR: "__ashiftrt_r4_28" [drivers/input/mouse/psmouse.ko] undefined!
+ERROR: "__ashiftrt_r4_28" [drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.ko] undefined!
+ERROR: "__ashiftrt_r4_28" [fs/udf/udf.ko] undefined!
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- arch/sh/lib/delay.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/sh/kernel/sh_ksyms_32.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/sh/lib/delay.c b/arch/sh/lib/delay.c
-index dad8e6a..540e670 100644
---- a/arch/sh/lib/delay.c
-+++ b/arch/sh/lib/delay.c
-@@ -29,6 +29,7 @@ void __delay(unsigned long loops)
- 		: "0" (loops)
- 		: "t");
- }
-+EXPORT_SYMBOL(__delay);
- 
- inline void __const_udelay(unsigned long xloops)
- {
+diff --git a/arch/sh/kernel/sh_ksyms_32.c b/arch/sh/kernel/sh_ksyms_32.c
+index 2827744..5818f98 100644
+--- a/arch/sh/kernel/sh_ksyms_32.c
++++ b/arch/sh/kernel/sh_ksyms_32.c
+@@ -53,8 +53,14 @@ DECLARE_EXPORT(__ashiftrt_r4_21);
+ DECLARE_EXPORT(__ashiftrt_r4_22);
+ DECLARE_EXPORT(__ashiftrt_r4_23);
+ DECLARE_EXPORT(__ashiftrt_r4_24);
++DECLARE_EXPORT(__ashiftrt_r4_25);
++DECLARE_EXPORT(__ashiftrt_r4_26);
+ DECLARE_EXPORT(__ashiftrt_r4_27);
++DECLARE_EXPORT(__ashiftrt_r4_28);
++DECLARE_EXPORT(__ashiftrt_r4_29);
+ DECLARE_EXPORT(__ashiftrt_r4_30);
++DECLARE_EXPORT(__ashiftrt_r4_31);
++DECLARE_EXPORT(__ashiftrt_r4_32);
+ DECLARE_EXPORT(__movstr);
+ DECLARE_EXPORT(__movstrSI8);
+ DECLARE_EXPORT(__movstrSI12);
 -- 
 2.7.4
 
