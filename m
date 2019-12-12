@@ -2,174 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA35911C3E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 04:38:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D48D911C40B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 04:42:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbfLLDic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 22:38:32 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39934 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfLLDib (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 22:38:31 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b137so406633pga.6;
-        Wed, 11 Dec 2019 19:38:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZRyM8vqFAeXNEEkflUNLvEoDK86LaNGE46fG0ac6og0=;
-        b=UXP+XXKOa/c94TpkEggFBROby717qqBC4K8QVM4BLHn6vfAJASo2EmI8X4EtkuApkE
-         in1BujpkqXqeo45TonWoC/BFfDsTxNPZMOeu6YrnI/JiiAJ57xlo8G6NYl7e9KO66LwA
-         VBaToGjj8tkvsDHm1xDD7Azn/tg1RquPR3wdLs7aSmgLF8IV06v5FV+wEobN1LdYDZvI
-         UWdQWW6G5fy9pXhob2ZXd/9NVpdBntqmgGc7PNhLIdCHRpPMgnC/tMowc2fF3Dvmh52Q
-         vCOb7iDr5Mxv/khg4hA1V/XR6Ghaauv2LbYi4iXSU6+O7X6IMtcIsU9yT0JvjDdWuzpa
-         7XGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ZRyM8vqFAeXNEEkflUNLvEoDK86LaNGE46fG0ac6og0=;
-        b=Pq/0CpIjD5q/9r6rPZnmxwb0OmHv4+QIJMDb/Lt89aqEPt0l38i3N+DHVNAZKEgcBb
-         K+96zNv3hpDXUqKi9q+n8a6a6wKtZ3Y8yiK3QhPQv3NHPzEQfglsTuPvM7DlFdno2BFg
-         9zTnu3UydvjT/0FXlGRLKZxJh/X8+laK00182Tvi0inIPlLTTa1JisRSxzKlrKK25sx6
-         wGYsdrZ5gbZ4fNyWAikuwXYqtAGooD2BXDygBXTOKPYT8l2xRCgx6fZFRVeQ/xebO8SA
-         MQFzohwRSgFLAxQ0mTpmWxtx3WB11vWdHKRj0V77TCK5OnkfpufezwTCorjy6AXUzdXH
-         zhXg==
-X-Gm-Message-State: APjAAAUXmHIQmRfWS1iIvC1miK2JnNSQcnnnnDUY9f/rU0WJvQikk2Rf
-        dTGMJBOsC6h2qV0VAwB1j14=
-X-Google-Smtp-Source: APXvYqx1JwoWiU0d6Vk8gb9OfVJ6bvzaIUQPjw34Lg2vajFDQ3vCrVmqIK88C1KR7yoHMs88XN1Etw==
-X-Received: by 2002:a62:33c6:: with SMTP id z189mr7617287pfz.246.1576121910704;
-        Wed, 11 Dec 2019 19:38:30 -0800 (PST)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id b4sm4956339pfd.18.2019.12.11.19.38.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 19:38:30 -0800 (PST)
-Subject: Re: [PATCH 1/2] watchdog: mtx-1: Drop au1000.h header inclusion
-To:     Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mips@linux-mips.org, Paul Burton <paulburton@kernel.org>,
-        Denis Efremov <efremov@linux.com>
-References: <20191211210204.31579-1-f.fainelli@gmail.com>
- <20191211210204.31579-2-f.fainelli@gmail.com>
- <21b7be75-db61-3b14-c57c-04af0b78b347@roeck-us.net>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
-Message-ID: <3fdc99fa-f75c-33d4-e1c4-ec8ad185e2cd@gmail.com>
-Date:   Wed, 11 Dec 2019 19:38:29 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727785AbfLLDkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 22:40:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58618 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727507AbfLLDkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 22:40:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EA039AE34;
+        Thu, 12 Dec 2019 03:39:58 +0000 (UTC)
+From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To:     linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-amlogic@lists.infradead.org, Roc He <hepeng@zidoo.tv>,
+        zypeng@titanmec.com, sales@fdhisi.com, csd@princeton.com.tw
+Subject: [RFC 00/25] arm64: realtek: Add Xnano X5 and implement TM1628/FD628/AiP1618 LED controllers
+Date:   Thu, 12 Dec 2019 04:39:27 +0100
+Message-Id: <20191212033952.5967-1-afaerber@suse.de>
+X-Mailer: git-send-email 2.16.4
 MIME-Version: 1.0
-In-Reply-To: <21b7be75-db61-3b14-c57c-04af0b78b347@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
+This patch series implements the LED controllers found in some RTD1295 based
+TV set-top boxes.
 
-On 12/11/2019 5:35 PM, Guenter Roeck wrote:
-> On 12/11/19 1:02 PM, Florian Fainelli wrote:
->> Including au1000.h from the machine specific header directory prevents
->> this driver from being built on any other platforms (MIPS included).
->> Since we do not use any definitions, drop it.
->>
->> Reported-by: Denis Efremov <efremov@linux.com>
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->> ---
->>   drivers/watchdog/mtx-1_wdt.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/watchdog/mtx-1_wdt.c b/drivers/watchdog/mtx-1_wdt.c
->> index 25a92857b217..aeca22f7450e 100644
->> --- a/drivers/watchdog/mtx-1_wdt.c
->> +++ b/drivers/watchdog/mtx-1_wdt.c
->> @@ -41,8 +41,6 @@
->>   #include <linux/uaccess.h>
->>   #include <linux/gpio/consumer.h>
->>   -#include <asm/mach-au1x00/au1000.h>
->> -
->>   #define MTX1_WDT_INTERVAL    (5 * HZ)
->>     static int ticks = 100 * HZ;
->>
-> 
-> Given that this is nothing but yet another gpio watchdog driver, I'd
-> personally rather have it merged with gpio_wdt.c. On a higher level,
-> cleaning up old-style watchdog drivers, without converting them to
-> using the watchdog core, is a waste of time.
+Ever since I've had mainline Linux kernels booting on my Zidoo X9S TV box,
+it's been bugging me that it kept displaying "boot" on its front display.
+A hot lead was a TM1628 chip on the front display's daughterboard, which
+English and Chinese datasheets were available for. The biggest hurdle
+to overcome was whether and how this chip was connected to the SoC.
+Confusingly the datasheet talks about "Serial Interface" and shows pins
+DIO, SCLK and STB; whereas neither UART nor SPI DT nodes seemed to be in use
+for this, no mention of such chipset in the binary vendor DT, and only one
+seemingly unrelated exported GPIO. Sadly Zidoo have refused to share GPL
+sourcecode with me, and the public GPL code drops from NAS and SBC vendors
+didn't seem to include drivers for this chip. Last weekend, review of vendor
+DT pinctrl nodes revealed a "spi@1" pinctrl node in use by the pinctrl node
+itself, despite there being only one GSPI block on the SoC. debugfs under
+Android revealed GPIO pins named "fp_stb", "fp_data" and "fp_clk" (on X5:
+3x "vfdtest", unhelpfully). So I hereby present my first 3-wire SPI slave,
+using standard spi-gpio driver.
 
-If that makes you feel any better, I was not planning on going further
-than that, and yes, removing this driver and using gpio_wdt.c would be
-the way to go, this driver greatly predates gpio_wdt.c and I have since
-then not had access to my MTX-1 platforms which is why this did not
-happen. We can attempt a "blind conversion" without testing, but what
-good would that make, not sure.
+This required to extend the spi-gpio driver with Little Endian support.
 
-> 
-> Wim, should we make it a policy to reject patches into old-style drivers
-> unless they fix a real bug ? It is getting a pain to have to review those
-> patches.
-> 
-> Thanks,
-> Guenter
+TM1628 and related chipsets have an internal Display RAM, from which they
+control a two-dimensional array of LED components, often used for
+seven-segment displays, i.e. clock display, but also for indicators.
+Individual LEDs can be turned on/off, but brightness is applied globally.
+Some chipsets also support polling a two-dimensional key pad.
+
+This initial RFC implements a SPI slave driver within Linux leds subsystem
+and lets DT expose individual LED components as two-state LEDs, allowing
+to assign standard Linux LED triggers and to control them via sysfs.
+
+It goes on to add a "text" attribute to the driver that enables DT-configured
+seven-segment displays; I was expecting to find precedence in auxdisplay
+subsystem but came up empty. So my driver currently integrates its own
+generic (but incomplete) character-to-8-segments mapping, as well as in a
+second step a combined-characters-to-8-segments mapping, which then gets
+mapped to the chipset's available output lines. Doing this as sysfs device
+attribute had the advantage of being able to test it quickly; it also leaves
+timezone management to userspace and lets it choose between wall clock and
+playback time as needed. LED triggers appeared to be per-LED; otherwise an
+RTC-implemented interrupt based LED trigger would've been nice for RTD1195+,
+since my pending irqchip driver exposes interrupts down to half-second that
+would seem ideal for accurately driving such a display, with blinking colon.
+
+Finally, it sketches how keypad handling could be integrated into the leds
+driver, but I am lacking a test case for that functionality.
+Distinguishing LEDs and key inputs in DT may get difficult...
+
+For brightness control I am still investigating the backlight API and
+defaulting to the chipset's default (lowest) brightness.
+
+Prepended is a new DT for Xnano X5 OTT TV Box, featuring an FD628 display.
+
+Displays connected to these controllers didn't have any model or vendor
+usually, and for the lengthy numbers from my X9S, Google found no hits.
+Therefore I've been unable to come up with compatible strings for those
+displays and need to configure it per .dts, even though some may be using
+the same, e.g., "88:88" type display model.
+Whereas the same display might be connected to different LED controllers,
+thus is orthogonal to the controller's compatible string.
+
+Another aspect here is that the leds binding expects to have child nodes
+per LED directly on the LED controller node. So I've gone to lengths to
+shoehorn my display child node into that scheme via wildcard reg property.
+
+The alternative would be to define some special child node, as done for the
+SPI controller's "slave" node, to use as display. But in theory there might
+be multiple displays connected to one controller (which is neglected here).
+And in theory the same display might be wired up differently, so at most
+the display model could tell us about layout and availability of LEDs, but
+we'd still need a mapping from the LED controller's to the display's pins.
+So far neither of the two displays tested actually use the segment lines
+for the segments, but rather switch segment and grid lines.
+
+So in theory we might consider the display as LED controller and implement
+binding/driver on that level (moving it to DT root node like gpio-leds),
+if we can hook it up to the actual LED controller in this case on SPI bus?
+Assuming we can actually identify the display with some compatible string,
+that is.
+However, update efficiency has been a concern, with clock display in mind.
+Thus, forcing two SPI commands (three SPI transfers) per LED segment, as the
+the current LED API would entail, should better be avoided. This led to the
+current design of having everything in tm1628 driver, so that we can easily
+determine the scope of an update operation there (one per LED; all for text,
+to be optimized through bit field of dirtied bytes).
+
+Locking is completely missing still. We'll need at least a mutex to avoid,
+e.g., a heartbeat LED trigger and a text update conflicting on SPI bus or
+"hazards" becoming visible on the display during conflicting byte updates.
+
+Module remove support is missing, too.
+
+We may also need to revisit my error checking and either inline functions
+or drop checks on the LED bit level, if it becomes a performance bottleneck.
+
+On the cosmetic side, some lines are still beyond 80 characters.
+
+Some more notes:
+* Public TM1628 V1.1 datasheet is in Chinese only and differs from the
+  unversioned English version found elsewhere on datasheet sites by
+  documenting more display modes, included here (guessed from Arabic numbers).
+* Public FD628 datasheet is Chinese only (guesses based on Arabic numbers).
+  FD623 appears to have more output lines, which would fit current data types.
+* AiP1618 links were all broken (404); try Google "site:szfdwdz.com" search
+  to actually find the documents available on their site.
+* Princeton PT6964 is another related LED controller with public datasheet
+  that I did not encounter in my TV boxes yet, thus not included here.
+  Datasheets are linked only for PT6959 and PT6967, but PT6964 V1.3 and V1.4
+  are available elsewhere. PT6967 has more output lines, which my current
+  data types could barely hold. Maybe bump them all to u32 type right away?
+* TM1628 is also found on MeLE V9 TV box, to be tested.
+* FD628 is also found on Amlogic S905X2 based Vontar X96 Max TV box,
+  to be tested (once UART is soldered).
+* AiP1618 was found on Ava and Lake I TV boxes, to be tested.
+* It remained unclear to me which of these many similar chipsets was first.
+  My driver name is therefore based on the chip I encountered first.
+
+This series is based on my not-yet-posted RTD1295 pinctrl and GPIO drivers.
+
+Latest experimental patches at:
+https://github.com/afaerber/linux/commits/rtd1295-next
+
+Have a lot of fun!
+
+Cheers,
+Andreas
+
+Cc: linux-leds@vger.kernel.org
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Dan Murphy <dmurphy@ti.com>
+
+Cc: linux-rtc@vger.kernel.org
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+
+Cc: linux-spi@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
+
+Cc: linux-amlogic@lists.infradead.org
+
+Cc: Roc He <hepeng@zidoo.tv>
+# No email for Xnano
+
+Cc: zypeng@titanmec.com
+Cc: sales@fdhisi.com
+# No email for szfdwdz.com
+Cc: csd@princeton.com.tw
+
+Andreas Färber (25):
+  dt-bindings: vendor-prefixes: Add Xnano
+  dt-bindings: arm: realtek: Add Xnano X5
+  arm64: dts: realtek: rtd1295: Add Xnano X5
+  spi: gpio: Implement LSB First bitbang support
+  dt-bindings: vendor-prefixes: Add Titan Micro Electronics
+  dt-bindings: leds: Add Titan Micro Electronics TM1628
+  leds: Add Titan Micro Electronics TM1628
+  arm64: dts: realtek: rtd129x-zidoo-x9s: Add TM1628 LED controller
+  arm64: dts: realtek: rtd1295-zidoo-x9s: Add regular LEDs to TM1628
+  dt-bindings: vendor-prefixes: Add Fuda Hisi Microelectronics
+  dt-bindings: leds: tm1628: Add Fuda Hisi Microelectronics FD628
+  leds: tm1628: Add Fuda Hisi Microelectronics FD628
+  arm64: dts: realtek: rtd1295-xnano-x5: Add FD628 LED controller
+  arm64: dts: realtek: rtd1295-xnano-x5: Add regular LEDs to FD628
+  dt-bindings: vendor-prefixes: Add Fude Microelectronics
+  dt-bindings: leds: tm1628: Add Fude Microelectronics AiP1618
+  leds: tm1628: Prepare Fude Microelectronics AiP1618
+  dt-bindings: leds: tm1628: Define display child nodes
+  leds: tm1628: Add 7-segment display support
+  arm64: dts: realtek: rtd1295-zidoo-x9s: Add display to TM1628
+  arm64: dts: realtek: rtd1295-xnano-x5: Add display to FD628
+  leds: tm1826: Add combined glyph support
+  WIP: leds: tm1628: Prepare TM1628 keys
+  WIP: leds: tm1628: Prepare FD628 keys
+  WIP: leds: tm1628: Prepare AiP1618 keys
+
+ Documentation/devicetree/bindings/arm/realtek.yaml |   1 +
+ .../devicetree/bindings/leds/titanmec,tm1628.yaml  | 134 ++++
+ .../devicetree/bindings/vendor-prefixes.yaml       |   8 +
+ arch/arm64/boot/dts/realtek/Makefile               |   1 +
+ arch/arm64/boot/dts/realtek/rtd1295-xnano-x5.dts   | 108 +++
+ arch/arm64/boot/dts/realtek/rtd1295-zidoo-x9s.dts  |  36 +-
+ drivers/leds/Kconfig                               |  12 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-tm1628.c                         | 727 +++++++++++++++++++++
+ drivers/spi/spi-bitbang-txrx.h                     |  68 +-
+ drivers/spi/spi-gpio.c                             |  42 +-
+ 11 files changed, 1126 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/titanmec,tm1628.yaml
+ create mode 100644 arch/arm64/boot/dts/realtek/rtd1295-xnano-x5.dts
+ create mode 100644 drivers/leds/leds-tm1628.c
 
 -- 
-Florian
+2.16.4
+
