@@ -2,347 +2,724 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 366E611DA44
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 00:55:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A1A311DA4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 00:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731506AbfLLXzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 18:55:04 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36668 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731442AbfLLXzD (ORCPT
+        id S1731521AbfLLXz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 18:55:56 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33724 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731421AbfLLXz4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 18:55:03 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBCNqbO4001118;
-        Thu, 12 Dec 2019 18:54:39 -0500
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wusvh9w1c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Dec 2019 18:54:39 -0500
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xBCNo2aO032426;
-        Thu, 12 Dec 2019 23:54:43 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma01wdc.us.ibm.com with ESMTP id 2wr3q72ap8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Dec 2019 23:54:43 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBCNsbQv22216990
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Dec 2019 23:54:37 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72D6BAE05F;
-        Thu, 12 Dec 2019 23:54:37 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2DC82AE063;
-        Thu, 12 Dec 2019 23:54:36 +0000 (GMT)
-Received: from [9.163.51.183] (unknown [9.163.51.183])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Dec 2019 23:54:36 +0000 (GMT)
-Subject: Re: [ v2] hwmon: (pmbus) Add Wistron power supply pmbus driver
-To:     Ben Pai <Ben_Pai@wistron.com>, linux@roeck-us.net
-Cc:     robh+dt@kernel.org, jdelvare@suse.com,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, corbet@lwn.net, wangat@tw.ibm.com,
-        Andy_YF_Wang@wistron.com, Claire_Ku@wistron.com
-References: <20191208134438.12925-1-Ben_Pai@wistron.com>
-From:   Eddie James <eajames@linux.ibm.com>
-Message-ID: <97651ec9-e467-dbd9-dcb8-b3efe1387fef@linux.ibm.com>
-Date:   Thu, 12 Dec 2019 17:54:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        Thu, 12 Dec 2019 18:55:56 -0500
+Received: by mail-ot1-f68.google.com with SMTP id d17so3983726otc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 15:55:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ztKiKS9kDpcRmXJKe1XqlJokHmkmscn2Mwt+6zEVKRM=;
+        b=DfRCIRQ6tmr01hyQQmSe0q5gSVJWhOkt/EPq/AlvrNrHQGoGL3Gu8H6QQGFvKlZMad
+         W0Y7AD86BDCoyNcGu+tGcbU1eSh4fPXyyOckGumgag/AJ8iWA3cAbCAFiZ88ka4hriIV
+         fAyDuWL24tdl7+3rdOfH++JeaBTfUHPVoqj9pRwWRLLuq6hq02PimwRsRrARflNsiGyS
+         PZjpl0NY+aRU6NCK4AFQSPyem/NPjK8zSBuOQUfv3d04ongImCmddN/sKIs1iCh7zLXD
+         qL/X7h9NynaPMycY2EYXPFMl+qU5owEu9UTH4M/dCGVdYN1Q2AH13pydTFWKEp/5flcY
+         uQHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ztKiKS9kDpcRmXJKe1XqlJokHmkmscn2Mwt+6zEVKRM=;
+        b=OVYts5rPwUYF4v/th6h9HFdnJ04yC1nB9oohAptTI6j+B8djc2B0GEThkqy6elc63X
+         ujNC4sv9J9XIoAN3Xne6f6cV8IrMhsgKholJrbQl7MBfn704mSwhKidQPr7VuS0FCv0h
+         +462SwcR7AD1MXa8HoFpSozQ0NHhsSg4In2DCxiUEof1rDj+PU1CdQM2bguPZdg0bJOW
+         tVwT7O8MuC4UsFa0rcyo+y3r22elPI1VAi09lm3nquD4gWP/QbUzvCs7C8Lgh+z0TrQ1
+         dG0s9hkmhpTtvZYzVeNLxUeJ97KwXD9cNs9nONGlMaSsaCLMGLNoupnmXXAuXQH9+SW6
+         Tn4A==
+X-Gm-Message-State: APjAAAWVhPm8QJ8vfS0zH1qeD1VVxcD8Ujwmv6NoJ8vwoE3ib2I+2+Ji
+        lrOJNdRrnUWzGztNn2Mdxivp4oYUs9XgEeE9g1M=
+X-Google-Smtp-Source: APXvYqxFNUX3YKAlxg5/9O9bsfwVjv9Ycx04ZfxPP1KrpE5mDL69ayx/PimyvX8dsXrvpUEoK+sm8wEjFDKqvVvv2LU=
+X-Received: by 2002:a05:6830:50:: with SMTP id d16mr11890289otp.155.1576194954730;
+ Thu, 12 Dec 2019 15:55:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191208134438.12925-1-Ben_Pai@wistron.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-12_08:2019-12-12,2019-12-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- clxscore=1011 suspectscore=0 adultscore=0 mlxlogscore=999 phishscore=0
- spamscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912120184
+References: <20191212151656.26151-1-dja@axtens.net> <20191212151656.26151-4-dja@axtens.net>
+In-Reply-To: <20191212151656.26151-4-dja@axtens.net>
+From:   Jordan Niethe <jniethe5@gmail.com>
+Date:   Fri, 13 Dec 2019 10:55:43 +1100
+Message-ID: <CACzsE9q1iLgoMLzVy0AYeRvWbj=kY-Ry52y84PGtWw3YXXFipA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] powerpc: Book3S 64-bit "heavyweight" KASAN support
+To:     Daniel Axtens <dja@axtens.net>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, kasan-dev@googlegroups.com,
+        christophe.leroy@c-s.fr, aneesh.kumar@linux.ibm.com,
+        bsingharora@gmail.com, Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 12/8/19 7:44 AM, Ben Pai wrote:
-> Add the driver to monitor Wisreon power supplies with hwmon over pmbus.
-
-
-Hi Ben.
-
-
-This driver looks very similar to the IBM CFFPS driver. If you think 
-they are similar enough, you may want to simply add a new version to 
-that driver that supports your PSU.
-
-
-Thanks,
-
-Eddie
-
-
+On Fri, Dec 13, 2019 at 2:19 AM Daniel Axtens <dja@axtens.net> wrote:
 >
-> Signed-off-by: Ben Pai <Ben_Pai@wistron.com>
+> KASAN support on Book3S is a bit tricky to get right:
+>
+>  - It would be good to support inline instrumentation so as to be able to
+>    catch stack issues that cannot be caught with outline mode.
+>
+>  - Inline instrumentation requires a fixed offset.
+>
+>  - Book3S runs code in real mode after booting. Most notably a lot of KVM
+>    runs in real mode, and it would be good to be able to instrument it.
+>
+>  - Because code runs in real mode after boot, the offset has to point to
+>    valid memory both in and out of real mode.
+>
+>    [For those not immersed in ppc64, in real mode, the top nibble or 2 bits
+>    (depending on radix/hash mmu) of the address is ignored. The linear
+>    mapping is placed at 0xc000000000000000. This means that a pointer to
+>    part of the linear mapping will work both in real mode, where it will be
+>    interpreted as a physical address of the form 0x000..., and out of real
+>    mode, where it will go via the linear mapping.]
+>
+
+How does hash or radix mmu mode effect how many bits are ignored in real mode?
+
+> One approach is just to give up on inline instrumentation. This way all
+> checks can be delayed until after everything set is up correctly, and the
+> address-to-shadow calculations can be overridden. However, the features and
+> speed boost provided by inline instrumentation are worth trying to do
+> better.
+>
+> If _at compile time_ it is known how much contiguous physical memory a
+> system has, the top 1/8th of the first block of physical memory can be set
+> aside for the shadow. This is a big hammer and comes with 3 big
+> consequences:
+>
+>  - there's no nice way to handle physically discontiguous memory, so only
+>    the first physical memory block can be used.
+>
+>  - kernels will simply fail to boot on machines with less memory than
+>    specified when compiling.
+>
+>  - kernels running on machines with more memory than specified when
+>    compiling will simply ignore the extra memory.
+>
+> Implement and document KASAN this way. The current implementation is Radix
+> only.
+>
+> Despite the limitations, it can still find bugs,
+> e.g. http://patchwork.ozlabs.org/patch/1103775/
+>
+> At the moment, this physical memory limit must be set _even for outline
+> mode_. This may be changed in a later series - a different implementation
+> could be added for outline mode that dynamically allocates shadow at a
+> fixed offset. For example, see https://patchwork.ozlabs.org/patch/795211/
+>
+> Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Balbir Singh <bsingharora@gmail.com> # ppc64 out-of-line radix version
+> Cc: Christophe Leroy <christophe.leroy@c-s.fr> # ppc32 version
+> Signed-off-by: Daniel Axtens <dja@axtens.net>
+>
 > ---
->   .../devicetree/bindings/hwmon/wistron-wps.txt |  30 +++
->   drivers/hwmon/pmbus/Kconfig                   |   9 +
->   drivers/hwmon/pmbus/Makefile                  |   1 +
->   drivers/hwmon/pmbus/wistron-wps.c             | 176 ++++++++++++++++++
->   4 files changed, 216 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/hwmon/wistron-wps.txt
->   create mode 100644 drivers/hwmon/pmbus/wistron-wps.c
+> Changes since v2:
 >
-> diff --git a/Documentation/devicetree/bindings/hwmon/wistron-wps.txt b/Documentation/devicetree/bindings/hwmon/wistron-wps.txt
+>  - Address feedback from Christophe around cleanups and docs.
+>  - Address feedback from Balbir: at this point I don't have a good solution
+>    for the issues you identify around the limitations of the inline implementation
+>    but I think that it's worth trying to get the stack instrumentation support.
+>    I'm happy to have an alternative and more flexible outline mode - I had
+>    envisoned this would be called 'lightweight' mode as it imposes fewer restrictions.
+>    I've linked to your implementation. I think it's best to add it in a follow-up series.
+>  - Made the default PHYS_MEM_SIZE_FOR_KASAN value 1024MB. I think most people have
+>    guests with at least that much memory in the Radix 64s case so it's a much
+>    saner default - it means that if you just turn on KASAN without reading the
+>    docs you're much more likely to have a bootable kernel, which you will never
+>    have if the value is set to zero! I'm happy to bikeshed the value if we want.
+>
+> Changes since v1:
+>  - Landed kasan vmalloc support upstream
+>  - Lots of feedback from Christophe.
+>
+> Changes since the rfc:
+>
+>  - Boots real and virtual hardware, kvm works.
+>
+>  - disabled reporting when we're checking the stack for exception
+>    frames. The behaviour isn't wrong, just incompatible with KASAN.
+>
+>  - Documentation!
+>
+>  - Dropped old module stuff in favour of KASAN_VMALLOC.
+>
+> The bugs with ftrace and kuap were due to kernel bloat pushing
+> prom_init calls to be done via the plt. Because we did not have
+> a relocatable kernel, and they are done very early, this caused
+> everything to explode. Compile with CONFIG_RELOCATABLE!
+> ---
+>  Documentation/dev-tools/kasan.rst             |   8 +-
+>  Documentation/powerpc/kasan.txt               | 112 +++++++++++++++++-
+>  arch/powerpc/Kconfig                          |   3 +
+>  arch/powerpc/Kconfig.debug                    |  21 ++++
+>  arch/powerpc/Makefile                         |  11 ++
+>  arch/powerpc/include/asm/book3s/64/hash.h     |   4 +
+>  arch/powerpc/include/asm/book3s/64/pgtable.h  |   7 ++
+>  arch/powerpc/include/asm/book3s/64/radix.h    |   5 +
+>  arch/powerpc/include/asm/kasan.h              |  21 +++-
+>  arch/powerpc/kernel/process.c                 |   8 ++
+>  arch/powerpc/kernel/prom.c                    |  64 +++++++++-
+>  arch/powerpc/mm/kasan/Makefile                |   3 +-
+>  .../mm/kasan/{kasan_init_32.c => init_32.c}   |   0
+>  arch/powerpc/mm/kasan/init_book3s_64.c        |  72 +++++++++++
+>  14 files changed, 330 insertions(+), 9 deletions(-)
+>  rename arch/powerpc/mm/kasan/{kasan_init_32.c => init_32.c} (100%)
+>  create mode 100644 arch/powerpc/mm/kasan/init_book3s_64.c
+>
+> diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
+> index 4af2b5d2c9b4..d99dc580bc11 100644
+> --- a/Documentation/dev-tools/kasan.rst
+> +++ b/Documentation/dev-tools/kasan.rst
+> @@ -22,8 +22,9 @@ global variables yet.
+>  Tag-based KASAN is only supported in Clang and requires version 7.0.0 or later.
+>
+>  Currently generic KASAN is supported for the x86_64, arm64, xtensa and s390
+> -architectures. It is also supported on 32-bit powerpc kernels. Tag-based KASAN
+> -is supported only on arm64.
+> +architectures. It is also supported on powerpc, for 32-bit kernels, and for
+> +64-bit kernels running under the Radix MMU. Tag-based KASAN is supported only
+> +on arm64.
+>
+>  Usage
+>  -----
+> @@ -256,7 +257,8 @@ CONFIG_KASAN_VMALLOC
+>  ~~~~~~~~~~~~~~~~~~~~
+>
+>  With ``CONFIG_KASAN_VMALLOC``, KASAN can cover vmalloc space at the
+> -cost of greater memory usage. Currently this is only supported on x86.
+> +cost of greater memory usage. Currently this is optional on x86, and
+> +required on 64-bit powerpc.
+>
+>  This works by hooking into vmalloc and vmap, and dynamically
+>  allocating real shadow memory to back the mappings.
+> diff --git a/Documentation/powerpc/kasan.txt b/Documentation/powerpc/kasan.txt
+> index a85ce2ff8244..f134a91600ad 100644
+> --- a/Documentation/powerpc/kasan.txt
+> +++ b/Documentation/powerpc/kasan.txt
+> @@ -1,4 +1,4 @@
+> -KASAN is supported on powerpc on 32-bit only.
+> +KASAN is supported on powerpc on 32-bit and Radix 64-bit only.
+>
+>  32 bit support
+>  ==============
+> @@ -10,3 +10,113 @@ fixmap area and occupies one eighth of the total kernel virtual memory space.
+>
+>  Instrumentation of the vmalloc area is not currently supported, but modules
+>  are.
+> +
+> +64 bit support
+> +==============
+> +
+> +Currently, only the radix MMU is supported. There have been versions for Book3E
+> +processors floating around on the mailing list, but nothing has been merged.
+> +
+> +KASAN support on Book3S is a bit tricky to get right:
+> +
+> + - It would be good to support inline instrumentation so as to be able to catch
+> +   stack issues that cannot be caught with outline mode.
+> +
+> + - Inline instrumentation requires a fixed offset.
+> +
+> + - Book3S runs code in real mode after booting. Most notably a lot of KVM runs
+> +   in real mode, and it would be good to be able to instrument it.
+> +
+> + - Because code runs in real mode after boot, the offset has to point to
+> +   valid memory both in and out of real mode.
+> +
+> +One approach is just to give up on inline instrumentation. This way all checks
+> +can be delayed until after everything set is up correctly, and the
+> +address-to-shadow calculations can be overridden. However, the features and
+> +speed boost provided by inline instrumentation are worth trying to do better.
+> +
+> +If _at compile time_ it is known how much contiguous physical memory a system
+> +has, the top 1/8th of the first block of physical memory can be set aside for
+> +the shadow. This is a big hammer and comes with 3 big consequences:
+> +
+> + - there's no nice way to handle physically discontiguous memory, so only the
+> +   first physical memory block can be used.
+> +
+> + - kernels will simply fail to boot on machines with less memory than specified
+> +   when compiling.
+> +
+> + - kernels running on machines with more memory than specified when compiling
+> +   will simply ignore the extra memory.
+> +
+> +At the moment, this physical memory limit must be set _even for outline mode_.
+> +This may be changed in a future version - a different implementation could be
+> +added for outline mode that dynamically allocates shadow at a fixed offset.
+> +For example, see https://patchwork.ozlabs.org/patch/795211/
+> +
+> +This value is configured in CONFIG_PHYS_MEM_SIZE_FOR_KASAN.
+> +
+> +Tips
+> +----
+> +
+> + - Compile with CONFIG_RELOCATABLE.
+> +
+> +   In development, boot hangs were observed when building with ftrace and KUAP
+> +   on. These ended up being due to kernel bloat pushing prom_init calls to be
+> +   done via the PLT. Because the kernel was not relocatable, and the calls are
+> +   done very early, this caused execution to jump off into somewhere
+> +   invalid. Enabling relocation fixes this.
+> +
+> +NUMA/discontiguous physical memory
+> +----------------------------------
+> +
+> +Currently the code cannot really deal with discontiguous physical memory. Only
+> +physical memory that is contiguous from physical address zero can be used. The
+> +size of that memory, not total memory, must be specified when configuring the
+> +kernel.
+> +
+> +Discontiguous memory can occur on machines with memory spread across multiple
+> +nodes. For example, on a Talos II with 64GB of RAM:
+> +
+> + - 32GB runs from 0x0 to 0x0000_0008_0000_0000,
+> + - then there's a gap,
+> + - then the final 32GB runs from 0x0000_2000_0000_0000 to 0x0000_2008_0000_0000
+> +
+> +This can create _significant_ issues:
+> +
+> + - If the machine is treated as having 64GB of _contiguous_ RAM, the
+> +   instrumentation would assume that it ran from 0x0 to
+> +   0x0000_0010_0000_0000. The last 1/8th - 0x0000_000e_0000_0000 to
+> +   0x0000_0010_0000_0000 would be reserved as the shadow region. But when the
+> +   kernel tried to access any of that, it would be trying to access pages that
+> +   are not physically present.
+> +
+> + - If the shadow region size is based on the top address, then the shadow
+> +   region would be 0x2008_0000_0000 / 8 = 0x0401_0000_0000 bytes = 4100 GB of
+> +   memory, clearly more than the 64GB of RAM physically present.
+> +
+> +Therefore, the code currently is restricted to dealing with memory in the node
+> +starting at 0x0. For this system, that's 32GB. If a contiguous physical memory
+> +size greater than the size of the first contiguous region of memory is
+> +specified, the system will be unable to boot or even print an error message.
+> +
+> +The layout of a system's memory can be observed in the messages that the Radix
+> +MMU prints on boot. The Talos II discussed earlier has:
+> +
+> +radix-mmu: Mapped 0x0000000000000000-0x0000000040000000 with 1.00 GiB pages (exec)
+> +radix-mmu: Mapped 0x0000000040000000-0x0000000800000000 with 1.00 GiB pages
+> +radix-mmu: Mapped 0x0000200000000000-0x0000200800000000 with 1.00 GiB pages
+> +
+> +As discussed, this system would be configured for 32768 MB.
+> +
+> +Another system prints:
+> +
+> +radix-mmu: Mapped 0x0000000000000000-0x0000000040000000 with 1.00 GiB pages (exec)
+> +radix-mmu: Mapped 0x0000000040000000-0x0000002000000000 with 1.00 GiB pages
+> +radix-mmu: Mapped 0x0000200000000000-0x0000202000000000 with 1.00 GiB pages
+> +
+> +This machine has more memory: 0x0000_0040_0000_0000 total, but only
+> +0x0000_0020_0000_0000 is physically contiguous from zero, so it would be
+> +configured for 131072 MB of physically contiguous memory.
+> +
+> +This restriction currently also affects outline mode, but this could be
+> +changed in future if an alternative outline implementation is added.
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 6987b0832e5f..2561446e85a8 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -173,6 +173,9 @@ config PPC
+>         select HAVE_ARCH_HUGE_VMAP              if PPC_BOOK3S_64 && PPC_RADIX_MMU
+>         select HAVE_ARCH_JUMP_LABEL
+>         select HAVE_ARCH_KASAN                  if PPC32
+> +       select HAVE_ARCH_KASAN                  if PPC_BOOK3S_64 && PPC_RADIX_MMU
+> +       select HAVE_ARCH_KASAN_VMALLOC          if PPC_BOOK3S_64 && PPC_RADIX_MMU
+> +       select KASAN_VMALLOC                    if KASAN && PPC_BOOK3S_64
+>         select HAVE_ARCH_KGDB
+>         select HAVE_ARCH_MMAP_RND_BITS
+>         select HAVE_ARCH_MMAP_RND_COMPAT_BITS   if COMPAT
+> diff --git a/arch/powerpc/Kconfig.debug b/arch/powerpc/Kconfig.debug
+> index 4e1d39847462..5c454f8fa24b 100644
+> --- a/arch/powerpc/Kconfig.debug
+> +++ b/arch/powerpc/Kconfig.debug
+> @@ -394,6 +394,27 @@ config PPC_FAST_ENDIAN_SWITCH
+>         help
+>           If you're unsure what this is, say N.
+>
+> +config PHYS_MEM_SIZE_FOR_KASAN
+> +       int "Contiguous physical memory size for KASAN (MB)" if KASAN && PPC_BOOK3S_64
+> +       default 1024
+> +       help
+> +
+> +         To get inline instrumentation support for KASAN on 64-bit Book3S
+> +         machines, you need to know how much contiguous physical memory your
+> +         system has. A shadow offset will be calculated based on this figure,
+> +         which will be compiled in to the kernel. KASAN will use this offset
+> +         to access its shadow region, which is used to verify memory accesses.
+> +
+> +         If you attempt to boot on a system with less memory than you specify
+> +         here, your system will fail to boot very early in the process. If you
+> +         boot on a system with more memory than you specify, the extra memory
+> +         will wasted - it will be reserved and not used.
+> +
+> +         For systems with discontiguous blocks of physical memory, specify the
+> +         size of the block starting at 0x0. You can determine this by looking
+> +         at the memory layout info printed to dmesg by the radix MMU code
+> +         early in boot. See Documentation/powerpc/kasan.txt.
+> +
+>  config KASAN_SHADOW_OFFSET
+>         hex
+>         depends on KASAN
+> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+> index f35730548e42..eff693527462 100644
+> --- a/arch/powerpc/Makefile
+> +++ b/arch/powerpc/Makefile
+> @@ -230,6 +230,17 @@ ifdef CONFIG_476FPE_ERR46
+>                 -T $(srctree)/arch/powerpc/platforms/44x/ppc476_modules.lds
+>  endif
+>
+> +ifdef CONFIG_PPC_BOOK3S_64
+> +# The KASAN shadow offset is such that linear map (0xc000...) is shadowed by
+> +# the last 8th of linearly mapped physical memory. This way, if the code uses
+> +# 0xc addresses throughout, accesses work both in in real mode (where the top
+> +# 2 bits are ignored) and outside of real mode.
+> +#
+> +# 0xc000000000000000 >> 3 = 0xa800000000000000 = 12105675798371893248
+> +KASAN_SHADOW_OFFSET = $(shell echo 7 \* 1024 \* 1024 \* $(CONFIG_PHYS_MEM_SIZE_FOR_KASAN) / 8 + 12105675798371893248 | bc)
+> +KBUILD_CFLAGS += -DKASAN_SHADOW_OFFSET=$(KASAN_SHADOW_OFFSET)UL
+> +endif
+> +
+>  # No AltiVec or VSX instructions when building kernel
+>  KBUILD_CFLAGS += $(call cc-option,-mno-altivec)
+>  KBUILD_CFLAGS += $(call cc-option,-mno-vsx)
+> diff --git a/arch/powerpc/include/asm/book3s/64/hash.h b/arch/powerpc/include/asm/book3s/64/hash.h
+> index 2781ebf6add4..fce329b8452e 100644
+> --- a/arch/powerpc/include/asm/book3s/64/hash.h
+> +++ b/arch/powerpc/include/asm/book3s/64/hash.h
+> @@ -18,6 +18,10 @@
+>  #include <asm/book3s/64/hash-4k.h>
+>  #endif
+>
+> +#define H_PTRS_PER_PTE         (1 << H_PTE_INDEX_SIZE)
+> +#define H_PTRS_PER_PMD         (1 << H_PMD_INDEX_SIZE)
+> +#define H_PTRS_PER_PUD         (1 << H_PUD_INDEX_SIZE)
+> +
+>  /* Bits to set in a PMD/PUD/PGD entry valid bit*/
+>  #define HASH_PMD_VAL_BITS              (0x8000000000000000UL)
+>  #define HASH_PUD_VAL_BITS              (0x8000000000000000UL)
+> diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+> index b01624e5c467..209817235a44 100644
+> --- a/arch/powerpc/include/asm/book3s/64/pgtable.h
+> +++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+> @@ -231,6 +231,13 @@ extern unsigned long __pmd_frag_size_shift;
+>  #define PTRS_PER_PUD   (1 << PUD_INDEX_SIZE)
+>  #define PTRS_PER_PGD   (1 << PGD_INDEX_SIZE)
+>
+> +#define MAX_PTRS_PER_PTE       ((H_PTRS_PER_PTE > R_PTRS_PER_PTE) ? \
+> +                                 H_PTRS_PER_PTE : R_PTRS_PER_PTE)
+> +#define MAX_PTRS_PER_PMD       ((H_PTRS_PER_PMD > R_PTRS_PER_PMD) ? \
+> +                                 H_PTRS_PER_PMD : R_PTRS_PER_PMD)
+> +#define MAX_PTRS_PER_PUD       ((H_PTRS_PER_PUD > R_PTRS_PER_PUD) ? \
+> +                                 H_PTRS_PER_PUD : R_PTRS_PER_PUD)
+> +
+>  /* PMD_SHIFT determines what a second-level page table entry can map */
+>  #define PMD_SHIFT      (PAGE_SHIFT + PTE_INDEX_SIZE)
+>  #define PMD_SIZE       (1UL << PMD_SHIFT)
+> diff --git a/arch/powerpc/include/asm/book3s/64/radix.h b/arch/powerpc/include/asm/book3s/64/radix.h
+> index d97db3ad9aae..4f826259de71 100644
+> --- a/arch/powerpc/include/asm/book3s/64/radix.h
+> +++ b/arch/powerpc/include/asm/book3s/64/radix.h
+> @@ -35,6 +35,11 @@
+>  #define RADIX_PMD_SHIFT                (PAGE_SHIFT + RADIX_PTE_INDEX_SIZE)
+>  #define RADIX_PUD_SHIFT                (RADIX_PMD_SHIFT + RADIX_PMD_INDEX_SIZE)
+>  #define RADIX_PGD_SHIFT                (RADIX_PUD_SHIFT + RADIX_PUD_INDEX_SIZE)
+> +
+> +#define R_PTRS_PER_PTE         (1 << RADIX_PTE_INDEX_SIZE)
+> +#define R_PTRS_PER_PMD         (1 << RADIX_PMD_INDEX_SIZE)
+> +#define R_PTRS_PER_PUD         (1 << RADIX_PUD_INDEX_SIZE)
+> +
+>  /*
+>   * Size of EA range mapped by our pagetables.
+>   */
+> diff --git a/arch/powerpc/include/asm/kasan.h b/arch/powerpc/include/asm/kasan.h
+> index 296e51c2f066..f18268cbdc33 100644
+> --- a/arch/powerpc/include/asm/kasan.h
+> +++ b/arch/powerpc/include/asm/kasan.h
+> @@ -2,6 +2,9 @@
+>  #ifndef __ASM_KASAN_H
+>  #define __ASM_KASAN_H
+>
+> +#include <asm/page.h>
+> +#include <asm/pgtable.h>
+> +
+>  #ifdef CONFIG_KASAN
+>  #define _GLOBAL_KASAN(fn)      _GLOBAL(__##fn)
+>  #define _GLOBAL_TOC_KASAN(fn)  _GLOBAL_TOC(__##fn)
+> @@ -14,13 +17,19 @@
+>
+>  #ifndef __ASSEMBLY__
+>
+> -#include <asm/page.h>
+> +#ifdef CONFIG_KASAN
+> +void kasan_init(void);
+> +#else
+> +static inline void kasan_init(void) { }
+> +#endif
+>
+>  #define KASAN_SHADOW_SCALE_SHIFT       3
+>
+>  #define KASAN_SHADOW_START     (KASAN_SHADOW_OFFSET + \
+>                                  (PAGE_OFFSET >> KASAN_SHADOW_SCALE_SHIFT))
+>
+> +#ifdef CONFIG_PPC32
+> +
+>  #define KASAN_SHADOW_OFFSET    ASM_CONST(CONFIG_KASAN_SHADOW_OFFSET)
+>
+>  #define KASAN_SHADOW_END       0UL
+> @@ -30,11 +39,17 @@
+>  #ifdef CONFIG_KASAN
+>  void kasan_early_init(void);
+>  void kasan_mmu_init(void);
+> -void kasan_init(void);
+>  #else
+> -static inline void kasan_init(void) { }
+>  static inline void kasan_mmu_init(void) { }
+>  #endif
+> +#endif
+> +
+> +#ifdef CONFIG_PPC_BOOK3S_64
+> +
+> +#define KASAN_SHADOW_SIZE ((u64)CONFIG_PHYS_MEM_SIZE_FOR_KASAN * \
+> +                               1024 * 1024 * 1 / 8)
+> +
+> +#endif /* CONFIG_PPC_BOOK3S_64 */
+>
+>  #endif /* __ASSEMBLY */
+>  #endif
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index 4df94b6e2f32..c60ff299f39b 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -2081,7 +2081,14 @@ void show_stack(struct task_struct *tsk, unsigned long *stack)
+>                 /*
+>                  * See if this is an exception frame.
+>                  * We look for the "regshere" marker in the current frame.
+> +                *
+> +                * KASAN may complain about this. If it is an exception frame,
+> +                * we won't have unpoisoned the stack in asm when we set the
+> +                * exception marker. If it's not an exception frame, who knows
+> +                * how things are laid out - the shadow could be in any state
+> +                * at all. Just disable KASAN reporting for now.
+>                  */
+> +               kasan_disable_current();
+>                 if (validate_sp(sp, tsk, STACK_INT_FRAME_SIZE)
+>                     && stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER) {
+>                         struct pt_regs *regs = (struct pt_regs *)
+> @@ -2091,6 +2098,7 @@ void show_stack(struct task_struct *tsk, unsigned long *stack)
+>                                regs->trap, (void *)regs->nip, (void *)lr);
+>                         firstframe = 1;
+>                 }
+> +               kasan_enable_current();
+>
+>                 sp = newsp;
+>         } while (count++ < kstack_depth_to_print);
+> diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
+> index 6620f37abe73..d994c7c39c8d 100644
+> --- a/arch/powerpc/kernel/prom.c
+> +++ b/arch/powerpc/kernel/prom.c
+> @@ -72,6 +72,7 @@ unsigned long tce_alloc_start, tce_alloc_end;
+>  u64 ppc64_rma_size;
+>  #endif
+>  static phys_addr_t first_memblock_size;
+> +static phys_addr_t top_phys_addr;
+>  static int __initdata boot_cpu_count;
+>
+>  static int __init early_parse_mem(char *p)
+> @@ -449,6 +450,26 @@ static bool validate_mem_limit(u64 base, u64 *size)
+>  {
+>         u64 max_mem = 1UL << (MAX_PHYSMEM_BITS);
+>
+> +       /*
+> +        * To handle the NUMA/discontiguous memory case, don't allow a block
+> +        * to be added if it falls completely beyond the configured physical
+> +        * memory. Print an informational message.
+> +        *
+> +        * Frustratingly we also see this with qemu - it seems to split the
+> +        * specified memory into a number of smaller blocks. If this happens
+> +        * under qemu, it probably represents misconfiguration. So we want
+> +        * the message to be noticeable, but not shouty.
+> +        *
+> +        * See Documentation/powerpc/kasan.txt
+> +        */
+> +       if (IS_ENABLED(CONFIG_KASAN) &&
+> +           (base >= ((u64)CONFIG_PHYS_MEM_SIZE_FOR_KASAN << 20))) {
+> +               pr_warn("KASAN: not adding memory block at %llx (size %llx)\n"
+> +                       "This could be due to discontiguous memory or kernel misconfiguration.",
+> +                       base, *size);
+> +               return false;
+> +       }
+> +
+>         if (base >= max_mem)
+>                 return false;
+>         if ((base + *size) > max_mem)
+> @@ -572,8 +593,11 @@ void __init early_init_dt_add_memory_arch(u64 base, u64 size)
+>
+>         /* Add the chunk to the MEMBLOCK list */
+>         if (add_mem_to_memblock) {
+> -               if (validate_mem_limit(base, &size))
+> +               if (validate_mem_limit(base, &size)) {
+>                         memblock_add(base, size);
+> +                       if (base + size > top_phys_addr)
+> +                               top_phys_addr = base + size;
+> +               }
+>         }
+>  }
+>
+> @@ -613,6 +637,8 @@ static void __init early_reserve_mem_dt(void)
+>  static void __init early_reserve_mem(void)
+>  {
+>         __be64 *reserve_map;
+> +       phys_addr_t kasan_shadow_start;
+> +       phys_addr_t kasan_memory_size;
+>
+>         reserve_map = (__be64 *)(((unsigned long)initial_boot_params) +
+>                         fdt_off_mem_rsvmap(initial_boot_params));
+> @@ -651,6 +677,42 @@ static void __init early_reserve_mem(void)
+>                 return;
+>         }
+>  #endif
+> +
+> +       if (IS_ENABLED(CONFIG_KASAN) && IS_ENABLED(CONFIG_PPC_BOOK3S_64)) {
+> +               kasan_memory_size =
+> +                       ((phys_addr_t)CONFIG_PHYS_MEM_SIZE_FOR_KASAN << 20);
+> +
+> +               if (top_phys_addr < kasan_memory_size) {
+> +                       /*
+> +                        * We are doomed. We shouldn't even be able to get this
+> +                        * far, but we do in qemu. If we continue and turn
+> +                        * relocations on, we'll take fatal page faults for
+> +                        * memory that's not physically present. Instead,
+> +                        * panic() here: it will be saved to __log_buf even if
+> +                        * it doesn't get printed to the console.
+> +                        */
+> +                       panic("Tried to book a KASAN kernel configured for %u MB with only %llu MB! Aborting.",
+> +                             CONFIG_PHYS_MEM_SIZE_FOR_KASAN,
+> +                             (u64)(top_phys_addr >> 20));
+> +               } else if (top_phys_addr > kasan_memory_size) {
+> +                       /* print a biiiig warning in hopes people notice */
+> +                       pr_err("===========================================\n"
+> +                               "Physical memory exceeds compiled-in maximum!\n"
+> +                               "This kernel was compiled for KASAN with %u MB physical memory.\n"
+> +                               "The physical memory detected is at least %llu MB.\n"
+> +                               "Memory above the compiled limit will not be used!\n"
+> +                               "===========================================\n",
+> +                               CONFIG_PHYS_MEM_SIZE_FOR_KASAN,
+> +                               (u64)(top_phys_addr >> 20));
+> +               }
+> +
+> +               kasan_shadow_start = _ALIGN_DOWN(kasan_memory_size * 7 / 8,
+> +                                                PAGE_SIZE);
+> +               DBG("reserving %llx -> %llx for KASAN",
+> +                   kasan_shadow_start, top_phys_addr);
+> +               memblock_reserve(kasan_shadow_start,
+> +                                top_phys_addr - kasan_shadow_start);
+> +       }
+>  }
+>
+>  #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
+> diff --git a/arch/powerpc/mm/kasan/Makefile b/arch/powerpc/mm/kasan/Makefile
+> index 6577897673dd..f02b15c78e4d 100644
+> --- a/arch/powerpc/mm/kasan/Makefile
+> +++ b/arch/powerpc/mm/kasan/Makefile
+> @@ -2,4 +2,5 @@
+>
+>  KASAN_SANITIZE := n
+>
+> -obj-$(CONFIG_PPC32)           += kasan_init_32.o
+> +obj-$(CONFIG_PPC32)           += init_32.o
+> +obj-$(CONFIG_PPC_BOOK3S_64)   += init_book3s_64.o
+> diff --git a/arch/powerpc/mm/kasan/kasan_init_32.c b/arch/powerpc/mm/kasan/init_32.c
+> similarity index 100%
+> rename from arch/powerpc/mm/kasan/kasan_init_32.c
+> rename to arch/powerpc/mm/kasan/init_32.c
+> diff --git a/arch/powerpc/mm/kasan/init_book3s_64.c b/arch/powerpc/mm/kasan/init_book3s_64.c
 > new file mode 100644
-> index 000000000000..aacb2e66736e
+> index 000000000000..f961e96be136
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/wistron-wps.txt
-> @@ -0,0 +1,30 @@
-> +ver ibm-cffps
-> +=======================
-> +
-> +Supported chips:
-> +
-> +  * Wistron Common Form Factor power supply(wps).
-> +
-> +Author: Ben Pai <Ben_Pai@wistron.com>
-> +
-> +Description
-> +-----------
-> +
-> +Our company name is Wistron, so this driver is written to supports
-> +Wistron Common Form Factor power supplies(wps). This driver
-> +is a client to the core PMBus driver. Read information from psu,
-> +and create debug-files and write information to them via driver.
-> +
-> +Usage Notes
-> +-----------
-> +
-> +This driver does not auto-detect devices. You will have to instantiate the
-> +devices explicitly. Please see Documentation/i2c/instantiating-devices for
-> +details.
-> +
-> +Information of the data read
-> +---------------------
-> +FRU : name of psu manufacturer.
-> +PN : part_number of psu.
-> +SN : serial_number of psu.
-> +mfr_date : Date of psu's manufacture.
-> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-> index d62d69bb7e49..ebb7024e58ab 100644
-> --- a/drivers/hwmon/pmbus/Kconfig
-> +++ b/drivers/hwmon/pmbus/Kconfig
-> @@ -219,6 +219,15 @@ config SENSORS_UCD9200
->   	  This driver can also be built as a module. If so, the module will
->   	  be called ucd9200.
->   
-> +config SENSORS_WISTRON_WPS
-> +	tristate "Wistron Power Supply"
-> +	help
-> +	  If you say yes here you get hardware monitoring support for the Wistron
-> +	  power supply.
-> +
-> +	  This driver can also be built as a module. If so, the module will
-> +	  be called wistron-wps.
-> +
->   config SENSORS_ZL6100
->   	tristate "Intersil ZL6100 and compatibles"
->   	help
-> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-> index 03bacfcfd660..cad38f99e8c5 100644
-> --- a/drivers/hwmon/pmbus/Makefile
-> +++ b/drivers/hwmon/pmbus/Makefile
-> @@ -25,4 +25,5 @@ obj-$(CONFIG_SENSORS_TPS40422)	+= tps40422.o
->   obj-$(CONFIG_SENSORS_TPS53679)	+= tps53679.o
->   obj-$(CONFIG_SENSORS_UCD9000)	+= ucd9000.o
->   obj-$(CONFIG_SENSORS_UCD9200)	+= ucd9200.o
-> +obj-$(CONFIG_SENSORS_WISTRON_WPS) += wistron-wps.o
->   obj-$(CONFIG_SENSORS_ZL6100)	+= zl6100.o
-> diff --git a/drivers/hwmon/pmbus/wistron-wps.c b/drivers/hwmon/pmbus/wistron-wps.c
-> new file mode 100644
-> index 000000000000..4e2649e7b3f2
-> --- /dev/null
-> +++ b/drivers/hwmon/pmbus/wistron-wps.c
-> @@ -0,0 +1,176 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +++ b/arch/powerpc/mm/kasan/init_book3s_64.c
+> @@ -0,0 +1,72 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Copyright 2019 Wistron Corp.
+> + * KASAN for 64-bit Book3S powerpc
+> + *
+> + * Copyright (C) 2019 IBM Corporation
+> + * Author: Daniel Axtens <dja@axtens.net>
 > + */
 > +
-> +#include <linux/bitops.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/device.h>
-> +#include <linux/fs.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/pmbus.h>
+> +#define DISABLE_BRANCH_PROFILING
 > +
-> +#include "pmbus.h"
+> +#include <linux/kasan.h>
+> +#include <linux/printk.h>
+> +#include <linux/sched/task.h>
+> +#include <asm/pgalloc.h>
 > +
-> +#define WPS_FRU_CMD	   0x99
-> +#define WPS_PN_CMD         0x9A
-> +#define WPS_FW_CMD	   0x9B
-> +#define WPS_DATE_CMD       0x9D
-> +#define WPS_SN_CMD	   0x9E
-> +
-> +enum {
-> +	WPS_DEBUGFS_FRU,
-> +	WPS_DEBUGFS_PN,
-> +	WPS_DEBUGFS_SN,
-> +	WPS_DEBUGFS_FW,
-> +	WPS_DEBUGFS_DATE,
-> +	WPS_DEBUGFS_NUM_ENTRIES
-> +};
-> +
-> +struct wistron_wps {
-> +	struct i2c_client *client;
-> +	int debugfs_entries[WPS_DEBUGFS_NUM_ENTRIES];
-> +};
-> +
-> +#define to_psu(x, y) container_of(x, struct wistron_wps, debugfs_entries[y])
-> +
-> +static ssize_t wistron_wps_debugfs_op(struct file *file, char __user *buf,
-> +				      size_t count, loff_t *ppos)
+> +void __init kasan_init(void)
 > +{
-> +	u8 cmd;
-> +	int rc;
-> +	int *idxp = file->private_data;
-> +	int idx = *idxp;
-> +	struct wistron_wps *psu = to_psu(idxp, idx);
-> +	char data[I2C_SMBUS_BLOCK_MAX] = { 0 };
+> +       int i;
+> +       void *k_start = kasan_mem_to_shadow((void *)RADIX_KERN_VIRT_START);
+> +       void *k_end = kasan_mem_to_shadow((void *)RADIX_VMEMMAP_END);
 > +
-> +	pmbus_set_page(psu->client, 0);
-> +	switch (idx) {
-> +	case WPS_DEBUGFS_FRU:
-> +		cmd = WPS_FRU_CMD;
-> +		break;
-> +	case WPS_DEBUGFS_PN:
-> +		cmd = WPS_PN_CMD;
-> +		break;
-> +	case WPS_DEBUGFS_SN:
-> +		cmd = WPS_SN_CMD;
-> +		break;
-> +	case WPS_DEBUGFS_FW:
-> +		cmd = WPS_FW_CMD;
-> +		break;
-> +	case WPS_DEBUGFS_DATE:
-> +		cmd = WPS_DATE_CMD;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
+> +       pte_t pte = __pte(__pa(kasan_early_shadow_page) |
+> +                         pgprot_val(PAGE_KERNEL) | _PAGE_PTE);
 > +
-> +	rc = i2c_smbus_read_block_data(psu->client, cmd, data);
-> +	if (rc < 0)
-> +		return rc;
+> +       if (!early_radix_enabled())
+> +               panic("KASAN requires radix!");
 > +
-> +done:
-> +	data[rc] = '\n';
-> +	rc += 2;
+> +       for (i = 0; i < PTRS_PER_PTE; i++)
+> +               __set_pte_at(&init_mm, (unsigned long)kasan_early_shadow_page,
+> +                            &kasan_early_shadow_pte[i], pte, 0);
 > +
-> +	return simple_read_from_buffer(buf, count, ppos, data, rc);
+> +       for (i = 0; i < PTRS_PER_PMD; i++)
+> +               pmd_populate_kernel(&init_mm, &kasan_early_shadow_pmd[i],
+> +                                   kasan_early_shadow_pte);
+> +
+> +       for (i = 0; i < PTRS_PER_PUD; i++)
+> +               pud_populate(&init_mm, &kasan_early_shadow_pud[i],
+> +                            kasan_early_shadow_pmd);
+> +
+> +       memset(kasan_mem_to_shadow((void *)PAGE_OFFSET), KASAN_SHADOW_INIT,
+> +              KASAN_SHADOW_SIZE);
+> +
+> +       kasan_populate_early_shadow(
+> +               kasan_mem_to_shadow((void *)RADIX_KERN_VIRT_START),
+> +               kasan_mem_to_shadow((void *)RADIX_VMALLOC_START));
+> +
+> +       /* leave a hole here for vmalloc */
+> +
+> +       kasan_populate_early_shadow(
+> +               kasan_mem_to_shadow((void *)RADIX_VMALLOC_END),
+> +               kasan_mem_to_shadow((void *)RADIX_VMEMMAP_END));
+> +
+> +       flush_tlb_kernel_range((unsigned long)k_start, (unsigned long)k_end);
+> +
+> +       /* mark early shadow region as RO and wipe */
+> +       pte = __pte(__pa(kasan_early_shadow_page) |
+> +                   pgprot_val(PAGE_KERNEL_RO) | _PAGE_PTE);
+> +       for (i = 0; i < PTRS_PER_PTE; i++)
+> +               __set_pte_at(&init_mm, (unsigned long)kasan_early_shadow_page,
+> +                            &kasan_early_shadow_pte[i], pte, 0);
+> +
+> +       /*
+> +        * clear_page relies on some cache info that hasn't been set up yet.
+> +        * It ends up looping ~forever and blows up other data.
+> +        * Use memset instead.
+> +        */
+> +       memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+> +
+> +       /* Enable error messages */
+> +       init_task.kasan_depth = 0;
+> +       pr_info("KASAN init done (64-bit Book3S heavyweight mode)\n");
 > +}
-> +
-> +static const struct file_operations wistron_wps_fops = {
-> +
-> +	.llseek = noop_llseek,
-> +	.read = wistron_wps_debugfs_op,
-> +	.open = simple_open,
-> +};
-> +
-> +static struct pmbus_driver_info wistron_wps_info = {
-> +	.pages = 1,
-> +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
-> +		PMBUS_HAVE_PIN | PMBUS_HAVE_POUT | PMBUS_HAVE_FAN12 |
-> +		PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 |
-> +		PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT |
-> +		PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_STATUS_TEMP |
-> +		PMBUS_HAVE_STATUS_FAN12,
-> +};
-> +
-> +static struct pmbus_platform_data wistron_wps_pdata = {
-> +	.flags = PMBUS_SKIP_STATUS_CHECK,
-> +};
-> +
-> +static int wistron_wps_probe(struct i2c_client *client,
-> +			     const struct i2c_device_id *id)
-> +{
-> +	int i, rc;
-> +	struct dentry *debugfs;
-> +	struct dentry *wistron_wps_dir;
-> +	struct wistron_wps *psu;
-> +
-> +	client->dev.platform_data = &wistron_wps_pdata;
-> +	rc = pmbus_do_probe(client, id, &wistron_wps_info);
-> +	if (rc)
-> +		return rc;
-> +
-> +	psu = devm_kzalloc(&client->dev, sizeof(*psu), GFP_KERNEL);
-> +	if (!psu)
-> +		return 0;
-> +
-> +	psu->client = client;
-> +
-> +	debugfs = pmbus_get_debugfs_dir(client);
-> +	if (!debugfs)
-> +		return 0;
-> +
-> +	wistron_wps_dir = debugfs_create_dir(client->name, debugfs);
-> +	if (!wistron_wps_dir)
-> +		return 0;
-> +
-> +	for (i = 0; i < WPS_DEBUGFS_NUM_ENTRIES; ++i)
-> +		psu->debugfs_entries[i] = i;
-> +
-> +	debugfs_create_file("fru", 0444, wistron_wps_dir,
-> +			    &psu->debugfs_entries[WPS_DEBUGFS_FRU],
-> +			    &wistron_wps_fops);
-> +	debugfs_create_file("part_number", 0444, wistron_wps_dir,
-> +			    &psu->debugfs_entries[WPS_DEBUGFS_PN],
-> +			    &wistron_wps_fops);
-> +	debugfs_create_file("serial_number", 0444, wistron_wps_dir,
-> +			    &psu->debugfs_entries[WPS_DEBUGFS_SN],
-> +			    &wistron_wps_fops);
-> +	debugfs_create_file("fw_version", 0444, wistron_wps_dir,
-> +			    &psu->debugfs_entries[WPS_DEBUGFS_FW],
-> +			    &wistron_wps_fops);
-> +	debugfs_create_file("mfr_date", 0444, wistron_wps_dir,
-> +			    &psu->debugfs_entries[WPS_DEBUGFS_DATE],
-> +			    &wistron_wps_fops);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct i2c_device_id wistron_wps_id[] = {
-> +	{ "wistron_wps", 1 },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(i2c, wistron_wps_id);
-> +
-> +static const struct of_device_id wistron_wps_of_match[] = {
-> +	{ .compatible = "wistron, wps" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, wistron_wps_of_match);
-> +
-> +static struct i2c_driver wistron_wps_driver = {
-> +	.driver = {
-> +		.name = "wistron-wps",
-> +		.of_match_table = wistron_wps_of_match,
-> +	},
-> +	.probe = wistron_wps_probe,
-> +	.remove = pmbus_do_remove,
-> +	.id_table = wistron_wps_id,
-> +};
-> +
-> +module_i2c_driver(wistron_wps_driver);
-> +
-> +MODULE_AUTHOR("Ben Pai");
-> +MODULE_DESCRIPTION("PMBus driver for Wistron power supplies");
-> +MODULE_LICENSE("GPL");
+> --
+> 2.20.1
+>
