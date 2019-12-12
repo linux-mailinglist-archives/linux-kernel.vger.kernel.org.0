@@ -2,102 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E911411C156
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 01:29:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1613811C18C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 01:37:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfLLA3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 19:29:36 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36330 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbfLLA3g (ORCPT
+        id S1727387AbfLLAgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 19:36:53 -0500
+Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:52228 "EHLO
+        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726791AbfLLAgx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 19:29:36 -0500
-Received: by mail-lf1-f68.google.com with SMTP id n12so281879lfe.3;
-        Wed, 11 Dec 2019 16:29:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pC6XF/C4qA6Z3fF58X0CjVZydy0fb8CelD9qd37i5gc=;
-        b=HshZQGQHDaBtH2auNRZfezkqBM+IIN3iaK35ve5/12tX8zrV3UwAwhNtW2CaOC4GGH
-         VulBEsCEkSHMh7Ln0pKDk9e8aB3S++LApRbmWewG2o0/isabLtPD9i09Pcr+uy6mJ1zh
-         yinfxOFIvvABQXxS3N32b9Hu/AlWcnXm7UipweDlDLPPkxZwaNQYKlS5DRi7NZgtqEvQ
-         5HiVMcTOP1bpSnkaN4n/2pVbUD/+EISG3O6fpniJ9EpXw3bgh0UEfNoVMAZi2BSoC1WR
-         BQ/rX5E358IAzM7hQ94LlfNSTL2fuo10CBtRH5favAiDybjbGb1diIYoP1VvKQCA7r6X
-         oWUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pC6XF/C4qA6Z3fF58X0CjVZydy0fb8CelD9qd37i5gc=;
-        b=CH04j7calde3YBRK69AHXtWFZN4MTur9MU579yU31ZJZbl7fIpG2+0HjyxCyw17/bl
-         C+grvvQJ2PhOnd8pFz/kH067StEzzJG5gV4tHU+Q97zfWLiiHz3cD6BVKyZPDCdzraDw
-         Yf+zey0ba9zVkaYPqKRBgWscPAkBF5YP7wS2TMJVWkGH9iwVHziVieH9I8IpWydLm0VS
-         VvwcIuXndX05xKsRi8Qk9fRmAouJNfqOU0fC8kTwpPeW+2nrhSVjT51CFG880T+yPbno
-         VK14z27puUWGOMZrzAySoAicMNpsnlpK6w5tS1+S2Z5gpmR51VhwfhcF3BMVUeliY+VM
-         RlzQ==
-X-Gm-Message-State: APjAAAU5lF1FD/9/EovHQ3F+oqTt45jUJ5q3freS29CGMfAKB/my6fM6
-        goOnr62iNxAKcIaguRlcujm/diwh
-X-Google-Smtp-Source: APXvYqyD9UYdejrNSyfdLH+9mfQMcI9Ym/rhgknNTIiB4I1iG4nafZurmwrznkO4CEVPBg3bmCBAvw==
-X-Received: by 2002:ac2:599c:: with SMTP id w28mr4173459lfn.78.1576110573638;
-        Wed, 11 Dec 2019 16:29:33 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id d16sm1964036lfa.16.2019.12.11.16.29.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 16:29:32 -0800 (PST)
-Subject: Re: [PATCH v2 0/9] input: elants: Support Asus TF300T touchscreen
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Scott Liu <scott.liu@emc.com.tw>,
-        James Chen <james.chen@emc.com.tw>,
-        Johnny Chuang <johnny.chuang@emc.com.tw>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org, Henrik Rydberg <rydberg@bitmath.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh-dt@kernel.org>
-References: <cover.1576079249.git.mirq-linux@rere.qmqm.pl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3da0327c-d7c4-b0f2-9ab4-b7088891ef7c@gmail.com>
-Date:   Thu, 12 Dec 2019 03:29:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Wed, 11 Dec 2019 19:36:53 -0500
+X-Greylist: delayed 1324 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Dec 2019 19:36:52 EST
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
+        id 1ifC7r-0000O6-5Q; Thu, 12 Dec 2019 00:14:39 +0000
+Message-ID: <0e00090ef6fcf310159d6ce23f2c92f511dd01de.camel@codethink.co.uk>
+Subject: Re: [Y2038] [PATCH v7 6/9] ALSA: Avoid using timespec for struct
+ snd_timer_tread
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org,
+        Takashi Iwai <tiwai@suse.com>
+Cc:     Baolin Wang <baolin.wang@linaro.org>, y2038@lists.linaro.org,
+        linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+        Mark Brown <broonie@kernel.org>,
+        Baolin Wang <baolin.wang7@gmail.com>
+Date:   Thu, 12 Dec 2019 00:14:38 +0000
+In-Reply-To: <20191211212025.1981822-7-arnd@arndb.de>
+References: <20191211212025.1981822-1-arnd@arndb.de>
+         <20191211212025.1981822-7-arnd@arndb.de>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-In-Reply-To: <cover.1576079249.git.mirq-linux@rere.qmqm.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-11.12.2019 19:03, Michał Mirosław пишет:
-> This series cleans up the driver a bit and implements changes needed to
-> support EKTF3624-based touchscreen used in eg. Asus TF300T tablet. 
-> 
-> ---
-> v2: extended with Dmitry's patches (replaced v1 patches 3 and 4)
-> 
-> Dmitry Osipenko (3):
->   input: elants: support 0x66 reply opcode for reporting touches
->   dt-bindings: input: elants-i2c: Document common touchscreen properties
->   dt-bindings: input: elants-i2c: Document eKTF3624
-> 
-> Michał Mirosław (6):
->   input: elants: document some registers and values
->   input: elants: support old touch report format
->   input: elants: remove unused axes
->   input: elants: override touchscreen info with DT properties
->   input: elants: refactor elants_i2c_execute_command()
->   input: elants: read touchscreen size for EKTF3624
-> 
->  .../devicetree/bindings/input/elants_i2c.txt  |   6 +-
->  drivers/input/touchscreen/elants_i2c.c        | 358 ++++++++++++------
->  2 files changed, 239 insertions(+), 125 deletions(-)
-> 
+On Wed, 2019-12-11 at 22:20 +0100, Arnd Bergmann wrote:
+[...] 
+> +static int snd_timer_user_tread(void __user *argp, struct snd_timer_user *tu,
+> +				unsigned int cmd, bool compat)
+> +{
+> +	int __user *p = argp;
+> +	int xarg, old_tread;
+> +
+> +	if (tu->timeri)	/* too late */
+> +		return -EBUSY;
+> +	if (get_user(xarg, p))
+> +		return -EFAULT;
+> +
+> +	old_tread = tu->tread;
+> +
+> +	if (!xarg)
+> +		tu->tread = TREAD_FORMAT_NONE;
+> +	else if (cmd == SNDRV_TIMER_IOCTL_TREAD64 ||
+> +		 (IS_ENABLED(CONFIG_64BITS) && !compat))
 
-Hello Michał,
+This needs to check for CONFIG_64BIT not CONFIG_64BITS.
 
-The series works and looks good to me, eKTF3624 touchscreen is working
-fine on Nexus 7. Thank you very much!
+[...]
+> @@ -2145,14 +2202,34 @@ static ssize_t snd_timer_user_read(struct file *file, char __user *buffer,
+>  		tu->qused--;
+>  		spin_unlock_irq(&tu->qlock);
+>  
+> -		if (tu->tread) {
+> -			if (copy_to_user(buffer, &tu->tqueue[qhead],
+> -					 sizeof(struct snd_timer_tread)))
+> +		tread = &tu->tqueue[qhead];
+> +
+> +		switch (tu->tread) {
+> +		case TREAD_FORMAT_TIME64:
+> +			if (copy_to_user(buffer, tread,
+> +					 sizeof(struct snd_timer_tread64)))
+>  				err = -EFAULT;
+> -		} else {
+> +			break;
+> +		case TREAD_FORMAT_TIME32:
+> +			memset(&tread32, 0, sizeof(tread32));
+> +			tread32 = (struct snd_timer_tread32) {
+> +				.event = tread->event,
+> +				.tstamp_sec = tread->tstamp_sec,
+> +				.tstamp_sec = tread->tstamp_nsec,
+> +				.val = tread->val,
+> +			};
+> +
+> +			if (copy_to_user(buffer, &tread32, sizeof(tread32)))
+> +				err = -EFAULT;
+> +			break;
+> +		case TREAD_FORMAT_NONE:
+>  			if (copy_to_user(buffer, &tu->queue[qhead],
+>  					 sizeof(struct snd_timer_read)))
+>  				err = -EFAULT;
+> +			break;
+> +		default:
+> +			err = -ENOTSUPP;
+[...]
+
+This is not a valid error code for returning to user-space, but this
+case should be impossible so I don't think it matters.
+
+Ben.
+
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
+
