@@ -2,68 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B54C11D07A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 352DF11D085
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:08:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbfLLPGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:06:51 -0500
-Received: from foss.arm.com ([217.140.110.172]:49942 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728581AbfLLPGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:06:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B06EB30E;
-        Thu, 12 Dec 2019 07:06:48 -0800 (PST)
-Received: from [192.168.0.9] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42FA23F6CF;
-        Thu, 12 Dec 2019 07:06:47 -0800 (PST)
-Subject: Re: [PATCH v3 0/5] sched/fair: Task placement biasing using uclamp
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@kernel.org, vincent.guittot@linaro.org,
-        patrick.bellasi@matbug.net, qperret@google.com,
-        qais.yousef@arm.com, morten.rasmussen@arm.com
-References: <20191211113851.24241-1-valentin.schneider@arm.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <7c9caf20-de5b-3fa2-2663-e712ba3d7829@arm.com>
-Date:   Thu, 12 Dec 2019 16:06:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1729040AbfLLPIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 10:08:02 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:41565 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728815AbfLLPIC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 10:08:02 -0500
+Received: by mail-vs1-f67.google.com with SMTP id f8so1767551vsq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 07:08:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zbYuLohJ6uz9IV3uB+nuAd8APjXTFVTSFGSirgS84Fw=;
+        b=pkqrboVtNyI5GfSeksmn9z5PnU5TgHPwW8EtQ28nj33hzudbVH9SuoYaMsPTPRIgK5
+         Eqp/3oIW6uUE4++T9Mj7TzjbQVgb7UC+hw4/pxWH8PYZ5u0kbc6O8eVmn//rz5aTQjKV
+         LvnklEtIK4gpufnMuZelStusOrqeQFUhrVcDtUa2c5qB/zC2el+WhNR1eOvWGcC9SION
+         Hk0ue7RAmyWIELLCOGkDVdtEF4DVFtZUBK5v2mxCV3MXD6tPUmvejYAdc7Q4wp3f42D3
+         a3nwTSWD+upAi+wOj1E3pl5atpf7VUwWRmypPWUiCHH8mQFqEOqg/0K5HZcYFxqA92a2
+         4XyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zbYuLohJ6uz9IV3uB+nuAd8APjXTFVTSFGSirgS84Fw=;
+        b=KY3jO7GbsdvheFD103eao24mRlj3lG0y2QhRl0FkDX3aLSBik2D6a4SmJx7BLsAmlJ
+         AIWuxovNcuDeBUJbAyagoWSnBMIFj2DNGcndaoU1564eUixs7GdYpqNYvwVkKIGd68O8
+         bjxeEr21izokGsmOnrZGKHeBLGAK+PQzzq2TX7SbwkpNHSKGVOfiS+qlodhneoKZwI54
+         wlTZ9t0xee/rlnQad7KJokZ4nF6o/j17a8n9+xWEnpsDaZHjxWedwIwpKpTV6tNIvwna
+         NkfJV75uvrrh77Nh4nfWMMWN70FVByPwrVpanCftRRbnN/ogePm4sF87atVPPwNqD7Qd
+         FKpg==
+X-Gm-Message-State: APjAAAUZOUYz+urlWlsne3OQJHGvPqTiAdn3ir8GBKeSqWIck6GXJ2dX
+        QuZeu0pBuWnpbIt0WiVmtKoeY8bd1fsfLi5AQgKShQ==
+X-Google-Smtp-Source: APXvYqw8Cxw8goN18pz+XIVG0ArSx5rkSvWM5IzHtNml4ttcHm9tifgGxLAx++YkwezG41U68dvM6EO/SuWVRkgPtZ0=
+X-Received: by 2002:a67:b649:: with SMTP id e9mr7320111vsm.34.1576163280703;
+ Thu, 12 Dec 2019 07:08:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191211113851.24241-1-valentin.schneider@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191210014011.21987-1-digetx@gmail.com> <CAPDyKFpMe09PNQqinvvidF+wfASx2nuvgf7=Hx5+cGni8pdcRA@mail.gmail.com>
+ <28045442-6a1c-1e0b-0dfe-c36fa9de149a@gmail.com> <CAPDyKFpWO_McZEoefX1T=SE=RYm_GU3S+LgYZrgJY_SJgv7egA@mail.gmail.com>
+ <44f99e56-468e-c3f9-3785-73c2cf8ba118@gmail.com> <d4933cb1-d2c1-8055-e0f4-f6fcbe9973bc@gmail.com>
+In-Reply-To: <d4933cb1-d2c1-8055-e0f4-f6fcbe9973bc@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 12 Dec 2019 16:07:24 +0100
+Message-ID: <CAPDyKFq26Wcd9f3VJ1afxv9TVDJQu4wi+yLS-4Pi1bYnFLyWsg@mail.gmail.com>
+Subject: Re: [PATCH v1] sdhci: tegra: Add workaround for Broadcom WiFi
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/2019 12:38, Valentin Schneider wrote:
-> Hi,
-> 
-> While uclamp restrictions currently only impact schedutil's frequency
-> selection, it would make sense to also let them impact CPU selection in
-> asymmetric topologies. This would let us steer specific tasks towards
-> certain CPU capacities regardless of their actual utilization - I give a
-> few examples in patch 4.
-> 
-> The first three patches are mainly cleanups, the meat of the thing is
-> in patches 4 and 5.
-> 
-> Note that this is in the same spirit as what Patrick had proposed for EAS
-> on Android [1]
-> 
-> [1]: https://android.googlesource.com/kernel/common/+/b61876ed122f816660fe49e0de1b7ee4891deaa2%5E%21
+On Thu, 12 Dec 2019 at 15:23, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 11.12.2019 19:29, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 11.12.2019 19:10, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> On Wed, 11 Dec 2019 at 16:46, Dmitry Osipenko <digetx@gmail.com> wrote=
+:
+> >>>
+> >>> Hello Ulf,
+> >>>
+> >>> 11.12.2019 11:11, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>>> On Tue, 10 Dec 2019 at 02:40, Dmitry Osipenko <digetx@gmail.com> wro=
+te:
+> >>>>>
+> >>>>> All Tegra20 boards that have embedded Broadcom WiFi SDIO chip are a=
+ffected
+> >>>>> by a problem where WiFi chip reports CCCR v1.10, while it should v1=
+.20.
+> >>>>> In a result high-speed mode isn't enabled for the WiFi card and thi=
+s
+> >>>>> results in a malfunctioning SDIO communication.
+> >>>>
+> >>>> Does that also mean SDIO_SPEED_SHS bit is set when reading SDIO_CCCR=
+_SPEED?
+> >>>
+> >>> Yes, the SDIO_SPEED_SHS bit is set.
+> >>>
+> >>>>>  brcmfmac: brcmf_sdio_readframes: read 304 bytes from channel 1 fai=
+led: -84
+> >>>>>  brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send =
+NAK
+> >>>>>
+> >>>>> Downstream kernels are overriding card's CCCR info in SDHCI driver =
+to fix
+> >>>>> the problem, let's do the same in upstream.
+> >>>>>
+> >>>>> The change is inspired by omap_hsmmc_init_card() of OMAP's HSMMC dr=
+iver,
+> >>>>> which overrides card's info for the TI wl1251 WiFi.
+> >>>>
+> >>>> This is a temporary solution and should be replaced by doing the DT
+> >>>> parsing during
+> >>>>
+> >>>> So, yes, let's see if we can use a card quirk instead. That's the fi=
+rst option.
+> >>>>
+> >>>> A second option is simply to parse the DT subnode for a new DT
+> >>>> property during mmc_sdio_init_card(). Along the lines of what we do
+> >>>> for the broken-hpi DT binding for eMMC.
+> >>>
+> >>> Let's try the first option. My understanding is that the problem affe=
+cts
+> >>> only the specific model of the WiFi chip and it's not a board-specifi=
+c
+> >>> problem. I'll add Broadcom driver people to CC for the next version o=
+f
+> >>> the patch, maybe they'll have something to say.
+> >>
+> >> Okay, sounds reasonable. By looking at your latest attempt for a fix,
+> >> I have two minor nitpicks, otherwise it looks good.
+> >>
+> >> The nitpicks:
+> >> I suggest to rename MMC_QUIRK_HIGH_SPEED_CARD to MMC_QUIRK_HIGH_SPEED
+> >> and mmc_card_need_high_speed_toggle() to mmc_card_quirk_hs().
+> >
+> > I'll take it into account, thanks.
+>
+> Looks like I managed to figure out what's really going on:
+>
+>   1. The BCM4329 doc clearly states that High Speed is supported, see
+> page 49 (Section 11: WLAN Interfaces, SDIO v1.2)
+>
+> https://www.cypress.com/file/298626/download
+>
+>   2. I googled for performance results of the BCM4329 SDIO WiFi and came
+> to a conclusion that ~40 Mbit/s is a realistic maximum of the WiFi-data
+> throughput for NVIDIA Tegra20 boards due to antenna configuration
+> limitations and whatever.
 
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Tested-By: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Okay.
 
-Tested on Juno-r0 (Arm64) cpumask [0x3f] w/ big [0x06], LITTLE [0x39]
-[orig cpu capacity big,LITTLE: 1024,446] and rt-app
+>
+>   3. The Tegra's SDHCI clock is pre-configured to 48MHz at the time of
+> kernel's boot-up.
+>
+>   4. IIUC, the maximum clock rate for the legacy SD signaling mode is
+> ~25MHz and that is more than enough for a 4-lane SDIO data-bus that
+> allows up to 100 Mbit/s for the WiFi which is capped to 40 Mbit/s anyways=
+.
 
-4 periodic tasks runtime/period [800/16000], per task uclamp_min/max
-[600,1024]
+Yes, I see.
 
-w/o uclamp: EAS puts the tasks on LITTLE CPUs [0x39]
-w/  uclamp: EAS puts the tasks on big CPUs [0x06]
+>
+>   5. Apparently MMC core doesn't limit the clock rate for the Normal
+> Speed cards.
+
+It should, else it's a bug (I would be really surprised if that's the
+case, but who knows).
+
+>
+>
+> So, I added "max-frequency =3D <25000000>;" to the SDHCI node of the
+> board's device-tree and ta-da! WiFi works absolutely fine without the
+> quirk! Thus the SDIO card quirk isn't really needed and I'm dropping it
+> for now.
+>
+> Ulf, do you know if it's a bug or a feature of the MMC core that it
+> doesn't limit clock rate for the Normal Speed cards?
+
+It should limit the speed, else it's a bug. Can you perhaps check what
+the requested clock rate is via some debug prints in the host ops
+->set_ios()? And also what the real rate becomes after dividers.
+
+If it's not a bug in the core, I suspect that there may be generic
+problem dealing with initialization frequencies for sdhci-tegra.
+
+For example, mmc_rescan_try_freq() tries to initialize the SDIO card
+at 400KHz, then 300, then 200 then 100 (in that order, and note
+*KHz*). When a frequency is successful, initialization continues and
+later on the clock rate should be increased to 25MHz, for legacy speed
+mode.
+
+Kind regards
+Uffe
