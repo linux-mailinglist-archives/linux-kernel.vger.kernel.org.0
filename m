@@ -2,188 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40EC811C1BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 01:59:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C91C711C1D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:06:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbfLLA7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 19:59:06 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52091 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726791AbfLLA7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 19:59:05 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1727483AbfLLBFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 20:05:53 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:35408 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbfLLBFx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 20:05:53 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 47YFwX40CXz1rQBK;
+        Thu, 12 Dec 2019 02:05:48 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 47YFwX2Q08z1qqkq;
+        Thu, 12 Dec 2019 02:05:48 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id q-W7gOHmTDAQ; Thu, 12 Dec 2019 02:04:36 +0100 (CET)
+X-Auth-Info: ryjPqBpzHulkb8n+Csi9otVruh6YyTMa0AaPwPgVcBA=
+Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47YFmk24gsz9sPL;
-        Thu, 12 Dec 2019 11:59:02 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1576112342;
-        bh=q29hxPkZ81zqhm8TCiG1DkHRYda5aQynV71wQB7CmII=;
-        h=Date:From:To:Cc:Subject:From;
-        b=mpmFQMBquXMfKteBipHrly0/ZE7VLcyjgblIOhtdRx27viHxk53IscP+onNLVHn2q
-         20pgZlqIPgAdgcnH6g0RFBXO7/XrWL6cB4h+4v0WLQSyMjyGn0625Rhp+cjl125qZ9
-         llRL7zgUny/cQLIGquneYKBwGj5W0LFnd95a50hNUANHsUO934TiTZC3Sj6JET8IHJ
-         MydYJ8vfnTWEXQCQV+rp8BiqLd14XT+a4+ec20w91yZ3ZM7JLXK4SEBmzuFmesR5Xl
-         Xxw0ar9XI1HPefOopy4vz9l1NteUiTjRemd2il52NNVyoArrg9C9ZKCUw8zkjSwu5n
-         wNmzAenbwzcLw==
-Date:   Thu, 12 Dec 2019 11:59:01 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failures after merge of the keys tree
-Message-ID: <20191212115901.221d8ba1@canb.auug.org.au>
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Thu, 12 Dec 2019 02:04:35 +0100 (CET)
+Subject: Re: [PATCH v2 2/2] mtd: rawnand: denali_dt: add reset controlling
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mtd@lists.infradead.org
+Cc:     Dinh Nguyen <dinguyen@kernel.org>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-kernel@vger.kernel.org
+References: <20191211054538.8283-1-yamada.masahiro@socionext.com>
+ <20191211054538.8283-2-yamada.masahiro@socionext.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <399bb8ab-74c5-1be3-4156-6d854738b548@denx.de>
+Date:   Thu, 12 Dec 2019 01:22:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/iFdWzqfb3Y03+bLckGVND9j";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20191211054538.8283-2-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/iFdWzqfb3Y03+bLckGVND9j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 12/11/19 6:45 AM, Masahiro Yamada wrote:
+[...]
+> diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
+> index 8b779a899dcf..9a294c3f6ec8 100644
+> --- a/drivers/mtd/nand/raw/denali_dt.c
+> +++ b/drivers/mtd/nand/raw/denali_dt.c
+> @@ -6,6 +6,7 @@
+>   */
+>  
+>  #include <linux/clk.h>
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+>  #include <linux/ioport.h>
+> @@ -14,6 +15,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/reset.h>
+>  
+>  #include "denali.h"
+>  
+> @@ -22,6 +24,8 @@ struct denali_dt {
+>  	struct clk *clk;	/* core clock */
+>  	struct clk *clk_x;	/* bus interface clock */
+>  	struct clk *clk_ecc;	/* ECC circuit clock */
+> +	struct reset_control *rst;	/* core reset */
+> +	struct reset_control *rst_reg;	/* register reset */
+>  };
+>  
+>  struct denali_dt_data {
+> @@ -151,6 +155,14 @@ static int denali_dt_probe(struct platform_device *pdev)
+>  	if (IS_ERR(dt->clk_ecc))
+>  		return PTR_ERR(dt->clk_ecc);
+>  
+> +	dt->rst = devm_reset_control_get_optional_shared(dev, "nand");
+> +	if (IS_ERR(dt->rst))
+> +		return PTR_ERR(dt->rst);
+> +
+> +	dt->rst_reg = devm_reset_control_get_optional_shared(dev, "reg");
+> +	if (IS_ERR(dt->rst_reg))
+> +		return PTR_ERR(dt->rst_reg);
+> +
+>  	ret = clk_prepare_enable(dt->clk);
+>  	if (ret)
+>  		return ret;
+> @@ -166,10 +178,30 @@ static int denali_dt_probe(struct platform_device *pdev)
+>  	denali->clk_rate = clk_get_rate(dt->clk);
+>  	denali->clk_x_rate = clk_get_rate(dt->clk_x);
+>  
+> -	ret = denali_init(denali);
+> +	/*
+> +	 * Deassert the register reset, and the core reset in this order.
+> +	 * Deasserting the core reset while the register reset is asserted
+> +	 * will cause unpredictable behavior in the controller.
+> +	 */
+> +	ret = reset_control_deassert(dt->rst_reg);
+>  	if (ret)
+>  		goto out_disable_clk_ecc;
+>  
+> +	ret = reset_control_deassert(dt->rst);
+> +	if (ret)
+> +		goto out_assert_rst_reg;
+> +
+> +	/*
+> +	 * When the reset is deasserted, the initialization sequence is kicked
+> +	 * (bootstrap process). The driver must wait until it finished.
+> +	 * Otherwise, it will result in unpredictable behavior.
+> +	 */
+> +	usleep_range(200, 1000);
+> +
+> +	ret = denali_init(denali);
+> +	if (ret)
+> +		goto out_assert_rst;
+> +
+>  	for_each_child_of_node(dev->of_node, np) {
+>  		ret = denali_dt_chip_init(denali, np);
+>  		if (ret) {
+> @@ -184,6 +216,10 @@ static int denali_dt_probe(struct platform_device *pdev)
+>  
+>  out_remove_denali:
+>  	denali_remove(denali);
+> +out_assert_rst:
+> +	reset_control_assert(dt->rst);
+> +out_assert_rst_reg:
+> +	reset_control_assert(dt->rst_reg);
 
-Hi all,
+Maybe you can use devm_add_action_or_reset() here , like in e.g.
+drivers/input/touchscreen/ili210x.c , to avoid this unwinding ?
 
-After merging the keys tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-In file included from include/linux/keyctl.h:11,
-                 from include/linux/key.h:35,
-                 from include/linux/key-type.h:11,
-                 from fs/crypto/keyring.c:22:
-fs/crypto/keyring.c: In function 'allocate_filesystem_keyring':
-include/uapi/linux/keyctl.h:52:24: warning: passing argument 5 of 'keyring_=
-alloc' makes pointer from integer without a cast [-Wint-conversion]
-   52 | #define KEY_POS_SEARCH 0x08000000 /* possessor can find a key in se=
-arch / search a keyring */
-      |                        ^
-      |                        |
-      |                        int
-fs/crypto/keyring.c:208:21: note: in expansion of macro 'KEY_POS_SEARCH'
-  208 |     current_cred(), KEY_POS_SEARCH |
-      |                     ^~~~~~~~~~~~~~
-In file included from include/linux/key-type.h:11,
-                 from fs/crypto/keyring.c:22:
-include/linux/key.h:390:20: note: expected 'struct key_acl *' but argument =
-is of type 'int'
-  390 | extern struct key *keyring_alloc(const char *description, kuid_t ui=
-d, kgid_t gid,
-      |                    ^~~~~~~~~~~~~
-In file included from include/linux/keyctl.h:11,
-                 from include/linux/key.h:35,
-                 from include/linux/key-type.h:11,
-                 from fs/crypto/keyring.c:22:
-fs/crypto/keyring.c: In function 'allocate_master_key_users_keyring':
-include/uapi/linux/keyctl.h:52:24: warning: passing argument 5 of 'keyring_=
-alloc' makes pointer from integer without a cast [-Wint-conversion]
-   52 | #define KEY_POS_SEARCH 0x08000000 /* possessor can find a key in se=
-arch / search a keyring */
-      |                        ^
-      |                        |
-      |                        int
-fs/crypto/keyring.c:252:21: note: in expansion of macro 'KEY_POS_SEARCH'
-  252 |     current_cred(), KEY_POS_SEARCH |
-      |                     ^~~~~~~~~~~~~~
-In file included from include/linux/key-type.h:11,
-                 from fs/crypto/keyring.c:22:
-include/linux/key.h:390:20: note: expected 'struct key_acl *' but argument =
-is of type 'int'
-  390 | extern struct key *keyring_alloc(const char *description, kuid_t ui=
-d, kgid_t gid,
-      |                    ^~~~~~~~~~~~~
-In file included from include/linux/keyctl.h:11,
-                 from include/linux/key.h:35,
-                 from include/linux/key-type.h:11,
-                 from fs/crypto/keyring.c:22:
-fs/crypto/keyring.c: In function 'add_master_key_user':
-include/uapi/linux/keyctl.h:52:24: warning: passing argument 6 of 'key_allo=
-c' makes pointer from integer without a cast [-Wint-conversion]
-   52 | #define KEY_POS_SEARCH 0x08000000 /* possessor can find a key in se=
-arch / search a keyring */
-      |                        ^
-      |                        |
-      |                        int
-fs/crypto/keyring.c:290:8: note: in expansion of macro 'KEY_POS_SEARCH'
-  290 |        KEY_POS_SEARCH | KEY_USR_VIEW, 0, NULL);
-      |        ^~~~~~~~~~~~~~
-In file included from include/linux/key-type.h:11,
-                 from fs/crypto/keyring.c:22:
-include/linux/key.h:256:20: note: expected 'struct key_acl *' but argument =
-is of type 'int'
-  256 | extern struct key *key_alloc(struct key_type *type,
-      |                    ^~~~~~~~~
-In file included from include/linux/keyctl.h:11,
-                 from include/linux/key.h:35,
-                 from include/linux/key-type.h:11,
-                 from fs/crypto/keyring.c:22:
-fs/crypto/keyring.c: In function 'add_new_master_key':
-include/uapi/linux/keyctl.h:52:24: warning: passing argument 6 of 'key_allo=
-c' makes pointer from integer without a cast [-Wint-conversion]
-   52 | #define KEY_POS_SEARCH 0x08000000 /* possessor can find a key in se=
-arch / search a keyring */
-      |                        ^
-      |                        |
-      |                        int
-fs/crypto/keyring.c:362:4: note: in expansion of macro 'KEY_POS_SEARCH'
-  362 |    KEY_POS_SEARCH | KEY_USR_SEARCH | KEY_USR_VIEW,
-      |    ^~~~~~~~~~~~~~
-In file included from include/linux/key-type.h:11,
-                 from fs/crypto/keyring.c:22:
-include/linux/key.h:256:20: note: expected 'struct key_acl *' but argument =
-is of type 'int'
-  256 | extern struct key *key_alloc(struct key_type *type,
-      |                    ^~~~~~~~~
-fs/crypto/keysetup_v1.c: In function 'find_and_lock_process_key':
-fs/crypto/keysetup_v1.c:107:8: error: too few arguments to function 'reques=
-t_key'
-  107 |  key =3D request_key(&key_type_logon, description, NULL);
-      |        ^~~~~~~~~~~
-In file included from include/keys/user-type.h:11,
-                 from fs/crypto/keysetup_v1.c:25:
-include/linux/key.h:321:27: note: declared here
-  321 | static inline struct key *request_key(struct key_type *type,
-      |                           ^~~~~~~~~~~
-drivers/md/dm-verity-verify-sig.c: In function 'verity_verify_get_sig_from_=
-key':
-drivers/md/dm-verity-verify-sig.c:38:8: error: too few arguments to functio=
-n 'request_key'
-   38 |  key =3D request_key(&key_type_user,
-      |        ^~~~~~~~~~~
-In file included from include/keys/user-type.h:11,
-                 from drivers/md/dm-verity-verify-sig.c:10:
-include/linux/key.h:321:27: note: declared here
-  321 | static inline struct key *request_key(struct key_type *type,
-      |                           ^~~~~~~~~~~
-
-
-Caused by commit
-
-  068df091816a ("keys: Replace uid/gid/perm permissions checking with an AC=
-L")
-
-I have used the keys tree from next-20191211 for today.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/iFdWzqfb3Y03+bLckGVND9j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3xkNUACgkQAVBC80lX
-0Gycvgf9EwK6ivtSGRXCNrbIPSNf0N51zwzJyNj0T1uFMWq8yZdMmosP6cMVgUgm
-lA01WPbMajunv2hTmxwb1DstCc6wZunpfAZroDZVhoTCLIwt1/+vLq7fo1ROQdzh
-BGdgErQ28o0On/OZ4EN3kb38MYFP4WHzecaAvczZo8HpQy0efxlcFLN0T0lHdtkq
-X99T/IZTGPD7SR0Y9J3Tt0YPBDrUExYxtMrzfL4mR7d/fnV4B7N/gx3vt5MhUsE0
-VnumDGvjcdquEIuF1tun3AGSUNPX/sbKLYhSX5L40Npauxu3XY+Y63Us7ORTGuU1
-X6fn9tKLl+nLuz5F14CqkwnM0IQ2IA==
-=HzoL
------END PGP SIGNATURE-----
-
---Sig_/iFdWzqfb3Y03+bLckGVND9j--
+[...]
