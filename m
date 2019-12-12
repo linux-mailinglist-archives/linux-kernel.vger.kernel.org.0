@@ -2,76 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1191411CB8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 11:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6CA311CB95
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 11:58:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbfLLK5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 05:57:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33752 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728834AbfLLK5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 05:57:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D787CAFDF;
-        Thu, 12 Dec 2019 10:57:34 +0000 (UTC)
-Message-ID: <099cb6558e9a10c1fce73e34484c0eaf21293e61.camel@suse.de>
-Subject: Re: [PATCH for-5.6 2/4] staging: bcm2835-audio: Use managed buffer
- allocation
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Takashi Iwai <tiwai@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com
-Date:   Thu, 12 Dec 2019 11:57:33 +0100
-In-Reply-To: <20191210141356.18074-3-tiwai@suse.de>
-References: <20191210141356.18074-1-tiwai@suse.de>
-         <20191210141356.18074-3-tiwai@suse.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-KDe450wmkzJFlREF+n28"
-User-Agent: Evolution 3.34.2 
+        id S1728931AbfLLK55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 05:57:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728784AbfLLK54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 05:57:56 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7ED9214D8;
+        Thu, 12 Dec 2019 10:57:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576148276;
+        bh=efVjjQG6UNoj6c0lJ3KZywfrNSIcf/ci6H+eEgtsTEg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qIZUGbB5HlPD3M7fra6t0v3E4z6A2gSNs+Dumsk/xrse3/DeZY82vaPqiZhADE+dH
+         WC1Z5XodnJcXvvoBUdYmPO2tlMtHQKnw6ENXgegzU7YTy7Fm1bCxt4w1h++/yiz6VG
+         2MwBCnXujAaYG6EHQ8hxaIJ+LVuQ7fskCptM8H9Q=
+Date:   Thu, 12 Dec 2019 11:57:54 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     syzbot <syzbot+92f32d4e21fb246d31a2@syzkaller.appspotmail.com>
+Cc:     andriy.shevchenko@linux.intel.com, asierra@xes-inc.com,
+        corbet@lwn.net, ext-kimmo.rautkoski@vaisala.com, jslaby@suse.com,
+        kai.heng.feng@canonical.com, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, mika.westerberg@linux.intel.com,
+        paulburton@kernel.org, peter@hurleysoftware.com, sr@denx.de,
+        syzkaller-bugs@googlegroups.com, yamada.masahiro@socionext.com,
+        yegorslists@googlemail.com
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
+ mem16_serial_out
+Message-ID: <20191212105754.GC1476206@kroah.com>
+References: <00000000000044a65205994a7e13@google.com>
+ <00000000000003cc8505994f9036@google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000003cc8505994f9036@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 09, 2019 at 05:38:01PM -0800, syzbot wrote:
+> syzbot has bisected this bug to:
+> 
+> commit bd94c4077a0b2ecc35562c294f80f3659ecd8499
+> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Date:   Wed Oct 28 03:46:05 2015 +0000
+> 
+>     serial: support 16-bit register interface for console
 
---=-KDe450wmkzJFlREF+n28
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+That would be because that is when this function was added to the kernel
+:)
 
-On Tue, 2019-12-10 at 15:13 +0100, Takashi Iwai wrote:
-> Clean up the driver with the new managed buffer allocation API.
-> The hw_params and hw_free callbacks became superfluous and dropped.
->=20
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Again, you are asking the kernel to write to a bad place in memory, and
+then crash when that happens.  That sounds like the correct
+functionality to me...
 
-Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+thanks,
 
-Thanks!
-
-
---=-KDe450wmkzJFlREF+n28
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl3yHR0ACgkQlfZmHno8
-x/7T1wf9HqdO2587apiYerHZt0Jf/EfpHtnps8r5NNLydl8BXf/nNo9Nnfb7E6vE
-tamYcG/rVIzfWZ2aBeIaG1jxrfKwZFrTy8T+djPw4Y94x8HTLf7S+qhJs+ppzFHo
-wAF3hzz25fUWCG0z1q2bEQXm4qmc5Irhdy/o9rESwdVF5Z3w+1XGo3J9HIDj4bKw
-bKl63amT+yioLN4/cetU9IkEm2TUqKwR3qlH0TZz0EvCiXoOGR2t5kzT92YrROJL
-Rxw/PyZ7gqJ4DM6fQ6aWUzo+/p82ASRfrfi0456846zQVShb7zYNAud7fODTsELR
-aIt52MtSc3sl2zjH+jbV+U3hRV8Vkw==
-=acj8
------END PGP SIGNATURE-----
-
---=-KDe450wmkzJFlREF+n28--
-
+greg k-h
