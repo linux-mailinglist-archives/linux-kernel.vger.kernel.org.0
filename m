@@ -2,180 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 229F211C305
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FF5211C30F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:12:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbfLLCKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 21:10:14 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:46952 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727544AbfLLCKN (ORCPT
+        id S1727678AbfLLCMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 21:12:49 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33401 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727610AbfLLCMt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 21:10:13 -0500
-X-UUID: 28645188f81543daa26b4ac3a15a528a-20191212
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=VpgZcjR1SsBox1/HBPJxCX6RUerx/cuwQ7AnJYi8EIw=;
-        b=rFHOh26/RdrbPri00JBSqbakNv5Z+KWYLRxSTLUP6hzQD4EB8b13qUeWaYA6yDXfV1e3tmXrX2vujjEV9oe1VvqjtJrC79MKDtuzI+UN/j8nxawAb+F0ohcvupfQg/UXuikDh/GrtsHuG1YLle/Yy0vRICBb4cP5AHalL3Yyk9A=;
-X-UUID: 28645188f81543daa26b4ac3a15a528a-20191212
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 197373770; Thu, 12 Dec 2019 10:10:02 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32N2.mediatek.inc
- (172.27.4.72) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 12 Dec
- 2019 10:05:23 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 12 Dec 2019 10:10:06 +0800
-Message-ID: <1576116600.21256.3.camel@mhfsdcap03>
-Subject: Re: [PATCH v2 4/4] usb: usb3503: Convert to use GPIO descriptors
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-CC:     <linux-usb@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Stefan Agner" <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date:   Thu, 12 Dec 2019 10:10:00 +0800
-In-Reply-To: <20191211145226.25074-1-m.szyprowski@samsung.com>
-References: <20191211145054.24835-1-m.szyprowski@samsung.com>
-         <CGME20191211145231eucas1p29d4e0ed105274c79682b48a613b45904@eucas1p2.samsung.com>
-         <20191211145226.25074-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 11 Dec 2019 21:12:49 -0500
+Received: by mail-lj1-f195.google.com with SMTP id 21so430340ljr.0;
+        Wed, 11 Dec 2019 18:12:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LjKmmGGr7I3bsVNJKL/MxiBjYqhZ6jr8Q64gi26fwIo=;
+        b=Pgm7k7+8rcTU4r4nhE+uDFkUt/ZfwVcD12TahrGqBNOH5eEmSn8PR4UBye4oscgPgo
+         9R2SoKez8rU10trp+OrKrfgmh1buPD85G/fzawNqQFqwxybb6m11WDq+1lsh7QRmt+5s
+         tVqEZdP/SbaLYsZxxjWbUOr1V4i+7ULo9yTpdc7RblvzyDhWIKmnyNuBfBaxmZjuDYRH
+         lPStXJOcFZolOrUN7TOJnapCtf1Go7NR5cOtD9YR7wC7A995pXQwh9xhyG9hJoO5Cw0A
+         GFNYRvYpP6glqv75ITaGjca0jDAWJU2WWtBHUTTuXQAdBlnVldHp3Ye3qKpy2eAGgw8s
+         jSdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LjKmmGGr7I3bsVNJKL/MxiBjYqhZ6jr8Q64gi26fwIo=;
+        b=Lrt9aDQAUEAi3eG8sQMi/99DsgPZd/XVbdiwrJArBdT+IefnfXqqpUi7cAKtNgW0or
+         yIDvEfFJb5YMB85II4e+kCpKcKlUNUbZ76uwGYHP0+PZIw4IEm8iVxeNbyrNx4GB0Exi
+         /5UH0Wib/Hsnqo4BX9/FjkEy9OcAiF8t3OkI3KIUhODSg0VFHOHFk//OVj4dMWopPybT
+         qPPGfQ6llgAQTAEl2f1GnxT/6RZzJbOjvGFdYWneUnmjNWgWVbzja8gysP8RsI347tCc
+         fGbPmtg11gvE+n6iz970MMKaNo3ZKJbQAvyREZa4Jqxauuwb/049pmFcggpdyPoJw0Zy
+         4BVw==
+X-Gm-Message-State: APjAAAXnxVRo0MnbvtX0qoNWh3bgZZbjkkcpbuKS6JGsjLvve6WORizw
+        GV003INkaBDfyRhmkaF0A+e2KZTmEAVX0CT6XDM=
+X-Google-Smtp-Source: APXvYqwnVnMEcO2L0aq3+e/XrVxcjJi+EM9wQHdAG97WqFaRKIj/dPQSuFGOyBqLbmoUl7OlVvHnx/n4pHceTKzRz+0=
+X-Received: by 2002:a05:651c:102c:: with SMTP id w12mr4162594ljm.53.1576116766664;
+ Wed, 11 Dec 2019 18:12:46 -0800 (PST)
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 3AA4084B10160E7ED06A631047B49B5C3DEDD960766FE10618DCAC976FA6C5572000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20191211163310.4788-1-sj38.park@gmail.com> <3dab421e-6aa5-90e4-791e-53482f5c1fe8@kernel.org>
+ <CAEjAshqjjVgtf_JxNvi3WOvkrjOp_-YjK=rY7GE0Mt40Y1EMqQ@mail.gmail.com>
+ <CAFd5g4649_C0tSy3W-KzN05Y8K5zZtGUGVYFA9iAKvaXsPentw@mail.gmail.com> <CAFd5g46X4P7dfJWVw9hdvhVupanuZU-_KWGzostRy_e1Z=P1Og@mail.gmail.com>
+In-Reply-To: <CAFd5g46X4P7dfJWVw9hdvhVupanuZU-_KWGzostRy_e1Z=P1Og@mail.gmail.com>
+From:   SeongJae Park <sj38.park@gmail.com>
+Date:   Thu, 12 Dec 2019 03:12:19 +0100
+Message-ID: <CAEjAshpxvhL_h9tVDy9fX7ocs=cc1ihtqE5L39RhJh9CDD8bpw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] Fix nits in the kunit
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     shuah <shuah@kernel.org>, SeongJae Park <sjpark@amazon.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, SeongJae Park <sjpark@amazon.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTEyLTExIGF0IDE1OjUyICswMTAwLCBNYXJlayBTenlwcm93c2tpIHdyb3Rl
-Og0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+DQo+IA0K
-PiBUaGlzIGNvbnZlcnRzIHRoZSBVU0IzNTAzIHRvIHBpY2sgR1BJTyBkZXNjcmlwdG9ycyBmcm9t
-IHRoZQ0KPiBkZXZpY2UgdHJlZSBpbnN0ZWFkIG9mIGl0ZXJhdGl2ZWx5IHBpY2tpbmcgb3V0IEdQ
-SU8gbnVtYmVyDQo+IHJlZmVyZW5jZXMgYW5kIHRoZW4gcmVmZXJlbmNpbmcgdGhlc2UgZnJvbSB0
-aGUgZ2xvYmFsIEdQSU8NCj4gbnVtYmVyc3BhY2UuDQo+IA0KPiBUaGUgVVNCMzUwMyBpcyBvbmx5
-IHVzZWQgZnJvbSBkZXZpY2UgdHJlZSBhbW9uZyB0aGUgaW4tdHJlZQ0KPiBwbGF0Zm9ybXMuIElm
-IGJvYXJkIGZpbGVzIHdvdWxkIHN0aWxsIGRlc2lyZSB0byB1c2UgaXQgdGhleSBjYW4NCj4gcHJv
-dmlkZSBtYWNoaW5lIGRlc2NyaXB0b3IgdGFibGVzLg0KPiANCj4gTWFrZSBzdXJlIHRvIHByZXNl
-cnZlIHNlbWFudGljcyBzdWNoIGFzIHRoZSByZXNldCBkZWxheQ0KPiBpbnRyb2R1Y2VkIGJ5IFN0
-ZWZhbi4NCj4gDQo+IENjOiBDaHVuZmVuZyBZdW4gPGNodW5mZW5nLnl1bkBtZWRpYXRlay5jb20+
-DQo+IENjOiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+DQo+IENj
-OiBTdGVmYW4gQWduZXIgPHN0ZWZhbkBhZ25lci5jaD4NCj4gQ2M6IEtyenlzenRvZiBLb3psb3dz
-a2kgPGtyemtAa2VybmVsLm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogTGludXMgV2FsbGVpaiA8bGlu
-dXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPiBbbXN6eXByb3c6IGludmVydCB0aGUgbG9naWMgYmVo
-aW5kIHJlc2V0IEdQSU8gbGluZV0NCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8
-bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvdXNiL21pc2MvdXNi
-MzUwMy5jICAgICAgICAgICAgfCA5NCArKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0NCj4gIGlu
-Y2x1ZGUvbGludXgvcGxhdGZvcm1fZGF0YS91c2IzNTAzLmggfCAgMyAtDQo+ICAyIGZpbGVzIGNo
-YW5nZWQsIDM1IGluc2VydGlvbnMoKyksIDYyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvdXNiL21pc2MvdXNiMzUwMy5jIGIvZHJpdmVycy91c2IvbWlzYy91c2IzNTAz
-LmMNCj4gaW5kZXggNzJmMzlhOTc1MWI1Li4xMTZiZDc4OWU1NjggMTAwNjQ0DQo+IC0tLSBhL2Ry
-aXZlcnMvdXNiL21pc2MvdXNiMzUwMy5jDQo+ICsrKyBiL2RyaXZlcnMvdXNiL21pc2MvdXNiMzUw
-My5jDQo+IEBAIC03LDExICs3LDEwIEBADQo+ICANCj4gICNpbmNsdWRlIDxsaW51eC9jbGsuaD4N
-Cj4gICNpbmNsdWRlIDxsaW51eC9pMmMuaD4NCj4gLSNpbmNsdWRlIDxsaW51eC9ncGlvLmg+DQo+
-ICsjaW5jbHVkZSA8bGludXgvZ3Bpby9jb25zdW1lci5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L2Rl
-bGF5Lmg+DQo+ICAjaW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L21v
-ZHVsZS5oPg0KPiAtI2luY2x1ZGUgPGxpbnV4L29mX2dwaW8uaD4NCj4gICNpbmNsdWRlIDxsaW51
-eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kYXRhL3Vz
-YjM1MDMuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9yZWdtYXAuaD4NCj4gQEAgLTQ3LDE5ICs0Niwx
-OSBAQCBzdHJ1Y3QgdXNiMzUwMyB7DQo+ICAJc3RydWN0IGRldmljZQkJKmRldjsNCj4gIAlzdHJ1
-Y3QgY2xrCQkqY2xrOw0KPiAgCXU4CXBvcnRfb2ZmX21hc2s7DQo+IC0JaW50CWdwaW9faW50bjsN
-Cj4gLQlpbnQJZ3Bpb19yZXNldDsNCj4gLQlpbnQJZ3Bpb19jb25uZWN0Ow0KPiArCXN0cnVjdCBn
-cGlvX2Rlc2MJKmludG47DQo+ICsJc3RydWN0IGdwaW9fZGVzYyAJKnJlc2V0Ow0KPiArCXN0cnVj
-dCBncGlvX2Rlc2MgCSpjb25uZWN0Ow0KPiAgCWJvb2wJc2Vjb25kYXJ5X3JlZl9jbGs7DQo+ICB9
-Ow0KPiAgDQo+ICBzdGF0aWMgaW50IHVzYjM1MDNfcmVzZXQoc3RydWN0IHVzYjM1MDMgKmh1Yiwg
-aW50IHN0YXRlKQ0KPiAgew0KPiAtCWlmICghc3RhdGUgJiYgZ3Bpb19pc192YWxpZChodWItPmdw
-aW9fY29ubmVjdCkpDQo+IC0JCWdwaW9fc2V0X3ZhbHVlX2NhbnNsZWVwKGh1Yi0+Z3Bpb19jb25u
-ZWN0LCAwKTsNCj4gKwlpZiAoIXN0YXRlICYmIGh1Yi0+Y29ubmVjdCkNCj4gKwkJZ3Bpb2Rfc2V0
-X3ZhbHVlX2NhbnNsZWVwKGh1Yi0+Y29ubmVjdCwgMCk7DQo+ICANCj4gLQlpZiAoZ3Bpb19pc192
-YWxpZChodWItPmdwaW9fcmVzZXQpKQ0KPiAtCQlncGlvX3NldF92YWx1ZV9jYW5zbGVlcChodWIt
-PmdwaW9fcmVzZXQsIHN0YXRlKTsNCj4gKwlpZiAoaHViLT5yZXNldCkNCj4gKwkJZ3Bpb2Rfc2V0
-X3ZhbHVlX2NhbnNsZWVwKGh1Yi0+cmVzZXQsICFzdGF0ZSk7DQpXaGF0IGFib3V0IHByZXBhcmlu
-ZyBhbm90aGVyIHBhdGNoIGZvciBAc3RhdGUgYmVmb3JlIHRoaXMgcGF0aD8NCg0KPiAgDQo+ICAJ
-LyogV2FpdCBUX0hVQklOSVQgPT0gNG1zIGZvciBodWIgbG9naWMgdG8gc3RhYmlsaXplICovDQo+
-ICAJaWYgKHN0YXRlKQ0KPiBAQCAtMTE1LDggKzExNCw4IEBAIHN0YXRpYyBpbnQgdXNiMzUwM19j
-b25uZWN0KHN0cnVjdCB1c2IzNTAzICpodWIpDQo+ICAJCX0NCj4gIAl9DQo+ICANCj4gLQlpZiAo
-Z3Bpb19pc192YWxpZChodWItPmdwaW9fY29ubmVjdCkpDQo+IC0JCWdwaW9fc2V0X3ZhbHVlX2Nh
-bnNsZWVwKGh1Yi0+Z3Bpb19jb25uZWN0LCAxKTsNCj4gKwlpZiAoaHViLT5jb25uZWN0KQ0KPiAr
-CQlncGlvZF9zZXRfdmFsdWVfY2Fuc2xlZXAoaHViLT5jb25uZWN0LCAxKTsNCj4gIA0KPiAgCWh1
-Yi0+bW9kZSA9IFVTQjM1MDNfTU9ERV9IVUI7DQo+ICAJZGV2X2luZm8oZGV2LCAic3dpdGNoZWQg
-dG8gSFVCIG1vZGVcbiIpOw0KPiBAQCAtMTYzLDEzICsxNjIsMTEgQEAgc3RhdGljIGludCB1c2Iz
-NTAzX3Byb2JlKHN0cnVjdCB1c2IzNTAzICpodWIpDQo+ICAJaW50IGVycjsNCj4gIAl1MzIgbW9k
-ZSA9IFVTQjM1MDNfTU9ERV9IVUI7DQo+ICAJY29uc3QgdTMyICpwcm9wZXJ0eTsNCj4gKwllbnVt
-IGdwaW9kX2ZsYWdzIGZsYWdzOw0KPiAgCWludCBsZW47DQo+ICANCj4gIAlpZiAocGRhdGEpIHsN
-Cj4gIAkJaHViLT5wb3J0X29mZl9tYXNrCT0gcGRhdGEtPnBvcnRfb2ZmX21hc2s7DQo+IC0JCWh1
-Yi0+Z3Bpb19pbnRuCQk9IHBkYXRhLT5ncGlvX2ludG47DQo+IC0JCWh1Yi0+Z3Bpb19jb25uZWN0
-CT0gcGRhdGEtPmdwaW9fY29ubmVjdDsNCj4gLQkJaHViLT5ncGlvX3Jlc2V0CQk9IHBkYXRhLT5n
-cGlvX3Jlc2V0Ow0KPiAgCQlodWItPm1vZGUJCT0gcGRhdGEtPmluaXRpYWxfbW9kZTsNCj4gIAl9
-IGVsc2UgaWYgKG5wKSB7DQo+ICAJCXUzMiByYXRlID0gMDsNCj4gQEAgLTIzMCw1OSArMjI3LDM4
-IEBAIHN0YXRpYyBpbnQgdXNiMzUwM19wcm9iZShzdHJ1Y3QgdXNiMzUwMyAqaHViKQ0KPiAgCQkJ
-fQ0KPiAgCQl9DQo+ICANCj4gLQkJaHViLT5ncGlvX2ludG4JPSBvZl9nZXRfbmFtZWRfZ3Bpbyhu
-cCwgImludG4tZ3Bpb3MiLCAwKTsNCj4gLQkJaWYgKGh1Yi0+Z3Bpb19pbnRuID09IC1FUFJPQkVf
-REVGRVIpDQo+IC0JCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsNCj4gLQkJaHViLT5ncGlvX2Nvbm5l
-Y3QgPSBvZl9nZXRfbmFtZWRfZ3BpbyhucCwgImNvbm5lY3QtZ3Bpb3MiLCAwKTsNCj4gLQkJaWYg
-KGh1Yi0+Z3Bpb19jb25uZWN0ID09IC1FUFJPQkVfREVGRVIpDQo+IC0JCQlyZXR1cm4gLUVQUk9C
-RV9ERUZFUjsNCj4gLQkJaHViLT5ncGlvX3Jlc2V0ID0gb2ZfZ2V0X25hbWVkX2dwaW8obnAsICJy
-ZXNldC1ncGlvcyIsIDApOw0KPiAtCQlpZiAoaHViLT5ncGlvX3Jlc2V0ID09IC1FUFJPQkVfREVG
-RVIpDQo+IC0JCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsNCj4gIAkJb2ZfcHJvcGVydHlfcmVhZF91
-MzIobnAsICJpbml0aWFsLW1vZGUiLCAmbW9kZSk7DQo+ICAJCWh1Yi0+bW9kZSA9IG1vZGU7DQo+
-ICAJfQ0KPiAgDQo+IC0JaWYgKGh1Yi0+cG9ydF9vZmZfbWFzayAmJiAhaHViLT5yZWdtYXApDQo+
-IC0JCWRldl9lcnIoZGV2LCAiUG9ydHMgZGlzYWJsZWQgd2l0aCBubyBjb250cm9sIGludGVyZmFj
-ZVxuIik7DQo+IC0NCj4gLQlpZiAoZ3Bpb19pc192YWxpZChodWItPmdwaW9faW50bikpIHsNCj4g
-LQkJaW50IHZhbCA9IGh1Yi0+c2Vjb25kYXJ5X3JlZl9jbGsgPyBHUElPRl9PVVRfSU5JVF9MT1cg
-Og0KPiAtCQkJCQkJICAgR1BJT0ZfT1VUX0lOSVRfSElHSDsNCj4gLQkJZXJyID0gZGV2bV9ncGlv
-X3JlcXVlc3Rfb25lKGRldiwgaHViLT5ncGlvX2ludG4sIHZhbCwNCj4gLQkJCQkJICAgICJ1c2Iz
-NTAzIGludG4iKTsNCj4gLQkJaWYgKGVycikgew0KPiAtCQkJZGV2X2VycihkZXYsDQo+IC0JCQkJ
-InVuYWJsZSB0byByZXF1ZXN0IEdQSU8gJWQgYXMgaW50ZXJydXB0IHBpbiAoJWQpXG4iLA0KPiAt
-CQkJCWh1Yi0+Z3Bpb19pbnRuLCBlcnIpOw0KPiAtCQkJcmV0dXJuIGVycjsNCj4gLQkJfQ0KPiAt
-CX0NCj4gLQ0KPiAtCWlmIChncGlvX2lzX3ZhbGlkKGh1Yi0+Z3Bpb19jb25uZWN0KSkgew0KPiAt
-CQllcnIgPSBkZXZtX2dwaW9fcmVxdWVzdF9vbmUoZGV2LCBodWItPmdwaW9fY29ubmVjdCwNCj4g
-LQkJCQlHUElPRl9PVVRfSU5JVF9MT1csICJ1c2IzNTAzIGNvbm5lY3QiKTsNCj4gLQkJaWYgKGVy
-cikgew0KPiAtCQkJZGV2X2VycihkZXYsDQo+IC0JCQkJInVuYWJsZSB0byByZXF1ZXN0IEdQSU8g
-JWQgYXMgY29ubmVjdCBwaW4gKCVkKVxuIiwNCj4gLQkJCQlodWItPmdwaW9fY29ubmVjdCwgZXJy
-KTsNCj4gLQkJCXJldHVybiBlcnI7DQo+IC0JCX0NCj4gLQl9DQo+IC0NCj4gLQlpZiAoZ3Bpb19p
-c192YWxpZChodWItPmdwaW9fcmVzZXQpKSB7DQo+IC0JCWVyciA9IGRldm1fZ3Bpb19yZXF1ZXN0
-X29uZShkZXYsIGh1Yi0+Z3Bpb19yZXNldCwNCj4gLQkJCQlHUElPRl9PVVRfSU5JVF9MT1csICJ1
-c2IzNTAzIHJlc2V0Iik7DQo+ICsJaWYgKGh1Yi0+c2Vjb25kYXJ5X3JlZl9jbGspDQo+ICsJCWZs
-YWdzID0gR1BJT0RfT1VUX0xPVzsNCj4gKwllbHNlDQo+ICsJCWZsYWdzID0gR1BJT0RfT1VUX0hJ
-R0g7DQo+ICsJaHViLT5pbnRuID0gZGV2bV9ncGlvZF9nZXRfb3B0aW9uYWwoZGV2LCAiaW50biIs
-IGZsYWdzKTsNCj4gKwlpZiAoSVNfRVJSKGh1Yi0+aW50bikpDQo+ICsJCXJldHVybiBQVFJfRVJS
-KGh1Yi0+aW50bik7DQo+ICsJaWYgKGh1Yi0+aW50bikNCj4gKwkJZ3Bpb2Rfc2V0X2NvbnN1bWVy
-X25hbWUoaHViLT5pbnRuLCAidXNiMzUwMyBpbnRuIik7DQo+ICsNCj4gKwlodWItPmNvbm5lY3Qg
-PSBkZXZtX2dwaW9kX2dldF9vcHRpb25hbChkZXYsICJjb25uZWN0IiwgR1BJT0RfT1VUX0xPVyk7
-DQo+ICsJaWYgKElTX0VSUihodWItPmNvbm5lY3QpKQ0KPiArCQlyZXR1cm4gUFRSX0VSUihodWIt
-PmNvbm5lY3QpOw0KPiArCWlmIChodWItPmNvbm5lY3QpDQo+ICsJCWdwaW9kX3NldF9jb25zdW1l
-cl9uYW1lKGh1Yi0+Y29ubmVjdCwgInVzYjM1MDMgY29ubmVjdCIpOw0KPiArDQo+ICsJaHViLT5y
-ZXNldCA9IGRldm1fZ3Bpb2RfZ2V0X29wdGlvbmFsKGRldiwgInJlc2V0IiwgR1BJT0RfT1VUX0hJ
-R0gpOw0KPiArCWlmIChJU19FUlIoaHViLT5yZXNldCkpDQo+ICsJCXJldHVybiBQVFJfRVJSKGh1
-Yi0+cmVzZXQpOw0KPiArCWlmIChodWItPnJlc2V0KSB7DQo+ICAJCS8qIERhdGFzaGVldCBkZWZp
-bmVzIGEgaGFyZHdhcmUgcmVzZXQgdG8gYmUgYXQgbGVhc3QgMTAwdXMgKi8NCj4gIAkJdXNsZWVw
-X3JhbmdlKDEwMCwgMTAwMDApOw0KPiAtCQlpZiAoZXJyKSB7DQo+IC0JCQlkZXZfZXJyKGRldiwN
-Cj4gLQkJCQkidW5hYmxlIHRvIHJlcXVlc3QgR1BJTyAlZCBhcyByZXNldCBwaW4gKCVkKVxuIiwN
-Cj4gLQkJCQlodWItPmdwaW9fcmVzZXQsIGVycik7DQo+IC0JCQlyZXR1cm4gZXJyOw0KPiAtCQl9
-DQo+ICsJCWdwaW9kX3NldF9jb25zdW1lcl9uYW1lKGh1Yi0+cmVzZXQsICJ1c2IzNTAzIHJlc2V0
-Iik7DQo+ICAJfQ0KPiAgDQo+ICsJaWYgKGh1Yi0+cG9ydF9vZmZfbWFzayAmJiAhaHViLT5yZWdt
-YXApDQo+ICsJCWRldl9lcnIoZGV2LCAiUG9ydHMgZGlzYWJsZWQgd2l0aCBubyBjb250cm9sIGlu
-dGVyZmFjZVxuIik7DQo+ICsNCj4gIAl1c2IzNTAzX3N3aXRjaF9tb2RlKGh1YiwgaHViLT5tb2Rl
-KTsNCj4gIA0KPiAgCWRldl9pbmZvKGRldiwgIiVzOiBwcm9iZWQgaW4gJXMgbW9kZVxuIiwgX19m
-dW5jX18sDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvdXNiMzUw
-My5oIGIvaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL3VzYjM1MDMuaA0KPiBpbmRleCBlMDQ5
-ZDUxYzEzNTMuLmQwMWVmOTdkZGYzNiAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9saW51eC9wbGF0
-Zm9ybV9kYXRhL3VzYjM1MDMuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEv
-dXNiMzUwMy5oDQo+IEBAIC0xNyw5ICsxNyw2IEBAIGVudW0gdXNiMzUwM19tb2RlIHsNCj4gIHN0
-cnVjdCB1c2IzNTAzX3BsYXRmb3JtX2RhdGEgew0KPiAgCWVudW0gdXNiMzUwM19tb2RlCWluaXRp
-YWxfbW9kZTsNCj4gIAl1OAlwb3J0X29mZl9tYXNrOw0KPiAtCWludAlncGlvX2ludG47DQo+IC0J
-aW50CWdwaW9fY29ubmVjdDsNCj4gLQlpbnQJZ3Bpb19yZXNldDsNCj4gIH07DQo+ICANCj4gICNl
-bmRpZg0KDQo=
+On Thu, Dec 12, 2019 at 3:06 AM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> On Wed, Dec 11, 2019 at 9:45 AM Brendan Higgins
+> <brendanhiggins@google.com> wrote:
+> >
+> > On Wed, Dec 11, 2019 at 9:40 AM SeongJae Park <sj38.park@gmail.com> wrote:
+> > >
+> > > On Wed, Dec 11, 2019 at 6:22 PM shuah <shuah@kernel.org> wrote:
+> > > >
+> > > > On 12/11/19 9:33 AM, SeongJae Park wrote:
+> > > > > May I ask some comments?
+>
+> SeongJae,
+>
+> I reviewed and tested all your patches. Everything looks good to me
+> with one minor caveat: I tried applying your patches on
+> kselftest/fixes[1] and got the following error:
+>
+> error: patch failed: Documentation/dev-tools/kunit/start.rst:21
+> error: Documentation/dev-tools/kunit/start.rst: patch does not apply
+> Patch failed at 0005 kunit: Rename 'kunitconfig' to '.kunitconfig'
+>
+> I think the merge conflict is fairly straightforward, but it would
+> still probably make Shuah's life easier if you rebased your patches.
 
+Appreciate your nice response, I will rebase it and send the next version!
+
+
+Thanks,
+SeongJae Park
+
+>
+> Cheers!
+>
+> P.S. Thanks for the patch adding the test case for test the build_dir
+> thing. I really appreciate that!
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=fixes
