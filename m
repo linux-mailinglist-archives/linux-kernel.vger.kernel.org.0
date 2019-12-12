@@ -2,90 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D44F211D625
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E49F11D62F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:48:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730465AbfLLSrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 13:47:36 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:45851 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730258AbfLLSrg (ORCPT
+        id S1730545AbfLLSsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 13:48:42 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37914 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730473AbfLLSsl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 13:47:36 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 36169220DD;
-        Thu, 12 Dec 2019 13:47:35 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Thu, 12 Dec 2019 13:47:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=4mxdiD
-        QsfZD57JRu05aHGqyvwaIJ8QTGQZI90Fgydd4=; b=VHyI13HrTGZaW29m3NPvPp
-        QYnyqv1yxXQqfY7S65bQ1P8D+a1s4FBvXARJxdoqRT6NY+CPbtG/eXPNSmCJKB1j
-        zNsUMC9OUmMu5gurOWxl0LffUQCVGXiRQwS4PzI94O+wQg8fO+7iqOcXfSnQQEuP
-        sBpePNNhk/W7ijzo6LgE/eMwnB9WXP5N4/Xeh4CGNNFC4teXNPlbknopT1a1jxT6
-        3hG5LfI/PFCFpBsVUFiYhgvF/vW82hrxy1B8mdR6X8UlH5iTTHp0Xy3wb/9zyZSz
-        2KI8qoa58NKLLWkegCDzubVbobEKy8AQ4ndv+IcjQz7zOSwqA1MUBfjv5De1V/aQ
-        ==
-X-ME-Sender: <xms:RovyXZ6dENrjQfkLucsOxKRmsEP6eT-P-ZPKMwiAgDbz3aFKozescw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudeljedguddukecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefkugho
-    ucfutghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucfkphepud
-    elfedrgeejrdduieehrddvhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgt
-    hhesihguohhstghhrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:RovyXW1RuBc_k0gpyJ1lKw9soDUrYUFgEc5x_pe8CbmPRlhSsFgR7A>
-    <xmx:RovyXcC3H1mJIGrqiaLbU6gtBpFQjufXlvA30ApLoN8Wn7mwVeLGTA>
-    <xmx:RovyXXERYLM9YddjfK8Ej4pT-UOGVWanW22NckQIjdV-Mc9mQWuaGA>
-    <xmx:R4vyXYG8Kyhe1AtsLribXicv6vK9yVUXFm2oQfSWlH5DZzDnFItZnw>
-Received: from localhost (unknown [193.47.165.251])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5ABE13060134;
-        Thu, 12 Dec 2019 13:47:34 -0500 (EST)
-Date:   Thu, 12 Dec 2019 20:47:32 +0200
-From:   Ido Schimmel <idosch@idosch.org>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Yuval Avnery <yuvalav@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Gospodarek <andy@greyhouse.net>
-Subject: Re: [PATCH net-next] netdevsim: Add max_vfs to bus_dev
-Message-ID: <20191212184732.GA570918@splinter>
-References: <1576033133-18845-1-git-send-email-yuvalav@mellanox.com>
- <20191211095854.6cd860f1@cakuba.netronome.com>
- <AM6PR05MB514244DC6D25DDD433C0E238C55A0@AM6PR05MB5142.eurprd05.prod.outlook.com>
- <20191211111537.416bf078@cakuba.netronome.com>
- <AM6PR05MB5142CCAB9A06DAC199F7100CC55A0@AM6PR05MB5142.eurprd05.prod.outlook.com>
- <20191211142401.742189cf@cakuba.netronome.com>
- <AM6PR05MB51423D365FB5A8DB22B1DE62C55A0@AM6PR05MB5142.eurprd05.prod.outlook.com>
- <20191211154952.50109494@cakuba.netronome.com>
- <AM6PR05MB51425B74E736C5D765356DC8C5550@AM6PR05MB5142.eurprd05.prod.outlook.com>
- <20191212102517.602a8a5d@cakuba.netronome.com>
+        Thu, 12 Dec 2019 13:48:41 -0500
+Received: by mail-lj1-f194.google.com with SMTP id k8so3445556ljh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 10:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yLX/s+7Ivhh0xF9dE8Ygc3zv1BE9WaHo0SxDQx/ndOw=;
+        b=Hxo7zIOH626xCx5M7isNX9Kz2i6WfXy8dvU+dHqLV39CO//zL/XyJhwdy9zMUggXsF
+         sKVjhBuXVQzllryD1mGY0+h/6F170yVG671fMzLLAz66yPU2LfkO41ADlv1O+3YGsXdW
+         gJZ1lANbmyuJbIB7rg2DrjzC2Wjd1R0mzUPj4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yLX/s+7Ivhh0xF9dE8Ygc3zv1BE9WaHo0SxDQx/ndOw=;
+        b=Nod1kR4wP5CdQoIC5S4b7J7kEx5YA0sid57Q4MloxGCF4gOJ4V6QYe0pegytp5ZzL/
+         Y+APOD2Uo/OZpgvWHx4fLEsyi6CMyrlcPFLHPUogiIkWTqSPKhZpeixgIwnX/ePhgB04
+         ENsYJAROgUaFBLNwbUgXD2OKIN3aPvutPgC1oYpECrStQbKJgcvBei2QcFVqQn7QplHo
+         3fEnin3lcb5BL1HP1HxTZHbAcGeOV+AEafeqzQx+CIldOvnCg+zM/jbQHtJbSDje/PyP
+         0vFRurpXUVxIfqk0VVBqK/CE6slCphUO8+IloHt6ocj1kfuCGfUEVgjtZuNgQj/j2het
+         Xs3Q==
+X-Gm-Message-State: APjAAAVIb7APMKzlPgY3qdY4o8bjVgJ0HX4v0xknITWlV44h2946BoVW
+        KRwsp/3qIlw2CXWsKf6AIpa+wkYMS7E=
+X-Google-Smtp-Source: APXvYqzPk6YH+rKagLV8YHy5FQfHJkd3taeBJHCEroXGR2erpOm9SttWVHAThjx8Us5nqlFBEhcXgg==
+X-Received: by 2002:a2e:808a:: with SMTP id i10mr6590531ljg.151.1576176519194;
+        Thu, 12 Dec 2019 10:48:39 -0800 (PST)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id x29sm3763110lfg.45.2019.12.12.10.48.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2019 10:48:38 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id 203so11685lfa.12
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 10:48:38 -0800 (PST)
+X-Received: by 2002:ac2:50cc:: with SMTP id h12mr6524868lfm.29.1576176517766;
+ Thu, 12 Dec 2019 10:48:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212102517.602a8a5d@cakuba.netronome.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191212140752.347520-1-linux@dominikbrodowski.net>
+ <20191212140752.347520-3-linux@dominikbrodowski.net> <20191212183848.GJ4203@ZenIV.linux.org.uk>
+In-Reply-To: <20191212183848.GJ4203@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 12 Dec 2019 10:48:22 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiGH8mBqShwmOy-g+QA4_+prs-5s4eX6wZa7yatCu3aNw@mail.gmail.com>
+Message-ID: <CAHk-=wiGH8mBqShwmOy-g+QA4_+prs-5s4eX6wZa7yatCu3aNw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fs: remove ksys_dup()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 10:25:17AM -0800, Jakub Kicinski wrote:
-> I'd like to see netdevsim to also serve as sort of a reference model
-> for device behaviour. Vendors who are not first to implement a feature
-> always complain that there is no documentation on how things should
-> work.
+On Thu, Dec 12, 2019 at 10:38 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Let's not expose the kernel guts to init/*.c more than absolutely unavoidable.
 
-+1
+Well, in this case I think it's more than justified: it removes one of
+the nasty "pass user pointers from kernel space" cases.
 
-I have a patch set that adds FIB offload implementation to netdevsim and
-a gazillion of test cases that I share between netdevsim and mlxsw. Can
-be used by more drivers when they land.
+I'd like to get to the point where "init" doesn't need set_fs() at
+all. We're not there now - do_execve() is going to be painful. So
+maybe we'll never be. But this gets us one step closer, at least.
 
-It's also very convenient for fuzzing now that syzkaller supports
-netdevsim instances thanks to Jiri. I've been running syzkaller for a
-few weeks now to test the FIB implementation.
+               Linus
