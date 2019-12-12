@@ -2,160 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B9E11CF8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:17:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58DCC11CF92
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:18:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbfLLOQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 09:16:59 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35285 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729669AbfLLOQ7 (ORCPT
+        id S1729718AbfLLOSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:18:05 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:59414 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729392AbfLLOSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:16:59 -0500
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1ifPH0-0000Ii-83; Thu, 12 Dec 2019 15:16:58 +0100
-Received: from sha by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1ifPGz-0002zH-Hz; Thu, 12 Dec 2019 15:16:57 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     linux-ide@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH] libata: Fix retrieving of active qcs
-Date:   Thu, 12 Dec 2019 15:16:56 +0100
-Message-Id: <20191212141656.11439-1-s.hauer@pengutronix.de>
-X-Mailer: git-send-email 2.24.0
+        Thu, 12 Dec 2019 09:18:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sLQKwGit9wLSgboUFNJSj0UuCKgTnkxAwBeCTVETGRM=; b=GhgvB6chdyHnUTDYNs015+Il8
+        ODfPi+ysABPUR4KShO40i06LpIl6SBFQORMDqrMTR2tk5o9ZI4455WH50RipoykJ1xN3AByQhnkoY
+        dK1yzNt/9Cm8gLK5xHxLNl9YrHfV11g+xYZc5E+Wdvq8tOtiJ95XTSBZjhbWdPWrdT1wAYh7wmQG3
+        VPtn/nhGUpV8RfBYROZuyzUlnJqqLnN67O6ObAMclAoC6p/SvxZbtn9G51pm6njYYhfJzBIVFiFfH
+        w6nnd0FpE80ItbAT2Lw49ekjdFa7nK5rR0F+0ojdBOAKnMwyMA4etvo75JUcURB7dc/eHzZiMMXCA
+        Jyx/ehTkw==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:40348)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1ifPHr-000791-JH; Thu, 12 Dec 2019 14:17:51 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1ifPHn-0006sN-Ar; Thu, 12 Dec 2019 14:17:47 +0000
+Date:   Thu, 12 Dec 2019 14:17:47 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v1] clk: Convert managed get functions to devm_add_action
+ API
+Message-ID: <20191212141747.GI25745@shell.armlinux.org.uk>
+References: <3d8a58bf-0814-1ec1-038a-10a20b9646ad@free.fr>
+ <20191128185630.GK82109@yoga>
+ <20191202014237.GR248138@dtor-ws>
+ <f177ef95-ef7e-cab0-1322-6de28f18ecdb@free.fr>
+ <c0ccca86-b7b1-b587-60c1-4794376fa789@arm.com>
+ <ba630966-5479-c831-d0e2-bc2eb12bc317@free.fr>
+ <20191211222829.GV50317@dtor-ws>
+ <70528f77-ca10-01cd-153b-23486ce87d45@free.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <70528f77-ca10-01cd-153b-23486ce87d45@free.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ata_qc_complete_multiple() is called with a mask of the still active
-tags.
+On Thu, Dec 12, 2019 at 02:53:40PM +0100, Marc Gonzalez wrote:
+> On 11/12/2019 23:28, Dmitry Torokhov wrote:
+> 
+> > On Wed, Dec 11, 2019 at 05:17:28PM +0100, Marc Gonzalez wrote:
+> >
+> >> What is the rationale for the devm_add_action API?
+> > 
+> > For one-off and maybe complex unwind actions in drivers that wish to use
+> > devm API (as mixing devm and manual release is verboten). Also is often
+> > used when some core subsystem does not provide enough devm APIs.
+> 
+> Thanks for the insight, Dmitry. Thanks to Robin too.
+> 
+> This is what I understand so far:
+> 
+> devm_add_action() is nice because it hides/factorizes the complexity
+> of the devres API, but it incurs a small storage overhead of one
+> pointer per call, which makes it unfit for frequently used actions,
+> such as clk_get.
+> 
+> Is that correct?
+> 
+> My question is: why not design the API without the small overhead?
+> 
+> Proof of concept below:
+> 
+> 
+> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> index 0bbb328bd17f..76392dd6273b 100644
+> --- a/drivers/base/devres.c
+> +++ b/drivers/base/devres.c
+> @@ -685,6 +685,20 @@ int devres_release_group(struct device *dev, void *id)
+>  }
+>  EXPORT_SYMBOL_GPL(devres_release_group);
+>  
+> +void *devm_add(struct device *dev, dr_release_t func, void *arg, size_t size)
+> +{
+> +	void *data = devres_alloc(func, size, GFP_KERNEL);
+> +
+> +	if (data) {
+> +		memcpy(data, arg, size);
+> +		devres_add(dev, data);
+> +	} else
+> +		func(dev, arg);
+> +
+> +	return data;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_add);
+> +
+>  /*
+>   * Custom devres actions allow inserting a simple function call
+>   * into the teadown sequence.
+> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+> index be160764911b..8db671823126 100644
+> --- a/drivers/clk/clk-devres.c
+> +++ b/drivers/clk/clk-devres.c
+> @@ -4,6 +4,11 @@
+>  #include <linux/export.h>
+>  #include <linux/gfp.h>
+>  
+> +static void __clk_put(struct device *dev, void *data)
+> +{
+> +	clk_put(*(struct clk **)data);
+> +}
+> +
+>  static void devm_clk_release(struct device *dev, void *res)
+>  {
+>  	clk_put(*(struct clk **)res);
+> @@ -11,19 +16,11 @@ static void devm_clk_release(struct device *dev, void *res)
+>  
+>  struct clk *devm_clk_get(struct device *dev, const char *id)
+>  {
+> -	struct clk **ptr, *clk;
+> -
+> -	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
+> -	if (!ptr)
+> -		return ERR_PTR(-ENOMEM);
+> +	struct clk *clk = clk_get(dev, id);
+>  
+> -	clk = clk_get(dev, id);
+> -	if (!IS_ERR(clk)) {
+> -		*ptr = clk;
+> -		devres_add(dev, ptr);
+> -	} else {
+> -		devres_free(ptr);
+> -	}
+> +	if (!IS_ERR(clk))
+> +		if (!devm_add(dev, __clk_put, &clk, sizeof(clk)))
+> +			clk = ERR_PTR(-ENOMEM);
 
-mv_sata doesn't have this information directly and instead calculates
-the still active tags from the started tags (ap->qc_active) and the
-finished tags as (ap->qc_active ^ done_mask)
+You leak clk here.
 
-Since 28361c40368 the hw_tag and tag are no longer the same and the
-equation is no longer valid. In ata_exec_internal_sg() ap->qc_active is
-initialized as 1ULL << ATA_TAG_INTERNAL, but in hardware tag 0 is
-started and this will be in done_mask on completion. ap->qc_active ^
-done_mask becomes 0x100000000 ^ 0x1 = 0x100000001 and thus tag 0 used as
-the internal tag will never be reported as completed.
-
-This is fixed by introducing ata_qc_get_active() which returns the
-active hardware tags and calling it where appropriate.
-
-This is tested on mv_sata, but sata_fsl and sata_nv suffer from the same
-problem. There is another case in sata_nv that most likely needs fixing
-as well, but this looks a little different, so I wasn't confident enough
-to change that.
-
-Fixes: 28361c403683 ("libata: add extra internal command")
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/ata/libata-core.c | 23 +++++++++++++++++++++++
- drivers/ata/sata_fsl.c    |  2 +-
- drivers/ata/sata_mv.c     |  2 +-
- drivers/ata/sata_nv.c     |  2 +-
- include/linux/libata.h    |  1 +
- 5 files changed, 27 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 28c492be0a57..d73bec933892 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -5325,6 +5325,29 @@ void ata_qc_complete(struct ata_queued_cmd *qc)
- 	}
- }
- 
-+/**
-+ *	ata_qc_get_active - get bitmask of active qcs
-+ *	@ap: port in question
-+ *
-+ *	LOCKING:
-+ *	spin_lock_irqsave(host lock)
-+ *
-+ *	RETURNS:
-+ *	Bitmask of active qcs
-+ */
-+u64 ata_qc_get_active(struct ata_port *ap)
-+{
-+	u64 qc_active = ap->qc_active;
-+
-+	/* ATA_TAG_INTERNAL is sent to hw as tag 0 */
-+	if (qc_active & (1ULL << ATA_TAG_INTERNAL)) {
-+		qc_active |= (1 << 0);
-+		qc_active &= ~(1ULL << ATA_TAG_INTERNAL);
-+	}
-+
-+	return qc_active;
-+}
-+
- /**
-  *	ata_qc_complete_multiple - Complete multiple qcs successfully
-  *	@ap: port in question
-diff --git a/drivers/ata/sata_fsl.c b/drivers/ata/sata_fsl.c
-index 8e9cb198fcd1..ca6c706e9c25 100644
---- a/drivers/ata/sata_fsl.c
-+++ b/drivers/ata/sata_fsl.c
-@@ -1278,7 +1278,7 @@ static void sata_fsl_host_intr(struct ata_port *ap)
- 				     i, ioread32(hcr_base + CC),
- 				     ioread32(hcr_base + CA));
- 		}
--		ata_qc_complete_multiple(ap, ap->qc_active ^ done_mask);
-+		ata_qc_complete_multiple(ap, ata_qc_get_active(ap) ^ done_mask);
- 		return;
- 
- 	} else if ((ap->qc_active & (1ULL << ATA_TAG_INTERNAL))) {
-diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
-index ad385a113391..bde695a32097 100644
---- a/drivers/ata/sata_mv.c
-+++ b/drivers/ata/sata_mv.c
-@@ -2827,7 +2827,7 @@ static void mv_process_crpb_entries(struct ata_port *ap, struct mv_port_priv *pp
- 	}
- 
- 	if (work_done) {
--		ata_qc_complete_multiple(ap, ap->qc_active ^ done_mask);
-+		ata_qc_complete_multiple(ap, ata_qc_get_active(ap) ^ done_mask);
- 
- 		/* Update the software queue position index in hardware */
- 		writelfl((pp->crpb_dma & EDMA_RSP_Q_BASE_LO_MASK) |
-diff --git a/drivers/ata/sata_nv.c b/drivers/ata/sata_nv.c
-index 56946012d113..7510303111fa 100644
---- a/drivers/ata/sata_nv.c
-+++ b/drivers/ata/sata_nv.c
-@@ -984,7 +984,7 @@ static irqreturn_t nv_adma_interrupt(int irq, void *dev_instance)
- 					check_commands = 0;
- 				check_commands &= ~(1 << pos);
- 			}
--			ata_qc_complete_multiple(ap, ap->qc_active ^ done_mask);
-+			ata_qc_complete_multiple(ap, ata_qc_get_active(ap) ^ done_mask);
- 		}
- 	}
- 
-diff --git a/include/linux/libata.h b/include/linux/libata.h
-index 207e7ee764ce..f4c045b56e6c 100644
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@ -1174,6 +1174,7 @@ extern unsigned int ata_do_dev_read_id(struct ata_device *dev,
- 					struct ata_taskfile *tf, u16 *id);
- extern void ata_qc_complete(struct ata_queued_cmd *qc);
- extern int ata_qc_complete_multiple(struct ata_port *ap, u64 qc_active);
-+extern u64 ata_qc_get_started(struct ata_port *ap);
- extern void ata_scsi_simulate(struct ata_device *dev, struct scsi_cmnd *cmd);
- extern int ata_std_bios_param(struct scsi_device *sdev,
- 			      struct block_device *bdev,
 -- 
-2.24.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
