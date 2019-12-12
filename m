@@ -2,87 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C838D11CF5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:08:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1F611CF6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:10:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729692AbfLLOIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 09:08:07 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:34760 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729529AbfLLOIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:08:04 -0500
-Received: from zn.tnic (p200300EC2F0A5A0074DA66A3488432B7.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5a00:74da:66a3:4884:32b7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DD9531EC0CF2;
-        Thu, 12 Dec 2019 15:08:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1576159682;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=NsGklImh4vHVCyOymFTYnrXanEPRgUlIlWs7cbNiu6U=;
-        b=iN08be9/huQMl+iEiScV/paCVRtsQQsrwRQWEmnmeKWF4TaYjWL7tcPT5X+/ES58fRlVVr
-        kVIPZMR1e7Ps9ywEugeQgXrEl7h2CEDePKINMyshMRNHt9sa+VGG79bGrKQmN89cCwLwTn
-        R7BunpK0TFmEoQOUB8O2Au8IIAXvGhQ=
-Date:   Thu, 12 Dec 2019 15:07:55 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
-        Len Brown <lenb@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: [PATCH v4 00/19] x86/cpu: Clean up handling of VMX features
-Message-ID: <20191212140755.GF4991@zn.tnic>
-References: <20191128014016.4389-1-sean.j.christopherson@intel.com>
+        id S1729674AbfLLOKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:10:39 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38360 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729574AbfLLOKj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 09:10:39 -0500
+Received: by mail-ed1-f65.google.com with SMTP id i6so1920127edr.5
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 06:10:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=agntn3zX+JI+eqZxnVa5cFTQXBG0odRbTBgJtL3lVZY=;
+        b=O/jlQz9NjPnQ/JrQW1XNeB162L66kNWnwQoVszhi50nNFvsD8WGu2RXpGJMFEF8dQg
+         NFtayb/Klr+dBxExR8CfGmdAyvuiD9XGxyTS1UbmvPUDw62CuyI3RZ6IQG4adEW1IXhz
+         GGudm408wtx0iEWHXUff9BTpcb8pC9Pyrpr1+Au/kvF+Nm+ZRmo7BtcQZfmWgB/0zzWk
+         svxm/hYxFOiJOgnGGy5Vw40LOhgrhgtvNVh0smc4e+EJJyGCdVmDCReTnppIOqVBch6r
+         J20FwGj/f3TSUGMrj4O/qWeTRyavx1Qv8YIZf+O4UPBf/YJxEugLIIFbqHA4f0FnW8uP
+         pjjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=agntn3zX+JI+eqZxnVa5cFTQXBG0odRbTBgJtL3lVZY=;
+        b=MGky5PNMiAqPFD0VujA1xP/VHDWBVg6jwXR1EAehTMt2S+pkjVJrlZjOsstYcPW/sd
+         eGJmtbNoT0t/qztakudMgwLRLaY2qmdLjrKEV+3je0gcjGKNfB2npHZ1tY5T9nmbseHC
+         J5sVcUoUyA4mZ10GG33+Uq9htwlVwwTHsmyyYjXozVAydd/zxZdFVUR77kKapnCDlKSW
+         BaA7/5dnFiNYXSIvtqrUIExlp0UdXoqRcOSC4hh67YEjSpg+F4Q5nbSP1QFjTKdAGQUL
+         0WkvQWVN6GMW1Ti92S3hP5XKXKk26IOZ+vdtZWXSkWZWYxGvdDlVMnEyHCOxnuN04Beh
+         tMbA==
+X-Gm-Message-State: APjAAAXyOujLfhqwl8wbVFvkVBxK9SU/1aoVBDcmVbo7jtmaeNUembxl
+        keE5MhRYEvvwZRqdPTf1JALQS9zm2LWq2PPC1aE=
+X-Google-Smtp-Source: APXvYqy7Az5XIaBaOPpPEXUA842/VMBLQ6xGXNRDQjXyTXISHzJOz82UB8Lx5ispYKGpyTOKUtqpm8k3Iehryv7gxWg=
+X-Received: by 2002:a05:6402:1484:: with SMTP id e4mr9945028edv.286.1576159837173;
+ Thu, 12 Dec 2019 06:10:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191128014016.4389-1-sean.j.christopherson@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAFqpmVJ90bAV4vasH1Z0DcTUjT7asCJFPeJBxtxGZwAhTVP7=w@mail.gmail.com>
+ <b02d053f-1b07-bd4f-20fc-9a26106145d1@suse.com>
+In-Reply-To: <b02d053f-1b07-bd4f-20fc-9a26106145d1@suse.com>
+From:   Nicholas Tsirakis <niko.tsirakis@gmail.com>
+Date:   Thu, 12 Dec 2019 09:10:26 -0500
+Message-ID: <CAFqpmVLnHPUZEpvmw1-f=2LoPkfUHO67ETdwtnsPA7DsXRSRSA@mail.gmail.com>
+Subject: Re: [BUG] Xen-ballooned memory never returned to domain after partial-free
+To:     =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        boris.ostrovsky@oracle.com
+Cc:     xen-devel <xen-devel@lists.xenproject.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 05:39:57PM -0800, Sean Christopherson wrote:
-> Clean up a handful of interrelated warts in the kernel's handling of VMX:
-> 
->   - Enable VMX in IA32_FEATURE_CONTROL during boot instead of on-demand
->     during KVM load to avoid future contention over IA32_FEATURE_CONTROL.
-> 
->   - Rework VMX feature reporting so that it is accurate and up-to-date,
->     now and in the future.
-> 
->   - Consolidate code across CPUs that support VMX.
+> And I think this is the problem. We want here:
+>
+>     balloon_stats.target_pages =3D balloon_stats.current_pages +
+>                                  balloon_stats.target_unpopulated;
 
-Ok, this is shaping up slowly to be upstream-ready, AFAICT.
+Ahh I knew I was missing something. Tested the patch, works great! "Reporte=
+d by"
+is fine with me.
 
-How are we merging the next revision, after the minor things have been
-taken care of? Through tip?
+Do you happen to know the answer to my second question? It's not as importa=
+nt,
+but it does confuse me as I wouldn't expect the total memory to be
+balloon-able at
+all with the hotplugging configs disabled.
 
-Paolo?
+--Niko
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+On Thu, Dec 12, 2019 at 2:18 AM J=C3=BCrgen Gro=C3=9F <jgross@suse.com> wro=
+te:
+>
+> On 11.12.19 23:08, Nicholas Tsirakis wrote:
+> > Hello,
+> >
+> > The issue I'm seeing is that pages of previously-xenballooned memory ar=
+e getting
+> > trapped in the balloon on free, specifically when they are free'd in ba=
+tches
+> > (i.e. not all at once). The first batch is restored to the domain prope=
+rly, but
+> > subsequent frees are not.
+> >
+> > Truthfully I'm not sure if this is a bug or not, but the behavior I'm s=
+eeing
+> > doesn't seem to make sense. Note that this "bug" is in the balloon driv=
+er, but
+> > the behavior is seen when using the gnttab API, which utilizes the ball=
+oon in
+> > the background.
+> >
+> > -----------------------------------------------------------------------=
+-------
+> >
+> > This issue is better illustrated as an example, seen below. Note that t=
+he file
+> > in question is drivers/xen/balloon.c:
+> >
+> > Kernel version: 4.19.*, code seems consistent on master as well
+> > Relevant configs:
+> >      - CONFIG_MEMORY_HOTPLUG not set
+> >      - CONFIG_XEN_BALLOON_MEMORY_HOTPLUG not set
+> >
+> > * current_pages =3D # of pages assigned to domain
+> > * target_pages =3D # of pages we want assigned to domain
+> > * credit =3D target - current
+> >
+> > Start with current_pages/target_pages =3D 20 pages
+> >
+> > 1. alloc 5 pages with gnttab_alloc_pages(). current_pages =3D 15, credi=
+t =3D 5.
+> > 2. alloc 3 pages with gnttab_alloc_pages(). current_pages =3D 12, credi=
+t =3D 8.
+> > 3. some time later, free the last 3 pages with gnttab_free_pages().
+> > 4. 3 pages go back to balloon and balloon worker is scheduled since cre=
+dit > 0.
+> >      * Relevant part of balloon worker shown below:
+> >
+> >      do {
+> >          ...
+> >
+> >          credit =3D current_credit();
+> >
+> >          if (credit > 0) {
+> >              if (balloon_is_inflated())
+> >                  state =3D increase_reservation(credit);
+> >              else
+> >                  state =3D reserve_additional_memory();
+> >          }
+> >
+> >          ...
+> >
+> >      } while (credit && state =3D=3D BP_DONE);
+> >
+> > 5. credit > 0 and the balloon contains 3 pages, so run increase_reserva=
+tion. 3
+> >     pages are restored to domain, correctly. current_pages =3D 15, cred=
+it =3D 5.
+> > 6. at this point credit is still > 0, so we loop again.
+> > 7. this time, the balloon has 0 pages, so we call reserve_additional_me=
+mory,
+> >     seen below. note that CONFIG_XEN_BALLOON_MEMORY_HOTPLUG is disabled=
+, so this
+> >     funciton is very sparse.
+> >
+> >      static enum bp_state reserve_additional_memory(void)
+> >      {
+> >          balloon_stats.target_pages =3D balloon_stats.current_pages;
+> >          return BP_ECANCELED;
+> >      }
+> >
+> > 8. now target =3D current =3D 15, which drops our credit down to 0.
+>
+> And I think this is the problem. We want here:
+>
+>      balloon_stats.target_pages =3D balloon_stats.current_pages +
+>                                   balloon_stats.target_unpopulated;
+>
+> This should fix it. Thanks for the detailed analysis!
+>
+> Does the attached patch work for you?
+>
+> And are you fine with the "Reported-by:" added?
+>
+>
+> Juergen
