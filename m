@@ -2,167 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8ED611CF05
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 14:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33BE011CF01
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 14:59:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbfLLN7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 08:59:19 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:42642 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729559AbfLLN7N (ORCPT
+        id S1729553AbfLLN7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 08:59:09 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:55531 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729490AbfLLN7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 08:59:13 -0500
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id 394B2200A94;
-        Thu, 12 Dec 2019 13:59:11 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 5CBD620B70; Thu, 12 Dec 2019 14:57:38 +0100 (CET)
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thu, 12 Dec 2019 08:59:09 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MALql-1iYZEW3qlH-00BpfK; Thu, 12 Dec 2019 14:58:36 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Mike Travis <mike.travis@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] init: use do_mount() instead of ksys_mount()
-Date:   Thu, 12 Dec 2019 14:57:24 +0100
-Message-Id: <20191212135724.331342-4-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191212135724.331342-1-linux@dominikbrodowski.net>
-References: <20191212135724.331342-1-linux@dominikbrodowski.net>
+        Christoph Hellwig <hch@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Hedi Berriche <hedi.berriche@hpe.com>,
+        Justin Ernst <justin.ernst@hpe.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/platform/uv: avoid unused variable warning
+Date:   Thu, 12 Dec 2019 14:58:06 +0100
+Message-Id: <20191212135815.4176658-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:aaEg7X+SOM/t1v0aZsqNDtlakHBANpTRGizRsksBk3TGrhYriNB
+ 3wOfkguPAQgypDQwEmBt07TCzY2lzwbWNYOq8fNOo4HATiPuaIvhZYYs6LWpYKbtzruvpHf
+ m1JhHbkjFAp2HziQMa8MUTrwlPWeUgaQu7dgJxZz0bvkpSrkXFVyPCLjAHNHNt/qSBma/zk
+ 37MB7fPZc6+sAqh195YwA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:EQpF1no2hr4=:/73Yd8PAeV8mYr0pW+v2IU
+ +xvIV8dFjJvg6VjK0D3rBVSWNcG3IvofLytQRYTd4Bl9xYaXmnWoD/dp2kFg+UsgscVrk/+Yo
+ rzopIwpEOjhsSNjKtCseP8GLYEDuA78QZhzRGvKIoNm9k3r5IM57grBQRSfIoGUAOT+AODARG
+ xmZ2IwBP1oJGzx737IV9GUc3LBJmEb4AuWa/34Y+e75eahq1tXCng9fovEs3vtbDayQJ9dNEo
+ cSnQhySuFHdOPZJ71dsVwYwbvw7d+tA9uQR+7hBLMV+v2RLhQHcbNsp+jg9d3qapFQPm1DuiL
+ VfjxRr3Mp6hvhHMCecYzR/Dznp9qmDdd8FvRa6Kw5y4992/xKyE86KvafMJ8U/rDTtHzBPVmn
+ sXsIMSqZMaGa8rwpUgruJyqGilt1dDwkIxVK++XEMAll76a5IWvkWuOPBwnALafpJJjUoqTWn
+ m5RV1iM8bPd9KyCFH5hMZlrtzyM88SUiGm1DoxXzrSWDefrFllbwB6fG8NDCxJyHZ/bqm0S0A
+ D7eO509ihHHhplu2HEoca26J4OyYZeXi66p00YScPUO9FW/5G6yNdUVD5uTdwATuE/mBVAfU9
+ 9V+WMNXAblDaHjpAFzAXt4/Zo0uJMsdfmNlzQzNcj3jWIc2kBM6s0UEBR7Irr9PMZOnZkEZcs
+ c/8vR3OrYrmVvAHgPyHUoAqnwOi1nkuj/EJbxjZCyJPjiwjtGLf2vC67q0O2TuTcRQRmOXqdX
+ 4UmrPMCPOVME9fNwGK7jyVT8C9IUe2iLjZXSJxdiUvG3ZxTxC1Um7yiTeNirukwl0Kd8qDITO
+ 4t44UysExiJzTIekoobpFM86YKht9CpTA0bJC+DdGLcyaDUqgrlfFBj2F7Y9jM2xY3xqy/2tb
+ 1PO5a2USzzD3XUcGh/fA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In prepare_namespace(), do_mount() can be used instead of ksys_mount()
-as the first and third argument are const strings in the kernel, the
-second and fourth argument are passed through anyway, and the fifth
-argument is NULL.
+When CONFIG_PROC_FS is disabled, the compiler warns about an
+unused variable:
 
-In do_mount_root(), ksys_mount() is called with the first and third
-argument being already kernelspace strings, which do not need to be
-copied over from userspace to kernelspace (again). The second and
-fourth arguments are passed through to do_mount() anyway. The fifth
-argument, while already residing in kernelspace, needs to be put into
-a page of its own. Then, do_mount() can be used instead of
-ksys_mount().
+arch/x86/kernel/apic/x2apic_uv_x.c: In function 'uv_setup_proc_files':
+arch/x86/kernel/apic/x2apic_uv_x.c:1546:8: error: unused variable 'name' [-Werror=unused-variable]
+  char *name = hubless ? "hubless" : "hubbed";
 
-Once this is done, there are no in-kernel users to ksys_mount() left,
-which can therefore be removed.
+Simplify the code so this variable is no longer needed.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Fixes: 8785968bce1c ("x86/platform/uv: Add UV Hubbed/Hubless Proc FS Files")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/namespace.c           | 10 ++--------
- include/linux/syscalls.h |  2 --
- init/do_mounts.c         | 28 ++++++++++++++++++++++------
- 3 files changed, 24 insertions(+), 16 deletions(-)
+ arch/x86/kernel/apic/x2apic_uv_x.c | 28 ++++------------------------
+ 1 file changed, 4 insertions(+), 24 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 2fd0c8bcb8c1..be601d3a8008 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3325,8 +3325,8 @@ struct dentry *mount_subtree(struct vfsmount *m, const char *name)
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index d5b51a740524..1af416da1f87 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -1493,13 +1493,13 @@ static void check_efi_reboot(void)
  }
- EXPORT_SYMBOL(mount_subtree);
  
--int ksys_mount(const char __user *dev_name, const char __user *dir_name,
--	       const char __user *type, unsigned long flags, void __user *data)
-+SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
-+		char __user *, type, unsigned long, flags, void __user *, data)
+ /* Setup user proc fs files */
+-static int proc_hubbed_show(struct seq_file *file, void *data)
++static int __maybe_unused proc_hubbed_show(struct seq_file *file, void *data)
  {
- 	int ret;
- 	char *kernel_type;
-@@ -3359,12 +3359,6 @@ int ksys_mount(const char __user *dev_name, const char __user *dir_name,
- 	return ret;
+ 	seq_printf(file, "0x%x\n", uv_hubbed_system);
+ 	return 0;
  }
  
--SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
--		char __user *, type, unsigned long, flags, void __user *, data)
+-static int proc_hubless_show(struct seq_file *file, void *data)
++static int __maybe_unused proc_hubless_show(struct seq_file *file, void *data)
+ {
+ 	seq_printf(file, "0x%x\n", uv_hubless_system);
+ 	return 0;
+@@ -1511,28 +1511,11 @@ static int proc_oemid_show(struct seq_file *file, void *data)
+ 	return 0;
+ }
+ 
+-static int proc_hubbed_open(struct inode *inode, struct file *file)
 -{
--	return ksys_mount(dev_name, dir_name, type, flags, data);
+-	return single_open(file, proc_hubbed_show, (void *)NULL);
 -}
 -
- /*
-  * Create a kernel mount representation for a new, prepared superblock
-  * (specified by fs_fd) and attach to an open_tree-like file descriptor.
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index d0391cc2dae9..5262b7a76d39 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1231,8 +1231,6 @@ asmlinkage long sys_ni_syscall(void);
-  * the ksys_xyzyyz() functions prototyped below.
-  */
- 
--int ksys_mount(const char __user *dev_name, const char __user *dir_name,
--	       const char __user *type, unsigned long flags, void __user *data);
- int ksys_umount(char __user *name, int flags);
- int ksys_dup(unsigned int fildes);
- int ksys_chroot(const char __user *filename);
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 43f6d098c880..f55cbd9cb818 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -387,12 +387,25 @@ static void __init get_fs_names(char *page)
- 	*s = '\0';
- }
- 
--static int __init do_mount_root(char *name, char *fs, int flags, void *data)
-+static int __init do_mount_root(const char *name, const char *fs,
-+				 const int flags, const void *data)
+-static int proc_hubless_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, proc_hubless_show, (void *)NULL);
+-}
+-
+ static int proc_oemid_open(struct inode *inode, struct file *file)
  {
- 	struct super_block *s;
--	int err = ksys_mount(name, "/root", fs, flags, data);
--	if (err)
--		return err;
-+	char *data_page;
-+	struct page *p;
-+	int ret;
-+
-+	/* do_mount() requires a full page as fifth argument */
-+	p = alloc_page(GFP_KERNEL);
-+	if (!p)
-+		return -ENOMEM;
-+
-+	data_page = page_address(p);
-+	strncpy(data_page, data, PAGE_SIZE - 1);
-+
-+	ret = do_mount(name, "/root", fs, flags, data_page);
-+	if (ret)
-+		goto out;
- 
- 	ksys_chdir("/root");
- 	s = current->fs->pwd.dentry->d_sb;
-@@ -402,7 +415,10 @@ static int __init do_mount_root(char *name, char *fs, int flags, void *data)
- 	       s->s_type->name,
- 	       sb_rdonly(s) ? " readonly" : "",
- 	       MAJOR(ROOT_DEV), MINOR(ROOT_DEV));
--	return 0;
-+
-+out:
-+	put_page(p);
-+	return ret;
+ 	return single_open(file, proc_oemid_show, (void *)NULL);
  }
  
- void __init mount_block_root(char *name, int flags)
-@@ -671,7 +687,7 @@ void __init prepare_namespace(void)
- 	mount_root();
- out:
- 	devtmpfs_mount();
--	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
-+	do_mount(".", "/", NULL, MS_MOVE, NULL);
- 	ksys_chroot(".");
+-/* (struct is "non-const" as open function is set at runtime) */
+-static struct file_operations proc_version_fops = {
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static const struct file_operations proc_oemid_fops = {
+ 	.open		= proc_oemid_open,
+ 	.read		= seq_read,
+@@ -1543,15 +1526,12 @@ static const struct file_operations proc_oemid_fops = {
+ static __init void uv_setup_proc_files(int hubless)
+ {
+ 	struct proc_dir_entry *pde;
+-	char *name = hubless ? "hubless" : "hubbed";
+ 
+ 	pde = proc_mkdir(UV_PROC_NODE, NULL);
+-	proc_create("oemid", 0, pde, &proc_oemid_fops);
+-	proc_create(name, 0, pde, &proc_version_fops);
+ 	if (hubless)
+-		proc_version_fops.open = proc_hubless_open;
++		proc_create_single("hubless", 0, pde, proc_hubless_show);
+ 	else
+-		proc_version_fops.open = proc_hubbed_open;
++		proc_create_single("hubbed", 0, pde, proc_hubbed_show);
  }
  
+ /* Initialize UV hubless systems */
 -- 
-2.24.1
+2.20.0
 
