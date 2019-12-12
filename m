@@ -2,62 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7079511CC1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:21:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2984F11CC25
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728982AbfLLLVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 06:21:40 -0500
-Received: from mga07.intel.com ([134.134.136.100]:4991 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728871AbfLLLVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 06:21:40 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 03:21:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,305,1571727600"; 
-   d="scan'208";a="220672957"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 12 Dec 2019 03:21:36 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 12 Dec 2019 13:21:35 +0200
-Date:   Thu, 12 Dec 2019 13:21:35 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Use new GPIO direction defines for intel pinctrl
-Message-ID: <20191212112135.GE2110480@lahna.fi.intel.com>
-References: <cover.1576132131.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1729000AbfLLLYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 06:24:02 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:58125 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728874AbfLLLYB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 06:24:01 -0500
+Received: from [192.168.1.155] ([77.9.34.244]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MfpGL-1i4P3u3mnJ-00gKKo; Thu, 12 Dec 2019 12:24:00 +0100
+Subject: Re: [PATCH] platform/x86: pcengines-apu2: fix simswap gpio assignment
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org
+References: <20191212111507.14365-1-info@metux.net>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <79f8f45f-98a7-c2c6-068d-82e339d8be46@metux.net>
+Date:   Thu, 12 Dec 2019 12:23:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1576132131.git.matti.vaittinen@fi.rohmeurope.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191212111507.14365-1-info@metux.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:CZeYZiiSBZWPrSOZTUvcsXeGgSQm2AkN673/yNAHOcY4QxiosW+
+ 12gZ84yQMb3aimeGqaU597g+KlRcOwqdwoYonPzz/KUloKV6JTg65LVdymneM/4xr4T54mt
+ 2MDte5OJWdZfuzW7DOST2qkFmHK/cmWRhdly+6ArDJuBWV7AkHrKnD58luIy/CAkcbeJt1b
+ GEo6zal3745T7iMJ2xQOw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vGHnqnB0WNQ=:o/gYaInETCt2ny8i3AKVBY
+ eIZ+z8DoDQ5X02eEWeK3SRbu7vRT6A3ZQinp1tOVMBpWGoJhtsviBBrzyXOnfyJNUWxu2gfkr
+ MCpHx4AqLnt16f4JPu9WZ0mHh0gEyZbl72b0hSTmrCSgNS+GFIvJ6oPc1+Nh6R85lm9pkxMZe
+ NXKANIObVmHskLohuMNYiC6nicIl8l3DWIAbAfNcbX9i2raKk99iJdHmGNmoZdvB4e3O+BoHX
+ YA+1EJRbEtoRPZs2ivpIINpuZ1iIJ5jCewfb7SekTItXTi8vJbaVBY8Hnt4YFAmX1EC4Pp2O5
+ zAIC+gIsO1FBWwg00zKZX/4dHE/kjtpzYVzHGI9XwmwtlsMKpzHlt+HrZ/8sM6pu/lS71lbrp
+ UkPRbt4xITUfIiMxkDvksQEogkcn4HQKzxBYqAVF6mNJW3S6XZBqLuuxu96lTtBzQz+JvLryp
+ gb1/QkWgCki7cnYIfVvWXxISQR/tK5BniTbJsPPujo9e5DT7qaBIbSDWKZAMDjpDu9of1lZgp
+ thtrzz5AbP2oHtMoa/o9g337em1GywmyLnyGl1yWewqrbQXZfS2sduMl/US299/nxt+H72+nK
+ VA8+Mbit1yJei1WbyA0lookkctTk9yVVCD4+shYfAcWbDF/OQ/S4SgVbIJaXWjOq0mV3XK4O1
+ r6PPxAAdxevMdiTsJUL9+nuia0lql7wcYuNv5fmL0oiI4TuLlGJh4x5HUjSZ01A7ehL6IqMbC
+ HNL0tvHJTnTFWx5MBBgxTHcGKcjcElRbU2ZKpOH3G5qhY0/LhL3RL2xnocb9II4wSvNzynVsy
+ JzldVSmPIuPL9OjK3kALBCvEJXiaASZ6oIJqe37JZbkuHworsGr2H/QvaNjkQpA32KPDt/cCC
+ qbx6ORFXzpaV3JkQpORg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 08:33:54AM +0200, Matti Vaittinen wrote:
-> We added definitions for GPIO line directions here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commit/?id=9208b1e77d6e8e9776f34f46ef4079ecac9c3c25
-> 
-> Let's use them on Intel pincontrollers too.
-> 
-> Changes for v2:
->   - Replaced ternary operator with if() for better readability
-> 
-> ---
-> 
-> Matti Vaittinen (3):
->   pinctrl: pinctrl-intel: Use GPIO direction definitions
->   pinctrl: pinctrl-cherryview: Use GPIO direction definitions
->   pinctrl: pinctrl-baytrail: Use GPIO direction definitions
 
-Andy, please pick these up with my,
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On 12.12.19 12:15, Enrico Weigelt, metux IT consult wrote:
+> The mapping entry has to hold the gpio line index instead of
+> controller's register number.
+> 
+> Fixes: 5037d4ddda31c2dbbb018109655f61054b1756dc
+
+Sorry, got the Fixes line wrong again ... forgot to fix my scripts :o
+
+I'll repost in a few seconds.
+
+
+--mtx
+
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
