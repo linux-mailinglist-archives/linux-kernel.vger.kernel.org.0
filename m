@@ -2,90 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CD1911D182
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:54:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF9C311D18A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:55:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbfLLPyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:54:09 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:55367 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729498AbfLLPyJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:54:09 -0500
-Received: (qmail 17464 invoked by uid 500); 12 Dec 2019 10:54:08 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 12 Dec 2019 10:54:08 -0500
-Date:   Thu, 12 Dec 2019 10:54:08 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Suwan Kim <suwan.kim027@gmail.com>
-cc:     shuah@kernel.org, <valentina.manea.m@gmail.com>,
-        <gregkh@linuxfoundation.org>, <marmarek@invisiblethingslab.com>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH 2/2] usbip: Fix error path of vhci_recv_ret_submit()
-In-Reply-To: <20191212052841.6734-3-suwan.kim027@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1912121050130.14053-100000@netrider.rowland.org>
+        id S1729677AbfLLPzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 10:55:14 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:48925 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729509AbfLLPzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 10:55:14 -0500
+Received: from localhost (mailhub1-ext [192.168.12.233])
+        by localhost (Postfix) with ESMTP id 47Ydfl2H6MzB09ZV;
+        Thu, 12 Dec 2019 16:55:11 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=EfCot0cP; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id D9rWWWTshkIZ; Thu, 12 Dec 2019 16:55:11 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47Ydfl1CmQzB09ZT;
+        Thu, 12 Dec 2019 16:55:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1576166111; bh=PJztFoqZeZST1HMzqILi2xyKFqgX3RxPFx1/4+TG/tk=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=EfCot0cPMLRcALyzGy3x1WzkPa0APIh0auRG5pNwxZo4b8aMF1/1AuW51bYPESZ9Y
+         ziBgDeI5oE/4VJLWfQJzArHXiDhT/RM2jU9+Mlon2y9KpuYpFaPvE9JRTUFmP0hPUw
+         SWOnTZe7prONi+zR7dyM5qmsxnh/nNhDVTJJhZm4=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B10348B872;
+        Thu, 12 Dec 2019 16:55:12 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 9AsI8caOxSn5; Thu, 12 Dec 2019 16:55:12 +0100 (CET)
+Received: from [172.25.230.112] (po15451.idsi0.si.c-s.fr [172.25.230.112])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 935D68B860;
+        Thu, 12 Dec 2019 16:55:12 +0100 (CET)
+Subject: Re: [PATCH v3 1/3] kasan: define and use MAX_PTRS_PER_* for early
+ shadow tables
+To:     Daniel Axtens <dja@axtens.net>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+        kasan-dev@googlegroups.com, aneesh.kumar@linux.ibm.com,
+        bsingharora@gmail.com
+References: <20191212151656.26151-1-dja@axtens.net>
+ <20191212151656.26151-2-dja@axtens.net>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <65a52c58-4409-de89-6f5d-8797d0ebca74@c-s.fr>
+Date:   Thu, 12 Dec 2019 16:55:12 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20191212151656.26151-2-dja@axtens.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Dec 2019, Suwan Kim wrote:
 
-> If a transaction error happens in vhci_recv_ret_submit(), event
-> handler closes connection and changes port status to kick hub_event.
-> Then hub tries to flush the endpoint URBs, but that causes infinite
-> loop between usb_hub_flush_endpoint() and vhci_urb_dequeue() because
-> "vhci_priv" in vhci_urb_dequeue() was already released by
-> vhci_recv_ret_submit() before a transmission error occurred. Thus,
-> vhci_urb_dequeue() terminates early and usb_hub_flush_endpoint()
-> continuously calls vhci_urb_dequeue().
+
+Le 12/12/2019 à 16:16, Daniel Axtens a écrit :
+> powerpc has a variable number of PTRS_PER_*, set at runtime based
+> on the MMU that the kernel is booted under.
 > 
-> The root cause of this issue is that vhci_recv_ret_submit()
-> terminates early without giving back URB when transaction error
-> occurs in vhci_recv_ret_submit(). That causes the error URB to still
-> be linked at endpoint list without “vhci_priv".
+> This means the PTRS_PER_* are no longer constants, and therefore
+> breaks the build.
 > 
-> So, in the case of trasnaction error in vhci_recv_ret_submit(),
-> unlink URB from the endpoint, insert proper error code in
-> urb->status and give back URB.
+> Define default MAX_PTRS_PER_*s in the same style as MAX_PTRS_PER_P4D.
+> As KASAN is the only user at the moment, just define them in the kasan
+> header, and have them default to PTRS_PER_* unless overridden in arch
+> code.
 > 
-> Reported-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
-> Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
+> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Suggested-by: Balbir Singh <bsingharora@gmail.com>
+> Signed-off-by: Daniel Axtens <dja@axtens.net>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+
 > ---
->  drivers/usb/usbip/vhci_rx.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+>   include/linux/kasan.h | 18 +++++++++++++++---
+>   mm/kasan/init.c       |  6 +++---
+>   2 files changed, 18 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/usb/usbip/vhci_rx.c b/drivers/usb/usbip/vhci_rx.c
-> index 33f8972ba842..dc26acad6baf 100644
-> --- a/drivers/usb/usbip/vhci_rx.c
-> +++ b/drivers/usb/usbip/vhci_rx.c
-> @@ -77,16 +77,21 @@ static void vhci_recv_ret_submit(struct vhci_device *vdev,
->  	usbip_pack_pdu(pdu, urb, USBIP_RET_SUBMIT, 0);
->  
->  	/* recv transfer buffer */
-> -	if (usbip_recv_xbuff(ud, urb) < 0)
-> -		return;
-> +	if (usbip_recv_xbuff(ud, urb) < 0) {
-> +		urb->status = -EPIPE;
-> +		goto error;
-> +	}
->  
->  	/* recv iso_packet_descriptor */
-> -	if (usbip_recv_iso(ud, urb) < 0)
-> -		return;
-> +	if (usbip_recv_iso(ud, urb) < 0) {
-> +		urb->status = -EPIPE;
-> +		goto error;
-> +	}
 
--EPIPE is used for STALL.  The appropriate error code for transaction 
-error would be -EPROTO (or -EILSEQ or -ETIME, but people seem to be 
-settling on -EPROTO).
-
-Alan Stern
-
+Christophe
