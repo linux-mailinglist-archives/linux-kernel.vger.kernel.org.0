@@ -2,86 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A9311C673
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 08:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D193511C68A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 08:39:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbfLLHeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 02:34:06 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:38321 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728072AbfLLHeG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 02:34:06 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 338B423D09;
-        Thu, 12 Dec 2019 08:34:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1576136044;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ahNlfZRgvyxNMfLruGaGs7saGlzvDiLyQV2jVcLv9i0=;
-        b=kpjgNJ8csN4y9W3dOZcgoA6Xm76QjIO2uzLC68Ruww0eJJVhotfhADAkr62cQnzi/SCblo
-        5TvosPORI6iVRAbMsuIcEzzdkoZRjp118ofA3dxSdiRr1fU8Cnk/z5/1bK5c1OrISEjMTx
-        oLzv39WgUp0awOhIjHDIErTaNTB7DL4=
+        id S1728133AbfLLHiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 02:38:55 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7221 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728072AbfLLHiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 02:38:54 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 193F32A0078476331057;
+        Thu, 12 Dec 2019 15:38:51 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 12 Dec 2019 15:38:42 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <linux@roeck-us.net>, <heikki.krogerus@linux.intel.com>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhongjiang@huawei.com>
+Subject: [PATCH] usb: typec: fusb302: Fix an undefined reference to 'extcon_get_state'
+Date:   Thu, 12 Dec 2019 15:34:23 +0800
+Message-ID: <1576136063-50916-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 12 Dec 2019 08:34:03 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3] arm64: dts: ls1028a: fix reboot node
-In-Reply-To: <20191212020055.GB15858@dragon>
-References: <20191211171145.14736-1-michael@walle.cc>
- <20191212020055.GB15858@dragon>
-Message-ID: <ad3885c9545cb73eced2fa3f0ce6f0be@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.8
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: 338B423D09
-X-Spamd-Result: default: False [1.40 / 15.00];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         NEURAL_HAM(-0.00)[-0.285];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 2019-12-12 03:00, schrieb Shawn Guo:
-> On Wed, Dec 11, 2019 at 06:11:45PM +0100, Michael Walle wrote:
->> The reboot register isn't located inside the DCFG controller, but in 
->> its
->> own RST controller. Fix it.
->> 
->> Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
->> Signed-off-by: Michael Walle <michael@walle.cc>
-> 
-> You missed Leo's ACK on v2?  I added it and applied the patch.
+Fixes the following compile error:
 
-Yes, I forgot to add that, thanks.
+drivers/usb/typec/tcpm/fusb302.o: In function `tcpm_get_current_limit':
+fusb302.c:(.text+0x3ee): undefined reference to `extcon_get_state'
+fusb302.c:(.text+0x422): undefined reference to `extcon_get_state'
+fusb302.c:(.text+0x450): undefined reference to `extcon_get_state'
+fusb302.c:(.text+0x48c): undefined reference to `extcon_get_state'
+drivers/usb/typec/tcpm/fusb302.o: In function `fusb302_probe':
+fusb302.c:(.text+0x980): undefined reference to `extcon_get_extcon_dev'
+make: *** [vmlinux] Error 1
 
--michael
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/usb/typec/tcpm/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/typec/tcpm/Kconfig b/drivers/usb/typec/tcpm/Kconfig
+index 72481bb..a81ea9f 100644
+--- a/drivers/usb/typec/tcpm/Kconfig
++++ b/drivers/usb/typec/tcpm/Kconfig
+@@ -32,6 +32,7 @@ endif # TYPEC_TCPCI
+ config TYPEC_FUSB302
+ 	tristate "Fairchild FUSB302 Type-C chip driver"
+ 	depends on I2C
++	depends on EXTCON
+ 	help
+ 	  The Fairchild FUSB302 Type-C chip driver that works with
+ 	  Type-C Port Controller Manager to provide USB PD and USB
+-- 
+1.7.12.4
+
