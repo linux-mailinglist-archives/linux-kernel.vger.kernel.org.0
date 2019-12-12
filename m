@@ -2,198 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8C3711CF20
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:04:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5849611CF29
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbfLLOEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 09:04:00 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46529 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729582AbfLLOD7 (ORCPT
+        id S1729676AbfLLOEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:04:49 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:58067 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729547AbfLLOEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:03:59 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z7so2816795wrl.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 06:03:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YadRPUKRq+F+OfrkUFp7sfL3GGaSi5RtCx1mrcXaajw=;
-        b=XiZKyVtF24JXNcMYL8Xwe6LFXRC5rGLAOXIUebbHSaeHrG07WKUNr8RJwQ823LolID
-         XnFR2jJK+OvfWeKwOzAJUnPI+UDjOIOAgaUxlmeNOgEYTjulFbraIKmKbxd3ld4BJepg
-         G8B4irn4mFBPM4Zu1GzyaWBuarsTxkULoMSdz25SJyyVexc+thf8CLbZtfVE9FbRTaOh
-         07zSU07GZuRh33XLh0EaBWoqfCLw6SwC7WrBpEUnaHaZ6x4A62aUKnANPqKliM4Y0vez
-         uxK2fzumLw0PuinGG6OouRcXDf86rYM3J9sV+PomXgyY3qXZ+pLRC39ja+f/oDQUrtUn
-         HCsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YadRPUKRq+F+OfrkUFp7sfL3GGaSi5RtCx1mrcXaajw=;
-        b=aKt/eXsAQ383C2T7geCM9PiKarY/qJG/Uw+yWkmZkySnCmCBQ4i6kmP0M0pkw21/I+
-         t5Me2RlcaBYWMtTLJR8KB6WePatUxJi60Ekz9JSxym9dIyHQSrBBMrdcJbJmGORWDuV9
-         utTr7M0LBYZW6hVjON4MNlcVv7gikBbZc5Y5wpIIZosapwXB3AR1331XUH8fWYIcOzhq
-         9exedCVLJdYobliuAcq9HvelBjkJb3W78NKMh5mPEOZWV/5jzwKtM48NataMRYx7yDNF
-         4W07x9vcwnX1Yb3Y9Vng7tnrtGzJy8pzUXNKAVAUB+oWrO0SVWq05kcDZBMp2sQUcZMK
-         O8HQ==
-X-Gm-Message-State: APjAAAUhd+GgaOqEKW9LqCe4HHQATZ0Um4g93BjQw2eZvH0dqdiZqmA2
-        GwxmtcKcgt3T2qxaFaS6tZZ+DdDygo6w55TuKjzscg==
-X-Google-Smtp-Source: APXvYqyP/fsTNrCsT+L04hV7mtxjhyRS7l6whdWu7iB4pHI+wGkJkmQ7EMGzQOTq1HesEWkup/WBxhYzqcz5ap1GBSE=
-X-Received: by 2002:a5d:6652:: with SMTP id f18mr6737640wrw.246.1576159437310;
- Thu, 12 Dec 2019 06:03:57 -0800 (PST)
+        Thu, 12 Dec 2019 09:04:48 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MnWx3-1hyxRR0wyr-00jZT4; Thu, 12 Dec 2019 15:04:20 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Mike Travis <mike.travis@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Hedi Berriche <hedi.berriche@hpe.com>,
+        Justin Ernst <justin.ernst@hpe.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/platform/uv: avoid unused variable warning
+Date:   Thu, 12 Dec 2019 15:03:57 +0100
+Message-Id: <20191212140419.315264-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <1574864578-467-1-git-send-email-neal.liu@mediatek.com>
- <1574864578-467-4-git-send-email-neal.liu@mediatek.com> <CADnJP=uhD=J2NrpSwiX8oCTd-u_q05=HhsAV-ErCsXNDwVS0rA@mail.gmail.com>
- <1575027046.24848.4.camel@mtkswgap22> <CAKv+Gu_um7eRYXbieW7ogDX5mmZaxP7JQBJM9CajK+6CsO5RgQ@mail.gmail.com>
- <20191202191146.79e6368c@why> <299029b0-0689-c2c4-4656-36ced31ed513@gmail.com>
- <b7043e932211911a81383274e0cc983d@www.loen.fr> <1576127609.27185.8.camel@mtkswgap22>
- <a5982b8ed10440eef14c04df6e6060b6@www.loen.fr>
-In-Reply-To: <a5982b8ed10440eef14c04df6e6060b6@www.loen.fr>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 12 Dec 2019 15:03:42 +0100
-Message-ID: <CAKv+Gu9YhkzpKbrxa=xDOkS6=kZSMaidor_4DqGY6f1M0tO7kQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] hwrng: add mtk-sec-rng driver
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Neal Liu <neal.liu@mediatek.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Matt Mackall <mpm@selenic.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?B?Q3J5c3RhbCBHdW8gKOmDreaZtik=?= <crystal.guo@mediatek.com>,
-        Will Deacon <will@kernel.org>, Lars Persson <lists@bofh.nu>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:xM0uqZr408u8v1eBM37k4OWvemqZEVo56Zeor5mvcWZmUqaGS/N
+ rp7miPPJEEw2z2rhDcFr64f+PswFnItkjVLoEcoCy3Sf4YEaK8GSNGN4ft4AzaBCD/2TxKf
+ uY6+hnmNRu+COxLEqhNjK3Yjhb29CvHiNcJURn1BynstdGNOqQgepnB2komWcqDaTD202tl
+ cQxYRwh+VDrXjvyav5vEw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hjjuQndz3YI=:0OyZ9O/LRsulaDG9L2UeJj
+ stMrjmFNMBbwVdmQeExisj9/9tcZyKfCumIPtU58wMWyQqCXLTNsmwnU+tGEGTMdrwFftwdj9
+ DDan7ylswG1dr5a+N7cE7GEtYsPRnGDsbq1Px/8iYI4aVkC8dubuRXqebMuKF075Kl6sEe2ns
+ s11pOmum7A8KHGzU+n96/pBOh3GrQy3oWAjutb9mg6XLiXnYSEDa6Eul8iKyaPbOC1skEfUE1
+ Z6AUxEODiGqAw75xMsUi6Aoj3DGzsVts3WWbPRj1w5/xDIoGfstvBFybZ9uC80Md3R9quwowf
+ Spen7aZTNJFBsrx/GeUP4wbQBLwaUT7mkWx8L7RfjV9MmvpOVFy6nIB4pE3gdxwFfapT+3Gbb
+ 2pUPucKb3E8FxJ9ZSaTpY6VC7JbdvIIo+p2fZ84Co6cNR5EbQqd2XFVzb42gUWWCrAZegjC8l
+ 4HQiWhXsa4YgUN0q6WIIWt+NoAWLgRIcRRspY5P7f/EbPoyLihChFYbviq4TfKsu2DZeRKYro
+ duMC2mk6upVie3gix98IsJArP1dxwVZlmvDoJ/ZHDTQUTCqy2SuXatGNISgY9SsVFuEFHXS6L
+ PbqD3e3ydiZ7aZ1upciX6NjUnVctIF7sY86+4P5nNUcrJALR3/8KcWmALFsuBno9Ivs4wncSa
+ ui6Y3vTjpLesito4UpchfpX1L7qzrQlrv8t7/Rt/J+TzlWTt7BixApUFmcAol1jcbA4VeORKG
+ RmC/FCnoR/Z+4HZjTJ7UGp/7UKoB+/Uji36bGiG30aWfyxL39s4QyuEEGS13UB+/PuA2Rev6/
+ id2J8nhqZ1APdGBMlf6oNSUS9TpNO2hGd4+UxaWnfvbu1F4vDhMh6NQyW5ISdzEz3sx+Pl4Hw
+ AFD0JvcIDyJYpqG1+eEg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Dec 2019 at 12:45, Marc Zyngier <maz@kernel.org> wrote:
->
-> On 2019-12-12 05:13, Neal Liu wrote:
-> > On Tue, 2019-12-03 at 11:17 +0000, Marc Zyngier wrote:
-> >> On 2019-12-03 04:16, Florian Fainelli wrote:
-> >> > On 12/2/2019 11:11 AM, Marc Zyngier wrote:
-> >> >> On Mon, 2 Dec 2019 16:12:09 +0000
-> >> >> Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> >> >>
-> >> >>> (adding some more arm64 folks)
-> >> >>>
-> >> >>> On Fri, 29 Nov 2019 at 11:30, Neal Liu <neal.liu@mediatek.com>
-> >> >>> wrote:
-> >> >>>>
-> >> >>>> On Fri, 2019-11-29 at 18:02 +0800, Lars Persson wrote:
-> >> >>>>> Hi Neal,
-> >> >>>>>
-> >> >>>>> On Wed, Nov 27, 2019 at 3:23 PM Neal Liu
-> >> <neal.liu@mediatek.com>
-> >> >>>>> wrote:
-> >> >>>>>>
-> >> >>>>>> For MediaTek SoCs on ARMv8 with TrustZone enabled,
-> >> peripherals
-> >> >>>>>> like
-> >> >>>>>> entropy sources is not accessible from normal world (linux)
-> >> and
-> >> >>>>>> rather accessible from secure world (ATF/TEE) only. This
-> >> driver
-> >> >>>>>> aims
-> >> >>>>>> to provide a generic interface to ATF rng service.
-> >> >>>>>>
-> >> >>>>>
-> >> >>>>> I am working on several SoCs that also will need this kind of
-> >> >>>>> driver
-> >> >>>>> to get entropy from Arm trusted firmware.
-> >> >>>>> If you intend to make this a generic interface, please clean
-> >> up
-> >> >>>>> the
-> >> >>>>> references to MediaTek and give it a more generic name. For
-> >> >>>>> example
-> >> >>>>> "Arm Trusted Firmware random number driver".
-> >> >>>>>
-> >> >>>>> It will also be helpful if the SMC call number is
-> >> configurable.
-> >> >>>>>
-> >> >>>>> - Lars
-> >> >>>>
-> >> >>>> Yes, I'm trying to make this to a generic interface. I'll try
-> >> to
-> >> >>>> make
-> >> >>>> HW/platform related dependency to be configurable and let it
-> >> more
-> >> >>>> generic.
-> >> >>>> Thanks for your suggestion.
-> >> >>>>
-> >> >>>
-> >> >>> I don't think it makes sense for each arm64 platform to expose
-> >> an
-> >> >>> entropy source via SMC calls in a slightly different way, and
-> >> model
-> >> >>> it
-> >> >>> as a h/w driver. Instead, we should try to standardize this, and
-> >> >>> perhaps expose it via the architectural helpers that already
-> >> exist
-> >> >>> (get_random_seed_long() and friends), so they get plugged into
-> >> the
-> >> >>> kernel random pool driver directly.
-> >> >>
-> >> >> Absolutely. I'd love to see a standard, ARM-specified,
-> >> virtualizable
-> >> >> RNG that is abstracted from the HW.
-> >> >
-> >> > Do you think we could use virtio-rng on top of a modified
-> >> virtio-mmio
-> >> > which instead of being backed by a hardware mailbox, could use
-> >> > hvc/smc
-> >> > calls to signal writes to shared memory and get notifications via
-> >> an
-> >> > interrupt? This would also open up the doors to other virtio uses
-> >> > cases
-> >> > beyond just RNG (e.g.: console, block devices?). If this is
-> >> > completely
-> >> > stupid, then please disregard this comment.
-> >>
-> >> The problem with a virtio device is that it is a ... device. What we
-> >> want
-> >> is to be able to have access to an entropy source extremely early in
-> >> the
-> >> kernel life, and devices tend to be available pretty late in the
-> >> game.
-> >> This means we cannot plug them in the architectural helpers that Ard
-> >> mentions above.
-> >>
-> >> What you're suggesting looks more like a new kind of virtio
-> >> transport,
-> >> which is interesting, in a remarkably twisted way... ;-)
-> >>
-> >> Thanks,
-> >>
-> >>          M.
-> >
-> > In conclusion, is it helpful that hw_random has a generic interface
-> > to
-> > add device randomness by talking to hwrng which is implemented in the
-> > firmware or the hypervisor?
-> > For most chip vendors, I think the answer is yes. We already prepared
-> > a
-> > new patchset and need you agree with this idea.
->
-> As long as it is a *unified* interface, I'm all for that.
->
+When CONFIG_PROC_FS is disabled, the compiler warns about an
+unused variable:
 
+arch/x86/kernel/apic/x2apic_uv_x.c: In function 'uv_setup_proc_files':
+arch/x86/kernel/apic/x2apic_uv_x.c:1546:8: error: unused variable 'name' [-Werror=unused-variable]
+  char *name = hubless ? "hubless" : "hubbed";
 
-Yeah, but I'm not sure it makes sense to model it as a device like
-this. It would be nice if we could tie this into the ARM SMCCC
-discovery, and use the SMC calls to back arch_get_random_seed_long()
-[provided we fix the braindead way in which that is being used today
-in the interrupt code]
+Simplify the code so this variable is no longer needed.
+
+Fixes: 8785968bce1c ("x86/platform/uv: Add UV Hubbed/Hubless Proc FS Files")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/x86/kernel/apic/x2apic_uv_x.c | 43 +++++-------------------------
+ 1 file changed, 6 insertions(+), 37 deletions(-)
+
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index d5b51a740524..ad53b2abc859 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -1493,65 +1493,34 @@ static void check_efi_reboot(void)
+ }
+ 
+ /* Setup user proc fs files */
+-static int proc_hubbed_show(struct seq_file *file, void *data)
++static int __maybe_unused proc_hubbed_show(struct seq_file *file, void *data)
+ {
+ 	seq_printf(file, "0x%x\n", uv_hubbed_system);
+ 	return 0;
+ }
+ 
+-static int proc_hubless_show(struct seq_file *file, void *data)
++static int __maybe_unused proc_hubless_show(struct seq_file *file, void *data)
+ {
+ 	seq_printf(file, "0x%x\n", uv_hubless_system);
+ 	return 0;
+ }
+ 
+-static int proc_oemid_show(struct seq_file *file, void *data)
++static int __maybe_unused proc_oemid_show(struct seq_file *file, void *data)
+ {
+ 	seq_printf(file, "%s/%s\n", oem_id, oem_table_id);
+ 	return 0;
+ }
+ 
+-static int proc_hubbed_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, proc_hubbed_show, (void *)NULL);
+-}
+-
+-static int proc_hubless_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, proc_hubless_show, (void *)NULL);
+-}
+-
+-static int proc_oemid_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, proc_oemid_show, (void *)NULL);
+-}
+-
+-/* (struct is "non-const" as open function is set at runtime) */
+-static struct file_operations proc_version_fops = {
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+-static const struct file_operations proc_oemid_fops = {
+-	.open		= proc_oemid_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static __init void uv_setup_proc_files(int hubless)
+ {
+ 	struct proc_dir_entry *pde;
+-	char *name = hubless ? "hubless" : "hubbed";
+ 
+ 	pde = proc_mkdir(UV_PROC_NODE, NULL);
+-	proc_create("oemid", 0, pde, &proc_oemid_fops);
+-	proc_create(name, 0, pde, &proc_version_fops);
++	proc_create_single("oemid", 0, pde, proc_oemid_show);
+ 	if (hubless)
+-		proc_version_fops.open = proc_hubless_open;
++		proc_create_single("hubless", 0, pde, proc_hubless_show);
+ 	else
+-		proc_version_fops.open = proc_hubbed_open;
++		proc_create_single("hubbed", 0, pde, proc_hubbed_show);
+ }
+ 
+ /* Initialize UV hubless systems */
+-- 
+2.20.0
+
