@@ -2,139 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C58911D809
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 21:46:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6B4411D811
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 21:49:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730889AbfLLUqf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Dec 2019 15:46:35 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:36425 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730784AbfLLUqf (ORCPT
+        id S1730906AbfLLUst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 15:48:49 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50727 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730749AbfLLUss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 15:46:35 -0500
-Received: from marcel-macbook.fritz.box (p4FF9F0D1.dip0.t-ipconnect.de [79.249.240.209])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 3D04CCECEA;
-        Thu, 12 Dec 2019 21:55:44 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
-Subject: Re: [PATCH v3] bluetooth: hci_bcm: enable IRQ capability from node
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <cf77eec5df92b1845f0bf7cc8eb53edd4af9e1bf.camel@suse.de>
-Date:   Thu, 12 Dec 2019 21:46:32 +0100
-Cc:     Guillaume La Roque <glaroque@baylibre.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        BlueZ <linux-bluetooth@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, khilman@baylibre.com,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <0CF02341-CF69-4680-B61F-DC5C0702F1A2@holtmann.org>
-References: <20191211094923.20220-1-glaroque@baylibre.com>
- <cf77eec5df92b1845f0bf7cc8eb53edd4af9e1bf.camel@suse.de>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-X-Mailer: Apple Mail (2.3608.40.2.2.4)
+        Thu, 12 Dec 2019 15:48:48 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a5so3885614wmb.0;
+        Thu, 12 Dec 2019 12:48:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:mime-version:message-id:in-reply-to
+         :references:user-agent:content-transfer-encoding;
+        bh=5qSR0QdqBCxMs032kRyQPK8EtIXFRay9PJcRioaKMHY=;
+        b=IqqQVn8ilZmmSxPnbbsjtHorPQB/AZreK9phmXXKd/PX+sxkep7uzTHc1eAtlEfFP+
+         jdcbyZP21eOJTefkqKGfd9eUPRW2BK83iju3qT6bi2ScAFc+7uLUFuRBXCX57ebxhbgY
+         ik0V440sm/3gTTrhFVU5ZEY+w4uR1XSYg4z+ahrJzIQCLjS264cTU/yl9y+UhU7NI30x
+         ce3QRGUrE2qbCVFKvUhy0kSQAdUEGQDIocasLUwVvYs+zoHYeiHM6Z0djE2Y4wgn7TWe
+         owMwTfCJ1hR6ESjDut+GrU7sxmj+sc3j4TmhzTZ6COP5rSGGzGbj4COtI8Oh60LgDhHB
+         DwWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:mime-version:message-id
+         :in-reply-to:references:user-agent:content-transfer-encoding;
+        bh=5qSR0QdqBCxMs032kRyQPK8EtIXFRay9PJcRioaKMHY=;
+        b=VcsYh+MbOEvi+wOSnNRTNUxofKxKYFRfLO+lT2w0xHtvEK/3nDIKRkPGUP2uvNFPJ1
+         JdsagLble68yyebYdQqzoKZYcRhM2VVvr5JKIRYpj/2MFVh0ihHajNZz3dbUoVnAvs+X
+         8bpJh6z9SOpjsGKbFsgkHRdVVU/e/K6DVZYH7qbbYnjHCWsOQSDVEWkwz7frWY4md2PD
+         eP7vGUNWXZJ5hhbiFJtPM/nDuvOUeQP3zt90dTdLn/kVnwSXX350k9gG/MytR8kftxoa
+         YCBui8570zaCimI69nqiwUUsfhRh7z9ebphbe1Ye75GB99Lkt5l/GPM7dq/hWMgJJid7
+         FQvA==
+X-Gm-Message-State: APjAAAVDnh5PEOKBgCpIV7JXlhFVtsmlvBSHCqBtHxVRSjf5hSBKqOXv
+        yitqBEGOPsnMXF8KXYmVlAs=
+X-Google-Smtp-Source: APXvYqyRBHkSwvPqlOT+cdjfjV6lVJXPzV6ms+AZeyVinqzXI6QzavMEZHDeFT0yrkacR53OIEZa0Q==
+X-Received: by 2002:a05:600c:10cd:: with SMTP id l13mr9322438wmd.102.1576183726517;
+        Thu, 12 Dec 2019 12:48:46 -0800 (PST)
+Received: from localhost ([5.59.90.131])
+        by smtp.gmail.com with ESMTPSA id s16sm7349852wrn.78.2019.12.12.12.48.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 12:48:45 -0800 (PST)
+From:   Vicente Bergas <vicencb@gmail.com>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Enric Balletbo Serra <eballetbo@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Frederick Lawler <fred@fredlawl.com>,
+        <linux-pci@vger.kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Mark Brown <broonie@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        =?iso-8859-1?Q?Stefan_M=E4tje?= <stefan.maetje@esd.eu>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [REGRESSION] PCI v5.5-rc1 breaks google kevin
+Date:   Thu, 12 Dec 2019 21:48:43 +0100
+MIME-Version: 1.0
+Message-ID: <1d500ac9-accd-40d5-b1c9-e3de88957557@gmail.com>
+In-Reply-To: <20191212203925.GH24359@e119886-lin.cambridge.arm.com>
+References: <58ce5534-64bd-4b4b-bd60-ed4e0c71b20f@gmail.com>
+ <166f0016-7061-be5c-660d-0499f74e8697@arm.com>
+ <20191212005254.GE24359@e119886-lin.cambridge.arm.com>
+ <CAFqH_50pJVQT3uqtpVgqn4ijfdPMzHoE1ns_KARH+_cKe+3NRg@mail.gmail.com>
+ <792cf6ab-26c4-40a4-90b0-a99e620548f4@gmail.com>
+ <20191212203925.GH24359@e119886-lin.cambridge.arm.com>
+User-Agent: Trojita
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
+On Thursday, December 12, 2019 9:39:27 PM CET, Andrew Murray wrote:
+> On Thu, Dec 12, 2019 at 07:40:06PM +0100, Vicente Bergas wrote:
+>> On Thursday, December 12, 2019 3:16:25 PM CET, Enric Balletbo Serra wrote:=
 
->> Actually IRQ can be found from GPIO but all platforms don't support
->> gpiod_to_irq, it's the case on amlogic chip.
->> so to have possibility to use interrupt mode we need to add interrupts
->> field in node and support it in driver.
->> 
->> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
->> ---
->> drivers/bluetooth/hci_bcm.c | 3 +++
->> 1 file changed, 3 insertions(+)
-> 
-> This triggers the following panic on Raspberry Pi 4:
-> 
-> [    6.634507] Unable to handle kernel NULL pointer dereference at virtual
-> address 0000000000000018
-> [    6.643486] Mem abort info:
-> [    6.646350]   ESR = 0x96000004
-> [    6.649466]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    6.654873]   SET = 0, FnV = 0
-> [    6.657977]   EA = 0, S1PTW = 0
-> [    6.661201] Data abort info:
-> [    6.664135]   ISV = 0, ISS = 0x00000004
-> [    6.668042]   CM = 0, WnR = 0
-> [    6.671061] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000f3c83000
-> [    6.677627] [0000000000000018] pgd=0000000000000000
-> [    6.682595] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-> [    6.688255] Modules linked in: hci_uart brcmutil btqca btbcm cfg80211
-> bluetooth raspberrypi_cpufreq ecdh_generic ecc rfkill clk_raspberrypi
-> raspberrypi_hwmon pwm_bcm2835 crct10dif_ce bcm2835_dma i2c_bcm2835 pcie_brcmstb
-> ip_tables x_tables ipv6 nf_defrag_ipv6
-> [    6.711519] CPU: 3 PID: 39 Comm: kworker/u8:1 Not tainted 5.5.0-rc1-next-
-> 20191212-00009-geb500fec1e34-dirty #26
-> [    6.721771] Hardware name: Raspberry Pi 4 Model B Rev 1.1 (DT)
-> [    6.727709] Workqueue: events_unbound async_run_entry_fn
-> [    6.733105] pstate: a0000005 (NzCv daif -PAN -UAO)
-> [    6.737971] pc : platform_get_irq_optional+0xa4/0x260
-> [    6.743099] lr : platform_get_irq_optional+0x6c/0x260
-> [    6.748226] sp : ffff8000101b3c20
-> [    6.751586] x29: ffff8000101b3c20 x28: ffffd4bd4a957000
-> [    6.756980] x27: ffff0000f6c0c070 x26: ffff0000f6c0c020
-> [    6.762373] x25: 0000000000000000 x24: 0000000000000000
-> [    6.767767] x23: ffff0000f6238c00 x22: ffffd4bd4a241a38
-> [    6.773159] x21: ffffd4bd49e95838 x20: ffff0000f6238bf0
-> [    6.778552] x19: 0000000000000000 x18: 0000000000000010
-> [    6.783944] x17: 0000000000000000 x16: ffffd4bd497117a8
-> [    6.789337] x15: ffff0000f6fc0470 x14: 0720072007200720
-> [    6.794730] x13: 0720072007200720 x12: 0720072007200720
-> [    6.800123] x11: 0720072007200720 x10: 0720072007200720
-> [    6.805516] x9 : 0720072007200720 x8 : 0720072007200720
-> [    6.810913] x7 : ffffd4bd496ad210 x6 : 000000000000017d
-> [    6.810922] x5 : 0000000000000000 x4 : ffff0000fb7fa1b0
-> [    6.821713] x3 : 00000000f6238800 x2 : 0000000000000000
-> [    6.821716] x1 : 0000000000000000 x0 : 0000000000000000
-> [    6.821720] Call trace:
-> [    6.821730]  platform_get_irq_optional+0xa4/0x260
-> [    6.839768]  platform_get_irq+0x1c/0x58
-> [    6.839792]  bcm_serdev_probe+0x40/0x138 [hci_uart]
-> [    6.839805]  serdev_drv_probe+0x34/0x70
-> [    6.852544]  really_probe+0xd8/0x428
-> [    6.852546]  driver_probe_device+0xdc/0x130
-> [    6.852549]  __driver_attach_async_helper+0xa8/0xb0
-> [    6.852558]  async_run_entry_fn+0x40/0x1a0
-> [    6.869534]  process_one_work+0x19c/0x320
-> [    6.869537]  worker_thread+0x48/0x420
-> [    6.877319]  kthread+0xf0/0x120
-> [    6.877324]  ret_from_fork+0x10/0x18
-> [    6.877330] Code: 17ffffef f9419293 937a7c02 8b020273 (f9400e62)
-> [    6.890329] ---[ end trace 3ebb39e57973e0b7 ]---
-> 
->> 
->> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
->> index f8f5c593a05c..9f52d57c56de 100644
->> --- a/drivers/bluetooth/hci_bcm.c
->> +++ b/drivers/bluetooth/hci_bcm.c
->> @@ -1409,6 +1409,7 @@ static int bcm_serdev_probe(struct serdev_device
->> *serdev)
->> {
->> 	struct bcm_device *bcmdev;
->> 	const struct bcm_device_data *data;
->> +	struct platform_device *pdev;
->> 	int err;
->> 
->> 	bcmdev = devm_kzalloc(&serdev->dev, sizeof(*bcmdev), GFP_KERNEL);
->> @@ -1421,6 +1422,8 @@ static int bcm_serdev_probe(struct serdev_device
->> *serdev)
->> #endif
->> 	bcmdev->serdev_hu.serdev = serdev;
->> 	serdev_device_set_drvdata(serdev, bcmdev);
->> +	pdev = to_platform_device(bcmdev->dev);
-> 
-> Ultimately bcmdev->dev here comes from a serdev device not a platform device,
-> right?
+>>> Hi Vicente,
+>>>=20
+>>> Missatge de Andrew Murray <andrew.murray@arm.com> del dia dj., 12 de
+>>> des. 2019 a les 1:53:
+>>>> On Thu, Dec 12, 2019 at 12:12:56AM +0000, Robin Murphy wrote: ...
+>>>=20
+>>> Another issue that is affecting current mainline for kevin is fixed
+>>> with [1]. As usual, I have a tracking branch for 5.5 for different
+>>> Chromebooks with some not yet merged patches that makes things work
+>>> while are not fixed [2]. For kevin only the mentioned ASoC patch [1]
+>>> and the pcie fix [3] should be needed. Other than that display is
+>>> working for me on Kevin.
+>>>=20
+>>> Cheers,
+>>>  Enric
+>>>=20
+>>> [1]=20
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/=
+?h=3Dfor-5.5&id=3D4bf2e385aa59c2fae5f880aa25cfd2b470109093
+>>> [2]=20
+>>> https://gitlab.collabora.com/eballetbo/linux/commits/topic/chromeos/somew=
+hat-stable-5.5
+>>> [3]  https://lkml.org/lkml/2019/12/11/199
+>>>=20
+>>>>> ...
+>>>> It's likely that any PCI driver that uses PCI IO with that=20
+>>>> controller will
+>>>> suffer the same fate.
+>>>>=20
+>>>> Vicente - can you try the patch that has been proposed and=20
+>>>> verify it fixes
+>>>> the issue for you?
+>>>>=20
+>>>> Thanks, ...
+>>=20
+>> Hi Robin, Andrew and Enric,
+>> thank you all for the quick responses!
+>> I can confirm that patch [3] fixes the issue reported in this email and
+>> that [1] fixes the other issue reported on the other email.
+>
+> Pleased to hear this is working for you now.
+>
+> Are you happy to give a tested-by tag for [3]?
 
-I was afraid of this, but then nobody spoke up. Can we fix this or should I just revert the patch?
+Yes, feel free to apply this tag.
+Using it just now and the wlan at the other side of the PCIe bus is=20
+detected.
 
-Regards
+Regards,
+  Vicente.
 
-Marcel
+> Thanks,
+>
+> Andrew Murray
+>
+>>=20
+>> Regards,
+>>  Vicen=C3=A7.
+>>=20
+>
+>
 
