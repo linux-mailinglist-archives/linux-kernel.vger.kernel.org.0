@@ -2,74 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC6FC11C940
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 10:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2339811C950
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 10:38:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbfLLJf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 04:35:59 -0500
-Received: from a27-10.smtp-out.us-west-2.amazonses.com ([54.240.27.10]:34314
-        "EHLO a27-10.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728230AbfLLJf7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 04:35:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1576143358;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type;
-        bh=w0FazNewqkNs8YdPQjOHQnKwKkuu3mZLl8EwXAI4GQ4=;
-        b=ANJXc3Rky85I9YFunNSO+qsBYLsG26dEyqi4DVTEFxuEXm365azWY4/7L0D6V3lG
-        fmDWR5y68QWknZZm1zREOsmWBeDRD87eVvdEgRcJjM8jCah8QohJi+UoU9E/x2a5zZi
-        7Z1eQEUOwk26Ko71vdCpwOcKH+TjXzQw3xeTKWRs=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1576143358;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type:Feedback-ID;
-        bh=w0FazNewqkNs8YdPQjOHQnKwKkuu3mZLl8EwXAI4GQ4=;
-        b=VPS3XteqH6TtUXFQws12fTJfuumjnJm16BnDtmB/dfTdGCxOPBCGkdVC6Zrkw6NW
-        0qmY8g2xesHE8E+1iUPUITx7lLK2Q8ovn8dGVrPz5KTNAFY7VJfAJnvwwktyJcnNEVe
-        QWk4rfnwSSKF2NeHxmQ3aLi2AZCAqFX7nEC92sHg=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A814C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     linux-nvme@lists.infradead.org, linux-hwmon@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Stanislaw Gruszka <sgruszka@redhat.com>
-Subject: Re: [PATCH v3 09/12] wireless: iwlegacy: use <linux/units.h> helpers
-References: <1576075099-3441-1-git-send-email-akinobu.mita@gmail.com>
-        <1576075099-3441-10-git-send-email-akinobu.mita@gmail.com>
-Date:   Thu, 12 Dec 2019 09:35:58 +0000
-In-Reply-To: <1576075099-3441-10-git-send-email-akinobu.mita@gmail.com>
-        (Akinobu Mita's message of "Wed, 11 Dec 2019 23:38:16 +0900")
-Message-ID: <0101016ef9770a79-8bb3d210-14d0-491a-ba0e-e5eea30ddfaa-000000@us-west-2.amazonses.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1728456AbfLLJiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 04:38:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37570 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728230AbfLLJiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 04:38:16 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BDF8214D8;
+        Thu, 12 Dec 2019 09:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576143495;
+        bh=UlUP+r0l6vL+p/u4gySp7aVL3E71ArRcpUychAwWhPs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MS++4ttC54jH1jDF73vhXP7cwgJukDkqynlvmzwMOFuwjrkAY/YPZ0anugF7/ks+J
+         qOOOH7gasOLJoKZ+WRP1eDTN9eTKA7MCWBSrJOexedi4ylfH+cSZ8IMRsZlQ15jb2p
+         8omnUul+tj3HzSjfLixGhVnRHSDh1yzPF+15oSCU=
+Date:   Thu, 12 Dec 2019 10:36:45 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     shuah <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 00/92] 5.4.3-stable review
+Message-ID: <20191212093645.GH1378792@kroah.com>
+References: <20191211150221.977775294@linuxfoundation.org>
+ <0253e33d-afa5-3dda-95d5-220535537eb4@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-SES-Outgoing: 2019.12.12-54.240.27.10
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0253e33d-afa5-3dda-95d5-220535537eb4@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Akinobu Mita <akinobu.mita@gmail.com> writes:
+On Wed, Dec 11, 2019 at 07:48:28PM -0700, shuah wrote:
+> On 12/11/19 8:04 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.3 release.
+> > There are 92 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri, 13 Dec 2019 14:56:06 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.3-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> Compiled and booted on my test system. No dmesg regressions.
 
-> This switches the iwlegacy driver to use celsius_to_kelvin() and
-> kelvin_to_celsius() in <linux/units.h>.
->
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: Stanislaw Gruszka <sgruszka@redhat.com>
-> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Thanks for testing all of these and letting me know.
 
-It's enough to say "iwlegacy: ", no need to have "wireless:" in the title.
-
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
-
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+greg k-h
