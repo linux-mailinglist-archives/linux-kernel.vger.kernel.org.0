@@ -2,84 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C4511D569
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:25:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B39911D56F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730559AbfLLSZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 13:25:22 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36847 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730343AbfLLSZT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 13:25:19 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x184so1207622pfb.3;
-        Thu, 12 Dec 2019 10:25:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hhwDWcIgdctr3rjiuUu6kq62PV3/oAVNTk2uLpC4Kc4=;
-        b=B1awoG3mwdqyhy4ufoMsUYOIyi4u54v8RcyuEKxhLAGmLPPta5wpKDiMY+7LlAvFAi
-         leqyMWOkDXylvJoP69M/1PiGv2kfB3/i56Nrs5mgD8813xGMpv674Btb5vxQ28PTyEWd
-         1i0pNQ3RasQOw+ptHIwGfVDDCpWncDHCoPg2iqkT+vNftrZjczjel3/a58G8WxjzF1sr
-         ZsGHD9AwYC8PahIup/tzi67/37NG/rAJPvC1GkyfwQcZdKr+x2QLuyoPZ4U2fOAddA/z
-         BzYqadxuLVrCqW9zNJ1LNXy0KKrt6J39uEaYr+WliaMC9vNke3FqswL100G6fnXzyGk1
-         xWzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hhwDWcIgdctr3rjiuUu6kq62PV3/oAVNTk2uLpC4Kc4=;
-        b=SrfKprDxyYBeRNR+rxCMNlVbpCqjpb/6RkIsx/GC9r+lHtgJsHF4PlqUngD3pQU//a
-         Oek8il5QGXFPnWp6Y0HKKc2A/AQIQlYC5p37sz39V/wBlhXMHg8yrAAs/HVW3yXxT2J6
-         x1N+A65mA3H6UTfi3mdNX4i38MoJsaBJlNWhBYXhtNsjYgSWe+IfydsTQNgG9foInvJF
-         QyIxvnLfi8N2yfML5rfxDktDqRoIeubXoEIPmkdHpCDnaZHBeqyDPnVwvr2OOM/21AGF
-         8ft39hm5Kpy4ZRb0nf3yGCBNA2EHJ1wbI6sbvgfszj8MQ9506oQldfLQ8BrW/kjSQnVp
-         GW8Q==
-X-Gm-Message-State: APjAAAUru07xluiJp+I65xDQP3x97aQm4HCq8eTk9OMUzyMcWfhWdyzr
-        scKWDasy63w9qPlW/CTMeX0pYipe
-X-Google-Smtp-Source: APXvYqyEIStgF8cSp4NVbFsrC5Ygeh5nFUBdBIsQMWBTfhKAg6n8uTk9V6zbtmmjxTZUJap24kI48w==
-X-Received: by 2002:aa7:82c9:: with SMTP id f9mr11437729pfn.168.1576175119295;
-        Thu, 12 Dec 2019 10:25:19 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id p186sm8004188pfp.56.2019.12.12.10.25.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 12 Dec 2019 10:25:18 -0800 (PST)
-Date:   Thu, 12 Dec 2019 10:25:18 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 00/92] 5.4.3-stable review
-Message-ID: <20191212182518.GC26863@roeck-us.net>
-References: <20191211150221.977775294@linuxfoundation.org>
+        id S1730576AbfLLSZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 13:25:35 -0500
+Received: from mga05.intel.com ([192.55.52.43]:59691 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730110AbfLLSZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 13:25:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 10:25:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,306,1571727600"; 
+   d="scan'208";a="216201646"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.137])
+  by orsmga006.jf.intel.com with ESMTP; 12 Dec 2019 10:25:22 -0800
+Subject: [PATCH RFC v2 12/14] dmaengine: request submit optimization
+From:   Dave Jiang <dave.jiang@intel.com>
+To:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org
+Cc:     dan.j.williams@intel.com, tony.luck@intel.com, jing.lin@intel.com,
+        ashok.raj@intel.com, sanjay.k.kumar@intel.com, megha.dey@intel.com,
+        jacob.jun.pan@intel.com, yi.l.liu@intel.com, axboe@kernel.dk,
+        akpm@linux-foundation.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, fenghua.yu@intel.com, hpa@zytor.com
+Date:   Thu, 12 Dec 2019 11:25:22 -0700
+Message-ID: <157617512234.42350.12520827545570294790.stgit@djiang5-desk3.ch.intel.com>
+In-Reply-To: <157617487798.42350.4471714981643413895.stgit@djiang5-desk3.ch.intel.com>
+References: <157617487798.42350.4471714981643413895.stgit@djiang5-desk3.ch.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 04:04:51PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.3 release.
-> There are 92 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 13 Dec 2019 14:56:06 +0000.
-> Anything received after that time might be too late.
-> 
+Adding dsa direct call to dmaengine for optimization. Spectre-v2 makes
+indirect branches expensive. Adding direct call to the driver in order
+to mitigate that and reduce cycles to initiate a descriptor submit.
 
-For v5.4.2-102-g2d52a20a4c40:
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+---
+ drivers/dma/idxd/dma.c    |    5 +++--
+ include/linux/dmaengine.h |    6 +++++-
+ include/linux/idxd.h      |   20 ++++++++++++++++++++
+ usr/include/Makefile      |    1 +
+ 4 files changed, 29 insertions(+), 3 deletions(-)
+ create mode 100644 include/linux/idxd.h
 
-Build results:
-	total: 158 pass: 158 fail: 0
-Qemu test results:
-	total: 397 pass: 397 fail: 0
+diff --git a/drivers/dma/idxd/dma.c b/drivers/dma/idxd/dma.c
+index 07fbc98668ae..b9b4621e504a 100644
+--- a/drivers/dma/idxd/dma.c
++++ b/drivers/dma/idxd/dma.c
+@@ -8,6 +8,7 @@
+ #include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/dmaengine.h>
+ #include <uapi/linux/idxd.h>
++#include <linux/idxd.h>
+ #include "../dmaengine.h"
+ #include "registers.h"
+ #include "idxd.h"
+@@ -29,8 +30,7 @@ void idxd_parse_completion_status(u8 status, enum dmaengine_tx_result *res)
+ 	}
+ }
+ 
+-static int idxd_dma_submit_request(struct dma_chan *chan,
+-				   struct dma_request *req)
++int idxd_dma_submit_request(struct dma_chan *chan, struct dma_request *req)
+ {
+ 	struct idxd_wq *wq = container_of(chan, struct idxd_wq, dma_chan);
+ 
+@@ -39,6 +39,7 @@ static int idxd_dma_submit_request(struct dma_chan *chan,
+ 
+ 	return -EINVAL;
+ }
++EXPORT_SYMBOL_GPL(idxd_dma_submit_request);
+ 
+ static int idxd_dma_alloc_chan_resources(struct dma_chan *chan)
+ {
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index 220d241d71ed..cebfa8db60a0 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -1395,6 +1395,7 @@ static inline int dma_get_slave_caps(struct dma_chan *chan,
+ }
+ #endif
+ 
++#include <linux/idxd.h>
+ /* dmaengine_submit_request - helper routine for caller to submit
+  *				a DMA request.
+  * @chan: dma channel context
+@@ -1412,7 +1413,10 @@ static inline int dmaengine_submit_request(struct dma_chan *chan,
+ 	if (!ddev->device_submit_request)
+ 		return -EINVAL;
+ 
+-	return ddev->device_submit_request(chan, req);
++	if (ddev->device_submit_request == idxd_dma_submit_request)
++		return idxd_dma_submit_request(chan, req);
++	else
++		return ddev->device_submit_request(chan, req);
+ }
+ 
+ /* dmaengine_submit_request_and_wait - helper routine for caller to submit
+diff --git a/include/linux/idxd.h b/include/linux/idxd.h
+new file mode 100644
+index 000000000000..4fb26d41a684
+--- /dev/null
++++ b/include/linux/idxd.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright(c) 2019 Intel Corporation. All rights rsvd. */
++#ifndef _LINUX_IDXD_H_
++#define _LINUX_IDXD_H_
++
++struct dmaengine_result;
++struct dma_request;
++struct dma_chan;
++
++#if IS_ENABLED(CONFIG_INTEL_IDXD)
++int idxd_dma_submit_request(struct dma_chan *chan, struct dma_request *req);
++#else
++static inline int idxd_dma_submit_request(struct dma_chan *chan,
++					  struct dma_request *req)
++{
++	return -EOPNOTSUPP;
++}
++#endif
++
++#endif
+diff --git a/usr/include/Makefile b/usr/include/Makefile
+index 4a753a48767b..8bfd68bbc777 100644
+--- a/usr/include/Makefile
++++ b/usr/include/Makefile
+@@ -24,6 +24,7 @@ header-test- += linux/am437x-vpfe.h
+ header-test- += linux/android/binder.h
+ header-test- += linux/android/binderfs.h
+ header-test- += linux/coda.h
++header-test- += linux/iadx.h
+ header-test- += linux/elfcore.h
+ header-test- += linux/errqueue.h
+ header-test- += linux/fsmap.h
 
-Guenter
