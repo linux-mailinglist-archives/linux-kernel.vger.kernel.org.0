@@ -2,324 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68A3B11CBF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:12:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3077011CC00
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:14:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbfLLLMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 06:12:47 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:11742 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728648AbfLLLMr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 06:12:47 -0500
-Received: from [10.28.39.106] (10.28.39.106) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 12 Dec
- 2019 19:13:16 +0800
-Subject: Re: [PATCH 2/4] irqchip/meson-gpio: rework meson irqchip driver to
- support meson-A1 SoCs
-To:     Marc Zyngier <maz@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>
-References: <20191206121714.14579-1-qianggui.song@amlogic.com>
- <20191206121714.14579-3-qianggui.song@amlogic.com>
- <542e3e819e584d6e433d2c4276c3b379@www.loen.fr>
- <2551e382-d373-dad8-7294-80f2a15c0ad4@amlogic.com>
- <0cbbb895b50a838fd1dfa9e59528367d@www.loen.fr>
-From:   Qianggui Song <qianggui.song@amlogic.com>
-Message-ID: <4b892b12-4ffb-7fff-ba27-9e606c958257@amlogic.com>
-Date:   Thu, 12 Dec 2019 19:13:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1728963AbfLLLOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 06:14:54 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58830 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728458AbfLLLOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 06:14:53 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B4AAB51F6902C67E2F34;
+        Thu, 12 Dec 2019 19:14:50 +0800 (CST)
+Received: from DESKTOP-8RFUVS3.china.huawei.com (10.173.222.27) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 12 Dec 2019 19:14:43 +0800
+From:   Zenghui Yu <yuzenghui@huawei.com>
+To:     <bhelgaas@google.com>, <corbet@lwn.net>
+CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>,
+        Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH] Documentation: PCI: msi-howto.rst: Fix wrong function name
+Date:   Thu, 12 Dec 2019 19:13:38 +0800
+Message-ID: <20191212111338.1848-1-yuzenghui@huawei.com>
+X-Mailer: git-send-email 2.23.0.windows.1
 MIME-Version: 1.0
-In-Reply-To: <0cbbb895b50a838fd1dfa9e59528367d@www.loen.fr>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.39.106]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.173.222.27]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+pci_irq_alloc_vectors() -> pci_alloc_irq_vectors().
+
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+---
+ Documentation/PCI/msi-howto.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/PCI/msi-howto.rst b/Documentation/PCI/msi-howto.rst
+index 994cbb660ade..aa2046af69f7 100644
+--- a/Documentation/PCI/msi-howto.rst
++++ b/Documentation/PCI/msi-howto.rst
+@@ -283,5 +283,5 @@ or disabled (0).  If 0 is found in any of the msi_bus files belonging
+ to bridges between the PCI root and the device, MSIs are disabled.
+ 
+ It is also worth checking the device driver to see whether it supports MSIs.
+-For example, it may contain calls to pci_irq_alloc_vectors() with the
++For example, it may contain calls to pci_alloc_irq_vectors() with the
+ PCI_IRQ_MSI or PCI_IRQ_MSIX flags.
+-- 
+2.19.1
 
 
-On 2019/12/12 1:26, Marc Zyngier wrote:
-> On 2019-12-10 02:08, Qianggui Song wrote:
->> Hi, Marc
->>      Thank you for your review
->>
->> On 2019/12/6 21:13, Marc Zyngier wrote:
->>> On 2019-12-06 12:17, Qianggui Song wrote:
->>>> Since Meson-A1 Socs register layout of gpio interrupt controller 
->>>> have
->>>> difference with previous chips, registers to decide irq line and
->>>> offset
->>>> of trigger method are all changed, the current driver should be
->>>> modified.
->>>>
->>>> Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
->>>> ---
->>>>  drivers/irqchip/irq-meson-gpio.c | 79
->>>> ++++++++++++++++++++++++--------
->>>>  1 file changed, 60 insertions(+), 19 deletions(-)
->>>>
->>>> diff --git a/drivers/irqchip/irq-meson-gpio.c
->>>> b/drivers/irqchip/irq-meson-gpio.c
->>>> index 829084b568fa..1824ffc30de2 100644
->>>> --- a/drivers/irqchip/irq-meson-gpio.c
->>>> +++ b/drivers/irqchip/irq-meson-gpio.c
->>>> @@ -30,44 +30,74 @@
->>>>   * stuck at 0. Bits 8 to 15 are responsive and have the expected
->>>>   * effect.
->>>>   */
->>>> -#define REG_EDGE_POL_EDGE(x)	BIT(x)
->>>> -#define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
->>>> -#define REG_BOTH_EDGE(x)	BIT(8 + (x))
->>>> -#define REG_EDGE_POL_MASK(x)    (	\
->>>> -		REG_EDGE_POL_EDGE(x) |	\
->>>> -		REG_EDGE_POL_LOW(x)  |	\
->>>> -		REG_BOTH_EDGE(x))
->>>> +#define REG_EDGE_POL_EDGE(params,
->>>> x)	BIT((params)->edge_single_offset + (x))
->>>> +#define REG_EDGE_POL_LOW(params, x)	BIT((params)->pol_low_offset +
->>>> (x))
->>>> +#define REG_BOTH_EDGE(params, x)	BIT((params)->edge_both_offset +
->>>> (x))
->>>> +#define REG_EDGE_POL_MASK(params, x)    (	\
->>>> +		REG_EDGE_POL_EDGE(params, x) |	\
->>>> +		REG_EDGE_POL_LOW(params, x)  |	\
->>>> +		REG_BOTH_EDGE(params, x))
->>>>  #define REG_PIN_SEL_SHIFT(x)	(((x) % 4) * 8)
->>>>  #define REG_FILTER_SEL_SHIFT(x)	((x) * 4)
->>>>
->>>> +#define INIT_MESON8_COMMON_DATA					\
->>>> +	.edge_single_offset = 0,				\
->>>> +	.pol_low_offset = 16,					\
->>>> +	.pin_sel_mask = 0xff,					\
->>>> +	.ops = {						\
->>>> +		.gpio_irq_sel_pin = meson8_gpio_irq_sel_pin,	\
->>>> +	},
->>>
->>> Please place the #defines that operate on the various data 
->>> structures
->>> *after* the definition of the structures. It would greatly help
->>> reading the changes.
->>>
->> OK, will place it below the definition of struct 
->> meson_gpio_irq_params
->> in the next patch.
->>>> +
->>>> +struct meson_gpio_irq_controller;
->>>> +static void meson8_gpio_irq_sel_pin(struct 
->>>> meson_gpio_irq_controller
->>>> *ctl,
->>>> +				    unsigned int channel, unsigned long hwirq);
->>>> +struct irq_ctl_ops {
->>>> +	void (*gpio_irq_sel_pin)(struct meson_gpio_irq_controller *ctl,
->>>> +					 unsigned int channel,
->>>> +					 unsigned long hwirq);
->>>> +	void (*gpio_irq_init)(struct meson_gpio_irq_controller *ctl);
->>>> +};
->>>> +
->>>>  struct meson_gpio_irq_params {
->>>>  	unsigned int nr_hwirq;
->>>>  	bool support_edge_both;
->>>> +	unsigned int edge_both_offset;
->>>> +	unsigned int edge_single_offset;
->>>> +	unsigned int pol_low_offset;
->>>> +	unsigned int pin_sel_mask;
->>>> +	struct irq_ctl_ops ops;
->>>>  };
->>>>
->>>>  static const struct meson_gpio_irq_params meson8_params = {
->>>>  	.nr_hwirq = 134,
->>>> +	INIT_MESON8_COMMON_DATA
->>>>  };
->>>>
->>>>  static const struct meson_gpio_irq_params meson8b_params = {
->>>>  	.nr_hwirq = 119,
->>>> +	INIT_MESON8_COMMON_DATA
->>>>  };
->>>>
->>>>  static const struct meson_gpio_irq_params gxbb_params = {
->>>>  	.nr_hwirq = 133,
->>>> +	INIT_MESON8_COMMON_DATA
->>>>  };
->>>>
->>>>  static const struct meson_gpio_irq_params gxl_params = {
->>>>  	.nr_hwirq = 110,
->>>> +	INIT_MESON8_COMMON_DATA
->>>>  };
->>>>
->>>>  static const struct meson_gpio_irq_params axg_params = {
->>>>  	.nr_hwirq = 100,
->>>> +	INIT_MESON8_COMMON_DATA
->>>>  };
->>>>
->>>>  static const struct meson_gpio_irq_params sm1_params = {
->>>>  	.nr_hwirq = 100,
->>>>  	.support_edge_both = true,
->>>> +	.edge_both_offset = 8,
->>>> +	INIT_MESON8_COMMON_DATA
->>>>  };
->>>
->>> OK, this isn't great. The least you could do is to make
->>> your initializer parametric, so that it takes the nr_hwirq as
->>> a parameter.
->>>
->>> Then, any additional member that overrides common behaviour
->>> should come after the main initializer.
->>>
->>> Also, do you need 'support_edge_both'? Isn't a non-zero
->>> 'edge_both_offset' enough to detect the feature?
->>>
->>
->> Sorry, but I am not very clear that "make your initializer 
->> parametric,
->> so that it takes the nr_hwirq as a parameter". Is that
->> initializer(initial function in .ops ? ) as a parameter of struct
->> meson_gpio_irq_params ? If nr_hwirq as a parameter of init function 
->> of
->> .ops then will make lot of init function for each platform.
->>
->> How about move .ops from  macro like below:
->> #define INIT_MESON8_COMMON_DATA					\
->> 	.edge_single_offset = 0,				\
->> 	.pol_low_offset = 16,					\
->> 	.pin_sel_mask = 0xff,
->>
->> static const struct meson_gpio_irq_params sm1_params = {
->>  	.nr_hwirq = 100,//main initializer
->> 	.ops = {
->>               .gpio_irq_sel_pin = meson8_gpio_irq_sel_pin,
->>                /*in below to assign support_edge_both
->>                 * edge_both_offset
->>                 * call after main initializer to additional
->>                 * member
->>                 */
->>               .gpio_irq_init = meson_sm1_irq_init,
->> 	},
->>   	INIT_MESON8_COMMON_DATA// m8 to sm1 are the same.
->> };
-> 
-> No, what I'm suggesting is something like this:
-> 
-> diff --git a/drivers/irqchip/irq-meson-gpio.c 
-> b/drivers/irqchip/irq-meson-gpio.c
-> index 8478100706a6..27a3207a944d 100644
-> --- a/drivers/irqchip/irq-meson-gpio.c
-> +++ b/drivers/irqchip/irq-meson-gpio.c
-> @@ -43,24 +43,27 @@
->   /* Below is used for Meson-A1 series like chips*/
->   #define REG_PIN_A1_SEL	0x04
-> 
-> -#define INIT_MESON8_COMMON_DATA					\
-> -	.edge_single_offset = 0,				\
-> -	.pol_low_offset = 16,					\
-> -	.pin_sel_mask = 0xff,					\
-> -	.ops = {						\
-> -		.gpio_irq_sel_pin = meson8_gpio_irq_sel_pin,	\
-> -	},
-> -
-> -#define INIT_MESON_A1_COMMON_DATA				\
-> -	.support_edge_both = true,				\
-> -	.edge_both_offset = 16,					\
-> -	.edge_single_offset = 8,				\
-> -	.pol_low_offset = 0,					\
-> -	.pin_sel_mask = 0x7f,					\
-> -	.ops = {						\
-> -		.gpio_irq_sel_pin = meson_a1_gpio_irq_sel_pin,	\
-> -		.gpio_irq_init = meson_a1_gpio_irq_init,	\
-> -	},
-> +#define INIT_MESON_COMMON(irqs, init, sel)		\
-> +	.nr_hwirq = irqs,				\
-> +	.ops = {					\
-> +		.gpio_irq_sel_pin = sel,		\
-> +		.gpio_irq_init = init,			\
-> +	}
-> +
-> +#define INIT_MESON8_COMMON_DATA(irqs)			\
-> +	INIT_MESON_COMMON(irqs, NULL,			\
-> +			  meson8_gpio_irq_sel_pin),	\
-> +	.pol_low_offset = 16,				\
-> +	.pin_sel_mask = 0xff,
-> +
-> +#define INIT_MESON_A1_COMMON_DATA(irqs)			\
-> +	INIT_MESON_COMMON(irqs, meson_a1_gpio_irq_init,	\
-> +			  meson_a1_gpio_irq_sel_pin),	\
-> +	.support_edge_both = true,			\
-> +	.edge_both_offset = 16,				\
-> +	.edge_single_offset = 8,			\
-> +	.pol_low_offset = 0,				\
-> +	.pin_sel_mask = 0x7f,
-> 
->   struct meson_gpio_irq_controller;
->   static void meson8_gpio_irq_sel_pin(struct meson_gpio_irq_controller 
-> *ctl,
-> @@ -89,40 +92,33 @@ struct meson_gpio_irq_params {
->   };
-> 
->   static const struct meson_gpio_irq_params meson8_params = {
-> -	.nr_hwirq = 134,
-> -	INIT_MESON8_COMMON_DATA
-> +	INIT_MESON8_COMMON_DATA(134),
->   };
-> 
->   static const struct meson_gpio_irq_params meson8b_params = {
-> -	.nr_hwirq = 119,
-> -	INIT_MESON8_COMMON_DATA
-> +	INIT_MESON8_COMMON_DATA(119),
->   };
-> 
->   static const struct meson_gpio_irq_params gxbb_params = {
-> -	.nr_hwirq = 133,
-> -	INIT_MESON8_COMMON_DATA
-> +	INIT_MESON8_COMMON_DATA(133),
->   };
-> 
->   static const struct meson_gpio_irq_params gxl_params = {
-> -	.nr_hwirq = 110,
-> -	INIT_MESON8_COMMON_DATA
-> +	INIT_MESON8_COMMON_DATA(110),
->   };
-> 
->   static const struct meson_gpio_irq_params axg_params = {
-> -	.nr_hwirq = 100,
-> -	INIT_MESON8_COMMON_DATA
-> +	INIT_MESON8_COMMON_DATA(100),
->   };
-> 
->   static const struct meson_gpio_irq_params sm1_params = {
-> -	.nr_hwirq = 100,
-> +	INIT_MESON8_COMMON_DATA(100),
->   	.support_edge_both = true,
->   	.edge_both_offset = 8,
-> -	INIT_MESON8_COMMON_DATA
->   };
-> 
->   static const struct meson_gpio_irq_params a1_params = {
-> -	.nr_hwirq = 62,
-> -	INIT_MESON_A1_COMMON_DATA
-> +	INIT_MESON_A1_COMMON_DATA(62),
->   };
-> 
-Thanks, will try it in later patch
->   static const struct of_device_id meson_irq_gpio_matches[] = {
-> 
-> 
-> Thanks,
-> 
->          M.
-> 
