@@ -2,97 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 883E311CC08
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:17:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B172411CC0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbfLLLRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 06:17:33 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40288 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728458AbfLLLRc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 06:17:32 -0500
-Received: by mail-pg1-f193.google.com with SMTP id k25so985384pgt.7;
-        Thu, 12 Dec 2019 03:17:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GwuLqIZzMSkOgjShx1lhBWPcILFbSLlfNnhrbVgefE8=;
-        b=T0lQ3L5iAI1ysbK3n+jcnIhZs625Cviqe02IiaQKf5uDK2UOmBrtepr051nyFSZMce
-         KLMa23/5U6kq5UB89aVOZeHr3DPcVsW3CvHjRCRbl9uSKUmLLzsej6873kdDe0fHWO9/
-         lKhY1TL8AQgHCw9Mut/ySlPxG0L8L6LY2Z2ulDixwq8BCngQe5kCdd7ywZjJCD4xMn+E
-         G8nWmuzPd50TgpjabmwZIJynLdiW+pdb0p9PXdqeFGbXaLlj0dDK39HATzi7/SniuPQU
-         S6UIOKSFiPLcD9zULwzy1B44JH35PQjyaJvLQvLdcdQ7bXVzu1+rXHzrmXtHW1fJOEsB
-         5vXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GwuLqIZzMSkOgjShx1lhBWPcILFbSLlfNnhrbVgefE8=;
-        b=AxcipjPoZnucCCUyTjIMyOnYnreYxC5vtVyuL//GyNMRz4c15ziS7RvnkQE/o2VXKH
-         JSdNGrcQTZG30HxtUucqWl9khZHbKHrGceMiPgtrydSrLN1a1ugZ0t3QrS5HuGBwDsox
-         37o1Qs1wAH1f1DrmVU/cE0r3H0PrxSiAblzWO0ZH76aHAQOnjta/SncQnFEizx3ET9X/
-         12/e1IDMZ3JMr2gBrOMn7UYnc2tVuG29a7zsC4evT9G+NKeCKofMSAwEniiTh6sgnh0J
-         r1sBW9EYdqgf6EiSQAnAXnh7fzVDqtry7KVAY1JGqRrEMMGuJoBngV/MaSajwnFV0PF3
-         1JHg==
-X-Gm-Message-State: APjAAAVwlRxNkirpvOs5SgeRdeVu4CGiCFrSH0EXNQzFGbIYfeKhM3Dt
-        d7XHsJ89rJgrgFyV3KaXqp7qQV2/mu0=
-X-Google-Smtp-Source: APXvYqySpp0KjfkLQ1L1Nlzel5FRtxQVjK6BM+YDEy/cozoJZkSWBwdQwFSnHk63JVYsxyH5gaN6fg==
-X-Received: by 2002:aa7:9aa5:: with SMTP id x5mr9255362pfi.131.1576149452097;
-        Thu, 12 Dec 2019 03:17:32 -0800 (PST)
-Received: from [10.231.110.95] ([125.29.25.186])
-        by smtp.gmail.com with ESMTPSA id y38sm6535280pgk.33.2019.12.12.03.17.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Dec 2019 03:17:31 -0800 (PST)
-Subject: Re: [PATCH] of: refcount leak when phandle_cache entry replaced
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1575965693-30395-1-git-send-email-frowand.list@gmail.com>
- <20191211201856.GA21857@bogus>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <486ce60c-8a74-7baf-1054-c81c83e79e56@gmail.com>
-Date:   Thu, 12 Dec 2019 05:17:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728961AbfLLLSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 06:18:09 -0500
+Received: from mga17.intel.com ([192.55.52.151]:38945 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728648AbfLLLSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 06:18:09 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 03:18:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,305,1571727600"; 
+   d="scan'208";a="220672222"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 12 Dec 2019 03:18:06 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 12 Dec 2019 13:18:05 +0200
+Date:   Thu, 12 Dec 2019 13:18:05 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, linux@roeck-us.net,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: fusb302: Fix an undefined reference to
+ 'extcon_get_state'
+Message-ID: <20191212111805.GD31345@kuha.fi.intel.com>
+References: <1576136063-50916-1-git-send-email-zhongjiang@huawei.com>
+ <20191212090132.GC31345@kuha.fi.intel.com>
+ <5DF20530.2040509@huawei.com>
+ <20191212092805.GA1375559@kroah.com>
+ <5DF20B18.4020601@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20191211201856.GA21857@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5DF20B18.4020601@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/19 2:18 PM, Rob Herring wrote:
-> On Tue, 10 Dec 2019 02:14:53 -0600, frowand.list@gmail.com wrote:
->> From: Frank Rowand <frank.rowand@sony.com>
->>
->> of_find_node_by_phandle() does not do an of_node_put() of the existing
->> node in a phandle cache entry when that node is replaced by a new node.
->>
->> Reported-by: Rob Herring <robh+dt@kernel.org>
->> Fixes: b8a9ac1a5b99 ("of: of_node_get()/of_node_put() nodes held in phandle cache")
->> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
->> ---
->>
->> Checkpatch will warn about a line over 80 characters.  Let me know
->> if that bothers you.
->>
->>  drivers/of/base.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
+On Thu, Dec 12, 2019 at 05:40:40PM +0800, zhong jiang wrote:
+> On 2019/12/12 17:28, Greg KH wrote:
+> > On Thu, Dec 12, 2019 at 05:15:28PM +0800, zhong jiang wrote:
+> >> On 2019/12/12 17:01, Heikki Krogerus wrote:
+> >>> On Thu, Dec 12, 2019 at 03:34:23PM +0800, zhong jiang wrote:
+> >>>> Fixes the following compile error:
+> >>>>
+> >>>> drivers/usb/typec/tcpm/fusb302.o: In function `tcpm_get_current_limit':
+> >>>> fusb302.c:(.text+0x3ee): undefined reference to `extcon_get_state'
+> >>>> fusb302.c:(.text+0x422): undefined reference to `extcon_get_state'
+> >>>> fusb302.c:(.text+0x450): undefined reference to `extcon_get_state'
+> >>>> fusb302.c:(.text+0x48c): undefined reference to `extcon_get_state'
+> >>>> drivers/usb/typec/tcpm/fusb302.o: In function `fusb302_probe':
+> >>>> fusb302.c:(.text+0x980): undefined reference to `extcon_get_extcon_dev'
+> >>>> make: *** [vmlinux] Error 1
+> >>> There are stubs for those functions so that really should not be
+> >>> happening. I can not reproduce that.
+> >> It can be reproduced in next branch. you can try it in the latest next branch.
+> > Can it be reproduced in 5.5-rc1?
+> >
+> commit 78adcacd4edbd6795e164bbda9a4b2b7e51666a7
+> Author: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date:   Thu Dec 12 15:48:07 2019 +1100
 > 
-> Applied, thanks.
+>     Add linux-next specific files for 20191212
 > 
-> Rob
-> 
+> I  reproduce it  based on this commit.  The related config is attached.
 
-If the rework patch of the cache that you posted shortly after accepting
-my patch, then my patch becomes not needed and is just extra noise in the
-history.  Once your patch finishes review (I am assuming it probably
-will), then my patch should be reverted.
+OK, now I get what's going on. EXTCON is build as a module, but
+FUSB302 is not. This should be explained in the commit message.
 
--Frank
+That does not mean we have to force everybody to enable EXTCON in
+order to use this driver. Try something like this:
+
+diff --git a/drivers/usb/typec/tcpm/Kconfig b/drivers/usb/typec/tcpm/Kconfig
+index 72481bbb2af3..06e026f6325c 100644
+--- a/drivers/usb/typec/tcpm/Kconfig
++++ b/drivers/usb/typec/tcpm/Kconfig
+@@ -31,6 +31,7 @@ endif # TYPEC_TCPCI
+
+ config TYPEC_FUSB302
+        tristate "Fairchild FUSB302 Type-C chip driver"
++       depends on EXTCON=n || EXTCON=y || (EXTCON=m && m)
+        depends on I2C
+        help
+          The Fairchild FUSB302 Type-C chip driver that works with
+
+
+It looks a bit silly, but I don't know of any other way (maybe
+somebody else does?).
+
+thanks,
+
+-- 
+heikki
