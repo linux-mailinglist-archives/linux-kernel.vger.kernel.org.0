@@ -2,130 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 753C411D011
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 769DD11D01C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:44:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729758AbfLLOmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 09:42:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53426 "EHLO mail.kernel.org"
+        id S1729795AbfLLOoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:44:05 -0500
+Received: from foss.arm.com ([217.140.110.172]:49196 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729266AbfLLOmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:42:37 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C2E020637;
-        Thu, 12 Dec 2019 14:42:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576161755;
-        bh=ck563JxppjwUrfE3D/tbAxjKAXIW9YCI6JybTAijvFI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=diM2SA6uv924om3crOT9thcoY4Fb421uI5NehQWj7fpPAhf+gd1OZ4zhkFH9vbhop
-         sGXQtfYFoHJth1IbutmDeROzPxdpvK87+0hjqKVLPPjV6pZMSAT3NY35E0Fip3ZgsN
-         cJLaPPxSd2YSoFiTjaLoau+ii/PKczv7tL91N4aE=
-Date:   Thu, 12 Dec 2019 15:42:33 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vitor Soares <Vitor.Soares@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org,
-        Joao.Pinto@synopsys.com, bbrezillon@kernel.org, wsa@the-dreams.de,
-        arnd@arndb.de, broonie@kernel.org
-Subject: Re: [RFC 3/5] i3c: device: expose transfer strutures to uapi
-Message-ID: <20191212144233.GA1668196@kroah.com>
-References: <cover.1575977795.git.vitor.soares@synopsys.com>
- <fcc51a2758fd7920e1c0163a818fe7c12bd33765.1575977795.git.vitor.soares@synopsys.com>
+        id S1729526AbfLLOoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 09:44:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B0E530E;
+        Thu, 12 Dec 2019 06:44:03 -0800 (PST)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D90EA3F718;
+        Thu, 12 Dec 2019 06:44:00 -0800 (PST)
+Date:   Thu, 12 Dec 2019 14:43:55 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Neal Liu <neal.liu@mediatek.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+        Lars Persson <lists@bofh.nu>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        wsd_upstream <wsd_upstream@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Crystal Guo =?utf-8?B?KOmDreaZtik=?= <Crystal.Guo@mediatek.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v5 3/3] hwrng: add mtk-sec-rng driver
+Message-ID: <20191212144355.GA13263@bogus>
+References: <1574864578-467-1-git-send-email-neal.liu@mediatek.com>
+ <1574864578-467-4-git-send-email-neal.liu@mediatek.com>
+ <CADnJP=uhD=J2NrpSwiX8oCTd-u_q05=HhsAV-ErCsXNDwVS0rA@mail.gmail.com>
+ <1575027046.24848.4.camel@mtkswgap22>
+ <CAKv+Gu_um7eRYXbieW7ogDX5mmZaxP7JQBJM9CajK+6CsO5RgQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fcc51a2758fd7920e1c0163a818fe7c12bd33765.1575977795.git.vitor.soares@synopsys.com>
+In-Reply-To: <CAKv+Gu_um7eRYXbieW7ogDX5mmZaxP7JQBJM9CajK+6CsO5RgQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 04:37:31PM +0100, Vitor Soares wrote:
-> --- /dev/null
-> +++ b/include/uapi/linux/i3c/device.h
-> @@ -0,0 +1,66 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
+On Mon, Dec 02, 2019 at 04:12:09PM +0000, Ard Biesheuvel wrote:
+> (adding some more arm64 folks)
+> 
+> On Fri, 29 Nov 2019 at 11:30, Neal Liu <neal.liu@mediatek.com> wrote:
+> >
+> > On Fri, 2019-11-29 at 18:02 +0800, Lars Persson wrote:
+> > > Hi Neal,
+> > >
+> > > On Wed, Nov 27, 2019 at 3:23 PM Neal Liu <neal.liu@mediatek.com> wrote:
+> > > >
+> > > > For MediaTek SoCs on ARMv8 with TrustZone enabled, peripherals like
+> > > > entropy sources is not accessible from normal world (linux) and
+> > > > rather accessible from secure world (ATF/TEE) only. This driver aims
+> > > > to provide a generic interface to ATF rng service.
+> > > >
+> > >
+> > > I am working on several SoCs that also will need this kind of driver
+> > > to get entropy from Arm trusted firmware.
+> > > If you intend to make this a generic interface, please clean up the
+> > > references to MediaTek and give it a more generic name. For example
+> > > "Arm Trusted Firmware random number driver".
+> > >
+> > > It will also be helpful if the SMC call number is configurable.
+> > >
+> > > - Lars
+> >
+> > Yes, I'm trying to make this to a generic interface. I'll try to make
+> > HW/platform related dependency to be configurable and let it more
+> > generic.
+> > Thanks for your suggestion.
+> >
+> 
+> I don't think it makes sense for each arm64 platform to expose an
+> entropy source via SMC calls in a slightly different way, and model it
+> as a h/w driver. Instead, we should try to standardize this, and
+> perhaps expose it via the architectural helpers that already exist
+> (get_random_seed_long() and friends), so they get plugged into the
+> kernel random pool driver directly.
+> 
+> Note that in addition to drivers based on vendor SMC calls, we already
+> have a RNG h/w driver based on OP-TEE as well, where the driver
+> attaches to a standardized trusted OS interface identified by a UUID,
+> and which also gets invoked via SMC calls into secure firmware.
 
-Not a valid uapi SPDX license :(
+Yes, I agree. I had raised the issue internally and forgot to follow up.
+I raised this few months back after I read a blog[1]
 
+--
+Regards,
+Sudeep
 
-> +/*
-> + * Copyright (c) 2019 Synopsys, Inc. and/or its affiliates.
-> + *
-> + * Author: Vitor Soares <vitor.soares@synopsys.com>
-> + */
-> +
-> +#ifndef _UAPI_LINUX_I3C_DEVICE_H
-> +#define _UAPI_LINUX_I3C_DEVICE_H
-> +
-> +#include <linux/types.h>
-> +
-> +/**
-> + * enum i3c_error_code - I3C error codes
-> + *
-> + * These are the standard error codes as defined by the I3C specification.
-> + * When -EIO is returned by the i3c_device_do_priv_xfers() or
-> + * i3c_device_send_hdr_cmds() one can check the error code in
-> + * &struct_i3c_priv_xfer.err or &struct i3c_hdr_cmd.err to get a better idea of
-> + * what went wrong.
-> + *
-> + * @I3C_ERROR_UNKNOWN: unknown error, usually means the error is not I3C
-> + *		       related
-> + * @I3C_ERROR_M0: M0 error
-> + * @I3C_ERROR_M1: M1 error
-> + * @I3C_ERROR_M2: M2 error
-> + */
-> +enum i3c_error_code {
-> +	I3C_ERROR_UNKNOWN = 0,
-> +	I3C_ERROR_M0 = 1,
-> +	I3C_ERROR_M1,
-> +	I3C_ERROR_M2,
-
-You have to specify all of these.
-
-> +};
-> +
-> +/**
-> + * enum i3c_hdr_mode - HDR mode ids
-> + * @I3C_HDR_DDR: DDR mode
-> + * @I3C_HDR_TSP: TSP mode
-> + * @I3C_HDR_TSL: TSL mode
-> + */
-> +enum i3c_hdr_mode {
-> +	I3C_HDR_DDR,
-> +	I3C_HDR_TSP,
-> +	I3C_HDR_TSL,
-
-same here.
-
-
-> +};
-> +
-> +/**
-> + * struct i3c_priv_xfer - I3C SDR private transfer
-> + * @rnw: encodes the transfer direction. true for a read, false for a write
-> + * @len: transfer length in bytes of the transfer
-> + * @data: input/output buffer
-> + * @data.in: input buffer. Must point to a DMA-able buffer
-> + * @data.out: output buffer. Must point to a DMA-able buffer
-> + * @err: I3C error code
-> + */
-> +struct i3c_priv_xfer {
-> +	u8 rnw;
-> +	u16 len;
-> +	union {
-> +		void *in;
-> +		const void *out;
-> +	} data;
-> +	enum i3c_error_code err;
-
-Ick, that's a horrid user/kernel api structure that will not work at
-all.
-
-Please fix.
-
-thanks,
-
-greg k-h
+[1] https://community.arm.com/developer/ip-products/processors/f/cortex-a-forum/43679/arm-really-should-standardize-an-smc-interface-for-hardware-random-number-generators
