@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A08311D971
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 23:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F2D711D973
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 23:36:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731173AbfLLWfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 17:35:48 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:35067 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730784AbfLLWfr (ORCPT
+        id S1731219AbfLLWfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 17:35:53 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25911 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731175AbfLLWft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 17:35:47 -0500
+        Thu, 12 Dec 2019 17:35:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1576190147;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=fkogw9fCK3fQnXbyNstM260Fvpl0EOyfpQuQ+DAojAQ=;
-        b=i0rBpsmI4hql7Ytn1FvTJVneFOcmOk5S4c3JgPxYU4OAYaD7SoQNtuSVwU1bRzm6j/PCh6
-        5jtgmJ/7lmywl2HoznNY8v/TVWZcKBCS5x0T9UD9+N4F4u8sfNCiNHN3VQ5GCS1FQVFMC3
-        N0/di3qZZOO6VYyRGuz2nm6lfa/du9o=
+        bh=gO+9wOv+XnKPsvxOrQ0r7t/MjPJcWebeS9c1iUlob5Y=;
+        b=fZ4drCNzA/s5wC3AZeEBSKNFSD0H2fWsacRoo6TYhdmdoDtkC11H/OW7HpiNA9pf3xmcYZ
+        +qURHhhW8nUaBiFh6I6I4A01GzmhVea1kSNzeaR+XNyaC9WW3RxBc2Lcq+Hr2B7JR6dV1C
+        fke5N/5LHkjRRw4WRoqBnLjtTVTGdNE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-147-sZNZe5xfOdys4Q5XufQdcw-1; Thu, 12 Dec 2019 17:35:43 -0500
-X-MC-Unique: sZNZe5xfOdys4Q5XufQdcw-1
+ us-mta-67-LiD0oYyHPXG9Jt6ab_cXgQ-1; Thu, 12 Dec 2019 17:35:44 -0500
+X-MC-Unique: LiD0oYyHPXG9Jt6ab_cXgQ-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9FA9E477;
-        Thu, 12 Dec 2019 22:35:42 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 776AA18557C6;
+        Thu, 12 Dec 2019 22:35:43 +0000 (UTC)
 Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EA68660C05;
-        Thu, 12 Dec 2019 22:35:41 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C15EA60BF3;
+        Thu, 12 Dec 2019 22:35:42 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Will Deacon <will.deacon@arm.com>
 Cc:     linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH 1/5] locking/lockdep: Track number of zapped classes
-Date:   Thu, 12 Dec 2019 17:35:21 -0500
-Message-Id: <20191212223525.1652-2-longman@redhat.com>
+Subject: [PATCH 2/5] locking/lockdep: Track leaked chain_hlocks entries
+Date:   Thu, 12 Dec 2019 17:35:22 -0500
+Message-Id: <20191212223525.1652-3-longman@redhat.com>
 In-Reply-To: <20191212223525.1652-1-longman@redhat.com>
 References: <20191212223525.1652-1-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
@@ -49,71 +49,144 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The whole point of the lockdep dynamic key patch is to allow unused
-locks to be removed from the lockdep data buffers so that existing
-buffer space can be reused. However, there is no way to find out how
-many unused locks are zapped and so we don't know if the zapping process
-is working properly.
+If a lock chain contains a class that is zapped, the whole lock chain is
+now invalid. There is no point in keeping a partial chain behind hoping
+it can be useful. So just dump the corresponding chain_hlocks entries
+and account for them in a new nr_leaked_chain_hlocks stat counter which
+is shown as part of /proc/lockdep_stats.
 
-Add a new nr_zapped_classes variable to track that and show it in
-/proc/lockdep_stats if it is non-zero.
+This patch also changes the type of nr_chain_hlocks to unsigned integer
+to be consistent with the other counters.
+
+A latter patch will try to reuse the freed chain_hlocks entries.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/locking/lockdep.c           | 2 ++
- kernel/locking/lockdep_internals.h | 1 +
- kernel/locking/lockdep_proc.c      | 9 +++++++++
- 3 files changed, 12 insertions(+)
+ kernel/locking/lockdep.c           | 40 ++++++------------------------
+ kernel/locking/lockdep_internals.h |  5 ++--
+ kernel/locking/lockdep_proc.c      |  4 ++-
+ 3 files changed, 14 insertions(+), 35 deletions(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 32282e7112d3..c8d0374101b0 100644
+index c8d0374101b0..d03503b348f1 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -147,6 +147,7 @@ static DECLARE_BITMAP(list_entries_in_use, MAX_LOCKDEP_ENTRIES);
- #define KEYHASH_SIZE		(1UL << KEYHASH_BITS)
- static struct hlist_head lock_keys_hash[KEYHASH_SIZE];
- unsigned long nr_lock_classes;
-+unsigned long nr_zapped_classes;
- #ifndef CONFIG_DEBUG_LOCKDEP
- static
- #endif
-@@ -4875,6 +4876,7 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
- 	}
+@@ -2624,8 +2624,9 @@ check_prevs_add(struct task_struct *curr, struct held_lock *next)
  
- 	remove_class_from_lock_chains(pf, class);
-+	nr_zapped_classes++;
+ struct lock_chain lock_chains[MAX_LOCKDEP_CHAINS];
+ static DECLARE_BITMAP(lock_chains_in_use, MAX_LOCKDEP_CHAINS);
+-int nr_chain_hlocks;
+ static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
++unsigned int nr_chain_hlocks;
++unsigned int nr_leaked_chain_hlocks;
+ 
+ struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i)
+ {
+@@ -4770,57 +4771,32 @@ static void remove_class_from_lock_chain(struct pending_free *pf,
+ 					 struct lock_class *class)
+ {
+ #ifdef CONFIG_PROVE_LOCKING
+-	struct lock_chain *new_chain;
+-	u64 chain_key;
+ 	int i;
+ 
+ 	for (i = chain->base; i < chain->base + chain->depth; i++) {
+ 		if (chain_hlocks[i] != class - lock_classes)
+ 			continue;
+-		/* The code below leaks one chain_hlock[] entry. */
+-		if (--chain->depth > 0) {
+-			memmove(&chain_hlocks[i], &chain_hlocks[i + 1],
+-				(chain->base + chain->depth - i) *
+-				sizeof(chain_hlocks[0]));
+-		}
++		/* Account for leaked chain_hlock[] entries. */
++		nr_leaked_chain_hlocks += chain->depth;
++
+ 		/*
+ 		 * Each lock class occurs at most once in a lock chain so once
+ 		 * we found a match we can break out of this loop.
+ 		 */
+-		goto recalc;
++		goto free_lock_chain;
+ 	}
+ 	/* Since the chain has not been modified, return. */
+ 	return;
+ 
+-recalc:
+-	chain_key = INITIAL_CHAIN_KEY;
+-	for (i = chain->base; i < chain->base + chain->depth; i++)
+-		chain_key = iterate_chain_key(chain_key, chain_hlocks[i]);
+-	if (chain->depth && chain->chain_key == chain_key)
+-		return;
++free_lock_chain:
+ 	/* Overwrite the chain key for concurrent RCU readers. */
+-	WRITE_ONCE(chain->chain_key, chain_key);
++	WRITE_ONCE(chain->chain_key, INITIAL_CHAIN_KEY);
+ 	/*
+ 	 * Note: calling hlist_del_rcu() from inside a
+ 	 * hlist_for_each_entry_rcu() loop is safe.
+ 	 */
+ 	hlist_del_rcu(&chain->entry);
+ 	__set_bit(chain - lock_chains, pf->lock_chains_being_freed);
+-	if (chain->depth == 0)
+-		return;
+-	/*
+-	 * If the modified lock chain matches an existing lock chain, drop
+-	 * the modified lock chain.
+-	 */
+-	if (lookup_chain_cache(chain_key))
+-		return;
+-	new_chain = alloc_lock_chain();
+-	if (WARN_ON_ONCE(!new_chain)) {
+-		debug_locks_off();
+-		return;
+-	}
+-	*new_chain = *chain;
+-	hlist_add_head_rcu(&new_chain->entry, chainhashentry(chain_key));
+ #endif
  }
  
- static void reinit_class(struct lock_class *class)
 diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 18d85aebbb57..a31d16fd3c43 100644
+index a31d16fd3c43..b6ec9595ae88 100644
 --- a/kernel/locking/lockdep_internals.h
 +++ b/kernel/locking/lockdep_internals.h
-@@ -124,6 +124,7 @@ extern const char *__get_key_name(const struct lockdep_subclass_key *key,
- struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i);
- 
- extern unsigned long nr_lock_classes;
-+extern unsigned long nr_zapped_classes;
+@@ -128,14 +128,15 @@ extern unsigned long nr_zapped_classes;
  extern unsigned long nr_list_entries;
  long lockdep_next_lockchain(long i);
  unsigned long lock_chain_count(void);
+-extern int nr_chain_hlocks;
+ extern unsigned long nr_stack_trace_entries;
+ 
+ extern unsigned int nr_hardirq_chains;
+ extern unsigned int nr_softirq_chains;
+ extern unsigned int nr_process_chains;
+-extern unsigned int max_lockdep_depth;
++extern unsigned int nr_chain_hlocks;
++extern unsigned int nr_leaked_chain_hlocks;
+ 
++extern unsigned int max_lockdep_depth;
+ extern unsigned int max_bfs_queue_depth;
+ 
+ #ifdef CONFIG_PROVE_LOCKING
 diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 9bb6d2497b04..82579fd7469f 100644
+index 82579fd7469f..aab524530115 100644
 --- a/kernel/locking/lockdep_proc.c
 +++ b/kernel/locking/lockdep_proc.c
-@@ -336,6 +336,15 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 	seq_printf(m, " debug_locks:                   %11u\n",
- 			debug_locks);
+@@ -271,7 +271,7 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
+ #ifdef CONFIG_PROVE_LOCKING
+ 	seq_printf(m, " dependency chains:             %11lu [max: %lu]\n",
+ 			lock_chain_count(), MAX_LOCKDEP_CHAINS);
+-	seq_printf(m, " dependency chain hlocks:       %11d [max: %lu]\n",
++	seq_printf(m, " dependency chain hlocks:       %11u [max: %lu]\n",
+ 			nr_chain_hlocks, MAX_LOCKDEP_CHAIN_HLOCKS);
+ #endif
  
-+	/*
-+	 * Zappped classes and lockdep data buffers reuse statistics.
-+	 */
-+	if (!nr_zapped_classes)
-+		return 0;
-+
-+	seq_puts(m, "\n");
-+	seq_printf(m, " zapped classes:                %11lu\n",
-+			nr_zapped_classes);
+@@ -345,6 +345,8 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
+ 	seq_puts(m, "\n");
+ 	seq_printf(m, " zapped classes:                %11lu\n",
+ 			nr_zapped_classes);
++	seq_printf(m, " leaked chain hlocks:           %11u\n",
++			nr_leaked_chain_hlocks);
  	return 0;
  }
  
