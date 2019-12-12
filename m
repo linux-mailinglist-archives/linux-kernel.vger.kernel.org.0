@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB84C11CD8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 13:54:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 485B211CD94
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 13:54:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbfLLMx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 07:53:57 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60835 "EHLO
+        id S1729327AbfLLMx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 07:53:59 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56275 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729221AbfLLMx5 (ORCPT
+        with ESMTP id S1729289AbfLLMx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Dec 2019 07:53:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576155235;
+        s=mimecast20190719; t=1576155236;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=VVeZNerFz0m8O8v6gQkmOYeCxlg/A2VEf1w2oz635Wg=;
-        b=OD2xnlEsEd9/W/WtIenOrNVDCunxAMfStg0XHsTouXeoTaIK63q3OlYA32llEFf6kVSxDr
-        qdLD4aM+y93Z781aB4ph7IS0VfIwMvS0dzujKoouYEvtFrsOgdMT4gBO23aEXr2QSPzfB2
-        asfrbdU3QOH+Q0aRT4eO8bIoGSG+XoQ=
+        bh=yfsqRxgDubeOFoB29hzjK9oDh1fi5tQsU42uuGO4JvA=;
+        b=OgyfLEZrv1MrXD+Skkd5z0THJFnQmMeXzcF2/XOKH0vArXlksOvPjbwCA4KhnAIbvQHd9k
+        ZOeOgJxvV+qBnT15Fy6pEH9riHPF5Q3AuN4BxNKCmSVv54LPuBrIhzI2UrC+lOMVAthY/J
+        DIIlbi1YbIpo4+sXz18aBU0qPs3+w8U=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-27-KWdqMaUROhClFtPph7_W8w-1; Thu, 12 Dec 2019 07:53:52 -0500
-X-MC-Unique: KWdqMaUROhClFtPph7_W8w-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-329-jtrs1QBLO1mAcdbtrBxEDg-1; Thu, 12 Dec 2019 07:53:53 -0500
+X-MC-Unique: jtrs1QBLO1mAcdbtrBxEDg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 36297A89A18;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A356E802B79;
         Thu, 12 Dec 2019 12:53:51 +0000 (UTC)
 Received: from sirius.home.kraxel.org (unknown [10.36.118.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AA8EA5DA7D;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C522A19C58;
         Thu, 12 Dec 2019 12:53:47 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id E843C9DB3; Thu, 12 Dec 2019 13:53:46 +0100 (CET)
+        id 1C99F9D62; Thu, 12 Dec 2019 13:53:47 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     olvaffe@gmail.com, gurchetansingh@chromium.org,
@@ -42,70 +42,118 @@ Cc:     olvaffe@gmail.com, gurchetansingh@chromium.org,
         Daniel Vetter <daniel@ffwll.ch>,
         virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 1/3] drm/virtio: skip set_scanout if framebuffer didn't change
-Date:   Thu, 12 Dec 2019 13:53:44 +0100
-Message-Id: <20191212125346.8334-2-kraxel@redhat.com>
+Subject: [PATCH v2 2/3] virtio-gpu: batch display update commands.
+Date:   Thu, 12 Dec 2019 13:53:45 +0100
+Message-Id: <20191212125346.8334-3-kraxel@redhat.com>
 In-Reply-To: <20191212125346.8334-1-kraxel@redhat.com>
 References: <20191212125346.8334-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v2: also check src rect (Chia-I Wu).
+When the driver submits multiple commands in a row it makes sense to
+notify the host only after submitting the last one, so the host can
+process them all at once, with a single vmexit.
+
+Add functions to enable/disable notifications to allow that.  Use the
+new functions for primary plane updates.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_plane.c | 35 +++++++++++++++-----------
- 1 file changed, 21 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_drv.h   |  6 ++++++
+ drivers/gpu/drm/virtio/virtgpu_plane.c |  4 ++++
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 23 +++++++++++++++++++++--
+ 3 files changed, 31 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+index eedae2a7b532..29cf005ed6b9 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.h
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+@@ -183,6 +183,9 @@ struct virtio_gpu_device {
+ 	struct kmem_cache *vbufs;
+ 	bool vqs_ready;
+ 
++	bool disable_notify;
++	bool pending_notify;
++
+ 	struct ida	resource_ida;
+ 
+ 	wait_queue_head_t resp_wq;
+@@ -335,6 +338,9 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work);
+ void virtio_gpu_dequeue_cursor_func(struct work_struct *work);
+ void virtio_gpu_dequeue_fence_func(struct work_struct *work);
+ 
++void virtio_gpu_disable_notify(struct virtio_gpu_device *vgdev);
++void virtio_gpu_enable_notify(struct virtio_gpu_device *vgdev);
++
+ /* virtio_gpu_display.c */
+ int virtio_gpu_framebuffer_init(struct drm_device *dev,
+ 				struct virtio_gpu_framebuffer *vgfb,
 diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
-index bc4bc4475a8c..59bf76d4a333 100644
+index 59bf76d4a333..2fb068cd680e 100644
 --- a/drivers/gpu/drm/virtio/virtgpu_plane.c
 +++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
-@@ -151,20 +151,27 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
- 	if (bo->dumb)
- 		virtio_gpu_update_dumb_bo(vgdev, bo, plane->state);
+@@ -146,6 +146,8 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
+ 		return;
+ 	}
  
--	DRM_DEBUG("handle 0x%x, crtc %dx%d+%d+%d, src %dx%d+%d+%d\n",
--		  bo->hw_res_handle,
--		  plane->state->crtc_w, plane->state->crtc_h,
--		  plane->state->crtc_x, plane->state->crtc_y,
--		  plane->state->src_w >> 16,
--		  plane->state->src_h >> 16,
--		  plane->state->src_x >> 16,
--		  plane->state->src_y >> 16);
--	virtio_gpu_cmd_set_scanout(vgdev, output->index,
--				   bo->hw_res_handle,
--				   plane->state->src_w >> 16,
--				   plane->state->src_h >> 16,
--				   plane->state->src_x >> 16,
--				   plane->state->src_y >> 16);
-+	if (plane->state->fb != old_state->fb ||
-+	    plane->state->src_w != old_state->src_w ||
-+	    plane->state->src_h != old_state->src_h ||
-+	    plane->state->src_x != old_state->src_x ||
-+	    plane->state->src_y != old_state->src_y) {
-+		DRM_DEBUG("handle 0x%x, crtc %dx%d+%d+%d, src %dx%d+%d+%d\n",
-+			  bo->hw_res_handle,
-+			  plane->state->crtc_w, plane->state->crtc_h,
-+			  plane->state->crtc_x, plane->state->crtc_y,
-+			  plane->state->src_w >> 16,
-+			  plane->state->src_h >> 16,
-+			  plane->state->src_x >> 16,
-+			  plane->state->src_y >> 16);
-+		virtio_gpu_cmd_set_scanout(vgdev, output->index,
-+					   bo->hw_res_handle,
-+					   plane->state->src_w >> 16,
-+					   plane->state->src_h >> 16,
-+					   plane->state->src_x >> 16,
-+					   plane->state->src_y >> 16);
-+	}
++	virtio_gpu_disable_notify(vgdev);
 +
- 	virtio_gpu_cmd_resource_flush(vgdev, bo->hw_res_handle,
- 				      plane->state->src_x >> 16,
+ 	vgfb = to_virtio_gpu_framebuffer(plane->state->fb);
+ 	bo = gem_to_virtio_gpu_obj(vgfb->base.obj[0]);
+ 	if (bo->dumb)
+@@ -177,6 +179,8 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
  				      plane->state->src_y >> 16,
+ 				      plane->state->src_w >> 16,
+ 				      plane->state->src_h >> 16);
++
++	virtio_gpu_enable_notify(vgdev);
+ }
+ 
+ static int virtio_gpu_cursor_prepare_fb(struct drm_plane *plane,
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index 9274c4063c70..5914e79d3429 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -404,8 +404,12 @@ static void virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
+ 	}
+ 	notify = virtio_gpu_queue_ctrl_buffer_locked(vgdev, vbuf, vout);
+ 	spin_unlock(&vgdev->ctrlq.qlock);
+-	if (notify)
+-		virtqueue_notify(vgdev->ctrlq.vq);
++	if (notify) {
++		if (vgdev->disable_notify)
++			vgdev->pending_notify = true;
++		else
++			virtqueue_notify(vgdev->ctrlq.vq);
++	}
+ 
+ 	if (sgt) {
+ 		sg_free_table(sgt);
+@@ -413,6 +417,21 @@ static void virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
+ 	}
+ }
+ 
++void virtio_gpu_disable_notify(struct virtio_gpu_device *vgdev)
++{
++	vgdev->disable_notify = true;
++}
++
++void virtio_gpu_enable_notify(struct virtio_gpu_device *vgdev)
++{
++	vgdev->disable_notify = false;
++
++	if (!vgdev->pending_notify)
++		return;
++	vgdev->pending_notify = false;
++	virtqueue_notify(vgdev->ctrlq.vq);
++}
++
+ static void virtio_gpu_queue_ctrl_buffer(struct virtio_gpu_device *vgdev,
+ 					 struct virtio_gpu_vbuffer *vbuf)
+ {
 -- 
 2.18.1
 
