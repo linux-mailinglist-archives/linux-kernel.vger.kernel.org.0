@@ -2,229 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 330DE11D982
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 23:38:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D71B11D9A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 23:41:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730948AbfLLWi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 17:38:28 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:30562 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730707AbfLLWi1 (ORCPT
+        id S1731011AbfLLWls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 17:41:48 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:39496 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730707AbfLLWls (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 17:38:27 -0500
+        Thu, 12 Dec 2019 17:41:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576190305;
+        s=mimecast20190719; t=1576190506;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=crHBje/oHds09T3AVYGKwazOp3zA0oqjnOabhZhsT6c=;
-        b=THo64cgBOuTEXP5Y/TyzNDrPDm9Bb0eHwSRfpbg/N54E7KM/n6hDPAfnssR7bgB4tppniR
-        pEZZRnXV+IHI7ZCKSq0L/f3rbx2z1leeoLiZqtLCazpq/q4QnwYalcfB8UIjxoTeeTV3+3
-        +En13ZAq4KiujaoQHos59JPpgojRawk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-299-xTIrS3i0Plq_M2x7NwcrKA-1; Thu, 12 Dec 2019 17:38:21 -0500
-X-MC-Unique: xTIrS3i0Plq_M2x7NwcrKA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B2DAD107ACC4;
-        Thu, 12 Dec 2019 22:38:18 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 291E210013A1;
-        Thu, 12 Dec 2019 22:38:09 +0000 (UTC)
-Date:   Fri, 13 Dec 2019 06:38:05 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     tglx@linutronix.de, chenxiang66@hisilicon.com,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        maz@kernel.org, hare@suse.com, hch@lst.de, axboe@kernel.dk,
-        bvanassche@acm.org, peterz@infradead.org, mingo@redhat.com
-Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity
- for managed interrupt
-Message-ID: <20191212223805.GA24463@ming.t460p>
-References: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
- <1575642904-58295-2-git-send-email-john.garry@huawei.com>
- <20191207080335.GA6077@ming.t460p>
- <78a10958-fdc9-0576-0c39-6079b9749d39@huawei.com>
- <20191210014335.GA25022@ming.t460p>
- <0ad37515-c22d-6857-65a2-cc28256a8afa@huawei.com>
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QTqrX0C+eShgCocrnLwj0jnrcRKihR9p/00TbrrS4kU=;
+        b=cvfVZ2bh0x+RS/q90h3CmRUxPa+kxGUwIXKF0gODW4ihpst2BCwm3XJdbN9vAZH4SpfpQk
+        hpeFmphrDmC2WxNTY6HpIWfw8PABvHvpxTJ8BY7fGlO2L9evsWSjm2NCU+FpZpZPcG9vHa
+        fDw/z+c81Eis5e4KFx4Ds5xr+fK6ZAg=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-397-5KZg-W5PPruxjT1SiMkrig-1; Thu, 12 Dec 2019 17:41:45 -0500
+X-MC-Unique: 5KZg-W5PPruxjT1SiMkrig-1
+Received: by mail-qv1-f70.google.com with SMTP id a4so438009qvn.14
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 14:41:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QTqrX0C+eShgCocrnLwj0jnrcRKihR9p/00TbrrS4kU=;
+        b=DxUCBz51XB/MVEFE77HMm4EQ3F7Qc2c3jFxtm+OeAkT1GTSP3r7mXWQ+M3TIJlg1ue
+         eUbOtrt5vhGIjytwgo5Q88Yrj9fpYBePJvoUj02MqAVEvfgtruB17zvTfPKCQWXLVjFu
+         fCalUn1UW/F8e0AKrSwQIm8ve/WnXGtuInL2GFd7yIwWTysPbI8F1U4Xa8JDUqE8y5FZ
+         CNUDcIu3c4gOvknSk5C7MZYG7WWK+P0e9PwDKI/zitROj2oewVKHAv9O8VvyauYVhlQa
+         h2H0FNIKne0Do4q5CLBpRUv0SBo5KE6cS8G5lJzn1uVdhwkFyer4a85jP4a8F1ezBfBA
+         ga1g==
+X-Gm-Message-State: APjAAAUf6Z7eT3EyG67G2bSWrocnnIYojxj2jYw2ZbWENRcpwV/O5VfU
+        FzdUiuRlyUVKo5nRa3yiAdMBY3QfSQsUBnLxXHhn6AR10bp8YpRnUrndoGM2Uc6MOBVKnuKyodi
+        hCSEZWRmuM1j8UYMCFA/e06fl
+X-Received: by 2002:a05:6214:178f:: with SMTP id ct15mr10290839qvb.95.1576190505101;
+        Thu, 12 Dec 2019 14:41:45 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxpps50O7sKKAKfqI0+8dAwkmzesR9yvNp5EYD0edwbGeb3d8hizM1fjMLPbyhetx7gE/j4rQ==
+X-Received: by 2002:a05:6214:178f:: with SMTP id ct15mr10290820qvb.95.1576190504832;
+        Thu, 12 Dec 2019 14:41:44 -0800 (PST)
+Received: from labbott-redhat.redhat.com (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id h32sm2734997qth.2.2019.12.12.14.41.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 14:41:44 -0800 (PST)
+From:   Laura Abbott <labbott@redhat.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCHv2] vfs: Handle file systems without ->parse_params better
+Date:   Thu, 12 Dec 2019 17:41:39 -0500
+Message-Id: <20191212224139.15970-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="liOOAslEiF7prFVr"
-Content-Disposition: inline
-In-Reply-To: <0ad37515-c22d-6857-65a2-cc28256a8afa@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---liOOAslEiF7prFVr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The new mount API relies on file systems to provide a ->parse_params
+function to handle parsing of arguments. If a file system doesn't
+have a ->parse_param function, it falls back to parsing the source
+option and rejecting all other options. This is a change in behavior
+for some file systems which would just quietly ignore extra options
+and mount successfully. This was noticed by users as squashfs failing
+to mount with extra options after the conversion to the new mount
+API.
 
-On Wed, Dec 11, 2019 at 05:09:18PM +0000, John Garry wrote:
-> On 10/12/2019 01:43, Ming Lei wrote:
-> > > > > For when the interrupt is managed, allow the threaded part to run on all
-> > > > > cpus in the irq affinity mask.
-> > > > I remembered that performance drop is observed by this approach in some
-> > > > test.
-> > >  From checking the thread about the NVMe interrupt swamp, just switching to
-> > > threaded handler alone degrades performance. I didn't see any specific
-> > > results for this change from Long Li -https://lkml.org/lkml/2019/8/21/128
-> 
-> Hi Ming,
-> 
-> > I am pretty clear the reason for Azure, which is caused by aggressive interrupt
-> > coalescing, and this behavior shouldn't be very common, and it can be
-> > addressed by the following patch:
-> 
-> I am running some NVMe perf tests with Marc's patch.
+File systems with a ->parse_params function rely on the top level
+to parse the "source" param so we can't easily move that around. To
+get around this, introduce a default parsing functions for file
+systems that take no arguments. This parses only the "source" option
+and only logs an error for other arguments. Update the comment
+to reflect this expected behavior for "source" parsing as well.
 
-We need to confirm that if Marc's patch works as expected, could you
-collect log via the attached script?
+Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock
+creation/configuration context")
+Link: https://lore.kernel.org/lkml/20191130181548.GA28459@gentoo-tp.home/
+Reported-by: Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1781863
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+v2: Dropped most the boiler plate for parsing and just compared
+against "source". Renamed to ignore_unknown_parse_param.
+---
+ fs/fs_context.c | 36 +++++++++++++++++++++++++++++-------
+ 1 file changed, 29 insertions(+), 7 deletions(-)
 
-> 
-> I see this almost always eventually (with or without that patch):
-> 
-> [   66.018140] rcu: INFO: rcu_preempt self-detected stall on CPU2% done]
-> [5058MB/0KB/0KB /s] [1295K/0/0 iops] [eta 01m:39s]
-> [   66.023885] rcu: 12-....: (5250 ticks this GP)
-> idle=182/1/0x4000000000000004 softirq=517/517 fqs=2529
-> [   66.033306] (t=5254 jiffies g=733 q=2241)
-> [   66.037394] Task dump for CPU 12:
-> [   66.040696] fio             R  running task        0   798    796
-> 0x00000002
-> [   66.047733] Call trace:
-> [   66.050173]  dump_backtrace+0x0/0x1a0
-> [   66.053823]  show_stack+0x14/0x20
-> [   66.057126]  sched_show_task+0x164/0x1a0
-> [   66.061036]  dump_cpu_task+0x40/0x2e8
-> [   66.064686]  rcu_dump_cpu_stacks+0xa0/0xe0
-> [   66.068769]  rcu_sched_clock_irq+0x6d8/0xaa8
-> [   66.073027]  update_process_times+0x2c/0x50
-> [   66.077198]  tick_sched_handle.isra.14+0x30/0x50
-> [   66.081802]  tick_sched_timer+0x48/0x98
-> [   66.085625]  __hrtimer_run_queues+0x120/0x1b8
-> [   66.089968]  hrtimer_interrupt+0xd4/0x250
-> [   66.093966]  arch_timer_handler_phys+0x28/0x40
-> [   66.098398]  handle_percpu_devid_irq+0x80/0x140
-> [   66.102915]  generic_handle_irq+0x24/0x38
-> [   66.106911]  __handle_domain_irq+0x5c/0xb0
-> [   66.110995]  gic_handle_irq+0x5c/0x148
-> [   66.114731]  el1_irq+0xb8/0x180
-> [   66.117858]  efi_header_end+0x94/0x234
-> [   66.121595]  irq_exit+0xd0/0xd8
-> [   66.124724]  __handle_domain_irq+0x60/0xb0
-> [   66.128806]  gic_handle_irq+0x5c/0x148
-> [   66.132542]  el0_irq_naked+0x4c/0x54
-> [   97.152870] rcu: INFO: rcu_preempt self-detected stall on CPU8% done]
-> [4736MB/0KB/0KB /s] [1212K/0/0 iops] [eta 01m:08s]
-> [   97.158616] rcu: 8-....: (1 GPs behind) idle=08e/1/0x4000000000000002
-> softirq=462/505 fqs=2621
-> [   97.167414] (t=5253 jiffies g=737 q=5507)
-> [   97.171498] Task dump for CPU 8:
-> [pu_task+0x40/0x2e8
-> [   97.198705]  rcu_dump_cpu_stacks+0xa0/0xe0
-> [   97.202788]  rcu_sched_clock_irq+0x6d8/0xaa8
-> [   97.207046]  update_process_times+0x2c/0x50
-> [   97.211217]  tick_sched_handle.isra.14+0x30/0x50
-> [   97.215820]  tick_sched_timer+0x48/0x98
-> [   97.219644]  __hrtimer_run_queues+0x120/0x1b8
-> [   97.223989]  hrtimer_interrupt+0xd4/0x250
-> [   97.227987]  arch_timer_handler_phys+0x28/0x40
-> [   97.232418]  handle_percpu_devid_irq+0x80/0x140
-> [   97.236935]  generic_handle_irq+0x24/0x38
-> [   97.240931]  __handle_domain_irq+0x5c/0xb0
-> [   97.245015]  gic_handle_irq+0x5c/0x148
-> [   97.248751]  el1_irq+0xb8/0x180
-> [   97.251880]  find_busiest_group+0x18c/0x9e8
-> [   97.256050]  load_balance+0x154/0xb98
-> [   97.259700]  rebalance_domains+0x1cc/0x2f8
-> [   97.263783]  run_rebalance_domains+0x78/0xe0
-> [   97.268040]  efi_header_end+0x114/0x234
-> [   97.271864]  run_ksoftirqd+0x38/0x48
-> [   97.275427]  smpboot_thread_fn+0x16c/0x270
-> [   97.279511]  kthread+0x118/0x120
-> [   97.282726]  ret_from_fork+0x10/0x18
-> [   97.286289] Task dump for CPU 12:
-> [   97.289591] kworker/12:1    R  running task        0   570      2
-> 0x0000002a
-> [   97.296634] Workqueue:  0x0 (mm_percpu_wq)
-> [   97.300718] Call trace:
-> [   97.303152]  __switch_to+0xbc/0x218
-> [   97.306632]  page_wait_table+0x1500/0x1800
-> 
-> Would this be the same interrupt "swamp" issue?
-
-It could be, but reason need to investigated.
-
-You never provide the test details(how many drives, how many disks
-attached to each drive) as I asked, so I can't comment on the reason,
-also no reason shows that the patch is a good fix.
-
-My theory is simple, so far, the CPU is still much quicker than
-current storage in case that IO aren't from multiple disks which are
-connected to same drive.
-
-Thanks, 
-Ming
-
---liOOAslEiF7prFVr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=dump-io-irq-affinity
-
-#!/bin/sh
-
-get_disk_from_pcid()
-{
-	PCID=$1
-
-	DISKS=`find /sys/block -name "*"`
-	for DISK in $DISKS; do
-		DISKP=`realpath $DISK/device`
-		echo $DISKP | grep $PCID > /dev/null
-		[ $? -eq 0 ] && echo `basename $DISK` && break
-	done
-}
-
-dump_irq_affinity()
-{
-	PCID=$1
-	PCIP=`find /sys/devices -name *$PCID | grep pci`
-
-	[[ ! -d $PCIP/msi_irqs ]] && return
-
-	IRQS=`ls $PCIP/msi_irqs`
-
-	[ $? -ne 0 ] && return
-
-	DISK=`get_disk_from_pcid $PCID`
-	echo "PCI name is $PCID: $DISK"
-
-	for IRQ in $IRQS; do
-	    [ -f /proc/irq/$IRQ/smp_affinity_list ] && CPUS=`cat /proc/irq/$IRQ/smp_affinity_list`
-	    [ -f /proc/irq/$IRQ/effective_affinity_list ] && ECPUS=`cat /proc/irq/$IRQ/effective_affinity_list`
-	    echo -e "\tirq $IRQ, cpu list $CPUS, effective list $ECPUS"
-	done
-}
-
-
-if [ $# -ge 1 ]; then
-	PCIDS=$1
-else
-#	PCID=`lspci | grep "Non-Volatile memory" | cut -c1-7`
-	PCIDS=`lspci | grep "Non-Volatile memory controller" | awk '{print $1}'`
-fi
-
-echo "kernel version: "
-uname -a
-
-for PCID in $PCIDS; do
-	dump_irq_affinity $PCID
-done
-
---liOOAslEiF7prFVr--
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 138b5b4d621d..086ade29b811 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -107,6 +107,22 @@ static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
+ 	return -ENOPARAM;
+ }
+ 
++/**
++ * ignore_unknowns_parse_param - ->parse_param function for a file system that
++ * takes no arguments
++ * @fc: The filesystem context
++ * @param: The parameter.
++ */
++static int ignore_unknown_parse_param(struct fs_context *fc, struct fs_parameter *param)
++{
++
++	if (strcmp(param->key, "source") == 0)
++		return -ENOPARAM;
++	/* Just log an error for backwards compatibility */
++	errorf(fc, "%s: Unknown parameter '%s'", fc->fs_type->name, param->key);
++	return 0;
++}
++
+ /**
+  * vfs_parse_fs_param - Add a single parameter to a superblock config
+  * @fc: The filesystem context to modify
+@@ -126,6 +142,7 @@ static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
+ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
+ {
+ 	int ret;
++	int (*parse_param)(struct fs_context *, struct fs_parameter *);
+ 
+ 	if (!param->key)
+ 		return invalf(fc, "Unnamed parameter\n");
+@@ -141,14 +158,19 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
+ 		 */
+ 		return ret;
+ 
+-	if (fc->ops->parse_param) {
+-		ret = fc->ops->parse_param(fc, param);
+-		if (ret != -ENOPARAM)
+-			return ret;
+-	}
++	parse_param = fc->ops->parse_param;
++	if (!parse_param)
++		parse_param = ignore_unknown_parse_param;
++
++	ret = parse_param(fc, param);
++	if (ret != -ENOPARAM)
++		return ret;
+ 
+-	/* If the filesystem doesn't take any arguments, give it the
+-	 * default handling of source.
++	/*
++	 * File systems may have a ->parse_param function but rely on
++	 * the top level to parse the source function. File systems
++	 * may have their own source parsing though so this needs
++	 * to come after the call to parse_param above.
+ 	 */
+ 	if (strcmp(param->key, "source") == 0) {
+ 		if (param->type != fs_value_is_string)
+-- 
+2.21.0
 
