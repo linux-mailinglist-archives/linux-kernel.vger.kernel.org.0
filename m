@@ -2,249 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D57311C825
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 09:24:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A467D11C7A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 09:22:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbfLLITP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 03:19:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37002 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728197AbfLLITN (ORCPT
+        id S1728772AbfLLIWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 03:22:05 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:3915 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728415AbfLLITa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 03:19:13 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBC8CCjv126073
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 03:19:12 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wtdp5bbk5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 03:19:12 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 12 Dec 2019 08:19:10 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Dec 2019 08:19:06 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBC8INZR36176334
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Dec 2019 08:18:23 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87C24AE051;
-        Thu, 12 Dec 2019 08:19:05 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5FDCAAE053;
-        Thu, 12 Dec 2019 08:19:04 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.137.139])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Dec 2019 08:19:04 +0000 (GMT)
-Subject: Re: [PATCH v2 1/2] IMA: Define workqueue for early boot "key"
- measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Date:   Thu, 12 Dec 2019 03:19:03 -0500
-In-Reply-To: <20191211185116.2740-2-nramas@linux.microsoft.com>
-References: <20191211185116.2740-1-nramas@linux.microsoft.com>
-         <20191211185116.2740-2-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19121208-4275-0000-0000-0000038E2C42
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121208-4276-0000-0000-000038A1E422
-Message-Id: <1576138743.4579.147.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-12_01:2019-12-12,2019-12-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
- lowpriorityscore=0 malwarescore=0 spamscore=0 suspectscore=2
- priorityscore=1501 mlxscore=0 phishscore=0 impostorscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912120057
+        Thu, 12 Dec 2019 03:19:30 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5df1f8030000>; Thu, 12 Dec 2019 00:19:15 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 12 Dec 2019 00:19:22 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 12 Dec 2019 00:19:22 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 12 Dec
+ 2019 08:19:19 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 12 Dec 2019 08:19:19 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5df1f8070007>; Thu, 12 Dec 2019 00:19:19 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v10 11/25] goldish_pipe: convert to pin_user_pages() and put_user_page()
+Date:   Thu, 12 Dec 2019 00:19:03 -0800
+Message-ID: <20191212081917.1264184-12-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191212081917.1264184-1-jhubbard@nvidia.com>
+References: <20191212081917.1264184-1-jhubbard@nvidia.com>
+MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576138755; bh=TksWTeRqb2e65v/kOUv6DZsbenXYEnzjjPNzfVXQEtw=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=BDIImglJjgwmkon10uFJrMUcq1FrawvSSc7M/n5THjPRiJxUFZt8MSD158KOw6HMV
+         rh2HKwrcUo/qI8Z4DkbZr/njaFynjuej3FPCKQtQBj0PnXHR5pHRdfg6+0Lktf6VRz
+         maklEWp5mrFd+e7ilYTSbTMlozCex2H3YVgonQjJU8livo7KL7LqIiZbxjQjs2+YKZ
+         4r7NTue2ODJ19r8IvGhqWw2UgATqxSgZ4EaKQTb83SWsCOTtCpu/ZuJhb/T/ltF79V
+         /cHocG75gDYZH4OMohCzbLciCoyzbyKfqKWmZJ4gAGTgo/kN63d9+TwHZ+000grOl0
+         hROu8ymdWzH1w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-12-11 at 10:51 -0800, Lakshmi Ramasubramanian wrote:
-> Measuring keys requires a custom IMA policy to be loaded.
-> Keys created or updated before a custom IMA policy is loaded should
-> be queued and the keys should be processed after a custom policy
-> is loaded.
-> 
-> This patch defines workqueue for queuing keys when a custom IMA policy
-> has not yet been loaded.
-> 
-> A flag namely ima_process_keys is used to check if the key should be
-> queued or should be processed immediately.
-> 
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> ---
->  security/integrity/ima/ima.h                 |  15 +++
->  security/integrity/ima/ima_asymmetric_keys.c | 110 +++++++++++++++++++
->  2 files changed, 125 insertions(+)
-> 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index f06238e41a7c..97f8a4078483 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -205,6 +205,21 @@ extern const char *const func_tokens[];
->  
->  struct modsig;
->  
-> +#ifdef CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-> +/*
-> + * To track keys that need to be measured.
-> + */
-> +struct ima_key_entry {
-> +	struct list_head list;
-> +	void *payload;
-> +	size_t payload_len;
-> +	char *keyring_name;
-> +};
-> +void ima_process_queued_keys(void);
-> +#else
-> +static inline void ima_process_queued_keys(void) {}
-> +#endif /* CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE */
-> +
->  /* LIM API function definitions */
->  int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
->  		   int mask, enum ima_hooks func, int *pcr,
-> diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-> index fea2e7dd3b09..ba01e04ec025 100644
-> --- a/security/integrity/ima/ima_asymmetric_keys.c
-> +++ b/security/integrity/ima/ima_asymmetric_keys.c
-> @@ -14,6 +14,116 @@
->  #include <keys/asymmetric-type.h>
->  #include "ima.h"
->  
-> +/*
-> + * Flag to indicate whether a key can be processed
-> + * right away or should be queued for processing later.
-> + */
-> +bool ima_process_keys;
-> +
-> +/*
-> + * To synchronize access to the list of keys that need to be measured
-> + */
-> +static DEFINE_MUTEX(ima_keys_mutex);
-> +static LIST_HEAD(ima_keys);
-> +
-> +static void ima_free_key_entry(struct ima_key_entry *entry)
-> +{
-> +	if (entry) {
-> +		kfree(entry->payload);
-> +		kfree(entry->keyring_name);
-> +		kfree(entry);
-> +	}
-> +}
-> +
-> +static struct ima_key_entry *ima_alloc_key_entry(
-> +	struct key *keyring,
-> +	const void *payload, size_t payload_len)
-> +{
-> +	int rc = 0;
-> +	struct ima_key_entry *entry;
-> +
-> +	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-> +	if (entry) {
-> +		entry->payload = kmemdup(payload, payload_len, GFP_KERNEL);
-> +		entry->keyring_name = kstrdup(keyring->description,
-> +					      GFP_KERNEL);
-> +		entry->payload_len = payload_len;
-> +	}
-> +
-> +	if ((entry == NULL) || (entry->payload == NULL) ||
-> +	    (entry->keyring_name == NULL)) {
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	INIT_LIST_HEAD(&entry->list);
-> +
-> +out:
-> +	if (rc) {
-> +		ima_free_key_entry(entry);
-> +		entry = NULL;
-> +	}
-> +
-> +	return entry;
-> +}
-> +
-> +bool ima_queue_key(struct key *keyring, const void *payload,
-> +		   size_t payload_len)
-> +{
-> +	bool queued = false;
-> +	struct ima_key_entry *entry;
-> +
-> +	entry = ima_alloc_key_entry(keyring, payload, payload_len);
-> +	if (!entry)
-> +		return false;
-> +
-> +	mutex_lock(&ima_keys_mutex);
-> +	if (!ima_process_keys) {
-> +		list_add_tail(&entry->list, &ima_keys);
-> +		queued = true;
-> +	}
-> +	mutex_unlock(&ima_keys_mutex);
-> +
-> +	if (!queued)
-> +		ima_free_key_entry(entry);
-> +
-> +	return queued;
-> +}
-> +
-> +/*
-> + * ima_process_queued_keys() - process keys queued for measurement
-> + *
-> + * This function sets ima_process_keys to true and processes queued keys.
-> + * From here on keys will be processed right away (not queued).
-> + */
-> +void ima_process_queued_keys(void)
-> +{
-> +	struct ima_key_entry *entry, *tmp;
-> +	LIST_HEAD(temp_ima_keys);
-> +
-> +	if (ima_process_keys)
-> +		return;
-> +
-> +	ima_process_keys = true;
-> +
-> +	INIT_LIST_HEAD(&temp_ima_keys);
-> +
-> +	mutex_lock(&ima_keys_mutex);
-> +
-> +	list_for_each_entry_safe(entry, tmp, &ima_keys, list)
-> +		list_move_tail(&entry->list, &temp_ima_keys);
-> +
-> +	mutex_unlock(&ima_keys_mutex);
+1. Call the new global pin_user_pages_fast(), from pin_goldfish_pages().
 
+2. As required by pin_user_pages(), release these pages via
+put_user_page(). In this case, do so via put_user_pages_dirty_lock().
 
-The v1 comment, which explained the need for using a temporary
-keyring, is an example of an informative comment.  If you don't
-object, instead of re-posting this patch, I can insert it.
+That has the side effect of calling set_page_dirty_lock(), instead
+of set_page_dirty(). This is probably more accurate.
 
-Mimi
+As Christoph Hellwig put it, "set_page_dirty() is only safe if we are
+dealing with a file backed page where we have reference on the inode it
+hangs off." [1]
 
-> +
-> +	list_for_each_entry_safe(entry, tmp, &temp_ima_keys, list) {
-> +		process_buffer_measurement(entry->payload, entry->payload_len,
-> +					   entry->keyring_name, KEY_CHECK, 0,
-> +					   entry->keyring_name);
-> +		list_del(&entry->list);
-> +		ima_free_key_entry(entry);
-> +	}
-> +}
-> +
->  /**
->   * ima_post_key_create_or_update - measure asymmetric keys
->   * @keyring: keyring to which the key is linked to
+Another side effect is that the release code is simplified because
+the page[] loop is now in gup.c instead of here, so just delete the
+local release_user_pages() entirely, and call
+put_user_pages_dirty_lock() directly, instead.
+
+[1] https://lore.kernel.org/r/20190723153640.GB720@lst.de
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ drivers/platform/goldfish/goldfish_pipe.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/g=
+oldfish/goldfish_pipe.c
+index ef50c264db71..2a5901efecde 100644
+--- a/drivers/platform/goldfish/goldfish_pipe.c
++++ b/drivers/platform/goldfish/goldfish_pipe.c
+@@ -274,7 +274,7 @@ static int goldfish_pin_pages(unsigned long first_page,
+ 		*iter_last_page_size =3D last_page_size;
+ 	}
+=20
+-	ret =3D get_user_pages_fast(first_page, requested_pages,
++	ret =3D pin_user_pages_fast(first_page, requested_pages,
+ 				  !is_write ? FOLL_WRITE : 0,
+ 				  pages);
+ 	if (ret <=3D 0)
+@@ -285,18 +285,6 @@ static int goldfish_pin_pages(unsigned long first_page=
+,
+ 	return ret;
+ }
+=20
+-static void release_user_pages(struct page **pages, int pages_count,
+-			       int is_write, s32 consumed_size)
+-{
+-	int i;
+-
+-	for (i =3D 0; i < pages_count; i++) {
+-		if (!is_write && consumed_size > 0)
+-			set_page_dirty(pages[i]);
+-		put_page(pages[i]);
+-	}
+-}
+-
+ /* Populate the call parameters, merging adjacent pages together */
+ static void populate_rw_params(struct page **pages,
+ 			       int pages_count,
+@@ -372,7 +360,8 @@ static int transfer_max_buffers(struct goldfish_pipe *p=
+ipe,
+=20
+ 	*consumed_size =3D pipe->command_buffer->rw_params.consumed_size;
+=20
+-	release_user_pages(pipe->pages, pages_count, is_write, *consumed_size);
++	put_user_pages_dirty_lock(pipe->pages, pages_count,
++				  !is_write && *consumed_size > 0);
+=20
+ 	mutex_unlock(&pipe->lock);
+ 	return 0;
+--=20
+2.24.0
 
