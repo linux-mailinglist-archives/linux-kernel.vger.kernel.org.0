@@ -2,90 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D722A11D256
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 17:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5E9F11D25F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 17:33:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbfLLQbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 11:31:53 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36466 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729857AbfLLQbx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 11:31:53 -0500
-Received: by mail-qt1-f194.google.com with SMTP id h12so248187qto.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 08:31:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5nxGnUdtw58bWHogUzbvsjBU/PDGHKaobG6uElnGLno=;
-        b=oa9rL5G/dbfnIV/LzrzoNnyRhtYmlptMoi+t69zugwSNSWgp9blS+XEl+9/0hsU8g4
-         wEvlkxhrXfv//LqB2RXF1LitoGfhsbCkWj/Z5CkEmM96cg+UQbdGImwjCbcHoIJMMNj+
-         sljAkxcEM8qhYEWlMb93V1Xx85g7RTRnV35Wu3xroUX1iVIdvJLWKvrBy79W0q0hUiVi
-         X3/dugi+HFn6kRO6XlCj5Wu2KE6/5NrV285cbLrOGt6N6OYzb6ULcMDIc/F6pZ2s7ZbE
-         VSVXgaZMKyImgmEl28wIXQzlvsJ5qIjNjk1tyKd4jJLcuPBrdarAFLv/PrC8tUBEusL0
-         wt2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5nxGnUdtw58bWHogUzbvsjBU/PDGHKaobG6uElnGLno=;
-        b=leGPUeJFxlhlt5R3+DOsH3w/6asCcKpi8u9kYnyL1sVr7X/v/r3pjyw1AIU3pHlV5I
-         SRX2zfh/5Py6kbSz4neDAc6tJzDQYCkFXndiGxTV4OZqjegOtxuZaBt7ZyechzkiUJiV
-         SquEiu2Omqs7R/4H4qzqHFmtYSO+QT3Gy4iQ8bg3J066fh4j1ArFr7iLznCkW5yQLz75
-         3lYNm3ZmlBV1Y/k+SWCdI2T1xruKrqRLr8ciXZS+A7E/Ru/M2bSpCxTeURpLZvEWG01+
-         4ckLqvwFFIvxibGlnlDcUIQ250rBLUDNe/XTcq5nzMTnvl5ay2t9Y90c6ao2YEV2H9If
-         2JFA==
-X-Gm-Message-State: APjAAAUBu3NORN0/SOWrvbRAYyE1T1Ln+035Ti/K63wwbxaaXnj2d3X2
-        NMm6tCmABprV/B82rd978lsy5Q==
-X-Google-Smtp-Source: APXvYqyfo7q7u1Qo2RWrsYPgxg4cCPsnEGuVFjYRp2T2M/zKAnej0anX24hFu358xW7EyeiV/RdLyw==
-X-Received: by 2002:ac8:3177:: with SMTP id h52mr8535747qtb.264.1576168311701;
-        Thu, 12 Dec 2019 08:31:51 -0800 (PST)
-Received: from ?IPv6:2620:0:1004:a:6e2b:60f7:b51b:3b04? ([2620:0:1004:a:6e2b:60f7:b51b:3b04])
-        by smtp.gmail.com with ESMTPSA id t38sm2355441qta.78.2019.12.12.08.31.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2019 08:31:51 -0800 (PST)
-Subject: Re: [PATCH v4 2/2] kvm: Use huge pages for DAX-backed files
-To:     David Hildenbrand <david@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     linux-nvdimm@lists.01.org, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jason.zeng@intel.com
-References: <20191211213207.215936-1-brho@google.com>
- <20191211213207.215936-3-brho@google.com>
- <eb9ef218-1bbc-83e6-ec84-c6aae245e62b@redhat.com>
-From:   Barret Rhoden <brho@google.com>
-Message-ID: <c203f44c-d5b0-429d-0c13-5723c09ec243@google.com>
-Date:   Thu, 12 Dec 2019 11:31:50 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729918AbfLLQd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 11:33:27 -0500
+Received: from sauhun.de ([88.99.104.3]:37048 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729591AbfLLQd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 11:33:27 -0500
+Received: from localhost (p54B331D1.dip0.t-ipconnect.de [84.179.49.209])
+        by pokefinder.org (Postfix) with ESMTPSA id 7C6252C04D8;
+        Thu, 12 Dec 2019 17:33:23 +0100 (CET)
+Date:   Thu, 12 Dec 2019 17:33:15 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     Daniel Mack <daniel@zonque.org>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, broonie@kernel.org,
+        lee.jones@linaro.org, lars@metafoo.de, pascal.huerst@gmail.com
+Subject: Re: [PATCH 07/10] i2c: Add driver for AD242x bus controller
+Message-ID: <20191212163315.GA3932@kunai>
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <20191209183511.3576038-9-daniel@zonque.org>
+ <64adf5d7-754a-f1da-aa9b-11579c5a2780@lucaceresoli.net>
 MIME-Version: 1.0
-In-Reply-To: <eb9ef218-1bbc-83e6-ec84-c6aae245e62b@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Content-Disposition: inline
+In-Reply-To: <64adf5d7-754a-f1da-aa9b-11579c5a2780@lucaceresoli.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/19 7:22 AM, David Hildenbrand wrote:
->> +	/*
->> +	 * Our caller grabbed the KVM mmu_lock with a successful
->> +	 * mmu_notifier_retry, so we're safe to walk the page table.
->> +	 */
->> +	switch (dev_pagemap_mapping_shift(hva, current->mm)) {
->> +	case PMD_SHIFT:
->> +	case PUD_SIZE:
-> 
-> Shouldn't this be PUD_SHIFT?
-> 
-> But I agree with Paolo, that this is simply
-> 
-> return dev_pagemap_mapping_shift(hva, current->mm) > PAGE_SHIFT;
 
-Yes, good call.  I'll fix that in the next version.
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi Luca,
+
+thanks for the review!
+
+> good, but I think there's a problem in this function. A "normal"
+> master_xfer function issues a repeated start between one msg and the
+> next one, at least in the typical case where all msgs have the same
+> slave address. Your implementation breaks repeated start. At first sight
+> we might need more complex code here to coalesce all consecutive msgs
+> with the same address into a single i2c_transfer() call.
+
+Note that it is by far the standard case that all messages in a transfer
+have the same client address (99,999%?). But technically, this is not a
+requirement and the repeated start on the bus is totally independent of
+the addresses used. It is just a master wanting to send without being
+interrupted by another master.
+
+   Wolfram
+
+
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl3ya8cACgkQFA3kzBSg
+KbZBdQ/6ApPjJEPmloupECtcOPxRdHIBMJSbDi9HpBk6QSvFwtknvv6ybcJHJ3Dc
+2GkbUK4EAcDvvDx4mTqhw7t8JPay3Bu3O13a/wXP5PDb7DeHJ5xDaBsEYVLC9id2
+E1I5aEfdrrxsL1HFUZn86BmmthMuupvelZAyfL7pXDT3AU5oNkPipfKzoiC0EiBP
+MPu2HN8BIX7l1ECvOL9j0pZYCfz00UHA4PtWHwz7zjiCG7RmY3qlm6xw5l6XFeq3
+wbcmTXcLr8OIG/8sw0PMJjJFqHfH9Vlj8aYcRrsgjDEHQbSTKAQ/RTDw9rcmAktW
+/1u6RUea0ckwX6rhKWZSXVktPzCV5LWaywD6lsMGXxhF/0T2tvKRqV6+xIngUY3n
+8KnzpK2i3gvLmP9BYYxa/BM8qiuR4SimZi35lmofttUzXUs/5fgJwxFg2UuJqpPD
+Ex/lyLc1AUbRRp8mDsSMsGg7Ku6WUt5T7OxmVjzvIYPLJ84GlTvZLA4WIskzWFVw
+aZ2+E4YZq35snfMfawdrDmTOOmNOEPfVuT5Cm2ul1HVTprAgF/DVkQHVWPzNtOo9
+xxwPgX9lrN0I+Ek2F1kSJguphMzVjIFRvFCl77TJUQ7qvBEWYDLQs1hBdmXieBxA
+bNZoxeVI6DmFF5qTxkQ3Qh9NUGWkPKuslRF2Fh7dWQIoS9FauJo=
+=Gmcp
+-----END PGP SIGNATURE-----
+
+--x+6KMIRAuhnl3hBn--
