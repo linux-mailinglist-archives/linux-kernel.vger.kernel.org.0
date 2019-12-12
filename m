@@ -2,113 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E028A11C5B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 06:56:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73FAF11C5C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 07:01:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfLLF4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 00:56:49 -0500
-Received: from mga04.intel.com ([192.55.52.120]:16608 "EHLO mga04.intel.com"
+        id S1727843AbfLLGBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 01:01:53 -0500
+Received: from smtp.h3c.com ([60.191.123.50]:7510 "EHLO h3cspam02-ex.h3c.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726833AbfLLF4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 00:56:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 21:56:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,304,1571727600"; 
-   d="scan'208";a="216003836"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.155])
-  by orsmga006.jf.intel.com with ESMTP; 11 Dec 2019 21:56:43 -0800
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        stable@vger.kernel.org, Ramalingam C <ramalingam.c@intel.com>
-Subject: [char-misc-next] mei: hdcp: bind only with i915 on the same PCH
-Date:   Thu, 12 Dec 2019 10:41:03 +0200
-Message-Id: <20191212084103.2893-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.21.0
+        id S1726775AbfLLGBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 01:01:52 -0500
+Received: from DAG2EX10-IDC.srv.huawei-3com.com ([10.8.0.73])
+        by h3cspam02-ex.h3c.com with ESMTPS id xBC60hJq043933
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Dec 2019 14:00:43 +0800 (GMT-8)
+        (envelope-from li.kai4@h3c.com)
+Received: from DAG2EX10-IDC.srv.huawei-3com.com (10.8.0.73) by
+ DAG2EX10-IDC.srv.huawei-3com.com (10.8.0.73) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 12 Dec 2019 14:00:45 +0800
+Received: from BJHUB01-EX.srv.huawei-3com.com (10.63.20.169) by
+ DAG2EX10-IDC.srv.huawei-3com.com (10.8.0.73) with Microsoft SMTP Server
+ (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.1.1713.5
+ via Frontend Transport; Thu, 12 Dec 2019 14:00:45 +0800
+Received: from RDVDI-L14391V.h3c.huawei-3com.com (10.125.108.72) by
+ rndsmtp.h3c.com (10.63.20.174) with Microsoft SMTP Server id 14.3.408.0; Thu,
+ 12 Dec 2019 14:00:36 +0800
+From:   Kai Li <li.kai4@h3c.com>
+To:     <mark@fasheh.com>, <jlbec@evilplan.org>,
+        <joseph.qi@linux.alibaba.com>, <chge@linux.alibaba.com>
+CC:     <ocfs2-devel@oss.oracle.com>, <linux-kernel@vger.kernel.org>,
+        Kai Li <li.kai4@h3c.com>
+Subject: [PATCH v2] ocfs2: call journal flush to mark journal as empty after journal recovery when mount
+Date:   Thu, 12 Dec 2019 14:00:00 +0800
+Message-ID: <20191212060000.930-1-li.kai4@h3c.com>
+X-Mailer: git-send-email 2.24.0.windows.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.125.108.72]
+X-DNSRBL: 
+X-MAIL: h3cspam02-ex.h3c.com xBC60hJq043933
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mei device and i915 must reside on the same
-PCH in order for HDCP to work. Make the component
-matching function enforce this requirement.
+If journal is dirty when mount, it will be replayed but jbd2 sb
+log tail cannot be updated to mark a new start because
+journal->j_flag has already been set with JBD2_ABORT first
+in journal_init_common. When a new transaction is committed, it
+will be recored in block 1 first(journal->j_tail is set to 1 in
+journal_reset).If emergency restart happens again before journal
+super block is updated unfortunately, the new recorded trans will
+not be replayed in the next mount.
 
-                   hdcp
-                    |
-   i915            mei
-    |               |
-    +----= PCH =----+
+The following steps describe this procedure in detail.
+1. mount and touch some files
+2. these transactions are committed to journal area but not checkpointed
+3. emergency restart
+4. mount again and its journals are replayed
+5. journal super block's first s_start is 1, but its s_seq is not updated
+6. touch a new file and its trans is committed but not checkpointed
+7. emergency restart again
+8. mount and journal is dirty, but trans committed in 6 will not be
+replayed.
 
-Cc: <stable@vger.kernel.org> v5.0+
-Cc: Ramalingam C <ramalingam.c@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Alexander Usyskin <alexander.usyskin@intel.com>
+This exception happens easily when this lun is used by only one node. If it
+is used by multi-nodes, other node will replay its journal and its
+journal super block will be updated after recovery like what this patch
+does.
+
+ocfs2_recover_node->ocfs2_replay_journal.
+
+The following jbd2 journal can be generated by touching a new file after
+journal is replayed, and seq 15 is the first valid commit, but first seq
+is 13 in journal super block.
+logdump:
+Block 0: Journal Superblock
+Seq: 0   Type: 4 (JBD2_SUPERBLOCK_V2)
+Blocksize: 4096   Total Blocks: 32768   First Block: 1
+First Commit ID: 13   Start Log Blknum: 1
+Error: 0
+Feature Compat: 0
+Feature Incompat: 2 block64
+Feature RO compat: 0
+Journal UUID: 4ED3822C54294467A4F8E87D2BA4BC36
+FS Share Cnt: 1   Dynamic Superblk Blknum: 0
+Per Txn Block Limit    Journal: 0    Data: 0
+
+Block 1: Journal Commit Block
+Seq: 14   Type: 2 (JBD2_COMMIT_BLOCK)
+
+Block 2: Journal Descriptor
+Seq: 15   Type: 1 (JBD2_DESCRIPTOR_BLOCK)
+No. Blocknum        Flags
+ 0. 587             none
+UUID: 00000000000000000000000000000000
+ 1. 8257792         JBD2_FLAG_SAME_UUID
+ 2. 619             JBD2_FLAG_SAME_UUID
+ 3. 24772864        JBD2_FLAG_SAME_UUID
+ 4. 8257802         JBD2_FLAG_SAME_UUID
+ 5. 513             JBD2_FLAG_SAME_UUID JBD2_FLAG_LAST_TAG
+...
+Block 7: Inode
+Inode: 8257802   Mode: 0640   Generation: 57157641 (0x3682809)
+FS Generation: 2839773110 (0xa9437fb6)
+CRC32: 00000000   ECC: 0000
+Type: Regular   Attr: 0x0   Flags: Valid
+Dynamic Features: (0x1) InlineData
+User: 0 (root)   Group: 0 (root)   Size: 7
+Links: 1   Clusters: 0
+ctime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
+atime: 0x5de5d870 0x113181a1 -- Tue Dec  3 11:37:20.288457121 2019
+mtime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
+dtime: 0x0 -- Thu Jan  1 08:00:00 1970
+...
+Block 9: Journal Commit Block
+Seq: 15   Type: 2 (JBD2_COMMIT_BLOCK)
+
+The following is jouranl recovery log when recovering the upper jbd2
+journal when mount again.
+syslog:
+[ 2265.648622] ocfs2: File system on device (252,1) was not unmounted cleanly, recovering it.
+[ 2265.649695] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 0
+[ 2265.650407] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 1
+[ 2265.650409] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 2
+[ 2265.650410] fs/jbd2/recovery.c:(jbd2_journal_recover, 278): JBD2: recovery, exit status 0, recovered transactions 13 to 13
+
+Due to first commit seq 13 recorded in journal super is not consistent
+with the value recorded in block 1(seq is 14), journal recovery will be
+terminated before seq 15 even though it is an unbroken commit, inode
+8257802 is a new file and it will be lost.
+
+Signed-off-by: Kai Li <li.kai4@h3c.com>
 ---
- drivers/misc/mei/hdcp/mei_hdcp.c | 33 +++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ fs/ocfs2/journal.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/misc/mei/hdcp/mei_hdcp.c b/drivers/misc/mei/hdcp/mei_hdcp.c
-index 93027fd96c71..4c596c646ac0 100644
---- a/drivers/misc/mei/hdcp/mei_hdcp.c
-+++ b/drivers/misc/mei/hdcp/mei_hdcp.c
-@@ -757,11 +757,38 @@ static const struct component_master_ops mei_component_master_ops = {
- 	.unbind = mei_component_master_unbind,
- };
+diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+index 1afe57f425a0..5c7a489f47b0 100644
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -1066,6 +1066,15 @@ int ocfs2_journal_load(struct ocfs2_journal *journal, int local, int replayed)
  
-+/**
-+ * mei_hdcp_component_match - compare function for matching mei hdcp.
-+ *
-+ *    The function checks if the driver is i915, the subcomponent is HDCP
-+ *    and the grand parent of hdcp and the parent of i915 are the same
-+ *    PCH device.
-+ *
-+ * @dev: master device
-+ * @subcomponent: subcomponent to match (I915_COMPONENT_HDCP)
-+ * @data: compare data (mei hdcp device)
-+ *
-+ * Return:
-+ * * 1 - if components match
-+ * * 0 - otherwise
-+ */
- static int mei_hdcp_component_match(struct device *dev, int subcomponent,
- 				    void *data)
- {
--	return !strcmp(dev->driver->name, "i915") &&
--	       subcomponent == I915_COMPONENT_HDCP;
-+	struct device *base = data;
-+
-+	if (strcmp(dev->driver->name, "i915") ||
-+	    subcomponent != I915_COMPONENT_HDCP)
-+		return 0;
-+
-+	base = base->parent;
-+	if (!base)
-+		return 0;
-+
-+	base = base->parent;
-+	dev = dev->parent;
-+
-+	return (base && dev && dev == base);
- }
+ 	ocfs2_clear_journal_error(osb->sb, journal->j_journal, osb->slot_num);
  
- static int mei_hdcp_probe(struct mei_cl_device *cldev,
-@@ -785,7 +812,7 @@ static int mei_hdcp_probe(struct mei_cl_device *cldev,
- 
- 	master_match = NULL;
- 	component_match_add_typed(&cldev->dev, &master_match,
--				  mei_hdcp_component_match, comp_master);
-+				  mei_hdcp_component_match, &cldev->dev);
- 	if (IS_ERR_OR_NULL(master_match)) {
- 		ret = -ENOMEM;
- 		goto err_exit;
++	if (replayed) {
++		mlog(ML_NOTICE, "journal recovery complete");
++		jbd2_journal_lock_updates(journal->j_journal);
++		status = jbd2_journal_flush(journal->j_journal);
++		jbd2_journal_unlock_updates(journal->j_journal);
++		if (status < 0)
++			mlog_errno(status);
++	}
++
+ 	status = ocfs2_journal_toggle_dirty(osb, 1, replayed);
+ 	if (status < 0) {
+ 		mlog_errno(status);
 -- 
-2.21.0
+2.24.0.windows.2
 
