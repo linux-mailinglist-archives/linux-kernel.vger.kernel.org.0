@@ -2,155 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0579C11D49D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 18:55:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BC111D4A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 18:57:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730245AbfLLRzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 12:55:38 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:34131 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730216AbfLLRzi (ORCPT
+        id S1730216AbfLLR47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 12:56:59 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33537 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729771AbfLLR47 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 12:55:38 -0500
-Received: by mail-ua1-f65.google.com with SMTP id w20so1281407uap.1;
-        Thu, 12 Dec 2019 09:55:37 -0800 (PST)
+        Thu, 12 Dec 2019 12:56:59 -0500
+Received: by mail-lj1-f193.google.com with SMTP id 21so3300021ljr.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 09:56:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2PL1W7x5Z3JdqFnpKW9K3ZxcFoDhA0Dzv5FYcB/mlfs=;
-        b=IMZWMJ2WHAJekhPfCyWSQK4lxPzoM08gtrG2KYsM+54rJnsOqa/+Euz080SWf1FnrH
-         ioO/Derd8qxIuD2s5on0yfU7m/h5rdRtTybgXpFgJmAniEzPm2S6EPVcHrlQyXoJccIT
-         eiFkjzYsv8V3Fl+n6mqbmcGkevMjZiQyG5WjFc91RdZr6EG8w3TJNxugsGQ9ORjRPG98
-         RAkRReQfsOGsNr4DNQnEhktFBEZoMWz4ec+gtR9FGLhIrc71xk1FPI056R+DKC+4gsdA
-         eE5z7jWiAf0OYMgI9Tu2rzWCgW8lfICZIv3NlcUPyIwCcaW6WqGAbhbb2cJSt+gGkiDa
-         WDPQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qtt9q6QTWhtx+uAQaSa9SaxP9utyh4MwkS3b1QBorDM=;
+        b=OOXv31QnIKHP+WN0REsqiLUpZrI6yxWjWJ/GvuSup3OYLi1us4yUSocn6DI/axDV0m
+         6GK7jXK+6k7LpPebQoPCRcocvjkW9omBDzxT+Lm4LYfIKGy7sKkeu15HX8MNjs/xu+xP
+         KjLl5e+iu8ZQnjJY5qMbfJqikj0qvnk6CZ3uo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2PL1W7x5Z3JdqFnpKW9K3ZxcFoDhA0Dzv5FYcB/mlfs=;
-        b=XpRWStxhPs/ldaFAYvnB+pe9jfywBKIbSJig5178gjUFn7pnLSIqzGkgi9fDs6kGjO
-         Y6peu4YvKozeU6vCVia7ZuCtWTl4jxP6NZccuP/RerhAN49G3vCt5BO+AVrjBAlKYr3H
-         1ryTEJgLhzvZgJdzCxPNHTpyrvTXhs36A36q280oGpJuJ4s0AkTUdJapENUO9Tif/loO
-         bf2egkHtXlqn4CSAZ40O7ZLm9B4bEHBn6zJFykkTDBuvptxwDoeUpA3a/O3LH6treyNQ
-         EhVh3kolm0QTl2lZxePoYPlfd0IdJtpAdAoaBlz+6Af3vXz7QVf8qetn72BN4lrwIwDJ
-         Py7A==
-X-Gm-Message-State: APjAAAVToQMQLs4Ei05m7uq3R95QMA4GaO66718otStfEXRHOVRlqUv3
-        mTA84vj434fPhM20VSocwnYxdPfT
-X-Google-Smtp-Source: APXvYqwa5i+J2tmfe5HC8wshUSotezwbNelSP43N7xrarKSYMAwJcVY4/+7AsM+XiNaKNca8UyX79g==
-X-Received: by 2002:ab0:6418:: with SMTP id x24mr9636621uao.40.1576173336768;
-        Thu, 12 Dec 2019 09:55:36 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([177.195.210.207])
-        by smtp.gmail.com with ESMTPSA id u16sm4094734vkl.21.2019.12.12.09.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 09:55:36 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id E12FF40352; Thu, 12 Dec 2019 14:55:31 -0300 (-03)
-Date:   Thu, 12 Dec 2019 14:55:31 -0300
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        arnaldo.melo@gmail.com, linux-kernel@vger.kernel.org,
-        linux-trace-devel@vger.kernel.org
-Subject: Re: [PATCH] libtraceevent: allow custom libdir path
-Message-ID: <20191212175531.GG13965@kernel.org>
-References: <20191207111440.6574-1-sudipm.mukherjee@gmail.com>
- <20191212111900.3f46e033@gandalf.local.home>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qtt9q6QTWhtx+uAQaSa9SaxP9utyh4MwkS3b1QBorDM=;
+        b=JykLmIDteNxG67bcq6RPaIWegfnLOjeDSMEmz1Sfhn9b1Oi08QcUZK9LLw/nfxhdP1
+         cDw/VPPcqpTMsUjqNo0y5cbTWc4vPGzz8IYj0qiuaaZEWSJlklVllbe+tug7keHsNBsn
+         J1CyNGe5NU1qiqyLi5K9CKqIpm9bhWbvX0PRIlETNBvRi3kgpvFjCk3qb3XG3yCQEDnF
+         fO5m+gx0IbnfFeUAjpR/cMhjvj7fsm1slPamK2OSl/pY79d9l1dgVKQbsQt+zFACah04
+         sCXzG05aTmE2ME6asj3/dNPgPLhiPeKHrM6heW+Z9wP80VfoR5ufIbf9xBZmQUu4G9aE
+         KeSw==
+X-Gm-Message-State: APjAAAWmEq064X223Wm91e2GYZ8VyqNudtgjAWzmG87/2wLM+Eo0G8e2
+        KfbC8hRJFJutiAqtKGIuKsooDt03Lis=
+X-Google-Smtp-Source: APXvYqwjb3FKAH3cBZG+P3WS/7AgsmIss7+XRjTF5YpAHnwMv16gWfjWmGTKvDV4ptWqdC7+qLWazA==
+X-Received: by 2002:a2e:920b:: with SMTP id k11mr6484264ljg.111.1576173417145;
+        Thu, 12 Dec 2019 09:56:57 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id g14sm3430908ljj.37.2019.12.12.09.56.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2019 09:56:56 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id k8so3279472ljh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 09:56:56 -0800 (PST)
+X-Received: by 2002:a2e:99d0:: with SMTP id l16mr6857860ljj.1.1576173415852;
+ Thu, 12 Dec 2019 09:56:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212111900.3f46e033@gandalf.local.home>
-X-Url:  http://acmel.wordpress.com
+References: <20191212145042.12694-1-labbott@redhat.com> <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
+ <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com>
+In-Reply-To: <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 12 Dec 2019 09:56:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
+Message-ID: <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: Don't reject unknown parameters
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="0000000000008e989005998578dc"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Dec 12, 2019 at 11:19:00AM -0500, Steven Rostedt escreveu:
-> 
-> Arnaldo,
-> 
-> Can you pull this patch in?
-> 
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+--0000000000008e989005998578dc
+Content-Type: text/plain; charset="UTF-8"
 
-Sure, applied.
+On Thu, Dec 12, 2019 at 9:47 AM Laura Abbott <labbott@redhat.com> wrote:
+>
+> Good point, I think I missed how that code flow worked for printing
+> out the error. I debated putting in a dummy parse_param but I
+> figured that squashfs wouldn't be the only fs that didn't take
+> arguments (it's in the minority but certainly not the only one).
 
-- Arnaldo
- 
-> -- Steve
-> 
-> 
-> On Sat,  7 Dec 2019 11:14:40 +0000
-> Sudip Mukherjee <sudipm.mukherjee@gmail.com> wrote:
-> 
-> > When I use prefix=/usr and try to install libtraceevent in my laptop it
-> > tries to install in /usr/lib64. I am not having any folder as /usr/lib64
-> > and also the debian policy doesnot allow installing in /usr/lib64. It
-> > should be in /usr/lib/x86_64-linux-gnu/.
-> > 
-> > Quote: No package for a 64 bit architecture may install files in
-> > 	/usr/lib64/ or in a subdirectory of it.
-> > ref: https://www.debian.org/doc/debian-policy/ch-opersys.html
-> > 
-> > Make it more flexible by allowing to mention libdir_relative while
-> > installing so that distros can mention the path according to their policy
-> > or use the default one.
-> > 
-> > Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-> > ---
-> > 
-> > Hi Steve,
-> > 
-> > And yet another one (hopefully the final one for now). I know I missed
-> > the merge window, but your Ack should be ok.
-> > 
-> >  tools/lib/traceevent/Makefile         | 5 +++--
-> >  tools/lib/traceevent/plugins/Makefile | 5 +++--
-> >  2 files changed, 6 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-> > index c5a03356a999..7e2450ddd7e1 100644
-> > --- a/tools/lib/traceevent/Makefile
-> > +++ b/tools/lib/traceevent/Makefile
-> > @@ -39,11 +39,12 @@ DESTDIR_SQ = '$(subst ','\'',$(DESTDIR))'
-> >  
-> >  LP64 := $(shell echo __LP64__ | ${CC} ${CFLAGS} -E -x c - | tail -n 1)
-> >  ifeq ($(LP64), 1)
-> > -  libdir_relative = lib64
-> > +  libdir_relative_temp = lib64
-> >  else
-> > -  libdir_relative = lib
-> > +  libdir_relative_temp = lib
-> >  endif
-> >  
-> > +libdir_relative ?= $(libdir_relative_temp)
-> >  prefix ?= /usr/local
-> >  libdir = $(prefix)/$(libdir_relative)
-> >  man_dir = $(prefix)/share/man
-> > diff --git a/tools/lib/traceevent/plugins/Makefile b/tools/lib/traceevent/plugins/Makefile
-> > index f440989fa55e..edb046151305 100644
-> > --- a/tools/lib/traceevent/plugins/Makefile
-> > +++ b/tools/lib/traceevent/plugins/Makefile
-> > @@ -32,11 +32,12 @@ DESTDIR_SQ = '$(subst ','\'',$(DESTDIR))'
-> >  
-> >  LP64 := $(shell echo __LP64__ | ${CC} ${CFLAGS} -E -x c - | tail -n 1)
-> >  ifeq ($(LP64), 1)
-> > -  libdir_relative = lib64
-> > +  libdir_relative_tmp = lib64
-> >  else
-> > -  libdir_relative = lib
-> > +  libdir_relative_tmp = lib
-> >  endif
-> >  
-> > +libdir_relative ?= $(libdir_relative_tmp)
-> >  prefix ?= /usr/local
-> >  libdir = $(prefix)/$(libdir_relative)
-> >  
+I think printing out the error part is actually fine - it would act as
+a warning for invalid parameters like this.
 
--- 
+So I think a dummy parse_param that prints out a warning is likely the
+right thing to do.
 
-- Arnaldo
+Something like the attached, perhaps? Totally untested.
+
+               Linus
+
+--0000000000008e989005998578dc
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k430y16a0>
+X-Attachment-Id: f_k430y16a0
+
+IGZzL3NxdWFzaGZzL3N1cGVyLmMgfCA5ICsrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDkgaW5z
+ZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2ZzL3NxdWFzaGZzL3N1cGVyLmMgYi9mcy9zcXVhc2hm
+cy9zdXBlci5jCmluZGV4IDBjYzRjZWVjMDU2Mi4uZmJkMWUwNWIzOWFhIDEwMDY0NAotLS0gYS9m
+cy9zcXVhc2hmcy9zdXBlci5jCisrKyBiL2ZzL3NxdWFzaGZzL3N1cGVyLmMKQEAgLTM1NSw5ICsz
+NTUsMTggQEAgc3RhdGljIGludCBzcXVhc2hmc19yZWNvbmZpZ3VyZShzdHJ1Y3QgZnNfY29udGV4
+dCAqZmMpCiAJcmV0dXJuIDA7CiB9CiAKKy8qIFByaW50IHRoZSB3YXJuaW5nLCBidXQgaWdub3Jl
+IGl0IGFzIGFuIGVycm9yICovCitzdGF0aWMgaW50IHNxdWFzaGZzX3BhcnNlX3BhcmFtKHN0cnVj
+dCBmc19jb250ZXh0ICpmYywgc3RydWN0IGZzX3BhcmFtZXRlciAqcGFyYW0pCit7CisJaW52YWxm
+KGZjLCAiJXM6IFVua25vd24gcGFyYW1ldGVyICclcyciLAorCQlmYy0+ZnNfdHlwZS0+bmFtZSwg
+cGFyYW0tPmtleSk7CisJcmV0dXJuIDA7Cit9CisKIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZnNfY29u
+dGV4dF9vcGVyYXRpb25zIHNxdWFzaGZzX2NvbnRleHRfb3BzID0gewogCS5nZXRfdHJlZQk9IHNx
+dWFzaGZzX2dldF90cmVlLAogCS5yZWNvbmZpZ3VyZQk9IHNxdWFzaGZzX3JlY29uZmlndXJlLAor
+CS5wYXJzZV9wYXJhbQk9IHNxdWFzaGZzX3BhcnNlX3BhcmFtLAogfTsKIAogc3RhdGljIGludCBz
+cXVhc2hmc19pbml0X2ZzX2NvbnRleHQoc3RydWN0IGZzX2NvbnRleHQgKmZjKQo=
+--0000000000008e989005998578dc--
