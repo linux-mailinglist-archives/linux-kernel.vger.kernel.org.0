@@ -2,88 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFEE011D016
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 729D711D006
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:41:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbfLLOnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 09:43:55 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7679 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729266AbfLLOnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:43:55 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B6E1D8ADCCDE0913A27E;
-        Thu, 12 Dec 2019 22:43:52 +0800 (CST)
-Received: from huawei.com (10.175.113.25) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Thu, 12 Dec 2019
- 22:43:42 +0800
-From:   Cheng Jian <cj.chengjian@huawei.com>
-To:     <mingo@kernel.org>, <peterz@infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <cj.chengjian@huawei.com>, <chenwandun@huawei.com>,
-        <xiexiuqi@huawei.com>, <liwei391@huawei.com>,
-        <huawei.libin@huawei.com>, <bobo.shaobowang@huawei.com>,
-        <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>
-Subject: [PATCH] sched/fair: Optimize select_idle_cpu
-Date:   Thu, 12 Dec 2019 22:41:02 +0800
-Message-ID: <20191212144102.181510-1-cj.chengjian@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1729556AbfLLOlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:41:15 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42474 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729287AbfLLOlP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 09:41:15 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 66so2193021otd.9;
+        Thu, 12 Dec 2019 06:41:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1MpAVnQXIv8ku6mOOgsViBA0ZgH1Jr6htBIpVf8hv44=;
+        b=TmfxLvpiE1YGEOvfsMj4j2KSVOGGvMe7y6y21tDR2a5R2kqs7cP27dib0KhgjIlbZa
+         8oAR3gFeXU1le1bcPyK3oWXBUdoxeh8D/i8gDDQxIibE460qAUivtlVigN90XrxHDH2Q
+         e5iwpDQAEJY9FY6XihbJLgMVP0jfkVPamLRPB8X82N7D6mGJ6Qm1QdfpVGa50pQ8ji/t
+         zi9mniyBKVwnP4PN1yG2VrRD5F1ccYbqKYJQS1vKMA7P/uIXamK8rpqpq8fJ/APnj204
+         Krx+X6XHj8VUNU5/DyWfoWmk6NusQiREyuvIo64GwkH5mkr6iOr/ZhvzvI3tUsjrjl+v
+         bC6Q==
+X-Gm-Message-State: APjAAAWA1tR13HxMItYcRQzOCDOmNn24QhBNWNXsf8Q7pX5ccdwOfQhk
+        4Y70Xyq4cH1gZTqIfd70Kwhoe7xN9jsyg1CGA5U=
+X-Google-Smtp-Source: APXvYqxjBHOhA2FAx/R9INxJKIh2DYhKaOmC+96fdWuPR9sXbpqz4T1747pPnd9kezYbXhCT9EEkcIi2C43a+mOB/ac=
+X-Received: by 2002:a9d:2073:: with SMTP id n106mr8392139ota.145.1576161674382;
+ Thu, 12 Dec 2019 06:41:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20191116005240.15722-1-robh@kernel.org> <20191116005240.15722-3-robh@kernel.org>
+In-Reply-To: <20191116005240.15722-3-robh@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 12 Dec 2019 15:41:03 +0100
+Message-ID: <CAMuHMdX20LvK2o1cZJ8q83Q08JQzH6L07gmqBm0V0xSc5GHk4A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dt-bindings: PCI: Convert generic host binding to DT schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Will Deacon <will@kernel.org>,
+        David Daney <david.daney@cavium.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-select_idle_cpu will scan the LLC domain for idle CPUs,
-it's always expensive. so commit
-    1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
-introduces a way to limit how many CPUs we scan.
+Hi Rob,
 
-But this also lead to the following issue:
+On Sat, Nov 16, 2019 at 1:53 AM Rob Herring <robh@kernel.org> wrote:
+> Convert the generic PCI host binding to DT schema. The derivative Juno,
+> PLDA XpressRICH3-AXI, and Designware ECAM bindings all just vary in
+> their compatible strings. The simplest way to convert those to
+> schema is just add them into the common generic PCI host schema.
+>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Andrew Murray <andrew.murray@arm.com>
+> Cc: Zhou Wang <wangzhou1@hisilicon.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: David Daney <david.daney@cavium.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Our threads are all bind to the front CPUs of the LLC domain,
-and now all the threads runs on the last CPU of them. nr is
-always less than the cpumask_weight, for_each_cpu_wrap can't
-find the CPU which our threads can run on, so the threads stay
-at the last CPU all the time.
+> index 515b2f9542e5..000000000000
+> --- a/Documentation/devicetree/bindings/pci/designware-pcie-ecam.txt
+> +++ /dev/null
 
-Fixes: 1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
-Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
----
- kernel/sched/fair.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> -Example:
+> -
+> -    pcie1: pcie@7f000000 {
+> -        compatible = "socionext,synquacer-pcie-ecam", "snps,dw-pcie-ecam";
+> -        device_type = "pci";
+> -        reg = <0x0 0x7f000000 0x0 0xf00000>;
+> -        bus-range = <0x0 0xe>;
+> -        #address-cells = <3>;
+> -        #size-cells = <2>;
+> -        ranges = <0x1000000 0x00 0x00010000 0x00 0x7ff00000 0x0 0x00010000>,
+> -                 <0x2000000 0x00 0x70000000 0x00 0x70000000 0x0 0x0f000000>,
+> -                 <0x3000000 0x3f 0x00000000 0x3f 0x00000000 0x1 0x00000000>;
+> -
+> -        #interrupt-cells = <0x1>;
+> -        interrupt-map-mask = <0x0 0x0 0x0 0x0>;
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 08a233e97a01..16a29b570803 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5834,6 +5834,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 	s64 delta;
- 	int this = smp_processor_id();
- 	int cpu, nr = INT_MAX, si_cpu = -1;
-+	struct cpumask cpus;
- 
- 	this_sd = rcu_dereference(*this_cpu_ptr(&sd_llc));
- 	if (!this_sd)
-@@ -5859,11 +5860,11 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 
- 	time = cpu_clock(this);
- 
--	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
-+	cpumask_and(&cpus, sched_domain_span(sd), p->cpus_ptr);
-+
-+	for_each_cpu_wrap(cpu, &cpus, target) {
- 		if (!--nr)
- 			return si_cpu;
--		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
--			continue;
- 		if (available_idle_cpu(cpu))
- 			break;
- 		if (si_cpu == -1 && sched_idle_cpu(cpu))
+An all-zeroes interrupt-map-mask seems to be very common on embedded
+SoCs, where all devices are mapped to a single interrupt.
+
+However, schemas/pci/pci-bus.yaml says:
+
+  interrupt-map-mask:
+    items:
+      - description: PCI high address cell
+        minimum: 0
+        maximum: 0xf800
+      - description: PCI mid address cell
+        const: 0
+      - description: PCI low address cell
+        const: 0
+      - description: PCI IRQ cell
+        minimum: 1
+        maximum: 7
+
+and thus complains about an all-zeroes mask, e.g.
+
+    arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dt.yaml:
+pcie@fe000000: interrupt-map-mask:0:3: 0 is less than the minimum of 1
+
+> -        interrupt-map = <0x0 0x0 0x0 0x0 &gic 0x0 0x0 0x0 182 0x4>;
+> -        msi-map = <0x0 &its 0x0 0x10000>;
+> -        dma-coherent;
+> -    };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.20.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
