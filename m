@@ -2,122 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56C7D11C5E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 07:17:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F1811C5EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 07:23:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbfLLGR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 01:17:57 -0500
-Received: from mout.gmx.net ([212.227.15.15]:54087 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726825AbfLLGR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 01:17:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1576131461;
-        bh=KL73YRrT7LLHVsznmPTHt/klCRSoc1CVMKSMBDmBo6I=;
-        h=X-UI-Sender-Class:From:To:Subject:Reply-to:Date;
-        b=Tpc3ARXxO+7BOveLypF/SVr8mN0m+AgXaOl5a/zuwIZlfLxkuOvwxPmPNtZTI8OmQ
-         nDRZjvPdrzU/X4npI+hF0EyGJwd5ehZq1GlZxO5AxGFBzuVzlmxWmnPGmnlGHdYwb1
-         HYnuKO8tdTiqRXa1KWzBzRHzBv9dUZucJV/kZpbQ=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from corona.crabdance.com ([173.228.106.20]) by mail.gmx.com
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MKbgE-1iQujo3OOq-00KwkB; Thu, 12 Dec 2019 07:17:41 +0100
-Received: by corona.crabdance.com (Postfix, from userid 1001)
-        id BFE2D6E85603; Wed, 11 Dec 2019 22:17:02 -0800 (PST)
-From:   Stefan Schaeckeler <schaecsn@gmx.net>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] thermal: rockchip: enable hwmon
-Content-Type: text/plain
-Reply-to: schaecsn@gmx.net
-Message-Id: <20191212061702.BFE2D6E85603@corona.crabdance.com>
-Date:   Wed, 11 Dec 2019 22:17:02 -0800 (PST)
-X-Provags-ID: V03:K1:kW48YWv2at+CtoZ29KlwFzvfojnYn+Z2kTPJCrfxCVA5Rh90eXV
- aM0gPv8hwKLUJ2iDVrZbWVOWIqDS4KVTl38TNMvJV32rVUullnP6dlrbKMYeIcndtHucyom
- MSUCZDZU+Xu4+kEiA13utXDD/2NBQynNtjXJeU09nBD+OkbsLck4KpO2RGz+HrIqDiZSCgj
- fKIBwKd4KkB87Z94yizRg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8lU53RZXNGc=:sHRJzAdIaFHRXzs8mtVvzs
- f6InwGCn/l5BZMSCxMyTXAhaoZ7dS9F6qxUBsgCvr3SSROiqGwCvMl5Qe9plRrS0XFICiO4lr
- dyCIIF/Qk0ByJPzjOC/m+CA203m/i2Qu0Qve5T9s/k/MCXqsov2QFvZ6na17H1rYprH91OSe8
- g68xOoJIFDDEJDGSI4v8DA3hg0MbacLSrkpP4GUeJEOpXWFUT9NAIyHSa+iIIH+SCUQn/doqy
- BZzt4R6NvLndpk3bNnjgYWOgVqUakjsPdsacPEQOQk10BpQhiqYwi+lMIITxLyty2F/v0Y/Ww
- rnnobEPvXAZsbYJV3e9j5dpWQCCOeAqIGeKbgavxyNXA8DP+gIodRZc05eoovlGpaHXuAza82
- fyhnX9zAg3YvOPcYglyMFHBlGytIgwyKBIPld5+cqtUJ0HH5vQF1JQKwHSQSEX0zBIEQO/rdB
- 4dKC3BWAkssdJrJXpRsAR0Dil7A3WBWpxtsBdRy4t04OuhlBKAnmdh6cjHwR5pWTDPIt7zWYU
- v1CQwY1XY15Cu+upIUnbPmxEx+DCYxYwr5xn++HpuCvY5w/bukbqw/S0k66g1icYQm/seM0Fa
- 3ziE1uH00dSP1q7pQ/3MQ5NvPyMEFGQSQMBt4ZtHb6ByFABsEAK+pRD8a7YtkI7P+IxDkK9d5
- IFpBK4OryV0yYSWKuqxS3y6aoTYOKN8Qi36v3Ji9dGZiwOf5e9fxwvnHbBADNqd6LclyTRrVJ
- svdqUX0ikEm9/aCN/mGbnzEunSwrd2m0EX0z6taP58gWYUqJ5WWSl3RSDW28B5FUB+A4pbR5i
- U7d9h33aiVTOG/ffx3xnq8skbj9jCt2VVwk7i1OXlFXD0Dt0532yR//0rifOqE5bp3h89p5BC
- WeB2dzdi/yFIfVfUaSMhB8h9M48KK9D/IKtiUKaIxBA6tTVKzSwHk7NucxKfoI70T0p5QUfho
- obCWmGjdX/KP25fo3T3fFJXPQqyn6ERXmeToAhWnq1s+GgT77LuWVWRuXuSWbJCTWTB6bdI97
- HI7hCrFDAhnhgJJ9bjjD7/qMnBpk5/GjlNuzPZBOQpIgZCx85l7Fm58MU+aViFSzB4fcP9glY
- uftxD3KXeknjou9mPmBr3Xbg3xsY+mb0fN1zgs5z1VzvJhIVAja8gZernjZ/rNZk9jsg4bD5B
- vG+uAdgqho/YkxhO6smQ4268B3zsB2vUx5EXqIBVHhrpZ+0fs9WmbFoWTI3nF9EbwivaZZq7A
- tRfztC7BrfN3WKncCMrtszSwpEAy4cdLGOJFu0nXcrIKT+YanoRLnHNl8dNk=
-Content-Transfer-Encoding: quoted-printable
+        id S1727979AbfLLGXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 01:23:34 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:35320 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727954AbfLLGXd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 01:23:33 -0500
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id xBC6NSf0023112
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 15:23:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com xBC6NSf0023112
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576131809;
+        bh=i7ocOMSc/MW6eFTX2hPMVcZEp0K52RbWh5zz/YcJAPs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RCvQa6T4un0P7modVhShMH6LZJ/CgaCV3mrsFBlaq86vjUfPhDTY/QhMpkIwp2/U1
+         h3vRYpNFhng5TYc0TQJyvj/BFRbWoBYiHXjMgCxsa/Q4TfMfD4sNwn39c0JxdG09gI
+         Y0XlXry3GSHJ0dynVSkbhIM61AcIq+F9DMzc3m9cNEkKX8B2g2unYlnVC7hRlA/Lz3
+         TMIUBH0LW3Q/cPcrO2F9gXFuqxFbjFsbHzU2Frg5AiOcOQY9RpOrc/1Gw+PTUvL6dv
+         qmPGAHqJ5f/kGKbASBefcF3K7vrCt1ii5KQhDmjXmWp1MWI/dOwqPrBBlM+1K9Y2vP
+         GvbbPvYPRZ7Sg==
+X-Nifty-SrcIP: [209.85.221.179]
+Received: by mail-vk1-f179.google.com with SMTP id u6so79837vkn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 22:23:28 -0800 (PST)
+X-Gm-Message-State: APjAAAXGe96yFKzs9LynNo9oOQZQwVHa8EtNFvfEqZgOsbXxGECpBaP8
+        Ve6uQCM1RIXbYzkxsxGrj56CBOlMLhEmDyquII0=
+X-Google-Smtp-Source: APXvYqwEm/gQyJa2MpP2RIiSjW99Fc7GxuRNeWtbPxHbHRKlC4nJ8ewJTlxrhsE89XU5uf1j8vv0e+FaBmkUoZSUrBQ=
+X-Received: by 2002:a1f:6344:: with SMTP id x65mr7376302vkb.26.1576131807703;
+ Wed, 11 Dec 2019 22:23:27 -0800 (PST)
+MIME-Version: 1.0
+References: <20191125154217.18640-1-jeyu@kernel.org> <20191206124102.12334-1-jeyu@kernel.org>
+In-Reply-To: <20191206124102.12334-1-jeyu@kernel.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 12 Dec 2019 15:22:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATcO3tW-ggosW7DxRquKbAWnQCNoZFtQZXxJn-+=UtE9g@mail.gmail.com>
+Message-ID: <CAK7LNATcO3tW-ggosW7DxRquKbAWnQCNoZFtQZXxJn-+=UtE9g@mail.gmail.com>
+Subject: Re: [PATCH v3] export.h: reduce __ksymtab_strings string duplication
+ by using "MS" section flags
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthias Maennich <maennich@google.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default, of-based thermal drivers do not enable hwmon.
-Explicitly enable hwmon for both, the soc and gpu temperature
-sensor.
+On Fri, Dec 6, 2019 at 9:41 PM Jessica Yu <jeyu@kernel.org> wrote:
+>
+> Commit c3a6cf19e695 ("export: avoid code duplication in
+> include/linux/export.h") refactors export.h quite nicely, but introduces
+> a slight increase in memory usage due to using the empty string ""
+> instead of NULL to indicate that an exported symbol has no namespace. As
+> mentioned in that commit, this meant an increase of 1 byte per exported
+> symbol without a namespace. For example, if a kernel configuration has
+> about 10k exported symbols, this would mean that the size of
+> __ksymtab_strings would increase by roughly 10kB.
+>
+> We can alleviate this situation by utilizing the SHF_MERGE and
+> SHF_STRING section flags. SHF_MERGE|SHF_STRING indicate to the linker
+> that the data in the section are null-terminated strings that can be
+> merged to eliminate duplication. More specifically, from the binutils
+> documentation - "for sections with both M and S, a string which is a
+> suffix of a larger string is considered a duplicate. Thus "def" will be
+> merged with "abcdef"; A reference to the first "def" will be changed to
+> a reference to "abcdef"+3". Thus, all the empty strings would be merged
+> as well as any strings that can be merged according to the cited method
+> above. For example, "memset" and "__memset" would be merged to just
+> "__memset" in __ksymtab_strings.
+>
+> As of v5.4-rc5, the following statistics were gathered with x86
+> defconfig with approximately 10.7k exported symbols.
+>
+> Size of __ksymtab_strings in vmlinux:
+> -------------------------------------
+> v5.4-rc5: 213834 bytes
+> v5.4-rc5 with commit c3a6cf19e695: 224455 bytes
+> v5.4-rc5 with this patch: 205759 bytes
+>
+> So, we already see memory savings of ~8kB compared to vanilla -rc5 and
+> savings of nearly 18.7kB compared to -rc5 with commit c3a6cf19e695 on top.
+>
+> Unfortunately, as of this writing, strings will not get deduplicated for
+> kernel modules, as ld does not do the deduplication for
+> SHF_MERGE|SHF_STRINGS sections for relocatable files (ld -r), which
+> kernel modules are. A patch for ld is currently being worked on to
+> hopefully allow for string deduplication in relocatable files in the
+> future.
+>
+> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Signed-off-by: Jessica Yu <jeyu@kernel.org>
+> ---
+> v3:
+>   - remove __KSTRTAB_ENTRY macros in favor of just putting the asm directly
+>     in ___EXPORT_SYMBOL
+>   - Document more clearly what the ___EXPORT_SYMBOL macro does
+>
+>  include/asm-generic/export.h |  8 +++++---
+>  include/linux/export.h       | 27 ++++++++++++++++++++-------
+>  2 files changed, 25 insertions(+), 10 deletions(-)
+>
+> diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+> index fa577978fbbd..23bc98e97a66 100644
+> --- a/include/asm-generic/export.h
+> +++ b/include/asm-generic/export.h
+> @@ -26,9 +26,11 @@
+>  .endm
+>
+>  /*
+> - * note on .section use: @progbits vs %progbits nastiness doesn't matter,
+> - * since we immediately emit into those sections anyway.
+> + * note on .section use: we specify progbits since usage of the "M" (SHF_MERGE)
+> + * section flag requires it. Use '%progbits' instead of '@progbits' since the
+> + * former apparently works on all arches according to the binutils source.
+>   */
+> +
+>  .macro ___EXPORT_SYMBOL name,val,sec
+>  #ifdef CONFIG_MODULES
+>         .globl __ksymtab_\name
+> @@ -37,7 +39,7 @@
+>  __ksymtab_\name:
+>         __put \val, __kstrtab_\name
+>         .previous
+> -       .section __ksymtab_strings,"a"
+> +       .section __ksymtab_strings,"aMS",%progbits,1
+>  __kstrtab_\name:
+>         .asciz "\name"
+>         .previous
+> diff --git a/include/linux/export.h b/include/linux/export.h
+> index 201262793369..18dcdcd118e7 100644
+> --- a/include/linux/export.h
+> +++ b/include/linux/export.h
+> @@ -81,16 +81,29 @@ struct kernel_symbol {
+>
+>  #else
+>
+> -/* For every exported symbol, place a struct in the __ksymtab section */
+> +/*
+> + * For every exported symbol, do the following:
 
-Signed-off-by: Stefan Schaeckeler <schaecsn@gmx.net>
+Just a nit.
 
-=2D--
- drivers/thermal/rockchip_thermal.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+You mention "an entry" twice
+to talk about different classes of structures.
 
-diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip=
-_thermal.c
-index 343c2f5c5a25..e47c60010259 100644
-=2D-- a/drivers/thermal/rockchip_thermal.c
-+++ b/drivers/thermal/rockchip_thermal.c
-@@ -19,6 +19,8 @@
- #include <linux/mfd/syscon.h>
- #include <linux/pinctrl/consumer.h>
+It might be better to be explicit about "which entry".
 
-+#include "thermal_hwmon.h"
-+
- /**
-  * If the temperature over a period of time High,
-  * the resulting TSHUT gave CRU module,let it reset the entire chip,
-@@ -1321,8 +1323,15 @@ static int rockchip_thermal_probe(struct platform_d=
-evice *pdev)
 
- 	thermal->chip->control(thermal->regs, true);
+> + *
+> + * - If applicable, place an entry in the __kcrctab section.
 
--	for (i =3D 0; i < thermal->chip->chn_num; i++)
-+	for (i =3D 0; i < thermal->chip->chn_num; i++) {
- 		rockchip_thermal_toggle_sensor(&thermal->sensors[i], true);
-+		thermal->sensors[i].tzd->tzp->no_hwmon =3D false;
-+		error =3D thermal_add_hwmon_sysfs(thermal->sensors[i].tzd);
-+		if (error)
-+			dev_warn(&pdev->dev,
-+				 "failed to register sensor %d with hwmon: %d\n",
-+				 i, error);
-+	}
+  "place a CRC entry in the __kcrctab section"
+might be clearer ?
 
- 	platform_set_drvdata(pdev, thermal);
 
-@@ -1344,6 +1353,7 @@ static int rockchip_thermal_remove(struct platform_d=
-evice *pdev)
- 	for (i =3D 0; i < thermal->chip->chn_num; i++) {
- 		struct rockchip_thermal_sensor *sensor =3D &thermal->sensors[i];
+> + * - Put the name of the symbol and namespace (empty string "" for none) in
+> + *   __ksymtab_strings.
+> + * - Place an entry in the __ksymtab section.
 
-+		thermal_remove_hwmon_sysfs(sensor->tzd);
- 		rockchip_thermal_toggle_sensor(sensor, false);
- 	}
+ "Place a struct kernel_symbol entry in __ksymtab section"   ?
+might be clearer ?
 
-=2D-
-2.24.0
 
+Other than that:
+Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+
+
+> + *
+> + * note on .section use: we specify progbits since usage of the "M" (SHF_MERGE)
+> + * section flag requires it. Use '%progbits' instead of '@progbits' since the
+> + * former apparently works on all arches according to the binutils source.
+> + */
+>  #define ___EXPORT_SYMBOL(sym, sec, ns)                                 \
+>         extern typeof(sym) sym;                                         \
+> +       extern const char __kstrtab_##sym[];                            \
+> +       extern const char __kstrtabns_##sym[];                          \
+>         __CRC_SYMBOL(sym, sec);                                         \
+> -       static const char __kstrtab_##sym[]                             \
+> -       __attribute__((section("__ksymtab_strings"), used, aligned(1))) \
+> -       = #sym;                                                         \
+> -       static const char __kstrtabns_##sym[]                           \
+> -       __attribute__((section("__ksymtab_strings"), used, aligned(1))) \
+> -       = ns;                                                           \
+> +       asm("   .section \"__ksymtab_strings\",\"aMS\",%progbits,1\n"   \
+> +           "__kstrtab_" #sym ":                                \n"     \
+> +           "   .asciz  \"" #sym "\"                            \n"     \
+> +           "__kstrtabns_" #sym ":                              \n"     \
+> +           "   .asciz  \"" ns "\"                              \n"     \
+> +           "   .previous                                       \n");   \
+>         __KSYMTAB_ENTRY(sym, sec)
+>
+>  #endif
+> --
+> 2.16.4
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
