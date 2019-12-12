@@ -2,78 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5291011D0A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:13:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A88BD11D0A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:15:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbfLLPNS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:13:18 -0500
-Received: from mx2.freebsd.org ([96.47.72.81]:28432 "EHLO mx2.freebsd.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728705AbfLLPNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:13:17 -0500
-Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx2.freebsd.org (Postfix) with ESMTPS id BF56F744B5;
-        Thu, 12 Dec 2019 15:13:16 +0000 (UTC)
-        (envelope-from emaste@freebsd.org)
-Received: from freefall.freebsd.org (freefall.freebsd.org [96.47.72.132])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         server-signature RSA-PSS (4096 bits)
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "freefall.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx1.freebsd.org (Postfix) with ESMTPS id 47YckN3fvrz3H3l;
-        Thu, 12 Dec 2019 15:13:16 +0000 (UTC)
-        (envelope-from emaste@freebsd.org)
-Received: by freefall.freebsd.org (Postfix, from userid 1079)
-        id 765A3FD19; Thu, 12 Dec 2019 15:13:16 +0000 (UTC)
-From:   Ed Maste <emaste@freefall.freebsd.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ed Maste <emaste@freebsd.org>
-Subject: [PATCH] perf tools: correct license on jsmn json parser
-Date:   Thu, 12 Dec 2019 15:12:44 +0000
-Message-Id: <20191212151244.26324-1-emaste@freefall.freebsd.org>
-X-Mailer: git-send-email 2.22.0
+        id S1729178AbfLLPPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 10:15:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34634 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728654AbfLLPPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 10:15:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A95F9ADDF;
+        Thu, 12 Dec 2019 15:15:00 +0000 (UTC)
+Subject: Re: [RFC 04/25] spi: gpio: Implement LSB First bitbang support
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Dan Murphy <dmurphy@ti.com>
+References: <20191212033952.5967-1-afaerber@suse.de>
+ <20191212033952.5967-5-afaerber@suse.de>
+ <CAMuHMdWdxJ9AaWhyCW-u8fCpXSDCPd-D6Dx129SF5nRssZsK=g@mail.gmail.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Organization: SUSE Software Solutions Germany GmbH
+Message-ID: <9b4b6287-c1d9-1b41-88a8-7ac9fe222642@suse.de>
+Date:   Thu, 12 Dec 2019 16:14:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWdxJ9AaWhyCW-u8fCpXSDCPd-D6Dx129SF5nRssZsK=g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ed Maste <emaste@freebsd.org>
+Hi Geert,
 
-These files are part of the jsmn json parser, introduced in 867a979a83.
-Correct the SPDX tag to indicate that they are under the MIT license.
+Am 12.12.19 um 09:40 schrieb Geert Uytterhoeven:
+> On Thu, Dec 12, 2019 at 4:41 AM Andreas Färber <afaerber@suse.de> wrote:
+>> Add support for slave DT property spi-lsb-first, i.e., SPI_LSB_FIRST mode.
+>>
+>> Duplicate the inline helpers bitbang_txrx_be_cpha{0,1} as LE versions.
+>> Make checkpatch.pl happy by changing "unsigned" to "unsigned int".
+>>
+>> Conditionally call them from all the spi-gpio txrx_word callbacks.
+>>
+>> Signed-off-by: Andreas Färber <afaerber@suse.de>
+> 
+> Thanks for your patch!
 
-Signed-off-by: Ed Maste <emaste@freebsd.org>
----
- tools/perf/pmu-events/jsmn.h | 2 +-
- tools/perf/pmu-events/json.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+NP. I prefer fixing issues at the source over awkward workarounds. :)
 
-diff --git a/tools/perf/pmu-events/jsmn.h b/tools/perf/pmu-events/jsmn.h
-index c7b0f6ea2a31..1bdfd55fff30 100644
---- a/tools/perf/pmu-events/jsmn.h
-+++ b/tools/perf/pmu-events/jsmn.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+/* SPDX-License-Identifier: MIT */
- #ifndef __JSMN_H_
- #define __JSMN_H_
- 
-diff --git a/tools/perf/pmu-events/json.h b/tools/perf/pmu-events/json.h
-index fbcd5a0590ad..7cb29fac8c31 100644
---- a/tools/perf/pmu-events/json.h
-+++ b/tools/perf/pmu-events/json.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+/* SPDX-License-Identifier: MIT */
- #ifndef JSON_H
- #define JSON_H 1
- 
+>> --- a/drivers/spi/spi-gpio.c
+>> +++ b/drivers/spi/spi-gpio.c
+>> @@ -135,25 +135,37 @@ static inline int getmiso(const struct spi_device *spi)
+>>  static u32 spi_gpio_txrx_word_mode0(struct spi_device *spi,
+>>                 unsigned nsecs, u32 word, u8 bits, unsigned flags)
+>>  {
+>> -       return bitbang_txrx_be_cpha0(spi, nsecs, 0, flags, word, bits);
+>> +       if (unlikely(spi->mode & SPI_LSB_FIRST))
+>> +               return bitbang_txrx_le_cpha0(spi, nsecs, 0, flags, word, bits);
+>> +       else
+>> +               return bitbang_txrx_be_cpha0(spi, nsecs, 0, flags, word, bits);
+>>  }
+> 
+> Duplicating all functions sounds a bit wasteful to me.
+
+Two functions duplicated, eight function calls duplicated.
+
+> What about reverting the word first, and calling the normal functions?
+> 
+>     if (unlikely(spi->mode & SPI_LSB_FIRST)) {
+>             if (bits <= 8)
+>                     word = bitrev8(word) >> (bits - 8);
+>             else if (bits <= 16)
+>                     word = bitrev16(word) >> (bits - 16);
+>             else
+>                     word = bitrev32(word) >> (bits - 32);
+>     }
+>     return bitbang_txrx_be_cpha0(spi, nsecs, 0, flags, word, bits);
+
+Hm, wasn't aware of those helpers, so I opted not to loop over the bits
+for reversing myself, as Thomas Gleixner disliked bit loops in irqchip.
+Performance appeared to be a concern here, too.
+
+Eight functions duplicated then. I don't like that - at least we should
+pack that into an inline helper or macro, to not copy&paste even more
+lines around. Who knows, maybe we'll get 64-bit support at one point?
+
+Do you think it would be acceptable to instead encapsulate this inside
+the _be inline helpers? That would lead the name ad absurdum, of course,
+but we would then need to do it only twice, not eight times.
+
+However, either way would seem to make the LSB code path slower than MSB
+due to the prepended reversal.
+
+Delays are already stubbed out, with open TODOs for further inlining
+functions that are being dispatched today.
+
+So from that angle I don't see a better way than either duplicating the
+functions or using some macro magic to #include the header twice. If we
+wanted to go down that path, we could probably de-duplicate the existing
+two functions, too, but I was trying to err on the cautious side, since
+I don't have setups to test all four code paths myself (and a ton of
+more relevant but less fun patches to flush out ;)).
+
+Regards,
+Andreas
+
 -- 
-2.24.0
-
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer
+HRB 36809 (AG Nürnberg)
