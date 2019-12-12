@@ -2,142 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F1C611D032
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:49:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 872C211D039
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:50:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbfLLOtG convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Dec 2019 09:49:06 -0500
-Received: from mga01.intel.com ([192.55.52.88]:62440 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729640AbfLLOtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:49:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 06:49:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,306,1571727600"; 
-   d="scan'208";a="245748962"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Dec 2019 06:49:05 -0800
-Received: from fmsmsx101.amr.corp.intel.com (10.18.124.199) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 12 Dec 2019 06:49:05 -0800
-Received: from fmsmsx107.amr.corp.intel.com ([169.254.6.96]) by
- fmsmsx101.amr.corp.intel.com ([169.254.1.124]) with mapi id 14.03.0439.000;
- Thu, 12 Dec 2019 06:49:05 -0800
-From:   "Ruhl, Michael J" <michael.j.ruhl@intel.com>
-To:     Gerd Hoffmann <kraxel@redhat.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        "gurchetansingh@chromium.org" <gurchetansingh@chromium.org>
-Subject: RE: [PATCH] drm/virtio: fix mmap page attributes
-Thread-Topic: [PATCH] drm/virtio: fix mmap page attributes
-Thread-Index: AQHVrzjyVT6cHGbxNE67i4kUKKmNL6e2l33w
-Date:   Thu, 12 Dec 2019 14:49:04 +0000
-Message-ID: <14063C7AD467DE4B82DEDB5C278E8663EE148E5D@fmsmsx107.amr.corp.intel.com>
-References: <20191210085759.14763-1-kraxel@redhat.com>
-In-Reply-To: <20191210085759.14763-1-kraxel@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTQxNTkzOTMtMDdjOC00MzQ0LTgyNjMtZjk0NDA5MTY0ZGVmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiS3hMREFEWnJxV3FlRmY4RTd2U0JLaDhpeHlwU29CaHhUTVo0TjNCRU1vVksrM1gxR0pnSHhVZXFBUWx5NjdJaiJ9
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1728937AbfLLOuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:50:50 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57482 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728861AbfLLOuu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 09:50:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576162248;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=7XQ0BIDQs1rSkgFn546VmoxkIOFu9sf2QvSDRqt2+UU=;
+        b=YYoKvq8kqS9GyAl/RC0tY86oCqPTA9qS1AUjYy1A93xfTqcLc/tjiTNTNPeqiZThjpweN1
+        cGd8iS3DRuB9eNqMpE6LrZO+oNeEq0qlQ0QvnpTBBEjjvxLDt/rIpIrd8DP5zLZIFesjIB
+        hA8Stn1JeSErympxuX0uRK4hmMD4o7k=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-330-CioVZae2Or-KhoNGILrX-A-1; Thu, 12 Dec 2019 09:50:46 -0500
+X-MC-Unique: CioVZae2Or-KhoNGILrX-A-1
+Received: by mail-qt1-f198.google.com with SMTP id g22so1516230qtr.23
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 06:50:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7XQ0BIDQs1rSkgFn546VmoxkIOFu9sf2QvSDRqt2+UU=;
+        b=lqlXQEMZBWXKF7SL1p86Vb9L5AiDdmQSg5W7y87RaqkC3xQbzlETIu3mXqGAq52LaH
+         0eTZxTr6D4EJokxfxIk3G40WFMtsdwNCdLsGqJCjIxJHFqgDEQVvso0K84lmSSeo6hvS
+         CbQrDlq5wkQxk+G6ZQN1b2QMfgFV+1tRAjEdNLsyuXmxIZcG/fWX6ycOEsq4LUXPiLND
+         n2DpSiNIFysQUF4ShdclhgKgTfZkH2qErKKl6Zx1vZatWOJIIiANH38KP4vlmtUdK61X
+         8W+bMpNs15jKsaZVI+6V5V020yG7/LsLCTVH/5Mdq34Ni/9BM1FluklHUpljKGtOYKTp
+         O3zQ==
+X-Gm-Message-State: APjAAAUZgJhjBC1V1X1S100iP3BhJxSykQ5/Ljy5YA16bCNqurwENtfT
+        bteutnptOqq85DaerjJAdLWALTvwrLkQnaNfK51bKsTMWD3HRpYc0jK6kKyfyd5tsS6lHIhyAJ+
+        OSRSA553oR17O7arlH3jzhnCp
+X-Received: by 2002:ac8:7417:: with SMTP id p23mr7598797qtq.313.1576162246357;
+        Thu, 12 Dec 2019 06:50:46 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxOQuw5KzIzEEpY1tkirep65v+/e3rmTOxoGFv8KpZEJqgnBlMHg1taBK8FFNx2bZg0I/q0jg==
+X-Received: by 2002:ac8:7417:: with SMTP id p23mr7598772qtq.313.1576162246140;
+        Thu, 12 Dec 2019 06:50:46 -0800 (PST)
+Received: from labbott-redhat.redhat.com (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id 201sm1823298qkf.10.2019.12.12.06.50.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 06:50:45 -0800 (PST)
+From:   Laura Abbott <labbott@redhat.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] vfs: Don't reject unknown parameters
+Date:   Thu, 12 Dec 2019 09:50:42 -0500
+Message-Id: <20191212145042.12694-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->-----Original Message-----
->From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of
->Gerd Hoffmann
->Sent: Tuesday, December 10, 2019 3:58 AM
->To: dri-devel@lists.freedesktop.org
->Cc: David Airlie <airlied@linux.ie>; open list <linux-kernel@vger.kernel.org>;
->open list:VIRTIO GPU DRIVER <virtualization@lists.linux-foundation.org>;
->Gerd Hoffmann <kraxel@redhat.com>; gurchetansingh@chromium.org
->Subject: [PATCH] drm/virtio: fix mmap page attributes
->
->virtio-gpu uses cached mappings.  shmem helpers use writecombine though.
->So roll our own mmap function, wrapping drm_gem_shmem_mmap(), to
->tweak
->vm_page_prot accordingly.
->
->Reported-by: Gurchetan Singh <gurchetansingh@chromium.org>
->Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
->---
-> drivers/gpu/drm/virtio/virtgpu_object.c | 18 +++++++++++++++++-
-> 1 file changed, 17 insertions(+), 1 deletion(-)
->
->diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c
->b/drivers/gpu/drm/virtio/virtgpu_object.c
->index 017a9e0fc3bb..158610902054 100644
->--- a/drivers/gpu/drm/virtio/virtgpu_object.c
->+++ b/drivers/gpu/drm/virtio/virtgpu_object.c
->@@ -75,6 +75,22 @@ static void virtio_gpu_free_object(struct
->drm_gem_object *obj)
-> 	drm_gem_shmem_free_object(obj);
-> }
->
->+static int virtio_gpu_gem_mmap(struct drm_gem_object *obj, struct
->vm_area_struct *vma)
->+{
->+	pgprot_t prot;
->+	int ret;
->+
->+	ret = drm_gem_shmem_mmap(obj, vma);
->+	if (ret < 0)
->+		return ret;
->+
->+	/* virtio-gpu needs normal caching, so clear writecombine */
+The new mount API currently rejects unknown parameters if the
+filesystem doesn't have doesn't take any arguments. This is
+unfortunately a regression from the old API which silently
+ignores extra arguments. This is easly seen with the squashfs
+conversion (5a2be1288b51 ("vfs: Convert squashfs to use the new
+mount API")) which now fails to mount with extra options. Just
+get rid of the error.
 
-A minor nit. 
+Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock
+creation/configuration context")
+Link: https://lore.kernel.org/lkml/20191130181548.GA28459@gentoo-tp.home/
+Reported-by: Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1781863
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ fs/fs_context.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I was looking at this code, trying to see where you were clearing the
-writecombine bit.
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 138b5b4d621d..7ec20b1f8a53 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -160,8 +160,7 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
+ 		return 0;
+ 	}
+ 
+-	return invalf(fc, "%s: Unknown parameter '%s'",
+-		      fc->fs_type->name, param->key);
++	return 0;
+ }
+ EXPORT_SYMBOL(vfs_parse_fs_param);
+ 
+-- 
+2.21.0
 
-Maybe a more clear comment would be:
-
-virtio-gpu needs normal caching, re-do protection without writecombine
-
-?
-
-Mike
-
->+	prot = vm_get_page_prot(vma->vm_flags);
->+	prot = pgprot_decrypted(prot);
->+	vma->vm_page_prot = prot;
->+	return 0;
->+}
->+
-> static const struct drm_gem_object_funcs virtio_gpu_gem_funcs = {
-> 	.free = virtio_gpu_free_object,
-> 	.open = virtio_gpu_gem_object_open,
->@@ -86,7 +102,7 @@ static const struct drm_gem_object_funcs
->virtio_gpu_gem_funcs = {
-> 	.get_sg_table = drm_gem_shmem_get_sg_table,
-> 	.vmap = drm_gem_shmem_vmap,
-> 	.vunmap = drm_gem_shmem_vunmap,
->-	.mmap = &drm_gem_shmem_mmap,
->+	.mmap = &virtio_gpu_gem_mmap,
-> };
->
-> struct drm_gem_object *virtio_gpu_create_object(struct drm_device *dev,
->--
->2.18.1
->
->_______________________________________________
->dri-devel mailing list
->dri-devel@lists.freedesktop.org
->https://lists.freedesktop.org/mailman/listinfo/dri-devel
