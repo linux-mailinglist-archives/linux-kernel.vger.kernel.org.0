@@ -2,115 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 015A311D3F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 18:31:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 004C611D403
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 18:31:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbfLLRbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 12:31:06 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43093 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730061AbfLLRbF (ORCPT
+        id S1730206AbfLLRbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 12:31:46 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:65136 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730162AbfLLRbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 12:31:05 -0500
-Received: by mail-lj1-f196.google.com with SMTP id a13so3168813ljm.10;
-        Thu, 12 Dec 2019 09:31:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pwcDuyQ5H/LeRcpzHWQQ5LPkKEAPYr1LrdRtOV1GNCg=;
-        b=fqznNKDF+97BNXhX0xT1avM+7NbUfhXB8lgQUji0tZcAqYWaZxoGnbFjs0dy521YOc
-         sfk8GSXNgI2dQkBlBPgZWSALhTs5K0s/jsAzKmjuLXw+9bkhTYTuhPbS7XtX6xyjQ1pL
-         u/CMyxQGDWiApJeiYWtF2lmMs3nN92pw9ItmSg2SYehR6+nuvf489VENLcGI7W8DJy4C
-         8/R+0xPPWBI2rghv+zJUDpgApdgBz+kGaYPCURhKoMGgIWJyvEqNcpryKduNKVExeHXq
-         zr3gK5Be7c4xIaSZLj9qptQ3LUxBFRxrvnB2IrhCgm8kxTcumf2m3rjQgGxeQNLCyCXP
-         qGZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pwcDuyQ5H/LeRcpzHWQQ5LPkKEAPYr1LrdRtOV1GNCg=;
-        b=T6y1urimeHuTCNpC9lD/dAZE9H5kuKr2DD168rh8DuLgX74FlIeq4ZxgkaJY5lbkXp
-         HE7dVNIVR7jDpVDMIpc9+ca3zW55+KMZWEHQKYUeLuwL+lhD4y+iq7d8ZmKfH+3rB8xH
-         XkiiGIlhnRAMhZAd+CBJi7mVojrt4fF/RAjOGBndbzDlimX2gRy6Qp5vjDazObiVGueX
-         Nf//t5nVQ79+JFJsI3e12JwXNgSDNN0a8V48eKddB1oz42xuyhujTRwFLdPgfnfdX6mY
-         0FT2FgvTQ1JnoYfx8bG+dyzH5959LsNEPGnPekCf6WYolhd7st0xcpOqkUN2z38FvtwN
-         tVKw==
-X-Gm-Message-State: APjAAAWJf/VM0KHrwW0efBUxIi7aOAF/rRnKKve8MIm3mqKDh8oV7XyT
-        vWzpgnG1s9CF/HhnBM2jjz9Wjhp1/Y95VFLezyn5saGs
-X-Google-Smtp-Source: APXvYqxAjspAhxct45txPMuGxP8n581H7r4DjRSv0XoxKkAFeCDgWkvoP6X0+farZhsuWhWNpr1lDrirmmNr7wPsxZA=
-X-Received: by 2002:a2e:8606:: with SMTP id a6mr6723056lji.119.1576171862453;
- Thu, 12 Dec 2019 09:31:02 -0800 (PST)
+        Thu, 12 Dec 2019 12:31:45 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBCHQhph061183
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 12:31:44 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wtf70rp0x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 12:31:44 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 12 Dec 2019 17:31:22 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 12 Dec 2019 17:31:17 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBCHVGS658130460
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Dec 2019 17:31:16 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC964A405C;
+        Thu, 12 Dec 2019 17:31:16 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2DD5DA405B;
+        Thu, 12 Dec 2019 17:31:16 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.212])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Dec 2019 17:31:16 +0000 (GMT)
+Subject: Re: [PATCH v2 02/13] KVM: x86: Protect
+ kvm_hv_msr_[get|set]_crash_data() from Spectre-v1/L1TF attacks
+To:     Marios Pomonis <pomonis@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Finco <nifi@google.com>, Andrew Honig <ahonig@google.com>,
+        stable@vger.kernel.org
+References: <20191211204753.242298-1-pomonis@google.com>
+ <20191211204753.242298-3-pomonis@google.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
+Date:   Thu, 12 Dec 2019 18:31:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-References: <20191127142707.GB2889@paulmck-ThinkPad-P72> <20191129182823.8710-1-sjpark@amazon.de>
- <CAEjAshoczVRTavYmEb82xh+aJzQ30sKJRTuj=os7nZfFQ3AFfg@mail.gmail.com>
-In-Reply-To: <CAEjAshoczVRTavYmEb82xh+aJzQ30sKJRTuj=os7nZfFQ3AFfg@mail.gmail.com>
-From:   SeongJae Park <sj38.park@gmail.com>
-Date:   Thu, 12 Dec 2019 18:30:35 +0100
-Message-ID: <CAEjAshoe3HunF4=0LQduZ=QW3mFQVNZQY6xXYJ1TwA1byMrGDQ@mail.gmail.com>
-Subject: Re: [PATCH] docs/memory-barriers.txt.kokr: Minor wordsmith
-To:     Jonathan Corbet <corbet@lwn.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Will Deacon <will@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        SeongJae Park <sjpark@amazon.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+In-Reply-To: <20191211204753.242298-3-pomonis@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19121217-0016-0000-0000-000002D43431
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19121217-0017-0000-0000-000033365B94
+Message-Id: <314f6d96-b75f-e159-d94d-1d30a5140e40@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-12_05:2019-12-12,2019-12-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 clxscore=1015 malwarescore=0
+ suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912120136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gSm9uLA0KDQpPbiBGcmksIERlYyA2LCAyMDE5IGF0IDY6MjEgUE0gU2VvbmdKYWUgUGFy
-ayA8c2ozOC5wYXJrQGdtYWlsLmNvbT4gd3JvdGU6DQo+DQo+IEhlbGxvIEpvbiBhbmQgUGF1bCwN
-Cj4NCj4gT24gRnJpLCBOb3YgMjksIDIwMTkgYXQgNzoyOSBQTSBTZW9uZ0phZSBQYXJrIDxzajM4
-LnBhcmtAZ21haWwuY29tPiB3cm90ZToNCj4gPg0KPiA+IEFzIHN1Z2dlc3RlZCBieSBQYXVsLCBJ
-IGdvdCBhIHJldmlldyBmcm9tIGFub3RoZXIgS29yZWFuIGhhY2tlciBZdW5qYWUuDQo+ID4gIEZy
-b20gdGhlIHJldmlldywgSSBnb3Qgbm90IG9ubHkgJ1Jldmlld2VkLWJ5OicgdGFncywgYnV0IGFs
-c28gZm91bmQgYQ0KPiA+IGZldyBtaW5vciBuaXRzLiAgU28gSSBtYWRlIGEgc2Vjb25kIHZlcnNp
-b24gb2YgdGhlIHBhdGNoc2V0IGJ1dCBqdXN0DQo+ID4gcmVhbGl6ZWQgdGhhdCB0aGUgZmlyc3Qg
-dmVyc2lvbiBoYXMgYWxyZWFkeSBzZW50IHRvIExpbnVzLiAgSSB0aGVyZWZvcmUNCj4gPiBzZW5k
-IG9ubHkgdGhlIG5pdCBmaXhlcyBhcyBhbm90aGVyIHBhdGNoLg0KPg0KPiBNYXkgSSBhc2sgeW91
-ciBjb21tZW50cz8NCg0KTWF5IEkgYXNrIHlvdXIgY29tbWVudHM/DQoNCg0KVGhhbmtzLA0KU2Vv
-bmdKYWUgUGFyaw0KDQo+DQo+DQo+IFRoYW5rcywNCj4gU2VvbmdKYWUgUGFyaw0KPg0KPiA+DQo+
-ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gPjggLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+IGRvY3MvbWVtb3J5LWJhcnJpZXJzLnR4dC5rb2tyOiBN
-aW5vciB3b3Jkc21pdGgNCj4gPg0KPiA+IFRoaXMgY29tbWl0IGZpeGVzIGEgY291cGxlIG9mIG1p
-bm9yIG5pdHMgaW4gdGhlIEtvcmVhbiB0cmFuc2xhdGlvbiBvZg0KPiA+ICdtZW1vcnktYmFycmll
-cnMudHh0Jy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNlb25nSmFlIFBhcmsgPHNqcGFya0Bh
-bWF6b24uZGU+DQo+ID4gUmV2aWV3ZWQtYnk6IFl1bmphZSBMZWUgPGx5ajc2OTRAZ21haWwuY29t
-Pg0KPiA+IC0tLQ0KPiA+ICBEb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9rb19LUi9tZW1vcnkt
-YmFycmllcnMudHh0IHwgNCArKy0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMo
-KyksIDIgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi90
-cmFuc2xhdGlvbnMva29fS1IvbWVtb3J5LWJhcnJpZXJzLnR4dCBiL0RvY3VtZW50YXRpb24vdHJh
-bnNsYXRpb25zL2tvX0tSL21lbW9yeS1iYXJyaWVycy50eHQNCj4gPiBpbmRleCBhOGQyNmRmOTM2
-MGIuLjI5ZTc2YTczYWU1OSAxMDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0
-aW9ucy9rb19LUi9tZW1vcnktYmFycmllcnMudHh0DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi90
-cmFuc2xhdGlvbnMva29fS1IvbWVtb3J5LWJhcnJpZXJzLnR4dA0KPiA+IEBAIC0yNDEzLDcgKzI0
-MTMsNyBAQCBf7JWK7Iq164uI64ukXy4NCj4gPiAg7JWM6rOgIOyeiOuKlCwgLSBpbmIoKSDrgpgg
-d3JpdGVsKCkg6rO8IOqwmeydgCAtIOyggeygiO2VnCDslaHshLjsiqQg66Oo7Yu07J2EIO2Gte2V
-tCDsnbTro6jslrTsoLjslbzrp4wNCj4gPiAg7ZWp64uI64ukLiAg7J206rKD65Ok7J2AIOuMgOu2
-gOu2hOydmCDqsr3smrDsl5DripQg66qF7Iuc7KCBIOuplOuqqOumrCDrsLDrpqzslrQg7JmAIO2V
-qOq7mCDsgqzsmqnrkKAg7ZWE7JqU6rCADQo+ID4gIOyXhuyKteuLiOuLpOunjCwg7JmE7ZmU65Cc
-IOuplOuqqOumrCDslaHshLjsiqQg7IaN7ISx7Jy866GcIEkvTyDrqZTrqqjrpqwg7JyI64+E7Jqw
-66Gc7J2YIOywuOyhsOulvCDsnITtlbQNCj4gPiAt7JWh7IS47IqkIO2VqOyImOqwgCDsgqzsmqnr
-kJzri6TrqbQg7Iic7ISc66W8IOqwleygnO2VmOq4sCDsnITtlbQgX21hZGF0b3J5XyDrqZTrqqjr
-pqwg67Cw66as7Ja06rCADQo+ID4gK+yVoeyEuOyKpCDtlajsiJjqsIAg7IKs7Jqp65Cc64uk66m0
-IOyInOyEnOulvCDqsJXsoJztlZjquLAg7JyE7ZW0IF9tYW5kYXRvcnlfIOuplOuqqOumrCDrsLDr
-pqzslrTqsIANCj4gPiAg7ZWE7JqU7ZWp64uI64ukLg0KPiA+DQo+ID4gIOuNlCDrp47snYAg7KCV
-67O066W8IOychO2VtOyEoCBEb2N1bWVudGF0aW9uL2RyaXZlci1hcGkvZGV2aWNlLWlvLnJzdCDr
-pbwg7LC46rOg7ZWY7Iut7Iuc7JikLg0KPiA+IEBAIC0yNTI4LDcgKzI1MjgsNyBAQCBJL08g7JWh
-7IS47Iqk66W8IO2Gte2VnCDso7zrs4DsnqXsuZjsmYDsnZgg7Ya17Iug7J2AIOyVhO2CpO2Fjeyz
-kOyZgCDquLDquLDsl5ANCj4gPiAgICAgICAgIOydtOqyg+uTpOydgCByZWFkWCgpIOyZgCB3cml0
-ZVgoKSDrnpEg67mE7Iq37ZWY7KeA66eMLCDrjZQg7JmE7ZmU65CcIOuplOuqqOumrCDsiJzshJwN
-Cj4gPiAgICAgICAgIOuztOyepeydhCDsoJzqs7Xtlanri4jri6QuICDqtazssrTsoIHsnLzroZws
-IOydtOqyg+uTpOydgCDsnbzrsJjsoIEg66mU66qo66asIOyVoeyEuOyKpOuCmCBkZWxheSgpDQo+
-ID4gICAgICAgICDro6jtlIQgKOyYiDrslZ7snZggMi01IO2VreuqqSkg7JeQIOuMgO2VtCDsiJzs
-hJzrpbwg67O07J6l7ZWY7KeAIOyViuyKteuLiOuLpOunjCDrlJTtj7TtirggSS9PDQo+ID4gLSAg
-ICAgICDquLDriqXsnLzroZwg66ek7ZWR65CcIF9faW9tZW0g7Y+s7J247YSw7JeQIOuMgO2VtCDr
-j5nsnpHtlaAg65WMLCDqsJnsnYAgQ1BVIOyTsOugiOuTnOyXkCDsnZjtlbQNCj4gPiArICAgICAg
-IOq4sOuKpeycvOuhnCDrp6TtlZHrkJwgX19pb21lbSDtj6zsnbjthLDsl5Ag64yA7ZW0IOuPmeye
-ke2VoCDrlYwsIOqwmeydgCBDUFUg7JOw66CI65Oc7JeQIOydmO2VnA0KPiA+ICAgICAgICAg6rCZ
-7J2AIOyjvOuzgOyepey5mOuhnOydmCDslaHshLjsiqTsl5DripQg7Iic7ISc6rCAIOunnuy2sOyn
-iCDqsoPsnbQg67O07J6l65Cp64uI64ukLg0KPiA+DQo+ID4gICAoKikgcmVhZHNYKCksIHdyaXRl
-c1goKToNCj4gPiAtLQ0KPiA+IDIuMTcuMg0KPiA+DQo=
+
+
+On 11.12.19 21:47, Marios Pomonis wrote:
+> This fixes Spectre-v1/L1TF vulnerabilities in kvm_hv_msr_get_crash_data()
+> and kvm_hv_msr_set_crash_data().
+> These functions contain index computations that use the
+> (attacker-controlled) MSR number.
+> 
+> Fixes: commit e7d9513b60e8 ("kvm/x86: added hyper-v crash msrs into kvm hyperv context")
+> 
+> Signed-off-by: Nick Finco <nifi@google.com>
+> Signed-off-by: Marios Pomonis <pomonis@google.com>
+> Reviewed-by: Andrew Honig <ahonig@google.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  arch/x86/kvm/hyperv.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+> index 23ff65504d7e..26408434b9bc 100644
+> --- a/arch/x86/kvm/hyperv.c
+> +++ b/arch/x86/kvm/hyperv.c
+> @@ -809,11 +809,12 @@ static int kvm_hv_msr_get_crash_data(struct kvm_vcpu *vcpu,
+>  				     u32 index, u64 *pdata)
+>  {
+>  	struct kvm_hv *hv = &vcpu->kvm->arch.hyperv;
+> +	size_t size = ARRAY_SIZE(hv->hv_crash_param);
+> 
+> -	if (WARN_ON_ONCE(index >= ARRAY_SIZE(hv->hv_crash_param)))
+> +	if (WARN_ON_ONCE(index >= size))
+>  		return -EINVAL;
+
+The fact that we do a WARN_ON_ONCE here, should actually tell that index is not
+user controllable. Otherwise this would indicate the possibility to trigger a 
+kernel warning from a malicious user space. So
+a: we do not need this change
+or
+b: we must also fix the WARN_ON_ONCE
+
+
