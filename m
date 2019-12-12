@@ -2,171 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA89911D58A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:29:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1187211D5AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:33:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730423AbfLLS32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 13:29:28 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64570 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730380AbfLLS31 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 13:29:27 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBCIM4M0070122
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 13:29:27 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wugd2qba0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 13:29:26 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 12 Dec 2019 18:29:24 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Dec 2019 18:29:20 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBCITJTv33095812
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Dec 2019 18:29:19 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5C4C8A4040;
-        Thu, 12 Dec 2019 18:29:19 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04338A4051;
-        Thu, 12 Dec 2019 18:29:19 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.212])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Dec 2019 18:29:18 +0000 (GMT)
-Subject: Re: READ_ONCE() + STACKPROTECTOR_STRONG == :/ (was Re: [GIT PULL]
- Please pull powerpc/linux.git powerpc-5.5-2 tag (topic/kasan-bitops))
-To:     Will Deacon <will@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, dja@axtens.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <87blslei5o.fsf@mpe.ellerman.id.au>
- <20191206131650.GM2827@hirez.programming.kicks-ass.net>
- <875zimp0ay.fsf@mpe.ellerman.id.au>
- <20191212080105.GV2844@hirez.programming.kicks-ass.net>
- <20191212100756.GA11317@willie-the-truck>
- <20191212104610.GW2827@hirez.programming.kicks-ass.net>
- <CAHk-=wjUBsH0BYDBv=q36482G-U7c=9bC89L_BViSciTfb8fhA@mail.gmail.com>
- <20191212180634.GA19020@willie-the-truck>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
-Date:   Thu, 12 Dec 2019 19:29:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1730472AbfLLSdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 13:33:22 -0500
+Received: from mga14.intel.com ([192.55.52.115]:13185 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730344AbfLLSdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 13:33:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 10:25:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,306,1571727600"; 
+   d="scan'208";a="216380396"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.137])
+  by orsmga003.jf.intel.com with ESMTP; 12 Dec 2019 10:25:10 -0800
+Subject: [PATCH RFC v2 10/14] dmaengine: idxd: add descriptor manipulation
+ routines
+From:   Dave Jiang <dave.jiang@intel.com>
+To:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org
+Cc:     dan.j.williams@intel.com, tony.luck@intel.com, jing.lin@intel.com,
+        ashok.raj@intel.com, sanjay.k.kumar@intel.com, megha.dey@intel.com,
+        jacob.jun.pan@intel.com, yi.l.liu@intel.com, axboe@kernel.dk,
+        akpm@linux-foundation.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, fenghua.yu@intel.com, hpa@zytor.com
+Date:   Thu, 12 Dec 2019 11:25:10 -0700
+Message-ID: <157617511035.42350.5798193672511246769.stgit@djiang5-desk3.ch.intel.com>
+In-Reply-To: <157617487798.42350.4471714981643413895.stgit@djiang5-desk3.ch.intel.com>
+References: <157617487798.42350.4471714981643413895.stgit@djiang5-desk3.ch.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20191212180634.GA19020@willie-the-truck>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19121218-0016-0000-0000-000002D43707
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121218-0017-0000-0000-000033365EAC
-Message-Id: <b37ce52d-89cc-5f2e-827d-c260e63152da@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-12_06:2019-12-12,2019-12-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 clxscore=1015 adultscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912120141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This commit adds helper functions for DSA descriptor allocation, setup,
+submission, and free operations.
 
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
 
-On 12.12.19 19:06, Will Deacon wrote:
-> On Thu, Dec 12, 2019 at 09:41:32AM -0800, Linus Torvalds wrote:
->> On Thu, Dec 12, 2019 at 2:46 AM Peter Zijlstra <peterz@infradead.org> wrote:
->>>
->>> +#ifdef GCC_VERSION < 40800
->>
->> Where does that 4.8 version check come from, and why?
->>
->> Yeah, I know, but this really wants a comment. Sadly it looks like gcc
->> bugzilla is down, so
->>
->>    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145
->>
->> currently gives an "Internal Server Error" for me.
->>
->> [ Delete the horrid code we have because of gcc bugs ]
->>
->>> +#else /* GCC_VERSION < 40800 */
->>> +
->>> +#define READ_ONCE_NOCHECK(x)                                           \
->>> +({                                                                     \
->>> +       typeof(x) __x = *(volatile typeof(x))&(x);                      \
->>
->> I think we can/should just do this unconditionally if it helps th eissue.
-> 
-> I'm currently trying to solve the issue by removing volatile from the bitop
-> function signatures, but it's grotty because there are quite a few callers
-> to fix up. I'm still trying to do it, because removing volatile fields from
-> structurs is generally a "good thing", but I'd be keen to simplify
-> READ_ONCE() as you suggest regardless.
+---
 
-As I am the one who added the foundation of READ_ONCEs uglyness, I am now in
-favour of re-simplifying it again. I was first a bit scared about re-introducing
-bugs, but the gcc testsuite has this particular case covered, so hopefully we
-should not see the issue with volatile and aggregate types again.
+idxd_submit_desc() and idxd_alloc_desc() are used in the next patch in the
+series.
+---
+ drivers/dma/idxd/Makefile |    2 -
+ drivers/dma/idxd/submit.c |  127 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 128 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/dma/idxd/submit.c
 
-Christian
+diff --git a/drivers/dma/idxd/Makefile b/drivers/dma/idxd/Makefile
+index a552560a03dc..50eca12015e2 100644
+--- a/drivers/dma/idxd/Makefile
++++ b/drivers/dma/idxd/Makefile
+@@ -1,2 +1,2 @@
+ obj-$(CONFIG_INTEL_IDXD) += idxd.o
+-idxd-y := init.o irq.o device.o sysfs.o
++idxd-y := init.o irq.o device.o sysfs.o submit.o
+diff --git a/drivers/dma/idxd/submit.c b/drivers/dma/idxd/submit.c
+new file mode 100644
+index 000000000000..2dcd13f9f654
+--- /dev/null
++++ b/drivers/dma/idxd/submit.c
+@@ -0,0 +1,127 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright(c) 2019 Intel Corporation. All rights rsvd. */
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/dmaengine.h>
++#include <uapi/linux/idxd.h>
++#include "../dmaengine.h"
++#include "idxd.h"
++#include "registers.h"
++
++static struct idxd_desc *idxd_alloc_desc(struct idxd_wq *wq, bool nonblock)
++{
++	struct idxd_desc *desc;
++	int idx;
++	struct idxd_device *idxd = wq->idxd;
++
++	if (idxd->state != IDXD_DEV_ENABLED)
++		return ERR_PTR(-EIO);
++
++	if (!nonblock)
++		percpu_down_read(&wq->submit_lock);
++	else if (!percpu_down_read_trylock(&wq->submit_lock))
++		return ERR_PTR(-EBUSY);
++
++	if (!atomic_add_unless(&wq->dq_count, 1, wq->size)) {
++		int rc;
++
++		if (nonblock) {
++			percpu_up_read(&wq->submit_lock);
++			return ERR_PTR(-EAGAIN);
++		}
++
++		percpu_up_read(&wq->submit_lock);
++		percpu_down_write(&wq->submit_lock);
++		rc = wait_event_interruptible(wq->submit_waitq,
++				atomic_add_unless(&wq->dq_count, 1, wq->size) ||
++				idxd->state != IDXD_DEV_ENABLED);
++		percpu_up_write(&wq->submit_lock);
++		if (rc < 0)
++			return ERR_PTR(-EINTR);
++		if (idxd->state != IDXD_DEV_ENABLED)
++			return ERR_PTR(-EIO);
++	} else {
++		percpu_up_read(&wq->submit_lock);
++	}
++
++	idx = sbitmap_get(&wq->sbmap, 0, false);
++	if (idx < 0) {
++		atomic_dec(&wq->dq_count);
++		return ERR_PTR(-EAGAIN);
++	}
++
++	desc = wq->descs[idx];
++	memset(desc->hw, 0, sizeof(struct dsa_hw_desc));
++	memset(desc->completion, 0, sizeof(struct dsa_completion_record));
++	return desc;
++}
++
++void idxd_free_desc(struct idxd_wq *wq, struct idxd_desc *desc)
++{
++	atomic_dec(&wq->dq_count);
++
++	sbitmap_clear_bit(&wq->sbmap, desc->id);
++	wake_up(&wq->submit_waitq);
++}
++
++static int idxd_submit_desc(struct idxd_wq *wq, struct idxd_desc *desc,
++			    bool nonblock)
++{
++	struct idxd_device *idxd = wq->idxd;
++	int vec = desc->hw->int_handle;
++
++	if (idxd->state != IDXD_DEV_ENABLED)
++		return -EIO;
++
++	/*
++	 * The wmb() flushes writes to coherent DMA data before possibly
++	 * triggering a DMA read. The wmb() is necessary even on UP because
++	 * the recipient is a device.
++	 */
++	wmb();
++	iosubmit_cmds512(wq->dportal, desc->hw, 1);
++
++	/*
++	 * Pending the descriptor to the lockless list for the irq_entry
++	 * that we designated the descriptor to.
++	 */
++	llist_add(&desc->llnode, &idxd->irq_entries[vec].pending_llist);
++
++	return 0;
++}
++
++static inline void idxd_prep_desc_common(struct idxd_wq *wq,
++					 struct dsa_hw_desc *hw, char opcode,
++					 u64 addr_f1, u64 addr_f2, u64 len,
++					 u64 compl, u32 flags)
++{
++	hw->flags = flags;
++	hw->opcode = opcode;
++	hw->src_addr = addr_f1;
++	hw->dst_addr = addr_f2;
++	hw->xfer_size = len;
++	hw->priv = !!(wq->type == IDXD_WQT_KERNEL);
++	hw->completion_addr = compl;
++
++	/*
++	 * Descriptor completion vectors are 1-8 for MSIX. We will round
++	 * robin through the 8 vectors.
++	 */
++	hw->int_handle = ++wq->vec_ptr;
++	wq->vec_ptr = wq->vec_ptr & 7;
++}
++
++static inline void set_desc_addresses(struct dma_request *req,
++				      u64 *src, u64 *dst)
++{
++		*src = sg_dma_address(&req->sg[0]);
++		*dst = req->pg_dma;
++}
++
++static inline void set_completion_address(struct idxd_desc *desc,
++					  u64 *compl_addr)
++{
++		*compl_addr = desc->compl_dma;
++}
 
