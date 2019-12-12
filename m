@@ -2,140 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B278611D471
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 18:48:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4B1511D485
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 18:49:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730283AbfLLRrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 12:47:55 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40006 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730205AbfLLRrx (ORCPT
+        id S1730273AbfLLRtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 12:49:32 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:53738 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729771AbfLLRtc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 12:47:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576172872;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ASYuMc+fUDlTjfvYIhv1Vh2nVmLhsT9gDD/FqNpAF6k=;
-        b=XdX1N4uAafpEgYq+aWxFGCkV4FTUfe0sZxZxfxiPIhKw/PHz77GF0mUuO7SfWg81oUk3d3
-        BKx+L/eeKM9t19HY4JmDHVbbEIJOztO5B62Y2MaeyhiWHMH4K60BZ9zXtIwNyreZ7me1YU
-        OJ7d/M15JHXufBn34/kypyrK3yUjVIU=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-328-BseCufqwO7S8DjN8iIaw9A-1; Thu, 12 Dec 2019 12:47:50 -0500
-X-MC-Unique: BseCufqwO7S8DjN8iIaw9A-1
-Received: by mail-qt1-f197.google.com with SMTP id p12so1896464qtu.6
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 09:47:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ASYuMc+fUDlTjfvYIhv1Vh2nVmLhsT9gDD/FqNpAF6k=;
-        b=qe87XYUH1w7F25DWuyRInUMu3o0Lfi0KnFiTyYSsM/ZlGlu+AixibnkMe48TpaRaoY
-         uBA+y15yZyBAqaGBQkhcJZN8Xs9xEG6KeHPpZzBivjibHeVMgS/6/GvYvc+ruUJUyM6I
-         E2ItYj6IiJ8YasHkqL+pZatSQ0/iLwaiRPgEog87TBrAQBDJf92qGZiliRWEq744nheL
-         RgPeLSF1mBzugptcoKjzsGFJk/Uv/45pAyMSPzK6vF+a+qOajiTfs0OJLEi8MYrmWjVC
-         CBX8oCWoJ8Px4pQI+D0srzyS1HygG5jLYIYqapnPAycmW1xXT8SlWvpHD6Sj0O+Z1bly
-         1PEQ==
-X-Gm-Message-State: APjAAAVm8i+fBDev+EvT74KpXVU6xjG80/a66Q1B5Ana0hDxSvin6qsz
-        nFZBv2innD9x62VueH8BpSYPWS+4PGchEHNQ0Zm38tIE4Bq7EVn8P/6reo+5dQ8hu9Hq9OlY5qg
-        vJRL+uWp/aAPSU5zK0H4C3lxj
-X-Received: by 2002:ac8:5486:: with SMTP id h6mr8682558qtq.17.1576172869663;
-        Thu, 12 Dec 2019 09:47:49 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy8cQXG4sfd4W+2HawtZfnusNe6YR3joXEoDhOEQpoYF8BGdk4GpmShFtI5vjEysZpsSySulw==
-X-Received: by 2002:ac8:5486:: with SMTP id h6mr8682540qtq.17.1576172869382;
-        Thu, 12 Dec 2019 09:47:49 -0800 (PST)
-Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id n129sm371776qkf.64.2019.12.12.09.47.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2019 09:47:48 -0800 (PST)
-Subject: Re: [PATCH] vfs: Don't reject unknown parameters
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191212145042.12694-1-labbott@redhat.com>
- <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com>
-Date:   Thu, 12 Dec 2019 12:47:47 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 12 Dec 2019 12:49:32 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBCHijtl032917;
+        Thu, 12 Dec 2019 17:48:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=209O+3Xe8wnGXL8s/3e5RLbnSLi6zch/ZA2bLBFzw5k=;
+ b=D9Ypnds+tQTjBQGTQIEeJCcGvTNeF9gbB0luV0hEZsxC6+/RwzXtgkkbWvWUPmInuihf
+ 7b2NNY071RtRuhyE7nERl7VUh8eMzxFg6Lpa4oRd5MxuE4BW/tTSP9Z4ku2//O0qmI17
+ 8I3rqYbDY8USDlsxSFsypeDczQV/nf0RlNqmMBnVoqC/iUNozGASW5kTFpe1L079/K0R
+ Mz8PsfX0HvRVrvioXCUM4ibgk6rXBboq69ebCwSYwUYv5lp+ZO7DEoIcbmCe/Ll//4rS
+ 2YSwr0OXT+iRa/umdy6P5bw6arI3aPtFHdrOBt/sOyenQcs//VZk5HYRt/9WDn8nhu2Z 3A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2wrw4nhe5r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Dec 2019 17:48:01 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBCHhg0D177364;
+        Thu, 12 Dec 2019 17:48:01 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2wumw0nwp2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Dec 2019 17:48:00 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBCHm0EX022395;
+        Thu, 12 Dec 2019 17:48:00 GMT
+Received: from [192.168.14.112] (/109.65.223.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Dec 2019 09:47:59 -0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH v4 11/19] x86/cpu: Print VMX flags in /proc/cpuinfo using
+ VMX_FEATURES_*
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <20191212174357.GE3163@linux.intel.com>
+Date:   Thu, 12 Dec 2019 19:47:51 +0200
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
+        Len Brown <lenb@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <407604A2-354E-4358-91EC-E04A57F506C1@oracle.com>
+References: <20191128014016.4389-1-sean.j.christopherson@intel.com>
+ <20191128014016.4389-12-sean.j.christopherson@intel.com>
+ <20191212122646.GE4991@zn.tnic>
+ <d0b21e7e-69f5-09f9-3e1c-14d49fa42b9f@redhat.com>
+ <4A24DE75-4E68-4EC6-B3F3-4ACB0EE82BF0@oracle.com>
+ <17c6569e-d0af-539c-6d63-f4c07367d8d1@redhat.com>
+ <20191212174357.GE3163@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9469 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=601
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912120139
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9469 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=668 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912120139
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/19 12:13 PM, Ilya Dryomov wrote:
-> On Thu, Dec 12, 2019 at 3:51 PM Laura Abbott <labbott@redhat.com> wrote:
->>
->> The new mount API currently rejects unknown parameters if the
->> filesystem doesn't have doesn't take any arguments. This is
->> unfortunately a regression from the old API which silently
->> ignores extra arguments. This is easly seen with the squashfs
->> conversion (5a2be1288b51 ("vfs: Convert squashfs to use the new
->> mount API")) which now fails to mount with extra options. Just
->> get rid of the error.
->>
->> Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock
->> creation/configuration context")
->> Link: https://lore.kernel.org/lkml/20191130181548.GA28459@gentoo-tp.home/
->> Reported-by: Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
->> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1781863
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->> ---
->>   fs/fs_context.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/fs/fs_context.c b/fs/fs_context.c
->> index 138b5b4d621d..7ec20b1f8a53 100644
->> --- a/fs/fs_context.c
->> +++ b/fs/fs_context.c
->> @@ -160,8 +160,7 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
->>                  return 0;
->>          }
->>
->> -       return invalf(fc, "%s: Unknown parameter '%s'",
->> -                     fc->fs_type->name, param->key);
->> +       return 0;
->>   }
->>   EXPORT_SYMBOL(vfs_parse_fs_param);
-> 
-> Hi Laura,
-> 
-> I'm pretty sure this is a regression for all other filesystems
-> that used to check for unknown tokens and return an error from their
-> ->mount/fill_super/etc methods before the conversion.
-> 
-> All filesystems that provide ->parse_param expect that ENOPARAM is
-> turned into an error with an error message.  I think we are going to
-> need something a bit more involved in vfs_parse_fs_param(), or just
-> a dummy ->parse_param for squashfs that would always return 0.
-> 
-> Thanks,
-> 
->                  Ilya
-> 
 
-Good point, I think I missed how that code flow worked for printing
-out the error. I debated putting in a dummy parse_param but I
-figured that squashfs wouldn't be the only fs that didn't take
-arguments (it's in the minority but certainly not the only one).
-I'll see about reworking the flow unless Al/David want to
-see the dummy parse_param or give a patch.
 
-Thanks,
-Laura
+> On 12 Dec 2019, at 19:43, Sean Christopherson =
+<sean.j.christopherson@intel.com> wrote:
+>=20
+> On Thu, Dec 12, 2019 at 04:57:10PM +0100, Paolo Bonzini wrote:
+>> On 12/12/19 16:52, Liran Alon wrote:
+>>>>> virt_apic_accesses	-> vapic
+>>>> apicv
+>>> Frankly, I dislike APICv terminology. I prefer to enumerate the
+>>> various VMX features which are collectively called APICv by KVM.=20
+>>> APICv currently represents in KVM terminology the combination of
+>>> APIC-register virtualization, virtual-interrupt-delivery and
+>>> posted-interrupts (See cpu_has_vmx_apicv()).
+>>>=20
+>>> In fact, the coupling of =E2=80=9Cenable_apicv=E2=80=9D module =
+parameter have made me
+>>> multiple times to need to disable entire APICv features when there
+>>> for example was only a bug in posted-interrupts.
+>>>=20
+>>> Even you got confused as virtualize-apic-access is not part of =
+KVM=E2=80=99s
+>>> APICv terminology but rather it=E2=80=99s enablement depend on
+>>> flexpriority_enabled (See cpu_need_virtualize_apic_accesses()). i.e.
+>>> It can be used for faster intercept handling of accesses to guest
+>>> xAPIC MMIO page.
+>>=20
+>> Right, I got confused with APIC-register virtualization.  Virtualize
+>> APIC accesses is another one I wouldn't bother putting in =
+/proc/cpuinfo,
+>> since it's usually present together with flexpriority.
+>=20
+> Key word being "usually".  My intent in printing out partially =
+redundant
+> flags was to help users debug/understand why the combined feature =
+isn't
+> supported.  E.g. userspace can already easily (relatively speaking) =
+query
+> flexpriority support via =
+/sys/module/kvm_intel/parameters/flexpriority.
+> But if that comes back "N", the user has no way to determine exactly =
+why
+> flexpriority is disabled.
+
++1 on that.
+
+/proc/cpuinfo should just dump supported VMX features that kernel is =
+aware of as exposed from CPU.
+Without further processing.
 
