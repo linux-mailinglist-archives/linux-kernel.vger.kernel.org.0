@@ -2,16 +2,16 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C97711D505
+	by mail.lfdr.de (Postfix) with ESMTP id BBD3D11D506
 	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:14:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730347AbfLLSOg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 13:14:36 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:56748 "EHLO
+        id S1730381AbfLLSOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 13:14:47 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:56762 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730080AbfLLSOf (ORCPT
+        with ESMTP id S1730317AbfLLSOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 13:14:35 -0500
+        Thu, 12 Dec 2019 13:14:36 -0500
 X-isilmar-external: YES
 X-isilmar-external: YES
 X-isilmar-external: YES
@@ -20,10 +20,10 @@ X-isilmar-external: YES
 X-isilmar-external: YES
 X-isilmar-external: YES
 Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id D73D9200A85;
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id D9B6E200A91;
         Thu, 12 Dec 2019 18:14:33 +0000 (UTC)
 Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id D092420AFD; Thu, 12 Dec 2019 19:14:26 +0100 (CET)
+        id 4579E20B6C; Thu, 12 Dec 2019 19:14:29 +0100 (CET)
 From:   Dominik Brodowski <linux@dominikbrodowski.net>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -31,10 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] remove ksys_mount() and ksys_dup()
-Date:   Thu, 12 Dec 2019 19:14:17 +0100
-Message-Id: <20191212181422.31033-1-linux@dominikbrodowski.net>
+Subject: [PATCH 1/5] devtmpfs: use do_mount() instead of ksys_mount()
+Date:   Thu, 12 Dec 2019 19:14:18 +0100
+Message-Id: <20191212181422.31033-2-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191212181422.31033-1-linux@dominikbrodowski.net>
+References: <20191212181422.31033-1-linux@dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -42,69 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit ae4b064e2a616b545acf02b8f50cc513b32c7522:
+In devtmpfs, do_mount() can be called directly instead of complex wrapping
+by ksys_mount():
+- the first and third arguments are const strings in the kernel,
+  and do not need to be copied over from userspace;
+- the fifth argument is NULL, and therefore no page needs to be
+  copied over from userspace;
+- the second and fourth argument are passed through anyway.
 
-  Merge tag 'afs-fixes-20191211' of git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs (2019-12-11 18:10:40 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git remove-ksys-mount-dup
-
-for you to fetch changes up to 8243186f0cc7c57cf9d6a110cd7315c44e3e0be8:
-
-  fs: remove ksys_dup() (2019-12-12 19:00:36 +0100)
-
-This small series replaces all in-kernel calls to the
-userspace-focused ksys_mount() and ksys_dup() with calls
-to kernel-centric functions:
-
-For each replacement of ksys_mount() with do_mount(),
-one needs to verify that the first and third parameter
-(char *dev_name, char *type) are strings allocated in
-kernelspace and that the fifth parameter (void *data)
-is either NULL or refers to a full page (only occurence
-in init/do_mounts.c::do_mount_root()). The second and
-fourth parameters (char *dir_name, unsigned long flags)
-are passed by ksys_mount() to do_mount() unchanged, and
-therefore do not require particular care.
-
-Moreover, instead of pretending to be userspace, the opening
-of /dev/console as stdin/stdout/stderr can be implemented
-using in-kernel functions as well. Thereby, ksys_dup() can
-be removed for good.
-
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
+ drivers/base/devtmpfs.c | 6 +++---
+ include/linux/device.h  | 4 ++--
+ init/do_mounts.c        | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Changes since the split-series patches[1,2]:
-- merge both series (on suggestion by Linus)
-- remove pointless cast (on suggestion by Linus)
-
-[1] https://lore.kernel.org/lkml/20191212135724.331342-1-linux@dominikbrodowski.net/
-[2] https://lore.kernel.org/lkml/20191212140752.347520-1-linux@dominikbrodowski.net/
-
-
-Thanks,
-	Dominik
-
-
-----------------------------------------------------------------
-Dominik Brodowski (5):
-      devtmpfs: use do_mount() instead of ksys_mount()
-      initrd: use do_mount() instead of ksys_mount()
-      init: use do_mount() instead of ksys_mount()
-      init: unify opening /dev/console as stdin/stdout/stderr
-      fs: remove ksys_dup()
-
- drivers/base/devtmpfs.c  |  6 +++---
- fs/file.c                |  7 +------
- fs/namespace.c           | 10 ++--------
- include/linux/device.h   |  4 ++--
- include/linux/initrd.h   |  2 ++
- include/linux/syscalls.h |  3 ---
- init/do_mounts.c         | 30 +++++++++++++++++++++++-------
- init/do_mounts_initrd.c  | 11 ++++-------
- init/main.c              | 31 ++++++++++++++++++++++++++-----
- 9 files changed, 63 insertions(+), 41 deletions(-)
-
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index 30d0523014e0..6cdbf1531238 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -359,7 +359,7 @@ static int handle_remove(const char *nodename, struct device *dev)
+  * If configured, or requested by the commandline, devtmpfs will be
+  * auto-mounted after the kernel mounted the root filesystem.
+  */
+-int devtmpfs_mount(const char *mntdir)
++int devtmpfs_mount(void)
+ {
+ 	int err;
+ 
+@@ -369,7 +369,7 @@ int devtmpfs_mount(const char *mntdir)
+ 	if (!thread)
+ 		return 0;
+ 
+-	err = ksys_mount("devtmpfs", mntdir, "devtmpfs", MS_SILENT, NULL);
++	err = do_mount("devtmpfs", "dev", "devtmpfs", MS_SILENT, NULL);
+ 	if (err)
+ 		printk(KERN_INFO "devtmpfs: error mounting %i\n", err);
+ 	else
+@@ -394,7 +394,7 @@ static int devtmpfsd(void *p)
+ 	*err = ksys_unshare(CLONE_NEWNS);
+ 	if (*err)
+ 		goto out;
+-	*err = ksys_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, NULL);
++	*err = do_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, NULL);
+ 	if (*err)
+ 		goto out;
+ 	ksys_chdir("/.."); /* will traverse into overmounted root */
+diff --git a/include/linux/device.h b/include/linux/device.h
+index e226030c1df3..96ff76731e93 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -1666,11 +1666,11 @@ extern bool kill_device(struct device *dev);
+ #ifdef CONFIG_DEVTMPFS
+ extern int devtmpfs_create_node(struct device *dev);
+ extern int devtmpfs_delete_node(struct device *dev);
+-extern int devtmpfs_mount(const char *mntdir);
++extern int devtmpfs_mount(void);
+ #else
+ static inline int devtmpfs_create_node(struct device *dev) { return 0; }
+ static inline int devtmpfs_delete_node(struct device *dev) { return 0; }
+-static inline int devtmpfs_mount(const char *mountpoint) { return 0; }
++static inline int devtmpfs_mount(void) { return 0; }
+ #endif
+ 
+ /* drivers/base/power/shutdown.c */
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index af9cda887a23..43f6d098c880 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -670,7 +670,7 @@ void __init prepare_namespace(void)
+ 
+ 	mount_root();
+ out:
+-	devtmpfs_mount("dev");
++	devtmpfs_mount();
+ 	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+ 	ksys_chroot(".");
+ }
 -- 
 2.24.1
+
