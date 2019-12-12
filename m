@@ -2,57 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C91AE11D753
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 20:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA8511D735
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 20:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730730AbfLLTnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 14:43:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58520 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730284AbfLLTm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 14:42:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EB117AE37;
-        Thu, 12 Dec 2019 19:42:57 +0000 (UTC)
-Date:   Thu, 12 Dec 2019 11:36:30 -0800
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@kernel.org>, aneesh.kumar@linux.ibm.com
-Subject: Re: [PATCH v2] mm/hugetlb: defer free_huge_page() to a workqueue
-Message-ID: <20191212193630.su6wvt54cut6addo@linux-p48b>
-Mail-Followup-To: Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@kernel.org>,
-        aneesh.kumar@linux.ibm.com
-References: <20191211194615.18502-1-longman@redhat.com>
- <4fbc39a9-2c9c-4c2c-2b13-a548afe6083c@oracle.com>
- <32d2d4f2-83b9-2e40-05e2-71cd07e01b80@redhat.com>
- <0fcce71f-bc20-0ea3-b075-46592c8d533d@oracle.com>
- <20191212060650.ftqq27ftutxpc5hq@linux-p48b>
- <20191212063050.ufrpij6s6jkv7g7j@linux-p48b>
- <20191212190427.ouyohviijf5inhur@linux-p48b>
- <d6b9743c-776c-d740-73af-a600f15b910a@oracle.com>
+        id S1730790AbfLLTgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 14:36:46 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40805 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730765AbfLLTgo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 14:36:44 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c14so4024010wrn.7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 11:36:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=26CQo4we7KtCfvTKv993lhoi2F1fM7dxkL37tJToeiU=;
+        b=0bWiTGIV4TBC4HQqKJut7ledSmNzlbafeuunBgzcIJHkJax0jtZ0jMLzGHUvMlvUuL
+         wBaw5vXg3akzsq37fDpW0Q77N7e5aXa/S06o7cgYA7NgLr0o69KowlOxqiuu19P8M24q
+         /Bg6rqy7WTOzij1WpJmt3SfL44lA5iGWSoYTl66uT3vqQrhKxRcmNhCen02yyDuy5XyE
+         Rk3rRk22Fpc5+Xowl9Ui0okoHiTUhTzE0iEYZvYdCHBVlXEumzAdIY+w4iT13p2AFJGP
+         /Zi5u3XtQbysQFaHFQQYTaPgLmcFyDyiTa8KzJsxJc2zxI3dBjQlIcRzYDX5UHHITBRQ
+         mIgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=26CQo4we7KtCfvTKv993lhoi2F1fM7dxkL37tJToeiU=;
+        b=hijXC6HLenwU1nVTpf8E+l57VpmgSIILFjR5BOn3VpZQPgWbZGQZTD4CYY7RLWWNAZ
+         IgIJ1KgHLlT5FEeVaoqkOl/5vhIg+GTcQSXu9Ip5Tbe0yo137lDxx0Qz04/SDsFU5SU7
+         SNH3CUEC4zLMjqv2/LexJ1YplnbEO8W6vfCAo0TF3J7j5krf8NmvrdZKHvb8sfktvA8j
+         8aze5sOQW3WCVx2pHD80x9nedPIG7t70E+0dKziZmDNKrhj59o+R2Rw7wPOUFlj2vmho
+         djClhgojTJifi7vtP7fS3TLF6mhZyYHiQ/Kki/UhlHEnwH+AJwjp1Ixyni85Xfmr+sai
+         K1jg==
+X-Gm-Message-State: APjAAAWHcXFeBYeuwSsDZjWVlnvJ1NnNdpE6Ei+u9U4y615PwWp2JQDW
+        BhmgOs0BxuEKc3nAD2PxcL0lQVjD2XY=
+X-Google-Smtp-Source: APXvYqwQhaWhC3pY0IFwMztpCBjDmmW+hlZfOXqucMqAQkOxn9NE6sIr+fEMQaQAqzfUrg84KXG7Dw==
+X-Received: by 2002:a5d:6441:: with SMTP id d1mr8161069wrw.93.1576179402329;
+        Thu, 12 Dec 2019 11:36:42 -0800 (PST)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id k19sm6820349wmi.42.2019.12.12.11.36.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 11:36:41 -0800 (PST)
+Date:   Thu, 12 Dec 2019 20:36:39 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        davidgow@google.com, linux-crypto@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v1 5/7] crypto: amlogic: add unspecified HAS_IOMEM
+ dependency
+Message-ID: <20191212193639.GA25451@Red>
+References: <20191211192742.95699-1-brendanhiggins@google.com>
+ <20191211192742.95699-6-brendanhiggins@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d6b9743c-776c-d740-73af-a600f15b910a@oracle.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191211192742.95699-6-brendanhiggins@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Dec 2019, Mike Kravetz wrote:
+On Wed, Dec 11, 2019 at 11:27:40AM -0800, Brendan Higgins wrote:
+> Currently CONFIG_CRYPTO_DEV_AMLOGIC_GXL=y implicitly depends on
+> CONFIG_HAS_IOMEM=y; consequently, on architectures without IOMEM we get
+> the following build error:
+> 
+> ld: drivers/crypto/amlogic/amlogic-gxl-core.o: in function `meson_crypto_probe':
+> drivers/crypto/amlogic/amlogic-gxl-core.c:240: undefined reference to `devm_platform_ioremap_resource'
+> 
+> Fix the build error by adding the unspecified dependency.
+> 
+> Reported-by: Brendan Higgins <brendanhiggins@google.com>
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> ---
+>  drivers/crypto/amlogic/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/crypto/amlogic/Kconfig b/drivers/crypto/amlogic/Kconfig
+> index b90850d18965f..cf95476026708 100644
+> --- a/drivers/crypto/amlogic/Kconfig
+> +++ b/drivers/crypto/amlogic/Kconfig
+> @@ -1,5 +1,6 @@
+>  config CRYPTO_DEV_AMLOGIC_GXL
+>  	tristate "Support for amlogic cryptographic offloader"
+> +	depends on HAS_IOMEM
+>  	default y if ARCH_MESON
+>  	select CRYPTO_SKCIPHER
+>  	select CRYPTO_ENGINE
 
->The patch does seem fairly simple and straight forward.  I need to brush up
->on my workqueue knowledge to provide a full review.
+Acked-by: Corentin Labbe <clabbe@baylibre.com>
 
-The flush_work() call is actually bogus as we obviously cannot block in
-softirq...
+Thanks
