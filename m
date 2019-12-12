@@ -2,115 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC7211C5DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 07:14:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DEF911C5EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 07:28:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbfLLGOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 01:14:24 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44552 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfLLGOY (ORCPT
+        id S1727968AbfLLG2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 01:28:04 -0500
+Received: from mail.windriver.com ([147.11.1.11]:33403 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbfLLG2E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 01:14:24 -0500
-Received: by mail-pl1-f194.google.com with SMTP id az3so121868plb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 22:14:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=1IZDs0iYiahgJEGSYbddkxkQujB2cMWGSHF0L+ZwSZo=;
-        b=JKwHnJc2jYiNvGmsXPAObMNQADjvaWf8HH6d05W/W1oaoGBxyE4DFp8d863Wq9DNCK
-         YV4kU+QNZ8Frw+TUkl5pu2R5AAqMuDsZnmIrnRCes8UbXqRIrPDjqjv88x6KeRmpeR5s
-         R4KRMVRVT/O4cn6dE3R0W6HbcuCmPycoH5mIqs9bBzkrtEilP18sMYAoeohXPIlxtzRZ
-         fo5yDX5hrSaNJhWKZ13I78iQU9+BSek1+lSVI2PM6DgBur2cQiopdw0fpn13JB0poO7H
-         tRmyXyrtrgg1zJJ7xvFBddh0jT7+0HLYuqgA61nI5/oThgKtZTGyVBjqvb1XzzVzYso7
-         eYKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1IZDs0iYiahgJEGSYbddkxkQujB2cMWGSHF0L+ZwSZo=;
-        b=ahWepZ8sfpU2ZRoV1Jouou/lhw5xwbZwiaC9p2tBkLZXSN1u+fNeJgajdiD/7zWnS8
-         sD4WiF3Kvq+xHcKs/64qyCecH+ynl1KA+pWTLC1qmFook9ExAboidEGqXz1MDeX7cS0L
-         IT0lOKYtgLcCUX844yJBXHyMGajnb7tnZSbte2VKhWAV0ppaTvSnodyJUQP6EMl3Krpj
-         Hq3MjYg2usAFpdr2mCKVUWQ6Xg5C8jJXcXZ4wpX9kzOhVyzlc/aUXqeY/sSvfvKsSfhD
-         90RObo1bysRICTtYoC6BdZnQIHJHQdvXdh+6mVsa4goS9EgpA7YHD2JRBkwpggRuZUxE
-         /qLg==
-X-Gm-Message-State: APjAAAUIXgbmH90njPS3p6cqMUkyHe3c61Jg+e1jpCnIC5QO3SjpuvGt
-        5nYCSo0M8VxXU31EeAfmbKM=
-X-Google-Smtp-Source: APXvYqwWU5nRYfUe9rm1EOwmrfNBQdfc0meSTc6V0Kdz2roaHaIP6wS8z3p4cSckwmC9IhAgwzNvBw==
-X-Received: by 2002:a17:902:9308:: with SMTP id bc8mr7896052plb.18.1576131263843;
-        Wed, 11 Dec 2019 22:14:23 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id p186sm5266532pfp.56.2019.12.11.22.14.22
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Wed, 11 Dec 2019 22:14:23 -0800 (PST)
-From:   qiwuchen55@gmail.com
-To:     peterz@infradead.org, mingo@kernel.org, oleg@redhat.com,
-        christian.brauner@ubuntu.com
-Cc:     kernel-team@android.com, linux-kernel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>
-Subject: [PATCH] kernel/exit: do panic earlier to get coredump if global init task exit
-Date:   Thu, 12 Dec 2019 14:14:15 +0800
-Message-Id: <1576131255-3433-1-git-send-email-qiwuchen55@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 12 Dec 2019 01:28:04 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTPS id xBC6RfSb021450
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Wed, 11 Dec 2019 22:27:41 -0800 (PST)
+Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Wed, 11 Dec
+ 2019 22:27:40 -0800
+Subject: Re: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected()
+ with rcu_replace_pointer()
+To:     <paulmck@kernel.org>
+CC:     Tuong Lien Tong <tuong.t.lien@dektech.com.au>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mingo@kernel.org>, <tipc-discussion@lists.sourceforge.net>,
+        <kernel-team@fb.com>, <torvalds@linux-foundation.org>,
+        <davem@davemloft.net>
+References: <20191210033146.GA32522@paulmck-ThinkPad-P72>
+ <0e565b68-ece1-5ae6-bb5d-710163fb8893@windriver.com>
+ <20191210223825.GS2889@paulmck-ThinkPad-P72>
+ <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
+ <707801d5afc6$cac68190$605384b0$@dektech.com.au>
+ <db88d33f-8e25-8859-84ec-3372a108c759@windriver.com>
+ <20191211184609.GI2889@paulmck-ThinkPad-P72>
+From:   Ying Xue <ying.xue@windriver.com>
+Message-ID: <58df887e-cfb5-37fd-6c06-d5f98449edd5@windriver.com>
+Date:   Thu, 12 Dec 2019 14:14:20 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191211184609.GI2889@paulmck-ThinkPad-P72>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.224.155.90]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: chenqiwu <chenqiwu@xiaomi.com>
+On 12/12/19 2:46 AM, Paul E. McKenney wrote:
+> On Wed, Dec 11, 2019 at 12:42:00PM +0800, Ying Xue wrote:
+>> On 12/11/19 10:00 AM, Tuong Lien Tong wrote:
+>>>>  
+>>>>  	/* Move passive key if any */
+>>>>  	if (key.passive) {
+>>>> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
+>>>> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2,
+>>> &rx->lock);
+>>> The 3rd parameter should be the lockdep condition checking instead of the
+>>> spinlock's pointer i.e. "lockdep_is_held(&rx->lock)"?
+>>> That's why I'd prefer to use the 'tipc_aead_rcu_swap ()' macro, which is
+>>> clear & concise at least for the context here. It might be re-used later as
+>>> well...
+>>>
+>>
+>> Right. The 3rd parameter of rcu_replace_pointer() should be
+>> "lockdep_is_held(&rx->lock)" instead of "&rx->lock".
+> 
+> Like this?
 
-When global init task get a chance to be killed, panic will happen in
-later calling steps by do_exit()->exit_notify()->forget_original_parent()
-->find_child_reaper() if all init threads have exited.
+Yes, I think it's better to set the 3rd parameter of
+rcu_replace_pointer() with "lockdep_is_held(&rx->lock)".
 
-However, it's hard to extract the coredump of init task from a kernel
-crashdump, since exit_mm() has released its mm before panic. In order
-to get the backtrace of init task in userspace, it's better to do panic
-earlier at the beginning of exitting route.
-
-It's worth noting that we must take case of a multi-threaded init exitting
-issue. We need the test for signal_group_exit() to ensure that it is all
-threads exiting and not just the current thread.
-
-Of course testing signal_group_exit() is not sufficient. It is still
-possible that this is someone calling exit(2) in an old binary or someone
-calling pthread_exit(3) from the last thread of init. To handle that case,
-we need the test to be:
-
-(signal_group_exit(tsk->signal) || thread_group_empty(tsk)).
-
-Because exiting the final thread of init should also trigger the panic.
-
-Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
----
- kernel/exit.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/exit.c b/kernel/exit.c
-index e10de98..ba7d1aa 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -578,10 +578,6 @@ static struct task_struct *find_child_reaper(struct task_struct *father,
- 	}
- 
- 	write_unlock_irq(&tasklist_lock);
--	if (unlikely(pid_ns == &init_pid_ns)) {
--		panic("Attempted to kill init! exitcode=0x%08x\n",
--			father->signal->group_exit_code ?: father->exit_code);
--	}
- 
- 	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
- 		list_del_init(&p->ptrace_entry);
-@@ -785,6 +781,9 @@ void __noreturn do_exit(long code)
- 		panic("Aiee, killing interrupt handler!");
- 	if (unlikely(!tsk->pid))
- 		panic("Attempted to kill the idle task!");
-+	if (unlikely(is_global_init(tsk) &&
-+		(signal_group_exit(tsk->signal) || thread_group_empty(tsk))))
-+		panic("Attempted to kill init! exitcode=0x%08lx\n", code);
- 
- 	/*
- 	 * If do_exit is called because this processes oopsed, it's possible
--- 
-1.9.1
-
+> 
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> commit 575bb4ba1b22383656760feb3d122e11656ccdfd
+> Author: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Mon Dec 9 19:13:45 2019 -0800
+> 
+>     net/tipc: Replace rcu_swap_protected() with rcu_replace_pointer()
+>     
+>     This commit replaces the use of rcu_swap_protected() with the more
+>     intuitively appealing rcu_replace_pointer() as a step towards removing
+>     rcu_swap_protected().
+>     
+>     Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+>     Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+>     Reported-by: kbuild test robot <lkp@intel.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>     [ paulmck: Updated based on Ying Xue and Tuong Lien Tong feedback. ]
+>     Cc: Jon Maloy <jon.maloy@ericsson.com>
+>     Cc: Ying Xue <ying.xue@windriver.com>
+>     Cc: "David S. Miller" <davem@davemloft.net>
+>     Cc: <netdev@vger.kernel.org>
+>     Cc: <tipc-discussion@lists.sourceforge.net>
+> 
+> diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
+> index 990a872..c8c47fc 100644
+> --- a/net/tipc/crypto.c
+> +++ b/net/tipc/crypto.c
+> @@ -257,9 +257,6 @@ static char *tipc_key_change_dump(struct tipc_key old, struct tipc_key new,
+>  #define tipc_aead_rcu_ptr(rcu_ptr, lock)				\
+>  	rcu_dereference_protected((rcu_ptr), lockdep_is_held(lock))
+>  
+> -#define tipc_aead_rcu_swap(rcu_ptr, ptr, lock)				\
+> -	rcu_swap_protected((rcu_ptr), (ptr), lockdep_is_held(lock))
+> -
+>  #define tipc_aead_rcu_replace(rcu_ptr, ptr, lock)			\
+>  do {									\
+>  	typeof(rcu_ptr) __tmp = rcu_dereference_protected((rcu_ptr),	\
+> @@ -1189,7 +1186,7 @@ static bool tipc_crypto_key_try_align(struct tipc_crypto *rx, u8 new_pending)
+>  
+>  	/* Move passive key if any */
+>  	if (key.passive) {
+> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
+> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2, lockdep_is_held(&rx->lock));
+>  		x = (key.passive - key.pending + new_pending) % KEY_MAX;
+>  		new_passive = (x <= 0) ? x + KEY_MAX : x;
+>  	}
+> 
