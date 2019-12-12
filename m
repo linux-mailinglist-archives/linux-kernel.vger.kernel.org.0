@@ -2,188 +2,369 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 352DF11D085
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:08:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CFF411D07F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:07:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729040AbfLLPIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:08:02 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:41565 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728815AbfLLPIC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:08:02 -0500
-Received: by mail-vs1-f67.google.com with SMTP id f8so1767551vsq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 07:08:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zbYuLohJ6uz9IV3uB+nuAd8APjXTFVTSFGSirgS84Fw=;
-        b=pkqrboVtNyI5GfSeksmn9z5PnU5TgHPwW8EtQ28nj33hzudbVH9SuoYaMsPTPRIgK5
-         Eqp/3oIW6uUE4++T9Mj7TzjbQVgb7UC+hw4/pxWH8PYZ5u0kbc6O8eVmn//rz5aTQjKV
-         LvnklEtIK4gpufnMuZelStusOrqeQFUhrVcDtUa2c5qB/zC2el+WhNR1eOvWGcC9SION
-         Hk0ue7RAmyWIELLCOGkDVdtEF4DVFtZUBK5v2mxCV3MXD6tPUmvejYAdc7Q4wp3f42D3
-         a3nwTSWD+upAi+wOj1E3pl5atpf7VUwWRmypPWUiCHH8mQFqEOqg/0K5HZcYFxqA92a2
-         4XyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zbYuLohJ6uz9IV3uB+nuAd8APjXTFVTSFGSirgS84Fw=;
-        b=KY3jO7GbsdvheFD103eao24mRlj3lG0y2QhRl0FkDX3aLSBik2D6a4SmJx7BLsAmlJ
-         AIWuxovNcuDeBUJbAyagoWSnBMIFj2DNGcndaoU1564eUixs7GdYpqNYvwVkKIGd68O8
-         bjxeEr21izokGsmOnrZGKHeBLGAK+PQzzq2TX7SbwkpNHSKGVOfiS+qlodhneoKZwI54
-         wlTZ9t0xee/rlnQad7KJokZ4nF6o/j17a8n9+xWEnpsDaZHjxWedwIwpKpTV6tNIvwna
-         NkfJV75uvrrh77Nh4nfWMMWN70FVByPwrVpanCftRRbnN/ogePm4sF87atVPPwNqD7Qd
-         FKpg==
-X-Gm-Message-State: APjAAAUZOUYz+urlWlsne3OQJHGvPqTiAdn3ir8GBKeSqWIck6GXJ2dX
-        QuZeu0pBuWnpbIt0WiVmtKoeY8bd1fsfLi5AQgKShQ==
-X-Google-Smtp-Source: APXvYqw8Cxw8goN18pz+XIVG0ArSx5rkSvWM5IzHtNml4ttcHm9tifgGxLAx++YkwezG41U68dvM6EO/SuWVRkgPtZ0=
-X-Received: by 2002:a67:b649:: with SMTP id e9mr7320111vsm.34.1576163280703;
- Thu, 12 Dec 2019 07:08:00 -0800 (PST)
+        id S1728798AbfLLPHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 10:07:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728581AbfLLPHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 10:07:46 -0500
+Received: from [192.168.0.112] (unknown [58.212.132.8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACD372067C;
+        Thu, 12 Dec 2019 15:07:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576163265;
+        bh=eVancd6eApj0QTZXyr7/oAByDIaN1V5wlMJweZnI/TI=;
+        h=Subject:To:References:Cc:From:Date:In-Reply-To:From;
+        b=aUBXSyEpSEtsq5YHfQv5VFslJRoG5/XMBRuqIrlqyKN8O7sopWc9yzb+acBmFL7Xy
+         jBeoMObvj/4yc44OpQ7YBR/nv+uP7+0Me4ncrjVAJKrhhnF4woxZykGNADAiDIsRbs
+         KBKpuO8xsz0yYgSL0Rkgo3dw1ghcc1rBgkzj86OM=
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: support data compression
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+References: <20191022171602.93637-2-jaegeuk@kernel.org>
+ <20191027225006.GA321938@sol.localdomain>
+ <da214cdc-0074-b7bf-7761-d4c4ad3d4f6a@huawei.com>
+ <20191030025512.GA4791@sol.localdomain>
+ <97c33fa1-15af-b319-29a1-22f254a26c0a@huawei.com>
+ <20191030170246.GB693@sol.localdomain>
+ <899f99e9-fdc7-a84b-14ec-623fa3a5e164@huawei.com>
+ <20191118161146.GB41670@jaegeuk-macbookpro.roam.corp.google.com>
+ <20191118205822.GA57882@jaegeuk-macbookpro.roam.corp.google.com>
+ <20191125174204.GB71634@jaegeuk-macbookpro.roam.corp.google.com>
+ <20191211012723.GA57416@jaegeuk-macbookpro.roam.corp.google.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <8b1eccb2-d791-c349-d6c2-ec2c5b33eb1d@kernel.org>
+Date:   Thu, 12 Dec 2019 23:07:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-References: <20191210014011.21987-1-digetx@gmail.com> <CAPDyKFpMe09PNQqinvvidF+wfASx2nuvgf7=Hx5+cGni8pdcRA@mail.gmail.com>
- <28045442-6a1c-1e0b-0dfe-c36fa9de149a@gmail.com> <CAPDyKFpWO_McZEoefX1T=SE=RYm_GU3S+LgYZrgJY_SJgv7egA@mail.gmail.com>
- <44f99e56-468e-c3f9-3785-73c2cf8ba118@gmail.com> <d4933cb1-d2c1-8055-e0f4-f6fcbe9973bc@gmail.com>
-In-Reply-To: <d4933cb1-d2c1-8055-e0f4-f6fcbe9973bc@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 12 Dec 2019 16:07:24 +0100
-Message-ID: <CAPDyKFq26Wcd9f3VJ1afxv9TVDJQu4wi+yLS-4Pi1bYnFLyWsg@mail.gmail.com>
-Subject: Re: [PATCH v1] sdhci: tegra: Add workaround for Broadcom WiFi
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191211012723.GA57416@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Dec 2019 at 15:23, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 11.12.2019 19:29, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > 11.12.2019 19:10, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> On Wed, 11 Dec 2019 at 16:46, Dmitry Osipenko <digetx@gmail.com> wrote=
-:
-> >>>
-> >>> Hello Ulf,
-> >>>
-> >>> 11.12.2019 11:11, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>> On Tue, 10 Dec 2019 at 02:40, Dmitry Osipenko <digetx@gmail.com> wro=
-te:
-> >>>>>
-> >>>>> All Tegra20 boards that have embedded Broadcom WiFi SDIO chip are a=
-ffected
-> >>>>> by a problem where WiFi chip reports CCCR v1.10, while it should v1=
-.20.
-> >>>>> In a result high-speed mode isn't enabled for the WiFi card and thi=
-s
-> >>>>> results in a malfunctioning SDIO communication.
-> >>>>
-> >>>> Does that also mean SDIO_SPEED_SHS bit is set when reading SDIO_CCCR=
-_SPEED?
-> >>>
-> >>> Yes, the SDIO_SPEED_SHS bit is set.
-> >>>
-> >>>>>  brcmfmac: brcmf_sdio_readframes: read 304 bytes from channel 1 fai=
-led: -84
-> >>>>>  brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send =
-NAK
-> >>>>>
-> >>>>> Downstream kernels are overriding card's CCCR info in SDHCI driver =
-to fix
-> >>>>> the problem, let's do the same in upstream.
-> >>>>>
-> >>>>> The change is inspired by omap_hsmmc_init_card() of OMAP's HSMMC dr=
-iver,
-> >>>>> which overrides card's info for the TI wl1251 WiFi.
-> >>>>
-> >>>> This is a temporary solution and should be replaced by doing the DT
-> >>>> parsing during
-> >>>>
-> >>>> So, yes, let's see if we can use a card quirk instead. That's the fi=
-rst option.
-> >>>>
-> >>>> A second option is simply to parse the DT subnode for a new DT
-> >>>> property during mmc_sdio_init_card(). Along the lines of what we do
-> >>>> for the broken-hpi DT binding for eMMC.
-> >>>
-> >>> Let's try the first option. My understanding is that the problem affe=
-cts
-> >>> only the specific model of the WiFi chip and it's not a board-specifi=
-c
-> >>> problem. I'll add Broadcom driver people to CC for the next version o=
-f
-> >>> the patch, maybe they'll have something to say.
-> >>
-> >> Okay, sounds reasonable. By looking at your latest attempt for a fix,
-> >> I have two minor nitpicks, otherwise it looks good.
-> >>
-> >> The nitpicks:
-> >> I suggest to rename MMC_QUIRK_HIGH_SPEED_CARD to MMC_QUIRK_HIGH_SPEED
-> >> and mmc_card_need_high_speed_toggle() to mmc_card_quirk_hs().
-> >
-> > I'll take it into account, thanks.
->
-> Looks like I managed to figure out what's really going on:
->
->   1. The BCM4329 doc clearly states that High Speed is supported, see
-> page 49 (Section 11: WLAN Interfaces, SDIO v1.2)
->
-> https://www.cypress.com/file/298626/download
->
->   2. I googled for performance results of the BCM4329 SDIO WiFi and came
-> to a conclusion that ~40 Mbit/s is a realistic maximum of the WiFi-data
-> throughput for NVIDIA Tegra20 boards due to antenna configuration
-> limitations and whatever.
+Hi Jaegeuk,
 
-Okay.
+On 2019-12-11 9:27, Jaegeuk Kim wrote:
+> Hi Chao,
+>
+> Let me know, if it's okay to integrate compression patch all together.
+> I don't have a critical bug to fix w/ them now.
+
+Cool, let me send a new RFC with below fix applied.
+
+Thanks,
 
 >
->   3. The Tegra's SDHCI clock is pre-configured to 48MHz at the time of
-> kernel's boot-up.
+> Another fix:
+> ---
+>  fs/f2fs/compress.c | 101 ++++++++++++++++++++++++++++-----------------
+>  fs/f2fs/data.c     |  15 ++++---
+>  fs/f2fs/f2fs.h     |   1 -
+>  3 files changed, 72 insertions(+), 45 deletions(-)
 >
->   4. IIUC, the maximum clock rate for the legacy SD signaling mode is
-> ~25MHz and that is more than enough for a 4-lane SDIO data-bus that
-> allows up to 100 Mbit/s for the WiFi which is capped to 40 Mbit/s anyways=
-.
-
-Yes, I see.
-
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index 7ebd2bc018bd..af23ed6deffd 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -73,6 +73,17 @@ static void f2fs_put_compressed_page(struct page *page)
+>  	put_page(page);
+>  }
 >
->   5. Apparently MMC core doesn't limit the clock rate for the Normal
-> Speed cards.
-
-It should, else it's a bug (I would be really surprised if that's the
-case, but who knows).
-
+> +static void f2fs_put_rpages(struct compress_ctx *cc)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < cc->cluster_size; i++) {
+> +		if (!cc->rpages[i])
+> +			continue;
+> +		put_page(cc->rpages[i]);
+> +	}
+> +}
+> +
+>  struct page *f2fs_compress_control_page(struct page *page)
+>  {
+>  	return ((struct compress_io_ctx *)page_private(page))->rpages[0];
+> @@ -93,7 +104,10 @@ int f2fs_init_compress_ctx(struct compress_ctx *cc)
+>  void f2fs_destroy_compress_ctx(struct compress_ctx *cc)
+>  {
+>  	kfree(cc->rpages);
+> -	f2fs_reset_compress_ctx(cc);
+> +	cc->rpages = NULL;
+> +	cc->nr_rpages = 0;
+> +	cc->nr_cpages = 0;
+> +	cc->cluster_idx = NULL_CLUSTER;
+>  }
 >
+>  void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct page *page)
+> @@ -536,14 +550,6 @@ static bool cluster_may_compress(struct compress_ctx *cc)
+>  	return __cluster_may_compress(cc);
+>  }
 >
-> So, I added "max-frequency =3D <25000000>;" to the SDHCI node of the
-> board's device-tree and ta-da! WiFi works absolutely fine without the
-> quirk! Thus the SDIO card quirk isn't really needed and I'm dropping it
-> for now.
+> -void f2fs_reset_compress_ctx(struct compress_ctx *cc)
+> -{
+> -	cc->rpages = NULL;
+> -	cc->nr_rpages = 0;
+> -	cc->nr_cpages = 0;
+> -	cc->cluster_idx = NULL_CLUSTER;
+> -}
+> -
+>  static void set_cluster_writeback(struct compress_ctx *cc)
+>  {
+>  	int i;
+> @@ -602,13 +608,13 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+>  		ret = f2fs_read_multi_pages(cc, &bio, cc->cluster_size,
+>  						&last_block_in_bio, false);
+>  		if (ret)
+> -			return ret;
+> +			goto release_pages;
+>  		if (bio)
+>  			f2fs_submit_bio(sbi, bio, DATA);
 >
-> Ulf, do you know if it's a bug or a feature of the MMC core that it
-> doesn't limit clock rate for the Normal Speed cards?
-
-It should limit the speed, else it's a bug. Can you perhaps check what
-the requested clock rate is via some debug prints in the host ops
-->set_ios()? And also what the real rate becomes after dividers.
-
-If it's not a bug in the core, I suspect that there may be generic
-problem dealing with initialization frequencies for sdhci-tegra.
-
-For example, mmc_rescan_try_freq() tries to initialize the SDIO card
-at 400KHz, then 300, then 200 then 100 (in that order, and note
-*KHz*). When a frequency is successful, initialization continues and
-later on the clock rate should be increased to 25MHz, for legacy speed
-mode.
-
-Kind regards
-Uffe
+>  		ret = f2fs_init_compress_ctx(cc);
+>  		if (ret)
+> -			return ret;
+> +			goto release_pages;
+>  	}
+>
+>  	for (i = 0; i < cc->cluster_size; i++) {
+> @@ -638,9 +644,11 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+>
+>  		for (i = cc->cluster_size - 1; i > 0; i--) {
+>  			ret = f2fs_get_block(&dn, start_idx + i);
+> -			if (ret)
+> +			if (ret) {
+>  				/* TODO: release preallocate blocks */
+> -				goto release_pages;
+> +				i = cc->cluster_size;
+> +				goto unlock_pages;
+> +			}
+>
+>  			if (dn.data_blkaddr != NEW_ADDR)
+>  				break;
+> @@ -769,7 +777,11 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+>  	cic->magic = F2FS_COMPRESSED_PAGE_MAGIC;
+>  	cic->inode = inode;
+>  	refcount_set(&cic->ref, 1);
+> -	cic->rpages = cc->rpages;
+> +	cic->rpages = f2fs_kzalloc(sbi, sizeof(struct page *) <<
+> +			cc->log_cluster_size, GFP_NOFS);
+> +	if (!cic->rpages)
+> +		goto out_put_cic;
+> +
+>  	cic->nr_rpages = cc->cluster_size;
+>
+>  	for (i = 0; i < cc->nr_cpages; i++) {
+> @@ -793,7 +805,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+>
+>  		blkaddr = datablock_addr(dn.inode, dn.node_page,
+>  							dn.ofs_in_node);
+> -		fio.page = cc->rpages[i];
+> +		fio.page = cic->rpages[i] = cc->rpages[i];
+>  		fio.old_blkaddr = blkaddr;
+>
+>  		/* cluster header */
+> @@ -819,7 +831,6 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+>
+>  		f2fs_bug_on(fio.sbi, blkaddr == NULL_ADDR);
+>
+> -
+>  		if (fio.encrypted)
+>  			fio.encrypted_page = cc->cpages[i - 1];
+>  		else if (fio.compressed)
+> @@ -859,17 +870,22 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+>  			fi->last_disk_size = psize;
+>  		up_write(&fi->i_sem);
+>  	}
+> -	f2fs_reset_compress_ctx(cc);
+> +	f2fs_put_rpages(cc);
+> +	f2fs_destroy_compress_ctx(cc);
+>  	return 0;
+>
+>  out_destroy_crypt:
+> -	for (i -= 1; i >= 0; i--)
+> +	kfree(cic->rpages);
+> +
+> +	for (--i; i >= 0; i--)
+>  		fscrypt_finalize_bounce_page(&cc->cpages[i]);
+>  	for (i = 0; i < cc->nr_cpages; i++) {
+>  		if (!cc->cpages[i])
+>  			continue;
+>  		f2fs_put_page(cc->cpages[i], 1);
+>  	}
+> +out_put_cic:
+> +	kfree(cic);
+>  out_put_dnode:
+>  	f2fs_put_dnode(&dn);
+>  out_unlock_op:
+> @@ -963,37 +979,39 @@ int f2fs_write_multi_pages(struct compress_ctx *cc,
+>  	struct f2fs_inode_info *fi = F2FS_I(cc->inode);
+>  	const struct f2fs_compress_ops *cops =
+>  			f2fs_cops[fi->i_compress_algorithm];
+> -	int err = -EAGAIN;
+> +	bool compressed = false;
+> +	int err;
+>
+>  	*submitted = 0;
+>  	if (cluster_may_compress(cc)) {
+>  		err = f2fs_compress_pages(cc);
+> -		if (err) {
+> -			err = -EAGAIN;
+> +		if (err == -EAGAIN)
+>  			goto write;
+> -		}
+> +		else if (err)
+> +			goto put_out;
+> +
+>  		err = f2fs_write_compressed_pages(cc, submitted,
+>  							wbc, io_type);
+>  		cops->destroy_compress_ctx(cc);
+> +		if (!err)
+> +			return 0;
+> +		f2fs_bug_on(F2FS_I_SB(cc->inode), err != -EAGAIN);
+>  	}
+>  write:
+> -	if (err == -EAGAIN) {
+> -		bool compressed = false;
+> -
+> -		f2fs_bug_on(F2FS_I_SB(cc->inode), *submitted);
+> +	f2fs_bug_on(F2FS_I_SB(cc->inode), *submitted);
+>
+> -		if (is_compressed_cluster(cc))
+> -			compressed = true;
+> +	if (is_compressed_cluster(cc))
+> +		compressed = true;
+>
+> -		err = f2fs_write_raw_pages(cc, submitted, wbc,
+> -						io_type, compressed);
+> -		if (compressed) {
+> -			stat_sub_compr_blocks(cc->inode, *submitted);
+> -			F2FS_I(cc->inode)->i_compressed_blocks -= *submitted;
+> -			f2fs_mark_inode_dirty_sync(cc->inode, true);
+> -		}
+> -		f2fs_destroy_compress_ctx(cc);
+> +	err = f2fs_write_raw_pages(cc, submitted, wbc, io_type, compressed);
+> +	if (compressed) {
+> +		stat_sub_compr_blocks(cc->inode, *submitted);
+> +		F2FS_I(cc->inode)->i_compressed_blocks -= *submitted;
+> +		f2fs_mark_inode_dirty_sync(cc->inode, true);
+>  	}
+> +put_out:
+> +	f2fs_put_rpages(cc);
+> +	f2fs_destroy_compress_ctx(cc);
+>  	return err;
+>  }
+>
+> @@ -1055,7 +1073,13 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
+>  		dic->tpages[i] = cc->rpages[i];
+>  	}
+>
+> -	dic->rpages = cc->rpages;
+> +	dic->rpages = f2fs_kzalloc(sbi, sizeof(struct page *) <<
+> +			cc->log_cluster_size, GFP_NOFS);
+> +	if (!dic->rpages)
+> +		goto out_free;
+> +
+> +	for (i = 0; i < dic->cluster_size; i++)
+> +		dic->rpages[i] = cc->rpages[i];
+>  	dic->nr_rpages = cc->cluster_size;
+>  	return dic;
+>
+> @@ -1072,8 +1096,7 @@ void f2fs_free_dic(struct decompress_io_ctx *dic)
+>  		for (i = 0; i < dic->cluster_size; i++) {
+>  			if (dic->rpages[i])
+>  				continue;
+> -			unlock_page(dic->tpages[i]);
+> -			put_page(dic->tpages[i]);
+> +			f2fs_put_page(dic->tpages[i], 1);
+>  		}
+>  		kfree(dic->tpages);
+>  	}
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 7046b222e8de..19cd03450066 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2099,7 +2099,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>  							false);
+>  				f2fs_free_dic(dic);
+>  				f2fs_put_dnode(&dn);
+> -				f2fs_reset_compress_ctx(cc);
+> +				f2fs_destroy_compress_ctx(cc);
+>  				*bio_ret = bio;
+>  				return ret;
+>  			}
+> @@ -2117,7 +2117,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>
+>  	f2fs_put_dnode(&dn);
+>
+> -	f2fs_reset_compress_ctx(cc);
+> +	f2fs_destroy_compress_ctx(cc);
+>  	*bio_ret = bio;
+>  	return 0;
+>
+> @@ -2125,7 +2125,6 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>  	f2fs_put_dnode(&dn);
+>  out:
+>  	f2fs_decompress_end_io(cc->rpages, cc->cluster_size, true, false);
+> -	f2fs_destroy_compress_ctx(cc);
+>  	*bio_ret = bio;
+>  	return ret;
+>  }
+> @@ -2192,8 +2191,10 @@ int f2fs_mpage_readpages(struct address_space *mapping,
+>  							max_nr_pages,
+>  							&last_block_in_bio,
+>  							is_readahead);
+> -				if (ret)
+> +				if (ret) {
+> +					f2fs_destroy_compress_ctx(&cc);
+>  					goto set_error_page;
+> +				}
+>  			}
+>  			ret = f2fs_is_compressed_cluster(inode, page->index);
+>  			if (ret < 0)
+> @@ -2229,11 +2230,14 @@ int f2fs_mpage_readpages(struct address_space *mapping,
+>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+>  		if (f2fs_compressed_file(inode)) {
+>  			/* last page */
+> -			if (nr_pages == 1 && !f2fs_cluster_is_empty(&cc))
+> +			if (nr_pages == 1 && !f2fs_cluster_is_empty(&cc)) {
+>  				ret = f2fs_read_multi_pages(&cc, &bio,
+>  							max_nr_pages,
+>  							&last_block_in_bio,
+>  							is_readahead);
+> +				if (ret)
+> +					f2fs_destroy_compress_ctx(&cc);
+> +			}
+>  		}
+>  #endif
+>  	}
+> @@ -2856,6 +2860,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>
+>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+>  			if (f2fs_compressed_file(inode)) {
+> +				get_page(page);
+>  				f2fs_compress_ctx_add_page(&cc, page);
+>  				continue;
+>  			}
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 26a4cc1fd686..5d55cef66410 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3765,7 +3765,6 @@ static inline bool f2fs_post_read_required(struct inode *inode)
+>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+>  bool f2fs_is_compressed_page(struct page *page);
+>  struct page *f2fs_compress_control_page(struct page *page);
+> -void f2fs_reset_compress_ctx(struct compress_ctx *cc);
+>  int f2fs_prepare_compress_overwrite(struct inode *inode,
+>  			struct page **pagep, pgoff_t index, void **fsdata);
+>  bool f2fs_compress_write_end(struct inode *inode, void *fsdata,
+>
