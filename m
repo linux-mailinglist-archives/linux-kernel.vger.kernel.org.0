@@ -2,77 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DED411C8BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 09:58:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E80311C8B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 09:58:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbfLLI6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 03:58:23 -0500
-Received: from mga03.intel.com ([134.134.136.65]:5107 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728269AbfLLI6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 03:58:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 00:58:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,305,1571727600"; 
-   d="scan'208";a="211051659"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.169]) ([10.237.72.169])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Dec 2019 00:58:20 -0800
-Subject: Re: [PATCH] mmc: sdhci-s3c: remove unused ext_cd_gpio field
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-mmc@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Ben Dooks <ben-linux@fluff.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-kernel@vger.kernel.org
-References: <3f12c2deaae9e77a5e7ab8415db7751a27bc3b98.1575916477.git.mirq-linux@rere.qmqm.pl>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <dbb465fd-b3b1-422f-2a8a-e6f50bb7fede@intel.com>
-Date:   Thu, 12 Dec 2019 10:57:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728290AbfLLI6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 03:58:05 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50914 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727906AbfLLI6E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 03:58:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UYXNX80R84IuQhMypgalm96ZyeTH5BvfJvjUVx9LbmM=; b=hTI5TD5udC3lGr9CTWri81MWv
+        alYXJ/Eja1uWKBpYFfybYPThtxlb/i2+2McSUPn/56MN4FMW8wescfPTQ2ya1qxxFRMKeeyH8mnlJ
+        y8pzmxv32d9Wqi1IR8JgxrHlNuL65GOFw4F9v/cxU/E2nezXB5pF32RQKddjlm0e2nMHQyfAoJkt/
+        Ji00iycF6DnZ+/STvnDkxnXB7RqE8WLbid/g29uaxeP409M0CYa+aTiLYbckReP/GFeA7XXKa331D
+        gxxW1U6/fGrfQjVScuWNkO3kKJvjM9lVjyJq3mjArC/0zzi36wbMOGq7sKPcUDr+3qi66fZKtqbwD
+        /gDYxnqIg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifKIH-0008UQ-6W; Thu, 12 Dec 2019 08:57:57 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C6401305E21;
+        Thu, 12 Dec 2019 09:56:34 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 15C792B18D262; Thu, 12 Dec 2019 09:57:55 +0100 (CET)
+Date:   Thu, 12 Dec 2019 09:57:55 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Message-ID: <20191212085755.GR2827@hirez.programming.kicks-ass.net>
+References: <20191121060444.GA55272@gmail.com>
+ <20191121130153.GS4097@hirez.programming.kicks-ass.net>
+ <20191121171214.GD12042@gmail.com>
+ <20191121173444.GA5581@agluck-desk2.amr.corp.intel.com>
+ <20191122105141.GY4114@hirez.programming.kicks-ass.net>
+ <20191122152715.GA1909@hirez.programming.kicks-ass.net>
+ <3908561D78D1C84285E8C5FCA982C28F7F4DD20D@ORSMSX115.amr.corp.intel.com>
+ <20191122202345.GC2844@hirez.programming.kicks-ass.net>
+ <20191122204204.GA192370@romley-ivt3.sc.intel.com>
+ <CALCETrUBomb2_2xyX-tZUD84smtDWH6e16zSN1qupkv-DWu5kw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3f12c2deaae9e77a5e7ab8415db7751a27bc3b98.1575916477.git.mirq-linux@rere.qmqm.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrUBomb2_2xyX-tZUD84smtDWH6e16zSN1qupkv-DWu5kw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/12/19 8:37 pm, Michał Mirosław wrote:
-> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-> ---
->  drivers/mmc/host/sdhci-s3c.c | 2 --
->  1 file changed, 2 deletions(-)
+On Fri, Nov 22, 2019 at 01:25:45PM -0800, Andy Lutomirski wrote:
+> On Fri, Nov 22, 2019 at 12:29 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
+> >
+> > On Fri, Nov 22, 2019 at 09:23:45PM +0100, Peter Zijlstra wrote:
+> > > On Fri, Nov 22, 2019 at 06:02:04PM +0000, Luck, Tony wrote:
+> > > > > it requires we get the kernel and firmware clean, but only warns about
+> > > > > dodgy userspace, which I really don't think there is much of.
+> > > > >
+> > > > > getting the kernel clean should be pretty simple.
+> > > >
+> > > > Fenghua has a half dozen additional patches (I think they were
+> > > > all posted in previous iterations of the patch) that were found by
+> > > > code inspection, rather than by actually hitting them.
+> > >
+> > > I thought we merged at least some of that, but maybe my recollection is
+> > > faulty.
+> >
+> > At least 2 key fixes are in TIP tree:
+> > https://lore.kernel.org/lkml/157384597983.12247.8995835529288193538.tip-bot2@tip-bot2/
+> > https://lore.kernel.org/lkml/157384597947.12247.7200239597382357556.tip-bot2@tip-bot2/
 > 
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index 51e096f27388..8b15945dd499 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -117,7 +117,6 @@ struct sdhci_s3c {
->  	struct s3c_sdhci_platdata *pdata;
->  	int			cur_clk;
->  	int			ext_cd_irq;
-> -	int			ext_cd_gpio;
->  
->  	struct clk		*clk_io;
->  	struct clk		*clk_bus[MAX_BUS_CLK];
-> @@ -512,7 +511,6 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
->  			goto err_pdata_io_clk;
->  	} else {
->  		memcpy(pdata, pdev->dev.platform_data, sizeof(*pdata));
-> -		sc->ext_cd_gpio = -1; /* invalid gpio number */
->  	}
->  
->  	drv_data = sdhci_s3c_get_driver_data(pdev);
+> I do not like these patches at all.  I would *much* rather see the
+> bitops fixed and those patches reverted.
 > 
+> Is there any Linux architecture that doesn't have 32-bit atomic
+> operations?
+
+Of course! The right question is if there's any architecture that has
+SMP and doesn't have 32bit atomic instructions, and then I'd have to
+tell you that yes we have those too :/
+
+Personally I'd love to mandate any SMP system has proper atomic ops, but
+for now we sorta have to make PARISC and SPARC32 (and some ARC variant
+IIRC) limp along.
+
+PARISC and SPARC32 only have the equivalent of an xchgb or something.
+Using that you can build a test-and-set spinlock, and then you have to
+build atomic primitives using a hashtable of spinlocks.
+
+Awesome, right?
+
+> If all architectures can support them, then we should add
+> set_bit_u32(), etc and/or make x86's set_bit() work for a
+> 4-byte-aligned pointer.
+
+I object to _u32() variants of the atomic bitops; the bitops interface
+is a big enough trainwreck already, lets not make it worse. Making the
+existing bitops use 32bit atomics on the inside should be fine though.
+
+If anything we could switch the entire bitmap interface to unsigned int,
+but I'm not sure that'd actually help much.
+
+Anyway, many of the unaligned usages appear not to require atomicicity
+in the first place, see the other patches he sent [*]. And like pointed out
+elsewhere, any code that casts random pointers to (unsigned long *) is
+probably already broken due to endian issues. Just making the unaligned
+check go away isn't fixing it.
+
+[*] https://lkml.kernel.org/r/1574710984-208305-1-git-send-email-fenghua.yu@intel.com
+
 
