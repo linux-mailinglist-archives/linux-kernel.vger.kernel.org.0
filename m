@@ -2,293 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0333E11CF9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:20:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1922D11CF8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:17:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729725AbfLLOU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 09:20:29 -0500
-Received: from mx2.freebsd.org ([96.47.72.81]:40148 "EHLO mx2.freebsd.org"
+        id S1729707AbfLLORY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:17:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729695AbfLLOU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:20:28 -0500
-X-Greylist: delayed 357 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Dec 2019 09:20:27 EST
-Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx2.freebsd.org (Postfix) with ESMTPS id 7C8036BDEE;
-        Thu, 12 Dec 2019 14:14:29 +0000 (UTC)
-        (envelope-from emaste@freebsd.org)
-Received: from freefall.freebsd.org (freefall.freebsd.org [96.47.72.132])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         server-signature RSA-PSS (4096 bits)
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "freefall.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx1.freebsd.org (Postfix) with ESMTPS id 47YbQY21H5z3CbD;
-        Thu, 12 Dec 2019 14:14:29 +0000 (UTC)
-        (envelope-from emaste@freebsd.org)
-Received: by freefall.freebsd.org (Postfix, from userid 1079)
-        id 24842F04E; Thu, 12 Dec 2019 14:14:29 +0000 (UTC)
-From:   Ed Maste <emaste@freefall.freebsd.org>
+        id S1729614AbfLLORY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 09:17:24 -0500
+Received: from linux-8ccs.suse.de (nat.nue.novell.com [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBA42214AF;
+        Thu, 12 Dec 2019 14:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576160243;
+        bh=GTWZsTMHwSIX/dwrBBpyuXpdLIub+Ac4mHiSvkqrc1E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Au9KioiuBbYctxTW+TYPykA1tS11Hu6JnY5OsGClH8ByAP18PWQJISYpduSyNvw6J
+         8v9tU4J3jO8ig/VAaKHSlVV44Ldl5wcZWcIpXuaKTMhK9MrhG+5DkiCdsND48yB3T4
+         W0ReUtLPbfvk8rX5wfGF7IpnZsWQt7/deButQHe4=
+From:   Jessica Yu <jeyu@kernel.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ed Maste <emaste@freebsd.org>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH] perf vendor events s390: Fix commas so PMU event files are valid JSON
-Date:   Thu, 12 Dec 2019 14:14:22 +0000
-Message-Id: <20191212141422.72187-1-emaste@freefall.freebsd.org>
-X-Mailer: git-send-email 2.22.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     Matthias Maennich <maennich@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH v4] export.h: reduce __ksymtab_strings string duplication by using "MS" section flags
+Date:   Thu, 12 Dec 2019 15:16:13 +0100
+Message-Id: <20191212141613.24966-1-jeyu@kernel.org>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20191206124102.12334-1-jeyu@kernel.org>
+References: <20191206124102.12334-1-jeyu@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ed Maste <emaste@freebsd.org>
+Commit c3a6cf19e695 ("export: avoid code duplication in
+include/linux/export.h") refactors export.h quite nicely, but introduces
+a slight increase in memory usage due to using the empty string ""
+instead of NULL to indicate that an exported symbol has no namespace. As
+mentioned in that commit, this meant an increase of 1 byte per exported
+symbol without a namespace. For example, if a kernel configuration has
+about 10k exported symbols, this would mean that the size of
+__ksymtab_strings would increase by roughly 10kB.
 
-No functional change.
+We can alleviate this situation by utilizing the SHF_MERGE and
+SHF_STRING section flags. SHF_MERGE|SHF_STRING indicate to the linker
+that the data in the section are null-terminated strings that can be
+merged to eliminate duplication. More specifically, from the binutils
+documentation - "for sections with both M and S, a string which is a
+suffix of a larger string is considered a duplicate. Thus "def" will be
+merged with "abcdef"; A reference to the first "def" will be changed to
+a reference to "abcdef"+3". Thus, all the empty strings would be merged
+as well as any strings that can be merged according to the cited method
+above. For example, "memset" and "__memset" would be merged to just
+"__memset" in __ksymtab_strings.
 
-Akin to da3ef7f6 for power9, remove extra commas in the s390 JSON files
-so that the files can be parsed and validated by other utilities.
+As of v5.4-rc5, the following statistics were gathered with x86
+defconfig with approximately 10.7k exported symbols.
 
-Signed-off-by: Ed Maste <emaste@freebsd.org>
+Size of __ksymtab_strings in vmlinux:
+-------------------------------------
+v5.4-rc5: 213834 bytes
+v5.4-rc5 with commit c3a6cf19e695: 224455 bytes
+v5.4-rc5 with this patch: 205759 bytes
+
+So, we already see memory savings of ~8kB compared to vanilla -rc5 and
+savings of nearly 18.7kB compared to -rc5 with commit c3a6cf19e695 on top.
+
+Unfortunately, as of this writing, strings will not get deduplicated for
+kernel modules, as ld does not do the deduplication for
+SHF_MERGE|SHF_STRINGS sections for relocatable files (ld -r), which
+kernel modules are. A patch for ld is currently being worked on to
+hopefully allow for string deduplication in relocatable files in the
+future.
+
+Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 ---
- tools/perf/pmu-events/arch/s390/cf_z10/basic.json      | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z10/crypto.json     | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z10/extended.json   | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z13/basic.json      | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z13/crypto.json     | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z13/extended.json   | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z14/basic.json      | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z14/crypto.json     | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z14/extended.json   | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z15/basic.json      | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z15/crypto.json     | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json    | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z15/extended.json   | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z196/basic.json     | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z196/crypto.json    | 2 +-
- tools/perf/pmu-events/arch/s390/cf_z196/extended.json  | 2 +-
- tools/perf/pmu-events/arch/s390/cf_zec12/basic.json    | 2 +-
- tools/perf/pmu-events/arch/s390/cf_zec12/crypto.json   | 2 +-
- tools/perf/pmu-events/arch/s390/cf_zec12/extended.json | 2 +-
- 19 files changed, 19 insertions(+), 19 deletions(-)
+v4:
+  - fix the comment above ___EXPORT_SYMBOL to be more specific about what
+    entries are being placed in their respective sections.
 
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z10/basic.json b/tools/perf/pmu-events/arch/s390/cf_z10/basic.json
-index 2dd8dafff2ef..783de7f1aeaa 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z10/basic.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z10/basic.json
-@@ -82,5 +82,5 @@
- 		"EventName": "PROBLEM_STATE_L1D_PENALTY_CYCLES",
- 		"BriefDescription": "Problem-State L1D Penalty Cycles",
- 		"PublicDescription": "Problem-State Level-1 D-Cache Penalty Cycle Count"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z10/crypto.json b/tools/perf/pmu-events/arch/s390/cf_z10/crypto.json
-index db286f19e7b6..3f28007d3892 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z10/crypto.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z10/crypto.json
-@@ -110,5 +110,5 @@
- 		"EventName": "AES_BLOCKED_CYCLES",
- 		"BriefDescription": "AES Blocked Cycles",
- 		"PublicDescription": "Total number of CPU cycles blocked for the AES functions issued by the CPU because the DEA/AES coprocessor is busy performing a function issued by another CPU"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z10/extended.json b/tools/perf/pmu-events/arch/s390/cf_z10/extended.json
-index b6b7f29ca831..86bd8ba9391d 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z10/extended.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z10/extended.json
-@@ -124,5 +124,5 @@
- 		"EventName": "L2C_STORES_SENT",
- 		"BriefDescription": "L2C Stores Sent",
- 		"PublicDescription": "Incremented by one for every store sent to Level-2 (L1.5) cache"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z13/basic.json b/tools/perf/pmu-events/arch/s390/cf_z13/basic.json
-index 2dd8dafff2ef..783de7f1aeaa 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z13/basic.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z13/basic.json
-@@ -82,5 +82,5 @@
- 		"EventName": "PROBLEM_STATE_L1D_PENALTY_CYCLES",
- 		"BriefDescription": "Problem-State L1D Penalty Cycles",
- 		"PublicDescription": "Problem-State Level-1 D-Cache Penalty Cycle Count"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z13/crypto.json b/tools/perf/pmu-events/arch/s390/cf_z13/crypto.json
-index db286f19e7b6..3f28007d3892 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z13/crypto.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z13/crypto.json
-@@ -110,5 +110,5 @@
- 		"EventName": "AES_BLOCKED_CYCLES",
- 		"BriefDescription": "AES Blocked Cycles",
- 		"PublicDescription": "Total number of CPU cycles blocked for the AES functions issued by the CPU because the DEA/AES coprocessor is busy performing a function issued by another CPU"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z13/extended.json b/tools/perf/pmu-events/arch/s390/cf_z13/extended.json
-index 436ce33f1182..62e6bdf750dd 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z13/extended.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z13/extended.json
-@@ -390,5 +390,5 @@
- 		"EventName": "MT_DIAG_CYCLES_TWO_THR_ACTIVE",
- 		"BriefDescription": "Cycle count with two threads active",
- 		"PublicDescription": "Cycle count with two threads active"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z14/basic.json b/tools/perf/pmu-events/arch/s390/cf_z14/basic.json
-index 17fb5241928b..fc762e9f1d6e 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z14/basic.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z14/basic.json
-@@ -54,5 +54,5 @@
- 		"EventName": "PROBLEM_STATE_INSTRUCTIONS",
- 		"BriefDescription": "Problem-State Instructions",
- 		"PublicDescription": "Problem-State Instruction Count"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z14/crypto.json b/tools/perf/pmu-events/arch/s390/cf_z14/crypto.json
-index db286f19e7b6..3f28007d3892 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z14/crypto.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z14/crypto.json
-@@ -110,5 +110,5 @@
- 		"EventName": "AES_BLOCKED_CYCLES",
- 		"BriefDescription": "AES Blocked Cycles",
- 		"PublicDescription": "Total number of CPU cycles blocked for the AES functions issued by the CPU because the DEA/AES coprocessor is busy performing a function issued by another CPU"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z14/extended.json b/tools/perf/pmu-events/arch/s390/cf_z14/extended.json
-index 68618152ea2c..e6478dff0af7 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z14/extended.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z14/extended.json
-@@ -369,5 +369,5 @@
- 		"EventName": "MT_DIAG_CYCLES_TWO_THR_ACTIVE",
- 		"BriefDescription": "Cycle count with two threads active",
- 		"PublicDescription": "Cycle count with two threads active"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z15/basic.json b/tools/perf/pmu-events/arch/s390/cf_z15/basic.json
-index 17fb5241928b..fc762e9f1d6e 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z15/basic.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z15/basic.json
-@@ -54,5 +54,5 @@
- 		"EventName": "PROBLEM_STATE_INSTRUCTIONS",
- 		"BriefDescription": "Problem-State Instructions",
- 		"PublicDescription": "Problem-State Instruction Count"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z15/crypto.json b/tools/perf/pmu-events/arch/s390/cf_z15/crypto.json
-index db286f19e7b6..3f28007d3892 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z15/crypto.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z15/crypto.json
-@@ -110,5 +110,5 @@
- 		"EventName": "AES_BLOCKED_CYCLES",
- 		"BriefDescription": "AES Blocked Cycles",
- 		"PublicDescription": "Total number of CPU cycles blocked for the AES functions issued by the CPU because the DEA/AES coprocessor is busy performing a function issued by another CPU"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json b/tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json
-index 5e36bc2468d0..0b88daf840c5 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json
-@@ -26,5 +26,5 @@
- 		"EventName": "ECC_BLOCKED_CYCLES_COUNT",
- 		"BriefDescription": "ECC Blocked Cycles Count",
- 		"PublicDescription": "Long ECC blocked cycles count"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z15/extended.json b/tools/perf/pmu-events/arch/s390/cf_z15/extended.json
-index 89e070727e1b..4942b20a1ea1 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z15/extended.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z15/extended.json
-@@ -369,5 +369,5 @@
- 		"EventName": "MT_DIAG_CYCLES_TWO_THR_ACTIVE",
- 		"BriefDescription": "Cycle count with two threads active",
- 		"PublicDescription": "Cycle count with two threads active"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z196/basic.json b/tools/perf/pmu-events/arch/s390/cf_z196/basic.json
-index 2dd8dafff2ef..783de7f1aeaa 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z196/basic.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z196/basic.json
-@@ -82,5 +82,5 @@
- 		"EventName": "PROBLEM_STATE_L1D_PENALTY_CYCLES",
- 		"BriefDescription": "Problem-State L1D Penalty Cycles",
- 		"PublicDescription": "Problem-State Level-1 D-Cache Penalty Cycle Count"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z196/crypto.json b/tools/perf/pmu-events/arch/s390/cf_z196/crypto.json
-index db286f19e7b6..3f28007d3892 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z196/crypto.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z196/crypto.json
-@@ -110,5 +110,5 @@
- 		"EventName": "AES_BLOCKED_CYCLES",
- 		"BriefDescription": "AES Blocked Cycles",
- 		"PublicDescription": "Total number of CPU cycles blocked for the AES functions issued by the CPU because the DEA/AES coprocessor is busy performing a function issued by another CPU"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_z196/extended.json b/tools/perf/pmu-events/arch/s390/cf_z196/extended.json
-index b7b42a870bb0..86b29fd181cf 100644
---- a/tools/perf/pmu-events/arch/s390/cf_z196/extended.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_z196/extended.json
-@@ -166,5 +166,5 @@
- 		"EventName": "L1I_OFFCHIP_L3_SOURCED_WRITES",
- 		"BriefDescription": "L1I Off-Chip L3 Sourced Writes",
- 		"PublicDescription": "A directory write to the Level-1 I-Cache directory where the returned cache line was sourced from an Off Chip/On Book Level-3 cache"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_zec12/basic.json b/tools/perf/pmu-events/arch/s390/cf_zec12/basic.json
-index 2dd8dafff2ef..783de7f1aeaa 100644
---- a/tools/perf/pmu-events/arch/s390/cf_zec12/basic.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_zec12/basic.json
-@@ -82,5 +82,5 @@
- 		"EventName": "PROBLEM_STATE_L1D_PENALTY_CYCLES",
- 		"BriefDescription": "Problem-State L1D Penalty Cycles",
- 		"PublicDescription": "Problem-State Level-1 D-Cache Penalty Cycle Count"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_zec12/crypto.json b/tools/perf/pmu-events/arch/s390/cf_zec12/crypto.json
-index db286f19e7b6..3f28007d3892 100644
---- a/tools/perf/pmu-events/arch/s390/cf_zec12/crypto.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_zec12/crypto.json
-@@ -110,5 +110,5 @@
- 		"EventName": "AES_BLOCKED_CYCLES",
- 		"BriefDescription": "AES Blocked Cycles",
- 		"PublicDescription": "Total number of CPU cycles blocked for the AES functions issued by the CPU because the DEA/AES coprocessor is busy performing a function issued by another CPU"
--	},
-+	}
- ]
-diff --git a/tools/perf/pmu-events/arch/s390/cf_zec12/extended.json b/tools/perf/pmu-events/arch/s390/cf_zec12/extended.json
-index 162251037219..f40cbed89418 100644
---- a/tools/perf/pmu-events/arch/s390/cf_zec12/extended.json
-+++ b/tools/perf/pmu-events/arch/s390/cf_zec12/extended.json
-@@ -243,5 +243,5 @@
- 		"EventName": "TX_C_TABORT_SPECIAL",
- 		"BriefDescription": "Aborted transactions in constrained TX mode using special completion logic",
- 		"PublicDescription": "A transaction abort has occurred in a constrained transactional-execution mode and the CPU is using special logic to allow the transaction to complete"
--	},
-+	}
- ]
+ include/asm-generic/export.h |  8 +++++---
+ include/linux/export.h       | 27 ++++++++++++++++++++-------
+
+ 2 files changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+index afddc5442e92..365345f9a9e3 100644
+--- a/include/asm-generic/export.h
++++ b/include/asm-generic/export.h
+@@ -27,9 +27,11 @@
+ .endm
+ 
+ /*
+- * note on .section use: @progbits vs %progbits nastiness doesn't matter,
+- * since we immediately emit into those sections anyway.
++ * note on .section use: we specify progbits since usage of the "M" (SHF_MERGE)
++ * section flag requires it. Use '%progbits' instead of '@progbits' since the
++ * former apparently works on all arches according to the binutils source.
+  */
++
+ .macro ___EXPORT_SYMBOL name,val,sec
+ #ifdef CONFIG_MODULES
+ 	.section ___ksymtab\sec+\name,"a"
+@@ -37,7 +39,7 @@
+ __ksymtab_\name:
+ 	__put \val, __kstrtab_\name
+ 	.previous
+-	.section __ksymtab_strings,"a"
++	.section __ksymtab_strings,"aMS",%progbits,1
+ __kstrtab_\name:
+ 	.asciz "\name"
+ 	.previous
+diff --git a/include/linux/export.h b/include/linux/export.h
+index 627841448293..c166d35e3d76 100644
+--- a/include/linux/export.h
++++ b/include/linux/export.h
+@@ -82,16 +82,29 @@ struct kernel_symbol {
+ 
+ #else
+ 
+-/* For every exported symbol, place a struct in the __ksymtab section */
++/*
++ * For every exported symbol, do the following:
++ *
++ * - If applicable, place a CRC entry in the __kcrctab section.
++ * - Put the name of the symbol and namespace (empty string "" for none) in
++ *   __ksymtab_strings.
++ * - Place a struct kernel_symbol entry in the __ksymtab section.
++ *
++ * note on .section use: we specify progbits since usage of the "M" (SHF_MERGE)
++ * section flag requires it. Use '%progbits' instead of '@progbits' since the
++ * former apparently works on all arches according to the binutils source.
++ */
+ #define ___EXPORT_SYMBOL(sym, sec, ns)					\
+ 	extern typeof(sym) sym;						\
++	extern const char __kstrtab_##sym[];				\
++	extern const char __kstrtabns_##sym[];				\
+ 	__CRC_SYMBOL(sym, sec);						\
+-	static const char __kstrtab_##sym[]				\
+-	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
+-	= #sym;								\
+-	static const char __kstrtabns_##sym[]				\
+-	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
+-	= ns;								\
++	asm("	.section \"__ksymtab_strings\",\"aMS\",%progbits,1\n"	\
++	    "__kstrtab_" #sym ":				\n"	\
++	    "	.asciz 	\"" #sym "\"				\n"	\
++	    "__kstrtabns_" #sym ":				\n"	\
++	    "	.asciz 	\"" ns "\"				\n"	\
++	    "	.previous					\n");	\
+ 	__KSYMTAB_ENTRY(sym, sec)
+ 
+ #endif
 -- 
-2.24.0
+2.16.4
 
