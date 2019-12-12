@@ -2,69 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BBE311D1B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 17:02:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D7911D1BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 17:03:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729759AbfLLQCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 11:02:24 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44720 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729247AbfLLQCY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 11:02:24 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sjoerd)
-        with ESMTPSA id 588E328B82D
-Received: by beast.luon.net (Postfix, from userid 1000)
-        id 618673E1F0D; Thu, 12 Dec 2019 17:02:20 +0100 (CET)
-From:   Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH] ARM: dts: imx6qdl: Enable egalax touch screen
-Date:   Thu, 12 Dec 2019 17:02:20 +0100
-Message-Id: <20191212160220.2265521-1-sjoerd.simons@collabora.co.uk>
-X-Mailer: git-send-email 2.24.0
+        id S1729816AbfLLQDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 11:03:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729247AbfLLQDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 11:03:15 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A87C22173E;
+        Thu, 12 Dec 2019 16:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576166595;
+        bh=hfABrdLSbH0bF01p271neeli3FQecfhJg4XVLx7Gzt0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xoPRm99RqXB4G6cle4WwUEdyyR/xvWEN2/Pv6Q1/dEW7dcz94kHXPQUoWAlzNwVf6
+         CfAhr/QJHu8bLnf8dLLvaKAuEubbTEUmyqMocdFxvWs8wxkeif566rlC19JCkNCBuo
+         1ZP/hc43GyOhkAPxmlTplERgVf0xW5BcW91kOcy0=
+Date:   Thu, 12 Dec 2019 17:03:12 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Scott Schafer <schaferjscott@gmail.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        devel@driverdev.osuosl.org, GR-Linux-NIC-Dev@marvell.com,
+        Manish Chopra <manishc@marvell.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 11/23] staging: qlge: Fix CHECK: braces {} should be
+ used on all arms of this statement
+Message-ID: <20191212160312.GA1672580@kroah.com>
+References: <cover.1576086080.git.schaferjscott@gmail.com>
+ <0e1fc1a16725094676fdab63d3a24a986309a759.1576086080.git.schaferjscott@gmail.com>
+ <20191212121206.GB1895@kadam>
+ <20191212150200.GA8219@karen>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191212150200.GA8219@karen>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sabrelite boards can have an lvds screen attached with a built-in i2c touch
-screen. Enable this in the dtsi.
+On Thu, Dec 12, 2019 at 09:02:00AM -0600, Scott Schafer wrote:
+> On Thu, Dec 12, 2019 at 03:12:06PM +0300, Dan Carpenter wrote:
+> > On Wed, Dec 11, 2019 at 12:12:40PM -0600, Scott Schafer wrote:
+> > > @@ -351,8 +352,9 @@ static int ql_aen_lost(struct ql_adapter *qdev, struct mbox_params *mbcp)
+> > >  	mbcp->out_count = 6;
+> > >  
+> > >  	status = ql_get_mb_sts(qdev, mbcp);
+> > > -	if (status)
+> > > +	if (status) {
+> > >  		netif_err(qdev, drv, qdev->ndev, "Lost AEN broken!\n");
+> > > +	}
+> > >  	else {
+> > 
+> > The close } should be on the same line as the else.
+> > 
+> > >  		int i;
+> > >  
+> > 
+> > regards,
+> > dan carpenter
+> 
+> this was fixed in patch 22
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
----
-
- arch/arm/boot/dts/imx6qdl-sabrelite.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/imx6qdl-sabrelite.dtsi b/arch/arm/boot/dts/imx6qdl-sabrelite.dtsi
-index 8468216dae9b..382b127b2251 100644
---- a/arch/arm/boot/dts/imx6qdl-sabrelite.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-sabrelite.dtsi
-@@ -416,6 +416,14 @@ &i2c3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_i2c3>;
- 	status = "okay";
-+
-+	touchscreen@4 {
-+		compatible = "eeti,egalax_ts";
-+		reg = <0x04>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
-+		wakeup-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
-+	};
- };
- 
- &iomuxc {
--- 
-2.24.0
+Don't add a warning that you later fix up :)
 
