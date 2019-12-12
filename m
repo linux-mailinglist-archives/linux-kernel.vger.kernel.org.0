@@ -2,48 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20F1B11D4C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:00:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF69711D4BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730279AbfLLSA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 13:00:26 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42677 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730003AbfLLSA0 (ORCPT
+        id S1730308AbfLLSA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 13:00:27 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34906 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730023AbfLLSA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Dec 2019 13:00:26 -0500
-Received: by mail-qk1-f193.google.com with SMTP id z14so2327462qkg.9
+Received: by mail-qk1-f195.google.com with SMTP id z76so2353099qka.2
         for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 10:00:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rBuDgfE9sLA4203asMoCDWk+/8WmQc7l3W+E9Z8j78g=;
-        b=cKLtvvZJliZrTDwE6hpd5dGzMkCdZi83ZXrLL82eYxh+1o40FZXnVXRI0oTLQBHA7B
-         WAxIxJCkiAMBZTV9q23Gqp6DDH3zYAcWlUV1L2TIjyEku9PGi9PsQYwTfUyYmCQeoStd
-         582fEed6uqCpj3nNqzGplF/xvd60Dp64emPLS3+NoJi6F0OhDDhUuGh24YbpxhAfr400
-         GMeJhUhCuxSbnnAMcC8vz6fElnDlH0ZQQ5eCeH/tYna8CgydtljqS3SXuTKtdwCA5N2B
-         t7bAjaZOPhK2AR9l9dAlq2u0CDEcf5ykjSHp7GAETNwySBBlK8C1Yy3uasu1tK4Rxt12
-         CxKA==
-X-Gm-Message-State: APjAAAWMaSFZ+Qwqx6sGz/gzAsAXq9ndrIbLGR6mVlD3uQk7S1cTl4CZ
-        ADx+GUezetzVhsqPu961xOrOy0Q9
-X-Google-Smtp-Source: APXvYqxZMJZMxnFh+S3mIYmQTIp9GbiXIU38KyPzHtuMVKOBpTJlU6UMp9lQqX6wMY70/Bt24tr4QQ==
-X-Received: by 2002:a37:9bc2:: with SMTP id d185mr2045075qke.422.1576173624670;
-        Thu, 12 Dec 2019 10:00:24 -0800 (PST)
+        bh=ge4HTdIewKvZfDm4331T+xQhrGpyDOZS/n3ZLfKIywA=;
+        b=KC5P0h+2fk1/eSjWzwX7P/e2cFa7Km833c0vixzvG3VDdVCtcfkNuIBcSuFOvKCjnE
+         W7Gbrj+CfIC3Iqji+1HunJJsFZ1MApfAhUqegbJUojN9H93vLo2Jrj0/7QhoezwyrY0a
+         6+iNqWaOAPPaVdRrlTxSjfRR3/OVI0p0veoYszl3Wj5cR5ERV5sD6tUw93GdNf2UHKjo
+         LN5B6+e5mcHzQjTkjOSFoah6XsTWFcdAzLF8ivwL66zkKdI4WqhW11T0CRpfPoDMXEOf
+         OwJixdot/VGHbu+QkR5e45mN/XQS4PTwSVqswniOMoBuxU5oGL1sg/ojrbGAaN07Su4O
+         gXfw==
+X-Gm-Message-State: APjAAAWL3hGRVUH4fFkNw1OeXzHoOCPgRtOgNzDyxHCb7oExupQHnceA
+        BVmkX7GPMxb6TSX9nMpYH/0=
+X-Google-Smtp-Source: APXvYqzPgquNiWUTSa8w2qUun8q40UYQumZjmfLc645lmbSdBU0r5+O17stNE9wsVgsn/VdZlJbABA==
+X-Received: by 2002:a05:620a:218a:: with SMTP id g10mr9469536qka.351.1576173625487;
+        Thu, 12 Dec 2019 10:00:25 -0800 (PST)
 Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id j7sm1946037qkd.46.2019.12.12.10.00.23
+        by smtp.gmail.com with ESMTPSA id j7sm1946037qkd.46.2019.12.12.10.00.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 10:00:23 -0800 (PST)
+        Thu, 12 Dec 2019 10:00:24 -0800 (PST)
 From:   Arvind Sankar <nivedita@alum.mit.edu>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] init/main.c: minor cleanup/bugfix of envvar handling
-Date:   Thu, 12 Dec 2019 13:00:20 -0500
-Message-Id: <20191212180023.24339-1-nivedita@alum.mit.edu>
+Subject: [PATCH v2 1/3] init/main.c: log arguments and environment passed to init
+Date:   Thu, 12 Dec 2019 13:00:21 -0500
+Message-Id: <20191212180023.24339-2-nivedita@alum.mit.edu>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191123214039.139275-1-nivedita@alum.mit.edu>
+In-Reply-To: <20191212180023.24339-1-nivedita@alum.mit.edu>
 References: <20191123214039.139275-1-nivedita@alum.mit.edu>
+ <20191212180023.24339-1-nivedita@alum.mit.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,58 +52,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-unknown_bootoption passes unrecognized command line arguments to init as
-either environment variables or arguments. Some of the logic in the
-function is broken for quoted command line arguments.
+Extend logging in `run_init_process` to also show the arguments and
+environment that we are passing to init.
 
-When an argument of the form param="value" is processed by parse_args
-and passed to unknown_bootoption, the command line has
-  param\0"value\0
-with val pointing to the beginning of value. The helper function
-repair_env_string is then used to restore the '=' character that was
-removed by parse_args, and strip the quotes off fully. This results in
-  param=value\0\0
-and val ends up pointing to the 'a' instead of the 'v' in value. This
-bug was introduced when repair_env_string was refactored into a separate
-function, and the decrement of val in repair_env_string became dead code.
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+---
+ init/main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-This causes two problems in unknown_bootoption in the two places where
-the val pointer is used as a substitute for the length of param:
-
-1. An argument of the form param=".value" is misinterpreted as a
-potential module parameter, with the result that it will not be placed
-in init's environment.
-
-2. An argument of the form param="value" is checked to see if param is
-an existing environment variable that should be overwritten, but the
-comparison is off-by-one and compares 'param=v' instead of 'param='
-against the existing environment. So passing, for example, TERM="vt100"
-on the command line results in init being passed both TERM=linux and
-TERM=vt100 in its environment.
-
-Patch 1 adds logging for the arguments and environment passed to init
-and is independent of the rest: it can be dropped if this is
-unnecessarily verbose.
-
-Patch 2 removes repair_env_string from initcall parameter parsing in
-do_initcall_level, as that uses a separate copy of the command line now
-and the repairing is no longer necessary.
-
-Patch 3 fixes the bug in unknown_bootoption by recording the length of
-param explicitly instead of implying it from val-param.
-
-Changes from v1:
-- use pr_debug for additional logging in patch 1
-- move removal of dead val--; line from patch 2 to patch 3
-
-Arvind Sankar (3):
-  init/main.c: log arguments and environment passed to init
-  init/main.c: remove unnecessary repair_env_string in do_initcall_level
-  init/main.c: fix quoted value handling in unknown_bootoption
-
- init/main.c | 31 ++++++++++++++++++++++---------
- 1 file changed, 22 insertions(+), 9 deletions(-)
-
+diff --git a/init/main.c b/init/main.c
+index 91f6ebb30ef0..4ebf4346a44c 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1042,8 +1042,16 @@ static void __init do_pre_smp_initcalls(void)
+ 
+ static int run_init_process(const char *init_filename)
+ {
++	const char *const *p;
++
+ 	argv_init[0] = init_filename;
+ 	pr_info("Run %s as init process\n", init_filename);
++	pr_debug("  with arguments:\n");
++	for (p = argv_init; *p; p++)
++		pr_debug("    %s\n", *p);
++	pr_debug("  with environment:\n");
++	for (p = envp_init; *p; p++)
++		pr_debug("    %s\n", *p);
+ 	return do_execve(getname_kernel(init_filename),
+ 		(const char __user *const __user *)argv_init,
+ 		(const char __user *const __user *)envp_init);
 -- 
 2.23.0
 
