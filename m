@@ -2,243 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B62A511C3D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 04:19:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5805C11C3D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 04:34:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfLLDTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 22:19:33 -0500
-Received: from mail-eopbgr30064.outbound.protection.outlook.com ([40.107.3.64]:60992
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726638AbfLLDTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 22:19:33 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SA74HZ/T7X6oNtscmaQD0dbXsn9XinPI+APt8yJi5IXh7qiu+aqd1tRGB1vN39cC30WWNsYcZ4rIw80vF4uipaP5PKS3/0TzCwu44z0BoYZJlQtB8oMDNBRaCvLAvJn5NSJt09HyFR9WwjJVZusqOQH0hLJCviAvrmZL28wTIwD6q6AIom+x2j2ncLwD+YuoWSDi9oUku0TCEqDSREjLnnWmewYmHVX0EKarbBmhscDrzztOwW6JLud2r7F7d4VACxrpJGhkasNXaO5OPy3QAVUGL0SCT9YkBqQNhbi8qsT7tVFeiPuOVqjvEYddXtJQHoFTIR1tW41wxFWKO84pfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DAwjKxvnVC+zMuAx21ydKprAKexJLCOi4NMZvk1QE0w=;
- b=EXF4s05e7C2B4vh228Jc8Pxwx9R+jLlMMlqfqIolJh01B/TXuZJ6dKoiC6VJD+fsL0bv5ddGDbq8RqrevRvoEns6Bhbq3t7xd1NHgJCnDv035P1nkZzNzD1F3tBIMvmj1r1xdECsvjRCYN/1xjKus497K2vigFh2IdYVWFPdgm6QoaqDd5uBdvuAMI2DvgmPIlI9xqQAPbA0vgjPjLT1wweyVwejCJBaAug0AKLuTVXwgMZ3PN82rjPi30eUn05RZ0h3pEMSuIO4JXOjpLlUjyNoAnnlo8L6m/UUKdzkNncMSaggolz1LlWOt9IH11qsU2dHFF0qV6ugFs+HnYKd9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DAwjKxvnVC+zMuAx21ydKprAKexJLCOi4NMZvk1QE0w=;
- b=rwcZY6UM9Ugjg5phXiNJ3jTQeNFaFKyCXM2qIj4YDyIb/eSkl1TBzcyU5fAmLjdpHBT2yt8Y3q2A2CZui10aQw8tD5i/GU5K5n1pLA+J2qVW1+PXoFMqE3QjrqJtZ0X4l8pywhXKByNymFg5vlTD+o23y51oxx13yvMy2zpvHHg=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6756.eurprd04.prod.outlook.com (10.255.182.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.16; Thu, 12 Dec 2019 03:19:25 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::505:87e7:6b49:3d29]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::505:87e7:6b49:3d29%7]) with mapi id 15.20.2538.017; Thu, 12 Dec 2019
- 03:19:25 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Jun Li <jun.li@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        "angus@akkea.ca" <angus@akkea.ca>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] arm64: dts: imx8m: drop "fsl,aips-bus" and
- "fsl,imx8mq-aips-bus"
-Thread-Topic: [PATCH] arm64: dts: imx8m: drop "fsl,aips-bus" and
- "fsl,imx8mq-aips-bus"
-Thread-Index: AQHVsJr0430+yrGMXkiqegeAayzdJw==
-Date:   Thu, 12 Dec 2019 03:19:25 +0000
-Message-ID: <1576120601-28698-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR04CA0076.apcprd04.prod.outlook.com
- (2603:1096:202:15::20) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 26512b2c-2412-4f7d-3186-08d77eb216f7
-x-ms-traffictypediagnostic: AM0PR04MB6756:|AM0PR04MB6756:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB675619A221046213CCDCE4B688550@AM0PR04MB6756.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2449;
-x-forefront-prvs: 0249EFCB0B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(366004)(396003)(376002)(39860400002)(189003)(199004)(8936002)(81156014)(81166006)(71200400001)(6512007)(7416002)(2616005)(54906003)(186003)(6486002)(26005)(8676002)(4326008)(52116002)(86362001)(6506007)(110136005)(316002)(66476007)(66446008)(66946007)(64756008)(66556008)(2906002)(478600001)(36756003)(44832011)(5660300002)(32563001)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6756;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: XN+8r7HR3a7tynccVF5m3CzcxwCKXIvper7rRhhSMPvhzXsRneLWRdQqk5BPfq+ikOnbq8jRlaFQwCUL511B8bWGyHcnf33GuuYUp2YlQhAyMumybYrrtuxGKUe/mIXya1H6AtpKkUPqfPl4GQ1+R4f8lkEzNXirTyqXc3yRO63Suw96YuueMp6lMM8Iqcnwq/g8A7fmhXlcVvD42oW+cgxDO+fV6AQLQva6UfUUtws59bwwQDbllqTtSaO0X90Z02MWGf8+m0o470mmlP0+sT/SgZ255SEF9PK+iw3x42rlF4PQgQJJtxAnYm6AVmIA15nW1iJlDHjBra5TzuZMNHZXV9xRJePsimyAjSZCUeX+SupRofBZTNGygHyU6jmDiI1+dvlU0hY+qLirDoXKjbxMQUmRP9oq5PwIbeTH2U+S+UEGfUR13c1OXFO8NF3EUMlD1k846PsBCxdo6VXmIJATZt5F6KizunA8B7Pebh+PoyuJlcStNuC2vi1lQK8+1k7eEEZslc8qKa3b4JM4xQ==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726831AbfLLDeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 22:34:10 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:37829 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbfLLDeJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 22:34:09 -0500
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xBC3Xl0H013734;
+        Thu, 12 Dec 2019 12:33:47 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xBC3Xl0H013734
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576121628;
+        bh=p1P3InDUiioyKsJ0uqaLYPyxVpYrR5VZ44BOVhRr6QU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FdUxNb09tRix91rC7pFGfY91Alomf9VGqGWbt5CnOCadE5WbXoJg5TPifTUICLvWK
+         LesPIlYRvDQDBtlsyO6qOj4DUBcy05EFUfaaIPppNaG6wXtfWE6+QFM3+BUxsmc0Aq
+         DOh3Qjm0Q3M5HiAG3xgecFuFWSJ2oLbpNFA0osNVc2SwHOLl5l8DgByu6GYHdLMMrv
+         rkYvYXDAjt6DAP9PTW/rNqdJJkckmBVkLGBtcXWlb8jnlZIHJG0kSJkXT7j9flOcZE
+         q8NAQqaa0QUPV/XK+UyUcs8h4sK4R18uosuG/P4l3RBpr7Iebx9pi1anrFSlG+ULxp
+         BZHYMF3jHk4+w==
+X-Nifty-SrcIP: [209.85.221.175]
+Received: by mail-vk1-f175.google.com with SMTP id i18so1102vkk.7;
+        Wed, 11 Dec 2019 19:33:47 -0800 (PST)
+X-Gm-Message-State: APjAAAU1PQlTMP4/At5pbI8/0Qgw0s6rsdhMqtY/InVeNjF+vILP1l+B
+        ubU/VEt66PmufqTbI+SSWcEZrDXO/I5gkJu0kdM=
+X-Google-Smtp-Source: APXvYqxQv7H+yYlj4cHgvDygVGhBBZnFMhLd2OuGWfMmVY59MfZ4NEBI6ohS0rdhJMIe8WNTbhNsQh+3Do02yOmxJmQ=
+X-Received: by 2002:a1f:2e4a:: with SMTP id u71mr3263415vku.96.1576121626675;
+ Wed, 11 Dec 2019 19:33:46 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26512b2c-2412-4f7d-3186-08d77eb216f7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2019 03:19:25.2740
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: g4HauRcp+eat25InHGbb7kEsJRCdwBeQBpNFaZVj9xN5hE598Aast0MflFUMjoF9kZTih12veOJN9tG7x8oZ3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6756
+References: <20191211054538.8283-1-yamada.masahiro@socionext.com>
+ <20191211054538.8283-2-yamada.masahiro@socionext.com> <399bb8ab-74c5-1be3-4156-6d854738b548@denx.de>
+In-Reply-To: <399bb8ab-74c5-1be3-4156-6d854738b548@denx.de>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 12 Dec 2019 12:33:10 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATDcWV5sV3r6Rkv-4KMGDE5ZwyG525WDyjGEW85xSDF1g@mail.gmail.com>
+Message-ID: <CAK7LNATDcWV5sV3r6Rkv-4KMGDE5ZwyG525WDyjGEW85xSDF1g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mtd: rawnand: denali_dt: add reset controlling
+To:     Marek Vasut <marex@denx.de>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Thu, Dec 12, 2019 at 10:05 AM Marek Vasut <marex@denx.de> wrote:
+>
+> On 12/11/19 6:45 AM, Masahiro Yamada wrote:
+> [...]
+> > diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
+> > index 8b779a899dcf..9a294c3f6ec8 100644
+> > --- a/drivers/mtd/nand/raw/denali_dt.c
+> > +++ b/drivers/mtd/nand/raw/denali_dt.c
+> > @@ -6,6 +6,7 @@
+> >   */
+> >
+> >  #include <linux/clk.h>
+> > +#include <linux/delay.h>
+> >  #include <linux/err.h>
+> >  #include <linux/io.h>
+> >  #include <linux/ioport.h>
+> > @@ -14,6 +15,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/of_device.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/reset.h>
+> >
+> >  #include "denali.h"
+> >
+> > @@ -22,6 +24,8 @@ struct denali_dt {
+> >       struct clk *clk;        /* core clock */
+> >       struct clk *clk_x;      /* bus interface clock */
+> >       struct clk *clk_ecc;    /* ECC circuit clock */
+> > +     struct reset_control *rst;      /* core reset */
+> > +     struct reset_control *rst_reg;  /* register reset */
+> >  };
+> >
+> >  struct denali_dt_data {
+> > @@ -151,6 +155,14 @@ static int denali_dt_probe(struct platform_device *pdev)
+> >       if (IS_ERR(dt->clk_ecc))
+> >               return PTR_ERR(dt->clk_ecc);
+> >
+> > +     dt->rst = devm_reset_control_get_optional_shared(dev, "nand");
+> > +     if (IS_ERR(dt->rst))
+> > +             return PTR_ERR(dt->rst);
+> > +
+> > +     dt->rst_reg = devm_reset_control_get_optional_shared(dev, "reg");
+> > +     if (IS_ERR(dt->rst_reg))
+> > +             return PTR_ERR(dt->rst_reg);
+> > +
+> >       ret = clk_prepare_enable(dt->clk);
+> >       if (ret)
+> >               return ret;
+> > @@ -166,10 +178,30 @@ static int denali_dt_probe(struct platform_device *pdev)
+> >       denali->clk_rate = clk_get_rate(dt->clk);
+> >       denali->clk_x_rate = clk_get_rate(dt->clk_x);
+> >
+> > -     ret = denali_init(denali);
+> > +     /*
+> > +      * Deassert the register reset, and the core reset in this order.
+> > +      * Deasserting the core reset while the register reset is asserted
+> > +      * will cause unpredictable behavior in the controller.
+> > +      */
+> > +     ret = reset_control_deassert(dt->rst_reg);
+> >       if (ret)
+> >               goto out_disable_clk_ecc;
+> >
+> > +     ret = reset_control_deassert(dt->rst);
+> > +     if (ret)
+> > +             goto out_assert_rst_reg;
+> > +
+> > +     /*
+> > +      * When the reset is deasserted, the initialization sequence is kicked
+> > +      * (bootstrap process). The driver must wait until it finished.
+> > +      * Otherwise, it will result in unpredictable behavior.
+> > +      */
+> > +     usleep_range(200, 1000);
+> > +
+> > +     ret = denali_init(denali);
+> > +     if (ret)
+> > +             goto out_assert_rst;
+> > +
+> >       for_each_child_of_node(dev->of_node, np) {
+> >               ret = denali_dt_chip_init(denali, np);
+> >               if (ret) {
+> > @@ -184,6 +216,10 @@ static int denali_dt_probe(struct platform_device *pdev)
+> >
+> >  out_remove_denali:
+> >       denali_remove(denali);
+> > +out_assert_rst:
+> > +     reset_control_assert(dt->rst);
+> > +out_assert_rst_reg:
+> > +     reset_control_assert(dt->rst_reg);
+>
+> Maybe you can use devm_add_action_or_reset() here , like in e.g.
+> drivers/input/touchscreen/ili210x.c , to avoid this unwinding ?
 
-There is no binding doc for these compatible string
-"fsl,imx8mq-aips-bus" and "fsl,aips-bus", "simple-bus" is enough
-for aips usage, so drop the upper two.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 8 ++++----
- arch/arm64/boot/dts/freescale/imx8mn.dtsi | 8 ++++----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 8 ++++----
- 3 files changed, 12 insertions(+), 12 deletions(-)
+No.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dt=
-s/freescale/imx8mm.dtsi
-index 20756440a420..a0dbf47ab320 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -232,7 +232,7 @@
- 		ranges =3D <0x0 0x0 0x0 0x3e000000>;
-=20
- 		aips1: bus@30000000 {
--			compatible =3D "fsl,aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
- 			ranges =3D <0x30000000 0x30000000 0x400000>;
-@@ -501,7 +501,7 @@
- 		};
-=20
- 		aips2: bus@30400000 {
--			compatible =3D "fsl,aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
- 			ranges =3D <0x30400000 0x30400000 0x400000>;
-@@ -560,7 +560,7 @@
- 		};
-=20
- 		aips3: bus@30800000 {
--			compatible =3D "fsl,aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
- 			ranges =3D <0x30800000 0x30800000 0x400000>;
-@@ -775,7 +775,7 @@
- 		};
-=20
- 		aips4: bus@32c00000 {
--			compatible =3D "fsl,aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
- 			ranges =3D <0x32c00000 0x32c00000 0x400000>;
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dt=
-s/freescale/imx8mn.dtsi
-index 5c47443ceb3d..cce65b9a861f 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-@@ -208,7 +208,7 @@
- 		ranges =3D <0x0 0x0 0x0 0x3e000000>;
-=20
- 		aips1: bus@30000000 {
--			compatible =3D "fsl,aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			reg =3D <0x30000000 0x400000>;
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
-@@ -395,7 +395,7 @@
- 		};
-=20
- 		aips2: bus@30400000 {
--			compatible =3D "fsl,aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			reg =3D <0x30400000 0x400000>;
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
-@@ -455,7 +455,7 @@
- 		};
-=20
- 		aips3: bus@30800000 {
--			compatible =3D "fsl,aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			reg =3D <0x30800000 0x400000>;
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
-@@ -671,7 +671,7 @@
- 		};
-=20
- 		aips4: bus@32c00000 {
--			compatible =3D "fsl,aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			reg =3D <0x32c00000 0x400000>;
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dt=
-s/freescale/imx8mq.dtsi
-index a9fe065e3cde..6a1e83922c71 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -290,7 +290,7 @@
- 		dma-ranges =3D <0x40000000 0x0 0x40000000 0xc0000000>;
-=20
- 		bus@30000000 { /* AIPS1 */
--			compatible =3D "fsl,imx8mq-aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
- 			ranges =3D <0x30000000 0x30000000 0x400000>;
-@@ -692,7 +692,7 @@
- 		};
-=20
- 		bus@30400000 { /* AIPS2 */
--			compatible =3D "fsl,imx8mq-aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
- 			ranges =3D <0x30400000 0x30400000 0x400000>;
-@@ -751,7 +751,7 @@
- 		};
-=20
- 		bus@30800000 { /* AIPS3 */
--			compatible =3D "fsl,imx8mq-aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
- 			ranges =3D <0x30800000 0x30800000 0x400000>,
-@@ -1023,7 +1023,7 @@
- 		};
-=20
- 		bus@32c00000 { /* AIPS4 */
--			compatible =3D "fsl,imx8mq-aips-bus", "simple-bus";
-+			compatible =3D "simple-bus";
- 			#address-cells =3D <1>;
- 			#size-cells =3D <1>;
- 			ranges =3D <0x32c00000 0x32c00000 0x400000>;
---=20
-2.16.4
+Drivers should be explicit about what and when
+to do about the hardware access.
 
+
+This comes down to a question about why
+Linux kernel does not have such APIs as:
+
+devm_clk_prepare_enable()
+devm_reset_control_deassert()
+devm_regulator_enable()
+
+In fact, I saw some people sending such patches in the past.
+
+
+Mark Brown clearly answered the question.
+https://lkml.org/lkml/2014/2/1/131
+
+I really support his thinking.
+
+
+
+
+
+--
+Best Regards
+
+Masahiro Yamada
