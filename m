@@ -2,232 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50D4711D872
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 22:21:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F7DD11D84E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 22:10:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731089AbfLLVVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 16:21:14 -0500
-Received: from mga02.intel.com ([134.134.136.20]:25359 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731056AbfLLVVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 16:21:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 13:20:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,307,1571727600"; 
-   d="scan'208";a="226062845"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by orsmga002.jf.intel.com with ESMTP; 12 Dec 2019 13:20:51 -0800
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v2 3/3] x86/fpu/xstate: Invalidate fpregs when __fpu_restore_sig() fails
-Date:   Thu, 12 Dec 2019 13:08:55 -0800
-Message-Id: <20191212210855.19260-4-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191212210855.19260-1-yu-cheng.yu@intel.com>
-References: <20191212210855.19260-1-yu-cheng.yu@intel.com>
+        id S1730993AbfLLVJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 16:09:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40568 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730806AbfLLVJw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 16:09:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NfTrfkPSa1ladziv/NA8uZx3AQzUk89ICwWABT2MQUM=; b=ndQakGnefV+QEporHtSLrSWtR
+        lUPOben5zYX2quN3mRuu5nH6XQLIGJD4qLJxpk/tTXsSSN5K9TXLqkaKE0SzeAQqrCioBSVl/rG2i
+        sHEQQ+bkq3+k5l2DUzwLOk3MnmgOg1D5ngV+WaSKu42rtnrxdZR5ASX1L6YQZ6WTuh5Be+YeOsNfe
+        aer1pxdOHKR160osM9yf9iyalNAo/stwVksu/HSVgwN40oUFbJb1SpQcoYmux9WM5z6ExO291fjmN
+        tA2CSMBcE6rU5IODAW8TSdU0WZpjWG8dxRdxFpXeXVkzvIuu6lIhczf5b8Kyz7/5/MDycrKgaTGLg
+        z6wvSXDmw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifViZ-0006So-Kf; Thu, 12 Dec 2019 21:09:51 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 90D97980CCD; Thu, 12 Dec 2019 22:09:49 +0100 (CET)
+Date:   Thu, 12 Dec 2019 22:09:49 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: READ_ONCE() + STACKPROTECTOR_STRONG == :/
+Message-ID: <20191212210949.GE11457@worktop.programming.kicks-ass.net>
+References: <20191212210052.GA8906@avx2>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191212210052.GA8906@avx2>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In __fpu_restore_sig(),'init_fpstate.xsave' and part of 'fpu->state.xsave'
-are restored separately to xregs.  However, as stated in __cpu_invalidate_
-fpregs_state(),
+On Fri, Dec 13, 2019 at 12:00:52AM +0300, Alexey Dobriyan wrote:
+> > We could move the kernel to C++ and write:
+> > 
+> > 	std::remove_volatile<typeof(p)>::type __p = (p);
+> > 
+> > /me runs like hell...
+> 
+> Did you just said I can send "struct sched_domain::private" and
+> "struct wait_queue_entry::private" rename?
+> :^)
 
-  Any code that clobbers the FPU registers or updates the in-memory
-  FPU state for a task MUST let the rest of the kernel know that the
-  FPU registers are no longer valid for this task.
+I don't believe those are the only usage of C++ keywords. IIRC I'm using
+'class' somewhere as well.
 
-and this code violates that rule.  Should the restoration fail, the other
-task's context is corrupted.
+> Doable but not until C++20. constinit and designated initializers are
+> pretty mandatory.
+> 
+> Debian GNU/Linux 8 debian88 ttyS0
+> 
+> debian88 login: root
+> Password:
+> Last login: Thu Sep 19 01:04:29 +03 2019 on tty1
+> Linux debian88 5.3.0+ #1 SMP PREEMPT Thu Sep 19 01:02:26 +03 2019 x86_64
+> root@debian88:~# cat /proc/$(pgrep sshd)/stack
+> [<0>] _ZL9do_selectiP11fd_set_bitsP10timespec64+0x5ac/0x750
+> [<0>] _Z15core_sys_selectiP15__kernel_fd_setS0_S0_P10timespec64+0x143/0x260
 
-This problem does not occur very often because copy_*_to_xregs() succeeds
-most of the time.  It occurs, for instance, in copy_user_to_fpregs_
-zeroing() when the first half of the restoration succeeds and the other
-half fails.  This can be triggered by running glibc tests, where a non-
-present user stack page causes the XRSTOR to fail.
+Argh.. I forgot how I hated mangled names.
 
-The introduction of supervisor xstates and CET, while not contributing to
-the problem, makes it more detectable.  After init_fpstate and the Shadow
-Stack pointer have been restored to xregs, the XRSTOR from user stack
-fails and fpu_fpregs_owner_ctx is not updated.  The task currently owning
-fpregs then uses the corrupted Shadow Stack pointer and triggers a control-
-protection fault.
-
-Fix it by adding __cpu_invalidate_fpregs_state() to functions that copy
-fpstate to fpregs:
-  copy_*_to_xregs_*(), copy_*_to_fxregs_*(), and copy_*_to_fregs_*().
-The alternative is to hit all of the call sites themselves.
-
-The function __cpu_invalidate_fpregs_state() is chosen over fpregs_
-deactivate() as it is called under fpregs_lock() protection.
-
-In addition to sigreturn, also checked all call sites of these functions:
-
-- copy_init_fpstate_to_fpregs();
-- copy_kernel_to_fpregs();
-- ex_handler_fprestore();
-- fpu__save(); and
-- fpu__copy().
-
-In fpu__save() and fpu__copy(), fpregs are re-activated because they are
-considered valid in both cases.
-
-v2:
-  Add the missing EXPORT_SYMBOL_GPL(fpu_fpregs_owner_ctx).
-
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
----
- arch/x86/include/asm/fpu/internal.h | 14 ++++++++++++++
- arch/x86/kernel/fpu/core.c          | 16 ++++++++++++++--
- 2 files changed, 28 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 44c48e34d799..f317da2c5ca5 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -142,6 +142,8 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
- 		     _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_fprestore)	\
- 		     : output : input)
- 
-+static inline void __cpu_invalidate_fpregs_state(void);
-+
- static inline int copy_fregs_to_user(struct fregs_state __user *fx)
- {
- 	return user_insn(fnsave %[fx]; fwait,  [fx] "=m" (*fx), "m" (*fx));
-@@ -158,6 +160,8 @@ static inline int copy_fxregs_to_user(struct fxregs_state __user *fx)
- 
- static inline void copy_kernel_to_fxregs(struct fxregs_state *fx)
- {
-+	__cpu_invalidate_fpregs_state();
-+
- 	if (IS_ENABLED(CONFIG_X86_32))
- 		kernel_insn(fxrstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- 	else
-@@ -166,6 +170,8 @@ static inline void copy_kernel_to_fxregs(struct fxregs_state *fx)
- 
- static inline int copy_kernel_to_fxregs_err(struct fxregs_state *fx)
- {
-+	__cpu_invalidate_fpregs_state();
-+
- 	if (IS_ENABLED(CONFIG_X86_32))
- 		return kernel_insn_err(fxrstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- 	else
-@@ -174,6 +180,8 @@ static inline int copy_kernel_to_fxregs_err(struct fxregs_state *fx)
- 
- static inline int copy_user_to_fxregs(struct fxregs_state __user *fx)
- {
-+	__cpu_invalidate_fpregs_state();
-+
- 	if (IS_ENABLED(CONFIG_X86_32))
- 		return user_insn(fxrstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- 	else
-@@ -182,16 +190,19 @@ static inline int copy_user_to_fxregs(struct fxregs_state __user *fx)
- 
- static inline void copy_kernel_to_fregs(struct fregs_state *fx)
- {
-+	__cpu_invalidate_fpregs_state();
- 	kernel_insn(frstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- }
- 
- static inline int copy_kernel_to_fregs_err(struct fregs_state *fx)
- {
-+	__cpu_invalidate_fpregs_state();
- 	return kernel_insn_err(frstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- }
- 
- static inline int copy_user_to_fregs(struct fregs_state __user *fx)
- {
-+	__cpu_invalidate_fpregs_state();
- 	return user_insn(frstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- }
- 
-@@ -340,6 +351,7 @@ static inline void copy_kernel_to_xregs(struct xregs_state *xstate, u64 mask)
- 	u32 lmask = mask;
- 	u32 hmask = mask >> 32;
- 
-+	__cpu_invalidate_fpregs_state();
- 	XSTATE_XRESTORE(xstate, lmask, hmask);
- }
- 
-@@ -382,6 +394,7 @@ static inline int copy_user_to_xregs(struct xregs_state __user *buf, u64 mask)
- 	u32 hmask = mask >> 32;
- 	int err;
- 
-+	__cpu_invalidate_fpregs_state();
- 	stac();
- 	XSTATE_OP(XRSTOR, xstate, lmask, hmask, err);
- 	clac();
-@@ -399,6 +412,7 @@ static inline int copy_kernel_to_xregs_err(struct xregs_state *xstate, u64 mask)
- 	u32 hmask = mask >> 32;
- 	int err;
- 
-+	__cpu_invalidate_fpregs_state();
- 	XSTATE_OP(XRSTOR, xstate, lmask, hmask, err);
- 
- 	return err;
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 12c70840980e..4e5151e43a2c 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -42,6 +42,7 @@ static DEFINE_PER_CPU(bool, in_kernel_fpu);
-  * Track which context is using the FPU on the CPU:
-  */
- DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
-+EXPORT_SYMBOL_GPL(fpu_fpregs_owner_ctx);
- 
- static bool kernel_fpu_disabled(void)
- {
-@@ -127,7 +128,12 @@ void fpu__save(struct fpu *fpu)
- 
- 	if (!test_thread_flag(TIF_NEED_FPU_LOAD)) {
- 		if (!copy_fpregs_to_fpstate(fpu)) {
-+			/*
-+			 * copy_kernel_to_fpregs deactivates fpregs;
-+			 * re-activate fpregs after that.
-+			 */
- 			copy_kernel_to_fpregs(&fpu->state);
-+			fpregs_activate(fpu);
- 		}
- 	}
- 
-@@ -191,11 +197,17 @@ int fpu__copy(struct task_struct *dst, struct task_struct *src)
- 	 *   register contents so we have to load them back. )
- 	 */
- 	fpregs_lock();
--	if (test_thread_flag(TIF_NEED_FPU_LOAD))
-+	if (test_thread_flag(TIF_NEED_FPU_LOAD)) {
- 		memcpy(&dst_fpu->state, &src_fpu->state, fpu_kernel_xstate_size);
- 
--	else if (!copy_fpregs_to_fpstate(dst_fpu))
-+	} else if (!copy_fpregs_to_fpstate(dst_fpu)) {
-+		/*
-+		 * copy_kernel_to_fpregs deactivates fpregs;
-+		 * re-activate fpregs after that.
-+		 */
- 		copy_kernel_to_fpregs(&dst_fpu->state);
-+		fpregs_activate(src_fpu);
-+	}
- 
- 	fpregs_unlock();
- 
--- 
-2.17.1
-
+> [<0>] __x64_sys_select+0xa7/0xf0
+> [<0>] do_syscall_64+0x3b/0xe7
+> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
