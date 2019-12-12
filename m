@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6981011CF56
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:08:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4009C11CF58
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:08:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729653AbfLLOIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1729630AbfLLOIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 12 Dec 2019 09:08:02 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:43130 "EHLO
+Received: from isilmar-4.linta.de ([136.243.71.142]:43136 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729529AbfLLOIB (ORCPT
+        with ESMTP id S1729542AbfLLOIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Dec 2019 09:08:01 -0500
 X-isilmar-external: YES
@@ -18,20 +18,22 @@ X-isilmar-external: YES
 X-isilmar-external: YES
 X-isilmar-external: YES
 Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id 473A2200A97;
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id 45B1B200A95;
         Thu, 12 Dec 2019 14:08:00 +0000 (UTC)
 Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 8E99420B64; Thu, 12 Dec 2019 15:07:56 +0100 (CET)
+        id 21CC620B6C; Thu, 12 Dec 2019 15:07:57 +0100 (CET)
 From:   Dominik Brodowski <linux@dominikbrodowski.net>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] remove ksys_dup()
-Date:   Thu, 12 Dec 2019 15:07:50 +0100
-Message-Id: <20191212140752.347520-1-linux@dominikbrodowski.net>
+Subject: [PATCH 1/2] init: unify opening /dev/console as stdin/stdout/stderr
+Date:   Thu, 12 Dec 2019 15:07:51 +0100
+Message-Id: <20191212140752.347520-2-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191212140752.347520-1-linux@dominikbrodowski.net>
+References: <20191212140752.347520-1-linux@dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -39,42 +41,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of pretending to be userspace, the opening of
-/dev/console as stdin/stdout/stderr can be implemented
-using in-kernel functions.
+Merge the two instances where /dev/console is opened as
+stdin/stdout/stderr.
 
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
+ include/linux/initrd.h  |  2 ++
+ init/do_mounts_initrd.c |  5 +----
+ init/main.c             | 17 ++++++++++++-----
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
-@viro: is this something for you to take and push upstream
-for the next cycle?
-
-The same changes (on top of commit ae4b064e2a616b545acf02b8f50cc513b32c7522:
-
-  Merge tag 'afs-fixes-20191211' of git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs (2019-12-11 18:10:40 -0800)
-
-are also available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git remove-ksys-dup
-
-including all changes up to d7aacb7ad766adea665b440b56e9c9152b1065f7:
-
-  fs: remove ksys_dup() (2019-12-12 14:59:48 +0100)
-
-----------------------------------------------------------------
-Dominik Brodowski (2):
-      init: unify opening /dev/console as stdin/stdout/stderr
-      fs: remove ksys_dup()
-
- fs/file.c                |  7 +------
- include/linux/initrd.h   |  2 ++
- include/linux/syscalls.h |  1 -
- init/do_mounts_initrd.c  |  5 +----
- init/main.c              | 31 ++++++++++++++++++++++++++-----
- 5 files changed, 30 insertions(+), 16 deletions(-)
-
-Thanks,
-	Dominik
-
+diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+index d77fe34fb00a..aa5914355728 100644
+--- a/include/linux/initrd.h
++++ b/include/linux/initrd.h
+@@ -28,3 +28,5 @@ extern unsigned int real_root_dev;
+ 
+ extern char __initramfs_start[];
+ extern unsigned long __initramfs_size;
++
++void console_on_rootfs(void);
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index a9c6cc56f505..a1bc10045fd2 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -48,10 +48,7 @@ early_param("initrd", early_initrd);
+ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
+ {
+ 	ksys_unshare(CLONE_FS | CLONE_FILES);
+-	/* stdin/stdout/stderr for /linuxrc */
+-	ksys_open("/dev/console", O_RDWR, 0);
+-	ksys_dup(0);
+-	ksys_dup(0);
++	console_on_rootfs();
+ 	/* move initrd over / and chdir/chroot in initrd root */
+ 	ksys_chdir("/root");
+ 	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+diff --git a/init/main.c b/init/main.c
+index 91f6ebb30ef0..2cd736059416 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1155,6 +1155,17 @@ static int __ref kernel_init(void *unused)
+ 	      "See Linux Documentation/admin-guide/init.rst for guidance.");
+ }
+ 
++void console_on_rootfs(void)
++{
++	/* Open the /dev/console as stdin, this should never fail */
++	if (ksys_open((const char __user *) "/dev/console", O_RDWR, 0) < 0)
++		pr_err("Warning: unable to open an initial console.\n");
++
++	/* create stdout/stderr */
++	(void) ksys_dup(0);
++	(void) ksys_dup(0);
++}
++
+ static noinline void __init kernel_init_freeable(void)
+ {
+ 	/*
+@@ -1190,12 +1201,8 @@ static noinline void __init kernel_init_freeable(void)
+ 
+ 	do_basic_setup();
+ 
+-	/* Open the /dev/console on the rootfs, this should never fail */
+-	if (ksys_open((const char __user *) "/dev/console", O_RDWR, 0) < 0)
+-		pr_err("Warning: unable to open an initial console.\n");
++	console_on_rootfs();
+ 
+-	(void) ksys_dup(0);
+-	(void) ksys_dup(0);
+ 	/*
+ 	 * check if there is an early userspace init.  If yes, let it do all
+ 	 * the work
 -- 
 2.24.1
 
