@@ -2,144 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D6611D4BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 18:59:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9939F11D4C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbfLLR7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 12:59:38 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46971 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730281AbfLLR7h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 12:59:37 -0500
-Received: by mail-ot1-f68.google.com with SMTP id g18so2829728otj.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 09:59:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hyvqVUw30+SZX29bM7+V3jqwHKdXckZsARui5p8wXkE=;
-        b=aj/3kNTYpNtUKR7EbJSlbIR7OuvgLrMsg2A0F6fYB2/hgfbnnbl9+8LyBrDy8shOr8
-         5jTRk/BMXhnudMowqBHH0S5NYKRgQ9rFxuCKeSDofqeXcfx7uhKtC17UdE8kpSWquJTK
-         2BEC9fGPeKSZClELYV/QJzc4je45MeCqEmu8+jh7SGQ9Wn9umQYfHEoAt/brB+rXFcDd
-         KNSUTD9SOFqgEMRxqF9sBEz3w7SpWD6Io1lcnEy62y2YhXxStP+4qcvBAPnvD6CQZpO5
-         OXEG8ziZSWTPQLVmfvYXsVj6zS+izGC5yMNZ51Z9Ts6g9RBxBSIb8XJVb/S+wzWyoaQQ
-         FXXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hyvqVUw30+SZX29bM7+V3jqwHKdXckZsARui5p8wXkE=;
-        b=sd50ldC7EkDCvOaklSefa9xdHVaQfEUsVFAGj1lS/xdbKT55FgkNpQJkLYI1O77JLu
-         GguBJZdLFTVVSU+2zomsdsZr5n4asQsfzyEJ+YVB3FOoXtHdvYcEWfu4xL9oSPuB9Htw
-         QaqjaMnui91+W2E6k+2lWd3t95dMKTF3M2QsC7+QwbMB3IKQlQqTJaVX/3GFif9JBIyE
-         +F8Nl76i5Nmk6ZAeqN3SpzxjNerOLpZLewZmxDmHtKEj6sIjFNZrIFC45V8jf4Q3isRO
-         9LLGWYwNTpUmozpIciOMd2+S6rBY5hVXsumoaq79KE2AS5Dej/ow9LIkEDWngQq/Wrtt
-         FVcg==
-X-Gm-Message-State: APjAAAWas6vkS98EptbcwQ5MjRGV0J2e8i0FHVDngiPKsnpqgVmevUT2
-        deoBvXiO8o/KbbGkC6nwRwKaJj6+yS6GKSNkVcB43Q==
-X-Google-Smtp-Source: APXvYqyspLymJk5JMISgtjN43ATBp0Ct1Ma15zdcNgSN1GXL58ve4+5Bo2yaPsSdIlPxIzbTPZlJpTFkdzRW2z7T/rk=
-X-Received: by 2002:a9d:6f11:: with SMTP id n17mr9356386otq.126.1576173576479;
- Thu, 12 Dec 2019 09:59:36 -0800 (PST)
+        id S1730342AbfLLSAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 13:00:47 -0500
+Received: from mga14.intel.com ([192.55.52.115]:9975 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730169AbfLLSAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 13:00:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 09:48:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,306,1571727600"; 
+   d="scan'208";a="414006063"
+Received: from tstruk-mobl1.jf.intel.com (HELO [127.0.1.1]) ([10.7.196.67])
+  by fmsmga005.fm.intel.com with ESMTP; 12 Dec 2019 09:48:55 -0800
+Subject: [PATCH =v2 3/3] tpm: selftest: cleanup after unseal with wrong
+ auth/policy test
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     tadeusz.struk@intel.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, jgg@ziepe.ca, mingo@redhat.com,
+        jeffrin@rajagiritech.edu.in, linux-integrity@vger.kernel.org,
+        will@kernel.org, peterhuewe@gmx.de
+Date:   Thu, 12 Dec 2019 09:48:59 -0800
+Message-ID: <157617293957.8172.1404790695313599409.stgit@tstruk-mobl1>
+In-Reply-To: <157617292787.8172.9586296287013438621.stgit@tstruk-mobl1>
+References: <157617292787.8172.9586296287013438621.stgit@tstruk-mobl1>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-References: <20191211213207.215936-1-brho@google.com> <20191211213207.215936-3-brho@google.com>
- <376DB19A-4EF1-42BF-A73C-741558E397D4@oracle.com> <CAPcyv4gpYF=D323G+69FhFZw4i5W-15_wTRa1xNPdmear0phTw@mail.gmail.com>
- <F19843AB-1974-4E79-A85B-9AE00D58E192@oracle.com>
-In-Reply-To: <F19843AB-1974-4E79-A85B-9AE00D58E192@oracle.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 12 Dec 2019 09:59:25 -0800
-Message-ID: <CAPcyv4i5ZaiA+KeraXzz-0vs25UGEmZ2ka9Z-PUT3T_7URAFMA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] kvm: Use huge pages for DAX-backed files
-To:     Liran Alon <liran.alon@oracle.com>
-Cc:     Barret Rhoden <brho@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        X86 ML <x86@kernel.org>, KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Zeng, Jason" <jason.zeng@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 9:39 AM Liran Alon <liran.alon@oracle.com> wrote:
->
->
->
-> > On 12 Dec 2019, at 18:54, Dan Williams <dan.j.williams@intel.com> wrote=
-:
-> >
-> > On Thu, Dec 12, 2019 at 4:34 AM Liran Alon <liran.alon@oracle.com> wrot=
-e:
-> >>
-> >>
-> >>
-> >>> On 11 Dec 2019, at 23:32, Barret Rhoden <brho@google.com> wrote:
-> >>>
-> >>> This change allows KVM to map DAX-backed files made of huge pages wit=
-h
-> >>> huge mappings in the EPT/TDP.
-> >>>
-> >>> DAX pages are not PageTransCompound.  The existing check is trying to
-> >>> determine if the mapping for the pfn is a huge mapping or not.  For
-> >>> non-DAX maps, e.g. hugetlbfs, that means checking PageTransCompound.
-> >>> For DAX, we can check the page table itself.
-> >>
-> >> For hugetlbfs pages, tdp_page_fault() -> mapping_level() -> host_mappi=
-ng_level() -> kvm_host_page_size() -> vma_kernel_pagesize()
-> >> will return the page-size of the hugetlbfs without the need to parse t=
-he page-tables.
-> >> See vma->vm_ops->pagesize() callback implementation at hugetlb_vm_ops-=
->pagesize()=3D=3Dhugetlb_vm_op_pagesize().
-> >>
-> >> Only for pages that were originally mapped as small-pages and later me=
-rged to larger pages by THP, there is a need to check for PageTransCompound=
-(). Again, instead of parsing page-tables.
-> >>
-> >> Therefore, it seems more logical to me that:
-> >> (a) If DAX-backed files are mapped as large-pages to userspace, it sho=
-uld be reflected in vma->vm_ops->page_size() of that mapping. Causing kvm_h=
-ost_page_size() to return the right size without the need to parse the page=
--tables.
-> >
-> > A given dax-mapped vma may have mixed page sizes so ->page_size()
-> > can't be used reliably to enumerating the mapping size.
->
-> Naive question: Why don=E2=80=99t split the VMA in this case to multiple =
-VMAs with different results for ->page_size()?
+Unseal with wrong auth or wrong policy test affects DA lockout
+and eventually causes the tests to fail with:
+"ProtocolError: TPM_RC_LOCKOUT: rc=0x00000921"
+when the tests run multiple times.
+Send tpm clear command after the test to reset the DA counters.
 
-Filesystems traditionally have not populated ->pagesize() in their
-vm_operations, there was no compelling reason to go add it and the
-complexity seems prohibitive.
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+ tools/testing/selftests/tpm2/test_smoke.sh |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-> What you are describing sounds like DAX is breaking this callback semanti=
-cs in an unpredictable manner.
+diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
+index cb54ab637ea6..8155c2ea7ccb 100755
+--- a/tools/testing/selftests/tpm2/test_smoke.sh
++++ b/tools/testing/selftests/tpm2/test_smoke.sh
+@@ -3,3 +3,8 @@
+ 
+ python -m unittest -v tpm2_tests.SmokeTest
+ python -m unittest -v tpm2_tests.AsyncTest
++
++CLEAR_CMD=$(which tpm2_clear)
++if [ -n $CLEAR_CMD ]; then
++	tpm2_clear -T device
++fi
 
-It's not unpredictable. vma_kernel_pagesize() returns PAGE_SIZE. Huge
-pages in the page cache has a similar issue.
-
-> >> (b) If DAX-backed files small-pages can be later merged to large-pages=
- by THP, then the =E2=80=9Cstruct page=E2=80=9D of these pages should be mo=
-dified as usual to make PageTransCompound() return true for them. I=E2=80=
-=99m not highly familiar with this mechanism, but I would expect THP to be =
-able to merge DAX-backed files small-pages to large-pages in case DAX provi=
-des =E2=80=9Cstruct page=E2=80=9D for the DAX pages.
-> >
-> > DAX pages do not participate in THP and do not have the
-> > PageTransCompound accounting. The only mechanism that records the
-> > mapping size for dax is the page tables themselves.
->
-> What is the rational behind this? Given that DAX pages can be described w=
-ith =E2=80=9Cstruct page=E2=80=9D (i.e. ZONE_DEVICE), what prevents THP fro=
-m manipulating page-tables to merge multiple DAX PFNs to a larger page?
-
-THP accounting is a function of the page allocator. ZONE_DEVICE pages
-are excluded from the page allocator. ZONE_DEVICE is just enough
-infrastructure to support pfn_to_page(), page_address(), and
-get_user_pages(). Other page allocator services beyond that are not
-present.
