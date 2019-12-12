@@ -2,95 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8F0011D4CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04E5211D4D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730298AbfLLSB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 13:01:56 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:59362 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730148AbfLLSB4 (ORCPT
+        id S1730328AbfLLSCU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 13:02:20 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:45080 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730034AbfLLSCU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 13:01:56 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBCI1jCj040670;
-        Thu, 12 Dec 2019 12:01:45 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576173705;
-        bh=7umw+lZFi1BHRxJtoDG/pDfGYt2ivKM2wzztYeraSx4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=mjvuyE5K/ua8woRHztS9LAAhCdNoMODmSggKIAY96KJd9xga6vMDt0Ew+yRwo/ZB7
-         SujM4u8gfg0mmJzOqJ84dskQkiPjTeJmEmm7h1U/gqHPlCP/inKNXYtxri06JWnqdU
-         4jI9RWOPrPp8n783qi+xF3rmI3BEPYxYXtOrVzgc=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBCI1jMa094685
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Dec 2019 12:01:45 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 12
- Dec 2019 12:01:44 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 12 Dec 2019 12:01:44 -0600
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBCI1fIu110459;
-        Thu, 12 Dec 2019 12:01:42 -0600
-Subject: Re: [PATCH v7 00/12] dmaengine/soc: Add Texas Instruments UDMA
- support
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, <vkoul@kernel.org>,
-        <robh+dt@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>
-CC:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lokeshvutla@ti.com>, <t-kristo@ti.com>, <tony@atomide.com>,
-        <j-keerthy@ti.com>, <vigneshr@ti.com>
-References: <20191209094332.4047-1-peter.ujfalusi@ti.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <24491d96-df44-de64-73cb-2f67e6581629@ti.com>
-Date:   Thu, 12 Dec 2019 20:01:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 12 Dec 2019 13:02:20 -0500
+Received: by mail-vs1-f65.google.com with SMTP id l24so2181638vsr.12
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 10:02:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=6VMaTbelWuQ+1FodCcr2BEYuHHsLNCijzy+nxpRewBA=;
+        b=boHK9Ps/ESS/aYcUZu1ZxqkMcdJ0k0BtqwQZqXT0KMGomi75+BfdFmrXe1YyeJpTor
+         KPyM4/8ob8vUBLt3h/yJbxTGvNkH7rC2urbftztqL7uOS1DmFKysPcLyi1/ov1BZ2si0
+         39leXy1UZ4h04po4twpp5EO8Ujy29guLkTLUgG2bHB337NAaFVD0CRUUKcR3MCFYq0am
+         OuGHGIphm1g3YyY4v840tdLy4jKhk+gi7yvky2PidUAnSvV4007ouFvpkiQZFArjLwjp
+         ndh+Q9sbmk6zKJjlyQuqjuiRU7lALZxhIiW1fw6vA79mt05Zwpo4mBDmoor7GtbU7LZ2
+         pjUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6VMaTbelWuQ+1FodCcr2BEYuHHsLNCijzy+nxpRewBA=;
+        b=eCxae46nUzU+2/cAtnuDsprp3TrZ/gYzm3NwIixsomiEtHKaIKjI2/d4251KOgJ+36
+         /yucQSoGnjlOIM7rUnMnpV6mR43p3k4sXpKy6WFfiKBcr0OuIHuInUtDxgL54iLlGtkX
+         PHLxmxT3MySgHWzdHu7NxbAGJZfP/G+IovFs/cq9UeAlf/4560+pMqfczG14nzdS2+Vu
+         CnkPFmOs+bsgVkcwpoc0MHZ0jI7QteodJ5RVr88bhZqwBVy65LP99URw+mG2whwdiBiZ
+         70Aytq4p6ojSrTB+p7Kyza9nuJLqSe48rLUFaB2NXmMQ4dvQ2KQ2bKDEcq7uGgD5/pyu
+         S75w==
+X-Gm-Message-State: APjAAAXunaHmpHuYlMiCc35ekAXOIA8Qz1QEa91XIQ2BssSPhaK5osdb
+        EahZS16FHfLULv4ByiwGOUs=
+X-Google-Smtp-Source: APXvYqwNdFlfEvGETvtQkPzx2uUXeHrLSfdDsyGme4tg+9ysPo6anVAqrynEkzQm8qDaNIXw1jJ+8Q==
+X-Received: by 2002:a67:6ec7:: with SMTP id j190mr8316132vsc.101.1576173738962;
+        Thu, 12 Dec 2019 10:02:18 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([177.195.210.207])
+        by smtp.gmail.com with ESMTPSA id i20sm4248987vkn.51.2019.12.12.10.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 10:02:18 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 0A9CD40352; Thu, 12 Dec 2019 15:02:14 -0300 (-03)
+Date:   Thu, 12 Dec 2019 15:02:13 -0300
+To:     Ed Maste <emaste@freefall.freebsd.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>, emaste@freebsd.org,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: Re: [PATCH] perf list: remove name from L1D_RO_EXCL_WRITES
+ description
+Message-ID: <20191212180213.GI13965@kernel.org>
+References: <20191212145346.5026-1-emaste@freefall.freebsd.org>
 MIME-Version: 1.0
-In-Reply-To: <20191209094332.4047-1-peter.ujfalusi@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191212145346.5026-1-emaste@freefall.freebsd.org>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Thu, Dec 12, 2019 at 02:53:46PM +0000, Ed Maste escreveu:
+> From: Ed Maste <emaste@freebsd.org>
+> 
+> In 7fcfa9a2d9 an unintended prefix "Counter:18 Name:" was removed from
+> the description for L1D_RO_EXCL_WRITES, but the extra name remained in
+> the description.  Remove it too.
 
+Also trivially correct, applied and added a Fixes tag with that cset
+(7fcfa9a2d9).
 
-On 09/12/2019 11:43, Peter Ujfalusi wrote:
-> Hi,
+- Arnaldo
+ 
+> Signed-off-by: Ed Maste <emaste@freebsd.org>
+> ---
+>  tools/perf/pmu-events/arch/s390/cf_z14/extended.json | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Vinod, Nishanth, Tero, Santosh: the ti_sci patch in this series was sent
-> upstream over a month ago:
-> https://lore.kernel.org/lkml/20191025084715.25098-1-peter.ujfalusi@ti.com/
-> 
-> I'm still waiting on it's fate (Tero has given his r-b).
-> The ti_sci patch did not made it to 5.5-rc1, but I included it in the series and
-> let the maintainers decide if it can go via DMAengine for 5.6 or to later
-> releases (5.6 probably for the ti_sci and 5.7 for the UDMA driver patch).
-> 
-> Changes since v6:
-> (https://patchwork.kernel.org/project/linux-dmaengine/list/?series=209455&state=*)
-> 
-> - UDMAP DMAengine driver:
->   - Squashed the split patches
->   - Squashed the early TX completion handling update
->     (https://patchwork.kernel.org/project/linux-dmaengine/list/?series=210713&state=*)
->   - Hard reset fix for RX channels to avoid channel lockdown
->   - Correct completed descriptor's residue value
-> 
-
-Thank you Peter,
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> diff --git a/tools/perf/pmu-events/arch/s390/cf_z14/extended.json b/tools/perf/pmu-events/arch/s390/cf_z14/extended.json
+> index e6478dff0af7..4942b20a1ea1 100644
+> --- a/tools/perf/pmu-events/arch/s390/cf_z14/extended.json
+> +++ b/tools/perf/pmu-events/arch/s390/cf_z14/extended.json
+> @@ -4,7 +4,7 @@
+>  		"EventCode": "128",
+>  		"EventName": "L1D_RO_EXCL_WRITES",
+>  		"BriefDescription": "L1D Read-only Exclusive Writes",
+> -		"PublicDescription": "L1D_RO_EXCL_WRITES A directory write to the Level-1 Data cache where the line was originally in a Read-Only state in the cache but has been updated to be in the Exclusive state that allows stores to the cache line"
+> +		"PublicDescription": "A directory write to the Level-1 Data cache where the line was originally in a Read-Only state in the cache but has been updated to be in the Exclusive state that allows stores to the cache line"
+>  	},
+>  	{
+>  		"Unit": "CPU-M-CF",
+> -- 
+> 2.24.0
 
 -- 
-Best regards,
-grygorii
+
+- Arnaldo
