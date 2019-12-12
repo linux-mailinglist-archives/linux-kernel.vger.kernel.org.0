@@ -2,72 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D186211D74F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 20:43:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A9E11D764
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 20:45:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730716AbfLLTm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 14:42:57 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33151 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730284AbfLLTm5 (ORCPT
+        id S1730668AbfLLTpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 14:45:09 -0500
+Received: from a27-11.smtp-out.us-west-2.amazonses.com ([54.240.27.11]:50554
+        "EHLO a27-11.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730284AbfLLTpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 14:42:57 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ifUMN-0002lk-QV; Thu, 12 Dec 2019 19:42:51 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>,
-        Ganesh Sesetti <gseset@codeaurora.org>,
-        Karthikeyan Periyasamy <periyasa@codeaurora.org>,
-        John Crispin <john@phrozen.org>, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ath11k: fix missing free of skb on error return path
-Date:   Thu, 12 Dec 2019 19:42:51 +0000
-Message-Id: <20191212194251.108343-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        Thu, 12 Dec 2019 14:45:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1576179908;
+        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To;
+        bh=eQxrK8Iw23uSBOiCp/yidrRTawxLunZnrXI4AtGvRN8=;
+        b=kmM4+iiuXzCz2sueL2jv0+TXTB390Tqs2792/h/RdYEVoWV7JwaSEBTeqxBK98oZ
+        WtQfRQw4Q+sqxpSt7CDHeYF1DhdUaDO0CFrNxQh7wVQzUq/jU2/x9ARG0dNbtdyQqYe
+        rsScXiVTufva5gvgP3PSp2RYgL4p1ydIbBIC+Qzk=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1576179908;
+        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Feedback-ID;
+        bh=eQxrK8Iw23uSBOiCp/yidrRTawxLunZnrXI4AtGvRN8=;
+        b=Pl8nwW5Ya+d3N3VA5qCjysPpYh23dMxfCF1/3RovGlW3OPqazIshzFsUxXXUz7Gn
+        0YDQAd/CUC7qKsTQI2PuBbYfHI/lvkNELwyHwqc/Cm6a0ofBfRPcj0oMKawiLm8xKRb
+        7iwjENbDNgTkjLrLUvwaLfdFRRkLHEkKWf6dXwxY=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99458C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=eberman@codeaurora.org
+Date:   Thu, 12 Dec 2019 19:45:08 +0000
+From:   Elliot Berman <eberman@codeaurora.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        saiprakash.ranjan@codeaurora.org, tsoni@codeaurora.org,
+        sidgup@codeaurora.org, psodagud@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 11/18] firmware: qcom_scm-32: Use SMC arch wrappers
+Message-ID: <0101016efba4bff6-afac982d-5c34-4c5d-a383-05522db4d45f-000000@us-west-2.amazonses.com>
+References: <1573593774-12539-1-git-send-email-eberman@codeaurora.org>
+ <1573593774-12539-12-git-send-email-eberman@codeaurora.org>
+ <5dcf45bd.1c69fb81.297bb.9cb9@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5dcf45bd.1c69fb81.297bb.9cb9@mx.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-SES-Outgoing: 2019.12.12-54.240.27.11
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Nov 15, 2019 at 04:41:32PM -0800, Stephen Boyd wrote:
+> Nice. Can this come earlier in the series?
 
-The error handling when the call to ath11k_hal_srng_get_entrysize fails
-leaks skb, fix this by returning via the err_free return path that will
-ensure the skb is free'd.
+This patch is the first in this series that applies only to qcom_scm-32.
+Patches 1-5 were some common changes, 6-10 clean up qcom_scm-64, 11-15
+clean up qcom_scm-32, and 16-18 merges the two. I'd rather not move this
+patch earlier in the series as it breaks that organization of patches.
 
-Addresses-Coverity: ("Resource leak")
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ath11k/dp_tx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath11k/dp_tx.c b/drivers/net/wireless/ath/ath11k/dp_tx.c
-index a8b9557c2346..7123a4fc4635 100644
---- a/drivers/net/wireless/ath/ath11k/dp_tx.c
-+++ b/drivers/net/wireless/ath/ath11k/dp_tx.c
-@@ -645,8 +645,10 @@ int ath11k_dp_tx_htt_srng_setup(struct ath11k_base *ab, u32 ring_id,
- 				 HAL_ADDR_MSB_REG_SHIFT;
- 
- 	ret = ath11k_hal_srng_get_entrysize(ring_type);
--	if (ret < 0)
--		return -EINVAL;
-+	if (ret < 0) {
-+		ret = -EINVAL;
-+		goto err_free;
-+	}
- 
- 	ring_entry_sz = ret;
- 
 -- 
-2.24.0
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
