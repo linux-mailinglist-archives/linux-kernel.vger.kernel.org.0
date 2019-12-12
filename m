@@ -2,89 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6945111CE3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 14:25:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6628211CE4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 14:28:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbfLLNZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 08:25:38 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:50082 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729170AbfLLNZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 08:25:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=bxnXIodnVA+EXBQ9CzKw2+L2s06f/eW1ZteOUMDWsiU=; b=L5e/4sTMJEgfoy08MJh5WXYJ6i
-        vtxgJMqAJUi8fKfN/Q5KP8FQnuW4FE9UBwBZ/KRoW0xWFvLE685wFxZz9EFJekPOrDAqg783JqQJ3
-        XPskH3kEU7fR0/Ph78F3bj9HvZWOr4H99XHMwhfMNb8afPT2T5Xye6Z5mz+fbKas7xlU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1ifOT2-0002nd-BQ; Thu, 12 Dec 2019 14:25:20 +0100
-Date:   Thu, 12 Dec 2019 14:25:20 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Biao Huang <biao.huang@mediatek.com>
-Cc:     davem@davemloft.net, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, yt.shen@mediatek.com
-Subject: Re: [PATCH 1/2] net-next: stmmac: mediatek: add more suuport for RMII
-Message-ID: <20191212132520.GB9959@lunn.ch>
-References: <20191212024145.21752-1-biao.huang@mediatek.com>
- <20191212024145.21752-2-biao.huang@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212024145.21752-2-biao.huang@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729447AbfLLN22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 08:28:28 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:33467 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729170AbfLLN20 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 08:28:26 -0500
+Received: from orion.localdomain ([77.9.34.244]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N3Gok-1hfLzv0MEc-010PqN; Thu, 12 Dec 2019 14:28:25 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     info@metux.net, platform-driver-x86@vger.kernel.org
+Subject: [PATCH] platform: x86: pcengines-apuv2: detect apuv4 board
+Date:   Thu, 12 Dec 2019 14:27:56 +0100
+Message-Id: <20191212132756.23767-1-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+X-Provags-ID: V03:K1:uYYbIXN6u977H9q2Z7ur9CNmsRycQWJnvxo7HOOu296jowcOUQq
+ vWCwj+YdqYxO7l1Vv/pIsjvOLImJsIyZ0roYxGJrCZ18GVrGPYvidnwrQuPIZnNNOzHhSe7
+ VsZriHCDsIzD7sqHNpTxdSTGYDMaAUgTlrwF5iKaL/ellvpiJuDQBptv+T861saiXljbUHa
+ DuyFOH/WMnHQ1zXy86r9w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:pC0Z+e3jamc=:ufdPHa2HX7OwotodO9gCr3
+ b33f6XAYXOkQ5tUALcFwY/U5kDslDf0dJ33SFXJs7PEfRlxt2zfRFkVH1pmW1f9aFS79JgHEH
+ eHmvj/rOBd2/4L5I6hBFUtf2Srk0Ysb2cwQBCrzWTz8zLVpEPTxMc/T1Ntt0ptgw8QOKYDRHb
+ yyT+H7VDCrcY4AFWqmk2iaR/uQn9m7NWNWEJQhj6csRqvbpOqI1hNOq36L3QHk81oVmcGRu65
+ qkp7LN7HJbreCn+yKgyyI2EBRJBrafNlpPWKKtgfZ6pizphzb/eSBCcRncuKm8brW3ywPcI3t
+ zR0OT1qrzMwSNg2rgn06dETVl8IPfoMoxpt+Fw+Fh7y7Il4bNigxM3ghaWDNqaop+o7QIQ2sg
+ kJWzJq27cGtmBXfCHbwxj/6Q1jYgkVguYN0OybAGM7e82u3mmbu/Z13NB48wjPf+YOeBi22oL
+ 1pYiMK1vStL3PWmzX/ivhEmB/yL7Sq4TZn+bt7doS0mXe/9K+/dS/8bS05K+io1y+04jr9D6i
+ kdvmAJeiIue92/pWZFaUAAodCE7j6mnp8Vb3PXc3bxmx0a7TJPh/uBje0BdX1mcuFtosdpeDn
+ yZ5iyNPkHfgLf33IVENaRNjjoQQp66ldKlBF26EgLDtH47M0pCkinxEqIG8sn3vvdA2Yf8Dou
+ b4jOYSOrWXxSMuODwRq5tt9m4E3eU5UxZLeez7oH48P9wf7kgLiT4R0xKoVfIez6Rzx+Aqohy
+ 3+q/G7YQKEasMJwr/cnbW+y885aRl4mz2Sm6SicIFtrTnUwNvDZWRWzEpgIYqA6REpJHpv/xk
+ BjiqrYUgTHfRxXb5kayDmCcUFR/7+p+PYLNjG5wtt1hvQVXz3rl5JYdJnZNvkJdbKhDTjitKJ
+ mJPD8fMO8YecZwLHbMxQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 10:41:44AM +0800, Biao Huang wrote:
-> MT2712 SoC can provide the rmii reference clock, and the clock
-> will output from TXC pin only, which means ref_clk pin of external
-> PHY should connect to TXC pin in this case.
-> Add corresponding clock and timing settings.
+GPIO stuff on APUv4 seems to be the same as on APUv2, so we just
+need to match on DMI data.
 
-Hi Biao
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/platform/x86/pcengines-apuv2.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Subject line has a typo.
+diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
+index 48b112b4f0b0..49f25bffce3c 100644
+--- a/drivers/platform/x86/pcengines-apuv2.c
++++ b/drivers/platform/x86/pcengines-apuv2.c
+@@ -189,6 +189,33 @@ static const struct dmi_system_id apu_gpio_dmi_table[] __initconst = {
+ 		},
+ 		.driver_data = (void *)&board_apu2,
+ 	},
++	/* APU4 w/ legacy bios < 4.0.8 */
++	{
++		.ident        = "apu4",
++		.matches    = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "APU4")
++		},
++		.driver_data = (void *)&board_apu2,
++	},
++	/* APU4 w/ legacy bios >= 4.0.8 */
++	{
++		.ident       = "apu4",
++		.matches     = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "apu4")
++		},
++		.driver_data = (void *)&board_apu2,
++	},
++	/* APU4 w/ mainline bios */
++	{
++		.ident       = "apu4",
++		.matches     = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu4")
++		},
++		.driver_data = (void *)&board_apu2,
++	},
+ 	{}
+ };
+ 
+-- 
+2.11.0
 
-> @@ -278,6 +296,7 @@ static int mediatek_dwmac_config_dt(struct mediatek_dwmac_plat_data *plat)
->  	mac_delay->tx_inv = of_property_read_bool(plat->np, "mediatek,txc-inverse");
->  	mac_delay->rx_inv = of_property_read_bool(plat->np, "mediatek,rxc-inverse");
->  	plat->rmii_rxc = of_property_read_bool(plat->np, "mediatek,rmii-rxc");
-> +	plat->rmii_clk_from_mac = of_property_read_bool(plat->np, "mediatek,rmii-clk-from-mac");
->  
->  	return 0;
->  }
-> @@ -287,6 +306,16 @@ static int mediatek_dwmac_clk_init(struct mediatek_dwmac_plat_data *plat)
->  	const struct mediatek_dwmac_variant *variant = plat->variant;
->  	int i, num = variant->num_clks;
->  
-> +	plat->mac_rmii_clk = NULL;
-> +	if (plat->phy_mode == PHY_INTERFACE_MODE_RMII &&
-> +	    plat->rmii_clk_from_mac) {
-> +		plat->mac_rmii_clk = devm_clk_get(plat->dev, "rmii_internal");
-> +		if (IS_ERR(plat->mac_rmii_clk)) {
-> +			dev_err(plat->dev, "Failed to get reference clk from MAC\n");
-> +			return PTR_ERR(plat->mac_rmii_clk);
-> +		}
-> +	}
-
-Please don't use a binary property. This is a clock, so describe it in
-DT as a clock. Add it to the existing list of clocks.
-
-   Andrew
