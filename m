@@ -2,63 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD4E11C294
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:45:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BC4511C2AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbfLLBpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 20:45:19 -0500
-Received: from mga07.intel.com ([134.134.136.100]:40835 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727539AbfLLBpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:45:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 17:45:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,303,1571727600"; 
-   d="scan'208";a="216118388"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 11 Dec 2019 17:45:13 -0800
-Received: from [10.226.38.16] (unknown [10.226.38.16])
-        by linux.intel.com (Postfix) with ESMTP id 127BA580297;
-        Wed, 11 Dec 2019 17:45:11 -0800 (PST)
-Subject: Re: [PATCH v7 0/2] phy: intel-lgm-emmc: Add support for eMMC PHY
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kishon@ti.com, cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        peter.harliman.liem@intel.com
-References: <20191211025011.12156-1-vadivel.muruganx.ramuthevar@linux.intel.com>
- <20191211110542.GQ32742@smile.fi.intel.com>
-From:   "Ramuthevar, Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Message-ID: <0b4652c6-05c2-ab91-b79b-d4c2268ec9dd@linux.intel.com>
-Date:   Thu, 12 Dec 2019 09:45:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727647AbfLLBrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 20:47:36 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:46061 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbfLLBrg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 20:47:36 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xBC1lLY7028248, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCAS11.realtek.com.tw[172.21.6.12])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xBC1lLY7028248
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Dec 2019 09:47:21 +0800
+Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
+ RTITCAS11.realtek.com.tw (172.21.6.12) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Thu, 12 Dec 2019 09:47:21 +0800
+Received: from RTEXMB04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Thu, 12 Dec 2019 09:47:21 +0800
+Received: from RTEXMB04.realtek.com.tw ([fe80::7d15:f8ee:cfc7:88ce]) by
+ RTEXMB04.realtek.com.tw ([fe80::7d15:f8ee:cfc7:88ce%6]) with mapi id
+ 15.01.1779.005; Thu, 12 Dec 2019 09:47:21 +0800
+From:   Pkshih <pkshih@realtek.com>
+To:     "straube.linux@gmail.com" <straube.linux@gmail.com>
+CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/6] rtlwifi: convert rtl8192{ce,cu,de} to use generic functions
+Thread-Topic: [PATCH 0/6] rtlwifi: convert rtl8192{ce,cu,de} to use generic
+ functions
+Thread-Index: AQHVsDpzfsqbYxD/WEOoQ833A6RTfKe1NZ6A
+Date:   Thu, 12 Dec 2019 01:47:21 +0000
+Message-ID: <1576115241.2733.1.camel@realtek.com>
+References: <20191211154755.15012-1-straube.linux@gmail.com>
+In-Reply-To: <20191211154755.15012-1-straube.linux@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.95]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EB2C6ECAB6231E48B97459A61CA72D91@realtek.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20191211110542.GQ32742@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 11/12/2019 7:05 PM, Andy Shevchenko wrote:
-> On Wed, Dec 11, 2019 at 10:50:09AM +0800, Ramuthevar,Vadivel MuruganX wrote:
->> Add eMMC-PHY support for Intel LGM SoC
->>
->> changes in v7:
->>   Rebased to maintainer kernel tree phy-tag-5.5
->>
-> You forgot to bump version...
-
-Thanks Andy, oh My bad, I will update the patch v8.
-
----
-With Best Regards
-Vadivel
+T24gV2VkLCAyMDE5LTEyLTExIGF0IDE2OjQ3ICswMTAwLCBNaWNoYWVsIFN0cmF1YmUgd3JvdGU6
+DQo+IFRoaXMgc2VyaWVzIGNvbnZlcnRzIHRoZSBkcml2ZXJzIHJ0bDgxOTJ7Y2UsY3UsZGV9IHRv
+IHVzZSB0aGUgZ2VuZXJpYw0KPiBmdW5jdGlvbnMgcnRsX3F1ZXJ5X3J4cHdycGVyY2VudGFnZSBh
+bmQgcnRsX3NpZ25hbF9zY2FsZV9tYXBwaW5nLg0KPiANCj4gTWljaGFlbCBTdHJhdWJlICg2KToN
+Cj4gwqAgcnRsd2lmaTogcnRsODE5MmNlOiB1c2UgZ2VuZXJpYyBydGxfcXVlcnlfcnhwd3JwZXJj
+ZW50YWdlDQo+IMKgIHJ0bHdpZmk6IHJ0bDgxOTJjdTogdXNlIGdlbmVyaWMgcnRsX3F1ZXJ5X3J4
+cHdycGVyY2VudGFnZQ0KPiDCoCBydGx3aWZpOiBydGw4MTkyZGU6IHVzZSBnZW5lcmljIHJ0bF9x
+dWVyeV9yeHB3cnBlcmNlbnRhZ2UNCj4gwqAgcnRsd2lmaTogcnRsODE5MmNlOiB1c2UgZ2VuZXJp
+YyBydGxfc2lnbmFsX3NjYWxlX21hcHBpbmcNCj4gwqAgcnRsd2lmaTogcnRsODE5MmN1OiB1c2Ug
+Z2VuZXJpYyBydGxfc2lnbmFsX3NjYWxlX21hcHBpbmcNCj4gwqAgcnRsd2lmaTogcnRsODE5MmRl
+OiB1c2UgZ2VuZXJpYyBydGxfc2lnbmFsX3NjYWxlX21hcHBpbmcNCj4gDQo+IMKgLi4uL3dpcmVs
+ZXNzL3JlYWx0ZWsvcnRsd2lmaS9ydGw4MTkyY2UvdHJ4LmPCoMKgfCA0OCArKy0tLS0tLS0tLS0t
+LS0tLS0NCj4gwqAuLi4vd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0bDgxOTJjdS9tYWMuY8Kg
+wqB8IDQ5ICsrLS0tLS0tLS0tLS0tLS0tLS0NCj4gwqAuLi4vd2lyZWxlc3MvcmVhbHRlay9ydGx3
+aWZpL3J0bDgxOTJkZS90cnguY8KgwqB8IDQ3ICsrLS0tLS0tLS0tLS0tLS0tLQ0KPiDCoDMgZmls
+ZXMgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygrKSwgMTMwIGRlbGV0aW9ucygtKQ0KPiANCg0KRm9y
+IGFsbCBwYXRjaGVzOg0KQWNrZWQtYnk6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0ZWsuY29t
+Pg0KDQpDdXJpb3VzbHkuIEhvdyBjYW4geW91IGZpbmQgdGhlc2UgZnVuY3Rpb24gYXJlIGlkZW50
+aWNhbD8NCg0KDQo=
