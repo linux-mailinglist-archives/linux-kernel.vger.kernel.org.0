@@ -2,294 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6318011D077
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:05:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85CB311D091
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbfLLPEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:04:55 -0500
-Received: from mga11.intel.com ([192.55.52.93]:25637 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728611AbfLLPEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:04:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 07:04:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,306,1571727600"; 
-   d="scan'208";a="225952395"
-Received: from nntpdsd52-183.inn.intel.com ([10.125.52.183])
-  by orsmga002.jf.intel.com with ESMTP; 12 Dec 2019 07:04:50 -0800
-From:   roman.sudarikov@linux.intel.com
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, eranian@google.com,
-        bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com,
-        gregkh@linuxfoundation.org
-Cc:     alexander.antonov@intel.com, roman.sudarikov@linux.intel.com
-Subject: [PATCH v3 2/2] =?UTF-8?q?perf=20x86:=20Exposing=20an=20Uncore=20u?= =?UTF-8?q?nit=20to=20PMON=20for=20Intel=20Xeon=C2=AE=20server=20platform?=
-Date:   Thu, 12 Dec 2019 18:04:40 +0300
-Message-Id: <20191212150440.11377-3-roman.sudarikov@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20191212150440.11377-1-roman.sudarikov@linux.intel.com>
-References: <20191212150440.11377-1-roman.sudarikov@linux.intel.com>
+        id S1728821AbfLLPKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 10:10:11 -0500
+Received: from mailgw01.mediatek.com ([216.200.240.184]:45626 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728581AbfLLPKK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 10:10:10 -0500
+X-UUID: d5b1c1139af847fab4a6947ae83326a9-20191212
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=84wpsP18Q2abVq3hW8fuZwnD/ApWQ30/AxRn97/G118=;
+        b=UkPiQGkS1kcFAqhGZxjzEALbMv4gp538c3RtIPLGNFC4DE5xWKS3uuKHLtV7RxD26mPPD5w4rHadQoqMqeoNSzBtEktr9awH5AzEYoEosmXRjTlVGtauooi48+BTvcwr8NL1C7l3QPAkpamTqdF+kLOELr4QVCVCcMnuCoV+iBk=;
+X-UUID: d5b1c1139af847fab4a6947ae83326a9-20191212
+Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw01.mediatek.com
+        (envelope-from <landen.chao@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 263070001; Thu, 12 Dec 2019 07:09:59 -0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS62N2.mediatek.inc (172.29.193.42) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 12 Dec 2019 07:06:26 -0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 12 Dec 2019 23:05:20 +0800
+Message-ID: <1576163122.18168.2.camel@mtksdccf07>
+Subject: Re: [PATCH net-next 2/6] net: dsa: mt7530: Extend device data ready
+ for adding a new hardware
+From:   Landen Chao <landen.chao@mediatek.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+CC:     "andrew@lunn.ch" <andrew@lunn.ch>,
+        "vivien.didelot@savoirfairelinux.com" 
+        <vivien.didelot@savoirfairelinux.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Sean Wang <Sean.Wang@mediatek.com>,
+        "opensource@vdorst.com" <opensource@vdorst.com>,
+        "frank-w@public-files.de" <frank-w@public-files.de>
+Date:   Thu, 12 Dec 2019 23:05:22 +0800
+In-Reply-To: <d77e3109-e022-3581-2ca8-02889c5ddbf4@gmail.com>
+References: <cover.1575914275.git.landen.chao@mediatek.com>
+         <2d546d6bb15ff8b4b75af2220e20db4e634f4145.1575914275.git.landen.chao@mediatek.com>
+         <d77e3109-e022-3581-2ca8-02889c5ddbf4@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
-
-Current version supports a server line starting Intel® Xeon® Processor
-Scalable Family and introduces mapping for IIO Uncore units only.
-Other units can be added on demand.
-
-IIO stack to PMON mapping is exposed through:
-    /sys/devices/uncore_iio_<pmu_idx>/platform_mapping
-    in the following format: domain:bus
-
-For example, on a 4-die Intel Xeon® server platform:
-    $ cat /sys/devices/uncore_iio_0/platform_mapping
-    0000:00,0000:40,0000:80,0000:c0
-
-Which means:
-IIO PMON block 0 on die 0 belongs to IIO stack on bus 0x00, domain 0x0000
-IIO PMON block 0 on die 1 belongs to IIO stack on bus 0x40, domain 0x0000
-IIO PMON block 0 on die 2 belongs to IIO stack on bus 0x80, domain 0x0000
-IIO PMON block 0 on die 3 belongs to IIO stack on bus 0xc0, domain 0x0000
-
-Co-developed-by: Alexander Antonov <alexander.antonov@intel.com>
-Signed-off-by: Alexander Antonov <alexander.antonov@intel.com>
-Signed-off-by: Roman Sudarikov <roman.sudarikov@linux.intel.com>
----
- arch/x86/events/intel/uncore.c       |   2 +-
- arch/x86/events/intel/uncore.h       |   1 +
- arch/x86/events/intel/uncore_snbep.c | 162 +++++++++++++++++++++++++++
- 3 files changed, 164 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 2c53ad44b51f..c0d86bc8e786 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -16,7 +16,7 @@ struct pci_driver *uncore_pci_driver;
- DEFINE_RAW_SPINLOCK(pci2phy_map_lock);
- struct list_head pci2phy_map_head = LIST_HEAD_INIT(pci2phy_map_head);
- struct pci_extra_dev *uncore_extra_pci_dev;
--static int max_dies;
-+int max_dies;
- 
- /* mask of cpus that collect uncore events */
- static cpumask_t uncore_cpu_mask;
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index f52dd3f112a7..94eacca6f485 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -523,6 +523,7 @@ extern raw_spinlock_t pci2phy_map_lock;
- extern struct list_head pci2phy_map_head;
- extern struct pci_extra_dev *uncore_extra_pci_dev;
- extern struct event_constraint uncore_constraint_empty;
-+extern int max_dies;
- 
- /* uncore_snb.c */
- int snb_uncore_pci_init(void);
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index b10a5ec79e48..2562fde2e5b8 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -273,6 +273,30 @@
- #define SKX_CPUNODEID			0xc0
- #define SKX_GIDNIDMAP			0xd4
- 
-+/*
-+ * The CPU_BUS_NUMBER MSR returns the values of the respective CPUBUSNO CSR
-+ * that BIOS programmed. MSR has package scope.
-+ * |  Bit  |  Default  |  Description
-+ * | [63]  |    00h    | VALID - When set, indicates the CPU bus
-+ *                       numbers have been initialized. (RO)
-+ * |[62:48]|    ---    | Reserved
-+ * |[47:40]|    00h    | BUS_NUM_5 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(5). (RO)
-+ * |[39:32]|    00h    | BUS_NUM_4 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(4). (RO)
-+ * |[31:24]|    00h    | BUS_NUM_3 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(3). (RO)
-+ * |[23:16]|    00h    | BUS_NUM_2 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(2). (RO)
-+ * |[15:8] |    00h    | BUS_NUM_1 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(1). (RO)
-+ * | [7:0] |    00h    | BUS_NUM_0 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(0). (RO)
-+ */
-+#define SKX_MSR_CPU_BUS_NUMBER		0x300
-+#define SKX_MSR_CPU_BUS_VALID_BIT	(1ULL << 63)
-+#define BUS_NUM_STRIDE			8
-+
- /* SKX CHA */
- #define SKX_CHA_MSR_PMON_BOX_FILTER_TID		(0x1ffULL << 0)
- #define SKX_CHA_MSR_PMON_BOX_FILTER_LINK	(0xfULL << 9)
-@@ -3580,6 +3604,9 @@ static struct intel_uncore_ops skx_uncore_iio_ops = {
- 	.read_counter		= uncore_msr_read_counter,
- };
- 
-+static int skx_iio_get_topology(struct intel_uncore_type *type);
-+static int skx_iio_set_mapping(struct intel_uncore_type *type);
-+
- static struct intel_uncore_type skx_uncore_iio = {
- 	.name			= "iio",
- 	.num_counters		= 4,
-@@ -3594,6 +3621,8 @@ static struct intel_uncore_type skx_uncore_iio = {
- 	.constraints		= skx_uncore_iio_constraints,
- 	.ops			= &skx_uncore_iio_ops,
- 	.format_group		= &skx_uncore_iio_format_group,
-+	.get_topology		= skx_iio_get_topology,
-+	.set_mapping		= skx_iio_set_mapping,
- };
- 
- enum perf_uncore_iio_freerunning_type_id {
-@@ -3780,6 +3809,139 @@ static int skx_count_chabox(void)
- 	return hweight32(val);
- }
- 
-+static inline int skx_msr_cpu_bus_read(int cpu, u64 *topology)
-+{
-+	u64 msr_value;
-+
-+	if (rdmsrl_on_cpu(cpu, SKX_MSR_CPU_BUS_NUMBER, &msr_value) ||
-+			!(msr_value & SKX_MSR_CPU_BUS_VALID_BIT))
-+		return -1;
-+
-+	*topology = msr_value;
-+
-+	return 0;
-+}
-+
-+static int skx_iio_get_topology(struct intel_uncore_type *type)
-+{
-+	int ret, cpu, die, current_die;
-+	struct pci_bus *bus = NULL;
-+
-+	/*
-+	 * Verified single-segment environments only; disabled for multiple
-+	 * segment topologies for now.
-+	 */
-+	while ((bus = pci_find_next_bus(bus)) && !pci_domain_nr(bus))
-+		;
-+	if (bus) {
-+		pr_info("I/O stack mapping is not supported for multi-seg\n");
-+		return -1;
-+	}
-+
-+	type->topology = kzalloc(max_dies * sizeof(u64), GFP_KERNEL);
-+	if (!type->topology)
-+		return -ENOMEM;
-+
-+	/*
-+	 * Using cpus_read_lock() to ensure cpu is not going down between
-+	 * looking at cpu_online_mask.
-+	 */
-+	cpus_read_lock();
-+	/* Invalid value to start loop.*/
-+	current_die = -1;
-+	for_each_online_cpu(cpu) {
-+		die = topology_logical_die_id(cpu);
-+		if (current_die == die)
-+			continue;
-+		ret = skx_msr_cpu_bus_read(cpu, &type->topology[die]);
-+		if (ret) {
-+			kfree(type->topology);
-+			break;
-+		}
-+		current_die = die;
-+	}
-+	cpus_read_unlock();
-+
-+	return ret;
-+}
-+
-+static inline u8 skx_iio_stack_bus(struct intel_uncore_pmu *pmu, int die)
-+{
-+	return pmu->type->topology[die] >> (pmu->pmu_idx * BUS_NUM_STRIDE);
-+}
-+
-+static int skx_iio_set_box_mapping(struct intel_uncore_pmu *pmu)
-+{
-+	char *buf;
-+	int die = 0;
-+	/* Length of template "%04x:%02x," without null character. */
-+	const int template_len = 8;
-+
-+	/*
-+	 * Root bus 0x00 is valid only for die 0 AND pmu_idx = 0.
-+	 * Set "0" platform mapping for PMUs which have zero stack bus and
-+	 * non-zero index.
-+	 */
-+	if (!skx_iio_stack_bus(pmu, die) && pmu->pmu_idx) {
-+		pmu->mapping = kzalloc(2, GFP_KERNEL);
-+		if (!pmu->mapping)
-+			return -ENOMEM;
-+		sprintf(pmu->mapping, "0");
-+		return 0;
-+	}
-+
-+	pmu->mapping = kzalloc(max_dies * template_len + 1, GFP_KERNEL);
-+	if (!pmu->mapping)
-+		return -ENOMEM;
-+
-+	buf = pmu->mapping;
-+	for (; die < max_dies; die++) {
-+		buf += snprintf(buf, template_len + 1, "%04x:%02x,", 0,
-+				skx_iio_stack_bus(pmu, die));
-+	}
-+
-+	*(--buf) = '\0';
-+
-+	return 0;
-+}
-+
-+static int skx_iio_set_mapping(struct intel_uncore_type *type)
-+{
-+	/*
-+	 * Each IIO stack (PCIe root port) has its own IIO PMON block, so each
-+	 * platform_mapping holds bus number(s) of PCIe root port(s), which can
-+	 * be monitored by that IIO PMON block.
-+	 *
-+	 * For example, on 4-die Xeon platform with up to 6 IIO stacks per die
-+	 * and, therefore, 6 IIO PMON blocks per die, the platform_mapping
-+	 * of IIO PMON block 0 holds "0000:00,0000:40,0000:80,0000:c0":
-+	 *
-+	 * $ cat /sys/devices/uncore_iio_0/platform_mapping
-+	 * 0000:00,0000:40,0000:80,0000:c0
-+	 *
-+	 * Which means:
-+	 * IIO PMON 0 on die 0 belongs to PCIe RP on bus 0x00, domain 0x0000
-+	 * IIO PMON 0 on die 1 belongs to PCIe RP on bus 0x40, domain 0x0000
-+	 * IIO PMON 0 on die 2 belongs to PCIe RP on bus 0x80, domain 0x0000
-+	 * IIO PMON 0 on die 3 belongs to PCIe RP on bus 0xc0, domain 0x0000
-+	 */
-+
-+	int ret;
-+	struct intel_uncore_pmu *pmu = type->pmus;
-+
-+	for (; pmu - type->pmus < type->num_boxes; pmu++) {
-+		ret = skx_iio_set_box_mapping(pmu);
-+		if (ret) {
-+			for (; pmu->pmu_idx > 0; --pmu)
-+				kfree(pmu->mapping);
-+			break;
-+		}
-+	}
-+
-+	kfree(type->topology);
-+	return ret;
-+}
-+
- void skx_uncore_cpu_init(void)
- {
- 	skx_uncore_chabox.num_boxes = skx_count_chabox();
--- 
-2.19.1
+T24gVGh1LCAyMDE5LTEyLTEyIGF0IDExOjQ1ICswODAwLCBGbG9yaWFuIEZhaW5lbGxpIHdyb3Rl
+Og0KPiANCj4gT24gMTIvMTAvMjAxOSAxMjoxNCBBTSwgTGFuZGVuIENoYW8gd3JvdGU6DQo+ID4g
+QWRkIGEgc3RydWN0dXJlIGhvbGRpbmcgcmVxdWlyZWQgb3BlcmF0aW9ucyBmb3IgZWFjaCBkZXZp
+Y2Ugc3VjaCBhcyBkZXZpY2UNCj4gPiBpbml0aWFsaXphdGlvbiwgUEhZIHBvcnQgcmVhZCBvciB3
+cml0ZSwgYSBjaGVja2VyIHdoZXRoZXIgUEhZIGludGVyZmFjZSBpcw0KPiA+IHN1cHBvcnRlZCBv
+biBhIGNlcnRhaW4gcG9ydCwgTUFDIHBvcnQgc2V0dXAgZm9yIGVpdGhlciBidXMgcGFkIG9yIGEN
+Cj4gPiBzcGVjaWZpYyBQSFkgaW50ZXJmYWNlLg0KPiA+IA0KPiA+IFRoZSBwYXRjaCBpcyBkb25l
+IGZvciByZWFkeSBhZGRpbmcgYSBuZXcgaGFyZHdhcmUgTVQ3NTMxLg0KPiA+IA0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IExhbmRlbiBDaGFvIDxsYW5kZW4uY2hhb0BtZWRpYXRlay5jb20+DQo+ID4gU2ln
+bmVkLW9mZi1ieTogU2VhbiBXYW5nIDxzZWFuLndhbmdAbWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0K
+PiBbc25pcF0NCj4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2RzYS9tdDc1MzAuYyBi
+L2RyaXZlcnMvbmV0L2RzYS9tdDc1MzAuYw0KPiA+IGluZGV4IGVkMWVjMTBlYzYyYi4uOWE2NDhk
+MWY1ZDA5IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbmV0L2RzYS9tdDc1MzAuYw0KPiA+ICsr
+KyBiL2RyaXZlcnMvbmV0L2RzYS9tdDc1MzAuYw0KPiA+IEBAIC00MjUsNyArNDI1LDcgQEAgbXQ3
+NTMwX2ZkYl93cml0ZShzdHJ1Y3QgbXQ3NTMwX3ByaXYgKnByaXYsIHUxNiB2aWQsDQo+ID4gIH0N
+Cj4gPiAgDQo+ID4gIHN0YXRpYyBpbnQNCj4gPiAtbXQ3NTMwX3BhZF9jbGtfc2V0dXAoc3RydWN0
+IGRzYV9zd2l0Y2ggKmRzLCBpbnQgbW9kZSkNCj4gPiArbXQ3NTMwX3BhZF9jbGtfc2V0dXAoc3Ry
+dWN0IGRzYV9zd2l0Y2ggKmRzLCBwaHlfaW50ZXJmYWNlX3QgbW9kZSkNCj4gDQo+IEhlcmUgeW91
+IHBhc3MgYSBwaHlfaW50ZXJmYWNlX3QgYXJndW1lbnQgYnV0IG5vdCBpbiBtdDc2MzJfcGFkX2Ns
+a19zZXR1cCgpLg0KPiANCj4gPiArc3RhdGljIGludA0KPiA+ICttdDc1MzBfcGFkX3NldHVwKHN0
+cnVjdCBkc2Ffc3dpdGNoICpkcywgY29uc3Qgc3RydWN0IHBoeWxpbmtfbGlua19zdGF0ZSAqc3Rh
+dGUpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBtdDc1MzBfcHJpdiAqcHJpdiA9IGRzLT5wcml2Ow0K
+PiA+ICsNCj4gPiArCS8qIFNldHVwIFRYIGNpcmN1aXQgaW5jbHVpbmcgcmVsZXZhbnQgUEFEIGFu
+ZCBkcml2aW5nICovDQo+ID4gKwltdDc1MzBfcGFkX2Nsa19zZXR1cChkcywgc3RhdGUtPmludGVy
+ZmFjZSk7DQo+ID4gKw0KPiA+ICsJaWYgKHByaXYtPmlkID09IElEX01UNzUzMCkgew0KPiA+ICsJ
+CS8qIFNldHVwIFJYIGNpcmN1aXQsIHJlbGV2YW50IFBBRCBhbmQgZHJpdmluZyBvbiB0aGUNCj4g
+PiArCQkgKiBob3N0IHdoaWNoIG11c3QgYmUgcGxhY2VkIGFmdGVyIHRoZSBzZXR1cCBvbiB0aGUN
+Cj4gPiArCQkgKiBkZXZpY2Ugc2lkZSBpcyBhbGwgZmluaXNoZWQuDQo+ID4gKwkJICovDQo+ID4g
+KwkJbXQ3NjIzX3BhZF9jbGtfc2V0dXAoZHMpOw0KPiANCj4gV291bGQgbm90IGl0IG1ha2Ugc2Vu
+c2UgdG8gcGFzcyBpdCBkb3duIGhlcmUgYXMgd2VsbCBmb3IgY29uc2lzdGVuY3k/DQptdDc2MjNf
+cGFkX2NsaygpIGNvbnRhaW5zIHRoZSBzZXR0aW5nIGZvciBQSFlfSU5URVJGQUNFX01PREVfVFJH
+TUlJLiBJdA0KaXMgcmVhbGx5IGJldHRlciB0byBwYXNzIHBoeV9pbnRlcmZhY2VfdCBmb3IgZXJy
+b3IgaGFuZGxpbmcuDQo+IA0KPiBbc25pcF0NCj4gDQo+ID4gQEAgLTE2NjAsOCArMTc2OCwxOSBA
+QCBtdDc1MzBfcHJvYmUoc3RydWN0IG1kaW9fZGV2aWNlICptZGlvZGV2KQ0KPiA+ICAJLyogR2V0
+IHRoZSBoYXJkd2FyZSBpZGVudGlmaWVyIGZyb20gdGhlIGRldmljZXRyZWUgbm9kZS4NCj4gPiAg
+CSAqIFdlIHdpbGwgbmVlZCBpdCBmb3Igc29tZSBvZiB0aGUgY2xvY2sgYW5kIHJlZ3VsYXRvciBz
+ZXR1cC4NCj4gPiAgCSAqLw0KPiA+IC0JcHJpdi0+aWQgPSAodW5zaWduZWQgaW50KSh1bnNpZ25l
+ZCBsb25nKQ0KPiA+IC0JCW9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YSgmbWRpb2Rldi0+ZGV2KTsN
+Cj4gPiArCXByaXYtPmluZm8gPSBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEoJm1kaW9kZXYtPmRl
+dik7DQo+ID4gKwlpZiAoIXByaXYtPmluZm8pDQo+ID4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ID4g
+Kw0KPiA+ICsJLyogU2FuaXR5IGNoZWNrIGlmIHRoZXNlIHJlcXVpcmVkIGRldmljZSBvcGVyc3Rh
+aW9ucyBhcmUgZmlsbGVkDQo+ID4gKwkgKiBwcm9wZXJseS4NCj4gDQo+IFR5cG86IG9wZXJhdGlv
+bnMuDQpPb3BzLCBzb3JyeS4gSSdsbCBjb3JyZWN0IGl0Lg0KDQpMYW5kZW4NCj4gDQo+IE90aGVy
+IHRoYW4gdGhhdCwgdGhpcyBsb29rcyBva2F5IHRvIG1lLg0KDQoNCg==
 
