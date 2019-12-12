@@ -2,147 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33BE011CF01
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 14:59:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F95411CF0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:00:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729553AbfLLN7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 08:59:09 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:55531 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729490AbfLLN7J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 08:59:09 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MALql-1iYZEW3qlH-00BpfK; Thu, 12 Dec 2019 14:58:36 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Mike Travis <mike.travis@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Justin Ernst <justin.ernst@hpe.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/platform/uv: avoid unused variable warning
-Date:   Thu, 12 Dec 2019 14:58:06 +0100
-Message-Id: <20191212135815.4176658-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1729635AbfLLOAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:00:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54994 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729524AbfLLOAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 09:00:16 -0500
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 922A021655;
+        Thu, 12 Dec 2019 14:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576159215;
+        bh=w6j7nt8EVQhGqeeabig/3mMtxBUSwyE1b0/3qRLnlMY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rmi1gkkd4I+2394B3wixXdiXO3A3D0r2w2dH7yVZGFDe1Z8I0ja30fsJ2t8IZ+rCh
+         Duh2X+pXYS65dQtBq5brAD93r3mic178CAaeGzI1CbWc5IyIJ4BKhxWIqg+jTrDGWr
+         HUvkRctVRdbDGf5w3EXNugc6xO4/q/zWl++5AmOk=
+Received: by mail-qk1-f173.google.com with SMTP id r14so1618225qke.13;
+        Thu, 12 Dec 2019 06:00:15 -0800 (PST)
+X-Gm-Message-State: APjAAAWpxBDC38pzafU1+iiYfc2q4ZKd66/w08OALT6gF81m3mqlQhTz
+        MTgHxZ5Vg2XRB2MSw7gF2TGcwbP7BhM/0X59WQ==
+X-Google-Smtp-Source: APXvYqylVaRXooiFXE5LLn2gb6i2E8GDU2gD9ANvwzpoLnrIk+YG9DZFfJ8BliPuj1AETH76SC8tJJD1gjvt1ijX7t4=
+X-Received: by 2002:ae9:f205:: with SMTP id m5mr8219015qkg.152.1576159214753;
+ Thu, 12 Dec 2019 06:00:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:aaEg7X+SOM/t1v0aZsqNDtlakHBANpTRGizRsksBk3TGrhYriNB
- 3wOfkguPAQgypDQwEmBt07TCzY2lzwbWNYOq8fNOo4HATiPuaIvhZYYs6LWpYKbtzruvpHf
- m1JhHbkjFAp2HziQMa8MUTrwlPWeUgaQu7dgJxZz0bvkpSrkXFVyPCLjAHNHNt/qSBma/zk
- 37MB7fPZc6+sAqh195YwA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:EQpF1no2hr4=:/73Yd8PAeV8mYr0pW+v2IU
- +xvIV8dFjJvg6VjK0D3rBVSWNcG3IvofLytQRYTd4Bl9xYaXmnWoD/dp2kFg+UsgscVrk/+Yo
- rzopIwpEOjhsSNjKtCseP8GLYEDuA78QZhzRGvKIoNm9k3r5IM57grBQRSfIoGUAOT+AODARG
- xmZ2IwBP1oJGzx737IV9GUc3LBJmEb4AuWa/34Y+e75eahq1tXCng9fovEs3vtbDayQJ9dNEo
- cSnQhySuFHdOPZJ71dsVwYwbvw7d+tA9uQR+7hBLMV+v2RLhQHcbNsp+jg9d3qapFQPm1DuiL
- VfjxRr3Mp6hvhHMCecYzR/Dznp9qmDdd8FvRa6Kw5y4992/xKyE86KvafMJ8U/rDTtHzBPVmn
- sXsIMSqZMaGa8rwpUgruJyqGilt1dDwkIxVK++XEMAll76a5IWvkWuOPBwnALafpJJjUoqTWn
- m5RV1iM8bPd9KyCFH5hMZlrtzyM88SUiGm1DoxXzrSWDefrFllbwB6fG8NDCxJyHZ/bqm0S0A
- D7eO509ihHHhplu2HEoca26J4OyYZeXi66p00YScPUO9FW/5G6yNdUVD5uTdwATuE/mBVAfU9
- 9V+WMNXAblDaHjpAFzAXt4/Zo0uJMsdfmNlzQzNcj3jWIc2kBM6s0UEBR7Irr9PMZOnZkEZcs
- c/8vR3OrYrmVvAHgPyHUoAqnwOi1nkuj/EJbxjZCyJPjiwjtGLf2vC67q0O2TuTcRQRmOXqdX
- 4UmrPMCPOVME9fNwGK7jyVT8C9IUe2iLjZXSJxdiUvG3ZxTxC1Um7yiTeNirukwl0Kd8qDITO
- 4t44UysExiJzTIekoobpFM86YKht9CpTA0bJC+DdGLcyaDUqgrlfFBj2F7Y9jM2xY3xqy/2tb
- 1PO5a2USzzD3XUcGh/fA==
+References: <1575965693-30395-1-git-send-email-frowand.list@gmail.com>
+ <20191211201856.GA21857@bogus> <486ce60c-8a74-7baf-1054-c81c83e79e56@gmail.com>
+In-Reply-To: <486ce60c-8a74-7baf-1054-c81c83e79e56@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 12 Dec 2019 08:00:03 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL_0UUrjPG3G4vzO5fzzREV4tr5Y+ykRxzU+Cqz4_YgdQ@mail.gmail.com>
+Message-ID: <CAL_JsqL_0UUrjPG3G4vzO5fzzREV4tr5Y+ykRxzU+Cqz4_YgdQ@mail.gmail.com>
+Subject: Re: [PATCH] of: refcount leak when phandle_cache entry replaced
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_PROC_FS is disabled, the compiler warns about an
-unused variable:
+On Thu, Dec 12, 2019 at 5:17 AM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> On 12/11/19 2:18 PM, Rob Herring wrote:
+> > On Tue, 10 Dec 2019 02:14:53 -0600, frowand.list@gmail.com wrote:
+> >> From: Frank Rowand <frank.rowand@sony.com>
+> >>
+> >> of_find_node_by_phandle() does not do an of_node_put() of the existing
+> >> node in a phandle cache entry when that node is replaced by a new node.
+> >>
+> >> Reported-by: Rob Herring <robh+dt@kernel.org>
+> >> Fixes: b8a9ac1a5b99 ("of: of_node_get()/of_node_put() nodes held in phandle cache")
+> >> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> >> ---
+> >>
+> >> Checkpatch will warn about a line over 80 characters.  Let me know
+> >> if that bothers you.
+> >>
+> >>  drivers/of/base.c | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >
+> > Applied, thanks.
+> >
+> > Rob
+> >
+>
+> If the rework patch of the cache that you posted shortly after accepting
+> my patch, then my patch becomes not needed and is just extra noise in the
+> history.  Once your patch finishes review (I am assuming it probably
+> will), then my patch should be reverted.
 
-arch/x86/kernel/apic/x2apic_uv_x.c: In function 'uv_setup_proc_files':
-arch/x86/kernel/apic/x2apic_uv_x.c:1546:8: error: unused variable 'name' [-Werror=unused-variable]
-  char *name = hubless ? "hubless" : "hubbed";
+The question is what to backport: nothing, this patch or mine? My
+thought was to apply this mainly to backport. If you're fine with
+nothing or mine, then we can drop it. I'm a bit nervous marking mine
+for stable.
 
-Simplify the code so this variable is no longer needed.
-
-Fixes: 8785968bce1c ("x86/platform/uv: Add UV Hubbed/Hubless Proc FS Files")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/x86/kernel/apic/x2apic_uv_x.c | 28 ++++------------------------
- 1 file changed, 4 insertions(+), 24 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index d5b51a740524..1af416da1f87 100644
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -1493,13 +1493,13 @@ static void check_efi_reboot(void)
- }
- 
- /* Setup user proc fs files */
--static int proc_hubbed_show(struct seq_file *file, void *data)
-+static int __maybe_unused proc_hubbed_show(struct seq_file *file, void *data)
- {
- 	seq_printf(file, "0x%x\n", uv_hubbed_system);
- 	return 0;
- }
- 
--static int proc_hubless_show(struct seq_file *file, void *data)
-+static int __maybe_unused proc_hubless_show(struct seq_file *file, void *data)
- {
- 	seq_printf(file, "0x%x\n", uv_hubless_system);
- 	return 0;
-@@ -1511,28 +1511,11 @@ static int proc_oemid_show(struct seq_file *file, void *data)
- 	return 0;
- }
- 
--static int proc_hubbed_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, proc_hubbed_show, (void *)NULL);
--}
--
--static int proc_hubless_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, proc_hubless_show, (void *)NULL);
--}
--
- static int proc_oemid_open(struct inode *inode, struct file *file)
- {
- 	return single_open(file, proc_oemid_show, (void *)NULL);
- }
- 
--/* (struct is "non-const" as open function is set at runtime) */
--static struct file_operations proc_version_fops = {
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static const struct file_operations proc_oemid_fops = {
- 	.open		= proc_oemid_open,
- 	.read		= seq_read,
-@@ -1543,15 +1526,12 @@ static const struct file_operations proc_oemid_fops = {
- static __init void uv_setup_proc_files(int hubless)
- {
- 	struct proc_dir_entry *pde;
--	char *name = hubless ? "hubless" : "hubbed";
- 
- 	pde = proc_mkdir(UV_PROC_NODE, NULL);
--	proc_create("oemid", 0, pde, &proc_oemid_fops);
--	proc_create(name, 0, pde, &proc_version_fops);
- 	if (hubless)
--		proc_version_fops.open = proc_hubless_open;
-+		proc_create_single("hubless", 0, pde, proc_hubless_show);
- 	else
--		proc_version_fops.open = proc_hubbed_open;
-+		proc_create_single("hubbed", 0, pde, proc_hubbed_show);
- }
- 
- /* Initialize UV hubless systems */
--- 
-2.20.0
-
+Rob
