@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24F5F11C299
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A90C211C29C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:45:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfLLBpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 20:45:35 -0500
+        id S1727766AbfLLBph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 20:45:37 -0500
 Received: from mga02.intel.com ([134.134.136.20]:65192 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727677AbfLLBpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:45:25 -0500
+        id S1727691AbfLLBp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 20:45:27 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 17:45:25 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 17:45:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,303,1571727600"; 
-   d="scan'208";a="296446104"
+   d="scan'208";a="296446113"
 Received: from gjang-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.252.207.37])
-  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2019 17:45:23 -0800
+  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2019 17:45:25 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v5 07/11] soundwire: intel: update headers for interrupts
-Date:   Wed, 11 Dec 2019 19:45:03 -0600
-Message-Id: <20191212014507.28050-8-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v5 08/11] soundwire: intel: add link_list to handle interrupts with a single thread
+Date:   Wed, 11 Dec 2019 19:45:04 -0600
+Message-Id: <20191212014507.28050-9-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191212014507.28050-1-pierre-louis.bossart@linux.intel.com>
 References: <20191212014507.28050-1-pierre-louis.bossart@linux.intel.com>
@@ -45,36 +45,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 
-The existing use of 6 handlers is problematic in MSI mode. Update
-headers so that all shared interrupts can be handled with a single
-handler.
+In MSI mode, the use of separate handlers and threads for the Intel
+IPC, stream and SoundWire shared interrupt leads to timeouts and lost
+interrupts.
+
+The solution is to merge all interrupt handling across all links with
+a single thread function. The use of a linked list enables this thread
+function to walk through all contexts and figure out which link needs
+attention.
 
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- include/linux/soundwire/sdw_intel.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/soundwire/sdw_intel.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/include/linux/soundwire/sdw_intel.h b/include/linux/soundwire/sdw_intel.h
-index 3ccb38d48eef..2ce3e9ecc4b6 100644
+index 2ce3e9ecc4b6..2a56180bc9dc 100644
 --- a/include/linux/soundwire/sdw_intel.h
 +++ b/include/linux/soundwire/sdw_intel.h
-@@ -4,6 +4,8 @@
- #ifndef __SDW_INTEL_H
- #define __SDW_INTEL_H
+@@ -70,6 +70,7 @@ struct sdw_intel_link_res;
+  * @handle: ACPI parent handle
+  * @links: information for each link (controller-specific and kept
+  * opaque here)
++ * @link_list: list to handle interrupts across all links
+  */
+ struct sdw_intel_ctx {
+ 	int count;
+@@ -77,6 +78,7 @@ struct sdw_intel_ctx {
+ 	u32 link_mask;
+ 	acpi_handle handle;
+ 	struct sdw_intel_link_res *links;
++	struct list_head link_list;
+ };
  
-+#include <linux/irqreturn.h>
-+
  /**
-  * struct sdw_intel_stream_params_data: configuration passed during
-  * the @params_stream callback, e.g. for interaction with DSP
-@@ -127,4 +129,6 @@ void sdw_intel_exit(struct sdw_intel_ctx *ctx);
- 
- void sdw_intel_enable_irq(void __iomem *mmio_base, bool enable);
- 
-+irqreturn_t sdw_intel_thread(int irq, void *dev_id);
-+
- #endif
 -- 
 2.20.1
 
