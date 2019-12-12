@@ -2,148 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C91C711C1D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:06:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 401D811C1C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:01:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfLLBFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 20:05:53 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:35408 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbfLLBFx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:05:53 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 47YFwX40CXz1rQBK;
-        Thu, 12 Dec 2019 02:05:48 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 47YFwX2Q08z1qqkq;
-        Thu, 12 Dec 2019 02:05:48 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id q-W7gOHmTDAQ; Thu, 12 Dec 2019 02:04:36 +0100 (CET)
-X-Auth-Info: ryjPqBpzHulkb8n+Csi9otVruh6YyTMa0AaPwPgVcBA=
-Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu, 12 Dec 2019 02:04:35 +0100 (CET)
-Subject: Re: [PATCH v2 2/2] mtd: rawnand: denali_dt: add reset controlling
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mtd@lists.infradead.org
-Cc:     Dinh Nguyen <dinguyen@kernel.org>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-kernel@vger.kernel.org
-References: <20191211054538.8283-1-yamada.masahiro@socionext.com>
- <20191211054538.8283-2-yamada.masahiro@socionext.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <399bb8ab-74c5-1be3-4156-6d854738b548@denx.de>
-Date:   Thu, 12 Dec 2019 01:22:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727483AbfLLBBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 20:01:08 -0500
+Received: from mga07.intel.com ([134.134.136.100]:37975 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726791AbfLLBBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 20:01:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 17:01:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,303,1571727600"; 
+   d="scan'208";a="225733894"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 11 Dec 2019 17:01:04 -0800
+Cc:     baolu.lu@linux.intel.com
+Subject: Re: [PATCH 1/1] iommu/vt-d: Fix dmar pte read access not set error
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20191211014015.7898-1-baolu.lu@linux.intel.com>
+ <20191211163511.gjju2s3yy4sus44w@cantor>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <86270320-efae-1c37-4c5a-6e5415e36a95@linux.intel.com>
+Date:   Thu, 12 Dec 2019 09:00:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <20191211054538.8283-2-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191211163511.gjju2s3yy4sus44w@cantor>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/19 6:45 AM, Masahiro Yamada wrote:
-[...]
-> diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
-> index 8b779a899dcf..9a294c3f6ec8 100644
-> --- a/drivers/mtd/nand/raw/denali_dt.c
-> +++ b/drivers/mtd/nand/raw/denali_dt.c
-> @@ -6,6 +6,7 @@
->   */
->  
->  #include <linux/clk.h>
-> +#include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
->  #include <linux/ioport.h>
-> @@ -14,6 +15,7 @@
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> +#include <linux/reset.h>
->  
->  #include "denali.h"
->  
-> @@ -22,6 +24,8 @@ struct denali_dt {
->  	struct clk *clk;	/* core clock */
->  	struct clk *clk_x;	/* bus interface clock */
->  	struct clk *clk_ecc;	/* ECC circuit clock */
-> +	struct reset_control *rst;	/* core reset */
-> +	struct reset_control *rst_reg;	/* register reset */
->  };
->  
->  struct denali_dt_data {
-> @@ -151,6 +155,14 @@ static int denali_dt_probe(struct platform_device *pdev)
->  	if (IS_ERR(dt->clk_ecc))
->  		return PTR_ERR(dt->clk_ecc);
->  
-> +	dt->rst = devm_reset_control_get_optional_shared(dev, "nand");
-> +	if (IS_ERR(dt->rst))
-> +		return PTR_ERR(dt->rst);
-> +
-> +	dt->rst_reg = devm_reset_control_get_optional_shared(dev, "reg");
-> +	if (IS_ERR(dt->rst_reg))
-> +		return PTR_ERR(dt->rst_reg);
-> +
->  	ret = clk_prepare_enable(dt->clk);
->  	if (ret)
->  		return ret;
-> @@ -166,10 +178,30 @@ static int denali_dt_probe(struct platform_device *pdev)
->  	denali->clk_rate = clk_get_rate(dt->clk);
->  	denali->clk_x_rate = clk_get_rate(dt->clk_x);
->  
-> -	ret = denali_init(denali);
-> +	/*
-> +	 * Deassert the register reset, and the core reset in this order.
-> +	 * Deasserting the core reset while the register reset is asserted
-> +	 * will cause unpredictable behavior in the controller.
-> +	 */
-> +	ret = reset_control_deassert(dt->rst_reg);
->  	if (ret)
->  		goto out_disable_clk_ecc;
->  
-> +	ret = reset_control_deassert(dt->rst);
-> +	if (ret)
-> +		goto out_assert_rst_reg;
-> +
-> +	/*
-> +	 * When the reset is deasserted, the initialization sequence is kicked
-> +	 * (bootstrap process). The driver must wait until it finished.
-> +	 * Otherwise, it will result in unpredictable behavior.
-> +	 */
-> +	usleep_range(200, 1000);
-> +
-> +	ret = denali_init(denali);
-> +	if (ret)
-> +		goto out_assert_rst;
-> +
->  	for_each_child_of_node(dev->of_node, np) {
->  		ret = denali_dt_chip_init(denali, np);
->  		if (ret) {
-> @@ -184,6 +216,10 @@ static int denali_dt_probe(struct platform_device *pdev)
->  
->  out_remove_denali:
->  	denali_remove(denali);
-> +out_assert_rst:
-> +	reset_control_assert(dt->rst);
-> +out_assert_rst_reg:
-> +	reset_control_assert(dt->rst_reg);
+Hi,
 
-Maybe you can use devm_add_action_or_reset() here , like in e.g.
-drivers/input/touchscreen/ili210x.c , to avoid this unwinding ?
+On 12/12/19 12:35 AM, Jerry Snitselaar wrote:
+> On Wed Dec 11 19, Lu Baolu wrote:
+>> If the default DMA domain of a group doesn't fit a device, it
+>> will still sit in the group but use a private identity domain.
+>> When map/unmap/iova_to_phys come through iommu API, the driver
+>> should still serve them, otherwise, other devices in the same
+>> group will be impacted. Since identity domain has been mapped
+>> with the whole available memory space and RMRRs, we don't need
+>> to worry about the impact on it.
+>>
+> 
+> Does this pose any potential issues with the reverse case where the
+> group has a default identity domain, and the first device fits that,
+> but a later device in the group needs dma and gets a private dma
+> domain?
 
-[...]
+No. iommu_map/unmap() should not be called for default identity domain.
+
+         if (unlikely(!(domain->type & __IOMMU_DOMAIN_PAGING)))
+                 return -EINVAL;
+
+Best regards,
+baolu
+
+> 
+>> Link: https://www.spinics.net/lists/iommu/msg40416.html
+>> Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+>> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>> Fixes: 942067f1b6b97 ("iommu/vt-d: Identify default domains replaced 
+>> with private")
+>> Cc: stable@vger.kernel.org # v5.3+
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>> drivers/iommu/intel-iommu.c | 8 --------
+>> 1 file changed, 8 deletions(-)
+>>
+>> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+>> index 0c8d81f56a30..b73bebea9148 100644
+>> --- a/drivers/iommu/intel-iommu.c
+>> +++ b/drivers/iommu/intel-iommu.c
+>> @@ -5478,9 +5478,6 @@ static int intel_iommu_map(struct iommu_domain 
+>> *domain,
+>>     int prot = 0;
+>>     int ret;
+>>
+>> -    if (dmar_domain->flags & DOMAIN_FLAG_LOSE_CHILDREN)
+>> -        return -EINVAL;
+>> -
+>>     if (iommu_prot & IOMMU_READ)
+>>         prot |= DMA_PTE_READ;
+>>     if (iommu_prot & IOMMU_WRITE)
+>> @@ -5523,8 +5520,6 @@ static size_t intel_iommu_unmap(struct 
+>> iommu_domain *domain,
+>>     /* Cope with horrid API which requires us to unmap more than the
+>>        size argument if it happens to be a large-page mapping. */
+>>     BUG_ON(!pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level));
+>> -    if (dmar_domain->flags & DOMAIN_FLAG_LOSE_CHILDREN)
+>> -        return 0;
+>>
+>>     if (size < VTD_PAGE_SIZE << level_to_offset_bits(level))
+>>         size = VTD_PAGE_SIZE << level_to_offset_bits(level);
+>> @@ -5556,9 +5551,6 @@ static phys_addr_t 
+>> intel_iommu_iova_to_phys(struct iommu_domain *domain,
+>>     int level = 0;
+>>     u64 phys = 0;
+>>
+>> -    if (dmar_domain->flags & DOMAIN_FLAG_LOSE_CHILDREN)
+>> -        return 0;
+>> -
+>>     pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level);
+>>     if (pte)
+>>         phys = dma_pte_addr(pte);
+>> -- 
+>> 2.17.1
+>>
+> 
