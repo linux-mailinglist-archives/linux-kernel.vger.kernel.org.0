@@ -2,129 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2475511C29D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:45:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BD4E11C294
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:45:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbfLLBpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 20:45:45 -0500
-Received: from mga02.intel.com ([134.134.136.20]:65192 "EHLO mga02.intel.com"
+        id S1727637AbfLLBpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 20:45:19 -0500
+Received: from mga07.intel.com ([134.134.136.100]:40835 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbfLLBpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:45:32 -0500
+        id S1727539AbfLLBpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 20:45:14 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 17:45:32 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 17:45:13 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,303,1571727600"; 
-   d="scan'208";a="296446135"
-Received: from gjang-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.252.207.37])
-  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2019 17:45:30 -0800
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v5 11/11] soundwire: intel: add clock stop quirks
-Date:   Wed, 11 Dec 2019 19:45:07 -0600
-Message-Id: <20191212014507.28050-12-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191212014507.28050-1-pierre-louis.bossart@linux.intel.com>
-References: <20191212014507.28050-1-pierre-louis.bossart@linux.intel.com>
+   d="scan'208";a="216118388"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga003.jf.intel.com with ESMTP; 11 Dec 2019 17:45:13 -0800
+Received: from [10.226.38.16] (unknown [10.226.38.16])
+        by linux.intel.com (Postfix) with ESMTP id 127BA580297;
+        Wed, 11 Dec 2019 17:45:11 -0800 (PST)
+Subject: Re: [PATCH v7 0/2] phy: intel-lgm-emmc: Add support for eMMC PHY
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        kishon@ti.com, cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
+        peter.harliman.liem@intel.com
+References: <20191211025011.12156-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20191211110542.GQ32742@smile.fi.intel.com>
+From:   "Ramuthevar, Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Message-ID: <0b4652c6-05c2-ab91-b79b-d4c2268ec9dd@linux.intel.com>
+Date:   Thu, 12 Dec 2019 09:45:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191211110542.GQ32742@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to power rail dependencies, the SoundWire Master driver cannot
-make decisions on its own when entering pm runtime suspend.
+Hi,
 
-Add quirk mask for each link, so that the SOF parent driver can inform
-the SoundWire master driver of the desired behavior:
-a) leave clock on
-b) power-off instead of clock stop
-c) power-off if all devices cannot generate wakes
-d) force bus reset on clock restart
+On 11/12/2019 7:05 PM, Andy Shevchenko wrote:
+> On Wed, Dec 11, 2019 at 10:50:09AM +0800, Ramuthevar,Vadivel MuruganX wrote:
+>> Add eMMC-PHY support for Intel LGM SoC
+>>
+>> changes in v7:
+>>   Rebased to maintainer kernel tree phy-tag-5.5
+>>
+> You forgot to bump version...
 
-Note that for now the interface with the SOF driver relies on a single
-mask for all links. If needed, the interface might be modified at a
-later point to provide more freedom. The code at the lower level does
-not assume any commonality between links.
+Thanks Andy, oh My bad, I will update the patch v8.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- include/linux/soundwire/sdw_intel.h | 37 +++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
-
-diff --git a/include/linux/soundwire/sdw_intel.h b/include/linux/soundwire/sdw_intel.h
-index 45fa6d93197f..93b83bdf8035 100644
---- a/include/linux/soundwire/sdw_intel.h
-+++ b/include/linux/soundwire/sdw_intel.h
-@@ -59,6 +59,40 @@ struct sdw_intel_acpi_info {
- 
- struct sdw_intel_link_res;
- 
-+/* Intel clock-stop/pm_runtime quirk definitions */
-+
-+/*
-+ * Force the clock to remain on during pm_runtime suspend. This might
-+ * be needed if Slave devices do not have an alternate clock source or
-+ * if the latency requirements are very strict.
-+ */
-+#define SDW_INTEL_CLK_STOP_NOT_ALLOWED		BIT(0)
-+
-+/*
-+ * Stop the bus during pm_runtime suspend. If set, a complete bus
-+ * reset and re-enumeration will be performed when the bus
-+ * restarts. This mode shall not be used if Slave devices can generate
-+ * in-band wakes.
-+ */
-+#define SDW_INTEL_CLK_STOP_TEARDOWN		BIT(1)
-+
-+/*
-+ * Stop the bus during pm_suspend if Slaves are not wake capable
-+ * (e.g. speaker amplifiers). The clock-stop mode is typically
-+ * slightly higher power than when the IP is completely powered-off.
-+ */
-+#define SDW_INTEL_CLK_STOP_WAKE_CAPABLE_ONLY	BIT(2)
-+
-+/*
-+ * Require a bus reset (and complete re-enumeration) when exiting
-+ * clock stop modes. This may be needed if the controller power was
-+ * turned off and all context lost. This quirk shall not be used if a
-+ * Slave device needs to remain enumerated and keep its context,
-+ * e.g. to provide the reasons for the wake, report acoustic events or
-+ * pass a history buffer.
-+ */
-+#define SDW_INTEL_CLK_STOP_BUS_RESET		BIT(3)
-+
- /**
-  * struct sdw_intel_ctx - context allocated by the controller
-  * driver probe
-@@ -97,6 +131,8 @@ struct sdw_intel_ctx {
-  * @link_mask: bit-wise mask listing links selected by the DSP driver
-  * This mask may be a subset of the one reported by the controller since
-  * machine-specific quirks are handled in the DSP driver.
-+ * @clock_stop_quirks: mask array of possible behaviors requested by the
-+ * DSP driver. The quirks are common for all links for now.
-  */
- struct sdw_intel_res {
- 	int count;
-@@ -107,6 +143,7 @@ struct sdw_intel_res {
- 	const struct sdw_intel_ops *ops;
- 	struct device *dev;
- 	u32 link_mask;
-+	u32 clock_stop_quirks;
- };
- 
- /*
--- 
-2.20.1
-
+With Best Regards
+Vadivel
