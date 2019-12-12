@@ -2,117 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBAFC11D0FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:28:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BA8C11D107
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbfLLP2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:28:06 -0500
-Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:2174 "EHLO
-        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728869AbfLLP2F (ORCPT
+        id S1729371AbfLLP3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 10:29:34 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43487 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729003AbfLLP3d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:28:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1576164485;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AvgORIxOYpFKDQliLXZpKH57CcT6Jc8jG1mpwed1XFM=;
-  b=dajOOG86SYPFPdYPX+lfzIFMxFEJ7SETyG4UHO1UZRywZt22Eehyhqk3
-   Og/Vavw5W1XFx3O+lkGIBG51EDvdnJ0tj7oDf+PGIqf2epNiloDLMey+9
-   dn54E+RPHAOzo1nAUavJ7B9YU94+e9YJEepV24MIFDJlq+8NyunRsoBoS
-   M=;
-Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
-  receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
-  roger.pau@citrix.com designates 162.221.158.21 as permitted
-  sender) identity=mailfrom; client-ip=162.221.158.21;
-  receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: I4h8En3BXKbrUkzf/pMTjpOcz5DugWSud/TOnaQG8/yjRnCs+felomVJF9tkitwa2GXPzHR5vs
- juOU9uZdTtTY+J1T0PdISZanhZfVnRDG6WKQXXfio6eF6NfaHcOy0lz7hc9hTCg32/iW8pCEly
- aIi+YclRWsAsq5mJTNHbovUsAH+cmEnTGHrN5iMjwReVgM1tnRi1j3ZMdk/bde3QgYutvaaC6d
- pzZI/zV5aPOwH0RmSwtnO9T7Yg0vER/2SmH7/s7vTBXZ/bXZlDIX6l9xKNoY7drB58boDKtBUV
- PQE=
-X-SBRS: 2.7
-X-MesageID: 9588030
-X-Ironport-Server: esa3.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.69,306,1571716800"; 
-   d="scan'208";a="9588030"
-Date:   Thu, 12 Dec 2019 16:27:57 +0100
-From:   Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-To:     SeongJae Park <sj38.park@gmail.com>
-CC:     <jgross@suse.com>, <axboe@kernel.dk>, <konrad.wilk@oracle.com>,
-        <linux-block@vger.kernel.org>, <sjpark@amazon.com>,
-        <pdurrant@amazon.com>, SeongJae Park <sjpark@amazon.de>,
-        <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>
-Subject: Re: [Xen-devel] [PATCH v7 2/3] xen/blkback: Squeeze page pools if a
- memory pressure is detected
-Message-ID: <20191212152757.GF11756@Air-de-Roger>
-References: <20191211181016.14366-1-sjpark@amazon.de>
- <20191211181016.14366-3-sjpark@amazon.de>
+        Thu, 12 Dec 2019 10:29:33 -0500
+Received: by mail-lj1-f193.google.com with SMTP id a13so2731071ljm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 07:29:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qTpkotce35zOQrVkQ1ddp2xTck4OkTwMYGpdBkrE2zc=;
+        b=UzEaq2vnzr9sjAB8ubKyX2pmHVWmdWkuu+kXjYG2MrzZD1H3BCHFpbhGTRmEhU2lOT
+         OsxjshF4T1juteQFcTCADG9+eUhhqBXa1LK7eTSY3cUAUZTikyDVIqcbmcmZIQuRxA6L
+         +517/FUr48FJvqV5Tr9xy3tuB2iRmccAiG9kYzTcjSSq3rCLDwyjpt18RS8SYr9PA0jr
+         mXVoz/WVbIQmTmvhUapSfHUWf/g3WkNxTansBEtW996+m9U+dD+ToYp0AHoFboma2Umw
+         ef2KrP/fZWJce09hRI69t023T50EAaAtJXUh5Omb32YPhdLcg5ruX60UShLSzSr14EEY
+         d6mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qTpkotce35zOQrVkQ1ddp2xTck4OkTwMYGpdBkrE2zc=;
+        b=jYsAR59yqljj5vaYdO6zvghddTYWJMvlZ8KEeGJC6qArod/Rs1xTf/DLQiCs2b+GQc
+         SHqmHRngOqbe+8TNdxMeyk15v196VNK7GA05PCJ6EgQACDnzJjjmohIzyo6d1NoV+7Cu
+         b/YbsqKzQnWttRN2TA6HzvRlUrPy6k9mVEJunDEAXwQ/0m+Bw/Rbn/xOFU521RWqojCJ
+         KoFypyHYUdDRC/1PMzAg0msY9HhOMzzkoNEZGODxQEu7Y+88XBB2gCraCwZGUTfnVJWF
+         5MeSmL45Z/Oo5cmY1Pkke62pvIglwJnG7O2UlTxc5mcjAmQiQIie2A9+f7hsCV4CZ/AY
+         WM/g==
+X-Gm-Message-State: APjAAAWqYkNVzKqwdMYUskMcBFvgMn6apzB3pH7srk2JdoZnXxG1JS1d
+        j1hmo2qT6+Px4+H1V+cOht8JlDXMW0TMhkQVokT2iQ==
+X-Google-Smtp-Source: APXvYqyj+Hsn41+C6NSE3ED5W7WfWudu0qa263fd1v1kKFO4Z7x5NLyw0A//WCDy2x3t0vaix6Qdu0vgTudDQt588nQ=
+X-Received: by 2002:a2e:9ec4:: with SMTP id h4mr6403872ljk.77.1576164571573;
+ Thu, 12 Dec 2019 07:29:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191211181016.14366-3-sjpark@amazon.de>
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL03.citrite.net (10.69.22.127)
+References: <1575352925-17271-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1575352925-17271-1-git-send-email-peng.fan@nxp.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 12 Dec 2019 16:29:19 +0100
+Message-ID: <CACRpkdaTLVNXd+-j_gkOfKnTk02XaZiMA_XxUeM0_4zZ_F-=ug@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: mvebu: use platform_irq_count
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "rjui@broadcom.com" <rjui@broadcom.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "sbranden@broadcom.com" <sbranden@broadcom.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alice Guo <alice.guo@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 06:10:15PM +0000, SeongJae Park wrote:
-> diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-> index fd1e19f1a49f..98823d150905 100644
-> --- a/drivers/block/xen-blkback/blkback.c
-> +++ b/drivers/block/xen-blkback/blkback.c
-> @@ -142,6 +142,21 @@ static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
->  		HZ * xen_blkif_pgrant_timeout);
->  }
->  
-> +/* Once a memory pressure is detected, squeeze free page pools for a while. */
-> +static unsigned int buffer_squeeze_duration_ms = 10;
-> +module_param_named(buffer_squeeze_duration_ms,
-> +		buffer_squeeze_duration_ms, int, 0644);
-> +MODULE_PARM_DESC(buffer_squeeze_duration_ms,
-> +"Duration in ms to squeeze pages buffer when a memory pressure is detected");
-> +
-> +static unsigned long buffer_squeeze_end;
-> +
-> +void xen_blkbk_reclaim_memory(struct xenbus_device *dev)
-> +{
-> +	buffer_squeeze_end = jiffies +
-> +		msecs_to_jiffies(buffer_squeeze_duration_ms);
+On Tue, Dec 3, 2019 at 7:04 AM Peng Fan <peng.fan@nxp.com> wrote:
 
-I'm not sure this is fully correct. This function will be called for
-each blkback instance, but the timeout is stored in a global variable
-that's shared between all blkback instances. Shouldn't this timeout be
-stored in xen_blkif so each instance has it's own local variable?
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> Use platform_irq_count to replace of_irq_count
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>
+> V1:
+>  Code inspection, not tested
 
-Or else in the case you have 1k blkback instances the timeout is
-certainly going to be longer than expected, because each call to
-xen_blkbk_reclaim_memory will move it forward.
+Patch applied.
 
-Thanks, Roger.
+Yours,
+Linus Walleij
