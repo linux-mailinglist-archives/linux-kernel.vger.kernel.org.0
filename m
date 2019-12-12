@@ -2,86 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25BED11D074
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:04:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1965B11D0A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:14:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbfLLPEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:04:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59264 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728624AbfLLPEg (ORCPT
+        id S1729102AbfLLPOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 10:14:40 -0500
+Received: from mailgw02.mediatek.com ([216.200.240.185]:33650 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728818AbfLLPOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:04:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rnKPEPHq5zWJRr2D9M8D7b1LZbRScvFVrRnHqxj8R2Y=; b=Qk+JfLLq7VE+GfWfLz9sBZPDG
-        RbfdAD7UVvPSwk+5qsrwzipk3m6cYByNZmYuaEZDxb186BGsGu3DzU5KQzhPiTSNujtPXM8IP5/uS
-        996MttNeOxiAldY20deJCtPv6xa+LrcH+bbOlxznh0H0//johEHSu0frJ4N5Et3Cd74LKWfWp3T+s
-        FsnylRaDG6sDaEghhqcx7mSzQ9CnwZtYvJ6DJS8yy/X9Yg4CMtndj+OuPOOHad5DBt4nB13KYb/UO
-        V9t4f6VmybuDBuc1lgmBFe60y3GDRIgYr7Xm5ln1dac6hpLOrsUE/qWrythI3Y/oriSkR/SQ/Z1wM
-        w4Yfqghnw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifQ11-0000oE-Pv; Thu, 12 Dec 2019 15:04:31 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 29CB4304D2B;
-        Thu, 12 Dec 2019 16:03:09 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9053920120E34; Thu, 12 Dec 2019 16:04:29 +0100 (CET)
-Date:   Thu, 12 Dec 2019 16:04:29 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Cheng Jian <cj.chengjian@huawei.com>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        chenwandun@huawei.com, xiexiuqi@huawei.com, liwei391@huawei.com,
-        huawei.libin@huawei.com, bobo.shaobowang@huawei.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org
-Subject: Re: [PATCH] sched/fair: Optimize select_idle_cpu
-Message-ID: <20191212150429.GZ2827@hirez.programming.kicks-ass.net>
-References: <20191212144102.181510-1-cj.chengjian@huawei.com>
+        Thu, 12 Dec 2019 10:14:39 -0500
+X-UUID: 570f561f5b0b4658a53dd63d9d56ad04-20191212
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=rc1N+2mn11vQnuHKJzeaj4YyfZJLE0LcAj+lNO1fVFk=;
+        b=pLg+4cv2VvvAIXJsMEcXb85SuEhZhUu0t0/ywWL7GP+8QjX+TVcjrX+V1YNcITaWjq3tL4HEArB6rS7yoU4s5ZWqqOoGzttOuyKW1WieABsuoVR1JyP4Sz+rYLtJomr06PZsAcDrjAf3XBDDudKKF8G6w1+Cu2gt8V1iHURkLY0=;
+X-UUID: 570f561f5b0b4658a53dd63d9d56ad04-20191212
+Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw02.mediatek.com
+        (envelope-from <landen.chao@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 607824229; Thu, 12 Dec 2019 07:14:35 -0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS62N1.mediatek.inc (172.29.193.41) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 12 Dec 2019 07:05:41 -0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 12 Dec 2019 23:04:30 +0800
+Message-ID: <1576163072.18168.0.camel@mtksdccf07>
+Subject: Re: [PATCH net-next 4/6] net: dsa: mt7530: Add the support of
+ MT7531 switch
+From:   Landen Chao <landen.chao@mediatek.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "vivien.didelot@savoirfairelinux.com" 
+        <vivien.didelot@savoirfairelinux.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Sean Wang <Sean.Wang@mediatek.com>,
+        "opensource@vdorst.com" <opensource@vdorst.com>,
+        "frank-w@public-files.de" <frank-w@public-files.de>
+Date:   Thu, 12 Dec 2019 23:04:32 +0800
+In-Reply-To: <20191211192703.GC30053@lunn.ch>
+References: <cover.1575914275.git.landen.chao@mediatek.com>
+         <6d608dd024edc90b09ba4fe35417b693847f973c.1575914275.git.landen.chao@mediatek.com>
+         <20191210164438.GD27714@lunn.ch> <1576088280.23763.73.camel@mtksdccf07>
+         <20191211192703.GC30053@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212144102.181510-1-cj.chengjian@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 10:41:02PM +0800, Cheng Jian wrote:
-> select_idle_cpu will scan the LLC domain for idle CPUs,
-> it's always expensive. so commit
->     1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
-> introduces a way to limit how many CPUs we scan.
-> 
-> But this also lead to the following issue:
-> 
-> Our threads are all bind to the front CPUs of the LLC domain,
-> and now all the threads runs on the last CPU of them. nr is
-> always less than the cpumask_weight, for_each_cpu_wrap can't
-> find the CPU which our threads can run on, so the threads stay
-> at the last CPU all the time.
-> 
-> Fixes: 1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
-> Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
-> ---
->  kernel/sched/fair.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 08a233e97a01..16a29b570803 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5834,6 +5834,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
->  	s64 delta;
->  	int this = smp_processor_id();
->  	int cpu, nr = INT_MAX, si_cpu = -1;
-> +	struct cpumask cpus;
+T24gVGh1LCAyMDE5LTEyLTEyIGF0IDAzOjI3ICswODAwLCBBbmRyZXcgTHVubiB3cm90ZToNCj4g
+PiBEbyB5b3UgYWxzbyBoaW50IGF0IHVzaW5nIHRoZSBzYW1lIG51bWJlciBvZiBwYXJhbWV0ZXJz
+IGZvcg0KPiA+IG10NzUzMV9pbmRfYzIyX3BoeV9yZWFkKCkgYW5kIG10NzUzMV9pbmRfYzQ1X3Bo
+eV9yZWFkKCk/DQo+IA0KPiBUaGF0IGlzIHVwIHRvIHlvdS4gSXQganVzdCBzZWVtcyBsaWtlIHlv
+dXIgTURJTyBidXMgY2FuIGRvIGJvdGggQzIyDQo+IGFuZCBDNDUuIEFuZCBzb21lYm9keSBtaWdo
+dCBjb25uZWN0IGFuIGV4dGVybmFsIEM0NSBQSFksIHNvIHlvdSBtaWdodA0KPiBhcyB3ZWxsIHN1
+cHBvcnQgaXQuDQpZZXMsIGl0IGlzIGJldHRlciB0byBzdXBwb3J0IGV4dGVybmFsIEM0NSBQSFku
+IFRoYW5rcyBmb3IgeW91ciBhZHZpY2UuDQoNCkxhbmRlbg0KPiANCj4gICAgQW5kcmV3DQo=
 
-NAK, you must not put a cpumask on stack.
