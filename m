@@ -2,115 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE6F611DA17
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 00:35:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAFED11DA22
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 00:39:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731341AbfLLXfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 18:35:17 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38535 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfLLXfO (ORCPT
+        id S1731145AbfLLXj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 18:39:29 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:34220 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfLLXj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 18:35:14 -0500
-Received: by mail-lf1-f65.google.com with SMTP id r14so569009lfm.5;
-        Thu, 12 Dec 2019 15:35:12 -0800 (PST)
+        Thu, 12 Dec 2019 18:39:28 -0500
+Received: by mail-vk1-f196.google.com with SMTP id w67so260664vkf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 15:39:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=aO85qqdL2qrngMuzPa0x+Jh/Nqd2OFRkhn4wziOGIHI=;
-        b=VhHKdukWWAl0HfgdTVlu+e+gJekUvy8NWwa4sOZgVoGH/BGdRJa1E04dIJgHW3EBVu
-         gKUjcyt9LLYQ6PSObvsPJxyPqrlZ7Hc6WiIGqU6RVdSJe3mYVzpAKTbWP99AgMcETNIa
-         3THlPU1k4Cox+e3Seih+r4md/pJ1z3Ve+NpNz9fkyoOKSfnasMAlH7yGn7e7HSWS/cNO
-         +DGDJfrRLJ6G8JvCo7d17u7wxGBgKlSQa8W2NXFJuG7SB61CKWXlSZy51JmxOTuVTYgG
-         ZaEPRfG8EM+9hYzhlbSTKedU1XdpLJrOwrh3ZONPyTZ+tkEnnN/nIS9JSKG2dSlbZHEH
-         Noiw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Fc2RGJ3UClAMsvSW+fKzHU87UiE/9k4bA3dodgjrviE=;
+        b=DfOwrr8xJ+MjAGBD5DPRK3CtrM98mBYbvY82OB7HXgLa1lSvy6Oh7roTWvGfy1vYmQ
+         fkK8JvcONlBAl2dde0NnSED13jqqTXZ5ZuN8OUUdY4yirTMTd5eJfgCr0ry8TQ36uANH
+         xdfhYjply1N4IvUEZb0K59zMzDOfBiJNVnbB2r0AW6CyGDbUwwgflvz5Zav1jhZHa2Hc
+         w0YBOCUEr+bBToZQVHj23JGp9HlqIIDmA6NqcJtZxtvD0hBOtbXhVDnIgAt8g0/f/u6n
+         HDWRnEdGP2SDVIYDxscK1eX/jRB4GSAjMlsJGzZvlc9NiCMDtNGeOxgcp0JjR8txI43q
+         ZXQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=aO85qqdL2qrngMuzPa0x+Jh/Nqd2OFRkhn4wziOGIHI=;
-        b=hwurfULxS5BYQrfKt7QUuA2C+ph6OlryxRknQNEqxcVn93avD+mRq097hcEoYxy34M
-         qrODhyu1u+WHRUvyZkCC905lAHTJOIx4QtGM0QWMSfdTZaUkko5qgBpvScZlzg5QYcvK
-         eD3EYMULvqDFL4Y3YfibkhMswMcvAoVlLfDDTyjV4qtV2OGDk7tWyaSK2IfFifztgdPu
-         rl1P03uQa0gCfV3IqpGVp1sGBl7qFizFFKmZDVMUbFd5LraozFObwDpywo9g8bigWD4p
-         MguFLnf4m47wW5kxnD4wYxSoq6cjLSuedfI1NlAWdOMRvglXmIDOaIsoVGVncEYTVayS
-         PjPQ==
-X-Gm-Message-State: APjAAAXstgshLEqkQqnPnm+WjplgHo8Co4q0Maoa9KibNnrCepbxjarq
-        EakX0IJekIJswBcVC3GbR9o=
-X-Google-Smtp-Source: APXvYqwxBrytrV61kYH19ZVGWsUDa7/qZ5Ys6fgRynMwL6Xtk/yXgq02a0rkTlDCqLm8dRSqToQdDg==
-X-Received: by 2002:ac2:44a3:: with SMTP id c3mr7189472lfm.1.1576193711543;
-        Thu, 12 Dec 2019 15:35:11 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id q27sm3764283ljm.25.2019.12.12.15.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 15:35:11 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM state
-Date:   Fri, 13 Dec 2019 02:34:28 +0300
-Message-Id: <20191212233428.14648-4-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191212233428.14648-1-digetx@gmail.com>
-References: <20191212233428.14648-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Fc2RGJ3UClAMsvSW+fKzHU87UiE/9k4bA3dodgjrviE=;
+        b=b7BpbJgf0hFUHs1T3Oa9wiE5ap4fCjWSciOHr+2Y9swB4UiwgPliUm0XmXPB70yS7a
+         U0ExYn/gQSSG5wOU5JVspFdeaLEfRmlWsOQAYDGN6td51KC1UtGIUSxK2s4NkBH3ap7x
+         icObLVHcVBHb55x+FBlH/6yT1KG5jC0rDqevwWV/Dtr7Rh01UiKv/91h2IYdIlL0cL9n
+         FrIpHwlpZWFBld3jy/xYUxCe7uod5izexA0A+GXCi+CxxdZFVlqerHN/VDY7AOSBeEPJ
+         gbFa3S2bXyXuRxPYRdncE1l22QrDQ/NfYf6rl2VviQRc5UbKlK8FHwgQlT2F2FXumHVr
+         5exQ==
+X-Gm-Message-State: APjAAAUQtOZ21nv87Vd453jUMrSRMfDsnzzt0E1IFIFewkz7EeHxeAf4
+        PRVC6Wc+4gQHJxX3sNo9NUk8siHhj3+jl4/LALrI74Rl
+X-Google-Smtp-Source: APXvYqxiVybcStEMqYeEIGEnJ+HtMBPGQkv8Kki+YBh0DS0X1ru0NT7WrnTsK5Rvcxhr0Gt1sTo4rGQEHf7vCJ/BUvQ=
+X-Received: by 2002:a05:6122:2b6:: with SMTP id 22mr11219224vkq.49.1576193967753;
+ Thu, 12 Dec 2019 15:39:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191206075321.18239-1-hslester96@gmail.com> <8736dq2c66.fsf@intel.com>
+In-Reply-To: <8736dq2c66.fsf@intel.com>
+From:   Ben Skeggs <skeggsb@gmail.com>
+Date:   Fri, 13 Dec 2019 09:39:16 +1000
+Message-ID: <CACAvsv4He=bKpa2VxJr-cYUoy66sw8mGgFcnpMM0qDb1qXYSrg@mail.gmail.com>
+Subject: Re: [PATCH] drm/dp_mst: add missed nv50_outp_release in nv50_msto_disable
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Chuhong Yuan <hslester96@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        ML nouveau <nouveau@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Ben Skeggs <bskeggs@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I noticed that sometime I2C clock is kept enabled during suspend-resume.
-This happens because runtime PM defers dynamic suspension and thus it may
-happen that runtime PM is in active state when system enters into suspend.
-In particular I2C controller that is used for CPU's DVFS is often kept ON
-during suspend because CPU's voltage scaling happens quite often.
+On Thu, 12 Dec 2019 at 18:14, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+>
+> On Fri, 06 Dec 2019, Chuhong Yuan <hslester96@gmail.com> wrote:
+> > nv50_msto_disable() does not call nv50_outp_release() to match
+> > nv50_outp_acquire() like other disable().
+> > Add the missed call to fix it.
+This is intentional, and it's called at a later time
+(nv50_mstm_prepare()) to avoid confusing HW.
 
-Note: we marked runtime PM as IRQ-safe during the driver's probe in the
-"Support atomic transfers" patch, thus it's okay to enforce runtime PM
-suspend/resume in the NOIRQ phase which is used for the system-level
-suspend/resume of the driver.
+Ben.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b3ecdd87e91f..d309a314f4d6 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1790,9 +1790,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- static int __maybe_unused tegra_i2c_suspend(struct device *dev)
- {
- 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+	int err;
- 
- 	i2c_mark_adapter_suspended(&i2c_dev->adapter);
- 
-+	err = pm_runtime_force_suspend(dev);
-+	if (err < 0)
-+		return err;
-+
- 	return 0;
- }
- 
-@@ -1813,6 +1818,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
- 	if (err)
- 		return err;
- 
-+	err = pm_runtime_force_resume(dev);
-+	if (err < 0)
-+		return err;
-+
- 	i2c_mark_adapter_resumed(&i2c_dev->adapter);
- 
- 	return 0;
--- 
-2.24.0
-
+>
+> The subject prefix "drm/dp_mst" implies drm core change, but this is
+> about nouveau. Please fix.
+>
+> BR,
+> Jani.
+>
+> >
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> > ---
+> >  drivers/gpu/drm/nouveau/dispnv50/disp.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> > index 549486f1d937..84e1417355cc 100644
+> > --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> > +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> > @@ -862,8 +862,10 @@ nv50_msto_disable(struct drm_encoder *encoder)
+> >
+> >       mstm->outp->update(mstm->outp, msto->head->base.index, NULL, 0, 0);
+> >       mstm->modified = true;
+> > -     if (!--mstm->links)
+> > +     if (!--mstm->links) {
+> >               mstm->disabled = true;
+> > +             nv50_outp_release(mstm->outp);
+> > +     }
+> >       msto->disabled = true;
+> >  }
+>
+> --
+> Jani Nikula, Intel Open Source Graphics Center
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
