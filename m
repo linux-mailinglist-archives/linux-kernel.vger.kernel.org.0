@@ -2,163 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9244411C570
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 06:29:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A52C11C57D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 06:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbfLLF3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 00:29:11 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36744 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbfLLF3K (ORCPT
+        id S1726921AbfLLFbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 00:31:16 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:63787 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfLLFbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 00:29:10 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r19so797610ljg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 21:29:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0onU7gVBFHeq7m2PLrQb4rE7g9Cdls/YcARoJxqQZoI=;
-        b=ga4yxtjFyobGLmpt6nUXe+vKPDmcBpo+Oa+ePkkrrwEtHlYCij1VYeYIoKPzPS5LB9
-         rjUeSbNzN/qEuRfieM6EPYqQLixxBM30sgiwtwIXFdtur06H673NQNtY1Uw6Gk6EQpH1
-         y/s5ddTuejuECIutiOgC7akr5NCzsBKYm7IeesuHCAO2xbF2m1cUU2rJ4G95J2+7Ji5e
-         R68lsP4qTBUKakHfXlXZSmscQxnpc9qXue5TCxVv8E6xPKke19OYMeefcqpyAcmx/FRJ
-         IDhElqNUFmwyM+DPjHqKu0LJU6F/OYpmRMt0taNNj5j5dhUBipkdODapRENIPmSEgpqP
-         s2Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0onU7gVBFHeq7m2PLrQb4rE7g9Cdls/YcARoJxqQZoI=;
-        b=C5Nv0unsiHlySf0ir/hQsZfdQWOWGzamS5icFvg2Q9ih9MRzHrb8V25ttTChJdmPNk
-         DqpqqT8X1RFdXSff9hycbpDUW61ylocQ/MvG2bHzlvMUoneOtI1MN/PpNcTtC0C2GwQA
-         qyxtk8pAh39a9CHt4sN3zXhM1e4T60YjOSSiKRWcq/iSAX55UMdE/sDBV5aD8Dd3OyaY
-         MO65tjcCYrf1rr2b63mwJHzR7gAzWHIU5MWYH+8JgwZa8eGSvOfYY+pAXszZGtPI7uKG
-         vzaO+/+JgInuAHQ8AM+ftUX8I/sYJGfwGBFzaO/NdER2NS5nMvauMUES+Un9GeUGLGs4
-         rzSg==
-X-Gm-Message-State: APjAAAViovvUeaC8RTRQX3l5qPaVEHbbbOc+lcBrE63dh+jHzq3mTgu7
-        usP2lt6QxIxwFFemTt9knuDgWiFCG4/inttAOTxBkw==
-X-Google-Smtp-Source: APXvYqyAi8Y/18qIYbhHxpG5xltgaOPyxUWdx8tLUS0muB40MfO/04uqosm6BUTKxuHVGg7aeT9jHuEH7RoEta9akvM=
-X-Received: by 2002:a2e:a0c6:: with SMTP id f6mr4526081ljm.46.1576128547783;
- Wed, 11 Dec 2019 21:29:07 -0800 (PST)
+        Thu, 12 Dec 2019 00:31:16 -0500
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xBC5UtvP010862;
+        Thu, 12 Dec 2019 14:30:55 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xBC5UtvP010862
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576128656;
+        bh=yoxmpqDe2x6QTk+OCI2TnHYO1f9S6bQL94maOXXu9Cg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BFMJ0fqyvkgSQU6XTqtRTdjRVMGf2K4LKdULuCjmxrJWmEHbKkLTL08Jq3uyKFVWQ
+         r4z0QcWjdD2c6KDnie9ikxQRa1XFzD6r+OKJRJi2GlzbLkLCA2OFTq483TGWTRxdev
+         xYWai3NjWpSNEvWhjJjrKsz3PgzeKZ5V1fstOAV2RAjbvGY3qRGLQA3L+7GLUrCoO7
+         oE6znrbosrNWUtV+Jt3KUpR0KxJe8isMHFxHkrF7i4Ozq9Y2dV5rOc1ZJTOxGPzWfg
+         DHhHtSHkeZsCF1CNMGn79CYhEJ4hDt93Rwr+rBYcydoDo9cZ+0ReAF239Y55rpytp2
+         8FAz7fY+UmymA==
+X-Nifty-SrcIP: [209.85.221.182]
+Received: by mail-vk1-f182.google.com with SMTP id s62so55073vkb.10;
+        Wed, 11 Dec 2019 21:30:55 -0800 (PST)
+X-Gm-Message-State: APjAAAU4yAC9S9XsgqNCoyD1w/Dy1qZM/z4hhi6mh/CXHcSSsrCuFMqh
+        Od1BN49kZ1ME+CzCdZsM6Lqbwnt5nG21/LirURU=
+X-Google-Smtp-Source: APXvYqzyAz3nSzfmsWApFSr+H7lqWz4keVsUzY5ov/PBG2Gnw3VZND0u41kQMEzVp4JKD2lPAcUKpZx5ND+FxHbatqM=
+X-Received: by 2002:a1f:2e4a:: with SMTP id u71mr3546169vku.96.1576128654360;
+ Wed, 11 Dec 2019 21:30:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20191211150221.977775294@linuxfoundation.org>
-In-Reply-To: <20191211150221.977775294@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 12 Dec 2019 10:58:56 +0530
-Message-ID: <CA+G9fYsnFnAimAAusrOYtOphC9fnXbwjvi1St0hQFdHKbVZdgg@mail.gmail.com>
-Subject: Re: [PATCH 5.4 00/92] 5.4.3-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
+References: <87wob4tf9b.fsf@alyssa.is>
+In-Reply-To: <87wob4tf9b.fsf@alyssa.is>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 12 Dec 2019 14:30:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ2+=jCO5SUpB-C8NZHODLVXs3SJ2qyYR9J+OiU_+1iAg@mail.gmail.com>
+Message-ID: <CAK7LNAQ2+=jCO5SUpB-C8NZHODLVXs3SJ2qyYR9J+OiU_+1iAg@mail.gmail.com>
+Subject: Re: Bogus dependency for HW_RANDOM_VIRTIO with oldconfig
+To:     Alyssa Ross <hi@alyssa.is>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Dec 2019 at 20:39, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Tue, Dec 10, 2019 at 11:41 PM Alyssa Ross <hi@alyssa.is> wrote:
 >
-> This is the start of the stable review cycle for the 5.4.3 release.
-> There are 92 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> I'm new here and not sure if I'm contacting the correct people/groups --
+> please point me in the right direction if not.  I don't know if the
+> culprit here is Kconfig, the virtio Kconfig file, the hw_random Kconfig
+> file, or some combination of those.
 >
-> Responses should be made by Fri, 13 Dec 2019 14:56:06 +0000.
-> Anything received after that time might be too late.
+> I believe I have discovered an issue with the order in which make
+> oldconfig asks for virtio-related options, and would appreciate some
+> advice on how to solve it:
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.4.3-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.4.y
-> and the diffstat can be found below.
+> HW_RANDOM_VIRTIO=y depends on VIRTIO=y.  In my kernel, VIRTIO=y is
+> selected by VIRITO_PCI=y, but when make oldconfig prompts for
+> HW_RANDOM_VIRTIO, VIRTIO_PCI has not been prompted for yet, and so
+> VIRTIO is still set to m.
 >
-> thanks,
+> This means that it's not possible for me to set HW_RANDOM_VIRTIO=y using
+> oldconfig without setting an VIRTIO-selecting option I don't need, but
+> that is prompted for _before_ HW_RANDOM_VIRTIO.  One such option that I
+> have identified so far is VOP.  It is prompted for before
+> HW_RANDOM_VIRTIO, and so if I set VOP=y it is now possible to set
+> HW_RANDOM_VIRTIO.
 >
-> greg k-h
+> When using menuconfig on a config file generated with oldconfig, that
+> does not have HW_RANDOM_VIRTIO enabled, I am able to set HW_RANDOM=y and
+> HW_RANDOM_VIRTIO=y, and after saving I can confirm that no other changes
+> have been made to the configuration file.  This tells me that there's no
+> need for a dependency on e.g. VOP, except when using oldconfig.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+OK, you are right.
 
-Summary
-------------------------------------------------------------------------
+Actually, the oldconfig restarts when it finds a newly-visible option.
+For example, when VIRTIO is changed from n to y,
+oldconfig restarts the menu and shows a prompt for HW_RANDOM_VIRTIO.
 
-kernel: 5.4.3-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-5.4.y
-git commit: 6b42537b2c8927366737f1d297ae4e91fdeba6ea
-git describe: v5.4.2-93-g6b42537b2c89
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/bui=
-ld/v5.4.2-93-g6b42537b2c89
+But, this does not happen when VIRTIO is changed from m to y.
+
+> So, I think there is an ordering issue here, and that oldconfig
+> should not prompt for HW_RANDOM_VIRTIO until after any option that might
+> select VIRTIO=y.
+>
+> I would be happy to try to submit or test a patch to fix this, but I
+> don't know where to go from here.
+
+Perhaps check_conf() could be fixed, though I have not looked into it yet.
 
 
-No regressions (compared to build v5.4.2)
-
-No fixes (compared to build v5.4.2)
-
-Ran 23952 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* linux-log-parser
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fs-tests
-* network-basic-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* kvm-unit-tests
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-cpuhotplug-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-open-posix-tests
-* ltp-sched-tests
-* ltp-syscalls-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-securebits-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Best Regards
+Masahiro Yamada
