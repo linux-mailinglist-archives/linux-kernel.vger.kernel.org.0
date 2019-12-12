@@ -2,158 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D01F311CE5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 14:33:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1821411CE6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 14:35:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729466AbfLLNdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 08:33:37 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40342 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729302AbfLLNdh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 08:33:37 -0500
-Received: by mail-oi1-f195.google.com with SMTP id 6so410540oix.7;
-        Thu, 12 Dec 2019 05:33:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B1c5GbpC2qZV4XZL32ReXMmOl4Gf9Xdye7e43MFMR8g=;
-        b=ir+J4KCiAPAkjvp0ky7CL/fRvOfMW0Zm7o6v1rXeaVUwDUxF+C9TNjXpn/BysOxlk7
-         jJoVe5vx7/SBDPPYb7u1VhtIifglsrR+YblRpsrivUjYZYP9lccjXlwbyfruFgZBi8qa
-         FG80TRt7j8ounLnQC3UpkFKEVH/R6a6/IJHuA+ChO6JBMQ5umQTxLXd46SyztwKTsBUj
-         +kXOZseOs9sI5AUoKcO2Vr3PN/+LrB6oxo5jqQKIwFy3+s96Uop2ypSNkqKzDZ5/i3KZ
-         6oaJR4CsJthXtHp5SJYfNYltMOJyuTE6WmZQV9n85PdWWAtrg0fWq9yUp/ixquWJprKb
-         WHPA==
-X-Gm-Message-State: APjAAAVhFittvr2zZoo96SeXv2x9q8StI17TKbAhNdj1Uu3I2nzUKQ7u
-        HaYg40oYzoh4JCwP1mVESs5PZCWVAVuwNI6D3Tk=
-X-Google-Smtp-Source: APXvYqyZrB81syD0Ce6WwALcSofZswA84PMJGyV785ydrh5qmd3i1ZIC8I8AuxCcmSbHRH3rYOaGved6PnxX/cMztls=
-X-Received: by 2002:aca:4e87:: with SMTP id c129mr4645921oib.153.1576157615510;
- Thu, 12 Dec 2019 05:33:35 -0800 (PST)
+        id S1729481AbfLLNfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 08:35:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37514 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729457AbfLLNfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 08:35:42 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2D15214AF;
+        Thu, 12 Dec 2019 13:35:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576157741;
+        bh=kX7tmQZUkMsb+wxM2lkuAZ/OE6BVVDyV/hHHPESUsac=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BoyR0ZHnOCM+h1SLcosyobq3AU7Dt2V+OSXVLxawClCqojIZ2bAFsyhqBOiln6VJR
+         2tyjWyjao06jWXe2DM5EvcjPbXUzWQUQaAnuU5gyUvfnNM7G53OR9OAf+xyCR4Jje/
+         KMYKVot6sJ84MeRlL1Xu0KA10X+gtEBv5Agw+foo=
+Date:   Thu, 12 Dec 2019 14:35:39 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     zhenwei pi <pizhenwei@bytedance.com>
+Cc:     arnd@arndb.de, peng.hao2@zte.com.cn, linux-kernel@vger.kernel.org
+Subject: Re: [External] Re: [PATCH] misc: pvpanic: add crash loaded event
+Message-ID: <20191212133539.GA1571185@kroah.com>
+References: <20191212123226.1879155-1-pizhenwei@bytedance.com>
+ <20191212130155.GA1544206@kroah.com>
+ <0364f87c-7ad0-0208-fb03-d5f17d45ab73@bytedance.com>
 MIME-Version: 1.0
-References: <20191127084253.16356-1-geert+renesas@glider.be>
- <20191127084253.16356-3-geert+renesas@glider.be> <CACRpkdYyY0eGipdK6ixZxLtdJ5px=U2mOa79VZb00NEEAEL=6g@mail.gmail.com>
-In-Reply-To: <CACRpkdYyY0eGipdK6ixZxLtdJ5px=U2mOa79VZb00NEEAEL=6g@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 12 Dec 2019 14:33:24 +0100
-Message-ID: <CAMuHMdVL2w=DzOHTh-Tq6NZLTNUKxUneMi3wX71Z83mdsy3LTA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] gpiolib: Add support for gpiochipN-based table lookup
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0364f87c-7ad0-0208-fb03-d5f17d45ab73@bytedance.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Dec 12, 2019 at 09:26:22PM +0800, zhenwei pi wrote:
+> On 12/12/19 9:01 PM, Greg KH wrote:
+> 
+> > On Thu, Dec 12, 2019 at 08:32:26PM +0800, zhenwei pi wrote:
+> > > Some users prefer kdump tools to generate guest kernel dumpfile,
+> > > at the same time, need a out-of-band kernel panic event.
+> > > 
+> > > Currently if booting guest kernel with 'crash_kexec_post_notifiers',
+> > > QEMU will recieve PVPANIC_PANICKED event and stop VM. If booting
+> > > guest kernel without 'crash_kexec_post_notifiers', guest will not
+> > > call notifier chain.
+> > > 
+> > > Add PVPANIC_CRASH_LOADED bit for pvpanic event, it means that guest
+> > > actually hit a kernel panic, but kernel wants to handle by itself.
+> > > 
+> > > Signed-off-by: zhenwei pi <pizhenwei@bytedance.com>
+> > > ---
+> > >   drivers/misc/pvpanic.c | 10 +++++++++-
+> > >   1 file changed, 9 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
+> > > index 95ff7c5a1dfb..a8cc96c90550 100644
+> > > --- a/drivers/misc/pvpanic.c
+> > > +++ b/drivers/misc/pvpanic.c
+> > > @@ -10,6 +10,7 @@
+> > >   #include <linux/acpi.h>
+> > >   #include <linux/kernel.h>
+> > > +#include <linux/kexec.h>
+> > >   #include <linux/module.h>
+> > >   #include <linux/of.h>
+> > >   #include <linux/of_address.h>
+> > > @@ -19,6 +20,7 @@
+> > >   static void __iomem *base;
+> > >   #define PVPANIC_PANICKED        (1 << 0)
+> > > +#define PVPANIC_CRASH_LOADED    (1 << 1)
+> > BIT(1)?
+> 
+> zhenwei: yes, define PVPANIC_CRASH_LOADED as BIT(1)?
+> 
+> > 
+> > >   MODULE_AUTHOR("Hu Tao <hutao@cn.fujitsu.com>");
+> > >   MODULE_DESCRIPTION("pvpanic device driver");
+> > > @@ -34,7 +36,13 @@ static int
+> > >   pvpanic_panic_notify(struct notifier_block *nb, unsigned long code,
+> > >   		     void *unused)
+> > >   {
+> > > -	pvpanic_send_event(PVPANIC_PANICKED);
+> > > +	unsigned int event = PVPANIC_PANICKED;
+> > > +
+> > > +	if (kexec_crash_loaded())
+> > > +		event = PVPANIC_CRASH_LOADED;
+> > > +
+> > > +	pvpanic_send_event(event);
+> > Who gets this event to know that the above new bit is set or not?
+> 
+> Hypervisor will catch this event. A typical case maybe like this: guest os triggers
+> pvpanic PVPANIC_CRASH_LOADED event, QEMU gets this event by handling vm-exit reason,
+> then QEMU posts event to libvirt. Monotor agent gets domain lifecycle event from
+> libvirt. Bingo, we can know that the guest has crashed but it handle error by
+> kexec crash loaded image.
 
-On Thu, Dec 12, 2019 at 2:20 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Nov 27, 2019 at 9:43 AM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > Currently GPIO controllers can only be referred to by label in GPIO
-> > lookup tables.
-> >
-> > Add support for looking them up by "gpiochipN" name, with "N" either the
-> > corresponding GPIO device's ID number, or the GPIO controller's first
-> > GPIO number.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> What the commit message is missing is a rationale, why is this needed?
+But as you have burried this user api value in a random .c file, how
+does anything outside of the kernel know what the value really is for?
 
-Right. To be added: so they can be looked up in the GPIO lookup table
-using either the chip's label, or the "gpiochipN" name.
+Shouldn't the #define be in a uapi file?
 
-> > If this is rejected, the GPIO Aggregator documentation must be updated.
-> >
-> > The second variant is currently used by the legacy sysfs interface only,
-> > so perhaps the chip->base check should be dropped?
->
-> Anything improving the sysfs is actively discouraged by me.
-> If it is just about staying compatible it is another thing.
+thanks,
 
-OK, so N must be the corresponding GPIO device's ID number.
-
-> > +static int gpiochip_match_id(struct gpio_chip *chip, void *data)
-> > +{
-> > +       int id = (uintptr_t)data;
-> > +
-> > +       return id == chip->base || id == chip->gpiodev->id;
-> > +}
-> >  static struct gpio_chip *find_chip_by_name(const char *name)
-> >  {
-> > -       return gpiochip_find((void *)name, gpiochip_match_name);
-> > +       struct gpio_chip *chip;
-> > +       int id;
-> > +
-> > +       chip = gpiochip_find((void *)name, gpiochip_match_name);
-> > +       if (chip)
-> > +               return chip;
-> > +
-> > +       if (!str_has_prefix(name, GPIOCHIP_NAME))
-> > +               return NULL;
-> > +
-> > +       if (kstrtoint(name + strlen(GPIOCHIP_NAME), 10, &id))
-> > +               return NULL;
-> > +
-> > +       return gpiochip_find((void *)(uintptr_t)id, gpiochip_match_id);
->
-> Isn't it easier to just  augment the existing match function to
-> check like this:
->
-> static int gpiochip_match_name(struct gpio_chip *chip, void *data)
-> {
->         const char *name = data;
->
->         if (!strcmp(chip->label, name))
->                return 0;
-
-return true;
-
->         return !strcmp(dev_name(&chip->gpiodev->dev), name);
-> }
-
-Oh, didn't think of using dev_name() on the gpiodev.
-Yes, with the chip->base check removed, the code can be simplified.
-
-Or just
-
-        return !strcmp(chip->label, name) ||
-               !strcmp(dev_name(&chip->gpiodev->dev), name);
-
-> We should I guess also add some kerneldoc to say we first
-> match on the label and second on dev_name().
-
-OK.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h-
