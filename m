@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFB6611C41C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 04:42:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF04311C459
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 04:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbfLLDkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 22:40:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58768 "EHLO mx1.suse.de"
+        id S1727508AbfLLDns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 22:43:48 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:48054 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727802AbfLLDkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 22:40:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CDFB0ADE1;
-        Thu, 12 Dec 2019 03:40:08 +0000 (UTC)
-From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To:     linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [RFC 25/25] WIP: leds: tm1628: Prepare AiP1618 keys
-Date:   Thu, 12 Dec 2019 04:39:52 +0100
-Message-Id: <20191212033952.5967-26-afaerber@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191212033952.5967-1-afaerber@suse.de>
-References: <20191212033952.5967-1-afaerber@suse.de>
+        id S1727381AbfLLDnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 22:43:47 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 31912E95EE8E62413E16;
+        Thu, 12 Dec 2019 11:43:45 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 12 Dec 2019 11:43:36 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <mingo@redhat.com>, <peterz@infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
+Subject: [PATCH] sched/fair: fix function name in comment
+Date:   Thu, 12 Dec 2019 11:40:51 +0800
+Message-ID: <20191212034051.161513-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extend definition with key input lines.
+Function name "init_sched_domains" has been modified to
+"sched_init_domains" in commit 8d5dc5126bb2
+("sched/topology: Small cleanup"). Fix the function name
+"init_sched_domains" in comment.
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
 ---
- drivers/leds/leds-tm1628.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-tm1628.c b/drivers/leds/leds-tm1628.c
-index 2caf1e63fc90..e28809d9a700 100644
---- a/drivers/leds/leds-tm1628.c
-+++ b/drivers/leds/leds-tm1628.c
-@@ -699,6 +699,8 @@ static const struct tm1628_info aip1618_info = {
- 	.seg_mask = GENMASK(14, 12) | GENMASK(5, 1),
- 	.modes = aip1618_modes,
- 	.default_mode = 3,
-+	.k_mask = BIT(2),
-+	.ks_mask = GENMASK(5, 1),
- 	.pwm_map = tm1628_pwm_map,
- 	.default_pwm = 0,
- };
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 08a233e..c872fd4 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9512,7 +9512,7 @@ void update_max_interval(void)
+  * It checks each scheduling domain to see if it is due to be balanced,
+  * and initiates a balancing operation if so.
+  *
+- * Balancing parameters are set up in init_sched_domains.
++ * Balancing parameters are set up in sched_init_domains.
+  */
+ static void rebalance_domains(struct rq *rq, enum cpu_idle_type idle)
+ {
 -- 
-2.16.4
+2.7.4
 
