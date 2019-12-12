@@ -2,104 +2,268 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37D2211C1CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 690DB11C1E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:08:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfLLBDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 20:03:05 -0500
-Received: from mga05.intel.com ([192.55.52.43]:61888 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727403AbfLLBDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:03:05 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 17:03:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,303,1571727600"; 
-   d="scan'208";a="210945278"
-Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Dec 2019 17:03:03 -0800
-Date:   Thu, 12 Dec 2019 09:04:24 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        yu-cheng.yu@intel.com
-Subject: Re: [PATCH v8 4/7] KVM: VMX: Load CET states on vmentry/vmexit
-Message-ID: <20191212010423.GB17570@local-michael-cet-test.sh.intel.com>
-References: <20191101085222.27997-1-weijiang.yang@intel.com>
- <20191101085222.27997-5-weijiang.yang@intel.com>
- <20191210212305.GM15758@linux.intel.com>
- <20191211015423.GC12845@local-michael-cet-test>
- <20191211163510.GF5044@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211163510.GF5044@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1727506AbfLLBIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 20:08:23 -0500
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:51667 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726791AbfLLBIW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 20:08:22 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 9168D22396;
+        Wed, 11 Dec 2019 20:08:21 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Wed, 11 Dec 2019 20:08:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=22RmgyxfJBeRaOGSVLQVBw8m1e4rYRQ
+        3qBL8OQyhN/Y=; b=Imlmo23GJ4QKdJUpt5POxJxEZpbC7ctOVu7pyNq2j/KsAzP
+        zZrU1zj8p43psHP0Gbye7hKCnxDVNOhMF27UkYYI/92V5lZZ7vTwZPMg16jRez1h
+        FOHZIHzMjaKN/LV5QKNISXQAptOxja0WwfnAIyYZNM47nRDEtnt3prAW95FQ04lq
+        zaEQSJvcGlZ7plP8tYrmbw8wbd5kFeLOnH3jrc22GnBut5c2kvyVPGZLyINFclO8
+        sH0/YatoOr8+nMGyYGgrCe/cbMjaRHWtikPY3oVq55fyAzpU1j+dpEeroZgGXT3q
+        z/S9vmOIBZj55RaylPOmg7otZTvDm74JrIHcU9A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=22Rmgy
+        xfJBeRaOGSVLQVBw8m1e4rYRQ3qBL8OQyhN/Y=; b=iJi33v66ZxMXJSINKmsIje
+        i15D2JBbp7LqZbs6GzH5B21XuH4tnx6hWkeFHjk+Hna88R/ZxH7CczzV6s0QWy28
+        El1nJh9TQSIXG17cBmrIz2UezZoIGIopAMJsBkudjXoqEpKg0HdJiMDqgrWhjjKy
+        biUIGl22KQI27E3AvwkIykU1YtztFmxbasx6XNPsRXsJaYeScwxVmquNCASYdUx/
+        l2u28/D9/rL1/UYZRCPj5n4zDXhKd7AYU5RG4lMF0q+VGDHlSpdILS4E9ZjJ0OVP
+        7FDzycKrwQYbJHdJVK9lDOqhUX3Ud7PrgURwFNV6mVs7JdsKtIvU/Tkj1pEcpWVg
+        ==
+X-ME-Sender: <xms:BJPxXRu9Q43kARsWuqi9hPpfRnqs0NAe9O-1iraS9_Td-uCXSUnUSg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudeliedgvdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecuffhomh
+    grihhnpehoiihlrggsshdrohhrghenucfrrghrrghmpehmrghilhhfrhhomheprghnughr
+    vgifsegrjhdrihgurdgruhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:BJPxXc3sE6S4-KnHKsaJfEmfm9cy3_7h_SywkMa7HBmp7UiyIhvRag>
+    <xmx:BJPxXeACy88E_qLznCMjv-WUPyuZTxmzG_P0IHghE4IdODxFLWBKYw>
+    <xmx:BJPxXbUkRlBYL9dpfySX1av0iQDMxTufh5HlSR3AjUJOxmEyU-ZbbA>
+    <xmx:BZPxXS5vw9LN0T0uSZEZixaXr2S6QM5crlBzqRYudQn-waBXInKcuQ>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 6CCE0E00A2; Wed, 11 Dec 2019 20:08:20 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-679-g1f7ccac-fmstable-20191210v1
+Mime-Version: 1.0
+Message-Id: <78c346a0-217c-4216-b16a-498f80e7303a@www.fastmail.com>
+In-Reply-To: <20191211202620.GA31628@cnn>
+References: <20191211202620.GA31628@cnn>
+Date:   Thu, 12 Dec 2019 11:39:59 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     manikandan-e <manikandan.hcl.ers.epl@gmail.com>,
+        "Joel Stanley" <joel@jms.id.au>, vkhemka@fb.com
+Cc:     "Sai Dasari" <sdasari@fb.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        manikandan.e@hcl.com
+Subject: Re: [PATCH v4 2/2] ARM: dts: aspeed: Adding Facebook Yosemite V2 BMC
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 08:35:10AM -0800, Sean Christopherson wrote:
-> On Wed, Dec 11, 2019 at 09:54:23AM +0800, Yang Weijiang wrote:
-> > On Tue, Dec 10, 2019 at 01:23:05PM -0800, Sean Christopherson wrote:
-> > > On Fri, Nov 01, 2019 at 04:52:19PM +0800, Yang Weijiang wrote:
-> > > > @@ -2834,6 +2837,9 @@ void vmx_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0)
-> > > >  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> > > >  	unsigned long hw_cr0;
-> > > >  
-> > > > +	if (!(cr0 & X86_CR0_WP) && kvm_read_cr4_bits(vcpu, X86_CR4_CET))
-> > > > +		cr0 |= X86_CR0_WP;
-> > > 
-> > > Huh?  What's the interaction between CR4.CET and CR0.WP?  If there really
-> > > is some non-standard interaction then it needs to be documented in at least
-> > > the changelog and probably with a comment as well.
-> > >
-> > The processor does not allow CR4.CET to be set if CR0.WP = 0 (similarly, it
-> > does not allow CR0.WP to be cleared while CR4.CET = 1).
+
+
+On Thu, 12 Dec 2019, at 06:56, Manikandan Elumalai wrote:
+> The Yosemite V2 is a facebook multi-node server
+> platform that host four OCP server. The BMC
+> in the Yosemite V2 platform based on AST2500 SoC.
 > 
-> Ya, as you surmised below, this needs to be a #GP condition.
->
-OK, will do it.
+> This patch adds linux device tree entry related to
+> Yosemite V2 specific devices connected to BMC SoC.
+> 
+> --- Reviews summary
+> --- v4[2/2] - Spell and contributor name correction.
+> ---         - License identifier changed to GPL-2.0-or-later.
+> ---         - aspeed-gpio.h removed.
+> ---         - FAN2 tacho channel changed.
+> ---      v4 - Bootargs removed.
+> ---         - Reviewed-by: Vijay Khemka <vkhemka@fb.com>
+> ---      v3 - Uart1 Debug removed .
+> ---         - Acked-by:Andrew Jeffery <andrew@aj.id.au>
 
-> Have you tested SMM at all?  The interaction between CR0 and CR4 may be
-> problematic for em_rsm() and/or rsm_enter_protected_mode().
->
-Not yet, what's an easy way to test code in SMM mode?
-Thanks!
+You need to put the Reviewed-by / Acked-by tags down below your Signed-off-by. That
+way we know that the patch is still ready to go (and they appear in patchwork - you can
+(currently) see that they're missing[1]).
 
-> > > > +
-> > > >  	hw_cr0 = (cr0 & ~KVM_VM_CR0_ALWAYS_OFF);
-> > > >  	if (enable_unrestricted_guest)
-> > > >  		hw_cr0 |= KVM_VM_CR0_ALWAYS_ON_UNRESTRICTED_GUEST;
-> > > > @@ -2936,6 +2942,22 @@ static bool guest_cet_allowed(struct kvm_vcpu *vcpu, u32 feature, u32 mode)
-> > > >  	return false;
-> > > >  }
-> > > >  
-> > > > +bool is_cet_bit_allowed(struct kvm_vcpu *vcpu)
-> > > > +{
-> > > > +	unsigned long cr0;
-> > > > +	bool cet_allowed;
-> > > > +
-> > > > +	cr0 = kvm_read_cr0(vcpu);
-> > > > +	cet_allowed = guest_cet_allowed(vcpu, X86_FEATURE_SHSTK,
-> > > > +					XFEATURE_MASK_CET_USER) ||
-> > > > +		      guest_cet_allowed(vcpu, X86_FEATURE_IBT,
-> > > > +					XFEATURE_MASK_CET_USER);
-> > > > +	if ((cr0 & X86_CR0_WP) && cet_allowed)
-> > > > +		return true;
-> > > 
-> > > So, attempting to set CR4.CET if CR0.WP=0 takes a #GP?  But attempting
-> > > to clear CR0.WP if CR4.CET=1 is ignored?
-> > > 
-> > Per above words in spec., inject #GP to guest in either case?
-> > 
-> > > > +
-> > > > +	return false;
-> > > > +}
-> > > > +
+[1] https://patchwork.ozlabs.org/project/linux-aspeed/list/?series=147912&state=%2A&archive=both
+
+Andrew
+
+> ---      v2 - LPC and VUART removed .
+> ---      v1 - Initial draft.
+> 
+> Signed-off-by: Manikandan Elumalai <manikandan.hcl.ers.epl@gmail.com>
+> ---
+>  .../boot/dts/aspeed-bmc-facebook-yosemitev2.dts    | 148 +++++++++++++++++++++
+>  1 file changed, 148 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
+> 
+> diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts 
+> b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
+> new file mode 100644
+> index 0000000..ffd7f4c
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
+> @@ -0,0 +1,148 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +// Copyright (c) 2018 Facebook Inc.
+> +
+> +/dts-v1/;
+> +
+> +#include "aspeed-g5.dtsi"
+> +/ {
+> +	model = "Facebook Yosemitev2 BMC";
+> +	compatible = "facebook,yosemitev2-bmc", "aspeed,ast2500";
+> +	aliases {
+> +		serial4 = &uart5;
+> +	};
+> +	chosen {
+> +		stdout-path = &uart5;
+> +	};
+> +
+> +	memory@80000000 {
+> +		reg = <0x80000000 0x20000000>;
+> +	};
+> +
+> +	iio-hwmon {
+> +		// VOLATAGE SENSOR
+> +		compatible = "iio-hwmon";
+> +		io-channels = <&adc 0> , <&adc 1> , <&adc 2> ,  <&adc 3> ,
+> +		<&adc 4> , <&adc 5> , <&adc 6> ,  <&adc 7> ,
+> +		<&adc 8> , <&adc 9> , <&adc 10>, <&adc 11> ,
+> +		<&adc 12> , <&adc 13> , <&adc 14> , <&adc 15> ;
+> +	};
+> +};
+> +
+> +&fmc {
+> +	status = "okay";
+> +	flash@0 {
+> +		status = "okay";
+> +		m25p,fast-read;
+> +#include "openbmc-flash-layout.dtsi"
+> +	};
+> +};
+> +
+> +&spi1 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_spi1_default>;
+> +	flash@0 {
+> +		status = "okay";
+> +		m25p,fast-read;
+> +		label = "pnor";
+> +	};
+> +};
+> +
+> +&uart5 {
+> +	// BMC Console
+> +	status = "okay";
+> +};
+> +
+> +&mac0 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_rmii1_default>;
+> +	use-ncsi;
+> +};
+> +
+> +&adc {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_adc0_default
+> +			&pinctrl_adc1_default
+> +			&pinctrl_adc2_default
+> +			&pinctrl_adc3_default
+> +			&pinctrl_adc4_default
+> +			&pinctrl_adc5_default
+> +			&pinctrl_adc6_default
+> +			&pinctrl_adc7_default
+> +			&pinctrl_adc8_default
+> +			&pinctrl_adc9_default
+> +			&pinctrl_adc10_default
+> +			&pinctrl_adc11_default
+> +			&pinctrl_adc12_default
+> +			&pinctrl_adc13_default
+> +			&pinctrl_adc14_default
+> +			&pinctrl_adc15_default>;
+> +};
+> +
+> +&i2c8 {
+> +	//FRU EEPROM
+> +	status = "okay";
+> +	eeprom@51 {
+> +		compatible = "atmel,24c64";
+> +		reg = <0x51>;
+> +		pagesize = <32>;
+> +	};
+> +};
+> +
+> +&i2c9 {
+> +	//INLET & OUTLET TEMP
+> +	status = "okay";
+> +	tmp421@4e {
+> +		compatible = "ti,tmp421";
+> +		reg = <0x4e>;
+> +	};
+> +	tmp421@4f {
+> +		compatible = "ti,tmp421";
+> +		reg = <0x4f>;
+> +	};
+> +};
+> +
+> +&i2c10 {
+> +	//HSC
+> +	status = "okay";
+> +	adm1278@40 {
+> +		compatible = "adi,adm1278";
+> +		reg = <0x40>;
+> +	};
+> +};
+> +
+> +&i2c11 {
+> +	//MEZZ_TEMP_SENSOR
+> +	status = "okay";
+> +	tmp421@1f {
+> +		compatible = "ti,tmp421";
+> +		reg = <0x1f>;
+> +	};
+> +};
+> +
+> +&i2c12 {
+> +	//MEZZ_FRU
+> +	status = "okay";
+> +	eeprom@51 {
+> +		compatible = "atmel,24c64";
+> +		reg = <0x51>;
+> +		pagesize = <32>;
+> +	};
+> +};
+> +
+> +&pwm_tacho {
+> +	//FSC
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
+> +	fan@0 {
+> +		reg = <0x00>;
+> +		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
+> +	};
+> +	fan@1 {
+> +		reg = <0x01>;
+> +		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
+> +	};
+> +};
+> -- 
+> 2.7.4
+> 
+>
