@@ -2,106 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9F9911CB91
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 11:57:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1191411CB8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 11:57:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728917AbfLLK5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 05:57:53 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:52063 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728784AbfLLK5w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 05:57:52 -0500
-Received: from [192.168.1.155] ([77.9.34.244]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MAfpQ-1iYma71nE8-00B8Qa; Thu, 12 Dec 2019 11:57:43 +0100
-Subject: Re: CONFIG_COMMON_CLK vs CONFIG_HAVE_CLK
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <871rtae1m5.wl-kuninori.morimoto.gx@renesas.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <741ff2c5-56b3-5ba0-3d52-39f77d468739@metux.net>
-Date:   Thu, 12 Dec 2019 11:57:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728901AbfLLK5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 05:57:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33752 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728834AbfLLK5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 05:57:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D787CAFDF;
+        Thu, 12 Dec 2019 10:57:34 +0000 (UTC)
+Message-ID: <099cb6558e9a10c1fce73e34484c0eaf21293e61.camel@suse.de>
+Subject: Re: [PATCH for-5.6 2/4] staging: bcm2835-audio: Use managed buffer
+ allocation
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Takashi Iwai <tiwai@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Date:   Thu, 12 Dec 2019 11:57:33 +0100
+In-Reply-To: <20191210141356.18074-3-tiwai@suse.de>
+References: <20191210141356.18074-1-tiwai@suse.de>
+         <20191210141356.18074-3-tiwai@suse.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-KDe450wmkzJFlREF+n28"
+User-Agent: Evolution 3.34.2 
 MIME-Version: 1.0
-In-Reply-To: <871rtae1m5.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:jfkuNy7/fCi0rzXmELMflnyO9841JrTIse6j/+mgmnLvV+lkIX3
- fe4zzmfBIrxM5WfDvnf5SYA9f5OEyygYXXsam95zzASix8a32MCoK3iu2uyh72DEALHb2yB
- c4DIBb0gw3+atYWkzfzaxoyWjdFUDcsr5dMxRzSr1eKFNJJaG393GojSAjFovB4POB9/hI7
- oikSugWYZ/8hfxOgMcGDw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8SnvJGSPurQ=:bEuYauAMSwkYBASfPgtM9l
- iRHu5yB08E1gfsAYnrl2q5bqeaX58GZ30PDNBq2KwZe0DYcdcZL1luYsWtF2SwmW3/nnc+Cff
- /HXZabwyTm4FO3MNyAL/K0djrr9sNbLfnQ0q88QmcFShaYSaHbi5kdSxn0AJC18lkIEyJ7i4X
- 0R9n03xVO+BG+oWGqyal8a0kuU7JXg2MhTb/Ar0D+z4Bvs4P2Jj2+8EiMOn0gdfEey6PKHNMG
- HbUyGGcVfmbXY6kv7/ENdjU0pqwIO86Z5VypCQ4sPuGf5/wwzRkLyL3+kVnDCDbxXEQWylukG
- 4C19DiGdHPhP3JELVzE3Cu/KpAzkw0Uju5Wf+kT4nhbM8JjpwUp1gRQG1SdJ1QSbHachabkgo
- 2GpLXoQOIxSHDHx139wCQL37jqxl2qhT+9xC2KRcd4w6rYl29ZBI2GKq+itG3B4NYkDy7PYps
- eSfs9RbAQ+5EjxTKrsKJj9XHSHKsuFpr4teZ15uslY9yNsTSZe8jsFey53B0TX7VAw9Dh6TQA
- 6sIz6DYuQPSFRtA9q3JcLdZIMcboJuW1bTvWNnOIi0qOqumTxri5xK5wIzsxXSzqorRYXePHq
- ciO+Z+x9tZtEy7fXkKufdeenaUo2D0d7I7KeadN5BqP9eVTrIF1foFN0FR/L5nI5WtrViz5hw
- e1+Z7II77RP+cMIZ10oCHwjH6t/1N6SrOJZyZ684Bu2t6MO68h5GRFRfbquDvFdnRz/ED0ay+
- A8TaFjxaBvFy5dg0S49a6+wYjgE+xNZxjxiXf8D2IwL2a7x7BCuHnexrVd+x3VwMZ7SYdq3wG
- I1mwh4sDQUs0lGt+BuOrYI1Sum1W4HVahSZsXNmQHfkZyHW95xKLsl56UyOiN0sXMVUa5XUQE
- UQZzri4cm8rzCTn+jVHg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.12.19 03:09, Kuninori Morimoto wrote:
 
-> I noticed that there are some CONFIG_HAVE_CLK vs CONFIG_COMMON_CLK mismatch.
-> Because of it, I got compile error at clk_set_min_rate() on SH.
-> SH will have HAVE_CLK, but doesn't have COMMON_CLK.
-> 
-> 	> ARCH=sh make allyesconfig
-> 	> make
-> 	...
-> 	drivers/devfreq/tegra30-devfreq.o: In function `tegra_devfreq_target':
-> 	tegra30-devfreq.c:(.text+0x368): undefined reference to `clk_set_min_rate'
-> 
-> clk_set_min_rate() is under HAVE_CLK at clk.h
-> 
-> 	--- clk.h ---
-> =>	#ifdef CONFIG_HAVE_CLK
-> 	...
-> 	int clk_set_min_rate(struct clk *clk, unsigned long rate);
-> 	...
-> 	#else /* !CONFIG_HAVE_CLK */
-> 	static inline int clk_set_min_rate(struct clk *clk, unsigned long rate)
-> 	...
-> 	-------------
-> 
-> It is implemented at clk.c.
-> But it will be compiled via COMMON_CLK
-> 
-> 	--- Makefile ---
-> 	...
-> =>	obj-$(CONFIG_COMMON_CLK)	+= clk.o
+--=-KDe450wmkzJFlREF+n28
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-You've got CONFIG_HAVE_CLK enabled, but CONFIG_COMMON_CLK disabled ?
+On Tue, 2019-12-10 at 15:13 +0100, Takashi Iwai wrote:
+> Clean up the driver with the new managed buffer allocation API.
+> The hw_params and hw_free callbacks became superfluous and dropped.
+>=20
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
 
-hmm, the whole CONFIG_HAVE_CLK looks a bit weird to me. I wonder what's
-the actual purpose of having this arch-specific.
+Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-IMHO, we should sort out whether there are some things that some arch
-really *needs*, and what could be optional - then split that into
-separate modules along this line.
-
-It seems that clk_set_min_rate() belongs to CONFIG_COMMON_CLK, and
-tegra30-devfreq.c needds to depend on CONFIG_COMMON_CLK.
+Thanks!
 
 
---mtx
+--=-KDe450wmkzJFlREF+n28
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl3yHR0ACgkQlfZmHno8
+x/7T1wf9HqdO2587apiYerHZt0Jf/EfpHtnps8r5NNLydl8BXf/nNo9Nnfb7E6vE
+tamYcG/rVIzfWZ2aBeIaG1jxrfKwZFrTy8T+djPw4Y94x8HTLf7S+qhJs+ppzFHo
+wAF3hzz25fUWCG0z1q2bEQXm4qmc5Irhdy/o9rESwdVF5Z3w+1XGo3J9HIDj4bKw
+bKl63amT+yioLN4/cetU9IkEm2TUqKwR3qlH0TZz0EvCiXoOGR2t5kzT92YrROJL
+Rxw/PyZ7gqJ4DM6fQ6aWUzo+/p82ASRfrfi0456846zQVShb7zYNAud7fODTsELR
+aIt52MtSc3sl2zjH+jbV+U3hRV8Vkw==
+=acj8
+-----END PGP SIGNATURE-----
+
+--=-KDe450wmkzJFlREF+n28--
+
