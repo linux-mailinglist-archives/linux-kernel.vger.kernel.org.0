@@ -2,93 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF5411CB3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 11:47:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9201F11CB1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 11:39:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbfLLKrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 05:47:05 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40444 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728784AbfLLKrE (ORCPT
+        id S1728763AbfLLKjm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 05:39:42 -0500
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:38435 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728589AbfLLKjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 05:47:04 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q8so551994pfh.7
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 02:47:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=fE7IMePVLjFQjnYVNQlVTOVLLvpMYOoKCNMHpXwByQE=;
-        b=EuHUCtrpzZjIKeMwhyCsgclqRS53cCfdpAYCbWldWKNmcScTnhi64z/RsE/aA7VEer
-         JKH2n3QfWHAZO28XgcsvBHEQJPoYGcg9YOKnqK+7pDBpG/EUxUUZOpuQm8Q80v7zyfxc
-         MTGN7mlm6lLZIDLT5z/C7rnQoGiaqMzvW6BJ1Lls4ayKIcHpMeul81N28pNEGZcL+psH
-         PhnxGIS7CM+IOCWsw9hFgcQ/MObEgHI15ge06gpvLvgZHmuuHZvr6Gosd9TvAeU7SrDQ
-         wYZYG10uF7xzX7QooSfVLM3Xsu0/33f1xiGwHcM+iZXwFtL5TEwSdoE+V4VBoACMRQQE
-         4h6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=fE7IMePVLjFQjnYVNQlVTOVLLvpMYOoKCNMHpXwByQE=;
-        b=dAv0uIr5jBJrX4r55plRPYfOYzdHsgMp+v2oM5Z5T460ikjPzLSaGgk+j3x4uTccFW
-         VVcxYaOIOP3F6I1tmRRr4PED+W4x4TiBLICW+Benghmrbyu9dpjvTRUBwM9LIvgdDaXj
-         JpRIrmZRGFTZ62hFzmjo/M7HQPtRiVu5E2YNE2WfgUzro9rxmxK+lbBAQCBhgkIUW12G
-         wPx0/oPZ/gqp69YJ0a4zhpDzS6Dufjp7ucQxLOQbIpnIwwqP+9okY41xO76JTOmiuU68
-         4T5jZPUVnQBGFu2C1QQZ1bB7i1ZNqqSoNHkaiYgF5bRGV2I1vPbUlCFXUvpoxChb99Fb
-         OmZQ==
-X-Gm-Message-State: APjAAAURYMXzZjiNVnW8y0UbXeZtZpGXJ9EnDuiuiSn9UAcFwcZR1kjF
-        0j0EtWBJyU6lYmswC19afXdZeUZHFTdKSg==
-X-Google-Smtp-Source: APXvYqxWdvDwQltpsuhPKSoxi1BqstgmYgEslmyM4ahlal9Rw/GqAYZAzIv0H1YLCLS/Q8y43/TNbw==
-X-Received: by 2002:aa7:850c:: with SMTP id v12mr9061225pfn.188.1576147623344;
-        Thu, 12 Dec 2019 02:47:03 -0800 (PST)
-Received: from localhost ([14.96.118.80])
-        by smtp.gmail.com with ESMTPSA id l18sm6635869pff.79.2019.12.12.02.47.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 02:47:02 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, agross@kernel.org, swboyd@chromium.org,
-        stephan@gerhold.net, olof@lixom.net,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-pm@vger.kernel.org
-Subject: [PATCH v2] drivers: thermal: tsens: Work with old DTBs
-Date:   Thu, 12 Dec 2019 16:08:14 +0530
-Message-Id: <cea3317c5d793db312064d68b261ad420a4a81b1.1576146898.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1576146898.git.amit.kucheria@linaro.org>
-References: <cover.1576146898.git.amit.kucheria@linaro.org>
+        Thu, 12 Dec 2019 05:39:42 -0500
+Received: from [IPv6:2001:983:e9a7:1:1c4a:480a:7ba1:9c65]
+ ([IPv6:2001:983:e9a7:1:1c4a:480a:7ba1:9c65])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id fLsgiYsLcGyJwfLshixjqv; Thu, 12 Dec 2019 11:39:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1576147180; bh=KZ03RxcJQ7IpU9N7i9dUPkS6LtZ5asybaeAyewvmUuA=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=Q8Q0AP1/GpoSinBV4NfVIGCUhmhBF8NTjn37VVEeO2ZDq0Yb7yf8nIOiynqk058KR
+         lrk9NuMgN4sVd0Rf27AhSxOeZG/Q6D/Iuw2tmG21MkZkjNH6OBhSx7eMzxwl48XrhX
+         tBC4P3T8QK6bGOicO+cMvX47TjnVrOOD9CdOTmA62h3o8O1V+K4zP3w0Z/ACDum6zI
+         /R2SgQztYTBbliovBfv6LSBgesh8uL9AfOvsBL65ydaHNZohbdWDGG4cIVa9fkNCUm
+         uOQ97T0PoFyD+LWJNRsTOpFlkssAQZcnJr19k1lbArYzY/JMZPlCjKRv0uW/3T6nZD
+         QdEWFHXfqnqjg==
+Subject: Re: [PATCH] media: exynos4-is: add missed clk_disable_unprepare in
+ remove
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191104154942.8935-1-hslester96@gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <29590e4f-cb9e-c9ac-608c-b7b72c308d25@xs4all.nl>
+Date:   Thu, 12 Dec 2019 11:39:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191104154942.8935-1-hslester96@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNUG4uRitZeKdWfgazy03OKDZeNHpu/zYbU7lFqsLQVzvhPtSN/qHYwNYnsfJOOlWXm50QkhfippMYJWkrYp4MOJscB6J4SK8Cs0NwvTcuc/v8pjHghH
+ 3rp4xs6O2eaA8cPfpx6Akjfe2nqHEYxuVvOZYoHHzusAKe6HKk6FLOQ2v3v2IKr6P1o1nqCVncofmrbkzihr1RYriUzaNGLqR2w+jFvSIdgN7UOInfbaj/vp
+ yFmuwi6OF3RwfM5wCha9XBquMsMj107D7fiFnum8jYOgLXl73cf9ELUjB6ZNEH/4jPBocuiQEc4A0+EWBt3eDm030U5EuE3eb6OT87QgQkOZfbhml9elZaN2
+ j8875GcFSGC94GWExwwN43VejsTR2agiFtL04hx4wFfCDiBkIgyOhLA+gQgr7KsLlWEcVE/k5JwVlOhYxqAS4O6c42bWd4joATbXyh3ksSqSIGJwXkfaG5HR
+ qtetCaA4v9RC5q/R9DJIYEkuzDO3rCETzSvDCSfEl3F/iwZvs+29WFPx8v9JrD1f9Df6QYvQgDMq96RbdpmZlFEf84To9rsJiByRLYsEdKCGebLRmvbl6+Fv
+ Zfbif4gABZow32cfBxb6Ek1/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order for the old DTBs to continue working, the new interrupt code
-must not return an error if interrupts are not defined. Don't return an
-error in case of -ENXIO.
+On 11/4/19 4:49 PM, Chuhong Yuan wrote:
+> This driver forgets to disable and unprepare clock when remove.
+> Add a call to clk_disable_unprepare to fix it.
 
-Fixes: 634e11d5b450a ("drivers: thermal: tsens: Add interrupt support")
-Suggested-by: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- drivers/thermal/qcom/tsens.c | 3 +++
- 1 file changed, 3 insertions(+)
+I'd like an Ack from Samsung before I apply this. I see this in the probe() in fimc-lite.c:
 
-diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-index 015e7d2015985..0e7cf52369326 100644
---- a/drivers/thermal/qcom/tsens.c
-+++ b/drivers/thermal/qcom/tsens.c
-@@ -110,6 +110,9 @@ static int tsens_register(struct tsens_priv *priv)
- 	irq = platform_get_irq_byname(pdev, "uplow");
- 	if (irq < 0) {
- 		ret = irq;
-+		/* For old DTs with no IRQ defined */
-+		if (irq == -ENXIO)
-+			ret = 0;
- 		goto err_put_device;
- 	}
- 
--- 
-2.20.1
+       if (!pm_runtime_enabled(dev)) {
+                ret = clk_prepare_enable(fimc->clock);
+                if (ret < 0)
+                        goto err_sd;
+        }
+
+So is it right to always call clk_disable_unprepare in the remove()?
+
+I suspect it is correct, but I would like someone else to take a look as well.
+
+Regards,
+
+	Hans
+
+> 
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> ---
+>  drivers/media/platform/exynos4-is/fimc-lite.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+> index e87c6a09205b..6748bd96aada 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+> @@ -1614,6 +1614,7 @@ static int fimc_lite_remove(struct platform_device *pdev)
+>  	struct fimc_lite *fimc = platform_get_drvdata(pdev);
+>  	struct device *dev = &pdev->dev;
+>  
+> +	clk_disable_unprepare(fimc->clock);
+>  	pm_runtime_disable(dev);
+>  	pm_runtime_set_suspended(dev);
+>  	fimc_lite_unregister_capture_subdev(fimc);
+> 
 
