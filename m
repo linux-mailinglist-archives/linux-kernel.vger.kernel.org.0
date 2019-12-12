@@ -2,142 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65D6711C325
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8827211C31F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:18:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfLLCUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 21:20:33 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:44367 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727592AbfLLCUc (ORCPT
+        id S1727782AbfLLCS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 21:18:57 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:30495 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbfLLCS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 21:20:32 -0500
-X-UUID: 54fa3d0fbbb844c7b2cebbf20008eb2f-20191212
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=9c+CKJCw7ds62qe6zhspsMPOjl/4Hp7ooomuS+RoEEI=;
-        b=YfzqF2gBK9cOf3P5+RyjdFs2uoFb9Bzn0jlneCtjpAaRPkqAU+238zimE7sJYgpLtNzYIf8AqphROllQ0il8eJEu+OgkH0YYFBy/wziUGpGE4FmhXkygG0dh1hTAIpkVm2ExDxRGT0um+URS5a9BZYn/hnl18fkE4MF/5c0Hmp4=;
-X-UUID: 54fa3d0fbbb844c7b2cebbf20008eb2f-20191212
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <dennis-yc.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 546727836; Thu, 12 Dec 2019 10:20:27 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 12 Dec 2019 10:20:06 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 12 Dec 2019 10:19:58 +0800
-Message-ID: <1576117225.21687.6.camel@mtkswgap22>
-Subject: Re: [PATCH v2 04/14] mailbox: mediatek: cmdq: clear task in channel
- before shutdown
-From:   Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Thu, 12 Dec 2019 10:20:25 +0800
-In-Reply-To: <1576116202.16444.4.camel@mtksdaap41>
-References: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-         <1574819937-6246-6-git-send-email-dennis-yc.hsieh@mediatek.com>
-         <1575946181.16676.4.camel@mtksdaap41> <1576113221.17653.6.camel@mtkswgap22>
-         <1576114297.11762.1.camel@mtksdaap41>
-         <1576115494.17653.21.camel@mtkswgap22>
-         <1576116202.16444.4.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Wed, 11 Dec 2019 21:18:56 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191212021854epoutp02b8fba53d54cf68783c2e00e5af8d569c~ffi7g0d4M1774517745epoutp02P
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 02:18:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191212021854epoutp02b8fba53d54cf68783c2e00e5af8d569c~ffi7g0d4M1774517745epoutp02P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576117134;
+        bh=D/mpbRPQ7PYfFvRy7oND/XIuRaRfz2xb+Q3d4iAPYow=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=pJvOMGSQ0eAzPuWKeNDR7yMlvEx5cDeybXUYzAxh7fsfr2ol2ucJZpCuzuzlQo5fY
+         mc6WVq2Irr/u0n/idJt32lpvfx6XxWdYMPRQB5NOnB5eG3CY+ZmA+jQ92KfcaWiqCH
+         EiKs7jndayvtqsDHVSU7yMsj6nsk0mkho8f9sSOk=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191212021853epcas1p11159d588db64827853e04199855f5a5a~ffi6qWCpl0318503185epcas1p1j;
+        Thu, 12 Dec 2019 02:18:53 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.155]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47YHXj6f6szMqYkZ; Thu, 12 Dec
+        2019 02:18:45 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A6.7E.48498.583A1FD5; Thu, 12 Dec 2019 11:18:45 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191212021845epcas1p25476799a9de72f80c722b59ca67ce34d~ffiy0BxU81369213692epcas1p2c;
+        Thu, 12 Dec 2019 02:18:45 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191212021845epsmtrp11780f5ac5590fa048a9cea31ce592e19~ffiyzXr_p0161301613epsmtrp1G;
+        Thu, 12 Dec 2019 02:18:45 +0000 (GMT)
+X-AuditID: b6c32a36-a3dff7000001bd72-40-5df1a385bfc4
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        39.E8.10238.483A1FD5; Thu, 12 Dec 2019 11:18:44 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191212021844epsmtip1fc1a27e37dfdf65cf773da3a3d08a35b~ffiyqMFgD0624706247epsmtip1w;
+        Thu, 12 Dec 2019 02:18:44 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     linux-pm@vger.kernel.org
+Cc:     cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] PM / devfreq: rk3399_dmc: Add COMPILE_TEST dependency for
+ build test
+Date:   Thu, 12 Dec 2019 11:25:08 +0900
+Message-Id: <20191212022508.13716-1-cw00.choi@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsWy7bCmrm7r4o+xBm+Oilhc//Kc1eJs0xt2
+        i8u75rBZfO49wmhxu3EFmwOrR9+WVYwenzfJBTBFZdtkpCampBYppOYl56dk5qXbKnkHxzvH
+        m5oZGOoaWlqYKynkJeam2iq5+AToumXmAG1TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gq
+        pRak5BRYFugVJ+YWl+al6yXn51oZGhgYmQIVJmRnLGpvYCzYxFWxYdcFpgbGxxxdjJwcEgIm
+        Ep8PTmIDsYUEdjBKzGpJ6GLkArI/MUpM2jKdGcL5xihx+MNnFpiOU48fs0Ek9jJKvPl4kwnC
+        +cIosfNnGyNIFZuAlsT+FzfA5ooIyEhMvbKfFcRmFsiTWHtlF1hcWCBconn9ajCbRUBVYt36
+        FmYQm1fASmLlrztsENvkJVZvOAB2hoTAU1aJv//vAW3jAHJcJFbPTIWoEZZ4dXwLO4QtJfGy
+        vw3KrpZYefIIG0RvB6PElv0XWCESxhL7l04Gm8MsoCmxfpc+RFhRYufvuYwQd/JJvPvawwqx
+        ileio00IokRZ4vKDu0wQtqTE4vZONogSD4m2bk9IKMZKnDm5nn0Co+wshPkLGBlXMYqlFhTn
+        pqcWGxYYIcfRJkZw+tEy28G46JzPIUYBDkYlHt4H0h9jhVgTy4orcw8xSnAwK4nwHm97FyvE
+        m5JYWZValB9fVJqTWnyI0RQYdhOZpUST84GpMa8k3tDUyNjY2MLE0MzU0FBJnJfjx8VYIYH0
+        xJLU7NTUgtQimD4mDk6pBsZNmQqr/Yqb3/7Lk+P5OCHuWdFcQW91tm/rdX8a8+z5s9PhS83M
+        XaHKFnwGPs+uvn2guj/lkJzNfXfLaweND1zZ+nWKwKcX8fsK9WaXKglPs6qXzk22jTBQsNyk
+        4rH+wv7FjI57xR2FlqyKvnyUZ9m+bwE2FzqnGf+9WbCo9qBdho/2kf8sXHeVWIozEg21mIuK
+        EwFMrTDGVQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEJMWRmVeSWpSXmKPExsWy7bCSnG7L4o+xBgcbbS2uf3nOanG26Q27
+        xeVdc9gsPvceYbS43biCzYHVo2/LKkaPz5vkApiiuGxSUnMyy1KL9O0SuDIWtTcwFmziqtiw
+        6wJTA+Njji5GTg4JAROJU48fs3UxcnEICexmlJjdNpUVIiEpMe3iUeYuRg4gW1ji8OFiiJpP
+        jBK/j7Yyg9SwCWhJ7H9xgw3EFhGQkZh6ZT9YL7NAkcTJ7Q/YQWxhgVCJZVe3gdWzCKhKrFvf
+        AmbzClhJrPx1hw1il7zE6g0HmCcw8ixgZFjFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7
+        iREcElqaOxgvL4k/xCjAwajEwztD/WOsEGtiWXFl7iFGCQ5mJRHe423vYoV4UxIrq1KL8uOL
+        SnNSiw8xSnOwKInzPs07FikkkJ5YkpqdmlqQWgSTZeLglGpgrJZ0UvR2uFawTJ5zZ9+5uYmt
+        NySm2ApoNFTPW5n+5dPOwlPJJ18sSIvmnf9Y6PsV3zdzXmXuTdV4qi6UtfTUhe+r3576zuiY
+        6OjsHc9755xVkr/cnKttO268dwia+uUY295lb/d4bFi53HdL6Ov97mbd2tvW5N6ov7B4byLn
+        u6bJS1b+jjd/+VWJpTgj0VCLuag4EQDjpFoUBQIAAA==
+X-CMS-MailID: 20191212021845epcas1p25476799a9de72f80c722b59ca67ce34d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191212021845epcas1p25476799a9de72f80c722b59ca67ce34d
+References: <CGME20191212021845epcas1p25476799a9de72f80c722b59ca67ce34d@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQ0ssDQoNCk9uIFRodSwgMjAxOS0xMi0xMiBhdCAxMDowMyArMDgwMCwgQ0sgSHUgd3JvdGU6
-DQo+IEhpLCBEZW5uaXM6DQo+IA0KPiBPbiBUaHUsIDIwMTktMTItMTIgYXQgMDk6NTEgKzA4MDAs
-IERlbm5pcy1ZQyBIc2llaCB3cm90ZToNCj4gPiBIaSBDSywNCj4gPiANCj4gPiBPbiBUaHUsIDIw
-MTktMTItMTIgYXQgMDk6MzEgKzA4MDAsIENLIEh1IHdyb3RlOg0KPiA+ID4gSGksIERlbm5pczoN
-Cj4gPiA+IA0KPiA+ID4gT24gVGh1LCAyMDE5LTEyLTEyIGF0IDA5OjEzICswODAwLCBEZW5uaXMt
-WUMgSHNpZWggd3JvdGU6DQo+ID4gPiA+IEhpIENLLA0KPiA+ID4gPiANCj4gPiA+ID4gT24gVHVl
-LCAyMDE5LTEyLTEwIGF0IDEwOjQ5ICswODAwLCBDSyBIdSB3cm90ZToNCj4gPiA+ID4gPiBIaSwg
-RGVubmlzOg0KPiA+ID4gPiA+IA0KPiA+ID4gPiA+IE9uIFdlZCwgMjAxOS0xMS0yNyBhdCAwOTo1
-OCArMDgwMCwgRGVubmlzIFlDIEhzaWVoIHdyb3RlOg0KPiA+ID4gPiA+ID4gRG8gc3VjY2VzcyBj
-YWxsYmFjayBpbiBjaGFubmVsIHdoZW4gc2h1dGRvd24uIEZvciB0aG9zZSB0YXNrIG5vdCBmaW5p
-c2gsDQo+ID4gPiA+ID4gPiBjYWxsYmFjayB3aXRoIGVycm9yIGNvZGUgdGh1cyBjbGllbnQgaGFz
-IGNoYW5jZSB0byBjbGVhbnVwIG9yIHJlc2V0Lg0KPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiBT
-aWduZWQtb2ZmLWJ5OiBEZW5uaXMgWUMgSHNpZWggPGRlbm5pcy15Yy5oc2llaEBtZWRpYXRlay5j
-b20+DQo+ID4gPiA+ID4gPiAtLS0NCj4gPiA+ID4gPiA+ICBkcml2ZXJzL21haWxib3gvbXRrLWNt
-ZHEtbWFpbGJveC5jIHwgMjYgKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiA+ID4gPiA+
-ICAxIGZpbGUgY2hhbmdlZCwgMjYgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gPiA+ID4gDQo+ID4gPiA+
-ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tYWlsYm94L210ay1jbWRxLW1haWxib3guYyBiL2Ry
-aXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmMNCj4gPiA+ID4gPiA+IGluZGV4IGZkNTE5
-YjZmNTE4Yi4uYzEyYTc2OGQxMTc1IDEwMDY0NA0KPiA+ID4gPiA+ID4gLS0tIGEvZHJpdmVycy9t
-YWlsYm94L210ay1jbWRxLW1haWxib3guYw0KPiA+ID4gPiA+ID4gKysrIGIvZHJpdmVycy9tYWls
-Ym94L210ay1jbWRxLW1haWxib3guYw0KPiA+ID4gPiA+ID4gQEAgLTQ1MCw2ICs0NTAsMzIgQEAg
-c3RhdGljIGludCBjbWRxX21ib3hfc3RhcnR1cChzdHJ1Y3QgbWJveF9jaGFuICpjaGFuKQ0KPiA+
-ID4gPiA+ID4gIA0KPiA+ID4gPiA+ID4gIHN0YXRpYyB2b2lkIGNtZHFfbWJveF9zaHV0ZG93bihz
-dHJ1Y3QgbWJveF9jaGFuICpjaGFuKQ0KPiA+ID4gPiA+ID4gIHsNCj4gPiA+ID4gPiA+ICsJc3Ry
-dWN0IGNtZHFfdGhyZWFkICp0aHJlYWQgPSAoc3RydWN0IGNtZHFfdGhyZWFkICopY2hhbi0+Y29u
-X3ByaXY7DQo+ID4gPiA+ID4gPiArCXN0cnVjdCBjbWRxICpjbWRxID0gZGV2X2dldF9kcnZkYXRh
-KGNoYW4tPm1ib3gtPmRldik7DQo+ID4gPiA+ID4gPiArCXN0cnVjdCBjbWRxX3Rhc2sgKnRhc2ss
-ICp0bXA7DQo+ID4gPiA+ID4gPiArCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+ID4gPiA+ID4gPiAr
-DQo+ID4gPiA+ID4gPiArCXNwaW5fbG9ja19pcnFzYXZlKCZ0aHJlYWQtPmNoYW4tPmxvY2ssIGZs
-YWdzKTsNCj4gPiA+ID4gPiA+ICsJaWYgKGxpc3RfZW1wdHkoJnRocmVhZC0+dGFza19idXN5X2xp
-c3QpKQ0KPiA+ID4gPiA+ID4gKwkJZ290byBkb25lOw0KPiA+ID4gPiA+ID4gKw0KPiA+ID4gPiA+
-ID4gKwlXQVJOX09OKGNtZHFfdGhyZWFkX3N1c3BlbmQoY21kcSwgdGhyZWFkKSA8IDApOw0KPiA+
-ID4gPiA+ID4gKw0KPiA+ID4gPiA+ID4gKwkvKiBtYWtlIHN1cmUgZXhlY3V0ZWQgdGFza3MgaGF2
-ZSBzdWNjZXNzIGNhbGxiYWNrICovDQo+ID4gPiA+ID4gPiArCWNtZHFfdGhyZWFkX2lycV9oYW5k
-bGVyKGNtZHEsIHRocmVhZCk7DQo+ID4gPiA+ID4gPiArCWlmIChsaXN0X2VtcHR5KCZ0aHJlYWQt
-PnRhc2tfYnVzeV9saXN0KSkNCj4gPiA+ID4gPiA+ICsJCWdvdG8gZG9uZTsNCj4gPiA+ID4gPiA+
-ICsNCj4gPiA+ID4gPiA+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlKHRhc2ssIHRtcCwgJnRo
-cmVhZC0+dGFza19idXN5X2xpc3QsDQo+ID4gPiA+ID4gPiArCQkJCSBsaXN0X2VudHJ5KSB7DQo+
-ID4gPiA+ID4gPiArCQljbWRxX3Rhc2tfZXhlY19kb25lKHRhc2ssIC1FQ09OTkFCT1JURUQpOw0K
-PiA+ID4gPiA+ID4gKwkJa2ZyZWUodGFzayk7DQo+ID4gPiA+ID4gPiArCX0NCj4gPiA+ID4gPiA+
-ICsNCj4gPiA+ID4gPiA+ICsJY21kcV90aHJlYWRfZGlzYWJsZShjbWRxLCB0aHJlYWQpOw0KPiA+
-ID4gPiA+ID4gKwljbGtfZGlzYWJsZShjbWRxLT5jbG9jayk7DQo+ID4gPiA+ID4gPiArZG9uZToN
-Cj4gPiA+ID4gPiANCj4gPiA+ID4gPiBjbWRxX3RocmVhZF9yZXN1bWUodGhyZWFkKTsNCj4gPiA+
-ID4gPiANCj4gPiA+ID4gPiBSZWdhcmRzLA0KPiA+ID4gPiA+IENLDQo+ID4gPiA+ID4gDQo+ID4g
-PiA+IA0KPiA+ID4gPiBDYWxsIHJlc3VtZSBoZXJlIHdpbGwgY2F1c2UgdmlvbGF0aW9uLiBUaGUg
-dGhyZWFkLT50YXNrX2J1c3lfbGlzdCBlbXB0eQ0KPiA+ID4gPiBtZWFucyBubyB0YXNrIHdvcmsg
-aW4gZ2NlIGFuZCB0aHJlYWQgc3RhdGUgc2hvdWxkIGFscmVhZHkgZGlzYWJsZQ0KPiA+ID4gPiB3
-aXRob3V0IGNsb2NrLCB3aGljaCBpcyB3aGF0IHdlIHdhbnQgc2luY2UgY2xpZW50IHRyeSB0byBz
-aHV0IGRvd24gdGhpcw0KPiA+ID4gPiBtYm94IGNoYW5uZWwuIFNvIEkgdGhpbmsgd2UgZG9uJ3Qg
-bmVlZCByZXN1bWUgaGVyZS4NCj4gPiA+ID4gDQo+ID4gPiANCj4gPiA+IE9LLiBXaGVuIGNsaWVu
-dCBmcmVlIGNoYW5uZWwsIHRocmVhZCBpcyBzdXNwZW5kZWQuIFRoZW4gY2xpZW50IHJlcXVlc3QN
-Cj4gPiA+IGNoYW5uZWwsIHdoZXJlIGRvIHlvdSByZXN1bWUgdGhyZWFkPw0KPiA+ID4gDQo+ID4g
-DQo+ID4gd2hlbiBjbGllbnQgc2VuZCBuZXcgcGt0IHRvIG5ldyBjaGFubmVsLCBjbWRxX21ib3hf
-c2VuZF9kYXRhKCkgd2lsbA0KPiA+IGVuYWJsZSB0aHJlYWQuDQo+IA0KPiBpbiBjbWRxX21ib3hf
-c2VuZF9kYXRhKCksIGl0IHdvdWxkIHJ1biBiZWxvdyBjb21tYW5kOg0KPiANCj4gV0FSTl9PTihj
-bGtfZW5hYmxlKGNtZHEtPmNsb2NrKSA8IDApOw0KPiBXQVJOX09OKGNtZHFfdGhyZWFkX3Jlc2V0
-KGNtZHEsIHRocmVhZCkgPCAwKTsNCj4gDQo+IHdyaXRlbCh0YXNrLT5wYV9iYXNlLCB0aHJlYWQt
-PmJhc2UgKyBDTURRX1RIUl9DVVJSX0FERFIpOw0KPiB3cml0ZWwodGFzay0+cGFfYmFzZSArIHBr
-dC0+Y21kX2J1Zl9zaXplLA0KPiAgICAgICAgdGhyZWFkLT5iYXNlICsgQ01EUV9USFJfRU5EX0FE
-RFIpOw0KPiB3cml0ZWwodGhyZWFkLT5wcmlvcml0eSwgdGhyZWFkLT5iYXNlICsgQ01EUV9USFJf
-UFJJT1JJVFkpOw0KPiB3cml0ZWwoQ01EUV9USFJfSVJRX0VOLCB0aHJlYWQtPmJhc2UgKyBDTURR
-X1RIUl9JUlFfRU5BQkxFKTsNCj4gd3JpdGVsKENNRFFfVEhSX0VOQUJMRUQsIHRocmVhZC0+YmFz
-ZSArIENNRFFfVEhSX0VOQUJMRV9UQVNLKTsNCj4gDQo+IERvIHlvdSBtZWFuIENNRFFfVEhSX0VO
-QUJMRV9UQVNLIGlzIHNldCB0byBDTURRX1RIUl9FTkFCTEVELCB0aGVuDQo+IENNRFFfVEhSX1NV
-U1BFTkRfVEFTSyB3b3VsZCBiZSBhdXRvbWF0aWNhbGx5IHNldCB0byBDTURRX1RIUl9SRVNVTUU/
-IElmDQo+IHRoaXMgaGFyZHdhcmUgd29yayBpbiBzbyBzcGVjaWFsIGJlaGF2aW9yLCBwbGVhc2Ug
-YWRkIGNvbW1lbnQgZm9yIHRoaXMuDQo+IA0KPiBSZWdhcmRzLA0KPiBDSw0KPiANCg0Kc29ycnkg
-Zm9yIG5vdCBjbGVhcmx5IGV4cGxhaW4gYmVmb3JlDQoNCmNhbGwgdG8gY21kcV90aHJlYWRfcmVz
-ZXQoKSB3aWxsIHJlc2V0IHRocmVhZCBzdGF0dXMsIHdoaWNoIGluY2x1ZGUNCnN1c3BlbmQgc3Rh
-dGUuIHRoZSBDTURRX1RIUl9TVVNQRU5EX1RBU0sgd2lsbCBiZSBjbGVhciBhZnRlciByZXNldCwg
-dGh1cw0Kd2UgY2FuIHNpbXBseSBzZXQgQ01EUV9USFJfRU5BQkxFX1RBU0sgdG8gQ01EUV9USFJf
-RU5BQkxFRCBhbmQgdGhlbg0KdGhyZWFkIHJ1bm5pbmcgYWdhaW4uDQoNCkkgd2lsbCBhZGQgY29t
-bWVudCBpbiBib3RoIGNtZHFfbWJveF9zZW5kX2RhdGEoKSBhbmQNCmNtZHFfbWJveF9zaHV0ZG93
-bigpIHRvIGNsYXJpZnkgdGhpcyBoYXJkd2FyZSBiZWhhdmlvci4NCg0KDQpSZWdhcmRzLA0KRGVu
-bmlzDQoNCj4gPiANCj4gPiANCj4gPiBSZWdhcmRzLA0KPiA+IERlbm5pcw0KPiA+IA0KPiA+ID4g
-UmVnYXJkcywNCj4gPiA+IENLDQo+ID4gPiANCj4gPiA+ID4gDQo+ID4gPiA+IFJlZ2FyZHMsDQo+
-ID4gPiA+IERlbm5pcw0KPiA+ID4gPiANCj4gPiA+ID4gPiA+ICsJc3Bpbl91bmxvY2tfaXJxcmVz
-dG9yZSgmdGhyZWFkLT5jaGFuLT5sb2NrLCBmbGFncyk7DQo+ID4gPiA+ID4gPiAgfQ0KPiA+ID4g
-PiA+ID4gIA0KPiA+ID4gPiA+ID4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWJveF9jaGFuX29wcyBj
-bWRxX21ib3hfY2hhbl9vcHMgPSB7DQo+ID4gPiA+ID4gDQo+ID4gPiA+ID4gDQo+ID4gPiA+IA0K
-PiA+ID4gPiANCj4gPiA+IA0KPiA+ID4gDQo+ID4gDQo+ID4gDQo+IA0KPiANCg0K
+To build test, add COMPILE_TEST depedency to both ARM_RK3399_DMC_DEVFREQ
+and DEVFREQ_EVENT_ROCKCHIP_DFI configuration.
+
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/devfreq/Kconfig       | 2 +-
+ drivers/devfreq/event/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index 8485f948caeb..c9b1039ade64 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -125,7 +125,7 @@ config ARM_TEGRA20_DEVFREQ
+ 
+ config ARM_RK3399_DMC_DEVFREQ
+ 	tristate "ARM RK3399 DMC DEVFREQ Driver"
+-	depends on ARCH_ROCKCHIP
++	depends on ARCH_ROCKCHIP || COMPILE_TEST
+ 	select DEVFREQ_EVENT_ROCKCHIP_DFI
+ 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+ 	select PM_DEVFREQ_EVENT
+diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
+index cef2cf5347ca..a53e0a6ffdfe 100644
+--- a/drivers/devfreq/event/Kconfig
++++ b/drivers/devfreq/event/Kconfig
+@@ -34,7 +34,7 @@ config DEVFREQ_EVENT_EXYNOS_PPMU
+ 
+ config DEVFREQ_EVENT_ROCKCHIP_DFI
+ 	tristate "ROCKCHIP DFI DEVFREQ event Driver"
+-	depends on ARCH_ROCKCHIP
++	depends on ARCH_ROCKCHIP || COMPILE_TEST
+ 	help
+ 	  This add the devfreq-event driver for Rockchip SoC. It provides DFI
+ 	  (DDR Monitor Module) driver to count ddr load.
+-- 
+2.17.1
 
