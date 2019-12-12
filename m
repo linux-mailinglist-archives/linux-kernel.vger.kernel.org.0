@@ -2,100 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A3E11CB26
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 11:42:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E9811CB01
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 11:36:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728770AbfLLKmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 05:42:23 -0500
-Received: from mail1.perex.cz ([77.48.224.245]:43076 "EHLO mail1.perex.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728605AbfLLKmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 05:42:23 -0500
-X-Greylist: delayed 352 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Dec 2019 05:42:22 EST
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 7D1ECA003F;
-        Thu, 12 Dec 2019 11:36:26 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 7D1ECA003F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-        t=1576146986; bh=YtTaENPq9i4RKmnvPYc5L3nsNLdbKw7vKEt54nHQbGI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=USc9YNRCsV7vZpdI3NBwrO18EULFynImYU0yxKpMDDo84nWb/UQUxHU15JQDZbvWo
-         UKoeC6tehU870BYiTN8tbMtb5Kle0QmBQfrqVmQEOYiDlSflATNe+0FmIQdGu1mXfh
-         fZpLfcpHG+LSnmTewAmG6QVz0NwielNKhbkMAqd8=
-Received: from p50.perex-int.cz (unknown [192.168.100.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: perex)
-        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-        Thu, 12 Dec 2019 11:36:17 +0100 (CET)
-Subject: Re: [PATCH] ASoC: Add MediaTek MT6660 Speaker Amp Driver
-To:     Jeff Chang <richtek.jeff.chang@gmail.com>, lgirdwood@gmail.com
-Cc:     broonie@kernel.org, tiwai@suse.com, matthias.bgg@gmail.com,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, jeff_chang@richtek.com
-References: <1576141937-13199-1-git-send-email-richtek.jeff.chang@gmail.com>
-From:   Jaroslav Kysela <perex@perex.cz>
-Message-ID: <02c25504-dec5-4026-6e2b-d3763e70663a@perex.cz>
-Date:   Thu, 12 Dec 2019 11:36:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <1576141937-13199-1-git-send-email-richtek.jeff.chang@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1728703AbfLLKge convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Dec 2019 05:36:34 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:39928 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728631AbfLLKge (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 05:36:34 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-56-h9JTAAgyNGuF0q8-5La6xQ-1; Thu, 12 Dec 2019 10:36:28 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 12 Dec 2019 10:36:27 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 12 Dec 2019 10:36:27 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Peter Zijlstra' <peterz@infradead.org>,
+        "Luck, Tony" <tony.luck@intel.com>
+CC:     Andy Lutomirski <luto@kernel.org>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, Will Deacon <will@kernel.org>
+Subject: RE: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Thread-Topic: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Thread-Index: AQHVsHPW6yBAo1s5f0Kws0hZvGpx8qe2RQqA
+Date:   Thu, 12 Dec 2019 10:36:27 +0000
+Message-ID: <5ba0190e63594ad1b8b032bc12553393@AcuMS.aculab.com>
+References: <CALCETrW+qxrE633qetS4c1Rn2AX_hk5OgneZRtoZPFN1J395Ng@mail.gmail.com>
+ <20191121185303.GB199273@romley-ivt3.sc.intel.com>
+ <20191121202508.GZ4097@hirez.programming.kicks-ass.net>
+ <CALCETrXbe_q07kL1AyaNaAqgUHsdN6rEDzzZ0CEtv-k9VvQL0A@mail.gmail.com>
+ <20191122092555.GA4097@hirez.programming.kicks-ass.net>
+ <3908561D78D1C84285E8C5FCA982C28F7F4DD19F@ORSMSX115.amr.corp.intel.com>
+ <20191122203105.GE2844@hirez.programming.kicks-ass.net>
+ <CALCETrVjXC7RHZCkAcWEeCrJq7DPeVBooK8S3mG0LT8q9AxvPw@mail.gmail.com>
+ <20191211175202.GQ2827@hirez.programming.kicks-ass.net>
+ <20191211184416.GA6344@agluck-desk2.amr.corp.intel.com>
+ <20191211223917.GU2844@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191211223917.GU2844@hirez.programming.kicks-ass.net>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: h9JTAAgyNGuF0q8-5La6xQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne 12. 12. 19 v 10:12 Jeff Chang napsal(a):
-> +static const struct snd_kcontrol_new mt6660_component_snd_controls[] = {
-> +	SOC_SINGLE_EXT_TLV("Digital Volume", MT6660_REG_VOL_CTRL, 0, 255,
-> +			   1, snd_soc_get_volsw, mt6660_component_put_volsw,
-> +			   vol_ctl_tlv),
-> +	SOC_SINGLE_EXT("WDT Switch", MT6660_REG_WDT_CTRL, 7, 1, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("Hard_Clip Switch", MT6660_REG_HCLIP_CTRL, 8, 1, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("Clip Switch", MT6660_REG_SPS_CTRL, 0, 1, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("BoostMode", MT6660_REG_BST_CTRL, 0, 3, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("DRE Switch", MT6660_REG_DRE_CTRL, 0, 1, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("DC_Protect Switch",
-> +		MT6660_REG_DC_PROTECT_CTRL, 3, 1, 0,
-> +		snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("audio input selection", MT6660_REG_DATAO_SEL, 6, 3, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("Data Output Left Channel Selection",
-> +		       MT6660_REG_DATAO_SEL, 3, 7, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("Data Output Right Channel Selection",
-> +		       MT6660_REG_DATAO_SEL, 0, 7, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	/* for debug purpose */
-> +	SOC_SINGLE_EXT("HPF_AUD_IN Switch", MT6660_REG_HPF_CTRL, 0, 1, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("AUD_LOOP_BACK Switch", MT6660_REG_PATH_BYPASS, 4, 1, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("Mute Switch", MT6660_REG_SYSTEM_CTRL, 1, 1, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("Bypass CS Comp Switch", MT6660_REG_PATH_BYPASS, 2, 1, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("T0_SEL", MT6660_REG_CALI_T0, 0, 7, 0,
-> +		       snd_soc_get_volsw, NULL),
-> +	SOC_SINGLE_EXT("Chip_Rev", SND_SOC_NOPM, 0, 16, 0,
-> +		       mt6660_component_get_volsw, NULL),
+From: Peter Zijlstra
+> Sent: 11 December 2019 22:39
+> On Wed, Dec 11, 2019 at 10:44:16AM -0800, Luck, Tony wrote:
+> > On Wed, Dec 11, 2019 at 06:52:02PM +0100, Peter Zijlstra wrote:
+> > > Sure, but we're talking two cpus here.
+> > >
+> > > 	u32 var = 0;
+> > > 	u8 *ptr = &var;
+> > >
+> > > 	CPU0			CPU1
+> > >
+> > > 				xchg(ptr, 1)
+> > >
+> > > 	xchg((ptr+1, 1);
+> > > 	r = READ_ONCE(var);
+> >
+> > It looks like our current implementation of set_bit() would already run
+> > into this if some call sites for a particular bitmap `pass in constant
+> > bit positions (which get optimized to byte wide "orb") while others pass
+> > in a variable bit (which execute as 64-bit "bts").
+> 
+> Yes, but luckily most nobody cares.
+> 
+> I only know of two places in the entire kernel where we considered this,
+> one is clear_bit_unlock_is_negative_byte() and there we punted and
+> stuffed everything in a single byte, and the other is that x86
+> queued_fetch_set_pending_acquire() thing I pointed out earlier.
+> 
+> > I'm not a h/w architect ... but I've assumed that a LOCK operation
+> > on something contained entirely within a cache line gets its atomicity
+> > by keeping exclusive ownership of the cache line.
+> 
+> Right, but like I just wrote to Andy, consider SMT where each thread has
+> its own store-buffer. Then the line is local to the core, but there
+> still is a remote sb to hide stores in.
+> 
+> I don't know if anything x86 does that, or even allows that, but I'm not
+> aware of specs that are clear enough to say either way.
 
-The control names looks really strange like always for the ASoC tree. We 
-should talk about a standardization here. At least unify spaces, underscores 
-and such characters and abbreviations.
+On x86 'xchg' is always 'locked' regardless of whether there is a 'lock' prefix.
+set_bit() (etc) include the 'lock' prefix (dunno why this decision was made...).
 
-					Thanks,
-						Jaroslav
+For locked operations (including misaligned ones) that don't cross cache-line
+boundaries the read operation almost certainly locks the cache line (against
+a snoop) until the write has updated the cache line.
+This won't happen until the write 'drains' from the store buffer.
+(I suspect that locked read requests act like write requests in ensuring
+that no other cpu has a dirty copy of the cache line, and also marking it dirty.)
+Although this will delay the response to the snoop it will only
+stall the cpu (or other bus master), not the entire memory 'bus'.
 
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+If you read the description of 'lock btr' you'll see that it always does the
+write cycle (to complete the atomic RMW expected by the memory
+subsystem) even when the bit is clear.
+
+Remote store buffers are irrelevant to locked accesses.
+(If you are doing concurrent locked and unlocked accesses to the same
+memory location something is badly broken.)
+
+It really can't matter whether one access is a mis-aligned 64bit word
+and the other a byte. Both do atomic RMW updates so the result
+cannot be unexpected.
+
+In principle two separate 8 bit RMW cycles could be done concurrently
+to two halves of a 16 bit 'flag' word without losing any bits or any reads
+returning any of the expected 4 values.
+Not that any memory system would support such updates.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
