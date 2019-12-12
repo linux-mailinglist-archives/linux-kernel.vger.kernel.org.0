@@ -2,59 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3077011CC00
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:14:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D724911CC04
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:15:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfLLLOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 06:14:54 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58830 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728458AbfLLLOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 06:14:53 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B4AAB51F6902C67E2F34;
-        Thu, 12 Dec 2019 19:14:50 +0800 (CST)
-Received: from DESKTOP-8RFUVS3.china.huawei.com (10.173.222.27) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 12 Dec 2019 19:14:43 +0800
-From:   Zenghui Yu <yuzenghui@huawei.com>
-To:     <bhelgaas@google.com>, <corbet@lwn.net>
-CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>,
-        Zenghui Yu <yuzenghui@huawei.com>
-Subject: [PATCH] Documentation: PCI: msi-howto.rst: Fix wrong function name
-Date:   Thu, 12 Dec 2019 19:13:38 +0800
-Message-ID: <20191212111338.1848-1-yuzenghui@huawei.com>
-X-Mailer: git-send-email 2.23.0.windows.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+        id S1728986AbfLLLPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 06:15:38 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:56963 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728458AbfLLLPh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 06:15:37 -0500
+Received: from orion.localdomain ([77.9.34.244]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MAxLT-1iZ0ev044X-00BOiC; Thu, 12 Dec 2019 12:15:36 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     info@metux.net, platform-driver-x86@vger.kernel.org
+Subject: [PATCH] platform/x86: pcengines-apu2: fix simswap gpio assignment
+Date:   Thu, 12 Dec 2019 12:15:07 +0100
+Message-Id: <20191212111507.14365-1-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+X-Provags-ID: V03:K1:V1Saik6Dq+VQNBC8ix5ah6wHx0KOYSzmu6tS9ECL1lNFBVQy8YA
+ EkGB25WSVG5I/5JuQ5FmC5KVRPEkK38wtYNZY6wl8n6zQO3qabJWYlgFE993oRslxgXzjz1
+ 76d2QBr75dUm0bj8MV8wkee+mqgJKt0Bks8nO7F2YJMslEfafw1VZe/YGKHWxFWSUzJrsyD
+ xCuqNqExSLt09dkBp+H0w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:M2bPAAyHAJU=:fftKP6nTrbbjZqOqWf7xUw
+ GqU5LKvKKc4RF8XNN4lsuaiRysxTfVMZTI7TWBE7GL5WKJeQtu/sKIoM0ctSfPJ4DbmEb0rz7
+ xZYO/d/vhn26Q+9CP8Nt3X+6O9JEKK4NnfslFTPPPbILyYIRqkxVQF8MOanliFpDq3e722qVE
+ RE9Um8fjyVJS4YWPqEU25vw1LhXL1x2fWYIyF7G+XLgnmYDleuWerEAZy6WtrNIywvSLc0WbY
+ 2St0AwGXObds++yr5lcXS/VU0SkdZpG5sNJ3RuhhKpUqap5d2M5L3jtLHduD0QXXe+oP/9iHA
+ l5voR3GshDe1aiSMlAoiaqPhEJJ54uUMs6DOXUeXtb037JzqN7qL8JwGQWh/8P1Ce6MAuOawb
+ bZEkNfRL01nvfMwwLoFRdmgOL1VmThaAe6FA7BPij2ldC0GDxiavuBjLMITaM1NX8UJfXSUGq
+ 5ZnuK1uTlogyVKL7APNUCsVvfE2xqUN7vIBCcRsAKt6+EueSnGI+URobf0bUB2atDIwzOD1cf
+ zAFHeD707RVQnImNWsBYfcrB/ucGi9j2BZSxTnQTcMnV3CD3IU7S33LgXEDixFVWqkuhCJLrU
+ z9Adq62qAL7xGB8eazq3MN0GOScqCPOftISK/Rw8ZqA9JhVhYq3WkRWGFgO/3xsJfIVo0fLqk
+ RaZT+aI2EGoS5MvVqjFqTF1nqDVNAYJgLIhuyiEvd5Ej8xpq4DWfBnsmSnPpn/gikCx9wEYeX
+ Y41bT6PCq4IvgHsIfUJqnFv3Zw5WkECUQj5HvBz8iq7aba6oNQ0n/e/lgHzTDggDehTXjV5O8
+ ytrun2zAuaWDtdTm3CXxUuIyODQYU8ATKBkE9yr9WI7ThY+Kxx6mjipG3r+z6K6X17IYZwhLv
+ BduCr0SdBxZ46vmmbzuQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pci_irq_alloc_vectors() -> pci_alloc_irq_vectors().
+The mapping entry has to hold the gpio line index instead of
+controller's register number.
 
-Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Fixes: 5037d4ddda31c2dbbb018109655f61054b1756dc
+
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- Documentation/PCI/msi-howto.rst | 2 +-
+ drivers/platform/x86/pcengines-apuv2.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/PCI/msi-howto.rst b/Documentation/PCI/msi-howto.rst
-index 994cbb660ade..aa2046af69f7 100644
---- a/Documentation/PCI/msi-howto.rst
-+++ b/Documentation/PCI/msi-howto.rst
-@@ -283,5 +283,5 @@ or disabled (0).  If 0 is found in any of the msi_bus files belonging
- to bridges between the PCI root and the device, MSIs are disabled.
- 
- It is also worth checking the device driver to see whether it supports MSIs.
--For example, it may contain calls to pci_irq_alloc_vectors() with the
-+For example, it may contain calls to pci_alloc_irq_vectors() with the
- PCI_IRQ_MSI or PCI_IRQ_MSIX flags.
+diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
+index 48b112b4f0b0..c32daf087640 100644
+--- a/drivers/platform/x86/pcengines-apuv2.c
++++ b/drivers/platform/x86/pcengines-apuv2.c
+@@ -95,7 +95,7 @@ static struct gpiod_lookup_table gpios_led_table = {
+ 				NULL, 1, GPIO_ACTIVE_LOW),
+ 		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED3,
+ 				NULL, 2, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_REG_SIMSWAP,
++		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_SIMSWAP,
+ 				NULL, 3, GPIO_ACTIVE_LOW),
+ 	}
+ };
 -- 
-2.19.1
-
+2.11.0
 
