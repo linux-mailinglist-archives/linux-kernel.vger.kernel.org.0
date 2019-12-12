@@ -2,54 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D05A11C2D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:01:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4564A11C2DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:02:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbfLLCBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 21:01:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56824 "EHLO mail.kernel.org"
+        id S1727698AbfLLCC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 21:02:27 -0500
+Received: from mx.socionext.com ([202.248.49.38]:58677 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726793AbfLLCBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 21:01:08 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 232722077B;
-        Thu, 12 Dec 2019 02:01:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576116068;
-        bh=mrLm7hWWGdtEPq9cGYIvyHV5bCojU9MeN4AkSl1wgng=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LXZxgE+DKBG/qoOnEiDBqi4cB+vAa9DF8tMqPwcCv5iE6Ri8KD/kKZVKAZ4gc/KaO
-         1cIi+UK0BKN4kCPeqHDRoonl+3TlmTJpancmus5GZz0xxy25tzYq4bCZLs7EZ7bXjb
-         OTITqe06Wl/qWRvaJfI/Z2WK1j8xUftOiF2565ag=
-Date:   Thu, 12 Dec 2019 10:00:56 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>,
+        id S1727678AbfLLCC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 21:02:27 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 12 Dec 2019 11:02:25 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 51E9C180B6B;
+        Thu, 12 Dec 2019 11:02:25 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 12 Dec 2019 11:03:05 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id C04DC1A0006;
+        Thu, 12 Dec 2019 11:02:24 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3] arm64: dts: ls1028a: fix reboot node
-Message-ID: <20191212020055.GB15858@dragon>
-References: <20191211171145.14736-1-michael@walle.cc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211171145.14736-1-michael@walle.cc>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH 0/2] PCI: Add new UniPhier PCIe endpoint driver
+Date:   Thu, 12 Dec 2019 11:02:16 +0900
+Message-Id: <1576116138-16501-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 06:11:45PM +0100, Michael Walle wrote:
-> The reboot register isn't located inside the DCFG controller, but in its
-> own RST controller. Fix it.
-> 
-> Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
-> Signed-off-by: Michael Walle <michael@walle.cc>
+This series adds PCIe endpoint controller driver for Socionext UniPhier
+SoCs. This controller is based on the DesignWare PCIe core. This driver
+supports Pro5 SoC.
 
-You missed Leo's ACK on v2?  I added it and applied the patch.
+Kunihiko Hayashi (2):
+  dt-bindings: PCI: Add UniPhier PCIe endpoint controller description
+  PCI: uniphier: Add UniPhier PCIe endpoint controller support
 
-Shawn
+ .../devicetree/bindings/pci/uniphier-pcie-ep.txt   |  47 +++
+ MAINTAINERS                                        |   4 +-
+ drivers/pci/controller/dwc/Kconfig                 |  13 +-
+ drivers/pci/controller/dwc/Makefile                |   1 +
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c      | 399 +++++++++++++++++++++
+ 5 files changed, 460 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/uniphier-pcie-ep.txt
+ create mode 100644 drivers/pci/controller/dwc/pcie-uniphier-ep.c
+
+-- 
+2.7.4
+
