@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5634811D873
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 22:21:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB3A111D871
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 22:21:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731070AbfLLVVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1731079AbfLLVVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 12 Dec 2019 16:21:13 -0500
 Received: from mga02.intel.com ([134.134.136.20]:25359 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731019AbfLLVVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 16:21:12 -0500
+        id S1730971AbfLLVVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 16:21:13 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 13:20:50 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 13:20:51 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,307,1571727600"; 
-   d="scan'208";a="226062837"
+   d="scan'208";a="226062842"
 Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by orsmga002.jf.intel.com with ESMTP; 12 Dec 2019 13:20:49 -0800
+  by orsmga002.jf.intel.com with ESMTP; 12 Dec 2019 13:20:50 -0800
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>,
@@ -35,9 +35,9 @@ To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Fenghua Yu <fenghua.yu@intel.com>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v2 1/3] x86/fpu/xstate: Fix small issues before adding supervisor xstates
-Date:   Thu, 12 Dec 2019 13:08:53 -0800
-Message-Id: <20191212210855.19260-2-yu-cheng.yu@intel.com>
+Subject: [PATCH v2 2/3] x86/fpu/xstate: Make xfeature_is_supervisor()/xfeature_is_user() return bool
+Date:   Thu, 12 Dec 2019 13:08:54 -0800
+Message-Id: <20191212210855.19260-3-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191212210855.19260-1-yu-cheng.yu@intel.com>
 References: <20191212210855.19260-1-yu-cheng.yu@intel.com>
@@ -46,50 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In response to earlier comments, fix small issues before introducing XSAVES
-supervisor states:
-- Fix comments of xfeature_is_supervisor().
-- Replace ((u64)1 << 63) with XCOMP_BV_COMPACTED_FORMAT.
+In the previous patch, xfeature_is_supervisor()'s description is revised,
+and since xfeature_is_supervisor()/xfeature_is_user() are used only in
+boolean context, make both return bool.
 
-No functional changes from this patch.
-
+Suggested-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/fpu/xstate.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ arch/x86/kernel/fpu/xstate.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 319be936c348..0bd313351650 100644
+index 0bd313351650..56e87d00a92f 100644
 --- a/arch/x86/kernel/fpu/xstate.c
 +++ b/arch/x86/kernel/fpu/xstate.c
-@@ -110,12 +110,9 @@ EXPORT_SYMBOL_GPL(cpu_has_xfeatures);
- static int xfeature_is_supervisor(int xfeature_nr)
+@@ -107,7 +107,7 @@ int cpu_has_xfeatures(u64 xfeatures_needed, const char **feature_name)
+ }
+ EXPORT_SYMBOL_GPL(cpu_has_xfeatures);
+ 
+-static int xfeature_is_supervisor(int xfeature_nr)
++static bool xfeature_is_supervisor(int xfeature_nr)
  {
  	/*
--	 * We currently do not support supervisor states, but if
--	 * we did, we could find out like this.
--	 *
--	 * SDM says: If state component 'i' is a user state component,
--	 * ECX[0] return 0; if state component i is a supervisor
--	 * state component, ECX[0] returns 1.
-+	 * Extended State Enumeration Sub-leaves (EAX = 0DH, ECX = n, n > 1)
-+	 * returns ECX[0] set to (1) for a supervisor state, and cleared (0)
-+	 * for a user state.
- 	 */
+ 	 * Extended State Enumeration Sub-leaves (EAX = 0DH, ECX = n, n > 1)
+@@ -117,10 +117,10 @@ static int xfeature_is_supervisor(int xfeature_nr)
  	u32 eax, ebx, ecx, edx;
  
-@@ -419,7 +416,8 @@ static void __init setup_init_fpu_buf(void)
- 	print_xstate_features();
+ 	cpuid_count(XSTATE_CPUID, xfeature_nr, &eax, &ebx, &ecx, &edx);
+-	return !!(ecx & 1);
++	return ecx & 1;
+ }
  
- 	if (boot_cpu_has(X86_FEATURE_XSAVES))
--		init_fpstate.xsave.header.xcomp_bv = (u64)1 << 63 | xfeatures_mask;
-+		init_fpstate.xsave.header.xcomp_bv = XCOMP_BV_COMPACTED_FORMAT |
-+						     xfeatures_mask;
- 
- 	/*
- 	 * Init all the features state with header.xfeatures being 0x0
+-static int xfeature_is_user(int xfeature_nr)
++static bool xfeature_is_user(int xfeature_nr)
+ {
+ 	return !xfeature_is_supervisor(xfeature_nr);
+ }
 -- 
 2.17.1
 
