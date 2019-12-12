@@ -2,119 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42EC011D080
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7CA811D08B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:08:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbfLLPHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:07:51 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44968 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728815AbfLLPHu (ORCPT
+        id S1729025AbfLLPI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 10:08:57 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:38639 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728666AbfLLPI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:07:50 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBCF7c8I009948
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 10:07:49 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wu1fnmg97-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 10:07:48 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Thu, 12 Dec 2019 15:07:46 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Dec 2019 15:07:41 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBCF7eX939977108
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Dec 2019 15:07:40 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BB5C04C040;
-        Thu, 12 Dec 2019 15:07:40 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D51B4C044;
-        Thu, 12 Dec 2019 15:07:38 +0000 (GMT)
-Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Thu, 12 Dec 2019 15:07:38 +0000 (GMT)
-Date:   Thu, 12 Dec 2019 20:37:37 +0530
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Phil Auld <pauld@redhat.com>,
-        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v4] sched/core: Preempt current task in favour of bound
- kthread
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20191120191636.GI4097@hirez.programming.kicks-ass.net>
- <20191120220313.GC18056@pauld.bos.csb>
- <20191121132937.GW4114@hirez.programming.kicks-ass.net>
- <20191209165122.GA27229@linux.vnet.ibm.com>
- <20191209231743.GA19256@dread.disaster.area>
- <20191210054330.GF27253@linux.vnet.ibm.com>
- <20191210172307.GD9139@linux.vnet.ibm.com>
- <20191211173829.GB21797@linux.vnet.ibm.com>
- <20191211224617.GE19256@dread.disaster.area>
- <20191212101031.GV2827@hirez.programming.kicks-ass.net>
+        Thu, 12 Dec 2019 10:08:57 -0500
+Received: by mail-ua1-f65.google.com with SMTP id z17so1023337uac.5
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 07:08:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BBZPqQLjRrXMYmR1TRaqMyhH4qY4XtbQYO8hjLWbaCQ=;
+        b=m4/Wr2qvLIWwO/nnv/MWFlzrVTYqwIuP//VHOprM0TS4aqnouLBYYbuKXDfZOW4zy6
+         WwGNt6wKboMPLkZ2E8/NZCbgzjnehCPCJew6MkeU98jvV4zfh3C9C65H7kzchE6IfEc3
+         cPsLn0wlOvRbdjWraOtHB9YHqPNxincix8AEtn1vTYqcZFNx++w0YhKkj22b+wEn8D58
+         KihdxGOOV7uAKzwjHIWmulnscOi9cX+DuB+DkH8CWtEvucWc13p3AmI36VLn7BCMFG22
+         2TmNAFLJ76Xm9ie4xkbBYzaNembFUKkM0K5MrWfnOhPIfPCMMWLF/Aei/G4b6ruqQ5om
+         6DNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BBZPqQLjRrXMYmR1TRaqMyhH4qY4XtbQYO8hjLWbaCQ=;
+        b=h8q8Bczto0FWXj1jdNp+/CBzxm1Y9yD2X+omKkJaxZJT7vhyBdTWXX3pH2IF3stOTR
+         oL9mxVoV7ZsroaDeQTYr/hHW62Cio/JK26I+4Fa3EBe85XlApmq89tudanHPksPHC/E+
+         2q3uRMIA+FjtdhzAv3oH2yIbLL+S/kEciieuZAY53hlYga0xdaJK5H8aZW3H91POdchZ
+         u6DN6spEqgx5i2hEsRTdnXWf0Ucate05Up3tV3hZ3T+MJ1L8akfI/b6qYMz68jJOsgh4
+         aC89BHOyU5ni0DHVNA+ngYZo8cM1dq5OgNFwcgT+rNw8degJleOnsgZ4xtN+O6BCpFQ4
+         MvYw==
+X-Gm-Message-State: APjAAAWZsMWa1mtyxr6Xt0uPZCzBysgXzflnBrwix0zG8hbHfmyxp09A
+        lY/nd9zvk4hYqwxFiMjdWjmJx5lLVuwmUW9J2fNlfg==
+X-Google-Smtp-Source: APXvYqylzTcuVtIdKTe2ptVzi2MZfkuPeOlp+Ab7T3CJfNA/27r7rEWO5mUtRTY83LtjQy3Do512L/IYNuh6OowCLas=
+X-Received: by 2002:ab0:2716:: with SMTP id s22mr8672177uao.20.1576163336218;
+ Thu, 12 Dec 2019 07:08:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20191212101031.GV2827@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 19121215-0028-0000-0000-000003C7E3ED
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121215-0029-0000-0000-0000248B1DE8
-Message-Id: <20191212150737.GC21797@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-12_03:2019-12-12,2019-12-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 bulkscore=0 spamscore=0 lowpriorityscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 phishscore=0
- adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1910280000 definitions=main-1912120117
+References: <20191129172537.31410-1-m.felsch@pengutronix.de>
+ <20191129172537.31410-4-m.felsch@pengutronix.de> <20191204134631.GT1998@sirena.org.uk>
+ <20191210094144.mxximpuouchy3fqu@pengutronix.de> <AM5PR1001MB099497419E4DCA69D424EC35805A0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191211170918.q7kqkd4lrwwp7jl3@pengutronix.de>
+In-Reply-To: <20191211170918.q7kqkd4lrwwp7jl3@pengutronix.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 12 Dec 2019 16:08:44 +0100
+Message-ID: <CACRpkda4PFA=99u33xsXzQND1FaP=8GXGRQULngcd5a=zFepXg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: mfd: da9062: add regulator voltage
+ selection documentation
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Mark Brown <broonie@kernel.org>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "joel@jms.id.au" <joel@jms.id.au>,
+        "andrew@aj.id.au" <andrew@aj.id.au>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Peter Zijlstra <peterz@infradead.org> [2019-12-12 11:10:31]:
+On Wed, Dec 11, 2019 at 6:09 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
 
-> 
-> +static struct sched_entity *
-> +__pick_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *curr);
+> I discussed it with a colleague again and he mentioned that pinctrl
+> should be named pinctrl instead it should be named padctrl.
 
-I think we already have __pick_next_entity in kernel/sched/fair.c
+Quoting Documentation/driver-api/pinctl.rst:
 
-static struct sched_entity *__pick_next_entity(struct sched_entity *se)
-{
-        struct rb_node *next = rb_next(&se->run_node);
+(...)
+Definition of PIN:
 
-        if (!next)
-                return NULL;
+- PINS are equal to pads, fingers, balls or whatever packaging input or
+  output line you want to control and these are denoted by unsigned integers
+  in the range 0..maxpin.
+(...)
 
-        return rb_entry(next, struct sched_entity, run_node);
-}
+> We don't
+> reconfigure the pad to a other function it is still a device general
+> purpose input pad. The hw-signal flow goes always trough the gpio block
+> so one argument more for my solution. Also we don't configure the "pad"
+> to be a vsel/ena-pin. The hw-pad can only be a gpio or has an alternate
+> function (WDKICK for GPIO0, Seq. SYS_EN for GPIO2, Seq. PWR_EN for GPIO4).
+> Instead we tell the regulator to use _this_ GPIO e.g. for voltage
+> selection so we go the other way around. My last argument why pinctrl
+> isn't the correct place is that the GPIO1 can be used for
+> regulator-0:vsel-in and for regulator-1:enable-in. So this pad would
+> have different states which is invalid IMHO.
 
-I checked in v5.5-rc1, v5.4 and tip/master too. Let me know if you were
-referring to a different version of code.
+Yeah it is just one of these cases where the silicon designer pulled
+a line of polysilicone over to the regulator enable signal and put a
+switch on it and say "so you can also enable the regulator
+with a signal from here", it can be used in parallel with anything
+else, which is especially messy.
 
-So I modified the only place its called to the newer
-__pick_next_entity(cfs_rq, curr); 
+Special cases require special handling, since the electronic design
+of this thing is a bit Rube Goldberg.
 
-But wanted to verify if that's what you had in mind.
-
-
--- 
-Thanks and Regards
-Srikar Dronamraju
-
+Yours,
+Linus Walleij
