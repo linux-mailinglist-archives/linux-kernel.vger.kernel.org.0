@@ -2,112 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4962111D203
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 17:13:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C358A11D20E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 17:18:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729841AbfLLQNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 11:13:35 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:60832 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729247AbfLLQNf (ORCPT
+        id S1729843AbfLLQSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 11:18:11 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54824 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729591AbfLLQSK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 11:13:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9JV0lxxuv671N8NKDdLe7T2sZ0c3sP/gDG4QJmH6v6I=; b=O7qKrYCh4SxHNiVfo4LTPQ/DO
-        U+hCmjmuk4IQ799vwQ5um1611eJpj4PQUb0cYEaKZ3rK4kc+wExWFpX3srZwyNIXinvP6MUDHjboi
-        UK8o1uGU/IawIuph3RM1AW/yuZNyJgaLtI79uSPqOe2WyPGOR6JbXnMSuuFCTw1jgLmEWJJ8xYfB3
-        WtQgpsG9evG8UM4mL1Zl5IdFe7K+o0h+AmcI9zk/lA1p1RQ8dP3MK0XWOF3K+fsP4Z7uCGyeKif6w
-        y2yCqfK/88wBNjaoxW2R44hknsK857fuLorjm86sNhCDC6AWEulFIpsSytQR54FB2g0aBo/vZd4uL
-        bOHnjSs4A==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:40386)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1ifR5f-0007lu-IU; Thu, 12 Dec 2019 16:13:23 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1ifR5c-0006wl-IL; Thu, 12 Dec 2019 16:13:20 +0000
-Date:   Thu, 12 Dec 2019 16:13:20 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v1] clk: Convert managed get functions to devm_add_action
- API
-Message-ID: <20191212161320.GK25745@shell.armlinux.org.uk>
-References: <20191202014237.GR248138@dtor-ws>
- <f177ef95-ef7e-cab0-1322-6de28f18ecdb@free.fr>
- <c0ccca86-b7b1-b587-60c1-4794376fa789@arm.com>
- <ba630966-5479-c831-d0e2-bc2eb12bc317@free.fr>
- <20191211222829.GV50317@dtor-ws>
- <70528f77-ca10-01cd-153b-23486ce87d45@free.fr>
- <20191212141747.GI25745@shell.armlinux.org.uk>
- <58c27422-e06c-f42e-16ea-baeca3bb9b01@free.fr>
- <20191212144616.GJ25745@shell.armlinux.org.uk>
- <d2595721-b5cb-d268-d6bd-bc794c07aacc@free.fr>
+        Thu, 12 Dec 2019 11:18:10 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBCGHvLv077744;
+        Thu, 12 Dec 2019 10:17:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576167477;
+        bh=nkLQXRQ87/SfQSBWWiilrp7/xPrpCi1hyGz8PEvF/Ss=;
+        h=From:To:CC:Subject:Date;
+        b=MePKYqk8/SzAObjqBi4Ei8Jj/L7n8dXOapx3cZPfRREr2XbqjHMo6qeDpjL7JMINx
+         aorcAwPvlEPWZENyarLXp1EPYBvJm2qxB1jHrZijLpIj8QeJWoDQo3inBbCpxzaSvI
+         Napit0EFcN1FLgXCYEA5W99U2Xu74ez1rBaoyGY8=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBCGHvK9122783
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Dec 2019 10:17:57 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 12
+ Dec 2019 10:17:57 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 12 Dec 2019 10:17:57 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBCGHvpu030666;
+        Thu, 12 Dec 2019 10:17:57 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <mkl@pengutronix.de>,
+        <linux-can@vger.kernel.org>, <wg@grandegger.com>,
+        <sriram.dash@samsung.com>
+CC:     Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH linux-can/testing] can: tcan4x5x: Disable the INH pin device-state GPIO is unavailable
+Date:   Thu, 12 Dec 2019 10:15:36 -0600
+Message-ID: <20191212161536.23264-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2595721-b5cb-d268-d6bd-bc794c07aacc@free.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 04:51:25PM +0100, Marc Gonzalez wrote:
-> On 12/12/2019 15:46, Russell King - ARM Linux admin wrote:
-> 
-> > However, please don't call this __clk_put().
-> > git grep __clk_put will tell you why.  Thanks.
-> 
-> $ git grep __clk_put
-> drivers/clk/clk-devres.c:static void __clk_put(struct device *dev, void *data)
-> drivers/clk/clk-devres.c:               if (!devm_add(dev, __clk_put, &clk, sizeof(clk)))
-> drivers/clk/clk.c:void __clk_put(struct clk *clk)
-> drivers/clk/clk.h:void __clk_put(struct clk *clk);
-> drivers/clk/clk.h:static inline void __clk_put(struct clk *clk) { }
-> drivers/clk/clkdev.c:   __clk_put(clk);
-> 
-> I see. I will s/__clk_put/my_clk_put/ in my proposal.
-> 
-> Out of curiosity...
-> 
-> $ git grep __clk_put v2.6.29-rc1
-> v2.6.29-rc1:arch/arm/common/clkdev.c:   __clk_put(clk);
-> v2.6.29-rc1:arch/arm/mach-ep93xx/include/mach/clkdev.h:#define __clk_put(clk) do { } while (0)
-> v2.6.29-rc1:arch/arm/mach-integrator/include/mach/clkdev.h:static inline void __clk_put(struct clk *clk)
-> v2.6.29-rc1:arch/arm/mach-pxa/include/mach/clkdev.h:#define __clk_put(clk) do { } while (0)
-> v2.6.29-rc1:arch/arm/mach-realview/include/mach/clkdev.h:#define __clk_put(clk) do { } while (0)
-> v2.6.29-rc1:arch/arm/mach-versatile/include/mach/clkdev.h:#define __clk_put(clk) do { } while (0)
-> 
-> Genesis seems to be 0318e693d3a56
-> 
-> The clkdev API expected platforms to export a __clk_put method?
+If the device state GPIO is not connected to the host then disable the
+INH output from the TCAN device per section 8.3.5 of the data sheet.
 
-Along with __clk_get(), these were the interfaces from the cross-
-platform clkdev code to the clk API implementation specific code.
-__clk_get() no longer exists as its uses were eliminated, but
-__clk_put() remains.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ drivers/net/can/m_can/tcan4x5x.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-It's quite logical if you read the patch which your above commit ID
-references.
-
+diff --git a/drivers/net/can/m_can/tcan4x5x.c b/drivers/net/can/m_can/tcan4x5x.c
+index b5d2ea0999c1..6a1f242d1876 100644
+--- a/drivers/net/can/m_can/tcan4x5x.c
++++ b/drivers/net/can/m_can/tcan4x5x.c
+@@ -102,6 +102,7 @@
+ #define TCAN4X5X_MODE_NORMAL BIT(7)
+ 
+ #define TCAN4X5X_DISABLE_WAKE_MSK	(BIT(31) | BIT(30))
++#define TCAN4X5X_DISABLE_INH_MSK	BIT(9)
+ 
+ #define TCAN4X5X_SW_RESET BIT(2)
+ 
+@@ -360,6 +361,15 @@ static int tcan4x5x_disable_wake(struct m_can_classdev *cdev)
+ 				  TCAN4X5X_DISABLE_WAKE_MSK, 0x00);
+ }
+ 
++static int tcan4x5x_disable_state(struct m_can_classdev *cdev)
++{
++	struct tcan4x5x_priv *tcan4x5x = cdev->device_data;
++
++	return regmap_update_bits(tcan4x5x->regmap, TCAN4X5X_CONFIG,
++				  TCAN4X5X_DISABLE_INH_MSK, 0x01);
++
++}
++
+ static int tcan4x5x_parse_config(struct m_can_classdev *cdev)
+ {
+ 	struct tcan4x5x_priv *tcan4x5x = cdev->device_data;
+@@ -383,8 +393,10 @@ static int tcan4x5x_parse_config(struct m_can_classdev *cdev)
+ 	tcan4x5x->device_state_gpio = devm_gpiod_get_optional(cdev->dev,
+ 							      "device-state",
+ 							      GPIOD_IN);
+-	if (IS_ERR(tcan4x5x->device_state_gpio))
++	if (IS_ERR(tcan4x5x->device_state_gpio)) {
+ 		tcan4x5x->device_state_gpio = NULL;
++		tcan4x5x_disable_state(cdev);
++	}
+ 
+ 	return 0;
+ }
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.23.0
+
