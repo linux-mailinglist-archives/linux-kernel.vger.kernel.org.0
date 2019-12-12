@@ -2,114 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F6411C287
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A621711C290
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:44:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbfLLBnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 20:43:04 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:8618 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727649AbfLLBnB (ORCPT
+        id S1727648AbfLLBn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 20:43:57 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38950 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727509AbfLLBn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:43:01 -0500
-X-UUID: 2852b13916f540a09307fbd4b35acc9d-20191212
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=phDsoiIyJCBnu4asobwbcjbE3yzCEaKCfb7CC35r6aw=;
-        b=m7AdmdtFaKS/md5+QEqjxR+L5OrA0PxvbrRYKDbLwgwpLWcWikGGq3iufCjmEwA7T04RZsOLN/ZmekFiDS8KcqM7AVdjde+n/wwGGFbQwOeybnsvmpXcVpnHAiblQPWheK2VyIBNyrWsobV/j7bTz/gz+xtNTKVV+C+D641OLls=;
-X-UUID: 2852b13916f540a09307fbd4b35acc9d-20191212
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <dennis-yc.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1915842643; Thu, 12 Dec 2019 09:42:56 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 12 Dec 2019 09:42:35 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 12 Dec 2019 09:42:51 +0800
-Message-ID: <1576114975.17653.16.camel@mtkswgap22>
-Subject: Re: [PATCH v2 13/14] soc: mediatek: cmdq: add wait no clear event
- function
-From:   Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Thu, 12 Dec 2019 09:42:55 +0800
-In-Reply-To: <1576029887.19653.17.camel@mtksdaap41>
-References: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-         <1574819937-6246-15-git-send-email-dennis-yc.hsieh@mediatek.com>
-         <1576029887.19653.17.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Wed, 11 Dec 2019 20:43:57 -0500
+Received: by mail-lf1-f66.google.com with SMTP id y1so372656lfb.6;
+        Wed, 11 Dec 2019 17:43:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=k3MT7+L3kNReQ0aWj6ky2KsiTx1YfA3d7iiuzNpuvhM=;
+        b=Ulz7/dF+kPJTSCqiGltQdo8sS30X4xoZfoyGQsNApxOE66T6t3UCN8p/TfQqzO7qIZ
+         HWe/sNp2OzuTk3l+8gt3Arx2UpV/BGQmlswxT7spwdqu3zrkTxSpJYvphoZEZxmyIxop
+         LaDSPwDjiveJJBVrVJPTbv36fxKUrO93aCoD4t3zk2ohI5ja5Pof0Fp0q7lcJGNNFyA8
+         m2RbiNhh3jGnlgHqh9uD5MnEe00FJ1NKOHfZYqjK43UaGSqoQHv9htySiVVCVDYacxDX
+         r+fdQBd6Ra6aNPeK73GIeT9VGPANBF1/Dtd1hOiekU6ZE2rewxuEK9ungY4D2QtbaSY/
+         a65g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=k3MT7+L3kNReQ0aWj6ky2KsiTx1YfA3d7iiuzNpuvhM=;
+        b=LiYExBzxUgbA5dw4dJQ8G5Atzb+zuVxOHHxVBk9Cacr8rWEYVLSo+2bKmKLriqKMSq
+         9nNuGTaPc7dv2O3nNZeOx6Mj+NESJGUeHB6HmuFgs7bi6nG+2BJmn2GbaeTyj+zFEf9B
+         uXR9AeM90QXpwnbJ49XxgQYJTIEJiv6ohi2CEthsyKj2j2Wg4vNtKZJJycqKA3+aQ3J8
+         YBW0/Z1ej14EVJOibshC/0YCczWsSLOkRL/ax5mrS6sNPwp0hICBfCBbRYUUT1+uheUs
+         1+OViGsu7O0gvh5ZLqBj+VneBx6vU4xxS+I8Fu25cA3npE26/J6X8NutcXk4tYIpAUnA
+         mqnQ==
+X-Gm-Message-State: APjAAAXtEcoqvgdgjW+OIerjwFn1BQhqAILrYPH/mIi++LEB+yXLiCNm
+        YpLqtnXQzYNYG/ylP6J+6H0=
+X-Google-Smtp-Source: APXvYqz7aTD5v1Yosyuc0A6maHQLW08mG0PaBCEDjujtH7miw7vNqCc+VqmwSEbFKuQSiaGRS/LpQQ==
+X-Received: by 2002:ac2:4436:: with SMTP id w22mr4140344lfl.185.1576115035025;
+        Wed, 11 Dec 2019 17:43:55 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id i4sm2327370lji.0.2019.12.11.17.43.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 17:43:54 -0800 (PST)
+Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mperttunen@nvidia.com, sboyd@kernel.org,
+        gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com, allison@lohutok.net, pgaikwad@nvidia.com,
+        mturquette@baylibre.com, horms+renesas@verge.net.au,
+        Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de,
+        spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        markz@nvidia.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        alexios.zavras@intel.com, alsa-devel@alsa-project.org
+References: <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
+ <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
+ <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
+ <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
+ <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+ <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
+ <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
+ <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
+ <3f1c9325-3017-62be-1e3b-82fd28540fdf@nvidia.com>
+ <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
+ <20191211151028.GZ28289@pdeschrijver-desktop.Nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0930a710-174b-859b-294c-e9f81f6a3b5e@gmail.com>
+Date:   Thu, 12 Dec 2019 04:43:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <20191211151028.GZ28289@pdeschrijver-desktop.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTEyLTExIGF0IDEwOjA0ICswODAwLCBDSyBIdSB3cm90ZToNCj4gSGksIERl
-bm5pczoNCj4gDQo+IE9uIFdlZCwgMjAxOS0xMS0yNyBhdCAwOTo1OCArMDgwMCwgRGVubmlzIFlD
-IEhzaWVoIHdyb3RlOg0KPiA+IEFkZCB3YWl0IG5vIGNsZWFyIGV2ZW50IGZ1bmN0aW9uIGluIGNt
-ZHEgaGVscGVyIGZ1bmN0aW9ucyB0byB3YWl0IHNwZWNpZmljDQo+ID4gZXZlbnQgd2l0aG91dCBj
-bGVhciB0byAwIGFmdGVyIHJlY2VpdmUgaXQuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogRGVu
-bmlzIFlDIEhzaWVoIDxkZW5uaXMteWMuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+
-ICBkcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1oZWxwZXIuYyB8IDE1ICsrKysrKysrKysr
-KysrKw0KPiA+ICBpbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oICB8IDEwICsr
-KysrKysrKysNCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAyNSBpbnNlcnRpb25zKCspDQo+ID4gDQo+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jIGIv
-ZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVyLmMNCj4gPiBpbmRleCAxMGE5YjQ0
-ODFlNTguLjZmMjcwZmFkZmI1MCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3NvYy9tZWRpYXRl
-ay9tdGstY21kcS1oZWxwZXIuYw0KPiA+ICsrKyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1j
-bWRxLWhlbHBlci5jDQo+ID4gQEAgLTMzMCw2ICszMzAsMjEgQEAgaW50IGNtZHFfcGt0X3dmZShz
-dHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2IGV2ZW50KQ0KPiA+ICB9DQo+ID4gIEVYUE9SVF9TWU1C
-T0woY21kcV9wa3Rfd2ZlKTsNCj4gPiAgDQo+ID4gK2ludCBjbWRxX3BrdF93YWl0X25vX2NsZWFy
-KHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYgZXZlbnQpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBj
-bWRxX2luc3RydWN0aW9uIGluc3QgPSB7IHswfSB9Ow0KPiA+ICsNCj4gPiArCWlmIChldmVudCA+
-PSBDTURRX01BWF9FVkVOVCkNCj4gPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gPiArDQo+ID4gKwlp
-bnN0Lm9wID0gQ01EUV9DT0RFX1dGRTsNCj4gPiArCWluc3QudmFsdWUgPSBDTURRX1dGRV9XQUlU
-IHwgQ01EUV9XRkVfV0FJVF9WQUxVRTsNCj4gPiArCWluc3QuZXZlbnQgPSBldmVudDsNCj4gPiAr
-DQo+ID4gKwlyZXR1cm4gY21kcV9wa3RfYXBwZW5kX2NvbW1hbmQocGt0LCBpbnN0KTsNCj4gPiAr
-fQ0KPiA+ICtFWFBPUlRfU1lNQk9MKGNtZHFfcGt0X3dhaXRfbm9fY2xlYXIpOw0KPiANCj4gU28g
-dGhlIHdhaXQgY29tbWFuZCBoYXMgdHdvIHZlcnNpb24sIG9uZSBpcyB3YWl0IGFuZCB0aGVuIGNs
-ZWFyIGV2ZW50LA0KPiBhbm90aGVyIGlzIHdhaXQgYW5kIG5vdCBjbGVhciBldmVudC4gVGhlIG5h
-bWUgb2YgY21kcV9wa3Rfd2ZlKCkgaXMgJ3dhaXQNCj4gZm9yIGV2ZW50Jywgc28gaXQncyB0cml2
-aWFsIHRoYXQgd2UgdGhpbmsgaXQgZG9lcyBub3QgY2xlYXIgZXZlbnQuIEkndmUNCj4gdGhyZWUg
-c3VnZ2VzdGlvbiBmb3IgdGhpczoNCj4gDQo+IDEuIExldCBjbWRxX3BrdF93ZmUoKSB3YWl0IGFu
-ZCBub3QgY2xlYXIgZXZlbnQsIGFuZA0KPiBjbWRxX3BrdF93ZmVfY2xlYXJfZXZlbnQoKSB3YWl0
-IGFuZCBjbGVhciBldmVudC4NCj4gDQo+IG9yIA0KPiAyLiBMZXQgY21kcV9wa3Rfd2ZlKCkgaGFz
-IGEgcGFyYW1ldGVyIHRvIGluZGljYXRlIHRoYXQgY2xlYXIgZXZlbnQgb3INCj4gbm90IGFmdGVy
-IHdhaXQuDQo+IA0KPiBvcg0KPiAzLiBMZXQgY21kcV9wa3Rfd2ZlKCkgd2FpdCBhbmQgbm90IGNs
-ZWFyIGV2ZW50LCBhbmQgbm90IHByb3ZpZGUgd2FpdCBhbmQNCj4gY2xlYXIgZXZlbnQgdmVyc2lv
-bi4gRm9yIERSTSBhbmQgTURQLCBJIHRoaW5rIGJvdGgganVzdCBuZWVkIHdhaXQgYW5kDQo+IG5v
-dCBjbGVhciBldmVudC4NCj4gDQo+IFJlZ2FyZHMsDQo+IENLDQo+IA0KDQpvaywgSSB3aWxsIGNo
-YW5nZSBjbWRxX3BrdF93ZmUgd2FpdCBhbmQgbm90IGNsZWFyLCBhbmQgZXhwb3NlIGFub3RoZXIN
-CmNtZHFfcGt0X3dmZV9jbGVhcl9ldmVudCgpIGFwaQ0KDQoNClJlZ2FyZHMsDQpEZW5uaXMNCg0K
-PiANCj4gPiArDQo+ID4gIGludCBjbWRxX3BrdF9jbGVhcl9ldmVudChzdHJ1Y3QgY21kcV9wa3Qg
-KnBrdCwgdTE2IGV2ZW50KQ0KPiA+ICB7DQo+ID4gIAlzdHJ1Y3QgY21kcV9pbnN0cnVjdGlvbiBp
-bnN0ID0geyB7MH0gfTsNCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0
-ZWsvbXRrLWNtZHEuaCBiL2luY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmgNCj4g
-PiBpbmRleCBkMTVkOGM5NDE5OTIuLjQwYmM2MWFkOGQzMSAxMDA2NDQNCj4gPiAtLS0gYS9pbmNs
-dWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oDQo+ID4gKysrIGIvaW5jbHVkZS9saW51
-eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaA0KPiA+IEBAIC0xNDksNiArMTQ5LDE2IEBAIGludCBj
-bWRxX3BrdF93cml0ZV9zX3ZhbHVlKHN0cnVjdCBjbWRxX3BrdCAqcGt0LCBkbWFfYWRkcl90IGFk
-ZHIsDQo+ID4gICAqLw0KPiA+ICBpbnQgY21kcV9wa3Rfd2ZlKHN0cnVjdCBjbWRxX3BrdCAqcGt0
-LCB1MTYgZXZlbnQpOw0KPiA+ICANCj4gPiArLyoqDQo+ID4gKyAqIGNtZHFfcGt0X3dhaXRfbm9f
-Y2xlYXIoKSAtIEFwcGVuZCB3YWl0IGZvciBldmVudCBjb21tYW5kIHRvIHRoZSBDTURRIHBhY2tl
-dCwNCj4gPiArICoJCQkgICAgICB3aXRob3V0IHVwZGF0ZSBldmVudCB0byAwIGFmdGVyIHJlY2Vp
-dmUgaXQuDQo+ID4gKyAqIEBwa3Q6CXRoZSBDTURRIHBhY2tldA0KPiA+ICsgKiBAZXZlbnQ6CXRo
-ZSBkZXNpcmVkIGV2ZW50IHR5cGUgdG8gd2FpdA0KPiA+ICsgKg0KPiA+ICsgKiBSZXR1cm46IDAg
-Zm9yIHN1Y2Nlc3M7IGVsc2UgdGhlIGVycm9yIGNvZGUgaXMgcmV0dXJuZWQNCj4gPiArICovDQo+
-ID4gK2ludCBjbWRxX3BrdF93YWl0X25vX2NsZWFyKHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYg
-ZXZlbnQpOw0KPiA+ICsNCj4gPiAgLyoqDQo+ID4gICAqIGNtZHFfcGt0X2NsZWFyX2V2ZW50KCkg
-LSBhcHBlbmQgY2xlYXIgZXZlbnQgY29tbWFuZCB0byB0aGUgQ01EUSBwYWNrZXQNCj4gPiAgICog
-QHBrdDoJdGhlIENNRFEgcGFja2V0DQo+IA0KPiANCg0K
+11.12.2019 18:10, Peter De Schrijver пишет:
+> On Tue, Dec 10, 2019 at 08:41:56PM +0300, Dmitry Osipenko wrote:
+> 
+> ..
+> 
+>>>
+>>> PMC clock gate is based on the state of CLKx_ACCEPT_REQ and FORCE_EN
+>>> like explained above.
+>>>
+>>> CLKx_ACCEPT_REQ is 0 default and FORCE_EN acts as gate to enable/disable
+>>> EXTPERIPH clock output to PMC CLK_OUT_1/2/3.
+>>
+>> [and to enable OSC as well]
+>>
+>>> So I believe we need to register as MUX and Gate rather than as a single
+>>> clock. Please confirm.
+>>
+>> 1. The force-enabling is applied to both OSC and EXTERN sources of
+>> PMC_CLK_OUT_x by PMC at once.
+>>
+>> 2. Both of PMC's force-enabling and OSC/EXTERN selection is internal to PMC.
+>>
+>> Should be better to define it as a single "pmc_clk_out_x". I don't see
+>> any good reasons for differentiating PMC's Gate from the MUX, it's a
+>> single hardware unit from a point of view of the rest of the system.
+>>
+>> Peter, do you have any objections?
+> 
+> The reason to have separate gate and mux clocks, is to preserve compatibility
+> with existing users.
+> Otherwise the current users would need to figure out if there's a
+> single clock or 2 clocks to configure. I don't think adding that code in
+> each user is worth it only to have a sligthly nicer modelling of the
+> hardware.
 
+Could you please clarify what do you mean by the "existing users"?
+AFAIK, nothing in kernel uses mux clocks.
