@@ -2,101 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01D911D19C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ACEF11D1DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 17:07:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbfLLP5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:57:36 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:37661 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729734AbfLLP5c (ORCPT
+        id S1729815AbfLLQHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 11:07:40 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.80]:29841 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729247AbfLLQHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:57:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576166251;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RxNkdTGL+BHDrpQPm/i6A4JCBzTI+wc8n9aRFvVKItM=;
-        b=CYfqva1BnMdTn9G2tv3dAjk5Vn5Y0L2QNwNSSxpKh0DQljPWehISwIgMDxxggFa9KfSnng
-        74LoUznPPgqQscR1RD+CE+k2yXviwkXl7fS85xI4Wozk0BUqqrEYZoeMU/xebEtl8EJWMd
-        5CroIL/sXBuYYB8b0KeW3mnRF0AiK7g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-279-GV9XHqYCP_G1WJjPtl2YTw-1; Thu, 12 Dec 2019 10:57:28 -0500
-X-MC-Unique: GV9XHqYCP_G1WJjPtl2YTw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 009A7186E8C0;
-        Thu, 12 Dec 2019 15:57:26 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D46C060303;
-        Thu, 12 Dec 2019 15:57:25 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 3554283729;
-        Thu, 12 Dec 2019 15:57:25 +0000 (UTC)
-Date:   Thu, 12 Dec 2019 10:57:25 -0500 (EST)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     syzbot <syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com>
-Cc:     gregkh@linuxfoundation.org, gustavo@padovan.org,
-        johan hedberg <johan.hedberg@gmail.com>, jslaby@suse.com,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        loic poulain <loic.poulain@intel.com>, marcel@holtmann.org,
-        mhjungk@gmail.com, syzkaller-bugs@googlegroups.com,
-        torvalds@linux-foundation.org
-Message-ID: <678541062.767044.1576166245082.JavaMail.zimbra@redhat.com>
-In-Reply-To: <000000000000b17fae05993f628b@google.com>
-References: <000000000000b17fae05993f628b@google.com>
-Subject: Re: WARNING in tty_set_termios
+        Thu, 12 Dec 2019 11:07:39 -0500
+X-Greylist: delayed 1285 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Dec 2019 11:07:38 EST
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id F2FFB567C0D
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 09:46:11 -0600 (CST)
+Received: from e36.ehosts.com ([192.185.128.17])
+        by cmsmtp with SMTP
+        id fQfLi3ZCnOdBHfQfLiCfkj; Thu, 12 Dec 2019 09:46:11 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=singleboardsolutions.com; s=default; h=Message-ID:CC:To:Date:From:Subject:
+        Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=UMrk7SVJBaZoF5+E4IWNlDb5JQkYTRr384MzHtkSMNA=; b=Z6F45GnZxN2pseuh0IHHkf69/s
+        ZLOxtsygVBMQDpO7ull4wMLqcSmdySbPZvytspNyu2pUslfuHN/55s2KRqikKLBC5+E5gapNgaaXl
+        NAknwJTUy7yBoxUao54lCEhsviPaOlUAFap8Ls3ZQ7zGD04OjmJjFdakIOnDIAgOkGblTHOpaKUT7
+        GGxhZmp2azaq1Yd6hLkYjDBMnUAuljMr/tgsucpANmmnJAwdndG6GDFTNKm68bwyqQ7U/+Om0ahbG
+        5/4QYPZzmFm75kkCvNBRN3X/3NRJvQnmkWKmlccw/oAe1JruqtpbPQdf2pErpAlMCdRfUTE3lSC2T
+        vkLtKQHA==;
+Received: from [172.58.138.77] (port=57064 helo=[IPV6:2607:fb90:1784:5f4e:a5d4:b11d:2550:9cec])
+        by e36.ehosts.com with esmtpa (Exim 4.92)
+        (envelope-from <tmckahan@singleboardsolutions.com>)
+        id 1ifQfL-001viD-Fm; Thu, 12 Dec 2019 08:46:11 -0700
+In-Reply-To: <678df227-38be-47af-7ee3-741a391a196c@fivetechno.de>
+References: <678df227-38be-47af-7ee3-741a391a196c@fivetechno.de>
+X-Referenced-Uid: 55
+Thread-Topic: [PATCH 2/3] arm64: dts: rockchip: Enable PD for USB-C-Port on rk3399-roc-pc.
+X-Is-Generated-Message-Id: true
+X-Blue-Identity: !l=635&o=43&fo=3004&pl=525&po=0&qs=PREFIX&f=HTML&n=Thomas%20McKahan&e=tmckahan%40singleboardsolutions.com&m=!%3ANDg0ODA5OGEtZmVjOS00NjIyLTkwMTUtZGI5MTM5OGY1ZGU3%3ASU5CT1g%3D%3ANTU%3D%3AANSWERED&p=491&q=SHOW
+User-Agent: Android
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.43.2.123, 10.4.195.2]
-Thread-Topic: WARNING in tty_set_termios
-Thread-Index: nfPhKBJJSkrI9vtIk7Do/4ncxH+k5w==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+ charset=UTF-8
+Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Enable PD for USB-C-Port on rk3399-roc-pc.
+From:   Thomas McKahan <tmckahan@singleboardsolutions.com>
+Date:   Thu, 12 Dec 2019 10:46:09 -0500
+To:     Markus Reichl <m.reichl@fivetechno.de>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        narmstrong@baylibre.com
+Message-ID: <84920a36-230f-42a6-a960-a71e685be99f@singleboardsolutions.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - e36.ehosts.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - singleboardsolutions.com
+X-BWhitelist: no
+X-Source-IP: 172.58.138.77
+X-Source-L: No
+X-Exim-ID: 1ifQfL-001viD-Fm
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([IPV6:2607:fb90:1784:5f4e:a5d4:b11d:2550:9cec]) [172.58.138.77]:57064
+X-Source-Auth: tmckahan@singleboardsolutions.com
+X-Email-Count: 2
+X-Source-Cap: ZWxlY3RyaTk7ZWxlY3RyaTk7ZTM2LmVob3N0cy5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-#syz fix: Bluetooth: hci_uart: check for missing tty operations
+Hello Markus,
 
-Best regards,
-Vladis Dronov
+=C2=A0=C2=A0=C2=A0 I have been working with this as well, ca=
+me across it on Armbian=2E I was also trying to eliminate the warning conce=
+rning the lack of port with limited success=2E=C2=A0 I also missed the inte=
+rrupt pin definition I see=2E=C2=A0 I will test this later today=2E=C2=A0 
+=
 
------ Original Message -----
-> From: "syzbot" <syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com>
-> To: gregkh@linuxfoundation.org, gustavo@padovan.org, "johan hedberg" <johan.hedberg@gmail.com>, jslaby@suse.com,
-> linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, "loic poulain" <loic.poulain@intel.com>,
-> marcel@holtmann.org, mhjungk@gmail.com, syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
-> vdronov@redhat.com
-> Sent: Monday, December 9, 2019 7:20:01 AM
-> Subject: Re: WARNING in tty_set_termios
-> 
-> syzbot suspects this bug was fixed by commit:
-> 
-> commit b36a1552d7319bbfd5cf7f08726c23c5c66d4f73
-> Author: Vladis Dronov <vdronov@redhat.com>
-> Date:   Tue Jul 30 09:33:45 2019 +0000
-> 
->      Bluetooth: hci_uart: check for missing tty operations
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10b20aeae00000
-> start commit:   66c56cfa Merge tag 'remove-dma_zalloc_coherent-5.0' of git..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b05cfdb4ee8ab9b2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a950165cbb86bdd023a4
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=121cee07400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fdaed8c00000
-> 
-> If the result looks correct, please mark the bug fixed by replying with:
-> 
-> #syz fix: Bluetooth: hci_uart: check for missing tty operations
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
-> 
+=C2=A0=C2=A0 I've added Neil Armstrong for information in case any boards =
+on the Amlogic side are similarly configured, I think a few other Rockchip =
+ones at least are missing connector nodes, it appears to be a consistent is=
+sue presumably due to driver changes=2E
+
+-Tony
+
+
+=E2=81=A3
+
+On Dec 10, 2019=
+, 7:45 AM, at 7:45 AM, Markus Reichl <m=2Ereichl@fivetechno=2Ede> wrote:
+>U=
+SB-C-Port 0 on rk3399-roc-pc is designed to supply the board=2E
+>To meet th=
+e power requirements of up to 45W a power delivery (PD)
+>compatible supply =
+is needed=2E To configure the PD the node of the
+>fusb302 needs a connector=
+ property with desired PD description=2E
+>
+>Signed-off-by: Markus Reichl <m=
+=2Ereichl@fivetechno=2Ede>
+>---
+>Presently the board in mainline has to be =
+powered from a 12V supply,
+>connected to two pins on the expansion header a=
+s the standard 5V
+>delivered by the unconfigured USB-C plug is not enough f=
+or higher
+>loads or peripherals on USB or M=2E2=2E
+>
+>With this patch the b=
+oard requests 15V from the PD and runs fine
+>on high loads with NVME SSD, E=
+thernet, SDIO WLAN and USB peripherals=2E
+>During boot the 12V supply is st=
+ill needed for some seconds,
+>as the fusb302 shuts down or resets the PD sh=
+ortly when initializing
+>(BUG?)=2E
+>
+>The board's 12V line is running prese=
+ntly on 5V, the default output
+>voltage of the MP8859 on I2C-7, for wich no=
+ mainline kernel driver
+>exists yet=2E
+>---
+>  arch/arm64/boot/dts/rockchip=
+/rk3399-roc-pc=2Edtsi | 16 ++++++++++++++--
+>  1 file changed, 14 insertion=
+s(+), 2 deletions(-)
+>
+>diff --git a/arch/arm64/boot/dts/rockchip/rk3399-ro=
+c-pc=2Edtsi
+>b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc=2Edtsi
+>index 8e0=
+1b04144b7=2E=2E90783b2b1d1f 100644
+>--- a/arch/arm64/boot/dts/rockchip/rk33=
+99-roc-pc=2Edtsi
+>+++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc=2Edtsi
+>=
+@@ -6,6 +6,7 @@
+>  /dts-v1/;
+>  #include <dt-bindings/input/linux-event-cod=
+es=2Eh>
+>  #include <dt-bindings/pwm/pwm=2Eh>
+>+#include <dt-bindings/usb/p=
+d=2Eh>
+>  #include "rk3399=2Edtsi"
+>  #include "rk3399-opp=2Edtsi"
+>  
+>@@ =
+-540,11 +541,22 @@ fusb0: usb-typec@22 {
+>  		compatible =3D "fcs,fusb302";=
+
+>  		reg =3D <0x22>;
+>  		interrupt-parent =3D <&gpio1>;
+>-		interrupts =
+=3D <2 IRQ_TYPE_LEVEL_LOW>;
+>+		interrupts =3D <RK_PA2 IRQ_TYPE_LEVEL_LOW>;=
+
+>  		pinctrl-names =3D "default";
+>  		pinctrl-0 =3D <&fusb0_int>;
+>  		vb=
+us-supply =3D <&vcc_vbus_typec0>;
+>-		status =3D "okay";
+>+
+>+		usb_con: co=
+nnector {
+>+			compatible =3D "usb-c-connector";
+>+			label =3D "USB-C-0";
+=
+>+			power-role =3D "dual";
+>+			try-power-role =3D "sink";
+>+			source-pdo=
+s =3D <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
+>+			sink-pdos =3D <PDO_=
+FIXED(5000, 3000, PDO_FIXED_USB_COMM)
+>+				     PDO_VAR(5000, 15000, 3000)=
+
+>+				     PDO_PPS_APDO(5000, 15000, 3000)>;
+>+			op-sink-microwatt =3D <4=
+5000000>;
+>+		};
+>  	};
+>  };
+>  
+>-- 
+>2=2E24=2E0
+>
+>
+>___________________=
+____________________________
+>Linux-rockchip mailing list
+>Linux-rockchip@l=
+ists=2Einfradead=2Eorg
+>http://lists=2Einfradead=2Eorg/mailman/listinfo/lin=
+ux-rockchip
 
