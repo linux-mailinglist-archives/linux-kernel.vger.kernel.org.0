@@ -2,149 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0626211D862
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 22:16:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA4CD11D877
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 22:21:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731061AbfLLVPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 16:15:52 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60706 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730971AbfLLVPv (ORCPT
+        id S1731104AbfLLVVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 16:21:53 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35985 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731078AbfLLVVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 16:15:51 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBCL7Eno051267;
-        Thu, 12 Dec 2019 16:15:49 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wujxrppd5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Dec 2019 16:15:48 -0500
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id xBCL7YiG052047;
-        Thu, 12 Dec 2019 16:15:48 -0500
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wujxrppcv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Dec 2019 16:15:48 -0500
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xBCL9xOL012765;
-        Thu, 12 Dec 2019 21:15:47 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma04dal.us.ibm.com with ESMTP id 2wr3q7dhy4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Dec 2019 21:15:47 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBCLFka655836952
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Dec 2019 21:15:46 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 48A8678060;
-        Thu, 12 Dec 2019 21:15:46 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C55197805E;
-        Thu, 12 Dec 2019 21:15:44 +0000 (GMT)
-Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.137])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Dec 2019 21:15:44 +0000 (GMT)
-From:   Leonardo Bras <leonardo@linux.ibm.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Cc:     Leonardo Bras <leonardo@linux.ibm.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] drivers/vhost : Removes unnecessary 'else' in vhost_copy_from_user
-Date:   Thu, 12 Dec 2019 18:15:39 -0300
-Message-Id: <20191212211539.34578-1-leonardo@linux.ibm.com>
-X-Mailer: git-send-email 2.23.0
+        Thu, 12 Dec 2019 16:21:53 -0500
+Received: by mail-pg1-f194.google.com with SMTP id k3so215842pgc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 13:21:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A3MllguTlm4RWEMVtAXxk8WCZHqQzGllKbJkD1LpkZo=;
+        b=XOSrWBeBMymaJn4z1PR8VDb2JrXgYLfUBwv5WuGOHadZF8aLKPGK7s3i80NML9ei5o
+         Wz+pX+KdMmyRfIOuG5pMCh3ms1vGqADyMXJweI9dlCYaufAZ4i3qR6Iy3JnnJ8bgvEGd
+         TueSwhM5i2JoLKcIA8OmAjTC7bOIrDgKDzJB4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A3MllguTlm4RWEMVtAXxk8WCZHqQzGllKbJkD1LpkZo=;
+        b=q+60Mq6smAXkbl0nfHVIFsO+fvXT1otvzc05TyuVhU9j4haHuxvkKmSqRq9Qz2U/9U
+         51eMUZ+nbqYTXYqlWZ04eo568XCLhhCsNckgnz17SrGHUYxBc4hYjPF6zkgjp1vEKRlj
+         fqLHLIS6Qd8zAL/Qo9qv098k3bFiJbfMy5eYCq3QYzecHzQvHPUbObiRxpIRcyewEWG1
+         NAYNt/5Dk/EjoHYY3ekuBslJk/3H1UGLnVQG3TsmDwBG2seO+wGJbuTAsNsBMzoQDI4N
+         JU6f+vFTH4nGZXWN7eoWAeHmyHtFWANdBhBwVCs2CiO3/eIY/VANr9s9iTTvdq2qIuCa
+         RUlg==
+X-Gm-Message-State: APjAAAXWdQcz57vgaB7H2S5bd8IDYCS31vtzBIshunrQjFLOAwUmAYZd
+        0AcCJgovlcWIQTulwzXBXcvNzQ==
+X-Google-Smtp-Source: APXvYqxCXvvMmFnm700MmbQmtWurHwBNW8hqqwHFReXZcDmV8WyGaUc29LSksY5z4mtikc0J/wRD1g==
+X-Received: by 2002:a63:504f:: with SMTP id q15mr12761862pgl.8.1576185712148;
+        Thu, 12 Dec 2019 13:21:52 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id y62sm8969595pfg.45.2019.12.12.13.21.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 13:21:51 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] usb: dwc3: qcom: Remove useless compatible strings from the match table
+Date:   Thu, 12 Dec 2019 13:21:25 -0800
+Message-Id: <20191212132122.1.I85a23bdcff04dbce48cc46ddb8f1ffe7a51015eb@changeid>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-12_07:2019-12-12,2019-12-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- malwarescore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
- clxscore=1011 suspectscore=0 bulkscore=0 spamscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912120164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need for this else statement, given that if block will return.
-This change is not supposed to change the output binary.
+The of match table in dwc3-qcom.c had an entry per Qualcomm SoC known
+to have dwc3.  That's not needed.  Here's why:
 
-It reduces identation level on most lines in this function, and also
-fixes an split string on vq_err().
+1. The bindings specify that the compatible string in the device tree
+   should contain the SoC-specific compatible string followed by the
+   string "qcom,dwc3".
 
-Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+2. All known Qualcomm SoC dts files (confirmed via git grep in
+   mainline Linux) using dwc3 follow the rules and do, in fact,
+   contain the SoC-specific compatible string followed by the string
+   "qcom,dwc3".
+
+3. The source code does nothing special with the per-SoC strings--they
+   are only used to match the node.
+
+Let's remove the extra strings from the table.  Doing so will avoid
+the need to land future useless patches [1] that do nothing more than
+add yet more strings to the table.
+
+NOTE: if later we _do_ find some SoC-specific quirk we need to handle
+in the code we can add back a subset of these strings.  At the time we
+will probably also add some data in the match table to make it easier
+to generalize this hypothetical quirk across all the SoCs it affects.
+
+[1] https://lore.kernel.org/r/1574940787-1004-2-git-send-email-sanm@codeaurora.org
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
- drivers/vhost/vhost.c | 50 +++++++++++++++++++++----------------------
- 1 file changed, 24 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index f44340b41494..b23d1b74c32f 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -824,34 +824,32 @@ static int vhost_copy_from_user(struct vhost_virtqueue *vq, void *to,
+ drivers/usb/dwc3/dwc3-qcom.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+index 261af9e38ddd..72e867e02a1c 100644
+--- a/drivers/usb/dwc3/dwc3-qcom.c
++++ b/drivers/usb/dwc3/dwc3-qcom.c
+@@ -751,9 +751,6 @@ static const struct dev_pm_ops dwc3_qcom_dev_pm_ops = {
  
- 	if (!vq->iotlb)
- 		return __copy_from_user(to, from, size);
--	else {
--		/* This function should be called after iotlb
--		 * prefetch, which means we're sure that vq
--		 * could be access through iotlb. So -EAGAIN should
--		 * not happen in this case.
--		 */
--		void __user *uaddr = vhost_vq_meta_fetch(vq,
--				     (u64)(uintptr_t)from, size,
--				     VHOST_ADDR_DESC);
--		struct iov_iter f;
- 
--		if (uaddr)
--			return __copy_from_user(to, uaddr, size);
-+	/* This function should be called after iotlb
-+	 * prefetch, which means we're sure that vq
-+	 * could be access through iotlb. So -EAGAIN should
-+	 * not happen in this case.
-+	 */
-+	void __user *uaddr = vhost_vq_meta_fetch(vq,
-+			     (u64)(uintptr_t)from, size,
-+			     VHOST_ADDR_DESC);
-+	struct iov_iter f;
- 
--		ret = translate_desc(vq, (u64)(uintptr_t)from, size, vq->iotlb_iov,
--				     ARRAY_SIZE(vq->iotlb_iov),
--				     VHOST_ACCESS_RO);
--		if (ret < 0) {
--			vq_err(vq, "IOTLB translation failure: uaddr "
--			       "%p size 0x%llx\n", from,
--			       (unsigned long long) size);
--			goto out;
--		}
--		iov_iter_init(&f, READ, vq->iotlb_iov, ret, size);
--		ret = copy_from_iter(to, size, &f);
--		if (ret == size)
--			ret = 0;
--	}
-+	if (uaddr)
-+		return __copy_from_user(to, uaddr, size);
-+
-+	ret = translate_desc(vq, (u64)(uintptr_t)from, size, vq->iotlb_iov,
-+			     ARRAY_SIZE(vq->iotlb_iov),
-+			     VHOST_ACCESS_RO);
-+	if (ret < 0) {
-+		vq_err(vq, "IOTLB translation failure: uaddr %p size 0x%llx\n",
-+		       from, (unsigned long long)size);
-+		goto out;
-+	}
-+	iov_iter_init(&f, READ, vq->iotlb_iov, ret, size);
-+	ret = copy_from_iter(to, size, &f);
-+	if (ret == size)
-+		ret = 0;
- 
- out:
- 	return ret;
+ static const struct of_device_id dwc3_qcom_of_match[] = {
+ 	{ .compatible = "qcom,dwc3" },
+-	{ .compatible = "qcom,msm8996-dwc3" },
+-	{ .compatible = "qcom,msm8998-dwc3" },
+-	{ .compatible = "qcom,sdm845-dwc3" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, dwc3_qcom_of_match);
 -- 
-2.23.0
+2.24.1.735.g03f4e72817-goog
 
