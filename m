@@ -2,81 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E154B11D84C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 22:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B49311D870
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 22:21:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731020AbfLLVI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 16:08:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59242 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730812AbfLLVI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 16:08:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D14CDAD95;
-        Thu, 12 Dec 2019 21:08:24 +0000 (UTC)
-Subject: Re: [RFC 04/25] spi: gpio: Implement LSB First bitbang support
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Dan Murphy <dmurphy@ti.com>
-References: <20191212033952.5967-1-afaerber@suse.de>
- <20191212033952.5967-5-afaerber@suse.de>
- <CAMuHMdWdxJ9AaWhyCW-u8fCpXSDCPd-D6Dx129SF5nRssZsK=g@mail.gmail.com>
- <9b4b6287-c1d9-1b41-88a8-7ac9fe222642@suse.de>
- <20191212171922.GM4310@sirena.org.uk>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <70bf4954-d7ab-e300-017c-c743a40162a4@suse.de>
-Date:   Thu, 12 Dec 2019 22:08:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <20191212171922.GM4310@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1731051AbfLLVVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 16:21:12 -0500
+Received: from mga02.intel.com ([134.134.136.20]:25359 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730971AbfLLVVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 16:21:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 13:20:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,307,1571727600"; 
+   d="scan'208";a="226062825"
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by orsmga002.jf.intel.com with ESMTP; 12 Dec 2019 13:20:48 -0800
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH v2 0/3] Fix small issues in XSAVES
+Date:   Thu, 12 Dec 2019 13:08:52 -0800
+Message-Id: <20191212210855.19260-1-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 12.12.19 um 18:19 schrieb Mark Brown:
-> On Thu, Dec 12, 2019 at 04:14:59PM +0100, Andreas Färber wrote:
->> Am 12.12.19 um 09:40 schrieb Geert Uytterhoeven:
->>> On Thu, Dec 12, 2019 at 4:41 AM Andreas Färber <afaerber@suse.de> wrote:
->>>> Add support for slave DT property spi-lsb-first, i.e., SPI_LSB_FIRST mode.
-> 
->>>> Duplicate the inline helpers bitbang_txrx_be_cpha{0,1} as LE versions.
->>>> Make checkpatch.pl happy by changing "unsigned" to "unsigned int".
-> 
-> Separate patch for this?
+Rebase v1 to Linux v5.5-rc1.  This supersedes the previous version, but
+does not have any functional changes.
 
-For the checkpatch cleanup? Or helpers preparation vs. spi-gpio.c usage?
+The first two patches in this series are split from my supervisor xstate
+patches [2].  The third is to fix a vital issue in __fpu_restore_sig(),
+and more RFC than the others.  All three are not directly related to
+supervisor xstates or CET, split them out and submit first.  I will
+re-submit supervisor xstate patches shortly.
 
->> So from that angle I don't see a better way than either duplicating the
->> functions or using some macro magic to #include the header twice. If we
->> wanted to go down that path, we could probably de-duplicate the existing
->> two functions, too, but I was trying to err on the cautious side, since
->> I don't have setups to test all four code paths myself (and a ton of
->> more relevant but less fun patches to flush out ;)).
-> 
-> Yeah, I don't think there's any great options here with the potential
-> performance issues - probably the nicest thing would be to autogenerate
-> lots of variants but I think that's far more trouble than it's worth.
+When__fpu_restore_sig() fails, partially cleared FPU registers still belong
+to the previous owner task.  That causes that task to use corrupted xregs.
+Fix it by doing __cpu_invalidate_fpregs_state() in functions that copy into
+fpregs.  Further details are in the commit log of patch #3.
 
-Maybe add another code comment to revisit that idea later then?
+[1] v1 of this series:
+    https://lkml.kernel.org/r/20191205182648.32257-1-yu-cheng.yu@intel.com/
 
-Thanks,
-Andreas
+[2] Support XSAVES supervisor states
+    https://lkml.kernel.org/r/20190925151022.21688-1-yu-cheng.yu@intel.com/
+
+[3] CET patches:
+    https://lkml.kernel.org/r/20190813205225.12032-1-yu-cheng.yu@intel.com/
+    https://lkml.kernel.org/r/20190813205359.12196-1-yu-cheng.yu@intel.com/
+
+Yu-cheng Yu (3):
+  x86/fpu/xstate: Fix small issues before adding supervisor xstates
+  x86/fpu/xstate: Make xfeature_is_supervisor()/xfeature_is_user()
+    return bool
+  x86/fpu/xstate: Invalidate fpregs when __fpu_restore_sig() fails
+
+ arch/x86/include/asm/fpu/internal.h | 14 ++++++++++++++
+ arch/x86/kernel/fpu/core.c          | 16 ++++++++++++++--
+ arch/x86/kernel/fpu/xstate.c        | 18 ++++++++----------
+ 3 files changed, 36 insertions(+), 12 deletions(-)
 
 -- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+2.17.1
+
