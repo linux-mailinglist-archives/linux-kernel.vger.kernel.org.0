@@ -2,206 +2,395 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F86D11C509
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 05:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F1611C50E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 05:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbfLLEvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 23:51:08 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:57023 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726689AbfLLEvH (ORCPT
+        id S1727948AbfLLEyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 23:54:02 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41865 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727870AbfLLEyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 23:51:07 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3E8E5223A2;
-        Wed, 11 Dec 2019 23:51:06 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Wed, 11 Dec 2019 23:51:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=ep04Dn5qmfs2mdZrsK/koUM1j+dGjwq
-        qU1VZH2ff2Bg=; b=NhQMUA4eJdN1LLv6TG4FBgd1f4z8zBRTwyzqXT0So1EDQIE
-        sWXuuyVpo9S9tTSIkd1zb17Qa0HAA/wj9iSg4kAnnuD5X9JHTU8Y5eK/nh3oRzvr
-        bHJlicK0lMBa0e+qQGyrXUul9obC4WMizmBaLMwnZeO7mf4qw3PmmF0MWU9Cbo6M
-        xw2iTzOM07DhZLn4yckRbdDgewhwUJF+CoNPHvg0io4FExcGPCoCNJ9wIoNWHk9j
-        rHkQyHUR0eN9tZR+0/1ljg/gFPm8EsTLgaPjq7JlDblJ21pLpD4L4Wg6W8HrFqTO
-        jmvZ2Pzm7zI1snTtWiJUYCtNkTvrmIb7r2FZDSg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=ep04Dn
-        5qmfs2mdZrsK/koUM1j+dGjwqqU1VZH2ff2Bg=; b=jz+I4tz9Wi87/0G/8gRhYc
-        XHQiPj3L7xwNR3yRWqsLoribVEa8oOHVS4+n4VSwVZbRxbiel6F644QBG6pRbD4q
-        bqQBBfDFuhM9Zq9PB/2nKfDah52HY4Sv9okOkeI9QiuuiEX8VSi+NgwsMfvk2OTw
-        7Xr/fl8PuSoh76pQl2SobYBWaWnETpJ81PGdMOdPmvrKb9sGfd36+3F5mEOQmpfS
-        Z7d7n6/A2MIosHW2vwQ4xAQq0EVKsA2/skclelYwOZxK7P3U1Xfa1QABJtregqsD
-        8Cb7GVOLJyZvx0c0k0PKe9RL0z9New0Ns2Iobm6i8ffw0iNpzjVE2DIX3VJk+fbA
-        ==
-X-ME-Sender: <xms:OMfxXTJ_voGqbigVdF8n5SuBLo2hRpb8_CZ_-L3FAu-rjeWrQmY8cA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudeliedgjeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgeptd
-X-ME-Proxy: <xmx:OMfxXWa1d2H2fo0KalFXZtAtuy5LPgOhmMm4w70aXsPA4JNyF_bL5Q>
-    <xmx:OMfxXX51WvkT_LD69OPWyqXr5N2f5NU61DMg8P_VMhrb3K9mNVGELA>
-    <xmx:OMfxXXJzLKE4c7eUavZA4yCcDEOnIbqFsUysXT47HJSE3pBQrifQdg>
-    <xmx:OsfxXU554NfgEQkg-4fSJH1Ybo_bc-NhMdbjfS1xQpJtib0U_kmHJA>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 726AAE00A2; Wed, 11 Dec 2019 23:51:04 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-679-g1f7ccac-fmstable-20191210v1
-Mime-Version: 1.0
-Message-Id: <f597202e-0d5a-4b76-ba0a-a6f0a857b289@www.fastmail.com>
-In-Reply-To: <bffadb0a-aba7-d799-b2ef-a4adb3259c4b@linux.ibm.com>
-References: <1575566112-11658-1-git-send-email-eajames@linux.ibm.com>
- <1575566112-11658-7-git-send-email-eajames@linux.ibm.com>
- <de395d95-15f4-4df3-873d-ce89ae008ed3@www.fastmail.com>
- <bffadb0a-aba7-d799-b2ef-a4adb3259c4b@linux.ibm.com>
-Date:   Thu, 12 Dec 2019 15:22:44 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Eddie James" <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, "Jason Cooper" <jason@lakedaemon.net>,
-        linux-aspeed@lists.ozlabs.org, "Marc Zyngier" <maz@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
-        mark.rutland@arm.com, "Joel Stanley" <joel@jms.id.au>
-Subject: Re: [PATCH v2 06/12] drivers/soc: Add Aspeed XDMA Engine Driver
-Content-Type: text/plain
+        Wed, 11 Dec 2019 23:54:02 -0500
+Received: by mail-pl1-f195.google.com with SMTP id bd4so47953plb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 20:54:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tHc0PSlg2ACU7A0C5ZEBVhN6RrL2muH9eFVp0rXdeDE=;
+        b=KGecksqTN7aH5WaT4X+s+x+aP+a7i7w6cLgxIRgN33sxCXMSyEKJciRD7d/6ihcDUC
+         3I7wQbAZt3iZaal81RY6v0Mz/zczvfg2SA89GwuuNHw/n5vU16vI+ifvJ4sk57OdNpC4
+         V7o/+FbQ5JPLui0wRjqlbtUqJnAPzFtU3kxSFs1S77k8ZxHhaXFGiL/v5WdCohFCtEhm
+         I3GcCjNIfmKbF9pTxosH5OQKs0cdqxvRMvgrvLuRD8L0i/5M8im/Y4Zz+x40EJIy5H5n
+         mCoRBfNjnZtvP/6mWS6NBxuykK0aGwULL22KIeyDDXsixKKhun7vD+mqKM5cBwMxdK1q
+         knIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tHc0PSlg2ACU7A0C5ZEBVhN6RrL2muH9eFVp0rXdeDE=;
+        b=mFy0F79XHm5/sRVDa77NXERvrBinuxwsFvDiYzzuN7NkGQW0L8DYY3gF0Qf7tnoyvr
+         b46BOJA07P9uj88H98ioYDScchSXZg+P+n9E3oREpMm2ybnKz7UjrsbYr6RtevUACNpF
+         nSxBvA5Lgs1Jt9jXMCU2TeKVL1lJjmU05BHfvyiX7TsVC+eEnLej5YRY3g1sbRQdJuBE
+         jsvBnR7YikhXTXrLscDbFxOajcIJDEfqrAoxDoRxADSKnagYbgVJEJNwl6CXZiBdb8kS
+         Sy1o5DW+mGNXkg1P0Kk3Z3wVoyRlNJW9/owSeIMfzO3TqwBvPTOF/8lVy88zvieWYfRh
+         tHDg==
+X-Gm-Message-State: APjAAAWClNpPDz3VP3DFT7cTgpGrg0iRe5vZe6rcy96IbVNcUhp6rxhZ
+        Tqv77oh8sgtJPIxSRI2poUXb8w==
+X-Google-Smtp-Source: APXvYqzrRHnZ5q4I4LzpDUl67+uqmLMUk4wBwLzuaNFK6ZHjHGq/Wky7eTDvRsCnfnIfsl0moHl/Qw==
+X-Received: by 2002:a17:90a:a48c:: with SMTP id z12mr7859371pjp.38.1576126441010;
+        Wed, 11 Dec 2019 20:54:01 -0800 (PST)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 81sm4853330pfx.73.2019.12.11.20.53.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2019 20:54:00 -0800 (PST)
+Date:   Wed, 11 Dec 2019 20:53:57 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Can Guo <cang@codeaurora.org>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Evan Green <evgreen@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] scsi: ufs: Modulize ufs-bsg
+Message-ID: <20191212045357.GA415177@yoga>
+References: <1576054123-16417-1-git-send-email-cang@codeaurora.org>
+ <0101016ef425ef65-5c4508cc-5e76-4107-bb27-270f66acaa9a-000000@us-west-2.amazonses.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0101016ef425ef65-5c4508cc-5e76-4107-bb27-270f66acaa9a-000000@us-west-2.amazonses.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed 11 Dec 00:49 PST 2019, Can Guo wrote:
 
+> In order to improve the flexibility of ufs-bsg, modulizing it is a good
+> choice. This change introduces tristate to ufs-bsg to allow users compile
+> it as an external module.
 
-On Thu, 12 Dec 2019, at 07:09, Eddie James wrote:
+Can you please elaborate on what this "flexibility" is and why it's a
+good thing?
+
 > 
-> On 12/10/19 9:47 PM, Andrew Jeffery wrote:
-> >
-> > On Fri, 6 Dec 2019, at 03:45, Eddie James wrote:
-> >> +
-> >> +static unsigned int aspeed_xdma_ast2600_set_cmd(struct aspeed_xdma *ctx,
-> >> +						struct aspeed_xdma_op *op,
-> >> +						u32 bmc_addr)
-> >> +{
-> >> +	u64 cmd = XDMA_CMD_AST2600_CMD_IRQ_BMC |
-> >> +		(op->direction ? XDMA_CMD_AST2600_CMD_UPSTREAM : 0);
-> >> +	unsigned int line_size;
-> >> +	unsigned int nidx = (ctx->cmd_idx + 1) % XDMA_NUM_CMDS;
-> >> +	unsigned int line_no = 1;
-> >> +	unsigned int pitch = 1;
-> >> +	struct aspeed_xdma_cmd *ncmd =
-> >> +		&(((struct aspeed_xdma_cmd *)ctx->cmdq)[ctx->cmd_idx]);
-> >> +
-> >> +	if ((op->host_addr + op->len) & 0xffffffff00000000ULL)
-> > Do we know that this won't wrap?
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/Kconfig   |  3 ++-
+>  drivers/scsi/ufs/Makefile  |  2 +-
+>  drivers/scsi/ufs/ufs_bsg.c | 49 +++++++++++++++++++++++++++++++++++++++++++---
+>  drivers/scsi/ufs/ufs_bsg.h |  8 --------
+>  drivers/scsi/ufs/ufshcd.c  | 36 ++++++++++++++++++++++++++++++----
+>  drivers/scsi/ufs/ufshcd.h  |  7 ++++++-
+>  6 files changed, 87 insertions(+), 18 deletions(-)
 > 
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index d14c224..72620ce 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -38,6 +38,7 @@ config SCSI_UFSHCD
+>  	select PM_DEVFREQ
+>  	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+>  	select NLS
+> +	select BLK_DEV_BSGLIB
+
+Why is this needed?
+
+>  	---help---
+>  	This selects the support for UFS devices in Linux, say Y and make
+>  	  sure that you know the name of your UFS host adapter (the card
+> @@ -143,7 +144,7 @@ config SCSI_UFS_TI_J721E
+>  	  If unsure, say N.
+>  
+>  config SCSI_UFS_BSG
+> -	bool "Universal Flash Storage BSG device node"
+> +	tristate "Universal Flash Storage BSG device node"
+>  	depends on SCSI_UFSHCD
+>  	select BLK_DEV_BSGLIB
+>  	help
+> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+> index 94c6c5d..904eff1 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -6,7 +6,7 @@ obj-$(CONFIG_SCSI_UFS_CDNS_PLATFORM) += cdns-pltfrm.o
+>  obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
+>  obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
+>  ufshcd-core-y				+= ufshcd.o ufs-sysfs.o
+> -ufshcd-core-$(CONFIG_SCSI_UFS_BSG)	+= ufs_bsg.o
+> +obj-$(CONFIG_SCSI_UFS_BSG)	+= ufs_bsg.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+>  obj-$(CONFIG_SCSI_UFS_HISI) += ufs-hisi.o
+> diff --git a/drivers/scsi/ufs/ufs_bsg.c b/drivers/scsi/ufs/ufs_bsg.c
+> index 3a2e68f..302222f 100644
+> --- a/drivers/scsi/ufs/ufs_bsg.c
+> +++ b/drivers/scsi/ufs/ufs_bsg.c
+> @@ -164,13 +164,15 @@ static int ufs_bsg_request(struct bsg_job *job)
+>   */
+>  void ufs_bsg_remove(struct ufs_hba *hba)
+>  {
+> -	struct device *bsg_dev = &hba->bsg_dev;
+> +	struct device *bsg_dev = hba->bsg_dev;
+>  
+>  	if (!hba->bsg_queue)
+>  		return;
+>  
+>  	bsg_remove_queue(hba->bsg_queue);
+>  
+> +	hba->bsg_dev = NULL;
+> +	hba->bsg_queue = NULL;
+>  	device_del(bsg_dev);
+>  	put_device(bsg_dev);
+>  }
+> @@ -178,6 +180,7 @@ void ufs_bsg_remove(struct ufs_hba *hba)
+>  static inline void ufs_bsg_node_release(struct device *dev)
+>  {
+>  	put_device(dev->parent);
+> +	kfree(dev);
+>  }
+>  
+>  /**
+> @@ -186,14 +189,19 @@ static inline void ufs_bsg_node_release(struct device *dev)
+>   *
+>   * Called during initial loading of the driver, and before scsi_scan_host.
+>   */
+> -int ufs_bsg_probe(struct ufs_hba *hba)
+> +static int ufs_bsg_probe(struct ufs_hba *hba)
+>  {
+> -	struct device *bsg_dev = &hba->bsg_dev;
+> +	struct device *bsg_dev;
+>  	struct Scsi_Host *shost = hba->host;
+>  	struct device *parent = &shost->shost_gendev;
+>  	struct request_queue *q;
+>  	int ret;
+>  
+> +	bsg_dev = kzalloc(sizeof(*bsg_dev), GFP_KERNEL);
+> +	if (!bsg_dev)
+> +		return -ENOMEM;
+> +
+> +	hba->bsg_dev = bsg_dev;
+>  	device_initialize(bsg_dev);
+>  
+>  	bsg_dev->parent = get_device(parent);
+> @@ -217,6 +225,41 @@ int ufs_bsg_probe(struct ufs_hba *hba)
+>  
+>  out:
+>  	dev_err(bsg_dev, "fail to initialize a bsg dev %d\n", shost->host_no);
+> +	hba->bsg_dev = NULL;
+>  	put_device(bsg_dev);
+>  	return ret;
+>  }
+> +
+> +static int __init ufs_bsg_init(void)
+> +{
+> +	struct list_head *hba_list = NULL;
+> +	struct ufs_hba *hba;
+> +	int ret = 0;
+> +
+> +	ufshcd_get_hba_list_lock(&hba_list);
+> +	list_for_each_entry(hba, hba_list, list) {
+> +		ret = ufs_bsg_probe(hba);
+> +		if (ret)
+> +			break;
+> +	}
+
+So what happens if I go CONFIG_SCSI_UFS_BSG=y and
+CONFIG_SCSI_UFS_QCOM=y?
+
+Wouldn't that mean that ufs_bsg_init() is called before ufshcd_init()
+has added the controller to the list? And even in the even that they are
+both =m, what happens if they are invoked in the "wrong" order?
+
+> +	ufshcd_put_hba_list_unlock();
+> +
+> +	return ret;
+> +}
+> +
+> +static void __exit ufs_bsg_exit(void)
+> +{
+> +	struct list_head *hba_list = NULL;
+> +	struct ufs_hba *hba;
+> +
+> +	ufshcd_get_hba_list_lock(&hba_list);
+> +	list_for_each_entry(hba, hba_list, list)
+> +		ufs_bsg_remove(hba);
+> +	ufshcd_put_hba_list_unlock();
+> +}
+> +
+> +late_initcall_sync(ufs_bsg_init);
+> +module_exit(ufs_bsg_exit);
+> +
+> +MODULE_ALIAS("ufs-bsg");
+
+The purpose of MODULE_ALIAS() is to facilitate module autoloading, but
+as you probe the bsg device from the initcall of the bsg driver itself I
+don't see how that would happen, and as such I don't think this alias
+has a purpose.
+
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/scsi/ufs/ufs_bsg.h b/drivers/scsi/ufs/ufs_bsg.h
+> index d099187..9d922c0 100644
+> --- a/drivers/scsi/ufs/ufs_bsg.h
+> +++ b/drivers/scsi/ufs/ufs_bsg.h
+> @@ -12,12 +12,4 @@
+>  #include "ufshcd.h"
+>  #include "ufs.h"
+>  
+> -#ifdef CONFIG_SCSI_UFS_BSG
+> -void ufs_bsg_remove(struct ufs_hba *hba);
+> -int ufs_bsg_probe(struct ufs_hba *hba);
+> -#else
+> -static inline void ufs_bsg_remove(struct ufs_hba *hba) {}
+> -static inline int ufs_bsg_probe(struct ufs_hba *hba) {return 0; }
+> -#endif
+> -
+>  #endif /* UFS_BSG_H */
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index a86b0fd..7a83a8f 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -108,6 +108,22 @@
+>  		       16, 4, buf, __len, false);                        \
+>  } while (0)
+>  
+> +static LIST_HEAD(ufs_hba_list);
+> +static DEFINE_MUTEX(ufs_hba_list_lock);
+> +
+> +void ufshcd_get_hba_list_lock(struct list_head **list)
+> +{
+> +	mutex_lock(&ufs_hba_list_lock);
+> +	*list = &ufs_hba_list;
+> +}
+> +EXPORT_SYMBOL_GPL(ufshcd_get_hba_list_lock);
+> +
+> +void ufshcd_put_hba_list_unlock(void)
+> +{
+> +	mutex_unlock(&ufs_hba_list_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(ufshcd_put_hba_list_unlock);
+> +
+>  int ufshcd_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
+>  		     const char *prefix)
+>  {
+> @@ -2093,6 +2109,7 @@ int ufshcd_send_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd)
+>  	ufshcd_release(hba);
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(ufshcd_send_uic_cmd);
+>  
+>  /**
+>   * ufshcd_map_sg - Map scatter-gather list to prdt
+> @@ -6024,6 +6041,7 @@ int ufshcd_exec_raw_upiu_cmd(struct ufs_hba *hba,
+>  
+>  	return err;
+>  }
+> +EXPORT_SYMBOL_GPL(ufshcd_exec_raw_upiu_cmd);
+>  
+>  /**
+>   * ufshcd_eh_device_reset_handler - device reset handler registered to
+> @@ -7043,9 +7061,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>  			}
+>  			hba->clk_scaling.is_allowed = true;
+>  		}
+> -
+> -		ufs_bsg_probe(hba);
+> -
+>  		scsi_scan_host(hba->host);
+>  		pm_runtime_put_sync(hba->dev);
+>  	}
+> @@ -8248,7 +8263,16 @@ int ufshcd_shutdown(struct ufs_hba *hba)
+>   */
+>  void ufshcd_remove(struct ufs_hba *hba)
+>  {
+> -	ufs_bsg_remove(hba);
+> +	struct device *bsg_dev = hba->bsg_dev;
+> +
+> +	mutex_lock(&ufs_hba_list_lock);
+> +	list_del(&hba->list);
+> +	if (hba->bsg_queue) {
+> +		bsg_remove_queue(hba->bsg_queue);
+> +		device_del(bsg_dev);
+
+Am I reading this correct in that you probe the bsg_dev form initcall
+and you delete it as the ufshcd instance is removed? That's not okay.
+
+Regards,
+Bjorn
+
+> +		put_device(bsg_dev);
+> +	}
+> +	mutex_unlock(&ufs_hba_list_lock);
+>  	ufs_sysfs_remove_nodes(hba->dev);
+>  	scsi_remove_host(hba->host);
+>  	scsi_host_put(hba->host);
+> @@ -8494,6 +8518,10 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+>  	async_schedule(ufshcd_async_scan, hba);
+>  	ufs_sysfs_add_nodes(hba->dev);
+>  
+> +	mutex_lock(&ufs_hba_list_lock);
+> +	list_add_tail(&hba->list, &ufs_hba_list);
+> +	mutex_unlock(&ufs_hba_list_lock);
+> +
+>  	return 0;
+>  
+>  out_remove_scsi_host:
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 2740f69..893debc 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -74,6 +74,9 @@
+>  
+>  struct ufs_hba;
+>  
+> +void ufshcd_get_hba_list_lock(struct list_head **list);
+> +void ufshcd_put_hba_list_unlock(void);
+> +
+>  enum dev_cmd_type {
+>  	DEV_CMD_TYPE_NOP		= 0x0,
+>  	DEV_CMD_TYPE_QUERY		= 0x1,
+> @@ -473,6 +476,7 @@ struct ufs_stats {
+>  
+>  /**
+>   * struct ufs_hba - per adapter private structure
+> + * @list: Anchored at ufs_hba_list
+>   * @mmio_base: UFSHCI base register address
+>   * @ucdl_base_addr: UFS Command Descriptor base address
+>   * @utrdl_base_addr: UTP Transfer Request Descriptor base address
+> @@ -527,6 +531,7 @@ struct ufs_stats {
+>   * @scsi_block_reqs_cnt: reference counting for scsi block requests
+>   */
+>  struct ufs_hba {
+> +	struct list_head list;
+>  	void __iomem *mmio_base;
+>  
+>  	/* Virtual memory reference */
+> @@ -734,7 +739,7 @@ struct ufs_hba {
+>  	struct ufs_desc_size desc_size;
+>  	atomic_t scsi_block_reqs_cnt;
+>  
+> -	struct device		bsg_dev;
+> +	struct device		*bsg_dev;
+>  	struct request_queue	*bsg_queue;
+>  };
+>  
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 > 
-> No, but I assume it would be a bad transfer anyway at that point?
-
-But what happens as a consequence? We would have a 64 bit address
-but wouldn't enable 64bit addressing, so presumably the hardware
-would only use the bottom 32 bits of the address?
-
-Things could get weird yes?
-
-Or is there some failure that would occur before we trigger the transfer?
-Is that what you're depending on?
-
-> >> +
-> >> +static void aspeed_xdma_done(struct aspeed_xdma *ctx, bool error)
-> >> +{
-> >> +	if (ctx->current_client) {
-> >> +		ctx->current_client->error = error;
-> >> +		ctx->current_client->in_progress = false;
-> >> +		ctx->current_client = NULL;
-> > You need to take start_lock before writing these members to ensure the
-> > writes are not reordered across acquisition of start_lock in
-> > aspeed_xdma_start() above, unless there's some other guarantee of that?
-> 
-> 
-> Unless we get spurious interrupts (as in, the xdma interrupt fires with 
-> no transfer started, and somehow the correct status bits are set), it's 
-> not possible to execute this at the same time as aspeed_xdma_start(). So 
-> I did not try and lock here. Do you think it's worth locking for that 
-> situation?
-> 
-
-Why is it worth not locking? How is it correct? To answer that way we invoke
-all kinds of reasoning about multi-processing (interrupt handled on one core
-while aspeed_xdma_start() is executing on another), value visibility and
-instruction reordering (though as it happens the 2400, 2500 and 2600 are all
-in-order). We'll trip ourselves up if there is eventually a switch to out-of-order
-execution where the writes might be reordered and delayed until after
-start_lock has been acquired in aspeed_xdma_start() by a subseqent transfer.
-This line of reasoning is brittle exploitation of properties of the currently used
-cores for no benefit. Finishing the DMA op isn't a hot path where you might
-want to take some of these risks for performance, so we have almost zero
-care for lock contention but we must always be concerned about correctness.
-
-We avoid invoking all of those questions by acquiring the lock.
-
-> >> +
-> >> +	ctx->vga_pool = devm_gen_pool_create(dev, ilog2(PAGE_SIZE), -1, NULL);
-> >> +	if (!ctx->vga_pool) {
-> >> +		dev_err(dev, "Failed to setup genalloc pool.\n");
-> >> +		return -ENOMEM;
-> >> +	}
-> >> +
-> >> +	rc = of_property_read_u32_array(dev->of_node, "vga-mem", vgamem, 2);
-> > As mentioned, this could be any reserved memory range. Also can't we get it as
-> > a resource rather than parsing a u32 array? Not sure if there's an advantage
-> > but it feels like a better representation.
-> 
-> 
-> That doesn't work unfortunately because the VGA memory is not mapped and 
-> the reserved memory subsystem fails to find it.
-
-Fair enough.
-
-> >> +
-> >> +	regmap_update_bits(sdmc, SDMC_REMAP, ctx->chip->sdmc_remap,
-> >> +			   ctx->chip->sdmc_remap);
-> > I disagree with doing this. As mentioned on the bindings it should be up to
-> > the platform integrator to ensure that this is configured appropriately.
-> 
-> 
-> Probably so, but then how does one actually configure that elsewhere? Do 
-> you mean add code to the edac driver (and add support for the ast2600) 
-> to read some dts properties to set it?
-
-Right. That's where I was going. I don't expect you to do that as part of this
-patch series, but if you could separate this code out into separate patches
-(dealing with the sdmc property in the devicetree binding as well) we can at
-least concentrate on getting the core XDMA driver in and work out how to
-move forward with configuring the memory controller later.
-
-> >> +/*
-> >> + * aspeed_xdma_direction
-> >> + *
-> >> + * ASPEED_XDMA_DIRECTION_DOWNSTREAM: transfers data from the host to the BMC
-> >> + *
-> >> + * ASPEED_XDMA_DIRECTION_UPSTREAM: transfers data from the BMC to the host
-> >> + *
-> >> + * ASPEED_XDMA_DIRECTION_RESET: resets the XDMA engine
-> >> + */
-> >> +enum aspeed_xdma_direction {
-> >> +	ASPEED_XDMA_DIRECTION_DOWNSTREAM = 0,
-> >> +	ASPEED_XDMA_DIRECTION_UPSTREAM,
-> >> +	ASPEED_XDMA_DIRECTION_RESET,
-> > I still think having a reset action as part of the direction is a bit funky. Can you maybe
-> > put that in a separate patch so we can debate it later?
-> 
-> 
-> I can, but I'm fairly convinced this is the cleanest way to add the 
-> reset functionality.
-> 
-
-Right, but if you separate it out you'll get my reviewed-by on the core XDMA
-patches much quicker :) You can convince me about it in slow-time.
-
-Cheers,
-
-Andrew
