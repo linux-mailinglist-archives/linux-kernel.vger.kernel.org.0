@@ -2,361 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA9C11C27D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:44:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F6411C287
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 02:44:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbfLLBmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 20:42:47 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33335 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727667AbfLLBmq (ORCPT
+        id S1727731AbfLLBnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 20:43:04 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:8618 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727649AbfLLBnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:42:46 -0500
-Received: by mail-pl1-f195.google.com with SMTP id c13so336114pls.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 17:42:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=okKeUrpGRdRMM1YttfPu++dPsYz1GD2rw9QI6vDbyQ4=;
-        b=fEiCjzD2vzN0vq5Yvk8MuiJWXuVxsYSs8Ohm9vcxVt4HuVC115y9PZl/iP6JFB87sD
-         Z06vMHEE4ybMVnm6B7L+3RrKBdtDVBRTp84+7MFNLZHJpf8NsRBH0Z0Ed5sO4PoNfUnU
-         Oegr5NAMSpg2elSJ82GKbecEiWSG67wATl7KVgPJjgAfBDc30uzZVDRG0FGo37OymIkV
-         9LPlAT8nhgXDqo63ZA58CJVNCEwElFMH/L39Iu2X/xYrkdv8WghJTFXi5h2PfVcfnToh
-         UNY9DiOlKpZvUi6F+TJqBofFvhYrN6pA1HqcBuu/rTDjYvn+/wbILUCT8RP+m+RnKhf4
-         0fCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=okKeUrpGRdRMM1YttfPu++dPsYz1GD2rw9QI6vDbyQ4=;
-        b=lpV1f/gBHWgRe0Q/5nuZZVW83vF/85mugBSHXB+DtJSpnK6S1fDtl6ehi+bb55V+98
-         01uijQnAW2+sk6gCmX7sclIrwzQ4lCYHCrkWLGxF8ehfKQRCaoN+xOOjdmMwHxl7rBBt
-         1SxIZsQN43XHi01/k/LAcm42cJcIUrGcPNALB2/vx+KiTIPORp9ADGYRmUbZrnPZ2Cvm
-         pZeygHmbRcXhR5K+qu1oEQ/mCG1EiPq0xc/5IN7adtf6V3kiGs5/UjhlN30pKybU0w2O
-         sSk9vSESODFeLWIlRv9UsDT6ddt3lm/XoQYWaDmCI9QKKp7gAWWmwYeIiaXI4IzjJ1Kl
-         secA==
-X-Gm-Message-State: APjAAAUxy/0cY1o+DFku/MbM1gRRAFk0EP7nyElIaxzYCvWDv+990nEp
-        XmJbHq4jkTiPqxMDBAarT1xNasimfDE=
-X-Google-Smtp-Source: APXvYqxvESeTDKX7aFK/kefdrKXspH/aC5ujQXlsEEpZCgVR9C5X2KaPnz+m0r/s83c6Ales87cUNQ==
-X-Received: by 2002:a17:90a:250a:: with SMTP id j10mr7112628pje.134.1576114965024;
-        Wed, 11 Dec 2019 17:42:45 -0800 (PST)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id p16sm4217996pgi.50.2019.12.11.17.42.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 17:42:44 -0800 (PST)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     Yu Chen <chenyu56@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Guillaume Gardet <Guillaume.Gardet@arm.com>,
-        Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v7 8/8] misc: hisi_hikey_usb: Driver to support onboard USB gpio hub on Hikey960
-Date:   Thu, 12 Dec 2019 01:42:33 +0000
-Message-Id: <20191212014233.32799-9-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191212014233.32799-1-john.stultz@linaro.org>
-References: <20191212014233.32799-1-john.stultz@linaro.org>
+        Wed, 11 Dec 2019 20:43:01 -0500
+X-UUID: 2852b13916f540a09307fbd4b35acc9d-20191212
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=phDsoiIyJCBnu4asobwbcjbE3yzCEaKCfb7CC35r6aw=;
+        b=m7AdmdtFaKS/md5+QEqjxR+L5OrA0PxvbrRYKDbLwgwpLWcWikGGq3iufCjmEwA7T04RZsOLN/ZmekFiDS8KcqM7AVdjde+n/wwGGFbQwOeybnsvmpXcVpnHAiblQPWheK2VyIBNyrWsobV/j7bTz/gz+xtNTKVV+C+D641OLls=;
+X-UUID: 2852b13916f540a09307fbd4b35acc9d-20191212
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <dennis-yc.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1915842643; Thu, 12 Dec 2019 09:42:56 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 12 Dec 2019 09:42:35 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 12 Dec 2019 09:42:51 +0800
+Message-ID: <1576114975.17653.16.camel@mtkswgap22>
+Subject: Re: [PATCH v2 13/14] soc: mediatek: cmdq: add wait no clear event
+ function
+From:   Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Thu, 12 Dec 2019 09:42:55 +0800
+In-Reply-To: <1576029887.19653.17.camel@mtksdaap41>
+References: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
+         <1574819937-6246-15-git-send-email-dennis-yc.hsieh@mediatek.com>
+         <1576029887.19653.17.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Chen <chenyu56@huawei.com>
-
-The HiKey960 has a fairly complex USB configuration due to it
-needing to support a USB-C port for host/device mode and multiple
-USB-A ports in host mode, all using a single USB controller.
-
-See schematics here:
-  https://github.com/96boards/documentation/raw/master/consumer/hikey/hikey960/hardware-docs/HiKey960_Schematics.pdf
-
-This driver acts as a usb-role-switch intermediary, intercepting
-the role switch notifications from the tcpm code, and passing
-them on to the dwc3 core.
-
-In doing so, it also controls the onboard hub and power gpios in
-order to properly route the data lines between the USB-C port
-and the onboard hub to the USB-A ports.
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-CC: ShuFan Lee <shufan_lee@richtek.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Yu Chen <chenyu56@huawei.com>
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jun Li <lijun.kernel@gmail.com>
-Cc: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Guillaume Gardet <Guillaume.Gardet@arm.com>
-Cc: Jack Pham <jackp@codeaurora.org>
-Cc: linux-usb@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Yu Chen <chenyu56@huawei.com>
-[jstultz: Major rework to make the driver a usb-role-switch
-          intermediary]
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v3:
-* Major rework to make the driver a usb-role-switch intermediary
-  rather then trying to do notifier callbacks from the role switch
-  logic
-v7:
-* Add MAINTAINERS entry and more verbose Kconfig description
----
- MAINTAINERS                   |   7 ++
- drivers/misc/Kconfig          |   9 ++
- drivers/misc/Makefile         |   1 +
- drivers/misc/hisi_hikey_usb.c | 178 ++++++++++++++++++++++++++++++++++
- 4 files changed, 195 insertions(+)
- create mode 100644 drivers/misc/hisi_hikey_usb.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bd5847e802de..ae5bebc2b3e5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7422,6 +7422,13 @@ F:	include/uapi/linux/if_hippi.h
- F:	net/802/hippi.c
- F:	drivers/net/hippi/
- 
-+HIKEY960 ONBOARD USB GPIO HUB DRIVER
-+M:	John Stultz <john.stultz@linaro.org>
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	drivers/misc/hisi_hikey_usb.c
-+F:	Documentation/devicetree/bindings/misc/hisilicon-hikey-usb.yaml
-+
- HISILICON SECURITY ENGINE V2 DRIVER (SEC2)
- M:	Zaibo Xu <xuzaibo@huawei.com>
- L:	linux-crypto@vger.kernel.org
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 7f0d48f406e3..563492f67be3 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -465,6 +465,15 @@ config PVPANIC
- 	  a paravirtualized device provided by QEMU; it lets a virtual machine
- 	  (guest) communicate panic events to the host.
- 
-+config HISI_HIKEY_USB
-+	tristate "USB GPIO Hub on HiSilicon Hikey960 Platform"
-+	depends on OF && GPIOLIB
-+	help
-+	  If you say yes here this adds support for the on-board USB gpio hub
-+	  found on the HiKey960, which is necssary to support switching between
-+	  the dual-role USB-C port and the USB-A host ports using only one USB
-+	  controller.
-+
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index c1860d35dc7e..e5e85ad0dd57 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -57,3 +57,4 @@ obj-y				+= cardreader/
- obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
- obj-$(CONFIG_HABANA_AI)		+= habanalabs/
- obj-$(CONFIG_XILINX_SDFEC)	+= xilinx_sdfec.o
-+obj-$(CONFIG_HISI_HIKEY_USB)	+= hisi_hikey_usb.o
-diff --git a/drivers/misc/hisi_hikey_usb.c b/drivers/misc/hisi_hikey_usb.c
-new file mode 100644
-index 000000000000..32015bc9ccf6
---- /dev/null
-+++ b/drivers/misc/hisi_hikey_usb.c
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Support for usb functionality of Hikey series boards
-+ * based on Hisilicon Kirin Soc.
-+ *
-+ * Copyright (C) 2017-2018 Hilisicon Electronics Co., Ltd.
-+ *		http://www.huawei.com
-+ *
-+ * Authors: Yu Chen <chenyu56@huawei.com>
-+ */
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/notifier.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/slab.h>
-+#include <linux/usb/role.h>
-+
-+#define DEVICE_DRIVER_NAME "hisi_hikey_usb"
-+
-+#define HUB_VBUS_POWER_ON 1
-+#define HUB_VBUS_POWER_OFF 0
-+#define USB_SWITCH_TO_HUB 1
-+#define USB_SWITCH_TO_TYPEC 0
-+#define TYPEC_VBUS_POWER_ON 1
-+#define TYPEC_VBUS_POWER_OFF 0
-+
-+struct hisi_hikey_usb {
-+	struct gpio_desc *otg_switch;
-+	struct gpio_desc *typec_vbus;
-+	struct gpio_desc *hub_vbus;
-+
-+	struct usb_role_switch *hub_role_sw;
-+	struct usb_role_switch *dev_role_sw;
-+	struct notifier_block nb;
-+};
-+
-+static void hub_power_ctrl(struct hisi_hikey_usb *hisi_hikey_usb, int value)
-+{
-+	gpiod_set_value_cansleep(hisi_hikey_usb->hub_vbus, value);
-+}
-+
-+static void usb_switch_ctrl(struct hisi_hikey_usb *hisi_hikey_usb,
-+			    int switch_to)
-+{
-+	gpiod_set_value_cansleep(hisi_hikey_usb->otg_switch, switch_to);
-+}
-+
-+static void usb_typec_power_ctrl(struct hisi_hikey_usb *hisi_hikey_usb,
-+				 int value)
-+{
-+	gpiod_set_value_cansleep(hisi_hikey_usb->typec_vbus, value);
-+}
-+
-+static int hub_usb_role_switch_set(struct device *dev, enum usb_role role)
-+{
-+	struct hisi_hikey_usb *hisi_hikey_usb = dev_get_drvdata(dev);
-+
-+	if (!hisi_hikey_usb || !hisi_hikey_usb->dev_role_sw)
-+		return -EINVAL;
-+
-+	switch (role) {
-+	case USB_ROLE_NONE:
-+		usb_typec_power_ctrl(hisi_hikey_usb, TYPEC_VBUS_POWER_OFF);
-+		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_HUB);
-+		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_ON);
-+		break;
-+	case USB_ROLE_HOST:
-+		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_OFF);
-+		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_TYPEC);
-+		usb_typec_power_ctrl(hisi_hikey_usb, TYPEC_VBUS_POWER_ON);
-+		break;
-+	case USB_ROLE_DEVICE:
-+		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_OFF);
-+		usb_typec_power_ctrl(hisi_hikey_usb, TYPEC_VBUS_POWER_OFF);
-+		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_TYPEC);
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return usb_role_switch_set_role(hisi_hikey_usb->dev_role_sw, role);
-+}
-+
-+static enum usb_role hub_usb_role_switch_get(struct device *dev)
-+{
-+	struct hisi_hikey_usb *hisi_hikey_usb = dev_get_drvdata(dev);
-+
-+	if (!hisi_hikey_usb || !hisi_hikey_usb->dev_role_sw)
-+		return -EINVAL;
-+
-+	return usb_role_switch_get_role(hisi_hikey_usb->dev_role_sw);
-+}
-+
-+static int hisi_hikey_usb_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct hisi_hikey_usb *hisi_hikey_usb;
-+	struct usb_role_switch_desc hub_role_switch = {NULL};
-+
-+	hisi_hikey_usb = devm_kzalloc(dev, sizeof(*hisi_hikey_usb), GFP_KERNEL);
-+	if (!hisi_hikey_usb)
-+		return -ENOMEM;
-+
-+	hisi_hikey_usb->typec_vbus = devm_gpiod_get(dev, "typec-vbus",
-+						    GPIOD_OUT_LOW);
-+	if (IS_ERR(hisi_hikey_usb->typec_vbus))
-+		return PTR_ERR(hisi_hikey_usb->typec_vbus);
-+
-+	hisi_hikey_usb->otg_switch = devm_gpiod_get(dev, "otg-switch",
-+						    GPIOD_OUT_HIGH);
-+	if (IS_ERR(hisi_hikey_usb->otg_switch))
-+		return PTR_ERR(hisi_hikey_usb->otg_switch);
-+
-+	/* hub-vdd33-en is optional */
-+	hisi_hikey_usb->hub_vbus = devm_gpiod_get_optional(dev, "hub-vdd33-en",
-+							   GPIOD_OUT_HIGH);
-+	if (IS_ERR(hisi_hikey_usb->hub_vbus))
-+		return PTR_ERR(hisi_hikey_usb->hub_vbus);
-+
-+	hisi_hikey_usb->dev_role_sw = usb_role_switch_get(dev);
-+	if (!hisi_hikey_usb->dev_role_sw)
-+		return -EPROBE_DEFER;
-+	if (IS_ERR(hisi_hikey_usb->dev_role_sw))
-+		return PTR_ERR(hisi_hikey_usb->dev_role_sw);
-+
-+	hub_role_switch.fwnode = dev_fwnode(dev);
-+	hub_role_switch.set = hub_usb_role_switch_set;
-+	hub_role_switch.get = hub_usb_role_switch_get;
-+	hisi_hikey_usb->hub_role_sw = usb_role_switch_register(dev,
-+							&hub_role_switch);
-+
-+	if (IS_ERR(hisi_hikey_usb->hub_role_sw)) {
-+		usb_role_switch_put(hisi_hikey_usb->dev_role_sw);
-+		return PTR_ERR(hisi_hikey_usb->hub_role_sw);
-+	}
-+
-+	platform_set_drvdata(pdev, hisi_hikey_usb);
-+
-+	return 0;
-+}
-+
-+static int  hisi_hikey_usb_remove(struct platform_device *pdev)
-+{
-+	struct hisi_hikey_usb *hisi_hikey_usb = platform_get_drvdata(pdev);
-+
-+	if (hisi_hikey_usb->hub_role_sw)
-+		usb_role_switch_unregister(hisi_hikey_usb->hub_role_sw);
-+
-+	if (hisi_hikey_usb->dev_role_sw)
-+		usb_role_switch_put(hisi_hikey_usb->dev_role_sw);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id id_table_hisi_hikey_usb[] = {
-+	{.compatible = "hisilicon,gpio_hubv1"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, id_table_hisi_hikey_usb);
-+
-+static struct platform_driver hisi_hikey_usb_driver = {
-+	.probe = hisi_hikey_usb_probe,
-+	.remove = hisi_hikey_usb_remove,
-+	.driver = {
-+		.name = DEVICE_DRIVER_NAME,
-+		.of_match_table = id_table_hisi_hikey_usb,
-+	},
-+};
-+
-+module_platform_driver(hisi_hikey_usb_driver);
-+
-+MODULE_AUTHOR("Yu Chen <chenyu56@huawei.com>");
-+MODULE_DESCRIPTION("Driver Support for USB functionality of Hikey");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+T24gV2VkLCAyMDE5LTEyLTExIGF0IDEwOjA0ICswODAwLCBDSyBIdSB3cm90ZToNCj4gSGksIERl
+bm5pczoNCj4gDQo+IE9uIFdlZCwgMjAxOS0xMS0yNyBhdCAwOTo1OCArMDgwMCwgRGVubmlzIFlD
+IEhzaWVoIHdyb3RlOg0KPiA+IEFkZCB3YWl0IG5vIGNsZWFyIGV2ZW50IGZ1bmN0aW9uIGluIGNt
+ZHEgaGVscGVyIGZ1bmN0aW9ucyB0byB3YWl0IHNwZWNpZmljDQo+ID4gZXZlbnQgd2l0aG91dCBj
+bGVhciB0byAwIGFmdGVyIHJlY2VpdmUgaXQuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogRGVu
+bmlzIFlDIEhzaWVoIDxkZW5uaXMteWMuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+
+ICBkcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1oZWxwZXIuYyB8IDE1ICsrKysrKysrKysr
+KysrKw0KPiA+ICBpbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oICB8IDEwICsr
+KysrKysrKysNCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAyNSBpbnNlcnRpb25zKCspDQo+ID4gDQo+
+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jIGIv
+ZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVyLmMNCj4gPiBpbmRleCAxMGE5YjQ0
+ODFlNTguLjZmMjcwZmFkZmI1MCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3NvYy9tZWRpYXRl
+ay9tdGstY21kcS1oZWxwZXIuYw0KPiA+ICsrKyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1j
+bWRxLWhlbHBlci5jDQo+ID4gQEAgLTMzMCw2ICszMzAsMjEgQEAgaW50IGNtZHFfcGt0X3dmZShz
+dHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2IGV2ZW50KQ0KPiA+ICB9DQo+ID4gIEVYUE9SVF9TWU1C
+T0woY21kcV9wa3Rfd2ZlKTsNCj4gPiAgDQo+ID4gK2ludCBjbWRxX3BrdF93YWl0X25vX2NsZWFy
+KHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYgZXZlbnQpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBj
+bWRxX2luc3RydWN0aW9uIGluc3QgPSB7IHswfSB9Ow0KPiA+ICsNCj4gPiArCWlmIChldmVudCA+
+PSBDTURRX01BWF9FVkVOVCkNCj4gPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gPiArDQo+ID4gKwlp
+bnN0Lm9wID0gQ01EUV9DT0RFX1dGRTsNCj4gPiArCWluc3QudmFsdWUgPSBDTURRX1dGRV9XQUlU
+IHwgQ01EUV9XRkVfV0FJVF9WQUxVRTsNCj4gPiArCWluc3QuZXZlbnQgPSBldmVudDsNCj4gPiAr
+DQo+ID4gKwlyZXR1cm4gY21kcV9wa3RfYXBwZW5kX2NvbW1hbmQocGt0LCBpbnN0KTsNCj4gPiAr
+fQ0KPiA+ICtFWFBPUlRfU1lNQk9MKGNtZHFfcGt0X3dhaXRfbm9fY2xlYXIpOw0KPiANCj4gU28g
+dGhlIHdhaXQgY29tbWFuZCBoYXMgdHdvIHZlcnNpb24sIG9uZSBpcyB3YWl0IGFuZCB0aGVuIGNs
+ZWFyIGV2ZW50LA0KPiBhbm90aGVyIGlzIHdhaXQgYW5kIG5vdCBjbGVhciBldmVudC4gVGhlIG5h
+bWUgb2YgY21kcV9wa3Rfd2ZlKCkgaXMgJ3dhaXQNCj4gZm9yIGV2ZW50Jywgc28gaXQncyB0cml2
+aWFsIHRoYXQgd2UgdGhpbmsgaXQgZG9lcyBub3QgY2xlYXIgZXZlbnQuIEkndmUNCj4gdGhyZWUg
+c3VnZ2VzdGlvbiBmb3IgdGhpczoNCj4gDQo+IDEuIExldCBjbWRxX3BrdF93ZmUoKSB3YWl0IGFu
+ZCBub3QgY2xlYXIgZXZlbnQsIGFuZA0KPiBjbWRxX3BrdF93ZmVfY2xlYXJfZXZlbnQoKSB3YWl0
+IGFuZCBjbGVhciBldmVudC4NCj4gDQo+IG9yIA0KPiAyLiBMZXQgY21kcV9wa3Rfd2ZlKCkgaGFz
+IGEgcGFyYW1ldGVyIHRvIGluZGljYXRlIHRoYXQgY2xlYXIgZXZlbnQgb3INCj4gbm90IGFmdGVy
+IHdhaXQuDQo+IA0KPiBvcg0KPiAzLiBMZXQgY21kcV9wa3Rfd2ZlKCkgd2FpdCBhbmQgbm90IGNs
+ZWFyIGV2ZW50LCBhbmQgbm90IHByb3ZpZGUgd2FpdCBhbmQNCj4gY2xlYXIgZXZlbnQgdmVyc2lv
+bi4gRm9yIERSTSBhbmQgTURQLCBJIHRoaW5rIGJvdGgganVzdCBuZWVkIHdhaXQgYW5kDQo+IG5v
+dCBjbGVhciBldmVudC4NCj4gDQo+IFJlZ2FyZHMsDQo+IENLDQo+IA0KDQpvaywgSSB3aWxsIGNo
+YW5nZSBjbWRxX3BrdF93ZmUgd2FpdCBhbmQgbm90IGNsZWFyLCBhbmQgZXhwb3NlIGFub3RoZXIN
+CmNtZHFfcGt0X3dmZV9jbGVhcl9ldmVudCgpIGFwaQ0KDQoNClJlZ2FyZHMsDQpEZW5uaXMNCg0K
+PiANCj4gPiArDQo+ID4gIGludCBjbWRxX3BrdF9jbGVhcl9ldmVudChzdHJ1Y3QgY21kcV9wa3Qg
+KnBrdCwgdTE2IGV2ZW50KQ0KPiA+ICB7DQo+ID4gIAlzdHJ1Y3QgY21kcV9pbnN0cnVjdGlvbiBp
+bnN0ID0geyB7MH0gfTsNCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0
+ZWsvbXRrLWNtZHEuaCBiL2luY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmgNCj4g
+PiBpbmRleCBkMTVkOGM5NDE5OTIuLjQwYmM2MWFkOGQzMSAxMDA2NDQNCj4gPiAtLS0gYS9pbmNs
+dWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oDQo+ID4gKysrIGIvaW5jbHVkZS9saW51
+eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaA0KPiA+IEBAIC0xNDksNiArMTQ5LDE2IEBAIGludCBj
+bWRxX3BrdF93cml0ZV9zX3ZhbHVlKHN0cnVjdCBjbWRxX3BrdCAqcGt0LCBkbWFfYWRkcl90IGFk
+ZHIsDQo+ID4gICAqLw0KPiA+ICBpbnQgY21kcV9wa3Rfd2ZlKHN0cnVjdCBjbWRxX3BrdCAqcGt0
+LCB1MTYgZXZlbnQpOw0KPiA+ICANCj4gPiArLyoqDQo+ID4gKyAqIGNtZHFfcGt0X3dhaXRfbm9f
+Y2xlYXIoKSAtIEFwcGVuZCB3YWl0IGZvciBldmVudCBjb21tYW5kIHRvIHRoZSBDTURRIHBhY2tl
+dCwNCj4gPiArICoJCQkgICAgICB3aXRob3V0IHVwZGF0ZSBldmVudCB0byAwIGFmdGVyIHJlY2Vp
+dmUgaXQuDQo+ID4gKyAqIEBwa3Q6CXRoZSBDTURRIHBhY2tldA0KPiA+ICsgKiBAZXZlbnQ6CXRo
+ZSBkZXNpcmVkIGV2ZW50IHR5cGUgdG8gd2FpdA0KPiA+ICsgKg0KPiA+ICsgKiBSZXR1cm46IDAg
+Zm9yIHN1Y2Nlc3M7IGVsc2UgdGhlIGVycm9yIGNvZGUgaXMgcmV0dXJuZWQNCj4gPiArICovDQo+
+ID4gK2ludCBjbWRxX3BrdF93YWl0X25vX2NsZWFyKHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYg
+ZXZlbnQpOw0KPiA+ICsNCj4gPiAgLyoqDQo+ID4gICAqIGNtZHFfcGt0X2NsZWFyX2V2ZW50KCkg
+LSBhcHBlbmQgY2xlYXIgZXZlbnQgY29tbWFuZCB0byB0aGUgQ01EUSBwYWNrZXQNCj4gPiAgICog
+QHBrdDoJdGhlIENNRFEgcGFja2V0DQo+IA0KPiANCg0K
 
