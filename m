@@ -2,431 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FC4B11D1D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 17:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A6AE11D1D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 17:07:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbfLLQE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 11:04:29 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36561 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729668AbfLLQEV (ORCPT
+        id S1729741AbfLLQHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 11:07:13 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44154 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729605AbfLLQHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 11:04:21 -0500
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ifQwr-0003cZ-KC; Thu, 12 Dec 2019 17:04:17 +0100
-Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ifQwr-0004LH-3h; Thu, 12 Dec 2019 17:04:17 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     support.opensource@diasemi.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, linus.walleij@linaro.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, kernel@pengutronix.de
-Subject: [RESEND PATCH v3 3/3] pinctrl: da9062: add driver support
-Date:   Thu, 12 Dec 2019 17:04:13 +0100
-Message-Id: <20191212160413.15232-4-m.felsch@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191212160413.15232-1-m.felsch@pengutronix.de>
-References: <20191212160413.15232-1-m.felsch@pengutronix.de>
+        Thu, 12 Dec 2019 11:07:12 -0500
+Received: by mail-pg1-f193.google.com with SMTP id x7so1355066pgl.11;
+        Thu, 12 Dec 2019 08:07:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version:in-reply-to
+         :content-transfer-encoding;
+        bh=hCXWACuOCexCnHIz0jCOmF4DYKWkjPdd5H/jFPoItro=;
+        b=IkYgMnF2gLAlQaxdpyryOpYIwVwEh0VKVFj7HudbihnYnxNZu4QI18aPJ37U4uzyp/
+         BlD1tWs7IMBduKKeEZDaejczWP08RcOs4A+9t+gX6ojw+dyuoKPsnmPsHgURKQ9XP3eL
+         oKjYVUqECyX1zczto/andUpR8yFdi3epbkapsSPYdqxNH1llQjEtnGm0yoG7x4+EB5Sq
+         98r+UhLcWm8ADQpErB6akvg09+atbU2lE7wRZXexZSjl3fgD9tgZSW25uC81LTqyVmzJ
+         NIIK9S7QAhXdr03iO+IRSNMmMe3rPGOknSlE/A0/RchzyNOr6L/UsJYKdBNPCJz9qnUe
+         jO1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :in-reply-to:content-transfer-encoding;
+        bh=hCXWACuOCexCnHIz0jCOmF4DYKWkjPdd5H/jFPoItro=;
+        b=tiUjk6U2khjIXJb6sTT50p31up3mYq3zK0vSsizsuMw+M2HA11jS4uuf9KJtLY+b7L
+         76GV7QX81p32eONYFlZu92bqaUGa2bcn6FPq2hVufhRZsaz8oEcfoM/mzcJS32j7fOKN
+         NsKiYtreCIwQztDPkLpdvm5Dia9LdnCJajLUjzYX0qdizCyKO3b5wxgQRcFzh30CvFY6
+         FxCKOo5bSCdEPNNvvCB6Kzf8StiXo4XRnEH2zDzs8apYvpa7TobYWNREP7EmW/vgLmiA
+         SH12lBfOamcKuDxx8/osgrC/RPdh75KIVdK1XaGP0aLieJ6jy9xqtWjR+Fn0LVKTb76v
+         P+Kg==
+X-Gm-Message-State: APjAAAXiJ5xT8L/lrsQwERyZ8oEufQwIKC8PmUrxzbplbJEBjAKMVjTO
+        aTGQmDY5W0VCBDIsGAjDC0w=
+X-Google-Smtp-Source: APXvYqxSVQfqyqgkVT73oV6Yh6YcW5Bxj10GO45cM95SrDPjF4K5yUaFstQ/B47LysRt136MrdXZdQ==
+X-Received: by 2002:a63:338e:: with SMTP id z136mr11343954pgz.60.1576166831821;
+        Thu, 12 Dec 2019 08:07:11 -0800 (PST)
+Received: from localhost.localdomain ([12.176.148.120])
+        by smtp.gmail.com with ESMTPSA id b2sm8183016pff.6.2019.12.12.08.07.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Dec 2019 08:07:10 -0800 (PST)
+From:   SeongJae Park <sj38.park@gmail.com>
+To:     =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>
+Cc:     jgross@suse.com, axboe@kernel.dk, sjpark@amazon.com,
+        konrad.wilk@oracle.com, pdurrant@amazon.com,
+        SeongJae Park <sjpark@amazon.de>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: Re: [Xen-devel] [PATCH v7 2/3] xen/blkback: Squeeze page pools if a memory pressure is detected
+Date:   Thu, 12 Dec 2019 17:06:58 +0100
+Message-Id: <20191212160658.10466-1-sj38.park@gmail.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
+In-Reply-To: <20191212152757.GF11756@Air-de-Roger>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DA9062 is a mfd pmic device which supports 5 GPIOs. The GPIOs can
-be used as input, output or have a special use-case.
+On Thu, 12 Dec 2019 16:27:57 +0100 "Roger Pau Monné" <roger.pau@citrix.com> wrote:
 
-The patch adds the support for the normal input/output use-case.
+> > diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+> > index fd1e19f1a49f..98823d150905 100644
+> > --- a/drivers/block/xen-blkback/blkback.c
+> > +++ b/drivers/block/xen-blkback/blkback.c
+> > @@ -142,6 +142,21 @@ static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
+> >  		HZ * xen_blkif_pgrant_timeout);
+> >  }
+> >  
+> > +/* Once a memory pressure is detected, squeeze free page pools for a while. */
+> > +static unsigned int buffer_squeeze_duration_ms = 10;
+> > +module_param_named(buffer_squeeze_duration_ms,
+> > +		buffer_squeeze_duration_ms, int, 0644);
+> > +MODULE_PARM_DESC(buffer_squeeze_duration_ms,
+> > +"Duration in ms to squeeze pages buffer when a memory pressure is detected");
+> > +
+> > +static unsigned long buffer_squeeze_end;
+> > +
+> > +void xen_blkbk_reclaim_memory(struct xenbus_device *dev)
+> > +{
+> > +	buffer_squeeze_end = jiffies +
+> > +		msecs_to_jiffies(buffer_squeeze_duration_ms);
+> 
+> I'm not sure this is fully correct. This function will be called for
+> each blkback instance, but the timeout is stored in a global variable
+> that's shared between all blkback instances. Shouldn't this timeout be
+> stored in xen_blkif so each instance has it's own local variable?
+> 
+> Or else in the case you have 1k blkback instances the timeout is
+> certainly going to be longer than expected, because each call to
+> xen_blkbk_reclaim_memory will move it forward.
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
----
-Changelog:
+Agreed that.  I think the extended timeout would not make a visible
+performance, though, because the time that 1k-loop take would be short enough
+to be ignored compared to the millisecond-scope duration.
 
-v3:
-- add comment for gpio private include
-- add missing bits.h include
-- add pin_config state container and set initial pin state to push-pull
-- make use of GPIO_LINE_DIRECTION_{IN,OUT}
-- update MAINTAINERS entry -> gpio-da90??.c already covered but not
-  pinctrl-da90??.c
+I took this way because I wanted to minimize such structural changes as far as
+I can, as this is just a point-fix rather than ultimate solution.  That said,
+it is not fully correct and very confusing.  My another colleague also pointed
+out it in internal review.  Correct solution would be to adding a variable in
+the struct as you suggested or avoiding duplicated update of the variable by
+initializing the variable once the squeezing duration passes.  I would prefer
+the later way, as it is more straightforward and still not introducing
+structural change.  For example, it might be like below:
 
-v2:
-- fix minor style issue
-- move from drivers/gpio to drivers/pinctrl
-- Fix spelling issue
-- rename local gpio_dir to gpio_mode
-- Add datasheet reference and TODO notes
-- move gpio to mfd-root node to avoid hierarchical interrupt chips
-- Add gpio-controller property check
-- remove of_device_id since we drop the gpio of-subnode
-- Drop da9062_gpio_get_hwgpio
-
- MAINTAINERS                      |   1 +
- drivers/pinctrl/Kconfig          |  12 ++
- drivers/pinctrl/Makefile         |   1 +
- drivers/pinctrl/pinctrl-da9062.c | 297 +++++++++++++++++++++++++++++++
- 4 files changed, 311 insertions(+)
- create mode 100644 drivers/pinctrl/pinctrl-da9062.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 296de2b51c83..2b680790fdf8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4837,6 +4837,7 @@ F:	drivers/leds/leds-da90??.c
- F:	drivers/mfd/da903x.c
- F:	drivers/mfd/da90??-*.c
- F:	drivers/mfd/da91??-*.c
-+F:	drivers/pinctrl/pinctrl-da90??.c
- F:	drivers/power/supply/da9052-battery.c
- F:	drivers/power/supply/da91??-*.c
- F:	drivers/regulator/da903x.c
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index b372419d61f2..977787c158cc 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -126,6 +126,18 @@ config PINCTRL_DA850_PUPD
- 	  Driver for TI DA850/OMAP-L138/AM18XX pinconf. Used to control
- 	  pullup/pulldown pin groups.
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index f41c698dd854..6856c8ef88de 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -152,8 +152,9 @@ static unsigned long buffer_squeeze_end;
  
-+config PINCTRL_DA9062
-+	tristate "Dialog Semiconductor DA9062 PMIC pinctrl and GPIO Support"
-+	depends on MFD_DA9062
-+	select GPIOLIB
-+	help
-+	  The Dialog DA9062 PMIC provides multiple GPIOs that can be muxed for
-+	  different functions. This driver bundles a pinctrl driver to select the
-+	  function muxing and a GPIO driver to handle the GPIO when the GPIO
-+	  function is selected.
-+
-+	  Say yes to enable pinctrl and GPIO support for the DA9062 PMIC.
-+
- config PINCTRL_DIGICOLOR
- 	bool
- 	depends on OF && (ARCH_DIGICOLOR || COMPILE_TEST)
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index ac537fdbc998..2397684cbe11 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_PINCTRL_AT91PIO4)	+= pinctrl-at91-pio4.o
- obj-$(CONFIG_PINCTRL_AMD)	+= pinctrl-amd.o
- obj-$(CONFIG_PINCTRL_BM1880)	+= pinctrl-bm1880.o
- obj-$(CONFIG_PINCTRL_DA850_PUPD) += pinctrl-da850-pupd.o
-+obj-$(CONFIG_PINCTRL_DA9062)	+= pinctrl-da9062.o
- obj-$(CONFIG_PINCTRL_DIGICOLOR)	+= pinctrl-digicolor.o
- obj-$(CONFIG_PINCTRL_FALCON)	+= pinctrl-falcon.o
- obj-$(CONFIG_PINCTRL_GEMINI)	+= pinctrl-gemini.o
-diff --git a/drivers/pinctrl/pinctrl-da9062.c b/drivers/pinctrl/pinctrl-da9062.c
-new file mode 100644
-index 000000000000..39f13fcbd3a8
---- /dev/null
-+++ b/drivers/pinctrl/pinctrl-da9062.c
-@@ -0,0 +1,297 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Dialog DA9062 pinctrl and GPIO driver.
-+ * Based on DA9055 GPIO driver.
-+ *
-+ * TODO:
-+ *   - add pinmux and pinctrl support (gpio alternate mode)
-+ *
-+ * Documents:
-+ * [1] https://www.dialog-semiconductor.com/sites/default/files/da9062_datasheet_3v6.pdf
-+ *
-+ * Copyright (C) 2019 Pengutronix, Marco Felsch <kernel@pengutronix.de>
-+ */
-+#include <linux/bits.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/gpio/driver.h>
-+
-+#include <linux/mfd/da9062/core.h>
-+#include <linux/mfd/da9062/registers.h>
-+
-+/*
-+ * We need this get the gpio_desc from a <gpio_chip,offset> tuple to decide if
-+ * the gpio is active low without a vendor specific dt-binding.
-+ */
-+#include <../gpio/gpiolib.h>
-+
-+#define DA9062_TYPE(offset)		(4 * (offset % 2))
-+#define DA9062_PIN_SHIFT(offset)	(4 * (offset % 2))
-+#define DA9062_PIN_ALTERNATE		0x00 /* gpio alternate mode */
-+#define DA9062_PIN_GPI			0x01 /* gpio in */
-+#define DA9062_PIN_GPO_OD		0x02 /* gpio out open-drain */
-+#define DA9062_PIN_GPO_PP		0x03 /* gpio out push-pull */
-+#define DA9062_GPIO_NUM			5
-+
-+struct da9062_pctl {
-+	struct da9062 *da9062;
-+	struct gpio_chip gc;
-+	unsigned int pin_config[DA9062_GPIO_NUM];
-+};
-+
-+static int da9062_pctl_get_pin_mode(struct da9062_pctl *pctl,
-+				    unsigned int offset)
-+{
-+	struct regmap *regmap = pctl->da9062->regmap;
-+	int ret, val;
-+
-+	ret = regmap_read(regmap, DA9062AA_GPIO_0_1 + (offset >> 1), &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	val >>= DA9062_PIN_SHIFT(offset);
-+	val &= DA9062AA_GPIO0_PIN_MASK;
-+
-+	return val;
-+}
-+
-+static int da9062_pctl_set_pin_mode(struct da9062_pctl *pctl,
-+				    unsigned int offset, unsigned int mode_req)
-+{
-+	struct regmap *regmap = pctl->da9062->regmap;
-+	unsigned int mode = mode_req;
-+	unsigned int mask;
-+	int ret;
-+
-+	mode &= DA9062AA_GPIO0_PIN_MASK;
-+	mode <<= DA9062_PIN_SHIFT(offset);
-+	mask = DA9062AA_GPIO0_PIN_MASK << DA9062_PIN_SHIFT(offset);
-+
-+	ret = regmap_update_bits(regmap, DA9062AA_GPIO_0_1 + (offset >> 1),
-+				 mask, mode);
-+	if (!ret)
-+		pctl->pin_config[offset] = mode_req;
-+
-+	return ret;
-+}
-+
-+static int da9062_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct da9062_pctl *pctl = gpiochip_get_data(gc);
-+	struct regmap *regmap = pctl->da9062->regmap;
-+	int gpio_mode, val;
-+	int ret;
-+
-+	gpio_mode = da9062_pctl_get_pin_mode(pctl, offset);
-+	if (gpio_mode < 0)
-+		return gpio_mode;
-+
-+	switch (gpio_mode) {
-+	case DA9062_PIN_ALTERNATE:
-+		return -ENOTSUPP;
-+	case DA9062_PIN_GPI:
-+		ret = regmap_read(regmap, DA9062AA_STATUS_B, &val);
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	case DA9062_PIN_GPO_OD:
-+	case DA9062_PIN_GPO_PP:
-+		ret = regmap_read(regmap, DA9062AA_GPIO_MODE0_4, &val);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return !!(val & BIT(offset));
-+}
-+
-+static void da9062_gpio_set(struct gpio_chip *gc, unsigned int offset,
-+			    int value)
-+{
-+	struct da9062_pctl *pctl = gpiochip_get_data(gc);
-+	struct regmap *regmap = pctl->da9062->regmap;
-+
-+	regmap_update_bits(regmap, DA9062AA_GPIO_MODE0_4, BIT(offset),
-+			   value << offset);
-+}
-+
-+static int da9062_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct da9062_pctl *pctl = gpiochip_get_data(gc);
-+	int gpio_mode;
-+
-+	gpio_mode = da9062_pctl_get_pin_mode(pctl, offset);
-+	if (gpio_mode < 0)
-+		return gpio_mode;
-+
-+	switch (gpio_mode) {
-+	case DA9062_PIN_ALTERNATE:
-+		return -ENOTSUPP;
-+	case DA9062_PIN_GPI:
-+		return GPIO_LINE_DIRECTION_IN;
-+	case DA9062_PIN_GPO_OD:
-+	case DA9062_PIN_GPO_PP:
-+		return GPIO_LINE_DIRECTION_OUT;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int da9062_gpio_direction_input(struct gpio_chip *gc,
-+				       unsigned int offset)
-+{
-+	struct da9062_pctl *pctl = gpiochip_get_data(gc);
-+	struct regmap *regmap = pctl->da9062->regmap;
-+	struct gpio_desc *desc = gpiochip_get_desc(gc, offset);
-+	unsigned int gpi_type;
-+	int ret;
-+
-+	ret = da9062_pctl_set_pin_mode(pctl, offset, DA9062_PIN_GPI);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * If the gpio is active low we should set it in hw too. No worries
-+	 * about gpio_get() because we read and return the gpio-level. So the
-+	 * gpiolib active_low handling is still correct.
-+	 *
-+	 * 0 - active low, 1 - active high
-+	 */
-+	gpi_type = !gpiod_is_active_low(desc);
-+
-+	return regmap_update_bits(regmap, DA9062AA_GPIO_0_1 + (offset >> 1),
-+				DA9062AA_GPIO0_TYPE_MASK << DA9062_TYPE(offset),
-+				gpi_type << DA9062_TYPE(offset));
-+}
-+
-+static int da9062_gpio_direction_output(struct gpio_chip *gc,
-+					unsigned int offset, int value)
-+{
-+	struct da9062_pctl *pctl = gpiochip_get_data(gc);
-+	unsigned int pin_config = pctl->pin_config[offset];
-+	int ret;
-+
-+	ret = da9062_pctl_set_pin_mode(pctl, offset, pin_config);
-+	if (ret)
-+		return ret;
-+
-+	da9062_gpio_set(gc, offset, value);
-+
-+	return 0;
-+}
-+
-+static int da9062_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-+				  unsigned long config)
-+{
-+	struct da9062_pctl *pctl = gpiochip_get_data(gc);
-+	struct regmap *regmap = pctl->da9062->regmap;
-+	int gpio_mode;
-+
-+	/*
-+	 * We need to meet the following restrictions [1, Figure 18]:
-+	 * - PIN_CONFIG_BIAS_PULL_DOWN -> only allowed if the pin is used as
-+	 *				  gpio input
-+	 * - PIN_CONFIG_BIAS_PULL_UP   -> only allowed if the pin is used as
-+	 *				  gpio output open-drain.
-+	 */
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		gpio_mode = da9062_pctl_get_pin_mode(pctl, offset);
-+		if (gpio_mode < 0)
-+			return -EINVAL;
-+		else if (gpio_mode != DA9062_PIN_GPI)
-+			return -ENOTSUPP;
-+		return regmap_update_bits(regmap, DA9062AA_CONFIG_K,
-+					  BIT(offset), BIT(offset));
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		gpio_mode = da9062_pctl_get_pin_mode(pctl, offset);
-+		if (gpio_mode < 0)
-+			return -EINVAL;
-+		else if (gpio_mode != DA9062_PIN_GPO_OD)
-+			return -ENOTSUPP;
-+		return regmap_update_bits(regmap, DA9062AA_CONFIG_K,
-+					  BIT(offset), BIT(offset));
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		return da9062_pctl_set_pin_mode(pctl, offset,
-+						DA9062_PIN_GPO_OD);
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		return da9062_pctl_set_pin_mode(pctl, offset,
-+						DA9062_PIN_GPO_PP);
-+	default:
-+		return -ENOTSUPP;
-+	}
-+}
-+
-+static int da9062_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct da9062_pctl *pctl = gpiochip_get_data(gc);
-+	struct da9062 *da9062 = pctl->da9062;
-+
-+	return regmap_irq_get_virq(da9062->regmap_irq,
-+				   DA9062_IRQ_GPI0 + offset);
-+}
-+
-+static const struct gpio_chip reference_gc = {
-+	.owner = THIS_MODULE,
-+	.get = da9062_gpio_get,
-+	.set = da9062_gpio_set,
-+	.get_direction = da9062_gpio_get_direction,
-+	.direction_input = da9062_gpio_direction_input,
-+	.direction_output = da9062_gpio_direction_output,
-+	.set_config = da9062_gpio_set_config,
-+	.to_irq = da9062_gpio_to_irq,
-+	.can_sleep = true,
-+	.ngpio = DA9062_GPIO_NUM,
-+	.base = -1,
-+};
-+
-+static int da9062_pctl_probe(struct platform_device *pdev)
-+{
-+	struct device *parent = pdev->dev.parent;
-+	struct da9062_pctl *pctl;
-+	int i;
-+
-+	pctl = devm_kzalloc(&pdev->dev, sizeof(*pctl), GFP_KERNEL);
-+	if (!pctl)
-+		return -ENOMEM;
-+
-+	pctl->da9062 = dev_get_drvdata(parent);
-+	if (!pctl->da9062)
-+		return -EINVAL;
-+
-+	if (!device_property_present(parent, "gpio-controller"))
-+		return 0;
-+
-+	for (i = 0; i < ARRAY_SIZE(pctl->pin_config); i++)
-+		pctl->pin_config[i] = DA9062_PIN_GPO_PP;
-+
-+	/*
-+	 * Currently the driver handles only the GPIO support. The
-+	 * pinctrl/pinmux support can be added later if needed.
-+	 */
-+	pctl->gc = reference_gc;
-+	pctl->gc.label = dev_name(&pdev->dev);
-+	pctl->gc.parent = &pdev->dev;
-+#ifdef CONFIG_OF_GPIO
-+	pctl->gc.of_node = parent->of_node;
-+#endif
-+
-+	platform_set_drvdata(pdev, pctl);
-+
-+	return devm_gpiochip_add_data(&pdev->dev, &pctl->gc, pctl);
-+}
-+
-+static struct platform_driver da9062_pctl_driver = {
-+	.probe = da9062_pctl_probe,
-+	.driver = {
-+		.name	= "da9062-gpio",
-+	},
-+};
-+module_platform_driver(da9062_pctl_driver);
-+
-+MODULE_AUTHOR("Marco Felsch <kernel@pengutronix.de>");
-+MODULE_DESCRIPTION("DA9062 PMIC pinctrl and GPIO Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:da9062-gpio");
--- 
-2.20.1
+ void xen_blkbk_reclaim_memory(struct xenbus_device *dev)
+ {
+-       buffer_squeeze_end = jiffies +
+-               msecs_to_jiffies(buffer_squeeze_duration_ms);
++       if (!buffer_squeeze_end)
++               buffer_squeeze_end = jiffies +
++                       msecs_to_jiffies(buffer_squeeze_duration_ms);
+ }
+ 
+ static inline int get_free_page(struct xen_blkif_ring *ring, struct page **page)
+@@ -669,10 +670,13 @@ int xen_blkif_schedule(void *arg)
+                }
+ 
+                /* Shrink the free pages pool if it is too large. */
+-               if (time_before(jiffies, buffer_squeeze_end))
++               if (time_before(jiffies, buffer_squeeze_end)) {
+                        shrink_free_pagepool(ring, 0);
+-               else
++               } else {
++                       if (unlikely(buffer_squeeze_end))
++                               buffer_squeeze_end = 0;
+                        shrink_free_pagepool(ring, max_buffer_pages);
++               }
+ 
+                if (log_stats && time_after(jiffies, ring->st_print))
+                        print_stats(ring);
 
+May I ask you what way would you prefer?
+
+
+Thanks,
+SeongJae Park
+
+> 
+> Thanks, Roger.
+> 
