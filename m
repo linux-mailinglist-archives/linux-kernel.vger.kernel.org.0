@@ -2,67 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D193511C68A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 08:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9631C11C67A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 08:35:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbfLLHiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 02:38:55 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7221 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728072AbfLLHiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 02:38:54 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 193F32A0078476331057;
-        Thu, 12 Dec 2019 15:38:51 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 12 Dec 2019 15:38:42 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <linux@roeck-us.net>, <heikki.krogerus@linux.intel.com>,
-        <gregkh@linuxfoundation.org>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhongjiang@huawei.com>
-Subject: [PATCH] usb: typec: fusb302: Fix an undefined reference to 'extcon_get_state'
-Date:   Thu, 12 Dec 2019 15:34:23 +0800
-Message-ID: <1576136063-50916-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1728165AbfLLHeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 02:34:36 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:21756 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728151AbfLLHee (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 02:34:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576136073;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QcotRZOg8cVYsqL5GLsgP8ixI9kdR95Q2W4XEWIcwA4=;
+        b=FadP9GPEhm/EYxZySOIyhBMHnzfufJdHIvS3nCljWZx0aRefR+lkR8RJBm5HJeuAnbFAaE
+        sDIN4EbymvXShHzznUHwie194Y1F8mb8z92EfciYmTrmsbLS1wSPiyC8+f0Wsa1Zq5lbCX
+        H/rkFiFRtLLpimqXc+ho/C7mDz8qFDA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-10-4Wt3wXf3P0GGIDpB7LgN2g-1; Thu, 12 Dec 2019 02:34:30 -0500
+X-MC-Unique: 4Wt3wXf3P0GGIDpB7LgN2g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 148EB107ACC7;
+        Thu, 12 Dec 2019 07:34:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1352D6013D;
+        Thu, 12 Dec 2019 07:34:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wgVpV-O4zeO+xOMcOUyKZi+1kg+6Kmi-P7SUx-ydZm5Og@mail.gmail.com>
+References: <CAHk-=wgVpV-O4zeO+xOMcOUyKZi+1kg+6Kmi-P7SUx-ydZm5Og@mail.gmail.com> <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk> <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com> <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com> <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com> <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com> <9417.1576097731@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, David Sterba <dsterba@suse.cz>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1416.1576136065.1@warthog.procyon.org.uk>
+Date:   Thu, 12 Dec 2019 07:34:25 +0000
+Message-ID: <1417.1576136065@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following compile error:
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-drivers/usb/typec/tcpm/fusb302.o: In function `tcpm_get_current_limit':
-fusb302.c:(.text+0x3ee): undefined reference to `extcon_get_state'
-fusb302.c:(.text+0x422): undefined reference to `extcon_get_state'
-fusb302.c:(.text+0x450): undefined reference to `extcon_get_state'
-fusb302.c:(.text+0x48c): undefined reference to `extcon_get_state'
-drivers/usb/typec/tcpm/fusb302.o: In function `fusb302_probe':
-fusb302.c:(.text+0x980): undefined reference to `extcon_get_extcon_dev'
-make: *** [vmlinux] Error 1
+> You are sure you won't want that for the notification queue cases? I
+> guess they'll never want to "sync" part..
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/usb/typec/tcpm/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Actually, that's a good point, I do call it in post_one_notification() since I
+have to hold the lock anyway.  But, as you say, I'm not sure whether I need
+the sync variant.
 
-diff --git a/drivers/usb/typec/tcpm/Kconfig b/drivers/usb/typec/tcpm/Kconfig
-index 72481bb..a81ea9f 100644
---- a/drivers/usb/typec/tcpm/Kconfig
-+++ b/drivers/usb/typec/tcpm/Kconfig
-@@ -32,6 +32,7 @@ endif # TYPEC_TCPCI
- config TYPEC_FUSB302
- 	tristate "Fairchild FUSB302 Type-C chip driver"
- 	depends on I2C
-+	depends on EXTCON
- 	help
- 	  The Fairchild FUSB302 Type-C chip driver that works with
- 	  Type-C Port Controller Manager to provide USB PD and USB
--- 
-1.7.12.4
+David
 
