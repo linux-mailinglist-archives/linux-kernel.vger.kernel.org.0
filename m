@@ -2,339 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1680511C146
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 01:24:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C6A11C13A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 01:22:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbfLLAYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 19:24:13 -0500
-Received: from mail.rptsys.com ([23.155.224.45]:3143 "EHLO mail.rptsys.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727128AbfLLAYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 19:24:12 -0500
-X-Greylist: delayed 461 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Dec 2019 19:24:11 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mail.rptsys.com (Postfix) with ESMTP id 1B60AF4814A21;
-        Wed, 11 Dec 2019 18:16:30 -0600 (CST)
-Received: from mail.rptsys.com ([127.0.0.1])
-        by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 3ZguppylM-EI; Wed, 11 Dec 2019 18:16:28 -0600 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.rptsys.com (Postfix) with ESMTP id C263FF48149E1;
-        Wed, 11 Dec 2019 18:16:28 -0600 (CST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com C263FF48149E1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
-        t=1576109788; bh=IFG5YIjxkPyD9LA2qlwHFHG51vT2LDZp6lx/xnyq+PY=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=IFIy3MeFsb1Rm6mWlaAzatG7s8KOJp9X0nPGTUxcrASyFHiTmnpBREIlntTYPx8rz
-         kGYlpQLUJVqJpcIslmAbUNIQB7wAailjywvpVy1LjU5mADNpNyx6NqwSiTQp1C3Kcj
-         6/nVuH2ICm53xiLacbgkOKVAQhF57hREQbsk2coc=
-X-Virus-Scanned: amavisd-new at rptsys.com
-Received: from mail.rptsys.com ([127.0.0.1])
-        by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id BZTW_6UYPJAo; Wed, 11 Dec 2019 18:16:28 -0600 (CST)
-Received: from vali.starlink.edu (localhost [127.0.0.1])
-        by mail.rptsys.com (Postfix) with ESMTP id 96808F48149D6;
-        Wed, 11 Dec 2019 18:16:28 -0600 (CST)
-Date:   Wed, 11 Dec 2019 18:16:27 -0600 (CST)
-From:   Timothy Pearson <tpearson@raptorengineering.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Alex Deucher <alexdeucher@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Message-ID: <1363559590.4979794.1576109787742.JavaMail.zimbra@raptorengineeringinc.com>
-In-Reply-To: <20191212110245.6f63732b@canb.auug.org.au>
-References: <20191212110245.6f63732b@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the amdgpu tree with Linus' tree
+        id S1727208AbfLLAWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 19:22:02 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34083 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727126AbfLLAWB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 19:22:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576110120;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ska3bIPmsdQtnj/4meb46bcvVz/4NO14TTW8PGBXyDI=;
+        b=ept2QLrM2quCQFoRtTS5dc6YZfJe09iZpgfiMyYl4py3asp3ouNdEhlWxqkjgcHgSTytDo
+        TeeVyozkjFgHR0U6O8IfvMsXrUlOEmkcm+MIGavAZAR/L9Q/XJmL9Iudt8CX/G2DGVIY7I
+        lQQpaa1X6VWnvqT7yhLgQq+kNE2suwg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-134-FNimZqfWMLe8Kz0-FAoexw-1; Wed, 11 Dec 2019 19:21:59 -0500
+X-MC-Unique: FNimZqfWMLe8Kz0-FAoexw-1
+Received: by mail-wm1-f70.google.com with SMTP id 7so69822wmf.9
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 16:21:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ska3bIPmsdQtnj/4meb46bcvVz/4NO14TTW8PGBXyDI=;
+        b=LxYGwUtkUnvhvSfvSaTdkSLuH8V0xwNkCDU9W+eb/WlLFJTipy2Wd2dRkXs0CsMArh
+         Uc4+W/FebnlU72YuxSeexRPpzura748lKPREGV67VYDI42sacuopoCB4qwEaPCH0WRlc
+         7PrSVPrgZpsCKEursG7gsxbK8wSn8eAIbzPLMI0a05p9Gf974VsKK9pRgJhROPkYBQKS
+         hoOTRvn/+ulLrdryEGcXqSZNHpNy67xh4iRxdzSXKa0rYpCMW+TPzJYM6Zgk25DHiwxU
+         Wg6w8LaKffGqsUEoBj8q4wCdQpwp/aEyNoVI71x1Yz8Mppl5d38va7/nJ+VqntVd/lyI
+         QlMA==
+X-Gm-Message-State: APjAAAW6RF0kfW25rDW7zQSdibUEi2bLxzSoPGNDtiknm4PkCCpGdgHI
+        2jHPKkI+P/7EAmD2r0IlBi3X1Mks7QFp2mEsoZAlDu4BBLJZ3BrZMKiKuLO9TV6NvG0jOX0zrwZ
+        LNAqzGvghaMbECetzb2XbpriM
+X-Received: by 2002:adf:f58a:: with SMTP id f10mr2889588wro.105.1576110118022;
+        Wed, 11 Dec 2019 16:21:58 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxGJwEdVkyaU2oXUwh6CTh2f90dtYsbxxgMNCxSyknFWlvYkVEzD3KyBhe96t/+ML4ibwigNw==
+X-Received: by 2002:adf:f58a:: with SMTP id f10mr2889571wro.105.1576110117837;
+        Wed, 11 Dec 2019 16:21:57 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9? ([2001:b07:6468:f312:e9bb:92e9:fcc3:7ba9])
+        by smtp.gmail.com with ESMTPSA id c9sm4002416wmc.47.2019.12.11.16.21.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 16:21:57 -0800 (PST)
+Subject: Re: [PATCH v4 2/2] kvm: Use huge pages for DAX-backed files
+To:     Barret Rhoden <brho@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     linux-nvdimm@lists.01.org, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jason.zeng@intel.com
+References: <20191211213207.215936-1-brho@google.com>
+ <20191211213207.215936-3-brho@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <5abef720-c329-13c3-ff93-b4b58a08721c@redhat.com>
+Date:   Thu, 12 Dec 2019 01:21:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
+In-Reply-To: <20191211213207.215936-3-brho@google.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC65 (Linux)/8.5.0_GA_3042)
-Thread-Topic: linux-next: manual merge of the amdgpu tree with Linus' tree
-Thread-Index: Vt6Yhmqb1oFnoQ2p4nl1dsvjbM/SGg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new version looks OK from my side.
+On 11/12/19 22:32, Barret Rhoden wrote:
+> +	/*
+> +	 * Our caller grabbed the KVM mmu_lock with a successful
+> +	 * mmu_notifier_retry, so we're safe to walk the page table.
+> +	 */
+> +	switch (dev_pagemap_mapping_shift(hva, current->mm)) {
+> +	case PMD_SHIFT:
+> +	case PUD_SIZE:
+> +		return true;
+> +	}
+> +	return false;
 
------ Original Message -----
-> From: "Stephen Rothwell" <sfr@canb.auug.org.au>
-> To: "Alex Deucher" <alexdeucher@gmail.com>
-> Cc: "Linux Next Mailing List" <linux-next@vger.kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "Nick
-> Desaulniers" <ndesaulniers@google.com>, "Timothy Pearson" <tpearson@raptorengineering.com>
-> Sent: Wednesday, December 11, 2019 6:03:37 PM
-> Subject: linux-next: manual merge of the amdgpu tree with Linus' tree
+Should this simply be "> PAGE_SHIFT"?
 
-> Hi all,
-> 
-> Today's linux-next merge of the amdgpu tree got conflicts in:
-> 
->  drivers/gpu/drm/amd/display/dc/calcs/Makefile
->  drivers/gpu/drm/amd/display/dc/dcn20/Makefile
->  drivers/gpu/drm/amd/display/dc/dcn21/Makefile
->  drivers/gpu/drm/amd/display/dc/dml/Makefile
->  drivers/gpu/drm/amd/display/dc/dsc/Makefile
-> 
-> between commits:
-> 
->  c868868f6b6a ("drm/amdgpu: fix stack alignment ABI mismatch for Clang")
->  00db297106e8 ("drm/amdgpu: fix stack alignment ABI mismatch for GCC 7.1+")
-> 
-> from Linus' tree and commit:
-> 
->  86462415d58d ("amdgpu: Enable initial DCN support on POWER")
-> 
-> from the amdgpu tree.
-> 
-> I fixed it up (I think .. see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
-> 
-> --
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/gpu/drm/amd/display/dc/calcs/Makefile
-> index 26c6d735cdc7,4d3006bd4337..000000000000
-> --- a/drivers/gpu/drm/amd/display/dc/calcs/Makefile
-> +++ b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
-> @@@ -24,22 -25,23 +25,30 @@@
->  # It calculates Bandwidth and Watermarks values for HW programming
->  #
->  
-> -ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
-> -	cc_stack_align := -mpreferred-stack-boundary=4
-> -else ifneq ($(call cc-option, -mstack-alignment=16),)
-> -	cc_stack_align := -mstack-alignment=16
-> ++ifdef CONFIG_X86
-> +calcs_ccflags := -mhard-float -msse
-> + endif
-> +
-> -ifdef CONFIG_X86
-> -calcs_ccflags := -mhard-float -msse $(cc_stack_align)
-> ++ifdef CONFIG_PPC64
-> ++calcs_ccflags := -mhard-float -maltivec
-> ++endif
->  
-> -ifdef CONFIG_CC_IS_CLANG
-> -calcs_ccflags += -msse2
-> +ifdef CONFIG_CC_IS_GCC
-> +ifeq ($(call cc-ifversion, -lt, 0701, y), y)
-> +IS_OLD_GCC = 1
->  endif
->  endif
->  
-> -ifdef CONFIG_PPC64
-> -calcs_ccflags := -mhard-float -maltivec $(cc_stack_align)
-> +ifdef IS_OLD_GCC
-> +# Stack alignment mismatch, proceed with caution.
-> +# GCC < 7.1 cannot compile code using `double` and -mpreferred-stack-boundary=3
-> +# (8B stack alignment).
-> +calcs_ccflags += -mpreferred-stack-boundary=4
-> +else
-> ++ifdef CONFIG_X86
-> +calcs_ccflags += -msse2
-> +endif
-> + endif
->  
->  CFLAGS_$(AMDDALPATH)/dc/calcs/dcn_calcs.o := $(calcs_ccflags)
->  CFLAGS_$(AMDDALPATH)/dc/calcs/dcn_calc_auto.o := $(calcs_ccflags)
-> diff --cc drivers/gpu/drm/amd/display/dc/dcn20/Makefile
-> index 63f3bddba7da,07f652d40f86..000000000000
-> --- a/drivers/gpu/drm/amd/display/dc/dcn20/Makefile
-> +++ b/drivers/gpu/drm/amd/display/dc/dcn20/Makefile
-> @@@ -6,26 -7,25 +7,32 @@@ DCN20 = dcn20_resource.o dcn20_init.o d
->  		dcn20_stream_encoder.o dcn20_link_encoder.o dcn20_dccg.o \
->  		dcn20_vmid.o dcn20_dwb.o dcn20_dwb_scl.o
->  
-> - ifdef CONFIG_DRM_AMD_DC_DSC_SUPPORT
->  DCN20 += dcn20_dsc.o
-> - endif
->  
-> -ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
-> -	cc_stack_align := -mpreferred-stack-boundary=4
-> -else ifneq ($(call cc-option, -mstack-alignment=16),)
-> -	cc_stack_align := -mstack-alignment=16
-> ++ifdef CONFIG_X86
-> +CFLAGS_$(AMDDALPATH)/dc/dcn20/dcn20_resource.o := -mhard-float -msse
-> + endif
-> +
-> -ifdef CONFIG_X86
-> -CFLAGS_$(AMDDALPATH)/dc/dcn20/dcn20_resource.o := -mhard-float -msse
-> $(cc_stack_align)
-> ++ifdef CONFIG_PPC64
-> ++CFLAGS_$(AMDDALPATH)/dc/dcn20/dcn20_resource.o := -mhard-float -maltivec
-> ++endif
->  
-> -ifdef CONFIG_CC_IS_CLANG
-> -CFLAGS_$(AMDDALPATH)/dc/dcn20/dcn20_resource.o += -msse2
-> +ifdef CONFIG_CC_IS_GCC
-> +ifeq ($(call cc-ifversion, -lt, 0701, y), y)
-> +IS_OLD_GCC = 1
->  endif
->  endif
->  
-> -ifdef CONFIG_PPC64
-> -CFLAGS_$(AMDDALPATH)/dc/dcn20/dcn20_resource.o := -mhard-float -maltivec
-> $(cc_stack_align)
-> +ifdef IS_OLD_GCC
-> +# Stack alignment mismatch, proceed with caution.
-> +# GCC < 7.1 cannot compile code using `double` and -mpreferred-stack-boundary=3
-> +# (8B stack alignment).
-> +CFLAGS_$(AMDDALPATH)/dc/dcn20/dcn20_resource.o += -mpreferred-stack-boundary=4
-> +else
-> ++ifdef CONFIG_X86
-> +CFLAGS_$(AMDDALPATH)/dc/dcn20/dcn20_resource.o += -msse2
-> +endif
-> + endif
->  
->  AMD_DAL_DCN20 = $(addprefix $(AMDDALPATH)/dc/dcn20/,$(DCN20))
->  
-> diff --cc drivers/gpu/drm/amd/display/dc/dcn21/Makefile
-> index 14113ccf498d,041464d001bd..000000000000
-> --- a/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
-> +++ b/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
-> @@@ -1,24 -2,26 +2,33 @@@
->  #
->  # Makefile for DCN21.
->  
-> - DCN21 = dcn21_hubp.o dcn21_hubbub.o dcn21_resource.o dcn21_hwseq.o
-> dcn21_link_encoder.o
-> + DCN21 = dcn21_init.o dcn21_hubp.o dcn21_hubbub.o dcn21_resource.o \
-> + 	 dcn21_hwseq.o dcn21_link_encoder.o
->  
-> -ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
-> -	cc_stack_align := -mpreferred-stack-boundary=4
-> -else ifneq ($(call cc-option, -mstack-alignment=16),)
-> -	cc_stack_align := -mstack-alignment=16
-> ++ifdef CONFIG_X86
-> +CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o := -mhard-float -msse
-> + endif
-> +
-> -ifdef CONFIG_X86
-> -CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o := -mhard-float -msse
-> $(cc_stack_align)
-> ++ifdef CONFIG_PPC64
-> ++CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o := -mhard-float -maltivec
-> ++endif
->  
-> -ifdef CONFIG_CC_IS_CLANG
-> -CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o += -msse2
-> +ifdef CONFIG_CC_IS_GCC
-> +ifeq ($(call cc-ifversion, -lt, 0701, y), y)
-> +IS_OLD_GCC = 1
->  endif
->  endif
->  
-> -ifdef CONFIG_PPC64
-> -CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o := -mhard-float -maltivec
-> $(cc_stack_align)
-> +ifdef IS_OLD_GCC
-> +# Stack alignment mismatch, proceed with caution.
-> +# GCC < 7.1 cannot compile code using `double` and -mpreferred-stack-boundary=3
-> +# (8B stack alignment).
-> +CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o += -mpreferred-stack-boundary=4
-> +else
-> ++ifdef CONFIG_X86
-> +CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o += -msse2
-> +endif
-> + endif
->  
->  AMD_DAL_DCN21 = $(addprefix $(AMDDALPATH)/dc/dcn21/,$(DCN21))
->  
-> diff --cc drivers/gpu/drm/amd/display/dc/dml/Makefile
-> index 8df251626e22,82c8978c81ab..000000000000
-> --- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> +++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> @@@ -24,22 -25,23 +25,30 @@@
->  # It provides the general basic services required by other DAL
->  # subcomponents.
->  
-> -ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
-> -	cc_stack_align := -mpreferred-stack-boundary=4
-> -else ifneq ($(call cc-option, -mstack-alignment=16),)
-> -	cc_stack_align := -mstack-alignment=16
-> ++ifdef CONFIG_X86
-> +dml_ccflags := -mhard-float -msse
-> + endif
-> +
-> -ifdef CONFIG_X86
-> -dml_ccflags := -mhard-float -msse $(cc_stack_align)
-> ++ifdef CONFIG_PPC64
-> ++dml_ccflags := -mhard-float -maltivec
-> ++endif
->  
-> -ifdef CONFIG_CC_IS_CLANG
-> -dml_ccflags += -msse2
-> +ifdef CONFIG_CC_IS_GCC
-> +ifeq ($(call cc-ifversion, -lt, 0701, y), y)
-> +IS_OLD_GCC = 1
->  endif
->  endif
->  
-> -ifdef CONFIG_PPC64
-> -dml_ccflags := -mhard-float -maltivec $(cc_stack_align)
-> +ifdef IS_OLD_GCC
-> +# Stack alignment mismatch, proceed with caution.
-> +# GCC < 7.1 cannot compile code using `double` and -mpreferred-stack-boundary=3
-> +# (8B stack alignment).
-> +dml_ccflags += -mpreferred-stack-boundary=4
-> +else
-> ++ifdef CONFIG_X86
-> +dml_ccflags += -msse2
-> +endif
-> + endif
->  
->  CFLAGS_$(AMDDALPATH)/dc/dml/display_mode_lib.o := $(dml_ccflags)
->  
-> diff --cc drivers/gpu/drm/amd/display/dc/dsc/Makefile
-> index 970737217e53,08edd919ec82..000000000000
-> --- a/drivers/gpu/drm/amd/display/dc/dsc/Makefile
-> +++ b/drivers/gpu/drm/amd/display/dc/dsc/Makefile
-> @@@ -1,22 -2,23 +2,30 @@@
->  #
->  # Makefile for the 'dsc' sub-component of DAL.
->  
-> -ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
-> -	cc_stack_align := -mpreferred-stack-boundary=4
-> -else ifneq ($(call cc-option, -mstack-alignment=16),)
-> -	cc_stack_align := -mstack-alignment=16
-> ++ifdef CONFIG_X86
-> +dsc_ccflags := -mhard-float -msse
-> + endif
-> +
-> -ifdef CONFIG_X86
-> -dsc_ccflags := -mhard-float -msse $(cc_stack_align)
-> ++ifdef CONFIG_PPC64
-> ++dsc_ccflags := -mhard-float -maltivec
-> ++endif
->  
-> -ifdef CONFIG_CC_IS_CLANG
-> -dsc_ccflags += -msse2
-> +ifdef CONFIG_CC_IS_GCC
-> +ifeq ($(call cc-ifversion, -lt, 0701, y), y)
-> +IS_OLD_GCC = 1
->  endif
->  endif
->  
-> -ifdef CONFIG_PPC64
-> -dsc_ccflags := -mhard-float -maltivec $(cc_stack_align)
-> +ifdef IS_OLD_GCC
-> +# Stack alignment mismatch, proceed with caution.
-> +# GCC < 7.1 cannot compile code using `double` and -mpreferred-stack-boundary=3
-> +# (8B stack alignment).
-> +dsc_ccflags += -mpreferred-stack-boundary=4
-> +else
-> ++ifdef CONFIG_X86
-> +dsc_ccflags += -msse2
-> +endif
-> + endif
->  
->  CFLAGS_$(AMDDALPATH)/dc/dsc/rc_calc.o := $(dsc_ccflags)
->   CFLAGS_$(AMDDALPATH)/dc/dsc/rc_calc_dpi.o := $(dsc_ccflags)
+Paolo
+
