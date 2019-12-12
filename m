@@ -2,210 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85E6911C344
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7672511C35A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:39:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbfLLC2h convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Dec 2019 21:28:37 -0500
-Received: from smtp.h3c.com ([60.191.123.50]:4948 "EHLO h3cspam02-ex.h3c.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727664AbfLLC2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 21:28:36 -0500
-Received: from DAG2EX01-BASE.srv.huawei-3com.com ([10.8.0.64])
-        by h3cspam02-ex.h3c.com with ESMTPS id xBC2Rslq008144
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Dec 2019 10:27:54 +0800 (GMT-8)
-        (envelope-from li.kai4@h3c.com)
-Received: from DAG2EX07-IDC.srv.huawei-3com.com (10.8.0.70) by
- DAG2EX01-BASE.srv.huawei-3com.com (10.8.0.64) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 12 Dec 2019 10:27:55 +0800
-Received: from DAG2EX07-IDC.srv.huawei-3com.com ([::1]) by
- DAG2EX07-IDC.srv.huawei-3com.com ([fe80::c439:37f7:8e24:31c4%9]) with mapi id
- 15.01.1713.004; Thu, 12 Dec 2019 10:27:55 +0800
-From:   Likai <li.kai4@h3c.com>
-To:     Changwei Ge <chge@linux.alibaba.com>,
-        "mark@fasheh.com" <mark@fasheh.com>,
-        "jlbec@evilplan.org" <jlbec@evilplan.org>,
-        "joseph.qi@linux.alibaba.com" <joseph.qi@linux.alibaba.com>
-CC:     "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ocfs2: call journal flush to mark journal as empty after
- journal recovery when mount
-Thread-Topic: [PATCH] ocfs2: call journal flush to mark journal as empty after
- journal recovery when mount
-Thread-Index: AQHVsApQjv9leuKFH0CaG26YADPZnQ==
-Date:   Thu, 12 Dec 2019 02:27:55 +0000
-Message-ID: <4f5b0bc5e63c4a7b963b54b488589785@h3c.com>
-References: <20191211100338.510-1-li.kai4@h3c.com>
- <d4bb15d0-55fa-2a8e-a975-4c65eed3bae3@linux.alibaba.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.125.108.72]
-x-sender-location: DAG2
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+        id S1727842AbfLLCjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 21:39:35 -0500
+Received: from 60-251-196-230.HINET-IP.hinet.net ([60.251.196.230]:47361 "EHLO
+        ironport.ite.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727652AbfLLCjf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 21:39:35 -0500
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 12 Dec 2019 10:39:33 +0800
+Received: from csbcas.internal.ite.com.tw (csbcas1.internal.ite.com.tw [192.168.65.46])
+        by mse.ite.com.tw with ESMTP id xBC2dSJ3065779;
+        Thu, 12 Dec 2019 10:39:28 +0800 (GMT-8)
+        (envelope-from allen.chen@ite.com.tw)
+Received: from allen-VirtualBox.internal.ite.com.tw (192.168.70.14) by
+ csbcas1.internal.ite.com.tw (192.168.65.45) with Microsoft SMTP Server (TLS)
+ id 14.3.352.0; Thu, 12 Dec 2019 10:39:28 +0800
+From:   allen <allen.chen@ite.com.tw>
+CC:     Allen Chen <allen.chen@ite.com.tw>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] drm/edid: fixup EDID 1.4 judge reduced-blanking timings logic
+Date:   Thu, 12 Dec 2019 10:33:42 +0800
+Message-ID: <1576118022-4347-1-git-send-email-allen.chen@ite.com.tw>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-X-DNSRBL: 
-X-MAIL: h3cspam02-ex.h3c.com xBC2Rslq008144
+Content-Type: text/plain
+X-Originating-IP: [192.168.70.14]
+X-MAIL: mse.ite.com.tw xBC2dSJ3065779
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Changwei，
+According to VESA ENHANCED EXTENDED DISPLAY IDENTIFICATION DATA STANDARD
+(Defines EDID Structure Version 1, Revision 4) page: 39
+How to determine whether the monitor support RB timing or not?
+EDID 1.4
+First:  read detailed timing descriptor and make sure byte 0 = 0x00,
+	byte 1 = 0x00, byte 2 = 0x00 and byte 3 = 0xFD
+Second: read EDID bit 0 in feature support byte at address 18h = 1
+	and detailed timing descriptor byte 10 = 0x04
+Third:  if EDID bit 0 in feature support byte = 1 &&
+	detailed timing descriptor byte 10 = 0x04
+	then we can check byte 15, if bit 4 in byte 15 = 1 is support RB
+        if EDID bit 0 in feature support byte != 1 ||
+	detailed timing descriptor byte 10 != 0x04,
+	then byte 15 can not be used
 
-thanks for your comments， I will modify the log info inline.
+The linux code is_rb function not follow the VESA's rule
 
-thanks
+Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
+Reported-by: kbuild test robot <lkp@intel.com>
+---
+ drivers/gpu/drm/drm_edid.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
-On 2019/12/11 20:48, Changwei Ge wrote:
-> Hi Kai,
->
-> Now the problem is more clear to me.
->
-> Just a few comments inline.
->
-> On 12/11/19 6:03 PM, Kai Li wrote:
->> If journal is dirty when mount, it will be replayed but jbd2 sb
->> log tail cannot be updated to mark a new start because
->> journal->j_flag has already been set with JBD2_ABORT first
->> in journal_init_common. When a new transaction is committed, it
->> will be recored in block 1 first(journal->j_tail is set to 1 in
->> journal_reset).
->>
->> If emergency restart happens again before journal super block is
->> updated unfortunately, the new recorded trans will not be replayed
->> in the next mount.
-> So this issue happens before the first committing log iteration  comes 
-> (running in jbd2 kernel thread), right?
-> This leads jbd2 losing the chance to update *on-disk* journal super 
-> block but the dynamic status of journal is still remaining in memory.
->
-> Yes, I agree. We should update on-disk journal super block after journal 
-> recovery since that procedure doesn't involve journal status in memory 
-> which is just reset to the very beginning(tail and head pointing to the 
-> first block) of journal region.
->
-> Moreover, during journal recovery running by peer nodes, ocfs2 already 
-> does that like what this patch does.
->
-> ocfs2_recover_node() -> ocfs2_replay_journal().
->
-> Very good job to catch such an exception. :-)
->
->
->> This exception happens when this lun is used by only one node. If it
->> is used by multi-nodes, other node will replay its journal and its
->> journal sb block will be updated after recovery.
->>
->> To fix this problem, use jbd2_journal_flush to mark journal as empty as
->> ocfs2_replay_journal has done.
->>
->> The following jbd2 journal can be generated by touching a new file after
->> journal is replayed, and seq 15 is the first valid commit, but first seq
->> is 13 in journal super block.
->> logdump:
->> Block 0: Journal Superblock
->> Seq: 0   Type: 4 (JBD2_SUPERBLOCK_V2)
->> Blocksize: 4096   Total Blocks: 32768   First Block: 1
->> First Commit ID: 13   Start Log Blknum: 1
->> Error: 0
->> Feature Compat: 0
->> Feature Incompat: 2 block64
->> Feature RO compat: 0
->> Journal UUID: 4ED3822C54294467A4F8E87D2BA4BC36
->> FS Share Cnt: 1   Dynamic Superblk Blknum: 0
->> Per Txn Block Limit    Journal: 0    Data: 0
->>
->> Block 1: Journal Commit Block
->> Seq: 14   Type: 2 (JBD2_COMMIT_BLOCK)
->>
->> Block 2: Journal Descriptor
->> Seq: 15   Type: 1 (JBD2_DESCRIPTOR_BLOCK)
->> No. Blocknum        Flags
->>   0. 587             none
->> UUID: 00000000000000000000000000000000
->>   1. 8257792         JBD2_FLAG_SAME_UUID
->>   2. 619             JBD2_FLAG_SAME_UUID
->>   3. 24772864        JBD2_FLAG_SAME_UUID
->>   4. 8257802         JBD2_FLAG_SAME_UUID
->>   5. 513             JBD2_FLAG_SAME_UUID JBD2_FLAG_LAST_TAG
->> ...
->> Block 7: Inode
->> Inode: 8257802   Mode: 0640   Generation: 57157641 (0x3682809)
->> FS Generation: 2839773110 (0xa9437fb6)
->> CRC32: 00000000   ECC: 0000
->> Type: Regular   Attr: 0x0   Flags: Valid
->> Dynamic Features: (0x1) InlineData
->> User: 0 (root)   Group: 0 (root)   Size: 7
->> Links: 1   Clusters: 0
->> ctime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
->> atime: 0x5de5d870 0x113181a1 -- Tue Dec  3 11:37:20.288457121 2019
->> mtime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
->> dtime: 0x0 -- Thu Jan  1 08:00:00 1970
->> ...
->> Block 9: Journal Commit Block
->> Seq: 15   Type: 2 (JBD2_COMMIT_BLOCK)
->>
->> The following is jouranl recovery log when recovering the upper jbd2
->> journal when mount again.
->> syslog:
->> [ 2265.648622] ocfs2: File system on device (252,1) was not unmounted cleanly, recovering it.
->> [ 2265.649695] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 0
->> [ 2265.650407] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 1
->> [ 2265.650409] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 2
->> [ 2265.650410] fs/jbd2/recovery.c:(jbd2_journal_recover, 278): JBD2: recovery, exit status 0, recovered transactions 13 to 13
->>
->> Due to first commit seq 13 recorded in journal super is not consistent
->> with the value recorded in block 1(seq is 14), journal recovery will be
->> terminated before seq 15 even though it is an unbroken commit, inode
->> 8257802 is a new file and it will be lost.
->>
->> Signed-off-by: Kai Li <li.kai4@h3c.com>
->> ---
->>   fs/ocfs2/journal.c | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
->> index 1afe57f425a0..b8b9d26fa731 100644
->> --- a/fs/ocfs2/journal.c
->> +++ b/fs/ocfs2/journal.c
->> @@ -1066,6 +1066,14 @@ int ocfs2_journal_load(struct ocfs2_journal *journal, int local, int replayed)
->>   
->>   	ocfs2_clear_journal_error(osb->sb, journal->j_journal, osb->slot_num);
->>   
->> +	if (replayed) {
->> +		/* wipe the journal */
-mlog( ML_NOTICE, "journal recovery complete" );
-Its reason is that if journal is dirty we will print a notice "File
-system on device (*) was not unmounted cleanly, recovering it" before,
-here it is done.
->> +		jbd2_journal_lock_updates(journal->j_journal);
->> +		status = jbd2_journal_flush(journal->j_journal);
->> +		jbd2_journal_unlock_updates(journal->j_journal);
-if (status < 0)
-    mlog_errno(status);
-if it fails, it may cause file lost in future.
->> +		mlog(ML_NOTICE, "journal recovery complete, status=%d", status);
-> Is the above mlog line necessary?
-> Can we just log a warning only jbd2_journal_flush() fails and let the 
-> mount continue? IMO, the mlog line can't help much.
->
-> Otherwise, this patch looks good to me.
->
->
-> Thanks,
-> Changwei
->
->
->> +	}
->> +
->>   	status = ocfs2_journal_toggle_dirty(osb, 1, replayed);
->>   	if (status < 0) {
->>   		mlog_errno(status);
->>
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index f5926bf..826ed78 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -2017,13 +2017,21 @@ struct drm_display_mode *drm_mode_find_dmt(struct drm_device *dev,
+ 	}
+ }
+ 
++static bool
++is_display_descriptor(const u8 *r, u8 tag)
++{
++	return (!r[0] && !r[1] && !r[2] && r[3] == tag) ? true : false;
++}
++
+ static void
+ is_rb(struct detailed_timing *t, void *data)
+ {
+ 	u8 *r = (u8 *)t;
+-	if (r[3] == EDID_DETAIL_MONITOR_RANGE)
+-		if (r[15] & 0x10)
+-			*(bool *)data = true;
++
++	if (is_display_descriptor(r, EDID_DETAIL_MONITOR_RANGE)) {
++		if (r[10] == BIT(2))
++			*(int *)data = !!(r[15] & 0x10);
++	}
+ }
+ 
+ /* EDID 1.4 defines this explicitly.  For EDID 1.3, we guess, badly. */
+@@ -2031,9 +2039,13 @@ struct drm_display_mode *drm_mode_find_dmt(struct drm_device *dev,
+ drm_monitor_supports_rb(struct edid *edid)
+ {
+ 	if (edid->revision >= 4) {
+-		bool ret = false;
+-		drm_for_each_detailed_block((u8 *)edid, is_rb, &ret);
+-		return ret;
++		if (edid->features & BIT(0)) {
++			int ret = -1;
++
++			drm_for_each_detailed_block((u8 *)edid, is_rb, &ret);
++			if (ret != -1)
++				return ret;
++		}
+ 	}
+ 
+ 	return ((edid->input & DRM_EDID_INPUT_DIGITAL) != 0);
+-- 
+1.9.1
 
