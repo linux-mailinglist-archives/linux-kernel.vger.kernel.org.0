@@ -2,125 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DEF911C5EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 07:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56C7D11C5E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 07:17:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfLLG2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 01:28:04 -0500
-Received: from mail.windriver.com ([147.11.1.11]:33403 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbfLLG2E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 01:28:04 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTPS id xBC6RfSb021450
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 11 Dec 2019 22:27:41 -0800 (PST)
-Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Wed, 11 Dec
- 2019 22:27:40 -0800
-Subject: Re: [tipc-discussion] [PATCH net/tipc] Replace rcu_swap_protected()
- with rcu_replace_pointer()
-To:     <paulmck@kernel.org>
-CC:     Tuong Lien Tong <tuong.t.lien@dektech.com.au>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mingo@kernel.org>, <tipc-discussion@lists.sourceforge.net>,
-        <kernel-team@fb.com>, <torvalds@linux-foundation.org>,
-        <davem@davemloft.net>
-References: <20191210033146.GA32522@paulmck-ThinkPad-P72>
- <0e565b68-ece1-5ae6-bb5d-710163fb8893@windriver.com>
- <20191210223825.GS2889@paulmck-ThinkPad-P72>
- <54112a30-de24-f6b2-b02e-05bc7d567c57@windriver.com>
- <707801d5afc6$cac68190$605384b0$@dektech.com.au>
- <db88d33f-8e25-8859-84ec-3372a108c759@windriver.com>
- <20191211184609.GI2889@paulmck-ThinkPad-P72>
-From:   Ying Xue <ying.xue@windriver.com>
-Message-ID: <58df887e-cfb5-37fd-6c06-d5f98449edd5@windriver.com>
-Date:   Thu, 12 Dec 2019 14:14:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191211184609.GI2889@paulmck-ThinkPad-P72>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.224.155.90]
+        id S1727893AbfLLGR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 01:17:57 -0500
+Received: from mout.gmx.net ([212.227.15.15]:54087 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726825AbfLLGR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 01:17:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1576131461;
+        bh=KL73YRrT7LLHVsznmPTHt/klCRSoc1CVMKSMBDmBo6I=;
+        h=X-UI-Sender-Class:From:To:Subject:Reply-to:Date;
+        b=Tpc3ARXxO+7BOveLypF/SVr8mN0m+AgXaOl5a/zuwIZlfLxkuOvwxPmPNtZTI8OmQ
+         nDRZjvPdrzU/X4npI+hF0EyGJwd5ehZq1GlZxO5AxGFBzuVzlmxWmnPGmnlGHdYwb1
+         HYnuKO8tdTiqRXa1KWzBzRHzBv9dUZucJV/kZpbQ=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from corona.crabdance.com ([173.228.106.20]) by mail.gmx.com
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MKbgE-1iQujo3OOq-00KwkB; Thu, 12 Dec 2019 07:17:41 +0100
+Received: by corona.crabdance.com (Postfix, from userid 1001)
+        id BFE2D6E85603; Wed, 11 Dec 2019 22:17:02 -0800 (PST)
+From:   Stefan Schaeckeler <schaecsn@gmx.net>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] thermal: rockchip: enable hwmon
+Content-Type: text/plain
+Reply-to: schaecsn@gmx.net
+Message-Id: <20191212061702.BFE2D6E85603@corona.crabdance.com>
+Date:   Wed, 11 Dec 2019 22:17:02 -0800 (PST)
+X-Provags-ID: V03:K1:kW48YWv2at+CtoZ29KlwFzvfojnYn+Z2kTPJCrfxCVA5Rh90eXV
+ aM0gPv8hwKLUJ2iDVrZbWVOWIqDS4KVTl38TNMvJV32rVUullnP6dlrbKMYeIcndtHucyom
+ MSUCZDZU+Xu4+kEiA13utXDD/2NBQynNtjXJeU09nBD+OkbsLck4KpO2RGz+HrIqDiZSCgj
+ fKIBwKd4KkB87Z94yizRg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8lU53RZXNGc=:sHRJzAdIaFHRXzs8mtVvzs
+ f6InwGCn/l5BZMSCxMyTXAhaoZ7dS9F6qxUBsgCvr3SSROiqGwCvMl5Qe9plRrS0XFICiO4lr
+ dyCIIF/Qk0ByJPzjOC/m+CA203m/i2Qu0Qve5T9s/k/MCXqsov2QFvZ6na17H1rYprH91OSe8
+ g68xOoJIFDDEJDGSI4v8DA3hg0MbacLSrkpP4GUeJEOpXWFUT9NAIyHSa+iIIH+SCUQn/doqy
+ BZzt4R6NvLndpk3bNnjgYWOgVqUakjsPdsacPEQOQk10BpQhiqYwi+lMIITxLyty2F/v0Y/Ww
+ rnnobEPvXAZsbYJV3e9j5dpWQCCOeAqIGeKbgavxyNXA8DP+gIodRZc05eoovlGpaHXuAza82
+ fyhnX9zAg3YvOPcYglyMFHBlGytIgwyKBIPld5+cqtUJ0HH5vQF1JQKwHSQSEX0zBIEQO/rdB
+ 4dKC3BWAkssdJrJXpRsAR0Dil7A3WBWpxtsBdRy4t04OuhlBKAnmdh6cjHwR5pWTDPIt7zWYU
+ v1CQwY1XY15Cu+upIUnbPmxEx+DCYxYwr5xn++HpuCvY5w/bukbqw/S0k66g1icYQm/seM0Fa
+ 3ziE1uH00dSP1q7pQ/3MQ5NvPyMEFGQSQMBt4ZtHb6ByFABsEAK+pRD8a7YtkI7P+IxDkK9d5
+ IFpBK4OryV0yYSWKuqxS3y6aoTYOKN8Qi36v3Ji9dGZiwOf5e9fxwvnHbBADNqd6LclyTRrVJ
+ svdqUX0ikEm9/aCN/mGbnzEunSwrd2m0EX0z6taP58gWYUqJ5WWSl3RSDW28B5FUB+A4pbR5i
+ U7d9h33aiVTOG/ffx3xnq8skbj9jCt2VVwk7i1OXlFXD0Dt0532yR//0rifOqE5bp3h89p5BC
+ WeB2dzdi/yFIfVfUaSMhB8h9M48KK9D/IKtiUKaIxBA6tTVKzSwHk7NucxKfoI70T0p5QUfho
+ obCWmGjdX/KP25fo3T3fFJXPQqyn6ERXmeToAhWnq1s+GgT77LuWVWRuXuSWbJCTWTB6bdI97
+ HI7hCrFDAhnhgJJ9bjjD7/qMnBpk5/GjlNuzPZBOQpIgZCx85l7Fm58MU+aViFSzB4fcP9glY
+ uftxD3KXeknjou9mPmBr3Xbg3xsY+mb0fN1zgs5z1VzvJhIVAja8gZernjZ/rNZk9jsg4bD5B
+ vG+uAdgqho/YkxhO6smQ4268B3zsB2vUx5EXqIBVHhrpZ+0fs9WmbFoWTI3nF9EbwivaZZq7A
+ tRfztC7BrfN3WKncCMrtszSwpEAy4cdLGOJFu0nXcrIKT+YanoRLnHNl8dNk=
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/19 2:46 AM, Paul E. McKenney wrote:
-> On Wed, Dec 11, 2019 at 12:42:00PM +0800, Ying Xue wrote:
->> On 12/11/19 10:00 AM, Tuong Lien Tong wrote:
->>>>  
->>>>  	/* Move passive key if any */
->>>>  	if (key.passive) {
->>>> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
->>>> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2,
->>> &rx->lock);
->>> The 3rd parameter should be the lockdep condition checking instead of the
->>> spinlock's pointer i.e. "lockdep_is_held(&rx->lock)"?
->>> That's why I'd prefer to use the 'tipc_aead_rcu_swap ()' macro, which is
->>> clear & concise at least for the context here. It might be re-used later as
->>> well...
->>>
->>
->> Right. The 3rd parameter of rcu_replace_pointer() should be
->> "lockdep_is_held(&rx->lock)" instead of "&rx->lock".
-> 
-> Like this?
+By default, of-based thermal drivers do not enable hwmon.
+Explicitly enable hwmon for both, the soc and gpu temperature
+sensor.
 
-Yes, I think it's better to set the 3rd parameter of
-rcu_replace_pointer() with "lockdep_is_held(&rx->lock)".
+Signed-off-by: Stefan Schaeckeler <schaecsn@gmx.net>
 
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> commit 575bb4ba1b22383656760feb3d122e11656ccdfd
-> Author: Paul E. McKenney <paulmck@kernel.org>
-> Date:   Mon Dec 9 19:13:45 2019 -0800
-> 
->     net/tipc: Replace rcu_swap_protected() with rcu_replace_pointer()
->     
->     This commit replaces the use of rcu_swap_protected() with the more
->     intuitively appealing rcu_replace_pointer() as a step towards removing
->     rcu_swap_protected().
->     
->     Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
->     Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
->     Reported-by: kbuild test robot <lkp@intel.com>
->     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
->     [ paulmck: Updated based on Ying Xue and Tuong Lien Tong feedback. ]
->     Cc: Jon Maloy <jon.maloy@ericsson.com>
->     Cc: Ying Xue <ying.xue@windriver.com>
->     Cc: "David S. Miller" <davem@davemloft.net>
->     Cc: <netdev@vger.kernel.org>
->     Cc: <tipc-discussion@lists.sourceforge.net>
-> 
-> diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
-> index 990a872..c8c47fc 100644
-> --- a/net/tipc/crypto.c
-> +++ b/net/tipc/crypto.c
-> @@ -257,9 +257,6 @@ static char *tipc_key_change_dump(struct tipc_key old, struct tipc_key new,
->  #define tipc_aead_rcu_ptr(rcu_ptr, lock)				\
->  	rcu_dereference_protected((rcu_ptr), lockdep_is_held(lock))
->  
-> -#define tipc_aead_rcu_swap(rcu_ptr, ptr, lock)				\
-> -	rcu_swap_protected((rcu_ptr), (ptr), lockdep_is_held(lock))
-> -
->  #define tipc_aead_rcu_replace(rcu_ptr, ptr, lock)			\
->  do {									\
->  	typeof(rcu_ptr) __tmp = rcu_dereference_protected((rcu_ptr),	\
-> @@ -1189,7 +1186,7 @@ static bool tipc_crypto_key_try_align(struct tipc_crypto *rx, u8 new_pending)
->  
->  	/* Move passive key if any */
->  	if (key.passive) {
-> -		tipc_aead_rcu_swap(rx->aead[key.passive], tmp2, &rx->lock);
-> +		tmp2 = rcu_replace_pointer(rx->aead[key.passive], tmp2, lockdep_is_held(&rx->lock));
->  		x = (key.passive - key.pending + new_pending) % KEY_MAX;
->  		new_passive = (x <= 0) ? x + KEY_MAX : x;
->  	}
-> 
+=2D--
+ drivers/thermal/rockchip_thermal.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip=
+_thermal.c
+index 343c2f5c5a25..e47c60010259 100644
+=2D-- a/drivers/thermal/rockchip_thermal.c
++++ b/drivers/thermal/rockchip_thermal.c
+@@ -19,6 +19,8 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/pinctrl/consumer.h>
+
++#include "thermal_hwmon.h"
++
+ /**
+  * If the temperature over a period of time High,
+  * the resulting TSHUT gave CRU module,let it reset the entire chip,
+@@ -1321,8 +1323,15 @@ static int rockchip_thermal_probe(struct platform_d=
+evice *pdev)
+
+ 	thermal->chip->control(thermal->regs, true);
+
+-	for (i =3D 0; i < thermal->chip->chn_num; i++)
++	for (i =3D 0; i < thermal->chip->chn_num; i++) {
+ 		rockchip_thermal_toggle_sensor(&thermal->sensors[i], true);
++		thermal->sensors[i].tzd->tzp->no_hwmon =3D false;
++		error =3D thermal_add_hwmon_sysfs(thermal->sensors[i].tzd);
++		if (error)
++			dev_warn(&pdev->dev,
++				 "failed to register sensor %d with hwmon: %d\n",
++				 i, error);
++	}
+
+ 	platform_set_drvdata(pdev, thermal);
+
+@@ -1344,6 +1353,7 @@ static int rockchip_thermal_remove(struct platform_d=
+evice *pdev)
+ 	for (i =3D 0; i < thermal->chip->chn_num; i++) {
+ 		struct rockchip_thermal_sensor *sensor =3D &thermal->sensors[i];
+
++		thermal_remove_hwmon_sysfs(sensor->tzd);
+ 		rockchip_thermal_toggle_sensor(sensor, false);
+ 	}
+
+=2D-
+2.24.0
+
