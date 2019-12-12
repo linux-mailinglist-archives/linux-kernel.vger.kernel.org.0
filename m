@@ -2,201 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB34E11D77F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 20:55:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 928BC11D784
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 20:55:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730747AbfLLTyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 14:54:21 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35281 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730284AbfLLTyU (ORCPT
+        id S1730774AbfLLTzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 14:55:10 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43218 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730736AbfLLTzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 14:54:20 -0500
-Received: by mail-pl1-f195.google.com with SMTP id s10so1113744plp.2;
-        Thu, 12 Dec 2019 11:54:19 -0800 (PST)
+        Thu, 12 Dec 2019 14:55:09 -0500
+Received: by mail-pg1-f193.google.com with SMTP id k197so53642pga.10
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 11:55:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AYTQzwmCtyGCeqizYrg2mM/HZ/u7PZU1cYAmygilZ0k=;
-        b=cX8lgTvUAXu99X786QsC9HqG6LE3Uns60bB8Mg24Pi1whV6rqYeIyozLk5TEBScQnH
-         vEX2ErYtIiYbH5/uVCE2MhsBsy6QBqT9ev7MDeMj/JaiVVBkKggFYq/s4iWumpVK09rX
-         kWKCIfyRSRZd+fKRSw8KZpaGloz+XIJAbPvjVi13JuXsx7MDDCYDqTIYKR5FwWM1juRl
-         2iKdQmzQoN1k8saGUF4yG6jolU3TaublpQtHwwlWHNAbb8UEEm2mbpAuTiD8Gd+amJZd
-         gphXNJw56GshdruhQFfqyB+rWIF04VXVQ4wrRWPonUmHHbkBbxkzxIrEMRuvTpruFHX3
-         hH7w==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xipc9AXS94+c5lbtEsh/KKCpzfOdW798Fs9Zb0D/PIM=;
+        b=n/trhhKh1SRnTbMZInQL3F/fYF7cApqpFLu8db8hCAxCkIS54227TZO5d952kgkFaT
+         Nt1BP4QBL1oo0zD8u62AcYIyafCRJlI0QVSV9hQqSpSO3fb/6wSDfAQbBwMhxantExaC
+         76utHdSG20yv5dEzWHT6d6/yK+IYkvlvmIoUk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AYTQzwmCtyGCeqizYrg2mM/HZ/u7PZU1cYAmygilZ0k=;
-        b=SMZzOelBpd9r4Pv5PAsdRSm+MfpVxQujptD0kGdiNyaWwN8NTZLQimlzPczeALPuMj
-         fappLkBkijZigQuicTEXVYo3p+9PLkgSNybYCvzDbHRYyVnivnYYOIGH2F7coI4Bl9QY
-         JdY9wCW9eGyOV0EO5J9i6WIjAg6Mrad9hcpluMGWJpmXLG1eqw46W/p0eXED7dcJyhmw
-         jqp46Fokj0cugUT+vVAhJ/ySzthj+RzN6FC9bYMggI5G02ZYtGv7UBWbOswPAgSV1uwt
-         zMqnhIm39xKlHDdQJh7BM5WZQWNyV50xW80GldWs+LzSQFihOgWAqwPU+PhUnO45aHih
-         fyqw==
-X-Gm-Message-State: APjAAAUVXFfsiVTIVtt3CyfVLCqYa/AlJsexM3mKJqopTw2PUNe171g2
-        JNOKHRnXs6zsVQrWs/4LbLo=
-X-Google-Smtp-Source: APXvYqyjha5pHlTMRAFaVfr0dMmvm/8Osbko8EWvK1HuJpN3iPuEJapQ5TwebGZ62Vmm4wm1WJvJXA==
-X-Received: by 2002:a17:90a:5d04:: with SMTP id s4mr11680747pji.120.1576180459011;
-        Thu, 12 Dec 2019 11:54:19 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::b509])
-        by smtp.gmail.com with ESMTPSA id q41sm6646036pja.20.2019.12.12.11.54.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Dec 2019 11:54:18 -0800 (PST)
-Date:   Thu, 12 Dec 2019 11:54:16 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Andrii Nakryiko <andriin@fb.com>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: [PATCH bpf-next 11/15] bpftool: add skeleton codegen command
-Message-ID: <20191212195415.ubnuypco536rp6mu@ast-mbp.dhcp.thefacebook.com>
-References: <CAEf4Bzb+3b-ypP8YJVA=ogQgp1KXx2xPConOswA0EiGXsmfJow@mail.gmail.com>
- <20191211191518.GD3105713@mini-arch>
- <CAEf4BzYofFFjSAO3O-G37qyeVHE6FACex=yermt8bF8mXksh8g@mail.gmail.com>
- <20191211200924.GE3105713@mini-arch>
- <CAEf4BzaE0Q7LnPOa90p1RX9qSbOA_8hkT=6=7peP9C88ErRumQ@mail.gmail.com>
- <20191212025735.GK3105713@mini-arch>
- <CAEf4BzY2KHK4h5e40QgGt4GzJ6c+rm-vtbyEdM41vUSqcs=txA@mail.gmail.com>
- <20191212162953.GM3105713@mini-arch>
- <CAEf4BzYJHvuFbBM-xvCCsEa+Pg-bG1tprGMbCDtsbGHdv7KspA@mail.gmail.com>
- <20191212104334.222552a1@cakuba.netronome.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xipc9AXS94+c5lbtEsh/KKCpzfOdW798Fs9Zb0D/PIM=;
+        b=AjndGkNfXwW5UnMhMghUhfc3/tDNOTeLK/TeSoJaDdOr+RSR0cuiN1DjZe1wysNqcR
+         XpI9D5rY7om2plPr9k8C3dryMYY922xhhcRphQhqIBai45SHl59F9jC9K6WXptg5Bagz
+         MRRkLw52bMHQVP7KE7Fh4kNm4OWDcwAy2G+Ec+yJngXb7VGmL2XM58lvOAZiomyhzE5q
+         keX/DtTHD+6c/mmd7qh27Sit5rEs6kud8UM8ggKonpCh106YUhTnmA9BuCVOtnuAoqyl
+         8l0WtYKXqLEEcMScAlJp+x0JupkjZzviN1/otuE8JlN+n2mhEP0121lgNXnihZ7xf6jv
+         YDMQ==
+X-Gm-Message-State: APjAAAW6fLrT0EfxqkhD9MoejlOVIDtG+J/1688mQntjk4vGLAqeiArR
+        XCtfpOgBDHuS/iWy1iAvcVXbyg==
+X-Google-Smtp-Source: APXvYqzhuJPokwvUPye5ga1VPMjxotcugrUG9Ne+S1EX+edBcYRP2JJip+UdhFedyIJD4uuWm7WuJQ==
+X-Received: by 2002:a63:4b50:: with SMTP id k16mr12623072pgl.386.1576180508286;
+        Thu, 12 Dec 2019 11:55:08 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id u26sm7929974pfn.46.2019.12.12.11.55.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2019 11:55:07 -0800 (PST)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rajeshwari <rkambl@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Maulik Shah <mkshah@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] arm64: dts: qcom: sc7180: Fix order of nodes
+Date:   Thu, 12 Dec 2019 11:55:01 -0800
+Message-Id: <20191212115443.1.I55198466344789267ed1eb5ec555fd890c9fc6e1@changeid>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212104334.222552a1@cakuba.netronome.com>
-User-Agent: NeoMutt/20180223
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 10:43:34AM -0800, Jakub Kicinski wrote:
-> On Thu, 12 Dec 2019 08:53:22 -0800, Andrii Nakryiko wrote:
-> > > > > Btw, how hard it would be to do this generation with a new python
-> > > > > script instead of bpftool? Something along the lines of
-> > > > > scripts/bpf_helpers_doc.py that parses BTF and spits out this C header
-> > > > > (shouldn't be that hard to write custom BTF parser in python, right)?
-> > > > >  
-> > > >
-> > > > Not impossible, but harder than I'd care to deal with. I certainly
-> > > > don't want to re-implement a good chunk of ELF and BTF parsing (maps,
-> > > > progs, in addition to datasec stuff). But "it's hard to use bpftool in
-> > > > our build system" doesn't seem like good enough reason to do all that.  
-> > > You can replace "our build system" with some other project you care about,
-> > > like systemd. They'd have the same problem with vendoring in recent enough
-> > > bpftool or waiting for every distro to do it. And all this work is
-> > > because you think that doing:
-> > >
-> > >         my_obj->rodata->my_var = 123;
-> > >
-> > > Is easier / more type safe than doing:
-> > >         int *my_var = bpf_object__rodata_lookup(obj, "my_var");
-> > >         *my_var = 123;  
-> > 
-> > Your arguments are confusing me. Did I say that we shouldn't add this
-> > type of "dynamic" interface to variables? Or did I say that every
-> > single BPF application has to adopt skeleton and bpftool? I made no
-> > such claims and it seems like discussion is just based around where I
-> > have to apply my time and efforts... You think it's not useful - don't
-> > integrate bpftool into your build system, simple as that. Skeleton is
-> > used for selftests, but it's up to maintainers to decide whether to
-> > keep this, similar to all the BTF decisions.
-> 
-> Since we have two people suggesting this functionality to be a separate
-> tool could you please reconsider my arguments from two days ago?
-> 
->   There absolutely nothing this tool needs from [bpftool], no
->   JSON needed, no bpffs etc. 
+The SC7180 device tree nodes should be ordered by address. Re-shuffle
+some nodes which currently don't follow this convention.
 
-To generate vmlinux.h bpftool doesn't need json and doesn't need bpffs.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+Bjorn/Andy: if this is considered correct could it be landed quickly,
+to have a sane baseline for other patches and minimize conflicts?
 
-> It can be a separate tool like
->   libbpf-skel-gen or libbpf-c-skel or something, distributed with libbpf.
->   That way you can actually soften the backward compat. In case people
->   become dependent on it they can carry that little tool on their own.
 
-Jakub,
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 74 ++++++++++++++--------------
+ 1 file changed, 37 insertions(+), 37 deletions(-)
 
-Could you please consider Andrii's reply to your comment from two days ago:
-https://lore.kernel.org/bpf/CAEf4BzbeZbmCTOOo2uQXjm0GL0WDu7aLN6fdUk18Nv2g0kfwVg@mail.gmail.com/
-"we are trying to make users lives easier by having major distributions
-distribute bpftool and libbpf properly. Adding extra binaries to
-distribute around doesn't seem to be easing any of users pains."
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 63a7bfb7f5125..286a4b2aeced9 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -619,16 +619,6 @@
+ 			};
+ 		};
+ 
+-		pdc: interrupt-controller@b220000 {
+-			compatible = "qcom,sc7180-pdc", "qcom,pdc";
+-			reg = <0 0xb220000 0 0x30000>;
+-			qcom,pdc-ranges = <0 480 15>, <17 497 98>,
+-					  <119 634 4>, <124 639 1>;
+-			#interrupt-cells = <2>;
+-			interrupt-parent = <&intc>;
+-			interrupt-controller;
+-		};
+-
+ 		tlmm: pinctrl@3500000 {
+ 			compatible = "qcom,sc7180-pinctrl";
+ 			reg = <0 0x03500000 0 0x300000>,
+@@ -932,33 +922,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		system-cache-controller@9200000 {
+-			compatible = "qcom,sc7180-llcc";
+-			reg = <0 0x09200000 0 0x200000>, <0 0x09600000 0 0x50000>;
+-			reg-names = "llcc_base", "llcc_broadcast_base";
+-			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
+-		};
+-
+-		tsens0: thermal-sensor@c263000 {
+-			compatible = "qcom,sc7180-tsens","qcom,tsens-v2";
+-			reg = <0 0x0c263000 0 0x1ff>, /* TM */
+-				<0 0x0c222000 0 0x1ff>; /* SROT */
+-			#qcom,sensors = <15>;
+-			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "uplow";
+-			#thermal-sensor-cells = <1>;
+-		};
+-
+-		tsens1: thermal-sensor@c265000 {
+-			compatible = "qcom,sc7180-tsens","qcom,tsens-v2";
+-			reg = <0 0x0c265000 0 0x1ff>, /* TM */
+-				<0 0x0c223000 0 0x1ff>; /* SROT */
+-			#qcom,sensors = <10>;
+-			interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "uplow";
+-			#thermal-sensor-cells = <1>;
+-		};
+-
+ 		usb_1_hsphy: phy@88e3000 {
+ 			compatible = "qcom,sc7180-qusb2-phy";
+ 			reg = <0 0x088e3000 0 0x400>;
+@@ -1007,6 +970,13 @@
+ 			};
+ 		};
+ 
++		system-cache-controller@9200000 {
++			compatible = "qcom,sc7180-llcc";
++			reg = <0 0x09200000 0 0x200000>, <0 0x09600000 0 0x50000>;
++			reg-names = "llcc_base", "llcc_broadcast_base";
++			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
+ 		usb_1: usb@a6f8800 {
+ 			compatible = "qcom,sc7180-dwc3", "qcom,dwc3";
+ 			reg = <0 0x0a6f8800 0 0x400>;
+@@ -1051,6 +1021,36 @@
+ 			};
+ 		};
+ 
++		pdc: interrupt-controller@b220000 {
++			compatible = "qcom,sc7180-pdc", "qcom,pdc";
++			reg = <0 0xb220000 0 0x30000>;
++			qcom,pdc-ranges = <0 480 15>, <17 497 98>,
++					  <119 634 4>, <124 639 1>;
++			#interrupt-cells = <2>;
++			interrupt-parent = <&intc>;
++			interrupt-controller;
++		};
++
++		tsens0: thermal-sensor@c263000 {
++			compatible = "qcom,sc7180-tsens","qcom,tsens-v2";
++			reg = <0 0x0c263000 0 0x1ff>, /* TM */
++				<0 0x0c222000 0 0x1ff>; /* SROT */
++			#qcom,sensors = <15>;
++			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "uplow";
++			#thermal-sensor-cells = <1>;
++		};
++
++		tsens1: thermal-sensor@c265000 {
++			compatible = "qcom,sc7180-tsens","qcom,tsens-v2";
++			reg = <0 0x0c265000 0 0x1ff>, /* TM */
++				<0 0x0c223000 0 0x1ff>; /* SROT */
++			#qcom,sensors = <10>;
++			interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "uplow";
++			#thermal-sensor-cells = <1>;
++		};
++
+ 		spmi_bus: spmi@c440000 {
+ 			compatible = "qcom,spmi-pmic-arb";
+ 			reg = <0 0x0c440000 0 0x1100>,
+-- 
+2.24.1.735.g03f4e72817-goog
 
-My opinion is the following.
-bpftool is necessary to write bpf programs already. It's necessary to produce
-vmlinux.h for bpf programs to include it. It's part of build process. I can
-relate to Stan's complains that he needs to update clang and pahole. He missed
-the fact that he needs to update bpftool too if he wants to use all features of
-CO-RE. Same thing for skeleton generation. If people need to run the latest
-selftest/bpf on the latest kernel they need to upgrade to the latest clang,
-pahole, libbpf, bpftool. Nothing new here.
-
-Backwards compat is the same concern for skeleton generation and for vmlinux.h
-generation. Obviously no one wants to introduce something that will keep
-changing. Is vmlinux.h generation stable? I like to believe so. Same with
-skeleton. I wouldn't want to see it changing, but in both cases such chance
-exists. We cannot and should not adopt kernel-like ABI guarantees to user space
-code. It will paralyze the development.
-
-Now consider if vmlinux.h and skeleton generation is split out of bpftool into
-new tool. Effectively it would mean a fork of bpftool. Two binaries doing bpf
-elf file processing without clear distinction between them is going to be very
-confusing.
-
-One more point from Stan's email:
-
-> You can replace "our build system" with some other project you care about,
-> like systemd. They'd have the same problem with vendoring in recent enough
-
-we've been working with systemd folks for ~8 month to integrate libbpf into
-their build that is using meson build system and their CI that is github based.
-So we're well aware about systemd requirements for libbpf and friends.
-
-> bpftool or waiting for every distro to do it. And all this work is
-> because you think that doing:
->
->        my_obj->rodata->my_var = 123;
->
-> Is easier / more type safe than doing:
->        int *my_var = bpf_object__rodata_lookup(obj, "my_var");
->        *my_var = 123;
-
-Stan, you conveniently skipped error checking. It should have been:
-    int *my_var = bpf_object__rodata_lookup(obj, "my_var");
-    if (IS_ERROR_NULL(my_var))
-        goto out_cleanup;
-     *my_var = 123;
-
-Now multiply this code by N variables and consider how cleanup code will look like.
-Then multiply this lookup plus cleanup code for all maps, all program and all links.
-Today this bpf_object__*lookup*("string") for programs, maps, links is a major
-chunk of code not all only for all tests, but for all C, python, C++ services
-that use BPF. It's error prone and verbose. Generated skeleton moves the tedious
-job of writing lookup accessors from humans into bpftool.
-Take a look at Andrii's patch 13/15:
-5 files changed, 149 insertions(+), 249 deletions(-)
-Those are simple selftests, yet code removal is huge. Bigger project benefits
-even more.
-
-bcc and bpftrace are successful projects because barrier of entry is low.
-Both allow single line 'hello world' to get going with BPF. We're missing
-this completely for networking. Some people suggest that bpftrace like
-domain specific language needs to be invented for networking. I don't mind. Yet
-I'd like C to be the first choice both for networking and for tracing. To
-achieve that the barrier of entry need to be drastically reduced. 'Hello world'
-in BPF C and corresponding user space C should fit on one slide. The existing
-amount of boiler plate code in libbpf is such barrier. Skeleton generation
-solves this usability problem. I do expect a lot more tools to be written in C
-because skeleton exists. Can we teach skeleton to generate C++, go, rust,
-python wrappers? Surely we can. One step at a time. If we make it work well for
-"bpf C" plus "user C" it will work well when user side is written in a
-different language.
