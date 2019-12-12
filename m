@@ -2,200 +2,347 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F078211DA3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 00:54:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 366E611DA44
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 00:55:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731460AbfLLXyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 18:54:43 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:55902 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731440AbfLLXyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 18:54:40 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ifYHt-0004ZM-IN; Thu, 12 Dec 2019 16:54:39 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ifYHo-0005qW-8R; Thu, 12 Dec 2019 16:54:24 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 12 Dec 2019 16:54:18 -0700
-Message-Id: <20191212235418.22396-10-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191212235418.22396-1-logang@deltatee.com>
-References: <20191212235418.22396-1-logang@deltatee.com>
+        id S1731506AbfLLXzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 18:55:04 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36668 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731442AbfLLXzD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 18:55:03 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBCNqbO4001118;
+        Thu, 12 Dec 2019 18:54:39 -0500
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wusvh9w1c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Dec 2019 18:54:39 -0500
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xBCNo2aO032426;
+        Thu, 12 Dec 2019 23:54:43 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma01wdc.us.ibm.com with ESMTP id 2wr3q72ap8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Dec 2019 23:54:43 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBCNsbQv22216990
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Dec 2019 23:54:37 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 72D6BAE05F;
+        Thu, 12 Dec 2019 23:54:37 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2DC82AE063;
+        Thu, 12 Dec 2019 23:54:36 +0000 (GMT)
+Received: from [9.163.51.183] (unknown [9.163.51.183])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Dec 2019 23:54:36 +0000 (GMT)
+Subject: Re: [ v2] hwmon: (pmbus) Add Wistron power supply pmbus driver
+To:     Ben Pai <Ben_Pai@wistron.com>, linux@roeck-us.net
+Cc:     robh+dt@kernel.org, jdelvare@suse.com,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, corbet@lwn.net, wangat@tw.ibm.com,
+        Andy_YF_Wang@wistron.com, Claire_Ku@wistron.com
+References: <20191208134438.12925-1-Ben_Pai@wistron.com>
+From:   Eddie James <eajames@linux.ibm.com>
+Message-ID: <97651ec9-e467-dbd9-dcb8-b3efe1387fef@linux.ibm.com>
+Date:   Thu, 12 Dec 2019 17:54:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, Chaitanya.Kulkarni@wdc.com, maxg@mellanox.com, sbates@raithlin.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH v10 9/9] nvmet-configfs: Introduce passthru configfs interface
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+In-Reply-To: <20191208134438.12925-1-Ben_Pai@wistron.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-12_08:2019-12-12,2019-12-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ clxscore=1011 suspectscore=0 adultscore=0 mlxlogscore=999 phishscore=0
+ spamscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912120184
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_NVME_TARGET_PASSTHRU as 'passthru' directory will
-be added to each subsystem. The directory is similar to a namespace
-and has two attributes: device_path and enable. The user must set the
-path to the nvme controller's char device and write '1' to enable the
-subsystem to use passthru.
 
-Any given subsystem is prevented from enabling both a regular namespace
-and the passthru device. If one is enabled, enabling the other will
-produce an error.
+On 12/8/19 7:44 AM, Ben Pai wrote:
+> Add the driver to monitor Wisreon power supplies with hwmon over pmbus.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
----
- drivers/nvme/target/configfs.c | 99 ++++++++++++++++++++++++++++++++++
- drivers/nvme/target/nvmet.h    |  1 +
- 2 files changed, 100 insertions(+)
 
-diff --git a/drivers/nvme/target/configfs.c b/drivers/nvme/target/configfs.c
-index 354d43fab8db..1ae3f87f611d 100644
---- a/drivers/nvme/target/configfs.c
-+++ b/drivers/nvme/target/configfs.c
-@@ -615,6 +615,103 @@ static const struct config_item_type nvmet_namespaces_type = {
- 	.ct_owner		= THIS_MODULE,
- };
- 
-+#ifdef CONFIG_NVME_TARGET_PASSTHRU
-+
-+static ssize_t nvmet_passthru_device_path_show(struct config_item *item,
-+		char *page)
-+{
-+	struct nvmet_subsys *subsys = to_subsys(item->ci_parent);
-+
-+	return snprintf(page, PAGE_SIZE, "%s\n", subsys->passthru_ctrl_path);
-+}
-+
-+static ssize_t nvmet_passthru_device_path_store(struct config_item *item,
-+		const char *page, size_t count)
-+{
-+	struct nvmet_subsys *subsys = to_subsys(item->ci_parent);
-+	size_t len;
-+	int ret;
-+
-+	mutex_lock(&subsys->lock);
-+
-+	ret = -EBUSY;
-+	if (subsys->passthru_ctrl)
-+		goto out_unlock;
-+
-+	ret = -EINVAL;
-+	len = strcspn(page, "\n");
-+	if (!len)
-+		goto out_unlock;
-+
-+	kfree(subsys->passthru_ctrl_path);
-+	ret = -ENOMEM;
-+	subsys->passthru_ctrl_path = kstrndup(page, len, GFP_KERNEL);
-+	if (!subsys->passthru_ctrl_path)
-+		goto out_unlock;
-+
-+	mutex_unlock(&subsys->lock);
-+
-+	return count;
-+out_unlock:
-+	mutex_unlock(&subsys->lock);
-+	return ret;
-+}
-+CONFIGFS_ATTR(nvmet_passthru_, device_path);
-+
-+static ssize_t nvmet_passthru_enable_show(struct config_item *item,
-+		char *page)
-+{
-+	struct nvmet_subsys *subsys = to_subsys(item->ci_parent);
-+
-+	return sprintf(page, "%d\n", subsys->passthru_ctrl ? 1 : 0);
-+}
-+
-+static ssize_t nvmet_passthru_enable_store(struct config_item *item,
-+		const char *page, size_t count)
-+{
-+	struct nvmet_subsys *subsys = to_subsys(item->ci_parent);
-+	bool enable;
-+	int ret = 0;
-+
-+	if (strtobool(page, &enable))
-+		return -EINVAL;
-+
-+	if (enable)
-+		ret = nvmet_passthru_ctrl_enable(subsys);
-+	else
-+		nvmet_passthru_ctrl_disable(subsys);
-+
-+	return ret ? ret : count;
-+}
-+CONFIGFS_ATTR(nvmet_passthru_, enable);
-+
-+static struct configfs_attribute *nvmet_passthru_attrs[] = {
-+	&nvmet_passthru_attr_device_path,
-+	&nvmet_passthru_attr_enable,
-+	NULL,
-+};
-+
-+static const struct config_item_type nvmet_passthru_type = {
-+	.ct_attrs		= nvmet_passthru_attrs,
-+	.ct_owner		= THIS_MODULE,
-+};
-+
-+static void nvmet_add_passthru_group(struct nvmet_subsys *subsys)
-+{
-+	config_group_init_type_name(&subsys->passthru_group,
-+				    "passthru", &nvmet_passthru_type);
-+	configfs_add_default_group(&subsys->passthru_group,
-+				   &subsys->group);
-+}
-+
-+#else /* CONFIG_NVME_TARGET_PASSTHRU */
-+
-+static void nvmet_add_passthru_group(struct nvmet_subsys *subsys)
-+{
-+}
-+
-+#endif /* CONFIG_NVME_TARGET_PASSTHRU */
-+
- static int nvmet_port_subsys_allow_link(struct config_item *parent,
- 		struct config_item *target)
- {
-@@ -918,6 +1015,8 @@ static struct config_group *nvmet_subsys_make(struct config_group *group,
- 	configfs_add_default_group(&subsys->allowed_hosts_group,
- 			&subsys->group);
- 
-+	nvmet_add_passthru_group(subsys);
-+
- 	return &subsys->group;
- }
- 
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index 9e7d492aedbd..a6b29102a925 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -233,6 +233,7 @@ struct nvmet_subsys {
- #ifdef CONFIG_NVME_TARGET_PASSTHRU
- 	struct nvme_ctrl	*passthru_ctrl;
- 	char			*passthru_ctrl_path;
-+	struct config_group	passthru_group;
- #endif /* CONFIG_NVME_TARGET_PASSTHRU */
- };
- 
--- 
-2.20.1
+Hi Ben.
 
+
+This driver looks very similar to the IBM CFFPS driver. If you think 
+they are similar enough, you may want to simply add a new version to 
+that driver that supports your PSU.
+
+
+Thanks,
+
+Eddie
+
+
+>
+> Signed-off-by: Ben Pai <Ben_Pai@wistron.com>
+> ---
+>   .../devicetree/bindings/hwmon/wistron-wps.txt |  30 +++
+>   drivers/hwmon/pmbus/Kconfig                   |   9 +
+>   drivers/hwmon/pmbus/Makefile                  |   1 +
+>   drivers/hwmon/pmbus/wistron-wps.c             | 176 ++++++++++++++++++
+>   4 files changed, 216 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/hwmon/wistron-wps.txt
+>   create mode 100644 drivers/hwmon/pmbus/wistron-wps.c
+>
+> diff --git a/Documentation/devicetree/bindings/hwmon/wistron-wps.txt b/Documentation/devicetree/bindings/hwmon/wistron-wps.txt
+> new file mode 100644
+> index 000000000000..aacb2e66736e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/wistron-wps.txt
+> @@ -0,0 +1,30 @@
+> +ver ibm-cffps
+> +=======================
+> +
+> +Supported chips:
+> +
+> +  * Wistron Common Form Factor power supply(wps).
+> +
+> +Author: Ben Pai <Ben_Pai@wistron.com>
+> +
+> +Description
+> +-----------
+> +
+> +Our company name is Wistron, so this driver is written to supports
+> +Wistron Common Form Factor power supplies(wps). This driver
+> +is a client to the core PMBus driver. Read information from psu,
+> +and create debug-files and write information to them via driver.
+> +
+> +Usage Notes
+> +-----------
+> +
+> +This driver does not auto-detect devices. You will have to instantiate the
+> +devices explicitly. Please see Documentation/i2c/instantiating-devices for
+> +details.
+> +
+> +Information of the data read
+> +---------------------
+> +FRU : name of psu manufacturer.
+> +PN : part_number of psu.
+> +SN : serial_number of psu.
+> +mfr_date : Date of psu's manufacture.
+> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+> index d62d69bb7e49..ebb7024e58ab 100644
+> --- a/drivers/hwmon/pmbus/Kconfig
+> +++ b/drivers/hwmon/pmbus/Kconfig
+> @@ -219,6 +219,15 @@ config SENSORS_UCD9200
+>   	  This driver can also be built as a module. If so, the module will
+>   	  be called ucd9200.
+>   
+> +config SENSORS_WISTRON_WPS
+> +	tristate "Wistron Power Supply"
+> +	help
+> +	  If you say yes here you get hardware monitoring support for the Wistron
+> +	  power supply.
+> +
+> +	  This driver can also be built as a module. If so, the module will
+> +	  be called wistron-wps.
+> +
+>   config SENSORS_ZL6100
+>   	tristate "Intersil ZL6100 and compatibles"
+>   	help
+> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+> index 03bacfcfd660..cad38f99e8c5 100644
+> --- a/drivers/hwmon/pmbus/Makefile
+> +++ b/drivers/hwmon/pmbus/Makefile
+> @@ -25,4 +25,5 @@ obj-$(CONFIG_SENSORS_TPS40422)	+= tps40422.o
+>   obj-$(CONFIG_SENSORS_TPS53679)	+= tps53679.o
+>   obj-$(CONFIG_SENSORS_UCD9000)	+= ucd9000.o
+>   obj-$(CONFIG_SENSORS_UCD9200)	+= ucd9200.o
+> +obj-$(CONFIG_SENSORS_WISTRON_WPS) += wistron-wps.o
+>   obj-$(CONFIG_SENSORS_ZL6100)	+= zl6100.o
+> diff --git a/drivers/hwmon/pmbus/wistron-wps.c b/drivers/hwmon/pmbus/wistron-wps.c
+> new file mode 100644
+> index 000000000000..4e2649e7b3f2
+> --- /dev/null
+> +++ b/drivers/hwmon/pmbus/wistron-wps.c
+> @@ -0,0 +1,176 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright 2019 Wistron Corp.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/debugfs.h>
+> +#include <linux/device.h>
+> +#include <linux/fs.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/pmbus.h>
+> +
+> +#include "pmbus.h"
+> +
+> +#define WPS_FRU_CMD	   0x99
+> +#define WPS_PN_CMD         0x9A
+> +#define WPS_FW_CMD	   0x9B
+> +#define WPS_DATE_CMD       0x9D
+> +#define WPS_SN_CMD	   0x9E
+> +
+> +enum {
+> +	WPS_DEBUGFS_FRU,
+> +	WPS_DEBUGFS_PN,
+> +	WPS_DEBUGFS_SN,
+> +	WPS_DEBUGFS_FW,
+> +	WPS_DEBUGFS_DATE,
+> +	WPS_DEBUGFS_NUM_ENTRIES
+> +};
+> +
+> +struct wistron_wps {
+> +	struct i2c_client *client;
+> +	int debugfs_entries[WPS_DEBUGFS_NUM_ENTRIES];
+> +};
+> +
+> +#define to_psu(x, y) container_of(x, struct wistron_wps, debugfs_entries[y])
+> +
+> +static ssize_t wistron_wps_debugfs_op(struct file *file, char __user *buf,
+> +				      size_t count, loff_t *ppos)
+> +{
+> +	u8 cmd;
+> +	int rc;
+> +	int *idxp = file->private_data;
+> +	int idx = *idxp;
+> +	struct wistron_wps *psu = to_psu(idxp, idx);
+> +	char data[I2C_SMBUS_BLOCK_MAX] = { 0 };
+> +
+> +	pmbus_set_page(psu->client, 0);
+> +	switch (idx) {
+> +	case WPS_DEBUGFS_FRU:
+> +		cmd = WPS_FRU_CMD;
+> +		break;
+> +	case WPS_DEBUGFS_PN:
+> +		cmd = WPS_PN_CMD;
+> +		break;
+> +	case WPS_DEBUGFS_SN:
+> +		cmd = WPS_SN_CMD;
+> +		break;
+> +	case WPS_DEBUGFS_FW:
+> +		cmd = WPS_FW_CMD;
+> +		break;
+> +	case WPS_DEBUGFS_DATE:
+> +		cmd = WPS_DATE_CMD;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	rc = i2c_smbus_read_block_data(psu->client, cmd, data);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +done:
+> +	data[rc] = '\n';
+> +	rc += 2;
+> +
+> +	return simple_read_from_buffer(buf, count, ppos, data, rc);
+> +}
+> +
+> +static const struct file_operations wistron_wps_fops = {
+> +
+> +	.llseek = noop_llseek,
+> +	.read = wistron_wps_debugfs_op,
+> +	.open = simple_open,
+> +};
+> +
+> +static struct pmbus_driver_info wistron_wps_info = {
+> +	.pages = 1,
+> +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
+> +		PMBUS_HAVE_PIN | PMBUS_HAVE_POUT | PMBUS_HAVE_FAN12 |
+> +		PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 |
+> +		PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT |
+> +		PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_STATUS_TEMP |
+> +		PMBUS_HAVE_STATUS_FAN12,
+> +};
+> +
+> +static struct pmbus_platform_data wistron_wps_pdata = {
+> +	.flags = PMBUS_SKIP_STATUS_CHECK,
+> +};
+> +
+> +static int wistron_wps_probe(struct i2c_client *client,
+> +			     const struct i2c_device_id *id)
+> +{
+> +	int i, rc;
+> +	struct dentry *debugfs;
+> +	struct dentry *wistron_wps_dir;
+> +	struct wistron_wps *psu;
+> +
+> +	client->dev.platform_data = &wistron_wps_pdata;
+> +	rc = pmbus_do_probe(client, id, &wistron_wps_info);
+> +	if (rc)
+> +		return rc;
+> +
+> +	psu = devm_kzalloc(&client->dev, sizeof(*psu), GFP_KERNEL);
+> +	if (!psu)
+> +		return 0;
+> +
+> +	psu->client = client;
+> +
+> +	debugfs = pmbus_get_debugfs_dir(client);
+> +	if (!debugfs)
+> +		return 0;
+> +
+> +	wistron_wps_dir = debugfs_create_dir(client->name, debugfs);
+> +	if (!wistron_wps_dir)
+> +		return 0;
+> +
+> +	for (i = 0; i < WPS_DEBUGFS_NUM_ENTRIES; ++i)
+> +		psu->debugfs_entries[i] = i;
+> +
+> +	debugfs_create_file("fru", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_FRU],
+> +			    &wistron_wps_fops);
+> +	debugfs_create_file("part_number", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_PN],
+> +			    &wistron_wps_fops);
+> +	debugfs_create_file("serial_number", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_SN],
+> +			    &wistron_wps_fops);
+> +	debugfs_create_file("fw_version", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_FW],
+> +			    &wistron_wps_fops);
+> +	debugfs_create_file("mfr_date", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_DATE],
+> +			    &wistron_wps_fops);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id wistron_wps_id[] = {
+> +	{ "wistron_wps", 1 },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(i2c, wistron_wps_id);
+> +
+> +static const struct of_device_id wistron_wps_of_match[] = {
+> +	{ .compatible = "wistron, wps" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, wistron_wps_of_match);
+> +
+> +static struct i2c_driver wistron_wps_driver = {
+> +	.driver = {
+> +		.name = "wistron-wps",
+> +		.of_match_table = wistron_wps_of_match,
+> +	},
+> +	.probe = wistron_wps_probe,
+> +	.remove = pmbus_do_remove,
+> +	.id_table = wistron_wps_id,
+> +};
+> +
+> +module_i2c_driver(wistron_wps_driver);
+> +
+> +MODULE_AUTHOR("Ben Pai");
+> +MODULE_DESCRIPTION("PMBus driver for Wistron power supplies");
+> +MODULE_LICENSE("GPL");
