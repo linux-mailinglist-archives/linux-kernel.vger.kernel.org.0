@@ -2,93 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE73B11C127
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 01:13:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1044C11C130
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 01:13:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbfLLANB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 19:13:01 -0500
-Received: from foss.arm.com ([217.140.110.172]:53048 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbfLLANA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 19:13:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4E121FB;
-        Wed, 11 Dec 2019 16:12:59 -0800 (PST)
-Received: from [192.168.1.123] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 025913F52E;
-        Wed, 11 Dec 2019 16:12:56 -0800 (PST)
-Subject: Re: [REGRESSION] PCI v5.5-rc1 breaks google kevin
-To:     Vicente Bergas <vicencb@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Frederick Lawler <fred@fredlawl.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        =?UTF-8?Q?Stefan_M=c3=a4tje?= <stefan.maetje@esd.eu>,
-        linux-arm-kernel@lists.infradead.org
-References: <58ce5534-64bd-4b4b-bd60-ed4e0c71b20f@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <166f0016-7061-be5c-660d-0499f74e8697@arm.com>
-Date:   Thu, 12 Dec 2019 00:12:56 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <58ce5534-64bd-4b4b-bd60-ed4e0c71b20f@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        id S1727327AbfLLANo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 19:13:44 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:56225 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbfLLANo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 19:13:44 -0500
+Received: from orion.localdomain ([95.118.81.154]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MRk8w-1iHehw16t8-00TE0F; Thu, 12 Dec 2019 01:13:42 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     dmitry.torokhov@gmail.com, linux-input@vger.kernel.org
+Subject: [PATCH v4] input: keyboard: gpio_keys_polled: use gpio lookup table
+Date:   Thu, 12 Dec 2019 01:13:11 +0100
+Message-Id: <20191212001311.4268-1-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+X-Provags-ID: V03:K1:hzkcK0KVH3HkZ1kB/dsKgamqh1CtK0vjkGCIf569CcCy32nvihO
+ qwLG7k+DkCi9x72Y4mCC8ze4vjZwGknTijFYJYYXahXWpT5kZ4O0zVY5kdVfrsQzIEVTwYg
+ i1PkUPFnRiKvIUu8QRkXrD7nRQxg7iK5Q6ma7e8OynDI4dpgpYPgwynH1vgye5h5OUZ2mQU
+ UJX7cnd5XVkTnkAEJeojg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:cHgGsh2LhJ0=:OBOH/rCptuMNuuEaKYUmw4
+ A+dWhhYpUDvxAbG6AEpLIEVPvmuHwyRDCkPreK+/Xs624yh3mPYDoZfhpPTZ95Zg4RSvH4ARm
+ gum4R/gvhMFu48wYm9MKPGuSkjZvdIxbV75uh7jpKnNaTFOg2lQfqzqaylZ1Xwqvd7IjcuuDX
+ G0EmkWjO4/XU+Mo8e5UYmzqq3b6k+iha4vLPbh9EdCRuB+sv6cu8El3UQmtszW4kG58Dl7Lfa
+ SytValFR7aCHWRa55eZGqtCUQXjurI2ENLgTiKNexUNQdg1oFW2P2eGw3vjTvlDXUe5saQokA
+ f8A5YYv/vanNg5mIVAkNIkRqRKBiGQ08GNw8ZeMkjaOVxKoJI7L5jEEmk7WTnJbXhVgymdDUm
+ /sUsbyZNd2FSvc5Nli3uFpUoCtF4h66irjqb0qb+uqVDiMCoh1iiaA6oOWmO9QS+0UP76v6Ga
+ QUYslecDpoj7nLBjSnWmzISvEUJyWCMygbReWgpaa3UdNZloeRQ46W/wXPOpXixFBBLwazVG5
+ K/Skig4UHtOVvXbKH+gD0nHvG5JaHJg6IDo6Dv/EP927xM17uuDJda/+phiGkZ+AsyAhEeLkH
+ npEW81vVrUxaZiQRNTCzzCTBbZJgZYYCKln2anyy3xmCcMuovlp02JgWRITc1Jj9BPP6M7yuj
+ SlT1QlVLH3zcrFpdZ8RdTrr7cULjmo97r0oWhWsRdN7UBD0QUXmpfm1xV1nItGxS1ocMBK035
+ hLuRBVEHXiW+ZkTE1JGH9YHEiPs3Toj3n4K2qHcDi7/brOw97x/yag+aGjzJE1LZFHBmSNYYr
+ OKLHSBReDM9dIsouuRgOSWUOflwXR7tdZ9Ma4VyGGUr3TCY1PnupBldeLcMm0foGQY7S8TCRf
+ xYPIbweJ/VB9LQFa8bqA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vicente,
+From: Enrico Weigelt <info@metux.net>
 
-On 2019-12-11 11:38 pm, Vicente Bergas wrote:
-> Hi,
-> since v5.5-rc1 the google kevin chromebook does not boot.
-> Git bisect reports 5e0c21c75e8c PCI/ASPM: Remove pcie_aspm_enabled() 
-> unnecessary locking
-> as the first bad commit.
-> 
-> In order to revert it from v5.5-rc1 i had to also revert some dependencies:
-> 5e0c21c75e8c08375a69710527e4a921b897cb7e
-> aff5d0552da4055da3faa27ee4252e48bb1f5821
-> 35efea32b26f9aacc99bf07e0d2cdfba2028b099
-> 687aaf386aeb551130f31705ce40d1341047a936
-> 72ea91afbfb08619696ccde610ee4d0d29cf4a1d
-> 87e90283c94c76ee11d379ab5a0973382bbd0baf
-> After reverting all of this, still no luck.
-> So, either the results of git bisect are not to be trusted, or
-> there are more bad commits.
-> 
-> By "does not boot" i mean that the display fails to start and
-> the display is the only output device, so debugging is quite difficult.
+Support the recently introduced gpio lookup tables for
+attaching to gpio lines. So, harcoded gpio numbers aren't
+needed anymore.
 
-Assuming it's a manifestation of the same PCI breakage that Enric and 
-Lorenzo figured out, there's a proposed fix here: 
-https://lkml.org/lkml/2019/12/11/199
+changes v4:
+    * completely rewritten in a much simpler way, now just adding
+      a third case (in the button probe loop), where neither oftree
+      nor raw gpio number exists.
 
-Robin.
+changes v3:
+    * fix printf string in gpio_keys_polled_get_gpiod()
+    * fix unused variable 'error' in gpio_keys_polled_get_gpiod()
+    * fix uninitialized variable in gpio_keys_polled_get_gpiod_fwnode()
 
-> v5.5-rc1 as is (reverting no commits at all) works fine when disabling PCI:
-> # CONFIG_PCI is not set
-> 
-> Regards,
->   Vicente.
-> 
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org
+Signed-off-by: Enrico Weigelt <info@metux.net>
+---
+ drivers/input/keyboard/gpio_keys_polled.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+index 6eb0a2f3f9de..9ef8c7dade27 100644
+--- a/drivers/input/keyboard/gpio_keys_polled.c
++++ b/drivers/input/keyboard/gpio_keys_polled.c
+@@ -307,7 +307,7 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+ 				fwnode_handle_put(child);
+ 				return error;
+ 			}
+-		} else if (gpio_is_valid(button->gpio)) {
++		} else if ((button->gpio > 0) && gpio_is_valid(button->gpio)) {
+ 			/*
+ 			 * Legacy GPIO number so request the GPIO here and
+ 			 * convert it to descriptor.
+@@ -333,6 +333,18 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+ 					button->gpio);
+ 				return -EINVAL;
+ 			}
++		} else {
++			/* try via gpio lookup table */
++			bdata->gpiod = devm_gpiod_get_index(dev, NULL, i, GPIOF_IN);
++			if (IS_ERR(bdata->gpiod)) {
++				dev_err(dev,
++					"unable to get gpio for button %d: %ld\n",
++					i, PTR_ERR(bdata->gpiod));
++				return PTR_ERR(bdata->gpiod);
++			}
++
++			gpiod_set_consumer_name(bdata->gpiod,
++						button->desc ? : DRV_NAME);
+ 		}
+ 
+ 		bdata->last_state = -1;
+-- 
+2.11.0
+
