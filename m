@@ -2,89 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B64611C467
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 04:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F50411C470
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 04:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbfLLDtb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 22:49:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727589AbfLLDtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 22:49:31 -0500
-Received: from localhost (unknown [106.200.251.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDF90214D8;
-        Thu, 12 Dec 2019 03:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576122570;
-        bh=sO6XmEoJxykkgpmbd4+eUXUxrxDhjg81vEZPden8/MU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PO8NlrgakWBWf/vuxs49fIfKtb/DQFt/iw6sGB4y05mZhvI+Lsd5Q4SONdcdOq0Ts
-         XGipELIWwdl4gI087D9aEA/6SJ8upNHwy7wagVw9pdpldzYydgpND76jw6ZV7ynsET
-         0QdUKKjhT/aTSxSAHqs18kmWir7KPa5BCKcWNKUU=
-Date:   Thu, 12 Dec 2019 09:19:26 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Subject: Re: [PATCH v5 00/11] soundwire: update ASoC interfaces
-Message-ID: <20191212034926.GK2536@vkoul-mobl>
-References: <20191212014507.28050-1-pierre-louis.bossart@linux.intel.com>
+        id S1727684AbfLLDwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 22:52:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33742 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727421AbfLLDwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 22:52:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D78AAABE9;
+        Thu, 12 Dec 2019 03:52:22 +0000 (UTC)
+Subject: Re: [PATCH AUTOSEL 4.14 32/58] bcache: at least try to shrink 1 node
+ in bch_mca_scan()
+To:     John Stoffel <john@stoffel.org>, Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org
+References: <20191211152831.23507-1-sashal@kernel.org>
+ <20191211152831.23507-32-sashal@kernel.org>
+ <24049.47251.286105.88377@quad.stoffel.home>
+From:   Coly Li <colyli@suse.de>
+Organization: SUSE Labs
+Message-ID: <3363848c-6422-31b7-4ec2-0899f605a7f5@suse.de>
+Date:   Thu, 12 Dec 2019 11:52:13 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <24049.47251.286105.88377@quad.stoffel.home>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191212014507.28050-1-pierre-louis.bossart@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-12-19, 19:44, Pierre-Louis Bossart wrote:
-> We need new fields in existing structures to
-> a) deal with race conditions on codec probe/enumeration
-> b) allow for multi-step ACPI scan/probe/startup on Intel plaforms
-> c) deal with MSI issues using a single handler/threads for all audio
-> interrupts
-> d) deal with access to registers shared across multiple links on Intel
-> platforms
+On 2019/12/12 11:48 上午, John Stoffel wrote:
+>>>>>> "Sasha" == Sasha Levin <sashal@kernel.org> writes:
 > 
-> These structures for a) will be used by the SOF driver as well as
-> codec drivers. The b) c) and d) cases are only for the Intel-specific
-> implementation.
+> Sasha> From: Coly Li <colyli@suse.de>
+> Sasha> [ Upstream commit 9fcc34b1a6dd4b8e5337e2b6ef45e428897eca6b ]
 > 
-> To avoid conflicts between ASoC and Soundwire trees, these 11 patches
-> are provided out-of-order, before the functionality enabled in these
-> header files is added in follow-up patch series which can be applied
-> separately in the ASoC and Soundwire trees. As discussed earlier,
-> Vinod would need to provide an immutable tag for Mark Brown, and the
-> integration on the ASoC side of SOF changes and new codecs drivers can
-> proceed in parallel with SoundWire core changes.
+> Sasha> In bch_mca_scan(), the number of shrinking btree node is calculated
+> Sasha> by code like this,
+> Sasha> 	unsigned long nr = sc->nr_to_scan;
 > 
-> I had multiple offline discussions with Vinod/Mark/Takashi on how to
-> proceed withe volume of SoundWire changes. Now that v5.5-rc1 is out we
-> should go ahead with these interface changes.
+> Sasha>         nr /= c->btree_pages;
+> Sasha>         nr = min_t(unsigned long, nr, mca_can_free(c));
+> Sasha> variable sc->nr_to_scan is number of objects (here is bcache B+tree
+> Sasha> nodes' number) to shrink, and pointer variable sc is sent from memory
+> Sasha> management code as parametr of a callback.
 > 
-> The next patchset "[PATCH v3 00/15] soundwire: intel: implement new
-> ASoC interfaces​" can still be reviewed but will not apply as is due to
-> a one-line conflict. An update will be provided when Vinod applies
-> this series to avoid noise on mailing lists.
+> Sasha> If sc->nr_to_scan is smaller than c->btree_pages, after the above
+> Sasha> calculation, variable 'nr' will be 0 and nothing will be shrunk. It is
+> Sasha> frequeently observed that only 1 or 2 is set to sc->nr_to_scan and make
+> Sasha> nr to be zero. Then bch_mca_scan() will do nothing more then acquiring
+> Sasha> and releasing mutex c->bucket_lock.
 > 
-> An update for the series "[PATCH v3 00/22] soundwire: code hardening
-> and suspend-resume support" is ready but will be provided when both
-> the interfaces changes and the implementation changes are merged.
+> Sasha> This patch checkes whether nr is 0 after the above calculation, if 0
+> Sasha> is the result then set 1 to variable 'n'. Then at least bch_mca_scan()
+> Sasha> will try to shrink a single B+tree node.
+> 
+> Sasha>  	nr /= c->btree_pages;
+> Sasha> +	if (nr == 0)
+> Sasha> +		nr = 1;
+> 
+> 
+> Wouldn't it be even more clear with:
+> 
+>    nr /= c->bree_pages || 1;
+> 
+> instead?
 
-Applied, thanks
+No, it is not more clear. At least to me, I may confuse does it mean,
+- nr = (nr / c->btree_pages) || 1;
+- or nr = nr / (c->btree_pages || 1)
 
-I will send the tag tomorrow after it is in next
+If I don't check C manual, I am not able to tell the correct calculate
+at first time.
 
-Thanks
+Thanks.
 
 -- 
-~Vinod
+
+Coly Li
