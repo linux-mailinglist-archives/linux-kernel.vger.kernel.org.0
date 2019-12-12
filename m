@@ -2,98 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 814F811CF9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:20:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0018711CFA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:21:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbfLLOUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 09:20:17 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7227 "EHLO huawei.com"
+        id S1729730AbfLLOVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:21:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57152 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729392AbfLLOUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:20:17 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id ECD4EA4312FAC6B1B3DC;
-        Thu, 12 Dec 2019 22:20:12 +0800 (CST)
-Received: from [127.0.0.1] (10.133.219.218) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Thu, 12 Dec 2019
- 22:20:11 +0800
-Message-ID: <5DF24C9B.7030402@huawei.com>
-Date:   Thu, 12 Dec 2019 22:20:11 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1729664AbfLLOVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 09:21:19 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CFF16B199;
+        Thu, 12 Dec 2019 14:21:17 +0000 (UTC)
+Subject: Re: [BUG] Xen-ballooned memory never returned to domain after
+ partial-free
+To:     Nicholas Tsirakis <niko.tsirakis@gmail.com>,
+        boris.ostrovsky@oracle.com
+Cc:     xen-devel <xen-devel@lists.xenproject.org>,
+        linux-kernel@vger.kernel.org
+References: <CAFqpmVJ90bAV4vasH1Z0DcTUjT7asCJFPeJBxtxGZwAhTVP7=w@mail.gmail.com>
+ <b02d053f-1b07-bd4f-20fc-9a26106145d1@suse.com>
+ <CAFqpmVLnHPUZEpvmw1-f=2LoPkfUHO67ETdwtnsPA7DsXRSRSA@mail.gmail.com>
+From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Message-ID: <7feb44ef-0957-3df1-3411-2a7b971d8931@suse.com>
+Date:   Thu, 12 Dec 2019 15:21:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-CC:     Greg KH <gregkh@linuxfoundation.org>, <linux@roeck-us.net>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: typec: fusb302: Fix an undefined reference to 'extcon_get_state'
-References: <1576136063-50916-1-git-send-email-zhongjiang@huawei.com> <20191212090132.GC31345@kuha.fi.intel.com> <5DF20530.2040509@huawei.com> <20191212092805.GA1375559@kroah.com> <5DF20B18.4020601@huawei.com> <20191212111805.GD31345@kuha.fi.intel.com> <20191212122053.GA1541203@kroah.com> <20191212124937.GE31345@kuha.fi.intel.com>
-In-Reply-To: <20191212124937.GE31345@kuha.fi.intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+In-Reply-To: <CAFqpmVLnHPUZEpvmw1-f=2LoPkfUHO67ETdwtnsPA7DsXRSRSA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.219.218]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/12/12 20:49, Heikki Krogerus wrote:
-> On Thu, Dec 12, 2019 at 01:20:53PM +0100, Greg KH wrote:
->> On Thu, Dec 12, 2019 at 01:18:05PM +0200, Heikki Krogerus wrote:
->>> On Thu, Dec 12, 2019 at 05:40:40PM +0800, zhong jiang wrote:
->>>> On 2019/12/12 17:28, Greg KH wrote:
->>>>> On Thu, Dec 12, 2019 at 05:15:28PM +0800, zhong jiang wrote:
->>>>>> On 2019/12/12 17:01, Heikki Krogerus wrote:
->>>>>>> On Thu, Dec 12, 2019 at 03:34:23PM +0800, zhong jiang wrote:
->>>>>>>> Fixes the following compile error:
->>>>>>>>
->>>>>>>> drivers/usb/typec/tcpm/fusb302.o: In function `tcpm_get_current_limit':
->>>>>>>> fusb302.c:(.text+0x3ee): undefined reference to `extcon_get_state'
->>>>>>>> fusb302.c:(.text+0x422): undefined reference to `extcon_get_state'
->>>>>>>> fusb302.c:(.text+0x450): undefined reference to `extcon_get_state'
->>>>>>>> fusb302.c:(.text+0x48c): undefined reference to `extcon_get_state'
->>>>>>>> drivers/usb/typec/tcpm/fusb302.o: In function `fusb302_probe':
->>>>>>>> fusb302.c:(.text+0x980): undefined reference to `extcon_get_extcon_dev'
->>>>>>>> make: *** [vmlinux] Error 1
->>>>>>> There are stubs for those functions so that really should not be
->>>>>>> happening. I can not reproduce that.
->>>>>> It can be reproduced in next branch. you can try it in the latest next branch.
->>>>> Can it be reproduced in 5.5-rc1?
->>>>>
->>>> commit 78adcacd4edbd6795e164bbda9a4b2b7e51666a7
->>>> Author: Stephen Rothwell <sfr@canb.auug.org.au>
->>>> Date:   Thu Dec 12 15:48:07 2019 +1100
->>>>
->>>>     Add linux-next specific files for 20191212
->>>>
->>>> I  reproduce it  based on this commit.  The related config is attached.
->>> OK, now I get what's going on. EXTCON is build as a module, but
->>> FUSB302 is not. This should be explained in the commit message.
->>>
->>> That does not mean we have to force everybody to enable EXTCON in
->>> order to use this driver. Try something like this:
->>>
->>> diff --git a/drivers/usb/typec/tcpm/Kconfig b/drivers/usb/typec/tcpm/Kconfig
->>> index 72481bbb2af3..06e026f6325c 100644
->>> --- a/drivers/usb/typec/tcpm/Kconfig
->>> +++ b/drivers/usb/typec/tcpm/Kconfig
->>> @@ -31,6 +31,7 @@ endif # TYPEC_TCPCI
->>>
->>>  config TYPEC_FUSB302
->>>         tristate "Fairchild FUSB302 Type-C chip driver"
->>> +       depends on EXTCON=n || EXTCON=y || (EXTCON=m && m)
->> Ugh.  We need a better "pattern" for stuff like this, it's getting more
->> and more frequent.
+On 12.12.19 15:10, Nicholas Tsirakis wrote:
+>> And I think this is the problem. We want here:
 >>
->> And no, I don't have a better idea :(
-> I think this works:
->
->         depends on EXTCON || !EXTCON
-It seems to be better and works when I test the above patch.
+>>      balloon_stats.target_pages = balloon_stats.current_pages +
+>>                                   balloon_stats.target_unpopulated;
+> 
+> Ahh I knew I was missing something. Tested the patch, works great! "Reported by"
+> is fine with me.
 
-Thanks,
-zhong jiang
-> thanks,
->
+Thanks.
 
+> 
+> Do you happen to know the answer to my second question? It's not as important,
+> but it does confuse me as I wouldn't expect the total memory to be
+> balloon-able at
+> all with the hotplugging configs disabled.
 
+Ballooning != hotplugging memory
+
+With memory hotplug you can add (or - in theory - remove) memory to the
+kernel it didn't know about before.
+
+With ballooning you just give some memory back to the hypervisor, but
+kernel still has some knowledge about it (e.g. keeps struct page for
+each ballooned memory page).
+
+HTH, Juergen
