@@ -2,122 +2,324 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D75FF11CC09
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:18:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68A3B11CBF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 12:12:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbfLLLSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 06:18:10 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:43472 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728676AbfLLLSJ (ORCPT
+        id S1728940AbfLLLMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 06:12:47 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:11742 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728648AbfLLLMr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 06:18:09 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBCBEGZb069194;
-        Thu, 12 Dec 2019 11:18:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=d4MdoY6N+v+K3WPQHuafJC/CqPbOGWJY82uCtk/epbY=;
- b=YZZqbiP7glUoytwVEbmZ+tpCWrnpcD5BmvreEfTXEZz16bIO7rISD3UPynyygcCX2LZD
- AmbFQWB2GH+EygqkPgzOYT2hCepocbADv6DZICU1Sd1VE847zPe7eK47b8uV/0mRZize
- /TwtMs5d810ZWlfTt3AL4g4FeUj2xt3XSVqJuA8Xipy87Z3kE8WWnum7Cqz8zvIcyahW
- R4je6hsF7SY9XAOL6LsI4bnNJGP38TtRrrTtFeGQ1dXIdsMtzrHe9oizT2c5V0MPWBwC
- ttnS3eVoO+zQ0cJHshHzIHrqy9Vj2YThs9f/1GeWvkmyRMM8ar0d2JQWgzy3WD91L2qw oA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2wr41qjbvm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Dec 2019 11:18:03 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBCBHCjD070987;
-        Thu, 12 Dec 2019 11:18:02 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2wu2fw5qqh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Dec 2019 11:17:48 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBCBD15M032746;
-        Thu, 12 Dec 2019 11:13:01 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 12 Dec 2019 03:13:00 -0800
-Date:   Thu, 12 Dec 2019 14:12:46 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Scott Schafer <schaferjscott@gmail.com>
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        devel@driverdev.osuosl.org, GR-Linux-NIC-Dev@marvell.com,
-        Manish Chopra <manishc@marvell.com>,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v2 20/23] staging: qlge: Fix CHECK: usleep_range is
- preferred over udelay
-Message-ID: <20191212111245.GE2070@kadam>
-References: <cover.1576086080.git.schaferjscott@gmail.com>
- <a3f14b13d76102cd4e536152e09517a69ddbe9f9.1576086080.git.schaferjscott@gmail.com>
- <337af773-a1da-0c04-6180-aa3597372522@cogentembedded.com>
- <20191212110057.GA7934@karen>
+        Thu, 12 Dec 2019 06:12:47 -0500
+Received: from [10.28.39.106] (10.28.39.106) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 12 Dec
+ 2019 19:13:16 +0800
+Subject: Re: [PATCH 2/4] irqchip/meson-gpio: rework meson irqchip driver to
+ support meson-A1 SoCs
+To:     Marc Zyngier <maz@kernel.org>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>
+References: <20191206121714.14579-1-qianggui.song@amlogic.com>
+ <20191206121714.14579-3-qianggui.song@amlogic.com>
+ <542e3e819e584d6e433d2c4276c3b379@www.loen.fr>
+ <2551e382-d373-dad8-7294-80f2a15c0ad4@amlogic.com>
+ <0cbbb895b50a838fd1dfa9e59528367d@www.loen.fr>
+From:   Qianggui Song <qianggui.song@amlogic.com>
+Message-ID: <4b892b12-4ffb-7fff-ba27-9e606c958257@amlogic.com>
+Date:   Thu, 12 Dec 2019 19:13:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212110057.GA7934@karen>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9468 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912120084
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9468 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912120084
+In-Reply-To: <0cbbb895b50a838fd1dfa9e59528367d@www.loen.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.39.106]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 05:00:57AM -0600, Scott Schafer wrote:
-> On Thu, Dec 12, 2019 at 01:45:57PM +0300, Sergei Shtylyov wrote:
-> > Hello!
-> > 
-> > On 11.12.2019 21:12, Scott Schafer wrote:
-> > 
-> > > chage udelay() to usleep_range()
-> > 
-> >    Change?
-> > 
-> > > Signed-off-by: Scott Schafer <schaferjscott@gmail.com>
-> > > ---
-> > >   drivers/staging/qlge/qlge_main.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/staging/qlge/qlge_main.c b/drivers/staging/qlge/qlge_main.c
-> > > index e18aa335c899..9427386e4a1e 100644
-> > > --- a/drivers/staging/qlge/qlge_main.c
-> > > +++ b/drivers/staging/qlge/qlge_main.c
-> > > @@ -147,7 +147,7 @@ int ql_sem_spinlock(struct ql_adapter *qdev, u32 sem_mask)
-> > >   	do {
-> > >   		if (!ql_sem_trylock(qdev, sem_mask))
-> > >   			return 0;
-> > > -		udelay(100);
-> > > +		usleep_range(100, 200);
-> > 
-> >    I hope you're not in atomic context...
-> > 
-> > >   	} while (--wait_count);
-> > >   	return -ETIMEDOUT;
-> > >   }
-> > 
-> > MBR, Sergei
+
+
+On 2019/12/12 1:26, Marc Zyngier wrote:
+> On 2019-12-10 02:08, Qianggui Song wrote:
+>> Hi, Marc
+>>      Thank you for your review
+>>
+>> On 2019/12/6 21:13, Marc Zyngier wrote:
+>>> On 2019-12-06 12:17, Qianggui Song wrote:
+>>>> Since Meson-A1 Socs register layout of gpio interrupt controller 
+>>>> have
+>>>> difference with previous chips, registers to decide irq line and
+>>>> offset
+>>>> of trigger method are all changed, the current driver should be
+>>>> modified.
+>>>>
+>>>> Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
+>>>> ---
+>>>>  drivers/irqchip/irq-meson-gpio.c | 79
+>>>> ++++++++++++++++++++++++--------
+>>>>  1 file changed, 60 insertions(+), 19 deletions(-)
+>>>>
+>>>> diff --git a/drivers/irqchip/irq-meson-gpio.c
+>>>> b/drivers/irqchip/irq-meson-gpio.c
+>>>> index 829084b568fa..1824ffc30de2 100644
+>>>> --- a/drivers/irqchip/irq-meson-gpio.c
+>>>> +++ b/drivers/irqchip/irq-meson-gpio.c
+>>>> @@ -30,44 +30,74 @@
+>>>>   * stuck at 0. Bits 8 to 15 are responsive and have the expected
+>>>>   * effect.
+>>>>   */
+>>>> -#define REG_EDGE_POL_EDGE(x)	BIT(x)
+>>>> -#define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
+>>>> -#define REG_BOTH_EDGE(x)	BIT(8 + (x))
+>>>> -#define REG_EDGE_POL_MASK(x)    (	\
+>>>> -		REG_EDGE_POL_EDGE(x) |	\
+>>>> -		REG_EDGE_POL_LOW(x)  |	\
+>>>> -		REG_BOTH_EDGE(x))
+>>>> +#define REG_EDGE_POL_EDGE(params,
+>>>> x)	BIT((params)->edge_single_offset + (x))
+>>>> +#define REG_EDGE_POL_LOW(params, x)	BIT((params)->pol_low_offset +
+>>>> (x))
+>>>> +#define REG_BOTH_EDGE(params, x)	BIT((params)->edge_both_offset +
+>>>> (x))
+>>>> +#define REG_EDGE_POL_MASK(params, x)    (	\
+>>>> +		REG_EDGE_POL_EDGE(params, x) |	\
+>>>> +		REG_EDGE_POL_LOW(params, x)  |	\
+>>>> +		REG_BOTH_EDGE(params, x))
+>>>>  #define REG_PIN_SEL_SHIFT(x)	(((x) % 4) * 8)
+>>>>  #define REG_FILTER_SEL_SHIFT(x)	((x) * 4)
+>>>>
+>>>> +#define INIT_MESON8_COMMON_DATA					\
+>>>> +	.edge_single_offset = 0,				\
+>>>> +	.pol_low_offset = 16,					\
+>>>> +	.pin_sel_mask = 0xff,					\
+>>>> +	.ops = {						\
+>>>> +		.gpio_irq_sel_pin = meson8_gpio_irq_sel_pin,	\
+>>>> +	},
+>>>
+>>> Please place the #defines that operate on the various data 
+>>> structures
+>>> *after* the definition of the structures. It would greatly help
+>>> reading the changes.
+>>>
+>> OK, will place it below the definition of struct 
+>> meson_gpio_irq_params
+>> in the next patch.
+>>>> +
+>>>> +struct meson_gpio_irq_controller;
+>>>> +static void meson8_gpio_irq_sel_pin(struct 
+>>>> meson_gpio_irq_controller
+>>>> *ctl,
+>>>> +				    unsigned int channel, unsigned long hwirq);
+>>>> +struct irq_ctl_ops {
+>>>> +	void (*gpio_irq_sel_pin)(struct meson_gpio_irq_controller *ctl,
+>>>> +					 unsigned int channel,
+>>>> +					 unsigned long hwirq);
+>>>> +	void (*gpio_irq_init)(struct meson_gpio_irq_controller *ctl);
+>>>> +};
+>>>> +
+>>>>  struct meson_gpio_irq_params {
+>>>>  	unsigned int nr_hwirq;
+>>>>  	bool support_edge_both;
+>>>> +	unsigned int edge_both_offset;
+>>>> +	unsigned int edge_single_offset;
+>>>> +	unsigned int pol_low_offset;
+>>>> +	unsigned int pin_sel_mask;
+>>>> +	struct irq_ctl_ops ops;
+>>>>  };
+>>>>
+>>>>  static const struct meson_gpio_irq_params meson8_params = {
+>>>>  	.nr_hwirq = 134,
+>>>> +	INIT_MESON8_COMMON_DATA
+>>>>  };
+>>>>
+>>>>  static const struct meson_gpio_irq_params meson8b_params = {
+>>>>  	.nr_hwirq = 119,
+>>>> +	INIT_MESON8_COMMON_DATA
+>>>>  };
+>>>>
+>>>>  static const struct meson_gpio_irq_params gxbb_params = {
+>>>>  	.nr_hwirq = 133,
+>>>> +	INIT_MESON8_COMMON_DATA
+>>>>  };
+>>>>
+>>>>  static const struct meson_gpio_irq_params gxl_params = {
+>>>>  	.nr_hwirq = 110,
+>>>> +	INIT_MESON8_COMMON_DATA
+>>>>  };
+>>>>
+>>>>  static const struct meson_gpio_irq_params axg_params = {
+>>>>  	.nr_hwirq = 100,
+>>>> +	INIT_MESON8_COMMON_DATA
+>>>>  };
+>>>>
+>>>>  static const struct meson_gpio_irq_params sm1_params = {
+>>>>  	.nr_hwirq = 100,
+>>>>  	.support_edge_both = true,
+>>>> +	.edge_both_offset = 8,
+>>>> +	INIT_MESON8_COMMON_DATA
+>>>>  };
+>>>
+>>> OK, this isn't great. The least you could do is to make
+>>> your initializer parametric, so that it takes the nr_hwirq as
+>>> a parameter.
+>>>
+>>> Then, any additional member that overrides common behaviour
+>>> should come after the main initializer.
+>>>
+>>> Also, do you need 'support_edge_both'? Isn't a non-zero
+>>> 'edge_both_offset' enough to detect the feature?
+>>>
+>>
+>> Sorry, but I am not very clear that "make your initializer 
+>> parametric,
+>> so that it takes the nr_hwirq as a parameter". Is that
+>> initializer(initial function in .ops ? ) as a parameter of struct
+>> meson_gpio_irq_params ? If nr_hwirq as a parameter of init function 
+>> of
+>> .ops then will make lot of init function for each platform.
+>>
+>> How about move .ops from  macro like below:
+>> #define INIT_MESON8_COMMON_DATA					\
+>> 	.edge_single_offset = 0,				\
+>> 	.pol_low_offset = 16,					\
+>> 	.pin_sel_mask = 0xff,
+>>
+>> static const struct meson_gpio_irq_params sm1_params = {
+>>  	.nr_hwirq = 100,//main initializer
+>> 	.ops = {
+>>               .gpio_irq_sel_pin = meson8_gpio_irq_sel_pin,
+>>                /*in below to assign support_edge_both
+>>                 * edge_both_offset
+>>                 * call after main initializer to additional
+>>                 * member
+>>                 */
+>>               .gpio_irq_init = meson_sm1_irq_init,
+>> 	},
+>>   	INIT_MESON8_COMMON_DATA// m8 to sm1 are the same.
+>> };
 > 
-> Im not quite what you mean by "I hope you're not in atomic context",
-> could you please explain why you said this? 
-
-You can't sleep from certain IRQs or when you are holding certain locks
-(spin_locks and rwlocks).  The we have preempt_disable() then you can't
-sleep.
-
-regards,
-dan carpenter
-
+> No, what I'm suggesting is something like this:
+> 
+> diff --git a/drivers/irqchip/irq-meson-gpio.c 
+> b/drivers/irqchip/irq-meson-gpio.c
+> index 8478100706a6..27a3207a944d 100644
+> --- a/drivers/irqchip/irq-meson-gpio.c
+> +++ b/drivers/irqchip/irq-meson-gpio.c
+> @@ -43,24 +43,27 @@
+>   /* Below is used for Meson-A1 series like chips*/
+>   #define REG_PIN_A1_SEL	0x04
+> 
+> -#define INIT_MESON8_COMMON_DATA					\
+> -	.edge_single_offset = 0,				\
+> -	.pol_low_offset = 16,					\
+> -	.pin_sel_mask = 0xff,					\
+> -	.ops = {						\
+> -		.gpio_irq_sel_pin = meson8_gpio_irq_sel_pin,	\
+> -	},
+> -
+> -#define INIT_MESON_A1_COMMON_DATA				\
+> -	.support_edge_both = true,				\
+> -	.edge_both_offset = 16,					\
+> -	.edge_single_offset = 8,				\
+> -	.pol_low_offset = 0,					\
+> -	.pin_sel_mask = 0x7f,					\
+> -	.ops = {						\
+> -		.gpio_irq_sel_pin = meson_a1_gpio_irq_sel_pin,	\
+> -		.gpio_irq_init = meson_a1_gpio_irq_init,	\
+> -	},
+> +#define INIT_MESON_COMMON(irqs, init, sel)		\
+> +	.nr_hwirq = irqs,				\
+> +	.ops = {					\
+> +		.gpio_irq_sel_pin = sel,		\
+> +		.gpio_irq_init = init,			\
+> +	}
+> +
+> +#define INIT_MESON8_COMMON_DATA(irqs)			\
+> +	INIT_MESON_COMMON(irqs, NULL,			\
+> +			  meson8_gpio_irq_sel_pin),	\
+> +	.pol_low_offset = 16,				\
+> +	.pin_sel_mask = 0xff,
+> +
+> +#define INIT_MESON_A1_COMMON_DATA(irqs)			\
+> +	INIT_MESON_COMMON(irqs, meson_a1_gpio_irq_init,	\
+> +			  meson_a1_gpio_irq_sel_pin),	\
+> +	.support_edge_both = true,			\
+> +	.edge_both_offset = 16,				\
+> +	.edge_single_offset = 8,			\
+> +	.pol_low_offset = 0,				\
+> +	.pin_sel_mask = 0x7f,
+> 
+>   struct meson_gpio_irq_controller;
+>   static void meson8_gpio_irq_sel_pin(struct meson_gpio_irq_controller 
+> *ctl,
+> @@ -89,40 +92,33 @@ struct meson_gpio_irq_params {
+>   };
+> 
+>   static const struct meson_gpio_irq_params meson8_params = {
+> -	.nr_hwirq = 134,
+> -	INIT_MESON8_COMMON_DATA
+> +	INIT_MESON8_COMMON_DATA(134),
+>   };
+> 
+>   static const struct meson_gpio_irq_params meson8b_params = {
+> -	.nr_hwirq = 119,
+> -	INIT_MESON8_COMMON_DATA
+> +	INIT_MESON8_COMMON_DATA(119),
+>   };
+> 
+>   static const struct meson_gpio_irq_params gxbb_params = {
+> -	.nr_hwirq = 133,
+> -	INIT_MESON8_COMMON_DATA
+> +	INIT_MESON8_COMMON_DATA(133),
+>   };
+> 
+>   static const struct meson_gpio_irq_params gxl_params = {
+> -	.nr_hwirq = 110,
+> -	INIT_MESON8_COMMON_DATA
+> +	INIT_MESON8_COMMON_DATA(110),
+>   };
+> 
+>   static const struct meson_gpio_irq_params axg_params = {
+> -	.nr_hwirq = 100,
+> -	INIT_MESON8_COMMON_DATA
+> +	INIT_MESON8_COMMON_DATA(100),
+>   };
+> 
+>   static const struct meson_gpio_irq_params sm1_params = {
+> -	.nr_hwirq = 100,
+> +	INIT_MESON8_COMMON_DATA(100),
+>   	.support_edge_both = true,
+>   	.edge_both_offset = 8,
+> -	INIT_MESON8_COMMON_DATA
+>   };
+> 
+>   static const struct meson_gpio_irq_params a1_params = {
+> -	.nr_hwirq = 62,
+> -	INIT_MESON_A1_COMMON_DATA
+> +	INIT_MESON_A1_COMMON_DATA(62),
+>   };
+> 
+Thanks, will try it in later patch
+>   static const struct of_device_id meson_irq_gpio_matches[] = {
+> 
+> 
+> Thanks,
+> 
+>          M.
+> 
