@@ -2,167 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1922D11CF8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:17:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF1C11CF87
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 15:16:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbfLLORY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 09:17:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729614AbfLLORY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:17:24 -0500
-Received: from linux-8ccs.suse.de (nat.nue.novell.com [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBA42214AF;
-        Thu, 12 Dec 2019 14:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576160243;
-        bh=GTWZsTMHwSIX/dwrBBpyuXpdLIub+Ac4mHiSvkqrc1E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Au9KioiuBbYctxTW+TYPykA1tS11Hu6JnY5OsGClH8ByAP18PWQJISYpduSyNvw6J
-         8v9tU4J3jO8ig/VAaKHSlVV44Ldl5wcZWcIpXuaKTMhK9MrhG+5DkiCdsND48yB3T4
-         W0ReUtLPbfvk8rX5wfGF7IpnZsWQt7/deButQHe4=
-From:   Jessica Yu <jeyu@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Matthias Maennich <maennich@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jessica Yu <jeyu@kernel.org>
-Subject: [PATCH v4] export.h: reduce __ksymtab_strings string duplication by using "MS" section flags
-Date:   Thu, 12 Dec 2019 15:16:13 +0100
-Message-Id: <20191212141613.24966-1-jeyu@kernel.org>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191206124102.12334-1-jeyu@kernel.org>
-References: <20191206124102.12334-1-jeyu@kernel.org>
+        id S1729649AbfLLOQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 09:16:39 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43143 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729578AbfLLOQi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 09:16:38 -0500
+Received: by mail-qk1-f193.google.com with SMTP id t129so1683591qke.10;
+        Thu, 12 Dec 2019 06:16:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6GBGCKakEwAi+SxuWUfOkadj0n7loMWnfnQvA8ShRvQ=;
+        b=syayC1RvNDxvD18+kTX/JNogom/aWz14yGuOHeDLj5KjomPtSd37PoGodtbiCvOpdE
+         vGIaVlQeTXfMsf9yVKonxDTBX2DP2xlnGPfieK+nH8CDudRSroy1R7g3EVhDc/DfhJ24
+         FzrwYjcvm7+7WFEo6oRj4dM8wmPiCC4wedPnKXsxCGCk7S4dIWZF0fodt1DxRPkW9T9l
+         CZc/iztXwUpiJe86KApaizcy2cEnJa8T7CFnVOiAfJBtiTZXw8Iu5hXIB/fNwqN+qQEy
+         k+VIRKMpPtu/KpcQrMOb3nzGuE9cgLSMypnGsqstWYmxBlvVj99j8AVObaopHS+/5ajL
+         vQrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6GBGCKakEwAi+SxuWUfOkadj0n7loMWnfnQvA8ShRvQ=;
+        b=FcD0waKJ0qi6DOPilTKmIu+/tqxHjYML2lY91lfg9L85xQxxBNJl2P/NS77UKlQ+4K
+         5aGxI8GhYw6QOiNg0iFLVg7j6j2yz6ZsYVAlY49gRnmQTjlI2l+T9Txz2zPMbWoZbmt2
+         GrX06NV/PED0j9b8kG2tTAup2UhVfpybhrOOrPcc3Mw27xhbOyHLSyci5oslL3HQL39U
+         IRAiBlA/v50sTC5jvXcwd7EuWTtRXQ7o4g0U9699OkGYcUH1PPhupoIs/XSzi3JF711/
+         r+IY9bx/akLy+es4ePxinZI5Tll7P2TcZoYobdl/nsbfpbF4MB1w4DraL43GPYzz8AuA
+         aejQ==
+X-Gm-Message-State: APjAAAW0l6bOAVpqBEi7rzT0dJxkVKxzKYmr0lfkuJpHDS/0BM3vHPy3
+        KFmorYS0qxuNeNETQmIV/xpPRQRkDfbqxrWBgSg=
+X-Google-Smtp-Source: APXvYqy3LZbmIJZqWEtZQRAxI8xuryqKsLm5wgMvxsNC8rWduFKgN8bZg4xqtDDT3Ra7L0z4cOoXyw9CsE4XvMKt3OQ=
+X-Received: by 2002:a37:a642:: with SMTP id p63mr8470433qke.85.1576160197345;
+ Thu, 12 Dec 2019 06:16:37 -0800 (PST)
+MIME-Version: 1.0
+References: <58ce5534-64bd-4b4b-bd60-ed4e0c71b20f@gmail.com>
+ <166f0016-7061-be5c-660d-0499f74e8697@arm.com> <20191212005254.GE24359@e119886-lin.cambridge.arm.com>
+In-Reply-To: <20191212005254.GE24359@e119886-lin.cambridge.arm.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Thu, 12 Dec 2019 15:16:25 +0100
+Message-ID: <CAFqH_50pJVQT3uqtpVgqn4ijfdPMzHoE1ns_KARH+_cKe+3NRg@mail.gmail.com>
+Subject: Re: [REGRESSION] PCI v5.5-rc1 breaks google kevin
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Frederick Lawler <fred@fredlawl.com>,
+        linux-pci@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Mark Brown <broonie@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        =?UTF-8?Q?Stefan_M=C3=A4tje?= <stefan.maetje@esd.eu>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit c3a6cf19e695 ("export: avoid code duplication in
-include/linux/export.h") refactors export.h quite nicely, but introduces
-a slight increase in memory usage due to using the empty string ""
-instead of NULL to indicate that an exported symbol has no namespace. As
-mentioned in that commit, this meant an increase of 1 byte per exported
-symbol without a namespace. For example, if a kernel configuration has
-about 10k exported symbols, this would mean that the size of
-__ksymtab_strings would increase by roughly 10kB.
+Hi Vicente,
 
-We can alleviate this situation by utilizing the SHF_MERGE and
-SHF_STRING section flags. SHF_MERGE|SHF_STRING indicate to the linker
-that the data in the section are null-terminated strings that can be
-merged to eliminate duplication. More specifically, from the binutils
-documentation - "for sections with both M and S, a string which is a
-suffix of a larger string is considered a duplicate. Thus "def" will be
-merged with "abcdef"; A reference to the first "def" will be changed to
-a reference to "abcdef"+3". Thus, all the empty strings would be merged
-as well as any strings that can be merged according to the cited method
-above. For example, "memset" and "__memset" would be merged to just
-"__memset" in __ksymtab_strings.
+Missatge de Andrew Murray <andrew.murray@arm.com> del dia dj., 12 de
+des. 2019 a les 1:53:
+>
+> On Thu, Dec 12, 2019 at 12:12:56AM +0000, Robin Murphy wrote:
+> > Hi Vicente,
+> >
+> > On 2019-12-11 11:38 pm, Vicente Bergas wrote:
+> > > Hi,
+> > > since v5.5-rc1 the google kevin chromebook does not boot.
+> > > Git bisect reports 5e0c21c75e8c PCI/ASPM: Remove pcie_aspm_enabled()
+> > > unnecessary locking
+> > > as the first bad commit.
+> > >
+> > > In order to revert it from v5.5-rc1 i had to also revert some dependencies:
+> > > 5e0c21c75e8c08375a69710527e4a921b897cb7e
+> > > aff5d0552da4055da3faa27ee4252e48bb1f5821
+> > > 35efea32b26f9aacc99bf07e0d2cdfba2028b099
+> > > 687aaf386aeb551130f31705ce40d1341047a936
+> > > 72ea91afbfb08619696ccde610ee4d0d29cf4a1d
+> > > 87e90283c94c76ee11d379ab5a0973382bbd0baf
+> > > After reverting all of this, still no luck.
+> > > So, either the results of git bisect are not to be trusted, or
+> > > there are more bad commits.
+> > >
+> > > By "does not boot" i mean that the display fails to start and
+> > > the display is the only output device, so debugging is quite difficult.
+> >
 
-As of v5.4-rc5, the following statistics were gathered with x86
-defconfig with approximately 10.7k exported symbols.
+Another issue that is affecting current mainline for kevin is fixed
+with [1]. As usual, I have a tracking branch for 5.5 for different
+Chromebooks with some not yet merged patches that makes things work
+while are not fixed [2]. For kevin only the mentioned ASoC patch [1]
+and the pcie fix [3] should be needed. Other than that display is
+working for me on Kevin.
 
-Size of __ksymtab_strings in vmlinux:
--------------------------------------
-v5.4-rc5: 213834 bytes
-v5.4-rc5 with commit c3a6cf19e695: 224455 bytes
-v5.4-rc5 with this patch: 205759 bytes
+Cheers,
+ Enric
 
-So, we already see memory savings of ~8kB compared to vanilla -rc5 and
-savings of nearly 18.7kB compared to -rc5 with commit c3a6cf19e695 on top.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?h=for-5.5&id=4bf2e385aa59c2fae5f880aa25cfd2b470109093
+[2] https://gitlab.collabora.com/eballetbo/linux/commits/topic/chromeos/somewhat-stable-5.5
+[3]  https://lkml.org/lkml/2019/12/11/199
 
-Unfortunately, as of this writing, strings will not get deduplicated for
-kernel modules, as ld does not do the deduplication for
-SHF_MERGE|SHF_STRINGS sections for relocatable files (ld -r), which
-kernel modules are. A patch for ld is currently being worked on to
-hopefully allow for string deduplication in relocatable files in the
-future.
-
-Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
----
-v4:
-  - fix the comment above ___EXPORT_SYMBOL to be more specific about what
-    entries are being placed in their respective sections.
-
- include/asm-generic/export.h |  8 +++++---
- include/linux/export.h       | 27 ++++++++++++++++++++-------
-
- 2 files changed, 25 insertions(+), 10 deletions(-)
-
-diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
-index afddc5442e92..365345f9a9e3 100644
---- a/include/asm-generic/export.h
-+++ b/include/asm-generic/export.h
-@@ -27,9 +27,11 @@
- .endm
- 
- /*
-- * note on .section use: @progbits vs %progbits nastiness doesn't matter,
-- * since we immediately emit into those sections anyway.
-+ * note on .section use: we specify progbits since usage of the "M" (SHF_MERGE)
-+ * section flag requires it. Use '%progbits' instead of '@progbits' since the
-+ * former apparently works on all arches according to the binutils source.
-  */
-+
- .macro ___EXPORT_SYMBOL name,val,sec
- #ifdef CONFIG_MODULES
- 	.section ___ksymtab\sec+\name,"a"
-@@ -37,7 +39,7 @@
- __ksymtab_\name:
- 	__put \val, __kstrtab_\name
- 	.previous
--	.section __ksymtab_strings,"a"
-+	.section __ksymtab_strings,"aMS",%progbits,1
- __kstrtab_\name:
- 	.asciz "\name"
- 	.previous
-diff --git a/include/linux/export.h b/include/linux/export.h
-index 627841448293..c166d35e3d76 100644
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -82,16 +82,29 @@ struct kernel_symbol {
- 
- #else
- 
--/* For every exported symbol, place a struct in the __ksymtab section */
-+/*
-+ * For every exported symbol, do the following:
-+ *
-+ * - If applicable, place a CRC entry in the __kcrctab section.
-+ * - Put the name of the symbol and namespace (empty string "" for none) in
-+ *   __ksymtab_strings.
-+ * - Place a struct kernel_symbol entry in the __ksymtab section.
-+ *
-+ * note on .section use: we specify progbits since usage of the "M" (SHF_MERGE)
-+ * section flag requires it. Use '%progbits' instead of '@progbits' since the
-+ * former apparently works on all arches according to the binutils source.
-+ */
- #define ___EXPORT_SYMBOL(sym, sec, ns)					\
- 	extern typeof(sym) sym;						\
-+	extern const char __kstrtab_##sym[];				\
-+	extern const char __kstrtabns_##sym[];				\
- 	__CRC_SYMBOL(sym, sec);						\
--	static const char __kstrtab_##sym[]				\
--	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
--	= #sym;								\
--	static const char __kstrtabns_##sym[]				\
--	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
--	= ns;								\
-+	asm("	.section \"__ksymtab_strings\",\"aMS\",%progbits,1\n"	\
-+	    "__kstrtab_" #sym ":				\n"	\
-+	    "	.asciz 	\"" #sym "\"				\n"	\
-+	    "__kstrtabns_" #sym ":				\n"	\
-+	    "	.asciz 	\"" ns "\"				\n"	\
-+	    "	.previous					\n");	\
- 	__KSYMTAB_ENTRY(sym, sec)
- 
- #endif
--- 
-2.16.4
-
+> > Assuming it's a manifestation of the same PCI breakage that Enric and
+> > Lorenzo figured out, there's a proposed fix here:
+> > https://lkml.org/lkml/2019/12/11/199
+>
+> It's likely that any PCI driver that uses PCI IO with that controller will
+> suffer the same fate.
+>
+> Vicente - can you try the patch that has been proposed and verify it fixes
+> the issue for you?
+>
+> Thanks,
+>
+> Andrew Murray
+>
+> >
+> > Robin.
+> >
+> > > v5.5-rc1 as is (reverting no commits at all) works fine when disabling PCI:
+> > > # CONFIG_PCI is not set
+> > >
+> > > Regards,
+> > >   Vicente.
+> > >
+> > >
+> > > _______________________________________________
+> > > Linux-rockchip mailing list
+> > > Linux-rockchip@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
