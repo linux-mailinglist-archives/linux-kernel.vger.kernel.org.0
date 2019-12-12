@@ -2,108 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A426911C687
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 08:38:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF37B11C68E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 08:39:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbfLLHgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 02:36:22 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36457 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728119AbfLLHgW (ORCPT
+        id S1728148AbfLLHjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 02:39:22 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39140 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728138AbfLLHjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 02:36:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576136180;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9cfkJ5Ufa4kjVWWnLFP633QavJjP7jRiWlpS2WvklvE=;
-        b=FwRxY825+60vc9PmQ+bC0sSetwjaqE2Qy1vBtRNvosfgHiwrdtuhMYbM2r2WnQ7hi0hwW5
-        lkCEC01iOk++kjZvG0u5E5drPU1EETCmiQaAfKrlHCmP0tU4psc82lp/XRpVDA20fpd18N
-        OnP/sSVBOG2dUw4qCCFm/Uaapy7L5u4=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-46-1xqflhsjNd2aiE43vt_Ypw-1; Thu, 12 Dec 2019 02:36:19 -0500
-X-MC-Unique: 1xqflhsjNd2aiE43vt_Ypw-1
-Received: by mail-qv1-f72.google.com with SMTP id l1so926814qvu.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 23:36:19 -0800 (PST)
+        Thu, 12 Dec 2019 02:39:22 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 2so300009pfx.6
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2019 23:39:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Qo4K50LzAN2stnSI10i/xMxtvvEyKR1cSWIWv7pZkAY=;
+        b=QTHWe33GqVF+OXqosfCsmbjOnSeJdTu2Ok3v6PGMePJB7YQAsSH2vM9oXU47Iacc1K
+         VZ40OB8Jw7epK4xlR0cKDWXRT0MD9vBIZKU0ozV7lJqKRLWkpGu4x5biCxa24CJLzMmm
+         Af7H8zLmJguvauWsRE29SjWjC5xmgY0NvyLTypZP3UJ1/9kE6vA/tbijX1IuYbahDU9J
+         xLBhl1dQKQbMhG8lIuM1si7Kps/Ur5BXRPI9FyLQDkAymILFAXY8QqmTIY+U3sCCLRa4
+         rctivrQJNKlfawkqEDrFRlwXUfcMVLkbnX5GDlhYhfRbdN+Uk7EHa/G7Te1q80lDa28D
+         /Mjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9cfkJ5Ufa4kjVWWnLFP633QavJjP7jRiWlpS2WvklvE=;
-        b=kh1SAeU3kjL2qwF0TVTrG+DqxEDMwaUkMrcpFxswBZkCTHCfPBudHY1tChSUJbuJzu
-         tzVWOOKcAAKRGWdDQYZ+maEz4LsQMF2IhtpxUxjQ2M0OglaRutIXpWV7lq9+De1MlnoN
-         s0SxdP5LubUCodmHMge54Bgv8HVBZ8U1KN1q7kpup4zP6TLdgkaHMWdmt8DapUtIz63o
-         YBuqYTxUNTDkoihaTilPsb4JjLCcsX2Cl94lXuyXvfWm2aPOUHIwryNNgnj6KBIBrv59
-         2pDW57olu6SQhN1C5RJodAuINyS5nbtbRv1amKQGjX/a3DZJtyeNlJ3tweb2E7OvugLH
-         Jj+w==
-X-Gm-Message-State: APjAAAXN7O5jzefCnpdtZAzvB6ZphXuzK58zAPwbWyeldZaiIIMBlkYA
-        OVFp3PNwMeTZztEtLZ5yPtF0IX7u3ndo1wo0RI7NuWdQY3rYm4+I+/lM57HBRvYyvdT9jEzlutb
-        rldAjTkd81DZeKUj4oLa7SLnk
-X-Received: by 2002:a0c:f8d1:: with SMTP id h17mr7051926qvo.80.1576136179096;
-        Wed, 11 Dec 2019 23:36:19 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy7n0VUXHhGOLoe1r/B4ld1vL6rsAl2Bm1uyVdOAyJr+xL+CjdY0j5Wt0fgQ0y+22OgYTq+sg==
-X-Received: by 2002:a0c:f8d1:: with SMTP id h17mr7051910qvo.80.1576136178889;
-        Wed, 11 Dec 2019 23:36:18 -0800 (PST)
-Received: from redhat.com (bzq-79-181-48-215.red.bezeqint.net. [79.181.48.215])
-        by smtp.gmail.com with ESMTPSA id j15sm1530212qtn.37.2019.12.11.23.36.16
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Qo4K50LzAN2stnSI10i/xMxtvvEyKR1cSWIWv7pZkAY=;
+        b=HGHMVpExOG1c2srY/ZE4Lj3oY0mpfWVgPD/dEW8/WX15Z5+CDFmYm8HfQdR+PkhLXG
+         gOkGB6JSndv3F38519ChKkn2bXviWjtG9U5sdThVMRutYRknzb/tzwBlRHbcew0xRRML
+         7LREDeSLd7OA57Gv/w3Dmh6bXgHhwQocPjQJlDgUhJk/vFIYslhq5kXHNlv7XICkypd7
+         1wdpgiMS2V/esZf25Xfoi4NNsSMu5kdKNH8ORv6ar69lHA7hbqtp10kZW5LalxS/gBlg
+         Wa44rqCcBkak53teWevtllrhFakQQSyIUYVqJgi5iK8oOCGrvRNqBRBFglN3fFAk2Psx
+         7PVQ==
+X-Gm-Message-State: APjAAAXxzmn4cgqlxi01P6c2IvJD1NxLSSy5j1Kp1vMZ7gfYHRZwnDf6
+        EddpruqzE7Ng1TVeSea9fRGl4g==
+X-Google-Smtp-Source: APXvYqyWrtLsL3y0QsBXtvnDvJ4rPvhnI90XbGOmcWEW32DAzZHdT8obP0vpz4JmOvrIUfBy6uGEPQ==
+X-Received: by 2002:a63:1f16:: with SMTP id f22mr8587016pgf.2.1576136361275;
+        Wed, 11 Dec 2019 23:39:21 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id g17sm5962032pfb.180.2019.12.11.23.39.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 23:36:17 -0800 (PST)
-Date:   Thu, 12 Dec 2019 02:36:13 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-Message-ID: <20191212023154-mutt-send-email-mst@kernel.org>
-References: <20191129213505.18472-1-peterx@redhat.com>
- <20191129213505.18472-5-peterx@redhat.com>
- <20191211063830-mutt-send-email-mst@kernel.org>
- <20191211205952.GA5091@xz-x1>
- <20191211172713-mutt-send-email-mst@kernel.org>
- <46ceb88c-0ddd-0d9a-7128-3aa5a7d9d233@redhat.com>
+        Wed, 11 Dec 2019 23:39:20 -0800 (PST)
+Date:   Wed, 11 Dec 2019 23:39:18 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     robh+dt@kernel.org, ulf.hansson@linaro.org, rnayak@codeaurora.org,
+        agross@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        mark.rutland@arm.com, swboyd@chromium.org, dianders@chromium.org
+Subject: Re: [PATCH 6/6] arm64: dts: sm8150: Add rpmh power-domain node
+Message-ID: <20191212073918.GO3143381@builder>
+References: <20191118173944.27043-1-sibis@codeaurora.org>
+ <0101016e7f99eab9-35efa01f-8ed3-4a77-87e1-09c381173121-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <46ceb88c-0ddd-0d9a-7128-3aa5a7d9d233@redhat.com>
+In-Reply-To: <0101016e7f99eab9-35efa01f-8ed3-4a77-87e1-09c381173121-000000@us-west-2.amazonses.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 01:08:14AM +0100, Paolo Bonzini wrote:
-> >> I'd say it won't be a big issue on locking 1/2M of host mem for a
-> >> vm...
-> >> Also note that if dirty ring is enabled, I plan to evaporate the
-> >> dirty_bitmap in the next post. The old kvm->dirty_bitmap takes
-> >> $GUEST_MEM/32K*2 mem.  E.g., for 64G guest it's 64G/32K*2=4M.  If with
-> >> dirty ring of 8 vcpus, that could be 64K*8=0.5M, which could be even
-> >> less memory used.
-> > 
-> > Right - I think Avi described the bitmap in kernel memory as one of
-> > design mistakes. Why repeat that with the new design?
+On Mon 18 Nov 09:40 PST 2019, Sibi Sankar wrote:
+
+> Add the DT node for the rpmhpd power controller.
 > 
-> Do you have a source for that?
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
-Nope, it was a private talk.
+Series applied, please send separate patch for the yaml migration.
 
-> At least the dirty bitmap has to be
-> accessed from atomic context so it seems unlikely that it can be moved
-> to user memory.
+Regards,
+Bjorn
 
-Why is that? We could surely do it from VCPU context?
-
-> The dirty ring could use user memory indeed, but it would be much harder
-> to set up (multiple ioctls for each ring?  what to do if userspace
-> forgets one? etc.).
-
-Why multiple ioctls? If you do like virtio packed ring you just need the
-base and the size.
-
--- 
-MST
-
+> ---
+>  arch/arm64/boot/dts/qcom/sm8150.dtsi | 55 ++++++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> index 8f23fcadecb89..0ac257637c2af 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> @@ -5,6 +5,7 @@
+>   */
+>  
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/power/qcom-rpmpd.h>
+>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+>  #include <dt-bindings/clock/qcom,rpmh.h>
+>  
+> @@ -469,6 +470,60 @@
+>  				clock-names = "xo";
+>  				clocks = <&xo_board>;
+>  			};
+> +
+> +			rpmhpd: power-controller {
+> +				compatible = "qcom,sm8150-rpmhpd";
+> +				#power-domain-cells = <1>;
+> +				operating-points-v2 = <&rpmhpd_opp_table>;
+> +
+> +				rpmhpd_opp_table: opp-table {
+> +					compatible = "operating-points-v2";
+> +
+> +					rpmhpd_opp_ret: opp1 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_RETENTION>;
+> +					};
+> +
+> +					rpmhpd_opp_min_svs: opp2 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
+> +					};
+> +
+> +					rpmhpd_opp_low_svs: opp3 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
+> +					};
+> +
+> +					rpmhpd_opp_svs: opp4 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
+> +					};
+> +
+> +					rpmhpd_opp_svs_l1: opp5 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+> +					};
+> +
+> +					rpmhpd_opp_svs_l2: opp6 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_SVS_L2>;
+> +					};
+> +
+> +					rpmhpd_opp_nom: opp7 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
+> +					};
+> +
+> +					rpmhpd_opp_nom_l1: opp8 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
+> +					};
+> +
+> +					rpmhpd_opp_nom_l2: opp9 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
+> +					};
+> +
+> +					rpmhpd_opp_turbo: opp10 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
+> +					};
+> +
+> +					rpmhpd_opp_turbo_l1: opp11 {
+> +						opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
+> +					};
+> +				};
+> +			};
+>  		};
+>  	};
+>  
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
