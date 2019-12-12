@@ -2,111 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1613811C18C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 01:37:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15D2F11C177
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 01:33:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbfLLAgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 19:36:53 -0500
-Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:52228 "EHLO
-        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726791AbfLLAgx (ORCPT
+        id S1727310AbfLLAdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 19:33:14 -0500
+Received: from sender4-op-o11.zoho.com ([136.143.188.11]:17124 "EHLO
+        sender4-op-o11.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbfLLAdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 19:36:53 -0500
-X-Greylist: delayed 1324 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Dec 2019 19:36:52 EST
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
-        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
-        id 1ifC7r-0000O6-5Q; Thu, 12 Dec 2019 00:14:39 +0000
-Message-ID: <0e00090ef6fcf310159d6ce23f2c92f511dd01de.camel@codethink.co.uk>
-Subject: Re: [Y2038] [PATCH v7 6/9] ALSA: Avoid using timespec for struct
- snd_timer_tread
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org,
-        Takashi Iwai <tiwai@suse.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, y2038@lists.linaro.org,
-        linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-        Mark Brown <broonie@kernel.org>,
-        Baolin Wang <baolin.wang7@gmail.com>
-Date:   Thu, 12 Dec 2019 00:14:38 +0000
-In-Reply-To: <20191211212025.1981822-7-arnd@arndb.de>
-References: <20191211212025.1981822-1-arnd@arndb.de>
-         <20191211212025.1981822-7-arnd@arndb.de>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Wed, 11 Dec 2019 19:33:14 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1576110779; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=X03i3V/8EUcM4luIhZRpY/0odgc75H4FDcR6CcpcWIyBuQ4f6rr08GUvv0bfI/UA9GvqiJinK18u9ID0gk0yJ20jws6uLu1DVLoOTYHCkyHxyfaYACg2rtZZO+CV8tCuLXoPbz3u9NyTc7eyz9AWjLLwMTzxORygeif2v1g9ens=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1576110779; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=52I5t2+RJ1d8gIfMJ4FqE43LzPcw+pznymfSad4xjbk=; 
+        b=UTy/00hBxJFLgKpMC2jspMD9+G+mxdNxljNzSH6woTSn5TO4M3YQUoLxQYmRijQ1AsBgol8hrvScE94rdtCuH+0XG4+6j6loVv49ts4KeL5JmUnt7csCXGjVhNrm1d6ERSjJVyb2vwAV4sU5v2M+gBliWzROWzEvmyyGDRVcn9A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie (pool-173-73-58-202.washdc.fios.verizon.net [173.73.58.202]) by mx.zohomail.com
+        with SMTPS id 1576110778099739.3714501720381; Wed, 11 Dec 2019 16:32:58 -0800 (PST)
+Date:   Thu, 12 Dec 2019 00:17:35 +0000
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree <devicetree@vger.kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v6 2/2] iio: (bma400) add driver for the BMA400
+Message-ID: <20191212001735.GA4667@nessie>
+References: <20191211010308.1525-1-dan@dlrobertson.com>
+ <20191211010308.1525-3-dan@dlrobertson.com>
+ <CAHp75VdAJwMkPZQLLQrOk4HABjG-parEOmH8S-6kU+zyYnnfww@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VdAJwMkPZQLLQrOk4HABjG-parEOmH8S-6kU+zyYnnfww@mail.gmail.com>
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-12-11 at 22:20 +0100, Arnd Bergmann wrote:
-[...] 
-> +static int snd_timer_user_tread(void __user *argp, struct snd_timer_user *tu,
-> +				unsigned int cmd, bool compat)
-> +{
-> +	int __user *p = argp;
-> +	int xarg, old_tread;
-> +
-> +	if (tu->timeri)	/* too late */
-> +		return -EBUSY;
-> +	if (get_user(xarg, p))
-> +		return -EFAULT;
-> +
-> +	old_tread = tu->tread;
-> +
-> +	if (!xarg)
-> +		tu->tread = TREAD_FORMAT_NONE;
-> +	else if (cmd == SNDRV_TIMER_IOCTL_TREAD64 ||
-> +		 (IS_ENABLED(CONFIG_64BITS) && !compat))
+On Wed, Dec 11, 2019 at 03:21:56PM +0200, Andy Shevchenko wrote:
+> On Wed, Dec 11, 2019 at 3:20 AM Dan Robertson <dan@dlrobertson.com> wrote:
+> >
+> > Add a IIO driver for the Bosch BMA400 3-axes ultra-low power accelerometer.
+> > The driver supports reading from the acceleration and temperature
+> > registers. The driver also supports reading and configuring the output data
+> > rate, oversampling ratio, and scale.
+> 
+> > +#define BMA400_LP_OSR_SHIFT         0x05
+> > +#define BMA400_NP_OSR_SHIFT         0x04
+> > +#define BMA400_SCALE_SHIFT          0x06
+> 
+> I'm not sure why this is being defined as hex number instead of plain decimal...
 
-This needs to check for CONFIG_64BIT not CONFIG_64BITS.
+Sounds good.
 
-[...]
-> @@ -2145,14 +2202,34 @@ static ssize_t snd_timer_user_read(struct file *file, char __user *buffer,
->  		tu->qused--;
->  		spin_unlock_irq(&tu->qlock);
->  
-> -		if (tu->tread) {
-> -			if (copy_to_user(buffer, &tu->tqueue[qhead],
-> -					 sizeof(struct snd_timer_tread)))
-> +		tread = &tu->tqueue[qhead];
-> +
-> +		switch (tu->tread) {
-> +		case TREAD_FORMAT_TIME64:
-> +			if (copy_to_user(buffer, tread,
-> +					 sizeof(struct snd_timer_tread64)))
->  				err = -EFAULT;
-> -		} else {
-> +			break;
-> +		case TREAD_FORMAT_TIME32:
-> +			memset(&tread32, 0, sizeof(tread32));
-> +			tread32 = (struct snd_timer_tread32) {
-> +				.event = tread->event,
-> +				.tstamp_sec = tread->tstamp_sec,
-> +				.tstamp_sec = tread->tstamp_nsec,
-> +				.val = tread->val,
-> +			};
-> +
-> +			if (copy_to_user(buffer, &tread32, sizeof(tread32)))
-> +				err = -EFAULT;
-> +			break;
-> +		case TREAD_FORMAT_NONE:
->  			if (copy_to_user(buffer, &tu->queue[qhead],
->  					 sizeof(struct snd_timer_read)))
->  				err = -EFAULT;
-> +			break;
-> +		default:
-> +			err = -ENOTSUPP;
-[...]
+> > +#define BMA400_TWO_BITS_MASK        GENMASK(1, 0)
+> > +#define BMA400_LP_OSR_MASK          GENMASK(6, BMA400_LP_OSR_SHIFT)
+> > +#define BMA400_NP_OSR_MASK          GENMASK(5, BMA400_NP_OSR_SHIFT)
+> > +#define BMA400_ACC_ODR_MASK         GENMASK(3, 0)
+> > +#define BMA400_ACC_SCALE_MASK       GENMASK(7, BMA400_SCALE_SHIFT)
+> 
+> And here simple better to put same numbers. It will help to read.
 
-This is not a valid error code for returning to user-space, but this
-case should be impossible so I don't think it matters.
+Do you mean for the shift or for the mask?
 
-Ben.
+> > +const struct regmap_config bma400_regmap_config = {
+> > +       .reg_bits = 8,
+> > +       .val_bits = 8,
+> > +       .max_register = BMA400_CMD_REG,
+> > +       .cache_type = REGCACHE_RBTREE,
+> > +       .writeable_reg = bma400_is_writable_reg,
+> > +       .volatile_reg = bma400_is_volatile_reg,
+> > +};
+> > +EXPORT_SYMBOL(bma400_regmap_config);
+> 
+> I'm not sure I got the idea why this one is being exported.
 
--- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+It needs to be exported so that it can be used in the bma400_i2c module and the
+future bma400_spi module. In theory, if we _really_ do not want to export this,
+then we can define separate regmap configs in each of the bma400_i2c and
+(future) bma400_spi modules, but then we would have to export the is_volitile_reg
+and is_writable_reg functions. As a result, I do not see any benefits to that
+method over exporting the config, but I could be convinced otherwise.
+
+> > +               if (odr < BMA400_ACC_ODR_MIN_RAW ||
+> > +                   odr > BMA400_ACC_ODR_MAX_RAW) {
+> 
+> One line?
+
+It is too long if I simplify to one line.
+
+> > +               if (uhz || hz % BMA400_ACC_ODR_MIN_WHOLE_HZ)
+> > +                       return -EINVAL;
+> > +
+> > +               val = hz / BMA400_ACC_ODR_MIN_WHOLE_HZ;
+> > +               idx = __ffs(val);
+> > +
+> 
+> > +               if (val ^ BIT(idx))
+> 
+> Seems like funny way of checking is_power_of_2(). But it's up to maintainers.
+> And your variant may even be better here (in code generation perspective)...
+> 
+> However, the whole idea here is, IIUC, to have something like
+> 
+>   hz = 2^idx * BMA400_ACC_ODR_MIN_WHOLE_HZ
+> 
+> I think you may do it without divisions, i.e. call __ffs() first and then do
+>    idx = __ffs(...);
+>    val = hz >> idx;
+>    if (val != BMA400_ACC_ODR_MIN_WHOLE_HZ)
+>     return -EINVAL;
+> 
+> or something like above.
+
+It would be more obvious what is being done here with is_power_of_two. I'll
+revisit this function with your suggestions. If I can make it simpler, I'll
+go this route.
+
+> 
+> > +                       return -EINVAL;
+> 
+> ...
+> 
+> > +       odr = (~BMA400_ACC_ODR_MASK & val) | idx;
+> 
+> I'm wondering why Yoda style is being used here.
+
+I guess I think like Yoda :) I can update this. I typically do prefer
+new_mask | old_mask, but I do not feel too strongly about it.
+
+> > +static void bma400_accel_scale_from_raw(int raw, unsigned int *val)
+> > +{
+> > +       *val = BMA400_SCALE_MIN * (1 << raw);
+> 
+> Isn't it the same as
+>     *val = BMA400_SCALE_MIN << raw;
+> ?
+
+Yes. Good catch. Not sure what I was thinking :)
+
+> 
+> > +               return -EINVAL;
+> 
+> ...
+> 
+> > +       ret = regmap_read(data->regmap, BMA400_ACC_CONFIG0_REG, &val);
+> > +       if (ret < 0)
+> 
+> I'm wondering if in all of these regmap_read()...
+> 
+> > +               return ret;
+> 
+> > +       ret = regmap_write(data->regmap, BMA400_ACC_CONFIG0_REG,
+> > +                          mode | (val & ~BMA400_TWO_BITS_MASK));
+> > +       if (ret < 0) {
+> 
+> ...and regmap_write() calls you ever can get a positive returned code.
+
+From the regmap_read/regmap_write docs:
+
+> * A value of zero will be returned on success, a negative errno will
+> * be returned in error cases.
+
+So I assume ret <= 0
+
+Cheers,
+
+ - Dan
 
