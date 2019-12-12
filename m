@@ -2,521 +2,342 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A59211C2E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:02:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65CC811C30A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbfLLCCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 21:02:34 -0500
-Received: from mx.socionext.com ([202.248.49.38]:58677 "EHLO mx.socionext.com"
+        id S1727778AbfLLCLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 21:11:05 -0500
+Received: from mga03.intel.com ([134.134.136.65]:23469 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727689AbfLLCC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 21:02:29 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 12 Dec 2019 11:02:27 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 5E3AD603AB;
-        Thu, 12 Dec 2019 11:02:27 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 12 Dec 2019 11:03:07 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id E6AEC1A01CF;
-        Thu, 12 Dec 2019 11:02:26 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 2/2] PCI: uniphier: Add UniPhier PCIe endpoint controller support
-Date:   Thu, 12 Dec 2019 11:02:18 +0900
-Message-Id: <1576116138-16501-3-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576116138-16501-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1576116138-16501-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S1727637AbfLLCLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 21:11:05 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 18:10:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,303,1571727600"; 
+   d="scan'208";a="245525172"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.9])
+  by fmsmga002.fm.intel.com with ESMTP; 11 Dec 2019 18:10:51 -0800
+Date:   Wed, 11 Dec 2019 21:02:40 -0500
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>
+Subject: Re: [RFC PATCH 4/9] vfio-pci: register default dynamic-trap-bar-info
+ region
+Message-ID: <20191212020240.GA21868@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20191205032650.29794-1-yan.y.zhao@intel.com>
+ <20191205165530.1f29fe85@x1.home>
+ <20191206060407.GF31791@joy-OptiPlex-7040>
+ <20191206082038.2b1078d9@x1.home>
+ <20191209062212.GL31791@joy-OptiPlex-7040>
+ <20191209141608.310520fc@x1.home>
+ <20191210074444.GA28339@joy-OptiPlex-7040>
+ <20191210093805.36a5b443@x1.home>
+ <20191211062555.GC28339@joy-OptiPlex-7040>
+ <20191211115655.7ecc5c83@x1.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211115655.7ecc5c83@x1.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces specific glue layer for UniPhier platform to support
-PCIe controller that is based on the DesignWare PCIe core, and
-this driver supports endpoint mode. This supports for Pro5 SoC only.
+On Thu, Dec 12, 2019 at 02:56:55AM +0800, Alex Williamson wrote:
+> On Wed, 11 Dec 2019 01:25:55 -0500
+> Yan Zhao <yan.y.zhao@intel.com> wrote:
+> 
+> > On Wed, Dec 11, 2019 at 12:38:05AM +0800, Alex Williamson wrote:
+> > > On Tue, 10 Dec 2019 02:44:44 -0500
+> > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > >   
+> > > > On Tue, Dec 10, 2019 at 05:16:08AM +0800, Alex Williamson wrote:  
+> > > > > On Mon, 9 Dec 2019 01:22:12 -0500
+> > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > > > >     
+> > > > > > On Fri, Dec 06, 2019 at 11:20:38PM +0800, Alex Williamson wrote:    
+> > > > > > > On Fri, 6 Dec 2019 01:04:07 -0500
+> > > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > > > > > >       
+> > > > > > > > On Fri, Dec 06, 2019 at 07:55:30AM +0800, Alex Williamson wrote:      
+> > > > > > > > > On Wed,  4 Dec 2019 22:26:50 -0500
+> > > > > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > > > > > > > >         
+> > > > > > > > > > Dynamic trap bar info region is a channel for QEMU and vendor driver to
+> > > > > > > > > > communicate dynamic trap info. It is of type
+> > > > > > > > > > VFIO_REGION_TYPE_DYNAMIC_TRAP_BAR_INFO and subtype
+> > > > > > > > > > VFIO_REGION_SUBTYPE_DYNAMIC_TRAP_BAR_INFO.
+> > > > > > > > > > 
+> > > > > > > > > > This region has two fields: dt_fd and trap.
+> > > > > > > > > > When QEMU detects a device regions of this type, it will create an
+> > > > > > > > > > eventfd and write its eventfd id to dt_fd field.
+> > > > > > > > > > When vendor drivre signals this eventfd, QEMU reads trap field of this
+> > > > > > > > > > info region.
+> > > > > > > > > > - If trap is true, QEMU would search the device's PCI BAR
+> > > > > > > > > > regions and disable all the sparse mmaped subregions (if the sparse
+> > > > > > > > > > mmaped subregion is disablable).
+> > > > > > > > > > - If trap is false, QEMU would re-enable those subregions.
+> > > > > > > > > > 
+> > > > > > > > > > A typical usage is
+> > > > > > > > > > 1. vendor driver first cuts its bar 0 into several sections, all in a
+> > > > > > > > > > sparse mmap array. So initally, all its bar 0 are passthroughed.
+> > > > > > > > > > 2. vendor driver specifys part of bar 0 sections to be disablable.
+> > > > > > > > > > 3. on migration starts, vendor driver signals dt_fd and set trap to true
+> > > > > > > > > > to notify QEMU disabling the bar 0 sections of disablable flags on.
+> > > > > > > > > > 4. QEMU disables those bar 0 section and hence let vendor driver be able
+> > > > > > > > > > to trap access of bar 0 registers and make dirty page tracking possible.
+> > > > > > > > > > 5. on migration failure, vendor driver signals dt_fd to QEMU again.
+> > > > > > > > > > QEMU reads trap field of this info region which is false and QEMU
+> > > > > > > > > > re-passthrough the whole bar 0 region.
+> > > > > > > > > > 
+> > > > > > > > > > Vendor driver specifies whether it supports dynamic-trap-bar-info region
+> > > > > > > > > > through cap VFIO_PCI_DEVICE_CAP_DYNAMIC_TRAP_BAR in
+> > > > > > > > > > vfio_pci_mediate_ops->open().
+> > > > > > > > > > 
+> > > > > > > > > > If vfio-pci detects this cap, it will create a default
+> > > > > > > > > > dynamic_trap_bar_info region on behalf of vendor driver with region len=0
+> > > > > > > > > > and region->ops=null.
+> > > > > > > > > > Vvendor driver should override this region's len, flags, rw, mmap in its
+> > > > > > > > > > vfio_pci_mediate_ops.        
+> > > > > > > > > 
+> > > > > > > > > TBH, I don't like this interface at all.  Userspace doesn't pass data
+> > > > > > > > > to the kernel via INFO ioctls.  We have a SET_IRQS ioctl for
+> > > > > > > > > configuring user signaling with eventfds.  I think we only need to
+> > > > > > > > > define an IRQ type that tells the user to re-evaluate the sparse mmap
+> > > > > > > > > information for a region.  The user would enumerate the device IRQs via
+> > > > > > > > > GET_IRQ_INFO, find one of this type where the IRQ info would also
+> > > > > > > > > indicate which region(s) should be re-evaluated on signaling.  The user
+> > > > > > > > > would enable that signaling via SET_IRQS and simply re-evaluate the        
+> > > > > > > > ok. I'll try to switch to this way. Thanks for this suggestion.
+> > > > > > > >       
+> > > > > > > > > sparse mmap capability for the associated regions when signaled.        
+> > > > > > > > 
+> > > > > > > > Do you like the "disablable" flag of sparse mmap ?
+> > > > > > > > I think it's a lightweight way for user to switch mmap state of a whole region,
+> > > > > > > > otherwise going through a complete flow of GET_REGION_INFO and re-setup
+> > > > > > > > region might be too heavy.      
+> > > > > > > 
+> > > > > > > No, I don't like the disable-able flag.  At what frequency do we expect
+> > > > > > > regions to change?  It seems like we'd only change when switching into
+> > > > > > > and out of the _SAVING state, which is rare.  It seems easy for
+> > > > > > > userspace, at least QEMU, to drop the entire mmap configuration and      
+> > > > > > ok. I'll try this way.
+> > > > > >     
+> > > > > > > re-read it.  Another concern here is how do we synchronize the event?
+> > > > > > > Are we assuming that this event would occur when a user switch to
+> > > > > > > _SAVING mode on the device?  That operation is synchronous, the device
+> > > > > > > must be in saving mode after the write to device state completes, but
+> > > > > > > it seems like this might be trying to add an asynchronous dependency.
+> > > > > > > Will the write to device_state only complete once the user handles the
+> > > > > > > eventfd?  How would the kernel know when the mmap re-evaluation is
+> > > > > > > complete.  It seems like there are gaps here that the vendor driver
+> > > > > > > could miss traps required for migration because the user hasn't
+> > > > > > > completed the mmap transition yet.  Thanks,
+> > > > > > > 
+> > > > > > > Alex      
+> > > > > > 
+> > > > > > yes, this asynchronous event notification will cause vendor driver miss
+> > > > > > traps. But it's supposed to be of very short period time. That's also a
+> > > > > > reason for us to wish the re-evaluation to be lightweight. E.g. if it's
+> > > > > > able to be finished before the first iterate, it's still safe.    
+> > > > > 
+> > > > > Making the re-evaluation lightweight cannot solve the race, it only
+> > > > > masks it.
+> > > > >     
+> > > > > > But I agree, the timing is not guaranteed, and so it's best for kernel
+> > > > > > to wait for mmap re-evaluation to complete. 
+> > > > > > 
+> > > > > > migration_thread
+> > > > > >     |->qemu_savevm_state_setup
+> > > > > >     |   |->ram_save_setup
+> > > > > >     |   |   |->migration_bitmap_sync
+> > > > > >     |   |       |->kvm_log_sync
+> > > > > >     |   |       |->vfio_log_sync
+> > > > > >     |   |
+> > > > > >     |   |->vfio_save_setup
+> > > > > >     |       |->set_device_state(_SAVING)
+> > > > > >     |
+> > > > > >     |->qemu_savevm_state_pending
+> > > > > >     |   |->ram_save_pending
+> > > > > >     |   |   |->migration_bitmap_sync 
+> > > > > >     |   |      |->kvm_log_sync
+> > > > > >     |   |      |->vfio_log_sync
+> > > > > >     |   |->vfio_save_pending
+> > > > > >     |
+> > > > > >     |->qemu_savevm_state_iterate
+> > > > > >     |   |->ram_save_iterate //send pages
+> > > > > >     |   |->vfio_save_iterate
+> > > > > >     ...
+> > > > > > 
+> > > > > > 
+> > > > > > Actually, we previously let qemu trigger the re-evaluation when migration starts.
+> > > > > > And now the reason for we to wish kernel to trigger the mmap re-evaluation is that
+> > > > > > there're other two possible use cases:
+> > > > > > (1) keep passing through devices when migration starts and track dirty pages
+> > > > > >     using hardware IOMMU. Then when migration is about to complete, stop the
+> > > > > >     device and start trap PCI BARs for software emulation. (we made some
+> > > > > >     changes to let device stop ahead of vcpu )    
+> > > > > 
+> > > > > How is that possible?  I/O devices need to continue to work until the
+> > > > > vCPU stops otherwise the vCPU can get blocked on the device.  Maybe QEMU    
+> > > > hi Alex
+> > > > For devices like DSA [1], it can support SVM mode. In this mode, when a
+> > > > page fault happens, the Intel DSA device blocks until the page fault is
+> > > > resolved, if PRS is enabled; otherwise it is reported as an error.
+> > > > 
+> > > > Therefore, to pass through DSA into guest and do live migration with it,
+> > > > it is desired to stop DSA before stopping vCPU, as there may be an
+> > > > outstanding page fault to be resolved.
+> > > > 
+> > > > During the period when DSA is stopped and vCPUs are still running, all the
+> > > > pass-through resources are trapped and emulated by host mediation driver until
+> > > > vCPUs stop.  
+> > > 
+> > > If the DSA is stopped and resources are trapped and emulated, then is
+> > > the device really stopped from a QEMU perspective or has it simply
+> > > switched modes underneath QEMU?  If the device is truly stopped, then
+> > > I'd like to understand how a vCPU doing a PIO read from the device
+> > > wouldn't wedge the VM.
+> > >  
+> > It doesn't matter if the device is truly stopped or not (although from
+> > my point of view, just draining commands and keeping device running is
+> > better as it handles live migration failure better).
+> > PIOs also need to be trapped and emulated if a vCPU accesses them.
+> 
+> We seem to be talking around each other here.  If PIOs are trapped and
+> emulated then the device is not "stopped" as far as QEMU is concerned,
+> right?  "Stopping" a device suggests to me that a running vCPU doing a
+> PIO read from the device would block and cause problems in the still
+> running VM.  So I think you're suggesting some sort of mode switch in
+> the device where direct access is disabled an emulation takes over
+> until the vCPUs are stopped.
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- MAINTAINERS                                   |   2 +-
- drivers/pci/controller/dwc/Kconfig            |  13 +-
- drivers/pci/controller/dwc/Makefile           |   1 +
- drivers/pci/controller/dwc/pcie-uniphier-ep.c | 399 ++++++++++++++++++++++++++
- 4 files changed, 412 insertions(+), 3 deletions(-)
- create mode 100644 drivers/pci/controller/dwc/pcie-uniphier-ep.c
+sorry for this confusion.
+yes, it's a kind of mode switch from a QEMU perspective.
+Currently, its implementation in our local branch is like that:
+1. before migration thread stopping vCPUs, a migration state
+(COMPLETING) notification is sent to vfio migration state notifier, and
+this notifier would put device state to !RUNNING, and put all BARs to trap
+state.
+2. in the kernel, when device state is set to !RUNNING, draining all
+pending device requests, and starts emulation.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4b6ec28..9ed0572 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12695,7 +12695,7 @@ M:	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
- L:	linux-pci@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/pci/uniphier-pcie*.txt
--F:	drivers/pci/controller/dwc/pcie-uniphier.c
-+F:	drivers/pci/controller/dwc/pcie-uniphier*.c
- 
- PCIE DRIVER FOR ST SPEAR13XX
- M:	Pratyush Anand <pratyush.anand@gmail.com>
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 0ba988b..6bc661a 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -247,15 +247,24 @@ config PCIE_TEGRA194
- 	  controller found in NVIDIA Tegra194 SoC.
- 
- config PCIE_UNIPHIER
--	bool "Socionext UniPhier PCIe controllers"
-+	bool "Socionext UniPhier PCIe host controllers"
- 	depends on ARCH_UNIPHIER || COMPILE_TEST
- 	depends on OF && HAS_IOMEM
- 	depends on PCI_MSI_IRQ_DOMAIN
- 	select PCIE_DW_HOST
- 	help
--	  Say Y here if you want PCIe controller support on UniPhier SoCs.
-+	  Say Y here if you want PCIe host controller support on UniPhier SoCs.
- 	  This driver supports LD20 and PXs3 SoCs.
- 
-+config PCIE_UNIPHIER_EP
-+	bool "Socionext UniPhier PCIe endpoint controllers"
-+	depends on ARCH_UNIPHIER || COMPILE_TEST
-+	depends on OF && HAS_IOMEM
-+	select PCIE_DW_EP
-+	help
-+	  Say Y here if you want PCIe endpoint controller support on
-+	  UniPhier SoCs. This driver supports Pro5 SoC.
-+
- config PCIE_AL
- 	bool "Amazon Annapurna Labs PCIe controller"
- 	depends on OF && (ARM64 || COMPILE_TEST)
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index 69faff3..ba458b6 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
- obj-$(CONFIG_PCI_MESON) += pci-meson.o
- obj-$(CONFIG_PCIE_TEGRA194) += pcie-tegra194.o
- obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
-+obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
- 
- # The following drivers are for devices that use the generic ACPI
- # pci_root.c driver but don't support standard ECAM config access.
-diff --git a/drivers/pci/controller/dwc/pcie-uniphier-ep.c b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-new file mode 100644
-index 00000000..7b5aa0f
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-@@ -0,0 +1,399 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PCIe endpoint controller driver for UniPhier SoCs
-+ * Copyright 2018 Socionext Inc.
-+ * Author: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/init.h>
-+#include <linux/of_device.h>
-+#include <linux/pci.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include "pcie-designware.h"
-+
-+/* Link Glue registers */
-+#define PCL_RSTCTRL0			0x0010
-+#define PCL_RSTCTRL_AXI_REG		BIT(3)
-+#define PCL_RSTCTRL_AXI_SLAVE		BIT(2)
-+#define PCL_RSTCTRL_AXI_MASTER		BIT(1)
-+#define PCL_RSTCTRL_PIPE3		BIT(0)
-+
-+#define PCL_RSTCTRL1			0x0020
-+#define PCL_RSTCTRL_PERST		BIT(0)
-+
-+#define PCL_RSTCTRL2			0x0024
-+#define PCL_RSTCTRL_PHY_RESET		BIT(0)
-+
-+#define PCL_MODE			0x8000
-+#define PCL_MODE_REGVAL			BIT(0)
-+
-+#define PCL_APP_CLK_CTRL		0x8004
-+#define PCL_APP_CLK_REQ			BIT(0)
-+
-+#define PCL_APP_READY_CTRL		0x8008
-+#define PCL_APP_LTSSM_ENABLE		BIT(0)
-+
-+#define PCL_APP_MSI0			0x8040
-+#define PCL_APP_VEN_MSI_TC_MASK		GENMASK(10, 8)
-+#define PCL_APP_VEN_MSI_VECTOR_MASK	GENMASK(4, 0)
-+
-+#define PCL_APP_MSI1			0x8044
-+#define PCL_APP_MSI_REQ			BIT(0)
-+
-+#define PCL_APP_INTX			0x8074
-+#define PCL_APP_INTX_SYS_INT		BIT(0)
-+
-+/* assertion time of intx in usec */
-+#define PCL_INTX_WIDTH_USEC		30
-+
-+struct uniphier_pcie_ep_priv {
-+	void __iomem *base;
-+	struct dw_pcie pci;
-+	struct clk *clk, *clk_gio;
-+	struct reset_control *rst, *rst_gio;
-+	struct phy *phy;
-+	const struct uniphier_pcie_ep_soc_data *data;
-+};
-+
-+struct uniphier_pcie_ep_soc_data {
-+	bool is_legacy;
-+	const struct pci_epc_features features;
-+};
-+
-+#define to_uniphier_pcie(x)	dev_get_drvdata((x)->dev)
-+
-+static void uniphier_pcie_ltssm_enable(struct uniphier_pcie_ep_priv *priv,
-+				       bool enable)
-+{
-+	u32 val;
-+
-+	val = readl(priv->base + PCL_APP_READY_CTRL);
-+	if (enable)
-+		val |= PCL_APP_LTSSM_ENABLE;
-+	else
-+		val &= ~PCL_APP_LTSSM_ENABLE;
-+	writel(val, priv->base + PCL_APP_READY_CTRL);
-+}
-+
-+static void uniphier_pcie_phy_reset(struct uniphier_pcie_ep_priv *priv,
-+				    bool assert)
-+{
-+	u32 val;
-+
-+	val = readl(priv->base + PCL_RSTCTRL2);
-+	if (assert)
-+		val |= PCL_RSTCTRL_PHY_RESET;
-+	else
-+		val &= ~PCL_RSTCTRL_PHY_RESET;
-+	writel(val, priv->base + PCL_RSTCTRL2);
-+}
-+
-+static void uniphier_pcie_init_ep(struct uniphier_pcie_ep_priv *priv)
-+{
-+	u32 val;
-+
-+	/* set EP mode */
-+	val = readl(priv->base + PCL_MODE);
-+	val |= PCL_MODE_REGVAL;
-+	writel(val, priv->base + PCL_MODE);
-+
-+	/* clock request */
-+	val = readl(priv->base + PCL_APP_CLK_CTRL);
-+	val &= ~PCL_APP_CLK_REQ;
-+	writel(val, priv->base + PCL_APP_CLK_CTRL);
-+
-+	/* deassert PIPE3 and AXI reset */
-+	val = readl(priv->base + PCL_RSTCTRL0);
-+	val |= PCL_RSTCTRL_AXI_REG | PCL_RSTCTRL_AXI_SLAVE
-+		| PCL_RSTCTRL_AXI_MASTER | PCL_RSTCTRL_PIPE3;
-+	writel(val, priv->base + PCL_RSTCTRL0);
-+
-+	uniphier_pcie_ltssm_enable(priv, false);
-+}
-+
-+static int uniphier_pcie_start_link(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_ep_priv *priv = to_uniphier_pcie(pci);
-+
-+	uniphier_pcie_ltssm_enable(priv, true);
-+
-+	return 0;
-+}
-+
-+static void uniphier_pcie_stop_link(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_ep_priv *priv = to_uniphier_pcie(pci);
-+
-+	uniphier_pcie_ltssm_enable(priv, false);
-+}
-+
-+static void uniphier_pcie_ep_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	enum pci_barno bar;
-+
-+	for (bar = BAR_0; bar <= BAR_5; bar++)
-+		dw_pcie_ep_reset_bar(pci, bar);
-+}
-+
-+static int uniphier_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	struct uniphier_pcie_ep_priv *priv = to_uniphier_pcie(pci);
-+	u32 val;
-+
-+	/* assert INTx */
-+	val = readl(priv->base + PCL_APP_INTX);
-+	val |= PCL_APP_INTX_SYS_INT;
-+	writel(val, priv->base + PCL_APP_INTX);
-+
-+	udelay(PCL_INTX_WIDTH_USEC);
-+
-+	/* deassert INTx */
-+	val = readl(priv->base + PCL_APP_INTX);
-+	val &= ~PCL_APP_INTX_SYS_INT;
-+	writel(val, priv->base + PCL_APP_INTX);
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep,
-+					  u8 func_no, u16 interrupt_num)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	struct uniphier_pcie_ep_priv *priv = to_uniphier_pcie(pci);
-+	u32 val;
-+
-+	val = FIELD_PREP(PCL_APP_VEN_MSI_TC_MASK, func_no)
-+		| FIELD_PREP(PCL_APP_VEN_MSI_VECTOR_MASK, interrupt_num - 1);
-+	writel(val, priv->base + PCL_APP_MSI0);
-+
-+	val = readl(priv->base + PCL_APP_MSI1);
-+	val |= PCL_APP_MSI_REQ;
-+	writel(val, priv->base + PCL_APP_MSI1);
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-+				      enum pci_epc_irq_type type,
-+				      u16 interrupt_num)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_EPC_IRQ_LEGACY:
-+		return uniphier_pcie_ep_raise_legacy_irq(ep);
-+	case PCI_EPC_IRQ_MSI:
-+		return uniphier_pcie_ep_raise_msi_irq(ep, func_no,
-+						      interrupt_num);
-+	default:
-+		dev_err(pci->dev, "UNKNOWN IRQ type (%d)\n", type);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pci_epc_features*
-+uniphier_pcie_get_features(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	struct uniphier_pcie_ep_priv *priv = to_uniphier_pcie(pci);
-+
-+	return &priv->data->features;
-+}
-+
-+static const struct dw_pcie_ep_ops uniphier_pcie_ep_ops = {
-+	.ep_init = uniphier_pcie_ep_init,
-+	.raise_irq = uniphier_pcie_ep_raise_irq,
-+	.get_features = uniphier_pcie_get_features,
-+};
-+
-+static int uniphier_add_pcie_ep(struct uniphier_pcie_ep_priv *priv,
-+				struct platform_device *pdev)
-+{
-+	struct dw_pcie *pci = &priv->pci;
-+	struct dw_pcie_ep *ep = &pci->ep;
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	int ret;
-+
-+	ep->ops = &uniphier_pcie_ep_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi2");
-+	pci->dbi_base2 = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(pci->dbi_base2))
-+		return PTR_ERR(pci->dbi_base2);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
-+	if (!res)
-+		return -EINVAL;
-+
-+	ep->phys_base = res->start;
-+	ep->addr_size = resource_size(res);
-+
-+	ret = dw_pcie_ep_init(ep);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize endpoint (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_ep_enable(struct uniphier_pcie_ep_priv *priv)
-+{
-+	int ret;
-+
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_prepare_enable(priv->clk_gio);
-+	if (ret)
-+		goto out_clk_disable;
-+
-+	ret = reset_control_deassert(priv->rst);
-+	if (ret)
-+		goto out_clk_gio_disable;
-+
-+	ret = reset_control_deassert(priv->rst_gio);
-+	if (ret)
-+		goto out_rst_assert;
-+
-+	uniphier_pcie_init_ep(priv);
-+
-+	if (priv->data->is_legacy)
-+		uniphier_pcie_phy_reset(priv, true);
-+
-+	ret = phy_init(priv->phy);
-+	if (ret)
-+		goto out_rst_gio_assert;
-+
-+	if (priv->data->is_legacy)
-+		uniphier_pcie_phy_reset(priv, false);
-+
-+	return 0;
-+
-+out_rst_gio_assert:
-+	reset_control_assert(priv->rst_gio);
-+out_rst_assert:
-+	reset_control_assert(priv->rst);
-+out_clk_gio_disable:
-+	clk_disable_unprepare(priv->clk_gio);
-+out_clk_disable:
-+	clk_disable_unprepare(priv->clk);
-+
-+	return ret;
-+}
-+
-+static const struct dw_pcie_ops dw_pcie_ops = {
-+	.start_link = uniphier_pcie_start_link,
-+	.stop_link = uniphier_pcie_stop_link,
-+};
-+
-+static int uniphier_pcie_ep_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct uniphier_pcie_ep_priv *priv;
-+	struct resource *res;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->data = of_device_get_match_data(dev);
-+	if (WARN_ON(!priv->data))
-+		return -EINVAL;
-+
-+	priv->pci.dev = dev;
-+	priv->pci.ops = &dw_pcie_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-+	priv->pci.dbi_base = devm_pci_remap_cfg_resource(dev, res);
-+	if (IS_ERR(priv->pci.dbi_base))
-+		return PTR_ERR(priv->pci.dbi_base);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "link");
-+	priv->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	if (priv->data->is_legacy) {
-+		priv->clk_gio = devm_clk_get(dev, "gio");
-+		if (IS_ERR(priv->clk))
-+			return PTR_ERR(priv->clk);
-+
-+		priv->rst_gio =
-+			devm_reset_control_get_shared(dev, "gio");
-+		if (IS_ERR(priv->rst_gio))
-+			return PTR_ERR(priv->rst_gio);
-+
-+		priv->clk = devm_clk_get(dev, "link");
-+		if (IS_ERR(priv->clk))
-+			return PTR_ERR(priv->clk);
-+
-+		priv->rst =
-+			devm_reset_control_get_shared(dev, "link");
-+		if (IS_ERR(priv->rst))
-+			return PTR_ERR(priv->rst);
-+	} else {
-+		priv->clk = devm_clk_get(dev, NULL);
-+		if (IS_ERR(priv->clk))
-+			return PTR_ERR(priv->clk);
-+
-+		priv->rst = devm_reset_control_get_shared(dev, NULL);
-+		if (IS_ERR(priv->rst))
-+			return PTR_ERR(priv->rst);
-+	}
-+
-+	priv->phy = devm_phy_optional_get(dev, "pcie-phy");
-+	if (IS_ERR(priv->phy))
-+		return PTR_ERR(priv->phy);
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	ret = uniphier_pcie_ep_enable(priv);
-+	if (ret)
-+		return ret;
-+
-+	return uniphier_add_pcie_ep(priv, pdev);
-+}
-+
-+static const struct uniphier_pcie_ep_soc_data uniphier_pro5_data = {
-+	.is_legacy = true,
-+	.features = {
-+		.linkup_notifier = false,
-+		.msi_capable = true,
-+		.msix_capable = false,
-+		.align = 1 << 16,
-+		.bar_fixed_64bit = BIT(BAR_0) | BIT(BAR_2) | BIT(BAR_4),
-+		.reserved_bar =  BIT(BAR_4),
-+	},
-+};
-+
-+static const struct of_device_id uniphier_pcie_ep_match[] = {
-+	{
-+		.compatible = "socionext,uniphier-pro5-pcie-ep",
-+		.data = &uniphier_pro5_data,
-+	},
-+	{ /* sentinel */ },
-+};
-+
-+static struct platform_driver uniphier_pcie_ep_driver = {
-+	.probe  = uniphier_pcie_ep_probe,
-+	.driver = {
-+		.name = "uniphier-pcie-ep",
-+		.of_match_table = uniphier_pcie_ep_match,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver(uniphier_pcie_ep_driver);
--- 
-2.7.4
+This implementation has two issues:
+1. it requires hardcode in QEMU to put all BARs trapped and the time
+spending on revoking mmaps is not necessary for devices that do not need it.
+2. !RUNNING state here is not accurate and it will confuse vendor
+drivers who stop devices after vCPUs stop.
 
+For the 2nd issue, I think we can propose a new device state like
+PRE-STOPPING.
+
+But for the 1st issue, not sure how to fix it right now.
+Maybe we can still add an asynchronous kernel notification and wait until
+QEMU have switched the region mmap state?
+
+
+> > > > [1] https://software.intel.com/sites/default/files/341204-intel-data-streaming-accelerator-spec.pdf
+> > > > 
+> > > >   
+> > > > > should assume all mmaps should be dropped on vfio device after we pass
+> > > > > some point of the migration process.
+> > > > >     
+> > > > yes, it should be workable for the use case of DSA.
+> > > >   
+> > > > > If there are a fixed set of mmap settings for a region and discrete
+> > > > > conditions under which they become active (ex. switch device to SAVING
+> > > > > mode) then QEMU could choose the right mapping itself and we wouldn't
+> > > > > need to worry about this asynchronous signaling problem, it would just
+> > > > > be defined as part of the protocol userspace needs to use.
+> > > > >    
+> > > > It's ok to let QEMU trigger dynamic trap on certain condition (like switching
+> > > > device to SAVING mode), but it seems that there's no fixed set of mmap settings
+> > > > for a region.
+> > > > For example, some devices may want to trap the whole BARs, but some devices
+> > > > only requires to trap a range of pages in a BAR for performance consideration.
+> > > > 
+> > > > If the "disable-able" flag is not preferable, maybe re-evaluation way is
+> > > > the only choice? But it is a burden to ask for re-evaluation if they are
+> > > > not required.
+> > > > 
+> > > > What about introducing a "region_bitmask" in ctl header of the migration region?
+> > > > when QEMU writes a region index to the "region_bitmask", it can read back
+> > > > from this field a bitmask to know which mmap to disable.  
+> > > 
+> > > If a vendor driver wanted to have a migration sparse mmap that's
+> > > different from its runtime sparse mmap, we could simply add a new
+> > > capability in the region_info.  Userspace would only need to switch to
+> > > a different mapping for regions which advertise a new migration sparse
+> > > mmap capability.  Doesn't that serve the same purpose as the proposed
+> > > bitmap?  
+> > 
+> > yes, it does.
+> > I will try this way in next version.
+> > 
+> > > > > > (2) performance optimization. There's an example in GVT (mdev case): 
+> > > > > >     PCI BARs are passed through on vGPU initialization and are mmaped to a host
+> > > > > >     dummy buffer. Then after initialization done, start trap of PCI BARs of
+> > > > > >     vGPUs and start normal host mediation. The initial pass-through can save
+> > > > > >     1000000 times of mmio trap.    
+> > > > > 
+> > > > > Much of this discussion has me worried that many assumptions are being
+> > > > > made about the user and device interaction.  Backwards compatible
+> > > > > behavior is required.  If a mdev device presents an initial sparse mmap
+> > > > > capability for this acceleration, how do you support an existing
+> > > > > userspace that doesn't understand the new dynamic mmap semantics and
+> > > > > continues to try to operate with the initial sparse mmap?  Doesn't this
+> > > > > introduce another example of the raciness of the device trying to
+> > > > > switch mmaps?  Seems that if QEMU doesn't handle the eventfd with
+> > > > > sufficient timeliness the switch back to trap behavior could miss an
+> > > > > important transaction.  This also seems like an optimization targeted
+> > > > > at VMs running for only a short time, where it's not obvious to me that
+> > > > > GVT-g overlaps those sorts of use cases.  How much initialization time
+> > > > > is actually being saved with such a hack?  Thanks,
+> > > > >    
+> > > > It can save about 4s initialization time with such a hack. But you are
+> > > > right, the backward compatibility is a problem and we are not going to
+> > > > upstream that. Just an example to show the usage.
+> > > > It's fine if we drop the way of asynchronous kernel notification.  
+> > > 
+> > > I think to handle such a situation we'd need a mechanism to revoke the
+> > > user's mmap.  We can make use of an asynchronous mechanism to improve
+> > > performance of a device, but we need a synchronous mechanism to
+> > > maintain correctness.  For this example, the sparse mmap capability
+> > > could advertise the section of the BAR as mmap'able and revoke that
+> > > user mapping after the device finishes the initialization phase.
+> > > Potentially the user re-evaluating region_info after the initialization
+> > > phase would see a different sparse mmap capability excluding these
+> > > sections, but then we might need to think whether we want to suggest
+> > > that the user always re-read the region_info after device reset.  AFAIK,
+> > > we currently have no mechanism to revoke user mmaps. Thanks,
+> > >   
+> > Actually I think the "disable-able" flag is good except for its backward
+> > compatibility :)
+> 
+> Setting a flag on a section of a region doesn't solve the asynchronous
+> problem.  Thanks,
+> 
+yes. I mean we are ok to give up the way of kernel to trigger re-evaluation
+for now, as currently the use cases of DSA and GVT are not in upstream
+phase and we can add that if necessary in future.
+And I think "disable-able" flag is a way to re-use existing sparse mmap,
+because otherwise we have to either re-evaluate the region_info or introduce
+new caps like migration_sparse_mmap, reset_sparse_mmap. But I agree,
+this flag may cause problem for old QEMUs.
+
+Thanks
+Yan
