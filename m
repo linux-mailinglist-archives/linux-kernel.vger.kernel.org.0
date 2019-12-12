@@ -2,142 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8A8E11C39F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE2F11C3A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 03:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbfLLCvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Dec 2019 21:51:42 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:48669 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727678AbfLLCvl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Dec 2019 21:51:41 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191212025139epoutp02135c5a0c1d6756073fbfa38e3c875961~ff-hTL0Y_1195211952epoutp02n
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 02:51:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191212025139epoutp02135c5a0c1d6756073fbfa38e3c875961~ff-hTL0Y_1195211952epoutp02n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576119099;
-        bh=GnrJ15q/HFwDIHL3gFZLsi8o81NU126LeWMf5E0LJ5c=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=JFJiKm5hOnM7amp9ocV7Wp2WD8TY6eWsHbMvfQlfarNLztP7GRIXzZjr1O1auz1I9
-         ZaEBt81uPPs3LOE1g4CsPRC+cw550RnSoCS6SpY5JhqGVANjecU7jV5sVhWVwy01hI
-         DShwLN5GmUbhGMsoYr4CgObnROAQbQCiCvbZUMLI=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191212025138epcas1p1858adcc8b9206ae31b3012d76f86ffd7~ff-g131vi0821908219epcas1p1h;
-        Thu, 12 Dec 2019 02:51:38 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47YJGc3trDzMqYkc; Thu, 12 Dec
-        2019 02:51:36 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        80.37.48498.83BA1FD5; Thu, 12 Dec 2019 11:51:36 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191212025135epcas1p274ba7bab1a68bb734e41db188027270a~ff-eOv5JT0287002870epcas1p2I;
-        Thu, 12 Dec 2019 02:51:35 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191212025135epsmtrp1af88fc2491b136ce6d1856e8ce60fed6~ff-eOFwhy1625416254epsmtrp1D;
-        Thu, 12 Dec 2019 02:51:35 +0000 (GMT)
-X-AuditID: b6c32a36-a55ff7000001bd72-00-5df1ab380e70
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        19.AB.10238.73BA1FD5; Thu, 12 Dec 2019 11:51:35 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191212025135epsmtip239f283f5bdacfa75b85dab823f22caa1~ff-eCmZop1206312063epsmtip2n;
-        Thu, 12 Dec 2019 02:51:35 +0000 (GMT)
-Subject: Re: [PATCH] PM / devfreq: tegra: add COMMON_CLK dependency
-To:     Arnd Bergmann <arnd@arndb.de>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <e046bf10-f683-c230-471f-cd7768db3b11@samsung.com>
-Date:   Thu, 12 Dec 2019 11:58:05 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
-MIME-Version: 1.0
-In-Reply-To: <20191211125411.1857250-1-arnd@arndb.de>
+        id S1727340AbfLLC6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Dec 2019 21:58:42 -0500
+Received: from mail-eopbgr30085.outbound.protection.outlook.com ([40.107.3.85]:33042
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726741AbfLLC6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Dec 2019 21:58:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cUMMHYMKuk6H++TE2++I66yJ9yuYzDe8LYQzqGWG/JRkHTsbif9IEHP/2RNzu+P/C3Z8Bz/2Nx33/XQt2q3lrieMfDhWXtLbTe9awjTmATANvXpYjXobC7Pi5jVfDWKoM5hv+vhjhjEcCVbEQ22VkkP900km5TrMdzwZ5uUPZ2zl7bOUt+KnfHLLscPpmIvBNpKEiX1memU8z1IoX2NISDhYA0m9uKa9yga9/Hnzv5Oj8HsYO2yJMZIyexwbymbLJEmRVR518rtW89kW7SBnjjtSrGlHauDTs4Rger2RY2+mDGWQTpXy2YVdeKXWmiKCP2ls3ASmoi4E2j9ohN+1eA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7H80ueDAI1BZaVY7PtEth1+meRWE6eRsxYMoFkbRFGk=;
+ b=Q/6oG4qohYvFhNioJ0YuyxH+fQOgJ+P4o9ORgJKpGYqzoEnGou2l50gdsDCrC4OQXgSOFfiRA6oiZ1gEji1ICDTOG6Pgy/2AHfelgiM3dBpw6iuyAVJ+fn8wyH/jU2P8b38+kpGmSYh1un6yLkuV1Ldf0G0TmodwI7RSuCD89VdHLHS6jpZNjv3/uJO3+1dzQg0JbFVZFEPA3+OIYiObZCgwPAYDv1jwdpRWITOMaFXKOtd/ulUcyq3fV4ZNbPR2AvTokVpHvlFhnH+oCsp8zY4tVVE2t/oAPYpXewNrkACjobtBoypkSvVJY/9GBhxJL1nGeBB4A7E+B5uPHwPzYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7H80ueDAI1BZaVY7PtEth1+meRWE6eRsxYMoFkbRFGk=;
+ b=exAsROwNX/NesGwjaO6VCJc2V+PtrnPglurNKXQcz8e9aVCDa1w6OTifZIxJechIQ+oo4574RRxqRVO0AO6zANqZGIZm+uCq7q6oJjYfXnAb+KC+BLRTo7colRMW4Pc4wMgR7VWe7Hs/na+blzoDs6KVpNR/ylCjAY4AwHLNEf8=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6369.eurprd04.prod.outlook.com (20.179.252.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.14; Thu, 12 Dec 2019 02:58:38 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::505:87e7:6b49:3d29]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::505:87e7:6b49:3d29%7]) with mapi id 15.20.2538.017; Thu, 12 Dec 2019
+ 02:58:38 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 0/9] clk: imx8m: switch to clk_hw based API
+Thread-Topic: [PATCH V2 0/9] clk: imx8m: switch to clk_hw based API
+Thread-Index: AQHVsJgNGbvwO6VVu0SKbjsMmkP7iw==
+Date:   Thu, 12 Dec 2019 02:58:38 +0000
+Message-ID: <1576119353-26679-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmrq7F6o+xBoeuSVn8nXSMHch5zGhx
-        tukNu8XlXXPYLD73HmG0uN24gs1i86apzA7sHr9/TWL02DnrLrvHu3Pn2D36tqxi9Pi8SS6A
-        NSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoDCWF
-        ssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgWWBXnFibnFpXrpecn6ulaGBgZEpUGFC
-        dsaNvlvMBV/YK7pO/mVqYNzF1sXIySEhYCKxsr+LvYuRi0NIYAejxNZPO9kgnE+MEuvW3IDK
-        fGOU2HntC1zLqjXLGSESexklXv7dD9XynlFi3u5nzF2MHBzCAs4S/74ngsRFBOYySix/8Bus
-        m1kgSeJW22oWEJtNQEti/4sbYHF+AUWJqz8eM4L08grYSdx74AgSZhFQlfh1pYcJxBYVCJM4
-        ua2FEcTmFRCUODnzCdgYTgFTibfT/zNBjBeXuPVkPpQtL7H97RxmkBskBN6zSay/NIMZ4gMX
-        iZuTvkLZwhKvjm9hh7ClJF72t0HZ1RIrTx5hg2juYJTYsv8CK0TCWGL/0slMIIcyC2hKrN+l
-        DxFWlNj5ey4jxGI+iXdfe1hBSiQEeCU62oQgSpQlLj+4ywRhS0osbu9km8CoNAvJO7OQvDAL
-        yQuzEJYtYGRZxSiWWlCcm55abFhghBzbmxjBSVTLbAfjonM+hxgFOBiVeHgfSH+MFWJNLCuu
-        zD3EKMHBrCTCe7ztXawQb0piZVVqUX58UWlOavEhRlNgaE9klhJNzgcm+LySeENTI2NjYwsT
-        QzNTQ0MlcV6OHxdjhQTSE0tSs1NTC1KLYPqYODilGhhnH5l56trUSo8ChfQNHfK1Rxe/rfMp
-        /GDVquQ3x2et86EHjY5nMq7k5SStq7Ra1NKpLjZjQau1RobydE+Z7g16/66ovDiXIRG74tvj
-        0H6WT29kdbvO1y55Pi3t6Z9f3fZ+rQuMN0WIfGL951ey/riJgZ9N7KNsjR0OBfNN1m24uH3h
-        NbMLnYFKLMUZiYZazEXFiQDpjLeCuAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjkeLIzCtJLcpLzFFi42LZdlhJXtd89cdYg1XduhZ/Jx1jt1j98TGj
-        xdmmN+wWl3fNYbP43HuE0eJ24wo2i82bpjI7sHv8/jWJ0WPnrLvsHu/OnWP36NuyitHj8ya5
-        ANYoLpuU1JzMstQifbsErowbfbeYC76wV3Sd/MvUwLiLrYuRk0NCwERi1ZrljF2MXBxCArsZ
-        JT5OPcEKkZCUmHbxKHMXIweQLSxx+HAxRM1bRon1f6eBxYUFnCX+fU8EiYsIzGaUOHX2KNhQ
-        ZoEkiUnzrrOD2EICHYwSXS/B4mwCWhL7X9wAs/kFFCWu/njMCDKHV8BO4t4DR5Awi4CqxK8r
-        PUwgtqhAmMTOJY/BbF4BQYmTM5+wgNicAqYSb6f/Z4JYpS7xZ94lZghbXOLWk/lQcXmJ7W/n
-        ME9gFJ6FpH0WkpZZSFpmIWlZwMiyilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOJa0
-        NHcwXl4Sf4hRgINRiYd3hvrHWCHWxLLiytxDjBIczEoivMfb3sUK8aYkVlalFuXHF5XmpBYf
-        YpTmYFES532adyxSSCA9sSQ1OzW1ILUIJsvEwSnVwJgpuI/78pPozwp8doIrLwuZqAffzbFh
-        +ikSy5fpfdU3+OyLmN6fuWHXuFqOCcb086xaG1g965fUhFAfqVLTh7wzK/S8n2+057u2WPmC
-        6DkmZ1bdVLZ/oQcYWn1msb64F3kgwah/aptP+fqXjlXz5C4oznl8ZE5OLLfetvNLkt++4Qqq
-        ejrvvBJLcUaioRZzUXEiAH5oOJShAgAA
-X-CMS-MailID: 20191212025135epcas1p274ba7bab1a68bb734e41db188027270a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191211125428epcas1p3200de29d1a7566ebd443cd0477ca594e
-References: <CGME20191211125428epcas1p3200de29d1a7566ebd443cd0477ca594e@epcas1p3.samsung.com>
-        <20191211125411.1857250-1-arnd@arndb.de>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR0401CA0022.apcprd04.prod.outlook.com
+ (2603:1096:202:2::32) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: aae20718-2039-48d5-26b8-08d77eaf2f71
+x-ms-traffictypediagnostic: AM0PR04MB6369:|AM0PR04MB6369:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB6369EA324F1B4BBAEE57663D88550@AM0PR04MB6369.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3383;
+x-forefront-prvs: 0249EFCB0B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(396003)(366004)(136003)(199004)(189003)(6512007)(71200400001)(44832011)(4326008)(2906002)(6636002)(26005)(186003)(478600001)(6486002)(966005)(5660300002)(2616005)(86362001)(8936002)(36756003)(110136005)(316002)(8676002)(6506007)(66476007)(66556008)(64756008)(66946007)(66446008)(81156014)(54906003)(52116002)(81166006)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6369;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: KvnnWTtXq+eRCabnFgCLVrAWyFlIrkKma1aqy98fwC2AMVfUjmU41Fvt6thaRaMO6WzWEO/5H7heDEE4lkHJOaeMJ3GJKf/aA3zFzt3iruYId9UNP5GtQxrYLqr+OCzXLnCIsvKlRR/6ruHva1xyZ06E4ZZ12juDBAiArim2qia67YHvnTqGVV1s9WFNcIA9KVWjJvsUZe3obFik/BS2NslHweoQi4kSlf7ekVaDkCaDh5CSsMzp/YM88XkPtELPN5aHeMqF52FEA4KiBcz8BV4DVE1ujICBadoMbRgeBtivW+xVFfZaHz9gwkhk7tBtLb1pbLBluq7aezK6wvWCAOqnuhMe+KfFFE3TB9tLwTylZ5EDWMNMG4uCTN3qTgLDyS1N6uAypeFs1L6pU0cBL1qninmooiidSrCim4KzehXVD0KXqeTc8dU+s+BB2r+7E6DEKnjGvIsk2ZIefv50xNIpwTrQSsHYMkfMY0I5nuv9vZRjtZLS9yh9Fy/zooKpx6vgfu033R3MHjeOXB8aVw==
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aae20718-2039-48d5-26b8-08d77eaf2f71
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2019 02:58:38.0773
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: K0jyZjvJg4qRqlw/llt6Xy/oO24ohPrvez2HeR6DbzHSsnqJw6kou0qppVO9KGwdRb4hh5fqvb6IAcK79Oqe4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6369
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/19 9:54 PM, Arnd Bergmann wrote:
-> Compile-testing this driver fails if CONFIG_COMMON_CLK is not set:
-> 
-> drivers/devfreq/tegra30-devfreq.o: In function `tegra_devfreq_target':
-> tegra30-devfreq.c:(.text+0x164): undefined reference to `clk_set_min_rate'
-> 
-> Fixes: 35f8dbc72721 ("PM / devfreq: tegra: Enable COMPILE_TEST for the driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/devfreq/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index defe1d438710..f712c3de0876 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -98,6 +98,7 @@ config ARM_TEGRA_DEVFREQ
->  		ARCH_TEGRA_132_SOC || ARCH_TEGRA_124_SOC || \
->  		ARCH_TEGRA_210_SOC || \
->  		COMPILE_TEST
-> +	depends on COMMON_CLK
->  	select PM_OPP
->  	help
->  	  This adds the DEVFREQ driver for the Tegra family of SoCs.
-> 
+From: Peng Fan <peng.fan@nxp.com>
 
-Applied it. Thanks.
+This covers v1 https://patchwork.kernel.org/cover/11217881/ and
+v3 https://patchwork.kernel.org/cover/11251585/
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+V2:
+Per Leonard's comments, use to_clk helpers
+Add Abel's R-b tag
+Rebased on Shawn's next branch
+
+This patchset is to convert i.MX8M clk driver to clk_hw based API,
+and add clk_hw helpers that will be used by i.MX8M clk driver.
+
+Peng Fan (9):
+  clk: imx: clk-pll14xx: Switch to clk_hw based API
+  clk: imx: clk-composite-8m: Switch to clk_hw based API
+  clk: imx: add imx_unregister_hw_clocks
+  clk: imx: add hw API imx_clk_hw_mux2_flags
+  clk: imx: gate3: Switch to clk_hw based API
+  clk: imx: Remove __init for imx_obtain_fixed_clk_hw() API
+  clk: imx: imx8mn: Switch to clk_hw based API
+  clk: imx: imx8mm: Switch to clk_hw based API
+  clk: imx: imx8mq: Switch to clk_hw based API
+
+ drivers/clk/imx/clk-composite-8m.c |   4 +-
+ drivers/clk/imx/clk-imx8mm.c       | 555 +++++++++++++++++----------------=
+--
+ drivers/clk/imx/clk-imx8mn.c       | 489 ++++++++++++++++---------------
+ drivers/clk/imx/clk-imx8mq.c       | 573 +++++++++++++++++++--------------=
+----
+ drivers/clk/imx/clk-pll14xx.c      |  22 +-
+ drivers/clk/imx/clk.c              |  12 +-
+ drivers/clk/imx/clk.h              |  52 +++-
+ 7 files changed, 896 insertions(+), 811 deletions(-)
+
+--=20
+2.16.4
+
