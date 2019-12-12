@@ -2,106 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FAB511D5AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:33:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A00711D5B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 19:34:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730409AbfLLSds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 13:33:48 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:47048 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730291AbfLLSds (ORCPT
+        id S1730483AbfLLSes (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 13:34:48 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:52350 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730455AbfLLSer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 13:33:48 -0500
-Received: by mail-ot1-f66.google.com with SMTP id g18so2938987otj.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 10:33:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2JEzjDTXigw8nTAlF070YiTxXmoqt0fiFaSaJYbD0m0=;
-        b=ufuXmQiynKIhlryP/nAuUMz1QU6Dn2EbSsneTbWxFV91i8ZR8GVxkgzVfIhq68Om8y
-         hZaMhuc6jD81PgDVsrdWfixKWiTEuKjXPE/5CHJaZUWxSV7jkCMMGPXZf4hIFze5QZkO
-         Fe3pjnG9MZcRSiXX4h03BqXwfQg5esIhN7SCPPU15/RLVn6EdXc6q2IYbirqdEBqqtoV
-         1X9u1y1J9sUpVlXTASC3w8oWerK5SQ+bzRCcq3/3Y5XHac6VuhEuHceHyOxTc4prEj7a
-         WAjtXFAQLlSYUigoSI+ks/o15KvvRt2eFWxG1vFmFAoGlg7coj4s4E6cU8GcoMDRCYBm
-         fl3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2JEzjDTXigw8nTAlF070YiTxXmoqt0fiFaSaJYbD0m0=;
-        b=PzhIWBf/+wh4xPbYgfjLBu44VvMQ4UYE0J8sFU1FTqgcVQyPoAZy3ovPXDLS75Q3jH
-         /DPVQwlm3EKFj/KevC/QCNKm9QaSy/AYRpITYfSZVmwCJ8IrtZpMpR3eckJlALKWaQdB
-         /iu68BAPrqgHMMb7SeCB+iLvtgUu2CGr3IQ6MgjdlwwI1lGC0IALsKiAdCgm08vEgKbR
-         CrEvexR+L4v2rBOJGHTWXMB4msvxzMxiXaaGa+8CpFJl7R1/w/N1yireLzDlhSSNPeYb
-         zhmye5huydhLraXE30WOJEAbI8vLCJri6tAqNCho3BBdtMV30C1pekSm4EHAH7u9OZ4J
-         QN6w==
-X-Gm-Message-State: APjAAAUY7WnAmbZ7/LYYLBEjFslGjQw3WFBZXiKHQvdaLJU2oShiQx4g
-        fzM/1Q/1Wwu6RKyKIrkbklUzoBOftgpb8A/lxq059A==
-X-Google-Smtp-Source: APXvYqweGtmWP/9RDwqqztjyBmVQhQCTFC0RrVREpzH+hWNkdDn380L8OObmNOa7PFyEM3JGNhguvUUT5fLg37ssxCk=
-X-Received: by 2002:a05:6830:1097:: with SMTP id y23mr9499165oto.332.1576175627329;
- Thu, 12 Dec 2019 10:33:47 -0800 (PST)
+        Thu, 12 Dec 2019 13:34:47 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifTIR-0001bO-9B; Thu, 12 Dec 2019 18:34:43 +0000
+Date:   Thu, 12 Dec 2019 18:34:43 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+31043da7725b6ec210f1@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: BUG: corrupted list in __dentry_kill (2)
+Message-ID: <20191212183443.GH4203@ZenIV.linux.org.uk>
+References: <000000000000b6b03205997b71cf@google.com>
+ <20191212061206.GE4203@ZenIV.linux.org.uk>
+ <CACT4Y+YJuV8EGSx8K_5Qd0f+fUz8MHb1awyJ78Jf8zrNmKokrA@mail.gmail.com>
+ <20191212133844.GG4203@ZenIV.linux.org.uk>
+ <CACT4Y+ZQ6C07TcuAHwc-T+Lb2ZkigkqW32d=TF054RuPwUFimw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20191203172641.66642-1-john.stultz@linaro.org>
- <20191203172641.66642-2-john.stultz@linaro.org> <b3e979ab-0c95-4e16-6399-9bed09e08a7b@ti.com>
-In-Reply-To: <b3e979ab-0c95-4e16-6399-9bed09e08a7b@ti.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Thu, 12 Dec 2019 10:33:36 -0800
-Message-ID: <CALAqxLV5XwrJU2psx_ALFK1q9ZTaLTGRD9dgQhGQ5v=ojfyE+w@mail.gmail.com>
-Subject: Re: [RESEND][PATCH v16 1/5] dma-buf: Add dma-buf heaps framework
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Dave Airlie <airlied@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+ZQ6C07TcuAHwc-T+Lb2ZkigkqW32d=TF054RuPwUFimw@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 8:52 AM Andrew F. Davis <afd@ti.com> wrote:
-> On 12/3/19 12:26 PM, John Stultz wrote:
-> > +#define DMA_HEAP_IOC_MAGIC           'H'
-> > +
-> > +/**
-> > + * DOC: DMA_HEAP_IOC_ALLOC - allocate memory from pool
-> > + *
-> > + * Takes a dma_heap_allocation_data struct and returns it with the fd field
-> > + * populated with the dmabuf handle of the allocation.
-> > + */
-> > +#define DMA_HEAP_IOC_ALLOC   _IOWR(DMA_HEAP_IOC_MAGIC, 0x0,\
-> > +                                   struct dma_heap_allocation_data)
-> > +
->
-> <subsytem>_IOC_
->
-> Seems more common for the internal numberings and such, what the user
-> calls is more often (espesially in DRM and DMA_BUF):
->
-> <subsytem>_IOCTL_<function>
->
-> This is really just another naming nit but becouse this one really *is*
-> ABI then getting our prefrence right is a must, up to you here.
+On Thu, Dec 12, 2019 at 04:57:14PM +0100, Dmitry Vyukov wrote:
 
-So yea, Sumit has already pulled these into drm-misc-next, so this
-feedback is just a few days too late.
+> > Speaking of bisect hazards, I'd recommend to check how your bisect
+> > went - the bug is definitely local to this commit and I really
+> > wonder what had caused the bisect to go wrong in this particular
+> > case.
+> 
+> I did not get the relation of folding to bisection. Or you mean these
+> are just separate things?
 
-But it's not a bad suggestion, so if you want to submit a tack-on
-patch to drm-misc-next I suspect we can, try to pull it in.
+Suppose instead of folding the fix in I would've done a followup commit
+just with the fix.  And left the branch in that form, eventually getting
+it pulled into mainline.  From that point on, *ANY* bisect stepping into
+the first commit would've been thrown off.  For ever and ever, since
+once it's in mainline, it really won't go away.
 
-thanks
--john
+That's what folding avoids - accumulation of scar tissue, if you will.
+Sure, there's enough cases when bug is found too late - it's already
+in mainline or pulled into net-next or some other branch with similar
+"no rebase, no reorder" policy.  But if you look at the patchsets posted
+on the lists and watch them from iteration to iteration, you'll see
+a _lot_ of fix-folding.  IME (both by my own practice and by watching
+the patchsets posted by others) it outnumbers the cases when fix can't
+be folded by quite a factor.  I wouldn't be surprised if it was an
+order of magnitude...
+
+Strict "never fold fixes" policy would've accelerated the accumulation
+of bisect hazards in the mainline.  And while useful bisect may be a lost
+cause for CI bots, it isn't that for intelligent developers.  Anything
+that makes it more painful is not going to be welcome.
