@@ -2,160 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2191E11D17A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:52:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0DAF11D185
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 16:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbfLLPwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 10:52:23 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50673 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729416AbfLLPwW (ORCPT
+        id S1729666AbfLLPyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 10:54:21 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43810 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729247AbfLLPyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:52:22 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a5so2916697wmb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 07:52:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ppVt/c6SNGbxwMT06FmYWiQkL8ReCtZAObgQLli/bGc=;
-        b=FQK+F5Tqc8VmatT6qdaJSBwIwwPtF4BX7q+Zo2tSJdUU7H3Poig4l99vIp+I1/Vvlh
-         mimYc8wDLLjPw0140MevtlhicgJTxyOHkfWRR5ay61yk0bxeCWWLe4PrBHC4fIXmy8xg
-         ffcCWN9W2Sts1HHv2X6IJH3dkKfXiIOEIBUem78RJYbraY689kLWgWeWyJNiG3YG7Mru
-         PJyaMuC+g111+wvG/l7UEPS5W5yajVSs2te9dnR4P63kRf/E3jnMGPhIBVqUIGqSyNk7
-         JlY1+9WWAU6STu+j4Oi234ZDrjlFqABIbb7Sj/1lHOB31K2H9V5kA4HnFDRFrdDawBKB
-         vBHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ppVt/c6SNGbxwMT06FmYWiQkL8ReCtZAObgQLli/bGc=;
-        b=kwd3rI4OByR0qlEXLe0jc6081E3k/aqJBmbtY70AWatBYDwKQjqUQ2HFuybRYfhCAO
-         qoPj27pjFf469h6TzNEMqanh20IpEiwjjLlSXYK3MTa+wWr630N9tXI7C7cmntJWYWN7
-         +Oa0aoFH9a5DNNdJn54D2LAibBiSk0C3wQXlh7F4knq0l4vo3qqXYCuuv8WqbLT7L99f
-         7sUsmdY1cAoudwnYM5GFGB9o1U1FI69T5yH4mls/8R9dUgabeQM2YMK4pUMwpQEF+jUQ
-         bkuSqAnDPX6Wdchj7pnZAMHahptDSKvu/lSJrnLJM9J8TX7judxEu+mFSFzy5qNnJ4Gh
-         rnBg==
-X-Gm-Message-State: APjAAAVb+EoVNgqHjH43lp5kkwT1jBnFekeUmt24Ek14amsOM18t2Dlz
-        yAeq9Du3e73jLvje9lAYRHcktA==
-X-Google-Smtp-Source: APXvYqyvc2Y2xdShKzDEsC4cVAZysnpb3aqCe69/dn9O8AQEa41FSMBBexqoLXh3Te7JRAVg4RzXxA==
-X-Received: by 2002:a1c:14a:: with SMTP id 71mr7609430wmb.48.1576165939689;
-        Thu, 12 Dec 2019 07:52:19 -0800 (PST)
-Received: from dell ([95.149.164.71])
-        by smtp.gmail.com with ESMTPSA id z189sm7190746wmc.2.2019.12.12.07.52.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 07:52:19 -0800 (PST)
-Date:   Thu, 12 Dec 2019 15:52:09 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mfd: intel_soc_pmic: Rename pwm_backlight pwm-lookup
- to pwm_pmic_backlight
-Message-ID: <20191212155209.GC3468@dell>
-References: <20191119151818.67531-1-hdegoede@redhat.com>
- <20191119151818.67531-3-hdegoede@redhat.com>
- <20191210085111.GQ3468@dell>
- <a05e5a2b-568e-2b0d-0293-aa937c590a74@redhat.com>
- <20191212084546.GA3468@dell>
- <d22e9a04-da09-0f41-a78e-ac17a947650a@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d22e9a04-da09-0f41-a78e-ac17a947650a@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 12 Dec 2019 10:54:20 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBCFnTus110391;
+        Thu, 12 Dec 2019 15:52:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=Xn0flDReye6aR5I2+sBndrykdJvUw4tnWd/w/4iOE8I=;
+ b=UvraykOmy/BoiCbihwwgJ9btFSG162/cAbspyKksvLqIfIz0sm/fcwN/Gh1TU8kKyEUj
+ +khYN0y5CXpHVcYEjqXaSIei8vQ1QgWIWCpgwC1ikZDB8Pha17oHp0GKxmz/UfTGG2W7
+ wh3T0gzDIKcrgo1Ge2TS5UL0ec2RBxiWz8xGDixlkp9tDVfocrwpeC8lOHwGD0fd+njU
+ dadP0SS6RDLhOsTe/H0rlNOsTA8V3VmSkw2jkHRcYtF8NpqSesV5uk8r3rkQA2G1ocjb
+ hg0SYIEQ87hRJEKJKvT4CSDqTnJZSkk1QSJ5GJ4xsT1EFly2YdF5V5A4etvD6eKpJWR7 IQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2wr41qkw18-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Dec 2019 15:52:29 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBCFnQJW135560;
+        Thu, 12 Dec 2019 15:52:28 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wumk6cv32-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Dec 2019 15:52:28 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBCFqJbt028969;
+        Thu, 12 Dec 2019 15:52:20 GMT
+Received: from [192.168.14.112] (/109.65.223.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Dec 2019 07:52:19 -0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH v4 11/19] x86/cpu: Print VMX flags in /proc/cpuinfo using
+ VMX_FEATURES_*
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <d0b21e7e-69f5-09f9-3e1c-14d49fa42b9f@redhat.com>
+Date:   Thu, 12 Dec 2019 17:52:12 +0200
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
+        Len Brown <lenb@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4A24DE75-4E68-4EC6-B3F3-4ACB0EE82BF0@oracle.com>
+References: <20191128014016.4389-1-sean.j.christopherson@intel.com>
+ <20191128014016.4389-12-sean.j.christopherson@intel.com>
+ <20191212122646.GE4991@zn.tnic>
+ <d0b21e7e-69f5-09f9-3e1c-14d49fa42b9f@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9469 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=610
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912120123
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9469 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=677 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912120123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Dec 2019, Hans de Goede wrote:
 
-> Hi,
-> 
-> On 12-12-2019 09:45, Lee Jones wrote:
-> > On Wed, 11 Dec 2019, Hans de Goede wrote:
-> > 
-> > > Hi Lee,
-> > > 
-> > > On 10-12-2019 09:51, Lee Jones wrote:
-> > > > On Tue, 19 Nov 2019, Hans de Goede wrote:
-> > > > 
-> > > > > At least Bay Trail (BYT) and Cherry Trail (CHT) devices can use 1 of 2
-> > > > > different PWM controllers for controlling the LCD's backlight brightness.
-> > > > > 
-> > > > > Either the one integrated into the PMIC or the one integrated into the
-> > > > > SoC (the 1st LPSS PWM controller).
-> > > > > 
-> > > > > So far in the LPSS code on BYT we have skipped registering the LPSS PWM
-> > > > > controller "pwm_backlight" lookup entry when a Crystal Cove PMIC is
-> > > > > present, assuming that in this case the PMIC PWM controller will be used.
-> > > > > 
-> > > > > On CHT we have been relying on only 1 of the 2 PWM controllers being
-> > > > > enabled in the DSDT at the same time; and always registered the lookup.
-> > > > > 
-> > > > > So far this has been working, but the correct way to determine which PWM
-> > > > > controller needs to be used is by checking a bit in the VBT table and
-> > > > > recently I've learned about 2 different BYT devices:
-> > > > > Point of View MOBII TAB-P800W
-> > > > > Acer Switch 10 SW5-012
-> > > > > 
-> > > > > Which use a Crystal Cove PMIC, yet the LCD is connected to the SoC/LPSS
-> > > > > PWM controller (and the VBT correctly indicates this), so here our old
-> > > > > heuristics fail.
-> > > > > 
-> > > > > Since only the i915 driver has access to the VBT, this commit renames
-> > > > > the "pwm_backlight" lookup entries for the Crystal Cove PMIC's PWM
-> > > > > controller to "pwm_pmic_backlight" so that the i915 driver can do a
-> > > > > pwm_get() for the right controller depending on the VBT bit, instead of
-> > > > > the i915 driver relying on a "pwm_backlight" lookup getting registered
-> > > > > which magically points to the right controller.
-> > > > > 
-> > > > > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> > > > > ---
-> > > > >    drivers/mfd/intel_soc_pmic_core.c | 2 +-
-> > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > For my own reference:
-> > > >     Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> > > 
-> > > As mentioned in the cover-letter, to avoid breaking bi-sectability
-> > > as well as to avoid breaking the intel-gfx CI we need to merge this series
-> > > in one go through one tree. Specifically through the drm-intel tree.
-> > > Is that ok with you ?
-> > > 
-> > > If this is ok with you, then you do not have to do anything, I will just push
-> > > the entire series to drm-intel. drivers/mfd/intel_soc_pmic_core.c
-> > > does not see much changes so I do not expect this to lead to any conflicts.
-> > 
-> > It's fine, so long as a minimal immutable pull-request is provided.
-> > Whether it's pulled or not will depend on a number of factors, but it
-> > needs to be an option.
-> 
-> The way the drm subsys works that is not really a readily available
-> option. The struct definition which this patch changes a single line in
-> has not been touched since 2015-06-26 so I really doubt we will get a
-> conflict from this.
 
-Always with the exceptions ...
+> On 12 Dec 2019, at 16:13, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>=20
+> On 12/12/19 13:26, Borislav Petkov wrote:
+>>=20
+>> vmx flags       : virtual_nmis preemption_timer invvpid ept_x_only =
+ept_ad ept_1gb flexpriority tsc_offsetting virtual_tpr mtf =
+virt_apic_accesses ept vpid unrestricted_guest ple shadow_vmcs pml =
+mode_based_ept_exec
+>>=20
+>> virtual_nmis		-> vnmis
+>=20
+> Even vnmi
+>=20
+>> preemption_timer	-> preempt_tmr
+>=20
+> I would prefer the full one here.
+>=20
+>> flexpriority		-> flexprio
+>=20
+> Full name?
+>=20
+>> tsc_offsetting		-> tsc_ofs
+>=20
+> tsc_offset?
+>=20
+>> virtual_tpr		-> vtpr
+>=20
+> Do we need this?  It's usually included together with flexpriority.
+>=20
+>> virt_apic_accesses	-> vapic
+>=20
+> apicv
 
-OOI, why does this *have* to go through the DRM tree?
+Frankly, I dislike APICv terminology. I prefer to enumerate the various =
+VMX features which are collectively called APICv by KVM.
+APICv currently represents in KVM terminology the combination of =
+APIC-register virtualization, virtual-interrupt-delivery and =
+posted-interrupts (See cpu_has_vmx_apicv()).
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+In fact, the coupling of =E2=80=9Cenable_apicv=E2=80=9D module parameter =
+have made me multiple times to need to disable entire APICv features =
+when there for example was only a bug in posted-interrupts.
+
+Even you got confused as virtualize-apic-access is not part of KVM=E2=80=99=
+s APICv terminology but rather it=E2=80=99s enablement depend on =
+flexpriority_enabled (See cpu_need_virtualize_apic_accesses()). i.e. It =
+can be used for faster intercept handling of accesses to guest xAPIC =
+MMIO page.
+
+>=20
+>> unrestricted_guest	-> unres_guest
+>=20
+> Full? Or just unrestricted
+
+I prefer unrestricted_guest.
+
+>=20
+> In general I would stick to the same names as kvm_intel module
+> parameters (sans "enable_" if applicable) and not even bother =
+publishing
+> the others.  Some features are either not used by KVM or available on
+> all VMX processors.
+>=20
+> Paolo
+>=20
+>> and so on. Those are just my examples - I betcha the SDM is more
+>> creative here with abbreviations. But you guys are going to grep for
+>> them. If it were me, I'd save on typing. :-)
+>=20
+
