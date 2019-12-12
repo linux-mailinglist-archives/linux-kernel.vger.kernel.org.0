@@ -2,161 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A99511D975
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 23:36:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD7A11D979
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2019 23:36:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731296AbfLLWf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 17:35:56 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27482 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731195AbfLLWfv (ORCPT
+        id S1731323AbfLLWgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 17:36:06 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33591 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731195AbfLLWgC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 17:35:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576190150;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=pEKtnt+JQUKetJNgDkSiBPLQgi++nxjMDJ2PaPmD118=;
-        b=cIUmnsPewdgPwHo3wGAf19iVm/r2BEM3snnGLWGxLKql0m3oDdAmeraFuksW3+gFPFAjHp
-        rprr5G4/G4hU9Nnhihjo+5KhE/8MYPx9ELBX1EJ6H2+TyynpsMqVIbvGbCJk7s7lA+wxJ3
-        QOd2wOQRUxrRWq6m+exvlgnX6UQ1FZk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-233-d24WbFT5P1OL16jJFm_DOA-1; Thu, 12 Dec 2019 17:35:47 -0500
-X-MC-Unique: d24WbFT5P1OL16jJFm_DOA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03F93800053;
-        Thu, 12 Dec 2019 22:35:46 +0000 (UTC)
-Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4CDF360BF3;
-        Thu, 12 Dec 2019 22:35:45 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH 5/5] locking/lockdep: Decrement irq context counters when removing lock chain
-Date:   Thu, 12 Dec 2019 17:35:25 -0500
-Message-Id: <20191212223525.1652-6-longman@redhat.com>
-In-Reply-To: <20191212223525.1652-1-longman@redhat.com>
-References: <20191212223525.1652-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+        Thu, 12 Dec 2019 17:36:02 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d139so4616340wmd.0;
+        Thu, 12 Dec 2019 14:36:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7ZC6V8vQF8U9+ro8xLo3meGZOer4fQgS0VnuTo8ZafQ=;
+        b=gmVkTx3PNVS6vZfikSxq/vX+wmzj69MGa59qpbY2NWl3EvOhPqTOPWWmeGFZ4u5nNK
+         k+iPsYmBoYn2jmm2gMhsL+DOW/p0+hBBLkXrXnl2Gue29VucKHDwHs9wXEOG4FlnXeCu
+         EW2GY9uAHV3RCg5lDvrbeYFFf9HccOBVQuTXkk1gZi6N8LdmjxXF7vLXEawFXGUFcvNG
+         7NXTmCHO45+OuRd9ORl3FDLdwoiGL4w6UPvATpFbP50hOGvBouxIXxhrGBYCM9Z2uDYm
+         tIAXb3IKiLbvKEpArALrY0XijHMUTQ0ngJRjcTXkZlG0cVcURV/0mPSIlz7DRCqbc4HB
+         NsBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7ZC6V8vQF8U9+ro8xLo3meGZOer4fQgS0VnuTo8ZafQ=;
+        b=aiigWuz0P1CgLY0j+vSEuJRyqo4CqOSwqGNZm6zHshzz98LsdIj+1VJ170/i+rdgDa
+         6OVIuefyUQoJvUflFUgaiuxzUQE0QQFQWTx2xW/7/+Q2twIt7ccR14k6eBd1xZ+axvIi
+         lWrz8hnIPk4Tq3nv7szJyJjvCTnaAkr58ixehz1i/Ky6l+TRdKMAfPU/Vdyk5wPQ/uNA
+         a1jIg0ct4QS5fe6QcEUWuo1t0PtxKQAh+hrPUhMMgpze7ShX4Ra2udEkKpgEb+xeKeJ8
+         gsRhRpHxYf9duVBKa7PGbl7ebhmeMfhAFf7N4vISKsWWpzR1cGv+Z6sXGn6VcCSnEVhi
+         fU2Q==
+X-Gm-Message-State: APjAAAXTu1KFZcVmAZduv+FyYOaTyFICPatYxamRn/icVcrZzhYx57x1
+        WeV+7/93L5mouKHtkSTXQfe/hAsMcAAR2hJuplzYkQ==
+X-Google-Smtp-Source: APXvYqyLeeOFUEZADqvzUcHggdMQXLsgjtOr/m/4Zvbn8hRhUCgqU1csOP5xuGbzFDCXTv1TVSbMTLSXF/7P5SsNVSc=
+X-Received: by 2002:a1c:6404:: with SMTP id y4mr4901765wmb.143.1576190160417;
+ Thu, 12 Dec 2019 14:36:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20191212181657.101381-1-colin.king@canonical.com>
+In-Reply-To: <20191212181657.101381-1-colin.king@canonical.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 12 Dec 2019 17:35:48 -0500
+Message-ID: <CADnq5_PXb035J7yyfX1gB3oNsVQb-L=KZHR31KxLEH-VUZfT8g@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/powerplay: fix various dereferences of a
+ pointer before it is null checked
+To:     Colin King <colin.king@canonical.com>
+Cc:     Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kenneth Feng <kenneth.feng@amd.com>,
+        Yintian Tao <yttao@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are currently three counters to track the irq context of a lock
-chain - nr_hardirq_chains, nr_softirq_chains and nr_process_chains.
-They are incremented when a new lock chain is added, but they are not
-decremented when a lock chain is removed. That causes the some of
-the statistic counts reported by /proc/lockdep_stats to be incorrect.
+On Thu, Dec 12, 2019 at 1:17 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There are several occurrances of the pointer hwmgr being dereferenced
+> before it is null checked.  Fix these by performing the dereference
+> of hwmgr after it has been null checked.
+>
+> Addresses-Coverity: ("Dereference before null check")
+> Fixes: 8497d2bcdee1 ("drm/amd/powerplay: enable pp one vf mode for vega10")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fix that by decrementing the right counter when a lock chain is removed.
+Applied.  thanks!
 
-Fixes: a0b0fd53e1e6 ("locking/lockdep: Free lock classes that are no longer in use")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/lockdep.c           | 35 +++++++++++++++++++++---------
- kernel/locking/lockdep_internals.h |  6 +++++
- 2 files changed, 31 insertions(+), 10 deletions(-)
+Alex
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 97c17ba85d29..1d8f2fcd4bb4 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2300,16 +2300,24 @@ static int check_irq_usage(struct task_struct *curr, struct held_lock *prev,
- 	return 0;
- }
- 
--static void inc_chains(void)
-+static void inc_chains(int irq_context)
- {
--	if (current->hardirq_context)
-+	if (irq_context & LOCK_CHAIN_HARDIRQ_CONTEXT)
- 		nr_hardirq_chains++;
--	else {
--		if (current->softirq_context)
--			nr_softirq_chains++;
--		else
--			nr_process_chains++;
--	}
-+	else if (irq_context & LOCK_CHAIN_SOFTIRQ_CONTEXT)
-+		nr_softirq_chains++;
-+	else
-+		nr_process_chains++;
-+}
-+
-+static void dec_chains(int irq_context)
-+{
-+	if (irq_context & LOCK_CHAIN_HARDIRQ_CONTEXT)
-+		nr_hardirq_chains--;
-+	else if (irq_context & LOCK_CHAIN_SOFTIRQ_CONTEXT)
-+		nr_softirq_chains--;
-+	else
-+		nr_process_chains--;
- }
- 
- #else
-@@ -2325,6 +2333,10 @@ static inline void inc_chains(void)
- 	nr_process_chains++;
- }
- 
-+static void dec_chains(int irq_context)
-+{
-+	nr_process_chains--;
-+}
- #endif /* CONFIG_TRACE_IRQFLAGS */
- 
- static void
-@@ -2933,7 +2945,7 @@ static inline int add_chain_cache(struct task_struct *curr,
- 	chain_hlocks[chain->base + j] = class - lock_classes;
- 	hlist_add_head_rcu(&chain->entry, hash_head);
- 	debug_atomic_inc(chain_lookup_misses);
--	inc_chains();
-+	inc_chains(chain->irq_context);
- 
- 	return 1;
- }
-@@ -3686,7 +3698,8 @@ mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
- 
- static inline unsigned int task_irq_context(struct task_struct *task)
- {
--	return 2 * !!task->hardirq_context + !!task->softirq_context;
-+	return LOCK_CHAIN_HARDIRQ_CONTEXT * !!task->hardirq_context +
-+	       LOCK_CHAIN_SOFTIRQ_CONTEXT * !!task->softirq_context;
- }
- 
- static int separate_irq_context(struct task_struct *curr,
-@@ -4890,6 +4903,8 @@ static void remove_class_from_lock_chain(struct pending_free *pf,
- free_lock_chain:
- 	/* Overwrite the chain key for concurrent RCU readers. */
- 	WRITE_ONCE(chain->chain_key, INITIAL_CHAIN_KEY);
-+	dec_chains(chain->irq_context);
-+
- 	/*
- 	 * Note: calling hlist_del_rcu() from inside a
- 	 * hlist_for_each_entry_rcu() loop is safe.
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 999cd714e0d1..26e387d3155a 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -98,6 +98,12 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
- 
- #define MAX_LOCKDEP_CHAINS_BITS	16
- 
-+/*
-+ * Bit definitions for lock_chain.irq_context
-+ */
-+#define LOCK_CHAIN_SOFTIRQ_CONTEXT	(1 << 0)
-+#define LOCK_CHAIN_HARDIRQ_CONTEXT	(1 << 1)
-+
- /*
-  * Stack-trace: tightly packed array of stack backtrace
-  * addresses. Protected by the hash_lock.
--- 
-2.18.1
-
+> ---
+>  drivers/gpu/drm/amd/powerplay/amd_powerplay.c |  6 +++---
+>  drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c   | 15 +++------------
+>  2 files changed, 6 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
+> index 5087d6bdba60..322c2015d3a0 100644
+> --- a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
+> +++ b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
+> @@ -275,12 +275,12 @@ static int pp_dpm_load_fw(void *handle)
+>  {
+>         struct pp_hwmgr *hwmgr = handle;
+>
+> -       if (!hwmgr->not_vf)
+> -               return 0;
+> -
+>         if (!hwmgr || !hwmgr->smumgr_funcs || !hwmgr->smumgr_funcs->start_smu)
+>                 return -EINVAL;
+>
+> +       if (!hwmgr->not_vf)
+> +               return 0;
+> +
+>         if (hwmgr->smumgr_funcs->start_smu(hwmgr)) {
+>                 pr_err("fw load failed\n");
+>                 return -EINVAL;
+> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+> index e2b82c902948..f48fdc7f0382 100644
+> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+> @@ -282,10 +282,7 @@ int hwmgr_hw_init(struct pp_hwmgr *hwmgr)
+>
+>  int hwmgr_hw_fini(struct pp_hwmgr *hwmgr)
+>  {
+> -       if (!hwmgr->not_vf)
+> -               return 0;
+> -
+> -       if (!hwmgr || !hwmgr->pm_en)
+> +       if (!hwmgr || !hwmgr->pm_en || !hwmgr->not_vf)
+>                 return 0;
+>
+>         phm_stop_thermal_controller(hwmgr);
+> @@ -305,10 +302,7 @@ int hwmgr_suspend(struct pp_hwmgr *hwmgr)
+>  {
+>         int ret = 0;
+>
+> -       if (!hwmgr->not_vf)
+> -               return 0;
+> -
+> -       if (!hwmgr || !hwmgr->pm_en)
+> +       if (!hwmgr || !hwmgr->pm_en || !hwmgr->not_vf)
+>                 return 0;
+>
+>         phm_disable_smc_firmware_ctf(hwmgr);
+> @@ -327,13 +321,10 @@ int hwmgr_resume(struct pp_hwmgr *hwmgr)
+>  {
+>         int ret = 0;
+>
+> -       if (!hwmgr->not_vf)
+> -               return 0;
+> -
+>         if (!hwmgr)
+>                 return -EINVAL;
+>
+> -       if (!hwmgr->pm_en)
+> +       if (!hwmgr->not_vf || !hwmgr->pm_en)
+>                 return 0;
+>
+>         ret = phm_setup_asic(hwmgr);
+> --
+> 2.24.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
