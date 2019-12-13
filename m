@@ -2,150 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4CE711E205
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 11:34:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE6211E216
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 11:37:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbfLMKed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 05:34:33 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36339 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbfLMKec (ORCPT
+        id S1726757AbfLMKgx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 13 Dec 2019 05:36:53 -0500
+Received: from m4a0073g.houston.softwaregrp.com ([15.124.2.131]:42101 "EHLO
+        m4a0073g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725747AbfLMKgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 05:34:32 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p17so6013088wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 02:34:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=q4KtYYchW8wnshbi6O5F9y2RA7nr79sOAhO7O/V2SE8=;
-        b=iNU04/oiOLQ7PceRJWuZIPErJtpA6B+CoQ14HvshutO6ZY/6r8ry+tCENVbx759lMK
-         Je6gEcGujxv3WT81I/zjtsrcZHULuDbQIVFuBE2N4VD4hqX26NbNRvWCq0DDfde0tPxU
-         VWwIrih2OZhjQfs6Sf7IVHLEXXED5wrDQpFltnz5rEPv4ZYgnHPRktkLpHtZmOMFx+BY
-         PCpoHMshjPbwTyphzcQPW+Yi26v5IK+RKS/TGMzTZZjytHXV1ZvEGKh/RyDjO/upRNxn
-         /+hWHwI8OhnJRO/kSRFb3joqYQkVHJNefBnkFvzvIeIcIFS3ebQkyy0WiAhPqEH1KrEd
-         l5tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=q4KtYYchW8wnshbi6O5F9y2RA7nr79sOAhO7O/V2SE8=;
-        b=cg/QqGEqJ3UcrTJqCJFLVUuNT954MjUg9cE4HN0iylGLLz8qGyfZWFGxGusHVcMbLj
-         zchGkdJhcoNPgtOdtxHSWSPKo/nyzFFvusu/axZFUr4vNs2/Unjy4TsH8j52GaM2g1Sb
-         t4CoHU2AHEgqi/h4IV5DquR1I2CQ3BucdkSct2RYRKP2Yyt5Q12aaxvXae9xZ0SenN2G
-         cTo6px2WigISb4LCyb5D7qhTLc3w7R9rS/Bn2jlHpaLCZQc6CUZb85XRHpmvhyyKz79a
-         andaY0Tm1Qfj+p3SofS1IHZpt5VWvEKwbIC9zAnItrFsQBdhgbyTe1rlFzy8yygo1OhH
-         bV+w==
-X-Gm-Message-State: APjAAAXThMhWVoYZ8M9V+BMB29W8HqGdu2MDcCavE8bX9Kqgx5163Czr
-        oxGevfdxATiPZ4H1YTYyOS3cSQ==
-X-Google-Smtp-Source: APXvYqwMuAYtT9aYzrhLaDXVZS1t+2Lu8DNTCOy6y/CBDhaRjBY1a7clkhT3QoTjtPbm737cGgxFtQ==
-X-Received: by 2002:a7b:c1d8:: with SMTP id a24mr12677314wmj.130.1576233269247;
-        Fri, 13 Dec 2019 02:34:29 -0800 (PST)
-Received: from [10.2.4.229] (lfbn-nic-1-505-157.w90-116.abo.wanadoo.fr. [90.116.92.157])
-        by smtp.gmail.com with ESMTPSA id g2sm9431131wrw.76.2019.12.13.02.34.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Dec 2019 02:34:28 -0800 (PST)
-Subject: Re: [PATCH] clk: meson: g12a: fix missing uart2 in regmap table
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>
-References: <20191213103304.12867-1-jbrunet@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- mQENBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAG0KE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT6JATsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIW5AQ0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAYkBHwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8guQINBFYnf6QBEADQ+wBYa+X2n/xIQz/RUoGHf84Jm+yTqRT43t7sO48/cBW9vAn9
- GNwnJ3HRJWKATW0ZXrCr40ES/JqM1fUTfiFDB3VMdWpEfwOAT1zXS+0rX8yljgsWR1UvqyEP
- 3xN0M/40Zk+rdmZKaZS8VQaXbveaiWMEmY7sBV3QvgOzB7UF2It1HwoCon5Y+PvyE3CguhBd
- 9iq5iEampkMIkbA3FFCpQFI5Ai3BywkLzbA3ZtnMXR8Qt9gFZtyXvFQrB+/6hDzEPnBGZOOx
- zkd/iIX59SxBuS38LMlhPPycbFNmtauOC0DNpXCv9ACgC9tFw3exER/xQgSpDVc4vrL2Cacr
- wmQp1k9E0W+9pk/l8S1jcHx03hgCxPtQLOIyEu9iIJb27TjcXNjiInd7Uea195NldIrndD+x
- 58/yU3X70qVY+eWbqzpdlwF1KRm6uV0ZOQhEhbi0FfKKgsYFgBIBchGqSOBsCbL35f9hK/JC
- 6LnGDtSHeJs+jd9/qJj4WqF3x8i0sncQ/gszSajdhnWrxraG3b7/9ldMLpKo/OoihfLaCxtv
- xYmtw8TGhlMaiOxjDrohmY1z7f3rf6njskoIXUO0nabun1nPAiV1dpjleg60s3OmVQeEpr3a
- K7gR1ljkemJzM9NUoRROPaT7nMlNYQL+IwuthJd6XQqwzp1jRTGG26J97wARAQABiQM+BBgB
- AgAJBQJWJ3+kAhsCAikJEBaat7Gkz/iuwV0gBBkBAgAGBQJWJ3+kAAoJEHfc29rIyEnRk6MQ
- AJDo0nxsadLpYB26FALZsWlN74rnFXth5dQVQ7SkipmyFWZhFL8fQ9OiIoxWhM6rSg9+C1w+
- n45eByMg2b8H3mmQmyWztdI95OxSREKwbaXVapCcZnv52JRjlc3DoiiHqTZML5x1Z7lQ1T3F
- 8o9sKrbFO1WQw1+Nc91+MU0MGN0jtfZ0Tvn/ouEZrSXCE4K3oDGtj3AdC764yZVq6CPigCgs
- 6Ex80k6QlzCdVP3RKsnPO2xQXXPgyJPJlpD8bHHHW7OLfoR9DaBNympfcbQJeekQrTvyoASw
- EOTPKE6CVWrcQIztUp0WFTdRGgMK0cZB3Xfe6sOp24PQTHAKGtjTHNP/THomkH24Fum9K3iM
- /4Wh4V2eqGEgpdeSp5K+LdaNyNgaqzMOtt4HYk86LYLSHfFXywdlbGrY9+TqiJ+ZVW4trmui
- NIJCOku8SYansq34QzYM0x3UFRwff+45zNBEVzctSnremg1mVgrzOfXU8rt+4N1b2MxorPF8
- 619aCwVP7U16qNSBaqiAJr4e5SNEnoAq18+1Gp8QsFG0ARY8xp+qaKBByWES7lRi3QbqAKZf
- yOHS6gmYo9gBmuAhc65/VtHMJtxwjpUeN4Bcs9HUpDMDVHdfeRa73wM+wY5potfQ5zkSp0Jp
- bxnv/cRBH6+c43stTffprd//4Hgz+nJcCgZKtCYIAPkUxABC85ID2CidzbraErVACmRoizhT
- KR2OiqSLW2x4xdmSiFNcIWkWJB6Qdri0Fzs2dHe8etD1HYaht1ZhZ810s7QOL7JwypO8dscN
- KTEkyoTGn6cWj0CX+PeP4xp8AR8ot4d0BhtUY34UPzjE1/xyrQFAdnLd0PP4wXxdIUuRs0+n
- WLY9Aou/vC1LAdlaGsoTVzJ2gX4fkKQIWhX0WVk41BSFeDKQ3RQ2pnuzwedLO94Bf6X0G48O
- VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <904df8d1-e975-b493-ca6f-88b8547de84d@baylibre.com>
-Date:   Fri, 13 Dec 2019 11:34:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191213103304.12867-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+        Fri, 13 Dec 2019 05:36:52 -0500
+Received: FROM m4a0073g.houston.softwaregrp.com (15.120.17.147) BY m4a0073g.houston.softwaregrp.com WITH ESMTP;
+ Fri, 13 Dec 2019 10:34:46 +0000
+Received: from M4W0334.microfocus.com (2002:f78:1192::f78:1192) by
+ M4W0335.microfocus.com (2002:f78:1193::f78:1193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Fri, 13 Dec 2019 10:35:03 +0000
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (15.124.8.14) by
+ M4W0334.microfocus.com (15.120.17.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Fri, 13 Dec 2019 10:35:02 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Lla6KRrLUBafguKdhhiyEfjRuSWXqHnarY1bdOqOuugc1FIc7kltrGzOfe9AhODNKybPiMBE89DGklZx6qsZMzhme31qkQieTL2MSz9rD3r++M6iSKWI+7+ODR36+4CE4enjaVb9BUpcxmHSyEUL1Sdabwtt6yr2pMRqA/OgstFOyt/U866eq5bv8xw04VoFL877wSIioIkVxlLOi6pE769lcQGqIvi3KpcgjhuRRxnHgecJXwpRhlOUAH1yGxflEp02uKKZLD8/khgTsrj3p3fsTPnJMxsaZBbmpVpgZUvbJoXsOZvss2VRzqnMyFewA4OTXiLnvKPsAmWNLdok+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jdkR3e3gS9wOAYhqvSivnmiO4uc5uIqt6bDyuVI0X44=;
+ b=mwFwU3r21dKzQJlC2VvLWKBsF4Ee2CQJM8JRJpin7slMllV+IthQyN3nVZoCe8SUchxzjHUJ1kYCpEtvQdGe4oPTdZJ7SlIY8LghLpOQm3Vk891mzC69wOnAKjdR6G/Oq9pjg3wbHdWXnWbOug84SYQCZP/8tat47iZ3ICXnfQxF7kpkO+7wKWQm0yzWK9m6MWFxLUK13pJSfmM5208CTBwXu2auoIKy2362U0phbIROs0RT4Akz1IZmEnID7k5IgKIWd1nIYt4I39tExO+a8ZmwarUz8Tz66pRTOJA+4wk1bX+Xp0EpaSuoBpZvwFnUtBPlofaqKus22if2JNEirA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from MWHPR1801MB1919.namprd18.prod.outlook.com (10.164.204.162) by
+ MWHPR1801MB1917.namprd18.prod.outlook.com (10.164.204.160) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.16; Fri, 13 Dec 2019 10:35:01 +0000
+Received: from MWHPR1801MB1919.namprd18.prod.outlook.com
+ ([fe80::1c16:ffc:c341:ebbc]) by MWHPR1801MB1919.namprd18.prod.outlook.com
+ ([fe80::1c16:ffc:c341:ebbc%6]) with mapi id 15.20.2538.016; Fri, 13 Dec 2019
+ 10:35:01 +0000
+From:   Joey Lee <JLee@suse.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC:     Chun-Yi Lee <joeyli.kernel@gmail.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        "Nayna Jain" <nayna@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH 2/2] efi: show error messages only when loading
+ certificates is failed
+Thread-Topic: [PATCH 2/2] efi: show error messages only when loading
+ certificates is failed
+Thread-Index: AQHVsZU0Eap8mezu6UCH9Ab36BcR6ae3ygyAgAAMIgCAAAiJgA==
+Date:   Fri, 13 Dec 2019 10:35:01 +0000
+Message-ID: <20191213103447.GA22409@linux-l9pv.suse>
+References: <20191213090646.12329-1-jlee@suse.com>
+ <20191213090646.12329-3-jlee@suse.com>
+ <CAKv+Gu_2GTqKJNVpMEg4ic_3ACb5GJKAkgfFWoEdWqMN7pmwiA@mail.gmail.com>
+ <20191213092049.GW22409@linux-l9pv.suse>
+ <CAKv+Gu8-Ay2R9wU-wwz2w+Q9jZOduXYigmFJL8Rmppnm1CSpHg@mail.gmail.com>
+In-Reply-To: <CAKv+Gu8-Ay2R9wU-wwz2w+Q9jZOduXYigmFJL8Rmppnm1CSpHg@mail.gmail.com>
+Accept-Language: zh-TW, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK2P15301CA0024.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:202:1::34) To MWHPR1801MB1919.namprd18.prod.outlook.com
+ (2603:10b6:301:68::34)
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=JLee@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [60.251.47.115]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 77ac7a76-33df-4d8f-152f-08d77fb81be2
+x-ms-traffictypediagnostic: MWHPR1801MB1917:
+x-microsoft-antispam-prvs: <MWHPR1801MB19175EC49A1DAED5F4DBAEDCA3540@MWHPR1801MB1917.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:83;
+x-forefront-prvs: 0250B840C1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(346002)(396003)(39860400002)(376002)(366004)(199004)(189003)(8676002)(4326008)(54906003)(81156014)(36756003)(81166006)(316002)(7416002)(86362001)(2906002)(8936002)(6916009)(52116002)(71200400001)(478600001)(6486002)(5660300002)(15650500001)(66446008)(186003)(33656002)(64756008)(66946007)(26005)(1076003)(6506007)(66476007)(55236004)(6512007)(66556008)(9686003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR1801MB1917;H:MWHPR1801MB1919.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: E/6/e4Moywqpd0jWfZJgN50R42NDRXGusET3YDQeZ9iSePglTAGFM5FbQe32DOoGZourenrYKdMtOY3Fe0msNqTgvMMy+p0K5K0SSdMzjSDjyVBdbFiZJxnJqpSRThL0GKFJ+VVWsjk01k9DygW8FXPLgcbJSxCzYLnNazafJ9dcs/EdFVUMnDXj3vt1lwoAuhUxlUJ8P45W+xObI009D2Kv8grp3zFFTE5lnIzbICHdfqfYZsglvPTzzp9gXHZS34GJ28iYFcRjN/GMWMVDgUWAapc3gNvucMO4fIiyKnpaxyw0yxjE+eXiUBcNbCVUo7UM/r2OCfA5wz8Zto91oEi19ehMsss87HbGpe/MveIGC0Dd1C4rfHomWOAIvcuk0ViQrl19suKY1ilRXDIunSM6gFVqNAJ1WLosu3ldpXmRWMGMlIwgCe/L0hsrpc5x
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <38B02C5CBD33F7479AEDCA36FDB26E30@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77ac7a76-33df-4d8f-152f-08d77fb81be2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2019 10:35:01.5645
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JGnCUGMyyz7tpq3ZSoEVMPR8JobOFY5HZpckqZZysHXB39C4b3CWXimPJLRwwEu6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1801MB1917
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/12/2019 11:33, Jerome Brunet wrote:
-> UART2 peripheral is missing from the regmap fixup table of the g12a family
-> clock controller. As it is, any access to this clock would Oops, which is
-> not great.
+Hi Ard,
+
+On Fri, Dec 13, 2019 at 10:04:14AM +0000, Ard Biesheuvel wrote:
+> On Fri, 13 Dec 2019 at 10:21, Joey Lee <JLee@suse.com> wrote:
+> >
+> > Hi Ard,
+> >
+> > On Fri, Dec 13, 2019 at 09:10:12AM +0000, Ard Biesheuvel wrote:
+> > > On Fri, 13 Dec 2019 at 10:07, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> > > >
+> > > > When loading certificates list from EFI variables, the error
+> > > > message and efi status code always be emitted to dmesg. It looks
+> > > > ugly:
+> > > >
+> > > > [    2.335031] Couldn't get size: 0x800000000000000e
+> > > > [    2.335032] Couldn't get UEFI MokListRT
+> > > > [    2.339985] Couldn't get size: 0x800000000000000e
+> > > > [    2.339987] Couldn't get UEFI dbx list
+> > > >
+> > > > This cosmetic patch moved the messages to the error handling code
+> > > > path. And, it also shows the corresponding status string of status
+> > > > code.
+> > > >
+> > >
+> > > So what output do we get after applying this patch when those
+> > > variables don't exist?
+> > >
+> >
+> > A "UEFI:xxxx list was not found" message will be exposed in dmesg
+> > when kernel loglevel be set to debug. Otherwise there have no messages.
+> >
 > 
-> Add the clock to the table to fix the problem.
+> OK, that works for me.
 > 
-> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-> Reported-by: Dmitry Shmidt <dimitrysh@google.com>
-> Tested-by: Dmitry Shmidt <dimitrysh@google.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/g12a.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index 66cf791bfc8c..cd1de3e004e4 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -4692,6 +4692,7 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
->  	&g12a_bt656,
->  	&g12a_usb1_to_ddr,
->  	&g12a_mmc_pclk,
-> +	&g12a_uart2,
->  	&g12a_vpu_intr,
->  	&g12a_gic,
->  	&g12a_sd_emmc_a_clk0,
+> I take it this will go via the linux-security tree along with 1/2?
+>
+
+Yes, this patch must go with 1/2 patch. 
+ 
+> Acked-by: Ard Biesheuvel <ardb@kernel.org>
 > 
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Thanks for your review!
+
+Joey Lee
+> 
+> 
+> > > > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> > > > ---
+> > > >  security/integrity/platform_certs/load_uefi.c | 40 ++++++++++++++-------------
+> > > >  1 file changed, 21 insertions(+), 19 deletions(-)
+> > > >
+> > > > diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> > > > index 81b19c52832b..b6c60fb3fb6c 100644
+> > > > --- a/security/integrity/platform_certs/load_uefi.c
+> > > > +++ b/security/integrity/platform_certs/load_uefi.c
+> > > > @@ -1,4 +1,5 @@
+> > > >  // SPDX-License-Identifier: GPL-2.0
+> > > > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> > > >
+> > > >  #include <linux/kernel.h>
+> > > >  #include <linux/sched.h>
+> > > > @@ -39,7 +40,7 @@ static __init bool uefi_check_ignore_db(void)
+> > > >   * Get a certificate list blob from the named EFI variable.
+> > > >   */
+> > > >  static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> > > > -                                 unsigned long *size)
+> > > > +                                 unsigned long *size, const char *source)
+> > > >  {
+> > > >         efi_status_t status;
+> > > >         unsigned long lsize = 4;
+> > > > @@ -48,23 +49,30 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> > > >
+> > > >         status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
+> > > >         if (status != EFI_BUFFER_TOO_SMALL) {
+> > > > -               pr_err("Couldn't get size: 0x%lx\n", status);
+> > > > -               return NULL;
+> > > > +               if (status == EFI_NOT_FOUND) {
+> > > > +                       pr_debug("%s list was not found\n", source);
+> > > > +                       return NULL;
+> > > > +               }
+> > > > +               goto err;
+> > > >         }
+> > > >
+> > > >         db = kmalloc(lsize, GFP_KERNEL);
+> > > > -       if (!db)
+> > > > -               return NULL;
+> > > > +       if (!db) {
+> > > > +               status = EFI_OUT_OF_RESOURCES;
+> > > > +               goto err;
+> > > > +       }
+> > > >
+> > > >         status = efi.get_variable(name, guid, NULL, &lsize, db);
+> > > >         if (status != EFI_SUCCESS) {
+> > > >                 kfree(db);
+> > > > -               pr_err("Error reading db var: 0x%lx\n", status);
+> > > > -               return NULL;
+> > > > +               goto err;
+> > > >         }
+> > > >
+> > > >         *size = lsize;
+> > > >         return db;
+> > > > +err:
+> > > > +       pr_err("Couldn't get %s list: %s\n", source, efi_status_to_str(status));
+> > > > +       return NULL;
+> > > >  }
+> > > >
+> > > >  /*
+> > > > @@ -153,10 +161,8 @@ static int __init load_uefi_certs(void)
+> > > >          * an error if we can't get them.
+> > > >          */
+> > > >         if (!uefi_check_ignore_db()) {
+> > > > -               db = get_cert_list(L"db", &secure_var, &dbsize);
+> > > > -               if (!db) {
+> > > > -                       pr_err("MODSIGN: Couldn't get UEFI db list\n");
+> > > > -               } else {
+> > > > +               db = get_cert_list(L"db", &secure_var, &dbsize, "UEFI:db");
+> > > > +               if (db) {
+> > > >                         rc = parse_efi_signature_list("UEFI:db",
+> > > >                                         db, dbsize, get_handler_for_db);
+> > > >                         if (rc)
+> > > > @@ -166,10 +172,8 @@ static int __init load_uefi_certs(void)
+> > > >                 }
+> > > >         }
+> > > >
+> > > > -       mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
+> > > > -       if (!mok) {
+> > > > -               pr_info("Couldn't get UEFI MokListRT\n");
+> > > > -       } else {
+> > > > +       mok = get_cert_list(L"MokListRT", &mok_var, &moksize, "UEFI:MokListRT");
+> > > > +       if (mok) {
+> > > >                 rc = parse_efi_signature_list("UEFI:MokListRT",
+> > > >                                               mok, moksize, get_handler_for_db);
+> > > >                 if (rc)
+> > > > @@ -177,10 +181,8 @@ static int __init load_uefi_certs(void)
+> > > >                 kfree(mok);
+> > > >         }
+> > > >
+> > > > -       dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
+> > > > -       if (!dbx) {
+> > > > -               pr_info("Couldn't get UEFI dbx list\n");
+> > > > -       } else {
+> > > > +       dbx = get_cert_list(L"dbx", &secure_var, &dbxsize, "UEFI:dbx");
+> > > > +       if (dbx) {
+> > > >                 rc = parse_efi_signature_list("UEFI:dbx",
+> > > >                                               dbx, dbxsize,
+> > > >                                               get_handler_for_dbx);
+> > > > --
+> > > > 2.16.4
+> > > >
