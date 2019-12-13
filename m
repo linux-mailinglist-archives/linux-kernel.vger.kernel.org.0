@@ -2,140 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5964411DF84
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:34:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8361B11DF8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:37:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfLMIeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 03:34:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35322 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725810AbfLMIeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 03:34:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3DE0DAB9B;
-        Fri, 13 Dec 2019 08:34:12 +0000 (UTC)
-Date:   Fri, 13 Dec 2019 09:34:11 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     jpoimboe@redhat.com, jikos@kernel.org, mbenes@suse.cz,
-        joe.lawrence@redhat.com, shuah@kernel.org,
-        live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: livepatch: Fix it to do root uid check and
- skip
-Message-ID: <20191213083411.delrxditrpcdm7az@pathway.suse.cz>
-References: <20191213015617.23110-1-skhan@linuxfoundation.org>
+        id S1726524AbfLMIhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 03:37:41 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35794 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbfLMIhl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 03:37:41 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 15so1350843lfr.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 00:37:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IViYxUVtxhmy+DhoYbq41mJ5frzvzah03nv9ueXSwIM=;
+        b=VH7XmMTYa7gkUtI0dk0K3xQG+rHb2TE89MdDnwaMmu/omPIeRmBQT7R00hlMq46Vop
+         n/L7FWABeXBTjQHxUhlvc3iobGa8yZ3q34qp+H9FTf8HLq36L37n4C/BjbMXVEQsKxcH
+         qq8KUavWNUAneUOUX31KLR0ZjLlgFCKGPMRPHnhWbqNaY9cXTQjAYj50EF5ZRpZbmPpK
+         /4X2wO+R+/qBv5J0kAXLzlCOg5Afx6y6VmzNEIzBMLDGTFYbbrTZDcuFFACi/1dq7HE1
+         Vevyj4b4HzDEbN8cwGI2xILgLmVjGeKKFYPrA3BMNWgR08JCBFHnwcyUDYFATs1rjXn2
+         yL7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IViYxUVtxhmy+DhoYbq41mJ5frzvzah03nv9ueXSwIM=;
+        b=Pl2rlXGx1R4FRvyMOPZgty6xQNtVwT1Pw8FnaBuoWpCkzxMaKCffm236ejGxGtahY9
+         OTCqc/u0NTsM5+zv+0lYI1cMe/LjGICiNaC54UmyxNHST6XzcZdT69TjjYqfj41LLsfJ
+         I0RHW2yp0JYibaQr4XQxO5e2sNcvkSmxZMq/N2PS71pJ+HZIGO8i/93xwKe+tl1jkcvB
+         +49DzwMGYC4yrxBiQeJ6pm+rH3p2FNkcXST7KmzQVp2dVzIhVLYSGMFo3TaEHbj5Cye+
+         WvZuuwK/tWugrhduHvU4FoYuSjSFzb0poohYWVj4RyjE+dR8B2ede29spco14ps4Qz+g
+         tbqA==
+X-Gm-Message-State: APjAAAUK0AMD0sLQZtBE0pF3gcq+DYAYLDZiJdCf98Wwo5pj+ESiqzTj
+        6jSMtCShHLDHWNMTYCzq+BhCc8D7i4l4VZ7HXY4GOw==
+X-Google-Smtp-Source: APXvYqz6KzhzKX65oJt06EFCN7iEWegIfKRRv5k7uFFbbaYlDeM5+NLKuOtf+MEbqH6/PWvxcsi1B/JW7yfDPu2sQEk=
+X-Received: by 2002:ac2:43a7:: with SMTP id t7mr7603624lfl.125.1576226259104;
+ Fri, 13 Dec 2019 00:37:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213015617.23110-1-skhan@linuxfoundation.org>
-User-Agent: NeoMutt/20170912 (1.9.0)
+References: <20191213024530.28052-1-cj.chengjian@huawei.com>
+In-Reply-To: <20191213024530.28052-1-cj.chengjian@huawei.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 13 Dec 2019 09:37:27 +0100
+Message-ID: <CAKfTPtCQCQio=D3nRTRgbhthKWo752OeaM2X4UcNwr2jByvoNg@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/fair: Optimize select_idle_cpu
+To:     Cheng Jian <cj.chengjian@huawei.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        chenwandun@huawei.com, Xie XiuQi <xiexiuqi@huawei.com>,
+        liwei391@huawei.com, huawei.libin@huawei.com,
+        bobo.shaobowang@huawei.com, Juri Lelli <juri.lelli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-12-12 18:56:17, Shuah Khan wrote:
-> livepatch test configures the system and debug environment to run
-> tests. Some of these actions fail without root access and test
-> dumps several permission denied messages before it exits.
-> 
-> Fix it to check root uid and exit with skip code instead.
+On Fri, 13 Dec 2019 at 03:48, Cheng Jian <cj.chengjian@huawei.com> wrote:
+>
+> select_idle_cpu() will scan the LLC domain for idle CPUs,
+> it's always expensive. so the next commit :
+>
+>         1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
+>
+> introduces a way to limit how many CPUs we scan.
+>
+> But it consume some CPUs out of 'nr' that are not allowed
+> for the task and thus waste our attempts. The function
+> always return nr_cpumask_bits, and we can't find a CPU
+> which our task is allowed to run.
+>
+> Cpumask may be too big, similar to select_idle_core(), use
+> per_cpu_ptr 'select_idle_mask' to prevent stack overflow.
+>
+> Fixes: 1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
+> Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
 
-It works when I run the tests directly, e.g.
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-$> cd tools/testing/selftests/livepatch
-$> ./test-livepatch.sh
-
-But I still get an error from the selftest framework when running
-make run_tests:
-
-$> make run_tests
-TAP version 13
-1..5
-# selftests: livepatch: test-livepatch.sh
-/mnt/kernel/linux/tools/testing/selftests/kselftest/runner.sh: line 43: /dev/stdout: Permission denied
-not ok 1 selftests: livepatch: test-livepatch.sh # exit=1
-# selftests: livepatch: test-callbacks.sh
-/mnt/kernel/linux/tools/testing/selftests/kselftest/runner.sh: line 43: /dev/stdout: Permission denied
-not ok 2 selftests: livepatch: test-callbacks.sh # exit=1
-# selftests: livepatch: test-shadow-vars.sh
-/mnt/kernel/linux/tools/testing/selftests/kselftest/runner.sh: line 43: /dev/stdout: Permission denied
-not ok 3 selftests: livepatch: test-shadow-vars.sh # exit=1
-# selftests: livepatch: test-state.sh
-/mnt/kernel/linux/tools/testing/selftests/kselftest/runner.sh: line 43: /dev/stdout: Permission denied
-not ok 4 selftests: livepatch: test-state.sh # exit=1
-# selftests: livepatch: test-ftrace.sh
-/mnt/kernel/linux/tools/testing/selftests/kselftest/runner.sh: line 43: /dev/stdout: Permission denied
-not ok 5 selftests: livepatch: test-ftrace.sh # exit=1
-
-The same problem is also in linux-next. Is this a know problem, please?
-
-
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 > ---
->  tools/testing/selftests/livepatch/functions.sh | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
-> index 31eb09e38729..014b587692f0 100644
-> --- a/tools/testing/selftests/livepatch/functions.sh
-> +++ b/tools/testing/selftests/livepatch/functions.sh
-> @@ -45,6 +57,7 @@ function pop_config() {
->  }
->  
->  function set_dynamic_debug() {
-> +	is_root
->          cat <<-EOF > /sys/kernel/debug/dynamic_debug/control
->  		file kernel/livepatch/* +p
->  		func klp_try_switch_task -p
-
-This test is superfluous.
-
-I guess that it was added because of test-state.sh. But it calls
-set_dynamic_debug() instead of config_setup() by mistake.
-Please, use the patch below instead of the above hunk.
-
-Otherwise, this patch looks good. Thanks for fixing this.
-Without the hunk above, and with the patch below, feel free to use:
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-
-
-Here is the fix of test-state.sh:
-
-From 01ca8fd71fc964b892e54aea198537d007d33b4f Mon Sep 17 00:00:00 2001
-From: Petr Mladek <pmladek@suse.com>
-Date: Fri, 13 Dec 2019 09:26:45 +0100
-Subject: [PATCH] selftests/livepatch: Use setup_config() also in test-state.sh
-
-The commit 35c9e74cff4c798d0 ("selftests/livepatch: Make dynamic debug
-setup and restore generic") introduced setup_config() to prepare
-the testing environment. All selftests should call it instead
-of set_dynamic_debug().
-
-test-state.sh has been developed in parallel and was not converted
-by mistake.
-
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- tools/testing/selftests/livepatch/test-state.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/livepatch/test-state.sh b/tools/testing/selftests/livepatch/test-state.sh
-index dc2908c22c26..5c80e51fca55 100755
---- a/tools/testing/selftests/livepatch/test-state.sh
-+++ b/tools/testing/selftests/livepatch/test-state.sh
-@@ -8,7 +8,7 @@ MOD_LIVEPATCH=test_klp_state
- MOD_LIVEPATCH2=test_klp_state2
- MOD_LIVEPATCH3=test_klp_state3
- 
--set_dynamic_debug
-+setup_config
- 
- 
- # TEST: Loading and removing a module that modifies the system state
--- 
-2.16.4
-
+>  kernel/sched/fair.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 08a233e97a01..d48244388ce9 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5828,6 +5828,7 @@ static inline int select_idle_smt(struct task_struct *p, int target)
+>   */
+>  static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int target)
+>  {
+> +       struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
+>         struct sched_domain *this_sd;
+>         u64 avg_cost, avg_idle;
+>         u64 time, cost;
+> @@ -5859,11 +5860,11 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+>
+>         time = cpu_clock(this);
+>
+> -       for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
+> +       cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+> +
+> +       for_each_cpu_wrap(cpu, cpus, target) {
+>                 if (!--nr)
+>                         return si_cpu;
+> -               if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+> -                       continue;
+>                 if (available_idle_cpu(cpu))
+>                         break;
+>                 if (si_cpu == -1 && sched_idle_cpu(cpu))
+> --
+> 2.20.1
+>
