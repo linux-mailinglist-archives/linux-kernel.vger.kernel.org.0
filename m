@@ -2,244 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C4EA11E4F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:53:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A120511E4F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:53:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbfLMNvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:51:40 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33688 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfLMNvj (ORCPT
+        id S1727519AbfLMNvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:51:36 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33928 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfLMNvg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:51:39 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y206so1527858pfb.0;
-        Fri, 13 Dec 2019 05:51:38 -0800 (PST)
+        Fri, 13 Dec 2019 08:51:36 -0500
+Received: by mail-pf1-f196.google.com with SMTP id l127so1524712pfl.1;
+        Fri, 13 Dec 2019 05:51:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ymqyf3ZzOKHzrjO49WfBXaPmL09jcKuafUFOn/7WrR0=;
-        b=HTpEumY8ELx9uGBt9g/xDzvfDgkgQfOqBchv5PjqzQeyvS5cObNggKcmCb3UNxi/jh
-         lH8Wrthu3f2BvMuy4aB3YBZ/YaGj16nw4hx2gp9xqpfMEvVwjdFdG/cotnrH9kTXamPA
-         VxQtwpOp5+tjW+LcTt4Oo1USXDUKnnUA2ABLI0sAsQHlF2uZV92ZQ6Kd46Mvoagp/lku
-         gX7KoNvSHEiwS5YWNpnNG3lD5Lp5BXZ8D/OWs1At06bNBCYOnT8Xv6OvKda1baIT+AYi
-         1htJqU/FMpQkEYFwi05w4s8WgLjYlQpZgr59uvz7HhyglzmHD9sv/9dSziKSBfJ7JbD7
-         C1yw==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IkiWlzBXeVbd3pSPzmXC9ZHVKdjut2jmY51Fm29xZAs=;
+        b=i/RYUMmYOGOZ/VZKkxvFNK+7sCFzdMrMs6TAwG7vkLPleEc1/ItLPOymgcWVSS5G/U
+         iMTxLpR/JsuQAOk5Ca8XHmU+ijB8RhElFbU9PNj/sOkgaNdwhbIY7f0X89f/+5qWquZf
+         OtkK3OnWpS1/K0bgqrJas+gJAr2HyAlg7i0aOZUrTqRBOXGHGfG2M0LgwRrQfoJbYLRt
+         kuBrwTLuAk9JI6agmzxTGL1XXgDWpLVXQOMl38OUyMrqFLmKz8DqyrwHOjMfMelCqsLP
+         uBvsHhpOLHDtp7Rp1yPzGUozjOK/VHm8n3vgIa1+3i5y7GvZGnUd5IRJPWFIvrHtY58R
+         mylw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ymqyf3ZzOKHzrjO49WfBXaPmL09jcKuafUFOn/7WrR0=;
-        b=tXNZZzId+/Yt/BpgFZGWt+PAIvKoabk/SkPKpgUrAiBtWJ8cczg/fZyMSszC45KzHG
-         OqvVNEXHNTFY5GPImAhjrTSyjm4uyaArlwOFbbzVpY87bU599SU6OIL/mIeic1eUKA1O
-         g+6lBKdhoz2Dyq8QSXlV68k+k1RFLngfebtv7+nZMYoBQ1yOIM8fjP/KpSEkFan4NZ8W
-         2jBsi7cneCS0bIFeg+NucrXpr7hrRl7MBfl4p45HrCLavI3k+HeSYX4p907vtFwX1/j7
-         e8Skf5IC7IBdcHDXiDQ6zSCVhOB8Fzd3u1iubRwmt+FfSATJKTnX6mSD9E614SB3h+IW
-         tVfw==
-X-Gm-Message-State: APjAAAVfLsJ0u7DPLoTYsQG3ykqgg+QT0HKmyvIg0N8uQpKR3Zgrn8bC
-        okPIUX5zeKtSPhmrGMHxhFsugjGJ
-X-Google-Smtp-Source: APXvYqzuZ7bLsEERfyor7dwMWxIJH9JkvW3kxNrSwI6c0aHQISu84lFn0uFL6hfVfqj7GltzzZj1HQ==
-X-Received: by 2002:a62:788a:: with SMTP id t132mr16242050pfc.134.1576245098324;
-        Fri, 13 Dec 2019 05:51:38 -0800 (PST)
-Received: from cnn ([2402:3a80:47f:89b1:9c76:12d1:42df:9222])
-        by smtp.gmail.com with ESMTPSA id p28sm10768389pgb.93.2019.12.13.05.51.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Dec 2019 05:51:37 -0800 (PST)
-Date:   Fri, 13 Dec 2019 19:21:31 +0530
-From:   Manikandan Elumalai <manikandan.hcl.ers.epl@gmail.com>
-To:     andrew@aj.id.au, joel@jms.id.au
-Cc:     sdasari@fb.com, vijaykhemka@fb.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        manikandan.e@hcl.com, openbmc@lists.ozlabs.org
-Subject: [PATCH v5] ARM: dts: aspeed: Adding Facebook Yosemite V2 BMC
-Message-ID: <20191213135131.GA1822@cnn>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IkiWlzBXeVbd3pSPzmXC9ZHVKdjut2jmY51Fm29xZAs=;
+        b=NVFnHVKGp4D+6cl7mzivNR2s7fKzO0hda9Km5S54Y6lXCUVuRc5LjeiVBZuXCfV6ti
+         pbtoy8Yh5M/SicInhNAxltdyYTX4zwjidFHpYvgR98AX11mWr2sLrdsHvVHCUjwPrjZS
+         JEF9p9eltc2mhnNjLUYSpERnjv+VjGv5ZyaSzpvvaT1+CYlhsa1xHCLfQ6DZ4c+f5ZIv
+         tu272uXdHrdHQ2ouPEIYUiC8VCLNN8sbbbx7yJTTPd8kPzKRAfGz3xTiGljjZAp8BMmC
+         1QXx2SwR11DplJBZNdb+0s7LcSGNwrpr1zDHjOmR9mCGfsnWA1szxx9wr4oVu1/8glHy
+         jlLA==
+X-Gm-Message-State: APjAAAUsi0P6kuKpkqhA+qWUYJsgTnVHovnz94Z+8YjBus3F4a/S6CEl
+        +pnxKF4Mte7iRT+zRkRVAjiSNAxh
+X-Google-Smtp-Source: APXvYqzZcDPfj1DX9SnGHIm18wsz2wIAlsgXAU/nTMByZURxs8UdspDbhjZ639wV1GPUt6rYXKjOjw==
+X-Received: by 2002:a62:e40e:: with SMTP id r14mr15971357pfh.115.1576245095471;
+        Fri, 13 Dec 2019 05:51:35 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f30sm11194840pga.20.2019.12.13.05.51.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 05:51:34 -0800 (PST)
+Subject: Re: [PATCH] watchdog: qcom: Use platform_get_irq_optional() for bark
+ irq
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        linux-watchdog@vger.kernel.org,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20191213064934.4112-1-saiprakash.ranjan@codeaurora.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <b5b1d073-832b-e7bf-90b0-0cd4167ca3dc@roeck-us.net>
+Date:   Fri, 13 Dec 2019 05:51:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20191213064934.4112-1-saiprakash.ranjan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Yosemite V2 is a facebook multi-node server
-platform that host four OCP server. The BMC
-in the Yosemite V2 platform based on AST2500 SoC.
+On 12/12/19 10:49 PM, Sai Prakash Ranjan wrote:
+> platform_get_irq() prints an error message when the interrupt
+> is not available. So on platforms where bark interrupt is
+> not specified, following error message is observed on SDM845.
+> 
+> [    2.975888] qcom_wdt 17980000.watchdog: IRQ index 0 not found
+> 
+> This is also seen on SC7180, SM8150 SoCs as well.
+> Fix this by using platform_get_irq_optional() instead.
+> 
+> Fixes: 36375491a4395654 ("watchdog: qcom: support pre-timeout when the bark irq is available")
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 
-This patch adds linux device tree entry related to
-Yosemite V2 specific devices connected to BMC SoC.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Signed-off-by : Manikandan Elumalai <manikandan.hcl.ers.epl@gmail.com>
-Acked-by        : Andrew Jeffery <andrew@aj.id.au>
-Reviewed-by  : Vijay Khemka <vkhemka@fb.com>
---- 
----      v5 - Spell and contributor name correction.
----           - License identifier changed to GPL-2.0-or-later.
----           - aspeed-gpio.h removed.
----           - FAN2 tacho channel changed.
----      v4 - Bootargs removed.
----      v3 - Uart1 Debug removed .
----      v2 - LPC and VUART removed .
----      v1 - Initial draft.
---- 
- .../boot/dts/aspeed-bmc-facebook-yosemitev2.dts    | 148 +++++++++++++++++++++
- 1 file changed, 148 insertions(+)
- create mode 100644 arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
-
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
-new file mode 100644
-index 0000000..ffd7f4c
---- /dev/null
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
-@@ -0,0 +1,148 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// Copyright (c) 2018 Facebook Inc.
-+
-+/dts-v1/;
-+
-+#include "aspeed-g5.dtsi"
-+/ {
-+	model = "Facebook Yosemitev2 BMC";
-+	compatible = "facebook,yosemitev2-bmc", "aspeed,ast2500";
-+	aliases {
-+		serial4 = &uart5;
-+	};
-+	chosen {
-+		stdout-path = &uart5;
-+	};
-+
-+	memory@80000000 {
-+		reg = <0x80000000 0x20000000>;
-+	};
-+
-+	iio-hwmon {
-+		// VOLATAGE SENSOR
-+		compatible = "iio-hwmon";
-+		io-channels = <&adc 0> , <&adc 1> , <&adc 2> ,  <&adc 3> ,
-+		<&adc 4> , <&adc 5> , <&adc 6> ,  <&adc 7> ,
-+		<&adc 8> , <&adc 9> , <&adc 10>, <&adc 11> ,
-+		<&adc 12> , <&adc 13> , <&adc 14> , <&adc 15> ;
-+	};
-+};
-+
-+&fmc {
-+	status = "okay";
-+	flash@0 {
-+		status = "okay";
-+		m25p,fast-read;
-+#include "openbmc-flash-layout.dtsi"
-+	};
-+};
-+
-+&spi1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_spi1_default>;
-+	flash@0 {
-+		status = "okay";
-+		m25p,fast-read;
-+		label = "pnor";
-+	};
-+};
-+
-+&uart5 {
-+	// BMC Console
-+	status = "okay";
-+};
-+
-+&mac0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rmii1_default>;
-+	use-ncsi;
-+};
-+
-+&adc {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_adc0_default
-+			&pinctrl_adc1_default
-+			&pinctrl_adc2_default
-+			&pinctrl_adc3_default
-+			&pinctrl_adc4_default
-+			&pinctrl_adc5_default
-+			&pinctrl_adc6_default
-+			&pinctrl_adc7_default
-+			&pinctrl_adc8_default
-+			&pinctrl_adc9_default
-+			&pinctrl_adc10_default
-+			&pinctrl_adc11_default
-+			&pinctrl_adc12_default
-+			&pinctrl_adc13_default
-+			&pinctrl_adc14_default
-+			&pinctrl_adc15_default>;
-+};
-+
-+&i2c8 {
-+	//FRU EEPROM
-+	status = "okay";
-+	eeprom@51 {
-+		compatible = "atmel,24c64";
-+		reg = <0x51>;
-+		pagesize = <32>;
-+	};
-+};
-+
-+&i2c9 {
-+	//INLET & OUTLET TEMP
-+	status = "okay";
-+	tmp421@4e {
-+		compatible = "ti,tmp421";
-+		reg = <0x4e>;
-+	};
-+	tmp421@4f {
-+		compatible = "ti,tmp421";
-+		reg = <0x4f>;
-+	};
-+};
-+
-+&i2c10 {
-+	//HSC
-+	status = "okay";
-+	adm1278@40 {
-+		compatible = "adi,adm1278";
-+		reg = <0x40>;
-+	};
-+};
-+
-+&i2c11 {
-+	//MEZZ_TEMP_SENSOR
-+	status = "okay";
-+	tmp421@1f {
-+		compatible = "ti,tmp421";
-+		reg = <0x1f>;
-+	};
-+};
-+
-+&i2c12 {
-+	//MEZZ_FRU
-+	status = "okay";
-+	eeprom@51 {
-+		compatible = "atmel,24c64";
-+		reg = <0x51>;
-+		pagesize = <32>;
-+	};
-+};
-+
-+&pwm_tacho {
-+	//FSC
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
-+	fan@0 {
-+		reg = <0x00>;
-+		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
-+	};
-+	fan@1 {
-+		reg = <0x01>;
-+		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
-+	};
-+};
--- 
-2.7.4
+> ---
+>   drivers/watchdog/qcom-wdt.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
+> index a494543d3ae1..eb47fe5ed280 100644
+> --- a/drivers/watchdog/qcom-wdt.c
+> +++ b/drivers/watchdog/qcom-wdt.c
+> @@ -246,7 +246,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	/* check if there is pretimeout support */
+> -	irq = platform_get_irq(pdev, 0);
+> +	irq = platform_get_irq_optional(pdev, 0);
+>   	if (irq > 0) {
+>   		ret = devm_request_irq(dev, irq, qcom_wdt_isr,
+>   				       IRQF_TRIGGER_RISING,
+> 
 
