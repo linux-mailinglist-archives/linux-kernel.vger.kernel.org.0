@@ -2,102 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8841311EC2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:53:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6404A11EC2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:53:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfLMUxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:53:32 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:55983 "EHLO
+        id S1726836AbfLMUxu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:53:50 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:43261 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbfLMUxc (ORCPT
+        with ESMTP id S1725937AbfLMUxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:53:32 -0500
+        Fri, 13 Dec 2019 15:53:49 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MNwXA-1iLyXr40AC-00OKO3; Fri, 13 Dec 2019 21:53:24 +0100
+ 1Mf3yk-1i3ky22RkQ-00gY1h; Fri, 13 Dec 2019 21:53:36 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org
+To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Fontana <rfontana@redhat.com>
-Subject: [PATCH v2 07/24] tsacct: add 64-bit btime field
-Date:   Fri, 13 Dec 2019 21:52:12 +0100
-Message-Id: <20191213205221.3787308-4-arnd@arndb.de>
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Maxim Mikityanskiy <maximmi@mellanox.com>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Subject: [PATCH v2 08/24] packet: clarify timestamp overflow
+Date:   Fri, 13 Dec 2019 21:52:13 +0100
+Message-Id: <20191213205221.3787308-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191213204936.3643476-1-arnd@arndb.de>
 References: <20191213204936.3643476-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:m6zEFmAIGteUTAMEdgs5prJfD/t974ZJHKfzjd8SuVlLVyFh89i
- pvk7yilTWbmNQeMsJ/AlHqqLtide7TxY7hZG6X9HBcpWwfIX0yPr/Drv3EvsHl7n+Ml6j1d
- 0tOFRa0UPRlTwNTtR5mokYRAhW18Uz1TBCButDDeBDX9U8H7nv//rgGg3Nym7/5yfm1OSLO
- m6dEvLkEgCjTO+uvaQQuw==
+X-Provags-ID: V03:K1:kKBta+G+as32YcXvSh8tqOxFF8jEv1GeP9pum+Ut03Clje4yb0Y
+ szlos7jj5U38a9OyuzukApS8mGz2pEGMpu1kdmhnUtVYGq1KoMKrBMvwG2Ju1qHHmp6TxBX
+ Ckl2dSzUfranvLS9EdhP4rZF83JADlDdY8rQeETo2twFKq2U+Hc5gvv4bWLL/UDNPmm4X9p
+ JVMHJaWzJlbVlDbLw7GIQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wVYUFpoDrxs=:RY9/vsc3D1VxscEnAiUjml
- r0KGyz2oGh43qf6yyRErfNzcXG7W5xEASsxVzHdgjutQQj0BXyWsru5UoBMgVsN2syAWj46kC
- LsGnxVyODBZoFq5D78OZmppOUNowPq2YnUB9NsuGeAKwyFqsyp7ruvHJl8GrnV82dC7o1DAJK
- csMhiVhkyRpeHfYWvTpdpsqMjiAnJ4G0iW2O76y/rST1OmxNaQErWizbTTsWnAPQ+rCDUNFYc
- zwcUFx3zSylWCIy0UztN1cozDHepsL1MltTnJIb/QSOdXHGm69gbReBhRbnVhMG528q2PeQ2E
- VVOzhkk7c1tKILcnfKYfjAXd/em5NjgdKrs2Tbq30EBdAl6G4uSJ/NrrAPmQXIMQ7I/pKdrJj
- VaUTzaCMZcUF5Xx6AGKfp1aafz891WMvLD5KSUWWq5BnSjYIuvAtxSm5/DzrKXBmQSyyHTGyX
- b7IKA+z2tSj619vxwcEZ9Z102Qak/ufaiqu4y/3pi1eyLLMW7nQuJX5VQB3GzpYccO3NJDup8
- i45sVCFKrftpu4Xb5shNAcgsZB9Ne2VUOic3nmJmea9A7NQsCoPg4kRW/7dMO/SKZkhsbXH/v
- kwEtCz27McMrJsoswg4BWMZml6pWFE2v53bTVbdc3Kfx6EpuEHndvFJ3ClXKXOsPSXrLsA6HF
- 3Zpb25Cs571FdJfN2WBbajDvC/F3X58/54uE+4+EaEtQ5ve+CHOeyedjRyZ0H8znillRbOn80
- gUKaHvzdCS3hZ6kLNcdGaNX88Auct2TyW8oT+DMyw+BQPe+J4f7aThFCMMukmc01+KNPUoLTq
- OhMDWmoWzoAoMdlvSPaD/HakQGGxTfttI7bG4VDtDOlBiGp5CBEvlbFtpm0A5xuNwtaLs58uJ
- jVlHaEdEr1biLGL6AN6w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:IRdm5OTc3rE=:EZmf5cbRyzKAHD8CnHoxmH
+ gRxlyJt2cIfonuW1EgiTb6S6CC3kH7g5rzAgTaMgZ0k1RpIInOJ2F8y2+gd9A6VUVkKi5JCGb
+ kd3iCHr+Obp8BOvM4r1mNwxlrC+n9BXx0w+2KXY6qh2qXG4lNnP1LNV+ftLNGZtPFNdGOrKcr
+ wsh4atIZsxCGAek99Bp7zpXILcoh8saZ3vcIf+IuU9ytJDcsTP02o2wd4tQPS8FuXsZG/EYpG
+ gP6AS9n28Y9Q5BEtZXdAAM6SeL4CGa+8eL10mRk9ruYXac+Uyk50eNmdioIsalwVYhAQPqN8g
+ sD5ZAbLLfyKD01KehEeUvUEtOJMNUdtUaaDUGmvQx6LkICIZjvEKGY7tfG3W4jxBJ5+fRR3It
+ 8D81cJPCLAx8nBmUVJXvnDtvRYZSI2xaDDdi+v4p7ge5IviGf4LvGxsUqG22NAIuIsEGPwswR
+ MRpgwWx95S8xjpP+eM8f35d4yEg8Zwl8cf0QSE2vRpxNTSN6BAC23Ugpc0MgkaZvTN6PlgHy3
+ 3Yh1MDgPA8QogrIr5jLZby5BU44A12q/x8ulD0APdnweT0jCXUQqUm2wLBb3dbSpdtinVL147
+ 5kntc3jlnYo6w1mCqN9CRLprjxVgRpKRgCR3UEcqVEYjOLu2pY7wTgGZOOfyYAuJotpjSCjr/
+ XlSIPO8GPwp3rLOl6z/JJoPmio90dX0nZi0jpOFeN9uHM9zbTXcnSGed0EnppfrcBJMoVR+YR
+ 3ZyCOZjrtvRn5uKUkBZwnN1TgWzSHQpGViJqM8zRLcUpooFBFjgaWbyMEEB0HDT06PmgwsZKV
+ ybKqE9JyyG90ElcZMYr1x0qseCj9ADA+RrT2+g9cu3G0ogv7a92+boY1NSUaS8oRVuYX9JbMU
+ 1ytJBPm9j09YOD61HG6Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As there is only a 32-bit ac_btime field in taskstat and
-we should handle dates after the overflow, add a new field
-with the same information but 64-bit width that can hold
-a full time64_t.
+The memory mapped packet socket data structure in version 1 through 3
+all contain 32-bit second values for the packet time stamps, which makes
+them suffer from the overflow of time_t in y2038 or y2106 (depending
+on whether user space interprets the value as signed or unsigned).
 
+The implementation uses the deprecated getnstimeofday() function.
+
+In order to get rid of that, this changes the code to use
+ktime_get_real_ts64() as a replacement, documenting the nature of the
+overflow. As long as the user applications treat the timestamps as
+unsigned, or only use the difference between timestamps, they are
+fine, and changing the timestamps to 64-bit wouldn't require a more
+invasive user space API change.
+
+Note: a lot of other APIs suffer from incompatible structures when
+time_t gets redefined to 64-bit in 32-bit user space, but this one
+does not.
+
+Acked-by: Willem de Bruijn <willemb@google.com>
+Link: https://lore.kernel.org/lkml/CAF=yD-Jomr-gWSR-EBNKnSpFL46UeG564FLfqTCMNEm-prEaXA@mail.gmail.com/T/#u
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/uapi/linux/taskstats.h | 5 ++++-
- kernel/tsacct.c                | 1 +
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ net/packet/af_packet.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/include/uapi/linux/taskstats.h b/include/uapi/linux/taskstats.h
-index 7d3ea366e93b..ccbd08709321 100644
---- a/include/uapi/linux/taskstats.h
-+++ b/include/uapi/linux/taskstats.h
-@@ -34,7 +34,7 @@
-  */
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 53c1d41fb1c9..60300f3fcddc 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -408,17 +408,17 @@ static int __packet_get_status(const struct packet_sock *po, void *frame)
+ 	}
+ }
  
+-static __u32 tpacket_get_timestamp(struct sk_buff *skb, struct timespec *ts,
++static __u32 tpacket_get_timestamp(struct sk_buff *skb, struct timespec64 *ts,
+ 				   unsigned int flags)
+ {
+ 	struct skb_shared_hwtstamps *shhwtstamps = skb_hwtstamps(skb);
  
--#define TASKSTATS_VERSION	9
-+#define TASKSTATS_VERSION	10
- #define TS_COMM_LEN		32	/* should be >= TASK_COMM_LEN
- 					 * in linux/sched.h */
+ 	if (shhwtstamps &&
+ 	    (flags & SOF_TIMESTAMPING_RAW_HARDWARE) &&
+-	    ktime_to_timespec_cond(shhwtstamps->hwtstamp, ts))
++	    ktime_to_timespec64_cond(shhwtstamps->hwtstamp, ts))
+ 		return TP_STATUS_TS_RAW_HARDWARE;
  
-@@ -169,6 +169,9 @@ struct taskstats {
- 	/* Delay waiting for thrashing page */
- 	__u64	thrashing_count;
- 	__u64	thrashing_delay_total;
-+
-+	/* v10: 64-bit btime to avoid overflow */
-+	__u64	ac_btime64;		/* 64-bit begin time */
- };
+-	if (ktime_to_timespec_cond(skb->tstamp, ts))
++	if (ktime_to_timespec64_cond(skb->tstamp, ts))
+ 		return TP_STATUS_TS_SOFTWARE;
  
+ 	return 0;
+@@ -428,13 +428,20 @@ static __u32 __packet_set_timestamp(struct packet_sock *po, void *frame,
+ 				    struct sk_buff *skb)
+ {
+ 	union tpacket_uhdr h;
+-	struct timespec ts;
++	struct timespec64 ts;
+ 	__u32 ts_status;
  
-diff --git a/kernel/tsacct.c b/kernel/tsacct.c
-index ab12616ee6fb..257ffb993ea2 100644
---- a/kernel/tsacct.c
-+++ b/kernel/tsacct.c
-@@ -36,6 +36,7 @@ void bacct_add_tsk(struct user_namespace *user_ns,
- 	/* Convert to seconds for btime (note y2106 limit) */
- 	btime = ktime_get_real_seconds() - div_u64(delta, USEC_PER_SEC);
- 	stats->ac_btime = clamp_t(time64_t, btime, 0, U32_MAX);
-+	stats->ac_btime64 = btime;
+ 	if (!(ts_status = tpacket_get_timestamp(skb, &ts, po->tp_tstamp)))
+ 		return 0;
  
- 	if (thread_group_leader(tsk)) {
- 		stats->ac_exitcode = tsk->exit_code;
+ 	h.raw = frame;
++	/*
++	 * versions 1 through 3 overflow the timestamps in y2106, since they
++	 * all store the seconds in a 32-bit unsigned integer.
++	 * If we create a version 4, that should have a 64-bit timestamp,
++	 * either 64-bit seconds + 32-bit nanoseconds, or just 64-bit
++	 * nanoseconds.
++	 */
+ 	switch (po->tp_version) {
+ 	case TPACKET_V1:
+ 		h.h1->tp_sec = ts.tv_sec;
+@@ -774,8 +781,8 @@ static void prb_close_block(struct tpacket_kbdq_core *pkc1,
+ 		 * It shouldn't really happen as we don't close empty
+ 		 * blocks. See prb_retire_rx_blk_timer_expired().
+ 		 */
+-		struct timespec ts;
+-		getnstimeofday(&ts);
++		struct timespec64 ts;
++		ktime_get_real_ts64(&ts);
+ 		h1->ts_last_pkt.ts_sec = ts.tv_sec;
+ 		h1->ts_last_pkt.ts_nsec	= ts.tv_nsec;
+ 	}
+@@ -805,7 +812,7 @@ static void prb_thaw_queue(struct tpacket_kbdq_core *pkc)
+ static void prb_open_block(struct tpacket_kbdq_core *pkc1,
+ 	struct tpacket_block_desc *pbd1)
+ {
+-	struct timespec ts;
++	struct timespec64 ts;
+ 	struct tpacket_hdr_v1 *h1 = &pbd1->hdr.bh1;
+ 
+ 	smp_rmb();
+@@ -818,7 +825,7 @@ static void prb_open_block(struct tpacket_kbdq_core *pkc1,
+ 	BLOCK_NUM_PKTS(pbd1) = 0;
+ 	BLOCK_LEN(pbd1) = BLK_PLUS_PRIV(pkc1->blk_sizeof_priv);
+ 
+-	getnstimeofday(&ts);
++	ktime_get_real_ts64(&ts);
+ 
+ 	h1->ts_first_pkt.ts_sec = ts.tv_sec;
+ 	h1->ts_first_pkt.ts_nsec = ts.tv_nsec;
+@@ -2168,7 +2175,7 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+ 	unsigned long status = TP_STATUS_USER;
+ 	unsigned short macoff, netoff, hdrlen;
+ 	struct sk_buff *copy_skb = NULL;
+-	struct timespec ts;
++	struct timespec64 ts;
+ 	__u32 ts_status;
+ 	bool is_drop_n_account = false;
+ 	bool do_vnet = false;
+@@ -2300,7 +2307,7 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+ 	skb_copy_bits(skb, 0, h.raw + macoff, snaplen);
+ 
+ 	if (!(ts_status = tpacket_get_timestamp(skb, &ts, po->tp_tstamp)))
+-		getnstimeofday(&ts);
++		ktime_get_real_ts64(&ts);
+ 
+ 	status |= ts_status;
+ 
 -- 
 2.20.0
 
