@@ -2,66 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5CED11E140
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:55:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B56A11E0C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:31:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfLMJzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:55:47 -0500
-Received: from paleale.coelho.fi ([176.9.41.70]:52134 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725747AbfLMJzr (ORCPT
+        id S1726524AbfLMJa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:30:26 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43638 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfLMJa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:55:47 -0500
-X-Greylist: delayed 2039 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Dec 2019 04:55:45 EST
-Received: from 91-156-6-193.elisa-laajakaista.fi ([91.156.6.193] helo=redipa)
-        by farmhouse.coelho.fi with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.92.2)
-        (envelope-from <luca@coelho.fi>)
-        id 1ifh8p-0002Lp-1I; Fri, 13 Dec 2019 11:21:43 +0200
-Message-ID: <3fc87add008ee42892f747bc247f15e09f6ed2d4.camel@coelho.fi>
-From:   Luca Coelho <luca@coelho.fi>
-To:     Akinobu Mita <akinobu.mita@gmail.com>,
-        linux-nvme@lists.infradead.org, linux-hwmon@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>
-Date:   Fri, 13 Dec 2019 11:21:40 +0200
-In-Reply-To: <1576075099-3441-11-git-send-email-akinobu.mita@gmail.com>
-References: <1576075099-3441-1-git-send-email-akinobu.mita@gmail.com>
-         <1576075099-3441-11-git-send-email-akinobu.mita@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2+b1 
+        Fri, 13 Dec 2019 04:30:26 -0500
+Received: by mail-io1-f68.google.com with SMTP id s2so1676219iog.10
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 01:30:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VbLwtEEii+eZr02TAunYp0r9vwXzyFh2PvhryUpIvu0=;
+        b=AZz89padS3ilULxI3+ozr300rmWfzzY1kN8fVffLYF4fQ5tWQXv8YlmkSnJ48Xmya4
+         45uwmFCQHFOSWHVRCRVGXS90qtIHSfbfPZF/PIMUQwY6QJnniGpn3Smza5HPBVWcvGje
+         9yz7fNP6u3GFZji5pYEWMCuwskl2FiPYRj0+Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VbLwtEEii+eZr02TAunYp0r9vwXzyFh2PvhryUpIvu0=;
+        b=F5W0scpT9xuBk2gbk+3R+4lfjhI9gQB3T0ibYxufawR/0fNf5G10uv2r752qSAxA5t
+         kgG7VSjCzHXpjIx5FgHzIQmWgUsUN+k7RCkxMSeQ8vAVVF/lUUeEPzBvd8484zYUpiFy
+         jX6hp3XOdXFp/ttfhbqsBQSzZq0636ffxdWMmSHVNJ6hWAbJCjwES8L+lnDFwfbJxPX4
+         n+CbpMyM+1wyBOjmp6T4tRerbzuqqEg8zJ1Qnns+OjBua9y2qV8BqjpazhUbjTkVekPI
+         QFXcs44+MSi7DyZqeuCxx8H22jcM9pUr0T43sqRuSPBanU7dCzDQq8Pa1D60puPy3zqd
+         GTTw==
+X-Gm-Message-State: APjAAAVt765osYcoss13pUYixIh0+0qHt1y+HNIZkCTBeWgw68cm7St/
+        65gSV5G/UQaqAmpqtDcYqlAZdt5d9SWjZuPmhojUlg==
+X-Google-Smtp-Source: APXvYqzwM8OVdjfc6nPVJOOHNFpeyNvYtMcf+cL5pDaYSQBuwa61eiV16PuC1ggtwJieCU4wJrSqxFkFc28L62I7NLM=
+X-Received: by 2002:a5d:8846:: with SMTP id t6mr5453453ios.63.1576229425684;
+ Fri, 13 Dec 2019 01:30:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on farmhouse.coelho.fi
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        TVD_RCVD_IP,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: Re: [PATCH v3 10/12] wireless: iwlwifi: use <linux/units.h> helpers
+References: <20191212145042.12694-1-labbott@redhat.com> <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
+ <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com> <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
+ <cf4c9634-1503-d182-cb12-810fb969bc96@redhat.com> <20191212213609.GK4203@ZenIV.linux.org.uk>
+ <CAJfpegv_zY6w6=pOL0x=sjuQmGae0ymOafZXjyAdNEHj+EKyNA@mail.gmail.com>
+In-Reply-To: <CAJfpegv_zY6w6=pOL0x=sjuQmGae0ymOafZXjyAdNEHj+EKyNA@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 13 Dec 2019 10:30:14 +0100
+Message-ID: <CAJfpegu+mMVm8vNMZhUVveWKRz4VgcMip7vC4iBhZahWbk=qPw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: Don't reject unknown parameters
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-12-11 at 23:38 +0900, Akinobu Mita wrote:
-> This switches the iwlwifi driver to use celsius_to_kelvin() and
-> kelvin_to_celsius() in <linux/units.h>.
-> 
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: Johannes Berg <johannes.berg@intel.com>
-> Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-> Cc: Luca Coelho <luciano.coelho@intel.com>
-> Cc: Intel Linux Wireless <linuxwifi@intel.com>
-> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-> ---
+On Fri, Dec 13, 2019 at 10:15 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Acked-by: Luca Coelho <luciano.coelho@intel.com>
+> I have sent patches for the above numerous times, all been ignored by
+> DavidH and Al.  While this seems minor now, I think getting this
+> interface into a better shape as early as possible may save lots more
+> headaches later...
 
---
-Cheers,
-Luca.
+Refs:
 
+https://lore.kernel.org/linux-fsdevel/20191128155940.17530-12-mszeredi@redhat.com/
+https://lore.kernel.org/linux-fsdevel/20191128155940.17530-13-mszeredi@redhat.com/
+https://lore.kernel.org/linux-fsdevel/20190619123019.30032-7-mszeredi@redhat.com/
+etc...
+
+Thanks,
+Miklos
