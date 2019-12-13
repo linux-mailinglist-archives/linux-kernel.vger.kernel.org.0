@@ -2,93 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22CB111E876
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:38:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A52F11E882
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbfLMQi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:38:26 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:36212 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727480AbfLMQi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:38:26 -0500
-Received: from zn.tnic (p200300EC2F0A5A00E05EA1F3CB5927A8.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5a00:e05e:a1f3:cb59:27a8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E4ADC1EC0D05;
-        Fri, 13 Dec 2019 17:38:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1576255105;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=U1lMKBvl7t0uA7vs1lBWLnqmt5G1DUAC7gAqYkIurz4=;
-        b=ThBk7Cyjp8/zS0rF3ChUwzKW8vplJXRdLqiiwOMh2PEF1rzp3FQ6UPNT9Rps9Cv9mUvsuI
-        ydEWJF7+LBav3DByHM0gMVDhPVT3bwBmu+7UtOH+qnHOc4gCtyaEckVdWsZTmPcwOwuaWk
-        AVbhufKMZN+m29Je8YwfYkToyp4cIjE=
-Date:   Fri, 13 Dec 2019 17:38:18 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] x86/mm/KASLR: Adjust the padding size for the
- direct mapping.
-Message-ID: <20191213163818.GB25899@zn.tnic>
-References: <20191115144917.28469-1-msys.mizuma@gmail.com>
- <20191115144917.28469-5-msys.mizuma@gmail.com>
- <20191212201916.GL4991@zn.tnic>
- <20191213132850.GG28917@MiWiFi-R3L-srv>
- <20191213141543.GA25899@zn.tnic>
- <20191213145448.GH28917@MiWiFi-R3L-srv>
+        id S1728269AbfLMQk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:40:59 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:57001 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727974AbfLMQk6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 11:40:58 -0500
+Received: from mail-qk1-f180.google.com ([209.85.222.180]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MuUrM-1hoOAF0LYo-00rV9X; Fri, 13 Dec 2019 17:40:57 +0100
+Received: by mail-qk1-f180.google.com with SMTP id z76so98914qka.2;
+        Fri, 13 Dec 2019 08:40:56 -0800 (PST)
+X-Gm-Message-State: APjAAAWoS0U0GNvBrpx4FO4Z767v7goXk114etyG00wNVxJxB7w6KGwj
+        rVC2hlaLZt6d+5r/iY7AWGBZ1DxhbWp7k6Yh7Ig=
+X-Google-Smtp-Source: APXvYqw5u1orJc/a+i3My5cWS10VAbPb8wFPnJLEObrgY4XMCNLfXeYS18RvOE3gtWInw4m44JEidx73ZCZBJjkLuTw=
+X-Received: by 2002:a37:5b45:: with SMTP id p66mr14335919qkb.394.1576255255850;
+ Fri, 13 Dec 2019 08:40:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191213145448.GH28917@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191213141046.1770441-1-arnd@arndb.de> <20191213141046.1770441-11-arnd@arndb.de>
+ <CBC9899C-12BE-466E-8809-EA928AAE1F11@oracle.com>
+In-Reply-To: <CBC9899C-12BE-466E-8809-EA928AAE1F11@oracle.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 13 Dec 2019 17:40:39 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3RXqVqpeTmOrEGtXyeMGZV+5g_QzywGgLnfvi2GMDx=g@mail.gmail.com>
+Message-ID: <CAK8P3a3RXqVqpeTmOrEGtXyeMGZV+5g_QzywGgLnfvi2GMDx=g@mail.gmail.com>
+Subject: Re: [PATCH v2 10/12] nfsd: use boottime for lease expiry alculation
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     Bruce Fields <bfields@fieldses.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:wAw4Wi6VZUHfEEGkMBUqSjMEdjXoZgnhYkmoeo226Z8fiMwLwrn
+ e+FiZgw2B64glMViYcoywnnndOtaJRWXgA+K4RprdKHttefgT3roLNNjjW+a+gyZpY+bHqk
+ zvjhrwIqjZfFCSJWWriCqYxnN0Q4a3rif5mNS5Y5GbTsrXMH3w4q3pNqCvk6AV4OZMN33tQ
+ pD1kLrJwrcpWbHm27ZVGg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:z5uKNK97r58=:gjhYy2fzJmWJLKHBZ4fv5W
+ NTpJ7HZEtn03HGZqGzkW32yUs77UdOfYrGPIPIuH7/Fo+nyEaU14NJHxalUxjIXSRJnrmwnAx
+ GIn4PxJrmF5gBeJlee5E5o/VftRICudQCP2RLFSWS5LfU+Z/je3paDQjHwLfdxNKuM4OF1GiX
+ H67SVOmz4ZctgCkyui+Jqi7YcclFb3eZXltSoSVPo6bGRy7A06TFxmpD0JStQIskRu+EQ48E7
+ V5z30XfWJ2S4StU2WomVStVZFjKNxrr0y5zCSwcRvOhYyInir3bgKRix5Fci8hmR6HMQWJMOi
+ 859clQQ0/w+YrC/35KC/5OwNjk5ZbH+svcIFV/FwloCqvnmbb+lLwHLNf2pISciBNVIGI/xQa
+ e6idsW0l23k0rQeKMX4gANTpzdfvhJCQybA1Q57t//3OmNmqrKSBrc+N4Li/hhXotIueSmzVY
+ neRY5AQUTjk5yzqnBN5mJStlQ7VBd8l24dUpfdPqDnfdO6GF1FuWYXPI3pfo3alScS2DgpvGY
+ u6X9DMb6TDk1yjTMsvDTxstu7YWADS4uhkMXOocDJslJvL86bowoNBrA1t0ExqCwiyOdGFOxI
+ KdQPfy7FhRNgXdm+8lfxblLDfe0X81aZMwdZ+GTqnlZpLPAxb+iJnqG8/hpX/NM23sbuTukb7
+ QXdBEEBjfeTzIZxOQNeJZtf4/rE1+CihnogHzsF2htmfTDDlXzo/HAdHePzi7FOexVS4ck5Bp
+ mJpOlkt3vCiK0W57VYPh3XV7hpCA8SXwDUgbfjUepfIb2/ef+z9E21M8LHLZYCRUzBK43/PB2
+ LRaSO5wFHLNEqaMNGZmxPm8Aj9tart/gMGrAtOwHopDLA65wCQ1BjQ10LCmFCx6p47tgYc+pA
+ 6pAizvX1MXLNaIAgLsMg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 10:54:48PM +0800, Baoquan He wrote:
-> On 12/13/19 at 03:15pm, Borislav Petkov wrote:
-> > On Fri, Dec 13, 2019 at 09:28:50PM +0800, Baoquan He wrote:
-> > > In Documentation/x86/x86_64/mm.rst, the physical memory regions mapping
-> > > with page_offset is called as the direct mapping of physical memory.
-> > 
-> > The fact that it happens to compute the *first* region's size, which
-> > *happens* to be the direct mapping of all physical memory is immaterial
-> > here.
-> > 
-> > It is actually causing more confusion in an already complex piece of
-> > code. You can call this function just as well
-> > 
-> >   calc_region_size()
-> > 
-> > which won't confuse readers. Because all you care about here is the
-> > region's size - not which region it is.
-> 
-> Won't calc_region_size be too generic? We also have vmalloc and vmemmap,
-> and here we are specifically calculating the direct mapping of physical
-> memory.
+On Fri, Dec 13, 2019 at 5:26 PM Chuck Lever <chuck.lever@oracle.com> wrote:
+> > On Dec 13, 2019, at 9:10 AM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-It sounds like you didn't read what I wrote above so read it again pls.
+> > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+> > index 24534db87e86..508d7c6c00b5 100644
+> > --- a/fs/nfsd/nfs4callback.c
+> > +++ b/fs/nfsd/nfs4callback.c
+> > @@ -823,7 +823,12 @@ static const struct rpc_program cb_program = {
+> > static int max_cb_time(struct net *net)
+> > {
+> >       struct nfsd_net *nn = net_generic(net, nfsd_net_id);
+> > -     return max(nn->nfsd4_lease/10, (time_t)1) * HZ;
+> > +
+> > +     /* nfsd4_lease is set to at most one hour */
+> > +     if (WARN_ON_ONCE(nn->nfsd4_lease > 3600))
+> > +             return 360 * HZ;
+>
+> Why is the WARN_ON_ONCE added here? Is it really necessary?
 
-> If not knowing the max address to cover all the possible hotplugged
-> memory, later memory hotplug will fail.
+This is to ensure the kernel doesn't change to a larger limit that
+requires a 64-bit division on a 32-bit architecture.
 
-You don't have to state the obvious - I can see that in the code.
+With the old code, dividing by 10 was always fast as
+nn->nfsd4_lease was the size of an integer register. Now it
+is 64 bit wide, and I check that truncating it to 32 bit again
+is safe.
 
-So let me ask you differently: can the parsing of the SRAT table happen
-shortly before kernel_randomize_memory() *without* adding all that gunk
-to the compressed stage, and without adding the boot_params member and
-done only for memory hot_add machines?
+> (Otherwise these all LGTM).
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks for taking a look.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+      Arnd
