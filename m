@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2641211DAD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:10:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5C6811DAA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:09:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731795AbfLMAJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 19:09:09 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:38779 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731764AbfLMAJE (ORCPT
+        id S1731806AbfLMAJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 19:09:12 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41946 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731524AbfLMAJH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:09:04 -0500
-Received: by mail-pj1-f68.google.com with SMTP id l4so344571pjt.5
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:09:03 -0800 (PST)
+        Thu, 12 Dec 2019 19:09:07 -0500
+Received: by mail-pg1-f193.google.com with SMTP id x8so529238pgk.8
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:09:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0AvuSAjkIKauhY++c7YWp6c3q12AUyVxjR83OEuWwPU=;
-        b=N44hjPgUKP1rna4pDgr1TI6pgfXmWzNYqT2os27E2x9CgNvOq4XfY2uvZg3QbDL4q8
-         lC2uzw05PZALhHdfZOv00DF4DpIBbBiXA5k9+3/l8Go8fBWKLx0KNKMDxH7lsbo1ZYEF
-         QNGRGBDlsm1A5d+/s31tS1Eirnkr5aZfaRGP3QM+eD3CVaZ1++8VCJxOmoc/n4bNNa8k
-         wvVJzYhEIKOStfkx7/jI7JW+1eS53I77LUvwumVzjIJf9Vu1T+gi29abhbiOlFuq+5oZ
-         MMODig9sZun8DmyfjTS/+mELafP9hPHcMY44LTbnyeWo9KguTxA4KnALSwzn1jcrCX/L
-         rpYg==
+        bh=v4lYZdDwtdQBIclggA0bWMyCLHW3q7zupAZQy402Fd0=;
+        b=mWp9yH0Vc2CNeqnIaym91/4DIhwEBKNorUH26C0EJi/KMKyIwOQrN0yx4HXE7ian9H
+         OfLfOWbObSYBBqoc1MH5mKjzxExVnO3STfE2SrxzZjTQeLkAouoHmrQHEbf11U4EIcig
+         kPLzJjkU3EGiNPrT6BsO+0t3u2X6hJbTmf9uKLGDMV5rDBb8bA9YnISjlaz0EOuq5Y1J
+         +GTT6vdimCrjxzipC/Jmq1wCBUTgbkdXMT565PPjXrCahc8dnGOFvwlQw7zP3CmkXkHV
+         BCmy75UFtaVUU2ex5yWF/V5SA64y/YdF8/GbKAsY6rFHFbR1NG+6ufn/Ps7nhUk9P1JA
+         iU1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0AvuSAjkIKauhY++c7YWp6c3q12AUyVxjR83OEuWwPU=;
-        b=JPkATx7oyG2TRgVEHd3mcYpQATubjYpQ/GnBB+okQEgInJxV+m8Y6ATvOsRmOulfu0
-         1TWyd5jT+d52vgp+ViqYVl5nwIkNIpPQBsy/0kwuqFFWVvifx7i2/I9kh2+LljTqVjXB
-         HMz1nOSCn1rSP/9m8L/zOrhMCHj73eSPSFqF7iONV0gKNra7O0ulyzOFZQMNeIqlqNBY
-         6k2AydD4+cGV5R+/E9C6TMGlHfBOgu97M7O8hFyU/LwEZsXcy+z2YrAknPwIRB0AWM+0
-         bZZ/0x7GOlJSS9g+g45f774imrw/GRdyB9DB/uRdsTlldOU1xvdTNWAzM8IPevSRnE+s
-         Pcyw==
-X-Gm-Message-State: APjAAAWCqp7dutUSHQDWB94J9eYg9PjDeaj0QRaL7ZX3o34xelFV2MYM
-        06G5uyNqw1EsV8cDD4hcJTk4WfmyKwU=
-X-Google-Smtp-Source: APXvYqwYRTF3MnCYATLiJ+ZqcgT9/DArauisQ+e4UKASVqEwmtFvSwNn2galsFLV/dQmuwgAPCREJA==
-X-Received: by 2002:a17:90a:a386:: with SMTP id x6mr13586682pjp.116.1576195743090;
-        Thu, 12 Dec 2019 16:09:03 -0800 (PST)
+        bh=v4lYZdDwtdQBIclggA0bWMyCLHW3q7zupAZQy402Fd0=;
+        b=pn0joWx4/KCnZATxcEawVCAycOg6cZytuB4x4Kwr3Lolgpk33EjLhCNuMOXASOBaoX
+         YLRMB73L6gPEz/OKlBPky8VnDs58ywe0jt0xWjDWzu8Vj6KUNgay2dSzm3UlC1q/pf9z
+         zq20H4q2fI74hK/17jEVPks0ihXfhALoYUE7+WRYfVJ5nID7sA1nPga4lnb3lGMfPBXD
+         kXqqEwaC6biFcvEkYePhsNB3gUzIseT//hgdLva8xvprEBk8XFk0voB5MEwgSyEOD3Qi
+         7mqcVqNFzlJY+YwiML1OvEkgBzFMwWNUHllYw72F99S66YKm9V+hF0/uOjUzC6bU+3Ci
+         5eeA==
+X-Gm-Message-State: APjAAAXaLI5wXpyifXrmgenZqxiRGdbGK/bKBMOsBvRpxUoss/FNQ3mM
+        on+/6FnLwNFTirhyWVGndBLJz4M/77A=
+X-Google-Smtp-Source: APXvYqz0nRUqF6FBYGAYNKw+5MJ2oqirJQnva9+ZNbslF6K7J3asSfIbzrDEpwLMcHVr87dltfNRGg==
+X-Received: by 2002:a63:4641:: with SMTP id v1mr13452225pgk.389.1576195745800;
+        Thu, 12 Dec 2019 16:09:05 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.09.00
+        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.09.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 16:09:02 -0800 (PST)
+        Thu, 12 Dec 2019 16:09:04 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -53,9 +53,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Jiri Slaby <jslaby@suse.com>,
         Vasiliy Khoruzhick <vasilykh@arista.com>,
         linux-serial@vger.kernel.org
-Subject: [PATCH 37/58] tty/serial: Migrate samsung_tty to use has_sysrq
-Date:   Fri, 13 Dec 2019 00:06:36 +0000
-Message-Id: <20191213000657.931618-38-dima@arista.com>
+Subject: [PATCH 38/58] tty/serial: Migrate sb1250-duart to use has_sysrq
+Date:   Fri, 13 Dec 2019 00:06:37 +0000
+Message-Id: <20191213000657.931618-39-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191213000657.931618-1-dima@arista.com>
 References: <20191213000657.931618-1-dima@arista.com>
@@ -77,32 +77,32 @@ Initialise it in driver's probe and remove ifdeffery.
 
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/serial/samsung_tty.c | 5 +----
+ drivers/tty/serial/sb1250-duart.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 83fd51607741..9770fe29ae86 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -21,10 +21,6 @@
-  * BJD, 04-Nov-2004
- */
+diff --git a/drivers/tty/serial/sb1250-duart.c b/drivers/tty/serial/sb1250-duart.c
+index 329aced26bd8..cb8185bffe42 100644
+--- a/drivers/tty/serial/sb1250-duart.c
++++ b/drivers/tty/serial/sb1250-duart.c
+@@ -15,10 +15,6 @@
+  *	"BCM1250/BCM1125/BCM1125H User Manual", Broadcom Corporation
+  */
  
--#if defined(CONFIG_SERIAL_SAMSUNG_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+-#if defined(CONFIG_SERIAL_SB1250_DUART_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 -#define SUPPORT_SYSRQ
 -#endif
 -
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
- #include <linux/slab.h>
-@@ -1909,6 +1905,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
- 		ourport->port.fifosize = ourport->drv_data->fifosize[index];
- 	else if (ourport->info->fifosize)
- 		ourport->port.fifosize = ourport->info->fifosize;
-+	ourport->port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_SAMSUNG_CONSOLE);
- 
- 	/*
- 	 * DMA transfers must be aligned at least to cache line size,
+ #include <linux/compiler.h>
+ #include <linux/console.h>
+ #include <linux/delay.h>
+@@ -813,6 +809,7 @@ static void __init sbd_probe_duarts(void)
+ 			uport->ops	= &sbd_ops;
+ 			uport->line	= line;
+ 			uport->mapbase	= SBD_CHANREGS(line);
++			uport->has_sysrq = IS_ENABLED(CONFIG_SERIAL_SB1250_DUART_CONSOLE);
+ 		}
+ 	}
+ }
 -- 
 2.24.0
 
