@@ -2,59 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 219D311DE6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 08:10:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B4811DE80
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 08:18:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbfLMHKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 02:10:03 -0500
-Received: from mga01.intel.com ([192.55.52.88]:8694 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725906AbfLMHKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 02:10:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 23:10:02 -0800
-X-IronPort-AV: E=Sophos;i="5.69,308,1571727600"; 
-   d="scan'208";a="208368732"
-Received: from peterhae-mobl.ger.corp.intel.com (HELO localhost) ([10.252.49.100])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 23:09:58 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Vince Weaver <vincent.weaver@maine.edu>,
-        linux-kernel@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: Re: [perf] perf_fuzzer triggers NULL pointer derefernce in i915 driver
-In-Reply-To: <alpine.DEB.2.21.1912121032420.15237@macbook-air>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <alpine.DEB.2.21.1912121032420.15237@macbook-air>
-Date:   Fri, 13 Dec 2019 09:09:59 +0200
-Message-ID: <87tv641z20.fsf@intel.com>
+        id S1726427AbfLMHSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 02:18:13 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53352 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725497AbfLMHSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 02:18:12 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 882569D7A5C5C710FA0A;
+        Fri, 13 Dec 2019 15:18:09 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 13 Dec 2019 15:17:59 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <stefanr@s5r6.in-berlin.de>
+CC:     <linux1394-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
+Subject: [PATCH] firewire: net: remove set but not used variables 'guid'
+Date:   Fri, 13 Dec 2019 15:15:10 +0800
+Message-ID: <20191213071510.177751-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Dec 2019, Vince Weaver <vincent.weaver@maine.edu> wrote:
-> with current git the perf_fuzzer was able to trigger this NULL pointer
-> de-reference in the i915 driver.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Please file a bug.
+drivers/firewire/net.c: In function fwnet_finish_incoming_packet:
+drivers/firewire/net.c:488:9: warning: variable guid set but not used [-Wunused-but-set-variable]
 
-https://gitlab.freedesktop.org/drm/intel/wikis/How-to-file-i915-bugs
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ drivers/firewire/net.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-BR,
-Jani.
-
-
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index 715e491..2878564 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -490,7 +490,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ {
+ 	struct fwnet_device *dev;
+ 	int status;
+-	__be64 guid;
+ 
+ 	switch (ether_type) {
+ 	case ETH_P_ARP:
+@@ -512,7 +511,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ 	 * Parse the encapsulation header. This actually does the job of
+ 	 * converting to an ethernet-like pseudo frame header.
+ 	 */
+-	guid = cpu_to_be64(dev->card->guid);
+ 	if (dev_hard_header(skb, net, ether_type,
+ 			   is_broadcast ? net->broadcast : net->dev_addr,
+ 			   NULL, skb->len) >= 0) {
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.7.4
+
