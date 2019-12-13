@@ -2,103 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8225B11E063
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 652BE11E0A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:28:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbfLMJMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:12:49 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:58847 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfLMJMs (ORCPT
+        id S1726916AbfLMJ16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:27:58 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56422 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726769AbfLMJ1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:12:48 -0500
-Received: from mail-qv1-f53.google.com ([209.85.219.53]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MzQbw-1hkY503oH2-00vNe9; Fri, 13 Dec 2019 10:12:47 +0100
-Received: by mail-qv1-f53.google.com with SMTP id z3so572126qvn.0;
-        Fri, 13 Dec 2019 01:12:46 -0800 (PST)
-X-Gm-Message-State: APjAAAVdjH0AM8OalO420MJ9FsonYzOw7ARt4hV8ClWhQNe/3zsT85CZ
-        jhDXXQcHOj6FyiMtjTuPQXWyXl3G3KFO6lzW2t0=
-X-Google-Smtp-Source: APXvYqy/KOGEPMwdh4FoH/jyBuQcNsHmp5vzih7Ry8TS0OjC6q423kVxL+t8K+Md+55WWC+0cI3NaG9Z2+AmfTzLsdw=
-X-Received: by 2002:a0c:bd20:: with SMTP id m32mr12468089qvg.197.1576228365743;
- Fri, 13 Dec 2019 01:12:45 -0800 (PST)
+        Fri, 13 Dec 2019 04:27:37 -0500
+Received: from 79.184.255.82.ipv4.supernova.orange.pl (79.184.255.82) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id 3389f51032fc8655; Fri, 13 Dec 2019 10:27:34 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Subject: [PATCH v1 02/10] ACPI: processor: Introduce acpi_processor_evaluate_cst()
+Date:   Fri, 13 Dec 2019 10:12:50 +0100
+Message-ID: <12144402.mclmRrL0h9@kreacher>
+In-Reply-To: <3950312.2WmFeOdZGY@kreacher>
+References: <3950312.2WmFeOdZGY@kreacher>
 MIME-Version: 1.0
-References: <1576225834-16389-1-git-send-email-sunguoyun@loongson.cn>
-In-Reply-To: <1576225834-16389-1-git-send-email-sunguoyun@loongson.cn>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 13 Dec 2019 10:12:29 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1nLz2FDxw28DBXVma9E2saWpGtt+y6tYm4jros6TUF6w@mail.gmail.com>
-Message-ID: <CAK8P3a1nLz2FDxw28DBXVma9E2saWpGtt+y6tYm4jros6TUF6w@mail.gmail.com>
-Subject: Re: [PATCH V2] MIPS: Add get_thread_area syscall
-To:     Guoyun Sun <sunguoyun@loongson.cn>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Xuefeng Li <lixuefeng@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:R7d2KjzKhAJPtKeDSv8HU1uxOAiuqRUm+tslKIJMlNfBnfaP/06
- Wc8wWq65uFcILTaFbdT7pedB99ynSOhtL9boFpHxbPhbXz3pcieG7JG4s1C7smgX/fA3swK
- YUo7u3RjvHpV5R8MBuiXPT11eYXAQCBjctuNcr8A92WfuKcM3htxlwZQzdcsguY+lkJPgI0
- OkTBGa4TSeIssgSvIjOkg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:D1U26v/T0Lc=:vGYDxyAHHQhrTtyDpF1QDd
- NFC6D8hMRY7sFvGCTDYXZEUIoX9Fy3ruXTsa4v4u/z7BsyEeN+7tTs39DNEAleMg7cVUpe1DE
- iqKDv8bCQ6QRlkr2PULHN/TP6smY6ckhpZw7BXnG3/yTy3y4hA+aad4ibbRFUz8RFfgtVLmel
- MQ92HK4/KhbVhStjLTgxQ1bOno1ivK1alDYDeKazucm7xh4KF8AIn/j+HYFdLnaLrn8ZAFBrw
- HI3Eh9OcPV1xfg5jvAmgTfdRQtyqZtS65dODXTblDFiwVdQhUUXYRo5FYhMwUSrMA5q6BE8Lx
- LHUKFWvGZhq8V8RSV7Y+9oAvvedROybewRwelMiOswXCWwJtA9kZDyQMUWvEB6hr7X0y32N2L
- 6mQ1GVIuodyhr6eEqyRn4PVK/m2iae2+HYv1CvFIOjTw0BTWMO0Rgf6qoQWpawIrq4K2BFyDJ
- zhGXmYIgCNnznPiO5rRoPTYMmVKQrgYEEER5dIM2GSujuj/v5OyIyYzsTeSkGJltkSfRYEZeE
- dP/aEGeuIiQ4sDUDWOmbvjYqwOztbrpI5TrUpdrPGFwdaTBX1R4Q/ra8D0oX6pUcxLg8wI698
- 9zB+/1tRtBvaevp9WMNzCbrJmjnqKXssQD3hUmEi7p4V/IQn4rPutsgRqoJngFIbA6STYp9hE
- FcyyXOv2Z9qw7qNsEVeRRaL8h6iyovUtmy5PXPhdP9WLhg2DL9YFlKmOrtGLBkERQfWK0tmHP
- 7nFuLnD9FTYsv9sBnp+JqOoDX364C1g1ViPO127ORJu7Zvr0340Rt4uvANgJpK2LbBu3MHOPy
- uin5cfbEm5VILQUAnyqOzsnocqGWR/mkPxoAQ1TlYRM9AZNWzsOkAl4OyGvjKm6pfHljoeu2P
- YlyLBKRXkApEcT2jn12w==
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 9:30 AM Guoyun Sun <sunguoyun@loongson.cn> wrote:
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-Thanks for fixing the numbers. On second look, I saw another problem:
+In order to separate the ACPI _CST evaluation from checks
+specific to the ACPI processor driver, move the majority of
+the acpi_processor_get_power_info_cst() function body to a new
+function, acpi_processor_evaluate_cst(), that will extract
+the C-states information from _CST output, and redefine
+acpi_processor_get_power_info_cst() as a wrapper around it.
 
-> diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
-> index c333e57..20bf4c5 100644
-> --- a/arch/mips/kernel/syscall.c
-> +++ b/arch/mips/kernel/syscall.c
-> @@ -94,6 +94,16 @@ SYSCALL_DEFINE1(set_thread_area, unsigned long, addr)
->         return 0;
->  }
->
-> +SYSCALL_DEFINE1(get_thread_area, unsigned long __user *, u_info)
-> +{
-> +       struct thread_info *ti = task_thread_info(current);
-> +
-> +       if (copy_to_user(u_info, &(ti->tp_value), sizeof(ti->tp_value)))
-> +               return -EFAULT;
-> +
-> +       return 0;
-> +}
-> +
+No intentional functional impact.
 
-This won't work for compat mode, when tp_value is a different size
-in kernel and user space. You could either add a COMPAT_SYSCALL_DEFINE1()
-variant, or handle it like
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-        if (in_compat_syscall())
-                   return put_user(ti->tp_value, (__u32 *)u_info);
-        return put_user(ti->tp_value, u_info);
+No changes from the RFC version.
+
+---
+ drivers/acpi/processor_idle.c | 52 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 32 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+index dd737d836c03..e92d0e6d4cd1 100644
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -297,21 +297,17 @@ static int acpi_processor_get_power_info_default(struct acpi_processor *pr)
+ 	return 0;
+ }
+ 
+-static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
++static int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
++				       struct acpi_processor_power *info)
+ {
++	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
++	union acpi_object *cst;
+ 	acpi_status status;
+ 	u64 count;
+-	int current_count;
++	int current_count = 0;
+ 	int i, ret = 0;
+-	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+-	union acpi_object *cst;
+-
+-	if (nocst)
+-		return -ENODEV;
+ 
+-	current_count = 0;
+-
+-	status = acpi_evaluate_object(pr->handle, "_CST", NULL, &buffer);
++	status = acpi_evaluate_object(handle, "_CST", NULL, &buffer);
+ 	if (ACPI_FAILURE(status)) {
+ 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "No _CST, giving up\n"));
+ 		return -ENODEV;
+@@ -335,9 +331,6 @@ static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
+ 		goto end;
+ 	}
+ 
+-	/* Tell driver that at least _CST is supported. */
+-	pr->flags.has_cst = 1;
+-
+ 	for (i = 1; i <= count; i++) {
+ 		union acpi_object *element;
+ 		union acpi_object *obj;
+@@ -383,7 +376,7 @@ static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
+ 		cx.entry_method = ACPI_CSTATE_SYSTEMIO;
+ 		if (reg->space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
+ 			if (acpi_processor_ffh_cstate_probe
+-					(pr->id, &cx, reg) == 0) {
++					(cpu, &cx, reg) == 0) {
+ 				cx.entry_method = ACPI_CSTATE_FFH;
+ 			} else if (cx.type == ACPI_STATE_C1) {
+ 				/*
+@@ -432,7 +425,7 @@ static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
+ 			continue;
+ 
+ 		current_count++;
+-		memcpy(&(pr->power.states[current_count]), &cx, sizeof(cx));
++		memcpy(&info->states[current_count], &cx, sizeof(cx));
+ 
+ 		/*
+ 		 * We support total ACPI_PROCESSOR_MAX_POWER - 1
+@@ -446,12 +439,9 @@ static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
+ 		}
+ 	}
+ 
+-	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found %d power states\n",
+-			  current_count));
++	acpi_handle_info(handle, "Found %d idle states\n", current_count);
+ 
+-	/* Validate number of power states discovered */
+-	if (current_count < 2)
+-		ret = -EFAULT;
++	info->count = current_count;
+ 
+       end:
+ 	kfree(buffer.pointer);
+@@ -459,6 +449,28 @@ static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
+ 	return ret;
+ }
+ 
++static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
++{
++	int ret;
++
++	if (nocst)
++		return -ENODEV;
++
++	ret = acpi_processor_evaluate_cst(pr->handle, pr->id, &pr->power);
++	if (ret)
++		return ret;
++
++	/*
++	 * It is expected that there will be at least 2 states, C1 and
++	 * something else (C2 or C3), so fail if that is not the case.
++	 */
++	if (pr->power.count < 2)
++		return -EFAULT;
++
++	pr->flags.has_cst = 1;
++	return 0;
++}
++
+ static void acpi_processor_power_verify_c3(struct acpi_processor *pr,
+ 					   struct acpi_processor_cx *cx)
+ {
+-- 
+2.16.4
 
 
-      Arnd
+
+
+
