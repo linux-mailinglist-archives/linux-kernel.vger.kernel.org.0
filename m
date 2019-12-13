@@ -2,88 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C36B11E54B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:11:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEC7611E560
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:13:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfLMOLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 09:11:11 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:50571 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727666AbfLMOLE (ORCPT
+        id S1727704AbfLMONK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 09:13:10 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:35950 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727563AbfLMONJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 09:11:04 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MK3eI-1iQyrf475S-00LVMW; Fri, 13 Dec 2019 15:10:58 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 12/12] nfsd: remove nfs4_reset_lease() declarations
-Date:   Fri, 13 Dec 2019 15:10:46 +0100
-Message-Id: <20191213141046.1770441-13-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191213141046.1770441-1-arnd@arndb.de>
-References: <20191213141046.1770441-1-arnd@arndb.de>
+        Fri, 13 Dec 2019 09:13:09 -0500
+Received: by mail-qk1-f194.google.com with SMTP id a203so2143351qkc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 06:13:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Nid8tA47CgGN/j7YlqJfGqUykgFGi6RHG/gnONQyj4E=;
+        b=iiL3UdjaR/ciA0kSMNs852p8OTlOiquuE5fH159L/f/kyYZSKGWMWVam+pUVGCkXzn
+         9bgt3SEbd3pKnEhCeny9C42+mC0KXfiMLBQgpimffHI86crwzaVM/11h7Y8coEKA38o+
+         tCVCdPV56qNiZgx3KgERpcRrNrVWUEs+0alaL5KGOlujfPecyMF86opv0mn3yFtlMhi/
+         HSFudy4nXLFhq55ZzOCCgbDw0syt6JyzB7F1//hQ+zzHl5IqhR2XQhaFKSX6W7QnskC+
+         6wTsaWtttmI+TDa2Sz4IrzVt+oKSBMj5Bnc1BiFbug2PEg9RfDO5OiVAlqxNQb7ozfcK
+         /Ebg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Nid8tA47CgGN/j7YlqJfGqUykgFGi6RHG/gnONQyj4E=;
+        b=oEu98J0q5cjO9FVDcnlYzPAoimuiozMDvT5Bp5hPKLD2cpK1L7M9dts09yMjOOlmEH
+         yZIw4iI4G5PN/fK6pnb7P6vccBufXBxTLJ3sznGqaR7Xl79EVx+LmuBOo3nFMeCPH3lI
+         lk+QJ+0JmU/tt4egqUTOKNH09wX+PSMtb7vpVIKaYSbIz99kJY5RvonpsvnKpUXqqufq
+         ZS6mLyj1UQSFzEmOJrw+KSoGXjX2KSmeqJUna/1kDyCIovBCQkPV61xIN/eTmU+D5diE
+         HaF8HfDnhuSXDkhDU3zfbhEaq9z0ERQcIV/RiSL8ZqUmYQ7gs+FTW6Qo47jecfu8Dpo+
+         BQ4g==
+X-Gm-Message-State: APjAAAUuK44QXuJv9qv0P2bGn9Tkkd3V2ktPQzTieo9aOaUUFMoxadMe
+        TgWLfeMwBUHHL7Ml0tUPC/phGw==
+X-Google-Smtp-Source: APXvYqym2ajF5omuu9eNtqjRTVEFjAXQV+T4/+DYjZkhvWoajaXY+wFuOq6d8uOBMk6PvGM6fJu4eg==
+X-Received: by 2002:a05:620a:12ae:: with SMTP id x14mr14203983qki.5.1576246387524;
+        Fri, 13 Dec 2019 06:13:07 -0800 (PST)
+Received: from [192.168.1.10] (c-66-30-119-151.hsd1.ma.comcast.net. [66.30.119.151])
+        by smtp.gmail.com with ESMTPSA id z28sm3463658qtz.69.2019.12.13.06.13.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 06:13:06 -0800 (PST)
+Subject: Re: [PATCH v5 2/2] kvm: Use huge pages for DAX-backed files
+To:     Liran Alon <liran.alon@oracle.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        linux-nvdimm@lists.01.org, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jason.zeng@intel.com
+References: <20191212182238.46535-1-brho@google.com>
+ <20191212182238.46535-3-brho@google.com>
+ <06108004-1720-41EB-BCAB-BFA8FEBF4772@oracle.com>
+ <ED482280-CB47-4AB6-9E7E-EEE7848E0F8B@oracle.com>
+ <f8e948ff-6a2a-a6d6-9d8e-92b93003354a@google.com>
+ <65FB6CC1-3AD2-4D6F-9481-500BD7037203@oracle.com>
+From:   Barret Rhoden <brho@google.com>
+Message-ID: <90a9af31-304c-e8d5-b17c-0ddb4c98fddb@google.com>
+Date:   Fri, 13 Dec 2019 09:13:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <65FB6CC1-3AD2-4D6F-9481-500BD7037203@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ZKDoE9QgssUEaF4ESIVfDgM6JJvUm/C6dyGIwg+yexjRBcXrUwm
- hst4t6IX7xAaZVaj/pOiP9MP7i6dIkJDNDt0a+FHxmxT1X1k0C+p7+Ws/qj5gef0dozZQ2B
- qLHaEEbKkSXSec+anp6BztnEkbxv1Wa6tunbyUd/NoOGcetuTEK04Q4jFRbxBLBGjRvm0ZS
- GLiZZqTHprSm8m6ItitfQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:IbM7yEiXipE=:6X7jwtgzmmb9MKvUnt9E0Y
- dXCOBP06ZrqB3cgtvswg5L3oHYNBYrspPiM5rwALF0quasoWzYagSSjZvX3QErsP9Vx8sgm65
- tJaji1xG9BMEWCKqmG70OGUBdqpeQ/qpwZxrDUaQA+R1vsFZMAH7IsmVYGkbWUjhgysRlfAhQ
- G+xxqSEMW3S4xlbBmU4RXsk2BImOt5aXmPQzIiS7ej8VDcXcUqds5+WAw2dyQuZvVWnQCGP7f
- BPO94IBvxRPFgAMVtN83yhn4tZQ4L6TWg9u7aGwwRh0vvrxuK/sX7T0SEJK9ELGCzJ9uzhKug
- ZY98E1SQWDUs0WWHh+EwsXYqqda/S1BMTuoX7elPUQnsf6DQKnK9T5KyiiOq5YhhEUJ25Mgd+
- +FSswh/Y7xq4hIYXtvBn51twcQLK/QZCzRGBj/q378QlvI1gcgz/Rd2eBJT9lLvtG3wnveyJJ
- 53TSww8LgvMndlhYIo/CNyXRByQva8XaP8+ICFcLaFCNvZ94+Ew0ljzaPIW8uXZRTOVxcTgRB
- tb4QHALggAbZSCmo173owo3uK8H9pDr3EXMVlwfqwrpgfAbggI4CQ57nNAVrrUMu1plgiP7+i
- +LdKRuwTf8/8NbROdhVM21An1ZI4nRsUpeFTnh3f/dT5yNyWvN0iFXXhsxLwz2qbnNMBwo1I7
- Zj8LnQ18TZRjDYUZCgeR45eMpVjv8ci6V4T+m0qKZtzlJgF9ddI5zYdtp7+RJfuhKP2YPwgYM
- WCcWPJtuqJwqdI8UQf3cHDhRbtrhzi3UcYaWURXNINhjeId5TP7GqLjCowkYa3dBFuMa3v+at
- o5/9enAVhBgXv+5ElFYeBya0gx4RRb7cydfpDC3mgU77gMWJ7g9gtiQXxzB9Czm1HRU42NvK/
- Vp3PRn1kosvqocOoocrg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function was removed a long time ago, but the declaration
-and a dummy implementation are still there, referencing the
-deprecated time_t type.
+On 12/12/19 8:07 PM, Liran Alon wrote:
+>> I was a little hesitant to change the this to handle 1 GB pages with this patchset at first.  I didn't want to break the non-DAX case stuff by doing so.
+> 
+> Why would it affect non-DAX case?
+> Your patch should just make hugepage_adjust() to parse page-tables only in case is_zone_device_page(). Otherwise, page tables shouldn’t be parsed.
+> i.e. THP merged pages should still be detected by PageTransCompoundMap().
 
-Remove both.
+That's what I already do.  But if I wanted to make the hugepage_adjust() 
+function also handle the change to 1 GB, then that code would apply to 
+THP too.  I didn't want to do that without knowing the implications for THP.
 
-Fixes: f958a1320ff7 ("nfsd4: remove unnecessary lease-setting function")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/nfsd/nfsd.h | 2 --
- 1 file changed, 2 deletions(-)
+>> Specifically, can a THP page be 1 GB, and if so, how can you tell?  If you can't tell easily, I could walk the page table for all cases, instead of just zone_device().
+> 
+> I prefer to walk page-tables only for is_zone_device_page().
 
-diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
-index 57b93d95fa5c..31f152bbbb2f 100644
---- a/fs/nfsd/nfsd.h
-+++ b/fs/nfsd/nfsd.h
-@@ -142,7 +142,6 @@ int nfs4_state_start(void);
- int nfs4_state_start_net(struct net *net);
- void nfs4_state_shutdown(void);
- void nfs4_state_shutdown_net(struct net *net);
--void nfs4_reset_lease(time_t leasetime);
- int nfs4_reset_recoverydir(char *recdir);
- char * nfs4_recoverydir(void);
- bool nfsd4_spo_must_allow(struct svc_rqst *rqstp);
-@@ -153,7 +152,6 @@ static inline int nfs4_state_start(void) { return 0; }
- static inline int nfs4_state_start_net(struct net *net) { return 0; }
- static inline void nfs4_state_shutdown(void) { }
- static inline void nfs4_state_shutdown_net(struct net *net) { }
--static inline void nfs4_reset_lease(time_t leasetime) { }
- static inline int nfs4_reset_recoverydir(char *recdir) { return 0; }
- static inline char * nfs4_recoverydir(void) {return NULL; }
- static inline bool nfsd4_spo_must_allow(struct svc_rqst *rqstp)
--- 
-2.20.0
+Is there another way to tell if a THP page is 1 GB?  Anyway, this is the 
+sort of stuff I didn't want to mess around with.
+
+hugepage_adjust() seemed like a reasonable place to get a huge (2MB) 
+page table entry out of a DAX mapping.  I didn't want to proliferate 
+another special case for upgrading to a larger PTE size (i.e. how 
+hugetlbfs and THP have separate mechanisms), so I hopped on to the "can 
+we do a 2MB mapping even though host_mapping_level() didn't say so" case 
+- which is my interpretation of what huge_adjust() is for.
+
+Barret
+
 
