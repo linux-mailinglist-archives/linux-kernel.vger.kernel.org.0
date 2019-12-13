@@ -2,159 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5937C11EC54
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4044D11EC56
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:57:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfLMU5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:57:32 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:33731 "EHLO
+        id S1726833AbfLMU5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:57:41 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:55425 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfLMU5b (ORCPT
+        with ESMTP id S1725747AbfLMU5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:57:31 -0500
+        Fri, 13 Dec 2019 15:57:40 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MCbZL-1iWCwj47Xf-009dzd; Fri, 13 Dec 2019 21:57:15 +0100
+ 1M2w0K-1ijAJy1eIO-003Mbu; Fri, 13 Dec 2019 21:57:30 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-nfs@vger.kernel.org
-Subject: [PATCH v2 18/24] nfs: fscache: use timespec64 in inode auxdata
-Date:   Fri, 13 Dec 2019 21:53:46 +0100
-Message-Id: <20191213205417.3871055-9-arnd@arndb.de>
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Brian Foster <bfoster@redhat.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Nick Bowler <nbowler@draconx.ca>
+Subject: [PATCH v2 19/24] xfs: rename compat_time_t to old_time32_t
+Date:   Fri, 13 Dec 2019 21:53:47 +0100
+Message-Id: <20191213205417.3871055-10-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191213204936.3643476-1-arnd@arndb.de>
 References: <20191213204936.3643476-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:eSpA+PeGzcN5/q+tSCYMNqYwum00xsr3wrwDajwhj/LcbNxeqj3
- xpZEUffRgySY5dIEMfYLZyJqNTCruiE0MMz9YpW+jOORPjSIStKzr+8z+H6mQz25URpuODB
- e223MW7cvFYZ6dCuCXKvbkvrQb1nYpoztuLlysTOh0wDCnrfnvi2ilsZvdfcRnKOXXny7wU
- mDag+0g9ojpjFZcDv7n6g==
+X-Provags-ID: V03:K1:zARXgYKok4zeFDeeiNI16bU/sUy4YFIaNYCQJhqKBzQvtO+A17j
+ v4tP1EL/FypfHgRghMWum3GsKwt3bSsFh+LQlXfZ8b1QoXAeO/eXJeoUue+k/qwEXtW3KQt
+ 8CymFTBFACC8PMqkvogi/8JqezrnKFM7ZCyKZRi4H0KE11VQzGJsVCZgVf1eHP+T/QD+CG0
+ QqYUBx+tj3Lzwj6dluayA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yxdt9MqnWt4=:OBts36wUuwCQus2XQkhzGl
- pKenNFFAD2FTUrYDyhA0zUblisj/ayGPpSpIezzv4UghyEyenxubcoF0Y3RWMPxVm9ySafB4x
- vLpZl2UwLbcB0u7S/rlBsatGDaEfLaHuA7bDb3u423+pcTA5dNV489y+mISiNaQk6HxstKYdG
- VlN+/20BwC7KlJJnK2esD7qWzG//1shkBYOfcUAgvkRcaTUnHZIDK56Kqh0YzZLkGE/A3p98/
- mK4QWPy4in+qxK0hMjPw10Jo0doBm9saNK8iWLVlEGURKFkfRRY+Oz55hEfEpv/pi1Pey71zZ
- e3D1hYzUbTM2TO3i99t586jcPyPnbdarRFopA++nL3W3wfuSSal+pPUoToKJR3Bj0s2GrjmCF
- yA48A/vJhhaqUdPnCKaeJrbo/Zy7ZyJb+x9kvA29zpWzr2Zm6qX71hjujr73DjD0Y1BtzUF3P
- FvfSAr1TfJj19qQFr2SJ6UTPapu8emgETmyNB7ryIecNwXa+zaWaBUoCB9XUrRXGPYnQC3gnw
- B7204zKLOcSD1ByV/Y9xXZwsXYGWPdupyrbr9UVcTRy9c3YrwXJOtF9dAizbBAjslO+p3HMfu
- kymi02S/6REd3ikGqh6oF15QgH01KDrb1/yCBAovM4WMXHh/a1jBS1vDr4bKzd7oS0IV+fkBJ
- MH0vtZdstx/2/Syy+IVtpy1+n2En+Yk8upOzPQQIil5SVafifFqbP9uGh1hEiQZhAy3MKu9df
- lSPWgHbQ80g8idvOlDQXWx9TL8R0Mp8HUAqxudJRd7p9VXbEw9aeZXtZfx6myuY8ZYLryhhne
- spgQXL7f0P/FfsWb7otpMXRbNmt0e9zc5KvAsS10NNdkM+6CEhQvuZWu9JxZFEpDGD4lfigiW
- s8q1TGli8fGxZvftiCZw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KuBqyk8mLpI=:DXXot5F8i3KR2QR2b5njA0
+ C5sUb6IXLZGwy3iRjXzZtPcQ0bKQ98ph2rn+5bOAuE1WA2E+2DRWnJJwJBLnk7uF/5alcwxq4
+ pw1I7k3cyzP0yWzHOgS58+gxZpIyQWP3bGUZZmYFdPuRnwOpIu/r2v8vUv5dNxfKiQwdi9cH0
+ fjOQ0dEq8+9hs4nrEg1rfLtCebS0M6cjEiTK9Wrt3/1XHGqfDbFQTY3MUMMx1vhfBw/ya46HS
+ 8d55sKQU+FiWDcBt4fRWxUff/lKINLgvy3w49NzDtn1ZYAxMFYK0ExbRxoc9f/lsR++hpy/kM
+ EzHD7K5n9vG2kY4S+oqQ+5Dbpo0JwcACUDE1GReG9NDvCoZvj7l2K3NSJjCCFHTh4mc875uvg
+ 2Z3ZPzuSPl8EFMO8SXyeuESMwXOVZCjqSY9YVkaBxJFPGg5Oq3N+3OWILmR44OvK/bioeHV/7
+ cFeH0oJM0xLojwAFlNdyMi7s5bn7erLfG7ZzBfvKWxbxT4u+jZYvHS4E+Wof/p+yQOi+eKhEZ
+ InFbWlGZu0VLsmLuu8Gbxtkz+dbyEegQ6pzqR3Dgp3boxgCVmksoKok2pTcahOlUXGxH+kUUa
+ T1+NbB2FCuUBTv7ig9jXs1q11ukMR8Q0lOL3NaWSZXipJGyCIAE3kZloJ+P1Mch6AUh4DSuEt
+ NgFYm0LS/edpWjeMa+I0kb6ujA0GaoeoIqc4ruiaB49lzL6HlHKoaAO/gCWIFg+2X6mf8E9ZE
+ CaO9gEtvqhPOkkWKJM3kbSyN9/TssF0J8NS0KTjcdpuNPSALWSGojoK/MpKxCsC52LDfHOnlz
+ fACIRYflX0kBmHe8Va1nfHfCblPXXBBPcFy8WX5anhd0ChMO8MavG4yqDO9KqJObrVIcJssKB
+ csAnZVpQ8ahGdl4jO+Sg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nfs currently behaves differently on 32-bit and 64-bit kernels regarding
-the on-disk format of nfs_fscache_inode_auxdata.
+The compat_time_t type has been removed everywhere else,
+as most users rely on old_time32_t for both native and
+compat mode handling of 32-bit time_t.
 
-That format should really be the same on any kernel, and we should avoid
-the 'timespec' type in order to remove that from the kernel later on.
+Remove the last one in xfs.
 
-Using plain 'timespec64' would not be good here, since that includes
-implied padding and would possibly leak kernel stack data to the on-disk
-format on 32-bit architectures.
-
-struct __kernel_timespec would work as a replacement, but open-coding
-the two struct members in nfs_fscache_inode_auxdata makes it more
-obvious what's going on here, and keeps the current format for 64-bit
-architectures.
-
-Cc: David Howells <dhowells@redhat.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/nfs/fscache-index.c |  6 ++++--
- fs/nfs/fscache.c       | 18 ++++++++++++------
- fs/nfs/fscache.h       |  8 +++++---
- 3 files changed, 21 insertions(+), 11 deletions(-)
+ fs/xfs/xfs_ioctl32.c | 2 +-
+ fs/xfs/xfs_ioctl32.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfs/fscache-index.c b/fs/nfs/fscache-index.c
-index 15f271401dcc..573b1da9342c 100644
---- a/fs/nfs/fscache-index.c
-+++ b/fs/nfs/fscache-index.c
-@@ -84,8 +84,10 @@ enum fscache_checkaux nfs_fscache_inode_check_aux(void *cookie_netfs_data,
- 		return FSCACHE_CHECKAUX_OBSOLETE;
+diff --git a/fs/xfs/xfs_ioctl32.c b/fs/xfs/xfs_ioctl32.c
+index c4c4f09113d3..a49bd80b2c3b 100644
+--- a/fs/xfs/xfs_ioctl32.c
++++ b/fs/xfs/xfs_ioctl32.c
+@@ -107,7 +107,7 @@ xfs_ioctl32_bstime_copyin(
+ 	xfs_bstime_t		*bstime,
+ 	compat_xfs_bstime_t	__user *bstime32)
+ {
+-	compat_time_t		sec32;	/* tv_sec differs on 64 vs. 32 */
++	old_time32_t		sec32;	/* tv_sec differs on 64 vs. 32 */
  
- 	memset(&auxdata, 0, sizeof(auxdata));
--	auxdata.mtime = timespec64_to_timespec(nfsi->vfs_inode.i_mtime);
--	auxdata.ctime = timespec64_to_timespec(nfsi->vfs_inode.i_ctime);
-+	auxdata.mtime_sec  = nfsi->vfs_inode.i_mtime.tv_sec;
-+	auxdata.mtime_nsec = nfsi->vfs_inode.i_mtime.tv_nsec;
-+	auxdata.ctime_sec  = nfsi->vfs_inode.i_ctime.tv_sec;
-+	auxdata.ctime_nsec = nfsi->vfs_inode.i_ctime.tv_nsec;
+ 	if (get_user(sec32,		&bstime32->tv_sec)	||
+ 	    get_user(bstime->tv_nsec,	&bstime32->tv_nsec))
+diff --git a/fs/xfs/xfs_ioctl32.h b/fs/xfs/xfs_ioctl32.h
+index 8c7743cd490e..053de7d894cd 100644
+--- a/fs/xfs/xfs_ioctl32.h
++++ b/fs/xfs/xfs_ioctl32.h
+@@ -32,7 +32,7 @@
+ #endif
  
- 	if (NFS_SERVER(&nfsi->vfs_inode)->nfs_client->rpc_ops->version == 4)
- 		auxdata.change_attr = inode_peek_iversion_raw(&nfsi->vfs_inode);
-diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
-index 3800ab6f08fa..7def925d3af5 100644
---- a/fs/nfs/fscache.c
-+++ b/fs/nfs/fscache.c
-@@ -238,8 +238,10 @@ void nfs_fscache_init_inode(struct inode *inode)
- 		return;
+ typedef struct compat_xfs_bstime {
+-	compat_time_t	tv_sec;		/* seconds		*/
++	old_time32_t	tv_sec;		/* seconds		*/
+ 	__s32		tv_nsec;	/* and nanoseconds	*/
+ } compat_xfs_bstime_t;
  
- 	memset(&auxdata, 0, sizeof(auxdata));
--	auxdata.mtime = timespec64_to_timespec(nfsi->vfs_inode.i_mtime);
--	auxdata.ctime = timespec64_to_timespec(nfsi->vfs_inode.i_ctime);
-+	auxdata.mtime_sec  = nfsi->vfs_inode.i_mtime.tv_sec;
-+	auxdata.mtime_nsec = nfsi->vfs_inode.i_mtime.tv_nsec;
-+	auxdata.ctime_sec  = nfsi->vfs_inode.i_ctime.tv_sec;
-+	auxdata.ctime_nsec = nfsi->vfs_inode.i_ctime.tv_nsec;
- 
- 	if (NFS_SERVER(&nfsi->vfs_inode)->nfs_client->rpc_ops->version == 4)
- 		auxdata.change_attr = inode_peek_iversion_raw(&nfsi->vfs_inode);
-@@ -263,8 +265,10 @@ void nfs_fscache_clear_inode(struct inode *inode)
- 	dfprintk(FSCACHE, "NFS: clear cookie (0x%p/0x%p)\n", nfsi, cookie);
- 
- 	memset(&auxdata, 0, sizeof(auxdata));
--	auxdata.mtime = timespec64_to_timespec(nfsi->vfs_inode.i_mtime);
--	auxdata.ctime = timespec64_to_timespec(nfsi->vfs_inode.i_ctime);
-+	auxdata.mtime_sec  = nfsi->vfs_inode.i_mtime.tv_sec;
-+	auxdata.mtime_nsec = nfsi->vfs_inode.i_mtime.tv_nsec;
-+	auxdata.ctime_sec  = nfsi->vfs_inode.i_ctime.tv_sec;
-+	auxdata.ctime_nsec = nfsi->vfs_inode.i_ctime.tv_nsec;
- 	fscache_relinquish_cookie(cookie, &auxdata, false);
- 	nfsi->fscache = NULL;
- }
-@@ -305,8 +309,10 @@ void nfs_fscache_open_file(struct inode *inode, struct file *filp)
- 		return;
- 
- 	memset(&auxdata, 0, sizeof(auxdata));
--	auxdata.mtime = timespec64_to_timespec(nfsi->vfs_inode.i_mtime);
--	auxdata.ctime = timespec64_to_timespec(nfsi->vfs_inode.i_ctime);
-+	auxdata.mtime_sec  = nfsi->vfs_inode.i_mtime.tv_sec;
-+	auxdata.mtime_nsec = nfsi->vfs_inode.i_mtime.tv_nsec;
-+	auxdata.ctime_sec  = nfsi->vfs_inode.i_ctime.tv_sec;
-+	auxdata.ctime_nsec = nfsi->vfs_inode.i_ctime.tv_nsec;
- 
- 	if (inode_is_open_for_write(inode)) {
- 		dfprintk(FSCACHE, "NFS: nfsi 0x%p disabling cache\n", nfsi);
-diff --git a/fs/nfs/fscache.h b/fs/nfs/fscache.h
-index ad041cfbf9ec..6754c8607230 100644
---- a/fs/nfs/fscache.h
-+++ b/fs/nfs/fscache.h
-@@ -62,9 +62,11 @@ struct nfs_fscache_key {
-  * cache object.
-  */
- struct nfs_fscache_inode_auxdata {
--	struct timespec	mtime;
--	struct timespec	ctime;
--	u64		change_attr;
-+	s64	mtime_sec;
-+	s64	mtime_nsec;
-+	s64	ctime_sec;
-+	s64	ctime_nsec;
-+	u64	change_attr;
- };
- 
- /*
 -- 
 2.20.0
 
