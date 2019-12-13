@@ -2,42 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD8A511E6E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:47:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3361A11E6E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:47:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfLMPq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:46:28 -0500
-Received: from mx2.freebsd.org ([96.47.72.81]:54510 "EHLO mx2.freebsd.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727693AbfLMPq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:46:28 -0500
-Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx2.freebsd.org (Postfix) with ESMTPS id 1A5088C6E8;
-        Fri, 13 Dec 2019 15:46:27 +0000 (UTC)
-        (envelope-from emaste@freebsd.org)
-Received: from freefall.freebsd.org (freefall.freebsd.org [IPv6:2610:1c1:1:6074::16:84])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         server-signature RSA-PSS (4096 bits)
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "freefall.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx1.freebsd.org (Postfix) with ESMTPS id 47ZFQB5z05z497Q;
-        Fri, 13 Dec 2019 15:46:26 +0000 (UTC)
-        (envelope-from emaste@freebsd.org)
-Received: by freefall.freebsd.org (Postfix, from userid 1079)
-        id A3963303F; Fri, 13 Dec 2019 15:46:26 +0000 (UTC)
-From:   emaste@FreeBSD.org
-To:     linux-kernel@vger.kernel.org
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ed Maste <emaste@freebsd.org>
-Subject: [PATCH v2] perf tools: correct license on jsmn json parser
-Date:   Fri, 13 Dec 2019 15:46:25 +0000
-Message-Id: <20191213154625.41064-1-emaste@FreeBSD.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191212151244.26324-1-emaste@freefall.freebsd.org>
-References: <20191212151244.26324-1-emaste@freefall.freebsd.org>
+        id S1727980AbfLMPrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:47:46 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37858 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727831AbfLMPrp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 10:47:45 -0500
+Received: by mail-wr1-f67.google.com with SMTP id w15so7175165wru.4
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 07:47:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zy/1vxmK7IESgZ5MufAb5lMH5M1hrx2tBtD49AP8IGg=;
+        b=EwfZKJpHgTZfq2oP7jePrJKUK8ZNAm4PsQGN32QF3UGr1NkO0kMWQMhpx3xpKJd4k2
+         qCENKuKt9VkU+QR6qzO73xgYJPkZkW515/0DMsa4G85AiuMp+AxljrIpsZKE+TY8ngmk
+         /8dv3fPgl/f9PgecfmougTtKhSdBMssa8PEsw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zy/1vxmK7IESgZ5MufAb5lMH5M1hrx2tBtD49AP8IGg=;
+        b=r7wPOeYwgPrFqzae2EMM5mtaryuTN6zXsbWdLi4pFtgZardb5bOEQPpkf+d1kR3Ol7
+         hp+5leibEdzfDXWI2aP/2fV8kUxdowNIw+hxAhaAfSfVNhwtVqtemU/zUJmb6tz2C0xv
+         OWBcthbEabjqvOgPlfjyu0odjQQlc6LmL5sYg6qWLNXFm4hxmEbVkXKYliaZmZhfgAEy
+         /PptvoiOp0PjMql/TveKq5qBYqYGfmxS8Na5u8eILL0EjWvf6frxCfMpSArZ0Gtz3C85
+         uOGbQU2jG2yjR1zOxXEkNzQ7WE8D8mwXgt9kEQMUT72iu3oF90Eh1cSD7D3ZsvHKgfCm
+         H0sg==
+X-Gm-Message-State: APjAAAXTz9RHw80H/7zKV25edaLTJhdAfx8cXpwOeAOtPXhm3f+i/ocL
+        86V6pnQvhaug3P8DhBAEtuYCbw==
+X-Google-Smtp-Source: APXvYqxDDCsPNF553NwXAaiIZEZtJCqKHvMMr8OTf4QdQlkxPgrUbkSbZGoxyJoE0pe94MnpErfvJQ==
+X-Received: by 2002:adf:f3d0:: with SMTP id g16mr14079175wrp.2.1576252064539;
+        Fri, 13 Dec 2019 07:47:44 -0800 (PST)
+Received: from localhost.localdomain ([2a06:98c0:1000:8250:3da5:43ec:24b:e240])
+        by smtp.gmail.com with ESMTPSA id s8sm10140295wrt.57.2019.12.13.07.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 07:47:43 -0800 (PST)
+From:   Lorenz Bauer <lmb@cloudflare.com>
+To:     ast@kernel.org, daniel@iogearbox.net,
+        "David S. Miller" <davem@davemloft.net>,
+        Jesus Sanchez-Palencia <jesus.sanchez-palencia@intel.com>,
+        Richard Cochran <rcochran@linutronix.de>,
+        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kernel-team@cloudflare.com, Lorenz Bauer <lmb@cloudflare.com>
+Subject: [PATCH bpf] bpf: clear skb->tstamp in bpf_redirect when necessary
+Date:   Fri, 13 Dec 2019 15:46:34 +0000
+Message-Id: <20191213154634.27338-1-lmb@cloudflare.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -45,27 +61,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ed Maste <emaste@freebsd.org>
+Redirecting a packet from ingress to egress by using bpf_redirect
+breaks if the egress interface has an fq qdisc installed. This is the same
+problem as fixed in 8203e2d8 ("net: clear skb->tstamp in forwarding paths").
 
-This header is part of the jsmn json parser, introduced in 867a979a83.
-Correct the SPDX tag to indicate that it is under the MIT license.
+Clear skb->tstamp when redirecting into the egress path.
 
-Signed-off-by: Ed Maste <emaste@freebsd.org>
-Acked-by: Andi Kleen <ak@linux.intel.com>
+Fixes: 80b14de ("net: Add a new socket option for a future transmit time.")
+Fixes: fb420d5 ("tcp/fq: move back to CLOCK_MONOTONIC")
+Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
 ---
- tools/perf/pmu-events/jsmn.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/filter.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/pmu-events/jsmn.h b/tools/perf/pmu-events/jsmn.h
-index c7b0f6ea2a31..1bdfd55fff30 100644
---- a/tools/perf/pmu-events/jsmn.h
-+++ b/tools/perf/pmu-events/jsmn.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+/* SPDX-License-Identifier: MIT */
- #ifndef __JSMN_H_
- #define __JSMN_H_
+diff --git a/net/core/filter.c b/net/core/filter.c
+index f1e703eed3d2..d914257763b5 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -2055,6 +2055,7 @@ static inline int __bpf_tx_skb(struct net_device *dev, struct sk_buff *skb)
+ 	}
  
+ 	skb->dev = dev;
++	skb->tstamp = 0;
+ 
+ 	dev_xmit_recursion_inc();
+ 	ret = dev_queue_xmit(skb);
 -- 
-2.24.0
+2.20.1
 
