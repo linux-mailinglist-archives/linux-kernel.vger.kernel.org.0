@@ -2,87 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E95E411DC56
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 03:59:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEC8A11DC65
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 04:07:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731820AbfLMC7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 21:59:16 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:41646 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731465AbfLMC7Q (ORCPT
+        id S1731930AbfLMDHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 22:07:14 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:38974 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731465AbfLMDHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 21:59:16 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2DA5820B7187;
-        Thu, 12 Dec 2019 18:59:15 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2DA5820B7187
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576205955;
-        bh=qv+NmmnZ+/n9eF3FzeCcHEgZTGuVHBDcefUGSa3G2Ug=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mvV048o53KZrnKUqBWi40AGMeYEPwiiAx3txKH0je5V8BQHmIW8UQ03ad8Z3hPAAf
-         bUr4X2ZCRYkT0HLu0Ljs7y9O14mIukU7XyaxUCh9MiWMy6feKWF3KGqHWHRevCUYUM
-         IyS/6OHbMg6T3Tsm9ESbrhWes2lpClPsNMtTkyxY=
-Subject: Re: [PATCH v3 1/2] IMA: Define workqueue for early boot "key"
- measurements
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-References: <20191213004250.21132-1-nramas@linux.microsoft.com>
- <20191213004250.21132-2-nramas@linux.microsoft.com>
- <1576202134.4579.189.camel@linux.ibm.com>
- <6e0dad33-66f9-4807-d08d-ff30396cec5e@linux.microsoft.com>
- <1576204377.4579.206.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <c60341a3-2329-cd92-c76c-6f8249a57b43@linux.microsoft.com>
-Date:   Thu, 12 Dec 2019 18:59:39 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Thu, 12 Dec 2019 22:07:14 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBD374jn002520;
+        Thu, 12 Dec 2019 21:07:04 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576206424;
+        bh=P2vJoPklK2vOl7x3hsP0IoRW0iDntiu2jXuS39HL8uQ=;
+        h=From:To:CC:Subject:Date;
+        b=Aa6U+JD3qArPqIlL3fVzaJFe8PXoAJVeAJy1TYicx+h9LvJc+8AuhdIvaVXMZvHnH
+         uki2SmHmSl0JqeCB3ZZDyErcWrJBcotJ5RQ6OjzxM/UKeT6wi8bMt9lXwiZnCGSvL7
+         LY69J1VhtMkYMuDN21paO4Xmosi5TEFE+QiQnGbU=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBD374S2018385
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Dec 2019 21:07:04 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 12
+ Dec 2019 21:07:04 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 12 Dec 2019 21:07:04 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBD374lv058827;
+        Thu, 12 Dec 2019 21:07:04 -0600
+From:   Dave Gerlach <d-gerlach@ti.com>
+To:     Tony Lindgren <tony@atomide.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Dave Gerlach <d-gerlach@ti.com>
+Subject: [PATCH 0/5] ARM: OMAP2+: Introduce cpuidle for am335x/am437x
+Date:   Thu, 12 Dec 2019 21:07:50 -0600
+Message-ID: <20191213030755.16096-1-d-gerlach@ti.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1576204377.4579.206.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/2019 6:32 PM, Mimi Zohar wrote:
-
->>>
->>> Don't you need a test here, before setting ima_process_keys?
->>>
->>> 	if (ima_process_keys)
->>> 		return;
->>>
->>> Mimi
->>
->> That check is done before the comment - at the start of
->> ima_process_queued_keys().
-> 
-> The first test prevents taking the mutex unnecessarily.
-> 
-> Mimi
-
-I am trying to understand your concern here. Could you please clarify?
-
-  => If ima_process_keys is false
-       -> With the mutex held, should check ima_process_keys again 
-before setting?
-
-Let's say 2 or more threads are racing in calling ima_process_queued_keys():
-
-The 1st one will set ima_process_keys and process queued keys.
-
-The 2nd and subsequent ones - even if they have gone past the initial 
-check, will find an empty list of keys (the list "ima_keys") when they 
-take the mutex. So they'll not process any keys.
-
-thanks,
-  -lakshmi
+Hi,
+This series adds support for cpuidle on am335x and am437x using the
+cpuidle_arm driver. When testing on am335x-evm and am437x-gp-evm the
+follow power consumption reductions are seen on v5.5-rc1 baseline:
 
 
+Idling at command line, CPUFreq userspace governor to 300MHz:
+  am335x-evm:
+    VDD_MPU: 48 mW -> 5 mW
+
+  am437x-gp-evm:
+    VDD_MPU: 32 mW -> 3 mW
+
+
+Idling at command line, CPUFreq userspace governor to 1GHz:
+  am335x-evm:
+    VDD_MPU: 313 mW -> 18 mW
+
+  am437x-gp-evm:
+    VDD_MPU: 208 mW -> 10 mW
+
+A forthcoming series will add idle states to the device tree for each
+am335x and am437x to add C1 state for MPU Gate which gates the clock to
+the main CPU.  am335x makes use of the wkup_m3_ipc driver for this to
+use the same wkup_m3 to gate the cpu clock that is used for suspend, so
+the same firmware found here is required [1] to be placed in
+/lib/firmware.
+
+First patch adds dt-binding for enable-method for each SoC which is needed
+for cpuidle-arm driver to probe, second patch adds platform code for cpuidle,
+third patch modifies both platform code and pm33xx soc driver to add needed
+flags and callback for idling, fourth patch actually enables cpuidle in the
+soc pm33xx driver, and then that last patch enables the needed CONFIG options
+in omap2plus_defconfig.
+
+Regards,
+Dave
+
+[1] https://git.ti.com/cgit/processor-firmware/ti-amx3-cm3-pm-firmware/tree/bin/am335x-pm-firmware.elf?h=ti-v4.1.y
+
+Dave Gerlach (5):
+  dt-bindings: arm: cpu: Add TI AM335x and AM437x enable method
+  ARM: OMAP2+: pm33xx-core: Add cpuidle_ops for am335x/am437x
+  ARM: OMAP2+: pm33xx-core: Extend platform_data ops for cpuidle
+  soc: ti: pm33xx: Add base cpuidle support
+  ARM: omap2plus_defconfig: Add CONFIG_ARM_CPUIDLE
+
+ .../devicetree/bindings/arm/cpus.yaml         |   2 +
+ arch/arm/configs/omap2plus_defconfig          |   2 +
+ arch/arm/mach-omap2/pm33xx-core.c             | 137 +++++++++++++++++-
+ drivers/soc/ti/pm33xx.c                       |  21 ++-
+ include/linux/platform_data/pm33xx.h          |   6 +-
+ 5 files changed, 160 insertions(+), 8 deletions(-)
+
+-- 
+2.20.1
 
