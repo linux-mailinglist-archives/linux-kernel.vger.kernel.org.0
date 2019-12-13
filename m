@@ -2,96 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 154B411E139
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:55:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5825711E149
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:57:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfLMJzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:55:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50010 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725799AbfLMJzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:55:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4FA82AFC2;
-        Fri, 13 Dec 2019 09:55:09 +0000 (UTC)
-Subject: Re: [PATCH] x86-64/entry: add instruction suffix to SYSRET
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     the arch/x86 maintainers <x86@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <cbecab05-9e95-5dec-ef81-499617c153a6@suse.com>
- <08B92B44-CCA9-4B83-B9CC-F1601D44B73F@amacapital.net>
- <0053f606-f4f7-3951-f40b-b7bd08703590@suse.com>
- <CALCETrWHNunMzP1xHmOhvHG20_baoeXhNbCcEJgCgm5xzGM5Tw@mail.gmail.com>
-From:   Jan Beulich <jbeulich@suse.com>
-Message-ID: <ed9d8df6-0fe7-ca15-bab2-4d9cbbfe62f0@suse.com>
-Date:   Fri, 13 Dec 2019 10:55:31 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726141AbfLMJ5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:57:12 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:50606 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfLMJ5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 04:57:12 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBD9ubog152811;
+        Fri, 13 Dec 2019 09:56:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=S7FcfMv5EYcYTkRgDKj3WiJgIcLQuGB+dA630iy3KgE=;
+ b=EwUctdIKdzeMK4U9V0eZodEkn7Bb+OG5JVroMMBxdp9bMxk5wASTgKNja1oZFcUIxOn9
+ tEwtlEoYUj7T1nmTMIWJefNN9uBNqLmZcBaveIJj9AF+apGkAaTRefE83UrOWgK6WPOw
+ HjC5MbEvqLZJWUT6/gWleJGhXHZfpG1tTUI2cWrApFo4/wvsq5VXZ2zz2o5Iv7BYFNXe
+ f3cZeXdDri4EXBl9H/UJUNMx6HDy21MOtARZHgTzH8lWiV5rKpcU1uDLNL2mRVZvoF1q
+ IOVwvYMv3u5y4WxG/pj0mkbmoeR4jkYl6KHCxMj0rJntCtjOOHDDgC9weq3RAMWCMtKO Yw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2wr41qr6u2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Dec 2019 09:56:44 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBD9mlnf001336;
+        Fri, 13 Dec 2019 09:56:44 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2wumu62phb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Dec 2019 09:56:43 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBD9ugiY016371;
+        Fri, 13 Dec 2019 09:56:42 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 13 Dec 2019 01:56:42 -0800
+Date:   Fri, 13 Dec 2019 12:56:34 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Willy Tarreau <w@1wt.eu>,
+        Andrew Morton <akpm@linux-foundation.org>, will@kernel.org,
+        ebiederm@xmission.com, linux-arch@vger.kernel.org,
+        security@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] execve: warn if process starts with executable stack
+Message-ID: <20191213095634.GB2407@kadam>
+References: <20191208171918.GC19716@avx2>
+ <20191210174726.101e434df59b6aec8a53cca1@linux-foundation.org>
+ <20191211072225.GB3700@avx2>
+ <20191211095937.GB31670@1wt.eu>
+ <20191211181933.GA3919@avx2>
+ <20191211182401.GF31670@1wt.eu>
+ <20191212212520.GA9682@avx2>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrWHNunMzP1xHmOhvHG20_baoeXhNbCcEJgCgm5xzGM5Tw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191212212520.GA9682@avx2>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9469 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912130078
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9469 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912130078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.12.2019 22:43, Andy Lutomirski wrote:
-> On Tue, Dec 10, 2019 at 7:40 AM Jan Beulich <jbeulich@suse.com> wrote:
->>
->> On 10.12.2019 16:29, Andy Lutomirski wrote:
->>>> On Dec 10, 2019, at 2:48 AM, Jan Beulich <JBeulich@suse.com> wrote:
->>>>
->>>> ﻿Omitting suffixes from instructions in AT&T mode is bad practice when
->>>> operand size cannot be determined by the assembler from register
->>>> operands, and is likely going to be warned about by upstream gas in the
->>>> future. Add the missing suffix here.
->>>>
->>>> Signed-off-by: Jan Beulich <jbeulich@suse.com>
->>>>
->>>> --- a/arch/x86/entry/entry_64.S
->>>> +++ b/arch/x86/entry/entry_64.S
->>>> @@ -1728,7 +1728,7 @@ END(nmi)
->>>> SYM_CODE_START(ignore_sysret)
->>>>    UNWIND_HINT_EMPTY
->>>>    mov    $-ENOSYS, %eax
->>>> -    sysret
->>>> +    sysretl
->>>
->>> Isn’t the default sysretq?  sysretl looks more correct, but that suggests
->>> that your changelog is wrong.
->>
->> No, this is different from ret, and more like iret and lret.
->>
->>> Is this code even reachable?
->>
->> Yes afaict, supported by the comment ahead of the symbol. syscall_init()
->> puts its address into MSR_CSTAR when !IA32_EMULATION.
->>
+On Fri, Dec 13, 2019 at 12:25:20AM +0300, Alexey Dobriyan wrote:
+> On Wed, Dec 11, 2019 at 07:24:01PM +0100, Willy Tarreau wrote:
+> > On Wed, Dec 11, 2019 at 09:19:33PM +0300, Alexey Dobriyan wrote:
+> > > Reports are better be done by people who know what they are doing, as in
+> > > understand what executable stack is and what does it mean in reality.
+> > > 
+> > > > Otherwise it will just go to /dev/null with all warning about bad blocks
+> > > > on USB sticks and CPU core throttling under high temperature.
+> > > 
+> > > That's fine. You don't want bugreports from people who don't know what
+> > > is executable stack. Every security bug bounty program is flooded by
+> > > such people. This is why message is worded in a neutral way.
+> > 
+> > Well we definitely don't have the same experience with user reports. I
+> > was just suggesting, but since you apparently already have all the
+> > responses you needed, I'm even wondering why the warning remains.
 > 
-> What I meant was: can a program actually get itself into 32-bit mode
-> to execute a 32-bit SYSCALL instruction?
-
-Why not? It can set up a 32-bit code segment descriptor, far-branch
-into it, and then execute SYSCALL. I can't see anything preventing
-this in the logic involved in descriptor adjustment system calls. In
-fact it looks to be at least partly the opposite - fill_ldt()
-disallows creation of 64-bit code segments (oddly enough
-fill_user_desc() then still copies the bit back, despite there
-apparently being no way for it to get set).
-
-> Anyway, the change itself is Acked-by: Andy Lutomirski <luto@kernel.org>
+> Willy, whatever instructions for users you have in mind must be
+> different for different people. Developer should be told to add
+> "-Wl,-z,noexecstack" and more. Regular user (define "regular") should be
+> told to send bugreport if the program really needs executable stack
+> which again splits into two situations: exec stack was added knowingly
+> because it is some old program with lost source code or it was readded
+> by mistake.
 > 
-> But let's please clarify the changelog:
+> "Complain to linux-kernel" is meaningless, kernel is not responsible.
 > 
-> ignore_sysret contains an unsuffixed 'sysret' instruction.  gas
-> correctly interprets this as sysretl, but leaving it up to gas to
-> guess when there is no register operand that implies a size is bad
-> practice, and upstream gas is likely to warn about this in the future.
-> Use 'sysretl' explicitly.  This does not change the assembled output.
+> What the message is even supposed to say?
+> 
 
-Fine with me, changed.
+You could direct people to a website and then update the instructions
+as needed.
 
-Jan
+regards,
+dan carpenter
+
