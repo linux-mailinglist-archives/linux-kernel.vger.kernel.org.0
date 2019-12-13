@@ -2,147 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C716711EB1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 20:24:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB4611EB1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 20:26:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbfLMTYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 14:24:19 -0500
-Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:46856 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728631AbfLMTYT (ORCPT
+        id S1728921AbfLMTZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 14:25:57 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44675 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728631AbfLMTZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 14:24:19 -0500
-Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 9D26F4060D;
-        Fri, 13 Dec 2019 19:24:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1576265058; bh=2HCRCMT0lnlcQv2rNYIM7SDUCX0x+USzVcUkgTa4nGE=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=Z7EiXKi7bboj2NlcwZDEgkcjnexg8nY8/doTgIDuILWTJ7pgVMFtPVLmKjLIU1xxE
-         LHMhcWtWoNBvydVQABaBVBYQFjzzbHM7dQ/NkTVv4H7XkGOyCGXE9YY90QSWfh+FzX
-         WPRlkkMUQcPc7w8jEEyZs42AdxuyRjRo3KlQkd9H7EMyudZm8PjtbaSqDuxYabOl6b
-         tIfFJpLNedSdRULgE6/pdcyEqqAwmDxEBCRDkDpmZMY9XZpYCFqklBVtnDdRZ24xgZ
-         ZUGbCGZE+q+3V6vAK3y/VwJJaBAXiMxFF3SCtFIgQI0Z86jMA/3vOal5jJM172vQmY
-         Q8SqVHgdfY7Ww==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 5B7D2A0083;
-        Fri, 13 Dec 2019 19:24:15 +0000 (UTC)
-Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 13 Dec 2019 11:23:14 -0800
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (10.202.3.67) by
- mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 13 Dec 2019 11:23:14 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ob7ctWhJJR6BP+Npxbd1qCVwkabbwmxgiRf16OBQ19DW9QSFbSJdeXHrfGPH23iryQ50G4oI2S+5I53mBHQbHMs50TiYne/sc7VccFBICSAspeeEtXLe8LZkfkD3ukmqQAhXJrVvQJGReHEAISoHQxo8gGvbNBrW+8rSrxeH38MuzrNYi1a5fiEK0JwRpVl81IJ9ZnTnfYbKVJlmGofBoL16zAHMGepFW+6046iz+0RzZmd+BMaG4KbRkZHVTVCh7Qk1n6tE90CV66kYIYw6fuIlQBi2TxW+4fQwdpD3sS7DijBOtSz8OhhyZmea967ywJeOb27qe56S7fIuBxC+yA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NNw5wB0KY74oDpB/om061AlnENyOa34FNMdaWiNhm+w=;
- b=fxxj/+m3sAju4g0IOvXxZfkTdMH5FzTPJiGL0RqQc+lW0AQ8xIxKqfKLJC02tsl3VQsiTfN6bMOsIRSa5VfLadPqbPmrLG4tanj6IJpafwqsRalHpQ9U83mAin05X09hoURN38WAeqJJ/z1WD5Mbz8T6alTDkyQVQRFDgblBieVFmrom7pk+Ii+3fYGY4niF+CaDF6hx/rerCVUuY4H4r77WR985KNKOm7J6DpmFG0LMMM80Bs2cO66D63x0Tu5BwOtlaXwVcmqCY9ESPJ73KdeihbNuZEBioFFqyy8sLPHsi6HQyK1UGJSIKBs+Wh7TfaeZ8DN8Tg2ZiRW0sgktjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
+        Fri, 13 Dec 2019 14:25:56 -0500
+Received: by mail-ed1-f67.google.com with SMTP id cm12so366578edb.11;
+        Fri, 13 Dec 2019 11:25:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NNw5wB0KY74oDpB/om061AlnENyOa34FNMdaWiNhm+w=;
- b=ArSoiCfr046loQDvc3lexM1bJLqL0q3yHl8iaEgZVsYUiiOSQ4J8+wDwdWau+8altH/lir7WMY0uazjfdn3sQNjRYeEheg4DoJalgBH0sctGyFkfNCvnhTphZoep030sZDk12zISeMcH42eMmJWVJnVJWuSwXi0YSlu3x1SK5ds=
-Received: from CY4PR1201MB0037.namprd12.prod.outlook.com (10.172.78.22) by
- CY4PR1201MB2485.namprd12.prod.outlook.com (10.172.117.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.16; Fri, 13 Dec 2019 19:23:12 +0000
-Received: from CY4PR1201MB0037.namprd12.prod.outlook.com
- ([fe80::5d88:202f:2fff:24b4]) by CY4PR1201MB0037.namprd12.prod.outlook.com
- ([fe80::5d88:202f:2fff:24b4%8]) with mapi id 15.20.2516.018; Fri, 13 Dec 2019
- 19:23:12 +0000
-From:   Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-To:     Pavel Machek <pavel@denx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 099/243] usb: dwc3: debugfs: Properly print/set link
- state for HS
-Thread-Topic: [PATCH 4.19 099/243] usb: dwc3: debugfs: Properly print/set link
- state for HS
-Thread-Index: AQHVsDaLtpPSN5OMLk2Tn5J854A5uKe30MGAgACkVYA=
-Date:   Fri, 13 Dec 2019 19:23:12 +0000
-Message-ID: <f3c4d47c-ae00-1b5a-1894-d48da26ed5fd@synopsys.com>
-References: <20191211150339.185439726@linuxfoundation.org>
- <20191211150345.799359877@linuxfoundation.org> <20191213093501.GA27976@amd>
-In-Reply-To: <20191213093501.GA27976@amd>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=thinhn@synopsys.com; 
-x-originating-ip: [149.117.75.11]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 71f00fef-6d6b-4503-189f-08d78001e547
-x-ms-traffictypediagnostic: CY4PR1201MB2485:
-x-microsoft-antispam-prvs: <CY4PR1201MB2485AEBC2E60ECD5B950BA2CAA540@CY4PR1201MB2485.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:612;
-x-forefront-prvs: 0250B840C1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(39860400002)(136003)(346002)(189003)(199004)(36756003)(4744005)(81166006)(8676002)(4001150100001)(31696002)(478600001)(86362001)(8936002)(4326008)(31686004)(5660300002)(81156014)(26005)(6486002)(76116006)(66446008)(186003)(54906003)(2616005)(2906002)(64756008)(71200400001)(66556008)(6506007)(66476007)(6512007)(110136005)(66946007)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR1201MB2485;H:CY4PR1201MB0037.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: vEgq3T7HcI1Y5agguSDf3y5T57jfhMsPEFlvJ90JWg0b/02MnWkrVfgyzdHHCxBnXePBvfg6JlE1m2UzFrmISt8PjNWwYqhCx2Ygqcd/+K/t6YCzOunn9SSK2bRO62VJ/qeAojtEmAR+3BPZKYGBphKPBTk7BRsdnDVL8EVMBNGkWVNW4brwq8XJxONJo0w07FlHsyN7ZnbksumILSH0SDcH1dLmyH77Vvlm6OhXbyz1pFt++8e8JY5OdksdMAMKNl0pobQGt1q+42otOzhiBlkyUkaQSyfxRg3lom8HIw8StVlhh/WJSX8KxHp5vZDJ8d8tOFUn/ytQPcrd/+oAaVqm3x8ooB1B/S2ZKxkxQvhWpll21mDCPBIvOZ1x146b+s1zAMDFlQB+JAnA/Ev5/yFNdAxk51NVr4dGRsKIqwufg3DQUA+jObGChQl1/t/x
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <081814DAFDBAA84CB1F8929E6A500D21@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/+Pf3FRJ46P/YXMaPoPohv4rWPl/O0X724GzNKVLDoA=;
+        b=T3xjo6GgOBEJ8cCXdXzw13znTZYWGMvXQTW9T+APXTH4KwqJaaBg+vqAAC7uY0Krcf
+         I7R32HPw+jtg8o/o89oUO2vvgfV6BHvealku/PApTdWhrW29Df0H54NsLpPVfGx8db3m
+         jbDkG/QdomAK6S2woZqktrmiTYuZjaG0mtR/q78H/sa3AmEvpvYrI29EPefUkf26nedk
+         mmb9IwP9v6dstjQ06tT3KVmVbNPFmsytpZ41mn0M/AUtPEZOQpv79Hc3CxWFWINxsbRi
+         0jrNni2Ts66uissiF05qyUcs0JGjj0VVpjQTxOz0fCLfmKzS/y+bGLCpRCvnXpQVpSwy
+         q/Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=/+Pf3FRJ46P/YXMaPoPohv4rWPl/O0X724GzNKVLDoA=;
+        b=uZTbPsr3qGA5jfyZbGAapg6Xxe75IfvEKl5CuFJW/NsbXRZjci6FYc01tKxnbcsWA3
+         s/01bOF5J1aHKc8QYM8dbT6wbQtLOo6RGBbEr8KTIZfaFXu7s8oR/INpibNP+Fp3llbW
+         /oCkB2nxFv3SBtHrP+1yjCUhDEa833v7YjHgLY3VlWZeryTcGZYry8YcyVe93BPVuSW+
+         TK4P8PNpeC8mGihu9kLIGqWGT1Zuy5KLLfx2XFSQZMpONETduJifhtxPbw7CqB52yfc7
+         2o44Jux1y7I6EDw9eT31YFqSKz0ZdiQ0zKPZdcjp+m4igSttq6Zgew1TJZ+oNYsIC8ZT
+         7FDg==
+X-Gm-Message-State: APjAAAVCKcUkAgj9A6X93qilQF/IKTS9aEZ/uK8IOr+UTWdsYHFACdpr
+        4jO47PBNithfZo73Q3IcRqs=
+X-Google-Smtp-Source: APXvYqwc7UsERW/A+zk+KNr2UyXjWePGW7FY5XO/Or9UNo5GoVQxod85WFoRW87nJ14J9300Ag3Dkg==
+X-Received: by 2002:a17:906:d8a4:: with SMTP id qc4mr18082362ejb.264.1576265153949;
+        Fri, 13 Dec 2019 11:25:53 -0800 (PST)
+Received: from [10.67.50.53] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id ot12sm636447ejb.72.2019.12.13.11.25.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 11:25:53 -0800 (PST)
+Subject: Re: [PATCH v3 00/13] phy: usb: Updates to Broadcom STB USB PHY driver
+To:     Al Cooper <alcooperx@gmail.com>, linux-kernel@vger.kernel.org
+Cc:     bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+References: <20191210132132.41509-1-alcooperx@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
+ xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
+ X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
+ AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
+ ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
+ SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
+ nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
+ qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
+ YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
+ FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
+ 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSDOwU0EVxvH8AEQAOqv6agYuT4x3DgFIJNv9i0e
+ S443rCudGwmg+CbjXGA4RUe1bNdPHYgbbIaN8PFkXfb4jqg64SyU66FXJJJO+DmPK/t7dRNA
+ 3eMB1h0GbAHlLzsAzD0DKk1ARbjIusnc02aRQNsAUfceqH5fAMfs2hgXBa0ZUJ4bLly5zNbr
+ r0t/fqZsyI2rGQT9h1D5OYn4oF3KXpSpo+orJD93PEDeseho1EpmMfsVH7PxjVUlNVzmZ+tc
+ IDw24CDSXf0xxnaojoicQi7kzKpUrJodfhNXUnX2JAm/d0f9GR7zClpQMezJ2hYAX7BvBajb
+ Wbtzwi34s8lWGI121VjtQNt64mSqsK0iQAE6OYk0uuQbmMaxbBTT63+04rTPBO+gRAWZNDmQ
+ b2cTLjrOmdaiPGClSlKx1RhatzW7j1gnUbpfUl91Xzrp6/Rr9BgAZydBE/iu57KWsdMaqu84
+ JzO9UBGomh9eyBWBkrBt+Fe1qN78kM7JO6i3/QI56NA4SflV+N4PPgI8TjDVaxgrfUTV0gVa
+ cr9gDE5VgnSeSiOleChM1jOByZu0JTShOkT6AcSVW0kCz3fUrd4e5sS3J3uJezSvXjYDZ53k
+ +0GS/Hy//7PSvDbNVretLkDWL24Sgxu/v8i3JiYIxe+F5Br8QpkwNa1tm7FK4jOd95xvYADl
+ BUI1EZMCPI7zABEBAAHCwagEGBECAAkFAlcbx/ACGwICKQkQYVeZFbVjdg7BXSAEGQECAAYF
+ Alcbx/AACgkQh9CWnEQHBwSJBw//Z5n6IO19mVzMy/ZLU/vu8flv0Aa0kwk5qvDyvuvfiDTd
+ WQzq2PLs+obX0y1ffntluhvP+8yLzg7h5O6/skOfOV26ZYD9FeV3PIgR3QYF26p2Ocwa3B/k
+ P6ENkk2pRL2hh6jaA1Bsi0P34iqC2UzzLq+exctXPa07ioknTIJ09BT31lQ36Udg7NIKalnj
+ 5UbkRjqApZ+Rp0RAP9jFtq1n/gjvZGyEfuuo/G+EVCaiCt3Vp/cWxDYf2qsX6JxkwmUNswuL
+ C3duQ0AOMNYrT6Pn+Vf0kMboZ5UJEzgnSe2/5m8v6TUc9ZbC5I517niyC4+4DY8E2m2V2LS9
+ es9uKpA0yNcd4PfEf8bp29/30MEfBWOf80b1yaubrP5y7yLzplcGRZMF3PgBfi0iGo6kM/V2
+ 13iD/wQ45QTV0WTXaHVbklOdRDXDHIpT69hFJ6hAKnnM7AhqZ70Qi31UHkma9i/TeLLzYYXz
+ zhLHGIYaR04dFT8sSKTwTSqvm8rmDzMpN54/NeDSoSJitDuIE8givW/oGQFb0HGAF70qLgp0
+ 2XiUazRyRU4E4LuhNHGsUxoHOc80B3l+u3jM6xqJht2ZyMZndbAG4LyVA2g9hq2JbpX8BlsF
+ skzW1kbzIoIVXT5EhelxYEGqLFsZFdDhCy8tjePOWK069lKuuFSssaZ3C4edHtkZ8gCfWWtA
+ 8dMsqeOIg9Trx7ZBCDOZGNAAnjYQmSb2eYOAti3PX3Ex7vI8ZhJCzsNNBEjPuBIQEAC/6NPW
+ 6EfQ91ZNU7e/oKWK91kOoYGFTjfdOatp3RKANidHUMSTUcN7J2mxww80AQHKjr3Yu2InXwVX
+ SotMMR4UrkQX7jqabqXV5G+88bj0Lkr3gi6qmVkUPgnNkIBe0gaoM523ujYKLreal2OQ3GoJ
+ PS6hTRoSUM1BhwLCLIWqdX9AdT6FMlDXhCJ1ffA/F3f3nTN5oTvZ0aVF0SvQb7eIhGVFxrlb
+ WS0+dpyulr9hGdU4kzoqmZX9T/r8WCwcfXipmmz3Zt8o2pYWPMq9Utby9IEgPwultaP06MHY
+ nhda1jfzGB5ZKco/XEaXNvNYADtAD91dRtNGMwRHWMotIGiWwhEJ6vFc9bw1xcR88oYBs+7p
+ gbFSpmMGYAPA66wdDKGj9+cLhkd0SXGht9AJyaRA5AWB85yNmqcXXLkzzh2chIpSEawRsw8B
+ rQIZXc5QaAcBN2dzGN9UzqQArtWaTTjMrGesYhN+aVpMHNCmJuISQORhX5lkjeg54oplt6Zn
+ QyIsOCH3MfG95ha0TgWwyFtdxOdY/UY2zv5wGivZ3WeS0TtQf/BcGre2y85rAohFziWOzTaS
+ BKZKDaBFHwnGcJi61Pnjkz82hena8OmsnsBIucsz4N0wE+hVd6AbDYN8ZcFNIDyt7+oGD1+c
+ PfqLz2df6qjXzq27BBUboklbGUObNwADBQ//V45Z51Q4fRl/6/+oY5q+FPbRLDPlUF2lV6mb
+ hymkpqIzi1Aj/2FUKOyImGjbLAkuBQj3uMqy+BSSXyQLG3sg8pDDe8AJwXDpG2fQTyTzQm6l
+ OnaMCzosvALk2EOPJryMkOCI52+hk67cSFA0HjgTbkAv4Mssd52y/5VZR28a+LW+mJIZDurI
+ Y14UIe50G99xYxjuD1lNdTa/Yv6qFfEAqNdjEBKNuOEUQOlTLndOsvxOOPa1mRUk8Bqm9BUt
+ LHk3GDb8bfDwdos1/h2QPEi+eI+O/bm8YX7qE7uZ13bRWBY+S4+cd+Cyj8ezKYAJo9B+0g4a
+ RVhdhc3AtW44lvZo1h2iml9twMLfewKkGV3oG35CcF9mOd7n6vDad3teeNpYd/5qYhkopQrG
+ k2oRBqxyvpSLrJepsyaIpfrt5NNaH7yTCtGXcxlGf2jzGdei6H4xQPjDcVq2Ra5GJohnb/ix
+ uOc0pWciL80ohtpSspLlWoPiIowiKJu/D/Y0bQdatUOZcGadkywCZc/dg5hcAYNYchc8AwA4
+ 2dp6w8SlIsm1yIGafWlNnfvqbRBglSTnxFuKqVggiz2zk+1wa/oP+B96lm7N4/3Aw6uy7lWC
+ HvsHIcv4lxCWkFXkwsuWqzEKK6kxVpRDoEQPDj+Oy/ZJ5fYuMbkdHrlegwoQ64LrqdmiVVPC
+ TwQYEQIADwIbDAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2Do+FAJ956xSz2XpDHql+Wg/2qv3b
+ G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
+Message-ID: <ec0e50c6-b226-70b4-0f1b-51d5cb0a71c5@gmail.com>
+Date:   Fri, 13 Dec 2019 11:25:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71f00fef-6d6b-4503-189f-08d78001e547
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2019 19:23:12.5099
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: E5ZXhiiJDGwv9q/mdKDwSMCzgFyi/16LvmQRnand2LO/BdzoawGlttscfWc1Hgd6ABIUHLIpVotc29JKIU9xWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB2485
-X-OriginatorOrg: synopsys.com
+In-Reply-To: <20191210132132.41509-1-alcooperx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 12/10/19 5:21 AM, Al Cooper wrote:
+> This patchset contains various updates to the Broadcom STB USB Driver.
+> The updates include:
+> - Add support for 7216 and 7211 Broadcom SoCs which use the new
+>   Synopsis USB Controller.
+> - Add support for USB Wake
+> - Add various bug fixes.
+> 
+> v3 - Rebase to v5.5-rc1
+> 
+> v2 - Changes based on review feedback
+> - Add vendor prefix to DT property "syscon-piarbctl"
+> - Use standard "wakeup" instead of "wake" for DT "interrupt-names"
 
-Pavel Machek wrote:
-> On Wed 2019-12-11 16:04:21, Greg Kroah-Hartman wrote:
->> From: Thinh Nguyen <thinh.nguyen@synopsys.com>
->>
->> [ Upstream commit 0d36dede457873404becd7c9cb9d0f2bcfd0dcd9 ]
->>
->> Highspeed device and below has different state names than superspeed and
->> higher. Add proper checks and printouts of link states for highspeed and
->> below.
-> This is debugfs, so I don't believe it was suitable for stable in the
-> first place, but....
->
->
->> +	case DWC3_LINK_STATE_RESUME:
->> +		return "Resume";
->> +	default:
->> +		return "UNKNOWN link state\n";
->> +	}
-> You may want to delete \n here, it will be duplicated if this ever
-> triggers.
+This entire series:
 
-We already fixed it upstream:
-038761ce68c2 ("usb: dwc3: debug: Remove newline printout")
+Tested-by: Florian Fainelli <f.fainelli@gmail.com>
 
-> Best regards,
-> 								Pavel
+> 
+> Al Cooper (13):
+>   phy: usb: EHCI DMA may lose a burst of DMA data for 7255xA0 family
+>   phy: usb: Get all drivers that use USB clks using correct
+>     enable/disable
+>   phy: usb: Put USB phys into IDDQ on suspend to save power in S2 mode
+>   phy: usb: Add "wake on" functionality
+>   phy: usb: Restructure in preparation for adding 7216 USB support
+>   dt-bindings: Add Broadcom STB USB PHY binding document
+>   phy: usb: Add support for new Synopsis USB controller on the 7216
+>   phy: usb: Add support for new Synopsis USB controller on the 7211b0
+>   phy: usb: fix driver to defer on clk_get defer
+>   phy: usb: PHY's MDIO registers not accessible without device installed
+>   phy: usb: bdc: Fix occasional failure with BDC on 7211
+>   phy: usb: USB driver is crashing during S3 resume on 7216
+>   phy: usb: Add support for wake and USB low power mode for 7211 S2/S5
+> 
+>  .../bindings/phy/brcm,brcmstb-usb-phy.txt     |  69 ++-
+>  drivers/phy/broadcom/Makefile                 |   2 +-
+>  .../phy/broadcom/phy-brcm-usb-init-synopsis.c | 414 ++++++++++++++++++
+>  drivers/phy/broadcom/phy-brcm-usb-init.c      | 226 +++++-----
+>  drivers/phy/broadcom/phy-brcm-usb-init.h      | 148 ++++++-
+>  drivers/phy/broadcom/phy-brcm-usb.c           | 269 ++++++++++--
+>  6 files changed, 943 insertions(+), 185 deletions(-)
+>  create mode 100644 drivers/phy/broadcom/phy-brcm-usb-init-synopsis.c
+> 
 
-BR
-Thinh
+
+-- 
+Florian
