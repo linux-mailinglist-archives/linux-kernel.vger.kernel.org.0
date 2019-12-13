@@ -2,83 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 680EA11E799
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:05:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 090C811E7AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbfLMQFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:05:19 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57029 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728049AbfLMQFS (ORCPT
+        id S1728406AbfLMQFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:05:51 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:43187 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728099AbfLMQFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:05:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576253117;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Cc7ICVZb+s4e7ChsQ+cDBzumwFBBlF0+3dl2VlDWCJs=;
-        b=RJNQ/wp8f1ctg/kUjfASoIYXkEeoJGHVe+GlK+i45wk6tIu5MEC2HLO1u1ygPAQTGtKGVr
-        +xPlNjzxBcbbvIrt+SlakwkcPUe9wXOGRHMw3nfg2GzeNNbsH88ADfwgI50mOuidUVYFnG
-        onzJEPH0gKgrTe1icXiQ4EsYGm/f19k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-204-UHE-uBOXM8uEy4Qkn4d-ug-1; Fri, 13 Dec 2019 11:05:14 -0500
-X-MC-Unique: UHE-uBOXM8uEy4Qkn4d-ug-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 79D27DB65;
-        Fri, 13 Dec 2019 16:05:13 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-122-140.rdu2.redhat.com [10.10.122.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E823060569;
-        Fri, 13 Dec 2019 16:05:12 +0000 (UTC)
-Subject: Re: [PATCH 4/5] locking/lockdep: Reuse free chain_hlocks entries
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-References: <20191212223525.1652-1-longman@redhat.com>
- <20191212223525.1652-5-longman@redhat.com>
- <20191213102525.GA2844@hirez.programming.kicks-ass.net>
- <20191213105042.GJ2871@hirez.programming.kicks-ass.net>
- <9a79ef1a-96e0-1fd7-97e8-ef854b08524d@redhat.com>
-Organization: Red Hat
-Message-ID: <dab58211-8d31-3b16-c1f1-51badfa8e210@redhat.com>
-Date:   Fri, 13 Dec 2019 11:05:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 13 Dec 2019 11:05:51 -0500
+Received: by mail-yw1-f68.google.com with SMTP id s187so22199ywe.10;
+        Fri, 13 Dec 2019 08:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XEqMHcTdDOYOvlqXuxrY0ZDmTfpLPgj3LFItvyhrGW8=;
+        b=NKVRcrFQi760LHcc2CA3mSfP216r5ge0bRp8GoTBxQzDEoVuCBqhn0AnB12G/DmyIN
+         7Zi15rAWKE+6u8EKYPiy3nu7oTaK5y4xGj5v1FFU9OeZdev3wLePzS27Rkg9I+xGub9I
+         BjVjua+vP5CtwTTtDm0Erd2lv6gGzHFiO+eHL3CS+WnWEJavdNg4ge7f1YNh8qPoTOvJ
+         oLeb8/YH+bUQBRJK+1ii49WoOVdX9FMfzWXw+QClPLnUwhLIqprDDRsL2pU6LRXvQd85
+         JKxf1xFOMXICKrzwC0pUKzTXHqKJHui89SGkOKuS83pvy6UfKsVaILzw1wcnRL9L9mEa
+         Nbhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XEqMHcTdDOYOvlqXuxrY0ZDmTfpLPgj3LFItvyhrGW8=;
+        b=sIptDIS6AalEA1rtX6Rte91Svnp3l3R4BfNfkD5PXqpMTgULeX+BCKigqDYhwx5rWw
+         LlOq1+AXqvbHblJK74yxcoBSj9UFvNw9zzqzhVmHbHaxyQFgmdBw9fosIcrcul/5jW8n
+         v5bavzQzdc8NoIWWSJVTVEM0I7kI7QUTIV2W+SD0slgrRhTW11Y0uIqVt8Es20hIA7Y+
+         ueLWVlzdRlk4gonRwt6yb3G7uL/Z7bFWpccQ86ZLRFBnjzUesU0Yp08GHVxaKfTrbKf4
+         H2tMvDyYV70cVHhp5s9viZCA1gz/MLhS0VpWvhJvjVb0SdRPMI+DE7arMTe3afvgp42l
+         FqmA==
+X-Gm-Message-State: APjAAAXemg3wc4XybPsNNamwQino2XTQMspbFXMDMpixsjqXVPyitm6B
+        ahSBmLsKWA+inNlw1bjrJi0=
+X-Google-Smtp-Source: APXvYqys0XoQhk+58M8smG2N+QHVvjzqTiqDCi74zIQgQS1eYZb6PW/ZmzSN70o7vzlpSbz5S4WEFw==
+X-Received: by 2002:a0d:c041:: with SMTP id b62mr9089386ywd.488.1576253149508;
+        Fri, 13 Dec 2019 08:05:49 -0800 (PST)
+Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
+        by smtp.gmail.com with ESMTPSA id v38sm3984694ywh.63.2019.12.13.08.05.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 08:05:48 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     peng.fan@nxp.com, ping.bai@nxp.com, Adam Ford <aford173@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/7] soc: imx: Enable additional functionality of i.MX8M Mini
+Date:   Fri, 13 Dec 2019 10:05:35 -0600
+Message-Id: <20191213160542.15757-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <9a79ef1a-96e0-1fd7-97e8-ef854b08524d@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/19 11:02 AM, Waiman Long wrote:
-> That is an interesting idea. It will eliminate the need of a separate
-> array to track the free chain_hlocks. However, if there are n chains
-> available, it will waste about 3n bytes of storage, on average.
->
-> I have a slightly different idea. I will enforce a minimum allocation
-> size of 2. For a free block, the first 2 hlocks for each allocation
-> block will store a 32-bit integer (hlock[0] << 16)|hlock[1]:
->
-> Bit 31: always 1
-> Bits 24-30: block size
-> Bits 0-23: index to the next free block.
->
-> In this way, the wasted space will be k bytes where k is the number of
-The wasted space should be 2k bytes. My mistake.
-> 1-entry chains. I don't think merging adjacent blocks will be that
-> useful at this point. We can always add this capability later on if it
-> is found to be useful.
+The GPCv2 controller on the i.MX8M Mini is compatible with the driver
+used for the i.MX8MQ except for the register locations and names.
+The GPCv2 controller is used to enable additional periperals currently
+unavailable on the i.MX8M Mini.  In order to make them function,
+the GPCv2 needs to be adapted so the drivers can associate their
+power domain to the GPCv2 to enable them.
 
-Cheers,
-Longman
+This series makes one include file slightly more generic,
+adds the iMX8M Mini entries, updates the bindings, adds them
+to the device tree, then associates the new power domain to
+both the OTG and PCIe controllers.
+
+Some peripherals may need additional power domain drivers in the future
+due to limitations of the GPC driver, but the drivers for VPU and others are
+not available yet.
+
+Adam Ford (7):
+  soc: imx: gpcv2: Rename imx8mq-power.h to imx8m-power.h
+  soc: imx: gpcv2: Update imx8m-power.h to include iMX8M Mini
+  soc: imx: gpcv2: add support for i.MX8M Mini SoC
+  dt-bindings: imx-gpcv2: Update bindings to support i.MX8M Mini
+  arm64: dts: imx8mm: add GPC power domains
+  ARM64: dts: imx8mm: Fix clocks and power domain for USB OTG
+  arm64: dts: imx8mm: Add PCIe support
+
+ .../bindings/power/fsl,imx-gpcv2.txt          |   6 +-
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi     | 127 ++++++++-
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi     |   2 +-
+ drivers/soc/imx/gpcv2.c                       | 246 +++++++++++++++++-
+ .../power/{imx8mq-power.h => imx8m-power.h}   |  14 +
+ 5 files changed, 387 insertions(+), 8 deletions(-)
+ rename include/dt-bindings/power/{imx8mq-power.h => imx8m-power.h} (57%)
+
+-- 
+2.20.1
 
