@@ -2,99 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFDB511E5A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:35:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 750C411E5AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:36:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbfLMOfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 09:35:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29230 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727778AbfLMOfa (ORCPT
+        id S1727813AbfLMOgg convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 13 Dec 2019 09:36:36 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40462 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727711AbfLMOgg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 09:35:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576247729;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=K16O3uoMoq1X7RVCymy3uF4s1barxs0V/Dkj4PdUFYc=;
-        b=VnMg/nbS4WLIfz9pzROj7NhtJ+T8bS4q7p43VNINsfGcthTJ0gzHuKdNvUujFeABQmT07v
-        /sBKFDEymBQCaHrCXwiTGfqcU3nXhm3L0gph82GjC5NLz2O5LtoBk9ZlCTxqNwACUO+bmd
-        7ALyVfVI4h2L5Zis0Iu8IWP4KqhB0NM=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-167-U_G4IoFhNzeun0v-G5cMWg-1; Fri, 13 Dec 2019 09:35:26 -0500
-X-MC-Unique: U_G4IoFhNzeun0v-G5cMWg-1
-Received: by mail-qt1-f197.google.com with SMTP id o24so1896011qtr.17
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 06:35:25 -0800 (PST)
+        Fri, 13 Dec 2019 09:36:36 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i15so6698860oto.7;
+        Fri, 13 Dec 2019 06:36:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=K16O3uoMoq1X7RVCymy3uF4s1barxs0V/Dkj4PdUFYc=;
-        b=Rtj18BSbqF2LjyierBLElsYHD1alPXrVCbGGBgeU3bwYs31kTPQw9//GH4j9PCLWp5
-         glHFIK9nG94PPFzuwPhCZXfBApG/D0+ueTiC5MaE4Q/q9t6U85dLGfhJDdEILfbzUivQ
-         yfWxzYZKxCBursKvG5n15yaapD+XPjS4MmPgmIIXvPS0dvpC3ixefWtpLd7/ke0pH71X
-         3hWul2sCHOP0jfL9iyh8rSksz0EAQUKpV3B7TPZuLZ8aNHpMdDdBEl0nG/8yQedqUCsd
-         MuCbTz0nKxChOCDK6jS4YYPl6QTtoR1x/lYWDa2km8JULa7xTPj4BcZRHr4abEFIY8QE
-         IqSg==
-X-Gm-Message-State: APjAAAWQPkypeaidxXcbi4hmzqsWN256100pIKE84Ykw8I2/YaTvI6Jn
-        9p/IrXi4Yp54woAnkRjvQs+aJTXM+m/9vFshWwgZM8lr8pmaUvDcKhhVAPx16aXZATLbAlkgv7K
-        SDSAkLMzff7bgIheLz1bc+dyR
-X-Received: by 2002:a37:5d1:: with SMTP id 200mr13575572qkf.492.1576247725619;
-        Fri, 13 Dec 2019 06:35:25 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxgq1bbRToA9P95foPk8oGS2OI8ibHY6a72vmEjljgya2qgJqTa4/Xh04URKGN+H8Bz4Y3K4g==
-X-Received: by 2002:a37:5d1:: with SMTP id 200mr13575555qkf.492.1576247725393;
-        Fri, 13 Dec 2019 06:35:25 -0800 (PST)
-Received: from redhat.com (bzq-79-181-48-215.red.bezeqint.net. [79.181.48.215])
-        by smtp.gmail.com with ESMTPSA id l62sm2885132qke.12.2019.12.13.06.35.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 06:35:24 -0800 (PST)
-Date:   Fri, 13 Dec 2019 09:35:19 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, david@redhat.com, imammedo@redhat.com,
-        jasowang@redhat.com, liuj97@gmail.com, mst@redhat.com,
-        stable@vger.kernel.org, yuhuang@redhat.com
-Subject: [PULL] virtio: cleanups and fixes
-Message-ID: <20191213093519-mutt-send-email-mst@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GGDHCjU3MM6dIoUZbPeaqvOt8azxG8D7bJ42yMYhguQ=;
+        b=Fg68g20DS9J34weDnrWGHF/e32qZHaPKuqqvTc5id+1NwJ8EhouTc3Sf5tDMNjnnY6
+         SqQa4qIVZqeLiYz9B5rO5FMd51FlHFwY1JMgj0K+BhdT1V9epD8WwlMWnyf56xe6qeqV
+         qtDhx3Lc4/+sNcFyLjAxnsIyQrqOaGSf1+EEb/qrGvKObeP2TnFYG0q+bi2ALBnd2gZz
+         04rZ79DmSzgBfSHIjkOYSPqFtxM5Br/Uz4emFiZN5CYUPReMTar0yFkYKcpjvjWgPNst
+         1ENDf3Fds4LmZ6vE1oAXSNaazzPtAN8jCYtfe+47tRQYQW5cH9oTN3bOJVXsxXA+ZVMO
+         2iNQ==
+X-Gm-Message-State: APjAAAUnN0pkrsHwA1bpmgIGHR0UBwkkOpB9uLf6PLVkKBpOBoVCgn5V
+        P58Gs8CdSrgYjbnrXx16OHRguMn9WoIYwiQZtH4=
+X-Google-Smtp-Source: APXvYqwKdL1VCGK4Oe8rL01hvhyHoDgd/HFUlME0PAelLe/cixzON7bfU2Iq4k7pCixPL7UT2s6qDca45N2N5QcrkBo=
+X-Received: by 2002:a9d:7984:: with SMTP id h4mr15219004otm.297.1576247795212;
+ Fri, 13 Dec 2019 06:36:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
+References: <20191212033952.5967-1-afaerber@suse.de> <7110806f-ddbd-f055-e107-7a1f7e223102@arm.com>
+ <c86c6bc0-b0e5-c46e-da87-9d910b95f9f3@suse.de> <04e7d7cd-a8bc-621b-9205-1a058521cabe@arm.com>
+In-Reply-To: <04e7d7cd-a8bc-621b-9205-1a058521cabe@arm.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 13 Dec 2019 15:36:24 +0100
+Message-ID: <CAMuHMdXddQ4v8-by_SmcS09EYykoBZ2G2vcFUpqPadHFaasy7A@mail.gmail.com>
+Subject: Re: [RFC 00/25] arm64: realtek: Add Xnano X5 and implement
+ TM1628/FD628/AiP1618 LED controllers
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org,
+        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        csd@princeton.com.tw,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, sales@fdhisi.com,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, zypeng@titanmec.com,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Dan Murphy <dmurphy@ti.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+Hi Robin,
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+On Fri, Dec 13, 2019 at 3:08 PM Robin Murphy <robin.murphy@arm.com> wrote:
+> On 12/12/2019 8:55 pm, Andreas Färber wrote:
+> > Am 12.12.19 um 14:14 schrieb Robin Murphy:
+> >> and as far as I
+> >> could tell the command set appears to derive from (or is at least common
+> >> to) some old Holtek VFD controllers.
+> >
+> > Hmm, HT16515 looks similar and has more lines, RAM and mode bits than I
+> > prepared here.
+> > https://www.holtek.com/productdetail/-/vg/ht16515
+> >
+> > So I'd need to make more numbers model-dependent and allocate the
+> > Display RAM buffer dynamically.
+> >
+> > Whereas HT16D35A seems incompatible command-wise, and HT16528 appears to
+> > be out of scope, for dot displays and with fancy embedded character map.
+> >
+> > No Holtek email alias that I can quickly spot.
+> >
+> > But given that I'm proposing vendor-specific compatibles just in case,
+> > the main decisions will be the Kconfig symbol and module name. The
+> > driver code itself we could always refactor after merging, and renaming
+> > the schema file (as opposed to compatible) should also be possible.
+>
+> Yeah, I'm not sure that it really matters, as I doubt there are many
+> Linux-capable devices with a real VFD anyway; it just seemed like an
+> interesting datapoint that fell out of scouring the web trying to find
+> any evidence for which the "canonical" 1618 might be (and the Holtek
+> connection was actually a coincidence from a misidentification of the
+> ARTSCHIP part number).
 
-are available in the Git repository at:
+My Sony Blu-Ray/Home Theatre has a nice one (14-segment!), also driven
+by an HT16515.  While the specific model predates the arrival of Linux
+in the next stepping of the hardware, it should be sufficiently powerful
+to run Linux.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+Unfortunately it's in active use, so hacking experiments would be vetoed by
+the family ;-)
 
-for you to fetch changes up to 63b9b80e9f5b2c463d98d6e550e0d0e3ace66033:
+Gr{oetje,eeting}s,
 
-  virtio_balloon: divide/multiply instead of shifts (2019-12-11 08:14:07 -0500)
+                        Geert
 
-----------------------------------------------------------------
-virtio: fixes, cleanups
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Some fixes and cleanup patches.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-----------------------------------------------------------------
-David Hildenbrand (1):
-      virtio-balloon: fix managed page counts when migrating pages between zones
-
-Michael S. Tsirkin (2):
-      virtio_balloon: name cleanups
-      virtio_balloon: divide/multiply instead of shifts
-
- drivers/virtio/virtio_balloon.c | 36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
