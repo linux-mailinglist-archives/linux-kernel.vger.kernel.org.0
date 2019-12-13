@@ -2,128 +2,372 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A0011DD81
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 06:16:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19BAF11DDBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 06:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732003AbfLMFQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 00:16:18 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40848 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfLMFQS (ORCPT
+        id S1732075AbfLMF05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 00:26:57 -0500
+Received: from lucky1.263xmail.com ([211.157.147.135]:42404 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfLMF05 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 00:16:18 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s22so1202824ljs.7;
-        Thu, 12 Dec 2019 21:16:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HtHQdkqH4Es+ZIp2yRzZr6MYlrLXYfg6ekbWUN18b2I=;
-        b=dKY8h0JxXJUHhuimUVKzcifoLuMESUOhE3YvAPT8Ed5P2LVpjnb+wPesvekwYVMmWV
-         lca2b8ADEDpVm1j+LeOZ85ut0u+mF5kg9HH373P6xW0ER/wgAMcP1nBoXykldHdkpNVs
-         L/hVfZRvSsd/C+yFANp4lnHZM1DWlrg2m2xhgHcOfe+GtiGyCDmncFLAkta4uRtOoqXG
-         j1zkrdQwjmMP7lcK7k5mrp/velI5fdsv+vni2NA24IwondxJkD3lDLHEehbXgR3V7Mac
-         g5b/zU1kBwtJuhb4ANeK7drT7FZZGA2TT7LRDg0SmGbQTwL6sk2UVsfpFoz41tGrx2s4
-         ZuqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HtHQdkqH4Es+ZIp2yRzZr6MYlrLXYfg6ekbWUN18b2I=;
-        b=XG1RkbNZUskXWvRIOumOqPl9JKM5oxYE0+4AId96k324NYKcGe91iFfMXqBt/RXI8x
-         TEILoWChx8/Pi54t18pl/t3xnuyNplJ8MmvEc8yQtQEhCLkTnwEtsN/fjn3s1njNGnS9
-         hII8+rLUubFYg9DAobrMWr+qRdV3j1T8QUFW7Ff5bN7A0ffw80thvP8mboJlzfhdxklN
-         SV8FW4ej4EYh1MEy5a7rmUcSPlIm6j7pSIWHOIhpd9fPMyQSMZTyf4JVx/JORyAfiBJ5
-         IzGQYLzs0qEH3rVRVK6W23Btcd32nERzLLjRlpNLq4FEHzErEdyHkbCxx6FDC3sDttAA
-         8rOA==
-X-Gm-Message-State: APjAAAWixFd9mNKVNbLuo6SBsHm1DEPDtbv2FHg2R+mPIg8NLzsHOL6t
-        /ga4y2Uh9Hkk6CsBkN5XIhKgn/S+yv+y2dzZoFtyWA==
-X-Google-Smtp-Source: APXvYqyWRWJccgtT72Yhl/J/B/P0l3E36sc6NcKyV2MDZoPUaxbtjRI7VSdtxF23LHwJL/UQ7tlYfya4Xg4uhs7RWfk=
-X-Received: by 2002:a2e:99cd:: with SMTP id l13mr8235977ljj.243.1576214175764;
- Thu, 12 Dec 2019 21:16:15 -0800 (PST)
+        Fri, 13 Dec 2019 00:26:57 -0500
+X-Greylist: delayed 421 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Dec 2019 00:26:05 EST
+Received: from localhost (unknown [192.168.167.16])
+        by lucky1.263xmail.com (Postfix) with ESMTP id D99FC4CEC3;
+        Fri, 13 Dec 2019 13:18:50 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (42.17.110.36.static.bjtelecom.net [36.110.17.42])
+        by smtp.263.net (postfix) whith ESMTP id P12514T140025888880384S1576214251829137_;
+        Fri, 13 Dec 2019 13:18:52 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <02d9743777686192730effedd29ab06d>
+X-RL-SENDER: chengang@emindsoft.com.cn
+X-SENDER: chengang@emindsoft.com.cn
+X-LOGIN-NAME: chengang@emindsoft.com.cn
+X-FST-TO: gregkh@linuxfoundation.org
+X-SENDER-IP: 36.110.17.42
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 5
+From:   chengang@emindsoft.com.cn
+To:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        andriy.shevchenko@linux.intel.com, sr@denx.de,
+        mika.westerberg@linux.intel.com, yegorslists@googlemail.com,
+        yuehaibing@huawei.com, haolee.swjtu@gmail.com, dsterba@suse.com,
+        mojha@codeaurora.org
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chen Gang <chengang@emindsoft.com.cn>,
+        Lv Li-song <lvlisong@emindsoft.com.cn>
+Subject: [PATCH] drivers: tty: serial: 8250: fintek: Can enable or disable irq sharing based on isa or pci bus
+Date:   Fri, 13 Dec 2019 13:17:17 +0800
+Message-Id: <20191213051717.2058-1-chengang@emindsoft.com.cn>
+X-Mailer: git-send-email 2.24.0.308.g228f53135a
 MIME-Version: 1.0
-References: <20191211223344.165549-1-brianvv@google.com>
-In-Reply-To: <20191211223344.165549-1-brianvv@google.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Thu, 12 Dec 2019 21:16:04 -0800
-Message-ID: <CAADnVQLh9Dz82YUMCR7P0sHed9W+bkcGXw098E3dwO5rHTmZ2g@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 00/11] add bpf batch ops to process more than
- 1 elem
-To:     Brian Vazquez <brianvv@google.com>
-Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Yonghong Song <yhs@fb.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 2:34 PM Brian Vazquez <brianvv@google.com> wrote:
->
-> This patch series introduce batch ops that can be added to bpf maps to
-> lookup/lookup_and_delete/update/delete more than 1 element at the time,
-> this is specially useful when syscall overhead is a problem and in case
-> of hmap it will provide a reliable way of traversing them.
->
-> The implementation inclues a generic approach that could potentially be
-> used by any bpf map and adds it to arraymap, it also includes the specific
-> implementation of hashmaps which are traversed using buckets instead
-> of keys.
->
-> The bpf syscall subcommands introduced are:
->
->   BPF_MAP_LOOKUP_BATCH
->   BPF_MAP_LOOKUP_AND_DELETE_BATCH
->   BPF_MAP_UPDATE_BATCH
->   BPF_MAP_DELETE_BATCH
->
-> The UAPI attribute is:
->
->   struct { /* struct used by BPF_MAP_*_BATCH commands */
->          __aligned_u64   in_batch;       /* start batch,
->                                           * NULL to start from beginning
->                                           */
->          __aligned_u64   out_batch;      /* output: next start batch */
->          __aligned_u64   keys;
->          __aligned_u64   values;
->          __u32           count;          /* input/output:
->                                           * input: # of key/value
->                                           * elements
->                                           * output: # of filled elements
->                                           */
->          __u32           map_fd;
->          __u64           elem_flags;
->          __u64           flags;
->   } batch;
->
->
-> in_batch and out_batch are only used for lookup and lookup_and_delete since
-> those are the only two operations that attempt to traverse the map.
->
-> update/delete batch ops should provide the keys/values that user wants
-> to modify.
->
-> Here are the previous discussions on the batch processing:
->  - https://lore.kernel.org/bpf/20190724165803.87470-1-brianvv@google.com/
->  - https://lore.kernel.org/bpf/20190829064502.2750303-1-yhs@fb.com/
->  - https://lore.kernel.org/bpf/20190906225434.3635421-1-yhs@fb.com/
->
-> Changelog sinve v2:
->  - Add generic batch support for lpm_trie and test it (Yonghong Song)
->  - Use define MAP_LOOKUP_RETRIES for retries (John Fastabend)
->  - Return errors directly and remove labels (Yonghong Song)
->  - Insert new API functions into libbpf alphabetically (Yonghong Song)
->  - Change hlist_nulls_for_each_entry_rcu to
->    hlist_nulls_for_each_entry_safe in htab batch ops (Yonghong Song)
+From: Chen Gang <chengang@emindsoft.com.cn>
 
-Yonghong,
-please review.
+Sorry for this patch being too late, which is for linux-next 20151127 (
+about linux 4.4-rc2).  After 4 years, much things have been changed. But
+I think it might be still valuable for some old versions. Welcome anyone
+to refact this patch for their own.
+
+Fintek serial ports can share irq, but they need be enabled firstly, so
+enable or disable irq sharing based on isa or pci bus. From kconfig, it
+can be configured.
+
+For integrated 8250 drivers, kernel always calls pnp driver, which will
+not use integrated fintek driver for ever. So let pnp driver try the
+other drivers firstly (e.g. fintek), if fail, try pnp driver its own.
+
+Cc: Lv Li-song <lvlisong@emindsoft.com.cn>
+Signed-off-by: Chen Gang <chengang@emindsoft.com.cn>
+---
+ drivers/tty/serial/8250/8250.h        |   9 +++
+ drivers/tty/serial/8250/8250_fintek.c | 130 +++++++++++++++++++++-------------
+ drivers/tty/serial/8250/8250_pnp.c    |  13 +++-
+ drivers/tty/serial/8250/Kconfig       |  26 +++++++
+ 4 files changed, 129 insertions(+), 49 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
+index d54dcd8..a6e3245 100644
+--- a/drivers/tty/serial/8250/8250.h
++++ b/drivers/tty/serial/8250/8250.h
+@@ -14,6 +14,7 @@
+ #include <linux/serial_8250.h>
+ #include <linux/serial_reg.h>
+ #include <linux/dmaengine.h>
++#include <linux/pnp.h>
+ 
+ struct uart_8250_dma {
+ 	int (*tx_dma)(struct uart_8250_port *p);
+@@ -130,6 +131,9 @@ void serial8250_rpm_put(struct uart_8250_port *p);
+ #endif
+ 
+ #ifdef CONFIG_SERIAL_8250_PNP
++struct pnp_base_data {
++	struct pnp_driver *driver;
++};
+ int serial8250_pnp_init(void);
+ void serial8250_pnp_exit(void);
+ #else
+@@ -137,6 +141,11 @@ static inline int serial8250_pnp_init(void) { return 0; }
+ static inline void serial8250_pnp_exit(void) { }
+ #endif
+ 
++#ifdef CONFIG_SERIAL_8250_FINTEK
++extern int
++fintek_8250_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id);
++#endif
++
+ #ifdef CONFIG_ARCH_OMAP1
+ static inline int is_omap1_8250(struct uart_8250_port *pt)
+ {
+diff --git a/drivers/tty/serial/8250/8250_fintek.c b/drivers/tty/serial/8250/8250_fintek.c
+index 8947439..50c4ed7e 100644
+--- a/drivers/tty/serial/8250/8250_fintek.c
++++ b/drivers/tty/serial/8250/8250_fintek.c
+@@ -38,9 +38,15 @@
+ #define RXW4C_IRA BIT(3)
+ #define TXW4C_IRA BIT(2)
+ 
++#define ICSR   0x70
++#define IRQ_SHARING_MOD 0x10
++#define PCI_IRQ_SHARING 0x00
++#define ISA_IRQ_SHARING 0x20
++
+ #define DRIVER_NAME "8250_fintek"
+ 
+ struct fintek_8250 {
++	struct pnp_base_data base; /* must be the first */
+ 	u16 base_port;
+ 	u8 index;
+ 	u8 key;
+@@ -138,6 +144,31 @@ static int fintek_8250_rs485_config(struct uart_port *port,
+ 	return 0;
+ }
+ 
++#if IS_ENABLED(CONFIG_SERIAL_8250_FINTEK_IRQ_SHARING)
++
++static void set_icsr(u16 base_port, u8 index)
++{
++	uint8_t icsr = 0;
++
++	outb(LDN, base_port + ADDR_PORT);
++	outb(index, base_port + DATA_PORT);
++	outb(ICSR, base_port + ADDR_PORT);
++	icsr = inb(base_port + DATA_PORT);
++
++	if (icsr != 0xff) {
++		icsr |= IRQ_SHARING_MOD;
++#if IS_ENABLED(CONFIG_SERIAL_8250_FINTEK_IRQ_SHARING_ISA)
++		icsr |= ISA_IRQ_SHARING;
++#else
++		icsr |= PCI_IRQ_SHARING;
++#endif
++		outb(ICSR, base_port + ADDR_PORT);
++		outb(icsr, base_port + DATA_PORT);
++	}
++}
++
++#endif
++
+ static int fintek_8250_base_port(u16 io_address, u8 *key, u8 *index)
+ {
+ 	static const u16 addr[] = {0x4e, 0x2e};
+@@ -166,7 +197,9 @@ static int fintek_8250_base_port(u16 io_address, u8 *key, u8 *index)
+ 				aux |= inb(addr[i] + DATA_PORT) << 8;
+ 				if (aux != io_address)
+ 					continue;
+-
++#if IS_ENABLED(CONFIG_SERIAL_8250_FINTEK_IRQ_SHARING)
++				set_icsr(addr[i], k);
++#endif
+ 				fintek_8250_exit_key(addr[i]);
+ 				*key = keys[j];
+ 				*index = k;
+@@ -179,53 +212,6 @@ static int fintek_8250_base_port(u16 io_address, u8 *key, u8 *index)
+ 	return -ENODEV;
+ }
+ 
+-static int
+-fintek_8250_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id)
+-{
+-	struct uart_8250_port uart;
+-	struct fintek_8250 *pdata;
+-	int base_port;
+-	u8 key;
+-	u8 index;
+-
+-	if (!pnp_port_valid(dev, 0))
+-		return -ENODEV;
+-
+-	base_port = fintek_8250_base_port(pnp_port_start(dev, 0), &key, &index);
+-	if (base_port < 0)
+-		return -ENODEV;
+-
+-	memset(&uart, 0, sizeof(uart));
+-
+-	pdata = devm_kzalloc(&dev->dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata)
+-		return -ENOMEM;
+-	uart.port.private_data = pdata;
+-
+-	if (!pnp_irq_valid(dev, 0))
+-		return -ENODEV;
+-	uart.port.irq = pnp_irq(dev, 0);
+-	uart.port.iobase = pnp_port_start(dev, 0);
+-	uart.port.iotype = UPIO_PORT;
+-	uart.port.rs485_config = fintek_8250_rs485_config;
+-
+-	uart.port.flags |= UPF_SKIP_TEST | UPF_BOOT_AUTOCONF;
+-	if (pnp_irq_flags(dev, 0) & IORESOURCE_IRQ_SHAREABLE)
+-		uart.port.flags |= UPF_SHARE_IRQ;
+-	uart.port.uartclk = 1843200;
+-	uart.port.dev = &dev->dev;
+-
+-	pdata->key = key;
+-	pdata->base_port = base_port;
+-	pdata->index = index;
+-	pdata->line = serial8250_register_8250_port(&uart);
+-	if (pdata->line < 0)
+-		return -ENODEV;
+-
+-	pnp_set_drvdata(dev, pdata);
+-	return 0;
+-}
+-
+ static void fintek_8250_remove(struct pnp_dev *dev)
+ {
+ 	struct fintek_8250 *pdata = pnp_get_drvdata(dev);
+@@ -276,6 +262,54 @@ static struct pnp_driver fintek_8250_driver = {
+ 	.id_table	= fintek_dev_table,
+ };
+ 
++int
++fintek_8250_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id)
++{
++	struct uart_8250_port uart;
++	struct fintek_8250 *pdata;
++	int base_port;
++	u8 key;
++	u8 index;
++
++	if (!pnp_port_valid(dev, 0))
++		return -ENODEV;
++
++	base_port = fintek_8250_base_port(pnp_port_start(dev, 0), &key, &index);
++	if (base_port < 0)
++		return -ENODEV;
++
++	memset(&uart, 0, sizeof(uart));
++
++	pdata = devm_kzalloc(&dev->dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return -ENOMEM;
++	uart.port.private_data = pdata;
++
++	if (!pnp_irq_valid(dev, 0))
++		return -ENODEV;
++	uart.port.irq = pnp_irq(dev, 0);
++	uart.port.iobase = pnp_port_start(dev, 0);
++	uart.port.iotype = UPIO_PORT;
++	uart.port.rs485_config = fintek_8250_rs485_config;
++
++	uart.port.flags |= UPF_SKIP_TEST | UPF_BOOT_AUTOCONF;
++	if (pnp_irq_flags(dev, 0) & IORESOURCE_IRQ_SHAREABLE)
++		uart.port.flags |= UPF_SHARE_IRQ;
++	uart.port.uartclk = 1843200;
++	uart.port.dev = &dev->dev;
++
++	pdata->key = key;
++	pdata->base_port = base_port;
++	pdata->index = index;
++	pdata->line = serial8250_register_8250_port(&uart);
++	if (pdata->line < 0)
++		return -ENODEV;
++	pdata->base.driver = &fintek_8250_driver;
++
++	pnp_set_drvdata(dev, pdata);
++	return 0;
++}
++
+ module_pnp_driver(fintek_8250_driver);
+ MODULE_DESCRIPTION("Fintek F812164 module");
+ MODULE_AUTHOR("Ricardo Ribalda <ricardo.ribalda@gmail.com>");
+diff --git a/drivers/tty/serial/8250/8250_pnp.c b/drivers/tty/serial/8250/8250_pnp.c
+index 658b392..af43a4c 100644
+--- a/drivers/tty/serial/8250/8250_pnp.c
++++ b/drivers/tty/serial/8250/8250_pnp.c
+@@ -438,8 +438,13 @@ static int
+ serial_pnp_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id)
+ {
+ 	struct uart_8250_port uart, *port;
+-	int ret, line, flags = dev_id->driver_data;
++	int ret, line, flags;
+ 
++#if IS_BUILTIN(CONFIG_SERIAL_8250_FINTEK)
++	if (!fintek_8250_probe(dev, dev_id))
++		return 0;
++#endif
++	flags = dev_id->driver_data;
+ 	if (flags & UNKNOWN_DEV) {
+ 		ret = serial_pnp_guess_board(dev);
+ 		if (ret < 0)
+@@ -494,6 +499,8 @@ static void serial_pnp_remove(struct pnp_dev *dev)
+ {
+ 	long line = (long)pnp_get_drvdata(dev);
+ 
++	if (line > CONFIG_SERIAL_8250_NR_UARTS)
++		((struct pnp_base_data *)line)->driver->remove(dev);
+ 	dev->capabilities &= ~PNP_CONSOLE;
+ 	if (line)
+ 		serial8250_unregister_port(line - 1);
+@@ -504,6 +511,8 @@ static int serial_pnp_suspend(struct pnp_dev *dev, pm_message_t state)
+ {
+ 	long line = (long)pnp_get_drvdata(dev);
+ 
++	if (line > CONFIG_SERIAL_8250_NR_UARTS)
++		((struct pnp_base_data *)line)->driver->suspend(dev, state);
+ 	if (!line)
+ 		return -ENODEV;
+ 	serial8250_suspend_port(line - 1);
+@@ -514,6 +523,8 @@ static int serial_pnp_resume(struct pnp_dev *dev)
+ {
+ 	long line = (long)pnp_get_drvdata(dev);
+ 
++	if (line > CONFIG_SERIAL_8250_NR_UARTS)
++		((struct pnp_base_data *)line)->driver->resume(dev);
+ 	if (!line)
+ 		return -ENODEV;
+ 	serial8250_resume_port(line - 1);
+diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+index 6412f14..37d120b 100644
+--- a/drivers/tty/serial/8250/Kconfig
++++ b/drivers/tty/serial/8250/Kconfig
+@@ -337,6 +337,32 @@ config SERIAL_8250_FINTEK
+ 	  LPC to 4 UART. This device has some RS485 functionality not available
+ 	  through the PNP driver. If unsure, say N.
+ 
++config SERIAL_8250_FINTEK_IRQ_SHARING
++	bool "Enable IRQ sharing for Fintek F81216A LPC to 4 UART"
++	depends on SERIAL_8250_FINTEK
++	help
++	  Selecting this option will enable IRQ sharing for the Fintek F81216A
++	  LPC to 4 UART.
++
++choice
++	prompt "IRQ sharing ways for Fintek F81216A LPC to 4 UART"
++	depends on SERIAL_8250_FINTEK_IRQ_SHARING
++	default SERIAL_8250_FINTEK_IRQ_SHARING_ISA
++
++config SERIAL_8250_FINTEK_IRQ_SHARING_ISA
++	bool "ISA bus IRQ sharing"
++	depends on SERIAL_8250_FINTEK_IRQ_SHARING
++	help
++	  Based on ISA bus.
++
++config SERIAL_8250_FINTEK_IRQ_SHARING_PCI
++	bool "PCI bus IRQ sharing"
++	depends on SERIAL_8250_FINTEK_IRQ_SHARING
++	help
++	  Based on PCI bus.
++
++endchoice
++
+ config SERIAL_8250_LPC18XX
+ 	tristate "NXP LPC18xx/43xx serial port support"
+ 	depends on SERIAL_8250 && OF && (ARCH_LPC18XX || COMPILE_TEST)
+-- 
+1.9.1
+
+
+
