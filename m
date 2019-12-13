@@ -2,87 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2B9A11E798
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:05:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 680EA11E799
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:05:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbfLMQFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:05:06 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40468 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728302AbfLMQFF (ORCPT
+        id S1728325AbfLMQFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:05:19 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57029 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728049AbfLMQFS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:05:05 -0500
-Received: by mail-lj1-f195.google.com with SMTP id s22so3205155ljs.7
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:05:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gbf8k5yJ19A5wSZeXVRUlCPqOm3eyldLxkULlc81AFU=;
-        b=ymPQwlgoBu3AuxXxyAS8Pqr3jk0WyzPrXO0bCPOwIOGjnvgBRrGXil4Wbr2ayNyVg0
-         5oHwBqXWHlNYU4H4t0AGAUVusSZhkfHiNJjIj3uc5bx4NxoOqz31/r1rWdCvix34S3ZY
-         2LTTNgxyQ1bi8H8MZq9m+SG3t+rgn5AEU+AoO5VKhdPwcr7tzMRGFhdW9/jc9cvU1N9p
-         yEh3vCXdHeINwcTyiFYrKgZxEzP6mSe5+H8dC7GEWci+dHT6he+jJOMaqoKrHvuaroER
-         O8H3WuM0RCU6HzU+YAsXHI4yTGfj4+7zOW1wJoyn1ns5KWkT3b+TjkHMoaPRnN7i7Mnt
-         wJ2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gbf8k5yJ19A5wSZeXVRUlCPqOm3eyldLxkULlc81AFU=;
-        b=LgWG7AAbmZ48vtVmxviE+0G8hdVpYVAPE7/www0WhLE0Dfan7F2Lv7cLQM/SB/siBq
-         rzq1QEtsho4VgAOppC1hDogn6Lve8pGdP8wG/zpfL3Tl7Kf9luepjgJmfyNYYJLTwWDb
-         zKx2wd9DHjjrV7qMsRy5YkuRmomGkV6BSCqUICtCIkdgvY5FLEh0WwtnWo8VWfLEHCBP
-         Bb86xcXnlWw1OS2Y2GjmDJq0TUT8Pct6LPKde5nnzSp2b/yxZ98fJkG2Nib3yZZ9/C/H
-         TwEvRUdmKHG7yJ4jmjukWhl3/PlJP+7vllEer/OR56S9wbJdLdRXSyCOFOhmMrwup++Y
-         HO/Q==
-X-Gm-Message-State: APjAAAWGjEW7Upojrr/pdLGxwXwcC0RvJqja2B5AeBaM3l/P+4Bexx3y
-        9jApHyxAod//zplgl0TIF+aQBQvmv6ZHgNZfYsUTug==
-X-Google-Smtp-Source: APXvYqwqvR2JGdbH6+gDLiMiftLZwqMCeGYmrtZEZ9p/3pwbALJms19uoBQteKErH11ha+LVboridg4Lm1ql8BrOASI=
-X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr9963179ljm.233.1576253102887;
- Fri, 13 Dec 2019 08:05:02 -0800 (PST)
+        Fri, 13 Dec 2019 11:05:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576253117;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Cc7ICVZb+s4e7ChsQ+cDBzumwFBBlF0+3dl2VlDWCJs=;
+        b=RJNQ/wp8f1ctg/kUjfASoIYXkEeoJGHVe+GlK+i45wk6tIu5MEC2HLO1u1ygPAQTGtKGVr
+        +xPlNjzxBcbbvIrt+SlakwkcPUe9wXOGRHMw3nfg2GzeNNbsH88ADfwgI50mOuidUVYFnG
+        onzJEPH0gKgrTe1icXiQ4EsYGm/f19k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-204-UHE-uBOXM8uEy4Qkn4d-ug-1; Fri, 13 Dec 2019 11:05:14 -0500
+X-MC-Unique: UHE-uBOXM8uEy4Qkn4d-ug-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 79D27DB65;
+        Fri, 13 Dec 2019 16:05:13 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-122-140.rdu2.redhat.com [10.10.122.140])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E823060569;
+        Fri, 13 Dec 2019 16:05:12 +0000 (UTC)
+Subject: Re: [PATCH 4/5] locking/lockdep: Reuse free chain_hlocks entries
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+References: <20191212223525.1652-1-longman@redhat.com>
+ <20191212223525.1652-5-longman@redhat.com>
+ <20191213102525.GA2844@hirez.programming.kicks-ass.net>
+ <20191213105042.GJ2871@hirez.programming.kicks-ass.net>
+ <9a79ef1a-96e0-1fd7-97e8-ef854b08524d@redhat.com>
+Organization: Red Hat
+Message-ID: <dab58211-8d31-3b16-c1f1-51badfa8e210@redhat.com>
+Date:   Fri, 13 Dec 2019 11:05:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <CGME20191211145104eucas1p1ce04a26eebcd4c22d72f204e7ae0aa5a@eucas1p1.samsung.com>
- <20191211145054.24835-1-m.szyprowski@samsung.com>
-In-Reply-To: <20191211145054.24835-1-m.szyprowski@samsung.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 13 Dec 2019 17:04:51 +0100
-Message-ID: <CACRpkdbBBjXxftu1fw7H9N+hAe_MfkUPJErN6MPJ8Mxirh1w5A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4 RESEND] USB3503: correct GPIOs polarity and update
- the driver
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-usb <linux-usb@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <9a79ef1a-96e0-1fd7-97e8-ef854b08524d@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 3:51 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+On 12/13/19 11:02 AM, Waiman Long wrote:
+> That is an interesting idea. It will eliminate the need of a separate
+> array to track the free chain_hlocks. However, if there are n chains
+> available, it will waste about 3n bytes of storage, on average.
+>
+> I have a slightly different idea. I will enforce a minimum allocation
+> size of 2. For a free block, the first 2 hlocks for each allocation
+> block will store a 32-bit integer (hlock[0] << 16)|hlock[1]:
+>
+> Bit 31: always 1
+> Bits 24-30: block size
+> Bits 0-23: index to the next free block.
+>
+> In this way, the wasted space will be k bytes where k is the number of
+The wasted space should be 2k bytes. My mistake.
+> 1-entry chains. I don't think merging adjacent blocks will be that
+> useful at this point. We can always add this capability later on if it
+> is found to be useful.
 
-> Marek Szyprowski (3):
->   ARM: dts: exynos: Correct USB3503 GPIOs polarity
->   ARM: dts: qcom: Correct USB3503 GPIOs polarity
->   ARM: dts: sun8i: a83t: Correct USB3503 GPIOs polarity
+Cheers,
+Longman
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-for all these three.
-
-Yours,
-Linus Walleij
