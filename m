@@ -2,80 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D945C11E6BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:38:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9008E11E6CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:39:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbfLMPib (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:38:31 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:38505 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfLMPib (ORCPT
+        id S1728049AbfLMPjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:39:23 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:36378 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727904AbfLMPjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:38:31 -0500
-Received: from mail-qt1-f172.google.com ([209.85.160.172]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MdvVu-1i70lf2PTi-00b1qA; Fri, 13 Dec 2019 16:38:29 +0100
-Received: by mail-qt1-f172.google.com with SMTP id e12so2600021qto.2;
-        Fri, 13 Dec 2019 07:38:29 -0800 (PST)
-X-Gm-Message-State: APjAAAUVhP/5UXUxaWEfxul12GxhzJ0sA88FsR8jTr4Gh7XOuwGdRgdi
-        NQks70v7l20tNHnCMcbEwGT7W3NNffKQKKuDv6I=
-X-Google-Smtp-Source: APXvYqw99oGMzeSioZjqdskLBPgYHN7FjeXUu4HGv1laMzanNdwLYdX0anAAiC6bn6p3caU4v71uSXwskgpYo0rS1GI=
-X-Received: by 2002:ac8:47d3:: with SMTP id d19mr12720676qtr.142.1576251508429;
- Fri, 13 Dec 2019 07:38:28 -0800 (PST)
+        Fri, 13 Dec 2019 10:39:21 -0500
+Received: by mail-yw1-f68.google.com with SMTP id n184so6054ywc.3;
+        Fri, 13 Dec 2019 07:39:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=66dDxa4JQshR1dxJN1HCdA7FRTIVML1Rl2L0x4gBwBs=;
+        b=IpwWQTBzg9+efmz6zpdHlpW7WO6Qb2rzpNyjAvojL6elJWNgpVqmZyQ+VOA2jRdCEh
+         jGyplAdiIPO/JftjYxUO7sovgTvepNOw0lWV1MT9dznUOuusPMO+j+Z13oroUaaD5bil
+         1piYhqNdzEdfXdqhnE+7U5kCEFqfJ8zhu7wceeOYtYpgS0QKCQ+RML/u0oe6npp2nIWC
+         Cc9nOT5KsyorY2X5unKnHKTIQ8r9XxZZz4ec1HolS6nH5SjuT5MeeuFP3YXKRzxK52KC
+         2LdZ8O6EEN/aQaZn8ExiHvWWt6aJrAMgVOeJJTI1AxGZbbtQSCpn6u9Ib/Kn3pQul97X
+         ebAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=66dDxa4JQshR1dxJN1HCdA7FRTIVML1Rl2L0x4gBwBs=;
+        b=paGbHfPminizg1T70Pj3QKYWFmDEp+RQKlsesNVFmI0ad/wLdWJoqyw3ePIWcG8mq+
+         T8vwmv2qTpe57wTHAJ0Sgtlb6+kuNP/7MvthGaWk5HuQwAaJ+kbNTW/J+7DBh5LDn/w4
+         RweWhsi1/HhI7pZFiM+m+7rErHnr9UO7q5wSO8GGRQZy9G5my9yx0H4epRqvrw0/OxJz
+         E4h3lkCHlAMgLgmBwCrHSO+ax2GGU8RDfqwIof7KS+XUcOcV48txEUieTlayZbIWih4K
+         IzZNeLmcHqea3wZVEwN5ELIGdSxgQDrmOK2hWWpAiMmTv5eDnCcPrNM+EJIDp9kvF0aZ
+         Xd+Q==
+X-Gm-Message-State: APjAAAXc0cPpi8bqXwwoMbGK57GYdN/EQWAC0gejCnbz4v1W0LvvpW9F
+        SkzM6ng/EkhNeSZxT7om7A8=
+X-Google-Smtp-Source: APXvYqzO7cb72G93h6pc42x43nIgubOr0x06bTe3Kej8fCH2doIKLJGdJ8weE8MbHkaf+/uMF//KeA==
+X-Received: by 2002:a25:b007:: with SMTP id q7mr7626962ybf.193.1576251560130;
+        Fri, 13 Dec 2019 07:39:20 -0800 (PST)
+Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
+        by smtp.gmail.com with ESMTPSA id i17sm4300474ywg.66.2019.12.13.07.39.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 07:39:19 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     horia.geanta@nxp.com, Adam Ford <aford173@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH V2 1/3] crypto: caam: Add support for i.MX8M Mini
+Date:   Fri, 13 Dec 2019 09:39:08 -0600
+Message-Id: <20191213153910.11235-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191126161824.337724-1-arnd@arndb.de> <20191126161824.337724-7-arnd@arndb.de>
- <09c664fd-87fb-4fac-f104-9afbe7d33aa2@xs4all.nl> <CAK8P3a1TvFCJf8t9T1yOXjsp088s9dbEOKLVDPinfwJe2B-27g@mail.gmail.com>
- <81bb5da1-6b84-8473-4ada-c174f43bbae2@xs4all.nl>
-In-Reply-To: <81bb5da1-6b84-8473-4ada-c174f43bbae2@xs4all.nl>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 13 Dec 2019 16:38:12 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1zvMFrs1cG+nQmTq3Tcv4OWdBkPNcsr6JsaM=Zkj8cFQ@mail.gmail.com>
-Message-ID: <CAK8P3a1zvMFrs1cG+nQmTq3Tcv4OWdBkPNcsr6JsaM=Zkj8cFQ@mail.gmail.com>
-Subject: Re: [PATCH v5 6/8] media: v4l2-core: fix v4l2_buffer handling for
- time64 ABI
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:wRRagCp/9UR7bP6HmPcw1OLo5+z22fM6ujfQU4/EM+H3I0fmN6f
- zeza0Ofdr9yOfDUy2ttXCEZHA9Q9vBbpdgd6P+A38Qviex3VqffjuqZqQcGupr+jA4s5TT/
- BKi3htCAO84NPb4tJ+9D1SpvLeDnzKMvC0EY4QgZLwHDA7k9vO8tsG55xEMfzW8B+3/qlJ4
- Wuw50GON3Q6B/TjvnUp7w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:LpZlHmiYtzg=:w1Q5Pk0+AwPFPpJXJhgh5N
- c8dX4aSsajw89bIyTgaZ7sqqK7Gx5e11J+M4aADq+GqDMJjup6bn4kyWOWVYKpBfcQZX6Tn+N
- 3GDhzS3czTGsrJBOIbJrr4VwZ4lxn2SBlZW00EuSo77TRIhP4DQ+TZtQTzMR9bUQyBYze40eL
- 1UFw318vhwSgI5vdmT8hvuKU+ulB9OpmZp/8/WG7HCpAtbkciwjzSbGVjQdX6nhbXF/owaIag
- WwVHLmLdtJDjI84pOePdiyG5ElCjwIe5T76SLE15HiY294OAq/mwH8lzDaRCMQRD6LB5uJl+m
- KuRSJcL41QJ7BJlekCl5jza5ma8MsYTUS07pjagDLODeiJlFjM4yolN10LdKyf12I80qP2jJX
- zC11rUwWA92Goy5vpOGvOK0yTW425BbXDy5two+ZY7jhmIwOLnb4Q9uic9Ai5VENYP+iW1cKt
- RGQl8Nqs6oVxNXGZzwifJWUlXtYIZiH0VQ+MrqJkpvyD79vZSRtt4gffVtfsqpWT8jE9GtD28
- bnKIOB/uEy1aG8NdvrEncl1IOjNHUtQkY2E1i9ytgbI4ipNuSJy3TtRS/k6BYsNlLzdbzQ+ab
- Xuq8/PC84xL/GRCXg5domnr/8mAfWugCamxy7yvqV0K3QZV/FIBdmJtFbSJC3uMalaB+Tn11O
- 5NSN4rWzRM+4UFRghrQb8TxW6lCDA8WfbgeE/HImemFbLbshnCZCXpe6wua9qaah93wgcCFJ8
- k8VSFGYhlULX2+bKIq5oKZp13dFjL5C/fVLOj0LmWbR5GyQWeKFd0La+aQ67e73eG0rur8LtM
- yGNyw4vka9xxpnAKWK1P73uLH6CKq4jcTORqD4OrIYe0RpNOp7x97gY48islLn+wYvefalzXv
- 9rv9gkKy69Qt1Qh1D7zA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 4:33 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On 12/13/19 4:08 PM, Arnd Bergmann wrote:
-> > On Thu, Dec 12, 2019 at 4:43 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> >
-> > I've heard good things about the prebuilt toolchains from http://musl.cc/.
-> > These seems to come with a libstdc++, but I have not tried that myself.
->
-> I'll see if I can give those a spin, but if I can't get it to work quickly,
-> then I don't plan on spending much time on it.
+The i.MX8M Mini uses the same crypto engine as the i.MX8MQ, but
+the driver is restricting the check to just the i.MX8MQ.
 
-Ok, sounds good. The way the series is structured, I tried to have the
-time64 ioctls use the existing code, while adding new time32 ioctls
-to ensure that we catch the bugs in the new time32 version through
-testing, and have fewer bugs to start with in the time64 version.
+This patch expands the check for either i.MX8MQ or i.MX8MM.
 
-     Arnd
+Signed-off-by: Adam Ford <aford173@gmail.com>
+
+---
+V2:  Expand the check that forces the setting on imx8mq to also be true for imx8mm
+     Explictly state imx8mm compatiblity instead of making it generic to all imx8m*
+      this is mostly due to lack of other hardware to test
+
+diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+index d7c3c3805693..c01dda692ecc 100644
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -102,7 +102,8 @@ static inline int run_descriptor_deco0(struct device *ctrldev, u32 *desc,
+ 	     * Apparently on i.MX8MQ it doesn't matter if virt_en == 1
+ 	     * and the following steps should be performed regardless
+ 	     */
+-	    of_machine_is_compatible("fsl,imx8mq")) {
++	    of_machine_is_compatible("fsl,imx8mq") ||
++	    of_machine_is_compatible("fsl,imx8mm")) {
+ 		clrsetbits_32(&ctrl->deco_rsr, 0, DECORSR_JR0);
+ 
+ 		while (!(rd_reg32(&ctrl->deco_rsr) & DECORSR_VALID) &&
+@@ -509,6 +510,7 @@ static const struct soc_device_attribute caam_imx_soc_table[] = {
+ 	{ .soc_id = "i.MX6*",  .data = &caam_imx6_data },
+ 	{ .soc_id = "i.MX7*",  .data = &caam_imx7_data },
+ 	{ .soc_id = "i.MX8MQ", .data = &caam_imx7_data },
++	{ .soc_id = "i.MX8MM", .data = &caam_imx7_data },
+ 	{ .family = "Freescale i.MX" },
+ 	{ /* sentinel */ }
+ };
+-- 
+2.20.1
+
