@@ -2,105 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31B1411E9B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:05:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AF2F11E9C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:11:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbfLMSEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 13:04:20 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43610 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbfLMSEU (ORCPT
+        id S1728702AbfLMSI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 13:08:57 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52146 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728653AbfLMSI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 13:04:20 -0500
-Received: by mail-io1-f65.google.com with SMTP id s2so483747iog.10;
-        Fri, 13 Dec 2019 10:04:19 -0800 (PST)
+        Fri, 13 Dec 2019 13:08:57 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d73so131381wmd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 10:08:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=jlzKVAxbx+/Wr5suXUGHs2MnNQmk3chg9M1fa3mxz0g=;
-        b=Skh6QyHnf7xBMFDJYmzZZRHK0QvNMRhjfKNkFmERmWOjRUeuq9Cv8Dj3RgrxMNiTwI
-         ywitD7tQC8mx+ruBvsmxhQHSZkSezs7LGvajniWTFxP+/GZ3n1IB+54WP1xHR+tn3aSb
-         18zQItO6jGVSrwY0MzCcplQv9pZxuHfxzpfXFomF1dyHqb53kJfjOU7jUN0FvnB7utUZ
-         2F6V1W5Q1cZ2UYl6trJVIsXy+0ZiShGux1TuA3q4IKdt8A0f67Jo2EWdqv3dpWUhIKOW
-         4gVJ0tYkggMSUgNMeS2Qv3hCxmlslYR9tIzGISL7hi9nYeBLoWzU1I6TcEwsRGVrwt7V
-         5hGQ==
+        d=cloudflare.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=O/cxA8OR7wvHTzpZtT+CV5+Gsa2e2EvgAMAg5PhtGMU=;
+        b=yrsqrWs1BY9XfWRcorJXSVnwZk2X+HKuhTyAsxUPuUQSr+/GAJzVZjebOCv42OsEG2
+         J39R3rEgUdBuhtYfQyZ5X4REm5t3K9E70nVP2h51B6RzqZx66WWwLJ9okKiYvZoLtniY
+         awM3o9a/w3hFmTcDuzuXnHSZfrUGB2S5tNwag=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=jlzKVAxbx+/Wr5suXUGHs2MnNQmk3chg9M1fa3mxz0g=;
-        b=W7OzOMfeV5+zRpiZjg8FJyX+KSi4qBmUgJj7svAE69dAhwFAajQhdy+mUxypmVTwn8
-         4CAehv2AsTxpbN9NEdEdlvB2oFRz9w4/RDCMVXWZvnP+4VYMp3StwqO4MUV+D7pqygSj
-         VTz4vfO02nVE8n9mNdOBt8hLny06cKZYmOUEMjnDS8amMBfpmO+5+F9sot8qKedpbEzY
-         XKAUZqAkofjVEFpDPsvEoWuu2NyFqOdBDqHwFKaBayixDlYQ2/ndR1l03RKFkDs0GFt/
-         nIFv1OhSJq7GShtPtaUko/SsdxbLcvX6oi9XQtJ5dJtFFMdz1/b7Cx9wu/oQHvjeXgH7
-         xl+A==
-X-Gm-Message-State: APjAAAVJbJxZ9hOoN1TyrV1l8xfV++s/pkSLBKFfKou3pPm9c7v2AKS3
-        6IFFEv0njPZVqpiScwVoUqaAmF7t3AWNvXVCorGVCQHw
-X-Google-Smtp-Source: APXvYqz+Ddjeu5WylBKH31KLJqL+in4RoPghN7qO8r+09q+bmZZr5Nz73OoWlxeyVxdUA4Ecm8R2x9ODEBCdv+gTVg4=
-X-Received: by 2002:a5d:9512:: with SMTP id d18mr8473567iom.85.1576260259061;
- Fri, 13 Dec 2019 10:04:19 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=O/cxA8OR7wvHTzpZtT+CV5+Gsa2e2EvgAMAg5PhtGMU=;
+        b=cRDBcbRfNQK9UlGD68nsvQ/1jCc+e5AY4H/Qw0JKB35YMavFR+elF5KJILNjsXigIQ
+         u+ySV37NwBY6KLdb2MOEzjZ9SlWyhWLPk/6PDR6X+OfdZRvwHuGL/78iOLCRtrXgwHl4
+         qPu0zezigaAOenAN4XxAXScxqgyi4PizlvktboiPT9qRaMoCuimB4x6buOkjX4m2wjLX
+         b1zr4PPWhd+mXcq2jZW8cvmHQ2XBakyV+wju9tT3f0T2veCGb6PhcUsQdMOQduxnB+F8
+         o+1N+dueqRgratnYIUCvP7+w2oajdIa6JBXcTeX3cbaNjVG3HLvJ32QXlWV3jBsEaYsM
+         k2Sg==
+X-Gm-Message-State: APjAAAVamegu4oR9heS1peZMfFi8gmCUiXDCNfoEz4/MI5/JYTO4fYuf
+        NcO0OIUBxd9SfUTdlR/ye3tk2Q==
+X-Google-Smtp-Source: APXvYqyRzmw1t/nhcd7tFqSwEq4NM+D3Xo/fEUCYFhdc2wqXY4e+lStCTXj/vfCE7f8Nr3vKFyJ+fA==
+X-Received: by 2002:a1c:9c87:: with SMTP id f129mr14480448wme.26.1576260534942;
+        Fri, 13 Dec 2019 10:08:54 -0800 (PST)
+Received: from localhost.localdomain ([2a06:98c0:1000:8250:3da5:43ec:24b:e240])
+        by smtp.gmail.com with ESMTPSA id d8sm10686655wrx.71.2019.12.13.10.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 10:08:54 -0800 (PST)
+From:   Lorenz Bauer <lmb@cloudflare.com>
+To:     ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kernel-team@cloudflare.com, Lorenz Bauer <lmb@cloudflare.com>
+Subject: [PATCH bpf v2] bpf: clear skb->tstamp in bpf_redirect when necessary
+Date:   Fri, 13 Dec 2019 18:08:17 +0000
+Message-Id: <20191213180817.2510-1-lmb@cloudflare.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191213154634.27338-1-lmb@cloudflare.com>
+References: <20191213154634.27338-1-lmb@cloudflare.com>
 MIME-Version: 1.0
-References: <PSXP216MB043892C04178AB333F7AF08C80580@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <20191210213836.GA149297@google.com> <PSXP216MB0438B40D6EFFF5F9B5952F6580550@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-In-Reply-To: <PSXP216MB0438B40D6EFFF5F9B5952F6580550@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-Reply-To: bjorn@helgaas.com
-From:   Bjorn Helgaas <bjorn.helgaas@gmail.com>
-Date:   Fri, 13 Dec 2019 12:04:07 -0600
-Message-ID: <CABhMZUU_6Ljn60sH_C8EwhKwF=uUrP2Y3ob1nnAM_UjM=i+8=A@mail.gmail.com>
-Subject: Re: [PATCH v12 0/4] PCI: Patch series to improve Thunderbolt enumeration
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 4:23 AM Nicholas Johnson
-<nicholas.johnson-opensource@outlook.com.au> wrote:
->
-> On Tue, Dec 10, 2019 at 03:38:36PM -0600, Bjorn Helgaas wrote:
-> > On Mon, Dec 09, 2019 at 12:59:29PM +0000, Nicholas Johnson wrote:
-> > > Hi all,
-> > >
-> > > Since last time:
-> > >     Reverse Christmas tree for a couple of variables
-> > >
-> > >     Changed while to whilst (sounds more formal, and so that
-> > >     grepping for "while" only brings up code)
-> > >
-> > >     Made sure they still apply to latest Linux v5.5-rc1
-> > >
-> > > Kind regards,
-> > > Nicholas
-> > >
-> > > Nicholas Johnson (4):
-> > >   PCI: Consider alignment of hot-added bridges when distributing
-> > >     available resources
-> > >   PCI: In extend_bridge_window() change available to new_size
-> > >   PCI: Change extend_bridge_window() to set resource size directly
-> > >   PCI: Allow extend_bridge_window() to shrink resource if necessary
-> > >
-> > >  drivers/pci/setup-bus.c | 182 +++++++++++++++++++---------------------
-> > >  1 file changed, 88 insertions(+), 94 deletions(-)
-> >
-> > Applied to pci/resource for v5.6, thanks!
-> Thank you all for your time, support and patience with me. I have
-> learned a lot in the past year.
->
-> I will obviously stick around to address any potential concerns with the
-> patches, but it also seems like kernel development is what I want to do
-> as a career. Hopefully I can take this beyond a hobby despite my
-> physical location. Perth, Western Australia is not big on this. Perhaps
-> there are companies open to telecommuting employees. In any case, you
-> will continue to see me around.
+Redirecting a packet from ingress to egress by using bpf_redirect
+breaks if the egress interface has an fq qdisc installed. This is the same
+problem as fixed in 'commit 8203e2d844d3 ("net: clear skb->tstamp in forwarding paths")
 
-Thanks for your work.  Springfield, Missouri, is not big on kernel
-development either, so I can sympathize with that :)
+Clear skb->tstamp when redirecting into the egress path.
+
+Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
+Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
+Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+---
+ net/core/filter.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/core/filter.c b/net/core/filter.c
+index f1e703eed3d2..d914257763b5 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -2055,6 +2055,7 @@ static inline int __bpf_tx_skb(struct net_device *dev, struct sk_buff *skb)
+ 	}
+ 
+ 	skb->dev = dev;
++	skb->tstamp = 0;
+ 
+ 	dev_xmit_recursion_inc();
+ 	ret = dev_queue_xmit(skb);
+-- 
+2.20.1
+
