@@ -2,149 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 869E711DBFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 03:09:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12BF111DC04
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 03:14:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731905AbfLMCJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 21:09:32 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37917 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727778AbfLMCJb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 21:09:31 -0500
-Received: by mail-ot1-f68.google.com with SMTP id h20so4330019otn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 18:09:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vovJd+uHMVTrtqK/zCJZbzcPcP72DcTVR7QkhclYvEk=;
-        b=q5c0q9mLNmokamXfmx9MFWb207RUgzaDGN2UhqWgLavf9rRxkkfCqgzGTsqhgsrz8O
-         5lOWgoc0woysdcXfGOA4slOkpnZ67WEXrlZwCQis7QvIc+Wq+1uWrNoHvsrvRi/JVBul
-         SANe+fNbq4okVnp9H6txdmfA+6CQAkMbh/BH6GvPR1Y3XviozV3pm/4MZRYQaKXxws6f
-         5QzaGOq89tUTUQEtuMptuDInXjGssF0ST9Ua97ZpqN/ijGTG9Udnh8sK8rzvqtUSsB3r
-         /gzkQsyGCt2RHX7s0rVBuFEvlHa/5TQOOFZ1uHt7osOgLBt1cmOwEyvDBOnivoLi6Fk+
-         5/vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vovJd+uHMVTrtqK/zCJZbzcPcP72DcTVR7QkhclYvEk=;
-        b=pdgNv9sdIYTqC+n84Sl0u4LSTx8z9sswyAmuTYptOir8lQPZI6YB6Bwzpz9P4p39GZ
-         tXzR7S1x+Nd1ofzcGOghxmUeS2/8WA+G8LTzOUnWf4Y/92TtvPa/OWvlPJTpC//Io7Ix
-         dU1lCc8NJzh5QU7SMLpbHeKkMANuowyFi4sm5MA7JTDXPpaeCvNO2+dkRLk7iq0E9QwH
-         CQE99egee4dqHzuNM1CfL5FHtWj7PpOGsHIsuQIWhGQL3EJZgTvh8NzIfGbq/u6ri6zp
-         1wZePaszCv5tRffmXayxXeKxNxKioYP+q6wdy/mg2Kj2yJBittOwKza64heX1nEu643B
-         qjdA==
-X-Gm-Message-State: APjAAAXqyGXoR4VGZSEkI1eseZu5eG9gi9yaR/sxYVH2I61BeFxN3eGB
-        jY5+KNjvPG2MvaW89u4iW4J6M0ipnuo2X6tO9lY=
-X-Google-Smtp-Source: APXvYqywZZkqxjGj7LWVTn+9w8E+MgzSO1+JJ6BWsL03agkEYsJDN3v5Fz0L0r0wcxi2IwDsnu1PGOUXGuL4jP7lTwk=
-X-Received: by 2002:a9d:6a8f:: with SMTP id l15mr11486859otq.59.1576202970718;
- Thu, 12 Dec 2019 18:09:30 -0800 (PST)
+        id S1731923AbfLMCNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 21:13:45 -0500
+Received: from mga05.intel.com ([192.55.52.43]:26956 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727778AbfLMCNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 21:13:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 18:13:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,308,1571727600"; 
+   d="scan'208";a="226146129"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 12 Dec 2019 18:13:41 -0800
+Cc:     baolu.lu@linux.intel.com
+Subject: Re: [PATCH 1/1] iommu/vt-d: Fix dmar pte read access not set error
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20191211014015.7898-1-baolu.lu@linux.intel.com>
+ <20191212014952.vlrmxrk2cebwxjnp@cantor>
+ <6f3bcad9-b9b3-b349-fdad-ce53a79a665b@linux.intel.com>
+ <20191213003013.gc3zg3fpzpjntnzg@cantor>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <7d58da5b-3f55-72b2-0638-ae561446d207@linux.intel.com>
+Date:   Fri, 13 Dec 2019 10:12:54 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <1575976016-110900-1-git-send-email-chenwandun@huawei.com>
-In-Reply-To: <1575976016-110900-1-git-send-email-chenwandun@huawei.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Fri, 13 Dec 2019 04:09:03 +0200
-Message-ID: <CAFCwf13U7qcJEL=3qqtNSid7KBiviaJR-64+X5zsu-118-GODQ@mail.gmail.com>
-Subject: Re: [PATCH] habanalabs: remove variable 'val' set but not used
-To:     Chen Wandun <chenwandun@huawei.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Tomer Tayar <ttayar@habana.ai>,
-        Omer Shpigelman <oshpigelman@habana.ai>,
-        Dalit Ben Zoor <dbenzoor@habana.ai>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191213003013.gc3zg3fpzpjntnzg@cantor>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 1:00 PM Chen Wandun <chenwandun@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/misc/habanalabs/goya/goya.c: In function goya_pldm_init_cpu:
-> drivers/misc/habanalabs/goya/goya.c:2195:6: warning: variable val set but not used [-Wunused-but-set-variable]
-> drivers/misc/habanalabs/goya/goya.c: In function goya_hw_init:
-> drivers/misc/habanalabs/goya/goya.c:2505:6: warning: variable val set but not used [-Wunused-but-set-variable]
->
-> Fixes: 9494a8dd8d22 ("habanalabs: add h/w queues module")
-> Signed-off-by: Chen Wandun <chenwandun@huawei.com>
-> ---
->  drivers/misc/habanalabs/goya/goya.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-> index c8d16aa..7344e8a 100644
-> --- a/drivers/misc/habanalabs/goya/goya.c
-> +++ b/drivers/misc/habanalabs/goya/goya.c
-> @@ -2192,7 +2192,7 @@ static int goya_push_linux_to_device(struct hl_device *hdev)
->
->  static int goya_pldm_init_cpu(struct hl_device *hdev)
->  {
-> -       u32 val, unit_rst_val;
-> +       u32 unit_rst_val;
->         int rc;
->
->         /* Must initialize SRAM scrambler before pushing u-boot to SRAM */
-> @@ -2200,14 +2200,14 @@ static int goya_pldm_init_cpu(struct hl_device *hdev)
->
->         /* Put ARM cores into reset */
->         WREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL, CPU_RESET_ASSERT);
-> -       val = RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
-> +       RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
->
->         /* Reset the CA53 MACRO */
->         unit_rst_val = RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
->         WREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N, CA53_RESET);
-> -       val = RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
-> +       RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
->         WREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N, unit_rst_val);
-> -       val = RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
-> +       RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
->
->         rc = goya_push_uboot_to_device(hdev);
->         if (rc)
-> @@ -2228,7 +2228,7 @@ static int goya_pldm_init_cpu(struct hl_device *hdev)
->         /* Release ARM core 0 from reset */
->         WREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL,
->                                         CPU_RESET_CORE0_DEASSERT);
-> -       val = RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
-> +       RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
->
->         return 0;
->  }
-> @@ -2502,13 +2502,12 @@ int goya_mmu_init(struct hl_device *hdev)
->  static int goya_hw_init(struct hl_device *hdev)
->  {
->         struct asic_fixed_properties *prop = &hdev->asic_prop;
-> -       u32 val;
->         int rc;
->
->         dev_info(hdev->dev, "Starting initialization of H/W\n");
->
->         /* Perform read from the device to make sure device is up */
-> -       val = RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
-> +       RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
->
->         /*
->          * Let's mark in the H/W that we have reached this point. We check
-> @@ -2560,7 +2559,7 @@ static int goya_hw_init(struct hl_device *hdev)
->                 goto disable_queues;
->
->         /* Perform read from the device to flush all MSI-X configuration */
-> -       val = RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
-> +       RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
->
->         return 0;
->
-> --
-> 2.7.4
->
+Hi,
 
-Thanks!
-Applied to -fixes
-Oded
+On 12/13/19 8:30 AM, Jerry Snitselaar wrote:
+> On Thu Dec 12 19, Lu Baolu wrote:
+>> Hi,
+>>
+>> On 12/12/19 9:49 AM, Jerry Snitselaar wrote:
+>>> On Wed Dec 11 19, Lu Baolu wrote:
+>>>> If the default DMA domain of a group doesn't fit a device, it
+>>>> will still sit in the group but use a private identity domain.
+>>>> When map/unmap/iova_to_phys come through iommu API, the driver
+>>>> should still serve them, otherwise, other devices in the same
+>>>> group will be impacted. Since identity domain has been mapped
+>>>> with the whole available memory space and RMRRs, we don't need
+>>>> to worry about the impact on it.
+>>>>
+>>>> Link: https://www.spinics.net/lists/iommu/msg40416.html
+>>>> Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+>>>> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>>>> Fixes: 942067f1b6b97 ("iommu/vt-d: Identify default domains replaced 
+>>>> with private")
+>>>> Cc: stable@vger.kernel.org # v5.3+
+>>>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>>>
+>>> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>>
+>> Can you please try this fix and check whether it can fix your problem?
+>> If it helps, do you mind adding a Tested-by?
+>>
+>> Best regards,
+>> baolu
+>>
+> 
+> I'm testing with this patch, my patch that moves the direct mapping call,
+> and Alex's patch for the ISA bridge. It solved the 2 iommu mapping errors
+> I was seeing with default passthrough, I no longer see all the dmar pte
+> read access errors, and the system boots allowing me to login. I'm tracking
+> down 2 issues at the moment. With passthrough I see a problem with 01:00.4
+> that I mentioned in the earlier email:
+> 
+> [   78.978573] uhci_hcd: USB Universal Host Controller Interface driver
+> [   78.980842] uhci_hcd 0000:01:00.4: UHCI Host Controller
+> [   78.982738] uhci_hcd 0000:01:00.4: new USB bus registered, assigned 
+> bus number 3
+> [   78.985222] uhci_hcd 0000:01:00.4: detected 8 ports
+> [   78.986907] uhci_hcd 0000:01:00.4: port count misdetected? forcing to 
+> 2 ports
+> [   78.989316] uhci_hcd 0000:01:00.4: irq 16, io base 0x00003c00
+> [   78.994634] uhci_hcd 0000:01:00.4: DMAR: 32bit DMA uses non-identity 
+> mapping
+> [   7 0000:01:00.4: unable to allocate consistent memory for frame list
+> [   79.499891] uhci_hcd 0000:01:00.4: startup error -16
+> [   79.501588] uhci_hcd 0000:01:00.4: USB bus 3 deregistered
+> [   79.503494] uhci_hcd 0000:01:00.4: init 0000:01:00.4 fail, -16
+> [   79.505497] uhci_hcd: probe of 0000:01:00.4 failed with error -16
+> 
+> If I boot the system with iommu=nopt I see an iommu map failure due to
+> the prot check in __domain_mapping:
+> 
+> [   40.940589] pci 0000:00:1f.0: iommu_group_add_device: calling 
+> iommu_group_create_direct_mappings
+> [   40.943558] pci 0000:00:1f.0: iommu_group_create_direct_mappings: 
+> iterating through mappings
+> [   40.946402] pci 0000:00:1f.0: iommu_group_create_direct_mappings: 
+> calling apply_resv_region
+> [   40.949184] pci 0000:00:1f.0: iommu_group_create_direct_mappings: 
+> entry type is direct
+> [   40.951819] DMAR: intel_iommu_map: enter
+> [   40.953128] DMAR: __domain_mapping: prot & 
+> (DMA_PTE_READ|DMA_PTE_WRITE) == 0
+> [   40.955486] DMAR: domain_mapping: __domain_mapping failed
+> [   40.957348] DMAR: intel_iommu_map: domain_pfn_mapping returned -22
+> [   40.959466] DMAR: intel_iommu_map: leave
+> [   40.959468] iommu: iommu_map: ops->map failed iova 0x0 pa 
+> 0x0000000000000000 pgsize 0x1000
+> [   40.963511] pci 0000:00:1f.0: iommu_group_create_direct_mappings: 
+> iommu_map failed
+> [   40.966026] pci 0000:00:1f.0: iommu_group_create_direct_mappings: 
+> leaving func
+> [   40.968487] pci 0000:00:1f.0: iommu_group_add_device: calling 
+> __iommu_attach_device
+> [   40.971016] pci 0000:00:1f.0: Adding to iommu group 19
+> [   40.972731] pci 0000:00:1f.0: DMAR: domain->type is dma
+> 
+> /sys/kernel/iommu_groups/19
+> [root@hp-dl388g8-07 19]# cat reserved_regions 0x0000000000000000 
+> 0x0000000000ffffff direct
+> 0x00000000bdf6e000 0x00000000bdf84fff direct
+> 0x00000000fee00000 0x00000000feefffff msi
+> 
+> 00:1f.0 ISA bridge: Intel Corporation C600/X79 series chipset LPC 
+> Controller
+
+This seems to be another issue?
+
+Best regards,
+baolu
