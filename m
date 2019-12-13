@@ -2,64 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC71B11DB7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 02:08:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E0611DB83
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 02:09:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731577AbfLMBHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 20:07:50 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:46798 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbfLMBHu (ORCPT
+        id S1731623AbfLMBIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 20:08:41 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:38268 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbfLMBIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 20:07:50 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 58E3B15422CD6;
-        Thu, 12 Dec 2019 17:07:49 -0800 (PST)
-Date:   Thu, 12 Dec 2019 17:07:48 -0800 (PST)
-Message-Id: <20191212.170748.409220660557209092.davem@davemloft.net>
-To:     mkubecek@suse.cz
-Cc:     netdev@vger.kernel.org, jakub.kicinski@netronome.com,
-        jiri@resnulli.us, andrew@lunn.ch, f.fainelli@gmail.com,
-        linville@tuxdriver.com, stephen@networkplumber.org,
-        johannes@sipsolutions.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 0/5] ethtool netlink interface, preliminary
- part
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <cover.1576057593.git.mkubecek@suse.cz>
-References: <cover.1576057593.git.mkubecek@suse.cz>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 12 Dec 2019 17:07:49 -0800 (PST)
+        Thu, 12 Dec 2019 20:08:41 -0500
+Received: by mail-pj1-f68.google.com with SMTP id l4so443207pjt.5
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 17:08:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kkgyMWnJPA7zPuIRZMDlek4Ocs5Jn4Aj6e2Q5KIp8ZQ=;
+        b=XXue9bSsn/QGwPyZsS9Yw5oDsyV6R7ISqQjzNtilrdV0LqHP7ydlrwoNZ0Fe1Z58oY
+         5jqZZ/k9DgwzVES0emuhCdP43nT5SFJPwlfZWNmu9xvxF/F1I2p5/k8iMvZRG5uLeOHy
+         1Tyw4wHmYFJ4ycLlJGE2SmTSuQLsGmg8VoA1s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kkgyMWnJPA7zPuIRZMDlek4Ocs5Jn4Aj6e2Q5KIp8ZQ=;
+        b=B3acte0aoCeXIijJ+q3PEJ8WYMArnQbOwu0p2GuyX7oGtvfLcJb7op06eEzorX2wzl
+         4XeZ5Bk44js6q56Sa4FOn6fqVWifwW143/eApAX1igra/nDVXclLQQ13G3vgafuhOd8u
+         enZm2Uh5E/Ad/4PFrSUub1gh2Niz7LYIhRaA/o9NlQikzrUIh9fchAyUUvu2Ix0FKWzc
+         C7HHzmS6u03GSQEftPVN3CrfDHmI6gpRZbK4DXFe6Jb21FplHlvgbW+3VVwH5B633mMA
+         gpoY6pFKb6gUdSilZ7qEfViWNzjnte0Lcpt6Pz5PpHNn0k1Dn4kxxvDaeUmxV6PC+ac/
+         HOYg==
+X-Gm-Message-State: APjAAAW4bcFD228+EmK8kKdtbYUq1VeFzFnw+XyvwBEbWzI+WtRdHN6+
+        J5yGEYXvHCABk2tpx0lmMBOzlQ==
+X-Google-Smtp-Source: APXvYqzxQMXTCdlwRfSZ1o1MO2oKXU5lgxZGM559VlbYDbYkUzeHc6zmlxEHFO1YwaaLKV2mD+KtHA==
+X-Received: by 2002:a17:90a:fa13:: with SMTP id cm19mr12755762pjb.141.1576199320402;
+        Thu, 12 Dec 2019 17:08:40 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id b22sm8652452pfd.63.2019.12.12.17.08.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2019 17:08:39 -0800 (PST)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rajeshwari <rkambl@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Maulik Shah <mkshah@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v2] arm64: dts: qcom: sc7180: Fix node order
+Date:   Thu, 12 Dec 2019 17:08:36 -0800
+Message-Id: <20191212170824.v2.1.I55198466344789267ed1eb5ec555fd890c9fc6e1@changeid>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Kubecek <mkubecek@suse.cz>
-Date: Wed, 11 Dec 2019 10:58:09 +0100 (CET)
+The SC7180 device tree nodes should be ordered by address. Re-shuffle
+some nodes which currently don't follow this convention.
 
-> As Jakub Kicinski suggested in ethtool netlink v7 discussion, this
-> submission consists only of preliminary patches which raised no objections;
-> first four patches already have Acked-by or Reviewed-by.
-> 
-> - patch 1 exposes permanent hardware address (as shown by "ethtool -P")
->   via rtnetlink
-> - patch 2 is renames existing netlink helper to a better name
-> - patch 3 and 4 reorganize existing ethtool code (no functional change)
-> - patch 5 makes the table of link mode names available as an ethtool string
->   set (will be needed for the netlink interface) 
-> 
-> Once we get these out of the way, v8 of the first part of the ethtool
-> netlink interface will follow.
-> 
-> Changes from v2 to v3: fix SPDX licence identifiers (patch 3 and 5).
-> 
-> Changes from v1 to v2: restore build time check that all link modes have
-> assigned a name (patch 5).
+Since we are already moving it add a missing leading zero to the
+address in the 'reg' property of the 'interrupt-controller@b220000'
+node.
 
-Series applied to net-next, thanks.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+---
+
+Changes in v2:
+- updated commit message
+- added Doug's 'Reviewed-by' tag
+- added leading zero to address of 'interrupt-controller@b220000'
+
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 74 ++++++++++++++--------------
+ 1 file changed, 37 insertions(+), 37 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 52a58615ec06d..6876aae2e46b1 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -642,16 +642,6 @@ uart11: serial@a94000 {
+ 			};
+ 		};
+ 
+-		pdc: interrupt-controller@b220000 {
+-			compatible = "qcom,sc7180-pdc", "qcom,pdc";
+-			reg = <0 0xb220000 0 0x30000>;
+-			qcom,pdc-ranges = <0 480 15>, <17 497 98>,
+-					  <119 634 4>, <124 639 1>;
+-			#interrupt-cells = <2>;
+-			interrupt-parent = <&intc>;
+-			interrupt-controller;
+-		};
+-
+ 		tlmm: pinctrl@3500000 {
+ 			compatible = "qcom,sc7180-pinctrl";
+ 			reg = <0 0x03500000 0 0x300000>,
+@@ -952,33 +942,6 @@ qspi: spi@88dc000 {
+ 			status = "disabled";
+ 		};
+ 
+-		system-cache-controller@9200000 {
+-			compatible = "qcom,sc7180-llcc";
+-			reg = <0 0x09200000 0 0x200000>, <0 0x09600000 0 0x50000>;
+-			reg-names = "llcc_base", "llcc_broadcast_base";
+-			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
+-		};
+-
+-		tsens0: thermal-sensor@c263000 {
+-			compatible = "qcom,sc7180-tsens","qcom,tsens-v2";
+-			reg = <0 0x0c263000 0 0x1ff>, /* TM */
+-				<0 0x0c222000 0 0x1ff>; /* SROT */
+-			#qcom,sensors = <15>;
+-			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "uplow";
+-			#thermal-sensor-cells = <1>;
+-		};
+-
+-		tsens1: thermal-sensor@c265000 {
+-			compatible = "qcom,sc7180-tsens","qcom,tsens-v2";
+-			reg = <0 0x0c265000 0 0x1ff>, /* TM */
+-				<0 0x0c223000 0 0x1ff>; /* SROT */
+-			#qcom,sensors = <10>;
+-			interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "uplow";
+-			#thermal-sensor-cells = <1>;
+-		};
+-
+ 		usb_1_hsphy: phy@88e3000 {
+ 			compatible = "qcom,sc7180-qusb2-phy";
+ 			reg = <0 0x088e3000 0 0x400>;
+@@ -1028,6 +991,13 @@ usb_1_ssphy: phy@88e9200 {
+ 			};
+ 		};
+ 
++		system-cache-controller@9200000 {
++			compatible = "qcom,sc7180-llcc";
++			reg = <0 0x09200000 0 0x200000>, <0 0x09600000 0 0x50000>;
++			reg-names = "llcc_base", "llcc_broadcast_base";
++			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
+ 		usb_1: usb@a6f8800 {
+ 			compatible = "qcom,sc7180-dwc3", "qcom,dwc3";
+ 			reg = <0 0x0a6f8800 0 0x400>;
+@@ -1072,6 +1042,36 @@ usb_1_dwc3: dwc3@a600000 {
+ 			};
+ 		};
+ 
++		pdc: interrupt-controller@b220000 {
++			compatible = "qcom,sc7180-pdc", "qcom,pdc";
++			reg = <0 0x0b220000 0 0x30000>;
++			qcom,pdc-ranges = <0 480 15>, <17 497 98>,
++					  <119 634 4>, <124 639 1>;
++			#interrupt-cells = <2>;
++			interrupt-parent = <&intc>;
++			interrupt-controller;
++		};
++
++		tsens0: thermal-sensor@c263000 {
++			compatible = "qcom,sc7180-tsens","qcom,tsens-v2";
++			reg = <0 0x0c263000 0 0x1ff>, /* TM */
++				<0 0x0c222000 0 0x1ff>; /* SROT */
++			#qcom,sensors = <15>;
++			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "uplow";
++			#thermal-sensor-cells = <1>;
++		};
++
++		tsens1: thermal-sensor@c265000 {
++			compatible = "qcom,sc7180-tsens","qcom,tsens-v2";
++			reg = <0 0x0c265000 0 0x1ff>, /* TM */
++				<0 0x0c223000 0 0x1ff>; /* SROT */
++			#qcom,sensors = <10>;
++			interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "uplow";
++			#thermal-sensor-cells = <1>;
++		};
++
+ 		spmi_bus: spmi@c440000 {
+ 			compatible = "qcom,spmi-pmic-arb";
+ 			reg = <0 0x0c440000 0 0x1100>,
+-- 
+2.24.1.735.g03f4e72817-goog
+
