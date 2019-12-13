@@ -2,425 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CA1511DA62
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C47711DA85
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:08:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731466AbfLMAGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 19:06:21 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:54235 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731095AbfLMAGV (ORCPT
+        id S1731626AbfLMAIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 19:08:11 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37565 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731387AbfLMAII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:06:21 -0500
-Received: from [IPv6:2a02:810c:c200:2e91:786c:367:d9ef:ed17] (unknown [IPv6:2a02:810c:c200:2e91:786c:367:d9ef:ed17])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id CA77023066;
-        Fri, 13 Dec 2019 01:06:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1576195577;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AhZSlJyXrcA/f9Kc9fKwG7AScAYIXvFzLT9JK5eAq58=;
-        b=gDh44XmNZ8NHwcZact/6eA2LBcKGwvCOKk2/JyK4eHyUZhWXhpHqDjxyirr46bJDWP6omU
-        ejsYGTv915Da5BB/CRBhgkVp6ZRpkoiJou+dHFRlqqvpfmobpy73ykhh26zBm8kq+t44Ol
-        3nPR7A+rU47D3FxUHeql1n0xY+MFTgo=
-Date:   Fri, 13 Dec 2019 01:06:16 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20191212221817.B7FF1206DA@mail.kernel.org>
-References: <20191205072653.34701-1-wen.he_1@nxp.com> <20191205072653.34701-2-wen.he_1@nxp.com> <20191212221817.B7FF1206DA@mail.kernel.org>
+        Thu, 12 Dec 2019 19:08:08 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c23so390429plz.4
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:08:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=FHHmkEl4SpR4ivIudHsXj+xUr9cWriV3GCavBgAuZTs=;
+        b=GKyPG04uIaq+p8lC1GSMtA4ysgCMpPhqhJt0hRkCS/dSXJUg8Mq/cz4mYTTvt1Mj5C
+         sgk4+YyllI2M1plKsEoURSfrh7o3i3E5Kw63LDCyDtZccMWS9WdoZB1JGvBOWJZhKoU3
+         DPlx/tDcCQs0W37+UWQjm3Nq5jwxzCvrVMcibMJpEceROwbcd+UH/MfnXlVALblW4c8H
+         n6WLjNOhznj9tYPwpVGTz3cwarLa2i/GWH1E0Tjt++KPOJQmOIRP0/w4jEFU+iSsle4C
+         fKDnJwkLWGnEOSqOlBSfX+sT3oejnYLPlUhj+Uz/Z2sfdYO05PORyfLzR4apZ/PR3LPw
+         pcTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FHHmkEl4SpR4ivIudHsXj+xUr9cWriV3GCavBgAuZTs=;
+        b=ZkDAr7JR6kJpfigUDsjiJwb3fGeicUrwSAduh+2p8bjZXIIJsHYAC4X/AR+DlMxBRV
+         LhOjdssGE9nkHqXk0/DAqSB8X0q2O6nD7T4qNdULplEltbiEcIddO98tWy9Xnm+yrrhh
+         hcAxcgYbapd3l2v8fvjHSb3xiuP1gGBwfhQdQXANUkrZi4XtJsUvrkJeT7L9X+HpGINj
+         jc4guqyPvCfx6igZUTJRgfbv2Q+sCZXi86j6p02q7WITjnd0nJDFEe5ulcrYecclWodz
+         lVMe9G1/j/IFOGeR3VFPqOZGYPD5zdSY3MEuAuI+ZTUARs+WEvpYCFyWTlo+8NX/5NLY
+         ODoQ==
+X-Gm-Message-State: APjAAAW0PgDEYL+vS71gOgzqjyIhktQ/hFP/cv8Uvu7Wk1JDyK0b2Cbj
+        mcbbR2qdn1WAhWdsPx+HGB3lNftVNUQ=
+X-Google-Smtp-Source: APXvYqzpjPu4dvRRLM1GayX0PxOdEk6fFvVgEaWtqh+n01buttVx3B7NKOP7RlJqvfCFFpB1p86ulQ==
+X-Received: by 2002:a17:90a:d986:: with SMTP id d6mr13284014pjv.78.1576195686920;
+        Thu, 12 Dec 2019 16:08:06 -0800 (PST)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.08.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 16:08:05 -0800 (PST)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org
+Subject: [PATCH 18/58] tty/serial: Migrate fsl_lpuart to use has_sysrq
+Date:   Fri, 13 Dec 2019 00:06:17 +0000
+Message-Id: <20191213000657.931618-19-dima@arista.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191213000657.931618-1-dima@arista.com>
+References: <20191213000657.931618-1-dima@arista.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [v11 2/2] clk: ls1028a: Add clock driver for Display output interface
-To:     Stephen Boyd <sboyd@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Wen He <wen.he_1@nxp.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Michael Walle <michael@walle.cc>
-Message-ID: <F2C21019-79F4-450F-A575-9621E5747C4E@walle.cc>
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: CA77023066
-X-Spamd-Result: default: False [1.40 / 15.00];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[9];
-         NEURAL_HAM(-0.00)[-0.323];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:31334, ipnet:2a02:810c::/31, country:DE];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 12=2E Dezember 2019 23:18:16 MEZ schrieb Stephen Boyd <sboyd@kernel=2Eor=
-g>:
->Quoting Wen He (2019-12-04 23:26:53)
->> Add clock driver for QorIQ LS1028A Display output interfaces(LCD,
->DPHY),
->> as implemented in TSMC CLN28HPM PLL, this PLL supports the
->programmable
->> integer division and range of the display output pixel clock's
->27-594MHz=2E
->>=20
->> Signed-off-by: Wen He <wen=2Ehe_1@nxp=2Ecom>
->> Signed-off-by: Michael Walle <michael@walle=2Ecc>
->
->Is Michael the author? SoB chain is backwards here=2E
+The SUPPORT_SYSRQ ifdeffery is not nice as:
+- May create misunderstanding about sizeof(struct uart_port) between
+  different objects
+- Prevents moving functions from serial_core.h
+- Reduces readability (well, it's ifdeffery - it's hard to follow)
 
-the original driver was from Wen=2E I've just supplied some code and
-the vco frequency stuff=2E so its basically a sob of us both=2E=20
+In order to remove SUPPORT_SYSRQ, has_sysrq variable has been added.
+Initialise it in driver's probe and remove ifdeffery.
 
--michael=20
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
->
->> diff --git a/drivers/clk/clk-plldig=2Ec b/drivers/clk/clk-plldig=2Ec
->> new file mode 100644
->> index 000000000000=2E=2E1942686f0254
->> --- /dev/null
->> +++ b/drivers/clk/clk-plldig=2Ec
->> @@ -0,0 +1,297 @@
->> +// SPDX-License-Identifier: GPL-2=2E0
->> +/*
->> + * Copyright 2019 NXP
->> + *
->> + * Clock driver for LS1028A Display output interfaces(LCD, DPHY)=2E
->> + */
->> +
->> +#include <linux/clk-provider=2Eh>
->> +#include <linux/device=2Eh>
->> +#include <linux/module=2Eh>
->> +#include <linux/err=2Eh>
->> +#include <linux/io=2Eh>
->> +#include <linux/iopoll=2Eh>
->> +#include <linux/of=2Eh>
->> +#include <linux/of_address=2Eh>
->> +#include <linux/of_device=2Eh>
->> +#include <linux/platform_device=2Eh>
->> +#include <linux/slab=2Eh>
->> +#include <linux/bitfield=2Eh>
->> +
->> +/* PLLDIG register offsets and bit masks */
->> +#define PLLDIG_REG_PLLSR            0x24
->> +#define PLLDIG_LOCK_MASK            BIT(2)
->> +#define PLLDIG_REG_PLLDV            0x28
->> +#define PLLDIG_MFD_MASK             GENMASK(7, 0)
->> +#define PLLDIG_RFDPHI1_MASK         GENMASK(30, 25)
->> +#define PLLDIG_REG_PLLFM            0x2c
->> +#define PLLDIG_SSCGBYP_ENABLE       BIT(30)
->> +#define PLLDIG_REG_PLLFD            0x30
->> +#define PLLDIG_FDEN                 BIT(30)
->> +#define PLLDIG_FRAC_MASK            GENMASK(15, 0)
->> +#define PLLDIG_REG_PLLCAL1          0x38
->> +#define PLLDIG_REG_PLLCAL2          0x3c
->> +
->> +/* Range of the VCO frequencies, in Hz */
->> +#define PLLDIG_MIN_VCO_FREQ         650000000
->> +#define PLLDIG_MAX_VCO_FREQ         1300000000
->> +
->> +/* Range of the output frequencies, in Hz */
->> +#define PHI1_MIN_FREQ               27000000
->> +#define PHI1_MAX_FREQ               600000000
->> +
->> +/* Maximum value of the reduced frequency divider */
->> +#define MAX_RFDPHI1          63UL
->> +
->> +/* Best value of multiplication factor divider */
->> +#define PLLDIG_DEFAULT_MFD   44
->> +
->> +/*
->> + * Denominator part of the fractional part of the
->> + * loop multiplication factor=2E
->> + */
->> +#define MFDEN          20480
->> +
->> +static const struct clk_parent_data parent_data[] =3D {
->> +       {=2Eindex =3D 0},
->
->Nitpick: Add spaces after { and before }
->
->> +};
->> +
->> +struct clk_plldig {
->> +       struct clk_hw hw;
->> +       void __iomem *regs;
->> +       unsigned int vco_freq;
->> +};
->> +
->> +#define to_clk_plldig(_hw)     container_of(_hw, struct clk_plldig,
->hw)
->> +
->> +static int plldig_enable(struct clk_hw *hw)
->> +{
->> +       struct clk_plldig *data =3D to_clk_plldig(hw);
->> +       u32 val;
->> +
->> +       val =3D readl(data->regs + PLLDIG_REG_PLLFM);
->> +       /*
->> +        * Use Bypass mode with PLL off by default, the frequency
->overshoot
->> +        * detector output was disable=2E SSCG Bypass mode should be
->enable=2E
->> +        */
->> +       val |=3D PLLDIG_SSCGBYP_ENABLE;
->> +       writel(val, data->regs + PLLDIG_REG_PLLFM);
->> +
->> +       return 0;
->> +}
->> +
->> +static void plldig_disable(struct clk_hw *hw)
->> +{
->> +       struct clk_plldig *data =3D to_clk_plldig(hw);
->> +       u32 val;
->> +
->> +       val =3D readl(data->regs + PLLDIG_REG_PLLFM);
->> +
->> +       val &=3D ~PLLDIG_SSCGBYP_ENABLE;
->> +       val |=3D FIELD_PREP(PLLDIG_SSCGBYP_ENABLE, 0x0);
->> +
->> +       writel(val, data->regs + PLLDIG_REG_PLLFM);
->> +}
->> +
->> +static int plldig_is_enabled(struct clk_hw *hw)
->> +{
->> +       struct clk_plldig *data =3D to_clk_plldig(hw);
->> +
->> +       return (readl(data->regs + PLLDIG_REG_PLLFM) &
->
->Please drop useless parenthesis=2E
->
->> +                             PLLDIG_SSCGBYP_ENABLE);
->> +}
->> +
->> +static unsigned long plldig_recalc_rate(struct clk_hw *hw,
->> +                                       unsigned long parent_rate)
->> +{
->> +       struct clk_plldig *data =3D to_clk_plldig(hw);
->> +       u32 val, rfdphi1;
->> +
->> +       val =3D readl(data->regs + PLLDIG_REG_PLLDV);
->> +
->> +       /* Check if PLL is bypassed */
->> +       if (val & PLLDIG_SSCGBYP_ENABLE)
->> +               return parent_rate;
->> +
->> +       rfdphi1 =3D FIELD_GET(PLLDIG_RFDPHI1_MASK, val);
->> +
->> +       /*
->> +        * If RFDPHI1 has a value of 1 the VCO frequency is also
->divided by
->> +        * one=2E
->> +        */
->> +       if (!rfdphi1)
->> +               rfdphi1 =3D 1;
->> +
->> +       return DIV_ROUND_UP(data->vco_freq, rfdphi1);
->> +}
->> +
->> +static unsigned long plldig_calc_target_div(unsigned long vco_freq,
->> +                                           unsigned long
->target_rate)
->> +{
->> +       unsigned long div;
->> +
->> +       div =3D DIV_ROUND_CLOSEST(vco_freq, target_rate);
->> +       div =3D max(1UL, div);
->> +       div =3D min(div, MAX_RFDPHI1);
->
->Use clamp()=2E
->
->> +
->> +       return div;
->> +}
->> +
->> +static int plldig_determine_rate(struct clk_hw *hw,
->> +                                struct clk_rate_request *req)
->> +{
->> +       struct clk_plldig *data =3D to_clk_plldig(hw);
->> +       unsigned int div;
->> +
->> +       if (req->rate < PHI1_MIN_FREQ)
->> +               req->rate =3D PHI1_MIN_FREQ;
->> +       if (req->rate > PHI1_MAX_FREQ)
->> +               req->rate =3D PHI1_MAX_FREQ;
->
->Use clamp()
->
->> +
->> +       div =3D plldig_calc_target_div(data->vco_freq, req->rate);
->> +       req->rate =3D DIV_ROUND_UP(data->vco_freq, div);
->> +
->> +       return 0;
->> +}
->> +
->> +static int plldig_set_rate(struct clk_hw *hw, unsigned long rate,
->> +               unsigned long parent_rate)
->> +{
->> +       struct clk_plldig *data =3D to_clk_plldig(hw);
->> +       unsigned int val, cond;
->> +       unsigned int rfdphi1;
->> +
->> +       if (rate < PHI1_MIN_FREQ)
->> +               rate =3D PHI1_MIN_FREQ;
->> +       if (rate > PHI1_MAX_FREQ)
->> +               rate =3D PHI1_MAX_FREQ;
->
->Use clamp()
->
->> +
->> +       rfdphi1 =3D plldig_calc_target_div(data->vco_freq, rate);
->> +
->> +       /* update the divider value */
->> +       val =3D readl(data->regs + PLLDIG_REG_PLLDV);
->> +       val &=3D ~PLLDIG_RFDPHI1_MASK;
->> +       val |=3D FIELD_PREP(PLLDIG_RFDPHI1_MASK, rfdphi1);
->> +       writel(val, data->regs + PLLDIG_REG_PLLDV);
->> +
->> +       /* delay 200us make sure that old lock state is cleared */
->> +       udelay(200);
->
->Please remove 'delay 200us' from the comment=2E Just say that we're
->waiting
->for old lock state to clear=2E It's clear from the code how much time it
->is=2E
->
->> +
->> +       /* Wait until PLL is locked or timeout (maximum 1000 usecs)
->*/
->
->Drop the time=2E It's a millisecond=2E
->
->> +       return readl_poll_timeout_atomic(data->regs +
->PLLDIG_REG_PLLSR, cond,
->> +                                        cond & PLLDIG_LOCK_MASK, 0,
->> +                                        USEC_PER_MSEC);
->> +}
->> +
->> +static const struct clk_ops plldig_clk_ops =3D {
->> +       =2Eenable =3D plldig_enable,
->> +       =2Edisable =3D plldig_disable,
->> +       =2Eis_enabled =3D plldig_is_enabled,
->> +       =2Erecalc_rate =3D plldig_recalc_rate,
->> +       =2Edetermine_rate =3D plldig_determine_rate,
->> +       =2Eset_rate =3D plldig_set_rate,
->> +};
->> +
->> +static int plldig_init(struct clk_hw *hw)
->> +{
->> +       struct clk_plldig *data =3D to_clk_plldig(hw);
->> +       struct clk_hw *parent =3D clk_hw_get_parent(hw);
->> +       unsigned long parent_rate =3D clk_hw_get_rate(parent);
->> +       unsigned long val;
->> +       unsigned long long lltmp;
->> +       unsigned int mfd, fracdiv =3D 0;
->> +
->> +       if (!parent)
->> +               return -EINVAL;
->> +
->> +       if (data->vco_freq) {
->> +               mfd =3D data->vco_freq / parent_rate;
->> +               lltmp =3D data->vco_freq % parent_rate;
->> +               lltmp *=3D MFDEN;
->> +               do_div(lltmp, parent_rate);
->> +               fracdiv =3D lltmp;
->> +       } else {
->> +               mfd =3D PLLDIG_DEFAULT_MFD;
->> +               data->vco_freq =3D parent_rate * mfd;
->> +       }
->> +
->> +       val =3D FIELD_PREP(PLLDIG_MFD_MASK, mfd);
->> +       writel(val, data->regs + PLLDIG_REG_PLLDV);
->> +
->> +       if (fracdiv) {
->> +               val =3D FIELD_PREP(PLLDIG_FRAC_MASK, fracdiv);
->> +               /* Enable fractional divider */
->
->Remove useless comment please=2E Or move above the if condition=2E
->
->> +               val |=3D PLLDIG_FDEN;
->> +               writel(val, data->regs + PLLDIG_REG_PLLFD);
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int plldig_clk_probe(struct platform_device *pdev)
->> +{
->> +       struct clk_plldig *data;
->> +       struct resource *mem;
->> +       struct device *dev =3D &pdev->dev;
->> +       int ret;
->> +
->> +       data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> +       if (!data)
->> +               return -ENOMEM;
->> +
->> +       mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +       data->regs =3D devm_ioremap_resource(dev, mem);
->
->We have devm_platform_ioremap_resource() for this now=2E
->
->> +       if (IS_ERR(data->regs))
->> +               return PTR_ERR(data->regs);
->> +
->> +       data->hw=2Einit =3D CLK_HW_INIT_PARENTS_DATA("dpclk",
->> +                                                parent_data,
->> +                                                &plldig_clk_ops,
->> +                                                0);
->> +
->> +       ret =3D devm_clk_hw_register(dev, &data->hw);
->> +       if (ret) {
->> +               dev_err(dev, "failed to register %s clock\n",
->> +                                               dev->of_node->name);
->> +               return ret;
->> +       }
->> +
->> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
->> +                                         &data->hw);
->> +       if (ret) {
->> +               dev_err(dev, "unable to add clk provider\n");
->> +               return ret;
->> +       }
->> +
->> +       /*
->> +        * The frequency of the VCO cannot be changed during runtime=2E
->> +        * Therefore, let the user specify a desired frequency=2E
->> +        */
->> +       if (!of_property_read_u32(dev->of_node, "fsl,vco-hz",
->> +                                 &data->vco_freq)) {
->> +               if (data->vco_freq < PLLDIG_MIN_VCO_FREQ ||
->> +                   data->vco_freq > PLLDIG_MAX_VCO_FREQ)
->> +                       return -EINVAL;
->> +       }
->> +
->> +       return plldig_init(&data->hw);
->> +}
->> +
->> +static const struct of_device_id plldig_clk_id[] =3D {
->> +       { =2Ecompatible =3D "fsl,ls1028a-plldig"},
->
->Nitpick: Add a space before }
->
->> +       { }
->> +};
->> +MODULE_DEVICE_TABLE(of, plldig_clk_id);
->> +
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 4e128d19e0ad..76c69d255d92 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -5,10 +5,6 @@
+  *  Copyright 2012-2014 Freescale Semiconductor, Inc.
+  */
+ 
+-#if defined(CONFIG_SERIAL_FSL_LPUART_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+-#define SUPPORT_SYSRQ
+-#endif
+-
+ #include <linux/clk.h>
+ #include <linux/console.h>
+ #include <linux/dma-mapping.h>
+@@ -864,9 +860,7 @@ static void lpuart_rxint(struct lpuart_port *sport)
+ 			if (sr & UARTSR1_OR)
+ 				flg = TTY_OVERRUN;
+ 
+-#ifdef SUPPORT_SYSRQ
+ 			sport->port.sysrq = 0;
+-#endif
+ 		}
+ 
+ 		tty_insert_flip_char(port, rx, flg);
+@@ -946,9 +940,7 @@ static void lpuart32_rxint(struct lpuart_port *sport)
+ 			if (sr & UARTSTAT_OR)
+ 				flg = TTY_OVERRUN;
+ 
+-#ifdef SUPPORT_SYSRQ
+ 			sport->port.sysrq = 0;
+-#endif
+ 		}
+ 
+ 		tty_insert_flip_char(port, rx, flg);
+@@ -2461,6 +2453,7 @@ static int lpuart_probe(struct platform_device *pdev)
+ 		sport->port.ops = &lpuart32_pops;
+ 	else
+ 		sport->port.ops = &lpuart_pops;
++	sport->port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_FSL_LPUART_CONSOLE);
+ 	sport->port.flags = UPF_BOOT_AUTOCONF;
+ 
+ 	if (lpuart_is_32(sport))
+-- 
+2.24.0
 
