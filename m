@@ -2,110 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D167711E676
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:22:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA51E11E681
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:25:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbfLMPW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:22:28 -0500
-Received: from mail-eopbgr20080.outbound.protection.outlook.com ([40.107.2.80]:50659
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727840AbfLMPW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:22:27 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TqVWoqLuwMxesZwMRiylbrRVVzzjRykS0XEBm4ZHgfmzAZ0Eu7cpjexHcEB/9hV3BdLNl22LbaDyP8YP79naPRnKsBQ6gVlgJnDocbz7w38E4495HO55ci+lZF/ifTZSjg8IOC+YkZKTNG8UyfpDRrEwzcI1h4CzQl0h4W04z4ikq/uRf9qfzX6YOOF1uJi4xcsqTcalYSLm82eiEOLB/HerC2Lswao3QeWpP7RiB763gUd6Ane7Lqy8KHM1FX2+WkndRF7JTUPxVSdDpESZLorwfrZmpeXTRvTFSC1ujazDVtHSbzw225qf4xSDFc225+C/M4z7h16aQHqJouHNUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jEjKG8q5pBMISXiQ5qDsnGu0nigh1a8c3aVgIuEIk1Q=;
- b=eRQbuhLQ2B/DsPc1T7s8RYOurnlemhuVYjHqFskUsWM+UMqMadra3tDvZX/McCeHnulLRi0lPzoGYVVhqtta+lkITnliT0NjgBdqgrFvPzpP87KffNxmPngT1a4F9127/YL2fFAiUdFtPxD5szv+C8MD2RHfrndqRRYLBqhdsuZZ/PtG888MXMkAykc3ea4QLi5v8CyODkbFEemwOnBd2dTiJpmMPkn/Oy9ex8++YD4ImYny4gl0do27bayqpWiqfIWLFS304w2FJr4nroTsd5aX9k1wMYmpT2qxu13o7eTsqRpK9dkZr2PmNPVlkzWk8ygbDmB6qc06vJBebSuHkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jEjKG8q5pBMISXiQ5qDsnGu0nigh1a8c3aVgIuEIk1Q=;
- b=YQiQG7cMSs18xnlT3FOnauVWbcYdy3A6v32zr3dlS3WAcJOeRMBae3WOQrq0D0Rm8uCnF+7fSltM8dtKBdilfRxbJ5RyHP14r7zm61dyB3E+oVhuE/yjvJbPVj8O/O+Ha3xzad9sbT39MjJAQh/iXEOHBX1mg2C8/kLUg52v3e8=
-Received: from DB6PR05MB3223.eurprd05.prod.outlook.com (10.175.232.149) by
- DB6PR05MB3157.eurprd05.prod.outlook.com (10.170.220.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.18; Fri, 13 Dec 2019 15:22:22 +0000
-Received: from DB6PR05MB3223.eurprd05.prod.outlook.com
- ([fe80::4127:4f1a:a073:a987]) by DB6PR05MB3223.eurprd05.prod.outlook.com
- ([fe80::4127:4f1a:a073:a987%4]) with mapi id 15.20.2516.019; Fri, 13 Dec 2019
- 15:22:22 +0000
-From:   Liming Sun <lsun@mellanox.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-CC:     Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        David Woods <dwoods@mellanox.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v1 1/1] platform/mellanox: fix the mlx-bootctl sysfs
-Thread-Topic: [PATCH v1 1/1] platform/mellanox: fix the mlx-bootctl sysfs
-Thread-Index: AQHVrsYzUl5YWvnJj0GywOQUtaqWFqe34JMAgABT9MA=
-Date:   Fri, 13 Dec 2019 15:22:22 +0000
-Message-ID: <DB6PR05MB3223B0F68E3E4EE3A20AD193A1540@DB6PR05MB3223.eurprd05.prod.outlook.com>
-References: <94727fab054309cd98c876748fd27b130ce5031f.1575918870.git.lsun@mellanox.com>
- <CAHp75VcY9syYZoaOLWUHQQ6n5CXwvUnarDJPovLtyLTyZE_ifw@mail.gmail.com>
-In-Reply-To: <CAHp75VcY9syYZoaOLWUHQQ6n5CXwvUnarDJPovLtyLTyZE_ifw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=lsun@mellanox.com; 
-x-originating-ip: [216.156.69.42]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: af39b36d-5971-4c6c-4664-08d77fe04043
-x-ms-traffictypediagnostic: DB6PR05MB3157:|DB6PR05MB3157:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB6PR05MB315752FED45E501AED4E4DEEA1540@DB6PR05MB3157.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0250B840C1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(39860400002)(376002)(136003)(346002)(199004)(189003)(13464003)(86362001)(8936002)(66946007)(81166006)(316002)(81156014)(4744005)(8676002)(76116006)(26005)(4326008)(2906002)(478600001)(54906003)(53546011)(6506007)(52536014)(55016002)(5660300002)(71200400001)(7696005)(6916009)(33656002)(66556008)(64756008)(66476007)(9686003)(186003)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR05MB3157;H:DB6PR05MB3223.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: xO0807CNNBedzxFTYLyHi7DZI9DM+0XWLJJK5xYN3AXD4Rphp0NZN6v3iRW/IoSxnmYfOj3CfTp3DUkbzPutY2aC+M8ehVm63VKFiYr2TNS3rR8BMOg1uu+HH5PypYelVfCgi/xrdbCKVvbVncde9RQwZDhSymB/F6sC9gRYE8bv7C2kzxG+LugXGJqsR93zaUELK9t4WzEY2QyG7AByhcq+TJUCwwrnSS03XOKxUgQJrz6MzYLf3Debb7Eccp6APkv6KPiOiA/mDuzkdAWbldCzzwrSoInQVb7Qd4s4xNGF4DuUT21xKFO6mCoYcnbgrjPyftvrTy+8xP923Rr6jWWC5FSJWW636HmzFKxkyuBU5XMxfZkP5W1BCMon6OEQ4/kojv3oCQolZNJPbG8bzEBVCOHaHQqgZSZgZtszGRoGWQd3V7pe7E8SsLUyKbBv5iBlAVlC/RyKmBipKek4AyyxUIcX9+U9kjijbv34183qw2tUOcAm4RWOjqbmqsUj
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727864AbfLMPZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:25:39 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36788 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727536AbfLMPZj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 10:25:39 -0500
+Received: by mail-lj1-f194.google.com with SMTP id r19so3083523ljg.3;
+        Fri, 13 Dec 2019 07:25:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vpQPUvm03IxC9CJiK4kP7EGdEHCSuBFUn665asErXvY=;
+        b=AR6bM5rcNF/986NbNCEQGoh2OGNVIp20RdIEWLVX3Lz6Ru5RQpOThcU7eTVBVv3JvB
+         uwW5/L6bvyaou6OpTcxtI0b3y5u9lxswO+irVDHBh9idiqtsmvZdcPw8lWVwNwOialOH
+         gkdd2PSrpXJZ3Bl6j2LTSyMfQ251MfSnBZupKEPCVVgJ6CCeS2mBzEmXU1WH3d5gVd1F
+         1u6T8AkOq5kJm2vllPiq235MA0Tm3KVPqd39/2xKpZeMbyNx/CeYFYd5b+GBewL02CUw
+         7A369FlOtLnmxtW5y0ZcT+2CElrvyuIcxZ91gTVEYAyA90lg0seB6xmuive12Aj/yKzh
+         ysAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vpQPUvm03IxC9CJiK4kP7EGdEHCSuBFUn665asErXvY=;
+        b=tGPVm+/7JlIIBJ9mDkwfBun100Iq+p1X8HQAj4u2DBsBDzxDp1prfHF/H2QeWRFTu+
+         tCITs2yR4r0gwGZRBTysxCMsrVIisLmrP7vO1Pnt92EInP2nmAzSi/nsCEDh1BS1EFmD
+         Xcz0di2kRU78D4XJJkNuLcICKJJEIeLu9nd5uyBjrHC46EnmKTYzJ5R2SaDqZVft1kzw
+         YAmexmR9W40LlQWQsL0ZkBNqESguoEoZek3IzZEoYjtfuAqWWYafQh/q6vhP5DqxHNTW
+         gdrppiAr2w3G9fzgvy1Fw2pgxnzMXjt3BZ/NvZFH0yBWWRQHJOOj8QkRpLkG+tEhUASC
+         Z9Bw==
+X-Gm-Message-State: APjAAAXkbCVGvJPwffqiWyGVkB8TlYKRtEdQ17CXqp+5UQJ8kfqgMQ8Y
+        AylDpPLrO8mKh5PsuNB/CNaBWMOK
+X-Google-Smtp-Source: APXvYqzVYzB7rz3dmZxLnSFsF7aeMxxrRckTm0XmmHAfzsMamePK8EKc77HCYRP3IpZMj5Zoi6FkdQ==
+X-Received: by 2002:a2e:580c:: with SMTP id m12mr9928921ljb.150.1576250736503;
+        Fri, 13 Dec 2019 07:25:36 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id w6sm4661282lfq.95.2019.12.13.07.25.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 07:25:36 -0800 (PST)
+Subject: Re: [PATCH v1 1/3] i2c: tegra: Support atomic transfers
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191212233428.14648-1-digetx@gmail.com>
+ <20191212233428.14648-2-digetx@gmail.com> <20191213151208.GC222809@ulmo>
+ <5a2a9cef-f4ed-c5a4-1f35-c89c3b5106a6@gmail.com>
+ <20191213152017.GA293199@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <840b678e-de92-1564-1739-c15ca8dd5766@gmail.com>
+Date:   Fri, 13 Dec 2019 18:25:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: af39b36d-5971-4c6c-4664-08d77fe04043
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2019 15:22:22.0688
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IIe8RFIcQS5hx0F4cyKnLO1G5q0F3Te0rhSpbHsU64qOW1yPLpXgs8dSsRtve9a8SlVOXmQDzNKwKyNpcMfPzw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR05MB3157
+In-Reply-To: <20191213152017.GA293199@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhhbmtzISBVcGRhdGVkIGluIHYyLg0KDQotIExpbWluZw0KDQo+IC0tLS0tT3JpZ2luYWwgTWVz
-c2FnZS0tLS0tDQo+IEZyb206IEFuZHkgU2hldmNoZW5rbyA8YW5keS5zaGV2Y2hlbmtvQGdtYWls
-LmNvbT4NCj4gU2VudDogRnJpZGF5LCBEZWNlbWJlciAxMywgMjAxOSA1OjIxIEFNDQo+IFRvOiBM
-aW1pbmcgU3VuIDxsc3VuQG1lbGxhbm94LmNvbT4NCj4gQ2M6IEFuZHkgU2hldmNoZW5rbyA8YW5k
-eUBpbmZyYWRlYWQub3JnPjsgRGFycmVuIEhhcnQgPGR2aGFydEBpbmZyYWRlYWQub3JnPjsgVmFk
-aW0gUGFzdGVybmFrIDx2YWRpbXBAbWVsbGFub3guY29tPjsgRGF2aWQNCj4gV29vZHMgPGR3b29k
-c0BtZWxsYW5veC5jb20+OyBQbGF0Zm9ybSBEcml2ZXIgPHBsYXRmb3JtLWRyaXZlci14ODZAdmdl
-ci5rZXJuZWwub3JnPjsgTGludXggS2VybmVsIE1haWxpbmcgTGlzdCA8bGludXgtDQo+IGtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEgMS8xXSBwbGF0Zm9y
-bS9tZWxsYW5veDogZml4IHRoZSBtbHgtYm9vdGN0bCBzeXNmcw0KPiANCj4gT24gTW9uLCBEZWMg
-OSwgMjAxOSBhdCA5OjI0IFBNIExpbWluZyBTdW4gPGxzdW5AbWVsbGFub3guY29tPiB3cm90ZToN
-Cj4gPg0KPiA+IFRoaXMgaXMgYSBmb2xsb3ctdXAgY29tbWl0IGZvciB0aGUgc3lzZnMgYXR0cmli
-dXRlcyB0byBjaGFuZ2UNCj4gPiBmcm9tIERSSVZFUl9BVFRSIHRvIERFVklDRV9BVFRSIGFjY29y
-ZGluZyB0byBzb21lIGluaXRpYWwgY29tbWVudHMuDQo+ID4gSW4gc3VjaCBjYXNlLCBpdCdzIGJl
-dHRlciB0byBwb2ludCB0aGUgc3lzZnMgcGF0aCB0byB0aGUgZGV2aWNlDQo+ID4gaXRzZWxmIGlu
-c3RlYWQgb2YgdGhlIGRyaXZlci4gVGhpcyBjb21taXQgYWRkcyB0aGUgbWlzc2luZw0KPiA+IHN5
-c2ZzX2NyZWF0ZV9ncm91cCgpIHNvIHRoZSBhdHRyaWJ1dGVzIGNhbiBiZSBjcmVhdGVkIHVuZGVy
-IHRoZQ0KPiA+IGRldmljZS4gVGhlIEFCSSBkb2N1bWVudCBpcyBhbHNvIHVwZGF0ZWQuDQo+ID4N
-Cj4gDQo+IEZpeGVzIHRhZywgcGxlYXNlLg0KPiANCj4gLS0NCj4gV2l0aCBCZXN0IFJlZ2FyZHMs
-DQo+IEFuZHkgU2hldmNoZW5rbw0K
+13.12.2019 18:20, Thierry Reding пишет:
+> On Fri, Dec 13, 2019 at 06:15:12PM +0300, Dmitry Osipenko wrote:
+>> 13.12.2019 18:12, Thierry Reding пишет:
+>>> On Fri, Dec 13, 2019 at 02:34:26AM +0300, Dmitry Osipenko wrote:
+>>>> System shutdown may happen with interrupts being disabled and in this case
+>>>> I2C core rejects transfers if atomic transfer isn't supported by driver.
+>>>>
+>>>> There were several occurrences where I found my Nexus 7 completely
+>>>> discharged despite of being turned off and then one day I spotted this in
+>>>> the log:
+>>>>
+>>>>  reboot: Power down
+>>>>  ------------[ cut here ]------------
+>>>>  WARNING: CPU: 0 PID: 1 at drivers/i2c/i2c-core.h:40 i2c_transfer+0x95/0x9c
+>>>>  No atomic I2C transfer handler for 'i2c-1'
+>>>>  Modules linked in: tegra30_devfreq
+>>>>  CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted 5.4.0-next-20191202-00120-gf7ecd80fb803-dirty #3195
+>>>>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>>>>  [<c010e4b5>] (unwind_backtrace) from [<c010a0fd>] (show_stack+0x11/0x14)
+>>>>  [<c010a0fd>] (show_stack) from [<c09995e5>] (dump_stack+0x85/0x94)
+>>>>  [<c09995e5>] (dump_stack) from [<c011f3d1>] (__warn+0xc1/0xc4)
+>>>>  [<c011f3d1>] (__warn) from [<c011f691>] (warn_slowpath_fmt+0x61/0x78)
+>>>>  [<c011f691>] (warn_slowpath_fmt) from [<c069a8dd>] (i2c_transfer+0x95/0x9c)
+>>>>  [<c069a8dd>] (i2c_transfer) from [<c05667f1>] (regmap_i2c_read+0x4d/0x6c)
+>>>>  [<c05667f1>] (regmap_i2c_read) from [<c0563601>] (_regmap_raw_read+0x99/0x1cc)
+>>>>  [<c0563601>] (_regmap_raw_read) from [<c0563757>] (_regmap_bus_read+0x23/0x38)
+>>>>  [<c0563757>] (_regmap_bus_read) from [<c056293d>] (_regmap_read+0x3d/0xfc)
+>>>>  [<c056293d>] (_regmap_read) from [<c0562d3b>] (_regmap_update_bits+0x87/0xc4)
+>>>>  [<c0562d3b>] (_regmap_update_bits) from [<c0563add>] (regmap_update_bits_base+0x39/0x50)
+>>>>  [<c0563add>] (regmap_update_bits_base) from [<c056fd39>] (max77620_pm_power_off+0x29/0x2c)
+>>>>  [<c056fd39>] (max77620_pm_power_off) from [<c013bbdd>] (__do_sys_reboot+0xe9/0x170)
+>>>>  [<c013bbdd>] (__do_sys_reboot) from [<c0101001>] (ret_fast_syscall+0x1/0x28)
+>>>>  Exception stack(0xde907fa8 to 0xde907ff0)
+>>>>  7fa0:                   00000000 00000000 fee1dead 28121969 4321fedc 00000000
+>>>>  7fc0: 00000000 00000000 00000000 00000058 00000000 00000000 00000000 00000000
+>>>>  7fe0: 0045adf0 bed9abb8 004444a0 b6c666d0
+>>>>  ---[ end trace bdd18f87595b1a5e ]---
+>>>>
+>>>> The atomic transferring is implemented by enforcing PIO mode for the
+>>>> transfer and by polling interrupt status until transfer is completed or
+>>>> failed.
+>>>>
+>>>> Now system shuts down properly every time.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/i2c/busses/i2c-tegra.c | 95 +++++++++++++++++++++++++++++++---
+>>>>  1 file changed, 88 insertions(+), 7 deletions(-)
+>>>
+>>> I ran this on the test farm and the results are all green, so:
+>>>
+>>> Tested-by: Thierry Reding <treding@nvidia.com>
+>>>
+>>
+>> Thanks!
+>>
+>> Does the farm test board's shut down by verifying the
+>> hardware's power state?
+> 
+> No, that's not something we test. I was primarily running this to make
+> sure we don't regress anywhere else.
+
+Verifying basics is also good :) Thanks again!
