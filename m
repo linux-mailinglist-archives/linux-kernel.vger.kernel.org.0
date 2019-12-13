@@ -2,128 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B07A511DBE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 02:55:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF04711DBEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 02:59:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731849AbfLMBzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 20:55:45 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17534 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727722AbfLMBzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 20:55:45 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBD1qCXR072856
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 20:55:44 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wuq3wu808-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 20:55:44 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 13 Dec 2019 01:55:41 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 13 Dec 2019 01:55:37 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBD1taO519267686
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 13 Dec 2019 01:55:36 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39C82AE05A;
-        Fri, 13 Dec 2019 01:55:36 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 09B42AE045;
-        Fri, 13 Dec 2019 01:55:35 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.206.100])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 13 Dec 2019 01:55:34 +0000 (GMT)
-Subject: Re: [PATCH v3 1/2] IMA: Define workqueue for early boot "key"
- measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Date:   Thu, 12 Dec 2019 20:55:34 -0500
-In-Reply-To: <20191213004250.21132-2-nramas@linux.microsoft.com>
-References: <20191213004250.21132-1-nramas@linux.microsoft.com>
-         <20191213004250.21132-2-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19121301-0020-0000-0000-000003979F64
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121301-0021-0000-0000-000021EEAB24
-Message-Id: <1576202134.4579.189.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-12_08:2019-12-12,2019-12-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- mlxlogscore=999 impostorscore=0 suspectscore=2 bulkscore=0 adultscore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912130014
+        id S1731858AbfLMB7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 20:59:02 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43578 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727778AbfLMB7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 20:59:02 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 851E678041BB411D4832;
+        Fri, 13 Dec 2019 09:58:59 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 13 Dec 2019 09:58:54 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <jdelvare@suse.com>, <linux@roeck-us.net>
+CC:     <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [-next] hwmon: (w83627ehf) make sensor_dev_attr_##_name variables static
+Date:   Fri, 13 Dec 2019 09:56:05 +0800
+Message-ID: <20191213015605.172472-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +/*
-> + * ima_process_queued_keys() - process keys queued for measurement
-> + *
-> + * This function sets ima_process_keys to true and processes queued keys.
-> + * From here on keys will be processed right away (not queued).
-> + */
-> +void ima_process_queued_keys(void)
-> +{
-> +	struct ima_key_entry *entry, *tmp;
-> +	LIST_HEAD(temp_ima_keys);
-> +
-> +	if (ima_process_keys)
-> +		return;
-> +
-> +	/*
-> +	 * To avoid holding the mutex when processing queued keys,
-> +	 * transfer the queued keys with the mutex held to a temp list,
-> +	 * release the mutex, and then process the queued keys from
-> +	 * the temp list.
-> +	 *
-> +	 * Since ima_process_keys is set to true, any new key will be
-> +	 * processed immediately and not be queued.
-> +	 */
-> +	INIT_LIST_HEAD(&temp_ima_keys);
-> +
-> +	mutex_lock(&ima_keys_mutex);
+Fix sparse warning:
 
-Don't you need a test here, before setting ima_process_keys?
+drivers/hwmon/w83627ehf.c:1202:1: warning: symbol 'sensor_dev_attr_pwm1_target' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1204:1: warning: symbol 'sensor_dev_attr_pwm2_target' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1206:1: warning: symbol 'sensor_dev_attr_pwm3_target' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1208:1: warning: symbol 'sensor_dev_attr_pwm4_target' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1211:1: warning: symbol 'sensor_dev_attr_pwm1_tolerance' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1213:1: warning: symbol 'sensor_dev_attr_pwm2_tolerance' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1215:1: warning: symbol 'sensor_dev_attr_pwm3_tolerance' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1217:1: warning: symbol 'sensor_dev_attr_pwm4_tolerance' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1294:1: warning: symbol 'sensor_dev_attr_pwm4_stop_time' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1296:1: warning: symbol 'sensor_dev_attr_pwm4_start_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1298:1: warning: symbol 'sensor_dev_attr_pwm4_stop_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1300:1: warning: symbol 'sensor_dev_attr_pwm4_max_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1302:1: warning: symbol 'sensor_dev_attr_pwm4_step_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1305:1: warning: symbol 'sensor_dev_attr_pwm3_stop_time' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1307:1: warning: symbol 'sensor_dev_attr_pwm3_start_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1309:1: warning: symbol 'sensor_dev_attr_pwm3_stop_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1312:1: warning: symbol 'sensor_dev_attr_pwm1_stop_time' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1314:1: warning: symbol 'sensor_dev_attr_pwm2_stop_time' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1316:1: warning: symbol 'sensor_dev_attr_pwm1_start_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1318:1: warning: symbol 'sensor_dev_attr_pwm2_start_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1320:1: warning: symbol 'sensor_dev_attr_pwm1_stop_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1322:1: warning: symbol 'sensor_dev_attr_pwm2_stop_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1330:1: warning: symbol 'sensor_dev_attr_pwm1_max_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1332:1: warning: symbol 'sensor_dev_attr_pwm1_step_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1334:1: warning: symbol 'sensor_dev_attr_pwm2_max_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1336:1: warning: symbol 'sensor_dev_attr_pwm2_step_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1338:1: warning: symbol 'sensor_dev_attr_pwm3_max_output' was not declared. Should it be static?
+drivers/hwmon/w83627ehf.c:1340:1: warning: symbol 'sensor_dev_attr_pwm3_step_output' was not declared. Should it be static?
 
-	if (ima_process_keys)
-		return;
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ drivers/hwmon/w83627ehf.c | 56 +++++++++++++++++++++++------------------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-Mimi
-
-> +
-> +	ima_process_keys = true;
-> +
-> +	list_for_each_entry_safe(entry, tmp, &ima_keys, list)
-> +		list_move_tail(&entry->list, &temp_ima_keys);
-> +
-> +	mutex_unlock(&ima_keys_mutex);
-> +
-> +	list_for_each_entry_safe(entry, tmp, &temp_ima_keys, list) {
-> +		process_buffer_measurement(entry->payload, entry->payload_len,
-> +					   entry->keyring_name, KEY_CHECK, 0,
-> +					   entry->keyring_name);
-> +		list_del(&entry->list);
-> +		ima_free_key_entry(entry);
-> +	}
-> +}
-> +
-> 
+diff --git a/drivers/hwmon/w83627ehf.c b/drivers/hwmon/w83627ehf.c
+index 207cc74..0a13f6b 100644
+--- a/drivers/hwmon/w83627ehf.c
++++ b/drivers/hwmon/w83627ehf.c
+@@ -1199,22 +1199,22 @@ store_tolerance(struct device *dev, struct device_attribute *attr,
+ 	return count;
+ }
+ 
+-SENSOR_DEVICE_ATTR(pwm1_target, 0644, show_target_temp,
++static SENSOR_DEVICE_ATTR(pwm1_target, 0644, show_target_temp,
+ 	    store_target_temp, 0);
+-SENSOR_DEVICE_ATTR(pwm2_target, 0644, show_target_temp,
++static SENSOR_DEVICE_ATTR(pwm2_target, 0644, show_target_temp,
+ 	    store_target_temp, 1);
+-SENSOR_DEVICE_ATTR(pwm3_target, 0644, show_target_temp,
++static SENSOR_DEVICE_ATTR(pwm3_target, 0644, show_target_temp,
+ 	    store_target_temp, 2);
+-SENSOR_DEVICE_ATTR(pwm4_target, 0644, show_target_temp,
++static SENSOR_DEVICE_ATTR(pwm4_target, 0644, show_target_temp,
+ 	    store_target_temp, 3);
+ 
+-SENSOR_DEVICE_ATTR(pwm1_tolerance, 0644, show_tolerance,
++static SENSOR_DEVICE_ATTR(pwm1_tolerance, 0644, show_tolerance,
+ 	    store_tolerance, 0);
+-SENSOR_DEVICE_ATTR(pwm2_tolerance, 0644, show_tolerance,
++static SENSOR_DEVICE_ATTR(pwm2_tolerance, 0644, show_tolerance,
+ 	    store_tolerance, 1);
+-SENSOR_DEVICE_ATTR(pwm3_tolerance, 0644, show_tolerance,
++static SENSOR_DEVICE_ATTR(pwm3_tolerance, 0644, show_tolerance,
+ 	    store_tolerance, 2);
+-SENSOR_DEVICE_ATTR(pwm4_tolerance, 0644, show_tolerance,
++static SENSOR_DEVICE_ATTR(pwm4_tolerance, 0644, show_tolerance,
+ 	    store_tolerance, 3);
+ 
+ /* Smart Fan registers */
+@@ -1291,35 +1291,35 @@ store_##reg(struct device *dev, struct device_attribute *attr, \
+ 
+ fan_time_functions(fan_stop_time, FAN_STOP_TIME)
+ 
+-SENSOR_DEVICE_ATTR(pwm4_stop_time, 0644, show_fan_stop_time,
++static SENSOR_DEVICE_ATTR(pwm4_stop_time, 0644, show_fan_stop_time,
+ 	    store_fan_stop_time, 3);
+-SENSOR_DEVICE_ATTR(pwm4_start_output, 0644, show_fan_start_output,
++static SENSOR_DEVICE_ATTR(pwm4_start_output, 0644, show_fan_start_output,
+ 	    store_fan_start_output, 3);
+-SENSOR_DEVICE_ATTR(pwm4_stop_output, 0644, show_fan_stop_output,
++static SENSOR_DEVICE_ATTR(pwm4_stop_output, 0644, show_fan_stop_output,
+ 	    store_fan_stop_output, 3);
+-SENSOR_DEVICE_ATTR(pwm4_max_output, 0644, show_fan_max_output,
++static SENSOR_DEVICE_ATTR(pwm4_max_output, 0644, show_fan_max_output,
+ 	    store_fan_max_output, 3);
+-SENSOR_DEVICE_ATTR(pwm4_step_output, 0644, show_fan_step_output,
++static SENSOR_DEVICE_ATTR(pwm4_step_output, 0644, show_fan_step_output,
+ 	    store_fan_step_output, 3);
+ 
+-SENSOR_DEVICE_ATTR(pwm3_stop_time, 0644, show_fan_stop_time,
++static SENSOR_DEVICE_ATTR(pwm3_stop_time, 0644, show_fan_stop_time,
+ 	    store_fan_stop_time, 2);
+-SENSOR_DEVICE_ATTR(pwm3_start_output, 0644, show_fan_start_output,
++static SENSOR_DEVICE_ATTR(pwm3_start_output, 0644, show_fan_start_output,
+ 	    store_fan_start_output, 2);
+-SENSOR_DEVICE_ATTR(pwm3_stop_output, 0644, show_fan_stop_output,
++static SENSOR_DEVICE_ATTR(pwm3_stop_output, 0644, show_fan_stop_output,
+ 		    store_fan_stop_output, 2);
+ 
+-SENSOR_DEVICE_ATTR(pwm1_stop_time, 0644, show_fan_stop_time,
++static SENSOR_DEVICE_ATTR(pwm1_stop_time, 0644, show_fan_stop_time,
+ 	    store_fan_stop_time, 0);
+-SENSOR_DEVICE_ATTR(pwm2_stop_time, 0644, show_fan_stop_time,
++static SENSOR_DEVICE_ATTR(pwm2_stop_time, 0644, show_fan_stop_time,
+ 	    store_fan_stop_time, 1);
+-SENSOR_DEVICE_ATTR(pwm1_start_output, 0644, show_fan_start_output,
++static SENSOR_DEVICE_ATTR(pwm1_start_output, 0644, show_fan_start_output,
+ 	    store_fan_start_output, 0);
+-SENSOR_DEVICE_ATTR(pwm2_start_output, 0644, show_fan_start_output,
++static SENSOR_DEVICE_ATTR(pwm2_start_output, 0644, show_fan_start_output,
+ 	    store_fan_start_output, 1);
+-SENSOR_DEVICE_ATTR(pwm1_stop_output, 0644, show_fan_stop_output,
++static SENSOR_DEVICE_ATTR(pwm1_stop_output, 0644, show_fan_stop_output,
+ 	    store_fan_stop_output, 0);
+-SENSOR_DEVICE_ATTR(pwm2_stop_output, 0644, show_fan_stop_output,
++static SENSOR_DEVICE_ATTR(pwm2_stop_output, 0644, show_fan_stop_output,
+ 	    store_fan_stop_output, 1);
+ 
+ 
+@@ -1327,17 +1327,17 @@ SENSOR_DEVICE_ATTR(pwm2_stop_output, 0644, show_fan_stop_output,
+  * pwm1 and pwm3 don't support max and step settings on all chips.
+  * Need to check support while generating/removing attribute files.
+  */
+-SENSOR_DEVICE_ATTR(pwm1_max_output, 0644, show_fan_max_output,
++static SENSOR_DEVICE_ATTR(pwm1_max_output, 0644, show_fan_max_output,
+ 	    store_fan_max_output, 0);
+-SENSOR_DEVICE_ATTR(pwm1_step_output, 0644, show_fan_step_output,
++static SENSOR_DEVICE_ATTR(pwm1_step_output, 0644, show_fan_step_output,
+ 	    store_fan_step_output, 0);
+-SENSOR_DEVICE_ATTR(pwm2_max_output, 0644, show_fan_max_output,
++static SENSOR_DEVICE_ATTR(pwm2_max_output, 0644, show_fan_max_output,
+ 	    store_fan_max_output, 1);
+-SENSOR_DEVICE_ATTR(pwm2_step_output, 0644, show_fan_step_output,
++static SENSOR_DEVICE_ATTR(pwm2_step_output, 0644, show_fan_step_output,
+ 	    store_fan_step_output, 1);
+-SENSOR_DEVICE_ATTR(pwm3_max_output, 0644, show_fan_max_output,
++static SENSOR_DEVICE_ATTR(pwm3_max_output, 0644, show_fan_max_output,
+ 	    store_fan_max_output, 2);
+-SENSOR_DEVICE_ATTR(pwm3_step_output, 0644, show_fan_step_output,
++static SENSOR_DEVICE_ATTR(pwm3_step_output, 0644, show_fan_step_output,
+ 	    store_fan_step_output, 2);
+ 
+ static ssize_t
+-- 
+2.7.4
 
