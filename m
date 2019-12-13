@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B164411DAAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:09:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED02E11DADB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:10:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731838AbfLMAJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 19:09:25 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45148 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731817AbfLMAJT (ORCPT
+        id S1731731AbfLMAKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 19:10:32 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39549 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731828AbfLMAJW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:09:19 -0500
-Received: by mail-pg1-f195.google.com with SMTP id b9so514631pgk.12
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:09:19 -0800 (PST)
+        Thu, 12 Dec 2019 19:09:22 -0500
+Received: by mail-pl1-f195.google.com with SMTP id o9so385329plk.6
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:09:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pjqr9PsS0EovzJGQYpD/pwwPvvnyZIwKp6EbPz/5EgY=;
-        b=cwLK4NNB2VWHR4d7JpiEvbIAkwzbxJnPfZRa8DuBvQuFwUNYO11+2xy87bxT8WfePD
-         owa871l8tcOEzZCC9BswW1773QFWI3vhOLaPkOHEOnkzVwJED1OqwQtSPz27a3YEBaXb
-         W9VM2BPgmz4oKWUvOq9BdWrJvYCEZQ0OyM9+kVS/G4PJcBmlmmybzb6fD+4fTiarvje2
-         I3ZccabCSytAd6H7kbx+ULDd5Utcapa7yyCKlYxclYQiw9OEUuoVEIgVtvhKOntI7O3v
-         OpJaKtBcSUL6h6OL6nagXEwYjQsv1z8VcELiylZ3PcbBgDsjoMLCTrS69+YmjuwLKuT3
-         76Lg==
+        bh=Q6Z6h55fqcKu/1XdEPBrCCQZqpAqK/dlHyYZRu6yk0A=;
+        b=XF2rsfp6S8eVpNAwetphzdMntNRfleo8sRWtjge/7tZNQ00G6D+xDWInIppahrgaVP
+         56NMUvPSH2EP7N0FdLt7Ve9GX2Ow5BwokuTIs/7QmH5OuaOObM07n0rTevRAkVOsN1eB
+         uRvdkEL83YmHbC4hH8sbKzbm40UaJHO/CO1bz1f5qfJqVJmrZ3j+wxV95kM95LLSlrsF
+         bpAY3+MTgrkQ1t12PDoKlijBzwBbfGbZcCmy9w1qVsEeg8M6TOJ5y5fQI/HV6aXO3ksH
+         t8bodtXGK2fCSZcgJSEidF++iq4gbEzVvOwNlntWLZXF+s6M7gk/HuXXKLqM1011bMb3
+         urUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pjqr9PsS0EovzJGQYpD/pwwPvvnyZIwKp6EbPz/5EgY=;
-        b=h+DNtXGVRfauy4V9A+7e8E9TSFC4vb26layna2MmZ8nAhcv+bwyrt8aA6PrwXpVRiZ
-         grIVFxqddAgKAGvaUs+phiff8z6GwfIyeGXSqTNcV+azdcHkbKqF50VCVmnk4F7X0+XT
-         JKT9vHzaleol0qUfjIgxl2ZyrMeB4Ci5jAcg1aL29RY44Mb+8H/GHSC7KCm4RODzOlb/
-         PiC1xybZpv131LUj3yi/jBpHNxRjQVzhelS0hTiTmcwP3MbDnIm9lXb6Zp4rDiKT9BNl
-         FtbhZDvXhQO8pnfNEINahYqvOhAwHZOTxENk5pL+Ib6fBLWUHlPB8sI6o7e9sWwEIhuc
-         ZdKQ==
-X-Gm-Message-State: APjAAAXGrm/onAFKHctQC7y+FGyblLYRsten+bKboWZ3waI6gEU04ZpN
-        xlVmdwZnbJhR6saB3umdOJ4IFpRR6tg=
-X-Google-Smtp-Source: APXvYqylNIScI/0cKlTTskoG1NnO9Lpswns54njx5jJy10duraYGPjumdQEWf5EWn2gPG/Cr/NBhLg==
-X-Received: by 2002:a63:510e:: with SMTP id f14mr13779333pgb.35.1576195758296;
-        Thu, 12 Dec 2019 16:09:18 -0800 (PST)
+        bh=Q6Z6h55fqcKu/1XdEPBrCCQZqpAqK/dlHyYZRu6yk0A=;
+        b=gE9EOUsFSka6O7JNd1K3Muw/3q4f5ki/3RQUwyl6But1itmSelh7vuJujnJWaT+HOg
+         oEw4EBIhmDN9B7EqF4GhWtgQPHkudooqOI26zTdJO0iraA+/e+q4eVLVGwKMAsa3wrHL
+         xktDqYsbpgPK6xlypSOwHHx09yLhALQ9PUBfLExt1tB87pUIHmXYRN7WxdByhvkPCmGi
+         mGdt980O82FRqj/hTaBkKJDQA0Sxq7dKRrewl8seBjqPg3lBBfu5HU8XyPwfq7AsLJVU
+         BewsvBMPzq6esyYfzMyAUExeSGeXyRPL58oLkslphwYOiz4iKM+mqu7kd5zpKR4sieg7
+         40Mw==
+X-Gm-Message-State: APjAAAU4/iHJlPTXgal7ymR/BKSpO0xTqICaj2UcJ8WYFOPKiWzjU3Wf
+        ayhFtgHPS4nHQfa5PZmYodt/7mQBe4k=
+X-Google-Smtp-Source: APXvYqwlkJz/Si2OVsRDCRLc+xPb5dEar6sDzFHhlOaQ2a+RW7qzAwTJAfBum3Dn/5w7f+5voW+Utg==
+X-Received: by 2002:a17:902:aa95:: with SMTP id d21mr12764749plr.263.1576195761332;
+        Thu, 12 Dec 2019 16:09:21 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.09.14
+        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.09.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 16:09:17 -0800 (PST)
+        Thu, 12 Dec 2019 16:09:20 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -52,12 +52,12 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>,
         Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>
-Subject: [PATCH 42/58] tty/serial: Migrate sprd_serial to use has_sysrq
-Date:   Fri, 13 Dec 2019 00:06:41 +0000
-Message-Id: <20191213000657.931618-43-dima@arista.com>
+        linux-serial@vger.kernel.org,
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 43/58] tty/serial: Migrate st-asc to use has_sysrq
+Date:   Fri, 13 Dec 2019 00:06:42 +0000
+Message-Id: <20191213000657.931618-44-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191213000657.931618-1-dima@arista.com>
 References: <20191213000657.931618-1-dima@arista.com>
@@ -77,37 +77,36 @@ The SUPPORT_SYSRQ ifdeffery is not nice as:
 In order to remove SUPPORT_SYSRQ, has_sysrq variable has been added.
 Initialise it in driver's probe and remove ifdeffery.
 
-Cc: Baolin Wang <baolin.wang7@gmail.com>
-Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Orson Zhai <orsonzhai@gmail.com>
+Cc: Patrice Chotard <patrice.chotard@st.com>
+Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/serial/sprd_serial.c | 5 +----
+ drivers/tty/serial/st-asc.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-index 31df23502562..0c3b7420b01e 100644
---- a/drivers/tty/serial/sprd_serial.c
-+++ b/drivers/tty/serial/sprd_serial.c
-@@ -3,10 +3,6 @@
-  * Copyright (C) 2012-2015 Spreadtrum Communications Inc.
+diff --git a/drivers/tty/serial/st-asc.c b/drivers/tty/serial/st-asc.c
+index 7971997cdead..fb6bbb5e2234 100644
+--- a/drivers/tty/serial/st-asc.c
++++ b/drivers/tty/serial/st-asc.c
+@@ -5,10 +5,6 @@
+  * Copyright (C) 2003-2013 STMicroelectronics (R&D) Limited
   */
  
--#if defined(CONFIG_SERIAL_SPRD_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+-#if defined(CONFIG_SERIAL_ST_ASC_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 -#define SUPPORT_SYSRQ
 -#endif
 -
- #include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/serial.h>
  #include <linux/console.h>
- #include <linux/delay.h>
-@@ -1227,6 +1223,7 @@ static int sprd_probe(struct platform_device *pdev)
- 	up->fifosize = SPRD_FIFO_SIZE;
- 	up->ops = &serial_sprd_ops;
- 	up->flags = UPF_BOOT_AUTOCONF;
-+	up->has_sysrq = IS_ENABLED(CONFIG_SERIAL_SPRD_CONSOLE);
+@@ -730,6 +726,7 @@ static int asc_init_port(struct asc_port *ascport,
+ 	port->fifosize	= ASC_FIFO_SIZE;
+ 	port->dev	= &pdev->dev;
+ 	port->irq	= platform_get_irq(pdev, 0);
++	port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_ST_ASC_CONSOLE);
  
- 	ret = sprd_clk_init(up);
- 	if (ret)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	port->membase = devm_ioremap_resource(&pdev->dev, res);
 -- 
 2.24.0
 
