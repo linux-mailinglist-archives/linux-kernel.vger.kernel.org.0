@@ -2,85 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C1B911E0B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A86A711E0DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:34:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfLMJ2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:28:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbfLMJ2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:28:54 -0500
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FF792077B;
-        Fri, 13 Dec 2019 09:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576229333;
-        bh=z085srnn3eTmF1mwhBfbPVedeQToZQE/o5DkKGsSR08=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=IeJvapsUVcA8uVcYv5Kqitdr29GDDro0ZX5vgTAm8nlrNJMFOwfHEINqU5/07nins
-         iZT3KIv033pIQW7UJDWTl6HtXUN0QwcpfUfDre+wNu2XLF9+BPpUJGbYJLB9jh4TyU
-         yx3wg+JU4X8cmI8IRYPPtGFex/90Cjx3t2Yz2+OM=
-Date:   Fri, 13 Dec 2019 10:28:50 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] HID: hid-input: clear unmapped usages
-In-Reply-To: <20191207210518.GA181006@dtor-ws>
-Message-ID: <nycvar.YFH.7.76.1912131027560.4603@cbobk.fhfr.pm>
-References: <20191207210518.GA181006@dtor-ws>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726820AbfLMJeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:34:12 -0500
+Received: from mailgw01.mediatek.com ([216.200.240.184]:44974 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfLMJeM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 04:34:12 -0500
+X-UUID: fda40fdd2eb4450bb9f680dc1ebb0ff7-20191213
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=0JD+8l+fzZf3CxwWvh+ixOQUisSCO4Am5oc7crnl/GM=;
+        b=K+tV79RZfL3j4lc+aZGGzBtAaH92Zr04OnFUxGJGLO1basYLJVxb8BQJ3hlHDSxrj0IcmtzEP0aV/Gv7g/ObNgw4/r53kLRiQfJSVVKr40grWoR8w9cXTupOJWhGqxQlGpUKaEvqI+WuUr+R1y7Sld+3V/HC817OHzzfQqYMYnw=;
+X-UUID: fda40fdd2eb4450bb9f680dc1ebb0ff7-20191213
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 317957212; Fri, 13 Dec 2019 01:34:08 -0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 13 Dec 2019 16:10:41 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 13 Dec 2019 16:11:06 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <pedrom.sousa@synopsys.com>, <jejb@linux.ibm.com>,
+        <matthias.bgg@gmail.com>
+CC:     <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <beanhuo@micron.com>,
+        <kuohong.wang@mediatek.com>, <peter.wang@mediatek.com>,
+        <chun-hung.wu@mediatek.com>, <andy.teng@mediatek.com>,
+        Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v1 3/4] scsi: ufs-mediatek: configure customized auto-hibern8 timer
+Date:   Fri, 13 Dec 2019 16:11:34 +0800
+Message-ID: <1576224695-22657-4-git-send-email-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1576224695-22657-1-git-send-email-stanley.chu@mediatek.com>
+References: <1576224695-22657-1-git-send-email-stanley.chu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-TM-SNTS-SMTP: F956DC43922FBC5D30DF3D51ACB1CB999177E0C709DED9B19CCEE192BA9DEF812000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 7 Dec 2019, Dmitry Torokhov wrote:
-
-> We should not be leaving half-mapped usages with potentially invalid
-> keycodes, as that may confuse hidinput_find_key() when the key is located
-> by index, which may end up feeding way too large keycode into the VT
-> keyboard handler and cause OOB write there:
-> 
-> BUG: KASAN: global-out-of-bounds in clear_bit include/asm-generic/bitops-instrumented.h:56 [inline]
-> BUG: KASAN: global-out-of-bounds in kbd_keycode drivers/tty/vt/keyboard.c:1411 [inline]
-> BUG: KASAN: global-out-of-bounds in kbd_event+0xe6b/0x3790 drivers/tty/vt/keyboard.c:1495
-> Write of size 8 at addr ffffffff89a1b2d8 by task syz-executor108/1722
-> ...
->  kbd_keycode drivers/tty/vt/keyboard.c:1411 [inline]
->  kbd_event+0xe6b/0x3790 drivers/tty/vt/keyboard.c:1495
->  input_to_handler+0x3b6/0x4c0 drivers/input/input.c:118
->  input_pass_values.part.0+0x2e3/0x720 drivers/input/input.c:145
->  input_pass_values drivers/input/input.c:949 [inline]
->  input_set_keycode+0x290/0x320 drivers/input/input.c:954
->  evdev_handle_set_keycode_v2+0xc4/0x120 drivers/input/evdev.c:882
->  evdev_do_ioctl drivers/input/evdev.c:1150 [inline]
-> 
-> Reported-by: syzbot+19340dff067c2d3835c0@syzkaller.appspotmail.com
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> 
-> v2: fixed up interaction with hid-multitouch according to Benjamin's
-> feedback
-> 
-> Please consider tagging for stable.
-
-I'd like to push this for 5.5 (and tag for stable), but would prefer this 
-to have gone through the full battery of Benjamin's testing infrastructure 
-first.
-
-Benjamin, did you have chance to run Dmitry's patch through your 
-machinery?
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+Q29uZmlndXJlIGN1c3RvbWl6ZWQgYXV0by1oaWJlcm44IHRpbWVyIGluIE1lZGlhVGVrIENoaXBz
+ZXRzLg0KDQpTaWduZWQtb2ZmLWJ5OiBTdGFubGV5IENodSA8c3RhbmxleS5jaHVAbWVkaWF0ZWsu
+Y29tPg0KLS0tDQogZHJpdmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuYyB8IDggKysrKysrKysN
+CiAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJz
+L3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jIGIvZHJpdmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsu
+Yw0KaW5kZXggNjkwNDgzYzc4MjEyLi43MWUyZTBlNGVhMTEgMTAwNjQ0DQotLS0gYS9kcml2ZXJz
+L3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jDQorKysgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRp
+YXRlay5jDQpAQCAtNyw2ICs3LDcgQEANCiAgKi8NCiANCiAjaW5jbHVkZSA8bGludXgvYXJtLXNt
+Y2NjLmg+DQorI2luY2x1ZGUgPGxpbnV4L2JpdGZpZWxkLmg+DQogI2luY2x1ZGUgPGxpbnV4L29m
+Lmg+DQogI2luY2x1ZGUgPGxpbnV4L29mX2FkZHJlc3MuaD4NCiAjaW5jbHVkZSA8bGludXgvcGh5
+L3BoeS5oPg0KQEAgLTMwMCw2ICszMDEsMTMgQEAgc3RhdGljIGludCB1ZnNfbXRrX3Bvc3RfbGlu
+ayhzdHJ1Y3QgdWZzX2hiYSAqaGJhKQ0KIAkvKiBlbmFibGUgdW5pcHJvIGNsb2NrIGdhdGluZyBm
+ZWF0dXJlICovDQogCXVmc19tdGtfY2ZnX3VuaXByb19jZyhoYmEsIHRydWUpOw0KIA0KKwkvKiBj
+b25maWd1cmUgYXV0by1oaWJlcm44IHRpbWVyIHRvIDEwbXMgKi8NCisJaWYgKHVmc2hjZF9pc19h
+dXRvX2hpYmVybjhfc3VwcG9ydGVkKGhiYSkpIHsNCisJCXVmc2hjZF9hdXRvX2hpYmVybjhfdXBk
+YXRlKGhiYSwNCisJCQlGSUVMRF9QUkVQKFVGU0hDSV9BSElCRVJOOF9USU1FUl9NQVNLLCAxMCkg
+fA0KKwkJCUZJRUxEX1BSRVAoVUZTSENJX0FISUJFUk44X1NDQUxFX01BU0ssIDMpKTsNCisJfQ0K
+Kw0KIAlyZXR1cm4gMDsNCiB9DQogDQotLSANCjIuMTguMA0K
 
