@@ -2,101 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5FD211E660
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17C0511E665
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:21:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfLMPVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:21:39 -0500
-Received: from out28-52.mail.aliyun.com ([115.124.28.52]:42509 "EHLO
-        out28-52.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727872AbfLMPVi (ORCPT
+        id S1727919AbfLMPVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:21:42 -0500
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:54329 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727898AbfLMPVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:21:38 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07670759|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.826969-0.0200583-0.152973;DS=CONTINUE|ham_system_inform|0.423128-0.00153908-0.575333;FP=12401601434723292222|1|1|1|0|-1|-1|-1;HT=e02c03306;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.GGSxanS_1576250475;
-Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GGSxanS_1576250475)
-          by smtp.aliyun-inc.com(10.147.40.233);
-          Fri, 13 Dec 2019 23:21:29 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        paul.burton@mips.com, paulburton@kernel.org, paul@crapouillou.net,
-        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
-Subject: [PATCH v2 5/5] clk: Ingenic: Remove unnecessary spinlock when reading registers.
-Date:   Fri, 13 Dec 2019 23:21:12 +0800
-Message-Id: <1576250472-124315-7-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576250472-124315-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1576250472-124315-1-git-send-email-zhouyanjie@wanyeetech.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 13 Dec 2019 10:21:40 -0500
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from lsun@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 13 Dec 2019 17:21:35 +0200
+Received: from farm-0002.mtbu.labs.mlnx (farm-0002.mtbu.labs.mlnx [10.15.2.32])
+        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id xBDFLXVY023139;
+        Fri, 13 Dec 2019 10:21:33 -0500
+Received: (from lsun@localhost)
+        by farm-0002.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id xBDFLWLx027329;
+        Fri, 13 Dec 2019 10:21:32 -0500
+From:   Liming Sun <lsun@mellanox.com>
+To:     Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        David Woods <dwoods@mellanox.com>
+Cc:     Liming Sun <lsun@mellanox.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] platform/mellanox: fix the mlx-bootctl sysfs
+Date:   Fri, 13 Dec 2019 10:21:24 -0500
+Message-Id: <1576250484-27291-1-git-send-email-lsun@mellanox.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <94727fab054309cd98c876748fd27b130ce5031f.1575918870.git.lsun@mellanox.com>
+References: <94727fab054309cd98c876748fd27b130ce5031f.1575918870.git.lsun@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is not necessary to use spinlock when reading registers,
-so remove it from cgu.c.
+This is a follow-up commit for the sysfs attributes to change
+from DRIVER_ATTR to DEVICE_ATTR according to some initial comments.
+In such case, it's better to point the sysfs path to the device
+itself instead of the driver. This commit adds the missing
+sysfs_create_group() so the attributes can be created under the
+device. The ABI document is also updated.
 
-Suggested-by: Paul Cercueil <paul@crapouillou.net>
-Suggested-by: Paul Burton <paulburton@kernel.org>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+Fixes: 79e29cb8fbc5 ("platform/mellanox: Add bootctl driver for Mellanox BlueField Soc")
+Signed-off-by: Liming Sun <lsun@mellanox.com>
 ---
+v1->v2: Added the Fixes tag according to Andy's comment.
+v1: Initial version.
+---
+ Documentation/ABI/testing/sysfs-platform-mellanox-bootctl | 10 +++++-----
+ drivers/platform/mellanox/mlxbf-bootctl.c                 | 15 +++++++++++++++
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-Notes:
-    v2:
-    New Patch.
-
- drivers/clk/ingenic/cgu.c | 8 --------
- 1 file changed, 8 deletions(-)
-
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index ae1ddcb..3c95451 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -76,16 +76,13 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	const struct ingenic_cgu_pll_info *pll_info;
- 	unsigned m, n, od_enc, od;
- 	bool bypass;
--	unsigned long flags;
- 	u32 ctl;
+diff --git a/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl b/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
+index c65a805..401d202 100644
+--- a/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
++++ b/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
+@@ -1,4 +1,4 @@
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/lifecycle_state
++What:		/sys/bus/platform/devices/MLNXBF04:00/lifecycle_state
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+@@ -10,7 +10,7 @@ Description:
+ 		  GA Non-Secured - Non-Secure chip and not able to change state
+ 		  RMA - Return Merchandise Authorization
  
- 	clk_info = &cgu->clock_info[ingenic_clk->idx];
- 	BUG_ON(clk_info->type != CGU_CLK_PLL);
- 	pll_info = &clk_info->pll;
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/post_reset_wdog
++What:		/sys/bus/platform/devices/MLNXBF04:00/post_reset_wdog
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+@@ -19,7 +19,7 @@ Description:
+ 		to reboot the chip and recover it to the old state if the new
+ 		boot partition fails.
  
--	spin_lock_irqsave(&cgu->lock, flags);
- 	ctl = readl(cgu->base + pll_info->pll_reg);
--	spin_unlock_irqrestore(&cgu->lock, flags);
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/reset_action
++What:		/sys/bus/platform/devices/MLNXBF04:00/reset_action
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+@@ -30,7 +30,7 @@ Description:
+ 		  emmc - boot from the onchip eMMC
+ 		  emmc_legacy - boot from the onchip eMMC in legacy (slow) mode
  
- 	m = (ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0);
- 	m += pll_info->m_offset;
-@@ -94,9 +91,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	od_enc = ctl >> pll_info->od_shift;
- 	od_enc &= GENMASK(pll_info->od_bits - 1, 0);
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/second_reset_action
++What:		/sys/bus/platform/devices/MLNXBF04:00/second_reset_action
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+@@ -44,7 +44,7 @@ Description:
+ 		  swap_emmc - swap the primary / secondary boot partition
+ 		  none - cancel the action
  
--	spin_lock_irqsave(&cgu->lock, flags);
- 	ctl = readl(cgu->base + pll_info->bypass_reg);
--	spin_unlock_irqrestore(&cgu->lock, flags);
+-What:		/sys/bus/platform/devices/MLNXBF04:00/driver/secure_boot_fuse_state
++What:		/sys/bus/platform/devices/MLNXBF04:00/secure_boot_fuse_state
+ Date:		Oct 2019
+ KernelVersion:	5.5
+ Contact:	"Liming Sun <lsun@mellanox.com>"
+diff --git a/drivers/platform/mellanox/mlxbf-bootctl.c b/drivers/platform/mellanox/mlxbf-bootctl.c
+index 61753b6..9482eab 100644
+--- a/drivers/platform/mellanox/mlxbf-bootctl.c
++++ b/drivers/platform/mellanox/mlxbf-bootctl.c
+@@ -282,9 +282,16 @@ static bool mlxbf_bootctl_guid_match(const guid_t *guid,
+ static int mlxbf_bootctl_probe(struct platform_device *pdev)
+ {
+ 	struct arm_smccc_res res = { 0 };
++	struct device *dev = &pdev->dev;
+ 	guid_t guid;
+ 	int ret;
  
- 	bypass = !pll_info->no_bypass_bit &&
- 		 !!(ctl & BIT(pll_info->bypass_bit));
-@@ -269,12 +264,9 @@ static int ingenic_pll_is_enabled(struct clk_hw *hw)
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
- 	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
- 	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
--	unsigned long flags;
- 	u32 ctl;
- 
--	spin_lock_irqsave(&cgu->lock, flags);
- 	ctl = readl(cgu->base + pll_info->pll_reg);
--	spin_unlock_irqrestore(&cgu->lock, flags);
- 
- 	return !!(ctl & BIT(pll_info->enable_bit));
++	ret = sysfs_create_group(&dev->kobj, &mlxbf_bootctl_group);
++	if (ret) {
++		dev_err(dev, "failed to create attributes, err=%d\n", ret);
++		return ret;
++	}
++
+ 	/* Ensure we have the UUID we expect for this service. */
+ 	arm_smccc_smc(MLXBF_BOOTCTL_SIP_SVC_UID, 0, 0, 0, 0, 0, 0, 0, &res);
+ 	guid_parse(mlxbf_bootctl_svc_uuid_str, &guid);
+@@ -305,8 +312,16 @@ static int mlxbf_bootctl_probe(struct platform_device *pdev)
+ 	return 0;
  }
+ 
++static int mlxbf_bootctl_remove(struct platform_device *pdev)
++{
++	sysfs_remove_group(&pdev->dev.kobj, &mlxbf_bootctl_group);
++
++	return 0;
++}
++
+ static struct platform_driver mlxbf_bootctl_driver = {
+ 	.probe = mlxbf_bootctl_probe,
++	.remove = mlxbf_bootctl_remove,
+ 	.driver = {
+ 		.name = "mlxbf-bootctl",
+ 		.groups = mlxbf_bootctl_groups,
 -- 
-2.7.4
+1.8.3.1
 
