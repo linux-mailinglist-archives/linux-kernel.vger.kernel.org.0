@@ -2,167 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B837911EAD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 20:02:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0493F11EADA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 20:03:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbfLMTCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 14:02:03 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33254 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728455AbfLMTCD (ORCPT
+        id S1728808AbfLMTCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 14:02:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37326 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728455AbfLMTCk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 14:02:03 -0500
-Received: by mail-oi1-f196.google.com with SMTP id v140so1673847oie.0;
-        Fri, 13 Dec 2019 11:02:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2XdeKtI0YQlIdxephxhveyyskN7+C9/UjeBuKo3UXnA=;
-        b=ihrbPpTpwm9ABq5vgD5GK0bTAJXNLa3wdV2xdJrQgduGnQhnBNoiLx3Nu3QNtVKLET
-         zJM3pJ/lktGafG6SdbUt0GgN1XnQPdIxmleRDJ6KXsxh63HrdvzyHokupKFTZzvvDXzD
-         j3QDnNewtHchha7Gh2n2BYNUxzmXAtPFQ2VC7K0qE9LOnQkwN4uruaN/gRXTAhnUKM2L
-         6W9VgAYJdHyXvDZJTpqCPE9yVK/ZtaOgxc2IrzSGOJTatrOBJoAO+VadohhIp/rjiVYe
-         SZw7M8seGvCd2/EwnVsdiG8ZqnAeHkM8Nv2oOX5DacTbW9s6yiJgbd3tPFYZTrgqpL/Y
-         krIw==
-X-Gm-Message-State: APjAAAVk7x5YR8+pYP15JzxpWVlPHj3XAwmVTWUA9xtO65/+nX21jjfV
-        9YX6GPgdhOmSQm7cFDIWHit9YoU=
-X-Google-Smtp-Source: APXvYqw8UMim545Km3t4cYb2yWB3l/jkydMfF9IZ1540YOrSblxxasMA+XzaDkAFtvgcqL4kI0gBlg==
-X-Received: by 2002:a05:6808:6c5:: with SMTP id m5mr7214700oih.143.1576263722041;
-        Fri, 13 Dec 2019 11:02:02 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b3sm3542692oie.25.2019.12.13.11.02.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 11:02:01 -0800 (PST)
-Date:   Fri, 13 Dec 2019 13:02:00 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, od@zcrc.me,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] dt-bindings: Document JZ47xx VPU auxiliary
- processor
-Message-ID: <20191213190200.GA11267@bogus>
-References: <20191210164014.50739-1-paul@crapouillou.net>
+        Fri, 13 Dec 2019 14:02:40 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBDIrfY7048799
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 14:02:38 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wusmm3ftp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 14:02:38 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Fri, 13 Dec 2019 19:02:36 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 13 Dec 2019 19:02:35 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBDJ2XqZ42139826
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Dec 2019 19:02:34 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E20E1A405F;
+        Fri, 13 Dec 2019 19:02:33 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F628A405B;
+        Fri, 13 Dec 2019 19:02:33 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.145.49.79])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 13 Dec 2019 19:02:33 +0000 (GMT)
+Subject: Re: [PATCH resend] s390/purgatory: Make sure we fail the build if
+ purgatory has missing symbols
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Philipp Rudo <prudo@linux.ibm.com>
+References: <20191212205304.191610-1-hdegoede@redhat.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
+Date:   Fri, 13 Dec 2019 20:02:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210164014.50739-1-paul@crapouillou.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191212205304.191610-1-hdegoede@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19121319-0028-0000-0000-000003C84756
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19121319-0029-0000-0000-0000248B859A
+Message-Id: <31fd8562-7591-ccc0-f170-4f2d3d0eb25a@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-13_07:2019-12-13,2019-12-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ spamscore=0 adultscore=0 mlxscore=0 mlxlogscore=945 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 malwarescore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912130145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 05:40:10PM +0100, Paul Cercueil wrote:
-> Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
-> Ingenic is a second Xburst MIPS CPU very similar to the main core.
-> This document describes the devicetree bindings for this auxiliary
-> processor.
+Thanks applied.
+
+Now that the build fixes have been merged I do not see a reasons to
+defer this any longer.
+I also added a Tested-by: Philipp Rudo <prudo@linux.ibm.com>
+as he successfully tested v2 in October.
+
+
+
+On 12.12.19 21:53, Hans de Goede wrote:
+> Since we link purgatory with -r aka we enable "incremental linking"
+> no checks for unresolved symbols are done while linking the purgatory.
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> This commit adds an extra check for unresolved symbols by calling ld
+> without -r before running objcopy to generate purgatory.ro.
+> 
+> This will help us catch missing symbols in the purgatory sooner.
+> 
+> Note this commit also removes --no-undefined from LDFLAGS_purgatory
+> as that has no effect.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > ---
+> Changes in v2:
+> - Using 2 if_changed lines under a single rule does not work, then
+>   1 of the 2 will always execute each build.
+>   Instead add a new (unused) purgatory.chk intermediate which gets
+>   linked from purgatory.ro without -r to do the missing symbols check
+> - This also fixes the check generating an a.out file (oops)
+> ---
+>  arch/s390/purgatory/.gitignore |  1 +
+>  arch/s390/purgatory/Makefile   | 13 ++++++++++---
+>  2 files changed, 11 insertions(+), 3 deletions(-)
 > 
-> Notes:
->     v2: Update TCSM0 address in example
->     v3: Change node name to 'video-decoder'
->     v4: Convert to YAML. I didn't add Rob's Ack on v3 because of that (sorry Rob)
+> diff --git a/arch/s390/purgatory/.gitignore b/arch/s390/purgatory/.gitignore
+> index 04a03433c720..c82157f46b18 100644
+> --- a/arch/s390/purgatory/.gitignore
+> +++ b/arch/s390/purgatory/.gitignore
+> @@ -1,3 +1,4 @@
+>  purgatory
+> +purgatory.chk
+>  purgatory.lds
+>  purgatory.ro
+> diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
+> index bc0d7a0d0394..13e9a5dc0a07 100644
+> --- a/arch/s390/purgatory/Makefile
+> +++ b/arch/s390/purgatory/Makefile
+> @@ -4,7 +4,7 @@ OBJECT_FILES_NON_STANDARD := y
+>  
+>  purgatory-y := head.o purgatory.o string.o sha256.o mem.o
+>  
+> -targets += $(purgatory-y) purgatory.lds purgatory purgatory.ro
+> +targets += $(purgatory-y) purgatory.lds purgatory purgatory.chk purgatory.ro
+>  PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+>  
+>  $(obj)/sha256.o: $(srctree)/lib/crypto/sha256.c FORCE
+> @@ -26,15 +26,22 @@ KBUILD_CFLAGS += $(CLANG_FLAGS)
+>  KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
+>  KBUILD_AFLAGS := $(filter-out -DCC_USING_EXPOLINE,$(KBUILD_AFLAGS))
+>  
+> -LDFLAGS_purgatory := -r --no-undefined -nostdlib -z nodefaultlib -T
+> +# Since we link purgatory with -r unresolved symbols are not checked, so we
+> +# also link a purgatory.chk binary without -r to check for unresolved symbols.
+> +PURGATORY_LDFLAGS := -nostdlib -z nodefaultlib
+> +LDFLAGS_purgatory := -r $(PURGATORY_LDFLAGS) -T
+> +LDFLAGS_purgatory.chk := -e purgatory_start $(PURGATORY_LDFLAGS)
+>  $(obj)/purgatory: $(obj)/purgatory.lds $(PURGATORY_OBJS) FORCE
+>  		$(call if_changed,ld)
+>  
+> +$(obj)/purgatory.chk: $(obj)/purgatory FORCE
+> +		$(call if_changed,ld)
+> +
+>  OBJCOPYFLAGS_purgatory.ro := -O elf64-s390
+>  OBJCOPYFLAGS_purgatory.ro += --remove-section='*debug*'
+>  OBJCOPYFLAGS_purgatory.ro += --remove-section='.comment'
+>  OBJCOPYFLAGS_purgatory.ro += --remove-section='.note.*'
+> -$(obj)/purgatory.ro: $(obj)/purgatory FORCE
+> +$(obj)/purgatory.ro: $(obj)/purgatory $(obj)/purgatory.chk FORCE
+>  		$(call if_changed,objcopy)
+>  
+>  $(obj)/kexec-purgatory.o: $(obj)/kexec-purgatory.S $(obj)/purgatory.ro FORCE
 > 
->  .../bindings/remoteproc/ingenic,vpu.yaml      | 76 +++++++++++++++++++
->  1 file changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-> new file mode 100644
-> index 000000000000..9f876d16a5a6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-> @@ -0,0 +1,76 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/remoteproc/ingenic,vpu.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Ingenic Video Processing Unit bindings
-> +
-> +description:
-> +  Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
-> +  Ingenic is a second Xburst MIPS CPU very similar to the main core.
-> +  This document describes the devicetree bindings for this auxiliary
-> +  processor.
-> +
-> +maintainers:
-> +  - Paul Cercueil <paul@crapouillou.net>
-> +
-> +properties:
-> +  compatible:
-> +    const: ingenic,jz4770-vpu-rproc
-> +
-> +  reg:
-> +    items:
-> +      - description: aux registers
-> +      - description: tcsm0 registers
-> +      - description: tcsm1 registers
-> +      - description: sram registers
-> +
-> +  reg-names:
-> +    items:
-> +      - const: aux
-> +      - const: tcsm0
-> +      - const: tcsm1
-> +      - const: sram
-> +
-> +  clocks:
-> +    items:
-> +      - description: aux clock
-> +      - description: vpu clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: aux
-> +      - const: vpu
-> +
-> +  interrupts:
-> +    description: VPU hardware interrupt
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    vpu: video-decoder@132a0000 {
-> +      compatible = "ingenic,jz4770-vpu-rproc";
-> +
-> +      reg = <0x132a0000 0x20 /* AUX */
-> +           0x132b0000 0x4000 /* TCSM0 */
-> +           0x132c0000 0xc000 /* TCSM1 */
-> +           0x132f0000 0x7000 /* SRAM */
-> +      >;
-> +      reg-names = "aux", "tcsm0", "tcsm1", "sram";
-> +
-> +      clocks = <&cgu JZ4770_CLK_AUX>, <&cgu JZ4770_CLK_VPU>;
 
-Examples are built now by 'make dt_binding_check' and this fails. You 
-need to add the include for these defines.
-
-Also, the schema should complain after that on 'reg'. You need to <> 
-each entry (addr and size).
-
-> +      clock-names = "aux", "vpu";
-> +
-> +      interrupt-parent = <&cpuintc>;
-> +      interrupts = <3>;
-> +    };
-> -- 
-> 2.24.0
-> 
