@@ -2,86 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09C0911E531
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:07:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A3511E52A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:05:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfLMOGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 09:06:20 -0500
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:43862 "EHLO
-        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725747AbfLMOGT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 09:06:19 -0500
-Received: from faui04f.informatik.uni-erlangen.de (faui04f.informatik.uni-erlangen.de [IPv6:2001:638:a000:4130:131:188:30:136])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 1897C241702;
-        Fri, 13 Dec 2019 15:06:18 +0100 (CET)
-Received: by faui04f.informatik.uni-erlangen.de (Postfix, from userid 66991)
-        id D9A82C20BD0; Fri, 13 Dec 2019 14:56:44 +0100 (CET)
-From:   Simon Geis <simon.geis@fau.de>
-To:     Dominik Brodowski <linux@dominikbrodowski.net>
-Cc:     Simon Geis <simon.geis@fau.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Adam Zerella <adam.zerella@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
-        Lukas Panzer <lukas.panzer@fau.de>
-Subject: [PATCH v3 10/10] PCMCIA/i82092: remove #if 0 block
-Date:   Fri, 13 Dec 2019 14:53:14 +0100
-Message-Id: <20191213135311.9111-11-simon.geis@fau.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191213135311.9111-1-simon.geis@fau.de>
-References: <20191213135311.9111-1-simon.geis@fau.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727580AbfLMOES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 09:04:18 -0500
+Received: from mail.sysgo.com ([176.9.12.79]:58710 "EHLO mail.sysgo.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726524AbfLMOES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 09:04:18 -0500
+From:   David Engraf <david.engraf@sysgo.com>
+To:     richard.genoud@gmail.com, gregkh@linuxfoundation.org,
+        jslaby@suse.com, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com
+Cc:     linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, David Engraf <david.engraf@sysgo.com>
+Subject: [PATCH v2] tty/serial: atmel: fix out of range clock divider handling
+Date:   Fri, 13 Dec 2019 15:03:01 +0100
+Message-Id: <20191213140301.16490-1-david.engraf@sysgo.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <1e2e3f63-84db-4b38-1bf1-85916116e0a2@sysgo.com>
+References: <1e2e3f63-84db-4b38-1bf1-85916116e0a2@sysgo.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unused function indirect_read16, which
-is similar to indirect_read with the exception that
-it reads 16 instead of 8 bit.
+Use MCK_DIV8 when the clock divider is > 65535. Unfortunately the mode
+register was already written thus the clock selection is ignored.
 
-Co-developed-by: Lukas Panzer <lukas.panzer@fau.de>
-Signed-off-by: Lukas Panzer <lukas.panzer@fau.de>
-Signed-off-by: Simon Geis <simon.geis@fau.de>
+Fix by doing the baud rate calulation before setting the mode.
 
+Fixes: 5bf5635ac170 ("tty/serial: atmel: add fractional baud rate support")
+Signed-off-by: David Engraf <david.engraf@sysgo.com>
 ---
- drivers/pcmcia/i82092.c | 20 --------------------
- 1 file changed, 20 deletions(-)
+ drivers/tty/serial/atmel_serial.c | 43 ++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
-index 9184fafcb8af..c6e9bb1fa167 100644
---- a/drivers/pcmcia/i82092.c
-+++ b/drivers/pcmcia/i82092.c
-@@ -200,26 +200,6 @@ static unsigned char indirect_read(int socket, unsigned short reg)
- 	return val;
- }
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index a8dc8af83f39..1ba9bc667e13 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -2270,27 +2270,6 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		mode |= ATMEL_US_USMODE_NORMAL;
+ 	}
  
--#if 0
--static unsigned short indirect_read16(int socket, unsigned short reg)
--{
--	unsigned short int port;
--	unsigned short tmp;
--	unsigned long flags;
+-	/* set the mode, clock divisor, parity, stop bits and data size */
+-	atmel_uart_writel(port, ATMEL_US_MR, mode);
 -
--	spin_lock_irqsave(&port_lock, flags);
--	reg  = reg + socket * 0x40;
--	port = sockets[socket].io_base;
--	outb(reg, port);
--	tmp = inb(port+1);
--	reg++;
--	outb(reg, port);
--	tmp = tmp | (inb(port+1)<<8);
--	spin_unlock_irqrestore(&port_lock, flags);
--	return tmp;
--}
--#endif
+-	/*
+-	 * when switching the mode, set the RTS line state according to the
+-	 * new mode, otherwise keep the former state
+-	 */
+-	if ((old_mode & ATMEL_US_USMODE) != (mode & ATMEL_US_USMODE)) {
+-		unsigned int rts_state;
 -
- static void indirect_write(int socket, unsigned short reg, unsigned char value)
- {
- 	unsigned short int port;
+-		if ((mode & ATMEL_US_USMODE) == ATMEL_US_USMODE_HWHS) {
+-			/* let the hardware control the RTS line */
+-			rts_state = ATMEL_US_RTSDIS;
+-		} else {
+-			/* force RTS line to low level */
+-			rts_state = ATMEL_US_RTSEN;
+-		}
+-
+-		atmel_uart_writel(port, ATMEL_US_CR, rts_state);
+-	}
+-
+ 	/*
+ 	 * Set the baud rate:
+ 	 * Fractional baudrate allows to setup output frequency more
+@@ -2317,6 +2296,28 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+ 
+ 	if (!(port->iso7816.flags & SER_ISO7816_ENABLED))
+ 		atmel_uart_writel(port, ATMEL_US_BRGR, quot);
++
++	/* set the mode, clock divisor, parity, stop bits and data size */
++	atmel_uart_writel(port, ATMEL_US_MR, mode);
++
++	/*
++	 * when switching the mode, set the RTS line state according to the
++	 * new mode, otherwise keep the former state
++	 */
++	if ((old_mode & ATMEL_US_USMODE) != (mode & ATMEL_US_USMODE)) {
++		unsigned int rts_state;
++
++		if ((mode & ATMEL_US_USMODE) == ATMEL_US_USMODE_HWHS) {
++			/* let the hardware control the RTS line */
++			rts_state = ATMEL_US_RTSDIS;
++		} else {
++			/* force RTS line to low level */
++			rts_state = ATMEL_US_RTSEN;
++		}
++
++		atmel_uart_writel(port, ATMEL_US_CR, rts_state);
++	}
++
+ 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+ 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
+ 	atmel_port->tx_stopped = false;
 -- 
-2.20.1
+2.17.1
 
