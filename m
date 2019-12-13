@@ -2,162 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 845D211E466
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:14:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B14DA11E46C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:17:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfLMNNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:13:55 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:10921 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727377AbfLMNNy (ORCPT
+        id S1727322AbfLMNR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:17:28 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:41001 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfLMNR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:13:54 -0500
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191213131351epoutp022694a7e852e387524d5a267277bfcfae~f8IEgP1nO2670726707epoutp02j
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 13:13:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191213131351epoutp022694a7e852e387524d5a267277bfcfae~f8IEgP1nO2670726707epoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576242832;
-        bh=kndy2Y5LGVy0vs5kAh24/QnBy9l7iubosPTnmQtJ/LY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jif3WHqZjzngnhr0uBR5LQw/BvWaLgd7QGZNebkh15FE17cNdgkUfzQtlv58V6Inc
-         NVC+tzOvZNGMuxqZOcfD3AH6cfio5/uJwLR70LdvIvmGal0hrYW5/SGuXde2wD8mp1
-         HQ/fLxKjN4tVOgkyYodQPCKwMMe2OGNedj0Y+tHE=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20191213131351epcas5p47065a6338b617bb51be7136d2081ef93~f8IDxfR222192921929epcas5p4K;
-        Fri, 13 Dec 2019 13:13:51 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B0.CB.20197.F8E83FD5; Fri, 13 Dec 2019 22:13:51 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191213131350epcas5p3c90ec8981639f488b65d8e09b098fa2b~f8IDBogw22448124481epcas5p3K;
-        Fri, 13 Dec 2019 13:13:50 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191213131350epsmtrp18222a1603e849d5f02f08789c7a0d0dd~f8IDA6Jzp0753107531epsmtrp1Q;
-        Fri, 13 Dec 2019 13:13:50 +0000 (GMT)
-X-AuditID: b6c32a4a-781ff70000014ee5-aa-5df38e8fd7a7
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6C.5F.06569.E8E83FD5; Fri, 13 Dec 2019 22:13:50 +0900 (KST)
-Received: from ubuntu.sa.corp.samsungelectronics.net (unknown
-        [107.108.83.125]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191213131348epsmtip25761b5a380b91a36dfe14d8ef0a0cec5~f8IBYiI-01371613716epsmtip2-;
-        Fri, 13 Dec 2019 13:13:48 +0000 (GMT)
-From:   Anvesh Salveru <anvesh.s@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc:     kishon@ti.com, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        lorenzo.pieralisi@arm.com, andrew.murray@arm.com,
-        bhelgaas@google.com, pankaj.dubey@samsung.com,
-        mark.rutland@arm.com, robh+dt@kernel.org,
-        Anvesh Salveru <anvesh.s@samsung.com>
-Subject: [PATCH v6 2/2] PCI: dwc: add support to handle ZRX-DC Compliant
- PHYs
-Date:   Fri, 13 Dec 2019 18:43:20 +0530
-Message-Id: <1576242800-23969-3-git-send-email-anvesh.s@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576242800-23969-1-git-send-email-anvesh.s@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleLIzCtJLcpLzFFi42LZdlhTS7e/73OsQeNTDovm/9tZLc7uWshq
-        saQpw2LX3Q52ixVfZrJbXHjaw2ZxedccNouz846zWbz5/YLdYun1i0wWi7Z+Ybdo3XuE3YHH
-        Y828NYweO2fdZfdYsKnUY9OqTjaPvi2rGD227P/M6HH8xnYmj8+b5AI4orhsUlJzMstSi/Tt
-        ErgyHk5bzVKwRqjiwKTLzA2Mx/m7GDk5JARMJA5sPMDcxcjFISSwm1Fi94tvLCAJIYFPjBJH
-        dilAJL4xSjQ0TGGG6bh65hQbRNFeRokJc0QhilqYJD7NPcYOkmAT0Jb4eXQvmC0iYC1xuH0L
-        WAOzwD9GicdzKroYOTiEBfwlzi4Bm8kioCpxZNMjsHJeAReJNZt3skDskpO4ea4TrIZTwFVi
-        56MFYJdKCNxmk7ix5Q/UQS4Sr/9NY4SwhSVeHd/CDmFLSbzsb4Oy8yV67y6FsmskptztgKq3
-        lzhwZQ4LyD3MApoS63fpQ5zJJ9H7+wkTSFhCgFeio00IwlSSaJtZDdEoIbF4/k2oAzwkPjb1
-        skFCYQYw2H6uZJnAKDsLYegCRsZVjJKpBcW56anFpgVGeanlesWJucWleel6yfm5mxjB6UPL
-        awfjsnM+hxgFOBiVeHgZUj7FCrEmlhVX5h5ilOBgVhLhTdX+HCvEm5JYWZValB9fVJqTWnyI
-        UZqDRUmcdxLr1RghgfTEktTs1NSC1CKYLBMHp1QDY6XOWY3qN6Wb7FfFHD7VrCzpZfhqjUpr
-        5+ymdCXbU3m2c7c3CBY+azm5eTf/c4F5zBoMc+J7f3VNXu1i6PjiuGf22jxfs5Lveyw8X8X1
-        hFtdelqVVCtinBggXWv/7cKkuN6Vz7ebKwjuM1XfxHHFJGVtx0GpwDero5Jqvzj3cDw76GUe
-        HeugxFKckWioxVxUnAgA5RbjghsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsWy7bCSvG5f3+dYg7+XBCya/29ntTi7ayGr
-        xZKmDItddzvYLVZ8mcluceFpD5vF5V1z2CzOzjvOZvHm9wt2i6XXLzJZLNr6hd2ide8Rdgce
-        jzXz1jB67Jx1l91jwaZSj02rOtk8+rasYvTYsv8zo8fxG9uZPD5vkgvgiOKySUnNySxLLdK3
-        S+DKeDhtNUvBGqGKA5MuMzcwHufvYuTkkBAwkbh65hRbFyMXh5DAbkaJjpfTmSESEhJf9n5l
-        g7CFJVb+e84OYgsJNDFJLGmIBbHZBLQlfh7dCxYXEbCVuP9oMivIIGaBLiaJM7/ugw0SFvCV
-        uDn5NxOIzSKgKnFk0yOwBl4BF4k1m3eyQCyQk7h5rhOsnlPAVWLnowXMEMtcJBYsvcE6gZFv
-        ASPDKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M4BDW0trBeOJE/CFGAQ5GJR7eFYmf
-        YoVYE8uKK3MPMUpwMCuJ8KZqf44V4k1JrKxKLcqPLyrNSS0+xCjNwaIkziuffyxSSCA9sSQ1
-        OzW1ILUIJsvEwSnVwNi86YaOHPvnO6uePVosHbVVuzPpdfkNzws2sYwfpG6sXL/5jnj6Jt/v
-        bh//heWJin2avnNJ8L6DPL/LHW463ts24aGAeVwru+rDznOKTdYdn9805DZJna2vzD1395i/
-        Ve/CW4kP1U813BO6J5W3ZoHAg8M+M5/OyrPTUz56aRtbZ7JT8b2eDfxKLMUZiYZazEXFiQAy
-        IuEPXQIAAA==
-X-CMS-MailID: 20191213131350epcas5p3c90ec8981639f488b65d8e09b098fa2b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20191213131350epcas5p3c90ec8981639f488b65d8e09b098fa2b
-References: <1576242800-23969-1-git-send-email-anvesh.s@samsung.com>
-        <CGME20191213131350epcas5p3c90ec8981639f488b65d8e09b098fa2b@epcas5p3.samsung.com>
+        Fri, 13 Dec 2019 08:17:28 -0500
+Received: from mail-qv1-f46.google.com ([209.85.219.46]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mt7Pt-1hqnvg3JyD-00tW4K; Fri, 13 Dec 2019 14:17:26 +0100
+Received: by mail-qv1-f46.google.com with SMTP id b18so798382qvo.8;
+        Fri, 13 Dec 2019 05:17:25 -0800 (PST)
+X-Gm-Message-State: APjAAAWW3Mm3QToWBZ/0Vdbe9InKkbH9DjSDuKTQHO6AkwUNEADOSbzv
+        25atTTrrtlpJcuW+d9cszDQ3pmLe0OCb2w66Bdk=
+X-Google-Smtp-Source: APXvYqzFwFcYikxJ28kBoN0UCn5sg1VzXwQF4a8L8BwcmPohvWspCPfGhWeuKWhSDV04mg28v6cq323o0FLTlhBpJL4=
+X-Received: by 2002:ad4:4021:: with SMTP id q1mr12702039qvp.211.1576243044500;
+ Fri, 13 Dec 2019 05:17:24 -0800 (PST)
+MIME-Version: 1.0
+References: <87blslei5o.fsf@mpe.ellerman.id.au> <20191206131650.GM2827@hirez.programming.kicks-ass.net>
+ <875zimp0ay.fsf@mpe.ellerman.id.au> <20191212080105.GV2844@hirez.programming.kicks-ass.net>
+ <20191212100756.GA11317@willie-the-truck> <20191212104610.GW2827@hirez.programming.kicks-ass.net>
+ <CAHk-=wjUBsH0BYDBv=q36482G-U7c=9bC89L_BViSciTfb8fhA@mail.gmail.com>
+ <20191212180634.GA19020@willie-the-truck> <CAHk-=whRxB0adkz+V7SQC8Ac_rr_YfaPY8M2mFDfJP2FFBNz8A@mail.gmail.com>
+ <20191212193401.GB19020@willie-the-truck> <CAHk-=wiMuHmWzQ7-CRQB6o+SHtA-u-Rp6VZwPcqDbjAaug80rQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wiMuHmWzQ7-CRQB6o+SHtA-u-Rp6VZwPcqDbjAaug80rQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 13 Dec 2019 14:17:08 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2QYpT_u3D7c_w+hoyeO-Stkj5MWyU_LgGOqnMtKLEudg@mail.gmail.com>
+Message-ID: <CAK8P3a2QYpT_u3D7c_w+hoyeO-Stkj5MWyU_LgGOqnMtKLEudg@mail.gmail.com>
+Subject: Re: READ_ONCE() + STACKPROTECTOR_STRONG == :/ (was Re: [GIT PULL]
+ Please pull powerpc/linux.git powerpc-5.5-2 tag (topic/kasan-bitops))
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Daniel Axtens <dja@axtens.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:rKN2YCHFewC72uW1MuYrJQgq362ZdK+azijNTr40IS4PW0mQwGw
+ 6Hv3OGBR3PZf1U7KKq4k7sELVY+a8lsl8aYXG7Dpi2m7SO+Kc3rQRKaCS4My/kJiw5diCT5
+ kBLt85YUujGlzFgpPPu/Lc0w/Govbp+qXkxXiM53nrKJo/GxWgQBoHByZSwXp45yqFAmTvu
+ ilw28pPKIxLz+c/blFIWA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:iRczoI831SQ=:sxHfHnTKiRDof+yqXbP6fE
+ n3Q/VMgbTf4KFQw6U2dBtyda3gi/sKX5gDDoLKIFVvxZY0Q33f/ocqn/dZqUtCFkshIsG20nB
+ /SvD+MLAlXZ8dpSVI32w4BQMUHvOVPpZScAhXrDk7s9UbnRsPoGrpR366x9AuMeM/eUnt2LWU
+ LP0O2V8QBEXSqMsO+AMGh3PMjL9HhlJAvW6qae4/WzqxBTCyfiUS+3W9cm2H2J7nirjZiKK2u
+ n2TyFrUEUAeotrV6ikwA0ko3tr0EhK63p/yc3R26QY77jd9aC9HBL3a+7Es/WYalB/rmHOwbc
+ sI40uKS+qIIUB+3pvPKAOI4AODLZcOHFqyTTjxma5V/d0oRONPDUaJBQu22k6fzrNA8whkhga
+ ISozDYB7Csi/N89NjrkfCVqLPSbjH01/xizGauLzNRbXFBYrEkLS8oQqqnjmOKcevop1wEQF2
+ +lRTJi337t5VyolTO9GcW1eDYjWPdW7XWTHKImL3QKOfeI/xrABWd2cEDKhL6o1V+jMj2/Mjz
+ qgj9f6SphUKIut/bJaWhiVAFRbb+dvENDKSirj+/w25iWDecuj4JMeXBA4RVdhTW6N8J4bFnK
+ 6STlT+OwHFeKT0LP1Y7M2/iL0lU2skTkmFtTkRXrjuZ9IhacRbTXWzmz6uPqQGZTfFsOpyInq
+ uPoixNhc/tYJWwzSZNm2BuvWJcHh9c62gJPgsZMMjCoRU8/kZoOBDKDoipZEUoOozIpXGF7mG
+ gWZXkFcF9uv4JpBL08M6twyk+2ALCzhKJrfmzthJ6e2moEUzncuPRf22Px74+/4sUEqpKSGie
+ TG2pgG6Qmc1XXWnPQt9b2lEKxkmVLi/qUM6ZaCkLit7tmesFM3DEsP1CAPw6MbWqHi9xDfoog
+ dCOOD2y9anONsweWXPJw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many platforms use DesignWare controller but the PHY can be different in
-different platforms. If the PHY is compliant is to ZRX-DC specification
-it helps in low power consumption during power states.
+On Thu, Dec 12, 2019 at 9:50 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, Dec 12, 2019 at 11:34 AM Will Deacon <will@kernel.org> wrote:
+> > The root of my concern in all of this, and what started me looking at it in
+> > the first place, is the interaction with 'typeof()'. Inheriting 'volatile'
+> > for a pointer means that local variables in macros declared using typeof()
+> > suddenly start generating *hideous* code, particularly when pointless stack
+> > spills get stackprotector all excited.
+>
+> Yeah, removing volatile can be a bit annoying.
+>
+> For the particular case of the bitops, though, it's not an issue.
+> Since you know the type there, you can just cast it.
+>
+> And if we had the rule that READ_ONCE() was an arithmetic type, you could do
+>
+>     typeof(0+(*p)) __var;
+>
+> since you might as well get the integer promotion anyway (on the
+> non-volatile result).
+>
+> But that doesn't work with structures or unions, of course.
+>
+> I'm not entirely sure we have READ_ONCE() with a struct. I do know we
+> have it with 64-bit entities on 32-bit machines, but that's ok with
+> the "0+" trick.
 
-If current data rate is 8.0 GT/s or higher and PHY is not compliant to
-ZRX-DC specification, then after every 100ms link should transition to
-recovery state during the low power states.
+I'll have my randconfig builder look for instances, so far I found one,
+see below. My feeling is that it would be better to enforce at least
+the size being a 1/2/4/8, to avoid cases where someone thinks
+the access is atomic, but it falls back on a memcpy.
 
-DesignWare controller provides GEN3_ZRXDC_NONCOMPL field in
-GEN3_RELATED_OFF to specify about ZRX-DC compliant PHY.
+      Arnd
 
-Platforms with ZRX-DC compliant PHY can set phy_zrxdc_compliant variable
-to specify this property to the controller.
+diff --git a/drivers/xen/time.c b/drivers/xen/time.c
+index 0968859c29d0..adb492c0aa34 100644
+--- a/drivers/xen/time.c
++++ b/drivers/xen/time.c
+@@ -64,7 +64,7 @@ static void xen_get_runstate_snapshot_cpu_delta(
+        do {
+                state_time = get64(&state->state_entry_time);
+                rmb();  /* Hypervisor might update data. */
+-               *res = READ_ONCE(*state);
++               memcpy(res, state, sizeof(*res));
+                rmb();  /* Hypervisor might update data. */
+        } while (get64(&state->state_entry_time) != state_time ||
+                 (state_time & XEN_RUNSTATE_UPDATE));
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 5e88e7e33abe..f4ae360efdba 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -179,6 +179,8 @@ void ftrace_likely_update(struct
+ftrace_likely_data *f, int val,
 
-Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
-Changes w.r.t v5:
- - None
+ #include <uapi/linux/types.h>
 
- drivers/pci/controller/dwc/pcie-designware.c | 6 ++++++
- drivers/pci/controller/dwc/pcie-designware.h | 4 ++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 820488d..36a01b7 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -556,4 +556,10 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 		       PCIE_PL_CHK_REG_CHK_REG_START;
- 		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
- 	}
++extern void __broken_access_once(void *, const void *, unsigned long);
 +
-+	if (pci->phy_zrxdc_compliant) {
-+		val = dw_pcie_readl_dbi(pci, PCIE_PORT_GEN3_RELATED);
-+		val &= ~PORT_LOGIC_GEN3_ZRXDC_NONCOMPL;
-+		dw_pcie_writel_dbi(pci, PCIE_PORT_GEN3_RELATED, val);
-+	}
+ #define __READ_ONCE_SIZE                                               \
+ ({                                                                     \
+        switch (size) {                                                 \
+@@ -187,9 +189,7 @@ void ftrace_likely_update(struct
+ftrace_likely_data *f, int val,
+        case 4: *(__u32 *)res = *(volatile __u32 *)p; break;            \
+        case 8: *(__u64 *)res = *(volatile __u64 *)p; break;            \
+        default:                                                        \
+-               barrier();                                              \
+-               __builtin_memcpy((void *)res, (const void *)p, size);   \
+-               barrier();                                              \
++               __broken_access_once((void *)res, (const void *)p,
+size);       \
+        }                                                               \
+ })
+
+@@ -225,9 +225,7 @@ static __always_inline void
+__write_once_size(volatile void *p, void *res, int s
+        case 4: *(volatile __u32 *)p = *(__u32 *)res; break;
+        case 8: *(volatile __u64 *)p = *(__u64 *)res; break;
+        default:
+-               barrier();
+-               __builtin_memcpy((void *)p, (const void *)res, size);
+-               barrier();
++               __broken_access_once((void *)p, (const void *)res, size);
+        }
  }
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 5accdd6..36f7579 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -60,6 +60,9 @@
- #define PCIE_MSI_INTR0_MASK		0x82C
- #define PCIE_MSI_INTR0_STATUS		0x830
- 
-+#define PCIE_PORT_GEN3_RELATED		0x890
-+#define PORT_LOGIC_GEN3_ZRXDC_NONCOMPL	BIT(0)
-+
- #define PCIE_ATU_VIEWPORT		0x900
- #define PCIE_ATU_REGION_INBOUND		BIT(31)
- #define PCIE_ATU_REGION_OUTBOUND	0
-@@ -249,6 +252,7 @@ struct dw_pcie {
- 	void __iomem		*atu_base;
- 	u32			num_viewport;
- 	u8			iatu_unroll_enabled;
-+	bool			phy_zrxdc_compliant;
- 	struct pcie_port	pp;
- 	struct dw_pcie_ep	ep;
- 	const struct dw_pcie_ops *ops;
--- 
-2.7.4
-
