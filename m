@@ -2,51 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE36211EE4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 00:11:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C49CF11EE39
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 00:10:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbfLMXKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 18:10:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbfLMXKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726705AbfLMXKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 13 Dec 2019 18:10:12 -0500
-Subject: Re: [GIT PULL] Power management updates for v5.5-rc2
+Received: from mail.kernel.org ([198.145.29.99]:37982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725818AbfLMXKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 18:10:11 -0500
+Subject: Re: [GIT PULL] treewide conversion to sizeof_field() for v5.5-rc2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1576278611;
-        bh=3VDMKaOSGPTkNpHGoDx3v+RrnjumjThjkba1A8KfkFc=;
+        bh=W0/3GK7wjRbtYrP1sNxwWGJzeNh9uPSeWJTmPG73fwU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=BkHi6nt36Apy1lP/ei9pr9TOOqlTGXJPjrwyZZNQh+18CKzwwrxqVjwubnHqgYN/+
-         I8QhRrt+EclosNFSkHNrtevejA8tBdIn5g3Z31/m6nfie6YWDOQ2Gk9tujK3ByQwiY
-         hp10230KRdUBAFeAVMauSiNEwUZrQXDz18uKCOc0=
+        b=hHmQwpH+RNhSAXoUrf9aWUK+IEed6vMsUyG6Vh4hshHvcS3hv/UHVJjjK5oYtGHYz
+         USS+SagH0WdX4GiO9RsfMwAg7skb3uzHRIA4TIHtEFlbFdciYyGxRIhGoxm2wxuyhz
+         +FbiKut1COFxN3LQB6W+gy/mh8rRY5ph7ndlhQ2A=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0g-xo1f2yPWGzFnrGQKFuHV=aDk_nV6s7hpWNnhnqyv5g@mail.gmail.com>
-References: <CAJZ5v0g-xo1f2yPWGzFnrGQKFuHV=aDk_nV6s7hpWNnhnqyv5g@mail.gmail.com>
+In-Reply-To: <201912091054.ECCE323A6@keescook>
+References: <201912091054.ECCE323A6@keescook>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0g-xo1f2yPWGzFnrGQKFuHV=aDk_nV6s7hpWNnhnqyv5g@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.5-rc2
-X-PR-Tracked-Commit-Id: 4c84515da8099f4bab5d9312a0ffaf40f14aa87b
+X-PR-Tracked-Message-Id: <201912091054.ECCE323A6@keescook>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
+ tags/sizeof_field-v5.5-rc2
+X-PR-Tracked-Commit-Id: c593642c8be046915ca3a4a300243a68077cd207
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6bd2c87aaffe0b58ce65233fe922b9eb5f7d9a85
-Message-Id: <157627861190.1837.9258292989054106751.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 22ff311af9c7d0eca4e9d276e95c4793a6ecf84f
+Message-Id: <157627861114.1837.10201169523541394928.pr-tracker-bot@kernel.org>
 Date:   Fri, 13 Dec 2019 23:10:11 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Joe Perches <joe@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 13 Dec 2019 10:53:45 +0100:
+The pull request you sent on Mon, 9 Dec 2019 11:05:51 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.5-rc2
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/sizeof_field-v5.5-rc2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6bd2c87aaffe0b58ce65233fe922b9eb5f7d9a85
+https://git.kernel.org/torvalds/c/22ff311af9c7d0eca4e9d276e95c4793a6ecf84f
 
 Thank you!
 
