@@ -2,333 +2,360 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F7C211E604
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:02:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52DF611E607
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:03:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfLMPCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:02:35 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24647 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727499AbfLMPCf (ORCPT
+        id S1727628AbfLMPDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:03:02 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37103 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727456AbfLMPDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:02:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576249354;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nHXpTUcPw2SpnBmWlIQHCjEfMqdBse48PD3viLk8Sfs=;
-        b=LM3x7IBgPzG5ylnuL/kpFxa85kx3x4zAv2prSmzXUWVR+Mi+Yl8xX0CoA7PGC4+d37FOj5
-        udW5SdU7heJR1X7tVXLUrQIxSE378j4BfxzHqmLdfmlLpWg1vLgsxj2NVOCFnDtof47bRp
-        yMfhR3MLNoSquOphhwca9+uwgWIUJMQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-163-5acyVH6yPoawh8q1UP2JtQ-1; Fri, 13 Dec 2019 10:02:30 -0500
-X-MC-Unique: 5acyVH6yPoawh8q1UP2JtQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 77E401005502;
-        Fri, 13 Dec 2019 15:02:29 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-122-140.rdu2.redhat.com [10.10.122.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D0B6619C4F;
-        Fri, 13 Dec 2019 15:02:26 +0000 (UTC)
-Subject: Re: [PATCH 4/5] locking/lockdep: Reuse free chain_hlocks entries
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-References: <20191212223525.1652-1-longman@redhat.com>
- <20191212223525.1652-5-longman@redhat.com>
- <20191213102525.GA2844@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <d639c80c-d60f-d5ac-8559-7942798dc92e@redhat.com>
-Date:   Fri, 13 Dec 2019 10:02:26 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 13 Dec 2019 10:03:02 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c23so1355904plz.4;
+        Fri, 13 Dec 2019 07:03:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version:in-reply-to
+         :content-transfer-encoding;
+        bh=Vb4ixXdGMl4w6FcAuA76VTn+FFigMl96oWrEUTUTeAk=;
+        b=KeOo+LCzbNBZ18Mm+NnKYzHnnOTPUKZckrqQmn82mjC7ub1BbkDMi5b3W172SbKic6
+         9+QBVbCBAmK7rrxQgp6yk5vmELFWQyVKMEefVolLv+A1g4he99yYpgxgHSXQADPoHLmZ
+         kLWVRqFR7PQiguxe116dVD6NJW3NzkUOS/9IBoI4QdXqtV/HC+NOZJaDwN6hLDyUhFP+
+         6r/Ho1pY8VWAfm8dmMof5vIrnr1/xb1B8G62wVTSOYN+E+jGN6yfFKMgqGQIuc3HqA9M
+         wb2HsD5niQWm0/ZglKBb0GoSoJiq0Yu1Eim0gK7uPMKO0veIQCVj5L7MjyTfnV/ruLig
+         HuaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :in-reply-to:content-transfer-encoding;
+        bh=Vb4ixXdGMl4w6FcAuA76VTn+FFigMl96oWrEUTUTeAk=;
+        b=gUiV/P9nXt14zMHWegOeWmj97yrsGOUpYqiehloOcfF2iag/n0qIfnLAT8SyL9Jg5x
+         YhcL8dNOQelsJeruZe5VfVb2BDoiF63KZeujyVleIA+PmouSAMwxq1C5QxbHaxiX1Pa3
+         6sksSu3u8mErpkWWwvjkVI4TgfdpqHsik8CUkvO1qLxSmHQj/rzsO9X1p+pGZfxgIXwL
+         ZNLW3ePa2usHrheNH5EaQ4XR0KB45QgYpoqXtng+OGn72oBASld40FYE1sC5w3tk+0J4
+         CQ65XrtoECds34tP4De6FtFiBi+lyqXPvfUdTuc6tAKdnmh4oBdPWXE1wjKOHf83Qwio
+         ydgw==
+X-Gm-Message-State: APjAAAXQg6XV69CCF83TG4y0umLQo5nWhipdT0nSvInNLHTxs3Mg6pK8
+        P+dXMbZ6rejIPBsb6jBWgHo=
+X-Google-Smtp-Source: APXvYqxebJjdbaCt1V9TumdDNNENI6MaOJxWj8JKcVXhBD1yzDTCLhcMOUSsbClGXurKtRKMJDafcg==
+X-Received: by 2002:a17:902:7586:: with SMTP id j6mr15180994pll.299.1576249381353;
+        Fri, 13 Dec 2019 07:03:01 -0800 (PST)
+Received: from localhost.localdomain ([12.176.148.120])
+        by smtp.gmail.com with ESMTPSA id a22sm12774164pfk.108.2019.12.13.07.02.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 13 Dec 2019 07:03:00 -0800 (PST)
+From:   SeongJae Park <sj38.park@gmail.com>
+To:     =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>
+Cc:     jgross@suse.com, axboe@kernel.dk, konrad.wilk@oracle.com,
+        SeongJae Park <sjpark@amazon.de>, pdurrant@amazon.com,
+        sjpark@amazon.com, xen-devel@lists.xenproject.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v8 2/3] xen/blkback: Squeeze page pools if a memory pressure is detected
+Date:   Fri, 13 Dec 2019 16:02:42 +0100
+Message-Id: <20191213150242.9949-1-sj38.park@gmail.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-In-Reply-To: <20191213102525.GA2844@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <20191213143435.GI11756@Air-de-Roger>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/19 5:25 AM, Peter Zijlstra wrote:
-> On Thu, Dec 12, 2019 at 05:35:24PM -0500, Waiman Long wrote:
->
->> diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
->> index 4c23ab7d27c2..999cd714e0d1 100644
->> --- a/kernel/locking/lockdep_internals.h
->> +++ b/kernel/locking/lockdep_internals.h
->> @@ -107,8 +107,15 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
->>  #endif
->>  
->>  #define MAX_LOCKDEP_CHAINS	(1UL << MAX_LOCKDEP_CHAINS_BITS)
->> -
->>  #define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
->> +#define MAX_CHAIN_HLOCKS_BLOCKS	1024
->> +#define CHAIN_HLOCKS_HASH	8
->> +
->> +struct chain_hlocks_block {
->> +	unsigned int		   depth: 8,
->> +				   base :24;
->> +	struct chain_hlocks_block *next;
->> +};
->>  
->>  extern struct list_head all_lock_classes;
->>  extern struct lock_chain lock_chains[];
-> This doesn't need to be in the header, there are no users outside of the
-> stuff you wrote below.
->
-That is true.
->> +#ifdef CONFIG_PROVE_LOCKING
->> +static struct chain_hlocks_block chain_hlocks_blocks[MAX_CHAIN_HLOCKS_BLOCKS];
->> +static struct chain_hlocks_block *chain_hlocks_block_hash[CHAIN_HLOCKS_HASH];
->> +static struct chain_hlocks_block *free_chain_hlocks_blocks;
->> +
->> +/*
->> + * Graph lock must be held before calling the chain_hlocks_block functions.
->> + * Chain hlocks of depth 1-(CHAIN_HLOCKS_HASH-1) is mapped directly to
->> + * chain_hlocks_block_hash[1-(CHAIN_HLOCKS_HASH-1)]. All other sizes
->> + * are mapped to chain_hlocks_block_hash[0].
->> + */
->> +static inline struct chain_hlocks_block *alloc_chain_hlocks_block(void)
->> +{
->> +	struct chain_hlocks_block *block = free_chain_hlocks_blocks;
->> +
->> +	WARN_ONCE(!debug_locks_silent && !block,
->> +		  "Running out of chain_hlocks_block\n");
->> +	free_chain_hlocks_blocks = block ? block->next : NULL;
->> +	return block;
->> +}
->> +
->> +static inline void free_chain_hlocks_block(struct chain_hlocks_block *block)
->> +{
->> +	block->next = free_chain_hlocks_blocks;
->> +	free_chain_hlocks_blocks = block;
->> +}
->> +
->> +static inline void push_chain_hlocks_block(struct chain_hlocks_block *block)
->> +{
->> +	int hash, depth = block->depth;
->> +
->> +	hash = (depth >= CHAIN_HLOCKS_HASH) ? 0 : depth;
->> +	block->next = chain_hlocks_block_hash[hash];
->> +	chain_hlocks_block_hash[hash] = block;
->> +	nr_free_chain_hlocks += depth;
->> +}
-> I would argue this is not a hash, these are buckets. You're doing
-> regular size buckets.
+On Fri, 13 Dec 2019 15:34:35 +0100 "Roger Pau Monné" <roger.pau@citrix.com> wrote:
 
-I think I used the wrong terminology here. Bucket is a better description.
+> > Each `blkif` has a free pages pool for the grant mapping.  The size of
+> > the pool starts from zero and is increased on demand while processing
+> > the I/O requests.  If current I/O requests handling is finished or 100
+> > milliseconds has passed since last I/O requests handling, it checks and
+> > shrinks the pool to not exceed the size limit, `max_buffer_pages`.
+> > 
+> > Therefore, host administrators can cause memory pressure in blkback by
+> > attaching a large number of block devices and inducing I/O.  Such
+> > problematic situations can be avoided by limiting the maximum number of
+> > devices that can be attached, but finding the optimal limit is not so
+> > easy.  Improper set of the limit can results in memory pressure or a
+> > resource underutilization.  This commit avoids such problematic
+> > situations by squeezing the pools (returns every free page in the pool
+> > to the system) for a while (users can set this duration via a module
+> > parameter) if memory pressure is detected.
+> > 
+> > Discussions
+> > ===========
+> > 
+> > The `blkback`'s original shrinking mechanism returns only pages in the
+> > pool which are not currently be used by `blkback` to the system.  In
+> > other words, the pages that are not mapped with granted pages.  Because
+> > this commit is changing only the shrink limit but still uses the same
+> > freeing mechanism it does not touch pages which are currently mapping
+> > grants.
+> > 
+> > Once memory pressure is detected, this commit keeps the squeezing limit
+> > for a user-specified time duration.  The duration should be neither too
+> > long nor too short.  If it is too long, the squeezing incurring overhead
+> > can reduce the I/O performance.  If it is too short, `blkback` will not
+> > free enough pages to reduce the memory pressure.  This commit sets the
+> > value as `10 milliseconds` by default because it is a short time in
+> > terms of I/O while it is a long time in terms of memory operations.
+> > Also, as the original shrinking mechanism works for at least every 100
+> > milliseconds, this could be a somewhat reasonable choice.  I also tested
+> > other durations (refer to the below section for more details) and
+> > confirmed that 10 milliseconds is the one that works best with the test.
+> > That said, the proper duration depends on actual configurations and
+> > workloads.  That's why this commit allows users to set the duration as a
+> > module parameter.
+> > 
+> > Memory Pressure Test
+> > ====================
+> > 
+> > To show how this commit fixes the memory pressure situation well, I
+> > configured a test environment on a xen-running virtualization system.
+> > On the `blkfront` running guest instances, I attach a large number of
+> > network-backed volume devices and induce I/O to those.  Meanwhile, I
+> > measure the number of pages that swapped in (pswpin) and out (pswpout)
+> > on the `blkback` running guest.  The test ran twice, once for the
+> > `blkback` before this commit and once for that after this commit.  As
+> > shown below, this commit has dramatically reduced the memory pressure:
+> > 
+> >                 pswpin  pswpout
+> >     before      76,672  185,799
+> >     after          212    3,325
+> > 
+> > Optimal Aggressive Shrinking Duration
+> > -------------------------------------
+> > 
+> > To find a best squeezing duration, I repeated the test with three
+> > different durations (1ms, 10ms, and 100ms).  The results are as below:
+> > 
+> >     duration    pswpin  pswpout
+> >     1           852     6,424
+> >     10          212     3,325
+> >     100         203     3,340
+> > 
+> > As expected, the memory pressure has decreased as the duration is
+> > increased, but the reduction stopped from the `10ms`.  Based on this
+> > results, I chose the default duration as 10ms.
+> > 
+> > Performance Overhead Test
+> > =========================
+> > 
+> > This commit could incur I/O performance degradation under severe memory
+> > pressure because the squeezing will require more page allocations per
+> > I/O.  To show the overhead, I artificially made a worst-case squeezing
+> > situation and measured the I/O performance of a `blkfront` running
+> > guest.
+> > 
+> > For the artificial squeezing, I set the `blkback.max_buffer_pages` using
+> > the `/sys/module/xen_blkback/parameters/max_buffer_pages` file.  In this
+> > test, I set the value to `1024` and `0`.  The `1024` is the default
+> > value.  Setting the value as `0` is same to a situation doing the
+> > squeezing always (worst-case).
+> > 
+> > For the I/O performance measurement, I run a simple `dd` command 5 times
+> > as below and collect the 'MB/s' results.
+> > 
+> >     $ for i in {1..5}; do dd if=/dev/zero of=file \
+> >                              bs=4k count=$((256*512)); sync; done
+> > 
+> > If the underlying block device is slow enough, the squeezing overhead
+> > could be hidden.  For the reason, I do this test for both a slow block
+> > device and a fast block device.  I use a popular cloud block storage
+> > service, ebs[1] as a slow device and the ramdisk block device[2] for the
+> > fast device.
+> > 
+> > The results are as below.  'max_pgs' represents the value of the
+> > `blkback.max_buffer_pages` parameter.
+> > 
+> > On the slow block device
+> > ------------------------
+> > 
+> >     max_pgs   Min       Max       Median     Avg    Stddev
+> >     0         38.7      45.8      38.7       40.12  3.1752165
+> >     1024      38.7      45.8      38.7       40.12  3.1752165
+> >     No difference proven at 95.0% confidence
+> > 
+> > On the fast block device
+> > ------------------------
+> > 
+> >     max_pgs   Min       Max       Median     Avg    Stddev
+> >     0         417       423       420        419.4  2.5099801
+> >     1024      414       425       416        417.8  4.4384682
+> >     No difference proven at 95.0% confidence
+> > 
+> > In short, even worst case squeezing on ramdisk based fast block device
+> > makes no visible performance degradation.  Please note that this is just
+> > a very simple and minimal test.  On systems using super-fast block
+> > devices and a special I/O workload, the results might be different.  If
+> > you have any doubt, test on your machine with your workload to find the
+> > optimal squeezing duration for you.
+> > 
+> > [1] https://aws.amazon.com/ebs/
+> > [2] https://www.kernel.org/doc/html/latest/admin-guide/blockdev/ramdisk.html
+> > 
+> > Reviewed-by: Juergen Gross <jgross@suse.com>
+> 
+> You should likely have dropped Juergen RB, since you made some
+> non-trivial changes.
+
+Yes, I will!
+
+> 
+> > Signed-off-by: SeongJae Park <sjpark@amazon.de>
+> > ---
+> >  .../ABI/testing/sysfs-driver-xen-blkback      |  9 ++++++++
+> >  drivers/block/xen-blkback/blkback.c           | 22 +++++++++++++++++--
+> >  drivers/block/xen-blkback/common.h            |  2 ++
+> >  drivers/block/xen-blkback/xenbus.c            | 11 +++++++++-
+> >  4 files changed, 41 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-driver-xen-blkback b/Documentation/ABI/testing/sysfs-driver-xen-blkback
+> > index 4e7babb3ba1f..a74a6d513c9f 100644
+> > --- a/Documentation/ABI/testing/sysfs-driver-xen-blkback
+> > +++ b/Documentation/ABI/testing/sysfs-driver-xen-blkback
+> > @@ -25,3 +25,12 @@ Description:
+> >                  allocated without being in use. The time is in
+> >                  seconds, 0 means indefinitely long.
+> >                  The default is 60 seconds.
+> > +
+> > +What:           /sys/module/xen_blkback/parameters/buffer_squeeze_duration_ms
+> > +Date:           December 2019
+> > +KernelVersion:  5.5
+> > +Contact:        Roger Pau Monn� <roger.pau@citrix.com>
+> 
+> I think you should be the contact for this feature, you are the one
+> that implemented it :).
+> 
+> > +Description:
+> > +                How long the block backend buffers release every free pages in
+> > +                those under memory pressure.  The time is in milliseconds.
+> 
+> "When memory pressure is reported to blkback this option controls the
+> duration in milliseconds that blkback will not cache any page not
+> backed by a grant mapping. The default is 10ms."
+
+Great, will change!
+
+> 
+> > +                The default is 10 milliseconds.
+> > diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+> > index fd1e19f1a49f..26606c4896fd 100644
+> > --- a/drivers/block/xen-blkback/blkback.c
+> > +++ b/drivers/block/xen-blkback/blkback.c
+> > @@ -142,6 +142,21 @@ static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
+> >  		HZ * xen_blkif_pgrant_timeout);
+> >  }
+> >  
+> > +/* Once a memory pressure is detected, squeeze free page pools for a while. */
+> > +static unsigned int buffer_squeeze_duration_ms = 10;
+> > +module_param_named(buffer_squeeze_duration_ms,
+> > +		buffer_squeeze_duration_ms, int, 0644);
+> > +MODULE_PARM_DESC(buffer_squeeze_duration_ms,
+> > +"Duration in ms to squeeze pages buffer when a memory pressure is detected");
+> 
+> I would place this in xenbus.c so that you don't need the
+> xen_blkbk_update_buffer_squeeze_end helper, and can just set
+> blkif->buffer_squeeze_end from xen_blkbk_reclaim_memory.
+
+Good point, I will!
+
+> 
+> > +
+> > +static unsigned long buffer_squeeze_end;
+> 
+> This variable should be removed...
+> 
+> > +
+> > +void xen_blkbk_update_buffer_squeeze_end(struct xen_blkif *blkif)
+> > +{
+> > +	blkif->buffer_squeeze_end = jiffies +
+> > +		msecs_to_jiffies(buffer_squeeze_duration_ms);
+> > +}
+> > +
+> >  static inline int get_free_page(struct xen_blkif_ring *ring, struct page **page)
+> >  {
+> >  	unsigned long flags;
+> > @@ -656,8 +671,11 @@ int xen_blkif_schedule(void *arg)
+> >  			ring->next_lru = jiffies + msecs_to_jiffies(LRU_INTERVAL);
+> >  		}
+> >  
+> > -		/* Shrink if we have more than xen_blkif_max_buffer_pages */
+> > -		shrink_free_pagepool(ring, xen_blkif_max_buffer_pages);
+> > +		/* Shrink the free pages pool if it is too large. */
+> > +		if (time_before(jiffies, buffer_squeeze_end))
+> 
+> ... and this comparison needs to use blkif->buffer_squeeze_end
+> instead.
+
+Ooops, I made so dumb mistakes... Will fix it.
+
+> 
+> > +			shrink_free_pagepool(ring, 0);
+> > +		else
+> > +			shrink_free_pagepool(ring, xen_blkif_max_buffer_pages);
+> >  
+> >  		if (log_stats && time_after(jiffies, ring->st_print))
+> >  			print_stats(ring);
+> > diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
+> > index 1d3002d773f7..ba653126177d 100644
+> > --- a/drivers/block/xen-blkback/common.h
+> > +++ b/drivers/block/xen-blkback/common.h
+> > @@ -319,6 +319,7 @@ struct xen_blkif {
+> >  	/* All rings for this device. */
+> >  	struct xen_blkif_ring	*rings;
+> >  	unsigned int		nr_rings;
+> > +	unsigned long		buffer_squeeze_end;
+> >  };
+> >  
+> >  struct seg_buf {
+> > @@ -383,6 +384,7 @@ irqreturn_t xen_blkif_be_int(int irq, void *dev_id);
+> >  int xen_blkif_schedule(void *arg);
+> >  int xen_blkif_purge_persistent(void *arg);
+> >  void xen_blkbk_free_caches(struct xen_blkif_ring *ring);
+> > +void xen_blkbk_update_buffer_squeeze_end(struct xen_blkif *blkif);
+> >  
+> >  int xen_blkbk_flush_diskcache(struct xenbus_transaction xbt,
+> >  			      struct backend_info *be, int state);
+> > diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+> > index b90dbcd99c03..09fe6cb5c4ea 100644
+> > --- a/drivers/block/xen-blkback/xenbus.c
+> > +++ b/drivers/block/xen-blkback/xenbus.c
+> > @@ -824,6 +824,14 @@ static void frontend_changed(struct xenbus_device *dev,
+> >  }
+> >  
+> >  
+> 
+> I would place the module_param_named instance here, so it's close as
+> possible to it's only user.
+
+Good suggestion!
+
+> 
+> > +void xen_blkbk_reclaim_memory(struct xenbus_device *dev)
+> 
+> This can be static and drop the xen_blkbk prefix AFAICT.
+> 
+> > +{
+> > +	struct backend_info *be = dev_get_drvdata(&dev->dev);
+> > +
+> > +	xen_blkbk_update_buffer_squeeze_end(be->blkif);
+> 
+> Set blkif->buffer_squeeze_end here.
+> 
+> > +}
+> > +
+> > +
+> 
+> Extra newline.
+
+I thought its a rule to use two newlines between functions here, but seems it
+was just a trivial nit.  Will fix and send next version soon!
 
 
->
->> +static inline struct chain_hlocks_block *pop_chain_hlocks_block(int depth)
->> +{
->> +	struct chain_hlocks_block *curr, **pprev;
->> +
->> +	if (!nr_free_chain_hlocks)
->> +		return NULL;
->> +
->> +	if (depth < CHAIN_HLOCKS_HASH) {
->> +		curr = chain_hlocks_block_hash[depth];
->> +		if (curr) {
->> +			chain_hlocks_block_hash[depth] = curr->next;
->> +			nr_free_chain_hlocks -= depth;
->> +		}
->> +		return curr;
->> +	}
->> +
->> +	/*
->> +	 * For depth >= CHAIN_HLOCKS_HASH, it is not really a pop operation.
->> +	 * Instead, the first entry with the right size is returned.
->> +	 */
->> +	curr  = chain_hlocks_block_hash[0];
->> +	pprev = chain_hlocks_block_hash;
->> +
->> +	while (curr) {
->> +		if (curr->depth == depth)
->> +			break;
->> +		pprev = &(curr->next);
->> +		curr = curr->next;
->> +	}
->> +
->> +	if (curr) {
->> +		*pprev = curr->next;
->> +		nr_free_chain_hlocks -= depth;
->> +	}
->> +	return curr;
->> +}
->> +#else
->> +static inline void free_chain_hlocks_block(struct chain_hlocks_block *block) { }
->> +static inline struct chain_hlocks_block *pop_chain_hlocks_block(int depth)
->> +{
->> +	return NULL;
->> +}
->> +#endif /* CONFIG_PROVE_LOCKING */
-> You've made a bit of a mess of things though. Why is that push/pop crud
-> exposed? Why didn't you build a self contained allocator?
->
-> All you really want is:
->
-> u16 *alloc_chain(int size);
-> void free_chain(int size, u16 *chain);
->
->
-> An implementation would be something along these lines (completely
-> untested, fresh from the keyboard):
->
-> struct chain_block {
-> 	int size;
-> 	int base;
-> 	struct chain_block *next;
-> };
->
-> struct chain_block chain_blocks[MAX_BLOCKS];
-> struct chain_block *free_blocks;
->
->
-> struct chain_block init_block = {
-> 	.size = MAX_LOCKDEP_CHAIN_HLOCKS,
-> 	.base = 0,
-> 	.next = NULL,
-> };
->
-> struct chain_block *free_list[MAX_BUCKETS] = {
-> 	&init_block, /* 0 */
-> };
->
->
-> void free_block(struct chain_block *b)
-> {
-> 	b->next = free_blocks;
-> 	free_blocks = b;
-> }
->
-> struct chain_block *alloc_block(void)
-> {
-> 	struct chain_block *block = free_blocks;
-> 	free_blocks = block->next;
-> 	return block;
-> }
->
-> struct chain_block *pop_block(struct chain_block **bp)
-> {
-> 	struct chain_block *b = *bp;
-> 	if (!b)
-> 		return NULL;
-> 	*bp = b->next;
-> }
->
-> void push_block(struct chain_block **bp, struct chain_block *b)
-> {
-> 	b->next = *bp;
-> 	*bp = b;
-> }
->
-> /* could contemplate ilog2() buckets */
-> int size2bucket(int size)
-> {
-> 	return size >= MAX_BUCKET ? 0 : size;
-> }
->
-> /* bucket[0] is mixed size */
-> struct chain_block *pop_block_0(struct chain_block **bp, int size)
-> {
-> 	struct chain_block **p = bp, *b = *bp;
-> 	if (!b)
-> 		return NULL;
->
-> 	p = bp;
-> 	while (b && b->size < size) {
-> 		p = &b->next;
-> 		b = b->next;
-> 	}
-> 	if (!b)
-> 		return NULL;
->
-> 	*p = b->next;
-> 	return b;
-> }
->
-> u16 *alloc_chain(int size)
-> {
-> 	int i, bucket = size2bucket(size);
-> 	struct chain_block *b;
-> 	u16 *chain;
->
-> 	if (!bucket) {
-> 		b = pop_block_0(&free_list[0], size);
-> 		if (b)
-> 			goto got_block;
-> 	} else {
-> 		b = pop_block(&free_list[bucket]);
-> 		if (b)
-> 			goto got_block;
->
-> 		/* pop a large block, hope the fragment is still useful */
-> 		b = pop_block_0(&free_list[0], size);
-> 		if (b)
-> 			goto got_block;
->
-> 		for (i = MAX_BUCKETS-1; i > bucket; i--)
-> 			b = pop_block(&free_list[bucket]);
-> 			if (b)
-> 				goto got_block;
-> 		}
-> 	}
-> 	return NULL;
->
-> got_block:
->
-> 	chain = chain_hlocks + b->base;
-> 	b->base += size;
-> 	b->size -= size;
->
-> 	if (b->size) {
-> 		/* return the fragment */
-> 		bucket = size2bucket(b->size);
-> 		push_block(&free_list[bucket], b);
-> 	} else {
-> 		free_block(b);
-> 	}
->
-> 	return chain;
-> }
->
-> void free_chain(int size, u16 *chain)
-> {
-> 	struct chain_block *b = alloc_block();
-> 	int bucket = size2bucket(size);
->
-> 	if (!b) {
-> 		// leak stuff;
-> 		return;
-> 	}
->
-> 	b->size = size;
-> 	b->base = chain - chain_hlocks;
->
-> 	push_bucket(&free_list[bucket], b);
-> }
->
-> void init_blocks(void)
-> {
-> 	int i;
->
-> 	for (i = 0; i < MAX_BLOCKS; i++)
-> 		free_block(chain_blocks[i]);
-> }
->
-Thanks for the suggestion. I will incorporate your idea in the next
-version of the patch.
+Thanks,
+SeongJae Park
 
-Cheers,
-Longman
-
+> 
+> Thanks, Roger.
+> 
