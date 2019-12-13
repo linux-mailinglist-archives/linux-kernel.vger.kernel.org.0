@@ -2,172 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B44F11E350
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9223C11E358
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:09:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfLMMI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 07:08:57 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2187 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726856AbfLMMI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 07:08:57 -0500
-Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id E8B3AEB9742DB66BDA0C;
-        Fri, 13 Dec 2019 12:08:55 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml708-cah.china.huawei.com (10.201.108.49) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 13 Dec 2019 12:08:55 +0000
-Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 13 Dec
- 2019 12:08:55 +0000
-Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity
- for managed interrupt
-To:     Marc Zyngier <maz@kernel.org>
-CC:     Ming Lei <ming.lei@redhat.com>, <tglx@linutronix.de>,
-        "chenxiang (M)" <chenxiang66@hisilicon.com>,
-        <bigeasy@linutronix.de>, <linux-kernel@vger.kernel.org>,
-        <hare@suse.com>, <hch@lst.de>, <axboe@kernel.dk>,
-        <bvanassche@acm.org>, <peterz@infradead.org>, <mingo@redhat.com>
-References: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
- <1575642904-58295-2-git-send-email-john.garry@huawei.com>
- <20191207080335.GA6077@ming.t460p>
- <78a10958-fdc9-0576-0c39-6079b9749d39@huawei.com>
- <20191210014335.GA25022@ming.t460p>
- <28424a58-1159-c3f9-1efb-f1366993afcf@huawei.com>
- <048746c22898849d28985c0f65cf2c2a@www.loen.fr>
- <ce1b93c6-8ff9-6106-84af-909ec52d49e5@huawei.com>
- <6e513d25d8b0c6b95d37a64df0c27b78@www.loen.fr>
- <06d1e2ff-9ec7-2262-25a0-4503cb204b0b@huawei.com>
- <5caa8414415ab35e74662ac0a30bb4ac@www.loen.fr>
- <f58c3ae0-9807-bea8-4570-28d975336090@huawei.com>
- <2443e657-2ccd-bf85-072c-284ea0b3ce40@huawei.com>
- <214947849a681fc702d018383a3f95ac@www.loen.fr>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <174bfdbe-0c44-298b-35e9-8466e77528df@huawei.com>
-Date:   Fri, 13 Dec 2019 12:08:54 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727076AbfLMMJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 07:09:44 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48656 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbfLMMJo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 07:09:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Nr1I6SS3feCDCxDX98WOBu5+rrE0sIel3SECkfzkxLQ=; b=QnHe2UaIVxReuM76bdKA79ENXD
+        jnOHkBqFLlG4vig16AARH8jVMlLFarljq6FVA/8VUssKra++ftkU5+IT/qqaIo9fpJlRAFinnHeRK
+        8NE0VzhZgXyBj3HiFq2I6wKnVAyLD0PbqQ4y8xz7VdKECMin6Ys+V6F3S92nAB2h+bPFcT0Bx2kFK
+        zSW9zbuee/d6ZPGLF5jV1JkJrU6cgzVlm5VbzANKYpO0fqV1tUJeXV5aHRLeZ6EubTRPx3ZTTFTrt
+        sn1gEJCN7JVtYvCYpTGXHFxkxrQzIGA/6H9+mJmkHhtFAcfbHUjnqU8QgNnAVSPCujDRKODz5xdyJ
+        oedNkF9w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifjky-0003YE-Km; Fri, 13 Dec 2019 12:09:16 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DDF9330602B;
+        Fri, 13 Dec 2019 13:07:52 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A37B72B1886CA; Fri, 13 Dec 2019 13:09:13 +0100 (CET)
+Date:   Fri, 13 Dec 2019 13:09:13 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     "chengjian (D)" <cj.chengjian@huawei.com>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, chenwandun@huawei.com,
+        xiexiuqi@huawei.com, liwei391@huawei.com, huawei.libin@huawei.com,
+        bobo.shaobowang@huawei.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org
+Subject: Re: [PATCH] sched/fair: Optimize select_idle_cpu
+Message-ID: <20191213120913.GB2844@hirez.programming.kicks-ass.net>
+References: <20191212144102.181510-1-cj.chengjian@huawei.com>
+ <20191212152406.GB2827@hirez.programming.kicks-ass.net>
+ <d40ac385-626f-e86f-b2cb-69adf10a193a@huawei.com>
+ <6d188305-66ab-81cf-6340-34d155dcaf3b@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <214947849a681fc702d018383a3f95ac@www.loen.fr>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.202.226.46]
-X-ClientProxiedBy: lhreml728-chm.china.huawei.com (10.201.108.79) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+In-Reply-To: <6d188305-66ab-81cf-6340-34d155dcaf3b@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
->> JFYI, we're still testing this and the patch itself seems to work as
->> intended.
->>
->> Here's the kernel log if you just want to see how the interrupts are
->> getting assigned:
->> https://pastebin.com/hh3r810g
+On Fri, Dec 13, 2019 at 11:28:00AM +0000, Valentin Schneider wrote:
+> On 13/12/2019 09:57, chengjian (D) wrote:
+> > 
+> > in select_idle_smt()
+> > 
+> > /*
+> >  * Scan the local SMT mask for idle CPUs.
+> >  */
+> > static int select_idle_smt(struct task_struct *p, int target)
+> > {
+> >     int cpu, si_cpu = -1;
+> > 
+> >     if (!static_branch_likely(&sched_smt_present))
+> >         return -1;
+> > 
+> >     for_each_cpu(cpu, cpu_smt_mask(target)) {
+> >         if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+> >             continue;
+> >         if (available_idle_cpu(cpu))
+> >             return cpu;
+> >         if (si_cpu == -1 && sched_idle_cpu(cpu))
+> >             si_cpu = cpu;
+> >     }
+> > 
+> >     return si_cpu;
+> > }
+> > 
+> > 
+> > Why don't we do the same thing in this function,
+> > 
+> > although cpu_smt_present () often has few CPUs.
+> > 
+> > it is better to determine the 'p->cpus_ptr' first.
+> > 
+> > 
 > 
-> It is a bit hard to make sense of this dump, specially on such a wide
-> machine (I want one!) 
+> Like you said the gains here would probably be small - the highest SMT
+> count I'm aware of is SMT8 (POWER9). Still, if we end up with both
+> select_idle_core() and select_idle_cpu() using that pattern, it would make
+> sense IMO to align select_idle_smt() with those.
 
-So do I :) That's the newer "D06CS" board.
+The cpumask_and() operation added would also have cost. I really don't
+see that paying off.
 
-without really knowing the topology of the system.
-
-So it's 2x socket, each socket has 2x CPU dies, and each die has 6 
-clusters of 4 CPUs, which gives 96 in total.
-
-> 
->> For me, I did get a performance boost for NVMe testing, but my
->> colleague Xiang Chen saw a drop for our storage test of interestÂ  -
->> that's the HiSi SAS controller. We're trying to make sense of it now.
-> 
-> One of the difference is that with this patch, the initial affinity
-> is picked inside the NUMA node that matches the ITS. 
-
-Is that even for managed interrupts? We're testing the storage 
-controller which uses managed interrupts. I should have made that clearer.
-
-In your case,
-> that's either node 0 or 2. But it is unclear whether which CPUs these
-> map to.
-> 
-> Given that I see interrupts mapped to CPUs 0-23 on one side, and 48-71
-> on the other, it looks like half of your machine gets starved, 
-
-Seems that way.
-
-So this is a mystery to me:
-
-[   23.584192] picked CPU62 IRQ147
-
-147:          0          0          0          0          0          0 
-        0          0          0          0          0          0 
-  0          0          0          0          0          0          0 
-       0          0          0          0          0          0 
-0          0          0          0          0          0          0 
-     0          0          0          0          0          0          0 
-          0          0          0          0          0          0 
-    0          0          0          0          0          0          0 
-         0          0          0          0          0          0 
-   0          0          0          0          0          0          0 
-        0          0          0          0          0          0 
-  0          0          0          0          0          0          0 
-       0          0          0          0          0          0 
-0          0          0          0          0          0          0 
-     0          0          0          0          0   ITS-MSI 94404626 
-Edge      hisi_sas_v3_hw cq
-
-
-and
-
-[   25.896728] picked CPU62 IRQ183
-
-183:          0          0          0          0          0          0 
-        0          0          0          0          0          0 
-  0          0          0          0          0          0          0 
-       0          0          0          0          0          0 
-0          0          0          0          0          0          0 
-     0          0          0          0          0          0          0 
-          0          0          0          0          0          0 
-    0          0          0          0          0          0          0 
-         0          0          0          0          0          0 
-   0          0          0          0          0          0          0 
-        0          0          0          0          0          0 
-  0          0          0          0          0          0          0 
-       0          0          0          0          0          0 
-0          0          0          0          0          0          0 
-     0          0          0          0          0   ITS-MSI 94437398 
-Edge      hisi_sas_v3_hw cq
-
-
-But mpstat reports for CPU62:
-
-12:44:58 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal 
-  %guest  %gnice   %idle
-12:45:00 AM   62    6.54    0.00   42.99    0.00    6.54   12.15    0.00 
-    0.00    6.54   25.23
-
-I don't know what interrupts they are...
-
-It's the "hisi_sas_v3_hw cq" interrupts which we're interested in.
-
-and that
-> may be because no ITS targets the NUMA nodes they are part of.
-
-So both storage controllers (which we're interested in for this test) 
-are on socket #0, node #0.
-
-  It would
-> be interesting to see what happens if you manually set the affinity
-> of the interrupts outside of the NUMA node.
-> 
-
-Again, managed, so I don't think it's possible.
-
-Thanks,
-John
+The other sites have the problem that we combine an iteration limit with
+affinity constraints. This loop doesn't do that and therefore doesn't
+suffer the problem.
