@@ -2,116 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B07711E963
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:46:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3A011E966
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:47:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbfLMRq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 12:46:27 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34291 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728203AbfLMRq1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 12:46:27 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r11so176067pgf.1;
-        Fri, 13 Dec 2019 09:46:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=dtBoagETXVh0V7/P97k4Rqz1E496kHkXGXKVFlW3Xbw=;
-        b=gOIaI7+2eAoluHDBShTOls5VEGdzNqNIBmdslR9DmyTjn7b/HUvrlp9zqHJktb8K4H
-         g2GvU2kReI0XtpANkg3fZnYLwn1z5bY+Q6oeI4/PjyJN3MmDz07/pZoPauqN4yKiptJj
-         VYXDf43PfNocaHKVJkYNYh6UAI4qibBIhVIj8m8Mg1aHTtUHBrrpRb3tJpJsUjNQL9tU
-         Xuy3pFkvxLDR1vPfGaFCVD0etxUdGPti5OKb1GcaPbweg99gwql+rHQCWVZ+gMKLu3W2
-         z50+tlMO7omgHqKjwcZhE3TcWakp2FddFqGhZTUjtKhuc0aXvQ8/CCtz2PUU5wY2Cxt3
-         X6/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=dtBoagETXVh0V7/P97k4Rqz1E496kHkXGXKVFlW3Xbw=;
-        b=Fyqld53eZTVCWtTEQTLgIHVfKvirlrfp4zSeiShiYcioYZsgmufHCIemVSlPE3EvYo
-         MDV8EytRmgxHAxMtDU1I+X+COji4CApeNMcvhcVW0lo6b4YIhdC6HeB2vPiaSmPvaVCF
-         Tq2sCGVBqDq+e5iIX/aJDSJDWbOErX77c1hqZGHy8B6UljjDn+ofwgm5jHfh66Db4D/E
-         WJk83r+KNB3zuZNrNwBIAzBaFSxAcT68zb5/nGvsTvGVYBmI4EBnFcEigJ+XQmLj9PzJ
-         AajBsJc43WMPlYADxvuN6gTjtKgBOWloQhlsjKW8fZJgqbWMQDFeG3J9rvKP6tWtCmuM
-         2nNw==
-X-Gm-Message-State: APjAAAW/0uLEPra3mOlRjSID0XD8QHrnIrv68BVeIl5CJ0V58wmgVT3a
-        yiLEJG1rawhoZiE9EEzex4g=
-X-Google-Smtp-Source: APXvYqyKV1E389RBA+UWrCbZt1ojc/ei0DHw5zlvBj3dEBxdxhbeQZ4NCwzp34jjtPT7agMXFqUBnA==
-X-Received: by 2002:aa7:8ad9:: with SMTP id b25mr683869pfd.70.1576259186300;
-        Fri, 13 Dec 2019 09:46:26 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id f18sm12823124pfk.124.2019.12.13.09.46.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 09:46:25 -0800 (PST)
-Date:   Fri, 13 Dec 2019 09:46:23 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: dwc3: use proper initializers for property entries
-Message-ID: <20191213174623.GA20267@dtor-ws>
+        id S1728570AbfLMRrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 12:47:04 -0500
+Received: from mga11.intel.com ([192.55.52.93]:29572 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726404AbfLMRrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 12:47:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 09:47:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
+   d="scan'208";a="296989821"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga001.jf.intel.com with ESMTP; 13 Dec 2019 09:47:02 -0800
+Date:   Fri, 13 Dec 2019 09:47:02 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Barret Rhoden <brho@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-nvdimm@lists.01.org, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jason.zeng@intel.com
+Subject: Re: [PATCH v5 1/2] mm: make dev_pagemap_mapping_shift() externally
+ visible
+Message-ID: <20191213174702.GB31552@linux.intel.com>
+References: <20191212182238.46535-1-brho@google.com>
+ <20191212182238.46535-2-brho@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191212182238.46535-2-brho@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should not be reaching into property entries and initialize them by
-hand, but rather use proper initializer macros. This way we can alter
-internal representation of property entries with no visible changes to
-their users.
+On Thu, Dec 12, 2019 at 01:22:37PM -0500, Barret Rhoden wrote:
+> KVM has a use case for determining the size of a dax mapping.
+> 
+> The KVM code has easy access to the address and the mm, and
+> dev_pagemap_mapping_shift() needs only those parameters.  It was
+> deriving them from page and vma.  This commit changes those parameters
+> from (page, vma) to (address, mm).
+> 
+> Signed-off-by: Barret Rhoden <brho@google.com>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  include/linux/mm.h  |  3 +++
+>  mm/memory-failure.c | 38 +++-----------------------------------
+>  mm/util.c           | 34 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 40 insertions(+), 35 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a2adf95b3f9c..bfd1882dd5c6 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1013,6 +1013,9 @@ static inline bool is_pci_p2pdma_page(const struct page *page)
+>  #define page_ref_zero_or_close_to_overflow(page) \
+>  	((unsigned int) page_ref_count(page) + 127u <= 127u)
+>  
+> +unsigned long dev_pagemap_mapping_shift(unsigned long address,
+> +					struct mm_struct *mm);
+> +
+>  static inline void get_page(struct page *page)
+>  {
+>  	page = compound_head(page);
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 3151c87dff73..bafa464c8290 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -261,40 +261,6 @@ void shake_page(struct page *p, int access)
+>  }
+>  EXPORT_SYMBOL_GPL(shake_page);
+>  
+> -static unsigned long dev_pagemap_mapping_shift(struct page *page,
+> -		struct vm_area_struct *vma)
+> -{
+> -	unsigned long address = vma_address(page, vma);
+> -	pgd_t *pgd;
+> -	p4d_t *p4d;
+> -	pud_t *pud;
+> -	pmd_t *pmd;
+> -	pte_t *pte;
+> -
+> -	pgd = pgd_offset(vma->vm_mm, address);
+> -	if (!pgd_present(*pgd))
+> -		return 0;
+> -	p4d = p4d_offset(pgd, address);
+> -	if (!p4d_present(*p4d))
+> -		return 0;
+> -	pud = pud_offset(p4d, address);
+> -	if (!pud_present(*pud))
+> -		return 0;
+> -	if (pud_devmap(*pud))
+> -		return PUD_SHIFT;
+> -	pmd = pmd_offset(pud, address);
+> -	if (!pmd_present(*pmd))
+> -		return 0;
+> -	if (pmd_devmap(*pmd))
+> -		return PMD_SHIFT;
+> -	pte = pte_offset_map(pmd, address);
+> -	if (!pte_present(*pte))
+> -		return 0;
+> -	if (pte_devmap(*pte))
+> -		return PAGE_SHIFT;
+> -	return 0;
+> -}
+> -
+>  /*
+>   * Failure handling: if we can't find or can't kill a process there's
+>   * not much we can do.	We just print a message and ignore otherwise.
+> @@ -324,7 +290,9 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
+>  	}
+>  	tk->addr = page_address_in_vma(p, vma);
+>  	if (is_zone_device_page(p))
+> -		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
+> +		tk->size_shift =
+> +			dev_pagemap_mapping_shift(vma_address(page, vma),
+> +						  vma->vm_mm);
+>  	else
+>  		tk->size_shift = compound_order(compound_head(p)) + PAGE_SHIFT;
+>  
+> diff --git a/mm/util.c b/mm/util.c
+> index 3ad6db9a722e..59984e6b40ab 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -901,3 +901,37 @@ int memcmp_pages(struct page *page1, struct page *page2)
+>  	kunmap_atomic(addr1);
+>  	return ret;
+>  }
+> +
+> +unsigned long dev_pagemap_mapping_shift(unsigned long address,
+> +					struct mm_struct *mm)
+> +{
+> +	pgd_t *pgd;
+> +	p4d_t *p4d;
+> +	pud_t *pud;
+> +	pmd_t *pmd;
+> +	pte_t *pte;
+> +
+> +	pgd = pgd_offset(mm, address);
+> +	if (!pgd_present(*pgd))
+> +		return 0;
+> +	p4d = p4d_offset(pgd, address);
+> +	if (!p4d_present(*p4d))
+> +		return 0;
+> +	pud = pud_offset(p4d, address);
+> +	if (!pud_present(*pud))
+> +		return 0;
+> +	if (pud_devmap(*pud))
+> +		return PUD_SHIFT;
+> +	pmd = pmd_offset(pud, address);
+> +	if (!pmd_present(*pmd))
+> +		return 0;
+> +	if (pmd_devmap(*pmd))
+> +		return PMD_SHIFT;
+> +	pte = pte_offset_map(pmd, address);
+> +	if (!pte_present(*pte))
+> +		return 0;
+> +	if (pte_devmap(*pte))
+> +		return PAGE_SHIFT;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_pagemap_mapping_shift);
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
+This is basically a rehash of lookup_address_in_pgd(), and doesn't provide
+exactly what KVM needs.  E.g. KVM works with levels instead of shifts, and
+it would be nice to provide the pte so that KVM can sanity check that the
+pfn from this walk matches the pfn it plans on mapping.
 
-It would be good if this could go through Rafael's tree as it is needed
-for the rest of my software_node/property_entry rework patch series
-which I would love not to delay till 5.6.
+Instead of exporting dev_pagemap_mapping_shift(), what about relacing it
+with a patch to introduce lookup_address_mm() and export that?
 
-Thanks!
-
- drivers/usb/dwc3/host.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
-index 5567ed2cddbec..fa252870c926f 100644
---- a/drivers/usb/dwc3/host.c
-+++ b/drivers/usb/dwc3/host.c
-@@ -88,10 +88,10 @@ int dwc3_host_init(struct dwc3 *dwc)
- 	memset(props, 0, sizeof(struct property_entry) * ARRAY_SIZE(props));
- 
- 	if (dwc->usb3_lpm_capable)
--		props[prop_idx++].name = "usb3-lpm-capable";
-+		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb3-lpm-capable");
- 
- 	if (dwc->usb2_lpm_disable)
--		props[prop_idx++].name = "usb2-lpm-disable";
-+		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb2-lpm-disable");
- 
- 	/**
- 	 * WORKAROUND: dwc3 revisions <=3.00a have a limitation
-@@ -103,7 +103,7 @@ int dwc3_host_init(struct dwc3 *dwc)
- 	 * This following flag tells XHCI to do just that.
- 	 */
- 	if (dwc->revision <= DWC3_REVISION_300A)
--		props[prop_idx++].name = "quirk-broken-port-ped";
-+		props[prop_idx++] = PROPERTY_ENTRY_BOOL("quirk-broken-port-ped");
- 
- 	if (prop_idx) {
- 		ret = platform_device_add_properties(xhci, props);
--- 
-2.24.1.735.g03f4e72817-goog
-
-
--- 
-Dmitry
+dev_pagemap_mapping_shift() could then wrap the new helper (if you want),
+and KVM could do lookup_address_mm() for querying the size of ZONE_DEVICE
+pages.
