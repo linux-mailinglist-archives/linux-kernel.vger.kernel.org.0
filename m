@@ -2,78 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8BFA11E56A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:15:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E25DF11E570
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:19:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbfLMOPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 09:15:52 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:35800 "EHLO mail.skyhub.de"
+        id S1727700AbfLMOQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 09:16:21 -0500
+Received: from foss.arm.com ([217.140.110.172]:60830 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727444AbfLMOPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 09:15:52 -0500
-Received: from zn.tnic (p200300EC2F0A5A0019677E6F46B493BB.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5a00:1967:7e6f:46b4:93bb])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 187591EC014A;
-        Fri, 13 Dec 2019 15:15:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1576246551;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=3NrpyLsdGpjnrpXHUCOJYaX4M12sVqeC8Ylwrt+/qOU=;
-        b=ZU+7E//mo8qAtFVAC7zGNuf35D5oDZUa67ku4yOGXDi7Qh2F2sv2wDpXYCQEeDW6KvJugN
-        /qIlxqq/yWbFaQlsmGCmtmkjl1nKKep/38khDmkCGQ+4cUVo8tVhaya/deQR5th0UtVaO+
-        LsZ687SizwSt6gV/Gcg4LbO+O55v+Ao=
-Date:   Fri, 13 Dec 2019 15:15:43 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        id S1727569AbfLMOQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 09:16:20 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5ED0513A1;
+        Fri, 13 Dec 2019 06:16:20 -0800 (PST)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EBB63F52E;
+        Fri, 13 Dec 2019 06:16:19 -0800 (PST)
+Subject: Re: [PATCH] arm64/elf_hwcap: Add new flags for BFloat-16 extension
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] x86/mm/KASLR: Adjust the padding size for the
- direct mapping.
-Message-ID: <20191213141543.GA25899@zn.tnic>
-References: <20191115144917.28469-1-msys.mizuma@gmail.com>
- <20191115144917.28469-5-msys.mizuma@gmail.com>
- <20191212201916.GL4991@zn.tnic>
- <20191213132850.GG28917@MiWiFi-R3L-srv>
+References: <1576145232-8311-1-git-send-email-anshuman.khandual@arm.com>
+From:   Suzuki Kuruppassery Poulose <suzuki.poulose@arm.com>
+Message-ID: <7730f07d-8560-d354-875b-ee49bc000e64@arm.com>
+Date:   Fri, 13 Dec 2019 14:16:18 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191213132850.GG28917@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1576145232-8311-1-git-send-email-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 09:28:50PM +0800, Baoquan He wrote:
-> In Documentation/x86/x86_64/mm.rst, the physical memory regions mapping
-> with page_offset is called as the direct mapping of physical memory.
+On 12/12/2019 10:07, Anshuman Khandual wrote:
+> Expose the availability of the BFloat16 (BF16) format support in the CPUs.
+> BF16 is a new 16-bit floating point format different from the half
+> precision format defined by the IEEE-754-2008.
+> 
+> BF16 extensions add support for new instructions for both FP/SIMD and SVE.
+> Advertise these features individually to the userspace via ELF HWCAP.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-The fact that it happens to compute the *first* region's size, which
-*happens* to be the direct mapping of all physical memory is immaterial
-here.
 
-It is actually causing more confusion in an already complex piece of
-code. You can call this function just as well
+Looks good to me.
 
-  calc_region_size()
-
-which won't confuse readers. Because all you care about here is the
-region's size - not which region it is.
-
-> kernel_randomize_memory() is invoked much earlier than
-> acpi_table_parse_srat().
-
-And? What are we going to do about that?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
