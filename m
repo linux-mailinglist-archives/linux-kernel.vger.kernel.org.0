@@ -2,218 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DC9A121A3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 20:53:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FB62121A63
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 21:01:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfLPTw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 14:52:58 -0500
-Received: from mga17.intel.com ([192.55.52.151]:47688 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726833AbfLPTw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 14:52:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 11:52:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
-   d="scan'208";a="227228886"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 16 Dec 2019 11:52:56 -0800
-Received: from [10.251.95.214] (abudanko-mobl.ccr.corp.intel.com [10.251.95.214])
-        by linux.intel.com (Postfix) with ESMTP id BDECC5802E5;
-        Mon, 16 Dec 2019 11:52:47 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v3 0/7] Introduce CAP_SYS_PERFMON to secure system performance
- monitoring and observability
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        intel-gfx@lists.freedesktop.org,
-        Brendan Gregg <bgregg@netflix.com>, songliubraving@fb.com,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Organization: Intel Corp.
-Message-ID: <b175f283-d256-e37e-f447-6ba4ab4f3d3a@linux.intel.com>
-Date:   Mon, 16 Dec 2019 22:52:46 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1727426AbfLPUBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 15:01:03 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:40683 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726426AbfLPUBD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 15:01:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576526462;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xa61T8y0JraKLOEIfs1XX0hxvV12aD4G8wd1zxbgSRI=;
+        b=Uj7+qkol6uM3K/FMY2c8EFJ2YPPergVItRW4zz0FijQOhbkx/EHF85vO3nm0vZX9RKONzH
+        CHP+SI5nbeMzAs8tRkv75RXoP1SGMn/CDWH5Y+x4kS0GgEICTBHkIHzR92ceqCKtEDaMI1
+        5X/WpbrzxQDDRwQn28wHv+2J4eGvY8c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-399-MBiXdzYWMd63jkwrNbXKiA-1; Mon, 16 Dec 2019 15:01:00 -0500
+X-MC-Unique: MBiXdzYWMd63jkwrNbXKiA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04CBA91230;
+        Mon, 16 Dec 2019 20:00:59 +0000 (UTC)
+Received: from localhost (ovpn-116-90.gru2.redhat.com [10.97.116.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E64260933;
+        Mon, 16 Dec 2019 20:00:56 +0000 (UTC)
+Date:   Fri, 13 Dec 2019 19:27:02 -0300
+From:   Eduardo Habkost <ehabkost@redhat.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, konrad.wilk@oracle.com
+Subject: Re: [PATCH 1/3] KVM: x86: fix reporting of AMD speculation bug CPUID
+ leaf
+Message-ID: <20191213222702.GH498046@habkost.net>
+References: <1566376002-17121-1-git-send-email-pbonzini@redhat.com>
+ <1566376002-17121-2-git-send-email-pbonzini@redhat.com>
+ <20191130232731.GA9495@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191130232731.GA9495@sol.localdomain>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 30, 2019 at 03:27:31PM -0800, Eric Biggers wrote:
+> Hi Paolo,
+> 
+> On Wed, Aug 21, 2019 at 10:26:40AM +0200, Paolo Bonzini wrote:
+> > The AMD_* bits have to be set from the vendor-independent
+> > feature and bug flags, because KVM_GET_SUPPORTED_CPUID does not care
+> > about the vendor and they should be set on Intel processors as well.
+> > On top of this, SSBD, STIBP and AMD_SSB_NO bit were not set, and
+> > VIRT_SSBD does not have to be added manually because it is a
+> > cpufeature that comes directly from the host's CPUID bit.
+> > 
+> > Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> > ---
+> >  arch/x86/kvm/cpuid.c | 21 +++++++++++++--------
+> >  1 file changed, 13 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > index 22c2720cd948..43caeb6059b9 100644
+> > --- a/arch/x86/kvm/cpuid.c
+> > +++ b/arch/x86/kvm/cpuid.c
+> > @@ -729,18 +729,23 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
+> >  			g_phys_as = phys_as;
+> >  		entry->eax = g_phys_as | (virt_as << 8);
+> >  		entry->edx = 0;
+> > +		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+> > +		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
+> >  		/*
+> > -		 * IBRS, IBPB and VIRT_SSBD aren't necessarily present in
+> > -		 * hardware cpuid
+> > +		 * AMD has separate bits for each SPEC_CTRL bit.
+> > +		 * arch/x86/kernel/cpu/bugs.c is kind enough to
+> > +		 * record that in cpufeatures so use them.
+> >  		 */
+> > -		if (boot_cpu_has(X86_FEATURE_AMD_IBPB))
+> > +		if (boot_cpu_has(X86_FEATURE_IBPB))
+> >  			entry->ebx |= F(AMD_IBPB);
+> > -		if (boot_cpu_has(X86_FEATURE_AMD_IBRS))
+> > +		if (boot_cpu_has(X86_FEATURE_IBRS))
+> >  			entry->ebx |= F(AMD_IBRS);
+> > -		if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
+> > -			entry->ebx |= F(VIRT_SSBD);
+> > -		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+> > -		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
+> > +		if (boot_cpu_has(X86_FEATURE_STIBP))
+> > +			entry->ebx |= F(AMD_STIBP);
+> > +		if (boot_cpu_has(X86_FEATURE_SSBD))
+> > +			entry->ebx |= F(AMD_SSBD);
+> > +		if (!boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
+> > +			entry->ebx |= F(AMD_SSB_NO);
+> >  		/*
+> >  		 * The preference is to use SPEC CTRL MSR instead of the
+> >  		 * VIRT_SPEC MSR.
+> 
+> This patch started causing a warning about an unchecked MSR access, when
+> starting a VM.
+> 
+> Processor is: "AMD Ryzen Threadripper 1950X 16-Core Processor"
+> 
+> The warning appears both in the host and guest kernel logs.
+> 
+> On the host:
+> 
+> 	[   12.121802] unchecked MSR access error: RDMSR from 0x48 at rIP: 0xffffffff8b049765 (svm_vcpu_run+0x6a5/0x720)
+> 	[   12.121806] Call Trace:
+> 	[   12.121812]  ? kvm_arch_vcpu_ioctl_run+0x902/0x1b70
+> 	[   12.121814]  ? kvm_vm_ioctl_irq_line+0x1e/0x30
+> 	[   12.121817]  ? kvm_vcpu_ioctl+0x21e/0x560
+> 	[   12.121821]  ? vfs_writev+0xc0/0xf0
+> 	[   12.121824]  ? do_vfs_ioctl+0x41d/0x690
+> 	[   12.121826]  ? ksys_ioctl+0x59/0x90
+> 	[   12.121827]  ? __x64_sys_ioctl+0x11/0x20
+> 	[   12.121828]  ? do_syscall_64+0x43/0x130
+> 	[   12.121832]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Currently access to perf_events, i915_perf and other performance monitoring and
-observability subsystems of the kernel is open for a privileged process [1] with
-CAP_SYS_ADMIN capability enabled in the process effective set [2].
+For reference, this is:
 
-This patch set introduces CAP_SYS_PERFMON capability devoted to secure system
-performance monitoring and observability operations so that CAP_SYS_PERFMON would
-assist CAP_SYS_ADMIN capability in its governing role for perf_events, i915_perf
-and other performance monitoring and observability subsystems of the kernel.
+	/*
+	 * We do not use IBRS in the kernel. If this vCPU has used the
+	 * SPEC_CTRL MSR it may have left it on; save the value and
+	 * turn it off. This is much more efficient than blindly adding
+	 * it to the atomic save/restore list. Especially as the former
+	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
+	 *
+	 * For non-nested case:
+	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
+	 * save it.
+	 *
+	 * For nested case:
+	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
+	 * save it.
+	 */
+	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
 
-CAP_SYS_PERFMON intends to meet the demand to secure system performance monitoring
-and observability operations in security sensitive, restricted, production
-environments (e.g. HPC clusters, cloud and virtual compute environments) where root
-or CAP_SYS_ADMIN credentials are not available to mass users of a system because
-of security considerations.
+This code looks suspicious.  I don't see anything that would
+prevent the kernel from trying to read the MSR on CPUs that don't
+have X86_FEATURE_AMD_SSBD (CPUID[0x80000008].EBX[24]) set.
 
-CAP_SYS_PERFMON intends to harden system security and integrity during system
-performance monitoring and observability operations by decreasing attack surface
-that is available to CAP_SYS_ADMIN privileged processes [2].
+Maybe it's a preexisting bug being triggered by the failing WRMSR
+below:
 
-CAP_SYS_PERFMON intends to take over CAP_SYS_ADMIN credentials related to system
-performance monitoring and observability operations and balance amount of
-CAP_SYS_ADMIN credentials following the recommendations in the capabilities man
-page [2] for CAP_SYS_ADMIN: "Note: this capability is overloaded; see Notes to
-kernel developers, below."
+> 
+> On the guest:
+> 
+> 	[    0.799090] unchecked MSR access error: WRMSR to 0x48 (tried to write 0x0000000000000004) at rIP: 0xffffffff81028272 (speculation_ctrl_update+0x132/0x2c0)
 
-For backward compatibility reasons access to system performance monitoring and
-observability subsystems of the kernel remains open for CAP_SYS_ADMIN privileged
-processes but CAP_SYS_ADMIN capability usage for secure system performance monitoring
-and observability operations is discouraged with respect to the introduced
-CAP_SYS_PERFMON capability.
+It looks like WRMSR is being rejected because of:
 
-The patch set is for tip perf/core repository:
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip perf/core
-sha1: ceb9e77324fa661b1001a0ae66f061b5fcb4e4e6
+		if (!msr->host_initiated &&
+		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS) &&
+		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_SSBD))
+			return 1;
 
----
-Changes in v3:
-- implemented perfmon_capable() macros aggregating required capabilities checks
-Changes in v2:
-- made perf_events trace points available to CAP_SYS_PERFMON privileged processes
-- made perf_event_paranoid_check() treat CAP_SYS_PERFMON equally to CAP_SYS_ADMIN
-- applied CAP_SYS_PERFMON to i915_perf, bpf_trace, powerpc and parisc system
-  performance monitoring and observability related subsystems
+My guess is that the actual bug is at do_cpuid_7_mask(), which
+enables SPEC_CTRL and SPEC_CTRL_SSBD even on AMD hosts, while the
+SVM MSR emulation code won't let guests write to
+MSR_IA32_SPEC_CTRL.  I don't understand why it was not causing
+any problems before commit 4c6903a0f9d76, though
 
----
-Alexey Budankov (7):
-  capabilities: introduce CAP_SYS_PERFMON to kernel and user space
-  perf/core: open access for CAP_SYS_PERFMON privileged process
-  perf tool: extend Perf tool with CAP_SYS_PERFMON capability support
-  drm/i915/perf: open access for CAP_SYS_PERFMON privileged process
-  trace/bpf_trace: open access for CAP_SYS_PERFMON privileged process
-  powerpc/perf: open access for CAP_SYS_PERFMON privileged process
-  parisc/perf: open access for CAP_SYS_PERFMON privileged process
+Can you show output of 'x86info -r' and /proc/cpuinfo in both the
+host and the guest?
 
- arch/parisc/kernel/perf.c           |  2 +-
- arch/powerpc/perf/imc-pmu.c         |  4 ++--
- drivers/gpu/drm/i915/i915_perf.c    | 13 ++++++-------
- include/linux/capability.h          |  1 +
- include/linux/perf_event.h          |  6 +++---
- include/uapi/linux/capability.h     |  8 +++++++-
- kernel/trace/bpf_trace.c            |  2 +-
- security/selinux/include/classmap.h |  4 ++--
- tools/perf/design.txt               |  3 ++-
- tools/perf/util/cap.h               |  4 ++++
- tools/perf/util/evsel.c             | 10 +++++-----
- tools/perf/util/util.c              |  1 +
- 12 files changed, 35 insertions(+), 23 deletions(-)
 
----
-Testing and validation (Intel Skylake, 8 cores, Fedora 29, 5.4.0-rc8+, x86_64):
-
-libcap library [3], [4] and Perf tool can be used to apply CAP_SYS_PERFMON 
-capability for secure system performance monitoring and observability beyond the
-scope permitted by the system wide perf_event_paranoid kernel setting [5] and
-below are the steps for evaluation:
-
-  - patch, build and boot the kernel
-  - patch, build Perf tool e.g. to /home/user/perf
-  ...
-  # git clone git://git.kernel.org/pub/scm/libs/libcap/libcap.git libcap
-  # pushd libcap
-  # patch libcap/include/uapi/linux/capabilities.h with [PATCH 1]
-  # make
-  # pushd progs
-  # ./setcap "cap_sys_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
-  # ./setcap -v "cap_sys_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
-  /home/user/perf: OK
-  # ./getcap /home/user/perf
-  /home/user/perf = cap_sys_ptrace,cap_syslog,cap_sys_perfmon+ep
-  # echo 2 > /proc/sys/kernel/perf_event_paranoid
-  # cat /proc/sys/kernel/perf_event_paranoid 
-  2
-  ...
-  $ /home/user/perf top
-    ... works as expected ...
-  $ cat /proc/`pidof perf`/status
-  Name:	perf
-  Umask:	0002
-  State:	S (sleeping)
-  Tgid:	2958
-  Ngid:	0
-  Pid:	2958
-  PPid:	9847
-  TracerPid:	0
-  Uid:	500	500	500	500
-  Gid:	500	500	500	500
-  FDSize:	256
-  ...
-  CapInh:	0000000000000000
-  CapPrm:	0000004400080000
-  CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
-                                     cap_sys_perfmon,cap_sys_ptrace,cap_syslog
-  CapBnd:	0000007fffffffff
-  CapAmb:	0000000000000000
-  NoNewPrivs:	0
-  Seccomp:	0
-  Speculation_Store_Bypass:	thread vulnerable
-  Cpus_allowed:	ff
-  Cpus_allowed_list:	0-7
-  ...
-
-Usage of cap_sys_perfmon effectively avoids unused credentials excess:
-
-- with cap_sys_admin:
-  CapEff:	0000007fffffffff => 01111111 11111111 11111111 11111111 11111111
-
-- with cap_sys_perfmon:
-  CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
-                                    38   34               19
-                           sys_perfmon   syslog           sys_ptrace
-
----
-
-[1] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
-[2] http://man7.org/linux/man-pages/man7/capabilities.7.html
-[3] http://man7.org/linux/man-pages/man8/setcap.8.html
-[4] https://git.kernel.org/pub/scm/libs/libcap/libcap.git
-[5] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
-[6] https://sites.google.com/site/fullycapable/, posix_1003.1e-990310.pdf
+> 	[    0.801823] Call Trace:
+> 	[    0.801831]  ? seccomp_set_mode_filter+0x18d/0x800
+> 	[    0.801833]  speculation_ctrl_update_current+0x21/0x30
+> 	[    0.801837]  task_update_spec_tif+0x1d/0x20
+> 	[    0.801839]  ssb_prctl_set+0xb5/0xd0
+> 	[    0.801841]  arch_seccomp_spec_mitigate+0x2a/0x50
+> 	[    0.801843]  seccomp_set_mode_filter+0x788/0x800
+> 	[    0.801845]  do_seccomp+0x34/0x200
+> 	[    0.801849]  __x64_sys_seccomp+0x15/0x20
+> 	[    0.801852]  do_syscall_64+0x4a/0x1f0
+> 	[    0.809349]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 	[    0.810548] RIP: 0033:0x7f431db92e9d
+> 	[    0.811528] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d b3 5f 0c 00 f7 d8 64 89 01 48
+> 	[    0.814754] RSP: 002b:00007ffca5506788 EFLAGS: 00000246 ORIG_RAX: 000000000000013d
+> 	[    0.816075] RAX: ffffffffffffffda RBX: 0000556956c07580 RCX: 00007f431db92e9d
+> 	[    0.817367] RDX: 0000556956c023e0 RSI: 0000000000000000 RDI: 0000000000000001
+> 	[    0.818698] RBP: 0000556956c023e0 R08: 0000000000000007 R09: 0000556956b73730
+> 	[    0.819948] R10: 0000556956b7101a R11: 0000000000000246 R12: 000000000000002d
+> 	[    0.821184] R13: 0040000000002001 R14: 00007f431d9b4898 R15: 0000000000000000
+> 
+> The VM still boots though.
+> 
+> I've actually been seeing this for a while but haven't had a chance to bisect it
+> until now.
+> 
+> Reverting the commit (4c6903a0f9d76) on mainline makes the warnings go away.
+> 
+> Any ideas?  Presumably something isn't working as intended.
+> 
+> - Eric
+> 
 
 -- 
-2.20.1
-
+Eduardo
 
