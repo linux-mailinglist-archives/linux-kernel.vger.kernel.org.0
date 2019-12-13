@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35D9311E622
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:07:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55FAA11E620
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:07:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbfLMPFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:05:43 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:49399 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727539AbfLMPFm (ORCPT
+        id S1727858AbfLMPFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:05:32 -0500
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:27610 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbfLMPFc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:05:42 -0500
-Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+        Fri, 13 Dec 2019 10:05:32 -0500
+Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
   Claudiu.Beznea@microchip.com designates 198.175.253.82 as
   permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
   envelope-from="Claudiu.Beznea@microchip.com";
   x-sender="Claudiu.Beznea@microchip.com";
   x-conformance=spf_only; x-record-type="v=spf1";
@@ -23,30 +23,30 @@ Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
   a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
   include:servers.mcsv.net include:mktomail.com
   include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa2.microchip.iphmx.com: no sender
+Received-SPF: None (esa1.microchip.iphmx.com: no sender
   authenticity information available from domain of
   postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
   envelope-from="Claudiu.Beznea@microchip.com";
   x-sender="postmaster@email.microchip.com";
   x-conformance=spf_only
-Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: ykhAAAECZnCZI8E2zOBJM46BZ6YwE0O/ABx5F/zDT9K2pj/dxCUQ+de86uNjHDFl7l9DwpoaHw
- VDzc8gcZ0LF5Iwf2EGeBRG0ZLnT0VRRo5JgSfaizZu2byI/yyjSHmTgRmNH6rkeicAyp+5vMiY
- 1AXO5SCjRxyCuLWggAqcMePO1ocyhuauSs/EJMw1Ky9A6pd2OffkSwuLCh3fRRZvKoBNo5aOOX
- jZF8qy9H2U4Vg7KbmfArlYRY/beDIMmSF+nlP0sPPrS6Ume91tMGfExkTHycDEfheckai5gh5L
- OI4=
+Authentication-Results: esa1.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: uVgVIoFgv+zyn1mJy1jOhCKRps55X6Y6NgJE8SfUWl3kBhO6VnIuWvpsYtL13bwGZNVImA46RC
+ ZMaK5iC9085AHVu8/PRhZ9zkjSKe6SB6vzZfrFLbiVijEJM+0w/3N54uclq0VODX/ZKWrNSvJa
+ 6XZX8c9WT0MGwh3zaLi8Sew7XwbGmzX4nTFxMbNuiEdUbl0XaiieAMrn/MhWUyiVihAy9rNMxU
+ 4Jzn+4niayQ6QncYPkViuqy4gVpYQy9GZ5WjuDZ0HEW12aPHzlZ/jGCVfOD4tNYB1EuSv3rrr/
+ Pb8=
 X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
-   d="scan'208";a="59718112"
+   d="scan'208";a="61647016"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Dec 2019 08:05:25 -0700
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Dec 2019 08:05:30 -0700
 Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 13 Dec 2019 08:05:25 -0700
+ 15.1.1713.5; Fri, 13 Dec 2019 08:05:30 -0700
 Received: from m18063-ThinkPad-T460p.microchip.com (10.10.85.251) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Fri, 13 Dec 2019 08:05:21 -0700
+ 15.1.1713.5 via Frontend Transport; Fri, 13 Dec 2019 08:05:25 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <sam@ravnborg.org>, <bbrezillon@kernel.org>, <airlied@linux.ie>,
         <daniel@ffwll.ch>, <nicolas.ferre@microchip.com>,
@@ -54,11 +54,10 @@ To:     <sam@ravnborg.org>, <bbrezillon@kernel.org>, <airlied@linux.ie>,
         <lee.jones@linaro.org>
 CC:     <dri-devel@lists.freedesktop.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 4/6] mfd: atmel-hlcdc: return in case of error
-Date:   Fri, 13 Dec 2019 17:04:54 +0200
-Message-ID: <1576249496-4849-5-git-send-email-claudiu.beznea@microchip.com>
+        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>
+Subject: [PATCH v2 5/6] drm: atmel-hlcdc: prefer a lower pixel-clock than requested
+Date:   Fri, 13 Dec 2019 17:04:55 +0200
+Message-ID: <1576249496-4849-6-git-send-email-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576249496-4849-1-git-send-email-claudiu.beznea@microchip.com>
 References: <1576249496-4849-1-git-send-email-claudiu.beznea@microchip.com>
@@ -69,42 +68,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For HLCDC timing engine configurations bit ATMEL_HLCDC_SIP of
-ATMEL_HLCDC_SR needs to be polled before applying new config. In case of
-timeout there is no indicator about this, so, return in case of timeout
-and also print a message about this.
+From: Peter Rosin <peda@axentia.se>
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+The intention was to only select a higher pixel-clock rate than the
+requested, if a slight overclocking would result in a rate significantly
+closer to the requested rate than if the conservative lower pixel-clock
+rate is selected. The fixed patch has the logic the other way around and
+actually prefers the higher frequency. Fix that.
+
+Fixes: f6f7ad323461 ("drm/atmel-hlcdc: allow selecting a higher pixel-clock than requested")
+Reported-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Tested-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/mfd/atmel-hlcdc.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/atmel-hlcdc.c b/drivers/mfd/atmel-hlcdc.c
-index 92bfcaa62ace..a1e46c87b956 100644
---- a/drivers/mfd/atmel-hlcdc.c
-+++ b/drivers/mfd/atmel-hlcdc.c
-@@ -40,10 +40,17 @@ static int regmap_atmel_hlcdc_reg_write(void *context, unsigned int reg,
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+index 721fa88bf71d..10985134ce0b 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+@@ -121,8 +121,8 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
+ 		int div_low = prate / mode_rate;
  
- 	if (reg <= ATMEL_HLCDC_DIS) {
- 		u32 status;
--
--		readl_poll_timeout_atomic(hregmap->regs + ATMEL_HLCDC_SR,
--					  status, !(status & ATMEL_HLCDC_SIP),
--					  1, 100);
-+		int ret;
-+
-+		ret = readl_poll_timeout_atomic(hregmap->regs + ATMEL_HLCDC_SR,
-+						status,
-+						!(status & ATMEL_HLCDC_SIP),
-+						1, 100);
-+		if (ret) {
-+			dev_err(hregmap->dev,
-+				"Timeout waiting for ATMEL_HLCDC_SIP\n");
-+			return ret;
-+		}
- 	}
- 
- 	writel(val, hregmap->regs + reg);
+ 		if (div_low >= 2 &&
+-		    ((prate / div_low - mode_rate) <
+-		     10 * (mode_rate - prate / div)))
++		    (10 * (prate / div_low - mode_rate) <
++		     (mode_rate - prate / div)))
+ 			/*
+ 			 * At least 10 times better when using a higher
+ 			 * frequency than requested, instead of a lower.
 -- 
 2.7.4
 
