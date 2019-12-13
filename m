@@ -2,194 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A81011EDA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 23:18:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F048011ED84
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 23:09:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbfLMWR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 17:17:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38638 "EHLO mail.kernel.org"
+        id S1726772AbfLMWFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 17:05:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbfLMWR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 17:17:58 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        id S1726638AbfLMWFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 17:05:06 -0500
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F9192073D;
-        Fri, 13 Dec 2019 22:17:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 790C7206DA
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 22:05:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576275477;
-        bh=tlc6zX/LTEyF5wczNgFfQrREIesmdwXR+IfQ/HzAsqI=;
+        s=default; t=1576274705;
+        bh=lB0pmE4DH9n1aB+8qsKB2hF3RhXN8SqieZmVDmlXu3o=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=BkxSAcqVhR0pEES5vqzaja2g/RZ4Zz1iwoK5Yo4PncyYac7iZxStJ+xuU3nPxDrh6
-         0YmTwFqmA3/uqTdAVhcCtFaEYOoHGCVhgQnhIQIGiCKp7TOkX/sEQSHtgccpwHM3NJ
-         mWxS5sjFZZ9cUhKehXAcDrTfxjqDjsOZE9wb9aMo=
-Received: by mail-qk1-f174.google.com with SMTP id z76so538668qka.2;
-        Fri, 13 Dec 2019 14:17:57 -0800 (PST)
-X-Gm-Message-State: APjAAAWvc023vKK6GfR8jcmsz3cunA4YJ50GWLodEn8WB2xoJIH/Rry1
-        EmLmuGZmagLy3/uG1oaQ5Slntji76Rw5eYcLBQ==
-X-Google-Smtp-Source: APXvYqyLVGyr/ou6/zCUSR6nbqEvM4qZSGd5lkUZviadNs7lGm/zXP4dZkMOJJThzBpo59gYWshwpV/gf0X0NWtCe7c=
-X-Received: by 2002:a05:620a:135b:: with SMTP id c27mr1536497qkl.119.1576245251094;
- Fri, 13 Dec 2019 05:54:11 -0800 (PST)
+        b=ro+XXfNCmF2DYiSC0iWcoMb30gc3gC5HlNG+UuNlqxhgAU0oCAuqiM+MS5aIiy33J
+         S2P+cuaDNV4QnzAoD+LNBCwyWpw8J9H/QxAIEaJyRi7QwdzD/yDWh9xAfYbCtvXdGV
+         hYlaX3pDqyYe7VwmzH/cWYJ00snRdfRcCkqs4bvI=
+Received: by mail-wm1-f44.google.com with SMTP id a5so363451wmb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 14:05:05 -0800 (PST)
+X-Gm-Message-State: APjAAAX8gqPHIrEGCRvU+hoFahojA+Ss0wSMtJN7PJ643VOSVvNctnlC
+        od4m5eBNKbKDPZo8l0zDiE+33BieRWNIKDq43Xvxjg==
+X-Google-Smtp-Source: APXvYqwJqiYJWWJLnD7MVAVhWixUCzijvK0zvRV05H850puS930kAWCyf3ggPO+OIZT7N+dZo0x4pEapwXHKt/lg4eo=
+X-Received: by 2002:a1c:7d8b:: with SMTP id y133mr14372276wmc.165.1576259379347;
+ Fri, 13 Dec 2019 09:49:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20191211061911.238393-1-hsinyi@chromium.org> <20191211061911.238393-4-hsinyi@chromium.org>
-In-Reply-To: <20191211061911.238393-4-hsinyi@chromium.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 13 Dec 2019 07:53:59 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+jkgDj6-SH1FrnjB1CQmf33=XUwN3N_fw_aJsQm3Fq9A@mail.gmail.com>
-Message-ID: <CAL_Jsq+jkgDj6-SH1FrnjB1CQmf33=XUwN3N_fw_aJsQm3Fq9A@mail.gmail.com>
-Subject: Re: [PATCH RESEND 3/4] dt-bindings: drm/bridge: Add GPIO display mux binding
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>
+References: <cbecab05-9e95-5dec-ef81-499617c153a6@suse.com>
+ <08B92B44-CCA9-4B83-B9CC-F1601D44B73F@amacapital.net> <0053f606-f4f7-3951-f40b-b7bd08703590@suse.com>
+ <CALCETrWHNunMzP1xHmOhvHG20_baoeXhNbCcEJgCgm5xzGM5Tw@mail.gmail.com> <ed9d8df6-0fe7-ca15-bab2-4d9cbbfe62f0@suse.com>
+In-Reply-To: <ed9d8df6-0fe7-ca15-bab2-4d9cbbfe62f0@suse.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 13 Dec 2019 09:49:28 -0800
+X-Gmail-Original-Message-ID: <CALCETrXoK+6gNn=3_yZdkHScd=N-a2f_VPC-svkFfHVsiVusVw@mail.gmail.com>
+Message-ID: <CALCETrXoK+6gNn=3_yZdkHScd=N-a2f_VPC-svkFfHVsiVusVw@mail.gmail.com>
+Subject: Re: [PATCH] x86-64/entry: add instruction suffix to SYSRET
+To:     Jan Beulich <jbeulich@suse.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 12:19 AM Hsin-Yi Wang <hsinyi@chromium.org> wrote:
+On Fri, Dec 13, 2019 at 1:55 AM Jan Beulich <jbeulich@suse.com> wrote:
 >
-> From: Nicolas Boichat <drinkcat@chromium.org>
+> On 12.12.2019 22:43, Andy Lutomirski wrote:
+> > On Tue, Dec 10, 2019 at 7:40 AM Jan Beulich <jbeulich@suse.com> wrote:
+> >>
+> >> On 10.12.2019 16:29, Andy Lutomirski wrote:
+> >>>> On Dec 10, 2019, at 2:48 AM, Jan Beulich <JBeulich@suse.com> wrote:
+> >>>>
+> >>>> =EF=BB=BFOmitting suffixes from instructions in AT&T mode is bad pra=
+ctice when
+> >>>> operand size cannot be determined by the assembler from register
+> >>>> operands, and is likely going to be warned about by upstream gas in =
+the
+> >>>> future. Add the missing suffix here.
+> >>>>
+> >>>> Signed-off-by: Jan Beulich <jbeulich@suse.com>
+> >>>>
+> >>>> --- a/arch/x86/entry/entry_64.S
+> >>>> +++ b/arch/x86/entry/entry_64.S
+> >>>> @@ -1728,7 +1728,7 @@ END(nmi)
+> >>>> SYM_CODE_START(ignore_sysret)
+> >>>>    UNWIND_HINT_EMPTY
+> >>>>    mov    $-ENOSYS, %eax
+> >>>> -    sysret
+> >>>> +    sysretl
+> >>>
+> >>> Isn=E2=80=99t the default sysretq?  sysretl looks more correct, but t=
+hat suggests
+> >>> that your changelog is wrong.
+> >>
+> >> No, this is different from ret, and more like iret and lret.
+> >>
+> >>> Is this code even reachable?
+> >>
+> >> Yes afaict, supported by the comment ahead of the symbol. syscall_init=
+()
+> >> puts its address into MSR_CSTAR when !IA32_EMULATION.
+> >>
+> >
+> > What I meant was: can a program actually get itself into 32-bit mode
+> > to execute a 32-bit SYSCALL instruction?
 >
-> Add bindings for Generic GPIO mux driver.
->
-> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> ---
-> Change from RFC to v1:
-> - txt to yaml
-> ---
->  .../bindings/display/bridge/gpio-mux.yaml     | 89 +++++++++++++++++++
->  1 file changed, 89 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/gpio-mux.yaml
->
-> diff --git a/Documentation/devicetree/bindings/display/bridge/gpio-mux.yaml b/Documentation/devicetree/bindings/display/bridge/gpio-mux.yaml
-> new file mode 100644
-> index 000000000000..cef098749066
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/gpio-mux.yaml
-> @@ -0,0 +1,89 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/gpio-mux.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Generic display mux (1 input, 2 outputs)
+> Why not? It can set up a 32-bit code segment descriptor, far-branch
+> into it, and then execute SYSCALL. I can't see anything preventing
+> this in the logic involved in descriptor adjustment system calls. In
+> fact it looks to be at least partly the opposite - fill_ldt()
+> disallows creation of 64-bit code segments (oddly enough
+> fill_user_desc() then still copies the bit back, despite there
+> apparently being no way for it to get set).
 
-What makes it generic? Doesn't the mux chip have power supply,
-possibly a reset line or not, etc.? What about a mux where the GPIO
-controls the mux?
+Do we allow creation of 32-bit code segments on !IA32_EMULATION
+kernels?  I think we shouldn't, but I'm not really sure.
 
-Generally, we avoid 'generic' bindings because h/w is rarely generic.
-You can have a generic driver which works on multiple devices.
+Anyway, this is irrelevant to the patch at hand.
 
-> +
-> +maintainers:
-> +  - Nicolas Boichat <drinkcat@chromium.org>
-> +
-> +description: |
-> +  This bindings describes a simple display (e.g. HDMI) mux, that has 1
-> +  input, and 2 outputs. The mux status is controlled by hardware, and
-> +  its status is read back using a GPIO.
-> +
-> +properties:
-> +  compatible:
-> +    const: gpio-display-mux
-> +
-> +  detect-gpios:
-> +    maxItems: 1
-> +    description: GPIO that indicates the active output
-> +
-> +  ports:
-> +    type: object
-> +
-> +    properties:
-> +      port@0:
-> +        type: object
-> +        description: |
-> +          Video port for input.
-> +
-> +      port@1:
-> +        type: object
-> +        description: |
-> +          2 video ports for output.
-> +          The reg value in the endpoints matches the GPIO status: when
-> +          GPIO is asserted, endpoint with reg value <1> is selected.
-
-You should describe 'endpoint@0' and 'endpoint@1' here too.
-
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +  - detect-gpios
-> +  - ports
-> +
-> +examples:
-> +  - |
-> +    hdmi_mux: hdmi_mux {
-> +      compatible = "gpio-display-mux";
-> +      status = "okay";
-
-Don't show status in examples.
-
-> +      detect-gpios = <&pio 36 GPIO_ACTIVE_HIGH>;
-> +      pinctrl-names = "default";
-> +      pinctrl-0 = <&hdmi_mux_pins>;
-> +      ddc-i2c-bus = <&hdmiddc0>;
-
-Not documented. Is the i2c bus muxed too? If not, then this is in the
-wrong place.
-
-> +
-> +      ports {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        port@0 { /* input */
-> +          reg = <0>;
-> +
-> +          hdmi_mux_in: endpoint {
-> +            remote-endpoint = <&hdmi0_out>;
-> +          };
-> +        };
-> +
-> +        port@1 { /* output */
-> +          reg = <1>;
-> +
-> +          #address-cells = <1>;
-> +          #size-cells = <0>;
-> +
-> +          hdmi_mux_out_anx: endpoint@0 {
-> +            reg = <0>;
-> +            remote-endpoint = <&anx7688_in>;
-> +          };
-> +
-> +          hdmi_mux_out_hdmi: endpoint@1 {
-> +            reg = <1>;
-> +            remote-endpoint = <&hdmi_connector_in>;
-> +          };
-> +        };
-> +      };
-> +    };
-> --
-> 2.24.0.525.g8f36a354ae-goog
->
+--Andy
