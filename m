@@ -2,104 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C08611E06B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:15:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 504F911E0B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:28:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfLMJPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:15:15 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:40024 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbfLMJPP (ORCPT
+        id S1726961AbfLMJ2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:28:10 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:48022 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbfLMJ1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:15:15 -0500
-Received: by mail-il1-f194.google.com with SMTP id b15so1490036ila.7
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 01:15:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lhhQ4tcwmeQStYaNHbNoHSE/s07Lkdx+vy7ZqDxz9/I=;
-        b=bqf2gMqMPcj2CdLdx4/7z4SGPeOe16t3NFwPGyEqAuIo3bArzFCAnXojgo9vOKILnZ
-         X2SbwaIsIiPqYIwIin/JpANpYMRTtnqS8wQpGLp6fm5GFyV21XYAouJ3KIFZDZIJAPCK
-         5Z5iqD+pbjGRfNLbDhwMl2nHCWEw66RArAP2w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lhhQ4tcwmeQStYaNHbNoHSE/s07Lkdx+vy7ZqDxz9/I=;
-        b=EvKAlPuZyE4Tp1B/RHSwJnoH0Pv0w0D1xDEm9Bro9nlNT9VUPUL+SbD1GghChZ4LkC
-         ifs47EcvJjkWnPCxshsb8XG84iMxvsdgBTRLxxNS6pgtEgzeLKtj1XcaSTNdzV15fx7I
-         /i+MxQKvtMaioZmgItkdSCBEFh/OtCoFvc95zq1SpeojykVqAeJFkpJ08kgA9WOn/ewA
-         GzcCsyMrTpUPkd/QYHoLjC4JWPIP+gTv/KpbnewHGQAHcekhOzxjPka3DL5Gro5sLzTK
-         4dXvW39zDP7mwtnAEbb+rpN1OhLcT+VyrWvioyALdROxI5+u/sUJKVKuuUQSpxXyvDsK
-         XHtA==
-X-Gm-Message-State: APjAAAVJDiq5pmn7FcdvH/eGx/NuGbkHm/bfPdXqsGhct+iG51nvb8/e
-        P/K/IKEg/xZllULlCPd47qcxyI7GRjcsdM3MGxP3QA==
-X-Google-Smtp-Source: APXvYqwWPwRORxqG4jy2Iy3LqhdqK/zZxkzDePZJrGA2tnSIAnlzo3+Euo5zMkZtXDIoAuSp7VdGG5IShMEUKkrcE/c=
-X-Received: by 2002:a92:89c2:: with SMTP id w63mr12345010ilk.252.1576228514214;
- Fri, 13 Dec 2019 01:15:14 -0800 (PST)
+        Fri, 13 Dec 2019 04:27:34 -0500
+Received: from 79.184.255.82.ipv4.supernova.orange.pl (79.184.255.82) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id ca8ad0f169ccbab0; Fri, 13 Dec 2019 10:27:32 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Subject: [PATCH v1 05/10] intel_idle: Refactor intel_idle_cpuidle_driver_init()
+Date:   Fri, 13 Dec 2019 10:16:04 +0100
+Message-ID: <15175612.mLOhOsQDLf@kreacher>
+In-Reply-To: <3950312.2WmFeOdZGY@kreacher>
+References: <3950312.2WmFeOdZGY@kreacher>
 MIME-Version: 1.0
-References: <20191212145042.12694-1-labbott@redhat.com> <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
- <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com> <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
- <cf4c9634-1503-d182-cb12-810fb969bc96@redhat.com> <20191212213609.GK4203@ZenIV.linux.org.uk>
-In-Reply-To: <20191212213609.GK4203@ZenIV.linux.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 13 Dec 2019 10:15:03 +0100
-Message-ID: <CAJfpegv_zY6w6=pOL0x=sjuQmGae0ymOafZXjyAdNEHj+EKyNA@mail.gmail.com>
-Subject: Re: [PATCH] vfs: Don't reject unknown parameters
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 10:36 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-> So you could bloody well just leave recognition (and handling) of "source"
-> to the caller, leaving you with just this:
->
->         if (strcmp(param->key, "source") == 0)
->                 return -ENOPARAM;
->         /* Just log an error for backwards compatibility */
->         errorf(fc, "%s: Unknown parameter '%s'", fc->fs_type->name, param->key);
->         return 0;
+Move the C-state verification and checks from
+intel_idle_cpuidle_driver_init() to a separate function,
+intel_idle_verify_cstate(), and make the former call it after
+checking the CPUIDLE_FLAG_UNUSABLE state flag.
 
-Which is fine for the old mount(2) interface.
+Also combine the drv->states[] updates with the incrementation of
+drv->state_count.
 
-But we have a brand new API as well; do we really need to carry these
-backward compatibility issues forward?  I mean checking if a
-param/flag is supported or not *is* useful and lacking that check is
-the source of numerous headaches in legacy interfaces (just take the
-open(2) example and the introduction of O_TMPFILE).
+No intentional functional impact.
 
-Just need a flag in fc indicating if this option comes from the old interface:
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-         if (strcmp(param->key, "source") == 0)
-                 return -ENOPARAM;
-         /* Just log an error for backwards compatibility */
-         errorf(fc, "%s: Unknown parameter '%s'", fc->fs_type->name,
-param->key);
-         return fc->legacy ? 0 : -ENOPARAM;
+No changes from the RFC version.
 
-And TBH, I think that logic applies to the common flags as well.  Some
-of these simply make no sense on the new interface ("silent",
-"posixacl") and some are ignored for lots of filesystems ("sync",
-"dirsync", "mand", "lazytime").  It would also be nice to reject "rw"
-for read-only filesystems.
+---
+ drivers/idle/intel_idle.c | 49 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 25 insertions(+), 24 deletions(-)
 
-I have sent patches for the above numerous times, all been ignored by
-DavidH and Al.  While this seems minor now, I think getting this
-interface into a better shape as early as possible may save lots more
-headaches later...
+diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+index 75fd2a7b0842..47255d3cf51f 100644
+--- a/drivers/idle/intel_idle.c
++++ b/drivers/idle/intel_idle.c
+@@ -944,6 +944,22 @@ static void intel_idle_s2idle(struct cpuidle_device *dev,
+ 	mwait_idle_with_hints(eax, ecx);
+ }
+ 
++static bool intel_idle_verify_cstate(unsigned int mwait_hint)
++{
++	unsigned int mwait_cstate = MWAIT_HINT2CSTATE(mwait_hint) + 1;
++	unsigned int num_substates = (mwait_substates >> mwait_cstate * 4) &
++					MWAIT_SUBSTATE_MASK;
++
++	/* Ignore the C-state if there are NO sub-states in CPUID for it. */
++	if (num_substates == 0)
++		return false;
++
++	if (mwait_cstate > 2 && !boot_cpu_has(X86_FEATURE_NONSTOP_TSC))
++		mark_tsc_unstable("TSC halts in idle states deeper than C2");
++
++	return true;
++}
++
+ static void __setup_broadcast_timer(bool on)
+ {
+ 	if (on)
+@@ -1332,10 +1348,10 @@ static void __init intel_idle_cpuidle_driver_init(void)
+ 	drv->state_count = 1;
+ 
+ 	for (cstate = 0; cstate < CPUIDLE_STATE_MAX; ++cstate) {
+-		int num_substates, mwait_hint, mwait_cstate;
++		unsigned int mwait_hint;
+ 
+-		if ((cpuidle_state_table[cstate].enter == NULL) &&
+-		    (cpuidle_state_table[cstate].enter_s2idle == NULL))
++		if (!cpuidle_state_table[cstate].enter &&
++		    !cpuidle_state_table[cstate].enter_s2idle)
+ 			break;
+ 
+ 		if (cstate + 1 > max_cstate) {
+@@ -1343,34 +1359,19 @@ static void __init intel_idle_cpuidle_driver_init(void)
+ 			break;
+ 		}
+ 
+-		mwait_hint = flg2MWAIT(cpuidle_state_table[cstate].flags);
+-		mwait_cstate = MWAIT_HINT2CSTATE(mwait_hint);
+-
+-		/* number of sub-states for this state in CPUID.MWAIT */
+-		num_substates = (mwait_substates >> ((mwait_cstate + 1) * 4))
+-					& MWAIT_SUBSTATE_MASK;
+-
+-		/* if NO sub-states for this state in CPUID, skip it */
+-		if (num_substates == 0)
+-			continue;
+-
+-		/* if state marked as disabled, skip it */
++		/* If marked as unusable, skip this state. */
+ 		if (cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_UNUSABLE) {
+ 			pr_debug("state %s is disabled\n",
+ 				 cpuidle_state_table[cstate].name);
+ 			continue;
+ 		}
+ 
++		mwait_hint = flg2MWAIT(cpuidle_state_table[cstate].flags);
++		if (!intel_idle_verify_cstate(mwait_hint))
++			continue;
+ 
+-		if (((mwait_cstate + 1) > 2) &&
+-			!boot_cpu_has(X86_FEATURE_NONSTOP_TSC))
+-			mark_tsc_unstable("TSC halts in idle"
+-					" states deeper than C2");
+-
+-		drv->states[drv->state_count] =	/* structure copy */
+-			cpuidle_state_table[cstate];
+-
+-		drv->state_count += 1;
++		/* Structure copy. */
++		drv->states[drv->state_count++] = cpuidle_state_table[cstate];
+ 	}
+ 
+ 	if (icpu->byt_auto_demotion_disable_flag) {
+-- 
+2.16.4
 
-Thanks,
-Miklos
+
+
+
+
