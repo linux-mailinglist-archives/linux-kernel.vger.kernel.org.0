@@ -2,64 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56F4E11E609
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D57111E61B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:07:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbfLMPDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:03:50 -0500
-Received: from muru.com ([72.249.23.125]:47090 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbfLMPDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:03:49 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 670AE8161;
-        Fri, 13 Dec 2019 15:04:26 +0000 (UTC)
-Date:   Fri, 13 Dec 2019 07:03:44 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Dave Gerlach <d-gerlach@ti.com>
-Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/5] ARM: OMAP2+: Introduce cpuidle for am335x/am437x
-Message-ID: <20191213150344.GJ35479@atomide.com>
-References: <20191213030755.16096-1-d-gerlach@ti.com>
+        id S1727700AbfLMPFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:05:08 -0500
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:27553 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbfLMPFI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 10:05:08 -0500
+Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa1.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa1.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: /l3zNd7W8x5mGxD5D2YKoB1ZSgknSeaTBybraVXNXDLaHm0eK/6PWCZz5tbCMhBfosSQk99CMd
+ sun3NtdDv8aYIoRGm4z0TPZ/CjWpJ9uiZz54nOAyE58fK2qAOiwinDmKSjahHddnQWWvvfetST
+ ckayaBEyvavx3V+Kp+T9fDkeUaQyeJDbbtHiuZIPIrabWW6LqIRxB13GEMq5cdGQSZgwjzLScP
+ o1lcMPyuTP/IHzWr7cWsZm8HA2xfjYrUqmWEtVoFw7TC++lzLZVf12NqSWfQmGy4T5C19yxMlF
+ PRI=
+X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
+   d="scan'208";a="61646956"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Dec 2019 08:05:07 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 13 Dec 2019 08:05:06 -0700
+Received: from m18063-ThinkPad-T460p.microchip.com (10.10.85.251) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Fri, 13 Dec 2019 08:05:02 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <sam@ravnborg.org>, <bbrezillon@kernel.org>, <airlied@linux.ie>,
+        <daniel@ffwll.ch>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <lee.jones@linaro.org>
+CC:     <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v2 0/6] fixes for atmel-hlcdc
+Date:   Fri, 13 Dec 2019 17:04:50 +0200
+Message-ID: <1576249496-4849-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213030755.16096-1-d-gerlach@ti.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Dave Gerlach <d-gerlach@ti.com> [191212 19:07]:
-> Hi,
-> This series adds support for cpuidle on am335x and am437x using the
-> cpuidle_arm driver. When testing on am335x-evm and am437x-gp-evm the
-> follow power consumption reductions are seen on v5.5-rc1 baseline:
-> 
-> 
-> Idling at command line, CPUFreq userspace governor to 300MHz:
->   am335x-evm:
->     VDD_MPU: 48 mW -> 5 mW
-> 
->   am437x-gp-evm:
->     VDD_MPU: 32 mW -> 3 mW
-> 
-> 
-> Idling at command line, CPUFreq userspace governor to 1GHz:
->   am335x-evm:
->     VDD_MPU: 313 mW -> 18 mW
-> 
->   am437x-gp-evm:
->     VDD_MPU: 208 mW -> 10 mW
+Hi,
 
-Hey this is great! A beverage on me when we get a chance :)
+I have few fixes for atmel-hlcdc driver in this series as well
+as two reverts.
+Revert "drm: atmel-hlcdc: enable sys_clk during initalization." is
+due to the fix in in patch 2/5.
 
-For merging, looks like I should take the series after folks are happy
-with it. Santosh, care to review and ack if it looks OK?
+Thank you,
+Claudiu Beznea
 
-Regards,
+Changes in v2:
+- introduce patch 3/6
+- use dev_err() inpatch 4/6
+- introduce patch 5/6 instead of reverting commit f6f7ad323461
+  ("drm/atmel-hlcdc: allow selecting a higher pixel-clock than requested")
 
-Tony
+Claudiu Beznea (5):
+  drm: atmel-hlcdc: use double rate for pixel clock only if supported
+  drm: atmel-hlcdc: enable clock before configuring timing engine
+  mfd: atmel-hlcdc: add struct device member to struct
+    atmel_hlcdc_regmap
+  mfd: atmel-hlcdc: return in case of error
+  Revert "drm: atmel-hlcdc: enable sys_clk during initalization."
+
+Peter Rosin (1):
+  drm: atmel-hlcdc: prefer a lower pixel-clock than requested
+
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 18 ++++++++++++------
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c   | 19 +------------------
+ drivers/mfd/atmel-hlcdc.c                      | 18 ++++++++++++++----
+ 3 files changed, 27 insertions(+), 28 deletions(-)
+
+-- 
+2.7.4
+
