@@ -2,206 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C38B11E634
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D138011E63F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:12:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfLMPIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:08:32 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:35433 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbfLMPIb (ORCPT
+        id S1727674AbfLMPMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:12:15 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39335 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727499AbfLMPMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:08:31 -0500
-Received: from mail-qv1-f50.google.com ([209.85.219.50]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1Mi2Fj-1i1myS0lv7-00e57m; Fri, 13 Dec 2019 16:08:29 +0100
-Received: by mail-qv1-f50.google.com with SMTP id o18so953554qvf.1;
-        Fri, 13 Dec 2019 07:08:28 -0800 (PST)
-X-Gm-Message-State: APjAAAXOxvg1WYd+/T/9EpmusdILm9OpW5nLt9b4oO/byJHB/Udd9bUu
-        vvUFfwxfwojJBJGgRN6gpzyRXUiiqql25+iS2L8=
-X-Google-Smtp-Source: APXvYqyXNQ4x18Xb3pDJJ3eG6ztUFPxVU+V+W0//wYliZN89MGgdHAFuqSBKrKU1TKieIVaUDZVh8vYjxfA8MJTr7YE=
-X-Received: by 2002:a0c:aca2:: with SMTP id m31mr14072871qvc.222.1576249707957;
- Fri, 13 Dec 2019 07:08:27 -0800 (PST)
+        Fri, 13 Dec 2019 10:12:14 -0500
+Received: by mail-wr1-f65.google.com with SMTP id y11so7022136wrt.6;
+        Fri, 13 Dec 2019 07:12:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5xjMnK8d3jzGk55yKrr3T8iLeWJCVMJrKa58oe9VrAw=;
+        b=u0CvGYAn/bMZA/crdgBKxOSEJyGgQ5RshzxacnadteTrtuJBI7GaIm9C02V5VyiLkQ
+         FMt7evI11sHvfUqfUsloNQ01INbVsqHR/BjkYbI7ogT8Ur8+8hwgS7lfNFiu6DRLX7V5
+         1qowp3XY8eQpt5urCg+LDoLv38C63lNjjGTyiaDc1z5AYhrNYrYzGvg4Lm8orXnVffwv
+         663+wdGHu3u22PafCvUx19iuJAubYd2/ThGLdxbLK0kMaEmhMW3Pv3/doGrI6cd738ga
+         66MXV1s94wuscDXSvi/b7Kr99cwMClyowaHukz+nMDcTeYPMP5xhteEtqzyAumxaQqdx
+         Dowg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5xjMnK8d3jzGk55yKrr3T8iLeWJCVMJrKa58oe9VrAw=;
+        b=frwSwTH+6XkJPJZoZ42ywIh3EpPydGGr2hm9SCNBLFHahVEdxeTmcIoOhVWqISUiFZ
+         6+DRApOsEwU5qy17EPPchjjf8rK3vQIO7PRfnHrRh/R4vcQ0zY2kFzhTNgY4k/V0/vWD
+         aSCcD6sanYcBUg2A/Ad/ejLVPebYZYEsK0wdLgGtJJHRd/TjarROuv8G8LHjrrqL3Mii
+         C2g6XgnM4CLIqQwmrkjsepuo2TKgKVVBNL3yGkGAWZ31RQ1O3XcWIZJBcTYD1AmAHORR
+         azB4bcNpJVXhKcwew4Xr4h334Pn/8+WNrKTIzeZ/GFXo21MA5ayM4yHKnl6BNa0rFprj
+         Jvgg==
+X-Gm-Message-State: APjAAAUJNdr4WfVKA5XWiO4jqp4gv6g9xURpR6YqIF31KUjofAZ9JPs6
+        +V2yFvO1x5j5ulNxGb9hJuI=
+X-Google-Smtp-Source: APXvYqwpzk77923HcAksbraHc0T9/edYcR0wf0BywZ09CBJMLjJVF6VvY4snaopC5IjgcmLM4Kg96Q==
+X-Received: by 2002:adf:df90:: with SMTP id z16mr14214961wrl.273.1576249931170;
+        Fri, 13 Dec 2019 07:12:11 -0800 (PST)
+Received: from localhost (pD9E518ED.dip0.t-ipconnect.de. [217.229.24.237])
+        by smtp.gmail.com with ESMTPSA id 16sm10475010wmi.0.2019.12.13.07.12.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 07:12:09 -0800 (PST)
+Date:   Fri, 13 Dec 2019 16:12:08 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] i2c: tegra: Support atomic transfers
+Message-ID: <20191213151208.GC222809@ulmo>
+References: <20191212233428.14648-1-digetx@gmail.com>
+ <20191212233428.14648-2-digetx@gmail.com>
 MIME-Version: 1.0
-References: <20191126161824.337724-1-arnd@arndb.de> <20191126161824.337724-7-arnd@arndb.de>
- <09c664fd-87fb-4fac-f104-9afbe7d33aa2@xs4all.nl>
-In-Reply-To: <09c664fd-87fb-4fac-f104-9afbe7d33aa2@xs4all.nl>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 13 Dec 2019 16:08:11 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1TvFCJf8t9T1yOXjsp088s9dbEOKLVDPinfwJe2B-27g@mail.gmail.com>
-Message-ID: <CAK8P3a1TvFCJf8t9T1yOXjsp088s9dbEOKLVDPinfwJe2B-27g@mail.gmail.com>
-Subject: Re: [PATCH v5 6/8] media: v4l2-core: fix v4l2_buffer handling for
- time64 ABI
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:bcTVUHr5D9sBj8v+27Fb5K1qnoKmWUl3vCPuMnw3eva4GA3xlW3
- xPztPSIh2UASPIwXxPAqWlWgptqoJk+idTDkFQsk12ksIJafKMZnpT/jq2/HX2JLoa+TtRO
- JT2ydFg2UEJaFlpTqPWLLpYkl/F/3eafQLGA0skX5TRLSsGsrqHXcI/2hPT19dclY1Upo8S
- VENI0ffJQ15gBSbHWQZAg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:mLdzpUq+mH8=:CBEaYGGaySZCGcc3a0GMC3
- 9nMTSieRNUFonNXkPyT62XTTfz6sQ3XjjLcZQxOR30FE3XwWLLZabv8P4ODHXcGhxI5GkoYW5
- CKVUjb1WUQWvxlnT8p805Sg2WdxWWPxpjbDLstCdgeshRZFwI630jJGFQD/a55gtvWWriP4ha
- xt+kNoFN4OfNeHZQHdoyURzTgllYGQ/k7GSU0vQ9/u4eL+j/wXELAEjTAXHbO+2gT7XqvDXdY
- ayjW25pY+dp6jB0Z2+6T5cjTq5glJomBvpmt+wqTMDcQ4gEhb2i4OabU8Ffy2a6kW0B12Cpvm
- AEmO3Cqii6DnEV2YbYa87ud4NxrTi8sORQd12n2bicIRyEOlDPzGk4yXZWvdkUGVnRzoJmBug
- z0vzlKVqcixhTAgIP8PbJG9fCloNKqWBJF+76r2H1rNPFu5kLO7JuB7vTOu4gIDl7Xhxst5Fa
- gmZG1ROGW7FCGRN9fyd+iktB1lEbtIDsqpbd63U4dLBF+3oQdpmGUFJ9DGgM/SzeOMGdHEXT+
- X56+pUzMnFlBXSAlepCmb8MSeAS4BP0gPultIXFJqwjw+K5Be6c3sJ34Rkv+gHpiBZdTYq+kY
- GsRluB60Ey1pgCQfZ/Tu5EeLY2+EW888FXpKEZpSmltWfZ67nJqq5r0B+7Q2sw2k59681pPMt
- uWNNRzyTcqdYu3CyQPnusgCnrmm1Pjx5GpBdKooMI+EXmYJE9XCS3xvTv+KkeuSM+V+O3sr7J
- 0uUrW+tR52ArSxlS+0h8FBRWRmyEzKnJptba7viTLkGFxLOxBOph9L9x/z1s4OqfrjUPK9gCl
- tOGv86SqyKDBcYux2L/wuiYV67UEWgEzn+f4JI0YHabCiiW6MxdNRkmAAPvYauwyAY/x2nG6S
- 7Li3GWLkfg/kgpKXy8xw==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="GZVR6ND4mMseVXL/"
+Content-Disposition: inline
+In-Reply-To: <20191212233428.14648-2-digetx@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 4:43 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> On 11/26/19 5:18 PM, Arnd Bergmann wrote:
-> >
-> >       switch (cmd) {
-> > +#ifdef COMPAT_32BIT_TIME
->
-> COMPAT_32BIT_TIME -> CONFIG_COMPAT_32BIT_TIME
 
-Fixed.
+--GZVR6ND4mMseVXL/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > +             *vb = (struct v4l2_buffer) {
-> > +                     .index          = vb32.index,
-> > +                     .type           = vb32.type,
-> > +                     .bytesused      = vb32.bytesused,
-> > +                     .flags          = vb32.flags,
-> > +                     .field          = vb32.field,
-> > +                     .timestamp.tv_sec       = vb32.timestamp.tv_sec,
-> > +                     .timestamp.tv_usec      = vb32.timestamp.tv_usec,
-> > +                     .timecode       = vb32.timecode,
->
-> You forgot to copy sequence.
->
-> > +                     .memory         = vb32.memory,
-> > +                     .m.userptr      = vb32.m.usercopy,
->
-> usercopy -> userptr
+On Fri, Dec 13, 2019 at 02:34:26AM +0300, Dmitry Osipenko wrote:
+> System shutdown may happen with interrupts being disabled and in this case
+> I2C core rejects transfers if atomic transfer isn't supported by driver.
+>=20
+> There were several occurrences where I found my Nexus 7 completely
+> discharged despite of being turned off and then one day I spotted this in
+> the log:
+>=20
+>  reboot: Power down
+>  ------------[ cut here ]------------
+>  WARNING: CPU: 0 PID: 1 at drivers/i2c/i2c-core.h:40 i2c_transfer+0x95/0x=
+9c
+>  No atomic I2C transfer handler for 'i2c-1'
+>  Modules linked in: tegra30_devfreq
+>  CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted 5.4.0-next-20191202-0012=
+0-gf7ecd80fb803-dirty #3195
+>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>  [<c010e4b5>] (unwind_backtrace) from [<c010a0fd>] (show_stack+0x11/0x14)
+>  [<c010a0fd>] (show_stack) from [<c09995e5>] (dump_stack+0x85/0x94)
+>  [<c09995e5>] (dump_stack) from [<c011f3d1>] (__warn+0xc1/0xc4)
+>  [<c011f3d1>] (__warn) from [<c011f691>] (warn_slowpath_fmt+0x61/0x78)
+>  [<c011f691>] (warn_slowpath_fmt) from [<c069a8dd>] (i2c_transfer+0x95/0x=
+9c)
+>  [<c069a8dd>] (i2c_transfer) from [<c05667f1>] (regmap_i2c_read+0x4d/0x6c)
+>  [<c05667f1>] (regmap_i2c_read) from [<c0563601>] (_regmap_raw_read+0x99/=
+0x1cc)
+>  [<c0563601>] (_regmap_raw_read) from [<c0563757>] (_regmap_bus_read+0x23=
+/0x38)
+>  [<c0563757>] (_regmap_bus_read) from [<c056293d>] (_regmap_read+0x3d/0xf=
+c)
+>  [<c056293d>] (_regmap_read) from [<c0562d3b>] (_regmap_update_bits+0x87/=
+0xc4)
+>  [<c0562d3b>] (_regmap_update_bits) from [<c0563add>] (regmap_update_bits=
+_base+0x39/0x50)
+>  [<c0563add>] (regmap_update_bits_base) from [<c056fd39>] (max77620_pm_po=
+wer_off+0x29/0x2c)
+>  [<c056fd39>] (max77620_pm_power_off) from [<c013bbdd>] (__do_sys_reboot+=
+0xe9/0x170)
+>  [<c013bbdd>] (__do_sys_reboot) from [<c0101001>] (ret_fast_syscall+0x1/0=
+x28)
+>  Exception stack(0xde907fa8 to 0xde907ff0)
+>  7fa0:                   00000000 00000000 fee1dead 28121969 4321fedc 000=
+00000
+>  7fc0: 00000000 00000000 00000000 00000058 00000000 00000000 00000000 000=
+00000
+>  7fe0: 0045adf0 bed9abb8 004444a0 b6c666d0
+>  ---[ end trace bdd18f87595b1a5e ]---
+>=20
+> The atomic transferring is implemented by enforcing PIO mode for the
+> transfer and by polling interrupt status until transfer is completed or
+> failed.
+>=20
+> Now system shuts down properly every time.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 95 +++++++++++++++++++++++++++++++---
+>  1 file changed, 88 insertions(+), 7 deletions(-)
 
-Fixed.
+I ran this on the test farm and the results are all green, so:
 
-> > +                     .length         = vb32.length,
-> > +                     .request_fd     = vb32.request_fd,
-> > +             };
-> > +
-> > +             if (cmd == VIDIOC_QUERYBUF_TIME32)
-> > +                     memset(&vb->length, 0, sizeof(*vb) -
-> > +                            offsetof(struct v4l2_buffer, length));
->
-> It's from the field AFTER vb->length that this needs to be zeroed. It's best to
-> use the CLEAR_AFTER_FIELD macro here.
+Tested-by: Thierry Reding <treding@nvidia.com>
 
-I'm a bit lost about this one: the fields that are not explicitly
-uninitialized here are already set to zero by the assignment
-above. Should this simply be a
+--GZVR6ND4mMseVXL/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                if (cmd == VIDIOC_QUERYBUF_TIME32)
-                       vb->request_fd = 0;
+-----BEGIN PGP SIGNATURE-----
 
-then? I don't remember where that memset() originally came
-from or why request_fd has to be cleared here.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3zqkgACgkQ3SOs138+
+s6F9NRAAhrADoRuLa9YvQLDZbxpA/Tnpsb8Qm67NM8YOmqAeKzOKlE3WRDH63mia
+MgbZAOoO3x31sfcku/u71k0fVKdDW4XEmCyCmthqj1Sv1hP5F4ySpAlewQZ5xV29
+O+TyJHpegVlBkO6m9cFUU3doeO081pUPf98vGrHjX+S/8eWMnFp836L+ZOPHJ7tg
+qC9MTCNdnQCMd/9JAvnWFO3l4d62gvyF6quaYVmanzbXrVZjeYQqfqzem8IeUsC5
+6XowmsO9xCUR030DVMnIhzFlno9L7rhZ16qA8ael7v6Ehu95JIJ5Ptoz4NPytk15
+loSt1C398luYGOxlVOoqN5eMiy2dYsiqoe/LCnkT8W8GnCCRhptcczyOddA2LoB2
+n6jrzgGFRqJgC4vKowqMTLQdZ4qKCPbQbo7DKRy+xWYVLp+B5TMQ7A8I8j2u6Baa
+yPOEY0qffNiPgR0xCyEqFRf5l+nuGdUQAmWOv6Bax+uq7U4lApTf7Dlc5HKcvWKh
+8+PzEsQ94lrORe/COI2BNCrVfoyqne1ltTrJmE7aryhY3FR8S+RBEQEmju9mB/JO
+ScvvU/wzg5ncg5Fy8U6dv1dhcRiqLHk/0Ejc4/MAZSHgUEXwldqsxSUNguRBpeK1
+SQhtkNgXOkCnjhQPDmKpbKGFobvSCf1ZH9gdehvvAMasyTykdeg=
+=j5aV
+-----END PGP SIGNATURE-----
 
-> > @@ -3100,6 +3141,30 @@ static int video_put_user(void __user *arg, void *parg, unsigned int cmd)
-> >                       return -EFAULT;
-> >               break;
-> >       }
-> > +     case VIDIOC_QUERYBUF_TIME32:
-> > +     case VIDIOC_QBUF_TIME32:
-> > +     case VIDIOC_DQBUF_TIME32:
-> > +     case VIDIOC_PREPARE_BUF_TIME32: {
-> > +             struct v4l2_buffer *vb = parg;
-> > +             struct v4l2_buffer_time32 vb32 = {
-> > +                     .index          = vb->index,
-> > +                     .type           = vb->type,
-> > +                     .bytesused      = vb->bytesused,
-> > +                     .flags          = vb->flags,
-> > +                     .field          = vb->field,
-> > +                     .timestamp.tv_sec       = vb->timestamp.tv_sec,
-> > +                     .timestamp.tv_usec      = vb->timestamp.tv_usec,
-> > +                     .timecode       = vb->timecode,
->
-> You forgot to copy sequence.
-
-Fixed.
-
-> With these changes this patch series passed both the 64 and 32 bit compliance
-> tests (in fact, all the issues mentioned above were found with these compliance
-> tests).
-
-Yay compliance tests!
-
-> I am unable to test with musl since v4l2-ctl and v4l2-compliance are C++ programs,
-> and there doesn't appear to be an easy way to compile a C++ program with musl.
->
-> If you happen to have a test environment where you can compile C++ with musl,
-> then let me know and I can give instructions on how to run the compliance tests.
->
-> If you can't test that, then I can merge this regardless, and hope for the best
-> once the Y2038 fixes end up in glibc. But ideally I'd like to have this tested.
-
-I've heard good things about the prebuilt toolchains from http://musl.cc/.
-These seems to come with a libstdc++, but I have not tried that myself.
-
-I've folded the change below into this patch in my y2038-v4l2-v6 branch
-but have not been able to update the copy on git.kernel.org yet because of
-server-side issues today.
-
-          Arnd
-
-8<-----
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c
-b/drivers/media/v4l2-core/v4l2-ioctl.c
-index c416870a3166..667225712343 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -3055,7 +3055,7 @@ static int video_get_user(void __user *arg, void
-*parg, unsigned int cmd,
-        }
-
-        switch (cmd) {
--#ifdef COMPAT_32BIT_TIME
-+#ifdef CONFIG_COMPAT_32BIT_TIME
-        case VIDIOC_QUERYBUF_TIME32:
-        case VIDIOC_QBUF_TIME32:
-        case VIDIOC_DQBUF_TIME32:
-@@ -3075,15 +3075,15 @@ static int video_get_user(void __user *arg,
-void *parg, unsigned int cmd,
-                        .timestamp.tv_sec       = vb32.timestamp.tv_sec,
-                        .timestamp.tv_usec      = vb32.timestamp.tv_usec,
-                        .timecode       = vb32.timecode,
-+                       .sequence       = vb32.sequence,
-                        .memory         = vb32.memory,
--                       .m.userptr      = vb32.m.usercopy,
-+                       .m.userptr      = vb32.m.userptr,
-                        .length         = vb32.length,
-                        .request_fd     = vb32.request_fd,
-                };
-
-                if (cmd == VIDIOC_QUERYBUF_TIME32)
--                       memset(&vb->length, 0, sizeof(*vb) -
--                              offsetof(struct v4l2_buffer, length));
-+                       vb->request_fd = 0;
-
-                break;
-        }
-@@ -3155,6 +3155,7 @@ static int video_put_user(void __user *arg, void
-*parg, unsigned int cmd)
-                        .timestamp.tv_sec       = vb->timestamp.tv_sec,
-                        .timestamp.tv_usec      = vb->timestamp.tv_usec,
-                        .timecode       = vb->timecode,
-+                       .sequence       = vb->sequence,
-                        .memory         = vb->memory,
-                        .m.userptr      = vb->m.userptr,
-                        .length         = vb->length,
+--GZVR6ND4mMseVXL/--
