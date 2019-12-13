@@ -2,80 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B63511DEF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 08:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6507611DEAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 08:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbfLMH5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 02:57:41 -0500
-Received: from mailgw01.mediatek.com ([216.200.240.184]:44399 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfLMH5l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 02:57:41 -0500
-X-UUID: 111a7bdbbc05466e9b8d0b1ccc455ba0-20191212
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=G9xP57LuRrds9HJm7/htVK7BRBr/hZcnDeiAioMGxyc=;
-        b=hjPLIC1kvltiT+tSCJG3TUMxD1fPnWBD5uCFPFIfYaGfuVBORMBQonlUpoRzsjezQyaWn0T3U3bnu6i7emxepieWQbj2zUMjZTDUAeL4eWcBC+9IwVRy3e9WS0O8R/s3VRtjpUXm+X9Fb6+7xZN9kuPp/p0mQuvSTzxU1nhPY8E=;
-X-UUID: 111a7bdbbc05466e9b8d0b1ccc455ba0-20191212
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <yongqiang.niu@mediatek.com>)
-        (musrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 792802576; Thu, 12 Dec 2019 23:57:37 -0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 13 Dec 2019 15:28:37 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 13 Dec 2019 15:28:24 +0800
-From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v2, 1/2] drm/mediatek: Fix gamma correction issue
-Date:   Fri, 13 Dec 2019 15:28:51 +0800
-Message-ID: <1576222132-31586-2-git-send-email-yongqiang.niu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1576222132-31586-1-git-send-email-yongqiang.niu@mediatek.com>
-References: <1576222132-31586-1-git-send-email-yongqiang.niu@mediatek.com>
+        id S1725945AbfLMHbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 02:31:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57774 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725497AbfLMHbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 02:31:24 -0500
+Received: from localhost (unknown [84.241.199.142])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E8AE22527;
+        Fri, 13 Dec 2019 07:31:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576222284;
+        bh=0F8E162DkAWc/zBDQj4WVQCnjIhvDR7U2JWM3qSA8Gk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1+/UVeWVO2Wrn7jAbXlNXC7NhAymCnGCkhK2IQpdzv5XP+YLF0tJZiAMRBvMAmOi0
+         +Ddexmj9YWSYX9Mua3F5jFu7vYOCcS6ZFP0g+zUTUE5//EMjGEkGAm/qMavRIYReHi
+         o9IU/c4ucTsbMlIDDgYin8wHACA9vcyXqcStx3j0=
+Date:   Fri, 13 Dec 2019 08:31:21 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     shuah@kernel.org, mcgrof@kernel.org, scott.branden@broadcom.com,
+        tiwai@suse.de, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: firmware: Fix it to do root uid check and skip
+Message-ID: <20191213073121.GH1750354@kroah.com>
+References: <20191213015606.23058-1-skhan@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191213015606.23058-1-skhan@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-aWYgdGhlcmUgaXMgbm8gZ2FtbWEgZnVuY3Rpb24gaW4gdGhlIGNydGMNCmRpc3BsYXkgcGF0aCwg
-ZG9uJ3QgYWRkIGdhbW1hIHByb3BlcnR5DQpmb3IgY3J0Yw0KDQpTaWduZWQtb2ZmLWJ5OiBZb25n
-cWlhbmcgTml1IDx5b25ncWlhbmcubml1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvZ3B1
-L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYyB8IDEwICsrKysrKysrLS0NCiAxIGZpbGUgY2hh
-bmdlZCwgOCBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL21l
-ZGlhdGVrL210a19kcm1fY3J0Yy5jDQppbmRleCBjYTRmYzQ3Li45YThlMWQ0IDEwMDY0NA0KLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQorKysgYi9kcml2ZXJz
-L2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCkBAIC03MzQsNiArNzM0LDcgQEAgaW50
-IG10a19kcm1fY3J0Y19jcmVhdGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsDQogCWludCBw
-aXBlID0gcHJpdi0+bnVtX3BpcGVzOw0KIAlpbnQgcmV0Ow0KIAlpbnQgaTsNCisJdWludCBnYW1t
-YV9sdXRfc2l6ZSA9IDA7DQogDQogCWlmICghcGF0aCkNCiAJCXJldHVybiAwOw0KQEAgLTc4NSw2
-ICs3ODYsOSBAQCBpbnQgbXRrX2RybV9jcnRjX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJt
-X2RldiwNCiAJCX0NCiANCiAJCW10a19jcnRjLT5kZHBfY29tcFtpXSA9IGNvbXA7DQorDQorCQlp
-ZiAoY29tcC0+ZnVuY3MtPmdhbW1hX3NldCkNCisJCQlnYW1tYV9sdXRfc2l6ZSA9IE1US19MVVRf
-U0laRTsNCiAJfQ0KIA0KIAlmb3IgKGkgPSAwOyBpIDwgbXRrX2NydGMtPmRkcF9jb21wX25yOyBp
-KyspDQpAQCAtODA1LDggKzgwOSwxMCBAQCBpbnQgbXRrX2RybV9jcnRjX2NyZWF0ZShzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZHJtX2RldiwNCiAJCQkJTlVMTCwgcGlwZSk7DQogCWlmIChyZXQgPCAwKQ0K
-IAkJcmV0dXJuIHJldDsNCi0JZHJtX21vZGVfY3J0Y19zZXRfZ2FtbWFfc2l6ZSgmbXRrX2NydGMt
-PmJhc2UsIE1US19MVVRfU0laRSk7DQotCWRybV9jcnRjX2VuYWJsZV9jb2xvcl9tZ210KCZtdGtf
-Y3J0Yy0+YmFzZSwgMCwgZmFsc2UsIE1US19MVVRfU0laRSk7DQorDQorCWlmIChnYW1tYV9sdXRf
-c2l6ZSkNCisJCWRybV9tb2RlX2NydGNfc2V0X2dhbW1hX3NpemUoJm10a19jcnRjLT5iYXNlLCBn
-YW1tYV9sdXRfc2l6ZSk7DQorCWRybV9jcnRjX2VuYWJsZV9jb2xvcl9tZ210KCZtdGtfY3J0Yy0+
-YmFzZSwgMCwgZmFsc2UsIGdhbW1hX2x1dF9zaXplKTsNCiAJcHJpdi0+bnVtX3BpcGVzKys7DQog
-CW11dGV4X2luaXQoJm10a19jcnRjLT5od19sb2NrKTsNCiANCi0tIA0KMS44LjEuMS5kaXJ0eQ0K
+On Thu, Dec 12, 2019 at 06:56:06PM -0700, Shuah Khan wrote:
+> firmware attempts to load test modules that require root access
+> and fail. Fix it to check for root uid and exit with skip code
+> instead.
+> 
+> Before this fix:
+> 
+> selftests: firmware: fw_run_tests.sh
+> modprobe: ERROR: could not insert 'test_firmware': Operation not permitted
+> You must have the following enabled in your kernel:
+> CONFIG_TEST_FIRMWARE=y
+> CONFIG_FW_LOADER=y
+> CONFIG_FW_LOADER_USER_HELPER=y
+> CONFIG_IKCONFIG=y
+> CONFIG_IKCONFIG_PROC=y
+> not ok 1 selftests: firmware: fw_run_tests.sh # SKIP
+> 
+> With this fix:
+> 
+> selftests: firmware: fw_run_tests.sh
+> skip all tests: must be run as root
+> not ok 1 selftests: firmware: fw_run_tests.sh # SKIP
+> 
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> ---
+>  tools/testing/selftests/firmware/fw_lib.sh | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/firmware/fw_lib.sh b/tools/testing/selftests/firmware/fw_lib.sh
+> index b879305a766d..5b8c0fedee76 100755
+> --- a/tools/testing/selftests/firmware/fw_lib.sh
+> +++ b/tools/testing/selftests/firmware/fw_lib.sh
+> @@ -34,6 +34,12 @@ test_modprobe()
+>  
+>  check_mods()
+>  {
+> +	local uid=$(id -u)
+> +	if [ $uid -ne 0 ]; then
+> +		echo "skip all tests: must be run as root" >&2
+> +		exit $ksft_skip
+> +	fi
+> +
+>  	trap "test_modprobe" EXIT
+>  	if [ ! -d $DIR ]; then
+>  		modprobe test_firmware
+> -- 
+> 2.20.1
+> 
 
+Reviwed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
