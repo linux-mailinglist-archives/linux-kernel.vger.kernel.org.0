@@ -2,114 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D3D11E9DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A211A11E9EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbfLMSMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 13:12:03 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:35539 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728667AbfLMSMC (ORCPT
+        id S1728709AbfLMSNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 13:13:05 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60116 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbfLMSNF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 13:12:02 -0500
-Received: by mail-qk1-f193.google.com with SMTP id z76so341220qka.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 10:12:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zYPYNQC53+CxeOZMSLaSXNleC2alunHbsG33GQacSz4=;
-        b=VoZOlw8aTRJ5130OpGd/2QPPeJVLXlpFsO6lMnt0ZVol+swiG2OufkT5eZ5bZNX1t7
-         6uq3Wh9ztEg6X4u9wTAPnozLL7VzKAPoXn1vpSn2db+we4rYrwIknRm5sY6suY68VX6z
-         qT12MybJIwhfdsNBRT2iKWvDh8hJH5RCDmfsI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zYPYNQC53+CxeOZMSLaSXNleC2alunHbsG33GQacSz4=;
-        b=WRXhgA3DcG5HMBB4aKa1nSMCDfts00ZQNbvtZBCsX9ybjs1yA3weIuwjN5gzQMuDYd
-         YJSE8ki4QSQdPPVnsQhsxReCRmVhMBXY51vQM8RxxC56zoVAU01MI4soUbU0iVmAkd2l
-         xCxxPWBIi0mpclSYeO+3wWeV2Gm/KZu6Xk7olYVJd/3DZkApqpwW367IeufO0T6p1/OI
-         os0Kjp5VYUhpdTa8cuLCzBHYUCuYxi2nZ/hE0C/s14nFZAapRqhZ2gbVGut/tOouGVsV
-         hF9nksiJNacb41fqU3DyfabkPOX2fawjbi5NAfwGNa8LRF+f8YJ5dtMOAW0ztQFAYkdg
-         i0Hg==
-X-Gm-Message-State: APjAAAUFkykyPPz/PvRU6vJyO3lynNNvCUAmqUtSBSsmmkhuVberSRw8
-        0IvbgPhGKNvWkbuI9UfBPB6wJclrUIo7wNb9nwTfFg==
-X-Google-Smtp-Source: APXvYqyenKHhwGviYc0bhj1kkNQB0iXKYg0CMjzjCOLDKyeheouOTpWir748zTNRkxFY2sr98wCfcLVq/vHGlgYTv1g=
-X-Received: by 2002:a37:514:: with SMTP id 20mr14328531qkf.321.1576260721379;
- Fri, 13 Dec 2019 10:12:01 -0800 (PST)
+        Fri, 13 Dec 2019 13:13:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nvJKkuuUpA7IOdjgxThavLGGgjF1c2RnRQtKXoSXgV4=; b=LZc274LqerX9tszvjBBjF8Y7Q
+        2RrM5UKXVTCUhff2SxcdqgCjM5v+TvN1crMfU+2uMX7F23V2NhNxYcbtf4TKxD9pR9n14S/PSkuOx
+        PL1Ll3oHDe5uUx7o9v+9FWK4V9cEKEsBZaC0rbSHjzc4ebg3Qa2O8Nu+By8r7ZJCSufsiW7KouJSP
+        pMdxQEw2j2TT4wFguf0B8zIgSlMuYh8KMoZMTTNAvL2vzA1luosjrErc8wCXa7Dg2y6/8gfXTDKfp
+        fBXplDlDvPtBkKRDJtBst4btxtVygMHAhUeXmpMluaONRMu5CJzffHR8AlPX19YDQNAOXAGl/L39f
+        Fs2eQPsHg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifpQw-0001fI-4G; Fri, 13 Dec 2019 18:12:58 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A3DE5304637;
+        Fri, 13 Dec 2019 19:11:34 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7DD9029D73AA2; Fri, 13 Dec 2019 19:12:55 +0100 (CET)
+Date:   Fri, 13 Dec 2019 19:12:55 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 4/5] locking/lockdep: Reuse free chain_hlocks entries
+Message-ID: <20191213181255.GF2844@hirez.programming.kicks-ass.net>
+References: <20191212223525.1652-1-longman@redhat.com>
+ <20191212223525.1652-5-longman@redhat.com>
+ <20191213102525.GA2844@hirez.programming.kicks-ass.net>
+ <20191213105042.GJ2871@hirez.programming.kicks-ass.net>
+ <9a79ef1a-96e0-1fd7-97e8-ef854b08524d@redhat.com>
 MIME-Version: 1.0
-References: <20191213113510.GG15474@quack2.suse.cz> <20191213153306.30744-1-tranmanphong@gmail.com>
-In-Reply-To: <20191213153306.30744-1-tranmanphong@gmail.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Fri, 13 Dec 2019 10:11:50 -0800
-Message-ID: <CAEXW_YQwrM6=u1gsij-5SL5+2n9Pk9HFEYdF_JWYjitLvr7Dcg@mail.gmail.com>
-Subject: Re: [PATCH V2] ext4: use rcu API in debug_print_tree
-To:     Phong Tran <tranmanphong@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        adilger.kernel@dilger.ca, "Paul E. McKenney" <paulmck@kernel.org>,
-        linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        rcu <rcu@vger.kernel.org>, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a79ef1a-96e0-1fd7-97e8-ef854b08524d@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 7:39 AM Phong Tran <tranmanphong@gmail.com> wrote:
->
-> struct ext4_sb_info.system_blks was marked __rcu.
-> But access the pointer without using RCU lock and dereference.
-> Sparse warning with __rcu notation:
->
-> block_validity.c:139:29: warning: incorrect type in argument 1 (different address spaces)
-> block_validity.c:139:29:    expected struct rb_root const *
-> block_validity.c:139:29:    got struct rb_root [noderef] <asn:4> *
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+On Fri, Dec 13, 2019 at 11:02:46AM -0500, Waiman Long wrote:
 
-Thanks Phong! Looks like a real bug fix caught thanks to Sparse. So
-let us mark for stable as well?
+> That is an interesting idea. It will eliminate the need of a separate
+> array to track the free chain_hlocks. However, if there are n chains
+> available, it will waste about 3n bytes of storage, on average.
+> 
+> I have a slightly different idea. I will enforce a minimum allocation
+> size of 2. For a free block, the first 2 hlocks for each allocation
+> block will store a 32-bit integer (hlock[0] << 16)|hlock[1]:
+> 
+> Bit 31: always 1
+> Bits 24-30: block size
+> Bits 0-23: index to the next free block.
 
-- Joel
+If you look closely at the proposed allocator, my blocks can be much
+larger than 7 bit. In fact, it start with a single block of
+MAX_LOCKDEP_CHAIN_HLOCKS entries.
 
-> ---
->  fs/ext4/block_validity.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> ---
-> change log:
-> V2: Add Reviewed-by: Jan Kara <jack@suse.cz>
->
-> diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-> index d4d4fdfac1a6..1ee04e76bbe0 100644
-> --- a/fs/ext4/block_validity.c
-> +++ b/fs/ext4/block_validity.c
-> @@ -133,10 +133,13 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
->  {
->         struct rb_node *node;
->         struct ext4_system_zone *entry;
-> +       struct ext4_system_blocks *system_blks;
->         int first = 1;
->
->         printk(KERN_INFO "System zones: ");
-> -       node = rb_first(&sbi->system_blks->root);
-> +       rcu_read_lock();
-> +       system_blks = rcu_dereference(sbi->system_blks);
-> +       node = rb_first(&system_blks->root);
->         while (node) {
->                 entry = rb_entry(node, struct ext4_system_zone, node);
->                 printk(KERN_CONT "%s%llu-%llu", first ? "" : ", ",
-> @@ -144,6 +147,7 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
->                 first = 0;
->                 node = rb_next(node);
->         }
-> +       rcu_read_unlock();
->         printk(KERN_CONT "\n");
->  }
->
-> --
-> 2.20.1
->
+That said; I don't think you need to encode the size at all. All we need
+to do is encode the chain_blocks[] index (and stick init_block in that
+array). That should maybe even fit in a single u16.
+
+Also, if we store that in the first and last 'word' of the free range,
+we can detect both before and after freespace.
+
+> In this way, the wasted space will be k bytes where k is the number of
+> 1-entry chains. I don't think merging adjacent blocks will be that
+> useful at this point. We can always add this capability later on if it
+> is found to be useful.
+
+I'm thinking 1 entry isn't much of a chain. My brain is completely fried
+atm, but are we really storing single entry 'chains' ? It seems to me we
+could skip that.
