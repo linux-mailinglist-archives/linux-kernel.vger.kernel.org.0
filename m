@@ -2,96 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6853F11E751
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:00:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02BAE11E769
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:03:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbfLMQAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:00:05 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45563 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbfLMQAF (ORCPT
+        id S1728083AbfLMQB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:01:56 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37437 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728015AbfLMQB4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:00:05 -0500
-Received: by mail-lf1-f67.google.com with SMTP id 203so2298757lfa.12
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:00:03 -0800 (PST)
+        Fri, 13 Dec 2019 11:01:56 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u17so3216639lja.4
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:01:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6d355onEMaQLbFzGsPL3qOJq28B0iID9uA32I/OH8KY=;
-        b=RWONLY0C20iDqzVgHJOMcG0CbIMsarnktxykVv3fzYeDcK6YbJdMcv6KZE7y0BCOlw
-         kLoWcGHRdoHmerJ3dVsBoOp4+zwDg69u2Io0/U/CLa1xJvkhFLD8LWAP0muL6aVREdlr
-         dq+PsPNZF/el3cTFU9c2TLiU19CHe1GqHUjhb9Ao2Js8Swj/6tWPBA7nCliYmQ2ENqoq
-         hV/HLAOs2jFe5nVBnbYC33Yl1pAlomhdJeOm3hDAhsk430Id7SWzriiZyxqxlmZ3qMta
-         g9H4lygWNPJQKBKl3RS5+yH5mlJUPdGNspRipjnSbgj5B4PwJcy9sof2EmJsR3mce3dI
-         IgIg==
+         :cc;
+        bh=5JutpvUzxOsyoaSk9NwrCbjNfxIk5I6Gyk3NK08J6cQ=;
+        b=XbodqbL3vPQgnrqfzeaCyEVhD38xe5Ee/7W6WG+3H0r8d3gK1zcoVwKVXMuUgAU0M2
+         4DQOvNLUDR/////SzUbHc5j5W1xWM/yBLPPmprf6fAhrBPgnVrF9MWLeN4O2vYZCJ7M1
+         4X1x8Fw9FLKKsz3moE9wj1ErHuqh07bNN9CKKPgDO7bCoXbsFXdawNp+ESB1lLm7lQbR
+         T7yralAgbY7NRKeWAjgOfz/kV7Au4VVQTOzHFNzsMAdqqDo6XqgWVar4MM1VmRxH+vOC
+         PfeOm17pCYVt57aHpW1G40Z4N/b7GfLJcpE1D+kmru6Dz8XIukjA6/e/RZoMG8TAjDWv
+         SgYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6d355onEMaQLbFzGsPL3qOJq28B0iID9uA32I/OH8KY=;
-        b=hA5nFgYNJFmFv9FAyNI3AYwcGUQAEV6DGUw7prmCcqYX5LHe+PoJ6MMle4L0pg4JnM
-         QeF+C/VtxRbRvJKgsw7Em41RO74a2ZmmTm/hdvs5IgEShGw6Q4+utYJh/1bZ7AydrNmm
-         94iR1+cK47zmOSHB4RKwmLFJvdi6D907/wf6QSGYcvZ3hHuqKRK9RF6UYzDS9vJluYi1
-         hz6UlH8WJ75kssQweYBDxnT4QR1k1WC5bOK5e/DwaSz7noIvBLafMMNRXLkdja2tSJEU
-         y4pdDMJh7BswYfqXv8Rre2pRXa+3BoRHwR4NOo2Xpy0Ww5dvB3ssZRvl9US5mGjHOc0J
-         LWug==
-X-Gm-Message-State: APjAAAVoEoIPlqiCPdEHxYzTQTW7bnEMI+pu4ydATvuEylx30jmHaLzA
-        kPzgqjX3NsptI9Qghx8vI/mD7KEX1eWDdtS+xGiokg==
-X-Google-Smtp-Source: APXvYqyf9tBuza0aFqrtSUyxftprBtALJcGpe4oAZEEePdM+WgDYDegqUpqrrK70d4RPfcTRXsPPG2o1rKeoC2pjSzU=
-X-Received: by 2002:a19:c648:: with SMTP id w69mr9309054lff.44.1576252802440;
- Fri, 13 Dec 2019 08:00:02 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=5JutpvUzxOsyoaSk9NwrCbjNfxIk5I6Gyk3NK08J6cQ=;
+        b=QI8oyysAC0+RxLOCyTASZa6qVvCJFmn+Ft0Zjt0JvmJYIJmmsgghevy1lctxh+P3wT
+         P7RSOLRSjAhn7yb7t+iYgNFQPCHZhzjeuHBFlP/4m7QEbU4krQEz0t3XGeg2fb+AbPFW
+         hCFuojpV6ssq8MJFryVhNy/e7dAy8lX/c9Ex6nDgmRMQzOfaAoKHdaevEPaoDHF7p0bO
+         J79K1A4MlI7WEdUe73MEyO6OuRErE3Rj2kIhECz0bbDZeVZXyFsgA7qZrM8Oh/womYmR
+         RiaR6fDzYtDEH30Rdx+88WvWKPX+ozpT29dIsrXDtISJ8pxJ4k80KECzO7fGhFY1mnkY
+         l1dg==
+X-Gm-Message-State: APjAAAXW3DOVw8zbRffEZWN7e6vSehfrJ+ps3LfqDwnFEQ7SWHabBPmd
+        3dNcfrZRkcZPwTGrO3rF/X2P38neuH2HcU6TCV6HXw==
+X-Google-Smtp-Source: APXvYqw5j7XQGOFi0lBLLQGKLSulok+o4hXa/wOnJ5dacau9siOORcPCGi5To+aftjmvKminoQEjm3PyKNxF1Nwhy2s=
+X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr9948355ljm.233.1576252914355;
+ Fri, 13 Dec 2019 08:01:54 -0800 (PST)
 MIME-Version: 1.0
-References: <1576221873-28738-1-git-send-email-krzk@kernel.org>
-In-Reply-To: <1576221873-28738-1-git-send-email-krzk@kernel.org>
+References: <20191209163937.8156-1-krzk@kernel.org> <20191209163937.8156-2-krzk@kernel.org>
+In-Reply-To: <20191209163937.8156-2-krzk@kernel.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 13 Dec 2019 16:59:50 +0100
-Message-ID: <CACRpkdaQZZcaPtDfieGSP9wSow11Xv3K_x89bq=QeYGb2BhpHw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: Fix missing OF and GPIOLIB dependency
- on S3C24xx and S3C64xx
+Date:   Fri, 13 Dec 2019 17:01:43 +0100
+Message-ID: <CACRpkdbZ8d0K08uSUhzUwnDupXX=Y+Wc+sa_etK-LnPL7RDB_Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: samsung: Clarify the option titles/names
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chen Zhou <chenzhou10@huawei.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 8:24 AM Krzysztof Kozlowski <krzk@kernel.org> wrote=
-:
+On Mon, Dec 9, 2019 at 5:40 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> All Samsung pinctrl drivers select common part - PINCTRL_SAMSUNG which us=
-es
-> both OF and GPIOLIB inside.  However only Exynos drivers depend on these,
-> therefore after enabling COMPILE_TEST, on x86_64 build of S3C64xx driver
-> failed:
+> The config options toggle Samsung Exynos SoCs pinctrl drivers, not the
+> driver data.  Clarify this in the option title/name and also make it
+> consistent with other Samsung entries.  No functional change.
 >
->     drivers/pinctrl/samsung/pinctrl-samsung.c: In function =E2=80=98samsu=
-ng_gpiolib_register=E2=80=99:
->     drivers/pinctrl/samsung/pinctrl-samsung.c:969:5: error: =E2=80=98stru=
-ct gpio_chip=E2=80=99 has no member named =E2=80=98of_node=E2=80=99
->        gc->of_node =3D bank->of_node;
->          ^
->
-> Rework the dependencies so all Samsung drivers and common
-> PINCTRL_SAMSUNG part depend on OF_GPIO (which is default yes if GPIOLIB
-> and OF are enabled).
->
-> Reported-by: Chen Zhou <chenzhou10@huawei.com>
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-What should this be applied on? It doesn't apply to my fixes
-branch which is close to v5.5-rc1. Please rebase and resend
-if this was not based on that.
-
-Should this have a Fixes: tag?
+Like the other Samsung patch this doesn't apply to my tree
+devel branch which is close to v5.5-rc1.
 
 Yours,
 Linus Walleij
