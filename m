@@ -2,128 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D679611E591
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE71D11E59E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:34:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbfLMO3q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 09:29:46 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39740 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfLMO3q (ORCPT
+        id S1727758AbfLMOdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 09:33:10 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61020 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727610AbfLMOdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 09:29:46 -0500
-Received: by mail-lj1-f193.google.com with SMTP id e10so2853197ljj.6;
-        Fri, 13 Dec 2019 06:29:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dzOJoViZyzmlBce2YvVe0rRd6r7H8bV+TzqfDck3oOc=;
-        b=KeZKPMZoIO7wUHMwZsZ9W3IjN9Ys8z+dw72Qio7PWqWDLsiGiXE6Gx4VBuCcdUIByX
-         CNU/eGA9oqca9M7zJJmDuUM+ucvK+riOiqhaAD3ffHNre7hvMzW1OYecExBRHEwN/yh3
-         3QZuPMyP/5a0mI/QRKUbImIx7XbjXJB1dRXB5hB1ZmhajpJnpJ2EDR2eclAnMCOlyQlb
-         0oHO4Y/kG4JGU4tEEamirI4zhDATVisSs2JxgAzaD0KHb7qYW9KW5tvK+uwWUchN6yTk
-         tX/D6xXYZsJCQ5LiHPXT9wPCgnVAHdjylnimxacw9WRhqLX4SHjw9NDSDaLspfDaVW5Z
-         h3dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dzOJoViZyzmlBce2YvVe0rRd6r7H8bV+TzqfDck3oOc=;
-        b=LdWzxMmQOJJ3+B+bV446vf4gbId5HhingHxrBDDYCmrN6EE2VIKrfjUkzkSJ8P4hOh
-         JQQtEjOMDDmKy+7BnMZQyX65HO1E1g3eTW+rw0z+s747Ep4ARglN7t3Jg+jvwCDJKDWu
-         cs6d7SLi1IGns6H5m7EzXJXeowN38+ndExUHRJwgrnZUWvFrohFIo48ugJmicAfslloO
-         5PCe2n5a5lWN/T35OTk4TROogcZ0PpsONxYxXmIE6NG39vjuXuZP0zf45uxBOc5z0u7Z
-         HZ7vJ+f526+YDNWxhS4bk8YFfqLOQtvNOhznt7Q/npnXnRkImXbUYUUCVDuMgJ29Xxk5
-         GQrQ==
-X-Gm-Message-State: APjAAAUTBv37sXnfUz9bm8ulAQ6Y9vspkUUJVg4UplnrKOENIuJWZiEF
-        mQZ3BhmhGRg26jAZCfIr8qk=
-X-Google-Smtp-Source: APXvYqzUIRA/6pr6C1HZPn0ryqhh2qLm3J/HEId13QznHjQsMIPsZR5tkA+XSTfT1loN4SwUMkt3GQ==
-X-Received: by 2002:a2e:810d:: with SMTP id d13mr9909467ljg.113.1576247383751;
-        Fri, 13 Dec 2019 06:29:43 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id i13sm4874011ljg.89.2019.12.13.06.29.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 06:29:43 -0800 (PST)
-Subject: Re: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM
- state
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>
-References: <20191212233428.14648-1-digetx@gmail.com>
- <20191212233428.14648-4-digetx@gmail.com>
-Message-ID: <ae96db3a-0854-6e80-0469-e5fa6fd7bb8e@gmail.com>
-Date:   Fri, 13 Dec 2019 17:29:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Fri, 13 Dec 2019 09:33:10 -0500
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xBDEV8Eb079029;
+        Fri, 13 Dec 2019 23:31:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp);
+ Fri, 13 Dec 2019 23:31:08 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xBDEV807079026
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 13 Dec 2019 23:31:08 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
+ mem_serial_out
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     syzbot <syzbot+f4f1e871965064ae689e@syzkaller.appspotmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asierra@xes-inc.com, ext-kimmo.rautkoski@vaisala.com,
+        Jiri Slaby <jslaby@suse.com>,
+        kai heng feng <kai.heng.feng@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>,
+        mika.westerberg@linux.intel.com, o.barta89@gmail.com,
+        paulburton@kernel.org, sr@denx.de,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        yegorslists@googlemail.com
+References: <00000000000053539a0599173973@google.com>
+ <20191212105701.GB1476206@kroah.com>
+ <CACT4Y+ZeR=z-3CSXFazmngUhs9DqfxgZLKBNhzvfg49Nrw=EzA@mail.gmail.com>
+ <20191213093357.GB2135612@kroah.com>
+ <CACT4Y+beoeY9XwbQX7nDY_5EPMQwK+j3JZ9E-k6vhiZudEA1LA@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <74859736-478a-6ad7-f0be-cfe87ec40ff5@i-love.sakura.ne.jp>
+Date:   Fri, 13 Dec 2019 23:31:08 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <20191212233428.14648-4-digetx@gmail.com>
+In-Reply-To: <CACT4Y+beoeY9XwbQX7nDY_5EPMQwK+j3JZ9E-k6vhiZudEA1LA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-13.12.2019 02:34, Dmitry Osipenko пишет:
-> I noticed that sometime I2C clock is kept enabled during suspend-resume.
-> This happens because runtime PM defers dynamic suspension and thus it may
-> happen that runtime PM is in active state when system enters into suspend.
-> In particular I2C controller that is used for CPU's DVFS is often kept ON
-> during suspend because CPU's voltage scaling happens quite often.
-> 
-> Note: we marked runtime PM as IRQ-safe during the driver's probe in the
-> "Support atomic transfers" patch, thus it's okay to enforce runtime PM
-> suspend/resume in the NOIRQ phase which is used for the system-level
-> suspend/resume of the driver.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index b3ecdd87e91f..d309a314f4d6 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1790,9 +1790,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
->  static int __maybe_unused tegra_i2c_suspend(struct device *dev)
->  {
->  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-> +	int err;
->  
->  	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+On 2019/12/13 19:00, Dmitry Vyukov wrote:
+> Easier said than done. "normal user of the serial port" is not really
+> a thing in Linux, right? You either have CAP_SYS_ADMIN or not, that's
+> not per-device...
+> As far as I remember +Tetsuo proposed a config along the lines of
+> "restrict only things that legitimately cause damage under a fuzzer
+> workload", e.g. freezing filesystems, disabling console output, etc.
+> This may be another candidate. But I can't find where that proposal is
+> now.
 
-I'm now in a doubt that it is correct to use NOIRQ level at all for the
-suspend because i2c_mark_adapter_suspended() uses mutex, thus I'm
-wondering what will happen if there is an asynchronous transfer
-happening during suspend..
+That suggestion got no response for two months.
 
-The i2c_mark_adapter_suspended() will try to block and will never return?
+  https://lkml.kernel.org/r/3e4e2b6b-7828-54ab-cf28-db1a396d7e20@i-love.sakura.ne.jp
 
-> +	err = pm_runtime_force_suspend(dev);
-> +	if (err < 0)
-> +		return err;
-> +
->  	return 0;
->  }
->  
-> @@ -1813,6 +1818,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
->  	if (err)
->  		return err;
->  
-> +	err = pm_runtime_force_resume(dev);
-> +	if (err < 0)
-> +		return err;
-> +
->  	i2c_mark_adapter_resumed(&i2c_dev->adapter);
->  
->  	return 0;
-> 
-
+Unless we add such kernel config option to upstream kernels, it will become
+a whack-a-mole game.
