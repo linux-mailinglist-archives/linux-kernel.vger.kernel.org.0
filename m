@@ -2,169 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EDC011EC60
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:59:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A38E511EC31
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfLMU7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:59:18 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:54913 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbfLMU7R (ORCPT
+        id S1726717AbfLMUyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:54:19 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33949 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfLMUyT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:59:17 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N1x6X-1hhwsx45CD-012Isl; Fri, 13 Dec 2019 21:58:47 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux@vger.kernel.org
-Subject: [PATCH v2 24/24] y2038: sparc: remove use of struct timex
-Date:   Fri, 13 Dec 2019 21:53:52 +0100
-Message-Id: <20191213205417.3871055-15-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191213204936.3643476-1-arnd@arndb.de>
-References: <20191213204936.3643476-1-arnd@arndb.de>
+        Fri, 13 Dec 2019 15:54:19 -0500
+Received: by mail-ot1-f66.google.com with SMTP id a15so652390otf.1;
+        Fri, 13 Dec 2019 12:54:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KIIcKgZTADTDSwYU9GOa/p2g/0/rTYnBM6ztrQxNYsA=;
+        b=nPxoH3UeHn/URwo1q7n1eYc3GBA+4z6PGyqbUIaNxM/W1i4ocgxRXKtD4Rhb+sMZTA
+         DEcAnmaeiOzWx+Z4DFnIBhGoVWoxxSC/kETAw6nXoo5GLUljlFOzjTsfCnqgb1LpTpqR
+         /D+diQly+1bEyidrJg6AxZ8oYpFEfWh03lKYiqPr3qcPaY5BJ2iwP8mjBe/DaHnA8rtP
+         WKt0eAckjPs2NPf4x06b7nxfMlvBLMV55OfOK1Kz8r+yWLhrzR5G+bRJQdlzL+OFv9fr
+         XbM72Gew5sIt860wQo1wq5mhqaY/ZwmZgqgD3gJ48XA7yo8wYk5jOwmFOA+dIJTO0GHI
+         UbjA==
+X-Gm-Message-State: APjAAAUylxdecYuit4x2ACnFq0odwkCiqGsHxEu5zt4R778wu+fSVJ9H
+        ESrgSJTnsAgFTmp+towhku/oPTU=
+X-Google-Smtp-Source: APXvYqxBJilDDGyTaDxnBj9ynh4myRloS+dQ+fRGAJGegSEuz8ivs5D3EYHV6sgRP4EHkpn4SjlIrA==
+X-Received: by 2002:a9d:c29:: with SMTP id 38mr15865869otr.1.1576270458920;
+        Fri, 13 Dec 2019 12:54:18 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m205sm3702145oif.10.2019.12.13.12.54.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 12:54:18 -0800 (PST)
+Date:   Fri, 13 Dec 2019 14:54:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Anil Varughese <aniljoy@cadence.com>,
+        Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 01/14] dt-bindings: phy: Sierra: Add bindings for
+ Sierra in TI's J721E
+Message-ID: <20191213205417.GA8776@bogus>
+References: <20191128104648.21894-1-kishon@ti.com>
+ <20191128104648.21894-2-kishon@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:A7e9/MVVT8BzRCfImaCg9M4jUKmhpwO6crIaNymrEDwlQZeltNw
- ofdOA22H+2CteR63M/zW7/QJ9xk/xm5IFVcZUCEHHr0oqqYjO2F8BCaw7M36GDA1ouTCTdL
- XZuuvO73Er8lopAUQzkNngA9tNTZDinleHYow3Tyi+PYH/pzhVVO6ZyLKW/gM0r5NukKCve
- ucLS2WBHfH5TBH6bwkJlg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:elooNoLl0os=:wJwvhFEbWlK180NJ0akjSc
- IwQ5iLJjeglZh0liN9JFPCnp0HP2SWD6SDJJ5dLDCQbHYYueqnXerizC/HI9HgURy2945Ym+e
- PM6PPU3k9wcvKwJVMCS2WBVFEQLDj3xjsKA597uZY2j1O4iNej+KtCgNla7T5EY/cXwJqh8yM
- tQ8JhxM4qHJezU0J7TI/AFMSDZQ7+LJXkjGLRypSzXhkJCa+XmWXGizlDiOKI7H5Y1cvYlmPr
- grNp1+Cb7FQeUwPxUofvsVCx7Jr0/ux3M3omtgiUzFqEamULFm2BdG1l1Ee+LRqs3+nuR5Y17
- 0Es32GbadsSt665oJa61Q56UhPWbZaHCjMjwFBFbx0pQF5PR398evp8kkMCHrBdKXhEZ1moVG
- IE5yRTE/w6L43ko1QeqCkgYYUB4uEZULTnlLanp5LZyrsRHIDl+/3wvRgDOq62hK+SQT9R7LN
- o6uZU7XT1ifzYCob6rtsswqrbs7Gxx7h7h6D6mvVXzsYMBaHRseiIxkyQfdnpTvJCNBrJMxow
- wD7ZVP9yyDTJvzG51Q1Qv38SI2sSrB5TpHzV1eRqeA12bKmO6i0Ck5Ej1kEJrOBDwxea5BZLC
- H55xBxTLXhAV73IaWkgY7JQWaqYVQ9LSet/er0Pprh8ZkogvymsbLhc5zEYAMZhWFwVSWZ1w/
- eXAS9UBJnJVc/Pci+emwQcd8K9slTndz3hYmhZ1xADVoIQ7Iz8wMLRk3+Idz6hpSQg0SIJklt
- xY2V7xhOOGXlxK904sUolNvMcvCSNNvld7821PQK4/jM/PfsgTlaufqF0BDehwnShertppsWu
- usrFlmZ4CLcZ9qVJPm1zxMcSX6En/quVRVGCJhFFCL/ZtLaly7rEq7IHU6wkkQ3naAnlgv3gD
- rSp6ogSKRmbENOUzUb5w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191128104648.21894-2-kishon@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'struct timex' is one of the last users of 'struct timeval' and is
-only referenced in one place in the kernel any more, to convert the
-user space timex into the kernel-internal version on sparc64, with a
-different tv_usec member type.
+On Thu, 28 Nov 2019 16:16:35 +0530, Kishon Vijay Abraham I wrote:
+> Add DT binding documentation for Sierra PHY IP used in TI's J721E
+> SoC.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  .../devicetree/bindings/phy/phy-cadence-sierra.txt  | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
 
-As a preparation for hiding the time_t definition and everything
-using that in the kernel, change the implementation once more
-to only convert the timeval member, and then enclose the
-struct definition in an #ifdef.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/sparc/kernel/sys_sparc_64.c | 29 +++++++++++++++--------------
- include/uapi/linux/timex.h       |  2 ++
- 2 files changed, 17 insertions(+), 14 deletions(-)
-
-diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_sparc_64.c
-index 9f41a6f5a032..1c85b0af4dfd 100644
---- a/arch/sparc/kernel/sys_sparc_64.c
-+++ b/arch/sparc/kernel/sys_sparc_64.c
-@@ -548,34 +548,35 @@ SYSCALL_DEFINE2(getdomainname, char __user *, name, int, len)
- 	return err;
- }
- 
--SYSCALL_DEFINE1(sparc_adjtimex, struct timex __user *, txc_p)
-+SYSCALL_DEFINE1(sparc_adjtimex, struct __kernel_timex __user *, txc_p)
- {
--	struct timex txc;		/* Local copy of parameter */
--	struct __kernel_timex *kt = (void *)&txc;
-+	struct __kernel_timex txc;
-+	__kernel_old_timeval *tv = (void *)&txc->time;
- 	int ret;
- 
- 	/* Copy the user data space into the kernel copy
- 	 * structure. But bear in mind that the structures
- 	 * may change
- 	 */
--	if (copy_from_user(&txc, txc_p, sizeof(struct timex)))
-+	if (copy_from_user(&txc, txc_p, sizeof(txc)))
- 		return -EFAULT;
- 
- 	/*
- 	 * override for sparc64 specific timeval type: tv_usec
- 	 * is 32 bit wide instead of 64-bit in __kernel_timex
- 	 */
--	kt->time.tv_usec = txc.time.tv_usec;
-+	kt->time.tv_usec = tv->tv_usec;
- 	ret = do_adjtimex(kt);
--	txc.time.tv_usec = kt->time.tv_usec;
-+	tv->tv_usec = kt->time.tv_usec;
- 
--	return copy_to_user(txc_p, &txc, sizeof(struct timex)) ? -EFAULT : ret;
-+	return copy_to_user(txc_p, &txc, sizeof(txc)) ? -EFAULT : ret;
- }
- 
--SYSCALL_DEFINE2(sparc_clock_adjtime, const clockid_t, which_clock,struct timex __user *, txc_p)
-+SYSCALL_DEFINE2(sparc_clock_adjtime, const clockid_t, which_clock,
-+		struct __kernel_timex __user *, txc_p)
- {
--	struct timex txc;		/* Local copy of parameter */
--	struct __kernel_timex *kt = (void *)&txc;
-+	struct __kernel_timex txc;
-+	__kernel_old_timeval *tv = (void *)&txc->time;
- 	int ret;
- 
- 	if (!IS_ENABLED(CONFIG_POSIX_TIMERS)) {
-@@ -590,18 +591,18 @@ SYSCALL_DEFINE2(sparc_clock_adjtime, const clockid_t, which_clock,struct timex _
- 	 * structure. But bear in mind that the structures
- 	 * may change
- 	 */
--	if (copy_from_user(&txc, txc_p, sizeof(struct timex)))
-+	if (copy_from_user(&txc, txc_p, sizeof(txc)))
- 		return -EFAULT;
- 
- 	/*
- 	 * override for sparc64 specific timeval type: tv_usec
- 	 * is 32 bit wide instead of 64-bit in __kernel_timex
- 	 */
--	kt->time.tv_usec = txc.time.tv_usec;
-+	kt->time.tv_usec = tv->tv_usec;
- 	ret = do_clock_adjtime(which_clock, kt);
--	txc.time.tv_usec = kt->time.tv_usec;
-+	tv->tv_usec = kt->time.tv_usec;
- 
--	return copy_to_user(txc_p, &txc, sizeof(struct timex)) ? -EFAULT : ret;
-+	return copy_to_user(txc_p, &txc, sizeof(txc)) ? -EFAULT : ret;
- }
- 
- SYSCALL_DEFINE5(utrap_install, utrap_entry_t, type,
-diff --git a/include/uapi/linux/timex.h b/include/uapi/linux/timex.h
-index 9f517f9010bb..bd627c368d09 100644
---- a/include/uapi/linux/timex.h
-+++ b/include/uapi/linux/timex.h
-@@ -57,6 +57,7 @@
- 
- #define NTP_API		4	/* NTP API version */
- 
-+#ifndef __KERNEL__
- /*
-  * syscall interface - used (mainly by NTP daemon)
-  * to discipline kernel clock oscillator
-@@ -91,6 +92,7 @@ struct timex {
- 	int  :32; int  :32; int  :32; int  :32;
- 	int  :32; int  :32; int  :32;
- };
-+#endif
- 
- struct __kernel_timex_timeval {
- 	__kernel_time64_t       tv_sec;
--- 
-2.20.0
-
+Reviewed-by: Rob Herring <robh@kernel.org>
