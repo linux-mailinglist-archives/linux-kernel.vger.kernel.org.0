@@ -2,174 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95DAF11E20E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 11:36:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 670D411E21A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 11:37:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfLMKgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 05:36:07 -0500
-Received: from foss.arm.com ([217.140.110.172]:54082 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725793AbfLMKgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 05:36:07 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 03CAB1FB;
-        Fri, 13 Dec 2019 02:36:06 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F3DC3F718;
-        Fri, 13 Dec 2019 02:36:05 -0800 (PST)
-Date:   Fri, 13 Dec 2019 10:36:03 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Dilip Kota <eswara.kota@linux.intel.com>
-Cc:     linux-pci@vger.kernel.org, lorenzo.pieralisi@arm.com,
-        helgaas@kernel.org, linux-kernel@vger.kernel.org,
-        andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Subject: Re: [PATCH 1/1] PCI: dwc: intel: fix nitpicks
-Message-ID: <20191213103602.GL24359@e119886-lin.cambridge.arm.com>
-References: <457c714ba7a73075291778b3436fd96feca7c532.1576144419.git.eswara.kota@linux.intel.com>
+        id S1726760AbfLMKhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 05:37:39 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55524 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbfLMKhj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 05:37:39 -0500
+Received: by mail-wm1-f65.google.com with SMTP id q9so5779702wmj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 02:37:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Q5ocr36Lob8hEeIWs3h/05wUQjQ+K9T4cwQK/71/Rho=;
+        b=ozjhT9LxrWoNn5+kruUUFRJPWCwFQD0DkqHF6Ig4DOJUCO4vI+jtZUQZFLC2js49Sj
+         NuIOBOuolNM2SxE5kENSvIQHZVZRPnvKRv3Hx/vkcThIr+nL7ktfGwQ7jJwPTo2unwfB
+         OQUfDXRNh0Ag9DDGGB2CsSkLxrYZE77mzjH5UrY3CfvD7oEkKgJ87NTH6Nx8n06x93Sk
+         UZw1bAbky2AcB8TR3mH6K2fC7FZnS1vzNig4nsvlpaEXlqhf0kuVgWg7qghUcYdupMbU
+         v4EWB4P/w6SgSSSdN+d/U/bWZJfcB50ezKAIXZkFvJ/3Rr6L5ZKWYal2yyIa/FozQmex
+         z+Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Q5ocr36Lob8hEeIWs3h/05wUQjQ+K9T4cwQK/71/Rho=;
+        b=nxRSRxuGNPbtfC6b87EfS0KXq1Ac97eneFTgm6SCbVE0FyyrA2PhBhW1NR988PKoEp
+         1PK9Jw+exd/HDo76JbFODS3NJohq5djVg4iV/9DLREc2Kr/1bvsZPDeYfKzgXJD3asEQ
+         HAG4EPpurq3Bw3GzhgK/+CyWYarjMI1dCdxtIsrhenHhu1DxM6uzPL7Qurzf1x+PSXxa
+         RIOIo0lkSJ3sPrVbVG87t+E4NMDCXpUgC8cot5NMbgCKIFIoRhRUtvMwPEoAxMTzB4f2
+         qHq7dd6w99p1eGflTc+mHgG7qTYn7ITP15ucxyhqxRDrIHGG5mhmFJQkSSyjh9WRMrp+
+         iSVw==
+X-Gm-Message-State: APjAAAWgeGumWAN+1Vtfwh1Nz3fUSnVqYhNbYdqN5q5u/sBY6UTdcimL
+        5+AjceqxumFmqsXglqhzIzyNcg==
+X-Google-Smtp-Source: APXvYqxnyCKPIUq28BfNLWLn/OmW1/9wwqrfPkgBDBgdwgpsg60dQCt7fUIEYsF/ccJNzGARb9NYQA==
+X-Received: by 2002:a05:600c:2488:: with SMTP id 8mr12247781wms.152.1576233457453;
+        Fri, 13 Dec 2019 02:37:37 -0800 (PST)
+Received: from dell ([95.149.164.71])
+        by smtp.gmail.com with ESMTPSA id y22sm3999712wma.35.2019.12.13.02.37.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 02:37:36 -0800 (PST)
+Date:   Fri, 13 Dec 2019 10:37:33 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     support.opensource@diasemi.com, robh+dt@kernel.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [RESEND PATCH v3 2/3] mfd: da9062: add support for the DA9062
+ GPIOs in the core
+Message-ID: <20191213103733.GB3648@dell>
+References: <20191212160413.15232-1-m.felsch@pengutronix.de>
+ <20191212160413.15232-3-m.felsch@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <457c714ba7a73075291778b3436fd96feca7c532.1576144419.git.eswara.kota@linux.intel.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191212160413.15232-3-m.felsch@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 01:19:43PM +0800, Dilip Kota wrote:
-> Fix the minor nits pointed in review of
-> Intel PCIe driver and PCIe DesignWare core.
-> No functional change expected.
+On Thu, 12 Dec 2019, Marco Felsch wrote:
+
+> Currently the da9062 GPIO's aren't available. The patch adds the support
+> to make these available by adding a gpio device with the corresponding
+> irq resources. Furthermore the patch fixes a minor style issue for the
+> onkey device.
 > 
-> Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  drivers/pci/controller/dwc/pcie-designware.c |  3 +--
->  drivers/pci/controller/dwc/pcie-intel-gw.c   | 30 ++++++++++++++--------------
->  2 files changed, 16 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 479e250695a0..681548c88282 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -12,10 +12,9 @@
->  #include <linux/of.h>
->  #include <linux/types.h>
->  
-> +#include "../../pci.h"
->  #include "pcie-designware.h"
->  
-> -extern const unsigned char pcie_link_speed[];
-> -
->  /*
->   * These interfaces resemble the pci_find_*capability() interfaces, but these
->   * are for configuring host controllers, which are bridges *to* PCI devices but
-> diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> index 8eada8f027bb..fc2a12212dec 100644
-> --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
-> +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> @@ -57,9 +57,9 @@
->  #define RESET_INTERVAL_MS		100
->  
->  struct intel_pcie_soc {
-> -	unsigned int pcie_ver;
-> -	unsigned int pcie_atu_offset;
-> -	u32 num_viewport;
-> +	unsigned int	pcie_ver;
-> +	unsigned int	pcie_atu_offset;
-> +	u32		num_viewport;
->  };
->  
->  struct intel_pcie_port {
-> @@ -192,7 +192,7 @@ static int intel_pcie_ep_rst_init(struct intel_pcie_port *lpp)
->  	if (IS_ERR(lpp->reset_gpio)) {
->  		ret = PTR_ERR(lpp->reset_gpio);
->  		if (ret != -EPROBE_DEFER)
-> -			dev_err(dev, "failed to request PCIe GPIO: %d\n", ret);
-> +			dev_err(dev, "Failed to request PCIe GPIO: %d\n", ret);
->  		return ret;
->  	}
->  
-> @@ -265,7 +265,7 @@ static int intel_pcie_get_resources(struct platform_device *pdev)
->  	if (IS_ERR(lpp->core_clk)) {
->  		ret = PTR_ERR(lpp->core_clk);
->  		if (ret != -EPROBE_DEFER)
-> -			dev_err(dev, "failed to get clks: %d\n", ret);
-> +			dev_err(dev, "Failed to get clks: %d\n", ret);
->  		return ret;
->  	}
->  
-> @@ -273,13 +273,13 @@ static int intel_pcie_get_resources(struct platform_device *pdev)
->  	if (IS_ERR(lpp->core_rst)) {
->  		ret = PTR_ERR(lpp->core_rst);
->  		if (ret != -EPROBE_DEFER)
-> -			dev_err(dev, "failed to get resets: %d\n", ret);
-> +			dev_err(dev, "Failed to get resets: %d\n", ret);
->  		return ret;
->  	}
->  
->  	ret = device_property_match_string(dev, "device_type", "pci");
->  	if (ret) {
-> -		dev_err(dev, "failed to find pci device type: %d\n", ret);
-> +		dev_err(dev, "Failed to find pci device type: %d\n", ret);
->  		return ret;
->  	}
->  
-> @@ -300,7 +300,7 @@ static int intel_pcie_get_resources(struct platform_device *pdev)
->  	if (IS_ERR(lpp->phy)) {
->  		ret = PTR_ERR(lpp->phy);
->  		if (ret != -EPROBE_DEFER)
-> -			dev_err(dev, "couldn't get pcie-phy: %d\n", ret);
-> +			dev_err(dev, "Couldn't get pcie-phy: %d\n", ret);
->  		return ret;
->  	}
->  
-> @@ -445,9 +445,11 @@ static int intel_pcie_rc_init(struct pcie_port *pp)
->  	return intel_pcie_host_setup(lpp);
->  }
->  
-> -int intel_pcie_msi_init(struct pcie_port *pp)
-> +/*
-> + * Dummy function so that DW core doesn't configure MSI
-> + */
-> +static int intel_pcie_msi_init(struct pcie_port *pp)
->  {
-> -	/* PCIe MSI/MSIx is handled by MSI in x86 processor */
->  	return 0;
->  }
->  
-> @@ -508,19 +510,17 @@ static int intel_pcie_probe(struct platform_device *pdev)
->  
->  	ret = dw_pcie_host_init(pp);
->  	if (ret) {
-> -		dev_err(dev, "cannot initialize host\n");
-> +		dev_err(dev, "Cannot initialize host\n");
->  		return ret;
->  	}
->  
->  	/*
->  	 * Intel PCIe doesn't configure IO region, so set viewport
-> -	 * to not to perform IO region access.
-> +	 * to not perform IO region access.
->  	 */
->  	pci->num_viewport = data->num_viewport;
->  
-> -	dev_info(dev, "Intel PCIe Root Complex Port init done\n");
-> -
-> -	return ret;
-> +	return 0;
->  }
+>  drivers/mfd/da9062-core.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
 
-I'll ask Lorenzo to squash this in when he returns.
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-
-Thanks,
-
-Andrew Murray
-
->  
->  static const struct dev_pm_ops intel_pcie_pm_ops = {
-> -- 
-> 2.11.0
-> 
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
