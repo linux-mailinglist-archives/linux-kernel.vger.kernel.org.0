@@ -2,185 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF04711DBEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 02:59:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9224C11DBE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 02:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731858AbfLMB7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 20:59:02 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43578 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727778AbfLMB7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 20:59:02 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 851E678041BB411D4832;
-        Fri, 13 Dec 2019 09:58:59 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 13 Dec 2019 09:58:54 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <jdelvare@suse.com>, <linux@roeck-us.net>
-CC:     <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <chenzhou10@huawei.com>
-Subject: [-next] hwmon: (w83627ehf) make sensor_dev_attr_##_name variables static
-Date:   Fri, 13 Dec 2019 09:56:05 +0800
-Message-ID: <20191213015605.172472-1-chenzhou10@huawei.com>
+        id S1731865AbfLMB4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 20:56:10 -0500
+Received: from mail-io1-f41.google.com ([209.85.166.41]:35976 "EHLO
+        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbfLMB4J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 20:56:09 -0500
+Received: by mail-io1-f41.google.com with SMTP id a22so789220ios.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 17:56:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4jtyJn+jd2kldixpZrOSg8TBt8xCd0UBOBYu2Jdo4r4=;
+        b=Asyyq5D68W25BKzSzKQUkjSn2xDNWbOl7NxBXvOaVRGASH+aZlLweLJ81c2dVUbVuX
+         691irB/y5NxuVTJq1DFPC9N1qM0tunQjtKj3fF2PU7f8C21LLOa1WNPwqrpogyrCuzO0
+         UjghPv2S5Hig88Zee8w9gDaniimKxyK2/YkQo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4jtyJn+jd2kldixpZrOSg8TBt8xCd0UBOBYu2Jdo4r4=;
+        b=V3Q6aeA8m7tRzRrm8PQ7s9dk/qVTNjNPQBpZtdiCK8IB4MJaiyoOYE5lQ6WrR5n6B1
+         cfO2l/KRFsKmpQFvVHbDbCqBqX46QJcN/SNEQNrTjUQ02h/Zv3oELPPnhM2MsyXEEq8W
+         3/5UzzsMQRdJ5YO/aOYZ1e1umIwxgknBd0PKw46/8VaPlpW8IgE8Svw9B1DVQFvrFlwm
+         SA3/C3UxB5eBAI1N7DkjV3A5OWycL6f4ENnQiVuZs2oDiLEwDZ9GJLOQxsRZXKti7Oqr
+         tnD+U1W4Eg4yunX4TdS8tmjAAivgyk56wKanuaUNKZaDi9hO3jTNLikbavaDWzaWJHZm
+         pokw==
+X-Gm-Message-State: APjAAAUG3VaTFYGuvm5Vd879nAWrhp9zzVt1K1o0QVO/JcS5kNMB2QD+
+        f+yG/wwF3Jf7OZEAZpNawcYUbg==
+X-Google-Smtp-Source: APXvYqxBY8QCMBIOmrwYTxCxzMazQJTC3wK+Qsu5YVdlers+N/MkKK1lKh9v4m46m285ky2Sp8Jlqg==
+X-Received: by 2002:a5d:9d4a:: with SMTP id k10mr5969938iok.134.1576202168931;
+        Thu, 12 Dec 2019 17:56:08 -0800 (PST)
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id y11sm1684335iot.19.2019.12.12.17.56.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 17:56:08 -0800 (PST)
+From:   Shuah Khan <skhan@linuxfoundation.org>
+To:     shuah@kernel.org, gregkh@linuxfoundation.org, mcgrof@kernel.org,
+        scott.branden@broadcom.com, tiwai@suse.de
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: firmware: Fix it to do root uid check and skip
+Date:   Thu, 12 Dec 2019 18:56:06 -0700
+Message-Id: <20191213015606.23058-1-skhan@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+firmware attempts to load test modules that require root access
+and fail. Fix it to check for root uid and exit with skip code
+instead.
 
-drivers/hwmon/w83627ehf.c:1202:1: warning: symbol 'sensor_dev_attr_pwm1_target' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1204:1: warning: symbol 'sensor_dev_attr_pwm2_target' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1206:1: warning: symbol 'sensor_dev_attr_pwm3_target' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1208:1: warning: symbol 'sensor_dev_attr_pwm4_target' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1211:1: warning: symbol 'sensor_dev_attr_pwm1_tolerance' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1213:1: warning: symbol 'sensor_dev_attr_pwm2_tolerance' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1215:1: warning: symbol 'sensor_dev_attr_pwm3_tolerance' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1217:1: warning: symbol 'sensor_dev_attr_pwm4_tolerance' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1294:1: warning: symbol 'sensor_dev_attr_pwm4_stop_time' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1296:1: warning: symbol 'sensor_dev_attr_pwm4_start_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1298:1: warning: symbol 'sensor_dev_attr_pwm4_stop_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1300:1: warning: symbol 'sensor_dev_attr_pwm4_max_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1302:1: warning: symbol 'sensor_dev_attr_pwm4_step_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1305:1: warning: symbol 'sensor_dev_attr_pwm3_stop_time' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1307:1: warning: symbol 'sensor_dev_attr_pwm3_start_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1309:1: warning: symbol 'sensor_dev_attr_pwm3_stop_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1312:1: warning: symbol 'sensor_dev_attr_pwm1_stop_time' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1314:1: warning: symbol 'sensor_dev_attr_pwm2_stop_time' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1316:1: warning: symbol 'sensor_dev_attr_pwm1_start_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1318:1: warning: symbol 'sensor_dev_attr_pwm2_start_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1320:1: warning: symbol 'sensor_dev_attr_pwm1_stop_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1322:1: warning: symbol 'sensor_dev_attr_pwm2_stop_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1330:1: warning: symbol 'sensor_dev_attr_pwm1_max_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1332:1: warning: symbol 'sensor_dev_attr_pwm1_step_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1334:1: warning: symbol 'sensor_dev_attr_pwm2_max_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1336:1: warning: symbol 'sensor_dev_attr_pwm2_step_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1338:1: warning: symbol 'sensor_dev_attr_pwm3_max_output' was not declared. Should it be static?
-drivers/hwmon/w83627ehf.c:1340:1: warning: symbol 'sensor_dev_attr_pwm3_step_output' was not declared. Should it be static?
+Before this fix:
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+selftests: firmware: fw_run_tests.sh
+modprobe: ERROR: could not insert 'test_firmware': Operation not permitted
+You must have the following enabled in your kernel:
+CONFIG_TEST_FIRMWARE=y
+CONFIG_FW_LOADER=y
+CONFIG_FW_LOADER_USER_HELPER=y
+CONFIG_IKCONFIG=y
+CONFIG_IKCONFIG_PROC=y
+not ok 1 selftests: firmware: fw_run_tests.sh # SKIP
+
+With this fix:
+
+selftests: firmware: fw_run_tests.sh
+skip all tests: must be run as root
+not ok 1 selftests: firmware: fw_run_tests.sh # SKIP
+
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 ---
- drivers/hwmon/w83627ehf.c | 56 +++++++++++++++++++++++------------------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
+ tools/testing/selftests/firmware/fw_lib.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/hwmon/w83627ehf.c b/drivers/hwmon/w83627ehf.c
-index 207cc74..0a13f6b 100644
---- a/drivers/hwmon/w83627ehf.c
-+++ b/drivers/hwmon/w83627ehf.c
-@@ -1199,22 +1199,22 @@ store_tolerance(struct device *dev, struct device_attribute *attr,
- 	return count;
- }
+diff --git a/tools/testing/selftests/firmware/fw_lib.sh b/tools/testing/selftests/firmware/fw_lib.sh
+index b879305a766d..5b8c0fedee76 100755
+--- a/tools/testing/selftests/firmware/fw_lib.sh
++++ b/tools/testing/selftests/firmware/fw_lib.sh
+@@ -34,6 +34,12 @@ test_modprobe()
  
--SENSOR_DEVICE_ATTR(pwm1_target, 0644, show_target_temp,
-+static SENSOR_DEVICE_ATTR(pwm1_target, 0644, show_target_temp,
- 	    store_target_temp, 0);
--SENSOR_DEVICE_ATTR(pwm2_target, 0644, show_target_temp,
-+static SENSOR_DEVICE_ATTR(pwm2_target, 0644, show_target_temp,
- 	    store_target_temp, 1);
--SENSOR_DEVICE_ATTR(pwm3_target, 0644, show_target_temp,
-+static SENSOR_DEVICE_ATTR(pwm3_target, 0644, show_target_temp,
- 	    store_target_temp, 2);
--SENSOR_DEVICE_ATTR(pwm4_target, 0644, show_target_temp,
-+static SENSOR_DEVICE_ATTR(pwm4_target, 0644, show_target_temp,
- 	    store_target_temp, 3);
- 
--SENSOR_DEVICE_ATTR(pwm1_tolerance, 0644, show_tolerance,
-+static SENSOR_DEVICE_ATTR(pwm1_tolerance, 0644, show_tolerance,
- 	    store_tolerance, 0);
--SENSOR_DEVICE_ATTR(pwm2_tolerance, 0644, show_tolerance,
-+static SENSOR_DEVICE_ATTR(pwm2_tolerance, 0644, show_tolerance,
- 	    store_tolerance, 1);
--SENSOR_DEVICE_ATTR(pwm3_tolerance, 0644, show_tolerance,
-+static SENSOR_DEVICE_ATTR(pwm3_tolerance, 0644, show_tolerance,
- 	    store_tolerance, 2);
--SENSOR_DEVICE_ATTR(pwm4_tolerance, 0644, show_tolerance,
-+static SENSOR_DEVICE_ATTR(pwm4_tolerance, 0644, show_tolerance,
- 	    store_tolerance, 3);
- 
- /* Smart Fan registers */
-@@ -1291,35 +1291,35 @@ store_##reg(struct device *dev, struct device_attribute *attr, \
- 
- fan_time_functions(fan_stop_time, FAN_STOP_TIME)
- 
--SENSOR_DEVICE_ATTR(pwm4_stop_time, 0644, show_fan_stop_time,
-+static SENSOR_DEVICE_ATTR(pwm4_stop_time, 0644, show_fan_stop_time,
- 	    store_fan_stop_time, 3);
--SENSOR_DEVICE_ATTR(pwm4_start_output, 0644, show_fan_start_output,
-+static SENSOR_DEVICE_ATTR(pwm4_start_output, 0644, show_fan_start_output,
- 	    store_fan_start_output, 3);
--SENSOR_DEVICE_ATTR(pwm4_stop_output, 0644, show_fan_stop_output,
-+static SENSOR_DEVICE_ATTR(pwm4_stop_output, 0644, show_fan_stop_output,
- 	    store_fan_stop_output, 3);
--SENSOR_DEVICE_ATTR(pwm4_max_output, 0644, show_fan_max_output,
-+static SENSOR_DEVICE_ATTR(pwm4_max_output, 0644, show_fan_max_output,
- 	    store_fan_max_output, 3);
--SENSOR_DEVICE_ATTR(pwm4_step_output, 0644, show_fan_step_output,
-+static SENSOR_DEVICE_ATTR(pwm4_step_output, 0644, show_fan_step_output,
- 	    store_fan_step_output, 3);
- 
--SENSOR_DEVICE_ATTR(pwm3_stop_time, 0644, show_fan_stop_time,
-+static SENSOR_DEVICE_ATTR(pwm3_stop_time, 0644, show_fan_stop_time,
- 	    store_fan_stop_time, 2);
--SENSOR_DEVICE_ATTR(pwm3_start_output, 0644, show_fan_start_output,
-+static SENSOR_DEVICE_ATTR(pwm3_start_output, 0644, show_fan_start_output,
- 	    store_fan_start_output, 2);
--SENSOR_DEVICE_ATTR(pwm3_stop_output, 0644, show_fan_stop_output,
-+static SENSOR_DEVICE_ATTR(pwm3_stop_output, 0644, show_fan_stop_output,
- 		    store_fan_stop_output, 2);
- 
--SENSOR_DEVICE_ATTR(pwm1_stop_time, 0644, show_fan_stop_time,
-+static SENSOR_DEVICE_ATTR(pwm1_stop_time, 0644, show_fan_stop_time,
- 	    store_fan_stop_time, 0);
--SENSOR_DEVICE_ATTR(pwm2_stop_time, 0644, show_fan_stop_time,
-+static SENSOR_DEVICE_ATTR(pwm2_stop_time, 0644, show_fan_stop_time,
- 	    store_fan_stop_time, 1);
--SENSOR_DEVICE_ATTR(pwm1_start_output, 0644, show_fan_start_output,
-+static SENSOR_DEVICE_ATTR(pwm1_start_output, 0644, show_fan_start_output,
- 	    store_fan_start_output, 0);
--SENSOR_DEVICE_ATTR(pwm2_start_output, 0644, show_fan_start_output,
-+static SENSOR_DEVICE_ATTR(pwm2_start_output, 0644, show_fan_start_output,
- 	    store_fan_start_output, 1);
--SENSOR_DEVICE_ATTR(pwm1_stop_output, 0644, show_fan_stop_output,
-+static SENSOR_DEVICE_ATTR(pwm1_stop_output, 0644, show_fan_stop_output,
- 	    store_fan_stop_output, 0);
--SENSOR_DEVICE_ATTR(pwm2_stop_output, 0644, show_fan_stop_output,
-+static SENSOR_DEVICE_ATTR(pwm2_stop_output, 0644, show_fan_stop_output,
- 	    store_fan_stop_output, 1);
- 
- 
-@@ -1327,17 +1327,17 @@ SENSOR_DEVICE_ATTR(pwm2_stop_output, 0644, show_fan_stop_output,
-  * pwm1 and pwm3 don't support max and step settings on all chips.
-  * Need to check support while generating/removing attribute files.
-  */
--SENSOR_DEVICE_ATTR(pwm1_max_output, 0644, show_fan_max_output,
-+static SENSOR_DEVICE_ATTR(pwm1_max_output, 0644, show_fan_max_output,
- 	    store_fan_max_output, 0);
--SENSOR_DEVICE_ATTR(pwm1_step_output, 0644, show_fan_step_output,
-+static SENSOR_DEVICE_ATTR(pwm1_step_output, 0644, show_fan_step_output,
- 	    store_fan_step_output, 0);
--SENSOR_DEVICE_ATTR(pwm2_max_output, 0644, show_fan_max_output,
-+static SENSOR_DEVICE_ATTR(pwm2_max_output, 0644, show_fan_max_output,
- 	    store_fan_max_output, 1);
--SENSOR_DEVICE_ATTR(pwm2_step_output, 0644, show_fan_step_output,
-+static SENSOR_DEVICE_ATTR(pwm2_step_output, 0644, show_fan_step_output,
- 	    store_fan_step_output, 1);
--SENSOR_DEVICE_ATTR(pwm3_max_output, 0644, show_fan_max_output,
-+static SENSOR_DEVICE_ATTR(pwm3_max_output, 0644, show_fan_max_output,
- 	    store_fan_max_output, 2);
--SENSOR_DEVICE_ATTR(pwm3_step_output, 0644, show_fan_step_output,
-+static SENSOR_DEVICE_ATTR(pwm3_step_output, 0644, show_fan_step_output,
- 	    store_fan_step_output, 2);
- 
- static ssize_t
+ check_mods()
+ {
++	local uid=$(id -u)
++	if [ $uid -ne 0 ]; then
++		echo "skip all tests: must be run as root" >&2
++		exit $ksft_skip
++	fi
++
+ 	trap "test_modprobe" EXIT
+ 	if [ ! -d $DIR ]; then
+ 		modprobe test_firmware
 -- 
-2.7.4
+2.20.1
 
