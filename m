@@ -2,119 +2,664 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D386E11EADC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 20:03:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3FEC11EAE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 20:04:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbfLMTDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 14:03:38 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42740 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728455AbfLMTDh (ORCPT
+        id S1728901AbfLMTEA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 13 Dec 2019 14:04:00 -0500
+Received: from smtprelay0020.hostedemail.com ([216.40.44.20]:56370 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728455AbfLMTD7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 14:03:37 -0500
-Received: by mail-oi1-f195.google.com with SMTP id j22so1637780oij.9;
-        Fri, 13 Dec 2019 11:03:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0jLdwo4Gh3BpcLr+x8Y4V1BSkeVDpmaHMCwdlyDbPHI=;
-        b=hF/C1PzzLmW4SyI5BZCh1ATG6HILNW73mJ8mxcNDnMEacNvo8cXpax2KnPq2iA0asi
-         hIwxZis6VxrpzUO2URbJQTnYtDhB0RHauCFpEFcliZUr0uZPfRS59cTRFOtWIpYg5pGE
-         w7F2NwpXXEgP69/CEoASF60IsY31nzuHaTDbLAxAU+kMYvT90qZJz/ziK5Yc6aYJjq6H
-         4FoPwKyDCnyNsbNYC3P0hrIkw83Q4cd6RxW5/Dt69lP+goGOk0l2enbzJ+tFn79E/zjz
-         ineKWJVkVkrgZd/3kbtZ4RAp5XSBL0inMsvjs10OR3zyeD+sRyQVzCA9pLTRBPw0N3H9
-         erGQ==
-X-Gm-Message-State: APjAAAW0jSOtI0zp0ZGTOhbPiOtE5nghsfgpP2yYMDRwQ4MEjc6x2ZOX
-        cousz9uf98OKbbDqYZL+kQ==
-X-Google-Smtp-Source: APXvYqyDYMLhdnJ4CPCzJjTRPxkIRfS51N1GfBOGJw6/3Te72GU1lQmiGGiO0u/xbrXHuLqsxYwijg==
-X-Received: by 2002:aca:3141:: with SMTP id x62mr7090024oix.108.1576263816699;
-        Fri, 13 Dec 2019 11:03:36 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r124sm3612857oie.9.2019.12.13.11.03.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 11:03:35 -0800 (PST)
-Date:   Fri, 13 Dec 2019 13:03:35 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     min.guo@mediatek.com
-Cc:     Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        chunfeng.yun@mediatek.com, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, tony@atomide.com,
-        hdegoede@redhat.com
-Subject: Re: [PATCH v9 1/6] dt-bindings: usb: musb: Add support for MediaTek
- musb controller
-Message-ID: <20191213190335.GA16897@bogus>
-References: <20191211015446.11477-1-min.guo@mediatek.com>
- <20191211015446.11477-2-min.guo@mediatek.com>
+        Fri, 13 Dec 2019 14:03:59 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 0CC0C18010D95;
+        Fri, 13 Dec 2019 19:03:54 +0000 (UTC)
+X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:69:146:327:355:379:541:599:800:960:966:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1513:1515:1516:1518:1521:1593:1594:1605:1730:1747:1777:1792:1981:2194:2196:2198:2199:2200:2201:2393:2525:2553:2560:2563:2682:2685:2731:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:4385:4605:5007:6261:6742:7514:7576:7875:7903:8603:9008:9025:9545:10004:10954:10967:11026:11232:11473:11658:11914:12043:12262:12294:12296:12297:12438:12555:12679:12683:12740:12895:12986:13141:13230:13439:14096:14097:14659:21080:21324:21433:21451:21627:21740:21789:21795:21939:21990:30012:30029:30051:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:non
+X-HE-Tag: year80_78fd867852a2f
+X-Filterd-Recvd-Size: 22216
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (Authenticated sender: nevets@goodmis.org)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 13 Dec 2019 19:03:51 +0000 (UTC)
+Date:   Fri, 13 Dec 2019 14:03:49 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [RFC] btf: Some structs are doubled because of struct
+ ring_buffer
+Message-ID: <20191213140349.5a42a8af@gandalf.local.home>
+In-Reply-To: <20191213184621.GG2844@hirez.programming.kicks-ass.net>
+References: <20191213153553.GE20583@krava>
+        <20191213112438.773dff35@gandalf.local.home>
+        <20191213165155.vimm27wo7brkh3yu@ast-mbp.dhcp.thefacebook.com>
+        <20191213121118.236f55b8@gandalf.local.home>
+        <20191213180223.GE2844@hirez.programming.kicks-ass.net>
+        <20191213132941.6fa2d1bd@gandalf.local.home>
+        <20191213184621.GG2844@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211015446.11477-2-min.guo@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 09:54:41AM +0800, min.guo@mediatek.com wrote:
-> From: Min Guo <min.guo@mediatek.com>
-> 
-> This adds support for MediaTek musb controller in
-> host, peripheral and otg mode.
-> 
-> Signed-off-by: Min Guo <min.guo@mediatek.com>
-> ---
-> changes in v9:
-> 1. Add usb-role-switch
-> 2. Remove label of usb connector child node
-> 3. Change usb connector child node compatible as "gpio-usb-b-connector", "usb-b-connector";
-> 
-> changes in v8:
-> 1. Add reviewed by Rob
-> 
-> changes in v7:
-> 1. Modify compatible as
-> - compatible : should be one of:
->                "mediatek,mt2701-musb"
->                ...
->                followed by "mediatek,mtk-musb"
-> 2. Change usb connector child node compatible as "gpio-usb-b-connector" 
-> 
-> changes in v6:
-> 1. Modify usb connector child node
-> 
-> changes in v5:
-> suggested by Rob:
-> 1. Modify compatible as 
-> - compatible : should be one of:
->                "mediatek,mt-2701"
->                ...
->                followed by "mediatek,mtk-musb"
-> 2. Add usb connector child node
-> 
-> changes in v4:
-> suggested by Sergei:
-> 1. String alignment
-> 
-> changes in v3:
-> 1. no changes
-> 
-> changes in v2:
-> suggested by Bin:
-> 1. Modify DRC to DRD
-> suggested by Rob:
-> 2. Drop the "<soc-model>-musb" in compatible
-> 3. Remove phy-names
-> 4. Add space after comma in clock-names
-> ---
->  .../devicetree/bindings/usb/mediatek,musb.txt | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/mediatek,musb.txt
+On Fri, 13 Dec 2019 19:46:21 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> >   perf_buffer and trace_buffer ?  
+> 
+> That's what I just proposed, right? So ACK on that ;-)
+
+Anyway, here's v2, followed by the tracing one, which has the diffstat
+of:
+
+ drivers/oprofile/cpu_buffer.c        |   2 +-
+ include/linux/ring_buffer.h          | 110 ++++++++++++------------
+ include/linux/trace_events.h         |   4 +-
+ include/trace/trace_events.h         |   2 +-
+ kernel/trace/blktrace.c              |   4 +-
+ kernel/trace/ring_buffer.c           | 124 +++++++++++++--------------
+ kernel/trace/ring_buffer_benchmark.c |   2 +-
+ kernel/trace/trace.c                 |  70 +++++++--------
+ kernel/trace/trace.h                 |  22 ++---
+ kernel/trace/trace_branch.c          |   2 +-
+ kernel/trace/trace_events.c          |   2 +-
+ kernel/trace/trace_events_hist.c     |   2 +-
+ kernel/trace/trace_functions_graph.c |   4 +-
+ kernel/trace/trace_hwlat.c           |   2 +-
+ kernel/trace/trace_kprobe.c          |   4 +-
+ kernel/trace/trace_mmiotrace.c       |   4 +-
+ kernel/trace/trace_sched_wakeup.c    |   4 +-
+ kernel/trace/trace_syscalls.c        |   4 +-
+ kernel/trace/trace_uprobe.c          |   2 +-
+ 19 files changed, 185 insertions(+), 185 deletions(-)
+
+
+-- Steve
+
+From d15abd76c3d39741fd53e7e5846b07001f3cd895 Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Date: Fri, 13 Dec 2019 13:21:30 -0500
+Subject: [PATCH] perf: Make struct ring_buffer less ambiguous
+
+eBPF requires needing to know the size of the perf ring buffer structure.
+But it unfortunately has the same name as the generic ring buffer used by
+tracing and oprofile. To make it less ambiguous, rename the perf ring buffer
+structure to "perf_buffer".
+
+As other parts of the ring buffer code has "perf_" as the prefix, it only
+makes sense to give the ring buffer the "perf_" prefix as well.
+
+Link: https://lore.kernel.org/r/20191213153553.GE20583@krava
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ include/linux/perf_event.h  |  6 ++---
+ kernel/events/core.c        | 42 ++++++++++++++---------------
+ kernel/events/internal.h    | 34 +++++++++++------------
+ kernel/events/ring_buffer.c | 54 ++++++++++++++++++-------------------
+ 4 files changed, 68 insertions(+), 68 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 6d4c22aee384..cf65763af0cb 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -582,7 +582,7 @@ struct swevent_hlist {
+ #define PERF_ATTACH_ITRACE	0x10
+ 
+ struct perf_cgroup;
+-struct ring_buffer;
++struct perf_buffer;
+ 
+ struct pmu_event_list {
+ 	raw_spinlock_t		lock;
+@@ -694,7 +694,7 @@ struct perf_event {
+ 	struct mutex			mmap_mutex;
+ 	atomic_t			mmap_count;
+ 
+-	struct ring_buffer		*rb;
++	struct perf_buffer		*rb;
+ 	struct list_head		rb_entry;
+ 	unsigned long			rcu_batches;
+ 	int				rcu_pending;
+@@ -854,7 +854,7 @@ struct perf_cpu_context {
+ 
+ struct perf_output_handle {
+ 	struct perf_event		*event;
+-	struct ring_buffer		*rb;
++	struct perf_buffer		*rb;
+ 	unsigned long			wakeup;
+ 	unsigned long			size;
+ 	u64				aux_flags;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 4ff86d57f9e5..2871c4d2bd53 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4373,7 +4373,7 @@ static void free_event_rcu(struct rcu_head *head)
+ }
+ 
+ static void ring_buffer_attach(struct perf_event *event,
+-			       struct ring_buffer *rb);
++			       struct perf_buffer *rb);
+ 
+ static void detach_sb_event(struct perf_event *event)
+ {
+@@ -5054,7 +5054,7 @@ perf_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+ static __poll_t perf_poll(struct file *file, poll_table *wait)
+ {
+ 	struct perf_event *event = file->private_data;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	__poll_t events = EPOLLHUP;
+ 
+ 	poll_wait(file, &event->waitq, wait);
+@@ -5296,7 +5296,7 @@ static long _perf_ioctl(struct perf_event *event, unsigned int cmd, unsigned lon
+ 		return perf_event_set_bpf_prog(event, arg);
+ 
+ 	case PERF_EVENT_IOC_PAUSE_OUTPUT: {
+-		struct ring_buffer *rb;
++		struct perf_buffer *rb;
+ 
+ 		rcu_read_lock();
+ 		rb = rcu_dereference(event->rb);
+@@ -5432,7 +5432,7 @@ static void calc_timer_values(struct perf_event *event,
+ static void perf_event_init_userpage(struct perf_event *event)
+ {
+ 	struct perf_event_mmap_page *userpg;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+ 	rcu_read_lock();
+ 	rb = rcu_dereference(event->rb);
+@@ -5464,7 +5464,7 @@ void __weak arch_perf_update_userpage(
+ void perf_event_update_userpage(struct perf_event *event)
+ {
+ 	struct perf_event_mmap_page *userpg;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	u64 enabled, running, now;
+ 
+ 	rcu_read_lock();
+@@ -5515,7 +5515,7 @@ EXPORT_SYMBOL_GPL(perf_event_update_userpage);
+ static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
+ {
+ 	struct perf_event *event = vmf->vma->vm_file->private_data;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	vm_fault_t ret = VM_FAULT_SIGBUS;
+ 
+ 	if (vmf->flags & FAULT_FLAG_MKWRITE) {
+@@ -5548,9 +5548,9 @@ static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
+ }
+ 
+ static void ring_buffer_attach(struct perf_event *event,
+-			       struct ring_buffer *rb)
++			       struct perf_buffer *rb)
+ {
+-	struct ring_buffer *old_rb = NULL;
++	struct perf_buffer *old_rb = NULL;
+ 	unsigned long flags;
+ 
+ 	if (event->rb) {
+@@ -5608,7 +5608,7 @@ static void ring_buffer_attach(struct perf_event *event,
+ 
+ static void ring_buffer_wakeup(struct perf_event *event)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+ 	rcu_read_lock();
+ 	rb = rcu_dereference(event->rb);
+@@ -5619,9 +5619,9 @@ static void ring_buffer_wakeup(struct perf_event *event)
+ 	rcu_read_unlock();
+ }
+ 
+-struct ring_buffer *ring_buffer_get(struct perf_event *event)
++struct perf_buffer *ring_buffer_get(struct perf_event *event)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+ 	rcu_read_lock();
+ 	rb = rcu_dereference(event->rb);
+@@ -5634,7 +5634,7 @@ struct ring_buffer *ring_buffer_get(struct perf_event *event)
+ 	return rb;
+ }
+ 
+-void ring_buffer_put(struct ring_buffer *rb)
++void ring_buffer_put(struct perf_buffer *rb)
+ {
+ 	if (!refcount_dec_and_test(&rb->refcount))
+ 		return;
+@@ -5672,7 +5672,7 @@ static void perf_mmap_close(struct vm_area_struct *vma)
+ {
+ 	struct perf_event *event = vma->vm_file->private_data;
+ 
+-	struct ring_buffer *rb = ring_buffer_get(event);
++	struct perf_buffer *rb = ring_buffer_get(event);
+ 	struct user_struct *mmap_user = rb->mmap_user;
+ 	int mmap_locked = rb->mmap_locked;
+ 	unsigned long size = perf_data_size(rb);
+@@ -5790,8 +5790,8 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+ 	struct perf_event *event = file->private_data;
+ 	unsigned long user_locked, user_lock_limit;
+ 	struct user_struct *user = current_user();
++	struct perf_buffer *rb = NULL;
+ 	unsigned long locked, lock_limit;
+-	struct ring_buffer *rb = NULL;
+ 	unsigned long vma_size;
+ 	unsigned long nr_pages;
+ 	long user_extra = 0, extra = 0;
+@@ -6266,7 +6266,7 @@ static unsigned long perf_prepare_sample_aux(struct perf_event *event,
+ 					  size_t size)
+ {
+ 	struct perf_event *sampler = event->aux_event;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+ 	data->aux_size = 0;
+ 
+@@ -6299,7 +6299,7 @@ static unsigned long perf_prepare_sample_aux(struct perf_event *event,
+ 	return data->aux_size;
+ }
+ 
+-long perf_pmu_snapshot_aux(struct ring_buffer *rb,
++long perf_pmu_snapshot_aux(struct perf_buffer *rb,
+ 			   struct perf_event *event,
+ 			   struct perf_output_handle *handle,
+ 			   unsigned long size)
+@@ -6338,8 +6338,8 @@ static void perf_aux_sample_output(struct perf_event *event,
+ 				   struct perf_sample_data *data)
+ {
+ 	struct perf_event *sampler = event->aux_event;
++	struct perf_buffer *rb;
+ 	unsigned long pad;
+-	struct ring_buffer *rb;
+ 	long size;
+ 
+ 	if (WARN_ON_ONCE(!sampler || !data->aux_size))
+@@ -6707,7 +6707,7 @@ void perf_output_sample(struct perf_output_handle *handle,
+ 		int wakeup_events = event->attr.wakeup_events;
+ 
+ 		if (wakeup_events) {
+-			struct ring_buffer *rb = handle->rb;
++			struct perf_buffer *rb = handle->rb;
+ 			int events = local_inc_return(&rb->events);
+ 
+ 			if (events >= wakeup_events) {
+@@ -7150,7 +7150,7 @@ void perf_event_exec(void)
+ }
+ 
+ struct remote_output {
+-	struct ring_buffer	*rb;
++	struct perf_buffer	*rb;
+ 	int			err;
+ };
+ 
+@@ -7158,7 +7158,7 @@ static void __perf_event_output_stop(struct perf_event *event, void *data)
+ {
+ 	struct perf_event *parent = event->parent;
+ 	struct remote_output *ro = data;
+-	struct ring_buffer *rb = ro->rb;
++	struct perf_buffer *rb = ro->rb;
+ 	struct stop_event_data sd = {
+ 		.event	= event,
+ 	};
+@@ -10998,7 +10998,7 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+ static int
+ perf_event_set_output(struct perf_event *event, struct perf_event *output_event)
+ {
+-	struct ring_buffer *rb = NULL;
++	struct perf_buffer *rb = NULL;
+ 	int ret = -EINVAL;
+ 
+ 	if (!output_event)
+diff --git a/kernel/events/internal.h b/kernel/events/internal.h
+index 747d67f130cb..f16f66b6b655 100644
+--- a/kernel/events/internal.h
++++ b/kernel/events/internal.h
+@@ -10,7 +10,7 @@
+ 
+ #define RING_BUFFER_WRITABLE		0x01
+ 
+-struct ring_buffer {
++struct perf_buffer {
+ 	refcount_t			refcount;
+ 	struct rcu_head			rcu_head;
+ #ifdef CONFIG_PERF_USE_VMALLOC
+@@ -58,17 +58,17 @@ struct ring_buffer {
+ 	void				*data_pages[0];
+ };
+ 
+-extern void rb_free(struct ring_buffer *rb);
++extern void rb_free(struct perf_buffer *rb);
+ 
+ static inline void rb_free_rcu(struct rcu_head *rcu_head)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+-	rb = container_of(rcu_head, struct ring_buffer, rcu_head);
++	rb = container_of(rcu_head, struct perf_buffer, rcu_head);
+ 	rb_free(rb);
+ }
+ 
+-static inline void rb_toggle_paused(struct ring_buffer *rb, bool pause)
++static inline void rb_toggle_paused(struct perf_buffer *rb, bool pause)
+ {
+ 	if (!pause && rb->nr_pages)
+ 		rb->paused = 0;
+@@ -76,16 +76,16 @@ static inline void rb_toggle_paused(struct ring_buffer *rb, bool pause)
+ 		rb->paused = 1;
+ }
+ 
+-extern struct ring_buffer *
++extern struct perf_buffer *
+ rb_alloc(int nr_pages, long watermark, int cpu, int flags);
+ extern void perf_event_wakeup(struct perf_event *event);
+-extern int rb_alloc_aux(struct ring_buffer *rb, struct perf_event *event,
++extern int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+ 			pgoff_t pgoff, int nr_pages, long watermark, int flags);
+-extern void rb_free_aux(struct ring_buffer *rb);
+-extern struct ring_buffer *ring_buffer_get(struct perf_event *event);
+-extern void ring_buffer_put(struct ring_buffer *rb);
++extern void rb_free_aux(struct perf_buffer *rb);
++extern struct perf_buffer *ring_buffer_get(struct perf_event *event);
++extern void ring_buffer_put(struct perf_buffer *rb);
+ 
+-static inline bool rb_has_aux(struct ring_buffer *rb)
++static inline bool rb_has_aux(struct perf_buffer *rb)
+ {
+ 	return !!rb->aux_nr_pages;
+ }
+@@ -94,7 +94,7 @@ void perf_event_aux_event(struct perf_event *event, unsigned long head,
+ 			  unsigned long size, u64 flags);
+ 
+ extern struct page *
+-perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff);
++perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff);
+ 
+ #ifdef CONFIG_PERF_USE_VMALLOC
+ /*
+@@ -103,25 +103,25 @@ perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff);
+  * Required for architectures that have d-cache aliasing issues.
+  */
+ 
+-static inline int page_order(struct ring_buffer *rb)
++static inline int page_order(struct perf_buffer *rb)
+ {
+ 	return rb->page_order;
+ }
+ 
+ #else
+ 
+-static inline int page_order(struct ring_buffer *rb)
++static inline int page_order(struct perf_buffer *rb)
+ {
+ 	return 0;
+ }
+ #endif
+ 
+-static inline unsigned long perf_data_size(struct ring_buffer *rb)
++static inline unsigned long perf_data_size(struct perf_buffer *rb)
+ {
+ 	return rb->nr_pages << (PAGE_SHIFT + page_order(rb));
+ }
+ 
+-static inline unsigned long perf_aux_size(struct ring_buffer *rb)
++static inline unsigned long perf_aux_size(struct perf_buffer *rb)
+ {
+ 	return rb->aux_nr_pages << PAGE_SHIFT;
+ }
+@@ -141,7 +141,7 @@ static inline unsigned long perf_aux_size(struct ring_buffer *rb)
+ 			buf += written;					\
+ 		handle->size -= written;				\
+ 		if (!handle->size) {					\
+-			struct ring_buffer *rb = handle->rb;		\
++			struct perf_buffer *rb = handle->rb;	\
+ 									\
+ 			handle->page++;					\
+ 			handle->page &= rb->nr_pages - 1;		\
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 7ffd5c763f93..192b8abc6330 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -35,7 +35,7 @@ static void perf_output_wakeup(struct perf_output_handle *handle)
+  */
+ static void perf_output_get_handle(struct perf_output_handle *handle)
+ {
+-	struct ring_buffer *rb = handle->rb;
++	struct perf_buffer *rb = handle->rb;
+ 
+ 	preempt_disable();
+ 
+@@ -49,7 +49,7 @@ static void perf_output_get_handle(struct perf_output_handle *handle)
+ 
+ static void perf_output_put_handle(struct perf_output_handle *handle)
+ {
+-	struct ring_buffer *rb = handle->rb;
++	struct perf_buffer *rb = handle->rb;
+ 	unsigned long head;
+ 	unsigned int nest;
+ 
+@@ -150,7 +150,7 @@ __perf_output_begin(struct perf_output_handle *handle,
+ 		    struct perf_event *event, unsigned int size,
+ 		    bool backward)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	unsigned long tail, offset, head;
+ 	int have_lost, page_shift;
+ 	struct {
+@@ -301,7 +301,7 @@ void perf_output_end(struct perf_output_handle *handle)
+ }
+ 
+ static void
+-ring_buffer_init(struct ring_buffer *rb, long watermark, int flags)
++ring_buffer_init(struct perf_buffer *rb, long watermark, int flags)
+ {
+ 	long max_size = perf_data_size(rb);
+ 
+@@ -361,7 +361,7 @@ void *perf_aux_output_begin(struct perf_output_handle *handle,
+ {
+ 	struct perf_event *output_event = event;
+ 	unsigned long aux_head, aux_tail;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	unsigned int nest;
+ 
+ 	if (output_event->parent)
+@@ -449,7 +449,7 @@ void *perf_aux_output_begin(struct perf_output_handle *handle,
+ }
+ EXPORT_SYMBOL_GPL(perf_aux_output_begin);
+ 
+-static __always_inline bool rb_need_aux_wakeup(struct ring_buffer *rb)
++static __always_inline bool rb_need_aux_wakeup(struct perf_buffer *rb)
+ {
+ 	if (rb->aux_overwrite)
+ 		return false;
+@@ -475,7 +475,7 @@ static __always_inline bool rb_need_aux_wakeup(struct ring_buffer *rb)
+ void perf_aux_output_end(struct perf_output_handle *handle, unsigned long size)
+ {
+ 	bool wakeup = !!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED);
+-	struct ring_buffer *rb = handle->rb;
++	struct perf_buffer *rb = handle->rb;
+ 	unsigned long aux_head;
+ 
+ 	/* in overwrite mode, driver provides aux_head via handle */
+@@ -532,7 +532,7 @@ EXPORT_SYMBOL_GPL(perf_aux_output_end);
+  */
+ int perf_aux_output_skip(struct perf_output_handle *handle, unsigned long size)
+ {
+-	struct ring_buffer *rb = handle->rb;
++	struct perf_buffer *rb = handle->rb;
+ 
+ 	if (size > handle->size)
+ 		return -ENOSPC;
+@@ -569,8 +569,8 @@ long perf_output_copy_aux(struct perf_output_handle *aux_handle,
+ 			  struct perf_output_handle *handle,
+ 			  unsigned long from, unsigned long to)
+ {
++	struct perf_buffer *rb = aux_handle->rb;
+ 	unsigned long tocopy, remainder, len = 0;
+-	struct ring_buffer *rb = aux_handle->rb;
+ 	void *addr;
+ 
+ 	from &= (rb->aux_nr_pages << PAGE_SHIFT) - 1;
+@@ -626,7 +626,7 @@ static struct page *rb_alloc_aux_page(int node, int order)
+ 	return page;
+ }
+ 
+-static void rb_free_aux_page(struct ring_buffer *rb, int idx)
++static void rb_free_aux_page(struct perf_buffer *rb, int idx)
+ {
+ 	struct page *page = virt_to_page(rb->aux_pages[idx]);
+ 
+@@ -635,7 +635,7 @@ static void rb_free_aux_page(struct ring_buffer *rb, int idx)
+ 	__free_page(page);
+ }
+ 
+-static void __rb_free_aux(struct ring_buffer *rb)
++static void __rb_free_aux(struct perf_buffer *rb)
+ {
+ 	int pg;
+ 
+@@ -662,7 +662,7 @@ static void __rb_free_aux(struct ring_buffer *rb)
+ 	}
+ }
+ 
+-int rb_alloc_aux(struct ring_buffer *rb, struct perf_event *event,
++int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+ 		 pgoff_t pgoff, int nr_pages, long watermark, int flags)
+ {
+ 	bool overwrite = !(flags & RING_BUFFER_WRITABLE);
+@@ -753,7 +753,7 @@ int rb_alloc_aux(struct ring_buffer *rb, struct perf_event *event,
+ 	return ret;
+ }
+ 
+-void rb_free_aux(struct ring_buffer *rb)
++void rb_free_aux(struct perf_buffer *rb)
+ {
+ 	if (refcount_dec_and_test(&rb->aux_refcount))
+ 		__rb_free_aux(rb);
+@@ -766,7 +766,7 @@ void rb_free_aux(struct ring_buffer *rb)
+  */
+ 
+ static struct page *
+-__perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff)
++__perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
+ {
+ 	if (pgoff > rb->nr_pages)
+ 		return NULL;
+@@ -798,13 +798,13 @@ static void perf_mmap_free_page(void *addr)
+ 	__free_page(page);
+ }
+ 
+-struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
++struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	unsigned long size;
+ 	int i;
+ 
+-	size = sizeof(struct ring_buffer);
++	size = sizeof(struct perf_buffer);
+ 	size += nr_pages * sizeof(void *);
+ 
+ 	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
+@@ -843,7 +843,7 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ 	return NULL;
+ }
+ 
+-void rb_free(struct ring_buffer *rb)
++void rb_free(struct perf_buffer *rb)
+ {
+ 	int i;
+ 
+@@ -854,13 +854,13 @@ void rb_free(struct ring_buffer *rb)
+ }
+ 
+ #else
+-static int data_page_nr(struct ring_buffer *rb)
++static int data_page_nr(struct perf_buffer *rb)
+ {
+ 	return rb->nr_pages << page_order(rb);
+ }
+ 
+ static struct page *
+-__perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff)
++__perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
+ {
+ 	/* The '>' counts in the user page. */
+ 	if (pgoff > data_page_nr(rb))
+@@ -878,11 +878,11 @@ static void perf_mmap_unmark_page(void *addr)
+ 
+ static void rb_free_work(struct work_struct *work)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	void *base;
+ 	int i, nr;
+ 
+-	rb = container_of(work, struct ring_buffer, work);
++	rb = container_of(work, struct perf_buffer, work);
+ 	nr = data_page_nr(rb);
+ 
+ 	base = rb->user_page;
+@@ -894,18 +894,18 @@ static void rb_free_work(struct work_struct *work)
+ 	kfree(rb);
+ }
+ 
+-void rb_free(struct ring_buffer *rb)
++void rb_free(struct perf_buffer *rb)
+ {
+ 	schedule_work(&rb->work);
+ }
+ 
+-struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
++struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	unsigned long size;
+ 	void *all_buf;
+ 
+-	size = sizeof(struct ring_buffer);
++	size = sizeof(struct perf_buffer);
+ 	size += sizeof(void *);
+ 
+ 	rb = kzalloc(size, GFP_KERNEL);
+@@ -939,7 +939,7 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ #endif
+ 
+ struct page *
+-perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff)
++perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
+ {
+ 	if (rb->aux_nr_pages) {
+ 		/* above AUX space */
+-- 
+2.20.1
+
