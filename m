@@ -2,128 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE20E11E477
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:22:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF5AA11E479
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:22:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbfLMNUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:20:51 -0500
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:41412 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbfLMNUv (ORCPT
+        id S1727387AbfLMNVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:21:32 -0500
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:38769 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726386AbfLMNVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:20:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1576243250; x=1607779250;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tFySCLGtPwSbxUYEux7/p0Qq1N3sbGfPAhYwtPWA8rI=;
-  b=q+yFsIPL9vjV7Vk8SVEayXkaH+KzTUeReqwRvOFeNS/hB2HWIKZ12k1U
-   iu1yQG7MkOIFrMQmSTlWEqsHAO+ihcF6cijHLC6QLcfTd/1Vwp1+M4jEv
-   VNUV/SMdSTB+K8S1R80jvVX4TjM1kzeXAU1RpYgXxqdNuDQTsAqkXCaD/
-   8=;
-IronPort-SDR: O0jhjvelAXfwKAOT+PVxdrI3ucPHYGBWbSCbkKO9chIdq5QSf3fZxfvnAusUejisOvPnXz7Kg1
- G9cNGYjF/sKQ==
-X-IronPort-AV: E=Sophos;i="5.69,309,1571702400"; 
-   d="scan'208";a="7497894"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-27fb8269.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 13 Dec 2019 13:20:49 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-27fb8269.us-east-1.amazon.com (Postfix) with ESMTPS id 181C5A1B8E;
-        Fri, 13 Dec 2019 13:20:47 +0000 (UTC)
-Received: from EX13D32EUB002.ant.amazon.com (10.43.166.114) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 13 Dec 2019 13:20:46 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
- EX13D32EUB002.ant.amazon.com (10.43.166.114) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 13 Dec 2019 13:20:45 +0000
-Received: from u2f063a87eabd5f.cbg10.amazon.com (10.125.106.135) by
- mail-relay.amazon.com (10.43.160.118) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Fri, 13 Dec 2019 13:20:43 +0000
-From:   Paul Durrant <pdurrant@amazon.com>
-To:     <xen-devel@lists.xenproject.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Paul Durrant <pdurrant@amazon.com>,
-        Juergen Gross <jgross@suse.com>,
-        "Jakub Kicinski" <jakub.kicinski@netronome.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH net v2] xen-netback: avoid race that can lead to NULL pointer dereference
-Date:   Fri, 13 Dec 2019 13:20:40 +0000
-Message-ID: <20191213132040.21446-1-pdurrant@amazon.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 13 Dec 2019 08:21:32 -0500
+Received: from [IPv6:2001:983:e9a7:1:c93c:45bd:1710:e478]
+ ([IPv6:2001:983:e9a7:1:c93c:45bd:1710:e478])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id fksoihjoeGyJwfkspi1ER9; Fri, 13 Dec 2019 14:21:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1576243289; bh=7EgWnmlezgqj/BVCt+K0pvVbA4FXbio5mhVaiZ5dfQs=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=AdH5iv0YH+McIOrsn1DAaopGdWufZ29ioADupUDcGxWk1oLktScwdR5k9bi0JYjtg
+         OEJK6H7Fs4R+OjlFrPBN4D0PRNP5Wlu8iyhe2rW2cTOe9a5r07vHBWpV+1CiGFxEit
+         FDmKC4Ad2ub/oF4hqHsgOFOlZVxT1VPQmEfUvBA6OpYc84sg2ABsUu5DDgjqrLAGqi
+         9P++BEXVdoVvRdzUPw/lz2ko24IEbZDeawl3d5bm1HVwMbvP/QFwC/h3KjwxcDEXKd
+         dGTRPc7vl+n5+2qN5eSI/APzP226yXtfpxo8ojhRe2fG1eTM4qjmXWj6nUZtNOy5S3
+         GnxofjNCHZf+w==
+Subject: Re: [PATCH v3 2/4] media: vicodec: use v4l2-mem2mem draining, stopped
+ and next-buf-is-last states handling
+To:     Neil Armstrong <narmstrong@baylibre.com>, mchehab@kernel.org,
+        hans.verkuil@cisco.com
+Cc:     linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Maxime Jourdan <mjourdan@baylibre.com>
+References: <20191209122028.13714-1-narmstrong@baylibre.com>
+ <20191209122028.13714-3-narmstrong@baylibre.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <0eb52de8-97a9-40cf-a926-262b1ecdc3e9@xs4all.nl>
+Date:   Fri, 13 Dec 2019 14:21:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <20191209122028.13714-3-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfCTmMw6UMTjLOJUPkCDlqks83iiillHmwdMzsgRBSoe9Hv36xB2m2JCtI2vE2e4HNUGyqznMLbJoF3O9tW1gv12rxYmLfCQHCIdKdX/s71xthDM0vOuU
+ HptJYccltFJSVGvxkzTfO99gMJZGZHBu5Vaz88vywlnqQyIHp7vUCxeCldEda8taB9ZWImjzwda5M8IGmaVSwhVj/RtSopo8exf74kxYjqitarmaTOAGUEXy
+ vrzJ4cE+GJJJMmriatdi6aScio5XLtqjkI02MJ3d+f/ClZOULw85BjGx+ORfwXifQSucKlUlhu/xQzwlpjCEAGZXUUFdP4dUcUqtZXKVCsKq6dC7S9BG2fib
+ U2B6nyFsPBXuSCSUEXYE6U+PLxXEOBxttOov6+KYCDYkbns0RFk6rnSCz50+rb1qFMCepkIn8mY+WPW+tp+kCXYaMTbI7Wndg8mxwSJ5BgIxf+ZL3TiWviKE
+ mphrMYzQ/VJUOTuejb9Z9e5J+hETayO1cXafObf1FnWicRf6w1sQNFZY5t2uDbKz4tzh1UjYQ+YeTUf1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function xenvif_disconnect_queue(), the value of queue->rx_irq is
-zeroed *before* queue->task is stopped. Unfortunately that task may call
-notify_remote_via_irq(queue->rx_irq) and calling that function with a
-zero value results in a NULL pointer dereference in evtchn_from_irq().
+On 12/9/19 1:20 PM, Neil Armstrong wrote:
+> Use the previously introduced v4l2-mem2mem core APIs to handle the drainig,
+> stopped and next-buf-is-last states.
+> 
+> With these changes, the v4l2-compliance still passes with the following
+> commands :
+> # v4l2-ctl --stream-mmap --stream-out-mmap --stream-to-hdr out.comp --stream-from in.yuv
+>>>>> <><><><><><><><><><><><><><><><>< 15.53 fps
+>  15.53 fps
+>> <><><><><><><><><><><><>< 13.99 fps
+>  13.99 fps
+>> <><><><><><><><><><><>< 13.52 fps
+>  13.52 fps
+>> <><><><><><><><><><><><>< 13.41 fps
+>  13.41 fps
+>> <><><><><><><><><><><><>< 13.21 fps
+>  13.21 fps
+>> <><><><><><><><><><><>< 13.09 fps
+>  13.09 fps
+>> <><><><><><><
+> STOP ENCODER
+> <<<
+> EOS EVENT
+> 
+> # v4l2-compliance --stream-from in.yuv -s
+> v4l2-compliance SHA: 7ead0e1856b89f2e19369af452bb03fd0cd16793, 64 bits
+> [...]
+> Total for vicodec device /dev/video0: 50, Succeeded: 50, Failed: 0, Warnings: 0
+> 
+> The full output is available at [1]
+> 
+> # v4l2-compliance -d1 --stream-from-hdr out.comp -s
+> v4l2-compliance SHA: 7ead0e1856b89f2e19369af452bb03fd0cd16793, 64 bits
+> [...]
+> Total for vicodec device /dev/video1: 50, Succeeded: 50, Failed: 0, Warnings: 0
+> 
+> The full output is available at [2]
+> 
+> No functional changes should be noticed.
 
-This patch simply re-orders things, stopping all tasks before zero-ing the
-irq values, thereby avoiding the possibility of the race.
+Ah, unfortunately there *are* functional changes.
 
-Fixes: 2ac061ce97f4 ("xen/netback: cleanup init and deinit code")
-Signed-off-by: Paul Durrant <pdurrant@amazon.com>
----
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc: Wei Liu <wei.liu@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>
+There is a (much) more extensive test that is done in the test-media script.
 
-v2:
- - Add 'Fixes' tag and re-work commit comment
----
- drivers/net/xen-netback/interface.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+In v4l-utils, go to contrib/test. Now run (as root): test-media vicodec
 
-diff --git a/drivers/net/xen-netback/interface.c b/drivers/net/xen-netback/interface.c
-index 68dd7bb07ca6..f15ba3de6195 100644
---- a/drivers/net/xen-netback/interface.c
-+++ b/drivers/net/xen-netback/interface.c
-@@ -628,18 +628,6 @@ int xenvif_connect_ctrl(struct xenvif *vif, grant_ref_t ring_ref,
- 
- static void xenvif_disconnect_queue(struct xenvif_queue *queue)
- {
--	if (queue->tx_irq) {
--		unbind_from_irqhandler(queue->tx_irq, queue);
--		if (queue->tx_irq == queue->rx_irq)
--			queue->rx_irq = 0;
--		queue->tx_irq = 0;
--	}
--
--	if (queue->rx_irq) {
--		unbind_from_irqhandler(queue->rx_irq, queue);
--		queue->rx_irq = 0;
--	}
--
- 	if (queue->task) {
- 		kthread_stop(queue->task);
- 		queue->task = NULL;
-@@ -655,6 +643,18 @@ static void xenvif_disconnect_queue(struct xenvif_queue *queue)
- 		queue->napi.poll = NULL;
- 	}
- 
-+	if (queue->tx_irq) {
-+		unbind_from_irqhandler(queue->tx_irq, queue);
-+		if (queue->tx_irq == queue->rx_irq)
-+			queue->rx_irq = 0;
-+		queue->tx_irq = 0;
-+	}
-+
-+	if (queue->rx_irq) {
-+		unbind_from_irqhandler(queue->rx_irq, queue);
-+		queue->rx_irq = 0;
-+	}
-+
- 	xenvif_unmap_frontend_data_rings(queue);
- }
- 
--- 
-2.20.1
+This test now fails on some tests for the stateful decoder:
 
+Streaming ioctls:
+        test read/write: OK (Not Supported)
+        test blocking wait: OK
+                fail: v4l2-test-buffers.cpp(943): ret == 0
+                fail: v4l2-test-buffers.cpp(1353): captureBufs(node, node_m2m_cap, q, m2m_q, frame_count, pollmode, capture_count)
+        test MMAP (select): FAIL
+                fail: v4l2-test-buffers.cpp(951): ret == 0
+                fail: v4l2-test-buffers.cpp(1353): captureBufs(node, node_m2m_cap, q, m2m_q, frame_count, pollmode, capture_count)
+        test MMAP (epoll): FAIL
+                fail: v4l2-test-buffers.cpp(943): ret == 0
+                fail: v4l2-test-buffers.cpp(1607): captureBufs(node, node_m2m_cap, q, m2m_q, frame_count, pollmode, capture_count)
+        test USERPTR (select): FAIL
+                fail: v4l2-test-buffers.cpp(943): ret == 0
+                fail: v4l2-test-buffers.cpp(1761): captureBufs(node, node_m2m_cap, q, m2m_q, frame_count, pollmode, capture_count)
+        test DMABUF (select): FAIL
+
+I also see this:
+
+cmp: EOF on /tmp/tmp.7KAXKAIkVZ/raw.yu12.1280.24 after byte 23500800, in line 1
+
+which shouldn't be there either.
+
+I can recommend the test-media script: it can test all the virtual drivers and it is
+part of the daily build to check for regressions.
+
+Regards,
+
+	Hans
