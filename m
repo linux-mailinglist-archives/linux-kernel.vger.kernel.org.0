@@ -2,93 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A7D11E184
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 11:05:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ED0E11E18D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 11:05:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfLMKEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 05:04:05 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39975 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbfLMKED (ORCPT
+        id S1726930AbfLMKEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 05:04:21 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50978 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbfLMKES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 05:04:03 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i15so5805266oto.7
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 02:04:02 -0800 (PST)
+        Fri, 13 Dec 2019 05:04:18 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a5so5672724wmb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 02:04:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=NOEG6uk8YNMLihvnkukpgnk8t1ki9it9N7ww5zhxekrD15yEP9mu///X6qO7xOEMCD
-         9qtW9QOmC2Yh3oUvuOm2gofUYAYEhGimknFZfWiMN84Aqo1p5qHGxjDS8bdogNeg6JVe
-         kf+MVQiuI0n4DAcAIhuTX4yaQLXB+PX4Mr0IPZLLJn8Ee1V7RunltjaSlmBbixTZYr4d
-         1B+OQKti8YibKtbsxkMT2gu2z87qZZ6GR0muwHtPJx08TWpG5KbFGkQ4WfX+amfUB+e4
-         yUgvh/9QFk+vA+u7HQmUmWdmWssU3UQMjawo/d5nlF4wtpXL5UJxJna7v3yHjRY+EfDT
-         MmTA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VXK6UjT3yvQXehTLYa6S1u2sa5BlRdomwa2/Hcjjkmc=;
+        b=Sqme3mDOu29bXcnx3JAe8SM+kNYOjY0c1eOn0jeZhyWGeYUz5rGyQns0Ag7pq/6y+4
+         kyNlzPph787dZHJXZEiOAQhGqvDODOeUvfLalFGgPiFOIIbTOdaXxqCO4YXJM6O/J8A5
+         7y+ODXuNB/C6mQD7u8B9P5qd4jMdTwZO/82wv52hSD1gubm9gWP71J3kBDqhi6pnnpca
+         +eMsnw4qmTsvG5PLIGt4gyyUyu8eeJJt0qvL6jGUQfBofpLosscXuEDnqCzV3F3SUx26
+         ANV1PwSCvLnuSYw3unH3vKxAF87HodZ174wMuHlQoyrwyn7WrIeh517gJIyDMCnxww0g
+         DLDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=dIpOPP5XODnCREYavH+FOInZJfkEiKjlOUmQ+VqFqBor26Ukucp+pl0T8Zv2Szxw8V
-         P94sCrsAjjERBPWXkGklEwZFE76RnzvfiFX33xdS3pVQwyrMbPVzpn2v529u2mHPRw0H
-         Y51cNz1udNSi+JmVzTUoDLqlROMpxKjHU/4sCcXGC4CUz1J946ezxaTmjyahCZVTBryR
-         GDaVG71EvsfRY/jsdqycVm+7a7B1THFpJt/crhjhX34P/sqp0ZMBJBnt8vdBI9tZqxP5
-         q43xFHifZWxFqkYOB6V3obWpddk7431rPs13SWEY3agckncxhMxFDsLS1rh20O7L9vCp
-         eRDQ==
-X-Gm-Message-State: APjAAAXgPNE1+pR6lEUNPksH9saLxlV5meb2xXa5KCv6z3Y8QCXo98Bt
-        rrmK4Cs/E07p81IL4nIMx621vX35HeV7VOpWG0k=
-X-Google-Smtp-Source: APXvYqyUoIZVM4u6s2pfd7w8G/T6FOnNxXMMfBt2qwF797MzATajsQP9jAfFOpse676Yas1IrqZarSg/2ErZqwC1c68=
-X-Received: by 2002:a9d:6a50:: with SMTP id h16mr14079607otn.267.1576231442433;
- Fri, 13 Dec 2019 02:04:02 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VXK6UjT3yvQXehTLYa6S1u2sa5BlRdomwa2/Hcjjkmc=;
+        b=SpOZ/Ph+One6FP4/M7mEuHUwRycgZHMJ13EPSKAiNJDfqhW48R3ofir1kDTB80LKXq
+         vlRiLaSunooSLEwaU42vLAVBCnJoxfXY3JVs82wIrrtuSyxG0UBBat6X4OLllgrPNSaT
+         GLj/et7XTgoVl/61S3KONUFe49mc9JipSVR2mMIDj9pohB9SoM8KcoEWGErWng1nzzMx
+         1irUAH0/1qwQ/q+xUaMbmT9OlziMLzXyoKVpOgLY9ZGIihWP5raQGng+PdYsruQgA7oF
+         jrOmx+bk9XaJOBx/i75nqDtkF/EG0gk43cjulrlt+WaEUKiRrFJwwTxJgj41mAVD9G0Y
+         T+sg==
+X-Gm-Message-State: APjAAAUpmIxCI4Nsx3OUR66wBnmkn+ecHnhH+xr8YwjzaeJsMlUAS1bX
+        UgWYEVVUiFP6/PwDnGbPs1h/c/FaKlzpG831dBLjzg==
+X-Google-Smtp-Source: APXvYqzrrrCcFiuqdvaZaLnkNV6SCoP4uctJu8CpEBW12Wz60eMvE/ICbTcq/LDfsqhURwKKOS2I+ILGE90133ebxOI=
+X-Received: by 2002:a1c:a795:: with SMTP id q143mr11772299wme.52.1576231456007;
+ Fri, 13 Dec 2019 02:04:16 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:ac9:6150:0:0:0:0:0 with HTTP; Fri, 13 Dec 2019 02:04:02
- -0800 (PST)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <moordavis0003@gmail.com>
-Date:   Fri, 13 Dec 2019 11:04:02 +0100
-Message-ID: <CAH26tOG-egv=y_nkx9a4WSYSwDHFDmZpCz5qmQu6biyELYf2sQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
+References: <20191213090646.12329-1-jlee@suse.com> <20191213090646.12329-3-jlee@suse.com>
+ <CAKv+Gu_2GTqKJNVpMEg4ic_3ACb5GJKAkgfFWoEdWqMN7pmwiA@mail.gmail.com> <20191213092049.GW22409@linux-l9pv.suse>
+In-Reply-To: <20191213092049.GW22409@linux-l9pv.suse>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 13 Dec 2019 10:04:14 +0000
+Message-ID: <CAKv+Gu8-Ay2R9wU-wwz2w+Q9jZOduXYigmFJL8Rmppnm1CSpHg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] efi: show error messages only when loading
+ certificates is failed
+To:     Joey Lee <JLee@suse.com>
+Cc:     Chun-Yi Lee <joeyli.kernel@gmail.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo
+On Fri, 13 Dec 2019 at 10:21, Joey Lee <JLee@suse.com> wrote:
+>
+> Hi Ard,
+>
+> On Fri, Dec 13, 2019 at 09:10:12AM +0000, Ard Biesheuvel wrote:
+> > On Fri, 13 Dec 2019 at 10:07, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> > >
+> > > When loading certificates list from EFI variables, the error
+> > > message and efi status code always be emitted to dmesg. It looks
+> > > ugly:
+> > >
+> > > [    2.335031] Couldn't get size: 0x800000000000000e
+> > > [    2.335032] Couldn't get UEFI MokListRT
+> > > [    2.339985] Couldn't get size: 0x800000000000000e
+> > > [    2.339987] Couldn't get UEFI dbx list
+> > >
+> > > This cosmetic patch moved the messages to the error handling code
+> > > path. And, it also shows the corresponding status string of status
+> > > code.
+> > >
+> >
+> > So what output do we get after applying this patch when those
+> > variables don't exist?
+> >
+>
+> A "UEFI:xxxx list was not found" message will be exposed in dmesg
+> when kernel loglevel be set to debug. Otherwise there have no messages.
+>
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8,5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+OK, that works for me.
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0002gmail.com
+I take it this will go via the linux-security tree along with 1/2?
 
-Vielen Dank im Voraus,
-Mr. Eddy William,
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
 
 
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0002gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William,
+> > > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> > > ---
+> > >  security/integrity/platform_certs/load_uefi.c | 40 ++++++++++++++-------------
+> > >  1 file changed, 21 insertions(+), 19 deletions(-)
+> > >
+> > > diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> > > index 81b19c52832b..b6c60fb3fb6c 100644
+> > > --- a/security/integrity/platform_certs/load_uefi.c
+> > > +++ b/security/integrity/platform_certs/load_uefi.c
+> > > @@ -1,4 +1,5 @@
+> > >  // SPDX-License-Identifier: GPL-2.0
+> > > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> > >
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/sched.h>
+> > > @@ -39,7 +40,7 @@ static __init bool uefi_check_ignore_db(void)
+> > >   * Get a certificate list blob from the named EFI variable.
+> > >   */
+> > >  static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> > > -                                 unsigned long *size)
+> > > +                                 unsigned long *size, const char *source)
+> > >  {
+> > >         efi_status_t status;
+> > >         unsigned long lsize = 4;
+> > > @@ -48,23 +49,30 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> > >
+> > >         status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
+> > >         if (status != EFI_BUFFER_TOO_SMALL) {
+> > > -               pr_err("Couldn't get size: 0x%lx\n", status);
+> > > -               return NULL;
+> > > +               if (status == EFI_NOT_FOUND) {
+> > > +                       pr_debug("%s list was not found\n", source);
+> > > +                       return NULL;
+> > > +               }
+> > > +               goto err;
+> > >         }
+> > >
+> > >         db = kmalloc(lsize, GFP_KERNEL);
+> > > -       if (!db)
+> > > -               return NULL;
+> > > +       if (!db) {
+> > > +               status = EFI_OUT_OF_RESOURCES;
+> > > +               goto err;
+> > > +       }
+> > >
+> > >         status = efi.get_variable(name, guid, NULL, &lsize, db);
+> > >         if (status != EFI_SUCCESS) {
+> > >                 kfree(db);
+> > > -               pr_err("Error reading db var: 0x%lx\n", status);
+> > > -               return NULL;
+> > > +               goto err;
+> > >         }
+> > >
+> > >         *size = lsize;
+> > >         return db;
+> > > +err:
+> > > +       pr_err("Couldn't get %s list: %s\n", source, efi_status_to_str(status));
+> > > +       return NULL;
+> > >  }
+> > >
+> > >  /*
+> > > @@ -153,10 +161,8 @@ static int __init load_uefi_certs(void)
+> > >          * an error if we can't get them.
+> > >          */
+> > >         if (!uefi_check_ignore_db()) {
+> > > -               db = get_cert_list(L"db", &secure_var, &dbsize);
+> > > -               if (!db) {
+> > > -                       pr_err("MODSIGN: Couldn't get UEFI db list\n");
+> > > -               } else {
+> > > +               db = get_cert_list(L"db", &secure_var, &dbsize, "UEFI:db");
+> > > +               if (db) {
+> > >                         rc = parse_efi_signature_list("UEFI:db",
+> > >                                         db, dbsize, get_handler_for_db);
+> > >                         if (rc)
+> > > @@ -166,10 +172,8 @@ static int __init load_uefi_certs(void)
+> > >                 }
+> > >         }
+> > >
+> > > -       mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
+> > > -       if (!mok) {
+> > > -               pr_info("Couldn't get UEFI MokListRT\n");
+> > > -       } else {
+> > > +       mok = get_cert_list(L"MokListRT", &mok_var, &moksize, "UEFI:MokListRT");
+> > > +       if (mok) {
+> > >                 rc = parse_efi_signature_list("UEFI:MokListRT",
+> > >                                               mok, moksize, get_handler_for_db);
+> > >                 if (rc)
+> > > @@ -177,10 +181,8 @@ static int __init load_uefi_certs(void)
+> > >                 kfree(mok);
+> > >         }
+> > >
+> > > -       dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
+> > > -       if (!dbx) {
+> > > -               pr_info("Couldn't get UEFI dbx list\n");
+> > > -       } else {
+> > > +       dbx = get_cert_list(L"dbx", &secure_var, &dbxsize, "UEFI:dbx");
+> > > +       if (dbx) {
+> > >                 rc = parse_efi_signature_list("UEFI:dbx",
+> > >                                               dbx, dbxsize,
+> > >                                               get_handler_for_dbx);
+> > > --
+> > > 2.16.4
+> > >
