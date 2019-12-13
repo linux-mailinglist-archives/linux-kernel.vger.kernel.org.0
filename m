@@ -2,81 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7AFC11E32E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:06:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24CD811E337
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:06:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfLMMGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 07:06:02 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46119 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbfLMMGB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 07:06:01 -0500
-Received: by mail-lj1-f193.google.com with SMTP id z17so2326284ljk.13
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 04:06:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8vy2WG4RuHa5f2z6LjbeaeW56JXxALVqQpIH2hCQzJo=;
-        b=MUFdr87bdfxATCI3TuO5k2GqC/HU8Dsml0uQw9V53Jd/55Qbe3TvFTuiiwhLJvYgw5
-         zfDgBf6GFZ4jSjt5tZVAQnxttYhw1lPR5WOrhifw5AkqsmSyFoHL++kCK4j/FeeRJ3do
-         4g2t1TYCAu0OCa6zVUR67UF+ejkN1IJ+hDkrM2SJbHadqHPABW5tDrg6QrhGpFz7Rr8L
-         F8Nf1nMaB4Ufr0urTRFjUd+WPj740mF3iCcP2SUsZIToizfiuaRXfW+oOjeyYYdcINk8
-         eMPSdHWD6uWpfVbvr/3r0xpjNZqG1QHnDfpxc0eFB3Noq77MyEHZUOgyuDflLkOk8Ri3
-         B5cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8vy2WG4RuHa5f2z6LjbeaeW56JXxALVqQpIH2hCQzJo=;
-        b=POdbsCCDL/PR86qmRdvn8BUA5R5YLnttkt1GWdGqjwQnhnPOh5SteAT1N7cTCaCKVv
-         DFDUHOijUi8LBBaykvLCgWuZovimgZriAKRkQOguAjyDXzQ8fZKEDeiaA7zmMUVRJ56p
-         kxthWdI7Xu/70CoaPSPvmWtVhieJ5RdSlwJbCqAFvPmZNUw8kOIjucHY8uExuIW0hJN6
-         rFQrO967B5F8ZFxseXS3Npf9r55HqnGZtC3qniUOjBTau3ETGBf2hbDOJYS943Ws6H/v
-         CT+xmVV4qn4/Otj7HVRZgo3ySUxU0HzaRWE0UJ2rVMbbYKKiGZLpQuq8HNiU2xpNPlcd
-         kQxA==
-X-Gm-Message-State: APjAAAVUAj9c92yzKXahvXjAohyB65/jNOZ7Zdv6QM4ssp2vcMZ9Pqz2
-        TBHPGMXrxx6bw+ebY+e6P+AmhDyBUCJ23/d9Lck=
-X-Google-Smtp-Source: APXvYqwBfVKH9QpfEnk02Am4ccGlNAh6cevgsF9QJIkcB8wjW9gjMc2o7+gzwuf/6YRf3nWwcpblq5xp3R3uXjjTd9I=
-X-Received: by 2002:a2e:b4b5:: with SMTP id q21mr9269515ljm.17.1576238759501;
- Fri, 13 Dec 2019 04:05:59 -0800 (PST)
-MIME-Version: 1.0
-References: <1576065442-19763-1-git-send-email-shengjiu.wang@nxp.com>
- <20191212164835.GD10451@ediswmail.ad.cirrus.com> <20191212165311.GK4310@sirena.org.uk>
- <CAA+D8AP4XNNmQ72xG6gNevtu8i8TJ7AaQMMgXJMCPmv2VO0_HA@mail.gmail.com>
-In-Reply-To: <CAA+D8AP4XNNmQ72xG6gNevtu8i8TJ7AaQMMgXJMCPmv2VO0_HA@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 13 Dec 2019 09:05:49 -0300
-Message-ID: <CAOMZO5AHRWbgn0U=FsF7a1Ux1vu2_zhga5j6Z5p=6K86PSm1Xw@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: wm8962: fix lambda value
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        guennadi.liakhovetski@linux.intel.com,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, patches@opensource.cirrus.com,
-        Thomas Gleixner <tglx@linutronix.de>, allison@lohutok.net
-Content-Type: text/plain; charset="UTF-8"
+        id S1726908AbfLMMGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 07:06:48 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:39706 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726717AbfLMMGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 07:06:47 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 06875200804;
+        Fri, 13 Dec 2019 13:06:43 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E9D5A200761;
+        Fri, 13 Dec 2019 13:06:42 +0100 (CET)
+Received: from fsr-ub1664-134.ea.freescale.net (fsr-ub1664-134.ea.freescale.net [10.171.74.111])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 234F6203B1;
+        Fri, 13 Dec 2019 13:06:42 +0100 (CET)
+From:   Mirela Rabulea <mirela.rabulea@nxp.com>
+To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl, shawnguo@kernel.org,
+        robh+dt@kernel.org
+Cc:     paul.kocialkowski@bootlin.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        s.hauer@pengutronix.de, aisheng.dong@nxp.com,
+        daniel.baluta@nxp.com, leonard.crestez@nxp.com,
+        robert.chiras@nxp.com, laurentiu.palcu@nxp.com,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        p.zabel@pengutronix.de, laurent.pinchart+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se,
+        dafna.hirschfeld@collabora.com,
+        Mirela Rabulea <mirela.rabulea@nxp.com>
+Subject: [PATCH v3 0/6] Add V4L2 driver for i.MX8 JPEG Encoder/Decoder
+Date:   Fri, 13 Dec 2019 14:06:15 +0200
+Message-Id: <1576238781-5911-1-git-send-email-mirela.rabulea@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shengjiu,
+Changes in v3:
+Add a 6th patch to update the MAINTAINERS file with an entry for this driver.
 
-On Fri, Dec 13, 2019 at 12:10 AM Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
+This patch set adds the V4L2 driver for i.MX8QXP/QM JPEG encoder/decoder
+and it's dependencies.
+The driver was tested on i.MX8QXP, using a unit test application and
+the v4l2-compliance tool, including the  streaming tests for encoder.
 
-> We encounter an issue that when Integer mode, the lambda=theta=0,
-> the output sound is slower than expected. After change lambda=1
-> the issue is gone.
+Mirela Rabulea (6):
+  media: v4l: Add packed YUV444 24bpp pixel format
+  firmware: imx: scu-pd: Add power domains for imx-jpeg
+  media: dt-bindings: Add bindings for i.MX8QXP/QM JPEG driver
+  media: imx-jpeg: Add V4L2 driver for i.MX8 JPEG Encoder/Decoder
+  arm64: dts: imx8qxp: Add jpeg encoder/decoder nodes
+  Add maintainer for IMX jpeg v4l2 driver
 
-This is important information and it would be nice to have it included
-in the commit log.
+ .../devicetree/bindings/media/imx8-jpeg.yaml       |   83 +
+ Documentation/media/uapi/v4l/pixfmt-packed-yuv.rst |   37 +-
+ MAINTAINERS                                        |    8 +
+ arch/arm64/boot/dts/freescale/imx8qxp-mek.dts      |    8 +
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi         |   37 +
+ drivers/firmware/imx/scu-pd.c                      |    6 +
+ drivers/media/platform/Kconfig                     |    2 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/imx-jpeg/Kconfig            |   10 +
+ drivers/media/platform/imx-jpeg/Makefile           |    3 +
+ drivers/media/platform/imx-jpeg/mxc-jpeg-hw.c      |  168 ++
+ drivers/media/platform/imx-jpeg/mxc-jpeg-hw.h      |  140 ++
+ drivers/media/platform/imx-jpeg/mxc-jpeg.c         | 2293 ++++++++++++++++++++
+ drivers/media/platform/imx-jpeg/mxc-jpeg.h         |  188 ++
+ drivers/media/v4l2-core/v4l2-ioctl.c               |    1 +
+ include/uapi/linux/videodev2.h                     |    1 +
+ 16 files changed, 2985 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/media/imx8-jpeg.yaml
+ create mode 100644 drivers/media/platform/imx-jpeg/Kconfig
+ create mode 100644 drivers/media/platform/imx-jpeg/Makefile
+ create mode 100644 drivers/media/platform/imx-jpeg/mxc-jpeg-hw.c
+ create mode 100644 drivers/media/platform/imx-jpeg/mxc-jpeg-hw.h
+ create mode 100644 drivers/media/platform/imx-jpeg/mxc-jpeg.c
+ create mode 100644 drivers/media/platform/imx-jpeg/mxc-jpeg.h
 
-Thanks
+-- 
+2.7.4
+
