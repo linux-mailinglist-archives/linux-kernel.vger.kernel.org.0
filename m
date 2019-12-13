@@ -2,251 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E819811E425
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:57:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 663CE11E42F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:57:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfLMM4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 07:56:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46220 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbfLMM4n (ORCPT
+        id S1727297AbfLMM5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 07:57:33 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:37643 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726345AbfLMM5d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 07:56:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fWjlDQlwIoBg7I4Z9XSj9pI9UUWfLrkzsxAziGh6H/M=; b=iQu8Ss5CvIW0fiJBxMLgkD1jm
-        yz+ajnmICV4TjIDDgyjd7PjqlmuUEvwzpxv4iI6JOc4i4t2KIec0epVoJTyvbUHEiqpxM6AJ+Xt05
-        sKMlHGiYwJk4ddTqnO404xiUWfpw8tXg1eqIYVKvSm4e0J/vOrP4MaT79qCHrwdyRKW34PUesKBVP
-        u/FrqqKsWXFJr9rj6glrIgaha27VGjLLX/VvZx6keNKxpAzE9YM5ANFtm2gDn8hL2KCBjRWD1jabQ
-        sRW9rFRq/ySsD5jIc8sZQIUccKV4JWAI1eusNTtWdFHf/Ti/SiaUpwv58KDQc+kuAmMRc9g/B9vAp
-        wYyfUNA/g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifkUX-0002Gq-OV; Fri, 13 Dec 2019 12:56:22 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 385E5305FFF;
-        Fri, 13 Dec 2019 13:54:58 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EC16A20121961; Fri, 13 Dec 2019 13:56:18 +0100 (CET)
-Date:   Fri, 13 Dec 2019 13:56:18 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, dja@axtens.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: Re: READ_ONCE() + STACKPROTECTOR_STRONG == :/ (was Re: [GIT PULL]
- Please pull powerpc/linux.git powerpc-5.5-2 tag (topic/kasan-bitops))
-Message-ID: <20191213125618.GD2844@hirez.programming.kicks-ass.net>
-References: <20191212080105.GV2844@hirez.programming.kicks-ass.net>
- <20191212100756.GA11317@willie-the-truck>
- <20191212104610.GW2827@hirez.programming.kicks-ass.net>
- <CAHk-=wjUBsH0BYDBv=q36482G-U7c=9bC89L_BViSciTfb8fhA@mail.gmail.com>
- <20191212180634.GA19020@willie-the-truck>
- <CAHk-=whRxB0adkz+V7SQC8Ac_rr_YfaPY8M2mFDfJP2FFBNz8A@mail.gmail.com>
- <20191212193401.GB19020@willie-the-truck>
- <20191212202157.GD11457@worktop.programming.kicks-ass.net>
- <20191212205338.GB11802@worktop.programming.kicks-ass.net>
- <20191213104706.xnpqaehmtean3mkd@ltop.local>
+        Fri, 13 Dec 2019 07:57:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576241851;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=b9VSUdKWho0AsMY5EAuNCRxldiXE6vz+eRj4A1RpznE=;
+        b=M9Z6gPhSmBz+RLo3zCnmIJRZtu09ZDR9fSv0okoqmWJvfNmePGzF7jAqH2Kj6H2JJkFUjb
+        odvpvGJaocHWpPkIVAEQbfsT26+KV+CjvAsoxrqA8mpfFqHlzMpqbLdQnNeSF9wUMt3LpG
+        LxBLldJa/I8wfCmFadiTOgNRsu91t7c=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-419-nlLw_sDSP-2FEA_EHgK9qQ-1; Fri, 13 Dec 2019 07:57:30 -0500
+X-MC-Unique: nlLw_sDSP-2FEA_EHgK9qQ-1
+Received: by mail-wm1-f72.google.com with SMTP id z2so1776038wmf.5
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 04:57:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=b9VSUdKWho0AsMY5EAuNCRxldiXE6vz+eRj4A1RpznE=;
+        b=Su83KEqFm5fO2I3PMaWUxSC6y4dl4XSskxWoNBvlCkNgcGWQmrQq6umHUF3V83Xlju
+         KPLq1R4JjP+qJtWWsyLXxk5Fb4pR+swBQIwTXYbAlNPtR+IgsE0yZ5Fo6txPC46IG3v3
+         44EBUZuhEKKO0vmAiz8Uk8zwNn5MjTQycB1iopG3XtxWaTXNaIIyr3GoEFqhMKQdZyj1
+         PTahakWPGIDyjZ1oh01nyxlF8e87TLD9jrnxYqBw3mhJXz8C+mFJiCeTzD7vy7d2L1qY
+         4Ydv1NzrhKh4hUo6VYvMsis8gNaEEEq38aDUBEhF3Ql5hiROdRwXeGs/5O2A5dkr9Gxs
+         w5wg==
+X-Gm-Message-State: APjAAAXvrAovcSNHQPPhlVsUwFDohbACK2T4bJ70KfSXII7BnmYK2pFb
+        FMreufbivDGa7IepxX9V90t3Ybfh/ojcBDaQrPKIO4vlhsGCU/qX1NOBFpuG9YPHf1Wf9M/7Mo1
+        WEFnRVd1uBEdDbxg9oK2UZP4e
+X-Received: by 2002:a5d:4847:: with SMTP id n7mr12782919wrs.30.1576241849424;
+        Fri, 13 Dec 2019 04:57:29 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyooJsG59h/SK6I3qzEzqYCu18nX3AX3vzKAV9jTMjSRqTrZNGY7kFwDuyC2i72yIcBNrfkKg==
+X-Received: by 2002:a5d:4847:: with SMTP id n7mr12782893wrs.30.1576241849183;
+        Fri, 13 Dec 2019 04:57:29 -0800 (PST)
+Received: from [192.168.1.14] ([90.168.169.92])
+        by smtp.gmail.com with ESMTPSA id q15sm9897425wrr.11.2019.12.13.04.57.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 04:57:28 -0800 (PST)
+Subject: Re: [GRUB PATCH 1/1] loader/i386/linux: Fix an underflow in the
+ setup_header length calculation
+To:     The development of GNU GRUB <grub-devel@gnu.org>,
+        Daniel Kiper <daniel.kiper@oracle.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Cc:     bp@alien8.de, eric.snowberg@oracle.com, hpa@zytor.com,
+        kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        mingo@redhat.com, phcoder@gmail.com, rdunlap@infradead.org,
+        ross.philipson@oracle.com
+References: <20191202172939.29271-1-daniel.kiper@oracle.com>
+From:   Javier Martinez Canillas <fmartine@redhat.com>
+Message-ID: <74fdf9ed-814b-0fc8-d405-79eb1011b9ee@redhat.com>
+Date:   Fri, 13 Dec 2019 13:57:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213104706.xnpqaehmtean3mkd@ltop.local>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191202172939.29271-1-daniel.kiper@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 11:47:06AM +0100, Luc Van Oostenryck wrote:
-> On Thu, Dec 12, 2019 at 09:53:38PM +0100, Peter Zijlstra wrote:
-> > Now, looking at the current GCC source:
-> > 
-> >   https://github.com/gcc-mirror/gcc/blob/97d7270f894395e513667a031a0c309d1819d05e/gcc/c/c-parser.c#L3707
-> > 
-> > it seems that __typeof__() is supposed to strip all qualifiers from
-> > _Atomic types. That lead me to try:
-> > 
-> > 	typeof(_Atomic typeof(p)) __p = (p);
-> > 
-> > But alas, I still get the same junk you got for ool_store_release() :/
+Hello Daniel,
+
+On 12/2/19 6:29 PM, Daniel Kiper wrote:
+> Recent work around x86 Linux kernel loader revealed an underflow in the
+> setup_header length calculation and another related issue. Both lead to
+> the memory overwrite and later machine crash.
 > 
-> I was checking this to see if Sparse was ready to support this.
-> I was a bit surprised because at first sigth GCC was doing as
-> it claims (typeof striping const & volatile on _Atomic types)
-> but your exampe wasn't working. But it's working if an
-> intermediate var is used:
-> 	_Atomic typeof(p) tmp;
-> 	typeof(tmp) __p = (p);
-> or, uglier but probably more practical:
-> 	typeof(({_Atomic typeof(p) tmp; })) __p = (p);
+> Currently when the GRUB copies the setup_header into the linux_params
+> (struct boot_params, traditionally known as "zero page") it assumes the
+> setup_header size as sizeof(linux_i386_kernel_header/lh). This is
+> incorrect. It should use the value calculated accordingly to the Linux
+> kernel boot protocol. Otherwise in case of pretty old kernel, to be
+> exact Linux kernel boot protocol, the GRUB may write more into
+> linux_params than it was expected to. Fortunately this is not very big
+> issue. Though it has to be fixed. However, there is also an underflow
+> which is grave. It happens when
 > 
-> Go figure!
+>   sizeof(linux_i386_kernel_header/lh) > "real size of the setup_header".
+> 
+> Then len value wraps around and grub_file_read() reads whole kernel into
+> the linux_params overwriting memory past it. This leads to the GRUB
+> memory allocator breakage and finally to its crash during boot.
+> 
+> The patch fixes both issues. Additionally, it moves the code not related to
+> grub_memset(linux_params)/grub_memcpy(linux_params)/grub_file_read(linux_params)
+> section outside of it to not confuse the reader.
+>
 
-Excellent! I had to change it to something like:
+Maybe you should add the following tag?
 
-#define unqual_typeof(x)    typeof(({_Atomic typeof(x) ___x __maybe_unused; ___x; }))
+Fixes: e683cfb0cf5 ("loader/i386/linux: Calculate the setup_header length")
 
-but that does indeed work!
+> Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+> ---
 
-Now I suppose we should wrap that in a symbol that indicates our
-compiler does indeed support _Atomic, otherwise things will come apart.
+The patch looks good to me.
 
-That is, my gcc-4.6 doesn't seem to have it, while gcc-4.8 does, which
-is exactly the range that needs the daft READ_ONCE() construct, how
-convenient :/
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
-Something a little like this perhaps?
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
 
----
-
-diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
-index 7d9cc5ec4971..c389af602da8 100644
---- a/arch/arm64/include/asm/barrier.h
-+++ b/arch/arm64/include/asm/barrier.h
-@@ -75,9 +75,9 @@ static inline unsigned long array_index_mask_nospec(unsigned long idx,
- 
- #define __smp_store_release(p, v)					\
- do {									\
--	typeof(p) __p = (p);						\
--	union { typeof(*p) __val; char __c[1]; } __u =			\
--		{ .__val = (__force typeof(*p)) (v) };			\
-+	unqual_typeof(p) __p = (p);					\
-+	union { unqual_typeof(*p) __val; char __c[1]; } __u =	\
-+		{ .__val = (__force unqual_typeof(*p)) (v) };	\
- 	compiletime_assert_atomic_type(*p);				\
- 	kasan_check_write(__p, sizeof(*p));				\
- 	switch (sizeof(*p)) {						\
-@@ -110,8 +110,8 @@ do {									\
- 
- #define __smp_load_acquire(p)						\
- ({									\
--	union { typeof(*p) __val; char __c[1]; } __u;			\
--	typeof(p) __p = (p);						\
-+	union { unqual_typeof(*p) __val; char __c[1]; } __u;		\
-+	unqual_typeof(p) __p = (p);					\
- 	compiletime_assert_atomic_type(*p);				\
- 	kasan_check_read(__p, sizeof(*p));				\
- 	switch (sizeof(*p)) {						\
-@@ -141,8 +141,8 @@ do {									\
- 
- #define smp_cond_load_relaxed(ptr, cond_expr)				\
- ({									\
--	typeof(ptr) __PTR = (ptr);					\
--	typeof(*ptr) VAL;						\
-+	unqual_typeof(ptr) __PTR = (ptr);				\
-+	unqual_typeof(*ptr) VAL;					\
- 	for (;;) {							\
- 		VAL = READ_ONCE(*__PTR);				\
- 		if (cond_expr)						\
-@@ -154,8 +154,8 @@ do {									\
- 
- #define smp_cond_load_acquire(ptr, cond_expr)				\
- ({									\
--	typeof(ptr) __PTR = (ptr);					\
--	typeof(*ptr) VAL;						\
-+	unqual_typeof(ptr) __PTR = (ptr);				\
-+	unqual_typeof(*ptr) VAL;					\
- 	for (;;) {							\
- 		VAL = smp_load_acquire(__PTR);				\
- 		if (cond_expr)						\
-diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
-index 85b28eb80b11..dd5bb055f5ab 100644
---- a/include/asm-generic/barrier.h
-+++ b/include/asm-generic/barrier.h
-@@ -228,8 +228,8 @@ do {									\
-  */
- #ifndef smp_cond_load_relaxed
- #define smp_cond_load_relaxed(ptr, cond_expr) ({		\
--	typeof(ptr) __PTR = (ptr);				\
--	typeof(*ptr) VAL;					\
-+	unqual_typeof(ptr) __PTR = (ptr);			\
-+	unqual_typeof(*ptr) VAL;				\
- 	for (;;) {						\
- 		VAL = READ_ONCE(*__PTR);			\
- 		if (cond_expr)					\
-@@ -250,7 +250,7 @@ do {									\
-  */
- #ifndef smp_cond_load_acquire
- #define smp_cond_load_acquire(ptr, cond_expr) ({		\
--	typeof(*ptr) _val;					\
-+	unqual_typeof(*ptr) _val;				\
- 	_val = smp_cond_load_relaxed(ptr, cond_expr);		\
- 	smp_acquire__after_ctrl_dep();				\
- 	_val;							\
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 0eb2a1cc411d..15fd7ea3882a 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -179,3 +179,10 @@
- #endif
- 
- #define __no_fgcse __attribute__((optimize("-fno-gcse")))
-+
-+#if GCC_VERSION < 40800
-+/*
-+ * GCC-4.6 doesn't support _Atomic, which is required to strip qualifiers.
-+ */
-+#define unqual_typeof(x)	typeof(x)
-+#endif
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ad8c76144a3c..9736993f2ba1 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -279,7 +279,7 @@ void __write_once_size(volatile void *p, void *res, int size)
- 
- #define __READ_ONCE(x, check)						\
- ({									\
--	union { typeof(x) __val; char __c[1]; } __u;			\
-+	union { unqual_typeof(x) __val; char __c[1]; } __u;		\
- 	if (check)							\
- 		__read_once_size(&(x), __u.__c, sizeof(x));		\
- 	else								\
-@@ -302,12 +302,12 @@ unsigned long read_word_at_a_time(const void *addr)
- 	return *(unsigned long *)addr;
- }
- 
--#define WRITE_ONCE(x, val) \
--({							\
--	union { typeof(x) __val; char __c[1]; } __u =	\
--		{ .__val = (__force typeof(x)) (val) }; \
--	__write_once_size(&(x), __u.__c, sizeof(x));	\
--	__u.__val;					\
-+#define WRITE_ONCE(x, val)					\
-+({								\
-+	union { unqual_typeof(x) __val; char __c[1]; } __u =	\
-+		{ .__val = (__force unqual_typeof(x)) (val) };	\
-+	__write_once_size(&(x), __u.__c, sizeof(x));		\
-+	__u.__val;						\
- })
- 
- #include <linux/kcsan.h>
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 72393a8c1a6c..fe8012c54251 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -243,4 +243,11 @@ struct ftrace_likely_data {
- #define __diag_error(compiler, version, option, comment) \
- 	__diag_ ## compiler(version, error, option)
- 
-+#ifndef unqual_typeof
-+/*
-+ * GCC __typeof__() strips all qualifiers from _Atomic types.
-+ */
-+#define unqual_typeof(x)	typeof(({_Atomic typeof(x) ___x __maybe_unused; ___x; }))
-+#endif
-+
- #endif /* __LINUX_COMPILER_TYPES_H */
