@@ -2,78 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 209DE11E716
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:52:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6853F11E751
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:00:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbfLMPvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:51:44 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:60950 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727927AbfLMPvo (ORCPT
+        id S1728096AbfLMQAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:00:05 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45563 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727980AbfLMQAF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:51:44 -0500
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7026620B7187;
-        Fri, 13 Dec 2019 07:51:43 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7026620B7187
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576252303;
-        bh=VamZRT3RyyPdbHwxLZRTfXiZ1Bh2bvZ/QaCwK/05xRk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KEpg5cLK7KxN/GLfgvJ3dXvwLMsTMZ8LWoJ0CgTbgYIG90mrWYICoh7JhX6j3GOij
-         8hs6aqk2cAAdURDB2TGhD/oxO/WoKdd5QgKMLG9LH4ep/gwFYInphHzJetz6oTHpG1
-         nZ+Md1wyHdDrIl0bfuk2vBwwuz0pcYY9nmBsqf8I=
-Subject: Re: [PATCH v3 1/2] IMA: Define workqueue for early boot "key"
- measurements
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-References: <20191213004250.21132-1-nramas@linux.microsoft.com>
- <20191213004250.21132-2-nramas@linux.microsoft.com>
- <1576202134.4579.189.camel@linux.ibm.com>
- <6e0dad33-66f9-4807-d08d-ff30396cec5e@linux.microsoft.com>
- <1576204377.4579.206.camel@linux.ibm.com>
- <c60341a3-2329-cd92-c76c-6f8249a57b43@linux.microsoft.com>
- <1576242406.4579.239.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <9938ff03-5cf2-5396-1172-5734cc10819e@linux.microsoft.com>
-Date:   Fri, 13 Dec 2019 07:51:37 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 13 Dec 2019 11:00:05 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 203so2298757lfa.12
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:00:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=6d355onEMaQLbFzGsPL3qOJq28B0iID9uA32I/OH8KY=;
+        b=RWONLY0C20iDqzVgHJOMcG0CbIMsarnktxykVv3fzYeDcK6YbJdMcv6KZE7y0BCOlw
+         kLoWcGHRdoHmerJ3dVsBoOp4+zwDg69u2Io0/U/CLa1xJvkhFLD8LWAP0muL6aVREdlr
+         dq+PsPNZF/el3cTFU9c2TLiU19CHe1GqHUjhb9Ao2Js8Swj/6tWPBA7nCliYmQ2ENqoq
+         hV/HLAOs2jFe5nVBnbYC33Yl1pAlomhdJeOm3hDAhsk430Id7SWzriiZyxqxlmZ3qMta
+         g9H4lygWNPJQKBKl3RS5+yH5mlJUPdGNspRipjnSbgj5B4PwJcy9sof2EmJsR3mce3dI
+         IgIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=6d355onEMaQLbFzGsPL3qOJq28B0iID9uA32I/OH8KY=;
+        b=hA5nFgYNJFmFv9FAyNI3AYwcGUQAEV6DGUw7prmCcqYX5LHe+PoJ6MMle4L0pg4JnM
+         QeF+C/VtxRbRvJKgsw7Em41RO74a2ZmmTm/hdvs5IgEShGw6Q4+utYJh/1bZ7AydrNmm
+         94iR1+cK47zmOSHB4RKwmLFJvdi6D907/wf6QSGYcvZ3hHuqKRK9RF6UYzDS9vJluYi1
+         hz6UlH8WJ75kssQweYBDxnT4QR1k1WC5bOK5e/DwaSz7noIvBLafMMNRXLkdja2tSJEU
+         y4pdDMJh7BswYfqXv8Rre2pRXa+3BoRHwR4NOo2Xpy0Ww5dvB3ssZRvl9US5mGjHOc0J
+         LWug==
+X-Gm-Message-State: APjAAAVoEoIPlqiCPdEHxYzTQTW7bnEMI+pu4ydATvuEylx30jmHaLzA
+        kPzgqjX3NsptI9Qghx8vI/mD7KEX1eWDdtS+xGiokg==
+X-Google-Smtp-Source: APXvYqyf9tBuza0aFqrtSUyxftprBtALJcGpe4oAZEEePdM+WgDYDegqUpqrrK70d4RPfcTRXsPPG2o1rKeoC2pjSzU=
+X-Received: by 2002:a19:c648:: with SMTP id w69mr9309054lff.44.1576252802440;
+ Fri, 13 Dec 2019 08:00:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1576242406.4579.239.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1576221873-28738-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <1576221873-28738-1-git-send-email-krzk@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 13 Dec 2019 16:59:50 +0100
+Message-ID: <CACRpkdaQZZcaPtDfieGSP9wSow11Xv3K_x89bq=QeYGb2BhpHw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: Fix missing OF and GPIOLIB dependency
+ on S3C24xx and S3C64xx
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chen Zhou <chenzhou10@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/19 5:06 AM, Mimi Zohar wrote:
+On Fri, Dec 13, 2019 at 8:24 AM Krzysztof Kozlowski <krzk@kernel.org> wrote=
+:
 
-> I just need to convince myself that this is correct.  Normally before
-> reading and writing a flag, there is some sort of locking.  With
-> taking the mutex before setting the flag, there is now only a lock
-> around the single writer.
-> 
-> Without taking a lock before reading the flag, will the queue always
-> be empty is the question.  If it is, then the comment is correct, but
-> the code assumes not and processes the list again.  Testing the flag
-> after taking the mutex just re-enforces the comment.
-> 
-> Bottom line, does reading the flag need to be lock protected?
-> 
-> Mimi
-> 
+> All Samsung pinctrl drivers select common part - PINCTRL_SAMSUNG which us=
+es
+> both OF and GPIOLIB inside.  However only Exynos drivers depend on these,
+> therefore after enabling COMPILE_TEST, on x86_64 build of S3C64xx driver
+> failed:
+>
+>     drivers/pinctrl/samsung/pinctrl-samsung.c: In function =E2=80=98samsu=
+ng_gpiolib_register=E2=80=99:
+>     drivers/pinctrl/samsung/pinctrl-samsung.c:969:5: error: =E2=80=98stru=
+ct gpio_chip=E2=80=99 has no member named =E2=80=98of_node=E2=80=99
+>        gc->of_node =3D bank->of_node;
+>          ^
+>
+> Rework the dependencies so all Samsung drivers and common
+> PINCTRL_SAMSUNG part depend on OF_GPIO (which is default yes if GPIOLIB
+> and OF are enabled).
+>
+> Reported-by: Chen Zhou <chenzhou10@huawei.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-I'll change this function to check the flag again after taking the lock 
-and process only if the queue has entries. Will send an update today.
+What should this be applied on? It doesn't apply to my fixes
+branch which is close to v5.5-rc1. Please rebase and resend
+if this was not based on that.
 
-Please let me know if you have any concern in other functions in this 
-file. I'll address them, if any, in today's update.
+Should this have a Fixes: tag?
 
-thanks,
-  -lakshmi
+Yours,
+Linus Walleij
