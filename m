@@ -2,93 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C3DC11ED0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 22:41:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E79C11ECE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 22:30:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfLMVkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 16:40:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726382AbfLMVkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 16:40:11 -0500
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 976F8206D8
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 21:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576273209;
-        bh=plP+cUX4HTiuvtFUm8ppZpU3p/w0AOIJhc+vg6yUdw4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1w21m685KVvJSvaGQcZJbnwK4/0OvE1pOWVV2uAAM6ju+JvUfqS2/fx8KZlHuDzqa
-         jTGjgTmR5iQz9vig6qNyE+hTTBmR63dSJCOfQq6bCUPtBVFqPDWJghZAnZ/6B1yrLW
-         1DNEIQsbbF4HSb6FDQGddUxwO1oCwEfCiEuM4MvY=
-Received: by mail-qt1-f174.google.com with SMTP id 5so297876qtz.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 13:40:09 -0800 (PST)
-X-Gm-Message-State: APjAAAUF6xlun4uP31Ai+KoXfCN6minz2BNONvSyC/RAS8oegu69jJO9
-        rEBs+Ac0psAKrMShPyJofiWEF21v2m1CaTvYw0M=
-X-Google-Smtp-Source: APXvYqwNhqXPixqQdvIZREeb21DXE+SjKxGOu2cNW/TosxXn5AtNHbCRC9DPlCZGp4YcZ04oF4pl/2wulLtt3SPnPOs=
-X-Received: by 2002:ac8:21ae:: with SMTP id 43mr13411822qty.223.1576257197339;
- Fri, 13 Dec 2019 09:13:17 -0800 (PST)
+        id S1726528AbfLMVaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 16:30:22 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58934 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfLMVaW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 16:30:22 -0500
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BE8379D6;
+        Fri, 13 Dec 2019 22:30:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1576272619;
+        bh=ugVPzgYz0NiaLKYKQDyg5loFUyhvh5heLoWsUgIayTc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h20vYc3JpzU7aPXMJuCzSilRyu7hCfAEhPKmpzptuvhM1yxYrX6ZuQ37jp/dFAkyf
+         HBVWeDYwmLMzLjZErobm6JmN9h+hfEBDkZ4Ar2muxFLMK5/WGHiZ6irpH4glu2v4la
+         mz80OBvKOg4r5lQiLbDRRIzTNsaI101SMCL2aKVI=
+Date:   Fri, 13 Dec 2019 23:30:10 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        ebiharaml@si-linux.co.jp
+Subject: Re: [PATCH v4 3/7] drm: rcar-du: lvds: Get dual link configuration
+ from DT
+Message-ID: <20191213213010.GN4860@pendragon.ideasonboard.com>
+References: <1575649974-31472-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1575649974-31472-4-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-References: <MWHPR12MB13438C0C72FA5811B29FD00FCB5A0@MWHPR12MB1343.namprd12.prod.outlook.com>
-In-Reply-To: <MWHPR12MB13438C0C72FA5811B29FD00FCB5A0@MWHPR12MB1343.namprd12.prod.outlook.com>
-From:   Josh Boyer <jwboyer@kernel.org>
-Date:   Fri, 13 Dec 2019 12:13:05 -0500
-X-Gmail-Original-Message-ID: <CA+5PVA4T5NBwv01W06MNH06De7BW86_vjhrQxjAD-TscjgdNGg@mail.gmail.com>
-Message-ID: <CA+5PVA4T5NBwv01W06MNH06De7BW86_vjhrQxjAD-TscjgdNGg@mail.gmail.com>
-Subject: Re: pull request: Linux-firmware: Update cxgb4 firmware to 1.24.11.0
-To:     Vishal Kulkarni <vishal@chelsio.com>
-Cc:     "linux-firmware@kernel.org" <linux-firmware@kernel.org>,
-        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1575649974-31472-4-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 12:36 AM Vishal Kulkarni <vishal@chelsio.com> wrote:
->
-> Hi,
->
-> Kindly pull the new firmware from the following URL:
-> git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
->
-> Thanks,
-> Vishal
->
-> The following changes since commit e8a0f4c9314754d8b2cbe9840357d88a861c438a:
->
->   rtl_nic: add firmware rtl8168fp-3 (2019-11-18 16:16:01 -0500)
->
-> are available in the git repository at:
->
->   git://git.chelsio.net/pub/git/linux-firmware.git master
->
-> for you to fetch changes up to af4c4be392494418ecf25279bfd4135eb7db69e3:
->
->   cxgb4: Update firmware to revision 1.24.11.0 (2019-12-10 21:22:17 -0800)
->
-> ----------------------------------------------------------------
-> Vishal Kulkarni (1):
->       cxgb4: Update firmware to revision 1.24.11.0
->
->  WHENCE                   |  12 ++++++------
->  cxgb4/t4fw-1.24.11.0.bin | Bin 0 -> 568832 bytes
->  cxgb4/t4fw-1.24.3.0.bin  | Bin 571904 -> 0 bytes
->  cxgb4/t5fw-1.24.11.0.bin | Bin 0 -> 673280 bytes
->  cxgb4/t5fw-1.24.3.0.bin  | Bin 662016 -> 0 bytes
->  cxgb4/t6fw-1.24.11.0.bin | Bin 0 -> 727552 bytes
->  cxgb4/t6fw-1.24.3.0.bin  | Bin 714240 -> 0 bytes
->  7 files changed, 6 insertions(+), 6 deletions(-)
->  create mode 100644 cxgb4/t4fw-1.24.11.0.bin
->  delete mode 100644 cxgb4/t4fw-1.24.3.0.bin
->  create mode 100644 cxgb4/t5fw-1.24.11.0.bin
->  delete mode 100644 cxgb4/t5fw-1.24.3.0.bin
->  create mode 100644 cxgb4/t6fw-1.24.11.0.bin
->  delete mode 100644 cxgb4/t6fw-1.24.3.0.bin
+Hi Fabrizio,
 
-Pulled.  kernel.org is down right now, but I'll push it out when it's back up.
+Thank you for the patch.
 
-josh
+On Fri, Dec 06, 2019 at 04:32:50PM +0000, Fabrizio Castro wrote:
+> For dual-LVDS configurations, it is now possible to mark the
+> DT port nodes for the sink with boolean properties (like
+> dual-lvds-even-pixels and dual-lvds-odd-pixels) to let drivers
+> know the encoders need to be configured in dual-LVDS mode.
+> 
+> Rework the implementation of rcar_lvds_parse_dt_companion
+> to make use of the DT markers while keeping backward
+> compatibility.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> ---
+> v3->v4:
+> * New patch extracted from patch:
+>   "drm: rcar-du: lvds: Add dual-LVDS panels support"
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_lvds.c | 56 +++++++++++++++++++++++++++++++------
+>  1 file changed, 47 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> index 3cb0a83..6c1f171 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> @@ -669,8 +669,10 @@ EXPORT_SYMBOL_GPL(rcar_lvds_dual_link);
+>  static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
+>  {
+>  	const struct of_device_id *match;
+> -	struct device_node *companion;
+> +	struct device_node *companion, *p0, *p1;
+
+Could you rename p0 and p1 to port0 and port1, and spit them to a
+separate line of variable declaration ?
+
+> +	struct rcar_lvds *companion_lvds;
+>  	struct device *dev = lvds->dev;
+> +	int dual_link;
+>  	int ret = 0;
+>  
+>  	/* Locate the companion LVDS encoder for dual-link operation, if any. */
+> @@ -689,13 +691,55 @@ static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
+>  		goto done;
+>  	}
+>  
+> +	/*
+> +	 * We need to work out if the sink is expecting us to function in
+> +	 * dual-link mode. We do this by looking at the DT port nodes we are
+> +	 * connected to, if they are marked as expecting even pixels and
+> +	 * odd pixels than we need to enable vertical stripe output.
+> +	 */
+> +	p0 = of_graph_get_port_by_id(dev->of_node, 1);
+> +	p1 = of_graph_get_port_by_id(companion, 1);
+> +	dual_link = drm_of_lvds_get_dual_link_pixel_order(p0, p1);
+> +	of_node_put(p0);
+> +	of_node_put(p1);
+> +	if (dual_link >= DRM_LVDS_DUAL_LINK_EVEN_ODD_PIXELS) {
+> +		lvds->dual_link = true;
+> +	} else if (lvds->next_bridge && lvds->next_bridge->timings) {
+> +		/*
+> +		 * Early dual-link bridge specific implementations populate the
+> +		 * timings field of drm_bridge, read the dual_link flag off the
+> +		 * bridge directly for backward compatibility.
+> +		 */
+> +		lvds->dual_link = lvds->next_bridge->timings->dual_link;
+> +	}
+> +
+> +	if (!lvds->dual_link) {
+> +		dev_dbg(dev, "Single-link configuration detected\n");
+> +		goto done;
+> +	}
+> +
+>  	lvds->companion = of_drm_find_bridge(companion);
+>  	if (!lvds->companion) {
+>  		ret = -EPROBE_DEFER;
+>  		goto done;
+>  	}
+>  
+> -	dev_dbg(dev, "Found companion encoder %pOF\n", companion);
+> +	dev_dbg(dev,
+> +		"Dual-link configuration detected (companion encoder %pOF)\n",
+> +		companion);
+> +
+> +	companion_lvds = bridge_to_rcar_lvds(lvds->companion);
+
+Could you move this line after the FIXME comment ?
+
+With these small issues fixed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +
+> +	/*
+> +	 * FIXME: We should not be messing with the companion encoder private
+> +	 * data from the primary encoder, we should rather let the companion
+> +	 * encoder work things out on its own. However, the companion encoder
+> +	 * doesn't hold a reference to the primary encoder, and
+> +	 * drm_of_lvds_get_dual_link_pixel_order needs to be given references
+> +	 * to the output ports of both encoders, therefore leave it like this
+> +	 * for the time being.
+> +	 */
+> +	companion_lvds->dual_link = true;
+>  
+>  done:
+>  	of_node_put(companion);
+> @@ -739,13 +783,7 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
+>  	if (ret)
+>  		goto done;
+>  
+> -	if ((lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK) &&
+> -	    lvds->next_bridge)
+> -		lvds->dual_link = lvds->next_bridge->timings
+> -				? lvds->next_bridge->timings->dual_link
+> -				: false;
+> -
+> -	if (lvds->dual_link)
+> +	if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK)
+>  		ret = rcar_lvds_parse_dt_companion(lvds);
+>  
+>  done:
+
+-- 
+Regards,
+
+Laurent Pinchart
