@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D962811DA8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:08:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0468911DAE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:10:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731698AbfLMAIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 19:08:32 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:44867 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731689AbfLMAI3 (ORCPT
+        id S1731702AbfLMAIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 19:08:37 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35363 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731699AbfLMAIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:08:29 -0500
-Received: by mail-pj1-f68.google.com with SMTP id w5so332519pjh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:08:29 -0800 (PST)
+        Thu, 12 Dec 2019 19:08:32 -0500
+Received: by mail-pl1-f196.google.com with SMTP id s10so397445plp.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:08:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wjRZfevODYHzxZeJEerM++U5kPyQ2TNReizqo4rhZwM=;
-        b=M5sgU6/NwIb3XirwHpgQRnTGudiEyVael2ZmtUe5vDyrezJvnbQSGG4mZHYIJHR+n/
-         o/+FzqVlrxnbt3QZTfGiPRqKKBcjW0AqsLrG1DfJqeLtmbUibc3P0Dd9cFoeXDBfcFF+
-         tnVw0Qi4W0uwzqWJaWIO1MZxFijKHqj+fKXp3Gz2AuA6VMbb6ivIJTBHKy5bYGmCz3fB
-         DMI9sb/Z6cdv8RQbi1OJZylZQtcs89lEU7ZQ0lbVDaDb+CQK4ZAWWxXMzPlex7pF8XlT
-         DHXrHpfPAmwn9gSCBeccQ0VCzpiVwmM2A6enAGxBC+s/AUeslkiHEfQ3X5i6xxm10xqQ
-         Jyeg==
+        bh=uLaSb+04RH7uaNmurK2bND0CZp19b8gTSTxLObfuai8=;
+        b=frhyqHYJ9l7cWgiM4jYZNt73/j/pL2ztPi9n4Onm+5/RPj5dQEamFfPP+w3fhcB0n4
+         KjH5enTCM/ZrA1N4MGOGvEKO8MECNE1Sw2ytoWTl6JFFmsChiB3zKhbvTikolsouILnV
+         yYjbCN6UfLWbo4xNHunxDujkkNYHmoJRkefPc0TCCt/Rw8jA1oO6WlSp+76SUk/QeCdm
+         OBt3h9acwRkWGw6wuRQsVMGKrXj03ptIZZzQtew+1SCqajaOCIJK+/I/3PYfFVgAKtNO
+         rFBWOND0O9F5PSBLr/cjMWhAsktSukCfyjeoPBXF6UESeN/JR+uwvyFZBLPnMr7SUZLU
+         OB5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wjRZfevODYHzxZeJEerM++U5kPyQ2TNReizqo4rhZwM=;
-        b=PdXRt32SohTScUDR09anAiojVpPzhYhFqIfcfBvPLJqf5nsg0XB3tkBEPgiLRzj4yb
-         SfWZiK+L4qLmxzcTfbjhzgO7IIbARZ8EzkLSDc1cX1foNRGjLCW63qUPbeZkEgQYTneG
-         HNK7gZa2vWr1v/5Q4ch/AOk6hUNIU45+HpNfFqaQz+WWJpJyNKB82u/dhcsOmvReftXq
-         /RePx2zohrJlZJW6ovlnuEFb65bpULx+KczKlHrGba+kIkcT2g5YtW/pxTH0HK0fP5aX
-         ILBSkx/ilFahoc0+kHllIp5OWBaUyHhN4ruUCZuR09KfBmRI+YCB+yFbQ6JmBH6sKOwH
-         cDHQ==
-X-Gm-Message-State: APjAAAUuoOVug2lL1XcYbeoJ35vj94DusMmMne26ZuBuPg/jnrxHWoGP
-        wnQ+FGkwfRrJBIfj3sGNhLMX/62bffM=
-X-Google-Smtp-Source: APXvYqwOOwyv/lff+up03radtTwnn5tvkqRamJd4DuZq9Zp4UmzvPyH30ddOnKD+EpAGQZ0jV22pZA==
-X-Received: by 2002:a17:902:8e84:: with SMTP id bg4mr12742595plb.138.1576195708252;
-        Thu, 12 Dec 2019 16:08:28 -0800 (PST)
+        bh=uLaSb+04RH7uaNmurK2bND0CZp19b8gTSTxLObfuai8=;
+        b=Jjk4T5Rz/nqLPRGuiTy3JvDlahEDJV2bNSIsDtYNVpE8snyq9oNJnmiCo4paE3RDth
+         3eePGy0ieRRVoiEzM6VHQYNuRmPBokHXLTMZFESTvb90sXOmS4+j8Iivvy6mBYAw+WR4
+         C74hHqihEvY5fF3vDtqizDCJR/rDspY3/0ZDLfYynhSeoZsjs5D6Gi0wBiz+WggpfEVV
+         Qw9kyglePDcgSIRsAs4p8tXvq05i3G1x02RHE3SzqYCSjAXdijbzT4dxTD0oKNPT81rE
+         eyMLDt9gKDlDkMERdYWrwk/d634KC6H96gqIA4LUeA8CbMyo91N3NDpBsRkvRMUjiUIt
+         VwYg==
+X-Gm-Message-State: APjAAAV+3Z5M4VO2FHF/RF3qRKVqLekDi4nCTYrfxH+zlVxl1wcjVS83
+        g0sl9zLNN8uMGjWFtNZLRKSjv15lI4k=
+X-Google-Smtp-Source: APXvYqxf/s+KfE+mWbXDwevNvIA11XGgWQIi4HzM+v3BtwcfvzlBYxpnYV9c9Z+0BLeRcMTXAJdlrg==
+X-Received: by 2002:a17:902:7b91:: with SMTP id w17mr12983685pll.158.1576195711016;
+        Thu, 12 Dec 2019 16:08:31 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.08.25
+        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.08.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 16:08:27 -0800 (PST)
+        Thu, 12 Dec 2019 16:08:30 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -52,12 +52,10 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>,
         Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH 25/58] tty/serial: Migrate msm_serial to use has_sysrq
-Date:   Fri, 13 Dec 2019 00:06:24 +0000
-Message-Id: <20191213000657.931618-26-dima@arista.com>
+        linux-serial@vger.kernel.org
+Subject: [PATCH 26/58] tty/serial: Migrate mux to use has_sysrq
+Date:   Fri, 13 Dec 2019 00:06:25 +0000
+Message-Id: <20191213000657.931618-27-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191213000657.931618-1-dima@arista.com>
 References: <20191213000657.931618-1-dima@arista.com>
@@ -77,37 +75,35 @@ The SUPPORT_SYSRQ ifdeffery is not nice as:
 In order to remove SUPPORT_SYSRQ, has_sysrq variable has been added.
 Initialise it in driver's probe and remove ifdeffery.
 
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/serial/msm_serial.c | 5 +----
+ drivers/tty/serial/mux.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
-index 1cbae0768b1f..375d6d3f17b2 100644
---- a/drivers/tty/serial/msm_serial.c
-+++ b/drivers/tty/serial/msm_serial.c
-@@ -7,10 +7,6 @@
-  * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
-  */
+diff --git a/drivers/tty/serial/mux.c b/drivers/tty/serial/mux.c
+index 00ce31e8d19a..2a9953211a2a 100644
+--- a/drivers/tty/serial/mux.c
++++ b/drivers/tty/serial/mux.c
+@@ -25,11 +25,7 @@
+ #include <asm/irq.h>
+ #include <asm/parisc-device.h>
  
--#if defined(CONFIG_SERIAL_MSM_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
--# define SUPPORT_SYSRQ
+-#if defined(CONFIG_SERIAL_MUX_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+ #include <linux/sysrq.h>
+-#define SUPPORT_SYSRQ
 -#endif
 -
- #include <linux/kernel.h>
- #include <linux/atomic.h>
- #include <linux/dma-mapping.h>
-@@ -1801,6 +1797,7 @@ static int msm_serial_probe(struct platform_device *pdev)
- 	if (unlikely(irq < 0))
- 		return -ENXIO;
- 	port->irq = irq;
-+	port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MSM_CONSOLE);
+ #include <linux/serial_core.h>
  
- 	platform_set_drvdata(pdev, port);
+ #define MUX_OFFSET 0x800
+@@ -483,6 +479,7 @@ static int __init mux_probe(struct parisc_device *dev)
+ 		port->ops	= &mux_pops;
+ 		port->flags	= UPF_BOOT_AUTOCONF;
+ 		port->line	= port_cnt;
++		port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MUX_CONSOLE);
  
+ 		/* The port->timeout needs to match what is present in
+ 		 * uart_wait_until_sent in serial_core.c.  Otherwise
 -- 
 2.24.0
 
