@@ -2,65 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 676E611DBB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 02:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E3C11DBAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 02:30:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731814AbfLMBbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 20:31:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727070AbfLMBby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 20:31:54 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [199.201.64.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EF69206B7;
-        Fri, 13 Dec 2019 01:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576200714;
-        bh=34CASTniCaPDj4mjipOQZOhdbDU3h+A6sqXdrXBKDI4=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=PF1MW1H5Me7IakC/MvwcYTzIHaT57QDN4NhNImZAYC9nKSrLZ12Li+wd01ka66pmV
-         7TvCT8L4DIXxkfApdfxFETMp+ms3vEBWHJn4lcC/ypScxGtC07WTdOfu5Pmk9Yo8d7
-         stBuP2wUxEq3DaFompzeH887tu8CWQIwnCL7rdRQ=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id E82AD35227E8; Thu, 12 Dec 2019 17:31:53 -0800 (PST)
-Date:   Thu, 12 Dec 2019 17:31:53 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>
-Subject: Re: linux-next: build warning after merge of the rcu tree
-Message-ID: <20191213013153.GF2889@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191212160622.021517d3@canb.auug.org.au>
- <20191212060200.GW2889@paulmck-ThinkPad-P72>
- <20191212224050.3ef73e82@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212224050.3ef73e82@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1731785AbfLMBab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 20:30:31 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:60979 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731684AbfLMBaa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Dec 2019 20:30:30 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id F2E50816;
+        Thu, 12 Dec 2019 20:30:28 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Thu, 12 Dec 2019 20:30:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=kIQjHdVLE1/fU9KLKVqg1kUSU55z6qa
+        RkOCmaNZ7BcM=; b=SoJQ5xHvi3TecnC2YnRQVyS8fHZ9HwNhk6t6bDtxOvFj1fa
+        4xH0M+JjI6BGsABRedlcfWLu2SPCvrLL9bYFLYlSfxVDrsW1RJRUu5kgGtx94b2E
+        q8OCbmI3eCk+HtRHALdZOuzKWmN0wq6cHb31AFq0OGxCwuAUCrwH3EKEFEGpm8Ax
+        jgpQdNCj1s2wXnx/hl5JyjwihPnxmNDbsBPcqOgYdo8RvleY4PB6jdLbREFFmfN9
+        wmzCrFFygtUhv+6CW6PChNfIoHYMCNAwe8QF5blsXjZuvHDBrqDnT4c/A19XTolg
+        dT4JR1PxTvDMXZWNVTv+qWsnOtC7IknaaLhp6ig==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=kIQjHd
+        VLE1/fU9KLKVqg1kUSU55z6qaRkOCmaNZ7BcM=; b=oc+XOCz9hlr/DOd2zlvukv
+        U0Licj/xRjpzT8oaccVAWiWCQ23NZ4jGRvhiXRZUvdwWVEXxd0QDYUjVenh6vj/7
+        nup1Tmp/yTzFenX7zuuMPOnqpcetaGGPwcVmMaDGScTtscKOmCYqInqTNZqP2zfh
+        rF7TgQH7JVNr3tlGprHOVfSzYiRQSizIF9Cm9GHXU4pHvN+KjDn9cKrLgddLxGUR
+        8aRgJngKLJhwtLH663kKAJr7cQokmq/kqazL7u9fVv2o9w/RCq8wMP/fZ7E0w6wr
+        9CA4ocXRyJA3LYQa6mFprFUbgQR85GZBKI+T+EZ5ejajuTUeAbMUMC/ZiHFFS/Bg
+        ==
+X-ME-Sender: <xms:sunyXdExu8xTM5B38nRS1bCN5Z15PXqo3hXfKkXXe8AmYeN05gt4qQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudelkedgfeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:sunyXXcSxg4dgH-B0kWwKeSVBRadjgvRAPWCagmcKt0fLHcBk4_sLA>
+    <xmx:sunyXWbQUcYVk3SvFPvRGO6bqpOqNezIuw_MW1-fAUvsiwUUVEbh0g>
+    <xmx:sunyXapAx4F9qjVqSOiMKR330kZAcK0jxMIHppW06AwZZd0dudQzwA>
+    <xmx:tOnyXSu_o_4JZC6f6T3E_sP3_KtRV98RBlold90e-Z-jZKy2_kiNug>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 34C75E00A2; Thu, 12 Dec 2019 20:30:26 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-680-g58d4e90-fmstable-20191213v1
+Mime-Version: 1.0
+Message-Id: <274285bd-1304-4e35-945a-90c9aecd119b@www.fastmail.com>
+In-Reply-To: <20191213000657.931618-5-dima@arista.com>
+References: <20191213000657.931618-1-dima@arista.com>
+ <20191213000657.931618-5-dima@arista.com>
+Date:   Fri, 13 Dec 2019 12:02:05 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Dmitry Safonov" <dima@arista.com>, linux-kernel@vger.kernel.org
+Cc:     "Dmitry Safonov" <0x7f454c46@gmail.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jiri Slaby" <jslaby@suse.com>,
+        "Vasiliy Khoruzhick" <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org, "Joel Stanley" <joel@jms.id.au>,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH 04/58] tty/serial: Migrate aspeed_vuart to use has_sysrq
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 10:40:50PM +1100, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> On Wed, 11 Dec 2019 22:02:00 -0800 "Paul E. McKenney" <paulmck@kernel.org> wrote:
-> >
-> > On Thu, Dec 12, 2019 at 04:06:22PM +1100, Stephen Rothwell wrote:
-> > > 
-> > > x86_64-linux-gnu-gcc (Debian 9.2.1-21) 9.2.1 20191130  
-> > 
-> > I don't see this warning with gcc version 7.4.0.  Just out of curiosity,
-> > what are you running, Stephen?
-> 
-> See above (9.2.1). ;-)
 
-Color me blind.  :-/
 
-							Thanx, Paul
+On Fri, 13 Dec 2019, at 10:36, Dmitry Safonov wrote:
+> The SUPPORT_SYSRQ ifdeffery is not nice as:
+> - May create misunderstanding about sizeof(struct uart_port) between
+>   different objects
+> - Prevents moving functions from serial_core.h
+> - Reduces readability (well, it's ifdeffery - it's hard to follow)
+> 
+> In order to remove SUPPORT_SYSRQ, has_sysrq variable has been added.
+> Initialise it in driver's probe and remove ifdeffery.
+> 
+> Cc: Andrew Jeffery <andrew@aj.id.au>
+> Cc: Joel Stanley <joel@jms.id.au>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-aspeed@lists.ozlabs.org
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+
+Acked-by: Andrew Jeffery <andrew@aj.id.au>
