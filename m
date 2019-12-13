@@ -2,93 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A898911E2FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 12:49:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41AA911E305
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 12:51:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfLMLsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 06:48:23 -0500
-Received: from foss.arm.com ([217.140.110.172]:56292 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725980AbfLMLsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 06:48:22 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5ED401045;
-        Fri, 13 Dec 2019 03:48:22 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AD1B3F718;
-        Fri, 13 Dec 2019 03:48:20 -0800 (PST)
-Subject: Re: [PATCH v2] sched/fair: Optimize select_idle_cpu
-To:     Cheng Jian <cj.chengjian@huawei.com>, mingo@kernel.org,
-        peterz@infradead.org, linux-kernel@vger.kernel.org
-Cc:     chenwandun@huawei.com, xiexiuqi@huawei.com, liwei391@huawei.com,
-        huawei.libin@huawei.com, bobo.shaobowang@huawei.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org
-References: <20191213024530.28052-1-cj.chengjian@huawei.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <ac11014d-ffc9-f0b2-3d48-2456c1c5edfa@arm.com>
-Date:   Fri, 13 Dec 2019 11:48:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726865AbfLMLum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 06:50:42 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:42526 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbfLMLum (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 06:50:42 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 1579D1C25B1; Fri, 13 Dec 2019 12:50:40 +0100 (CET)
+Date:   Fri, 13 Dec 2019 12:50:39 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 185/243] ARM: dts: sun8i: a23/a33: Fix up RTC device
+ node
+Message-ID: <20191213115039.GB31336@duo.ucw.cz>
+References: <20191211150339.185439726@linuxfoundation.org>
+ <20191211150351.658072828@linuxfoundation.org>
+ <20191212133132.GA13171@amd>
+ <20191212140241.GA1595136@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20191213024530.28052-1-cj.chengjian@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
+Content-Disposition: inline
+In-Reply-To: <20191212140241.GA1595136@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/12/2019 02:45, Cheng Jian wrote:
-> select_idle_cpu() will scan the LLC domain for idle CPUs,
-> it's always expensive. so the next commit :
-> 
-> 	1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
-> 
-> introduces a way to limit how many CPUs we scan.
-> 
-> But it consume some CPUs out of 'nr' that are not allowed
-> for the task and thus waste our attempts. The function
-> always return nr_cpumask_bits, and we can't find a CPU
-> which our task is allowed to run.
-> 
-> Cpumask may be too big, similar to select_idle_core(), use
-> per_cpu_ptr 'select_idle_mask' to prevent stack overflow.
-> 
-> Fixes: 1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
-> Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
 
-Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+--uQr8t48UFsdbeI+V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  kernel/sched/fair.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 08a233e97a01..d48244388ce9 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5828,6 +5828,7 @@ static inline int select_idle_smt(struct task_struct *p, int target)
->   */
->  static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int target)
->  {
-> +	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
->  	struct sched_domain *this_sd;
->  	u64 avg_cost, avg_idle;
->  	u64 time, cost;
-> @@ -5859,11 +5860,11 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
->  
->  	time = cpu_clock(this);
->  
-> -	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
-> +	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
-> +
-> +	for_each_cpu_wrap(cpu, cpus, target) {
->  		if (!--nr)
->  			return si_cpu;
-> -		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-> -			continue;
->  		if (available_idle_cpu(cpu))
->  			break;
->  		if (si_cpu == -1 && sched_idle_cpu(cpu))
-> 
+On Thu 2019-12-12 15:02:41, Greg Kroah-Hartman wrote:
+> On Thu, Dec 12, 2019 at 02:31:32PM +0100, Pavel Machek wrote:
+> > Hi!
+> >=20
+> > > The RTC module on the A23 was claimed to be the same as on the A31, w=
+hen
+> > > in fact it is not. The A31 does not have an RTC external clock output,
+> > > and its internal RC oscillator's average clock rate is not in the same
+> > > range. The A33's RTC is the same as the A23.
+> > >=20
+> > > This patch fixes the compatible string and clock properties to conform
+> > > to the updated bindings. The register range is also fixed.
+> >=20
+> > No, this is not okay for v4.19. New compatible is not in
+> > ./drivers/rtc/rtc-sun6i.c, so this will completely break rtc support.
+>=20
+> Good catch, I would have thought both of those would happen at the same
+> time.
+
+That's not normally how it works for dts changes. Drivers and dts very
+often have different maintainers, so there is preference for them to
+go in separately.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--uQr8t48UFsdbeI+V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXfN7DwAKCRAw5/Bqldv6
+8ibFAJ4pxy30IvcxHFjCBJCU15Pdj8quWwCfeIuo5fW4RKucTDuAB+Q4aUsc+wk=
+=msQO
+-----END PGP SIGNATURE-----
+
+--uQr8t48UFsdbeI+V--
