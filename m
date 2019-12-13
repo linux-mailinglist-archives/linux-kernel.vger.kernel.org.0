@@ -2,81 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 368EC11EA5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:32:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 133F511EA60
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:32:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbfLMSbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 13:31:44 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:41313 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbfLMSbo (ORCPT
+        id S1728821AbfLMScm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 13:32:42 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:42742 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728699AbfLMScl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 13:31:44 -0500
-Received: by mail-il1-f196.google.com with SMTP id f10so214718ils.8
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 10:31:43 -0800 (PST)
+        Fri, 13 Dec 2019 13:32:41 -0500
+Received: by mail-il1-f195.google.com with SMTP id a6so213739ili.9
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 10:32:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tpB/xeUDM1+yO8SMRMjK9hxdyXvy8qn++zhfg+M4I6Q=;
-        b=NnxJs1r1KqtlMmXaKnm83wZSyJ65551miQeW3U3EvBC1r1sQrTLC+QIbM050I8w2r/
-         vgTCCNig/abM137ibwuQw+92bAx1Sfh3A+DspSFTewAoheB3YfSKANcubKFg6zVLAFu9
-         u0NO1SaGNb4GEsOWy5T7umHFtXhDaqCUBW5tub+wE/L+9mVw9wPsgoPejjGa9Z0VsHDz
-         boHMaxoYdmjrKEUHUd5ziYLGbTDJXe8CCDdbV3CbOi728N93DApHwWAGb78JDsRu3vOb
-         xIH5CzdSOY2lVnqCWyGYfNjOcQ+8uonNmPNy0WHLvNH+8R9FlFpCtxeX61Q8OZBiL+2H
-         OGwg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=5Ho3srihBAE8WuqzThl+Cpq/uBCrB5qBgKR3HmQKsxU=;
+        b=1rG8VDBf1RzS6fLt6IZMvsGREvW/pB39avCyZC+RA7z8lS+72OOEAbK0AX/E4uEFi9
+         1pcAEAISjkBkzz+s+qx+f6cv0K9X7/PKhCumokvg8oGTO30cCYTkOrdcrjxq1X2C5lqy
+         40hX1py4b2WRqaGyi5TvYrHNZ19KSfHiXoTvwmneHfOx1mumq1q2mFU5JK/N2pplYOU5
+         fo3zlX0iSQ6zrkh9qTgOKKyf94r3l4pSZIeDIlslhIlpGLDzKAWtBaafMApfkfOp01Wx
+         /qfgef5eZtzAUW50+Cbtkj1ePMHN/+TELH2qeHCu4um3Me98g9gkx6CNV0hWbFfvvxyh
+         droQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tpB/xeUDM1+yO8SMRMjK9hxdyXvy8qn++zhfg+M4I6Q=;
-        b=pOYdU+dT8xsRGqS2yl8PnnE5BRZZdCw+MgCvMu3zqDwgnd9dUraXRrWDYZFSLt8Vpg
-         GvrRWsfI/ZTI8YPQhHFWtkW0aSUK6gCPg5BGkYFJphK4T6ql8PpG749GjFtC86ddjSmA
-         Tf0WKEi0gvUZQ8xXJsjYlN86Lshl3eKWdJkaPHwDu/pQ26TV1xvj3WawtyQoHzcVOS+L
-         m7Yat2DUmUAS5VTZs2FrXi+UFuYzR99HMEQBmQ/7VgNv88FDI/OvglQeh8v//HiIY8kc
-         ywbrFAn6Sxa15P6G/AxCkgxh8zp3u7r0b0NGLiEqOxCloGyrW3fnqxwRxz14EdOetjWh
-         Na7g==
-X-Gm-Message-State: APjAAAU+bTenquGB+M7xhoFUmrmYni2wnrNKtjMqRf/SpvK8WfpaYfhE
-        Pa/ncjzDUnIQ5yi3gVOTTUMpHILDLFm4Bt1XJ05qvQ==
-X-Google-Smtp-Source: APXvYqwqKI1k9m7CKtca2pmdvVz5aHQxyrvRxqEo2nHabNcDV3oy5nCgJHZVFEPpvds+l9dkkylLJBJz+HgYesKXjvA=
-X-Received: by 2002:a92:1655:: with SMTP id r82mr707357ill.72.1576261903292;
- Fri, 13 Dec 2019 10:31:43 -0800 (PST)
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5Ho3srihBAE8WuqzThl+Cpq/uBCrB5qBgKR3HmQKsxU=;
+        b=FA4g1Bve/VBTZqWomvaiirHx6ajXnIrAo6yZibwpwqnBPE1BgVENjpkx9TihmMaJ9D
+         r7XAntkHQ8Pvo08rM+3y0K+6KXkyKDKVW2XQLY2E/bxf6QdMFjrDfqSvY+5tTWjZb5aU
+         G42wd79pI3WBOuBA3cNYMIeJbd8+KjpxE99NqIwwowdBrmc3cr274bjN6Ta6DnMJzzD3
+         J2KZpC1qWiwKvMqqkEiR0n+B+pOzey3/lq2q+P0rtlFD34ql4Zh8ViiLFgmrvcw+ukN7
+         QiFhgVweLgrtAL3rxB9Fb9nnAUhWlyXWnanhVUPFfW8SFXrJbrYDSFkB7aiFt7KGQTVj
+         FiOA==
+X-Gm-Message-State: APjAAAWqRQdYBC1aPvwee9hm9eYEU6WJ08DMlwi9GJRwmfRkCoy1tf5N
+        Tof7+0R0FQJE56ZhURDw/BfgXLESKY8hBg==
+X-Google-Smtp-Source: APXvYqxFDpLVReulOVdecp1lbQgbQm2TE7vxx9BZvzbBgtzQrBAFdqkoMHu0SeY1Znwi8Kg3Ce8/CA==
+X-Received: by 2002:a92:d806:: with SMTP id y6mr687452ilm.234.1576261960431;
+        Fri, 13 Dec 2019 10:32:40 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id r22sm2942913ilb.25.2019.12.13.10.32.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 10:32:39 -0800 (PST)
+Subject: Re: [PATCH 1/1] io_uring: don't wait when under-submitting
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <5caa38be87f069eb4cc921d58ee1a98ff5d53978.1576223348.git.asml.silence@gmail.com>
+ <21ca72b0-c35d-96b7-399f-d4034d976c27@kernel.dk>
+Message-ID: <9fbb03f4-6444-04a6-4cfb-ee4b3aa0bcd1@kernel.dk>
+Date:   Fri, 13 Dec 2019 11:32:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20191210203409.2875880-1-arnd@arndb.de> <71a8139e603f697c734134faedfb3ce87067918f.camel@v3.sk>
-In-Reply-To: <71a8139e603f697c734134faedfb3ce87067918f.camel@v3.sk>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Fri, 13 Dec 2019 10:31:32 -0800
-Message-ID: <CAOesGMgVcoHp7W5QPu=ZXTMe1BcPOXOS+6vQOasXAZRyj_nC9g@mail.gmail.com>
-Subject: Re: [PATCH] ARM: mmp: include the correct cputype.h
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, SoC Team <soc@kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <21ca72b0-c35d-96b7-399f-d4034d976c27@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 12:41 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
->
-> On Tue, 2019-12-10 at 21:34 +0100, Arnd Bergmann wrote:
-> > The file was moved, causing a build error:
-> >
-> > In file included from /git/arm-soc/arch/arm/mach-mmp/pxa168.c:28:
-> > arch/arm/mach-mmp/pxa168.h:22:10: fatal error: cputype.h: No such file or directory
-> >
-> > Include it from the new location.
-> >
-> > Fixes: 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Acked-by: Lubomir Rintel <lkundrak@v3.sk>
+On 12/13/19 11:22 AM, Jens Axboe wrote:
+> On 12/13/19 12:51 AM, Pavel Begunkov wrote:
+>> There is no reliable way to submit and wait in a single syscall, as
+>> io_submit_sqes() may under-consume sqes (in case of an early error).
+>> Then it will wait for not-yet-submitted requests, deadlocking the user
+>> in most cases.
+> 
+> Why not just cap the wait_nr? If someone does to_submit = 8, wait_nr = 8,
+> and we only submit 4, just wait for 4? Ala:
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 81219a631a6d..4a76ccbb7856 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5272,6 +5272,10 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+>  		submitted = io_submit_sqes(ctx, to_submit, f.file, fd,
+>  					   &cur_mm, false);
+>  		mutex_unlock(&ctx->uring_lock);
+> +		if (submitted <= 0)
+> +			goto done;
+> +		if (submitted != to_submit && min_complete > submitted)
+> +			min_complete = submitted;
+>  	}
+>  	if (flags & IORING_ENTER_GETEVENTS) {
+>  		unsigned nr_events = 0;
+> @@ -5284,7 +5288,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+>  			ret = io_cqring_wait(ctx, min_complete, sig, sigsz);
+>  		}
+>  	}
+> -
+> +done:
+>  	percpu_ref_put(&ctx->refs);
+>  out_fput:
+>  	fdput(f);
+> 
 
-For some reason patchwork didn't reply to this, but I applied it a
-couple of days ago.
+This is probably a bit cleaner, since it only adjusts if we're going to
+wait.
 
 
-Thanks!
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 81219a631a6d..e262549a2601 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5272,11 +5272,15 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 		submitted = io_submit_sqes(ctx, to_submit, f.file, fd,
+ 					   &cur_mm, false);
+ 		mutex_unlock(&ctx->uring_lock);
++		if (submitted <= 0)
++			goto done;
+ 	}
+ 	if (flags & IORING_ENTER_GETEVENTS) {
+ 		unsigned nr_events = 0;
+ 
+ 		min_complete = min(min_complete, ctx->cq_entries);
++		if (submitted != to_submit && min_complete > submitted)
++			min_complete = submitted;
+ 
+ 		if (ctx->flags & IORING_SETUP_IOPOLL) {
+ 			ret = io_iopoll_check(ctx, &nr_events, min_complete);
+@@ -5284,7 +5288,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 			ret = io_cqring_wait(ctx, min_complete, sig, sigsz);
+ 		}
+ 	}
+-
++done:
+ 	percpu_ref_put(&ctx->refs);
+ out_fput:
+ 	fdput(f);
 
--Olof
+-- 
+Jens Axboe
+
