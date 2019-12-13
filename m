@@ -2,136 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 127B811E6B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:37:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2034611E6AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:37:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbfLMPgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:36:18 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41692 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbfLMPgQ (ORCPT
+        id S1728018AbfLMPgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:36:14 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:43915 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727991AbfLMPgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:36:16 -0500
-Received: by mail-pg1-f196.google.com with SMTP id x8so1750680pgk.8;
-        Fri, 13 Dec 2019 07:36:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HItEjzDojjooTRgp7O+9O0H7zbWi0kBed0e15OEYpt0=;
-        b=WGmHyUFRPZ2ZOsbgcmAPSFO/Jexvz5NhLELGWHpv4Tl7qQZg36Vg1cx8oxxQ1a/E/l
-         EpkpKqjdaGAGiWyOm+O7jp87MuU04zC2UgwiOV71LLy4XY6o2Ai499milKGvgTZClPXd
-         8cXbdDeNoLvi/fBx35UA9HHFm8dpmuGDNYDAltfHpPiutYGj2dPxtvwOEBxRyti/aA89
-         l3D1qL3yyee9OuIAkYTHYJP/KJoLRnMdh4oqoE5+3R0TrgiP0pLEbjmjX/nLxEVtgcZx
-         n4PYI+yrps2gpGDaMFk8KaqSqtDKEQaECLkTtO1OIuv5l43esfdmWGkDyuEwfX9MJgHf
-         o0Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HItEjzDojjooTRgp7O+9O0H7zbWi0kBed0e15OEYpt0=;
-        b=ECuun0qVHpA2DuJuAtbuVZdGl5FZSDEGPpYROYHPT3Jj5WhhUMRbsoA25588fgJEfC
-         v2MTekkJaid/gWV+Vy3+kmUWL2cwyYUBO1wFY4otO51lkxLYLji8eb2WNbOeLuP05I/l
-         /huKHailAPOtEGOBtpZZhQLKt7vw5yDFSBNhiPGuczPR6tC34iFke592/8TbBlrw4has
-         ynztKxY3AcrGdyAiLnT0uFIgZ8iaF8dHzTg8DQ7FZeW1FfCpxldEE1D3GBmvi/AR/KUk
-         lQLIpoxlMI4sTFIbbbCibiL0GjFyf6AgIh4zBcSTdu7uEK1TbtBzRe4uVWGZRpNZMOwP
-         OWYQ==
-X-Gm-Message-State: APjAAAWZHyK1e5YFoTXberY3zDDglpyKIkLbgoFDmuIfQKxmgZqCgvL2
-        f2AziWnJsKt3qcpyA+w2OXA=
-X-Google-Smtp-Source: APXvYqxC4ktjLQPkeK71MAy6/aFEcGoWvqtBT2iJQcTdeQzmCeLS4XtlZzU1Y8SN2p03/7qGvSO/4A==
-X-Received: by 2002:a62:1a16:: with SMTP id a22mr69199pfa.34.1576251375146;
-        Fri, 13 Dec 2019 07:36:15 -0800 (PST)
-Received: from localhost.localdomain ([12.176.148.120])
-        by smtp.gmail.com with ESMTPSA id w131sm12039217pfc.16.2019.12.13.07.36.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 07:36:14 -0800 (PST)
-From:   SeongJae Park <sj38.park@gmail.com>
-X-Google-Original-From: SeongJae Park <sjpark@amazon.de>
-To:     jgross@suse.com, axboe@kernel.dk, konrad.wilk@oracle.com,
-        roger.pau@citrix.com
-Cc:     SeongJae Park <sjpark@amazon.de>, pdurrant@amazon.com,
-        sjpark@amazon.com, sj38.park@gmail.com,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 4/4] xen/blkback: Consistently insert one empty line between functions
-Date:   Fri, 13 Dec 2019 15:35:46 +0000
-Message-Id: <20191213153546.17425-5-sjpark@amazon.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191213153546.17425-1-sjpark@amazon.de>
-References: <20191213153546.17425-1-sjpark@amazon.de>
+        Fri, 13 Dec 2019 10:36:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576251371;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=XdvQKU8LiqO/th1XH/f5TTkHcNsE/YPklKDD6xZt6qQ=;
+        b=Db27FA3+Q1kolvE9edN0LO/0RSX8ErXy0AXWemMr3jEbp2sKgIfCuY92NDItgl+efEwj4A
+        XShBBAD1jHkRUKKbYHzvPbwxKTGo0fBy+RigcPZCLK/oA4kl9QMW8/NjXmFTRbnIuqN8cI
+        E4HVdP8vJ0MfQU9aULmpF8oHf1oNxvo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-370-hbfm8CEePw28D6MRnwYrFA-1; Fri, 13 Dec 2019 10:36:07 -0500
+X-MC-Unique: hbfm8CEePw28D6MRnwYrFA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68935800582;
+        Fri, 13 Dec 2019 15:36:05 +0000 (UTC)
+Received: from krava (ovpn-205-9.brq.redhat.com [10.40.205.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 23A2C5C219;
+        Fri, 13 Dec 2019 15:35:55 +0000 (UTC)
+Date:   Fri, 13 Dec 2019 16:35:53 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc:     Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: [RFC] btf: Some structs are doubled because of struct ring_buffer
+Message-ID: <20191213153553.GE20583@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The number of empty lines between functions in the xenbus.c is
-inconsistent.  This trivial style cleanup commit fixes the file to
-consistently place only one empty line.
+hi,
+the current BTF vmlinux file have some of the structs doubled:
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- drivers/block/xen-blkback/xenbus.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+  $ bpftool btf dump file /sys/kernel/btf/vmlinux | grep task_struct
+  [150] STRUCT 'task_struct' size=11008 vlen=205
+  [12262] STRUCT 'task_struct' size=11008 vlen=205
 
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index 4f6ea4feca79..dc0ea123c74c 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -432,7 +432,6 @@ static void xenvbd_sysfs_delif(struct xenbus_device *dev)
- 	device_remove_file(&dev->dev, &dev_attr_physical_device);
- }
- 
--
- static void xen_vbd_free(struct xen_vbd *vbd)
- {
- 	if (vbd->bdev)
-@@ -489,6 +488,7 @@ static int xen_vbd_create(struct xen_blkif *blkif, blkif_vdev_t handle,
- 		handle, blkif->domid);
- 	return 0;
- }
-+
- static int xen_blkbk_remove(struct xenbus_device *dev)
- {
- 	struct backend_info *be = dev_get_drvdata(&dev->dev);
-@@ -572,6 +572,7 @@ static void xen_blkbk_discard(struct xenbus_transaction xbt, struct backend_info
- 	if (err)
- 		dev_warn(&dev->dev, "writing feature-discard (%d)", err);
- }
-+
- int xen_blkbk_barrier(struct xenbus_transaction xbt,
- 		      struct backend_info *be, int state)
- {
-@@ -656,7 +657,6 @@ static int xen_blkbk_probe(struct xenbus_device *dev,
- 	return err;
- }
- 
--
- /*
-  * Callback received when the hotplug scripts have placed the physical-device
-  * node.  Read it and the mode node, and create a vbd.  If the frontend is
-@@ -748,7 +748,6 @@ static void backend_changed(struct xenbus_watch *watch,
- 	}
- }
- 
--
- /*
-  * Callback received when the frontend's state changes.
-  */
-@@ -823,7 +822,6 @@ static void frontend_changed(struct xenbus_device *dev,
- 	}
- }
- 
--
- /* Once a memory pressure is detected, squeeze free page pools for a while. */
- static unsigned int buffer_squeeze_duration_ms = 10;
- module_param_named(buffer_squeeze_duration_ms,
-@@ -844,7 +842,6 @@ static void reclaim_memory(struct xenbus_device *dev)
- 
- /* ** Connection ** */
- 
--
- /*
-  * Write the physical details regarding the block device to the store, and
-  * switch to Connected state.
--- 
-2.17.1
+  $ bpftool btf dump file /sys/kernel/btf/vmlinux | grep "STRUCT 'perf_event'"
+  [1666] STRUCT 'perf_event' size=1160 vlen=70
+  [12301] STRUCT 'perf_event' size=1160 vlen=70
+
+The reason seems to be that we have two distinct 'struct ring_buffer'
+objects used in kernel: one in perf subsystem and one in kernel trace
+subsystem.
+
+When we compile kernel/trace/ring_buffer.c we have 'struct task_struct',
+which references 'struct ring_buffer', which is at that compile time
+defined in kernel/trace/ring_buffer.c.
+
+While when we compile kernel/events/core.c we have 'struct task_struct',
+which references ring buffer, which is at that compile time defined
+in kernel/events/internal.h.
+
+So we end up with 2 different 'struct task_struct' objects, and few
+other objects which are on the way to the 'struct ring_buffer' field,
+like:
+
+	[1666] STRUCT 'perf_event' size=1160 vlen=70
+		...
+		'rb' type_id=2289 bits_offset=5632
+		...
+
+		[2289] PTR '(anon)' type_id=10872
+
+			-> trace ring buffer
+
+			[10872] STRUCT 'ring_buffer' size=184 vlen=12
+				'flags' type_id=10 bits_offset=0
+				'cpus' type_id=22 bits_offset=32
+				'record_disabled' type_id=81 bits_offset=64
+				...
+
+	[12301] STRUCT 'perf_event' size=1160 vlen=70
+		...
+		'rb' type_id=13148 bits_offset=5632
+		...
+
+		[13148] PTR '(anon)' type_id=13147
+
+			-> perf ring buffer
+
+			[13147] STRUCT 'ring_buffer' size=240 vlen=33
+				'refcount' type_id=795 bits_offset=0
+				'callback_head' type_id=90 bits_offset=64
+				'nr_pages' type_id=22 bits_offset=192
+				'overwrite' type_id=22 bits_offset=224
+				'paused' type_id=22 bits_offset=256
+				...
+
+I don't think dedup algorithm can handle this and I'm not sure if there's
+some way in pahole to detect/prevent this.
+
+I only found that if I rename the ring_buffer objects to have distinct
+names, it will help:
+
+  $ bpftool btf dump file /sys/kernel/btf/vmlinux | grep task_struct
+  [150] STRUCT 'task_struct' size=11008 vlen=205
+
+  $ bpftool btf dump file /sys/kernel/btf/vmlinux | grep "STRUCT 'perf_event'"
+  [1665] STRUCT 'perf_event' size=1160 vlen=70
+
+also the BTF data get smaller ;-) before:
+
+  $ ll /sys/kernel/btf/vmlinux
+  -r--r--r--. 1 root root 2067432 Dec 13 22:56 /sys/kernel/btf/vmlinux
+
+after:
+  $ ll /sys/kernel/btf/vmlinux
+  -r--r--r--. 1 root root 1984345 Dec 13 23:02 /sys/kernel/btf/vmlinux
+
+
+Peter, Steven,
+if above is correct and there's no other better solution, would it be possible
+to straighten up the namespace and user some distinct names for perf and ftrace
+ring buffers?
+
+thoughts?
+jirka
 
