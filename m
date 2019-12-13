@@ -2,133 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EF1211E8D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:00:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E34B11E8DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:02:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbfLMQ76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:59:58 -0500
-Received: from mga03.intel.com ([134.134.136.65]:33321 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727480AbfLMQ76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:59:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 08:59:57 -0800
-X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
-   d="scan'208";a="216485218"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 08:59:56 -0800
-Message-ID: <1d1f8edbf6778d9fe904a9ed20c546df3b2534b2.camel@linux.intel.com>
-Subject: Re: [PATCH v15 0/7] mm / virtio: Provide support for free page
- reporting
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        David Hildenbrand <david@redhat.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>, kvm@vger.kernel.org,
-        mst@redhat.com, linux-kernel@vger.kernel.org, willy@infradead.org,
-        mhocko@kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org,
-        vbabka@suse.cz, yang.zhang.wz@gmail.com, nitesh@redhat.com,
-        konrad.wilk@oracle.com, pagupta@redhat.com, riel@surriel.com,
-        lcapitulino@redhat.com, dave.hansen@intel.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, osalvador@suse.de
-Date:   Fri, 13 Dec 2019 08:59:56 -0800
-In-Reply-To: <20191213110806.GA3178@techsingularity.net>
-References: <20191205161928.19548.41654.stgit@localhost.localdomain>
-         <ead08075-c886-dc7d-2c7b-47b20e00b515@redhat.com>
-         <20191213110806.GA3178@techsingularity.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1728413AbfLMRCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 12:02:32 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:43673 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728109AbfLMRCb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 12:02:31 -0500
+Received: by mail-qv1-f67.google.com with SMTP id p2so15803qvo.10;
+        Fri, 13 Dec 2019 09:02:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vUE8AEfpv1Je3ytswJ2t5UjmrKOaLm5nTOW/OGZXKqs=;
+        b=LiRgSKsEotztqVrsicsLsNUDrDyYeIVpc5+lRgzqczvL62rsuBj4Sa8kv7CHVoxoXH
+         EWf2/4n/6YSz0KEDVyfYtJTpb8F7EmGyVJR+ZshuzOr+rwiewODBxJsSOOlq9GFzmfmR
+         xbyfqPPoFwYCGFYTbxa0kspoKBUFBP8SWqe6HFH220EKZNVz5tnRGO45bF6o7uPDCsYs
+         c/oZxItM/SELe7rS2ok8whcpRv0BeIPcwpH6Sy1KO9LukZKVfqv3oXFTjiNf3iXIc7hr
+         s0ZkR9IY00n1vFjE/biRCTww+E0EzM7oNaqT4yRiQqb5w4dqYj9TQmRdhnkZeug5/rJe
+         984Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vUE8AEfpv1Je3ytswJ2t5UjmrKOaLm5nTOW/OGZXKqs=;
+        b=i/PV790HYbbvudLmDWf7VeKvmG1ePspD27a+IMIMZ3DpDa1qMe8Zw061+8PGJQ4giM
+         4WPr2OeTBmJxN+IIQ986kVmtx2K1k61N4Sil/J9ZZLVJVQel7ErR45KEkQxWF5lE1onX
+         /osmbNozDQKQ3DO7TLI6wGLxZgsuqPZdxhrXFhU33K3GNtNaL53MdTbYz+Y8JOJ4lZ+j
+         QrD2Xb7U+tuN3kV/Y2f/2/qsYbR4K05HxuwFR0MwhwSfu87QOsIXvOpyp+Wc/lMBnDds
+         E8Fb0siqBFqKETUrHMtowLYQxwTgifSkBiN+Jldev6vOC2lgYhIbpSfsg/DDb4bsHth1
+         xi9Q==
+X-Gm-Message-State: APjAAAVTrboTUMk5PcmDTh3SbpeO+d5s45o6lnF3rRD1FIWAnewgFK2W
+        YODPgxPTgtAN9zxYfltV8nuhuTO62omAxnnlkY8=
+X-Google-Smtp-Source: APXvYqxSHgQ7tT0FFNjw0FMOJb3XsIngDsE1kSkmcHPlEmXgbqA8EhfpMfQEZmwNFjBDUp4xDIjV8uTmvi+wnxrkb7A=
+X-Received: by 2002:ad4:4e34:: with SMTP id dm20mr14796667qvb.163.1576256550460;
+ Fri, 13 Dec 2019 09:02:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191201195728.4161537-1-aurelien@aurel32.net>
+ <87zhgbe0ix.fsf@mpe.ellerman.id.au> <20191202093752.GA1535@localhost.localdomain>
+ <CAFxkdAqg6RaGbRrNN3e_nHfHFR-xxzZgjhi5AnppTxxwdg0VyQ@mail.gmail.com>
+ <20191210222553.GA4580@calabresa> <CAFxkdAp6Up0qSyp0sH0O1yD+5W3LvY-+-iniBrorcz2pMV+y-g@mail.gmail.com>
+ <20191211160133.GB4580@calabresa> <CAFxkdAp9OGjJS1Sdny+TiG2+zU4n0Nj+ZVrZt5J6iVsS_zqqcw@mail.gmail.com>
+ <20191213101114.GA3986@calabresa>
+In-Reply-To: <20191213101114.GA3986@calabresa>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 13 Dec 2019 09:02:19 -0800
+Message-ID: <CAEf4BzY-JP+vYNjwShhgMs6sJ+Bdqc8FEd19BVf8uf+jSnX1Jw@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: Fix readelf output parsing for Fedora
+To:     Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+Cc:     Justin Forbes <jmforbes@linuxtx.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:BPF (Safe dynamic programs and tools)" 
+        <netdev@vger.kernel.org>, Yonghong Song <yhs@fb.com>,
+        "open list:BPF (Safe dynamic programs and tools)" 
+        <bpf@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Aurelien Jarno <aurelien@aurel32.net>,
+        debian-kernel@lists.debian.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-12-13 at 11:08 +0000, Mel Gorman wrote:
-> On Fri, Dec 13, 2019 at 11:00:42AM +0100, David Hildenbrand wrote:
-> > > A brief history on the background of free page reporting can be found at:
-> > > https://lore.kernel.org/lkml/29f43d5796feed0dec8e8bb98b187d9dac03b900.camel@linux.intel.com/
-> > > 
-> > > Changes from v13:
-> > > https://lore.kernel.org/lkml/20191105215940.15144.65968.stgit@localhost.localdomain/
-> > > Rewrote core reporting functionality
-> > >   Merged patches 3 & 4
-> > >   Dropped boundary list and related code
-> > >   Folded get_reported_page into page_reporting_fill
-> > >   Folded page_reporting_fill into page_reporting_cycle
-> > > Pulled reporting functionality out of free_reported_page
-> > >   Renamed it to __free_isolated_page
-> > >   Moved page reporting specific bits to page_reporting_drain
-> > > Renamed phdev to prdev since we aren't "hinting" we are "reporting"
-> > > Added documentation to describe the usage of unused page reporting
-> > > Updated cover page and patch descriptions to avoid mention of boundary
-> > > 
-> > > Changes from v14:
-> > > https://lore.kernel.org/lkml/20191119214454.24996.66289.stgit@localhost.localdomain/
-> > > Renamed "unused page reporting" to "free page reporting"
-> > >   Updated code, kconfig, and patch descriptions
-> > > Split out patch for __free_isolated_page
-> > >   Renamed function to __putback_isolated_page
-> > > Rewrote core reporting functionality
-> > >   Added logic to reschedule worker in 2 seconds instead of run to completion
-> > >   Removed reported_pages statistics
-> > >   Removed REPORTING_REQUESTED bit used in zone flags
-> > >   Replaced page_reporting_dev_info refcount with state variable
-> > >   Removed scatterlist from page_reporting_dev_info
-> > >   Removed capacity from page reporting device
-> > >   Added dynamic scatterlist allocation/free at start/end of reporting process
-> > >   Updated __free_one_page so that reported pages are not always added to tail
-> > >   Added logic to handle error from report function
-> > > Updated virtio-balloon patch that adds support for page reporting
-> > >   Updated patch description to try and highlight differences in approaches
-> > >   Updated logic to reflect that we cannot limit the scatterlist from device
-> > 
-> > Last time Mel said
-> > 
-> > "Ok, I'm ok with how this hooks into the allocator as the overhead is
-> > minimal. However, the patch itself still includes a number of
-> > optimisations instead of being a bare-boned implementation of the
-> > feature with optimisations layered on top."
-> > 
-> 
-> I didn't get the chance to take a close look as I'm trying to clear as
-> much as possible from my table on the run-up to Christmas so I don't come
-> back to a disaster inbox. I also noted that the Acks for earlier patches
-> were not included so I was uncertain if doing a full review would still
-> be a good use of time when time was tight.
+On Fri, Dec 13, 2019 at 2:11 AM Thadeu Lima de Souza Cascardo
+<cascardo@canonical.com> wrote:
+>
+> Fedora binutils has been patched to show "other info" for a symbol at the
+> end of the line. This was done in order to support unmaintained scripts
+> that would break with the extra info. [1]
+>
+> [1] https://src.fedoraproject.org/rpms/binutils/c/b8265c46f7ddae23a792ee8306fbaaeacba83bf8
+>
+> This in turn has been done to fix the build of ruby, because of checksec.
+> [2] Thanks Michael Ellerman for the pointer.
+>
+> [2] https://bugzilla.redhat.com/show_bug.cgi?id=1479302
+>
+> As libbpf Makefile is not unmaintained, we can simply deal with either
+> output format, by just removing the "other info" field, as it always comes
+> inside brackets.
+>
+> Cc: Aurelien Jarno <aurelien@aurel32.net>
+> Fixes: 3464afdf11f9 (libbpf: Fix readelf output parsing on powerpc with recent binutils)
+> Reported-by: Justin Forbes <jmforbes@linuxtx.org>
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+> ---
 
-Sorry about that. I will go back through and make sure to collect the Acks
-on the earlier patches. I guess I had overlooked them while focusing on
-rewriting the core functionality.
+I was briefly playing with it and trying to make it use nm to dump
+symbols, instead of parsing more human-oriented output of readelf, but
+somehow nm doesn't output symbols with @@LIBBPF.* suffix at the end,
+so I just gave up. So I think this one is good.
 
-> That said, some optimisations are still included but much reduced. For
-> example, list rotations are still there but it's very straight-forward.
+This should go through bpf-next tree.
 
-I will go ahead and split the rotations out into a separate patch for v16.
-I can probably do that and pull the budget bit I had added out and put it
-together as a "work conserving/limiting" optimization for the patch set.
+Acked-by: Andrii Nakryiko <andriin@fb.com>
 
-> The refcount is gone which is good and replaced by a state, which could be
-> be better documented, but is more straight forward and the zone->lock is
-> back protecting the free lists primarily and not zone metadata or prdev
-> metadata (at least not obviously). I didn't put in the time to see if
-> the atomic_set in page_reporting_process() is ok or whether state could
-> be lost but I *think* it's ok because it should be called from just one
-> workqueue request and they shouldn't be stacked. A comment there explaining
-> why atomic_set is definitely correct would be helpful.
 
-I will go though and add some more documentation about the state.
-
-> I'm inclined to decide that yes, this version is potentially ok as a
-> bare minimum but didn't put in the time to be 100% sure.
-
-Sounds good. I will go through and address the concerns you brought up,
-and probably post a v16 by the end of next week.
-
-Thanks for the feedback.
-
-- Alex
-
+>  tools/lib/bpf/Makefile | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
+> index defae23a0169..23ae06c43d08 100644
+> --- a/tools/lib/bpf/Makefile
+> +++ b/tools/lib/bpf/Makefile
+> @@ -147,6 +147,7 @@ TAGS_PROG := $(if $(shell which etags 2>/dev/null),etags,ctags)
+>
+>  GLOBAL_SYM_COUNT = $(shell readelf -s --wide $(BPF_IN_SHARED) | \
+>                            cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' | \
+> +                          sed 's/\[.*\]//' | \
+>                            awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$NF}' | \
+>                            sort -u | wc -l)
+>  VERSIONED_SYM_COUNT = $(shell readelf -s --wide $(OUTPUT)libbpf.so | \
+> @@ -213,6 +214,7 @@ check_abi: $(OUTPUT)libbpf.so
+>                      "versioned in $(VERSION_SCRIPT)." >&2;              \
+>                 readelf -s --wide $(BPF_IN_SHARED) |                     \
+>                     cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' |   \
+> +                   sed 's/\[.*\]//' |                                   \
+>                     awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$NF}'|  \
+>                     sort -u > $(OUTPUT)libbpf_global_syms.tmp;           \
+>                 readelf -s --wide $(OUTPUT)libbpf.so |                   \
+> --
+> 2.24.0
+>
