@@ -2,186 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F6D11ED0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 22:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 745D111ED0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 22:41:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbfLMVkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 16:40:08 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36499 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726382AbfLMVkG (ORCPT
+        id S1726792AbfLMVkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 16:40:17 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9756 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfLMVkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 16:40:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576273204;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WgOXIag/oVgErX13K0wlqJ230VPf+71NlCt27NFhOC8=;
-        b=fa5MdWSE+yr0QbII1ZjOkAwPlUZ0EiOxvOB0mlcU7x7do3fn1CmSkRh4xlmVtvh4Nqf+h/
-        FBcVLfFdsl6cL8wyDU36s6nM1lTqm/BKZRm5oPrDNm3xVuZHfdKg93l2QWmdzErnr9h9fM
-        EbwJ7dojO7FJZ7u1twsb6IkLv9Smjck=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-293-j09TGu7gOzS_Le1gjjpMpA-1; Fri, 13 Dec 2019 16:40:01 -0500
-X-MC-Unique: j09TGu7gOzS_Le1gjjpMpA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68993593A4;
-        Fri, 13 Dec 2019 21:39:59 +0000 (UTC)
-Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DB63C5D9CA;
-        Fri, 13 Dec 2019 21:39:58 +0000 (UTC)
-Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
-        id 6505E20694; Fri, 13 Dec 2019 16:39:58 -0500 (EST)
-Date:   Fri, 13 Dec 2019 16:39:58 -0500
-From:   Scott Mayhew <smayhew@redhat.com>
-To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
-Cc:     "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
-Subject: Re: [PATCH v6 00/27] nfs: Mount API conversion
-Message-ID: <20191213213958.GY4276@coeurl.usersys.redhat.com>
-References: <20191210123115.1655-1-smayhew@redhat.com>
- <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
+        Fri, 13 Dec 2019 16:40:17 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5df405380000>; Fri, 13 Dec 2019 13:40:08 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 13 Dec 2019 13:40:16 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 13 Dec 2019 13:40:16 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 13 Dec
+ 2019 21:40:15 +0000
+Subject: Re: [PATCH] mm/gup: Fix memory leak in __gup_benchmark_ioctl
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <emamd001@umn.edu>
+References: <20191211174653.4102-1-navid.emamdoost@gmail.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <9a692d27-4654-f1fc-d4c5-c6efba02c8a9@nvidia.com>
+Date:   Fri, 13 Dec 2019 13:40:15 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20191211174653.4102-1-navid.emamdoost@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576273208; bh=kns9lRLNk7iBLl+oznMVtZYqw3+QAeHuGv8ec9B6yws=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=oJ3bYl1Z5Gpmdvi7Y6NeGtebuuLGEPCWYNqk3tJzDS3MKEoKKqQUKczkvTc6g7KXL
+         WyMondT5BBwHQvhYCCmEvUBq8ERzzLR+bydBWA3Fz+u0U0ZuSJzsh3R10KQOn2t+xS
+         84trCd9TjfilpWf6ixPvaTLnkJC4zq3h7/8gLx5o16nSgn4w2QYy4cTqwy7ORXT1wf
+         DAaliJCEMTzjHL70kcOVSVJ78IYGj4nnw1jw8eQb5oTzgBU/+1kRg24hFLa+bAu+BE
+         vqokTJcSremr/xFOXkvqxSe9SRoCZZO4IySFSSZTytlku/65NSJDSbWuV2bzAdJ6hw
+         8dScaKdl6pHtw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019, Schumaker, Anna wrote:
-
-> Hi Scott,
+On 12/11/19 9:46 AM, Navid Emamdoost wrote:
+> In the implementation of __gup_benchmark_ioctl() the allocated pages
+> should be released before returning in case of an invalid cmd. Release
+> pages via kvfree().
 > 
-> On Tue, 2019-12-10 at 07:30 -0500, Scott Mayhew wrote:
-> > Hi Anna, Trond,
-> > 
-> > Here's a set of patches that converts NFS to use the mount API.  Note that
-> > there are a lot of preliminary patches, some from David and some from Al.
-> > The final patch (the one that does the actual conversion) from the David's
-> > initial posting has been split into 5 separate patches, and the entire set
-> > has been rebased on top of v5.5-rc1.
+> Fixes: 714a3a1ebafe ("mm/gup_benchmark.c: add additional pinning methods")
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> ---
+>  mm/gup_benchmark.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Thanks for the updated patches! Everything looks okay to me, but I've only
-> tested with the legacy mount command. I'm curious if you've tested it using the
-> new system?
+> diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
+> index 7dd602d7f8db..b160638f647e 100644
+> --- a/mm/gup_benchmark.c
+> +++ b/mm/gup_benchmark.c
+> @@ -63,6 +63,7 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
+>  					    NULL);
+>  			break;
+>  		default:
+> +			kvfree(pages);
+>  			return -1;
+>  		}
+>  
 
-I've hacked up mount.nfs for testing the new syscalls (for mounting... I
-haven't quite figured out remounting yet) here:
-https://github.com/scottmayhew/nfs-utils/tree/fscontext
+Hi,
 
-It seems to be working okay, with one exception.  If I mount the same
-NFS export with the same mount options multiple times, then I get
-multiple mounts:
+The patch is correct, but I would like to second Ira's request for a ret value,
+and a "goto done" to use a single place to kvfree, if you don't mind. 
 
-[root@fedora30 ~]# mount.nfs nfs:/export /mnt/t
-[root@fedora30 ~]# mount.nfs nfs:/export /mnt/t
-[root@fedora30 ~]# grep /mnt/t /proc/mounts
-nfs:/export /mnt/t nfs rw,seclabel,relatime,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=krb5,clientaddr=192.168.122.239,local_lock=none,addr=192.168.122.3 0 0
-nfs:/export /mnt/t nfs rw,seclabel,relatime,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=krb5,clientaddr=192.168.122.239,local_lock=none,addr=192.168.122.3 0 0
+Either way, you can add:
 
-That doesn't happen with the mount() syscall:
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 
-[root@fedora30 ~]# mount.nfs.old nfs:/export /mnt/t
-[root@fedora30 ~]# mount.nfs.old nfs:/export /mnt/t
-[root@fedora30 ~]# grep /mnt/t /proc/mounts
-nfs:/export /mnt/t nfs rw,seclabel,relatime,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=krb5,clientaddr=192.168.122.239,local_lock=none,addr=192.168.122.3 0 0
-
--Scott
-
-> 
-> Thanks,
-> Anna
-> 
-> > 
-> > Changes since v5:
-> > - fixed possible derefence of error pointer in nfs4_validate_fspath()
-> >   reported by Dan Carpenter
-> > - rebased on top of v5.5-rc1
-> > Changes since v4:
-> > - further split the original "NFS: Add fs_context support" patch (new
-> >   patch is about 25% smaller than the v4 patch)
-> > - fixed NFSv4 referral mounts (broken in the original patch)
-> > - fixed leak of nfs_fattr when fs_context is freed
-> > Changes since v3:
-> > - changed license and copyright text in fs/nfs/fs_context.c
-> > Changes since v2:
-> > - fixed the conversion of the nconnect= option
-> > - added '#if IS_ENABLED(CONFIG_NFS_V4)' around nfs4_parse_monolithic()
-> >   to avoid unused-function warning when compiling with v4 disabled
-> > Chagnes since v1:
-> > - split up patch 23 into 4 separate patches
-> > 
-> > -Scott
-> > 
-> > Al Viro (15):
-> >   saner calling conventions for nfs_fs_mount_common()
-> >   nfs: stash server into struct nfs_mount_info
-> >   nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
-> >   nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
-> >   nfs: don't bother setting/restoring export_path around
-> >     do_nfs_root_mount()
-> >   nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
-> >   nfs: lift setting mount_info from nfs_xdev_mount()
-> >   nfs: stash nfs_subversion reference into nfs_mount_info
-> >   nfs: don't bother passing nfs_subversion to ->try_mount() and
-> >     nfs_fs_mount_common()
-> >   nfs: merge xdev and remote file_system_type
-> >   nfs: unexport nfs_fs_mount_common()
-> >   nfs: don't pass nfs_subversion to ->create_server()
-> >   nfs: get rid of mount_info ->fill_super()
-> >   nfs_clone_sb_security(): simplify the check for server bogosity
-> >   nfs: get rid of ->set_security()
-> > 
-> > David Howells (8):
-> >   NFS: Move mount parameterisation bits into their own file
-> >   NFS: Constify mount argument match tables
-> >   NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
-> >   NFS: Split nfs_parse_mount_options()
-> >   NFS: Deindent nfs_fs_context_parse_option()
-> >   NFS: Add a small buffer in nfs_fs_context to avoid string dup
-> >   NFS: Do some tidying of the parsing code
-> >   NFS: Add fs_context support.
-> > 
-> > Scott Mayhew (4):
-> >   NFS: rename nfs_fs_context pointer arg in a few functions
-> >   NFS: Convert mount option parsing to use functionality from
-> >     fs_parser.h
-> >   NFS: Additional refactoring for fs_context conversion
-> >   NFS: Attach supplementary error information to fs_context.
-> > 
-> >  fs/nfs/Makefile         |    2 +-
-> >  fs/nfs/client.c         |   80 +-
-> >  fs/nfs/fs_context.c     | 1424 +++++++++++++++++++++++++
-> >  fs/nfs/fscache.c        |    2 +-
-> >  fs/nfs/getroot.c        |   73 +-
-> >  fs/nfs/internal.h       |  132 +--
-> >  fs/nfs/namespace.c      |  146 ++-
-> >  fs/nfs/nfs3_fs.h        |    2 +-
-> >  fs/nfs/nfs3client.c     |    6 +-
-> >  fs/nfs/nfs3proc.c       |    2 +-
-> >  fs/nfs/nfs4_fs.h        |    9 +-
-> >  fs/nfs/nfs4client.c     |   99 +-
-> >  fs/nfs/nfs4file.c       |    1 +
-> >  fs/nfs/nfs4namespace.c  |  292 +++---
-> >  fs/nfs/nfs4proc.c       |    2 +-
-> >  fs/nfs/nfs4super.c      |  257 ++---
-> >  fs/nfs/proc.c           |    2 +-
-> >  fs/nfs/super.c          | 2217 +++++----------------------------------
-> >  include/linux/nfs_xdr.h |    9 +-
-> >  19 files changed, 2287 insertions(+), 2470 deletions(-)
-> >  create mode 100644 fs/nfs/fs_context.c
-> > 
-
+thanks,
+-- 
+John Hubbard
+NVIDIA
+ 
