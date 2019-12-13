@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C60A011E4FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:55:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E78911E4FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:55:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbfLMNzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:55:36 -0500
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:43704 "EHLO
+        id S1727642AbfLMNzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:55:41 -0500
+Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:43724 "EHLO
         faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727489AbfLMNzg (ORCPT
+        by vger.kernel.org with ESMTP id S1727628AbfLMNzk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:55:36 -0500
+        Fri, 13 Dec 2019 08:55:40 -0500
 Received: from faui04f.informatik.uni-erlangen.de (faui04f.informatik.uni-erlangen.de [131.188.30.136])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 6E1F52417E0;
-        Fri, 13 Dec 2019 14:55:34 +0100 (CET)
+        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id F066D2417CD;
+        Fri, 13 Dec 2019 14:55:38 +0100 (CET)
 Received: by faui04f.informatik.uni-erlangen.de (Postfix, from userid 66991)
-        id 5F3BEC20BC7; Fri, 13 Dec 2019 14:55:34 +0100 (CET)
+        id E2833C20BC7; Fri, 13 Dec 2019 14:55:38 +0100 (CET)
 From:   Simon Geis <simon.geis@fau.de>
 To:     Dominik Brodowski <linux@dominikbrodowski.net>
 Cc:     Simon Geis <simon.geis@fau.de>,
@@ -26,9 +26,9 @@ Cc:     Simon Geis <simon.geis@fau.de>,
         Adam Zerella <adam.zerella@gmail.com>,
         linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
         Lukas Panzer <lukas.panzer@fau.de>
-Subject: [PATCH v3 04/10] PCMCIA/i82092: insert blank line after declarations
-Date:   Fri, 13 Dec 2019 14:53:08 +0100
-Message-Id: <20191213135311.9111-5-simon.geis@fau.de>
+Subject: [PATCH v3 05/10] PCMCIA/i82092: change code indentation
+Date:   Fri, 13 Dec 2019 14:53:09 +0100
+Message-Id: <20191213135311.9111-6-simon.geis@fau.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191213135311.9111-1-simon.geis@fau.de>
 References: <20191213135311.9111-1-simon.geis@fau.de>
@@ -39,85 +39,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Improve readability of the code by inserting a blank line
-after variable declarations.
+Align switch and case labels in order to improve readability.
+For the same reason, change the indentation of an if-statement.
 
 Co-developed-by: Lukas Panzer <lukas.panzer@fau.de>
 Signed-off-by: Lukas Panzer <lukas.panzer@fau.de>
 Signed-off-by: Simon Geis <simon.geis@fau.de>
 
 ---
- drivers/pcmcia/i82092.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/pcmcia/i82092.c | 122 ++++++++++++++++++++--------------------
+ 1 file changed, 61 insertions(+), 61 deletions(-)
 
 diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
-index b957e095bbb6..16431b48fd9e 100644
+index 16431b48fd9e..6b39750db282 100644
 --- a/drivers/pcmcia/i82092.c
 +++ b/drivers/pcmcia/i82092.c
-@@ -187,6 +187,7 @@ static unsigned char indirect_read(int socket, unsigned short reg)
- 	unsigned short int port;
- 	unsigned char val;
- 	unsigned long flags;
-+
- 	spin_lock_irqsave(&port_lock, flags);
- 	reg += socket * 0x40;
- 	port = sockets[socket].io_base;
-@@ -202,6 +203,7 @@ static unsigned short indirect_read16(int socket, unsigned short reg)
- 	unsigned short int port;
- 	unsigned short tmp;
- 	unsigned long flags;
-+
- 	spin_lock_irqsave(&port_lock, flags);
- 	reg  = reg + socket * 0x40;
- 	port = sockets[socket].io_base;
-@@ -219,6 +221,7 @@ static void indirect_write(int socket, unsigned short reg, unsigned char value)
- {
- 	unsigned short int port;
- 	unsigned long flags;
-+
- 	spin_lock_irqsave(&port_lock, flags);
- 	reg = reg + socket * 0x40;
- 	port = sockets[socket].io_base;
-@@ -232,6 +235,7 @@ static void indirect_setbit(int socket, unsigned short reg, unsigned char mask)
- 	unsigned short int port;
- 	unsigned char val;
- 	unsigned long flags;
-+
- 	spin_lock_irqsave(&port_lock, flags);
- 	reg = reg + socket * 0x40;
- 	port = sockets[socket].io_base;
-@@ -249,6 +253,7 @@ static void indirect_resetbit(int socket, unsigned short reg, unsigned char mask
- 	unsigned short int port;
- 	unsigned char val;
- 	unsigned long flags;
-+
- 	spin_lock_irqsave(&port_lock, flags);
- 	reg = reg + socket * 0x40;
- 	port = sockets[socket].io_base;
-@@ -265,6 +270,7 @@ static void indirect_write16(int socket, unsigned short reg, unsigned short valu
- 	unsigned short int port;
- 	unsigned char val;
- 	unsigned long flags;
-+
- 	spin_lock_irqsave(&port_lock, flags);
- 	reg = reg + socket * 0x40;
- 	port = sockets[socket].io_base;
-@@ -317,6 +323,7 @@ static irqreturn_t i82092aa_interrupt(int irq, void *dev)
+@@ -82,22 +82,22 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
  
- 		for (i = 0; i < socket_count; i++) {
- 			int csc;
+ 	pci_read_config_byte(dev, 0x40, &configbyte);  /* PCI Configuration Control */
+ 	switch (configbyte&6) {
+-		case 0:
+-			socket_count = 2;
+-			break;
+-		case 2:
+-			socket_count = 1;
+-			break;
+-		case 4:
+-		case 6:
+-			socket_count = 4;
+-			break;
+-
+-		default:
+-			dev_err(&dev->dev,
+-				"Oops, you did something we didn't think of.\n");
+-			ret = -EIO;
+-			goto err_out_disable;
++	case 0:
++		socket_count = 2;
++		break;
++	case 2:
++		socket_count = 1;
++		break;
++	case 4:
++	case 6:
++		socket_count = 4;
++		break;
 +
- 			if (sockets[i].card_state == 0) /* Inactive socket, should not happen */
- 				continue;
++	default:
++		dev_err(&dev->dev,
++			"Oops, you did something we didn't think of.\n");
++		ret = -EIO;
++		goto err_out_disable;
+ 	}
+ 	dev_info(&dev->dev, "configured as a %d socket device.\n",
+ 		 socket_count);
+@@ -501,42 +501,42 @@ static int i82092aa_set_socket(struct pcmcia_socket *socket, socket_state_t *sta
+ 	}
  
-@@ -362,6 +369,7 @@ static irqreturn_t i82092aa_interrupt(int irq, void *dev)
- static int card_present(int socketno)
- {
- 	unsigned int val;
-+
- 	enter("card_present");
+ 	switch (state->Vcc) {
+-		case 0:
+-			break;
+-		case 50:
+-			dev_info(&sock_info->dev->dev,
+-				 "setting voltage to Vcc to 5V on socket %i\n",
+-				 sock);
+-			reg |= I365_VCC_5V;
+-			break;
+-		default:
+-			dev_err(&sock_info->dev->dev,
+-				"%s called with invalid VCC power value: %i",
+-				__func__, state->Vcc);
+-			leave("i82092aa_set_socket");
+-			return -EINVAL;
++	case 0:
++		break;
++	case 50:
++		dev_info(&sock_info->dev->dev,
++			 "setting voltage to Vcc to 5V on socket %i\n",
++			 sock);
++		reg |= I365_VCC_5V;
++		break;
++	default:
++		dev_err(&sock_info->dev->dev,
++			"%s called with invalid VCC power value: %i",
++			__func__, state->Vcc);
++		leave("i82092aa_set_socket");
++		return -EINVAL;
+ 	}
  
- 	if ((socketno < 0) || (socketno >= MAX_SOCKETS))
+ 	switch (state->Vpp) {
+-		case 0:
+-			dev_info(&sock_info->dev->dev,
+-				 "not setting Vpp on socket %i\n", sock);
+-			break;
+-		case 50:
+-			dev_info(&sock_info->dev->dev,
+-				 "setting Vpp to 5.0 for socket %i\n", sock);
+-			reg |= I365_VPP1_5V | I365_VPP2_5V;
+-			break;
+-		case 120:
+-			dev_info(&sock_info->dev->dev, "setting Vpp to 12.0\n");
+-			reg |= I365_VPP1_12V | I365_VPP2_12V;
+-			break;
+-		default:
+-			dev_err(&sock_info->dev->dev,
+-				"%s called with invalid VPP power value: %i",
+-				__func__, state->Vcc);
+-			leave("i82092aa_set_socket");
+-			return -EINVAL;
++	case 0:
++		dev_info(&sock_info->dev->dev,
++			 "not setting Vpp on socket %i\n", sock);
++		break;
++	case 50:
++		dev_info(&sock_info->dev->dev,
++			 "setting Vpp to 5.0 for socket %i\n", sock);
++		reg |= I365_VPP1_5V | I365_VPP2_5V;
++		break;
++	case 120:
++		dev_info(&sock_info->dev->dev, "setting Vpp to 12.0\n");
++		reg |= I365_VPP1_12V | I365_VPP2_12V;
++		break;
++	default:
++		dev_err(&sock_info->dev->dev,
++			"%s called with invalid VPP power value: %i",
++			__func__, state->Vcc);
++		leave("i82092aa_set_socket");
++		return -EINVAL;
+ 	}
+ 
+ 	if (reg != indirect_read(sock, I365_POWER)) /* only write if changed */
+@@ -662,17 +662,17 @@ static int i82092aa_set_mem_map(struct pcmcia_socket *socket, struct pccard_mem_
+ 
+ 	i = (region.end >> 12) & 0x0fff;
+ 	switch (to_cycles(mem->speed)) {
+-		case 0:
+-			break;
+-		case 1:
+-			i |= I365_MEM_WS0;
+-			break;
+-		case 2:
+-			i |= I365_MEM_WS1;
+-			break;
+-		default:
+-			i |= I365_MEM_WS1 | I365_MEM_WS0;
+-			break;
++	case 0:
++		break;
++	case 1:
++		i |= I365_MEM_WS0;
++		break;
++	case 2:
++		i |= I365_MEM_WS1;
++		break;
++	default:
++		i |= I365_MEM_WS1 | I365_MEM_WS0;
++		break;
+ 	}
+ 
+ 	indirect_write16(sock, base+I365_W_STOP, i);
+@@ -704,7 +704,7 @@ static void i82092aa_module_exit(void)
+ 	enter("i82092aa_module_exit");
+ 	pci_unregister_driver(&i82092aa_pci_driver);
+ 	if (sockets[0].io_base > 0)
+-			 release_region(sockets[0].io_base, 2);
++		release_region(sockets[0].io_base, 2);
+ 	leave("i82092aa_module_exit");
+ }
+ 
 -- 
 2.20.1
 
