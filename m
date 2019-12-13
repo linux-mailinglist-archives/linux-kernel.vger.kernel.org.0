@@ -2,91 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 595A611EC3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:55:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35AC211EC40
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:55:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfLMUzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:55:17 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:42775 "EHLO
+        id S1726890AbfLMUzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:55:25 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:42731 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfLMUzQ (ORCPT
+        with ESMTP id S1725747AbfLMUzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:55:16 -0500
+        Fri, 13 Dec 2019 15:55:24 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MGQWr-1iVdkq2Ao9-00GmsB; Fri, 13 Dec 2019 21:54:57 +0100
+ 1MmUcL-1hxQSf3K9x-00iQa3; Fri, 13 Dec 2019 21:55:12 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Lucas Stach <l.stach@pengutronix.de>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Joe Perches <joe@perches.com>,
-        "Kristian H. Kristensen" <hoegsberg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org
-Subject: [PATCH v2 12/24] drm/msm: avoid using 'timespec'
-Date:   Fri, 13 Dec 2019 21:53:40 +0100
-Message-Id: <20191213205417.3871055-3-arnd@arndb.de>
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Sam Ravnborg <sam@ravnborg.org>, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 13/24] drm/etnaviv: reject timeouts with tv_nsec >= NSEC_PER_SEC
+Date:   Fri, 13 Dec 2019 21:53:41 +0100
+Message-Id: <20191213205417.3871055-4-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191213204936.3643476-1-arnd@arndb.de>
 References: <20191213204936.3643476-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:SMQNgPIVRwQmcTY5DRfiQVqW9b6fdavzYJig6CP6LZtweyjRbiD
- 6mCGxP1rZR5pga+x9KqlX9c6PXDBBgTUGKDJ0BZKNHZin6AxQJIq0jYcnvNfnUsFc79qM/e
- q8qmecpfokP3hq7bAPt5LDfnxYTuvoKmrPS0nS2HU9pnuvh+0wbVT234k8D5E087sBGJcmP
- i4yEHD4KCli0umxh9A3ww==
+X-Provags-ID: V03:K1:FtcvkRP+PxTuM1kB/nONVs3z2xlMBVJVd9+R6nDY92C5vgjuYmC
+ BxkfZJviB6exJbAT+s5FqrACns+dIYWedVsSQH9vpfEn6Tdd3xkx2Y1Dw0iBSRfN40+Tuuc
+ uCsxnZ0cpiOB0iZh0DN/b4KGJdHFOJmdi7tw3SQx+zCAHahyUH4Ov0bSe+pLy/Omb0Ac78/
+ hez/uq0rgQ0VgO+oUQn8w==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:DbQaztQtI+A=:gxrodGEeRggtiphssUm9Us
- Jq/wlDutot4qEvgTcu7kfZQQQ3iQeN6l/jwOUlHw1Ybnq3VPgMPcTl9strNMqMIzw9JBvSljD
- C2jPPtCwvmIl6PByLxcmzD+QyHErVxvkZOmoIegYpuQhUqJIzfhj3Kg6RZVgHW4bz1CqibKR6
- Ft+KVdpngmtt8UlvfyoTGNfYmprA9eW5mMVLEvqNmCPx0H24nj3frUkSFibwdnsTjWZZz63di
- tZABpibKZpy0u8d75dZczso0jUzTi7eQxK68axCwzreJDWLNLzMYomhhBrRb0z+C4Bh7wMREh
- IqmDvEY1RvYXwj0XALqnYz7FFUInslWTRCWa2S3qkZcg0DSj7/GN6q0MEx3pG4szda+yfMRmK
- J+8eQam1TInOwvydZdgspJK76t8NiIyLnWBR73tNZXBFkwWoljvI7oQwLHLMzuf7IjJQfvbod
- 6/+GSDtKOqO9r1irukoe/vUnyVZuxagYtaHgrd/VK2u1ToWu05PY1fGxC+WOCC9dmpwvf4Smo
- Vje6psV+nHPjQ2LbyeSJYMu8+Vyrfb59oJPpTsfY/ssvaM4JnnlPfgIUn4jSfRDwYrToDgzQJ
- eNDAO7A/aC8WX3IrDLKrEb4NpEi6wEZO59Ax1mICG/9qQMRhieTT0sii3o27R8skBPFa0BThe
- S3nKTK699n9ObLvefDUa/onIL6mlTOLQ4MG/dwG5bPq1dlUl/NohuJ6Snj3AKNhp0g10qPDEV
- RQLRhD98PZpi9F6xvPJMoiLcmvHmOz8gK8ZSNJ7ApEvDJzQ6poZfwqLwx8qK+dGt8k0lrFdqS
- HZ9OGCvIK91CYt69M0Soyrm7cJpKtZhVe4DJdxYaOiRvfLeff/cHHaLOcnwvnj2Q9MNLlsCJS
- hyaeD68zOSQ+8Ex8yWDw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gIg+rV75Vvo=:zI2EcLL6lmBx+OCsRoc1e5
+ MmRS3WIMSHuTTcT9/PtTyry4RW+qEysUDyVEHsrs2M5oFZ/EaugmFtOcQNiuKbd2vNn9mOuX5
+ n66LaOonAY1Ugd9fiHDV+v3QRa8uomPJ/xMzvrgTLY1Yhu4mD6BsKl2Vk1XJU53FrdMSrMX4z
+ v7MssgxRY3yPDFHuFrIoxlHbhp+QYcxM+W2+++e/pPomSxrw4kwHMYxPvu9XwF0Z0sKr69c9k
+ v7K2j56CXz3idaZ4scBjDNfsLks09PJgPW4dujia7Jz2qD+897HyjWVlzhg62wRluIn3X/yEw
+ hywPROlcXgvvsI/YyHbRnVkXdqe4dqNSE0jjlhc5fsPQximRVQcVf0XZzKlFf8/r+PKG75bui
+ J0LkVvImNrvWe46lP/5rQLED7zS77at9LWQ3Swxve0GUItDjpRi0X4mfFibml8XZ1jc0fluI6
+ mVHpS3+LgV8a+YGPXvxZ4hNuu9zzfQAllcbzYaV3YamYlv4eWngiu74j1NHN/Wf7Y4Bgo9SYz
+ nk8PpHC2bMFzV3peDQH8SkQIpNyMwpeaqSYGL2RIx03mPdpt5bojTh/qXSXeIyi/MmmslB7+0
+ 10f2MhJCHTbbshfGeiCuJoQenbOalmyCYrg2MovmyJQM52JZVO4aa2MgNxtJCUv124QKgVYXq
+ itKQFWfHUILXo26guQ1rJUObv0JMM0yHAeYiiHNLWwsbYoxPdhNisSMLY2RPQiPie14SP/Ds0
+ 8U4Kw2jmMyf7SpeTO7hziC7Ve7s9pAlz3ncZIie/erUHgtvxX4kk/VzK1nL9qmZIwxPg+4pCq
+ EaAy0IIuHERsu9ppg0MTvc6V/iA6/sqcvJNxH/rXkzSmIUVVEoCyRTKxBzB6vbX+GdBxHSr+B
+ EVFmgnFtc9yvY4/XQHiQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The timespec structure and associated interfaces are deprecated and will
-be removed in the future because of the y2038 overflow.
+Most kernel interfaces that take a timespec require normalized
+representation with tv_nsec between 0 and NSEC_PER_SEC.
 
-The use of ktime_to_timespec() in timeout_to_jiffies() does not
-suffer from that overflow, but is easy to avoid by just converting
-the ktime_t into jiffies directly.
+Passing values larger than 0x100000000ull further behaves differently
+on 32-bit and 64-bit kernels, and can cause the latter to spend a long
+time counting seconds in timespec64_sub()/set_normalized_timespec64().
 
-Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+Reject those large values at the user interface to enforce sane and
+portable behavior.
+
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/msm/msm_drv.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
-index 71547e756e29..740bf7c70d8f 100644
---- a/drivers/gpu/drm/msm/msm_drv.h
-+++ b/drivers/gpu/drm/msm/msm_drv.h
-@@ -454,8 +454,7 @@ static inline unsigned long timeout_to_jiffies(const ktime_t *timeout)
- 		remaining_jiffies = 0;
- 	} else {
- 		ktime_t rem = ktime_sub(*timeout, now);
--		struct timespec ts = ktime_to_timespec(rem);
--		remaining_jiffies = timespec_to_jiffies(&ts);
-+		remaining_jiffies = ktime_divns(rem, NSEC_PER_SEC / HZ);
- 	}
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+index 1f9c01be40d7..95d72dc00280 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+@@ -297,6 +297,9 @@ static int etnaviv_ioctl_gem_cpu_prep(struct drm_device *dev, void *data,
+ 	if (args->op & ~(ETNA_PREP_READ | ETNA_PREP_WRITE | ETNA_PREP_NOSYNC))
+ 		return -EINVAL;
  
- 	return remaining_jiffies;
++	if (args->timeout.tv_nsec > NSEC_PER_SEC)
++		return -EINVAL;
++
+ 	obj = drm_gem_object_lookup(file, args->handle);
+ 	if (!obj)
+ 		return -ENOENT;
+@@ -360,6 +363,9 @@ static int etnaviv_ioctl_wait_fence(struct drm_device *dev, void *data,
+ 	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
+ 		return -EINVAL;
+ 
++	if (args->timeout.tv_nsec > NSEC_PER_SEC)
++		return -EINVAL;
++
+ 	if (args->pipe >= ETNA_MAX_PIPES)
+ 		return -EINVAL;
+ 
+@@ -411,6 +417,9 @@ static int etnaviv_ioctl_gem_wait(struct drm_device *dev, void *data,
+ 	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
+ 		return -EINVAL;
+ 
++	if (args->timeout.tv_nsec > NSEC_PER_SEC)
++		return -EINVAL;
++
+ 	if (args->pipe >= ETNA_MAX_PIPES)
+ 		return -EINVAL;
+ 
 -- 
 2.20.0
 
