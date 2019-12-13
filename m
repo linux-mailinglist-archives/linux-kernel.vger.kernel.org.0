@@ -2,172 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC6D11EC5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:58:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FB3C11EC5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:58:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfLMU6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:58:15 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:60083 "EHLO
+        id S1726750AbfLMU6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:58:41 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:58183 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbfLMU6O (ORCPT
+        with ESMTP id S1725937AbfLMU6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:58:14 -0500
+        Fri, 13 Dec 2019 15:58:41 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M89bP-1iacoR0uTj-005GHx; Fri, 13 Dec 2019 21:58:04 +0100
+ 1MbS0X-1i8S0J3tFZ-00bs55; Fri, 13 Dec 2019 21:58:19 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Brian Foster <bfoster@redhat.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        Pavel Reichl <preichl@redhat.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Dave Chinner <dchinner@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH v2 21/24] xfs: quota: move to time64_t interfaces
-Date:   Fri, 13 Dec 2019 21:53:49 +0100
-Message-Id: <20191213205417.3871055-12-arnd@arndb.de>
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
+        Li RongQing <lirongqing@baidu.com>,
+        Zhang Yu <zhangyu31@baidu.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        zhengbin <zhengbin13@huawei.com>
+Subject: [PATCH v2 22/24] y2038: remove obsolete jiffies conversion functions
+Date:   Fri, 13 Dec 2019 21:53:50 +0100
+Message-Id: <20191213205417.3871055-13-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191213204936.3643476-1-arnd@arndb.de>
 References: <20191213204936.3643476-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:U4OoSyJcMxWrLz56NTLy5TvcMiZnlFrF1R3kAshvAlEbSRCOzeC
- MU+a+kgOurK/EF2WxWRPMR623nA1fdKR5uRZ5zKbNPf7Q2ifioCKn5m71y7W41kzptK+bmW
- 9TOOEK3FNdMOUOQoRUe5MnmmUq4cS3xgQeGYFPjj5jUUq3spY9G9co13nAzhAlTt8J/ZDfO
- +dqdMz7x2VQcU+LqrJVNQ==
+X-Provags-ID: V03:K1:+a7egnHYu/Vs4tGonIvWpddWPqQ3G3Wrw3UoOy1c8w4nWtkSLIH
+ WP2j0kouEaxCIxmbWZSzvBL11f1KKh3/hew5IawQz0XOCrQ+gKizADA7n/VPFRd7zTV1smC
+ k00875l342HVLxFmg7rrE6XRu7CNsuFPtLzP6FrKoEmYKUCt98BHJerR6wFhBdm7/cPzyKx
+ byCtsDXIHe1CvT7R5U5vQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4lyDylcgSX0=:F5ZQkV9kT770JxgnJn/cL8
- evBqGVlSOOHU9YaF40rxkzMeuVOWdyUbeluOGJJoi27Gtec8k8wXepwcwF2X+kQ/bGHRH+J8j
- PjjDXCcTk2Hty4XzJOPpv7Fv0xgqAP+4gQfP8IdGfq2OuJ/OyARMKjaCfYMhmYLIP3wrg6ccW
- gtiugyTF6LhkR33EtG6hVSDPgEXi/exbCoyrKa6ShVgnIi/JlRRJBYPgj16sjAMO/OXbkvY6u
- Xps2P8/JfVrKNZbEiZlLVALGFNqcrUdGKMOUOT571zbbP7E62dCsyD02WJMx8t0JydYxsC/Ou
- VtgaSRolPluzw+f7YnHCpjtW4QxfSH60A9mLCFjtEg0SQiDmUxREbHg3t7FVMBSGkktjffPAz
- LFgTgjqOoYjMEHC5hNqhHp1HmEJvIuXDpcLpPu5VD8VnYLDl7YSM71H6pZm4oL7VrAFpgcD0s
- l9qvZ/Jx0kmcY97rs/JGUZQXE6C5exrGmn2EZLLXyBZ+AKj83tgyN8NZY7olersMN9gPyeafi
- n1EpZh7UBE+d/XXv5ZvG7rqLqCAE9Sk2q6rik8uvPQ6DqP6aEvyQ50sA6CgFKwP2p3pdJelUO
- 5rFSAbi9xXwOqG0ZwWf++sNzNgbH3uiPbJ0poN26J4mz3BZmaKNVv3nY9UFqUCH5J8y37HHrC
- RFD0VmbxowJHo/BR9zbH3SBtYyP0ODVTvILY5ibLHYZMMkktaI+DZXL0LHXVbczPyIs3cUCx5
- dgU73Z+qHw36dXcT3e6TEf9S9ASK7H4SEglU5STCth0eRVfRvGBiyf6GteFPF2suKIchlxBo9
- 5bBLjgE/fCM3JhJUtx7QoCvNKcxyA7urx4LcaHNsEjy7ZKwk5V21PMatuptaWTElQOF7utsKd
- sdIkxulCikM8Z1R+3ZYg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FkIUgD1sr+w=:QqhdATVnkuEIRaTgHU5R3C
+ 8JX3YcqaA/s08qA+8JMS+qQUnItFmEfkGxSPHCUTLLwlAFupj8E84/HhYAcw8v2t4HyfFW5Hd
+ 3MQhV20eSbXQAxcfAPTC8qCnnKKpPsfTgaKA1o6VKvx4zIqiYJCpraES3tZY3r3jYQk9D5P1e
+ Pw5F4LryugGgsLY+8wn9lcLRyXcOqmVfEdtTYAIka/HiEqUfRxwWGYRN1tR4cBh58PE22EGGO
+ MoC0SnGtmSJydlAb+2F3upmMAqC8icW9HCNWn2Fu5HsfWSsaCV8tfqPC1X5Ou5PnZbGbwPt2S
+ kNt3uw2hJwJbQjF+xOiS7FAudO8qj6K3FPIe0DtpNCjm0mJdDthrwXL5MqER2m51d5iDP4s1y
+ DN6gi1U/9Xvti3wjsFcU+W2aqGphQCWaYOCYcAvDFyx8frrzOIh80iKwTXQZpwvJ19JuknobV
+ b8Z7RxIVIZPLkjRrsfUEp93zrnvScXj9cz6Gj2flRSdG9/uM1pit9V8J9Wlu7S+aHjSeSm+6I
+ ssX7OgleqxE6weQytJyWjN/XI0YdIIiUn4ZXTiwbgzlN3Nhxv60A9HwXolMdjcelo4NyiOX7e
+ nr2rLrzpVYPKUq1x/DDEuzRVDx5iw4qs2ogq+agjVaNn91aQ4L2CnyjRqVo4a7CGb7DttqDNB
+ e8RiLkP3xvV7+6JOviizoG2Lc8hj7X4EpV2eRd0ScYnkabXCr+yAQLdjTIEaGLDJN09rrXqQC
+ Os5oW+oYwNs+NXa9Gn2wZ41I2Kwnp595vJTbaUDToapua3e8BDV0XLhtBYkS1+8yyVoawOsBr
+ T36Sij30o6PfQUh0rKwnv1syW3iJpBhEGLw8OZMlwACYH4Af1QP7/+TUhOzqJNfQSOFsbGdCq
+ pfrnDEOrRLxjz0wuNXYQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a preparation for removing the 32-bit time_t type and
-all associated interfaces, change xfs to use time64_t and
-ktime_get_real_seconds() for the quota housekeeping.
+Now that the last user of timespec_to_jiffies() is gone, these
+can just be removed, everything else is using ktime_t or timespec64
+already.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/xfs/xfs_dquot.c       | 6 +++---
- fs/xfs/xfs_qm.h          | 6 +++---
- fs/xfs/xfs_quotaops.c    | 6 +++---
- fs/xfs/xfs_trans_dquot.c | 8 +++++---
- 4 files changed, 14 insertions(+), 12 deletions(-)
+ include/linux/jiffies.h | 20 --------------
+ kernel/time/time.c      | 58 ++++-------------------------------------
+ 2 files changed, 5 insertions(+), 73 deletions(-)
 
-diff --git a/fs/xfs/xfs_dquot.c b/fs/xfs/xfs_dquot.c
-index 2bff21ca9d78..9cfd3209f52b 100644
---- a/fs/xfs/xfs_dquot.c
-+++ b/fs/xfs/xfs_dquot.c
-@@ -137,7 +137,7 @@ xfs_qm_adjust_dqtimers(
- 		    (d->d_blk_hardlimit &&
- 		     (be64_to_cpu(d->d_bcount) >
- 		      be64_to_cpu(d->d_blk_hardlimit)))) {
--			d->d_btimer = cpu_to_be32(get_seconds() +
-+			d->d_btimer = cpu_to_be32(ktime_get_real_seconds() +
- 					mp->m_quotainfo->qi_btimelimit);
- 		} else {
- 			d->d_bwarns = 0;
-@@ -160,7 +160,7 @@ xfs_qm_adjust_dqtimers(
- 		    (d->d_ino_hardlimit &&
- 		     (be64_to_cpu(d->d_icount) >
- 		      be64_to_cpu(d->d_ino_hardlimit)))) {
--			d->d_itimer = cpu_to_be32(get_seconds() +
-+			d->d_itimer = cpu_to_be32(ktime_get_real_seconds() +
- 					mp->m_quotainfo->qi_itimelimit);
- 		} else {
- 			d->d_iwarns = 0;
-@@ -183,7 +183,7 @@ xfs_qm_adjust_dqtimers(
- 		    (d->d_rtb_hardlimit &&
- 		     (be64_to_cpu(d->d_rtbcount) >
- 		      be64_to_cpu(d->d_rtb_hardlimit)))) {
--			d->d_rtbtimer = cpu_to_be32(get_seconds() +
-+			d->d_rtbtimer = cpu_to_be32(ktime_get_real_seconds() +
- 					mp->m_quotainfo->qi_rtbtimelimit);
- 		} else {
- 			d->d_rtbwarns = 0;
-diff --git a/fs/xfs/xfs_qm.h b/fs/xfs/xfs_qm.h
-index 7823af39008b..4e57edca8bce 100644
---- a/fs/xfs/xfs_qm.h
-+++ b/fs/xfs/xfs_qm.h
-@@ -64,9 +64,9 @@ struct xfs_quotainfo {
- 	struct xfs_inode	*qi_pquotaip;	/* project quota inode */
- 	struct list_lru	 qi_lru;
- 	int		 qi_dquots;
--	time_t		 qi_btimelimit;	 /* limit for blks timer */
--	time_t		 qi_itimelimit;	 /* limit for inodes timer */
--	time_t		 qi_rtbtimelimit;/* limit for rt blks timer */
-+	time64_t	 qi_btimelimit;	 /* limit for blks timer */
-+	time64_t	 qi_itimelimit;	 /* limit for inodes timer */
-+	time64_t	 qi_rtbtimelimit;/* limit for rt blks timer */
- 	xfs_qwarncnt_t	 qi_bwarnlimit;	 /* limit for blks warnings */
- 	xfs_qwarncnt_t	 qi_iwarnlimit;	 /* limit for inodes warnings */
- 	xfs_qwarncnt_t	 qi_rtbwarnlimit;/* limit for rt blks warnings */
-diff --git a/fs/xfs/xfs_quotaops.c b/fs/xfs/xfs_quotaops.c
-index c7de17deeae6..38669e827206 100644
---- a/fs/xfs/xfs_quotaops.c
-+++ b/fs/xfs/xfs_quotaops.c
-@@ -37,9 +37,9 @@ xfs_qm_fill_state(
- 	tstate->flags |= QCI_SYSFILE;
- 	tstate->blocks = ip->i_d.di_nblocks;
- 	tstate->nextents = ip->i_d.di_nextents;
--	tstate->spc_timelimit = q->qi_btimelimit;
--	tstate->ino_timelimit = q->qi_itimelimit;
--	tstate->rt_spc_timelimit = q->qi_rtbtimelimit;
-+	tstate->spc_timelimit = (u32)q->qi_btimelimit;
-+	tstate->ino_timelimit = (u32)q->qi_itimelimit;
-+	tstate->rt_spc_timelimit = (u32)q->qi_rtbtimelimit;
- 	tstate->spc_warnlimit = q->qi_bwarnlimit;
- 	tstate->ino_warnlimit = q->qi_iwarnlimit;
- 	tstate->rt_spc_warnlimit = q->qi_rtbwarnlimit;
-diff --git a/fs/xfs/xfs_trans_dquot.c b/fs/xfs/xfs_trans_dquot.c
-index a6fe2d8dc40f..d1b9869bc5fa 100644
---- a/fs/xfs/xfs_trans_dquot.c
-+++ b/fs/xfs/xfs_trans_dquot.c
-@@ -580,7 +580,7 @@ xfs_trans_dqresv(
+diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+index 1b6d31da7cbc..e3279ef24d28 100644
+--- a/include/linux/jiffies.h
++++ b/include/linux/jiffies.h
+@@ -422,26 +422,6 @@ static __always_inline unsigned long usecs_to_jiffies(const unsigned int u)
+ extern unsigned long timespec64_to_jiffies(const struct timespec64 *value);
+ extern void jiffies_to_timespec64(const unsigned long jiffies,
+ 				  struct timespec64 *value);
+-static inline unsigned long timespec_to_jiffies(const struct timespec *value)
+-{
+-	struct timespec64 ts = timespec_to_timespec64(*value);
+-
+-	return timespec64_to_jiffies(&ts);
+-}
+-
+-static inline void jiffies_to_timespec(const unsigned long jiffies,
+-				       struct timespec *value)
+-{
+-	struct timespec64 ts;
+-
+-	jiffies_to_timespec64(jiffies, &ts);
+-	*value = timespec64_to_timespec(ts);
+-}
+-
+-extern unsigned long timeval_to_jiffies(const struct timeval *value);
+-extern void jiffies_to_timeval(const unsigned long jiffies,
+-			       struct timeval *value);
+-
+ extern clock_t jiffies_to_clock_t(unsigned long x);
+ static inline clock_t jiffies_delta_to_clock_t(long delta)
  {
- 	xfs_qcnt_t		hardlimit;
- 	xfs_qcnt_t		softlimit;
--	time_t			timer;
-+	time64_t		timer;
- 	xfs_qwarncnt_t		warns;
- 	xfs_qwarncnt_t		warnlimit;
- 	xfs_qcnt_t		total_count;
-@@ -635,7 +635,8 @@ xfs_trans_dqresv(
- 				goto error_return;
- 			}
- 			if (softlimit && total_count > softlimit) {
--				if ((timer != 0 && get_seconds() > timer) ||
-+				if ((timer != 0 &&
-+				     ktime_get_real_seconds() > timer) ||
- 				    (warns != 0 && warns >= warnlimit)) {
- 					xfs_quota_warn(mp, dqp,
- 						       QUOTA_NL_BSOFTLONGWARN);
-@@ -662,7 +663,8 @@ xfs_trans_dqresv(
- 				goto error_return;
- 			}
- 			if (softlimit && total_count > softlimit) {
--				if  ((timer != 0 && get_seconds() > timer) ||
-+				if  ((timer != 0 &&
-+				      ktime_get_real_seconds() > timer) ||
- 				     (warns != 0 && warns >= warnlimit)) {
- 					xfs_quota_warn(mp, dqp,
- 						       QUOTA_NL_ISOFTLONGWARN);
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 704ccd9451b0..cdd7386115ff 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -626,10 +626,12 @@ EXPORT_SYMBOL(__usecs_to_jiffies);
+  * The >> (NSEC_JIFFIE_SC - SEC_JIFFIE_SC) converts the scaled nsec
+  * value to a scaled second value.
+  */
+-static unsigned long
+-__timespec64_to_jiffies(u64 sec, long nsec)
++
++unsigned long
++timespec64_to_jiffies(const struct timespec64 *value)
+ {
+-	nsec = nsec + TICK_NSEC - 1;
++	u64 sec = value->tv_sec;
++	long nsec = value->tv_nsec + TICK_NSEC - 1;
+ 
+ 	if (sec >= MAX_SEC_IN_JIFFIES){
+ 		sec = MAX_SEC_IN_JIFFIES;
+@@ -640,18 +642,6 @@ __timespec64_to_jiffies(u64 sec, long nsec)
+ 		 (NSEC_JIFFIE_SC - SEC_JIFFIE_SC))) >> SEC_JIFFIE_SC;
+ 
+ }
+-
+-static unsigned long
+-__timespec_to_jiffies(unsigned long sec, long nsec)
+-{
+-	return __timespec64_to_jiffies((u64)sec, nsec);
+-}
+-
+-unsigned long
+-timespec64_to_jiffies(const struct timespec64 *value)
+-{
+-	return __timespec64_to_jiffies(value->tv_sec, value->tv_nsec);
+-}
+ EXPORT_SYMBOL(timespec64_to_jiffies);
+ 
+ void
+@@ -668,44 +658,6 @@ jiffies_to_timespec64(const unsigned long jiffies, struct timespec64 *value)
+ }
+ EXPORT_SYMBOL(jiffies_to_timespec64);
+ 
+-/*
+- * We could use a similar algorithm to timespec_to_jiffies (with a
+- * different multiplier for usec instead of nsec). But this has a
+- * problem with rounding: we can't exactly add TICK_NSEC - 1 to the
+- * usec value, since it's not necessarily integral.
+- *
+- * We could instead round in the intermediate scaled representation
+- * (i.e. in units of 1/2^(large scale) jiffies) but that's also
+- * perilous: the scaling introduces a small positive error, which
+- * combined with a division-rounding-upward (i.e. adding 2^(scale) - 1
+- * units to the intermediate before shifting) leads to accidental
+- * overflow and overestimates.
+- *
+- * At the cost of one additional multiplication by a constant, just
+- * use the timespec implementation.
+- */
+-unsigned long
+-timeval_to_jiffies(const struct timeval *value)
+-{
+-	return __timespec_to_jiffies(value->tv_sec,
+-				     value->tv_usec * NSEC_PER_USEC);
+-}
+-EXPORT_SYMBOL(timeval_to_jiffies);
+-
+-void jiffies_to_timeval(const unsigned long jiffies, struct timeval *value)
+-{
+-	/*
+-	 * Convert jiffies to nanoseconds and separate with
+-	 * one divide.
+-	 */
+-	u32 rem;
+-
+-	value->tv_sec = div_u64_rem((u64)jiffies * TICK_NSEC,
+-				    NSEC_PER_SEC, &rem);
+-	value->tv_usec = rem / NSEC_PER_USEC;
+-}
+-EXPORT_SYMBOL(jiffies_to_timeval);
+-
+ /*
+  * Convert jiffies/jiffies_64 to clock_t and back.
+  */
 -- 
 2.20.0
 
