@@ -2,72 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBDCA11DF28
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:11:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C04EB11DF45
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:21:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbfLMIKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 03:10:53 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:46966 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfLMIKw (ORCPT
+        id S1726004AbfLMIVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 03:21:45 -0500
+Received: from mailgw01.mediatek.com ([216.200.240.184]:37266 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725468AbfLMIVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 03:10:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tx0ZXrqD91cMc7eFMd/K/yknjRvGM17Okd5YIFyfuww=; b=jksB9r7kW8CRbrP+UyBMLysqCW
-        NtmZ5y7tSGdfsDJzmP2h2olA+T0T9A0U2LzZZ/ZmwuB/l2qLzt5h3wHUX+/HP1+0VsVgkZ2pjrCvj
-        oecZ3OWbIoGu3VRFW7WriDshglWIZJiTdJ8q5XJ6GmcMGa2sF+W0uIEAFklRKjvNCpQsU1PwkLfWZ
-        jaCO+qPTMkTITspjkC5UjxkVb0h/UyBQS5ljkpMiyzx+9sNg/MKLLGyjGTB+FkiDLiE2P+XtRitsM
-        JJl1ApwAkomKReqkEJrOoaZIyF32lkfvm52wntJMBpWnbr4ZXYSxwdctRmPYkrCIc3O1dzQMqCMTw
-        5Z0FRESw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifg21-0000Hn-1n; Fri, 13 Dec 2019 08:10:37 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 44605300130;
-        Fri, 13 Dec 2019 09:09:13 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B949A2B199FDC; Fri, 13 Dec 2019 09:10:33 +0100 (CET)
-Date:   Fri, 13 Dec 2019 09:10:33 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "chengjian (D)" <cj.chengjian@huawei.com>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        chenwandun@huawei.com, xiexiuqi@huawei.com, liwei391@huawei.com,
-        huawei.libin@huawei.com, bobo.shaobowang@huawei.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org
-Subject: Re: [PATCH] sched/fair: Optimize select_idle_cpu
-Message-ID: <20191213081033.GZ2844@hirez.programming.kicks-ass.net>
-References: <20191212144102.181510-1-cj.chengjian@huawei.com>
- <20191212150429.GZ2827@hirez.programming.kicks-ass.net>
- <52112146-a4ee-d09f-b61e-9aa35e2e5298@huawei.com>
+        Fri, 13 Dec 2019 03:21:44 -0500
+X-UUID: 6e746d18e597477e980987406f271eef-20191213
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:Reply-To:From:Subject:Message-ID; bh=EKD7QQ/TdtJi51T5Vize7rcSiXuT7zYiDce6IZbkLA4=;
+        b=ZWuuASaSl8ffzBuXAiyiu56kU0B7+d2vRw3t75+v/JRsCGcOyNVwJDRGPIqSPcAXcF8vqY5/I7/aUkO9QR1djK/UbCL2zrCjkybAPBUdTg5JudnkKRGhoJlhb6Uu/F26ofK/HX0HzRDu5iKDwh5ULg40bq3M34gCCc+J1Q05SQ4=;
+X-UUID: 6e746d18e597477e980987406f271eef-20191213
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <yongqiang.niu@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 947387575; Fri, 13 Dec 2019 00:21:37 -0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs05n1.mediatek.inc
+ (172.21.101.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 13 Dec
+ 2019 16:10:49 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 13 Dec 2019 16:11:12 +0800
+Message-ID: <1576224672.31822.6.camel@mhfsdcap03>
+Subject: Re: [PATCH v2, 2/2] drm/mediatek: Add ctm property support
+From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
+Reply-To: Yongqiang Niu <yongqiang.niu@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Fri, 13 Dec 2019 16:11:12 +0800
+In-Reply-To: <1576223825.9817.6.camel@mtksdaap41>
+References: <1576222132-31586-1-git-send-email-yongqiang.niu@mediatek.com>
+         <1576222132-31586-3-git-send-email-yongqiang.niu@mediatek.com>
+         <1576223825.9817.6.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <52112146-a4ee-d09f-b61e-9aa35e2e5298@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 09:51:30AM +0800, chengjian (D) wrote:
-> Hi, Peter
-> 
->     I saw the same work in select_idle_core, and I was wondering why the
-> per_cpu variable was
-> 
-> needed for this yesterday. Now I think I probably understand : cpumask may
-> be too large,
-> 
-> putting it on the stack may cause overflow. Is this correct ?
+T24gRnJpLCAyMDE5LTEyLTEzIGF0IDE1OjU3ICswODAwLCBDSyBIdSB3cm90ZToNCj4gT24gRnJp
+LCAyMDE5LTEyLTEzIGF0IDE1OjI4ICswODAwLCBZb25ncWlhbmcgTml1IHdyb3RlOg0KPiA+IEFk
+ZCBjdG0gcHJvcGVydHkgc3VwcG9ydA0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IFlvbmdxaWFu
+ZyBOaXUgPHlvbmdxaWFuZy5uaXVAbWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJz
+L2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMgICAgIHwgMTAgKysrKy0NCj4gPiAgZHJp
+dmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZGRwX2NvbXAuYyB8IDYyICsrKysrKysrKysr
+KysrKysrKysrKysrKysrKystDQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJt
+X2RkcF9jb21wLmggfCAgOSArKysrKw0KPiA+ICAzIGZpbGVzIGNoYW5nZWQsIDc4IGluc2VydGlv
+bnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
+dGtfZHJtX2NydGMuYw0KPiA+IGluZGV4IDlhOGUxZDQuLmRiMzAzMWUgMTAwNjQ0DQo+ID4gLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQo+ID4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQo+ID4gQEAgLTYxNCw4ICs2MTQs
+MTAgQEAgc3RhdGljIHZvaWQgbXRrX2RybV9jcnRjX2F0b21pY19mbHVzaChzdHJ1Y3QgZHJtX2Ny
+dGMgKmNydGMsDQo+ID4gIAlpZiAobXRrX2NydGMtPmV2ZW50KQ0KPiA+ICAJCW10a19jcnRjLT5w
+ZW5kaW5nX25lZWRzX3ZibGFuayA9IHRydWU7DQo+ID4gIAlpZiAoY3J0Yy0+c3RhdGUtPmNvbG9y
+X21nbXRfY2hhbmdlZCkNCj4gPiAtCQlmb3IgKGkgPSAwOyBpIDwgbXRrX2NydGMtPmRkcF9jb21w
+X25yOyBpKyspDQo+ID4gKwkJZm9yIChpID0gMDsgaSA8IG10a19jcnRjLT5kZHBfY29tcF9ucjsg
+aSsrKSB7DQo+ID4gIAkJCW10a19kZHBfZ2FtbWFfc2V0KG10a19jcnRjLT5kZHBfY29tcFtpXSwg
+Y3J0Yy0+c3RhdGUpOw0KPiA+ICsJCQltdGtfZGRwX2N0bV9zZXQobXRrX2NydGMtPmRkcF9jb21w
+W2ldLCBjcnRjLT5zdGF0ZSk7DQo+ID4gKwkJfQ0KPiA+ICAJbXRrX2RybV9jcnRjX2h3X2NvbmZp
+ZyhtdGtfY3J0Yyk7DQo+ID4gIH0NCj4gPiAgDQo+ID4gQEAgLTczNCw2ICs3MzYsNyBAQCBpbnQg
+bXRrX2RybV9jcnRjX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwNCj4gPiAgCWlu
+dCBwaXBlID0gcHJpdi0+bnVtX3BpcGVzOw0KPiA+ICAJaW50IHJldDsNCj4gPiAgCWludCBpOw0K
+PiA+ICsJYm9vbCBoYXNfY3RtID0gZmFsc2U7DQo+ID4gIAl1aW50IGdhbW1hX2x1dF9zaXplID0g
+MDsNCj4gPiAgDQo+ID4gIAlpZiAoIXBhdGgpDQo+ID4gQEAgLTc4Nyw2ICs3OTAsOSBAQCBpbnQg
+bXRrX2RybV9jcnRjX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwNCj4gPiAgDQo+
+ID4gIAkJbXRrX2NydGMtPmRkcF9jb21wW2ldID0gY29tcDsNCj4gPiAgDQo+ID4gKwkJaWYgKGNv
+bXAtPmZ1bmNzLT5jdG1fc2V0KQ0KPiA+ICsJCQloYXNfY3RtID0gdHJ1ZTsNCj4gPiArDQo+ID4g
+IAkJaWYgKGNvbXAtPmZ1bmNzLT5nYW1tYV9zZXQpDQo+ID4gIAkJCWdhbW1hX2x1dF9zaXplID0g
+TVRLX0xVVF9TSVpFOw0KPiA+ICAJfQ0KPiA+IEBAIC04MTIsNyArODE4LDcgQEAgaW50IG10a19k
+cm1fY3J0Y19jcmVhdGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsDQo+ID4gIA0KPiA+ICAJ
+aWYgKGdhbW1hX2x1dF9zaXplKQ0KPiA+ICAJCWRybV9tb2RlX2NydGNfc2V0X2dhbW1hX3NpemUo
+Jm10a19jcnRjLT5iYXNlLCBnYW1tYV9sdXRfc2l6ZSk7DQo+ID4gLQlkcm1fY3J0Y19lbmFibGVf
+Y29sb3JfbWdtdCgmbXRrX2NydGMtPmJhc2UsIDAsIGZhbHNlLCBnYW1tYV9sdXRfc2l6ZSk7DQo+
+ID4gKwlkcm1fY3J0Y19lbmFibGVfY29sb3JfbWdtdCgmbXRrX2NydGMtPmJhc2UsIDAsIGhhc19j
+dG0sIGdhbW1hX2x1dF9zaXplKTsNCj4gDQo+IE1heSBlbmFibGUgY29sb3IgbWFuYWdlbWVudCB3
+aGVuIGhhcyBnYW1tYSBvciBjdG0uDQo+IA0KPiBSZWdhcmRzLA0KPiBDSw0KPiANCmRybV9jcnRj
+X2VuYWJsZV9jb2xvcl9tZ210IHdpbGwgY2hlY2sgdGhlIHBhcmFtZXRlciB2YWxpZGF0aW9uLg0K
+aWYgaGFzX2N0bSBpcyBmYWxzZSwgd2lsbCBub3QgYXR0YWNoIGN0bSBwcm9wZXJ0eS4NCmlmIGdh
+bW1hX2x1dF9zaXplIGlzIHplcm8sIHdpbGwgbm90IGF0dGFjaCBnYW1tYSBwcm9wZXJ0eS4NCg0K
+DQo+ID4gIAlwcml2LT5udW1fcGlwZXMrKzsNCj4gPiAgCW11dGV4X2luaXQoJm10a19jcnRjLT5o
+d19sb2NrKTsNCj4gPiAgDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRl
+ay9tdGtfZHJtX2RkcF9jb21wLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9k
+ZHBfY29tcC5jDQo+ID4gaW5kZXggY2IzMjk2Zi4uMTgyOTkwYSAxMDA2NDQNCj4gPiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHBfY29tcC5jDQo+ID4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZGRwX2NvbXAuYw0KPiA+IEBAIC0zNyw3ICsz
+NywxNSBAQA0KPiA+ICAjZGVmaW5lIENDT1JSX0VOCQkJCUJJVCgwKQ0KPiA+ICAjZGVmaW5lIERJ
+U1BfQ0NPUlJfQ0ZHCQkJCTB4MDAyMA0KPiA+ICAjZGVmaW5lIENDT1JSX1JFTEFZX01PREUJCQlC
+SVQoMCkNCj4gPiArI2RlZmluZSBDQ09SUl9FTkdJTkVfRU4JCQkJQklUKDEpDQo+ID4gKyNkZWZp
+bmUgQ0NPUlJfR0FNTUFfT0ZGCQkJCUJJVCgyKQ0KPiA+ICsjZGVmaW5lIENDT1JSX1dHQU1VVF9T
+UkNfQ0xJUAkJCUJJVCgzKQ0KPiA+ICAjZGVmaW5lIERJU1BfQ0NPUlJfU0laRQkJCQkweDAwMzAN
+Cj4gPiArI2RlZmluZSBESVNQX0NDT1JSX0NPRUZfMAkJCTB4MDA4MA0KPiA+ICsjZGVmaW5lIERJ
+U1BfQ0NPUlJfQ09FRl8xCQkJMHgwMDg0DQo+ID4gKyNkZWZpbmUgRElTUF9DQ09SUl9DT0VGXzIJ
+CQkweDAwODgNCj4gPiArI2RlZmluZSBESVNQX0NDT1JSX0NPRUZfMwkJCTB4MDA4Qw0KPiA+ICsj
+ZGVmaW5lIERJU1BfQ0NPUlJfQ09FRl80CQkJMHgwMDkwDQo+ID4gIA0KPiA+ICAjZGVmaW5lIERJ
+U1BfRElUSEVSX0VOCQkJCTB4MDAwMA0KPiA+ICAjZGVmaW5lIERJVEhFUl9FTgkJCQlCSVQoMCkN
+Cj4gPiBAQCAtMTg4LDcgKzE5Niw3IEBAIHN0YXRpYyB2b2lkIG10a19jY29ycl9jb25maWcoc3Ry
+dWN0IG10a19kZHBfY29tcCAqY29tcCwgdW5zaWduZWQgaW50IHcsDQo+ID4gIAkJCSAgICAgdW5z
+aWduZWQgaW50IGJwYywgc3RydWN0IGNtZHFfcGt0ICpjbWRxX3BrdCkNCj4gPiAgew0KPiA+ICAJ
+bXRrX2RkcF93cml0ZShjbWRxX3BrdCwgaCA8PCAxNiB8IHcsIGNvbXAsIERJU1BfQ0NPUlJfU0la
+RSk7DQo+ID4gLQltdGtfZGRwX3dyaXRlKGNtZHFfcGt0LCBDQ09SUl9SRUxBWV9NT0RFLCBjb21w
+LCBESVNQX0NDT1JSX0NGRyk7DQo+ID4gKwltdGtfZGRwX3dyaXRlKGNtZHFfcGt0LCBDQ09SUl9F
+TkdJTkVfRU4sIGNvbXAsIERJU1BfQ0NPUlJfQ0ZHKTsNCj4gPiAgfQ0KPiA+ICANCj4gPiAgc3Rh
+dGljIHZvaWQgbXRrX2Njb3JyX3N0YXJ0KHN0cnVjdCBtdGtfZGRwX2NvbXAgKmNvbXApDQo+ID4g
+QEAgLTIwMSw2ICsyMDksNTcgQEAgc3RhdGljIHZvaWQgbXRrX2Njb3JyX3N0b3Aoc3RydWN0IG10
+a19kZHBfY29tcCAqY29tcCkNCj4gPiAgCXdyaXRlbF9yZWxheGVkKDB4MCwgY29tcC0+cmVncyAr
+IERJU1BfQ0NPUlJfRU4pOw0KPiA+ICB9DQo+ID4gIA0KPiA+ICsvKiBDb252ZXJ0cyBhIERSTSBT
+MzEuMzIgdmFsdWUgdG8gdGhlIEhXIFMxLjEwIGZvcm1hdC4gKi8NCj4gPiArc3RhdGljIHUxNiBt
+dGtfY3RtX3MzMV8zMl90b19zMV8xMCh1NjQgaW4pDQo+ID4gK3sNCj4gPiArCXUxNiByOw0KPiA+
+ICsNCj4gPiArCS8qIFNpZ24gYml0LiAqLw0KPiA+ICsJciA9IGluICYgQklUX1VMTCg2MykgPyBC
+SVQoMTEpIDogMDsNCj4gPiArDQo+ID4gKwlpZiAoKGluICYgR0VOTUFTS19VTEwoNjIsIDMzKSkg
+PiAwKSB7DQo+ID4gKwkJLyogaWRlbnRpdHkgdmFsdWUgMHgxMDAwMDAwMDAgLT4gMHg0MDAsICov
+DQo+ID4gKwkJLyogaWYgYmlnZ2VyIHRoaXMsIHNldCBpdCB0byBtYXggMHg3ZmYuICovDQo+ID4g
+KwkJciB8PSBHRU5NQVNLKDEwLCAwKTsNCj4gPiArCX0gZWxzZSB7DQo+ID4gKwkJLyogdGFrZSB0
+aGUgMTEgbW9zdCBpbXBvcnRhbnQgYml0cy4gKi8NCj4gPiArCQlyIHw9IChpbiA+PiAyMikgJiBH
+RU5NQVNLKDEwLCAwKTsNCj4gPiArCX0NCj4gPiArDQo+ID4gKwlyZXR1cm4gcjsNCj4gPiArfQ0K
+PiA+ICsNCj4gPiArc3RhdGljIHZvaWQgbXRrX2Njb3JyX2N0bV9zZXQoc3RydWN0IG10a19kZHBf
+Y29tcCAqY29tcCwNCj4gPiArCQkJICAgICAgc3RydWN0IGRybV9jcnRjX3N0YXRlICpzdGF0ZSkN
+Cj4gPiArew0KPiA+ICsJc3RydWN0IGRybV9wcm9wZXJ0eV9ibG9iICpibG9iID0gc3RhdGUtPmN0
+bTsNCj4gPiArCXN0cnVjdCBkcm1fY29sb3JfY3RtICpjdG07DQo+ID4gKwljb25zdCB1NjQgKmlu
+cHV0Ow0KPiA+ICsJdWludDE2X3QgY29lZmZzWzldID0geyAwIH07DQo+ID4gKwlpbnQgaTsNCj4g
+PiArCXN0cnVjdCBjbWRxX3BrdCAqY21kcV9wa3QgPSBOVUxMOw0KPiA+ICsNCj4gPiArCWlmICgh
+YmxvYikNCj4gPiArCQlyZXR1cm47DQo+ID4gKw0KPiA+ICsJY3RtID0gKHN0cnVjdCBkcm1fY29s
+b3JfY3RtICopYmxvYi0+ZGF0YTsNCj4gPiArCWlucHV0ID0gY3RtLT5tYXRyaXg7DQo+ID4gKw0K
+PiA+ICsJZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUoY29lZmZzKTsgaSsrKQ0KPiA+ICsJCWNv
+ZWZmc1tpXSA9IG10a19jdG1fczMxXzMyX3RvX3MxXzEwKGlucHV0W2ldKTsNCj4gPiArDQo+ID4g
+KwltdGtfZGRwX3dyaXRlKGNtZHFfcGt0LCBjb2VmZnNbMF0gPDwgMTYgfCBjb2VmZnNbMV0sDQo+
+ID4gKwkJICAgICAgY29tcCwgRElTUF9DQ09SUl9DT0VGXzApOw0KPiA+ICsJbXRrX2RkcF93cml0
+ZShjbWRxX3BrdCwgY29lZmZzWzJdIDw8IDE2IHwgY29lZmZzWzNdLA0KPiA+ICsJCSAgICAgIGNv
+bXAsIERJU1BfQ0NPUlJfQ09FRl8xKTsNCj4gPiArCW10a19kZHBfd3JpdGUoY21kcV9wa3QsIGNv
+ZWZmc1s0XSA8PCAxNiB8IGNvZWZmc1s1XSwNCj4gPiArCQkgICAgICBjb21wLCBESVNQX0NDT1JS
+X0NPRUZfMik7DQo+ID4gKwltdGtfZGRwX3dyaXRlKGNtZHFfcGt0LCBjb2VmZnNbNl0gPDwgMTYg
+fCBjb2VmZnNbN10sDQo+ID4gKwkJICAgICAgY29tcCwgRElTUF9DQ09SUl9DT0VGXzMpOw0KPiA+
+ICsJbXRrX2RkcF93cml0ZShjbWRxX3BrdCwgY29lZmZzWzhdIDw8IDE2LA0KPiA+ICsJCSAgICAg
+IGNvbXAsIERJU1BfQ0NPUlJfQ09FRl80KTsNCj4gPiArfQ0KPiA+ICsNCj4gPiAgc3RhdGljIHZv
+aWQgbXRrX2RpdGhlcl9jb25maWcoc3RydWN0IG10a19kZHBfY29tcCAqY29tcCwgdW5zaWduZWQg
+aW50IHcsDQo+ID4gIAkJCSAgICAgIHVuc2lnbmVkIGludCBoLCB1bnNpZ25lZCBpbnQgdnJlZnJl
+c2gsDQo+ID4gIAkJCSAgICAgIHVuc2lnbmVkIGludCBicGMsIHN0cnVjdCBjbWRxX3BrdCAqY21k
+cV9wa3QpDQo+ID4gQEAgLTI3MSw2ICszMzAsNyBAQCBzdGF0aWMgdm9pZCBtdGtfZ2FtbWFfc2V0
+KHN0cnVjdCBtdGtfZGRwX2NvbXAgKmNvbXAsDQo+ID4gIAkuY29uZmlnID0gbXRrX2Njb3JyX2Nv
+bmZpZywNCj4gPiAgCS5zdGFydCA9IG10a19jY29ycl9zdGFydCwNCj4gPiAgCS5zdG9wID0gbXRr
+X2Njb3JyX3N0b3AsDQo+ID4gKwkuY3RtX3NldCA9IG10a19jY29ycl9jdG1fc2V0LA0KPiA+ICB9
+Ow0KPiA+ICANCj4gPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBtdGtfZGRwX2NvbXBfZnVuY3MgZGRw
+X2RpdGhlciA9IHsNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
+a19kcm1fZGRwX2NvbXAuaCBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcF9j
+b21wLmgNCj4gPiBpbmRleCAzODRhYmFlLi4yMGZlNTVkIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcF9jb21wLmgNCj4gPiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHBfY29tcC5oDQo+ID4gQEAgLTkyLDYgKzkyLDgg
+QEAgc3RydWN0IG10a19kZHBfY29tcF9mdW5jcyB7DQo+ID4gIAkJCSAgc3RydWN0IGRybV9jcnRj
+X3N0YXRlICpzdGF0ZSk7DQo+ID4gIAl2b2lkICgqYmdjbHJfaW5fb24pKHN0cnVjdCBtdGtfZGRw
+X2NvbXAgKmNvbXApOw0KPiA+ICAJdm9pZCAoKmJnY2xyX2luX29mZikoc3RydWN0IG10a19kZHBf
+Y29tcCAqY29tcCk7DQo+ID4gKwl2b2lkICgqY3RtX3NldCkoc3RydWN0IG10a19kZHBfY29tcCAq
+Y29tcCwNCj4gPiArCQkJc3RydWN0IGRybV9jcnRjX3N0YXRlICpzdGF0ZSk7DQo+ID4gIH07DQo+
+ID4gIA0KPiA+ICBzdHJ1Y3QgbXRrX2RkcF9jb21wIHsNCj4gPiBAQCAtMjA1LDYgKzIwNywxMyBA
+QCBzdGF0aWMgaW5saW5lIHZvaWQgbXRrX2RkcF9jb21wX2JnY2xyX2luX29mZihzdHJ1Y3QgbXRr
+X2RkcF9jb21wICpjb21wKQ0KPiA+ICAJCWNvbXAtPmZ1bmNzLT5iZ2Nscl9pbl9vZmYoY29tcCk7
+DQo+ID4gIH0NCj4gPiAgDQo+ID4gK3N0YXRpYyBpbmxpbmUgdm9pZCBtdGtfZGRwX2N0bV9zZXQo
+c3RydWN0IG10a19kZHBfY29tcCAqY29tcCwNCj4gPiArCQkJCSAgIHN0cnVjdCBkcm1fY3J0Y19z
+dGF0ZSAqc3RhdGUpDQo+ID4gK3sNCj4gPiArCWlmIChjb21wLT5mdW5jcyAmJiBjb21wLT5mdW5j
+cy0+Y3RtX3NldCkNCj4gPiArCQljb21wLT5mdW5jcy0+Y3RtX3NldChjb21wLCBzdGF0ZSk7DQo+
+ID4gK30NCj4gPiArDQo+ID4gIGludCBtdGtfZGRwX2NvbXBfZ2V0X2lkKHN0cnVjdCBkZXZpY2Vf
+bm9kZSAqbm9kZSwNCj4gPiAgCQkJZW51bSBtdGtfZGRwX2NvbXBfdHlwZSBjb21wX3R5cGUpOw0K
+PiA+ICBpbnQgbXRrX2RkcF9jb21wX2luaXQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2
+aWNlX25vZGUgKmNvbXBfbm9kZSwNCj4gDQo+IA0KDQo=
 
-Yes, for instance when NR_CPUS=4096, struct cpumask ends up being 512
-bytes, and that is _far_ too large for an on-stack variable, remember we
-have relatively small fixed size stacks.
