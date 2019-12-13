@@ -2,88 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0FD411E9EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C0D11E9FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:17:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbfLMSNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 13:13:32 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:44233 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728734AbfLMSNb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 13:13:31 -0500
-X-Originating-IP: 91.224.148.103
-Received: from localhost.localdomain (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id A9E9920003;
-        Fri, 13 Dec 2019 18:13:27 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH] drm/panel: simple: Support reset GPIOs
-Date:   Fri, 13 Dec 2019 19:13:25 +0100
-Message-Id: <20191213181325.26228-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728713AbfLMSQR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 13:16:17 -0500
+Received: from mga17.intel.com ([192.55.52.151]:51794 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728626AbfLMSQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 13:16:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 10:16:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
+   d="scan'208";a="208536315"
+Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.172])
+  by orsmga008.jf.intel.com with ESMTP; 13 Dec 2019 10:16:11 -0800
+From:   Gayatri Kammela <gayatri.kammela@intel.com>
+To:     linux-pm@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org, alex.hung@canonical.com,
+        linux-acpi@vger.kernel.org, lenb@kernel.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, charles.d.prestopine@intel.com,
+        dvhart@infradead.org, Gayatri Kammela <gayatri.kammela@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@intel.com>
+Subject: [PATCH v2 0/4] drivers: Add Tiger Lake hardware IDs to support acpi,
+Date:   Fri, 13 Dec 2019 10:14:19 -0800
+Message-Id: <cover.1576260216.git.gayatri.kammela@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The panel common bindings provide a gpios-reset property which is
-active low by default. Let's support it in the simple driver.
+Hi,
 
-De-asserting the reset pin implies a physical high, which in turns is
-a logic low.
+Tiger Lake supports devices whose hardware IDs are changed for various
+drivers. Hence, add the new hardware IDs.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Patch 1: Add Tiger Lake support to DPTF driver
+Patch 2: Add Tiger Lake support to fan driver
+Patch 3: Add Tiger Lake support to Intel's HID driver
+Patch 4: Add Tiger Lake support to thermal driver
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 5d487686d25c..15dd495c347d 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -110,6 +110,7 @@ struct panel_simple {
- 	struct i2c_adapter *ddc;
- 
- 	struct gpio_desc *enable_gpio;
-+	struct gpio_desc *reset_gpio;
- 
- 	struct drm_display_mode override_mode;
- };
-@@ -433,12 +434,21 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
- 	if (IS_ERR(panel->supply))
- 		return PTR_ERR(panel->supply);
- 
-+	panel->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+						    GPIOD_OUT_LOW);
-+	if (IS_ERR(panel->reset_gpio)) {
-+		err = PTR_ERR(panel->reset_gpio);
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "failed to request reset pin: %d\n", err);
-+		return err;
-+	}
-+
- 	panel->enable_gpio = devm_gpiod_get_optional(dev, "enable",
- 						     GPIOD_OUT_LOW);
- 	if (IS_ERR(panel->enable_gpio)) {
- 		err = PTR_ERR(panel->enable_gpio);
- 		if (err != -EPROBE_DEFER)
--			dev_err(dev, "failed to request GPIO: %d\n", err);
-+			dev_err(dev, "failed to request enable pin: %d\n", err);
- 		return err;
- 	}
- 
+Changes since v1:
+1) Maintain the readability by adding hardware IDs in a sorted order
+
+Gayatri Kammela (4):
+  acpi: dptf: Add new Tiger Lake hardware IDs to support DPTF drivers in
+    acpi
+  acpi: fan: Add new Tiger Lake hardware ID to support fan driver in
+    acpi
+  platform/x86: intel-hid: Add new Tiger Lake hardware ID to support HID
+    driver
+  thermal: int340x_thermal: Add new Tiger Lake hardware IDs to support
+    thermal driver
+
+ drivers/acpi/dptf/dptf_power.c                          | 1 +
+ drivers/acpi/dptf/int340x_thermal.c                     | 4 ++++
+ drivers/acpi/fan.c                                      | 1 +
+ drivers/platform/x86/intel-hid.c                        | 1 +
+ drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 1 +
+ drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 1 +
+ 6 files changed, 9 insertions(+)
+
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
 -- 
-2.20.1
+2.17.1
 
