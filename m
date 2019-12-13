@@ -2,78 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90BC011ED3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 22:49:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC47511ED35
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 22:49:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfLMVtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 16:49:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52782 "EHLO mail.kernel.org"
+        id S1726895AbfLMVtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 16:49:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726846AbfLMVs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 16:48:56 -0500
+        id S1726856AbfLMVs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 16:48:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D05492465A;
-        Fri, 13 Dec 2019 21:48:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 118892465B;
+        Fri, 13 Dec 2019 21:48:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576273736;
-        bh=j3P5NL8NMAppm8b67o21Z+ZJFp08AZZs2i4B35+nU8c=;
+        s=default; t=1576273738;
+        bh=N7ld8QpWhFKFVlnsxwXVqKOE2P/6aREGj1EyVdGbtVg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k5lZtK2080RQzSKDfrFjdohglq+TjptgO+cLA9T/JxHMBiqNxmytn+ohSf2BGWjUj
-         YyF+RnwjZtbvKXeEQ1j9h/BLkg4jew0yCpGzbkKfm2hcQdjnG9tO8pgWftWDTA8oTF
-         Htv6996uHt0Q2D6AeMRWaSRPI7VyrEWE1stNeO3o=
-Date:   Fri, 13 Dec 2019 17:08:11 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.4 00/92] 5.4.3-stable review
-Message-ID: <20191213160811.GD2632926@kroah.com>
-References: <20191211150221.977775294@linuxfoundation.org>
- <20191212100433.GA1470066@kroah.com>
- <CA+G9fYsWs8feJ5uJZ_Jx-SR__zJZHwZhdVPWa+QOGMHVjBBsPw@mail.gmail.com>
+        b=y8YzYSCMInoCO3CmS3C3d2st2xu9ICzKSfa/M9uR5gXKM6rb7JMBP71djJXiOXJmq
+         tfp7xfiC+2AYWpQP5SFUstHGQQPa5xQBIjO0f0FvLZI7E+vAtlO/4GZG/AO0qg3+Jt
+         SUa8SL67t0qGDql2E5CjaiPhS7uitw0Wp5Nua8vM=
+Date:   Fri, 13 Dec 2019 17:10:46 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+Subject: Re: [PATCH v4 08/15] soundwire: add initial definitions for
+ sdw_master_device
+Message-ID: <20191213161046.GA2653074@kroah.com>
+References: <20191213050409.12776-1-pierre-louis.bossart@linux.intel.com>
+ <20191213050409.12776-9-pierre-louis.bossart@linux.intel.com>
+ <20191213072844.GF1750354@kroah.com>
+ <7431d8cf-4a09-42af-14f5-01ab3b15b47b@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYsWs8feJ5uJZ_Jx-SR__zJZHwZhdVPWa+QOGMHVjBBsPw@mail.gmail.com>
+In-Reply-To: <7431d8cf-4a09-42af-14f5-01ab3b15b47b@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 10:19:43AM +0530, Naresh Kamboju wrote:
-> On Thu, 12 Dec 2019 at 15:34, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Dec 11, 2019 at 04:04:51PM +0100, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 5.4.3 release.
-> > > There are 92 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Fri, 13 Dec 2019 14:56:06 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >       https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.3-rc1.gz
-> > > or in the git tree and branch at:
-> > >       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > > and the diffstat can be found below.
-> >
-> > I have pushed out -rc2 with a number of additional fixes:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.3-rc2.gz
+On Fri, Dec 13, 2019 at 09:49:57AM -0600, Pierre-Louis Bossart wrote:
+> On 12/13/19 1:28 AM, Greg KH wrote:
+> > On Thu, Dec 12, 2019 at 11:04:02PM -0600, Pierre-Louis Bossart wrote:
+> > > Since we want an explicit support for the SoundWire Master device, add
+> > > the definitions, following the Grey Bus example.
+> > 
+> > "Greybus"  All one word please.
 > 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
+> Ack, will fix.
+> 
+> > > @@ -59,9 +59,12 @@ int sdw_uevent(struct device *dev, struct kobj_uevent_env *env)
+> > >   		if (add_uevent_var(env, "MODALIAS=%s", modalias))
+> > >   			return -ENOMEM;
+> > > +	} else if (is_sdw_md(dev)) {
+> > 
+> > Ok, "is_sdw_md()" is a horrid function name.  Spell it out please, this
+> > ends up in the global namespace.
+> 
+> ok, will use is_sdw_master_device.
+> 
+> > 
+> > Actually, why are you not using module namespaces here for this new
+> > code?  That would help you out a lot.
+> 
+> I must admit I don't understand the question. This is literally modeled
+> after is_gb_host_device(), did I miss something in the Greybus
+> implementation?
 
-Great, tanks for testing and letting me know.
+No, I mean the new MODULE_NAMESPACE() support that is in the kernel.
+I'll move the greybus code to use it too, but when you are adding new
+apis, it just makes sense to use it then as well.
+
+thanks,
 
 greg k-h
