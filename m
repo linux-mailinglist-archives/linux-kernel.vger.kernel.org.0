@@ -2,85 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF46F11E907
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:15:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3568B11E912
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:19:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728475AbfLMRO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 12:14:59 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:46400 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728438AbfLMRO7 (ORCPT
+        id S1728499AbfLMRSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 12:18:35 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:35396 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728406AbfLMRSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 12:14:59 -0500
-Received: by mail-pj1-f66.google.com with SMTP id z21so1448791pjq.13
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 09:14:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=xGfkgHFOiwzu4bSfkgFVF67O8wpT6Z/ekwvnkfqDuzY=;
-        b=cUYdO6uuG/TiXeqwUvZcAm2hBzDMImTYy4ODdcn/fMcmh9JgLu1CLGGVX+KIvvSvO0
-         o8aWIqxEx/ptb+/MPjY/Yq579KsJr1o9RPqaiCllSSleXUTWrLmcI5RrEd+/Vrfu6Flu
-         CWYAgQa0ZlDt6LHKcaWNRNJjJC1lmY2DyL0S80riSCKaUdLoml+I2lmjv4MSWugYx9o5
-         s6JunedYMjjRe7k0maLrsIspTN1iGgwZbO2xjk7eeLOQ9oZ/D3yt0WyYvo0YErpvSsqV
-         QnY53A7SjfDhKpy53r4//AfCp08E65blD6Nm/gIFCLH23SXnz4k/U4az1r298eO7WUUq
-         FlCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=xGfkgHFOiwzu4bSfkgFVF67O8wpT6Z/ekwvnkfqDuzY=;
-        b=kPGPC+Izf7I63WyeZ45jpPsj9Nbq6+vJvN+70DxRlQimk7KLY9kkK2pB8bPZXmU2IX
-         lUKJnKrgNmLhjgIdhaDDhPqscM3P2Ft6jJnkX5oHvEwxA15UQ8RqsbbpLXJ9pAx3I0/u
-         SnETs6s2F5HAm8F5/hmUDw3s87OrG+Z4F24n14T4c4QObE0hYbipeZA5cHocaxYR7suF
-         P5iFjIxD2kL6gVbW/qbM+NpBqxjaJRWn4Rnkc1zu4nME0LwHO9cBwuhp65W/XLYuj4fs
-         elNBy6NF3w4oPOmEqWWac1cwfGc5qWZlT7IXJRjPdZ/Zb3SSK1jSnMFt/p76qe/e+QyD
-         K3hw==
-X-Gm-Message-State: APjAAAV4kXtobNqC0KeD0lXqxe3vRHKfQ3STLlID2kRcDMclbHgApLOS
-        JvGNUaAScbWCdj36NGt0MwUoOw==
-X-Google-Smtp-Source: APXvYqxNp9JqbsXiF34gHi5lFrYjYb8YF87UwVb6GpItvh6TUJ6QG94Jp9JFz8MrAz7ABEyxzH6tHA==
-X-Received: by 2002:a17:902:758c:: with SMTP id j12mr431734pll.14.1576257298141;
-        Fri, 13 Dec 2019 09:14:58 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id n188sm11426933pga.84.2019.12.13.09.14.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Dec 2019 09:14:57 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Guillaume La Roque <glaroque@baylibre.com>, marcel@holtmann.org,
-        johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     netdev@vger.kernel.org, nsaenzjulienne@suse.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] bluetooth: hci_bcm: enable IRQ capability from devicetree
-In-Reply-To: <20191213150622.14162-3-glaroque@baylibre.com>
-References: <20191213150622.14162-1-glaroque@baylibre.com> <20191213150622.14162-3-glaroque@baylibre.com>
-Date:   Fri, 13 Dec 2019 09:14:57 -0800
-Message-ID: <7ho8wc87vy.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 13 Dec 2019 12:18:34 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 60C0C20B7189;
+        Fri, 13 Dec 2019 09:18:33 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 60C0C20B7189
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1576257513;
+        bh=HUR/7PIaBPEifHrzxR+iFv6S9OSSul8DqgbDSwazjJc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CPSsmHNV+rTClvxrnjSWPSbuViuYkM9SA3ik3FbVEUoR6PSBOGgFcfQEtLdJxssBP
+         PQuZVrUoK93I9vNCqbpXe7nduyEh59KMKMcZo6LIumR4Y09LBNxo5BmKdIpqjPgi4n
+         QvfMEPnphyYFNJ/GebLgdlWXaL8fdorqoBMZ89HU=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Subject: [PATCH v4 0/2] IMA: Deferred measurement of keys
+Date:   Fri, 13 Dec 2019 09:18:25 -0800
+Message-Id: <20191213171827.28657-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guillaume La Roque <glaroque@baylibre.com> writes:
+This patchset extends the previous version[1] by adding support for
+deferred processing of keys.
 
-> Actually IRQ can be found from GPIO but all platforms don't support
-> gpiod_to_irq, it's the case on amlogic chip.
-> so to have possibility to use interrupt mode we need to add interrupts
-> property in devicetree and support it in driver.
+With the patchset referenced above, the IMA subsystem supports
+measuring asymmetric keys when the key is created or updated.
+But keys created or updated before a custom IMA policy is loaded
+are currently not measured. This includes keys added to, for instance,
+.builtin_trusted_keys which happens early in the boot process.
 
-I would reword this slightly (leaving out the amlogic specifics):
+This change adds support for queuing keys created or updated before
+a custom IMA policy is loaded. The queued keys are processed when
+a custom policy is loaded. Keys created or updated after a custom policy
+is loaded are measured immediately (not queued).
 
-"""
-Add support for getting IRQ directly from DT instead of relying on
-converting a GPIO to IRQ. This is needed for platforms with GPIO
-controllers that that do not support gpiod_to_irq().
-"""
+If the kernel is built with both CONFIG_IMA and
+CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE enabled then the IMA policy
+must be applied as a custom policy. Not providing a custom policy
+in the above configuration would result in asymmeteric keys being queued
+until a custom policy is loaded. This is by design.
 
-Other than that, this looks good to me and now it's clear that it only
-affects the DT path.
+[1] https://lore.kernel.org/linux-integrity/20191211164707.4698-1-nramas@linux.microsoft.com/
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Testing performed:
 
-Kevin
+  * Booted the kernel with this change.
+  * Added .builtin_trusted_keys in "keyrings=" option in
+    the IMA policy and verified the keys added to this
+    keyring are measured.
+  * Specified only func=KEY_CHECK and not "keyrings=" option,
+    and verified the keys added to builtin_trusted_keys keyring
+    are processed.
+  * Added keys at runtime and verified they are measured
+    if the IMA policy permitted.
+      => For example, added keys to .ima keyring and verified.
+
+Changelog:
+
+  v4
+
+  => Check and set ima_process_keys flag with mutex held.
+
+  v3
+
+  => Defined ima_process_keys flag to be static.
+  => Set ima_process_keys with ima_keys_mutex held.
+  => Added a comment in ima_process_queued_keys() function
+     to state the use of temporary list for keys.
+
+  v2
+
+  => Rebased the changes to v5.5-rc1
+  => Updated function names, variable names, and code comments
+     to be less verbose.
+
+  v1
+
+  => Code cleanup
+
+  v0
+
+  => Based changes on v5.4-rc8
+  => The following patchsets should be applied in that order
+     https://lore.kernel.org/linux-integrity/1572492694-6520-1-git-send-email-zohar@linux.ibm.com
+     https://lore.kernel.org/linux-integrity/20191204224131.3384-1-nramas@linux.microsoft.com/
+  => Added functions to queue and dequeue keys, and process
+     the queued keys when custom IMA policies are applied.
+
+Lakshmi Ramasubramanian (2):
+  IMA: Define workqueue for early boot key measurements
+  IMA: Call workqueue functions to measure queued keys
+
+ security/integrity/ima/ima.h                 |  15 ++
+ security/integrity/ima/ima_asymmetric_keys.c | 136 +++++++++++++++++++
+ security/integrity/ima/ima_policy.c          |   3 +
+ 3 files changed, 154 insertions(+)
+
+-- 
+2.17.1
+
