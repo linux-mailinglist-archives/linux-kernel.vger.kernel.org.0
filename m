@@ -2,236 +2,749 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C5111E0C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FA6C11E0D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:33:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfLMJbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:31:10 -0500
-Received: from mail-eopbgr140112.outbound.protection.outlook.com ([40.107.14.112]:48211
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726090AbfLMJbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:31:09 -0500
+        id S1726704AbfLMJd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:33:26 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:9955 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfLMJdY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 04:33:24 -0500
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Eugen.Hristev@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="Eugen.Hristev@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: o3UNzlOFXUN853p85lyWCgwjiOeFTsxxSPqoSgROHbW+WBnltUrumv02Y7jdYRuE7DkulhQCnz
+ 97g9jj7QKHRTbTEICCFMpxDHAmUHOxesGAsXjjREPLWLAsybmXIPiU7vTcYLBGhYDiKE2cNNfV
+ wRIkAp7N8hqE0ivy28YfEsvNH5RPnPcGspI/YzPeFWFXylWQ6C2jmF1v+uF/wVW4pFRY5KVLwi
+ MBkIN2X3hYw98tou/TmFnozMEiBRw0xH9KVQJY7nieeLqF2l/AkGOOgnicL5kZAzHpUGs2MbIW
+ P58=
+X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
+   d="scan'208";a="58427356"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Dec 2019 02:33:22 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 13 Dec 2019 02:33:21 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Fri, 13 Dec 2019 02:33:21 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k/60L5D6/6ZFYN0IDCl8qk/tMXuNU+UErExNDIeRaSQ9OsAjw1P0LCewzZ2E9ISSodGSCJLn+11ljmITfrbXJTOELeZn5zkC+ift/6zt3r8NVv834cnipyTk8HuK14jdP9/rpQ/83KuYbIHmXgwjXIiCcXmvRmXHlI51VvZ2TGXmH/t9WRp+8ofiElJIXakku/7aGWaZanpAZh9oEhvm09p/W8RwOhr4JqPEL946MaozHufRXV1slPSnXBayFTKx9y8vAzXdPOTnH+SS7avh9Lh7xJW3zzFEuDuhtRM7W3dfbw1FwPLGeRbsuEaG9pYaQk7dWUy15iyMp1EC8msnDg==
+ b=RdGxCsniJ0LaCbktKGAsOdMhr51Bkk7D0k5pPAAWHYUnyZ+DE1aCXmBx4yzXnjvFV8KwYrVMTNi13gAbnxxgYQ+kU7vCSeLY+0+UzZBR5GtPWceDErGIonlGUmwibIp9pwPr7tvNMyvrBRGFCM1mKp9fH0LXAl7suroEYorIC20pU3xr1ip2KFLPlgFloPLJLV7IX6vfZ72VQe69XaC/x71abwILrduqwgu088TuASgFnJV701q/g265nWVJ8QIRo7zMotWJGxgjNn2NBFXVGfbO1tH/U1SEFpYOmncabuQDJdHSheeWEgIZ8G/5Sxdz+dLMFYW8APydwy5t0i69kA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LgzuOxOAh0vuBgzLzyvSqbVaGg+tm5tiLCBdGSrzdoc=;
- b=niZrKPT2yb+rb/ZRKVQQBzErxSTZlzdD4hD0/B8Y3EzNSxpK4jLdfcF+AADpZN3rqBcIqNc0+hqfwGaPJ4gZplBXUPmH7SjvCO0v62tejl5AHK6EXMEKIlcYBISUTqvUXwSDPSDUn7mlEBg2/y8yJ6MHBtoFdqWo3dUgFIP54va549mawB1e5mTeYIXkhbCXI15xFyY3ONEpP5z/7OYt+5Y10IsqJrA2Ck2YFF7XWbT5lu9ntT4SL8SOw/AHwquVI/oOAMB+N8vcuQNxQgSF4OwrALPtWx+BoDLGc/zbEtBeMwteX+vjMQ82n6iK05797xys6hCxqFt/jH+dEAbvqg==
+ bh=L5WZC8ePa5LyKR2GkhzOBjmzD8Y8QWF6+Gb6bX4ly4s=;
+ b=ZsGaaYH2CLrPoVEqt7lkNhapE3TK8MpUxmkGOhP+7QYtMOBEi1zjLpSmFZjxWs+hUe8Zyc2u2weSr5N6Nt1TndYtZ9kBA0gG72IGn5jtQz2601/9JTXrcaw3XovUXiMzWR5TNd9uFP9O/mJ2fExhUhF3TnKK6eT6OGCAGyqjmxkeOSxj8/F/aqjtMzxiwFwRF+3cM2JOASN9mXsjMpYTliD6nphnxnGYZ58GluFDbNbicZTVXYfKi+PbghaflzeYXgMNoNd4Q/kJShYo4+zb3KmeX1I5YSI7Lt/a7fbMQ/89ZYQ5GfJll9gvg+4jGet+yFMAzdfCF2Xs298cRsI+uw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
- dkim=pass header.d=axentia.se; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector2;
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LgzuOxOAh0vuBgzLzyvSqbVaGg+tm5tiLCBdGSrzdoc=;
- b=S8D/nYOwkWYo0TyQqXSQME4/L+DgwT0ZUWD9CwrtLHZMsSuQEe1NQiKkf6C9zFkC0XejR9m+45BGL4tlelEKkVFxY/dHaNiiXSJ67ujVLj7+UtdJQAE4a8BQcdIO1ZMHjc3QfGN749/HSfFliOldYqkxfsMjPjQrw4EJWfOs9KY=
-Received: from DB3PR0202MB3434.eurprd02.prod.outlook.com (52.134.66.158) by
- DB3PR0202MB3418.eurprd02.prod.outlook.com (52.134.70.152) with Microsoft SMTP
+ bh=L5WZC8ePa5LyKR2GkhzOBjmzD8Y8QWF6+Gb6bX4ly4s=;
+ b=fcMTeD/Y6ZCkWHAavLJvDB/Y5sYo+t18QSpKWZKo5arxQGGNuwazgMaqFuklXlqpTcTB9k0ZUtYfzxhuHUqJwjgY+gsrfgg9UN8rXbRu0mrw/vYc/86h1/J0UGajhJoPtNAMoK3xMxXUOG7ajf91furadLXouTj963b0Bl22XoA=
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com (10.168.108.8) by
+ DM5PR11MB2027.namprd11.prod.outlook.com (10.168.103.22) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.17; Fri, 13 Dec 2019 09:30:59 +0000
-Received: from DB3PR0202MB3434.eurprd02.prod.outlook.com
- ([fe80::cd85:a8a5:da14:db13]) by DB3PR0202MB3434.eurprd02.prod.outlook.com
- ([fe80::cd85:a8a5:da14:db13%7]) with mapi id 15.20.2538.017; Fri, 13 Dec 2019
- 09:30:59 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     "Claudiu.Beznea@microchip.com" <Claudiu.Beznea@microchip.com>,
-        "sam@ravnborg.org" <sam@ravnborg.org>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "Ludovic.Desroches@microchip.com" <Ludovic.Desroches@microchip.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>
-CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] Revert "drm/atmel-hlcdc: allow selecting a higher
- pixel-clock than requested"
-Thread-Topic: [PATCH 4/5] Revert "drm/atmel-hlcdc: allow selecting a higher
- pixel-clock than requested"
-Thread-Index: AQHVr11DyxIz9S+dLEWyrkArJlSyg6ezeYGA///8moCAADjaAIABIyyAgAAtnoCAAtDTgIAAAL4A
-Date:   Fri, 13 Dec 2019 09:30:59 +0000
-Message-ID: <e41b9a8f-b0f4-bb88-1512-7fb94dfaebe4@axentia.se>
-References: <1575984287-26787-1-git-send-email-claudiu.beznea@microchip.com>
- <1575984287-26787-5-git-send-email-claudiu.beznea@microchip.com>
- <4c3ffc48-7aa5-1e48-b0e9-a50c4eea7c38@axentia.se>
- <5fbad2cd-0dbe-0be5-833a-f7a612d48012@microchip.com>
- <2272669c-38ee-1928-9563-46755574897c@axentia.se>
- <167cb87e-b189-71fd-0a79-adf89336d1f3@microchip.com>
- <b5ea01da-5345-05cf-9f89-b7123dbbb893@axentia.se>
- <be6a9bce-7d14-563b-1ee5-a968e2e3a6c8@microchip.com>
-In-Reply-To: <be6a9bce-7d14-563b-1ee5-a968e2e3a6c8@microchip.com>
-Accept-Language: en-US, sv-SE
+ 15.20.2538.18; Fri, 13 Dec 2019 09:33:18 +0000
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::9039:e0e8:9032:20c1]) by DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::9039:e0e8:9032:20c1%12]) with mapi id 15.20.2516.018; Fri, 13 Dec
+ 2019 09:33:18 +0000
+From:   <Eugen.Hristev@microchip.com>
+To:     <hverkuil@xs4all.nl>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <Eugen.Hristev@microchip.com>
+Subject: [PATCH v3 1/2] media: atmel: atmel-isc-base: expose white balance as
+ v4l2 controls
+Thread-Topic: [PATCH v3 1/2] media: atmel: atmel-isc-base: expose white
+ balance as v4l2 controls
+Thread-Index: AQHVsZhamcM4+cj7Jkak7z8fA0UuHw==
+Date:   Fri, 13 Dec 2019 09:33:18 +0000
+Message-ID: <1576229557-27001-1-git-send-email-eugen.hristev@microchip.com>
+Accept-Language: en-US, ro-RO
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-x-originating-ip: [213.112.138.100]
-x-clientproxiedby: HE1P195CA0023.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::33)
- To DB3PR0202MB3434.eurprd02.prod.outlook.com (2603:10a6:8:5::30)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [94.177.32.156]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f3f0e860-2afb-4d07-b20d-08d77faf29b6
-x-ms-traffictypediagnostic: DB3PR0202MB3418:
-x-microsoft-antispam-prvs: <DB3PR0202MB34180DEA97DA6CA52DDAC193BC540@DB3PR0202MB3418.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-office365-filtering-correlation-id: 1878b85e-d2c7-44a0-6104-08d77faf7c9f
+x-ms-traffictypediagnostic: DM5PR11MB2027:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR11MB2027014A112153FDD9237C9BE8540@DM5PR11MB2027.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
 x-forefront-prvs: 0250B840C1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(136003)(396003)(39830400003)(199004)(189003)(31686004)(66556008)(5660300002)(66476007)(2616005)(36756003)(316002)(71200400001)(54906003)(110136005)(64756008)(7416002)(6486002)(66446008)(66946007)(31696002)(6506007)(53546011)(508600001)(4326008)(81156014)(186003)(8936002)(4001150100001)(26005)(2906002)(6512007)(8676002)(81166006)(52116002)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB3PR0202MB3418;H:DB3PR0202MB3434.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(136003)(396003)(39860400002)(189003)(199004)(76116006)(91956017)(30864003)(478600001)(8676002)(6506007)(5660300002)(71200400001)(2616005)(66446008)(66946007)(66476007)(66556008)(64756008)(110136005)(2906002)(6512007)(316002)(4326008)(86362001)(107886003)(26005)(36756003)(186003)(81156014)(81166006)(6486002)(8936002)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB2027;H:DM5PR11MB1242.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2jMfNXjNbeGqNJEhyuvYpIIEeRd/ImqTvo6upAMgtQzJ7rqqlaG22IBhGASzykpxhVFBgZKRftpmReV9yPXdsSxWOfCIcgroTFwR5ceM//6v0Klv5WhyNWnbSnnE2w2D53EpMPDpNvj+f3cbZSTHE+QUhZo7Zk+Yy4Cf5m+Dj2v66fsSBKHkgnq6/yEvJWrOcsEOXd0ZlCDgbCDHc0rs6M1nINYHfyf2Irm7ZjmDULxnaNI0FkLR2o28RmZ7lG+WFSQuWxot38oder0cqx54Vm/Zd0ae4Xb9hIdYLGWB7sgz1In5GAJTGzJUCM6xzxHkMae86eJHi/DomYvKmnC03thWBnGwTfzeZdnXD3ZP4HeZnpKLwPTVtzAwB8ql+HiXirD0CovkYx3YpLPQC0higK9+BOnrajGuIJ70S+QwPNxGPSS41DzEmCOD7lMig8w7
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E58D646F03742341997F54DCEB0144F6@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+x-microsoft-antispam-message-info: KZLKiQ+STXnw+83T1bORZyENucAYmBdbP0OYr1kb91jIVsRzjO3p0AK+gHHPilh9w8LnnSlFhyPLJybNWB2SV0CBuabGs1Hf/ztntc3NcWVUkU6v7ik8Zrd/KSIU64QK4YQjV3IMdKCffpA7fwfBoEltinb9KQFTtywXMPAMU10BPbcYsQzC/0X1DDbFsSDho3H61GwTpXFd3n0d/9T/DurRyWf1AomaugGYs2ACd8Y2pr5i3RO0XosRnhwJWjpuCROjN6PcI4G8gCAz5mnHkU7WrBHLzscuy57h4f29O0DnufoQBWHYvquFcppjOm09uGfua4wVZ4tsuaaaa26mlE2Nkz1ZHHn6OCp9fR0LBMiYBy0HKvRdBbtnQPzMkdtbq6S8I52d8SiEqizmBe6j9wiZRLQpf3Mhy0JBr8U+6lqwD3xDhCV2gGsmbgtxjoPk
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3f0e860-2afb-4d07-b20d-08d77faf29b6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2019 09:30:59.4656
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1878b85e-d2c7-44a0-6104-08d77faf7c9f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2019 09:33:18.1499
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cby1IleFZNzQn/oCi7nHN9MQnjm/Asd4j3eQXBokQGmvJ+Z/KAfLRrxCJD5gWAKM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0202MB3418
+X-MS-Exchange-CrossTenant-userprincipalname: iriYP4C3Go2uBZvHs9UUsnmQSCsiHxY4bI3efQZzVVNH6n2vPsER82/gHDQAdVwffVOhduMTCmrImgLQ5d/s7jJDj4QcazXXSU2rnsaAn9o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB2027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0xMi0xMyAxMDoyOCwgQ2xhdWRpdS5CZXpuZWFAbWljcm9jaGlwLmNvbSB3cm90ZToN
-Cj4gDQo+IA0KPiBPbiAxMS4xMi4yMDE5IDE1OjI4LCBQZXRlciBSb3NpbiB3cm90ZToNCj4+IEVY
-VEVSTkFMIEVNQUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxl
-c3MgeW91IGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPj4NCj4+IE9uIDIwMTktMTItMTEgMTI6
-NDUsIENsYXVkaXUuQmV6bmVhQG1pY3JvY2hpcC5jb20gd3JvdGU6DQo+Pj4NCj4+Pg0KPj4+IE9u
-IDEwLjEyLjIwMTkgMTk6MjIsIFBldGVyIFJvc2luIHdyb3RlOg0KPj4+PiBFWFRFUk5BTCBFTUFJ
-TDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNzIHlvdSBrbm93
-IHRoZSBjb250ZW50IGlzIHNhZmUNCj4+Pj4NCj4+Pj4gT24gMjAxOS0xMi0xMCAxNTo1OSwgQ2xh
-dWRpdS5CZXpuZWFAbWljcm9jaGlwLmNvbSB3cm90ZToNCj4+Pj4+DQo+Pj4+Pg0KPj4+Pj4gT24g
-MTAuMTIuMjAxOSAxNjoxMSwgUGV0ZXIgUm9zaW4gd3JvdGU6DQo+Pj4+Pj4gT24gMjAxOS0xMi0x
-MCAxNDoyNCwgQ2xhdWRpdSBCZXpuZWEgd3JvdGU6DQo+Pj4+Pj4+IFRoaXMgcmV2ZXJ0cyBjb21t
-aXQgZjZmN2FkMzIzNDYxM2Y2ZjdmMjdjMjUwMzZhYWYwNzhkZTA3ZTliMC4NCj4+Pj4+Pj4gKCJk
-cm0vYXRtZWwtaGxjZGM6IGFsbG93IHNlbGVjdGluZyBhIGhpZ2hlciBwaXhlbC1jbG9jayB0aGFu
-IHJlcXVlc3RlZCIpDQo+Pj4+Pj4+IGJlY2F1c2UgYWxsb3dpbmcgc2VsZWN0aW5nIGEgaGlnaGVy
-IHBpeGVsIGNsb2NrIG1heSBvdmVyY2xvY2sNCj4+Pj4+Pj4gTENEIGRldmljZXMsIG5vdCBhbGwg
-b2YgdGhlbSBiZWluZyBjYXBhYmxlIG9mIHRoaXMuDQo+Pj4+Pj4NCj4+Pj4+PiBXaXRob3V0IHRo
-aXMgcGF0Y2gsIHRoZXJlIGFyZSBwYW5lbHMgdGhhdCBhcmUgKnNldmVybHkqIHVuZGVyY2xvY2tl
-ZCAob24gdGhlDQo+Pj4+Pj4gbWFnbml0dWRlIG9mIDQwTUh6IGluc3RlYWQgb2YgNjVNSHogb3Ig
-c29tZXRoaW5nIGxpa2UgdGhhdCwgSSBkb24ndCByZW1lbWJlcg0KPj4+Pj4+IHRoZSBleGFjdCBm
-aWd1cmVzKS4NCj4+Pj4+DQo+Pj4+PiBXaXRoIHBhdGNoIHRoYXQgc3dpdGNoZXMgYnkgZGVmYXVs
-dCB0byAyeHN5c3RlbSBjbG9jayBmb3IgcGl4ZWwgY2xvY2ssIGlmDQo+Pj4+PiB1c2luZyAxMzNN
-SHogc3lzdGVtIGNsb2NrIChhcyB5b3Ugc3BlY2lmaWVkIGluIHRoZSBwYXRjaCBJIHByb3Bvc2Vk
-IGZvcg0KPj4+Pj4gcmV2ZXJ0IGhlcmUpIHRoYXQgd291bGQgZ28sIHdpdGhvdXQgdGhpcyBwYXRj
-aCBhdCA1M01IeiBpZiA2NU1IeiBpcw0KPj4+Pj4gcmVxdWVzdGVkLiBDb3JyZWN0IG1lIGlmIEkn
-bSB3cm9uZy4NCj4+Pj4NCj4+Pj4gSXQgbWlnaHQgaGF2ZSBiZWVuIDUzTUh6LCB3aGF0ZXZlciBp
-dCB3YXMgaXQgd2FzIHRvbyBsb3cgZm9yIHRoaW5ncyB0byB3b3JrLg0KPj4+Pg0KPj4+Pj4+IEFu
-ZCB0aGV5IGFyZSBvZiBjb3Vyc2Ugbm90IGNhcGFibGUgb2YgdGhhdC4gQWxsIHBhbmVscw0KPj4+
-Pj4+IGhhdmUgKnNvbWUqIHNsYWNrIGFzIHRvIHdoYXQgZnJlcXVlbmNpZXMgYXJlIHN1cHBvcnRl
-ZCwgYW5kIHRoZSBwYXRjaCB3YXMNCj4+Pj4+PiB3cml0dGVuIHVuZGVyIHRoZSBhc3N1bXB0aW9u
-IHRoYXQgdGhlIHByZWZlcnJlZCBmcmVxdWVuY3kgb2YgdGhlIHBhbmVsIHdhcw0KPj4+Pj4+IHJl
-cXVlc3RlZCwgd2hpY2ggc2hvdWxkIGxlYXZlIGF0IGxlYXN0IGEgKmxpdHRsZSogaGVhZHJvb20u
-DQo+Pj4+Pg0KPj4+Pj4gSSBzZWUsIGJ1dCBmcm9tIG15IHBvaW50IG9mIHZpZXcsIHRoZSB1cHBl
-ciBsYXllcnMgc2hvdWxkIGRlY2lkZSB3aGF0DQo+Pj4+PiBmcmVxdWVuY3kgc2V0dGluZ3Mgc2hv
-dWxkIGJlIGRvbmUgb24gdGhlIExDRCBjb250cm9sbGVyIGFuZCBub3QgbGV0IHRoaXMgYXQNCj4+
-Pj4+ICB0aGUgZHJpdmVyJ3MgbGF0aXR1ZGUuDQo+Pj4+DQo+Pj4+IFJpZ2h0LCBidXQgdGhlIHVw
-cGVyIGxheWVycyBkbyBub3Qgc3VwcG9ydCBuZWdvdGlhdGluZyBhIGZyZXF1ZW5jeSBmcm9tDQo+
-Pj4+IHJhbmdlcy4gQXQgbGVhc3QgdGhlIGRpZG4ndCB3aGVuIHRoZSBwYXRjaCB3YXMgd3JpdHRl
-biwgYW5kIGltcGxlbWVudGluZw0KPj4+PiAqdGhhdCogc2VlbWVkIGxpa2UgYSBodWdlIHVuZGVy
-dGFraW5nLg0KPj4+Pg0KPj4+Pj4+DQo+Pj4+Pj4gU28sIEknbSBjdXJpb3VzIGFzIHRvIHdoYXQg
-cGFuZWwgcmVncmVzc2VkLiBPciByYXRoZXIsIHdoYXQgcGl4ZWwtY2xvY2sgaXQgbmVlZHMNCj4+
-Pj4+PiBhbmQgd2hhdCBpdCBnZXRzIHdpdGgvd2l0aG91dCB0aGUgcGF0Y2g/DQo+Pj4+Pg0KPj4+
-Pj4gSSBoYXZlIDIgdXNlIGNhc2VzOg0KPj4+Pj4gMS8gc3lzdGVtIGNsb2NrID0gMjAwTUh6IGFu
-ZCByZXF1ZXN0ZWQgcGl4ZWwgY2xvY2sgKG1vZGVfcmF0ZSkgfjcxTUh6LiBXaXRoDQo+Pj4+PiB0
-aGUgcmV2ZXJ0ZWQgcGF0Y2ggdGhlIHJlc3VsdGVkIGNvbXB1dGVkIHBpeGVsIGNsb2NrIHdvdWxk
-IGJlIDgwTUh6Lg0KPj4+Pj4gUHJldmlvdXNseSBpdCB3YXMgYXQgNjZNSHoNCj4+Pj4NCj4+Pj4g
-SSBkb24ndCBzZWUgaG93IHRoYXQncyBwb3NzaWJsZS4NCj4+Pj4NCj4+Pj4gW2RvaW5nIHNvbWUg
-Y2FsY3VsYXRpb24gYnkgaGFuZF0NCj4+Pj4NCj4+Pj4gQXJyZ2guICpibHVzaCoNCj4+Pj4NCj4+
-Pj4gVGhlIGNvZGUgZG9lcyBub3QgZG8gd2hhdCBJIGludGVuZGVkIGZvciBpdCB0byBkby4NCj4+
-Pj4gQ2FuIHlvdSBwbGVhc2UgdHJ5IHRoaXMgaW5zdGVhZCBvZiByZXZlcnRpbmc/DQo+Pj4+DQo+
-Pj4+IENoZWVycywNCj4+Pj4gUGV0ZXINCj4+Pj4NCj4+Pj4gRnJvbSBiM2U4NmQ1NWI4ZDEwN2E1
-YzA3ZTk4Zjg3OWM2N2Y2NzEyMGM4N2E2IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KPj4+PiBG
-cm9tOiBQZXRlciBSb3NpbiA8cGVkYUBheGVudGlhLnNlPg0KPj4+PiBEYXRlOiBUdWUsIDEwIERl
-YyAyMDE5IDE4OjExOjI4ICswMTAwDQo+Pj4+IFN1YmplY3Q6IFtQQVRDSF0gZHJtL2F0bWVsLWhs
-Y2RjOiBwcmVmZXIgYSBsb3dlciBwaXhlbC1jbG9jayB0aGFuIHJlcXVlc3RlZA0KPj4+Pg0KPj4+
-PiBUaGUgaW50ZW50aW9uIHdhcyB0byBvbmx5IHNlbGVjdCBhIGhpZ2hlciBwaXhlbC1jbG9jayBy
-YXRlIHRoYW4gdGhlDQo+Pj4+IHJlcXVlc3RlZCwgaWYgYSBzbGlnaHQgb3ZlcmNsb2NraW5nIHdv
-dWxkIHJlc3VsdCBpbiBhIHJhdGUgc2lnbmlmaWNhbnRseQ0KPj4+PiBjbG9zZXIgdG8gdGhlIHJl
-cXVlc3RlZCByYXRlIHRoYW4gaWYgdGhlIGNvbnNlcnZhdGl2ZSBsb3dlciBwaXhlbC1jbG9jaw0K
-Pj4+PiByYXRlIGlzIHNlbGVjdGVkLiBUaGUgZml4ZWQgcGF0Y2ggaGFzIHRoZSBsb2dpYyB0aGUg
-b3RoZXIgd2F5IGFyb3VuZCBhbmQNCj4+Pj4gYWN0dWFsbHkgcHJlZmVycyB0aGUgaGlnaGVyIGZy
-ZXF1ZW5jeS4gRml4IHRoYXQuDQo+Pj4+DQo+Pj4+IEZpeGVzOiBmNmY3YWQzMjM0NjEgKCJkcm0v
-YXRtZWwtaGxjZGM6IGFsbG93IHNlbGVjdGluZyBhIGhpZ2hlciBwaXhlbC1jbG9jayB0aGFuIHJl
-cXVlc3RlZCIpDQo+Pj4+IFJlcG9ydGVkLWJ5OiBDbGF1ZGl1IEJlem5lYSA8Y2xhdWRpdS5iZXpu
-ZWFAbWljcm9jaGlwLmNvbT4NCj4+Pj4gU2lnbmVkLW9mZi1ieTogUGV0ZXIgUm9zaW4gPHBlZGFA
-YXhlbnRpYS5zZT4NCj4+Pj4gLS0tDQo+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMv
-YXRtZWxfaGxjZGNfY3J0Yy5jIHwgNCArKy0tDQo+Pj4+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNl
-cnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPj4+Pg0KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19jcnRjLmMNCj4+Pj4gaW5kZXggOWUzNGJjZTA4OWQw
-Li4wMzY5MTg0NWQzN2EgMTAwNjQ0DQo+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hdG1lbC1o
-bGNkYy9hdG1lbF9obGNkY19jcnRjLmMNCj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2F0bWVs
-LWhsY2RjL2F0bWVsX2hsY2RjX2NydGMuYw0KPj4+PiBAQCAtMTIwLDggKzEyMCw4IEBAIHN0YXRp
-YyB2b2lkIGF0bWVsX2hsY2RjX2NydGNfbW9kZV9zZXRfbm9mYihzdHJ1Y3QgZHJtX2NydGMgKmMp
-DQo+Pj4+ICAgICAgICAgICAgICAgICBpbnQgZGl2X2xvdyA9IHByYXRlIC8gbW9kZV9yYXRlOw0K
-Pj4+Pg0KPj4+PiAgICAgICAgICAgICAgICAgaWYgKGRpdl9sb3cgPj0gMiAmJg0KPj4+PiAtICAg
-ICAgICAgICAgICAgICAgICgocHJhdGUgLyBkaXZfbG93IC0gbW9kZV9yYXRlKSA8DQo+Pj4+IC0g
-ICAgICAgICAgICAgICAgICAgIDEwICogKG1vZGVfcmF0ZSAtIHByYXRlIC8gZGl2KSkpDQo+Pj4+
-ICsgICAgICAgICAgICAgICAgICAgKDEwICogKHByYXRlIC8gZGl2X2xvdyAtIG1vZGVfcmF0ZSkg
-PA0KPj4+PiArICAgICAgICAgICAgICAgICAgICAobW9kZV9yYXRlIC0gcHJhdGUgLyBkaXYpKSkN
-Cj4+Pg0KPj4+IEkgdGVzdGVkIGl0IG9uIG15IHNldHVwIChJIGhhdmUgb25seSBvbmUgb2YgdGhv
-c2Ugc3BlY2lmaWVkIGFib3ZlKSBhbmQgaXQNCj4+PiBpcyBPSy4gRG9pbmcgc29tZSBtYXRoIGZv
-ciB0aGUgb3RoZXIgc2V0dXAgaXQgc2hvdWxkIGFsc28gYmUgT0suDQo+Pg0KPj4gR2xhZCB0byBo
-ZWFyIGl0LCBhbmQgdGhhbmtzIGZvciB0ZXN0aW5nL3ZlcmlmeWluZyENCj4+DQo+Pj4gQXMgYSB3
-aG9sZSwgSSdtIE9LIHdpdGggdGhpcyBhdCB0aGUgbW9tZW50IChsZXQncyBob3BlIGl0IHdpbGwg
-d29yayBmb3IgYWxsDQo+Pj4gdXNlLWNhc2VzKSBidXQgc3RpbGwgSSBhbSBub3QgT0sgd2l0aCBz
-ZWxlY3RpbmcgaGVyZSwgaW4gdGhlIGRyaXZlciwNCj4+PiBzb21ldGhpbmcgdGhhdCBtaWdodCB3
-b3JrLg0KPj4NCj4+IFRoZSBkcml2ZXIgaGFzIHRvIHNlbGVjdCAqc29tZXRoaW5nKi4gSWYgaXQg
-Y2FuIGRlbGl2ZXIgdGhlIGV4YWN0IHJlcXVlc3RlZA0KPj4gZnJlcXVlbmN5LCBmaW5lLiBPdGhl
-cndpc2U/IFdoYXQgc2hvdWxkIGl0IGRvPyBCYWlsIG91dD8gV2h5IGlzIDUzTUh6IGJldHRlcg0K
-Pj4gYW5kIG1vcmUgbGlrZWx5IHRvIHByb2R1Y2UgYSBwaWN0dXJlIHRoYW4gNjZNSHosIHdoZW4g
-NjVNSHogaXMgcmVxdWVzdGVkPw0KPj4gVGhhdCdzIG9mIGNvdXJzZSBhbiBpbXBvc3NpYmxlIHF1
-ZXN0aW9uIGZvciB0aGUgZHJpdmVyIHRvIGFuc3dlci4NCj4+DQo+PiBTbywgaWYgeW91IGFyZSBu
-b3Qgb2sgd2l0aCB0aGF0LCB5b3UgbmVlZCB0byBpbXBsZW1lbnQgc29tZXRoaW5nIHRoYXQgdXNl
-cw0KPj4gdGhlIG1pbi9tYXggZmllbGRzIGZyb20gdGhlIHZhcmlvdXMgZmllbGRzIGluc2lkZSBz
-dHJ1Y3QgZGlzcGxheV90aW1pbmcNCj4+IGluc3RlYWQgb2Ygb25seSBsb29raW5nIGF0IHRoZSB0
-eXAgZmllbGQuIEUuZy4gdGhlIHBhbmVsX2x2ZHMgZHJpdmVyIGNhbGxzDQo+PiB2aWRlb21vZGVf
-ZnJvbV90aW1pbmdzKCkgYW5kIHRoZSByZXN1bHQgaXMgYSBzaW5nbGUgcG9zc2libGUgbW9kZSB3
-aXRoIG9ubHkNCj4+IHRoZSB0eXBpY2FsIHRpbWluZ3MsIHdpdGggbm8gbmVnb3RpYXRpb24gb2Yg
-dGhlIGJlc3Qgb3B0aW9uIHdpdGhpbiB0aGUNCj4+IGdpdmVuIHJhbmdlcyB3aXRoIHRoZSBvdGhl
-ciBkcml2ZXJzIGludm9sdmVkIHdpdGggdGhlIHBpcGUuIEkgdGhpbmsgdGhlDQo+PiBwYW5lbC1z
-aW1wbGUgZHJpdmVyIGFsc28gbWFrZXMgdGhpcyBvbmUtc2lkZWQgZGVjaXNpb24gb2Ygb25seSBt
-YWtpbmcgdXNlDQo+PiBvZiB0aGUgdHlwIGZpZWxkIGZvciBlYWNoIGdpdmVuIHRpbWluZyByYW5n
-ZS4gSGF2aW5nIGRhYmJsZWQgYSBiaXQgaW4gd2hhdA0KPj4gdGhlIHNvdW5kIHN0YWNrIGRvZXMg
-dG8gbmVnb3RpYXRlIHRoZSBzYW1wbGUgcmF0ZSwgc2FtcGxlIGZvcm1hdCBhbmQNCj4+IGNoYW5u
-ZWwgY291bnQgZXRjLCBJIGNhbiBvbmx5IHByZWRpY3QgdGhhdCByZXRyb2ZpdHRpbmcgc29tZXRo
-aW5nIGxpa2UgdGhhdA0KPj4gZm9yIHZpZGVvIG1vZGVzIHdpbGwgYmUgLi4uIGludGVyZXN0aW5n
-LiBXaGljaCBpcyBwcm9iYWJseSB3aHkgaXQncyBub3QNCj4+IGRvbmUgYXQgYWxsLCBhdCBsZWFz
-dCBub3QgaW4gdGhlIGdlbmVyYWwgY2FzZS4NCj4+DQo+PiBBbmQgeWVzLCBJIGFncmVlLCB0aGUg
-Y3VycmVudCBtZWNoYW5pY3MgYXJlIGxlc3MgdGhhbiBpZGVhbC4gQnV0IEkgaGF2ZSBubw0KPj4g
-dGltZSB0byBkbyBhbnl0aGluZyBhYm91dCBpdC4NCj4+DQo+Pj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgQWx0aG91Z2ggSSBhbSBub3QgZmFtaWxpYXIgd2l0aCBob3cgb3RoZXIgRFJNDQo+
-Pj4gZHJpdmVycyBhcmUgaGFuZGxpbmcgdGhpcyBraW5kIG9mIHNjZW5hcmlvcy4gTWF5YmUgeW91
-IGFuZC9vciBvdGhlciBEUk0NCj4+PiBndXlzIGtub3dzIG1vcmUgYWJvdXQgaXQuDQo+Pg0KPj4g
-SSBkb24ndCBrbm93IChhbmQgSSBtZWFuIGl0IGxpdGVyYWxseSksIGJ1dCBtYXliZSB0aGVzZSBj
-aGlwcyBhcmUgc3BlY2lhbA0KPj4gYXMgdGhleSB0eXBpY2FsbHkgZW5kIHVwIHdpdGggdmVyeSBz
-bWFsbCBkaXZpZGVycyBhbmQgdGh1cyBsYXJnZSBmcmVxdWVuY3kNCj4+IHN0ZXBzPyBCVFcsIEkg
-ZG8gbm90IGNvbnNpZGVyIG15c2VsZiBhIERSTSBndXksIEkgaGF2ZSBvbmx5IHRyaWVkIHRvDQo+
-PiBmaXggdGhhdCB3aGljaCBkaWQgbm90IHdvcmsgb3V0IGZvciBvdXIgbmVlZHMuLi4NCj4+DQo+
-Pj4gSnVzdCBhcyBhIG5vdGljZSwgaXQgbWF5IHdvcnRoIGFkZGluZyBhIHByaW50IG1lc3NhZ2Ug
-c2F5aW5nIHdoYXQgd2FzDQo+Pj4gZnJlcXVlbmN5IHdhcyByZXF1ZXN0ZWQgYW5kIHdoYXQgZnJl
-cXVlbmN5IGhhcyBiZWVuIHNldHVwIGJ5IGRyaXZlci4NCj4+DQo+PiBJIGhhdmUgbm8gcHJvYmxl
-bSB3aXRoIHRoYXQuDQo+IA0KPiBIaSBQZXRlciwNCj4gDQo+IEkgaW50ZW5kIHRvIHByZXBhcmUg
-bXkgdjIgb2YgdGhpcyBzZXJpZXMuIEhvdyB3b3VsZCB5b3UgbGlrZSB0byBwcm9jZWVkDQo+IHdp
-dGggdGhlIHBhdGNoIHlvdSBwcm92aWRlZD8gQXJlIHlvdSBPSyBpZiBJIGFkZCBpdCB0byBteSB2
-MiBvZiB0aGlzIHNlcmllcw0KPiBvciB3b3VsZCB5b3UgcHJlZmVyIHRvIHNlbmQgaXQgb24geW91
-ciBvd24/DQoNCkl0IHdvdWxkIGJlIGF3ZXNvbWUgaWYgeW91IHNoZXBoZXJkIGl0IGZvciBtZSwg
-dGhhbmtzIQ0KDQpDaGVlcnMsDQpQZXRlcg0K
+From: Eugen Hristev <eugen.hristev@microchip.com>
+
+This exposes the white balance configuration of the ISC as v4l2 controls
+into userspace.
+There are 8 controls available:
+4 gain controls , sliders, for each of the BAYER components: R, B, GR, GB.
+These gains are multipliers for each component, in format unsigned 0:4:9 wi=
+th
+a default value of 512 (1.0 multiplier).
+4 offset controls, sliders, for each of the BAYER components: R, B, GR, GB.
+These offsets are added/substracted from each component, in format signed
+1:12:0 with a default value of 0 (+/- 0)
+
+To expose this to userspace, added 8 custom controls, in an auto cluster.
+
+To summarize the functionality:
+The auto cluster switch is the auto white balance control, and it works
+like this:
+AWB =3D=3D1 : autowhitebalance is on, the do_white_balance button is inacti=
+ve,
+the gains/offsets are inactive, but volatile and readable.
+Thus, the results of the whitebalance algorithm are available to userspace =
+to
+read at any time.
+AWB =3D=3D0: autowhitebalance is off, cluster is in manual mode, user can c=
+onfigure
+the gain/offsets directly. More than that, if the do_white_balance button i=
+s
+pressed, the driver will perform one-time-adjustment, (preferably with colo=
+r
+checker card) and the userspace can read again the new values.
+
+With this feature, the userspace can save the coefficients and reinstall th=
+em
+for example after reboot or reprobing the driver.
+
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+---
+Changes in v3:
+- Moved controls definition on separate header as done in imx driver
+- reserved range of user controls in v4l2-controls.h
+
+Changes in v2:
+- Created some macros to make the code smaller, for declaring the bal/off
+controls, and to convert to 2's complements required values (0 to ZERO_VAL)
+
+
+Compliance test for atmel-isc device /devavideo0:tmel-isc f0008000.isc: =3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  START STATUS  =3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+v4l2-ctrls: atmel-isc f0008000.isc: Brightness: 0
+v4l2-ctrls: atmel-isc f0008000.isc: Contrast: 256
+
+v
+ Driver Info:
+        Driver name      : atmel-isc
+        Card type        : Atmel Image Sensor Controller
+        Bus info         : platform:atmel-isc f0008000.isc
+        Driver version   : 5.5.0
+        Capabilities     : 0x84200001
+                Video Capture
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04200001
+                Video Capture
+                Streaming
+                Extended Pix Format
+
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second /dev/video0 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+4l2-ctrls: atmel-isc f0008000.isc: Gamma: 2
+v4l2-ctrls: atmel-isc f0008000.isc: White Balance, Automatic: true
+v4l2-ctrls: atmel-isc f0008000.isc: Red Component Balance: 512 inactive vol=
+atile
+v4l2-ctrls: atmel-isc f0008000.isc: Blue Component Balance: 512 inactive vo=
+latile
+v4l2-ctrls: atmel-isc f0008000.isc: Green Red Component Balance: 512 inacti=
+ve volatile
+v4l2-ctrls: atmel-isc f0008000.isc: Green Blue Component Balance: 512 inact=
+ive volatile
+v4l2-ctrls: atmel-isc f0008000.isc: Red Component Offset: 0 inactive volati=
+le
+v4l2-ctrls: atmel-isc f0008000.isc: Blue Component Offset: 0 inactive volat=
+ile
+v4l2-ctrls: atmel-isc f0008000.isc: Green Red Component Offset: 0 inactive =
+volatile
+v4l2-ctrls: atmel-isc f0008000.isc: Green Blue Component Offset: 0 inactive=
+ volatile
+atmel-isc f0008000.isc: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D  END STATUS  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+        test VIDIOC_LOG_STATUS: OK
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 6 Private Controls: 8
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Total for atmel-isc device /dev/video0: 44, Succeeded: 44, Failed: 0, Warni=
+ngs: 0
+ # v4l2-ctl -L
+
+User Controls
+
+                     brightness 0x00980900 (int)    : min=3D-1024 max=3D102=
+3 step=3D1 default=3D0 value=3D0 flags=3Dslider
+                       contrast 0x00980901 (int)    : min=3D-2048 max=3D204=
+7 step=3D1 default=3D256 value=3D256 flags=3Dslider
+        white_balance_automatic 0x0098090c (bool)   : default=3D1 value=3D1=
+ flags=3Dupdate
+               do_white_balance 0x0098090d (button) : flags=3Dinactive, wri=
+te-only, volatile, execute-on-write
+                          gamma 0x00980910 (int)    : min=3D0 max=3D2 step=
+=3D1 default=3D2 value=3D2 flags=3Dslider
+          red_component_balance 0x009819c0 (int)    : min=3D0 max=3D8191 st=
+ep=3D1 default=3D512 value=3D512 flags=3Dinactive, slider, volatile
+         blue_component_balance 0x009819c1 (int)    : min=3D0 max=3D8191 st=
+ep=3D1 default=3D512 value=3D512 flags=3Dinactive, slider, volatile
+    green_red_component_balance 0x009819c2 (int)    : min=3D0 max=3D8191 st=
+ep=3D1 default=3D512 value=3D512 flags=3Dinactive, slider, volatile
+   green_blue_component_balance 0x009819c3 (int)    : min=3D0 max=3D8191 st=
+ep=3D1 default=3D512 value=3D512 flags=3Dinactive, slider, volatile
+           red_component_offset 0x009819c4 (int)    : min=3D-4095 max=3D409=
+5 step=3D1 default=3D0 value=3D0 flags=3Dinactive, slider, volatile
+          blue_component_offset 0x009819c5 (int)    : min=3D-4095 max=3D409=
+5 step=3D1 default=3D0 value=3D0 flags=3Dinactive, slider, volatile
+     green_red_component_offset 0x009819c6 (int)    : min=3D-4095 max=3D409=
+5 step=3D1 default=3D0 value=3D0 flags=3Dinactive, slider, volatile
+    green_blue_component_offset 0x009819c7 (int)    : min=3D-4095 max=3D409=
+5 step=3D1 default=3D0 value=3D0 flags=3Dinactive, slider, volatile
+ #
+
+
+ drivers/media/platform/atmel/atmel-isc-base.c | 222 ++++++++++++++++++++++=
+----
+ drivers/media/platform/atmel/atmel-isc.h      |  23 ++-
+ include/linux/atmel-isc-media.h               |  30 ++++
+ include/uapi/linux/v4l2-controls.h            |   4 +
+ 4 files changed, 251 insertions(+), 28 deletions(-)
+ create mode 100644 include/linux/atmel-isc-media.h
+
+diff --git a/drivers/media/platform/atmel/atmel-isc-base.c b/drivers/media/=
+platform/atmel/atmel-isc-base.c
+index c1c776b..814a425 100644
+--- a/drivers/media/platform/atmel/atmel-isc-base.c
++++ b/drivers/media/platform/atmel/atmel-isc-base.c
+@@ -22,6 +22,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/videodev2.h>
++#include <linux/atmel-isc-media.h>
+=20
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-device.h>
+@@ -211,10 +212,35 @@ const u32 isc_gamma_table[GAMMA_MAX + 1][GAMMA_ENTRIE=
+S] =3D {
+ #define ISC_IS_FORMAT_RAW(mbus_code) \
+ 	(((mbus_code) & 0xf000) =3D=3D 0x3000)
+=20
++#define ISC_CTRL_ISC_TO_V4L2(x) ((x) =3D=3D ISC_WB_O_ZERO_VAL ? 0 : (x))
++#define ISC_CTRL_V4L2_TO_ISC(x) ((x) ? (x) : ISC_WB_O_ZERO_VAL)
++
++static inline void isc_update_v4l2_ctrls(struct isc_device *isc)
++{
++	struct isc_ctrls *ctrls =3D &isc->ctrls;
++
++	/* In here we set the v4l2 controls w.r.t. our pipeline config */
++	v4l2_ctrl_s_ctrl(isc->r_bal_ctrl, ctrls->gain[ISC_HIS_CFG_MODE_R]);
++	v4l2_ctrl_s_ctrl(isc->b_bal_ctrl, ctrls->gain[ISC_HIS_CFG_MODE_B]);
++	v4l2_ctrl_s_ctrl(isc->gr_bal_ctrl, ctrls->gain[ISC_HIS_CFG_MODE_GR]);
++	v4l2_ctrl_s_ctrl(isc->gb_bal_ctrl, ctrls->gain[ISC_HIS_CFG_MODE_GB]);
++
++	v4l2_ctrl_s_ctrl(isc->r_off_ctrl,
++			 ISC_CTRL_ISC_TO_V4L2(ctrls->offset[ISC_HIS_CFG_MODE_R]));
++	v4l2_ctrl_s_ctrl(isc->b_off_ctrl,
++			 ISC_CTRL_ISC_TO_V4L2(ctrls->offset[ISC_HIS_CFG_MODE_B]));
++	v4l2_ctrl_s_ctrl(isc->gr_off_ctrl,
++			 ISC_CTRL_ISC_TO_V4L2(ctrls->offset[ISC_HIS_CFG_MODE_GR]));
++	v4l2_ctrl_s_ctrl(isc->gb_off_ctrl,
++			 ISC_CTRL_ISC_TO_V4L2(ctrls->offset[ISC_HIS_CFG_MODE_GB]));
++}
++
+ static inline void isc_update_awb_ctrls(struct isc_device *isc)
+ {
+ 	struct isc_ctrls *ctrls =3D &isc->ctrls;
+=20
++	/* In here we set our actual hw pipeline config */
++
+ 	regmap_write(isc->regmap, ISC_WB_O_RGR,
+ 		     (ISC_WB_O_ZERO_VAL - (ctrls->offset[ISC_HIS_CFG_MODE_R])) |
+ 		     ((ISC_WB_O_ZERO_VAL - ctrls->offset[ISC_HIS_CFG_MODE_GR]) << 16));
+@@ -649,11 +675,9 @@ static void isc_set_pipeline(struct isc_device *isc, u=
+32 pipeline)
+=20
+ 	bay_cfg =3D isc->config.sd_format->cfa_baycfg;
+=20
+-	if (ctrls->awb =3D=3D ISC_WB_NONE)
+-		isc_reset_awb_ctrls(isc);
+-
+ 	regmap_write(regmap, ISC_WB_CFG, bay_cfg);
+ 	isc_update_awb_ctrls(isc);
++	isc_update_v4l2_ctrls(isc);
+=20
+ 	regmap_write(regmap, ISC_CFA_CFG, bay_cfg | ISC_CFA_CFG_EITPOL);
+=20
+@@ -1339,6 +1363,7 @@ static int isc_set_fmt(struct isc_device *isc, struct=
+ v4l2_format *f)
+ 	    isc->try_config.sd_format !=3D isc->config.sd_format) {
+ 		isc->ctrls.hist_stat =3D HIST_INIT;
+ 		isc_reset_awb_ctrls(isc);
++		isc_update_v4l2_ctrls(isc);
+ 	}
+ 	/* make the try configuration active */
+ 	isc->config =3D isc->try_config;
+@@ -1758,10 +1783,6 @@ static void isc_awb_work(struct work_struct *w)
+ 	ctrls->hist_id =3D hist_id;
+ 	baysel =3D isc->config.sd_format->cfa_baycfg << ISC_HIS_CFG_BAYSEL_SHIFT;
+=20
+-	/* if no more auto white balance, reset controls. */
+-	if (ctrls->awb =3D=3D ISC_WB_NONE)
+-		isc_reset_awb_ctrls(isc);
+-
+ 	pm_runtime_get_sync(isc->dev);
+=20
+ 	/*
+@@ -1786,6 +1807,8 @@ static void isc_awb_work(struct work_struct *w)
+ 		if (ctrls->awb =3D=3D ISC_WB_ONETIME) {
+ 			v4l2_info(&isc->v4l2_dev,
+ 				  "Completed one time white-balance adjustment.\n");
++			/* update the v4l2 controls values */
++			isc_update_v4l2_ctrls(isc);
+ 			ctrls->awb =3D ISC_WB_NONE;
+ 		}
+ 	}
+@@ -1817,6 +1840,27 @@ static int isc_s_ctrl(struct v4l2_ctrl *ctrl)
+ 	case V4L2_CID_GAMMA:
+ 		ctrls->gamma_index =3D ctrl->val;
+ 		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static const struct v4l2_ctrl_ops isc_ctrl_ops =3D {
++	.s_ctrl	=3D isc_s_ctrl,
++};
++
++static int isc_s_awb_ctrl(struct v4l2_ctrl *ctrl)
++{
++	struct isc_device *isc =3D container_of(ctrl->handler,
++					     struct isc_device, ctrls.handler);
++	struct isc_ctrls *ctrls =3D &isc->ctrls;
++
++	if (ctrl->flags & V4L2_CTRL_FLAG_INACTIVE)
++		return 0;
++
++	switch (ctrl->id) {
+ 	case V4L2_CID_AUTO_WHITE_BALANCE:
+ 		if (ctrl->val =3D=3D 1)
+ 			ctrls->awb =3D ISC_WB_AUTO;
+@@ -1827,36 +1871,142 @@ static int isc_s_ctrl(struct v4l2_ctrl *ctrl)
+ 		if (!isc->config.sd_format)
+ 			break;
+=20
+-		if (ctrls->hist_stat !=3D HIST_ENABLED)
+-			isc_reset_awb_ctrls(isc);
++		/* configure the controls with new values from v4l2 */
++		if (ctrl->cluster[ISC_CTRL_R_BAL]->is_new)
++			ctrls->gain[ISC_HIS_CFG_MODE_R] =3D isc->r_bal_ctrl->val;
++		if (ctrl->cluster[ISC_CTRL_B_BAL]->is_new)
++			ctrls->gain[ISC_HIS_CFG_MODE_B] =3D isc->b_bal_ctrl->val;
++		if (ctrl->cluster[ISC_CTRL_GR_BAL]->is_new)
++			ctrls->gain[ISC_HIS_CFG_MODE_GR] =3D isc->gr_bal_ctrl->val;
++		if (ctrl->cluster[ISC_CTRL_GB_BAL]->is_new)
++			ctrls->gain[ISC_HIS_CFG_MODE_GB] =3D isc->gb_bal_ctrl->val;
++
++		if (ctrl->cluster[ISC_CTRL_R_OFF]->is_new)
++			ctrls->offset[ISC_HIS_CFG_MODE_R] =3D
++				ISC_CTRL_V4L2_TO_ISC(isc->r_off_ctrl->val);
++		if (ctrl->cluster[ISC_CTRL_B_OFF]->is_new)
++			ctrls->offset[ISC_HIS_CFG_MODE_B] =3D
++				ISC_CTRL_V4L2_TO_ISC(isc->b_off_ctrl->val);
++		if (ctrl->cluster[ISC_CTRL_GR_OFF]->is_new)
++			ctrls->offset[ISC_HIS_CFG_MODE_GR] =3D
++				ISC_CTRL_V4L2_TO_ISC(isc->gr_off_ctrl->val);
++		if (ctrl->cluster[ISC_CTRL_GB_OFF]->is_new)
++			ctrls->offset[ISC_HIS_CFG_MODE_GB] =3D
++				ISC_CTRL_V4L2_TO_ISC(isc->gb_off_ctrl->val);
+=20
+-		if (isc->ctrls.awb =3D=3D ISC_WB_AUTO &&
++		isc_update_awb_ctrls(isc);
++
++		if (vb2_is_streaming(&isc->vb2_vidq)) {
++			/*
++			 * If we are streaming, we can update profile to
++			 * have the new settings in place.
++			 */
++			isc_update_profile(isc);
++		} else {
++			/*
++			 * The auto cluster will activate automatically this
++			 * control. This has to be deactivated when not
++			 * streaming.
++			 */
++			v4l2_ctrl_activate(isc->do_wb_ctrl, false);
++		}
++
++		/* if we have autowhitebalance on, start histogram procedure */
++		if (ctrls->awb =3D=3D ISC_WB_AUTO &&
+ 		    vb2_is_streaming(&isc->vb2_vidq) &&
+ 		    ISC_IS_FORMAT_RAW(isc->config.sd_format->mbus_code))
+ 			isc_set_histogram(isc, true);
+=20
+-		break;
+-	case V4L2_CID_DO_WHITE_BALANCE:
+-		/* if AWB is enabled, do nothing */
+-		if (ctrls->awb =3D=3D ISC_WB_AUTO)
+-			return 0;
++		/*
++		 * for one time whitebalance adjustment, check the button,
++		 * if it's pressed, perform the one time operation.
++		 */
++		if (ctrls->awb =3D=3D ISC_WB_NONE &&
++		    ctrl->cluster[ISC_CTRL_DO_WB]->is_new &&
++		    !(ctrl->cluster[ISC_CTRL_DO_WB]->flags &
++		    V4L2_CTRL_FLAG_INACTIVE)) {
++			ctrls->awb =3D ISC_WB_ONETIME;
++			isc_set_histogram(isc, true);
++			v4l2_dbg(1, debug, &isc->v4l2_dev,
++				 "One time white-balance started.\n");
++		}
++		return 0;
++	}
++	return 0;
++}
+=20
+-		ctrls->awb =3D ISC_WB_ONETIME;
+-		isc_set_histogram(isc, true);
+-		v4l2_dbg(1, debug, &isc->v4l2_dev,
+-			 "One time white-balance started.\n");
++static int isc_g_volatile_awb_ctrl(struct v4l2_ctrl *ctrl)
++{
++	struct isc_device *isc =3D container_of(ctrl->handler,
++					     struct isc_device, ctrls.handler);
++	struct isc_ctrls *ctrls =3D &isc->ctrls;
++
++	switch (ctrl->id) {
++	/* being a cluster, this id will be called for every control */
++	case V4L2_CID_AUTO_WHITE_BALANCE:
++		ctrl->cluster[ISC_CTRL_R_BAL]->val =3D
++					ctrls->gain[ISC_HIS_CFG_MODE_R];
++		ctrl->cluster[ISC_CTRL_B_BAL]->val =3D
++					ctrls->gain[ISC_HIS_CFG_MODE_B];
++		ctrl->cluster[ISC_CTRL_GR_BAL]->val =3D
++					ctrls->gain[ISC_HIS_CFG_MODE_GR];
++		ctrl->cluster[ISC_CTRL_GB_BAL]->val =3D
++					ctrls->gain[ISC_HIS_CFG_MODE_GB];
++
++		ctrl->cluster[ISC_CTRL_R_OFF]->val =3D
++			ISC_CTRL_ISC_TO_V4L2(ctrls->offset[ISC_HIS_CFG_MODE_R]);
++		ctrl->cluster[ISC_CTRL_B_OFF]->val =3D
++			ISC_CTRL_ISC_TO_V4L2(ctrls->offset[ISC_HIS_CFG_MODE_B]);
++		ctrl->cluster[ISC_CTRL_GR_OFF]->val =3D
++			ISC_CTRL_ISC_TO_V4L2(ctrls->offset[ISC_HIS_CFG_MODE_GR]);
++		ctrl->cluster[ISC_CTRL_GB_OFF]->val =3D
++			ISC_CTRL_ISC_TO_V4L2(ctrls->offset[ISC_HIS_CFG_MODE_GB]);
+ 		break;
+-	default:
+-		return -EINVAL;
+ 	}
+-
+ 	return 0;
+ }
+=20
+-static const struct v4l2_ctrl_ops isc_ctrl_ops =3D {
+-	.s_ctrl	=3D isc_s_ctrl,
++static const struct v4l2_ctrl_ops isc_awb_ops =3D {
++	.s_ctrl =3D isc_s_awb_ctrl,
++	.g_volatile_ctrl =3D isc_g_volatile_awb_ctrl,
+ };
+=20
++#define ISC_CTRL_OFF(_name, _id, _name_str) \
++	static const struct v4l2_ctrl_config _name =3D { \
++		.ops =3D &isc_awb_ops, \
++		.id =3D _id, \
++		.name =3D _name_str, \
++		.type =3D V4L2_CTRL_TYPE_INTEGER, \
++		.flags =3D V4L2_CTRL_FLAG_SLIDER, \
++		.min =3D -4095, \
++		.max =3D 4095, \
++		.step =3D 1, \
++		.def =3D 0, \
++	}
++
++ISC_CTRL_OFF(isc_r_off_ctrl, ISC_CID_R_OFFSET, "Red Component Offset");
++ISC_CTRL_OFF(isc_b_off_ctrl, ISC_CID_B_OFFSET, "Blue Component Offset");
++ISC_CTRL_OFF(isc_gr_off_ctrl, ISC_CID_GR_OFFSET, "Green Red Component Offs=
+et");
++ISC_CTRL_OFF(isc_gb_off_ctrl, ISC_CID_GB_OFFSET, "Green Blue Component Off=
+set");
++
++#define ISC_CTRL_BAL(_name, _id, _name_str) \
++	static const struct v4l2_ctrl_config _name =3D { \
++		.ops =3D &isc_awb_ops, \
++		.id =3D _id, \
++		.name =3D _name_str, \
++		.type =3D V4L2_CTRL_TYPE_INTEGER, \
++		.flags =3D V4L2_CTRL_FLAG_SLIDER, \
++		.min =3D 0, \
++		.max =3D 8191, \
++		.step =3D 1, \
++		.def =3D 512, \
++	}
++
++ISC_CTRL_BAL(isc_r_bal_ctrl, ISC_CID_R_BAL, "Red Component Balance");
++ISC_CTRL_BAL(isc_b_bal_ctrl, ISC_CID_B_BAL, "Blue Component Balance");
++ISC_CTRL_BAL(isc_gr_bal_ctrl, ISC_CID_GR_BAL, "Green Red Component Balance=
+");
++ISC_CTRL_BAL(isc_gb_bal_ctrl, ISC_CID_GB_BAL, "Green Blue Component Balanc=
+e");
++
+ static int isc_ctrl_init(struct isc_device *isc)
+ {
+ 	const struct v4l2_ctrl_ops *ops =3D &isc_ctrl_ops;
+@@ -1867,7 +2017,7 @@ static int isc_ctrl_init(struct isc_device *isc)
+ 	ctrls->hist_stat =3D HIST_INIT;
+ 	isc_reset_awb_ctrls(isc);
+=20
+-	ret =3D v4l2_ctrl_handler_init(hdl, 5);
++	ret =3D v4l2_ctrl_handler_init(hdl, 13);
+ 	if (ret < 0)
+ 		return ret;
+=20
+@@ -1877,10 +2027,13 @@ static int isc_ctrl_init(struct isc_device *isc)
+ 	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_BRIGHTNESS, -1024, 1023, 1, 0);
+ 	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_CONTRAST, -2048, 2047, 1, 256);
+ 	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_GAMMA, 0, GAMMA_MAX, 1, 2);
+-	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_AUTO_WHITE_BALANCE, 0, 1, 1, 1);
++	isc->awb_ctrl =3D v4l2_ctrl_new_std(hdl, &isc_awb_ops,
++					  V4L2_CID_AUTO_WHITE_BALANCE,
++					  0, 1, 1, 1);
+=20
+ 	/* do_white_balance is a button, so min,max,step,default are ignored */
+-	isc->do_wb_ctrl =3D v4l2_ctrl_new_std(hdl, ops, V4L2_CID_DO_WHITE_BALANCE=
+,
++	isc->do_wb_ctrl =3D v4l2_ctrl_new_std(hdl, &isc_awb_ops,
++					    V4L2_CID_DO_WHITE_BALANCE,
+ 					    0, 0, 0, 0);
+=20
+ 	if (!isc->do_wb_ctrl) {
+@@ -1891,6 +2044,21 @@ static int isc_ctrl_init(struct isc_device *isc)
+=20
+ 	v4l2_ctrl_activate(isc->do_wb_ctrl, false);
+=20
++	isc->r_bal_ctrl =3D v4l2_ctrl_new_custom(hdl, &isc_r_bal_ctrl, NULL);
++	isc->b_bal_ctrl =3D v4l2_ctrl_new_custom(hdl, &isc_b_bal_ctrl, NULL);
++	isc->gr_bal_ctrl =3D v4l2_ctrl_new_custom(hdl, &isc_gr_bal_ctrl, NULL);
++	isc->gb_bal_ctrl =3D v4l2_ctrl_new_custom(hdl, &isc_gb_bal_ctrl, NULL);
++	isc->r_off_ctrl =3D v4l2_ctrl_new_custom(hdl, &isc_r_off_ctrl, NULL);
++	isc->b_off_ctrl =3D v4l2_ctrl_new_custom(hdl, &isc_b_off_ctrl, NULL);
++	isc->gr_off_ctrl =3D v4l2_ctrl_new_custom(hdl, &isc_gr_off_ctrl, NULL);
++	isc->gb_off_ctrl =3D v4l2_ctrl_new_custom(hdl, &isc_gb_off_ctrl, NULL);
++
++	/*
++	 * The cluster is in auto mode with autowhitebalance enabled
++	 * and manual mode otherwise.
++	 */
++	v4l2_ctrl_auto_cluster(10, &isc->awb_ctrl, 0, true);
++
+ 	v4l2_ctrl_handler_setup(hdl);
+=20
+ 	return 0;
+diff --git a/drivers/media/platform/atmel/atmel-isc.h b/drivers/media/platf=
+orm/atmel/atmel-isc.h
+index bfaed2f..2cc6a33 100644
+--- a/drivers/media/platform/atmel/atmel-isc.h
++++ b/drivers/media/platform/atmel/atmel-isc.h
+@@ -213,7 +213,6 @@ struct isc_device {
+ 	struct fmt_config	try_config;
+=20
+ 	struct isc_ctrls	ctrls;
+-	struct v4l2_ctrl	*do_wb_ctrl;
+ 	struct work_struct	awb_work;
+=20
+ 	struct mutex		lock; /* serialize access to file operations */
+@@ -223,6 +222,28 @@ struct isc_device {
+=20
+ 	struct isc_subdev_entity	*current_subdev;
+ 	struct list_head		subdev_entities;
++
++	struct {
++#define ISC_CTRL_DO_WB 1
++#define ISC_CTRL_R_BAL 2
++#define ISC_CTRL_B_BAL 3
++#define ISC_CTRL_GR_BAL 4
++#define ISC_CTRL_GB_BAL 5
++#define ISC_CTRL_R_OFF 6
++#define ISC_CTRL_B_OFF 7
++#define ISC_CTRL_GR_OFF 8
++#define ISC_CTRL_GB_OFF 9
++		struct v4l2_ctrl	*awb_ctrl;
++		struct v4l2_ctrl	*do_wb_ctrl;
++		struct v4l2_ctrl	*r_bal_ctrl;
++		struct v4l2_ctrl	*b_bal_ctrl;
++		struct v4l2_ctrl	*gr_bal_ctrl;
++		struct v4l2_ctrl	*gb_bal_ctrl;
++		struct v4l2_ctrl	*r_off_ctrl;
++		struct v4l2_ctrl	*b_off_ctrl;
++		struct v4l2_ctrl	*gr_off_ctrl;
++		struct v4l2_ctrl	*gb_off_ctrl;
++	};
+ };
+=20
+ #define GAMMA_MAX	2
+diff --git a/include/linux/atmel-isc-media.h b/include/linux/atmel-isc-medi=
+a.h
+new file mode 100644
+index 0000000..ebb705b
+--- /dev/null
++++ b/include/linux/atmel-isc-media.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2019 Microchip Technology Inc. and its subsidiaries
++ *
++ * Author: Eugen Hristev <eugen.hristev@microchip.com>
++ */
++
++#ifndef __LINUX_ATMEL_ISC_MEDIA_H__
++#define __LINUX_ATMEL_ISC_MEDIA_H__
++
++enum atmel_isc_ctrl_id {
++	/* Red component gain control */
++	ISC_CID_R_BAL =3D (V4L2_CID_USER_ATMEL_ISC_BASE + 0),
++	/* Blue component gain control */
++	ISC_CID_B_BAL,
++	/* Green Red component gain control */
++	ISC_CID_GR_BAL,
++	/* Green Blue gain control */
++	ISC_CID_GB_BAL,
++	/* Red component offset control */
++	ISC_CID_R_OFFSET,
++	/* Blue component offset control */
++	ISC_CID_B_OFFSET,
++	/* Green Red component offset control */
++	ISC_CID_GR_OFFSET,
++	/* Green Blue component offset control */
++	ISC_CID_GB_OFFSET,
++};
++
++#endif
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-c=
+ontrols.h
+index 5a7bede..95e0291 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -192,6 +192,10 @@ enum v4l2_colorfx {
+  * We reserve 16 controls for this driver. */
+ #define V4L2_CID_USER_IMX_BASE			(V4L2_CID_USER_BASE + 0x10b0)
+=20
++/* The base for the atmel isc driver controls.
++ * We reserve 32 controls for this driver. */
++#define V4L2_CID_USER_ATMEL_ISC_BASE		(V4L2_CID_USER_BASE + 0x10c0)
++
+ /* MPEG-class control IDs */
+ /* The MPEG controls are applicable to all codec controls
+  * and the 'MPEG' part of the define is historical */
+--=20
+2.7.4
