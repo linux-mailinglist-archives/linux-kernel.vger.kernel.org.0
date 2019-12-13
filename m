@@ -2,132 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C445D11EA82
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86F0D11EA86
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:37:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbfLMShF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 13:37:05 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36452 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728884AbfLMShF (ORCPT
+        id S1728911AbfLMShS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 13:37:18 -0500
+Received: from mail-io1-f47.google.com ([209.85.166.47]:37973 "EHLO
+        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728901AbfLMShS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 13:37:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576262223;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/AzDNeFt/JNl5YH190khbXQVeplcQDkLb2NoTZrjPVQ=;
-        b=Mrj5/HLR7+T1Y4jWoqcdq//F1hwdt4EBiUxkSu1DmLPIAkAgKilh1yl7Ir4CAmDMO4D5Yf
-        i6KhYO+iALVigd8anntAjNBkyeNpQTk8uNoIlhBF7dUFzoMy2da6M1PfHuYPbBPX/DuIOY
-        ghkhnFzpfkr64dfrUYc3strg2ttyPQ4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-98-lHpy5HR0PEavOMKwnb1K8Q-1; Fri, 13 Dec 2019 13:37:02 -0500
-X-MC-Unique: lHpy5HR0PEavOMKwnb1K8Q-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CE88D1005502;
-        Fri, 13 Dec 2019 18:36:59 +0000 (UTC)
-Received: from krava (ovpn-204-48.brq.redhat.com [10.40.204.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BADE160BC2;
-        Fri, 13 Dec 2019 18:36:49 +0000 (UTC)
-Date:   Fri, 13 Dec 2019 19:36:46 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Subject: Re: [RFC] btf: Some structs are doubled because of struct ring_buffer
-Message-ID: <20191213183646.GB8994@krava>
-References: <20191213153553.GE20583@krava>
- <20191213112438.773dff35@gandalf.local.home>
- <20191213165155.vimm27wo7brkh3yu@ast-mbp.dhcp.thefacebook.com>
- <20191213121118.236f55b8@gandalf.local.home>
- <20191213180223.GE2844@hirez.programming.kicks-ass.net>
- <20191213132941.6fa2d1bd@gandalf.local.home>
+        Fri, 13 Dec 2019 13:37:18 -0500
+Received: by mail-io1-f47.google.com with SMTP id v3so648513ioj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 10:37:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8rSTbx4+Xnp8FvEJgiPQ5fFPbX8PvFRdBprtRWfCWCQ=;
+        b=Ohgf2p7RcDyAO9x+7hqrHkTxJ+a7kT8vOKByrsrMwlsQyfiqsofPMz6dlNEaH2kFr/
+         30OXQgmqBqqpNadNXtss0bPV2ZVcHODsCXvhDzcMWmbv1s3KgrYiRRQusO6bkbFDRp5r
+         LKvKMn4BTmDY7od/XhpsXT23xIipONjzb6tpmba5Yg7opdrxn9JbPVo+73idK9kGsIF2
+         nxFDLQAEjalQhqtduuADtXitKUuXf7FWRkHCJElsAxtG+37Ox7MhGWEh9v8dKVoLChhH
+         vtTC4mmQqcAXBoutRncx9v8ysca09wIVNJ/BhTFVjArRy8gBLIIC18A4DbY6RDDKDnlb
+         wsYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8rSTbx4+Xnp8FvEJgiPQ5fFPbX8PvFRdBprtRWfCWCQ=;
+        b=V9v5vLExcqeadgGh3gpmrFmLDjEZ5VtZNMRAYnYRQzlIeMNbDxuaqFbZ62P6jc2Yg0
+         j9xudaKNOLXe5GOt0Eyxm1mRspxQPMFfpjJHKK1mIW0TSwoEmMQYl7g8ZcICq9toxmsR
+         wwH6xfhq9d3e0ZImYvzcDuGdzZe8LILVLqw6DYR/A/PIx08G1dxBxEbbedhdhU2uo5Wl
+         Zudl3ccZUiXxk+UVV4Vnm7QyZlpx5YMno/yhluNrJ3nUccHJGq5knfRHQfhgNMKnd/Ka
+         B2FnHN3LwQoZ2iSet6PgL/EXNpNF52jzlkELaEmdfTLjQrYSIhbnS8zvJIA7grejDiFz
+         9Cvg==
+X-Gm-Message-State: APjAAAVrrRHOoTbv8rVsS0FbgMc6bGkVgtjMw6u4ZgIq+wgxZ/NXKRrB
+        jMVnavMEblIOLf2JYOU6qgL7/ZBoxG9AHzzHeJO4Pw==
+X-Google-Smtp-Source: APXvYqwmEGW+SCoK781R1wHEyeHBJdMspwk5PrOmp57kqjQ+5c6ggfMA1Zq5gVwxNfGgc4rjMK4/bvTYtO3f/Xhf1Jc=
+X-Received: by 2002:a5e:da0d:: with SMTP id x13mr7973581ioj.123.1576262237318;
+ Fri, 13 Dec 2019 10:37:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213132941.6fa2d1bd@gandalf.local.home>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20191120034451.30102-1-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20191120034451.30102-1-Zhiqiang.Hou@nxp.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Fri, 13 Dec 2019 10:37:06 -0800
+Message-ID: <CAOesGMjAQSfx1WZr6b1kNX=Exipj_f4X_f39Db7AxXr4xG4Tkg@mail.gmail.com>
+Subject: Re: [PATCHv9 00/12] PCI: Recode Mobiveil driver and add PCIe Gen4
+ driver for NXP Layerscape SoCs
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "m.karthikeyan@mobiveil.co.in" <m.karthikeyan@mobiveil.co.in>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "andrew.murray@arm.com" <andrew.murray@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 01:29:41PM -0500, Steven Rostedt wrote:
-> On Fri, 13 Dec 2019 19:02:23 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > On Fri, Dec 13, 2019 at 12:11:18PM -0500, Steven Rostedt wrote:
-> > > On Fri, 13 Dec 2019 08:51:57 -0800
-> > > Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> > >   
-> > > > It had two choices. Both valid. I don't know why gdb picked this one.
-> > > > So yeah I think renaming 'ring_buffer' either in ftrace or in perf would be
-> > > > good. I think renaming ftrace one would be better, since gdb picked perf one
-> > > > for whatever reason.  
-> > > 
-> > > Because of the sort algorithm. But from a technical perspective, the
-> > > ring buffer that ftrace uses is generic, where the perf ring buffer can
-> > > only be used for perf. Call it "event_ring_buffer" or whatever, but
-> > > it's not generic and should not have a generic name.  
-> > 
-> > Your ring buffer was so generic that I gave up trying to use it after
-> > trying for days :-( (the fundamental problem was that it was impossible
-> > to have a single cpu buffer; afaik that is still true today)
-> 
-> Yeah, but that could have been fixed, and the only reason it's not
-> today, is because it requires more overhead to do so.
-> 
-> IIRC, the main reason that you didn't use it then, is because it wasn't
-> fully lockless at the time (it is today), and you couldn't use it from
-> NMI context.
-> 
-> > 
-> > Nor is the perf buffer fundamentally specific to perf, but there not
-> > being another user means there has been very little effort to remove
-> > perf specific things from it.
-> 
-> I took a look at doing so, and it was not a trivial task.
-> 
-> > 
-> > There are major design differences between them, which is
-> > unquestionably, but I don't think it is fair to say one is more or less
-> > generic.
-> > 
-> > How about we rename both? I'm a bit adverse to long names, so how about
-> > we rename the perf one to perf_buffer and the trace one to trace_buffer?
-> 
-> I'm fine with this idea! Now what do we call the ring buffer that
-> tracing uses, as it is not specific for tracing, it was optimized for
-> splicing. But sure, I can rename it to trace_buffer. I just finished
-> renaming perf's...
-> 
-> Thinking about this, perhaps we should remove the word "ring" from
-> both. That is:
-> 
->   perf_buffer and trace_buffer ?
+Hi!
 
-sounds good to me.. and too good to be true ;-)
-please let me know if I should send the perf change
+On Tue, Nov 19, 2019 at 7:45 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
+>
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>
+> This patch set is to recode the Mobiveil driver and add
+> PCIe support for NXP Layerscape series SoCs integrated
+> Mobiveil's PCIe Gen4 controller.
 
-thanks,
-jirka
+Can we get a respin for this on top of the 5.5 merge window material?
+Given that it's a bunch of refactorings, many of them don't apply on
+top of the material that was merged.
 
+I'd love to see these go in sooner rather than later so I can start
+getting -next running on ls2160a here.
+
+
+-Olof
