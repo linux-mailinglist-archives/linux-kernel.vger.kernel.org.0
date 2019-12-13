@@ -2,267 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4162411EC09
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:49:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE77011EC1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:53:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfLMUtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:49:17 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:43984 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbfLMUtR (ORCPT
+        id S1726784AbfLMUvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:51:51 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:52823 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfLMUvv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:49:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1576270153; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XgOd8DNrA6cWegX2wWJrOiZQHCYtJnQOx+GCCgoINAA=;
-        b=MGGy7+bvJrWLaLFeV2OvxUGRzOjzfnEkPbf9nIWFOJmx4Cphe5bk6CpZdePlxa/xqbGET3
-        S0QNd7MY/W1v0YpB+ydgv8SbYewIrjjdIIZT7DqXVaIxzZDAql3b84GT17oagR+grw7y8W
-        dMtxblK5zOl8QcAqXFXwc2xa0MyLobo=
-Date:   Fri, 13 Dec 2019 21:49:07 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 3/3] power/supply: Add generic USB charger driver
-To:     Peter Chen <peter.chen@nxp.com>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Message-Id: <1576270147.3.0@crapouillou.net>
-In-Reply-To: <20191212091814.GA7035@b29397-desktop>
-References: <20191211155032.167032-1-paul@crapouillou.net>
-        <20191211155032.167032-3-paul@crapouillou.net>
-        <20191212091814.GA7035@b29397-desktop>
+        Fri, 13 Dec 2019 15:51:51 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MvbO4-1hpQC52QtS-00scVY; Fri, 13 Dec 2019 21:50:19 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, jdike@addtoit.com, richard@nod.at,
+        jcmvbkbc@gmail.com, stefanr@s5r6.in-berlin.de,
+        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+        christian.gmeiner@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
+        robdclark@gmail.com, sean@poorly.run, valdis.kletnieks@vt.edu,
+        gregkh@linuxfoundation.org, ccaulfie@redhat.com,
+        teigland@redhat.com, hirofumi@mail.parknet.co.jp, jack@suse.com,
+        davem@davemloft.net, fw@strlen.de, viro@zeniv.linux.org.uk,
+        rfontana@redhat.com, tglx@linutronix.de,
+        linux-um@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        devel@driverdev.osuosl.org, cluster-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, sparclinux@vger.kernel.org
+Subject: [PATCH v2 00/24] drivers, fs: y2038 updates
+Date:   Fri, 13 Dec 2019 21:49:09 +0100
+Message-Id: <20191213204936.3643476-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:uP+kiANpOGJCAXUng4IDyXrHx7+oq5wNuUSCR2Raiw5aTIDdJGg
+ 5j4AA9RZwtRFpSlQJZR8HotU54Xfp+erI4gckXGaucpRhzYx4dcdDnO9RE7chr7C+S6QsS1
+ hz8jSvfht0kOIuwI+U39is0hUz6MZ6pZnETpaFRYUgmMegCz9cluYoQw5GzMKND6Vlt+MoP
+ vuRLets3Xp1M/VHl6bYkg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kP6IKflIR3w=:FkB32fEkAgwus2sZyvbWHj
+ gR1XadNmIQfTKvjDx+NHX537KVRwu9adI8C1WG7Uvu2xqdyhi6NbGnzLLS3erKQVoi1q2bcZJ
+ fRUG1d36ibEvFjwqysbPbwC5u4DHiftBkUdZ02IxQaCgRmMake1padTMioHJ5VK44dQCw0Wgi
+ l9FfLjhcz0ZpYw+KmnFwnCxdaEQ4rrmqMmI9qQZLKGibtvLox0uwJBt2f1iziiy+EV55optWx
+ eHVAl6FcsIhDR1hGIagPTt0pygd3l5tg/E0N5N3r8mcI/qaniqvi6KMSXngpuISEjztZUFIKj
+ E4vl7qLyA/xxvBi57YzPutpomt5K21wonhWSM7aFqvVNnIjTmvlIhulMkCwyDac28R/Z4Dp0g
+ KMewi00ymEE1euw319FGcrDlXrYDszeK+FvG14u8GD9wvnlwoLF7R9G2nx97kdApqLxfkXQly
+ B+hANhQzcIaPqD3Mj4IbgJQGI17ypNCagD8+FwqTZDb0OBqInzQnwij7FBHUOWFHF3Qs/EI7o
+ 1nrINilaeyXksJoTUhiuzSirhvGWBkbMzW5k02tP0uTz7sxrCz/FxXHDE522PcCDuQTBlyv+I
+ QJ9z1iVT5Xg/jxkC7PWxkiiqjSgCEiTCIb6V84/lzwlgwaR4VDO+WH8ZX/gzqVNe9o9vQ3KSE
+ 8vilfRFPAZi1Or+AvWmTgxeRFkLvobJdMhGGlGJUFAh0XHUkVTF0t8WkeZWhW85ocAbJ5g94z
+ t07OthlwQEZNuwc5Z06FKMmP8bFmSpWpMf3TMpq6QCKO+gB6xZa0zdZgyTvgHlhAZckFpPNzt
+ SLryaKF3jS+MB5IeJX7dR8/nMWgS5LTwsezZchNIkyBiQLIxvP9ZVqFsGf6QbesMAbCjQWssu
+ Ok7QMsSa208ewWk2bxEw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+These are updates to devidce drivers and file systems that for some
+reason or another were not included in the kernel in the previous
+y2038 series.
 
+I've gone through all users of time_t again to make sure the
+kernel is in a long-term maintainable state.
 
-Le jeu., d=E9c. 12, 2019 at 09:18, Peter Chen <peter.chen@nxp.com> a=20
-=E9crit :
-> On 19-12-11 16:50:32, Paul Cercueil wrote:
->>  This simple charger driver uses the USB role switch framework to=20
->> detect
->>  the presence of a charger. The USB charger will report as online=20
->> when
->>  the USB role is set to device, and offline otherwise.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->>=20
->>  Notes:
->>      v2: Instead of detecting charger state from USB PHY, we detect=20
->> it from the
->>          USB role in use.
->>=20
->>   drivers/power/supply/Kconfig               |   8 ++
->>   drivers/power/supply/Makefile              |   1 +
->>   drivers/power/supply/generic-usb-charger.c | 124=20
->> +++++++++++++++++++++
->>   3 files changed, 133 insertions(+)
->>   create mode 100644 drivers/power/supply/generic-usb-charger.c
->>=20
->>  diff --git a/drivers/power/supply/Kconfig=20
->> b/drivers/power/supply/Kconfig
->>  index 27164a1d3c7c..c4221bcabee4 100644
->>  --- a/drivers/power/supply/Kconfig
->>  +++ b/drivers/power/supply/Kconfig
->>  @@ -51,6 +51,14 @@ config GENERIC_ADC_BATTERY
->>   	  Say Y here to enable support for the generic battery driver
->>   	  which uses IIO framework to read adc.
->>=20
->>  +config GENERIC_USB_CHARGER
->>  +	tristate "Generic USB charger"
->>  +	depends on USB_SUPPORT
->>  +	select USB_ROLE_SWITCH
->>  +	help
->>  +	  Say Y here to enable a generic USB charger driver which uses
->>  +	  the USB role switch framework to detect the presence of the=20
->> charger.
->>  +
->>   config MAX8925_POWER
->>   	tristate "MAX8925 battery charger support"
->>   	depends on MFD_MAX8925
->>  diff --git a/drivers/power/supply/Makefile=20
->> b/drivers/power/supply/Makefile
->>  index 6c7da920ea83..03f9b553bdfc 100644
->>  --- a/drivers/power/supply/Makefile
->>  +++ b/drivers/power/supply/Makefile
->>  @@ -8,6 +8,7 @@ power_supply-$(CONFIG_LEDS_TRIGGERS)	+=3D=20
->> power_supply_leds.o
->>   obj-$(CONFIG_POWER_SUPPLY)	+=3D power_supply.o
->>   obj-$(CONFIG_POWER_SUPPLY_HWMON) +=3D power_supply_hwmon.o
->>   obj-$(CONFIG_GENERIC_ADC_BATTERY)	+=3D generic-adc-battery.o
->>  +obj-$(CONFIG_GENERIC_USB_CHARGER)	+=3D generic-usb-charger.o
->>=20
->>   obj-$(CONFIG_PDA_POWER)		+=3D pda_power.o
->>   obj-$(CONFIG_APM_POWER)		+=3D apm_power.o
->>  diff --git a/drivers/power/supply/generic-usb-charger.c=20
->> b/drivers/power/supply/generic-usb-charger.c
->>  new file mode 100644
->>  index 000000000000..0493fafbd4c0
->>  --- /dev/null
->>  +++ b/drivers/power/supply/generic-usb-charger.c
->>  @@ -0,0 +1,124 @@
->>  +// SPDX-License-Identifier: GPL-2.0
->>  +/*
->>  + * Simple USB charger driver
->>  + * Copyright (c) 2019 Paul Cercueil <paul@crapouillou.net>
->>  + */
->>  +
->>  +#include <linux/device.h>
->>  +#include <linux/module.h>
->>  +#include <linux/of.h>
->>  +#include <linux/platform_device.h>
->>  +#include <linux/power_supply.h>
->>  +#include <linux/usb/role.h>
->>  +
->>  +struct usb_charger {
->>  +	struct notifier_block nb;
->>  +	struct usb_role_switch *role;
->>  +	struct power_supply_desc desc;
->>  +	struct power_supply *charger;
->>  +};
->>  +
->>  +static enum power_supply_property usb_charger_properties[] =3D {
->>  +	POWER_SUPPLY_PROP_ONLINE,
->>  +};
->>  +
->>  +static int usb_charger_get_property(struct power_supply *psy,
->>  +				    enum power_supply_property psp,
->>  +				    union power_supply_propval *val)
->>  +{
->>  +	struct usb_charger *charger =3D power_supply_get_drvdata(psy);
->>  +	enum usb_role role;
->>  +
->>  +	switch (psp) {
->>  +	case POWER_SUPPLY_PROP_ONLINE:
->>  +		role =3D usb_role_switch_get_role(charger->role);
->>  +		val->intval =3D role =3D=3D USB_ROLE_DEVICE;
->>  +		break;
->>  +	default:
->>  +		return -EINVAL;
->>  +	}
->>  +
->>  +	return 0;
->>  +}
->>  +
->>  +static int usb_charger_event(struct notifier_block *nb,
->>  +			     unsigned long event, void *d)
->>  +{
->>  +	struct usb_charger *charger =3D container_of(nb, struct=20
->> usb_charger, nb);
->>  +
->>  +	power_supply_changed(charger->charger);
->>  +
->>  +	return 0;
->>  +}
->>  +
->>  +static void usb_charger_unregister(void *data)
->>  +{
->>  +	struct usb_charger *charger =3D data;
->>  +
->>  +	usb_role_switch_unregister_notifier(charger->role, &charger->nb);
->>  +}
->>  +
->>  +static int usb_charger_probe(struct platform_device *pdev)
->>  +{
->>  +	struct device *dev =3D &pdev->dev;
->>  +	struct power_supply_desc *desc;
->>  +	struct usb_charger *charger;
->>  +	struct power_supply_config cfg =3D {
->>  +		.of_node =3D dev->of_node,
->>  +	};
->>  +	int err;
->>  +
->>  +	charger =3D devm_kzalloc(dev, sizeof(*charger), GFP_KERNEL);
->>  +	if (!charger)
->>  +		return -ENOMEM;
->>  +
->>  +	cfg.drv_data =3D charger;
->>  +	charger->nb.notifier_call =3D usb_charger_event;
->>  +
->>  +	charger->role =3D usb_role_switch_get(dev);
->>  +	if (IS_ERR(charger->role)) {
->>  +		if (PTR_ERR(charger->role) !=3D -EPROBE_DEFER)
->>  +			dev_err(dev, "Unable to get USB role");
->>  +		return PTR_ERR(charger->role);
->>  +	}
->>  +
->>  +	desc =3D &charger->desc;
->>  +	desc->name =3D "usb-charger";
->>  +	desc->properties =3D usb_charger_properties;
->>  +	desc->num_properties =3D ARRAY_SIZE(usb_charger_properties);
->>  +	desc->get_property =3D usb_charger_get_property;
->>  +	desc->type =3D POWER_SUPPLY_TYPE_USB;
->=20
-> What's your further plan for this generic USB charger?
-> To support BC1.2, we need to know charger type, and how
-> we could get it?
->=20
-> Peter
+Posting these as a series for better organization, but each change
+here is applicable standalone.
 
-Well I don't really know. The USB role framework does not give any info=20
-about what's plugged.
+Please merge, review, ack/nack etc as you see fit. I will
+add these to my y2038 branch [1] for linux-next, but can keep
+rebasing for feedback and to remove any patches that get
+picked up by a maintainer.
 
--Paul
+Changes since v1 [2]:
 
+- Add Acks I received
+- Rebase to v5.5-rc1, droping patches that got merged already
+- Add NFS, XFS and the final three patches from another series
+- Rewrite etnaviv patches
 
->=20
->>  +
->>  +	charger->charger =3D devm_power_supply_register(dev, desc, &cfg);
->>  +	if (IS_ERR(charger->charger)) {
->>  +		dev_err(dev, "Unable to register charger");
->>  +		return PTR_ERR(charger->charger);
->>  +	}
->>  +
->>  +	err =3D usb_role_switch_register_notifier(charger->role,=20
->> &charger->nb);
->>  +	if (err) {
->>  +		dev_err(dev, "Unable to register USB role switch notifier");
->>  +		return err;
->>  +	}
->>  +
->>  +	return devm_add_action_or_reset(dev, usb_charger_unregister,=20
->> charger);
->>  +}
->>  +
->>  +static const struct of_device_id usb_charger_of_match[] =3D {
->>  +	{ .compatible =3D "usb-charger" },
->>  +	{ /* sentinel */ },
->>  +};
->>  +MODULE_DEVICE_TABLE(of, usb_charger_of_match);
->>  +
->>  +static struct platform_driver usb_charger_driver =3D {
->>  +	.driver =3D {
->>  +		.name =3D "usb-charger",
->>  +		.of_match_table =3D of_match_ptr(usb_charger_of_match),
->>  +	},
->>  +	.probe =3D usb_charger_probe,
->>  +};
->>  +module_platform_driver(usb_charger_driver);
->>  +
->>  +MODULE_DESCRIPTION("Simple USB charger driver");
->>  +MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
->>  +MODULE_LICENSE("GPL");
->>  --
->>  2.24.0
->>=20
->=20
-> --
->=20
-> Thanks,
-> Peter Chen
+      Arnd
 
-=
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=y2038
+[2] https://lore.kernel.org/lkml/20191108213257.3097633-1-arnd@arndb.de/
 
+Arnd Bergmann (24):
+  Input: input_event: fix struct padding on sparc64
+  fat: use prandom_u32() for i_generation
+  dlm: use SO_SNDTIMEO_NEW instead of SO_SNDTIMEO_OLD
+  xtensa: ISS: avoid struct timeval
+  um: ubd: use 64-bit time_t where possible
+  acct: stop using get_seconds()
+  tsacct: add 64-bit btime field
+  packet: clarify timestamp overflow
+  quota: avoid time_t in v1_disk_dqblk definition
+  hostfs: pass 64-bit timestamps to/from user space
+  hfs/hfsplus: use 64-bit inode timestamps
+  drm/msm: avoid using 'timespec'
+  drm/etnaviv: reject timeouts with tv_nsec >= NSEC_PER_SEC
+  drm/etnaviv: avoid deprecated timespec
+  sunrpc: convert to time64_t for expiry
+  nfs: use time64_t internally
+  nfs: fix timstamp debug prints
+  nfs: fscache: use timespec64 in inode auxdata
+  xfs: rename compat_time_t to old_time32_t
+  xfs: disallow broken ioctls without compat-32-bit-time
+  xfs: quota: move to time64_t interfaces
+  y2038: remove obsolete jiffies conversion functions
+  y2038: rename itimerval to __kernel_old_itimerval
+  y2038: sparc: remove use of struct timex
+
+ arch/sparc/kernel/sys_sparc_64.c              | 29 +++++-----
+ arch/um/drivers/cow.h                         |  2 +-
+ arch/um/drivers/cow_user.c                    |  7 ++-
+ arch/um/drivers/ubd_kern.c                    | 10 ++--
+ arch/um/include/shared/os.h                   |  2 +-
+ arch/um/os-Linux/file.c                       |  2 +-
+ .../platforms/iss/include/platform/simcall.h  |  4 +-
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c         | 20 ++++---
+ drivers/gpu/drm/etnaviv/etnaviv_drv.h         | 11 ++--
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c         |  4 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.h         |  2 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.c         |  5 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.h         |  5 +-
+ drivers/gpu/drm/msm/msm_drv.h                 |  3 +-
+ drivers/input/evdev.c                         | 14 ++---
+ drivers/input/misc/uinput.c                   | 14 +++--
+ fs/dlm/lowcomms.c                             |  6 +-
+ fs/fat/inode.c                                |  3 +-
+ fs/hfs/hfs_fs.h                               | 28 +++++++--
+ fs/hfs/inode.c                                |  4 +-
+ fs/hfsplus/hfsplus_fs.h                       | 28 +++++++--
+ fs/hfsplus/inode.c                            | 12 ++--
+ fs/hostfs/hostfs.h                            | 22 ++++---
+ fs/hostfs/hostfs_kern.c                       | 15 +++--
+ fs/nfs/fscache-index.c                        |  6 +-
+ fs/nfs/fscache.c                              | 18 ++++--
+ fs/nfs/fscache.h                              |  8 ++-
+ fs/nfs/nfs4xdr.c                              | 10 ++--
+ fs/quota/quotaio_v1.h                         |  6 +-
+ fs/xfs/xfs_dquot.c                            |  6 +-
+ fs/xfs/xfs_ioctl.c                            | 26 +++++++++
+ fs/xfs/xfs_ioctl32.c                          |  2 +-
+ fs/xfs/xfs_ioctl32.h                          |  2 +-
+ fs/xfs/xfs_qm.h                               |  6 +-
+ fs/xfs/xfs_quotaops.c                         |  6 +-
+ fs/xfs/xfs_trans_dquot.c                      |  8 ++-
+ include/linux/jiffies.h                       | 20 -------
+ include/linux/sunrpc/cache.h                  | 42 ++++++++------
+ include/linux/sunrpc/gss_api.h                |  4 +-
+ include/linux/sunrpc/gss_krb5.h               |  2 +-
+ include/linux/syscalls.h                      |  9 ++-
+ include/uapi/linux/acct.h                     |  2 +
+ include/uapi/linux/input.h                    |  1 +
+ include/uapi/linux/taskstats.h                |  6 +-
+ include/uapi/linux/time_types.h               |  5 ++
+ include/uapi/linux/timex.h                    |  2 +
+ kernel/acct.c                                 |  4 +-
+ kernel/time/itimer.c                          | 18 +++---
+ kernel/time/time.c                            | 58 ++-----------------
+ kernel/tsacct.c                               |  9 ++-
+ net/packet/af_packet.c                        | 27 +++++----
+ net/sunrpc/auth_gss/gss_krb5_mech.c           | 12 +++-
+ net/sunrpc/auth_gss/gss_krb5_seal.c           |  8 +--
+ net/sunrpc/auth_gss/gss_krb5_unseal.c         |  6 +-
+ net/sunrpc/auth_gss/gss_krb5_wrap.c           | 16 ++---
+ net/sunrpc/auth_gss/gss_mech_switch.c         |  2 +-
+ net/sunrpc/auth_gss/svcauth_gss.c             |  6 +-
+ net/sunrpc/cache.c                            | 16 ++---
+ net/sunrpc/svcauth_unix.c                     | 10 ++--
+ 59 files changed, 351 insertions(+), 290 deletions(-)
+
+-- 
+2.20.0
+
+Cc: jdike@addtoit.com
+Cc: richard@nod.at
+Cc: jcmvbkbc@gmail.com
+Cc: stefanr@s5r6.in-berlin.de
+Cc: l.stach@pengutronix.de
+Cc: linux+etnaviv@armlinux.org.uk
+Cc: christian.gmeiner@gmail.com
+Cc: airlied@linux.ie
+Cc: daniel@ffwll.ch
+Cc: robdclark@gmail.com
+Cc: sean@poorly.run
+Cc: valdis.kletnieks@vt.edu
+Cc: gregkh@linuxfoundation.org
+Cc: ccaulfie@redhat.com
+Cc: teigland@redhat.com
+Cc: hirofumi@mail.parknet.co.jp
+Cc: jack@suse.com
+Cc: davem@davemloft.net
+Cc: fw@strlen.de
+Cc: viro@zeniv.linux.org.uk
+Cc: rfontana@redhat.com
+Cc: tglx@linutronix.de
+Cc: linux-um@lists.infradead.org
+Cc: linux1394-devel@lists.sourceforge.net
+Cc: etnaviv@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: freedreno@lists.freedesktop.org
+Cc: devel@driverdev.osuosl.org
+Cc: cluster-devel@redhat.com
+Cc: linux-fsdevel@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: trond.myklebust@hammerspace.com
+Cc: anna.schumaker@netapp.com
+Cc: linux-nfs@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Cc: darrick.wong@oracle.com
+Cc: sparclinux@vger.kernel.org
