@@ -2,204 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC78411EC26
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:53:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D36511EC29
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfLMUxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:53:05 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:45503 "EHLO
+        id S1726801AbfLMUxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:53:19 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:46181 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfLMUxE (ORCPT
+        with ESMTP id S1726671AbfLMUxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:53:04 -0500
+        Fri, 13 Dec 2019 15:53:16 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MSqbe-1iI6wz0KPG-00UKf7; Fri, 13 Dec 2019 21:52:47 +0100
+ 1MeDYt-1i6oQm1xF1-00bIho; Fri, 13 Dec 2019 21:53:07 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Alex Dewar <alex.dewar@gmx.co.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-um@lists.infradead.org
-Subject: [PATCH v2 05/24] um: ubd: use 64-bit time_t where possible
-Date:   Fri, 13 Dec 2019 21:52:10 +0100
-Message-Id: <20191213205221.3787308-2-arnd@arndb.de>
+To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Richard Fontana <rfontana@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2 06/24] acct: stop using get_seconds()
+Date:   Fri, 13 Dec 2019 21:52:11 +0100
+Message-Id: <20191213205221.3787308-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191213204936.3643476-1-arnd@arndb.de>
 References: <20191213204936.3643476-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:mLyO11lzsTki85ngmdRuvZQpffJE2UOI4zLl+uc1b6gL7mCwrB9
- c4BgVt5uCUzPtnrvPR47NFtCTQDbqK683AKz1oOVgkq1Ekn5QNnTb1ut06woz/k2ZQC0VGj
- oK9OwugHAi5tHUSZe5Suajf52pVQAEIFogivdYkNfobGxUDXRSqRAqJMt6v1s4DxoODHhav
- NLcxeYqWv0+1bUYscHkYw==
+X-Provags-ID: V03:K1:st6X4iFmtJPxqaDEnWHJh5aO982P37Ptwn8bOhTHFWKcELag9Vj
+ u9uy/F7aNCOxmXM8GDWXhPfPSVohIQLF/cpqmdRNDJlyjs5FoLkKZXuOl1wSWlYQ+1kjRh1
+ MXR+HAXY+hf6qeZTKw5iO08MRRwWmloaOTspzIIzU3UYsnTgVrHP72aqgmTNlwyM7j30jQ2
+ ewbhl+TxIIDPyaymGx+bQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lpUtqwLVCdA=:kSwfzyihbAiqRgvELZEZgw
- ofiAbMScdf0/jQ3hSJSbhdbyxxp+89hmduPl29UJkD3j5yjZIA2oA3utstDuUPtm30kcNJ2NI
- AEpPoyKYgCNnf97kHPdp1Uf/8oQaNKSuL2GSU7i1kanybJcWX92AmB7WnD8qEDsFhNMa+qvNh
- 34zxoGTz9YXc71+JnkFdEzavB8jJ71oGjZQEyIqmVJul7tkc2xaHpvdaYzvZJtqizzuYywi9b
- pmARFGfViQU2mhSrJBpKFBrCKLb0wWNmF0m5aRNkRDJwVd/3z0KNMOf0BI1jwHOgRzSEdQVco
- ADciMXWq4KfrjGF0EEwGeCtpqnzNQDgvUFTcPeCidp9+0adoL4ix/8b93qp9QHTvWWAhA4/FA
- 6JvEn8s91+CGmsJHeiaYENY0Jv8agE7mfyl3oBL5Mb58IBlisMXxcuC+9rg4n5p748+CJeOGz
- qTtkI6v8tx4SYiqCYJj8XUaj8ngKL+61rXJ179AupfW54rlYDICkwor5FIlIPNlAkuLI08Zyi
- hH3QuzvF6ZnbyifOy8xqY7TowWpvLvkO9Kf0VpmcUQiaSqBfasmMKGqZx/aqTRu8wPdqfGtxp
- jdhCKQzx1dqD+Y2etSM1KPr1abmF+GoPrusLcbicfouDBPZ/ixNoXiz1OgyI/+YcTVoTSk9za
- 0Az7W/wQ5bG+RSNvuyrwEEmmxrnCMXsC0gQ1MKUz7BonL1WklSo8HDdkDymkbhnNY/hsSij1f
- AmTRuwuSKiFQreqJXHEUlB8/vhXxvRMQd1j0oU3MZWbX8iTx/wFv4KtanhxyeN15RwYaoon6c
- qBciYRn8Rg9RNO8tUTbLHNCvyJhk+73r5JopIHEvYsY5Pk8ZyaEeVloh7InU3IvkdRVd3deDg
- cjYxvXEdMto71IAA8WdQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/P5Nke/yFgs=:XJpZhgz8TDetTezFII4o2+
+ eXtRcfcirHDAi9Zi9JHrQDJaNR+fsE6lgyR707lukk/IkDM5bdUiibJAQ8wFN2sk1x185EgE5
+ aCcIicl9JjgSh/3cxoeTedHnNmfg1HeleLIzCjxIYdYjLvquUQ0glGyP5LwcXSoExbYO6mVFE
+ k5kXjzj8TxswNKV/NprsXkAmOdvMes1Rgz3pO19JRyXoMNqziMbjrT341AOaPEXbSC6gUGf8p
+ abvoniCwWC0GkuJYSjw2qu97X5on4kRIS5wWU0dL6v9u9eg+tZWj5NVZz5prgYthgfvZ1yMjH
+ Qe298ynwsh/zQY702mgpyvtXeNkSWK3fE6Fm5xoSfSYpDL2Tm86jGicej116D5fLtske8/c2N
+ qThlrJvEkG/VomPdkDfKgJB7SE9E18ESIoOhHB8chd0fkzMSCF3jTzC4/OKRvC3kLQTp6xkuy
+ p+F3k62RNvB9ErWZq4Ul8Cu3fgdqnoxHT6J9uGyYilnUH8HCDjxYVfz9j2O212z6ouv1yzqIq
+ iT1G4fOMAVL4Pf2abMV4314Xdj/8ZCqa+wNa2okbhe9kfPM2TG3Nd9agKIBIF5IDGQgeJSbH0
+ bf3F/RlQJ9IGAfWsNOt3X1fbZjlPQqnz7WL3pHPfZgEyCNq6bAEMKQlpJUovkamad/tr3BC+D
+ DsQTqla5WW7KA1bmzTQ7nYz2YWitL+QoR9Ws1azKdiaa0vl4DEVUbXGEMoCDOkMP4VyzzSbYP
+ wLYnd/v1HIBAAgmrdLwXsj9HYxHN6PaZSaC0NXOI1y9HrOUJTCNKeDSOy1MXmBb3HzdrvBIbW
+ BSRYylPiHr0k8ZgJbYFXWRqFac/9Cl0riOhWctfDhLU8LLgOIgGzpCem/gwaLXqQOKHzi5wXc
+ EIJXG1qqpjICfJ6VXKwA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ubd code suffers from a possible y2038 overflow on 32-bit
-architectures, both for the cow header and the os_file_modtime()
-function.
+In 'struct acct', 'struct acct_v3', and 'struct taskstats' we have
+a 32-bit 'ac_btime' field containing an absolute time value, which
+will overflow in year 2106.
 
-Replace time_t with time64_t to extend the ubd_kern side as much
-as possible.
+There are two possible ways to deal with it:
 
-Whether this makes a difference for the user side depends on
-the host libc implementation that may use either 32-bit or 64-bit
-time_t.
+a) let it overflow and have user space code deal with reconstructing
+   the data based on the current time, or
+b) truncate the times based on the range of the u32 type.
 
-For the cow file format, the header contains an unsigned 32-bit
-timestamp, which is good until y2106, passing this through a
-'long long' gives us a consistent interpretation between 32-bit
-and 64-bit um kernels.
+Neither of them solves the actual problem. Pick the second
+one to best document what the issue is, and have someone
+fix it in a future version.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/um/drivers/cow.h       |  2 +-
- arch/um/drivers/cow_user.c  |  7 ++++---
- arch/um/drivers/ubd_kern.c  | 10 +++++-----
- arch/um/include/shared/os.h |  2 +-
- arch/um/os-Linux/file.c     |  2 +-
- 5 files changed, 12 insertions(+), 11 deletions(-)
+ include/uapi/linux/acct.h      | 2 ++
+ include/uapi/linux/taskstats.h | 1 +
+ kernel/acct.c                  | 4 +++-
+ kernel/tsacct.c                | 8 +++++---
+ 4 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/um/drivers/cow.h b/arch/um/drivers/cow.h
-index 760c507dd5b6..103adac691ed 100644
---- a/arch/um/drivers/cow.h
-+++ b/arch/um/drivers/cow.h
-@@ -11,7 +11,7 @@ extern int init_cow_file(int fd, char *cow_file, char *backing_file,
- extern int file_reader(__u64 offset, char *buf, int len, void *arg);
- extern int read_cow_header(int (*reader)(__u64, char *, int, void *),
- 			   void *arg, __u32 *version_out,
--			   char **backing_file_out, time_t *mtime_out,
-+			   char **backing_file_out, long long *mtime_out,
- 			   unsigned long long *size_out, int *sectorsize_out,
- 			   __u32 *align_out, int *bitmap_offset_out);
- 
-diff --git a/arch/um/drivers/cow_user.c b/arch/um/drivers/cow_user.c
-index 74b0c2686c95..29b46581ddd1 100644
---- a/arch/um/drivers/cow_user.c
-+++ b/arch/um/drivers/cow_user.c
-@@ -17,6 +17,7 @@
- 
- #define PATH_LEN_V1 256
- 
-+/* unsigned time_t works until year 2106 */
- typedef __u32 time32_t;
- 
- struct cow_header_v1 {
-@@ -197,7 +198,7 @@ int write_cow_header(char *cow_file, int fd, char *backing_file,
- 		     int sectorsize, int alignment, unsigned long long *size)
+diff --git a/include/uapi/linux/acct.h b/include/uapi/linux/acct.h
+index 0e72172cd23a..985b89068591 100644
+--- a/include/uapi/linux/acct.h
++++ b/include/uapi/linux/acct.h
+@@ -49,6 +49,7 @@ struct acct
+ 	__u16		ac_uid16;		/* LSB of Real User ID */
+ 	__u16		ac_gid16;		/* LSB of Real Group ID */
+ 	__u16		ac_tty;			/* Control Terminal */
++	/* __u32 range means times from 1970 to 2106 */
+ 	__u32		ac_btime;		/* Process Creation Time */
+ 	comp_t		ac_utime;		/* User Time */
+ 	comp_t		ac_stime;		/* System Time */
+@@ -81,6 +82,7 @@ struct acct_v3
+ 	__u32		ac_gid;			/* Real Group ID */
+ 	__u32		ac_pid;			/* Process ID */
+ 	__u32		ac_ppid;		/* Parent Process ID */
++	/* __u32 range means times from 1970 to 2106 */
+ 	__u32		ac_btime;		/* Process Creation Time */
+ #ifdef __KERNEL__
+ 	__u32		ac_etime;		/* Elapsed Time */
+diff --git a/include/uapi/linux/taskstats.h b/include/uapi/linux/taskstats.h
+index 5e8ca16a9079..7d3ea366e93b 100644
+--- a/include/uapi/linux/taskstats.h
++++ b/include/uapi/linux/taskstats.h
+@@ -112,6 +112,7 @@ struct taskstats {
+ 	__u32	ac_gid;			/* Group ID */
+ 	__u32	ac_pid;			/* Process ID */
+ 	__u32	ac_ppid;		/* Parent process ID */
++	/* __u32 range means times from 1970 to 2106 */
+ 	__u32	ac_btime;		/* Begin time [sec since 1970] */
+ 	__u64	ac_etime __attribute__((aligned(8)));
+ 					/* Elapsed time [usec] */
+diff --git a/kernel/acct.c b/kernel/acct.c
+index 81f9831a7859..11ff4a596d6b 100644
+--- a/kernel/acct.c
++++ b/kernel/acct.c
+@@ -416,6 +416,7 @@ static void fill_ac(acct_t *ac)
  {
- 	struct cow_header_v3 *header;
--	unsigned long modtime;
-+	long long modtime;
- 	int err;
+ 	struct pacct_struct *pacct = &current->signal->pacct;
+ 	u64 elapsed, run_time;
++	time64_t btime;
+ 	struct tty_struct *tty;
  
- 	err = cow_seek_file(fd, 0);
-@@ -276,7 +277,7 @@ int file_reader(__u64 offset, char *buf, int len, void *arg)
- 
- int read_cow_header(int (*reader)(__u64, char *, int, void *), void *arg,
- 		    __u32 *version_out, char **backing_file_out,
--		    time_t *mtime_out, unsigned long long *size_out,
-+		    long long *mtime_out, unsigned long long *size_out,
- 		    int *sectorsize_out, __u32 *align_out,
- 		    int *bitmap_offset_out)
- {
-@@ -363,7 +364,7 @@ int read_cow_header(int (*reader)(__u64, char *, int, void *), void *arg,
- 
- 		/*
- 		 * this was used until Dec2005 - 64bits are needed to represent
--		 * 2038+. I.e. we can safely do this truncating cast.
-+		 * 2106+. I.e. we can safely do this truncating cast.
- 		 *
- 		 * Additionally, we must use be32toh() instead of be64toh(), since
- 		 * the program used to use the former (tested - I got mtime
-diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-index 6627d7c30f37..dcabb463e011 100644
---- a/arch/um/drivers/ubd_kern.c
-+++ b/arch/um/drivers/ubd_kern.c
-@@ -561,7 +561,7 @@ static inline int ubd_file_size(struct ubd *ubd_dev, __u64 *size_out)
- 	__u32 version;
- 	__u32 align;
- 	char *backing_file;
--	time_t mtime;
-+	time64_t mtime;
- 	unsigned long long size;
- 	int sector_size;
- 	int bitmap_offset;
-@@ -600,9 +600,9 @@ static int read_cow_bitmap(int fd, void *buf, int offset, int len)
- 	return 0;
- }
- 
--static int backing_file_mismatch(char *file, __u64 size, time_t mtime)
-+static int backing_file_mismatch(char *file, __u64 size, time64_t mtime)
- {
--	unsigned long modtime;
-+	time64_t modtime;
- 	unsigned long long actual;
- 	int err;
- 
-@@ -628,7 +628,7 @@ static int backing_file_mismatch(char *file, __u64 size, time_t mtime)
- 		return -EINVAL;
+ 	/*
+@@ -448,7 +449,8 @@ static void fill_ac(acct_t *ac)
  	}
- 	if (modtime != mtime) {
--		printk(KERN_ERR "mtime mismatch (%ld vs %ld) of COW header vs "
-+		printk(KERN_ERR "mtime mismatch (%lld vs %lld) of COW header vs "
- 		       "backing file\n", mtime, modtime);
- 		return -EINVAL;
- 	}
-@@ -671,7 +671,7 @@ static int open_ubd_file(char *file, struct openflags *openflags, int shared,
- 		  unsigned long *bitmap_len_out, int *data_offset_out,
- 		  int *create_cow_out)
- {
--	time_t mtime;
-+	time64_t mtime;
- 	unsigned long long size;
- 	__u32 version, align;
- 	char *backing_file;
-diff --git a/arch/um/include/shared/os.h b/arch/um/include/shared/os.h
-index 506bcd1bca68..0f30204b6afa 100644
---- a/arch/um/include/shared/os.h
-+++ b/arch/um/include/shared/os.h
-@@ -150,7 +150,7 @@ extern int os_sync_file(int fd);
- extern int os_file_size(const char *file, unsigned long long *size_out);
- extern int os_pread_file(int fd, void *buf, int len, unsigned long long offset);
- extern int os_pwrite_file(int fd, const void *buf, int count, unsigned long long offset);
--extern int os_file_modtime(const char *file, unsigned long *modtime);
-+extern int os_file_modtime(const char *file, long long *modtime);
- extern int os_pipe(int *fd, int stream, int close_on_exec);
- extern int os_set_fd_async(int fd);
- extern int os_clear_fd_async(int fd);
-diff --git a/arch/um/os-Linux/file.c b/arch/um/os-Linux/file.c
-index 5133e3afb96f..fbda10535dab 100644
---- a/arch/um/os-Linux/file.c
-+++ b/arch/um/os-Linux/file.c
-@@ -341,7 +341,7 @@ int os_file_size(const char *file, unsigned long long *size_out)
- 	return 0;
- }
+ #endif
+ 	do_div(elapsed, AHZ);
+-	ac->ac_btime = get_seconds() - elapsed;
++	btime = ktime_get_real_seconds() - elapsed;
++	ac->ac_btime = clamp_t(time64_t, btime, 0, U32_MAX);
+ #if ACCT_VERSION==2
+ 	ac->ac_ahz = AHZ;
+ #endif
+diff --git a/kernel/tsacct.c b/kernel/tsacct.c
+index 7be3e7530841..ab12616ee6fb 100644
+--- a/kernel/tsacct.c
++++ b/kernel/tsacct.c
+@@ -24,6 +24,7 @@ void bacct_add_tsk(struct user_namespace *user_ns,
+ 	const struct cred *tcred;
+ 	u64 utime, stime, utimescaled, stimescaled;
+ 	u64 delta;
++	time64_t btime;
  
--int os_file_modtime(const char *file, unsigned long *modtime)
-+int os_file_modtime(const char *file, long long *modtime)
- {
- 	struct uml_stat buf;
- 	int err;
+ 	BUILD_BUG_ON(TS_COMM_LEN < TASK_COMM_LEN);
+ 
+@@ -32,9 +33,10 @@ void bacct_add_tsk(struct user_namespace *user_ns,
+ 	/* Convert to micro seconds */
+ 	do_div(delta, NSEC_PER_USEC);
+ 	stats->ac_etime = delta;
+-	/* Convert to seconds for btime */
+-	do_div(delta, USEC_PER_SEC);
+-	stats->ac_btime = get_seconds() - delta;
++	/* Convert to seconds for btime (note y2106 limit) */
++	btime = ktime_get_real_seconds() - div_u64(delta, USEC_PER_SEC);
++	stats->ac_btime = clamp_t(time64_t, btime, 0, U32_MAX);
++
+ 	if (thread_group_leader(tsk)) {
+ 		stats->ac_exitcode = tsk->exit_code;
+ 		if (tsk->flags & PF_FORKNOEXEC)
 -- 
 2.20.0
 
