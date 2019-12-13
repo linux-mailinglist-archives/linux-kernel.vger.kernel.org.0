@@ -2,91 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C5F211ED56
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 23:01:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C76C111ED5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 23:03:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfLMWBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 17:01:17 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42484 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbfLMWBQ (ORCPT
+        id S1726713AbfLMWD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 17:03:26 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45424 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfLMWDZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 17:01:16 -0500
-Received: by mail-pg1-f193.google.com with SMTP id s64so130500pgb.9;
-        Fri, 13 Dec 2019 14:01:16 -0800 (PST)
+        Fri, 13 Dec 2019 17:03:25 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 2so2164986pfg.12;
+        Fri, 13 Dec 2019 14:03:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=SyJOTro2Qxj5zknOopzR1wfS5jIi3FQ8gfidzuJ6Ln0=;
-        b=PqUvY8iyQctARCA98nfJzXmI9y23oL/C1rZgk7xmiGEMxrGhd921Z3GY3hgcUCtbky
-         nwVpVoGrZ0VVkX6pt6MiZO5ePD/gUS6VJGhSzEngGAvjmnJ3IHODu2QTuwj6/OMVjSEr
-         9LR147pNwwHtpM9K3rgfX+WL75u1CHDpNvHtP/fX8OaLKrRdUA0Plf2E5e9Vit9vzksk
-         /dMpL71BRBCGlpW8vbruQaiZC6sMt0xVgunxLkbjAZy+cFW/uHbqmB6QvGgm09nQM+Jb
-         XOMe8BMyuSWTM3iHQpSuoLQHHPwr2PwtzAKk3UEZl3rgKUBEcqkdfiG/f5xGwk7ciQ6R
-         BnCQ==
+        bh=tC9e56OkB9iMx5UogC2mae0NvXUXXZ3j9VUfeJ/X5wk=;
+        b=tRoNRQRh+sJGD73mI4PDIDyRvkzBaNEx53l8oRH/Sn6LiwA5jhvcsHTHKt0UYjOfKD
+         hI8+MAPu3GAvso6itHVboQN17c5NMohOaIdXDa6aP8XILG0jThspeOMRlB1IUC3yIWCZ
+         swEyhbgSOV49JTywMJrODnCc7u4bYKMNWk/ZTtAn4jlE/qSBoeS6gnQhmOISmdYhsicT
+         hv+UQszp8avxtmsIrnninBVWrvPdjhm37eQU53sSaxYhTcKtZ0QgecyWFxjbi9uOTD96
+         HCfXiVXAKR3OXOiwCQKS/hI0lN37hSjKxmU3aTbHAd2fk7aMPw55CqanJVLyHSFl5OxB
+         QQyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SyJOTro2Qxj5zknOopzR1wfS5jIi3FQ8gfidzuJ6Ln0=;
-        b=k2fvFyf/RZ7rUtdpOn8R8HA8a4UFRYAtKi5JLczFFp646c8G6WjDvll7VNiVJcJVwa
-         0YWuy5qn4nZzxS7cXCQsmO6N+B4BOLEE4b6ssCfuDOv48YnYGud2YlcTaUKLMuiNnYW/
-         Ue+UZzH5XaKCOFq/Tr0RBzJ+68S6C3DRh781qfagyW9uTFjsT4yXi5+hL6A+N22JSZA8
-         jkjLlc6gR3b0Z/KFSPM7TLtmFO03GHFfSjz3/MeL0EVBIJLIl77hg3Fp4zPfnqsdyjYa
-         2OI9vkzWEWHfogb5od+ErjDogcsPj+POn/SBDkvUp64NuGXlf5n/9iYbTQVYs6EIdPBh
-         nCWQ==
-X-Gm-Message-State: APjAAAWnGPPQxrjgNBhW8cvWnvRkyrDiRlcPoyOFfqc8ewd/0ZkQWPX5
-        qDAWV5lWp3q0Efb2xjy9YcGElTCY
-X-Google-Smtp-Source: APXvYqxeDfBH3tpaDeUWX2B6kuiOuVVyMBcKaeGE4AjkrDCmP6u1u1qTMpuEkKNIDPJCXJEIea85Cw==
-X-Received: by 2002:a63:6b07:: with SMTP id g7mr1862107pgc.243.1576274476076;
-        Fri, 13 Dec 2019 14:01:16 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w6sm13780681pfq.99.2019.12.13.14.01.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Dec 2019 14:01:15 -0800 (PST)
-Date:   Fri, 13 Dec 2019 14:01:13 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog: rn5t618_wdt: fix module aliases
-Message-ID: <20191213220113.GA24460@roeck-us.net>
-References: <20191213214802.22268-1-andreas@kemnade.info>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tC9e56OkB9iMx5UogC2mae0NvXUXXZ3j9VUfeJ/X5wk=;
+        b=axSnpFdcwMnUGm0hdnk7jdQaxBbNdQiz1kV+aS64ztk/JAHpAGKHpPU4DN1CVNvznv
+         vLijLiPbhhpVZYfUwkBcSReq2Tu+jrOsRvPG0vklBusQ7wyLUhOb8+LD/EyH130xasV/
+         Nzy8Uhuw1i2sRe+zsqe2vqxuBnS6GutdNetS+cMSZrPM3RnP099UHwivXPEBKV2/ejuk
+         A4A7pC21HNhSzaGKx4Xwf3CCfW9yzwjO4Kugb2vX4Z6TnyNQk9n29UEBiwd1Cc8m6Aju
+         bE7xbPqaRvpHNcseB8/ADNQKPHXukadwE68UIlKbpTwGFYS0OdzXn9pDHi/IWXberkRm
+         Cirg==
+X-Gm-Message-State: APjAAAV4kQ8T2OYNeGOM9kmtB5RQ0UCI0zlCWf6lyF2B1yDF1OQroqQt
+        rv8U6eNoOJ8u5S9+MSf6d9A=
+X-Google-Smtp-Source: APXvYqzBpAfl1hUow2NLUi+eXe/GatKLhViFfkqNuiWd45s78/xW4KFQIoMtOkjNEpVCqNgoFHYxSw==
+X-Received: by 2002:a63:d358:: with SMTP id u24mr1975871pgi.218.1576274604884;
+        Fri, 13 Dec 2019 14:03:24 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id h7sm13693878pfq.36.2019.12.13.14.03.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 14:03:24 -0800 (PST)
+Date:   Fri, 13 Dec 2019 14:03:21 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, robh@kernel.org, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH] input: keyboard: imx_sc_key: Only take the valid data
+ from SCU firmware as key state
+Message-ID: <20191213220321.GJ101194@dtor-ws>
+References: <1576202909-1661-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191213214802.22268-1-andreas@kemnade.info>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1576202909-1661-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 10:48:02PM +0100, Andreas Kemnade wrote:
-> Platform device aliases were missing so module autoloading
-> did not work.
+On Fri, Dec 13, 2019 at 10:08:29AM +0800, Anson Huang wrote:
+> When reading key state from SCU, the response data from SCU firmware
+> is 4 bytes due to MU message protocol, but ONLY the first byte is the
+> key state, other 3 bytes could be some dirty data, so we should ONLY
+> take the first byte as key state to avoid reporting incorrect state.
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Applied, thank you.
 
 > ---
->  drivers/watchdog/rn5t618_wdt.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/input/keyboard/imx_sc_key.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/watchdog/rn5t618_wdt.c b/drivers/watchdog/rn5t618_wdt.c
-> index 234876047431..6e524c8e26a8 100644
-> --- a/drivers/watchdog/rn5t618_wdt.c
-> +++ b/drivers/watchdog/rn5t618_wdt.c
-> @@ -188,6 +188,7 @@ static struct platform_driver rn5t618_wdt_driver = {
+> diff --git a/drivers/input/keyboard/imx_sc_key.c b/drivers/input/keyboard/imx_sc_key.c
+> index 5379952..9f809ae 100644
+> --- a/drivers/input/keyboard/imx_sc_key.c
+> +++ b/drivers/input/keyboard/imx_sc_key.c
+> @@ -78,7 +78,13 @@ static void imx_sc_check_for_events(struct work_struct *work)
+>  		return;
+>  	}
 >  
->  module_platform_driver(rn5t618_wdt_driver);
+> -	state = (bool)msg.state;
+> +	/*
+> +	 * The response data from SCU firmware is 4 bytes,
+> +	 * but ONLY the first byte is the key state, other
+> +	 * 3 bytes could be some dirty data, so we should
+> +	 * ONLY take the first byte as key state.
+> +	 */
+> +	state = (bool)(msg.state & 0xff);
 >  
-> +MODULE_ALIAS("platform:rn5t618-wdt");
->  MODULE_AUTHOR("Beniamino Galvani <b.galvani@gmail.com>");
->  MODULE_DESCRIPTION("RN5T618 watchdog driver");
->  MODULE_LICENSE("GPL v2");
+>  	if (state ^ priv->keystate) {
+>  		priv->keystate = state;
 > -- 
-> 2.20.1
+> 2.7.4
 > 
+
+-- 
+Dmitry
