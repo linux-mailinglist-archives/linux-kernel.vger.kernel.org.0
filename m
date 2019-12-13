@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 168FE11DAD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:10:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4056311DAAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:09:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731831AbfLMAJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 19:09:23 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42085 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731520AbfLMAJM (ORCPT
+        id S1731822AbfLMAJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 19:09:20 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40034 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731544AbfLMAJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:09:12 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s64so524420pgb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:09:12 -0800 (PST)
+        Thu, 12 Dec 2019 19:09:16 -0500
+Received: by mail-pg1-f195.google.com with SMTP id k25so534002pgt.7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:09:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mDtAK7kRlx+bCfDk3TtrxH2ze1hrkm3F6P7WSngbOvI=;
-        b=bo2+fnwoAHbocMaQJwHhSICIDSFWy0wS2ykgZc5jqpdVJKvQt4T2S261UFKan0kaW0
-         yVR0m9lojn/nuHntv+a6muGbZMcalQ5KxsZRi36EoshfESSiwe40HYAS2EQGammaSsgn
-         P00Il+8IcVuKq48DthDKEfzYNN0WVMtQ2/qHefO/iJRkg6H+T/RhYsQ7JZh95KFybnSk
-         W9smQpVxD+aC192g7q0qcOyBfu0JMXgmPuiQUukHfFWt3XJhHPWs3ri/BzdRRjz6s6p1
-         VNg8cLQWkNwFHMZrWpLEV1rJP8ZKJxzwcn7aMv9+SQnOzBE+4fjyUVtUCaXLbI2klXlW
-         OJJQ==
+        bh=t1uh3W06H9NP6XRp/n5KbLShieglkDi9487fZao2G2I=;
+        b=H3/YmJffs8b3odMUqGlaEHM/jpcFGNzkEIhF7RKU302EkPXx0fPYpHuucOhQ/ibExP
+         2vKkbtYutHWFVm2bXcm4x+sVdR2t5/sMnamGFN80o2OOYTyyyMV53Xz0naldgP5B1h5I
+         I87xgSECVlUeX0ddvHAysUD0NXjEZmVbE+9wS+wjhKD9171c4UoenqIesRzThyvNHMbA
+         ELPgTHntR/qxU4qmeJmrmJy/ZvyW4xgMyPtuFMoQKd34cfDioXFTllJh/9VZo/bDIvbK
+         +OJQ/FHrr/0DMz1KHMmRvOWaHoKpJvIaxXgV/pRiU7NudRHITAivFx5c46dsH1qyaVtN
+         jHvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mDtAK7kRlx+bCfDk3TtrxH2ze1hrkm3F6P7WSngbOvI=;
-        b=tcBbEV8mDfo8X70Sycadyjq+rZCUpJoQ/UOLq+6KExntXQdIV16VF3p7mHENvimHHR
-         pFTuGH4vRjVu5F9bF3es8vK8yvJ7uOHvAy33mxI2qxla7pfYM1QVjldybmX8r8BX3K14
-         BpxaLF0dz55rFXR7kEmHzk2f4X3xDz5whGkih3z8sKMIh2h1wriz1DJrp8ptljfxHyx2
-         440JKhBYgtkWCDz+lngCZUu2b6MmsV4oj9jFtqczRZ1/mrcQJET8w85QPLzl9jQbvSLE
-         CIxAe6Uw8jYF7c/DLw8kWHTeTaCJDCxqJZZHTzIlPOWRxrgnO4EQ+bLCYEMYXHMj+jeU
-         P0MQ==
-X-Gm-Message-State: APjAAAUSpsgbJMn4z0c8PaobNJEfOOntYDQVX+ASTFVqSnfnX4Inoiam
-        y9b9ahHveh9I+Do8woa4OG0SV8wOrIc=
-X-Google-Smtp-Source: APXvYqyjs/7p8E6vVHpPBpIYOyNWJqycWMMOttSl7Iw1wzzROG6S3FqyHmds9VCOUZt21N1v4O2xrA==
-X-Received: by 2002:a63:3089:: with SMTP id w131mr14051620pgw.453.1576195751335;
-        Thu, 12 Dec 2019 16:09:11 -0800 (PST)
+        bh=t1uh3W06H9NP6XRp/n5KbLShieglkDi9487fZao2G2I=;
+        b=Ds8Y6sk43ufFsyuCk961AFx4XEEjhMWhgfLCUw1ySfyUGcFsLmVNpmFSKJQ/mRVg/s
+         Xb9bwHlG+xAkpOAhlmuJPD6fwFcaIZR5wrkAMj2YQzudWpdQpUTMZIdHgL92kt9WDP1X
+         aj22eQhJm8FGnqHWroQXw0k2Kh8VN5jAFW31HYPyrEcg5VnBHZ/gxvkWcdd96eeNFBSw
+         I+f1dTlkdYjgx9cWVjAR/uYwxaMgi1WbZPxt6Y4eLkcezbEyuhQKEOmzT+6kAzejF0FC
+         dxS62hBArlgAOcXLQwYjiTSfMEe/8XqYFl+dpyjJt5nB4/Y4vFA5uspBMezEusdOlPEr
+         hxUg==
+X-Gm-Message-State: APjAAAVfcnzJA4kTLqynTDFosvWk2DCXmNJ/mKE5ysXIcyUQDSlzGgxa
+        790dDwXkE2T4ayx2zaLPcjSCoSLSxHY=
+X-Google-Smtp-Source: APXvYqwEf0zBe1s8PsjO3BBPeIQoHuwqLNAJvF3Y8o6KuSfl69SR2eKVcYqSPHKxGzLz1fZix5rWvA==
+X-Received: by 2002:a63:696:: with SMTP id 144mr14278642pgg.260.1576195754663;
+        Thu, 12 Dec 2019 16:09:14 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.09.08
+        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.09.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 16:09:10 -0800 (PST)
+        Thu, 12 Dec 2019 16:09:13 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -53,9 +53,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Jiri Slaby <jslaby@suse.com>,
         Vasiliy Khoruzhick <vasilykh@arista.com>,
         linux-serial@vger.kernel.org
-Subject: [PATCH 40/58] tty/serial: Migrate serial_txx9 to use has_sysrq
-Date:   Fri, 13 Dec 2019 00:06:39 +0000
-Message-Id: <20191213000657.931618-41-dima@arista.com>
+Subject: [PATCH 41/58] tty/serial: Migrate sh-sci to use has_sysrq
+Date:   Fri, 13 Dec 2019 00:06:40 +0000
+Message-Id: <20191213000657.931618-42-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191213000657.931618-1-dima@arista.com>
 References: <20191213000657.931618-1-dima@arista.com>
@@ -77,32 +77,46 @@ Initialise it in driver's probe and remove ifdeffery.
 
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/serial/serial_txx9.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/tty/serial/sh-sci.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_txx9.c b/drivers/tty/serial/serial_txx9.c
-index d22ccb32aa9b..b4d89e31730e 100644
---- a/drivers/tty/serial/serial_txx9.c
-+++ b/drivers/tty/serial/serial_txx9.c
-@@ -12,10 +12,6 @@
-  *  Serial driver for TX3927/TX4927/TX4925/TX4938 internal SIO controller
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 58bf9d496ba5..9b4ff872e297 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -15,10 +15,6 @@
+  *   Modified to support SH7300 SCIF. Takashi Kusuda (Jun 2003).
+  *   Removed SH7300 support (Jul 2007).
   */
- 
--#if defined(CONFIG_SERIAL_TXX9_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+-#if defined(CONFIG_SERIAL_SH_SCI_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 -#define SUPPORT_SYSRQ
 -#endif
 -
- #include <linux/module.h>
- #include <linux/ioport.h>
- #include <linux/init.h>
-@@ -1095,6 +1091,7 @@ static int serial_txx9_probe(struct platform_device *dev)
- 		port.flags	= p->flags;
- 		port.mapbase	= p->mapbase;
- 		port.dev	= &dev->dev;
-+		port.has_sysrq	= IS_ENABLED(CONFIG_SERIAL_TXX9_CONSOLE);
- 		ret = serial_txx9_register_port(&port);
- 		if (ret < 0) {
- 			dev_err(&dev->dev, "unable to register port at index %d "
+ #undef DEBUG
+ 
+ #include <linux/clk.h>
+@@ -2887,6 +2883,7 @@ static int sci_init_single(struct platform_device *dev,
+ 	port->ops	= &sci_uart_ops;
+ 	port->iotype	= UPIO_MEM;
+ 	port->line	= index;
++	port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_SH_SCI_CONSOLE);
+ 
+ 	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
+ 	if (res == NULL)
+@@ -3015,12 +3012,9 @@ static void serial_console_write(struct console *co, const char *s,
+ 	unsigned long flags;
+ 	int locked = 1;
+ 
+-#if defined(SUPPORT_SYSRQ)
+ 	if (port->sysrq)
+ 		locked = 0;
+-	else
+-#endif
+-	if (oops_in_progress)
++	else if (oops_in_progress)
+ 		locked = spin_trylock_irqsave(&port->lock, flags);
+ 	else
+ 		spin_lock_irqsave(&port->lock, flags);
 -- 
 2.24.0
 
