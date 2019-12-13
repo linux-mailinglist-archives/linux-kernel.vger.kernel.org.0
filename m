@@ -2,99 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE5D311EA23
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EEC211EA58
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:32:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbfLMSXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 13:23:32 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:47029 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbfLMSXc (ORCPT
+        id S1728841AbfLMS3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 13:29:05 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59171 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728775AbfLMS3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 13:23:32 -0500
-X-Originating-IP: 91.224.148.103
-Received: from localhost.localdomain (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id B21C724000F;
-        Fri, 13 Dec 2019 18:23:29 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 2/2] drm/panel: simple: Add Satoz SAT050AT40H12R2 panel support
-Date:   Fri, 13 Dec 2019 19:23:25 +0100
-Message-Id: <20191213182325.27030-2-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191213182325.27030-1-miquel.raynal@bootlin.com>
-References: <20191213182325.27030-1-miquel.raynal@bootlin.com>
+        Fri, 13 Dec 2019 13:29:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576261744;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EuipFtcR9CV/PUK4gZJD69/BC6ZNJnPtOUYxgz6hIYs=;
+        b=Lbiw5D6Ienk9rSXCuN6ilACSV5mCmYDnk5S+00GDAogIgLH7oqT4UQvN2IuA1kIPe2x44p
+        laaQigM+PiOlDVucAuh8KFrSKO9ksmn3o2PO325LQjQZOSwqGtmsQMLCPn0JZX3htva/Yy
+        BXu0vmgKook+rYFByH3Ek74qLVWID2k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-199-8BbtPYfgOsqEYAs5wK98og-1; Fri, 13 Dec 2019 13:29:02 -0500
+X-MC-Unique: 8BbtPYfgOsqEYAs5wK98og-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B880F107ACC5;
+        Fri, 13 Dec 2019 18:28:59 +0000 (UTC)
+Received: from krava (ovpn-204-48.brq.redhat.com [10.40.204.48])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 74C2519C4F;
+        Fri, 13 Dec 2019 18:28:50 +0000 (UTC)
+Date:   Fri, 13 Dec 2019 19:28:47 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [RFC] btf: Some structs are doubled because of struct ring_buffer
+Message-ID: <20191213182847.GA8994@krava>
+References: <20191213153553.GE20583@krava>
+ <20191213112438.773dff35@gandalf.local.home>
+ <20191213165155.vimm27wo7brkh3yu@ast-mbp.dhcp.thefacebook.com>
+ <20191213121118.236f55b8@gandalf.local.home>
+ <20191213173016.posmo4pxjwjvv4bh@ast-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191213173016.posmo4pxjwjvv4bh@ast-mbp.dhcp.thefacebook.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the Satoz SAT050AT40H12R2 RGB panel.
+On Fri, Dec 13, 2019 at 09:30:18AM -0800, Alexei Starovoitov wrote:
+> On Fri, Dec 13, 2019 at 12:11:18PM -0500, Steven Rostedt wrote:
+> > On Fri, 13 Dec 2019 08:51:57 -0800
+> > Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> > 
+> > > It had two choices. Both valid. I don't know why gdb picked this one.
+> > > So yeah I think renaming 'ring_buffer' either in ftrace or in perf would be
+> > > good. I think renaming ftrace one would be better, since gdb picked perf one
+> > > for whatever reason.
+> > 
+> > Because of the sort algorithm. But from a technical perspective, the
+> > ring buffer that ftrace uses is generic, where the perf ring buffer can
+> > only be used for perf. Call it "event_ring_buffer" or whatever, but
+> > it's not generic and should not have a generic name.
+> 
+> I don't mind whichever way. Just saying it would be good to rename :)
+> 
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Peter,
+any chance we could use the 'struct perf_buffer' for perf?
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 15dd495c347d..8ae98437cbba 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -2557,6 +2557,30 @@ static const struct panel_desc samsung_ltn140at29_301 = {
- 	},
- };
- 
-+static const struct drm_display_mode satoz_sat050at40h12r2_mode = {
-+	.clock = 33300,
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 210,
-+	.hsync_end = 800 + 210 + 20,
-+	.htotal = 800 + 210 + 420 + 46,
-+	.vdisplay = 480,
-+	.vsync_start = 480 + 23,
-+	.vsync_end = 480 + 23 + 10,
-+	.vtotal = 480 + 23 + 10 + 22,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_desc satoz_sat050at40h12r2 = {
-+	.modes = &satoz_sat050at40h12r2_mode,
-+	.num_modes = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 108,
-+		.height = 65,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
-+};
-+
- static const struct drm_display_mode sharp_ld_d5116z01b_mode = {
- 	.clock = 168480,
- 	.hdisplay = 1920,
-@@ -3357,6 +3381,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "samsung,ltn140at29-301",
- 		.data = &samsung_ltn140at29_301,
-+	}, {
-+		.compatible = "satoz,sat050at40h12r2",
-+		.data = &satoz_sat050at40h12r2,
- 	}, {
- 		.compatible = "sharp,ld-d5116z01b",
- 		.data = &sharp_ld_d5116z01b,
--- 
-2.20.1
+thanks,
+jirka
 
