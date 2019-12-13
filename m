@@ -2,147 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A981A11E795
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:05:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2B9A11E798
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:05:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbfLMQEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:04:54 -0500
-Received: from mailoutvs11.siol.net ([185.57.226.202]:56631 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728215AbfLMQEw (ORCPT
+        id S1728318AbfLMQFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:05:06 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40468 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728302AbfLMQFF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:04:52 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id CD37B524565;
-        Fri, 13 Dec 2019 17:04:47 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ATbi4QIs82Ql; Fri, 13 Dec 2019 17:04:47 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 6BEDE524543;
-        Fri, 13 Dec 2019 17:04:47 +0100 (CET)
-Received: from localhost.localdomain (cpe-86-58-102-7.static.triera.net [86.58.102.7])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 2B84E52455E;
-        Fri, 13 Dec 2019 17:04:45 +0100 (CET)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mchehab@kernel.org, mripard@kernel.org,
-        paul.kocialkowski@bootlin.com, hverkuil@xs4all.nl
-Cc:     gregkh@linuxfoundation.org, wens@csie.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 4/4] media: cedrus: hevc: Add support for multiple slices
-Date:   Fri, 13 Dec 2019 17:04:28 +0100
-Message-Id: <20191213160428.54303-5-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191213160428.54303-1-jernej.skrabec@siol.net>
-References: <20191213160428.54303-1-jernej.skrabec@siol.net>
+        Fri, 13 Dec 2019 11:05:05 -0500
+Received: by mail-lj1-f195.google.com with SMTP id s22so3205155ljs.7
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:05:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gbf8k5yJ19A5wSZeXVRUlCPqOm3eyldLxkULlc81AFU=;
+        b=ymPQwlgoBu3AuxXxyAS8Pqr3jk0WyzPrXO0bCPOwIOGjnvgBRrGXil4Wbr2ayNyVg0
+         5oHwBqXWHlNYU4H4t0AGAUVusSZhkfHiNJjIj3uc5bx4NxoOqz31/r1rWdCvix34S3ZY
+         2LTTNgxyQ1bi8H8MZq9m+SG3t+rgn5AEU+AoO5VKhdPwcr7tzMRGFhdW9/jc9cvU1N9p
+         yEh3vCXdHeINwcTyiFYrKgZxEzP6mSe5+H8dC7GEWci+dHT6he+jJOMaqoKrHvuaroER
+         O8H3WuM0RCU6HzU+YAsXHI4yTGfj4+7zOW1wJoyn1ns5KWkT3b+TjkHMoaPRnN7i7Mnt
+         wJ2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gbf8k5yJ19A5wSZeXVRUlCPqOm3eyldLxkULlc81AFU=;
+        b=LgWG7AAbmZ48vtVmxviE+0G8hdVpYVAPE7/www0WhLE0Dfan7F2Lv7cLQM/SB/siBq
+         rzq1QEtsho4VgAOppC1hDogn6Lve8pGdP8wG/zpfL3Tl7Kf9luepjgJmfyNYYJLTwWDb
+         zKx2wd9DHjjrV7qMsRy5YkuRmomGkV6BSCqUICtCIkdgvY5FLEh0WwtnWo8VWfLEHCBP
+         Bb86xcXnlWw1OS2Y2GjmDJq0TUT8Pct6LPKde5nnzSp2b/yxZ98fJkG2Nib3yZZ9/C/H
+         TwEvRUdmKHG7yJ4jmjukWhl3/PlJP+7vllEer/OR56S9wbJdLdRXSyCOFOhmMrwup++Y
+         HO/Q==
+X-Gm-Message-State: APjAAAWGjEW7Upojrr/pdLGxwXwcC0RvJqja2B5AeBaM3l/P+4Bexx3y
+        9jApHyxAod//zplgl0TIF+aQBQvmv6ZHgNZfYsUTug==
+X-Google-Smtp-Source: APXvYqwqvR2JGdbH6+gDLiMiftLZwqMCeGYmrtZEZ9p/3pwbALJms19uoBQteKErH11ha+LVboridg4Lm1ql8BrOASI=
+X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr9963179ljm.233.1576253102887;
+ Fri, 13 Dec 2019 08:05:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <CGME20191211145104eucas1p1ce04a26eebcd4c22d72f204e7ae0aa5a@eucas1p1.samsung.com>
+ <20191211145054.24835-1-m.szyprowski@samsung.com>
+In-Reply-To: <20191211145054.24835-1-m.szyprowski@samsung.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 13 Dec 2019 17:04:51 +0100
+Message-ID: <CACRpkdbBBjXxftu1fw7H9N+hAe_MfkUPJErN6MPJ8Mxirh1w5A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4 RESEND] USB3503: correct GPIOs polarity and update
+ the driver
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-usb <linux-usb@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that segment address is available, support for multi-slice frames
-can be easily added.
+On Wed, Dec 11, 2019 at 3:51 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- .../staging/media/sunxi/cedrus/cedrus_h265.c  | 26 ++++++++++++-------
- .../staging/media/sunxi/cedrus/cedrus_video.c |  1 +
- 2 files changed, 17 insertions(+), 10 deletions(-)
+> Marek Szyprowski (3):
+>   ARM: dts: exynos: Correct USB3503 GPIOs polarity
+>   ARM: dts: qcom: Correct USB3503 GPIOs polarity
+>   ARM: dts: sun8i: a83t: Correct USB3503 GPIOs polarity
 
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c b/drivers/s=
-taging/media/sunxi/cedrus/cedrus_h265.c
-index 888bfd5ca224..109d3289418c 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
-@@ -291,6 +291,8 @@ static void cedrus_h265_setup(struct cedrus_ctx *ctx,
- 	const struct v4l2_ctrl_hevc_pps *pps;
- 	const struct v4l2_ctrl_hevc_slice_params *slice_params;
- 	const struct v4l2_hevc_pred_weight_table *pred_weight_table;
-+	unsigned int width_in_ctb_luma, ctb_size_luma;
-+	unsigned int log2_max_luma_coding_block_size;
- 	dma_addr_t src_buf_addr;
- 	dma_addr_t src_buf_end_addr;
- 	u32 chroma_log2_weight_denom;
-@@ -303,15 +305,17 @@ static void cedrus_h265_setup(struct cedrus_ctx *ct=
-x,
- 	slice_params =3D run->h265.slice_params;
- 	pred_weight_table =3D &slice_params->pred_weight_table;
-=20
-+	log2_max_luma_coding_block_size =3D
-+		sps->log2_min_luma_coding_block_size_minus3 + 3 +
-+		sps->log2_diff_max_min_luma_coding_block_size;
-+	ctb_size_luma =3D 1UL << log2_max_luma_coding_block_size;
-+	width_in_ctb_luma =3D
-+		DIV_ROUND_UP(sps->pic_width_in_luma_samples, ctb_size_luma);
-+
- 	/* MV column buffer size and allocation. */
- 	if (!ctx->codec.h265.mv_col_buf_size) {
- 		unsigned int num_buffers =3D
- 			run->dst->vb2_buf.vb2_queue->num_buffers;
--		unsigned int log2_max_luma_coding_block_size =3D
--			sps->log2_min_luma_coding_block_size_minus3 + 3 +
--			sps->log2_diff_max_min_luma_coding_block_size;
--		unsigned int ctb_size_luma =3D
--			1UL << log2_max_luma_coding_block_size;
-=20
- 		/*
- 		 * Each CTB requires a MV col buffer with a specific unit size.
-@@ -366,15 +370,17 @@ static void cedrus_h265_setup(struct cedrus_ctx *ct=
-x,
- 	reg =3D VE_DEC_H265_BITS_END_ADDR_BASE(src_buf_end_addr);
- 	cedrus_write(dev, VE_DEC_H265_BITS_END_ADDR, reg);
-=20
--	/* Coding tree block address: start at the beginning. */
--	reg =3D VE_DEC_H265_DEC_CTB_ADDR_X(0) | VE_DEC_H265_DEC_CTB_ADDR_Y(0);
-+	/* Coding tree block address */
-+	reg =3D VE_DEC_H265_DEC_CTB_ADDR_X(slice_params->slice_segment_addr % w=
-idth_in_ctb_luma);
-+	reg |=3D VE_DEC_H265_DEC_CTB_ADDR_Y(slice_params->slice_segment_addr / =
-width_in_ctb_luma);
- 	cedrus_write(dev, VE_DEC_H265_DEC_CTB_ADDR, reg);
-=20
- 	cedrus_write(dev, VE_DEC_H265_TILE_START_CTB, 0);
- 	cedrus_write(dev, VE_DEC_H265_TILE_END_CTB, 0);
-=20
- 	/* Clear the number of correctly-decoded coding tree blocks. */
--	cedrus_write(dev, VE_DEC_H265_DEC_CTB_NUM, 0);
-+	if (ctx->fh.m2m_ctx->new_frame)
-+		cedrus_write(dev, VE_DEC_H265_DEC_CTB_NUM, 0);
-=20
- 	/* Initialize bitstream access. */
- 	cedrus_write(dev, VE_DEC_H265_TRIGGER, VE_DEC_H265_TRIGGER_INIT_SWDEC);
-@@ -523,8 +529,8 @@ static void cedrus_h265_setup(struct cedrus_ctx *ctx,
- 				V4L2_HEVC_PPS_FLAG_DEPENDENT_SLICE_SEGMENT,
- 				pps->flags);
-=20
--	/* FIXME: For multi-slice support. */
--	reg |=3D VE_DEC_H265_DEC_SLICE_HDR_INFO0_FLAG_FIRST_SLICE_SEGMENT_IN_PI=
-C;
-+	if (ctx->fh.m2m_ctx->new_frame)
-+		reg |=3D VE_DEC_H265_DEC_SLICE_HDR_INFO0_FLAG_FIRST_SLICE_SEGMENT_IN_P=
-IC;
-=20
- 	cedrus_write(dev, VE_DEC_H265_DEC_SLICE_HDR_INFO0, reg);
-=20
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.c b/drivers/=
-staging/media/sunxi/cedrus/cedrus_video.c
-index 15cf1f10221b..497b1199d3fe 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
-@@ -311,6 +311,7 @@ static int cedrus_s_fmt_vid_out(struct file *file, vo=
-id *priv,
-=20
- 	switch (ctx->src_fmt.pixelformat) {
- 	case V4L2_PIX_FMT_H264_SLICE:
-+	case V4L2_PIX_FMT_HEVC_SLICE:
- 		vq->subsystem_flags |=3D
- 			VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF;
- 		break;
---=20
-2.24.0
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+for all these three.
+
+Yours,
+Linus Walleij
