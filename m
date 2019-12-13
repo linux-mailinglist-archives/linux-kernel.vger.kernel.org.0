@@ -2,106 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E144111DCAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 04:46:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EFE611DCB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 05:03:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731565AbfLMDqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 22:46:03 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:39756 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731357AbfLMDqD (ORCPT
+        id S1731728AbfLMEDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 23:03:34 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33306 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727778AbfLMEDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 22:46:03 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04427;MF=rocking@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TklN2C6_1576208759;
-Received: from localhost(mailfrom:rocking@linux.alibaba.com fp:SMTPD_---0TklN2C6_1576208759)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 13 Dec 2019 11:45:59 +0800
-From:   Peng Wang <rocking@linux.alibaba.com>
-To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de
-Cc:     linux-kernel@vger.kernel.org, Peng Wang <rocking@linux.alibaba.com>
-Subject: [PATCH v2] schied/fair: Skip calculating @contrib without load
-Date:   Fri, 13 Dec 2019 11:45:40 +0800
-Message-Id: <1576208740-35609-1-git-send-email-rocking@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1575648862-12095-1-git-send-email-rocking@linux.alibaba.com>
-References: <1575648862-12095-1-git-send-email-rocking@linux.alibaba.com>
+        Thu, 12 Dec 2019 23:03:34 -0500
+Received: by mail-lj1-f193.google.com with SMTP id 21so1110732ljr.0;
+        Thu, 12 Dec 2019 20:03:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=L5uQwSQlRWVR2cnkqQftE5urW2BObiyzOTOXDSJ+kFg=;
+        b=vBHRZju2P7wqsFDu1I1BrVyl+TSGW35FeBwccHGI55Ahuh9KF8JP9UfIsjVabDT7nn
+         nujCbqKj1GAKOvoOd7SKsrlGZsmvp7L/egqhgp95a1uWh0lZDyEZi107UHEVlU47UIA6
+         BgiLT6CGjfAHTlFKfefaQ2CGduDv992dpZuu1PE4LnXPOGepgDswA+bzQyWxBfEm5a8o
+         d0hZAPnC1UIZ6toRqaiWvJi5Rct5Ky/ofx1UZ8CtMmqzigDliaNhSW4Figad2GmHimo1
+         7KUBJf1qydJXa2Ml3/Z586FTYUw1VeemQkwx9SJBVJSxGC7/97fZUwow82uvGjez+AzZ
+         yNkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=L5uQwSQlRWVR2cnkqQftE5urW2BObiyzOTOXDSJ+kFg=;
+        b=bZlX8zxjBG8qcV99Eod31tBadDJX5fwWoQ1o4zIV1jibuFqj3xvBnI5oK2UIHpZN5B
+         j7iVS0OVClZqJ9Jfb6jJg5ImLeJ5n0wNDR/MYLDcceolDkFtEmCaiPDJDouPwwxceQnc
+         xFwB4GjhPByuJKfM/VW4a5YFymehIWgkAIwduHz86ZN5M3uBuphPZitSpXu4TXaOF9Wb
+         B5WfdkqysW4R376Bareo+laabeuWygqSYviRja1QVHvrbr/Xcmm87eKXnrZksEqYOke9
+         QDRAEfiizw6wPgnnBPwMH6nXIeX4zjk22z+Cr+HmLTVdlNTRLHSKbwv/4lMs7A+8kqN2
+         vboA==
+X-Gm-Message-State: APjAAAViePkNoyGUFkYIofYDY2z4ZVnYxMmZz/Sjty3UeE4SH/feDNbh
+        9zG55ZKTY6/jNse1k1oswvfOxl4trIXpj6Qa6rw=
+X-Google-Smtp-Source: APXvYqyT8v8iAkBDf8j+50bdcZNss1V7LWKa6r0wn8vjpJJcFL0sE3pcZPl7nzaBuH2jdvozf4gysX5sLdUJRv/KSFs=
+X-Received: by 2002:a05:651c:29b:: with SMTP id b27mr7973573ljo.31.1576209811384;
+ Thu, 12 Dec 2019 20:03:31 -0800 (PST)
+MIME-Version: 1.0
+References: <1576075099-3441-1-git-send-email-akinobu.mita@gmail.com>
+ <1576075099-3441-3-git-send-email-akinobu.mita@gmail.com> <CAHp75Vfq4KqNAGY4ivveR7D0Z1fA1EOFT+oL9+f+Ak2jikCTVg@mail.gmail.com>
+In-Reply-To: <CAHp75Vfq4KqNAGY4ivveR7D0Z1fA1EOFT+oL9+f+Ak2jikCTVg@mail.gmail.com>
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Fri, 13 Dec 2019 13:03:19 +0900
+Message-ID: <CAC5umyiMZLM6rObaKc25+5nFg2rug69zJMF-jPUH6NAgX8-qPw@mail.gmail.com>
+Subject: Re: [PATCH v3 02/12] ACPI: thermal: switch to use <linux/units.h> helpers
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        linux-hwmon@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sujith Thomas <sujith.thomas@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because of the:
+2019=E5=B9=B412=E6=9C=8812=E6=97=A5(=E6=9C=A8) 0:29 Andy Shevchenko <andy.s=
+hevchenko@gmail.com>:
+>
+> On Wed, Dec 11, 2019 at 4:39 PM Akinobu Mita <akinobu.mita@gmail.com> wro=
+te:
+> >
+> > This switches the ACPI thermal zone driver to use celsius_to_deci_kelvi=
+n(),
+> > deci_kelvin_to_celsius(), and deci_kelvin_to_millicelsius_with_offset()=
+ in
+> > <linux/units.h> instead of helpers in <linux/thermal.h>.
+> >
+> > This is preparation for centralizing the kelvin to/from Celsius convers=
+ion
+> > helpers in <linux/units.h>.
+>
+> >  #include <linux/reboot.h>
+> >  #include <linux/device.h>
+> >  #include <linux/thermal.h>
+>
+> > +#include <linux/units.h>
+>
+> Can we try to keep *some* order, i.e. put this after acpi.h below?
 
-	if (!load)
-		runnable = running = 0;
+OK.
 
-clause in ___update_load_sum(), all the actual users of @contrib in
-accumulate_sum():
+> >  #include <linux/acpi.h>
+> >  #include <linux/workqueue.h>
+> >  #include <linux/uaccess.h>
+>
+> >                         } else if (crt > 0) {
+> > -                               unsigned long crt_k =3D CELSIUS_TO_DECI=
+_KELVIN(crt);
+> > +                               unsigned long crt_k =3D
+> > +                                       celsius_to_deci_kelvin(crt);
+>
+> It used to be one line, why do two?
 
-	if (load)
-		sa->load_sum += load * contrib;
-	if (runnable)
-		sa->runnable_load_sum += runnable * contrib;
-	if (running)
-		sa->util_sum += contrib << SCHED_CAPACITY_SHIFT;
+Because this line over 80 characters.  This patch doesn't make this line
+longer, but checkpatch.pl complains about it.
 
-don't happen, and therefore we don't care what @contrib actually is and
-calculating it is pointless.
+> >         pr_info(PREFIX "%s [%s] (%ld C)\n", acpi_device_name(device),
+> > -               acpi_device_bid(device), DECI_KELVIN_TO_CELSIUS(tz->tem=
+perature));
+> > +               acpi_device_bid(device),
+> > +               deci_kelvin_to_celsius(tz->temperature));
+>
+> Ditto.
 
-If we count the times when @load equals zero and not as below:
-
-	if (load) {
-		load_is_not_zero_count++;
-		contrib = __accumulate_pelt_segments(periods,
-				1024 - sa->period_contrib,delta);
-	} else
-		load_is_zero_count++;
-
-As we can see, load_is_zero_count is much bigger than
-load_is_zero_count, and the gap is gradually widening:
-
-	load_is_zero_count:            6016044 times
-	load_is_not_zero_count:         244316 times
-	19:50:43 up 1 min,  1 user,  load average: 0.09, 0.06, 0.02
-
-	load_is_zero_count:            7956168 times
-	load_is_not_zero_count:         261472 times
-	19:51:42 up 2 min,  1 user,  load average: 0.03, 0.05, 0.01
-
-	load_is_zero_count:           10199896 times
-	load_is_not_zero_count:         278364 times
-	19:52:51 up 3 min,  1 user,  load average: 0.06, 0.05, 0.01
-
-	load_is_zero_count:           14333700 times
-	load_is_not_zero_count:         318424 times
-	19:54:53 up 5 min,  1 user,  load average: 0.01, 0.03, 0.00
-
-Perhaps we can gain some performance advantage by saving these
-unnecessary calculation.
-
-Signed-off-by: Peng Wang <rocking@linux.alibaba.com>
----
- kernel/sched/pelt.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index a96db50..4392953 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -129,8 +129,9 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
- 		 * Step 2
- 		 */
- 		delta %= 1024;
--		contrib = __accumulate_pelt_segments(periods,
--				1024 - sa->period_contrib, delta);
-+		if (load)
-+			contrib = __accumulate_pelt_segments(periods,
-+					1024 - sa->period_contrib, delta);
- 	}
- 	sa->period_contrib = delta;
- 
--- 
-1.8.3.1
-
+Same as above, checkpatch.pl complains about line over 80 characters.
