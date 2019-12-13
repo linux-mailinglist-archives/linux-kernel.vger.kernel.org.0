@@ -2,85 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1433A11E091
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:27:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5768011E086
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbfLMJ1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:27:31 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:43234 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfLMJ1b (ORCPT
+        id S1726313AbfLMJZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:25:41 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35828 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfLMJZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:27:31 -0500
-Received: from 79.184.255.82.ipv4.supernova.orange.pl (79.184.255.82) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 9e2bfb5acf4f8881; Fri, 13 Dec 2019 10:27:28 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Subject: [PATCH v1 09/10] intel_idle: Add module parameter to prevent ACPI _CST from being used
-Date:   Fri, 13 Dec 2019 10:24:58 +0100
-Message-ID: <4991900.sFTjH42vUX@kreacher>
-In-Reply-To: <3950312.2WmFeOdZGY@kreacher>
-References: <3950312.2WmFeOdZGY@kreacher>
+        Fri, 13 Dec 2019 04:25:41 -0500
+Received: by mail-pg1-f193.google.com with SMTP id l24so1281750pgk.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 01:25:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=wf9sPxcYwAT6rtclj5mEhandYCSWH43MC5nKBUwJuGM=;
+        b=q6YmvAdM1YjCo8LldKHhrPRGbLKv576V33WVdDwvCHWaaZMYWoadqc75FoT0GEKad5
+         +ZDpY87H7oOiRB+BDjXreNi/FFKWx7+skyk29Hiw0kYYuxQ5wOSziykLcbYcYD5uArwj
+         IZ+Lybdz/+pOxcJIUvyov4kjMLmA72WP8hP2TsVEZzcfsGCz8STLrN4K80l2cZBezz8w
+         kgRZNho2q31PzgJBckJlFAqa/4CwpAG7LnAtgrqoiBxWeMG+AIeWkAdzQh44tIgcczaF
+         xXEGvRhyLP+ZhVBXoP0ycpmnwWC/lxIptBYUBFmmck5GwSNOWYF9qUNT0RO5VgAxoFgb
+         O7Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=wf9sPxcYwAT6rtclj5mEhandYCSWH43MC5nKBUwJuGM=;
+        b=d1EXxfIjpqeUEplqMuuWJhHk/SXh41Xq4T9HyyJpcG+yvALFlT9caxoEvg/nMxlaQE
+         VB0gX9wqrMMuup65vLZzSJzuYXTemIWnEuy0xahLfwg2e+2EBcL+lwfwIKx0qmzhGmNZ
+         n9CjqTfMYFueNyqGMuwRO0zhnAKS1Fm2f71L66Sg7oSvyX/M/3v6STeV+h5YL/a9u1Hp
+         aUkfynl5mFHBgeeMY+ikcoNxzguZ0r92RoBgpR9vRa4zY70dHm0LEQlFMLGBLTF84aFg
+         f0JYNOsJf0TRz4UpzPuqXpjGSW8t1NpSBCmRYfWcrmOGhVOZIPsH13kIK9wMMre152us
+         ge4A==
+X-Gm-Message-State: APjAAAVKiHOHRTy1/EG3eZmd6y1Q2q5ONfFvvQgnsJrj4qE5sl0oA91+
+        ywUlrlBIRJm3SEIIygWZhOsh7ljdeU05ty2AFlA=
+X-Google-Smtp-Source: APXvYqwgOEhAqZiAiD8m6N3j0rNVg3x6RhLiyeZG2yriSXS2teza0pfgHrdT1NVFQlD9yPmBW3SgjXAgaVkKQpqJPrs=
+X-Received: by 2002:a63:30c:: with SMTP id 12mr15765573pgd.276.1576229140333;
+ Fri, 13 Dec 2019 01:25:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Received: by 2002:a17:90a:3461:0:0:0:0 with HTTP; Fri, 13 Dec 2019 01:25:39
+ -0800 (PST)
+Reply-To: convy009@gmail.com
+From:   Ruben CONVY <gabrielmomoh99@gmail.com>
+Date:   Fri, 13 Dec 2019 10:25:39 +0100
+Message-ID: <CAHYRtW=uxhq=CDao7Qu-1PHQ=_KU4Q0JUT9Rnf-9qvj63+KBGA@mail.gmail.com>
+Subject: Why continued silence 2
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-
-Add a new module parameter called "no_acpi" to the intel_idle driver
-to allow the driver to be prevented from using ACPI _CST via kernel
-command line.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-No changes from the RFC version.
-
----
- drivers/idle/intel_idle.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-index a072b84d9595..26fe383bb921 100644
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -1138,6 +1138,10 @@ static bool intel_idle_max_cstate_reached(int cstate)
- #ifdef CONFIG_ACPI_PROCESSOR_CSTATE
- #include <acpi/processor.h>
- 
-+static bool no_acpi __read_mostly;
-+module_param(no_acpi, bool, 0444);
-+MODULE_PARM_DESC(no_acpi, "Do not use ACPI _CST for building the idle states list");
-+
- static struct acpi_processor_power acpi_state_table;
- 
- /**
-@@ -1167,6 +1171,11 @@ static bool intel_idle_acpi_cst_extract(void)
- {
- 	unsigned int cpu;
- 
-+	if (no_acpi) {
-+		pr_debug("Not allowed to use ACPI _CST\n");
-+		return false;
-+	}
-+
- 	for_each_possible_cpu(cpu) {
- 		struct acpi_processor *pr = per_cpu(processors, cpu);
- 
--- 
-2.16.4
-
-
-
-
-
+Did you receive my previous email regarding your family inheritance?
+Reply strictly through: convy009@gmail.com
+Best Regards,
+Ruben CONVY
