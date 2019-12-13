@@ -2,222 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE77011EC1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:53:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F4D11EC12
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:51:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfLMUvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:51:51 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:52823 "EHLO
+        id S1726674AbfLMUvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:51:08 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:41421 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfLMUvv (ORCPT
+        with ESMTP id S1725747AbfLMUvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:51:51 -0500
+        Fri, 13 Dec 2019 15:51:08 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MvbO4-1hpQC52QtS-00scVY; Fri, 13 Dec 2019 21:50:19 +0100
+ 1N2m7O-1hjKJl2E7I-0132dq; Fri, 13 Dec 2019 21:50:53 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, jdike@addtoit.com, richard@nod.at,
-        jcmvbkbc@gmail.com, stefanr@s5r6.in-berlin.de,
-        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
-        christian.gmeiner@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
-        robdclark@gmail.com, sean@poorly.run, valdis.kletnieks@vt.edu,
-        gregkh@linuxfoundation.org, ccaulfie@redhat.com,
-        teigland@redhat.com, hirofumi@mail.parknet.co.jp, jack@suse.com,
-        davem@davemloft.net, fw@strlen.de, viro@zeniv.linux.org.uk,
-        rfontana@redhat.com, tglx@linutronix.de,
-        linux-um@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        devel@driverdev.osuosl.org, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        darrick.wong@oracle.com, sparclinux@vger.kernel.org
-Subject: [PATCH v2 00/24] drivers, fs: y2038 updates
-Date:   Fri, 13 Dec 2019 21:49:09 +0100
-Message-Id: <20191213204936.3643476-1-arnd@arndb.de>
+To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, sparclinux@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, stable@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-input@vger.kernel.org
+Subject: [PATCH v2 01/24] Input: input_event: fix struct padding on sparc64
+Date:   Fri, 13 Dec 2019 21:49:10 +0100
+Message-Id: <20191213204936.3643476-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20191213204936.3643476-1-arnd@arndb.de>
+References: <20191213204936.3643476-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:uP+kiANpOGJCAXUng4IDyXrHx7+oq5wNuUSCR2Raiw5aTIDdJGg
- 5j4AA9RZwtRFpSlQJZR8HotU54Xfp+erI4gckXGaucpRhzYx4dcdDnO9RE7chr7C+S6QsS1
- hz8jSvfht0kOIuwI+U39is0hUz6MZ6pZnETpaFRYUgmMegCz9cluYoQw5GzMKND6Vlt+MoP
- vuRLets3Xp1M/VHl6bYkg==
+X-Provags-ID: V03:K1:b8gCujveRfENF93qhn+QoZv/ckKyXm1BIFaTvxXniIUqRp+b6PR
+ 3VSHWZW1SQzZk8GlNQpYeUFnSdkbDpGEpUozYthsO7HpZiAKH3XYDHJcXFjjxf1Xn91Ch+s
+ d37azDmn1CwgETn8euOshiFS2oUw9MuYpYmhu4tm/a1iwNWERIkO3OEYl1dsNDQfqxG7TYm
+ fURnjI/jbKO29eu5hdNRw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:kP6IKflIR3w=:FkB32fEkAgwus2sZyvbWHj
- gR1XadNmIQfTKvjDx+NHX537KVRwu9adI8C1WG7Uvu2xqdyhi6NbGnzLLS3erKQVoi1q2bcZJ
- fRUG1d36ibEvFjwqysbPbwC5u4DHiftBkUdZ02IxQaCgRmMake1padTMioHJ5VK44dQCw0Wgi
- l9FfLjhcz0ZpYw+KmnFwnCxdaEQ4rrmqMmI9qQZLKGibtvLox0uwJBt2f1iziiy+EV55optWx
- eHVAl6FcsIhDR1hGIagPTt0pygd3l5tg/E0N5N3r8mcI/qaniqvi6KMSXngpuISEjztZUFIKj
- E4vl7qLyA/xxvBi57YzPutpomt5K21wonhWSM7aFqvVNnIjTmvlIhulMkCwyDac28R/Z4Dp0g
- KMewi00ymEE1euw319FGcrDlXrYDszeK+FvG14u8GD9wvnlwoLF7R9G2nx97kdApqLxfkXQly
- B+hANhQzcIaPqD3Mj4IbgJQGI17ypNCagD8+FwqTZDb0OBqInzQnwij7FBHUOWFHF3Qs/EI7o
- 1nrINilaeyXksJoTUhiuzSirhvGWBkbMzW5k02tP0uTz7sxrCz/FxXHDE522PcCDuQTBlyv+I
- QJ9z1iVT5Xg/jxkC7PWxkiiqjSgCEiTCIb6V84/lzwlgwaR4VDO+WH8ZX/gzqVNe9o9vQ3KSE
- 8vilfRFPAZi1Or+AvWmTgxeRFkLvobJdMhGGlGJUFAh0XHUkVTF0t8WkeZWhW85ocAbJ5g94z
- t07OthlwQEZNuwc5Z06FKMmP8bFmSpWpMf3TMpq6QCKO+gB6xZa0zdZgyTvgHlhAZckFpPNzt
- SLryaKF3jS+MB5IeJX7dR8/nMWgS5LTwsezZchNIkyBiQLIxvP9ZVqFsGf6QbesMAbCjQWssu
- Ok7QMsSa208ewWk2bxEw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:iIbuBbbotM0=:qlSem9fmmr21xU4JKbUkwr
+ 2jwTBbOAuCE4GVBIZFL0TrE/kDGXnz2zZkeJWYbvGhf+HZcfLqu65WFtRkkx228BcNZwOKIuh
+ m0vU7lTquEbBCKwj68bhb6jg52BeQS62G3gR7WtmaOG52gnMGQ7W9iI1b+2CPLzB/kJqfjRUk
+ iDa20EOw/qK/icA36YWIJQ+d5sEL1cQgFIfmGlwltdAj1t67KpOG9oVbzTAPVjb8EQZMqjnRb
+ 6n5Qt1hKLWA3v+lZcc5SWtgzNzDDO283oCyYzbjuCtd5h8mLYN6I5J3x2PZAP0qKyogu7VcFd
+ HB1zgOJJhV8/WHRkK/EWdtBnJc/ESEqPoEtK7MfK71LPTdw0v3voVoAHsAVJX1pm0Fk+s0rR3
+ cYSUuppiTTS5dtk/Ax653eDoLYwd5IksUWHIi6xidTr1GLuNGXco5sYWCDzMXHhp4o6ep1BTP
+ 9zQOWWG132l95PNjSlfAR+4Og26QjT5jl5vnixgkx3Xy4jmEcCqFBQZZ3OtT+ghGZjzbdiSC0
+ Q96LFa3Ok8s1OF2cYR4NceiklpMC1gL3SMx9J6VL3WwaWZaRL2HrteTd1g0+P+6z1ZSoih2X0
+ 8FDcLDf7AZiGd9EZshJ2pgTMVdvla3OEsdKZtBBszML+XDxoHjZ/Z/siWJZRVVn7Bi6zSudWi
+ FhePVLTxrdj9pmsSHjNYgfz3mjhMOGn0wSWLlRojj3pa6ro9WcB5IPOKUzO9nDkG+lDEL7t4s
+ 6NeUbkktu6PAykWYIEkirix4f1fhKC98FsS63bdTHP5mkguDUvDk82s6Z8cEkdOlToy00NEZz
+ SvEOR0X0odwBLMSr130fEcLaibcRh0+p5Yyt7FIfuEYhWpzlaT9WI+Eg+Mqp/hfvRZqc/VKLj
+ 3QYw1ddrTu8UT6Yy+YIg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These are updates to devidce drivers and file systems that for some
-reason or another were not included in the kernel in the previous
-y2038 series.
+Going through all uses of timeval, I noticed that we screwed up
+input_event in the previous attempts to fix it:
 
-I've gone through all users of time_t again to make sure the
-kernel is in a long-term maintainable state.
+The time fields now match between kernel and user space, but
+all following fields are in the wrong place.
 
-Posting these as a series for better organization, but each change
-here is applicable standalone.
+Add the required padding that is implied by the glibc timeval
+definition to fix the layout, and use a struct initializer
+to avoid leaking kernel stack data.
 
-Please merge, review, ack/nack etc as you see fit. I will
-add these to my y2038 branch [1] for linux-next, but can keep
-rebasing for feedback and to remove any patches that get
-picked up by a maintainer.
+Cc: sparclinux@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Fixes: 141e5dcaa735 ("Input: input_event - fix the CONFIG_SPARC64 mixup")
+Fixes: 2e746942ebac ("Input: input_event - provide override for sparc64")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/input/evdev.c       | 14 +++++++-------
+ drivers/input/misc/uinput.c | 14 +++++++++-----
+ include/uapi/linux/input.h  |  1 +
+ 3 files changed, 17 insertions(+), 12 deletions(-)
 
-Changes since v1 [2]:
-
-- Add Acks I received
-- Rebase to v5.5-rc1, droping patches that got merged already
-- Add NFS, XFS and the final three patches from another series
-- Rewrite etnaviv patches
-
-      Arnd
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=y2038
-[2] https://lore.kernel.org/lkml/20191108213257.3097633-1-arnd@arndb.de/
-
-Arnd Bergmann (24):
-  Input: input_event: fix struct padding on sparc64
-  fat: use prandom_u32() for i_generation
-  dlm: use SO_SNDTIMEO_NEW instead of SO_SNDTIMEO_OLD
-  xtensa: ISS: avoid struct timeval
-  um: ubd: use 64-bit time_t where possible
-  acct: stop using get_seconds()
-  tsacct: add 64-bit btime field
-  packet: clarify timestamp overflow
-  quota: avoid time_t in v1_disk_dqblk definition
-  hostfs: pass 64-bit timestamps to/from user space
-  hfs/hfsplus: use 64-bit inode timestamps
-  drm/msm: avoid using 'timespec'
-  drm/etnaviv: reject timeouts with tv_nsec >= NSEC_PER_SEC
-  drm/etnaviv: avoid deprecated timespec
-  sunrpc: convert to time64_t for expiry
-  nfs: use time64_t internally
-  nfs: fix timstamp debug prints
-  nfs: fscache: use timespec64 in inode auxdata
-  xfs: rename compat_time_t to old_time32_t
-  xfs: disallow broken ioctls without compat-32-bit-time
-  xfs: quota: move to time64_t interfaces
-  y2038: remove obsolete jiffies conversion functions
-  y2038: rename itimerval to __kernel_old_itimerval
-  y2038: sparc: remove use of struct timex
-
- arch/sparc/kernel/sys_sparc_64.c              | 29 +++++-----
- arch/um/drivers/cow.h                         |  2 +-
- arch/um/drivers/cow_user.c                    |  7 ++-
- arch/um/drivers/ubd_kern.c                    | 10 ++--
- arch/um/include/shared/os.h                   |  2 +-
- arch/um/os-Linux/file.c                       |  2 +-
- .../platforms/iss/include/platform/simcall.h  |  4 +-
- drivers/gpu/drm/etnaviv/etnaviv_drv.c         | 20 ++++---
- drivers/gpu/drm/etnaviv/etnaviv_drv.h         | 11 ++--
- drivers/gpu/drm/etnaviv/etnaviv_gem.c         |  4 +-
- drivers/gpu/drm/etnaviv/etnaviv_gem.h         |  2 +-
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c         |  5 +-
- drivers/gpu/drm/etnaviv/etnaviv_gpu.h         |  5 +-
- drivers/gpu/drm/msm/msm_drv.h                 |  3 +-
- drivers/input/evdev.c                         | 14 ++---
- drivers/input/misc/uinput.c                   | 14 +++--
- fs/dlm/lowcomms.c                             |  6 +-
- fs/fat/inode.c                                |  3 +-
- fs/hfs/hfs_fs.h                               | 28 +++++++--
- fs/hfs/inode.c                                |  4 +-
- fs/hfsplus/hfsplus_fs.h                       | 28 +++++++--
- fs/hfsplus/inode.c                            | 12 ++--
- fs/hostfs/hostfs.h                            | 22 ++++---
- fs/hostfs/hostfs_kern.c                       | 15 +++--
- fs/nfs/fscache-index.c                        |  6 +-
- fs/nfs/fscache.c                              | 18 ++++--
- fs/nfs/fscache.h                              |  8 ++-
- fs/nfs/nfs4xdr.c                              | 10 ++--
- fs/quota/quotaio_v1.h                         |  6 +-
- fs/xfs/xfs_dquot.c                            |  6 +-
- fs/xfs/xfs_ioctl.c                            | 26 +++++++++
- fs/xfs/xfs_ioctl32.c                          |  2 +-
- fs/xfs/xfs_ioctl32.h                          |  2 +-
- fs/xfs/xfs_qm.h                               |  6 +-
- fs/xfs/xfs_quotaops.c                         |  6 +-
- fs/xfs/xfs_trans_dquot.c                      |  8 ++-
- include/linux/jiffies.h                       | 20 -------
- include/linux/sunrpc/cache.h                  | 42 ++++++++------
- include/linux/sunrpc/gss_api.h                |  4 +-
- include/linux/sunrpc/gss_krb5.h               |  2 +-
- include/linux/syscalls.h                      |  9 ++-
- include/uapi/linux/acct.h                     |  2 +
- include/uapi/linux/input.h                    |  1 +
- include/uapi/linux/taskstats.h                |  6 +-
- include/uapi/linux/time_types.h               |  5 ++
- include/uapi/linux/timex.h                    |  2 +
- kernel/acct.c                                 |  4 +-
- kernel/time/itimer.c                          | 18 +++---
- kernel/time/time.c                            | 58 ++-----------------
- kernel/tsacct.c                               |  9 ++-
- net/packet/af_packet.c                        | 27 +++++----
- net/sunrpc/auth_gss/gss_krb5_mech.c           | 12 +++-
- net/sunrpc/auth_gss/gss_krb5_seal.c           |  8 +--
- net/sunrpc/auth_gss/gss_krb5_unseal.c         |  6 +-
- net/sunrpc/auth_gss/gss_krb5_wrap.c           | 16 ++---
- net/sunrpc/auth_gss/gss_mech_switch.c         |  2 +-
- net/sunrpc/auth_gss/svcauth_gss.c             |  6 +-
- net/sunrpc/cache.c                            | 16 ++---
- net/sunrpc/svcauth_unix.c                     | 10 ++--
- 59 files changed, 351 insertions(+), 290 deletions(-)
-
+diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+index d7dd6fcf2db0..f918fca9ada3 100644
+--- a/drivers/input/evdev.c
++++ b/drivers/input/evdev.c
+@@ -224,13 +224,13 @@ static void __pass_event(struct evdev_client *client,
+ 		 */
+ 		client->tail = (client->head - 2) & (client->bufsize - 1);
+ 
+-		client->buffer[client->tail].input_event_sec =
+-						event->input_event_sec;
+-		client->buffer[client->tail].input_event_usec =
+-						event->input_event_usec;
+-		client->buffer[client->tail].type = EV_SYN;
+-		client->buffer[client->tail].code = SYN_DROPPED;
+-		client->buffer[client->tail].value = 0;
++		client->buffer[client->tail] = (struct input_event) {
++			.input_event_sec = event->input_event_sec,
++			.input_event_usec = event->input_event_usec,
++			.type = EV_SYN,
++			.code = SYN_DROPPED,
++			.value = 0,
++		};
+ 
+ 		client->packet_head = client->tail;
+ 	}
+diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
+index fd253781be71..2dabbe47d43e 100644
+--- a/drivers/input/misc/uinput.c
++++ b/drivers/input/misc/uinput.c
+@@ -74,12 +74,16 @@ static int uinput_dev_event(struct input_dev *dev,
+ 	struct uinput_device	*udev = input_get_drvdata(dev);
+ 	struct timespec64	ts;
+ 
+-	udev->buff[udev->head].type = type;
+-	udev->buff[udev->head].code = code;
+-	udev->buff[udev->head].value = value;
+ 	ktime_get_ts64(&ts);
+-	udev->buff[udev->head].input_event_sec = ts.tv_sec;
+-	udev->buff[udev->head].input_event_usec = ts.tv_nsec / NSEC_PER_USEC;
++
++	udev->buff[udev->head] = (struct input_event) {
++		.input_event_sec = ts.tv_sec,
++		.input_event_usec = ts.tv_nsec / NSEC_PER_USEC,
++		.type = type,
++		.code = code,
++		.value = value,
++	};
++
+ 	udev->head = (udev->head + 1) % UINPUT_BUFFER_SIZE;
+ 
+ 	wake_up_interruptible(&udev->waitq);
+diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
+index f056b2a00d5c..9a61c28ed3ae 100644
+--- a/include/uapi/linux/input.h
++++ b/include/uapi/linux/input.h
+@@ -34,6 +34,7 @@ struct input_event {
+ 	__kernel_ulong_t __sec;
+ #if defined(__sparc__) && defined(__arch64__)
+ 	unsigned int __usec;
++	unsigned int __pad;
+ #else
+ 	__kernel_ulong_t __usec;
+ #endif
 -- 
 2.20.0
 
-Cc: jdike@addtoit.com
-Cc: richard@nod.at
-Cc: jcmvbkbc@gmail.com
-Cc: stefanr@s5r6.in-berlin.de
-Cc: l.stach@pengutronix.de
-Cc: linux+etnaviv@armlinux.org.uk
-Cc: christian.gmeiner@gmail.com
-Cc: airlied@linux.ie
-Cc: daniel@ffwll.ch
-Cc: robdclark@gmail.com
-Cc: sean@poorly.run
-Cc: valdis.kletnieks@vt.edu
-Cc: gregkh@linuxfoundation.org
-Cc: ccaulfie@redhat.com
-Cc: teigland@redhat.com
-Cc: hirofumi@mail.parknet.co.jp
-Cc: jack@suse.com
-Cc: davem@davemloft.net
-Cc: fw@strlen.de
-Cc: viro@zeniv.linux.org.uk
-Cc: rfontana@redhat.com
-Cc: tglx@linutronix.de
-Cc: linux-um@lists.infradead.org
-Cc: linux1394-devel@lists.sourceforge.net
-Cc: etnaviv@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: freedreno@lists.freedesktop.org
-Cc: devel@driverdev.osuosl.org
-Cc: cluster-devel@redhat.com
-Cc: linux-fsdevel@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: trond.myklebust@hammerspace.com
-Cc: anna.schumaker@netapp.com
-Cc: linux-nfs@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org
-Cc: darrick.wong@oracle.com
-Cc: sparclinux@vger.kernel.org
