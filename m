@@ -2,77 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85EDA11EAA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:48:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3FF411EAAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:48:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728642AbfLMSsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 13:48:05 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:51530 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728455AbfLMSsF (ORCPT
+        id S1728869AbfLMSsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 13:48:15 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:40029 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728808AbfLMSsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 13:48:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7KmksfjGeFy5q5tSUXLtsC+cHDUntZib8I4AEEfjTJs=; b=aKmDKPE9Z/5kBA9KD7AYJERMK
-        INtyc2ByA+brwrBP2pw5Xc802GFsiPzrGBzgF/A0LtcKg+Y3rll1uRGWnVyzDSzKibX2sHis2eXlY
-        TcW2RVEAC82fyKPyZTBRGIXzK2S0blPkjhNmpQEzMqwhbnStscOeKzvHNIUIL1ArvNrczQmTyOerF
-        BjUvJnnYkijkBSsZcQP/3UWtEFZXmfAhKDgdme3GjoxtOzSnivjFJXl/OUVzqdcyfrwLNCB6dekfT
-        o+rPNYuY5SON70XCFSMGDnoqk6+gBXpXGKscWF4Txw+1QzZrHN2qBXMPXQRXUJG64A2AdxkpLcHDZ
-        q6PtkGm5w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifpyr-00013n-2l; Fri, 13 Dec 2019 18:48:01 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DC232304D2B;
-        Fri, 13 Dec 2019 19:46:38 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C74C529E8533C; Fri, 13 Dec 2019 19:47:59 +0100 (CET)
-Date:   Fri, 13 Dec 2019 19:47:59 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 4/5] locking/lockdep: Reuse free chain_hlocks entries
-Message-ID: <20191213184759.GH2844@hirez.programming.kicks-ass.net>
-References: <20191212223525.1652-1-longman@redhat.com>
- <20191212223525.1652-5-longman@redhat.com>
- <20191213102525.GA2844@hirez.programming.kicks-ass.net>
- <20191213105042.GJ2871@hirez.programming.kicks-ass.net>
- <9a79ef1a-96e0-1fd7-97e8-ef854b08524d@redhat.com>
- <20191213181255.GF2844@hirez.programming.kicks-ass.net>
- <7ca26a9a-003f-6f24-08e4-f01b80e3e962@redhat.com>
+        Fri, 13 Dec 2019 13:48:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576262892;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5A2LeRnUqA/oVUAeoB9Y1zyaCpFbrJsfRAN46NsJ6og=;
+        b=BWSrxPB3sx/Vle2dnpPMbnN5XXhVCMHDe60fLhX85MxyCMsdeM1xYd9Ef2VGiV+x1fRM4o
+        OWfElaiytoGnnhQlDZ4nnpsfbnaU8QdJFbxfZ39B6qifmHD0q3y3M+ZOyFm+F+Q34EESAv
+        u8q9ZJ2DBLA2Lx84qulFbylbcIK09Vs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-385-znf3gbb5PCy5O_eL0tSkOA-1; Fri, 13 Dec 2019 13:48:10 -0500
+X-MC-Unique: znf3gbb5PCy5O_eL0tSkOA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F649477;
+        Fri, 13 Dec 2019 18:48:09 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-117-123.ams2.redhat.com [10.36.117.123])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C21DD60474;
+        Fri, 13 Dec 2019 18:48:07 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     davem@davemloft.net
+Cc:     Stefano Garzarella <sgarzare@redhat.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: [PATCH net 1/2] vsock/virtio: fix null-pointer dereference in virtio_transport_recv_listen()
+Date:   Fri, 13 Dec 2019 19:48:00 +0100
+Message-Id: <20191213184801.486675-2-sgarzare@redhat.com>
+In-Reply-To: <20191213184801.486675-1-sgarzare@redhat.com>
+References: <20191213184801.486675-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ca26a9a-003f-6f24-08e4-f01b80e3e962@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 01:35:05PM -0500, Waiman Long wrote:
-> On 12/13/19 1:12 PM, Peter Zijlstra wrote:
-> >> In this way, the wasted space will be k bytes where k is the number of
-> >> 1-entry chains. I don't think merging adjacent blocks will be that
-> >> useful at this point. We can always add this capability later on if it
-> >> is found to be useful.
-> > I'm thinking 1 entry isn't much of a chain. My brain is completely fried
-> > atm, but are we really storing single entry 'chains' ? It seems to me we
-> > could skip that.
-> >
-> Indeed, the current code can produce a 1-entry chain. I also thought
-> that a chain had to be at least 2 entries. I got tripped up assuming
-> that. It could be a bug somewhere that allow a 1-entry chain to happen,
-> but I am not focusing on that right now.
+With multi-transport support, listener sockets are not bound to any
+transport. So, calling virtio_transport_reset(), when an error
+occurs, on a listener socket produces the following null-pointer
+dereference:
 
-If we need the minimum 2 entry granularity, it might make sense to spend
-a little time on that. If we can get away with single entry markers,
-then maybe write a comment so we'll not forget about it.
+  BUG: kernel NULL pointer dereference, address: 00000000000000e8
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 0 PID: 20 Comm: kworker/0:1 Not tainted 5.5.0-rc1-ste-00003-gb4be2=
+1f316ac-dirty #56
+  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS ?-20190727_073=
+836-buildvm-ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
+  Workqueue: virtio_vsock virtio_transport_rx_work [vmw_vsock_virtio_tran=
+sport]
+  RIP: 0010:virtio_transport_send_pkt_info+0x20/0x130 [vmw_vsock_virtio_t=
+ransport_common]
+  Code: 1f 84 00 00 00 00 00 0f 1f 00 55 48 89 e5 41 57 41 56 41 55 49 89=
+ f5 41 54 49 89 fc 53 48 83 ec 10 44 8b 76 20 e8 c0 ba fe ff <48> 8b 80 e=
+8 00 00 00 e8 64 e3 7d c1 45 8b 45 00 41 8b 8c 24 d4 02
+  RSP: 0018:ffffc900000b7d08 EFLAGS: 00010282
+  RAX: 0000000000000000 RBX: ffff88807bf12728 RCX: 0000000000000000
+  RDX: ffff88807bf12700 RSI: ffffc900000b7d50 RDI: ffff888035c84000
+  RBP: ffffc900000b7d40 R08: ffff888035c84000 R09: ffffc900000b7d08
+  R10: ffff8880781de800 R11: 0000000000000018 R12: ffff888035c84000
+  R13: ffffc900000b7d50 R14: 0000000000000000 R15: ffff88807bf12724
+  FS:  0000000000000000(0000) GS:ffff88807dc00000(0000) knlGS:00000000000=
+00000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 00000000000000e8 CR3: 00000000790f4004 CR4: 0000000000160ef0
+  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  Call Trace:
+   virtio_transport_reset+0x59/0x70 [vmw_vsock_virtio_transport_common]
+   virtio_transport_recv_pkt+0x5bb/0xe50 [vmw_vsock_virtio_transport_comm=
+on]
+   ? detach_buf_split+0xf1/0x130
+   virtio_transport_rx_work+0xba/0x130 [vmw_vsock_virtio_transport]
+   process_one_work+0x1c0/0x300
+   worker_thread+0x45/0x3c0
+   kthread+0xfc/0x130
+   ? current_work+0x40/0x40
+   ? kthread_park+0x90/0x90
+   ret_from_fork+0x35/0x40
+  Modules linked in: sunrpc kvm_intel kvm vmw_vsock_virtio_transport vmw_=
+vsock_virtio_transport_common irqbypass vsock virtio_rng rng_core
+  CR2: 00000000000000e8
+  ---[ end trace e75400e2ea2fa824 ]---
+
+This happens because virtio_transport_reset() calls
+virtio_transport_send_pkt_info() that can be used only on
+connecting/connected sockets.
+
+This patch fixes the issue, using virtio_transport_reset_no_sock()
+instead of virtio_transport_reset() when we are handling a listener
+socket.
+
+Fixes: c0cfa2d8a788 ("vsock: add multi-transports support")
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ net/vmw_vsock/virtio_transport_common.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virt=
+io_transport_common.c
+index e5ea29c6bca7..f5991006190e 100644
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -1021,18 +1021,18 @@ virtio_transport_recv_listen(struct sock *sk, str=
+uct virtio_vsock_pkt *pkt,
+ 	int ret;
+=20
+ 	if (le16_to_cpu(pkt->hdr.op) !=3D VIRTIO_VSOCK_OP_REQUEST) {
+-		virtio_transport_reset(vsk, pkt);
++		virtio_transport_reset_no_sock(t, pkt);
+ 		return -EINVAL;
+ 	}
+=20
+ 	if (sk_acceptq_is_full(sk)) {
+-		virtio_transport_reset(vsk, pkt);
++		virtio_transport_reset_no_sock(t, pkt);
+ 		return -ENOMEM;
+ 	}
+=20
+ 	child =3D vsock_create_connected(sk);
+ 	if (!child) {
+-		virtio_transport_reset(vsk, pkt);
++		virtio_transport_reset_no_sock(t, pkt);
+ 		return -ENOMEM;
+ 	}
+=20
+@@ -1054,7 +1054,7 @@ virtio_transport_recv_listen(struct sock *sk, struc=
+t virtio_vsock_pkt *pkt,
+ 	 */
+ 	if (ret || vchild->transport !=3D &t->transport) {
+ 		release_sock(child);
+-		virtio_transport_reset(vsk, pkt);
++		virtio_transport_reset_no_sock(t, pkt);
+ 		sock_put(child);
+ 		return ret;
+ 	}
+--=20
+2.23.0
+
