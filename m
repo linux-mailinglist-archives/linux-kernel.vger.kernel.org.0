@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C77B11EEC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 00:47:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A26FF11EEC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 00:47:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfLMXqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 18:46:25 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35400 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbfLMXqM (ORCPT
+        id S1726907AbfLMXqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 18:46:15 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40664 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfLMXqO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 18:46:12 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b19so2300139pfo.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 15:46:12 -0800 (PST)
+        Fri, 13 Dec 2019 18:46:14 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g6so1878081plp.7
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 15:46:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=cA4UDUHuCTqvlIh454k1CuQ9LBQaRg6FJ8cZd003K1c=;
-        b=F6arw4C77gsnO3MMZuHtdQgaIV/tPDc/9xs0Znpn4zcamJF2EiYYwM5SXXX2RsSfuE
-         e9ArJWGHwqypnETr+1RR9JJD+hpKmoraaTH7+w7y7h9RaBPlrMwoSUhLrOWJq43A75T1
-         YxoGhGHLaC29Halx1mNtG/A8Ea3eSPKLP/0CI=
+        bh=+EeHRETkxu0picdlIzKsYQGsspaxhuZcBp2HnJGPsVI=;
+        b=dcKFlE9XwzZl4mRXm1/nubZ9pM/vI36bs0JeNK8OmJeHbYVsGHdZYepNRVJ27sqRc8
+         hBJ40LIojZR/TpIta9y7LrW5GFl/dpxEH1+dISE61RwY2XZdnLh1/ZIv6XoYsVSE5+b2
+         5ynaQAh0YciRpY3C3TrKMakmgW3Wn/NaJtiGM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cA4UDUHuCTqvlIh454k1CuQ9LBQaRg6FJ8cZd003K1c=;
-        b=KPKnaHFSh2Z/Zw63hhKpX4jLrHk3nEdz7YD5Y+RHhg+4wiiMNC8vNJbM1rGuNeopAB
-         llqIXVTVhIkzvxbkYLReLGsDK6HyIbvhlOHSPKLrn7G7opg/vC3188kP/VB1ijHa58r6
-         J6k97RKu3GQhUrX/L7ALPOnuNYe8Ajmtd6aQTXQ0NSyb74IuTSU1HEW09qeSPzaSQqVL
-         XkZYPjG3RTCGZm8WZl9vxgPOCBA6Kotbxw8C5NJ5+FFybCdufhM1BHnUtDYZrFbjqqLO
-         Vqx/ARiTzqbbzqgiXI6Ubp81BfMRWHnXZ+YYASNawHHt60MajJ1zC5jructVw91oPof+
-         Z4HA==
-X-Gm-Message-State: APjAAAU6H4m0okzZuSSGNFqvL059vOcqSl2prjd2pcGt0aeQVh3LNMzL
-        KRT0oL3we3i+1v96fZMYPtoNdg==
-X-Google-Smtp-Source: APXvYqyWbcMVX6RrILQqSb7dvBaskEzzs7sYm+xMlYD7IHgX8YdOLFiBpC076Ti6YOU5glF8ziBxIQ==
-X-Received: by 2002:a63:5407:: with SMTP id i7mr2453004pgb.330.1576280772173;
-        Fri, 13 Dec 2019 15:46:12 -0800 (PST)
+        bh=+EeHRETkxu0picdlIzKsYQGsspaxhuZcBp2HnJGPsVI=;
+        b=MkCzplKp7gDsFsonPl+RqKgLe4BkeD6BHRvE9Hz2aCGEGHGm9DZtW3nK4/JxQ5gojV
+         Q+3aqEEfRfGXpMXy5N8HakYl7G5O7FVSO4MvUldfuhEvbOAvkOLMMZ7HcXc4yUiIefHw
+         g+omdAAfgSwEj6WRT/QmJsB/yPERYlDJ3DK8EHqUNx9UHY0ki5/WYXrFWTPp6+bmGiKg
+         hW+MnrekQl0qlTEWkk/KWBEeTyuvsxsonEKU12XLzYzYGxM2BoDCbk5VrKYYPDcg2PAg
+         Z0ilL+mSk5ZyiBO0kGB566pBb6/am+y9P2L7rJ9gNBq0E7bT8iKZsMgDdKr9IZUcuL2b
+         fT7g==
+X-Gm-Message-State: APjAAAWFxa24oj9/vEqSA/+NWsWNCAFWfxsRtSjwXq5817hqAoo1kdyC
+        U6tUnB9EwZ7jlmmSDYiCQhPqKA==
+X-Google-Smtp-Source: APXvYqzwmXELCKHrbQ5y46SHZ0WNh/wWcubb9wd3jDnndYX/iS4e3gFT+K2H5pXNZA1dmILWpcEWAg==
+X-Received: by 2002:a17:90a:2569:: with SMTP id j96mr2373833pje.79.1576280773362;
+        Fri, 13 Dec 2019 15:46:13 -0800 (PST)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id z19sm12282905pfn.49.2019.12.13.15.46.11
+        by smtp.gmail.com with ESMTPSA id z19sm12282905pfn.49.2019.12.13.15.46.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 15:46:11 -0800 (PST)
+        Fri, 13 Dec 2019 15:46:12 -0800 (PST)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Andrzej Hajda <a.hajda@samsung.com>,
         Neil Armstrong <narmstrong@baylibre.com>
@@ -53,9 +53,9 @@ Cc:     robdclark@chromium.org, linux-arm-msm@vger.kernel.org,
         Jernej Skrabec <jernej.skrabec@siol.net>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH 7/9] drm/bridge: ti-sn65dsi86: Group DP link training bits in a function
-Date:   Fri, 13 Dec 2019 15:45:28 -0800
-Message-Id: <20191213154448.7.I1fc75ad11db9048ef08cfe1ab7322753d9a219c7@changeid>
+Subject: [PATCH 8/9] drm/bridge: ti-sn65dsi86: Train at faster rates if slower ones fail
+Date:   Fri, 13 Dec 2019 15:45:29 -0800
+Message-Id: <20191213154448.8.I251add713bc5c97225200894ab110ea9183434fd@changeid>
 X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 In-Reply-To: <20191213234530.145963-1-dianders@chromium.org>
 References: <20191213234530.145963-1-dianders@chromium.org>
@@ -66,130 +66,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We'll re-organize the ti_sn_bridge_enable() function a bit to group
-together all the parts relating to link training and split them into a
-sub-function.  This is not intended to have any functional change and
-is in preparation for trying link training several times at different
-rates.  One small side effect here is that if link training fails
-we'll now leave the DP PLL disabled, but that seems like a sane thing
-to do.
+If we fail training at a lower DP link rate let's now keep trying
+until we run out of rates to try.  Basically the algorithm here is to
+start at the link rate that is the theoretical minimum and then slowly
+bump up until we run out of rates or hit the max rate of the sink.  We
+query the sink using a DPCD read.
+
+This is, in fact, important in practice.  Specifically at least one
+panel hooked up to the bridge (AUO B116XAK01) had a theoretical min
+rate more than 1.62 GHz (if run at 24 bpp) and fails to train at the
+next rate (2.16 GHz).  It would train at 2.7 GHz, though.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 86 ++++++++++++++++-----------
- 1 file changed, 52 insertions(+), 34 deletions(-)
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 69 +++++++++++++++++++++++----
+ 1 file changed, 59 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index d5990a0947b9..48fb4dc72e1c 100644
+index 48fb4dc72e1c..cc8bef172f69 100644
 --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
 +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -530,6 +530,46 @@ static unsigned int ti_sn_get_max_lanes(struct ti_sn_bridge *pdata)
+@@ -454,7 +454,7 @@ static const unsigned int ti_sn_bridge_dp_rate_lut[] = {
+ 	0, 1620, 2160, 2430, 2700, 3240, 4320, 5400
+ };
+ 
+-static void ti_sn_bridge_set_dp_rate(struct ti_sn_bridge *pdata)
++static int ti_sn_bridge_calc_min_dp_rate_idx(struct ti_sn_bridge *pdata)
+ {
+ 	unsigned int bit_rate_khz, dp_rate_mhz;
+ 	unsigned int i;
+@@ -472,8 +472,42 @@ static void ti_sn_bridge_set_dp_rate(struct ti_sn_bridge *pdata)
+ 		if (ti_sn_bridge_dp_rate_lut[i] > dp_rate_mhz)
+ 			break;
+ 
+-	regmap_update_bits(pdata->regmap, SN_DATARATE_CONFIG_REG,
+-			   DP_DATARATE_MASK, DP_DATARATE(i));
++	return i;
++}
++
++static int ti_sn_bridge_get_max_dp_rate_idx(struct ti_sn_bridge *pdata)
++{
++	u8 data;
++	int ret;
++
++	ret = drm_dp_dpcd_readb(&pdata->aux, DP_MAX_LINK_RATE, &data);
++	if (ret != 1) {
++		DRM_DEV_ERROR(pdata->dev,
++			      "Can't read max rate (%d); assuming 5.4 GHz\n",
++			      ret);
++		return ARRAY_SIZE(ti_sn_bridge_dp_rate_lut) - 1;
++	}
++
++	/*
++	 * Return an index into ti_sn_bridge_dp_rate_lut.  Just hardcode
++	 * these indicies since it's not like the register spec is ever going
++	 * to change and a loop would just be more complicated.  Apparently
++	 * the DP sink can only return these few rates as supported even
++	 * though the bridge allows some rates in between.
++	 */
++	switch (data) {
++	case DP_LINK_BW_1_62:
++		return 1;
++	case DP_LINK_BW_2_7:
++		return 4;
++	case DP_LINK_BW_5_4:
++		return 7;
++	}
++
++	DRM_DEV_ERROR(pdata->dev,
++		      "Unexpected max data rate (%#x); assuming 5.4 GHz\n",
++		      (int)data);
++	return ARRAY_SIZE(ti_sn_bridge_dp_rate_lut) - 1;
+ }
+ 
+ static void ti_sn_bridge_set_video_timings(struct ti_sn_bridge *pdata)
+@@ -530,13 +564,15 @@ static unsigned int ti_sn_get_max_lanes(struct ti_sn_bridge *pdata)
  	return data & DP_LANE_COUNT_MASK;
  }
  
-+static int ti_sn_link_training(struct ti_sn_bridge *pdata)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	/* set dp clk frequency value */
-+	ti_sn_bridge_set_dp_rate(pdata);
-+
-+	/* enable DP PLL */
-+	regmap_write(pdata->regmap, SN_PLL_ENABLE_REG, 1);
-+
-+	ret = regmap_read_poll_timeout(pdata->regmap, SN_DPPLL_SRC_REG, val,
-+				       val & DPPLL_SRC_DP_PLL_LOCK, 1000,
-+				       50 * 1000);
-+	if (ret) {
-+		DRM_ERROR("DP_PLL_LOCK polling failed (%d)\n", ret);
-+		goto exit;
-+	}
-+
-+	/* Semi auto link training mode */
-+	regmap_write(pdata->regmap, SN_ML_TX_MODE_REG, 0x0A);
-+	ret = regmap_read_poll_timeout(pdata->regmap, SN_ML_TX_MODE_REG, val,
-+				       val == ML_TX_MAIN_LINK_OFF ||
-+				       val == ML_TX_NORMAL_MODE, 1000,
-+				       500 * 1000);
-+	if (ret) {
-+		DRM_ERROR("Training complete polling failed (%d)\n", ret);
-+	} else if (val == ML_TX_MAIN_LINK_OFF) {
-+		DRM_ERROR("Link training failed, link is off\n");
-+		ret = -EIO;
-+	}
-+
-+exit:
-+	/* Disable the PLL if we failed */
-+	if (ret)
-+		regmap_write(pdata->regmap, SN_PLL_ENABLE_REG, 0);
-+
-+	return ret;
-+}
-+
+-static int ti_sn_link_training(struct ti_sn_bridge *pdata)
++static int ti_sn_link_training(struct ti_sn_bridge *pdata, int dp_rate_idx,
++			       const char **last_err_str)
+ {
+ 	unsigned int val;
+ 	int ret;
+ 
+ 	/* set dp clk frequency value */
+-	ti_sn_bridge_set_dp_rate(pdata);
++	regmap_update_bits(pdata->regmap, SN_DATARATE_CONFIG_REG,
++			   DP_DATARATE_MASK, DP_DATARATE(dp_rate_idx));
+ 
+ 	/* enable DP PLL */
+ 	regmap_write(pdata->regmap, SN_PLL_ENABLE_REG, 1);
+@@ -545,7 +581,7 @@ static int ti_sn_link_training(struct ti_sn_bridge *pdata)
+ 				       val & DPPLL_SRC_DP_PLL_LOCK, 1000,
+ 				       50 * 1000);
+ 	if (ret) {
+-		DRM_ERROR("DP_PLL_LOCK polling failed (%d)\n", ret);
++		*last_err_str = "DP_PLL_LOCK polling failed";
+ 		goto exit;
+ 	}
+ 
+@@ -556,9 +592,9 @@ static int ti_sn_link_training(struct ti_sn_bridge *pdata)
+ 				       val == ML_TX_NORMAL_MODE, 1000,
+ 				       500 * 1000);
+ 	if (ret) {
+-		DRM_ERROR("Training complete polling failed (%d)\n", ret);
++		*last_err_str = "Training complete polling failed";
+ 	} else if (val == ML_TX_MAIN_LINK_OFF) {
+-		DRM_ERROR("Link training failed, link is off\n");
++		*last_err_str = "Link training failed, link is off";
+ 		ret = -EIO;
+ 	}
+ 
+@@ -573,6 +609,9 @@ static int ti_sn_link_training(struct ti_sn_bridge *pdata)
  static void ti_sn_bridge_enable(struct drm_bridge *bridge)
  {
  	struct ti_sn_bridge *pdata = bridge_to_ti_sn_bridge(bridge);
-@@ -555,29 +595,8 @@ static void ti_sn_bridge_enable(struct drm_bridge *bridge)
- 	regmap_update_bits(pdata->regmap, SN_DSI_LANES_REG,
- 			   CHA_DSI_LANES_MASK, val);
++	const char *last_err_str;
++	int dp_rate_idx;
++	int max_dp_rate_idx;
+ 	unsigned int val;
+ 	int ret;
  
--	/* Set the DP output format (18 bpp or 24 bpp) */
--	val = (ti_sn_bridge_get_bpp(pdata) == 18) ? BPP_18_RGB : 0;
--	regmap_update_bits(pdata->regmap, SN_DATA_FORMAT_REG, BPP_18_RGB, val);
--
--	/* DP lane config */
--	val = DP_NUM_LANES(min(pdata->dp_lanes, 3));
--	regmap_update_bits(pdata->regmap, SN_SSC_CONFIG_REG, DP_NUM_LANES_MASK,
--			   val);
--
--	/* set dsi/dp clk frequency value */
-+	/* set dsi clk frequency value */
- 	ti_sn_bridge_set_dsi_rate(pdata);
--	ti_sn_bridge_set_dp_rate(pdata);
--
--	/* enable DP PLL */
--	regmap_write(pdata->regmap, SN_PLL_ENABLE_REG, 1);
--
--	ret = regmap_read_poll_timeout(pdata->regmap, SN_DPPLL_SRC_REG, val,
--				       val & DPPLL_SRC_DP_PLL_LOCK, 1000,
--				       50 * 1000);
--	if (ret) {
--		DRM_ERROR("DP_PLL_LOCK polling failed (%d)\n", ret);
--		return;
--	}
+@@ -616,9 +655,19 @@ static void ti_sn_bridge_enable(struct drm_bridge *bridge)
+ 	regmap_update_bits(pdata->regmap, SN_SSC_CONFIG_REG, DP_NUM_LANES_MASK,
+ 			   val);
  
- 	/**
- 	 * The SN65DSI86 only supports ASSR Display Authentication method and
-@@ -588,19 +607,18 @@ static void ti_sn_bridge_enable(struct drm_bridge *bridge)
- 	drm_dp_dpcd_writeb(&pdata->aux, DP_EDP_CONFIGURATION_SET,
- 			   DP_ALTERNATE_SCRAMBLER_RESET_ENABLE);
- 
--	/* Semi auto link training mode */
--	regmap_write(pdata->regmap, SN_ML_TX_MODE_REG, 0x0A);
--	ret = regmap_read_poll_timeout(pdata->regmap, SN_ML_TX_MODE_REG, val,
--				       val == ML_TX_MAIN_LINK_OFF ||
--				       val == ML_TX_NORMAL_MODE, 1000,
--				       500 * 1000);
--	if (ret) {
--		DRM_ERROR("Training complete polling failed (%d)\n", ret);
--		return;
--	} else if (val == ML_TX_MAIN_LINK_OFF) {
--		DRM_ERROR("Link training failed, link is off\n");
-+	/* Set the DP output format (18 bpp or 24 bpp) */
-+	val = (ti_sn_bridge_get_bpp(pdata) == 18) ? BPP_18_RGB : 0;
-+	regmap_update_bits(pdata->regmap, SN_DATA_FORMAT_REG, BPP_18_RGB, val);
-+
-+	/* DP lane config */
-+	val = DP_NUM_LANES(min(pdata->dp_lanes, 3));
-+	regmap_update_bits(pdata->regmap, SN_SSC_CONFIG_REG, DP_NUM_LANES_MASK,
-+			   val);
-+
-+	ret = ti_sn_link_training(pdata);
-+	if (ret)
+-	ret = ti_sn_link_training(pdata);
+-	if (ret)
++	/* Train until we run out of rates */
++	max_dp_rate_idx = ti_sn_bridge_get_max_dp_rate_idx(pdata);
++	for (dp_rate_idx = ti_sn_bridge_calc_min_dp_rate_idx(pdata);
++	     dp_rate_idx <= max_dp_rate_idx;
++	     dp_rate_idx++) {
++		ret = ti_sn_link_training(pdata, dp_rate_idx, &last_err_str);
++		if (!ret)
++			break;
++	}
++	if (ret) {
++		DRM_DEV_ERROR(pdata->dev, "%s (%d)\n", last_err_str, ret);
  		return;
--	}
++	}
  
  	/* config video parameters */
  	ti_sn_bridge_set_video_timings(pdata);
