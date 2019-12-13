@@ -2,135 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8956211EB7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7811811EB8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:09:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbfLMUFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:05:22 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35731 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728736AbfLMUFW (ORCPT
+        id S1729002AbfLMUJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:09:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58788 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728891AbfLMUI7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:05:22 -0500
-Received: by mail-qt1-f195.google.com with SMTP id e12so80144qto.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 12:05:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=AGxRnEh5CXFWXGLun9RvFBMrbc3Csuo1hFkC8taJ9Ao=;
-        b=fi8pocFAG1MtH+wrS/RwicUEW6vUdIGEjPL2lsSHOLPBs6UThnygqIyuQc95xton9e
-         Yxoneci0+u6nu3ovdvs2nwA6RCfIMHAvQP7WkJLiEs9uazqRsxy1GzWplPGcynkU2vEK
-         m7juwjZ8BwyfJRwNzTstai0DRHVpUgvjzk1Q5uqS/8LJE0nHMg3ldrRcWLKuHAHLT9dG
-         VlArpH8BK+h7UwtXjWpyLxEFn8kV0wny/tRfB8fOru0yd0avuJOpcJRwpsLKPK0y/1/z
-         q1OAdPQzLYkV9FLa/Gez/xOtKcg1Uv+ldtQ5Z2yWXT1+Sl1YJ5Vol1E4IiG9H3W6XsSS
-         WQAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AGxRnEh5CXFWXGLun9RvFBMrbc3Csuo1hFkC8taJ9Ao=;
-        b=am+Mz0aldLp0ukkWdwSEn1eKevpeu9oHerfuCIGyWoDaSzOSS5jW3+k+UFO8yxIn9k
-         qIxeunNv1o6dfvrlGO86koAKtxx9WGX99/P+vOIQFsnCWm+w/KvjqnT1oi6p9Fj+wI30
-         LydM/IAdzCVFQpJsaLBHS4uSaeWIOhQ+6P5j6ugXE3jHuF2HSJ25K8eEr7SUU8M95kTw
-         HqzjLvEoZJ2Q+4srNMJARiHoTdE90mfIsoaTBsmtzi9zpAHLmCzLtsIS2NZqlkX2vhJ+
-         iJ8Y/tONAr7dICY/IN9cE0u3rIvFjSy0T1jgXfCNi3dI5RCRfnJwhrT7eMrBTMYzWXCe
-         bdbA==
-X-Gm-Message-State: APjAAAVErmsltRchHa3EPgs+RnN752Ler8f5Qa8/kcItfJsFzW6QtLqY
-        zQkPPu21q7gIZee/5myJUcua6Q==
-X-Google-Smtp-Source: APXvYqyt8/F7dcovN6ml4CYTmL9Z4Gv+D5IHB1cNmx/2gV7w9evyzyCC0M4BYf6Eo/p0Bvy7I4PQQA==
-X-Received: by 2002:aed:24ec:: with SMTP id u41mr4951304qtc.220.1576267520991;
-        Fri, 13 Dec 2019 12:05:20 -0800 (PST)
-Received: from localhost (70.44.39.90.res-cmts.bus.ptd.net. [70.44.39.90])
-        by smtp.gmail.com with ESMTPSA id f23sm3092385qke.104.2019.12.13.12.05.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 12:05:20 -0800 (PST)
-Date:   Fri, 13 Dec 2019 15:05:19 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 3/3] mm: memcontrol: recursive memory.low protection
-Message-ID: <20191213200519.GA168988@cmpxchg.org>
-References: <20191213192158.188939-1-hannes@cmpxchg.org>
- <20191213192158.188939-4-hannes@cmpxchg.org>
+        Fri, 13 Dec 2019 15:08:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576267738;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/84os5q/0vcHvfh72M89AVayh59i0B6U/l5rjTal2t8=;
+        b=J5AXFuwuqPg8SCTBfY1FUuwgoJSPSu5nSB+rJmA9ERq65q0R37qMFSYs59iXgnHtOrToDW
+        m1UAMyocW3KoTwx6wqIlJ0rrmm1OgdNhuw8J/+YLJ/tRVlF/+CnxDtXgsZNOkomALNmbm7
+        gJuaMpQDFgFudSinfsMpiGD88t1dQj4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-217-TzBLTnOUOWm_n2yPNLd_Vg-1; Fri, 13 Dec 2019 15:08:55 -0500
+X-MC-Unique: TzBLTnOUOWm_n2yPNLd_Vg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BBAE718A6EC2;
+        Fri, 13 Dec 2019 20:08:52 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-122-140.rdu2.redhat.com [10.10.122.140])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0402719C4F;
+        Fri, 13 Dec 2019 20:08:51 +0000 (UTC)
+Subject: Re: [PATCH 4/5] locking/lockdep: Reuse free chain_hlocks entries
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+References: <20191212223525.1652-1-longman@redhat.com>
+ <20191212223525.1652-5-longman@redhat.com>
+ <20191213102525.GA2844@hirez.programming.kicks-ass.net>
+ <20191213105042.GJ2871@hirez.programming.kicks-ass.net>
+ <9a79ef1a-96e0-1fd7-97e8-ef854b08524d@redhat.com>
+ <20191213181255.GF2844@hirez.programming.kicks-ass.net>
+ <7ca26a9a-003f-6f24-08e4-f01b80e3e962@redhat.com>
+ <20191213184759.GH2844@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <2763959e-b0e9-a8cd-3468-232d128c8260@redhat.com>
+Date:   Fri, 13 Dec 2019 15:08:51 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213192158.188939-4-hannes@cmpxchg.org>
+In-Reply-To: <20191213184759.GH2844@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 02:21:58PM -0500, Johannes Weiner wrote:
-> +	if (cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_RECURSIVE_PROT) {
-> +		unsigned long unclaimed;
-> +		/*
-> +		 * If the children aren't claiming (all of) the
-> +		 * protection afforded to them by the parent,
-> +		 * distribute the remainder in proportion to the
-> +		 * (unprotected) size of each cgroup. That way,
-> +		 * cgroups that aren't explicitly prioritized wrt each
-> +		 * other compete freely over the allowance, but they
-> +		 * are collectively protected from neighboring trees.
-> +		 *
-> +		 * We're using unprotected size for the weight so that
-> +		 * if some cgroups DO claim explicit protection, we
-> +		 * don't protect the same bytes twice.
-> +		 */
-> +		unclaimed = parent_effective - siblings_protected;
-> +		unclaimed *= usage - protected;
-> +		unclaimed /= parent_usage - siblings_protected;
+On 12/13/19 1:47 PM, Peter Zijlstra wrote:
+> On Fri, Dec 13, 2019 at 01:35:05PM -0500, Waiman Long wrote:
+>> On 12/13/19 1:12 PM, Peter Zijlstra wrote:
+>>>> In this way, the wasted space will be k bytes where k is the number of
+>>>> 1-entry chains. I don't think merging adjacent blocks will be that
+>>>> useful at this point. We can always add this capability later on if it
+>>>> is found to be useful.
+>>> I'm thinking 1 entry isn't much of a chain. My brain is completely fried
+>>> atm, but are we really storing single entry 'chains' ? It seems to me we
+>>> could skip that.
+>>>
+>> Indeed, the current code can produce a 1-entry chain. I also thought
+>> that a chain had to be at least 2 entries. I got tripped up assuming
+>> that. It could be a bug somewhere that allow a 1-entry chain to happen,
+>> but I am not focusing on that right now.
+> If we need the minimum 2 entry granularity, it might make sense to spend
+> a little time on that. If we can get away with single entry markers,
+> then maybe write a comment so we'll not forget about it.
+>
+I will take a look at why an 1-entry chain happes and see if it is a bug
+that need to be fixed.
 
-Brainfart I noticed just after sending it out - naturally. If there is
-unclaimed protection in the parent, but the children use exactly how
-much they claim, this will div0. We have to check for usage that isn't
-explicitly protected in the child to which to apply the float. Fixlet
-below. Doesn't change the overall logic, though.
+Cheers,
+Longman
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 2e352cd6c38d..8d7e9490740b 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -6328,21 +6328,24 @@ static unsigned long effective_protection(unsigned long usage,
- 	 */
- 	ep = protected;
- 
--	if (cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_RECURSIVE_PROT) {
-+	/*
-+	 * If the children aren't claiming (all of) the protection
-+	 * afforded to them by the parent, distribute the remainder in
-+	 * proportion to the (unprotected) size of each cgroup. That
-+	 * way, cgroups that aren't explicitly prioritized wrt each
-+	 * other compete freely over the allowance, but they are
-+	 * collectively protected from neighboring trees.
-+	 *
-+	 * We're using unprotected size for the weight so that if some
-+	 * cgroups DO claim explicit protection, we don't protect the
-+	 * same bytes twice.
-+	 */
-+	if (!(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_RECURSIVE_PROT))
-+		return ep;
-+
-+	if (usage > protected && parent_effective > siblings_protected) {
- 		unsigned long unclaimed;
--		/*
--		 * If the children aren't claiming (all of) the
--		 * protection afforded to them by the parent,
--		 * distribute the remainder in proportion to the
--		 * (unprotected) size of each cgroup. That way,
--		 * cgroups that aren't explicitly prioritized wrt each
--		 * other compete freely over the allowance, but they
--		 * are collectively protected from neighboring trees.
--		 *
--		 * We're using unprotected size for the weight so that
--		 * if some cgroups DO claim explicit protection, we
--		 * don't protect the same bytes twice.
--		 */
-+
- 		unclaimed = parent_effective - siblings_protected;
- 		unclaimed *= usage - protected;
- 		unclaimed /= parent_usage - siblings_protected;
