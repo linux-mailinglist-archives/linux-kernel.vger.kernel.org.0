@@ -2,173 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55AB411E91A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:20:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C7EF11E920
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:26:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbfLMRTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 12:19:53 -0500
-Received: from mga18.intel.com ([134.134.136.126]:23731 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728255AbfLMRTx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 12:19:53 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 09:19:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
-   d="scan'208";a="414351942"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Dec 2019 09:19:50 -0800
-Date:   Fri, 13 Dec 2019 09:19:50 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Liran Alon <liran.alon@oracle.com>
-Cc:     Barret Rhoden <brho@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        linux-nvdimm@lists.01.org, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jason.zeng@intel.com
-Subject: Re: [PATCH v5 2/2] kvm: Use huge pages for DAX-backed files
-Message-ID: <20191213171950.GA31552@linux.intel.com>
-References: <20191212182238.46535-1-brho@google.com>
- <20191212182238.46535-3-brho@google.com>
- <06108004-1720-41EB-BCAB-BFA8FEBF4772@oracle.com>
- <ED482280-CB47-4AB6-9E7E-EEE7848E0F8B@oracle.com>
- <f8e948ff-6a2a-a6d6-9d8e-92b93003354a@google.com>
- <65FB6CC1-3AD2-4D6F-9481-500BD7037203@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <65FB6CC1-3AD2-4D6F-9481-500BD7037203@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1728455AbfLMR0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 12:26:01 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:41908 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726404AbfLMR0A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 12:26:00 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id ABE2D8EE19A;
+        Fri, 13 Dec 2019 09:25:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1576257959;
+        bh=cmlDkaHhdLMtJTUfRnK2Kihnle7r/X/R7Z8wR6Tc2jw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Eu6jZTZ2aoGWQ+h6efs/N4mhgMH0CZmN/Su3qNcDt5iEemXKYMkHWrQ7RC5+644EN
+         b85w2OICaez3dWdY9QNo8hj3c2+8AhIvS3jI7muPhoTYUkX58HklAStL6UgD2/198+
+         LRWTSeO3uRnu+1SVjplouMMOb4NqOgv0c5dUkSso=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id R3YuPfNVo9JD; Fri, 13 Dec 2019 09:25:59 -0800 (PST)
+Received: from [9.232.197.95] (unknown [129.33.253.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 40D7B8EE0E0;
+        Fri, 13 Dec 2019 09:25:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1576257959;
+        bh=cmlDkaHhdLMtJTUfRnK2Kihnle7r/X/R7Z8wR6Tc2jw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Eu6jZTZ2aoGWQ+h6efs/N4mhgMH0CZmN/Su3qNcDt5iEemXKYMkHWrQ7RC5+644EN
+         b85w2OICaez3dWdY9QNo8hj3c2+8AhIvS3jI7muPhoTYUkX58HklAStL6UgD2/198+
+         LRWTSeO3uRnu+1SVjplouMMOb4NqOgv0c5dUkSso=
+Message-ID: <1576257955.8504.20.camel@HansenPartnership.com>
+Subject: Re: [PATCH v4 2/2] IMA: Call workqueue functions to measure queued
+ keys
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Date:   Fri, 13 Dec 2019 12:25:55 -0500
+In-Reply-To: <20191213171827.28657-3-nramas@linux.microsoft.com>
+References: <20191213171827.28657-1-nramas@linux.microsoft.com>
+         <20191213171827.28657-3-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 03:07:31AM +0200, Liran Alon wrote:
-> 
-> > On 12 Dec 2019, at 21:55, Barret Rhoden <brho@google.com> wrote:
-> > 
-> >>>> Note that KVM already faulted in the page (or huge page) in the host's
-> >>>> page table, and we hold the KVM mmu spinlock.  We grabbed that lock in
-> >>>> kvm_mmu_notifier_invalidate_range_end, before checking the mmu seq.
-> >>>> 
-> >>>> Signed-off-by: Barret Rhoden <brho@google.com>
-> >>> 
-> >>> I don’t think the right place to change for this functionality is
-> >>> transparent_hugepage_adjust() which is meant to handle PFNs that are
-> >>> mapped as part of a transparent huge-page.
-> >>> 
-> >>> For example, this would prevent mapping DAX-backed file page as 1GB.  As
-> >>> transparent_hugepage_adjust() only handles the case (level ==
-> >>> PT_PAGE_TABLE_LEVEL).
+On Fri, 2019-12-13 at 09:18 -0800, Lakshmi Ramasubramanian wrote:
+[...]
+> @@ -165,6 +167,12 @@ void ima_post_key_create_or_update(struct key
+> *keyring, struct key *key,
+>  	if (!payload || (payload_len == 0))
+>  		return;
+>  
+> +	if (!ima_process_keys)
+> +		queued = ima_queue_key(keyring, payload,
+> payload_len);
+> +
+> +	if (queued)
+> +		return;
+> +
+>  	/*
+>  	 * keyring->description points to the name of the keyring
+>  	 * (such as ".builtin_trusted_keys", ".ima", etc.) to
+> diff --git a/security/integrity/ima/ima_policy.c
+> b/security/integrity/ima/ima_policy.c
+> index a4dde9d575b2..04b9c6c555de 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -807,6 +807,9 @@ void ima_update_policy(void)
+>  		kfree(arch_policy_entry);
+>  	}
+>  	ima_update_policy_flag();
+> +
+> +	/* Custom IMA policy has been loaded */
+> +	ima_process_queued_keys();
+>  }
 
-Teaching thp_adjust() how to handle 1GB wouldn't be a bad thing.  It's
-unlikely THP itself will support 1GB pages any time soon, but having the
-logic there wouldn't hurt anything.
+There's no locking around the ima_process_keys flag.  If you get two
+policy updates in quick succession can't this flag change as you're
+processing the second update meaning you lose it because the flag was
+false when you decided to build it for the queue but becomes true
+before you check above whether you need to queue it?
 
-> >>> As you are parsing the page-tables to discover the page-size the PFN is
-> >>> mapped in, I think you should instead modify kvm_host_page_size() to
-> >>> parse page-tables instead of rely on vma_kernel_pagesize() (Which relies
-> >>> on vma->vm_ops->pagesize()) in case of is_zone_device_page().
-> >>>
-> >>> The main complication though of doing this is that at this point you
-> >>> don’t yet have the PFN that is retrieved by try_async_pf(). So maybe you
-> >>> should consider modifying the order of calls in tdp_page_fault() &
-> >>> FNAME(page_fault)().
-> >>> 
-> >>> -Liran
-> >> Or alternatively when thinking about it more, maybe just rename
-> >> transparent_hugepage_adjust() to not be specific to THP and better handle
-> >> the case of parsing page-tables changing mapping-level to 1GB.
-> >> That is probably easier and more elegant.
+Note you don't need locking to fix this, you just need to ensure that
+you use the same copy of the flag value for both tests.
 
-Agreed.
+James
 
-> > I can rename it to hugepage_adjust(), since it's not just THP anymore.
-
-Or maybe allowed_hugepage_adjust()?  To pair with disallowed_hugepage_adjust(),
-which adjusts KVM's page size in the opposite direction to avoid the iTLB
-multi-hit issue.
-
-> 
-> Sounds good.
-> 
-> > 
-> > I was a little hesitant to change the this to handle 1 GB pages with this
-> > patchset at first.  I didn't want to break the non-DAX case stuff by doing
-> > so.
-> 
-> Why would it affect non-DAX case?
-> Your patch should just make hugepage_adjust() to parse page-tables only in case is_zone_device_page(). Otherwise, page tables shouldn’t be parsed.
-> i.e. THP merged pages should still be detected by PageTransCompoundMap().
-
-I think what Barret is saying is that teaching thp_adjust() how to do 1gb
-mappings would naturally affect the code path for THP pages.  But I agree
-that it would be superficial.
- 
-> > Specifically, can a THP page be 1 GB, and if so, how can you tell?  If you
-> > can't tell easily, I could walk the page table for all cases, instead of
-> > just zone_device().
-
-No, THP doesn't currently support 1gb pages.  Expliciting returning
-PMD_SIZE on PageTransCompoundMap() would be a good thing from a readability
-perspective.
-
-> I prefer to walk page-tables only for is_zone_device_page().
-> 
-> > 
-> > I'd also have to drop the "level == PT_PAGE_TABLE_LEVEL" check, I think,
-> > which would open this up to hugetlbfs pages (based on the comments).  Is
-> > there any reason why that would be a bad idea?
-
-No, the "level == PT_PAGE_TABLE_LEVEL" check is to filter out the case
-where KVM is already planning on using a large page, e.g. when the memory
-is backed by hugetlbs.
-
-> KVM already supports mapping 1GB hugetlbfs pages. As level is set to
-> PUD-level by
-> tdp_page_fault()->mapping_level()->host_mapping_level()->kvm_host_page_size()->vma_kernel_pagesize().
-> As VMA which is mmap of hugetlbfs sets vma->vm_ops to hugetlb_vm_ops() where
-> hugetlb_vm_op_pagesize() will return appropriate page-size.
-> 
-> Specifically, I don’t think THP ever merges small pages to 1GB pages. I think
-> this is why transparent_hugepage_adjust() checks PageTransCompoundMap() only
-> in case level == PT_PAGE_TABLE_LEVEL. I think you should keep this check in
-> the case of !is_zone_device_page().
-
-I would add 1gb support for DAX as a third patch in this series.  To pave
-the way in patch 2/2, change it to replace "bool pfn_is_huge_mapped()" with
-"int host_pfn_mapping_level()", and maybe also renaming host_mapping_level()
-to host_vma_mapping_level() to avoid confusion.
-
-Then allowed_hugepage_adjust() would look something like:
-
-static void allowed_hugepage_adjust(struct kvm_vcpu *vcpu, gfn_t gfn,
-				    kvm_pfn_t *pfnp, int *levelp, int max_level)
-{
-	kvm_pfn_t pfn = *pfnp;
-	int level = *levelp;	
-	unsigned long mask;
-
-	if (is_error_noslot_pfn(pfn) || !kvm_is_reserved_pfn(pfn) ||
-	    level == PT_PAGE_TABLE_LEVEL)
-		return;
-
-	/*
-	 * mmu_notifier_retry() was successful and mmu_lock is held, so
-	 * the pmd/pud can't be split from under us.
-	 */
-	level = host_pfn_mapping_level(vcpu->kvm, gfn, pfn);
-
-	*levelp = level = min(level, max_level);
-	mask = KVM_PAGES_PER_HPAGE(level) - 1;
-	VM_BUG_ON((gfn & mask) != (pfn & mask));
-	*pfnp = pfn & ~mask;
-}
