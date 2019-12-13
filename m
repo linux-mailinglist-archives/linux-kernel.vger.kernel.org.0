@@ -2,159 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C40A011E513
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:58:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EF6511E4F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:54:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbfLMN6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:58:09 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7687 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727531AbfLMN6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:58:08 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 28D915C864E049F2EFC2;
-        Fri, 13 Dec 2019 21:58:01 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 13 Dec 2019 21:57:50 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@redhat.com>, <namhyung@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <will@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH] perf tools: Add arm64 version of get_cpuid()
-Date:   Fri, 13 Dec 2019 21:54:15 +0800
-Message-ID: <1576245255-210926-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        id S1727534AbfLMNys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:54:48 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43141 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727444AbfLMNyr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 08:54:47 -0500
+Received: by mail-lj1-f196.google.com with SMTP id a13so2710525ljm.10
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 05:54:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=RdSTB5NQwjOoYrj/2BgnJiFXxkWUYSC7knKRCi5Mjio=;
+        b=PBrpArr9B3u6JbYnLb66q7dKmEGL2MtvGbWr/C+TjOKxAEIUfpOMogcjHNKobdOupn
+         ti3jniJZ/GhhfpTfZcUV9yKZcNGGA3smXcs3/rs/Gr221XP/DSC5c6FrNNJKrqvwRb9e
+         OCI/jZiHF1Z6USxpdsQ1rJK2siLGFyXAmzqG8EToVo7+VbF9Rb7vQTWNx5dw6KEs4lvz
+         2CQpj3uTWh5Sti8hI6DUESBXD1Dk2UPfUDYXqCroccZNuzycyNVZLdUseJkDx4lpE66n
+         KOkN4NZXnKZa0l8wvPlsEzPVbQjKJpbccoQdmuLKJFntwWO/NdDDXVoK87H0dl1Yfuc+
+         RSLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RdSTB5NQwjOoYrj/2BgnJiFXxkWUYSC7knKRCi5Mjio=;
+        b=hmpNxX7mf2ylClb0oOzD6WrY+C5xCfevGoO8IeWoMKYeeq/giTGwkhygQKoDv9fvTD
+         LUctMpbonFsSsHSS0GGLch0p3IjRoz+NCXQRoSGccu67n8zMbJxSCLZ8cnOr2VNdIUTo
+         aq1t4bIkiyMXM2RIQjzjlTGfoBb9M1eojVKaK9PW366hFaqA9r78ELpPJ5BJ/SvP0oAI
+         NF/GiRQ7hUUzwotdpsjdzzQ9JUoqJO8m51YAoDF/p7a1pW3AxGvEjiTCBAnCijuUHkFd
+         tPJMaG3AGnE7sjweUPY1+WJhpfvwnMEB7jXGUp3k2WQMq/QWlcTee4GhnOUT7NkDqmNg
+         HOTg==
+X-Gm-Message-State: APjAAAViMKwu1L4YjQD7hdPciGPdO1Ml4sOWKkLFD7HD859fOowUJuBi
+        3yJV1/E9hm9fvVGDVkI9l+Y1/8oSChuEyOYa8BE=
+X-Google-Smtp-Source: APXvYqzqvCk1kwftFb654uEcSobrO2skRbkphlZl1DN3n8ilpPs7nU3A24nx5rjZqGjRILC0iVulzf1o9GdPy/5pADs=
+X-Received: by 2002:a2e:93d5:: with SMTP id p21mr10049365ljh.50.1576245285476;
+ Fri, 13 Dec 2019 05:54:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+References: <1576037311-6052-1-git-send-email-orson.zhai@unisoc.com>
+ <CAK8P3a0244jKrEop2rHVyJZ57h4A9+mqb-5g-wLUSfR2G1svwg@mail.gmail.com>
+ <20191213024935.GD9271@lenovo> <20191213082336.GD3468@dell>
+In-Reply-To: <20191213082336.GD3468@dell>
+From:   Orson Zhai <orsonzhai@gmail.com>
+Date:   Fri, 13 Dec 2019 21:54:33 +0800
+Message-ID: <CA+H2tpH7QW-KG4pPXp7=_9J_yvXiL9O-2mCEP19HnRpM+QRqJA@mail.gmail.com>
+Subject: Re: [PATCH v3] mfd: syscon: Add arguments support for syscon reference
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Orson Zhai <orson.zhai@spreadtrum.com>,
+        Rob Herring <robh@kernel.org>,
+        Orson Zhai <orson.zhai@unisoc.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        baolin.wang@unisoc.com, Kevin Tang <kevin.tang@unisoc.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        liangcai.fan@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an arm64 version of get_cpuid(), which is used for various annotation
-and headers - for example, I now get the CPUID in "perf report --header",
-as shown in this snippet:
+On Fri, Dec 13, 2019 at 4:23 PM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Fri, 13 Dec 2019, Orson Zhai wrote:
+>
+> > Hi Lee and Rob,
+> >
+> > On Wed, Dec 11, 2019 at 02:55:39PM +0100, Arnd Bergmann wrote:
+> > > On Wed, Dec 11, 2019 at 5:09 AM Orson Zhai <orson.zhai@unisoc.com> wr=
+ote:
+> > > >
+> > > > There are a lot of similar global registers being used across multi=
+ple SoCs
+> > > > from Unisoc. But most of these registers are assigned with differen=
+t offset
+> > > > for different SoCs. It is hard to handle all of them in an all-in-o=
+ne
+> > > > kernel image.
+> > > >
+> > > > Add a helper function to get regmap with arguments where we could p=
+ut some
+> > > > extra information such as the offset value.
+> > > >
+> > > > Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
+> > > > Tested-by: Baolin Wang <baolin.wang@unisoc.com>
+> > >
+> > > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > Does this patch look good to be applied?
+> >
+> > Or if any comments please feel free to send to me.
+>
+> If it looks good to Arnd, it looks good to me.
+>
+> I have quite a number of reviews to get through first though, please
+> bear with me and resist the urge to nag.
 
-# hostname : ubuntu
-# os release : 5.5.0-rc1-dirty
-# perf version : 5.5.rc1.gbf8a13dc9851
-# arch : aarch64
-# nrcpus online : 96
-# nrcpus avail : 96
-# cpuid : 0x00000000480fd010
+Got it.
+Thanks for your kind reply!
 
-Since much of the code to read the MIDR is already in get_cpuid_str(),
-factor out this code.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-
-diff --git a/tools/perf/arch/arm64/util/header.c b/tools/perf/arch/arm64/util/header.c
-index a32e4b72a98f..d730666ab95d 100644
---- a/tools/perf/arch/arm64/util/header.c
-+++ b/tools/perf/arch/arm64/util/header.c
-@@ -1,8 +1,10 @@
- #include <stdio.h>
- #include <stdlib.h>
- #include <perf/cpumap.h>
-+#include <util/cpumap.h>
- #include <internal/cpumap.h>
- #include <api/fs/fs.h>
-+#include <errno.h>
- #include "debug.h"
- #include "header.h"
- 
-@@ -12,26 +14,21 @@
- #define MIDR_VARIANT_SHIFT      20
- #define MIDR_VARIANT_MASK       (0xf << MIDR_VARIANT_SHIFT)
- 
--char *get_cpuid_str(struct perf_pmu *pmu)
-+static int _get_cpuid(char *buf, size_t sz, struct perf_cpu_map *cpus)
- {
--	char *buf = NULL;
--	char path[PATH_MAX];
- 	const char *sysfs = sysfs__mountpoint();
--	int cpu;
- 	u64 midr = 0;
--	struct perf_cpu_map *cpus;
--	FILE *file;
-+	int cpu;
- 
--	if (!sysfs || !pmu || !pmu->cpus)
--		return NULL;
-+	if (!sysfs || sz < MIDR_SIZE)
-+		return EINVAL;
- 
--	buf = malloc(MIDR_SIZE);
--	if (!buf)
--		return NULL;
-+	cpus = perf_cpu_map__get(cpus);
- 
--	/* read midr from list of cpus mapped to this pmu */
--	cpus = perf_cpu_map__get(pmu->cpus);
- 	for (cpu = 0; cpu < perf_cpu_map__nr(cpus); cpu++) {
-+		char path[PATH_MAX];
-+		FILE *file;
-+
- 		scnprintf(path, PATH_MAX, "%s/devices/system/cpu/cpu%d"MIDR,
- 				sysfs, cpus->map[cpu]);
- 
-@@ -57,12 +54,48 @@ char *get_cpuid_str(struct perf_pmu *pmu)
- 		break;
- 	}
- 
--	if (!midr) {
-+	perf_cpu_map__put(cpus);
-+
-+	if (!midr)
-+		return EINVAL;
-+
-+	return 0;
-+}
-+
-+int get_cpuid(char *buf, size_t sz)
-+{
-+	struct perf_cpu_map *cpus = perf_cpu_map__new(NULL);
-+	int ret;
-+
-+	if (!cpus)
-+		return EINVAL;
-+
-+	ret = _get_cpuid(buf, sz, cpus);
-+
-+	perf_cpu_map__put(cpus);
-+
-+	return ret;
-+}
-+
-+char *get_cpuid_str(struct perf_pmu *pmu)
-+{
-+	char *buf = NULL;
-+	int res;
-+
-+	if (!pmu || !pmu->cpus)
-+		return NULL;
-+
-+	buf = malloc(MIDR_SIZE);
-+	if (!buf)
-+		return NULL;
-+
-+	/* read midr from list of cpus mapped to this pmu */
-+	res = _get_cpuid(buf, MIDR_SIZE, pmu->cpus);
-+	if (res) {
- 		pr_err("failed to get cpuid string for PMU %s\n", pmu->name);
- 		free(buf);
- 		buf = NULL;
- 	}
- 
--	perf_cpu_map__put(cpus);
- 	return buf;
- }
--- 
-2.17.1
-
+-Orson
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Linaro Services Technical Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
