@@ -2,153 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2034611E6AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:37:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D945C11E6BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:38:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbfLMPgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:36:14 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:43915 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727991AbfLMPgM (ORCPT
+        id S1727946AbfLMPib (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:38:31 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:38505 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727796AbfLMPib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:36:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576251371;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=XdvQKU8LiqO/th1XH/f5TTkHcNsE/YPklKDD6xZt6qQ=;
-        b=Db27FA3+Q1kolvE9edN0LO/0RSX8ErXy0AXWemMr3jEbp2sKgIfCuY92NDItgl+efEwj4A
-        XShBBAD1jHkRUKKbYHzvPbwxKTGo0fBy+RigcPZCLK/oA4kl9QMW8/NjXmFTRbnIuqN8cI
-        E4HVdP8vJ0MfQU9aULmpF8oHf1oNxvo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-370-hbfm8CEePw28D6MRnwYrFA-1; Fri, 13 Dec 2019 10:36:07 -0500
-X-MC-Unique: hbfm8CEePw28D6MRnwYrFA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68935800582;
-        Fri, 13 Dec 2019 15:36:05 +0000 (UTC)
-Received: from krava (ovpn-205-9.brq.redhat.com [10.40.205.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 23A2C5C219;
-        Fri, 13 Dec 2019 15:35:55 +0000 (UTC)
-Date:   Fri, 13 Dec 2019 16:35:53 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc:     Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Subject: [RFC] btf: Some structs are doubled because of struct ring_buffer
-Message-ID: <20191213153553.GE20583@krava>
+        Fri, 13 Dec 2019 10:38:31 -0500
+Received: from mail-qt1-f172.google.com ([209.85.160.172]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MdvVu-1i70lf2PTi-00b1qA; Fri, 13 Dec 2019 16:38:29 +0100
+Received: by mail-qt1-f172.google.com with SMTP id e12so2600021qto.2;
+        Fri, 13 Dec 2019 07:38:29 -0800 (PST)
+X-Gm-Message-State: APjAAAUVhP/5UXUxaWEfxul12GxhzJ0sA88FsR8jTr4Gh7XOuwGdRgdi
+        NQks70v7l20tNHnCMcbEwGT7W3NNffKQKKuDv6I=
+X-Google-Smtp-Source: APXvYqw99oGMzeSioZjqdskLBPgYHN7FjeXUu4HGv1laMzanNdwLYdX0anAAiC6bn6p3caU4v71uSXwskgpYo0rS1GI=
+X-Received: by 2002:ac8:47d3:: with SMTP id d19mr12720676qtr.142.1576251508429;
+ Fri, 13 Dec 2019 07:38:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <20191126161824.337724-1-arnd@arndb.de> <20191126161824.337724-7-arnd@arndb.de>
+ <09c664fd-87fb-4fac-f104-9afbe7d33aa2@xs4all.nl> <CAK8P3a1TvFCJf8t9T1yOXjsp088s9dbEOKLVDPinfwJe2B-27g@mail.gmail.com>
+ <81bb5da1-6b84-8473-4ada-c174f43bbae2@xs4all.nl>
+In-Reply-To: <81bb5da1-6b84-8473-4ada-c174f43bbae2@xs4all.nl>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 13 Dec 2019 16:38:12 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1zvMFrs1cG+nQmTq3Tcv4OWdBkPNcsr6JsaM=Zkj8cFQ@mail.gmail.com>
+Message-ID: <CAK8P3a1zvMFrs1cG+nQmTq3Tcv4OWdBkPNcsr6JsaM=Zkj8cFQ@mail.gmail.com>
+Subject: Re: [PATCH v5 6/8] media: v4l2-core: fix v4l2_buffer handling for
+ time64 ABI
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:wRRagCp/9UR7bP6HmPcw1OLo5+z22fM6ujfQU4/EM+H3I0fmN6f
+ zeza0Ofdr9yOfDUy2ttXCEZHA9Q9vBbpdgd6P+A38Qviex3VqffjuqZqQcGupr+jA4s5TT/
+ BKi3htCAO84NPb4tJ+9D1SpvLeDnzKMvC0EY4QgZLwHDA7k9vO8tsG55xEMfzW8B+3/qlJ4
+ Wuw50GON3Q6B/TjvnUp7w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LpZlHmiYtzg=:w1Q5Pk0+AwPFPpJXJhgh5N
+ c8dX4aSsajw89bIyTgaZ7sqqK7Gx5e11J+M4aADq+GqDMJjup6bn4kyWOWVYKpBfcQZX6Tn+N
+ 3GDhzS3czTGsrJBOIbJrr4VwZ4lxn2SBlZW00EuSo77TRIhP4DQ+TZtQTzMR9bUQyBYze40eL
+ 1UFw318vhwSgI5vdmT8hvuKU+ulB9OpmZp/8/WG7HCpAtbkciwjzSbGVjQdX6nhbXF/owaIag
+ WwVHLmLdtJDjI84pOePdiyG5ElCjwIe5T76SLE15HiY294OAq/mwH8lzDaRCMQRD6LB5uJl+m
+ KuRSJcL41QJ7BJlekCl5jza5ma8MsYTUS07pjagDLODeiJlFjM4yolN10LdKyf12I80qP2jJX
+ zC11rUwWA92Goy5vpOGvOK0yTW425BbXDy5two+ZY7jhmIwOLnb4Q9uic9Ai5VENYP+iW1cKt
+ RGQl8Nqs6oVxNXGZzwifJWUlXtYIZiH0VQ+MrqJkpvyD79vZSRtt4gffVtfsqpWT8jE9GtD28
+ bnKIOB/uEy1aG8NdvrEncl1IOjNHUtQkY2E1i9ytgbI4ipNuSJy3TtRS/k6BYsNlLzdbzQ+ab
+ Xuq8/PC84xL/GRCXg5domnr/8mAfWugCamxy7yvqV0K3QZV/FIBdmJtFbSJC3uMalaB+Tn11O
+ 5NSN4rWzRM+4UFRghrQb8TxW6lCDA8WfbgeE/HImemFbLbshnCZCXpe6wua9qaah93wgcCFJ8
+ k8VSFGYhlULX2+bKIq5oKZp13dFjL5C/fVLOj0LmWbR5GyQWeKFd0La+aQ67e73eG0rur8LtM
+ yGNyw4vka9xxpnAKWK1P73uLH6CKq4jcTORqD4OrIYe0RpNOp7x97gY48islLn+wYvefalzXv
+ 9rv9gkKy69Qt1Qh1D7zA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi,
-the current BTF vmlinux file have some of the structs doubled:
+On Fri, Dec 13, 2019 at 4:33 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 12/13/19 4:08 PM, Arnd Bergmann wrote:
+> > On Thu, Dec 12, 2019 at 4:43 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> >
+> > I've heard good things about the prebuilt toolchains from http://musl.cc/.
+> > These seems to come with a libstdc++, but I have not tried that myself.
+>
+> I'll see if I can give those a spin, but if I can't get it to work quickly,
+> then I don't plan on spending much time on it.
 
-  $ bpftool btf dump file /sys/kernel/btf/vmlinux | grep task_struct
-  [150] STRUCT 'task_struct' size=11008 vlen=205
-  [12262] STRUCT 'task_struct' size=11008 vlen=205
+Ok, sounds good. The way the series is structured, I tried to have the
+time64 ioctls use the existing code, while adding new time32 ioctls
+to ensure that we catch the bugs in the new time32 version through
+testing, and have fewer bugs to start with in the time64 version.
 
-  $ bpftool btf dump file /sys/kernel/btf/vmlinux | grep "STRUCT 'perf_event'"
-  [1666] STRUCT 'perf_event' size=1160 vlen=70
-  [12301] STRUCT 'perf_event' size=1160 vlen=70
-
-The reason seems to be that we have two distinct 'struct ring_buffer'
-objects used in kernel: one in perf subsystem and one in kernel trace
-subsystem.
-
-When we compile kernel/trace/ring_buffer.c we have 'struct task_struct',
-which references 'struct ring_buffer', which is at that compile time
-defined in kernel/trace/ring_buffer.c.
-
-While when we compile kernel/events/core.c we have 'struct task_struct',
-which references ring buffer, which is at that compile time defined
-in kernel/events/internal.h.
-
-So we end up with 2 different 'struct task_struct' objects, and few
-other objects which are on the way to the 'struct ring_buffer' field,
-like:
-
-	[1666] STRUCT 'perf_event' size=1160 vlen=70
-		...
-		'rb' type_id=2289 bits_offset=5632
-		...
-
-		[2289] PTR '(anon)' type_id=10872
-
-			-> trace ring buffer
-
-			[10872] STRUCT 'ring_buffer' size=184 vlen=12
-				'flags' type_id=10 bits_offset=0
-				'cpus' type_id=22 bits_offset=32
-				'record_disabled' type_id=81 bits_offset=64
-				...
-
-	[12301] STRUCT 'perf_event' size=1160 vlen=70
-		...
-		'rb' type_id=13148 bits_offset=5632
-		...
-
-		[13148] PTR '(anon)' type_id=13147
-
-			-> perf ring buffer
-
-			[13147] STRUCT 'ring_buffer' size=240 vlen=33
-				'refcount' type_id=795 bits_offset=0
-				'callback_head' type_id=90 bits_offset=64
-				'nr_pages' type_id=22 bits_offset=192
-				'overwrite' type_id=22 bits_offset=224
-				'paused' type_id=22 bits_offset=256
-				...
-
-I don't think dedup algorithm can handle this and I'm not sure if there's
-some way in pahole to detect/prevent this.
-
-I only found that if I rename the ring_buffer objects to have distinct
-names, it will help:
-
-  $ bpftool btf dump file /sys/kernel/btf/vmlinux | grep task_struct
-  [150] STRUCT 'task_struct' size=11008 vlen=205
-
-  $ bpftool btf dump file /sys/kernel/btf/vmlinux | grep "STRUCT 'perf_event'"
-  [1665] STRUCT 'perf_event' size=1160 vlen=70
-
-also the BTF data get smaller ;-) before:
-
-  $ ll /sys/kernel/btf/vmlinux
-  -r--r--r--. 1 root root 2067432 Dec 13 22:56 /sys/kernel/btf/vmlinux
-
-after:
-  $ ll /sys/kernel/btf/vmlinux
-  -r--r--r--. 1 root root 1984345 Dec 13 23:02 /sys/kernel/btf/vmlinux
-
-
-Peter, Steven,
-if above is correct and there's no other better solution, would it be possible
-to straighten up the namespace and user some distinct names for perf and ftrace
-ring buffers?
-
-thoughts?
-jirka
-
+     Arnd
