@@ -2,90 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3270811E120
+	by mail.lfdr.de (Postfix) with ESMTP id 9C1B411E122
 	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:47:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbfLMJrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:47:20 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44861 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfLMJrT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:47:19 -0500
-Received: by mail-ot1-f66.google.com with SMTP id x3so5714433oto.11;
-        Fri, 13 Dec 2019 01:47:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LrgOuy/9sPvzhX64/ManuYWOHaw5/qKpeJcMH1l0dJw=;
-        b=ucbY6U5i8iqwKIzDam7juPFkESzPvu0Nt8Zw7vbAfvrJ0Y2MmuE5qnHyZjzKko8KGT
-         9bmH+IGTMX2gWt5jCkhhaJ8CCu2aRNSoWZ6obh3YBKkaRe0/KQIFVaffpZvDH/pok2pg
-         wdjzY0HL2qZ/XyjBXmm3prMfc+axkzjgPc0mba2RCUhsgPx931WfO+wk2MKf9HeyVPK7
-         yKB7xkmF28LtidaMUskmSe29l8CdGEk15l4/tBREkWhgMU2FCZDX01Ra31D83J1Lcgu4
-         nbDhuryen6RtncKNk+zsK7JA2uEfQZLr6dD5qunPw0q3mS7JxiUBSggi3Au7yicia2U5
-         tB+Q==
-X-Gm-Message-State: APjAAAXaDJOH97oLfFTRPfA2v9KHkxRTwmC4dZhvG2HjdSj1bu8iTKR7
-        4iENu6jUfaHFdUsicfXG4KXlmJx/jIkzPBP/pkE=
-X-Google-Smtp-Source: APXvYqyTYrRZu/3wd+jVnsU9fJlU3qWbi4XDyl6SoSVPdfbCj6mQh4LJVDI5doZGlsmV/j5Q03mkCLX7+C1j0mvjiyg=
-X-Received: by 2002:a05:6830:18cd:: with SMTP id v13mr13098278ote.118.1576230438826;
- Fri, 13 Dec 2019 01:47:18 -0800 (PST)
+        id S1726620AbfLMJrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:47:24 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7684 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725793AbfLMJrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 04:47:23 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D5F2D2A762260A0E853F;
+        Fri, 13 Dec 2019 17:47:20 +0800 (CST)
+Received: from [127.0.0.1] (10.133.217.236) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 13 Dec 2019
+ 17:47:11 +0800
+Subject: Re: [PATCH] sched/fair: Optimize select_idle_cpu
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>
+CC:     <mingo@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chenwandun@huawei.com>, <xiexiuqi@huawei.com>,
+        <liwei391@huawei.com>, <huawei.libin@huawei.com>,
+        <bobo.shaobowang@huawei.com>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>
+References: <20191212144102.181510-1-cj.chengjian@huawei.com>
+ <20191212152406.GB2827@hirez.programming.kicks-ass.net>
+ <2498b792-8549-5ffd-0d85-179740e356a0@arm.com>
+From:   "chengjian (D)" <cj.chengjian@huawei.com>
+Message-ID: <bc0c48aa-4b98-b8e6-f828-762c4b90bfab@huawei.com>
+Date:   Fri, 13 Dec 2019 17:47:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20191212171137.13872-1-david@redhat.com> <20191212171137.13872-2-david@redhat.com>
- <5687328.t4MNS9KDDX@kreacher> <ec81db03-b970-420a-9c1b-29849b5e8902@redhat.com>
-In-Reply-To: <ec81db03-b970-420a-9c1b-29849b5e8902@redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 13 Dec 2019 10:47:07 +0100
-Message-ID: <CAJZ5v0iqgnhOF1UQQBfv7C_b5RyoAz=U3JYLt3a0U+UnZ48DUA@mail.gmail.com>
-Subject: Re: [PATCH RFC v4 01/13] ACPI: NUMA: export pxm_to_node
-To:     David Hildenbrand <david@redhat.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        virtio-dev@lists.oasis-open.org,
-        virtualization@lists.linux-foundation.org,
-        kvm-devel <kvm@vger.kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2498b792-8549-5ffd-0d85-179740e356a0@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.133.217.236]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 10:41 AM David Hildenbrand <david@redhat.com> wrote:
->
-> On 12.12.19 22:43, Rafael J. Wysocki wrote:
-> > On Thursday, December 12, 2019 6:11:25 PM CET David Hildenbrand wrote:
-> >> Will be needed by virtio-mem to identify the node from a pxm.
-> >>
-> >> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> >> Cc: Len Brown <lenb@kernel.org>
-> >> Cc: linux-acpi@vger.kernel.org
-> >> Signed-off-by: David Hildenbrand <david@redhat.com>
-> >> ---
-> >>  drivers/acpi/numa/srat.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-> >> index eadbf90e65d1..d5847fa7ac69 100644
-> >> --- a/drivers/acpi/numa/srat.c
-> >> +++ b/drivers/acpi/numa/srat.c
-> >> @@ -35,6 +35,7 @@ int pxm_to_node(int pxm)
-> >>              return NUMA_NO_NODE;
-> >>      return pxm_to_node_map[pxm];
-> >>  }
-> >> +EXPORT_SYMBOL(pxm_to_node);
-> >>
-> >>  int node_to_pxm(int node)
-> >>  {
-> >>
-> >
-> > This is fine by me FWIW.
->
-> Can I count that as an Acked-by and carry it along? Thanks!
 
-Yes, please.
+On 2019/12/12 23:44, Valentin Schneider wrote:
+> On 12/12/2019 15:24, Peter Zijlstra wrote:
+>> On Thu, Dec 12, 2019 at 10:41:02PM +0800, Cheng Jian wrote:
+>>
+>>> Fixes: 1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
+>> The 'funny' thing is that select_idle_core() actually does the right
+>> thing.
+>>
+>> Copying that should work:
+>>
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 08a233e97a01..416d574dcebf 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -5828,6 +5837,7 @@ static inline int select_idle_smt(struct task_struct *p, int target)
+>>    */
+>>   static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int target)
+>>   {
+>> +	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
+>>   	struct sched_domain *this_sd;
+>>   	u64 avg_cost, avg_idle;
+>>   	u64 time, cost;
+>> @@ -5859,11 +5869,11 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+>>   
+>>   	time = cpu_clock(this);
+>>   
+>> -	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
+>> +	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+>> +
+>> +	for_each_cpu_wrap(cpu, cpus, target) {
+>>   		if (!--nr)
+>>   			return si_cpu;
+>> -		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+>> -			continue;
+>>   		if (available_idle_cpu(cpu))
+>>   			break;
+>>   		if (si_cpu == -1 && sched_idle_cpu(cpu))
+>>
+> That looks sane enough. I'd only argue the changelog should directly point
+> out that the issue is we consume some CPUs out of 'nr' that are not allowed
+> for the task and thus waste our attempts.
+>
+> .
+
+
+Hi，Valentin
+
+Yeah，Yours are more clear.
+
+Thank you so much.
+
+
+-- Cheng Jian
+
+
+
