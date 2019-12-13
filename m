@@ -2,189 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C68DB11E2FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 12:49:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A898911E2FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 12:49:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfLMLrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 06:47:51 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40769 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbfLMLru (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 06:47:50 -0500
-Received: by mail-lf1-f68.google.com with SMTP id i23so1736767lfo.7;
-        Fri, 13 Dec 2019 03:47:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+ETvCMmbMzGGY7YShfNB5f2VnM4MZsAsh4twUwxFttw=;
-        b=bMRBq8S/kwxE1PXDeOHnWLOOKrJk1tT/LxX5Vm5f3Yz65KwgOCHuUz2g5HmTdntqWf
-         VZXkH3R+ZIbEnReyZ11N6sU2HFoaIBdmwmaT191OCKCDsy6MFEo7YKOv+5eJ2N5IfeBN
-         a1UQCVorcAULEx+i93eD5GpgIpY3yOL1KWIQqgScXygI27E7ZUSIA5UhW3fK0TCJnCgd
-         lE4NgX+7l00p/9kEiN4mJWTru2Yox13lW96pEgKvv+JsWryeuRO1l8svQgZuIleDMWt7
-         dYf6BlwP4gcyhiWmR/vod/zGekbc4GDoEOyd5RATkBFpfQayJWNfbYT+XekFLM4EXzCh
-         ZJJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+ETvCMmbMzGGY7YShfNB5f2VnM4MZsAsh4twUwxFttw=;
-        b=TfHTPqQWiHQTycaY0EO04bRnnOR5D3m9lBtN4mfPwkqoGyra+SRG0R+vtUijwTrQn7
-         eons6tngF2VOb5RBtf26ecF02199aVo8Ft6NnHx6DA5vcIodhRpOd+K+n9kGekg3VKao
-         LjjNSH54TcX2oI2XfZDZKdIAx7fi5PxIP3Bc5oO8IVAEnhAVCFA4A64NJAkcs9YAGPBL
-         p0Q74X/R/5HplyQewqhxhYVU72J2LSzSJAYs+XH01Qc7Z6UZAZeqLR/kmQMTJYW3Ut1H
-         B4x/8/YHZ5CU7EO26WhNtHk5GSGoz3o2WcDmfUCU/w8GYxSDrVKiC0lwDe9/OvKDC9r3
-         +rbA==
-X-Gm-Message-State: APjAAAWYOej71mLaHdxA5WHVAp/sGM0u8H2MFB/w1iKxxTlfYVsP2Uhp
-        R4AF4XlRb2MhYyoE59lZdV8Y8VyeUaWxLBhi8qk=
-X-Google-Smtp-Source: APXvYqz0CcvXDIgPQfEOn1UWPvPxDvqqBrgb/qmtE1XqPsfWy5MILYQ0RZxaJCsdjyngisILPZlGomv4w/Poud0iok8=
-X-Received: by 2002:a19:7015:: with SMTP id h21mr8405869lfc.68.1576237667682;
- Fri, 13 Dec 2019 03:47:47 -0800 (PST)
+        id S1726861AbfLMLsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 06:48:23 -0500
+Received: from foss.arm.com ([217.140.110.172]:56292 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725980AbfLMLsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 06:48:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5ED401045;
+        Fri, 13 Dec 2019 03:48:22 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AD1B3F718;
+        Fri, 13 Dec 2019 03:48:20 -0800 (PST)
+Subject: Re: [PATCH v2] sched/fair: Optimize select_idle_cpu
+To:     Cheng Jian <cj.chengjian@huawei.com>, mingo@kernel.org,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Cc:     chenwandun@huawei.com, xiexiuqi@huawei.com, liwei391@huawei.com,
+        huawei.libin@huawei.com, bobo.shaobowang@huawei.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org
+References: <20191213024530.28052-1-cj.chengjian@huawei.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <ac11014d-ffc9-f0b2-3d48-2456c1c5edfa@arm.com>
+Date:   Fri, 13 Dec 2019 11:48:20 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191212152757.GF11756@Air-de-Roger> <20191212160658.10466-1-sj38.park@gmail.com>
- <20191213092742.GG11756@Air-de-Roger> <8425d77b-37cf-d959-9466-7bc1d4d99642@suse.com>
-In-Reply-To: <8425d77b-37cf-d959-9466-7bc1d4d99642@suse.com>
-From:   SeongJae Park <sj38.park@gmail.com>
-Date:   Fri, 13 Dec 2019 12:47:19 +0100
-Message-ID: <CAEjAshpuT_S44Fn12XRZz-aLs38awkJSiQ_J2ofXsJRXKopScQ@mail.gmail.com>
-Subject: Re: [Xen-devel] [PATCH v7 2/3] xen/blkback: Squeeze page pools if a
- memory pressure is detected
-To:     =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Cc:     =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        SeongJae Park <sjpark@amazon.com>, konrad.wilk@oracle.com,
-        pdurrant@amazon.com, SeongJae Park <sjpark@amazon.de>,
-        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191213024530.28052-1-cj.chengjian@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 10:33 AM J=C3=BCrgen Gro=C3=9F <jgross@suse.com> wr=
-ote:
->
-> On 13.12.19 10:27, Roger Pau Monn=C3=A9 wrote:
-> > On Thu, Dec 12, 2019 at 05:06:58PM +0100, SeongJae Park wrote:
-> >> On Thu, 12 Dec 2019 16:27:57 +0100 "Roger Pau Monn=C3=A9" <roger.pau@c=
-itrix.com> wrote:
-> >>
-> >>>> diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen=
--blkback/blkback.c
-> >>>> index fd1e19f1a49f..98823d150905 100644
-> >>>> --- a/drivers/block/xen-blkback/blkback.c
-> >>>> +++ b/drivers/block/xen-blkback/blkback.c
-> >>>> @@ -142,6 +142,21 @@ static inline bool persistent_gnt_timeout(struc=
-t persistent_gnt *persistent_gnt)
-> >>>>            HZ * xen_blkif_pgrant_timeout);
-> >>>>   }
-> >>>>
-> >>>> +/* Once a memory pressure is detected, squeeze free page pools for =
-a while. */
-> >>>> +static unsigned int buffer_squeeze_duration_ms =3D 10;
-> >>>> +module_param_named(buffer_squeeze_duration_ms,
-> >>>> +          buffer_squeeze_duration_ms, int, 0644);
-> >>>> +MODULE_PARM_DESC(buffer_squeeze_duration_ms,
-> >>>> +"Duration in ms to squeeze pages buffer when a memory pressure is d=
-etected");
-> >>>> +
-> >>>> +static unsigned long buffer_squeeze_end;
-> >>>> +
-> >>>> +void xen_blkbk_reclaim_memory(struct xenbus_device *dev)
-> >>>> +{
-> >>>> +  buffer_squeeze_end =3D jiffies +
-> >>>> +          msecs_to_jiffies(buffer_squeeze_duration_ms);
-> >>>
-> >>> I'm not sure this is fully correct. This function will be called for
-> >>> each blkback instance, but the timeout is stored in a global variable
-> >>> that's shared between all blkback instances. Shouldn't this timeout b=
-e
-> >>> stored in xen_blkif so each instance has it's own local variable?
-> >>>
-> >>> Or else in the case you have 1k blkback instances the timeout is
-> >>> certainly going to be longer than expected, because each call to
-> >>> xen_blkbk_reclaim_memory will move it forward.
-> >>
-> >> Agreed that.  I think the extended timeout would not make a visible
-> >> performance, though, because the time that 1k-loop take would be short=
- enough
-> >> to be ignored compared to the millisecond-scope duration.
-> >>
-> >> I took this way because I wanted to minimize such structural changes a=
-s far as
-> >> I can, as this is just a point-fix rather than ultimate solution.  Tha=
-t said,
-> >> it is not fully correct and very confusing.  My another colleague also=
- pointed
-> >> out it in internal review.  Correct solution would be to adding a vari=
-able in
-> >> the struct as you suggested or avoiding duplicated update of the varia=
-ble by
-> >> initializing the variable once the squeezing duration passes.  I would=
- prefer
-> >> the later way, as it is more straightforward and still not introducing
-> >> structural change.  For example, it might be like below:
-> >>
-> >> diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-b=
-lkback/blkback.c
-> >> index f41c698dd854..6856c8ef88de 100644
-> >> --- a/drivers/block/xen-blkback/blkback.c
-> >> +++ b/drivers/block/xen-blkback/blkback.c
-> >> @@ -152,8 +152,9 @@ static unsigned long buffer_squeeze_end;
-> >>
-> >>   void xen_blkbk_reclaim_memory(struct xenbus_device *dev)
-> >>   {
-> >> -       buffer_squeeze_end =3D jiffies +
-> >> -               msecs_to_jiffies(buffer_squeeze_duration_ms);
-> >> +       if (!buffer_squeeze_end)
-> >> +               buffer_squeeze_end =3D jiffies +
-> >> +                       msecs_to_jiffies(buffer_squeeze_duration_ms);
-> >>   }
-> >>
-> >>   static inline int get_free_page(struct xen_blkif_ring *ring, struct =
-page **page)
-> >> @@ -669,10 +670,13 @@ int xen_blkif_schedule(void *arg)
-> >>                  }
-> >>
-> >>                  /* Shrink the free pages pool if it is too large. */
-> >> -               if (time_before(jiffies, buffer_squeeze_end))
-> >> +               if (time_before(jiffies, buffer_squeeze_end)) {
-> >>                          shrink_free_pagepool(ring, 0);
-> >> -               else
-> >> +               } else {
-> >> +                       if (unlikely(buffer_squeeze_end))
-> >> +                               buffer_squeeze_end =3D 0;
-> >>                          shrink_free_pagepool(ring, max_buffer_pages);
-> >> +               }
-> >>
-> >>                  if (log_stats && time_after(jiffies, ring->st_print))
-> >>                          print_stats(ring);
-> >>
-> >> May I ask you what way would you prefer?
-> >
-> > I'm not particularly found of this approach, as I think it's racy. Ie:
-> > you would have to add some kind of lock to make sure the contents of
-> > buffer_squeeze_end stay unmodified during the read and set cycle, or
-> > else xen_blkif_schedule will race with xen_blkbk_reclaim_memory.
-> >
-> > This is likely not a big deal ATM since the code will work as
-> > expected in most cases AFAICT, but I would still prefer to have a
-> > per-instance buffer_squeeze_end added to xen_blkif, given that the
-> > callback is per-instance. I wouldn't call it a structural change, it's
-> > just adding a variable to a struct instead of having a shared one, but
-> > the code is almost the same as the current version.
->
-> FWIW, I agree.
+On 13/12/2019 02:45, Cheng Jian wrote:
+> select_idle_cpu() will scan the LLC domain for idle CPUs,
+> it's always expensive. so the next commit :
+> 
+> 	1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
+> 
+> introduces a way to limit how many CPUs we scan.
+> 
+> But it consume some CPUs out of 'nr' that are not allowed
+> for the task and thus waste our attempts. The function
+> always return nr_cpumask_bits, and we can't find a CPU
+> which our task is allowed to run.
+> 
+> Cpumask may be too big, similar to select_idle_core(), use
+> per_cpu_ptr 'select_idle_mask' to prevent stack overflow.
+> 
+> Fixes: 1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
+> Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
 
-Agreed, will send v8 soon!
+Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
 
-
-Thanks,
-SeongJae Park
-
->
->
-> Juergen
+> ---
+>  kernel/sched/fair.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 08a233e97a01..d48244388ce9 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5828,6 +5828,7 @@ static inline int select_idle_smt(struct task_struct *p, int target)
+>   */
+>  static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int target)
+>  {
+> +	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
+>  	struct sched_domain *this_sd;
+>  	u64 avg_cost, avg_idle;
+>  	u64 time, cost;
+> @@ -5859,11 +5860,11 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+>  
+>  	time = cpu_clock(this);
+>  
+> -	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
+> +	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+> +
+> +	for_each_cpu_wrap(cpu, cpus, target) {
+>  		if (!--nr)
+>  			return si_cpu;
+> -		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+> -			continue;
+>  		if (available_idle_cpu(cpu))
+>  			break;
+>  		if (si_cpu == -1 && sched_idle_cpu(cpu))
+> 
