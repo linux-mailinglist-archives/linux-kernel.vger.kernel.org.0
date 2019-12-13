@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E80A11DA72
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:07:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF6811DA78
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:07:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731527AbfLMAHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 19:07:42 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41788 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731502AbfLMAHi (ORCPT
+        id S1731560AbfLMAHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 19:07:53 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:39156 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731492AbfLMAHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:07:38 -0500
-Received: by mail-pg1-f196.google.com with SMTP id x8so526152pgk.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:07:38 -0800 (PST)
+        Thu, 12 Dec 2019 19:07:41 -0500
+Received: by mail-pj1-f65.google.com with SMTP id v93so339845pjb.6
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:07:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ht926qJSnvFGYIB9K4O+nNF4O0GCYV2PIQMqyDhIY5k=;
-        b=pAhylW84Ppk1pzQ07cJ1GCoqAdv+PqaHjW642NqJkc81qr3/BsO1kzzIV+BxYI8KJX
-         v9yTtPYVQlJMZuz72or3lFYMBEFW6qZx9BLjNTipBf0mRr0Ldyfnt2Omlz0ogqyTJGrj
-         kZcx3UYqZ/dx7jXcXzBk/vaClRf7gjx1/mi55jkyiIcvUU/xzH2VMeQTmcq8+jRv+010
-         h3HWaYmF2Jof57rK5I49kt7xMb0qjvp5HLlTnQiLUIqUf23RkLT1zF2bntEymIlnFn5+
-         MI3/yaUhVKiz/oPzU+Wm5tN4v3m6jlv5ZvpNuqqprA10sYLna8sxyoJ4d9Hmc0drxyDL
-         b1AA==
+        bh=oOfw8DvGelk55VHYuQqtGjkzT+5DacD+SJoWHYJTR3I=;
+        b=XCdpRu57dNmoWnj2l4EG7ZDbsjFSrjIpki7aSV4S3h/YRY5z9QZKOes+9is2EyjqDi
+         Pggu8FM3/7QWvzeC21hsbCLhcGMQo4g+ugnC+0QPnM7fqEMVKKR/LOxJA4rFtuNZmFJ0
+         emjiYa/2Ns4Yv3HuAJhAI8IRO7/Gn2ljOKX+tfvBR207LOLY4JpQpr3XmBD6pMHFFdeK
+         +FFab1PlU1DCuACaqcrDYr+LhVt3ihA3qfjHHaEar1ILptYMg4ID3rVleAZoisR6GURI
+         6gMOPR4kRiTK0OV22sjNYFT3GWYlyH+dJHuhFM/9DiKyQtsss/VGLt/tXriatRoDRFqI
+         GabQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ht926qJSnvFGYIB9K4O+nNF4O0GCYV2PIQMqyDhIY5k=;
-        b=YhXLzW1YyZHI5PdeLBxTiAs3tSBwppVedUBP+wOTIm8AoWF5ExnBBGHM1foeVWkBRU
-         pNmJOikeWXfH30NyUUZ5nr1K89osXA8dDrgBW747tkPOCjTUPpOwjK0G9hoKCljWAVr5
-         qHYBxqpiI1OkZ3ldxit2j6driVxBfyY3Ao17doyhahngGQl2WJvBl3A2viaMnJv84ran
-         L8AN99dEV5gJL96wmDbUkAvYpsD1Va/key3aS1HYZky+CpRZ7MrjOcbioTcSjHLBOc1s
-         3MCdW75XuIjfMrPZCoXaLbTUbOGjmXE1fSK+1pHWbJjJqo38DpwrJm9ucLhkqhPZ+Cyo
-         qg0A==
-X-Gm-Message-State: APjAAAWc7WVhTX4XUMzHdZZIAw32IYNgNQGUHhSBs15W/6zDDm83ynqo
-        ZW6fgbkFaJ/Fml0JKcewyh4NujrRcpY=
-X-Google-Smtp-Source: APXvYqylue42aFMD17i+b85QMKbex5T+5d6XmumWHoNiwhyBRGK276IyodScoTiKLMJ9kqwqnXofjA==
-X-Received: by 2002:a63:4b48:: with SMTP id k8mr13646417pgl.362.1576195657625;
-        Thu, 12 Dec 2019 16:07:37 -0800 (PST)
+        bh=oOfw8DvGelk55VHYuQqtGjkzT+5DacD+SJoWHYJTR3I=;
+        b=S1czzzhPCvoARci0qPxc4yuHKqpqIHyNc+tk/OvAG7rsOXzJm5KBzviaVvG7yYYnnP
+         EtMTMBEg8gaF0uaE5NHzuMTW78RXG+sIXsTbX8SldJArIwk1JViUzaEr49YLM8gpzgQu
+         dVeA9fpnx/S3B1hsjc4ZJpHXgT6lnCA9xdyQOdlCs3rBJDs+KxKF4ck5X9qOH8Zp15It
+         SGeW9HPAe6bUmpqC8fUHhjWzgKD1fxoC7jjjC08xIAvltsaOoZIH4MtPKt47IoLcHiHc
+         XhJwrxKtiTUevByGdUFyAMFaHfH9TH0XvAB1Za4nz99qw7FE/KsmYSYieMJkBFA7JSev
+         OcOw==
+X-Gm-Message-State: APjAAAUlUaFlumWYifRIR5FJ6SAp9bR6PGa8YyyfkwxErjKv3BxX8cLk
+        tAMmmcizaTy28ybYGYQrQVzZKUeP2qA=
+X-Google-Smtp-Source: APXvYqwKzXaCGQEeoKJrUNZJQ9fKFxNSrrIEiT/fYpiiBnXVX3v8SPs8UTDHVRjx6kdnyz5cai2w1w==
+X-Received: by 2002:a17:902:b204:: with SMTP id t4mr12673801plr.137.1576195660500;
+        Thu, 12 Dec 2019 16:07:40 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.07.35
+        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.07.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 16:07:36 -0800 (PST)
+        Thu, 12 Dec 2019 16:07:39 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -52,10 +52,10 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>,
         Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org
-Subject: [PATCH 08/58] tty/serial: Migrate 8250_port to use has_sysrq
-Date:   Fri, 13 Dec 2019 00:06:07 +0000
-Message-Id: <20191213000657.931618-9-dima@arista.com>
+        linux-serial@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 09/58] tty/serial: Migrate amba-pl01* to use has_sysrq
+Date:   Fri, 13 Dec 2019 00:06:08 +0000
+Message-Id: <20191213000657.931618-10-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191213000657.931618-1-dima@arista.com>
 References: <20191213000657.931618-1-dima@arista.com>
@@ -75,34 +75,60 @@ The SUPPORT_SYSRQ ifdeffery is not nice as:
 In order to remove SUPPORT_SYSRQ, has_sysrq variable has been added.
 Initialise it in driver's probe and remove ifdeffery.
 
+Cc: Russell King <linux@armlinux.org.uk>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/serial/8250/8250_port.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/tty/serial/amba-pl010.c | 5 +----
+ drivers/tty/serial/amba-pl011.c | 6 +-----
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 90655910b0c7..8243f280a2ec 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -11,10 +11,6 @@
-  *  membase is an 'ioremapped' cookie.
+diff --git a/drivers/tty/serial/amba-pl010.c b/drivers/tty/serial/amba-pl010.c
+index 2c37d11726ab..3284f34e9dfe 100644
+--- a/drivers/tty/serial/amba-pl010.c
++++ b/drivers/tty/serial/amba-pl010.c
+@@ -15,10 +15,6 @@
+  * and hooked into this driver.
   */
  
--#if defined(CONFIG_SERIAL_8250_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+-#if defined(CONFIG_SERIAL_AMBA_PL010_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 -#define SUPPORT_SYSRQ
 -#endif
 -
  #include <linux/module.h>
- #include <linux/moduleparam.h>
  #include <linux/ioport.h>
-@@ -3055,6 +3051,7 @@ void serial8250_init_port(struct uart_8250_port *up)
+ #include <linux/init.h>
+@@ -728,6 +724,7 @@ static int pl010_probe(struct amba_device *dev, const struct amba_id *id)
+ 	uap->port.iotype = UPIO_MEM;
+ 	uap->port.irq = dev->irq[0];
+ 	uap->port.fifosize = 16;
++	uap->port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_AMBA_PL010_CONSOLE);
+ 	uap->port.ops = &amba_pl010_pops;
+ 	uap->port.flags = UPF_BOOT_AUTOCONF;
+ 	uap->port.line = i;
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 4b28134d596a..952483ec8ea1 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -16,11 +16,6 @@
+  * and hooked into this driver.
+  */
  
- 	spin_lock_init(&port->lock);
- 	port->ops = &serial8250_pops;
-+	port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_8250_CONSOLE);
+-
+-#if defined(CONFIG_SERIAL_AMBA_PL011_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+-#define SUPPORT_SYSRQ
+-#endif
+-
+ #include <linux/module.h>
+ #include <linux/ioport.h>
+ #include <linux/init.h>
+@@ -2579,6 +2574,7 @@ static int pl011_setup_port(struct device *dev, struct uart_amba_port *uap,
+ 	uap->port.mapbase = mmiobase->start;
+ 	uap->port.membase = base;
+ 	uap->port.fifosize = uap->fifosize;
++	uap->port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_AMBA_PL011_CONSOLE);
+ 	uap->port.flags = UPF_BOOT_AUTOCONF;
+ 	uap->port.line = index;
  
- 	up->cur_iotype = 0xFF;
- }
 -- 
 2.24.0
 
