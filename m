@@ -2,95 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A49F11DF4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:22:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 509AF11DF03
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:03:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbfLMIWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 03:22:48 -0500
-Received: from mailgw02.mediatek.com ([216.200.240.185]:60221 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfLMIWr (ORCPT
+        id S1725945AbfLMIDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 03:03:38 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50345 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfLMIDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 03:22:47 -0500
-X-UUID: 02c8eb1eb31443d59c20f316aad7c71e-20191213
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:Reply-To:From:Subject:Message-ID; bh=3iGzWvQ973vDVy2jTOS5BARL9ANWb/8ieSVfodrTkr4=;
-        b=E0OJZXP7CFIIiOND7EZdxZ/6RSDw+BPQGnB2xYPTcp27ez2h0wA5iduHuekmT7ygbheSIjLwb1mXEZXyyf4Wd4ODg1++1KNEoiA7HLxuJJWNo4AqjNU7s4UDqjE2epMKL3nWHQBgnPrHlW7zJMAPge2J2RdTVbHEoeNlDYvTXlc=;
-X-UUID: 02c8eb1eb31443d59c20f316aad7c71e-20191213
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <yongqiang.niu@mediatek.com>)
-        (musrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1009231870; Fri, 13 Dec 2019 00:22:45 -0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs05n2.mediatek.inc
- (172.21.101.140) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 13 Dec
- 2019 16:02:52 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 13 Dec 2019 16:03:11 +0800
-Message-ID: <1576224191.31822.2.camel@mhfsdcap03>
-Subject: Re: [PATCH v2, 1/2] drm/mediatek: Fix gamma correction issue
-From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
-Reply-To: Yongqiang Niu <yongqiang.niu@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Fri, 13 Dec 2019 16:03:11 +0800
-In-Reply-To: <1576223336.9817.3.camel@mtksdaap41>
-References: <1576222132-31586-1-git-send-email-yongqiang.niu@mediatek.com>
-         <1576222132-31586-2-git-send-email-yongqiang.niu@mediatek.com>
-         <1576223336.9817.3.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 13 Dec 2019 03:03:37 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1iffvE-00025T-43; Fri, 13 Dec 2019 09:03:36 +0100
+Received: from sha by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1iffvD-000715-K4; Fri, 13 Dec 2019 09:03:35 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     linux-ide@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH] libata: Fix retrieving of active qcs
+Date:   Fri, 13 Dec 2019 09:03:34 +0100
+Message-Id: <20191213080334.26922-1-s.hauer@pengutronix.de>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTEyLTEzIGF0IDE1OjQ4ICswODAwLCBDSyBIdSB3cm90ZToNCj4gSGksIFlv
-bmdxaWFuZzoNCj4gDQo+IFRoZSB0aXRsZSBpcyB0b28gcm91Z2guIEFueSBidWcgb2YgZ2FtbWEg
-d291bGQgYmUgdGhpcyB0aXRsZS4gSSB3b3VsZA0KPiBsaWtlIHRoZSB0aXRsZSBzaG93IGV4cGxp
-Y2l0bHkgd2hhdCBpdCBkb2VzLg0KPiANCj4gT24gRnJpLCAyMDE5LTEyLTEzIGF0IDE1OjI4ICsw
-ODAwLCBZb25ncWlhbmcgTml1IHdyb3RlOg0KPiA+IGlmIHRoZXJlIGlzIG5vIGdhbW1hIGZ1bmN0
-aW9uIGluIHRoZSBjcnRjDQo+ID4gZGlzcGxheSBwYXRoLCBkb24ndCBhZGQgZ2FtbWEgcHJvcGVy
-dHkNCj4gPiBmb3IgY3J0Yw0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IFlvbmdxaWFuZyBOaXUg
-PHlvbmdxaWFuZy5uaXVAbWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2dwdS9k
-cm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMgfCAxMCArKysrKysrKy0tDQo+ID4gIDEgZmlsZSBj
-aGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KPiA+IGluZGV4IGNhNGZjNDcuLjlhOGUx
-ZDQgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0
-Yy5jDQo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQo+
-ID4gQEAgLTczNCw2ICs3MzQsNyBAQCBpbnQgbXRrX2RybV9jcnRjX2NyZWF0ZShzdHJ1Y3QgZHJt
-X2RldmljZSAqZHJtX2RldiwNCj4gPiAgCWludCBwaXBlID0gcHJpdi0+bnVtX3BpcGVzOw0KPiA+
-ICAJaW50IHJldDsNCj4gPiAgCWludCBpOw0KPiA+ICsJdWludCBnYW1tYV9sdXRfc2l6ZSA9IDA7
-DQo+ID4gIA0KPiA+ICAJaWYgKCFwYXRoKQ0KPiA+ICAJCXJldHVybiAwOw0KPiA+IEBAIC03ODUs
-NiArNzg2LDkgQEAgaW50IG10a19kcm1fY3J0Y19jcmVhdGUoc3RydWN0IGRybV9kZXZpY2UgKmRy
-bV9kZXYsDQo+ID4gIAkJfQ0KPiA+ICANCj4gPiAgCQltdGtfY3J0Yy0+ZGRwX2NvbXBbaV0gPSBj
-b21wOw0KPiA+ICsNCj4gPiArCQlpZiAoY29tcC0+ZnVuY3MtPmdhbW1hX3NldCkNCj4gPiArCQkJ
-Z2FtbWFfbHV0X3NpemUgPSBNVEtfTFVUX1NJWkU7DQo+ID4gIAl9DQo+ID4gIA0KPiA+ICAJZm9y
-IChpID0gMDsgaSA8IG10a19jcnRjLT5kZHBfY29tcF9ucjsgaSsrKQ0KPiA+IEBAIC04MDUsOCAr
-ODA5LDEwIEBAIGludCBtdGtfZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1f
-ZGV2LA0KPiA+ICAJCQkJTlVMTCwgcGlwZSk7DQo+ID4gIAlpZiAocmV0IDwgMCkNCj4gPiAgCQly
-ZXR1cm4gcmV0Ow0KPiA+IC0JZHJtX21vZGVfY3J0Y19zZXRfZ2FtbWFfc2l6ZSgmbXRrX2NydGMt
-PmJhc2UsIE1US19MVVRfU0laRSk7DQo+ID4gLQlkcm1fY3J0Y19lbmFibGVfY29sb3JfbWdtdCgm
-bXRrX2NydGMtPmJhc2UsIDAsIGZhbHNlLCBNVEtfTFVUX1NJWkUpOw0KPiA+ICsNCj4gPiArCWlm
-IChnYW1tYV9sdXRfc2l6ZSkNCj4gPiArCQlkcm1fbW9kZV9jcnRjX3NldF9nYW1tYV9zaXplKCZt
-dGtfY3J0Yy0+YmFzZSwgZ2FtbWFfbHV0X3NpemUpOw0KPiA+ICsJZHJtX2NydGNfZW5hYmxlX2Nv
-bG9yX21nbXQoJm10a19jcnRjLT5iYXNlLCAwLCBmYWxzZSwgZ2FtbWFfbHV0X3NpemUpOw0KPiAN
-Cj4gSWYgdGhlcmUgaXMgbm8gZ2FtbWEsIHNoYWxsIHdlIGVuYWJsZSBjb2xvciBtYW5hZ2VtZW50
-Pw0KPiANCj4gUmVnYXJkcywNCj4gQ0sNCg0KZHJtX2NydGNfZW5hYmxlX2NvbG9yX21nbXQgd2ls
-bCBjaGVjayB0aGUgZ2FtbWFfbHV0X3NpemUgcGFyYW1ldGVyLA0KaWYgbm8gZ2FtbWEsIGdhbW1h
-X2x1dF9zaXplIHdpbGwgYmUgMCwgYW5kIGdhbW1hX2x1dF9zaXplIHdpbGwgbm90IGF0dGNoDQpn
-YW1tYSBwcm9wZXJ0eSBmb3IgdGhlIGNydGMNCj4gDQo+ID4gIAlwcml2LT5udW1fcGlwZXMrKzsN
-Cj4gPiAgCW11dGV4X2luaXQoJm10a19jcnRjLT5od19sb2NrKTsNCj4gPiAgDQo+IA0KPiANCg0K
+ata_qc_complete_multiple() is called with a mask of the still active
+tags.
+
+mv_sata doesn't have this information directly and instead calculates
+the still active tags from the started tags (ap->qc_active) and the
+finished tags as (ap->qc_active ^ done_mask)
+
+Since 28361c40368 the hw_tag and tag are no longer the same and the
+equation is no longer valid. In ata_exec_internal_sg() ap->qc_active is
+initialized as 1ULL << ATA_TAG_INTERNAL, but in hardware tag 0 is
+started and this will be in done_mask on completion. ap->qc_active ^
+done_mask becomes 0x100000000 ^ 0x1 = 0x100000001 and thus tag 0 used as
+the internal tag will never be reported as completed.
+
+This is fixed by introducing ata_qc_get_active() which returns the
+active hardware tags and calling it where appropriate.
+
+This is tested on mv_sata, but sata_fsl and sata_nv suffer from the same
+problem. There is another case in sata_nv that most likely needs fixing
+as well, but this looks a little different, so I wasn't confident enough
+to change that.
+
+Fixes: 28361c403683 ("libata: add extra internal command")
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ drivers/ata/libata-core.c | 23 +++++++++++++++++++++++
+ drivers/ata/sata_fsl.c    |  2 +-
+ drivers/ata/sata_mv.c     |  2 +-
+ drivers/ata/sata_nv.c     |  2 +-
+ include/linux/libata.h    |  1 +
+ 5 files changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index e9017c570bc5..a330e1f28ff4 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -5328,6 +5328,29 @@ void ata_qc_complete(struct ata_queued_cmd *qc)
+ 	}
+ }
+ 
++/**
++ *	ata_qc_get_active - get bitmask of active qcs
++ *	@ap: port in question
++ *
++ *	LOCKING:
++ *	spin_lock_irqsave(host lock)
++ *
++ *	RETURNS:
++ *	Bitmask of active qcs
++ */
++u64 ata_qc_get_active(struct ata_port *ap)
++{
++	u64 qc_active = ap->qc_active;
++
++	/* ATA_TAG_INTERNAL is sent to hw as tag 0 */
++	if (qc_active & (1ULL << ATA_TAG_INTERNAL)) {
++		qc_active |= (1 << 0);
++		qc_active &= ~(1ULL << ATA_TAG_INTERNAL);
++	}
++
++	return qc_active;
++}
++
+ /**
+  *	ata_qc_complete_multiple - Complete multiple qcs successfully
+  *	@ap: port in question
+diff --git a/drivers/ata/sata_fsl.c b/drivers/ata/sata_fsl.c
+index 9239615d8a04..d55ee244d693 100644
+--- a/drivers/ata/sata_fsl.c
++++ b/drivers/ata/sata_fsl.c
+@@ -1280,7 +1280,7 @@ static void sata_fsl_host_intr(struct ata_port *ap)
+ 				     i, ioread32(hcr_base + CC),
+ 				     ioread32(hcr_base + CA));
+ 		}
+-		ata_qc_complete_multiple(ap, ap->qc_active ^ done_mask);
++		ata_qc_complete_multiple(ap, ata_qc_get_active(ap) ^ done_mask);
+ 		return;
+ 
+ 	} else if ((ap->qc_active & (1ULL << ATA_TAG_INTERNAL))) {
+diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
+index 277f11909fc1..d7228f8e9297 100644
+--- a/drivers/ata/sata_mv.c
++++ b/drivers/ata/sata_mv.c
+@@ -2829,7 +2829,7 @@ static void mv_process_crpb_entries(struct ata_port *ap, struct mv_port_priv *pp
+ 	}
+ 
+ 	if (work_done) {
+-		ata_qc_complete_multiple(ap, ap->qc_active ^ done_mask);
++		ata_qc_complete_multiple(ap, ata_qc_get_active(ap) ^ done_mask);
+ 
+ 		/* Update the software queue position index in hardware */
+ 		writelfl((pp->crpb_dma & EDMA_RSP_Q_BASE_LO_MASK) |
+diff --git a/drivers/ata/sata_nv.c b/drivers/ata/sata_nv.c
+index f3e62f5528bd..eb9dc14e5147 100644
+--- a/drivers/ata/sata_nv.c
++++ b/drivers/ata/sata_nv.c
+@@ -984,7 +984,7 @@ static irqreturn_t nv_adma_interrupt(int irq, void *dev_instance)
+ 					check_commands = 0;
+ 				check_commands &= ~(1 << pos);
+ 			}
+-			ata_qc_complete_multiple(ap, ap->qc_active ^ done_mask);
++			ata_qc_complete_multiple(ap, ata_qc_get_active(ap) ^ done_mask);
+ 		}
+ 	}
+ 
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index d3bbfddf616a..2dbde119721d 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -1175,6 +1175,7 @@ extern unsigned int ata_do_dev_read_id(struct ata_device *dev,
+ 					struct ata_taskfile *tf, u16 *id);
+ extern void ata_qc_complete(struct ata_queued_cmd *qc);
+ extern int ata_qc_complete_multiple(struct ata_port *ap, u64 qc_active);
++extern u64 ata_qc_get_active(struct ata_port *ap);
+ extern void ata_scsi_simulate(struct ata_device *dev, struct scsi_cmnd *cmd);
+ extern int ata_std_bios_param(struct scsi_device *sdev,
+ 			      struct block_device *bdev,
+-- 
+2.24.0
 
