@@ -2,136 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB7911EB54
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 20:54:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5EE111EB6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:01:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbfLMTxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 14:53:52 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:35261 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728900AbfLMTxw (ORCPT
+        id S1729011AbfLMT7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 14:59:44 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44550 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728696AbfLMT7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 14:53:52 -0500
-Received: by mail-qk1-f193.google.com with SMTP id z76so218812qka.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 11:53:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=UDUGuPy0SzNQtaLWS/B5DyJXF4eqKf2oErS2khMyg4Y=;
-        b=aDdLn77F4ZSNiHcIyuN9tH5vtM9rtFMe/mkQfzUVRPPOC5mOfxX/l8Rd4ai7xnb14T
-         54qeT6LQLY1m+thu/An8GPv7ds/kfhZwcyG7BkZDXYwWN6AeQiPOJRnXdpT/GdVmwZtA
-         PAtDqicdbbejRnxZBr6LL1D4fAr1/EEXNeriU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=UDUGuPy0SzNQtaLWS/B5DyJXF4eqKf2oErS2khMyg4Y=;
-        b=U39g1ktP6+GC5D5IOVtnn8iKc691ovItXVj9SDhg3daXvqdQzTmT5TH/qjMio0Eo+k
-         xBK+O0mTZbPpeADthwQgRwZ4c9Pz4d1mKEH9aS+goQ2C6JanN1lsSmMkM1GA4e6bdp3b
-         Un3GxWsh5rMP5w8yfl6juTmJySUDfK3dyiHGm8mZDT/AbfNjHWau7+qWOLPJrxLwinxT
-         SLArmOO8ADUkMtMsS0pcqXBMLAuTm96G/Xlole78FaRxYy0PnsiZ5Nk4YiTMsqzDxkbe
-         P6pdEZ6YA3Y1A5dIFJ4XRrLZfs7GlckDL5ZVl9grJSI4ah5CZ95cv9gunv3qCiESDTk0
-         3JBg==
-X-Gm-Message-State: APjAAAWEUTa4EVQh9rQW/JsD5/dam+DNYgSKq52iBqvx3+KhFGPTlS4p
-        94YXZcMr74X2u8gh2L1NfX8G4g==
-X-Google-Smtp-Source: APXvYqyfqS0ID8TthkiIcQbMK759FrzJW0tg6ZzVKhlFGN942BaI/winZ1bilTouIW/UnGxRclYZnw==
-X-Received: by 2002:a05:620a:1112:: with SMTP id o18mr14883267qkk.126.1576266831174;
-        Fri, 13 Dec 2019 11:53:51 -0800 (PST)
-Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id t11sm3065461qkm.92.2019.12.13.11.53.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 11:53:49 -0800 (PST)
-From:   Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date:   Fri, 13 Dec 2019 14:53:48 -0500 (EST)
-X-X-Sender: vince@macbook-air
-To:     Dave Hansen <dave.hansen@intel.com>
-cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: Re: [perf] perf_fuzzer triggers NULL pointer derefernce in i915
- driver
-In-Reply-To: <f2c6502a-f13e-a663-f1f5-c441964d77ac@intel.com>
-Message-ID: <alpine.DEB.2.21.1912131452170.19748@macbook-air>
-References: <alpine.DEB.2.21.1912121032420.15237@macbook-air> <87tv641z20.fsf@intel.com> <f2c6502a-f13e-a663-f1f5-c441964d77ac@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 13 Dec 2019 14:59:44 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7C98D8EE1E0;
+        Fri, 13 Dec 2019 11:59:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1576267182;
+        bh=vWQDrFNBRvPHrpYiw15uNPAvoQF6Hmi1ReSpXrsHKmM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=R6Jl2cP46Dt/doNyUbZYQ0nMg6/WS+m3P2m2g1ghU1uvp1CQ5tFU1cWBjIajdBixd
+         IeI8SbzWuq9nbNKI3yJve1NI+7qDuVFkgXglwPteylYSZMYsnR0tDmov2M+bteyeqQ
+         0Do3quDEJ1Y3ttBnncgH+Z8ZjJV/jMAYaunBO6pg=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3QzNzn626Lyl; Fri, 13 Dec 2019 11:59:40 -0800 (PST)
+Received: from [172.20.40.112] (unknown [206.121.240.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B4A078EE0E0;
+        Fri, 13 Dec 2019 11:59:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1576267179;
+        bh=vWQDrFNBRvPHrpYiw15uNPAvoQF6Hmi1ReSpXrsHKmM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=L+2p7IcjaMeH3psLlUT8aYowCyyHNXyuebIK2ohBWvuDyYaKTV6vGoxrmqJAqpsgD
+         uN1cvwl9T1yjmIpTv2lDq2SvWVHJRsCXg6myuI4FdhK4M1y53nK6AmWYIu36J+aUgu
+         bUEEkyIemlotbxEI6H3Bm7jynqcOVYWJYg9dCEp8=
+Message-ID: <1576267177.4060.4.camel@HansenPartnership.com>
+Subject: Re: [PATCH v7 1/1] ns: add binfmt_misc to the user namespace
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Henning Schild <henning.schild@siemens.com>,
+        Laurent Vivier <laurent@vivier.eu>
+Cc:     linux-kernel@vger.kernel.org, Dmitry Safonov <dima@arista.com>,
+        linux-fsdevel@vger.kernel.org,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-api@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Greg Kurz <groug@kaod.org>, Jann Horn <jannh@google.com>,
+        containers@lists.linux-foundation.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kiszka <jan.kiszka@siemens.com>
+Date:   Fri, 13 Dec 2019 14:59:37 -0500
+In-Reply-To: <20191213185110.06b52cf4@md1za8fc.ad001.siemens.net>
+References: <20191107140304.8426-1-laurent@vivier.eu>
+         <20191107140304.8426-2-laurent@vivier.eu>
+         <7cb245ed-f738-7991-a09b-b27152274b9f@vivier.eu>
+         <20191213185110.06b52cf4@md1za8fc.ad001.siemens.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Dec 2019, Dave Hansen wrote:
-
-> On 12/12/19 11:09 PM, Jani Nikula wrote:
-> > On Thu, 12 Dec 2019, Vince Weaver <vincent.weaver@maine.edu> wrote:
-> >> with current git the perf_fuzzer was able to trigger this NULL pointer
-> >> de-reference in the i915 driver.
-> > Please file a bug.
-> > 
-> > https://gitlab.freedesktop.org/drm/intel/wikis/How-to-file-i915-bugs
+On Fri, 2019-12-13 at 18:51 +0100, Henning Schild wrote:
+> Hi all,
 > 
-> I'm seeing the same thing.  It's annoyingly and immediately reproducible
-> for me:
-> 
-> 	https://gitlab.freedesktop.org/drm/intel/issues/826
-> 
-> Let me know if you want anything fancier done like a bisect.  Looking
-> back through my kernel logs, it appears to also have happened with
-> 5.4.0-rc4.
+> that is a very useful contribution, which will hopefully be
+> considered.
 
-This patch was sent out in response to my report (but not as a direct 
-reply).
+I'm technically the maintainer on the you touched it last you own it
+basis, so if Christian's concerns get addressed I'll shepherd it
+upstream.
 
-
->From chris@chris-wilson.co.uk Thu Dec 12 10:42:36 2019
->Date: Thu, 12 Dec 2019 15:42:24 +0000
->From: Chris Wilson <chris@chris-wilson.co.uk>
->To: intel-gfx@lists.freedesktop.org
->Cc: Chris Wilson <chris@chris-wilson.co.uk>, Vince Weaver <vincent.weaver@maine.edu>, Matthew Auld <matthew.auld@intel.com>
->Subject: [PATCH] drm/i915: Set fence_work.ops before dma_fence_init
-
-Since dma_fence_init may call ops (because of a meaningless
-trace_dma_fence), we need to set the worker ops prior to that call.
-
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: 8e458fe2ee05 ("drm/i915: Generalise the clflush dma-worker")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Matthew Auld <matthew.auld@intel.com>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
----
- drivers/gpu/drm/i915/i915_sw_fence_work.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_sw_fence_work.c b/drivers/gpu/drm/i915/i915_sw_fence_work.c
-index 07552cd544f2..8538ee7a521d 100644
---- a/drivers/gpu/drm/i915/i915_sw_fence_work.c
-+++ b/drivers/gpu/drm/i915/i915_sw_fence_work.c
-@@ -78,12 +78,11 @@ static const struct dma_fence_ops fence_ops = {
- void dma_fence_work_init(struct dma_fence_work *f,
- 			 const struct dma_fence_work_ops *ops)
- {
-+	f->ops = ops;
- 	spin_lock_init(&f->lock);
- 	dma_fence_init(&f->dma, &fence_ops, &f->lock, 0, 0);
- 	i915_sw_fence_init(&f->chain, fence_notify);
- 	INIT_WORK(&f->work, fence_work);
--
--	f->ops = ops;
- }
- 
- int dma_fence_work_chain(struct dma_fence_work *f, struct dma_fence *signal)
--- 
-2.24.0
+James
 
