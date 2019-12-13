@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 090C811E7AB
+	by mail.lfdr.de (Postfix) with ESMTP id DD3E011E7AD
 	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728406AbfLMQFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:05:51 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:43187 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728099AbfLMQFv (ORCPT
+        id S1728426AbfLMQFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:05:54 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:47026 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728099AbfLMQFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:05:51 -0500
-Received: by mail-yw1-f68.google.com with SMTP id s187so22199ywe.10;
-        Fri, 13 Dec 2019 08:05:50 -0800 (PST)
+        Fri, 13 Dec 2019 11:05:53 -0500
+Received: by mail-yb1-f193.google.com with SMTP id v15so932446ybp.13;
+        Fri, 13 Dec 2019 08:05:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XEqMHcTdDOYOvlqXuxrY0ZDmTfpLPgj3LFItvyhrGW8=;
-        b=NKVRcrFQi760LHcc2CA3mSfP216r5ge0bRp8GoTBxQzDEoVuCBqhn0AnB12G/DmyIN
-         7Zi15rAWKE+6u8EKYPiy3nu7oTaK5y4xGj5v1FFU9OeZdev3wLePzS27Rkg9I+xGub9I
-         BjVjua+vP5CtwTTtDm0Erd2lv6gGzHFiO+eHL3CS+WnWEJavdNg4ge7f1YNh8qPoTOvJ
-         oLeb8/YH+bUQBRJK+1ii49WoOVdX9FMfzWXw+QClPLnUwhLIqprDDRsL2pU6LRXvQd85
-         JKxf1xFOMXICKrzwC0pUKzTXHqKJHui89SGkOKuS83pvy6UfKsVaILzw1wcnRL9L9mEa
-         Nbhw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+VnUOz+8D3V2uKNqlxwDzqgg2+EXtUFjH7t7xpLJ+2k=;
+        b=OJSd4RbR4A1qe4EmWcAK5phI498i9Zr0SDiK6+YbkjrNCjzLgglR4miia93Tl0KE5D
+         dhc9HDuU/T7vqbpOxN6K+Vki4L622Gm0bWuCieWjqJyloY3eNXP5ouN1+fumHz1bHy19
+         fqZE98HtZ9ht9b9s3nueTUf3u3Lbz/eyL4ksPDPq/PBMZ/fx0Bo+MICSYzUnKf949b6r
+         eR06o96BwwKrVtQEVicodx91aPfHQMf6bRyWUmZnq6IDzlFni5MdkZwsRISCEE/h+82M
+         yxJ9vAtFCphgEA90dT0sRC9tOPsg23JO1ZyyEshVlolOjR1HRukqQht35BW8eDiBfhDx
+         H9rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XEqMHcTdDOYOvlqXuxrY0ZDmTfpLPgj3LFItvyhrGW8=;
-        b=sIptDIS6AalEA1rtX6Rte91Svnp3l3R4BfNfkD5PXqpMTgULeX+BCKigqDYhwx5rWw
-         LlOq1+AXqvbHblJK74yxcoBSj9UFvNw9zzqzhVmHbHaxyQFgmdBw9fosIcrcul/5jW8n
-         v5bavzQzdc8NoIWWSJVTVEM0I7kI7QUTIV2W+SD0slgrRhTW11Y0uIqVt8Es20hIA7Y+
-         ueLWVlzdRlk4gonRwt6yb3G7uL/Z7bFWpccQ86ZLRFBnjzUesU0Yp08GHVxaKfTrbKf4
-         H2tMvDyYV70cVHhp5s9viZCA1gz/MLhS0VpWvhJvjVb0SdRPMI+DE7arMTe3afvgp42l
-         FqmA==
-X-Gm-Message-State: APjAAAXemg3wc4XybPsNNamwQino2XTQMspbFXMDMpixsjqXVPyitm6B
-        ahSBmLsKWA+inNlw1bjrJi0=
-X-Google-Smtp-Source: APXvYqys0XoQhk+58M8smG2N+QHVvjzqTiqDCi74zIQgQS1eYZb6PW/ZmzSN70o7vzlpSbz5S4WEFw==
-X-Received: by 2002:a0d:c041:: with SMTP id b62mr9089386ywd.488.1576253149508;
-        Fri, 13 Dec 2019 08:05:49 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+VnUOz+8D3V2uKNqlxwDzqgg2+EXtUFjH7t7xpLJ+2k=;
+        b=GtKcNe8pEdo7bsCwvs9jBcygMx7Jh1xwjxta4umA0j+9uu4/sm2msS5nXqSctALuc1
+         BwLQnJ1oEHtGT4gxQpGYyPkf3tAWM8LmH3QC8ol/iNCOD2+Rs4CCR9o3Xumn+wW52m6w
+         jFx5zZEjCbyLs+p7yFw84YxuTzKtqIjADv8qRGqUCT2T9teHhVAy9W6YTjQAjxssEU+f
+         tZnbRwc+eG4RtibnIfvUMHD5tWurXv9rLM9Dkvy0BMjaF0v3fAFBBWwy+Jw4J1lxbrKm
+         hjMttfrvDia/gyXuB96fr1iyKiZP4px71c8vTx4fO12yIknVC1yl2qYq/ErmSr1q35ic
+         OeVQ==
+X-Gm-Message-State: APjAAAXaADYWimRLoFL2/Hk1WPE08MH0fCCVgsjqVamv6r0srwBfXVSi
+        nYH4UFf+Wvzxlt/YbKixYZw=
+X-Google-Smtp-Source: APXvYqyH3cGVtkwoXj9l+rC5v9ceK5lYYEdVaYLTgOykQHR8iMWh+Pf+vCEY+WRK1WooF03tCRXT6w==
+X-Received: by 2002:a25:b108:: with SMTP id g8mr9228296ybj.518.1576253152035;
+        Fri, 13 Dec 2019 08:05:52 -0800 (PST)
 Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
-        by smtp.gmail.com with ESMTPSA id v38sm3984694ywh.63.2019.12.13.08.05.47
+        by smtp.gmail.com with ESMTPSA id v38sm3984694ywh.63.2019.12.13.08.05.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 08:05:48 -0800 (PST)
+        Fri, 13 Dec 2019 08:05:51 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     peng.fan@nxp.com, ping.bai@nxp.com, Adam Ford <aford173@gmail.com>,
@@ -56,10 +56,12 @@ Cc:     peng.fan@nxp.com, ping.bai@nxp.com, Adam Ford <aford173@gmail.com>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 0/7] soc: imx: Enable additional functionality of i.MX8M Mini
-Date:   Fri, 13 Dec 2019 10:05:35 -0600
-Message-Id: <20191213160542.15757-1-aford173@gmail.com>
+Subject: [PATCH V2 1/7] soc: imx: gpcv2: Rename imx8mq-power.h to imx8m-power.h
+Date:   Fri, 13 Dec 2019 10:05:36 -0600
+Message-Id: <20191213160542.15757-2-aford173@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191213160542.15757-1-aford173@gmail.com>
+References: <20191213160542.15757-1-aford173@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,39 +69,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GPCv2 controller on the i.MX8M Mini is compatible with the driver
-used for the i.MX8MQ except for the register locations and names.
-The GPCv2 controller is used to enable additional periperals currently
-unavailable on the i.MX8M Mini.  In order to make them function,
-the GPCv2 needs to be adapted so the drivers can associate their
-power domain to the GPCv2 to enable them.
+In preparation to add support for i.MX8M Mini, this renames
+the existing file to be more generic, so it doesn't become
+necessary to include multiple files to accomplish the same
+task in the future.
 
-This series makes one include file slightly more generic,
-adds the iMX8M Mini entries, updates the bindings, adds them
-to the device tree, then associates the new power domain to
-both the OTG and PCIe controllers.
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+V2:  No Change
 
-Some peripherals may need additional power domain drivers in the future
-due to limitations of the GPC driver, but the drivers for VPU and others are
-not available yet.
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi                   | 2 +-
+ drivers/soc/imx/gpcv2.c                                     | 2 +-
+ include/dt-bindings/power/{imx8mq-power.h => imx8m-power.h} | 0
+ 3 files changed, 2 insertions(+), 2 deletions(-)
 
-Adam Ford (7):
-  soc: imx: gpcv2: Rename imx8mq-power.h to imx8m-power.h
-  soc: imx: gpcv2: Update imx8m-power.h to include iMX8M Mini
-  soc: imx: gpcv2: add support for i.MX8M Mini SoC
-  dt-bindings: imx-gpcv2: Update bindings to support i.MX8M Mini
-  arm64: dts: imx8mm: add GPC power domains
-  ARM64: dts: imx8mm: Fix clocks and power domain for USB OTG
-  arm64: dts: imx8mm: Add PCIe support
-
- .../bindings/power/fsl,imx-gpcv2.txt          |   6 +-
- arch/arm64/boot/dts/freescale/imx8mm.dtsi     | 127 ++++++++-
- arch/arm64/boot/dts/freescale/imx8mq.dtsi     |   2 +-
- drivers/soc/imx/gpcv2.c                       | 246 +++++++++++++++++-
- .../power/{imx8mq-power.h => imx8m-power.h}   |  14 +
- 5 files changed, 387 insertions(+), 8 deletions(-)
- rename include/dt-bindings/power/{imx8mq-power.h => imx8m-power.h} (57%)
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+index 55a3d1c4bdf0..f73045539fb1 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -5,7 +5,7 @@
+  */
+ 
+ #include <dt-bindings/clock/imx8mq-clock.h>
+-#include <dt-bindings/power/imx8mq-power.h>
++#include <dt-bindings/power/imx8m-power.h>
+ #include <dt-bindings/reset/imx8mq-reset.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include "dt-bindings/input/input.h"
+diff --git a/drivers/soc/imx/gpcv2.c b/drivers/soc/imx/gpcv2.c
+index b0dffb06c05d..250f740d2314 100644
+--- a/drivers/soc/imx/gpcv2.c
++++ b/drivers/soc/imx/gpcv2.c
+@@ -15,7 +15,7 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <dt-bindings/power/imx7-power.h>
+-#include <dt-bindings/power/imx8mq-power.h>
++#include <dt-bindings/power/imx8m-power.h>
+ 
+ #define GPC_LPCR_A_CORE_BSC			0x000
+ 
+diff --git a/include/dt-bindings/power/imx8mq-power.h b/include/dt-bindings/power/imx8m-power.h
+similarity index 100%
+rename from include/dt-bindings/power/imx8mq-power.h
+rename to include/dt-bindings/power/imx8m-power.h
 -- 
 2.20.1
 
