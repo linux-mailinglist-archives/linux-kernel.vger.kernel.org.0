@@ -2,119 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DBE111E48D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A24411E491
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfLMN1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:27:52 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39893 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfLMN1v (ORCPT
+        id S1727456AbfLMN3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:29:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38599 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726674AbfLMN3A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:27:51 -0500
-Received: by mail-lf1-f68.google.com with SMTP id y1so1953827lfb.6;
-        Fri, 13 Dec 2019 05:27:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3a5X/HsBz/Jc1tMHJpbmDEO9eAeGDYj6GdIi3XHqmgk=;
-        b=UDTr9nd5YdTb0v4Cj17QdUNasXorhaf3wFgqaZW+mh5qHk9tgTFVfXJT3QqZ8MIpvH
-         NXrAFiKT68JxWuNnIA8IIhJnY7IzP/mqtAac+7QkKHZn9Lq2MatgeODHqxVT8wRzBf8X
-         BTbQ+1JjFqPAuOCOxaM1SIWCiadtPhAh/mL8CBZF9dEP4iKqO4i1aEB71Hg5xEXWJNVL
-         U7I02pje8D8nu0w09x5OxgiF3FQTxuMy0pb+5B1x9/VLA0I57ZgxX/RMGrnlSuTmtQvD
-         DAxtqUoNakVHTLZkYfajb/4DJJbmIlSUifZCZV0UJb1rj0qEiCqUKiA0IxE8s8BPvs7P
-         74Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3a5X/HsBz/Jc1tMHJpbmDEO9eAeGDYj6GdIi3XHqmgk=;
-        b=YtZj4dp+J0YPfl+CSLp9LLkKCh8mjqwydIvN9bLDQYUC7fP42RBoKjtwukeeuDPNb2
-         mOYhyGp76vGdkNvCKN4iYo0ky8KYH4s5epLOJhYlkIuPsN5KARt44eK1/3UKPyclRCb0
-         hpe71YzI7HNiJWjjabUF66Dos9a6WZ20BMeVW30JF0gt0XdcnuxIPYqYbn18eJG5lig2
-         +RP3x0GItlCgmN3o/cTkNDItZtczbhIgRWcLCdMxrqXH4Zjx6lg8UOgdU+8rPZRcCqUo
-         WpIDduxAe+jJwxJFIK9hurcAwIoI5z/l/U19coatG3iYGoKyemxAc1gA/v8t0S7qKMTW
-         yjIQ==
-X-Gm-Message-State: APjAAAV3Ekm4EjCe24191+mjtaGXiNri+HOT88M4e+Yh5D8bwaCL3Ihb
-        QC0pYAsHPmZfduix3tuTpdWoOJWH
-X-Google-Smtp-Source: APXvYqzdJxJTo1vC8tE/6X67cFm/2BzOhMPwQfT4615iB1t6JDsbDMiKJl5e+NhYNhJGVufp+Zj/Fw==
-X-Received: by 2002:a19:4ac2:: with SMTP id x185mr2761270lfa.131.1576243669708;
-        Fri, 13 Dec 2019 05:27:49 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id 2sm4774272ljq.38.2019.12.13.05.27.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 05:27:48 -0800 (PST)
-Subject: Re: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20
- and Tegra30 SoCs
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191118164512.8676-1-digetx@gmail.com>
- <20191118164512.8676-8-digetx@gmail.com>
- <2776e3c7-999e-5e6f-3a0e-211226dc30e6@gmail.com>
-Message-ID: <aee736a0-444c-3d1a-1e51-c5b5259eb1b5@gmail.com>
-Date:   Fri, 13 Dec 2019 16:27:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Fri, 13 Dec 2019 08:29:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576243739;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7n8SWaJivUQ/2/eU9591KEOF2V8zoo8DFt7lnv7IRQc=;
+        b=HjPktfS4jU/q9zkbzxqbho8tJcnEdbxTa9AE5Z/hhRpB2IRgiNv7ydRpfW2LuMAMUU/oHt
+        r0MmiiiWg1CfVq7mgv3U8lH5R9R+J0SnFPKjrmwFRckQZ7ZaJSFMCZ/eURSuIKrAEkAUEi
+        BT3nnAb9fVBPY0bp9tekdJZUtcX0Zx0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-112-Z8aowBMIOpSGuo1ww6FrxA-1; Fri, 13 Dec 2019 08:28:55 -0500
+X-MC-Unique: Z8aowBMIOpSGuo1ww6FrxA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 447C71883521;
+        Fri, 13 Dec 2019 13:28:54 +0000 (UTC)
+Received: from localhost (ovpn-12-63.pek2.redhat.com [10.72.12.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 52A051CB;
+        Fri, 13 Dec 2019 13:28:52 +0000 (UTC)
+Date:   Fri, 13 Dec 2019 21:28:50 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] x86/mm/KASLR: Adjust the padding size for the
+ direct mapping.
+Message-ID: <20191213132850.GG28917@MiWiFi-R3L-srv>
+References: <20191115144917.28469-1-msys.mizuma@gmail.com>
+ <20191115144917.28469-5-msys.mizuma@gmail.com>
+ <20191212201916.GL4991@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <2776e3c7-999e-5e6f-3a0e-211226dc30e6@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191212201916.GL4991@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-18.11.2019 19:51, Dmitry Osipenko пишет:
-> 18.11.2019 19:45, Dmitry Osipenko пишет:
->> Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
->> OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
->> Currently cpufreq-dt driver produces a bit annoying warning splats
->> during boot because valid OPPs are not found, this will be fixed once
->> tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
->> will also happen on older stable kernels using newer device-trees, thus
->> this patch should be backported to stable kernels as well.
->>
->> Cc: <stable@vger.kernel.org>
->> Reported-by: Jon Hunter <jonathanh@nvidia.com>
->> Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
->> index f1d170dcf4d3..aba591d57c67 100644
->> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
->> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
->> @@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
->>  	{ .compatible = "mediatek,mt8176", },
->>  	{ .compatible = "mediatek,mt8183", },
->>  
->> +	{ .compatible = "nvidia,tegra20", },
->> +	{ .compatible = "nvidia,tegra30", },
->>  	{ .compatible = "nvidia,tegra124", },
->>  	{ .compatible = "nvidia,tegra210", },
->>  
->>
+On 12/12/19 at 09:19pm, Borislav Petkov wrote:
+> > + * direct mapping area to the size of actual physical memory plus the
+> > + * configured padding CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING.
+> > + * The left part will be taken out to join memory randomization.
+> > + */
+> > +static inline unsigned long calc_direct_mapping_size(void)
 > 
-> Hello Viresh,
+> What direct mapping?!
 > 
-> Could you please pick up this patch for v5.5 fixes? Thanks in advance!
-> 
+> The code is computing the physical memory regions base address and
+> sizes.
 
-Viresh / Rafael? Maybe I should send that patch separately?
+In Documentation/x86/x86_64/mm.rst, the physical memory regions mapping
+with page_offset is called as the direct mapping of physical memory.
+Seems both is used in kernel and document. 
+
+> 
+> > +{
+> > +	unsigned long size_tb, memory_tb;
+> > +
+> > +	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+> > +		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+> > +
+> > +#ifdef CONFIG_MEMORY_HOTPLUG
+> > +	if (boot_params.max_addr) {
+> > +		unsigned long maximum_tb;
+> > +
+> > +		maximum_tb = DIV_ROUND_UP(boot_params.max_addr,
+> > +				1UL << TB_SHIFT);
+> 
+> All that jumping through hoops and adding a member to boot_params which
+> is useless on !hot-add systems - basically the majority out there - just
+> so that you can use that max address here?!
+> 
+> Did you not find acpi_table_parse_srat()?
+
+kernel_randomize_memory() is invoked much earlier than
+acpi_table_parse_srat(). KASLR need know the max address to reserve
+space for the direct mapping region (or the physical memory region)
+so that it can cover later possible hotplugged memory.
+
+Thanks
+Baoquan
+
