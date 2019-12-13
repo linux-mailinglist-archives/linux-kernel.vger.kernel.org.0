@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 724B111E7B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:06:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD10F11E7B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:06:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbfLMQGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:06:06 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:45186 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728465AbfLMQGD (ORCPT
+        id S1728501AbfLMQGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:06:07 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37661 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728474AbfLMQGF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:06:03 -0500
-Received: by mail-yw1-f67.google.com with SMTP id d12so15800ywl.12;
-        Fri, 13 Dec 2019 08:06:02 -0800 (PST)
+        Fri, 13 Dec 2019 11:06:05 -0500
+Received: by mail-yw1-f66.google.com with SMTP id z7so39946ywd.4;
+        Fri, 13 Dec 2019 08:06:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TUBn4hPQtTP6/1UnracKB+PKuO3QMFkkquLizrjA/XM=;
-        b=jplSiqf47y6ZYGeFyNC9sZb3biXn2gVEJv+PNanVJiJfXKyGzSYXXYRfL7jBHBCM4n
-         2Aqo6V6mUEzEMOcUjxb0pk24ulPgKMf5pdFFfE33y2TtBqr0kM4nGeY4zTvSUSoDfmMD
-         J70Deq811qD/hht1L21MoaE5Q8SLoPsULIueKFkEh3jOpz1mPB+ezRVkdNymmWeI4bif
-         5wCpDZO0aFl0eVcGNVignY7201cs3i3SsddVZNdZNugBdC9+b/5pJoVjKTbWwPszg0oe
-         sT2qDSAfMwE9kGXBLhDfwSHGj+ZtMk3QT4BSpakH0JQUlZmPdH3tJWAhk1oo5Ab6zMaj
-         Qujg==
+        bh=diIP0k4eLIclWt3c/P5DOQ3zYxKekMVmETftkqEOchs=;
+        b=U0zVNR1JYZrod79QD+eDZAcUrQLpJCzs1xbJF04ZdGD7FFvmgU+XZweRDwBFjV3VGc
+         +1R7hzyluTLSRVoGCDYDrGROkXjBeQgBOPxARbQo7f+T0a5/5PX60jT1sxXV7D9iTAZO
+         xbJyGbMXSWmC9Rbm8ywt9ZBLMKVLq8ty7Sy/M4pA1qWaRaaq/eu4JnBK6CSb90BZfpTU
+         AZg/ySD0AYBh1c0vlCkURnEr/F6AzxrJcCr+yjFVum8cFKwDaaOLJmeH1ESJ6+Wob06l
+         ubM8c2KvDJSJNZxJXDDNVxzxFgods0cj++bfgxYA7AJc8iKlvYacbNLmD/9GcY+VN7He
+         YcNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TUBn4hPQtTP6/1UnracKB+PKuO3QMFkkquLizrjA/XM=;
-        b=SN8MIE9yfFlazw4WFJVQfexdiA0xkGEAh9wQKH64up5rla93Hzhg6k/pL16XSsh70N
-         KsFOwXVMBqinPq4aTySe5Jt0kW7N4hvYMSOXobFUp/PB/Y18ZZSOWLVHIaxE3dIY29Nh
-         WyYhTUE7tYHNqAVbJbxGuhFXmeKTWawBG5M4+VJMmgJTCVdX8/o80x50pgCuZCxAdzHA
-         +Gz+bXtlpfaYwy4q+HVJqe35Q+5gBWNejn8iRDtG7XaQJchcLKYwkN4aoQmFk4lJGzJY
-         Q8D/aAtA6z0k19okfL9xEUvvmmV0bMjciwDwdYFyt435c//Jha90DTuyd4C/TyP9lzzE
-         MLeQ==
-X-Gm-Message-State: APjAAAUMLZyXsasYMzuE+1cacl0exeA+6o3n7hkZa+FlW85lF/Lg6b0F
-        7hM9nuCveH+zrEi97QiyW84=
-X-Google-Smtp-Source: APXvYqzObFt2i3P9CQgT7UV8LybxmIu+0nBxBacvga9qhhrksInhZa+8qHAwAJAlCO1naM/6MDEqMQ==
-X-Received: by 2002:a81:b548:: with SMTP id c8mr8655777ywk.465.1576253161238;
-        Fri, 13 Dec 2019 08:06:01 -0800 (PST)
+        bh=diIP0k4eLIclWt3c/P5DOQ3zYxKekMVmETftkqEOchs=;
+        b=q3fTwoRterXdC17id7RpGeKqKucASKAX7k22pCf+y3GzPnP2AAKnHXG1iTiJzKY2io
+         9f/ga6ujjqhDXoYvrl62pqA9wUWT5U2ekSJTvs3lgFsR/afIa4INzGE4cWP4xeuAgA0q
+         AlEwmP+UZgq/5fK3/Znjya7TdpDTgytgNfeq2m7FlT/8bqSrix03SkbADsjSyqgy9BDH
+         agECZb15/cdGo0+KeuN61CRJLogzVEDprBs4bUp9scjqnWt8fc37y/THjHKbKBaCsvgp
+         wMVK41904JkqG0RynweYnoTOLPRwl12wbr/PzRHFHe2J/zbKcB5q90cLPLZnik9pkM0C
+         XVoA==
+X-Gm-Message-State: APjAAAXNofmpj2bIwD1Z+2kWqDx6HjyxFr879dIef8u5kUA6Vd2UMGDW
+        JxC/Yxd8XrlhbryntIs6SDY=
+X-Google-Smtp-Source: APXvYqyBJY9tyGyZZfmfIE+qd5Bdaurz+H3WDg5noJq3FlC0IeODXBcxvHA//Hh2Do1CdrtahGJS3g==
+X-Received: by 2002:a0d:f443:: with SMTP id d64mr8872022ywf.125.1576253163588;
+        Fri, 13 Dec 2019 08:06:03 -0800 (PST)
 Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
-        by smtp.gmail.com with ESMTPSA id v38sm3984694ywh.63.2019.12.13.08.05.59
+        by smtp.gmail.com with ESMTPSA id v38sm3984694ywh.63.2019.12.13.08.06.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 08:06:00 -0800 (PST)
+        Fri, 13 Dec 2019 08:06:03 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     peng.fan@nxp.com, ping.bai@nxp.com, Adam Ford <aford173@gmail.com>,
@@ -56,9 +56,9 @@ Cc:     peng.fan@nxp.com, ping.bai@nxp.com, Adam Ford <aford173@gmail.com>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 5/7] arm64: dts: imx8mm: add GPC power domains
-Date:   Fri, 13 Dec 2019 10:05:40 -0600
-Message-Id: <20191213160542.15757-6-aford173@gmail.com>
+Subject: [PATCH V2 6/7] ARM64: dts: imx8mm: Fix clocks and power domain for USB OTG
+Date:   Fri, 13 Dec 2019 10:05:41 -0600
+Message-Id: <20191213160542.15757-7-aford173@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191213160542.15757-1-aford173@gmail.com>
 References: <20191213160542.15757-1-aford173@gmail.com>
@@ -69,116 +69,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a power domain controller on the i.XM8M Mini used for
-handling interrupts and controlling certain peripherals like
-USB OTG and PCIe, which are currently unavailable.
+There are two USB OTG controllers on the i.MX8M Mini, but currently
+neither are functional.
 
-This patch enables support the controller itself to the help
-facilitate enabling additional peripherals.
+According to the device tree entries published on the NXP kernel
+for the imx8m mini, these both need to be assigned to the proper
+clocks and power domain in order to function.
+
+This patch configures both USB OTG controllers to enable a missing
+clock and define the power domain so boards wishing to enable
+the USB OTG can do so.
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
-V2:  Removed references making GPC an interrupt controller.
-
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 78 +++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+V2:  No Change
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 23c8fad7932b..f38bed94bce2 100644
+index f38bed94bce2..dbeee4059c55 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/clock/imx8mm-clock.h>
-+#include <dt-bindings/power/imx8m-power.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-@@ -495,6 +496,83 @@
- 				interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
- 				#reset-cells = <1>;
- 			};
-+
-+			gpc: gpc@303a0000 {
-+				compatible = "fsl,imx8mm-gpc";
-+				reg = <0x303a0000 0x10000>;
-+				interrupt-parent = <&gic>;
-+				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+
-+				pgc {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					pgc_mipi: power-domain@0 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_MIPI>;
-+					};
-+
-+					pgc_pcie: power-domain@1 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_PCIE>;
-+					};
-+
-+					pgc_otg1: power-domain@2 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_USB_OTG1>;
-+					};
-+
-+					pgc_otg2: power-domain@3 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_USB_OTG2>;
-+					};
-+
-+					pgc_ddr1: power-domain@4 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_DDR1>;
-+					};
-+
-+					pgc_gpu2d: power-domain@5 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_GPU2D>;
-+					};
-+
-+					pgc_gpu: power-domain@6 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_GPU>;
-+					};
-+
-+					pgc_vpu: power-domain@7 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_VPU>;
-+					};
-+
-+					pgc_gpu3d: power-domain@8 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_GPU3D>;
-+					};
-+
-+					pgc_disp: power-domain@9 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_DOMAIN_DISP>;
-+					};
-+
-+					pgc_vpu_g1: power-domain@a {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_VPU_G1>;
-+					};
-+
-+					pgc_vpu_g2: power-domain@b {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_VPU_G2>;
-+					};
-+
-+					pgc_vpu_h1: power-domain@c {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MM_POWER_VPU_H1>;
-+					};
-+				};
-+			};
- 		};
- 
- 		aips2: bus@30400000 {
+@@ -865,8 +865,11 @@
+ 				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clk IMX8MM_CLK_USB1_CTRL_ROOT>;
+ 				clock-names = "usb1_ctrl_root_clk";
+-				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>;
+-				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>;
++				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>,
++						  <&clk IMX8MM_CLK_USB_CORE_REF>;
++				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>,
++							 <&clk IMX8MM_SYS_PLL1_100M>;
++				power-domains = <&pgc_otg1>;
+ 				fsl,usbphy = <&usbphynop1>;
+ 				fsl,usbmisc = <&usbmisc1 0>;
+ 				status = "disabled";
+@@ -884,8 +887,11 @@
+ 				interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clk IMX8MM_CLK_USB1_CTRL_ROOT>;
+ 				clock-names = "usb1_ctrl_root_clk";
+-				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>;
+-				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>;
++				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>,
++						  <&clk IMX8MM_CLK_USB_CORE_REF>;
++				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>,
++							 <&clk IMX8MM_SYS_PLL1_100M>;
++				power-domains = <&pgc_otg2>;
+ 				fsl,usbphy = <&usbphynop2>;
+ 				fsl,usbmisc = <&usbmisc2 0>;
+ 				status = "disabled";
 -- 
 2.20.1
 
