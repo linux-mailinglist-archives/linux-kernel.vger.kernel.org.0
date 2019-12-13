@@ -2,114 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB9F011EDAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 23:25:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8154411EDB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 23:25:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfLMWXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 17:23:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbfLMWXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 17:23:34 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726767AbfLMWZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 17:25:01 -0500
+Received: from mout-p-101.mailbox.org ([80.241.56.151]:23782 "EHLO
+        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbfLMWZB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 17:25:01 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C55E20706;
-        Fri, 13 Dec 2019 22:23:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576275813;
-        bh=4iChmOKy+iWyzBUqX73EkorUxBHm0c/M19HO10x0in0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=i4KM7W9Nv9QULJGh6tsFLMg6kACWSO3TPSt+iFvi0Lmz60OcH9UvQYZkapZjopQ6L
-         bOgaiNRrN7wdN5Mmbr2wp6ipHtOVbzipeY8UqU1PrQLF0EPQmZFQ4R45mFjBf38I8E
-         uhU1UDTTCEr1/BijD37EO8cG4BCMHJkEZpIVroA0=
-Date:   Fri, 13 Dec 2019 14:23:32 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <emamd001@umn.edu>
-Subject: Re: [PATCH] mm/gup: Fix memory leak in __gup_benchmark_ioctl
-Message-Id: <20191213142332.d7fafc243291eac302375c32@linux-foundation.org>
-In-Reply-To: <9a692d27-4654-f1fc-d4c5-c6efba02c8a9@nvidia.com>
-References: <20191211174653.4102-1-navid.emamdoost@gmail.com>
-        <9a692d27-4654-f1fc-d4c5-c6efba02c8a9@nvidia.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 47ZQG13TJdzKmTp;
+        Fri, 13 Dec 2019 23:24:57 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id d9EHptyMxc7J; Fri, 13 Dec 2019 23:24:54 +0100 (CET)
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH] openat2: switch to __attribute__((packed)) for open_how
+Date:   Sat, 14 Dec 2019 09:23:50 +1100
+Message-Id: <20191213222351.14071-1-cyphar@cyphar.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Dec 2019 13:40:15 -0800 John Hubbard <jhubbard@nvidia.com> wrote:
+The design of the original open_how struct layout was such that it
+ensured that there would be no un-labelled (and thus potentially
+non-zero) padding to avoid issues with struct expansion, as well as
+providing a uniform representation on all architectures (to avoid
+complications with OPEN_HOW_SIZE versioning).
 
-> On 12/11/19 9:46 AM, Navid Emamdoost wrote:
-> > In the implementation of __gup_benchmark_ioctl() the allocated pages
-> > should be released before returning in case of an invalid cmd. Release
-> > pages via kvfree().
-> > 
-> > Fixes: 714a3a1ebafe ("mm/gup_benchmark.c: add additional pinning methods")
-> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> > ---
-> >  mm/gup_benchmark.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-> > index 7dd602d7f8db..b160638f647e 100644
-> > --- a/mm/gup_benchmark.c
-> > +++ b/mm/gup_benchmark.c
-> > @@ -63,6 +63,7 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
-> >  					    NULL);
-> >  			break;
-> >  		default:
-> > +			kvfree(pages);
-> >  			return -1;
-> >  		}
-> >  
-> 
-> Hi,
-> 
-> The patch is correct, but I would like to second Ira's request for a ret value,
-> and a "goto done" to use a single place to kvfree, if you don't mind. 
-> 
+However, there were a few other desirable features which were not
+fulfilled by the previous struct layout:
 
-Fair enough.
+ * Adding new features (other than new flags) should always result in
+   the struct getting larger. However, by including a padding field, it
+   was possible for new fields to be added without expanding the
+   structure. This would somewhat complicate version-number based
+   checking of feature support.
 
-And let's make it return -EINVAL rather than -1, which appears to be
--EPERM.
+ * A non-zero bit in __padding yielded -EINVAL when it should arguably
+   have been -E2BIG (because the padding bits are effectively
+   yet-to-be-used fields). However, the semantics are not entirely clear
+   because userspace may expect -E2BIG to only signify that the
+   structure is too big. It's much simpler to just provide the guarantee
+   that new fields will always result in a struct size increase, and
+   -E2BIG indicates you're using a field that's too recent for an older
+   kernel.
 
---- a/mm/gup_benchmark.c~mm-gup-fix-memory-leak-in-__gup_benchmark_ioctl-fix
-+++ a/mm/gup_benchmark.c
-@@ -26,6 +26,7 @@ static int __gup_benchmark_ioctl(unsigne
- 	unsigned long i, nr_pages, addr, next;
- 	int nr;
- 	struct page **pages;
-+	int ret = 0;
- 
- 	if (gup->size > ULONG_MAX)
+ * While the alignment for u64s was manually backed by extra padding
+   fields, some languages (such as Rust) do not currently support
+   enforcing alignment of struct field members.
+
+ * The padding wasted space needlessly, and would very likely not be
+   used up entirely by future extensions for a long time (because it
+   couldn't fit a u64).
+
+While none of these outstanding issues are deal-breakers, we can iron
+out these warts before openat2(2) lands in Linus's tree. Instead of
+using alignment and padding, we simply pack the structure with
+__attribute__((packed)). Rust supports #[repr(packed)] and it removes
+all of the issues with having explicit padding.
+
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+ fs/open.c                                      |  2 --
+ include/uapi/linux/fcntl.h                     | 11 +++++------
+ tools/testing/selftests/openat2/helpers.h      | 11 +++++------
+ tools/testing/selftests/openat2/openat2_test.c | 18 +-----------------
+ 4 files changed, 11 insertions(+), 31 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index 50a46501bcc9..8cdb2b675867 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -993,8 +993,6 @@ static inline int build_open_flags(const struct open_how *how,
  		return -EINVAL;
-@@ -64,7 +65,8 @@ static int __gup_benchmark_ioctl(unsigne
- 			break;
- 		default:
- 			kvfree(pages);
--			return -1;
-+			ret = -EINVAL;
-+			goto out;
- 		}
+ 	if (how->resolve & ~VALID_RESOLVE_FLAGS)
+ 		return -EINVAL;
+-	if (memchr_inv(how->__padding, 0, sizeof(how->__padding)))
+-		return -EINVAL;
  
- 		if (nr <= 0)
-@@ -86,7 +88,8 @@ static int __gup_benchmark_ioctl(unsigne
- 	gup->put_delta_usec = ktime_us_delta(end_time, start_time);
+ 	/* Deal with the mode. */
+ 	if (WILL_CREATE(flags)) {
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index d886bdb585e4..0e070c7f568a 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -109,17 +109,16 @@
+  * O_TMPFILE} are set.
+  *
+  * @flags: O_* flags.
+- * @mode: O_CREAT/O_TMPFILE file mode.
+  * @resolve: RESOLVE_* flags.
++ * @mode: O_CREAT/O_TMPFILE file mode.
+  */
+ struct open_how {
+-	__aligned_u64 flags;
++	__u64 flags;
++	__u64 resolve;
+ 	__u16 mode;
+-	__u16 __padding[3]; /* must be zeroed */
+-	__aligned_u64 resolve;
+-};
++} __attribute__((packed));
  
- 	kvfree(pages);
--	return 0;
-+out:
-+	return ret;
- }
+-#define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
++#define OPEN_HOW_SIZE_VER0	18 /* sizeof first published struct */
+ #define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
  
- static long gup_benchmark_ioctl(struct file *filep, unsigned int cmd,
-_
+ /* how->resolve flags for openat2(2). */
+diff --git a/tools/testing/selftests/openat2/helpers.h b/tools/testing/selftests/openat2/helpers.h
+index 43ca5ceab6e3..eb1535c8fa2e 100644
+--- a/tools/testing/selftests/openat2/helpers.h
++++ b/tools/testing/selftests/openat2/helpers.h
+@@ -32,17 +32,16 @@
+  * O_TMPFILE} are set.
+  *
+  * @flags: O_* flags.
+- * @mode: O_CREAT/O_TMPFILE file mode.
+  * @resolve: RESOLVE_* flags.
++ * @mode: O_CREAT/O_TMPFILE file mode.
+  */
+ struct open_how {
+-	__aligned_u64 flags;
++	__u64 flags;
++	__u64 resolve;
+ 	__u16 mode;
+-	__u16 __padding[3]; /* must be zeroed */
+-	__aligned_u64 resolve;
+-};
++} __attribute__((packed));
+ 
+-#define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
++#define OPEN_HOW_SIZE_VER0	18 /* sizeof first published struct */
+ #define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
+ 
+ bool needs_openat2(const struct open_how *how);
+diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/testing/selftests/openat2/openat2_test.c
+index 0b64fedc008b..cbf95d160b1b 100644
+--- a/tools/testing/selftests/openat2/openat2_test.c
++++ b/tools/testing/selftests/openat2/openat2_test.c
+@@ -40,7 +40,7 @@ struct struct_test {
+ 	int err;
+ };
+ 
+-#define NUM_OPENAT2_STRUCT_TESTS 10
++#define NUM_OPENAT2_STRUCT_TESTS 7
+ #define NUM_OPENAT2_STRUCT_VARIATIONS 13
+ 
+ void test_openat2_struct(void)
+@@ -57,22 +57,6 @@ void test_openat2_struct(void)
+ 		  .arg.inner.flags = O_RDONLY,
+ 		  .size = sizeof(struct open_how_ext) },
+ 
+-		/* Normal struct with broken padding. */
+-		{ .name = "normal struct (non-zero padding[0])",
+-		  .arg.inner.flags = O_RDONLY,
+-		  .arg.inner.__padding = {0xa0, 0x00, 0x00},
+-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+-		{ .name = "normal struct (non-zero padding[1])",
+-		  .arg.inner.flags = O_RDONLY,
+-		  .arg.inner.__padding = {0x00, 0x1a, 0x00},
+-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+-		{ .name = "normal struct (non-zero padding[2])",
+-		  .arg.inner.flags = O_RDONLY,
+-		  .arg.inner.__padding = {0x00, 0x00, 0xef},
+-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+-
+-		/* TODO: Once expanded, check zero-padding. */
+-
+ 		/* Smaller than version-0 struct. */
+ 		{ .name = "zero-sized 'struct'",
+ 		  .arg.inner.flags = O_RDONLY, .size = 0, .err = -EINVAL },
+
+base-commit: 912dfe068c43fa13c587b8d30e73d335c5ba7d44
+-- 
+2.24.0
 
