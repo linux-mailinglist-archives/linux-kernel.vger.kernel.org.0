@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E47811DAB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:09:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C21411DAB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:09:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731850AbfLMAJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 19:09:32 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39558 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731568AbfLMAJ3 (ORCPT
+        id S1731859AbfLMAJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 19:09:34 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:44946 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731849AbfLMAJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:09:29 -0500
-Received: by mail-pl1-f194.google.com with SMTP id o9so385516plk.6
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:09:28 -0800 (PST)
+        Thu, 12 Dec 2019 19:09:32 -0500
+Received: by mail-pj1-f65.google.com with SMTP id w5so334410pjh.11
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:09:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=l5WLqTQP9VT3Wj9H/IDghikmP99MJJRtTWNwh4knJ1g=;
-        b=P8Xa9IyOFvUhnq1qV0qnqNFEDzFCnyBVvEhf15NcXH/cTRxIvFsnDeJh431tEL7Bho
-         vdUjPUjtRf7DXpmoLJ4OgEeMus6y8d+uGvBU3rBIastCi+YaDl7eBBH1PPp+J8z/8v1b
-         OAK7+gFw8kV3SQdJZu0ik5pf6c4aVoyS+z5NAOJ0ENZ7s40qEPP7yAuuSHjBLl9qHISY
-         pzuxIWw/vGVhkuP91JKD4QoZjBzpnqxee8Xfx92EgK55JdIiTx0rg3wcqTMThvBtjYJs
-         d/3tWF946bZdAjgsjrIflpPX6sGopVBo1A3BGFh0K4Sdr/Z+A6g0ZWtd4/unAg8p8CnU
-         TBjw==
+        bh=MM87Orb9mjoqPJJZ7fE6T1iLGpS8nu1v2BHGmFgBN28=;
+        b=V4YsKDvxBQsNKupfvhOfCfEI8IiASsLkz5MHqSGEz3X2YFcI6e6Q7YFTivbVaKyxOO
+         XMKPJx6pdyCvZYSG2GNcdyOxiR9eoLqkHkJNI3Ko9C0D0iuYjYr4jRPHHvJThVCongTR
+         FYE3RB/6pIHEW3Q4HoVKAQ7N3fI1wvf24nA7XA3bqEnCOjqNrVb7JvZotCOTn2VZOy5U
+         yKKU2bVfaIEX6Acw/4tNwRBp4mVbT5J4xyGMlZIo7T5GpnsNohkbV/BaIoPnLekeHUj6
+         HVmEfHegNn4PzAof1YbxnGeIHHzCC/ikG11wkFr2KRcu06CTsw/QVxQrfolNi9Vqfhky
+         J7KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=l5WLqTQP9VT3Wj9H/IDghikmP99MJJRtTWNwh4knJ1g=;
-        b=Xyc8HHIWhCDn8Z3HWJdWKEH4ag4W3Ffvxb+pyi7p8RCahQyPyudEynzv4T7xuEFJcS
-         U0p3NH0fH1CJPAhorKZDj6P7C05DtkmaZApIpjt4RnSx/kw5AkmG7scHeVhhbn5Owf6g
-         axOOaTIHXsIeYKyoh99O6KWfWe3NWlSyXyQJe41yfznznrTWnUnZUSyKNjqdNfOYwwJ+
-         m15N0vaswSfGzPR2izVvAsoBW064tWKZHV+TrJl2ha5kguE/SCp9VVhTa8A4TorrwNJn
-         0OMaqBsD+76aX/qtxWvythNwSRkIJwoPulXSfUIm/bcV0NMWNmMI+uyj2G2E5ORB9Njc
-         cz4w==
-X-Gm-Message-State: APjAAAXGGnwhTgsggPF0rUVy54m7V7fIRSvT/Gx4WKj01tKqG3ZmU2DQ
-        NKZLlGjTKHjXbS4UJn8tMT+yJft3xd0=
-X-Google-Smtp-Source: APXvYqy3wIN8nnc/UL9s/cxQrhBLjGU7KJitO7vCE6oaWq78Eq4QrQYcUGPCAaWotsrH9/5FfOuNkg==
-X-Received: by 2002:a17:902:6b45:: with SMTP id g5mr12477341plt.159.1576195767792;
-        Thu, 12 Dec 2019 16:09:27 -0800 (PST)
+        bh=MM87Orb9mjoqPJJZ7fE6T1iLGpS8nu1v2BHGmFgBN28=;
+        b=kh+GLOrKKPIYWzOLG4fkLbhh2HxpfmbXNLBHkWhQi+gCslXsITa5bS2XpeEqqmbMWV
+         N8XbdejhYkZqtO9/qtD2Khfe7IvNPZlD6Mj2wQrvbRUXziRqAqNLRgX+pBNVoR9H0vAK
+         Rm/YwpEwtPaDsH3K7vvXuQjaTBDflJoLpzUCDuD5iRb7keBNb0H+RPEXu6IQVy1WoE8/
+         4OA1ffX9b+3A/G+80rmW7CMS5CyX9V7+B2hdx4qfZ52+9NBc9HiSjrLblzS7+WuSTF/G
+         OWlmZr3mFvlOuueR1wEvrvaGfCesVZloDWhulH5/plCm/F5gko6pF4qw9RONEi2/Dujs
+         hT9A==
+X-Gm-Message-State: APjAAAUCMqpzBLjc0KOhz3aYyztM9hxpHu13EC6holUkv8aEhQu9Z2zQ
+        MhCFFpFQ//h0NMZXKdzOg6Id9nO5eeE=
+X-Google-Smtp-Source: APXvYqw9osG5+ClV6+xwyklwL7TpqMWpbcYwH/Gy/NWXNMzoUezcaMFROo7bqxHl7IZQepVB1w8N9g==
+X-Received: by 2002:a17:902:ba8e:: with SMTP id k14mr12924092pls.335.1576195770978;
+        Thu, 12 Dec 2019 16:09:30 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.09.25
+        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.09.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 16:09:27 -0800 (PST)
+        Thu, 12 Dec 2019 16:09:30 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -54,9 +54,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Vasiliy Khoruzhick <vasilykh@arista.com>,
         linux-serial@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
-Subject: [PATCH 45/58] tty/serial: Migrate sunhv to use has_sysrq
-Date:   Fri, 13 Dec 2019 00:06:44 +0000
-Message-Id: <20191213000657.931618-46-dima@arista.com>
+Subject: [PATCH 46/58] tty/serial: Migrate sunsab to use has_sysrq
+Date:   Fri, 13 Dec 2019 00:06:45 +0000
+Message-Id: <20191213000657.931618-47-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191213000657.931618-1-dima@arista.com>
 References: <20191213000657.931618-1-dima@arista.com>
@@ -80,32 +80,32 @@ Cc: "David S. Miller" <davem@davemloft.net>
 Cc: sparclinux@vger.kernel.org
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/serial/sunhv.c | 5 +----
+ drivers/tty/serial/sunsab.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/sunhv.c b/drivers/tty/serial/sunhv.c
-index f8503f8fc44e..eafada8fb6fa 100644
---- a/drivers/tty/serial/sunhv.c
-+++ b/drivers/tty/serial/sunhv.c
-@@ -25,10 +25,6 @@
- #include <asm/irq.h>
+diff --git a/drivers/tty/serial/sunsab.c b/drivers/tty/serial/sunsab.c
+index 72131b5e132e..1eb703c980e0 100644
+--- a/drivers/tty/serial/sunsab.c
++++ b/drivers/tty/serial/sunsab.c
+@@ -40,10 +40,6 @@
+ #include <asm/prom.h>
  #include <asm/setup.h>
  
--#if defined(CONFIG_MAGIC_SYSRQ)
+-#if defined(CONFIG_SERIAL_SUNSAB_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 -#define SUPPORT_SYSRQ
 -#endif
 -
  #include <linux/serial_core.h>
  #include <linux/sunserialcore.h>
  
-@@ -552,6 +548,7 @@ static int hv_probe(struct platform_device *op)
+@@ -985,6 +981,7 @@ static int sunsab_init_one(struct uart_sunsab_port *up,
  
- 	sunhv_port = port;
+ 	up->port.fifosize = SAB82532_XMIT_FIFO_SIZE;
+ 	up->port.iotype = UPIO_MEM;
++	up->port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_SUNSAB_CONSOLE);
  
-+	port->has_sysrq = 1;
- 	port->line = 0;
- 	port->ops = &sunhv_pops;
- 	port->type = PORT_SUNHV;
+ 	writeb(SAB82532_IPC_IC_ACT_LOW, &up->regs->w.ipc);
+ 
 -- 
 2.24.0
 
