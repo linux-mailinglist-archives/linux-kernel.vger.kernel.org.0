@@ -2,67 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54D7B11E50A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:56:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C50EF11E510
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfLMN4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:56:46 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36157 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727578AbfLMN4o (ORCPT
+        id S1727621AbfLMN5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:57:32 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37506 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727507AbfLMN5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:56:44 -0500
-Received: by mail-pl1-f193.google.com with SMTP id d15so1283001pll.3;
-        Fri, 13 Dec 2019 05:56:44 -0800 (PST)
+        Fri, 13 Dec 2019 08:57:32 -0500
+Received: by mail-pf1-f195.google.com with SMTP id p14so1525139pfn.4;
+        Fri, 13 Dec 2019 05:57:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yOTiVTN6TRqhsiKXyuXZAhjh4xoZddWaYpKSnXhSel4=;
-        b=b29/nw7LjKjjtDsfIHyDRy89fMafLkL3tjAMHTk9Us6zjIH9NG/JAc4hnIjwQeioNE
-         VWKGJ+QgOfOvDuFq3Ed1S8wDHsyOw84lK0l+loINKOTBl4wpzaPxaIqSc1lqgKJZzwWa
-         oyQhJQlHmbFTT4lfmN0nk/jSIuS62OEVM9aXBT6SK93n0x2WHFrJylc6SizYkVAFjUuu
-         xwf+JqhKx/4qOtcCDv0orGHxThbuT++dUmL+H4CHZeIv2RDFvA//G5pwebolT/2dU3tP
-         j/C2H1LyLffEd4yLljNvnFQ+PQY49fcpVmTFTtnBUdhy5NIpyhwHSdJN5XBTuHyYPnHP
-         SzLA==
+        bh=DPtsk1xekHf4rFompFbK+++ywQG55As5vK9YXX25XMc=;
+        b=HcZHnLR1V2y0vLHORQuWaZK6tD618ijiTm+wMIWqy5ttOW+N7ncHscgh5Rpe5dPZrT
+         DN5TbwDanXx3zF0C1n1Isg76VQZ9LDjiHkDa9ChFahhR03hwRxOX5qjlIMnwJY7/uprQ
+         hBNvephzkogku4C0RQC7Vy3L8GIc/hwxtd98zpioMw+5rUen0Tug4tiV5k/Fa5t15Jjn
+         7Fs+HcXsvfjoYjVmXDvoFRweQ45pZCMTvoFyqekuW0+koykZiDBQxAN0cAFFN5RDNFFp
+         HLnYWZjtmfd1Jb6pQCJW0pWLCpogjw39HKPu8CakppP7DsK2nKsethsuR5wstovhgp1+
+         1qjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=yOTiVTN6TRqhsiKXyuXZAhjh4xoZddWaYpKSnXhSel4=;
-        b=WrXcicGXXr0lbFx24GOk20L+fxjaG2PZ0mL5/BTGbDDLIGx2/KlcHsAm3L6qx7wZwq
-         y9hIOhueNbjncrOn98hTU6YobsT9G26K1aajRN4pCSiZcE5RXTVzdq+zbBOpZiJE57T2
-         kc7eP/rVcvsdHGyWvUfeSOdlqtGo9uFwovPuuYX44uB6F9L5b4L7g443FsNig70kMOWp
-         ki5eOywIsNUcJQoggMJnZkgNDpTRzMzT92FYiMJy5hweC6Yu3ecbQM9qVZJN9sc+nSpw
-         I3t07+38O8gORGaBuk0mSEZL3EAqnFk0dlg2q/s9zuA4929h8oRcBviI6Tuz0NHuXnNv
-         7heg==
-X-Gm-Message-State: APjAAAVP2sBRcuP1Rgimf2GNJT65JWotyfYpP4bIkJlOBHEDll7uZO3c
-        55rGsKRp1oBfhYhICJmx5jX54FU5
-X-Google-Smtp-Source: APXvYqxSnU8c+K3bHypBX2JvZR/ol+6V0HxmeKddZGGp+dpfva7PqMSkcSEsQPmDBV0BK5+V/M5tEQ==
-X-Received: by 2002:a17:902:7287:: with SMTP id d7mr15699726pll.17.1576245403682;
-        Fri, 13 Dec 2019 05:56:43 -0800 (PST)
+        bh=DPtsk1xekHf4rFompFbK+++ywQG55As5vK9YXX25XMc=;
+        b=DuL5wvfASUAWTfBaZMTr02jeA1XiRFTVp9UmdxTPucQaWsseHh5Xoaa89GpvHCgozh
+         uL0hH0xXxh/5wiAgMmnNRCbNFSn7wUrIUIx/NeiOc1twlUyZ96gGDCr5nO+XEN4R+YvP
+         Jmd9aCll5PXz2rGoGCnnAfEjlVQ2Ce17at9jQzodpdAIJyu+xuudx0lgYTet0x++Ins5
+         FwBS5Whrtfc8xSFvI5uxpwA+K3/9RNEM624mvbTc2/h2HgCJu60D5iuAQ1U/Izm5j+M2
+         IUH8DjpCht9JV3htoHTVBkQG1/kQgxP1Xe2axoe91KvRcIOKoAtwnKWmHtxV2Un9zkX3
+         oQwQ==
+X-Gm-Message-State: APjAAAVexmV0DslrUpVt/TKMcnW/ZTuRNmS1DSQne62Lbw/sAwsZwWbn
+        RmfaGb+FTnDszluG3E2NsFrAhKfh
+X-Google-Smtp-Source: APXvYqy9k2eDNK1J3IVJhR+gbK0hX/ItjAIfIbZD9dhbfVa/+PROIoCleTD5Ir8Ui3woBnQNkNMGYg==
+X-Received: by 2002:a63:de08:: with SMTP id f8mr16905639pgg.107.1576245451363;
+        Fri, 13 Dec 2019 05:57:31 -0800 (PST)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id n15sm11332899pgf.17.2019.12.13.05.56.42
+        by smtp.gmail.com with ESMTPSA id r68sm12605687pfr.78.2019.12.13.05.57.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 05:56:42 -0800 (PST)
-Subject: Re: [PATCH 4.19 000/243] 4.19.89-stable review
-To:     Pavel Machek <pavel@denx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20191211150339.185439726@linuxfoundation.org>
- <20191213093035.GA27637@amd>
+        Fri, 13 Dec 2019 05:57:30 -0800 (PST)
+Subject: Re: [PATCH v2] usb: typec: fusb302: Fix an undefined reference to
+ 'extcon_get_state'
+To:     zhong jiang <zhongjiang@huawei.com>,
+        heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191212122053.GA1541203@kroah.com>
+ <1576239378-50795-1-git-send-email-zhongjiang@huawei.com>
 From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <b9a5af67-c7db-a2f1-b573-cbf25c1f03f6@roeck-us.net>
-Date:   Fri, 13 Dec 2019 05:56:41 -0800
+Message-ID: <3dbe90ae-d1df-0714-f797-c6c279bf620c@roeck-us.net>
+Date:   Fri, 13 Dec 2019 05:57:29 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191213093035.GA27637@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <1576239378-50795-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -70,35 +68,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/19 1:30 AM, Pavel Machek wrote:
-> Hi!
+On 12/13/19 4:16 AM, zhong jiang wrote:
+> Fixes the following compile error:
 > 
->> This is the start of the stable review cycle for the 4.19.89 release.
->> There are 243 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Fri, 13 Dec 2019 14:56:06 +0000.
->> Anything received after that time might be too late.
+> drivers/usb/typec/tcpm/fusb302.o: In function `tcpm_get_current_limit':
+> fusb302.c:(.text+0x3ee): undefined reference to `extcon_get_state'
+> fusb302.c:(.text+0x422): undefined reference to `extcon_get_state'
+> fusb302.c:(.text+0x450): undefined reference to `extcon_get_state'
+> fusb302.c:(.text+0x48c): undefined reference to `extcon_get_state'
+> drivers/usb/typec/tcpm/fusb302.o: In function `fusb302_probe':
+> fusb302.c:(.text+0x980): undefined reference to `extcon_get_extcon_dev'
+> make: *** [vmlinux] Error 1
 > 
-> Is there something funny going on with the timing, again? I see that
-> 4.19.89 is already out:
+> It is because EXTCON is build as a module, but FUSB302 is not.
 > 
+> Suggested-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-Just for the record, in my opinion it is perfectly fine to publish stable
-releases early after all expected feedback is in. That lets me merge the
-release early today and gives me time to fix any merge related problems.
-I don't see the benefit of waiting until 14:46:07.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Guenter
-
-> commit 312017a460d5ea31d646e7148e400e13db799ddc
-> Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Date:   Fri Dec 13 08:52:59 2019 +0100
+> ---
+>   drivers/usb/typec/tcpm/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
 > 
->      Linux 4.19.89
-> 
-> Best regards,
-> 								Pavel
+> diff --git a/drivers/usb/typec/tcpm/Kconfig b/drivers/usb/typec/tcpm/Kconfig
+> index 72481bb..5b986d6 100644
+> --- a/drivers/usb/typec/tcpm/Kconfig
+> +++ b/drivers/usb/typec/tcpm/Kconfig
+> @@ -32,6 +32,7 @@ endif # TYPEC_TCPCI
+>   config TYPEC_FUSB302
+>   	tristate "Fairchild FUSB302 Type-C chip driver"
+>   	depends on I2C
+> +	depends on EXTCON || !EXTCON
+>   	help
+>   	  The Fairchild FUSB302 Type-C chip driver that works with
+>   	  Type-C Port Controller Manager to provide USB PD and USB
 > 
 
