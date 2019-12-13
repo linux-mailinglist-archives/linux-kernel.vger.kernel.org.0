@@ -2,76 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED5BB11EB2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 20:43:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 370F811EB35
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 20:49:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbfLMTm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 14:42:58 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40620 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728664AbfLMTm6 (ORCPT
+        id S1728937AbfLMTtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 14:49:22 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45627 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728767AbfLMTtV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 14:42:58 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so713695wrn.7
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 11:42:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=D0tr6Qi2/iKAHsaWWugO8jr9ggZmxHnL9sN+UVY/2cU=;
-        b=gIPFFgkzCQjUJtXeD98A+m1WBXQHtS+b46dR2XPFCJny3zGNfGa24kM0FUk8mIdKJ6
-         6pkio83oOohJFc3Oc44q3kETsKyMhR7Udw+mYB9LykURuNrvofRghyIojwbue6/7n7cs
-         O42TS5cy2krjry6L6uBPJJ6fc7d9ZiNGtgMcxGzmDJByvNRI8fppMw/G7PG0CzsVtErW
-         wrtEr4GZarJBXHXIEv8xFVVG26sGBWRdtD6OEzSOBs3GyBkeIN19AqfmO4CX++vF5u5N
-         DZJ0YTHQupE/gRI4WAW8VQWvq7ELErX+C6OVBzyIZKQ9m142NAmWX4kbrNjImOVkuhhV
-         cJsA==
+        Fri, 13 Dec 2019 14:49:21 -0500
+Received: by mail-oi1-f195.google.com with SMTP id v10so1726626oiv.12;
+        Fri, 13 Dec 2019 11:49:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=D0tr6Qi2/iKAHsaWWugO8jr9ggZmxHnL9sN+UVY/2cU=;
-        b=rbwQa/P6BCxo6IZ6+SyC4xGMoxhVwM6bquSNlh6Qjh3ysRiRLwaScl7t7H3doOIXSW
-         Cda8p8CeIg9wxowDswPWD6vWamdC0ZozV2E6kRUooNAYxOjPISbwTeouZJvwkhQHcu/6
-         wm3b9z0h7EVEVz6IuOjs6KdKs+/AC6cppsRnheg8C3O0/TuY7g6+Mfif+7rWr6OyJD8A
-         Y71yU91bCqKVJHHP2HE1ptNCYn3enWIZ0ylcyJTTdnbNrjP+fbT5Uc5P8+VQTAXJ8EoG
-         q7/bJ+ezFDvFEtb6lqX5Hs7tEMQsyfdE9+lZh8QrXKLA1rUU5ZmKPnECZo3T8/GeDjzI
-         6yog==
-X-Gm-Message-State: APjAAAVxD2kZd4fKzeQo1bl54QPkybUEYwCsyJiJgIjU8dxc+4Jb0NQY
-        qan/hUlfKP+cioMRDlJVGgukrqY88QTHpUgNO4g=
-X-Google-Smtp-Source: APXvYqz1BT4EjaqcuTa0hRCty+8A8mghfJXBCxZ5FRqW55ULQK0FtFcurbANUsWlcbm4OyTW1BKBvEOs68G90z+a6QY=
-X-Received: by 2002:adf:dfc9:: with SMTP id q9mr5889508wrn.219.1576266175840;
- Fri, 13 Dec 2019 11:42:55 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=puPqkib5wW1ufDZCsroCWU8Z4B1OBGBUiK23E46Afz4=;
+        b=KNPJ+NEkbAYAtH2YP5ecMo23dU1OAPH53alMBJ/ExXs5qY/KcukrxcrQrb+Bkrolas
+         +jxbPooZVJk0gpYd7Vazpg78RswM1k9VY5DIbUtV/Km6eqjOVFYJyR8xbN1cGPs8yqF2
+         BUZV70ykp7f7E0m80Y4mfAsEtDxtgSPC0kgQo73EAnu8a8P3inKsAb3ehsUtSsg2sXWJ
+         NgT172gi6WbKOJc7mHuudjc2MqkdOuMDhMThStr0cpkfZdiIoXFIOf3F3Mmyg6esiPcq
+         UjpIp2Xuxmm2NaYU0MWysBfRjoyP/aN67E50sxSgSMIRD7QNSEk5+Asv+fffL34GMmSs
+         22GA==
+X-Gm-Message-State: APjAAAV5oJRLwhV4HZFnuxnzzroFwC5WYqv+pLVNJzQv0/SHyL0Z4hXQ
+        mMaX8cv5HgrsxL2nfHUeNg==
+X-Google-Smtp-Source: APXvYqy9I8IPN8N57ObqYrugXpghM9TdPjB6AiccNCqXdBpXYtudSo6lvGrpH79nOj6dlId4HooUgQ==
+X-Received: by 2002:a05:6808:b1c:: with SMTP id s28mr7980503oij.2.1576266560907;
+        Fri, 13 Dec 2019 11:49:20 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j130sm3633161oia.34.2019.12.13.11.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 11:49:19 -0800 (PST)
+Date:   Fri, 13 Dec 2019 13:49:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     shubhrajyoti.datta@gmail.com
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, soren.brinkmann@xilinx.com,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: Re: [PATCH v3 02/10] clk: clock-wizard: Move the clockwizard to clk
+Message-ID: <20191213194918.GA13693@bogus>
+References: <cover.1574922435.git.shubhrajyoti.datta@xilinx.com>
+ <610b14b71d4c3c4c28cbedc340f6a92f15e25241.1574922435.git.shubhrajyoti.datta@xilinx.com>
 MIME-Version: 1.0
-Received: by 2002:adf:cd11:0:0:0:0:0 with HTTP; Fri, 13 Dec 2019 11:42:55
- -0800 (PST)
-Reply-To: emilyalba561@gmail.com
-From:   Emily Alba <emilyalba111@gmail.com>
-Date:   Fri, 13 Dec 2019 19:42:55 +0000
-Message-ID: <CAER1jXWoJK9oYfEWhgydqv2xGRAwndL+1W6MnXmSRmabEJ_s_A@mail.gmail.com>
-Subject: MRS. EMILY ALBA.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <610b14b71d4c3c4c28cbedc340f6a92f15e25241.1574922435.git.shubhrajyoti.datta@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DEAR FRIEND:
+On Thu, Nov 28, 2019 at 12:06:09PM +0530, shubhrajyoti.datta@gmail.com wrote:
+> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> 
+> Move the clocking wizard driver from staging to clk.
+> 
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> ---
+>  drivers/clk/Kconfig                 |   6 +
+>  drivers/clk/Makefile                |   1 +
+>  drivers/clk/clk-xlnx-clock-wizard.c | 335 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 342 insertions(+)
+>  create mode 100644 drivers/clk/clk-xlnx-clock-wizard.c
 
-GREETINGS FROM MY OWN SIDE; I AM MRS. EMILY ALBA, A WIDOW TO LATE
-DIPLOMAT DR. ABOUBAKA ZONGO.  I AM 54 YEARS OLD, SUFFERING FROM
-PANCREATIC CANCER. MY CONDITION IS REALLY BAD AND IT IS QUITE OBVIOUS
-THAT I WON=E2=80=99T LIVE MORE THAN SIX MONTHS ACCORDING TO MY DOCTORS.
+I don't see anything moved here.
 
-I AM WILLING TO DONATE THE SUM OF SEVEN MILLION FIVE HUNDRED THOUSEND
-EUROS (=E2=82=AC7.500, 000.00 EUROS) OUT THROUGH YOU IN OTHER TO HELP THE P=
-OOR
-WIDOWS AND THE LESS PRIVILEGED ONES IN THE RURAL AREAS AND TO CARRY
-OUT OTHER CHARITABLE WORKS.
-
-I WAIT FOR YOUR URGENT REPLY TO PROCEED.
-
-  BEST REGARDS,
-
-MRS. EMILY ALBA.
+Rob
