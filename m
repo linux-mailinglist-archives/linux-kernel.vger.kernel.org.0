@@ -2,166 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64F4211DD39
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 05:49:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6408511DD3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 05:53:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731846AbfLMEt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 23:49:57 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44729 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731631AbfLMEt4 (ORCPT
+        id S1731954AbfLMExk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 23:53:40 -0500
+Received: from m228-4.mailgun.net ([159.135.228.4]:24048 "EHLO
+        m228-4.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731789AbfLMExj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 23:49:56 -0500
-Received: by mail-lj1-f194.google.com with SMTP id c19so1131773lji.11
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 20:49:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=RjqECYszcPzuiZt/L0AxRI8ssRwksFUZbqaKQV1bL6Y=;
-        b=ZydEJMcq/6d5EfUHgWKsFIDKFkXYlKfsy5uX9HkifdQOWLixUPRgMmqJap+/j6s+Iq
-         iB3TJaHb5mggMmLkgpgCeOBUQIWOzZBg54ZTLJJLIH819bKi+N3jR1j/OdcgJ3C6CuAT
-         8RAZLhtARApYBNTzvPtCO8RJVQDrmUc9U9IBHO57bWEJ2wDJCfI8DPdyKA9jDSfIHjeY
-         VAyBVfBwpRmCUT1KAfoC074lW4gPQOQyOP3L7iSOtMbmJK1L8/1YpXv8dAJjs+qODEzz
-         Ij/5pe/GXGy41wa2SXBXKzpabbrREpAYeaJA3XXlz9gnrJZsS5qkohPYYUV+jS530zKE
-         3FlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RjqECYszcPzuiZt/L0AxRI8ssRwksFUZbqaKQV1bL6Y=;
-        b=rgK5GUqjN7TZ02z13Co5gIeX2LxIRdfbr0rC37YgfKRDUbU9DGS+orqzL/ATzJ+mF0
-         3IhWJ78vRC2ik5zowR6y9GtbghzB8otK518vTR3puHpBZIL6tPBqY3Q6bo7DbooJ916b
-         E/Cpvr4L0gxnen3vmzrXo9QVCJP4xU4Ve93VWiYuUd6Aw9PJObmgNw+MWIpyZsoir0fU
-         uVKOzLzwk1jb83OLtNFXHpkQOpCRcWD/nXxHHTUJv1oLEtpooNl7QHSxRgUwrkB7uN59
-         ft8tr9K8Evqsc0E5tDIxVOG8UiYvXQeOZXNJRgs/E+tbSa/Fpf5E9pNk6ZUBBeC7es/s
-         Tv1g==
-X-Gm-Message-State: APjAAAVzksv+a4nzDxHi8h7CGPuOBBRJhEvIvVTeeqGJGZ9/mjqfxmvY
-        Mlf7weeesJo7+N7dVe+iJcRrLhHj1ujCQbPWUI7Alg==
-X-Google-Smtp-Source: APXvYqzVZfwrAib+MkL2lbePl8L3T2AXPOH//B1Omcrvm7leLvsZEiXrbp2C9tVSKznw/eQFjmXBtLvjjknv9+i3fPU=
-X-Received: by 2002:a2e:854c:: with SMTP id u12mr7853870ljj.135.1576212594365;
- Thu, 12 Dec 2019 20:49:54 -0800 (PST)
+        Thu, 12 Dec 2019 23:53:39 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576212819; h=Content-Transfer-Encoding: MIME-Version:
+ Message-Id: Date: Subject: Cc: To: From: Sender;
+ bh=EmDuMybAbHkzS0TZek+TSUIMQantp+DpWmZhHZUvP1c=; b=XK8bEqgzOrUw4CkxwXfNqAZ72VKXr/Erfvt6uimbGRiXBxlHPfhCUQupdqM+7B5roFlQmXBn
+ ji4mAX2QWsAstt16wzYPBAdQ07S8i83xcznNvC/RNnhfDHA5uD5YY321pwQ9o249aDgMlIua
+ CifZV/UPqV6rmqXqdnc/SY9LoXk=
+X-Mailgun-Sending-Ip: 159.135.228.4
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df3194b.7fb8d579f260-smtp-out-n02;
+ Fri, 13 Dec 2019 04:53:31 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 2EC55C4479C; Fri, 13 Dec 2019 04:53:31 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 29CAAC43383;
+        Fri, 13 Dec 2019 04:53:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 29CAAC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Subject: [PATCH 0/3] Convert QCOM watchdog timer bindings to YAML
+Date:   Fri, 13 Dec 2019 10:23:17 +0530
+Message-Id: <cover.1576211720.git.saiprakash.ranjan@codeaurora.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20191211150221.977775294@linuxfoundation.org> <20191212100433.GA1470066@kroah.com>
-In-Reply-To: <20191212100433.GA1470066@kroah.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 13 Dec 2019 10:19:43 +0530
-Message-ID: <CA+G9fYsWs8feJ5uJZ_Jx-SR__zJZHwZhdVPWa+QOGMHVjBBsPw@mail.gmail.com>
-Subject: Re: [PATCH 5.4 00/92] 5.4.3-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Dec 2019 at 15:34, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Dec 11, 2019 at 04:04:51PM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.3 release.
-> > There are 92 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Fri, 13 Dec 2019 14:56:06 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >       https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.4.3-rc1.gz
-> > or in the git tree and branch at:
-> >       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.4.y
-> > and the diffstat can be found below.
->
-> I have pushed out -rc2 with a number of additional fixes:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.4.3-rc2.gz
+This series converts QCOM watchdog timer bindings to YAML. Also
+it adds the missing SoC-specific compatible for QCS404, SC7180,
+SDM845 and SM8150 SoCs.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Sai Prakash Ranjan (3):
+  dt-bindings: watchdog: Convert QCOM watchdog timer bindings to YAML
+  dt-bindings: watchdog: Add compatible for QCS404, SC7180, SDM845,
+    SM8150
+  arm64: dts: qcom: qcs404: Update the compatible for watchdog timer
 
-Summary
-------------------------------------------------------------------------
+ .../devicetree/bindings/watchdog/qcom-wdt.txt | 28 ---------
+ .../bindings/watchdog/qcom-wdt.yaml           | 59 +++++++++++++++++++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  2 +-
+ 3 files changed, 60 insertions(+), 29 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/qcom-wdt.txt
+ create mode 100644 Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
 
-kernel: 5.4.3-rc2
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-5.4.y
-git commit: 2d52a20a4c407f36814e9ebf0a64d73f74a690f6
-git describe: v5.4.2-102-g2d52a20a4c40
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/bui=
-ld/v5.4.2-102-g2d52a20a4c40
-
-No regressions (compared to build v5.4.2)
-
-No fixes (compared to build v5.4.2)
-
-Ran 24491 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* linux-log-parser
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-mm-tests
-* spectre-meltdown-checker-test
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-cpuhotplug-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* network-basic-tests
-* perf
-* v4l2-compliance
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* ssuite
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
