@@ -2,127 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EFD411DE17
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 07:03:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5263A11DE1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 07:06:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731734AbfLMGDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 01:03:52 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:49205 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727474AbfLMGDw (ORCPT
+        id S1732028AbfLMGGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 01:06:13 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35669 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729533AbfLMGGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 01:03:52 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=shile.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Tkm5YRB_1576217015;
-Received: from ali-6c96cfdd1403.local(mailfrom:shile.zhang@linux.alibaba.com fp:SMTPD_---0Tkm5YRB_1576217015)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 13 Dec 2019 14:03:46 +0800
-Subject: Re: [RFC PATCH v6 0/7] Speed booting by sorting ORC unwind tables at
- build time
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@amacapital.net>, x86@kernel.org
-Cc:     "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org
-References: <20191204004633.88660-1-shile.zhang@linux.alibaba.com>
-From:   Shile Zhang <shile.zhang@linux.alibaba.com>
-Message-ID: <7578e83f-0e90-88c3-e07d-4719e907e93a@linux.alibaba.com>
-Date:   Fri, 13 Dec 2019 14:03:52 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.1
+        Fri, 13 Dec 2019 01:06:12 -0500
+Received: by mail-pl1-f196.google.com with SMTP id s10so799240plp.2;
+        Thu, 12 Dec 2019 22:06:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oTcpJNk1xqKGyB5ClAR/s3v8RFY0BEnq+v19yEDpJbk=;
+        b=GQBWlcszvv5PGxYVAfrOSXSUt48y7V81ivYARzQtMMY+sz6ilI/paRYxJhfgj0vnZY
+         WRyJw1FeC/qV5UxnlnCFzn4KM2iHW3fBeI+oy+uUlu7wvrGdVp8iL+eXn7HNPGLDnkrr
+         Nsj4WMdGcqA4Ko0fBaVM9J4xMAMMdKKJhDMzDmhZdmNMxfhepWq7285obv6Ub5hsgKfh
+         WX/dKSrPzVzvjmAe03kzo7JaR6NXW1C9kb85DHy43zw1bmtkMCc+KAxnSW/Ktt56SFmk
+         cRNKYUZBd4vWLgGBAAY2oy4jDyPbZtAmJQzuzoOmu9Y3NyCSNu6tTJjGwzL8uy8fWJld
+         /rpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oTcpJNk1xqKGyB5ClAR/s3v8RFY0BEnq+v19yEDpJbk=;
+        b=ZNm4SCxPaBdETWR9GSBbUh3mrrJg1pgV9i4gbK9VNZiWvix3ipALMeRGOQv9HSqJ9k
+         w5gF+qQABUB2hOE9dvaC/FztuKe+oTlaeqH+lvYGmjmNERAH09Y9LUxOebAigaF2BLUh
+         9d3yWLkxk+JxBKhj7DHtfREX6T8rRPSzKhOx/Y50268ViLHiqF+pwgJzFPpAs34MNELv
+         b7oN4cINN+CC4DUzeCYfcz6hvLGa05NUZjowz6/HxX2uhE8ipZN23rPGxTURmr7LZ4Qk
+         GFRWoTWtpxNkcYzTkJdPPvmS4Jk6twV+6UEJSLcFrm5R/geygmUGM/u+OrJW43VBM6P6
+         ptug==
+X-Gm-Message-State: APjAAAW+mpXvH6vy0nc8qAx8I3bgN5i+Og+I9XMoo36f/KP5160DZNgu
+        8TlRw8QOmgX/b3f6SctFLGs=
+X-Google-Smtp-Source: APXvYqxHC4EwkoEsA6d0ud4NuxpyBl1jUHDJihm6TQB0jKGokpavCDdX6mETYwj1FhyZW2jxcz4faw==
+X-Received: by 2002:a17:90a:bc05:: with SMTP id w5mr14491704pjr.64.1576217172025;
+        Thu, 12 Dec 2019 22:06:12 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id p16sm8964659pgi.50.2019.12.12.22.06.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Dec 2019 22:06:11 -0800 (PST)
+Date:   Thu, 12 Dec 2019 22:06:09 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Chen Zhou <chenzhou10@huawei.com>
+Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [-next] hwmon: (w83627ehf) make sensor_dev_attr_##_name
+ variables static
+Message-ID: <20191213060609.GA20673@roeck-us.net>
+References: <20191213015605.172472-1-chenzhou10@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20191204004633.88660-1-shile.zhang@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191213015605.172472-1-chenzhou10@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter, Ingo,
+On Fri, Dec 13, 2019 at 09:56:05AM +0800, Chen Zhou wrote:
+> Fix sparse warning:
+> 
+> drivers/hwmon/w83627ehf.c:1202:1: warning: symbol 'sensor_dev_attr_pwm1_target' was not declared. Should it be static?
 
-Sorry for ping,
-but how about this series? or what can I do next?
+...
 
-Thanks!
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
 
-On 2019/12/4 08:46, Shile Zhang wrote:
-> Hi,
->
-> Sorry, update for compile error fix, reported by Intel's kbuild test robot.
-> Any comments or suggestions are welcome!
->
-> Thanks!
->
-> Changelog:
-> ==========
-> v5->v6:
-> - fix compile error reported by kbuild test robot;
->
-> v4->v5:
-> - replace sort with qsort, suggested by Andy Lutomirski <luto@amacapital.net>;
-> - add error handling in link scripts;
-> - fixed some review findings;
-> https://lore.kernel.org/lkml/20191128110206.2107-1-shile.zhang@linux.alibaba.com/
->
-> v3->v4:
-> - Code refactored for Peter's review findings and suggestions.
-> https://lore.kernel.org/lkml/20191115164539.57930-1-shile.zhang@linux.alibaba.com/
->
-> v2->v3:
-> - Discard new added sortorctable tool and related Kconfig changes.
-> - Refactored sortextable, makes it more readable and extendable.
-> - Rename 'sortextable' to 'sorttable', for more kernel tables extend.
-> - Add ORC unwind tables sort into sorttable.
-> - Remove the runtime ORC tables sort.
-> https://lore.kernel.org/lkml/20191115064750.47888-1-shile.zhang@linux.alibaba.com/
->
-> v1->v2:
-> - Removed new added Kconfig and runtime sort code, advised by Josh Poimboeuf.
-> - Some minor refactoring.
-> https://lore.kernel.org/lkml/20191108071108.72132-1-shile.zhang@linux.alibaba.com/
->
-> v1:
-> - Added a new sortorctable tool to sort ORC unwind tables at build time,
->    same as sortextable.
-> - Add a new Kconfigure to control if ORC unwind tables sort at build
->    time.
-> https://lore.kernel.org/lkml/20191107143205.206606-1-shile.zhang@linux.alibaba.com/
->
-> Shile Zhang (7):
->    scripts/sortextable: Rewrite error/success handling
->    scripts/sortextable: kernel coding style formating
->    scripts/sortextable: Remove dead code
->    scripts/sortextable: refactor do_func() function
->    scripts/sorttable: rename sortextable to sorttable
->    scripts/sorttable: Add ORC unwind tables sort concurrently
->    x86/unwind/orc: remove run-time ORC unwind tables sort
->
->   arch/arc/Kconfig                       |   2 +-
->   arch/arm/Kconfig                       |   2 +-
->   arch/arm64/Kconfig                     |   2 +-
->   arch/microblaze/Kconfig                |   2 +-
->   arch/mips/Kconfig                      |   2 +-
->   arch/parisc/Kconfig                    |   2 +-
->   arch/powerpc/Kconfig                   |   2 +-
->   arch/s390/Kconfig                      |   2 +-
->   arch/x86/Kconfig                       |   2 +-
->   arch/x86/kernel/unwind_orc.c           |   8 +-
->   arch/xtensa/Kconfig                    |   2 +-
->   init/Kconfig                           |   2 +-
->   scripts/.gitignore                     |   2 +-
->   scripts/Makefile                       |  13 +-
->   scripts/link-vmlinux.sh                |  13 +-
->   scripts/sortextable.h                  | 209 --------------
->   scripts/{sortextable.c => sorttable.c} | 305 +++++++++-----------
->   scripts/sorttable.h                    | 380 +++++++++++++++++++++++++
->   18 files changed, 557 insertions(+), 395 deletions(-)
->   delete mode 100644 scripts/sortextable.h
->   rename scripts/{sortextable.c => sorttable.c} (67%)
->   create mode 100644 scripts/sorttable.h
->
+Applied (though I removed most of the log messages - there no point of
+having all of them in the commit message).
 
+Guenter
+
+> ---
+>  drivers/hwmon/w83627ehf.c | 56 +++++++++++++++++++++++------------------------
+>  1 file changed, 28 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/hwmon/w83627ehf.c b/drivers/hwmon/w83627ehf.c
+> index 207cc74..0a13f6b 100644
+> --- a/drivers/hwmon/w83627ehf.c
+> +++ b/drivers/hwmon/w83627ehf.c
+> @@ -1199,22 +1199,22 @@ store_tolerance(struct device *dev, struct device_attribute *attr,
+>  	return count;
+>  }
+>  
+> -SENSOR_DEVICE_ATTR(pwm1_target, 0644, show_target_temp,
+> +static SENSOR_DEVICE_ATTR(pwm1_target, 0644, show_target_temp,
+>  	    store_target_temp, 0);
+> -SENSOR_DEVICE_ATTR(pwm2_target, 0644, show_target_temp,
+> +static SENSOR_DEVICE_ATTR(pwm2_target, 0644, show_target_temp,
+>  	    store_target_temp, 1);
+> -SENSOR_DEVICE_ATTR(pwm3_target, 0644, show_target_temp,
+> +static SENSOR_DEVICE_ATTR(pwm3_target, 0644, show_target_temp,
+>  	    store_target_temp, 2);
+> -SENSOR_DEVICE_ATTR(pwm4_target, 0644, show_target_temp,
+> +static SENSOR_DEVICE_ATTR(pwm4_target, 0644, show_target_temp,
+>  	    store_target_temp, 3);
+>  
+> -SENSOR_DEVICE_ATTR(pwm1_tolerance, 0644, show_tolerance,
+> +static SENSOR_DEVICE_ATTR(pwm1_tolerance, 0644, show_tolerance,
+>  	    store_tolerance, 0);
+> -SENSOR_DEVICE_ATTR(pwm2_tolerance, 0644, show_tolerance,
+> +static SENSOR_DEVICE_ATTR(pwm2_tolerance, 0644, show_tolerance,
+>  	    store_tolerance, 1);
+> -SENSOR_DEVICE_ATTR(pwm3_tolerance, 0644, show_tolerance,
+> +static SENSOR_DEVICE_ATTR(pwm3_tolerance, 0644, show_tolerance,
+>  	    store_tolerance, 2);
+> -SENSOR_DEVICE_ATTR(pwm4_tolerance, 0644, show_tolerance,
+> +static SENSOR_DEVICE_ATTR(pwm4_tolerance, 0644, show_tolerance,
+>  	    store_tolerance, 3);
+>  
+>  /* Smart Fan registers */
+> @@ -1291,35 +1291,35 @@ store_##reg(struct device *dev, struct device_attribute *attr, \
+>  
+>  fan_time_functions(fan_stop_time, FAN_STOP_TIME)
+>  
+> -SENSOR_DEVICE_ATTR(pwm4_stop_time, 0644, show_fan_stop_time,
+> +static SENSOR_DEVICE_ATTR(pwm4_stop_time, 0644, show_fan_stop_time,
+>  	    store_fan_stop_time, 3);
+> -SENSOR_DEVICE_ATTR(pwm4_start_output, 0644, show_fan_start_output,
+> +static SENSOR_DEVICE_ATTR(pwm4_start_output, 0644, show_fan_start_output,
+>  	    store_fan_start_output, 3);
+> -SENSOR_DEVICE_ATTR(pwm4_stop_output, 0644, show_fan_stop_output,
+> +static SENSOR_DEVICE_ATTR(pwm4_stop_output, 0644, show_fan_stop_output,
+>  	    store_fan_stop_output, 3);
+> -SENSOR_DEVICE_ATTR(pwm4_max_output, 0644, show_fan_max_output,
+> +static SENSOR_DEVICE_ATTR(pwm4_max_output, 0644, show_fan_max_output,
+>  	    store_fan_max_output, 3);
+> -SENSOR_DEVICE_ATTR(pwm4_step_output, 0644, show_fan_step_output,
+> +static SENSOR_DEVICE_ATTR(pwm4_step_output, 0644, show_fan_step_output,
+>  	    store_fan_step_output, 3);
+>  
+> -SENSOR_DEVICE_ATTR(pwm3_stop_time, 0644, show_fan_stop_time,
+> +static SENSOR_DEVICE_ATTR(pwm3_stop_time, 0644, show_fan_stop_time,
+>  	    store_fan_stop_time, 2);
+> -SENSOR_DEVICE_ATTR(pwm3_start_output, 0644, show_fan_start_output,
+> +static SENSOR_DEVICE_ATTR(pwm3_start_output, 0644, show_fan_start_output,
+>  	    store_fan_start_output, 2);
+> -SENSOR_DEVICE_ATTR(pwm3_stop_output, 0644, show_fan_stop_output,
+> +static SENSOR_DEVICE_ATTR(pwm3_stop_output, 0644, show_fan_stop_output,
+>  		    store_fan_stop_output, 2);
+>  
+> -SENSOR_DEVICE_ATTR(pwm1_stop_time, 0644, show_fan_stop_time,
+> +static SENSOR_DEVICE_ATTR(pwm1_stop_time, 0644, show_fan_stop_time,
+>  	    store_fan_stop_time, 0);
+> -SENSOR_DEVICE_ATTR(pwm2_stop_time, 0644, show_fan_stop_time,
+> +static SENSOR_DEVICE_ATTR(pwm2_stop_time, 0644, show_fan_stop_time,
+>  	    store_fan_stop_time, 1);
+> -SENSOR_DEVICE_ATTR(pwm1_start_output, 0644, show_fan_start_output,
+> +static SENSOR_DEVICE_ATTR(pwm1_start_output, 0644, show_fan_start_output,
+>  	    store_fan_start_output, 0);
+> -SENSOR_DEVICE_ATTR(pwm2_start_output, 0644, show_fan_start_output,
+> +static SENSOR_DEVICE_ATTR(pwm2_start_output, 0644, show_fan_start_output,
+>  	    store_fan_start_output, 1);
+> -SENSOR_DEVICE_ATTR(pwm1_stop_output, 0644, show_fan_stop_output,
+> +static SENSOR_DEVICE_ATTR(pwm1_stop_output, 0644, show_fan_stop_output,
+>  	    store_fan_stop_output, 0);
+> -SENSOR_DEVICE_ATTR(pwm2_stop_output, 0644, show_fan_stop_output,
+> +static SENSOR_DEVICE_ATTR(pwm2_stop_output, 0644, show_fan_stop_output,
+>  	    store_fan_stop_output, 1);
+>  
+>  
+> @@ -1327,17 +1327,17 @@ SENSOR_DEVICE_ATTR(pwm2_stop_output, 0644, show_fan_stop_output,
+>   * pwm1 and pwm3 don't support max and step settings on all chips.
+>   * Need to check support while generating/removing attribute files.
+>   */
+> -SENSOR_DEVICE_ATTR(pwm1_max_output, 0644, show_fan_max_output,
+> +static SENSOR_DEVICE_ATTR(pwm1_max_output, 0644, show_fan_max_output,
+>  	    store_fan_max_output, 0);
+> -SENSOR_DEVICE_ATTR(pwm1_step_output, 0644, show_fan_step_output,
+> +static SENSOR_DEVICE_ATTR(pwm1_step_output, 0644, show_fan_step_output,
+>  	    store_fan_step_output, 0);
+> -SENSOR_DEVICE_ATTR(pwm2_max_output, 0644, show_fan_max_output,
+> +static SENSOR_DEVICE_ATTR(pwm2_max_output, 0644, show_fan_max_output,
+>  	    store_fan_max_output, 1);
+> -SENSOR_DEVICE_ATTR(pwm2_step_output, 0644, show_fan_step_output,
+> +static SENSOR_DEVICE_ATTR(pwm2_step_output, 0644, show_fan_step_output,
+>  	    store_fan_step_output, 1);
+> -SENSOR_DEVICE_ATTR(pwm3_max_output, 0644, show_fan_max_output,
+> +static SENSOR_DEVICE_ATTR(pwm3_max_output, 0644, show_fan_max_output,
+>  	    store_fan_max_output, 2);
+> -SENSOR_DEVICE_ATTR(pwm3_step_output, 0644, show_fan_step_output,
+> +static SENSOR_DEVICE_ATTR(pwm3_step_output, 0644, show_fan_step_output,
+>  	    store_fan_step_output, 2);
+>  
+>  static ssize_t
