@@ -2,73 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27CFF11E369
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:13:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDAB11E368
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:13:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfLMMNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 07:13:37 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7232 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726851AbfLMMNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 07:13:36 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 43BF251F2FFBC74BD80D;
-        Fri, 13 Dec 2019 20:13:32 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 13 Dec 2019
- 20:13:21 +0800
-From:   yu kuai <yukuai3@huawei.com>
-To:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>, <luto@kernel.org>, <riel@surriel.com>,
-        <alexander.h.duyck@linux.intel.com>, <mtosatti@redhat.com>
-CC:     <yukuai3@huawei.com>, <zhengbin13@huawei.com>,
-        <yi.zhang@huawei.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86/process: remove set but not used varibles 'prev' and 'next'
-Date:   Fri, 13 Dec 2019 20:12:53 +0800
-Message-ID: <20191213121253.10072-1-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1726903AbfLMMN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 07:13:26 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48704 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbfLMMN0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 07:13:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=utMjoxUDezcWxJk4mk8LSviqN/OVWsX79SL4Aqpy8v0=; b=X8T0kfd96r7lIgFHNCTWx+MQq
+        74YSXj7t43tq/9BwRPWobFD7JFCl2nifRB1qdaQxatTQf+A7gpA2kBFM6fl1nij6hLTkMsqEVMTNS
+        bMEeExUxeGHN5e0SNqlCS71xSn/jxq9IpfksszxKHwDhk8Jc3WDSBz7VPl0Kyx5kYxpAgVJbV2pD4
+        i6dt0ORFYpWFtz5dKmm9YhxV9k6lvXeW3/DeKxDN28/htxEwhg9fDdiBy6RBvZCttLczuxhEp/l0r
+        uys+XTf6eD0w+npDhCc7zI6CibINH9bdfo6uN0L+CzmSU75hQP/J0X8gTJP9eRCZSvnDJflTj+afs
+        H2a6jqCzw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifjoh-0003cX-3A; Fri, 13 Dec 2019 12:13:07 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D5A8C304637;
+        Fri, 13 Dec 2019 13:11:43 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9C5AF2B1886CC; Fri, 13 Dec 2019 13:13:04 +0100 (CET)
+Date:   Fri, 13 Dec 2019 13:13:04 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Peng Wang <rocking@linux.alibaba.com>
+Cc:     mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] schied/fair: Skip calculating @contrib without load
+Message-ID: <20191213121304.GC2844@hirez.programming.kicks-ass.net>
+References: <1575648862-12095-1-git-send-email-rocking@linux.alibaba.com>
+ <1576208740-35609-1-git-send-email-rocking@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1576208740-35609-1-git-send-email-rocking@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Fri, Dec 13, 2019 at 11:45:40AM +0800, Peng Wang wrote:
+> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+> index a96db50..4392953 100644
+> --- a/kernel/sched/pelt.c
+> +++ b/kernel/sched/pelt.c
+> @@ -129,8 +129,9 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
+>  		 * Step 2
+>  		 */
+>  		delta %= 1024;
+> -		contrib = __accumulate_pelt_segments(periods,
+> -				1024 - sa->period_contrib, delta);
+> +		if (load)
+> +			contrib = __accumulate_pelt_segments(periods,
+> +					1024 - sa->period_contrib, delta);
+>  	}
+>  	sa->period_contrib = delta;
 
-arch/x86/kernel/process.c: In function ‘__switch_to_xtra’:
-arch/x86/kernel/process.c:618:31: warning: variable ‘next’ set
-but not used [-Wunused-but-set-variable]
-arch/x86/kernel/process.c:618:24: warning: variable ‘prev’ set
-but not used [-Wunused-but-set-variable]
+I've made that:
 
-They are never used, and so can be removed.
-
-Signed-off-by: yu kuai <yukuai3@huawei.com>
----
- arch/x86/kernel/process.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 61e93a318983..839b5244e3b7 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -615,12 +615,8 @@ void speculation_ctrl_update_current(void)
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -129,8 +129,20 @@ accumulate_sum(u64 delta, struct sched_a
+ 		 * Step 2
+ 		 */
+ 		delta %= 1024;
+-		contrib = __accumulate_pelt_segments(periods,
+-				1024 - sa->period_contrib, delta);
++		if (load) {
++			/*
++			 * This relies on the:
++			 *
++			 * if (!load)
++			 *	runnable = running = 0;
++			 *
++			 * clause from ___update_load_sum(); this results in
++			 * the below usage of @contrib to dissapear entirely,
++			 * so no point in calculating it.
++			 */
++			contrib = __accumulate_pelt_segments(periods,
++					1024 - sa->period_contrib, delta);
++		}
+ 	}
+ 	sa->period_contrib = delta;
  
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
- {
--	struct thread_struct *prev, *next;
- 	unsigned long tifp, tifn;
- 
--	prev = &prev_p->thread;
--	next = &next_p->thread;
--
- 	tifn = READ_ONCE(task_thread_info(next_p)->flags);
- 	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
- 
--- 
-2.17.2
-
+@@ -205,7 +217,9 @@ ___update_load_sum(u64 now, struct sched
+ 	 * This means that weight will be 0 but not running for a sched_entity
+ 	 * but also for a cfs_rq if the latter becomes idle. As an example,
+ 	 * this happens during idle_balance() which calls
+-	 * update_blocked_averages()
++	 * update_blocked_averages().
++	 *
++	 * Also see the comment in accumulate_sum().
+ 	 */
+ 	if (!load)
+ 		runnable = running = 0;
