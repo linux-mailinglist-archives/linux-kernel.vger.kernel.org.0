@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 509AF11DF03
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:03:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B4A211DF08
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:04:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbfLMIDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 03:03:38 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50345 "EHLO
+        id S1726427AbfLMIEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 03:04:14 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34543 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfLMIDh (ORCPT
+        with ESMTP id S1726004AbfLMIEO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 03:03:37 -0500
+        Fri, 13 Dec 2019 03:04:14 -0500
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1iffvE-00025T-43; Fri, 13 Dec 2019 09:03:36 +0100
+        id 1iffvp-0002AF-0d; Fri, 13 Dec 2019 09:04:13 +0100
 Received: from sha by dude.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1iffvD-000715-K4; Fri, 13 Dec 2019 09:03:35 +0100
+        id 1iffvo-00072x-Op; Fri, 13 Dec 2019 09:04:12 +0100
 From:   Sascha Hauer <s.hauer@pengutronix.de>
 To:     linux-ide@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH] libata: Fix retrieving of active qcs
-Date:   Fri, 13 Dec 2019 09:03:34 +0100
-Message-Id: <20191213080334.26922-1-s.hauer@pengutronix.de>
+Subject: [PATCH v2] libata: Fix retrieving of active qcs
+Date:   Fri, 13 Dec 2019 09:04:08 +0100
+Message-Id: <20191213080408.27032-1-s.hauer@pengutronix.de>
 X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,6 +64,10 @@ to change that.
 Fixes: 28361c403683 ("libata: add extra internal command")
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
+
+Changes since v1:
+- Fix wrong function name in include/linux/libata.h
+
  drivers/ata/libata-core.c | 23 +++++++++++++++++++++++
  drivers/ata/sata_fsl.c    |  2 +-
  drivers/ata/sata_mv.c     |  2 +-
