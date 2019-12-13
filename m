@@ -2,86 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 762B911E0E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:35:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C05F011E0E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:35:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfLMJfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:35:04 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:57596 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbfLMJfE (ORCPT
+        id S1726743AbfLMJfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:35:05 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:33034 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfLMJfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Dec 2019 04:35:04 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 4A6B61C246E; Fri, 13 Dec 2019 10:35:02 +0100 (CET)
-Date:   Fri, 13 Dec 2019 10:35:01 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 099/243] usb: dwc3: debugfs: Properly print/set link
- state for HS
-Message-ID: <20191213093501.GA27976@amd>
-References: <20191211150339.185439726@linuxfoundation.org>
- <20191211150345.799359877@linuxfoundation.org>
+Received: from [10.28.39.99] (10.28.39.99) by mail-sz.amlogic.com (10.28.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 13 Dec
+ 2019 17:35:20 +0800
+Subject: Re: [PATCH v4 1/6] dt-bindings: clock: meson: add A1 PLL clock
+ controller bindings
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20191206074052.15557-1-jian.hu@amlogic.com>
+ <20191206074052.15557-2-jian.hu@amlogic.com>
+ <1jblsdlvck.fsf@starbuckisacylon.baylibre.com>
+From:   Jian Hu <jian.hu@amlogic.com>
+Message-ID: <db7f731b-32c3-b4a6-1cab-2c34082b2c22@amlogic.com>
+Date:   Fri, 13 Dec 2019 17:35:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
-Content-Disposition: inline
-In-Reply-To: <20191211150345.799359877@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1jblsdlvck.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.39.99]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---LQksG6bCIzRHxTLp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed 2019-12-11 16:04:21, Greg Kroah-Hartman wrote:
-> From: Thinh Nguyen <thinh.nguyen@synopsys.com>
->=20
-> [ Upstream commit 0d36dede457873404becd7c9cb9d0f2bcfd0dcd9 ]
->=20
-> Highspeed device and below has different state names than superspeed and
-> higher. Add proper checks and printouts of link states for highspeed and
-> below.
-
-This is debugfs, so I don't believe it was suitable for stable in the
-first place, but....
-
-
-> +	case DWC3_LINK_STATE_RESUME:
-> +		return "Resume";
-> +	default:
-> +		return "UNKNOWN link state\n";
-> +	}
-
-You may want to delete \n here, it will be duplicated if this ever
-triggers.
-
-Best regards,
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---LQksG6bCIzRHxTLp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl3zW0UACgkQMOfwapXb+vICpQCfQHzNyEi8pbT+Xw6OnRhG7h07
-jKIAnjd/cwx9RAtSs75/JPIETKGhNhwn
-=D5ZS
------END PGP SIGNATURE-----
-
---LQksG6bCIzRHxTLp--
+On 2019/12/12 17:57, Jerome Brunet wrote:
+> 
+> On Fri 06 Dec 2019 at 08:40, Jian Hu <jian.hu@amlogic.com> wrote:
+> 
+>> Add the documentation to support Amlogic A1 PLL clock driver,
+>> and add A1 PLL clock controller bindings.
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>> ---
+>>   .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 59 +++++++++++++++++++
+>>   include/dt-bindings/clock/a1-pll-clkc.h       | 16 +++++
+>>   2 files changed, 75 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>>   create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>> new file mode 100644
+>> index 000000000000..7feeef5abf1b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>> @@ -0,0 +1,59 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> 
+> Rob commented on the above in v1 and it remains unaddressedOK, I will fix it in the next version.
+> 
+>> +/*
+>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+>> + */
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/clock/amlogic,a1-pll-clkc.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Amlogic Meson A/C serials PLL Clock Control Unit Device Tree Bindings
+>> +
+>> +maintainers:
+>> +  - Neil Armstrong <narmstrong@baylibre.com>
+>> +  - Jerome Brunet <jbrunet@baylibre.com>
+>> +  - Jian Hu <jian.hu@jian.hu.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    - enum:
+>> +        - amlogic,a1-pll-clkc
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +clocks:
+>> +  minItems: 2
+>> +  maxItems: 2
+>> +  items:
+>> +   - description: Input xtal_fixpll
+>> +   - description: Input xtal_hifipll
+>> +
+>> +clock-names:
+>> +  minItems: 2
+>> +  maxItems: 2
+>> +  items:
+>> +     - const: xtal_fixpll
+>> +     - const: xtal_hifipll
+>> +
+>> +required:
+>> +  - compatible
+>> +  - "#clock-cells"
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    clkc_pll: pll-clock-controller@7c80 {
+>> +                compatible = "amlogic,a1-pll-clkc";
+>> +                reg = <0 0x7c80 0 0x18c>;
+>> +                #clock-cells = <1>;
+>> +                clocks = <&clkc_periphs CLKID_XTAL_FIXPLL>,
+>> +                         <&clkc_periphs CLKID_XTAL_HIFIPLL>;
+>> +                clock-names = "xtal_fixpll", "xtal_hifipll";
+>> +    };
+>> diff --git a/include/dt-bindings/clock/a1-pll-clkc.h b/include/dt-bindings/clock/a1-pll-clkc.h
+>> new file mode 100644
+>> index 000000000000..58eae237e503
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/a1-pll-clkc.h
+>> @@ -0,0 +1,16 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>> +/*
+>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef __A1_PLL_CLKC_H
+>> +#define __A1_PLL_CLKC_H
+>> +
+>> +#define CLKID_FIXED_PLL				1
+>> +#define CLKID_FCLK_DIV2				6
+>> +#define CLKID_FCLK_DIV3				7
+>> +#define CLKID_FCLK_DIV5				8
+>> +#define CLKID_FCLK_DIV7				9
+>> +#define CLKID_HIFI_PLL				10
+>> +
+>> +#endif /* __A1_PLL_CLKC_H */
+> 
+> .
+> 
