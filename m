@@ -2,188 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B3A011E966
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:47:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 775B611E968
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 18:47:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbfLMRrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 12:47:04 -0500
-Received: from mga11.intel.com ([192.55.52.93]:29572 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726404AbfLMRrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 12:47:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 09:47:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
-   d="scan'208";a="296989821"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga001.jf.intel.com with ESMTP; 13 Dec 2019 09:47:02 -0800
-Date:   Fri, 13 Dec 2019 09:47:02 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Barret Rhoden <brho@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        linux-nvdimm@lists.01.org, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jason.zeng@intel.com
-Subject: Re: [PATCH v5 1/2] mm: make dev_pagemap_mapping_shift() externally
- visible
-Message-ID: <20191213174702.GB31552@linux.intel.com>
-References: <20191212182238.46535-1-brho@google.com>
- <20191212182238.46535-2-brho@google.com>
+        id S1728591AbfLMRrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 12:47:17 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46036 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbfLMRrR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 12:47:17 -0500
+Received: by mail-lj1-f193.google.com with SMTP id d20so3540696ljc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 09:47:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=eoAJedssCRtORBBwXDIR4/QT9NuQsdzJ4Ntg4pSM5cY=;
+        b=1bgwUcAZ78xCTIqaqNviEKuMJb97CygulYIPlFUqxsRkcRsnof435hIi2Xo9UN6RIc
+         AZYzu5lldy7TGNkcuuLDtmbqA1CDS4B8+QWKjQIUCcDOGvfan9LAwAD5e4SGX5E4fWZ8
+         PXr8h/WLRIBnR5CSWvuAyIOKbY3V1te0Yx+wzlK6CRWEW1gFd8vpWsNfyjUJWPWCOmfv
+         MUC3EwO12smFILAg7MrScMAH0IE4qq/4k65nNGoDEWhlbyWO1MQ6X5wlg7AQ/TmO0+oK
+         uVCG6N9DC/fHP5UGuJFkKhRSC/pUrkPeWc06iatwR9gPJUnsjrur6Nrv/Sbm2NM0Hqat
+         RGTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=eoAJedssCRtORBBwXDIR4/QT9NuQsdzJ4Ntg4pSM5cY=;
+        b=MPoAk/66RoIC1DoCtmOIfTRyU8TEJii3xcbR+i+DIIdDDbZOsL8ZAK7wjDA868Ztfd
+         3hbo+NdATMS2DfjJtaVnBUIRDV5eVGB/8hanh74/CW7fwf8kfaJkyYLT7+PC9TI4cHuV
+         e5Gjez9VZUjHHVnCc4qkK9gjbz59wpEyJB2RDOw5+DuH67twe6MB8n7FRkHcNzdNBARt
+         Bv252reRBVWETJ3CAcSqtGtLxh0rDrg1xoT2i61s3RiX34/9Zdvw9LGTeB9FzMEf6O66
+         QZAzX0WVt113eKTSZU2CafZilvxLPtNLisQPz7gJy1RXdHsSaA9G2H4frTQp3UYFLePP
+         gQjQ==
+X-Gm-Message-State: APjAAAWWUxGzqH/vozvVYQxnA29HaRzkVqQLPq/sa++pGRbwBFfs+tKO
+        HjPQGtUrjq1uvUT2PYKADcxpjg==
+X-Google-Smtp-Source: APXvYqyrL4fP/y35voKQ93uhJQCdlErk3H7h25gfob2xBThYWvN+CbLHJ+UN7VZf7cdxBzpPbR1YQg==
+X-Received: by 2002:a2e:868c:: with SMTP id l12mr9458337lji.194.1576259234756;
+        Fri, 13 Dec 2019 09:47:14 -0800 (PST)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id j19sm5555628lfb.90.2019.12.13.09.47.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 09:47:14 -0800 (PST)
+Date:   Fri, 13 Dec 2019 09:47:05 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Stanislav Fomichev <sdf@fomichev.me>,
+        Andrii Nakryiko <andriin@fb.com>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Alexei Starovoitov <ast@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: [PATCH bpf-next 11/15] bpftool: add skeleton codegen command
+Message-ID: <20191213094705.486101a0@cakuba.netronome.com>
+In-Reply-To: <CAEf4BzaG95dxgSBSm7m8c3gJ-XeL97=N4srS5fR7JRfcjaMwTw@mail.gmail.com>
+References: <CAEf4Bzb+3b-ypP8YJVA=ogQgp1KXx2xPConOswA0EiGXsmfJow@mail.gmail.com>
+        <20191211191518.GD3105713@mini-arch>
+        <CAEf4BzYofFFjSAO3O-G37qyeVHE6FACex=yermt8bF8mXksh8g@mail.gmail.com>
+        <20191211200924.GE3105713@mini-arch>
+        <CAEf4BzaE0Q7LnPOa90p1RX9qSbOA_8hkT=6=7peP9C88ErRumQ@mail.gmail.com>
+        <20191212025735.GK3105713@mini-arch>
+        <CAEf4BzY2KHK4h5e40QgGt4GzJ6c+rm-vtbyEdM41vUSqcs=txA@mail.gmail.com>
+        <20191212162953.GM3105713@mini-arch>
+        <CAEf4BzYJHvuFbBM-xvCCsEa+Pg-bG1tprGMbCDtsbGHdv7KspA@mail.gmail.com>
+        <20191212104334.222552a1@cakuba.netronome.com>
+        <20191212195415.ubnuypco536rp6mu@ast-mbp.dhcp.thefacebook.com>
+        <20191212122115.612bb13b@cakuba.netronome.com>
+        <CAEf4BzaG95dxgSBSm7m8c3gJ-XeL97=N4srS5fR7JRfcjaMwTw@mail.gmail.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212182238.46535-2-brho@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 01:22:37PM -0500, Barret Rhoden wrote:
-> KVM has a use case for determining the size of a dax mapping.
+On Thu, 12 Dec 2019 22:48:10 -0800, Andrii Nakryiko wrote:
+> > improve and hack on it. Baking it into as system tool is counter
+> > productive. Users should be able to grab the skel tool single-file
+> > source and adjust for their project's needs. Distributing your own copy
+> > of bpftool because you want to adjust skel is a heavy lift.  
 > 
-> The KVM code has easy access to the address and the mm, and
-> dev_pagemap_mapping_shift() needs only those parameters.  It was
-> deriving them from page and vma.  This commit changes those parameters
-> from (page, vma) to (address, mm).
+> Skeleton is auto-generated code, it's not supposed to be tweaked or
+> "adjusted" by hand. 
+
+Obviously not, I said adjusting the codegen tool, not the output.
+
+> Because next time you do tiny change to your BPF
+> source code (just swap order of two global variables), skeleton
+> changes. If someone is not satisfied with the way skeleton generation
+> looks like, they should propose changes and contribute to common
+> algorithm. Or, of course, they can just go and re-implement it on
+> their own, if struct bpf_object_skeleton suits them still (which is
+> what libbpf works with). Then they can do it in Python, Go, Scala,
+> Java, Perl, whatnot. But somehow I doubt anyone would want to do that.
 > 
-> Signed-off-by: Barret Rhoden <brho@google.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  include/linux/mm.h  |  3 +++
->  mm/memory-failure.c | 38 +++-----------------------------------
->  mm/util.c           | 34 ++++++++++++++++++++++++++++++++++
->  3 files changed, 40 insertions(+), 35 deletions(-)
+> > And maybe one day we do have Python/Go/whatever bindings, and we can
+> > convert the skel tool to a higher level language with modern templating.  
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index a2adf95b3f9c..bfd1882dd5c6 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1013,6 +1013,9 @@ static inline bool is_pci_p2pdma_page(const struct page *page)
->  #define page_ref_zero_or_close_to_overflow(page) \
->  	((unsigned int) page_ref_count(page) + 127u <= 127u)
->  
-> +unsigned long dev_pagemap_mapping_shift(unsigned long address,
-> +					struct mm_struct *mm);
-> +
->  static inline void get_page(struct page *page)
->  {
->  	page = compound_head(page);
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 3151c87dff73..bafa464c8290 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -261,40 +261,6 @@ void shake_page(struct page *p, int access)
->  }
->  EXPORT_SYMBOL_GPL(shake_page);
->  
-> -static unsigned long dev_pagemap_mapping_shift(struct page *page,
-> -		struct vm_area_struct *vma)
-> -{
-> -	unsigned long address = vma_address(page, vma);
-> -	pgd_t *pgd;
-> -	p4d_t *p4d;
-> -	pud_t *pud;
-> -	pmd_t *pmd;
-> -	pte_t *pte;
-> -
-> -	pgd = pgd_offset(vma->vm_mm, address);
-> -	if (!pgd_present(*pgd))
-> -		return 0;
-> -	p4d = p4d_offset(pgd, address);
-> -	if (!p4d_present(*p4d))
-> -		return 0;
-> -	pud = pud_offset(p4d, address);
-> -	if (!pud_present(*pud))
-> -		return 0;
-> -	if (pud_devmap(*pud))
-> -		return PUD_SHIFT;
-> -	pmd = pmd_offset(pud, address);
-> -	if (!pmd_present(*pmd))
-> -		return 0;
-> -	if (pmd_devmap(*pmd))
-> -		return PMD_SHIFT;
-> -	pte = pte_offset_map(pmd, address);
-> -	if (!pte_present(*pte))
-> -		return 0;
-> -	if (pte_devmap(*pte))
-> -		return PAGE_SHIFT;
-> -	return 0;
-> -}
-> -
->  /*
->   * Failure handling: if we can't find or can't kill a process there's
->   * not much we can do.	We just print a message and ignore otherwise.
-> @@ -324,7 +290,9 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
->  	}
->  	tk->addr = page_address_in_vma(p, vma);
->  	if (is_zone_device_page(p))
-> -		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
-> +		tk->size_shift =
-> +			dev_pagemap_mapping_shift(vma_address(page, vma),
-> +						  vma->vm_mm);
->  	else
->  		tk->size_shift = compound_order(compound_head(p)) + PAGE_SHIFT;
->  
-> diff --git a/mm/util.c b/mm/util.c
-> index 3ad6db9a722e..59984e6b40ab 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -901,3 +901,37 @@ int memcmp_pages(struct page *page1, struct page *page2)
->  	kunmap_atomic(addr1);
->  	return ret;
->  }
-> +
-> +unsigned long dev_pagemap_mapping_shift(unsigned long address,
-> +					struct mm_struct *mm)
-> +{
-> +	pgd_t *pgd;
-> +	p4d_t *p4d;
-> +	pud_t *pud;
-> +	pmd_t *pmd;
-> +	pte_t *pte;
-> +
-> +	pgd = pgd_offset(mm, address);
-> +	if (!pgd_present(*pgd))
-> +		return 0;
-> +	p4d = p4d_offset(pgd, address);
-> +	if (!p4d_present(*p4d))
-> +		return 0;
-> +	pud = pud_offset(p4d, address);
-> +	if (!pud_present(*pud))
-> +		return 0;
-> +	if (pud_devmap(*pud))
-> +		return PUD_SHIFT;
-> +	pmd = pmd_offset(pud, address);
-> +	if (!pmd_present(*pmd))
-> +		return 0;
-> +	if (pmd_devmap(*pmd))
-> +		return PMD_SHIFT;
-> +	pte = pte_offset_map(pmd, address);
-> +	if (!pte_present(*pte))
-> +		return 0;
-> +	if (pte_devmap(*pte))
-> +		return PAGE_SHIFT;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(dev_pagemap_mapping_shift);
+> Because high-level implementation is going to be so much simpler and
+> shorter, really? Is it that complicated in C right now? What's the
+> real benefit of waiting to be able to do it in "higher level" language
+> beyond being the contrarian? 
 
-This is basically a rehash of lookup_address_in_pgd(), and doesn't provide
-exactly what KVM needs.  E.g. KVM works with levels instead of shifts, and
-it would be nice to provide the pte so that KVM can sanity check that the
-pfn from this walk matches the pfn it plans on mapping.
+I did not say wait, I said do C and convert to something else once easy.
+You really gotta read responses more carefully :/
 
-Instead of exporting dev_pagemap_mapping_shift(), what about relacing it
-with a patch to introduce lookup_address_mm() and export that?
+> Apart from \n\ (which is mostly hidden
+> from view), I don't think high-level templates are going to be much
+> more clean.
+> 
+> > > We cannot and should not adopt kernel-like ABI guarantees to user space
+> > > code. It will paralyze the development.  
+> >
+> > Discussion for another time :)  
+> 
+> If this "experimental" disclaimer is a real blocker for all of this, I
+> don't mind making it a public API right now. bpf_object_skeleton is
+> already designed to be backward/forward compatible with size of struct
+> itself and all the sub-structs recorded during initialization. I
+> didn't mean to create impression like this whole approach is so raw
+> and untried that it will most certainly break and we are still unsure
+> about it. It's not and it certainly improves set up code for
+> real-world applications. We might need to add some extra option here
+> and there, but the stuff that's there already will stay as is.
 
-dev_pagemap_mapping_shift() could then wrap the new helper (if you want),
-and KVM could do lookup_address_mm() for querying the size of ZONE_DEVICE
-pages.
+As explained the experimental disclaimer is fairly useless and it gives
+people precedent for maybe not caring as hard as they should about
+ironing the details out before sending code upstream.
+
+I think we can just add a switch or option for improved generation when
+needed. You already check there are not extra trailing arguments so we
+should be good.
+
+> Would moving all the skeleton-related stuff into libbpf.h and
+> "stabilizing" it make all this more tolerable for you?
+
+I think I'm too tired if this to have an option any more.
