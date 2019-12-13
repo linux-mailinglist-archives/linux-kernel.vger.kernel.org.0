@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15DD111E35C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:10:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF00E11E35F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:11:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfLMMJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 07:09:56 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45928 "EHLO huawei.com"
+        id S1726930AbfLMMLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 07:11:15 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47600 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726717AbfLMMJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 07:09:56 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B435D8AB0A8FF068C476;
-        Fri, 13 Dec 2019 20:09:54 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 13 Dec 2019
- 20:09:46 +0800
+        id S1726867AbfLMMLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 07:11:14 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 95267D7B149C30DAA05A;
+        Fri, 13 Dec 2019 20:11:12 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Fri, 13 Dec 2019
+ 20:11:03 +0800
 From:   yu kuai <yukuai3@huawei.com>
-To:     <stefanr@s5r6.in-berlin.de>
+To:     <bp@alien8.de>, <mchehab@kernel.org>, <tony.luck@intel.com>,
+        <james.morse@arm.com>, <rrichter@marvell.com>
 CC:     <yukuai3@huawei.com>, <zhengbin13@huawei.com>,
-        <yi.zhang@huawei.com>, <linux1394-devel@lists.sourceforge.net>,
+        <yi.zhang@huawei.com>, <linux-edac@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH] firewire: net: remove set but not used variable 'guid'
-Date:   Fri, 13 Dec 2019 20:09:19 +0800
-Message-ID: <20191213120919.8080-1-yukuai3@huawei.com>
+Subject: [PATCH] EDAC: remove set but not used variable 'ecc_loc'
+Date:   Fri, 13 Dec 2019 20:10:36 +0800
+Message-ID: <20191213121036.8886-1-yukuai3@huawei.com>
 X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
@@ -38,35 +39,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/firewire/net.c: In function ‘fwnet_finish_incoming_packet’:
-drivers/firewire/net.c:493:9: warning: variable ‘guid’ set but not
-used [-Wunused-but-set-variable]
+drivers/edac/i5100_edac.c: In function ‘i5100_read_log’:
+drivers/edac/i5100_edac.c:489:11: warning: variable ‘ecc_loc’
+set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: yu kuai <yukuai3@huawei.com>
 ---
- drivers/firewire/net.c | 2 --
+ drivers/edac/i5100_edac.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
-index 715e491dfbc3..28785642a5c5 100644
---- a/drivers/firewire/net.c
-+++ b/drivers/firewire/net.c
-@@ -490,7 +490,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
- {
- 	struct fwnet_device *dev;
- 	int status;
--	__be64 guid;
+diff --git a/drivers/edac/i5100_edac.c b/drivers/edac/i5100_edac.c
+index 0ddc41e47a96..a7ccf7b13619 100644
+--- a/drivers/edac/i5100_edac.c
++++ b/drivers/edac/i5100_edac.c
+@@ -486,7 +486,6 @@ static void i5100_read_log(struct mem_ctl_info *mci, int chan,
+ 	u32 dw;
+ 	u32 dw2;
+ 	unsigned syndrome = 0;
+-	unsigned ecc_loc = 0;
+ 	unsigned merr;
+ 	unsigned bank;
+ 	unsigned rank;
+@@ -499,7 +498,6 @@ static void i5100_read_log(struct mem_ctl_info *mci, int chan,
+ 		pci_read_config_dword(pdev, I5100_REDMEMA, &dw2);
+ 		syndrome = dw2;
+ 		pci_read_config_dword(pdev, I5100_REDMEMB, &dw2);
+-		ecc_loc = i5100_redmemb_ecc_locator(dw2);
+ 	}
  
- 	switch (ether_type) {
- 	case ETH_P_ARP:
-@@ -512,7 +511,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
- 	 * Parse the encapsulation header. This actually does the job of
- 	 * converting to an ethernet-like pseudo frame header.
- 	 */
--	guid = cpu_to_be64(dev->card->guid);
- 	if (dev_hard_header(skb, net, ether_type,
- 			   is_broadcast ? net->broadcast : net->dev_addr,
- 			   NULL, skb->len) >= 0) {
+ 	if (i5100_validlog_recmemvalid(dw)) {
 -- 
 2.17.2
 
