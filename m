@@ -2,159 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3728711E07A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:22:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFFB911E0AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfLMJWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:22:08 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37071 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfLMJWH (ORCPT
+        id S1726757AbfLMJ1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:27:35 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61210 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfLMJ1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:22:07 -0500
-Received: by mail-lf1-f65.google.com with SMTP id b15so1427809lfc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 01:22:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZwmaUZJnMZMjAykwzuMYq1+U7baQKDrVjVyjfWLNTpw=;
-        b=KF2Cvyk+um/v+kxXqA2S5wHAkj8D6+AhKHlmdTVTCbha2Go4osgSNgw4BUNQFXQoDg
-         P0GyScEVl0N4NFlb/b9/x4kz+6JbSUIwpvjNerr8IDahYkRxoRa25OtqjbzKGupwkVny
-         qOgGjvMy41bDFgRQVetDMtkYOeO5K+6++Tc6LXxiSsP7b1kJmVqR8kBl3yukcYQYeQBR
-         6iFMa7q3heLX6iJilsN8ZEsbqwhPGMxX/c8RAvEXJaVHTa2kMU46it/oaCEOVOwimAuI
-         gjrOODSkF3rNwVwsDQ9RlHNbiirhCbTk+iMCBO9gCdFVtSE8OLYkPAMIeFSqmcmk+CE5
-         au+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZwmaUZJnMZMjAykwzuMYq1+U7baQKDrVjVyjfWLNTpw=;
-        b=M58q77m+3y9dg04sAsnjqPqJ0sZHJPOKx91k7MqT2HEMQ7aRo+hnD/HTOZD4RURAgD
-         MOfE/qLw4lwVH9glIWKK4B0L2SGrBSRNdZ3nvrr0byoLJuLhcRvaQomXJujbzLIROnnK
-         TB/AwsKRdnGq5Ce4e4jtiAKxq8wNVzPPfO1Q7CkX3H+mxvR+qtlyxX7+QpedLhhT17uL
-         wozzj7N73GVeZUIm5UCIYGjHYMzNnCCOZE3v7uXM7S4nsjJMlM8tYgWbGlp1MoAcvb8M
-         1VACHCQu990X4oY4buiEs/kDGILh2pOO9/FdVVO9pkv/Nm7BYR616yAA98N/bvL3prU7
-         06lQ==
-X-Gm-Message-State: APjAAAXNCTpJWwnIU43w7g6cnn5Gd0bo4DRfFmRY2vut96TQm2ZQp98h
-        /wyjFIWb64Nt9wkg43YKpb4X5eOk0cklCq+iF2oGbFM9
-X-Google-Smtp-Source: APXvYqwnTZgiMyv3JP0dy+CwLfGllw+etRelCx/iggNKJJ3sbGD+uMKyUHfVkxjMVSuOOgwd4aJFMbhKQCc+kRtsVkg=
-X-Received: by 2002:a19:6b0e:: with SMTP id d14mr8059708lfa.151.1576228925551;
- Fri, 13 Dec 2019 01:22:05 -0800 (PST)
+        Fri, 13 Dec 2019 04:27:33 -0500
+Received: from 79.184.255.82.ipv4.supernova.orange.pl (79.184.255.82) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id 3e4136f9a6c3eaa5; Fri, 13 Dec 2019 10:27:30 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Subject: [PATCH v1 07/10] cpuidle: Allow idle states to be disabled by default
+Date:   Fri, 13 Dec 2019 10:22:04 +0100
+Message-ID: <23901825.xGlorUmkL0@kreacher>
+In-Reply-To: <3950312.2WmFeOdZGY@kreacher>
+References: <3950312.2WmFeOdZGY@kreacher>
 MIME-Version: 1.0
-References: <1575648862-12095-1-git-send-email-rocking@linux.alibaba.com> <1576208740-35609-1-git-send-email-rocking@linux.alibaba.com>
-In-Reply-To: <1576208740-35609-1-git-send-email-rocking@linux.alibaba.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 13 Dec 2019 10:21:54 +0100
-Message-ID: <CAKfTPtC-iAewnR3QV1BJNWq-hJQphjs_eUwy=PxBrw-NuU3g_w@mail.gmail.com>
-Subject: Re: [PATCH v2] schied/fair: Skip calculating @contrib without load
-To:     Peng Wang <rocking@linux.alibaba.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peng,
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-minor typo on the subject s/schied/sched/
+In certain situations it may be useful to prevent some idle states
+from being used by default while allowing user space to enable them
+later on.
 
-On Fri, 13 Dec 2019 at 04:46, Peng Wang <rocking@linux.alibaba.com> wrote:
->
-> Because of the:
->
->         if (!load)
->                 runnable = running = 0;
->
-> clause in ___update_load_sum(), all the actual users of @contrib in
-> accumulate_sum():
->
->         if (load)
->                 sa->load_sum += load * contrib;
->         if (runnable)
->                 sa->runnable_load_sum += runnable * contrib;
->         if (running)
->                 sa->util_sum += contrib << SCHED_CAPACITY_SHIFT;
->
-> don't happen, and therefore we don't care what @contrib actually is and
-> calculating it is pointless.
->
-> If we count the times when @load equals zero and not as below:
->
->         if (load) {
->                 load_is_not_zero_count++;
->                 contrib = __accumulate_pelt_segments(periods,
->                                 1024 - sa->period_contrib,delta);
->         } else
->                 load_is_zero_count++;
->
-> As we can see, load_is_zero_count is much bigger than
-> load_is_zero_count, and the gap is gradually widening:
->
->         load_is_zero_count:            6016044 times
->         load_is_not_zero_count:         244316 times
->         19:50:43 up 1 min,  1 user,  load average: 0.09, 0.06, 0.02
->
->         load_is_zero_count:            7956168 times
->         load_is_not_zero_count:         261472 times
->         19:51:42 up 2 min,  1 user,  load average: 0.03, 0.05, 0.01
->
->         load_is_zero_count:           10199896 times
->         load_is_not_zero_count:         278364 times
->         19:52:51 up 3 min,  1 user,  load average: 0.06, 0.05, 0.01
->
->         load_is_zero_count:           14333700 times
->         load_is_not_zero_count:         318424 times
->         19:54:53 up 5 min,  1 user,  load average: 0.01, 0.03, 0.00
+For this purpose, introduce a new state flag, CPUIDLE_FLAG_OFF, to
+mark idle states that should be disabled by default, make the core
+set CPUIDLE_STATE_DISABLED_BY_USER for those states at the
+initialization time and add a new state attribute in sysfs,
+"default_status", to inform user space of the initial status of
+the given idle state ("disabled" if CPUIDLE_FLAG_OFF is set for it,
+"enabled" otherwise).
 
-your system looks pretty idle so i'm not sure to see a benefit of your
-patch in such situation
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
->
-> Perhaps we can gain some performance advantage by saving these
-> unnecessary calculation.
+Changes from the RFC version:
+ - Call the new sysfs attribute "default_status" (instead of "initial_status").
 
-load == 0 when
-- system is idle and we updates blocked load but we don't really care
-about performance in this case and we will stop the trigger the update
-once the load_avg reach null value
-- a rt/dl/cfs rq or a sched_entity wakes up. In this case, skipping
-the calculation of the contribution should fasten the wake up path
-although i'm not sure about the amount
+---
+ Documentation/ABI/testing/sysfs-devices-system-cpu |  6 ++++++
+ Documentation/admin-guide/pm/cpuidle.rst           |  3 +++
+ drivers/cpuidle/cpuidle.c                          |  6 +++++-
+ drivers/cpuidle/sysfs.c                            | 10 ++++++++++
+ include/linux/cpuidle.h                            |  1 +
+ 5 files changed, 25 insertions(+), 1 deletion(-)
 
-Nevertheless, this change makes sense
+diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+index fc20cde63d1e..2e0e3b45d02a 100644
+--- a/Documentation/ABI/testing/sysfs-devices-system-cpu
++++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+@@ -196,6 +196,12 @@ Description:
+ 		does not reflect it. Likewise, if one enables a deep state but a
+ 		lighter state still is disabled, then this has no effect.
+ 
++What:		/sys/devices/system/cpu/cpuX/cpuidle/stateN/default_status
++Date:		December 2019
++KernelVersion:	v5.6
++Contact:	Linux power management list <linux-pm@vger.kernel.org>
++Description:
++		(RO) The default status of this state, "enabled" or "disabled".
+ 
+ What:		/sys/devices/system/cpu/cpuX/cpuidle/stateN/residency
+ Date:		March 2014
+diff --git a/Documentation/admin-guide/pm/cpuidle.rst b/Documentation/admin-guide/pm/cpuidle.rst
+index e70b365dbc60..311cd7cc2b75 100644
+--- a/Documentation/admin-guide/pm/cpuidle.rst
++++ b/Documentation/admin-guide/pm/cpuidle.rst
+@@ -506,6 +506,9 @@ object corresponding to it, as follows:
+ ``disable``
+ 	Whether or not this idle state is disabled.
+ 
++``default_status``
++	The default status of this state, "enabled" or "disabled".
++
+ ``latency``
+ 	Exit latency of the idle state in microseconds.
+ 
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 0005be5ea2b4..24eaa4c8138b 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -571,10 +571,14 @@ static int __cpuidle_register_device(struct cpuidle_device *dev)
+ 	if (!try_module_get(drv->owner))
+ 		return -EINVAL;
+ 
+-	for (i = 0; i < drv->state_count; i++)
++	for (i = 0; i < drv->state_count; i++) {
+ 		if (drv->states[i].flags & CPUIDLE_FLAG_UNUSABLE)
+ 			dev->states_usage[i].disable |= CPUIDLE_STATE_DISABLED_BY_DRIVER;
+ 
++		if (drv->states[i].flags & CPUIDLE_FLAG_OFF)
++			dev->states_usage[i].disable |= CPUIDLE_STATE_DISABLED_BY_USER;
++	}
++
+ 	per_cpu(cpuidle_devices, dev->cpu) = dev;
+ 	list_add(&dev->device_list, &cpuidle_detected_devices);
+ 
+diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
+index 38ef770be90d..254d1560dc19 100644
+--- a/drivers/cpuidle/sysfs.c
++++ b/drivers/cpuidle/sysfs.c
+@@ -327,6 +327,14 @@ static ssize_t store_state_disable(struct cpuidle_state *state,
+ 	return size;
+ }
+ 
++static ssize_t show_state_default_status(struct cpuidle_state *state,
++					  struct cpuidle_state_usage *state_usage,
++					  char *buf)
++{
++	return sprintf(buf, "%s\n",
++		       state->flags & CPUIDLE_FLAG_OFF ? "disabled" : "enabled");
++}
++
+ define_one_state_ro(name, show_state_name);
+ define_one_state_ro(desc, show_state_desc);
+ define_one_state_ro(latency, show_state_exit_latency);
+@@ -337,6 +345,7 @@ define_one_state_ro(time, show_state_time);
+ define_one_state_rw(disable, show_state_disable, store_state_disable);
+ define_one_state_ro(above, show_state_above);
+ define_one_state_ro(below, show_state_below);
++define_one_state_ro(default_status, show_state_default_status);
+ 
+ static struct attribute *cpuidle_state_default_attrs[] = {
+ 	&attr_name.attr,
+@@ -349,6 +358,7 @@ static struct attribute *cpuidle_state_default_attrs[] = {
+ 	&attr_disable.attr,
+ 	&attr_above.attr,
+ 	&attr_below.attr,
++	&attr_default_status.attr,
+ 	NULL
+ };
+ 
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 1dabe36bd011..ebfb52b3ffbf 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -77,6 +77,7 @@ struct cpuidle_state {
+ #define CPUIDLE_FLAG_COUPLED	BIT(1) /* state applies to multiple cpus */
+ #define CPUIDLE_FLAG_TIMER_STOP BIT(2) /* timer is stopped on this state */
+ #define CPUIDLE_FLAG_UNUSABLE	BIT(3) /* avoid using this state */
++#define CPUIDLE_FLAG_OFF	BIT(4) /* disable this state by default */
+ 
+ struct cpuidle_device_kobj;
+ struct cpuidle_state_kobj;
+-- 
+2.16.4
 
-Reviewed-by: Vincent Guittot < vincent.guittot@linaro.org>
 
->
-> Signed-off-by: Peng Wang <rocking@linux.alibaba.com>
-> ---
->  kernel/sched/pelt.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-> index a96db50..4392953 100644
-> --- a/kernel/sched/pelt.c
-> +++ b/kernel/sched/pelt.c
-> @@ -129,8 +129,9 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
->                  * Step 2
->                  */
->                 delta %= 1024;
-> -               contrib = __accumulate_pelt_segments(periods,
-> -                               1024 - sa->period_contrib, delta);
-> +               if (load)
-> +                       contrib = __accumulate_pelt_segments(periods,
-> +                                       1024 - sa->period_contrib, delta);
->         }
->         sa->period_contrib = delta;
->
-> --
-> 1.8.3.1
->
+
+
+
