@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56A0A11DA7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD5D211DA7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:08:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731393AbfLMAIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 19:08:00 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37548 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731565AbfLMAH4 (ORCPT
+        id S1731597AbfLMAIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 19:08:01 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:36640 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731573AbfLMAH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:07:56 -0500
-Received: by mail-pl1-f194.google.com with SMTP id c23so390026plz.4
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:07:55 -0800 (PST)
+        Thu, 12 Dec 2019 19:07:58 -0500
+Received: by mail-pj1-f65.google.com with SMTP id n96so345939pjc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:07:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=a+sV5GoSJEiRZfmjrW1+1MwtZsdkaDLVuk2NRqNrH9Y=;
-        b=LukXmycdan+JrEsleQGB4m5qUwPFAgpUEG4ulZ/iKQnBL9RStn7Cp6kjSV+4MQl1dl
-         oE1jEaS75KVIjf4z+fWgjvfIzQd8TAVO3wv14/gI10gbHxdCXZbhlzyuNfDOSaM28uz1
-         4MczGTd3U5cbFMNQ3qRKf+iKJtfcOt5rBr7I5BmCUkgKCsAVdkyAvpG3G69fO/wt0y0I
-         2fcLvrn2wwPSqkHp5CaVVbRH7DgdkImmcUBrJUqn+i4Vdyr5+xb5VEyGMDuNxyDC0kxO
-         blZg4LtcnOFKuNXL1/sCwrSUuEo3Inlo9OHn34GAPMCYZ+uTABe9MRJagmu3KIQhPMmK
-         kvRw==
+        bh=zxx/HRHL6kjWjxkGDaGwGWZ/6AVYaJNa85HBD92o/lM=;
+        b=O0pwB2uuaJIoMx5Hj0eQnZ5uh3n3bDklfwUjHwIMqdbZZ3fHbmNl1iqmqJSlpryRO2
+         YIZy1T2tmjVvvgwOCKOqck2p3o6WvqTmgsTBvNhnAXKo+GXKmHllndUAmhIoLT+zTTOq
+         b+NuFqv9SquAq2CzlPTcE6pGHnd7/QBtqd+7xLnSktuU2SNBOoNpBQbuEPOxPJbaNkqE
+         EdatrGQPNq5Es0t0w37x8URXMcjITkkMbtAEWY3w0kuCeVZc4EHiKePPcyUptrKDAubv
+         jxYsYVD2dxj3yVxvebmhJvoEZAj1V+qH4IF410bk3LLvfbwl+RqvVPPp0mvrnMi5Qr2M
+         4VKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a+sV5GoSJEiRZfmjrW1+1MwtZsdkaDLVuk2NRqNrH9Y=;
-        b=WTDVl5LEwp7irFqMer1a/ctJ1yWNCFRrGJeMJ+0YOr1dCRWggqhwyKF9wo3QaiJ+fL
-         dtvcwh6SEfrQgcdcHGw8YgtVgf9YecxeFghEYcBWN/xDp++lspuXqi/KyecV32Oxcq3h
-         qn3nsZeSeTVK4BJSODlCKwjOZo6qkXAQXwXQosKQDdR2LAP+lO9apGu/jcP+D3aq4LJa
-         Suv+096n80nNc1D4Nyivn+UlUOvH8DUy2bCMI73Nh6HZ+oX8z/kmTbtl36dBnaQCUCs+
-         31USaAm3VCGQRd8rQPx8DEu7/YXiXY8UfZC3LxGRAPfmA39dhvXZNDMBeqtXKHFdyOyS
-         YtlQ==
-X-Gm-Message-State: APjAAAWtHFh9KX8nqebl+byQdhXtQNAiwxJcoZJfLi45R+qAa4s0UBnc
-        tLXGD6FsRSHj7tvuRGohVojXfD46Qas=
-X-Google-Smtp-Source: APXvYqw/W5ycRttQjCqpid9Ha6262vYFX2I8+5hsdzSjxZT4ZtOSRnkmyoJSW7ZXIymmA8NjgLKpTw==
-X-Received: by 2002:a17:902:bf47:: with SMTP id u7mr13112236pls.259.1576195674977;
-        Thu, 12 Dec 2019 16:07:54 -0800 (PST)
+        bh=zxx/HRHL6kjWjxkGDaGwGWZ/6AVYaJNa85HBD92o/lM=;
+        b=pMeXC/1H9H/LgJKPWBqsjbX0U1lonYuZjJeQh5rVsWMRoEc+S/83KzKvc9k+q4GUWV
+         NSgGz3+9coBwiloQ9cGqSr7M3wXSaQmSn97tb7ONbsPTkQYUNKrs9L+KShEDLttuB2FK
+         +zEyiEke10aoWd1QD3odbHtrLgAm3kCHIsOu4KtssBivEZDh5k02WnLouesg5o/xnVEX
+         tknZuP7TbDdoMwQwAa/ErT7q6pAASnPpgTdlIK7jslOJDw0m+JxN+j9VdMmoDtuL2KTk
+         db0mDOQp39uma+0qjJW49FOzhWXjvFH+oFkk0zZ/5xRW1lY1Lx0rYUJgcL78VB1PNg1X
+         YXuA==
+X-Gm-Message-State: APjAAAXXDgNcOgFR70ZS86rwzis7/UWgUPna6rvy/RxhTOMN4aJZCiGN
+        eh6gXXbPv75q5Rd8wObIGCXFEjIw82c=
+X-Google-Smtp-Source: APXvYqxJAMj6b+gRXMvs56fGQZqyz8wB4ICEEZaUhOEliFjrIdFM1hNV0AKbBv3XVTo5qVQMWh3sOQ==
+X-Received: by 2002:a17:902:b598:: with SMTP id a24mr12416703pls.247.1576195677874;
+        Thu, 12 Dec 2019 16:07:57 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.07.52
+        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.07.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 16:07:54 -0800 (PST)
+        Thu, 12 Dec 2019 16:07:57 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -52,10 +52,11 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>,
         Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org
-Subject: [PATCH 14/58] tty/serial: Migrate cpm_uart to use has_sysrq
-Date:   Fri, 13 Dec 2019 00:06:13 +0000
-Message-Id: <20191213000657.931618-15-dima@arista.com>
+        linux-serial@vger.kernel.org,
+        "Maciej W. Rozycki" <macro@linux-mips.org>
+Subject: [PATCH 15/58] tty/serial: Migrate dz to use has_sysrq
+Date:   Fri, 13 Dec 2019 00:06:14 +0000
+Message-Id: <20191213000657.931618-16-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191213000657.931618-1-dima@arista.com>
 References: <20191213000657.931618-1-dima@arista.com>
@@ -75,46 +76,35 @@ The SUPPORT_SYSRQ ifdeffery is not nice as:
 In order to remove SUPPORT_SYSRQ, has_sysrq variable has been added.
 Initialise it in driver's probe and remove ifdeffery.
 
+Cc: "Maciej W. Rozycki" <macro@linux-mips.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/serial/cpm_uart/cpm_uart_core.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/tty/serial/dz.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-index de6d02f7abe2..19d5a4cf29a6 100644
---- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-+++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-@@ -40,10 +40,6 @@
- #include <asm/fs_pd.h>
- #include <asm/udbg.h>
+diff --git a/drivers/tty/serial/dz.c b/drivers/tty/serial/dz.c
+index 7b57e840e255..6192ed011bc3 100644
+--- a/drivers/tty/serial/dz.c
++++ b/drivers/tty/serial/dz.c
+@@ -29,10 +29,6 @@
  
--#if defined(CONFIG_SERIAL_CPM_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+ #undef DEBUG_DZ
+ 
+-#if defined(CONFIG_SERIAL_DZ_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 -#define SUPPORT_SYSRQ
 -#endif
 -
- #include <linux/serial_core.h>
- #include <linux/kernel.h>
- 
-@@ -347,9 +343,7 @@ static void cpm_uart_int_rx(struct uart_port *port)
- 		/* ASSUMPTION: it contains nothing valid */
- 		i = 0;
+ #include <linux/bitops.h>
+ #include <linux/compiler.h>
+ #include <linux/console.h>
+@@ -787,6 +783,7 @@ static void __init dz_init_ports(void)
+ 		uport->ops	= &dz_ops;
+ 		uport->line	= line;
+ 		uport->mapbase	= base;
++		uport->has_sysrq = IS_ENABLED(CONFIG_SERIAL_DZ_CONSOLE);
  	}
--#ifdef SUPPORT_SYSRQ
- 	port->sysrq = 0;
--#endif
- 	goto error_return;
  }
  
-@@ -1204,7 +1198,8 @@ static int cpm_uart_init_port(struct device_node *np,
- 	pinfo->port.uartclk = ppc_proc_freq;
- 	pinfo->port.mapbase = (unsigned long)mem;
- 	pinfo->port.type = PORT_CPM;
--	pinfo->port.ops = &cpm_uart_pops,
-+	pinfo->port.ops = &cpm_uart_pops;
-+	pinfo->port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_CPM_CONSOLE);
- 	pinfo->port.iotype = UPIO_MEM;
- 	pinfo->port.fifosize = pinfo->tx_nrfifos * pinfo->tx_fifosize;
- 	spin_lock_init(&pinfo->port.lock);
 -- 
 2.24.0
 
