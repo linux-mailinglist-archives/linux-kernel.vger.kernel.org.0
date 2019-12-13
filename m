@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD02E11DA94
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:08:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86EA211DAE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 01:10:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731384AbfLMAIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 19:08:44 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42427 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731713AbfLMAIi (ORCPT
+        id S1731654AbfLMAKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Dec 2019 19:10:51 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:37279 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731721AbfLMAIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:08:38 -0500
-Received: by mail-pl1-f196.google.com with SMTP id x13so378799plr.9
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:08:38 -0800 (PST)
+        Thu, 12 Dec 2019 19:08:41 -0500
+Received: by mail-pj1-f68.google.com with SMTP id ep17so346733pjb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2019 16:08:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XEE0LGDV1J/8PNdfM5R+G2BENKuEh6gWNO7Fuw2PlT8=;
-        b=QdO6faUQ9IU/Iu3hc9HssBIFSyYwL1wjx6YLW1AGrFNfD1NEqfQWLvBbb7cncEUgM4
-         kQNSs1EkyzWRVaSAXzHHvTGkZAPoKwhyDXu97A+VZwti2nj1I5pWHpnFM9QWA/lxoZ13
-         VrknhWKh1KzguA6nOSPPffDORtX3W7EhuGtzagBADUGjmlbzM7Q2UqoXF5G8fEDSrm2A
-         svAskRSke+8ffBqi9jrnIhsH4v8M/CIzFCAlcXKFmeVGJQARdG2tS0Gk8GQrUY4fyGJu
-         jQ00/4sNwNy20ADchZObQ4QB5SV3L17th2C9opjauWqVn7y0oaboxFBUdzXe2K6GG6wn
-         1L7g==
+        bh=fEut0Fj8lvNcNC7jiLkhwffOKZHHYE/mx3CuScNZ2v8=;
+        b=GavOjZqbHPXSvQsnp/4V2Vt2SbCm4wYmihMFu5kV6wmSDnQ2gZbhwrJGLpCGH8sZxc
+         Mq3wTXtMxedfn5H6MhT8R0ZO36Id/ejuXCdH9tzshbmjAyq4XUn0K37ZvQ8+zF70KRlV
+         A/xASlDmfCmEQkcjagj6/tOa2thmMlNg19XyRWpXHfYRcIexZfxxTdGcYFOZjmYT+S4N
+         r778RI7pLZV6+wgHCoKtc2zKS5DVHCGS8qLdEZZvfpWGJ8+k43PdW0Vs4gaM8pHSQ7MH
+         i36T2zmtzstJ9XsrkTbmXaqlKoO7gJSxO65l8tjt3Ot6HMrRPfekWZ4yWi//L65kOe5h
+         +80g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XEE0LGDV1J/8PNdfM5R+G2BENKuEh6gWNO7Fuw2PlT8=;
-        b=n26TpPX/gheHLmAxJEWKq6H9zXs+vgo1tclk2FY01hFhCbbhnRZyTEgS3RixmwhFIE
-         U23ei9gzx6R6yIrwvj4w/6l07i/+I3apzK+Ub3VZ+WJ/1bcZjz/zy/g4ttmbzz3RYpfP
-         VloQ0YLKP/qkrgBv/7c18mY4KDj/TTvoR8TiNg3OWrHoDutlj/+//GNx8HXQdkpB3+6U
-         Sq/tLAr3VbBWWXPl5csxXht92K+6eOxN3/2DJk1Lqw1STGH5rm7KrVjtALxsYaxJkdkY
-         2UXbG8KwVhYmyaHPyyE4nM6HmIjaSagI2NUbdf04oybk6ie/iN6YxWrqBYiDuYcXXs9D
-         Qm1w==
-X-Gm-Message-State: APjAAAVsVcMdED/MlAc761/PoVLh/L0TDUm0eCubXNLd5mv1MdUtMYjl
-        JvSmmGHk4Eu+WLXLBSZhcg/ZaJ0qJ+8=
-X-Google-Smtp-Source: APXvYqzcYT0DHwWe/kfTwr+RdnsOlzCzNojd3O1sghIDf52D2BkxpgOg5Y3f2CLhLhsf0d2pnd8l+w==
-X-Received: by 2002:a17:90b:4391:: with SMTP id in17mr13218028pjb.33.1576195717651;
-        Thu, 12 Dec 2019 16:08:37 -0800 (PST)
+        bh=fEut0Fj8lvNcNC7jiLkhwffOKZHHYE/mx3CuScNZ2v8=;
+        b=GGdu3uuKvGLSowX8v1d2tVD+eknpzKKwGPJgACo8B/xbArjigDS6vrwWZEeSvJALze
+         7b8f6yO1AQKdH5Q8vo9lIT5vs1N6BbS7HqPf1rQpeEJU+ONg2Fwu8jf2L2lpjY6E9qMk
+         aYWDf3h2sYeaGfu0Xi/+X0uuBTF0cszgYXVarM7VAh610oAuG+pbziHWRwmLsrA2/sl5
+         NpXrjTA/ZiD6OVxfi1eF53NvYeP6zKgZiTjGLeOWRO7Wy9h/Q27BjrRQIhqZ0GpI4OcP
+         jZ2+eyFgyzn+zGc8GonqvYf3Gn2thMTKahQYOz36d7+yLbfwtZ79M86stWV8XQAqbeGy
+         xM+w==
+X-Gm-Message-State: APjAAAXfclqnqrT1jmKI1nlgOjlEOvb1avgpx8FsH2lpI46I+N1CJSFb
+        6zocNbJ9ZE4lKWRv8rHqpPgEGhgLsjU=
+X-Google-Smtp-Source: APXvYqwpZRasKszg6AZ/+lEvc5jALuKv9L8/eVh4D12TL0p2ZnL8XIvcoaxFCrZ/cC8QZUytMV6sTg==
+X-Received: by 2002:a17:90a:6346:: with SMTP id v6mr12978944pjs.51.1576195720577;
+        Thu, 12 Dec 2019 16:08:40 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.08.35
+        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.08.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 16:08:36 -0800 (PST)
+        Thu, 12 Dec 2019 16:08:39 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -53,9 +53,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Jiri Slaby <jslaby@suse.com>,
         Vasiliy Khoruzhick <vasilykh@arista.com>,
         linux-serial@vger.kernel.org
-Subject: [PATCH 28/58] tty/serial: Migrate omap-serial to use has_sysrq
-Date:   Fri, 13 Dec 2019 00:06:27 +0000
-Message-Id: <20191213000657.931618-29-dima@arista.com>
+Subject: [PATCH 29/58] tty/serial: Migrate pch_uart to use has_sysrq
+Date:   Fri, 13 Dec 2019 00:06:28 +0000
+Message-Id: <20191213000657.931618-30-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191213000657.931618-1-dima@arista.com>
 References: <20191213000657.931618-1-dima@arista.com>
@@ -77,32 +77,44 @@ Initialise it in driver's probe and remove ifdeffery.
 
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/serial/omap-serial.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/tty/serial/pch_uart.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/omap-serial.c b/drivers/tty/serial/omap-serial.c
-index 6420ae581a80..53b38a226f26 100644
---- a/drivers/tty/serial/omap-serial.c
-+++ b/drivers/tty/serial/omap-serial.c
-@@ -16,10 +16,6 @@
-  * this driver as required for the omap-platform.
+diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
+index c16234bca78f..c625bf7b8a92 100644
+--- a/drivers/tty/serial/pch_uart.c
++++ b/drivers/tty/serial/pch_uart.c
+@@ -2,9 +2,6 @@
+ /*
+  *Copyright (C) 2011 LAPIS Semiconductor Co., Ltd.
   */
- 
--#if defined(CONFIG_SERIAL_OMAP_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
+-#if defined(CONFIG_SERIAL_PCH_UART_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 -#define SUPPORT_SYSRQ
 -#endif
--
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/console.h>
-@@ -1680,6 +1676,7 @@ static int serial_omap_probe(struct platform_device *pdev)
- 	up->port.regshift = 2;
- 	up->port.fifosize = 64;
- 	up->port.ops = &serial_omap_pops;
-+	up->port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_OMAP_CONSOLE);
+ #include <linux/kernel.h>
+ #include <linux/serial_reg.h>
+ #include <linux/slab.h>
+@@ -587,12 +584,10 @@ static int pch_uart_hal_read(struct eg20t_port *priv, unsigned char *buf,
+ 			if (uart_handle_break(port))
+ 				continue;
+ 		}
+-#ifdef SUPPORT_SYSRQ
+ 		if (port->sysrq) {
+ 			if (uart_handle_sysrq_char(port, rbr))
+ 				continue;
+ 		}
+-#endif
  
- 	if (pdev->dev.of_node)
- 		ret = of_alias_get_id(pdev->dev.of_node, "serial");
+ 		buf[i++] = rbr;
+ 	}
+@@ -1796,6 +1791,7 @@ static struct eg20t_port *pch_uart_init_port(struct pci_dev *pdev,
+ 	priv->port.flags = UPF_BOOT_AUTOCONF;
+ 	priv->port.fifosize = fifosize;
+ 	priv->port.line = board->line_no;
++	priv->port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_PCH_UART_CONSOLE);
+ 	priv->trigger = PCH_UART_HAL_TRIGGER_M;
+ 
+ 	snprintf(priv->irq_name, IRQ_NAME_SIZE,
 -- 
 2.24.0
 
