@@ -2,210 +2,333 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D66EA11E5FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F7C211E604
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:02:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfLMO7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 09:59:40 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:12136 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbfLMO7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 09:59:39 -0500
-Received: from localhost (mailhub1-ext [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 47ZDN82bdGz9vBJg;
-        Fri, 13 Dec 2019 15:59:36 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=eNsSuvgn; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id JbWyOEqSF5fS; Fri, 13 Dec 2019 15:59:36 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47ZDN81JZNz9vBJc;
-        Fri, 13 Dec 2019 15:59:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1576249176; bh=ciNClaFt4bgE8XImcN+vK2ienGGRWFLoOBnDEXiWkyo=;
-        h=From:Subject:To:Cc:Date:From;
-        b=eNsSuvgnmZw1YmG5E/YgVg0KpuE+7i8abcfUzZwyBTaKGuDHrE70cwAEPxQTNKOGT
-         Qayr0Zwr419NfgU9KtjmPIPc7OybWEmftzlVvIHoBLETrhaD4SPnCawConqvQNt09V
-         u1zs90wHYjnVo4VE7sjygwG6OfO5s83Z38EsEt2s=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A27798B8CE;
-        Fri, 13 Dec 2019 15:59:37 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id gYnh7uNCBj0G; Fri, 13 Dec 2019 15:59:37 +0100 (CET)
-Received: from po16098vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 471608B8C4;
-        Fri, 13 Dec 2019 15:59:37 +0100 (CET)
-Received: by po16098vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id DDB6B63777; Fri, 13 Dec 2019 14:59:36 +0000 (UTC)
-Message-Id: <66a26ff96689f6f84b25ed11dcff6c3818801fe7.1576248635.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2] powerpc/32: add support of KASAN_VMALLOC
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, dja@axtens.net
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org
-Date:   Fri, 13 Dec 2019 14:59:36 +0000 (UTC)
+        id S1727553AbfLMPCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:02:35 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24647 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727499AbfLMPCf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 10:02:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576249354;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nHXpTUcPw2SpnBmWlIQHCjEfMqdBse48PD3viLk8Sfs=;
+        b=LM3x7IBgPzG5ylnuL/kpFxa85kx3x4zAv2prSmzXUWVR+Mi+Yl8xX0CoA7PGC4+d37FOj5
+        udW5SdU7heJR1X7tVXLUrQIxSE378j4BfxzHqmLdfmlLpWg1vLgsxj2NVOCFnDtof47bRp
+        yMfhR3MLNoSquOphhwca9+uwgWIUJMQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-163-5acyVH6yPoawh8q1UP2JtQ-1; Fri, 13 Dec 2019 10:02:30 -0500
+X-MC-Unique: 5acyVH6yPoawh8q1UP2JtQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 77E401005502;
+        Fri, 13 Dec 2019 15:02:29 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-122-140.rdu2.redhat.com [10.10.122.140])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D0B6619C4F;
+        Fri, 13 Dec 2019 15:02:26 +0000 (UTC)
+Subject: Re: [PATCH 4/5] locking/lockdep: Reuse free chain_hlocks entries
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+References: <20191212223525.1652-1-longman@redhat.com>
+ <20191212223525.1652-5-longman@redhat.com>
+ <20191213102525.GA2844@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <d639c80c-d60f-d5ac-8559-7942798dc92e@redhat.com>
+Date:   Fri, 13 Dec 2019 10:02:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20191213102525.GA2844@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support of KASAN_VMALLOC on PPC32.
+On 12/13/19 5:25 AM, Peter Zijlstra wrote:
+> On Thu, Dec 12, 2019 at 05:35:24PM -0500, Waiman Long wrote:
+>
+>> diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
+>> index 4c23ab7d27c2..999cd714e0d1 100644
+>> --- a/kernel/locking/lockdep_internals.h
+>> +++ b/kernel/locking/lockdep_internals.h
+>> @@ -107,8 +107,15 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
+>>  #endif
+>>  
+>>  #define MAX_LOCKDEP_CHAINS	(1UL << MAX_LOCKDEP_CHAINS_BITS)
+>> -
+>>  #define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
+>> +#define MAX_CHAIN_HLOCKS_BLOCKS	1024
+>> +#define CHAIN_HLOCKS_HASH	8
+>> +
+>> +struct chain_hlocks_block {
+>> +	unsigned int		   depth: 8,
+>> +				   base :24;
+>> +	struct chain_hlocks_block *next;
+>> +};
+>>  
+>>  extern struct list_head all_lock_classes;
+>>  extern struct lock_chain lock_chains[];
+> This doesn't need to be in the header, there are no users outside of the
+> stuff you wrote below.
+>
+That is true.
+>> +#ifdef CONFIG_PROVE_LOCKING
+>> +static struct chain_hlocks_block chain_hlocks_blocks[MAX_CHAIN_HLOCKS_BLOCKS];
+>> +static struct chain_hlocks_block *chain_hlocks_block_hash[CHAIN_HLOCKS_HASH];
+>> +static struct chain_hlocks_block *free_chain_hlocks_blocks;
+>> +
+>> +/*
+>> + * Graph lock must be held before calling the chain_hlocks_block functions.
+>> + * Chain hlocks of depth 1-(CHAIN_HLOCKS_HASH-1) is mapped directly to
+>> + * chain_hlocks_block_hash[1-(CHAIN_HLOCKS_HASH-1)]. All other sizes
+>> + * are mapped to chain_hlocks_block_hash[0].
+>> + */
+>> +static inline struct chain_hlocks_block *alloc_chain_hlocks_block(void)
+>> +{
+>> +	struct chain_hlocks_block *block = free_chain_hlocks_blocks;
+>> +
+>> +	WARN_ONCE(!debug_locks_silent && !block,
+>> +		  "Running out of chain_hlocks_block\n");
+>> +	free_chain_hlocks_blocks = block ? block->next : NULL;
+>> +	return block;
+>> +}
+>> +
+>> +static inline void free_chain_hlocks_block(struct chain_hlocks_block *block)
+>> +{
+>> +	block->next = free_chain_hlocks_blocks;
+>> +	free_chain_hlocks_blocks = block;
+>> +}
+>> +
+>> +static inline void push_chain_hlocks_block(struct chain_hlocks_block *block)
+>> +{
+>> +	int hash, depth = block->depth;
+>> +
+>> +	hash = (depth >= CHAIN_HLOCKS_HASH) ? 0 : depth;
+>> +	block->next = chain_hlocks_block_hash[hash];
+>> +	chain_hlocks_block_hash[hash] = block;
+>> +	nr_free_chain_hlocks += depth;
+>> +}
+> I would argue this is not a hash, these are buckets. You're doing
+> regular size buckets.
 
-To allow this, the early shadow covering the VMALLOC space
-need to be removed once high_memory var is set and before
-freeing memblock.
+I think I used the wrong terminology here. Bucket is a better description.
 
-And the VMALLOC area need to be aligned such that boundaries
-are covered by a full shadow page.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>
+>> +static inline struct chain_hlocks_block *pop_chain_hlocks_block(int depth)
+>> +{
+>> +	struct chain_hlocks_block *curr, **pprev;
+>> +
+>> +	if (!nr_free_chain_hlocks)
+>> +		return NULL;
+>> +
+>> +	if (depth < CHAIN_HLOCKS_HASH) {
+>> +		curr = chain_hlocks_block_hash[depth];
+>> +		if (curr) {
+>> +			chain_hlocks_block_hash[depth] = curr->next;
+>> +			nr_free_chain_hlocks -= depth;
+>> +		}
+>> +		return curr;
+>> +	}
+>> +
+>> +	/*
+>> +	 * For depth >= CHAIN_HLOCKS_HASH, it is not really a pop operation.
+>> +	 * Instead, the first entry with the right size is returned.
+>> +	 */
+>> +	curr  = chain_hlocks_block_hash[0];
+>> +	pprev = chain_hlocks_block_hash;
+>> +
+>> +	while (curr) {
+>> +		if (curr->depth == depth)
+>> +			break;
+>> +		pprev = &(curr->next);
+>> +		curr = curr->next;
+>> +	}
+>> +
+>> +	if (curr) {
+>> +		*pprev = curr->next;
+>> +		nr_free_chain_hlocks -= depth;
+>> +	}
+>> +	return curr;
+>> +}
+>> +#else
+>> +static inline void free_chain_hlocks_block(struct chain_hlocks_block *block) { }
+>> +static inline struct chain_hlocks_block *pop_chain_hlocks_block(int depth)
+>> +{
+>> +	return NULL;
+>> +}
+>> +#endif /* CONFIG_PROVE_LOCKING */
+> You've made a bit of a mess of things though. Why is that push/pop crud
+> exposed? Why didn't you build a self contained allocator?
+>
+> All you really want is:
+>
+> u16 *alloc_chain(int size);
+> void free_chain(int size, u16 *chain);
+>
+>
+> An implementation would be something along these lines (completely
+> untested, fresh from the keyboard):
+>
+> struct chain_block {
+> 	int size;
+> 	int base;
+> 	struct chain_block *next;
+> };
+>
+> struct chain_block chain_blocks[MAX_BLOCKS];
+> struct chain_block *free_blocks;
+>
+>
+> struct chain_block init_block = {
+> 	.size = MAX_LOCKDEP_CHAIN_HLOCKS,
+> 	.base = 0,
+> 	.next = NULL,
+> };
+>
+> struct chain_block *free_list[MAX_BUCKETS] = {
+> 	&init_block, /* 0 */
+> };
+>
+>
+> void free_block(struct chain_block *b)
+> {
+> 	b->next = free_blocks;
+> 	free_blocks = b;
+> }
+>
+> struct chain_block *alloc_block(void)
+> {
+> 	struct chain_block *block = free_blocks;
+> 	free_blocks = block->next;
+> 	return block;
+> }
+>
+> struct chain_block *pop_block(struct chain_block **bp)
+> {
+> 	struct chain_block *b = *bp;
+> 	if (!b)
+> 		return NULL;
+> 	*bp = b->next;
+> }
+>
+> void push_block(struct chain_block **bp, struct chain_block *b)
+> {
+> 	b->next = *bp;
+> 	*bp = b;
+> }
+>
+> /* could contemplate ilog2() buckets */
+> int size2bucket(int size)
+> {
+> 	return size >= MAX_BUCKET ? 0 : size;
+> }
+>
+> /* bucket[0] is mixed size */
+> struct chain_block *pop_block_0(struct chain_block **bp, int size)
+> {
+> 	struct chain_block **p = bp, *b = *bp;
+> 	if (!b)
+> 		return NULL;
+>
+> 	p = bp;
+> 	while (b && b->size < size) {
+> 		p = &b->next;
+> 		b = b->next;
+> 	}
+> 	if (!b)
+> 		return NULL;
+>
+> 	*p = b->next;
+> 	return b;
+> }
+>
+> u16 *alloc_chain(int size)
+> {
+> 	int i, bucket = size2bucket(size);
+> 	struct chain_block *b;
+> 	u16 *chain;
+>
+> 	if (!bucket) {
+> 		b = pop_block_0(&free_list[0], size);
+> 		if (b)
+> 			goto got_block;
+> 	} else {
+> 		b = pop_block(&free_list[bucket]);
+> 		if (b)
+> 			goto got_block;
+>
+> 		/* pop a large block, hope the fragment is still useful */
+> 		b = pop_block_0(&free_list[0], size);
+> 		if (b)
+> 			goto got_block;
+>
+> 		for (i = MAX_BUCKETS-1; i > bucket; i--)
+> 			b = pop_block(&free_list[bucket]);
+> 			if (b)
+> 				goto got_block;
+> 		}
+> 	}
+> 	return NULL;
+>
+> got_block:
+>
+> 	chain = chain_hlocks + b->base;
+> 	b->base += size;
+> 	b->size -= size;
+>
+> 	if (b->size) {
+> 		/* return the fragment */
+> 		bucket = size2bucket(b->size);
+> 		push_block(&free_list[bucket], b);
+> 	} else {
+> 		free_block(b);
+> 	}
+>
+> 	return chain;
+> }
+>
+> void free_chain(int size, u16 *chain)
+> {
+> 	struct chain_block *b = alloc_block();
+> 	int bucket = size2bucket(size);
+>
+> 	if (!b) {
+> 		// leak stuff;
+> 		return;
+> 	}
+>
+> 	b->size = size;
+> 	b->base = chain - chain_hlocks;
+>
+> 	push_bucket(&free_list[bucket], b);
+> }
+>
+> void init_blocks(void)
+> {
+> 	int i;
+>
+> 	for (i = 0; i < MAX_BLOCKS; i++)
+> 		free_block(chain_blocks[i]);
+> }
+>
+Thanks for the suggestion. I will incorporate your idea in the next
+version of the patch.
 
----
-v2: rebased ; exclude specific module handling when CONFIG_KASAN_VMALLOC is set.
----
- arch/powerpc/Kconfig                         |  1 +
- arch/powerpc/include/asm/book3s/32/pgtable.h |  5 +++++
- arch/powerpc/include/asm/kasan.h             |  2 ++
- arch/powerpc/include/asm/nohash/32/pgtable.h |  5 +++++
- arch/powerpc/mm/kasan/kasan_init_32.c        | 33 +++++++++++++++++++++++++++-
- arch/powerpc/mm/mem.c                        |  3 +++
- 6 files changed, 48 insertions(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 1ec34e16ed65..a247bbfb03d4 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -173,6 +173,7 @@ config PPC
- 	select HAVE_ARCH_HUGE_VMAP		if PPC_BOOK3S_64 && PPC_RADIX_MMU
- 	select HAVE_ARCH_JUMP_LABEL
- 	select HAVE_ARCH_KASAN			if PPC32
-+	select HAVE_ARCH_KASAN_VMALLOC		if PPC32
- 	select HAVE_ARCH_KGDB
- 	select HAVE_ARCH_MMAP_RND_BITS
- 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS	if COMPAT
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index 0796533d37dd..5b39c11e884a 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -193,7 +193,12 @@ int map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot);
- #else
- #define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
- #endif
-+
-+#ifdef CONFIG_KASAN_VMALLOC
-+#define VMALLOC_END	_ALIGN_DOWN(ioremap_bot, PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
-+#else
- #define VMALLOC_END	ioremap_bot
-+#endif
- 
- #ifndef __ASSEMBLY__
- #include <linux/sched.h>
-diff --git a/arch/powerpc/include/asm/kasan.h b/arch/powerpc/include/asm/kasan.h
-index 296e51c2f066..fbff9ff9032e 100644
---- a/arch/powerpc/include/asm/kasan.h
-+++ b/arch/powerpc/include/asm/kasan.h
-@@ -31,9 +31,11 @@
- void kasan_early_init(void);
- void kasan_mmu_init(void);
- void kasan_init(void);
-+void kasan_late_init(void);
- #else
- static inline void kasan_init(void) { }
- static inline void kasan_mmu_init(void) { }
-+static inline void kasan_late_init(void) { }
- #endif
- 
- #endif /* __ASSEMBLY */
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 552b96eef0c8..60c4d829152e 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -114,7 +114,12 @@ int map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot);
- #else
- #define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
- #endif
-+
-+#ifdef CONFIG_KASAN_VMALLOC
-+#define VMALLOC_END	_ALIGN_DOWN(ioremap_bot, PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
-+#else
- #define VMALLOC_END	ioremap_bot
-+#endif
- 
- /*
-  * Bits in a linux-style PTE.  These match the bits in the
-diff --git a/arch/powerpc/mm/kasan/kasan_init_32.c b/arch/powerpc/mm/kasan/kasan_init_32.c
-index 0e6ed4413eea..88036fb88350 100644
---- a/arch/powerpc/mm/kasan/kasan_init_32.c
-+++ b/arch/powerpc/mm/kasan/kasan_init_32.c
-@@ -129,6 +129,31 @@ static void __init kasan_remap_early_shadow_ro(void)
- 	flush_tlb_kernel_range(KASAN_SHADOW_START, KASAN_SHADOW_END);
- }
- 
-+static void __init kasan_unmap_early_shadow_vmalloc(void)
-+{
-+	unsigned long k_start = (unsigned long)kasan_mem_to_shadow((void *)VMALLOC_START);
-+	unsigned long k_end = (unsigned long)kasan_mem_to_shadow((void *)VMALLOC_END);
-+	unsigned long k_cur;
-+	phys_addr_t pa = __pa(kasan_early_shadow_page);
-+
-+	if (!early_mmu_has_feature(MMU_FTR_HPTE_TABLE)) {
-+		int ret = kasan_init_shadow_page_tables(k_start, k_end);
-+
-+		if (ret)
-+			panic("kasan: kasan_init_shadow_page_tables() failed");
-+	}
-+	for (k_cur = k_start & PAGE_MASK; k_cur < k_end; k_cur += PAGE_SIZE) {
-+		pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
-+		pte_t *ptep = pte_offset_kernel(pmd, k_cur);
-+
-+		if ((pte_val(*ptep) & PTE_RPN_MASK) != pa)
-+			continue;
-+
-+		__set_pte_at(&init_mm, k_cur, ptep, __pte(0), 0);
-+	}
-+	flush_tlb_kernel_range(k_start, k_end);
-+}
-+
- void __init kasan_mmu_init(void)
- {
- 	int ret;
-@@ -165,7 +190,13 @@ void __init kasan_init(void)
- 	pr_info("KASAN init done\n");
- }
- 
--#ifdef CONFIG_MODULES
-+void __init kasan_late_init(void)
-+{
-+	if (IS_ENABLED(CONFIG_KASAN_VMALLOC))
-+		kasan_unmap_early_shadow_vmalloc();
-+}
-+
-+#if defined(CONFIG_MODULES) && !defined(CONFIG_KASAN_VMALLOC)
- void *module_alloc(unsigned long size)
- {
- 	void *base;
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index 9488b63dfc87..3bb212c8ef2d 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -294,6 +294,9 @@ void __init mem_init(void)
- 
- 	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE);
- 	set_max_mapnr(max_pfn);
-+
-+	kasan_late_init();
-+
- 	memblock_free_all();
- 
- #ifdef CONFIG_HIGHMEM
--- 
-2.13.3
+Cheers,
+Longman
 
