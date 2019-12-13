@@ -2,123 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F72911DFD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85C5B11DFBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:49:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfLMIsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 03:48:52 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43601 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfLMIsw (ORCPT
+        id S1726752AbfLMIsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 03:48:16 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44827 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbfLMIsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 03:48:52 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p27so948253pli.10;
-        Fri, 13 Dec 2019 00:48:51 -0800 (PST)
+        Fri, 13 Dec 2019 03:48:13 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v201so1329211lfa.11
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 00:48:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yrmwheM1+hl4xPG9UeGTOMJP5qq8jouvYWPI+cmTnHk=;
-        b=JXoAHKm2bI0UF8C3jLaI9pvYELwmQXbNwNN2AtjdVI+1nSAgHqrbt+7mijVaetV20Y
-         6zQovqYzG18kdJuyfxMhQWB1JJynIx4K47ONJ0I+sOBz1A+DfTildAzUkIwkxZfuMhlH
-         pAi6iJ6fk1NmUlCYsXZkHO0txpiD0UyWmrcLxJwuldyvXjhUBo5+tHJhSwPMVOi4WSz4
-         +nDGpU7GVMaqCj3zyBPOKqfd0KEGupjIUghCCe4QBguZZ9d1cJgAICDyf6YwfSFtAMPP
-         GrJU+GqqFIFP7fZNANPqfUubQdzy/Oiw63YKt5jyDH8yWauSZgX8kp4feWIVhDLry4tI
-         zZLg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Rr+x1DIP1g1/KgRpSfHJSzeL4NNFx671OCjuV/vX6RI=;
+        b=scNwe2O5QhBXfBOt3IjCVoJEjevAiU6USOetssutDbJWLfyJWVndWsZDvWW71CQYiG
+         VK32P310iwbnHOT1jW8wAoNgnvxcSzuTv/55nym+iU6x85ADbyGe1huamHVHf2zC1F93
+         JIbdPRQN3GvjL3s+GEMrZT6y8V16Uh4+LI1tFWsSR5KTxof2G76+m/XoGWjbhnDRuecl
+         krXxgWelnmTmt5rkaX32h5GcAvX/L2Ey4bqai7cPz33O2iMreAO5hqS+JkwSK+1PfXsv
+         s/VWYkuayvgwdFBiWWoh1DZ122uMgPhAQRJDA4clNr/PQWVjz6FcV7Vau4mqKfNTPMmr
+         +bHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yrmwheM1+hl4xPG9UeGTOMJP5qq8jouvYWPI+cmTnHk=;
-        b=dlTYgF4bx4/807/E80f+hVqDiLTfk11MNK0K7CNKozfs4+DuV3mFMs4cC2LXuhZVcY
-         U9pHxd1mPSvBMJbqtqmNbS2nMFlimuC2hqVutJmNarC8cm436V+L6PdOz6Qy0bj15Jue
-         a5QV15+exJ0w9H3giSSYoVAQa7uA+7o0IErbPBlNYizvta5XSHZ9AnaAItr9mFoBd5et
-         SUkJLRL/TMPlfuygZpnc4Sx6NIgn/TwTOrhqygDcAF838URIYK/mDtqwGTHN+bDAelPq
-         ZkfWXAqhW/oGjxKQJ3lLefrbuTbcrvloVpYD0whwqECuxVDA0Y5myWXUodWZae0Wf14R
-         KB6A==
-X-Gm-Message-State: APjAAAWcdlpvweZRJ31/Ywdgvk7LUbahb9HWycdfFJvtMqxlQpopf2Ud
-        /8IcEu2Ibwxz5+dL81E+ZwI=
-X-Google-Smtp-Source: APXvYqzicnEwVE9B41IwGGyGmDGn6PjfwuHMeFWgsbEx+ksTLkPbjB2d4SolnSLbApVjeqKZ3461Mg==
-X-Received: by 2002:a17:90a:1704:: with SMTP id z4mr15379073pjd.131.1576226931296;
-        Fri, 13 Dec 2019 00:48:51 -0800 (PST)
-Received: from prasmi.domain.name ([103.219.60.167])
-        by smtp.gmail.com with ESMTPSA id 68sm9985632pge.14.2019.12.13.00.48.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 00:48:50 -0800 (PST)
-From:   Lad Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rr+x1DIP1g1/KgRpSfHJSzeL4NNFx671OCjuV/vX6RI=;
+        b=ftK6n125FpIEFr8+MDqmnU+LKYwmbUTrkvvQVVc6OsfSh4/P9vzmvcMmQqF3rVGXT2
+         nOCuWZUZtQq/bZo2iG5dN6r0/YbwehN5Qn3wNCv257jusmk7CYG6Kn2yrJA7SIwhZ4jl
+         dYWLJEuzbBvSCYLeI91fpBaIpzTJe06sKo7ADL5DKfTZQYMD+2DkD0+kRx3aeWqYF/kU
+         AUF418cWzlwmyLzzCEUNw7OiKZPRW0ai3AsvxgFRNmGYI7uC/4NIVWXXuY46IsHySmR1
+         UNVsQmbNP9Qteya95e7YnKQEEKnd91sUuWgdS8Ubx7KOrNuS41+o/DXTRuDJYCyfrrcU
+         gc3Q==
+X-Gm-Message-State: APjAAAUc3l1/ouZ5QVSEOaA0V8KzBYn6gPBlE4swv11LXhm5yzGeqlvP
+        Z4U94k2HDDYL2YWUViu6GUr8AtRIDQsqfYtHHM+CRQ==
+X-Google-Smtp-Source: APXvYqwhoLPGJ2pldnisIzV0cBSTI53njCKP4Cy76wqlT3521n0r+bpxhYrwfU6BsfJhR67BVugqRW4tqQaZGqxTt88=
+X-Received: by 2002:ac2:5c4b:: with SMTP id s11mr8073967lfp.133.1576226890954;
+ Fri, 13 Dec 2019 00:48:10 -0800 (PST)
+MIME-Version: 1.0
+References: <20191203141243.251058-1-paul.kocialkowski@bootlin.com> <20191203141243.251058-2-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20191203141243.251058-2-paul.kocialkowski@bootlin.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 13 Dec 2019 09:47:59 +0100
+Message-ID: <CACRpkdb2dvdyAUxt98TaoKAyMsFgZkOyUnn+J=NYWrnjRvp5dw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] dt-bindings: Add Xylon vendor prefix
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-pci@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Murray <andrew.murray@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Tom Joseph <tjoseph@cadence.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org,
-        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [v2 6/6] misc: pci_endpoint_test: add device-id for RZ/G2E pcie controller
-Date:   Fri, 13 Dec 2019 08:47:48 +0000
-Message-Id: <20191213084748.11210-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191213084748.11210-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20191213084748.11210-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Lee Jones <lee.jones@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Dec 3, 2019 at 3:13 PM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
 
-Add RZ/G2E in pci_device_id table so that pci-epf-test can be used
-for testing PCIe EP in RZ/G2E.
+> Xylon is an electronics company that produces FPGA hardware block designs
+> optimized for Xilinx FPGAs.
+>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Lad, Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/misc/pci_endpoint_test.c | 3 +++
- 1 file changed, 3 insertions(+)
+Patch applied to the GPIO tree.
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 6e208a0..3e879c7 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -66,6 +66,8 @@
- 
- #define PCI_DEVICE_ID_TI_AM654			0xb00c
- 
-+#define PCI_DEVICE_ID_RENESAS_RZG2E		0x002d
-+
- #define is_am654_pci_dev(pdev)		\
- 		((pdev)->device == PCI_DEVICE_ID_TI_AM654)
- 
-@@ -797,6 +799,7 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654),
- 	  .driver_data = (kernel_ulong_t)&am654_data
- 	},
-+	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_RZG2E) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
--- 
-2.7.4
-
+Yours,
+Linus Walleij
