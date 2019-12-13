@@ -2,165 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CDA411E4E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:48:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9653611E4E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:50:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbfLMNrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:47:51 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51899 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfLMNrv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:47:51 -0500
-Received: by mail-wm1-f67.google.com with SMTP id d73so6441682wmd.1;
-        Fri, 13 Dec 2019 05:47:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jVjtvPjTqqfiwFuP1hQNQHB84DjsEMm03rL1vowSzlM=;
-        b=kt2PtCMM5a2pWIm1sMNfZNonRFfJ+y83+3GLrdLul2sh2pnZEuzIfpDlLez38xGF0C
-         gsjYnMyoo4oesaYFEuzILr9bxqu4lSyiLjBQEbStq6B7D8eHpnSh9yEvrX0fnb97rHYu
-         jmzYtIKVhFUXVo7BPZ/TIBAUDWSM5PhJXFW806CDxsgLITVLhpfrWCHexRjbo1B7FVuJ
-         GylZIE/DtmHWDvr77f6qIwetJzdMLzcWFjuGgQYQJANN9yjCPpioA3fLGWGHUp0xIchU
-         iamew9qt3PPNCMPxsRfjCsrX+y9QeIAoHxDc/wlcFD3TS25DTRDSOoKVXBeXSy6XceWp
-         4oLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jVjtvPjTqqfiwFuP1hQNQHB84DjsEMm03rL1vowSzlM=;
-        b=smnSzVsmN8/iUqc0wzUGi8L7iRSpLvSI1gyL3SXXkEoc6xU66S80S+g5uctwDfFkTE
-         5GSqZ49AIG+mIzQliJOxWj6MvwqIbOZS79DVZf1wltr2y8U0REjx38+RZQK6gr+npdNy
-         Un35RmzUz0wMPVuG1RLrrm14jL47gZyqsRUEHcTYsvErCYpv2WDicWWdCn5u1dCzH0R8
-         VII7dcIBd3irBVhdD8mFR/ECLIptp7xUdBIDY0TJNo//VfZJUfzEIkajPj4eUP5cLdGy
-         m+MdEgEVe5rrqCbjOtvgHSHLRU4qEEWcKeSUYUjyv7HvyDJAi03VXOod3gD44mQH+t2q
-         SWyA==
-X-Gm-Message-State: APjAAAURBnmV23CEMwcizyTcfMLLjyCDkL4fUjfXoOWqov/nDfbYMz3C
-        VT9golUPJDJCsTZ7/IPKEPU96Si9
-X-Google-Smtp-Source: APXvYqzamqlXoXnM936cfqC+1u+klfrne2Kt0bhX0Ariz4JbA0JlFjfklX8sQr6ck1eVgrtVxm1L1w==
-X-Received: by 2002:a1c:9ec6:: with SMTP id h189mr13619213wme.28.1576244868360;
-        Fri, 13 Dec 2019 05:47:48 -0800 (PST)
-Received: from localhost (pD9E518ED.dip0.t-ipconnect.de. [217.229.24.237])
-        by smtp.gmail.com with ESMTPSA id b17sm10124570wrp.49.2019.12.13.05.47.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 05:47:46 -0800 (PST)
-Date:   Fri, 13 Dec 2019 14:47:46 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM
- state
-Message-ID: <20191213134746.GA222809@ulmo>
-References: <20191212233428.14648-1-digetx@gmail.com>
- <20191212233428.14648-4-digetx@gmail.com>
+        id S1727546AbfLMNtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:49:07 -0500
+Received: from mail.sysgo.com ([176.9.12.79]:58406 "EHLO mail.sysgo.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726524AbfLMNtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 08:49:07 -0500
+Subject: Re: [PATCH] tty/serial: atmel: fix out of range clock divider
+ handling
+To:     Richard Genoud <richard.genoud@gmail.com>,
+        gregkh@linuxfoundation.org, jslaby@suse.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com
+Cc:     linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20191211162954.8393-1-david.engraf@sysgo.com>
+ <822ac68e-4dde-21e8-caf9-a219b910d49e@gmail.com>
+From:   David Engraf <david.engraf@sysgo.com>
+Message-ID: <1e2e3f63-84db-4b38-1bf1-85916116e0a2@sysgo.com>
+Date:   Fri, 13 Dec 2019 14:49:03 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
-Content-Disposition: inline
-In-Reply-To: <20191212233428.14648-4-digetx@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <822ac68e-4dde-21e8-caf9-a219b910d49e@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 13.12.19 at 10:57, Richard Genoud wrote:
+> Hi,
+> 
+> Le 11/12/2019 à 17:29, David Engraf a écrit :
+>> Use MCK_DIV8 when the clock divider is > 65535. Unfortunately the mode
+>> register was already written thus the clock selection is ignored.
+>>
+>> Fix by writing the mode register after calculating the baudrate.
+>>
+>> Signed-off-by: David Engraf <david.engraf@sysgo.com>
+> 
+> It seems that this bug was introduced by:
+> commit 5bf5635ac170 ("tty/serial: atmel: add fractional baud rate support")
+> 
+> Could you add the "Fixes:" header ?
 
-On Fri, Dec 13, 2019 at 02:34:28AM +0300, Dmitry Osipenko wrote:
-> I noticed that sometime I2C clock is kept enabled during suspend-resume.
-> This happens because runtime PM defers dynamic suspension and thus it may
-> happen that runtime PM is in active state when system enters into suspend.
-> In particular I2C controller that is used for CPU's DVFS is often kept ON
-> during suspend because CPU's voltage scaling happens quite often.
->=20
-> Note: we marked runtime PM as IRQ-safe during the driver's probe in the
-> "Support atomic transfers" patch, thus it's okay to enforce runtime PM
-> suspend/resume in the NOIRQ phase which is used for the system-level
-> suspend/resume of the driver.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+Sure.
 
-I've recently discussed this with Rafael in the context of runtime PM
-support in the Tegra DRM driver and my understanding is that you're not
-supposed to force runtime PM suspension like this.
+> Ludovic, could you check if this was your intent at the time ?
+> 
+>> ---
+>>   drivers/tty/serial/atmel_serial.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+>> index a8dc8af83f39..9983e2fabbac 100644
+>> --- a/drivers/tty/serial/atmel_serial.c
+>> +++ b/drivers/tty/serial/atmel_serial.c
+>> @@ -2270,9 +2270,6 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+>>   		mode |= ATMEL_US_USMODE_NORMAL;
+>>   	}
+>>   
+> I think it's better to mo move the "Set baud rate" block here (cf bellow)
+> 
+>> -	/* set the mode, clock divisor, parity, stop bits and data size */
+>> -	atmel_uart_writel(port, ATMEL_US_MR, mode);
+>> -
+>>   	/*
+>>   	 * when switching the mode, set the RTS line state according to the
+>>   	 * new mode, otherwise keep the former state
+>> @@ -2315,6 +2312,9 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+>>   	}
+>>   	quot = cd | fp << ATMEL_US_FP_OFFSET;
+>>   
+>> +	/* set the mode, clock divisor, parity, stop bits and data size */
+>> +	atmel_uart_writel(port, ATMEL_US_MR, mode);
+>> +
+> I think your patch is good, but I'll be happier if instead of moving
+> those 2 lines here, the whole "Set the baud rate" block was moved before
+> "atmel_uart_writel(port, ATMEL_US_MR, mode);"
+> 
+> That's because at line 2291 the ATMEL_US_CR register is set with
+> ATMEL_US_RTSDIS or ATMEL_US_RTSEN.
+> And those 2 values have a different effect depending on US_MR.USART_MODE
+> 
+> Quoting from the relase manual:
+> RTSEN:
+> 1: Drives RTS pin to 1 if US_MR.USART_MODE field = 2, else drives RTS
+> pin to 0 if US_MR.USART_MODE field = 0.
+> 
+> RTSDIS:
+> 1: Drives RTS pin to 0 if US_MR.USART_MODE field = 2, else drives RTS
+> pin to 1 if US_MR.USART_MODE field = 0.
+> 
+> So, I think it's better to set the mode register before setting the
+> control register.
 
-I had meant to send out an alternative patch to fix this, which I've
-done now:
+I fully agree, the RTS pin configuration depends on USART_MODE. I will 
+make a new version of the patch.
 
-	http://patchwork.ozlabs.org/patch/1209148/
+Thanks
+- David
 
-That's more in line with what Rafael and I had discussed in the other
-thread and should address the issue that you're seeing as well.
 
-Thierry
+> 
+>>   	if (!(port->iso7816.flags & SER_ISO7816_ENABLED))
+>>   		atmel_uart_writel(port, ATMEL_US_BRGR, quot);
+>>   	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+>>
+> 
+> Thanks !
+> 
 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index b3ecdd87e91f..d309a314f4d6 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1790,9 +1790,14 @@ static int tegra_i2c_remove(struct platform_device=
- *pdev)
->  static int __maybe_unused tegra_i2c_suspend(struct device *dev)
->  {
->  	struct tegra_i2c_dev *i2c_dev =3D dev_get_drvdata(dev);
-> +	int err;
-> =20
->  	i2c_mark_adapter_suspended(&i2c_dev->adapter);
-> =20
-> +	err =3D pm_runtime_force_suspend(dev);
-> +	if (err < 0)
-> +		return err;
-> +
->  	return 0;
->  }
-> =20
-> @@ -1813,6 +1818,10 @@ static int __maybe_unused tegra_i2c_resume(struct =
-device *dev)
->  	if (err)
->  		return err;
-> =20
-> +	err =3D pm_runtime_force_resume(dev);
-> +	if (err < 0)
-> +		return err;
-> +
->  	i2c_mark_adapter_resumed(&i2c_dev->adapter);
-> =20
->  	return 0;
-> --=20
-> 2.24.0
->=20
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3zln8ACgkQ3SOs138+
-s6Hf9w/9HOu9U+CgVU21E6/qFJ3vw2/n8AgoS8/lzIMxeosqFW1Nn/FapcBw+Z1a
-TmkffpQA0QizAPmo3iqNJG+8ERFPxQ/gJyN4dhmK1HX5wGFv/HznnJRolhhZNybG
-HcssDdi8WT6L8PvSSeVxwINp7bTQXd8jHh6B9fA3QfFAvr04QS2TurqO5yd8JKmT
-1PpwaWeZ0HY9XLftLUr/gmkn7yYZwaD1uEXzsHsFDPw/HpXOrDKjzKo9r6KLWqpU
-KCKEnqqnBQ8IznUDjbBMNg8YkgvoFQLAdStvaC7QXAtw1s6CY2QC8GzHngZU2z6d
-2d6ST77UQEflJM7lRRbKzQXxpkS84zR40eRECmFQi/rJjD6YVIGr5rnYqtPy/Ek8
-gBAEsPiAd8JQE9fHELVvHeVBYWSruaz4O7CJ5wNjxJ+jOVWz40bc1eEkShy6fBCo
-zUw3A/6S+FPfO+D4n5UEw6DbvLU+4tlWn7SUyBauguPCItE0Gq+B1bd2dJS/Fiyn
-Pnbzi3LsDcQnqVtMbbpHdWjduHkMw+/qdV4lKyo1B0E8ePEdtSgRcbRdD3eTUwNj
-RhL/C9NEcmOCQpZUckvmZBj0a35Q76UNlRvQeLjypQU2RK2wm/Mk6HGpklBFi1Ur
-h5BueJ/e4hVdF+ozrGEjiKjZsL0saF1gpC84UAp+yYimc1Z+w0c=
-=+kDV
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
