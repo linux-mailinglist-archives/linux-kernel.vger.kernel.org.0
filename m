@@ -2,323 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B5211EA9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C12B711EAA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:48:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbfLMSpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 13:45:55 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37836 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728473AbfLMSpy (ORCPT
+        id S1728656AbfLMSqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 13:46:50 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51506 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728455AbfLMSqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 13:45:54 -0500
-Received: by mail-ot1-f65.google.com with SMTP id k14so248646otn.4;
-        Fri, 13 Dec 2019 10:45:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n1wf2eteVGZXSC7Mqgl066hg7LQBWqUPacG1DYCVzng=;
-        b=rY3BjVRYql7heo4jgbf7WiKQ8iIFH2cjqf37x8yoENRzioFr0JqkmOgRMGW8Njy5Az
-         yJ6ljDJB6oJKY7mtsM00X9YYY/RwM9QOOgmqGezEXiCR4uUhBhhs2k3uKkqPoJzqHDs/
-         6up91XcMJLhdb9dU7iFtsK0XWphf93T9G3+xfzu3AvuqNshTwjBj+RrOZmj0htspQuH/
-         sHqmTCKlcoYWHI8R7SVRmxWw9j5tlFQEMj0VmfFsUzATahfDTLbEcisN4PKF5NIkSN30
-         vyzHB6o6yrB0U9usU2phjD+mjDrFDxgwp2Yv7+timRttaBbmFw7WB90zzkgfYm6HOehw
-         jRPA==
-X-Gm-Message-State: APjAAAVw0uxh08AW7Ud27d0zp09MNo+wpUJhZkK5ZpzYdlheeJPRHRai
-        qCtvpWSonEH+14hPRAUpTw==
-X-Google-Smtp-Source: APXvYqw02K+Xpj85k8Pc/wTfISnwbcstHJKooxWFlJZLRYP8uQDgJJs9UuhmkvC1AW9kRTIB0iWUeQ==
-X-Received: by 2002:a05:6830:1e37:: with SMTP id t23mr16377291otr.16.1576262753566;
-        Fri, 13 Dec 2019 10:45:53 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u192sm3578273oia.41.2019.12.13.10.45.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 10:45:52 -0800 (PST)
-Date:   Fri, 13 Dec 2019 12:45:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Nagarjuna Kristam <nkristam@nvidia.com>
-Cc:     balbi@kernel.org, gregkh@linuxfoundation.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mark.rutland@arm.com, kishon@ti.com, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/18] dt-bindings: usb: Add NVIDIA Tegra XUSB device
- mode controller binding
-Message-ID: <20191213184552.GA2133@bogus>
-References: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
- <1575629421-7039-3-git-send-email-nkristam@nvidia.com>
+        Fri, 13 Dec 2019 13:46:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=k6bX98yPAK/DWwqLyqs0Jt4qhMgt0hIUQCq2lotOApw=; b=YkA/V1SrXrgr0WXo9DcHht8QV
+        TqqvJGWVNJ6H22xf5/TmBH5JgYQ+V8YnsfttRvffykjeXO/T0IJaOx6TfbpGuJmbI20AShiBsLviH
+        Bx+S36f+y68qo6Gtjin0PdmZCwQwIafgVKXbpaChYxWwD7Kypcwa/WBmNgNq6Tm5lEU2xDq5US6wi
+        RhYQnyNqDrFfqXBY9Akut+5Wcg4IoqT2d4eKWwvWy+vpOzwMNJCJ6l3au5yMxCWC3JR2tgQcD/dE1
+        rjVZ65tfajlnPupA8sseaU5pKyx+UtyJVZDZ+pL4RdH9iVO/BvHjnp5H/rnJq3lZ666WrEuCYCMk1
+        Ei24SjF4w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifpxG-000125-Ir; Fri, 13 Dec 2019 18:46:22 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3E5C03058B4;
+        Fri, 13 Dec 2019 19:45:00 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 232B829D73AB4; Fri, 13 Dec 2019 19:46:21 +0100 (CET)
+Date:   Fri, 13 Dec 2019 19:46:21 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [RFC] btf: Some structs are doubled because of struct ring_buffer
+Message-ID: <20191213184621.GG2844@hirez.programming.kicks-ass.net>
+References: <20191213153553.GE20583@krava>
+ <20191213112438.773dff35@gandalf.local.home>
+ <20191213165155.vimm27wo7brkh3yu@ast-mbp.dhcp.thefacebook.com>
+ <20191213121118.236f55b8@gandalf.local.home>
+ <20191213180223.GE2844@hirez.programming.kicks-ass.net>
+ <20191213132941.6fa2d1bd@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1575629421-7039-3-git-send-email-nkristam@nvidia.com>
+In-Reply-To: <20191213132941.6fa2d1bd@gandalf.local.home>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 04:20:05PM +0530, Nagarjuna Kristam wrote:
-> Add device-tree binding documentation for the XUSB device mode controller
-> present on Tegra210 and Tegra186 SoC. This controller supports the USB 3.0
-> specification.
+On Fri, Dec 13, 2019 at 01:29:41PM -0500, Steven Rostedt wrote:
+> On Fri, 13 Dec 2019 19:02:23 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
+
+> > Your ring buffer was so generic that I gave up trying to use it after
+> > trying for days :-( (the fundamental problem was that it was impossible
+> > to have a single cpu buffer; afaik that is still true today)
 > 
-> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
-> ---
-
-Next time version your patches correctly and include version history 
-here so I don't have to go look up why my R-by is missing.
-
->  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 204 +++++++++++++++++++++
->  1 file changed, 204 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+> Yeah, but that could have been fixed, and the only reason it's not
+> today, is because it requires more overhead to do so.
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-> new file mode 100644
-> index 0000000..b23c451
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-> @@ -0,0 +1,204 @@
-> +# SPDX-License-Identifier: GPL-2.0
+> IIRC, the main reason that you didn't use it then, is because it wasn't
+> fully lockless at the time (it is today), and you couldn't use it from
+> NMI context.
 
-Dual license new bindings please:
+What I remember is that I couldn't get a single cpu buffer, the whole
+per-cpu stuff was mangled in at the wrong layer. But who knows, my
+memory is faulty.
 
-(GPL-2.0-only OR BSD-2-Clause)
 
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/usb/nvidia,tegra-xudc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Device tree binding for NVIDIA Tegra XUSB device mode controller (XUDC)
-> +
-> +description:
-> +  The Tegra XUDC controller supports both USB 2.0 HighSpeed/FullSpeed and
-> +  USB 3.0 SuperSpeed protocols.
-> +
-> +maintainers:
-> +  - Nagarjuna Kristam <nkristam@nvidia.com>
-> +  - JC Kuo <jckuo@nvidia.com>
-> +  - Thierry Reding <treding@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +        - const: nvidia,tegra210-xudc # For Tegra210
-> +      - items:
-> +        - const: nvidia,tegra186-xudc # For Tegra186
-
-Use 'enum' instead of oneOf+const.
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: Must contain the XUSB device interrupt.
-
-Don't need a description for a single interrupt line.
-
-> +
-> +  power-domains:
-> +    maxItems: 2
-> +    description:
-> +      A list of PM domain specifiers that reference each power-domain
-> +      used by the XUSB device mode controller. This list must comprise of a
-> +      specifier for the XUSBA and XUSBB power-domains.
-> +      See ../power/power_domain.txt and ../arm/tegra/nvidia,tegra20-pmc.txt
-> +      for details.
-
-Just need:
-
-items:
-  - description: XUSBA power-domain
-  - description: XUSBB power-domain
-
-> +
-> +  power-domains-names:
-> +    maxItems: 2
-> +    description:
-> +       A list of names that represent each of the specifiers in
-> +       the 'power-domains' property.
-
-That's every 'power-domains-names'.
-
-> +    items:
-> +      - const: ss
-> +      - const: dev
-
-Okay, but those names don't match up with XUSBA and XUSBB. Names should 
-be meaningful or local to the module, not the provider if that helps.
-
-> +
-> +  nvidia,xusb-padctl:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      phandle to the XUSB pad controller that is used to configure the USB pads
-> +      used by the XUDC controller.
-> +
-> +  phys:
-> +    minItems: 1
-> +    description:
-> +      Must contain an entry for each entry in phy-names.
-> +      See ../phy/phy-bindings.txt for details.
-> +
-> +  phy-names:
-> +    minItems: 1
-> +    items:
-> +      - const: usb2-0
-> +      - const: usb2-1
-> +      - const: usb2-2
-> +      - const: usb2-3
-> +      - const: usb3-0
-> +      - const: usb3-1
-> +      - const: usb3-2
-> +      - const: usb3-3
-> +
-> +  avddio-usb-supply:
-> +    description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
-> +
-> +  hvdd-usb-supply:
-> +    description: USB controller power supply. Must supply 3.3 V.
-> +
-> +required:
-> +  - compatible
-> +  - power-domains
-> +  - power-domain-names
-> +  - nvidia,xusb-padctl
-> +  - phys
-> +  - phy-names
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          items:
-> +            const: nvidia,tegra210-xudc
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 3
-> +          items:
-> +          - description: XUSB device controller registers
-> +          - description: XUSB device PCI Config registers
-> +          - description: XUSB device registers.
-> +        reg-names:
-> +          maxItems: 3
-> +          items:
-> +            - const: base
-> +            - const: fpci
-> +            - const: ipfs
-
-As these are a superset of tegra186, you can move this up and tegra186 
-just needs to define 'maxItems: 2'.
-
-> +        clocks:
-> +          description:
-> +            Must contain an entry for all clocks used. See ../clock/clock-bindings.txt
-> +            for details.
-> +          maxItems: 5
-> +          items:
-> +            - description: Clock to enable core XUSB dev clock.
-> +            - description: Clock to enable XUSB super speed clock.
-> +            - description: Clock to enable XUSB super speed dev clock.
-> +            - description: Clock to enable XUSB high speed dev clock.
-> +            - description: Clock to enable XUSB full speed dev clock.
-> +        clock-names:
-> +          items:
-> +           - const: dev
-> +           - const: ss
-> +           - const: ss_src
-> +           - const: hs_src
-> +           - const: fs_src
-
-I would re-order the last 2 entries so that you can do the same thing as 
-I said for 'reg'.
-
-> +      required:
-> +        - reg
-> +        - reg-names
-> +        - clocks
-> +        - clock-names
-
-No need for these to be under the if. They are always required and 
-don't have to be where defined by 'properties'.
-
-> +        - avddio-usb-supply
-> +        - hvdd-usb-supply
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra186-xudc
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 2
-> +          items:
-> +          - description: XUSB device controller registers
-> +          - description: XUSB device PCI Config registers
-> +        reg-names:
-> +          maxItems: 2
-> +          items:
-> +            - const: base
-> +            - const: fpci
-> +        clocks:
-> +          description:
-> +            Must contain an entry for all clocks used. See ../clock/clock-bindings.txt
-> +            for details.
-> +          maxItems: 4
-> +          items:
-> +            - description: Clock to enable core XUSB dev clock.
-> +            - description: Clock to enable XUSB super speed clock.
-> +            - description: Clock to enable XUSB super speed dev clock.
-> +            - description: Clock to enable XUSB full speed dev clock.
-> +        clock-names:
-> +          items:
-> +           - const: dev
-> +           - const: ss
-> +           - const: ss_src
-> +           - const: fs_src
-> +      required:
-> +        - reg
-> +        - reg-names
-> +        - clocks
-> +        - clock-names
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra210-car.h>
-> +    #include <dt-bindings/gpio/tegra-gpio.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    usb@700d0000 {
-> +        compatible = "nvidia,tegra210-xudc";
-> +        reg = <0x0 0x700d0000 0x0 0x8000>,
-> +              <0x0 0x700d8000 0x0 0x1000>,
-> +              <0x0 0x700d9000 0x0 0x1000>;
-> +        reg-names = "base", "fpci", "ipfs";
-> +
-> +        interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +        clocks = <&tegra_car TEGRA210_CLK_XUSB_DEV>,
-> +                 <&tegra_car TEGRA210_CLK_XUSB_SS>,
-> +                 <&tegra_car TEGRA210_CLK_XUSB_SSP_SRC>,
-> +                 <&tegra_car TEGRA210_CLK_XUSB_HS_SRC>,
-> +                 <&tegra_car TEGRA210_CLK_XUSB_FS_SRC>;
-> +        clock-names = "dev", "ss", "ss_src", "hs_src", "fs_src";
-> +
-> +        power-domains = <&pd_xusbdev>, <&pd_xusbss>;
-> +        power-domain-names = "dev", "ss";
-> +
-> +        nvidia,xusb-padctl = <&padctl>;
-> +
-> +        phys = <&micro_b>;
-> +        phy-names = "usb2-0";
-> +
-> +        avddio-usb-supply = <&vdd_pex_1v05>;
-> +        hvdd-usb-supply = <&vdd_3v3_sys>;
-> +    };
-> -- 
-> 2.7.4
+> > How about we rename both? I'm a bit adverse to long names, so how about
+> > we rename the perf one to perf_buffer and the trace one to trace_buffer?
 > 
+> I'm fine with this idea! Now what do we call the ring buffer that
+> tracing uses, as it is not specific for tracing, it was optimized for
+> splicing. But sure, I can rename it to trace_buffer. I just finished
+> renaming perf's...
+> 
+> Thinking about this, perhaps we should remove the word "ring" from
+> both. That is:
+> 
+>   perf_buffer and trace_buffer ?
+
+That's what I just proposed, right? So ACK on that ;-)
