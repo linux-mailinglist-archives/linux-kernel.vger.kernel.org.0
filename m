@@ -2,89 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23B5B11E505
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C40A011E513
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:58:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbfLMN4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:56:32 -0500
-Received: from gate.crashing.org ([63.228.1.57]:56555 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727552AbfLMN4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:56:32 -0500
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id xBDDrto1009834;
-        Fri, 13 Dec 2019 07:53:55 -0600
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id xBDDrrmP009833;
-        Fri, 13 Dec 2019 07:53:53 -0600
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Fri, 13 Dec 2019 07:53:53 -0600
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, dja@axtens.net,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        christophe.leroy@c-s.fr, linux-arch@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: Re: READ_ONCE() + STACKPROTECTOR_STRONG == :/ (was Re: [GIT PULL] Please pull powerpc/linux.git powerpc-5.5-2 tag (topic/kasan-bitops))
-Message-ID: <20191213135353.GN3152@gate.crashing.org>
-References: <87blslei5o.fsf@mpe.ellerman.id.au> <20191206131650.GM2827@hirez.programming.kicks-ass.net> <875zimp0ay.fsf@mpe.ellerman.id.au> <20191212080105.GV2844@hirez.programming.kicks-ass.net> <20191212100756.GA11317@willie-the-truck> <20191212104610.GW2827@hirez.programming.kicks-ass.net> <87pngso2ck.fsf@mpe.ellerman.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87pngso2ck.fsf@mpe.ellerman.id.au>
-User-Agent: Mutt/1.4.2.3i
+        id S1727667AbfLMN6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:58:09 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7687 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727531AbfLMN6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 08:58:08 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 28D915C864E049F2EFC2;
+        Fri, 13 Dec 2019 21:58:01 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 13 Dec 2019 21:57:50 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@redhat.com>, <namhyung@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <will@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH] perf tools: Add arm64 version of get_cpuid()
+Date:   Fri, 13 Dec 2019 21:54:15 +0800
+Message-ID: <1576245255-210926-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+Add an arm64 version of get_cpuid(), which is used for various annotation
+and headers - for example, I now get the CPUID in "perf report --header",
+as shown in this snippet:
 
-On Fri, Dec 13, 2019 at 11:07:55PM +1100, Michael Ellerman wrote:
-> I tried this:
-> 
-> > @@ -295,6 +296,23 @@ void __write_once_size(volatile void *p, void *res, int size)
-> >   */
-> >  #define READ_ONCE_NOCHECK(x) __READ_ONCE(x, 0)
-> >  
-> > +#else /* GCC_VERSION < 40800 */
-> > +
-> > +#define READ_ONCE_NOCHECK(x)						\
-> > +({									\
-> > +	typeof(x) __x = *(volatile typeof(x))&(x);			\
-> 
-> Didn't compile, needed:
-> 
-> 	typeof(x) __x = *(volatile typeof(&x))&(x);			\
-> 
-> 
-> > +	smp_read_barrier_depends();					\
-> > +	__x;
-> > +})
-> 
-> 
-> And that works for me. No extra stack check stuff.
-> 
-> I guess the question is does that version of READ_ONCE() implement the
-> read once semantics. Do we have a good way to test that?
-> 
-> The only differences are because of the early return in the generic
-> test_and_set_bit_lock():
+# hostname : ubuntu
+# os release : 5.5.0-rc1-dirty
+# perf version : 5.5.rc1.gbf8a13dc9851
+# arch : aarch64
+# nrcpus online : 96
+# nrcpus avail : 96
+# cpuid : 0x00000000480fd010
 
-No, there is another difference:
+Since much of the code to read the MIDR is already in get_cpuid_str(),
+factor out this code.
 
->   30         ld      r10,560(r9)
->   31         std     r10,104(r1)
->   32         ld      r10,104(r1)
->   33         andi.   r10,r10,1
->   34         bne     <ext4_resize_begin_generic+0xd0>       29         bne     <ext4_resize_begin_ppc+0xd0>
+Signed-off-by: John Garry <john.garry@huawei.com>
 
-The stack var is volatile, so it is read back immediately after writing
-it, here.  This is a bad idea for performance, in general.
+diff --git a/tools/perf/arch/arm64/util/header.c b/tools/perf/arch/arm64/util/header.c
+index a32e4b72a98f..d730666ab95d 100644
+--- a/tools/perf/arch/arm64/util/header.c
++++ b/tools/perf/arch/arm64/util/header.c
+@@ -1,8 +1,10 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <perf/cpumap.h>
++#include <util/cpumap.h>
+ #include <internal/cpumap.h>
+ #include <api/fs/fs.h>
++#include <errno.h>
+ #include "debug.h"
+ #include "header.h"
+ 
+@@ -12,26 +14,21 @@
+ #define MIDR_VARIANT_SHIFT      20
+ #define MIDR_VARIANT_MASK       (0xf << MIDR_VARIANT_SHIFT)
+ 
+-char *get_cpuid_str(struct perf_pmu *pmu)
++static int _get_cpuid(char *buf, size_t sz, struct perf_cpu_map *cpus)
+ {
+-	char *buf = NULL;
+-	char path[PATH_MAX];
+ 	const char *sysfs = sysfs__mountpoint();
+-	int cpu;
+ 	u64 midr = 0;
+-	struct perf_cpu_map *cpus;
+-	FILE *file;
++	int cpu;
+ 
+-	if (!sysfs || !pmu || !pmu->cpus)
+-		return NULL;
++	if (!sysfs || sz < MIDR_SIZE)
++		return EINVAL;
+ 
+-	buf = malloc(MIDR_SIZE);
+-	if (!buf)
+-		return NULL;
++	cpus = perf_cpu_map__get(cpus);
+ 
+-	/* read midr from list of cpus mapped to this pmu */
+-	cpus = perf_cpu_map__get(pmu->cpus);
+ 	for (cpu = 0; cpu < perf_cpu_map__nr(cpus); cpu++) {
++		char path[PATH_MAX];
++		FILE *file;
++
+ 		scnprintf(path, PATH_MAX, "%s/devices/system/cpu/cpu%d"MIDR,
+ 				sysfs, cpus->map[cpu]);
+ 
+@@ -57,12 +54,48 @@ char *get_cpuid_str(struct perf_pmu *pmu)
+ 		break;
+ 	}
+ 
+-	if (!midr) {
++	perf_cpu_map__put(cpus);
++
++	if (!midr)
++		return EINVAL;
++
++	return 0;
++}
++
++int get_cpuid(char *buf, size_t sz)
++{
++	struct perf_cpu_map *cpus = perf_cpu_map__new(NULL);
++	int ret;
++
++	if (!cpus)
++		return EINVAL;
++
++	ret = _get_cpuid(buf, sz, cpus);
++
++	perf_cpu_map__put(cpus);
++
++	return ret;
++}
++
++char *get_cpuid_str(struct perf_pmu *pmu)
++{
++	char *buf = NULL;
++	int res;
++
++	if (!pmu || !pmu->cpus)
++		return NULL;
++
++	buf = malloc(MIDR_SIZE);
++	if (!buf)
++		return NULL;
++
++	/* read midr from list of cpus mapped to this pmu */
++	res = _get_cpuid(buf, MIDR_SIZE, pmu->cpus);
++	if (res) {
+ 		pr_err("failed to get cpuid string for PMU %s\n", pmu->name);
+ 		free(buf);
+ 		buf = NULL;
+ 	}
+ 
+-	perf_cpu_map__put(cpus);
+ 	return buf;
+ }
+-- 
+2.17.1
 
-
-Segher
