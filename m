@@ -2,226 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A76F11ED9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 23:16:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAFAC11EDAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 23:25:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfLMWQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 17:16:23 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59772 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbfLMWQW (ORCPT
+        id S1726680AbfLMWXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 17:23:19 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43316 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbfLMWXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 17:16:22 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 38ACE9D6;
-        Fri, 13 Dec 2019 23:16:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1576275379;
-        bh=8v3Vl0tRhEDBVMWaZdlqz6AcZcOhfQ9YhCMTb9iBmwU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oQWxXcWE90vCVxgDF+U72Gqq2+42SshQcvP3fFEf5WDeZJJi8naumeXS49K0B6DW0
-         1bvCFOLfCNk0lziXFIYvkIUkm2Df+Ogk51OWQVRS3jUJA01UKePXQ+i83OoKQctPF0
-         lJ02QwifFj4P9lvpAA9zvdZuEBUt1HUeCiRLQNbA=
-Date:   Sat, 14 Dec 2019 00:16:09 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        ebiharaml@si-linux.co.jp
-Subject: Re: [PATCH v4 6/7] dt-bindings: display: Add idk-2121wr binding
-Message-ID: <20191213221609.GQ4860@pendragon.ideasonboard.com>
-References: <1575649974-31472-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1575649974-31472-7-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 13 Dec 2019 17:23:19 -0500
+Received: by mail-ot1-f66.google.com with SMTP id p8so840832oth.10;
+        Fri, 13 Dec 2019 14:23:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WFqftU66d4lywk7YGZ8vQ6KoD9czO0JD1+b7jkC8Eqg=;
+        b=rzCSMo2MX00Wdvp9juhU6Koug51XE5NcOQM+yKyLCFNeeRt1zKoDWFYk1WZXipJuEs
+         g3yvqd3hS/w6xLtCZDuEEK7uDLR/FTPM8UYSfvtEc/yUaobhG/iE/XqwL4zpHHdDPviC
+         JgVkUN4fUgnrMGS0RHnFR3M6N/EHwq/PA4jJBH/CgUtHfcfzUmG65NSKd4iaHrLd8bMs
+         KuTZWnevcVkpGNiEqg+iMG25m0IqZu/7zScGzNxlyhb0CwflVvL+PP144jwMPY3esGfz
+         jGSDkB29KiZitYYEzZo2scr7s6y8qG2AJkHrA4A7Wj22UJzCjlazST/ER+Jtx6x+CHAa
+         Ph2g==
+X-Gm-Message-State: APjAAAX5Y6RepbzGnHPj7EzA3GChjhWoON4x344XQRgHAEtYzM3AIzQL
+        XKiTr08Wm282ZSSHUil0sg==
+X-Google-Smtp-Source: APXvYqy7Ii9i/4Qz6GD0XbnXcIegXItw0XTqvH2+WBespuMeepCyhsU1dWL9fRUGXYM3UeXhG6HziQ==
+X-Received: by 2002:a9d:6a8f:: with SMTP id l15mr16702538otq.59.1576275798548;
+        Fri, 13 Dec 2019 14:23:18 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id k5sm3780843otp.33.2019.12.13.14.23.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 14:23:17 -0800 (PST)
+Date:   Fri, 13 Dec 2019 16:23:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     support.opensource@diasemi.com, lee.jones@linaro.org,
+        robh+dt@kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, joel@jms.id.au, andrew@aj.id.au,
+        lgirdwood@gmail.com, broonie@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: Re: [PATCH v3 5/6] dt-bindings: mfd: da9062: add regulator gpio
+ enable/disable documentation
+Message-ID: <20191213222317.GA32740@bogus>
+References: <20191129172537.31410-1-m.felsch@pengutronix.de>
+ <20191129172537.31410-6-m.felsch@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1575649974-31472-7-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <20191129172537.31410-6-m.felsch@pengutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrizio,
-
-Thank you for the patch.
-
-On Fri, Dec 06, 2019 at 04:32:53PM +0000, Fabrizio Castro wrote:
-> Add binding for the idk-2121wr LVDS panel from Advantech.
+On Fri, 29 Nov 2019 18:25:36 +0100, Marco Felsch wrote:
+> At the gpio-based regulator enable/disable documentation. This property
+> can be applied to each subnode within the 'regulators' node so each
+> regulator can be configured differently.
 > 
-> Some panel-specific documentation can be found here:
-> https://buy.advantech.eu/Displays/Embedded-LCD-Kits-High-Brightness/model-IDK-2121WR-K2FHA2E.htm
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 > ---
-> v3->v4:
-> * Absorbed patch "dt-bindings: display: Add bindings for LVDS
->   bus-timings"
-> * Big restructuring after Rob's and Laurent's comments
+> Changelog:
+> v3:
+> - adapt binding description
 > 
-> v2->v3:
-> * new patch
-> ---
->  .../display/panel/advantech,idk-2121wr.yaml        | 128 +++++++++++++++++++++
->  1 file changed, 128 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+>  Documentation/devicetree/bindings/mfd/da9062.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml b/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
-> new file mode 100644
-> index 0000000..24cd38b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
-> @@ -0,0 +1,128 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/panel/advantech,idk-2121wr.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Advantech IDK-2121WR 21.5" Full-HD dual-LVDS panel
-> +
-> +maintainers:
-> +  - Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +
-> +description: |
-> +  The IDK-2121WR from Advantech is a Full-HD dual-LVDS panel.
-> +  A dual-LVDS interface is a dual-link connection with even pixels traveling
-> +  on one link, and with odd pixels traveling on the other link.
-> +
-> +  The panel expects odd pixels on the first port, and even pixels on the
-> +  second port, therefore the ports must be marked accordingly (with either
-> +  dual-lvds-odd-pixels or dual-lvds-even-pixels).
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: advantech,idk-2121wr
-> +      - {} # panel-lvds, but not listed here to avoid false select
-> +
-> +  width-mm:
-> +    const: 476
-> +
-> +  height-mm:
-> +    const: 268
-> +
-> +  data-mapping:
-> +    const: vesa-24
-> +
-> +  ports:
-> +    type: object
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +      port@0:
-> +        type: object
-> +        description: The sink for odd pixels.
-> +        properties:
-> +          reg:
-> +            const: 0
-> +
-> +          dual-lvds-odd-pixels: true
-> +
-> +        required:
-> +          - reg
-> +          - dual-lvds-odd-pixels
-> +
-> +      port@1:
-> +        type: object
-> +        description: The sink for even pixels.
-> +        properties:
-> +          reg:
-> +            const: 1
-> +
-> +          dual-lvds-even-pixels: true
-> +
-> +        required:
-> +          - reg
-> +          - dual-lvds-even-pixels
-> +
-> +  panel-timing: true
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - width-mm
-> +  - height-mm
-> +  - data-mapping
-> +  - panel-timing
-> +  - ports
-> +
-> +examples:
-> +  - |+
-> +    panel-lvds {
-> +      compatible = "advantech,idk-2121wr", "panel-lvds";
-> +
-> +      width-mm = <476>;
-> +      height-mm = <268>;
-> +
-> +      data-mapping = "vesa-24";
-> +
-> +      panel-timing {
-> +        clock-frequency = <148500000>;
-> +        hactive = <1920>;
-> +        vactive = <1080>;
-> +        hsync-len = <44>;
-> +        hfront-porch = <88>;
-> +        hback-porch = <148>;
-> +        vfront-porch = <4>;
-> +        vback-porch = <36>;
-> +        vsync-len = <5>;
-> +      };
-> +
-> +      ports {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        port@0 {
-> +          reg = <0>;
-> +          dual-lvds-odd-pixels;
-> +          panel_in0: endpoint {
-> +            remote-endpoint = <&lvds0_out>;
-> +          };
-> +        };
-> +
-> +        port@1 {
-> +          reg = <1>;
-> +          dual-lvds-even-pixels;
-> +          panel_in1: endpoint {
-> +            remote-endpoint = <&lvds1_out>;
-> +          };
-> +        };
-> +      };
-> +    };
-> +
-> +...
 
--- 
-Regards,
-
-Laurent Pinchart
+Reviewed-by: Rob Herring <robh@kernel.org>
