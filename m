@@ -2,159 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFFC111E621
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:07:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF6B11E627
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:07:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbfLMPFh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:05:37 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:32964 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727564AbfLMPFg (ORCPT
+        id S1727908AbfLMPG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:06:28 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33999 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbfLMPG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:05:36 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="Claudiu.Beznea@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: oGwtiwfYvjjZREwj4sUA+zqOCDJsiGr6mTMDgf/guLFS7iQtfF1E8lv4yQo+jj9CZzN/rt1VQG
- sN2jYAElRxkItkzsoYd9LugIWwQlBjQVuxELGVGCxcGrJErh3HnPmvLjDrFuYP2uZnOInzSv3a
- 7kr5IrYd5P+qtG9q6nFKcRfAetEpIVphd8S8TE582layuQi2RTgxpPhL7m/6fYalfd1y7w0urK
- ukHNG8SP2vk3uRNzV3S9hyZRt8XlpiFrfyIQnh6saJrjqOE1vlk1zuKdLAMTdxqLL8kHDguN40
- aLI=
-X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
-   d="scan'208";a="60293567"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Dec 2019 08:05:35 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 13 Dec 2019 08:05:34 -0700
-Received: from m18063-ThinkPad-T460p.microchip.com (10.10.85.251) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Fri, 13 Dec 2019 08:05:30 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <sam@ravnborg.org>, <bbrezillon@kernel.org>, <airlied@linux.ie>,
-        <daniel@ffwll.ch>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <lee.jones@linaro.org>
-CC:     <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Sandeep Sheriker Mallikarjun 
-        <sandeepsheriker.mallikarjun@microchip.com>
-Subject: [PATCH v2 6/6] Revert "drm: atmel-hlcdc: enable sys_clk during initalization."
-Date:   Fri, 13 Dec 2019 17:04:56 +0200
-Message-ID: <1576249496-4849-7-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576249496-4849-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1576249496-4849-1-git-send-email-claudiu.beznea@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 13 Dec 2019 10:06:26 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t2so7022582wrr.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 07:06:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=BLezIInJ8uihWacc2bBVtj+SQZPMxnvC7DifZIbQJvE=;
+        b=li4F/Ar7hR4Q/kwvgVzAkZj81JWDpZPSeYWgtmGLQyGyHmlYgzfrLxgz/NI3gwhVIP
+         4QxLbL6h+hoDwWodW3fbNd0y2uUjb9hTRcJcCIohjAbgA1OdKviFMjWl1Pw8Pv/jM7ap
+         whMYptpChW7ElPPSE+7vFM8lBhSjLPIpZSy7mBVn5Uwd5+hHxT6EZ2KFfqHszGcYgg/b
+         /iVxfUY/Vbqgu6nuoevdbgS2oGjzfjAAMtoqJkIHI14kiVVNhNDSwoDyjyWPAaToLzZe
+         378GS97d+sLDFXkfHVe9l8Hjs98bGOgUuZlVzdCPTxKUqapIVvqEAJe3o1dGdS6H0NrO
+         3rfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BLezIInJ8uihWacc2bBVtj+SQZPMxnvC7DifZIbQJvE=;
+        b=NO4+zAOPWDOVHsRAQH2XBOkQsrkeP4vvusnCMMySJNFcueMphzFpUZAqyhRu4w5yXa
+         50/ww+6yvRUKiIzSZ4721tjVBR9kOcU/RjgOSud3/+b+xhkqEAXpUqJtc+itVYmBM2t7
+         rP3HrVqmDE19Mx/d4wm02Idih5Qz2gqc8QP2nIkkVBgdEUNB/s4n2IiO/OJ3/YtEbAE1
+         j9LXCVGBfGl7+5xANX1sFKyFUAaGzlPCSskoZaVZf1ZsGnDiFUTDHVUgxEyIsRVWKm6z
+         RoXqtkEdUTT9OEfh5Ek2wtDQy8+O1Mng1A+bb9ir1T1bv7jveSunSjL5fBbr+0QaJXaR
+         fdfw==
+X-Gm-Message-State: APjAAAWtsNvFnX5LmK2iI6xiCotpAhcvPk5ZlLGIZjvMmWDYnQUYEB5j
+        wOhQDITCoM5HaNKCh5rW/x+pnw==
+X-Google-Smtp-Source: APXvYqzg+b2CkdS8n/yj9VSv6f3ya2EGjcaZxBnKs6Cpom4oRUIi7LBjJxlP5jrDHrDNMu6fpKbSYQ==
+X-Received: by 2002:adf:f581:: with SMTP id f1mr13743624wro.264.1576249584196;
+        Fri, 13 Dec 2019 07:06:24 -0800 (PST)
+Received: from localhost.localdomain ([2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca])
+        by smtp.gmail.com with ESMTPSA id x16sm10449403wmk.35.2019.12.13.07.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 07:06:23 -0800 (PST)
+From:   Guillaume La Roque <glaroque@baylibre.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     netdev@vger.kernel.org, nsaenzjulienne@suse.de,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com
+Subject: [PATCH v5 0/2] add support of interrupt for host wakeup from devicetree in BCM HCI driver
+Date:   Fri, 13 Dec 2019 16:06:20 +0100
+Message-Id: <20191213150622.14162-1-glaroque@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit d2c755e66617620b729041c625a6396c81d1231c
-("drm: atmel-hlcdc: enable sys_clk during initalization."). With
-commit "drm: atmel-hlcdc: enable clock before configuring timing engine"
-there is no need for this patch. Code is also simpler.
+add interrupts and interrupt-names properties to set host wakeup IRQ.
+actually driver find this IRQ from host-wakeup-gpios propety
+but some platforms are not supported gpiod_to_irq function.
+so to have possibility to use interrupt mode we need to add interrupts
+field in devicetree and support it in driver.
 
-Cc: Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
+change sinve v4 [1]:
+- add patch to update Documentation
+- use of_irq_get_byname to be more clear and move call in bcm_of_probe
+- update commit message
 
-Hi Sam,
+change since v3:
+- move on of_irq instead of platform_get_irq
 
-I still kept this as a patch as I didn't got any answer from you at my
-last email up to this moment.
+change since v2:
+- fix commit message
 
-If you think it is better to squash this one with patch 2/6 in this seris
-let me know.
+change since v1:
+- rebase patch
 
-Thank you,
-Claudiu Beznea
+[1] https://lore.kernel.org/linux-bluetooth/20191213105521.4290-1-glaroque@baylibre.com/
 
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+Guillaume La Roque (2):
+  dt-bindings: net: bluetooth: add interrupts properties
+  bluetooth: hci_bcm: enable IRQ capability from devicetree
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-index 8dc917a1270b..112aa5066cee 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-@@ -721,18 +721,10 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- 	dc->hlcdc = dev_get_drvdata(dev->dev->parent);
- 	dev->dev_private = dc;
- 
--	if (dc->desc->fixed_clksrc) {
--		ret = clk_prepare_enable(dc->hlcdc->sys_clk);
--		if (ret) {
--			dev_err(dev->dev, "failed to enable sys_clk\n");
--			goto err_destroy_wq;
--		}
--	}
--
- 	ret = clk_prepare_enable(dc->hlcdc->periph_clk);
- 	if (ret) {
- 		dev_err(dev->dev, "failed to enable periph_clk\n");
--		goto err_sys_clk_disable;
-+		goto err_destroy_wq;
- 	}
- 
- 	pm_runtime_enable(dev->dev);
-@@ -768,9 +760,6 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- err_periph_clk_disable:
- 	pm_runtime_disable(dev->dev);
- 	clk_disable_unprepare(dc->hlcdc->periph_clk);
--err_sys_clk_disable:
--	if (dc->desc->fixed_clksrc)
--		clk_disable_unprepare(dc->hlcdc->sys_clk);
- 
- err_destroy_wq:
- 	destroy_workqueue(dc->wq);
-@@ -795,8 +784,6 @@ static void atmel_hlcdc_dc_unload(struct drm_device *dev)
- 
- 	pm_runtime_disable(dev->dev);
- 	clk_disable_unprepare(dc->hlcdc->periph_clk);
--	if (dc->desc->fixed_clksrc)
--		clk_disable_unprepare(dc->hlcdc->sys_clk);
- 	destroy_workqueue(dc->wq);
- }
- 
-@@ -910,8 +897,6 @@ static int atmel_hlcdc_dc_drm_suspend(struct device *dev)
- 	regmap_read(regmap, ATMEL_HLCDC_IMR, &dc->suspend.imr);
- 	regmap_write(regmap, ATMEL_HLCDC_IDR, dc->suspend.imr);
- 	clk_disable_unprepare(dc->hlcdc->periph_clk);
--	if (dc->desc->fixed_clksrc)
--		clk_disable_unprepare(dc->hlcdc->sys_clk);
- 
- 	return 0;
- }
-@@ -921,8 +906,6 @@ static int atmel_hlcdc_dc_drm_resume(struct device *dev)
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
- 	struct atmel_hlcdc_dc *dc = drm_dev->dev_private;
- 
--	if (dc->desc->fixed_clksrc)
--		clk_prepare_enable(dc->hlcdc->sys_clk);
- 	clk_prepare_enable(dc->hlcdc->periph_clk);
- 	regmap_write(dc->hlcdc->regmap, ATMEL_HLCDC_IER, dc->suspend.imr);
- 
+ Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 4 +++-
+ drivers/bluetooth/hci_bcm.c                                  | 3 +++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
 -- 
-2.7.4
+2.17.1
 
