@@ -2,104 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A24411E491
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A4011E494
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:30:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfLMN3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:29:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38599 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726674AbfLMN3A (ORCPT
+        id S1727482AbfLMNaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:30:01 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45937 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727346AbfLMNaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:29:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576243739;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7n8SWaJivUQ/2/eU9591KEOF2V8zoo8DFt7lnv7IRQc=;
-        b=HjPktfS4jU/q9zkbzxqbho8tJcnEdbxTa9AE5Z/hhRpB2IRgiNv7ydRpfW2LuMAMUU/oHt
-        r0MmiiiWg1CfVq7mgv3U8lH5R9R+J0SnFPKjrmwFRckQZ7ZaJSFMCZ/eURSuIKrAEkAUEi
-        BT3nnAb9fVBPY0bp9tekdJZUtcX0Zx0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-112-Z8aowBMIOpSGuo1ww6FrxA-1; Fri, 13 Dec 2019 08:28:55 -0500
-X-MC-Unique: Z8aowBMIOpSGuo1ww6FrxA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 447C71883521;
-        Fri, 13 Dec 2019 13:28:54 +0000 (UTC)
-Received: from localhost (ovpn-12-63.pek2.redhat.com [10.72.12.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 52A051CB;
-        Fri, 13 Dec 2019 13:28:52 +0000 (UTC)
-Date:   Fri, 13 Dec 2019 21:28:50 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] x86/mm/KASLR: Adjust the padding size for the
- direct mapping.
-Message-ID: <20191213132850.GG28917@MiWiFi-R3L-srv>
-References: <20191115144917.28469-1-msys.mizuma@gmail.com>
- <20191115144917.28469-5-msys.mizuma@gmail.com>
- <20191212201916.GL4991@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212201916.GL4991@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        Fri, 13 Dec 2019 08:30:01 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j42so6612742wrj.12
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 05:29:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=CcxRGFcCrtkq/Fa7c3EWJk3tVffr+ohpXoBBbiHwCUs=;
+        b=cjQ0OZb/t830fsiw1m+88Q5m3W6dN8tb2EKys48brHEsYFriumeCBYH1gzs1T6XiNa
+         KhtuxYzXEWvJPJ27bZlxSWvgp7VYtFnP2QlusXGZlXlPvJbKt2yi2FynYUxkpECpAjNm
+         TG8sHRSnfxO2OIzRCaJjOpo0Puq/OiXDeuxQOxVouZaPxq1TPv8BC4HTqVZXsDFgTMVE
+         gnT14QHP3ipUClIjCClxZu9mh6ubayg9egpQUtNgDdiDOctC5rkkQwl2TY0lewF4war9
+         O5/PVU/RtFElEAoU45X82nuswfcKwyuaX0qqBIdLUPqb3f+GeNmBT6XkHKCD5RFxZOnw
+         20Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CcxRGFcCrtkq/Fa7c3EWJk3tVffr+ohpXoBBbiHwCUs=;
+        b=Zr9tTt6VGB+U2bKtDdBPmSmGimmLO+sTgumKvmDXSuHSmsk58+LFuVj1rVOSoeTUtL
+         nu7nAiE0M8lwNsnYiGZo6eR1NjilaE5waWxpzoO0MhBsK3l6VmR+7FCuwIAPp/kkhqE7
+         Xvf69SuUJkcmwkcAsrl4U9XIYCCtnrcQEOW0sKz9Q4/GNP+8c9U47URA+5xIvpoIUsui
+         sEAz5aNQAQwYwQKTP85Ek/R5jTVkgSFiVwBmkWIPosRWvMSNTy2ksyoscJn3Cs2ntDtg
+         RjxJ7WcrOIM8wYy4d1s7+V59rpm/D0B6z4FYqA1joz7hXcZd09mdmqwjhzZkrO+YakZx
+         bVYQ==
+X-Gm-Message-State: APjAAAUsPU4zM2kASXQiSISHPJNSLqnD3EVxWI+EcstQzDI3MQf0DkAO
+        1o7MH6NVto1F/3/ei7THh6bg4Q==
+X-Google-Smtp-Source: APXvYqz43qjGSJwCgT1Fuw9onIXmdIlL82ZNT9dug1PH1gM72NKtNtBBRiNR6mykRXSa3xxRxVS7Ig==
+X-Received: by 2002:a5d:65cf:: with SMTP id e15mr13144184wrw.126.1576243798663;
+        Fri, 13 Dec 2019 05:29:58 -0800 (PST)
+Received: from localhost.localdomain ([2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca])
+        by smtp.gmail.com with ESMTPSA id n3sm10540543wmc.27.2019.12.13.05.29.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2019 05:29:58 -0800 (PST)
+From:   Guillaume La Roque <glaroque@baylibre.com>
+To:     narmstrong@baylibre.com, mchehab@kernel.org,
+        hverkuil-cisco@xs4all.nl, khilman@baylibre.com,
+        devicetree@vger.kernel.org
+Cc:     linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Add support of CEC wakeup on Amlogic G12 and SM1 SoCs
+Date:   Fri, 13 Dec 2019 14:29:53 +0100
+Message-Id: <20191213132956.11074-1-glaroque@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/19 at 09:19pm, Borislav Petkov wrote:
-> > + * direct mapping area to the size of actual physical memory plus the
-> > + * configured padding CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING.
-> > + * The left part will be taken out to join memory randomization.
-> > + */
-> > +static inline unsigned long calc_direct_mapping_size(void)
-> 
-> What direct mapping?!
-> 
-> The code is computing the physical memory regions base address and
-> sizes.
+this patchset add support of CEC wakeup.
+We need to set logical address and activate some options in registers before going in suspend.
+Registers address and options values come from amlogic driver.
 
-In Documentation/x86/x86_64/mm.rst, the physical memory regions mapping
-with page_offset is called as the direct mapping of physical memory.
-Seems both is used in kernel and document. 
+Changes since v1:
+- fix bad mask variable use to set logical address.
+- use FIELD_PREP instead of shift value.
 
-> 
-> > +{
-> > +	unsigned long size_tb, memory_tb;
-> > +
-> > +	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
-> > +		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-> > +
-> > +#ifdef CONFIG_MEMORY_HOTPLUG
-> > +	if (boot_params.max_addr) {
-> > +		unsigned long maximum_tb;
-> > +
-> > +		maximum_tb = DIV_ROUND_UP(boot_params.max_addr,
-> > +				1UL << TB_SHIFT);
-> 
-> All that jumping through hoops and adding a member to boot_params which
-> is useless on !hot-add systems - basically the majority out there - just
-> so that you can use that max address here?!
-> 
-> Did you not find acpi_table_parse_srat()?
+Guillaume La Roque (3):
+  media: dt-bindings: media: meson-ao-cec: Add support of ao-sysctrl
+    syscon
+  arm64: dts: meson-g12g12: add syscon phandle in cec node
+  media: platform: meson-ao-cec-g12a: add wakeup support
 
-kernel_randomize_memory() is invoked much earlier than
-acpi_table_parse_srat(). KASLR need know the max address to reserve
-space for the direct mapping region (or the physical memory region)
-so that it can cover later possible hotplugged memory.
+ .../media/amlogic,meson-gx-ao-cec.yaml        |  4 +++
+ .../boot/dts/amlogic/meson-g12-common.dtsi    |  1 +
+ drivers/media/platform/meson/ao-cec-g12a.c    | 33 +++++++++++++++++++
+ 3 files changed, 38 insertions(+)
 
-Thanks
-Baoquan
+-- 
+2.17.1
 
