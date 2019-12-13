@@ -2,106 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C50EF11E510
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:57:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA3211E51E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:01:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbfLMN5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:57:32 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37506 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbfLMN5c (ORCPT
+        id S1727550AbfLMOBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 09:01:20 -0500
+Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:43816 "EHLO
+        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726524AbfLMOBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:57:32 -0500
-Received: by mail-pf1-f195.google.com with SMTP id p14so1525139pfn.4;
-        Fri, 13 Dec 2019 05:57:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DPtsk1xekHf4rFompFbK+++ywQG55As5vK9YXX25XMc=;
-        b=HcZHnLR1V2y0vLHORQuWaZK6tD618ijiTm+wMIWqy5ttOW+N7ncHscgh5Rpe5dPZrT
-         DN5TbwDanXx3zF0C1n1Isg76VQZ9LDjiHkDa9ChFahhR03hwRxOX5qjlIMnwJY7/uprQ
-         hBNvephzkogku4C0RQC7Vy3L8GIc/hwxtd98zpioMw+5rUen0Tug4tiV5k/Fa5t15Jjn
-         7Fs+HcXsvfjoYjVmXDvoFRweQ45pZCMTvoFyqekuW0+koykZiDBQxAN0cAFFN5RDNFFp
-         HLnYWZjtmfd1Jb6pQCJW0pWLCpogjw39HKPu8CakppP7DsK2nKsethsuR5wstovhgp1+
-         1qjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DPtsk1xekHf4rFompFbK+++ywQG55As5vK9YXX25XMc=;
-        b=DuL5wvfASUAWTfBaZMTr02jeA1XiRFTVp9UmdxTPucQaWsseHh5Xoaa89GpvHCgozh
-         uL0hH0xXxh/5wiAgMmnNRCbNFSn7wUrIUIx/NeiOc1twlUyZ96gGDCr5nO+XEN4R+YvP
-         Jmd9aCll5PXz2rGoGCnnAfEjlVQ2Ce17at9jQzodpdAIJyu+xuudx0lgYTet0x++Ins5
-         FwBS5Whrtfc8xSFvI5uxpwA+K3/9RNEM624mvbTc2/h2HgCJu60D5iuAQ1U/Izm5j+M2
-         IUH8DjpCht9JV3htoHTVBkQG1/kQgxP1Xe2axoe91KvRcIOKoAtwnKWmHtxV2Un9zkX3
-         oQwQ==
-X-Gm-Message-State: APjAAAVexmV0DslrUpVt/TKMcnW/ZTuRNmS1DSQne62Lbw/sAwsZwWbn
-        RmfaGb+FTnDszluG3E2NsFrAhKfh
-X-Google-Smtp-Source: APXvYqy9k2eDNK1J3IVJhR+gbK0hX/ItjAIfIbZD9dhbfVa/+PROIoCleTD5Ir8Ui3woBnQNkNMGYg==
-X-Received: by 2002:a63:de08:: with SMTP id f8mr16905639pgg.107.1576245451363;
-        Fri, 13 Dec 2019 05:57:31 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r68sm12605687pfr.78.2019.12.13.05.57.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 05:57:30 -0800 (PST)
-Subject: Re: [PATCH v2] usb: typec: fusb302: Fix an undefined reference to
- 'extcon_get_state'
-To:     zhong jiang <zhongjiang@huawei.com>,
-        heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191212122053.GA1541203@kroah.com>
- <1576239378-50795-1-git-send-email-zhongjiang@huawei.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <3dbe90ae-d1df-0714-f797-c6c279bf620c@roeck-us.net>
-Date:   Fri, 13 Dec 2019 05:57:29 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 13 Dec 2019 09:01:19 -0500
+Received: from faui04f.informatik.uni-erlangen.de (faui04f.informatik.uni-erlangen.de [131.188.30.136])
+        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 2BE442417E0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 15:01:18 +0100 (CET)
+Received: by faui04f.informatik.uni-erlangen.de (Postfix, from userid 66991)
+        id 6CB86C20BC7; Fri, 13 Dec 2019 14:56:12 +0100 (CET)
+From:   Simon Geis <simon.geis@fau.de>
+To:     Dominik Brodowski <linux@dominikbrodowski.net>
+Cc:     Simon Geis <simon.geis@fau.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Adam Zerella <adam.zerella@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
+        Lukas Panzer <lukas.panzer@fau.de>
+Subject: [PATCH v3 08/10] PCMCIA/i82092: include <linux/io.h> instead of <asm/io.h>
+Date:   Fri, 13 Dec 2019 14:53:12 +0100
+Message-Id: <20191213135311.9111-9-simon.geis@fau.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191213135311.9111-1-simon.geis@fau.de>
+References: <20191213135311.9111-1-simon.geis@fau.de>
 MIME-Version: 1.0
-In-Reply-To: <1576239378-50795-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/19 4:16 AM, zhong jiang wrote:
-> Fixes the following compile error:
-> 
-> drivers/usb/typec/tcpm/fusb302.o: In function `tcpm_get_current_limit':
-> fusb302.c:(.text+0x3ee): undefined reference to `extcon_get_state'
-> fusb302.c:(.text+0x422): undefined reference to `extcon_get_state'
-> fusb302.c:(.text+0x450): undefined reference to `extcon_get_state'
-> fusb302.c:(.text+0x48c): undefined reference to `extcon_get_state'
-> drivers/usb/typec/tcpm/fusb302.o: In function `fusb302_probe':
-> fusb302.c:(.text+0x980): undefined reference to `extcon_get_extcon_dev'
-> make: *** [vmlinux] Error 1
-> 
-> It is because EXTCON is build as a module, but FUSB302 is not.
-> 
-> Suggested-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Include the more general linux/io.h instead of asm/io.h
+as checkpatch suggests.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Co-developed-by: Lukas Panzer <lukas.panzer@fau.de>
+Signed-off-by: Lukas Panzer <lukas.panzer@fau.de>
+Signed-off-by: Simon Geis <simon.geis@fau.de>
 
-> ---
->   drivers/usb/typec/tcpm/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/typec/tcpm/Kconfig b/drivers/usb/typec/tcpm/Kconfig
-> index 72481bb..5b986d6 100644
-> --- a/drivers/usb/typec/tcpm/Kconfig
-> +++ b/drivers/usb/typec/tcpm/Kconfig
-> @@ -32,6 +32,7 @@ endif # TYPEC_TCPCI
->   config TYPEC_FUSB302
->   	tristate "Fairchild FUSB302 Type-C chip driver"
->   	depends on I2C
-> +	depends on EXTCON || !EXTCON
->   	help
->   	  The Fairchild FUSB302 Type-C chip driver that works with
->   	  Type-C Port Controller Manager to provide USB PD and USB
-> 
+---
+ drivers/pcmcia/i82092.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
+index 7c9749df47d8..5d7d04657b6d 100644
+--- a/drivers/pcmcia/i82092.c
++++ b/drivers/pcmcia/i82092.c
+@@ -18,7 +18,7 @@
+ 
+ #include <pcmcia/ss.h>
+ 
+-#include <asm/io.h>
++#include <linux/io.h>
+ 
+ #include "i82092aa.h"
+ #include "i82365.h"
+-- 
+2.20.1
 
