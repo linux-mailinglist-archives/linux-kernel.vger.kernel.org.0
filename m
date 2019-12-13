@@ -2,106 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEC7611E560
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:13:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8BFA11E56A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:15:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfLMONK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 09:13:10 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35950 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727563AbfLMONJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 09:13:09 -0500
-Received: by mail-qk1-f194.google.com with SMTP id a203so2143351qkc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 06:13:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Nid8tA47CgGN/j7YlqJfGqUykgFGi6RHG/gnONQyj4E=;
-        b=iiL3UdjaR/ciA0kSMNs852p8OTlOiquuE5fH159L/f/kyYZSKGWMWVam+pUVGCkXzn
-         9bgt3SEbd3pKnEhCeny9C42+mC0KXfiMLBQgpimffHI86crwzaVM/11h7Y8coEKA38o+
-         tCVCdPV56qNiZgx3KgERpcRrNrVWUEs+0alaL5KGOlujfPecyMF86opv0mn3yFtlMhi/
-         HSFudy4nXLFhq55ZzOCCgbDw0syt6JyzB7F1//hQ+zzHl5IqhR2XQhaFKSX6W7QnskC+
-         6wTsaWtttmI+TDa2Sz4IrzVt+oKSBMj5Bnc1BiFbug2PEg9RfDO5OiVAlqxNQb7ozfcK
-         /Ebg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Nid8tA47CgGN/j7YlqJfGqUykgFGi6RHG/gnONQyj4E=;
-        b=oEu98J0q5cjO9FVDcnlYzPAoimuiozMDvT5Bp5hPKLD2cpK1L7M9dts09yMjOOlmEH
-         yZIw4iI4G5PN/fK6pnb7P6vccBufXBxTLJ3sznGqaR7Xl79EVx+LmuBOo3nFMeCPH3lI
-         lk+QJ+0JmU/tt4egqUTOKNH09wX+PSMtb7vpVIKaYSbIz99kJY5RvonpsvnKpUXqqufq
-         ZS6mLyj1UQSFzEmOJrw+KSoGXjX2KSmeqJUna/1kDyCIovBCQkPV61xIN/eTmU+D5diE
-         HaF8HfDnhuSXDkhDU3zfbhEaq9z0ERQcIV/RiSL8ZqUmYQ7gs+FTW6Qo47jecfu8Dpo+
-         BQ4g==
-X-Gm-Message-State: APjAAAUuK44QXuJv9qv0P2bGn9Tkkd3V2ktPQzTieo9aOaUUFMoxadMe
-        TgWLfeMwBUHHL7Ml0tUPC/phGw==
-X-Google-Smtp-Source: APXvYqym2ajF5omuu9eNtqjRTVEFjAXQV+T4/+DYjZkhvWoajaXY+wFuOq6d8uOBMk6PvGM6fJu4eg==
-X-Received: by 2002:a05:620a:12ae:: with SMTP id x14mr14203983qki.5.1576246387524;
-        Fri, 13 Dec 2019 06:13:07 -0800 (PST)
-Received: from [192.168.1.10] (c-66-30-119-151.hsd1.ma.comcast.net. [66.30.119.151])
-        by smtp.gmail.com with ESMTPSA id z28sm3463658qtz.69.2019.12.13.06.13.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 06:13:06 -0800 (PST)
-Subject: Re: [PATCH v5 2/2] kvm: Use huge pages for DAX-backed files
-To:     Liran Alon <liran.alon@oracle.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        linux-nvdimm@lists.01.org, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jason.zeng@intel.com
-References: <20191212182238.46535-1-brho@google.com>
- <20191212182238.46535-3-brho@google.com>
- <06108004-1720-41EB-BCAB-BFA8FEBF4772@oracle.com>
- <ED482280-CB47-4AB6-9E7E-EEE7848E0F8B@oracle.com>
- <f8e948ff-6a2a-a6d6-9d8e-92b93003354a@google.com>
- <65FB6CC1-3AD2-4D6F-9481-500BD7037203@oracle.com>
-From:   Barret Rhoden <brho@google.com>
-Message-ID: <90a9af31-304c-e8d5-b17c-0ddb4c98fddb@google.com>
-Date:   Fri, 13 Dec 2019 09:13:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727628AbfLMOPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 09:15:52 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:35800 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727444AbfLMOPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 09:15:52 -0500
+Received: from zn.tnic (p200300EC2F0A5A0019677E6F46B493BB.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5a00:1967:7e6f:46b4:93bb])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 187591EC014A;
+        Fri, 13 Dec 2019 15:15:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1576246551;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=3NrpyLsdGpjnrpXHUCOJYaX4M12sVqeC8Ylwrt+/qOU=;
+        b=ZU+7E//mo8qAtFVAC7zGNuf35D5oDZUa67ku4yOGXDi7Qh2F2sv2wDpXYCQEeDW6KvJugN
+        /qIlxqq/yWbFaQlsmGCmtmkjl1nKKep/38khDmkCGQ+4cUVo8tVhaya/deQR5th0UtVaO+
+        LsZ687SizwSt6gV/Gcg4LbO+O55v+Ao=
+Date:   Fri, 13 Dec 2019 15:15:43 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] x86/mm/KASLR: Adjust the padding size for the
+ direct mapping.
+Message-ID: <20191213141543.GA25899@zn.tnic>
+References: <20191115144917.28469-1-msys.mizuma@gmail.com>
+ <20191115144917.28469-5-msys.mizuma@gmail.com>
+ <20191212201916.GL4991@zn.tnic>
+ <20191213132850.GG28917@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <65FB6CC1-3AD2-4D6F-9481-500BD7037203@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191213132850.GG28917@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/19 8:07 PM, Liran Alon wrote:
->> I was a little hesitant to change the this to handle 1 GB pages with this patchset at first.  I didn't want to break the non-DAX case stuff by doing so.
-> 
-> Why would it affect non-DAX case?
-> Your patch should just make hugepage_adjust() to parse page-tables only in case is_zone_device_page(). Otherwise, page tables shouldn’t be parsed.
-> i.e. THP merged pages should still be detected by PageTransCompoundMap().
+On Fri, Dec 13, 2019 at 09:28:50PM +0800, Baoquan He wrote:
+> In Documentation/x86/x86_64/mm.rst, the physical memory regions mapping
+> with page_offset is called as the direct mapping of physical memory.
 
-That's what I already do.  But if I wanted to make the hugepage_adjust() 
-function also handle the change to 1 GB, then that code would apply to 
-THP too.  I didn't want to do that without knowing the implications for THP.
+The fact that it happens to compute the *first* region's size, which
+*happens* to be the direct mapping of all physical memory is immaterial
+here.
 
->> Specifically, can a THP page be 1 GB, and if so, how can you tell?  If you can't tell easily, I could walk the page table for all cases, instead of just zone_device().
-> 
-> I prefer to walk page-tables only for is_zone_device_page().
+It is actually causing more confusion in an already complex piece of
+code. You can call this function just as well
 
-Is there another way to tell if a THP page is 1 GB?  Anyway, this is the 
-sort of stuff I didn't want to mess around with.
+  calc_region_size()
 
-hugepage_adjust() seemed like a reasonable place to get a huge (2MB) 
-page table entry out of a DAX mapping.  I didn't want to proliferate 
-another special case for upgrading to a larger PTE size (i.e. how 
-hugetlbfs and THP have separate mechanisms), so I hopped on to the "can 
-we do a 2MB mapping even though host_mapping_level() didn't say so" case 
-- which is my interpretation of what huge_adjust() is for.
+which won't confuse readers. Because all you care about here is the
+region's size - not which region it is.
 
-Barret
+> kernel_randomize_memory() is invoked much earlier than
+> acpi_table_parse_srat().
 
+And? What are we going to do about that?
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
