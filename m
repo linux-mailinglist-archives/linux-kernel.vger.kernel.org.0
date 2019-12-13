@@ -2,141 +2,242 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EAAD11E105
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:41:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F0C11E10E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:42:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfLMJld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:41:33 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:60995 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726368AbfLMJld (ORCPT
+        id S1726797AbfLMJmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:42:22 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:1258 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725799AbfLMJmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:41:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576230092;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=AAGzmTCJv3h5Cz7wJUEa1b4nNyP28rqALH9MEt1VkH4=;
-        b=hGIf7Qy3tZXhiYjuzXWmAQJM+SsdfilIvOblhWoLU/StJnO/leRfKrVSXWrsZRZ/52+E6x
-        muYvSP8jtJGWdTnsAB0yx9HM94B1+acUwBsIpp3BlZTlZuGLSD0eP0cYsd2xvMIfwT4AlU
-        AjssqaZqrp7LrfeA324ksuoiMU3Sp8M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-95-crM54kLROoCT3BeK_TWXJw-1; Fri, 13 Dec 2019 04:41:28 -0500
-X-MC-Unique: crM54kLROoCT3BeK_TWXJw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1AFFB107ACC5;
-        Fri, 13 Dec 2019 09:41:26 +0000 (UTC)
-Received: from [10.36.117.150] (ovpn-117-150.ams2.redhat.com [10.36.117.150])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 66DD05195A;
-        Fri, 13 Dec 2019 09:41:21 +0000 (UTC)
-Subject: Re: [PATCH RFC v4 01/13] ACPI: NUMA: export pxm_to_node
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        virtio-dev@lists.oasis-open.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-References: <20191212171137.13872-1-david@redhat.com>
- <20191212171137.13872-2-david@redhat.com> <5687328.t4MNS9KDDX@kreacher>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <ec81db03-b970-420a-9c1b-29849b5e8902@redhat.com>
-Date:   Fri, 13 Dec 2019 10:41:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 13 Dec 2019 04:42:21 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBD9eVN4009865;
+        Fri, 13 Dec 2019 01:42:07 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=proofpoint;
+ bh=Fpq9Ao6PpjM0ty//hCtZWpiiq9Tkp9mEzG7mYPoPFmU=;
+ b=syOcWH2HywPk65SDqNj+Qu8PeYOMLX1MAx6E1/7HfNJlq96R4nFpjdWaxs2GM4avMCWz
+ 9TDn1SqpSoGxZAvuuGNTE1vwJ+pFd62mNEoTd66WV0MVDKLPZshHekHdlf/oK5pkTIFf
+ DQX8Gg+M/93f4lPCz3dTSFqzRSF+6K9rKjOd8xwtdJBQqStENrsGMWt3M5YyTTLX48Jc
+ BTpcOGCPuDUXm3TuDDwsb538wLlDLoE9EfUMHCGWo8VmjJbVTAYVaQL3BWaKmV/mWUGB
+ OHYOECGnSOHFsPUmIcSRMYn7JHMOgNi5XzFxFIkwYP2KwHnaxPHYFMYjrKjiYgTGDi0o iA== 
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2wr9dfx4kj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 13 Dec 2019 01:42:07 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aD5dcfKhqo2Jrnst+Zaioh56aayW7ofIxd6sl3TLd+5flXiCQIqaZdDCbSj92lpuxhRaoH0sBqGfLkWACNMW/FAbJDFOHlljaMRPHMhTGogA+0Bxo+BZ6++xTJGCkv+eczIZUjcDXYYxZAciQWg53ebYbqP0T7tWXmA/a2/G8gDPDk0JN2q8tHEZPCPQ+bYV67YKEAPluwDFw3NuzD/JhIo1bnBIn3if1gCXcH/LUeCTY45sZoqpJzFv+lnG6DWQAe8AR3rCL2g1Qb2BO/Jg+/wFFj4/bSL2r0jG6yESiOnINihYLYQhICvWTcpmAzg4kl9yaI9bev5ytHOxvxrApA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fpq9Ao6PpjM0ty//hCtZWpiiq9Tkp9mEzG7mYPoPFmU=;
+ b=PjX/oYheU0SpyYKCcnV/D5qJ7v1d1wMhOmpY2b/DJKu54dP6x9ssQRi8gf6BqF3XWPes3CdpPwONQ4aO0q0cXf2mG8vMUSip8KDyWv0IRrPsk97J0pg3sQQdbVcH8J5IGjjyzW0McR0Oi02c0eP0oXRM9CEJet21R11i5Y30lTntWjjpcmlUuVcOiVQ2v1iQbfCyepdV0dHnZ1fYwKrjuGhwwdXMI4Yeg5vlsE1ijTkiqMKyLF/70oFE03R3ozHEZyzsrFTug68vVYBOmim337Wr/985mTLg8ZyHdawiw6Yiw60K9TRbSdBuXu/oC99SEdpESgQVxzDoA7uFRiyC0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 64.207.220.243) smtp.rcpttodomain=gmail.com smtp.mailfrom=cadence.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=cadence.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fpq9Ao6PpjM0ty//hCtZWpiiq9Tkp9mEzG7mYPoPFmU=;
+ b=KMQhZDs6haVClmN9c1YsCVw7688cekwzX5aTtp241w4HkAA7psxDD33eO29ZDv6XNyQ95jptTcPdjtMtSJYun+QmzTbSL1tt2EQhHtoakH7IJzpA0Lys2UtV5J3A31ITr0z/iiDa36I/lYZAA2lFl8nAFv27Re6PWiyX9TtMgoA=
+Received: from BN8PR07CA0014.namprd07.prod.outlook.com (2603:10b6:408:ac::27)
+ by BYAPR07MB4534.namprd07.prod.outlook.com (2603:10b6:a02:c6::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2538.15; Fri, 13 Dec
+ 2019 09:42:02 +0000
+Received: from MW2NAM12FT010.eop-nam12.prod.protection.outlook.com
+ (2a01:111:f400:fe5a::205) by BN8PR07CA0014.outlook.office365.com
+ (2603:10b6:408:ac::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2538.16 via Frontend
+ Transport; Fri, 13 Dec 2019 09:42:02 +0000
+Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
+ 64.207.220.243 as permitted sender) receiver=protection.outlook.com;
+ client-ip=64.207.220.243; helo=wcmailrelayl01.cadence.com;
+Received: from wcmailrelayl01.cadence.com (64.207.220.243) by
+ MW2NAM12FT010.mail.protection.outlook.com (10.13.180.77) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.16 via Frontend Transport; Fri, 13 Dec 2019 09:42:01 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by wcmailrelayl01.cadence.com (8.14.7/8.14.4) with ESMTP id xBD9frkC079581
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=OK);
+        Fri, 13 Dec 2019 01:41:55 -0800
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Fri, 13 Dec 2019 10:41:52 +0100
+Received: from lvlabc.cadence.com (10.165.128.101) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Fri, 13 Dec 2019 10:41:52 +0100
+Received: from lvlabc.cadence.com (localhost.localdomain [127.0.0.1])
+        by lvlabc.cadence.com (8.14.4/8.14.4) with ESMTP id xBD9fqvV011360;
+        Fri, 13 Dec 2019 09:41:52 GMT
+From:   Milind Parab <mparab@cadence.com>
+To:     <nicolas.nerre@microchip.com>, <andrew@lunn.ch>,
+        <antoine.tenart@bootlin.com>, <f.fainelli@gmail.com>,
+        <rmk+kernel@armlinux.org.uk>
+CC:     <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <hkallweit1@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <dkangude@cadence.com>, <a.fatoum@pengutronix.de>,
+        <brad.mouring@ni.com>, <pthombar@cadence.com>,
+        Milind Parab <mparab@cadence.com>
+Subject: [PATCH v2 2/3] net: macb: add support for C45 MDIO read/write
+Date:   Fri, 13 Dec 2019 09:41:51 +0000
+Message-ID: <1576230111-11325-1-git-send-email-mparab@cadence.com>
+X-Mailer: git-send-email 2.2.2
+In-Reply-To: <1576230007-11181-1-git-send-email-mparab@cadence.com>
+References: <1576230007-11181-1-git-send-email-mparab@cadence.com>
 MIME-Version: 1.0
-In-Reply-To: <5687328.t4MNS9KDDX@kreacher>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:64.207.220.243;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(136003)(376002)(39860400002)(36092001)(199004)(189003)(36906005)(426003)(2616005)(7416002)(5660300002)(70206006)(8936002)(2906002)(356004)(86362001)(7126003)(7696005)(316002)(70586007)(8676002)(478600001)(81156014)(54906003)(36756003)(81166006)(4326008)(26005)(110136005)(336012)(186003)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4534;H:wcmailrelayl01.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:unused.mynethost.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 07715488-977c-4b7a-4a50-08d77fb0b48f
+X-MS-TrafficTypeDiagnostic: BYAPR07MB4534:
+X-Microsoft-Antispam-PRVS: <BYAPR07MB45344CBA394AEAE5BBAE35B9D3540@BYAPR07MB4534.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2000;
+X-Forefront-PRVS: 0250B840C1
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: sII+zwProaFjSJBmIfjlwdCLL5VZfXKAH7WkwzxrzRmM6o4g1EvFye+4BT0XEr2xl4wtiGVZQBVZszUWuBkQACfjg46RdMO5MdB232PJh766gcwcNmjIccZd3h/x75efqPpxPYUkVCabmZ89KJCVuJOQZmAMUAa9p6Snzb3bkj4IpexK3d17X59vWxdGw2o0u7D6g2/l6sJoiPDDOh1i72Ek6iUK9prgO/G0nft/xlVNfVAbIdyAVpmyIRsbPMdhx8zymUtUFdEFrAOuODHK44nUu/rd5F+IQ23Ef8qa1yxx8TXHNulITT7l1Vz2zl/ncziZKZ1fLPVgxN+ibbpvyIm4X5ez1D267ID2DPJ1JoempNJ0zpsxEf3MEDLaeu6dXcew3A3Pa9TKFuuyf2KGhBjhGU2pL9fcvXpy7n6pB0mYQKkKl5qSA3nqj9/49OhBIt/W2S59Q/isD0lss+VoJAvseO9/pd2g+cHWPjbful9T4EOIbUdtZNNDYvaJ0Sjc
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2019 09:42:01.5905
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07715488-977c-4b7a-4a50-08d77fb0b48f
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[64.207.220.243];Helo=[wcmailrelayl01.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4534
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-13_02:2019-12-12,2019-12-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 mlxscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 clxscore=1015 mlxlogscore=927
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912130077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.12.19 22:43, Rafael J. Wysocki wrote:
-> On Thursday, December 12, 2019 6:11:25 PM CET David Hildenbrand wrote:
->> Will be needed by virtio-mem to identify the node from a pxm.
->>
->> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->> Cc: Len Brown <lenb@kernel.org>
->> Cc: linux-acpi@vger.kernel.org
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>  drivers/acpi/numa/srat.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
->> index eadbf90e65d1..d5847fa7ac69 100644
->> --- a/drivers/acpi/numa/srat.c
->> +++ b/drivers/acpi/numa/srat.c
->> @@ -35,6 +35,7 @@ int pxm_to_node(int pxm)
->>  		return NUMA_NO_NODE;
->>  	return pxm_to_node_map[pxm];
->>  }
->> +EXPORT_SYMBOL(pxm_to_node);
->>  
->>  int node_to_pxm(int node)
->>  {
->>
-> 
-> This is fine by me FWIW.
+This patch modify MDIO read/write functions to support
+communication with C45 PHY.
 
-Can I count that as an Acked-by and carry it along? Thanks!
+Signed-off-by: Milind Parab <mparab@cadence.com>
+---
+ drivers/net/ethernet/cadence/macb.h      | 15 ++++--
+ drivers/net/ethernet/cadence/macb_main.c | 61 +++++++++++++++++++-----
+ 2 files changed, 61 insertions(+), 15 deletions(-)
 
+diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+index 19fe4f4867c7..dbf7070fcdba 100644
+--- a/drivers/net/ethernet/cadence/macb.h
++++ b/drivers/net/ethernet/cadence/macb.h
+@@ -630,10 +630,17 @@
+ #define GEM_CLK_DIV96				5
+ 
+ /* Constants for MAN register */
+-#define MACB_MAN_SOF				1
+-#define MACB_MAN_WRITE				1
+-#define MACB_MAN_READ				2
+-#define MACB_MAN_CODE				2
++#define MACB_MAN_C22_SOF			1
++#define MACB_MAN_C22_WRITE			1
++#define MACB_MAN_C22_READ			2
++#define MACB_MAN_C22_CODE			2
++
++#define MACB_MAN_C45_SOF			0
++#define MACB_MAN_C45_ADDR			0
++#define MACB_MAN_C45_WRITE			1
++#define MACB_MAN_C45_POST_READ_INCR		2
++#define MACB_MAN_C45_READ			3
++#define MACB_MAN_C45_CODE			2
+ 
+ /* Capability mask bits */
+ #define MACB_CAPS_ISR_CLEAR_ON_WRITE		0x00000001
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 8c1812f39927..ced32d2a85e1 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -337,11 +337,30 @@ static int macb_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
+ 	if (status < 0)
+ 		goto mdio_read_exit;
+ 
+-	macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_SOF)
+-			      | MACB_BF(RW, MACB_MAN_READ)
+-			      | MACB_BF(PHYA, mii_id)
+-			      | MACB_BF(REGA, regnum)
+-			      | MACB_BF(CODE, MACB_MAN_CODE)));
++	if (regnum & MII_ADDR_C45) {
++		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
++			    | MACB_BF(RW, MACB_MAN_C45_ADDR)
++			    | MACB_BF(PHYA, mii_id)
++			    | MACB_BF(REGA, (regnum >> 16) & 0x1F)
++			    | MACB_BF(DATA, regnum & 0xFFFF)
++			    | MACB_BF(CODE, MACB_MAN_C45_CODE)));
++
++		status = macb_mdio_wait_for_idle(bp);
++		if (status < 0)
++			goto mdio_read_exit;
++
++		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
++			    | MACB_BF(RW, MACB_MAN_C45_READ)
++			    | MACB_BF(PHYA, mii_id)
++			    | MACB_BF(REGA, (regnum >> 16) & 0x1F)
++			    | MACB_BF(CODE, MACB_MAN_C45_CODE)));
++	} else {
++		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C22_SOF)
++				| MACB_BF(RW, MACB_MAN_C22_READ)
++				| MACB_BF(PHYA, mii_id)
++				| MACB_BF(REGA, regnum)
++				| MACB_BF(CODE, MACB_MAN_C22_CODE)));
++	}
+ 
+ 	status = macb_mdio_wait_for_idle(bp);
+ 	if (status < 0)
+@@ -370,12 +389,32 @@ static int macb_mdio_write(struct mii_bus *bus, int mii_id, int regnum,
+ 	if (status < 0)
+ 		goto mdio_write_exit;
+ 
+-	macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_SOF)
+-			      | MACB_BF(RW, MACB_MAN_WRITE)
+-			      | MACB_BF(PHYA, mii_id)
+-			      | MACB_BF(REGA, regnum)
+-			      | MACB_BF(CODE, MACB_MAN_CODE)
+-			      | MACB_BF(DATA, value)));
++	if (regnum & MII_ADDR_C45) {
++		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
++			    | MACB_BF(RW, MACB_MAN_C45_ADDR)
++			    | MACB_BF(PHYA, mii_id)
++			    | MACB_BF(REGA, (regnum >> 16) & 0x1F)
++			    | MACB_BF(DATA, regnum & 0xFFFF)
++			    | MACB_BF(CODE, MACB_MAN_C45_CODE)));
++
++		status = macb_mdio_wait_for_idle(bp);
++		if (status < 0)
++			goto mdio_write_exit;
++
++		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
++			    | MACB_BF(RW, MACB_MAN_C45_WRITE)
++			    | MACB_BF(PHYA, mii_id)
++			    | MACB_BF(REGA, (regnum >> 16) & 0x1F)
++			    | MACB_BF(CODE, MACB_MAN_C45_CODE)
++			    | MACB_BF(DATA, value)));
++	} else {
++		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C22_SOF)
++				| MACB_BF(RW, MACB_MAN_C22_WRITE)
++				| MACB_BF(PHYA, mii_id)
++				| MACB_BF(REGA, regnum)
++				| MACB_BF(CODE, MACB_MAN_C22_CODE)
++				| MACB_BF(DATA, value)));
++	}
+ 
+ 	status = macb_mdio_wait_for_idle(bp);
+ 	if (status < 0)
 -- 
-Thanks,
-
-David / dhildenb
+2.17.1
 
