@@ -2,140 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1BBD11E5ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:55:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D66EA11E5FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:59:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfLMOzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 09:55:16 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41901 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbfLMOzP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 09:55:15 -0500
-Received: by mail-lf1-f68.google.com with SMTP id m30so2169210lfp.8;
-        Fri, 13 Dec 2019 06:55:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2opFr/klQK1oObZvRIZa9Uwbm+rqJyT65CDiKOERf+U=;
-        b=Y+y5apdGrHSiwkctdVgYNHSe8GOEeduItT5VyjHaRwFq59Sm8SpifY0r94mYG73ClT
-         26dO/MXkfrUDu5hQHJ+CL+ZnoTgfp+6o40FvU7aKpgpJ8m0Lb0byz5PadhrpEvkX8/KW
-         PMEpDDr+WiifDLTE9f1z5hIfLkEVc52ncORBs72g+3N18QXtSiVcsmHrSWcagz9AwKbQ
-         E1UkMz9J44RN+zOFLaT33UWrfjzev4DakQRhc4Kx25TXI9r4q/gwXsLyfUXugumtfywb
-         jwbA/U8SA3Kn4cxRJs1/0Ch1CeZ2AZVROkj0vT4RDDd53topZmfFzawvyHh7fPUm1KEO
-         XFjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2opFr/klQK1oObZvRIZa9Uwbm+rqJyT65CDiKOERf+U=;
-        b=cNxTnusMz9mN133pKaZOTYdqMCRP9FPv90TZrBNiEE/PBTMOy80FsEcKPDg6ocZ7O1
-         OqpbVhMrcy/a+FAAKEee6FFvoXSS3CpgxHEhZFzsdO+7AtHyzg/o7k185GgDnN5FrROB
-         kTcN9lqwAXhFub7txv2Z6aSfYXCgMHfwqxn9G02RS2SgvTc/3PMRuK6kcKhSiN8Il/Dl
-         o9J5pix611nED65lI2Wubphga0SiUieW0jKTNuIh1k/c85n9IMVozqfigndJIC/K4W/3
-         k1z/i/X0frF0VVlG2jGLOL0PzZ0DicKRc77dlHq17K3qZ/iaLE4a4qAKbI6/zqvnkAID
-         BwmQ==
-X-Gm-Message-State: APjAAAU+MUCHgP9Yerc35+VWwDIOAwtbcOedBh087n1gnf6nYL7HwLuo
-        BLoT6CVkKBMFwyNhBueQYlA=
-X-Google-Smtp-Source: APXvYqzt/isFtrQIYcmnKxu+sYyMAJCKFYN/difz6VDeRNIWwYULjo+2bqyLCma+CrJDpzaPayDdfw==
-X-Received: by 2002:ac2:53a8:: with SMTP id j8mr9517976lfh.28.1576248912919;
-        Fri, 13 Dec 2019 06:55:12 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id p12sm4696695lfc.43.2019.12.13.06.55.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 06:55:12 -0800 (PST)
-Subject: Re: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM
- state
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>
-References: <20191212233428.14648-1-digetx@gmail.com>
- <20191212233428.14648-4-digetx@gmail.com>
- <ae96db3a-0854-6e80-0469-e5fa6fd7bb8e@gmail.com>
-Message-ID: <ec7e11f6-2695-29c8-c9ed-98dc229b8aac@gmail.com>
-Date:   Fri, 13 Dec 2019 17:55:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <ae96db3a-0854-6e80-0469-e5fa6fd7bb8e@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1727546AbfLMO7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 09:59:40 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:12136 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727329AbfLMO7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 09:59:39 -0500
+Received: from localhost (mailhub1-ext [192.168.12.233])
+        by localhost (Postfix) with ESMTP id 47ZDN82bdGz9vBJg;
+        Fri, 13 Dec 2019 15:59:36 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=eNsSuvgn; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id JbWyOEqSF5fS; Fri, 13 Dec 2019 15:59:36 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47ZDN81JZNz9vBJc;
+        Fri, 13 Dec 2019 15:59:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1576249176; bh=ciNClaFt4bgE8XImcN+vK2ienGGRWFLoOBnDEXiWkyo=;
+        h=From:Subject:To:Cc:Date:From;
+        b=eNsSuvgnmZw1YmG5E/YgVg0KpuE+7i8abcfUzZwyBTaKGuDHrE70cwAEPxQTNKOGT
+         Qayr0Zwr419NfgU9KtjmPIPc7OybWEmftzlVvIHoBLETrhaD4SPnCawConqvQNt09V
+         u1zs90wHYjnVo4VE7sjygwG6OfO5s83Z38EsEt2s=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A27798B8CE;
+        Fri, 13 Dec 2019 15:59:37 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id gYnh7uNCBj0G; Fri, 13 Dec 2019 15:59:37 +0100 (CET)
+Received: from po16098vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 471608B8C4;
+        Fri, 13 Dec 2019 15:59:37 +0100 (CET)
+Received: by po16098vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id DDB6B63777; Fri, 13 Dec 2019 14:59:36 +0000 (UTC)
+Message-Id: <66a26ff96689f6f84b25ed11dcff6c3818801fe7.1576248635.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2] powerpc/32: add support of KASAN_VMALLOC
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, dja@axtens.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org
+Date:   Fri, 13 Dec 2019 14:59:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-13.12.2019 17:29, Dmitry Osipenko пишет:
-> 13.12.2019 02:34, Dmitry Osipenko пишет:
->> I noticed that sometime I2C clock is kept enabled during suspend-resume.
->> This happens because runtime PM defers dynamic suspension and thus it may
->> happen that runtime PM is in active state when system enters into suspend.
->> In particular I2C controller that is used for CPU's DVFS is often kept ON
->> during suspend because CPU's voltage scaling happens quite often.
->>
->> Note: we marked runtime PM as IRQ-safe during the driver's probe in the
->> "Support atomic transfers" patch, thus it's okay to enforce runtime PM
->> suspend/resume in the NOIRQ phase which is used for the system-level
->> suspend/resume of the driver.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->> index b3ecdd87e91f..d309a314f4d6 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -1790,9 +1790,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
->>  static int __maybe_unused tegra_i2c_suspend(struct device *dev)
->>  {
->>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->> +	int err;
->>  
->>  	i2c_mark_adapter_suspended(&i2c_dev->adapter);
-> 
-> I'm now in a doubt that it is correct to use NOIRQ level at all for the
-> suspend because i2c_mark_adapter_suspended() uses mutex, thus I'm
-> wondering what will happen if there is an asynchronous transfer
-> happening during suspend..
-> 
-> The i2c_mark_adapter_suspended() will try to block and will never return?
+Add support of KASAN_VMALLOC on PPC32.
 
-Moreover, the I2C interrupt should be disabled during the NOIRQ phase.
-So, yes.. looks like making use of NOIRQ level wasn't a correct
-decision. On the other hand, I don't think that any I2C client driver
-used by Tegra SoCs in the upstream kernel could cause the problem at the
-moment, so it shouldn't be critical.
+To allow this, the early shadow covering the VMALLOC space
+need to be removed once high_memory var is set and before
+freeing memblock.
 
-BTW: Jon, please CC me next time ;) [I'll try to find a better solution
-for the PCIE problem]
+And the VMALLOC area need to be aligned such that boundaries
+are covered by a full shadow page.
 
->> +	err = pm_runtime_force_suspend(dev);
->> +	if (err < 0)
->> +		return err;
->> +
->>  	return 0;
->>  }
->>  
->> @@ -1813,6 +1818,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
->>  	if (err)
->>  		return err;
->>  
->> +	err = pm_runtime_force_resume(dev);
->> +	if (err < 0)
->> +		return err;
->> +
->>  	i2c_mark_adapter_resumed(&i2c_dev->adapter);
->>  
->>  	return 0;
->>
-> 
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+
+---
+v2: rebased ; exclude specific module handling when CONFIG_KASAN_VMALLOC is set.
+---
+ arch/powerpc/Kconfig                         |  1 +
+ arch/powerpc/include/asm/book3s/32/pgtable.h |  5 +++++
+ arch/powerpc/include/asm/kasan.h             |  2 ++
+ arch/powerpc/include/asm/nohash/32/pgtable.h |  5 +++++
+ arch/powerpc/mm/kasan/kasan_init_32.c        | 33 +++++++++++++++++++++++++++-
+ arch/powerpc/mm/mem.c                        |  3 +++
+ 6 files changed, 48 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 1ec34e16ed65..a247bbfb03d4 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -173,6 +173,7 @@ config PPC
+ 	select HAVE_ARCH_HUGE_VMAP		if PPC_BOOK3S_64 && PPC_RADIX_MMU
+ 	select HAVE_ARCH_JUMP_LABEL
+ 	select HAVE_ARCH_KASAN			if PPC32
++	select HAVE_ARCH_KASAN_VMALLOC		if PPC32
+ 	select HAVE_ARCH_KGDB
+ 	select HAVE_ARCH_MMAP_RND_BITS
+ 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS	if COMPAT
+diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
+index 0796533d37dd..5b39c11e884a 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
+@@ -193,7 +193,12 @@ int map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot);
+ #else
+ #define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
+ #endif
++
++#ifdef CONFIG_KASAN_VMALLOC
++#define VMALLOC_END	_ALIGN_DOWN(ioremap_bot, PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
++#else
+ #define VMALLOC_END	ioremap_bot
++#endif
+ 
+ #ifndef __ASSEMBLY__
+ #include <linux/sched.h>
+diff --git a/arch/powerpc/include/asm/kasan.h b/arch/powerpc/include/asm/kasan.h
+index 296e51c2f066..fbff9ff9032e 100644
+--- a/arch/powerpc/include/asm/kasan.h
++++ b/arch/powerpc/include/asm/kasan.h
+@@ -31,9 +31,11 @@
+ void kasan_early_init(void);
+ void kasan_mmu_init(void);
+ void kasan_init(void);
++void kasan_late_init(void);
+ #else
+ static inline void kasan_init(void) { }
+ static inline void kasan_mmu_init(void) { }
++static inline void kasan_late_init(void) { }
+ #endif
+ 
+ #endif /* __ASSEMBLY */
+diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
+index 552b96eef0c8..60c4d829152e 100644
+--- a/arch/powerpc/include/asm/nohash/32/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
+@@ -114,7 +114,12 @@ int map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot);
+ #else
+ #define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
+ #endif
++
++#ifdef CONFIG_KASAN_VMALLOC
++#define VMALLOC_END	_ALIGN_DOWN(ioremap_bot, PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
++#else
+ #define VMALLOC_END	ioremap_bot
++#endif
+ 
+ /*
+  * Bits in a linux-style PTE.  These match the bits in the
+diff --git a/arch/powerpc/mm/kasan/kasan_init_32.c b/arch/powerpc/mm/kasan/kasan_init_32.c
+index 0e6ed4413eea..88036fb88350 100644
+--- a/arch/powerpc/mm/kasan/kasan_init_32.c
++++ b/arch/powerpc/mm/kasan/kasan_init_32.c
+@@ -129,6 +129,31 @@ static void __init kasan_remap_early_shadow_ro(void)
+ 	flush_tlb_kernel_range(KASAN_SHADOW_START, KASAN_SHADOW_END);
+ }
+ 
++static void __init kasan_unmap_early_shadow_vmalloc(void)
++{
++	unsigned long k_start = (unsigned long)kasan_mem_to_shadow((void *)VMALLOC_START);
++	unsigned long k_end = (unsigned long)kasan_mem_to_shadow((void *)VMALLOC_END);
++	unsigned long k_cur;
++	phys_addr_t pa = __pa(kasan_early_shadow_page);
++
++	if (!early_mmu_has_feature(MMU_FTR_HPTE_TABLE)) {
++		int ret = kasan_init_shadow_page_tables(k_start, k_end);
++
++		if (ret)
++			panic("kasan: kasan_init_shadow_page_tables() failed");
++	}
++	for (k_cur = k_start & PAGE_MASK; k_cur < k_end; k_cur += PAGE_SIZE) {
++		pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
++		pte_t *ptep = pte_offset_kernel(pmd, k_cur);
++
++		if ((pte_val(*ptep) & PTE_RPN_MASK) != pa)
++			continue;
++
++		__set_pte_at(&init_mm, k_cur, ptep, __pte(0), 0);
++	}
++	flush_tlb_kernel_range(k_start, k_end);
++}
++
+ void __init kasan_mmu_init(void)
+ {
+ 	int ret;
+@@ -165,7 +190,13 @@ void __init kasan_init(void)
+ 	pr_info("KASAN init done\n");
+ }
+ 
+-#ifdef CONFIG_MODULES
++void __init kasan_late_init(void)
++{
++	if (IS_ENABLED(CONFIG_KASAN_VMALLOC))
++		kasan_unmap_early_shadow_vmalloc();
++}
++
++#if defined(CONFIG_MODULES) && !defined(CONFIG_KASAN_VMALLOC)
+ void *module_alloc(unsigned long size)
+ {
+ 	void *base;
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 9488b63dfc87..3bb212c8ef2d 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -294,6 +294,9 @@ void __init mem_init(void)
+ 
+ 	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE);
+ 	set_max_mapnr(max_pfn);
++
++	kasan_late_init();
++
+ 	memblock_free_all();
+ 
+ #ifdef CONFIG_HIGHMEM
+-- 
+2.13.3
 
