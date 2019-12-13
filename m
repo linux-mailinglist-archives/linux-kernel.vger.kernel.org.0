@@ -2,107 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9223C11E358
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DD111E35C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfLMMJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 07:09:44 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48656 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbfLMMJo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 07:09:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Nr1I6SS3feCDCxDX98WOBu5+rrE0sIel3SECkfzkxLQ=; b=QnHe2UaIVxReuM76bdKA79ENXD
-        jnOHkBqFLlG4vig16AARH8jVMlLFarljq6FVA/8VUssKra++ftkU5+IT/qqaIo9fpJlRAFinnHeRK
-        8NE0VzhZgXyBj3HiFq2I6wKnVAyLD0PbqQ4y8xz7VdKECMin6Ys+V6F3S92nAB2h+bPFcT0Bx2kFK
-        zSW9zbuee/d6ZPGLF5jV1JkJrU6cgzVlm5VbzANKYpO0fqV1tUJeXV5aHRLeZ6EubTRPx3ZTTFTrt
-        sn1gEJCN7JVtYvCYpTGXHFxkxrQzIGA/6H9+mJmkHhtFAcfbHUjnqU8QgNnAVSPCujDRKODz5xdyJ
-        oedNkF9w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifjky-0003YE-Km; Fri, 13 Dec 2019 12:09:16 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DDF9330602B;
-        Fri, 13 Dec 2019 13:07:52 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A37B72B1886CA; Fri, 13 Dec 2019 13:09:13 +0100 (CET)
-Date:   Fri, 13 Dec 2019 13:09:13 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     "chengjian (D)" <cj.chengjian@huawei.com>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, chenwandun@huawei.com,
-        xiexiuqi@huawei.com, liwei391@huawei.com, huawei.libin@huawei.com,
-        bobo.shaobowang@huawei.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org
-Subject: Re: [PATCH] sched/fair: Optimize select_idle_cpu
-Message-ID: <20191213120913.GB2844@hirez.programming.kicks-ass.net>
-References: <20191212144102.181510-1-cj.chengjian@huawei.com>
- <20191212152406.GB2827@hirez.programming.kicks-ass.net>
- <d40ac385-626f-e86f-b2cb-69adf10a193a@huawei.com>
- <6d188305-66ab-81cf-6340-34d155dcaf3b@arm.com>
+        id S1727145AbfLMMJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 07:09:56 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45928 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726717AbfLMMJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 07:09:56 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B435D8AB0A8FF068C476;
+        Fri, 13 Dec 2019 20:09:54 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 13 Dec 2019
+ 20:09:46 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <stefanr@s5r6.in-berlin.de>
+CC:     <yukuai3@huawei.com>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>, <linux1394-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] firewire: net: remove set but not used variable 'guid'
+Date:   Fri, 13 Dec 2019 20:09:19 +0800
+Message-ID: <20191213120919.8080-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6d188305-66ab-81cf-6340-34d155dcaf3b@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 11:28:00AM +0000, Valentin Schneider wrote:
-> On 13/12/2019 09:57, chengjian (D) wrote:
-> > 
-> > in select_idle_smt()
-> > 
-> > /*
-> >  * Scan the local SMT mask for idle CPUs.
-> >  */
-> > static int select_idle_smt(struct task_struct *p, int target)
-> > {
-> >     int cpu, si_cpu = -1;
-> > 
-> >     if (!static_branch_likely(&sched_smt_present))
-> >         return -1;
-> > 
-> >     for_each_cpu(cpu, cpu_smt_mask(target)) {
-> >         if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-> >             continue;
-> >         if (available_idle_cpu(cpu))
-> >             return cpu;
-> >         if (si_cpu == -1 && sched_idle_cpu(cpu))
-> >             si_cpu = cpu;
-> >     }
-> > 
-> >     return si_cpu;
-> > }
-> > 
-> > 
-> > Why don't we do the same thing in this function,
-> > 
-> > although cpu_smt_present () often has few CPUs.
-> > 
-> > it is better to determine the 'p->cpus_ptr' first.
-> > 
-> > 
-> 
-> Like you said the gains here would probably be small - the highest SMT
-> count I'm aware of is SMT8 (POWER9). Still, if we end up with both
-> select_idle_core() and select_idle_cpu() using that pattern, it would make
-> sense IMO to align select_idle_smt() with those.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-The cpumask_and() operation added would also have cost. I really don't
-see that paying off.
+drivers/firewire/net.c: In function â€˜fwnet_finish_incoming_packetâ€™:
+drivers/firewire/net.c:493:9: warning: variable â€˜guidâ€™ set but not
+used [-Wunused-but-set-variable]
 
-The other sites have the problem that we combine an iteration limit with
-affinity constraints. This loop doesn't do that and therefore doesn't
-suffer the problem.
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ drivers/firewire/net.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index 715e491dfbc3..28785642a5c5 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -490,7 +490,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ {
+ 	struct fwnet_device *dev;
+ 	int status;
+-	__be64 guid;
+ 
+ 	switch (ether_type) {
+ 	case ETH_P_ARP:
+@@ -512,7 +511,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ 	 * Parse the encapsulation header. This actually does the job of
+ 	 * converting to an ethernet-like pseudo frame header.
+ 	 */
+-	guid = cpu_to_be64(dev->card->guid);
+ 	if (dev_hard_header(skb, net, ether_type,
+ 			   is_broadcast ? net->broadcast : net->dev_addr,
+ 			   NULL, skb->len) >= 0) {
+-- 
+2.17.2
+
