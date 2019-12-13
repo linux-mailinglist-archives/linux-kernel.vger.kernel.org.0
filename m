@@ -2,110 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CEB311E5E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1BBD11E5ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 15:55:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbfLMOzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 09:55:01 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46653 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727673AbfLMOzB (ORCPT
+        id S1727865AbfLMOzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 09:55:16 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41901 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727673AbfLMOzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 09:55:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576248899;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gntSwDNDnzHe3/thZbUD4KWSDrrpcmgp8bqbLa8CMa0=;
-        b=ciqbZ/Ru+IADPhb+B4Jkhk0zMVadryQZlVHzrRP6JTgwnJC7NXmuk3HpjCLdff7K13R07g
-        o+XhvEHOrTgm6mUya6fHTx3bKEMEJBaANDqNmqYSe2d4v4L89jznmZsgZkVMM/RwjEOat1
-        Du8XsJSJD2nUjV8POy+ezirCAgzQhW8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-346-n5LdeNYkMJyouqVkjHcDAA-1; Fri, 13 Dec 2019 09:54:56 -0500
-X-MC-Unique: n5LdeNYkMJyouqVkjHcDAA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E7B998017DF;
-        Fri, 13 Dec 2019 14:54:53 +0000 (UTC)
-Received: from localhost (ovpn-12-63.pek2.redhat.com [10.72.12.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5132C5C219;
-        Fri, 13 Dec 2019 14:54:53 +0000 (UTC)
-Date:   Fri, 13 Dec 2019 22:54:48 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] x86/mm/KASLR: Adjust the padding size for the
- direct mapping.
-Message-ID: <20191213145448.GH28917@MiWiFi-R3L-srv>
-References: <20191115144917.28469-1-msys.mizuma@gmail.com>
- <20191115144917.28469-5-msys.mizuma@gmail.com>
- <20191212201916.GL4991@zn.tnic>
- <20191213132850.GG28917@MiWiFi-R3L-srv>
- <20191213141543.GA25899@zn.tnic>
+        Fri, 13 Dec 2019 09:55:15 -0500
+Received: by mail-lf1-f68.google.com with SMTP id m30so2169210lfp.8;
+        Fri, 13 Dec 2019 06:55:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2opFr/klQK1oObZvRIZa9Uwbm+rqJyT65CDiKOERf+U=;
+        b=Y+y5apdGrHSiwkctdVgYNHSe8GOEeduItT5VyjHaRwFq59Sm8SpifY0r94mYG73ClT
+         26dO/MXkfrUDu5hQHJ+CL+ZnoTgfp+6o40FvU7aKpgpJ8m0Lb0byz5PadhrpEvkX8/KW
+         PMEpDDr+WiifDLTE9f1z5hIfLkEVc52ncORBs72g+3N18QXtSiVcsmHrSWcagz9AwKbQ
+         E1UkMz9J44RN+zOFLaT33UWrfjzev4DakQRhc4Kx25TXI9r4q/gwXsLyfUXugumtfywb
+         jwbA/U8SA3Kn4cxRJs1/0Ch1CeZ2AZVROkj0vT4RDDd53topZmfFzawvyHh7fPUm1KEO
+         XFjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2opFr/klQK1oObZvRIZa9Uwbm+rqJyT65CDiKOERf+U=;
+        b=cNxTnusMz9mN133pKaZOTYdqMCRP9FPv90TZrBNiEE/PBTMOy80FsEcKPDg6ocZ7O1
+         OqpbVhMrcy/a+FAAKEee6FFvoXSS3CpgxHEhZFzsdO+7AtHyzg/o7k185GgDnN5FrROB
+         kTcN9lqwAXhFub7txv2Z6aSfYXCgMHfwqxn9G02RS2SgvTc/3PMRuK6kcKhSiN8Il/Dl
+         o9J5pix611nED65lI2Wubphga0SiUieW0jKTNuIh1k/c85n9IMVozqfigndJIC/K4W/3
+         k1z/i/X0frF0VVlG2jGLOL0PzZ0DicKRc77dlHq17K3qZ/iaLE4a4qAKbI6/zqvnkAID
+         BwmQ==
+X-Gm-Message-State: APjAAAU+MUCHgP9Yerc35+VWwDIOAwtbcOedBh087n1gnf6nYL7HwLuo
+        BLoT6CVkKBMFwyNhBueQYlA=
+X-Google-Smtp-Source: APXvYqzt/isFtrQIYcmnKxu+sYyMAJCKFYN/difz6VDeRNIWwYULjo+2bqyLCma+CrJDpzaPayDdfw==
+X-Received: by 2002:ac2:53a8:: with SMTP id j8mr9517976lfh.28.1576248912919;
+        Fri, 13 Dec 2019 06:55:12 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id p12sm4696695lfc.43.2019.12.13.06.55.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 06:55:12 -0800 (PST)
+Subject: Re: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM
+ state
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>
+References: <20191212233428.14648-1-digetx@gmail.com>
+ <20191212233428.14648-4-digetx@gmail.com>
+ <ae96db3a-0854-6e80-0469-e5fa6fd7bb8e@gmail.com>
+Message-ID: <ec7e11f6-2695-29c8-c9ed-98dc229b8aac@gmail.com>
+Date:   Fri, 13 Dec 2019 17:55:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213141543.GA25899@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <ae96db3a-0854-6e80-0469-e5fa6fd7bb8e@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/19 at 03:15pm, Borislav Petkov wrote:
-> On Fri, Dec 13, 2019 at 09:28:50PM +0800, Baoquan He wrote:
-> > In Documentation/x86/x86_64/mm.rst, the physical memory regions mapping
-> > with page_offset is called as the direct mapping of physical memory.
+13.12.2019 17:29, Dmitry Osipenko пишет:
+> 13.12.2019 02:34, Dmitry Osipenko пишет:
+>> I noticed that sometime I2C clock is kept enabled during suspend-resume.
+>> This happens because runtime PM defers dynamic suspension and thus it may
+>> happen that runtime PM is in active state when system enters into suspend.
+>> In particular I2C controller that is used for CPU's DVFS is often kept ON
+>> during suspend because CPU's voltage scaling happens quite often.
+>>
+>> Note: we marked runtime PM as IRQ-safe during the driver's probe in the
+>> "Support atomic transfers" patch, thus it's okay to enforce runtime PM
+>> suspend/resume in the NOIRQ phase which is used for the system-level
+>> suspend/resume of the driver.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>> index b3ecdd87e91f..d309a314f4d6 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -1790,9 +1790,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+>>  static int __maybe_unused tegra_i2c_suspend(struct device *dev)
+>>  {
+>>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>> +	int err;
+>>  
+>>  	i2c_mark_adapter_suspended(&i2c_dev->adapter);
 > 
-> The fact that it happens to compute the *first* region's size, which
-> *happens* to be the direct mapping of all physical memory is immaterial
-> here.
+> I'm now in a doubt that it is correct to use NOIRQ level at all for the
+> suspend because i2c_mark_adapter_suspended() uses mutex, thus I'm
+> wondering what will happen if there is an asynchronous transfer
+> happening during suspend..
 > 
-> It is actually causing more confusion in an already complex piece of
-> code. You can call this function just as well
+> The i2c_mark_adapter_suspended() will try to block and will never return?
+
+Moreover, the I2C interrupt should be disabled during the NOIRQ phase.
+So, yes.. looks like making use of NOIRQ level wasn't a correct
+decision. On the other hand, I don't think that any I2C client driver
+used by Tegra SoCs in the upstream kernel could cause the problem at the
+moment, so it shouldn't be critical.
+
+BTW: Jon, please CC me next time ;) [I'll try to find a better solution
+for the PCIE problem]
+
+>> +	err = pm_runtime_force_suspend(dev);
+>> +	if (err < 0)
+>> +		return err;
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -1813,6 +1818,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
+>>  	if (err)
+>>  		return err;
+>>  
+>> +	err = pm_runtime_force_resume(dev);
+>> +	if (err < 0)
+>> +		return err;
+>> +
+>>  	i2c_mark_adapter_resumed(&i2c_dev->adapter);
+>>  
+>>  	return 0;
+>>
 > 
->   calc_region_size()
-> 
-> which won't confuse readers. Because all you care about here is the
-> region's size - not which region it is.
-
-Won't calc_region_size be too generic? We also have vmalloc and vmemmap,
-and here we are specifically calculating the direct mapping of physical
-memory. 
-
-> 
-> > kernel_randomize_memory() is invoked much earlier than
-> > acpi_table_parse_srat().
-> 
-> And? What are we going to do about that?
-
-
-void __init setup_arch(char **cmdline_p)
-{
-...
-	kernel_randomize_memory();
-...
-	init_mem_mapping();
-...
-	initmem_init();
-...
-}
-
-In kernel_randomize_memory(), KASLR builds the layout of these regions,
-including their starting address and the gap between them. Once
-finished, __PAGE_OFFSET, VMALLOC_START, VMEMMAP_START are settled. 
-If not knowing the max address to cover all the possible hotplugged
-memory, later memory hotplug will fail.
-
-Thanks
-Baoquan
 
