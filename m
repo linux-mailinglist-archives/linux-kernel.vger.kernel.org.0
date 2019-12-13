@@ -2,123 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CEAF11E398
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:31:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE72C11E39B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 13:31:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfLMMbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 07:31:22 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53109 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726908AbfLMMbW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 07:31:22 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p9so6181441wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 04:31:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=z41FKQuYBUSuoSb2FV0vifxkTTBPMXxzD/YOhZ2tMXg=;
-        b=Ly/oQT9L+ts7qFVZIDbECN/aSDdc+QRYixCMzB3z+8bWc36CMUodtwuYDGPaBOM/Ih
-         gLkJq29oULc4rltitaD9MXHtFWZFPgwpOtHwj9ZMOKuo01Yy8jFUyMK5dFhAa75pBX+7
-         CQMwgUHLt9uRCgaYBPs6z9R8fpeYG6seMH6b/CGWq0OB9ozvko1nV46ueLh0yAmeFB7U
-         qot0qE7kJH6deDEOt5ZZTwWT5Keh4ntPraiEvn6E+TFHvEG2QCaC+sCh1TYeqJVDcnAq
-         StldK8xrkuSot7KQ5sgxR+59OsbvQikY9X50zAf2wOgPOzKqLUlm24kNLlQy9Gg5lbuA
-         Vlww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=z41FKQuYBUSuoSb2FV0vifxkTTBPMXxzD/YOhZ2tMXg=;
-        b=Z1JQYX/DT/9uXQnch9DNSA923U0v/D+p1v8oaNe7Td/xfc8lBOf8HJTiH9NJafy/w8
-         XtwV1PfXCXm2i9YvQ5MTUnigZ9V/lKTiwPN0z7URiVvlvaC25rfF3qdP+gjdg9OQ11zA
-         XHw4EZNf9eiPyJwwidPXO2qeGN1DyMxnvrKz9JJVpVrJgfernf9Dek86H/OwOER5lhvl
-         SJrUmxhJZH3DNoOPVv94EXzNtDCAKeVRuoBl+lJ1f27eF1jME4WAX9CN+n2JK9LAY1S4
-         sjwiymIVqH+peJ21HfqIfAbhuwaYm00KAa/86RZDuL89e0WEwDJBTvD5quHNuTsn7J/n
-         8yVQ==
-X-Gm-Message-State: APjAAAUhzb1c6yBkcPqTGi19DODJPwkhTXNAiJgqz15u6aMQoxxtK3CL
-        49SXp9d+wVE+njW6BvTKEVyUZw==
-X-Google-Smtp-Source: APXvYqyI9oCoKlmkTNb1eHINYrX90erhUnwNmt0X9Htia3GuiYl8nmeYuA97/k8Vm2oQdER9i+aAoQ==
-X-Received: by 2002:a1c:3d07:: with SMTP id k7mr5002476wma.79.1576240279760;
-        Fri, 13 Dec 2019 04:31:19 -0800 (PST)
-Received: from ?IPv6:2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca? ([2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca])
-        by smtp.gmail.com with ESMTPSA id g7sm9913377wrq.21.2019.12.13.04.31.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 04:31:19 -0800 (PST)
-Subject: Re: [PATCH v4] bluetooth: hci_bcm: enable IRQ capability from node
-To:     Johan Hovold <johan@kernel.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-bluetooth@vger.kernel.org, nsaenzjulienne@suse.de,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com
-References: <20191213105521.4290-1-glaroque@baylibre.com>
- <20191213111702.GX10631@localhost>
-From:   guillaume La Roque <glaroque@baylibre.com>
-Message-ID: <162e5588-a702-6042-6934-dd41b64fa1dc@baylibre.com>
-Date:   Fri, 13 Dec 2019 13:31:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727101AbfLMMbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 07:31:39 -0500
+Received: from mga07.intel.com ([134.134.136.100]:38502 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726908AbfLMMbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 07:31:39 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 04:31:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
+   d="scan'208";a="220913279"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 13 Dec 2019 04:31:35 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 13 Dec 2019 14:31:34 +0200
+Date:   Fri, 13 Dec 2019 14:31:34 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     linux@roeck-us.net, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] usb: typec: fusb302: Fix an undefined reference to
+ 'extcon_get_state'
+Message-ID: <20191213123134.GG31345@kuha.fi.intel.com>
+References: <20191212122053.GA1541203@kroah.com>
+ <1576239378-50795-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20191213111702.GX10631@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1576239378-50795-1-git-send-email-zhongjiang@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
+On Fri, Dec 13, 2019 at 08:16:18PM +0800, zhong jiang wrote:
+> Fixes the following compile error:
+> 
+> drivers/usb/typec/tcpm/fusb302.o: In function `tcpm_get_current_limit':
+> fusb302.c:(.text+0x3ee): undefined reference to `extcon_get_state'
+> fusb302.c:(.text+0x422): undefined reference to `extcon_get_state'
+> fusb302.c:(.text+0x450): undefined reference to `extcon_get_state'
+> fusb302.c:(.text+0x48c): undefined reference to `extcon_get_state'
+> drivers/usb/typec/tcpm/fusb302.o: In function `fusb302_probe':
+> fusb302.c:(.text+0x980): undefined reference to `extcon_get_extcon_dev'
+> make: *** [vmlinux] Error 1
+> 
+> It is because EXTCON is build as a module, but FUSB302 is not.
+> 
+> Suggested-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-On 12/13/19 12:17 PM, Johan Hovold wrote:
-> On Fri, Dec 13, 2019 at 11:55:21AM +0100, Guillaume La Roque wrote:
->> Actually IRQ can be found from GPIO but all platforms don't support
->> gpiod_to_irq, it's the case on amlogic chip.
->> so to have possibility to use interrupt mode we need to add interrupts
->> field in node and support it in driver.
-> "node" is a bit vague, please refer to devicetree here and in the patch
-> summary.
->
- i will
->> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
->> ---
->>  drivers/bluetooth/hci_bcm.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
->> index f8f5c593a05c..aa194f8d703e 100644
->> --- a/drivers/bluetooth/hci_bcm.c
->> +++ b/drivers/bluetooth/hci_bcm.c
->> @@ -13,6 +13,7 @@
->>  #include <linux/module.h>
->>  #include <linux/acpi.h>
->>  #include <linux/of.h>
->> +#include <linux/of_irq.h>
->>  #include <linux/property.h>
->>  #include <linux/platform_data/x86/apple.h>
->>  #include <linux/platform_device.h>
->> @@ -1421,6 +1422,7 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
->>  #endif
->>  	bcmdev->serdev_hu.serdev = serdev;
->>  	serdev_device_set_drvdata(serdev, bcmdev);
->> +	bcmdev->irq = of_irq_get(bcmdev->dev->of_node, 0);
-> And this clearly makes no sense for acpi, so you'd need to add it to
-> bcm_of_probe().
->
-> Shouldn't you be used using of_irq_get_byname()?
-i can use it if you prefer but no other interrupt need to be defined
->
-> And since you're extending the binding, I think you need a preparatory
-> patch documenting this in:
->
-> 	Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-sorry i forgot this, i will do
->>  	/* Initialize routing field to an unused value */
->>  	bcmdev->pcm_int_params[0] = 0xff;
-> Johan
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
+> ---
+>  drivers/usb/typec/tcpm/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/typec/tcpm/Kconfig b/drivers/usb/typec/tcpm/Kconfig
+> index 72481bb..5b986d6 100644
+> --- a/drivers/usb/typec/tcpm/Kconfig
+> +++ b/drivers/usb/typec/tcpm/Kconfig
+> @@ -32,6 +32,7 @@ endif # TYPEC_TCPCI
+>  config TYPEC_FUSB302
+>  	tristate "Fairchild FUSB302 Type-C chip driver"
+>  	depends on I2C
+> +	depends on EXTCON || !EXTCON
+>  	help
+>  	  The Fairchild FUSB302 Type-C chip driver that works with
+>  	  Type-C Port Controller Manager to provide USB PD and USB
+> -- 
+> 1.7.12.4
 
-thanks
+thanks,
 
-Guillaume
-
+-- 
+heikki
