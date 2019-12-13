@@ -2,160 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B29D011E0A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 130F611E084
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:24:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfLMJ1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:27:32 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51073 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfLMJ1b (ORCPT
+        id S1726642AbfLMJY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:24:28 -0500
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:29186 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfLMJY1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:27:31 -0500
-Received: from 79.184.255.82.ipv4.supernova.orange.pl (79.184.255.82) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 304d567ef6754ccf; Fri, 13 Dec 2019 10:27:29 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Subject: [PATCH v1 08/10] intel_idle: Allow ACPI _CST to be used for selected known processors
-Date:   Fri, 13 Dec 2019 10:24:02 +0100
-Message-ID: <1902757.UdhMkU40YC@kreacher>
-In-Reply-To: <3950312.2WmFeOdZGY@kreacher>
-References: <3950312.2WmFeOdZGY@kreacher>
+        Fri, 13 Dec 2019 04:24:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1576229066; x=1607765066;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=nOI5D+6Qsp89fLJNSiePjd9aVYqvwjTs+8hPVGDGZg4=;
+  b=Ip25ffDtBfXJ7/HsWfbciogXX+Lb5HXzOWHqLXG6g/Hfe04zh10G0L3A
+   SgAYGy7l5hX9tjP+3mkLKHvyTBm16e+381341wpaScAYOQEqkLfA2NXq4
+   KW16BUM4emDmtlgT3OBxRfpbp3iqNIfqdjUjOt2745+Q5ucYAKHq8op+F
+   k=;
+IronPort-SDR: ItgiI5YTcY9vcNkOGczRdSyvJ3au/2IDZzv+cjArheaPDCdiSDPdDCOsFIFR18iO1vLt74Nzg1
+ KVojnTkUh4QQ==
+X-IronPort-AV: E=Sophos;i="5.69,309,1571702400"; 
+   d="scan'208";a="14685483"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 13 Dec 2019 09:24:13 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS id 08C9BA2F76;
+        Fri, 13 Dec 2019 09:24:11 +0000 (UTC)
+Received: from EX13D32EUC004.ant.amazon.com (10.43.164.121) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 13 Dec 2019 09:24:11 +0000
+Received: from EX13D32EUC003.ant.amazon.com (10.43.164.24) by
+ EX13D32EUC004.ant.amazon.com (10.43.164.121) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 13 Dec 2019 09:24:10 +0000
+Received: from EX13D32EUC003.ant.amazon.com ([10.43.164.24]) by
+ EX13D32EUC003.ant.amazon.com ([10.43.164.24]) with mapi id 15.00.1367.000;
+ Fri, 13 Dec 2019 09:24:10 +0000
+From:   "Durrant, Paul" <pdurrant@amazon.com>
+To:     =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        David Miller <davem@davemloft.net>
+CC:     "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "wei.liu@kernel.org" <wei.liu@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: RE: [Xen-devel] [PATCH net-next] xen-netback: get rid of old udev
+ related code
+Thread-Topic: [Xen-devel] [PATCH net-next] xen-netback: get rid of old udev
+ related code
+Thread-Index: AQHVsPOiKWT/MKpGekOkpRko3pMZ46e23EKAgACxiQCAADwwIA==
+Date:   Fri, 13 Dec 2019 09:24:10 +0000
+Message-ID: <9f6d296e94744ce48d3f72fe4d3fd136@EX13D32EUC003.ant.amazon.com>
+References: <20191212135406.26229-1-pdurrant@amazon.com>
+ <20191212.110513.1770889236741616001.davem@davemloft.net>
+ <cefcf3a4-fc10-d62a-cac9-81f0e47710a8@suse.com>
+In-Reply-To: <cefcf3a4-fc10-d62a-cac9-81f0e47710a8@suse.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.166.122]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-
-Update the intel_idle driver to get the C-states information from ACPI
-_CST in some cases in which the processor is known to the driver, as long as
-that information is available and the new use_acpi flag is set in the
-profile of the processor in question.
-
-In the cases when there is a specific table of C-states for the given
-processor in the driver, that table is used as the primary source of
-information on the available C-states, but if ACPI _CST is present,
-the C-states that are not listed by it will not be enabled by default
-(they still can be enabled later by user space via sysfs, though).
-
-The new CPUIDLE_FLAG_ALWAYS_ENABLE flag can be used for marking
-C-states that should be enabled by default even if they are not
-listed by ACPI _CST.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-Changes from the RFC version:
- - Subject and changelog update.
- - Call the new state flag CPUIDLE_FLAG_ALWAYS_ENABLE (instead of _IGNORE_ACPI).
-
----
- drivers/idle/intel_idle.c | 45 ++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 42 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-index 28812d93d59a..a072b84d9595 100644
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -80,6 +80,7 @@ struct idle_cpu {
- 	unsigned long auto_demotion_disable_flags;
- 	bool byt_auto_demotion_disable_flag;
- 	bool disable_promotion_to_c1e;
-+	bool use_acpi;
- };
- 
- static const struct idle_cpu *icpu;
-@@ -90,6 +91,11 @@ static void intel_idle_s2idle(struct cpuidle_device *dev,
- 			      struct cpuidle_driver *drv, int index);
- static struct cpuidle_state *cpuidle_state_table;
- 
-+/*
-+ * Enable this state by default even if the ACPI _CST does not list it.
-+ */
-+#define CPUIDLE_FLAG_ALWAYS_ENABLE	BIT(15)
-+
- /*
-  * Set this flag for states where the HW flushes the TLB for us
-  * and so we don't need cross-calls to keep it consistent.
-@@ -1230,9 +1236,33 @@ static void intel_idle_init_cstates_acpi(struct cpuidle_driver *drv)
- 		state->enter_s2idle = intel_idle_s2idle;
- 	}
- }
-+
-+static bool intel_idle_off_by_default(u32 mwait_hint)
-+{
-+	int cstate, limit;
-+
-+	/*
-+	 * If there are no _CST C-states, do not disable any C-states by
-+	 * default.
-+	 */
-+	if (!acpi_state_table.count)
-+		return false;
-+
-+	limit = min_t(int, CPUIDLE_STATE_MAX, acpi_state_table.count);
-+	/*
-+	 * If limit > 0, intel_idle_cst_usable() has returned 'true', so all of
-+	 * the interesting states are ACPI_CSTATE_FFH.
-+	 */
-+	for (cstate = 1; cstate < limit; cstate++) {
-+		if (acpi_state_table.states[cstate].address == mwait_hint)
-+			return false;
-+	}
-+	return true;
-+}
- #else /* !CONFIG_ACPI_PROCESSOR_CSTATE */
- static inline bool intel_idle_acpi_cst_extract(void) { return false; }
- static inline void intel_idle_init_cstates_acpi(struct cpuidle_driver *drv) { }
-+static inline bool intel_idle_off_by_default(u32 mwait_hint) { return false; }
- #endif /* !CONFIG_ACPI_PROCESSOR_CSTATE */
- 
- /*
-@@ -1273,10 +1303,13 @@ static int __init intel_idle_probe(void)
- 	pr_debug("MWAIT substates: 0x%x\n", mwait_substates);
- 
- 	icpu = (const struct idle_cpu *)id->driver_data;
--	if (icpu)
-+	if (icpu) {
- 		cpuidle_state_table = icpu->state_table;
--	else if (!intel_idle_acpi_cst_extract())
-+		if (icpu->use_acpi)
-+			intel_idle_acpi_cst_extract();
-+	} else if (!intel_idle_acpi_cst_extract()) {
- 		return -ENODEV;
-+	}
- 
- 	pr_debug("v" INTEL_IDLE_VERSION " model 0x%X\n",
- 		 boot_cpu_data.x86_model);
-@@ -1484,7 +1517,13 @@ static void intel_idle_init_cstates_icpu(struct cpuidle_driver *drv)
- 			continue;
- 
- 		/* Structure copy. */
--		drv->states[drv->state_count++] = cpuidle_state_table[cstate];
-+		drv->states[drv->state_count] = cpuidle_state_table[cstate];
-+
-+		if (icpu->use_acpi && intel_idle_off_by_default(mwait_hint) &&
-+		    !(cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_ALWAYS_ENABLE))
-+			drv->states[drv->state_count].flags |= CPUIDLE_FLAG_OFF;
-+
-+		drv->state_count++;
- 	}
- 
- 	if (icpu->byt_auto_demotion_disable_flag) {
--- 
-2.16.4
-
-
-
-
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKw7xyZ2VuIEdyb8OfIDxqZ3Jv
+c3NAc3VzZS5jb20+DQo+IFNlbnQ6IDEzIERlY2VtYmVyIDIwMTkgMDU6NDENCj4gVG86IERhdmlk
+IE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47IER1cnJhbnQsIFBhdWwNCj4gPHBkdXJyYW50
+QGFtYXpvbi5jb20+DQo+IENjOiB4ZW4tZGV2ZWxAbGlzdHMueGVucHJvamVjdC5vcmc7IHdlaS5s
+aXVAa2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IG5ldGRldkB2
+Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtYZW4tZGV2ZWxdIFtQQVRDSCBuZXQtbmV4
+dF0geGVuLW5ldGJhY2s6IGdldCByaWQgb2Ygb2xkIHVkZXYNCj4gcmVsYXRlZCBjb2RlDQo+IA0K
+PiBPbiAxMi4xMi4xOSAyMDowNSwgRGF2aWQgTWlsbGVyIHdyb3RlOg0KPiA+IEZyb206IFBhdWwg
+RHVycmFudCA8cGR1cnJhbnRAYW1hem9uLmNvbT4NCj4gPiBEYXRlOiBUaHUsIDEyIERlYyAyMDE5
+IDEzOjU0OjA2ICswMDAwDQo+ID4NCj4gPj4gSW4gdGhlIHBhc3QgaXQgdXNlZCB0byBiZSB0aGUg
+Y2FzZSB0aGF0IHRoZSBYZW4gdG9vbHN0YWNrIHJlbGllZCB1cG9uDQo+ID4+IHVkZXYgdG8gZXhl
+Y3V0ZSBiYWNrZW5kIGhvdHBsdWcgc2NyaXB0cy4gSG93ZXZlciB0aGlzIGhhcyBub3QgYmVlbiB0
+aGUNCj4gPj4gY2FzZSBmb3IgbWFueSByZWxlYXNlcyBub3cgYW5kIHJlbW92YWwgb2YgdGhlIGFz
+c29jaWF0ZWQgY29kZSBpbg0KPiA+PiB4ZW4tbmV0YmFjayBzaG9ydGVucyB0aGUgc291cmNlIGJ5
+IG1vcmUgdGhhbiAxMDAgbGluZXMsIGFuZCByZW1vdmVzDQo+IG11Y2gNCj4gPj4gY29tcGxleGl0
+eSBpbiB0aGUgaW50ZXJhY3Rpb24gd2l0aCB0aGUgeGVuc3RvcmUgYmFja2VuZCBzdGF0ZS4NCj4g
+Pj4NCj4gPj4gTk9URTogeGVuLW5ldGJhY2sgaXMgdGhlIG9ubHkgeGVuYnVzIGRyaXZlciB0byBo
+YXZlIGEgZnVuY3Rpb25hbA0KPiB1ZXZlbnQoKQ0KPiA+PiAgICAgICAgbWV0aG9kLiBUaGUgb25s
+eSBvdGhlciBkcml2ZXIgdG8gaGF2ZSBhIG1ldGhvZCBhdCBhbGwgaXMNCj4gPj4gICAgICAgIHB2
+Y2FsbHMtYmFjaywgYW5kIGN1cnJlbnRseSBwdmNhbGxzX2JhY2tfdWV2ZW50KCkgc2ltcGx5IHJl
+dHVybnMNCj4gMC4NCj4gPj4gICAgICAgIEhlbmNlIHRoaXMgcGF0Y2ggYWxzbyBmYWNpbGl0YXRl
+cyBmdXJ0aGVyIGNsZWFudXAuDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IFBhdWwgRHVycmFu
+dCA8cGR1cnJhbnRAYW1hem9uLmNvbT4NCj4gPg0KPiA+IElmIHVzZXJzcGFjZSBldmVyIHVzZWQg
+dGhpcyBzdHVmZiwgSSBzZXJpb3VzbHkgZG91YnQgeW91IGNhbiByZW1vdmUgdGhpcw0KPiA+IGV2
+ZW4gaWYgaXQgaGFzbid0IGJlZW4gdXNlZCBpbiA1KyB5ZWFycy4NCj4gDQo+IEhtbSwgZGVwZW5k
+cy4NCj4gDQo+IFRoaXMgaGFzIGJlZW4gdXNlZCBieSBYZW4gdG9vbHMgaW4gZG9tMCBvbmx5LiBJ
+ZiB0aGUgbGFzdCB1c2FnZSBoYXMgYmVlbg0KPiBpbiBhIFhlbiB2ZXJzaW9uIHdoaWNoIGlzIG5v
+IGxvbmdlciBhYmxlIHRvIHJ1biB3aXRoIGN1cnJlbnQgTGludXggaW4NCj4gZG9tMCBpdCBjb3Vs
+ZCBiZSByZW1vdmVkLiBCdXQgSSBndWVzcyB0aGlzIHdvdWxkIGhhdmUgdG8gYmUgYSByYXRoZXIg
+b2xkDQo+IHZlcnNpb24gb2YgWGVuIChsaWtlIDMueD8pLg0KPiANCj4gUGF1bCwgY2FuIHlvdSBn
+aXZlIGEgaGludCBzaW5jZSB3aGljaCBYZW4gdmVyc2lvbiB0aGUgdG9vbHN0YWNrIG5vDQo+IGxv
+bmdlciByZWxpZXMgb24gdWRldiB0byBzdGFydCB0aGUgaG90cGx1ZyBzY3JpcHRzPw0KPiANCg0K
+VGhlIHVkZXYgcnVsZXMgd2VyZSBpbiBhIGZpbGUgY2FsbGVkIHRvb2xzL2hvdHBsdWcvTGludXgv
+eGVuLWJhY2tlbmQucnVsZXMgKGluIHhlbi5naXQpLCBhbmQgYSBjb21taXQgZnJvbSBSb2dlciBy
+ZW1vdmVkIHRoZSBOSUMgcnVsZXMgaW4gMjAxMjoNCg0KY29tbWl0IDU3YWQ2YWZlMmEwOGEwM2M0
+MGJjZDMzNmJmYjI3ZTAwOGUxZDNlNTMNCkF1dGhvcjogUm9nZXIgUGF1IE1vbm5lIDxyb2dlci5w
+YXVAY2l0cml4LmNvbT4NCkRhdGU6ICAgVGh1IEp1bCAyNiAxNjo0NzozNSAyMDEyICswMTAwDQoN
+CiAgICBsaWJ4bDogY2FsbCBob3RwbHVnIHNjcmlwdHMgZm9yIG5pYyBkZXZpY2VzIGZyb20gbGli
+eGwNCg0KICAgIFNpbmNlIG1vc3Qgb2YgdGhlIG5lZWRlZCB3b3JrIGlzIGFscmVhZHkgZG9uZSBp
+biBwcmV2aW91cyBwYXRjaGVzLA0KICAgIHRoaXMgcGF0Y2ggb25seSBjb250YWlucyB0aGUgbmVj
+ZXNzYXJ5IGNvZGUgdG8gY2FsbCBob3RwbHVnIHNjcmlwdHMNCiAgICBmb3IgbmljIGRldmljZXMs
+IHRoYXQgc2hvdWxkIGJlIGNhbGxlZCB3aGVuIHRoZSBkZXZpY2UgaXMgYWRkZWQgb3INCiAgICBy
+ZW1vdmVkIGZyb20gYSBndWVzdC4NCg0KICAgIEFkZGVkIGFub3RoZXIgcGFyYW1ldGVyIHRvIGxp
+YnhsX19nZXRfaG90cGx1Z19zY3JpcHRfaW5mbywgdGhhdCBpcw0KICAgIHVzZWQgdG8ga25vdyB0
+aGUgbnVtYmVyIG9mIHRpbWVzIGhvdHBsdWcgc2NyaXB0cyBoYXZlIGJlZW4gY2FsbGVkIGZvcg0K
+ICAgIHRoYXQgZGV2aWNlLiBUaGlzIGlzIGN1cnJlbnRseSB1c2VkIGJ5IElPRU1VIG5pY3Mgb24g
+TGludXguDQoNCiAgICBTaWduZWQtb2ZmLWJ5OiBSb2dlciBQYXUgTW9ubmUgPHJvZ2VyLnBhdUBj
+aXRyaXguY29tPg0KICAgIEFja2VkLWJ5OiBJYW4gSmFja3NvbjxpYW4uamFja3NvbkBldS5jaXRy
+aXguY29tPg0KICAgIENvbW1pdHRlZC1ieTogSWFuIENhbXBiZWxsIDxpYW4uY2FtcGJlbGxAY2l0
+cml4LmNvbT4NCg0KVGhlIGxhc3QgY29tbWl0IEkgY291bGQgZmluZCB0byB0aGF0IGZpbGUgbW9k
+aWZpZWQgaXRzIG5hbWUgdG8geGVuLWJhY2tlbmQucnVsZXMuaW4sIGFuZCB0aGlzIHdhcyBmaW5h
+bGx5IHJlbW92ZWQgYnkgR2VvcmdlIGluIDIwMTU6DQoNCmNvbW1pdCAyYmEzNjhkMTM4OTM0MDJi
+MmYxZmIzYzI4M2RkY2M3MTQ2NTlkZDliDQpBdXRob3I6IEdlb3JnZSBEdW5sYXAgPGdlb3JnZS5k
+dW5sYXBAZXUuY2l0cml4LmNvbT4NCkRhdGU6ICAgTW9uIEp1bCA2IDExOjUxOjM5IDIwMTUgKzAx
+MDANCg0KICAgIGxpYnhsOiBSZW1vdmUgbGludXggdWRldiBydWxlcw0KDQogICAgVGhleSBhcmUg
+bm8gbG9uZ2VyIG5lZWRlZCwgaGF2aW5nIGJlZW4gcmVwbGFjZWQgYnkgYSBkYWVtb24gZm9yDQog
+ICAgZHJpdmVyZG9tYWlucyB3aGljaCB3aWxsIHJ1biBzY3JpcHRzIGFzIG5lY2Vzc2FyeS4NCg0K
+ICAgIFdvcnNlIHlldCwgdGhleSBzZWVtIHRvIGJlIGJyb2tlbiBmb3Igc2NyaXB0LWJhc2VkIGJs
+b2NrIGRldmljZXMsIHN1Y2gNCiAgICBhcyBibG9jay1pc2NzaS4gIFRoaXMgd291bGRuJ3QgbWF0
+dGVyIHNvIG11Y2ggaWYgdGhleSB3ZXJlIG5ldmVyIHJ1bg0KICAgIGJ5IGRlZmF1bHQ7IGJ1dCBp
+ZiB5b3UgcnVuIGJsb2NrLWF0dGFjaCB3aXRob3V0IGhhdmluZyBjcmVhdGVkIGENCiAgICBkb21h
+aW4sIHRoZW4gdGhlIGFwcHJvcHJpYXRlIG5vZGUgdG8gZGlzYWJsZSBydW5uaW5nIHVkZXYgc2Ny
+aXB0cyB3aWxsDQogICAgbm90IGhhdmUgYmVlbiB3cml0dGVuIHlldCwgYW5kIHRoZSBhdHRhY2gg
+d2lsbCBzaWxlbnRseSBmYWlsLg0KDQogICAgUmF0aGVyIHRoYW4gdHJ5IHRvIHNvcnQgb3V0IHRo
+YXQgaXNzdWUsIGp1c3QgcmVtb3ZlIHRoZW0gZW50aXJlbHkuDQoNCiAgICBTaWduZWQtb2ZmLWJ5
+OiBHZW9yZ2UgRHVubGFwIDxnZW9yZ2UuZHVubGFwQGV1LmNpdHJpeC5jb20+DQogICAgQWNrZWQt
+Ynk6IFdlaSBMaXUgPHdlaS5saXUyQGNpdHJpeC5jb20+DQoNClNvLCBJIHRoaW5rIHRoaXMgbWVh
+bnMgYW55b25lIHVzaW5nIGEgdmVyc2lvbiBvZiB0aGUgWGVuIHRvb2xzIHdpdGhpbiByZWNlbnQg
+bWVtb3J5IHdpbGwgYmUgaGF2aW5nIHRoZWlyIGhvdHBsdWcgc2NyaXB0cyBjYWxsZWQgZGlyZWN0
+bHkgYnkgbGlieGwgKGFuZCBoYXZpbmcgdWRldiBydWxlcyBwcmVzZW50IHdvdWxkIGFjdHVhbGx5
+IGJlIGNvdW50ZXItcHJvZHVjdGl2ZSwgYXMgR2VvcmdlJ3MgY29tbWl0IHN0YXRlcyBhbmQgYXMg
+SSBkaXNjb3ZlcmVkIHRoZSBoYXJkIHdheSB3aGVuIHRoZSBjaGFuZ2Ugd2FzIG9yaWdpbmFsbHkg
+bWFkZSkuDQoNCiAgUGF1bA0KDQoNCg0KPiANCj4gSnVlcmdlbg0K
