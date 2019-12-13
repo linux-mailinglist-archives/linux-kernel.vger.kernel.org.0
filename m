@@ -2,194 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 409A311E442
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:04:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B630911E454
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 14:06:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbfLMNC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 08:02:58 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42296 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbfLMNC5 (ORCPT
+        id S1727296AbfLMNG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 08:06:57 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54022 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727205AbfLMNG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 08:02:57 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 4so1437694pfz.9;
-        Fri, 13 Dec 2019 05:02:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uEiwYwG2ib2Yeq5P9ACEefY7MIinaV0AW/8h9n1+N1Q=;
-        b=gPQK3qskrW2gOr2veuLvf3gAx9ng3L/VHZJ7mjG7Sk5Snik2Gdpm4PiVQRTPy8jyMD
-         0pn0MpgBCOy4m0xbDoG3lG2ws4voo87ZmXeWEIWxdrnmdf+h6UdUexqPOHE27GIYfOu7
-         dYbRwrNRkbApSAfXC5UtRr5A8euEdeWOOGWTGgdpDhLF1hWuwNJISZwaEz/x3lRZmpqr
-         OQ9bnyjBNR5dYnu2g2t8hsQ3gST0M32svalZmf8VLJWyccpz52Dh1H5GzWBP0zzN+r5L
-         2FCClYGdKGhx8BvcHCa/yvk3Kenf83R6/UT+CsgF5v04H3sCb9iUkphjcrAqHEkpfb7h
-         13nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uEiwYwG2ib2Yeq5P9ACEefY7MIinaV0AW/8h9n1+N1Q=;
-        b=Dk28sXf3AYMCkPa9weGBqI5U8ZDZDouZ9oDaqOd6+NXuF+ztR7YPISuinvHPlmR310
-         kbceA90wfsAGkWSnJS5K0lfmSfWP8cXfsdtb2LJDxP1ELb3yQ/oNw5wEOrd1J4xLcM8m
-         AotPV4X5JBBNJZDtiNwIJR2msZp2EpHdWwdq2UxQKoX8k7MeUf40ca99+uKxXI736XrX
-         q2AOPa3PqYSZ5sRZ38xCHMUhlaNKGkIWoaGhvZM9Ky9fzca62FsXUPlnO8R482BM85zy
-         PiqF4BnZeFABDf0vkwk4g+gx/5HnJoU2Sf69CKTFh1DxHK4b43HgSuG0ghG1kdC0WSpV
-         lP8g==
-X-Gm-Message-State: APjAAAXBb1jtsTRzzmsRr3Ai/Gq1GBGE0ynGM9l972J2kYQcOZUQU+oh
-        TY883rN1yfRbbEu+kamitTI=
-X-Google-Smtp-Source: APXvYqweIDheQHOiqrv3fPYFpeQWsnwFO9Q+ZKi9VcsDSHxaFOZMz0N8weNLFTTFp6v9m/m8d0pPvw==
-X-Received: by 2002:a63:1e5c:: with SMTP id p28mr17037963pgm.235.1576242176233;
-        Fri, 13 Dec 2019 05:02:56 -0800 (PST)
-Received: from localhost.localdomain ([12.176.148.120])
-        by smtp.gmail.com with ESMTPSA id k3sm10872278pgc.3.2019.12.13.05.02.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 05:02:55 -0800 (PST)
-From:   SeongJae Park <sj38.park@gmail.com>
-X-Google-Original-From: SeongJae Park <sjpark@amazon.de>
-To:     jgross@suse.com, axboe@kernel.dk, konrad.wilk@oracle.com,
-        roger.pau@citrix.com
-Cc:     SeongJae Park <sjpark@amazon.de>, pdurrant@amazon.com,
-        sjpark@amazon.com, sj38.park@gmail.com,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 3/3] xen/blkback: Remove unnecessary static variable name prefixes
-Date:   Fri, 13 Dec 2019 13:02:11 +0000
-Message-Id: <20191213130211.24011-4-sjpark@amazon.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191213130211.24011-1-sjpark@amazon.de>
-References: <20191213130211.24011-1-sjpark@amazon.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Fri, 13 Dec 2019 08:06:56 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBDD5N3k024259
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:06:55 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wusvhx6wm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:06:55 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 13 Dec 2019 13:06:53 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 13 Dec 2019 13:06:49 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBDD66Yh22282504
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Dec 2019 13:06:06 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9E840A4066;
+        Fri, 13 Dec 2019 13:06:48 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 596ABA4054;
+        Fri, 13 Dec 2019 13:06:47 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.131.45])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 13 Dec 2019 13:06:47 +0000 (GMT)
+Subject: Re: [PATCH v3 1/2] IMA: Define workqueue for early boot "key"
+ measurements
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Date:   Fri, 13 Dec 2019 08:06:46 -0500
+In-Reply-To: <c60341a3-2329-cd92-c76c-6f8249a57b43@linux.microsoft.com>
+References: <20191213004250.21132-1-nramas@linux.microsoft.com>
+         <20191213004250.21132-2-nramas@linux.microsoft.com>
+         <1576202134.4579.189.camel@linux.ibm.com>
+         <6e0dad33-66f9-4807-d08d-ff30396cec5e@linux.microsoft.com>
+         <1576204377.4579.206.camel@linux.ibm.com>
+         <c60341a3-2329-cd92-c76c-6f8249a57b43@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19121313-0028-0000-0000-000003C82E99
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19121313-0029-0000-0000-0000248B6C03
+Message-Id: <1576242406.4579.239.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-13_03:2019-12-13,2019-12-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ clxscore=1015 suspectscore=0 adultscore=0 mlxlogscore=999 phishscore=0
+ spamscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912130105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A few of static variables in blkback have 'xen_blkif_' prefix, though it
-is unnecessary for static variables.  This commit removes such prefixes.
+On Thu, 2019-12-12 at 18:59 -0800, Lakshmi Ramasubramanian wrote:
+> On 12/12/2019 6:32 PM, Mimi Zohar wrote:
+> 
+> >>>
+> >>> Don't you need a test here, before setting ima_process_keys?
+> >>>
+> >>> 	if (ima_process_keys)
+> >>> 		return;
 
-Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- drivers/block/xen-blkback/blkback.c | 37 +++++++++++++----------------
- 1 file changed, 17 insertions(+), 20 deletions(-)
+> >> That check is done before the comment - at the start of
+> >> ima_process_queued_keys().
+> > 
+> > The first test prevents taking the mutex unnecessarily.
+> > 
+> 
+> I am trying to understand your concern here. Could you please clarify?
+> 
+>   => If ima_process_keys is false
+>        -> With the mutex held, should check ima_process_keys again 
+> before setting?
+> 
+> Let's say 2 or more threads are racing in calling ima_process_queued_keys():
+> 
+> The 1st one will set ima_process_keys and process queued keys.
+> 
+> The 2nd and subsequent ones - even if they have gone past the initial 
+> check, will find an empty list of keys (the list "ima_keys") when they 
+> take the mutex. So they'll not process any keys.
 
-diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-index 26606c4896fd..85ff629a7546 100644
---- a/drivers/block/xen-blkback/blkback.c
-+++ b/drivers/block/xen-blkback/blkback.c
-@@ -62,8 +62,8 @@
-  * IO workloads.
-  */
- 
--static int xen_blkif_max_buffer_pages = 1024;
--module_param_named(max_buffer_pages, xen_blkif_max_buffer_pages, int, 0644);
-+static int max_buffer_pages = 1024;
-+module_param_named(max_buffer_pages, max_buffer_pages, int, 0644);
- MODULE_PARM_DESC(max_buffer_pages,
- "Maximum number of free pages to keep in each block backend buffer");
- 
-@@ -78,8 +78,8 @@ MODULE_PARM_DESC(max_buffer_pages,
-  * algorithm.
-  */
- 
--static int xen_blkif_max_pgrants = 1056;
--module_param_named(max_persistent_grants, xen_blkif_max_pgrants, int, 0644);
-+static int max_pgrants = 1056;
-+module_param_named(max_persistent_grants, max_pgrants, int, 0644);
- MODULE_PARM_DESC(max_persistent_grants,
-                  "Maximum number of grants to map persistently");
- 
-@@ -88,8 +88,8 @@ MODULE_PARM_DESC(max_persistent_grants,
-  * use. The time is in seconds, 0 means indefinitely long.
-  */
- 
--static unsigned int xen_blkif_pgrant_timeout = 60;
--module_param_named(persistent_grant_unused_seconds, xen_blkif_pgrant_timeout,
-+static unsigned int pgrant_timeout = 60;
-+module_param_named(persistent_grant_unused_seconds, pgrant_timeout,
- 		   uint, 0644);
- MODULE_PARM_DESC(persistent_grant_unused_seconds,
- 		 "Time in seconds an unused persistent grant is allowed to "
-@@ -137,9 +137,8 @@ module_param(log_stats, int, 0644);
- 
- static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
- {
--	return xen_blkif_pgrant_timeout &&
--	       (jiffies - persistent_gnt->last_used >=
--		HZ * xen_blkif_pgrant_timeout);
-+	return pgrant_timeout && (jiffies - persistent_gnt->last_used >=
-+			HZ * pgrant_timeout);
- }
- 
- /* Once a memory pressure is detected, squeeze free page pools for a while. */
-@@ -249,7 +248,7 @@ static int add_persistent_gnt(struct xen_blkif_ring *ring,
- 	struct persistent_gnt *this;
- 	struct xen_blkif *blkif = ring->blkif;
- 
--	if (ring->persistent_gnt_c >= xen_blkif_max_pgrants) {
-+	if (ring->persistent_gnt_c >= max_pgrants) {
- 		if (!blkif->vbd.overflow_max_grants)
- 			blkif->vbd.overflow_max_grants = 1;
- 		return -EBUSY;
-@@ -412,14 +411,13 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
- 		goto out;
- 	}
- 
--	if (ring->persistent_gnt_c < xen_blkif_max_pgrants ||
--	    (ring->persistent_gnt_c == xen_blkif_max_pgrants &&
-+	if (ring->persistent_gnt_c < max_pgrants ||
-+	    (ring->persistent_gnt_c == max_pgrants &&
- 	    !ring->blkif->vbd.overflow_max_grants)) {
- 		num_clean = 0;
- 	} else {
--		num_clean = (xen_blkif_max_pgrants / 100) * LRU_PERCENT_CLEAN;
--		num_clean = ring->persistent_gnt_c - xen_blkif_max_pgrants +
--			    num_clean;
-+		num_clean = (max_pgrants / 100) * LRU_PERCENT_CLEAN;
-+		num_clean = ring->persistent_gnt_c - max_pgrants + num_clean;
- 		num_clean = min(ring->persistent_gnt_c, num_clean);
- 		pr_debug("Going to purge at least %u persistent grants\n",
- 			 num_clean);
-@@ -614,8 +612,7 @@ static void print_stats(struct xen_blkif_ring *ring)
- 		 current->comm, ring->st_oo_req,
- 		 ring->st_rd_req, ring->st_wr_req,
- 		 ring->st_f_req, ring->st_ds_req,
--		 ring->persistent_gnt_c,
--		 xen_blkif_max_pgrants);
-+		 ring->persistent_gnt_c, max_pgrants);
- 	ring->st_print = jiffies + msecs_to_jiffies(10 * 1000);
- 	ring->st_rd_req = 0;
- 	ring->st_wr_req = 0;
-@@ -675,7 +672,7 @@ int xen_blkif_schedule(void *arg)
- 		if (time_before(jiffies, buffer_squeeze_end))
- 			shrink_free_pagepool(ring, 0);
- 		else
--			shrink_free_pagepool(ring, xen_blkif_max_buffer_pages);
-+			shrink_free_pagepool(ring, max_buffer_pages);
- 
- 		if (log_stats && time_after(jiffies, ring->st_print))
- 			print_stats(ring);
-@@ -902,7 +899,7 @@ static int xen_blkbk_map(struct xen_blkif_ring *ring,
- 			continue;
- 		}
- 		if (use_persistent_gnts &&
--		    ring->persistent_gnt_c < xen_blkif_max_pgrants) {
-+		    ring->persistent_gnt_c < max_pgrants) {
- 			/*
- 			 * We are using persistent grants, the grant is
- 			 * not mapped but we might have room for it.
-@@ -929,7 +926,7 @@ static int xen_blkbk_map(struct xen_blkif_ring *ring,
- 			pages[seg_idx]->persistent_gnt = persistent_gnt;
- 			pr_debug("grant %u added to the tree of persistent grants, using %u/%u\n",
- 				 persistent_gnt->gnt, ring->persistent_gnt_c,
--				 xen_blkif_max_pgrants);
-+				 max_pgrants);
- 			goto next;
- 		}
- 		if (use_persistent_gnts && !blkif->vbd.overflow_max_grants) {
--- 
-2.17.1
+I just need to convince myself that this is correct.  Normally before
+reading and writing a flag, there is some sort of locking.  With
+taking the mutex before setting the flag, there is now only a lock
+around the single writer.
+
+Without taking a lock before reading the flag, will the queue always
+be empty is the question.  If it is, then the comment is correct, but
+the code assumes not and processes the list again.  Testing the flag
+after taking the mutex just re-enforces the comment.
+
+Bottom line, does reading the flag need to be lock protected?
+
+Mimi
+
 
