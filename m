@@ -2,110 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6A7511DF94
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:37:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 114C111DF98
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 09:41:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbfLMIhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 03:37:45 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39206 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbfLMIhn (ORCPT
+        id S1726524AbfLMIlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 03:41:39 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42110 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfLMIlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 03:37:43 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 77so5492241oty.6;
-        Fri, 13 Dec 2019 00:37:42 -0800 (PST)
+        Fri, 13 Dec 2019 03:41:39 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y19so1327132lfl.9;
+        Fri, 13 Dec 2019 00:41:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=rLQ5m+u1dvrjSizT1sS4iO+rnO5Zjh0/I2TBX2IdsrQ=;
+        b=lDI74twSnmzAP+UZ3bIAiF1+NnttuW0yfFKA2pCdFYGcb8nOdOD5Vd+1JeMr/xk5lt
+         MLayFIEEIaFktMbOiqEry4oYOO7QfBohbaDmto24P1Lg+sQHGf/jx4RS2PYdFeA8ZPRT
+         LbuRXKXmvnnThVDivXkbbGoKQOwRJWyWeRh6YgdKx5NqZGX0V5GLBOFEgRvPQWhdGZ67
+         wBjphQDcaVIzS8YuPPvW9vO7Ne6stVJ7eZy+N4VeU3C2343su9FQOS5eqCsIUqF0lA86
+         Ml/AemxALKi+ka01i5yoPCpFbgrkVZ069SgRuOgJ/do8G+sBAWpx7yrhOa7Q+vqhkpHk
+         0ooQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hrUtcMROVbSj3bFQMrJtvcxKtecQ0YYWZGQ6UFEvpuE=;
-        b=H6lumRRZfMia/fXBlvj0yzat0cyD68UyCiANSvczQJxLyOq6oAfOgLap1jr9Tn2tsn
-         7TDLX5aWebiv9J3cfR3UZIOxiwzAEh/eCHW0KflOTdV3kXgIk88ehdvTCDru07C6498n
-         3eAPRFv1XtTf8oIU+ohratFwAKEB3L7RVXvUs1AOSGpUwZaWPdpCj6f6DLlqTbfVtah2
-         +2tTSGUcnETLd4fwfAgMg1sbheSd0wUpwj0MU9pfUKPtlndiuuHnS5Ko9OwgGBYus0H5
-         ryOVoXRAsqf75liyAIK4E8qBsZj9G178YYRl0gEWTKcCR7u7g0TYN9/WlU0jLQx/lCjF
-         idxg==
-X-Gm-Message-State: APjAAAV6QgQ3Sd8dH+lBVpVOcnplffXI+YMLKgyqvSjNReQSo5EwpYxF
-        8RLDFGmIqqpzeFCC4LAG03vr8JTVIHGDe6YsIzM=
-X-Google-Smtp-Source: APXvYqzwQuxqpAXr1PaoHa2ITEuOSiCxR6CYI4S0X2/CUhtNPf5jZ7bP1wxtc/TXNOR61beC6esoVnZKEDS8l3BlkTs=
-X-Received: by 2002:a05:6830:18cd:: with SMTP id v13mr12830287ote.118.1576226262292;
- Fri, 13 Dec 2019 00:37:42 -0800 (PST)
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rLQ5m+u1dvrjSizT1sS4iO+rnO5Zjh0/I2TBX2IdsrQ=;
+        b=BD/6RzGwC/1dKTKZ6cXQiD9lxdTQnMs2hLfSivcB4BI4YL1mqWbfsFZQPw1kVcOgWv
+         QWx4ayt6F8nr1OhBjD+9aaQi+wvLEvjPlo9zTZ1nbGl/3BAdh7JBAMLLQYwUlPKgEMiO
+         AKUHCuZhvr5WpOx9np9+ooBjx86mvFcYQ/JgIHFA5yreNj451NgmYuQUp+C6lIHrU9mi
+         yA9Sp+gU0g1d/p5rJql4t+c9UfK4oY5W5FRuSEykFmUsFCl3+geg3nFecAu6PrkBd5Hq
+         Y+bqbTxvKsPtyVgoVQGcA9ppZOf2Xwec0NR1BNx/3sO2hrUxu6YT/POGy3sqU7eaUrhb
+         wS2w==
+X-Gm-Message-State: APjAAAXIasKEyDFy24LhMwiSIXwrjlFv4u1nQqtRydBjizwwOoPg2BNp
+        7oHQiYncuk4W1dMCSJuUBxOeUDLOIKI=
+X-Google-Smtp-Source: APXvYqyySNePGf8Iw3wiWo/O7Kxs5ALek69lfyC5bZcw4C/Hicer9vtPstNSq6i9zEGJM7PBaabGXQ==
+X-Received: by 2002:a19:5212:: with SMTP id m18mr8153947lfb.7.1576226496826;
+        Fri, 13 Dec 2019 00:41:36 -0800 (PST)
+Received: from [172.31.190.83] ([86.57.146.226])
+        by smtp.gmail.com with ESMTPSA id h19sm4356381ljl.57.2019.12.13.00.41.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Dec 2019 00:41:36 -0800 (PST)
+Subject: Re: [PATCH liburing] Test wait after under-consuming
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <e5579bbac4fcb4f0e9b6ba4fbf3a56bd9a925c6c.1576224356.git.asml.silence@gmail.com>
+Message-ID: <688ff2e6-0bb3-908f-5b5f-af894ed9f0c5@gmail.com>
+Date:   Fri, 13 Dec 2019 11:41:35 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <20191108042225.45391-1-dmitry.torokhov@gmail.com>
- <20191108042225.45391-2-dmitry.torokhov@gmail.com> <CGME20191212111237eucas1p1a278d2d5d2437e3219896367e82604cc@eucas1p1.samsung.com>
- <b3f6ca8b-dbdf-0cec-aa8f-47ffcc5c5307@samsung.com> <20191212112825.GK32742@smile.fi.intel.com>
- <CAJZ5v0i3dSOSa37yWLM+zDVnMKVTkOxbyKD4vo0KVwj_uFB26Q@mail.gmail.com> <ef1eb8d9-92f3-a4e4-f8d2-a2e247737c97@samsung.com>
-In-Reply-To: <ef1eb8d9-92f3-a4e4-f8d2-a2e247737c97@samsung.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 13 Dec 2019 09:37:31 +0100
-Message-ID: <CAJZ5v0ggTeUURcBpdQfKHLCLCrBCVGn_uiBDMhb-GagySNBytQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/6] software node: rename is_array to is_inline
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Linux USB Mailing List <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e5579bbac4fcb4f0e9b6ba4fbf3a56bd9a925c6c.1576224356.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 7:47 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Rafael,
->
-> On 12.12.2019 17:41, Rafael J. Wysocki wrote:
-> > On Thu, Dec 12, 2019 at 12:28 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> >> On Thu, Dec 12, 2019 at 12:12:36PM +0100, Marek Szyprowski wrote:
-> >>> On 08.11.2019 05:22, Dmitry Torokhov wrote:
-> >>>> We do not need a special flag to know if we are dealing with an array,
-> >>>> as we can get that data from ratio between element length and the data
-> >>>> size, however we do need a flag to know whether the data is stored
-> >>>> directly inside property_entry or separately.
-> >>>>
-> >>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >>> Today I've noticed that this patch got merged to linux-next as commit
-> >>> e6bff4665c595b5a4aff173848851ed49ac3bfad. Sadly it breaks DWC3/xHCI
-> >>> driver operation on Samsung Exynos5 SoCs (and probably on other SoCs
-> >>> which use DWC3 in host mode too). I get the following errors during boot:
-> >>>
-> >>> dwc3 12000000.dwc3: failed to add properties to xHCI
-> >>> dwc3 12000000.dwc3: failed to initialize host
-> >>> dwc3: probe of 12000000.dwc3 failed with error -61
-> >>>
-> >>> Here is a full kernel log from Exynos5250-based Snow Chromebook on KernelCI:
-> >>>
-> >>> https://storage.kernelci.org/next/master/next-20191212/arm/exynos_defconfig/gcc-8/lab-collabora/boot-exynos5250-snow.txt
-> >>>
-> >>> (lack of 'ref' clk is not related nor fatal to the driver operation).
-> >>>
-> >>> The code which fails after this patch is located in
-> >>> drivers/usb/dwc3/host.c. Let me know if I can help more in locating the bug.
-> >> Thank you for report.
-> >>
-> >> I think we should not have that patch in the fist place... I used to have
-> >> a bad feeling about it and then forgot about it existence.
-> > Well, I think you mean the [2/6].
-> >
-> > The $subject one really shouldn't change functionality, we must have
-> > missed something here.
->
-> Nope, I was really talking about [1/6]. It looks that it revealed an
-> issue in the DWC3 driver pointed by Dmitry.
+On 12/13/2019 11:06 AM, Pavel Begunkov wrote:
+> In case of an error submission won't consume all sqes. This tests that
+> it will get back to the userspace even if (to_submit == to_wait)
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  test/link.c | 56 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 55 insertions(+), 1 deletion(-)
+> 
+> diff --git a/test/link.c b/test/link.c
+> index 8ec1649..93653f3 100644
+> --- a/test/link.c
+> +++ b/test/link.c
+> @@ -384,6 +384,55 @@ err:
+>  	return 1;
+>  }
+>  
+> +static int test_early_fail_and_wait(struct io_uring *ring)
+> +{
+> +	struct io_uring_cqe *cqe;
+> +	struct io_uring_sqe *sqe;
+> +	int ret, submitted, i;
+> +	const int invalid_fd = 42;
+> +	struct iovec iov = { .iov_base = NULL, .iov_len = 0 };
+> +
+> +	sqe = io_uring_get_sqe(ring);
+> +	if (!sqe) {
+> +		printf("get sqe failed\n");
+> +		goto err;
+> +	}
+> +
+> +	io_uring_prep_readv(sqe, invalid_fd, &iov, 1, 0);
+> +	sqe->user_data = 1;
+> +	sqe->flags |= IOSQE_IO_LINK;
+> +
+> +	sqe = io_uring_get_sqe(ring);
+> +	if (!sqe) {
+> +		printf("get sqe failed\n");
+> +		goto err;
+> +	}
+> +
+> +	io_uring_prep_nop(sqe);
+> +	sqe->user_data = 2;
+> +
+> +	submitted = io_uring_submit_and_wait(ring, 2);
+> +	if (submitted == -EAGAIN)
+> +		return 0;
 
-Right, but I was referring to the Andy's comment.
+As io_uring isn't recreated for each test case, I need to complete all
+cqes in any case. I'll resend
 
-Cheers!
+> +	if (submitted <= 0) {
+> +		printf("sqe submit failed: %d\n", submitted);
+> +		goto err;
+> +	}
+> +
+> +	for (i = 0; i < 2; i++) {
+> +		ret = io_uring_wait_cqe(ring, &cqe);
+> +		if (ret < 0) {
+> +			printf("wait completion %d\n", ret);
+> +			goto err;
+> +		}
+> +		io_uring_cqe_seen(ring, cqe);
+> +	}
+> +
+> +	return 0;
+> +err:
+> +	return 1;
+> +}
+> +
+>  int main(int argc, char *argv[])
+>  {
+>  	struct io_uring ring, poll_ring;
+> @@ -400,7 +449,6 @@ int main(int argc, char *argv[])
+>  	if (ret) {
+>  		printf("poll_ring setup failed\n");
+>  		return 1;
+> -
+>  	}
+>  
+>  	ret = test_single_link(&ring);
+> @@ -439,5 +487,11 @@ int main(int argc, char *argv[])
+>  		return ret;
+>  	}
+>  
+> +	ret = test_early_fail_and_wait(&ring);
+> +	if (ret) {
+> +		fprintf(stderr, "test_early_fail_and_wait\n");
+> +		return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+> 
+
+-- 
+Pavel Begunkov
