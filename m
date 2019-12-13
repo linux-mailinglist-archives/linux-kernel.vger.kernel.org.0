@@ -2,99 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 330DE11E7FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDE7811E828
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:25:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbfLMQTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:19:05 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37299 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728133AbfLMQTE (ORCPT
+        id S1728178AbfLMQZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:25:09 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38584 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727984AbfLMQZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:19:04 -0500
-Received: by mail-lf1-f66.google.com with SMTP id b15so2374429lfc.4;
-        Fri, 13 Dec 2019 08:19:02 -0800 (PST)
+        Fri, 13 Dec 2019 11:25:08 -0500
+Received: by mail-wr1-f66.google.com with SMTP id y17so51196wrh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:25:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DNUp596ZddGOax8pFd4t+4vyG8zhBsCGAZAw/KReX/E=;
+        b=Adt3PMoX5OBm6bSlz3GKd8g56Kg52X+ybqY1NTzIR6q1djD8cneBfVfzHtdsoHmiMl
+         EufFsQNT9xwDoLiyVXejbC+yTJzKqdFvKuVVa8GNB1NggGBssYR5ME0t2ImkiPtJC/bH
+         eIh9drLKzfFLPaIg367l6RZrPyxkzsovHQnyWAqzCz8yw0RwTgLAiB/Qw0bsd1b2PdQQ
+         BlP9GAZK2579VIQN2ofENJkpxwnYW7NnJ05lgZGushSPTsLOI3NIREkpkfcYVDmSQvY/
+         iG/Xije3sH3GawzNT8m5UCL/YR1aRogLCzAsoZdiO1cZQQ+lc1b6I0aJwWIsi2BO2ZD8
+         ispg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Spg0GfwWFlnRUw0lvoa6ReBLhxIzcCxpK224qhBQrwk=;
-        b=fS2w9fx2/qyRZCSQ7ld1Lck5W9YGKEyko/GaYYX6zDuKFTKxUOCu6aHpYPM6/ts8A1
-         ul7fUEDNoCcdtsiQ973+hkTLseRh5wv2ZkeDw8YIXdSXWuuYuZUSAMJhvzUzuOO/zsLm
-         Akr89PDzpaRXp4ZB1mtf9yAGE6gi4vmouWVNWufSAfxFI0BqZYx7ogKVR85I3YL6MNWQ
-         b35KglaacnJtkFnNl0XKLp6wHNfQ7L51T5Q3TuleAMkidmYaAl+ytGgw/SsI+FUWRcrX
-         he4K41jJPHcdEfOP4sC404HHTi8VyA7hAAqGyxelvVh2yGjivw4B051wGzzM2refoJKd
-         E+RQ==
-X-Gm-Message-State: APjAAAW3GMI8WnEDkOixPA7WoyKNLgiX4I2MXt8cYeJ72Eb69awT/SEL
-        3qZojReauFarRlyqmFXAOn8=
-X-Google-Smtp-Source: APXvYqxnVkGEyfViuTjx4mMxFXlrRlIx6//9d0OuQRcfhBx2KniHpTnXbEebHTcjKF/40vT+3FGIaw==
-X-Received: by 2002:a05:6512:21d:: with SMTP id a29mr9741453lfo.186.1576253941800;
-        Fri, 13 Dec 2019 08:19:01 -0800 (PST)
-Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id x13sm4778590lfe.48.2019.12.13.08.19.00
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DNUp596ZddGOax8pFd4t+4vyG8zhBsCGAZAw/KReX/E=;
+        b=kJCKRAhxdnvUSlarjXXIC1eq0lWrbedGWfNv9+vSzRDazQHKTouImvagHc+qQUA/iO
+         SWHRf0UFNxiRVssltm/oDjTMKBkaqqQJCVlgf8mn180gpdkpDR8QgOEELKHICqFvWE4P
+         jHmqVU1mYCzLysPGvuwNN6EhS8hs6zHyOoH0RKIgXFd/mKTsba1NXTXQrok3o9yBKswd
+         x4/rPuxpDNNRXmrhO/Qay3/uN+vq5HsM23uxgNoum3DK6qgActIKd5zzbXk5rkr7ARbu
+         QghQRBIv+iqk9W0tiRX+PWBFwIoS5Q5/d+36PZ86DNWHYmoDLqodslwS4X4jkMlKrkrU
+         psUg==
+X-Gm-Message-State: APjAAAUR0X9JJe62aXszDt36ua2wbXTPE5HlPbFW0xL93yzYj3CUHDJv
+        7Ht/XyMuCIn6X5QrG6a67I9AZg==
+X-Google-Smtp-Source: APXvYqyU6Z/dNDOhwWaYR15YpjIssxVYX/MERaSiGB29YqksLf4lDQ/uUhAvSDCJO7fTsU1N6F3JdA==
+X-Received: by 2002:adf:fe0e:: with SMTP id n14mr13658527wrr.116.1576254306335;
+        Fri, 13 Dec 2019 08:25:06 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:3d17:b245:8f4:3043])
+        by smtp.gmail.com with ESMTPSA id h8sm11139330wrx.63.2019.12.13.08.25.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 08:19:00 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1ifnef-0000iF-Bd; Fri, 13 Dec 2019 17:19:01 +0100
-Date:   Fri, 13 Dec 2019 17:19:01 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Guillaume La Roque <glaroque@baylibre.com>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, nsaenzjulienne@suse.de,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: net: bluetooth: add interrupts
- properties
-Message-ID: <20191213161901.GZ10631@localhost>
-References: <20191213150622.14162-1-glaroque@baylibre.com>
- <20191213150622.14162-2-glaroque@baylibre.com>
+        Fri, 13 Dec 2019 08:25:05 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>,
+        Kevin Hilman <khilman@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/3] ARM: davinci: convert dm365 to using the new clocksource driver
+Date:   Fri, 13 Dec 2019 17:24:50 +0100
+Message-Id: <20191213162453.15691-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213150622.14162-2-glaroque@baylibre.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 04:06:21PM +0100, Guillaume La Roque wrote:
-> add interrupts and interrupt-names as optional properties
-> to support host-wakeup by interrupt properties instead of
-> host-wakeup-gpios.
-> 
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> index b5eadee4a9a7..95912d979239 100644
-> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> @@ -36,7 +36,9 @@ Optional properties:
->      - pcm-frame-type: short, long
->      - pcm-sync-mode: slave, master
->      - pcm-clock-mode: slave, master
-> -
-> + - interrupts: must be one, used to wakeup the host processor if
-> +   gpiod_to_irq function not supported
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This is a Linux implementation detail which therefore doesn't belong in
-the binding.
+This is a follow-up to the big series converting DaVinci to using
+a proper clocksource driver. Last time we couldn't merge the entire
+series because of a bug that only appears on dm365 Soc when using
+ancient u-boot.
 
-I think the general rule is to prefer interrupts over gpios where we
-have a choice, but here the current binding already has a
-host-wakeup-gpios.
+This series contains a workaround for this problem, a patch finally
+converting the platform as well as a removal of all obsolete code.
 
-Not sure how best to handle that, maybe Rob knows.
+Bartosz Golaszewski (3):
+  clocksource: davinci: work around a clocksource problem on dm365 SoC
+  ARM: davinci: dm365: switch to using the clocksource driver
+  ARM: davinci: remove legacy timer support
 
-> + - interrupt-names: must be "host-wakeup"
->  
->  Example:
+ arch/arm/mach-davinci/Makefile              |   3 +-
+ arch/arm/mach-davinci/devices-da8xx.c       |   1 -
+ arch/arm/mach-davinci/devices.c             |  19 -
+ arch/arm/mach-davinci/dm365.c               |  22 +-
+ arch/arm/mach-davinci/include/mach/common.h |  17 -
+ arch/arm/mach-davinci/include/mach/time.h   |  33 --
+ arch/arm/mach-davinci/time.c                | 400 --------------------
+ drivers/clocksource/timer-davinci.c         |   8 +-
+ 8 files changed, 22 insertions(+), 481 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/time.h
+ delete mode 100644 arch/arm/mach-davinci/time.c
 
-Oh, and please keep people commenting on your patches on CC when you
-submit new versions.
+-- 
+2.23.0
 
-Johan
