@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDE7811E828
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:25:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F080711E82B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbfLMQZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:25:09 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38584 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727984AbfLMQZI (ORCPT
+        id S1728261AbfLMQZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:25:12 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41186 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728029AbfLMQZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:25:08 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y17so51196wrh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:25:07 -0800 (PST)
+        Fri, 13 Dec 2019 11:25:09 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c9so33851wrw.8
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 08:25:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DNUp596ZddGOax8pFd4t+4vyG8zhBsCGAZAw/KReX/E=;
-        b=Adt3PMoX5OBm6bSlz3GKd8g56Kg52X+ybqY1NTzIR6q1djD8cneBfVfzHtdsoHmiMl
-         EufFsQNT9xwDoLiyVXejbC+yTJzKqdFvKuVVa8GNB1NggGBssYR5ME0t2ImkiPtJC/bH
-         eIh9drLKzfFLPaIg367l6RZrPyxkzsovHQnyWAqzCz8yw0RwTgLAiB/Qw0bsd1b2PdQQ
-         BlP9GAZK2579VIQN2ofENJkpxwnYW7NnJ05lgZGushSPTsLOI3NIREkpkfcYVDmSQvY/
-         iG/Xije3sH3GawzNT8m5UCL/YR1aRogLCzAsoZdiO1cZQQ+lc1b6I0aJwWIsi2BO2ZD8
-         ispg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=EcTch/EIkIolmThjjfl6zE4yda6WGySYg3PDvCnto3E=;
+        b=NXXw8HE7mg0jRivRwjGhCSh1VgLhxcoWn6OtiAErL4YEF0RAL0AHHvcSaaCruxyyi/
+         woJdaICHqRvKCC0hh327fcS6CIuZq5F3F0w9kf+++rQMgRof1Bmz0xOqWcmiUXO9qvoz
+         yOHVS1sQCfiFhK1ItXhdBPrwEDyky5R9qEtPgSH35K1o7NHaf9RTaZ7jHhKrypMV4IgE
+         L/kJT5BEjGgpupRxlve+S3HVdxo7vk1k6ceE9tcTvWb8OruFepNFRhfuzZ+4zFO9eIOw
+         3AuYMuR+SK0yBn53HmDZORGoHPn2/babeFTT9ozj4HQUEJwjU8oWs1dxrDpD7qbGU50E
+         Nt8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DNUp596ZddGOax8pFd4t+4vyG8zhBsCGAZAw/KReX/E=;
-        b=kJCKRAhxdnvUSlarjXXIC1eq0lWrbedGWfNv9+vSzRDazQHKTouImvagHc+qQUA/iO
-         SWHRf0UFNxiRVssltm/oDjTMKBkaqqQJCVlgf8mn180gpdkpDR8QgOEELKHICqFvWE4P
-         jHmqVU1mYCzLysPGvuwNN6EhS8hs6zHyOoH0RKIgXFd/mKTsba1NXTXQrok3o9yBKswd
-         x4/rPuxpDNNRXmrhO/Qay3/uN+vq5HsM23uxgNoum3DK6qgActIKd5zzbXk5rkr7ARbu
-         QghQRBIv+iqk9W0tiRX+PWBFwIoS5Q5/d+36PZ86DNWHYmoDLqodslwS4X4jkMlKrkrU
-         psUg==
-X-Gm-Message-State: APjAAAUR0X9JJe62aXszDt36ua2wbXTPE5HlPbFW0xL93yzYj3CUHDJv
-        7Ht/XyMuCIn6X5QrG6a67I9AZg==
-X-Google-Smtp-Source: APXvYqyU6Z/dNDOhwWaYR15YpjIssxVYX/MERaSiGB29YqksLf4lDQ/uUhAvSDCJO7fTsU1N6F3JdA==
-X-Received: by 2002:adf:fe0e:: with SMTP id n14mr13658527wrr.116.1576254306335;
-        Fri, 13 Dec 2019 08:25:06 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EcTch/EIkIolmThjjfl6zE4yda6WGySYg3PDvCnto3E=;
+        b=A+vL/nGLvEiU3B2zdXLra0ZEqJxrpfhVsdwiWf1zE8+HKCzqSuDUsG/fZ7qyoRKYr7
+         +scNRQvBtioTcW0QHAOXT+FrtCmpcjo5TOCEq5GhQ9am7bFJvW9AM2+DpVJ8W+/3XJHX
+         72fb3Z4XmQMHauww31pMblbuMBWbw0AapRi8nw7bIH0bhuWDkXtO5A7+yDYZscwK6yyf
+         8+kEkHP7VbxyzNTQeLqpvt3RtQb2G2LhwsNwRQlW+l17Vmrj6aKHXMuaz93oqfzaI/tw
+         62N2JFLGPzB6TkRjcuPSDiwZpKM4/1jbifuU+xf9IBtC2vsk0Pw+0rTCo7hbyyUGumWi
+         uVNw==
+X-Gm-Message-State: APjAAAX0s3CQJnwOMy3KOtiIDboFSmPOI31KD082z+pvvJQLdg//lk52
+        aQcGGksv3qZq3J4nj5yPhkj63Q==
+X-Google-Smtp-Source: APXvYqy4DODPLOmqcXekbJRCf0m9ORveR71Qo5kLQgcGlDibqDyMSLStnwpOd7kDPDBP5ZV9ezD1JA==
+X-Received: by 2002:a5d:630c:: with SMTP id i12mr13511596wru.350.1576254307421;
+        Fri, 13 Dec 2019 08:25:07 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:3d17:b245:8f4:3043])
-        by smtp.gmail.com with ESMTPSA id h8sm11139330wrx.63.2019.12.13.08.25.05
+        by smtp.gmail.com with ESMTPSA id h8sm11139330wrx.63.2019.12.13.08.25.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 08:25:05 -0800 (PST)
+        Fri, 13 Dec 2019 08:25:06 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -53,10 +53,12 @@ To:     Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 0/3] ARM: davinci: convert dm365 to using the new clocksource driver
-Date:   Fri, 13 Dec 2019 17:24:50 +0100
-Message-Id: <20191213162453.15691-1-brgl@bgdev.pl>
+Subject: [PATCH 1/3] clocksource: davinci: work around a clocksource problem on dm365 SoC
+Date:   Fri, 13 Dec 2019 17:24:51 +0100
+Message-Id: <20191213162453.15691-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191213162453.15691-1-brgl@bgdev.pl>
+References: <20191213162453.15691-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,31 +68,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This is a follow-up to the big series converting DaVinci to using
-a proper clocksource driver. Last time we couldn't merge the entire
-series because of a bug that only appears on dm365 Soc when using
-ancient u-boot.
+The DM365 platform has a strange quirk (only present when using ancient
+u-boot - mainline u-boot v2013.01 and later works fine) where if we
+enable the second half of the timer in periodic mode before we do its
+initialization - the time won't start flowing and we can't boot.
 
-This series contains a workaround for this problem, a patch finally
-converting the platform as well as a removal of all obsolete code.
+When using more recent u-boot, we can enable the timer, then reinitialize
+it and all works fine.
 
-Bartosz Golaszewski (3):
-  clocksource: davinci: work around a clocksource problem on dm365 SoC
-  ARM: davinci: dm365: switch to using the clocksource driver
-  ARM: davinci: remove legacy timer support
+I've been unable to figure out why that is, but a workaround for this
+is straightforward - just cache the enable bits for tim34.
 
- arch/arm/mach-davinci/Makefile              |   3 +-
- arch/arm/mach-davinci/devices-da8xx.c       |   1 -
- arch/arm/mach-davinci/devices.c             |  19 -
- arch/arm/mach-davinci/dm365.c               |  22 +-
- arch/arm/mach-davinci/include/mach/common.h |  17 -
- arch/arm/mach-davinci/include/mach/time.h   |  33 --
- arch/arm/mach-davinci/time.c                | 400 --------------------
- drivers/clocksource/timer-davinci.c         |   8 +-
- 8 files changed, 22 insertions(+), 481 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/time.h
- delete mode 100644 arch/arm/mach-davinci/time.c
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/clocksource/timer-davinci.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/timer-davinci.c
+index 62745c962049..1c22443acaeb 100644
+--- a/drivers/clocksource/timer-davinci.c
++++ b/drivers/clocksource/timer-davinci.c
+@@ -64,6 +64,8 @@ static struct {
+ 	unsigned int tim_off;
+ } davinci_clocksource;
+ 
++static unsigned int davinci_clocksource_tim32_mode;
++
+ static struct davinci_clockevent *
+ to_davinci_clockevent(struct clock_event_device *clockevent)
+ {
+@@ -94,7 +96,7 @@ static void davinci_tim12_shutdown(void __iomem *base)
+ 	 * halves. In this case TIM34 runs in periodic mode and we must
+ 	 * not modify it.
+ 	 */
+-	tcr |= DAVINCI_TIMER_ENAMODE_PERIODIC <<
++	tcr |= davinci_clocksource_tim32_mode <<
+ 		DAVINCI_TIMER_ENAMODE_SHIFT_TIM34;
+ 
+ 	writel_relaxed(tcr, base + DAVINCI_TIMER_REG_TCR);
+@@ -107,7 +109,7 @@ static void davinci_tim12_set_oneshot(void __iomem *base)
+ 	tcr = DAVINCI_TIMER_ENAMODE_ONESHOT <<
+ 		DAVINCI_TIMER_ENAMODE_SHIFT_TIM12;
+ 	/* Same as above. */
+-	tcr |= DAVINCI_TIMER_ENAMODE_PERIODIC <<
++	tcr |= davinci_clocksource_tim32_mode <<
+ 		DAVINCI_TIMER_ENAMODE_SHIFT_TIM34;
+ 
+ 	writel_relaxed(tcr, base + DAVINCI_TIMER_REG_TCR);
+@@ -206,6 +208,8 @@ static void davinci_clocksource_init_tim34(void __iomem *base)
+ 	writel_relaxed(0x0, base + DAVINCI_TIMER_REG_TIM34);
+ 	writel_relaxed(UINT_MAX, base + DAVINCI_TIMER_REG_PRD34);
+ 	writel_relaxed(tcr, base + DAVINCI_TIMER_REG_TCR);
++
++	davinci_clocksource_tim32_mode = DAVINCI_TIMER_ENAMODE_PERIODIC;
+ }
+ 
+ /*
 -- 
 2.23.0
 
