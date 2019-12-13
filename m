@@ -2,180 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1176E11E2F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 12:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B21E11E2F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 12:46:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbfLMLmn convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 13 Dec 2019 06:42:43 -0500
-Received: from mga03.intel.com ([134.134.136.65]:4505 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725980AbfLMLmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 06:42:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 03:42:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
-   d="scan'208";a="204302347"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga007.jf.intel.com with ESMTP; 13 Dec 2019 03:42:42 -0800
-Received: from fmsmsx111.amr.corp.intel.com (10.18.116.5) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 13 Dec 2019 03:42:41 -0800
-Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
- fmsmsx111.amr.corp.intel.com (10.18.116.5) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 13 Dec 2019 03:42:41 -0800
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.90]) by
- SHSMSX101.ccr.corp.intel.com ([169.254.1.19]) with mapi id 14.03.0439.000;
- Fri, 13 Dec 2019 19:42:39 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>, Peter Xu <peterx@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        id S1726833AbfLMLqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 06:46:40 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38350 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfLMLqj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 06:46:39 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y17so6325048wrh.5;
+        Fri, 13 Dec 2019 03:46:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HCgiaWMI/x6U67hIPPycQp/x3zK3ZvfDXctut3Mj0H8=;
+        b=ntCYo4fm2d/zzZ4lTMIHE2k18++eeMkvDoPsZ2tVIeLuOwZKRH3Xl0/iqsxYzseV32
+         9JtOFz1k8zwhM7rcEfbl4Ul3T7p2HVGhxihyrWvvbKJ9c8Ti9MqToNwSmdA1M4cTmY4g
+         FE4K278750sNT48xziH/Hxs6RpB4M7bQuLqunBAH8s3sO8vnCqtvZeG+a+zC7r+HAqW2
+         KMRmPH93e5UhTfshDBVhWpsVneNuClqdHMb/bI1GEB4bmHsAed3iODeq1gPJxb+S2IfL
+         Xg7AzfAEQOGD6GGdnskwH/MkDQnpX1HilwhQvVmxk2Otg1pDMOCSx9jdIDda6roJYSko
+         TN4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HCgiaWMI/x6U67hIPPycQp/x3zK3ZvfDXctut3Mj0H8=;
+        b=srnIf4YEVAB/826wJhFwKBUkJ6HZLjlkdvI2EJo2hRt2fg/knN3lWA07ZCb+cbiDB6
+         l/eE4YpqtV46Wtv0AG5CEfoR2ri0ySz/69uMeEFQwAXjqER4N6etzF3aVmSjJd8vGZ3f
+         gIGEE2pLvdbqrBDLJGohrMUnWhUexMHoyKrlxc5gYgg61tVitOTBYoZyndsNN72q6gLF
+         yVqRYeZ0JPpJbabsIlvqcD9MJB9Bd3xeOeirENfubOtH11iOPYgZXrASeo/H98qZrEst
+         2VCNWsppQwtquvPX6f64fx68WRxfXbqoQRc9rIUia/ycu9643YQDejM1Sn8Qqkiny5UW
+         xrcw==
+X-Gm-Message-State: APjAAAUMZHxIoNsf7wIF63BUMZTpytENzQpEaHTLme08Z6K5hEIIr1kP
+        u66nbvkMc2kTI+EipK2sNB8xdvhB
+X-Google-Smtp-Source: APXvYqwijV//FwSD6ZdUbelYpMbehqqqYrxwCr2pcHvthrmHzwmG+JKUW2lWiTI9HuHu8NHjX/ZVbQ==
+X-Received: by 2002:adf:f6c1:: with SMTP id y1mr13203522wrp.17.1576237596862;
+        Fri, 13 Dec 2019 03:46:36 -0800 (PST)
+Received: from [192.168.178.26] (ipservice-092-219-207-064.092.219.pools.vodafone-ip.de. [92.219.207.64])
+        by smtp.gmail.com with ESMTPSA id a184sm10170022wmf.29.2019.12.13.03.46.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 03:46:36 -0800 (PST)
+Subject: Re: [PATCH 0/6] rtlwifi: convert rtl8192{ce,cu,de} to use generic
+ functions
+To:     Pkshih <pkshih@realtek.com>
+Cc:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 5/6] iommu/vt-d: Flush PASID-based iotlb for iova
- over first level
-Thread-Topic: [PATCH v3 5/6] iommu/vt-d: Flush PASID-based iotlb for iova
- over first level
-Thread-Index: AQHVr8iiJX/bvAPmK0eIArQDcTD6yKe33K3Q
-Date:   Fri, 13 Dec 2019 11:42:38 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C25743A130C08@SHSMSX104.ccr.corp.intel.com>
-References: <20191211021219.8997-1-baolu.lu@linux.intel.com>
- <20191211021219.8997-6-baolu.lu@linux.intel.com>
-In-Reply-To: <20191211021219.8997-6-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZDg4NzIyYWEtNjkzMy00ZTMyLTk5M2YtM2EwYWEyYmM4MzA1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTzVPakZYSkZyRW5KZE5ZZVQ2NVpvR0lEZUdmbklPTWhSbWVVMkFZMno4WnNNeFwvRGhwVFg5XC9zUW9weWpxYWFnIn0=
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+References: <20191211154755.15012-1-straube.linux@gmail.com>
+ <1576115241.2733.1.camel@realtek.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <84f3ec5e-eda7-c955-2705-482263eb1ee6@gmail.com>
+Date:   Fri, 13 Dec 2019 12:46:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <1576115241.2733.1.camel@realtek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Allen,
+On 2019-12-12 02:47, Pkshih wrote:
+> On Wed, 2019-12-11 at 16:47 +0100, Michael Straube wrote:
+>> This series converts the drivers rtl8192{ce,cu,de} to use the generic
+>> functions rtl_query_rxpwrpercentage and rtl_signal_scale_mapping.
+>>
+>> Michael Straube (6):
+>>    rtlwifi: rtl8192ce: use generic rtl_query_rxpwrpercentage
+>>    rtlwifi: rtl8192cu: use generic rtl_query_rxpwrpercentage
+>>    rtlwifi: rtl8192de: use generic rtl_query_rxpwrpercentage
+>>    rtlwifi: rtl8192ce: use generic rtl_signal_scale_mapping
+>>    rtlwifi: rtl8192cu: use generic rtl_signal_scale_mapping
+>>    rtlwifi: rtl8192de: use generic rtl_signal_scale_mapping
+>>
+>>   .../wireless/realtek/rtlwifi/rtl8192ce/trx.c  | 48 ++----------------
+>>   .../wireless/realtek/rtlwifi/rtl8192cu/mac.c  | 49 ++-----------------
+>>   .../wireless/realtek/rtlwifi/rtl8192de/trx.c  | 47 ++----------------
+>>   3 files changed, 14 insertions(+), 130 deletions(-)
+>>
+> 
+> For all patches:
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+> 
 
-> From: kvm-owner@vger.kernel.org [mailto:kvm-owner@vger.kernel.org] On Behalf
-> Of Lu Baolu
-> Sent: Wednesday, December 11, 2019 10:12 AM
-> To: Joerg Roedel <joro@8bytes.org>; David Woodhouse <dwmw2@infradead.org>;
-> Subject: [PATCH v3 5/6] iommu/vt-d: Flush PASID-based iotlb for iova over first level
-> 
-> When software has changed first-level tables, it should invalidate
-> the affected IOTLB and the paging-structure-caches using the PASID-
-> based-IOTLB Invalidate Descriptor defined in spec 6.5.2.4.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/dmar.c        | 41 ++++++++++++++++++++++++++++++++++
->  drivers/iommu/intel-iommu.c | 44 ++++++++++++++++++++++++-------------
->  include/linux/intel-iommu.h |  2 ++
->  3 files changed, 72 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> index 3acfa6a25fa2..fb30d5053664 100644
-> --- a/drivers/iommu/dmar.c
-> +++ b/drivers/iommu/dmar.c
-> @@ -1371,6 +1371,47 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16
-> sid, u16 pfsid,
->  	qi_submit_sync(&desc, iommu);
->  }
-> 
-> +/* PASID-based IOTLB invalidation */
-> +void qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u32 pasid, u64 addr,
-> +		     unsigned long npages, bool ih)
-> +{
-> +	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
-> +
-> +	/*
-> +	 * npages == -1 means a PASID-selective invalidation, otherwise,
-> +	 * a positive value for Page-selective-within-PASID invalidation.
-> +	 * 0 is not a valid input.
-> +	 */
-> +	if (WARN_ON(!npages)) {
-> +		pr_err("Invalid input npages = %ld\n", npages);
-> +		return;
-> +	}
-> +
-> +	if (npages == -1) {
-> +		desc.qw0 = QI_EIOTLB_PASID(pasid) |
-> +				QI_EIOTLB_DID(did) |
-> +				QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
-> +				QI_EIOTLB_TYPE;
-> +		desc.qw1 = 0;
-> +	} else {
-> +		int mask = ilog2(__roundup_pow_of_two(npages));
-> +		unsigned long align = (1ULL << (VTD_PAGE_SHIFT + mask));
-> +
-> +		if (WARN_ON_ONCE(!ALIGN(addr, align)))
-> +			addr &= ~(align - 1);
-> +
-> +		desc.qw0 = QI_EIOTLB_PASID(pasid) |
-> +				QI_EIOTLB_DID(did) |
-> +				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
-> +				QI_EIOTLB_TYPE;
-> +		desc.qw1 = QI_EIOTLB_ADDR(addr) |
-> +				QI_EIOTLB_IH(ih) |
-> +				QI_EIOTLB_AM(mask);
-> +	}
-> +
-> +	qi_submit_sync(&desc, iommu);
-> +}
-> +
->  /*
->   * Disable Queued Invalidation interface.
->   */
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 83a7abf0c4f0..e47f5fe37b59 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -1520,18 +1520,24 @@ static void iommu_flush_iotlb_psi(struct intel_iommu
-> *iommu,
-> 
->  	if (ih)
->  		ih = 1 << 6;
-> -	/*
-> -	 * Fallback to domain selective flush if no PSI support or the size is
-> -	 * too big.
-> -	 * PSI requires page size to be 2 ^ x, and the base address is naturally
-> -	 * aligned to the size
-> -	 */
-> -	if (!cap_pgsel_inv(iommu->cap) || mask > cap_max_amask_val(iommu-
-> >cap))
-> -		iommu->flush.flush_iotlb(iommu, did, 0, 0,
-> -						DMA_TLB_DSI_FLUSH);
-> -	else
-> -		iommu->flush.flush_iotlb(iommu, did, addr | ih, mask,
-> -						DMA_TLB_PSI_FLUSH);
-> +
-> +	if (domain_use_first_level(domain)) {
-> +		qi_flush_piotlb(iommu, did, domain->default_pasid,
-> +				addr, pages, ih);
+Thanks.
 
-I'm not sure if my understanding is correct. But let me tell a story.
-Assuming we assign a mdev and a PF/VF to a single VM, then there
-will be p_iotlb tagged with PASID_RID2PASID and p_iotlb tagged with
-default_pasid. We may want to flush both... If this operation is
-invoked per-device, then need to pass in a hint to indicate whether
-to use PASID_RID2PASID or default_pasid, or you may just issue two
-flush with the two PASID values. Thoughts?
+> Curiously. How can you find these function are identical?
+> 
+While sending cleanup patches for some staging wifi drivers I noticed
+that these functions are used in many of the realtek drivers and all
+looked very similar. Then used grep and diff to verify.
 
-Regards,
-Yi Liu
+Michael
+
