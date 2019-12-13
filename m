@@ -2,111 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83A0111E871
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:37:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22CB111E876
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 17:38:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbfLMQhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 11:37:03 -0500
-Received: from mga17.intel.com ([192.55.52.151]:42883 "EHLO mga17.intel.com"
+        id S1728339AbfLMQi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 11:38:26 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:36212 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727974AbfLMQhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:37:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 08:37:02 -0800
-X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
-   d="scan'208";a="216480091"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 08:37:01 -0800
-Message-ID: <f0153bdb80b26b99495cfc3086934968695deb6c.camel@linux.intel.com>
-Subject: Re: [PATCH v15 6/7] virtio-balloon: Add support for providing free
- page reports to host
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     David Hildenbrand <david@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        kvm@vger.kernel.org, mst@redhat.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, mgorman@techsingularity.net,
-        vbabka@suse.cz
-Cc:     yang.zhang.wz@gmail.com, nitesh@redhat.com, konrad.wilk@oracle.com,
-        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
-        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
-        pbonzini@redhat.com, dan.j.williams@intel.com, osalvador@suse.de
-Date:   Fri, 13 Dec 2019 08:37:01 -0800
-In-Reply-To: <ca305a98-864e-ccb0-5393-f73997645acf@redhat.com>
-References: <20191205161928.19548.41654.stgit@localhost.localdomain>
-         <20191205162255.19548.63866.stgit@localhost.localdomain>
-         <ca305a98-864e-ccb0-5393-f73997645acf@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1727480AbfLMQi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 11:38:26 -0500
+Received: from zn.tnic (p200300EC2F0A5A00E05EA1F3CB5927A8.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5a00:e05e:a1f3:cb59:27a8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E4ADC1EC0D05;
+        Fri, 13 Dec 2019 17:38:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1576255105;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=U1lMKBvl7t0uA7vs1lBWLnqmt5G1DUAC7gAqYkIurz4=;
+        b=ThBk7Cyjp8/zS0rF3ChUwzKW8vplJXRdLqiiwOMh2PEF1rzp3FQ6UPNT9Rps9Cv9mUvsuI
+        ydEWJF7+LBav3DByHM0gMVDhPVT3bwBmu+7UtOH+qnHOc4gCtyaEckVdWsZTmPcwOwuaWk
+        AVbhufKMZN+m29Je8YwfYkToyp4cIjE=
+Date:   Fri, 13 Dec 2019 17:38:18 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] x86/mm/KASLR: Adjust the padding size for the
+ direct mapping.
+Message-ID: <20191213163818.GB25899@zn.tnic>
+References: <20191115144917.28469-1-msys.mizuma@gmail.com>
+ <20191115144917.28469-5-msys.mizuma@gmail.com>
+ <20191212201916.GL4991@zn.tnic>
+ <20191213132850.GG28917@MiWiFi-R3L-srv>
+ <20191213141543.GA25899@zn.tnic>
+ <20191213145448.GH28917@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191213145448.GH28917@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-12-13 at 11:15 +0100, David Hildenbrand wrote:
-> On 05.12.19 17:22, Alexander Duyck wrote:
-> > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+On Fri, Dec 13, 2019 at 10:54:48PM +0800, Baoquan He wrote:
+> On 12/13/19 at 03:15pm, Borislav Petkov wrote:
+> > On Fri, Dec 13, 2019 at 09:28:50PM +0800, Baoquan He wrote:
+> > > In Documentation/x86/x86_64/mm.rst, the physical memory regions mapping
+> > > with page_offset is called as the direct mapping of physical memory.
 > > 
-> > Add support for the page reporting feature provided by virtio-balloon.
-> > Reporting differs from the regular balloon functionality in that is is
-> > much less durable than a standard memory balloon. Instead of creating a
-> > list of pages that cannot be accessed the pages are only inaccessible
-> > while they are being indicated to the virtio interface. Once the
-> > interface has acknowledged them they are placed back into their respective
-> > free lists and are once again accessible by the guest system.
+> > The fact that it happens to compute the *first* region's size, which
+> > *happens* to be the direct mapping of all physical memory is immaterial
+> > here.
 > > 
-> > Unlike a standard balloon we don't inflate and deflate the pages. Instead
-> > we perform the reporting, and once the reporting is completed it is
-> > assumed that the page has been dropped from the guest and will be faulted
-> > back in the next time the page is accessed.
+> > It is actually causing more confusion in an already complex piece of
+> > code. You can call this function just as well
 > > 
-> > For this reason when I had originally introduced the patch set I referred
-> > to this behavior as a "bubble" instead of a "balloon" since the duration
-> > is short lived, and when the page is touched the "bubble" is popped and
-> > the page is faulted back in.
+> >   calc_region_size()
+> > 
+> > which won't confuse readers. Because all you care about here is the
+> > region's size - not which region it is.
 > 
-> While an interesting read, I would drop that comment as it isn't really
-> of value for the code/codebase itself.
+> Won't calc_region_size be too generic? We also have vmalloc and vmemmap,
+> and here we are specifically calculating the direct mapping of physical
+> memory.
 
-Okay, I can drop the comment.
+It sounds like you didn't read what I wrote above so read it again pls.
 
-> [...]
-> 
-> > +
-> > +	vb->pr_dev_info.report = virtballoon_free_page_report;
-> > +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING)) {
-> > +		unsigned int capacity;
-> > +
-> > +		capacity = virtqueue_get_vring_size(vb->reporting_vq);
-> > +		if (capacity < PAGE_REPORTING_CAPACITY) {
-> > +			err = -ENOSPC;
-> > +			goto out_unregister_shrinker;
-> 
-> It's somewhat strange to fail loading the balloon completely here.
-> Wouldn't it be better to print e.g. a warning but continue without free
-> page reporting?
-> 
-> (I guess splitting up the list can be done in an addon patch if ever
-> really needed for virtio-balloon)
+> If not knowing the max address to cover all the possible hotplugged
+> memory, later memory hotplug will fail.
 
-That was kind of my thought. Odds are it probably is unlikely to come up.
-At least with the code I have now I think the virtqueue size is something
-like 128 and the capacity is only 32 as I wanted to limit the number of
-pages that were being reported at the time.
+You don't have to state the obvious - I can see that in the code.
 
-> Apart from that
-> 
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> 
-> Thanks!
-> 
+So let me ask you differently: can the parsing of the SRAT table happen
+shortly before kernel_randomize_memory() *without* adding all that gunk
+to the compressed stage, and without adding the boot_params member and
+done only for memory hot_add machines?
 
+-- 
+Regards/Gruss,
+    Boris.
 
-Thanks for the review.
-
-- Alex
-
+https://people.kernel.org/tglx/notes-about-netiquette
