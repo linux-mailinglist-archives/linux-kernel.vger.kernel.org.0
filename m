@@ -2,65 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF10611E68D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:29:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAF3E11E71F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 16:54:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfLMP3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 10:29:41 -0500
-Received: from muru.com ([72.249.23.125]:47128 "EHLO muru.com"
+        id S1728049AbfLMPyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 10:54:17 -0500
+Received: from mga04.intel.com ([192.55.52.120]:34227 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbfLMP3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:29:41 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 369A88181;
-        Fri, 13 Dec 2019 15:30:20 +0000 (UTC)
-Date:   Fri, 13 Dec 2019 07:29:38 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Benoit Parrot <bparrot@ti.com>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch v3 0/3] ARM: dts: am43x-vpfe/ov2659.patch
-Message-ID: <20191213152938.GK35479@atomide.com>
-References: <20191211140720.10539-1-bparrot@ti.com>
- <20191212174123.GF35479@atomide.com>
- <c4ae58dc-3c81-f493-a665-6926baa0f04c@ti.com>
+        id S1727948AbfLMPyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 10:54:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 07:54:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
+   d="scan'208";a="246170744"
+Received: from dbmoens-mobl1.amr.corp.intel.com ([10.255.228.102])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Dec 2019 07:54:15 -0800
+Subject: Re: [alsa-devel] [PATCH v4 06/15] soundwire: add support for
+ sdw_slave_type
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20191213050409.12776-1-pierre-louis.bossart@linux.intel.com>
+ <20191213050409.12776-7-pierre-louis.bossart@linux.intel.com>
+ <20191213072127.GD1750354@kroah.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <41d1fcbc-47b7-bbee-5b55-759cbb5f5a7b@linux.intel.com>
+Date:   Fri, 13 Dec 2019 09:05:37 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4ae58dc-3c81-f493-a665-6926baa0f04c@ti.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191213072127.GD1750354@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tero Kristo <t-kristo@ti.com> [191213 07:43]:
-> On 12/12/2019 19:41, Tony Lindgren wrote:
-> > * Benoit Parrot <bparrot@ti.com> [191211 06:04]:
-> > > This patch series adds the missing camera endpoint (ov2659) as well as
-> > > the required source clocks nodes for the sensor.
-> > > 
-> > > On the am437x-sk-evm the camera sensor is sourced from clkout1 but that
-> > > clock nodes/tree was removed as it was unsed at the time, we are
-> > > re-adding the needed clock nodes here.
-> > 
-> > Tero, it seems I can already pick this series?
+On 12/13/19 1:21 AM, Greg KH wrote:
+> On Thu, Dec 12, 2019 at 11:04:00PM -0600, Pierre-Louis Bossart wrote:
+>> Currently the bus does not have any explicit support for master
+>> devices.
+>>
+>> First add explicit support for sdw_slave_type and error checks if this type
+>> is not set.
+>>
+>> In follow-up patches we can add support for the sdw_md_type (md==Master
+>> Device), following the Grey Bus example.
 > 
-> I believe it is ready if you approve the clkout1 clock patch.
+> How are you using greybus as an example of "master devices"?  All you
+> are doing here is setting the type of the existing devices, right?
 
-OK yeah looks fine.
+I took your advice to look at GreyBus and used the 'gb host device' as 
+the model to implement the 'sdw master' add/startup/remove interfaces we 
+needed.
 
-> > Or ou want to queue the changes to am43xx-clocks.dtsi along with all
-> > your other clock patches?
+so yes in this patch we just add a type for the slave, the interesting 
+part is in the next patches.
+>>   static int sdw_uevent(struct device *dev, struct kobj_uevent_env *env)
+>>   {
+>> -	struct sdw_slave *slave = to_sdw_slave_device(dev);
+>> +	struct sdw_slave *slave;
+>>   	char modalias[32];
+>>   
+>> -	sdw_slave_modalias(slave, modalias, sizeof(modalias));
+>> +	if (is_sdw_slave(dev)) {
+>> +		slave = to_sdw_slave_device(dev);
+>> +
+>> +		sdw_slave_modalias(slave, modalias, sizeof(modalias));
+>>   
+>> -	if (add_uevent_var(env, "MODALIAS=%s", modalias))
+>> -		return -ENOMEM;
+>> +		if (add_uevent_var(env, "MODALIAS=%s", modalias))
+>> +			return -ENOMEM;
+>> +	} else {
+>> +		/* only Slave device type supported */
+>> +		dev_warn(dev, "uevent for unknown Soundwire type\n");
+>> +		return -EINVAL;
 > 
-> Well, I have actually never queued any omap2+ dts patches myself, and I
-> don't think there would be too many of those coming for next merge either.
+> Right now, this can not happen, right?
+> 
+> Not a problem, just trying to understand the sequence of patches here...
 
-OK will queue this series then. For the other ones from Benoit
-looks like we need an immutable clock branch before I can apply
-anything.
-
-Regards,
-
-Tony
+yes this cannot happen at this point, it's more of a paranoid test. In 
+theory a SoundWire solution could enable a 'monitor' device as defined 
+in the standard.
