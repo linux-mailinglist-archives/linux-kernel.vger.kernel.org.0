@@ -2,123 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C70911EAAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:48:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8E5C11EABE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 19:55:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728903AbfLMSsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 13:48:18 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52625 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728686AbfLMSsP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 13:48:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576262894;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VSDDjKTdNjIjYY9lNEGudZN4ZxbNPvX2QUzIT/T3/bU=;
-        b=H+RNfMxdNvTysBCOEmbPOGorcnkdQWR0n9YwUpYf65m+E0ejY7abgtQ04kHLSiM0UHU2Az
-        BWCe4hrJHp904ycXffWHXpDCVGBoLFmMWifQXPHMZYB9ZUI3ZUjE5r6bEQvZko5mrr7fTa
-        QDe+Owf7cMPRb/BLYrOL/nrCTXYhrwI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-252-arex5kL_PveUSWwTT-l1-A-1; Fri, 13 Dec 2019 13:48:12 -0500
-X-MC-Unique: arex5kL_PveUSWwTT-l1-A-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 657F1107ACC4;
-        Fri, 13 Dec 2019 18:48:11 +0000 (UTC)
-Received: from steredhat.redhat.com (ovpn-117-123.ams2.redhat.com [10.36.117.123])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CDC1460474;
-        Fri, 13 Dec 2019 18:48:09 +0000 (UTC)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     davem@davemloft.net
-Cc:     Stefano Garzarella <sgarzare@redhat.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: [PATCH net 2/2] vsock/virtio: add WARN_ON check on virtio_transport_get_ops()
-Date:   Fri, 13 Dec 2019 19:48:01 +0100
-Message-Id: <20191213184801.486675-3-sgarzare@redhat.com>
-In-Reply-To: <20191213184801.486675-1-sgarzare@redhat.com>
-References: <20191213184801.486675-1-sgarzare@redhat.com>
+        id S1728633AbfLMSzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 13:55:03 -0500
+Received: from mga02.intel.com ([134.134.136.20]:1981 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728552AbfLMSzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 13:55:03 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 10:55:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,309,1571727600"; 
+   d="scan'208";a="216722625"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
+  by orsmga003.jf.intel.com with ESMTP; 13 Dec 2019 10:55:02 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id A83E7300860; Fri, 13 Dec 2019 10:55:02 -0800 (PST)
+Date:   Fri, 13 Dec 2019 10:55:02 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     emaste@freebsd.org
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        acme@kernel.org
+Subject: Re: [PATCH v2] perf tools: correct license on jsmn json parser
+Message-ID: <20191213185502.GB9938@tassilo.jf.intel.com>
+References: <20191212151244.26324-1-emaste@freefall.freebsd.org>
+ <20191213154625.41064-1-emaste@FreeBSD.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191213154625.41064-1-emaste@FreeBSD.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-virtio_transport_get_ops() and virtio_transport_send_pkt_info()
-can only be used on connecting/connected sockets, since a socket
-assigned to a transport is required.
 
-This patch adds a WARN_ON() on virtio_transport_get_ops() to check
-this requirement, a comment and a returned error on
-virtio_transport_send_pkt_info(),
+Adding Arnaldo for a perf tools change.
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- net/vmw_vsock/virtio_transport_common.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virt=
-io_transport_common.c
-index f5991006190e..6abec3fc81d1 100644
---- a/net/vmw_vsock/virtio_transport_common.c
-+++ b/net/vmw_vsock/virtio_transport_common.c
-@@ -34,6 +34,9 @@ virtio_transport_get_ops(struct vsock_sock *vsk)
- {
- 	const struct vsock_transport *t =3D vsock_core_get_transport(vsk);
-=20
-+	if (WARN_ON(!t))
-+		return NULL;
-+
- 	return container_of(t, struct virtio_transport, transport);
- }
-=20
-@@ -161,15 +164,25 @@ void virtio_transport_deliver_tap_pkt(struct virtio=
-_vsock_pkt *pkt)
- }
- EXPORT_SYMBOL_GPL(virtio_transport_deliver_tap_pkt);
-=20
-+/* This function can only be used on connecting/connected sockets,
-+ * since a socket assigned to a transport is required.
-+ *
-+ * Do not use on listener sockets!
-+ */
- static int virtio_transport_send_pkt_info(struct vsock_sock *vsk,
- 					  struct virtio_vsock_pkt_info *info)
- {
- 	u32 src_cid, src_port, dst_cid, dst_port;
-+	const struct virtio_transport *t_ops;
- 	struct virtio_vsock_sock *vvs;
- 	struct virtio_vsock_pkt *pkt;
- 	u32 pkt_len =3D info->pkt_len;
-=20
--	src_cid =3D virtio_transport_get_ops(vsk)->transport.get_local_cid();
-+	t_ops =3D virtio_transport_get_ops(vsk);
-+	if (unlikely(!t_ops))
-+		return -EFAULT;
-+
-+	src_cid =3D t_ops->transport.get_local_cid();
- 	src_port =3D vsk->local_addr.svm_port;
- 	if (!info->remote_cid) {
- 		dst_cid	=3D vsk->remote_addr.svm_cid;
-@@ -202,7 +215,7 @@ static int virtio_transport_send_pkt_info(struct vsoc=
-k_sock *vsk,
-=20
- 	virtio_transport_inc_tx_pkt(vvs, pkt);
-=20
--	return virtio_transport_get_ops(vsk)->send_pkt(pkt);
-+	return t_ops->send_pkt(pkt);
- }
-=20
- static bool virtio_transport_inc_rx_pkt(struct virtio_vsock_sock *vvs,
---=20
-2.23.0
-
+On Fri, Dec 13, 2019 at 03:46:25PM +0000, emaste@FreeBSD.org wrote:
+> From: Ed Maste <emaste@freebsd.org>
+> 
+> This header is part of the jsmn json parser, introduced in 867a979a83.
+> Correct the SPDX tag to indicate that it is under the MIT license.
+> 
+> Signed-off-by: Ed Maste <emaste@freebsd.org>
+> Acked-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  tools/perf/pmu-events/jsmn.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/pmu-events/jsmn.h b/tools/perf/pmu-events/jsmn.h
+> index c7b0f6ea2a31..1bdfd55fff30 100644
+> --- a/tools/perf/pmu-events/jsmn.h
+> +++ b/tools/perf/pmu-events/jsmn.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: MIT */
+>  #ifndef __JSMN_H_
+>  #define __JSMN_H_
+>  
+> -- 
+> 2.24.0
+> 
