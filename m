@@ -2,275 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8EA611EC28
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B064411EC33
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 21:54:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfLMUxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 15:53:16 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:47094 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfLMUxQ (ORCPT
+        id S1726856AbfLMUyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 15:54:33 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:42315 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfLMUyc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:53:16 -0500
-Received: by mail-ot1-f67.google.com with SMTP id g18so567470otj.13
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2019 12:53:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RJVV240FcmOJOsegfmFG4PxTY2FHtv3JmMVXSMNvK6k=;
-        b=n8TzZEHDsWpon8BboRNW24Un+6olMj+aO1xctRqCSQ/nV2wlKLaM0DAWQq4A+GmRMB
-         yzcdzoH+NHnLnxatQAFwHoInBYz9ohJWIIWijjaJyrzOU7/4hdR+CK3bN9nqHGR5l/ee
-         ZIMnSZSdx0V7aMh7y1/Dop0GNflxxV6yuVqD/JgGvW494EXQ0KjjH2yYDcM1H7zwdESl
-         CcfotShnvymB8innOJGpoXlB0ZJq//e0EB1M1608mVLvRozEWRu89hx/3cmXL1LZiYOo
-         Bgf54l/a5ZRpNS6ZmMv8VFfrsM4vCpXmsi4DmjWeDg5YvhQgUqEt6gTZZPgUgWONi90K
-         kCjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RJVV240FcmOJOsegfmFG4PxTY2FHtv3JmMVXSMNvK6k=;
-        b=ISRYzInf2pR87ppe7qj0zeM0Gc0FpdQjZsWnXnRRAapkeJf6P6pXA+QSERWu8BFN27
-         Lnh6098mv5Giz5grstwpXAtlnm2arxa5fK5EapcMyY0gGdf7LB+AThvkuOfdFQoXwhmc
-         3vNGx0BGnJ3FvLupSq5C8qkDhY0GEygtHCkby/z11qQDAJSg8rfodeIQxzQMz5Q/uqaL
-         zYvOUsCz5pJm6BOpIcFNvbRPzEMp3UhxzXlXSOITL2yAwnLJ99DtH85ikfqHjE4ssI9M
-         rt5DcAj3tZF/ebJX64Hd9zUXKxzIqi/c7xMVOORglaxfvntMMhD25d2VduRhd/LKvfwD
-         8ojg==
-X-Gm-Message-State: APjAAAV5zl79D1EGAWOXEvXO0Ylmd47k6GjXNVJcI5938uM5LYHo/TzI
-        8/Uvl2FqDWse7/TtvD75N3mrAVnY+JqDEvnJ4pnexUnosO4=
-X-Google-Smtp-Source: APXvYqwNMdpBEGORkNOlA6jiI/GXWYgtOiCS/wZzPxcUlBe1ObOK+eaxp5oglwTaHj9cQ+Wn3wWk/FoLJr4p/BTacs0=
-X-Received: by 2002:a9d:7f12:: with SMTP id j18mr17267505otq.17.1576270394337;
- Fri, 13 Dec 2019 12:53:14 -0800 (PST)
+        Fri, 13 Dec 2019 15:54:32 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MgNQd-1i4aSD2T9D-00huUn; Fri, 13 Dec 2019 21:54:18 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-um@lists.infradead.org
+Subject: [PATCH v2 10/24] hostfs: pass 64-bit timestamps to/from user space
+Date:   Fri, 13 Dec 2019 21:53:38 +0100
+Message-Id: <20191213205417.3871055-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20191213204936.3643476-1-arnd@arndb.de>
+References: <20191213204936.3643476-1-arnd@arndb.de>
 MIME-Version: 1.0
-References: <20191126140406.164870-1-elver@google.com> <20191126140406.164870-3-elver@google.com>
- <00ee3b40-0e37-c9ac-3209-d07b233a0c1d@infradead.org> <20191203160128.GC2889@paulmck-ThinkPad-P72>
- <CANpmjNOvDHoapk1cR5rCAcYgfVwf8NS0wFJncJ-bQrWzCKLPpw@mail.gmail.com> <20191213013127.GE2889@paulmck-ThinkPad-P72>
-In-Reply-To: <20191213013127.GE2889@paulmck-ThinkPad-P72>
-From:   Marco Elver <elver@google.com>
-Date:   Fri, 13 Dec 2019 21:53:02 +0100
-Message-ID: <CANpmjNPWYh1HioefhZjQtXv+8sXSxQmg22uJN=-ut9mdsr=atw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] kcsan: Prefer __always_inline for fast-path
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:a6AdbmdDziwYGHu+FLwRLl9xFjl6ntLHucVI0g7wMYChjz0a15h
+ smNUqa7abfPVyLZDEicFzc+kxaoNSdsVsBhb2C3KoKHnF4X8drVpnzEeQwBcbSTwVrbA4ZE
+ l/jIyoAGeOSrx0BHpxPkM9AhZOahh3h/KMQdhAQJBgsQmtKP1NyFUKIJaAQ9SbK3m9M929y
+ ljS3RSrIpKC/5sFEyqAAQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:b1QJuSoZs2Y=:1GUnlu2dF2dprRPCt31Clf
+ Kv1y3O8o9ERlAkl4V0Fe0QrmFl1eJGcoNbAP0shJliOwxb439vJP2ESzT6Q6LmTMB/1OUgg9L
+ E8Eo8/uwZZx5ox+EFguRWTmeEqyers2S/DSkAwyHIIrMAzFr8MyXCyhm009u6VdNeqCkCZFk4
+ e1QPQn3EmkzHcdqZUu7o5eZFrT7OWWdmJQrWh68tRPsSPlHGqTn19fa4eHLmlpExQ8JxzgArD
+ t8eCWD9AwqyNgGiMB7tiqzu5ddMtDEFtWuXgss4ODnuNNPpz2g8dUGsqKO1W5yFO+B8zffSMs
+ iTkexflWc1Ypsz4//U87m4Xu3OVdSBxRG1m+/lYHw1KEoDAUwJfg5+k256HLY6TjdHxZCABIL
+ GI64J+yahQXalgJZAXy5iwZA8cLeJWtJC8ByybbPqW8PUjSD76HnNYIHjBufaflMJ0guhkC+4
+ sYwivnoImJE9ADg5/9YBzIESX7pRf/SUfjiLs9A15TqtB4NlVfNeFDoRZbBpFScRWO+4PbQbD
+ FqLeH63FvQfoifJVe4Qfae2M9f6G0FKaqVFof3e5uDC3Zyv1KgHQN0YLphROlOsL7ZRuoNaE6
+ DQDZGX8LVOCgHnoleFFuqaASFjkLl69bGmbUCy+2H1d8KVZa9J/AMKydajYxybqMjHt1Ac6CS
+ SZtUewPJGvklOSadqpjRJquJhKDiz9Vmq6zZRh13oCELpbJlrQTDjJmO0dRcdr1YKe+j/gM2d
+ gWZN+GMeXDsvdTyYfsux7MOfX/hcSZ9O8F95amXeLAxhJJR322Q3FWab15NoFKliM0HGKZEzb
+ vYWwoCO7nFofkOIokJhiMcWeRAvAGdQYpyCKuveyQ8wLV4bDaHIIIEvxvEVnG0HowsDZgTSO5
+ LWDJ78F7la/VYdUw7G1w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Dec 2019 at 02:31, Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> On Thu, Dec 12, 2019 at 10:11:59PM +0100, Marco Elver wrote:
-> > On Tue, 3 Dec 2019 at 17:01, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > >
-> > > On Mon, Dec 02, 2019 at 09:30:22PM -0800, Randy Dunlap wrote:
-> > > > On 11/26/19 6:04 AM, Marco Elver wrote:
-> > > > > Prefer __always_inline for fast-path functions that are called outside
-> > > > > of user_access_save, to avoid generating UACCESS warnings when
-> > > > > optimizing for size (CC_OPTIMIZE_FOR_SIZE). It will also avoid future
-> > > > > surprises with compiler versions that change the inlining heuristic even
-> > > > > when optimizing for performance.
-> > > > >
-> > > > > Report: http://lkml.kernel.org/r/58708908-84a0-0a81-a836-ad97e33dbb62@infradead.org
-> > > > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > > > > Signed-off-by: Marco Elver <elver@google.com>
-> > > >
-> > > > Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-> > >
-> > > Thank you, Randy!
-> >
-> > Hoped this would have applied by now, but since KCSAN isn't in
-> > mainline yet, should I send a version of this patch rebased on
-> > -rcu/kcsan?
-> > It will just conflict with the style cleanup that is in
-> > -tip/locking/kcsan when another eventual merge happens. Alternatively,
-> > we can delay it for now and just have to remember to apply eventually
-> > (and have to live with things being messy for a bit longer :-)).
->
-> Excellent question.  ;-)
->
-> The first several commits are in -tip already, so they will go upstream
-> in their current state by default.  And a bunch of -tip commits have
-> already been merged on top of them, so it might not be easy to move them.
->
-> So please feel free to port the patch to -rcu/ksan and let's see how that
-> plays out.  If it gets too ugly, then maybe wait until the current set
-> of patches go upstream.
->
-> Another option is to port them to the kcsan merge point in -rcu.  That
-> would bring in v5.5-rc1.  Would that help?
+The use of 'struct timespec' is deprecated in the kernel, so we
+want to avoid the conversions from/to the proper timespec64
+structure.
 
-For this patch it won't help, since it only conflicts with changes in
-this commit which is not in v5.5-rc1:
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=locking/kcsan&id=5cbaefe9743bf14c9d3106db0cc19f8cb0a3ca22
+On the user space side, we have a 'struct timespec' that is defined
+by the C library and that will be incompatible with the kernel's
+view on 32-bit architectures once they move to a 64-bit time_t,
+breaking the shared binary layout of hostfs_iattr and hostfs_stat.
 
-However, for this patch there are only 3 locations in
-kernel/kcsan/{core.c,encoding.h} that conflict, and all of them should
-be trivial to resolve. For the version rebased against -rcu/kcsan, in
-the conflicting locations I simply carried over the better style, so
-that upon eventual merge the resolution should be trivial (I hope). I
-have sent the rebased version here:
-http://lkml.kernel.org/r/20191213204946.251125-1-elver@google.com
+This changes the two structures to use a new hostfs_timespec structure
+with fixed 64-bit seconds/nanoseconds for passing the timestamps
+between hostfs_kern.c and hostfs_user.c. With a new enough user
+space side, this will allow timestamps beyond year 2038.
 
-Unrelated to this patch, we also deferred the updated bitops patch
-which now applies on top of v5.5-rc1:
-http://lkml.kernel.org/r/20191115115524.GA77379@google.com
-but doesn't apply to -rcu/kcsan. I think the bitops patch isn't
-terribly urgent, so it could wait to avoid further confusion.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/hostfs/hostfs.h      | 22 +++++++++++++---------
+ fs/hostfs/hostfs_kern.c | 15 +++++++++------
+ 2 files changed, 22 insertions(+), 15 deletions(-)
 
-Many thanks,
--- Marco
+diff --git a/fs/hostfs/hostfs.h b/fs/hostfs/hostfs.h
+index f4295aa19350..69cb796f6270 100644
+--- a/fs/hostfs/hostfs.h
++++ b/fs/hostfs/hostfs.h
+@@ -37,16 +37,20 @@
+  * is on, and remove the appropriate bits from attr->ia_mode (attr is a
+  * "struct iattr *"). -BlaisorBlade
+  */
++struct hostfs_timespec {
++	long long tv_sec;
++	long long tv_nsec;
++};
+ 
+ struct hostfs_iattr {
+-	unsigned int	ia_valid;
+-	unsigned short	ia_mode;
+-	uid_t		ia_uid;
+-	gid_t		ia_gid;
+-	loff_t		ia_size;
+-	struct timespec	ia_atime;
+-	struct timespec	ia_mtime;
+-	struct timespec	ia_ctime;
++	unsigned int		ia_valid;
++	unsigned short		ia_mode;
++	uid_t			ia_uid;
++	gid_t			ia_gid;
++	loff_t			ia_size;
++	struct hostfs_timespec	ia_atime;
++	struct hostfs_timespec	ia_mtime;
++	struct hostfs_timespec	ia_ctime;
+ };
+ 
+ struct hostfs_stat {
+@@ -56,7 +60,7 @@ struct hostfs_stat {
+ 	unsigned int uid;
+ 	unsigned int gid;
+ 	unsigned long long size;
+-	struct timespec atime, mtime, ctime;
++	struct hostfs_timespec atime, mtime, ctime;
+ 	unsigned int blksize;
+ 	unsigned long long blocks;
+ 	unsigned int maj;
+diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+index 5a7eb0c79839..e6b8c49076bb 100644
+--- a/fs/hostfs/hostfs_kern.c
++++ b/fs/hostfs/hostfs_kern.c
+@@ -549,9 +549,9 @@ static int read_name(struct inode *ino, char *name)
+ 	set_nlink(ino, st.nlink);
+ 	i_uid_write(ino, st.uid);
+ 	i_gid_write(ino, st.gid);
+-	ino->i_atime = timespec_to_timespec64(st.atime);
+-	ino->i_mtime = timespec_to_timespec64(st.mtime);
+-	ino->i_ctime = timespec_to_timespec64(st.ctime);
++	ino->i_atime = (struct timespec64){ st.atime.tv_sec, st.atime.tv_nsec };
++	ino->i_mtime = (struct timespec64){ st.mtime.tv_sec, st.mtime.tv_nsec };
++	ino->i_ctime = (struct timespec64){ st.ctime.tv_sec, st.ctime.tv_nsec };
+ 	ino->i_size = st.size;
+ 	ino->i_blocks = st.blocks;
+ 	return 0;
+@@ -820,15 +820,18 @@ static int hostfs_setattr(struct dentry *dentry, struct iattr *attr)
+ 	}
+ 	if (attr->ia_valid & ATTR_ATIME) {
+ 		attrs.ia_valid |= HOSTFS_ATTR_ATIME;
+-		attrs.ia_atime = timespec64_to_timespec(attr->ia_atime);
++		attrs.ia_atime = (struct hostfs_timespec)
++			{ attr->ia_atime.tv_sec, attr->ia_atime.tv_nsec };
+ 	}
+ 	if (attr->ia_valid & ATTR_MTIME) {
+ 		attrs.ia_valid |= HOSTFS_ATTR_MTIME;
+-		attrs.ia_mtime = timespec64_to_timespec(attr->ia_mtime);
++		attrs.ia_mtime = (struct hostfs_timespec)
++			{ attr->ia_mtime.tv_sec, attr->ia_mtime.tv_nsec };
+ 	}
+ 	if (attr->ia_valid & ATTR_CTIME) {
+ 		attrs.ia_valid |= HOSTFS_ATTR_CTIME;
+-		attrs.ia_ctime = timespec64_to_timespec(attr->ia_ctime);
++		attrs.ia_ctime = (struct hostfs_timespec)
++			{ attr->ia_ctime.tv_sec, attr->ia_ctime.tv_nsec };
+ 	}
+ 	if (attr->ia_valid & ATTR_ATIME_SET) {
+ 		attrs.ia_valid |= HOSTFS_ATTR_ATIME_SET;
+-- 
+2.20.0
 
-
->                                                         Thanx, Paul
->
-> > The version as-is here applies on -tip/locking/kcsan and -next (which
-> > merged -tip/locking/kcsan).
-> >
-> > Thanks,
-> > -- Marco
-> >
-> >
-> > >                                                         Thanx, Paul
-> > >
-> > > > Thanks.
-> > > >
-> > > > > ---
-> > > > > Rebased on: locking/kcsan branch of tip tree.
-> > > > > ---
-> > > > >  kernel/kcsan/atomic.h   |  2 +-
-> > > > >  kernel/kcsan/core.c     | 16 +++++++---------
-> > > > >  kernel/kcsan/encoding.h | 14 +++++++-------
-> > > > >  3 files changed, 15 insertions(+), 17 deletions(-)
-> > > > >
-> > > > > diff --git a/kernel/kcsan/atomic.h b/kernel/kcsan/atomic.h
-> > > > > index 576e03ddd6a3..a9c193053491 100644
-> > > > > --- a/kernel/kcsan/atomic.h
-> > > > > +++ b/kernel/kcsan/atomic.h
-> > > > > @@ -18,7 +18,7 @@
-> > > > >   * than cast to volatile. Eventually, we hope to be able to remove this
-> > > > >   * function.
-> > > > >   */
-> > > > > -static inline bool kcsan_is_atomic(const volatile void *ptr)
-> > > > > +static __always_inline bool kcsan_is_atomic(const volatile void *ptr)
-> > > > >  {
-> > > > >     /* only jiffies for now */
-> > > > >     return ptr == &jiffies;
-> > > > > diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-> > > > > index 3314fc29e236..c616fec639cd 100644
-> > > > > --- a/kernel/kcsan/core.c
-> > > > > +++ b/kernel/kcsan/core.c
-> > > > > @@ -78,10 +78,8 @@ static atomic_long_t watchpoints[CONFIG_KCSAN_NUM_WATCHPOINTS + NUM_SLOTS-1];
-> > > > >   */
-> > > > >  static DEFINE_PER_CPU(long, kcsan_skip);
-> > > > >
-> > > > > -static inline atomic_long_t *find_watchpoint(unsigned long addr,
-> > > > > -                                        size_t size,
-> > > > > -                                        bool expect_write,
-> > > > > -                                        long *encoded_watchpoint)
-> > > > > +static __always_inline atomic_long_t *
-> > > > > +find_watchpoint(unsigned long addr, size_t size, bool expect_write, long *encoded_watchpoint)
-> > > > >  {
-> > > > >     const int slot = watchpoint_slot(addr);
-> > > > >     const unsigned long addr_masked = addr & WATCHPOINT_ADDR_MASK;
-> > > > > @@ -146,7 +144,7 @@ insert_watchpoint(unsigned long addr, size_t size, bool is_write)
-> > > > >   * 2. the thread that set up the watchpoint already removed it;
-> > > > >   * 3. the watchpoint was removed and then re-used.
-> > > > >   */
-> > > > > -static inline bool
-> > > > > +static __always_inline bool
-> > > > >  try_consume_watchpoint(atomic_long_t *watchpoint, long encoded_watchpoint)
-> > > > >  {
-> > > > >     return atomic_long_try_cmpxchg_relaxed(watchpoint, &encoded_watchpoint, CONSUMED_WATCHPOINT);
-> > > > > @@ -160,7 +158,7 @@ static inline bool remove_watchpoint(atomic_long_t *watchpoint)
-> > > > >     return atomic_long_xchg_relaxed(watchpoint, INVALID_WATCHPOINT) != CONSUMED_WATCHPOINT;
-> > > > >  }
-> > > > >
-> > > > > -static inline struct kcsan_ctx *get_ctx(void)
-> > > > > +static __always_inline struct kcsan_ctx *get_ctx(void)
-> > > > >  {
-> > > > >     /*
-> > > > >      * In interrupts, use raw_cpu_ptr to avoid unnecessary checks, that would
-> > > > > @@ -169,7 +167,7 @@ static inline struct kcsan_ctx *get_ctx(void)
-> > > > >     return in_task() ? &current->kcsan_ctx : raw_cpu_ptr(&kcsan_cpu_ctx);
-> > > > >  }
-> > > > >
-> > > > > -static inline bool is_atomic(const volatile void *ptr)
-> > > > > +static __always_inline bool is_atomic(const volatile void *ptr)
-> > > > >  {
-> > > > >     struct kcsan_ctx *ctx = get_ctx();
-> > > > >
-> > > > > @@ -193,7 +191,7 @@ static inline bool is_atomic(const volatile void *ptr)
-> > > > >     return kcsan_is_atomic(ptr);
-> > > > >  }
-> > > > >
-> > > > > -static inline bool should_watch(const volatile void *ptr, int type)
-> > > > > +static __always_inline bool should_watch(const volatile void *ptr, int type)
-> > > > >  {
-> > > > >     /*
-> > > > >      * Never set up watchpoints when memory operations are atomic.
-> > > > > @@ -226,7 +224,7 @@ static inline void reset_kcsan_skip(void)
-> > > > >     this_cpu_write(kcsan_skip, skip_count);
-> > > > >  }
-> > > > >
-> > > > > -static inline bool kcsan_is_enabled(void)
-> > > > > +static __always_inline bool kcsan_is_enabled(void)
-> > > > >  {
-> > > > >     return READ_ONCE(kcsan_enabled) && get_ctx()->disable_count == 0;
-> > > > >  }
-> > > > > diff --git a/kernel/kcsan/encoding.h b/kernel/kcsan/encoding.h
-> > > > > index b63890e86449..f03562aaf2eb 100644
-> > > > > --- a/kernel/kcsan/encoding.h
-> > > > > +++ b/kernel/kcsan/encoding.h
-> > > > > @@ -59,10 +59,10 @@ encode_watchpoint(unsigned long addr, size_t size, bool is_write)
-> > > > >                   (addr & WATCHPOINT_ADDR_MASK));
-> > > > >  }
-> > > > >
-> > > > > -static inline bool decode_watchpoint(long watchpoint,
-> > > > > -                                unsigned long *addr_masked,
-> > > > > -                                size_t *size,
-> > > > > -                                bool *is_write)
-> > > > > +static __always_inline bool decode_watchpoint(long watchpoint,
-> > > > > +                                         unsigned long *addr_masked,
-> > > > > +                                         size_t *size,
-> > > > > +                                         bool *is_write)
-> > > > >  {
-> > > > >     if (watchpoint == INVALID_WATCHPOINT ||
-> > > > >         watchpoint == CONSUMED_WATCHPOINT)
-> > > > > @@ -78,13 +78,13 @@ static inline bool decode_watchpoint(long watchpoint,
-> > > > >  /*
-> > > > >   * Return watchpoint slot for an address.
-> > > > >   */
-> > > > > -static inline int watchpoint_slot(unsigned long addr)
-> > > > > +static __always_inline int watchpoint_slot(unsigned long addr)
-> > > > >  {
-> > > > >     return (addr / PAGE_SIZE) % CONFIG_KCSAN_NUM_WATCHPOINTS;
-> > > > >  }
-> > > > >
-> > > > > -static inline bool matching_access(unsigned long addr1, size_t size1,
-> > > > > -                              unsigned long addr2, size_t size2)
-> > > > > +static __always_inline bool matching_access(unsigned long addr1, size_t size1,
-> > > > > +                                       unsigned long addr2, size_t size2)
-> > > > >  {
-> > > > >     unsigned long end_range1 = addr1 + size1 - 1;
-> > > > >     unsigned long end_range2 = addr2 + size2 - 1;
-> > > > >
-> > > >
-> > > >
-> > > > --
-> > > > ~Randy
-> > > >
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20191213013127.GE2889%40paulmck-ThinkPad-P72.
