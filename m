@@ -2,63 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A261411DC3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 03:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B2511DC41
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 03:51:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731680AbfLMCsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Dec 2019 21:48:23 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:29891 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727605AbfLMCsX (ORCPT
+        id S1731771AbfLMCuj convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Dec 2019 21:50:39 -0500
+Received: from mx1.unisoc.com ([222.66.158.135]:50468 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726897AbfLMCuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Dec 2019 21:48:23 -0500
-X-UUID: ef95fc06bd1a427d9db9083dc31d40e7-20191213
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=1mh7OPQCgMOBR1dvjtbiL2hG+rXyscvDOnW/uspS6Jg=;
-        b=Pa6pK6ODz4CZP0vPhpwf7QPrL+CysndJoTOGcw5+gVlbVxo5xLwIHVeS9gTek2XrE4N93R6TlMXZhiArWDall1mgvloG2emzEL0zE8TtuK/nHnqegsla0MLUV3Ujh/H2DJYLR8jaap1kk97tMYd9+6PgddmmYIIh3CWJAUgZ6tU=;
-X-UUID: ef95fc06bd1a427d9db9083dc31d40e7-20191213
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 2126199904; Fri, 13 Dec 2019 10:48:16 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 13 Dec 2019 10:47:49 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 13 Dec 2019 10:47:36 +0800
-Message-ID: <1576205295.12066.5.camel@mtkswgap22>
-Subject: Re: [PATCH v1 0/2] scsi: ufs: fixup active period of ufshcd
- interrupt
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <alim.akhtar@samsung.com>,
-        <pedrom.sousa@synopsys.com>, <avri.altman@wdc.com>
-CC:     <martin.petersen@oracle.com>, <jejb@linux.ibm.com>,
-        <matthias.bgg@gmail.com>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <beanhuo@micron.com>,
-        <kuohong.wang@mediatek.com>, <peter.wang@mediatek.com>,
-        <chun-hung.wu@mediatek.com>, <andy.teng@mediatek.com>
-Date:   Fri, 13 Dec 2019 10:48:15 +0800
-In-Reply-To: <1575721321-8071-1-git-send-email-stanley.chu@mediatek.com>
-References: <1575721321-8071-1-git-send-email-stanley.chu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Thu, 12 Dec 2019 21:50:39 -0500
+Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+        by SHSQR01.spreadtrum.com with ESMTPS id xBD2nRML016388
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 13 Dec 2019 10:49:27 +0800 (CST)
+        (envelope-from Orson.Zhai@unisoc.com)
+Received: from lenovo (10.0.74.130) by BJMBX02.spreadtrum.com (10.0.64.8) with
+ Microsoft SMTP Server (TLS) id 15.0.847.32; Fri, 13 Dec 2019 10:49:50 +0800
+Date:   Fri, 13 Dec 2019 10:49:35 +0800
+From:   Orson Zhai <orson.zhai@spreadtrum.com>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh@kernel.org>
+CC:     Orson Zhai <orson.zhai@unisoc.com>, Arnd Bergmann <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <baolin.wang@unisoc.com>, <kevin.tang@unisoc.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        <liangcai.fan@unisoc.com>, <orsonzhai@gmail.com>
+Subject: Re: [PATCH v3] mfd: syscon: Add arguments support for syscon
+ reference
+Message-ID: <20191213024935.GD9271@lenovo>
+References: <1576037311-6052-1-git-send-email-orson.zhai@unisoc.com>
+ <CAK8P3a0244jKrEop2rHVyJZ57h4A9+mqb-5g-wLUSfR2G1svwg@mail.gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0244jKrEop2rHVyJZ57h4A9+mqb-5g-wLUSfR2G1svwg@mail.gmail.com>
+X-Originating-IP: [10.0.74.130]
+X-ClientProxiedBy: shcas04.spreadtrum.com (10.29.35.89) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+Content-Transfer-Encoding: 8BIT
+X-MAIL: SHSQR01.spreadtrum.com xBD2nRML016388
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RGVhciByZXZpZXdlcnMsDQoNCglHZW50bGUgcGluZyBmb3IgdGhpcyBwYXRjaCBzZXQuDQoNCk9u
-IFNhdCwgMjAxOS0xMi0wNyBhdCAyMDoyMSArMDgwMCwgU3RhbmxleSBDaHUgd3JvdGU6DQo+IFRo
-aXMgcGF0Y2hzZXQgZml4ZXMgdXAgYWN0aXZlIGR1cmF0aW9uIG9mIHVmc2hjZCBpbnRlcnJ1cHQg
-dG8gYXZvaWQgcG90ZW50aWFsIHN5c3RlbSBoYW5nIGlzc3Vlcy4NCj4gDQo+IFN0YW5sZXkgQ2h1
-ICgyKToNCj4gICBzY3NpOiB1ZnM6IGRpc2FibGUgaXJxIGJlZm9yZSBkaXNhYmxpbmcgY2xvY2tz
-DQo+ICAgc2NzaTogdWZzOiBkaXNhYmxlIGludGVycnVwdCBkdXJpbmcgY2xvY2stZ2F0aW5nDQo+
-IA0KPiAgZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuYyB8IDE1ICsrKysrKysrKystLS0tLQ0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQo+IA0KDQpU
-aGFua3MsDQpTdGFubGV5DQoNCg==
+Hi Lee and Rob,
 
+On Wed, Dec 11, 2019 at 02:55:39PM +0100, Arnd Bergmann wrote:
+> On Wed, Dec 11, 2019 at 5:09 AM Orson Zhai <orson.zhai@unisoc.com> wrote:
+> >
+> > There are a lot of similar global registers being used across multiple SoCs
+> > from Unisoc. But most of these registers are assigned with different offset
+> > for different SoCs. It is hard to handle all of them in an all-in-one
+> > kernel image.
+> >
+> > Add a helper function to get regmap with arguments where we could put some
+> > extra information such as the offset value.
+> >
+> > Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
+> > Tested-by: Baolin Wang <baolin.wang@unisoc.com>
+>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+
+Does this patch look good to be applied?
+
+Or if any comments please feel free to send to me.
+
+Thank you!
+
+Best Regards,
+Orson
+________________________________
+ This email (including its attachments) is intended only for the person or entity to which it is addressed and may contain information that is privileged, confidential or otherwise protected from disclosure. Unauthorized use, dissemination, distribution or copying of this email or the information herein or taking any action in reliance on the contents of this email or the information herein, by anyone other than the intended recipient, or an employee or agent responsible for delivering the message to the intended recipient, is strictly prohibited. If you are not the intended recipient, please do not read, copy, use or disclose any part of this e-mail to others. Please notify the sender immediately and permanently delete this e-mail and any attachments if you received it in error. Internet communications cannot be guaranteed to be timely, secure, error-free or virus-free. The sender does not accept liability for any errors or omissions.
+本邮件及其附件具有保密性质，受法律保护不得泄露，仅发送给本邮件所指特定收件人。严禁非经授权使用、宣传、发布或复制本邮件或其内容。若非该特定收件人，请勿阅读、复制、 使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件的方式即刻告知发件人。无法保证互联网通信及时、安全、无误或防毒。发件人对任何错漏均不承担责任。
