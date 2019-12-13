@@ -2,126 +2,268 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895D511E065
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:13:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A0011E095
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2019 10:27:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbfLMJN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 04:13:28 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:46536 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfLMJN1 (ORCPT
+        id S1726826AbfLMJ1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 04:27:39 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:45277 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbfLMJ1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:13:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1576228406; x=1607764406;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=CBG1FDANtU5OZr3itkCR/uZ0kGzF/Rp81mdKwZKZTmw=;
-  b=NS6Anzv2chFhdGEz7LHsKDZeWd72YiVKmNEojWbgpdtPAcsaNda0ORmq
-   +T5hO4gZUocOKGI2Wuy868vl6KjmYXn6AO1VdXNGMlF3uxtBB/ekMqOJG
-   tRofJEkXwviKzUkIwXXDvQC2oy+oIkvW3forIjO2pLrFSt6OaO0xh5KJG
-   E=;
-IronPort-SDR: R4EWnN0LcLv3X8VjF98eHYXSiwobj13NuJFtg1jfSe3jZQPRiaEXcXvdv2mR/rTU60u/8H6D4+
- oZHClg/pP4ww==
-X-IronPort-AV: E=Sophos;i="5.69,309,1571702400"; 
-   d="scan'208";a="13309466"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2a-119b4f96.us-west-2.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 13 Dec 2019 09:13:13 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2a-119b4f96.us-west-2.amazon.com (Postfix) with ESMTPS id 216D91A1E8F;
-        Fri, 13 Dec 2019 09:13:11 +0000 (UTC)
-Received: from EX13D11UWB004.ant.amazon.com (10.43.161.90) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 13 Dec 2019 09:13:11 +0000
-Received: from EX13D01UWB002.ant.amazon.com (10.43.161.136) by
- EX13D11UWB004.ant.amazon.com (10.43.161.90) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 13 Dec 2019 09:13:11 +0000
-Received: from EX13D01UWB002.ant.amazon.com ([10.43.161.136]) by
- EX13d01UWB002.ant.amazon.com ([10.43.161.136]) with mapi id 15.00.1367.000;
- Fri, 13 Dec 2019 09:13:11 +0000
-From:   "Singh, Balbir" <sblbir@amazon.com>
-To:     "hch@lst.de" <hch@lst.de>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "Sangaraju, Someswarudu" <ssomesh@amazon.com>
-Subject: Re: [RFC PATCH] block/genhd: Notify udev about capacity change
-Thread-Topic: [RFC PATCH] block/genhd: Notify udev about capacity change
-Thread-Index: AQHVrwYjh2l0GmmZOEmELsmopgOsAqe2RkCAgAGGxwA=
-Date:   Fri, 13 Dec 2019 09:13:10 +0000
-Message-ID: <8dee699c66a2c8532bd82515291d7fa86cab93f4.camel@amazon.com>
-References: <20191210030131.4198-1-sblbir@amazon.com>
-         <20191212095431.GA3720@lst.de>
-In-Reply-To: <20191212095431.GA3720@lst.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.160.100]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <85A3E586BE61E449B1EB82A25A1F7677@amazon.com>
-Content-Transfer-Encoding: base64
+        Fri, 13 Dec 2019 04:27:36 -0500
+Received: from 79.184.255.82.ipv4.supernova.orange.pl (79.184.255.82) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id dd2c8e29df03ce37; Fri, 13 Dec 2019 10:27:33 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Subject: [PATCH v1 03/10] ACPI: processor: Clean up acpi_processor_evaluate_cst()
+Date:   Fri, 13 Dec 2019 10:14:46 +0100
+Message-ID: <2158277.Sk0T0YLvXj@kreacher>
+In-Reply-To: <3950312.2WmFeOdZGY@kreacher>
+References: <3950312.2WmFeOdZGY@kreacher>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTEyLTEyIGF0IDEwOjU0ICswMTAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
-ZToNCj4gT24gVHVlLCBEZWMgMTAsIDIwMTkgYXQgMDM6MDE6MzFBTSArMDAwMCwgQmFsYmlyIFNp
-bmdoIHdyb3RlOg0KPiA+IEFsbG93IGJsb2NrL2dlbmhkIHRvIG5vdGlmeSB1c2VyIHNwYWNlICh2
-aWEgdWRldikgYWJvdXQgZGlzayBzaXplIGNoYW5nZXMNCj4gPiB1c2luZyBhIG5ldyBoZWxwZXIg
-ZGlza19zZXRfY2FwYWNpdHkoKSwgd2hpY2ggaXMgYSB3cmFwcGVyIG9uIHRvcA0KPiA+IG9mIHNl
-dF9jYXBhY2l0eSgpLiBkaXNrX3NldF9jYXBhY2l0eSgpIHdpbGwgb25seSBub3RpZnkgdmlhIHVk
-ZXYgaWYNCj4gPiB0aGUgY3VycmVudCBjYXBhY2l0eSBvciB0aGUgdGFyZ2V0IGNhcGFjaXR5IGlz
-IG5vdCB6ZXJvLg0KPiA+IA0KPiA+IGRpc2tfc2V0X2NhcGFjaXR5KCkgaXMgbm90IGVuYWJsZWQg
-Zm9yIGFsbCBkZXZpY2VzLCBqdXN0IHZpcnRpbyBibG9jaywNCj4gPiB4ZW4tYmxvY2tmcm9udCwg
-bnZtZSBhbmQgc2QuIE93bmVycyBvZiBvdGhlciBibG9jayBkaXNrIGRldmljZXMgY2FuDQo+ID4g
-ZWFzaWx5IG1vdmUgb3ZlciBieSBjaGFuZ2luZyBzZXRfY2FwYWNpdHkoKSB0byBkaXNrX3NldF9j
-YXBhY2l0eSgpDQo+ID4gDQo+ID4gQmFja2dyb3VuZDoNCj4gPiANCj4gPiBBcyBhIHBhcnQgb2Yg
-YSBwYXRjaCB0byBhbGxvdyBzZW5kaW5nIHRoZSBSRVNJWkUgZXZlbnQgb24gZGlzayBjYXBhY2l0
-eQ0KPiA+IGNoYW5nZSwgQ2hyaXN0b3BoIChoY2hAbHN0LmRlKSByZXF1ZXN0ZWQgdGhhdCB0aGUg
-cGF0Y2ggYmUgbWFkZSBnZW5lcmljDQo+ID4gYW5kIHRoZSBoYWNrcyBmb3IgdmlydGlvIGJsb2Nr
-IGFuZCB4ZW4gYmxvY2sgZGV2aWNlcyBiZSByZW1vdmVkIGFuZA0KPiA+IG1lcmdlZCB2aWEgYSBn
-ZW5lcmljIGhlbHBlci4NCj4gPiANCj4gPiBUZXN0aW5nOg0KPiA+IDEuIEkgZGlkIHNvbWUgYmFz
-aWMgdGVzdGluZyB3aXRoIGFuIE5WTUUgZGV2aWNlLCBieSByZXNpemluZyBpdCBpbg0KPiA+IHRo
-ZSBiYWNrZW5kIGFuZCBlbnN1cmVkIHRoYXQgdWRldmQgcmVjZWl2ZWQgdGhlIGV2ZW50Lg0KPiA+
-IA0KPiA+IFN1Z2dlc3RlZC1ieTogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+DQo+ID4g
-U2lnbmVkLW9mZi1ieTogQmFsYmlyIFNpbmdoIDxzYmxiaXJAYW1hem9uLmNvbT4NCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBTb21lc3dhcnVkdSBTYW5nYXJhanUgPHNzb21lc2hAYW1hem9uLmNvbT4NCj4g
-PiAtLS0NCj4gPiAgYmxvY2svZ2VuaGQuYyAgICAgICAgICAgICAgICB8IDE5ICsrKysrKysrKysr
-KysrKysrKysNCj4gPiAgZHJpdmVycy9ibG9jay92aXJ0aW9fYmxrLmMgICB8ICA0ICstLS0NCj4g
-PiAgZHJpdmVycy9ibG9jay94ZW4tYmxrZnJvbnQuYyB8ICA1ICstLS0tDQo+ID4gIGRyaXZlcnMv
-bnZtZS9ob3N0L2NvcmUuYyAgICAgfCAgMiArLQ0KPiA+ICBkcml2ZXJzL3Njc2kvc2QuYyAgICAg
-ICAgICAgIHwgIDIgKy0NCj4gPiAgaW5jbHVkZS9saW51eC9nZW5oZC5oICAgICAgICB8ICAxICsN
-Cj4gPiAgNiBmaWxlcyBjaGFuZ2VkLCAyNCBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQ0K
-PiA+IA0KPiA+IGRpZmYgLS1naXQgYS9ibG9jay9nZW5oZC5jIGIvYmxvY2svZ2VuaGQuYw0KPiA+
-IGluZGV4IGZmNjI2ODk3MGRkYy4uOTRmYWVjOTg2MDdiIDEwMDY0NA0KPiA+IC0tLSBhL2Jsb2Nr
-L2dlbmhkLmMNCj4gPiArKysgYi9ibG9jay9nZW5oZC5jDQo+ID4gQEAgLTQ2LDYgKzQ2LDI1IEBA
-IHN0YXRpYyB2b2lkIGRpc2tfYWRkX2V2ZW50cyhzdHJ1Y3QgZ2VuZGlzayAqZGlzayk7DQo+ID4g
-IHN0YXRpYyB2b2lkIGRpc2tfZGVsX2V2ZW50cyhzdHJ1Y3QgZ2VuZGlzayAqZGlzayk7DQo+ID4g
-IHN0YXRpYyB2b2lkIGRpc2tfcmVsZWFzZV9ldmVudHMoc3RydWN0IGdlbmRpc2sgKmRpc2spOw0K
-PiA+ICANCj4gPiArLyoNCj4gPiArICogU2V0IGRpc2sgY2FwYWNpdHkgYW5kIG5vdGlmeSBpZiB0
-aGUgc2l6ZSBpcyBub3QgY3VycmVudGx5DQo+ID4gKyAqIHplcm8gYW5kIHdpbGwgbm90IGJlIHNl
-dCB0byB6ZXJvDQo+IA0KPiBOaXQ6IFVzZSB1cCBhbGwgdGhlIDgwIGNoYXJzIHBlciBsaW5lLiAg
-QWxzbyBtYXliZSB0dXJuIHRoaXMgaW50byBhDQo+IGtlcm5lbGRvYyBjb21tZW50LiAgSSB0aGlu
-ayB5b3UgYWxzbyB3YW50IHRvIG1lbnRpb24gdGhlIG5vdGlmaWNhdGlvbg0KPiBhcyB3ZWxsLg0K
-DQpXaWxsIGRvIQ0KDQo+IA0KPiA+ICtFWFBPUlRfU1lNQk9MX0dQTChkaXNrX3NldF9jYXBhY2l0
-eSk7DQo+ID4gKw0KPiA+ICsNCj4gPiAgdm9pZCBwYXJ0X2luY19pbl9mbGlnaHQoc3RydWN0IHJl
-cXVlc3RfcXVldWUgKnEsIHN0cnVjdCBoZF9zdHJ1Y3QgKnBhcnQsDQo+ID4gaW50IHJ3KQ0KPiAN
-Cj4gTm8gbmVlZCBmb3IgdGhlIGRvdWJsZSBlbXB0eSBsaW5lLg0KPiANCj4gPiAgew0KPiA+ICAJ
-aWYgKHF1ZXVlX2lzX21xKHEpKQ0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Jsb2NrL3ZpcnRp
-b19ibGsuYyBiL2RyaXZlcnMvYmxvY2svdmlydGlvX2Jsay5jDQo+ID4gaW5kZXggN2ZmZDcxOWQ4
-OWRlLi44NjljZDNjMzE1MjkgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ibG9jay92aXJ0aW9f
-YmxrLmMNCj4gPiArKysgYi9kcml2ZXJzL2Jsb2NrL3ZpcnRpb19ibGsuYw0KPiANCj4gQW5kIHlv
-dSBwcm9iYWJseSB3YW50IHRvIHR1cm4gdGhpcyBpbnRvIGEgc2VyaWVzIHdpdGggcGF0Y2ggMSBh
-ZGRpbmcNCj4gdGhlIGluZnJhc3RydWN0dXJlLCBhbmQgdGhlbiBvbmUgcGF0Y2ggcGVyIGRyaXZl
-ciBzd2l0Y2hlZCBvdmVyLg0KTWFrZXMgc2Vuc2UsIHdpbGwgZG8NCg0KVGhhbmtzIGZvciB0aGUg
-ZmVlZGJhY2sNCkJhbGJpciBTaW5naC4NCg==
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+
+Clean up acpi_processor_evaluate_cst() in multiple ways:
+
+ * Rename current_count to last_index which matches the purpose of
+   the variable better.
+
+ * Consistently use acpi_handle_*() for printing messages and make
+   the messages cleaner.
+
+ * Drop redundant parens and braces.
+
+ * Rewrite and clarify comments.
+
+ * Rearrange checks and drop the redundant ones.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+No changes from the RFC version.
+
+---
+ drivers/acpi/processor_idle.c | 114 +++++++++++++++++++-----------------------
+ 1 file changed, 52 insertions(+), 62 deletions(-)
+
+diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+index e92d0e6d4cd1..7c2fe3b2ec31 100644
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -304,29 +304,29 @@ static int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
+ 	union acpi_object *cst;
+ 	acpi_status status;
+ 	u64 count;
+-	int current_count = 0;
++	int last_index = 0;
+ 	int i, ret = 0;
+ 
+ 	status = acpi_evaluate_object(handle, "_CST", NULL, &buffer);
+ 	if (ACPI_FAILURE(status)) {
+-		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "No _CST, giving up\n"));
++		acpi_handle_debug(handle, "No _CST\n");
+ 		return -ENODEV;
+ 	}
+ 
+ 	cst = buffer.pointer;
+ 
+-	/* There must be at least 2 elements */
+-	if (!cst || (cst->type != ACPI_TYPE_PACKAGE) || cst->package.count < 2) {
+-		pr_err("not enough elements in _CST\n");
++	/* There must be at least 2 elements. */
++	if (!cst || cst->type != ACPI_TYPE_PACKAGE || cst->package.count < 2) {
++		acpi_handle_warn(handle, "Invalid _CST output\n");
+ 		ret = -EFAULT;
+ 		goto end;
+ 	}
+ 
+ 	count = cst->package.elements[0].integer.value;
+ 
+-	/* Validate number of power states. */
++	/* Validate the number of C-states. */
+ 	if (count < 1 || count != cst->package.count - 1) {
+-		pr_err("count given by _CST is not valid\n");
++		acpi_handle_warn(handle, "Inconsistent _CST data\n");
+ 		ret = -EFAULT;
+ 		goto end;
+ 	}
+@@ -337,111 +337,101 @@ static int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
+ 		struct acpi_power_register *reg;
+ 		struct acpi_processor_cx cx;
+ 
++		/*
++		 * If there is not enough space for all C-states, skip the
++		 * excess ones and log a warning.
++		 */
++		if (last_index >= ACPI_PROCESSOR_MAX_POWER - 1) {
++			acpi_handle_warn(handle,
++					 "No room for more idle states (limit: %d)\n",
++					 ACPI_PROCESSOR_MAX_POWER - 1);
++			break;
++		}
++
+ 		memset(&cx, 0, sizeof(cx));
+ 
+-		element = &(cst->package.elements[i]);
++		element = &cst->package.elements[i];
+ 		if (element->type != ACPI_TYPE_PACKAGE)
+ 			continue;
+ 
+ 		if (element->package.count != 4)
+ 			continue;
+ 
+-		obj = &(element->package.elements[0]);
++		obj = &element->package.elements[0];
+ 
+ 		if (obj->type != ACPI_TYPE_BUFFER)
+ 			continue;
+ 
+ 		reg = (struct acpi_power_register *)obj->buffer.pointer;
+ 
+-		if (reg->space_id != ACPI_ADR_SPACE_SYSTEM_IO &&
+-		    (reg->space_id != ACPI_ADR_SPACE_FIXED_HARDWARE))
+-			continue;
+-
+-		/* There should be an easy way to extract an integer... */
+-		obj = &(element->package.elements[1]);
++		obj = &element->package.elements[1];
+ 		if (obj->type != ACPI_TYPE_INTEGER)
+ 			continue;
+ 
+ 		cx.type = obj->integer.value;
+ 		/*
+-		 * Some buggy BIOSes won't list C1 in _CST -
+-		 * Let acpi_processor_get_power_info_default() handle them later
++		 * There are known cases in which the _CST output does not
++		 * contain C1, so if the type of the first state found is not
++		 * C1, leave an empty slot for C1 to be filled in later.
+ 		 */
+ 		if (i == 1 && cx.type != ACPI_STATE_C1)
+-			current_count++;
++			last_index = 1;
+ 
+ 		cx.address = reg->address;
+-		cx.index = current_count + 1;
++		cx.index = last_index + 1;
+ 
+-		cx.entry_method = ACPI_CSTATE_SYSTEMIO;
+ 		if (reg->space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
+-			if (acpi_processor_ffh_cstate_probe
+-					(cpu, &cx, reg) == 0) {
+-				cx.entry_method = ACPI_CSTATE_FFH;
++			if (!acpi_processor_ffh_cstate_probe(cpu, &cx, reg)) {
++				/*
++				 * In the majority of cases _CST describes C1 as
++				 * a FIXED_HARDWARE C-state, but if the command
++				 * line forbids using MWAIT, use CSTATE_HALT for
++				 * C1 regardless.
++				 */
++				if (cx.type == ACPI_STATE_C1 &&
++				    boot_option_idle_override == IDLE_NOMWAIT) {
++					cx.entry_method = ACPI_CSTATE_HALT;
++					snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
++				} else {
++					cx.entry_method = ACPI_CSTATE_FFH;
++				}
+ 			} else if (cx.type == ACPI_STATE_C1) {
+ 				/*
+-				 * C1 is a special case where FIXED_HARDWARE
+-				 * can be handled in non-MWAIT way as well.
+-				 * In that case, save this _CST entry info.
+-				 * Otherwise, ignore this info and continue.
++				 * In the special case of C1, FIXED_HARDWARE can
++				 * be handled by executing the HLT instruction.
+ 				 */
+ 				cx.entry_method = ACPI_CSTATE_HALT;
+ 				snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
+ 			} else {
+ 				continue;
+ 			}
+-			if (cx.type == ACPI_STATE_C1 &&
+-			    (boot_option_idle_override == IDLE_NOMWAIT)) {
+-				/*
+-				 * In most cases the C1 space_id obtained from
+-				 * _CST object is FIXED_HARDWARE access mode.
+-				 * But when the option of idle=halt is added,
+-				 * the entry_method type should be changed from
+-				 * CSTATE_FFH to CSTATE_HALT.
+-				 * When the option of idle=nomwait is added,
+-				 * the C1 entry_method type should be
+-				 * CSTATE_HALT.
+-				 */
+-				cx.entry_method = ACPI_CSTATE_HALT;
+-				snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI HLT");
+-			}
+-		} else {
++		} else if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
++			cx.entry_method = ACPI_CSTATE_SYSTEMIO;
+ 			snprintf(cx.desc, ACPI_CX_DESC_LEN, "ACPI IOPORT 0x%x",
+ 				 cx.address);
++		} else {
++			continue;
+ 		}
+ 
+-		if (cx.type == ACPI_STATE_C1) {
++		if (cx.type == ACPI_STATE_C1)
+ 			cx.valid = 1;
+-		}
+ 
+-		obj = &(element->package.elements[2]);
++		obj = &element->package.elements[2];
+ 		if (obj->type != ACPI_TYPE_INTEGER)
+ 			continue;
+ 
+ 		cx.latency = obj->integer.value;
+ 
+-		obj = &(element->package.elements[3]);
++		obj = &element->package.elements[3];
+ 		if (obj->type != ACPI_TYPE_INTEGER)
+ 			continue;
+ 
+-		current_count++;
+-		memcpy(&info->states[current_count], &cx, sizeof(cx));
+-
+-		/*
+-		 * We support total ACPI_PROCESSOR_MAX_POWER - 1
+-		 * (From 1 through ACPI_PROCESSOR_MAX_POWER - 1)
+-		 */
+-		if (current_count >= (ACPI_PROCESSOR_MAX_POWER - 1)) {
+-			pr_warn("Limiting number of power states to max (%d)\n",
+-				ACPI_PROCESSOR_MAX_POWER);
+-			pr_warn("Please increase ACPI_PROCESSOR_MAX_POWER if needed.\n");
+-			break;
+-		}
++		memcpy(&info->states[++last_index], &cx, sizeof(cx));
+ 	}
+ 
+-	acpi_handle_info(handle, "Found %d idle states\n", current_count);
++	acpi_handle_info(handle, "Found %d idle states\n", last_index);
+ 
+-	info->count = current_count;
++	info->count = last_index;
+ 
+       end:
+ 	kfree(buffer.pointer);
+-- 
+2.16.4
+
+
+
+
+
