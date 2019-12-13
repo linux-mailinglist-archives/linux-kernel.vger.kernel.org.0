@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6295411EE4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 00:11:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4083E11EE48
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 00:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbfLMXKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 18:10:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37998 "EHLO mail.kernel.org"
+        id S1727132AbfLMXKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 18:10:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725945AbfLMXKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 18:10:11 -0500
-Subject: Re: [git pull] drm fixes for 5.5-rc2
+        id S1726599AbfLMXKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 18:10:14 -0500
+Subject: Re: [GIT PULL] sound fixes for 5.5-rc2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576278611;
-        bh=pspnKMIlXdhQZxbYs6m+K1waGcUhbbyoUHB0cwr6S5A=;
+        s=default; t=1576278613;
+        bh=WiZ3jJAfgiP9/4/Xz2sPhyKv9s293vyVEorQexoUaq8=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=F2xKFAGc2VQwggfbn1pCnWkoZ99BK15Wi+/PD+5Dhebj0nR4kf30/tD+EoNDCtZ1p
-         jddWCl8GlEK4j7CpqCu8Y0WPkMwFsS8qrHyCpw72qh5qjkAKAA62DqIHuYxRLzigiC
-         oKnTYcWtwrrVTMZQTrKP4jUW7na6DIm6rPNhG1S0=
+        b=NsmklCENb9GPHohlNQh2wI6TYGhDSI1fnygXAUwGI4tcpVOPWjg9aMHbonCRMLuvf
+         PW4/ePQvtGxSAXexEVeECW7Mec5qD0uWguDC4hryegqvc0pTPdCHHG2piElzI5ty+h
+         RcUBHbXl+aXwgIVIC3TzX35o9yhiaRxLwxK4jFHk=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9ty-Cn1SRGkXWkYN9L8F2oe-mwA77cvpSz3iJUutQQcrwA@mail.gmail.com>
-References: <CAPM=9ty-Cn1SRGkXWkYN9L8F2oe-mwA77cvpSz3iJUutQQcrwA@mail.gmail.com>
+In-Reply-To: <s5hblscfpad.wl-tiwai@suse.de>
+References: <s5hblscfpad.wl-tiwai@suse.de>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPM=9ty-Cn1SRGkXWkYN9L8F2oe-mwA77cvpSz3iJUutQQcrwA@mail.gmail.com>
-X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
- tags/drm-fixes-2019-12-13
-X-PR-Tracked-Commit-Id: d16f0f61400074dbc75797ca5ef5c3d50f6c0ddf
+X-PR-Tracked-Message-Id: <s5hblscfpad.wl-tiwai@suse.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+ tags/sound-5.5-rc2
+X-PR-Tracked-Commit-Id: 5815bdfd7f54739be9abed1301d55f5e74d7ad1f
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b2cb931d724b08def6e833541a37b08ebd59ab43
-Message-Id: <157627861136.1837.10096094016374191745.pr-tracker-bot@kernel.org>
-Date:   Fri, 13 Dec 2019 23:10:11 +0000
-To:     Dave Airlie <airlied@gmail.com>
+X-PR-Merge-Commit-Id: b61c56227bf5a2ca5e146cebcdf50b2e15e4c973
+Message-Id: <157627861355.1837.7004463837593543477.pr-tracker-bot@kernel.org>
+Date:   Fri, 13 Dec 2019 23:10:13 +0000
+To:     Takashi Iwai <tiwai@suse.de>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 13 Dec 2019 17:04:44 +1000:
+The pull request you sent on Fri, 13 Dec 2019 12:17:14 +0100:
 
-> git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-12-13
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-5.5-rc2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b2cb931d724b08def6e833541a37b08ebd59ab43
+https://git.kernel.org/torvalds/c/b61c56227bf5a2ca5e146cebcdf50b2e15e4c973
 
 Thank you!
 
