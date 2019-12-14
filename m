@@ -2,84 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 010F111F2D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 17:38:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1E2A11F2D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 17:43:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfLNQiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 11:38:15 -0500
-Received: from wbironout3b.netvigator.com ([210.87.247.19]:26687 "EHLO
-        wbironout3b.netvigator.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725970AbfLNQiP (ORCPT
+        id S1726802AbfLNQkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 11:40:53 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54830 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbfLNQkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 11:38:15 -0500
-X-Greylist: delayed 612 seconds by postgrey-1.27 at vger.kernel.org; Sat, 14 Dec 2019 11:38:14 EST
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0B2AQBaDPVd/5YXxstlHQEBAQkBEQUFA?=
- =?us-ascii?q?YFsBgELAYIfgUEgEhoQqUSFKIF7CQEBATsCAQGDLYETghEkNgcOAhABAQQBAQE?=
- =?us-ascii?q?CAQUEbYRrWIVWNlIoCCZ7W4JHAYJ2Bq4VMxoCii+BNgGHPoRZFAY/gUGBR4Ioc?=
- =?us-ascii?q?4dtgkoEl06XLAqCNJYFAhmOZwOLXQEtqGSCBQoogViBBYFZCoFEUBGMegE3FxW?=
- =?us-ascii?q?OGzQzgQSOQAE?=
-X-IronPort-AV: E=Sophos;i="5.69,314,1571673600"; 
-   d="scan'208";a="166050022"
-X-MGA-submission: =?us-ascii?q?MDH2+MYWhEouIgONWJx0B2GgW4V4ZZMtSpCgWZ?=
- =?us-ascii?q?A8ubt/KyG0peN16claqlItDctOXDjBJV4/jRWpexBJFV2hk3FWN/Mjun?=
- =?us-ascii?q?i0bskiibb9FLrlPFRj8stmuOl4nnrVMNti/K5Y1pndS36R6PukGNloU7?=
- =?us-ascii?q?HY?=
-Received: from unknown (HELO ybironoah03.netvigator.com) ([203.198.23.150])
-  by wbironout3v2.netvigator.com with ESMTP; 15 Dec 2019 00:27:58 +0800
-Received: from unknown (HELO rhel76.localdomain) ([42.200.157.25])
-  by ybironoah03.netvigator.com with ESMTP; 15 Dec 2019 00:27:58 +0800
-From:   "Chan Shu Tak, Alex" <alexchan@task.com.hk>
-Cc:     "Chan Shu Tak, Alex" <alexchan@task.com.hk>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] llc2: Reverse the true/false statements of the condition operator in llc_stat_ev_rx_null_dsap_xid_c and llc_stat_ev_rx_null_dsap_test_c.
-Date:   Sun, 15 Dec 2019 00:26:58 +0800
-Message-Id: <1576340820-4929-1-git-send-email-alexchan@task.com.hk>
-X-Mailer: git-send-email 1.8.3.1
-To:     unlisted-recipients:; (no To-header on input)
+        Sat, 14 Dec 2019 11:40:53 -0500
+Received: by mail-wm1-f65.google.com with SMTP id b19so2024802wmj.4
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2019 08:40:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=S9ef2wu9QYXVmSGoompV4V/CxRyXNOIMVXBHA4K/f9o+v26ki0yyDoBwyTFfffCQea
+         iKcOo1hMw2Mm46X3Mp5lIJxl16XG+/4uhEBrqNA8xcwBIT62TB0pC3DhuB7Nu/t3Lvdx
+         lwGnGK/82sSKn44vm0XTsk9QCfouWLfylL0LXN1mqm+MHilr6YAGSzogO8U4BKWHHOem
+         +ZlhuPeThAmie1pW/XmQlzN0VMacCbZMZTP31WZHIE5VmWlIqspY/Gii2htO+7mVE4Xj
+         kFO3UM+J7UBFMCbOUdJcdLRUivFUNK+nPzWDk1dMaBXZZHRboaE08zX8paJO7r5fF4ZD
+         OjUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=Hb73Dx8FtHXDNaggXvonm3ClLR1uPKkle8RV0Z3h8IknCFiW2lsxC4YUTCSYdIIJIV
+         AM3SkueG9GdAjSs7N4ZWlp11hxXKhIuLcLkKgoPnTmsmC1pjYNDyNBDzPHoIxQguXpQb
+         rjZ5INzRJ//PRpNwYSzV6CXuvzVFi9hFZf2WZTsmpzOWKCEECiSJ9w+MWhj1KbAY2RHj
+         4WueDCrd26HCVaHDE9za7r9/oXcljKgnTJEoDIYJyBKobg/wuUqYUiiBpWejFyMAGeYo
+         8WnyWDiXSdEY1zBv6aZGts3QneQwzXr0C2FaMHc/esYQ1PXb/4KOCrQB5ScGp3Ve7i81
+         nUyg==
+X-Gm-Message-State: APjAAAXHjySkXXAv3ieU2OektrLgJ6H3U/msE/jKgGQGTdyVYMbKYMJs
+        a/bGR9QGMrpC3gm4eFiEFwqcwOFTs/lL5U0rya4=
+X-Google-Smtp-Source: APXvYqz/ZzS0cbfLvi3mzdN4R/0OkAg9oC2map23emQc6XBoC4CijTZ43jEQhMVxc9Xctvo2huRrdkbccuyuVl9Y9SY=
+X-Received: by 2002:a05:600c:507:: with SMTP id i7mr21190050wmc.135.1576341652019;
+ Sat, 14 Dec 2019 08:40:52 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a1c:a387:0:0:0:0:0 with HTTP; Sat, 14 Dec 2019 08:40:51
+ -0800 (PST)
+Reply-To: ndahpeter1@gmail.com
+From:   ndah peter <anitadeerow2@gmail.com>
+Date:   Sat, 14 Dec 2019 17:40:51 +0100
+Message-ID: <CAL-fvu7+0mGZi+ibm8pdLR7a3HsMbWqqoqxo-MQgCFO1Ed6QMQ@mail.gmail.com>
+Subject: =?UTF-8?B?xaHFpWFzdG7DvSB2w61rZW5kLCBkZWp0ZSBtaSB2xJtkxJt0LCBwb2t1ZCBqc3RlIG9iZA==?=
+        =?UTF-8?B?csW+ZWxpIGUtbWFpbCwga3RlcsO9IGpzZW0gdsOhbSBwb3NsYWwgcMWZZWR0w61tPyBwcm9zw61tIG5h?=
+        =?UTF-8?B?cGnFoXRlIG1pIHpwxJt0?=
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Chan Shu Tak, Alex" <alexchan@task.com.hk>
-
-When a frame with NULL DSAP is received, llc_station_rcv is called.
-In turn, llc_stat_ev_rx_null_dsap_xid_c is called to check if it is
-a NULL XID frame. The original true statement returns 0 while the
-false statement returns 1. As a result, an incoming NULL TEST frame
-would trigger an XID response instead.
-
-The same error is found in llc_stat_ev_rx_null_dsap_test_c and fixed.
-
-Signed-off-by: Chan Shu Tak, Alex <alexchan@task.com.hk>
----
- net/llc/llc_station.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/llc/llc_station.c b/net/llc/llc_station.c
-index 204a835..90955d7 100644
---- a/net/llc/llc_station.c
-+++ b/net/llc/llc_station.c
-@@ -32,7 +32,7 @@ static int llc_stat_ev_rx_null_dsap_xid_c(struct sk_buff *skb)
- 	return LLC_PDU_IS_CMD(pdu) &&			/* command PDU */
- 	       LLC_PDU_TYPE_IS_U(pdu) &&		/* U type PDU */
- 	       LLC_U_PDU_CMD(pdu) == LLC_1_PDU_CMD_XID &&
--	       !pdu->dsap ? 0 : 1;			/* NULL DSAP value */
-+	       !pdu->dsap ? 1 : 0;			/* NULL DSAP value */
- }
- 
- static int llc_stat_ev_rx_null_dsap_test_c(struct sk_buff *skb)
-@@ -42,7 +42,7 @@ static int llc_stat_ev_rx_null_dsap_test_c(struct sk_buff *skb)
- 	return LLC_PDU_IS_CMD(pdu) &&			/* command PDU */
- 	       LLC_PDU_TYPE_IS_U(pdu) &&		/* U type PDU */
- 	       LLC_U_PDU_CMD(pdu) == LLC_1_PDU_CMD_TEST &&
--	       !pdu->dsap ? 0 : 1;			/* NULL DSAP */
-+	       !pdu->dsap ? 1 : 0;			/* NULL DSAP */
- }
- 
- static int llc_station_ac_send_xid_r(struct sk_buff *skb)
--- 
-1.8.3.1
 
