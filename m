@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92E3F11F1EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 14:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD8B11F1F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 14:27:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfLNN0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 08:26:52 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41706 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbfLNN0w (ORCPT
+        id S1726777AbfLNN05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 08:26:57 -0500
+Received: from mail-wm1-f41.google.com ([209.85.128.41]:55175 "EHLO
+        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbfLNN05 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 08:26:52 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c9so1747214wrw.8;
-        Sat, 14 Dec 2019 05:26:49 -0800 (PST)
+        Sat, 14 Dec 2019 08:26:57 -0500
+Received: by mail-wm1-f41.google.com with SMTP id b19so1701966wmj.4;
+        Sat, 14 Dec 2019 05:26:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HvGlD5kPVTONmWTHdpaxbRMm/71Q6Yy4dcoeO1YH8dE=;
-        b=ujMHJWNUwGcEg58M5xky4eCEQulioq+bUebi+7IQ6CK59ZinoFgikEMLhleIoQQ8kI
-         RS5VC4ycAadZG3m8A5nie06k0goclK+2ef8qukWD1mUo/3sbojPagfzw7lrR2tIYuC5f
-         tYJSfmnoEk3esCPCOeVP9/s5xbHf8bh/N+UEF0cXwot7NT9pqNF/qlU2v7P3Et2X7469
-         XnRdeo22aixZ+YO3e4TQaCFCg1EB04Rj2ze5j0a7RPlsmzCR17mXACIcypa/Pnndk8dF
-         hbdRD0CxBqq0VMBVYc4JpDSNo1AwVxkT1VvF/1J1TLdTnmqXIPC6RlriMBto+vvi64Ow
-         X8nQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dtzy3+hAiNDaAhrhdQ8ICcjc4JWsDIjne8uN1yUV2vY=;
+        b=W5q2N6eZ6SozphJyk3eV5Uam8ECBE6e9B1cq4JsLWcDnNHYYYqjdLy5Zz8F+1brMgE
+         tTZpeU0bKUN3FSnv2QzNGV9hFG4H36Bg9hly+QVe+VxkPXVzvtDuQtESMxlBuP/ckpEk
+         2GC4zvFsSUQjMz7TNazZvcy4BO+H7jewcvzphsejkCNef6t3SaQNGCzn7eb0LyqvKb07
+         ZcyZ957cqI6VV6v4LojnBxrpIMaQ/GHZ01LDRF8WYKt8b7Kb1BHJob0hqFjk8m+slDbc
+         6+drJemIc8OzvDq/hhgCessTAsrBxlb53yKBlXQe9AN7iSLq3B2DMmFVUaWU3arLqScd
+         I65A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HvGlD5kPVTONmWTHdpaxbRMm/71Q6Yy4dcoeO1YH8dE=;
-        b=OReZ1j4DnhSvuvAHIdrygQ94izGibCUpDob5J25CJaYf20meV7f4cqnxrn9ca010O1
-         277fqSEqy/dpWDXwZd1OJ1QevYCQnueQWZc34m16x64PMuEOqC1qHqSvxAyZ1lGPbHVu
-         KR+y6X+xrHLZ5+YR1LSOGy2LlXdwlT7F5f2MIQr6yeePW+0pbefYa3W6wUgppcrn43We
-         7wZf978+WnxiOaaCL6rejL0rWKQ9uCeudfZcm8l+h7FLFrxCer+Hna44eQPGtLeNzK2B
-         +EFSHDHuAEVr/QZs5PDJgUitZHacAAvM76FyTMKAC1rB6Nh0LlCOLTuLzGNa88DQJ6yW
-         sTPg==
-X-Gm-Message-State: APjAAAXdjqubA2Ys8qclECM5fUj96IRWvFXnoo/viMvPjcnunmaJBghi
-        bRk3eR+PTTc1v/PSWyKmRaE=
-X-Google-Smtp-Source: APXvYqyP44yq+IRE0YnGCPJUV5ruEA+Y0HOJdzxXa5REdibu3JoLLBLxdjGgaDYPrmoy6iARusRctQ==
-X-Received: by 2002:a05:6000:12:: with SMTP id h18mr17803023wrx.87.1576330008281;
-        Sat, 14 Dec 2019 05:26:48 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dtzy3+hAiNDaAhrhdQ8ICcjc4JWsDIjne8uN1yUV2vY=;
+        b=o8JbOFHTSS/Ta3Ok5MZZ9+siGkjhynt9Lm2AEM/d7rStzPH+zC6mw68b7OlEAS/WOg
+         rV9TxDownCgvfArepRO0EDxE4PQJ8rDaiIgtppQKVcAKwFgouhHW04dV6utF9pUUvTAv
+         MmmLD5cPTaQbuH0FrfrBXHriuaT29Uv/3Bvx/J3SlrH598jswQb+LDbUKBDuh4pfa+vD
+         KVw980/WMIk3Xp0g0khvRDZI2zQJo0tc3EQd6uAp84ALYPMcTJZ6LvTbe3i8eXpX42Jy
+         FQxW8djT/83hv3OL5D1eNhEcrDSgvhhSQaFGLAzDzcCsizGscvmirjCARLLdDPfNofL1
+         Yefw==
+X-Gm-Message-State: APjAAAU5CVDWhfFzaBF+jiQfZYcbuzdYQQB5mRiBTPEhk85djCQ9UjKg
+        cyXWXFm8Nsc7wNUZgxm6g3zOnclqe+c=
+X-Google-Smtp-Source: APXvYqz10cpYeB8E9Bi7lUE2QrMNMbTdGkMJ5RNWlVoaIVDZmIjBlNG0lvZ17g5xf8Qa49Ueg4Ho2w==
+X-Received: by 2002:a1c:8095:: with SMTP id b143mr20223031wmd.7.1576330009187;
+        Sat, 14 Dec 2019 05:26:49 -0800 (PST)
 Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::42f0:c285])
-        by smtp.gmail.com with ESMTPSA id o194sm4247383wme.45.2019.12.14.05.26.46
+        by smtp.gmail.com with ESMTPSA id o194sm4247383wme.45.2019.12.14.05.26.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2019 05:26:47 -0800 (PST)
+        Sat, 14 Dec 2019 05:26:48 -0800 (PST)
 From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -52,10 +52,12 @@ To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v3 1/3] arm64: dts: allwinner: Fix wrong license header
-Date:   Sat, 14 Dec 2019 14:26:40 +0100
-Message-Id: <20191214132642.29564-1-peron.clem@gmail.com>
+Subject: [PATCH v3 2/3] arm64: dts: allwinner: Convert license to SPDX identifier
+Date:   Sat, 14 Dec 2019 14:26:41 +0100
+Message-Id: <20191214132642.29564-2-peron.clem@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191214132642.29564-1-peron.clem@gmail.com>
+References: <20191214132642.29564-1-peron.clem@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -64,240 +66,840 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some headers specify that files are under dual-licensed GPL2.0+
-and X11. But in fact, it turns out that the full licenses texts
-associated are GPL2.0+ and MIT.
-
-Fix license headers to reflect real licenses associated.
+Use a shorter SPDX identifier instead of pasting the
+whole license.
 
 Signed-off-by: Clément Péron <peron.clem@gmail.com>
 ---
- arch/arm64/boot/dts/allwinner/axp803.dtsi                       | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts       | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts         | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts          | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts       | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts        | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts             | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts   | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi            | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi                   | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts    | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo2.dts         | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts        | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts      | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts | 2 +-
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi                    | 2 +-
- 16 files changed, 16 insertions(+), 16 deletions(-)
+ arch/arm64/boot/dts/allwinner/axp803.dtsi     | 39 +------------------
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 39 +------------------
+ .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 39 +------------------
+ .../dts/allwinner/sun50i-a64-olinuxino.dts    | 39 +------------------
+ .../dts/allwinner/sun50i-a64-orangepi-win.dts | 39 +------------------
+ .../dts/allwinner/sun50i-a64-pine64-plus.dts  | 39 +------------------
+ .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 39 +------------------
+ .../allwinner/sun50i-a64-sopine-baseboard.dts | 39 +------------------
+ .../boot/dts/allwinner/sun50i-a64-sopine.dtsi | 39 +------------------
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 39 +------------------
+ .../allwinner/sun50i-h5-nanopi-neo-plus2.dts  | 39 +------------------
+ .../dts/allwinner/sun50i-h5-nanopi-neo2.dts   | 39 +------------------
+ .../dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 39 +------------------
+ .../allwinner/sun50i-h5-orangepi-prime.dts    | 39 +------------------
+ .../sun50i-h5-orangepi-zero-plus.dts          |  2 +-
+ .../sun50i-h5-orangepi-zero-plus2.dts         | 39 +------------------
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  | 39 +------------------
+ 17 files changed, 17 insertions(+), 609 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/allwinner/axp803.dtsi b/arch/arm64/boot/dts/allwinner/axp803.dtsi
-index f0349ef4bfdd..22396406c5f9 100644
+index 22396406c5f9..f4f2c70fde5c 100644
 --- a/arch/arm64/boot/dts/allwinner/axp803.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/axp803.dtsi
-@@ -2,7 +2,7 @@
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
   * Copyright 2017 Icenowy Zheng <icenowy@aosc.xyz>
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This file is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /*
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 208373efee49..e19fbe066c9e 100644
+index e19fbe066c9e..76d0399b7737 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -2,7 +2,7 @@
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
   * Copyright (c) 2016 ARM Ltd.
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index 9b9d9157128c..311475159def 100644
+index 311475159def..4e7d4532e498 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -2,7 +2,7 @@
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
   * Copyright (C) 2017 Jagan Teki <jteki@openedev.com>
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index 0a2570575e1f..c98c4fca57de 100644
+index c98c4fca57de..62f58233292e 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -2,7 +2,7 @@
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
   * Copyright (C) 2017 Jagan Teki <jteki@openedev.com>
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-index f54a415f2e3b..ee419b028e2d 100644
+index ee419b028e2d..48bea0b526fa 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-@@ -3,7 +3,7 @@
+@@ -1,44 +1,7 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Copyright (C) 2017 Jagan Teki <jteki@openedev.com>
   * Copyright (C) 2017-2018 Samuel Holland <samuel@sholland.org>
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-index d5b6e8159a33..311525ff82df 100644
+index 311525ff82df..2fb8cef0309e 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-@@ -2,7 +2,7 @@
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
   * Copyright (c) 2016 ARM Ltd.
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ #include "sun50i-a64-pine64.dts"
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index 409523cb0950..6ba9f9052be5 100644
+index 6ba9f9052be5..830ab9beb3b2 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -2,7 +2,7 @@
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
   * Copyright (c) 2016 ARM Ltd.
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-index 920103ec0046..612f4c295549 100644
+index 612f4c295549..e5b29f37ffd1 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-@@ -5,7 +5,7 @@
+@@ -1,46 +1,9 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.xyz>
+  *
+  * Based on sun50i-a64-pine64.dts, which is:
   *   Copyright (c) 2016 ARM Ltd.
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
-index 9d20e13f0c02..a578a276d555 100644
+index a578a276d555..1733306c469e 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
-@@ -5,7 +5,7 @@
+@@ -1,46 +1,9 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.xyz>
+  *
+  * Based on sun50i-a64-pine64.dts, which is:
   *   Copyright (c) 2016 ARM Ltd.
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ #include "sun50i-a64.dtsi"
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 27e48234f1c2..0dfee8b7f523 100644
+index 0dfee8b7f523..ceacb093d258 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -4,7 +4,7 @@
+@@ -1,45 +1,8 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Copyright (C) 2016 ARM Ltd.
+  * based on the Allwinner H3 dtsi:
   *    Copyright (C) 2015 Jens Kuske <jenskuske@gmail.com>
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This file is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ #include <dt-bindings/clock/sun50i-a64-ccu.h>
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
-index 1c7dde84e54d..7037ec9df4a1 100644
+index 7037ec9df4a1..b65094488820 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
-@@ -3,7 +3,7 @@
+@@ -1,44 +1,7 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Copyright (C) 2017 Antony Antony <antony@phenome.org>
   * Copyright (C) 2016 ARM Ltd.
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This file is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo2.dts
-index 57a6f45036c1..fa56e232f380 100644
+index fa56e232f380..ee0aa49bce1e 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo2.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo2.dts
-@@ -2,7 +2,7 @@
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
   * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This file is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-index e126c1c9f05c..74f5d8b3eb8a 100644
+index 74f5d8b3eb8a..22df6dc44c79 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-@@ -2,7 +2,7 @@
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
   * Copyright (C) 2016 ARM Ltd.
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This file is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
-index d9b3ed257088..05c1c26ce6e6 100644
+index 05c1c26ce6e6..d9e3be17d842 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
-@@ -5,7 +5,7 @@
+@@ -1,46 +1,9 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.xyz>
+  *
+  * Based on sun50i-h5-orangepi-pc2.dts, which is:
   *   Copyright (C) 2016 ARM Ltd.
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
-index dacf61399527..93b104f2f9f5 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
-@@ -2,7 +2,7 @@
-  * Copyright (C) 2017 Jagan Teki <jteki@openedev.com>
-  *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-index 7c775a918a4e..620a3171c3e8 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This file is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus.dts
+index db6ea7b58999..08829849bc0d 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus.dts
 @@ -2,7 +2,7 @@
   * Copyright (C) 2016 ARM Ltd.
+  * Copyright (C) 2018 Hauke Mehrtens <hauke@hauke-m.de>
   *
-  * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-+ * of the GPL or the MIT license, at your option. Note that this dual
-  * licensing only applies to this file, and not this project as a
-  * whole.
-  *
+- * SPDX-License-Identifier: (GPL-2.0+ OR X11)
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
+index 93b104f2f9f5..54d360198622 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Copyright (C) 2017 Jagan Teki <jteki@openedev.com>
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+index 620a3171c3e8..83d177aff06e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+@@ -1,43 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Copyright (C) 2016 ARM Ltd.
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the MIT license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This file is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ #include <arm/sunxi-h3-h5.dtsi>
 -- 
 2.20.1
 
