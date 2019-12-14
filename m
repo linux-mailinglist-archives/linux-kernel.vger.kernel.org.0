@@ -2,199 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB0811F31D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 18:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA49111F334
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 18:58:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbfLNRzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 12:55:23 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35811 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbfLNRzW (ORCPT
+        id S1727180AbfLNR4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 12:56:39 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:32876 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726792AbfLNR4j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 12:55:22 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g6so942plt.2;
-        Sat, 14 Dec 2019 09:55:21 -0800 (PST)
+        Sat, 14 Dec 2019 12:56:39 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n25so1506988lfl.0;
+        Sat, 14 Dec 2019 09:56:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0jvWF9XYSISO584h2vYKYUoEcRiyVQ8hH7Hs2IoWF50=;
-        b=g2VIPeNv78fikjdmQp4F6HcLSJJlLRztzWIRg4z5MKw5ARx+QWeColI55a3kl7qx9i
-         cAFoFIbdKa4WMEDblx60nLEzaAGgygsrCa1OzawGh83RhPR4M+Pgz4cTiUuwtJ3+zLTR
-         rKSvgNvCdwzPqUvKrTPhWjfhJpfOInRRaTsdN4a2TkIHWk4Z3bZ0nLnwQonYk5wzWncg
-         vwCJdky9D1Os9HirkeURSPIS0re0yh8o0nUnCCSeya6qhWZv+FZ4VkTqLzURQWZQmAtq
-         IeuzYN5SfasSV/p6E2PnjMm3gp9rYSRVHGTAGwQgQAZsRDt5dp5Bj7folhkKi/e7xXRr
-         jVuQ==
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=Fa8lw02ivhbwAMD/0kKb4b8FWTP4Fni72JISw89p08E=;
+        b=KTa/A2vD2Upgn3m+UwRD3/KqhsjhdnZTWGijuOeGaKM7zEvS4zHZhoxT88SUJpvSAM
+         coSZM7fMn8U4Ve2ZV3WUUTekuQvLhEc8xfXOs105/YWxPvILEG+GoeUcpnKTDWChVtsH
+         0vJxXemQY2w6xO+Acqnb4aYAvVBMs4Yt7x47iAlsU2QCnLot0UbScFWQ0sXJO1kyvH/D
+         eN2VUOxAM1DewzjApZBtXIAzGAHdP5rtYAVJ3MtksC7BEo3QyIpCFSVrHq0uDpRebwom
+         RUCE8cGqDHwHHhi2c6gKn6G5BtutkW7nbhRfTm38mnplBbLdx7pfUY6VzWylTCJmNfsD
+         bAQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0jvWF9XYSISO584h2vYKYUoEcRiyVQ8hH7Hs2IoWF50=;
-        b=MK4LfHsf0HISkL6Ay39hYcdzrty1NQhyF+GijcA1ItgXO9RVNIJCsFKgVUGZxECZIu
-         eNnDLBTcnezGfkApxTc6A95I+Ou1QwwEJwi+C9NG3rMRvCxtNrDJlepvTqVyapLIVrL8
-         A45yLbWxVePt00+gkxSyN5fVTabhzJf7o0AvnyfsH2qoE7lVNc9fm/Ib7vaSPEssbqEy
-         GA/m8j0E76L/cXZ7cm8bFmIsCiaRI9AcNPrx+xaOmge6RiIK2MUDGpMUXfAP3KPWk9j/
-         3BPq/uQ9bu7+1IMAtt/L0VJ+atxf8BXg9WKM1ZXDd1SbAcqAyCR7fPXez5hq2CKYq/6V
-         EV9A==
-X-Gm-Message-State: APjAAAUi5zAXKmOwQpXf6AVm20rU2I499kaGtlOZx5Sn3866/+6ZV8o8
-        z8mBR8Ji4itnoLzKxay9QAY=
-X-Google-Smtp-Source: APXvYqyqtm2BCTkQ1WB9nU9hiA5GJsGTHwnwitKhC/pdbIodt1usGKIoQH8Uv4CdMMinxB6/xHe66A==
-X-Received: by 2002:a17:90a:8685:: with SMTP id p5mr7039962pjn.92.1576346121104;
-        Sat, 14 Dec 2019 09:55:21 -0800 (PST)
-Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id l22sm14347112pjc.0.2019.12.14.09.55.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 14 Dec 2019 09:55:20 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl,
-        john@phrozen.org, matthias.bgg@gmail.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, kgene@kernel.org, krzk@kernel.org,
-        mripard@kernel.org, wens@csie.org, ssantosh@kernel.org,
-        jun.nie@linaro.org, shawnguo@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 10/10] soc: qcom: convert to devm_platform_ioremap_resource
-Date:   Sat, 14 Dec 2019 17:54:47 +0000
-Message-Id: <20191214175447.25482-10-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191214175447.25482-1-tiny.windzz@gmail.com>
-References: <20191214175447.25482-1-tiny.windzz@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=Fa8lw02ivhbwAMD/0kKb4b8FWTP4Fni72JISw89p08E=;
+        b=qLJ2dSyYF/l5KdGyjt7rzuAZNBG6ebZFhBcRzwvG1B/aVMX2G6EiBVWxhpX4xzmvaB
+         cY8AONtnanmlONEXmZ5OAjp4v+kilp/xlX63I8FHle57lOiKDyb7ia/5dNcy97IDJJH8
+         ws/M88OwQ8IRL8SKgt4Zah3jNoI9HsfUdavfSNJMpFpn/EbMLxWZnkmyEth0ZVYtQjad
+         UnIWYZOpMKOYLNw43bt1cPgyJr8QGKVuwZp9cHzqKoPe81iu5LCrgyd6UvT4Mf3xE5xb
+         26Dd8GdRJ6cTTwZm1PDBwBUa8q3wZhEOm5pd/Y4wme6J1w+ndWahspWiEb598L/1C71b
+         BvuQ==
+X-Gm-Message-State: APjAAAXeJyxYizzmweqjmatxViweVRuU0Qb2dpIH+1ySWckAJgEidDwX
+        KQql+lhUxEt7EjGwSjJLbmOkKlJL87k=
+X-Google-Smtp-Source: APXvYqznIvGNCl59IIk8njEjrcNTb18ZdErSx6ZEHF8I+tJgTQBfysa8ANH0HLN72dh8aOAs7SvW+w==
+X-Received: by 2002:a19:5007:: with SMTP id e7mr12186382lfb.153.1576346196178;
+        Sat, 14 Dec 2019 09:56:36 -0800 (PST)
+Received: from [192.168.1.66] (88-119-143-153.static.zebra.lt. [88.119.143.153])
+        by smtp.gmail.com with ESMTPSA id 22sm7976110ljw.9.2019.12.14.09.56.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Dec 2019 09:56:35 -0800 (PST)
+Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_IOCTL
+To:     Jann Horn <jannh@google.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+References: <f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com>
+ <CAG48ez0N_b+kjbddhHe+BUvSnOSvpm1vdfQ9cv+cgTLuCMXqug@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <9b4f56c1-dce9-1acd-2775-e64a3955d8ee@gmail.com>
+Date:   Sat, 14 Dec 2019 20:56:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <CAG48ez0N_b+kjbddhHe+BUvSnOSvpm1vdfQ9cv+cgTLuCMXqug@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="4YB4m92gfg19Nx3WrZ9JrMujaIA3FhllQ"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--4YB4m92gfg19Nx3WrZ9JrMujaIA3FhllQ
+Content-Type: multipart/mixed; boundary="sNXDW8RANKm4Uql8TTvlqedYda3jQiFlf";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jann Horn <jannh@google.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+ kernel list <linux-kernel@vger.kernel.org>
+Message-ID: <9b4f56c1-dce9-1acd-2775-e64a3955d8ee@gmail.com>
+Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_IOCTL
+References: <f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com>
+ <CAG48ez0N_b+kjbddhHe+BUvSnOSvpm1vdfQ9cv+cgTLuCMXqug@mail.gmail.com>
+In-Reply-To: <CAG48ez0N_b+kjbddhHe+BUvSnOSvpm1vdfQ9cv+cgTLuCMXqug@mail.gmail.com>
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/soc/qcom/llcc-qcom.c    | 7 +------
- drivers/soc/qcom/qcom-geni-se.c | 4 +---
- drivers/soc/qcom/qcom_aoss.c    | 4 +---
- drivers/soc/qcom/qcom_gsbi.c    | 5 +----
- drivers/soc/qcom/spm.c          | 4 +---
- 5 files changed, 5 insertions(+), 19 deletions(-)
+--sNXDW8RANKm4Uql8TTvlqedYda3jQiFlf
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-index 429b5a60a1ba..99e19df76889 100644
---- a/drivers/soc/qcom/llcc-qcom.c
-+++ b/drivers/soc/qcom/llcc-qcom.c
-@@ -387,7 +387,6 @@ static int qcom_llcc_remove(struct platform_device *pdev)
- static struct regmap *qcom_llcc_init_mmio(struct platform_device *pdev,
- 		const char *name)
- {
--	struct resource *res;
- 	void __iomem *base;
- 	struct regmap_config llcc_regmap_config = {
- 		.reg_bits = 32,
-@@ -396,11 +395,7 @@ static struct regmap *qcom_llcc_init_mmio(struct platform_device *pdev,
- 		.fast_io = true,
- 	};
- 
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
--	if (!res)
--		return ERR_PTR(-ENODEV);
--
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return ERR_CAST(base);
- 
-diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
-index 7d622ea1274e..9c2c429b4b3f 100644
---- a/drivers/soc/qcom/qcom-geni-se.c
-+++ b/drivers/soc/qcom/qcom-geni-se.c
-@@ -723,7 +723,6 @@ EXPORT_SYMBOL(geni_se_rx_dma_unprep);
- static int geni_se_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	struct geni_wrapper *wrapper;
- 	int ret;
- 
-@@ -732,8 +731,7 @@ static int geni_se_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	wrapper->dev = dev;
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	wrapper->base = devm_ioremap_resource(dev, res);
-+	wrapper->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(wrapper->base))
- 		return PTR_ERR(wrapper->base);
- 
-diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
-index 006ac40c526a..fcfba9f1aaa1 100644
---- a/drivers/soc/qcom/qcom_aoss.c
-+++ b/drivers/soc/qcom/qcom_aoss.c
-@@ -513,7 +513,6 @@ static void qmp_cooling_devices_remove(struct qmp *qmp)
- 
- static int qmp_probe(struct platform_device *pdev)
- {
--	struct resource *res;
- 	struct qmp *qmp;
- 	int irq;
- 	int ret;
-@@ -526,8 +525,7 @@ static int qmp_probe(struct platform_device *pdev)
- 	init_waitqueue_head(&qmp->event);
- 	mutex_init(&qmp->tx_lock);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	qmp->msgram = devm_ioremap_resource(&pdev->dev, res);
-+	qmp->msgram = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(qmp->msgram))
- 		return PTR_ERR(qmp->msgram);
- 
-diff --git a/drivers/soc/qcom/qcom_gsbi.c b/drivers/soc/qcom/qcom_gsbi.c
-index 304afc223a58..202ff31cf54f 100644
---- a/drivers/soc/qcom/qcom_gsbi.c
-+++ b/drivers/soc/qcom/qcom_gsbi.c
-@@ -127,7 +127,6 @@ static int gsbi_probe(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
- 	struct device_node *tcsr_node;
- 	const struct of_device_id *match;
--	struct resource *res;
- 	void __iomem *base;
- 	struct gsbi_info *gsbi;
- 	int i, ret;
-@@ -135,12 +134,10 @@ static int gsbi_probe(struct platform_device *pdev)
- 	const struct crci_config *config = NULL;
- 
- 	gsbi = devm_kzalloc(&pdev->dev, sizeof(*gsbi), GFP_KERNEL);
--
- 	if (!gsbi)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
-diff --git a/drivers/soc/qcom/spm.c b/drivers/soc/qcom/spm.c
-index 8e10e02c6aa5..b6131ab07879 100644
---- a/drivers/soc/qcom/spm.c
-+++ b/drivers/soc/qcom/spm.c
-@@ -320,7 +320,6 @@ static const struct of_device_id spm_match_table[] = {
- static int spm_dev_probe(struct platform_device *pdev)
- {
- 	struct spm_driver_data *drv;
--	struct resource *res;
- 	const struct of_device_id *match_id;
- 	void __iomem *addr;
- 	int cpu;
-@@ -329,8 +328,7 @@ static int spm_dev_probe(struct platform_device *pdev)
- 	if (!drv)
- 		return -EINVAL;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	drv->reg_base = devm_ioremap_resource(&pdev->dev, res);
-+	drv->reg_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(drv->reg_base))
- 		return PTR_ERR(drv->reg_base);
- 
--- 
-2.17.1
 
+On 14/12/2019 20:12, Jann Horn wrote:
+> On Sat, Dec 14, 2019 at 4:30 PM Pavel Begunkov <asml.silence@gmail.com>=
+ wrote:
+>> This works almost like ioctl(2), except it doesn't support a bunch of
+>> common opcodes, (e.g. FIOCLEX and FIBMAP, see ioctl.c), and goes
+>> straight to a device specific implementation.
+>>
+>> The case in mind is dma-buf, drm and other ioctl-centric interfaces.
+>>
+>> Not-yet Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>
+>> It clearly needs some testing first, though works fine with dma-buf,
+>> but I'd like to discuss whether the use cases are convincing enough,
+>> and is it ok to desert some ioctl opcodes. For the last point it's
+>> fairly easy to add, maybe except three requiring fd (e.g. FIOCLEX)
+>>
+>> P.S. Probably, it won't benefit enough to consider using io_uring
+>> in drm/mesa, but anyway.
+> [...]
+>> +static int io_ioctl(struct io_kiocb *req,
+>> +                   struct io_kiocb **nxt, bool force_nonblock)
+>> +{
+>> +       const struct io_uring_sqe *sqe =3D req->sqe;
+>> +       unsigned int cmd =3D READ_ONCE(sqe->ioctl_cmd);
+>> +       unsigned long arg =3D READ_ONCE(sqe->ioctl_arg);
+>> +       int ret;
+>> +
+>> +       if (!req->file)
+>> +               return -EBADF;
+>> +       if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+>> +               return -EINVAL;
+>> +       if (unlikely(sqe->ioprio || sqe->addr || sqe->buf_index
+>> +               || sqe->rw_flags))
+>> +               return -EINVAL;
+>> +       if (force_nonblock)
+>> +               return -EAGAIN;
+>> +
+>> +       ret =3D security_file_ioctl(req->file, cmd, arg);
+>> +       if (!ret)
+>> +               ret =3D (int)vfs_ioctl(req->file, cmd, arg);
+>=20
+> This isn't going to work. For several of the syscalls that were added,
+> special care had to be taken to avoid bugs - like for RECVMSG, for the
+> upcoming OPEN/CLOSE stuff, and so on.
+>=20
+> And in principle, ioctls handlers can do pretty much all of the things
+> syscalls can do, and more. They can look at the caller's PID, they can
+> open and close (well, technically that's slightly unsafe, but IIRC
+> autofs does it anyway) things in the file descriptor table, they can
+> give another process access to the calling process in some way, and so
+> on. If you just allow calling arbitrary ioctls through io_uring, you
+> will certainly get bugs, and probably security bugs, too.
+>=20
+> Therefore, I would prefer to see this not happen at all; and if you do
+> have a usecase where you think the complexity is worth it, then I
+> think you'll have to add new infrastructure that allows each
+> file_operations instance to opt in to having specific ioctls called
+> via this mechanism, or something like that, and ensure that each of
+> the exposed ioctls only performs operations that are safe from uring
+> worker context.
+
+Sounds like hell of a problem. Thanks for sorting this out!
+
+>=20
+> Also, I'm not sure, but it might be a good idea to CC linux-api if you
+> continue working on this.
+>=20
+
+--=20
+Pavel Begunkov
+
+
+--sNXDW8RANKm4Uql8TTvlqedYda3jQiFlf--
+
+--4YB4m92gfg19Nx3WrZ9JrMujaIA3FhllQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl31IkAACgkQWt5b1Glr
++6Wx0xAApGN9Sj0cskefxpiPHW2GqjOD9alNmMPvEZxEtN3uZ6RFpdqWosyRKzPj
+6MY8PUr8CyELb9K+kVPba5Z2Pm7AFYzNO8fPM9PyoRLaYS0Y+6dCZqsc+RnH6iPj
+iIuPuiSTFSipbbguQqXF90EbFlHQqLpDjZm2c5zKZXe7pE+H0c6Kz590rbpT0LUh
+rnyExBS3eL/WoB0CX9ICYWe78c8x+RF2b4c79l6UwzkqmTY1PtZ4DPKbnNJK8kwj
+Z/u5nGTS2FBZO/TYOrbxhzr26pLykBY8bGlGNlfgmHRQqy23yUngnliE4KD7gWh3
+SAVyfOpT6ma8WvhReKfN2AtPM7Ci3c+3ff+/Cd+yBtjK6iN2JHZnYzYdMNwIywwc
+gEFu8Y7Wolvt3kGm/BGSGAAEMVQrVOCkbJDrTUofltJCA5+dhr7sDTJfFLT7Gs2p
+puGbN/Ga7+aLgrECUSDW5/s6lcrQRJt1zTvl2vuyJw/OX/Yiu9OM8VHmIVtu0ivP
+d5JJOHBcmEOxvdwPe7ETyc02FtPSSd4AUVgmVvOOkiDO30LKHaRPkqin6n0cmOi0
+NQJHp9cB3Mr9CqC0K5slpq+yfWDzR4FI9oa+zqzCvh61YYvifXukXWCWgSjnSTS/
+r7c99Xk9QWfoyadt3O1WDGT1MpNdmlb3MnmntXXHRmD8wCWuXoM=
+=80hD
+-----END PGP SIGNATURE-----
+
+--4YB4m92gfg19Nx3WrZ9JrMujaIA3FhllQ--
