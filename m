@@ -2,86 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA1B011F4FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 00:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1848311F501
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 00:07:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfLNXGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 18:06:17 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44272 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbfLNXGR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 18:06:17 -0500
-Received: by mail-io1-f66.google.com with SMTP id b10so3266369iof.11
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2019 15:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wOp75n88mMM3YUNrKjhCWhA9PYsgmXSi0rsbjs2+ri8=;
-        b=V8y8pZU884AbR1LaOYpGQsw4OmzhUtnVJrIfMkPLlIc7MGL0L3FICsxxJOT1bYSJ8v
-         qAratMNX39A0EtLhg9dnlHLi+KObTJvYrB7xTe2uzxCDTJUtLJru+wK6dOrKhMXQp5T6
-         ExEXm9g7NGPLd+T5gfd7/bGZA7HR7/RDO6ve487aW/49/EnoZ81jdiToNS7tOq5/3u8m
-         c2YXmzAeVxAH1LU+Ib02/6XgQEUEiJi3m9maoJMoeiLFWkW9e9uZis8xOtm1vIYissSB
-         Xo2taoHt96wizAMoUjXsfHBFTa++U8+f0KebxcoADSWUuEf7qk5oU6x4J5CPwIh5v+j1
-         igXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wOp75n88mMM3YUNrKjhCWhA9PYsgmXSi0rsbjs2+ri8=;
-        b=V2zPlKIoy6iFWUbU/MVWuaWECjhnMVCx7H2xhZn4fFrZCtHb4ie6ZQBa9f0FjuBP/P
-         Ywd4nmasURaAzQ7j/XQ40Bpj0ZY+i1eX+mpj8BsNRmj1j3aFApR5LsGL634xvALBIcOa
-         Ty29Nlt98bVvYpixTSY52lYtE07hutfIP5ylAydet+zV6lfRVZQhjwrW0cxTlavQUnjM
-         0zivUTgp6mx89KFmaSBsdr/iOeEj5JoD19b6OyzML/CTi/4YcaVTojzJG75yao/3w9LL
-         DskEom9A8hw5/nG89cLMuR8il0xAJ+JepPVW4dmE3Ekj7IO3wrwcQp2im9Ovc1SI5Tek
-         GMOA==
-X-Gm-Message-State: APjAAAVfpeLrbzKb8YCWo5P9/kYa2CK1XJNC6Q2rS+yreYMr/CB6fDCE
-        xOk+VkD8OxuTaNanNnR4s+o=
-X-Google-Smtp-Source: APXvYqzv5riKF2f6s+GAiQgXDUK4PdkDbWOnQ/fIQXoMXCazqIYoWnG47zR64ADnMqBzCF0Pp0B+zA==
-X-Received: by 2002:a6b:7616:: with SMTP id g22mr13753417iom.192.1576364776367;
-        Sat, 14 Dec 2019 15:06:16 -0800 (PST)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id w21sm3208834ioc.34.2019.12.14.15.06.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2019 15:06:15 -0800 (PST)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sandhya Bankar <bankarsandhya512@gmail.com>,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        =?UTF-8?q?Hildo=20Guillardi=20J=C3=BAnior?= <hildogjr@gmail.com>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     emamd001@umn.edu
-Subject: [PATCH] staging: rtl8192e: rtllib_module: Fix memory leak in alloc_rtllib
-Date:   Sat, 14 Dec 2019 17:05:58 -0600
-Message-Id: <20191214230603.15603-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727084AbfLNXH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 18:07:57 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:43282 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726803AbfLNXH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Dec 2019 18:07:57 -0500
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1igGVq-00005i-Hi; Sun, 15 Dec 2019 00:07:50 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     thierry.reding@gmail.com, mark.rutland@arm.com,
+        devicetree@vger.kernel.org,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        robh+dt@kernel.org, christoph.muellner@theobroma-systems.com
+Subject: Re: [PATCH 3/3] drm/panel: add panel driver for Xinpeng XPP055C272 panels
+Date:   Sun, 15 Dec 2019 00:07:49 +0100
+Message-ID: <2272108.TFxdGdtKl4@diego>
+In-Reply-To: <20191214081730.GC22818@ravnborg.org>
+References: <20191209144208.4863-1-heiko@sntech.de> <20191209144208.4863-3-heiko@sntech.de> <20191214081730.GC22818@ravnborg.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the implementation of alloc_rtllib() the allocated dev is leaked in
-case of ieee->pHTInfo allocation failure. Release via free_netdev(dev).
+Hi Sam,
 
-Fixes: 6869a11bff1d ("Staging: rtl8192e: Use !x instead of x == NULL")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/staging/rtl8192e/rtllib_module.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+thanks for the thorough review :-)
 
-diff --git a/drivers/staging/rtl8192e/rtllib_module.c b/drivers/staging/rtl8192e/rtllib_module.c
-index 64d9feee1f39..18d898714c5c 100644
---- a/drivers/staging/rtl8192e/rtllib_module.c
-+++ b/drivers/staging/rtl8192e/rtllib_module.c
-@@ -125,7 +125,7 @@ struct net_device *alloc_rtllib(int sizeof_priv)
- 
- 	ieee->pHTInfo = kzalloc(sizeof(struct rt_hi_throughput), GFP_KERNEL);
- 	if (!ieee->pHTInfo)
--		return NULL;
-+		goto failed;
- 
- 	HTUpdateDefaultSetting(ieee);
- 	HTInitializeHTInfo(ieee);
--- 
-2.17.1
+Am Samstag, 14. Dezember 2019, 09:17:30 CET schrieb Sam Ravnborg:
+> > +#define dsi_generic_write_seq(dsi, cmd, seq...) do {			\
+> > +		static const u8 d[] = { seq };				\
+> > +		int ret;						\
+> > +		ret = mipi_dsi_dcs_write(dsi, cmd, d, ARRAY_SIZE(d));	\
+> > +		if (ret < 0)						\
+> > +			return ret;					\
+> > +	} while (0)
+> This macro return an error code if a write fails.
+> 
+> > +
+> > +static int xpp055c272_init_sequence(struct xpp055c272 *ctx)
+> > +{
+> > +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+> > +	struct device *dev = ctx->dev;
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * Init sequence was supplied by the panel vendor without much
+> > +	 * documentation.
+> > +	 */
+> > +	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETEXTC, 0xf1, 0x12, 0x83);
+> But all uses of the macro here ignore the error.
+
+hmm, am I way off track here?
+
+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETEXTC, 0xf1, 0x12, 0x83);
+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETMIPI,
+			      0x33, 0x81, 0x05, 0xf9, 0x0e, 0x0e, 0x00, 0x00,
+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x25,
+			      0x00, 0x91, 0x0a, 0x00, 0x00, 0x02, 0x4f, 0x01,
+			      0x00, 0x00, 0x37);
+	...
+
+should just expand to
+
+do {
+		static const u8 d[] = { 0xf1, 0x12, 0x83 };
+		int ret;
+		ret = mipi_dsi_dcs_write(dsi, XPP055C272_CMD_SETEXTC, d, ARRAY_SIZE(d));
+		if (ret < 0)
+			return ret;
+} while (0)
+do {
+		static const u8 d[] = { 0x33, 0x81, 0x05, 0xf9, 0x0e, 0x0e, 0x00, 0x00,
+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x25,
+			      0x00, 0x91, 0x0a, 0x00, 0x00, 0x02, 0x4f, 0x01,
+			      0x00, 0x00, 0x37 };
+		int ret;
+		ret = mipi_dsi_dcs_write(dsi, XPP055C272_CMD_SETMIPI, d, ARRAY_SIZE(d));
+		if (ret < 0)
+			return ret;
+} while (0)
+...
+
+so every write instance will actually return an error if it happens and not
+continue on with the next init item.
+
+Or I'm not thinking correctly at 0:07 ;-)
+
+
+Heiko
+
 
