@@ -2,114 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 608B911F029
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 04:34:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F3B611F02A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 04:35:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfLNDeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Dec 2019 22:34:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51378 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726046AbfLNDeA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Dec 2019 22:34:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576294438;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tML/8OZB0+z+ReKLp0+fit2Y41cAd6W2Z1tBQGsHHkI=;
-        b=czJnR5SPZWUqNlOeyEz+XGGjYTiJlbqkBJNWzgY6M3IZey5GcDtxQ7xWAt+LhKmuW/Se4n
-        j0/3PzxXsGGwlSCISl/VPe0FmTOE2usw/AZyhGmSYq63K9KWRDbN7W5oTwiV96/QZSSg7Q
-        1AinQSLQQ+2o6MLm09uajc2sxS2QA3k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-430-48t0-X0NP7OZmFt3J36Txg-1; Fri, 13 Dec 2019 22:33:54 -0500
-X-MC-Unique: 48t0-X0NP7OZmFt3J36Txg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 80ABE1852E26;
-        Sat, 14 Dec 2019 03:33:52 +0000 (UTC)
-Received: from localhost (ovpn-12-17.pek2.redhat.com [10.72.12.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C4FCF60BCE;
-        Sat, 14 Dec 2019 03:33:51 +0000 (UTC)
-Date:   Sat, 14 Dec 2019 11:33:48 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        id S1726707AbfLNDfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Dec 2019 22:35:18 -0500
+Received: from mga02.intel.com ([134.134.136.20]:9065 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726046AbfLNDfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Dec 2019 22:35:18 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2019 19:35:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,312,1571727600"; 
+   d="scan'208";a="221051250"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga001.fm.intel.com with ESMTP; 13 Dec 2019 19:35:17 -0800
+Date:   Fri, 13 Dec 2019 19:35:16 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] x86/mm/KASLR: Adjust the padding size for the
- direct mapping.
-Message-ID: <20191214033348.GJ28917@MiWiFi-R3L-srv>
-References: <20191115144917.28469-1-msys.mizuma@gmail.com>
- <20191115144917.28469-5-msys.mizuma@gmail.com>
- <20191212201916.GL4991@zn.tnic>
+Subject: Re: [PATCH 0/2] KVM: x86: X86_FEATURE bit() cleanup
+Message-ID: <20191214033516.GA6676@linux.intel.com>
+References: <20191211175822.1925-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191212201916.GL4991@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <20191211175822.1925-1-sean.j.christopherson@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/19 at 09:19pm, Borislav Petkov wrote:
-> On Fri, Nov 15, 2019 at 09:49:17AM -0500, Masayoshi Mizuma wrote:
-> > +/*
-> > + * Even though a huge virtual address space is reserved for the direct
-> > + * mapping of physical memory, e.g in 4-level paging mode, it's 64TB,
-> > + * rare system can own enough physical memory to use it up, most are
-> > + * even less than 1TB.
-> 
-> This sentence is unparseable.
-> 
-> > So with KASLR enabled, we adapt the size of
-> 
-> Who's "we"?
-> 
-> > + * direct mapping area to the size of actual physical memory plus the
-> > + * configured padding CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING.
-> > + * The left part will be taken out to join memory randomization.
-> > + */
-> > +static inline unsigned long calc_direct_mapping_size(void)
-> 
-> What direct mapping?!
-> 
-> The code is computing the physical memory regions base address and
-> sizes.
-> 
-> > +{
-> > +	unsigned long size_tb, memory_tb;
-> > +
-> > +	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
-> > +		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-> > +
-> > +#ifdef CONFIG_MEMORY_HOTPLUG
-> > +	if (boot_params.max_addr) {
-> > +		unsigned long maximum_tb;
-> > +
-> > +		maximum_tb = DIV_ROUND_UP(boot_params.max_addr,
-> > +				1UL << TB_SHIFT);
-> 
-> All that jumping through hoops and adding a member to boot_params which
-> is useless on !hot-add systems - basically the majority out there - just
+On Wed, Dec 11, 2019 at 09:58:20AM -0800, Sean Christopherson wrote:
+> Small series to add build-time protections on reverse CPUID lookup (and
+> other usages of bit()), and to rename the misleading-generic bit() helper
+> to something that better conveys its purpose.
 
-Read this again, one system owns ACPI SRAT tables, doesn't mean it's
-a hot-adding system. Currently, most of systems have ACPI and the
-affiliated SRAT tables. But to support memory hotplug, it need specific
-firmware setting and web management to remotely power on/off the DIMM.
-At least, systems which is delived to us for testing is very few.
-
-So in kernel there's no way to check if memory hotplug is supported in
-system. Memory hotplug is the sufficient and unnecessary condition of
-the SRAT existence, I would say.
-
-Thanks
-Baoquan
-
+Paolo, please don't merge this even though Jim's feedback was minor, I
+have a revamped version that I'll send out next week.  Thanks!
