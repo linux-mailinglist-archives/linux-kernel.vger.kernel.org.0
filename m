@@ -2,30 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3662511F4AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 23:13:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0070B11F4C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 23:13:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbfLNWKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 17:10:43 -0500
-Received: from relay11.mail.gandi.net ([217.70.178.231]:54179 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbfLNWKe (ORCPT
+        id S1727514AbfLNWLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 17:11:34 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:54688 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727002AbfLNWLd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 17:10:34 -0500
-Received: from localhost (lfbn-lyo-1-1913-102.w90-65.abo.wanadoo.fr [90.65.92.102])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id C66A7100009;
-        Sat, 14 Dec 2019 22:10:32 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 16/16] rtc: rv3029: add nvram support
-Date:   Sat, 14 Dec 2019 23:10:22 +0100
-Message-Id: <20191214221022.622482-17-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191214221022.622482-1-alexandre.belloni@bootlin.com>
-References: <20191214221022.622482-1-alexandre.belloni@bootlin.com>
+        Sat, 14 Dec 2019 17:11:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1576361491; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=YGTjqsjkFY5d1JzvIrkAqXwCnX4OlYTC+XoMTNK/XsY=;
+        b=JLRzrQLdCHDbhY2XsOJo63XAS1mqNv9Z69+2UtdLysoWQ5xKroBJ4LEJLurdQRP6lYnoDh
+        /E5QACsw4VmXFdoTPr/IMxfVenRDU0wTGVsc8Iupt9aekmHMLYJ564oZmVxo/287EZQa7X
+        7gcZM9ERcgDqZAq0CwCZ0E3rlxZcJG0=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     od@zcrc.me, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/6] usb: musb: jz4740: Suppress useless field in priv structure
+Date:   Sat, 14 Dec 2019 23:11:21 +0100
+Message-Id: <20191214221126.93116-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -33,81 +35,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export the 8 byte RAM using nvmem.
+The 'dev' field was never read anywhere.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/rtc/rtc-rv3029c2.c | 36 +++++++++++++++++++++++++++++++-----
- 1 file changed, 31 insertions(+), 5 deletions(-)
+ drivers/usb/musb/jz4740.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-rv3029c2.c b/drivers/rtc/rtc-rv3029c2.c
-index 5610ff562652..4eda0db72b66 100644
---- a/drivers/rtc/rtc-rv3029c2.c
-+++ b/drivers/rtc/rtc-rv3029c2.c
-@@ -109,10 +109,8 @@
- #define RV3029_CONTROL_E2P_TOV_MASK	0x3F /* XTAL turnover temp mask */
+diff --git a/drivers/usb/musb/jz4740.c b/drivers/usb/musb/jz4740.c
+index 5e885fa26829..16d4120ba145 100644
+--- a/drivers/usb/musb/jz4740.c
++++ b/drivers/usb/musb/jz4740.c
+@@ -17,7 +17,6 @@
+ #include "musb_core.h"
  
- /* user ram section */
--#define RV3029_USR1_RAM_PAGE		0x38
--#define RV3029_USR1_SECTION_LEN		0x04
--#define RV3029_USR2_RAM_PAGE		0x3C
--#define RV3029_USR2_SECTION_LEN		0x04
-+#define RV3029_RAM_PAGE			0x38
-+#define RV3029_RAM_SECTION_LEN		8
+ struct jz4740_glue {
+-	struct device           *dev;
+ 	struct platform_device  *musb;
+ 	struct clk		*clk;
+ };
+@@ -150,7 +149,6 @@ static int jz4740_probe(struct platform_device *pdev)
+ 	musb->dev.dma_mask		= &musb->dev.coherent_dma_mask;
+ 	musb->dev.coherent_dma_mask	= DMA_BIT_MASK(32);
  
- struct rv3029_data {
- 	struct device		*dev;
-@@ -474,6 +472,18 @@ static int rv3029_ioctl(struct device *dev, unsigned int cmd, unsigned long arg)
- 	}
- }
+-	glue->dev			= &pdev->dev;
+ 	glue->musb			= musb;
+ 	glue->clk			= clk;
  
-+static int rv3029_nvram_write(void *priv, unsigned int offset, void *val,
-+			      size_t bytes)
-+{
-+	return regmap_bulk_write(priv, RV3029_RAM_PAGE + offset, val, bytes);
-+}
-+
-+static int rv3029_nvram_read(void *priv, unsigned int offset, void *val,
-+			     size_t bytes)
-+{
-+	return regmap_bulk_read(priv, RV3029_RAM_PAGE + offset, val, bytes);
-+}
-+
- static const struct rv3029_trickle_tab_elem {
- 	u32 r;		/* resistance in ohms */
- 	u8 conf;	/* trickle config bits */
-@@ -694,6 +704,15 @@ static int rv3029_probe(struct device *dev, struct regmap *regmap, int irq,
- 			const char *name)
- {
- 	struct rv3029_data *rv3029;
-+	struct nvmem_config nvmem_cfg = {
-+		.name = "rv3029_nvram",
-+		.word_size = 1,
-+		.stride = 1,
-+		.size = RV3029_RAM_SECTION_LEN,
-+		.type = NVMEM_TYPE_BATTERY_BACKED,
-+		.reg_read = rv3029_nvram_read,
-+		.reg_write = rv3029_nvram_write,
-+	};
- 	int rc = 0;
- 
- 	rv3029 = devm_kzalloc(dev, sizeof(*rv3029), GFP_KERNEL);
-@@ -731,7 +750,14 @@ static int rv3029_probe(struct device *dev, struct regmap *regmap, int irq,
- 	rv3029->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
- 	rv3029->rtc->range_max = RTC_TIMESTAMP_END_2079;
- 
--	return rtc_register_device(rv3029->rtc);
-+	rc = rtc_register_device(rv3029->rtc);
-+	if (rc)
-+		return rc;
-+
-+	nvmem_cfg.priv = rv3029->regmap;
-+	rtc_nvmem_register(rv3029->rtc, &nvmem_cfg);
-+
-+	return 0;
- }
- 
- static const struct regmap_range rv3029_holes_range[] = {
 -- 
-2.23.0
+2.24.0
 
