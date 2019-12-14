@@ -2,51 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E1D311F49B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 23:06:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E267C11F49A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 23:05:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfLNWFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 17:05:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44924 "EHLO mail.kernel.org"
+        id S1727592AbfLNWFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 17:05:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726992AbfLNWFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727452AbfLNWFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 14 Dec 2019 17:05:15 -0500
-Subject: Re: [GIT PULL] s390 updates for 5.5-rc2
+Subject: Re: [GIT PULL] Staging / IIO driver fixes for 5.5-rc2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576361114;
-        bh=7t1evyNR7hgGjMsXzZTdRERzbmsXgpGY/ZvFLZ+Fe1o=;
+        s=default; t=1576361115;
+        bh=Ak2F40sfzLCZkyR9X63W4auf9PESgifkXcU8GQc0M5M=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=bN0yWJlGU24op1/SPS/RyIOR9L03TlEwRNjSAI1lmjgbqMiFW4g/8HAcjQ6G2wo/+
-         mwIEI58QpBzdXHnKTk5338iT7WKLLqwz78xo5wvJJzBF/Ff0G9NQz0mns7jaED9hOl
-         DYEJenflvle2xw5S1pmAewyXoFBioO7wrQgcJMiU=
+        b=t1oNWebRjgWC+WdJzEdwGQKTtIhT023Yjv2CG1Aw6MG3L23if36alcanji3ErwVZX
+         KhvE7V26ClzKuK28ZKMqFQgnr6Hzles1vDJEYElJS7FvgB6WQzETNrLIIMs6GMPZNl
+         eDeLSxLxHODKwpeJ6/bZWBNonFp8dhC4ml+me9gk=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <your-ad-here.call-01576325419-ext-4863@work.hours>
-References: <your-ad-here.call-01576325419-ext-4863@work.hours>
+In-Reply-To: <20191214152748.GA3460096@kroah.com>
+References: <20191214152748.GA3460096@kroah.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <your-ad-here.call-01576325419-ext-4863@work.hours>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.5-3
-X-PR-Tracked-Commit-Id: 3e39ce266a273e5751e5792aee248cb8d9630c8b
+X-PR-Tracked-Message-Id: <20191214152748.GA3460096@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+ tags/staging-5.5-rc2
+X-PR-Tracked-Commit-Id: 4bcd9eae731083bb724faf68cce6021213308333
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 81d559849aa4d972a2d297840eefdd20c4054131
-Message-Id: <157636111465.10255.15224540830413807139.pr-tracker-bot@kernel.org>
-Date:   Sat, 14 Dec 2019 22:05:14 +0000
-To:     Vasily Gorbik <gor@linux.ibm.com>
+X-PR-Merge-Commit-Id: aff2a52507bfeb4d44d6a69f6f8d7ca3bcb9b50d
+Message-Id: <157636111520.10255.6588362877957671815.pr-tracker-bot@kernel.org>
+Date:   Sat, 14 Dec 2019 22:05:15 +0000
+To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 14 Dec 2019 13:10:19 +0100:
+The pull request you sent on Sat, 14 Dec 2019 16:27:48 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.5-3
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-5.5-rc2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/81d559849aa4d972a2d297840eefdd20c4054131
+https://git.kernel.org/torvalds/c/aff2a52507bfeb4d44d6a69f6f8d7ca3bcb9b50d
 
 Thank you!
 
