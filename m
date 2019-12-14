@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C659611F26B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 16:28:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD05311F272
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 16:28:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfLNP2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 10:28:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34822 "EHLO mail.kernel.org"
+        id S1726940AbfLNP2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 10:28:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726757AbfLNP2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 10:28:18 -0500
+        id S1726818AbfLNP2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Dec 2019 10:28:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F294214AF;
-        Sat, 14 Dec 2019 15:28:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06707214AF;
+        Sat, 14 Dec 2019 15:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576337297;
-        bh=+Xz+uCe76wc0uyA264puP0KEktwfV+4eFIf5Z8fsDrc=;
+        s=default; t=1576337330;
+        bh=3i3TJGlWnxTn79DIaJC4lzjFScVGz3jYaZBKCKe9FIk=;
         h=Date:From:To:Cc:Subject:From;
-        b=GK3a7/xeSuhmO2Xn0OUpwJlI4PjQWg27dxuZYm6J4SV+9URDasirsy03a91wwF+l8
-         exNwBWOa5Q08AOOpbOATMGf+KPNQ09JBv5WyDccTAwd9U3K2en6rVHCL2uoNDowcuW
-         KUkXbxiZev0d4NUfDauB0c7/+Jo1vdiRSaWQGsvE=
-Date:   Sat, 14 Dec 2019 16:28:15 +0100
+        b=kIFbaNPOeiVez5C2G8X4UEY2h+MAyRcNQ432eHWbJJz5Mf2LLdePgwNSaZA0Aic0F
+         E32rUtfQ4F+hMR7nxVnu90/siF8yvG0BwcrZqs5HRKiWUQQA1UGxWXt/DYYLEUJHmz
+         SLRO3b+8TIWwmHgIhU8IB+fSaDB4fwco+RH6ieO8=
+Date:   Sat, 14 Dec 2019 16:28:48 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [GIT PULL] Driver core fixes for 5.5-rc2
-Message-ID: <20191214152815.GA3460263@kroah.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 5.5-rc2
+Message-ID: <20191214152848.GA3460394@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -39,41 +38,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+The following changes since commit 9455d25f4e3b3d009fa1b810862e5b06229530e4:
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+  Merge tag 'ntb-5.5' of git://github.com/jonmason/ntb (2019-12-07 18:38:17 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-5.5-rc2
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-5.5-rc2
 
-for you to fetch changes up to eecd37e105f0137af0d1b726bf61ff35d1d7d2eb:
+for you to fetch changes up to 16981742717b04644a41052570fb502682a315d2:
 
-  drivers: Fix boot problem on SuperH (2019-12-10 15:51:20 +0100)
+  binder: fix incorrect calculation for num_valid (2019-12-14 09:10:47 +0100)
 
 ----------------------------------------------------------------
-Driver core fixes for 5.5-rc2
+Char/Misc driver fixes for 5.5-rc2
 
-Here are two small driver core fixes to resolve some reported issues
+Here are 6 small fixes for some reported char/misc driver issues:
+ - fix build warnings with new 'awk' with the raid6 code
+ - 4 interconnect driver bugfixes
+ - binder fix for reported problem
 
-The first is to handle the much-reported (by the build systems) problem
-that superH does not boot anymore.
-
-The second handles an issue in the new platform logic that a number of
-people ran into with the automated tests in kbuild
-
-Both of these have been in linux-next with no reported issues.
+All of these except the binder fix have been in linux-next with no
+reported issues.  The binder fix is "new" but Todd says it is good as he
+has tested it :)
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Guenter Roeck (1):
-      drivers: Fix boot problem on SuperH
+Georgi Djakov (3):
+      interconnect: qcom: sdm845: Walk the list safely on node removal
+      interconnect: qcom: qcs404: Walk the list safely on node removal
+      interconnect: qcom: msm8974: Walk the list safely on node removal
 
-Saravana Kannan (1):
-      of/platform: Unconditionally pause/resume sync state during kernel init
+Greg Kroah-Hartman (1):
+      lib: raid6: fix awk build warnings
 
- arch/sh/drivers/platform_early.c | 11 ++---------
- drivers/base/platform.c          |  4 ++++
- drivers/of/platform.c            |  6 +++---
- 3 files changed, 9 insertions(+), 12 deletions(-)
+Krzysztof Kozlowski (1):
+      interconnect: qcom: Fix Kconfig indentation
+
+Todd Kjos (1):
+      binder: fix incorrect calculation for num_valid
+
+ drivers/android/binder.c            |  4 ++--
+ drivers/interconnect/qcom/Kconfig   | 14 +++++++-------
+ drivers/interconnect/qcom/msm8974.c |  8 ++++----
+ drivers/interconnect/qcom/qcs404.c  |  8 ++++----
+ drivers/interconnect/qcom/sdm845.c  |  4 ++--
+ lib/raid6/unroll.awk                |  2 +-
+ 6 files changed, 20 insertions(+), 20 deletions(-)
