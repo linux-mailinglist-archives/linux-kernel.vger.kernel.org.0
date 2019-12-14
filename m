@@ -2,105 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64DEF11F3F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 21:28:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E124011F3C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 21:10:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfLNU2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 15:28:07 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.87]:31929 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726484AbfLNU2H (ORCPT
+        id S1726834AbfLNUKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 15:10:54 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33449 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfLNUKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 15:28:07 -0500
-X-Greylist: delayed 1330 seconds by postgrey-1.27 at vger.kernel.org; Sat, 14 Dec 2019 15:28:06 EST
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 1E8FA60EC62
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2019 14:05:56 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id gDfoiOs5xiJ43gDfoioC1z; Sat, 14 Dec 2019 14:05:56 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=fuWZgfc/nOwr/7Hm0CFqLup50VNZxiYld5Lu20kW2H0=; b=lWZ8zbtphioj26kyBkxXWX+zoW
-        A0L2B3ikK4xhPE73/B5bwoM5ZyLysrLSKeMT/NECuU5mqtrHZXWu0lGtdTzTzxu+n8irduxR/IteD
-        mUzwP0crn27n84aDRu9rIjEQGNQPDEviDjdOhN9n99vfrZp2Q+12482FJY9IeN4NIVHJfEFkAXhCs
-        ly3lsPcyOtgTX1PtEHY2PGrelLYNoLphpZXwfvUZqFeZSW14Eyie9v9S5tIq+V2ZLu+ff41IsLjWe
-        SdI2EVSoaO4AkUE4iU1LHJI/GruJpBgVx7bULjevqzVAvo0jElqHFS8LJYJHN5SPNIALrAsbf05Ot
-        Emn7YcjA==;
-Received: from [187.192.35.14] (port=45108 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1igDfm-002mfX-Kj; Sat, 14 Dec 2019 14:05:54 -0600
-Date:   Sat, 14 Dec 2019 14:07:09 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [GIT PULL] Wimplicit-fallthrough patches for 5.5-rc2
-Message-ID: <20191214200709.GA20124@embeddedor>
+        Sat, 14 Dec 2019 15:10:54 -0500
+Received: by mail-pf1-f195.google.com with SMTP id y206so3369478pfb.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2019 12:10:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=wuX1wX7F3A4+ViJ/F0TGocQYp+UHpk0d54KJOh0KWqY=;
+        b=moI3aNp2gAT6fiipm7VKPiy+ExbuP/KxOwHz1IvtGmHQpyBlujqY4lGo6og4s01Gws
+         COU2gYcZ6Jap8JvjadlrRSn8S/33mTnO9RURXanWwir+y0Tsuo4HoczUlYHUr/8Jm597
+         AGPgZE52gf9NtvdT2YMBmDPipmfP1Pe6DwgwIB8O41VmdOvsyEC/ELaxLf10l9/xtCDl
+         yOZ9c0QPLMm8Fx+e4XfJIn/SbHihOD6YoBI/D6OVtv93VWXeb+gHNKGuOO7Lhbi5IwiO
+         Ir7xCXz2QuYtYIu8IPu2YpqubPJgvxIHPJeE9p2ae1QoTxoLSbSMxfjAvSpmNqJRe3gd
+         oCLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=wuX1wX7F3A4+ViJ/F0TGocQYp+UHpk0d54KJOh0KWqY=;
+        b=YIIKGgy8MZmuGc+luadeD534XkNrvrT6XY31FTOQf99x/zq/XvtU0tCvVqDeT5HXZ6
+         hazkhupt6M+3JK/kul5tBZnS1AUEUMUgPVdycGikX4u1imbjuqX7My0vgSMRbhMIT6/a
+         6xFv1tiS2A7GN190YsplTT6dPzb67Yg1AiY+dSM+y7IIvkSi1aCtCWfWRNcTxqZHhAPS
+         Bll4JcWSQWxNaoda50QzTx352CELQ2ktPap2zpeOqtmFjTC8oIQYulvJsOhGB0QIn0Jm
+         FF3OKvOZV859Gf3dMa+sePIXmEhEkO4/jMxQext5sJbvpOLbx3/0upJplPqlo3VbDiT5
+         nn9Q==
+X-Gm-Message-State: APjAAAUCAGxnaFZGzo7XophF6+WgiXNKM4FFQpRq1A8pXKINivmtn7R3
+        goZlJxk1VNFyiVTXw601Mhp5LQ==
+X-Google-Smtp-Source: APXvYqyZIZpkQnsmmMbQQozox77o8oKzuyqEEgz/qPk80xmbgKB8F2SyKW2zohfp580A6GNPcxBONw==
+X-Received: by 2002:aa7:9205:: with SMTP id 5mr7043338pfo.213.1576354253427;
+        Sat, 14 Dec 2019 12:10:53 -0800 (PST)
+Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
+        by smtp.gmail.com with ESMTPSA id y22sm16280523pfn.122.2019.12.14.12.10.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2019 12:10:53 -0800 (PST)
+Date:   Sat, 14 Dec 2019 12:10:49 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Xu Wang <vulab@iscas.ac.cn>
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, davem@davemloft.net,
+        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] stmmac: platform: Remove unnecessary conditions
+Message-ID: <20191214121049.266b656f@cakuba.netronome.com>
+In-Reply-To: <1576060284-12371-1-git-send-email-vulab@iscas.ac.cn>
+References: <1576060284-12371-1-git-send-email-vulab@iscas.ac.cn>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.35.14
-X-Source-L: No
-X-Exim-ID: 1igDfm-002mfX-Kj
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.35.14]:45108
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+On Wed, 11 Dec 2019 10:31:24 +0000, Xu Wang wrote:
+> Remove conditions where if and else branch are identical.
+> This issue is detected by coccinelle.
+> 
+> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+> index bedaff0..1d26691 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+> @@ -229,8 +229,6 @@ static int stmmac_mtl_setup(struct platform_device *pdev,
+>  		plat->tx_sched_algorithm = MTL_TX_ALGORITHM_WFQ;
+>  	else if (of_property_read_bool(tx_node, "snps,tx-sched-dwrr"))
+>  		plat->tx_sched_algorithm = MTL_TX_ALGORITHM_DWRR;
+> -	else if (of_property_read_bool(tx_node, "snps,tx-sched-sp"))
+> -		plat->tx_sched_algorithm = MTL_TX_ALGORITHM_SP;
+>  	else
+>  		plat->tx_sched_algorithm = MTL_TX_ALGORITHM_SP;
+>  
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.5-rc2
-
-for you to fetch changes up to 3d519d6d388ba4f9a75d0e0b6f60d890987bc096:
-
-  sh: kgdb: Mark expected switch fall-throughs (2019-12-10 16:11:42 -0600)
-
-----------------------------------------------------------------
-Wimplicit-fallthrough patches for 5.5-rc2
-
-Hi Linus,
-
-Please, pull the following patches that mark switch cases where we are
-expecting to fall through.
-
- - Fix compile error on sh by marking expected switch fall-through
-
-Thanks
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-----------------------------------------------------------------
-Kuninori Morimoto (1):
-      sh: kgdb: Mark expected switch fall-throughs
-
- arch/sh/kernel/kgdb.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the patch but in this case it looks like this code is
+intentionally written this way to enumerate all options. Maintainers -
+please speak up if you prefer to have the patch applied, otherwise 
+I'm dropping it.
