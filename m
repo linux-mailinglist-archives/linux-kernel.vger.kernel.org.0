@@ -2,81 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B78ED11F270
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 16:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C659611F26B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 16:28:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfLNP2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 10:28:44 -0500
-Received: from node.akkea.ca ([192.155.83.177]:55528 "EHLO node.akkea.ca"
+        id S1726808AbfLNP2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 10:28:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726841AbfLNP2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 10:28:41 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id 162E54E200E;
-        Sat, 14 Dec 2019 15:28:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1576337321; bh=s9cS0kOUcH2uE/d4ffbDRkm1lMRvgvsU6VbvQ8wFuRk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=O3/7BTbBGpFJxy94eoDljHn6nK/OBQNdb2oV4uqP7uwqJuuUTYFcVITIRu/JBTwPb
-         y8USBYyISoqp1zeYrAqGmsYpnpLpLsILwKcP1g4/64Z7wM8eQxk1EpuVIMSf0hTCPz
-         M9M/55MSrGg951UtM7iCK6ZIyI277waib6Yo3o6g=
-X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
-Received: from node.akkea.ca ([127.0.0.1])
-        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id DAF4LvUi9G-W; Sat, 14 Dec 2019 15:28:40 +0000 (UTC)
-Received: from thinkpad-tablet.localdomain (S0106788a2041785e.gv.shawcable.net [70.66.86.75])
-        by node.akkea.ca (Postfix) with ESMTPSA id 8D4294E2003;
-        Sat, 14 Dec 2019 15:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1576337320; bh=s9cS0kOUcH2uE/d4ffbDRkm1lMRvgvsU6VbvQ8wFuRk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=ZsRuzvtw+LCX7rYvFeWI4OqJ9TaFSXrIG+TGs9wKLozFdh+bdOTOTuajepkcFjoTJ
-         7h0uczEL7eyjVwlF7f1KE5b0cOuYvtKfyAHdjrbY2rT/qFXpc/a/7yzlx6qsF/Ig2i
-         KjfcuQzBJT9v36Jf+2yYzICz2+TisxOznNY6KqhQ=
-From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
-To:     krzk@kernel.org
-Cc:     Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@puri.sm, "Angus Ainslie (Purism)" <angus@akkea.ca>
-Subject: [PATCH v2 2/2] device-tree: bindings: max17042_battery: add all of the compatible strings
-Date:   Sat, 14 Dec 2019 07:27:55 -0800
-Message-Id: <20191214152755.25138-3-angus@akkea.ca>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191214152755.25138-1-angus@akkea.ca>
-References: <20191214152755.25138-1-angus@akkea.ca>
+        id S1726757AbfLNP2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Dec 2019 10:28:18 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F294214AF;
+        Sat, 14 Dec 2019 15:28:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576337297;
+        bh=+Xz+uCe76wc0uyA264puP0KEktwfV+4eFIf5Z8fsDrc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=GK3a7/xeSuhmO2Xn0OUpwJlI4PjQWg27dxuZYm6J4SV+9URDasirsy03a91wwF+l8
+         exNwBWOa5Q08AOOpbOATMGf+KPNQ09JBv5WyDccTAwd9U3K2en6rVHCL2uoNDowcuW
+         KUkXbxiZev0d4NUfDauB0c7/+Jo1vdiRSaWQGsvE=
+Date:   Sat, 14 Dec 2019 16:28:15 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [GIT PULL] Driver core fixes for 5.5-rc2
+Message-ID: <20191214152815.GA3460263@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bindings are missing documentation for some of the compatible
-strings.
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
-Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/power/supply/max17042_battery.txt   | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/max17042_battery.txt b/Documentation/devicetree/bindings/power/supply/max17042_battery.txt
-index 3f3894aaeebc..f34c5daae9af 100644
---- a/Documentation/devicetree/bindings/power/supply/max17042_battery.txt
-+++ b/Documentation/devicetree/bindings/power/supply/max17042_battery.txt
-@@ -2,7 +2,11 @@ max17042_battery
- ~~~~~~~~~~~~~~~~
- 
- Required properties :
-- - compatible : "maxim,max17042"
-+ - compatible : one of the following
-+ * "maxim,max17042"
-+ * "maxim,max17047"
-+ * "maxim,max17050"
-+ * "maxim,max17055"
- 
- Optional properties :
-  - maxim,rsns-microohm : Resistance of rsns resistor in micro Ohms
--- 
-2.17.1
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-5.5-rc2
+
+for you to fetch changes up to eecd37e105f0137af0d1b726bf61ff35d1d7d2eb:
+
+  drivers: Fix boot problem on SuperH (2019-12-10 15:51:20 +0100)
+
+----------------------------------------------------------------
+Driver core fixes for 5.5-rc2
+
+Here are two small driver core fixes to resolve some reported issues
+
+The first is to handle the much-reported (by the build systems) problem
+that superH does not boot anymore.
+
+The second handles an issue in the new platform logic that a number of
+people ran into with the automated tests in kbuild
+
+Both of these have been in linux-next with no reported issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Guenter Roeck (1):
+      drivers: Fix boot problem on SuperH
+
+Saravana Kannan (1):
+      of/platform: Unconditionally pause/resume sync state during kernel init
+
+ arch/sh/drivers/platform_early.c | 11 ++---------
+ drivers/base/platform.c          |  4 ++++
+ drivers/of/platform.c            |  6 +++---
+ 3 files changed, 9 insertions(+), 12 deletions(-)
