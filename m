@@ -2,341 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8BD611F411
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 21:58:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF46B11F41B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2019 22:04:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfLNU6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 15:58:05 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54590 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726484AbfLNU6E (ORCPT
+        id S1726989AbfLNVEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 16:04:12 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:50655 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfLNVEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 15:58:04 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b19so2470857wmj.4
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2019 12:58:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=vMcnWgSW4WyNDrScAFvow/WT5DfXkoblq35RZJ7NaOE=;
-        b=Xb/RVOGMJUVXYC1yfTaHEKCzugH6VFnNw5g+yujgwxpFwtlgVNESmUMPVaCHPtTxmv
-         ndJoli9+lxs767KhVXxpIPPLaQ+PcXSvEkOiXthb7eFzDJlydkzSKV+/GUy6Z6C2ECR2
-         9DYe49qgMHzMTUX0tzIuhHPeJ/QrOruwZbnFEGwjswmQrl1FhffHlnTv/S+7zASsBeob
-         kR4XIjOuaHRVKukIV1pNhOs2EXeSArvA5jOEX7smcQpbR4Z3J0ypeH6aqRXUvtsfj78F
-         NWUYBMEPdHpEN83r+t625Tqkcwse062KAJXs8nsbWN5KlvlQuMEmyJOPSbVMl8s7m9Np
-         QHHQ==
+        Sat, 14 Dec 2019 16:04:11 -0500
+Received: by mail-il1-f198.google.com with SMTP id l63so2816272ili.17
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2019 13:04:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vMcnWgSW4WyNDrScAFvow/WT5DfXkoblq35RZJ7NaOE=;
-        b=evncEo15fJz+lg7DRrmR+/z7n5Uy5LF4IKX5oKQibE6jH8GW9eMvUqO5DXwxptn7EJ
-         HzexzBsVujYA71XeZUhAKhuqkfAooXyg88URuXqwqkPvDQNgL3NWphPJP42EbqihohDK
-         KchJL8nK0DTk89pDmZ1c2bHfpiThWnOYBEbWmhwRCYP1o/x0Z7YSpN8gsYa933HpNcOz
-         yei43KZEbjTpDB9f6s5+g/VeCGkAlaYTuu+74wRk3TIvHmUd7erwLkTAY/2qLj8OUon4
-         /ei1si8fkQ7PU1RamgAlgC9B5QNcoD30aIwsxueUjbDlPR9HQeBbW+9L6tuKEf/XLmd0
-         jpOg==
-X-Gm-Message-State: APjAAAWa6D/raZ3gzBwaCSslSAbYh8VdDsU4BrgLA4zMmx00B6L8vVQX
-        RObqZB95uTq9z/+vupyM7P6xNSOIaTE=
-X-Google-Smtp-Source: APXvYqybg/XnYIZ3pBMAf+OHTZbuRAR+yXkHAkAAoO0a3Vrr2ByAIAEe0ugWVMUIsgyjg+5RZ0rn5w==
-X-Received: by 2002:a1c:a543:: with SMTP id o64mr21299990wme.108.1576357080580;
-        Sat, 14 Dec 2019 12:58:00 -0800 (PST)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id j12sm15955607wrw.54.2019.12.14.12.57.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2019 12:57:59 -0800 (PST)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org, oshpigelman@habana.ai,
-        ttayar@habana.ai
-Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH] habanalabs: flush only at the end of the map/unmap
-Date:   Sat, 14 Dec 2019 22:57:57 +0200
-Message-Id: <20191214205757.25919-1-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=5oMQhE5HOZJYBQ6RqbQJx/czIjoLVj+jVnaKVFlcXMU=;
+        b=f5QeluflIOB3P/Qs7cIvw7W1cFZsn9Lf2RCyq5j4VNKFDRUtLhNWdw5Gmzbwv+gd+X
+         A7NWHenA6Xqyoko91Z+Xr5dQfum5i/ZULM2mkhDHsxMON+TLXZHNrCVJIs1mPWyow5yj
+         9ckJZrrMSPJ4PDqjslRqcD8HycvGU9OsXFfebORr5/z0ai0/1T3MIBKecXAGdvdbw36t
+         L3GSO23xYS3afMj8PVWpLC9lvZr7hklk8PZQxEbc2Tsu7cOEOSrrdWWB2zEoKEUjlLXg
+         oEXrgJ1JhtiRp46yyJm4USh+G6feleXqYoM2iSrRyFPZU6WE8ZU+q13yntr1LVd2p9i5
+         NvWQ==
+X-Gm-Message-State: APjAAAXI0K2/v4kU/nmo0E9ySUF/a/dLTjA5QApYjVDY+yJD9qrMp/p2
+        /GQLSIUQray/ibOoQxKQze9ChD5FNuUBpBDj0TNiAo72DqCu
+X-Google-Smtp-Source: APXvYqzIIvNB75c9O/IyF97cbZfnfUqtNQ0qJre+iGIKqCUtcPv+ZK7OT/QHSYMbv+9zpuk/V6aVH27j12HBKzI6ORM/Rl2bVUyo
+MIME-Version: 1.0
+X-Received: by 2002:a92:910b:: with SMTP id t11mr5568680ild.195.1576357449273;
+ Sat, 14 Dec 2019 13:04:09 -0800 (PST)
+Date:   Sat, 14 Dec 2019 13:04:09 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cd9e600599b051e5@google.com>
+Subject: KASAN: vmalloc-out-of-bounds Read in compat_copy_entries
+From:   syzbot <syzbot+f68108fed972453a0ad4@syzkaller.appspotmail.com>
+To:     bridge@lists.linux-foundation.org, coreteam@netfilter.org,
+        davem@davemloft.net, fw@strlen.de, kadlec@netfilter.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, nikolay@cumulusnetworks.com,
+        pablo@netfilter.org, roopa@cumulusnetworks.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawel Piskorski <ppiskorski@habana.ai>
+Hello,
 
-Optimize hl_mmu_map and hl_mmu_unmap by not calling flush(ctx)
-within per-page loop.
+syzbot found the following crash on:
 
-Signed-off-by: Pawel Piskorski <ppiskorski@habana.ai>
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+HEAD commit:    e31736d9 Merge tag 'nios2-v5.5-rc2' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a4f5dee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=79f79de2a27d3e3d
+dashboard link: https://syzkaller.appspot.com/bug?extid=f68108fed972453a0ad4
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c105dee00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f1e32ee00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f68108fed972453a0ad4@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: vmalloc-out-of-bounds in size_entry_mwt  
+net/bridge/netfilter/ebtables.c:2063 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in compat_copy_entries+0x128b/0x1380  
+net/bridge/netfilter/ebtables.c:2155
+Read of size 4 at addr ffffc900004461f4 by task syz-executor267/7937
+
+CPU: 1 PID: 7937 Comm: syz-executor267 Not tainted 5.5.0-rc1-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS  
+rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_address_description.constprop.0.cold+0x5/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:639
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:134
+  size_entry_mwt net/bridge/netfilter/ebtables.c:2063 [inline]
+  compat_copy_entries+0x128b/0x1380 net/bridge/netfilter/ebtables.c:2155
+  compat_do_replace+0x344/0x720 net/bridge/netfilter/ebtables.c:2249
+  compat_do_ebt_set_ctl+0x22f/0x27e net/bridge/netfilter/ebtables.c:2333
+  compat_nf_sockopt net/netfilter/nf_sockopt.c:144 [inline]
+  compat_nf_setsockopt+0x98/0x140 net/netfilter/nf_sockopt.c:156
+  compat_ip_setsockopt net/ipv4/ip_sockglue.c:1286 [inline]
+  compat_ip_setsockopt+0x106/0x140 net/ipv4/ip_sockglue.c:1267
+  compat_udp_setsockopt+0x68/0xb0 net/ipv4/udp.c:2649
+  compat_sock_common_setsockopt+0xb2/0x140 net/core/sock.c:3160
+  __compat_sys_setsockopt+0x185/0x380 net/compat.c:384
+  __do_compat_sys_setsockopt net/compat.c:397 [inline]
+  __se_compat_sys_setsockopt net/compat.c:394 [inline]
+  __ia32_compat_sys_setsockopt+0xbd/0x150 net/compat.c:394
+  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+  do_fast_syscall_32+0x27b/0xe16 arch/x86/entry/common.c:408
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7fc3a39
+Code: 00 00 00 89 d3 5b 5e 5f 5d c3 b8 80 96 98 00 eb c4 8b 04 24 c3 8b 1c  
+24 c3 8b 34 24 c3 8b 3c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ffab2b4c EFLAGS: 00000296 ORIG_RAX: 000000000000016e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000000000
+RDX: 0000000000000080 RSI: 0000000020000240 RDI: 0000000000000212
+RBP: 0000000000000012 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+
+Memory state around the buggy address:
+  ffffc90000446080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffffc90000446100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffffc90000446180: 00 00 00 00 00 00 00 00 02 f9 f9 f9 f9 f9 f9 f9
+                                                              ^
+  ffffc90000446200: f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
+  ffffc90000446280: f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
+==================================================================
+
+
 ---
- drivers/misc/habanalabs/goya/goya.c  | 20 +++++++------
- drivers/misc/habanalabs/habanalabs.h |  6 ++--
- drivers/misc/habanalabs/memory.c     |  9 ++++--
- drivers/misc/habanalabs/mmu.c        | 42 ++++++++++++++++++----------
- 4 files changed, 50 insertions(+), 27 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index c8d16aa4382c..08d4bef86e23 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -4737,7 +4737,8 @@ static int goya_mmu_add_mappings_for_device_cpu(struct hl_device *hdev)
- 
- 	for (off = 0 ; off < CPU_FW_IMAGE_SIZE ; off += PAGE_SIZE_2MB) {
- 		rc = hl_mmu_map(hdev->kernel_ctx, prop->dram_base_address + off,
--				prop->dram_base_address + off, PAGE_SIZE_2MB);
-+				prop->dram_base_address + off, PAGE_SIZE_2MB,
-+				(off + PAGE_SIZE_2MB) == CPU_FW_IMAGE_SIZE);
- 		if (rc) {
- 			dev_err(hdev->dev, "Map failed for address 0x%llx\n",
- 				prop->dram_base_address + off);
-@@ -4747,7 +4748,7 @@ static int goya_mmu_add_mappings_for_device_cpu(struct hl_device *hdev)
- 
- 	if (!(hdev->cpu_accessible_dma_address & (PAGE_SIZE_2MB - 1))) {
- 		rc = hl_mmu_map(hdev->kernel_ctx, VA_CPU_ACCESSIBLE_MEM_ADDR,
--			hdev->cpu_accessible_dma_address, PAGE_SIZE_2MB);
-+			hdev->cpu_accessible_dma_address, PAGE_SIZE_2MB, true);
- 
- 		if (rc) {
- 			dev_err(hdev->dev,
-@@ -4760,7 +4761,7 @@ static int goya_mmu_add_mappings_for_device_cpu(struct hl_device *hdev)
- 			rc = hl_mmu_map(hdev->kernel_ctx,
- 				VA_CPU_ACCESSIBLE_MEM_ADDR + cpu_off,
- 				hdev->cpu_accessible_dma_address + cpu_off,
--				PAGE_SIZE_4KB);
-+				PAGE_SIZE_4KB, true);
- 			if (rc) {
- 				dev_err(hdev->dev,
- 					"Map failed for CPU accessible memory\n");
-@@ -4786,14 +4787,15 @@ static int goya_mmu_add_mappings_for_device_cpu(struct hl_device *hdev)
- 	for (; cpu_off >= 0 ; cpu_off -= PAGE_SIZE_4KB)
- 		if (hl_mmu_unmap(hdev->kernel_ctx,
- 				VA_CPU_ACCESSIBLE_MEM_ADDR + cpu_off,
--				PAGE_SIZE_4KB))
-+				PAGE_SIZE_4KB, true))
- 			dev_warn_ratelimited(hdev->dev,
- 				"failed to unmap address 0x%llx\n",
- 				VA_CPU_ACCESSIBLE_MEM_ADDR + cpu_off);
- unmap:
- 	for (; off >= 0 ; off -= PAGE_SIZE_2MB)
- 		if (hl_mmu_unmap(hdev->kernel_ctx,
--				prop->dram_base_address + off, PAGE_SIZE_2MB))
-+				prop->dram_base_address + off, PAGE_SIZE_2MB,
-+				true))
- 			dev_warn_ratelimited(hdev->dev,
- 				"failed to unmap address 0x%llx\n",
- 				prop->dram_base_address + off);
-@@ -4818,14 +4820,15 @@ void goya_mmu_remove_device_cpu_mappings(struct hl_device *hdev)
- 
- 	if (!(hdev->cpu_accessible_dma_address & (PAGE_SIZE_2MB - 1))) {
- 		if (hl_mmu_unmap(hdev->kernel_ctx, VA_CPU_ACCESSIBLE_MEM_ADDR,
--				PAGE_SIZE_2MB))
-+				PAGE_SIZE_2MB, true))
- 			dev_warn(hdev->dev,
- 				"Failed to unmap CPU accessible memory\n");
- 	} else {
- 		for (cpu_off = 0 ; cpu_off < SZ_2M ; cpu_off += PAGE_SIZE_4KB)
- 			if (hl_mmu_unmap(hdev->kernel_ctx,
- 					VA_CPU_ACCESSIBLE_MEM_ADDR + cpu_off,
--					PAGE_SIZE_4KB))
-+					PAGE_SIZE_4KB,
-+					(cpu_off + PAGE_SIZE_4KB) >= SZ_2M))
- 				dev_warn_ratelimited(hdev->dev,
- 					"failed to unmap address 0x%llx\n",
- 					VA_CPU_ACCESSIBLE_MEM_ADDR + cpu_off);
-@@ -4833,7 +4836,8 @@ void goya_mmu_remove_device_cpu_mappings(struct hl_device *hdev)
- 
- 	for (off = 0 ; off < CPU_FW_IMAGE_SIZE ; off += PAGE_SIZE_2MB)
- 		if (hl_mmu_unmap(hdev->kernel_ctx,
--				prop->dram_base_address + off, PAGE_SIZE_2MB))
-+				prop->dram_base_address + off, PAGE_SIZE_2MB,
-+				(off + PAGE_SIZE_2MB) >= CPU_FW_IMAGE_SIZE))
- 			dev_warn_ratelimited(hdev->dev,
- 					"Failed to unmap address 0x%llx\n",
- 					prop->dram_base_address + off);
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 00c949f4ccd1..df34227dea31 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -1573,8 +1573,10 @@ int hl_mmu_init(struct hl_device *hdev);
- void hl_mmu_fini(struct hl_device *hdev);
- int hl_mmu_ctx_init(struct hl_ctx *ctx);
- void hl_mmu_ctx_fini(struct hl_ctx *ctx);
--int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size);
--int hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr, u32 page_size);
-+int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr,
-+		u32 page_size, bool flush_pte);
-+int hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr, u32 page_size,
-+		bool flush_pte);
- void hl_mmu_swap_out(struct hl_ctx *ctx);
- void hl_mmu_swap_in(struct hl_ctx *ctx);
- 
-diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
-index 6c72cb4eff54..b612b1ad0aac 100644
---- a/drivers/misc/habanalabs/memory.c
-+++ b/drivers/misc/habanalabs/memory.c
-@@ -747,7 +747,8 @@ static int map_phys_pg_pack(struct hl_ctx *ctx, u64 vaddr,
- 	for (i = 0 ; i < phys_pg_pack->npages ; i++) {
- 		paddr = phys_pg_pack->pages[i];
- 
--		rc = hl_mmu_map(ctx, next_vaddr, paddr, page_size);
-+		rc = hl_mmu_map(ctx, next_vaddr, paddr, page_size,
-+				(i + 1) == phys_pg_pack->npages);
- 		if (rc) {
- 			dev_err(hdev->dev,
- 				"map failed for handle %u, npages: %llu, mapped: %llu",
-@@ -765,7 +766,8 @@ static int map_phys_pg_pack(struct hl_ctx *ctx, u64 vaddr,
- err:
- 	next_vaddr = vaddr;
- 	for (i = 0 ; i < mapped_pg_cnt ; i++) {
--		if (hl_mmu_unmap(ctx, next_vaddr, page_size))
-+		if (hl_mmu_unmap(ctx, next_vaddr, page_size,
-+					(i + 1) == mapped_pg_cnt))
- 			dev_warn_ratelimited(hdev->dev,
- 				"failed to unmap handle %u, va: 0x%llx, pa: 0x%llx, page size: %u\n",
- 					phys_pg_pack->handle, next_vaddr,
-@@ -794,7 +796,8 @@ static void unmap_phys_pg_pack(struct hl_ctx *ctx, u64 vaddr,
- 	next_vaddr = vaddr;
- 
- 	for (i = 0 ; i < phys_pg_pack->npages ; i++, next_vaddr += page_size) {
--		if (hl_mmu_unmap(ctx, next_vaddr, page_size))
-+		if (hl_mmu_unmap(ctx, next_vaddr, page_size,
-+				       (i + 1) == phys_pg_pack->npages))
- 			dev_warn_ratelimited(hdev->dev,
- 			"unmap failed for vaddr: 0x%llx\n", next_vaddr);
- 
-diff --git a/drivers/misc/habanalabs/mmu.c b/drivers/misc/habanalabs/mmu.c
-index 6262b26e2086..006eee47909d 100644
---- a/drivers/misc/habanalabs/mmu.c
-+++ b/drivers/misc/habanalabs/mmu.c
-@@ -637,29 +637,27 @@ static int _hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr, bool is_dram_addr)
- 			clear_hop3 = true;
- 
- 		if (!clear_hop3)
--			goto flush;
-+			goto mapped;
- 
- 		clear_pte(ctx, hop3_pte_addr);
- 
- 		if (put_pte(ctx, hop3_addr))
--			goto flush;
-+			goto mapped;
- 
- 		clear_pte(ctx, hop2_pte_addr);
- 
- 		if (put_pte(ctx, hop2_addr))
--			goto flush;
-+			goto mapped;
- 
- 		clear_pte(ctx, hop1_pte_addr);
- 
- 		if (put_pte(ctx, hop1_addr))
--			goto flush;
-+			goto mapped;
- 
- 		clear_pte(ctx, hop0_pte_addr);
- 	}
- 
--flush:
--	flush(ctx);
--
-+mapped:
- 	return 0;
- 
- not_mapped:
-@@ -675,6 +673,7 @@ static int _hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr, bool is_dram_addr)
-  * @ctx: pointer to the context structure
-  * @virt_addr: virt addr to map from
-  * @page_size: size of the page to unmap
-+ * @flush_pte: whether to do a PCI flush
-  *
-  * This function does the following:
-  * - Check that the virt addr is mapped
-@@ -685,15 +684,19 @@ static int _hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr, bool is_dram_addr)
-  * changes the MMU hash, it must be protected by a lock.
-  * However, because it maps only a single page, the lock should be implemented
-  * in a higher level in order to protect the entire mapping of the memory area
-+ *
-+ * For optimization reasons PCI flush may be requested once after unmapping of
-+ * large area.
-  */
--int hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr, u32 page_size)
-+int hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr, u32 page_size,
-+		bool flush_pte)
- {
- 	struct hl_device *hdev = ctx->hdev;
- 	struct asic_fixed_properties *prop = &hdev->asic_prop;
- 	struct hl_mmu_properties *mmu_prop;
- 	u64 real_virt_addr;
- 	u32 real_page_size, npages;
--	int i, rc;
-+	int i, rc = 0;
- 	bool is_dram_addr;
- 
- 	if (!hdev->mmu_enable)
-@@ -729,12 +732,15 @@ int hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr, u32 page_size)
- 	for (i = 0 ; i < npages ; i++) {
- 		rc = _hl_mmu_unmap(ctx, real_virt_addr, is_dram_addr);
- 		if (rc)
--			return rc;
-+			break;
- 
- 		real_virt_addr += real_page_size;
- 	}
- 
--	return 0;
-+	if (flush_pte)
-+		flush(ctx);
-+
-+	return rc;
- }
- 
- static int _hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr,
-@@ -885,8 +891,6 @@ static int _hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr,
- 		get_pte(ctx, hop3_addr);
- 	}
- 
--	flush(ctx);
--
- 	return 0;
- 
- err:
-@@ -909,6 +913,7 @@ static int _hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr,
-  * @virt_addr: virt addr to map from
-  * @phys_addr: phys addr to map to
-  * @page_size: physical page size
-+ * @flush_pte: whether to do a PCI flush
-  *
-  * This function does the following:
-  * - Check that the virt addr is not mapped
-@@ -919,8 +924,12 @@ static int _hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr,
-  * changes the MMU hash, it must be protected by a lock.
-  * However, because it maps only a single page, the lock should be implemented
-  * in a higher level in order to protect the entire mapping of the memory area
-+ *
-+ * For optimization reasons PCI flush may be requested once after mapping of
-+ * large area.
-  */
--int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size)
-+int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size,
-+		bool flush_pte)
- {
- 	struct hl_device *hdev = ctx->hdev;
- 	struct asic_fixed_properties *prop = &hdev->asic_prop;
-@@ -976,6 +985,9 @@ int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size)
- 		mapped_cnt++;
- 	}
- 
-+	if (flush_pte)
-+		flush(ctx);
-+
- 	return 0;
- 
- err:
-@@ -988,6 +1000,8 @@ int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size)
- 		real_virt_addr += real_page_size;
- 	}
- 
-+	flush(ctx);
-+
- 	return rc;
- }
- 
--- 
-2.17.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
