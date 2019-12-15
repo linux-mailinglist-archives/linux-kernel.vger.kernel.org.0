@@ -2,171 +2,371 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7491611F9B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 18:35:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C21D711FAA1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 20:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfLORdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 12:33:09 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37279 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726130AbfLORdJ (ORCPT
+        id S1726380AbfLOTAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 14:00:25 -0500
+Received: from se15p.web-hosting.com ([198.54.122.235]:55939 "EHLO
+        se15p.web-hosting.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726146AbfLOTAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 12:33:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576431187;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=J6eLuoIH1PYARRdiL90lhVsYJtyjHYLmUjrrQQDPe7E=;
-        b=CzxlV34np9k3UEhMnNHvlZ/abfc3QqqDSifgUvK84Mn9hB/RVtKSzsFYU5B1Eoa7ygsHXv
-        xIJUGztF5l0ZtXtd1D8clVzr3L2Px6oqzPqqcGEb7H8G1JDrAajvJIAI90QYlUH1VrF/zH
-        hEJNyt8Bf3dBnek98SZAtoO+Nk4Y5F8=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-104-UXQBTVKqM0O4UaBotsSrfQ-1; Sun, 15 Dec 2019 12:33:05 -0500
-X-MC-Unique: UXQBTVKqM0O4UaBotsSrfQ-1
-Received: by mail-qv1-f72.google.com with SMTP id ec1so3752597qvb.6
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 09:33:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=J6eLuoIH1PYARRdiL90lhVsYJtyjHYLmUjrrQQDPe7E=;
-        b=lungjJtzZQHNF3R1jxr4q2+LlMCcPBU5kg8gh6wCXGKD3YkUUOWIozblUjIe2dM59J
-         49GBbqUXN9pGdJ6xYMaoiWoWoAV9RV1ZVJIeH8aizzr4FxlEBD8qyfGwrXdJddes58PQ
-         HfA6iUdFmFQSRMXA+eRvX3w0O27hcoRgTLvHyk1Usy0zw/yEGyeKC53obhkAOc6hi69b
-         YQnrRosnHMYOXY84IRTgfkhQxLtHmj2ECnYq798U8c4gfJpcn+nSS1zzqAgNdAUJNR4L
-         3UgjUE+jp9f8b4PyQO/gMNf1Sojgj+YfTBXS4Pi6KBEoqu1P8/4OY8k3tZhF5rZjdWwg
-         /5xQ==
-X-Gm-Message-State: APjAAAWpZTT5z6uDy6yrCHgxiNYyn5KpajK1GJd4EktsWEdsk+6E03O2
-        UAuPB6G1RfAPh0nA/rN3i5RU7M7gl1TAnY0WVw05s1W7rlNW3NnIjQInjDDGP0JqI+dM05Cmyeu
-        YCcqt3ow3vJ1CU1PXabQ7wMD6
-X-Received: by 2002:a0c:c250:: with SMTP id w16mr22513196qvh.24.1576431184771;
-        Sun, 15 Dec 2019 09:33:04 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxo9sJEBR+EsX1bmgGKr8ThSL07V3VdYoGvHnp9UXySXWBJwJocU2y448wh+xjezZzZwrACMw==
-X-Received: by 2002:a0c:c250:: with SMTP id w16mr22513173qvh.24.1576431184495;
-        Sun, 15 Dec 2019 09:33:04 -0800 (PST)
-Received: from xz-x1 ([2607:9880:19c0:3f::2])
-        by smtp.gmail.com with ESMTPSA id p126sm5093766qke.108.2019.12.15.09.33.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2019 09:33:03 -0800 (PST)
-Date:   Sun, 15 Dec 2019 12:33:02 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-Message-ID: <20191215173302.GB83861@xz-x1>
-References: <20191129213505.18472-1-peterx@redhat.com>
- <20191129213505.18472-5-peterx@redhat.com>
- <20191211063830-mutt-send-email-mst@kernel.org>
- <20191211205952.GA5091@xz-x1>
- <20191211172713-mutt-send-email-mst@kernel.org>
- <46ceb88c-0ddd-0d9a-7128-3aa5a7d9d233@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <46ceb88c-0ddd-0d9a-7128-3aa5a7d9d233@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Sun, 15 Dec 2019 14:00:24 -0500
+Received: from [68.65.123.203] (helo=server153.web-hosting.com)
+        by se18.registrar-servers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <akash@openedev.com>)
+        id 1igXp3-0000FJ-OY; Sun, 15 Dec 2019 09:36:54 -0800
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=openedev.com; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5zj0shl15ES5qDsvvytCNaNtROHrqNPVUl5RHKFbRRg=; b=FJkY50FN2m1mnbbyqDgdU7qu7U
+        vwNo3adf3NbikqyrqXeWGjTWToQCAYwTgQB3WnfCBkQkSROYtwoW9MISAGNaqPWDUw8k+UizS/vG5
+        Yc0Sr03b94CN1cLCNNxe5T40NZUguXDP7pDqJ83hdUJuBcOUIBhEj6ArdUy9exCdgqzoTNsQNrpAX
+        7IoNi1mNYQIcxRXHaKTSrqPa4/vCDWR+0D/fKKOs3DM5E8DAS2K6RKydg+EybxxhHC2WWt5MPDN5Q
+        XP/v6f7ow0io94jj8cAh+4Qh5YvOO50e6HyBfTDm+4Ca8kuNO4GNPXu3Y+89PLgWPaElYd9eSHPic
+        RdkQ0k3w==;
+Received: from [49.36.128.5] (port=59799 helo=localhost.localdomain)
+        by server153.web-hosting.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <akash@openedev.com>)
+        id 1igXoo-000nzF-Gg; Sun, 15 Dec 2019 12:36:39 -0500
+From:   Akash Gajjar <akash@openedev.com>
+To:     heiko@sntech.de
+Cc:     jagan@openedev.com, Akash Gajjar <akash@openedev.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Andy Yan <andy.yan@rock-chips.com>, Nick Xie <nick@khadas.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Vivek Unune <npcomplete13@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: add ROCK Pi S DTS support
+Date:   Sun, 15 Dec 2019 23:03:08 +0530
+Message-Id: <20191215173318.16385-1-akash@openedev.com>
+X-Mailer: git-send-email 2.17.1
+X-OutGoing-Spam-Status: No, score=-1.0
+X-Originating-IP: 68.65.123.203
+X-SpamExperts-Domain: nctest.net
+X-SpamExperts-Username: whmcalls3
+Authentication-Results: registrar-servers.com; auth=pass (login) smtp.auth=whmcalls3@nctest.net
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00423862851838)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0fi3oD8HEy9ysrsB6Ile+oipSDasLI4SayDByyq9LIhV3NwLXiK9LlnX
+ qwLx4kMoq0TNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3Kk502M/hntTzIKfCMISdhHXTA
+ YTyyIfs1cqM+JexaJLwYntLwFjolRFhTnXQDnB9P2e84PReenR5LSk2iUS2Af05Pal5SZwZh8dy2
+ Fa67Fl4+Oc8tufITealG6MtpeGac3DYt+BDEJR1lgqmSCJDhQl6lTwWcvbaZbWieihNdGQNGSJxR
+ C4MBuVqVtZLxSEtj+fHnOfi4UZg9u6/YGx9QV+zId7Fm0NXh2KWXCE3f01yEIlp2iAclkrimW38T
+ 9Tb8Ts1OFZCJnqICuBP35KwNAnl/VMjHUdMAogouFi8FrQ9mYOU/XB1KSiNVg+cbuxYxa2Aop7eI
+ c+mBKaMDVOs3iLMZyoJH4ecRQrRYN/OrSDl8Vk0Pa0DwkDQhZRmGDC02imPF2ji/6HmsZPf1qB3+
+ nFNiLZt/QXQnOBRD+jq1HsINMHXcElWWPWoWZV7l7hAfHyxxk8Sjs3o9/k8nLBnptAP6ED+kMe0f
+ 6T8yD2Ye6CPhlfGBForr3LaUZ2DRA29tXCh2+LQfEc98FHvNCYfCutsLx238JXd8QsFUL8BLk+8W
+ MvcZwcErvx7aHfkXXj9O58fMnqZUTt7CyKlJUh+zhiybuqDenzVX4+8THDFBpVfu9ObqeYXg8NqL
+ 4RQdsFskIMVlx3kpAAgFKa6cveEfQ1sONqcYt8QNJCyN/ux+WoxQGKDre32lxgGctzrZwMfaC3G/
+ sG7WSBh053rh3Jn0Yu3G8yPqLiUhcrqCspK0ihwuxN5wGVxm8rYIYSqDP1da70jJmTmqIy7XBC0Y
+ oVo+sDxIPj1UU4msT2Odp9D6f/N1xSLkVtFDhs2pVCzg/6su8DjltttWRLh6YZHfZDlxqtgKM0ng
+ UIO8/7FVNN6Jljh3uEfeTTa3VO3u5HRsz0s8Db1PmgmzCcMa7ulPKQwljdxbXpCgbiKBsA+Ddi6m
+ awf7qIPrXD/wjVs/n8fM5ydr4VRbSFCvnbggoY4Wvq8a9PDk3+iNqiYKhZaJO2iXygidb7xKf9ye
+ n1ptsyeNpBLGYEQKJVyp/FQfUJeyh3UYNr1P8PrBEjUzBQOhtbGwOd/74O4hBSz/kkmPgL+fgIgu
+ BWHJWcnjJ9Yw6nh4SabxNBlhRZKXVntiqJqwMz/WEzMRoKk+qdPdN+VHhkPkWFLLL/MajuTZZYrm
+ IMPpJ01xNSLp8yK4HDX6CXKW1cjrmvSDyiGG9+F7gBuhhNiu6O9mcHFleJWRxdnH7qtGkGOZyOYN
+ g9LcQCKZJyjZYhbcjZvoDgYD3LnUviLybo/lpLC3HHASJNUmoOHSoqgqxfHmWRkdQL1gXJvwL5op
+ HNLdfid/oune33LSDO2jwIIX2HH6/Xaa2YE7nuBo2iwEIN3pGn5OoRY51umiSqH1CKu9nM8fKghZ
+ uFuu++HSP4Hpd2sDdKgNSxpke6tG5/V0WQwo339q0aZI3qbhXsaDdLgW9bry4KJcrxSUzWDT2Gb/
+ yQXL5tP3WJd7sb8yEkSOtPpidAKWF8gSL91Ajw1AlIFKkYk=
+X-Report-Abuse-To: spam@se16.registrar-servers.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 01:08:14AM +0100, Paolo Bonzini wrote:
-> >>> What depends on what here? Looks suspicious ...
-> >>
-> >> Hmm, I think maybe it can be removed because the entry pointer
-> >> reference below should be an ordering constraint already?
-> 
-> entry->xxx depends on ring->reset_index.
+ROCK Pi S is RK3308 based SBC from radxa.com. ROCK Pi S has a,
+- 256MB/512MB DDR3 RAM
+- SD, NAND flash (optional on board 1/2/4/8Gb)
+- 100MB ethernet, PoE (optional)
+- Onboard 802.11 b/g/n wifi + Bluetooth 4.0 Module
+- USB2.0 Type-A HOST x1
+- USB3.0 Type-C OTG x1
+- 26-pin expansion header
+- USB Type-C DC 5V Power Supply
 
-Yes that's true, but...
+This patch enables
+- Console
+- NAND Flash
+- SD Card
 
-        entry = &ring->dirty_gfns[ring->reset_index & (ring->size - 1)];
-        /* barrier? */
-        next_slot = READ_ONCE(entry->slot);
-        next_offset = READ_ONCE(entry->offset);
+Signed-off-by: Akash Gajjar <akash@openedev.com>
+---
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3308-rock-pi-S.dts    | 221 ++++++++++++++++++
+ 3 files changed, 227 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3308-rock-pi-S.dts
 
-... I think entry->xxx depends on entry first, then entry depends on
-reset_index.  So it seems fine because all things have a dependency?
-
-> 
-> >>> what's the story around locking here? Why is it safe
-> >>> not to take the lock sometimes?
-> >>
-> >> kvm_dirty_ring_push() will be with lock==true only when the per-vm
-> >> ring is used.  For per-vcpu ring, because that will only happen with
-> >> the vcpu context, then we don't need locks (so kvm_dirty_ring_push()
-> >> is called with lock==false).
-> 
-> FWIW this will be done much more nicely in v2.
-> 
-> >>>> +	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
-> >>>> +	if (!page) {
-> >>>> +		r = -ENOMEM;
-> >>>> +		goto out_err_alloc_page;
-> >>>> +	}
-> >>>> +	kvm->vm_run = page_address(page);
-> >>>
-> >>> So 4K with just 8 bytes used. Not as bad as 1/2Mbyte for the ring but
-> >>> still. What is wrong with just a pointer and calling put_user?
-> >>
-> >> I want to make it the start point for sharing fields between
-> >> user/kernel per-vm.  Just like kvm_run for per-vcpu.
-> 
-> This page is actually not needed at all.  Userspace can just map at
-> KVM_DIRTY_LOG_PAGE_OFFSET, the indices reside there.  You can drop
-> kvm_vm_run completely.
-
-I changed it because otherwise we use one entry of the padding, and
-all the rest of paddings are a waste of memory because we can never
-really use the padding as new fields only for the 1st entry which
-overlaps with the indices.  IMHO that could even waste more than 4k.
-
-(for now we only "waste" 4K for per-vm, kvm_run is already mapped so
- no waste there, not to say potentially I still think we can use the
- kvm_vm_run in the future)
-
-> 
-> >>>> +	} else {
-> >>>> +		/*
-> >>>> +		 * Put onto per vm ring because no vcpu context.  Kick
-> >>>> +		 * vcpu0 if ring is full.
-> >>>
-> >>> What about tasks on vcpu 0? Do guests realize it's a bad idea to put
-> >>> critical tasks there, they will be penalized disproportionally?
-> >>
-> >> Reasonable question.  So far we can't avoid it because vcpu exit is
-> >> the event mechanism to say "hey please collect dirty bits".  Maybe
-> >> someway is better than this, but I'll need to rethink all these
-> >> over...
-> > 
-> > Maybe signal an eventfd, and let userspace worry about deciding what to
-> > do.
-> 
-> This has to be done synchronously.  But the vm ring should be used very
-> rarely (it's for things like kvmclock updates that write to guest memory
-> outside a vCPU), possibly a handful of times in the whole run of the VM.
-
-I've summarized a list of callers who might dirty guest memory in the
-other thread, it seems to me that even the kvm clock is using per-vcpu
-contexts.
-
-> 
-> >>> KVM_DIRTY_RING_MAX_ENTRIES is not part of UAPI.
-> >>> So how does userspace know what's legal?
-> >>> Do you expect it to just try?
-> >>
-> >> Yep that's what I thought. :)
-> 
-> We should return it for KVM_CHECK_EXTENSION.
-
-OK.  I'll drop the versioning.
-
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index d9847b306b83..48d40c928d45 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -422,6 +422,11 @@ properties:
+           - const: radxa,rockpi4
+           - const: rockchip,rk3399
+ 
++      - description: Radxa ROCK Pi S
++        items:
++          - const: radxa,rockpis
++          - const: rockchip,rk3308
++
+       - description: Radxa Rock2 Square
+         items:
+           - const: radxa,rock2-square
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+index 48fb631d5451..cc9e8c824980 100644
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -2,6 +2,7 @@
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-evb.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3308-evb.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3308-roc-cc.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3308-rock-pi-S.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-a1.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-evb.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock64.dtb
+diff --git a/arch/arm64/boot/dts/rockchip/rk3308-rock-pi-S.dts b/arch/arm64/boot/dts/rockchip/rk3308-rock-pi-S.dts
+new file mode 100644
+index 000000000000..e5fae451c631
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3308-rock-pi-S.dts
+@@ -0,0 +1,221 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2019 Akash Gajjar <akash@openedev.com>
++ * Copyright (c) 2019 Jagan Teki <jagan@openedev.com>
++ */
++
++/dts-v1/;
++#include "rk3308.dtsi"
++
++/ {
++	model = "Radxa ROCK Pi S";
++	compatible = "radxa,rockpis", "rockchip,rk3308";
++
++	chosen {
++		stdout-path = "serial0:1500000n8";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&green_led_gio>, <&heartbeat_led_gpio>;
++
++		green-led {
++			label = "rockpis:green:power";
++			gpios = <&gpio0 RK_PA6 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "default-on";
++			default-state = "on";
++		};
++
++		blue-led {
++			label = "rockpis:blue:user";
++			gpios = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
++	sdio_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_enable_h>;
++		reset-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
++	};
++
++	vcc5v0_sys: vcc5v0-sys {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc5v0_sys";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
++	vdd_core: vdd-core {
++		compatible = "pwm-regulator";
++		pwms = <&pwm0 0 5000 1>;
++		regulator-name = "vdd_core";
++		regulator-min-microvolt = <827000>;
++		regulator-max-microvolt = <1340000>;
++		regulator-init-microvolt = <1015000>;
++		regulator-settling-time-up-us = <250>;
++		regulator-always-on;
++		regulator-boot-on;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vdd_log: vdd-log {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_log";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1050000>;
++		regulator-max-microvolt = <1050000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc_ddr: vcc-ddr {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_ddr";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc_1v8: vcc-1v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_1v8";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		vin-supply = <&vcc_io>;
++	};
++
++	vcc_io: vcc-io {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_io";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc5v0_otg: vcc5v0-otg {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc5v0_otg";
++		regulator-always-on;
++		gpio = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		pinctrl-names = "default";
++		pinctrl-0 = <&otg_vbus_drv>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++};
++
++&cpu0 {
++	cpu-supply = <&vdd_core>;
++};
++
++&emmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
++	supports-sd;
++	disable-wp;
++	non-removable;
++	num-slots = <1>;
++	vin-supply = <&vcc_io>;
++	status = "okay";
++};
++
++&i2c1 {
++	status = "okay";
++};
++
++&sdmmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	cap-sd-highspeed;
++	max-frequeency = <150000000>;
++	supports-sd;
++	disable-wp;
++	num-slots = <1>;
++	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_det &sdmmc_bus4>;
++	card-detect-delay = <800>;
++	status = "okay";
++};
++
++&spi2 {
++	status = "okay";
++	max-freq = <10000000>;
++};
++
++&pinctrl {
++	pinctrl-names = "default";
++	pinctrl-0 = <&rtc_32k>;
++
++	leds {
++		green_led_gio: green-led-gpio {
++			rockchip,pins = <0 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		heartbeat_led_gpio: heartbeat-led-gpio {
++			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	usb {
++		otg_vbus_drv: otg-vbus-drv {
++			rockchip,pins = <0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	sdio-pwrseq {
++		wifi_enable_h: wifi-enable-h {
++			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		wifi_host_wake: wifi-host-wake {
++			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_down>;
++		};
++	};
++};
++
++&pwm0 {
++	status = "okay";
++	pinctrl-0 = <&pwm0_pin_pull_down>;
++};
++
++&saradc {
++	vref-supply = <&vcc_1v8>;
++	status = "okay";
++};
++
++&sdio {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	bus-width = <4>;
++	max-frequency = <1000000>;
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	supports-sdio;
++	keep-power-in-suspend;
++	mmc-pwrseq = <&sdio_pwrseq>;
++	non-removable;
++	sd-uhs-sdr104;
++	status = "okay";
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&uart4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart4_xfer &uart4_rts &uart4_cts>;
++	status = "okay";
++};
 -- 
-Peter Xu
+2.17.1
 
