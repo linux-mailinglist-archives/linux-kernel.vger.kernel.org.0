@@ -2,62 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A2D511FA4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 19:09:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE90911FA5B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 19:12:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbfLOSJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 13:09:34 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37514 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbfLOSJc (ORCPT
+        id S1726351AbfLOSMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 13:12:53 -0500
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:56146 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbfLOSMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 13:09:32 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u17so4239720lja.4;
-        Sun, 15 Dec 2019 10:09:30 -0800 (PST)
+        Sun, 15 Dec 2019 13:12:52 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 47bXZD1GySz9vYkk
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 18:12:52 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id McuPVEJyQibx for <linux-kernel@vger.kernel.org>;
+        Sun, 15 Dec 2019 12:12:52 -0600 (CST)
+Received: from mail-yw1-f69.google.com (mail-yw1-f69.google.com [209.85.161.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 47bXZD06SKz9vYkp
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 12:12:52 -0600 (CST)
+Received: by mail-yw1-f69.google.com with SMTP id 16so4013567ywz.5
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 10:12:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9WCN+aSziwo6IVDHqcjdnKmAeOBt5CXMdSt189Rd6D8=;
-        b=NvU27+/6GH5ISbMewOWteUW7hrpRQQAtdsOXkYGPdRcJMzfVUfEw5Qvv4pSR8Nfens
-         pcYlNC6VHGDqlKTHper6l7cssY+stCu7cP+6HXIKzX3K3AyWjX1ru/O7D/eI0AhqMkcw
-         Fsv60r6PHl8eMZ3opyM5/N5tJmPT43FM8PrwaaX0gMLmY6g4beVJ/3OKzw3LUSQlwg+S
-         N0s01A4KYBa+ePvLpnxALuQgXXPY7EPo9aOEcGGU0EL0n9ip9loTzK2rin6bwyPJqBkB
-         gVYqHltoi4Y8yEQCiWfe2Wt0gMc1g9VYGVVmXCreKSvrsnW9E7Aq3kCqi6bwr1Uo5+ro
-         UdeA==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s1Sd4wDOGySgNuBq62kvgRKaS2P+yDRGvZWncnO1u3k=;
+        b=T9aEdQlgrUMr5PCmALh0xtrBogCzg6SwS+LSaCSNmY8AlNcgSeTaopntfe/joFepcP
+         apFVkpz0ZNerL8JIjA7AfaAeuyud5z4lZj827ATCowSOXbA9dXiQW0UUD+L0w1rJ0/y5
+         LB2wvkflqacATyhGAauiN1U0WMN87XKsd3H4PmoZ0GXNtg7u0jnjTrgOWIMlnWh5/611
+         uIju8sfKfv4fhkKbREabtNRv7619hxv6gnu5gKTg28n9vzx/gK0FuLiPpdj38ITIKyXK
+         sfyyMshdltskk4aehjxoOhnT6+vkmTiqMH7Z/QInbzAlRL0U6SHRx5rMtwiFavgXWCwq
+         nhiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9WCN+aSziwo6IVDHqcjdnKmAeOBt5CXMdSt189Rd6D8=;
-        b=fgt44hlZMQbAaweiesuO8yEZXONKHLKkLruzE1YHFz8y/EUVSp30wFvphFB0IYYqnY
-         ISx2YC1g6XgYloNHVlInOCWeHl565SZ+u1vGCLtqCdg6Gj+fec87T851UfVtrwoFb2d1
-         mTptP9HaYJg290BMw30zwJaR9Yhe5wtofLjMWDj4V3KdoyIZtu1jslR8Ltk1BSPygVxH
-         HWVJaYukZjgWXq+7Mq51XajonK3imx7ID5pGCe1x0Flzunkcet0HCZTY1bUsDYhcj7hN
-         2PkndZFZ9o7GPNdXDJltrQx8Mc66LW7azCtRpaM0SQdtxjTBgkW3b31XwEVtmczOjoOF
-         IpKQ==
-X-Gm-Message-State: APjAAAVUexFEVSZ7vTMy5qlNYADUoBwxuJtS8nqzDDRKeU62gX8uSVrv
-        qxUd2dQekueF93gLqfOF4Nw=
-X-Google-Smtp-Source: APXvYqwu7LBPUs+T1isRG4okSZnxU/3EOajXzKbM3dRn/PXp35FxayqGrK4SC7zwbFLNd/fYA2W4Og==
-X-Received: by 2002:a2e:3c1a:: with SMTP id j26mr16715116lja.79.1576433370285;
-        Sun, 15 Dec 2019 10:09:30 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id t27sm8871875ljd.26.2019.12.15.10.09.29
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s1Sd4wDOGySgNuBq62kvgRKaS2P+yDRGvZWncnO1u3k=;
+        b=ELYvcwlo2zW7ehpFKmGVTa1rVKodx41c2y7zPu2LP8vZ6hyETrADLGYT2r8DFYq+j9
+         2/XRPp4CSHPXAU/ty1Raq103gbYwjwKb+BvKLwfJCmtf6LgS3+taDhnpR5GCvKRDmZ2A
+         i0nZupuPXBzNk7yM8IpkyKwMaCwmdKm+LK246Vk/hWTFr+JsDBJQyKqLESuPu6A4CAOj
+         yDc8lYa5paYDxjoQVNt2Sa0uWnr57ZDvKUNFHHdbIFcDsF5bebDAmVltwQ3DbK9NCmNf
+         7Ke1ztlfUeBN0lI1/LqwBQdAQPEWq7CN1DNOKHkzv0WMKtUrVVEnU+r2Wzq7R/SI1p0v
+         CeBA==
+X-Gm-Message-State: APjAAAUz4q12f8Edd73uGKIg/F1Ud3K8G3PAXiR8G4i50pcvGuh8SzOh
+        Y5sonCz1UqPHj1bBfJpBNNucYEFwZdAAYi3zyTMploaHYpzL0LyGDdpqyJkdplHK7M2nY2LA5H5
+        tpxdZ/BMElx+xaxmcUq4VWNUihwLr
+X-Received: by 2002:a25:31c6:: with SMTP id x189mr17347169ybx.514.1576433571479;
+        Sun, 15 Dec 2019 10:12:51 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzytpruw2bkHNQvDI6R+irVXH3fLtBBzdcopu87zda/RMDMvWwtbYjdW7j3Uw14zMRE0Jq9Lg==
+X-Received: by 2002:a25:31c6:: with SMTP id x189mr17347150ybx.514.1576433571249;
+        Sun, 15 Dec 2019 10:12:51 -0800 (PST)
+Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
+        by smtp.gmail.com with ESMTPSA id u130sm2260529ywc.10.2019.12.15.10.12.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2019 10:09:29 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Sun, 15 Dec 2019 10:12:50 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vandana BN <bnvandana@gmail.com>,
+        =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
+        Jeremy Sowden <jeremy@azazel.net>,
+        Harsh Jain <harshjain32@gmail.com>,
+        Matt Sickler <Matt.Sickler@daktronics.com>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] media: staging: tegra-vde: Use __maybe_unused attribute instead of ifdef
-Date:   Sun, 15 Dec 2019 21:07:52 +0300
-Message-Id: <20191215180752.5408-4-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191215180752.5408-1-digetx@gmail.com>
-References: <20191215180752.5408-1-digetx@gmail.com>
+Subject: [PATCH] staging: kpc2000: replace assertion with recovery code
+Date:   Sun, 15 Dec 2019 12:12:37 -0600
+Message-Id: <20191215181243.31519-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,45 +81,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace #ifdef with __maybe_unused attribute just to keep code cleaner a
-tad.
+In kpc_dma_transfer, if either priv or ldev is NULL, crashing the
+process is excessive and is not needed. Instead of asserting, by
+passing the error upstream, the error can be handled.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
 ---
- drivers/staging/media/tegra-vde/vde.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/staging/kpc2000/kpc_dma/fileops.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-index 3466daddf663..e18fd48981da 100644
---- a/drivers/staging/media/tegra-vde/vde.c
-+++ b/drivers/staging/media/tegra-vde/vde.c
-@@ -1150,8 +1150,7 @@ static int tegra_vde_remove(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
+index cb52bd9a6d2f..1c4633267cc1 100644
+--- a/drivers/staging/kpc2000/kpc_dma/fileops.c
++++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
+@@ -49,9 +49,11 @@ static int kpc_dma_transfer(struct dev_private_data *priv,
+ 	u64 dma_addr;
+ 	u64 user_ctl;
  
--#ifdef CONFIG_PM_SLEEP
--static int tegra_vde_pm_suspend(struct device *dev)
-+static __maybe_unused int tegra_vde_pm_suspend(struct device *dev)
- {
- 	struct tegra_vde *vde = dev_get_drvdata(dev);
- 	int err;
-@@ -1165,7 +1164,7 @@ static int tegra_vde_pm_suspend(struct device *dev)
- 	return 0;
- }
+-	BUG_ON(priv == NULL);
++	if (!priv)
++		return -EINVAL;
+ 	ldev = priv->ldev;
+-	BUG_ON(ldev == NULL);
++	if (!ldev)
++		return -EINVAL;
  
--static int tegra_vde_pm_resume(struct device *dev)
-+static __maybe_unused int tegra_vde_pm_resume(struct device *dev)
- {
- 	struct tegra_vde *vde = dev_get_drvdata(dev);
- 	int err;
-@@ -1178,7 +1177,6 @@ static int tegra_vde_pm_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
- static const struct dev_pm_ops tegra_vde_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_vde_runtime_suspend,
+ 	acd = kzalloc(sizeof(*acd), GFP_KERNEL);
+ 	if (!acd) {
 -- 
-2.24.0
+2.20.1
 
