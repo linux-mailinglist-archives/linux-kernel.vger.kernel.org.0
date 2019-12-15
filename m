@@ -2,147 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A7C611F8A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 16:58:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB2811F8B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 17:04:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfLOP6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 10:58:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36858 "EHLO mail.kernel.org"
+        id S1726260AbfLOQEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 11:04:47 -0500
+Received: from mx2.cyber.ee ([193.40.6.72]:50637 "EHLO mx2.cyber.ee"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbfLOP6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 10:58:51 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54FE520726;
-        Sun, 15 Dec 2019 15:58:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576425530;
-        bh=Lb6bRogCAQv2A8z1QGFmErVearjfTXEt+fi8X/hIV3U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=eeOosFvPk/n7icpTEC8v9UXeXmYfrIU23xsFDE6TAH62kVouNipzAT0CIXqvbCrGB
-         MxgQ71NI47mD4qeVTTUujc1rUfP0YcO2jIqUuaBNu+g4VmFb3iC/jVmSNjTlHy9E3r
-         ueGwASHh83GfvPqGbxJKOqejw+O02ao7O00Lr/zU=
-Date:   Sun, 15 Dec 2019 15:58:46 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.4 192/350] iio: dln2-adc: fix
- iio_triggered_buffer_postenable() position
-Message-ID: <20191215155846.37c85c2e@archlinux>
-In-Reply-To: <20191210210735.9077-153-sashal@kernel.org>
-References: <20191210210735.9077-1-sashal@kernel.org>
-        <20191210210735.9077-153-sashal@kernel.org>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726118AbfLOQEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 11:04:47 -0500
+Subject: Re: Regression in 5.4 kernel on 32-bit Radeon IBM T40
+To:     Woody Suwalski <terraluna977@gmail.com>
+Cc:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+References: <400f6ce9-e360-0860-ca2a-fb8bccdcdc9b@gmail.com>
+From:   Meelis Roos <mroos@linux.ee>
+Message-ID: <1e6a6ccb-a7a0-4173-d667-a53eb99b8699@linux.ee>
+Date:   Sun, 15 Dec 2019 18:04:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <400f6ce9-e360-0860-ca2a-fb8bccdcdc9b@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Dec 2019 16:04:57 -0500
-Sasha Levin <sashal@kernel.org> wrote:
-
-> From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+15.12.19 05:17 Woody Suwalski wrote:
+> Regression in 5.4 kernel on 32-bit Radeon IBM T40
+> triggered by
+> commit 33b3ad3788aba846fc8b9a065fe2685a0b64f713
+> Author: Christoph Hellwig <hch@lst.de>
+> Date:   Thu Aug 15 09:27:00 2019 +0200
 > 
-> [ Upstream commit a7bddfe2dfce1d8859422124abe1964e0ecd386e ]
+> Howdy,
+> The above patch has triggered a display problem on IBM Thinkpad T40, where the screen is covered with a lots of random short black horizontal lines, or distorted letters in X terms.
 > 
-> The iio_triggered_buffer_postenable() hook should be called first to
-> attach the poll function. The iio_triggered_buffer_predisable() hook is
-> called last (as is it should).
-> 
-> This change moves iio_triggered_buffer_postenable() to be called first. It
-> adds iio_triggered_buffer_predisable() on the error paths of the postenable
-> hook.
-> For the predisable hook, some code-paths have been changed to make sure
-> that the iio_triggered_buffer_predisable() hook gets called in case there
-> is an error before it.
+> The culprit seems to be that the dma_get_required_mask() is returning a value 0x3fffffff
+> which is smaller than dma_get_mask()0xffffffff.That results in dma_addressing_limited()==0 in ttm_bo_device(), and using 40-bits dma instead of 32-bits.
 
-Again, fixing logic to allow a more generic rework rather than actual bug.
+I have the same problem on 32-bit Dell Latitude D600.
 
-I didn't do a very good job of adding notes to all of these to indicate
-they weren't stable material. Sorry about that.
+> If I hardcode "1" as the last parameter to ttm_bo_device_init() in place of a call to dma_addressing_limited(),the problem goes away.
 
-Note I am fairly careful about tagging fixes that should go to stable...
+Tried this on top on 5.4.0 and it helped here too.
 
-Jonathan
+-- 
+Meelis Roos <mroos@linux.ee>
 
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/iio/adc/dln2-adc.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/dln2-adc.c b/drivers/iio/adc/dln2-adc.c
-> index 5fa78c273a258..65c7c9329b1c3 100644
-> --- a/drivers/iio/adc/dln2-adc.c
-> +++ b/drivers/iio/adc/dln2-adc.c
-> @@ -524,6 +524,10 @@ static int dln2_adc_triggered_buffer_postenable(struct iio_dev *indio_dev)
->  	u16 conflict;
->  	unsigned int trigger_chan;
->  
-> +	ret = iio_triggered_buffer_postenable(indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
->  	mutex_lock(&dln2->mutex);
->  
->  	/* Enable ADC */
-> @@ -537,6 +541,7 @@ static int dln2_adc_triggered_buffer_postenable(struct iio_dev *indio_dev)
->  				(int)conflict);
->  			ret = -EBUSY;
->  		}
-> +		iio_triggered_buffer_predisable(indio_dev);
->  		return ret;
->  	}
->  
-> @@ -550,6 +555,7 @@ static int dln2_adc_triggered_buffer_postenable(struct iio_dev *indio_dev)
->  		mutex_unlock(&dln2->mutex);
->  		if (ret < 0) {
->  			dev_dbg(&dln2->pdev->dev, "Problem in %s\n", __func__);
-> +			iio_triggered_buffer_predisable(indio_dev);
->  			return ret;
->  		}
->  	} else {
-> @@ -557,12 +563,12 @@ static int dln2_adc_triggered_buffer_postenable(struct iio_dev *indio_dev)
->  		mutex_unlock(&dln2->mutex);
->  	}
->  
-> -	return iio_triggered_buffer_postenable(indio_dev);
-> +	return 0;
->  }
->  
->  static int dln2_adc_triggered_buffer_predisable(struct iio_dev *indio_dev)
->  {
-> -	int ret;
-> +	int ret, ret2;
->  	struct dln2_adc *dln2 = iio_priv(indio_dev);
->  
->  	mutex_lock(&dln2->mutex);
-> @@ -577,12 +583,14 @@ static int dln2_adc_triggered_buffer_predisable(struct iio_dev *indio_dev)
->  	ret = dln2_adc_set_port_enabled(dln2, false, NULL);
->  
->  	mutex_unlock(&dln2->mutex);
-> -	if (ret < 0) {
-> +	if (ret < 0)
->  		dev_dbg(&dln2->pdev->dev, "Problem in %s\n", __func__);
-> -		return ret;
-> -	}
->  
-> -	return iio_triggered_buffer_predisable(indio_dev);
-> +	ret2 = iio_triggered_buffer_predisable(indio_dev);
-> +	if (ret == 0)
-> +		ret = ret2;
-> +
-> +	return ret;
->  }
->  
->  static const struct iio_buffer_setup_ops dln2_adc_buffer_setup_ops = {
+
+
+
 
