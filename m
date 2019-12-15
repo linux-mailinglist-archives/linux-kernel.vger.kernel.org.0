@@ -2,78 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4928711F739
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 11:45:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3506511F722
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 11:18:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbfLOKp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 05:45:28 -0500
-Received: from mail.baskent.edu.tr ([193.140.164.51]:58290 "EHLO
-        mail.baskent.edu.tr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfLOKp1 (ORCPT
+        id S1726145AbfLOKSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 05:18:25 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:51109 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbfLOKSY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 05:45:27 -0500
-X-Greylist: delayed 1778 seconds by postgrey-1.27 at vger.kernel.org; Sun, 15 Dec 2019 05:45:25 EST
-Received: from mail.baskent.edu.tr (mail.baskent.edu.tr [193.140.164.51])
-        by mail.baskent.edu.tr (Postfix) with ESMTPA id 8F6F11AF6ED;
-        Sun, 15 Dec 2019 13:06:49 +0300 (+03)
+        Sun, 15 Dec 2019 05:18:24 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1igQyi-0005PA-F9; Sun, 15 Dec 2019 11:18:20 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E356A1C2836;
+        Sun, 15 Dec 2019 11:18:19 +0100 (CET)
+Date:   Sun, 15 Dec 2019 10:18:19 -0000
+From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/bugs: Move enum taa_mitigations to bugs.c
+Cc:     Borislav Petkov <bp@suse.de>, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191112221823.19677-1-bp@alien8.de>
+References: <20191112221823.19677-1-bp@alien8.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Message-ID: <157640509981.30329.6388376575952582932.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Date:   Sun, 15 Dec 2019 04:06:48 -0600
-From:   Mr Pressley Anton <info@anton.co.za>
-To:     undisclosed-recipients:;
-Subject: Love Greetings
-Reply-To: infoantonnp@gmail.com
-Mail-Reply-To: infoantonnp@gmail.com
-Message-ID: <c5d07996cc0a087abf22fe18fce4672e@mail.baskent.edu.tr>
-X-Sender: info@anton.co.za
-User-Agent: Roundcube Webmail/1.0.12
-X-mailyeni-MailScanner-Information: Please contact the ISP for more information
-X-mailyeni-MailScanner-ID: 8F6F11AF6ED.A93DD
-X-mailyeni-MailScanner: Found to be clean
-X-mailyeni-MailScanner-SpamCheck: not spam, SpamAssassin (cached,
-        score=2.132, required 6, ALL_TRUSTED -1.00, AWL 0.43, BAYES_20 -0.00,
-        MILLION_HUNDRED 2.70)
-X-mailyeni-MailScanner-SpamScore: ss
-X-mailyeni-MailScanner-From: info@anton.co.za
-X-Spam-Status: No
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following commit has been merged into the x86/cpu branch of tip:
 
+Commit-ID:     72c2ce9867d9e8535f8c29eb6d842d1caad281af
+Gitweb:        https://git.kernel.org/tip/72c2ce9867d9e8535f8c29eb6d842d1caad281af
+Author:        Borislav Petkov <bp@suse.de>
+AuthorDate:    Tue, 12 Nov 2019 21:58:57 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Sat, 14 Dec 2019 16:06:33 +01:00
 
--- 
-Love Greetings
+x86/bugs: Move enum taa_mitigations to bugs.c
 
-I will introduce myself as Mr. Pressley Anton. a South African citizen 
-living in East London. A director of accounting who oversees the bank's 
-financial network
+... because it is used only there.
 
-I ask for your approval to introduce you to our bank as a business 
-partner. Ms. Surti Dahlia, a German / Dutch businesswoman and widow from 
-the Netherlands, who died in a MH370 Malaysia aircraft
+No functional changes.
 
-So we can say that their fund was worth eight million five hundred 
-thousand pounds
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: x86@kernel.org
+Link: https://lkml.kernel.org/r/20191112221823.19677-1-bp@alien8.de
+---
+ arch/x86/include/asm/processor.h | 7 -------
+ arch/x86/kernel/cpu/bugs.c       | 7 +++++++
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-
-
-We can legally move this amount if you are interested.
-Many thanks
-
-Greetings,
-Mr. Pressley Anton.
-E-post :infoantonnp@gmail.com
-Telephone : +27678841926
-(Director) Department International System.
-Accounting,
-Monitoring the financial network
-
--- 
-This message has been scanned for viruses and
-dangerous content by MailScanner, and is
-believed to be clean.
-
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 0340aad..7c071f8 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -1015,11 +1015,4 @@ enum mds_mitigations {
+ 	MDS_MITIGATION_VMWERV,
+ };
+ 
+-enum taa_mitigations {
+-	TAA_MITIGATION_OFF,
+-	TAA_MITIGATION_UCODE_NEEDED,
+-	TAA_MITIGATION_VERW,
+-	TAA_MITIGATION_TSX_DISABLED,
+-};
+-
+ #endif /* _ASM_X86_PROCESSOR_H */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 8bf6489..ed54b3b 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -286,6 +286,13 @@ early_param("mds", mds_cmdline);
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"TAA: " fmt
+ 
++enum taa_mitigations {
++	TAA_MITIGATION_OFF,
++	TAA_MITIGATION_UCODE_NEEDED,
++	TAA_MITIGATION_VERW,
++	TAA_MITIGATION_TSX_DISABLED,
++};
++
+ /* Default mitigation for TAA-affected CPUs */
+ static enum taa_mitigations taa_mitigation __ro_after_init = TAA_MITIGATION_VERW;
+ static bool taa_nosmt __ro_after_init;
