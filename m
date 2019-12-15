@@ -2,106 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D8711F90E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 17:37:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6DD911F929
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 17:39:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfLOQfc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 11:35:32 -0500
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:44046 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbfLOQfc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 11:35:32 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 47bVPv4VQ6z9vYfQ
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 16:35:31 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 927-zLuvbqkw for <linux-kernel@vger.kernel.org>;
-        Sun, 15 Dec 2019 10:35:31 -0600 (CST)
-Received: from mail-yw1-f71.google.com (mail-yw1-f71.google.com [209.85.161.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 47bVPv3M0jz9vYfL
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 10:35:31 -0600 (CST)
-Received: by mail-yw1-f71.google.com with SMTP id y188so2834476ywa.4
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 08:35:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RtqtAENkikt2OwSsUAKI6q95l8UgBNbet4mLKXhPLPc=;
-        b=gASw7z/I0SjFUTMduO0mrbXnhtLKxXhWkOF1hA/NCG12Ch6gDZFEqMnbJIwzzEPoou
-         +xH47X1jCoab581xt65AVJdaT3JqBWycPK5jVlQq0+xGLTyro0BNAy6T6oB1/wt/dles
-         ag7qhX3VwtoyqJFRO+djy8VltI5NtuvPH+NoE3e2pZl1gm9KBPs0tNtqIYIV9YV+iP7j
-         BHNwjeLz35FgXSkYJz0vrOhsE/tvHIKDsss25zHf4nVDcqCbzb7gM6ATSy0cbmgug3Q2
-         XTlMUOK0GYYiGZRDWz5Esl0NS0AozgZJ4ge0Ve6AbtJCcyVVNp8l9cAL4TZxrmk86wn2
-         VLQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RtqtAENkikt2OwSsUAKI6q95l8UgBNbet4mLKXhPLPc=;
-        b=HmjJ4V7jgk4DL53OCh/hvo3VEip2XJc0Nafj/WxmKjO019S5FfGFhZmzp5R+OxG6xl
-         3eQAGxfPkkhgFUVnEJ5ihOtDKIC2dvJud3Zt+4qGeeq/E/K5q9ZPegrQ4ePbVipQ+c4r
-         w+D1DRTNozL0uwisGXe2mzYTx2r6Ux2JCLPxxDt2bkCiKJTe2DgU95l07DIlswdOETsS
-         Sy/ArTehh2BBaVhp0p7hanXo+DcQXxpkEI7K5fv53AdI6Q7pgi7mPk8lyu4BTBXPqyQn
-         olhbXKQVuxaemJCbxNdUkxpZdfU2k0sR85aWHTFr/TmTQaTbbxWaOsUwm7cwfX2LpS0j
-         yliw==
-X-Gm-Message-State: APjAAAV4TCp0NuSaj0P1+W7jA1ISf4vFPXg0cvOgc+0Fiwk0NKQ+OQau
-        n9OiKlJeJCuE/nkQVr8dVc1nwJYFYOCm6jZISEzU7XrlH4cgi2+qhRo4ZoTe4R8/pL96Zaa3aiQ
-        3bL8kaGRU8fUQbJwkqiANhFi8jrs9
-X-Received: by 2002:a0d:cc4c:: with SMTP id o73mr16970362ywd.482.1576427730955;
-        Sun, 15 Dec 2019 08:35:30 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz926INkyG4z0GFI/Np7oPSQT09p97e6twIqiathpPSkhQbrht1R/pRTZ9FNegpZbKOIIU6sA==
-X-Received: by 2002:a0d:cc4c:: with SMTP id o73mr16970343ywd.482.1576427730693;
-        Sun, 15 Dec 2019 08:35:30 -0800 (PST)
-Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
-        by smtp.gmail.com with ESMTPSA id y9sm7261560ywc.19.2019.12.15.08.35.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2019 08:35:30 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Ilya Dryomov <idryomov@gmail.com>,
-        Sage Weil <sage@redhat.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Jens Axboe <axboe@kernel.dk>, ceph-devel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rbd: Avoid calling BUG() when object_map is not empty
-Date:   Sun, 15 Dec 2019 10:35:27 -0600
-Message-Id: <20191215163527.25203-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.20.1
+        id S1726774AbfLOQio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 11:38:44 -0500
+Received: from mail-dm6nam10on2106.outbound.protection.outlook.com ([40.107.93.106]:4570
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726135AbfLOQin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 11:38:43 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HRflOwsvUHsQN2bhi9w+6j6Jq1gJQ0Jxd1lVxgg5hRJmu5qghOuON+vbNL3W4fFDeynNuxqCdrbA65T0CM0M+omxaC4E2kkVgLdiTYOoOYISU5qQbwWTe6s0aMXBT01EXbTDWLNoX65JNqcV4CAUkTUYAKiDKjG6TFrUmdydekZfmEl1Qo6+SkvAYD/5HAo5nlo1N6lZrlVu1SX/+wGCdyG8TCi1gjNHRo26iD5484foMKxyRZdmSaYqebzCxfXG6i0c9k8qV3eDrDiI5W1Gq0gY3Dkf2s6tj6t+zxQLRyrMl9jq28Tt7zVGPmoBjbH6aNOsVhqb2aaEH0jYo4jkhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h4ORSuNMdu2nInMBcaUapu5Su1cZYaqI5wyr0UO4iEs=;
+ b=ENAY/70Xc/R4Txq+NEBXKVK9U4aK2aIoK/Wfd9p0b/6iMnAmHKBdjVZJmulecC26LCz+SykFt+Sh2HLTgQyCSE2tEiYde9mbJFydLBt0+EzJijI8hNJ+uHfLXLOqLcydIqUgKImebIOEyEHfl4a4hp8F2QZFxZENAf+1xLX7foPXDFFhOV7GJrOv6Bh4qht6zGY19CqkG/krApRTt6wumU1fLjE5HHcahQYzPWWBH6q0t76Wb13FlcMV7Lp9ZsQNZHnZTNEn5eXTF8zbZiPWyTvo7NbOHrzy6lRqp9kFVuXKQPPVH6KqKx3Q4k8xbb6u4OVoFgtnTtOQG6rw/YCUkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h4ORSuNMdu2nInMBcaUapu5Su1cZYaqI5wyr0UO4iEs=;
+ b=KL5DwCvYKk/8vF4bsVs4Dc/XxgxFkIQBmK7I+CtQahYQf4GO89Oz2A8s/kMJTLG1UHtiKk4ofRS6dJQLN71F9+gHa8oExPVKLfzC+VPzTt4yCvkbkECWRMIpzUWZf6vwl1jDPRXw6WR0b6C8HIFKKinY6b+UOCz3uMwWxWKPvDo=
+Received: from MN2PR21MB1375.namprd21.prod.outlook.com (20.179.23.160) by
+ MN2PR21MB1166.namprd21.prod.outlook.com (20.178.255.159) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2559.7; Sun, 15 Dec 2019 16:38:00 +0000
+Received: from MN2PR21MB1375.namprd21.prod.outlook.com
+ ([fe80::d15a:1864:efcd:6215]) by MN2PR21MB1375.namprd21.prod.outlook.com
+ ([fe80::d15a:1864:efcd:6215%9]) with mapi id 15.20.2559.012; Sun, 15 Dec 2019
+ 16:38:00 +0000
+From:   Haiyang Zhang <haiyangz@microsoft.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+CC:     "sashal@kernel.org" <sashal@kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "olaf@aepfle.de" <olaf@aepfle.de>, vkuznets <vkuznets@redhat.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2,net] hv_netvsc: Fix tx_table init in
+ rndis_set_subchannel()
+Thread-Topic: [PATCH v2,net] hv_netvsc: Fix tx_table init in
+ rndis_set_subchannel()
+Thread-Index: AQHVsHIPR2S1RqkKpkGOALob+Zz3Eae6CPmAgAFYy9A=
+Date:   Sun, 15 Dec 2019 16:38:00 +0000
+Message-ID: <MN2PR21MB1375F30B3BEEF42DFDB3D39ECA560@MN2PR21MB1375.namprd21.prod.outlook.com>
+References: <1576103187-2681-1-git-send-email-haiyangz@microsoft.com>
+ <20191214113025.363f21e2@cakuba.netronome.com>
+In-Reply-To: <20191214113025.363f21e2@cakuba.netronome.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=haiyangz@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-12-15T16:37:58.2733489Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=9b19c3e4-ad91-4479-b77b-ed5e79b48d5c;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=haiyangz@microsoft.com; 
+x-originating-ip: [96.61.92.94]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8a616f74-1a60-47b5-9341-08d7817d25f6
+x-ms-traffictypediagnostic: MN2PR21MB1166:|MN2PR21MB1166:|MN2PR21MB1166:
+x-ms-exchange-transport-forked: True
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <MN2PR21MB1166BC1ACC28CBC6B633F8BCCA560@MN2PR21MB1166.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 02524402D6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(396003)(136003)(39860400002)(199004)(189003)(13464003)(10290500003)(2906002)(55016002)(8676002)(26005)(6916009)(7696005)(76116006)(66476007)(52536014)(478600001)(81166006)(81156014)(66446008)(66556008)(54906003)(33656002)(5660300002)(9686003)(4326008)(66946007)(316002)(86362001)(8936002)(64756008)(53546011)(6506007)(186003)(71200400001)(8990500004);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR21MB1166;H:MN2PR21MB1375.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: qUnMXtxmnoYp2pNGuCvkaOKgrexZev7QoZf/v5vwQIXNSXMktpGz7sFEMaJC9IQ4Jv4qJmkB9P5sKEyxo2vi/+Ic9KZTqzVVsObMzBy66rgywiODgYQylLjiG8+dEzamsHlpAip46i+mD3CdNb+71zP4NlHLvWgTFQM8pzpJ7DQ4dUvBTyLf/ayjP7ZZlayfOgvjVeAutklpfTW3dLzdj7ORF5szOTguQouZseldsl9/BMzCAIvpg7Dk6vEVlSpxvead5H38quBC1Hj/zOZFaiLt5kGi1kf31QhtKVNA5ouDTqD5KRuUvUbi7Sjj2DCMFhXWEKzjBDdpc4CiglttTbjl1rzil8buuwczDsKrQYFwliHe/zEht/9M6Lq2DFjxljY6MnhK+P+i2ykG8daKoyLl/f8NWfYpD5dd6v/N40k2WnkOdpMvHqbAXOUaRMFhuRR5LC0AvxvKljlnfptfFCG6YlUVsGE7usHgGtnDd7qBUsstqgxvpFuOUZowEj0z
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a616f74-1a60-47b5-9341-08d7817d25f6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Dec 2019 16:38:00.1367
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: AvoJVNH0KxaK+vCW6WFvObT2pbCZCL4Hj1SXuJmlWElo9de6AA6m2gBdLVg6lBJHPw6gw3ssUKnzITGEZxWMRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR21MB1166
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In __rbd_object_map_load, if object_map contains data, return
-error -EINVAL upstream, instead of crashing, via BUG. The patch
-fixes this issue.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/block/rbd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 2b184563cd32..6e9a11f32a94 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -1892,7 +1892,8 @@ static int __rbd_object_map_load(struct rbd_device *rbd_dev)
- 	int num_pages;
- 	int ret;
- 
--	rbd_assert(!rbd_dev->object_map && !rbd_dev->object_map_size);
-+	if (rbd_dev->object_map || rbd_dev->object_map_size)
-+		return -EINVAL;
- 
- 	num_objects = ceph_get_num_objects(&rbd_dev->layout,
- 					   rbd_dev->mapping.size);
--- 
-2.20.1
+> -----Original Message-----
+> From: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Sent: Saturday, December 14, 2019 2:30 PM
+> To: Haiyang Zhang <haiyangz@microsoft.com>
+> Cc: sashal@kernel.org; linux-hyperv@vger.kernel.org; netdev@vger.kernel.o=
+rg;
+> KY Srinivasan <kys@microsoft.com>; Stephen Hemminger
+> <sthemmin@microsoft.com>; olaf@aepfle.de; vkuznets
+> <vkuznets@redhat.com>; davem@davemloft.net; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH v2,net] hv_netvsc: Fix tx_table init in rndis_set_sub=
+channel()
+>=20
+> On Wed, 11 Dec 2019 14:26:27 -0800, Haiyang Zhang wrote:
+> > Host can provide send indirection table messages anytime after RSS is
+> > enabled by calling rndis_filter_set_rss_param(). So the host provided
+> > table values may be overwritten by the initialization in
+> > rndis_set_subchannel().
+> >
+> > To prevent this problem, move the tx_table initialization before callin=
+g
+> > rndis_filter_set_rss_param().
+> >
+> > Fixes: a6fb6aa3cfa9 ("hv_netvsc: Set tx_table to equal weight after
+> subchannels open")
+> > Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+>=20
+> Applied, but there are two more problems with this code:
+>  - you should not reset the indirection table if it was configured by
+>    the user to something other than the default (use the
+>    netif_is_rxfh_configured() helper to check for that)
+
+For Send indirection table (tx_table) ethtool doesn't have the option=20
+to set it, and it's usually provided by the host. So we always initialize=20
+it...
+But, yes, for Receive indirection table (rx_table), I will make a fix, so=20
+it will be set to default only for new devices, or changing the number=20
+of channels; otherwise it will remain the same during operations like=20
+changing MTU, ringparam.
+
+
+>  - you should use the ethtool_rxfh_indir_default() wrapper
+For rx_table, we already use it:
+                rndis_device->rx_table[i] =3D ethtool_rxfh_indir_default(
+For tx_table, I know it's the same operation (%, mod), but this wrapper=20
+function's name is for rx_table. Should we use it for tx_table too?
+
+>=20
+> Please fix the former problem in the net tree, and after net is merged
+> into linux/master and net-next in a week or two please follow up with
+> the fix for the latter for net-next.
+
+Sure.
+
+Thanks,
+- Haiyang
 
