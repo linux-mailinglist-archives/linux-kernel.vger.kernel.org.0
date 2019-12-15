@@ -2,254 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 874E911FAB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 20:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E15BF11FAB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 20:20:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfLOTPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 14:15:10 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:33893 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbfLOTPK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 14:15:10 -0500
-Received: by mail-io1-f71.google.com with SMTP id n26so4263545ioj.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 11:15:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=/iZ4DjVWr9dBOt5+in3+RlcgccpjJAymn5wYhNeLHy4=;
-        b=HGVJpJvXeHbL7+rVItD4dihCM8geFJ65G59/XoS6dJuYGFfQXNx1pWulgXUD7yu6T5
-         R8tovxJxBS08opzMFbUCF/4oFwJ1EIobIhrwVyzz7EDIOOA+kcHMMz5mKUZ51senIDGD
-         +n1CUsV61XD86NX40p/sSsbT8fnJG7gocSdwCjLAyhJ86wsS7RBSPDdVK+CBYoqWFTbC
-         PVlkrpAFLRvxIFrawVhUd1gS2kO+3Z5Pd0C+i2TM+C2mAgQPsoqbCUUlolJbezTA/rHX
-         wJtFgX2aN60yZwrHg8GJ0V9hYMgrq62ZNBh0o/jPIbkUoKl7WeUE424CU5WX45vI+7Vn
-         6lhQ==
-X-Gm-Message-State: APjAAAX5lQWLsoDRfKvb8jaexwRPFeDiP5f53U1LGM0yfGYHViYnQvzT
-        ZmOzK9PKbGU14cBuGltqSwfbZpYSYsfNOd5b4GM49IvpQgdM
-X-Google-Smtp-Source: APXvYqyJYzLX3aoD0COI7H1zKQpI2ZRZDuwqcU6+/El2BziY7p7nZA8p0+VwU62I2IpD4k3j9JxmGtZWHWjdjuVE/OZUfRCig028
+        id S1726528AbfLOTUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 14:20:34 -0500
+Received: from mout.web.de ([217.72.192.78]:40985 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726146AbfLOTUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 14:20:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1576437611;
+        bh=VPrI4TCYPFYoecrPJ4eNzLm2QqOlyfyBZWKErxdrdJ8=;
+        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
+        b=KPaGTI+abg937Rv4Xj9IbAb5cT7UFKxcJVRu/OlO3yQ1ezzfpi7M+Tb2kxRqaqA0Y
+         j+1fomE3gNfKGWwO2J+AALgQMjwFtz42Lmif71MHcAPgkArjLTMwYBNAH853E5RdKz
+         Du/SgsmWkgYHaiQmWsk7rssQtJZjYb3Fc85sTaEM=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([2.243.76.50]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MTPn1-1iEtOm0HsF-00SQEM; Sun, 15
+ Dec 2019 20:20:11 +0100
+Cc:     linux-kernel@vger.kernel.org, Allison Randal <allison@lohutok.net>,
+        Kangjie Lu <kjlu@umn.edu>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Richard Fontana <rfontana@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20191215190805.2491-1-pakki001@umn.edu>
+Subject: Re: [PATCH] media: cx231xx: replace BUG_ON with recovery code
+To:     Aditya Pakki <pakki001@umn.edu>, linux-media@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <035989c6-17a7-12bf-d850-cca16e4c60d7@web.de>
+Date:   Sun, 15 Dec 2019 20:20:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:c787:: with SMTP id n7mr9035239jao.85.1576437308941;
- Sun, 15 Dec 2019 11:15:08 -0800 (PST)
-Date:   Sun, 15 Dec 2019 11:15:08 -0800
-In-Reply-To: <000000000000fe6c39059905c289@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cf6b330599c2e996@google.com>
-Subject: Re: INFO: task hung in flush_to_ldisc
-From:   syzbot <syzbot+e199b43b49192126ff69@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20191215190805.2491-1-pakki001@umn.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:TDmpZc174pB6lucvolhspth02A1n3l1qDxlxggY5GNp72VeSL6Y
+ edcqqiWUHS20RpTWfQN7gTbwMhQex1FEq40dlE2bNhNVAwRTKsZh94JT3N1OM74mAgLjpDW
+ 3x9wUz8bTseWEz4cMF77rxc1Ygp8rI11UfEkh4BOMUn/g1ke5mBwfRD7ZgdC+044ty+y/48
+ C3bZ7ag58D8Mf4aplTTaw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:jxK8NYw5P5o=:aFcGnD+MKdBBe53DfLL2HX
+ 6KstARxkWyS5Drk3xf4UqM711y80QHT3B1ecfLLEFLgsTPJfvA+l4NiAudsLmbx8Lx0gM+sln
+ W4k4jI5EyAVzJXzgFnL1u/JMilUigGm5pRlcdBE9zPvr5GSA+aprvjtyVdxbHEeBtn7W86Uud
+ ARY4AxAdaRS/owSqEBGE5efJjw84SeNcKHEhUl6JjA+gkqVzdwk7gTWCdixwAZ/oa8lLePEB5
+ LfVjowbHzOCoTjaVyOzfph7DUB0OiFK/bHY53WhexOboJuiwOg51tsOrI2zqnWc/RM3FURAr7
+ pOqBZHhD4VgFtkMRX/Ljj69kX0hcR1ytZ0zu+m/Fz+IDY1Ub2YIOcBL4R/4Vm9muAMBK09cfs
+ qjR9rc5h3C30NU0+xk/17HB+i5XOblkgmwxpjI8DE/AqrWzigGglLHH8M56la3qjsP6LGtel6
+ r0TEDpalLi8dYJDeqfotHwdWlH2oO7FFRIE4IovaOQCB3I6H/fqsQetrD5asUlc/f4Yo04kFF
+ CV8CaaDgRxRgVLa79RdS0QtX5g1p3IZMIeTe7IaMmSly6eG7Wj85xEgTblyX0+uawBG+bU/an
+ Kmjo4eA2Cql1SD976BpEFhcV50u3V6stNrmNcSqpuabvhYENGCCviSZ7sqGbtGYO6tsXv4t4o
+ Qd9mfT2Yv6fSYeeiZY7rzOIBVkfqIVCd5QaECvvLxmbN4whO0gn4DAY80Y48PDNjk+/My8o/1
+ is8elLJBRWs3NOi3y6giSfrYujdjMk1glKKOmeTMfAMBdfPFiai6x/nfQaiYOIslMLii/gYKW
+ 2ybwbm7UkpuXEgFS7tpPNKZhC3EnSjror1RBHDZhp2J9GutG7lfZKK7wNFpBU5TGB/KSkYZtQ
+ rRbvBdVBd9TKsmewKKHsCJYTLPGXRQ8fkw2a7ApMO0WNclcWjpcS98wtUYox++xpYdfKvSo+g
+ IXs3M+nCrxQCwpIv2o2IPwLm9PRqn9GT/JTou6/P9hUB9J4NANGaY+TpfI4mFHx4llU/HxCVn
+ mSid32890Tssa4Ltot5vcJt4P/snPslHgk4KZ3OCVo/Dj5ruqu0GxF5CdFBwqD3H+w60AV8xJ
+ xCHAHzaA4Pe51Ofwjd1Goq++2AawNbKTCJ0WJTwNDMZ513bqbN6dcJQFIcEE+5K301b+KjxCY
+ NEY/KzlIn/rvG2NZTU+xyCL3sfNEnR/YrdB59GqIdApnYII61uWw54dEAdAIF0//k7yR0rwsI
+ kqYZ2Z90uNyCRsjLJ+eYS1C3PKsidfB75FToHtPST7TcHPYDNt8EDMYNdy0Y=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+> The patch fixes this issue.
 
-HEAD commit:    07c4b9e9 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=102dafeae00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=79f79de2a27d3e3d
-dashboard link: https://syzkaller.appspot.com/bug?extid=e199b43b49192126ff69
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a4efdae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ccf946e00000
+Please replace this sentence by the tag =E2=80=9CFixes=E2=80=9D.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e199b43b49192126ff69@syzkaller.appspotmail.com
-
-INFO: task kworker/u4:2:24 blocked for more than 143 seconds.
-       Not tainted 5.5.0-rc1-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-kworker/u4:2    D24104    24      2 0x80004000
-Workqueue: events_unbound flush_to_ldisc
-Call Trace:
-  context_switch kernel/sched/core.c:3385 [inline]
-  __schedule+0x934/0x1f90 kernel/sched/core.c:4081
-  schedule+0xdc/0x2b0 kernel/sched/core.c:4155
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4214
-  __mutex_lock_common kernel/locking/mutex.c:1036 [inline]
-  __mutex_lock+0x7ab/0x13c0 kernel/locking/mutex.c:1106
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1121
-  flush_to_ldisc+0x3d/0x390 drivers/tty/tty_buffer.c:505
-  process_one_work+0x9af/0x1740 kernel/workqueue.c:2264
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2410
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-INFO: task login:9609 blocked for more than 143 seconds.
-       Not tainted 5.5.0-rc1-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-login           D27648  9609      1 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:3385 [inline]
-  __schedule+0x934/0x1f90 kernel/sched/core.c:4081
-  schedule+0xdc/0x2b0 kernel/sched/core.c:4155
-  schedule_timeout+0x717/0xc50 kernel/time/timer.c:1871
-  do_wait_for_common kernel/sched/completion.c:83 [inline]
-  __wait_for_common kernel/sched/completion.c:104 [inline]
-  wait_for_common kernel/sched/completion.c:115 [inline]
-  wait_for_completion+0x29c/0x440 kernel/sched/completion.c:136
-  __flush_work+0x4fe/0xa50 kernel/workqueue.c:3041
-  flush_work+0x18/0x20 kernel/workqueue.c:3062
-  tty_buffer_flush_work+0x16/0x20 drivers/tty/tty_buffer.c:618
-  n_tty_read+0xaea/0x1bf0 drivers/tty/n_tty.c:2199
-  tty_read+0x1a0/0x2a0 drivers/tty/tty_io.c:869
-  __vfs_read+0x8a/0x110 fs/read_write.c:425
-  vfs_read+0x1f0/0x440 fs/read_write.c:461
-  ksys_read+0x14f/0x290 fs/read_write.c:587
-  __do_sys_read fs/read_write.c:597 [inline]
-  __se_sys_read fs/read_write.c:595 [inline]
-  __x64_sys_read+0x73/0xb0 fs/read_write.c:595
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f6202982310
-Code: Bad RIP value.
-RSP: 002b:00007ffe08871a88 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f6202982310
-RDX: 00000000000001ff RSI: 00007ffe08871cf0 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 00007f6203265700 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe08871cf0
-R13: 0000000000000000 R14: 0000000000000001 R15: 000000000060b798
-
-Showing all locks held in the system:
-3 locks held by kworker/u4:2/24:
-  #0: ffff8880aa433928 ((wq_completion)events_unbound){+.+.}, at:  
-__write_once_size include/linux/compiler.h:226 [inline]
-  #0: ffff8880aa433928 ((wq_completion)events_unbound){+.+.}, at:  
-arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-  #0: ffff8880aa433928 ((wq_completion)events_unbound){+.+.}, at:  
-atomic64_set include/asm-generic/atomic-instrumented.h:855 [inline]
-  #0: ffff8880aa433928 ((wq_completion)events_unbound){+.+.}, at:  
-atomic_long_set include/asm-generic/atomic-long.h:40 [inline]
-  #0: ffff8880aa433928 ((wq_completion)events_unbound){+.+.}, at:  
-set_work_data kernel/workqueue.c:615 [inline]
-  #0: ffff8880aa433928 ((wq_completion)events_unbound){+.+.}, at:  
-set_work_pool_and_clear_pending kernel/workqueue.c:642 [inline]
-  #0: ffff8880aa433928 ((wq_completion)events_unbound){+.+.}, at:  
-process_one_work+0x88b/0x1740 kernel/workqueue.c:2235
-  #1: ffffc90000e17dc0 ((work_completion)(&buf->work)){+.+.}, at:  
-process_one_work+0x8c1/0x1740 kernel/workqueue.c:2239
-  #2: ffff8880aa5bc0a8 (&buf->lock){+.+.}, at: flush_to_ldisc+0x3d/0x390  
-drivers/tty/tty_buffer.c:505
-1 lock held by khungtaskd/1112:
-  #0: ffffffff899a56c0 (rcu_read_lock){....}, at:  
-debug_show_all_locks+0x5f/0x279 kernel/locking/lockdep.c:5334
-1 lock held by rsyslogd/9079:
-  #0: ffff8880962650e0 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110  
-fs/file.c:801
-2 locks held by getty/9170:
-  #0: ffff8880a7af2090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000182b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
-2 locks held by getty/9171:
-  #0: ffff88809ba38090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000184b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
-2 locks held by getty/9172:
-  #0: ffff88808fc60090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000181b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
-2 locks held by getty/9173:
-  #0: ffff8880928a3090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000183b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
-2 locks held by getty/9174:
-  #0: ffff8880a30e4090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc900017eb2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
-2 locks held by getty/9175:
-  #0: ffff8880a79aa090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000178b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
-2 locks held by login/9609:
-  #0: ffff8880a2673090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000185b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
-3 locks held by syz-executor065/9634:
-  #0: ffff8880a2673090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffff8880aa5bc0a8 (&buf->lock){+.+.}, at:  
-tty_buffer_lock_exclusive+0x30/0x40 drivers/tty/tty_buffer.c:61
-  #2: ffff8880ae837358 (&rq->lock){-.-.}, at: rq_lock  
-kernel/sched/sched.h:1215 [inline]
-  #2: ffff8880ae837358 (&rq->lock){-.-.}, at: __schedule+0x232/0x1f90  
-kernel/sched/core.c:4029
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1112 Comm: khungtaskd Not tainted 5.5.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-  watchdog+0xb11/0x10c0 kernel/hung_task.c:289
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 9634 Comm: syz-executor065 Not tainted 5.5.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__rcu_read_unlock+0x7c/0x710 kernel/rcu/tree_plugin.h:380
-Code: fd ff ff 3f 41 8d 47 ff 81 f9 fd ff ff 3f 41 89 86 78 03 00 00 0f 86  
-ac 00 00 00 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d c3 <48> b8 00 00 00  
-00 00 fc ff df 4c 89 e6 48 c1 ee 03 0f b6 04 06 84
-RSP: 0018:ffffc90001a976b0 EFLAGS: 00000046
-RAX: 0000000000000000 RBX: ffff8880a77d04c0 RCX: 1ffff11014efa0f7
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880ae8381e0
-RBP: ffffc90001a976f0 R08: 1ffff11015d0703c R09: ffffed1015d0703d
-R10: ffffed1015d0703c R11: ffff8880ae8381e3 R12: ffff8880a77d07b8
-R13: ffffffff899c5cf0 R14: ffff8880a77d0440 R15: 0000000000000001
-FS:  0000000001845880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000000a9307000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  rcu_read_unlock include/linux/rcupdate.h:670 [inline]
-  cgroup_account_cputime include/linux/cgroup.h:779 [inline]
-  update_curr+0x3e5/0x8d0 kernel/sched/fair.c:860
-  pick_next_task_fair+0x221/0xc70 kernel/sched/fair.c:6680
-  pick_next_task kernel/sched/core.c:3921 [inline]
-  __schedule+0x375/0x1f90 kernel/sched/core.c:4051
-  schedule+0xdc/0x2b0 kernel/sched/core.c:4155
-  paste_selection+0x2f5/0x460 drivers/tty/vt/selection.c:367
-  tioclinux+0x133/0x480 drivers/tty/vt/vt.c:3044
-  vt_ioctl+0x1a41/0x26d0 drivers/tty/vt/vt_ioctl.c:364
-  tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2660
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441209
-Code: e8 3c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 9b 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe7c0d3a88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441209
-RDX: 0000000020000080 RSI: 000000000000541c RDI: 0000000000000003
-RBP: 00000000000808bc R08: 00000000004002c8 R09: 00000000004002c8
-R10: 000000000000000d R11: 0000000000000246 R12: 0000000000402030
-R13: 00000000004020c0 R14: 0000000000000000 R15: 0000000000000000
-
+Regards,
+Markus
