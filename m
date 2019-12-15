@@ -2,104 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 677D911F9FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 18:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0151411FA11
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 18:52:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbfLORv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 12:51:59 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43143 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbfLORvw (ORCPT
+        id S1727059AbfLORwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 12:52:14 -0500
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:44340 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfLORvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 12:51:52 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p27so3446975pli.10;
-        Sun, 15 Dec 2019 09:51:52 -0800 (PST)
+        Sun, 15 Dec 2019 12:51:39 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 47bX5k2RC7z9vKZ5
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 17:51:38 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HGqvoaOhvsiO for <linux-kernel@vger.kernel.org>;
+        Sun, 15 Dec 2019 11:51:38 -0600 (CST)
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com [209.85.219.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 47bX5k1KLsz9vJbS
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 11:51:38 -0600 (CST)
+Received: by mail-yb1-f200.google.com with SMTP id x18so4724080ybr.15
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 09:51:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/cz4vRUnbRV9SZ3G6wT7uGNBKfnOEqLWr9ZhQq3aPJY=;
-        b=VUB0KVQAHEHprXd8JPg/0jED90d4vxehQR5oM13rBTaAw8YxpSr2SHoeE4jGTI7E22
-         9CU2zoUYjBTnG3V+h4FvWpk0N4jlhpjp3RLjpQqDiDyO3pz0inFoNokv0y6Fsu0Awb+b
-         M7s6Pjtbd8WVa7wOSJJuhjTi8zjBu2AzhoYEhH4fmQZO8q7pTFpxAYhgqOwQ4eb0W5aG
-         zmAXTggqqLYOk2JsO0UFqjCtuNRE80TkubJxiCWtarkBSzlpDy5d5eZOKISXqW7sd+ap
-         kPsjx2a3CPqG9IkXh3otL1pUVKFSZOoFGepy/lTbYnDJhLyZkz4V+bsRjFtnTv1ABJz3
-         6zqA==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2rmODKEIc4MD7niBVNAG3srAMkULqKzaTtL5GsTPKr4=;
+        b=ndUwWqTOV8eJgWkt3A+zimBNrqZgOkk4mx82UHJiTFnfV5SPWHQQ/3mOwqM+X/lEcD
+         wHihFytVBZVKo/KzHSkPWexBwaXWsEElfLMoJlUxL5qOFl/BgxyPAZckxakspyZFRKAy
+         QNJinof2FUVltCN4q1Ozd4YV28BwwPHedse8GA1De8GQgA0zCG94iA4bj9Lap8qylAfC
+         6/68JxtNZ/oxCXTc0ddGKRUhrqI5Nh5DyEsqJd9+OZZ6HxvR9R72wY6yqCuPWVXfze6Q
+         1fTKElcBSqHUBAWzDe7F31mkJv4FO757xdIJ4cQWKeAV977SVLjQnQAyKcLfUDVwrbuq
+         TaKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/cz4vRUnbRV9SZ3G6wT7uGNBKfnOEqLWr9ZhQq3aPJY=;
-        b=gYAqU1QIk2o+Q/91eGqXvx0rB6tJjumCJlNBE4Xt3sC3pCqW/yTbnNWnVMTyuSlNLR
-         onnZYHiZVMY2VGRmAR/wkLm/M5OJ7hJNWn6/vt/qNUJcmO/1VLw7HgvfoUM8RjP6vo5d
-         sI+9xtctlV//ODo6lNoDaNA5g34w8l5o5dP1oSMqA4sN4uKQzl35cV1E21xp3lSlOE++
-         LCzGxuO4KPWNT7bX2i1CfdxodQ4xYaU3jTv80kggRQ3dt0c6/plq4Dk0zRWf2Y6Lcxpb
-         JwM+IVfn+C942r1xeqjetmYuEQDf5dlKxWKJKpkKLPGrAT3n7Hnce9mIKe+4Wx5Dda/e
-         SF5A==
-X-Gm-Message-State: APjAAAU91b3F1KDZBOrHM5qo8mHc13wc1nLRD5IQAq5tWXO2FkekTUZt
-        JToHnP6VzOPNXfS6Z9BwPT0=
-X-Google-Smtp-Source: APXvYqwynwF10fAEJxkpOjzXrYzf6q0kcA5H9tyhmFPNupU2grFmbw3V9ozwvElSbTNjK4798iHyCA==
-X-Received: by 2002:a17:902:d708:: with SMTP id w8mr11897094ply.280.1576432312130;
-        Sun, 15 Dec 2019 09:51:52 -0800 (PST)
-Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id h3sm19102447pfr.15.2019.12.15.09.51.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Dec 2019 09:51:51 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     manuel.lauss@gmail.com, ulf.hansson@linaro.org,
-        khilman@baylibre.com, chaotian.jing@mediatek.com,
-        matthias.bgg@gmail.com, nico@fluxnic.net, adrian.hunter@intel.com,
-        agross@kernel.org, bjorn.andersson@linaro.org, ben-linux@fluff.org,
-        jh80.chung@samsung.com, vireshk@kernel.org, mripard@kernel.org,
-        wens@csie.org, wsa+renesas@sang-engineering.com,
-        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-        yamada.masahiro@socionext.com, tglx@linutronix.de,
-        allison@lohutok.net, yoshihiro.shimoda.uh@renesas.com,
-        geert+renesas@glider.be, linus.walleij@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 13/13] mmc: au1xmmc: switch to platform_get_irq
-Date:   Sun, 15 Dec 2019 17:51:20 +0000
-Message-Id: <20191215175120.3290-13-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191215175120.3290-1-tiny.windzz@gmail.com>
-References: <20191215175120.3290-1-tiny.windzz@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2rmODKEIc4MD7niBVNAG3srAMkULqKzaTtL5GsTPKr4=;
+        b=tqE0js+/6CjMDUCDPsgIId37HGXKF3n1pA2Hp3/OP6sCfTQA2QRKGifuwrbXd/Bmou
+         K3ObkSy/pu9u/gxO0rh1/iBOqmS/xltV9jbDQvwkg32PNwgCooSfjesBVB5i9eRD/iCR
+         7UelrfVVYAYwMN80feSoM5tIEOd/j6DoRUaOlnCjT2G5VH+PD/KCSbbZtL8Kgv9SoVK6
+         OPsjLZnpcTrSAmAok8iuHCLvjTlgG+4Sb3ixfHEoVFmHb1Xiojxuf3YLYK1OaP+bVxnM
+         3Bd5VxvTcA93YM+Na7znghJd104zY6tVz6ppALlP4M79JmUdEItAqDpKL77zmvlO7V2N
+         4pvA==
+X-Gm-Message-State: APjAAAXtoftvR9OqO/cZBYBfC32qQxs7I19Gd9MqDFS2lCb3zcno9vD3
+        wf9j6aSyEbj9HzdGc/Uo8psHMgKn8sYxzhO0E6osnREeZ12J3tSFKi7POmkw2czeGWRZYoR+rDs
+        MOJfkOmo5F94MtMvB2tIyGgMo51SU
+X-Received: by 2002:a25:4290:: with SMTP id p138mr13981237yba.112.1576432297513;
+        Sun, 15 Dec 2019 09:51:37 -0800 (PST)
+X-Google-Smtp-Source: APXvYqw0HHeIjcH7OnOW2tenzQrKmWXlYm720LYOj55jH+SMODNilD9yyzR9CazJpICeyA4QsooJTQ==
+X-Received: by 2002:a25:4290:: with SMTP id p138mr13981225yba.112.1576432297273;
+        Sun, 15 Dec 2019 09:51:37 -0800 (PST)
+Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
+        by smtp.gmail.com with ESMTPSA id g5sm6210011ywk.46.2019.12.15.09.51.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Dec 2019 09:51:36 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        Richard Fontana <rfontana@redhat.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yang Wei <yang.wei9@zte.com.cn>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] net: caif: replace BUG_ON with recovery code
+Date:   Sun, 15 Dec 2019 11:51:30 -0600
+Message-Id: <20191215175132.30139-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-platform_get_resource(pdev, IORESOURCE_IRQ) is not recommended for
-requesting IRQ's resources, as they can be not ready yet. Using
-platform_get_irq() instead is preferred for getting IRQ even if it
-was not retrieved earlier.
+In caif_xmit, there is a crash if the ptr dev is NULL. However, by
+returning the error to the callers, the error can be handled. The
+patch fixes this issue.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
 ---
- drivers/mmc/host/au1xmmc.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/net/caif/caif_serial.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/au1xmmc.c b/drivers/mmc/host/au1xmmc.c
-index bc8aeb47a7b4..8823680ca42c 100644
---- a/drivers/mmc/host/au1xmmc.c
-+++ b/drivers/mmc/host/au1xmmc.c
-@@ -984,12 +984,9 @@ static int au1xmmc_probe(struct platform_device *pdev)
- 		goto out2;
- 	}
+diff --git a/drivers/net/caif/caif_serial.c b/drivers/net/caif/caif_serial.c
+index bd40b114d6cd..d737ceb61203 100644
+--- a/drivers/net/caif/caif_serial.c
++++ b/drivers/net/caif/caif_serial.c
+@@ -270,7 +270,9 @@ static int caif_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ser_device *ser;
  
--	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (!r) {
--		dev_err(&pdev->dev, "no IRQ defined\n");
-+	host->irq = platform_get_irq(pdev, 0);
-+	if (host->irq < 0)
- 		goto out3;
--	}
--	host->irq = r->start;
+-	BUG_ON(dev == NULL);
++	if (WARN_ON(!dev))
++		return -EINVAL;
++
+ 	ser = netdev_priv(dev);
  
- 	mmc->ops = &au1xmmc_ops;
- 
+ 	/* Send flow off once, on high water mark */
 -- 
-2.17.1
+2.20.1
 
