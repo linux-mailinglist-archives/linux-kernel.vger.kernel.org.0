@@ -2,253 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F82911F925
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 17:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B139711F92C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 17:41:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfLOQif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 11:38:35 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:24773 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726676AbfLOQic (ORCPT
+        id S1726351AbfLOQlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 11:41:15 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39800 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726136AbfLOQlO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 11:38:32 -0500
+        Sun, 15 Dec 2019 11:41:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576427910;
+        s=mimecast20190719; t=1576428073;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5+TqmbLQzQ/VhWvgbcbh43ilbcLxJUlh83NZxjX7V3s=;
-        b=EEFAU2zA1leboDailNX4nm1ylLvv+gVPQR3MGMe4dp3+rNEUCsvE+c29PtGVl0TxfCItZ0
-        nFr8q+8m0shDbBRhYy6GP2iTRmhnQN9ZglZtaJaMcBPZFp0YbxIXFkIwgVTjY+KC9vNPk4
-        7m8n1kUg9CIHUNmVHm22Y237veX0zFA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-270-blklPJ6EOpycc36DK-BbdA-1; Sun, 15 Dec 2019 11:38:27 -0500
-X-MC-Unique: blklPJ6EOpycc36DK-BbdA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9BA1E477;
-        Sun, 15 Dec 2019 16:38:25 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-49.ams2.redhat.com [10.36.116.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A6EB5D9C9;
-        Sun, 15 Dec 2019 16:38:23 +0000 (UTC)
+        bh=pZXNOLSmIO4QRRkxs/U8mDeREkMLpc0KHW6n8y5dmes=;
+        b=iQnKpsiNwCVyxdauVzUGl25a9dq7P4hOpGJvW4/zaYQNiKaEODdjFcRbvGSObKjeuTAR2R
+        R1PvBkCCBgnckfQr3YyNTycqvxcLNgRz9O4gsmJkH8qOvcslE3M+vPOtbtq03GJUgyY7TB
+        HDfBJuBAH26rUUuLrrWOEzL6Qd8fyDY=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-406-hzEcZ-MNO0qIj_904EWVPg-1; Sun, 15 Dec 2019 11:41:09 -0500
+X-MC-Unique: hzEcZ-MNO0qIj_904EWVPg-1
+Received: by mail-wr1-f70.google.com with SMTP id f10so2415000wro.14
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 08:41:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pZXNOLSmIO4QRRkxs/U8mDeREkMLpc0KHW6n8y5dmes=;
+        b=cabKi4J4Z6pbdu/wIWGj4ind1chK3gigq7Zf1+hh48YZrqLsSD4YonltM17H8ErF4x
+         xKcJop+JnmG5GUaO8KpLw5hVLMtLqPbzUsgWcZn2mqbTIZTWwOHU5HsuoOEFw3i5aoTx
+         LcekRJLMbwDBkRh3JZf8M+GODoMZQ8ZOUR8oCDoKetF4A5oFRiu8iwJQxmC5yfVKI02Y
+         rMLWbSh9C6LEyKAoOfUsl4+MYlURrUi7ThUvK8AKGUte0f1ljbtqaWzk0pdk2JHn9yAW
+         8DYAbDg4E1wqGllDqbleP2vr5X8zcFWvdtdT6EoUBufzByc1JXi9PmQ3juToOGCnE2i7
+         X2Jg==
+X-Gm-Message-State: APjAAAVzWNpBiWr0J/YAV6s6chnroLSWpCeJmJ8nxeNj05s5S9SeMWEb
+        A4EVvQcuWZjxKaYOoUgs4QgcNK7WrJGXN50ezUVrPio7AblEAghNlX8vC1BkTcFrgoVE2Dq0755
+        aPpBh2zckVdZoIcHBqf5walSF
+X-Received: by 2002:a5d:6a8e:: with SMTP id s14mr26179936wru.150.1576428068031;
+        Sun, 15 Dec 2019 08:41:08 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxZpHMRDXlQMMSABQl81Zs6vH911Sv5c05gA8+uaC03Yib3ITofNGLMXO4++fjZuO82cMlHjA==
+X-Received: by 2002:a5d:6a8e:: with SMTP id s14mr26179919wru.150.1576428067834;
+        Sun, 15 Dec 2019 08:41:07 -0800 (PST)
+Received: from shalem.localdomain (2001-1c00-0c0c-fe00-7e79-4dac-39d0-9c14.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:7e79:4dac:39d0:9c14])
+        by smtp.gmail.com with ESMTPSA id x10sm18280784wrv.60.2019.12.15.08.41.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Dec 2019 08:41:07 -0800 (PST)
+Subject: Re: [PATCH] usb: dwc3: use proper initializers for property entries
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191213174623.GA20267@dtor-ws>
 From:   Hans de Goede <hdegoede@redhat.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 5/5] drm/i915/dsi: Control panel and backlight enable GPIOs on BYT
-Date:   Sun, 15 Dec 2019 17:38:10 +0100
-Message-Id: <20191215163810.52356-6-hdegoede@redhat.com>
-In-Reply-To: <20191215163810.52356-1-hdegoede@redhat.com>
-References: <20191215163810.52356-1-hdegoede@redhat.com>
+Message-ID: <2a8a5e6b-9372-978e-03d0-350ab65a2d0a@redhat.com>
+Date:   Sun, 15 Dec 2019 17:41:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191213174623.GA20267@dtor-ws>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Bay Trail devices the MIPI power on/off sequences for DSI LCD panels
-do not control the LCD panel- and backlight-enable GPIOs. So far, when
-the VBT indicates we should use the SoC for backlight control, we have
-been relying on these GPIOs being configured as output and driven high by
-the Video BIOS (GOP) when it initializes the panel.
+Hi,
 
-This does not work when the device is booted with a HDMI monitor connecte=
-d
-as then the GOP will initialize the HDMI instead of the panel, leaving th=
-e
-panel black, even though the i915 driver tries to output an image to it.
+On 13-12-2019 18:46, Dmitry Torokhov wrote:
+> We should not be reaching into property entries and initialize them by
+> hand, but rather use proper initializer macros. This way we can alter
+> internal representation of property entries with no visible changes to
+> their users.
+> 
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+> 
+> It would be good if this could go through Rafael's tree as it is needed
+> for the rest of my software_node/property_entry rework patch series
+> which I would love not to delay till 5.6.
 
-Likewise on some device-models when the GOP does not initialize the DSI
-panel it also leaves the mux of the PWM0 pin in generic GPIO mode instead
-of muxing it to the PWM controller.
+Patch looks good to me:
 
-This commit makes the DSI code control the SoC GPIOs for panel- and
-backlight-enable on BYT, when the VBT indicates the SoC should be used
+Acked-by: Hans de Goede <hdegoede@redhat.com>
 
-for backlight control. It also ensures that the PWM0 pin is muxed to the
-PWM controller in this case.
+Regards,
 
-This fixes the LCD panel not lighting up on various devices when booted
-with a HDMI monitor connected. This has been tested to fix this on the
-following devices:
+Hans
 
-Peaq C1010
-Point of View MOBII TAB-P800W
-Point of View MOBII TAB-P1005W
-Terra Pad 1061
-Yours Y8W81
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/gpu/drm/i915/display/intel_dsi.h     |  3 +-
- drivers/gpu/drm/i915/display/intel_dsi_vbt.c | 63 ++++++++++++++++++++
- 2 files changed, 65 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_dsi.h b/drivers/gpu/drm/i=
-915/display/intel_dsi.h
-index 675771ea91aa..7481a5aa3084 100644
---- a/drivers/gpu/drm/i915/display/intel_dsi.h
-+++ b/drivers/gpu/drm/i915/display/intel_dsi.h
-@@ -45,8 +45,9 @@ struct intel_dsi {
- 	struct intel_dsi_host *dsi_hosts[I915_MAX_PORTS];
- 	intel_wakeref_t io_wakeref[I915_MAX_PORTS];
-=20
--	/* GPIO Desc for CRC based Panel control */
-+	/* GPIO Desc for panel and backlight control */
- 	struct gpio_desc *gpio_panel;
-+	struct gpio_desc *gpio_backlight;
-=20
- 	struct intel_connector *attached_connector;
-=20
-diff --git a/drivers/gpu/drm/i915/display/intel_dsi_vbt.c b/drivers/gpu/d=
-rm/i915/display/intel_dsi_vbt.c
-index 847f04eec2a1..bd007d4f86e2 100644
---- a/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
-+++ b/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
-@@ -27,6 +27,8 @@
- #include <linux/gpio/consumer.h>
- #include <linux/gpio/machine.h>
- #include <linux/mfd/intel_soc_pmic.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/machine.h>
- #include <linux/slab.h>
-=20
- #include <asm/intel-mid.h>
-@@ -525,11 +527,15 @@ void intel_dsi_vbt_exec_sequence(struct intel_dsi *=
-intel_dsi,
- {
- 	if (seq_id =3D=3D MIPI_SEQ_POWER_ON && intel_dsi->gpio_panel)
- 		gpiod_set_value_cansleep(intel_dsi->gpio_panel, 1);
-+	if (seq_id =3D=3D MIPI_SEQ_BACKLIGHT_ON && intel_dsi->gpio_backlight)
-+		gpiod_set_value_cansleep(intel_dsi->gpio_backlight, 1);
-=20
- 	intel_dsi_vbt_exec(intel_dsi, seq_id);
-=20
- 	if (seq_id =3D=3D MIPI_SEQ_POWER_OFF && intel_dsi->gpio_panel)
- 		gpiod_set_value_cansleep(intel_dsi->gpio_panel, 0);
-+	if (seq_id =3D=3D MIPI_SEQ_BACKLIGHT_OFF && intel_dsi->gpio_backlight)
-+		gpiod_set_value_cansleep(intel_dsi->gpio_backlight, 0);
- }
-=20
- void intel_dsi_msleep(struct intel_dsi *intel_dsi, int msec)
-@@ -688,6 +694,8 @@ bool intel_dsi_vbt_init(struct intel_dsi *intel_dsi, =
-u16 panel_id)
- /*
-  * On some BYT/CHT devs some sequences are incomplete and we need to man=
-ually
-  * control some GPIOs. We need to add a GPIO lookup table before we get =
-these.
-+ * If the GOP did not initialize the panel (HDMI inserted) we may need t=
-o also
-+ * change the pinmux for the SoC's PWM0 pin from GPIO to PWM.
-  */
- static struct gpiod_lookup_table pmic_panel_gpio_table =3D {
- 	/* Intel GFX is consumer */
-@@ -699,23 +707,68 @@ static struct gpiod_lookup_table pmic_panel_gpio_ta=
-ble =3D {
- 	},
- };
-=20
-+static struct gpiod_lookup_table soc_panel_gpio_table =3D {
-+	.dev_id =3D "0000:00:02.0",
-+	.table =3D {
-+	  GPIO_LOOKUP("INT33FC:01", 10, "backlight", GPIO_ACTIVE_HIGH),
-+	  GPIO_LOOKUP("INT33FC:01", 11, "panel", GPIO_ACTIVE_HIGH),
-+	  { },
-+	},
-+};
-+
-+static const struct pinctrl_map soc_pwm_pinctrl_map[] =3D {
-+	PIN_MAP_MUX_GROUP("0000:00:02.0", "soc_pwm0", "INT33FC:00",
-+			  "pwm0_grp", "pwm"),
-+};
-+
- void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi, bool panel_is_=
-on)
- {
- 	struct drm_device *dev =3D intel_dsi->base.base.dev;
- 	struct drm_i915_private *dev_priv =3D to_i915(dev);
- 	struct mipi_config *mipi_config =3D dev_priv->vbt.dsi.config;
- 	enum gpiod_flags flags =3D panel_is_on ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW=
-;
-+	bool want_backlight_gpio =3D false;
-+	bool want_panel_gpio =3D false;
-+	struct pinctrl *pinctrl;
-+	int ret;
-=20
- 	if ((IS_VALLEYVIEW(dev_priv) || IS_CHERRYVIEW(dev_priv)) &&
- 	    (mipi_config->pwm_blc =3D=3D PPS_BLC_PMIC)) {
- 		gpiod_add_lookup_table(&pmic_panel_gpio_table);
-+		want_panel_gpio =3D true;
-+	}
-+
-+	if (IS_VALLEYVIEW(dev_priv) && mipi_config->pwm_blc =3D=3D PPS_BLC_SOC)=
- {
-+		gpiod_add_lookup_table(&soc_panel_gpio_table);
-+		want_panel_gpio =3D true;
-+		want_backlight_gpio =3D true;
-=20
-+		/* Ensure PWM0 pin is muxed as PWM instead of GPIO */
-+		ret =3D pinctrl_register_mappings(soc_pwm_pinctrl_map, 1);
-+		if (ret)
-+			DRM_ERROR("Failed to register pwm0 pinmux mapping\n");
-+
-+		pinctrl =3D devm_pinctrl_get_select(dev->dev, "soc_pwm0");
-+		if (IS_ERR(pinctrl))
-+			DRM_ERROR("Failed to set pinmux to PWM\n");
-+	}
-+
-+	if (want_panel_gpio) {
- 		intel_dsi->gpio_panel =3D gpiod_get(dev->dev, "panel", flags);
- 		if (IS_ERR(intel_dsi->gpio_panel)) {
- 			DRM_ERROR("Failed to own gpio for panel control\n");
- 			intel_dsi->gpio_panel =3D NULL;
- 		}
- 	}
-+
-+	if (want_backlight_gpio) {
-+		intel_dsi->gpio_backlight =3D
-+			gpiod_get(dev->dev, "backlight", flags);
-+		if (IS_ERR(intel_dsi->gpio_backlight)) {
-+			DRM_ERROR("Failed to own gpio for backlight control\n");
-+			intel_dsi->gpio_backlight =3D NULL;
-+		}
-+	}
- }
-=20
- void intel_dsi_vbt_gpio_cleanup(struct intel_dsi *intel_dsi)
-@@ -729,7 +782,17 @@ void intel_dsi_vbt_gpio_cleanup(struct intel_dsi *in=
-tel_dsi)
- 		intel_dsi->gpio_panel =3D NULL;
- 	}
-=20
-+	if (intel_dsi->gpio_backlight) {
-+		gpiod_put(intel_dsi->gpio_backlight);
-+		intel_dsi->gpio_backlight =3D NULL;
-+	}
-+
- 	if ((IS_VALLEYVIEW(dev_priv) || IS_CHERRYVIEW(dev_priv)) &&
- 	    (mipi_config->pwm_blc =3D=3D PPS_BLC_PMIC))
- 		gpiod_remove_lookup_table(&pmic_panel_gpio_table);
-+
-+	if (IS_VALLEYVIEW(dev_priv) && mipi_config->pwm_blc =3D=3D PPS_BLC_SOC)=
- {
-+		pinctrl_unregister_mappings(soc_pwm_pinctrl_map);
-+		gpiod_remove_lookup_table(&soc_panel_gpio_table);
-+	}
- }
---=20
-2.23.0
+
+> 
+> Thanks!
+> 
+>   drivers/usb/dwc3/host.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
+> index 5567ed2cddbec..fa252870c926f 100644
+> --- a/drivers/usb/dwc3/host.c
+> +++ b/drivers/usb/dwc3/host.c
+> @@ -88,10 +88,10 @@ int dwc3_host_init(struct dwc3 *dwc)
+>   	memset(props, 0, sizeof(struct property_entry) * ARRAY_SIZE(props));
+>   
+>   	if (dwc->usb3_lpm_capable)
+> -		props[prop_idx++].name = "usb3-lpm-capable";
+> +		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb3-lpm-capable");
+>   
+>   	if (dwc->usb2_lpm_disable)
+> -		props[prop_idx++].name = "usb2-lpm-disable";
+> +		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb2-lpm-disable");
+>   
+>   	/**
+>   	 * WORKAROUND: dwc3 revisions <=3.00a have a limitation
+> @@ -103,7 +103,7 @@ int dwc3_host_init(struct dwc3 *dwc)
+>   	 * This following flag tells XHCI to do just that.
+>   	 */
+>   	if (dwc->revision <= DWC3_REVISION_300A)
+> -		props[prop_idx++].name = "quirk-broken-port-ped";
+> +		props[prop_idx++] = PROPERTY_ENTRY_BOOL("quirk-broken-port-ped");
+>   
+>   	if (prop_idx) {
+>   		ret = platform_device_add_properties(xhci, props);
+> 
 
