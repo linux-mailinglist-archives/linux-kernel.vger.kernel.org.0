@@ -2,282 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1348711F937
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 17:48:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34C0611F939
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 17:54:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbfLOQsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 11:48:24 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46525 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbfLOQsX (ORCPT
+        id S1726267AbfLOQwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 11:52:11 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:47026 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbfLOQwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 11:48:23 -0500
-Received: by mail-ot1-f67.google.com with SMTP id g18so5713170otj.13;
-        Sun, 15 Dec 2019 08:48:22 -0800 (PST)
+        Sun, 15 Dec 2019 11:52:11 -0500
+Received: by mail-ua1-f65.google.com with SMTP id l6so791735uap.13
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 08:52:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=d52XL1WkRAKK78lpU5MjLSipqlyeBv/Ng+oA+gdkedvvWV/1RR/MeHm0OdrO1rKoNM
+         YaB9f2PQLfxBgUUCfO66alMyrBKGmtjqK+eJZBUb9zjYhAuZ49Zfj1ouF0KC7DItHVQT
+         7u05i1N3ZH8m5o9F80Za2Lx0FZLiUqyT+yQBYcOh/lvNQ2SBObn1HJv/hTwnT0d7HbXC
+         PAg75u0EoZ03dMv5lWj83ckTbQc7P+Xfx6PfdtI/FjuGRS24bxyzRICmzywrT54Fj80d
+         groGLw5kA0dA9u9vgZTzol8xjP0o2ApdYK4j1xhtHaz0OBvPDK86TTqQv6AjRd6p6hIE
+         ECiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IyI92hdnfY8PAAUr1dTGVnrFEL80XEUV2Rj9Icj07bk=;
-        b=e+cOQt9FRZAB2bj8pdBANZMExyhoP6vLekdVAx9ISF1v7Rrx0pLgrXoFyWB5aKR0d6
-         M26vOWm8zLBbdDzEuL36Ipx0g5mKGJRs6yPnj1GOIe58ZBsYFrmfA9nSfAldqJv9bj/Z
-         BD6BsAbvVjQQ33Y/soDkV8lJ0Tu24M0N9FgdRzYIUVRgu5zqJygogfMxfbBSoWFfYe9R
-         Pu6ZeSBBnEjIEI+OWfBCnC+ayek33b/rmvepbHnOoawz3mZBPW8KNY6rECIRGQ8A7YU9
-         Oa3cokgKWfd5SO1R6/nlkIJeHBGpoKw9Sg3OSObIMR5yXcAB3E5vyorwU9mosFJj/KD7
-         YSTg==
-X-Gm-Message-State: APjAAAVfk1S/Kba+8/1qaDdXg6HBP+C4T2MhdfI0m0QPvPTyXePsxtpQ
-        9LQr6ovGe9riRdta9sboQ3rgzNsRU0uBQeM1twecnXEK
-X-Google-Smtp-Source: APXvYqwmJdOxqsPVi4f7kKJuUSBxsrpNtrpa2HsLfNb//2maPELqkQETjBaDVVH1cxohsWjE71SufaeBQUF4Qqn0Udk=
-X-Received: by 2002:a9d:7984:: with SMTP id h4mr27656640otm.297.1576428502295;
- Sun, 15 Dec 2019 08:48:22 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=kzjEFWARziHwehYrkbX9YtFZimG1oEp6T/UtUQdGwasbkYV4onx8DEaUQYYyQUwn3c
+         kRy9AKIHQxGeFnfAzKOONtEFgdT4458Jt8s9zy/V6vMbknM8JkBY6OW3VMuYuViAjr/2
+         tYEoMhmckOAs9AO2ofnBrS+2dwp/3xG8NG3HWuEZMw8G/GD8EJIAUB3//qHVllA4Kcor
+         jpIGByOo8R4LGvkeH3KwbHHDRUnZ3Bi3l6IRgaRtv059vJtSyT5aTvkJe8TBgJt2jovj
+         Q952Dbkhmv02aD28yyIzD0ApXD0Pjg4H7Mc7VoTscdg7fOdUONpUvVoabpj/59xCQ3kP
+         X8vA==
+X-Gm-Message-State: APjAAAW+9zGukSIZJ8yaeLR28V8D7eJ3f9qScrZRFHC0tA8dD31wyrKN
+        sEePu7vL5OGl5t3V4vgi4STAMuUig9micpOhOeo=
+X-Google-Smtp-Source: APXvYqzCY4Lk87qjFdgKPk72KQQPAF3hbOB68Z1gUWCDOpyfskg0DxqBl8PzsIzjGcoXHgUISrFmBZka6Dq8922qKd8=
+X-Received: by 2002:ab0:13ca:: with SMTP id n10mr19993891uae.39.1576428730321;
+ Sun, 15 Dec 2019 08:52:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20191124195225.31230-1-jongk@linux-m68k.org> <CAMuHMdVv9FU+kTf7RDd=AFKL12tJxzmGbX4jZZ8Av3VCZUzwhA@mail.gmail.com>
- <20191126144121.kzkujr27ga36gqnf@wittgenstein> <CACz-3riWp1fWCaAJtMgRx9VRVAJ+ktdbAqHBobQUXR9XpHrVcQ@mail.gmail.com>
-In-Reply-To: <CACz-3riWp1fWCaAJtMgRx9VRVAJ+ktdbAqHBobQUXR9XpHrVcQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 15 Dec 2019 17:48:10 +0100
-Message-ID: <CAMuHMdVLQF_KyWDn=HxmLAp6Vy3jyw=JLDQWryLt809sCecosA@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Wire up clone3() syscall
-To:     Kars de Jong <jongk@linux-m68k.org>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Linux/m68k" <linux-m68k@vger.kernel.org>
+Received: by 2002:a9f:3d88:0:0:0:0:0 with HTTP; Sun, 15 Dec 2019 08:52:10
+ -0800 (PST)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <kotsllos2000@gmail.com>
+Date:   Sun, 15 Dec 2019 17:52:10 +0100
+Message-ID: <CAKnPpxA622pgLPndyRELVLazgWOTusfnB879+RtUTRe1tGSFAg@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kars,
+Hallo
 
-On Tue, Nov 26, 2019 at 4:29 PM Kars de Jong <jongk@linux-m68k.org> wrote:
-> Op di 26 nov. 2019 om 15:41 schreef Christian Brauner
-> <christian.brauner@ubuntu.com>:
-> > On Mon, Nov 25, 2019 at 10:12:25AM +0100, Geert Uytterhoeven wrote:
-> > > On Sun, Nov 24, 2019 at 8:52 PM Kars de Jong <jongk@linux-m68k.org> wrote:
-> > > > Wire up the clone3() syscall for m68k. The special entry point is done in
-> > > > assembler as was done for clone() as well. This is needed because all
-> > > > registers need to be saved. The C wrapper then calls the generic
-> > > > sys_clone3() with the correct arguments.
-> > > >
-> > > > Tested on A1200 using the simple test program from:
-> > > >
-> > > >   https://lore.kernel.org/lkml/20190716130631.tohj4ub54md25dys@brauner.io/
-> >
-> > Please note that we now have a growing test-suite for the clone3()
-> > syscall under
-> > tools/testing/selftests/clone3/*
-> >
-> > You can test on a suitable kernel with
-> >
-> > make TARGETS=clone3 kselftest
->
-> I'm afraid my user space is almost prehistoric. I have a homebrewn
-> root filesystem of about 2001 vintage, and another one with Debian
-> 3.1.
-> So until I have bootstrapped a more recent one, I'll leave that to others ;-)
+Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($8,5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
 
-With Ubuntu's libc6-m68k-cross installed, the selftest binaries cross-build
-fine.  Running them on a very old Debian requires some hackery:
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: eddywilliam0002gmail.com
 
-  1. Copy ld.so.1, ld-2.27.so, libc.so.6, and libc-2.27.so from
-     /usr/m68k-linux-gnu/lib/ to /tmp/lib on the m68k target,
-  2. mkdir /tmp/proc && mount proc /tmp/proc -t proc,
-  3. chroot /tmp /tmp/<test-binary>.
+Vielen Dank im Voraus,
+Mr. Eddy William,
 
-Unfortunately some tests failed:
 
-atari:~# chroot /tmp /tmp/clone3
-# clone3() syscall supported
-TAP version 13
-1..17
-# [825] Trying clone3() with flags 0 (size 0)
-# I am the parent (825). My child's pid is 826
-# I am the child, my PID is 826
-# [825] clone3() with flags says: 0 expected 0
-ok 1 [825] Result (0) matches expectation (0)
-# [825] Trying clone3() with flags 0x20000000 (size 0)
-# Invalid argument - Failed to create new process
-# [825] clone3() with flags says: -22 expected 0
-not ok 2 [825] Result (-22) is different than expected (0)
-# [825] Trying clone3() with flags 0 (size 64)
-# I am the parent (825). My child's pid is 827
-# I am the child, my PID is 827
-# [825] clone3() with flags says: 0 expected 0
-ok 3 [825] Result (0) matches expectation (0)
-# [825] Trying clone3() with flags 0 (size 56)
-# Invalid argument - Failed to create new process
-# [825] clone3() with flags says: -22 expected -22
-ok 4 [825] Result (-22) matches expectation (-22)
-# [825] Trying clone3() with flags 0 (size 88)
-# I am the parent (825). My child's pid is 828
-# I am the child, my PID is 828
-# [825] clone3() with flags says: 0 expected 0
-ok 5 [825] Result (0) matches expectation (0)
-# [825] Trying clone3() with flags 0 (size 0)
-# Invalid argument - Failed to create new process
-# [825] clone3() with flags says: -22 expected -22
-ok 6 [825] Result (-22) matches expectation (-22)
-# [825] Trying clone3() with flags 0 (size 0)
-# Invalid argument - Failed to create new process
-# [825] clone3() with flags says: -22 expected -22
-ok 7 [825] Result (-22) matches expectation (-22)
-# [825] Trying clone3() with flags 0 (size 0)
-# Invalid argument - Failed to create new process
-# [825] clone3() with flags says: -22 expected -22
-ok 8 [825] Result (-22) matches expectation (-22)
-# [825] Trying clone3() with flags 0 (size 0)
-# Invalid argument - Failed to create new process
-# [825] clone3() with flags says: -22 expected -22
-ok 9 [825] Result (-22) matches expectation (-22)
-# [825] Trying clone3() with flags 0 (size 88)
-# I am the parent (825). My child's pid is 829
-# I am the child, my PID is 829
-# [825] clone3() with flags says: 0 expected 0
-ok 10 [825] Result (0) matches expectation (0)
-# [825] Trying clone3() with flags 0 (size 96)
-# Argument list too long - Failed to create new process
-# [825] clone3() with flags says: -7 expected -7
-ok 11 [825] Result (-7) matches expectation (-7)
-# [825] Trying clone3() with flags 0 (size 160)
-# Argument list too long - Failed to create new process
-# [825] clone3() with flags says: -7 expected -7
-ok 12 [825] Result (-7) matches expectation (-7)
-# [825] Trying clone3() with flags 0 (size 4104)
-# Argument list too long - Failed to create new process
-# [825] clone3() with flags says: -7 expected -7
-ok 13 [825] Result (-7) matches expectation (-7)
-# [825] Trying clone3() with flags 0x20000000 (size 64)
-# Invalid argument - Failed to create new process
-# [825] clone3() with flags says: -22 expected 0
-not ok 14 [825] Result (-22) is different than expected (0)
-# [825] Trying clone3() with flags 0x20000000 (size 56)
-# Invalid argument - Failed to create new process
-# [825] clone3() with flags says: -22 expected -22
-ok 15 [825] Result (-22) matches expectation (-22)
-# [825] Trying clone3() with flags 0x20000000 (size 88)
-# Invalid argument - Failed to create new process
-# [825] clone3() with flags says: -22 expected 0
-not ok 16 [825] Result (-22) is different than expected (0)
-# [825] Trying clone3() with flags 0x20000000 (size 4104)
-# Argument list too long - Failed to create new process
-# [825] clone3() with flags says: -7 expected -7
-ok 17 [825] Result (-7) matches expectation (-7)
-Bail out!
-# Pass 14 Fail 3 Xfail 0 Xpass 0 Skip 0 Error 0
-atari:~# chroot /tmp /tmp/clone3_set_tid
-TAP version 13
-# clone3() syscall supported
-1..29
-# /proc/sys/kernel/pid_max 32768
-# [830] Trying clone3() with CLONE_SET_TID to 0 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 0 says :-22 - expected -22
-ok 1 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to 0 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 0 says :-22 - expected -22
-ok 2 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to 0 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 0 says :-22 - expected -22
-ok 3 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to 0 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 0 says :-22 - expected -22
-ok 4 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to 0 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 0 says :-22 - expected -22
-ok 5 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to -1 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID -1 says :-22 - expected -22
-ok 6 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to -1 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID -1 says :-22 - expected -22
-ok 7 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to -1 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID -1 says :-22 - expected -22
-ok 8 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to -1 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID -1 says :-22 - expected -22
-ok 9 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to -1 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID -1 says :-22 - expected -22
-ok 10 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to 0 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 0 says :-22 - expected -22
-ok 11 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to -1 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID -1 says :-22 - expected -22
-ok 12 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to -1 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID -1 says :-22 - expected -22
-ok 13 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to -1 and 0x20000000
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID -1 says :-22 - expected -22
-ok 14 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to 1 and 0x0
-# File exists - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 1 says :-17 - expected -17
-ok 15 [830] Result (-17) matches expectation (-17)
-# [830] Trying clone3() with CLONE_SET_TID to 1 and 0x20000000
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 1 says :-22 - expected 0
-not ok 16 [830] Result (-22) is different than expected (0)
-# [830] Trying clone3() with CLONE_SET_TID to 32768 and 0x0
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 32768 says :-22 - expected -22
-ok 17 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to 32768 and 0x20000000
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 32768 says :-22 - expected -22
-ok 18 [830] Result (-22) matches expectation (-22)
-# Child has PID 831
-# [830] Trying clone3() with CLONE_SET_TID to 831 and 0x0
-# I am the parent (830). My child's pid is 831
-# I am the child, my PID is 831 (expected 831)
-# [830] clone3() with CLONE_SET_TID 831 says :0 - expected 0
-ok 19 [830] Result (0) matches expectation (0)
-# [830] Trying clone3() with CLONE_SET_TID to 831 and 0x20000000
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 831 says :-22 - expected -22
-ok 20 [830] Result (-22) matches expectation (-22)
-# [830] Trying clone3() with CLONE_SET_TID to 1 and 0x20000000
-# Invalid argument - Failed to create new process
-# [830] clone3() with CLONE_SET_TID 1 says :-22 - expected 0
-not ok 21 [830] Result (-22) is different than expected (0)
-# unshare PID namespace
-Bail out! unshare(CLONE_NEWPID) failed: Invalid argument
-# Planned tests != run tests (29 != 21)
-# Pass 19 Fail 2 Xfail 0 Xpass 0 Skip 0 Error 0
-atari:~# chroot /tmp /tmp/clone3_clear_sighand
-TAP version 13
-# clone3() syscall supported
-1..1
-Bail out! Failed to clear signal handler for child process
-# Planned tests != run tests (1 != 0)
-# Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-atari:~#
 
-So this needs a bit more work?
+Hello
 
-Gr{oetje,eeting}s,
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
 
-                        Geert
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:eddywilliam0002gmail.=
+com
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Many thanks in advance,
+Mr.Eddy William,
