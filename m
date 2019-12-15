@@ -2,120 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C959611FAF7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 21:08:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 360C211FAFA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 21:08:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfLOUFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 15:05:03 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40680 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbfLOUFD (ORCPT
+        id S1726537AbfLOUGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 15:06:40 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44113 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbfLOUGj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 15:05:03 -0500
-Received: by mail-pg1-f196.google.com with SMTP id k25so2426547pgt.7;
-        Sun, 15 Dec 2019 12:05:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xIgln2CTeNUTcohT4yCRcrSFMvesnt3sC8dwNxQQtUM=;
-        b=o2wysAteIijZ8tWGZKG3kD7OLB1HVQ98F+1acPL7apqrId+6bkSJZp4bfeQPcLTcCD
-         W5zJdE9b8FfrrxIQq6rg5wWqgxa1Slp9K5vgMHjhOYD3g/FiPj97CRVs4giFDnmA5GRG
-         nBEw8JDPILEc6VehgT3fCDIidNQYVDmkTwwKIVhcVWY7GfxqNhk7VtPAsAqJDk5GjSU7
-         nHvQB+momWt3yrCoLOHZ1qraHWRt5BDUr3d6ZW5R2GvkYBczxl6ZuBY5Yat4RqDPCm+3
-         VbSoSGG2PgXYDLxJj38VD3pwr/8x8Wx1sjMpswhQCx3Dhr0L6y3Y0xiyXOOTOC+fYNSu
-         91dA==
+        Sun, 15 Dec 2019 15:06:39 -0500
+Received: by mail-ot1-f66.google.com with SMTP id x3so6163150oto.11;
+        Sun, 15 Dec 2019 12:06:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xIgln2CTeNUTcohT4yCRcrSFMvesnt3sC8dwNxQQtUM=;
-        b=HWp+512Fgjulh3mWvohdB2i1ce+bQvJ1gRDf0Ez+YZt1JJZxoPLFY2j6VSi6PporSK
-         qrBNJZzjBLhOZVfUdURydsnVxWrzGXR4f6KClea8pvj/1YB8m+fJv32pBox7YZEiJdT7
-         suahpivOIeOpfJAY1BwF1QoYMNShCqx79kSfSfWqPlZsnCRI6IwX0DINUx7sq6SsU7P7
-         MwECH9zsVhUdI27RCF8yy2ZxwPr7l1n4LwpsyDhGWd3fVAD/HwTRoF0rFb6XWwKB4rcl
-         JB5sYB/niIXsUkGosVG2YnAE5DwkXwVtRFWIYj25dJvKm5sgUJNxNkfWD+J321E9AYfh
-         996g==
-X-Gm-Message-State: APjAAAWZ+0Z7eMWvWnmZNncADf8fLbSqvJX2IsEz7XNzICJ5HXRnbKyK
-        DYllA7yGiwL1taFslDsWSyhflwVv
-X-Google-Smtp-Source: APXvYqwhMYzq9LVfNRlgXR0Z/3qbGzkkpOo79arI9v4XBwf4PSol4vSxiffMt0IkLYIKZtwLVmBK6g==
-X-Received: by 2002:a63:4f64:: with SMTP id p36mr14378616pgl.271.1576440302589;
-        Sun, 15 Dec 2019 12:05:02 -0800 (PST)
-Received: from localhost (c-73-25-156-94.hsd1.or.comcast.net. [73.25.156.94])
-        by smtp.gmail.com with ESMTPSA id c8sm18881075pfj.106.2019.12.15.12.05.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2019 12:05:01 -0800 (PST)
-From:   Rob Clark <robdclark@gmail.com>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Clark <robdclark@chromium.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH 1/2] fixup! drm/bridge: ti-sn65dsi86: Train at faster rates if slower ones fail
-Date:   Sun, 15 Dec 2019 12:04:59 -0800
-Message-Id: <20191215200459.1018893-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191213154448.8.I251add713bc5c97225200894ab110ea9183434fd@changeid>
-References: <20191213154448.8.I251add713bc5c97225200894ab110ea9183434fd@changeid>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3xp/csttZXysouE5r2d8VrjHUVDN87UbLOURq7DDwLA=;
+        b=hLAVN4WkYeu6I00PxA1+fpLc7La5z5RDigcIJRS7IwqxG0T5xwSeLWTPxGLhb9pQ7c
+         oY36cSaysMZg2wE6yPLo32I0AkoOmt+P3jpetWRxmSMuTa1tSRK14GpVQQH7lHczqUHY
+         ggS9Ec8IChLlPlEFaLpQklwAPKn3yebUrN9tMq2dlzQ1lkC3203lujdq9anTgDFH/wM9
+         FZXJ/J8TYy2zjeTtObV37yx3ZG7IkrN9S26aRKEKo/aylCPBjs6XqoykHk3HZ9+BpMTi
+         Doy4eQ4zUHJcZDMm1FIztawz/doR1sdLh2UwJ/sPPP25zIL3HbazsxYwhUDH+Ap8VzET
+         Qvxg==
+X-Gm-Message-State: APjAAAUInsi9J4r7tqVMb5VmmA1/yK5IA8ZGnCfbgOpftvla0zXksLOu
+        BTcplVP1Q0Dj87hsMOSya2kLmobW1ib6obo3FGwKJw==
+X-Google-Smtp-Source: APXvYqxTnkedDl3WfOaTYc5zPvQzy8kthpkpkpBSqhN6gZHv/BspJZ7NO7Rg1+s2VLYZDUBSdjj/t55S8xtLQ87up3w=
+X-Received: by 2002:a9d:dc1:: with SMTP id 59mr28456355ots.250.1576440398617;
+ Sun, 15 Dec 2019 12:06:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20191124195225.31230-1-jongk@linux-m68k.org> <CAMuHMdVv9FU+kTf7RDd=AFKL12tJxzmGbX4jZZ8Av3VCZUzwhA@mail.gmail.com>
+ <20191126144121.kzkujr27ga36gqnf@wittgenstein> <CACz-3riWp1fWCaAJtMgRx9VRVAJ+ktdbAqHBobQUXR9XpHrVcQ@mail.gmail.com>
+ <CAMuHMdVLQF_KyWDn=HxmLAp6Vy3jyw=JLDQWryLt809sCecosA@mail.gmail.com> <009ee46a-eb51-f76f-915d-baa883f0be24@physik.fu-berlin.de>
+In-Reply-To: <009ee46a-eb51-f76f-915d-baa883f0be24@physik.fu-berlin.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 15 Dec 2019 21:06:27 +0100
+Message-ID: <CAMuHMdWFuiFMzYe4L5JY6iRfwzbGW4BH5MVCGrSuuXZHrzKGpw@mail.gmail.com>
+Subject: Re: [PATCH] m68k: Wire up clone3() syscall
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Kars de Jong <jongk@linux-m68k.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+Hi Adrian,
 
-Fixes:
+On Sun, Dec 15, 2019 at 6:01 PM John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
+> On 12/15/19 5:48 PM, Geert Uytterhoeven wrote:
+> > With Ubuntu's libc6-m68k-cross installed, the selftest binaries cross-build
+> > fine.  Running them on a very old Debian requires some hackery:
+> >
+> >   1. Copy ld.so.1, ld-2.27.so, libc.so.6, and libc-2.27.so from
+> >      /usr/m68k-linux-gnu/lib/ to /tmp/lib on the m68k target,
+> >   2. mkdir /tmp/proc && mount proc /tmp/proc -t proc,
+> >   3. chroot /tmp /tmp/<test-binary>.
+> Why not use a recent environment?
+>
+> > https://wiki.debian.org/M68k/QemuSystemM68k
 
-In file included from ../drivers/gpu/drm/bridge/ti-sn65dsi86.c:25:
-../drivers/gpu/drm/bridge/ti-sn65dsi86.c: In function ‘ti_sn_bridge_enable’:
-../include/drm/drm_print.h:339:2: warning: ‘last_err_str’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  339 |  drm_dev_printk(dev, KERN_ERR, "*ERROR* " fmt, ##__VA_ARGS__)
-      |  ^~~~~~~~~~~~~~
-../drivers/gpu/drm/bridge/ti-sn65dsi86.c:650:14: note: ‘last_err_str’ was declared here
-  650 |  const char *last_err_str;
-      |              ^~~~~~~~~~~~
-In file included from ../drivers/gpu/drm/bridge/ti-sn65dsi86.c:25:
-../include/drm/drm_print.h:339:2: warning: ‘ret’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  339 |  drm_dev_printk(dev, KERN_ERR, "*ERROR* " fmt, ##__VA_ARGS__)
-      |  ^~~~~~~~~~~~~~
-../drivers/gpu/drm/bridge/ti-sn65dsi86.c:654:6: note: ‘ret’ was declared here
-  654 |  int ret;
-      |      ^~~
-  Building modules, stage 2.
----
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yeah, I will give that a try... one day...
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index cb774ee536cd..976f98991b3d 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -618,11 +618,11 @@ static int ti_sn_link_training(struct ti_sn_bridge *pdata, int dp_rate_idx,
- static void ti_sn_bridge_enable(struct drm_bridge *bridge)
- {
- 	struct ti_sn_bridge *pdata = bridge_to_ti_sn_bridge(bridge);
--	const char *last_err_str;
-+	const char *last_err_str = "No supported DP rate";
- 	int dp_rate_idx;
- 	int max_dp_rate_idx;
- 	unsigned int val;
--	int ret;
-+	int ret = -EINVAL;
- 
- 	/*
- 	 * Run with the maximum number of lanes that the DP sink supports.
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.23.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
