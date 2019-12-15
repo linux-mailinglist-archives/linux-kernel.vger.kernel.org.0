@@ -2,202 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8E4511F5A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 05:25:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3220511F5C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 05:35:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfLOEZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 23:25:07 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:55703 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726019AbfLOEZF (ORCPT
+        id S1726231AbfLOEdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 23:33:41 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:44000 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbfLOEdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 23:25:05 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 379475AC9;
-        Sat, 14 Dec 2019 23:25:04 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sat, 14 Dec 2019 23:25:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=eiExqcZ7ujXnf
-        ULrpep8+tjQvNG7hCVX9mCQFkEA6Uo=; b=Y3B7esRl9WjdxAbHeNYyrAjnpTM5n
-        /sxSOD24kVHfDwnWXzc2FcA0QeX+Syj9i8dtZz/HLEb96dWpD90JPa2DDsbG10qq
-        4qp9saXXWWXMD7wOGjpEfA2ZBy3F588WejM4+hUDCNddldCGctUhQTjJJtEdZKtU
-        ZgnuJFqVGgxe/FVzNxYkWApkmkQJrbeaHg0jYbhFfXNJ841aeD5t4oRGtFGb7ifU
-        4WPajAbXxI4R+C5O4WTzm7HJfHbrNNMalRaXBdTqC4HPlL2YOHJWdBeREiek+29K
-        EIuP5IbCbDQfy6RvOT9C/Wcf9cOAswMvclhtT7bRCGpal1ek3jqsaqBNQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=eiExqcZ7ujXnfULrpep8+tjQvNG7hCVX9mCQFkEA6Uo=; b=Oe0HD8Xi
-        1Mk7itRp/qo0Mk7pIEd/zKrwkmAT+4VBjv7vwuJq/ybqpemhfBTI2Xne8EBclGfP
-        xNl+10hp1MAddEx9AbVSXE8Ng/PNI5k/jg/2QyYhZDNaKn2jW3xrs0YMtSG3YRKc
-        ldF0KsHlOmF87mgZ2kNbtFwm8GA1/MqlUFnXvZo1zx9LTj3zwBb3K+yyU6GGraqs
-        ZK0I0U8K9kKd5kF67i/XKy84Rdny2+Evnn/QD3II5pRN6QN/4As1oC4QdrBaz5E3
-        1nnzBqdiPxMr5+CCw63bWtt6T0/aBKS4SjkkJsEV+PelyL4PDUmtjesCRm1EBZfk
-        pQR+e8WWak2tXA==
-X-ME-Sender: <xms:oLX1XYDiok_1POBQxg95OkoXKhgLHZktDPGxuFQK7HTd-nJ1SQFbtA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddtvddgieelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
-    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
-    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgepvd
-X-ME-Proxy: <xmx:oLX1XSLpkAWwI3qOhoCsdTWKd9fqMHG0la571rOACOwOKvyhpipQdQ>
-    <xmx:oLX1XbzWSA3A86E2CJGAWj90Ea1rxhHH_sRktGr7nCtFPxqbiVhXfA>
-    <xmx:oLX1XWw7An2FuzIJTNcjVCiiH8eFAWLmCHz95XkzsfH8fRw2GK3Tpw>
-    <xmx:oLX1XRH3K7Di1erBh9UIyftu4nis3iwYuRKcTDaFU4EYI89DrSYflQ>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2730A80059;
-        Sat, 14 Dec 2019 23:25:03 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ondrej Jirman <megous@megous.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v5 8/8] firmware: arm_scpi: Support unidirectional mailbox channels
-Date:   Sat, 14 Dec 2019 22:24:55 -0600
-Message-Id: <20191215042455.51001-9-samuel@sholland.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191215042455.51001-1-samuel@sholland.org>
-References: <20191215042455.51001-1-samuel@sholland.org>
+        Sat, 14 Dec 2019 23:33:41 -0500
+Received: by mail-pj1-f67.google.com with SMTP id g4so1494112pjs.10
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2019 20:33:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=K51j8K8EN2XPuqttk34dMlLQCvUL9tG6S45o7V+5+MU=;
+        b=rSuoQkCYH6bzYBVjPU8FbqRNmY0YmiIcGj83O2cSsmxSzv22e16yc20L3uKiVbr3nK
+         B52slI9FmgYjesrnwzmnCMtqozUyb7F7j9eyORMMTiB+BIt1vHimX+L+2eQO5LekkMnr
+         koQfyq+dRdKzG/meZ+yw6bU2vO/Q+snYpLPwKD7cfrKBm/ohGaT6sGqDul/3zJQ1mkRn
+         4oaveKo+jwkQaRKBl9hp/LLa4TrEPwAShyzFk5wahuGDyB2x4I9JBjh/KcK1ugyMVQiz
+         8xF3W/J05lu9lQEcUzSpF91II4YLNi3EDZIQ6f99Ngi7L6E9hWPZMoSkhJiftWXuFHY/
+         X8nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=K51j8K8EN2XPuqttk34dMlLQCvUL9tG6S45o7V+5+MU=;
+        b=K5qBQG5M3kdf5ZPGplt+LumundxOPgnrhn6ELdHR0NvLEdEXFNiJzYN8Jqh8nCqPlG
+         DPDDEh5cD5NNUcndMnWbKM3VDue4lIyGQndXvi2yAtgWQaeaHsVFfGlrQkKAG/SXN1D+
+         ev9gNUbQ936AqRQ1W9HV/nQg0LeS7RNYrYtYw840xZQOl1M5CL0M3gH2KQ2l95Mib9Aj
+         bhUyKsBYGLKc/mE/8C68Q9b630gL8vCNPcqrJGhqHdsa3zOjjxCoT0xzEjOAn3oGPrYv
+         DZbsNrgSiswXW6UPxE1rtPRM0tWneQ+f6TxHakfCzbj7/uKHG9Z4Q0V2KC/EEdarV2uf
+         Ulcg==
+X-Gm-Message-State: APjAAAV0kK4SGZhqnDcamE2inZLm7Fu6Ib7mZIxKDJPnVfc+k9I9THQr
+        dBoDA/lu5DwBBvlSg+RDLseEygNY3VI=
+X-Google-Smtp-Source: APXvYqxDxnE+42cDuVy+5iQUU/Tx31SkRqB05+m6gIJ/7lrWfSSLYL1x8M/df2LadQS8e5Ghu7t/Lg==
+X-Received: by 2002:a17:902:209:: with SMTP id 9mr9254119plc.58.1576384420590;
+        Sat, 14 Dec 2019 20:33:40 -0800 (PST)
+Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
+        by smtp.gmail.com with ESMTPSA id r20sm17218140pgu.89.2019.12.14.20.33.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2019 20:33:40 -0800 (PST)
+Date:   Sat, 14 Dec 2019 20:33:37 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Milind Parab <mparab@cadence.com>
+Cc:     <nicolas.nerre@microchip.com>, <andrew@lunn.ch>,
+        <antoine.tenart@bootlin.com>, <f.fainelli@gmail.com>,
+        <rmk+kernel@armlinux.org.uk>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <hkallweit1@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <dkangude@cadence.com>,
+        <a.fatoum@pengutronix.de>, <brad.mouring@ni.com>,
+        <pthombar@cadence.com>
+Subject: Re: [PATCH v2 1/3] net: macb: fix for fixed-link mode
+Message-ID: <20191214203337.687ebd6b@cakuba.netronome.com>
+In-Reply-To: <1576230061-11239-1-git-send-email-mparab@cadence.com>
+References: <1576230007-11181-1-git-send-email-mparab@cadence.com>
+        <1576230061-11239-1-git-send-email-mparab@cadence.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some mailbox controllers have only unidirectional channels, so we need a
-pair of them for each SCPI channel. If a mbox-names property is present,
-look for "rx" and "tx" mbox channels; otherwise, the existing behavior
-is preserved, and a single mbox channel is used for each SCPI channel.
+On Fri, 13 Dec 2019 09:41:01 +0000, Milind Parab wrote:
+> This patch fix the issue with fixed link. With fixed-link
+> device opening fails due to macb_phylink_connect not
+> handling fixed-link mode, in which case no MAC-PHY connection
+> is needed and phylink_connect return success (0), however
+> in current driver attempt is made to search and connect to
+> PHY even for fixed-link.
+> 
+> Signed-off-by: Milind Parab <mparab@cadence.com>
 
-Note that since the mailbox framework only supports a single phandle
-with each name (mbox_request_channel_byname always returns the first
-one), this new mode only supports a single SCPI channel.
-
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- drivers/firmware/arm_scpi.c | 58 +++++++++++++++++++++++++++++--------
- 1 file changed, 46 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
-index a80c331c3a6e..36ff9dd8d0fa 100644
---- a/drivers/firmware/arm_scpi.c
-+++ b/drivers/firmware/arm_scpi.c
-@@ -231,7 +231,8 @@ struct scpi_xfer {
- 
- struct scpi_chan {
- 	struct mbox_client cl;
--	struct mbox_chan *chan;
-+	struct mbox_chan *rx_chan;
-+	struct mbox_chan *tx_chan;
- 	void __iomem *tx_payload;
- 	void __iomem *rx_payload;
- 	struct list_head rx_pending;
-@@ -505,7 +506,7 @@ static int scpi_send_message(u8 idx, void *tx_buf, unsigned int tx_len,
- 	msg->rx_len = rx_len;
- 	reinit_completion(&msg->done);
- 
--	ret = mbox_send_message(scpi_chan->chan, msg);
-+	ret = mbox_send_message(scpi_chan->tx_chan, msg);
- 	if (ret < 0 || !rx_buf)
- 		goto out;
- 
-@@ -854,8 +855,13 @@ static void scpi_free_channels(void *data)
- 	struct scpi_drvinfo *info = data;
- 	int i;
- 
--	for (i = 0; i < info->num_chans; i++)
--		mbox_free_channel(info->channels[i].chan);
-+	for (i = 0; i < info->num_chans; i++) {
-+		struct scpi_chan *pchan = &info->channels[i];
-+
-+		if (pchan->tx_chan != pchan->rx_chan)
-+			mbox_free_channel(pchan->tx_chan);
-+		mbox_free_channel(pchan->rx_chan);
-+	}
- }
- 
- static int scpi_remove(struct platform_device *pdev)
-@@ -903,6 +909,7 @@ static int scpi_probe(struct platform_device *pdev)
- 	struct resource res;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
-+	bool use_mbox_names = false;
- 
- 	scpi_info = devm_kzalloc(dev, sizeof(*scpi_info), GFP_KERNEL);
- 	if (!scpi_info)
-@@ -916,6 +923,14 @@ static int scpi_probe(struct platform_device *pdev)
- 		dev_err(dev, "no mboxes property in '%pOF'\n", np);
- 		return -ENODEV;
- 	}
-+	if (of_get_property(dev->of_node, "mbox-names", NULL)) {
-+		use_mbox_names = true;
-+		if (count != 2) {
-+			dev_err(dev, "need exactly 2 mboxes with mbox-names\n");
-+			return -ENODEV;
-+		}
-+		count /= 2;
-+	}
- 
- 	scpi_info->channels = devm_kcalloc(dev, count, sizeof(struct scpi_chan),
- 					   GFP_KERNEL);
-@@ -961,15 +976,34 @@ static int scpi_probe(struct platform_device *pdev)
- 		mutex_init(&pchan->xfers_lock);
- 
- 		ret = scpi_alloc_xfer_list(dev, pchan);
--		if (!ret) {
--			pchan->chan = mbox_request_channel(cl, idx);
--			if (!IS_ERR(pchan->chan))
--				continue;
--			ret = PTR_ERR(pchan->chan);
--			if (ret != -EPROBE_DEFER)
--				dev_err(dev, "failed to get channel%d err %d\n",
--					idx, ret);
-+		if (ret)
-+			return ret;
-+
-+		if (use_mbox_names) {
-+			pchan->rx_chan = mbox_request_channel_byname(cl, "rx");
-+			if (IS_ERR(pchan->rx_chan)) {
-+				ret = PTR_ERR(pchan->rx_chan);
-+				goto fail;
-+			}
-+			pchan->tx_chan = mbox_request_channel_byname(cl, "tx");
-+			if (IS_ERR(pchan->rx_chan)) {
-+				ret = PTR_ERR(pchan->tx_chan);
-+				goto fail;
-+			}
-+		} else {
-+			pchan->rx_chan = mbox_request_channel(cl, idx);
-+			if (IS_ERR(pchan->rx_chan)) {
-+				ret = PTR_ERR(pchan->rx_chan);
-+				goto fail;
-+			}
-+			pchan->tx_chan = pchan->rx_chan;
- 		}
-+		continue;
-+
-+fail:
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to get channel%d err %d\n",
-+				idx, ret);
- 		return ret;
- 	}
- 
--- 
-2.23.0
-
+We'll wait to give a chance for Russell, Andrew and others to review,
+but this patch looks like a fix and the other ones look like features.
+You should post the fix separately so it's included in Linus'es tree
+ASAP (mark the patch with [PATCH net]), and the rest of the patches can
+wait for the next merge window (mark [PATCH net-next]). Fixes should
+also have an appropriate Fixes tag pointing at the first commit where
+the bug was present.
