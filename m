@@ -2,89 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD3811F879
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 16:31:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37DB411F877
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 16:31:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbfLOPbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 10:31:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbfLOPbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 10:31:36 -0500
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F3302465B;
-        Sun, 15 Dec 2019 15:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576423895;
-        bh=LgHeGbyJrYWU3ryipXZAEWbKr4XnV0pc7CZo8nwe71o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=i5Cutc5J5C/5aYfb3pnqldlule1dkMTiFtdLJQQf0csa7oyzCh7cQOCYG07GcSVZ9
-         IqhCNmw8CkN/a/xa4PpC8UyV1eVrvlsHUwUDR3+xpHamO7llyTLZV0IjgaarW3NFPu
-         smNpvbffdnRweEOQ/u/ZeoB1inTYavFVuPAUA4iU=
-Received: by mail-lj1-f178.google.com with SMTP id h23so3967503ljc.8;
-        Sun, 15 Dec 2019 07:31:35 -0800 (PST)
-X-Gm-Message-State: APjAAAVsIYOgOb/Muw/9yMUEjVfjYTAUGVU8EbdnvV8zjQ2UWTG9nmvH
-        BocPKACnfdoRNuJvziYnELhBgiDEObBzqUZqH0A=
-X-Google-Smtp-Source: APXvYqw2DbqZ9mPFhwyFC3xGwQKN0FgHbG3yv4TEKTv/RS3DYTfQCkrygxKAvb9/4K7Pve0MBgrcu0ELakg7Nt6nOu8=
-X-Received: by 2002:a05:651c:208:: with SMTP id y8mr16919184ljn.36.1576423893690;
- Sun, 15 Dec 2019 07:31:33 -0800 (PST)
+        id S1726470AbfLOPbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 10:31:14 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37160 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfLOPbN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 10:31:13 -0500
+Received: by mail-ot1-f68.google.com with SMTP id k14so5617751otn.4
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 07:31:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=Qkvwifp5YBKRkhsdeOIzlQKn34fyy5f0X+GCI33UMkA=;
+        b=ZMRF2pZAYe1uOSszCpWjsIWqLUNFCX8+srTXbsf3PbqzDElRdVMq0T8f51gp/6pXDK
+         cH3RJBZfHAWkKZtOTghzLhJIBO/pryawtebzm39OpK7uMMbyjdftNBLHsClzPZgZ0fpq
+         tc2f6YIjQNfIK/feRARvrnVKMvkaXTvboolk76UJWeN5ecHrxJ69k+xUNg7F/u58kYp3
+         0W9zWCaqyt1WR1ximB637ydiT48UDsR5r0xBBkqgXYMl1BehU8p7sYr48nKtencGH35T
+         z5QjzaPAysb75tZq9blYtXG1FX8GfU2NrCVEKKOqwpziJgCW06dKIPX9/dLMJ0go5BdR
+         dTUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=Qkvwifp5YBKRkhsdeOIzlQKn34fyy5f0X+GCI33UMkA=;
+        b=pTWzx2te5/0iywL8359+h83KTfc6jfUAbQNPKzAjJ9AS58knH45UySPEtGUaMQs0eG
+         wDmWzI9UdnqrgzclGMMzSChl7xZveW5v+djdbkoCiGxpBwkSaILQT1Ki/A86qF3SYxMX
+         eIK98WzFrg+7twI74zF5mXG/pOi+XaDfdbCSIqC2rT1pY3QjyYX5hhFu5SyRnxakbZbo
+         EzAqQXkRSDa4JpOl0iI7VazANhbZrP8QNrPu6IWB/mbFsAFEFh3c3Aq3O+zBfFgPuHfE
+         P9t+XyWF5Shi4wLYN21T+EhTR1qayAoS+1s53nIVU0WCSmvoOXbDYodQgauw/yE6B6+f
+         yplw==
+X-Gm-Message-State: APjAAAUqLJdYZHOaoO3y3Y/eXSHkEd+wd5fLNA2i+tfSjcnLJ/lvwTVk
+        s22TZVSlZgrbULls+C8hoDafSsvnA8Aj0jEtM+s=
+X-Google-Smtp-Source: APXvYqwbDbhTRcfe/+r0TCIZl8ABz7Pm2JdVcHgIebs6qzDTI65WVHijF21+4HD4T8E4DDv6swbSzVl9Wh4QFG/+280=
+X-Received: by 2002:a9d:6b17:: with SMTP id g23mr25777775otp.265.1576423872878;
+ Sun, 15 Dec 2019 07:31:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20191214181130.25808-1-tiny.windzz@gmail.com>
-In-Reply-To: <20191214181130.25808-1-tiny.windzz@gmail.com>
-From:   Chanwoo Choi <chanwoo@kernel.org>
-Date:   Mon, 16 Dec 2019 00:30:57 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH2CS6o-zaHXReKJXzxsU_jfYKg2WL7uGpzyaFNhgTSVbg@mail.gmail.com>
-Message-ID: <CAGTfZH2CS6o-zaHXReKJXzxsU_jfYKg2WL7uGpzyaFNhgTSVbg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PM / devfreq: rockchip-dfi: add missing of_node_put()
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+Received: by 2002:a4a:9b51:0:0:0:0:0 with HTTP; Sun, 15 Dec 2019 07:31:12
+ -0800 (PST)
+Reply-To: pm643779@gmail.com
+From:   Mr Frederick <mrfarukozhan@gmail.com>
+Date:   Sun, 15 Dec 2019 16:31:12 +0100
+Message-ID: <CAOnfJt0X9xnjJgePq7u2tdvHc8nST0L=v2-YO=n7DXV-9ucdvA@mail.gmail.com>
+Subject: Your Payment.
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019=EB=85=84 12=EC=9B=94 15=EC=9D=BC (=EC=9D=BC) =EC=98=A4=EC=A0=84 3:12, =
-Yangtao Li <tiny.windzz@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> of_node_put needs to be called when the device node which is got
-> from of_parse_phandle has finished using.
->
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/devfreq/event/rockchip-dfi.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event=
-/rockchip-dfi.c
-> index 5d1042188727..45b190e443d8 100644
-> --- a/drivers/devfreq/event/rockchip-dfi.c
-> +++ b/drivers/devfreq/event/rockchip-dfi.c
-> @@ -200,6 +200,7 @@ static int rockchip_dfi_probe(struct platform_device =
-*pdev)
->         node =3D of_parse_phandle(np, "rockchip,pmu", 0);
->         if (node) {
->                 data->regmap_pmu =3D syscon_node_to_regmap(node);
-> +               of_node_put(node);
->                 if (IS_ERR(data->regmap_pmu))
->                         return PTR_ERR(data->regmap_pmu);
->         }
-> --
-> 2.17.1
->
+Dear Beneficiary,
 
-Applied it. Better to use the capital letter for first char of sentence.
+This is to inform you that we are holding a parcel in your name, we
+work in collaboration with top firms and Governments of various
+countries as delivering agent that deliver valuable packages and
+baggage in trust and we have received instruction to deliver directly
+to your doorstep a parcel ( $750,000.00 cash in US Dollars ) which has
+been shipped in your favor by your Acquaintances .
 
---=20
-Best Regards,
-Chanwoo Choi
+The parcel was not delivered to you because the Customs cannot solely
+rely on the diplomat/Courier etc who shipped it due to the prevailing
+situation worldwide on cash movement and transfer of Hugh sum of money
+anyway our duty here is to provide you with convenient financial
+services and to ascertain that its delivered in good condition as we
+believe in keeping things as simple as possible which means you will
+no longer have to wait for long periods .
+
+However, your advice to kindly reconfirm to us your personal
+information as follows.
+Your Full name ,....................
+Your Address.....................
+Your Phone Number ...................
+
+To enable us  process and label your package clearly with your full
+name and clear all the entire registration/costs associated with the
+delivery to exonerate you from any form of investigations or
+interrogation and to authenticate the fact that it has no links
+whatsoever with either drugs or terrorism subject to international
+CASH DELIVERY regulations.
+
+In compliance with this condition,  I will facilitate the delivery to
+your designation address immediately and hand you the cash which is
+being held in trust and all the document that back up your cash I can
+also accompany you to your bank to make a test deposit of the cash
+into your bank account if you want .
+
+with regards ,
+Mr Frederick  A
+Safes Deposits Vaults
