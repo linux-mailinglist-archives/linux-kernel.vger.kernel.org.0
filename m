@@ -2,85 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A62DA11F51E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 00:56:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D733511F52B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2019 01:16:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfLNX4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Dec 2019 18:56:11 -0500
-Received: from node.akkea.ca ([192.155.83.177]:38606 "EHLO node.akkea.ca"
+        id S1727135AbfLOAPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Dec 2019 19:15:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726687AbfLNX4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Dec 2019 18:56:11 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id C9C0E4E200E;
-        Sat, 14 Dec 2019 23:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1576367770; bh=l91r0YDEN+oe9jxf3D6wJpDm6U1PN8Ku0lGaSjCm2s8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=E1iamzbfDFUgiQVjPZ5VUjG6MRahIpppFp2Gt/CcK2VlOBIhQP0Goa5ztQLQEu8sV
-         9CEzEEufMBp4gv6YUv5XsJH+rZMwa0gAXSfOF0HPyIusv7ofiR13wL2+vX2kAfKRJI
-         k4I7GPY8ilZjYP4sMjU7WRdf/FR6SDUSa9FT+1KQ=
-X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
-Received: from node.akkea.ca ([127.0.0.1])
-        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id V3F5Ef6DWhwm; Sat, 14 Dec 2019 23:56:10 +0000 (UTC)
-Received: from thinkpad-tablet.localdomain (S0106788a2041785e.gv.shawcable.net [70.66.86.75])
-        by node.akkea.ca (Postfix) with ESMTPSA id 54F364E2003;
-        Sat, 14 Dec 2019 23:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1576367770; bh=l91r0YDEN+oe9jxf3D6wJpDm6U1PN8Ku0lGaSjCm2s8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=E1iamzbfDFUgiQVjPZ5VUjG6MRahIpppFp2Gt/CcK2VlOBIhQP0Goa5ztQLQEu8sV
-         9CEzEEufMBp4gv6YUv5XsJH+rZMwa0gAXSfOF0HPyIusv7ofiR13wL2+vX2kAfKRJI
-         k4I7GPY8ilZjYP4sMjU7WRdf/FR6SDUSa9FT+1KQ=
-From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     kernel@puri.sm, Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>
-Subject: [PATCH v2 2/2] dt-bindings: sound: gtm601: add the broadmobi interface
-Date:   Sat, 14 Dec 2019 15:55:50 -0800
-Message-Id: <20191214235550.31257-3-angus@akkea.ca>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191214235550.31257-1-angus@akkea.ca>
-References: <20191214235550.31257-1-angus@akkea.ca>
+        id S1726823AbfLOAPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Dec 2019 19:15:12 -0500
+Subject: Re: [GIT PULL] Wimplicit-fallthrough patches for 5.5-rc2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576368911;
+        bh=2AVr/3T/8zCyT1jUqHdrzREhHmMssaywUFhCSP591m0=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=ecHOMWuoVVESX8lpwCkNbfj+9eQ9FODmAgHHYG1hY+Adacc8gJPqtKmalbo3yYLBt
+         yzSGgKyxodgvF/gvH3vWTGYqYmpxWwNnns2PfN/AHbNn8fwNJyw3zigOGgyn7rc68P
+         UOgICh6Bxoc9WpuA/1vBU8NJc0lJ8icoO5uRoNBw=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191214200709.GA20124@embeddedor>
+References: <20191214200709.GA20124@embeddedor>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191214200709.GA20124@embeddedor>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git
+ tags/Wimplicit-fallthrough-5.5-rc2
+X-PR-Tracked-Commit-Id: 3d519d6d388ba4f9a75d0e0b6f60d890987bc096
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 510c9788991c58827373bca719d8cffa4d65f846
+Message-Id: <157636891171.21229.8559220059254711187.pr-tracker-bot@kernel.org>
+Date:   Sun, 15 Dec 2019 00:15:11 +0000
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Broadmobi BM818 uses a different sample rate and channels from the
-option modem.
+The pull request you sent on Sat, 14 Dec 2019 14:07:09 -0600:
 
-Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/sound/gtm601.txt | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.5-rc2
 
-diff --git a/Documentation/devicetree/bindings/sound/gtm601.txt b/Documentation/devicetree/bindings/sound/gtm601.txt
-index 5efc8c068de0..efa32a486c4a 100644
---- a/Documentation/devicetree/bindings/sound/gtm601.txt
-+++ b/Documentation/devicetree/bindings/sound/gtm601.txt
-@@ -1,10 +1,16 @@
- GTM601 UMTS modem audio interface CODEC
- 
--This device has no configuration interface. Sample rate is fixed - 8kHz.
-+This device has no configuration interface. The sample rate and channels are
-+based on the compatible string
-+	"option,gtm601" = 8kHz mono
-+	"broadmobi,bm818" = 48KHz stereo
- 
- Required properties:
- 
--  - compatible : "option,gtm601"
-+  - compatible : one of
-+	"option,gtm601"
-+	"broadmobi,bm818"
-+
- 
- Example:
- 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/510c9788991c58827373bca719d8cffa4d65f846
+
+Thank you!
+
 -- 
-2.17.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
