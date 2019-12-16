@@ -2,99 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 772A41202D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:44:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B52F71202DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:46:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbfLPKoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 05:44:04 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46632 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727324AbfLPKoD (ORCPT
+        id S1727519AbfLPKqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 05:46:16 -0500
+Received: from zimbra2.kalray.eu ([92.103.151.219]:36816 "EHLO
+        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbfLPKqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:44:03 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z7so6576957wrl.13
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 02:44:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=TYn4KXFCmnMue9oYWo/j3mg7jGM7rzuxGct/WdOvzz8=;
-        b=y49FSHZncFMOSmnFI4STiDIoR9ZBizHKIK1wozs34TnPKQasUeHhsz//CBl+myFReF
-         8BGzgzvc79cYEQAH8qhBqhBP5y25cjXxnggkZ3aAkfr3ZNpIcBgGWR1Qxsqp+AZ2I2/c
-         aMXvjPl2hqWhMtlMoxDu1x8AjX+DKoiWAZb1CofggnsrOEOzs4VIYWaFYMBqYQwqFiHj
-         RrntcuxTUtVnxhIv6TrDwlrav6M9fH3+cLwYQ6gpNCVb/Un3BBimVP7W9qGziis98gdy
-         Fyxr6NHhkiFVxTHVc3ALBEa8mE5wfS8ArzFP20jre1v8C2olr1a5fbjBgzJTAH5+g3KB
-         W5cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=TYn4KXFCmnMue9oYWo/j3mg7jGM7rzuxGct/WdOvzz8=;
-        b=oDVoQBiYyTEAirJl0Fg1j5Z/902gdjwcC+iH5D4Kgm430llSfVR9Xo1lbhEhwF0YN1
-         0Clb76Ucerxgc9teB0DIOG/dWbbIdAJ8OuQsiJrQn6E5irFwUJBXH5iytON5QHP3UB3m
-         4l7S2Dnio2Ee6Bb2RodMfAWHbYsVQeArV/mqSv9MSUXLoT2ZefWeOir9F3XP0hC6AUJa
-         UV5jbVXf8f/mw3Ic0HI5S500kEX4M/vCOr8ku3b6uphPThA/DISS0ogoTX2i/RIxa6Bb
-         Pq1ifFWDMRNBMx03uVxyqyffxXzUTV/efuKsVIs207s2nxuN2jOZ5Tn6xZiHv+Jwge+D
-         mDag==
-X-Gm-Message-State: APjAAAVFBD+rTKgU/aYwrwmappjLlktYyJW2Szq05tPx1aIicrkFMFS8
-        uK2mDohPb44Fl4YJbU89xN9Vyg==
-X-Google-Smtp-Source: APXvYqy+xHiEnHqxwZv7QXY40UpjEmUZChrkX33sH3sKrTGGgaaX2f6qwwlc+D8e0z2Z3R6tNR26Kg==
-X-Received: by 2002:adf:e3c7:: with SMTP id k7mr31104859wrm.80.1576493041373;
-        Mon, 16 Dec 2019 02:44:01 -0800 (PST)
-Received: from dell ([2.27.35.132])
-        by smtp.gmail.com with ESMTPSA id z3sm21030535wrs.94.2019.12.16.02.43.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 02:44:00 -0800 (PST)
-Date:   Mon, 16 Dec 2019 10:43:59 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mon, 16 Dec 2019 05:46:15 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id BF31D27E038D;
+        Mon, 16 Dec 2019 11:46:13 +0100 (CET)
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id dL9Pma99PY6C; Mon, 16 Dec 2019 11:46:13 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id 2643327E0650;
+        Mon, 16 Dec 2019 11:46:13 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 2643327E0650
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
+        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1576493173;
+        bh=Q3J3IGqUHa44cwERxlcia+XQrwcBXBAjLyRwd25v6zc=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=pT2UXCEyjDQxsTkin3laAuvBsQyHND9Gfas+cElTO7ssTizN/EkZrv6VMlF2kL3ZR
+         s/xVZXjP2UAdijixv0utsaSxxj4CdrLqrfkch9XgvqLxWxZYRziSAcjEwERXbnNZkX
+         b1/Cj/AS9UPWkiScCZgWahq81mKrErpyqph4px6Q=
+X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id CyTpA5Zjb0LS; Mon, 16 Dec 2019 11:46:13 +0100 (CET)
+Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id 0ABF727E038D;
+        Mon, 16 Dec 2019 11:46:13 +0100 (CET)
+Date:   Mon, 16 Dec 2019 11:46:12 +0100 (CET)
+From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] mfd: ab8500-core: Add device tree support for AB8505
-Message-ID: <20191216104359.GF3601@dell>
-References: <20191117221053.278415-1-stephan@gerhold.net>
- <20191117221053.278415-2-stephan@gerhold.net>
+        Mark Rutland <mark.rutland@arm.com>, od <od@zcrc.me>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <340758118.96812669.1576493172804.JavaMail.zimbra@kalray.eu>
+In-Reply-To: <20191210164014.50739-2-paul@crapouillou.net>
+References: <20191210164014.50739-1-paul@crapouillou.net> <20191210164014.50739-2-paul@crapouillou.net>
+Subject: Re: [PATCH v4 2/5] remoteproc: Add device-managed variants of
+ rproc_alloc/rproc_add
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191117221053.278415-2-stephan@gerhold.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [192.168.40.202]
+X-Mailer: Zimbra 8.8.12_GA_3794 (ZimbraWebClient - GC75 (Linux)/8.8.12_GA_3794)
+Thread-Topic: remoteproc: Add device-managed variants of rproc_alloc/rproc_add
+Thread-Index: A1lvR1ZnQGMreymAk0HLkaguiV5GCQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 17 Nov 2019, Stephan Gerhold wrote:
+Hi Paul,
 
-> AB8505 support was never fully converted to the device tree.
-> Most of the MFD cells for AB8505 lack an "of_compatible",
-> which prevents them from being configured through the device tree.
-> 
-> Align the definition of the AB8505 MFD cells with the ones for AB8500,
-> and add device tree compatibles. Except for GPIO and regulators the
-> compatibles are equal to those used for AB8500 because the hardware
-> does not differ much.
-> 
-> Finally, change db8500_prcmu_register_ab8500() to check for the AB8505
-> device tree node additionally, and probe it if it is found.
-> 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+I tested it on our driver and freeing/remove are called correctly on probe =
+error and on module removal.
+
+Tested-By: Clement Leger <cleger@kalray.eu>
+
+Regards,
+
+Cl=C3=A9ment
+
+----- On 10 Dec, 2019, at 17:40, Paul Cercueil paul@crapouillou.net wrote:
+
+> Add API functions devm_rproc_alloc() and devm_rproc_add(), which behave
+> like rproc_alloc() and rproc_add() respectively, but register their
+> respective cleanup function to be called on driver detach.
+>=20
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
->  drivers/mfd/ab8500-core.c  | 14 ++++++++++++--
->  drivers/mfd/db8500-prcmu.c | 26 ++++++++++++++++++++------
->  2 files changed, 32 insertions(+), 8 deletions(-)
-
-Applied, thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>=20
+> Notes:
+>    v3: New patch
+>    v4: No change
+>=20
+> drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++
+> include/linux/remoteproc.h           |  5 +++
+> 2 files changed, 72 insertions(+)
+>=20
+> diff --git a/drivers/remoteproc/remoteproc_core.c
+> b/drivers/remoteproc/remoteproc_core.c
+> index 307df98347ba..0a9fc7fdd1c3 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1932,6 +1932,33 @@ int rproc_add(struct rproc *rproc)
+> }
+> EXPORT_SYMBOL(rproc_add);
+>=20
+> +static void devm_rproc_remove(void *rproc)
+> +{
+> +=09rproc_del(rproc);
+> +}
+> +
+> +/**
+> + * devm_rproc_add() - resource managed rproc_add()
+> + * @dev: the underlying device
+> + * @rproc: the remote processor handle to register
+> + *
+> + * This function performs like rproc_add() but the registered rproc devi=
+ce will
+> + * automatically be removed on driver detach.
+> + *
+> + * Returns 0 on success and an appropriate error code otherwise.
+> + */
+> +int devm_rproc_add(struct device *dev, struct rproc *rproc)
+> +{
+> +=09int err;
+> +
+> +=09err =3D rproc_add(rproc);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return devm_add_action_or_reset(dev, devm_rproc_remove, rproc);
+> +}
+> +EXPORT_SYMBOL(devm_rproc_add);
+> +
+> /**
+>  * rproc_type_release() - release a remote processor instance
+>  * @dev: the rproc's device
+> @@ -2149,6 +2176,46 @@ int rproc_del(struct rproc *rproc)
+> }
+> EXPORT_SYMBOL(rproc_del);
+>=20
+> +static void devm_rproc_free(struct device *dev, void *res)
+> +{
+> +=09rproc_free(*(struct rproc **)res);
+> +}
+> +
+> +/**
+> + * devm_rproc_alloc() - resource managed rproc_alloc()
+> + * @dev: the underlying device
+> + * @name: name of this remote processor
+> + * @ops: platform-specific handlers (mainly start/stop)
+> + * @firmware: name of firmware file to load, can be NULL
+> + * @len: length of private data needed by the rproc driver (in bytes)
+> + *
+> + * This function performs like rproc_alloc() but the acuired rproc devic=
+e will
+> + * automatically be released on driver detach.
+> + *
+> + * On success the new rproc is returned, and on failure, NULL.
+> + */
+> +struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
+> +=09=09=09       const struct rproc_ops *ops,
+> +=09=09=09       const char *firmware, int len)
+> +{
+> +=09struct rproc **ptr, *rproc;
+> +
+> +=09ptr =3D devres_alloc(devm_rproc_free, sizeof(*ptr), GFP_KERNEL);
+> +=09if (!ptr)
+> +=09=09return ERR_PTR(-ENOMEM);
+> +
+> +=09rproc =3D rproc_alloc(dev, name, ops, firmware, len);
+> +=09if (rproc) {
+> +=09=09*ptr =3D rproc;
+> +=09=09devres_add(dev, ptr);
+> +=09} else {
+> +=09=09devres_free(ptr);
+> +=09}
+> +
+> +=09return rproc;
+> +}
+> +EXPORT_SYMBOL(devm_rproc_alloc);
+> +
+> /**
+>  * rproc_add_subdev() - add a subdevice to a remoteproc
+>  * @rproc: rproc handle to add the subdevice to
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 16ad66683ad0..5f201f0c86c3 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -595,6 +595,11 @@ int rproc_add(struct rproc *rproc);
+> int rproc_del(struct rproc *rproc);
+> void rproc_free(struct rproc *rproc);
+>=20
+> +struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
+> +=09=09=09       const struct rproc_ops *ops,
+> +=09=09=09       const char *firmware, int len);
+> +int devm_rproc_add(struct device *dev, struct rproc *rproc);
+> +
+> void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)=
+;
+>=20
+> struct rproc_mem_entry *
+> --
+> 2.24.0
