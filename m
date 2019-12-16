@@ -2,135 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F80120596
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:28:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 152FD12059F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfLPM2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:28:15 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:33336 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727542AbfLPM2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:28:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 39041FB03;
-        Mon, 16 Dec 2019 13:28:10 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id z35nRjP2CTXa; Mon, 16 Dec 2019 13:28:08 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 8B0DC498AF; Mon, 16 Dec 2019 13:28:06 +0100 (CET)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] leds: lm3692x: Allow to set ovp and brigthness mode
-Date:   Mon, 16 Dec 2019 13:28:06 +0100
-Message-Id: <9c87a17aefbf758d58f199f7046114ee7505a1fa.1576499103.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1576499103.git.agx@sigxcpu.org>
-References: <cover.1576499103.git.agx@sigxcpu.org>
+        id S1727654AbfLPM2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:28:43 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:35585 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727569AbfLPM2m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 07:28:42 -0500
+Received: by mail-vk1-f195.google.com with SMTP id o187so1562458vka.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 04:28:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QaoPgwh2xfV295jRIGnmPYl36fDZZNdnkiloN5hh4CE=;
+        b=S/B9vSxtl+yCUJ5TJtpNk2Stv/n4pxJen2cvthe3ynAP3s2fdfTEDf3tZomPyz6/ti
+         c56rzuxM4QAB6cX1SwuBlhogEMIItrAmGHHi3ns9bmKzWiSCvIoPoAQsE6LewWidcSt/
+         uS/ygBA6WwzxnYrECvxR1yO2wGs7T55an3bXKgv1VII9O7KQetwebEVFyS7PP5o5JG8Z
+         WXw7M3EFBu/VJ44dxGgmBl8Gz7OGufeX8UpyQueudgpm0MdnhWFUBNsCWFzcddS22VKX
+         sPNZI3c8eaEF8pJD1EuxwIwS1BAOsagfTF+6dyoXqycYB/nk0NUuEatN48eLbR9wzjR0
+         GqBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QaoPgwh2xfV295jRIGnmPYl36fDZZNdnkiloN5hh4CE=;
+        b=GVxEyVhXdaj1PPtclpEEEVKBtPYVmCVqV3ufGmEcUIyPrOYd5qhVSVX/3RD8v1Q3ss
+         CgugfHSoNnfybBIHUog/CYukYPt0AH7fWHMRQWBw22hTTaDv3Nqqnd15lR94ptUGlMpl
+         WvOxgf4EPRrtTKY5ErglJtB0Rt4nGK7DGba2wOgIKr/lY8sVqF8z+P+cRH9Em7key+GD
+         110UlGpk9LLgh3lMmwGbXrlyO6njtFybmkjGJBP1FpMrlCjNTYMa5IOOf/YnNvpKj1Nz
+         BKtFFxfSqdXG+RxOMeIBLdsHyWljvdbIEJEbg8Usl0X83MH53ZAg5lKbLU5cRFWHDdWe
+         1lgA==
+X-Gm-Message-State: APjAAAWz8H3zeQhHA2Zk9dMtml6wxgg0kPgRKcQAx2mO2OdboBUS5ay1
+        NqMv/yR/aNdgwW7NE/90yQX992nVI+3KQYszihVcFKaztFY=
+X-Google-Smtp-Source: APXvYqw/AlQK61lzoibi6xl6okziErleCZ8cs/LBZLmTMrBvWdsoY+o2BjyAVo3CYVnu+ks556/YdO+EFNqOolU0srg=
+X-Received: by 2002:a1f:fe4e:: with SMTP id l75mr24217758vki.18.1576499321815;
+ Mon, 16 Dec 2019 04:28:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20191129172537.31410-1-m.felsch@pengutronix.de>
+ <20191129172537.31410-4-m.felsch@pengutronix.de> <20191204134631.GT1998@sirena.org.uk>
+ <20191210094144.mxximpuouchy3fqu@pengutronix.de> <AM5PR1001MB099497419E4DCA69D424EC35805A0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191211170918.q7kqkd4lrwwp7jl3@pengutronix.de> <20191212161019.GF4310@sirena.org.uk>
+ <20191212162152.5uu3feacduetysq7@pengutronix.de>
+In-Reply-To: <20191212162152.5uu3feacduetysq7@pengutronix.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 16 Dec 2019 13:28:30 +0100
+Message-ID: <CACRpkdbkiQLmyxHG4mAOqOho34UkUZwctRwsUgyJKCgZBOUEvQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: mfd: da9062: add regulator voltage
+ selection documentation
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "joel@jms.id.au" <joel@jms.id.au>,
+        "andrew@aj.id.au" <andrew@aj.id.au>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Overvoltage protection and brightness mode are currently hardcoded
-as disabled in the driver. Make these configurable via DT.
+On Thu, Dec 12, 2019 at 5:21 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
+> On 19-12-12 16:10, Mark Brown wrote:
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- drivers/leds/leds-lm3692x.c | 43 +++++++++++++++++++++++++++++++------
- 1 file changed, 37 insertions(+), 6 deletions(-)
+> > Note that there's two bits to my concern - one is if we should be using
+> > gpiolib or pinctrl, the other is what's driving the input (whichever API
+> > it's configured through) which didn't seem to be mentioned.
+>
+> gpiolib or pinctrl:
+> I pointed out all my arguments above so I think it is time for Linus.
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index 8b408102e138..2c084b333628 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -114,6 +114,7 @@ struct lm3692x_led {
- 	struct regulator *regulator;
- 	int led_enable;
- 	int model_id;
-+	u8 boost_ctrl, brightness_ctrl;
- };
- 
- static const struct reg_default lm3692x_reg_defs[] = {
-@@ -249,10 +250,7 @@ static int lm3692x_init(struct lm3692x_led *led)
- 	if (ret)
- 		goto out;
- 
--	ret = regmap_write(led->regmap, LM3692X_BOOST_CTRL,
--			LM3692X_BOOST_SW_1MHZ |
--			LM3692X_BOOST_SW_NO_SHIFT |
--			LM3692X_OCP_PROT_1_5A);
-+	ret = regmap_write(led->regmap, LM3692X_BOOST_CTRL, led->boost_ctrl);
- 	if (ret)
- 		goto out;
- 
-@@ -268,8 +266,7 @@ static int lm3692x_init(struct lm3692x_led *led)
- 	if (ret)
- 		goto out;
- 
--	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL,
--			LM3692X_BL_ADJ_POL | LM3692X_RAMP_EN);
-+	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL, led->brightness_ctrl);
- 	if (ret)
- 		goto out;
- 
-@@ -326,6 +323,8 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- {
- 	struct fwnode_handle *child = NULL;
- 	struct led_init_data init_data = {};
-+	u32 ovp = 0;
-+	bool exp_mode;
- 	int ret;
- 
- 	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
-@@ -350,6 +349,38 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		led->regulator = NULL;
- 	}
- 
-+	led->boost_ctrl = LM3692X_BOOST_SW_1MHZ |
-+		LM3692X_BOOST_SW_NO_SHIFT |
-+		LM3692X_OCP_PROT_1_5A;
-+	ret = device_property_read_u32(&led->client->dev,
-+				       "ti,overvoltage-volts", &ovp);
-+	if (!ret) {
-+		switch (ovp) {
-+		case 0:
-+			break;
-+		case 22:
-+			led->boost_ctrl |= LM3692X_OVP_21V;
-+			break;
-+		case 25:
-+			led->boost_ctrl |= LM3692X_OVP_25V;
-+			break;
-+		case 29:
-+			led->boost_ctrl |= LM3692X_OVP_29V;
-+			break;
-+		default:
-+			dev_err(&led->client->dev, "Invalid OVP %d\n", ovp);
-+			return -EINVAL;
-+		}
-+	}
-+	dev_dbg(&led->client->dev, "OVP: %dV", ovp);
-+
-+	led->brightness_ctrl = LM3692X_BL_ADJ_POL | LM3692X_RAMP_EN;
-+	exp_mode = device_property_read_bool(&led->client->dev,
-+				     "ti,brightness-mapping-exponential");
-+	dev_dbg(&led->client->dev, "Exponential brightness: %d", exp_mode);
-+	if (exp_mode)
-+		led->brightness_ctrl |= LM3692X_MAP_MODE_EXP;
-+
- 	child = device_get_next_child_node(&led->client->dev, child);
- 	if (!child) {
- 		dev_err(&led->client->dev, "No LED Child node\n");
--- 
-2.23.0
+I think I've elaborated on this?
 
+The API is fine with me, because this thing does some autonomous
+control and I don't know any better way to share that same line
+with the GPIO subsystem than to make this offset available to
+the regulator driver.
+
+Yours,
+Linus Walleij
