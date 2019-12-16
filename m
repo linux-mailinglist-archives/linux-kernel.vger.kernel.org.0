@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7152D1214F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CB73121450
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731244AbfLPSQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:16:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39510 "EHLO mail.kernel.org"
+        id S1726959AbfLPSKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:10:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731573AbfLPSQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:16:39 -0500
+        id S1730580AbfLPSKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:10:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6AF220717;
-        Mon, 16 Dec 2019 18:16:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B118206E0;
+        Mon, 16 Dec 2019 18:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520198;
-        bh=D9BzyQy5ZzPaglJk39CSdueO88kTdIsmK1/C+xN29lg=;
+        s=default; t=1576519815;
+        bh=1Wd+eUtlHBbmQh+9yqjJjg4lW15sRPZXXxgRoGFlzWY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S20wfiD9cMa9+kLZGUX8QyET0ve3/u3phUtBd+4TZ3iJJHGriIB6rIrfjx792Ko50
-         M5uFSycpCqfaWDGgyhTPgPAsgh6l6l0c6G9Tu45BH9SvFgGf59/jaFyKJqPhWdlezk
-         5TaikdpNZkg00kqKLyRph+6CYXM6dwYT80y8zd/4=
+        b=welasmnbbaXauRyt726HjwZXUDTd72IkH/h76Js17XmroRpaGk4x+WbQTCiHVWABi
+         0h//TdtbEL6lV0z2T5s8dXV2z0soKtl7YpCIG4WJwevAiQvhCK0jYqN3K22zQkqghW
+         Q/IGgDNtRs6FLtJMkZqVmfSfA3S+dmuh7UwIBSfM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 5.4 057/177] virt_wifi: fix use-after-free in virt_wifi_newlink()
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Marcin Pawlowski <mpawlowski@fb.com>,
+        "Williams, Gerald S" <gerald.s.williams@intel.com>
+Subject: [PATCH 5.3 073/180] workqueue: Fix spurious sanity check failures in destroy_workqueue()
 Date:   Mon, 16 Dec 2019 18:48:33 +0100
-Message-Id: <20191216174831.081261216@linuxfoundation.org>
+Message-Id: <20191216174830.456576710@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,76 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Tejun Heo <tj@kernel.org>
 
-commit bc71d8b580ba81b55b6e15b1c0320632515b4bac upstream.
+commit def98c84b6cdf2eeea19ec5736e90e316df5206b upstream.
 
-When virt_wifi interface is created, virt_wifi_newlink() is called and
-it calls register_netdevice().
-if register_netdevice() fails, it internally would call
-->priv_destructor(), which is virt_wifi_net_device_destructor() and
-it frees netdev. but virt_wifi_newlink() still use netdev.
-So, use-after-free would occur in virt_wifi_newlink().
+Before actually destrying a workqueue, destroy_workqueue() checks
+whether it's actually idle.  If it isn't, it prints out a bunch of
+warning messages and leaves the workqueue dangling.  It unfortunately
+has a couple issues.
 
-Test commands:
-    ip link add dummy0 type dummy
-    modprobe bonding
-    ip link add bonding_masters link dummy0 type virt_wifi
+* Mayday list queueing increments pwq's refcnts which gets detected as
+  busy and fails the sanity checks.  However, because mayday list
+  queueing is asynchronous, this condition can happen without any
+  actual work items left in the workqueue.
 
-Splat looks like:
-[  202.220554] BUG: KASAN: use-after-free in virt_wifi_newlink+0x88b/0x9a0 [virt_wifi]
-[  202.221659] Read of size 8 at addr ffff888061629cb8 by task ip/852
+* Sanity check failure leaves the sysfs interface behind too which can
+  lead to init failure of newer instances of the workqueue.
 
-[  202.222896] CPU: 1 PID: 852 Comm: ip Not tainted 5.4.0-rc5 #3
-[  202.223765] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[  202.225073] Call Trace:
-[  202.225532]  dump_stack+0x7c/0xbb
-[  202.226869]  print_address_description.constprop.5+0x1be/0x360
-[  202.229362]  __kasan_report+0x12a/0x16f
-[  202.230714]  kasan_report+0xe/0x20
-[  202.232595]  virt_wifi_newlink+0x88b/0x9a0 [virt_wifi]
-[  202.233370]  __rtnl_newlink+0xb9f/0x11b0
-[  202.244909]  rtnl_newlink+0x65/0x90
-[ ... ]
+This patch fixes the above two by
 
+* If a workqueue has a rescuer, disable and kill the rescuer before
+  sanity checks.  Disabling and killing is guaranteed to flush the
+  existing mayday list.
+
+* Remove sysfs interface before sanity checks.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Marcin Pawlowski <mpawlowski@fb.com>
+Reported-by: "Williams, Gerald S" <gerald.s.williams@intel.com>
 Cc: stable@vger.kernel.org
-Fixes: c7cdba31ed8b ("mac80211-next: rtnetlink wifi simulation device")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Link: https://lore.kernel.org/r/20191121122645.9355-1-ap420073@gmail.com
-[trim stack dump a bit]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/virt_wifi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/workqueue.c |   24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/virt_wifi.c
-+++ b/drivers/net/wireless/virt_wifi.c
-@@ -450,7 +450,6 @@ static void virt_wifi_net_device_destruc
- 	 */
- 	kfree(dev->ieee80211_ptr);
- 	dev->ieee80211_ptr = NULL;
--	free_netdev(dev);
- }
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -4316,9 +4316,28 @@ void destroy_workqueue(struct workqueue_
+ 	struct pool_workqueue *pwq;
+ 	int node;
  
- /* No lock interaction. */
-@@ -458,7 +457,7 @@ static void virt_wifi_setup(struct net_d
- {
- 	ether_setup(dev);
- 	dev->netdev_ops = &virt_wifi_ops;
--	dev->priv_destructor = virt_wifi_net_device_destructor;
-+	dev->needs_free_netdev  = true;
- }
++	/*
++	 * Remove it from sysfs first so that sanity check failure doesn't
++	 * lead to sysfs name conflicts.
++	 */
++	workqueue_sysfs_unregister(wq);
++
+ 	/* drain it before proceeding with destruction */
+ 	drain_workqueue(wq);
  
- /* Called in a RCU read critical section from netif_receive_skb */
-@@ -544,6 +543,7 @@ static int virt_wifi_newlink(struct net
- 		goto unregister_netdev;
- 	}
++	/* kill rescuer, if sanity checks fail, leave it w/o rescuer */
++	if (wq->rescuer) {
++		struct worker *rescuer = wq->rescuer;
++
++		/* this prevents new queueing */
++		spin_lock_irq(&wq_mayday_lock);
++		wq->rescuer = NULL;
++		spin_unlock_irq(&wq_mayday_lock);
++
++		/* rescuer will empty maydays list before exiting */
++		kthread_stop(rescuer->task);
++	}
++
+ 	/* sanity checks */
+ 	mutex_lock(&wq->mutex);
+ 	for_each_pwq(pwq, wq) {
+@@ -4350,11 +4369,6 @@ void destroy_workqueue(struct workqueue_
+ 	list_del_rcu(&wq->list);
+ 	mutex_unlock(&wq_pool_mutex);
  
-+	dev->priv_destructor = virt_wifi_net_device_destructor;
- 	priv->being_deleted = false;
- 	priv->is_connected = false;
- 	priv->is_up = false;
+-	workqueue_sysfs_unregister(wq);
+-
+-	if (wq->rescuer)
+-		kthread_stop(wq->rescuer->task);
+-
+ 	if (!(wq->flags & WQ_UNBOUND)) {
+ 		wq_unregister_lockdep(wq);
+ 		/*
 
 
