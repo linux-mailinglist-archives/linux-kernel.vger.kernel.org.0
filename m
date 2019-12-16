@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20379121837
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:42:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EA4712183C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:42:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbfLPSAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:00:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34788 "EHLO mail.kernel.org"
+        id S1729291AbfLPSmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:42:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728949AbfLPSAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:00:36 -0500
+        id S1728483AbfLPSAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:00:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E668E20726;
-        Mon, 16 Dec 2019 18:00:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A8B0205C9;
+        Mon, 16 Dec 2019 18:00:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519236;
-        bh=qpNwJcQPCMoeoqAQpmsMhpaFzPY0C6tolrQbm+JA800=;
+        s=default; t=1576519238;
+        bh=WlaGsvSqozUh/F0uCzyw6u/3FTIovZt1FXOX8anM9sU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gf1btnJqWDowtrwAc1dtxVG+tUsbW6t3CQFjqGJg7XITq0WhWeMEQDi833zWIHutX
-         JsRDQsX+bEM8eA/NNZGSSS3Rq/UfsvMCvj/YV9jXWynYStP0L5Ogq55KGMrVFz1Jgz
-         /p38FbL2zyvmfwznxF0spn+9fgGt64T+4Au0PmFM=
+        b=MCmXN6Q5z4a5kq5fzlkTTvkA9Z/KufsPdVwzruaA34xZpyWFRqaW+URhWSNr8WFxk
+         UbyUB9D5xzNZqJSDDcbhc98XrVwfJeinL3jJNoln6q83xP9EuTLWDKwTA5GTaCKYav
+         DKLdLtvPTHUwUBB5MBq0YWs3OT9SBnRf96QT4n7c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 251/267] drbd: Change drbd_request_detach_interruptibles return type to int
-Date:   Mon, 16 Dec 2019 18:49:37 +0100
-Message-Id: <20191216174916.378746725@linuxfoundation.org>
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 252/267] e100: Fix passing zero to PTR_ERR warning in e100_load_ucode_wait
+Date:   Mon, 16 Dec 2019 18:49:38 +0100
+Message-Id: <20191216174916.446817992@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,65 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 5816a0932b4fd74257b8cc5785bc8067186a8723 ]
+[ Upstream commit cd0d465bb697a9c7bf66a9fe940f7981232f1676 ]
 
-Clang warns when an implicit conversion is done between enumerated
-types:
+Fix a static code checker warning:
+drivers/net/ethernet/intel/e100.c:1349
+ e100_load_ucode_wait() warn: passing zero to 'PTR_ERR'
 
-drivers/block/drbd/drbd_state.c:708:8: warning: implicit conversion from
-enumeration type 'enum drbd_ret_code' to different enumeration type
-'enum drbd_state_rv' [-Wenum-conversion]
-                rv = ERR_INTR;
-                   ~ ^~~~~~~~
-
-drbd_request_detach_interruptible's only call site is in the return
-statement of adm_detach, which returns an int. Change the return type of
-drbd_request_detach_interruptible to match, silencing Clang's warning.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_state.c | 6 ++----
- drivers/block/drbd/drbd_state.h | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/intel/e100.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_state.c b/drivers/block/drbd/drbd_state.c
-index 0813c654c8938..b452359b6aae8 100644
---- a/drivers/block/drbd/drbd_state.c
-+++ b/drivers/block/drbd/drbd_state.c
-@@ -688,11 +688,9 @@ request_detach(struct drbd_device *device)
- 			CS_VERBOSE | CS_ORDERED | CS_INHIBIT_MD_IO);
- }
+diff --git a/drivers/net/ethernet/intel/e100.c b/drivers/net/ethernet/intel/e100.c
+index 4d10270ddf8fb..90974462743b5 100644
+--- a/drivers/net/ethernet/intel/e100.c
++++ b/drivers/net/ethernet/intel/e100.c
+@@ -1370,8 +1370,8 @@ static inline int e100_load_ucode_wait(struct nic *nic)
  
--enum drbd_state_rv
--drbd_request_detach_interruptible(struct drbd_device *device)
-+int drbd_request_detach_interruptible(struct drbd_device *device)
- {
--	enum drbd_state_rv rv;
--	int ret;
-+	int ret, rv;
+ 	fw = e100_request_firmware(nic);
+ 	/* If it's NULL, then no ucode is required */
+-	if (!fw || IS_ERR(fw))
+-		return PTR_ERR(fw);
++	if (IS_ERR_OR_NULL(fw))
++		return PTR_ERR_OR_ZERO(fw);
  
- 	drbd_suspend_io(device); /* so no-one is stuck in drbd_al_begin_io */
- 	wait_event_interruptible(device->state_wait,
-diff --git a/drivers/block/drbd/drbd_state.h b/drivers/block/drbd/drbd_state.h
-index b2a390ba73a05..f87371e55e682 100644
---- a/drivers/block/drbd/drbd_state.h
-+++ b/drivers/block/drbd/drbd_state.h
-@@ -162,8 +162,7 @@ static inline int drbd_request_state(struct drbd_device *device,
- }
- 
- /* for use in adm_detach() (drbd_adm_detach(), drbd_adm_down()) */
--enum drbd_state_rv
--drbd_request_detach_interruptible(struct drbd_device *device);
-+int drbd_request_detach_interruptible(struct drbd_device *device);
- 
- enum drbd_role conn_highest_role(struct drbd_connection *connection);
- enum drbd_role conn_highest_peer(struct drbd_connection *connection);
+ 	if ((err = e100_exec_cb(nic, (void *)fw, e100_setup_ucode)))
+ 		netif_err(nic, probe, nic->netdev,
 -- 
 2.20.1
 
