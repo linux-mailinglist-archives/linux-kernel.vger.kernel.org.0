@@ -2,128 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B09412031A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:01:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A5112031F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfLPK7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 05:59:15 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44582 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727466AbfLPK7P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:59:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576493953;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hQ6sYFdb7LHBsbEybHzcurKWWaevQ2cyS6out70xyhQ=;
-        b=c/AYvTgowKMwins/NcMjhTP0exSHdQ1HFu6mcm6kLfPk6d2lrHe6ILK2zBo7GfNFXRFJWP
-        C4snqjIsqLcCnlJ1+bsRUCG2NK5e3VsNluROMgyx1vX1uQp3kVrOUx1JiiPqh/e4G2Cx56
-        cVDA31dt1kmXFcqvjvgyhiBuRCcphDU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-187-IcMG-EozPwO79TxUqnJe1Q-1; Mon, 16 Dec 2019 05:59:12 -0500
-X-MC-Unique: IcMG-EozPwO79TxUqnJe1Q-1
-Received: by mail-wr1-f70.google.com with SMTP id i9so3558553wru.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 02:59:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hQ6sYFdb7LHBsbEybHzcurKWWaevQ2cyS6out70xyhQ=;
-        b=TVeYCIhIbClPt2lgwQJJA5I2FGG3bi4DXdz2znqd2z8DMiz59ICyTsZoelrLO1tPGY
-         Y6LFTvAX8VvUKxKTYo8GlZ3lDdTO0NQsn94ystBLvK/kmjtw3byIM8h3+t/oio8t0f8a
-         dbtnNDpEG21hlk3xXTGpYG8gFJvRg4/PeA16o6cBEhZm+It6Ttb0wWzLw8CCVjxpr/k2
-         NbQSy6VAe7RBLuVzLe74A3BB+WcFU0y4razRIbMNChbqy9yltOBigEnvuNS7BKszSiGt
-         uoEWJOpyxCuCoVMj1Etn9X3lS5Mlx0kf4vJ7pUHSoPGALjvXh2+Qcau1bS1t/Fq6cSlp
-         kxdQ==
-X-Gm-Message-State: APjAAAXGZnpmK4EkbwNreraDoi8B1nrit/TQ+BIsihgoIJVi3fujrXlk
-        xdViOkw19xQwcgk78gDz7CWFC160xyiNvZF9/o9TRBm3HRcH37q2EHTNXY5Y5gVs5c5+CQx6gq/
-        /UKFU+RZgYjyPk4Y0e9RrxS4b
-X-Received: by 2002:adf:d848:: with SMTP id k8mr28536784wrl.328.1576493951612;
-        Mon, 16 Dec 2019 02:59:11 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwuvaGOybV0XNDKQ0IqtqC93KS7+4qbR1CruhBbHrdFS8xkO4lkM5kRrehoFB3fnxoPD5bNoQ==
-X-Received: by 2002:adf:d848:: with SMTP id k8mr28536750wrl.328.1576493951322;
-        Mon, 16 Dec 2019 02:59:11 -0800 (PST)
-Received: from shalem.localdomain (2001-1c00-0c0c-fe00-7e79-4dac-39d0-9c14.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:7e79:4dac:39d0:9c14])
-        by smtp.gmail.com with ESMTPSA id s19sm19808552wmj.33.2019.12.16.02.59.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2019 02:59:10 -0800 (PST)
-Subject: Re: [PATCH 0/5] drm/i915/dsi: Control panel and backlight enable
- GPIOs from VBT
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-References: <20191215163810.52356-1-hdegoede@redhat.com>
- <CACRpkdarJ5chDfgc5F=ntzG1pw7kchtzp0Upp+OH9CH6WLnvXw@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <2a356fad-a473-3e37-4a7b-731594524862@redhat.com>
-Date:   Mon, 16 Dec 2019 11:59:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727551AbfLPLB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:01:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36798 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727485AbfLPLB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 06:01:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 854E2AC7D;
+        Mon, 16 Dec 2019 11:01:26 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     andrew.murray@arm.com, maz@kernel.org, linux-kernel@vger.kernel.org
+Cc:     james.quinlan@broadcom.com, mbrugger@suse.com,
+        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
+        jeremy.linton@arm.com, linux-pci@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH v5 0/6] Raspberry Pi 4 PCIe support
+Date:   Mon, 16 Dec 2019 12:01:06 +0100
+Message-Id: <20191216110113.30436-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdarJ5chDfgc5F=ntzG1pw7kchtzp0Upp+OH9CH6WLnvXw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This series aims at providing support for Raspberry Pi 4's PCIe
+controller, which is also shared with the Broadcom STB family of
+devices.
 
-On 16-12-2019 11:26, Linus Walleij wrote:
-> On Sun, Dec 15, 2019 at 5:38 PM Hans de Goede <hdegoede@redhat.com> wrote:
-> 
->> Linus, this series starts with the already discussed pinctrl change to
->> export the function to unregister a pinctrl-map. We can either merge this
->> through drm-intel, or you could pick it up and then provide an immutable
->> branch with it for merging into drm-intel-next. Which option do you prefer?
-> 
-> I have created an immutable branch with these changes and pulled it
-> to my "devel" branch for v5.6:
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-pinctrl-unreg-mappings
-> 
-> Please pull this in and put the other patches on top of that.
+There was a previous attempt to upstream this some years ago[1] but was
+blocked as most STB PCIe integrations have a sparse DMA mapping[2] which
+is something currently not supported by the kernel.  Luckily this is not
+the case for the Raspberry Pi 4.
 
-Great, thank you.
+Note the series is based on top of linux next, as the DTS patch depends
+on it.
 
-Jani, a question about how I am supposed to push this (when this has been
-also reviewed by some i915 devs and passes CI), can I just do:
+[1] https://patchwork.kernel.org/cover/10605933/
+[2] https://patchwork.kernel.org/patch/10605957/
 
-dim backmerge drm-intel-next-queued linux-pinctrl/ib-pinctrl-unreg-mappings
-cat other-patches | dim apply-branch drm-intel-next-queued
-dim push-branch drm-intel-next-queued
+---
 
-Or I guess that dim backmerge is reserved for other drm branches only and I
-should do:
+Changes since v4:
+  - Rebase DTS patch
+  - Respin log2.h code into it's own series as it's still contentious
+    yet mostly unrelated to the PCIe part
 
-dim checkout drm-intel-next-queued
-git merge linux-pinctrl/ib-pinctrl-unreg-mappings
-cat other-patches | dim apply-branch drm-intel-next-queued
-dim push-branch drm-intel-next-queued
+Changes since v3:
+  - Moved all the log2.h related changes at the end of the series, as I
+    presume they will be contentious and I don't want the PCIe patches
+    to depend on them. Ultimately I think I'll respin them on their own
+    series but wanted to keep them in for this submission just for the
+    sake of continuity.
+  - Addressed small nits here and there.
 
-Or should I leave merging linux-pinctrl/ib-pinctrl-unreg-mappings into
-drm-intel-next-queued up to you?
+Changes since v2:
+  - Redo register access in driver avoiding indirection while keeping
+    the naming intact
+  - Add patch editing ARM64's config
+  - Last MSI cleanups, notably removing MSIX flag
+  - Got rid of all _RB writes
+  - Got rid of all of_data
+  - Overall churn removal
+  - Address the rest of Andrew's comments
 
-> I had a bit of mess in my subsystems last kernel cycle so I
-> want to avoid that by strictly including all larger commits
-> in my trees.
+Changes since v1:
+  - add generic rounddown/roundup_pow_two64() patch
+  - Add MAINTAINERS patch
+  - Fix Kconfig
+  - Cleanup probe, use up to date APIs, exit on MSI failure
+  - Get rid of linux,pci-domain and other unused constructs
+  - Use edge triggered setup for MSI
+  - Cleanup MSI implementation
+  - Fix multiple cosmetic issues
+  - Remove supend/resume code
 
-I understand.
+Jim Quinlan (3):
+  dt-bindings: PCI: Add bindings for brcmstb's PCIe device
+  PCI: brcmstb: Add Broadcom STB PCIe host controller driver
+  PCI: brcmstb: Add MSI support
 
-Regards,
+Nicolas Saenz Julienne (3):
+  ARM: dts: bcm2711: Enable PCIe controller
+  MAINTAINERS: Add brcmstb PCIe controller
+  arm64: defconfig: Enable Broadcom's STB PCIe controller
 
-Hans
+ .../bindings/pci/brcm,stb-pcie.yaml           |   97 ++
+ MAINTAINERS                                   |    4 +
+ arch/arm/boot/dts/bcm2711.dtsi                |   31 +-
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/pci/controller/Kconfig                |    9 +
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-brcmstb.c         | 1007 +++++++++++++++++
+ 7 files changed, 1149 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+ create mode 100644 drivers/pci/controller/pcie-brcmstb.c
+
+-- 
+2.24.0
 
