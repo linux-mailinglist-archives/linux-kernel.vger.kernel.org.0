@@ -2,141 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C55512111A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:08:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEEC512106B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:05:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbfLPRIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:08:48 -0500
-Received: from mga14.intel.com ([192.55.52.115]:59257 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727788AbfLPRIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:08:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 08:33:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
-   d="scan'208";a="240090657"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 16 Dec 2019 08:33:57 -0800
-Received: from [10.251.95.214] (abudanko-mobl.ccr.corp.intel.com [10.251.95.214])
-        by linux.intel.com (Postfix) with ESMTP id 52C38580458;
-        Mon, 16 Dec 2019 08:33:49 -0800 (PST)
-Subject: Re: [PATCH v2 2/7] perf/core: open access for CAP_SYS_PERFMON
- privileged process
-To:     "Lubashev, Igor" <ilubashe@akamai.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "bgregg@netflix.com" <bgregg@netflix.com>,
-        Song Liu <songliubraving@fb.com>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <26101427-c0a3-db9f-39e9-9e5f4ddd009c@linux.intel.com>
- <fd6ffb43-ed43-14cd-b286-6ab4b199155b@linux.intel.com>
- <9316a1ab21f6441eb2b421acb818a2a1@ustx2ex-dag1mb6.msg.corp.akamai.com>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <3f2ac76c-6108-7769-4b99-a7a2da31af3d@linux.intel.com>
-Date:   Mon, 16 Dec 2019 19:33:48 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726545AbfLPRBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:01:01 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43450 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725805AbfLPRBB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:01:01 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBGGvZEl093370;
+        Mon, 16 Dec 2019 12:00:14 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wwe3nkqm7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Dec 2019 12:00:14 -0500
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id xBGGwAin095696;
+        Mon, 16 Dec 2019 12:00:13 -0500
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wwe3nkqk2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Dec 2019 12:00:13 -0500
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xBGGssAc028256;
+        Mon, 16 Dec 2019 17:00:11 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma05wdc.us.ibm.com with ESMTP id 2wvqc5vskm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Dec 2019 17:00:11 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBGH0Bpp38469964
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Dec 2019 17:00:11 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 366EA124052;
+        Mon, 16 Dec 2019 17:00:11 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A973A124060;
+        Mon, 16 Dec 2019 17:00:05 +0000 (GMT)
+Received: from [9.199.36.169] (unknown [9.199.36.169])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 16 Dec 2019 17:00:05 +0000 (GMT)
+Subject: Re: [PATCH 05/17] asm-generic/tlb: Rename
+ HAVE_RCU_TABLE_NO_INVALIDATE
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Helge Deller <deller@gmx.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Nick Hu <nickhu@andestech.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+References: <20191211120713.360281197@infradead.org>
+ <20191211122955.940455408@infradead.org> <87woawzc1t.fsf@linux.ibm.com>
+ <20191216123752.GM2844@hirez.programming.kicks-ass.net>
+ <d52ea890-c2ea-88f3-9d62-b86e60ee77ae@linux.ibm.com>
+ <20191216132004.GO2844@hirez.programming.kicks-ass.net>
+ <a9ae27c8-aa84-cda3-355c-7abb3b450d38@linux.ibm.com>
+ <33ed03aa-a34c-3a81-0f83-20c3e8d4eff7@linux.ibm.com>
+ <20191216145041.GG2827@hirez.programming.kicks-ass.net>
+ <20191216151419.GL2871@hirez.programming.kicks-ass.net>
+ <20191216153047.GM2871@hirez.programming.kicks-ass.net>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Message-ID: <c4edc550-b510-2521-d703-be324de68436@linux.ibm.com>
+Date:   Mon, 16 Dec 2019 22:30:03 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <9316a1ab21f6441eb2b421acb818a2a1@ustx2ex-dag1mb6.msg.corp.akamai.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191216153047.GM2871@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-16_06:2019-12-16,2019-12-16 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 impostorscore=0 phishscore=0
+ adultscore=0 bulkscore=0 clxscore=1015 suspectscore=2 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912160147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.12.2019 19:12, Lubashev, Igor wrote:
-> On Mon, Dec 16, 2019 at 2:15 AM, Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+On 12/16/19 9:00 PM, Peter Zijlstra wrote:
+> On Mon, Dec 16, 2019 at 04:14:19PM +0100, Peter Zijlstra wrote:
+>> On Mon, Dec 16, 2019 at 03:50:41PM +0100, Peter Zijlstra wrote:
+>>> On Mon, Dec 16, 2019 at 07:24:24PM +0530, Aneesh Kumar K.V wrote:
+>>>
+>>>> So __p*_free_tlb() routines on ppc64 just mark that we need a page walk
+>>>> cache flush and the actual flush in done in tlb_flush_mmu.
+>>>
+>>> Not quite, your __p*_free_tlb() goes to pgtable_free_tlb() which call
+>>> tlb_remove_table().
+>>>
+>>>> As per
+>>>>
+>>>> d86564a2f085b79ec046a5cba90188e61235280 (mm/tlb, x86/mm: Support
+>>>> invalidating TLB caches for RCU_TABLE_FREE ) that is not sufficient?
+>>>
+>>> 96bc9567cbe1 ("asm-generic/tlb, arch: Invert CONFIG_HAVE_RCU_TABLE_INVALIDATE")
+>>>
+>>> And no. Since you have TABLE_NO_INVALIDATE set, tlb_remove_table() will
+>>> not TLBI when it fails to allocate a batch page, which is an error for
+>>> PPC-Radix.
+>>>
+>>> There is also no TLBI when the batch page is full and the RCU callback
+>>> happens, which is also a bug on PPC-Radix.
 >>
->> Open access to perf_events monitoring for CAP_SYS_PERFMON privileged
->> processes.
->> For backward compatibility reasons access to perf_events subsystem remains
->> open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage
->> for secure perf_events monitoring is discouraged with respect to
->> CAP_SYS_PERFMON capability.
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  include/linux/perf_event.h | 9 ++++++---
->>  1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h index
->> 34c7c6910026..52313d2cc343 100644
->> --- a/include/linux/perf_event.h
->> +++ b/include/linux/perf_event.h
->> @@ -1285,7 +1285,8 @@ static inline int perf_is_paranoid(void)
->>
->>  static inline int perf_allow_kernel(struct perf_event_attr *attr)  {
->> -	if (sysctl_perf_event_paranoid > 1 && !capable(CAP_SYS_ADMIN))
->> +	if (sysctl_perf_event_paranoid > 1 &&
->> +	   !(capable(CAP_SYS_PERFMON) || capable(CAP_SYS_ADMIN)))
->>  		return -EACCES;
->>
->>  	return security_perf_event_open(attr, PERF_SECURITY_KERNEL); @@
->> -1293,7 +1294,8 @@ static inline int perf_allow_kernel(struct
->> perf_event_attr *attr)
->>
->>  static inline int perf_allow_cpu(struct perf_event_attr *attr)  {
->> -	if (sysctl_perf_event_paranoid > 0 && !capable(CAP_SYS_ADMIN))
->> +	if (sysctl_perf_event_paranoid > 0 &&
->> +	    !(capable(CAP_SYS_PERFMON) || capable(CAP_SYS_ADMIN)))
->>  		return -EACCES;
->>
->>  	return security_perf_event_open(attr, PERF_SECURITY_CPU); @@ -
->> 1301,7 +1303,8 @@ static inline int perf_allow_cpu(struct perf_event_attr
->> *attr)
->>
->>  static inline int perf_allow_tracepoint(struct perf_event_attr *attr)  {
->> -	if (sysctl_perf_event_paranoid > -1 && !capable(CAP_SYS_ADMIN))
->> +	if (sysctl_perf_event_paranoid > -1 &&
->> +	    !(capable(CAP_SYS_PERFMON) || capable(CAP_SYS_ADMIN)))
->>  		return -EPERM;
->>
->>  	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
->> --
->> 2.20.1
+>> It seems to me you need something like this here patch, all you need to
+>> add is a suitable definition of tlb_needs_table_invalidate() for Power.
 > 
-> Thanks.  I like the idea of CAP_SYS_PERFMON that does not require CAP_SYS_ADMIN.  It makes granting users ability to run perf a bit safer.
+> I'm thinking this:
 > 
-> I see a lot of "(capable(CAP_SYS_PERFMON) || capable(CAP_SYS_ADMIN)" constructs now.  Maybe wrapping it in an " inline bool perfmon_capable()" defined somewhere (like in /include/linux/capability.h)?
+> #define tlb_needs_table_invalidate()	radix_enabled()
+> 
+> should work for you. When you have Radix you need that TLBI, if you have
+> Hash you don't.
+> 
 
-Yes, it makes sense.
+yes. I was doing something similar with #ifdef around 
+tlb_table_invalidate(). I will take your approach rather than an arch 
+override of tlb_table_invalidate()
 
-Thanks,
-Alexey
-
-> 
-> - Igor
-> 
+-aneesh
