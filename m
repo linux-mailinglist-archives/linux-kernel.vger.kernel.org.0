@@ -2,79 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2255D12026E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:29:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 764961203CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:24:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfLPK31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 05:29:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48086 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727070AbfLPK30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:29:26 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD8D9206CB;
-        Mon, 16 Dec 2019 10:29:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576492166;
-        bh=h4X6AHfGqH1fcCYhsVZLrhBRQ9DB10RQK53ZRJEGw10=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IvVcuSHVLYGMmXZVmzWjp42//mldx+pzhw6/n2ye4z+xgib3qOgAuff+SDPb42z/R
-         wfXre21OOpLxB2OAOi4I2vyhOQHvnESfd1wKswN24x4L31iE3E04U4ynLnDGD25sbv
-         V042YBfc8kD87odpp3NQW1egVmAu9toKR/kAdgAU=
-Date:   Mon, 16 Dec 2019 11:29:23 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 09/14] ARM: dts: sun8i: r40: Add I2C pinmux options
-Message-ID: <20191216102923.nezpk2cqastyfpsd@gilmour.lan>
-References: <20191215165924.28314-1-wens@kernel.org>
- <20191215165924.28314-10-wens@kernel.org>
+        id S1727599AbfLPLYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:24:31 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:49860 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727346AbfLPLYB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 06:24:01 -0500
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id 88392200AC5;
+        Mon, 16 Dec 2019 11:23:58 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id 8EF0C20AFE; Mon, 16 Dec 2019 11:29:52 +0100 (CET)
+Date:   Mon, 16 Dec 2019 11:29:52 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Simon Geis <simon.geis@fau.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Adam Zerella <adam.zerella@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
+        Lukas Panzer <lukas.panzer@fau.de>
+Subject: Re: [PATCH v3 03/10] PCMCIA/i82092: remove braces around single
+ statement blocks
+Message-ID: <20191216102952.GC159459@light.dominikbrodowski.net>
+References: <20191213135311.9111-1-simon.geis@fau.de>
+ <20191213135311.9111-4-simon.geis@fau.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6lkmrciahlk4lydl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191215165924.28314-10-wens@kernel.org>
+In-Reply-To: <20191213135311.9111-4-simon.geis@fau.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 13, 2019 at 02:53:07PM +0100, Simon Geis wrote:
+> Remove braces around single statement blocks in order to
+> improve readability.
+> 
+> Co-developed-by: Lukas Panzer <lukas.panzer@fau.de>
+> Signed-off-by: Lukas Panzer <lukas.panzer@fau.de>
+> Signed-off-by: Simon Geis <simon.geis@fau.de>
 
---6lkmrciahlk4lydl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Dec 16, 2019 at 12:59:19AM +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
->
-> The R40 has five I2C controllers. Currently only I2C0 has its pinmux
-> option defined.
->
-> Add the options for the remaining four, and set them as the default,
-> since each controller has only one possible pinmux configuration.
->
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Applied, thanks!
-Maxime
-
---6lkmrciahlk4lydl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfdcgwAKCRDj7w1vZxhR
-xaLdAP9tc7Nm4GYFEAyZVooyptZNGjG4NOL1T9S7EiBgQ3Pz1AEAtO6crXWEEVFr
-ich4eYyroylJ+xW31k+yFo8klXVkSwg=
-=rMnm
------END PGP SIGNATURE-----
-
---6lkmrciahlk4lydl--
+Applied, thanks.
+	Dominik
