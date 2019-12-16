@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEE12121A99
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 21:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC985121A9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 21:13:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbfLPULm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 15:11:42 -0500
+        id S1727683AbfLPULo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 15:11:44 -0500
 Received: from mga14.intel.com ([192.55.52.115]:10614 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727508AbfLPULh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 15:11:37 -0500
+        id S1727534AbfLPULi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 15:11:38 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 11:19:23 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
-   d="scan'208";a="209411664"
+   d="scan'208";a="209411667"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by orsmga008.jf.intel.com with ESMTP; 16 Dec 2019 11:19:23 -0800
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -30,9 +30,9 @@ Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
         Raj Ashok <ashok.raj@intel.com>, "Yi Liu" <yi.l.liu@intel.com>,
         Eric Auger <eric.auger@redhat.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v8 09/10] iommu/ioasid: Add notifier for status change
-Date:   Mon, 16 Dec 2019 11:24:11 -0800
-Message-Id: <1576524252-79116-10-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v8 10/10] iommu/vt-d: Handle IOASID notifications
+Date:   Mon, 16 Dec 2019 11:24:12 -0800
+Message-Id: <1576524252-79116-11-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576524252-79116-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1576524252-79116-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -41,150 +41,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IOASIDs are system resources that can be shared by multiple drivers or
-subsystems. When status of an IOASID changes at runtime, there is need
-to notify all current users such that proper actions can be taken.
+IOASID/PASID are shared system resources that can be freed by software
+components outside IOMMU subsystem. When status of an IOASID changes,
+e.g. freed or suspended, notifications will be available to its users to
+take proper action.
 
-For example, an IOASID can be used by IOMMU subsystem for guest SVM as
-well as KVM. When the guest is terminating unexpectedly, both KVM and
-IOMMU need to perform clean up action before the IOASID is reclaimed.
-
-This patch adds a per IOASID notifier that can be registered by
-interesting parties.
+This patch adds a notification block such that when IOASID is freed by
+other components such as VFIO, associated software and hardware context
+can be cleaned.
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/ioasid.c | 43 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/ioasid.h | 20 ++++++++++++++++++++
- 2 files changed, 63 insertions(+)
+ drivers/iommu/intel-svm.c   | 52 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/intel-iommu.h |  2 +-
+ 2 files changed, 53 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
-index 0f8dd377aada..53a2ab287f7d 100644
---- a/drivers/iommu/ioasid.c
-+++ b/drivers/iommu/ioasid.c
-@@ -15,6 +15,7 @@ struct ioasid_data {
- 	struct ioasid_set *set;
- 	void *private;
- 	struct rcu_head rcu;
-+	struct atomic_notifier_head notifications;
- };
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index f580b7be63c5..a660e741551c 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -230,6 +230,48 @@ static LIST_HEAD(global_svm_list);
+ 	list_for_each_entry((sdev), &(svm)->devs, list)	\
+ 		if ((d) != (sdev)->dev) {} else
  
- /*
-@@ -314,6 +315,7 @@ ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
- 
- 	data->set = set;
- 	data->private = private;
-+	ATOMIC_INIT_NOTIFIER_HEAD(&data->notifications);
- 
- 	/*
- 	 * Custom allocator needs allocator data to perform platform specific
-@@ -360,6 +362,9 @@ void ioasid_free(ioasid_t ioasid)
- 		goto exit_unlock;
- 	}
- 
-+	/* Notify all users that this IOASID is being freed */
-+	atomic_notifier_call_chain(&ioasid_data->notifications, IOASID_FREE,
-+				     &ioasid);
- 	active_allocator->ops->free(ioasid, active_allocator->ops->pdata);
- 	/* Custom allocator needs additional steps to free the xa element */
- 	if (active_allocator->flags & IOASID_ALLOCATOR_CUSTOM) {
-@@ -416,6 +421,44 @@ void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
- }
- EXPORT_SYMBOL_GPL(ioasid_find);
- 
-+int ioasid_add_notifier(ioasid_t ioasid, struct notifier_block *nb)
++static int ioasid_status_change(struct notifier_block *nb,
++				unsigned long code, void *data)
 +{
-+	struct ioasid_allocator_data *idata;
-+	struct ioasid_data *data;
-+	int ret = 0;
++	ioasid_t ioasid = *(ioasid_t *)data;
++	struct intel_svm_dev *sdev;
++	struct intel_svm *svm;
 +
-+	rcu_read_lock();
-+	idata = rcu_dereference(active_allocator);
-+	data = xa_load(&idata->xa, ioasid);
-+	if (!data) {
-+		ret = -ENOENT;
-+		goto unlock;
++	if (code == IOASID_FREE) {
++		/*
++		 * Unbind all devices associated with this PASID which is
++		 * being freed by other users such as VFIO.
++		 */
++		svm = ioasid_find(NULL, ioasid, NULL);
++		if (!svm || !svm->iommu)
++			return NOTIFY_DONE;
++
++		if (IS_ERR(svm))
++			return NOTIFY_BAD;
++
++		list_for_each_entry(sdev, &svm->devs, list) {
++			list_del_rcu(&sdev->list);
++			intel_pasid_tear_down_entry(svm->iommu, sdev->dev,
++						    svm->pasid);
++				kfree_rcu(sdev, rcu);
++
++				if (list_empty(&svm->devs)) {
++					list_del(&svm->list);
++					ioasid_set_data(ioasid, NULL);
++					kfree(svm);
++				}
++		}
++
++		return NOTIFY_OK;
 +	}
-+	ret = atomic_notifier_chain_register(&data->notifications, nb);
-+unlock:
-+	rcu_read_unlock();
-+	return ret;
++
++	return NOTIFY_DONE;
 +}
-+EXPORT_SYMBOL_GPL(ioasid_add_notifier);
 +
-+void ioasid_remove_notifier(ioasid_t ioasid, struct notifier_block *nb)
-+{
-+	struct ioasid_allocator_data *idata;
-+	struct ioasid_data *data;
-+
-+	rcu_read_lock();
-+	idata = rcu_dereference(active_allocator);
-+	data = xa_load(&idata->xa, ioasid);
-+	rcu_read_unlock();
-+	if (!data) {
-+		pr_err("IOASID %d not found\n", ioasid);
-+		return;
-+	}
-+	/* Unregister can sleep, called outside RCU critical section. */
-+	atomic_notifier_chain_unregister(&data->notifications, nb);
-+}
-+EXPORT_SYMBOL_GPL(ioasid_remove_notifier);
-+
- MODULE_AUTHOR("Jean-Philippe Brucker <jean-philippe.brucker@arm.com>");
- MODULE_AUTHOR("Jacob Pan <jacob.jun.pan@linux.intel.com>");
- MODULE_DESCRIPTION("IO Address Space ID (IOASID) allocator");
-diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
-index 6f000d7a0ddc..4517c4be4088 100644
---- a/include/linux/ioasid.h
-+++ b/include/linux/ioasid.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/types.h>
- #include <linux/errno.h>
-+#include <linux/notifier.h>
- 
- #define INVALID_IOASID ((ioasid_t)-1)
- typedef unsigned int ioasid_t;
-@@ -29,6 +30,12 @@ struct ioasid_allocator_ops {
- 	void *pdata;
- };
- 
-+/* Notification data when IOASID status changed */
-+enum ioasid_notify_val {
-+	IOASID_FREE = 1,
-+	IOASID_SUSPEND,
++static struct notifier_block svm_ioasid_notifier = {
++		.notifier_call = ioasid_status_change,
 +};
 +
- #define DECLARE_IOASID_SET(name) struct ioasid_set name = { 0 }
- 
- #if IS_ENABLED(CONFIG_IOASID)
-@@ -40,6 +47,8 @@ void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
- int ioasid_register_allocator(struct ioasid_allocator_ops *allocator);
- void ioasid_unregister_allocator(struct ioasid_allocator_ops *allocator);
- int ioasid_set_data(ioasid_t ioasid, void *data);
-+int ioasid_add_notifier(ioasid_t ioasid, struct notifier_block *nb);
-+void ioasid_remove_notifier(ioasid_t ioasid, struct notifier_block *nb);
- 
- #else /* !CONFIG_IOASID */
- static inline ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min,
-@@ -58,6 +67,17 @@ static inline void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
- 	return NULL;
- }
- 
-+static inline int ioasid_add_notifier(ioasid_t ioasid,
-+				      struct notifier_block *nb)
-+{
-+	return -ENOTSUPP;
-+}
+ int intel_svm_bind_gpasid(struct iommu_domain *domain,
+ 			struct device *dev,
+ 			struct iommu_gpasid_bind_data *data)
+@@ -319,6 +361,13 @@ int intel_svm_bind_gpasid(struct iommu_domain *domain,
+ 			svm->gpasid = data->gpasid;
+ 			svm->flags |= SVM_FLAG_GUEST_PASID;
+ 		}
++		/* Get notified when IOASID is freed by others, e.g. VFIO */
++		ret = ioasid_add_notifier(data->hpasid, &svm_ioasid_notifier);
++		if (ret) {
++			mmput(svm->mm);
++			kfree(svm);
++			goto out;
++		}
+ 		ioasid_set_data(data->hpasid, svm);
+ 		INIT_LIST_HEAD_RCU(&svm->devs);
+ 		INIT_LIST_HEAD(&svm->list);
+@@ -432,6 +481,9 @@ int intel_svm_unbind_gpasid(struct device *dev, int pasid)
+ 				 * that PASID allocated by one guest cannot be
+ 				 * used by another.
+ 				 */
++				ioasid_remove_notifier(pasid,
++						       &svm_ioasid_notifier);
 +
-+static inline void ioasid_remove_notifier(ioasid_t ioasid,
-+				       struct notifier_block *nb)
-+{
-+}
-+
- static inline int ioasid_register_allocator(struct ioasid_allocator_ops *allocator)
- {
- 	return -ENOTSUPP;
+ 				ioasid_set_data(pasid, NULL);
+ 				kfree(svm);
+ 			}
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index 8c30b23bd838..e2a33c794e8d 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -711,7 +711,7 @@ struct intel_svm_dev {
+ struct intel_svm {
+ 	struct mmu_notifier notifier;
+ 	struct mm_struct *mm;
+-
++	struct notifier_block *nb;
+ 	struct intel_iommu *iommu;
+ 	int flags;
+ 	int pasid;
 -- 
 2.7.4
 
