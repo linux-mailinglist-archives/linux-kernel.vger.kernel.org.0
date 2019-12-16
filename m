@@ -2,95 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D65111FD22
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 04:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C727711FD11
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 04:05:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfLPDJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 22:09:52 -0500
-Received: from muru.com ([72.249.23.125]:48390 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726808AbfLPDJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 22:09:52 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 692DB80C5;
-        Mon, 16 Dec 2019 03:10:30 +0000 (UTC)
-Date:   Sun, 15 Dec 2019 19:09:48 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Evgeniy Polyakov <zbr@ioremap.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Adam Ford <aford173@gmail.com>,
-        "Andrew F . Davis" <afd@ti.com>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Vignesh R <vigneshr@ti.com>
-Subject: Re: [PATCH] w1: omap-hdq: Simplify driver with PM runtime autosuspend
-Message-ID: <20191216030948.GL35479@atomide.com>
-References: <20191215173817.47918-1-tony@atomide.com>
- <20191215230331.645b9064@aktux>
+        id S1726668AbfLPDFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 22:05:00 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35432 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726528AbfLPDFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 22:05:00 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 17C909BF6094140D07F3;
+        Mon, 16 Dec 2019 11:04:58 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Mon, 16 Dec 2019
+ 11:04:49 +0800
+From:   zhengbin <zhengbin13@huawei.com>
+To:     <pjones@redhat.com>, <konrad@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <zhengbin13@huawei.com>
+Subject: [PATCH] iscsi_ibft: Remove unneeded semicolon
+Date:   Mon, 16 Dec 2019 11:12:10 +0800
+Message-ID: <1576465930-34966-1-git-send-email-zhengbin13@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191215230331.645b9064@aktux>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Fixes coccicheck warning:
 
-* Andreas Kemnade <andreas@kemnade.info> [191215 22:04]:
-> On Sun, 15 Dec 2019 09:38:17 -0800
-> If I remember correctly this thing is critical to get the hwmod out of
-> reset but I need to examine that again:
+drivers/firmware/iscsi_ibft.c:804:2-3: Unneeded semicolon
 
-Thanks for testing, yes that's what I thought might cause it
-too, but nope :)
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+---
+ drivers/firmware/iscsi_ibft.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We currently disable interrupts for some reason after
-the first read. That won't play with runtime PM autosuspend
-at all as we never enable them again until the device has
-idled. Can you try the following additional patch on top?
-
-Regards,
-
-Tony
-
-8< -----------------
-diff --git a/drivers/w1/masters/omap_hdq.c b/drivers/w1/masters/omap_hdq.c
---- a/drivers/w1/masters/omap_hdq.c
-+++ b/drivers/w1/masters/omap_hdq.c
-@@ -86,15 +86,6 @@ static inline u8 hdq_reg_merge(struct hdq_data *hdq_data, u32 offset,
- 	return new_val;
+diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
+index 7e12cbd..8748692 100644
+--- a/drivers/firmware/iscsi_ibft.c
++++ b/drivers/firmware/iscsi_ibft.c
+@@ -801,7 +801,7 @@ static void ibft_unregister(void)
+ 		ibft_kobj = boot_kobj->data;
+ 		if (ibft_kobj->hdr && ibft_kobj->hdr->id == id_nic)
+ 			sysfs_remove_link(&boot_kobj->kobj, "device");
+-	};
++	}
  }
- 
--static void hdq_disable_interrupt(struct hdq_data *hdq_data, u32 offset,
--				  u32 mask)
--{
--	u32 ie;
--
--	ie = readl(hdq_data->hdq_base + offset);
--	writel(ie & mask, hdq_data->hdq_base + offset);
--}
--
- /*
-  * Wait for one or more bits in flag change.
-  * HDQ_FLAG_SET: wait until any bit in the flag is set.
-@@ -474,15 +465,9 @@ static u8 omap_w1_read_byte(void *_hdq)
- 	}
- 
- 	ret = hdq_read_byte(hdq_data, &val);
--	if (ret) {
-+	if (ret)
- 		ret = -1;
--		goto out_err;
--	}
- 
--	hdq_disable_interrupt(hdq_data, OMAP_HDQ_CTRL_STATUS,
--			      ~OMAP_HDQ_CTRL_STATUS_INTERRUPTMASK);
--
--out_err:
- 	pm_runtime_mark_last_busy(hdq_data->dev);
- 	pm_runtime_put_autosuspend(hdq_data->dev);
- 
+
+ static void ibft_cleanup(void)
+--
+2.7.4
+
