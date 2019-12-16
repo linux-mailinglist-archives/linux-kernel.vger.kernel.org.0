@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4712A12131C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:58:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE77412131E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:59:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbfLPR6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:58:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58978 "EHLO mail.kernel.org"
+        id S1728681AbfLPR66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:58:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726865AbfLPR6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:58:48 -0500
+        id S1728546AbfLPR6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:58:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB11920733;
-        Mon, 16 Dec 2019 17:58:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86BF02166E;
+        Mon, 16 Dec 2019 17:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519127;
-        bh=tlchDs7TvajlhgCZ7OeyLriVnH9A9S73sL+PYnPpnpw=;
+        s=default; t=1576519132;
+        bh=fNccwqWA+SRuS5QnXcv5KmJy7FvExzlUIFIQAkUaYT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QrmDF5GT3OjkogJ7kKYGaJhuxhbi6urNwVGl9wM39ncOEFNdm29cjo3lMtskoWage
-         BsBa8pPk1WIlIStBSl46k54V2J8pj7u5NMVGEWwlwMSqsluUgGswn4jvX+KnGdPFsd
-         JKssoHGunMb9Zombi1ONoZRM4RNnV3kZZqxcnSxk=
+        b=OkMQsr5wm5oMpijvDXaTNm/DwkJgae3KYU8Z663qgwPQA6qJI+j72y/90GRnlEepm
+         xahw9rtAKy10hLrxFv2JOEioH/lsPGE9y/pUNkEj7e7ZNLOXVZbGZuBT7tl29/Mn9n
+         yC7LdGn3JNPk5MWpRYlQ72D5eX1+2iqrbPLCcZT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pontus Fuchs <pontus.fuchs@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Denis Efremov <efremov@linux.com>
-Subject: [PATCH 4.14 206/267] ar5523: check NULL before memcpy() in ar5523_cmd()
-Date:   Mon, 16 Dec 2019 18:48:52 +0100
-Message-Id: <20191216174913.820607863@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH 4.14 208/267] media: bdisp: fix memleak on release
+Date:   Mon, 16 Dec 2019 18:48:54 +0100
+Message-Id: <20191216174913.930056503@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -46,40 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Efremov <efremov@linux.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 315cee426f87658a6799815845788fde965ddaad upstream.
+commit 11609a7e21f8cea42630350aa57662928fa4dc63 upstream.
 
-memcpy() call with "idata == NULL && ilen == 0" results in undefined
-behavior in ar5523_cmd(). For example, NULL is passed in callchain
-"ar5523_stat_work() -> ar5523_cmd_write() -> ar5523_cmd()". This patch
-adds ilen check before memcpy() call in ar5523_cmd() to prevent an
-undefined behavior.
+If a process is interrupted while accessing the video device and the
+device lock is contended, release() could return early and fail to free
+related resources.
 
-Cc: Pontus Fuchs <pontus.fuchs@gmail.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Efremov <efremov@linux.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Note that the return value of the v4l2 release file operation is
+ignored.
+
+Fixes: 28ffeebbb7bd ("[media] bdisp: 2D blitter driver using v4l2 mem2mem framework")
+Cc: stable <stable@vger.kernel.org>     # 4.2
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ar5523/ar5523.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/platform/sti/bdisp/bdisp-v4l2.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/wireless/ath/ar5523/ar5523.c
-+++ b/drivers/net/wireless/ath/ar5523/ar5523.c
-@@ -255,7 +255,8 @@ static int ar5523_cmd(struct ar5523 *ar,
+--- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
++++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+@@ -651,8 +651,7 @@ static int bdisp_release(struct file *fi
  
- 	if (flags & AR5523_CMD_FLAG_MAGIC)
- 		hdr->magic = cpu_to_be32(1 << 24);
--	memcpy(hdr + 1, idata, ilen);
-+	if (ilen)
-+		memcpy(hdr + 1, idata, ilen);
+ 	dev_dbg(bdisp->dev, "%s\n", __func__);
  
- 	cmd->odata = odata;
- 	cmd->olen = olen;
+-	if (mutex_lock_interruptible(&bdisp->lock))
+-		return -ERESTARTSYS;
++	mutex_lock(&bdisp->lock);
+ 
+ 	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+ 
 
 
