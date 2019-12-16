@@ -2,146 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C41DA120704
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 133A412070B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:24:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727896AbfLPNVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 08:21:35 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33775 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727653AbfLPNVe (ORCPT
+        id S1727909AbfLPNW2 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 16 Dec 2019 08:22:28 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40390 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727716AbfLPNW1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 08:21:34 -0500
-Received: by mail-wr1-f68.google.com with SMTP id b6so7256202wrq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 05:21:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=d/LHMaAxVPEbY5/XVTEijX35yHOsi0P88zlbTMxdDLo=;
-        b=HJ9L2xMJC5zbsATjEZ90u9BrD58wOqaqlbhyNrRaIqYRSpBl9qC/ZO63gHO+42bu1+
-         aQPH61j8ny1iTNoP6m0C0zRGuwsXnkQ2AOeyiq5K7oQ5Xg1vsSpQv4UXiez06oNkoa3F
-         8G7zrDOKxBe3CTQJDO/LB/9tWVtF1wH5K+ZN5VVIEuP4tmAvO+YQb+iKPqo6/PeTv3lj
-         n9bhGQb7VJadfJcsFId8GHmT73sOrfg1zPjp01b4YTCUNGr/2Ma1nAnn+kX8BpAFxXFT
-         eYwV0dDwzfJY6jdedyL2OPPuxRzCPTZoZU1jyNU+2ZKn6wlchTu8H8qddNglFl8P25gZ
-         qXmg==
+        Mon, 16 Dec 2019 08:22:27 -0500
+Received: by mail-oi1-f194.google.com with SMTP id 6so3277560oix.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 05:22:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=d/LHMaAxVPEbY5/XVTEijX35yHOsi0P88zlbTMxdDLo=;
-        b=jnrgChxEYVBW6wKBE1GbveyU6iw/5Z5eQrk04raKdbd67Hwkvz/M39AIPkwyjRpqvU
-         Hqcnl03jIvPfmPnD/mcg9SP4aOztxghCHqG1t1VX811IMEKgTo9UD5lwHUiahgQIPpTA
-         wxPvovFTxRlfPVa1361gwfC14mVvPAcrFWtKR/r8MZy6a2knF2x7HjyXUUhyyZmDR92H
-         7ktXCUj6i2tRNCBSO6NGsOHkxPctctxuA3BJHxA5rUI2G7avF0dw/abDhAtet/yC2if+
-         Eu1o+E+UACC3WL9BnCo6TLfRO8sDrYonsWOyUvZ2oeQEPuKKFhq5ysG17ke0wjY2mRiI
-         eVmA==
-X-Gm-Message-State: APjAAAXjUXGJlPZuUSXYNrqq5F+RN+rn1HhMrnIVL9aYyp9i00OZLCOW
-        sSLCsPkwwLp+BWlv2oIWY9+tSw==
-X-Google-Smtp-Source: APXvYqz9c0SD2h/Oa3hCkS5w+CzJ/oA2GvNbqe9iPQcISdFzrbYvldpHdkDH2E8dMieBLBWbAlm7lQ==
-X-Received: by 2002:adf:edd0:: with SMTP id v16mr29965178wro.310.1576502492368;
-        Mon, 16 Dec 2019 05:21:32 -0800 (PST)
-Received: from apalos.home (ppp-94-66-130-5.home.otenet.gr. [94.66.130.5])
-        by smtp.gmail.com with ESMTPSA id j12sm21903092wrt.55.2019.12.16.05.21.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 05:21:31 -0800 (PST)
-Date:   Mon, 16 Dec 2019 15:21:28 +0200
-From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        "brouer@redhat.com" <brouer@redhat.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        Li Rongqing <lirongqing@baidu.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        peterz@infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        bhelgaas@google.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][v2] page_pool: handle page recycle for NUMA_NO_NODE
- condition
-Message-ID: <20191216132128.GA19355@apalos.home>
-References: <1575624767-3343-1-git-send-email-lirongqing@baidu.com>
- <9fecbff3518d311ec7c3aee9ae0315a73682a4af.camel@mellanox.com>
- <20191211194933.15b53c11@carbon>
- <831ed886842c894f7b2ffe83fe34705180a86b3b.camel@mellanox.com>
- <0a252066-fdc3-a81d-7a36-8f49d2babc01@huawei.com>
- <20191216121557.GE30281@dhcp22.suse.cz>
- <20191216123426.GA18663@apalos.home>
- <20191216130845.GF30281@dhcp22.suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JawXd/NOVI0T+kjRC7W+KjOmHqd9T1rGdITq8d6PplQ=;
+        b=WoeubUdUyi7h+Z9u9pGulmGjq61NuiTaMzt0TI78PAQfrhiR31oo7Wilp7cG65Vhfs
+         lFnbVvFbiX0LFpYR9Z7zIvOHV0HBIvvQbMCCMzyFIlXIKFQrFlb5e8UDmI2UzTFC6Tb/
+         KmLwRxWaBY9I4qlr4I8m6wrlOczdSYRCUCIKtaR6DXkK3qLwN9/ct40zPlgs5afgpx46
+         Arw0IC7y/oayrfLTO6E0w3cyKuGLpMIS5x6T2tY3ldRkr6TRRua6YrK8km752Nn7walv
+         ht4jRpHgUkM4I1x/7YHTHPfSWBNZerzE51P/BX1H4iraXCZ5XIvbp2W3l44ieun7oQv/
+         waxA==
+X-Gm-Message-State: APjAAAVReXm+1daym35URMl1/0VZkS6GUqqKNHSyhXUWdT9ujD9AKVIU
+        pWEPGmekOmrvHNsuETpDE3XvjpTrKDgZj9Bz2JIptg==
+X-Google-Smtp-Source: APXvYqxSD5VVJ4lNUbCTPHVVtvS3hNg+xoQwBMqO9hpFO+TmvNY0uSGpkRz+QC4RbmLRXBVKTNp1RJND16zi4H5TzrU=
+X-Received: by 2002:aca:4e87:: with SMTP id c129mr8806320oib.153.1576502546665;
+ Mon, 16 Dec 2019 05:22:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216130845.GF30281@dhcp22.suse.cz>
+References: <20191212135724.331342-1-linux@dominikbrodowski.net>
+ <20191212135724.331342-4-linux@dominikbrodowski.net> <20191216013536.5wyvq4vjv5efd35n@core.my.home>
+ <CAHk-=wh8VLe3AEKhz=1bzSO=1fv4EM71EhufxuC=Gp=+bLhXoA@mail.gmail.com> <20191216051300.GB908@sol.localdomain>
+In-Reply-To: <20191216051300.GB908@sol.localdomain>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 16 Dec 2019 14:21:55 +0100
+Message-ID: <CAMuHMdUF1jXizp3Tz46YDJnzzmJDG_vE3xf-0o+OJiKx-waShw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] init: use do_mount() instead of ksys_mount()
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 02:08:45PM +0100, Michal Hocko wrote:
-> On Mon 16-12-19 14:34:26, Ilias Apalodimas wrote:
-> > Hi Michal, 
-> > On Mon, Dec 16, 2019 at 01:15:57PM +0100, Michal Hocko wrote:
-> > > On Thu 12-12-19 09:34:14, Yunsheng Lin wrote:
-> > > > +CC Michal, Peter, Greg and Bjorn
-> > > > Because there has been disscusion about where and how the NUMA_NO_NODE
-> > > > should be handled before.
-> > > 
-> > > I do not have a full context. What is the question here?
-> > 
-> > When we allocate pages for the page_pool API, during the init, the driver writer
-> > decides which NUMA node to use. The API can,  in some cases recycle the memory,
-> > instead of freeing it and re-allocating it. If the NUMA node has changed (irq
-> > affinity for example), we forbid recycling and free the memory, since recycling
-> > and using memory on far NUMA nodes is more expensive (more expensive than
-> > recycling, at least on the architectures we tried anyway).
-> > Since this would be expensive to do it per packet, the burden falls on the 
-> > driver writer for that. Drivers *have* to call page_pool_update_nid() or 
-> > page_pool_nid_changed() if they want to check for that which runs once
-> > per NAPI cycle.
-> 
-> Thanks for the clarification.
-> 
-> > The current code in the API though does not account for NUMA_NO_NODE. That's
-> > what this is trying to fix.
-> > If the page_pool params are initialized with that, we *never* recycle
-> > the memory. This is happening because the API is allocating memory with 
-> > 'nid = numa_mem_id()' if NUMA_NO_NODE is configured so the current if statement
-> > 'page_to_nid(page) == pool->p.nid' will never trigger.
-> 
-> OK. There is no explicit mention of the expected behavior for
-> NUMA_NO_NODE. The semantic is usually that there is no NUMA placement
-> requirement and the MM code simply starts the allocate from a local node
-> in that case. But the memory might come from any node so there is no
-> "local node" guarantee.
-> 
-> So the main question is what is the expected semantic? Do people expect
-> that NUMA_NO_NODE implies locality? Why don't you simply always reuse
-> when there was no explicit numa requirement?
-> 
+Hi all,
 
-Well they shouldn't. Hence my next proposal. I think we are pretty much saying
-the same thing here. 
-If the driver defines NUMA_NO_NODE, just blindly recycle memory.
+On Mon, Dec 16, 2019 at 6:13 AM Eric Biggers <ebiggers@kernel.org> wrote:
+> On Sun, Dec 15, 2019 at 07:50:23PM -0800, Linus Torvalds wrote:
+> > On Sun, Dec 15, 2019 at 5:35 PM Ondřej Jirman <megi@xff.cz> wrote:
+> > > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+> >
+> > Duh. So much for the trivial obvious conversion.
+> >
+> > It didn't take "data might be NULL" into account.
+> >
+> > A patch like this, perhaps? Untested..
 
-> > The initial proposal was to check:
-> > pool->p.nid == NUMA_NO_NODE && page_to_nid(page) == numa_mem_id()));
-> 
-> > After that the thread span out of control :)
-> > My question is do we *really* have to check for 
-> > page_to_nid(page) == numa_mem_id()? if the architecture is not NUMA aware
-> > wouldn't pool->p.nid == NUMA_NO_NODE be enough?
-> 
-> If the architecture is !NUMA then numa_mem_id and page_to_nid should
-> always equal and be both zero.
-> 
+> > --- a/init/do_mounts.c
+> > +++ b/init/do_mounts.c
+> > @@ -391,17 +391,19 @@ static int __init do_mount_root(const char *name, const char *fs,
+> >                                const int flags, const void *data)
+> >  {
+> >       struct super_block *s;
+> > -     char *data_page;
+> > -     struct page *p;
+> > +     struct page *p = NULL;
+> > +     char *data_page = NULL;
+> >       int ret;
+> >
+> > -     /* do_mount() requires a full page as fifth argument */
+> > -     p = alloc_page(GFP_KERNEL);
+> > -     if (!p)
+> > -             return -ENOMEM;
+> > -
+> > -     data_page = page_address(p);
+> > -     strncpy(data_page, data, PAGE_SIZE - 1);
+> > +     if (data) {
+> > +             /* do_mount() requires a full page as fifth argument */
+> > +             p = alloc_page(GFP_KERNEL);
+> > +             if (!p)
+> > +                     return -ENOMEM;
+> > +             data_page = page_address(p);
+> > +             strncpy(data_page, data, PAGE_SIZE - 1);
+> > +             data_page[PAGE_SIZE - 1] = '\0';
+> > +     }
+> >
+> >       ret = do_mount(name, "/root", fs, flags, data_page);
+> >       if (ret)
+> > @@ -417,7 +419,8 @@ static int __init do_mount_root(const char *name, const char *fs,
+> >              MAJOR(ROOT_DEV), MINOR(ROOT_DEV));
+> >
+> >  out:
+> > -     put_page(p);
+> > +     if (p)
+> > +             put_page(p);
+> >       return ret;
+>
+> I'm seeing the boot crash too, and Linus' patch fixes it.
 
-Ditto
+#metoo ;-)
 
-> -- 
-> Michal Hocko
-> SUSE Labs
+Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+> Note that adding the line
+>
+>                 data_page[PAGE_SIZE - 1] = '\0';
+>
+> is not necessary since do_mount() already does it.
+
+Indeed. So the "-1" can be dropped from the strncpy() call, which brings
+it even more in-line with the "full page" comment.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 
-Thanks
-/Ilias
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
