@@ -2,128 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F97712025D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:28:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E85D0120261
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:28:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfLPK1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 05:27:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727345AbfLPK1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:27:02 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDADC206CB;
-        Mon, 16 Dec 2019 10:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576492022;
-        bh=kUgzQHruAjaFJFDFjIH83xFuk1KBvTCvlgdm112GOkQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oKrWqvEV9lXn1r3miOVPSITbPPacHp89DGtXxqTYnHvm6TN+1tSGZFivgdvUIN9o7
-         cz4Ste93FLYwlxxzWJ603rI4ubx/PnNMo1xyoMJxTyuDz/t6BuQ3a2OcHHCyeXDOKA
-         YAmAJhk4Qtwm29VaZCd1Kh4XTwB/LGGWe8oz9g+k=
-Date:   Mon, 16 Dec 2019 10:26:56 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Elena Petrova <lenaptr@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v2 1/3] ubsan: Add trap instrumentation option
-Message-ID: <20191216102655.GA11082@willie-the-truck>
-References: <20191121181519.28637-1-keescook@chromium.org>
- <20191121181519.28637-2-keescook@chromium.org>
+        id S1727438AbfLPK1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 05:27:52 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40625 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbfLPK1w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 05:27:52 -0500
+Received: by mail-lj1-f196.google.com with SMTP id s22so6184855ljs.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 02:27:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kc8cYBIPzK7WSX6Dhpknsv+Az7sG/90zzv4gmeMoX/I=;
+        b=W8eY0lMy6Qgx6i4PCyCCiBvKfrdmAknD/ElHqjjw1MmaCLGGVpfqimMzwD1KrZptEq
+         SmGOOMB6K3EOysXDm1NJibNn3lksuBlHSOBZrz7e9YSXZZ0/0O6PP09e6gPdiqPt3m5B
+         Mzcdx5+SQBHVInfd1/jdFHaDUeTp0P1+OMJdM1fjj5O8gEMcfmVDBZX0mnqwtI0FHoC+
+         +JUpPJrkD3KtCHDJhkPV8xNvd5tGBAAQXPgmTaEpRRoIKPhM13zRhxUl2XeCnablcB1K
+         ZJsSS4yXSWQpyFNu04ukz20OTdBlqcQ4In2zbgGsTFzFdFnwdgDL7N3EYLh7dEwVzQDp
+         aAag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kc8cYBIPzK7WSX6Dhpknsv+Az7sG/90zzv4gmeMoX/I=;
+        b=Un8m0PLnAqMFedN+SULwDMx8iX3hItqLjOnQp3vyWEbVqiXGXZVUv5I5cr7n8mU6bf
+         Kh93ELB3CnKMe1+fJMdZc1LJ3rgiOi/KlalfA+j3VS6CUQs2shb79UT9FzZ0+LQjyu8L
+         BVYY+gupRlL9SOWM0pRg3wJ/xM+QFiol4WWr0ItIb/z/ALJtqdX20ltmFVN81xKJgxDD
+         5svhqXgoizIr/1b16E7r6BrjRTGEJ6K7FvTfhmvGttwa4I9Rw3JcCW/pd07gsIlGXYp6
+         py06j1325/QU7905UNjXWExosPRpRH4oEKtOhdbhvUCqYeu5Ev5HRhEk+H7KdVPcKAcR
+         5eXA==
+X-Gm-Message-State: APjAAAXVwZOyPbK6wMrHfUMYiIrgcoWkWzrIjyeua6buDGGgVx/NWJIq
+        4duE0goopSM/9x2+BWnzZsuqqG5CRem+PVYkNLYekg==
+X-Google-Smtp-Source: APXvYqxyqyrkWKlQ1gXsP1WttRxjmUxJOJGIdWOtatnGZNr2dHpk3W2tQ6LrXKWaSo/Xkh46gNIkzci0Gfo9VddG5bc=
+X-Received: by 2002:a2e:8045:: with SMTP id p5mr18792305ljg.251.1576492069993;
+ Mon, 16 Dec 2019 02:27:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121181519.28637-2-keescook@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191215163810.52356-1-hdegoede@redhat.com> <20191215163810.52356-3-hdegoede@redhat.com>
+In-Reply-To: <20191215163810.52356-3-hdegoede@redhat.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 16 Dec 2019 11:27:38 +0100
+Message-ID: <CACRpkdYWi5dX8jRBoJmrA3Mrig-JUKw+qq5gth2veY3EyUALqQ@mail.gmail.com>
+Subject: Re: [PATCH 2/5] drm/i915/dsi: Move poking of panel-enable GPIO to intel_dsi_vbt.c
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kees,
+On Sun, Dec 15, 2019 at 5:38 PM Hans de Goede <hdegoede@redhat.com> wrote:
 
-On Thu, Nov 21, 2019 at 10:15:17AM -0800, Kees Cook wrote:
-> The Undefined Behavior Sanitizer can operate in two modes: warning
-> reporting mode via lib/ubsan.c handler calls, or trap mode, which uses
-> __builtin_trap() as the handler. Using lib/ubsan.c means the kernel
-> image is about 5% larger (due to all the debugging text and reporting
-> structures to capture details about the warning conditions). Using the
-> trap mode, the image size changes are much smaller, though at the loss
-> of the "warning only" mode.
-> 
-> In order to give greater flexibility to system builders that want
-> minimal changes to image size and are prepared to deal with kernel code
-> being aborted and potentially destabilizing the system, this introduces
-> CONFIG_UBSAN_TRAP. The resulting image sizes comparison:
-> 
->    text    data     bss       dec       hex     filename
-> 19533663   6183037  18554956  44271656  2a38828 vmlinux.stock
-> 19991849   7618513  18874448  46484810  2c54d4a vmlinux.ubsan
-> 19712181   6284181  18366540  44362902  2a4ec96 vmlinux.ubsan-trap
-> 
-> CONFIG_UBSAN=y:      image +4.8% (text +2.3%, data +18.9%)
-> CONFIG_UBSAN_TRAP=y: image +0.2% (text +0.9%, data +1.6%)
-> 
-> Additionally adjusts the CONFIG_UBSAN Kconfig help for clarity and
-> removes the mention of non-existing boot param "ubsan_handle".
-> 
-> Suggested-by: Elena Petrova <lenaptr@google.com>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  lib/Kconfig.ubsan      | 22 ++++++++++++++++++----
->  lib/Makefile           |  2 ++
->  scripts/Makefile.ubsan |  9 +++++++--
->  3 files changed, 27 insertions(+), 6 deletions(-)
-> 
-> diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
-> index 0e04fcb3ab3d..9deb655838b0 100644
-> --- a/lib/Kconfig.ubsan
-> +++ b/lib/Kconfig.ubsan
-> @@ -5,11 +5,25 @@ config ARCH_HAS_UBSAN_SANITIZE_ALL
->  config UBSAN
->  	bool "Undefined behaviour sanity checker"
->  	help
-> -	  This option enables undefined behaviour sanity checker
-> +	  This option enables the Undefined Behaviour sanity checker.
->  	  Compile-time instrumentation is used to detect various undefined
-> -	  behaviours in runtime. Various types of checks may be enabled
-> -	  via boot parameter ubsan_handle
-> -	  (see: Documentation/dev-tools/ubsan.rst).
-> +	  behaviours at runtime. For more details, see:
-> +	  Documentation/dev-tools/ubsan.rst
-> +
-> +config UBSAN_TRAP
-> +	bool "On Sanitizer warnings, abort the running kernel code"
-> +	depends on UBSAN
-> +	depends on $(cc-option, -fsanitize-undefined-trap-on-error)
-> +	help
-> +	  Building kernels with Sanitizer features enabled tends to grow
-> +	  the kernel size by around 5%, due to adding all the debugging
-> +	  text on failure paths. To avoid this, Sanitizer instrumentation
-> +	  can just issue a trap. This reduces the kernel size overhead but
-> +	  turns all warnings (including potentially harmless conditions)
-> +	  into full exceptions that abort the running kernel code
-> +	  (regardless of context, locks held, etc), which may destabilize
-> +	  the system. For some system builders this is an acceptable
-> +	  trade-off.
+> On some older devices (BYT, CHT) which may use v2 VBT MIPI-sequences,
+> we need to manually control the panel enable GPIO as v2 sequences do
+> not do this.
+>
+> So far we have been carrying the code to do this on BYT/CHT devices
+> with a Crystal Cove PMIC in vlv_dsi.c, but as this really is a shortcoming
+> of the VBT MIPI-sequences, intel_dsi_vbt.c is a better place for this,
+> so move it there.
+>
+> This is a preparation patch for adding panel-enable and backlight-enable
+> GPIO support for BYT devices where instead of the PMIC the SoC is used
+> for backlight control.
+>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-Slight nit, but I wonder if it would make sense to move all this under a
-'menuconfig UBSAN' entry, so the dependencies can be dropped? Then you could
-have all of the suboptions default to on and basically choose which
-individual compiler options to disable based on your own preferences.
+The kernel looks prettier after than before and it seems correct so:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-What do you think?
-
-Will
+Yours,
+Linus Walleij
