@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3A371215A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:23:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35FD512166E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:29:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731966AbfLPSXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:23:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49566 "EHLO mail.kernel.org"
+        id S1731537AbfLPS3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:29:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731738AbfLPSUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:20:08 -0500
+        id S1731060AbfLPSOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:14:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 464B120409;
-        Mon, 16 Dec 2019 18:20:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 746F421775;
+        Mon, 16 Dec 2019 18:14:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520407;
-        bh=qAZAxjoNi4cBDYv7zf2N/zyVmpVIASdIiC8ISltOLjM=;
+        s=default; t=1576520049;
+        bh=dHp+0izUy3gUt9Z11uqVhXbKnF9n8E0PvImkKYAJD0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pmuNYZrB5W7c3sLQqTTFVuntiKUECDZWCE/mGupxZi9tAMoBSbwGIXRjbiTwW4BSt
-         1KGPw/LByewPEpZoisfoP/0r3sNzpivw+OzyVBx+82v+Gubk8xlS4Fim8u8m2mP9ue
-         3W0pPYFCrI9JhwYO+hvUtQWWNvRdE9MxKmqQXoKQ=
+        b=g7bXluZmjPbJewGQrhX9MuURjX465otivkbYcT54hDiy17l1GgWgh3gy9Y7mV1j1J
+         0rg4grba4/l9N27W3JzyZyVnT6dmZdN/icH/Jyq9z8OFgCGIAkEgQV0/TWu7RxHJdE
+         bM6o2K71nJNpQ0dwETePKqosL0XVQ9OU2WTkcqXQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yabin Cui <yabinc@google.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 5.4 143/177] coresight: Serialize enabling/disabling a link device.
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 159/180] scsi: qla2xxx: Fix a race condition between aborting and completing a SCSI command
 Date:   Mon, 16 Dec 2019 18:49:59 +0100
-Message-Id: <20191216174847.020242962@linuxfoundation.org>
+Message-Id: <20191216174845.839026411@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,323 +45,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yabin Cui <yabinc@google.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit edda32dabedb01f98b9d7b9a4492c13357834bbe upstream.
+[ Upstream commit 85cffefa09e448906a6f0bc20f422d75a18675bd ]
 
-When tracing etm data of multiple threads on multiple cpus through perf
-interface, some link devices are shared between paths of different cpus.
-It creates race conditions when different cpus wants to enable/disable
-the same link device at the same time.
+Instead of allocating a struct srb dynamically from inside .queuecommand(),
+set qla2xxx_driver_template.cmd_size such that struct scsi_cmnd and struct
+srb are contiguous. Do not call QLA_QPAIR_MARK_BUSY() /
+QLA_QPAIR_MARK_NOT_BUSY() for SRBs associated with SCSI commands. That is
+safe because scsi_remove_host() is called before queue pairs are deleted
+and scsi_remove_host() waits for all outstanding SCSI commands to finish.
 
-Example 1:
-Two cpus want to enable different ports of a coresight funnel, thus
-calling the funnel enable operation at the same time. But the funnel
-enable operation isn't reentrantable.
-
-Example 2:
-For an enabled coresight dynamic replicator with refcnt=1, one cpu wants
-to disable it, while another cpu wants to enable it. Ideally we still have
-an enabled replicator with refcnt=1 at the end. But in reality the result
-is uncertain.
-
-Since coresight devices claim themselves when enabled for self-hosted
-usage, the race conditions above usually make the link devices not usable
-after many cycles.
-
-To fix the race conditions, this patch uses spinlocks to serialize
-enabling/disabling link devices.
-
-Fixes: a06ae8609b3d ("coresight: add CoreSight core layer framework")
-Signed-off-by: Yabin Cui <yabinc@google.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: stable <stable@vger.kernel.org> # 5.3
-Link: https://lore.kernel.org/r/20191104181251.26732-14-mathieu.poirier@linaro.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Tested-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwtracing/coresight/coresight-funnel.c     |   32 +++++++++++---
- drivers/hwtracing/coresight/coresight-replicator.c |   33 ++++++++++++--
- drivers/hwtracing/coresight/coresight-tmc-etf.c    |   26 ++++++++---
- drivers/hwtracing/coresight/coresight.c            |   47 ++++++---------------
- 4 files changed, 88 insertions(+), 50 deletions(-)
+ drivers/scsi/qla2xxx/qla_def.h |  1 -
+ drivers/scsi/qla2xxx/qla_os.c  | 45 ++++++----------------------------
+ 2 files changed, 8 insertions(+), 38 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight-funnel.c
-+++ b/drivers/hwtracing/coresight/coresight-funnel.c
-@@ -38,12 +38,14 @@ DEFINE_CORESIGHT_DEVLIST(funnel_devs, "f
-  * @atclk:	optional clock for the core parts of the funnel.
-  * @csdev:	component vitals needed by the framework.
-  * @priority:	port selection order.
-+ * @spinlock:	serialize enable/disable operations.
-  */
- struct funnel_drvdata {
- 	void __iomem		*base;
- 	struct clk		*atclk;
- 	struct coresight_device	*csdev;
- 	unsigned long		priority;
-+	spinlock_t		spinlock;
- };
+diff --git a/drivers/scsi/qla2xxx/qla_def.h b/drivers/scsi/qla2xxx/qla_def.h
+index 0eb1d5a790b26..ea1728fe2c768 100644
+--- a/drivers/scsi/qla2xxx/qla_def.h
++++ b/drivers/scsi/qla2xxx/qla_def.h
+@@ -562,7 +562,6 @@ typedef struct srb {
+ } srb_t;
  
- static int dynamic_funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
-@@ -76,11 +78,21 @@ static int funnel_enable(struct coresigh
- {
- 	int rc = 0;
- 	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	unsigned long flags;
-+	bool first_enable = false;
+ #define GET_CMD_SP(sp) (sp->u.scmd.cmd)
+-#define SET_CMD_SP(sp, cmd) (sp->u.scmd.cmd = cmd)
+ #define GET_CMD_CTX_SP(sp) (sp->u.scmd.ctx)
  
--	if (drvdata->base)
--		rc = dynamic_funnel_enable_hw(drvdata, inport);
+ #define GET_CMD_SENSE_LEN(sp) \
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 484045e4d194f..3aa2dd43945bf 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -727,7 +727,6 @@ qla2x00_sp_compl(void *ptr, int res)
+ 	cmd->scsi_done(cmd);
+ 	if (comp)
+ 		complete(comp);
+-	qla2x00_rel_sp(sp);
+ }
+ 
+ void
+@@ -832,7 +831,6 @@ qla2xxx_qpair_sp_compl(void *ptr, int res)
+ 	cmd->scsi_done(cmd);
+ 	if (comp)
+ 		complete(comp);
+-	qla2xxx_rel_qpair_sp(sp->qpair, sp);
+ }
+ 
+ static int
+@@ -925,9 +923,8 @@ qla2xxx_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 	else
+ 		goto qc24_target_busy;
+ 
+-	sp = qla2x00_get_sp(vha, fcport, GFP_ATOMIC);
+-	if (!sp)
+-		goto qc24_host_busy;
++	sp = scsi_cmd_priv(cmd);
++	qla2xxx_init_sp(sp, vha, vha->hw->base_qpair, fcport);
+ 
+ 	sp->u.scmd.cmd = cmd;
+ 	sp->type = SRB_SCSI_CMD;
+@@ -948,9 +945,6 @@ qla2xxx_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ qc24_host_busy_free_sp:
+ 	sp->free(sp);
+ 
+-qc24_host_busy:
+-	return SCSI_MLQUEUE_HOST_BUSY;
 -
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	if (atomic_read(&csdev->refcnt[inport]) == 0) {
-+		if (drvdata->base)
-+			rc = dynamic_funnel_enable_hw(drvdata, inport);
-+		if (!rc)
-+			first_enable = true;
-+	}
- 	if (!rc)
-+		atomic_inc(&csdev->refcnt[inport]);
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+
-+	if (first_enable)
- 		dev_dbg(&csdev->dev, "FUNNEL inport %d enabled\n", inport);
- 	return rc;
- }
-@@ -107,11 +119,19 @@ static void funnel_disable(struct coresi
- 			   int outport)
- {
- 	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	unsigned long flags;
-+	bool last_disable = false;
+ qc24_target_busy:
+ 	return SCSI_MLQUEUE_TARGET_BUSY;
  
--	if (drvdata->base)
--		dynamic_funnel_disable_hw(drvdata, inport);
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	if (atomic_dec_return(&csdev->refcnt[inport]) == 0) {
-+		if (drvdata->base)
-+			dynamic_funnel_disable_hw(drvdata, inport);
-+		last_disable = true;
-+	}
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+@@ -1011,9 +1005,8 @@ qla2xxx_mqueuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd,
+ 	else
+ 		goto qc24_target_busy;
  
--	dev_dbg(&csdev->dev, "FUNNEL inport %d disabled\n", inport);
-+	if (last_disable)
-+		dev_dbg(&csdev->dev, "FUNNEL inport %d disabled\n", inport);
- }
+-	sp = qla2xxx_get_qpair_sp(vha, qpair, fcport, GFP_ATOMIC);
+-	if (!sp)
+-		goto qc24_host_busy;
++	sp = scsi_cmd_priv(cmd);
++	qla2xxx_init_sp(sp, vha, qpair, fcport);
  
- static const struct coresight_ops_link funnel_link_ops = {
---- a/drivers/hwtracing/coresight/coresight-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-replicator.c
-@@ -31,11 +31,13 @@ DEFINE_CORESIGHT_DEVLIST(replicator_devs
-  *		whether this one is programmable or not.
-  * @atclk:	optional clock for the core parts of the replicator.
-  * @csdev:	component vitals needed by the framework
-+ * @spinlock:	serialize enable/disable operations.
-  */
- struct replicator_drvdata {
- 	void __iomem		*base;
- 	struct clk		*atclk;
- 	struct coresight_device	*csdev;
-+	spinlock_t		spinlock;
- };
+ 	sp->u.scmd.cmd = cmd;
+ 	sp->type = SRB_SCSI_CMD;
+@@ -1037,9 +1030,6 @@ qla2xxx_mqueuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd,
+ qc24_host_busy_free_sp:
+ 	sp->free(sp);
  
- static void dynamic_replicator_reset(struct replicator_drvdata *drvdata)
-@@ -97,10 +99,22 @@ static int replicator_enable(struct core
- {
- 	int rc = 0;
- 	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	unsigned long flags;
-+	bool first_enable = false;
- 
--	if (drvdata->base)
--		rc = dynamic_replicator_enable(drvdata, inport, outport);
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	if (atomic_read(&csdev->refcnt[outport]) == 0) {
-+		if (drvdata->base)
-+			rc = dynamic_replicator_enable(drvdata, inport,
-+						       outport);
-+		if (!rc)
-+			first_enable = true;
-+	}
- 	if (!rc)
-+		atomic_inc(&csdev->refcnt[outport]);
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+
-+	if (first_enable)
- 		dev_dbg(&csdev->dev, "REPLICATOR enabled\n");
- 	return rc;
- }
-@@ -137,10 +151,19 @@ static void replicator_disable(struct co
- 			       int outport)
- {
- 	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	unsigned long flags;
-+	bool last_disable = false;
- 
--	if (drvdata->base)
--		dynamic_replicator_disable(drvdata, inport, outport);
--	dev_dbg(&csdev->dev, "REPLICATOR disabled\n");
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	if (atomic_dec_return(&csdev->refcnt[outport]) == 0) {
-+		if (drvdata->base)
-+			dynamic_replicator_disable(drvdata, inport, outport);
-+		last_disable = true;
-+	}
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+
-+	if (last_disable)
-+		dev_dbg(&csdev->dev, "REPLICATOR disabled\n");
- }
- 
- static const struct coresight_ops_link replicator_link_ops = {
---- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-@@ -334,9 +334,10 @@ static int tmc_disable_etf_sink(struct c
- static int tmc_enable_etf_link(struct coresight_device *csdev,
- 			       int inport, int outport)
- {
--	int ret;
-+	int ret = 0;
- 	unsigned long flags;
- 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	bool first_enable = false;
- 
- 	spin_lock_irqsave(&drvdata->spinlock, flags);
- 	if (drvdata->reading) {
-@@ -344,12 +345,18 @@ static int tmc_enable_etf_link(struct co
- 		return -EBUSY;
- 	}
- 
--	ret = tmc_etf_enable_hw(drvdata);
-+	if (atomic_read(&csdev->refcnt[0]) == 0) {
-+		ret = tmc_etf_enable_hw(drvdata);
-+		if (!ret) {
-+			drvdata->mode = CS_MODE_SYSFS;
-+			first_enable = true;
-+		}
-+	}
- 	if (!ret)
--		drvdata->mode = CS_MODE_SYSFS;
-+		atomic_inc(&csdev->refcnt[0]);
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
--	if (!ret)
-+	if (first_enable)
- 		dev_dbg(&csdev->dev, "TMC-ETF enabled\n");
- 	return ret;
- }
-@@ -359,6 +366,7 @@ static void tmc_disable_etf_link(struct
- {
- 	unsigned long flags;
- 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	bool last_disable = false;
- 
- 	spin_lock_irqsave(&drvdata->spinlock, flags);
- 	if (drvdata->reading) {
-@@ -366,11 +374,15 @@ static void tmc_disable_etf_link(struct
- 		return;
- 	}
- 
--	tmc_etf_disable_hw(drvdata);
--	drvdata->mode = CS_MODE_DISABLED;
-+	if (atomic_dec_return(&csdev->refcnt[0]) == 0) {
-+		tmc_etf_disable_hw(drvdata);
-+		drvdata->mode = CS_MODE_DISABLED;
-+		last_disable = true;
-+	}
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
--	dev_dbg(&csdev->dev, "TMC-ETF disabled\n");
-+	if (last_disable)
-+		dev_dbg(&csdev->dev, "TMC-ETF disabled\n");
- }
- 
- static void *tmc_alloc_etf_buffer(struct coresight_device *csdev,
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -253,9 +253,9 @@ static int coresight_enable_link(struct
- 				 struct coresight_device *parent,
- 				 struct coresight_device *child)
- {
--	int ret;
-+	int ret = 0;
- 	int link_subtype;
--	int refport, inport, outport;
-+	int inport, outport;
- 
- 	if (!parent || !child)
- 		return -EINVAL;
-@@ -264,29 +264,17 @@ static int coresight_enable_link(struct
- 	outport = coresight_find_link_outport(csdev, child);
- 	link_subtype = csdev->subtype.link_subtype;
- 
--	if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_MERG)
--		refport = inport;
--	else if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_SPLIT)
--		refport = outport;
--	else
--		refport = 0;
+-qc24_host_busy:
+-	return SCSI_MLQUEUE_HOST_BUSY;
 -
--	if (refport < 0)
--		return refport;
+ qc24_target_busy:
+ 	return SCSI_MLQUEUE_TARGET_BUSY;
+ 
+@@ -1280,10 +1270,8 @@ qla2xxx_eh_abort(struct scsi_cmnd *cmd)
+ 	int ret;
+ 	unsigned int id;
+ 	uint64_t lun;
+-	unsigned long flags;
+ 	int rval;
+ 	struct qla_hw_data *ha = vha->hw;
+-	struct qla_qpair *qpair;
+ 
+ 	if (qla2x00_isp_reg_stat(ha)) {
+ 		ql_log(ql_log_info, vha, 0x8042,
+@@ -1295,29 +1283,11 @@ qla2xxx_eh_abort(struct scsi_cmnd *cmd)
+ 	if (ret != 0)
+ 		return ret;
+ 
+-	sp = (srb_t *) CMD_SP(cmd);
+-	if (!sp)
+-		return SUCCESS;
++	sp = scsi_cmd_priv(cmd);
+ 
+-	qpair = sp->qpair;
+-	if (!qpair)
+-		return SUCCESS;
 -
--	if (atomic_inc_return(&csdev->refcnt[refport]) == 1) {
--		if (link_ops(csdev)->enable) {
--			ret = link_ops(csdev)->enable(csdev, inport, outport);
--			if (ret) {
--				atomic_dec(&csdev->refcnt[refport]);
--				return ret;
--			}
--		}
+-	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+-	if (sp->type != SRB_SCSI_CMD || GET_CMD_SP(sp) != cmd) {
+-		/* there's a chance an interrupt could clear
+-		   the ptr as part of done & free */
+-		spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
+-		return SUCCESS;
 -	}
 -
--	csdev->enable = true;
-+	if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_MERG && inport < 0)
-+		return inport;
-+	if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_SPLIT && outport < 0)
-+		return outport;
-+
-+	if (link_ops(csdev)->enable)
-+		ret = link_ops(csdev)->enable(csdev, inport, outport);
-+	if (!ret)
-+		csdev->enable = true;
- 
--	return 0;
-+	return ret;
- }
- 
- static void coresight_disable_link(struct coresight_device *csdev,
-@@ -295,7 +283,7 @@ static void coresight_disable_link(struc
- {
- 	int i, nr_conns;
- 	int link_subtype;
--	int refport, inport, outport;
-+	int inport, outport;
- 
- 	if (!parent || !child)
- 		return;
-@@ -305,20 +293,15 @@ static void coresight_disable_link(struc
- 	link_subtype = csdev->subtype.link_subtype;
- 
- 	if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_MERG) {
--		refport = inport;
- 		nr_conns = csdev->pdata->nr_inport;
- 	} else if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_SPLIT) {
--		refport = outport;
- 		nr_conns = csdev->pdata->nr_outport;
- 	} else {
--		refport = 0;
- 		nr_conns = 1;
- 	}
- 
--	if (atomic_dec_return(&csdev->refcnt[refport]) == 0) {
--		if (link_ops(csdev)->disable)
--			link_ops(csdev)->disable(csdev, inport, outport);
+-	/* Get a reference to the sp and drop the lock. */
+-	if (sp_get(sp)){
+-		/* ref_count is already 0 */
+-		spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
++	/* Return if the command has already finished. */
++	if (sp_get(sp))
+ 		return SUCCESS;
 -	}
-+	if (link_ops(csdev)->disable)
-+		link_ops(csdev)->disable(csdev, inport, outport);
+-	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
  
- 	for (i = 0; i < nr_conns; i++)
- 		if (atomic_read(&csdev->refcnt[i]) != 0)
+ 	id = cmd->device->id;
+ 	lun = cmd->device->lun;
+@@ -7197,6 +7167,7 @@ struct scsi_host_template qla2xxx_driver_template = {
+ 
+ 	.supported_mode		= MODE_INITIATOR,
+ 	.track_queue_depth	= 1,
++	.cmd_size		= sizeof(srb_t),
+ };
+ 
+ static const struct pci_error_handlers qla2xxx_err_handler = {
+-- 
+2.20.1
+
 
 
