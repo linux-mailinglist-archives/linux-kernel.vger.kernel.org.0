@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A009E12147A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:11:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59ACD1214F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:17:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730824AbfLPSLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:11:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55748 "EHLO mail.kernel.org"
+        id S1731592AbfLPSQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730811AbfLPSLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:11:36 -0500
+        id S1731400AbfLPSQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:16:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA7452072D;
-        Mon, 16 Dec 2019 18:11:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D395206E0;
+        Mon, 16 Dec 2019 18:16:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519896;
-        bh=4lpxXU2p3Hjyoh0K7wEvhHtrnxxSunMDGWN6OBThWKo=;
+        s=default; t=1576520205;
+        bh=ftMvWzn4IjXn9M6Ibkiy56/cS0YEF3UtTIygOj+2RrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kT2F1VyDy8/h2HN4sDtZRbMDcr1pd8pDCE1o+8tAR4nmqGSldePMI9eScLMd2g23E
-         BMnMBqtRFp5oQ0wjS5fO379/INh0nIuWNk5LWF2DATvMMfAr0kYLAIC/yG5Q6xMiaf
-         ApjHAlBLhG3ZmGEJUS/7j2eRTsytRmlZ3ojkoJmI=
+        b=ZxJuLcdW4K41F3V86ZiY9G1rSCUvT1DQMVcD2o3WdIeexJax0WlIJXgWCzAIvYp3O
+         iC6hFYbxGl90p7OW/1nBbp9W9tCcubwmljwbYqGlGhKK2e5NaAxOdu50lJoyAQBaZ+
+         QjOYcxy/S5AQcY63IVZeIOAM9oIR+ATvJ1XrRWe4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Rasmussen <jacobraz@google.com>,
-        Ross Zwisler <zwisler@google.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.3 076/180] ASoC: rt5645: Fixed typo for buddy jack support.
+        stable@vger.kernel.org, Tejas Joglekar <joglekar@synopsys.com>,
+        Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH 5.4 060/177] usb: dwc3: gadget: Fix logical condition
 Date:   Mon, 16 Dec 2019 18:48:36 +0100
-Message-Id: <20191216174830.721910122@linuxfoundation.org>
+Message-Id: <20191216174831.445399812@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Rasmussen <jacobraz@chromium.org>
+From: Tejas Joglekar <Tejas.Joglekar@synopsys.com>
 
-commit fe23be2d85b05f561431d75acddec726ea807d2a upstream.
+commit 8c7d4b7b3d43c54c0b8c1e4adb917a151c754196 upstream.
 
-Had a typo in e7cfd867fd98 that resulted in buddy jack support not being
-fixed.
+This patch corrects the condition to kick the transfer without
+giving back the requests when either request has remaining data
+or when there are pending SGs. The && check was introduced during
+spliting up the dwc3_gadget_ep_cleanup_completed_requests() function.
 
-Fixes: e7cfd867fd98 ("ASoC: rt5645: Fixed buddy jack support.")
-Signed-off-by: Jacob Rasmussen <jacobraz@google.com>
-Reviewed-by: Ross Zwisler <zwisler@google.com>
-Cc: <jacobraz@google.com>
-CC: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20191114232011.165762-1-jacobraz@google.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: f38e35dd84e2 ("usb: dwc3: gadget: split dwc3_gadget_ep_cleanup_completed_requests()")
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Tejas Joglekar <joglekar@synopsys.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/rt5645.c |    2 +-
+ drivers/usb/dwc3/gadget.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/codecs/rt5645.c
-+++ b/sound/soc/codecs/rt5645.c
-@@ -3271,7 +3271,7 @@ static void rt5645_jack_detect_work(stru
- 				    report, SND_JACK_MICROPHONE);
- 		return;
- 	case 4:
--		val = snd_soc_component_read32(rt5645->component, RT5645_A_JD_CTRL1) & 0x002;
-+		val = snd_soc_component_read32(rt5645->component, RT5645_A_JD_CTRL1) & 0x0020;
- 		break;
- 	default: /* read rt5645 jd1_1 status */
- 		val = snd_soc_component_read32(rt5645->component, RT5645_INT_IRQ_ST) & 0x1000;
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2491,7 +2491,7 @@ static int dwc3_gadget_ep_cleanup_comple
+ 
+ 	req->request.actual = req->request.length - req->remaining;
+ 
+-	if (!dwc3_gadget_ep_request_completed(req) &&
++	if (!dwc3_gadget_ep_request_completed(req) ||
+ 			req->num_pending_sgs) {
+ 		__dwc3_gadget_kick_transfer(dep);
+ 		goto out;
 
 
