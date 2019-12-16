@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0097712179F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:37:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3171612182B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbfLPShe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:37:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45538 "EHLO mail.kernel.org"
+        id S1729081AbfLPSll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:41:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729927AbfLPSGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:06:06 -0500
+        id S1729078AbfLPSBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:01:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D81D02072D;
-        Mon, 16 Dec 2019 18:06:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D752206B7;
+        Mon, 16 Dec 2019 18:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519565;
-        bh=KiyNRWnPGiJF+WXmZXgXlZosUasZ2NlvW0XqNFnF0p0=;
+        s=default; t=1576519263;
+        bh=pJvThVF7UxbRq3U3yLReQeuAsAk3XpB2WnkGmm/W5n4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0ZZd4q720VcAOlaCVh6loIb8BrgT5DxMgEHEcbbm7xEXdznkF3DonfDCZlfSwQ1fN
-         KXebLk9yXE/0LBzrUJLvFXhBhSvUKu2hP0Qc6DrJA3CUXaL0nhsILtEyYeUrrNjE4/
-         a0h7N7/xWufur3NxAsfYV0yyLPbVRelMoxW8Z7R8=
+        b=hJDbWJWQYSadn1HwSjt608cngyV+jT6YrL+Q9rYfYj53mqq0gXUqgZLda6kvYCPR2
+         kkENLHMMRKbI/GdF3EOa+uxPI8GgPJzovZ1f6nJ2d56v0aq7QKRIBVCo2pBq9x0QOx
+         TQMxjYjS/7CHD7pv9ZqTBZJWmiIOSfC10mpGSPBY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 118/140] net: hns3: change hnae3_register_ae_dev() to int
-Date:   Mon, 16 Dec 2019 18:49:46 +0100
-Message-Id: <20191216174820.078472441@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org, Andreas Dilger <adilger@dilger.ca>
+Subject: [PATCH 4.14 261/267] ext4: work around deleting a file with i_nlink == 0 safely
+Date:   Mon, 16 Dec 2019 18:49:47 +0100
+Message-Id: <20191216174917.073910129@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,98 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 74354140a579008fd164241e3697d9c37e5b8989 ]
+commit c7df4a1ecb8579838ec8c56b2bb6a6716e974f37 upstream.
 
-hnae3_register_ae_dev() may fail, and it should return a error code
-to its caller, so change hnae3_register_ae_dev() return type to int.
+If the file system is corrupted such that a file's i_links_count is
+too small, then it's possible that when unlinking that file, i_nlink
+will already be zero.  Previously we were working around this kind of
+corruption by forcing i_nlink to one; but we were doing this before
+trying to delete the directory entry --- and if the file system is
+corrupted enough that ext4_delete_entry() fails, then we exit with
+i_nlink elevated, and this causes the orphan inode list handling to be
+FUBAR'ed, such that when we unmount the file system, the orphan inode
+list can get corrupted.
 
-Also, when hnae3_register_ae_dev() return error, hns3_probe() should
-do some error handling and return the error code.
+A better way to fix this is to simply skip trying to call drop_nlink()
+if i_nlink is already zero, thus moving the check to the place where
+it makes the most sense.
 
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+https://bugzilla.kernel.org/show_bug.cgi?id=205433
+
+Link: https://lore.kernel.org/r/20191112032903.8828-1-tytso@mit.edu
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/hisilicon/hns3/hnae3.c     | 10 +++++++++-
- drivers/net/ethernet/hisilicon/hns3/hnae3.h     |  2 +-
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c |  8 ++++++--
- 3 files changed, 16 insertions(+), 4 deletions(-)
+ fs/ext4/namei.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.c b/drivers/net/ethernet/hisilicon/hns3/hnae3.c
-index 2097f92e14c5c..f98bff60bec37 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.c
-@@ -239,7 +239,7 @@ EXPORT_SYMBOL(hnae3_unregister_ae_algo);
-  * @ae_dev: the AE device
-  * NOTE: the duplicated name will not be checked
-  */
--void hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
-+int hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
- {
- 	const struct pci_device_id *id;
- 	struct hnae3_ae_algo *ae_algo;
-@@ -260,6 +260,7 @@ void hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -3065,18 +3065,17 @@ static int ext4_unlink(struct inode *dir
+ 	if (IS_DIRSYNC(dir))
+ 		ext4_handle_sync(handle);
  
- 		if (!ae_dev->ops) {
- 			dev_err(&ae_dev->pdev->dev, "ae_dev ops are null\n");
-+			ret = -EOPNOTSUPP;
- 			goto out_err;
- 		}
- 
-@@ -286,8 +287,15 @@ void hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
- 				ret);
- 	}
- 
-+	mutex_unlock(&hnae3_common_lock);
-+
-+	return 0;
-+
- out_err:
-+	list_del(&ae_dev->node);
- 	mutex_unlock(&hnae3_common_lock);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(hnae3_register_ae_dev);
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index f5c7fc9c5e5cc..5e1a7ab06c63b 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -513,7 +513,7 @@ struct hnae3_handle {
- #define hnae3_get_bit(origin, shift) \
- 	hnae3_get_field((origin), (0x1 << (shift)), (shift))
- 
--void hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev);
-+int hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev);
- void hnae3_unregister_ae_dev(struct hnae3_ae_dev *ae_dev);
- 
- void hnae3_unregister_ae_algo(struct hnae3_ae_algo *ae_algo);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 4b4d9de0a6bb5..0788e78747d94 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1604,9 +1604,13 @@ static int hns3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	ae_dev->dev_type = HNAE3_DEV_KNIC;
- 	pci_set_drvdata(pdev, ae_dev);
- 
--	hnae3_register_ae_dev(ae_dev);
-+	ret = hnae3_register_ae_dev(ae_dev);
-+	if (ret) {
-+		devm_kfree(&pdev->dev, ae_dev);
-+		pci_set_drvdata(pdev, NULL);
-+	}
- 
--	return 0;
-+	return ret;
- }
- 
- /* hns3_remove - Device removal routine
--- 
-2.20.1
-
+-	if (inode->i_nlink == 0) {
+-		ext4_warning_inode(inode, "Deleting file '%.*s' with no links",
+-				   dentry->d_name.len, dentry->d_name.name);
+-		set_nlink(inode, 1);
+-	}
+ 	retval = ext4_delete_entry(handle, dir, de, bh);
+ 	if (retval)
+ 		goto end_unlink;
+ 	dir->i_ctime = dir->i_mtime = current_time(dir);
+ 	ext4_update_dx_flag(dir);
+ 	ext4_mark_inode_dirty(handle, dir);
+-	drop_nlink(inode);
++	if (inode->i_nlink == 0)
++		ext4_warning_inode(inode, "Deleting file '%.*s' with no links",
++				   dentry->d_name.len, dentry->d_name.name);
++	else
++		drop_nlink(inode);
+ 	if (!inode->i_nlink)
+ 		ext4_orphan_add(handle, inode);
+ 	inode->i_ctime = current_time(inode);
 
 
