@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97BA8121264
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:52:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 122FA121265
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:52:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfLPRwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:52:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43628 "EHLO mail.kernel.org"
+        id S1727459AbfLPRwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:52:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727404AbfLPRwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:52:14 -0500
+        id S1727425AbfLPRwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FACF20726;
-        Mon, 16 Dec 2019 17:52:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D69122072D;
+        Mon, 16 Dec 2019 17:52:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518733;
-        bh=5EaPEyrukBMg3O+QebSDf5gJFnoIyQFT0LBomUN5WwE=;
+        s=default; t=1576518736;
+        bh=rjBUSxAXSbSi26oZwAwXqJ/7o7fALMzj6Cr8eIbk18k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R2NzP9wDqh/ZZWxMRTbwnIlRDN9MXVsiruFXb9xNe7DK052utm56hFzwAYyRX3XR+
-         SRHpL5jpN/Pac1IDJBj2kex9KMLs8gd6HOrnjuhr2W2jcpuERTb+HtmR3DdqKzH9DW
-         E1WoYPYrEbOhCZiWDnrZh56VV4F/EXyfvAhC9+3I=
+        b=2Ilu507TLCsxq5FOKSkOu2WvxbYwJg4Eo7fgahm0psAwAnDRc+KpAp93/fn2vYfwh
+         Z2b9pXxShS06AoEqkrJhwgCQP+O+uJESurQqtHgAImurryxVnkLwZheKnJApGwWlRl
+         a8Hs1PiRfH6Jp4hsAKgp4tr2vTWisLDDEsX0xMYw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Janne Huttunen <janne.huttunen@nokia.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 044/267] Staging: iio: adt7316: Fix i2c data reading, set the data field
-Date:   Mon, 16 Dec 2019 18:46:10 +0100
-Message-Id: <20191216174853.583168333@linuxfoundation.org>
+Subject: [PATCH 4.14 045/267] mm/vmstat.c: fix NUMA statistics updates
+Date:   Mon, 16 Dec 2019 18:46:11 +0100
+Message-Id: <20191216174853.654519191@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -45,37 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shreeya Patel <shreeya.patel23498@gmail.com>
+From: Janne Huttunen <janne.huttunen@nokia.com>
 
-[ Upstream commit 688cd642ba0c393344c802647848da5f0d925d0e ]
+[ Upstream commit 13c9aaf7fa01cc7600c61981609feadeef3354ec ]
 
-adt7316_i2c_read function nowhere sets the data field.
-It is necessary to have an appropriate value for it.
-Hence, assign the value stored in 'ret' variable to data field.
+Scan through the whole array to see if an update is needed.  While we're
+at it, use sizeof() to be safe against any possible type changes in the
+future.
 
-This is an ancient bug, and as no one seems to have noticed,
-probably no sense in applying it to stable.
+The bug here is that we wouldn't sync per-cpu counters into global ones
+if there was an update of numa_stats for higher cpus.  Highly
+theoretical one though because it is much more probable that zone_stats
+are updated so we would refresh anyway.  So I wouldn't bother to mark
+this for stable, yet something nice to fix.
 
-Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[mhocko@suse.com: changelog enhancement]
+Link: http://lkml.kernel.org/r/1541601517-17282-1-git-send-email-janne.huttunen@nokia.com
+Fixes: 1d90ca897cb0 ("mm: update NUMA counter threshold size")
+Signed-off-by: Janne Huttunen <janne.huttunen@nokia.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/addac/adt7316-i2c.c | 2 ++
- 1 file changed, 2 insertions(+)
+ mm/vmstat.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
-index f66dd3ebbab1f..856bcfa60c6c4 100644
---- a/drivers/staging/iio/addac/adt7316-i2c.c
-+++ b/drivers/staging/iio/addac/adt7316-i2c.c
-@@ -35,6 +35,8 @@ static int adt7316_i2c_read(void *client, u8 reg, u8 *data)
- 		return ret;
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index ba91683264134..e2197b03da574 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1805,12 +1805,13 @@ static bool need_update(int cpu)
+ 
+ 		/*
+ 		 * The fast way of checking if there are any vmstat diffs.
+-		 * This works because the diffs are byte sized items.
+ 		 */
+-		if (memchr_inv(p->vm_stat_diff, 0, NR_VM_ZONE_STAT_ITEMS))
++		if (memchr_inv(p->vm_stat_diff, 0, NR_VM_ZONE_STAT_ITEMS *
++			       sizeof(p->vm_stat_diff[0])))
+ 			return true;
+ #ifdef CONFIG_NUMA
+-		if (memchr_inv(p->vm_numa_stat_diff, 0, NR_VM_NUMA_STAT_ITEMS))
++		if (memchr_inv(p->vm_numa_stat_diff, 0, NR_VM_NUMA_STAT_ITEMS *
++			       sizeof(p->vm_numa_stat_diff[0])))
+ 			return true;
+ #endif
  	}
- 
-+	*data = ret;
-+
- 	return 0;
- }
- 
 -- 
 2.20.1
 
