@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF904121442
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E367C121395
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:03:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbfLPSJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:09:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52512 "EHLO mail.kernel.org"
+        id S1729437AbfLPSDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:03:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730500AbfLPSJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:52 -0500
+        id S1729422AbfLPSC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:02:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9F5C206B7;
-        Mon, 16 Dec 2019 18:09:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2C342082E;
+        Mon, 16 Dec 2019 18:02:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519791;
-        bh=+acM6/3oFbKzz7oCcG64SWWaZNc21NPB0mvTRhzs49c=;
+        s=default; t=1576519377;
+        bh=5eg2YcqqPkF+ZVxBI6vJskYLMY48vuTua1oTbHV4arg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gPO1IPaCJrNBAQAVY1SvC0kV0Sv4lzQo+kQ1m+fVuSDXT2B4dDB8JojoSgI2549xm
-         1yV22tazXDorZxlpGE3JWrzYplJFN99eYWDjsHI4BDVMMFMoAvT31CSaVd3xsjNxic
-         EU+ytxBmz85oJsU62u9ZVixbNZmSRMlMiqRzm9cw=
+        b=KJIcTpPnz66frN509RJd7ecKkC3Gd6SdnZlbxQ4sfBCiDz+ncIPqnzMPvQqt7Cvtg
+         RUpfFyn3m8Qvh5jCoMrIvesjMoaYet3yDyy0UilJpIQ+b1WVfctAsEycLqd0xImMXP
+         C3vzhjTVoqN402JDr9vjLeHuttgSREKVojb5Uymc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.3 068/180] ovl: fix corner case of non-unique st_dev;st_ino
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 040/140] btrfs: Avoid getting stuck during cyclic writebacks
 Date:   Mon, 16 Dec 2019 18:48:28 +0100
-Message-Id: <20191216174830.044230419@linuxfoundation.org>
+Message-Id: <20191216174759.787610721@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +43,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Tejun Heo <tj@kernel.org>
 
-commit 9c6d8f13e9da10a26ad7f0a020ef86e8ef142835 upstream.
+commit f7bddf1e27d18fbc7d3e3056ba449cfbe4e20b0a upstream.
 
-On non-samefs overlay without xino, non pure upper inodes should use a
-pseudo_dev assigned to each unique lower fs and pure upper inodes use the
-real upper st_dev.
+During a cyclic writeback, extent_write_cache_pages() uses done_index
+to update the writeback_index after the current run is over.  However,
+instead of current index + 1, it gets to to the current index itself.
 
-It is fine for an overlay pure upper inode to use the same st_dev;st_ino
-values as the real upper inode, because the content of those two different
-filesystem objects is always the same.
+Unfortunately, this, combined with returning on EOF instead of looping
+back, can lead to the following pathlogical behavior.
 
-In this case, however:
- - two filesystems, A and B
- - upper layer is on A
- - lower layer 1 is also on A
- - lower layer 2 is on B
+1. There is a single file which has accumulated enough dirty pages to
+   trigger balance_dirty_pages() and the writer appending to the file
+   with a series of short writes.
 
-Non pure upper overlay inode, whose origin is in layer 1 will have the same
-st_dev;st_ino values as the real lower inode. This may result with a false
-positive results of 'diff' between the real lower and copied up overlay
-inode.
+2. balance_dirty_pages kicks in, wakes up background writeback and sleeps.
 
-Fix this by using the upper st_dev;st_ino values in this case.  This breaks
-the property of constant st_dev;st_ino across copy up of this case. This
-breakage will be fixed by a later patch.
+3. Writeback kicks in and the cursor is on the last page of the dirty
+   file.  Writeback is started or skipped if already in progress.  As
+   it's EOF, extent_write_cache_pages() returns and the cursor is set
+   to done_index which is pointing to the last page.
 
-Fixes: 5148626b806a ("ovl: allocate anon bdev per unique lower fs")
-Cc: stable@vger.kernel.org # v4.17+
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+4. Writeback is done.  Nothing happens till balance_dirty_pages
+   finishes, at which point we go back to #1.
+
+This can almost completely stall out writing back of the file and keep
+the system over dirty threshold for a long time which can mess up the
+whole system.  We encountered this issue in production with a package
+handling application which can reliably reproduce the issue when
+running under tight memory limits.
+
+Reading the comment in the error handling section, this seems to be to
+avoid accidentally skipping a page in case the write attempt on the
+page doesn't succeed.  However, this concern seems bogus.
+
+On each page, the code either:
+
+* Skips and moves onto the next page.
+
+* Fails issue and sets done_index to index + 1.
+
+* Successfully issues and continue to the next page if budget allows
+  and not EOF.
+
+IOW, as long as it's not EOF and there's budget, the code never
+retries writing back the same page.  Only when a page happens to be
+the last page of a particular run, we end up retrying the page, which
+can't possibly guarantee anything data integrity related.  Besides,
+cyclic writes are only used for non-syncing writebacks meaning that
+there's no data integrity implication to begin with.
+
+Fix it by always setting done_index past the current page being
+processed.
+
+Note that this problem exists in other writepages too.
+
+CC: stable@vger.kernel.org # 4.19+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/inode.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/btrfs/extent_io.c |   12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -200,8 +200,14 @@ int ovl_getattr(const struct path *path,
- 			if (ovl_test_flag(OVL_INDEX, d_inode(dentry)) ||
- 			    (!ovl_verify_lower(dentry->d_sb) &&
- 			     (is_dir || lowerstat.nlink == 1))) {
--				stat->ino = lowerstat.ino;
- 				lower_layer = ovl_layer_lower(dentry);
-+				/*
-+				 * Cannot use origin st_dev;st_ino because
-+				 * origin inode content may differ from overlay
-+				 * inode content.
-+				 */
-+				if (samefs || lower_layer->fsid)
-+					stat->ino = lowerstat.ino;
- 			}
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -3956,7 +3956,7 @@ retry:
+ 		for (i = 0; i < nr_pages; i++) {
+ 			struct page *page = pvec.pages[i];
  
+-			done_index = page->index;
++			done_index = page->index + 1;
  			/*
+ 			 * At this point we hold neither the i_pages lock nor
+ 			 * the page lock: the page may be truncated or
+@@ -3993,16 +3993,6 @@ retry:
+ 				ret = 0;
+ 			}
+ 			if (ret < 0) {
+-				/*
+-				 * done_index is set past this page,
+-				 * so media errors will not choke
+-				 * background writeout for the entire
+-				 * file. This has consequences for
+-				 * range_cyclic semantics (ie. it may
+-				 * not be suitable for data integrity
+-				 * writeout).
+-				 */
+-				done_index = page->index + 1;
+ 				done = 1;
+ 				break;
+ 			}
 
 
