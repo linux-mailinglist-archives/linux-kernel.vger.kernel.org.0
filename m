@@ -2,70 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D53021219E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 20:29:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1C612199B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 20:02:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbfLPT27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 14:28:59 -0500
-Received: from mga14.intel.com ([192.55.52.115]:7077 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbfLPT26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 14:28:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 10:34:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
-   d="scan'208";a="227205218"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by orsmga002.jf.intel.com with ESMTP; 16 Dec 2019 10:34:55 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 61E903003B3; Mon, 16 Dec 2019 10:34:55 -0800 (PST)
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH] kconfig: Add kernel config option for fuzz testing.
-References: <20191216095955.9886-1-penguin-kernel@I-love.SAKURA.ne.jp>
-Date:   Mon, 16 Dec 2019 10:34:55 -0800
-In-Reply-To: <20191216095955.9886-1-penguin-kernel@I-love.SAKURA.ne.jp>
-        (Tetsuo Handa's message of "Mon, 16 Dec 2019 18:59:55 +0900")
-Message-ID: <87v9qgunjk.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        id S1727052AbfLPTBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 14:01:31 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39374 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726859AbfLPTB3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 14:01:29 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y1so5060090lfb.6
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 11:01:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j8zv1CiPH593sjJeuXjnKC5zw4ZEGW4qNjfHHVhMY3Y=;
+        b=ezPwBt9pUMGZXAfLdBdvnrmdpl1zWlUKRl7w5W1F0CBO0BZjbIoARtDcId4cwYQVoJ
+         x6deawPEIIjhrfIYzC7E3RnmFJPoPe+o4Tpp0m4KWbTXmqmXuilZniU4wGMH521vhenO
+         Fyb+whsXeMgRu2l2jULJPCi1SVUHPGeRtYiGA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j8zv1CiPH593sjJeuXjnKC5zw4ZEGW4qNjfHHVhMY3Y=;
+        b=qe15QNyc0shpXxm62eMYrYYPY+SWuMWkHZa6JB2jjSxzs6PC3MqXdk3TjefRtW8GPV
+         h5fk9MjJm+R4FgdiFGuYPIOL+wuBm3XMP/z7FFa/eGVcyNDgUV+qbHv3+HTSt+O90FkG
+         TME4J0HAvlZDxfURu0dv3AGWN89G7xMfiCVonUmRYOnIZ6bY4RS0WZD8wtkKP44191iA
+         sliwpJlnixog/j4V8sPzPjdWTsvGjDglwhx0EcR6OKjaqbYcndIyDUvgGVvltMsRrevu
+         O1zC4j9eyDOOCWaTaToDduYOMBoiCzgUC72UH8er+6Z7dcyeolf7PA+35lApTFHEi0rq
+         lesQ==
+X-Gm-Message-State: APjAAAWBbVBzDPuOHFX96pY9iCU6zkWZGTfzCVtyNNZSX5iMrDLUWOU4
+        WlI3P25+s9Ic2QNnXzHYd/+u2aqHo+sTFWszCO1WGQ==
+X-Google-Smtp-Source: APXvYqz7K/UCHxkFWnkPVaboJEEgUEvs787WcXzp6l8eUvEdNbEIL+niAGbE/zeLTUwQA96F6RqcRb0xCxq1xsIoOKc=
+X-Received: by 2002:a19:a408:: with SMTP id q8mr335591lfc.174.1576522886867;
+ Mon, 16 Dec 2019 11:01:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1576195889-23527-1-git-send-email-psajeepa@purestorage.com> <20191215185500.GA6097@unreal>
+In-Reply-To: <20191215185500.GA6097@unreal>
+From:   Prabhath Sajeepa <psajeepa@purestorage.com>
+Date:   Mon, 16 Dec 2019 11:01:15 -0800
+Message-ID: <CAE=VkfCzi3ooh7Cg8NqDNdVE4cwPvjO6JNjKCiAJQC37KyWJag@mail.gmail.com>
+Subject: Re: [PATCH] IB/mlx5: Fix outstanding_pi index for GSI qps
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roland Dreier <roland@purestorage.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
+On Sun, Dec 15, 2019 at 10:55 AM Leon Romanovsky <leon@kernel.org> wrote:
+>
+> On Thu, Dec 12, 2019 at 05:11:29PM -0700, Prabhath Sajeepa wrote:
+> > b0ffeb537f3a changed the way how outstanding WRs are tracked for GSI QP. But the
+> > fix did not cover the case when a call to ib_post_send fails and index
+> > to track outstanding WRs need to be updated correctly.
+> >
+> > Fixes: b0ffeb537f3a ('IB/mlx5: Fix iteration overrun in GSI qps ')
+> > Signed-off-by: Prabhath Sajeepa <psajeepa@purestorage.com>
+> > ---
+> >  drivers/infiniband/hw/mlx5/gsi.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/infiniband/hw/mlx5/gsi.c b/drivers/infiniband/hw/mlx5/gsi.c
+> > index ac4d8d1..1ae6fd9 100644
+> > --- a/drivers/infiniband/hw/mlx5/gsi.c
+> > +++ b/drivers/infiniband/hw/mlx5/gsi.c
+> > @@ -507,8 +507,7 @@ int mlx5_ib_gsi_post_send(struct ib_qp *qp, const struct ib_send_wr *wr,
+> >               ret = ib_post_send(tx_qp, &cur_wr.wr, bad_wr);
+> >               if (ret) {
+> >                       /* Undo the effect of adding the outstanding wr */
+> > -                     gsi->outstanding_pi = (gsi->outstanding_pi - 1) %
+> > -                                           gsi->cap.max_send_wr;
+> > +                     gsi->outstanding_pi--;
+>
+> I'm a little bit confused, what is the difference before and after
+> except dropping "gsi->cap.max_send_wr"?
+>
+> Thanks
+>
+> >                       goto err;
+> >               }
+> >               spin_unlock_irqrestore(&gsi->lock, flags);
+> > --
+> > 2.7.4
+> >
 
-> While syzkaller is finding many bugs, sometimes syzkaller examines
-> stupid operations. But disabling operations using kernel config option
-> is problematic because "kernel config option excludes whole module when
-> there is still room for examining all but specific operation" and
-> "the list of kernel config options becomes too complicated to maintain
-> because such list changes over time". Thus, this patch introduces a
-> kernel config option which allows disabling only specific operations.
-> This kernel config option should be enabled only when building kernels
-> for fuzz testing.
+This patch needs to be considered in conjunction with the below patch
+done by Slava Shwartsman
 
-It seems this should rather be a run time setting. Otherwise it's
-impossible to fuzz existing kernel binaries without rebuilding them.
+commit b0ffeb537f3a726931d962ab6d03e34a2f070ea4
 
-Yes syzkaller requires rebuilding anyways for the new compiler options,
-but there are other options (e.g. PT guided fuzzing) that do not.
+Author: Slava Shwartsman <slavash@mellanox.com>
 
-Maybe the run time setting can be the same as locked down kernels.
-It seems to me locked down kernels should avoid all these operations too.
+Date:   Sun Jul 3 06:28:19 2016
 
--Andi
+    IB/mlx5: Fix iteration overrun in GSI qps
+
+
+
+    Number of outstanding_pi may overflow and as a result may indicate that
+
+    there are no elements in the queue. The effect of doing this is that the
+
+    MAD layer will get stuck waiting for completions. The MAD layer will
+
+    think that the QP is full - because it didn't receive these completions.
+
+
+
+    This fix changes it so the outstanding_pi number is increased
+
+    with 32-bit wraparound and is not limited to max_send_wr so
+
+    that the difference between outstanding_pi and outstanding_ci will
+
+    really indicate the number of outstanding completions.
+
+
+    Cc: Stable <stable@vger.kernel.org>
+
+    Fixes: ea6dc2036224 ('IB/mlx5: Reorder GSI completions')
+
+    Signed-off-by: Slava Shwartsman <slavash@mellanox.com>
+
+    Signed-off-by: Leon Romanovsky <leon@kernel.org>
+
+    Reviewed-by: Haggai Eran <haggaie@mellanox.com>
+
+    Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+
+    Signed-off-by: Doug Ledford <dledford@redhat.com>
+
+diff --git a/drivers/infiniband/hw/mlx5/gsi.c b/drivers/infiniband/hw/mlx5/gsi.c
+
+index 53e03c8..79e6309 100644
+
+--- a/drivers/infiniband/hw/mlx5/gsi.c
+
++++ b/drivers/infiniband/hw/mlx5/gsi.c
+
+@@ -69,15 +69,6 @@ static bool mlx5_ib_deth_sqpn_cap(struct mlx5_ib_dev *dev)
+
+        return MLX5_CAP_GEN(dev->mdev, set_deth_sqpn);
+
+ }
+
+
+
+-static u32 next_outstanding(struct mlx5_ib_gsi_qp *gsi, u32 index)
+
+-{
+
+-       return ++index % gsi->cap.max_send_wr;
+
+-}
+
+-
+
+-#define for_each_outstanding_wr(gsi, index) \
+
+-       for (index = gsi->outstanding_ci; index != gsi->outstanding_pi; \
+
+-            index = next_outstanding(gsi, index))
+
+-
+
+ /* Call with gsi->lock locked */
+
+ static void generate_completions(struct mlx5_ib_gsi_qp *gsi)
+
+ {
+
+@@ -85,8 +76,9 @@ static void generate_completions(struct mlx5_ib_gsi_qp *gsi)
+
+        struct mlx5_ib_gsi_wr *wr;
+
+        u32 index;
+
+
+
+-       for_each_outstanding_wr(gsi, index) {
+
+-               wr = &gsi->outstanding_wrs[index];
+
++       for (index = gsi->outstanding_ci; index != gsi->outstanding_pi;
+
++            index++) {
+
++               wr = &gsi->outstanding_wrs[index % gsi->cap.max_send_wr];
+
+
+
+                if (!wr->completed)
+
+                        break;
+
+@@ -430,8 +422,9 @@ static int mlx5_ib_add_outstanding_wr(struct
+mlx5_ib_gsi_qp *gsi,
+
+                return -ENOMEM;
+
+        }
+
+
+
+-       gsi_wr = &gsi->outstanding_wrs[gsi->outstanding_pi];
+
+-       gsi->outstanding_pi = next_outstanding(gsi, gsi->outstanding_pi);
+
++       gsi_wr = &gsi->outstanding_wrs[gsi->outstanding_pi %
+
++                                      gsi->cap.max_send_wr];
+
++       gsi->outstanding_pi++;
+
+
+
+        if (!wc) {
+
+                memset(&gsi_wr->wc, 0, sizeof(gsi_wr->wc));
+
+
+
+The above fix was incomplete since it did not fix the ib_post_send
+failure case, which is fixed by the patch I submitted.
+
+
+-- 
+Thanks,
+Prabhath
