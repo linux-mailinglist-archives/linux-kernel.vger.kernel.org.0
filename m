@@ -2,245 +2,272 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D102B12125E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:52:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD4E121271
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:52:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfLPRwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:52:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43042 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726438AbfLPRwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:52:02 -0500
-Received: from localhost (unknown [5.29.147.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B64202072D;
-        Mon, 16 Dec 2019 17:52:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518721;
-        bh=Ax9FX6mkAiMSD2E503wbhkyltTzj2mc0isu/CrNmJ3k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GyUKL1atiewyOIgNqC/Ykcz1HvUb/Jttc0W8Hz7wfDucBV2GUWnlrFE5mQ35f47yN
-         HVdBTfnXxraBxcjQzDTIDd8f8geB7bomYASzdvxPbuSCetdmxaUOVmNaIBCMi8o8hz
-         xV6xWdyoEKMaXqoDCVde3pexb5dEVRUUe6Qmp3RI=
-Date:   Mon, 16 Dec 2019 19:51:58 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Prabhath Sajeepa <psajeepa@purestorage.com>
-Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roland Dreier <roland@purestorage.com>,
-        Ashish Karkare <ashishk@purestorage.com>
-Subject: Re: [PATCH] IB/mlx5: Fix outstanding_pi index for GSI qps
-Message-ID: <20191216175158.GC66555@unreal>
-References: <1576195889-23527-1-git-send-email-psajeepa@purestorage.com>
- <20191215185500.GA6097@unreal>
- <CAE=VkfD0Ywey6wW_rOZ=4qGyW347kTXH_MM17NvQhy6bkT=+tw@mail.gmail.com>
+        id S1727576AbfLPRwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:52:43 -0500
+Received: from mail-eopbgr1410091.outbound.protection.outlook.com ([40.107.141.91]:33280
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727555AbfLPRwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SIOTiYluzgfEgaiHDmrSTAjPhHn5oiAKKfGLfJIYD9dv54tAt+LN/47S4AmRCVSIajt4f/R6vjtHfmVgctKWmzoMXnLRIfggidFSmATjd/RH1I0rEny6mZCxzXA1Vk+6rOGeoPLeLpxROIilOAFN/d+tu6eMWiLXjp8Go5NjVPK2KJRSjNJOGsPmgRH+R+nCv1L16wXyQEnt+YK5SiKBvtFp/FKhLOiBSXubRpMJeFb7W1XrVLQHnaUM06KvVz2HkLUqalZCpLZnsrROVlWAgDTUfJaC8iboUNvG+aDD9elLSFNUQ486ezjKwoDTbXD8sXH8Lfn5pPNqVLO9qIjuCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BuhMYDp9+Hn5eQAhVH7ZVA2s916mIDiaQuCsbFOQlXc=;
+ b=cD2qVsmwu1VtZyk2sym5xdAl8/ejfZ3jsSMYO/nJQpjk/l+QRwY1HnA0q+BhDGby+EyKgYe6SDv6//BHen80k9A/lBvpEOKNiDI2agy0YfmiXvymO99EXq7xCyD5XA78DL2B1hKw9jEp5K4FzYBCcu9Yv4zXi4r0gPbqs7t8N3pzw1nYeAHKsAazhdfIZGosfCHpjrNzdsdpNjgRDNa08gv//IgW0sec3LLa+4m7oFmw/Qaq+M58BoOOMiRL8wSnlf+O9r59GLSiMuPlk+6EsKll7Ka2jLK/407Xv9fiynzOQHY2hOngiRkn3obvCEx2WlxQrHMC2w2e9b91sbXJvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BuhMYDp9+Hn5eQAhVH7ZVA2s916mIDiaQuCsbFOQlXc=;
+ b=UtEN6H8nS/WhNo6zYhnDhVGt+dYw6LTrPdlbSVUiMyNttksCFGUrsExkd5sTFvpdq8ChIyvBh0ZAgnbbQPY5hqCd34Xx4FJ2/NgduWr3DS/W5BOvpxBFVE2Pdy+GljKgpLemHPVn8W/YHluCm9gAqd03ZkiEdm4CPXJlSB4sXoc=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.13) by
+ TY1PR01MB1644.jpnprd01.prod.outlook.com (52.133.162.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.16; Mon, 16 Dec 2019 17:52:36 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::5166:5e51:90f5:3ee1]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::5166:5e51:90f5:3ee1%7]) with mapi id 15.20.2538.019; Mon, 16 Dec 2019
+ 17:52:36 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>
+Subject: RE: [PATCH v4 1/7] drm: of: Add drm_of_lvds_get_dual_link_pixel_order
+Thread-Topic: [PATCH v4 1/7] drm: of: Add
+ drm_of_lvds_get_dual_link_pixel_order
+Thread-Index: AQHVrFLZM0DJ8Da1xE6jlbUKYw8Y26e4mZUAgAR/lAA=
+Date:   Mon, 16 Dec 2019 17:52:36 +0000
+Message-ID: <TY1PR01MB1770F58B9BBDB1B4AF1DAB55C0510@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1575649974-31472-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1575649974-31472-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20191213210558.GJ4860@pendragon.ideasonboard.com>
+In-Reply-To: <20191213210558.GJ4860@pendragon.ideasonboard.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 0457af3c-74a8-415f-ce4e-08d78250bc3a
+x-ms-traffictypediagnostic: TY1PR01MB1644:|TY1PR01MB1644:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TY1PR01MB164488CAFEC66257E21AC737C0510@TY1PR01MB1644.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 02530BD3AA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(136003)(376002)(366004)(396003)(346002)(189003)(199004)(7416002)(52536014)(81156014)(81166006)(53546011)(6506007)(8676002)(8936002)(5660300002)(186003)(26005)(7696005)(55016002)(86362001)(4326008)(71200400001)(9686003)(66556008)(66446008)(66946007)(66476007)(76116006)(64756008)(44832011)(478600001)(316002)(2906002)(6916009)(54906003)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1644;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: A9xk/BmrrZ1EGlw2MglX862e0++PQJjZ3FRJtuEtFl9u8gSyF0iL9JN32UQF37AnEdT+eGkgzHMLSc9/GwVRfI/rrqePBZA+jIvpVQMMDHaWqAJ/AkQcA90Tprg4fkZVLk/+FUiB7VhE8uusjPQTL2axFFPR0yQRCX9u7Z033JMXXuZZTQdIN9gx2eEBk6Fgido9Hsn0w9NfSdwprj6XGmdcGQDvawJmt7MmqOAiiW2QK1W16ri03bIPUapFSqf2PKhOE9hSTc3OVJdTfZD3VBSTwYVkOTjW8moY6mkeCiYhgw+i9ZchIzlbgzeQUDoLtM1bATA9XbLw3AHAibkLwNo1qhQM/n4/Tz6ZRyHo0IsoD6uv3Gkh6FT1sFgRK13kYkrLW8kVXqEhDuZdIBV/77FHzgnq7rRkwzGEUyP3DaYRRhFzuBwbwGHDQqVP9bqN
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAE=VkfD0Ywey6wW_rOZ=4qGyW347kTXH_MM17NvQhy6bkT=+tw@mail.gmail.com>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0457af3c-74a8-415f-ce4e-08d78250bc3a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2019 17:52:36.0850
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7oGBKGy37UFK0tU32mahB+lPMJ2tJjfgCzCNGYe14yvpps0rdlVGSeA/EYGhq+xezvF0IRRBggcD/odpezqZL5aDc1uS8wNVu0YRMPb3P44=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1644
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please don't send HTML emails, they are marked as SPAM and dropped from
-ML, and please don't do top-posting.
-
-Can you please resend so we will be able to read it?
-
-My question is still valid, what is the difference between
-"gsi->outstanding_pi = (gsi->outstanding_pi - 1)" in original code
-and "gsi->outstanding_pi--" in proposed patch.
-
-Thanks
-
-On Mon, Dec 16, 2019 at 09:21:53AM -0800, Prabhath Sajeepa wrote:
-> Hi Leon,
->
-> This patch needs to be considered in conjunction with the below change done
-> by Slava Shwartsman
->
-> commit b0ffeb537f3a726931d962ab6d03e34a2f070ea4
->
-> Author: Slava Shwartsman <slavash@mellanox.com>
->
-> Date:   Sun Jul 3 06:28:19 2016
->
->     IB/mlx5: Fix iteration overrun in GSI qps
->
->         Number of outstanding_pi may overflow and as a result may indicate that
->
->     there are no elements in the queue. The effect of doing this is that the
->
->     MAD layer will get stuck waiting for completions. The MAD layer will
->
->     think that the QP is full - because it didn't receive these completions.
->
->         This fix changes it so the outstanding_pi number is increased
->
->     with 32-bit wraparound and is not limited to max_send_wr so
->
->     that the difference between outstanding_pi and outstanding_ci will
->
->     really indicate the number of outstanding completions.
->
->         Cc: Stable <stable@vger.kernel.org>
->
->     Fixes: ea6dc2036224 ('IB/mlx5: Reorder GSI completions')
->
->     Signed-off-by: Slava Shwartsman <slavash@mellanox.com>
->
->     Signed-off-by: Leon Romanovsky <leon@kernel.org>
->
->     Reviewed-by: Haggai Eran <haggaie@mellanox.com>
->
->     Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
->
->     Signed-off-by: Doug Ledford <dledford@redhat.com>
->
-> diff --git a/drivers/infiniband/hw/mlx5/gsi.c b/drivers/infiniband/hw/mlx5/gsi.c
->
-> index 53e03c8..79e6309 100644
->
-> --- a/drivers/infiniband/hw/mlx5/gsi.c
->
-> +++ b/drivers/infiniband/hw/mlx5/gsi.c
->
-> @@ -69,15 +69,6 @@ static bool mlx5_ib_deth_sqpn_cap(struct mlx5_ib_dev *dev)
->
->         return MLX5_CAP_GEN(dev->mdev, set_deth_sqpn);
->
->  }
->
->
->
-> -static u32 next_outstanding(struct mlx5_ib_gsi_qp *gsi, u32 index)
->
-> -{
->
-> -       return ++index % gsi->cap.max_send_wr;
->
-> -}
->
-> -
->
-> -#define for_each_outstanding_wr(gsi, index) \
->
-> -       for (index = gsi->outstanding_ci; index != gsi->outstanding_pi; \
->
-> -            index = next_outstanding(gsi, index))
->
-> -
->
->  /* Call with gsi->lock locked */
->
->  static void generate_completions(struct mlx5_ib_gsi_qp *gsi)
->
->  {
->
-> @@ -85,8 +76,9 @@ static void generate_completions(struct mlx5_ib_gsi_qp *gsi)
->
->         struct mlx5_ib_gsi_wr *wr;
->
->         u32 index;
->
->
->
-> -       for_each_outstanding_wr(gsi, index) {
->
-> -               wr = &gsi->outstanding_wrs[index];
->
-> +       for (index = gsi->outstanding_ci; index != gsi->outstanding_pi;
->
-> +            index++) {
->
-> +               wr = &gsi->outstanding_wrs[index % gsi->cap.max_send_wr];
->
->
->
->                 if (!wr->completed)
->
->                         break;
->
-> @@ -430,8 +422,9 @@ static int mlx5_ib_add_outstanding_wr(struct
-> mlx5_ib_gsi_qp *gsi,
->
->                 return -ENOMEM;
->
->         }
->
->
->
-> -       gsi_wr = &gsi->outstanding_wrs[gsi->outstanding_pi];
->
-> -       gsi->outstanding_pi = next_outstanding(gsi, gsi->outstanding_pi);
->
-> +       gsi_wr = &gsi->outstanding_wrs[gsi->outstanding_pi %
->
-> +                                      gsi->cap.max_send_wr];
->
-> +       gsi->outstanding_pi++;
->
->
->
->         if (!wc) {
->
->                 memset(&gsi_wr->wc, 0, sizeof(gsi_wr->wc));
->
->
->
-> The above fix was incomplete since it did not fix the ib_send_post
-> failure case, which is fixed by the patch I submitted.
->
->
-> Thanks,
->
-> Prabhath.
->
->
-> On Sun, Dec 15, 2019 at 10:55 AM Leon Romanovsky <leon@kernel.org> wrote:
->
-> > On Thu, Dec 12, 2019 at 05:11:29PM -0700, Prabhath Sajeepa wrote:
-> > > b0ffeb537f3a changed the way how outstanding WRs are tracked for GSI QP.
-> > But the
-> > > fix did not cover the case when a call to ib_post_send fails and index
-> > > to track outstanding WRs need to be updated correctly.
-> > >
-> > > Fixes: b0ffeb537f3a ('IB/mlx5: Fix iteration overrun in GSI qps ')
-> > > Signed-off-by: Prabhath Sajeepa <psajeepa@purestorage.com>
-> > > ---
-> > >  drivers/infiniband/hw/mlx5/gsi.c | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/infiniband/hw/mlx5/gsi.c
-> > b/drivers/infiniband/hw/mlx5/gsi.c
-> > > index ac4d8d1..1ae6fd9 100644
-> > > --- a/drivers/infiniband/hw/mlx5/gsi.c
-> > > +++ b/drivers/infiniband/hw/mlx5/gsi.c
-> > > @@ -507,8 +507,7 @@ int mlx5_ib_gsi_post_send(struct ib_qp *qp, const
-> > struct ib_send_wr *wr,
-> > >               ret = ib_post_send(tx_qp, &cur_wr.wr, bad_wr);
-> > >               if (ret) {
-> > >                       /* Undo the effect of adding the outstanding wr */
-> > > -                     gsi->outstanding_pi = (gsi->outstanding_pi - 1) %
-> > > -                                           gsi->cap.max_send_wr;
-> > > +                     gsi->outstanding_pi--;
-> >
-> > I'm a little bit confused, what is the difference before and after
-> > except dropping "gsi->cap.max_send_wr"?
-> >
-> > Thanks
-> >
-> > >                       goto err;
-> > >               }
-> > >               spin_unlock_irqrestore(&gsi->lock, flags);
-> > > --
-> > > 2.7.4
-> > >
-> >
->
->
-> --
-> Thanks,
-> Prabhath
+SGkgTGF1cmVudCwNCg0KVGhhbmsgeW91IGZvciB5b3VyIGZlZWRiYWNrIQ0KDQo+IEZyb206IGxp
+bnV4LXJlbmVzYXMtc29jLW93bmVyQHZnZXIua2VybmVsLm9yZyA8bGludXgtcmVuZXNhcy1zb2Mt
+b3duZXJAdmdlci5rZXJuZWwub3JnPiBPbiBCZWhhbGYgT2YgTGF1cmVudCBQaW5jaGFydA0KPiBT
+ZW50OiAxMyBEZWNlbWJlciAyMDE5IDIxOjA2DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMS83
+XSBkcm06IG9mOiBBZGQgZHJtX29mX2x2ZHNfZ2V0X2R1YWxfbGlua19waXhlbF9vcmRlcg0KPiAN
+Cj4gSGkgRmFicml6aW8sDQo+IA0KPiBUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4NCj4gDQo+IE9u
+IEZyaSwgRGVjIDA2LCAyMDE5IGF0IDA0OjMyOjQ4UE0gKzAwMDAsIEZhYnJpemlvIENhc3RybyB3
+cm90ZToNCj4gPiBBbiBMVkRTIGR1YWwtbGluayBjb25uZWN0aW9uIGlzIG1hZGUgb2YgdHdvIGxp
+bmtzLCB3aXRoIGV2ZW4NCj4gPiBwaXhlbHMgdHJhbnNpdHRpbmcgb24gb25lIGxpbmssIGFuZCBv
+ZGQgcGl4ZWxzIG9uIHRoZSBvdGhlcg0KPiA+IGxpbmsuIFRoZSBkZXZpY2UgdHJlZSBjYW4gYmUg
+dXNlZCB0byBmdWxseSBkZXNjcmliZSBkdWFsLWxpbmsNCj4gPiBMVkRTIGNvbm5lY3Rpb25zIGJl
+dHdlZW4gZW5jb2RlcnMgYW5kIGJyaWRnZXMvcGFuZWxzLg0KPiA+IFRoZSBzaW5rIG9mIGFuIExW
+RFMgZHVhbC1saW5rIGNvbm5lY3Rpb24gaXMgbWFkZSBvZiB0d28gcG9ydHMsDQo+ID4gdGhlIGNv
+cnJlc3BvbmRpbmcgT0YgZ3JhcGggcG9ydCBub2RlcyBjYW4gYmUgbWFya2VkDQo+ID4gd2l0aCBl
+aXRoZXIgZHVhbC1sdmRzLWV2ZW4tcGl4ZWxzIG9yIGR1YWwtbHZkcy1vZGQtcGl4ZWxzLA0KPiA+
+IGFuZCB0aGF0IGZ1bGx5IGRlc2NyaWJlcyBhbiBMVkRTIGR1YWwtbGluayBjb25uZWN0aW9uLA0K
+PiA+IGluY2x1ZGluZyBwaXhlbCBvcmRlci4NCj4gPg0KPiA+IGRybV9vZl9sdmRzX2dldF9kdWFs
+X2xpbmtfcGl4ZWxfb3JkZXIgaXMgYSBuZXcgaGVscGVyDQo+ID4gYWRkZWQgYnkgdGhpcyBwYXRj
+aCwgZ2l2ZW4gdGhlIHNvdXJjZSBwb3J0IG5vZGVzIGl0DQo+ID4gcmV0dXJucyBEUk1fTFZEU19E
+VUFMX0xJTktfRVZFTl9PRERfUElYRUxTIGlmIHRoZSBzb3VyY2UNCj4gPiBwb3J0IG5vZGVzIGJl
+bG9uZyB0byBhbiBMVkRTIGR1YWwtbGluayBjb25uZWN0aW9uLCB3aXRoIGV2ZW4NCj4gPiBwaXhl
+bHMgZXhwZWN0ZWQgdG8gYmUgZ2VuZXJhdGVkIGZyb20gdGhlIGZpcnN0IHBvcnQsIGFuZCBvZGQN
+Cj4gPiBwaXhlbHMgZXhwZWN0ZWQgdG8gYmUgZ2VuZXJhdGVkIGZyb20gdGhlIHNlY29uZCBwb3J0
+Lg0KPiA+IElmIHRoZSBuZXcgaGVscGVyIHJldHVybnMgRFJNX0xWRFNfRFVBTF9MSU5LX09ERF9F
+VkVOX1BJWEVMUywNCj4gPiBvZGQgcGl4ZWxzIGFyZSBleHBlY3RlZCB0byBiZSBnZW5lcmF0ZWQg
+ZnJvbSB0aGUgZmlyc3QgcG9ydCwNCj4gPiBhbmQgZXZlbiBwaXhlbHMgZnJvbSB0aGUgb3RoZXIg
+cG9ydC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6aW8u
+Y2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPiA+DQo+ID4gLS0tDQo+ID4gdjMtPnY0Og0KPiA+ICog
+VGhlIHBhdGNoIGhhZCB0aXRsZSAiZHJtOiBBZGQgYnVzIHRpbWluZ3MgaGVscGVyIiBpbiB2Mw0K
+PiA+ICogVGhlIGNvZGUgaGFzIG5vdyBiZWVuIG1vdmVkIHRvIGRybV9vZiwgYW5kIGhhcyBiZWVu
+IGZ1bGx5DQo+ID4gICByZXN0cnVjdHVyZWQsIHRoYW5rcyB0byBMYXVyZW50IGFuZCBEYW5pZWwg
+Zm9yIHRoZSBjb21tZW50cw0KPiA+DQo+ID4gdjItPnYzOg0KPiA+ICogbmV3IHBhdGNoDQo+ID4g
+LS0tDQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fb2YuYyB8IDEwNCArKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICBpbmNsdWRlL2RybS9kcm1fb2Yu
+aCAgICAgfCAgMjAgKysrKysrKysrDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTI0IGluc2VydGlv
+bnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX29mLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vZHJtX29mLmMNCj4gPiBpbmRleCAwY2E1ODgwLi5jMmU5YWI3IDEwMDY0
+NA0KPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fb2YuYw0KPiA+ICsrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9kcm1fb2YuYw0KPiA+IEBAIC0yNzQsMyArMjc0LDEwNyBAQCBpbnQgZHJtX29mX2Zp
+bmRfcGFuZWxfb3JfYnJpZGdlKGNvbnN0IHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsDQo+ID4gIAly
+ZXR1cm4gcmV0Ow0KPiA+ICB9DQo+ID4gIEVYUE9SVF9TWU1CT0xfR1BMKGRybV9vZl9maW5kX3Bh
+bmVsX29yX2JyaWRnZSk7DQo+ID4gKw0KPiA+ICtlbnVtIGRybV9vZl9sdmRzX3BpeGVscyB7DQo+
+ID4gKwlEUk1fT0ZfTFZEU19FVkVOID0gQklUKDApLA0KPiA+ICsJRFJNX09GX0xWRFNfT0REID0g
+QklUKDEpLA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArc3RhdGljIGludCBkcm1fb2ZfbHZkc19nZXRf
+cG9ydF9waXhlbHNfdHlwZShzdHJ1Y3QgZGV2aWNlX25vZGUgKnBvcnRfbm9kZSkNCj4gPiArew0K
+PiA+ICsJYm9vbCBldmVuX3BpeGVscyA9DQo+ID4gKwkJb2ZfcHJvcGVydHlfcmVhZF9ib29sKHBv
+cnRfbm9kZSwgImR1YWwtbHZkcy1ldmVuLXBpeGVscyIpOw0KPiA+ICsJYm9vbCBvZGRfcGl4ZWxz
+ID0NCj4gPiArCQlvZl9wcm9wZXJ0eV9yZWFkX2Jvb2wocG9ydF9ub2RlLCAiZHVhbC1sdmRzLW9k
+ZC1waXhlbHMiKTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gKGV2ZW5fcGl4ZWxzID8gRFJNX09GX0xW
+RFNfRVZFTiA6IDApIHwNCj4gPiArCSAgICAgICAob2RkX3BpeGVscyA/IERSTV9PRl9MVkRTX09E
+RCA6IDApOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50IGRybV9vZl9sdmRzX2dldF9y
+ZW1vdGVfcGl4ZWxzX3R5cGUoDQo+ID4gKwkJCWNvbnN0IHN0cnVjdCBkZXZpY2Vfbm9kZSAqcG9y
+dF9ub2RlKQ0KPiA+ICt7DQo+ID4gKwlzdHJ1Y3QgZGV2aWNlX25vZGUgKmVuZHBvaW50ID0gTlVM
+TDsNCj4gPiArCWludCBwaXhlbHNfdHlwZSA9IC1FUElQRTsNCj4gPiArDQo+ID4gKwlmb3JfZWFj
+aF9jaGlsZF9vZl9ub2RlKHBvcnRfbm9kZSwgZW5kcG9pbnQpIHsNCj4gPiArCQlzdHJ1Y3QgZGV2
+aWNlX25vZGUgKnJlbW90ZV9wb3J0Ow0KPiA+ICsJCWludCBjdXJyZW50X3B0Ow0KPiA+ICsNCj4g
+PiArCQlpZiAoIW9mX25vZGVfbmFtZV9lcShlbmRwb2ludCwgImVuZHBvaW50IikpDQo+ID4gKwkJ
+CWNvbnRpbnVlOw0KPiA+ICsNCj4gPiArCQlyZW1vdGVfcG9ydCA9IG9mX2dyYXBoX2dldF9yZW1v
+dGVfcG9ydChlbmRwb2ludCk7DQo+ID4gKwkJaWYgKCFyZW1vdGVfcG9ydCkNCj4gDQo+IFlvdSBu
+ZWVkIGFuIG9mX25vZGVfcHV0KGVuZHBvaW50KSBpbiB0aGUgY29kZSBwYXRocyB0aGF0IGV4aXQg
+ZnJvbSB0aGUNCj4gbG9vcC4NCg0KUmlnaHQsIHRoYW5rIHlvdSBmb3Igc3BvdHRpbmcgdGhpcyEN
+Cg0KPiANCj4gPiArCQkJcmV0dXJuIC1FUElQRTsNCj4gPiArDQo+ID4gKwkJY3VycmVudF9wdCA9
+IGRybV9vZl9sdmRzX2dldF9wb3J0X3BpeGVsc190eXBlKHJlbW90ZV9wb3J0KTsNCj4gPiArCQlv
+Zl9ub2RlX3B1dChyZW1vdGVfcG9ydCk7DQo+ID4gKwkJaWYgKCFwaXhlbHNfdHlwZSkNCj4gPiAr
+CQkJcGl4ZWxzX3R5cGUgPSBjdXJyZW50X3B0Ow0KPiANCj4gVGhpcyB3aWxsIG5ldmVyIGhhcHBl
+biBhcyBwaXhlbHNfdHlwZSBpcyBpbml0aWFsaXplZCB0byAtRVBJUEUuDQo+IFJlcGxhY2luZyB0
+aGUgY29uZGl0aW9uIHdpdGggaWYgKHBpeGVsc190eXBlIDwgMCkgc2hvdWxkIGZpeCBpdC4NCg0K
+SSBhZ3JlZQ0KDQo+IA0KPiA+ICsJCWlmICghY3VycmVudF9wdCB8fCBwaXhlbHNfdHlwZSAhPSBj
+dXJyZW50X3B0KQ0KPiA+ICsJCQlyZXR1cm4gLUVJTlZBTDsNCj4gDQo+IEkgd291bGQgYWRkIGEg
+Y29tbWVudCB0byBleHBsYWluIHRoaXMuIElmIEkgdW5kZXJzdGFuZCB0aGUgY29kZQ0KPiBjb3Jy
+ZWN0eSwgc29tZXRoaW5nIGFsb25nIHRoZSBsaW5lcyBvZg0KPiANCj4gCQkvKg0KPiAJCSAqIFNh
+bml0eSBjaGVjaywgZW5zdXJlIHRoYXQgYWxsIHJlbW90ZSBlbmRwb2ludHMgaGF2ZSB0aGUgc2Ft
+ZQ0KPiAJCSAqIHBpeGVsIHR5cGUuIFdlIG1heSBsaWZ0IHRoaXMgcmVzdHJpY3Rpb24gbGF0ZXIg
+aWYgd2UgbmVlZCB0bw0KPiAJCSAqIHN1cHBvcnQgbXVsdGlwbGUgc2lua3Mgd2l0aCBkaWZmZXJl
+bnQgZHVhbC1saW5rDQo+IAkJICogY29uZmlndXJhdGlvbnMgYnkgcGFzc2luZyB0aGUgZW5kcG9p
+bnRzIGV4cGxpY2l0bHkgdG8NCj4gCQkgKiBkcm1fb2ZfbHZkc19nZXRfZHVhbF9saW5rX3BpeGVs
+X29yZGVyKCkuDQo+IAkJIC8NCg0KSSB0aGluayB0aGlzIHdpbGwgd29yay4gVGhhbmsgeW91IGZv
+ciB0aGUgc3VnZ2VzdGlvbg0KDQo+IA0KPiA+ICsJfQ0KPiA+ICsNCj4gPiArCXJldHVybiBwaXhl
+bHNfdHlwZTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArLyoqDQo+ID4gKyAqIGRybV9vZl9sdmRzX2dl
+dF9kdWFsX2xpbmtfcGl4ZWxfb3JkZXIgLSBHZXQgTFZEUyBkdWFsLWxpbmsgcGl4ZWwgb3JkZXIN
+Cj4gPiArICogQHBvcnQxOiBGaXJzdCBEVCBwb3J0IG5vZGUgb2YgdGhlIER1YWwtbGluayBMVkRT
+IHNvdXJjZQ0KPiA+ICsgKiBAcG9ydDI6IFNlY29uZCBEVCBwb3J0IG5vZGUgb2YgdGhlIER1YWwt
+bGluayBMVkRTIHNvdXJjZQ0KPiA+ICsgKg0KPiA+ICsgKiBBbiBMVkRTIGR1YWwtbGluayBjb25u
+ZWN0aW9uIGlzIG1hZGUgb2YgdHdvIGxpbmtzLCB3aXRoIGV2ZW4gcGl4ZWxzDQo+ID4gKyAqIHRy
+YW5zaXR0aW5nIG9uIG9uZSBsaW5rLCBhbmQgb2RkIHBpeGVscyBvbiB0aGUgb3RoZXIgbGluay4g
+VGhpcyBmdW5jdGlvbg0KPiA+ICsgKiByZXR1cm5zLCBmb3IgdHdvIHBvcnRzIG9mIGFuIExWRFMg
+ZHVhbC1saW5rIHNvdXJjZSwgd2hpY2ggcG9ydCBzaGFsbCB0cmFuc21pdA0KPiA+ICsgKiB0aGUg
+ZXZlbiBhbmQgb2RkIHBpeGVscywgYmFzZWQgb24gdGhlIHJlcXVpcmVtZW50cyBvZiB0aGUgY29u
+bmVjdGVkIHNpbmsuDQo+ID4gKyAqDQo+ID4gKyAqIFRoZSBwaXhlbCBvcmRlciBpcyBkZXRlcm1p
+bmVkIGZyb20gdGhlIGR1YWwtbHZkcy1ldmVuLXBpeGVscyBhbmQNCj4gPiArICogZHVhbC1sdmRz
+LW9kZC1waXhlbHMgcHJvcGVydGllcyBpbiB0aGUgc2luaydzIERUIHBvcnQgbm9kZXMuIElmIHRo
+b3NlDQo+ID4gKyAqIHByb3BlcnRpZXMgYXJlIG5vdCBwcmVzZW50LCBvciBpZiB0aGVpciB1c2Fn
+ZSBpcyBub3QgdmFsaWQsIHRoaXMgZnVuY3Rpb24NCj4gPiArICogcmV0dXJucyAtRUlOVkFMLg0K
+PiA+ICsgKg0KPiA+ICsgKiBJZiBlaXRoZXIgcG9ydCBpcyBub3QgY29ubmVjdGVkLCB0aGlzIGZ1
+bmN0aW9uIHJldHVybnMgLUVQSVBFLg0KPiA+ICsgKg0KPiA+ICsgKiBAcG9ydDEgYW5kIEBwb3J0
+MiBhcmUgdHlwaWNhbGx5IERUIHNpYmxpbmcgbm9kZXMsIGJ1dCBtYXkgaGF2ZSBkaWZmZXJlbnQN
+Cj4gPiArICogcGFyZW50cyB3aGVuLCBmb3IgaW5zdGFuY2UsIHR3byBzZXBhcmF0ZSBMVkRTIGVu
+Y29kZXJzIGNhcnJ5IHRoZSBldmVuIGFuZCBvZGQNCj4gPiArICogcGl4ZWxzLg0KPiA+ICsgKg0K
+PiA+ICsgKiBSZXR1cm46DQo+ID4gKyAqICogRFJNX0xWRFNfRFVBTF9MSU5LX0VWRU5fT0REX1BJ
+WEVMUyAtIEBwb3J0MSBjYXJyaWVzIGV2ZW4gcGl4ZWxzIGFuZCBAcG9ydDINCj4gPiArICogICBj
+YXJyaWVzIG9kZCBwaXhlbHMNCj4gPiArICogKiBEUk1fTFZEU19EVUFMX0xJTktfRVZFTl9PRERf
+UElYRUxTIC0gQHBvcnQxIGNhcnJpZXMgb2RkIHBpeGVscyBhbmQgQHBvcnQxDQo+IA0KPiBUaGlz
+IHNob3VsZCBiZSBEUk1fTFZEU19EVUFMX0xJTktfT0REX0VWRU5fUElYRUxTLCBhbmQgdGhlIHNl
+Y29uZCBAcG9ydDENCj4gc2hvdWxkIGJlIEBwb3J0Mi4NCg0KQW5kIEkgdGhvdWdodCBJIGRvdWJs
+ZSBjaGVja2VkIHRob3NlLi4uIDopDQoNCj4gDQo+ID4gKyAqICAgY2FycmllcyBldmVuIHBpeGVs
+cw0KPiA+ICsgKiAqIC1FSU5WQUwgLSBAcG9ydDEgYW5kIEBwb3J0MiBhcmUgbm90IGNvbm5lY3Rl
+ZCB0byBhIGR1YWwtbGluayBMVkRTIHNpbmssIG9yDQo+ID4gKyAqICAgdGhlIHNpbmsgY29uZmln
+dXJhdGlvbiBpcyBpbnZhbGlkDQo+ID4gKyAqICogLUVQSVBFIC0gd2hlbiBAcG9ydDEgb3IgcG9y
+dDIgYXJlIG5vdCBjb25uZWN0ZWQNCj4gDQo+IHMvcG9ydDIvQHBvcnQyLw0KDQpDaGVlcnMNCg0K
+V2lsbCBmaXggdGhlIGhpZ2hsaWdodGVkIGlzc3VlcyBpbiB2NS4NCg0KVGhhbmtzLA0KRmFiDQoN
+Cj4gDQo+IFdpdGggdGhvc2Ugc21hbGwgaXNzdWVzIGFkZHJlc3NlZCwNCj4gDQo+IFJldmlld2Vk
+LWJ5OiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+
+DQo+IA0KPiA+ICsgKi8NCj4gPiAraW50IGRybV9vZl9sdmRzX2dldF9kdWFsX2xpbmtfcGl4ZWxf
+b3JkZXIoY29uc3Qgc3RydWN0IGRldmljZV9ub2RlICpwb3J0MSwNCj4gPiArCQkJCQkgIGNvbnN0
+IHN0cnVjdCBkZXZpY2Vfbm9kZSAqcG9ydDIpDQo+ID4gK3sNCj4gPiArCWludCByZW1vdGVfcDFf
+cHQsIHJlbW90ZV9wMl9wdDsNCj4gPiArDQo+ID4gKwlpZiAoIXBvcnQxIHx8ICFwb3J0MikNCj4g
+PiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gPiArDQo+ID4gKwlyZW1vdGVfcDFfcHQgPSBkcm1fb2Zf
+bHZkc19nZXRfcmVtb3RlX3BpeGVsc190eXBlKHBvcnQxKTsNCj4gPiArCWlmIChyZW1vdGVfcDFf
+cHQgPCAwKQ0KPiA+ICsJCXJldHVybiByZW1vdGVfcDFfcHQ7DQo+ID4gKw0KPiA+ICsJcmVtb3Rl
+X3AyX3B0ID0gZHJtX29mX2x2ZHNfZ2V0X3JlbW90ZV9waXhlbHNfdHlwZShwb3J0Mik7DQo+ID4g
+KwlpZiAocmVtb3RlX3AyX3B0IDwgMCkNCj4gPiArCQlyZXR1cm4gcmVtb3RlX3AyX3B0Ow0KPiA+
+ICsNCj4gPiArCS8qDQo+ID4gKwkgKiBBIHZhbGlkIGR1YWwtbFZEUyBidXMgaXMgZm91bmQgd2hl
+biBvbmUgcmVtb3RlIHBvcnQgaXMgbWFya2VkIHdpdGgNCj4gPiArCSAqICJkdWFsLWx2ZHMtZXZl
+bi1waXhlbHMiLCBhbmQgdGhlIG90aGVyIHJlbW90ZSBwb3J0IGlzIG1hcmtlZCB3aXRoDQo+ID4g
+KwkgKiAiZHVhbC1sdmRzLW9kZC1waXhlbHMiLCBiYWlsIG91dCBpZiB0aGUgbWFya2VycyBhcmUg
+bm90IHJpZ2h0Lg0KPiA+ICsJICovDQo+ID4gKwlpZiAocmVtb3RlX3AxX3B0ICsgcmVtb3RlX3Ay
+X3B0ICE9IERSTV9PRl9MVkRTX0VWRU4gKyBEUk1fT0ZfTFZEU19PREQpDQo+ID4gKwkJcmV0dXJu
+IC1FSU5WQUw7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIHJlbW90ZV9wMV9wdCA9PSBEUk1fT0ZfTFZE
+U19FVkVOID8NCj4gPiArCQlEUk1fTFZEU19EVUFMX0xJTktfRVZFTl9PRERfUElYRUxTIDoNCj4g
+PiArCQlEUk1fTFZEU19EVUFMX0xJTktfT0REX0VWRU5fUElYRUxTOw0KPiA+ICt9DQo+ID4gK0VY
+UE9SVF9TWU1CT0xfR1BMKGRybV9vZl9sdmRzX2dldF9kdWFsX2xpbmtfcGl4ZWxfb3JkZXIpOw0K
+PiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2RybS9kcm1fb2YuaCBiL2luY2x1ZGUvZHJtL2RybV9v
+Zi5oDQo+ID4gaW5kZXggZWFkMzRhYi4uOGVjN2NhNiAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRl
+L2RybS9kcm1fb2YuaA0KPiA+ICsrKyBiL2luY2x1ZGUvZHJtL2RybV9vZi5oDQo+ID4gQEAgLTE2
+LDYgKzE2LDE4IEBAIHN0cnVjdCBkcm1fcGFuZWw7DQo+ID4gIHN0cnVjdCBkcm1fYnJpZGdlOw0K
+PiA+ICBzdHJ1Y3QgZGV2aWNlX25vZGU7DQo+ID4NCj4gPiArLyoqDQo+ID4gKyAqIGVudW0gZHJt
+X2x2ZHNfZHVhbF9saW5rX3BpeGVscyAtIFBpeGVsIG9yZGVyIG9mIGFuIExWRFMgZHVhbC1saW5r
+IGNvbm5lY3Rpb24NCj4gPiArICogQERSTV9MVkRTX0RVQUxfTElOS19FVkVOX09ERF9QSVhFTFM6
+IEV2ZW4gcGl4ZWxzIGFyZSBleHBlY3RlZCB0byBiZSBnZW5lcmF0ZWQNCj4gPiArICogICAgZnJv
+bSB0aGUgZmlyc3QgcG9ydCwgb2RkIHBpeGVscyBmcm9tIHRoZSBzZWNvbmQgcG9ydA0KPiA+ICsg
+KiBARFJNX0xWRFNfRFVBTF9MSU5LX09ERF9FVkVOX1BJWEVMUzogT2RkIHBpeGVscyBhcmUgZXhw
+ZWN0ZWQgdG8gYmUgZ2VuZXJhdGVkDQo+ID4gKyAqICAgIGZyb20gdGhlIGZpcnN0IHBvcnQsIGV2
+ZW4gcGl4ZWxzIGZyb20gdGhlIHNlY29uZCBwb3J0DQo+ID4gKyAqLw0KPiA+ICtlbnVtIGRybV9s
+dmRzX2R1YWxfbGlua19waXhlbHMgew0KPiA+ICsJRFJNX0xWRFNfRFVBTF9MSU5LX0VWRU5fT0RE
+X1BJWEVMUyA9IDAsDQo+ID4gKwlEUk1fTFZEU19EVUFMX0xJTktfT0REX0VWRU5fUElYRUxTID0g
+MSwNCj4gPiArfTsNCj4gPiArDQo+ID4gICNpZmRlZiBDT05GSUdfT0YNCj4gPiAgdWludDMyX3Qg
+ZHJtX29mX2NydGNfcG9ydF9tYXNrKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsDQo+ID4gIAkJCSAg
+ICBzdHJ1Y3QgZGV2aWNlX25vZGUgKnBvcnQpOw0KPiA+IEBAIC0zNSw2ICs0Nyw4IEBAIGludCBk
+cm1fb2ZfZmluZF9wYW5lbF9vcl9icmlkZ2UoY29uc3Qgc3RydWN0IGRldmljZV9ub2RlICpucCwN
+Cj4gPiAgCQkJCWludCBwb3J0LCBpbnQgZW5kcG9pbnQsDQo+ID4gIAkJCQlzdHJ1Y3QgZHJtX3Bh
+bmVsICoqcGFuZWwsDQo+ID4gIAkJCQlzdHJ1Y3QgZHJtX2JyaWRnZSAqKmJyaWRnZSk7DQo+ID4g
+K2ludCBkcm1fb2ZfbHZkc19nZXRfZHVhbF9saW5rX3BpeGVsX29yZGVyKGNvbnN0IHN0cnVjdCBk
+ZXZpY2Vfbm9kZSAqcG9ydDEsDQo+ID4gKwkJCQkJICBjb25zdCBzdHJ1Y3QgZGV2aWNlX25vZGUg
+KnBvcnQyKTsNCj4gPiAgI2Vsc2UNCj4gPiAgc3RhdGljIGlubGluZSB1aW50MzJfdCBkcm1fb2Zf
+Y3J0Y19wb3J0X21hc2soc3RydWN0IGRybV9kZXZpY2UgKmRldiwNCj4gPiAgCQkJCQkgIHN0cnVj
+dCBkZXZpY2Vfbm9kZSAqcG9ydCkNCj4gPiBAQCAtNzcsNiArOTEsMTIgQEAgc3RhdGljIGlubGlu
+ZSBpbnQgZHJtX29mX2ZpbmRfcGFuZWxfb3JfYnJpZGdlKGNvbnN0IHN0cnVjdCBkZXZpY2Vfbm9k
+ZSAqbnAsDQo+ID4gIHsNCj4gPiAgCXJldHVybiAtRUlOVkFMOw0KPiA+ICB9DQo+ID4gKw0KPiA+
+ICtpbnQgZHJtX29mX2x2ZHNfZ2V0X2R1YWxfbGlua19waXhlbF9vcmRlcihjb25zdCBzdHJ1Y3Qg
+ZGV2aWNlX25vZGUgKnBvcnQxLA0KPiA+ICsJCQkJCSAgY29uc3Qgc3RydWN0IGRldmljZV9ub2Rl
+ICpwb3J0MikNCj4gPiArew0KPiA+ICsJcmV0dXJuIC1FSU5WQUw7DQo+ID4gK30NCj4gPiAgI2Vu
+ZGlmDQo+ID4NCj4gPiAgLyoNCj4gDQo+IC0tDQo+IFJlZ2FyZHMsDQo+IA0KPiBMYXVyZW50IFBp
+bmNoYXJ0DQo=
