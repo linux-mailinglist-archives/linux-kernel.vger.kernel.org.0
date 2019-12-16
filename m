@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DEE2121382
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC10E1214E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729316AbfLPSCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:02:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37972 "EHLO mail.kernel.org"
+        id S1731445AbfLPSPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:15:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729300AbfLPSCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:02:14 -0500
+        id S1731203AbfLPSPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:15:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E506E207FF;
-        Mon, 16 Dec 2019 18:02:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F6C220CC7;
+        Mon, 16 Dec 2019 18:15:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519333;
-        bh=e2UyM+TXay0wzQ4sGvv+pApzuAUzU5AJTyWnsr4Udis=;
+        s=default; t=1576520152;
+        bh=5fLDD5kXfqmNfszHj/dxVtJZScXrkLT2oIRKa31FBy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vVDDyBjPjS3Wkgu2dGWEp/F5zboq6DOg8WuFz6f6+1QRU5YzlhI17fEee2QYgJ8A0
-         tb0jCp2vYtQovJpNPZKS1HfEjGsKOxWkRRdQ8y4K1MRHkyOWNjQrjRBb/ud0Ma3Y5a
-         W8KjewWTx1c2PbVC/dSjbAawj95oT2sSLi6zNH4o=
+        b=b+7ljy9mTkGKiCyfVlt+kgvFPA6VNog0Hfm2EOW+tpvSbGUsJFxLJ6y7qvBj2q4Y6
+         p7y08qfGIPJ5zNvXXBoIB6z7iC05tmrWOtBTSp8r+FM/JsOiGC/iwc/48pBeHtkJBA
+         1VmaRjuR5t6Cl2EASQqBt0uSnq0OoSQTiJN2D7DI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 024/140] USB: serial: io_edgeport: fix epic endpoint lookup
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.4 036/177] ARM: dts: pandora-common: define wl1251 as child node of mmc3
 Date:   Mon, 16 Dec 2019 18:48:12 +0100
-Message-Id: <20191216174756.811284228@linuxfoundation.org>
+Message-Id: <20191216174828.678820673@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,50 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: H. Nikolaus Schaller <hns@goldelico.com>
 
-commit 7c5a2df3367a2c4984f1300261345817d95b71f8 upstream.
+commit 4f9007d692017cef38baf2a9b82b7879d5b2407b upstream.
 
-Make sure to use the current alternate setting when looking up the
-endpoints on epic devices to avoid binding to an invalid interface.
+Since v4.7 the dma initialization requires that there is a
+device tree property for "rx" and "tx" channels which is
+not provided by the pdata-quirks initialization.
 
-Failing to do so could cause the driver to misbehave or trigger a WARN()
-in usb_submit_urb() that kernels with panic_on_warn set would choke on.
+By conversion of the mmc3 setup to device tree this will
+finally allows to remove the OpenPandora wlan specific omap3
+data-quirks.
 
-Fixes: 6e8cf7751f9f ("USB: add EPIC support to the io_edgeport driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.21
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191210112601.3561-5-johan@kernel.org
+Fixes: 81eef6ca9201 ("mmc: omap_hsmmc: Use dma_request_chan() for requesting DMA channel")
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: <stable@vger.kernel.org> # v4.7+
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/io_edgeport.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/omap3-pandora-common.dtsi |   36 ++++++++++++++++++++++++++--
+ 1 file changed, 34 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -2919,16 +2919,18 @@ static int edge_startup(struct usb_seria
- 	response = 0;
+--- a/arch/arm/boot/dts/omap3-pandora-common.dtsi
++++ b/arch/arm/boot/dts/omap3-pandora-common.dtsi
+@@ -226,6 +226,17 @@
+ 		gpio = <&gpio6 4 GPIO_ACTIVE_HIGH>;	/* GPIO_164 */
+ 	};
  
- 	if (edge_serial->is_epic) {
-+		struct usb_host_interface *alt;
++	/* wl1251 wifi+bt module */
++	wlan_en: fixed-regulator-wg7210_en {
++		compatible = "regulator-fixed";
++		regulator-name = "vwlan";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		startup-delay-us = <50000>;
++		enable-active-high;
++		gpio = <&gpio1 23 GPIO_ACTIVE_HIGH>;
++	};
 +
-+		alt = serial->interface->cur_altsetting;
-+
- 		/* EPIC thing, set up our interrupt polling now and our read
- 		 * urb, so that the device knows it really is connected. */
- 		interrupt_in_found = bulk_in_found = bulk_out_found = false;
--		for (i = 0; i < serial->interface->altsetting[0]
--						.desc.bNumEndpoints; ++i) {
-+		for (i = 0; i < alt->desc.bNumEndpoints; ++i) {
- 			struct usb_endpoint_descriptor *endpoint;
- 			int buffer_size;
+ 	/* wg7210 (wifi+bt module) 32k clock buffer */
+ 	wg7210_32k: fixed-regulator-wg7210_32k {
+ 		compatible = "regulator-fixed";
+@@ -522,9 +533,30 @@
+ 	/*wp-gpios = <&gpio4 31 GPIO_ACTIVE_HIGH>;*/	/* GPIO_127 */
+ };
  
--			endpoint = &serial->interface->altsetting[0].
--							endpoint[i].desc;
-+			endpoint = &alt->endpoint[i].desc;
- 			buffer_size = usb_endpoint_maxp(endpoint);
- 			if (!interrupt_in_found &&
- 			    (usb_endpoint_is_int_in(endpoint))) {
+-/* mmc3 is probed using pdata-quirks to pass wl1251 card data */
+ &mmc3 {
+-	status = "disabled";
++	vmmc-supply = <&wlan_en>;
++
++	bus-width = <4>;
++	non-removable;
++	ti,non-removable;
++	cap-power-off-card;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc3_pins>;
++
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	wlan: wifi@1 {
++		compatible = "ti,wl1251";
++
++		reg = <1>;
++
++		interrupt-parent = <&gpio1>;
++		interrupts = <21 IRQ_TYPE_LEVEL_HIGH>;	/* GPIO_21 */
++
++		ti,wl1251-has-eeprom;
++	};
+ };
+ 
+ /* bluetooth*/
 
 
