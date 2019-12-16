@@ -2,191 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8775C120524
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:13:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D53A312052B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:13:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbfLPMND convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 16 Dec 2019 07:13:03 -0500
-Received: from smtp.h3c.com ([60.191.123.56]:26811 "EHLO h3cspam01-ex.h3c.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbfLPMND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:13:03 -0500
-Received: from DAG2EX04-BASE.srv.huawei-3com.com ([10.8.0.67])
-        by h3cspam01-ex.h3c.com with ESMTPS id xBGCBufv027054
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 16 Dec 2019 20:11:56 +0800 (GMT-8)
-        (envelope-from li.kai4@h3c.com)
-Received: from DAG2EX07-IDC.srv.huawei-3com.com (10.8.0.70) by
- DAG2EX04-BASE.srv.huawei-3com.com (10.8.0.67) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 16 Dec 2019 20:12:00 +0800
-Received: from DAG2EX07-IDC.srv.huawei-3com.com ([::1]) by
- DAG2EX07-IDC.srv.huawei-3com.com ([fe80::c439:37f7:8e24:31c4%9]) with mapi id
- 15.01.1713.004; Mon, 16 Dec 2019 20:12:00 +0800
-From:   Likai <li.kai4@h3c.com>
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
-        "mark@fasheh.com" <mark@fasheh.com>,
-        "jlbec@evilplan.org" <jlbec@evilplan.org>,
-        "chge@linux.alibaba.com" <chge@linux.alibaba.com>
-CC:     "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ocfs2: call journal flush to mark journal as empty
- after journal recovery when mount
-Thread-Topic: [PATCH v2] ocfs2: call journal flush to mark journal as empty
- after journal recovery when mount
-Thread-Index: AQHVsLF+fHlMp3IiE02yjxgB9B140g==
-Date:   Mon, 16 Dec 2019 12:12:00 +0000
-Message-ID: <57197a96b6e145bf8f992f103157cb1f@h3c.com>
-References: <20191212060000.930-1-li.kai4@h3c.com>
- <7cf9e23b-04a1-09a0-77a6-fe31f7a6a1b5@linux.alibaba.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.125.108.72]
-x-sender-location: DAG2
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727571AbfLPMNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:13:30 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:34257 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727427AbfLPMN3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 07:13:29 -0500
+X-UUID: 96a927f982284ffd80da20c66b46ab6e-20191216
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=01Zdn2moavFSAH92DOzH42F7drWh36U1FiCarROFBME=;
+        b=gB8kmiKJsw2QXVsVSf87Ql0IIKx6iaF1MPzMyMIa344K8meP31Ih0lFWASZP7OJ/s5GytRk2BSpN5cCqMw4zqXAZ68tR6etmIohcfZ9i6xT7MtcZ/1kpe7pTO21hUt6fALn4tkS4p7ZugkgWGjVW1WsM1cpLPrN2ya6fVEAvGqo=;
+X-UUID: 96a927f982284ffd80da20c66b46ab6e-20191216
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1289468991; Mon, 16 Dec 2019 20:13:17 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 16 Dec
+ 2019 20:12:41 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 16 Dec 2019 20:12:59 +0800
+Message-ID: <1576498396.28043.78.camel@mhfsdcap03>
+Subject: Re: [RESEND,PATCH 03/13] iommu/mediatek: Add mtk_iommu_pgtable
+ structure
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Chao Hao <chao.hao@mediatek.com>
+CC:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <iommu@lists.linux-foundation.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Jun Yan <jun.yan@mediatek.com>,
+        Cui Zhang <cui.zhang@mediatek.com>,
+        Guangming Cao <guangming.cao@mediatek.com>,
+        Anan Sun <anan.sun@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>
+Date:   Mon, 16 Dec 2019 20:13:16 +0800
+In-Reply-To: <20191104115238.2394-4-chao.hao@mediatek.com>
+References: <20191104115238.2394-1-chao.hao@mediatek.com>
+         <20191104115238.2394-4-chao.hao@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-X-DNSRBL: 
-X-MAIL: h3cspam01-ex.h3c.com xBGCBufv027054
+X-TM-SNTS-SMTP: 39EAD26C571E2DA9A3ADF7D67BFB280A5C20D797FC547AE679A650866EB2D9B32000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/12/16 18:02, Joseph Qi wrote:
->
-> On 19/12/12 14:00, Kai Li wrote:
->> If journal is dirty when mount, it will be replayed but jbd2 sb
->> log tail cannot be updated to mark a new start because
->> journal->j_flag has already been set with JBD2_ABORT first
->> in journal_init_common. When a new transaction is committed, it
->> will be recored in block 1 first(journal->j_tail is set to 1 in
->> journal_reset).If emergency restart happens again before journal
->> super block is updated unfortunately, the new recorded trans will
->> not be replayed in the next mount.
->>
->> The following steps describe this procedure in detail.
->> 1. mount and touch some files
->> 2. these transactions are committed to journal area but not checkpointed
->> 3. emergency restart
->> 4. mount again and its journals are replayed
->> 5. journal super block's first s_start is 1, but its s_seq is not updated
->> 6. touch a new file and its trans is committed but not checkpointed
->> 7. emergency restart again
->> 8. mount and journal is dirty, but trans committed in 6 will not be
->> replayed.
->>
->> This exception happens easily when this lun is used by only one node. If it
->> is used by multi-nodes, other node will replay its journal and its
->> journal super block will be updated after recovery like what this patch
->> does.
->>
->> ocfs2_recover_node->ocfs2_replay_journal.
->>
->> The following jbd2 journal can be generated by touching a new file after
->> journal is replayed, and seq 15 is the first valid commit, but first seq
->> is 13 in journal super block.
->> logdump:
->> Block 0: Journal Superblock
->> Seq: 0   Type: 4 (JBD2_SUPERBLOCK_V2)
->> Blocksize: 4096   Total Blocks: 32768   First Block: 1
->> First Commit ID: 13   Start Log Blknum: 1
->> Error: 0
->> Feature Compat: 0
->> Feature Incompat: 2 block64
->> Feature RO compat: 0
->> Journal UUID: 4ED3822C54294467A4F8E87D2BA4BC36
->> FS Share Cnt: 1   Dynamic Superblk Blknum: 0
->> Per Txn Block Limit    Journal: 0    Data: 0
->>
->> Block 1: Journal Commit Block
->> Seq: 14   Type: 2 (JBD2_COMMIT_BLOCK)
->>
->> Block 2: Journal Descriptor
->> Seq: 15   Type: 1 (JBD2_DESCRIPTOR_BLOCK)
->> No. Blocknum        Flags
->>  0. 587             none
->> UUID: 00000000000000000000000000000000
->>  1. 8257792         JBD2_FLAG_SAME_UUID
->>  2. 619             JBD2_FLAG_SAME_UUID
->>  3. 24772864        JBD2_FLAG_SAME_UUID
->>  4. 8257802         JBD2_FLAG_SAME_UUID
->>  5. 513             JBD2_FLAG_SAME_UUID JBD2_FLAG_LAST_TAG
->> ...
->> Block 7: Inode
->> Inode: 8257802   Mode: 0640   Generation: 57157641 (0x3682809)
->> FS Generation: 2839773110 (0xa9437fb6)
->> CRC32: 00000000   ECC: 0000
->> Type: Regular   Attr: 0x0   Flags: Valid
->> Dynamic Features: (0x1) InlineData
->> User: 0 (root)   Group: 0 (root)   Size: 7
->> Links: 1   Clusters: 0
->> ctime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
->> atime: 0x5de5d870 0x113181a1 -- Tue Dec  3 11:37:20.288457121 2019
->> mtime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
->> dtime: 0x0 -- Thu Jan  1 08:00:00 1970
->> ...
->> Block 9: Journal Commit Block
->> Seq: 15   Type: 2 (JBD2_COMMIT_BLOCK)
->>
->> The following is jouranl recovery log when recovering the upper jbd2
->> journal when mount again.
->> syslog:
->> [ 2265.648622] ocfs2: File system on device (252,1) was not unmounted cleanly, recovering it.
->> [ 2265.649695] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 0
->> [ 2265.650407] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 1
->> [ 2265.650409] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 2
->> [ 2265.650410] fs/jbd2/recovery.c:(jbd2_journal_recover, 278): JBD2: recovery, exit status 0, recovered transactions 13 to 13
->>
->> Due to first commit seq 13 recorded in journal super is not consistent
->> with the value recorded in block 1(seq is 14), journal recovery will be
->> terminated before seq 15 even though it is an unbroken commit, inode
->> 8257802 is a new file and it will be lost.
->>
->> Signed-off-by: Kai Li <li.kai4@h3c.com>
->> ---
->>  fs/ocfs2/journal.c | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
->> index 1afe57f425a0..5c7a489f47b0 100644
->> --- a/fs/ocfs2/journal.c
->> +++ b/fs/ocfs2/journal.c
->> @@ -1066,6 +1066,15 @@ int ocfs2_journal_load(struct ocfs2_journal *journal, int local, int replayed)
->>  
->>  	ocfs2_clear_journal_error(osb->sb, journal->j_journal, osb->slot_num);
->>  
->> +	if (replayed) {
->> +		mlog(ML_NOTICE, "journal recovery complete");
-> I don't think this log is appropriate, or we can change it to something like:
-> "Journal is dirty, wipe it first"?
->
-> Thanks,
-> Joseph
-This log is not used to interpret journal flush's purpose and calling
-journal flush to make jbd2 super block become normal should be a
-requisite operation internally,
-maybe a mark should be better I think if necessary.
-In addition,  ocfs2 prints a log like 'ocfs2: File system on device (%s)
-was not  unmounted cleanly, recovering it' before,
-and  journal has already been replayed in
-jbd2_journal_load->jbd2_journal_recover,  this log just means that it is
-done here.
-So I don't think it is inappropriate,  could you think abort my proposal
-again?
-
-Thanks
->> +		jbd2_journal_lock_updates(journal->j_journal);
->> +		status = jbd2_journal_flush(journal->j_journal);
->> +		jbd2_journal_unlock_updates(journal->j_journal);
->> +		if (status < 0)
->> +			mlog_errno(status);
->> +	}
->> +
->>  	status = ocfs2_journal_toggle_dirty(osb, 1, replayed);
->>  	if (status < 0) {
->>  		mlog_errno(status);
->>
+T24gTW9uLCAyMDE5LTExLTA0IGF0IDE5OjUyICswODAwLCBDaGFvIEhhbyB3cm90ZToNCj4gU3Rh
+cnQgd2l0aCB0aGlzIHBhdGNoLCB3ZSB3aWxsIGNoYW5nZSB0aGUgU1cgYXJjaGl0ZWN0dXJlDQo+
+IHRvIHN1cHBvcnQgbXVsdGlwbGUgZG9tYWlucy4gU1cgYXJjaGl0ZWN0dXJlIHdpbGwgaGFzIGEg
+YmlnIGNoYW5nZSwNCj4gc28gd2UgbmVlZCB0byBtb2RpZnkgYSBsaXR0bGUgYml0IGJ5IG1vcmUg
+dGhhbiBvbmUgcGF0Y2guDQo+IFRoZSBuZXcgU1cgb3ZlcmFsbCBhcmNoaXRlY3R1cmUgaXMgYXMg
+YmVsb3c6DQo+IA0KPiAJCQkJaW9tbXUwICAgaW9tbXUxDQo+IAkJCQkgIHwJICAgIHwNCj4gCQkJ
+CSAgLS0tLS0tLS0tLS0NCj4gCQkJCQl8DQo+IAkJCQltdGtfaW9tbXVfcGd0YWJsZQ0KPiAJCQkJ
+CXwNCj4gCQkJLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IAkJ
+CXwJCSAgICAgfAkJCSB8DQo+IAkJbXRrX2lvbW11X2RvbWFpbjEgICBtdGtfaW9tbXVfZG9tYWlu
+MiAgbXRrX2lvbW11X2RvbWFpbjMNCj4gCQkJfCAgICAgICAgICAgICAgICAgICAgfCAgICAgICAg
+ICAgICAgICAgICB8DQo+IAkJaW9tbXVfZ3JvdXAxICAgICAgICAgaW9tbXVfZ3JvdXAyICAgICAg
+ICAgICBpb21tdV9ncm91cDMNCj4gCQkJfCAgICAgICAgICAgICAgICAgICAgfCAgICAgICAgICAg
+ICAgICAgICB8DQo+IAkJaW9tbXVfZG9tYWluMSAgICAgICBpb21tdV9kb21haW4yCSAgICBpb21t
+dV9kb21haW4zDQo+IAkJCXwgICAgICAgICAgICAgICAgICAgIHwgICAgICAgICAgICAgICAgICAg
+fA0KPiAJCWlvdmEgcmVnaW9uMShub3JtYWwpICBpb3ZhIHJlZ2lvbjIoQ0NVKSAgICBpb3ZhIHJl
+Z2lvbjMoVlBVKQ0KPiANCj4gRm9yIGN1cnJlbnQgc3RydWN0dXJlLCBubyBtYXR0ZXIgaG93IG1h
+bnkgaW9tbXVzIHRoZXJlIGFyZSwNCj4gdGhleSB1c2UgdGhlIHNhbWUgcGFnZSB0YWJsZSB0byBz
+aW1wbGlmeSB0aGUgdXNhZ2Ugb2YgbW9kdWxlLg0KPiBJbiBvcmRlciB0byBtYWtlIHRoZSBzb2Z0
+d2FyZSBhcmNoaXRlY3R1cmUgbW9yZSBleHBsaWNpdCwgdGhpcw0KPiBwYXRjaCB3aWxsIGNyZWF0
+ZSBhIGdsb2JhbCBtdGtfaW9tbXVfcGd0YWJsZSBzdHJ1Y3R1cmUgdG8gZGVzY3JpYmUNCj4gcGFn
+ZSB0YWJsZSBhbmQgYWxsIHRoZSBpb21tdXMgdXNlIGl0Lg0KDQpUaGFua3MgZm9yIHRoZSBoYXJk
+IHdvcmsgb2YgdGhpcyBmaWxlLiBBY3R1YWxseSB0aGlzIHBhdGNoIGFuZCB0aGUgbGF0ZXINCm9u
+ZXMgY29uZnVzZSBtZS4gV2h5IGRvIHlvdSBtYWtlIHRoaXMgZmxvdyBjaGFuZ2U/IA0KZm9yIG1h
+a2luZyB0aGUgY29kZSAibW9yZSBleHBsaWNpdCIgb3IgZm9yIGFkZGluZyBtdWx0aS1kb21haW4g
+c3VwcG9ydA0KaW4gMTMvMTMuDQoNCklNSE8sIHRoZSBjaGFuZ2UgaXMgdW5uZWNlc3NhcnkuDQph
+KSBGb3IgbWUsIHRoaXMgY2hhbmdlIGhhcyBubyBpbXByb3ZlbWVudC4gY3VycmVudGx5IHdlIHVz
+ZSBhIGdsb2JhbA0KbXRrX2lvbW11X2dldF9tNHVfZGF0YSB0byBnZXQgdGhlIE00VSBkYXRhLiBJ
+IHdpbGwgYmUgdmVyeSBnbGFkIGlmIHlvdQ0KY291bGQgZ2V0IHJpZCBvZiBpdC4gQnV0IGluIHRo
+aXMgcGF0Y2hzZXQsIFlvdSB1c2UgYSBhbm90aGVyIGdsb2JhbA0KbXRrX2lvbW11X3BndGFibGUg
+dG8gaW5zdGVhZC4gRm9yIG1lLiBJdCBoYXMgbm8gaW1wcm92ZW1lbnQuDQoNCmIpIFRoaXMgcGF0
+Y2hzZXQgYnJlYWsgdGhlIG9yaWdpbmFsIGZsb3cuIGRldmljZV9ncm91cCBnaXZlIHlvdSBhDQpz
+b2Z0d2FyZSBjaGFuY2UgZm9yIGluaXRpYWxpemluZywgdGhlbiB5b3UgbW92ZSBwYWdldGFibGUg
+YWxsb2NhdGluZw0KY29kZSBpbnRvIGl0LiBCdXQgaXQgaXNuJ3QgZGV2aWNlX2dyb3VwIGpvYi4N
+Cg0KSSBjYW4gbm90IGRlY2lkZSBpZiB5b3VyIGZsb3cgaXMgcmlnaHQuIEJ1dCBpZiB5b3Ugb25s
+eSB3YW50IHRvIGFkZA0Kc3VwcG9ydCBtdWx0aS1kb21haW4sIEkgZ3Vlc3MgeW91IGNvdWxkIGV4
+dGVuZCB0aGUgY3VycmVudCAibTR1X2dyb3VwIg0KdG8gYSBhcnJheSAibTR1X2dyb3VwW05dIi4g
+SXQgbWF5IGJlIG1vcmUgc2ltcGxlLiBUbyBtYWtlIG10Njc3OQ0KcHJvZ3Jlc3MgZWFzaWx5LCBJ
+IHN1Z2dlc3QgeW91IGNhbiB1c2UgdGhpcyB3YXkgdG8gc3VwcG9ydCBtdWx0aS1kb21haW4NCmZp
+cnN0bHkuIFRoZW4geW91IGNvdWxkIHNlbmQgdGhpcyBuZXcgbXRrX2lvbW11X3BndGFibGUgcGF0
+Y2hzZXQgZm9yIHRoZQ0KY29kZSAibW9yZSBleHBsaWNpdCIgaWYgeW91IGluc2lzdC4NCg0KPiBU
+aGUgZGlhZ3JhbSBpcyBhcyBiZWxvdzoNCj4gDQo+IAltdGtfaW9tbXVfZGF0YTEoTU0pICAgICAg
+IG10a19pb21tdV9kYXRhMihBUFUpDQo+IAkJfAkJCSAgIHwNCj4gCQl8CQkJICAgfA0KPiAJCS0t
+LS0tLW10a19pb21tdV9wZ3RhYmxlLS0tLS0NCj4gDQo+IFdlIG5lZWQgdG8gY3JlYXRlIGdsb2Jh
+bCBtdGtfaW9tbXVfcGd0YWJsZSB0byBpbmNsdWRlIGFsbCB0aGUgaW92YQ0KPiByZWdpb25zIGZp
+cnN0bHkgYW5kIHNwZWNpYWwgaW92YSByZWdpb25zIGJ5IGRpdmlkZWQgYmFzZWQgb24gaXQsDQo+
+IHNvIHRoZSBpbmZvcm1hdGlvbiBvZiBwZ3RhYmxlIG5lZWRzIHRvIGJlIGNyZWF0ZWQgaW4gZGV2
+aWNlX2dyb3VwLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ2hhbyBIYW8gPGNoYW8uaGFvQG1lZGlh
+dGVrLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2lvbW11L210a19pb21tdS5jIHwgODQgKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICBkcml2ZXJzL2lvbW11L210a19p
+b21tdS5oIHwgIDEgKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCA4NSBpbnNlcnRpb25zKCspDQo+IA0K
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYyBiL2RyaXZlcnMvaW9tbXUv
+bXRrX2lvbW11LmMNCj4gaW5kZXggZjI4NDdlNjYxMTM3Li5mY2JkZTZiMGY1OGQgMTAwNjQ0DQo+
+IC0tLSBhL2RyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmMNCj4gKysrIGIvZHJpdmVycy9pb21tdS9t
+dGtfaW9tbXUuYw0KPiBAQCAtMTIzLDYgKzEyMywxMiBAQCBzdHJ1Y3QgbXRrX2lvbW11X2RvbWFp
+biB7DQo+ICAJc3RydWN0IGlvbW11X2RvbWFpbgkJZG9tYWluOw0KPiAgfTsNCj4gIA0KPiArc3Ry
+dWN0IG10a19pb21tdV9wZ3RhYmxlIHsNCj4gKwlzdHJ1Y3QgaW9fcGd0YWJsZV9jZmcJY2ZnOw0K
+PiArCXN0cnVjdCBpb19wZ3RhYmxlX29wcwkqaW9wOw0KPiArfTsNCj4gKw0KPiArc3RhdGljIHN0
+cnVjdCBtdGtfaW9tbXVfcGd0YWJsZSAqc2hhcmVfcGd0YWJsZTsNCj4gIHN0YXRpYyBjb25zdCBz
+dHJ1Y3QgaW9tbXVfb3BzIG10a19pb21tdV9vcHM7DQo+ICANCj4gIC8qDQo+IEBAIC0xNzAsNiAr
+MTc2LDExIEBAIHN0YXRpYyBzdHJ1Y3QgbXRrX2lvbW11X2RhdGEgKm10a19pb21tdV9nZXRfbTR1
+X2RhdGEodm9pZCkNCj4gIAlyZXR1cm4gTlVMTDsNCj4gIH0NCj4gIA0KPiArc3RhdGljIHN0cnVj
+dCBtdGtfaW9tbXVfcGd0YWJsZSAqbXRrX2lvbW11X2dldF9wZ3RhYmxlKHZvaWQpDQo+ICt7DQo+
+ICsJcmV0dXJuIHNoYXJlX3BndGFibGU7DQo+ICt9DQo+ICsNCj4gIHN0YXRpYyBzdHJ1Y3QgbXRr
+X2lvbW11X2RvbWFpbiAqdG9fbXRrX2RvbWFpbihzdHJ1Y3QgaW9tbXVfZG9tYWluICpkb20pDQo+
+ICB7DQo+ICAJcmV0dXJuIGNvbnRhaW5lcl9vZihkb20sIHN0cnVjdCBtdGtfaW9tbXVfZG9tYWlu
+LCBkb21haW4pOw0KPiBAQCAtMzIyLDYgKzMzMywxMyBAQCBzdGF0aWMgaW50IG10a19pb21tdV9k
+b21haW5fZmluYWxpc2Uoc3RydWN0IG10a19pb21tdV9kb21haW4gKmRvbSkNCj4gIHsNCj4gIAlz
+dHJ1Y3QgbXRrX2lvbW11X2RhdGEgKmRhdGEgPSBtdGtfaW9tbXVfZ2V0X200dV9kYXRhKCk7DQo+
+ICANCj4gKwlpZiAoZGF0YS0+cGd0YWJsZSkgew0KPiArCQlkb20tPmNmZyA9IGRhdGEtPnBndGFi
+bGUtPmNmZzsNCj4gKwkJZG9tLT5pb3AgPSBkYXRhLT5wZ3RhYmxlLT5pb3A7DQo+ICsJCWRvbS0+
+ZG9tYWluLnBnc2l6ZV9iaXRtYXAgPSBkYXRhLT5wZ3RhYmxlLT5jZmcucGdzaXplX2JpdG1hcDsN
+Cj4gKwkJcmV0dXJuIDA7DQo+ICsJfQ0KPiArDQo+ICAJZG9tLT5jZmcgPSAoc3RydWN0IGlvX3Bn
+dGFibGVfY2ZnKSB7DQo+ICAJCS5xdWlya3MgPSBJT19QR1RBQkxFX1FVSVJLX0FSTV9OUyB8DQo+
+ICAJCQlJT19QR1RBQkxFX1FVSVJLX05PX1BFUk1TIHwNCj4gQEAgLTM0NSw2ICszNjMsNjEgQEAg
+c3RhdGljIGludCBtdGtfaW9tbXVfZG9tYWluX2ZpbmFsaXNlKHN0cnVjdCBtdGtfaW9tbXVfZG9t
+YWluICpkb20pDQo+ICAJcmV0dXJuIDA7DQo+ICB9DQo+ICANCj4gK3N0YXRpYyBzdHJ1Y3QgbXRr
+X2lvbW11X3BndGFibGUgKmNyZWF0ZV9wZ3RhYmxlKHN0cnVjdCBtdGtfaW9tbXVfZGF0YSAqZGF0
+YSkNCj4gK3sNCj4gKwlzdHJ1Y3QgbXRrX2lvbW11X3BndGFibGUgKnBndGFibGU7DQo+ICsNCj4g
+KwlwZ3RhYmxlID0ga3phbGxvYyhzaXplb2YoKnBndGFibGUpLCBHRlBfS0VSTkVMKTsNCj4gKwlp
+ZiAoIXBndGFibGUpDQo+ICsJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0pOw0KPiArDQo+ICsJcGd0
+YWJsZS0+Y2ZnID0gKHN0cnVjdCBpb19wZ3RhYmxlX2NmZykgew0KPiArCQkucXVpcmtzID0gSU9f
+UEdUQUJMRV9RVUlSS19BUk1fTlMgfA0KPiArCQkJSU9fUEdUQUJMRV9RVUlSS19OT19QRVJNUyB8
+DQo+ICsJCQlJT19QR1RBQkxFX1FVSVJLX1RMQklfT05fTUFQIHwNCj4gKwkJCUlPX1BHVEFCTEVf
+UVVJUktfQVJNX01US19FWFQsDQo+ICsJCS5wZ3NpemVfYml0bWFwID0gbXRrX2lvbW11X29wcy5w
+Z3NpemVfYml0bWFwLA0KPiArCQkuaWFzID0gMzIsDQo+ICsJCS5vYXMgPSAzNCwNCj4gKwkJLnRs
+YiA9ICZtdGtfaW9tbXVfZmx1c2hfb3BzLA0KPiArCQkuaW9tbXVfZGV2ID0gZGF0YS0+ZGV2LA0K
+PiArCX07DQo+ICsNCj4gKwlwZ3RhYmxlLT5pb3AgPSBhbGxvY19pb19wZ3RhYmxlX29wcyhBUk1f
+VjdTLCAmcGd0YWJsZS0+Y2ZnLCBkYXRhKTsNCj4gKwlpZiAoIXBndGFibGUtPmlvcCkgew0KPiAr
+CQlkZXZfZXJyKGRhdGEtPmRldiwgIkZhaWxlZCB0byBhbGxvYyBpbyBwZ3RhYmxlXG4iKTsNCj4g
+KwkJcmV0dXJuIEVSUl9QVFIoLUVJTlZBTCk7DQo+ICsJfQ0KPiArDQo+ICsJZGV2X2luZm8oZGF0
+YS0+ZGV2LCAiJXMgY3JlYXRlIHBndGFibGUgZG9uZVxuIiwgX19mdW5jX18pOw0KPiArDQo+ICsJ
+cmV0dXJuIHBndGFibGU7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgbXRrX2lvbW11X2F0dGFj
+aF9wZ3RhYmxlKHN0cnVjdCBtdGtfaW9tbXVfZGF0YSAqZGF0YSwNCj4gKwkJCQkgICAgc3RydWN0
+IGRldmljZSAqZGV2KQ0KPiArew0KPiArCXN0cnVjdCBtdGtfaW9tbXVfcGd0YWJsZSAqcGd0YWJs
+ZSA9IG10a19pb21tdV9nZXRfcGd0YWJsZSgpOw0KPiArDQo+ICsJLyogY3JlYXRlIHNoYXJlIHBn
+dGFibGUgKi8NCj4gKwlpZiAoIXBndGFibGUpIHsNCj4gKwkJcGd0YWJsZSA9IGNyZWF0ZV9wZ3Rh
+YmxlKGRhdGEpOw0KPiArCQlpZiAoSVNfRVJSKHBndGFibGUpKSB7DQo+ICsJCQlkZXZfZXJyKGRh
+dGEtPmRldiwgIkZhaWxlZCB0byBjcmVhdGUgcGd0YWJsZVxuIik7DQo+ICsJCQlyZXR1cm4gLUVO
+T01FTTsNCj4gKwkJfQ0KPiArDQo+ICsJCXNoYXJlX3BndGFibGUgPSBwZ3RhYmxlOw0KPiArCX0N
+Cj4gKw0KPiArCS8qIGJpbmRpbmcgdG8gcGd0YWJsZSAqLw0KPiArCWRhdGEtPnBndGFibGUgPSBw
+Z3RhYmxlOw0KPiArDQo+ICsJZGV2X2luZm8oZGF0YS0+ZGV2LCAibTR1JWQgYXR0YWNoX3BndGFi
+bGUgZG9uZSFcbiIsIGRhdGEtPm00dV9pZCk7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4g
+Kw0KPiAgc3RhdGljIHN0cnVjdCBpb21tdV9kb21haW4gKm10a19pb21tdV9kb21haW5fYWxsb2Mo
+dW5zaWduZWQgdHlwZSkNCj4gIHsNCj4gIAlzdHJ1Y3QgbXRrX2lvbW11X2RvbWFpbiAqZG9tOw0K
+PiBAQCAtNTA4LDEwICs1ODEsMjEgQEAgc3RhdGljIHZvaWQgbXRrX2lvbW11X3JlbW92ZV9kZXZp
+Y2Uoc3RydWN0IGRldmljZSAqZGV2KQ0KPiAgc3RhdGljIHN0cnVjdCBpb21tdV9ncm91cCAqbXRr
+X2lvbW11X2RldmljZV9ncm91cChzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ICB7DQo+ICAJc3RydWN0
+IG10a19pb21tdV9kYXRhICpkYXRhID0gbXRrX2lvbW11X2dldF9tNHVfZGF0YSgpOw0KPiArCXN0
+cnVjdCBtdGtfaW9tbXVfcGd0YWJsZSAqcGd0YWJsZTsNCj4gKwlpbnQgcmV0ID0gMDsNCj4gIA0K
+PiAgCWlmICghZGF0YSkNCj4gIAkJcmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7DQo+ICANCj4gKwlw
+Z3RhYmxlID0gZGF0YS0+cGd0YWJsZTsNCj4gKwlpZiAoIXBndGFibGUpIHsNCj4gKwkJcmV0ID0g
+bXRrX2lvbW11X2F0dGFjaF9wZ3RhYmxlKGRhdGEsIGRldik7DQo+ICsJCWlmIChyZXQpIHsNCj4g
+KwkJCWRldl9lcnIoZGF0YS0+ZGV2LCAiRmFpbGVkIHRvIGRldmljZV9ncm91cFxuIik7DQo+ICsJ
+CQlyZXR1cm4gTlVMTDsNCj4gKwkJfQ0KPiArCX0NCj4gKw0KPiAgCS8qIEFsbCB0aGUgY2xpZW50
+IGRldmljZXMgYXJlIGluIHRoZSBzYW1lIG00dSBpb21tdS1ncm91cCAqLw0KPiAgCWlmICghZGF0
+YS0+bTR1X2dyb3VwKSB7DQo+ICAJCWRhdGEtPm00dV9ncm91cCA9IGlvbW11X2dyb3VwX2FsbG9j
+KCk7DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lvbW11L210a19pb21tdS5oIGIvZHJpdmVycy9p
+b21tdS9tdGtfaW9tbXUuaA0KPiBpbmRleCAxMzJkYzc2NWE0MGIuLmRkNWYxOWY3OGI2MiAxMDA2
+NDQNCj4gLS0tIGEvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuaA0KPiArKysgYi9kcml2ZXJzL2lv
+bW11L210a19pb21tdS5oDQo+IEBAIC02MSw2ICs2MSw3IEBAIHN0cnVjdCBtdGtfaW9tbXVfZGF0
+YSB7DQo+ICAJc3RydWN0IGNsawkJCSpiY2xrOw0KPiAgCXBoeXNfYWRkcl90CQkJcHJvdGVjdF9i
+YXNlOyAvKiBwcm90ZWN0IG1lbW9yeSBiYXNlICovDQo+ICAJc3RydWN0IG10a19pb21tdV9zdXNw
+ZW5kX3JlZwlyZWc7DQo+ICsJc3RydWN0IG10a19pb21tdV9wZ3RhYmxlCSpwZ3RhYmxlOw0KPiAg
+CXN0cnVjdCBtdGtfaW9tbXVfZG9tYWluCQkqbTR1X2RvbTsNCj4gIAlzdHJ1Y3QgaW9tbXVfZ3Jv
+dXAJCSptNHVfZ3JvdXA7DQo+ICAJYm9vbCAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbmFi
+bGVfNEdCOw0KDQo=
 
