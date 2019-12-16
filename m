@@ -2,495 +2,409 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61EFF11FC35
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 01:32:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A773311FC3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 01:38:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfLPAc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 19:32:26 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:50706 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726380AbfLPAcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 19:32:25 -0500
-Received: from ip5f5a5f74.dynamic.kabel-deutschland.de ([95.90.95.116] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1igeJ7-0004oF-23; Mon, 16 Dec 2019 01:32:17 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     dri-devel@lists.freedesktop.org
-Cc:     thierry.reding@gmail.com, sam@ravnborg.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heiko@sntech.de,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: [PATCH v2 3/3] drm/panel: add panel driver for Xinpeng XPP055C272 panels
-Date:   Mon, 16 Dec 2019 01:32:06 +0100
-Message-Id: <20191216003206.6672-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191216003206.6672-1-heiko@sntech.de>
-References: <20191216003206.6672-1-heiko@sntech.de>
+        id S1726526AbfLPAiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 19:38:24 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:46545 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbfLPAiY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 19:38:24 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191216003820epoutp01f2851736d2e657f1f6487329281d58b2~gswQ0_mfF0336203362epoutp01g
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 00:38:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191216003820epoutp01f2851736d2e657f1f6487329281d58b2~gswQ0_mfF0336203362epoutp01g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576456700;
+        bh=kAbYo1SH4VLzd8YFV0ywGCsP2GIOLdJ6A3u+vQzFZrk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=C9au0hg+CbGO+dyOkPr35hAewHEXEJNTfxdco8Ip5O0H/89kmX7HqL+fLDB2mB1Xp
+         k0/NV3kvq9pef297vkBGzJo36ag8BsyoAZiWdpzElgG+iZ1RlcQGd5WSlV/UrsQEeq
+         L1EK+kln4jupi4Jtr6tazNaHxY8zJlsIeU+bNfDY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191216003819epcas1p2773876204c6909056d0c378ffbd746d0~gswQSrmtD2928429284epcas1p2r;
+        Mon, 16 Dec 2019 00:38:19 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47bj6x2SSdzMqYkp; Mon, 16 Dec
+        2019 00:38:17 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B3.73.57028.5F1D6FD5; Mon, 16 Dec 2019 09:38:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20191216003813epcas1p4205461d6f6cc2170d4c6b5f141baddae~gswKMrUyi0615706157epcas1p4n;
+        Mon, 16 Dec 2019 00:38:13 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191216003813epsmtrp217cb6bb1508303e9597f220d4ed51d0d~gswKL2Jvb0872808728epsmtrp2O;
+        Mon, 16 Dec 2019 00:38:13 +0000 (GMT)
+X-AuditID: b6c32a35-50bff7000001dec4-92-5df6d1f54d3e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EA.D9.06569.4F1D6FD5; Mon, 16 Dec 2019 09:38:12 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191216003812epsmtip1b24c79040c9440eecbe4499ce106d86e~gswJ7kmhH0036800368epsmtip19;
+        Mon, 16 Dec 2019 00:38:12 +0000 (GMT)
+Subject: Re: [RFC PATCH v2 09/11] devfreq: exynos-bus: Add interconnect
+ functionality to exynos-bus
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     myungjoo.ham@samsung.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, georgi.djakov@linaro.org,
+        leonard.crestez@nxp.com, m.szyprowski@samsung.com,
+        b.zolnierkie@samsung.com, krzk@kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <35053bad-3f08-190a-0ffa-9aacd16da272@samsung.com>
+Date:   Mon, 16 Dec 2019 09:44:48 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
+In-Reply-To: <20190919142236.4071-10-a.swigon@samsung.com>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOJsWRmVeSWpSXmKPExsWy7bCmru7Xi99iDbb3Klrcn9fKaLFxxnpW
+        i/lHzrFaXPn6ns1i+t5NbBaT7k9gsTh/fgO7xYq7H1ktNj2+xmpxedccNovPvUcYLWac38dk
+        sfbIXXaL240r2CxmTH7J5sDvsWlVJ5vHnWt72Dzudx9n8ti8pN5j47sdTB59W1YxenzeJBfA
+        HpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0t5JC
+        WWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLJArzgxt7g0L10vOT/XytDAwMgUqDAh
+        O+P3q3/sBf2OFctfTmVvYHxs3MXIySEhYCKx9vxV9i5GLg4hgR2MEjO+nGOBcD4xSrz6t58J
+        wvnGKHGj8Q0zTMvUv9/ZIBJ7GSVOfXsDVfWeUeLtq0VMIFXCAqkSc9ZuZwZJiAj8Z5Q4vWwl
+        K4jDLHCMUWLvnZ8sIFVsAloS+1/cYAOx+QUUJa7+eMzYxcjBwStgJ3HgITdImEVAVWJa52+w
+        1aICYRInt7Uwgti8AoISJ2c+YQEp5xSwkli21xskzCwgLnHryXwmCFteonnrbLAbJASOsUs8
+        /baWFeIFF4nF3degbGGJV8e3sEPYUhKf3+1lg7CrJVaePMIG0dzBKLFl/wWoBmOJ/UsnM4Es
+        ZhbQlFi/Sx8irCix8/dcRojFfBLvvvawgpRICPBKdLQJQZQoS1x+cJcJwpaUWNzeyTaBUWkW
+        km9mIXlhFpIXZiEsW8DIsopRLLWgODc9tdiwwBA5ujcxghO1lukOxinnfA4xCnAwKvHwOmR/
+        ixViTSwrrsw9xCjBwawkwpuq/TlWiDclsbIqtSg/vqg0J7X4EKMpMLAnMkuJJucDs0heSbyh
+        qZGxsbGFiaGZqaGhkjgvx4+LsUIC6YklqdmpqQWpRTB9TBycUg2Mh6eUBzFt+Ros//jsMYnL
+        Cw5rrI39rF7ktW+tp/TDo6KLG69N7GVlvMjAxvg95Hkx6/kvd04say/pjlG3MHb783+hg1TH
+        jhPfV31JLL53U+5SeUK4a9KnZ2s4Hi+JM3d7/m5JvnxBzAS+6Lqis51LZk449N519xORpekR
+        c2/vDyyc6KI6YbHrAiWW4oxEQy3mouJEAA596pDqAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsWy7bCSnO6Xi99iDRo+2Vjcn9fKaLFxxnpW
+        i/lHzrFaXPn6ns1i+t5NbBaT7k9gsTh/fgO7xYq7H1ktNj2+xmpxedccNovPvUcYLWac38dk
+        sfbIXXaL240r2CxmTH7J5sDvsWlVJ5vHnWt72Dzudx9n8ti8pN5j47sdTB59W1YxenzeJBfA
+        HsVlk5Kak1mWWqRvl8CV8fvVP/aCfseK5S+nsjcwPjbuYuTkkBAwkZj69ztbFyMXh5DAbkaJ
+        jVNWMEIkJCWmXTzK3MXIAWQLSxw+XAxR85ZRYu/UTawgNcICqRJz1m5nBkmICPxnlHjYdowR
+        xGEWOMYo8XHFelaIlj2MEtd3TGcDaWET0JLY/+IGmM0voChx9cdjRpAVvAJ2EgcecoOEWQRU
+        JaZ1/mYGsUUFwiR2LnnMBGLzCghKnJz5hAWknFPASmLZXm+QMLOAusSfeZeYIWxxiVtP5jNB
+        2PISzVtnM09gFJ6FpHsWkpZZSFpmIWlZwMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/
+        dxMjOGK1tHYwnjgRf4hRgINRiYfXIftbrBBrYllxZe4hRgkOZiUR3lTtz7FCvCmJlVWpRfnx
+        RaU5qcWHGKU5WJTEeeXzj0UKCaQnlqRmp6YWpBbBZJk4OKUaGCXO/yriCJ7nlCQQPi+cyapl
+        k+uTsMSWw33z8uZPrjrdtiZC0+ZbcQHnzcQ6v0nnM3bvTa/bcDeP/e+Xu55vHqo/nlvBwrCv
+        epry3gXshitX/TSdtPlo76GcVztPPbT7LvX06PVceQ7L/YskNW+Y6MziPuYx/WLvHoG2KSzu
+        lsf5J8Wf/M1fxa/EUpyRaKjFXFScCAB/o+6Y1AIAAA==
+X-CMS-MailID: 20191216003813epcas1p4205461d6f6cc2170d4c6b5f141baddae
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190919142329eucas1p2e53992eab9ec6b404f716f955b3c228e
+References: <20190919142236.4071-1-a.swigon@samsung.com>
+        <CGME20190919142329eucas1p2e53992eab9ec6b404f716f955b3c228e@eucas1p2.samsung.com>
+        <20190919142236.4071-10-a.swigon@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Hi,
 
-Base on the somewhat similar Rocktech driver but adapted for
-panel-specific init of the XPP055C272.
+On 9/19/19 11:22 PM, Artur Świgoń wrote:
+> From: Artur Świgoń <a.swigon@partner.samsung.com>
+> 
+> This patch adds interconnect functionality to the exynos-bus devfreq
+> driver.
+> 
+> The SoC topology is a graph (or, more specifically, a tree) and most of
+> its edges are taken from the devfreq parent-child hierarchy (cf.
+> Documentation/devicetree/bindings/devfreq/exynos-bus.txt). Due to
+> unspecified relative probing order, -EPROBE_DEFER may be propagated to
+> guarantee that a child is probed before its parent.
+> 
+> Each bus is now an interconnect provider and an interconnect node as well
+> (cf. Documentation/interconnect/interconnect.rst), i.e. every bus registers
+> itself as a node. Node IDs are not hardcoded but rather assigned at
+> runtime, in probing order (subject to the above-mentioned exception
+> regarding relative order). This approach allows for using this driver with
+> various Exynos SoCs.
+> 
+> Frequencies requested via the interconnect API for a given node are
+> propagated to devfreq using dev_pm_qos_update_request(). Please note that
+> it is not an error when CONFIG_INTERCONNECT is 'n', in which case all
+> interconnect API functions are no-op.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+> ---
+>  drivers/devfreq/exynos-bus.c | 153 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 153 insertions(+)
+> 
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index 8d44810cac69..e0232202720d 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -14,14 +14,19 @@
+>  #include <linux/devfreq-event.h>
+>  #include <linux/device.h>
+>  #include <linux/export.h>
+> +#include <linux/idr.h>
+> +#include <linux/interconnect-provider.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/pm_opp.h>
+> +#include <linux/pm_qos.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+>  
+>  #define DEFAULT_SATURATION_RATIO	40
+>  
+> +#define icc_units_to_khz(x) ((x) / 8)
 
-changes in v2:
-- move to drm-panel-internal backlight handling (Sam)
-- adapt to changes that happened to drm_panel structs+functions (Sam)
-- sort includes (Sam)
-- drop unnecessary DRV_NAME constant (Sam)
-- do mipi_dsi_dcs_exit_sleep_mode and mipi_dsi_dcs_set_display_on
-  in panel prepare (not init_sequence) to keep symmetric (Sam)
+icc_units_to_khz() -> kpbs_to_khz()
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
----
- drivers/gpu/drm/panel/Kconfig                 |  10 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../gpu/drm/panel/panel-xinpeng-xpp055c272.c  | 401 ++++++++++++++++++
- 3 files changed, 412 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
+> +
+>  struct exynos_bus {
+>  	struct device *dev;
+>  
+> @@ -35,6 +40,12 @@ struct exynos_bus {
+>  	struct opp_table *opp_table;
+>  	struct clk *clk;
+>  	unsigned int ratio;
+> +
+> +	/* One provider per bus, one node per provider */
+> +	struct icc_provider provider;
+> +	struct icc_node *node;
+> +
+> +	struct dev_pm_qos_request qos_req;
+>  };
+>  
+>  /*
+> @@ -59,6 +70,13 @@ exynos_bus_ops_edev(enable_edev);
+>  exynos_bus_ops_edev(disable_edev);
+>  exynos_bus_ops_edev(set_event);
+>  
+> +static int exynos_bus_next_id(void)
+> +{
+> +	static DEFINE_IDA(exynos_bus_icc_ida);
+> +
+> +	return ida_alloc(&exynos_bus_icc_ida, GFP_KERNEL);
+> +}
+> +
+>  static int exynos_bus_get_event(struct exynos_bus *bus,
+>  				struct devfreq_event_data *edata)
+>  {
+> @@ -171,6 +189,38 @@ static void exynos_bus_passive_exit(struct device *dev)
+>  	clk_disable_unprepare(bus->clk);
+>  }
+>  
+> +static int exynos_bus_icc_set(struct icc_node *src, struct icc_node *dst)
+> +{
+> +	struct exynos_bus *src_bus = src->data, *dst_bus = dst->data;
+> +	s32 src_freq = icc_units_to_khz(src->avg_bw);
+> +	s32 dst_freq = icc_units_to_khz(dst->avg_bw);
+> +
+> +	dev_pm_qos_update_request(&src_bus->qos_req, src_freq);
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index f152bc4eeb53..fb1ded47677e 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -355,4 +355,14 @@ config DRM_PANEL_TRULY_NT35597_WQXGA
- 	help
- 	  Say Y here if you want to enable support for Truly NT35597 WQXGA Dual DSI
- 	  Video Mode panel
-+
-+config DRM_PANEL_XINPENG_XPP055C272
-+	tristate "Xinpeng XPP055C272 panel driver"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y here if you want to enable support for the Xinpeng
-+	  XPP055C272 controller for 720x1280 LCD panels with MIPI/RGB/SPI
-+	  system interfaces.
- endmenu
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index b6cd39fe0f20..71d7722146a7 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -38,3 +38,4 @@ obj-$(CONFIG_DRM_PANEL_TPO_TD028TTEC1) += panel-tpo-td028ttec1.o
- obj-$(CONFIG_DRM_PANEL_TPO_TD043MTEA1) += panel-tpo-td043mtea1.o
- obj-$(CONFIG_DRM_PANEL_TPO_TPG110) += panel-tpo-tpg110.o
- obj-$(CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA) += panel-truly-nt35597.o
-+obj-$(CONFIG_DRM_PANEL_XINPENG_XPP055C272) += panel-xinpeng-xpp055c272.o
-diff --git a/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c b/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
-new file mode 100644
-index 000000000000..1058886efd5f
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
-@@ -0,0 +1,401 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Xinpeng xpp055c272 5.5" MIPI-DSI panel driver
-+ * Copyright (C) 2019 Theobroma Systems Design und Consulting GmbH
-+ *
-+ * based on
-+ *
-+ * Rockteck jh057n00900 5.5" MIPI-DSI panel driver
-+ * Copyright (C) Purism SPC 2019
-+ */
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+#include <drm/drm_print.h>
-+
-+#include <video/display_timing.h>
-+#include <video/mipi_display.h>
-+
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/media-bus-format.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regulator/consumer.h>
-+
-+/* Manufacturer specific Commands send via DSI */
-+#define XPP055C272_CMD_ALL_PIXEL_OFF	0x22
-+#define XPP055C272_CMD_ALL_PIXEL_ON	0x23
-+#define XPP055C272_CMD_SETDISP		0xb2
-+#define XPP055C272_CMD_SETRGBIF		0xb3
-+#define XPP055C272_CMD_SETCYC		0xb4
-+#define XPP055C272_CMD_SETBGP		0xb5
-+#define XPP055C272_CMD_SETVCOM		0xb6
-+#define XPP055C272_CMD_SETOTP		0xb7
-+#define XPP055C272_CMD_SETPOWER_EXT	0xb8
-+#define XPP055C272_CMD_SETEXTC		0xb9
-+#define XPP055C272_CMD_SETMIPI		0xbA
-+#define XPP055C272_CMD_SETVDC		0xbc
-+#define XPP055C272_CMD_SETPCR		0xbf
-+#define XPP055C272_CMD_SETSCR		0xc0
-+#define XPP055C272_CMD_SETPOWER		0xc1
-+#define XPP055C272_CMD_SETECO		0xc6
-+#define XPP055C272_CMD_SETPANEL		0xcc
-+#define XPP055C272_CMD_SETGAMMA		0xe0
-+#define XPP055C272_CMD_SETEQ		0xe3
-+#define XPP055C272_CMD_SETGIP1		0xe9
-+#define XPP055C272_CMD_SETGIP2		0xea
-+
-+struct xpp055c272 {
-+	struct device *dev;
-+	struct drm_panel panel;
-+	struct gpio_desc *reset_gpio;
-+	struct regulator *vci;
-+	struct regulator *iovcc;
-+	bool prepared;
-+};
-+
-+static inline struct xpp055c272 *panel_to_xpp055c272(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct xpp055c272, panel);
-+}
-+
-+#define dsi_generic_write_seq(dsi, cmd, seq...) do {			\
-+		static const u8 d[] = { seq };				\
-+		int ret;						\
-+		ret = mipi_dsi_dcs_write(dsi, cmd, d, ARRAY_SIZE(d));	\
-+		if (ret < 0)						\
-+			return ret;					\
-+	} while (0)
-+
-+static int xpp055c272_init_sequence(struct xpp055c272 *ctx)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	struct device *dev = ctx->dev;
-+
-+	/*
-+	 * Init sequence was supplied by the panel vendor without much
-+	 * documentation.
-+	 */
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETEXTC, 0xf1, 0x12, 0x83);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETMIPI,
-+			      0x33, 0x81, 0x05, 0xf9, 0x0e, 0x0e, 0x00, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x25,
-+			      0x00, 0x91, 0x0a, 0x00, 0x00, 0x02, 0x4f, 0x01,
-+			      0x00, 0x00, 0x37);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETPOWER_EXT, 0x25);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETPCR, 0x02, 0x11, 0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETRGBIF,
-+			      0x0c, 0x10, 0x0a, 0x50, 0x03, 0xff, 0x00, 0x00,
-+			      0x00, 0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETSCR,
-+			      0x73, 0x73, 0x50, 0x50, 0x00, 0x00, 0x08, 0x70,
-+			      0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETVDC, 0x46);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETPANEL, 0x0b);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETCYC, 0x80);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETDISP, 0xc8, 0x12, 0x30);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETEQ,
-+			      0x07, 0x07, 0x0B, 0x0B, 0x03, 0x0B, 0x00, 0x00,
-+			      0x00, 0x00, 0xFF, 0x00, 0xC0, 0x10);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETPOWER,
-+			      0x53, 0x00, 0x1e, 0x1e, 0x77, 0xe1, 0xcc, 0xdd,
-+			      0x67, 0x77, 0x33, 0x33);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETECO, 0x00, 0x00, 0xff,
-+			      0xff, 0x01, 0xff);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETBGP, 0x09, 0x09);
-+	msleep(20);
-+
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETVCOM, 0x87, 0x95);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETGIP1,
-+			      0xc2, 0x10, 0x05, 0x05, 0x10, 0x05, 0xa0, 0x12,
-+			      0x31, 0x23, 0x3f, 0x81, 0x0a, 0xa0, 0x37, 0x18,
-+			      0x00, 0x80, 0x01, 0x00, 0x00, 0x00, 0x00, 0x80,
-+			      0x01, 0x00, 0x00, 0x00, 0x48, 0xf8, 0x86, 0x42,
-+			      0x08, 0x88, 0x88, 0x80, 0x88, 0x88, 0x88, 0x58,
-+			      0xf8, 0x87, 0x53, 0x18, 0x88, 0x88, 0x81, 0x88,
-+			      0x88, 0x88, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETGIP2,
-+			      0x00, 0x1a, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x1f, 0x88, 0x81, 0x35,
-+			      0x78, 0x88, 0x88, 0x85, 0x88, 0x88, 0x88, 0x0f,
-+			      0x88, 0x80, 0x24, 0x68, 0x88, 0x88, 0x84, 0x88,
-+			      0x88, 0x88, 0x23, 0x10, 0x00, 0x00, 0x1c, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x05,
-+			      0xa0, 0x00, 0x00, 0x00, 0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETGAMMA,
-+			      0x00, 0x06, 0x08, 0x2a, 0x31, 0x3f, 0x38, 0x36,
-+			      0x07, 0x0c, 0x0d, 0x11, 0x13, 0x12, 0x13, 0x11,
-+			      0x18, 0x00, 0x06, 0x08, 0x2a, 0x31, 0x3f, 0x38,
-+			      0x36, 0x07, 0x0c, 0x0d, 0x11, 0x13, 0x12, 0x13,
-+			      0x11, 0x18);
-+
-+	msleep(60);
-+
-+	DRM_DEV_DEBUG_DRIVER(dev, "Panel init sequence done\n");
-+	return 0;
-+}
-+
-+static int xpp055c272_unprepare(struct drm_panel *panel)
-+{
-+	struct xpp055c272 *ctx = panel_to_xpp055c272(panel);
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	int ret;
-+
-+	if (!ctx->prepared)
-+		return 0;
-+
-+	ret = mipi_dsi_dcs_set_display_off(dsi);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(ctx->dev, "failed to set display off: %d\n",
-+			      ret);
-+
-+	mipi_dsi_dcs_enter_sleep_mode(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev, "failed to enter sleep mode: %d\n",
-+			      ret);
-+		return ret;
-+	}
-+
-+	regulator_disable(ctx->iovcc);
-+	regulator_disable(ctx->vci);
-+
-+	ctx->prepared = false;
-+
-+	return 0;
-+}
-+
-+static int xpp055c272_prepare(struct drm_panel *panel)
-+{
-+	struct xpp055c272 *ctx = panel_to_xpp055c272(panel);
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	int ret;
-+
-+	if (ctx->prepared)
-+		return 0;
-+
-+	DRM_DEV_DEBUG_DRIVER(ctx->dev, "Resetting the panel\n");
-+	ret = regulator_enable(ctx->vci);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev,
-+			      "Failed to enable vci supply: %d\n", ret);
-+		return ret;
-+	}
-+	ret = regulator_enable(ctx->iovcc);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev,
-+			      "Failed to enable iovcc supply: %d\n", ret);
-+		goto disable_vci;
-+	}
-+
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+	/* T6: 10us */
-+	usleep_range(10, 20);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+
-+	/* T8: 20ms */
-+	msleep(20);
-+
-+	ret = xpp055c272_init_sequence(ctx);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev, "Panel init sequence failed: %d\n",
-+			      ret);
-+		goto disable_iovcc;
-+	}
-+
-+	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev, "Failed to exit sleep mode: %d\n", ret);
-+		goto disable_iovcc;
-+	}
-+
-+	/* T9: 120ms */
-+	msleep(120);
-+
-+	ret = mipi_dsi_dcs_set_display_on(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev, "Failed to set display on: %d\n", ret);
-+		goto disable_iovcc;
-+	}
-+
-+	msleep(50);
-+
-+	ctx->prepared = true;
-+
-+	return 0;
-+
-+disable_iovcc:
-+	regulator_disable(ctx->iovcc);
-+disable_vci:
-+	regulator_disable(ctx->vci);
-+	return ret;
-+}
-+
-+static const struct drm_display_mode default_mode = {
-+	.hdisplay	= 720,
-+	.hsync_start	= 720 + 40,
-+	.hsync_end	= 720 + 40 + 10,
-+	.htotal		= 720 + 40 + 10 + 40,
-+	.vdisplay	= 1280,
-+	.vsync_start	= 1280 + 22,
-+	.vsync_end	= 1280 + 22 + 4,
-+	.vtotal		= 1280 + 22 + 4 + 11,
-+	.vrefresh	= 60,
-+	.clock		= 64000,
-+	.flags		= DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
-+	.width_mm	= 68,
-+	.height_mm	= 121,
-+};
-+
-+static int xpp055c272_get_modes(struct drm_panel *panel,
-+				struct drm_connector *connector)
-+{
-+	struct xpp055c272 *ctx = panel_to_xpp055c272(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_duplicate(connector->dev, &default_mode);
-+	if (!mode) {
-+		DRM_DEV_ERROR(ctx->dev, "Failed to add mode %ux%u@%u\n",
-+			      default_mode.hdisplay, default_mode.vdisplay,
-+			      default_mode.vrefresh);
-+		return -ENOMEM;
-+	}
-+
-+	drm_mode_set_name(mode);
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	connector->display_info.width_mm = mode->width_mm;
-+	connector->display_info.height_mm = mode->height_mm;
-+	drm_mode_probed_add(connector, mode);
-+
-+	return 1;
-+}
-+
-+static const struct drm_panel_funcs xpp055c272_funcs = {
-+	.unprepare	= xpp055c272_unprepare,
-+	.prepare	= xpp055c272_prepare,
-+	.get_modes	= xpp055c272_get_modes,
-+};
-+
-+static int xpp055c272_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct xpp055c272 *ctx;
-+	int ret;
-+
-+	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->reset_gpio)) {
-+		DRM_DEV_ERROR(dev, "cannot get reset gpio\n");
-+		return PTR_ERR(ctx->reset_gpio);
-+	}
-+
-+	ctx->vci = devm_regulator_get(dev, "vci");
-+	if (IS_ERR(ctx->vci)) {
-+		ret = PTR_ERR(ctx->vci);
-+		if (ret != -EPROBE_DEFER)
-+			DRM_DEV_ERROR(dev,
-+				      "Failed to request vci regulator: %d\n",
-+				      ret);
-+		return ret;
-+	}
-+
-+	ctx->iovcc = devm_regulator_get(dev, "iovcc");
-+	if (IS_ERR(ctx->iovcc)) {
-+		ret = PTR_ERR(ctx->iovcc);
-+		if (ret != -EPROBE_DEFER)
-+			DRM_DEV_ERROR(dev,
-+				      "Failed to request iovcc regulator: %d\n",
-+				      ret);
-+		return ret;
-+	}
-+
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+
-+	ctx->dev = dev;
-+
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET;
-+
-+	drm_panel_init(&ctx->panel, &dsi->dev, &xpp055c272_funcs,
-+		       DRM_MODE_CONNECTOR_DSI);
-+
-+	ret = drm_panel_of_backlight(&ctx->panel);
-+	if (ret) {
-+		DRM_DEV_ERROR(dev, "Failed to find backlight: %d\n", ret);
-+		return ret;
-+	}
-+
-+	drm_panel_add(&ctx->panel);
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(dev, "mipi_dsi_attach failed: %d\n", ret);
-+		drm_panel_remove(&ctx->panel);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void xpp055c272_shutdown(struct mipi_dsi_device *dsi)
-+{
-+	struct xpp055c272 *ctx = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	ret = drm_panel_unprepare(&ctx->panel);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(&dsi->dev, "Failed to unprepare panel: %d\n",
-+			      ret);
-+
-+	ret = drm_panel_disable(&ctx->panel);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(&dsi->dev, "Failed to disable panel: %d\n",
-+			      ret);
-+}
-+
-+static int xpp055c272_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct xpp055c272 *ctx = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	xpp055c272_shutdown(dsi);
-+
-+	ret = mipi_dsi_detach(dsi);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(&dsi->dev, "Failed to detach from DSI host: %d\n",
-+			      ret);
-+
-+	drm_panel_remove(&ctx->panel);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id xpp055c272_of_match[] = {
-+	{ .compatible = "xinpeng,xpp055c272" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, xpp055c272_of_match);
-+
-+static struct mipi_dsi_driver xpp055c272_driver = {
-+	.driver = {
-+		.name = "panel-xinpeng-xpp055c272",
-+		.of_match_table = xpp055c272_of_match,
-+	},
-+	.probe	= xpp055c272_probe,
-+	.remove = xpp055c272_remove,
-+	.shutdown = xpp055c272_shutdown,
-+};
-+module_mipi_dsi_driver(xpp055c272_driver);
-+
-+MODULE_AUTHOR("Heiko Stuebner <heiko.stuebner@theobroma-systems.com>");
-+MODULE_DESCRIPTION("DRM driver for Xinpeng xpp055c272 MIPI DSI panel");
-+MODULE_LICENSE("GPL v2");
+Have to check the return value.
+If return error, show the waring with dev_warn.
+
+> +	dev_pm_qos_update_request(&dst_bus->qos_req, dst_freq);
+
+ditto.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int exynos_bus_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
+> +				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
+> +{
+> +	*agg_avg += avg_bw;
+> +	*agg_peak = max(*agg_peak, peak_bw);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct icc_node *exynos_bus_icc_xlate(struct of_phandle_args *spec,
+> +					     void *data)
+> +{
+> +	struct exynos_bus *bus = data;
+> +
+> +	if (spec->np != bus->dev->of_node)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	return bus->node;
+> +}
+> +
+>  static int exynos_bus_parent_parse_of(struct device_node *np,
+>  					struct exynos_bus *bus)
+>  {
+> @@ -366,6 +416,101 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+>  	return 0;
+>  }
+>  
+> +static int exynos_bus_icc_connect(struct exynos_bus *bus)
+> +{
+> +	struct device_node *np = bus->dev->of_node;
+> +	struct devfreq *parent_devfreq;
+> +	struct icc_node *parent_node = NULL;
+> +	struct of_phandle_args args;
+> +	int ret = 0;
+> +
+> +	parent_devfreq = devfreq_get_devfreq_by_phandle(bus->dev, 0);
+> +	if (!IS_ERR(parent_devfreq)) {
+> +		struct exynos_bus *parent_bus;
+> +
+> +		parent_bus = dev_get_drvdata(parent_devfreq->dev.parent);
+> +		parent_node = parent_bus->node;
+> +	} else {
+> +		/* Look for parent in DT */
+> +		int num = of_count_phandle_with_args(np, "parent",
+> +						     "#interconnect-cells");
+> +		if (num != 1)
+> +			goto out; /* 'parent' is optional */
+> +
+> +		ret = of_parse_phandle_with_args(np, "parent",
+> +						 "#interconnect-cells",
+> +						 0, &args);
+
+
+Actually, I agree your approach. I think that it is very useful
+and necessary to guarantee the PM QoS requirements between devices.
+
+But,
+As I already commented, I'm not sure that the "parent" property 
+is proper for only this driver. If possible, you better to get
+the parent phandle through other way like OF graph.
+
+If you suggest the standard way to make the tree between
+the exynos-bus, I'll agree.
+
+Also, for interconnect path, you have to add the connection
+between 'bus_display' and 'bus_leftbus' regardless
+of the existing 'devfreq' property.
+- bus_display - bus_leftbus - bus_dmc
+
+> +		if (ret < 0)
+> +			goto out;
+> +
+> +		of_node_put(args.np);
+> +
+> +		parent_node = of_icc_get_from_provider(&args);
+> +		if (IS_ERR(parent_node)) {
+> +			/* May be -EPROBE_DEFER */
+> +			ret = PTR_ERR(parent_node);
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	ret = icc_link_create(bus->node, parent_node->id);
+> +
+> +out:
+> +	return ret;
+> +}
+> +
+> +static int exynos_bus_icc_init(struct exynos_bus *bus)
+> +{
+> +	struct device *dev = bus->dev;
+> +	struct icc_provider *provider = &bus->provider;
+> +	struct icc_node *node;
+> +	int id, ret;
+> +
+> +	/* Initialize the interconnect provider */
+> +	provider->set = exynos_bus_icc_set;
+> +	provider->aggregate = exynos_bus_icc_aggregate;
+> +	provider->xlate = exynos_bus_icc_xlate;
+> +	provider->dev = dev;
+> +	provider->data = bus;
+> +
+> +	ret = icc_provider_add(provider);
+> +	if (ret < 0)
+> +		goto out;
+
+Return error without goto because there is no any requirement
+to free the resource before.
+
+> +
+> +	ret = id = exynos_bus_next_id();
+> +	if (ret < 0)
+> +		goto err_node;
+> +
+> +	node = icc_node_create(id);
+> +	if (IS_ERR(node)) {
+> +		ret = PTR_ERR(node);
+> +		goto err_node;
+> +	}
+> +
+> +	bus->node = node;
+> +	node->name = dev->of_node->name;
+> +	node->data = bus;
+> +	icc_node_add(node, provider);
+> +
+> +	ret = exynos_bus_icc_connect(bus);
+> +	if (ret < 0)
+> +		goto err_connect;
+> +
+> +	ret = dev_pm_qos_add_request(bus->devfreq->dev.parent, &bus->qos_req,
+
+Check whether this line is over 80 char.
+
+> +				     DEV_PM_QOS_MIN_FREQUENCY, 0);
+
+	Check the return value.
+
+> +
+> +out:
+
+Remove this goto due to not necessary.
+
+> +	return ret;
+
+	return 0;
+
+> +
+> +err_connect:
+> +	icc_node_del(node);
+> +	icc_node_destroy(id);
+> +err_node:
+> +	icc_provider_del(provider);
+> +
+> +	return ret;
+> +}
+> +
+>  static int exynos_bus_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -415,6 +560,14 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		goto err;
+>  
+> +	/*
+> +	 * Initialize interconnect provider. A return value of -ENOTSUPP means
+> +	 * that CONFIG_INTERCONNECT is disabled.
+> +	 */
+> +	ret = exynos_bus_icc_init(bus);
+> +	if (ret < 0 && ret != -ENOTSUPP)
+> +		goto err;
+
+Print error message.
+	dev_err(dev, "failed to initialize the interconnect provider");
+
+> +
+>  	max_state = bus->devfreq->profile->max_state;
+>  	min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
+>  	max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
+> 
+
+
 -- 
-2.24.0
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
