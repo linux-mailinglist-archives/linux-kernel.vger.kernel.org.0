@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D173A121317
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:58:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BCC412130A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:58:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbfLPR6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:58:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58692 "EHLO mail.kernel.org"
+        id S1727793AbfLPR6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:58:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728634AbfLPR6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:58:40 -0500
+        id S1728193AbfLPR6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:58:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77C5124687;
-        Mon, 16 Dec 2019 17:58:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2885A205ED;
+        Mon, 16 Dec 2019 17:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519119;
-        bh=DwurjK+quo8SdeIOkvjTyis6n0cJ4qLMhBov65ml5kg=;
+        s=default; t=1576519095;
+        bh=vT09+Y2atmoIbCV7QqkXaUqPrSgl4UOEZ/3qeExbu4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UqC18gppH5jBpit6EhfcGSHrR6XRjgwjJvcRlMQWML+D5l94mvi0BbCJmtsGBwx4g
-         X/0m/gMup1TKIMA6zjyGZhx19EvP+2MLW85118F5h4vU+LtbKJpewRxQvpDcIkWINE
-         bs3tAgb2jylvsAptNx0MnZxoSXhHNKAXBzlVKNow=
+        b=Otk9GxeA93sIA9D4av6nDh3XjtcRQhKNszXA6+br1fEItZJObOBud4FRN1nX4H5o/
+         5hpxz+WzxUdzs2SLlwqoEoQzZ+o11k1xUNblDUExS35oISh3DN1VPVNk65bPwwypZ2
+         gyxZlZTs50sRCQ9C1gis2RCGizcms+CdBdc6lCp0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 186/267] btrfs: use refcount_inc_not_zero in kill_all_nodes
-Date:   Mon, 16 Dec 2019 18:48:32 +0100
-Message-Id: <20191216174912.709681384@linuxfoundation.org>
+        stable@vger.kernel.org
+Subject: [PATCH 4.14 194/267] lib: raid6: fix awk build warnings
+Date:   Mon, 16 Dec 2019 18:48:40 +0100
+Message-Id: <20191216174913.155001468@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,67 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit baf320b9d531f1cfbf64c60dd155ff80a58b3796 upstream.
+commit 702600eef73033ddd4eafcefcbb6560f3e3a90f7 upstream.
 
-We hit the following warning while running down a different problem
+Newer versions of awk spit out these fun warnings:
+	awk: ../lib/raid6/unroll.awk:16: warning: regexp escape sequence `\#' is not a known regexp operator
 
-[ 6197.175850] ------------[ cut here ]------------
-[ 6197.185082] refcount_t: underflow; use-after-free.
-[ 6197.194704] WARNING: CPU: 47 PID: 966 at lib/refcount.c:190 refcount_sub_and_test_checked+0x53/0x60
-[ 6197.521792] Call Trace:
-[ 6197.526687]  __btrfs_release_delayed_node+0x76/0x1c0
-[ 6197.536615]  btrfs_kill_all_delayed_nodes+0xec/0x130
-[ 6197.546532]  ? __btrfs_btree_balance_dirty+0x60/0x60
-[ 6197.556482]  btrfs_clean_one_deleted_snapshot+0x71/0xd0
-[ 6197.566910]  cleaner_kthread+0xfa/0x120
-[ 6197.574573]  kthread+0x111/0x130
-[ 6197.581022]  ? kthread_create_on_node+0x60/0x60
-[ 6197.590086]  ret_from_fork+0x1f/0x30
-[ 6197.597228] ---[ end trace 424bb7ae00509f56 ]---
+As commit 700c1018b86d ("x86/insn: Fix awk regexp warnings") showed, it
+turns out that there are a number of awk strings that do not need to be
+escaped and newer versions of awk now warn about this.
 
-This is because the free side drops the ref without the lock, and then
-takes the lock if our refcount is 0.  So you can have nodes on the tree
-that have a refcount of 0.  Fix this by zero'ing out that element in our
-temporary array so we don't try to kill it again.
+Fix the string up so that no warning is produced.  The exact same kernel
+module gets created before and after this patch, showing that it wasn't
+needed.
 
-CC: stable@vger.kernel.org # 4.14+
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ add comment ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Link: https://lore.kernel.org/r/20191206152600.GA75093@kroah.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/delayed-inode.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ lib/raid6/unroll.awk |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/delayed-inode.c
-+++ b/fs/btrfs/delayed-inode.c
-@@ -1975,12 +1975,19 @@ void btrfs_kill_all_delayed_nodes(struct
- 		}
- 
- 		inode_id = delayed_nodes[n - 1]->inode_id + 1;
--
--		for (i = 0; i < n; i++)
--			refcount_inc(&delayed_nodes[i]->refs);
-+		for (i = 0; i < n; i++) {
-+			/*
-+			 * Don't increase refs in case the node is dead and
-+			 * about to be removed from the tree in the loop below
-+			 */
-+			if (!refcount_inc_not_zero(&delayed_nodes[i]->refs))
-+				delayed_nodes[i] = NULL;
-+		}
- 		spin_unlock(&root->inode_lock);
- 
- 		for (i = 0; i < n; i++) {
-+			if (!delayed_nodes[i])
-+				continue;
- 			__btrfs_kill_delayed_node(delayed_nodes[i]);
- 			btrfs_release_delayed_node(delayed_nodes[i]);
- 		}
+--- a/lib/raid6/unroll.awk
++++ b/lib/raid6/unroll.awk
+@@ -13,7 +13,7 @@ BEGIN {
+ 	for (i = 0; i < rep; ++i) {
+ 		tmp = $0
+ 		gsub(/\$\$/, i, tmp)
+-		gsub(/\$\#/, n, tmp)
++		gsub(/\$#/, n, tmp)
+ 		gsub(/\$\*/, "$", tmp)
+ 		print tmp
+ 	}
 
 
