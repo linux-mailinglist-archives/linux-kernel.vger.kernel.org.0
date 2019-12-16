@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB18A121296
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E35D12129B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:54:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfLPRyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:54:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49006 "EHLO mail.kernel.org"
+        id S1727881AbfLPRyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:54:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727855AbfLPRx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:53:58 -0500
+        id S1727875AbfLPRyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:54:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 367D721739;
-        Mon, 16 Dec 2019 17:53:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D200621582;
+        Mon, 16 Dec 2019 17:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518837;
-        bh=U7b312bTOfKIQ9C33uLex1IfKC+Nxv4IdvkyXjf+DTY=;
+        s=default; t=1576518852;
+        bh=ekAR3ck2KgdUuuz1Bg+Oor3rUFJl91n6bzTEKuQ3JEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M5szvK9F/albUBr+RP45y6sG3hST825NJUebGH+GBtzObV5qjkppP3dbMOxvnuw1b
-         /YsVwujqEMogZfH/bgLY9Y/l1FxfLiAiBIfdHjU/bPWsawRHw86TYKTnd5IhLFXfpw
-         +KiiYGaE6p49L4BBAYrcZ4Xeo6KwouwgE9DuR+sE=
+        b=x37TIW1j7FXcw9gNq6AQ7LKskVGh0J5WTyk6sfgqTQv4wHc8u1U/j8/hsxdNxlYBD
+         a07Ahf96CNGclyT2pVHJgJ2ajeUlowcwr9iIPTb2Nn2X+d/GXW+EM1JdoV1HlcWA2r
+         yLPI+rA1bIDAAzuox0R6XtTxVUwZBqy1QNm6Ie4E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 087/267] arm64: dts: meson-gxl-khadas-vim: fix GPIO lines names
-Date:   Mon, 16 Dec 2019 18:46:53 +0100
-Message-Id: <20191216174857.794624572@linuxfoundation.org>
+Subject: [PATCH 4.14 092/267] tcp: fix off-by-one bug on aborting window-probing socket
+Date:   Mon, 16 Dec 2019 18:46:58 +0100
+Message-Id: <20191216174858.352109816@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,44 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neil Armstrong <narmstrong@baylibre.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit 5b78012636f537344bd551934387f5772c38ba80 ]
+[ Upstream commit 3976535af0cb9fe34a55f2ffb8d7e6b39a2f8188 ]
 
-The gpio line names were set in the pinctrl node instead of the gpio node,
-at the time it was merged, it worked, but was obviously wrong.
-This patch moves the properties to the gpio nodes.
+Previously there is an off-by-one bug on determining when to abort
+a stalled window-probing socket. This patch fixes that so it is
+consistent with tcp_write_timeout().
 
-Fixes: 60795933b709 ("ARM64: dts: meson-gxl-khadas-vim: Add GPIO lines names")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/tcp_timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-index edc512ad0bac3..fb5db5f33e8c3 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-@@ -112,7 +112,7 @@
- 	linux,rc-map-name = "rc-geekbox";
- };
+diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
+index 592d6e9967a91..04e2c43a43a5a 100644
+--- a/net/ipv4/tcp_timer.c
++++ b/net/ipv4/tcp_timer.c
+@@ -358,7 +358,7 @@ static void tcp_probe_timer(struct sock *sk)
+ 			return;
+ 	}
  
--&pinctrl_aobus {
-+&gpio_ao {
- 	gpio-line-names = "UART TX",
- 			  "UART RX",
- 			  "Power Key In",
-@@ -125,7 +125,7 @@
- 			  "SYS LED";
- };
- 
--&pinctrl_periphs {
-+&gpio {
- 	gpio-line-names = /* Bank GPIOZ */
- 			  "", "", "", "", "", "", "",
- 			  "", "", "", "", "", "", "",
+-	if (icsk->icsk_probes_out > max_probes) {
++	if (icsk->icsk_probes_out >= max_probes) {
+ abort:		tcp_write_err(sk);
+ 	} else {
+ 		/* Only send another probe if we didn't close things up. */
 -- 
 2.20.1
 
