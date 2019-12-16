@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6AB8121757
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:36:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A28612181E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:41:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730358AbfLPSJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:09:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50962 "EHLO mail.kernel.org"
+        id S1729504AbfLPSkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:40:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728056AbfLPSJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:00 -0500
+        id S1729291AbfLPSCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:02:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBE5120700;
-        Mon, 16 Dec 2019 18:08:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12D2A20CC7;
+        Mon, 16 Dec 2019 18:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519740;
-        bh=K0O0fJrGWr8JYMaBAwhKQId7RgwS9oiMPA2ryRrCwd8=;
+        s=default; t=1576519328;
+        bh=FAoSuFN++pCYuO0My1MHO6HH1CjEyyDk9zCPD07s2Ks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fSmW5SK/DVJsGs3h5Swg05aLOLdIcMqdP+dLpi46HmYDXW4n4aI9p5SRPrTQgAQHL
-         YTghaJGwAGVrY9DZq/y9gpmgf5OivYP8rkpEcIjfQSnkPU51VRly0yx7uCq+dED2Hy
-         /jZBmBlry/B2AF2BLoUXrpwIf7ZewQY+Bgl368ZQ=
+        b=oHYrK99i3eneOlkgP6VGfnt5JcBjE0E+ca/I5adQUlLc5ZaKTp3fFYU/QTrGaxHOX
+         AoQ/Tzhsrctw0J+1n4MdVrRb24C6VpJFGdHpKruGTVw6LvbH9IOjlWM/GO8uJH/jcE
+         xRUNlWXI1qxkCb78m7yOUhtHX6CnOKFJglBkffUg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejas Joglekar <joglekar@synopsys.com>,
-        Felipe Balbi <balbi@kernel.org>
-Subject: [PATCH 5.3 049/180] usb: dwc3: gadget: Fix logical condition
-Date:   Mon, 16 Dec 2019 18:48:09 +0100
-Message-Id: <20191216174822.512153908@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 022/140] USB: atm: ueagle-atm: add missing endpoint check
+Date:   Mon, 16 Dec 2019 18:48:10 +0100
+Message-Id: <20191216174756.404593678@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +42,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejas Joglekar <Tejas.Joglekar@synopsys.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 8c7d4b7b3d43c54c0b8c1e4adb917a151c754196 upstream.
+commit 09068c1ad53fb077bdac288869dec2435420bdc4 upstream.
 
-This patch corrects the condition to kick the transfer without
-giving back the requests when either request has remaining data
-or when there are pending SGs. The && check was introduced during
-spliting up the dwc3_gadget_ep_cleanup_completed_requests() function.
+Make sure that the interrupt interface has an endpoint before trying to
+access its endpoint descriptors to avoid dereferencing a NULL pointer.
 
-Fixes: f38e35dd84e2 ("usb: dwc3: gadget: split dwc3_gadget_ep_cleanup_completed_requests()")
+The driver binds to the interrupt interface with interface number 0, but
+must not assume that this interface or its current alternate setting are
+the first entries in the corresponding configuration arrays.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Tejas Joglekar <joglekar@synopsys.com>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Fixes: b72458a80c75 ("[PATCH] USB: Eagle and ADI 930 usb adsl modem driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.16
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191210112601.3561-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/atm/ueagle-atm.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -2471,7 +2471,7 @@ static int dwc3_gadget_ep_cleanup_comple
+--- a/drivers/usb/atm/ueagle-atm.c
++++ b/drivers/usb/atm/ueagle-atm.c
+@@ -2168,10 +2168,11 @@ resubmit:
+ /*
+  * Start the modem : init the data and start kernel thread
+  */
+-static int uea_boot(struct uea_softc *sc)
++static int uea_boot(struct uea_softc *sc, struct usb_interface *intf)
+ {
+-	int ret, size;
+ 	struct intr_pkt *intr;
++	int ret = -ENOMEM;
++	int size;
  
- 	req->request.actual = req->request.length - req->remaining;
+ 	uea_enters(INS_TO_USBDEV(sc));
  
--	if (!dwc3_gadget_ep_request_completed(req) &&
-+	if (!dwc3_gadget_ep_request_completed(req) ||
- 			req->num_pending_sgs) {
- 		__dwc3_gadget_kick_transfer(dep);
- 		goto out;
+@@ -2196,6 +2197,11 @@ static int uea_boot(struct uea_softc *sc
+ 	if (UEA_CHIP_VERSION(sc) == ADI930)
+ 		load_XILINX_firmware(sc);
+ 
++	if (intf->cur_altsetting->desc.bNumEndpoints < 1) {
++		ret = -ENODEV;
++		goto err0;
++	}
++
+ 	intr = kmalloc(size, GFP_KERNEL);
+ 	if (!intr)
+ 		goto err0;
+@@ -2207,8 +2213,7 @@ static int uea_boot(struct uea_softc *sc
+ 	usb_fill_int_urb(sc->urb_int, sc->usb_dev,
+ 			 usb_rcvintpipe(sc->usb_dev, UEA_INTR_PIPE),
+ 			 intr, size, uea_intr, sc,
+-			 sc->usb_dev->actconfig->interface[0]->altsetting[0].
+-			 endpoint[0].desc.bInterval);
++			 intf->cur_altsetting->endpoint[0].desc.bInterval);
+ 
+ 	ret = usb_submit_urb(sc->urb_int, GFP_KERNEL);
+ 	if (ret < 0) {
+@@ -2223,6 +2228,7 @@ static int uea_boot(struct uea_softc *sc
+ 	sc->kthread = kthread_create(uea_kthread, sc, "ueagle-atm");
+ 	if (IS_ERR(sc->kthread)) {
+ 		uea_err(INS_TO_USBDEV(sc), "failed to create thread\n");
++		ret = PTR_ERR(sc->kthread);
+ 		goto err2;
+ 	}
+ 
+@@ -2237,7 +2243,7 @@ err1:
+ 	kfree(intr);
+ err0:
+ 	uea_leaves(INS_TO_USBDEV(sc));
+-	return -ENOMEM;
++	return ret;
+ }
+ 
+ /*
+@@ -2598,7 +2604,7 @@ static int uea_bind(struct usbatm_data *
+ 	if (ret < 0)
+ 		goto error;
+ 
+-	ret = uea_boot(sc);
++	ret = uea_boot(sc, intf);
+ 	if (ret < 0)
+ 		goto error_rm_grp;
+ 
 
 
