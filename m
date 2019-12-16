@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C35F121603
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:26:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D17D2121459
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731989AbfLPS0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:26:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41136 "EHLO mail.kernel.org"
+        id S1730239AbfLPSKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:10:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731505AbfLPSRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:17:20 -0500
+        id S1730231AbfLPSKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:10:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A573420717;
-        Mon, 16 Dec 2019 18:17:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 493D521582;
+        Mon, 16 Dec 2019 18:10:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520240;
-        bh=NuxosJ/LMYAEF7tYnKIAaZAkD4oCBlF4hHcFCRYA40s=;
+        s=default; t=1576519832;
+        bh=RV3klUc/PIvQCfSU2SpZoIO+Xo2pIu/8ydn60yThLWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MoL+EEEWwo5YKhpTA2XKcV5bsyiJqF++JuRxaprq49J2u4wnD56DMTXC82N9t1ugQ
-         nCDZwx55aESBgS/2NRAEgBwQFibNF0DpxrxN7S6bEIHrRFQX2lANuv7kYQJn5oxF0y
-         k7SNfDKqrZP4EbZLIAebN52za9f7mQoBjd3uaCDI=
+        b=dqUJYQWvKN9e5N7KWqKqB8Oh3c2kG/khh8nJtqJZ9UwoIDOr0RSshNnHx1f7QFhsG
+         FKROT32ZxpTpBJ8Q9u59NocxD1iV853sR9nY9Eg4Jnzy+rQSC/xUokWLTUjB973C7S
+         WxVwBnWga4/u7v6VlD0TPXzHzwSHxSLzbrIytIcs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 072/177] btrfs: Remove btrfs_bio::flags member
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Jiunn Chang <c0d1n61at3@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 5.3 088/180] media: cec.h: CEC_OP_REC_FLAG_ values were swapped
 Date:   Mon, 16 Dec 2019 18:48:48 +0100
-Message-Id: <20191216174835.081135586@linuxfoundation.org>
+Message-Id: <20191216174834.418486955@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qu Wenruo <wqu@suse.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit 34b127aecd4fe8e6a3903e10f204a7b7ffddca22 upstream.
+commit 806e0cdfee0b99efbb450f9f6e69deb7118602fc upstream.
 
-The last user of btrfs_bio::flags was removed in commit 326e1dbb5736
-("block: remove management of bi_remaining when restoring original
-bi_end_io"), remove it.
+CEC_OP_REC_FLAG_NOT_USED is 0 and CEC_OP_REC_FLAG_USED is 1, not the
+other way around.
 
-(Tagged for stable as the structure is heavily used and space savings
-are desirable.)
-
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reported-by: Jiunn Chang <c0d1n61at3@gmail.com>
+Cc: <stable@vger.kernel.org>      # for v4.10 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/volumes.h |    1 -
- 1 file changed, 1 deletion(-)
+ include/uapi/linux/cec.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -330,7 +330,6 @@ struct btrfs_bio {
- 	u64 map_type; /* get from map_lookup->type */
- 	bio_end_io_t *end_io;
- 	struct bio *orig_bio;
--	unsigned long flags;
- 	void *private;
- 	atomic_t error;
- 	int max_errors;
+--- a/include/uapi/linux/cec.h
++++ b/include/uapi/linux/cec.h
+@@ -768,8 +768,8 @@ struct cec_event {
+ #define CEC_MSG_SELECT_DIGITAL_SERVICE			0x93
+ #define CEC_MSG_TUNER_DEVICE_STATUS			0x07
+ /* Recording Flag Operand (rec_flag) */
+-#define CEC_OP_REC_FLAG_USED				0
+-#define CEC_OP_REC_FLAG_NOT_USED			1
++#define CEC_OP_REC_FLAG_NOT_USED			0
++#define CEC_OP_REC_FLAG_USED				1
+ /* Tuner Display Info Operand (tuner_display_info) */
+ #define CEC_OP_TUNER_DISPLAY_INFO_DIGITAL		0
+ #define CEC_OP_TUNER_DISPLAY_INFO_NONE			1
 
 
