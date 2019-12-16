@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C76BE1213DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40B60121497
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:13:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfLPSFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:05:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44354 "EHLO mail.kernel.org"
+        id S1730626AbfLPSMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:12:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729846AbfLPSFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:05:39 -0500
+        id S1730572AbfLPSMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:12:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1ADED20700;
-        Mon, 16 Dec 2019 18:05:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CFA6206B7;
+        Mon, 16 Dec 2019 18:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519538;
-        bh=5cxpUpaQfq084JkcGhH1UyrJMKJkaD6lSDJm5jRztZo=;
+        s=default; t=1576519954;
+        bh=2oSPk7Am9vJP6YaoyozVS/wigGzoum5Po323ansRbRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tsD/V3StQ2tYaG56SGJbD7KLy60RP3qePjvkotv433sybn+oip+gpcAk7pSHyrPqR
-         WHwLY7HbsUYyGmVlxOunBFMTWOnLousyQRs1B3Hv4iVanQqWOHP/0lHe9slWidgYIu
-         DujauYYIljX17yQjTFSsDrpAYHusZ+5J8uQiG2Zw=
+        b=l4gPVigcdEJcj7VChHGUfKgYfDaAc9BOIPx/HQpG3+akr1zfim0JxeekwA3Fj297X
+         76YBOMfgvBpNoP+fOFnPa8eRwEZGcfeBnv6X6o1MWy/XDdm2EzatSkOH4YDYRNX1C8
+         f/R1NN0xY37XF+buWxF/KR86DYivxSZ+Se38sUNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Quinn Tran <qutran@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 108/140] omap: pdata-quirks: remove openpandora quirks for mmc3 and wl1251
-Date:   Mon, 16 Dec 2019 18:49:36 +0100
-Message-Id: <20191216174816.194534419@linuxfoundation.org>
+Subject: [PATCH 5.3 137/180] scsi: qla2xxx: Do command completion on abort timeout
+Date:   Mon, 16 Dec 2019 18:49:37 +0100
+Message-Id: <20191216174842.564991975@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,139 +46,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: H. Nikolaus Schaller <hns@goldelico.com>
+From: Quinn Tran <qutran@marvell.com>
 
-[ Upstream commit 2398c41d64321e62af54424fd399964f3d48cdc2 ]
+[ Upstream commit 71c80b75ce8f08c0978ce9a9816b81b5c3ce5e12 ]
 
-With a wl1251 child node of mmc3 in the device tree decoded
-in omap_hsmmc.c to handle special wl1251 initialization, we do
-no longer need to instantiate the mmc3 through pdata quirks.
+On switch, fabric and mgt command timeout, driver send Abort to tell FW to
+return the original command.  If abort is timeout, then return both Abort
+and original command for cleanup.
 
-We also can remove the wlan regulator and reset/interrupt definitions
-and do them through device tree.
-
-Fixes: 81eef6ca9201 ("mmc: omap_hsmmc: Use dma_request_chan() for requesting DMA channel")
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: <stable@vger.kernel.org> # v4.7+
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 219d27d7147e0 ("scsi: qla2xxx: Fix race conditions in the code for aborting SCSI commands")
+Cc: stable@vger.kernel.org # 5.2
+Link: https://lore.kernel.org/r/20191105150657.8092-3-hmadhani@marvell.com
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Quinn Tran <qutran@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/pdata-quirks.c | 93 ------------------------------
- 1 file changed, 93 deletions(-)
+ drivers/scsi/qla2xxx/qla_def.h  |  1 +
+ drivers/scsi/qla2xxx/qla_init.c | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
-index 7f02743edbe4c..dae7262287704 100644
---- a/arch/arm/mach-omap2/pdata-quirks.c
-+++ b/arch/arm/mach-omap2/pdata-quirks.c
-@@ -305,108 +305,15 @@ static void __init omap3_logicpd_torpedo_init(void)
+diff --git a/drivers/scsi/qla2xxx/qla_def.h b/drivers/scsi/qla2xxx/qla_def.h
+index bb1c7b2d0ac1f..674ee2afe2b52 100644
+--- a/drivers/scsi/qla2xxx/qla_def.h
++++ b/drivers/scsi/qla2xxx/qla_def.h
+@@ -543,6 +543,7 @@ typedef struct srb {
+ 	const char *name;
+ 	int iocbs;
+ 	struct qla_qpair *qpair;
++	struct srb *cmd_sp;
+ 	struct list_head elem;
+ 	u32 gen1;	/* scratch */
+ 	u32 gen2;	/* scratch */
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 5df604fae7593..a75a40b14140a 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -103,8 +103,22 @@ static void qla24xx_abort_iocb_timeout(void *data)
+ 	u32 handle;
+ 	unsigned long flags;
+ 
++	if (sp->cmd_sp)
++		ql_dbg(ql_dbg_async, sp->vha, 0x507c,
++		    "Abort timeout - cmd hdl=%x, cmd type=%x hdl=%x, type=%x\n",
++		    sp->cmd_sp->handle, sp->cmd_sp->type,
++		    sp->handle, sp->type);
++	else
++		ql_dbg(ql_dbg_async, sp->vha, 0x507c,
++		    "Abort timeout 2 - hdl=%x, type=%x\n",
++		    sp->handle, sp->type);
++
+ 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+ 	for (handle = 1; handle < qpair->req->num_outstanding_cmds; handle++) {
++		if (sp->cmd_sp && (qpair->req->outstanding_cmds[handle] ==
++		    sp->cmd_sp))
++			qpair->req->outstanding_cmds[handle] = NULL;
++
+ 		/* removing the abort */
+ 		if (qpair->req->outstanding_cmds[handle] == sp) {
+ 			qpair->req->outstanding_cmds[handle] = NULL;
+@@ -113,6 +127,9 @@ static void qla24xx_abort_iocb_timeout(void *data)
+ 	}
+ 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
+ 
++	if (sp->cmd_sp)
++		sp->cmd_sp->done(sp->cmd_sp, QLA_OS_TIMER_EXPIRED);
++
+ 	abt->u.abt.comp_status = CS_TIMEOUT;
+ 	sp->done(sp, QLA_OS_TIMER_EXPIRED);
  }
- 
- /* omap3pandora legacy devices */
--#define PANDORA_WIFI_IRQ_GPIO		21
--#define PANDORA_WIFI_NRESET_GPIO	23
- 
- static struct platform_device pandora_backlight = {
- 	.name	= "pandora-backlight",
- 	.id	= -1,
- };
- 
--static struct regulator_consumer_supply pandora_vmmc3_supply[] = {
--	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.2"),
--};
--
--static struct regulator_init_data pandora_vmmc3 = {
--	.constraints = {
--		.valid_ops_mask		= REGULATOR_CHANGE_STATUS,
--	},
--	.num_consumer_supplies	= ARRAY_SIZE(pandora_vmmc3_supply),
--	.consumer_supplies	= pandora_vmmc3_supply,
--};
--
--static struct fixed_voltage_config pandora_vwlan = {
--	.supply_name		= "vwlan",
--	.microvolts		= 1800000, /* 1.8V */
--	.gpio			= PANDORA_WIFI_NRESET_GPIO,
--	.startup_delay		= 50000, /* 50ms */
--	.enable_high		= 1,
--	.init_data		= &pandora_vmmc3,
--};
--
--static struct platform_device pandora_vwlan_device = {
--	.name		= "reg-fixed-voltage",
--	.id		= 1,
--	.dev = {
--		.platform_data = &pandora_vwlan,
--	},
--};
--
--static void pandora_wl1251_init_card(struct mmc_card *card)
--{
--	/*
--	 * We have TI wl1251 attached to MMC3. Pass this information to
--	 * SDIO core because it can't be probed by normal methods.
--	 */
--	if (card->type == MMC_TYPE_SDIO || card->type == MMC_TYPE_SD_COMBO) {
--		card->quirks |= MMC_QUIRK_NONSTD_SDIO;
--		card->cccr.wide_bus = 1;
--		card->cis.vendor = 0x104c;
--		card->cis.device = 0x9066;
--		card->cis.blksize = 512;
--		card->cis.max_dtr = 24000000;
--		card->ocr = 0x80;
--	}
--}
--
--static struct omap2_hsmmc_info pandora_mmc3[] = {
--	{
--		.mmc		= 3,
--		.caps		= MMC_CAP_4_BIT_DATA | MMC_CAP_POWER_OFF_CARD,
--		.gpio_cd	= -EINVAL,
--		.gpio_wp	= -EINVAL,
--		.init_card	= pandora_wl1251_init_card,
--	},
--	{}	/* Terminator */
--};
--
--static void __init pandora_wl1251_init(void)
--{
--	struct wl1251_platform_data pandora_wl1251_pdata;
--	int ret;
--
--	memset(&pandora_wl1251_pdata, 0, sizeof(pandora_wl1251_pdata));
--
--	pandora_wl1251_pdata.power_gpio = -1;
--
--	ret = gpio_request_one(PANDORA_WIFI_IRQ_GPIO, GPIOF_IN, "wl1251 irq");
--	if (ret < 0)
--		goto fail;
--
--	pandora_wl1251_pdata.irq = gpio_to_irq(PANDORA_WIFI_IRQ_GPIO);
--	if (pandora_wl1251_pdata.irq < 0)
--		goto fail_irq;
--
--	pandora_wl1251_pdata.use_eeprom = true;
--	ret = wl1251_set_platform_data(&pandora_wl1251_pdata);
--	if (ret < 0)
--		goto fail_irq;
--
--	return;
--
--fail_irq:
--	gpio_free(PANDORA_WIFI_IRQ_GPIO);
--fail:
--	pr_err("wl1251 board initialisation failed\n");
--}
--
- static void __init omap3_pandora_legacy_init(void)
- {
- 	platform_device_register(&pandora_backlight);
--	platform_device_register(&pandora_vwlan_device);
--	omap_hsmmc_init(pandora_mmc3);
--	omap_hsmmc_late_init(pandora_mmc3);
--	pandora_wl1251_init();
- }
- #endif /* CONFIG_ARCH_OMAP3 */
+@@ -147,6 +164,7 @@ static int qla24xx_async_abort_cmd(srb_t *cmd_sp, bool wait)
+ 	sp->type = SRB_ABT_CMD;
+ 	sp->name = "abort";
+ 	sp->qpair = cmd_sp->qpair;
++	sp->cmd_sp = cmd_sp;
+ 	if (wait)
+ 		sp->flags = SRB_WAKEUP_ON_COMP;
  
 -- 
 2.20.1
