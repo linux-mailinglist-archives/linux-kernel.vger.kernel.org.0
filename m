@@ -2,103 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46F5A120F38
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9961120F42
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfLPQUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 11:20:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbfLPQUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 11:20:30 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F06F02067C;
-        Mon, 16 Dec 2019 16:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576513229;
-        bh=+W3HJxf8mYgXKDeK2Y+jemjrghe0yTj6JOxN73ZJi3E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YNh6WZJvNuoZQvXRqRB6YKK5MKCzFq1ZLNadsR2AX5bddtdSx9VVXsa0BjWk+J9JW
-         4ZUzJVkSYiflK7f8JQKn3nyM38/lRadAB5mrnp6xP3z5YheK50GoThffOnnly7o7H8
-         UHezaRQ5zU4vYMeOLzWSuPB44a8mINvGRF8SDzY0=
-Date:   Mon, 16 Dec 2019 17:20:27 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Wang Nan <wangnan0@huawei.com>,
-        linux- stable <stable@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        lkft-triage@lists.linaro.org
-Subject: Re: [PATCH 56/63] perf tests: Fix out of bounds memory access
-Message-ID: <20191216162027.GA2227094@kroah.com>
-References: <20191107190011.23924-1-acme@kernel.org>
- <20191107190011.23924-57-acme@kernel.org>
- <CA+G9fYu-sGYutfX5K5LyAZ8cUfNpWomtyA_0SQsHyej0jD8qTw@mail.gmail.com>
+        id S1726622AbfLPQWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 11:22:06 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:53328 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfLPQWG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 11:22:06 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBGGLwPL003425;
+        Mon, 16 Dec 2019 10:21:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576513318;
+        bh=O+BYHkMcyBXf0jD60gSDEV7hfg36asqCTGt4eDTxcIc=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=D6Nb/LiFdZvAvEa60M/qlwkVaiBQ/u9sFcXqP655AqqoxUG9SJU/ww2l21BRTJqxg
+         jHQ+2bco/TwrL2Vu5HWyO2mXucb/J8/G4+H8QNjJDZ7TNRqIvvY22BZdXCuOeJVdxD
+         +tlxMZD6whKcvviEpOLkn8SlATa6Hz53KSSGu4/I=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBGGLwa8095306
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 16 Dec 2019 10:21:58 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 16
+ Dec 2019 10:21:56 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 16 Dec 2019 10:21:56 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBGGLu7C106651;
+        Mon, 16 Dec 2019 10:21:56 -0600
+Date:   Mon, 16 Dec 2019 10:21:16 -0600
+From:   Bin Liu <b-liu@ti.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <od@zcrc.me>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: musb: Disable pullup at init
+Message-ID: <20191216162116.GB14499@iaqt7>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191214221815.97483-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYu-sGYutfX5K5LyAZ8cUfNpWomtyA_0SQsHyej0jD8qTw@mail.gmail.com>
+In-Reply-To: <20191214221815.97483-1-paul@crapouillou.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 09:37:02PM +0530, Naresh Kamboju wrote:
-> This patch merged into stable-rc tree and perf build failed on OE for
-> Linaro builds for 5.3, 4.19, 4.14 and 4.9.
-> Please find build error logs here,
+On Sat, Dec 14, 2019 at 11:18:15PM +0100, Paul Cercueil wrote:
+> The pullup may be already enabled before the driver is initialized. This
+> happens for instance on JZ4740.
 > 
-> tests/backward-ring-buffer.c: In function 'test__backward_ring_buffer':
-> tests/backward-ring-buffer.c:147:2: warning: implicit declaration of
-> function 'evlist__close'; did you mean 'perf_evlist__close'?
-> [-Wimplicit-function-declaration]
->   evlist__close(evlist);
->   ^~~~~~~~~~~~~
->   perf_evlist__close
-> tests/backward-ring-buffer.c:147:2: warning: nested extern declaration
-> of 'evlist__close' [-Wnested-externs]
-> tests/backward-ring-buffer.c:149:8: warning: implicit declaration of
-> function 'evlist__open'; did you mean 'perf_evlist__open'?
-> [-Wimplicit-function-declaration]
->   err = evlist__open(evlist);
->         ^~~~~~~~~~~~
->         perf_evlist__open
-> tests/backward-ring-buffer.c:149:8: warning: nested extern declaration
-> of 'evlist__open' [-Wnested-externs]
-> perf/1.0-r9/recipe-sysroot/usr/lib/python2.7/config/libpython2.7.a(posixmodule.o):
-> In function `posix_tmpnam':
-> /usr/src/debug/python/2.7.15-r1/Python-2.7.15/Modules/posixmodule.c:7648:
-> warning: the use of `tmpnam_r' is dangerous, better use `mkstemp'
-> perf/1.0-r9/recipe-sysroot/usr/lib/python2.7/config/libpython2.7.a(posixmodule.o):
-> In function `posix_tempnam':
-> /usr/src/debug/python/2.7.15-r1/Python-2.7.15/Modules/posixmodule.c:7595:
-> warning: the use of `tempnam' is dangerous, better use `mkstemp'
-> perf/1.0-r9/perf-1.0/perf-in.o: In function `test__backward_ring_buffer':
-> perf/1.0-r9/perf-1.0/tools/perf/tests/backward-ring-buffer.c:147:
-> undefined reference to `evlist__close'
-> perf/1.0-r9/perf-1.0/tools/perf/tests/backward-ring-buffer.c:149:
-> undefined reference to `evlist__open'
+> It has to be disabled at init time, as we cannot guarantee that a gadget
+> driver will be bound to the UDC.
 > 
-> Full log can be found at,
-> https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-stable-rc-5.3/DISTRO=lkft,MACHINE=hikey,label=docker-lkft/72/consoleText
-> https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-stable-rc-4.19/DISTRO=lkft,MACHINE=intel-corei7-64,label=docker-lkft/378/consoleText
-> https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-stable-rc-4.14/DISTRO=lkft,MACHINE=intel-corei7-64,label=docker-lkft/675/consoleText
-> https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-stable-rc-4.9/DISTRO=lkft,MACHINE=intel-corei7-64,label=docker-lkft/753/consoleText
-> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Suggested-by: Bin Liu <b-liu@ti.com>
 
-Good catch, thanks, I'll go drop it from all of these queues.
+Applied. Thanks.
 
-greg k-h
+-Bin.
