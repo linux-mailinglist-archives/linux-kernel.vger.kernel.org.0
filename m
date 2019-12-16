@@ -2,124 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46371121BE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D03C121BC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbfLPVgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 16:36:11 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:54362 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbfLPVgJ (ORCPT
+        id S1727539AbfLPVfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 16:35:47 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46351 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfLPVfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 16:36:09 -0500
-Received: by mail-pf1-f201.google.com with SMTP id v14so7698144pfm.21
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 13:36:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=rowy0fulnWlicWAYnRVZ1Dd1A8eU5tnc0eErNEZ+z80=;
-        b=PsqTJlOqPYyiihmLOLIb6xAhTBSJvttAVNodws3FJbnnkfYipi8xAJuaOwtmKyQzpV
-         IFuLnz58ISep0HZjvSM64NS2Zp27Ri/mgzV8FI5s45OLWRWCs7RfCJ30GkYKJF3VG39B
-         32PeBFBUiqKu0qqajQ/mVKYHcsPnQnJnB8w+eab63fDZ5tI1IVP27ChhOjD6mhb18f6J
-         TlEGQtJHefr8CyAZHH6HxW80kFb1RJ1o7EA1mXWqzoWX7A39js6GAPJIUZp7v34dhOc6
-         WeHxvOpYbKrACctym1WFD+zuP11y2mPIyqqk2dplT8wd1ozEtHp79GU169FWnKEMwEMv
-         qGNw==
+        Mon, 16 Dec 2019 16:35:46 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a124so4491632oii.13;
+        Mon, 16 Dec 2019 13:35:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=rowy0fulnWlicWAYnRVZ1Dd1A8eU5tnc0eErNEZ+z80=;
-        b=uZ4vWBqCZgfzec/Z7EnE8Z9NCJXSAl1tczY2ovbiJz0tlRkGLK83Z5gMZNplaYhism
-         4Dzmj6EBhiL872SUVeJEKJPxraCsCrkWBRkL1VohQ42luH0ja/86ICYNVRqSBrdPKkVr
-         dUop3kcRNKCu5UL1dFx7AiuXXEOdT/7BnpP2wK+1m/pvRUuTPRkACywl1HvMhPvEOu8W
-         iVgQGaGwF6PRekgzKZc1vFyLJj0YbdwAtC8essqokk9JeQoAXv19FhG7llxi2mdRY1Yh
-         0meh6zYTTfjEzqDyLUBmVqHOFtWdVUVGTUpshGwRrozXUZhtKLvsc2FXsQUt91JqOjdR
-         l+CA==
-X-Gm-Message-State: APjAAAVUKMDfQ6RNRQSOCR8kqnsFw1Z6IzQ8Yovu0YvUjH47tjVzJs+V
-        q60Pq7owDTrFiFJUICopHuc8hYSztwputIYN3KMsJlCdjCDFl/DlPcDyHfZhevv+H5jBuP9+PSO
-        6S0W+wNjvWbPZQR5TQY4lrI3oU0R6Y0VWMCpkS7NQkvOalWOgBaICxIbP3bjUIZTq27kCvWvx
-X-Google-Smtp-Source: APXvYqxiDfgt93rcM0223tSoye1p3mg8HWLc1oSc+SjuoE4GYYqQkL10qTfDmi9hqrbIbU4HmdRZj2Z32jnW
-X-Received: by 2002:a63:1447:: with SMTP id 7mr20829842pgu.22.1576532168726;
- Mon, 16 Dec 2019 13:36:08 -0800 (PST)
-Date:   Mon, 16 Dec 2019 13:35:32 -0800
-In-Reply-To: <20191216213532.91237-1-bgardon@google.com>
-Message-Id: <20191216213532.91237-10-bgardon@google.com>
-Mime-Version: 1.0
-References: <20191216213532.91237-1-bgardon@google.com>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-Subject: [PATCH v2 8/8] KVM: selftests: Move large memslots above KVM internal
- memslots in _vm_create
-From:   Ben Gardon <bgardon@google.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        Peter Xu <peterx@redhat.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ben Gardon <bgardon@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vJ2usFWIeCmkzmTC7qcf2zGiRqXsS5ix2vXMB0EkNbI=;
+        b=KyxZePEZ3YNKJXcVKlyZlVzzbTLYeNjCNtwazWD9XU6GxZwyS6zEXU9qDAidHsUClO
+         fZoXkOrdKzRm5B7vnHgC08d3RsMbT//W1k32OP4m6uLoJ4dRNbjeRr5h9ErcKpe7jMRZ
+         yYtklx9Vc8T51qnsL8Mt3FU7I2bzOGlHiR89i3S9PFzjTyWnZJRh2RSufSvJBVOI8wHQ
+         XxKKg8KoeLkMcvtJ/b/IfBa5yMOiJ0HUTry9lu2P8XX8hE973JkgcRX5cc3YIBRjdhe9
+         SZ72QCmoOE0wbu0QB+yqeevDB9ybeihVkErjsN0zQ1WTtHpjaEKiYV87ZAa3sGpAkeDW
+         JP/w==
+X-Gm-Message-State: APjAAAV/sXZU2MaveHIs/Z3n2DjWrWpUHExSXX/aZ1Kc1zrECMrOlgTh
+        s7TBaiE82djpNoqFFWcstBl1G0zJuM2kqx3GYCE=
+X-Google-Smtp-Source: APXvYqzeC3z/0g7tRLvdvvwAJCteCRLAbygW1va+REys9e3fUJcMxQkdZnEB0iQtUlOzmkKHEvgmtrZmAiwIi1djeJc=
+X-Received: by 2002:a05:6808:b38:: with SMTP id t24mr729850oij.110.1576532145696;
+ Mon, 16 Dec 2019 13:35:45 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1576520244.git.gayatri.kammela@intel.com>
+In-Reply-To: <cover.1576520244.git.gayatri.kammela@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 16 Dec 2019 22:35:34 +0100
+Message-ID: <CAJZ5v0g2UHJcnczekgegX6_7kzHrmXNS_e3KRCC2d4LQ1+RceA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] drivers: Add Tiger Lake hardware IDs to support ACPI,
+To:     Gayatri Kammela <gayatri.kammela@intel.com>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Alex Hung <alex.hung@canonical.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        "Prestopine, Charles D" <charles.d.prestopine@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM creates internal memslots between 3 and 4 GiB paddrs on the first
-vCPU creation. If memslot 0 is large enough it collides with these
-memslots an causes vCPU creation to fail. When requesting more than 3G,
-start memslot 0 at 4G in _vm_create.
+On Mon, Dec 16, 2019 at 7:33 PM Gayatri Kammela
+<gayatri.kammela@intel.com> wrote:
+>
+> Hi,
+>
+> Tiger Lake supports devices whose hardware IDs are changed for various
+> drivers. Hence, add the new hardware IDs.
+>
+> Patch 1: Add Tiger Lake support to DPTF driver
+> Patch 2: Add Tiger Lake support to fan driver
+> Patch 3: Add Tiger Lake support to device_pm
+> Patch 4: Add Tiger Lake support to Intel's HID driver
+> Patch 5: Add Tiger Lake support to thermal driver
 
-Signed-off-by: Ben Gardon <bgardon@google.com>
----
- tools/testing/selftests/kvm/lib/kvm_util.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+I'm going to apply the whole series (for 5.6) if nobody has any issues
+with that.
 
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 41cf45416060f..886d58e6cac39 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -113,6 +113,8 @@ const char * const vm_guest_mode_string[] = {
- _Static_assert(sizeof(vm_guest_mode_string)/sizeof(char *) == NUM_VM_MODES,
- 	       "Missing new mode strings?");
- 
-+#define KVM_INTERNAL_MEMSLOTS_START_PADDR (3UL << 30)
-+#define KVM_INTERNAL_MEMSLOTS_END_PADDR (4UL << 30)
- /*
-  * VM Create
-  *
-@@ -128,13 +130,16 @@ _Static_assert(sizeof(vm_guest_mode_string)/sizeof(char *) == NUM_VM_MODES,
-  *
-  * Creates a VM with the mode specified by mode (e.g. VM_MODE_P52V48_4K).
-  * When phy_pages is non-zero, a memory region of phy_pages physical pages
-- * is created and mapped starting at guest physical address 0.  The file
-- * descriptor to control the created VM is created with the permissions
-- * given by perm (e.g. O_RDWR).
-+ * is created. If phy_pages is less that 3G, it is mapped starting at guest
-+ * physical address 0. If phy_pages is greater than 3G it is mapped starting
-+ * 4G into the guest physical address space to avoid KVM internal memslots
-+ * which map the region between 3G and 4G. The file descriptor to control the
-+ * created VM is created with the permissions given by perm (e.g. O_RDWR).
-  */
- struct kvm_vm *_vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
- {
- 	struct kvm_vm *vm;
-+	uint64_t guest_paddr = 0;
- 
- 	DEBUG("Testing guest mode: %s\n", vm_guest_mode_string(mode));
- 
-@@ -227,9 +232,11 @@ struct kvm_vm *_vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
- 
- 	/* Allocate and setup memory for guest. */
- 	vm->vpages_mapped = sparsebit_alloc();
-+	if (guest_paddr + phy_pages > KVM_INTERNAL_MEMSLOTS_START_PADDR)
-+		guest_paddr = KVM_INTERNAL_MEMSLOTS_END_PADDR;
- 	if (phy_pages != 0)
- 		vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
--					    0, 0, phy_pages, 0);
-+					    guest_paddr, 0, phy_pages, 0);
- 
- 	return vm;
- }
--- 
-2.24.1.735.g03f4e72817-goog
-
+Thanks!
