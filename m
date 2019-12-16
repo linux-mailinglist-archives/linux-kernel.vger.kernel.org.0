@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33A3E121415
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E5A8121623
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:27:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730068AbfLPSID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:08:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49206 "EHLO mail.kernel.org"
+        id S1731486AbfLPSQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730200AbfLPSH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:07:57 -0500
+        id S1731261AbfLPSQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:16:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59A9F20700;
-        Mon, 16 Dec 2019 18:07:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0839D207FF;
+        Mon, 16 Dec 2019 18:16:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519676;
-        bh=WNWl2KwpTQ9stnB82DioW1lk2opBZTbTniKS4yHFbJs=;
+        s=default; t=1576520171;
+        bh=xS8Y5k8sZBEYPLKkLbYUbQl4P9YoLy1v1ipp5f+HbOA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ETKS9jlMkSsOi2LhqHKXJvm2DaSaBylqrYfxwj5P81xK2h9uLP11W6jPpNFW1mdrC
-         a/Gqnd/tWfWGA1hnfm0poHiH6NkRU36KagKVUFVWksP76/mA+0C1cZQt7pKkYeQb6R
-         vYMIFufyVcHEtPQGTwWdFs0cUYWoy7rSK3voSg/k=
+        b=By1cDNWjyfZ2RfTJhk4clzaCxiHzk2RSXm3f026dn328Kc1Bj2M9kzgxyRzGWjLWH
+         YP72aT+oun9MPJME2cnVSrBvmV87IGC4lnBbjvIXy7SySM8J6jiznl6uIZn0qQvrkF
+         Lv+Qr2NNNiNNLf40Qy6XI3shFLopzAb+hFIto3p4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 5.3 023/180] xhci: Increase STS_HALT timeout in xhci_suspend()
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Quinn Tran <qutran@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.4 007/177] scsi: qla2xxx: Do command completion on abort timeout
 Date:   Mon, 16 Dec 2019 18:47:43 +0100
-Message-Id: <20191216174811.168354603@linuxfoundation.org>
+Message-Id: <20191216174812.584590986@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Quinn Tran <qutran@marvell.com>
 
-commit 7c67cf6658cec70d8a43229f2ce74ca1443dc95e upstream.
+commit 71c80b75ce8f08c0978ce9a9816b81b5c3ce5e12 upstream.
 
-I've recently observed failed xHCI suspend attempt on AMD Raven Ridge
-system:
-kernel: xhci_hcd 0000:04:00.4: WARN: xHC CMD_RUN timeout
-kernel: PM: suspend_common(): xhci_pci_suspend+0x0/0xd0 returns -110
-kernel: PM: pci_pm_suspend(): hcd_pci_suspend+0x0/0x30 returns -110
-kernel: PM: dpm_run_callback(): pci_pm_suspend+0x0/0x150 returns -110
-kernel: PM: Device 0000:04:00.4 failed to suspend async: error -110
+On switch, fabric and mgt command timeout, driver send Abort to tell FW to
+return the original command.  If abort is timeout, then return both Abort
+and original command for cleanup.
 
-Similar to commit ac343366846a ("xhci: Increase STS_SAVE timeout in
-xhci_suspend()") we also need to increase the HALT timeout to make it be
-able to suspend again.
-
-Cc: <stable@vger.kernel.org> # 5.2+
-Fixes: f7fac17ca925 ("xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()")
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20191211142007.8847-5-mathias.nyman@linux.intel.com
+Fixes: 219d27d7147e0 ("scsi: qla2xxx: Fix race conditions in the code for aborting SCSI commands")
+Cc: stable@vger.kernel.org # 5.2
+Link: https://lore.kernel.org/r/20191105150657.8092-3-hmadhani@marvell.com
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Quinn Tran <qutran@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_def.h  |    1 +
+ drivers/scsi/qla2xxx/qla_init.c |   18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -970,7 +970,7 @@ static bool xhci_pending_portevent(struc
- int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup)
- {
- 	int			rc = 0;
--	unsigned int		delay = XHCI_MAX_HALT_USEC;
-+	unsigned int		delay = XHCI_MAX_HALT_USEC * 2;
- 	struct usb_hcd		*hcd = xhci_to_hcd(xhci);
- 	u32			command;
- 	u32			res;
+--- a/drivers/scsi/qla2xxx/qla_def.h
++++ b/drivers/scsi/qla2xxx/qla_def.h
+@@ -604,6 +604,7 @@ typedef struct srb {
+ 	const char *name;
+ 	int iocbs;
+ 	struct qla_qpair *qpair;
++	struct srb *cmd_sp;
+ 	struct list_head elem;
+ 	u32 gen1;	/* scratch */
+ 	u32 gen2;	/* scratch */
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -101,8 +101,22 @@ static void qla24xx_abort_iocb_timeout(v
+ 	u32 handle;
+ 	unsigned long flags;
+ 
++	if (sp->cmd_sp)
++		ql_dbg(ql_dbg_async, sp->vha, 0x507c,
++		    "Abort timeout - cmd hdl=%x, cmd type=%x hdl=%x, type=%x\n",
++		    sp->cmd_sp->handle, sp->cmd_sp->type,
++		    sp->handle, sp->type);
++	else
++		ql_dbg(ql_dbg_async, sp->vha, 0x507c,
++		    "Abort timeout 2 - hdl=%x, type=%x\n",
++		    sp->handle, sp->type);
++
+ 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+ 	for (handle = 1; handle < qpair->req->num_outstanding_cmds; handle++) {
++		if (sp->cmd_sp && (qpair->req->outstanding_cmds[handle] ==
++		    sp->cmd_sp))
++			qpair->req->outstanding_cmds[handle] = NULL;
++
+ 		/* removing the abort */
+ 		if (qpair->req->outstanding_cmds[handle] == sp) {
+ 			qpair->req->outstanding_cmds[handle] = NULL;
+@@ -111,6 +125,9 @@ static void qla24xx_abort_iocb_timeout(v
+ 	}
+ 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
+ 
++	if (sp->cmd_sp)
++		sp->cmd_sp->done(sp->cmd_sp, QLA_OS_TIMER_EXPIRED);
++
+ 	abt->u.abt.comp_status = CS_TIMEOUT;
+ 	sp->done(sp, QLA_OS_TIMER_EXPIRED);
+ }
+@@ -142,6 +159,7 @@ static int qla24xx_async_abort_cmd(srb_t
+ 	sp->type = SRB_ABT_CMD;
+ 	sp->name = "abort";
+ 	sp->qpair = cmd_sp->qpair;
++	sp->cmd_sp = cmd_sp;
+ 	if (wait)
+ 		sp->flags = SRB_WAKEUP_ON_COMP;
+ 
 
 
