@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCD8F12157C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:22:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7CD121362
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732082AbfLPSV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:21:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55470 "EHLO mail.kernel.org"
+        id S1729118AbfLPSBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:01:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731497AbfLPSVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:21:25 -0500
+        id S1729108AbfLPSBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:01:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B02B20717;
-        Mon, 16 Dec 2019 18:21:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA82E2166E;
+        Mon, 16 Dec 2019 18:01:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520485;
-        bh=+TcQCskO8Yxad2UV+B9L/vAH6xNMwSDamhI/wfm7YAM=;
+        s=default; t=1576519270;
+        bh=NJg064XV9VxiRqIe6ZJtZWzA9SXnDH5W0GUGvDVe/SM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ui8aUPD37QzzR3lZL91cEjESgNoziFp50DGjIcS2LIwEO6A8mErHtFmyZfZtsG3Fa
-         ljwXmawP5g7NEWqvHJBbWToRayJfyhh4LmJYoYVlV0qjdEN5GM+AWc8wEbRdFWwgeW
-         B/6vVVFeKCWheiXQScS1W+P7QPbNftWZO3AE9Dvs=
+        b=0mf+06oVzmx0sc14EUCclB9FbGVqqi6wDXutmdnosqp1JwAG2YtpOqNAyqijiHTYi
+         6tASojo29jz25mL9PXaOvAkHGclP7zMPe/RZmZPDDXJYQ1F/LyVOQyTP6CQlZJyPl/
+         tysuKseiNqia0IVhmhUvoW9Ev0L+XFpciEU1M9dE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 5.4 134/177] pinctrl: samsung: Fix device node refcount leaks in Exynos wakeup controller init
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        yangerkun <yangerkun@huawei.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.14 264/267] ext4: fix a bug in ext4_wait_for_tail_page_commit
 Date:   Mon, 16 Dec 2019 18:49:50 +0100
-Message-Id: <20191216174844.862838184@linuxfoundation.org>
+Message-Id: <20191216174917.289112040@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,60 +44,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: yangerkun <yangerkun@huawei.com>
 
-commit 5c7f48dd14e892e3e920dd6bbbd52df79e1b3b41 upstream.
+commit 565333a1554d704789e74205989305c811fd9c7a upstream.
 
-In exynos_eint_wkup_init() the for_each_child_of_node() loop is used
-with a break to find a matching child node.  Although each iteration of
-for_each_child_of_node puts the previous node, but early exit from loop
-misses it.  This leads to leak of device node.
+No need to wait for any commit once the page is fully truncated.
+Besides, it may confuse e.g. concurrent ext4_writepage() with the page
+still be dirty (will be cleared by truncate_pagecache() in
+ext4_setattr()) but buffers has been freed; and then trigger a bug
+show as below:
 
-Cc: <stable@vger.kernel.org>
-Fixes: 43b169db1841 ("pinctrl: add exynos4210 specific extensions for samsung pinctrl driver")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+[   26.057508] ------------[ cut here ]------------
+[   26.058531] kernel BUG at fs/ext4/inode.c:2134!
+...
+[   26.088130] Call trace:
+[   26.088695]  ext4_writepage+0x914/0xb28
+[   26.089541]  writeout.isra.4+0x1b4/0x2b8
+[   26.090409]  move_to_new_page+0x3b0/0x568
+[   26.091338]  __unmap_and_move+0x648/0x988
+[   26.092241]  unmap_and_move+0x48c/0xbb8
+[   26.093096]  migrate_pages+0x220/0xb28
+[   26.093945]  kernel_mbind+0x828/0xa18
+[   26.094791]  __arm64_sys_mbind+0xc8/0x138
+[   26.095716]  el0_svc_common+0x190/0x490
+[   26.096571]  el0_svc_handler+0x60/0xd0
+[   26.097423]  el0_svc+0x8/0xc
+
+Run the procedure (generate by syzkaller) parallel with ext3.
+
+void main()
+{
+	int fd, fd1, ret;
+	void *addr;
+	size_t length = 4096;
+	int flags;
+	off_t offset = 0;
+	char *str = "12345";
+
+	fd = open("a", O_RDWR | O_CREAT);
+	assert(fd >= 0);
+
+	/* Truncate to 4k */
+	ret = ftruncate(fd, length);
+	assert(ret == 0);
+
+	/* Journal data mode */
+	flags = 0xc00f;
+	ret = ioctl(fd, _IOW('f', 2, long), &flags);
+	assert(ret == 0);
+
+	/* Truncate to 0 */
+	fd1 = open("a", O_TRUNC | O_NOATIME);
+	assert(fd1 >= 0);
+
+	addr = mmap(NULL, length, PROT_WRITE | PROT_READ,
+					MAP_SHARED, fd, offset);
+	assert(addr != (void *)-1);
+
+	memcpy(addr, str, 5);
+	mbind(addr, length, 0, 0, 0, MPOL_MF_MOVE);
+}
+
+And the bug will be triggered once we seen the below order.
+
+reproduce1                         reproduce2
+
+...                            |   ...
+truncate to 4k                 |
+change to journal data mode    |
+                               |   memcpy(set page dirty)
+truncate to 0:                 |
+ext4_setattr:                  |
+...                            |
+ext4_wait_for_tail_page_commit |
+                               |   mbind(trigger bug)
+truncate_pagecache(clean dirty)|   ...
+...                            |
+
+mbind will call ext4_writepage() since the page still be dirty, and then
+report the bug since the buffers has been free. Fix it by return
+directly once offset equals to 0 which means the page has been fully
+truncated.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: yangerkun <yangerkun@huawei.com>
+Link: https://lore.kernel.org/r/20190919063508.1045-1-yangerkun@huawei.com
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/ext4/inode.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -506,6 +506,7 @@ int exynos_eint_wkup_init(struct samsung
- 				bank->nr_pins, &exynos_eint_irqd_ops, bank);
- 		if (!bank->irq_domain) {
- 			dev_err(dev, "wkup irq domain add failed\n");
-+			of_node_put(wkup_np);
- 			return -ENXIO;
- 		}
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5305,11 +5305,15 @@ static void ext4_wait_for_tail_page_comm
  
-@@ -520,8 +521,10 @@ int exynos_eint_wkup_init(struct samsung
- 		weint_data = devm_kcalloc(dev,
- 					  bank->nr_pins, sizeof(*weint_data),
- 					  GFP_KERNEL);
--		if (!weint_data)
-+		if (!weint_data) {
-+			of_node_put(wkup_np);
- 			return -ENOMEM;
-+		}
- 
- 		for (idx = 0; idx < bank->nr_pins; ++idx) {
- 			irq = irq_of_parse_and_map(bank->of_node, idx);
-@@ -538,10 +541,13 @@ int exynos_eint_wkup_init(struct samsung
- 		}
- 	}
- 
--	if (!muxed_banks)
-+	if (!muxed_banks) {
-+		of_node_put(wkup_np);
- 		return 0;
-+	}
- 
- 	irq = irq_of_parse_and_map(wkup_np, 0);
-+	of_node_put(wkup_np);
- 	if (!irq) {
- 		dev_err(dev, "irq number for muxed EINTs not found\n");
- 		return 0;
+ 	offset = inode->i_size & (PAGE_SIZE - 1);
+ 	/*
+-	 * All buffers in the last page remain valid? Then there's nothing to
+-	 * do. We do the check mainly to optimize the common PAGE_SIZE ==
+-	 * blocksize case
++	 * If the page is fully truncated, we don't need to wait for any commit
++	 * (and we even should not as __ext4_journalled_invalidatepage() may
++	 * strip all buffers from the page but keep the page dirty which can then
++	 * confuse e.g. concurrent ext4_writepage() seeing dirty page without
++	 * buffers). Also we don't need to wait for any commit if all buffers in
++	 * the page remain valid. This is most beneficial for the common case of
++	 * blocksize == PAGESIZE.
+ 	 */
+-	if (offset > PAGE_SIZE - i_blocksize(inode))
++	if (!offset || offset > (PAGE_SIZE - i_blocksize(inode)))
+ 		return;
+ 	while (1) {
+ 		page = find_lock_page(inode->i_mapping,
 
 
