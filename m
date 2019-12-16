@@ -2,76 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E441411FFFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:38:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22EBC11FFFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:39:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfLPIiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 03:38:18 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46431 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726856AbfLPIiS (ORCPT
+        id S1727015AbfLPIjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 03:39:00 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:33113 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726756AbfLPIi7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 03:38:18 -0500
-Received: by mail-ua1-f66.google.com with SMTP id l6so1304604uap.13
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 00:38:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OP2XiHV+z9XRmOc6CVIQd7a0qzdvr1/Q3scZZYxr1/c=;
-        b=r186NgrdfTPHE2tpoPDJa7x9tQuQ/QFHgodakc61Ob+nFNnXNgovHI3f1/7CUBT/1v
-         4wcw0kUA9wCRMKc6fuAe+RcZzpp3T5EIzlUrObzeRWgYp5L0/dyQfTt8+/apH0TPJ7Oc
-         2gVCCjJ9L61hrUgACxE7Gx2t7WFaRzRM7IpiJWo+wTfIg292hispYmrOsZzsBvoLMNfF
-         Ir+O1OpLqiEbXITQT6ito6EowgfIVcrr5s8cMA7qBowJYvBKBKvicFeL2es39Dvv6J+2
-         aYXnn6xwZg35oIC5h21qC/j/dgwQFtPSlC2JSprHr5rDSXU9LNIuIsQCUbktM0XaS5j7
-         bo9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OP2XiHV+z9XRmOc6CVIQd7a0qzdvr1/Q3scZZYxr1/c=;
-        b=IKa4ngQMcp5ahcoFaucAnSrdTy6RX2xmmXLRrTGl+0WU753ksa4YsCefax0LrXe2Y0
-         eGg56pCn+E+YCKR9Vcums3FegBaarqJdlhg9GIuN9sQeHtGMw8OUekFWEOxX8w0yoNzG
-         /S68F6HmDwkTC2eW6pdi/R8nV25wcMalTOQ7TrX0gZIW7FKKFEYV1vxL7rE5gamw1Qbk
-         8d5w84TKC3LeQbunOaPwru2YA9+hXNT+plHR22UqBg/mDu8hPPUDEprNy/El68jXqOfZ
-         Azi4/lvr54BVBRgSLLBMnrzTaCESaeXlMHGk2X4S6BBhY9CM42M2X31WFadI4BwSoQgE
-         UsWQ==
-X-Gm-Message-State: APjAAAVucLKPSc2PJK4NmjlEJTPC0YFFXCSOMsZZ7C6YTr5pmDGT6Q2G
-        RAceaB+cUHGmaVMRPVRY8BX8GQLAqKYVNkLYcZ07qA==
-X-Google-Smtp-Source: APXvYqxWyOGptlYcgZ8GG7DRjA0eoZhkshCQNRcbI8e/5CoIydNXg1zYY8yTVFSvvZjiGUSUFzsofLus8fU624q0t2I=
-X-Received: by 2002:ab0:5512:: with SMTP id t18mr22644336uaa.128.1576485497137;
- Mon, 16 Dec 2019 00:38:17 -0800 (PST)
+        Mon, 16 Dec 2019 03:38:59 -0500
+Received: from [192.168.1.155] ([77.2.44.177]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1Mbkac-1i8GtY2cKk-00dEbt; Mon, 16 Dec 2019 09:38:50 +0100
+Subject: Re: [PATCH] net: l2tp: remove unneeded MODULE_VERSION() usage
+To:     David Miller <davem@davemloft.net>, info@metux.net
+Cc:     linux-kernel@vger.kernel.org, jchapman@katalix.com,
+        netdev@vger.kernel.org
+References: <20191212133613.25376-1-info@metux.net>
+ <20191212.110354.354662228217900367.davem@davemloft.net>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <75d6a169-d977-441a-f9b5-292be0c9a3f1@metux.net>
+Date:   Mon, 16 Dec 2019 09:38:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <0101016ef36a5c54-2907cf32-2269-4a8c-9447-b086e7c86d98-000000@us-west-2.amazonses.com>
-In-Reply-To: <0101016ef36a5c54-2907cf32-2269-4a8c-9447-b086e7c86d98-000000@us-west-2.amazonses.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 16 Dec 2019 09:38:06 +0100
-Message-ID: <CACRpkdY9ETQRHn7x2D2XVLZ810Uo1cPQxMBqTy5LnrORRNjTVw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: qcom: Add new qup functions
- for sc7180
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191212.110354.354662228217900367.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:2CqXzjJ/9Rl87J4VRB8rGMWHTiQg+TNck86VRyWGGfMGIhsEhLc
+ YvLGIyG0jCvZO3wy5RAQHLeKqWEELlQ7MkliKqSmhhT6Dr0FZkHypk0Q83op505Om8TLCco
+ VhSVxW4bYHGfdE6ywonzLOd/HFEn3IOzX3W36a3Jk35WQkeofO6U0zbayqrIXL+0jpOwJuA
+ tneSCDpLmGZ5pmbOkSeXA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8Nfwt0ybmJc=:A4391fXndGZ/zwrcm7kqf7
+ KP/GcKlirwiXeqt0Xq5gpj3wbVesvKNygGkvJmyDXc/GhtF8mVP/Iu9gmCukA8fB5Uce9E/8a
+ 1p2rwmbmsA1jel6nXi+rwRnFKc1uHykMo/PNo3brFBTniprpZSZro1RTAKleKL40vkGHMRBVs
+ FxZz8hLqzE7NDMbnika8wtLikC5E81vbOTJBsqwp5Y+SDZGg25Fo7Q7Rwq9M8kXyl3EwGCFky
+ Xn9OXU2N+SPboglQ+dLyYFr7Lk97aEej3XN69xOUuI+GxPutOdF5MU0mIT0WP/dLJ94xQnofp
+ ak+aBMbG0nkmMlbNN6d8gxNHC3GfX3c//Fe5KlIWLbvWUZsvX8+Cot+T7DlS0rXezsXtfHdyT
+ 26gE7MnsQxJOsCvn+Uhk0v5TG9j+6w0+cT+XFSAzR6HIgmeutEFQFMs3JtDGqDg1wg1DnSCdC
+ OFLmSPrrUNTucqQX3Nknve/hw6of6MWmWWpM3dkEtpF57pIgbSfiAYbbIW7DGs8wIcfCKcvHV
+ BjsRaJDLtjI1rtWNAqeMVEEzWBAmqeKTyMrTrrqy7sT3LU6NsZBQjUCxHL4nq2qZgQxmUwBFR
+ rKq12ya6obp9GuIcUIqcpaLH2XXEvFTzY43ag7W+GmG4PbT7F8s9/XzVpG6ehps9TKRUAGisU
+ em7n+fPbab4Y9NK0av/aFk3idd7D0oVyswNfri5aRz2HG775LCo7PGZyAUjyvahzp6it8J2Mv
+ 6xhcQ2ib9JfZhyMsHoGFrxJ/DDw294bvyc5j0a9xF8rtF9lkwnOjzUcxmqXgt9JZfe7bga24t
+ 1SkZdovYC3SBYOjwuza6WriEMwZ3dp8JqEmZN/3y3x5e7wKfiNhpEJuzPqebVH+CRF/d5uniE
+ dMCl/u2s6p0D0ckMoO/Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 6:24 AM Rajendra Nayak <rnayak@codeaurora.org> wrote:
+On 12.12.19 20:03, David Miller wrote:
 
-> Add new qup functions for qup02/04/11 and qup13 wherein multiple
-> functions (for i2c and uart) share the same pin. This allows users
-> to identify which specific qup function for the instance one needs
-> to use for the pin.
->
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Hi,
 
-Patch applied for v5.6 with the ACKs.
+> Is there a plan to remove MODULE_VERSION across the entire kernel tree?
 
-Yours,
-Linus Walleij
+I'm not entirely sure, but for all I know it just doesn't make sense at
+all to have it (maybe except for OOT modules) and already was removed in
+several places. For example, Greg cleansed it from the input subsys a
+few years ago:
+
+	https://lkml.org/lkml/2017/11/22/480
+
+Similar patch for gpio subsys was accepted recently.
+
+This got my attention by some discussion on some patches introducing new
+module w/ including such macro call. The consensus from the discussion
+was that the MODULE_VERSION() shouldn't be used, so I prepared some
+patches to remove it in many places.
+
+If you like to keep it in, give me a clear reject (maybe also a short
+list of other areas under your maintainership), so I can skip it out
+and don't bother you again :)
+
+Personally, I believe, we shouldn't keep things that don't really serve
+any purpose. Does anybody ever actually use it ?
+
+
+By the way: we've got a similar thing with network devices, they've got
+a version field. But it seems not all drivers filling it.
+
+What is that used for ?
+
+
+
+--mtx
+
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
