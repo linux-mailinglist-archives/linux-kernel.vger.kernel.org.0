@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C6E121775
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:36:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF79B121848
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:42:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729669AbfLPSG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:06:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47534 "EHLO mail.kernel.org"
+        id S1728598AbfLPSAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:00:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729686AbfLPSG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:06:56 -0500
+        id S1728896AbfLPSAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:00:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CACB206EC;
-        Mon, 16 Dec 2019 18:06:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7617D206B7;
+        Mon, 16 Dec 2019 18:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519616;
-        bh=ZZCNl37csOKpEgVnThWHBvPhhL0/QSl1yVvj8Y5NkzY=;
+        s=default; t=1576519211;
+        bh=PjRTivSThzWAPtY8BdWGvjX8V2EKIO+0ggdCBxpSkCw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NnxeaD8TN1bclfoY7rIyhaDbgC87VXSUn/Ubbf8IuJaxswJEFl3v/FVdbfsPa3x3s
-         nQKT4qKicr+hyjezYXhZHqrCk/1xsXbfAiAbhq0OU7aOmtUyw1Cngj31RVKITjvB4d
-         7xjyEen5CP3FRjHz0PQgV/Lf57ElGCrcMBbGHTrg=
+        b=CQcM2WvMEkFzk8MIHbXs+8EVg22+9mrg4zFUkOI1vdfu2grN1jjhnunIrvN+pP1aH
+         DqRFOSpIMOkkLojlsTiyenyC+Nu3VZW0nvIhCV9nKVFQ7OcTXt7xR8BYje+d3xYQiW
+         5w6XyHm38AI/hccX15sFdb0G6LaNmwzYx8Dx6aBg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
+        Bart Van Assche <bvanassche@acm.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 099/140] scsi: qla2xxx: Fix hang in fcport delete path
-Date:   Mon, 16 Dec 2019 18:49:27 +0100
-Message-Id: <20191216174812.764367641@linuxfoundation.org>
+Subject: [PATCH 4.14 242/267] scsi: qla2xxx: Always check the qla2x00_wait_for_hba_online() return value
+Date:   Mon, 16 Dec 2019 18:49:28 +0100
+Message-Id: <20191216174915.811245126@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit f00b3428a801758243693e046b34226e92bc56b3 ]
+[ Upstream commit e6803efae5acd109fad9f2f07dab674563441a53 ]
 
-A hang was observed in the fcport delete path when the device was
-responding slow and an issue-lip path (results in session termination) was
-taken.
+This patch fixes several Coverity complaints about not always checking
+the qla2x00_wait_for_hba_online() return value.
 
-Fix this by issuing logo requests unconditionally.
-
-PID: 19491  TASK: ffff8e23e67bb150  CPU: 0   COMMAND: "kworker/0:0"
- #0 [ffff8e2370297bf8] __schedule at ffffffffb4f7dbb0
- #1 [ffff8e2370297c88] schedule at ffffffffb4f7e199
- #2 [ffff8e2370297c98] schedule_timeout at ffffffffb4f7ba68
- #3 [ffff8e2370297d40] msleep at ffffffffb48ad9ff
- #4 [ffff8e2370297d58] qlt_free_session_done at ffffffffc0c32052 [qla2xxx]
- #5 [ffff8e2370297e20] process_one_work at ffffffffb48bcfdf
- #6 [ffff8e2370297e68] worker_thread at ffffffffb48bdca6
- #7 [ffff8e2370297ec8] kthread at ffffffffb48c4f81
-
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Cc: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Tested-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Himanshu Madhani <hmadhani@marvell.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_init.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/scsi/qla2xxx/qla_attr.c   | 3 ++-
+ drivers/scsi/qla2xxx/qla_target.c | 7 +++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index df91847d20cd0..9cb5527d3d8f1 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -291,9 +291,6 @@ qla2x00_async_logout(struct scsi_qla_host *vha, fc_port_t *fcport)
- 	struct srb_iocb *lio;
- 	int rval = QLA_FUNCTION_FAILED;
+diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
+index 1844c2f594605..656253285db9d 100644
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -652,7 +652,8 @@ qla2x00_sysfs_write_reset(struct file *filp, struct kobject *kobj,
+ 			break;
+ 		} else {
+ 			/* Make sure FC side is not in reset */
+-			qla2x00_wait_for_hba_online(vha);
++			WARN_ON_ONCE(qla2x00_wait_for_hba_online(vha) !=
++				     QLA_SUCCESS);
  
--	if (!vha->flags.online || (fcport->flags & FCF_ASYNC_SENT))
--		return rval;
--
- 	fcport->flags |= FCF_ASYNC_SENT;
- 	sp = qla2x00_get_sp(vha, fcport, GFP_KERNEL);
- 	if (!sp)
+ 			/* Issue MPI reset */
+ 			scsi_block_requests(vha->host);
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 2f5658554275c..69ed544d80ef0 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -6394,7 +6394,8 @@ qlt_enable_vha(struct scsi_qla_host *vha)
+ 	} else {
+ 		set_bit(ISP_ABORT_NEEDED, &base_vha->dpc_flags);
+ 		qla2xxx_wake_dpc(base_vha);
+-		qla2x00_wait_for_hba_online(base_vha);
++		WARN_ON_ONCE(qla2x00_wait_for_hba_online(base_vha) !=
++			     QLA_SUCCESS);
+ 	}
+ }
+ EXPORT_SYMBOL(qlt_enable_vha);
+@@ -6424,7 +6425,9 @@ static void qlt_disable_vha(struct scsi_qla_host *vha)
+ 
+ 	set_bit(ISP_ABORT_NEEDED, &vha->dpc_flags);
+ 	qla2xxx_wake_dpc(vha);
+-	qla2x00_wait_for_hba_online(vha);
++	if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS)
++		ql_dbg(ql_dbg_tgt, vha, 0xe081,
++		       "qla2x00_wait_for_hba_online() failed\n");
+ }
+ 
+ /*
 -- 
 2.20.1
 
