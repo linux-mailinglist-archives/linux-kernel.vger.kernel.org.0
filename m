@@ -2,75 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E01612053C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD42120543
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:16:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfLPMQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:16:01 -0500
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:40674 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbfLPMQB (ORCPT
+        id S1727608AbfLPMQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:16:36 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:34527 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727587AbfLPMQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:16:01 -0500
-Received: by mail-wm1-f50.google.com with SMTP id t14so6426707wmi.5;
-        Mon, 16 Dec 2019 04:15:59 -0800 (PST)
+        Mon, 16 Dec 2019 07:16:33 -0500
+Received: by mail-ua1-f67.google.com with SMTP id w20so1990613uap.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 04:16:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g6hMK4zvmiSQXDEVIro/DLpNW8Dnq2eeAYZqmv+C7n4=;
+        b=ACbNbFswU1bSLXpKw7frBiJCD6yT6A648nS5mwhOnzZ/oCoWad3p+XghmD1WWzlVJm
+         txMzHtwXkBDWokJ/qZ+h2NJNPo9VbjuBgNeD2ooLabCNucUnCK0laHcbbaDut7vIo027
+         DGIbWg5yK8l48N2llclSO2ZAL85UBWtMaooZlHhG8lnHmOvHVcS+QEgB/B532FqJdWQh
+         Ud6qSt1MTC7AD4yTbOkjMO5VSHEg7XmLrE6VGezhugDqk9s7SNpN9mJC+dL9rWjyTL+v
+         ag2YGxtfHBMl2JzSpFfkRk+npQR6zGCl2dRnuhF+/nv3CFHdQT4l5R3tgcRsFnEci7bQ
+         ONyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xpOt/nWEH5e+C/wcINi7KopuFX15NmmEgac9xN5m/Ic=;
-        b=YA10gB2PrRIC0cN3b4zAt2ecoOdzAZv1rN9QfE+CjOrPKmVhRt5E9AcvC/GtwqiJtY
-         hzTfry+vD8m0HBg1pJZ1KgHWcL9XyVbqq+qt711Zkm3BK5Yp3/kEWlhvpCBWiYL0OxO+
-         8g2qr7D33f/DEXPFhsxyNa0EeddBuO7aL52K5Wr4OZy3gW7KuJykFezwYFxMfs0kHhkU
-         17mto8KfPbPJ+BQ7JDvjlGbpfoUmCJRhBlh0nz1VbiQt2F10TfHhUw/dnuozXxKRA1fE
-         3q217eZDFl6Bf81r12nYaXvtGlaOwiUZFs1YmQy4GVyzk9IBvMOXytfcjdiB1AOxYBq5
-         9uWA==
-X-Gm-Message-State: APjAAAXDT9OZU/piz8oW1YxnvOPw7aQnjuhIvVujaGQclgGS+Kv1utWS
-        0WBdf7Fk6h29UdRq/KupHFE=
-X-Google-Smtp-Source: APXvYqy7Wo0RpoiMH51vUwDnupDNyRG8/Z4WXT/m7kZli22Ahm0E7svgVvIVi65Oj38bYTjZE4VPHQ==
-X-Received: by 2002:a7b:c218:: with SMTP id x24mr30909776wmi.149.1576498559025;
-        Mon, 16 Dec 2019 04:15:59 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id 5sm21517096wrh.5.2019.12.16.04.15.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 04:15:58 -0800 (PST)
-Date:   Mon, 16 Dec 2019 13:15:57 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yunsheng Lin <linyunsheng@huawei.com>
-Cc:     Saeed Mahameed <saeedm@mellanox.com>,
-        "brouer@redhat.com" <brouer@redhat.com>,
-        "ilias.apalodimas@linaro.org" <ilias.apalodimas@linaro.org>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        Li Rongqing <lirongqing@baidu.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        peterz@infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        bhelgaas@google.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][v2] page_pool: handle page recycle for NUMA_NO_NODE
- condition
-Message-ID: <20191216121557.GE30281@dhcp22.suse.cz>
-References: <1575624767-3343-1-git-send-email-lirongqing@baidu.com>
- <9fecbff3518d311ec7c3aee9ae0315a73682a4af.camel@mellanox.com>
- <20191211194933.15b53c11@carbon>
- <831ed886842c894f7b2ffe83fe34705180a86b3b.camel@mellanox.com>
- <0a252066-fdc3-a81d-7a36-8f49d2babc01@huawei.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g6hMK4zvmiSQXDEVIro/DLpNW8Dnq2eeAYZqmv+C7n4=;
+        b=eLge88J+WPYP/JilcoqZB1zi9JTiODSM2BTvH9tnho6/hMUdzwE8fCQc9zTopbl71d
+         fVpKknonkpv5A7rc+oDWkRdYwuu2haXntw0T5o7Elh8KJ+/oT5j04uK12rGXKDDwnkgM
+         h54TymXp187ASq7ouIo3aX6+4+0cDqQnXByV0V8YbEsrwfEVxPflrKQtgxS0Pt8dK/zE
+         VF9a4e2uAqjZTZd3BWcpbCFbwTkZgTInyGkTm6KDiUD/WajAd2mNUUeVk3MeJXmjipc8
+         sooXbmiBIYEArGDv/0U/10La35FbUYyQlIm5zf+FxEEd0P3Q49GEwLrxvF17wmuItO/J
+         iYaA==
+X-Gm-Message-State: APjAAAV8r79swpY23S/dQ+XwYInhG7zC3B/lgaIT2FZCBSVK6p5K1Opo
+        4aCnV7Y2xTHEXi7SVAGqQFbHhaMnSSWvZ7bPrhNkUg==
+X-Google-Smtp-Source: APXvYqxgrIn4al26ZnFpKqCL0TxyFBEwhX8AWXeCD4bBS7Ttf4sGA8fJ1Pg64Ke5L5GoUz3YDXkMxfaBaYcspaOS/YE=
+X-Received: by 2002:ab0:1c0a:: with SMTP id a10mr22825812uaj.140.1576498591580;
+ Mon, 16 Dec 2019 04:16:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a252066-fdc3-a81d-7a36-8f49d2babc01@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <20191215163810.52356-1-hdegoede@redhat.com> <CACRpkdarJ5chDfgc5F=ntzG1pw7kchtzp0Upp+OH9CH6WLnvXw@mail.gmail.com>
+ <1474a983-3e22-d59b-255a-edd3a41f0967@redhat.com>
+In-Reply-To: <1474a983-3e22-d59b-255a-edd3a41f0967@redhat.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 16 Dec 2019 13:16:20 +0100
+Message-ID: <CACRpkdaYgpY=Anem00tPS=HPCD5XUrfWmWjvPkszggnHCpgK2Q@mail.gmail.com>
+Subject: Re: [PATCH 0/5] drm/i915/dsi: Control panel and backlight enable
+ GPIOs from VBT
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 12-12-19 09:34:14, Yunsheng Lin wrote:
-> +CC Michal, Peter, Greg and Bjorn
-> Because there has been disscusion about where and how the NUMA_NO_NODE
-> should be handled before.
+On Mon, Dec 16, 2019 at 12:11 PM Hans de Goede <hdegoede@redhat.com> wrote:
 
-I do not have a full context. What is the question here?
--- 
-Michal Hocko
-SUSE Labs
+> Ugh, taking one last look at the "pinctrl: Export pinctrl_unregister_mappings"
+> patch it is no good, sorry.
+
+Ooops!
+
+> Linus, can you please drop this from your -next ?
+
+Sure, done.
+
+> So I see 2 options:
+> 1) Add an orig_map member to maps_node and use that in the comparison,
+> this is IMHO somewhat ugly
+>
+> 2) Add a new pinctrl_register_mappings_no_dup helper and document in
+> pinctrl_unregister_mappings kdoc that it can only be used together
+> with the no_dup variant.
+>
+> I believe that 2 is by far the best option. Linus do you agree or
+> do you have any other suggestions?
+
+What about (3) look for all calls to pinctrl_register_mappings()
+in the kernel.
+
+Hey it is 2 places in total:
+arch/arm/mach-u300/core.c:      pinctrl_register_mappings(u300_pinmux_map,
+drivers/pinctrl/cirrus/pinctrl-madera-core.c:           ret =
+pinctrl_register_mappings(pdata->gpio_configs,
+
+Delete  __initdata from the u300 table, the other one seems
+safe. Fold this into your patch.
+
+Go with the original idea.
+
+Yours,
+Linus Walleij
