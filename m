@@ -2,167 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 881F111FC8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 02:24:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3972211FC85
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 02:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfLPBYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 20:24:40 -0500
-Received: from mail-eopbgr70081.outbound.protection.outlook.com ([40.107.7.81]:35386
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726299AbfLPBYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 20:24:40 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bIxVA1J4UKpcpH8yZlw7/zrYbl0kk2E35RBcqcLqqo/ll4TwlfxPejRYymHM0DlH1Ft0/pqlv3ar7Crhtlo6/ozVil6jYHUvECMj9Dbqrdq86Ww5zdI2UJjjQsUvO6XrZ8vffRsIrQrgUR72bPqAu1ub2j4HTXF84tb7DEJsMtqqx5PsZrFyNW7+A//d/3yj6c45vVaskuryhgVQO9imCBhhjjNZUdi3U70FPErX9dexlr/0boMGLwCMM6Zowlp8LwzfDgFl+u21+nGOVg/f3+Iu0suqyerSm7gPRcU1Yebmw501PQkBDyP8JWqjc0LVeQ+B3frhNqBQi+5LUfXqnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RWcz42ePjnkuxrDXmlXo+w8oHCACf/paQLTWyda5P7M=;
- b=aLMxnA2q0IQdF/WP24MujUcl4xAiFZOuOihYVGn5JmtD6IPsCDSbJsylhtnble2eRz4XYCBWj1XqWhJYK34EFA7fGiIq6STb/nWpGQk40g4dUTTKYcWUwPRGegM1twsF/Riek7Om2uhJhrvWtcd9jtqheL1uSzj+JDgCpFUlPdzKJ4s2KTKbw+JqwHdtmvg+9j5U/Px4jFWQadOm3T6KdjjXlefZiCcem+1cO/rlgHJjyV3N8fYJRJ0ahWZjwxc5DwF7H2jFpNhApWPXvMDOQnPZFAox7+H1MVuvXNsra1QarGP44fRcp3Df3JTmsRzins7nAMZcbkPASarnUzMkTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RWcz42ePjnkuxrDXmlXo+w8oHCACf/paQLTWyda5P7M=;
- b=aMfTO5H70W4SE10xSDJjGQkP9/MKA1NpVwBZNZDWeUCvNk35AadQLgC4cb5FO+fkGuIqYRGEBvaITUezmMY2QRva8he07GUVa5a+aDGK381my+njj11qufO9QLBC8PTvYf4MCsFQr1LBUYw7gVX8xSKZCkD+JJOIXJ6I/0x1CG0=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
- VI1PR04MB3229.eurprd04.prod.outlook.com (10.170.231.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.17; Mon, 16 Dec 2019 01:24:35 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::cd33:501f:b25:51a9]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::cd33:501f:b25:51a9%7]) with mapi id 15.20.2538.019; Mon, 16 Dec 2019
- 01:24:35 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-CC:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "od@zcrc.me" <od@zcrc.me>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Subject: RE: [PATCH v2 3/3] power/supply: Add generic USB charger driver
-Thread-Topic: [PATCH v2 3/3] power/supply: Add generic USB charger driver
-Thread-Index: AQHVsDrKPWSbvY6T+0OJ94dLsbCA8qe2ObMAgAJTXYCAA3BKkA==
-Date:   Mon, 16 Dec 2019 01:24:35 +0000
-Message-ID: <VI1PR04MB5327401FFD2D32E937548DD48B510@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <20191211155032.167032-1-paul@crapouillou.net>
-        <20191211155032.167032-3-paul@crapouillou.net>
-        <20191212091814.GA7035@b29397-desktop> <1576270147.3.0@crapouillou.net>
-In-Reply-To: <1576270147.3.0@crapouillou.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.67]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 35b637ed-a5e1-4c42-4b53-08d781c6b631
-x-ms-traffictypediagnostic: VI1PR04MB3229:
-x-microsoft-antispam-prvs: <VI1PR04MB3229D387431E7EF62D46BC518B510@VI1PR04MB3229.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 02530BD3AA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(376002)(346002)(39860400002)(366004)(189003)(199004)(7696005)(478600001)(4326008)(5660300002)(33656002)(26005)(52536014)(6506007)(6916009)(66556008)(86362001)(66946007)(316002)(54906003)(64756008)(76116006)(186003)(44832011)(9686003)(7416002)(8676002)(71200400001)(55016002)(8936002)(66476007)(66446008)(81166006)(81156014)(2906002)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3229;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3Yl6s7ezAOyhIYkO9aQAEbwLzL9dZWre+IfcSs9QoOZXbWuEvIkCdU30lBef8T7CmCJAVS8xhRTLzDg7MRJ8ao+0Yh3WuSZu8oIMWspfpPj+YZIiO1SOqstzBOBR+q8b/6T7xYTLKlybrhmE4V75Gs87Shcbrczrzr2Pa1Xv541Sukl0wd+fnJvPC/IFcvMSKcmh62YOXcceR2cV2N3pJiDqcntqZFrghGBb1KDeAM3Dlu9r6zKsrONuI7emimIOM3quw+lAO41bQYCaYbHmrJySrLlhNdUKcrlJACgVMXF7cYeCwJymebF1E1+TwY0V4tTDholEZhkaoJRQ4beANtFRgoKO0zI/aJ/Lv6KOz52IAN0xM0Yb/1c+QdMbigt2bzr/G5DQsFbLSsfCzZBo1EhnJ5BbVl6hEGbVMqfR1w7B6zoqjNTJE6aRq+yk3Wd+Fu7wnUrf1iQc5b45ti/Fd2EoobXY/a6yyqe8jmxT+OsY8EbGKdWvDvSmldIWU68p
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726559AbfLPBTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 20:19:53 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:55653 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbfLPBTx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 20:19:53 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191216011948epoutp04881f471045fe381049b86f8b2c62040d~gtUeJgOk70931709317epoutp04P
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 01:19:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191216011948epoutp04881f471045fe381049b86f8b2c62040d~gtUeJgOk70931709317epoutp04P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576459188;
+        bh=8giqkkhX+t6iZYeFY9KVtwUMjXYwL+oSsLFbg5OEA7o=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=eIhOJkZALNTMtDxyg576IiTryvOQsM4A+bcPWPbeih6DqwzyVlxVTIg5rUSYxPdra
+         OhNue7eiHffeUvy4MBWYj46xdGTY3KPteBOPxmRwwP9kBu5VQ22ISuJ1oo2+B0AFYe
+         xUit4FFSJSJGKEDjclMJDd6gcoRMxlkRGG8RiXeY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20191216011947epcas1p39934fdf7cfd680c3b7ff966262e8f539~gtUdm8D3P2543125431epcas1p3J;
+        Mon, 16 Dec 2019 01:19:47 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47bk2n23rgzMqYkc; Mon, 16 Dec
+        2019 01:19:45 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5A.8A.48019.EABD6FD5; Mon, 16 Dec 2019 10:19:42 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20191216011942epcas1p47aab213d18e13e805056d1e7be2fb729~gtUYNJG0P2204522045epcas1p4c;
+        Mon, 16 Dec 2019 01:19:42 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191216011942epsmtrp257955c838efed5a502a6b714b474cdcd~gtUYMjyxz2826028260epsmtrp2W;
+        Mon, 16 Dec 2019 01:19:42 +0000 (GMT)
+X-AuditID: b6c32a38-257ff7000001bb93-80-5df6dbaec84b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        11.DC.06569.DABD6FD5; Mon, 16 Dec 2019 10:19:41 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191216011941epsmtip2393d421082fd5ab53a31ee10a37df9a2~gtUX_XoVs1339113391epsmtip2a;
+        Mon, 16 Dec 2019 01:19:41 +0000 (GMT)
+Subject: Re: [PATCH] extcon: sm5502: remove unneeded semicolon
+To:     Xu Wang <vulab@iscas.ac.cn>, myungjoo.ham@samsung.com
+Cc:     linux-kernel@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <6e94aa1e-2669-621b-d70b-f4780ed6705a@samsung.com>
+Date:   Mon, 16 Dec 2019 10:26:17 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35b637ed-a5e1-4c42-4b53-08d781c6b631
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2019 01:24:35.4737
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4wEwjRdPxSS3hdbP9zP6/Kl1zt7l/1aF8fcGEMAsDFs19CzoEUj179+mz+2/GTfyvSlL2MT0UNzhZVFMBxKenQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3229
+In-Reply-To: <1576230514-5049-1-git-send-email-vulab@iscas.ac.cn>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHe3a367Va3abmaUHNG0JO1F3nbNpmr5SSoBD1obB1mTdn7o3d
+        TdK+GGQti0gsypGpVOJWNFBTs0xSywwRZfhCZgRKWKJWllhRtOst8tvvnOf8z3n+z3MITFaK
+        y4l8q5N1WBkzha8UN3fFqOIejC3kqOofR2kDbTdx7diZelzrLW0X78TSn7Y2ovTLTT6UPt+w
+        KRs7UqAzsUwu61CwVqMtN9+ap6cOHDTsMWiSVXQcnaLdRimsjIXVU3szs+P25ZuDgyhFIWN2
+        BVPZDMdRCWk6h83lZBUmG+fUU6w912xPscdzjIVzWfPijTZLKq1SJWqChccLTNUzg2J745pT
+        vpnoEnRrVRkKJYBMgkF/RUgZWknIyFYE5W8qRULwBcH74VqJECwgCPjcIf8kc+cfYsJBO4K6
+        35+QEMwh6HvxEi9DBBFGpkHdkyJeEE6mQMNAt4RnjFTAj7cNS4yTSuiYGsV5XktGwdDiBOJZ
+        GpR+fV4ZwrcRk9HwdKiQT0eQh6G3+ezfknXQWzkp5jmU3AUd09dxoX0kvJ6sFgm8GVpmbi7d
+        E8huHNyfRzDBwF7wXmxDAofBx56mv8bkMD/bjgt8Gry93bggdiNo6hiQCAdq6LhbIeIvh5Ex
+        4G9LENJR8OhnFRIGr4HZb5ckfAmQUnCfkwklWyDwblwk8Aa4ff4CfgVRnmV2PMsseJZZ8Pwf
+        VoPEPrSetXOWPJaj7UnL/7oBLa2gUtuKnvRndiKSQNRq6ZRpIUcmYQq5IksnAgKjwqVs7HyO
+        TJrLFBWzDpvB4TKzXCfSBB+7HJNHGG3BhbY6DbQmUa1Wa5PoZA1NU5FSYnEwR0bmMU62gGXt
+        rOOfTkSEykuQfTy87Hvffelwwr1D1TVUZsHVkKreGztGambQlVjpqCL16LXXK37FWLtaTmjL
+        a3e6vTX39/vqfr81ver3GzOms7b6/JszirnUyGllmuhCWLEWTh6Lntg+ldG3cZve/MB7x+Df
+        /bFiN1Vi+JBf9awzgF/U6dye8tJhSU9t4UTWWUrMmRhaiTk45g/0cy2+mAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPLMWRmVeSWpSXmKPExsWy7bCSvO7a299iDdp/Wlhc3jWHzeJ24wo2
+        i5Wte1kcmD327djM6NG3ZRWjx+dNcgHMUVw2Kak5mWWpRfp2CVwZ899eZCnYzFex6q1qA+M8
+        7i5GTg4JAROJ9+1bmbsYuTiEBHYzSnxd9JAVIiEpMe3iUaAEB5AtLHH4cDFEzVtGiXlvZrGC
+        xIUF7CSW7akEKRcRsJTYdOEIWCuzgILEr3ubWCHqpzBK/Fq6hwUkwSagJbH/xQ02EJtfQFHi
+        6o/HjCA2L9CcL0dnsoPMZBFQldh3tQwkLCoQJrFzyWMmiBJBiZMzn4CN4RRwlNj/ejobxC51
+        iT/zLjFD2OISt57MZ4Kw5SW2v53DPIFReBaS9llIWmYhaZmFpGUBI8sqRsnUguLc9NxiwwKj
+        vNRyveLE3OLSvHS95PzcTYzgaNDS2sF44kT8IUYBDkYlHl6H7G+xQqyJZcWVuYcYJTiYlUR4
+        U7U/xwrxpiRWVqUW5ccXleakFh9ilOZgURLnlc8/FikkkJ5YkpqdmlqQWgSTZeLglGpgdNk6
+        ocL3mdL3o263Sp6qnlwupKuwq0aB7+izWI9ngqdNEzJfWPdd2/JQ4KPr7I9eq5d/s5O9fOBf
+        0saCZZ7GX+KmKz/yjDdmZQwJWvxvgf6C/Q31Z0/P3nju+cRzTlMXbfrgd3zRVTbltLWHfivZ
+        qOiFJ51afZ8n4kelZua9WNa/e9NN+/PXLVViKc5INNRiLipOBACGlHsAggIAAA==
+X-CMS-MailID: 20191216011942epcas1p47aab213d18e13e805056d1e7be2fb729
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191213094853epcas1p4459d16e88cbf5f12f7f682efddd993e7
+References: <CGME20191213094853epcas1p4459d16e88cbf5f12f7f682efddd993e7@epcas1p4.samsung.com>
+        <1576230514-5049-1-git-send-email-vulab@iscas.ac.cn>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=20
-> >>  +
-> >>  +	desc =3D &charger->desc;
-> >>  +	desc->name =3D "usb-charger";
-> >>  +	desc->properties =3D usb_charger_properties;
-> >>  +	desc->num_properties =3D ARRAY_SIZE(usb_charger_properties);
-> >>  +	desc->get_property =3D usb_charger_get_property;
-> >>  +	desc->type =3D POWER_SUPPLY_TYPE_USB;
-> >
-> > What's your further plan for this generic USB charger?
-> > To support BC1.2, we need to know charger type, and how we could get
-> > it?
-> >
-> > Peter
->=20
-> Well I don't really know. The USB role framework does not give any info a=
-bout
-> what's plugged.
->=20
+On 12/13/19 6:48 PM, Xu Wang wrote:
+> remove unneeded semicolon
+> This is detected by coccinelle.
+> 
+> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+> ---
+>  drivers/extcon/extcon-sm5502.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-sm5502.c b/drivers/extcon/extcon-sm5502.c
+> index bcf65aa..106d4da 100644
+> --- a/drivers/extcon/extcon-sm5502.c
+> +++ b/drivers/extcon/extcon-sm5502.c
+> @@ -249,7 +249,7 @@ static int sm5502_muic_set_path(struct sm5502_muic_info *info,
+>  		dev_err(info->dev, "Unknown DM_CON/DP_CON switch type (%d)\n",
+>  				con_sw);
+>  		return -EINVAL;
+> -	};
+> +	}
+>  
+>  	switch (vbus_sw) {
+>  	case VBUSIN_SWITCH_OPEN:
+> @@ -268,7 +268,7 @@ static int sm5502_muic_set_path(struct sm5502_muic_info *info,
+>  	default:
+>  		dev_err(info->dev, "Unknown VBUS switch type (%d)\n", vbus_sw);
+>  		return -EINVAL;
+> -	};
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -357,13 +357,13 @@ static unsigned int sm5502_muic_get_cable_type(struct sm5502_muic_info *info)
+>  				"cannot identify the cable type: adc(0x%x)\n",
+>  				adc);
+>  			return -EINVAL;
+> -		};
+> +		}
+>  		break;
+>  	default:
+>  		dev_err(info->dev,
+>  			"failed to identify the cable type: adc(0x%x)\n", adc);
+>  		return -EINVAL;
+> -	};
+> +	}
+>  
+>  	return cable_type;
+>  }
+> @@ -405,7 +405,7 @@ static int sm5502_muic_cable_handler(struct sm5502_muic_info *info,
+>  		dev_dbg(info->dev,
+>  			"cannot handle this cable_type (0x%x)\n", cable_type);
+>  		return 0;
+> -	};
+> +	}
+>  
+>  	/* Change internal hardware path(DM_CON/DP_CON, VBUSIN) */
+>  	ret = sm5502_muic_set_path(info, con_sw, vbus_sw, attached);
+> 
 
-What's the use case for this patch set? How it be used?
+Applied it. Better to use the capital letter for first char
+on patch title.
 
-Thanks,
-Peter
-
-> -Paul
->=20
->=20
-> >
-> >>  +
-> >>  +	charger->charger =3D devm_power_supply_register(dev, desc, &cfg);
-> >>  +	if (IS_ERR(charger->charger)) {
-> >>  +		dev_err(dev, "Unable to register charger");
-> >>  +		return PTR_ERR(charger->charger);
-> >>  +	}
-> >>  +
-> >>  +	err =3D usb_role_switch_register_notifier(charger->role,
-> >> &charger->nb);
-> >>  +	if (err) {
-> >>  +		dev_err(dev, "Unable to register USB role switch notifier");
-> >>  +		return err;
-> >>  +	}
-> >>  +
-> >>  +	return devm_add_action_or_reset(dev, usb_charger_unregister,
-> >> charger);
-> >>  +}
-> >>  +
-> >>  +static const struct of_device_id usb_charger_of_match[] =3D {
-> >>  +	{ .compatible =3D "usb-charger" },
-> >>  +	{ /* sentinel */ },
-> >>  +};
-> >>  +MODULE_DEVICE_TABLE(of, usb_charger_of_match);  +  +static struct
-> >> platform_driver usb_charger_driver =3D {
-> >>  +	.driver =3D {
-> >>  +		.name =3D "usb-charger",
-> >>  +		.of_match_table =3D of_match_ptr(usb_charger_of_match),
-> >>  +	},
-> >>  +	.probe =3D usb_charger_probe,
-> >>  +};
-> >>  +module_platform_driver(usb_charger_driver);
-> >>  +
-> >>  +MODULE_DESCRIPTION("Simple USB charger driver");
-> >> +MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
-> >> +MODULE_LICENSE("GPL");
-> >>  --
-> >>  2.24.0
-> >>
-> >
-> > --
-> >
-> > Thanks,
-> > Peter Chen
->=20
-
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
