@@ -2,119 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A86FA11FC84
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 02:19:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59E5D11FC88
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 02:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfLPBTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 20:19:19 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46642 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbfLPBTT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 20:19:19 -0500
-Received: by mail-il1-f195.google.com with SMTP id t17so4061929ilm.13;
-        Sun, 15 Dec 2019 17:19:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ePXTIUIV0Ij0A4oFj9n/QikNcOig0/QRLPKU1H5Yl24=;
-        b=sLKPB9VQC3w3hOZ2rB0Zj7IdZFrQ7RPW2q18mbwdnIfdK3WSusuuVHYKvdX4IXEwe8
-         hzLoUWxTb5Uaia3LHoHRZz4qtYV2NLwhgrY5SDdMr/T6LRY215U2o95E7V2ZdY+TgZmQ
-         uotdb1LF7J0yfmJhjzJh7r4eiR51N8lQh/sF+87Tx6P2kf92KDrPToRrDsO+myw8H6UR
-         lnbmcXrdQDRHJehj4Z5ImhNS/K1CR16ORqPXUk2GyCMVlHDL6W4PPx6GgFO4Mm+9RyN+
-         x7QawRLn0MaCrnH63TF7WLR6UW8tgEYzzPvU86CD+1GQ3BxCszDiG65dRBvISbRUirq2
-         aMGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ePXTIUIV0Ij0A4oFj9n/QikNcOig0/QRLPKU1H5Yl24=;
-        b=U9Jf5K+DNjY/mRHJTzqX0xF5Igpp9+3zEgz+eVjB5C8hUjCx3Vd9yEgZhnFXGXpJOW
-         X2MKf3UsDoYFa4gEIhNBl3WK3L3RDRO61wM/2ntwh81LwwzjZb/vrXK5QPWKyRn7qlzM
-         783ClkRc7EVtZjgylmYh3GSXiWuHXgGI9uEsifdwLv+Qt5M6XejIVp8hQp5FxQljYWYK
-         ioMDWLuE0lbmxe6vu8M6eBKtNVxIf6rTRQ3g/FIcspSvvkF0njs3zLGM+ZyCEFXH23X2
-         GHGqAxvwAliXF1T7BRVz/CQtAICtIb3j1tAetzEZkNuwDwD0CeuKXKqjJOQFn4Bj74JA
-         Zxeg==
-X-Gm-Message-State: APjAAAVX5W/s2TZl2tUX9ZIexb5qBuCoWrx8syjM3sUiWQzswZtp+2Ta
-        7qEFrs+FMUKusm5OoBbvlLQ9uliHaIty0wlkjpQ=
-X-Google-Smtp-Source: APXvYqwD8Xnb/tCPRqtJ8UGlll0Xewt5uNwl7jCMZ0uVsOUTNIJewHgcq6oah6cqSetAmqsuqyBBSYFKuG3i1gfA7EY=
-X-Received: by 2002:a92:6e09:: with SMTP id j9mr10245125ilc.178.1576459158278;
- Sun, 15 Dec 2019 17:19:18 -0800 (PST)
+        id S1726515AbfLPBXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 20:23:38 -0500
+Received: from ozlabs.org ([203.11.71.1]:50125 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726299AbfLPBXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 20:23:37 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47bk784hz8z9sP6;
+        Mon, 16 Dec 2019 12:23:32 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1576459414;
+        bh=bFoEp0Oze1uoHC2r3Fp1CEYcJF/UHb71fRXsGtfYZIY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=isCPi/8AXANwUAv7CIHOP3YyUqe1M13CxS7FNwVn5LSnOYxaShAHu6U4KV7L8BEiI
+         kCBNwYRS40ivvFQUmwcR7LZjzhhddVeBBkJaPj1MkaMBsBgoGVDQwvqOwxNW6G96x/
+         0+LbVYrLtZhQo12LRpH75E0gr4AkkwSfufYRTZjnL1KceqqeJ11wUU82rC+vaKg32Q
+         3KyGMKSI0kfWHS4dz62eEMLjq15DkSfKyOWtklUXKi44Ng1u2FmxDh/V3xrHIiNnC8
+         4C6DjdvGRFSa27gZ1U9G2vVNi7pLyVNp2L0QmhRfYIRxqQn8zBilHXJhk19SZxz36s
+         Zbp884+wsJXZA==
+Date:   Mon, 16 Dec 2019 12:23:31 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <20191216122331.43c766f1@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20191213234530.145963-1-dianders@chromium.org>
- <20191213154448.9.I1791f91dd22894da04f86699a7507d101d4385bc@changeid>
- <20191214000738.GP624164@phenom.ffwll.local> <CAD=FV=VqU8Aeuno44hAi6SP+7NZRTfgJcYPHcWpVNCo6GXUJPw@mail.gmail.com>
-In-Reply-To: <CAD=FV=VqU8Aeuno44hAi6SP+7NZRTfgJcYPHcWpVNCo6GXUJPw@mail.gmail.com>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Sun, 15 Dec 2019 18:19:06 -0700
-Message-ID: <CAOCk7NoT9FKikk3pNi-JGZPopaicE0kM-7nEK4GeqZmEtB+nAA@mail.gmail.com>
-Subject: Re: [PATCH 9/9] drm/bridge: ti-sn65dsi86: Skip non-standard DP rates
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Clark <robdclark@chromium.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/zeyYGkAXi=.XMxUHhTLcnmI";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 5:49 PM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Fri, Dec 13, 2019 at 4:07 PM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >
-> > On Fri, Dec 13, 2019 at 03:45:30PM -0800, Douglas Anderson wrote:
-> > > The bridge chip supports these DP rates according to TI's spec:
-> > > * 1.62 Gbps (RBR)
-> > > * 2.16 Gbps
-> > > * 2.43 Gbps
-> > > * 2.7 Gbps (HBR)
-> > > * 3.24 Gbps
-> > > * 4.32 Gbps
-> > > * 5.4 Gbps (HBR2)
-> > >
-> > > As far as I can tell, only RBR, HBR, and HBR2 are part of the DP spec.
-> > > If other rates work then I believe it's because the sink has allowed
-> > > bending the spec a little bit.
-> >
-> > I think you need to look at the eDP spec. And filter this stuff correctly
-> > (there's more fields there for these somewhat irky edp timings). Simply
-> > not using them works, but it's defeating the point of having these
-> > intermediate clocks for edp panels.
->
-> Ah, I see my problem.  I had earlier only found the eDP 1.3 spec which
-> doesn't mention these rates.  The eDP 1.4 spec does, however.  ...and
-> the change log for 1.4 specifically mentions that it added 4 new link
-> rates and also adds the "SUPPORTED_LINK_RATES" register.
+--Sig_/zeyYGkAXi=.XMxUHhTLcnmI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, you need the eDP spec.  I previously posted
-https://patchwork.kernel.org/patch/11205201/ and was hoping Bjorn
-would find time to test it.  Maybe it would fit well with your series?
- I'm coming back from tracel, and hope to review everything you have,
-but this caught my eye.
+Hi all,
 
->
-> I can try to spin a v2 but for now I'll hold off for additional feedback.
->
-> I'll also note that I'd be totally OK if just the first 8 patches in
-> this series landed for now and someone could eventually figure out how
-> to make this work.  With just the first 8 patches I think we will
-> still be in an improved state compared to where we were before (and it
-> fixes the panel I care about) and someone could later write the code
-> to skip unsupported rates...
->
->
-> -Doug
+After merging the drm-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/gpu/drm/bridge/analogix/analogix-anx6345.c: In function 'anx6345_i2=
+c_probe':
+drivers/gpu/drm/bridge/analogix/analogix-anx6345.c:738:30: error: implicit =
+declaration of function 'i2c_new_dummy' [-Werror=3Dimplicit-function-declar=
+ation]
+  738 |    anx6345->i2c_clients[i] =3D i2c_new_dummy(client->adapter,
+      |                              ^~~~~~~~~~~~~
+drivers/gpu/drm/bridge/analogix/analogix-anx6345.c:738:28: warning: assignm=
+ent to 'struct i2c_client *' from 'int' makes pointer from integer without =
+a cast [-Wint-conversion]
+  738 |    anx6345->i2c_clients[i] =3D i2c_new_dummy(client->adapter,
+      |                            ^
+
+Caused by commit
+
+  6aa192698089 ("drm/bridge: Add Analogix anx6345 support")
+
+interacting with commit
+
+  2c2f00ab1641 ("i2c: remove i2c_new_dummy() API")
+
+=46rom Linus' tree.
+
+I have applied the following fix up patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 16 Dec 2019 12:11:19 +1100
+Subject: [PATCH] drm/bridge: fix up for removal of i2c_new_dummy()
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c b/drivers/g=
+pu/drm/bridge/analogix/analogix-anx6345.c
+index 9917ce0d86a0..56f55c53abfd 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
+@@ -735,13 +735,13 @@ static int anx6345_i2c_probe(struct i2c_client *clien=
+t,
+ 	/* Map slave addresses of ANX6345 */
+ 	for (i =3D 0; i < I2C_NUM_ADDRESSES; i++) {
+ 		if (anx6345_i2c_addresses[i] >> 1 !=3D client->addr)
+-			anx6345->i2c_clients[i] =3D i2c_new_dummy(client->adapter,
++			anx6345->i2c_clients[i] =3D i2c_new_dummy_device(client->adapter,
+ 						anx6345_i2c_addresses[i] >> 1);
+ 		else
+ 			anx6345->i2c_clients[i] =3D client;
+=20
+-		if (!anx6345->i2c_clients[i]) {
+-			err =3D -ENOMEM;
++		if (IS_ERR(anx6345->i2c_clients[i])) {
++			err =3D PTR_ERR(anx6345->i2c_clients[i]);
+ 			DRM_ERROR("Failed to reserve I2C bus %02x\n",
+ 				  anx6345_i2c_addresses[i]);
+ 			goto err_unregister_i2c;
+--=20
+2.24.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/zeyYGkAXi=.XMxUHhTLcnmI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl323JMACgkQAVBC80lX
+0GxN4QgAj7cSKYl22karaXz89XosCJqL4gvGd9bkeZ5Xb+s0IxEa+wWqHBlypzSK
+CgwKRM52IvdDillgu4OrUswwU3uOnGVwpDzhaAEPud2MlVHwW8FUVpVWXMS/R0T9
+ioq2BZghynAVV4bk7BtJbqGT4/NWyLOLqMNRJc87ab314NQ/ndHVhND9dRRnarka
+iDuQJA9LeT8a2nAVjK7h3eaX2kwBVOARZuOY5nODMeRyKzaYyWo4RVn4B5bCR+gY
+wBugDDotCKnOgI3ZwdLySA9A5cPbySMuIXK5d30QDptp6vH0YzbI8nFc+/S7XFQm
+RnTk93uuVVln84h0daNEeovw8VE/nQ==
+=ycV+
+-----END PGP SIGNATURE-----
+
+--Sig_/zeyYGkAXi=.XMxUHhTLcnmI--
