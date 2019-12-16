@@ -2,79 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22E521202F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4F821203D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:24:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbfLPKxg convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 16 Dec 2019 05:53:36 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38131 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbfLPKxg (ORCPT
+        id S1727631AbfLPLYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:24:43 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:49676 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbfLPLYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:53:36 -0500
-X-Originating-IP: 91.224.148.103
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id EB18C24000F;
-        Mon, 16 Dec 2019 10:53:32 +0000 (UTC)
-Date:   Mon, 16 Dec 2019 11:53:31 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] drm/panel: simple: Support reset GPIOs
-Message-ID: <20191216115331.5c6047f7@xps13>
-In-Reply-To: <20191214102354.GB2967@ravnborg.org>
-References: <20191213181325.26228-1-miquel.raynal@bootlin.com>
-        <20191214102354.GB2967@ravnborg.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 16 Dec 2019 06:24:00 -0500
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id 165DF200A62;
+        Mon, 16 Dec 2019 11:23:58 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id 7AEA020BC9; Mon, 16 Dec 2019 11:53:38 +0100 (CET)
+Date:   Mon, 16 Dec 2019 11:53:38 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        kvm list <kvm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        lkft-triage@lists.linaro.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: mainline-5.5.0-rc1: do_mount_root+0x6c/0x10d - kernel crash
+ while mounting rootfs
+Message-ID: <20191216105338.GA163642@light.dominikbrodowski.net>
+References: <CA+G9fYuO7vMjsqkyXHZSU-pKEk0L0t9kQTfnd5xopVADyGwprw@mail.gmail.com>
+ <CAK8P3a38ZhQcA0Vj-EtNzmH7+iuoOhPrQUzN-avxJn9iU2K5=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a38ZhQcA0Vj-EtNzmH7+iuoOhPrQUzN-avxJn9iU2K5=Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
-
-Sam Ravnborg <sam@ravnborg.org> wrote on Sat, 14 Dec 2019 11:23:54
-+0100:
-
-> Hi Miquel.
+On Mon, Dec 16, 2019 at 11:22:04AM +0100, Arnd Bergmann wrote:
+> On Mon, Dec 16, 2019 at 10:15 AM Naresh Kamboju
+> <naresh.kamboju@linaro.org> wrote:
+> >
+> > The following kernel crash reported on qemu_x86_64 boot running
+> > 5.5.0-rc1 mainline kernel.
 > 
-> On Fri, Dec 13, 2019 at 07:13:25PM +0100, Miquel Raynal wrote:
-> > The panel common bindings provide a gpios-reset property which is
-> > active low by default. Let's support it in the simple driver.
-> > 
-> > De-asserting the reset pin implies a physical high, which in turns is
-> > a logic low.
-> > 
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>  
+> I looked for too long at v5.5-rc1 completely puzzled by how you got to this
+> object code before realizing that this is a git snapshot between -rc1 and -rc2.
 > 
-> Code looks fine - but I fail to see why simple panels would require a
-> reset pin.
+> The code in question was changed by a recent series from Dominik Brodowski,
+> the main difference being commit cccaa5e33525 ("init: use do_mount() instead
+> of ksys_mount()").
 > 
-> Do you have any simple panels that requires this, or did you add it
-> because you saw it in the panel-common.yaml file?
+> It looks like the NULL-check in ksys_mount()/copy_mount_options() is missing
+> from the new mount_block_root, so it passes a NULL pointer into strncpy().
+> 
+> Something like this should fix it (not tested):
 
-My hardware is:
+This equivalent patch by Linus already got some testing:
 
-LVDS IP <----------> LVDS to RGB bridge <------------> Panel
-
-While there is a simple "RGB to LVDS" bridge driver, there is none
-doing the work the other way around. In my case, the bridge has a reset
-pin.
-
-As until now there is no way to represent the "LVDS to RGB" bridge and
-because the bindings already document such reset pin, I decided to add
-support for it in the simple panel driver.
+https://lore.kernel.org/lkml/CAHk-=wh8VLe3AEKhz=1bzSO=1fv4EM71EhufxuC=Gp=+bLhXoA@mail.gmail.com/
 
 Thanks,
-Miquèl
+	Dominik
