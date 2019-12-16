@@ -2,59 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C857C1203C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:24:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63B0B1202D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:42:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfLPLYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:24:12 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:49862 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbfLPLYB (ORCPT
+        id S1727529AbfLPKlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 05:41:44 -0500
+Received: from smtp67.ord1d.emailsrvr.com ([184.106.54.67]:51606 "EHLO
+        smtp67.ord1d.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727404AbfLPKln (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:24:01 -0500
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id 8C949200AC6;
-        Mon, 16 Dec 2019 11:23:58 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id C8E3E20BBE; Mon, 16 Dec 2019 11:35:48 +0100 (CET)
-Date:   Mon, 16 Dec 2019 11:35:48 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Simon Geis <simon.geis@fau.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Adam Zerella <adam.zerella@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
-        Lukas Panzer <lukas.panzer@fau.de>
-Subject: Re: [PATCH v3 08/10] PCMCIA/i82092: include <linux/io.h> instead of
- <asm/io.h>
-Message-ID: <20191216103548.GH159459@light.dominikbrodowski.net>
-References: <20191213135311.9111-1-simon.geis@fau.de>
- <20191213135311.9111-9-simon.geis@fau.de>
+        Mon, 16 Dec 2019 05:41:43 -0500
+X-Greylist: delayed 308 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Dec 2019 05:41:42 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=g001.emailsrvr.com;
+        s=20190322-9u7zjiwi; t=1576492593;
+        bh=AK1LJ3KblE6GDo+Gln+ScoyharN9JqkHG34xHm9NG0c=;
+        h=Subject:To:From:Date:From;
+        b=sJKlpfmEhT9C9F1RljRyH4Il8+GyJufNI3ScEkxDHRqcb3dOzwQVY7Q/uLFn1Ph2Q
+         +dtnoPlzKE/opH0bNh6mWoUIgRdsrOeVFZ7PafZSyAbt1dBqWxaGQTVa5MnHUtUDwA
+         SUyZ4E5McBGNamhVzBXPUeM7pj4WaTGgQqt+u3ZI=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+        s=20190130-41we5z8j; t=1576492593;
+        bh=AK1LJ3KblE6GDo+Gln+ScoyharN9JqkHG34xHm9NG0c=;
+        h=Subject:To:From:Date:From;
+        b=EGfkJ+0mGtNEdlLvYR+ZiibBlOSwK4znGDToxgbdGt1oVwSshoqaO5TN4FiE4bYxL
+         fMLD4mTw/tSGdvPQzO40pd3EwLwjDtq3tg//enweZN1RE2WSb5bYLoPd0USAmUHPok
+         Chj+PEMGTtttfOxf5e4NE+eaq33/KTuQZ5Cbdiyw=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp9.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 1D1B9C00DB;
+        Mon, 16 Dec 2019 05:36:32 -0500 (EST)
+X-Sender-Id: abbotti@mev.co.uk
+Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Mon, 16 Dec 2019 05:36:33 -0500
+Subject: Re: [PATCH] staging: comedi: drivers: Fix memory leak in
+ gsc_hpdi_auto_attach
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc:     emamd001@umn.edu
+References: <20191215013306.18880-1-navid.emamdoost@gmail.com>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <6159c10a-2f5f-e6ef-7a64-4b613e422efa@mev.co.uk>
+Date:   Mon, 16 Dec 2019 10:36:28 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213135311.9111-9-simon.geis@fau.de>
+In-Reply-To: <20191215013306.18880-1-navid.emamdoost@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 02:53:12PM +0100, Simon Geis wrote:
-> Include the more general linux/io.h instead of asm/io.h
-> as checkpatch suggests.
+On 15/12/2019 01:33, Navid Emamdoost wrote:
+> In the implementation of gsc_hpdi_auto_attach(), the allocated dma
+> description is leaks in case of alignment error, or failure of
+> gsc_hpdi_setup_dma_descriptors() or comedi_alloc_subdevices(). Release
+> devpriv->dma_desc via dma_free_coherent().
 > 
-> Co-developed-by: Lukas Panzer <lukas.panzer@fau.de>
-> Signed-off-by: Lukas Panzer <lukas.panzer@fau.de>
-> Signed-off-by: Simon Geis <simon.geis@fau.de>
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-Applied, thanks
-	Dominik
+Actually, there is no memory leak (although there is another problem 
+that I'll mention below).  If the "auto_attach" handler 
+gsc_hpdi_auto_attach() returns an error, then the "detach" handler 
+gsc_hpdi_detach() will be called automatically to clean up.  (This is 
+true for all comedi drivers).  gsc_hpdi_detach() calls 
+gsc_hpdi_free_dma() to free the DMA buffers and DMA descriptors.
+
+> ---
+>   drivers/staging/comedi/drivers/gsc_hpdi.c | 16 +++++++++++++---
+>   1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/comedi/drivers/gsc_hpdi.c b/drivers/staging/comedi/drivers/gsc_hpdi.c
+> index 4bdf44d82879..c0c7047a6d1b 100644
+> --- a/drivers/staging/comedi/drivers/gsc_hpdi.c
+> +++ b/drivers/staging/comedi/drivers/gsc_hpdi.c
+> @@ -633,16 +633,17 @@ static int gsc_hpdi_auto_attach(struct comedi_device *dev,
+>   	if (devpriv->dma_desc_phys_addr & 0xf) {
+>   		dev_warn(dev->class_dev,
+>   			 " dma descriptors not quad-word aligned (bug)\n");
+> -		return -EIO;
+> +		retval = -EIO;
+> +		goto release_dma_desc;
+>   	}
+>   
+>   	retval = gsc_hpdi_setup_dma_descriptors(dev, 0x1000);
+>   	if (retval < 0)
+> -		return retval;
+> +		goto release_dma_desc;
+>   
+>   	retval = comedi_alloc_subdevices(dev, 1);
+>   	if (retval)
+> -		return retval;
+> +		goto release_dma_desc;
+>   
+>   	/* Digital I/O subdevice */
+>   	s = &dev->subdevices[0];
+> @@ -660,6 +661,15 @@ static int gsc_hpdi_auto_attach(struct comedi_device *dev,
+>   	s->cancel	= gsc_hpdi_cancel;
+>   
+>   	return gsc_hpdi_init(dev);
+> +
+> +release_dma_desc:
+> +	if (devpriv->dma_desc)
+> +		dma_free_coherent(&pcidev->dev,
+> +				  sizeof(struct plx_dma_desc) *
+> +				NUM_DMA_DESCRIPTORS,
+> +				devpriv->dma_desc,
+> +				devpriv->dma_desc_phys_addr);
+> +	return retval;
+>   }
+>   
+>   static void gsc_hpdi_detach(struct comedi_device *dev)
+> 
+
+This patch could actually result in devpriv->dma_desc being freed twice 
+- once in the 'release_dma_desc:' code and again when gsc_hpdi_detach() 
+is called externally as part of the clean-up.
+
+The real bug in the original code is that it does not check whether any 
+of the calls to dma_alloc_coherent() returned NULL.  If any of the calls 
+to dma_alloc_coherent() returns NULL, gsc_hpdi_auto_attach() needs to 
+return an error (-ENOMEM).  The subsequent call to gsc_hpdi_detach() 
+will then free whatever DMA coherent buffers where allocated.
+
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
