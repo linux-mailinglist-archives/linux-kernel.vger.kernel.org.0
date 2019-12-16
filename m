@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F42121443
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 160EF1214EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbfLPSJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:09:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52600 "EHLO mail.kernel.org"
+        id S1731096AbfLPSQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730521AbfLPSJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:54 -0500
+        id S1731551AbfLPSQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:16:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5445620700;
-        Mon, 16 Dec 2019 18:09:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A546421739;
+        Mon, 16 Dec 2019 18:16:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519793;
-        bh=c+qMZz+4LQ98rQvO6c0U67L6JaEmdi0MzflveXY0soQ=;
+        s=default; t=1576520191;
+        bh=L0RDW2xVEkpL8/XEYi0LAlybTE199bltg4a5H+Iddk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0kXqxsSg1bZvvMwclLEUhMZp97qS71KOHfyNZZ9rINQLKe2615ZieSNEugs8cJpVh
-         BiG8v4fvDjJ3K7Ia96uGndESHD4CLrWmg5CLJgFGJ5pq2X3PiYKCF6/P8GT68t+YnZ
-         3kVorxzefrs6RtWtUS2nc2J9FZKtCHFV4Nd/xX+g=
+        b=jQRkBzI0qMLEUXxqCkxxIdae/9K7sQkm/Ct0gBbaOgThcmfBEuYICGohH12c6F9nI
+         GH6Tc3cZYQD3Qv9a1t7Hna3wCkuqS6J4zKBxUrqn1/aWmouIsp3R7TwDL6iApY3DBT
+         H96829iyd6eZQJRORrg/m527j0/9TaHhE7/YW+0I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.3 069/180] ovl: relax WARN_ON() on rename to self
-Date:   Mon, 16 Dec 2019 18:48:29 +0100
-Message-Id: <20191216174830.135531745@linuxfoundation.org>
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.4 054/177] brcmfmac: disable PCIe interrupts before bus reset
+Date:   Mon, 16 Dec 2019 18:48:30 +0100
+Message-Id: <20191216174830.695630262@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-commit 6889ee5a53b8d969aa542047f5ac8acdc0e79a91 upstream.
+commit 5d26a6a6150c486f51ea2aaab33af04db02f63b8 upstream.
 
-In ovl_rename(), if new upper is hardlinked to old upper underneath
-overlayfs before upper dirs are locked, user will get an ESTALE error
-and a WARN_ON will be printed.
+Keeping interrupts on could result in brcmfmac freeing some resources
+and then IRQ handlers trying to use them. That was obviously a straight
+path for crashing a kernel.
 
-Changes to underlying layers while overlayfs is mounted may result in
-unexpected behavior, but it shouldn't crash the kernel and it shouldn't
-trigger WARN_ON() either, so relax this WARN_ON().
+Example:
+CPU0                           CPU1
+----                           ----
+brcmf_pcie_reset
+  brcmf_pcie_bus_console_read
+  brcmf_detach
+    ...
+    brcmf_fweh_detach
+    brcmf_proto_detach
+                               brcmf_pcie_isr_thread
+                                 ...
+                                 brcmf_proto_msgbuf_rx_trigger
+                                   ...
+                                   drvr->proto->pd
+    brcmf_pcie_release_irq
 
-Reported-by: syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com
-Fixes: 804032fabb3b ("ovl: don't check rename to self")
-Cc: <stable@vger.kernel.org> # v4.9+
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+[  363.789218] Unable to handle kernel NULL pointer dereference at virtual address 00000038
+[  363.797339] pgd = c0004000
+[  363.800050] [00000038] *pgd=00000000
+[  363.803635] Internal error: Oops: 17 [#1] SMP ARM
+(...)
+[  364.029209] Backtrace:
+[  364.031725] [<bf243838>] (brcmf_proto_msgbuf_rx_trigger [brcmfmac]) from [<bf2471dc>] (brcmf_pcie_isr_thread+0x228/0x274 [brcmfmac])
+[  364.043662]  r7:00000001 r6:c8ca0000 r5:00010000 r4:c7b4f800
+
+Fixes: 4684997d9eea ("brcmfmac: reset PCIe bus on a firmware crash")
+Cc: stable@vger.kernel.org # v5.2+
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/dir.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -1170,7 +1170,7 @@ static int ovl_rename(struct inode *oldd
- 	if (newdentry == trap)
- 		goto out_dput;
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+@@ -1427,6 +1427,8 @@ static int brcmf_pcie_reset(struct devic
+ 	struct brcmf_fw_request *fwreq;
+ 	int err;
  
--	if (WARN_ON(olddentry->d_inode == newdentry->d_inode))
-+	if (olddentry->d_inode == newdentry->d_inode)
- 		goto out_dput;
++	brcmf_pcie_intr_disable(devinfo);
++
+ 	brcmf_pcie_bus_console_read(devinfo, true);
  
- 	err = 0;
+ 	brcmf_detach(dev);
 
 
