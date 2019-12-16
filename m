@@ -2,90 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C45A2120F2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0862D120F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:24:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfLPQRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 11:17:15 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37106 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726742AbfLPQRN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 11:17:13 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w15so8011704wru.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 08:17:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=r3ZGFYVqEiHwYj/KwvD5Pu4+HTWz/KZ7Kiw/TxOn57I=;
-        b=xbo/lwqOQy1FS7C+xsYSQcx5bgukzpffD2E22Gt2BGvjQIeMuv0YnpsfV8OlRk/c1l
-         lUKBWCY89izvWtL2Li/GnK0jVcO43iIwYYs7qsAzvTxsADEWbW5yYZuEXMIdfm5DnExM
-         6ri7EUiveI2iMptBammNBQI0/nmcfXVf8XIQsxCicVH0cGr6cXIuPfgCiyMeQaR90EL7
-         2d82MtLPM7zZVM6FQil0MXXwM5f3v8ZfrSNnmcM8mRYr4i/VDi8V5yG9NbnIq5WJCi6J
-         KWa06ztKcC9ETLPv7kwKNtrvE+Viu0W+R8Rd01swoaBcJYuP1tDb4BAHg0LrheAsUksJ
-         4keA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=r3ZGFYVqEiHwYj/KwvD5Pu4+HTWz/KZ7Kiw/TxOn57I=;
-        b=bt9dFuc5inmHj1Mek/ky1YQTWFBXoUU4gObA8lEUn2TucMVOgqy6CzAnIkHZtCxFcc
-         FIbaI8vLRodB5aRp938qbMF99PE5kYEhrTxm0i6QndLCe+h9ru2Hmebu1YGQjnxHl5he
-         c2nR5Jsun2PLni90FVJKCB4Che6V/jwrqQ7s+yfIIxdvwl0XmY/BSYMRL8uMfCrgacrc
-         ZpcTK3HlAr4loDLDl1WxEm5JENFni07u2VdSkCzFng+wfNj9C3dbNh6w7kNzF1DXFEan
-         xivXGBzr2sVl0XmSVCaoowVG9Eg7afmHhdm7GhI0DfacaxENRFDQYQyoW8/o7gIPktpJ
-         SITQ==
-X-Gm-Message-State: APjAAAXcNYp8BaEXgmUS6kqSrcpgNpRzM6UYSvTKLTvaLqeE9jOa4rQm
-        qQeqjg1dNje2V5r3cMUBEYo/PA==
-X-Google-Smtp-Source: APXvYqziVssigAv2YlptZeqjNq6fPlpxFmzjNGrhVJGnWBGQLzm5s6+4MSYn72RUTN5cM6L52pW9eQ==
-X-Received: by 2002:adf:dfd2:: with SMTP id q18mr31049989wrn.152.1576513031335;
-        Mon, 16 Dec 2019 08:17:11 -0800 (PST)
-Received: from dell ([185.17.149.202])
-        by smtp.gmail.com with ESMTPSA id o66sm18121839wmo.20.2019.12.16.08.17.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 08:17:10 -0800 (PST)
-Date:   Mon, 16 Dec 2019 16:17:10 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     sam@ravnborg.org, bbrezillon@kernel.org, airlied@linux.ie,
-        daniel@ffwll.ch, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] mfd: atmel-hlcdc: add struct device member to
- struct atmel_hlcdc_regmap
-Message-ID: <20191216161710.GO2369@dell>
-References: <1576249496-4849-1-git-send-email-claudiu.beznea@microchip.com>
- <1576249496-4849-4-git-send-email-claudiu.beznea@microchip.com>
+        id S1726690AbfLPQYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 11:24:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55930 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725836AbfLPQYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 11:24:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 3B3D0B14A;
+        Mon, 16 Dec 2019 16:24:18 +0000 (UTC)
+Date:   Mon, 16 Dec 2019 08:17:48 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Waiman Long <longman@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        aneesh.kumar@linux.ibm.com
+Subject: Re: [PATCH v2] mm/hugetlb: defer free_huge_page() to a workqueue
+Message-ID: <20191216161748.tgi2oictlfqy6azi@linux-p48b>
+Mail-Followup-To: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Waiman Long <longman@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, aneesh.kumar@linux.ibm.com
+References: <20191211194615.18502-1-longman@redhat.com>
+ <4fbc39a9-2c9c-4c2c-2b13-a548afe6083c@oracle.com>
+ <32d2d4f2-83b9-2e40-05e2-71cd07e01b80@redhat.com>
+ <0fcce71f-bc20-0ea3-b075-46592c8d533d@oracle.com>
+ <20191212060650.ftqq27ftutxpc5hq@linux-p48b>
+ <20191212063050.ufrpij6s6jkv7g7j@linux-p48b>
+ <20191212190427.ouyohviijf5inhur@linux-p48b>
+ <20191216133711.GH30281@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1576249496-4849-4-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191216133711.GH30281@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Dec 2019, Claudiu Beznea wrote:
+On Mon, 16 Dec 2019, Michal Hocko wrote:
+>I am afraid that work_struct is too large to be stuffed into the struct
+>page array (because of the lockdep part).
 
-> Add struct device member to struct atmel_hlcdc_regmap to be
-> able to use dev_*() specific logging functions.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  drivers/mfd/atmel-hlcdc.c | 3 +++
->  1 file changed, 3 insertions(+)
+Yeah, this needs to be done without touching struct page.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Which is why I had done the stack allocated way in this patch, but we
+cannot wait for it to complete in irq, so that's out the window. Andi
+had suggested percpu allocated work items, but having played with the
+idea over the weekend, I don't see how we can prevent another page being
+freed on the same cpu before previous work on the same cpu is complete
+(cpu0 wants to free pageA, schedules the work, in the mean time cpu0
+wants to free pageB and workerfn for pageA still hasn't been called).
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>I think that it would be just safer to make hugetlb_lock irq safe. Are
+>there any other locks that would require the same?
+
+It would be simpler. Any performance issues that arise would probably
+be only seen in microbenchmarks, assuming we want to have full irq safety.
+If we don't need to worry about hardirq, then even better.
+
+The subpool lock would also need to be irq safe.
+
+Thanks,
+Davidlohr
