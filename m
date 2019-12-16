@@ -2,147 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB4A0121882
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9774812183E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:42:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbfLPSo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:44:27 -0500
-Received: from vern.gendns.com ([98.142.107.122]:51676 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728628AbfLPR6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:58:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=w47QjhKrBXMUdp+l8T2SAsW2mwp1Jabl/ePLzslA7oA=; b=p7BYUMz76ycJJFM3PClg9odYJf
-        SgvrkJ5BfYZW7V3Lzd8rK6fgMjQYElnaiWcwSmo16INTSxJC6nWrzOGgqJHi46jBRRJN3ivOrjaP2
-        gsTwxdgz8r1UrDc7Wm56HXRBdiK0avDd0TyiG+RP8/ZInhDv1z9poSReXBXqzhyp38F8W7rpCAqug
-        8ZdDVftdTAtEMNTb3jx8cEfpLZEY9VNlaOYogRszpur4JlSgtH0dJms0iKDzwL/6cfuGmbSzdJ2kB
-        Eu6JW5VO5OPNQtnZUROQMd5/FmUV3BRWHJPgmyY4241Iap9jj9gcxKRSkvXChFOpW9NVSB1uVmWXJ
-        2eyHfc8g==;
-Received: from [2600:1700:4830:165f::fb2] (port=50142)
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <david@lechnology.com>)
-        id 1igudd-00082q-GU; Mon, 16 Dec 2019 12:58:33 -0500
-Subject: Re: [PATCH 1/3] clocksource: davinci: work around a clocksource
- problem on dm365 SoC
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kevin Hilman <khilman@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20191213162453.15691-1-brgl@bgdev.pl>
- <20191213162453.15691-2-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <b9a28314-4fce-ebbd-be20-b0ffa2f1f15f@lechnology.com>
-Date:   Mon, 16 Dec 2019 11:58:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728936AbfLPSAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:00:25 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:53267 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726784AbfLPSAT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:00:19 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1igufD-0005zW-IO; Mon, 16 Dec 2019 19:00:11 +0100
+To:     John Garry <john.garry@huawei.com>
+Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity  for managed interrupt
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-In-Reply-To: <20191213162453.15691-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 16 Dec 2019 18:00:11 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, <tglx@linutronix.de>,
+        "chenxiang (M)" <chenxiang66@hisilicon.com>,
+        <bigeasy@linutronix.de>, <linux-kernel@vger.kernel.org>,
+        <hare@suse.com>, <hch@lst.de>, <axboe@kernel.dk>,
+        <bvanassche@acm.org>, <peterz@infradead.org>, <mingo@redhat.com>
+In-Reply-To: <a5f6a542-2dbc-62de-52e2-bd5413b5db51@huawei.com>
+References: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
+ <1575642904-58295-2-git-send-email-john.garry@huawei.com>
+ <20191207080335.GA6077@ming.t460p>
+ <78a10958-fdc9-0576-0c39-6079b9749d39@huawei.com>
+ <20191210014335.GA25022@ming.t460p>
+ <0ad37515-c22d-6857-65a2-cc28256a8afa@huawei.com>
+ <20191212223805.GA24463@ming.t460p>
+ <d4b89ecf-7ced-d5d6-fc02-6d4257580465@huawei.com>
+ <20191213131822.GA19876@ming.t460p>
+ <b7f3bcea-84ec-f9f6-a3aa-007ae712415f@huawei.com>
+ <20191214135641.5a817512@why>
+ <7db89b97-1b9e-8dd1-684a-3eef1b1af244@huawei.com>
+ <50d9ba606e1e3ee1665a0328ffac67ac@www.loen.fr>
+ <a5f6a542-2dbc-62de-52e2-bd5413b5db51@huawei.com>
+Message-ID: <68058fd28c939b8e065524715494de95@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: john.garry@huawei.com, ming.lei@redhat.com, tglx@linutronix.de, chenxiang66@hisilicon.com, bigeasy@linutronix.de, linux-kernel@vger.kernel.org, hare@suse.com, hch@lst.de, axboe@kernel.dk, bvanassche@acm.org, peterz@infradead.org, mingo@redhat.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/19 10:24 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The DM365 platform has a strange quirk (only present when using ancient
-> u-boot - mainline u-boot v2013.01 and later works fine) where if we
-> enable the second half of the timer in periodic mode before we do its
-> initialization - the time won't start flowing and we can't boot.
-> 
-> When using more recent u-boot, we can enable the timer, then reinitialize
-> it and all works fine.
-> 
-> I've been unable to figure out why that is, but a workaround for this
-> is straightforward - just cache the enable bits for tim34.
+Hi John,
 
+On 2019-12-16 14:17, John Garry wrote:
+> Hi Marc,
+>
+>>>
+>>> I'm just wondering if non-managed interrupts should be included in
+>>> the load balancing calculation? Couldn't irqbalance (if active) 
+>>> start
+>>> moving non-managed interrupts around anyway?
+>> But they are, aren't they? See what we do in irq_set_affinity:
+>> +        atomic_inc(per_cpu_ptr(&cpu_lpi_count, cpu));
+>> +        atomic_dec(per_cpu_ptr(&cpu_lpi_count,
+>> +                       its_dev->event_map.col_map[id]));
+>> We don't try to "rebalance" anything based on that though, not that
+>> I think we should.
+>
+> Ah sorry, I meant whether they should not be included. In
+> its_irq_domain_activate(), we increment the per-cpu lpi count and 
+> also
+> use its_pick_target_cpu() to find the least loaded cpu. I am asking
+> whether we should just stick with the old policy for non-managed
+> interrupts here.
+>
+> After checking D05, I see a very significant performance hit for SAS
+> controller performance - ~40% throughout lowering.
 
-I had a hard time groking this code. See suggested changes below for
-something that would make the intention more clear (to me at least).
+-ETOOMANYMOVINGPARTS.
 
+> With this patch, now we have effective affinity targeted at seemingly
+> "random" CPUs, as opposed to all just using CPU0. This affects
+> performance.
 
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   drivers/clocksource/timer-davinci.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/timer-davinci.c
-> index 62745c962049..1c22443acaeb 100644
-> --- a/drivers/clocksource/timer-davinci.c
-> +++ b/drivers/clocksource/timer-davinci.c
-> @@ -64,6 +64,8 @@ static struct {
->   	unsigned int tim_off;
->   } davinci_clocksource;
->   
-> +static unsigned int davinci_clocksource_tim32_mode;
+And piling all interrupts on the same CPU does help?
 
-static unsigned bool davinci_clocksource_initialized;
+> The difference is that when we use managed interrupts - like for NVME
+> or D06 SAS controller - the irq cpu affinity mask matches the CPUs
+> which enqueue the requests to the queue associated with the 
+> interrupt.
+> So there is an efficiency is enqueuing and deqeueing on same CPU 
+> group
+> - all related to blk multi-queue. And this is not the case for
+> non-managed interrupts.
 
-> +
->   static struct davinci_clockevent *
->   to_davinci_clockevent(struct clock_event_device *clockevent)
->   {
-> @@ -94,7 +96,7 @@ static void davinci_tim12_shutdown(void __iomem *base)
->   	 * halves. In this case TIM34 runs in periodic mode and we must
->   	 * not modify it.
->   	 */
-> -	tcr |= DAVINCI_TIMER_ENAMODE_PERIODIC <<
-> +	tcr |= davinci_clocksource_tim32_mode <<
->   		DAVINCI_TIMER_ENAMODE_SHIFT_TIM34;
+So you enqueue requests from CPU0 only? It seems a bit odd...
 
-	if (davinci_clocksource_initialized)
-		tcr |= DAVINCI_TIMER_ENAMODE_PERIODIC <<
-			DAVINCI_TIMER_ENAMODE_SHIFT_TIM34;
+>>>> Please give this new patch a shot on your system (my D05 doesn't 
+>>>> have
+>>>> any managed devices):
+>>>
+>>> We could consider supporting platform msi managed interrupts, but I
+>>> doubt the value.
+>> It shouldn't be hard to do, and most of the existing code could be
+>> moved to the generic level. As for the value, I'm not convinced
+>> either. For example D05 uses the MBIGEN as an intermediate interrupt
+>> controller, so MSIs are from the PoV of MBIGEN, and not the SAS 
+>> device
+>> attached to it. Not the best design...
+>
+> JFYI, I did raise this following topic before, but that's as far as I 
+> got:
+>
+> https://marc.info/?l=linux-block&m=150722088314310&w=2
 
->   
->   	writel_relaxed(tcr, base + DAVINCI_TIMER_REG_TCR);
-> @@ -107,7 +109,7 @@ static void davinci_tim12_set_oneshot(void __iomem *base)
->   	tcr = DAVINCI_TIMER_ENAMODE_ONESHOT <<
->   		DAVINCI_TIMER_ENAMODE_SHIFT_TIM12;
->   	/* Same as above. */
-> -	tcr |= DAVINCI_TIMER_ENAMODE_PERIODIC <<
-> +	tcr |= davinci_clocksource_tim32_mode <<
->   		DAVINCI_TIMER_ENAMODE_SHIFT_TIM34;
+Yes. And that's probably not very hard, but the problem in your case is
+that the D05 HW is not using MSIs... You'd have to provide an 
+abstraction
+for wired interrupts (please don't).
 
-	if (davinci_clocksource_initialized)
-		tcr |= DAVINCI_TIMER_ENAMODE_PERIODIC <<
-			DAVINCI_TIMER_ENAMODE_SHIFT_TIM34;
+You'd be better off directly setting the affinity of the interrupts 
+from
+the driver, but I somehow can't believe that you're only submitting 
+requests
+from the same CPU, always. There must be something I'm missing.
 
->   
->   	writel_relaxed(tcr, base + DAVINCI_TIMER_REG_TCR);
-> @@ -206,6 +208,8 @@ static void davinci_clocksource_init_tim34(void __iomem *base)
->   	writel_relaxed(0x0, base + DAVINCI_TIMER_REG_TIM34);
->   	writel_relaxed(UINT_MAX, base + DAVINCI_TIMER_REG_PRD34);
->   	writel_relaxed(tcr, base + DAVINCI_TIMER_REG_TCR);
-> +
-> +	davinci_clocksource_tim32_mode = DAVINCI_TIMER_ENAMODE_PERIODIC;
+Thanks,
 
-
-	davinci_clocksource_initialized  = true;
-
->   }
->   
->   /*
-> 
+         M.
+-- 
+Jazz is not dead. It just smells funny...
