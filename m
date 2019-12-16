@@ -2,53 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA7FC121BE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A134D121BE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:37:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbfLPVgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 16:36:09 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:45305 "EHLO
+        id S1727858AbfLPVgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 16:36:17 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:35284 "EHLO
         mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727764AbfLPVgF (ORCPT
+        with ESMTP id S1727785AbfLPVgI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 16:36:05 -0500
-Received: by mail-pf1-f201.google.com with SMTP id x21so7703610pfp.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 13:36:04 -0800 (PST)
+        Mon, 16 Dec 2019 16:36:08 -0500
+Received: by mail-pf1-f201.google.com with SMTP id r2so7728544pfl.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 13:36:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=12xMY3S0k192hVkbotc53c72N/aodHQMjhfnDBGydPE=;
-        b=rl/7dkOgtYeVv9AB7dvqV/elQ8lG4vxCd0UIegUKUVq/guJ7sv45aiSJfICIpCTvqs
-         p6PASHMMDqZxO4cDMRqLQyL22gumOO6wRpS0MsNRLrt7UsYEtEGCGH9iFK7Qmr3G8HX8
-         B0n9CXIt3Of3/o5Xm9fGR4RkPbg89PP4O7r1iLIG2i/rwz8Va1ylN0eIfQCmVxHMy4Y1
-         afmtBwI9BaoRYkflywTXSreG3Q+W/tkTT+W1pRZYCHKnTL2L88h8lwIKCcdf4gp5Q6Yf
-         7rILaJNZ/v4tD8ms//+Vv8ZRfd1NqHE9tcB9QtaTZA53J0/uArTXJI7C8DIeRRk+6ohJ
-         IlIQ==
+        bh=uVc2axwkCnCZhi+X312ppAdnVSbc0L4toMqGqZnNMKw=;
+        b=WpvSEkDZ3zGJQkjjyek7brDRW8CLSSj/z+kyUghXynSz0CIPG/Pkh7uHpylMv+lsCV
+         TBEOmtduByp41X120yvyW+L8fCIYUmgUBI2aEGCvxzdYsI003XS4/mLtP0CVM1msY+Hk
+         5WO1bpSwfIZ7uZQCdxwxrvfo2tA7Ek7XaxrYgUxw9C2BdjXTgXH9m8uVA2BgZNxcZJ5S
+         /NOeN4RMYprVaCR06rF4KVOnuh8Dj7m4BetXNrBKpZt0L7wLeuagWrJS0QyOcKe/dODK
+         sID4umEhHdU1D/KEoA6ciVgckNKpatKM3u+B/Qu76ggC+9Fw1kJa86qkXsaUrnSxE8kA
+         XBaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=12xMY3S0k192hVkbotc53c72N/aodHQMjhfnDBGydPE=;
-        b=G0j1LbKdHuVyuVavYvWJ5/isHLkegjA9WaMDlBSlITuYs8MyAch9gM2p+b6tsqP+Xn
-         kJCnqopMTkmLscqaLNon4153ylz8si2QGxjhnW4BETTuNgKpsCbVZJOxyX8ucKaaiV+r
-         vWS7Lwi3wPICr5RNKLQqiCeAS35oRm1+WuAMY+Sr03YOkQg8X5aO89v6QocFyoumn1Ef
-         KAKM1UFKjVALUbyN82f6WUb3ich2UoftK8aX7enNErbPFXxfR19+jvLSTgvWnHv0YdPb
-         VpGQ97sVXvdU78UwCXSvihWHMUBAXZYGCWjxfaVmoJx2EpdY7YLxNZmCru4Po9BSdKXE
-         bVsg==
-X-Gm-Message-State: APjAAAUFVFkazaPJGh1Fl7/eAClZ62tTL64H7/F3ZMijP80o9OpfaUmw
-        sH2+++qY3fsLI3RcI+oFpPbK3SDLvwANpmvYquhsxqBmriODkqoCyKK9hbJERU5i8fXz76TEusC
-        /aWu3q9cdzQVKaa2A2HK1bNnGcM6ENuIkQ8Kz71yHZX3EWOICUeaSlJni+IEg7XX7kXr4tQ2x
-X-Google-Smtp-Source: APXvYqwkL+yZdegrXbzdsdBayfb5JmqCBNLnFE1LAaMF4sDcauOq6l8mmW+RAw0F7ozlKHcDw2WDH6qalYeQ
-X-Received: by 2002:a65:4203:: with SMTP id c3mr20797817pgq.368.1576532164120;
- Mon, 16 Dec 2019 13:36:04 -0800 (PST)
-Date:   Mon, 16 Dec 2019 13:35:30 -0800
+        bh=uVc2axwkCnCZhi+X312ppAdnVSbc0L4toMqGqZnNMKw=;
+        b=oDgDfuQzC2Yqeun89BllLEdL2JjVJq01QP5aaU1cA8W4BSDk+1Osfh07I6zIowPAru
+         BWYgyRQaOoO2DycaRm3JPbGXx0hY+EoOCGpcAj2v7vt7T67A4vxg8B1h6v1eZJSi7iFK
+         OWgTUpEgRPDP/TLpiWzdMedAM1G7+VGuFe3KCyY+zZL+8ZLwT2vrOfT072UhTzTLx3h6
+         oc/9+TNzCvIfDJIcBw+H7+EPyU9lM+BnMKvgxxMd9jCT5UPZKZp1zRrHa2J/po6AT3w3
+         2EUvecuS3w3SjwgV5LxiJTglqqUFFXhnxBmB8D+kkVynYTR4JBID2igCBaSjVKDnWBJh
+         /NyA==
+X-Gm-Message-State: APjAAAXeZTZm4VuLqPrg0ZDzliDymbr+68SccJCCaciS/+TpoOwFkN2X
+        0JU+yoSl0OrGqCZHUkzIjcYDs1F15IihY5znpp41rQIzP7ScKqKdSOS4gTN8a4DSnclDlbnax1k
+        jqYUM5vLjQCVFbXcR3r0iIwCkrIZDodJbLBpoDw3o3MVgfeOf47VYKuajhAhe+GB6ZnsidqRA
+X-Google-Smtp-Source: APXvYqxAvjI7NezKNIRCnRAWCElstJUl5eVy0r8/FtYh7zCfXc8erNLof+lG3knmkBtIjjVxutbT4Tg4gE8y
+X-Received: by 2002:a63:1662:: with SMTP id 34mr20427182pgw.77.1576532166453;
+ Mon, 16 Dec 2019 13:36:06 -0800 (PST)
+Date:   Mon, 16 Dec 2019 13:35:31 -0800
 In-Reply-To: <20191216213532.91237-1-bgardon@google.com>
-Message-Id: <20191216213532.91237-8-bgardon@google.com>
+Message-Id: <20191216213532.91237-9-bgardon@google.com>
 Mime-Version: 1.0
 References: <20191216213532.91237-1-bgardon@google.com>
 X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-Subject: [PATCH v2 7/8] KVM: selftests: Time guest demand paging
+Subject: [PATCH v2 8/8] KVM: selftests: Add parameter to _vm_create for
+ memslot 0 base paddr
 From:   Ben Gardon <bgardon@google.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         linux-kselftest@vger.kernel.org
@@ -63,183 +64,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to quantify demand paging performance, time guest execution
-during demand paging.
+KVM creates internal memslots between 3 and 4 GiB paddrs on the first
+vCPU creation. If memslot 0 is large enough it collides with these
+memslots an causes vCPU creation to fail. Add a paddr parameter for
+memslot 0 so that tests which support large VMs can relocate memslot 0
+above 4 GiB.
 
 Signed-off-by: Ben Gardon <bgardon@google.com>
 ---
- .../selftests/kvm/demand_paging_test.c        | 68 +++++++++++++++++++
- 1 file changed, 68 insertions(+)
+ tools/testing/selftests/kvm/lib/kvm_util.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/demand_paging_test.c b/tools/testing/selftests/kvm/demand_paging_test.c
-index 2b80f614dd537..d93d72bdea4a3 100644
---- a/tools/testing/selftests/kvm/demand_paging_test.c
-+++ b/tools/testing/selftests/kvm/demand_paging_test.c
-@@ -32,6 +32,12 @@
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 41cf45416060f..886d58e6cac39 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -113,6 +113,8 @@ const char * const vm_guest_mode_string[] = {
+ _Static_assert(sizeof(vm_guest_mode_string)/sizeof(char *) == NUM_VM_MODES,
+ 	       "Missing new mode strings?");
  
- #define DEFAULT_GUEST_TEST_MEM_SIZE (1 << 30) /* 1G */
- 
-+#ifdef PRINT_PER_PAGE_UPDATES
-+#define PER_PAGE_DEBUG(...) DEBUG(__VA_ARGS__)
-+#else
-+#define PER_PAGE_DEBUG(...)
-+#endif
-+
- #ifdef PRINT_PER_VCPU_UPDATES
- #define PER_VCPU_DEBUG(...) DEBUG(__VA_ARGS__)
- #else
-@@ -62,6 +68,26 @@ static uint64_t guest_test_phys_mem;
-  */
- static uint64_t guest_test_virt_mem = DEFAULT_GUEST_TEST_MEM;
- 
-+int64_t to_ns(struct timespec ts)
-+{
-+	return (int64_t)ts.tv_nsec + 1000000000LL * (int64_t)ts.tv_sec;
-+}
-+
-+struct timespec diff(struct timespec start, struct  timespec end)
-+{
-+	struct   timespec temp;
-+
-+	if ((end.tv_nsec-start.tv_nsec) < 0) {
-+		temp.tv_sec = end.tv_sec - start.tv_sec - 1;
-+		temp.tv_nsec = 1000000000 + end.tv_nsec - start.tv_nsec;
-+	} else {
-+		temp.tv_sec = end.tv_sec - start.tv_sec;
-+		temp.tv_nsec = end.tv_nsec - start.tv_nsec;
-+	}
-+
-+	return temp;
-+}
-+
++#define KVM_INTERNAL_MEMSLOTS_START_PADDR (3UL << 30)
++#define KVM_INTERNAL_MEMSLOTS_END_PADDR (4UL << 30)
  /*
-  * Continuously write to the first 8 bytes of each page in the demand paging
-  * memory region.
-@@ -96,11 +122,15 @@ static void *vcpu_worker(void *data)
- 	uint64_t gva = args->gva;
- 	uint64_t pages = args->pages;
- 	struct kvm_run *run;
-+	struct timespec start;
-+	struct timespec end;
- 
- 	vcpu_args_set(vm, vcpu_id, 2, gva, pages);
- 
- 	run = vcpu_state(vm, vcpu_id);
- 
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+
- 	/* Let the guest access its memory */
- 	ret = _vcpu_run(vm, vcpu_id);
- 	TEST_ASSERT(ret == 0, "vcpu_run failed: %d\n", ret);
-@@ -110,6 +140,11 @@ static void *vcpu_worker(void *data)
- 			    exit_reason_str(run->exit_reason));
- 	}
- 
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+	PER_VCPU_DEBUG("vCPU %d execution time: %lld.%.9lds\n", vcpu_id,
-+		       (long long)(diff(start, end).tv_sec),
-+		       diff(start, end).tv_nsec);
-+
- 	return NULL;
- }
- 
-@@ -145,6 +180,8 @@ static struct kvm_vm *create_vm(enum vm_guest_mode mode, int vcpus,
- static int handle_uffd_page_request(int uffd, uint64_t addr)
+  * VM Create
+  *
+@@ -128,13 +130,16 @@ _Static_assert(sizeof(vm_guest_mode_string)/sizeof(char *) == NUM_VM_MODES,
+  *
+  * Creates a VM with the mode specified by mode (e.g. VM_MODE_P52V48_4K).
+  * When phy_pages is non-zero, a memory region of phy_pages physical pages
+- * is created and mapped starting at guest physical address 0.  The file
+- * descriptor to control the created VM is created with the permissions
+- * given by perm (e.g. O_RDWR).
++ * is created. If phy_pages is less that 3G, it is mapped starting at guest
++ * physical address 0. If phy_pages is greater than 3G it is mapped starting
++ * 4G into the guest physical address space to avoid KVM internal memslots
++ * which map the region between 3G and 4G. The file descriptor to control the
++ * created VM is created with the permissions given by perm (e.g. O_RDWR).
+  */
+ struct kvm_vm *_vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
  {
- 	pid_t tid;
-+	struct timespec start;
-+	struct timespec end;
- 	struct uffdio_copy copy;
- 	int r;
+ 	struct kvm_vm *vm;
++	uint64_t guest_paddr = 0;
  
-@@ -155,6 +192,8 @@ static int handle_uffd_page_request(int uffd, uint64_t addr)
- 	copy.len = host_page_size;
- 	copy.mode = 0;
+ 	DEBUG("Testing guest mode: %s\n", vm_guest_mode_string(mode));
  
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+
- 	r = ioctl(uffd, UFFDIO_COPY, &copy);
- 	if (r == -1) {
- 		DEBUG("Failed Paged in 0x%lx from thread %d with errno: %d\n",
-@@ -162,6 +201,13 @@ static int handle_uffd_page_request(int uffd, uint64_t addr)
- 		return r;
- 	}
+@@ -227,9 +232,11 @@ struct kvm_vm *_vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
  
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+
-+	PER_PAGE_DEBUG("UFFDIO_COPY %d \t%lld ns\n", tid,
-+		       (long long)to_ns(diff(start, end)));
-+	PER_PAGE_DEBUG("Paged in %ld bytes at 0x%lx from thread %d\n",
-+		       host_page_size, addr, tid);
-+
- 	return 0;
+ 	/* Allocate and setup memory for guest. */
+ 	vm->vpages_mapped = sparsebit_alloc();
++	if (guest_paddr + phy_pages > KVM_INTERNAL_MEMSLOTS_START_PADDR)
++		guest_paddr = KVM_INTERNAL_MEMSLOTS_END_PADDR;
+ 	if (phy_pages != 0)
+ 		vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
+-					    0, 0, phy_pages, 0);
++					    guest_paddr, 0, phy_pages, 0);
+ 
+ 	return vm;
  }
- 
-@@ -178,7 +224,10 @@ static void *uffd_handler_thread_fn(void *arg)
- 	int uffd = uffd_args->uffd;
- 	useconds_t delay = uffd_args->delay;
- 	int64_t pages = 0;
-+	struct timespec start;
-+	struct timespec end;
- 
-+	clock_gettime(CLOCK_MONOTONIC, &start);
- 	while (!quit_uffd_thread) {
- 		struct uffd_msg msg;
- 		struct pollfd pollfd[1];
-@@ -241,6 +290,13 @@ static void *uffd_handler_thread_fn(void *arg)
- 		pages++;
- 	}
- 
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+	PER_VCPU_DEBUG("userfaulted %ld pages over %lld.%.9lds. (%f/sec)\n",
-+		       pages, (long long)(diff(start, end).tv_sec),
-+		       diff(start, end).tv_nsec, pages /
-+		       ((double)diff(start, end).tv_sec +
-+			(double)diff(start, end).tv_nsec / 100000000.0));
-+
- 	return NULL;
- }
- 
-@@ -303,6 +359,8 @@ static void run_test(enum vm_guest_mode mode, bool use_uffd,
- 	uint64_t guest_num_pages;
- 	int vcpu_id;
- 	int r;
-+	struct timespec start;
-+	struct timespec end;
- 
- 	vm = create_vm(mode, vcpus, vcpu_wss);
- 
-@@ -417,6 +475,8 @@ static void run_test(enum vm_guest_mode mode, bool use_uffd,
- 
- 	DEBUG("Finished creating vCPUs and starting uffd threads\n");
- 
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+
- 	for (vcpu_id = 0; vcpu_id < vcpus; vcpu_id++) {
- 		pthread_create(&vcpu_threads[vcpu_id], NULL, vcpu_worker,
- 			       &vcpu_args[vcpu_id]);
-@@ -432,6 +492,8 @@ static void run_test(enum vm_guest_mode mode, bool use_uffd,
- 
- 	DEBUG("All vCPU threads joined\n");
- 
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+
- 	if (use_uffd) {
- 		/* Tell the user fault fd handler threads to quit */
- 		quit_uffd_thread = true;
-@@ -439,6 +501,12 @@ static void run_test(enum vm_guest_mode mode, bool use_uffd,
- 			pthread_join(uffd_handler_threads[vcpu_id], NULL);
- 	}
- 
-+	DEBUG("Total guest execution time: %lld.%.9lds\n",
-+	      (long long)(diff(start, end).tv_sec), diff(start, end).tv_nsec);
-+	DEBUG("Overall demand paging rate: %f pgs/sec\n",
-+	      guest_num_pages / ((double)diff(start, end).tv_sec +
-+	      (double)diff(start, end).tv_nsec / 100000000.0));
-+
- 	ucall_uninit(vm);
- 	kvm_vm_free(vm);
- 
 -- 
 2.24.1.735.g03f4e72817-goog
 
