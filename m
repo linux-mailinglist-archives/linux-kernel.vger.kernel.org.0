@@ -2,75 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEF571217FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D23D121792
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:37:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729340AbfLPSC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:02:27 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:38808 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729086AbfLPSCY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:02:24 -0500
-Received: by mail-qk1-f195.google.com with SMTP id k6so3622581qki.5;
-        Mon, 16 Dec 2019 10:02:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=/wgIjX1dU2wQH6kmt/wxBh8DEI9OC0fPRFaMU5c+19U=;
-        b=aK5FHjDX78JdmIlmY7UGSEKLyK+plDswCHD9EfXisDUKQelP/XMkWce0lfrZkZUJyg
-         3UC66szQcE7PNLgccwlf59/DU2/S88c323rKOwvOimcYvXbcQq3jftigRUrw3yGgwfKO
-         aK6zJH123/LmhoYyEpo/YBOtBw4tmQhG00QBrrosLUg83ENlpU3hsJBrdo7YfPPYJKzB
-         zmIwmJUdhuBtX5+FYq/fg1mUZGgxJGJK/0qoZBbGbdyukYxJ2vaDyRkd7nNJYGx5UO3y
-         zcmoJ9rieShg9yFWklosDfWp4SLtbQW1n5szZ8uNw2Cd9Rlq5mgoro/6us+dNZ2+H2RM
-         uB5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=/wgIjX1dU2wQH6kmt/wxBh8DEI9OC0fPRFaMU5c+19U=;
-        b=E6XaYTUysM5GJojTbuA+SSAwMQN0i4HyRW/8LPgUr/oDDWI4Xh9ylRY5013KekdVB1
-         8fy+JfmKfwNHAsQrYwQx0OJHUIV/9LNdUJ7i6TCb2SnmS7U5I/ClWosgrHD2FZYFkRfP
-         XFUzcAFvMjGtDfQDPN83LA+K9X+XO44wpcg4GATF0rm4akiH9SjBsa1KcisyKjSjwkLb
-         3X97L/8Mtf7kNmMPCTHbReBYLrQUkjc2aCtxgT1jIrjFRq3Jio3Xix6R82ZVpSej0x/t
-         obqBEMEGsT5Duwdq4mImp5bvRCi/0fmXp7A43pWVv6+7KXdaVZnbAe4k5+O5q0lMfckT
-         r4zQ==
-X-Gm-Message-State: APjAAAXFxLeM4cOCowm1L0fn06JQNqOIDX5ZmJOCosRZoFl0fCPZ8QdB
-        BguEtTdcR59cyncOYsmuzWc=
-X-Google-Smtp-Source: APXvYqzdu1sTCj4NZqYSRC6slwAaJGOIFip0P2vewuNZ7htej3nWePVTXo/8UzTYLV9SDoAn/6Sq9A==
-X-Received: by 2002:a37:9f94:: with SMTP id i142mr582854qke.244.1576519343375;
-        Mon, 16 Dec 2019 10:02:23 -0800 (PST)
-Received: from iclxps (c-73-129-26-117.hsd1.md.comcast.net. [73.129.26.117])
-        by smtp.gmail.com with ESMTPSA id r41sm7101996qtc.6.2019.12.16.10.02.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 10:02:22 -0800 (PST)
-Message-ID: <2e689322e9c07a062454eed51b318d4c0b29799c.camel@gmail.com>
-Subject: Re: [PATCH v5 2/4] lib: devres: add a helper function for ioremap_uc
-From:   Tuowen Zhao <ztuowen@gmail.com>
-To:     Greg KH <greg@kroah.com>
-Cc:     Sasha Levin <sashal@kernel.org>, lee.jones@linaro.org,
-        linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        mika.westerberg@linux.intel.com, stable@vger.kernel.org,
-        linux@roeck-us.net
-Date:   Mon, 16 Dec 2019 13:02:21 -0500
-In-Reply-To: <20191216130634.GA1563846@kroah.com>
-References: <20191016210629.1005086-3-ztuowen@gmail.com>
-         <20191017143144.9985421848@mail.kernel.org>
-         <b113dd8da86934acc90859dc592e0234fa88cfdc.camel@gmail.com>
-         <20191018164738.GY31224@sasha-vm>
-         <7eb0ed7d51b53f7d720a78d9b959c462adb850d4.camel@gmail.com>
-         <20191216130634.GA1563846@kroah.com>
-Content-Type: text/plain
-User-Agent: Evolution 3.34.2 
+        id S1729964AbfLPSGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:06:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729954AbfLPSGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:06:18 -0500
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B2072166E
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 18:06:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576519577;
+        bh=S5EzSfr7uz1asgFND7AidBJiY1qcdryqnWh8OXVt/z8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TEhdLnktDkneS2U8ScbsupaPjrRyLgXviGmjv8fyXhwceZZdPuBlDvLwgGj1XN2ep
+         MqB4YXvCEMCZpAipLQv21MJ7GuyG7fzDDtJa8lYOoycO5iWHrTUWpBooPwnINxpV1U
+         pSba1UJsUlpjXkMnIi/z/5TRpZ5CLIuca3hlHI5Q=
+Received: by mail-wr1-f54.google.com with SMTP id c9so8443761wrw.8
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 10:06:17 -0800 (PST)
+X-Gm-Message-State: APjAAAWSRo9wmIcudj4QM1jGrSarHvN/Egxm8pHuwgt0RlAXbaNJlZsv
+        VngZhXi1A66K9Fox+5ZlwB6Lb91GY/PcfX1zCdl37A==
+X-Google-Smtp-Source: APXvYqzNIPecnAEIIuC3AYqmcV/03RxgmHT8yLHLhfcvyzkeze3OiCVXOUVH+z/9oav+2xiJixtULNy2GAZ80uDWYuI=
+X-Received: by 2002:adf:eb09:: with SMTP id s9mr33046847wrn.61.1576519575849;
+ Mon, 16 Dec 2019 10:06:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <CALCETrW+qxrE633qetS4c1Rn2AX_hk5OgneZRtoZPFN1J395Ng@mail.gmail.com>
+ <20191121185303.GB199273@romley-ivt3.sc.intel.com> <20191121202508.GZ4097@hirez.programming.kicks-ass.net>
+ <CALCETrXbe_q07kL1AyaNaAqgUHsdN6rEDzzZ0CEtv-k9VvQL0A@mail.gmail.com>
+ <20191122092555.GA4097@hirez.programming.kicks-ass.net> <3908561D78D1C84285E8C5FCA982C28F7F4DD19F@ORSMSX115.amr.corp.intel.com>
+ <20191122203105.GE2844@hirez.programming.kicks-ass.net> <CALCETrVjXC7RHZCkAcWEeCrJq7DPeVBooK8S3mG0LT8q9AxvPw@mail.gmail.com>
+ <20191211175202.GQ2827@hirez.programming.kicks-ass.net> <CALCETrXUZ790WFk9SEzuiKg-wMva=RpWhZNYPf+MqzT0xdu+gg@mail.gmail.com>
+ <20191211223407.GT2844@hirez.programming.kicks-ass.net> <CALCETrUr+LwpQm5caeKgXGhaZ87HmcNn4wTsmkPzTEptp6sC6g@mail.gmail.com>
+ <8d880a468c6242b9a951a83716ddeb07@AcuMS.aculab.com> <CALCETrW1LDuzcnvav=MY1bUv4jQ25n30La5m5x8tXfDknfV_cQ@mail.gmail.com>
+ <053a199934844aef9745d7398494b5a0@AcuMS.aculab.com>
+In-Reply-To: <053a199934844aef9745d7398494b5a0@AcuMS.aculab.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 16 Dec 2019 10:06:03 -0800
+X-Gmail-Original-Message-ID: <CALCETrWvq9XMTse=9JTtnVYY+U2pGcF-nP=YHvEFq4htxbfGwA@mail.gmail.com>
+Message-ID: <CALCETrWvq9XMTse=9JTtnVYY+U2pGcF-nP=YHvEFq4htxbfGwA@mail.gmail.com>
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks, sorry for the trouble.
+On Mon, Dec 16, 2019 at 9:45 AM David Laight <David.Laight@aculab.com> wrote:
+>
+> From: Andy Lutomirski
+> > Sent: 16 December 2019 17:23
+> ...
+> > I'm talking specifically about x86 here, where, for example, "Reads
+> > are not reordered with other reads".  So READ_ONCE *does* have
+> > sequencing requirements on the CPUs.
+> >
+> > Feel free to replace READ_ONCE with MOV in your head if you like :)
+>
+> I got a little confused because I thought your reference to READ_ONCE()
+> was relevant.
+>
+> Sometimes remembering all this gets hard.
+> The docs about the effects of LFENCE and MFENCE don't really help
+> (they make my brain hurt).
+> I'm pretty sure I've decided in the past they are almost never needed.
+>
 
-Tuowen
+Me too.
 
+This whole discussion is about the fact that PeterZ is sceptical that
+actual x86 CPUs have as strong a memory model as the SDM suggests, and
+I'm trying to understand the exact concern.  This may or may not be
+directly relevant to the kernel. :)
+
+> Usually the ordering of reads doesn't help you.
+> IIRC If locations 'a' and 'b' get changed from 0 to 1 it is perfectly possible
+> for one cpu to see a==0, b==1 and another a==1, b==0 even
+> though both read a then b.
+> (On non-alpha this may require different cpus update a and b.)
+>
+
+x86 mostly prevents this.
