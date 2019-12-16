@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2537B121696
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:30:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C01ED121693
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:30:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731015AbfLPSMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:12:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58072 "EHLO mail.kernel.org"
+        id S1731023AbfLPSMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:12:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730993AbfLPSMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:12:45 -0500
+        id S1730426AbfLPSMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:12:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9E5F21582;
-        Mon, 16 Dec 2019 18:12:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 692BF206E0;
+        Mon, 16 Dec 2019 18:12:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519964;
-        bh=AXCS24bMiz5Bb0xzUxIt8oDfRwDtdzooXWjmdPF5MMU=;
+        s=default; t=1576519966;
+        bh=dC3BKaGzyD47C+7JPgiEYv4kee05d9UvGB56Gy5Cp5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YgCAg100FfxCvyj7YyG764Zerannu28cnfBUnMTbpPg6odq3Xl0WwNjyhubuibtOS
-         JbgGTAWS0ONsIlV7oq40KmUSSG1yi1kK2q5oDxbRVYoQr0GiP35cyCseZ2MNi/y0aU
-         8FyADy+tEtcb6StD/KgE67y3VFijfq/fY0iuWcCY=
+        b=0upomm0TybHa99mzbrtJd//lqMknf7rq6RDy1heACa5Cra2QqZGYuxGcR4yvTEmji
+         3ieTvMJW/RQzB378j3JFWG+oLF+kTax9GtqcujP+U+1LBRsG8/sCzOlkCtRzW0eIxg
+         Nx9RBBDhCksGetViCCkT5nYR4eEU6JswAskhEA68=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arun Easi <aeasi@marvell.com>,
+        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
         Himanshu Madhani <hmadhani@marvell.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 141/180] scsi: qla2xxx: Fix NVMe port discovery after a short device port loss
-Date:   Mon, 16 Dec 2019 18:49:41 +0100
-Message-Id: <20191216174843.037897728@linuxfoundation.org>
+Subject: [PATCH 5.3 142/180] scsi: qla2xxx: Fix hang in fcport delete path
+Date:   Mon, 16 Dec 2019 18:49:42 +0100
+Message-Id: <20191216174843.143052148@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
 References: <20191216174806.018988360@linuxfoundation.org>
@@ -45,60 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arun Easi <aeasi@marvell.com>
+From: Quinn Tran <qutran@marvell.com>
 
-[ Upstream commit 9e744591ef1b8df27c25c68dac858dada8688f77 ]
+[ Upstream commit f00b3428a801758243693e046b34226e92bc56b3 ]
 
-The following sequence of event leads to NVME port disappearing:
+A hang was observed in the fcport delete path when the device was
+responding slow and an issue-lip path (results in session termination) was
+taken.
 
-    - device port shut
-    - nvme_fc_unregister_remoteport
-    - device port online
-    - remote port delete completes
-    - relogin is scheduled
-    - "post gidpn" message appears due to rscn generation # mismatch
+Fix this by issuing logo requests unconditionally.
 
-In short, if a device comes back online sooner than an unregister
-completion, a mismatch in rscn generation number occurs, which is not
-handled correctly during device relogin. Fix this by starting with a redo
-of GNL.
+PID: 19491  TASK: ffff8e23e67bb150  CPU: 0   COMMAND: "kworker/0:0"
+ #0 [ffff8e2370297bf8] __schedule at ffffffffb4f7dbb0
+ #1 [ffff8e2370297c88] schedule at ffffffffb4f7e199
+ #2 [ffff8e2370297c98] schedule_timeout at ffffffffb4f7ba68
+ #3 [ffff8e2370297d40] msleep at ffffffffb48ad9ff
+ #4 [ffff8e2370297d58] qlt_free_session_done at ffffffffc0c32052 [qla2xxx]
+ #5 [ffff8e2370297e20] process_one_work at ffffffffb48bcfdf
+ #6 [ffff8e2370297e68] worker_thread at ffffffffb48bdca6
+ #7 [ffff8e2370297ec8] kthread at ffffffffb48c4f81
 
-When ql2xextended_error_logging is enabled, the re-plugged device's
-discovery stops with the following messages printed:
-
---8<--
-qla2xxx [0000:41:00.0]-480d:3: Relogin scheduled.
-qla2xxx [0000:41:00.0]-4800:3: DPC handler sleeping.
-qla2xxx [0000:41:00.0]-2902:3: qla24xx_handle_relogin_event 21:00:00:24:ff:17:9e:91 DS 0 LS 7 P 0 del 2 cnfl
-   (null) rscn 1|2 login 1|2 fl 1
-qla2xxx [0000:41:00.0]-28e9:3: qla24xx_handle_relogin_event 1666 21:00:00:24:ff:17:9e:91 post gidpn
-qla2xxx [0000:41:00.0]-480e:3: Relogin end.
---8<--
-
-Signed-off-by: Arun Easi <aeasi@marvell.com>
+Signed-off-by: Quinn Tran <qutran@marvell.com>
 Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_init.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index a75a40b14140a..2c617a34ae1e7 100644
+index 2c617a34ae1e7..2f39ed9c66d64 100644
 --- a/drivers/scsi/qla2xxx/qla_init.c
 +++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1712,9 +1712,9 @@ void qla24xx_handle_relogin_event(scsi_qla_host_t *vha,
- 	}
+@@ -396,9 +396,6 @@ qla2x00_async_logout(struct scsi_qla_host *vha, fc_port_t *fcport)
+ 	struct srb_iocb *lio;
+ 	int rval = QLA_FUNCTION_FAILED;
  
- 	if (fcport->last_rscn_gen != fcport->rscn_gen) {
--		ql_dbg(ql_dbg_disc, vha, 0x20e9, "%s %d %8phC post gidpn\n",
-+		ql_dbg(ql_dbg_disc, vha, 0x20e9, "%s %d %8phC post gnl\n",
- 		    __func__, __LINE__, fcport->port_name);
+-	if (!vha->flags.online || (fcport->flags & FCF_ASYNC_SENT))
+-		return rval;
 -
-+		qla24xx_post_gnl_work(vha, fcport);
- 		return;
- 	}
- 
+ 	fcport->flags |= FCF_ASYNC_SENT;
+ 	sp = qla2x00_get_sp(vha, fcport, GFP_KERNEL);
+ 	if (!sp)
 -- 
 2.20.1
 
