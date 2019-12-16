@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACF6B1214B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D86B5121550
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:21:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730811AbfLPSOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:14:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60644 "EHLO mail.kernel.org"
+        id S1731820AbfLPSUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:20:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730830AbfLPSNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:13:53 -0500
+        id S1732119AbfLPSUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:20:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53CAC207FF;
-        Mon, 16 Dec 2019 18:13:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 641E4207FF;
+        Mon, 16 Dec 2019 18:20:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520032;
-        bh=xIAUMyEs4IxOo03+cfmn9uPZNxEon7WbX0KauaAyN3Q=;
+        s=default; t=1576520438;
+        bh=lGK49QzGsn6Km4EKllpGnP8ptxHvw55hR+s6dVJYePY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QyFdjh+ldUz+Q1BjNf5+CMjhhxKrB6+X4Si3iUgplfDCera+5ISqC6UgN99xYkLie
-         q55yZpEtqn8bLn0CYO7lDQVgQ6Hwsq18KIh0i4DCJNrmsSAdZ72cihGW9sQCiL/ij2
-         WhB2GV5EfpwuU3SkbMrDLnMC1JL5tfjDP3Eb721c=
+        b=iICiR5tcxRvT5gXwZFiOLhJfqfJnEbR/2WCOTCX9tFCS858dn0oyxAz1vjubS7PNW
+         uNB5OnrmcSaFHbN85M7HPnurjvwPNDjmbLG8hOhRo+UyVwtwLn2rJzT8NY5CxbvpO5
+         jFGoexArmp6dgFSPbi3E7yNDTqCgBSg3Y/0MZMSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Geoffray <ngeoffray@google.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Hugh Dickins <hughd@google.com>, Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.3 170/180] mm, memfd: fix COW issue on MAP_PRIVATE and F_SEAL_FUTURE_WRITE mappings
-Date:   Mon, 16 Dec 2019 18:50:10 +0100
-Message-Id: <20191216174847.528262321@linuxfoundation.org>
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Quinn Tran <qutran@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 155/177] scsi: qla2xxx: Fix SRB leak on switch command timeout
+Date:   Mon, 16 Dec 2019 18:50:11 +0100
+Message-Id: <20191216174848.492793496@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,90 +46,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Geoffray <ngeoffray@google.com>
+From: Quinn Tran <qutran@marvell.com>
 
-commit 05d351102dbe4e103d6bdac18b1122cd3cd04925 upstream.
+[ Upstream commit af2a0c51b1205327f55a7e82e530403ae1d42cbb ]
 
-F_SEAL_FUTURE_WRITE has unexpected behavior when used with MAP_PRIVATE:
-A private mapping created after the memfd file that gets sealed with
-F_SEAL_FUTURE_WRITE loses the copy-on-write at fork behavior, meaning
-children and parent share the same memory, even though the mapping is
-private.
+when GPSC/GPDB switch command fails, driver just returns without doing a
+proper cleanup. This patch fixes this memory leak by calling sp->free() in
+the error path.
 
-The reason for this is due to the code below:
-
-  static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
-  {
-        struct shmem_inode_info *info = SHMEM_I(file_inode(file));
-
-        if (info->seals & F_SEAL_FUTURE_WRITE) {
-                /*
-                 * New PROT_WRITE and MAP_SHARED mmaps are not allowed when
-                 * "future write" seal active.
-                 */
-                if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_WRITE))
-                        return -EPERM;
-
-                /*
-                 * Since the F_SEAL_FUTURE_WRITE seals allow for a MAP_SHARED
-                 * read-only mapping, take care to not allow mprotect to revert
-                 * protections.
-                 */
-                vma->vm_flags &= ~(VM_MAYWRITE);
-        }
-        ...
-  }
-
-And for the mm to know if a mapping is copy-on-write:
-
-  static inline bool is_cow_mapping(vm_flags_t flags)
-  {
-        return (flags & (VM_SHARED | VM_MAYWRITE)) == VM_MAYWRITE;
-  }
-
-The patch fixes the issue by making the mprotect revert protection
-happen only for shared mappings.  For private mappings, using mprotect
-will have no effect on the seal behavior.
-
-The F_SEAL_FUTURE_WRITE feature was introduced in v5.1 so v5.3.x stable
-kernels would need a backport.
-
-[akpm@linux-foundation.org: reflow comment, per Christoph]
-Link: http://lkml.kernel.org/r/20191107195355.80608-1-joel@joelfernandes.org
-Fixes: ab3948f58ff84 ("mm/memfd: add an F_SEAL_FUTURE_WRITE seal to memfd")
-Signed-off-by: Nicolas Geoffray <ngeoffray@google.com>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: https://lore.kernel.org/r/20191105150657.8092-4-hmadhani@marvell.com
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Quinn Tran <qutran@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/shmem.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/scsi/qla2xxx/qla_gs.c   |  2 +-
+ drivers/scsi/qla2xxx/qla_init.c | 11 +++++------
+ drivers/scsi/qla2xxx/qla_mbx.c  |  4 ----
+ drivers/scsi/qla2xxx/qla_mid.c  | 11 ++++-------
+ drivers/scsi/qla2xxx/qla_os.c   |  7 ++++++-
+ 5 files changed, 16 insertions(+), 19 deletions(-)
 
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2198,11 +2198,14 @@ static int shmem_mmap(struct file *file,
- 			return -EPERM;
+diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
+index 5298ed10059f2..84bb4a0480166 100644
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -3005,7 +3005,7 @@ static void qla24xx_async_gpsc_sp_done(srb_t *sp, int res)
+ 	fcport->flags &= ~(FCF_ASYNC_SENT | FCF_ASYNC_ACTIVE);
  
- 		/*
--		 * Since the F_SEAL_FUTURE_WRITE seals allow for a MAP_SHARED
--		 * read-only mapping, take care to not allow mprotect to revert
--		 * protections.
-+		 * Since an F_SEAL_FUTURE_WRITE sealed memfd can be mapped as
-+		 * MAP_SHARED and read-only, take care to not allow mprotect to
-+		 * revert protections on such mappings. Do this only for shared
-+		 * mappings. For private mappings, don't need to mask
-+		 * VM_MAYWRITE as we still want them to be COW-writable.
- 		 */
--		vma->vm_flags &= ~(VM_MAYWRITE);
-+		if (vma->vm_flags & VM_SHARED)
-+			vma->vm_flags &= ~(VM_MAYWRITE);
+ 	if (res == QLA_FUNCTION_TIMEOUT)
+-		return;
++		goto done;
+ 
+ 	if (res == (DID_ERROR << 16)) {
+ 		/* entry status error */
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 8c0aae937c1f7..d400b51929a6e 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -1153,19 +1153,18 @@ static void qla24xx_async_gpdb_sp_done(srb_t *sp, int res)
+ 	    "Async done-%s res %x, WWPN %8phC mb[1]=%x mb[2]=%x \n",
+ 	    sp->name, res, fcport->port_name, mb[1], mb[2]);
+ 
+-	if (res == QLA_FUNCTION_TIMEOUT) {
+-		dma_pool_free(sp->vha->hw->s_dma_pool, sp->u.iocb_cmd.u.mbx.in,
+-			sp->u.iocb_cmd.u.mbx.in_dma);
+-		return;
+-	}
+-
+ 	fcport->flags &= ~(FCF_ASYNC_SENT | FCF_ASYNC_ACTIVE);
++
++	if (res == QLA_FUNCTION_TIMEOUT)
++		goto done;
++
+ 	memset(&ea, 0, sizeof(ea));
+ 	ea.fcport = fcport;
+ 	ea.sp = sp;
+ 
+ 	qla24xx_handle_gpdb_event(vha, &ea);
+ 
++done:
+ 	dma_pool_free(ha->s_dma_pool, sp->u.iocb_cmd.u.mbx.in,
+ 		sp->u.iocb_cmd.u.mbx.in_dma);
+ 
+diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
+index 4a1f21c11758e..4d90cf101f5fc 100644
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -6287,17 +6287,13 @@ int qla24xx_send_mb_cmd(struct scsi_qla_host *vha, mbx_cmd_t *mcp)
+ 	case  QLA_SUCCESS:
+ 		ql_dbg(ql_dbg_mbx, vha, 0x119d, "%s: %s done.\n",
+ 		    __func__, sp->name);
+-		sp->free(sp);
+ 		break;
+ 	default:
+ 		ql_dbg(ql_dbg_mbx, vha, 0x119e, "%s: %s Failed. %x.\n",
+ 		    __func__, sp->name, rval);
+-		sp->free(sp);
+ 		break;
  	}
  
- 	file_accessed(file);
+-	return rval;
+-
+ done_free_sp:
+ 	sp->free(sp);
+ done:
+diff --git a/drivers/scsi/qla2xxx/qla_mid.c b/drivers/scsi/qla2xxx/qla_mid.c
+index 238240984bc15..eabc5127174ed 100644
+--- a/drivers/scsi/qla2xxx/qla_mid.c
++++ b/drivers/scsi/qla2xxx/qla_mid.c
+@@ -946,7 +946,7 @@ int qla24xx_control_vp(scsi_qla_host_t *vha, int cmd)
+ 
+ 	sp = qla2x00_get_sp(base_vha, NULL, GFP_KERNEL);
+ 	if (!sp)
+-		goto done;
++		return rval;
+ 
+ 	sp->type = SRB_CTRL_VP;
+ 	sp->name = "ctrl_vp";
+@@ -962,7 +962,7 @@ int qla24xx_control_vp(scsi_qla_host_t *vha, int cmd)
+ 		ql_dbg(ql_dbg_async, vha, 0xffff,
+ 		    "%s: %s Failed submission. %x.\n",
+ 		    __func__, sp->name, rval);
+-		goto done_free_sp;
++		goto done;
+ 	}
+ 
+ 	ql_dbg(ql_dbg_vport, vha, 0x113f, "%s hndl %x submitted\n",
+@@ -980,16 +980,13 @@ int qla24xx_control_vp(scsi_qla_host_t *vha, int cmd)
+ 	case QLA_SUCCESS:
+ 		ql_dbg(ql_dbg_vport, vha, 0xffff, "%s: %s done.\n",
+ 		    __func__, sp->name);
+-		goto done_free_sp;
++		break;
+ 	default:
+ 		ql_dbg(ql_dbg_vport, vha, 0xffff, "%s: %s Failed. %x.\n",
+ 		    __func__, sp->name, rval);
+-		goto done_free_sp;
++		break;
+ 	}
+ done:
+-	return rval;
+-
+-done_free_sp:
+ 	sp->free(sp);
+ 	return rval;
+ }
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 909c61cbf0fce..23c3927751637 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -986,7 +986,7 @@ qla2xxx_mqueuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd,
+ 		ql_dbg(ql_dbg_io + ql_dbg_verbose, vha, 0x3078,
+ 		    "Start scsi failed rval=%d for cmd=%p.\n", rval, cmd);
+ 		if (rval == QLA_INTERFACE_ERROR)
+-			goto qc24_fail_command;
++			goto qc24_free_sp_fail_command;
+ 		goto qc24_host_busy_free_sp;
+ 	}
+ 
+@@ -1000,6 +1000,11 @@ qc24_host_busy_free_sp:
+ qc24_target_busy:
+ 	return SCSI_MLQUEUE_TARGET_BUSY;
+ 
++qc24_free_sp_fail_command:
++	sp->free(sp);
++	CMD_SP(cmd) = NULL;
++	qla2xxx_rel_qpair_sp(sp->qpair, sp);
++
+ qc24_fail_command:
+ 	cmd->scsi_done(cmd);
+ 
+-- 
+2.20.1
+
 
 
