@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0580A121431
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D130D12162C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:27:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730382AbfLPSJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:09:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51170 "EHLO mail.kernel.org"
+        id S1731453AbfLPSQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729891AbfLPSJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:08 -0500
+        id S1731441AbfLPSPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:15:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30F0D20700;
-        Mon, 16 Dec 2019 18:09:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E830C2082E;
+        Mon, 16 Dec 2019 18:15:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519747;
-        bh=40JMI6VQBZQYGPRBCqC1Q5JsXnBsyZXglDSKlZdoUug=;
+        s=default; t=1576520154;
+        bh=uvmuwkss42ULQYKZk7SlI3MEFf+rMhPfU9Iz/mewulQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHfyQE/ghK/10I4kTKsQejYy6aaMdSM3a7ZZdgGCeWQQCj+rTmBFxon/EWzx+7oF9
-         1+v+biNS07RRQkNBmTHt85Vjd4KJ16jNGBoB3krECnLUvmb3+7a/JYuLsSkgCyx7lI
-         MpgsiCxzlbDzNh7Dqc9lDMqSWSVnZLt9BHk6E5Sk=
+        b=gYR2Hlu4Q7SeK9m9KVPzUGbZKvHLK78IiwWr8wjrxtmgOXADcSU60PchAjiB3AQdC
+         pi6FST86+fhgsh8+nrxMl23Rb3HLkOfYUgvZf8dd0mqs/WNqrQynpU5BmMyAlADvPN
+         nuLlwy7YNp4vuDESkXATH8L1+Xz8m4FE4ZO57lpQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@denx.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 5.3 052/180] phy: renesas: rcar-gen3-usb2: Fix sysfs interface of "role"
-Date:   Mon, 16 Dec 2019 18:48:12 +0100
-Message-Id: <20191216174823.569732139@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.4 037/177] iio: adis16480: Add debugfs_reg_access entry
+Date:   Mon, 16 Dec 2019 18:48:13 +0100
+Message-Id: <20191216174828.760843408@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Nuno Sá <nuno.sa@analog.com>
 
-commit 4bd5ead82d4b877ebe41daf95f28cda53205b039 upstream.
+commit 4c35b7a51e2f291471f7221d112c6a45c63e83bc upstream.
 
-Since the role_store() uses strncmp(), it's possible to refer
-out-of-memory if the sysfs data size is smaller than strlen("host").
-This patch fixes it by using sysfs_streq() instead of strncmp().
+The driver is defining debugfs entries by calling
+`adis16480_debugfs_init()`. However, those entries are attached to the
+iio_dev debugfs entry which won't exist if no debugfs_reg_access
+callback is provided.
 
-Reported-by: Pavel Machek <pavel@denx.de>
-Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
-Cc: <stable@vger.kernel.org> # v4.10+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Pavel Machek <pavel@denx.de>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Fixes: 2f3abe6cbb6c ("iio:imu: Add support for the ADIS16480 and similar IMUs")
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/iio/imu/adis16480.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -21,6 +21,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/string.h>
- #include <linux/usb/of.h>
- #include <linux/workqueue.h>
+--- a/drivers/iio/imu/adis16480.c
++++ b/drivers/iio/imu/adis16480.c
+@@ -919,6 +919,7 @@ static const struct iio_info adis16480_i
+ 	.read_raw = &adis16480_read_raw,
+ 	.write_raw = &adis16480_write_raw,
+ 	.update_scan_mode = adis_update_scan_mode,
++	.debugfs_reg_access = adis_debugfs_reg_access,
+ };
  
-@@ -320,9 +321,9 @@ static ssize_t role_store(struct device
- 	if (!ch->is_otg_channel || !rcar_gen3_is_any_rphy_initialized(ch))
- 		return -EIO;
- 
--	if (!strncmp(buf, "host", strlen("host")))
-+	if (sysfs_streq(buf, "host"))
- 		new_mode = PHY_MODE_USB_HOST;
--	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
-+	else if (sysfs_streq(buf, "peripheral"))
- 		new_mode = PHY_MODE_USB_DEVICE;
- 	else
- 		return -EINVAL;
+ static int adis16480_stop_device(struct iio_dev *indio_dev)
 
 
