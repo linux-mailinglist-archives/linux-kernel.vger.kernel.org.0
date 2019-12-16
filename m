@@ -2,41 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACED7121241
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF74D121282
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:53:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfLPRvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:51:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40776 "EHLO mail.kernel.org"
+        id S1727709AbfLPRxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:53:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbfLPRvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:51:06 -0500
+        id S1727105AbfLPRxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:53:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80ACE206EC;
-        Mon, 16 Dec 2019 17:51:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3416221582;
+        Mon, 16 Dec 2019 17:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518666;
-        bh=lmNlI0Iy1U04FTtoVNG4GxPlCEQXl93btRPK0tuyk5w=;
+        s=default; t=1576518789;
+        bh=C+M+dkqlPuWxaT4c3/MwIJpUvrvzuALHtnCxEPl+/7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QyXd5mAlTiy95I+vjSg4ZGpLs4zM9WM8L7ZKS4wvKCQbjuxM0kwEZnvyNRe7jfjM0
-         O8Gyh4hmWZ2yZGg7LpVE/wr221vmJutSDSbJBxa35pcH2pH8sLzE9VyXUAgpT6H+sy
-         xEkM17QTrQhQq7bsOPr1ihHsYJAnevukUMSVRanE=
+        b=dbaIbYDko0CvmvFHEfvSj4tqZ0v+1HCRWS8WC/i03pd23hQTxfg5W23H+Iv/3Gjh8
+         RgwCNAI6ecMKw9BUm03gKNBiGPW7B7/LGUx5+FLdALrCLUVNuCCQW9DEYvXj5dwPHs
+         i4CrIv9lhR4JmPsiWIgsi8gfct6kGDE2O4+KQ1D0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
-        akpm@linux-foundation.org, bigeasy@linutronix.de, cl@linux.com,
-        keescook@chromium.org, penberg@kernel.org, rientjes@google.com,
-        thgarnie@google.com, tytso@mit.edu, will@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 017/267] sched/core: Avoid spurious lock dependencies
-Date:   Mon, 16 Dec 2019 18:45:43 +0100
-Message-Id: <20191216174850.930105200@linuxfoundation.org>
+        stable@vger.kernel.org, paulhsia <paulhsia@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 018/267] ALSA: pcm: Fix stream lock usage in snd_pcm_period_elapsed()
+Date:   Mon, 16 Dec 2019 18:45:44 +0100
+Message-Id: <20191216174851.027832266@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -49,65 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: paulhsia <paulhsia@chromium.org>
 
-[ Upstream commit ff51ff84d82aea5a889b85f2b9fb3aa2b8691668 ]
+[ Upstream commit f5cdc9d4003a2f66ea57b3edd3e04acc2b1a4439 ]
 
-While seemingly harmless, __sched_fork() does hrtimer_init(), which,
-when DEBUG_OBJETS, can end up doing allocations.
+If the nullity check for `substream->runtime` is outside of the lock
+region, it is possible to have a null runtime in the critical section
+if snd_pcm_detach_substream is called right before the lock.
 
-This then results in the following lock order:
-
-  rq->lock
-    zone->lock.rlock
-      batched_entropy_u64.lock
-
-Which in turn causes deadlocks when we do wakeups while holding that
-batched_entropy lock -- as the random code does.
-
-Solve this by moving __sched_fork() out from under rq->lock. This is
-safe because nothing there relies on rq->lock, as also evident from the
-other __sched_fork() callsite.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Qian Cai <cai@lca.pw>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: akpm@linux-foundation.org
-Cc: bigeasy@linutronix.de
-Cc: cl@linux.com
-Cc: keescook@chromium.org
-Cc: penberg@kernel.org
-Cc: rientjes@google.com
-Cc: thgarnie@google.com
-Cc: tytso@mit.edu
-Cc: will@kernel.org
-Fixes: b7d5dc21072c ("random: add a spinlock_t to struct batched_entropy")
-Link: https://lkml.kernel.org/r/20191001091837.GK4536@hirez.programming.kicks-ass.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: paulhsia <paulhsia@chromium.org>
+Link: https://lore.kernel.org/r/20191112171715.128727-2-paulhsia@chromium.org
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/core/pcm_lib.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bbf8b32fc69ec..97a27726ea217 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5242,10 +5242,11 @@ void init_idle(struct task_struct *idle, int cpu)
- 	struct rq *rq = cpu_rq(cpu);
+diff --git a/sound/core/pcm_lib.c b/sound/core/pcm_lib.c
+index 729a85a6211d6..80453266a2def 100644
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -1803,11 +1803,14 @@ void snd_pcm_period_elapsed(struct snd_pcm_substream *substream)
+ 	struct snd_pcm_runtime *runtime;
  	unsigned long flags;
  
-+	__sched_fork(0, idle);
-+
- 	raw_spin_lock_irqsave(&idle->pi_lock, flags);
- 	raw_spin_lock(&rq->lock);
+-	if (PCM_RUNTIME_CHECK(substream))
++	if (snd_BUG_ON(!substream))
+ 		return;
+-	runtime = substream->runtime;
  
--	__sched_fork(0, idle);
- 	idle->state = TASK_RUNNING;
- 	idle->se.exec_start = sched_clock();
- 	idle->flags |= PF_IDLE;
+ 	snd_pcm_stream_lock_irqsave(substream, flags);
++	if (PCM_RUNTIME_CHECK(substream))
++		goto _unlock;
++	runtime = substream->runtime;
++
+ 	if (!snd_pcm_running(substream) ||
+ 	    snd_pcm_update_hw_ptr0(substream, 1) < 0)
+ 		goto _end;
+@@ -1818,6 +1821,7 @@ void snd_pcm_period_elapsed(struct snd_pcm_substream *substream)
+ #endif
+  _end:
+ 	kill_fasync(&runtime->fasync, SIGIO, POLL_IN);
++ _unlock:
+ 	snd_pcm_stream_unlock_irqrestore(substream, flags);
+ }
+ EXPORT_SYMBOL(snd_pcm_period_elapsed);
 -- 
 2.20.1
 
