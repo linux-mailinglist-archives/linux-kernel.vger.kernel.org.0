@@ -2,232 +2,611 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D99BE1209CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 829DA1209DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:40:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbfLPPgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 10:36:06 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:62130 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728234AbfLPPgF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 10:36:05 -0500
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xBGFZ10r004944;
-        Tue, 17 Dec 2019 00:35:01 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp);
- Tue, 17 Dec 2019 00:35:01 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xBGFZ17Y004938
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 17 Dec 2019 00:35:01 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] kconfig: Add kernel config option for fuzz testing.
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jiri Slaby <jslaby@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
-References: <20191216095955.9886-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <20191216114636.GB1515069@kroah.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <ce36371b-0ca6-5819-2604-65627ce58fc8@i-love.sakura.ne.jp>
-Date:   Tue, 17 Dec 2019 00:35:00 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1728481AbfLPPjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 10:39:05 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45716 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728322AbfLPPjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 10:39:01 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 4860D5A56A57D6BA28D3;
+        Mon, 16 Dec 2019 23:38:53 +0800 (CST)
+Received: from lhrphicprd00229.huawei.com (10.123.41.22) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 16 Dec 2019 23:38:43 +0800
+From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To:     <linux-mm@kvack.org>, <linux-acpi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <x86@kernel.org>
+CC:     Keith Busch <keith.busch@intel.com>, <jglisse@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, <linuxarm@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tao Xu <tao3.xu@intel.com>,
+        Brice Goglin <brice.goglin@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH V6 0/7]  ACPI: Support Generic Initiator proximity domains
+Date:   Mon, 16 Dec 2019 23:38:02 +0800
+Message-ID: <20191216153809.105463-1-Jonathan.Cameron@huawei.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20191216114636.GB1515069@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.123.41.22]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/12/16 20:46, Greg Kroah-Hartman wrote:
-> Why isn't it the job of the fuzzers to keep a blacklist of things they
-> should not do without expecting the system to crash?  Why is it up to
-> the kernel to do that work for them?
+Introduces a new type of NUMA node for cases where we want to represent
+the access characteristics of a non CPU initiator of memory requests,
+as these differ from all those for existing nodes containing CPUs and/or
+memory.
 
-Details will be explained by Dmitry Vyukov.
-In short, fuzzer wants cooperation with the kernel.
+These Generic Initiators are presented by the node access0 class in
+sysfs in the same way as a CPU.   It seems likely that there will be
+usecases in which the best 'CPU' is desired and Generic Initiators
+should be ignored.  The final few patches in this series introduced
+access1 which is a new performance class in the sysfs node description
+which presents only CPU to memory relationships.  Test cases for this
+are described below.
 
->> @@ -633,6 +633,9 @@ static void k_spec(struct vc_data *vc, unsigned char value, char up_flag)
->>  	     kbd->kbdmode == VC_OFF) &&
->>  	     value != KVAL(K_SAK))
->>  		return;		/* SAK is allowed even in raw mode */
->> +	/* Repeating SysRq-t forever causes RCU stalls. */
->> +	if (IS_ENABLED(CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING))
->> +		return;
-> 
-> That does not make sense.  What does this comment mean?
+Thanks to Dan for suggestions on V5.  Most of the changes are
+an attempt to implement what was discussed in that thread.
 
-https://syzkaller.appspot.com/text?tag=CrashLog&x=12eb1e67600000 (already gone)
-reported that a USB fuzz test is triggering SysRq-t until RCU stall happens. We don't
-need to disable whole module only for avoiding RCU stall due to crazy SysRq-t requests.
+The new patch makes it clear that some of the existing naming is perhaps
+more specific than it should be. It may be worth a follow up patch
+to rename from *cpu* to *initiator* in a few places where this might
+cause confusion.
 
-[  563.439044][    C1] ksoftirqd/1     R  running task    28264    16      2 0x80004008
-[  563.447037][    C1] Call Trace:
-[  563.450321][    C1]  sched_show_task.cold+0x2e0/0x359
-[  563.455502][    C1]  show_state_filter+0x164/0x209
-[  563.460421][    C1]  ? fn_caps_on+0x90/0x90
-[  563.464730][    C1]  k_spec+0xdc/0x120
-[  563.468605][    C1]  kbd_event+0x927/0x3790
-[  563.472914][    C1]  ? k_pad+0x720/0x720
-[  563.476964][    C1]  ? mark_held_locks+0xe0/0xe0
-[  563.481791][    C1]  ? sysrq_filter+0xdf/0xeb0
-[  563.486359][    C1]  ? k_pad+0x720/0x720
-[  563.490419][    C1]  input_to_handler+0x3b6/0x4c0
-[  563.495247][    C1]  input_pass_values.part.0+0x2e3/0x720
-[  563.500770][    C1]  input_repeat_key+0x1ee/0x2c0
-[  563.505622][    C1]  ? input_dev_suspend+0x80/0x80
-[  563.510535][    C1]  ? rcu_read_lock_bh_held+0xb0/0xb0
-[  563.515805][    C1]  call_timer_fn+0x179/0x650
-[  563.520385][    C1]  ? input_dev_suspend+0x80/0x80
-[  563.525389][    C1]  ? msleep_interruptible+0x130/0x130
-[  563.531528][    C1]  ? rcu_read_lock_sched_held+0x9c/0xd0
-[  563.537058][    C1]  ? rcu_read_lock_bh_held+0xb0/0xb0
-[  563.542334][    C1]  ? _raw_spin_unlock_irq+0x24/0x30
-[  563.547519][    C1]  ? input_dev_suspend+0x80/0x80
-[  563.552443][    C1]  run_timer_softirq+0x5e3/0x1490
-[  563.557454][    C1]  ? add_timer+0x7a0/0x7a0
-[  563.561853][    C1]  ? rcu_read_lock_sched_held+0x9c/0xd0
-[  563.567377][    C1]  ? rcu_read_lock_bh_held+0xb0/0xb0
-[  563.572644][    C1]  __do_softirq+0x221/0x912
-[  563.577147][    C1]  ? takeover_tasklets+0x720/0x720
-[  563.582246][    C1]  run_ksoftirqd+0x1f/0x40
-[  563.586638][    C1]  smpboot_thread_fn+0x3e8/0x850
-[  563.591640][    C1]  ? smpboot_unregister_percpu_thread+0x190/0x190
-[  563.598031][    C1]  ? __kthread_parkme+0x10a/0x1c0
-[  563.603031][    C1]  ? smpboot_unregister_percpu_thread+0x190/0x190
-[  563.609440][    C1]  kthread+0x318/0x420
-[  563.613746][    C1]  ? kthread_create_on_node+0xf0/0xf0
-[  563.619092][    C1]  ret_from_fork+0x24/0x30
+One outstanding question to highlight in this series is whether
+we should assume all ACPI supporting architectures support Generic
+Initiator domains, or whether to introduce an
+ARCH_HAS_GENERIC_INITIATOR_DOMAINS entry in Kconfig.
+
+Changes since V5:
+
+3 new patches:
+* A fix for a subtlety in how ACPI 6.3 changed part of the HMAT table.
+* Introduction of access1 class to represent characteristics between CPU
+  and memory, ingnoring GIs unlike access0 which includes them.
+* Docs to describe the new access0 class.
+
+Note that I ran a number of test cases for the new class which are
+described at the end of this email.
+
+Changes since V4:
+
+At Rafael's suggestion:
+
+Rebase on top of Dan William's Specific Purpose Memory series as that
+moves srat.c Original patches cherry-picked fine onto mmotm with Dan's
+patches applied.
+
+Applies to mmotm-2019-09-25 +
+https://lore.kernel.org/linux-acpi/156140036490.2951909.1837804994781523185.stgit@dwillia2-desk3.amr.corp.intel.com/
+[PATCH v4 00/10] EFI Specific Purpose Memory Support
+(note there are some trivial conflicts to deal with when applying
+the SPM series).
+
+Change since V3.
+* Rebase.
+
+Changes since RFC V2.
+* RFC dropped as now we have x86 support, so the lack of guards in in the
+  ACPI code etc should now be fine.
+  * Added x86 support.  Note this has only been tested on QEMU as I don't have
+    a convenient x86 NUMA machine to play with.  Note that this fitted together
+      rather differently from arm64 so I'm particularly interested in feedback
+        on the two solutions.
+
+Since RFC V1.
+* Fix incorrect interpretation of the ACPI entry noted by Keith Busch
+* Use the acpica headers definitions that are now in mmotm.
+
+It's worth noting that, to safely put a given device in a GI node, may
+require changes to the existing drivers as it's not unusual to assume
+you have local memory or processor core. There may be further constraints
+not yet covered by this patch.
+
+Original cover letter...
+
+ACPI 6.3 introduced a new entity that can be part of a NUMA proximity domain.
+It may share such a domain with the existing options (memory, CPU etc) but it
+may also exist on it's own.
+
+The intent is to allow the description of the NUMA properties (particularly
+via HMAT) of accelerators and other initiators of memory activity that are not
+the host processor running the operating system.
+
+This patch set introduces 'just enough' to make them work for arm64 and x86.
+It should be trivial to support other architectures, I just don't suitable
+NUMA systems readily available to test.
+
+There are a few quirks that need to be considered.
+
+1. Fall back nodes
+******************
+
+As pre ACPI 6.3 supporting operating systems do not have Generic Initiator
+Proximity Domains it is possible to specify, via _PXM in DSDT that another
+device is part of such a GI only node.  This currently blows up spectacularly.
+
+Whilst we can obviously 'now' protect against such a situation (see the related
+thread on PCI _PXM support and the  threadripper board identified there as
+also falling into the  problem of using non existent nodes
+https://patchwork.kernel.org/patch/10723311/ ), there is no way to  be sure
+we will never have legacy OSes that are not protected  against this.  It would
+also be 'non ideal' to fallback to  a default node as there may be a better
+(non GI) node to pick  if GI nodes aren't available.
+
+The work around is that we also have a new system wide OSC bit that allows
+an operating system to 'announce' that it supports Generic Initiators.  This
+allows, the firmware to us DSDT magic to 'move' devices between the nodes
+dependent on whether our new nodes are there or not.
+
+2. New ways of assigning a proximity domain for devices
+*******************************************************
+
+Until now, the only way firmware could indicate that a particular device
+(outside the 'special' set of cpus etc) was to be found in a particular
+Proximity Domain by the use of _PXM in DSDT.
+
+That is equally valid with GI domains, but we have new options. The SRAT
+affinity structure includes a handle (ACPI or PCI) to identify devices
+with the system and specify their proximity domain that way.  If both _PXM
+and this are provided, they should give the same answer.
+
+For now this patch set completely ignores that feature as we don't need
+it to start the discussion.  It will form a follow up set at some point
+(if no one else fancies doing it).
+
+Test cases for the access1 class
+********************************
+
+Test cases for Generic Initiator additions to HMAT.
+
+Setup
+
+PXM0 (node 0) - CPU0 CPU1, 2G memory
+PXM1 (node 1) - CPU2 CPU3, 2G memory
+PXM2 (node 2) - CPU4 CPU5, 2G memory
+PXM3 (node 4) - 2G memory (GI in one case below)
+PXM4 (node 3) - GI only.
+
+Config 1:  GI in PXM4 nearer to memory in PXM 3 than CPUs, not direct attached
+
+[    2.384064] acpi/hmat: HMAT: Locality: Flags:00 Type:Access Latency Initiator Domains:4 Target Domains:4 Base:256
+[    2.384913] acpi/hmat:   Initiator-Target[0-0]:1 nsec
+[    2.385190] acpi/hmat:   Initiator-Target[0-1]:9 nsec
+[    2.385736] acpi/hmat:   Initiator-Target[0-2]:9 nsec
+[    2.385984] acpi/hmat:   Initiator-Target[0-3]:9 nsec
+[    2.386447] acpi/hmat:   Initiator-Target[1-0]:9 nsec
+[    2.386740] acpi/hmat:   Initiator-Target[1-1]:1 nsec
+[    2.386964] acpi/hmat:   Initiator-Target[1-2]:9 nsec
+[    2.387174] acpi/hmat:   Initiator-Target[1-3]:9 nsec
+[    2.387624] acpi/hmat:   Initiator-Target[2-0]:9 nsec
+[    2.387953] acpi/hmat:   Initiator-Target[2-1]:9 nsec
+[    2.388155] acpi/hmat:   Initiator-Target[2-2]:1 nsec
+[    2.388607] acpi/hmat:   Initiator-Target[2-3]:9 nsec
+[    2.388861] acpi/hmat:   Initiator-Target[4-0]:13 nsec
+[    2.389126] acpi/hmat:   Initiator-Target[4-1]:13 nsec
+[    2.389574] acpi/hmat:   Initiator-Target[4-2]:13 nsec
+[    2.389805] acpi/hmat:   Initiator-Target[4-3]:5 nsec
+
+# Sysfs reads the same for nodes 0-2 for access0 and access1 as no GI involved.
+
+/sys/bus/node/devices/...
+    node0 #1 and 2 similar.
+        access0
+            initiators
+                node0
+                read_bandwidth  0 #not specificed in hmat
+                read_latency    1
+                write_bandwidth 0
+                write_latency   1
+            power
+            targets
+                node0
+            uevent
+        access1
+            initiators
+                node0
+                read_bandwidth  0
+                read_latency    1
+                write_bandwidth 0
+                read_bandwidth  1   
+            power
+            targets
+                node 0
+            uevent
+        compact
+        cpu0
+        cpu1
+        ...
+    node3 # Note PXM 4, contains GI only
+        access0
+            initiators
+                *empty*
+            power
+            targets
+                node4
+            uevent
+        compact
+        ...
+    node4
+        access0
+            initiators
+                node3
+                read_bandwidth  0
+                read_latency    5
+                write_bandwidth 0
+                write_latency   5
+            power
+            targets
+                *empty*
+            uevent
+        access1
+            initiators
+                node0
+                node1
+                node2
+                read_bandwidth  0
+                read_latency    9
+                write_bandwidth 0
+                write_latency   9
+            power
+            targets
+                *empty*
+            uevent
+        compact
+        ...
+
+Config 2:  GI in PXM4 further to memory in PXM 3 than CPUs, not direct attached
+
+[    4.073493] acpi/hmat: HMAT: Locality: Flags:00 Type:Access Latency Initiator Domains:4 Target Domains:4 Base:256
+[    4.074785] acpi/hmat:   Initiator-Target[0-0]:1 nsec
+[    4.075150] acpi/hmat:   Initiator-Target[0-1]:9 nsec
+[    4.075423] acpi/hmat:   Initiator-Target[0-2]:9 nsec
+[    4.076184] acpi/hmat:   Initiator-Target[0-3]:9 nsec
+[    4.077116] acpi/hmat:   Initiator-Target[1-0]:9 nsec
+[    4.077366] acpi/hmat:   Initiator-Target[1-1]:1 nsec
+[    4.077640] acpi/hmat:   Initiator-Target[1-2]:9 nsec
+[    4.078156] acpi/hmat:   Initiator-Target[1-3]:9 nsec
+[    4.078471] acpi/hmat:   Initiator-Target[2-0]:9 nsec
+[    4.078994] acpi/hmat:   Initiator-Target[2-1]:9 nsec
+[    4.079277] acpi/hmat:   Initiator-Target[2-2]:1 nsec
+[    4.079505] acpi/hmat:   Initiator-Target[2-3]:9 nsec
+[    4.080126] acpi/hmat:   Initiator-Target[4-0]:13 nsec
+[    4.080995] acpi/hmat:   Initiator-Target[4-1]:13 nsec
+[    4.081351] acpi/hmat:   Initiator-Target[4-2]:13 nsec
+[    4.082125] acpi/hmat:   Initiator-Target[4-3]:13 nsec
+
+/sys/bus/node/devices/...
+    node0 #1 and 2 similar.
+        access0
+            initiators
+                node0
+                read_bandwidth  0 #not specificed in hmat
+                read_latency    1
+                write_bandwidth 0
+                write_latency   1
+            power
+            targets
+                node0
+                node4
+            uevent
+        access1
+            initiators
+                node0
+                read_bandwidth  0
+                read_latency    1
+                write_bandwidth 0
+                read_bandwidth  1   
+            power
+            targets
+                node0
+                node4
+            uevent
+        compact
+        cpu0
+        cpu1
+        ...
+    node3 # Note PXM 4, contains GI only
+        #No accessX directories.
+        compact
+        ...
+    node4
+        access0
+            initiators
+                node0
+                node1
+                node2
+                read_bandwidth  0
+                read_latency    9
+                write_bandwidth 0
+                write_latency   9
+            power
+            targets
+                *empty*
+            uevent
+        access1
+            initiators
+                node0
+                node1
+                node2
+                read_bandwidth  0
+                read_latency    9
+                write_bandwidth 0
+                write_latency   9
+            power
+            targets
+                *empty*
+            uevent
+        compact
+        ...
 
 
+case 3 - as per case 2 but now the memory in node 3 is direct attached to the
+GI but nearer the main nodes (not physically sensible :))
 
->> diff --git a/fs/ioctl.c b/fs/ioctl.c
->> index 2f5e4e5b97e1..f879aa94b118 100644
->> --- a/fs/ioctl.c
->> +++ b/fs/ioctl.c
->> @@ -601,6 +601,11 @@ static int ioctl_fsfreeze(struct file *filp)
->>  	if (sb->s_op->freeze_fs == NULL && sb->s_op->freeze_super == NULL)
->>  		return -EOPNOTSUPP;
->>  
->> +#ifdef CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING
->> +	/* Freezing filesystems causes hung tasks. */
->> +	return -EBUSY;
->> +#endif
-> 
-> ick ick ick.
+/sys/bus/node/devices/...
+    node0 #1 and 2 similar.
+        access0
+            initiators
+                node0
+                read_bandwidth  0 #not specificed in hmat
+                read_latency    1
+                write_bandwidth 0
+                write_latency   1
+            power
+            targets
+                node0
+                node4
+            uevent
+        access1
+            initiators
+                node0
+                read_bandwidth  0
+                read_latency    1
+                write_bandwidth 0
+                read_bandwidth  1   
+            power
+            targets
+                node0
+                node4
+            uevent
+        compact
+        cpu0
+        cpu1
+        ...
+    node3 # Note PXM 4, contains GI only
+        access0
+            initiators
+                *empty*
+            power
+            targets
+                node4
+            uevent
+        compact
+        ...
+    node4
+        access0
+            initiators
+                node3
+                read_bandwidth  0
+                read_latency    13
+                write_bandwidth 0
+                write_latency   13
+            power
+            targets
+                *empty*
+            uevent
+        access1
+            initiators
+                node0
+                node1
+                node2
+                read_bandwidth  0
+                read_latency    9
+                write_bandwidth 0
+                write_latency   9
+            power
+            targets
+                *empty*
+            uevent
+        compact
+        ...
 
-syzbot was failing to blacklist ioctl(FIFREEZE) due to a bug fixed at
-https://lore.kernel.org/linux-fsdevel/03633af8-fab8-a985-c215-f619ea4ded08@I-love.SAKURA.ne.jp/ .
+Case 4 - nearer the GI, but direct attached to one of the CPUS.
+# Another bonkers one.
 
-Then, syzbot was not blacklisting ioctl(EXT4_IOC_SHUTDOWN) which was fixed at
-https://github.com/google/syzkaller/commit/61ed43a86a3721708aeeee72b23bfa1eacd921b2 .
+/sys/bus/node/devices/...
+    node0 #1 similar.
+        access0
+            initiators
+                node0
+                read_bandwidth  0 #not specificed in hmat
+                read_latency    1
+                write_bandwidth 0
+                write_latency   1
+            power
+            targets
+                node0
+                node4
+            uevent
+        access1
+            initiators
+                node0
+                read_bandwidth  0
+                read_latency    1
+                write_bandwidth 0
+                read_bandwidth  1   
+            power
+            targets
+                node0
+            uevent
+        compact
+        cpu0
+        cpu1
+        ...
+    node2 # Direct attached to memory in node 3
+        access0
+            initiators
+                node2
+                read_bandwidth  0 #not specificed in hmat
+                read_latency    1
+                write_bandwidth 0
+                write_latency   1
+            power
+            targets
+                node2
+                node4 #direct attached
+            uevent
+        access1
+            initiators
+                node2
+                read_bandwidth  0
+                read_latency    1
+                write_bandwidth 0
+                read_bandwidth  1   
+            power
+            targets
+                node2
+                node4 #direct attached
+            uevent
+        compact
+        cpu0
+        cpu1
+        ...
 
-These bugs could be fixed (in a whack-a-mole manner) but
+    node3 # Note PXM 4, contains GI only
+        #No accessX directories.
+        compact
+        ...
+    node4
+        access0
+            initiators
+                node3
+                read_bandwidth  0
+                read_latency    13
+                write_bandwidth 0
+                write_latency   13
+            power
+            targets
+                *empty*
+            uevent
+        access1
+            initiators
+                node0
+                node1
+                node2
+                read_bandwidth  0
+                read_latency    9
+                write_bandwidth 0
+                write_latency   9
+            power
+            targets
+                *empty*
+            uevent
+        compact
+        ...
 
->> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
->> index 1ef6f75d92f1..9a2f95a78fef 100644
->> --- a/kernel/printk/printk.c
->> +++ b/kernel/printk/printk.c
->> @@ -1198,6 +1198,14 @@ MODULE_PARM_DESC(ignore_loglevel,
->>  
->>  static bool suppress_message_printing(int level)
->>  {
->> +#ifdef CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING
->> +	/*
->> +	 * Changing console_loglevel causes "no output". But ignoring
->> +	 * console_loglevel is easier than preventing change of
->> +	 * console_loglevel.
->> +	 */
->> +	return (level >= CONSOLE_LOGLEVEL_DEFAULT && !ignore_loglevel);
->> +#endif
-> 
-> I don't understand the need for this change at all.
+case 5 memory and GI together in node 3 (added an extra GI to node 3)
+Note hmat should also reflect this extra initiator domain.
 
-this case was too hard to blacklist, as explained at
-https://lore.kernel.org/lkml/4d1a4b51-999b-63c6-5ce3-a704013cecb6@i-love.sakura.ne.jp/ .
-syz_execute_func() can find deeper bug by executing arbitrary binary code, but
-we cannot blacklist specific syscalls/arguments for syz_execute_func() testcases.
-Unless we guard on the kernel side, we won't be able to re-enable syz_execute_func()
-testcases.
+/sys/bus/node/devices/...
+    node0 #1 and 2 similar.
+        access0
+            initiators
+                node0
+                read_bandwidth  0 #not specificed in hmat
+                read_latency    1
+                write_bandwidth 0
+                write_latency   1
+            power
+            targets
+                node0
+                node4
+            uevent
+        access1
+            initiators
+                node0
+                read_bandwidth  0
+                read_latency    1
+                write_bandwidth 0
+                read_bandwidth  1   
+            power
+            targets
+                node0
+            uevent
+        compact
+        cpu0
+        cpu1
+        ...
+    node3 # Note PXM 3, contains GI only
+        #No accessX directories.
+        compact
+        ...
+    node4 # Now memory and GI.
+        access0
+            initiators
+                node4
+                read_bandwidth  0
+                read_latency    1
+                write_bandwidth 0
+                write_latency   1
+            power
+            targets
+                node4
+            uevent
+        access1
+            initiators
+                node0
+                node1
+                node2
+                read_bandwidth  0
+                read_latency    9
+                write_bandwidth 0
+                write_latency   9
+            power
+            targets
+                *empty* # as expected GI doesn't paticipate in access 1.
+            uevent
+        compact
+        ...
 
-> 
->>  	return (level >= console_loglevel && !ignore_loglevel);
->>  }
->>  
+Jonathan Cameron (7):
+  ACPI: Support Generic Initiator only domains
+  arm64: Support Generic Initiator only domains
+  x86: Support Generic Initiator only proximity domains
+  ACPI: Let ACPI know we support Generic Initiator Affinity Structures
+  ACPI: HMAT: Fix handling of changes from ACPI 6.2 to ACPI 6.3
+  node: Add access1 class to represent CPU to memory characteristics
+  docs: mm: numaperf.rst Add brief description for access class 1.
 
-Also, although ability to interpret kernel messages was improved by CONFIG_PRINTK_CALLER
-config option, we still cannot tell whether some string such as "BUG:" "WARNING:" came from
-BUG(), BUG_ON(), WARN(), WARN_ON() etc. Therefore, modules emitting such string causes
-syzbot to report as crash. For example, TOMOYO security module introduced
-CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING in order to allow syzbot to fuzz TOMOYO
-security module, and then extended CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING to
-prevent TOMOYO from emitting "WARNING:" string so that syzbot will not detect it as crash.
+ Documentation/admin-guide/mm/numaperf.rst |  8 ++
+ arch/arm64/kernel/smp.c                   |  8 ++
+ arch/x86/include/asm/numa.h               |  2 +
+ arch/x86/kernel/setup.c                   |  1 +
+ arch/x86/mm/numa.c                        | 14 ++++
+ drivers/acpi/bus.c                        |  1 +
+ drivers/acpi/numa/hmat.c                  | 89 ++++++++++++++++++-----
+ drivers/acpi/numa/srat.c                  | 62 +++++++++++++++-
+ drivers/base/node.c                       |  3 +
+ include/asm-generic/topology.h            |  3 +
+ include/linux/acpi.h                      |  1 +
+ include/linux/nodemask.h                  |  1 +
+ include/linux/topology.h                  |  7 ++
+ 13 files changed, 179 insertions(+), 21 deletions(-)
 
-
-commit e80b18599a39a625bc8b2e39ba3004a62f78805a
-Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date:   Fri Apr 12 20:04:54 2019 +0900
-
-    tomoyo: Add a kernel config option for fuzzing testing.
-
-    syzbot is reporting kernel panic triggered by memory allocation fault
-    injection before loading TOMOYO's policy [1]. To make the fuzzing tests
-    useful, we need to assign a profile other than "disabled" (no-op) mode.
-    Therefore, let's allow syzbot to load TOMOYO's built-in policy for
-    "learning" mode using a kernel config option. This option must not be
-    enabled for kernels built for production system, for this option also
-    disables domain/program checks when modifying policy configuration via
-    /sys/kernel/security/tomoyo/ interface.
-
-    [1] https://syzkaller.appspot.com/bug?extid=29569ed06425fcf67a95
-
-    Reported-by: syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
-    Reported-by: syzbot <syzbot+29569ed06425fcf67a95@syzkaller.appspotmail.com>
-    Reported-by: syzbot <syzbot+2ee3f8974c2e7dc69feb@syzkaller.appspotmail.com>
-    Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    Signed-off-by: James Morris <jamorris@linux.microsoft.com>
-
-commit 4ad98ac46490d5f8441025930070eaf028cfd0f2
-Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date:   Tue May 7 20:34:22 2019 +0900
-
-    tomoyo: Don't emit WARNING: string while fuzzing testing.
-
-    Commit cff0e6c3ec3e6230 ("tomoyo: Add a kernel config option for fuzzing
-    testing.") enabled the learning mode, but syzkaller is detecting any
-    "WARNING:" string as a crash. Thus, disable TOMOYO's quota warning if
-    built for fuzzing testing.
-
-    Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    Cc: Dmitry Vyukov <dvyukov@google.com>
-    Signed-off-by: James Morris <jamorris@linux.microsoft.com>
-
-
-As a result of these two patches, TOMOYO is now fuzzed by syzbot. But there are
-other modules emitting these strings. We need to somehow make it possible to
-distinguish whether these string came from BUG(), BUG_ON(), WARN(), WARN_ON() etc.
-in a generically applicable way.
-
-
-
-To summarize, syzbot wants a kernel config option for two purposes:
-
-  (1) Allow syzkaller run testcases as far/deep as possible.
-
-  (2) Prevent syzkaller from generating false alarms.
-
-This is beyond merely maintaining blacklist on the fuzzer side.
+-- 
+2.19.1
 
