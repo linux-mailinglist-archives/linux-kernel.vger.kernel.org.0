@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEDC01214EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4197E121389
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731529AbfLPSQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:16:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38688 "EHLO mail.kernel.org"
+        id S1729365AbfLPSCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:02:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731498AbfLPSQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:16:22 -0500
+        id S1729054AbfLPSCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:02:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8619206EC;
-        Mon, 16 Dec 2019 18:16:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A271218AC;
+        Mon, 16 Dec 2019 18:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520181;
-        bh=3Qd5hzpmn3rrcoWEHRcr2ign7r0UPPijDyHlYd44t70=;
+        s=default; t=1576519350;
+        bh=02OOIG76Z/Iy1EgmCIZzU+/S2CzO0XCskta4452Yzj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w3BiCqKW7grnV2sfnujT/AEy4IPikejqcZ5Poe5bAbYLimoE1JJqhQT8fVVvaImt0
-         gR2NCLRCli14BURJq6VswevTWzRwjIINvBz0wntHX6FExjM2BfQAJvmMYjaYHi+DYv
-         S40cSLfQS8F1UWhL4oJXWNU/rx7W98m4j8te7ov0=
+        b=mEGGMCCBodKZ+IGLPqUonZS2CSjCWdVY0eiI5BH6eH7WPBqdEEeCLHu4F0xXh6g+E
+         TMYqJp9KCoFLbbEsdrgXnYwCKhKlXeBdWrCWJ8Gc5p7nxmgev45tAEUYm4rxLB88hf
+         s/aQMsNRVLVbUHfrmz5Ej6C9TAkoNmKlOIs4ltiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Robert=20W=C3=B6rle?= <rwoerle@mibtec.de>,
-        Beniamin Bia <beniamin.bia@analog.com>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.4 042/177] iio: adc: ad7606: fix reading unnecessary data from device
+        stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.19 030/140] mtd: spear_smi: Fix Write Burst mode
 Date:   Mon, 16 Dec 2019 18:48:18 +0100
-Message-Id: <20191216174829.672720972@linuxfoundation.org>
+Message-Id: <20191216174757.854872981@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Beniamin Bia <beniamin.bia@analog.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-commit 341826a065660d1b77d89e6335b6095cd654271c upstream.
+commit 69c7f4618c16b4678f8a4949b6bb5ace259c0033 upstream.
 
-When a conversion result is being read from ADC, the driver reads the
-number of channels + 1 because it thinks that IIO_CHAN_SOFT_TIMESTAMP
-is also a physical channel. This patch fixes this issue.
+Any write with either dd or flashcp to a device driven by the
+spear_smi.c driver will pass through the spear_smi_cpy_toio()
+function. This function will get called for chunks of up to 256 bytes.
+If the amount of data is smaller, we may have a problem if the data
+length is not 4-byte aligned. In this situation, the kernel panics
+during the memcpy:
 
-Fixes: 2985a5d88455 ("staging: iio: adc: ad7606: Move out of staging")
-Reported-by: Robert Wörle <rwoerle@mibtec.de>
-Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+    # dd if=/dev/urandom bs=1001 count=1 of=/dev/mtd6
+    spear_smi_cpy_toio [620] dest c9070000, src c7be8800, len 256
+    spear_smi_cpy_toio [620] dest c9070100, src c7be8900, len 256
+    spear_smi_cpy_toio [620] dest c9070200, src c7be8a00, len 256
+    spear_smi_cpy_toio [620] dest c9070300, src c7be8b00, len 233
+    Unhandled fault: external abort on non-linefetch (0x808) at 0xc90703e8
+    [...]
+    PC is at memcpy+0xcc/0x330
+
+The above error occurs because the implementation of memcpy_toio()
+tries to optimize the number of I/O by writing 4 bytes at a time as
+much as possible, until there are less than 4 bytes left and then
+switches to word or byte writes.
+
+Unfortunately, the specification states about the Write Burst mode:
+
+        "the next AHB Write request should point to the next
+	incremented address and should have the same size (byte,
+	half-word or word)"
+
+This means ARM architecture implementation of memcpy_toio() cannot
+reliably be used blindly here. Workaround this situation by update the
+write path to stick to byte access when the burst length is not
+multiple of 4.
+
+Fixes: f18dbbb1bfe0 ("mtd: ST SPEAr: Add SMI driver for serial NOR flash")
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/ad7606.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/devices/spear_smi.c |   38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -85,7 +85,7 @@ err_unlock:
+--- a/drivers/mtd/devices/spear_smi.c
++++ b/drivers/mtd/devices/spear_smi.c
+@@ -592,6 +592,26 @@ static int spear_mtd_read(struct mtd_inf
+ 	return 0;
+ }
  
- static int ad7606_read_samples(struct ad7606_state *st)
++/*
++ * The purpose of this function is to ensure a memcpy_toio() with byte writes
++ * only. Its structure is inspired from the ARM implementation of _memcpy_toio()
++ * which also does single byte writes but cannot be used here as this is just an
++ * implementation detail and not part of the API. Not mentioning the comment
++ * stating that _memcpy_toio() should be optimized.
++ */
++static void spear_smi_memcpy_toio_b(volatile void __iomem *dest,
++				    const void *src, size_t len)
++{
++	const unsigned char *from = src;
++
++	while (len) {
++		len--;
++		writeb(*from, dest);
++		from++;
++		dest++;
++	}
++}
++
+ static inline int spear_smi_cpy_toio(struct spear_smi *dev, u32 bank,
+ 		void __iomem *dest, const void *src, size_t len)
  {
--	unsigned int num = st->chip_info->num_channels;
-+	unsigned int num = st->chip_info->num_channels - 1;
- 	u16 *data = st->data;
- 	int ret;
+@@ -614,7 +634,23 @@ static inline int spear_smi_cpy_toio(str
+ 	ctrlreg1 = readl(dev->io_base + SMI_CR1);
+ 	writel((ctrlreg1 | WB_MODE) & ~SW_MODE, dev->io_base + SMI_CR1);
+ 
+-	memcpy_toio(dest, src, len);
++	/*
++	 * In Write Burst mode (WB_MODE), the specs states that writes must be:
++	 * - incremental
++	 * - of the same size
++	 * The ARM implementation of memcpy_toio() will optimize the number of
++	 * I/O by using as much 4-byte writes as possible, surrounded by
++	 * 2-byte/1-byte access if:
++	 * - the destination is not 4-byte aligned
++	 * - the length is not a multiple of 4-byte.
++	 * Avoid this alternance of write access size by using our own 'byte
++	 * access' helper if at least one of the two conditions above is true.
++	 */
++	if (IS_ALIGNED(len, sizeof(u32)) &&
++	    IS_ALIGNED((uintptr_t)dest, sizeof(u32)))
++		memcpy_toio(dest, src, len);
++	else
++		spear_smi_memcpy_toio_b(dest, src, len);
+ 
+ 	writel(ctrlreg1, dev->io_base + SMI_CR1);
  
 
 
