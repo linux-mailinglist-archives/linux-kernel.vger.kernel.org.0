@@ -2,142 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACB671208B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:33:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11A691208B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:35:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbfLPOdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 09:33:10 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:41914 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbfLPOdJ (ORCPT
+        id S1728130AbfLPOeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 09:34:20 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40703 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728014AbfLPOeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 09:33:09 -0500
-Received: by mail-qk1-f196.google.com with SMTP id u5so4614433qkf.8;
-        Mon, 16 Dec 2019 06:33:08 -0800 (PST)
+        Mon, 16 Dec 2019 09:34:20 -0500
+Received: by mail-lf1-f68.google.com with SMTP id i23so4379793lfo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 06:34:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=b3n3Kfle6iU1BrFAyB3vXy4iLossBp48BoHQ88uRT0E=;
-        b=tZI2rIKp+Iecmn0roFCkMpG2UHfHCKdqG8nOdHlVzC99671hMOyodEQMdkSRxMbuY4
-         H0dsHxhgv/MVQzU5N6WRAvjN36Q6j31EmxttJ7gL8hE2TVw+t9QD30371Xhlqy8CM4Wp
-         DdYyEBDpBhyodXRUJLjuFIGnoeI2iiwsX+P8moicEWTuPXCYOsPDUP0zQy9nHxsycl4v
-         b0oDcM2IVRlMXkZeNnPKKoa6KCu/5jX28Iz8D/4U+Rmg4vI2BQ6JrSwWnYF40AtKyPMh
-         t+GwEwreNAhvs8KULWEqccKFnxGUEGYiXmtZIvYBlgkuq6d9MHycpFRzo7+47J2VR4Zb
-         pw7Q==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pM2vtMGjkCHmIe0oJgiVI/NviBKKoDB9ui06H9LZlIA=;
+        b=UPKHs0lmOKBXfEUAz/nm8tJeuBAUhG+Q8xBdh6P1yIaLaqQcJ4oaFdfHx7gGB4Btbv
+         PefH04cuGeHFP/hb7JH0+cAldzLHfRvP/2c741fs0Y5bLwJt+v6gP6JcrRqfKjuY8MqP
+         xgOspbEnFfY4mqB3b6yok0rFPrK+RxmeZ65Xzbq4gODp2mXFhPWfImhIqH9j3knrXqYU
+         RQIOw/IFFzoUylacaB0yYbF8P1B6Lpo9BpnduA0m/Q1L1VxM/0AXnZ71/kAIPKueWSMr
+         pkOLjo8K8yqEAbWlnwnuuQ0Ff8NytFtRqrfgnLP5hCuBzTsfuvEvYRQnoZWMDY38IXsQ
+         dkNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=b3n3Kfle6iU1BrFAyB3vXy4iLossBp48BoHQ88uRT0E=;
-        b=n8r4dRkQoXlDFXn1MxktKbCH/KmKJMUT2n/9po2v18qxnUvVJ6UUaVGiW+y4WmJPfi
-         bCDcQUf1K8Qojz1FdgVDoV2Q9dlPhnFs+A7Ldxo8lJOwQutLla3qffvZo+Bwsmzz9VdJ
-         XtYRpNS/cIRKvVs8OPipzi9WhkHraWgGpfruEfAkA6r22LvcHiW4lO7lwIJjfpDOGhEj
-         5Kf9mEMFecaCGMQPC2m84U/UHEwoyoHGPPl++Wcn21GIg0nh3aWXWlyVwYFldUaYjH6f
-         RDYTj9cBH2u7QtcvfrwdRIVSwPQ4dKAwNWdLOr0IaLBpHMUIbw15ap8aGCK9C5j+6Syd
-         jaiw==
-X-Gm-Message-State: APjAAAVolySh5Kl975Q6AT7ltyhnMvj0AdR6wVtUiyhwjQsY4SbJMHqK
-        i8yqzM0VF1ZTtHI+RdR8d/Y=
-X-Google-Smtp-Source: APXvYqxDYhGdtN/BGOqPRD4pavuWko1kVtlkknI3dzB5zqCUhSKJnF5KjcDgKsDJUNrPC1d38fS4Ew==
-X-Received: by 2002:a37:8085:: with SMTP id b127mr1241501qkd.424.1576506787748;
-        Mon, 16 Dec 2019 06:33:07 -0800 (PST)
-Received: from localhost.localdomain ([72.53.229.209])
-        by smtp.gmail.com with ESMTPSA id b3sm6966992qtr.86.2019.12.16.06.33.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 06:33:07 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>, Pavel Machek <pavel@ucw.cz>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Grigoryev Denis <grigoryev@fastwel.ru>,
-        Axel Lin <axel.lin@ingics.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: [PATCH v6 2/2] dt-bindings: mfd: update TI tps6105x chip bindings
-Date:   Mon, 16 Dec 2019 09:32:59 -0500
-Message-Id: <20191216143259.24587-3-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191216143259.24587-1-TheSven73@gmail.com>
-References: <20191216143259.24587-1-TheSven73@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pM2vtMGjkCHmIe0oJgiVI/NviBKKoDB9ui06H9LZlIA=;
+        b=A+4mnErybr+GGKhIzJrlmLWmI2CphHmDkqGRVsruL1XIY91crp7P7CfcxpB2d/a2fT
+         Y1nd4osh48U+Rhj/gA95lug6LXBhwy+l5wFct4C8DGSaoMzzK0HVngW3xSJft/YB3sSE
+         pf770Gkt54RzD4QPNVMyYxmYpkEZVGeHK8bgg6cldYEOQ3mm7rhH7jG1vwdts6m6gk6E
+         MQZRi2IDmTRNesP/nNdl9GiY1uY8ZNV42hZaZqQ5VN5xu+6he5tTklnUkgMLye1Ea7qL
+         gYwqRMu7wYoAqWlTh39h2XEfyjhizrWTWr8ozTAuSlhiU/7O2Muy6yZGnCigsa6+DjKH
+         qb8A==
+X-Gm-Message-State: APjAAAUoEdsa1N/Tu00wvmsDqq6Aq5FqG0yM7vvhs1+Vr2jXs/2Nv/Qb
+        54cqBabhS2BOJ/faQ6SUvVWo6A==
+X-Google-Smtp-Source: APXvYqxRcFIIGONztiy383ZxnDP9vz3zR6MiHbKV+4KoqbQF19r49AHUHnsw5SeXQCbbNTOTAFsdpQ==
+X-Received: by 2002:a19:2213:: with SMTP id i19mr16742484lfi.83.1576506856999;
+        Mon, 16 Dec 2019 06:34:16 -0800 (PST)
+Received: from jax (h-249-223.A175.priv.bahnhof.se. [98.128.249.223])
+        by smtp.gmail.com with ESMTPSA id c23sm10773958ljj.78.2019.12.16.06.34.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Dec 2019 06:34:16 -0800 (PST)
+Date:   Mon, 16 Dec 2019 15:34:14 +0100
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+To:     "Thomas, Rijo-john" <Rijo-john.Thomas@amd.com>
+Cc:     tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Nimesh Easow <Nimesh.Easow@amd.com>,
+        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC PATCH v3 0/4] TEE driver for AMD APUs
+Message-ID: <20191216143413.GA22435@jax>
+References: <cover.1575608819.git.Rijo-john.Thomas@amd.com>
+ <f7803de4-b09d-cfb7-9289-7abf5dde37c0@amd.com>
+ <20191216123911.GA11788@jax>
+ <d09adcce-3004-bc3f-b9d1-69b57107b468@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d09adcce-3004-bc3f-b9d1-69b57107b468@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver has been extended to optionally get its operational
-mode, regulator init data and LED naming from the devicetree.
++Olof and Arnd, who are usually taking my pull requests.
 
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
----
- .../devicetree/bindings/mfd/tps6105x.txt      | 47 ++++++++++++++++++-
- 1 file changed, 46 insertions(+), 1 deletion(-)
+On Mon, Dec 16, 2019 at 06:35:03PM +0530, Thomas, Rijo-john wrote:
+> +Herbert
+> 
+> Hi Jens,
+> 
+> On 16/12/19 6:09 pm, Jens Wiklander wrote:
+> > Hi Rijo,
+> > 
+> > On Thu, Dec 12, 2019 at 06:04:24PM +0530, Thomas, Rijo-john wrote:
+> >> Hi Jens,
+> >>
+> >> Please let me know if there are any comments for this patch series. I
+> >> shall address them, if any, and post for next review.
+> > 
+> > This looks good, I have no further comments.
+> > 
+> > How do you intend to upstream this? There's the dependency towards "Add
+> > TEE interface support to AMD Secure Processor driver"
+> > (https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml.org%2Flkml%2F2019%2F12%2F4%2F42&amp;data=02%7C01%7CRijo-john.Thomas%40amd.com%7C3be32c79103640faefdc08d78224f703%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637120967585713342&amp;sdata=I2lQNxu%2BBeIrL3Yk09IOYlUGsxWeCmLJhCcFuyqSJkA%3D&amp;reserved=0) to take into account too.
+> 
+> Thanks! If you are okay, can you give an Acked-by so that I can ask the crypto
+> subsystem maintainer to pull these patches as well.
 
-diff --git a/Documentation/devicetree/bindings/mfd/tps6105x.txt b/Documentation/devicetree/bindings/mfd/tps6105x.txt
-index 93602c7a19c8..dc448a9d5b4d 100644
---- a/Documentation/devicetree/bindings/mfd/tps6105x.txt
-+++ b/Documentation/devicetree/bindings/mfd/tps6105x.txt
-@@ -7,11 +7,56 @@ Required properties:
- - compatible:		"ti,tps61050" or "ti,tps61052"
- - reg:			Specifies the I2C slave address
- 
--Example:
-+Optional sub-node:
-+
-+This subnode selects the chip's operational mode.
-+There can be at most one single available subnode.
-+
-+- regulator: presence of this sub-node puts the chip in regulator mode.
-+	see ../regulator/regulator.yaml
-+
-+- led: presence of this sub-node puts the chip in led mode.
-+	Optional properties:
-+	- function : see ../leds/common.txt
-+	- color    : see ../leds/common.txt
-+	- label    : see ../leds/common.txt
-+			(deprecated)
-+
-+Example (GPIO operation only):
-+
-+i2c0 {
-+	tps61052@33 {
-+		compatible = "ti,tps61052";
-+		reg = <0x33>;
-+	};
-+};
-+
-+Example (GPIO + regulator operation):
- 
- i2c0 {
- 	tps61052@33 {
- 		compatible = "ti,tps61052";
- 		reg = <0x33>;
-+
-+		regulator {
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+	};
-+};
-+
-+Example (GPIO + led operation):
-+
-+#include <dt-bindings/leds/common.h>
-+
-+i2c0 {
-+	tps61052@33 {
-+		compatible = "ti,tps61052";
-+		reg = <0x33>;
-+
-+		led {
-+			color = <LED_COLOR_ID_WHITE>;
-+		};
- 	};
- };
--- 
-2.17.1
+Sounds good. The risk for merge conflicts with other patches via the
+normal path (arm-soc) should be minimal, if there's any I expect them to
+be trivial to resolve.
 
+Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
+
+Thanks,
+Jens
+
+> 
+> Thanks,
+> Rijo
+> 
+> > 
+> > Thanks,
+> > Jens
+> > 
+> >>
+> >> Thanks,
+> >> Rijo
+> >>
+> >> On 06/12/19 10:48 am, Rijo Thomas wrote:
+> >>> This patch series introduces Trusted Execution Environment (TEE) driver
+> >>> for AMD APU enabled systems. The TEE is a secure area of a processor which
+> >>> ensures that sensitive data is stored, processed and protected in an
+> >>> isolated and trusted environment. The AMD Secure Processor is a dedicated
+> >>> processor which provides TEE to enable HW platform security. It offers
+> >>> protection against software attacks generated in Rich Operating
+> >>> System (Rich OS) such as Linux running on x86. The AMD-TEE Trusted OS
+> >>> running on AMD Secure Processor allows loading and execution of security
+> >>> sensitive applications called Trusted Applications (TAs). An example of
+> >>> a TA would be a DRM (Digital Rights Management) TA written to enforce
+> >>> content protection.
+> >>>
+> >>> Linux already provides a tee subsystem, which is described in [1]. The tee
+> >>> subsystem provides a generic TEE ioctl interface which can be used by user
+> >>> space to talk to a TEE driver. AMD-TEE driver registers with tee subsystem
+> >>> and implements tee function callbacks in an AMD platform specific manner.
+> >>>
+> >>> The following TEE commands are recognized by AMD-TEE Trusted OS:
+> >>> 1. TEE_CMD_ID_LOAD_TA : Load Trusted Application (TA) binary into TEE
+> >>>    environment
+> >>> 2. TEE_CMD_ID_UNLOAD_TA : Unload TA binary from TEE environment
+> >>> 3. TEE_CMD_ID_OPEN_SESSION : Open session with loaded TA
+> >>> 4. TEE_CMD_ID_CLOSE_SESSION : Close session with loaded TA
+> >>> 5. TEE_CMD_ID_INVOKE_CMD : Invoke a command with loaded TA
+> >>> 6. TEE_CMD_ID_MAP_SHARED_MEM : Map shared memory
+> >>> 7. TEE_CMD_ID_UNMAP_SHARED_MEM : Unmap shared memory
+> >>>
+> >>> Each command has its own payload format. The AMD-TEE driver creates a
+> >>> command buffer payload for submission to AMD-TEE Trusted OS.
+> >>>
+> >>> This patch series has a dependency on another patch set titled - Add TEE
+> >>> interface support to AMD Secure Processor driver.
+> >>> Link: https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml.org%2Flkml%2F2019%2F12%2F4%2F42&amp;data=02%7C01%7CRijo-john.Thomas%40amd.com%7C3be32c79103640faefdc08d78224f703%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637120967585713342&amp;sdata=I2lQNxu%2BBeIrL3Yk09IOYlUGsxWeCmLJhCcFuyqSJkA%3D&amp;reserved=0
+> >>>
+> >>> v3:
+> >>> * Updated [1] with driver details
+> >>>
+> >>> v2:
+> >>> * Added a helper API in AMD Secure Processor driver, which can be
+> >>>   called by AMD-TEE driver during module init to check if TEE is
+> >>>   present on the device
+> >>> * Added proper checks for parameter attribute variable
+> >>> * Used tee_shm_pool_alloc() to allocate struct tee_shm_pool data structure
+> >>> * Removed all references to tee_private.h header file in driver code,
+> >>>   except for the file drivers/tee/amdtee/core.c. The driver loads TA binary
+> >>>   by calling request_firmware(), which takes struct device* as one of its
+> >>>   arguments. The device 'dev' field is part of struct tee_device, defined
+> >>>   in tee_private.h
+> >>>
+> >>> [1] https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.kernel.org%2Fdoc%2FDocumentation%2Ftee.txt&amp;data=02%7C01%7CRijo-john.Thomas%40amd.com%7C3be32c79103640faefdc08d78224f703%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637120967585713342&amp;sdata=3nmaMDGsdbqRdR3ocM0xoEFsNRbd2IgUj6tvCKJhk2w%3D&amp;reserved=0
+> >>>
+> >>> Rijo Thomas (4):
+> >>>   tee: allow compilation of tee subsystem for AMD CPUs
+> >>>   tee: add AMD-TEE driver
+> >>>   tee: amdtee: check TEE status during driver initialization
+> >>>   Documentation: tee: add AMD-TEE driver details
+> >>>
+> >>>  Documentation/tee.txt               |  81 ++++++
+> >>>  drivers/crypto/ccp/tee-dev.c        |  11 +
+> >>>  drivers/tee/Kconfig                 |   4 +-
+> >>>  drivers/tee/Makefile                |   1 +
+> >>>  drivers/tee/amdtee/Kconfig          |   8 +
+> >>>  drivers/tee/amdtee/Makefile         |   5 +
+> >>>  drivers/tee/amdtee/amdtee_if.h      | 183 +++++++++++++
+> >>>  drivers/tee/amdtee/amdtee_private.h | 159 +++++++++++
+> >>>  drivers/tee/amdtee/call.c           | 373 ++++++++++++++++++++++++++
+> >>>  drivers/tee/amdtee/core.c           | 516 ++++++++++++++++++++++++++++++++++++
+> >>>  drivers/tee/amdtee/shm_pool.c       |  93 +++++++
+> >>>  include/linux/psp-tee.h             |  18 ++
+> >>>  include/uapi/linux/tee.h            |   1 +
+> >>>  13 files changed, 1451 insertions(+), 2 deletions(-)
+> >>>  create mode 100644 drivers/tee/amdtee/Kconfig
+> >>>  create mode 100644 drivers/tee/amdtee/Makefile
+> >>>  create mode 100644 drivers/tee/amdtee/amdtee_if.h
+> >>>  create mode 100644 drivers/tee/amdtee/amdtee_private.h
+> >>>  create mode 100644 drivers/tee/amdtee/call.c
+> >>>  create mode 100644 drivers/tee/amdtee/core.c
+> >>>  create mode 100644 drivers/tee/amdtee/shm_pool.c
+> >>>
+> >>> --
+> >>> 1.9.1
+> >>>
