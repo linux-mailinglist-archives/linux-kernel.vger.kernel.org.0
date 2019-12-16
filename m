@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E7B121430
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAC50121630
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:27:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbfLPSJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:09:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51056 "EHLO mail.kernel.org"
+        id S1731638AbfLPS13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:27:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729898AbfLPSJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:03 -0500
+        id S1731227AbfLPSPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:15:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C52E20700;
-        Mon, 16 Dec 2019 18:09:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB25E21739;
+        Mon, 16 Dec 2019 18:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519742;
-        bh=wvmeNpa027W1i5Q2eKJqK3An4IqirvgMkON7GabCJCM=;
+        s=default; t=1576520147;
+        bh=tHbKCpPiGecCPTCgk3V5tn9r2fHfaJe0rvIkRctlIjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j4QneX6dvbg2ZAVEe3lCBInRn8g1CTQHX1vny6BlY/6kdBC9AqfkUYq9mURYKa5Pb
-         Ft1+ShPnl1S+kDRLVQbcvboqD8chXm43Huq+bYSR+5ZK2MoUOfyGDHwbe0XE9GWFQi
-         A2RcJZEH2Lh2FCF/eD8D2DtBrWPIr2dDRjae0+sI=
+        b=OgtUP2OYOC6AJcdiuVCAg1NiRGRcvcJw34yQP2Ai3aukBvdeDTS9EhhWxugA9Nq6I
+         5YOn4s82p+yUUwJN2Fp6RF/5OBIK4Si6UDYuDfvf1fEaSv/OFBVM2pgKJ/NZUvlOUG
+         M9YNHyrcpEDLdldYf02ivVhd0RNWaRtTWndr90iU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <balbi@kernel.org>
-Subject: [PATCH 5.3 050/180] usb: dwc3: gadget: Clear started flag for non-IOC
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Subject: [PATCH 5.4 034/177] interconnect: qcom: qcs404: Walk the list safely on node removal
 Date:   Mon, 16 Dec 2019 18:48:10 +0100
-Message-Id: <20191216174822.817319138@linuxfoundation.org>
+Message-Id: <20191216174828.234103663@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
 
-commit d3abda5a98a18e524e17fd4085c9f4bd53e9ef53 upstream.
+commit f39488ea2a75c49634c8611090f58734f61eee7c upstream.
 
-Normally the END_TRANSFER command completion handler will clear the
-DWC3_EP_TRANSFER_STARTED flag. However, if the command was sent without
-interrupt on completion, then the flag will not be cleared. Make sure to
-clear the flag in this case.
+As we will remove items off the list using list_del(), we need to use the
+safe version of list_for_each_entry().
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
+Reported-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: <stable@vger.kernel.org> # v5.4
+Link: https://lore.kernel.org/r/20191212075332.16202-4-georgi.djakov@linaro.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/interconnect/qcom/qcs404.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -2699,6 +2699,9 @@ static void dwc3_stop_active_transfer(st
- 	WARN_ON_ONCE(ret);
- 	dep->resource_index = 0;
+--- a/drivers/interconnect/qcom/qcs404.c
++++ b/drivers/interconnect/qcom/qcs404.c
+@@ -414,7 +414,7 @@ static int qnoc_probe(struct platform_de
+ 	struct icc_provider *provider;
+ 	struct qcom_icc_node **qnodes;
+ 	struct qcom_icc_provider *qp;
+-	struct icc_node *node;
++	struct icc_node *node, *tmp;
+ 	size_t num_nodes, i;
+ 	int ret;
  
-+	if (!interrupt)
-+		dep->flags &= ~DWC3_EP_TRANSFER_STARTED;
-+
- 	if (dwc3_is_usb31(dwc) || dwc->revision < DWC3_REVISION_310A)
- 		udelay(100);
- }
+@@ -494,7 +494,7 @@ static int qnoc_probe(struct platform_de
+ 
+ 	return 0;
+ err:
+-	list_for_each_entry(node, &provider->nodes, node_list) {
++	list_for_each_entry_safe(node, tmp, &provider->nodes, node_list) {
+ 		icc_node_del(node);
+ 		icc_node_destroy(node->id);
+ 	}
+@@ -508,9 +508,9 @@ static int qnoc_remove(struct platform_d
+ {
+ 	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
+ 	struct icc_provider *provider = &qp->provider;
+-	struct icc_node *n;
++	struct icc_node *n, *tmp;
+ 
+-	list_for_each_entry(n, &provider->nodes, node_list) {
++	list_for_each_entry_safe(n, tmp, &provider->nodes, node_list) {
+ 		icc_node_del(n);
+ 		icc_node_destroy(n->id);
+ 	}
 
 
