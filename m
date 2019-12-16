@@ -2,134 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA71F12076B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:44:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A85C120765
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:41:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbfLPNl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 08:41:28 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53150 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727609AbfLPNl2 (ORCPT
+        id S1727904AbfLPNlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 08:41:07 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:44946 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727609AbfLPNlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 08:41:28 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBGDcUlr076139;
-        Mon, 16 Dec 2019 08:40:40 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wwe8aaw6w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 Dec 2019 08:40:40 -0500
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id xBGDcdLa077440;
-        Mon, 16 Dec 2019 08:40:40 -0500
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wwe8aaw5x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 Dec 2019 08:40:39 -0500
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xBGDeW0l014885;
-        Mon, 16 Dec 2019 13:40:38 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma03dal.us.ibm.com with ESMTP id 2wvqc689y6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 Dec 2019 13:40:38 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBGDebSg43385342
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Dec 2019 13:40:37 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BCF2B28058;
-        Mon, 16 Dec 2019 13:40:37 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2CF8028059;
-        Mon, 16 Dec 2019 13:40:32 +0000 (GMT)
-Received: from [9.199.36.91] (unknown [9.199.36.91])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 16 Dec 2019 13:40:31 +0000 (GMT)
-Subject: Re: [PATCH 05/17] asm-generic/tlb: Rename
- HAVE_RCU_TABLE_NO_INVALIDATE
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Helge Deller <deller@gmx.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Nick Hu <nickhu@andestech.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-References: <20191211120713.360281197@infradead.org>
- <20191211122955.940455408@infradead.org> <87woawzc1t.fsf@linux.ibm.com>
- <20191216123752.GM2844@hirez.programming.kicks-ass.net>
- <d52ea890-c2ea-88f3-9d62-b86e60ee77ae@linux.ibm.com>
- <20191216132004.GO2844@hirez.programming.kicks-ass.net>
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Message-ID: <a9ae27c8-aa84-cda3-355c-7abb3b450d38@linux.ibm.com>
-Date:   Mon, 16 Dec 2019 19:10:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Mon, 16 Dec 2019 08:41:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1576503665; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=H294czyNOxXLRiUnhSh84JjUSdKrChOTGztkeWRPDKo=;
+        b=VLG56Qhb4PeiZEfefSApkXt0NDXHvwvrVQs0rh0WWwe7SpqMouCkultiOpoRvX8QaHOfGY
+        vJ0kXn/DRBXXNFdihWuqNY52w4vIhyq0hyFHhSD+tjMXA4qJuJM6eTqfh6fN0Wz5IE/hOi
+        MFHGTdIY0v+446X6LvcA7+AEDNvkwc0=
+Date:   Mon, 16 Dec 2019 14:41:00 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v4 2/5] remoteproc: Add device-managed variants of
+ rproc_alloc/rproc_add
+To:     =?iso-8859-1?q?Cl=E9ment?= Leger <cleger@kalray.eu>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, od <od@zcrc.me>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-Id: <1576503660.3.3@crapouillou.net>
+In-Reply-To: <340758118.96812669.1576493172804.JavaMail.zimbra@kalray.eu>
+References: <20191210164014.50739-1-paul@crapouillou.net>
+        <20191210164014.50739-2-paul@crapouillou.net>
+        <340758118.96812669.1576493172804.JavaMail.zimbra@kalray.eu>
 MIME-Version: 1.0
-In-Reply-To: <20191216132004.GO2844@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-16_05:2019-12-16,2019-12-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=2 bulkscore=0
- phishscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912160122
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/16/19 6:50 PM, Peter Zijlstra wrote:
-> On Mon, Dec 16, 2019 at 06:43:53PM +0530, Aneesh Kumar K.V wrote:
->> On 12/16/19 6:07 PM, Peter Zijlstra wrote:
-> 
->>> I'm confused, are you saing you're happy to have PowerPC eat the extra
->>> TLB invalidates? I thought you cared about PPC performance :-)
->>>
->>>
->>
->> Instead can we do
->>
->> static inline void tlb_table_invalidate(struct mmu_gather *tlb)
->> {
->> #ifndef CONFIG_MMU_GATHER_RCU_TABLE_FREE
->> 	 * Invalidate page-table caches used by hardware walkers. Then we still
->> 	 * need to RCU-sched wait while freeing the pages because software
->> 	 * walkers can still be in-flight.
->> 	 */
->> 	tlb_flush_mmu_tlbonly(tlb);
->> #endif
->> }
-> 
-> How does that not break ARM/ARM64/s390 and x86 ?
-> 
-
-Hmm I missed that usage of RCU_TABLE_NO_INVALIDATE.
-
-Ok I guess we need to revert this change that went upstream this merge 
-window then
-
-commit 52162ec784fa05f3a4b1d8e84421279998be3773
-Author: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Date:   Thu Oct 24 13:28:00 2019 +0530
-
-     powerpc/mm/book3s64/radix: Use freed_tables instead of need_flush_all
+Hi Cl=E9ment,
 
 
+Le lun., d=E9c. 16, 2019 at 11:46, Cl=E9ment Leger <cleger@kalray.eu> a=20
+=E9crit :
+> Hi Paul,
+>=20
+> I tested it on our driver and freeing/remove are called correctly on=20
+> probe error and on module removal.
+>=20
+> Tested-By: Clement Leger <cleger@kalray.eu>
 
-I will review the change closely.
+Great, thanks.
 
--aneesh
+Did you also test the prepare/unprepare callbacks? Is it working for=20
+you?
+
+Thanks,
+-Paul
+
+
+> ----- On 10 Dec, 2019, at 17:40, Paul Cercueil paul@crapouillou.net=20
+> wrote:
+>=20
+>>  Add API functions devm_rproc_alloc() and devm_rproc_add(), which=20
+>> behave
+>>  like rproc_alloc() and rproc_add() respectively, but register their
+>>  respective cleanup function to be called on driver detach.
+>>=20
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>>=20
+>>  Notes:
+>>     v3: New patch
+>>     v4: No change
+>>=20
+>>  drivers/remoteproc/remoteproc_core.c | 67=20
+>> ++++++++++++++++++++++++++++
+>>  include/linux/remoteproc.h           |  5 +++
+>>  2 files changed, 72 insertions(+)
+>>=20
+>>  diff --git a/drivers/remoteproc/remoteproc_core.c
+>>  b/drivers/remoteproc/remoteproc_core.c
+>>  index 307df98347ba..0a9fc7fdd1c3 100644
+>>  --- a/drivers/remoteproc/remoteproc_core.c
+>>  +++ b/drivers/remoteproc/remoteproc_core.c
+>>  @@ -1932,6 +1932,33 @@ int rproc_add(struct rproc *rproc)
+>>  }
+>>  EXPORT_SYMBOL(rproc_add);
+>>=20
+>>  +static void devm_rproc_remove(void *rproc)
+>>  +{
+>>  +	rproc_del(rproc);
+>>  +}
+>>  +
+>>  +/**
+>>  + * devm_rproc_add() - resource managed rproc_add()
+>>  + * @dev: the underlying device
+>>  + * @rproc: the remote processor handle to register
+>>  + *
+>>  + * This function performs like rproc_add() but the registered=20
+>> rproc device will
+>>  + * automatically be removed on driver detach.
+>>  + *
+>>  + * Returns 0 on success and an appropriate error code otherwise.
+>>  + */
+>>  +int devm_rproc_add(struct device *dev, struct rproc *rproc)
+>>  +{
+>>  +	int err;
+>>  +
+>>  +	err =3D rproc_add(rproc);
+>>  +	if (err)
+>>  +		return err;
+>>  +
+>>  +	return devm_add_action_or_reset(dev, devm_rproc_remove, rproc);
+>>  +}
+>>  +EXPORT_SYMBOL(devm_rproc_add);
+>>  +
+>>  /**
+>>   * rproc_type_release() - release a remote processor instance
+>>   * @dev: the rproc's device
+>>  @@ -2149,6 +2176,46 @@ int rproc_del(struct rproc *rproc)
+>>  }
+>>  EXPORT_SYMBOL(rproc_del);
+>>=20
+>>  +static void devm_rproc_free(struct device *dev, void *res)
+>>  +{
+>>  +	rproc_free(*(struct rproc **)res);
+>>  +}
+>>  +
+>>  +/**
+>>  + * devm_rproc_alloc() - resource managed rproc_alloc()
+>>  + * @dev: the underlying device
+>>  + * @name: name of this remote processor
+>>  + * @ops: platform-specific handlers (mainly start/stop)
+>>  + * @firmware: name of firmware file to load, can be NULL
+>>  + * @len: length of private data needed by the rproc driver (in=20
+>> bytes)
+>>  + *
+>>  + * This function performs like rproc_alloc() but the acuired rproc=20
+>> device will
+>>  + * automatically be released on driver detach.
+>>  + *
+>>  + * On success the new rproc is returned, and on failure, NULL.
+>>  + */
+>>  +struct rproc *devm_rproc_alloc(struct device *dev, const char=20
+>> *name,
+>>  +			       const struct rproc_ops *ops,
+>>  +			       const char *firmware, int len)
+>>  +{
+>>  +	struct rproc **ptr, *rproc;
+>>  +
+>>  +	ptr =3D devres_alloc(devm_rproc_free, sizeof(*ptr), GFP_KERNEL);
+>>  +	if (!ptr)
+>>  +		return ERR_PTR(-ENOMEM);
+>>  +
+>>  +	rproc =3D rproc_alloc(dev, name, ops, firmware, len);
+>>  +	if (rproc) {
+>>  +		*ptr =3D rproc;
+>>  +		devres_add(dev, ptr);
+>>  +	} else {
+>>  +		devres_free(ptr);
+>>  +	}
+>>  +
+>>  +	return rproc;
+>>  +}
+>>  +EXPORT_SYMBOL(devm_rproc_alloc);
+>>  +
+>>  /**
+>>   * rproc_add_subdev() - add a subdevice to a remoteproc
+>>   * @rproc: rproc handle to add the subdevice to
+>>  diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>  index 16ad66683ad0..5f201f0c86c3 100644
+>>  --- a/include/linux/remoteproc.h
+>>  +++ b/include/linux/remoteproc.h
+>>  @@ -595,6 +595,11 @@ int rproc_add(struct rproc *rproc);
+>>  int rproc_del(struct rproc *rproc);
+>>  void rproc_free(struct rproc *rproc);
+>>=20
+>>  +struct rproc *devm_rproc_alloc(struct device *dev, const char=20
+>> *name,
+>>  +			       const struct rproc_ops *ops,
+>>  +			       const char *firmware, int len);
+>>  +int devm_rproc_add(struct device *dev, struct rproc *rproc);
+>>  +
+>>  void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry=20
+>> *mem);
+>>=20
+>>  struct rproc_mem_entry *
+>>  --
+>>  2.24.0
+
+=
+
