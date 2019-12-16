@@ -2,87 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C40B312033D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:04:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16953120342
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:04:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbfLPLB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:01:58 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37052 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727574AbfLPLB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:01:58 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A52CA99EDB6985B6C7A7;
-        Mon, 16 Dec 2019 19:01:56 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Mon, 16 Dec 2019
- 19:01:50 +0800
-From:   yu kuai <yukuai3@huawei.com>
-To:     <bp@alien8.de>, <mchehab@kernel.org>, <tony.luck@intel.com>,
-        <james.morse@arm.com>, <rrichter@marvell.com>
-CC:     <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
-        <zhengbin13@huawei.com>, <linux-edac@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH V2] EDAC: remove set but not used variable 'ecc_loc'
-Date:   Mon, 16 Dec 2019 19:01:21 +0800
-Message-ID: <20191216110121.46698-1-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1727582AbfLPLDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:03:22 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45590 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbfLPLDW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 06:03:22 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j42so2501584wrj.12
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 03:03:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=upjGYkZqZYKQQ1aSiBhxjtA8tPUTNd9STSo2heTQlKo=;
+        b=DgiMmBbc3XYOjeI0isWd2VCBorba3D4aLArPEvxn+DHWraLRt73SMTNLGi1FXgnGC/
+         elIJ+/hu1xmT23g5vMz6hg/Mnvi3Se3jQoCcVvs3Rf17/OKioIOZQ1r85uNMcdqrCSSg
+         ES1FbPYr3EDaPkUj1lXEg4nFJZjotOe6oOtEgPNFXn9rqESkK1fjyFdSJ3aWbcnJdRfK
+         jzNKdjqX8hNXdFxyQCWRtA/bmeH7/yMjLi5d8s18gYl8jgKw23c+e8RFGblEoEL1HvOH
+         TFAlcUz5uYH73KTLFq3m/1iaw0eocEtSvMjHftJ4QXjN41GFSKhouNIYmHgVNw5gVJzp
+         SGZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=upjGYkZqZYKQQ1aSiBhxjtA8tPUTNd9STSo2heTQlKo=;
+        b=SbjnQluOJP1PahCd6r2ATwMpniIL4R7n2/bWv4U53TFEfNfvrgbLyH4vHtIsbKRUGg
+         z26A8rBGw3c08hEH3zRpINOmIq8lACAt8Se6hSkEBMTXpi9iH09qmrtFK3IQ4gbQ9Cmw
+         3fgfhuj6Is21WSo2TEJ9SPDKFGRA06kM8emNmBnw58GC8lQDwMtOAAqMOhkhMGbRR3DL
+         ydbf/1GLf9TP7KD5FKyM55IgAE6r2z/7nyEIq0UpB2IMgHPJwOS8wFxCHP1EVtBP83n7
+         w3AYH1mHAjgETEOpf1sHNv/FBoDav6oeKgLs2altgjpWPZIkKfNo9gClUYZdFenotEDF
+         MikQ==
+X-Gm-Message-State: APjAAAVomvUUFtn6lB6OfXFjIcAT935JqXgNKkQD1DZkEABveKB/Y3XF
+        hEhVHvCejTLQ8MVjQH/SRC3sK+lJb/s=
+X-Google-Smtp-Source: APXvYqzDEtPf6hz1M4rCPCyKgQBoshf+86oUwaVQZlbVRiOSEN92y243LBjTNvXUVxZ+Fm0eIZdBQA==
+X-Received: by 2002:a5d:4752:: with SMTP id o18mr28599465wrs.330.1576494199982;
+        Mon, 16 Dec 2019 03:03:19 -0800 (PST)
+Received: from dell ([2.27.35.132])
+        by smtp.gmail.com with ESMTPSA id t5sm20744255wrr.35.2019.12.16.03.03.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 03:03:19 -0800 (PST)
+Date:   Mon, 16 Dec 2019 11:03:18 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mfd: intel-lpss: Add Intel Jasper Lake PCI IDs
+Message-ID: <20191216110318.GI3601@dell>
+References: <20191209141507.60298-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191209141507.60298-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Mon, 09 Dec 2019, Andy Shevchenko wrote:
 
-drivers/edac/i5100_edac.c: In function ‘i5100_read_log’:
-drivers/edac/i5100_edac.c:489:11: warning: variable ‘ecc_loc’
-set but not used [-Wunused-but-set-variable]
+> Intel Jasper Lake has the same LPSS than Intel Ice Lake.
+> Add the new IDs to the list of supported devices.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/mfd/intel-lpss-pci.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 
-It is never used, and so can be removed.
-Signed-off-by: yu kuai <yukuai3@huawei.com>
----
-changes in V2
--remove the definition of the function i5100_redmemb_ecc_locator()
- drivers/edac/i5100_edac.c | 7 -------
- 1 file changed, 7 deletions(-)
+Applied, thanks.
 
-diff --git a/drivers/edac/i5100_edac.c b/drivers/edac/i5100_edac.c
-index 0ddc41e47a96..191aa7c19ded 100644
---- a/drivers/edac/i5100_edac.c
-+++ b/drivers/edac/i5100_edac.c
-@@ -259,11 +259,6 @@ static inline u32 i5100_nrecmemb_ras(u32 a)
- 	return a & ((1 << 16) - 1);
- }
- 
--static inline u32 i5100_redmemb_ecc_locator(u32 a)
--{
--	return a & ((1 << 18) - 1);
--}
--
- static inline u32 i5100_recmema_merr(u32 a)
- {
- 	return i5100_nrecmema_merr(a);
-@@ -486,7 +481,6 @@ static void i5100_read_log(struct mem_ctl_info *mci, int chan,
- 	u32 dw;
- 	u32 dw2;
- 	unsigned syndrome = 0;
--	unsigned ecc_loc = 0;
- 	unsigned merr;
- 	unsigned bank;
- 	unsigned rank;
-@@ -499,7 +493,6 @@ static void i5100_read_log(struct mem_ctl_info *mci, int chan,
- 		pci_read_config_dword(pdev, I5100_REDMEMA, &dw2);
- 		syndrome = dw2;
- 		pci_read_config_dword(pdev, I5100_REDMEMB, &dw2);
--		ecc_loc = i5100_redmemb_ecc_locator(dw2);
- 	}
- 
- 	if (i5100_validlog_recmemvalid(dw)) {
 -- 
-2.17.2
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
