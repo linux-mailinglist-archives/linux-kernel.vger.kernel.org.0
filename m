@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA6EC1213B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:04:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE8C1215F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729382AbfLPSEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:04:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41122 "EHLO mail.kernel.org"
+        id S1731691AbfLPSRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:17:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729197AbfLPSEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:04:01 -0500
+        id S1731682AbfLPSRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:17:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A96C920726;
-        Mon, 16 Dec 2019 18:04:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92081206E0;
+        Mon, 16 Dec 2019 18:17:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519441;
-        bh=CeBwiQdcuprVkYH3v/InYP1u7hVzUfhzPzQkTL2H7Lw=;
+        s=default; t=1576520257;
+        bh=8li020Po+yB8tIM/vH97YFOqrlj1+GSSXyV+MrYkqqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LuUAuUnZ3rXHpf5YGJfOPRQTwVx+VsPLbK6UfzV1iX98b2f8vrpCivLijzNiHifMy
-         0HjL5dO6O4ZYKa82co/3oNGBPZn9c/PCOrulCbzoPWj6IezEd0Ka2fT+ORyqa/qjHR
-         vnK5T1h0EfBeS2qxzrtmB9Ln3K1Ctkwa9zw2nANU=
+        b=P2uNNzmx2bf7eSrI9rK4v4Ii2O2/W7ISIJebVb45+t30aY8taAEf/Rer2SNxTpTY7
+         nYsjOm2WjUNnQJbjSxh/AD4o1oWCVIuKUFXUOHyOkbfBpUGJ8hPm7EyBITB73CX8Pu
+         U0dKdhRXwfwfdvEu1b1pZxm3bTzKjosSvmyBwBNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 4.19 067/140] erofs: zero out when listxattr is called with no xattr
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.4 079/177] ovl: fix lookup failure on multi lower squashfs
 Date:   Mon, 16 Dec 2019 18:48:55 +0100
-Message-Id: <20191216174806.072963258@linuxfoundation.org>
+Message-Id: <20191216174836.659387465@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +44,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gao Xiang <gaoxiang25@huawei.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 926d1650176448d7684b991fbe1a5b1a8289e97c upstream.
+commit 7e63c87fc2dcf3be9d3aab82d4a0ea085880bdca upstream.
 
-As David reported [1], ENODATA returns when attempting
-to modify files by using EROFS as an overlayfs lower layer.
+In the past, overlayfs required that lower fs have non null uuid in
+order to support nfs export and decode copy up origin file handles.
 
-The root cause is that listxattr could return unexpected
--ENODATA by mistake for inodes without xattr. That breaks
-listxattr return value convention and it can cause copy
-up failure when used with overlayfs.
+Commit 9df085f3c9a2 ("ovl: relax requirement for non null uuid of
+lower fs") relaxed this requirement for nfs export support, as long
+as uuid (even if null) is unique among all lower fs.
 
-Resolve by zeroing out if no xattr is found for listxattr.
+However, said commit unintentionally also relaxed the non null uuid
+requirement for decoding copy up origin file handles, regardless of
+the unique uuid requirement.
 
-[1] https://lore.kernel.org/r/CAEvUa7nxnby+rxK-KRMA46=exeOMApkDMAV08AjMkkPnTPV4CQ@mail.gmail.com
-Link: https://lore.kernel.org/r/20191201084040.29275-1-hsiangkao@aol.com
-Fixes: cadf1ccf1b00 ("staging: erofs: add error handling for xattr submodule")
-Cc: <stable@vger.kernel.org> # 4.19+
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Amend this mistake by disabling decoding of copy up origin file handle
+from lower fs with a conflicting uuid.
+
+We still encode copy up origin file handles from those fs, because
+file handles like those already exist in the wild and because they
+might provide useful information in the future.
+
+There is an unhandled corner case described by Miklos this way:
+- two filesystems, A and B, both have null uuid
+- upper layer is on A
+- lower layer 1 is also on A
+- lower layer 2 is on B
+
+In this case bad_uuid won't be set for B, because the check only
+involves the list of lower fs.  Hence we'll try to decode a layer 2
+origin on layer 1 and fail.
+
+We will deal with this corner case later.
+
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Tested-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/lkml/20191106234301.283006-1-colin.king@canonical.com/
+Fixes: 9df085f3c9a2 ("ovl: relax requirement for non null uuid ...")
+Cc: stable@vger.kernel.org # v4.20+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/erofs/xattr.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/overlayfs/namei.c     |    8 ++++++++
+ fs/overlayfs/ovl_entry.h |    2 ++
+ fs/overlayfs/super.c     |   24 +++++++++++++++++-------
+ 3 files changed, 27 insertions(+), 7 deletions(-)
 
---- a/drivers/staging/erofs/xattr.c
-+++ b/drivers/staging/erofs/xattr.c
-@@ -638,6 +638,8 @@ ssize_t erofs_listxattr(struct dentry *d
- 	struct listxattr_iter it;
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -325,6 +325,14 @@ int ovl_check_origin_fh(struct ovl_fs *o
+ 	int i;
  
- 	ret = init_inode_xattrs(d_inode(dentry));
-+	if (ret == -ENOATTR)
-+		return 0;
- 	if (ret)
- 		return ret;
+ 	for (i = 0; i < ofs->numlower; i++) {
++		/*
++		 * If lower fs uuid is not unique among lower fs we cannot match
++		 * fh->uuid to layer.
++		 */
++		if (ofs->lower_layers[i].fsid &&
++		    ofs->lower_layers[i].fs->bad_uuid)
++			continue;
++
+ 		origin = ovl_decode_real_fh(fh, ofs->lower_layers[i].mnt,
+ 					    connected);
+ 		if (origin)
+--- a/fs/overlayfs/ovl_entry.h
++++ b/fs/overlayfs/ovl_entry.h
+@@ -22,6 +22,8 @@ struct ovl_config {
+ struct ovl_sb {
+ 	struct super_block *sb;
+ 	dev_t pseudo_dev;
++	/* Unusable (conflicting) uuid */
++	bool bad_uuid;
+ };
  
+ struct ovl_layer {
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1255,7 +1255,7 @@ static bool ovl_lower_uuid_ok(struct ovl
+ {
+ 	unsigned int i;
+ 
+-	if (!ofs->config.nfs_export && !(ofs->config.index && ofs->upper_mnt))
++	if (!ofs->config.nfs_export && !ofs->upper_mnt)
+ 		return true;
+ 
+ 	for (i = 0; i < ofs->numlowerfs; i++) {
+@@ -1263,9 +1263,13 @@ static bool ovl_lower_uuid_ok(struct ovl
+ 		 * We use uuid to associate an overlay lower file handle with a
+ 		 * lower layer, so we can accept lower fs with null uuid as long
+ 		 * as all lower layers with null uuid are on the same fs.
++		 * if we detect multiple lower fs with the same uuid, we
++		 * disable lower file handle decoding on all of them.
+ 		 */
+-		if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid))
++		if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid)) {
++			ofs->lower_fs[i].bad_uuid = true;
+ 			return false;
++		}
+ 	}
+ 	return true;
+ }
+@@ -1277,6 +1281,7 @@ static int ovl_get_fsid(struct ovl_fs *o
+ 	unsigned int i;
+ 	dev_t dev;
+ 	int err;
++	bool bad_uuid = false;
+ 
+ 	/* fsid 0 is reserved for upper fs even with non upper overlay */
+ 	if (ofs->upper_mnt && ofs->upper_mnt->mnt_sb == sb)
+@@ -1288,11 +1293,15 @@ static int ovl_get_fsid(struct ovl_fs *o
+ 	}
+ 
+ 	if (!ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
+-		ofs->config.index = false;
+-		ofs->config.nfs_export = false;
+-		pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', falling back to index=off,nfs_export=off.\n",
+-			uuid_is_null(&sb->s_uuid) ? "null" : "conflicting",
+-			path->dentry);
++		bad_uuid = true;
++		if (ofs->config.index || ofs->config.nfs_export) {
++			ofs->config.index = false;
++			ofs->config.nfs_export = false;
++			pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', falling back to index=off,nfs_export=off.\n",
++				uuid_is_null(&sb->s_uuid) ? "null" :
++							    "conflicting",
++				path->dentry);
++		}
+ 	}
+ 
+ 	err = get_anon_bdev(&dev);
+@@ -1303,6 +1312,7 @@ static int ovl_get_fsid(struct ovl_fs *o
+ 
+ 	ofs->lower_fs[ofs->numlowerfs].sb = sb;
+ 	ofs->lower_fs[ofs->numlowerfs].pseudo_dev = dev;
++	ofs->lower_fs[ofs->numlowerfs].bad_uuid = bad_uuid;
+ 	ofs->numlowerfs++;
+ 
+ 	return ofs->numlowerfs;
 
 
