@@ -2,111 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03AA811FCE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 03:31:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B83D411FCED
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 03:40:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfLPCbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 21:31:23 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36772 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbfLPCbX (ORCPT
+        id S1726540AbfLPCkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 21:40:03 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:45328 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbfLPCkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 21:31:23 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z3so5400479wru.3;
-        Sun, 15 Dec 2019 18:31:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UpvyF0EdWS+Om5YRvxySlIG/mvo3QAlXjzlkgGDs+DU=;
-        b=qyYKRuHITiwOw8aoERmomP1QcHaO+ooqgl8sHMof/j+kkt5elHSOIoZoc3sZU51TTI
-         9+b/HmOBTAYfvCnIBmhDNIwQnr6rHfZp6O6CdXCSqCjqmXxS6+QyyJTmiL038YJ0Olr3
-         boxuoqeIoYyTIKv149gGeIQAmJzc1J3jHXMrGeXqfzEJCdxiGNkduZTa9PRlkKvIXBES
-         lpgoKthKfyyqdy7bsZ+Uj+LA0PgGOzsXJKQFzkBRUesKUV/wgMkC0eeudFnDFdXH/swQ
-         cOtCRrOOkQcDL9J1/RjCSvKZcvOXfgL0EpZo530ASU1N0/BUn0ev8uNJaVQdi2SM5wu7
-         WivQ==
+        Sun, 15 Dec 2019 21:40:02 -0500
+Received: by mail-pj1-f67.google.com with SMTP id r11so2287448pjp.12;
+        Sun, 15 Dec 2019 18:40:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UpvyF0EdWS+Om5YRvxySlIG/mvo3QAlXjzlkgGDs+DU=;
-        b=QWwVdq7a1IStvhbLtzuBf5IdiAwG7qoibB1cxz63XktlyPHMnS5u8Lz5EUMGMC8miF
-         Cdq7YNKqzU2HuROG9PyE10FHE85L6I8Ckkhqly7su6rYs9BbMTU/oHJrguSn17xs044c
-         +0ZofNxU8us5+ysmDf6OoV7oaY8KplzbnmIO9fkA+DKx1v2urWK4RSGcoIKCvtlxtFfD
-         +C/unwze/Npl9g4duC4rJpoaZg/QFDF/8m+/y1G0adGCAGdLwfZZj71PdPINodFdb4M5
-         kX0ldyiqnuPfrfYY18+smxZcQa4fLP9em/AqBMDpdk962NGhwbHLac4fjGkowUGyRoIv
-         CrJw==
-X-Gm-Message-State: APjAAAX2YDwE1u42GsDWqtv1l0RCociOs/P6TUoe66QPMjRP6nmpHmBV
-        ySY85BE3Gjy5k2CzMHzET6unQVyf8O9xvaguR5U=
-X-Google-Smtp-Source: APXvYqzanKQKeZzVCBDeRO025pcfvhaYt/GmOW9Lg/MsvSWs3HFfoyA0PsRJFAPGYRjReAgZnyTlDiteWR5qO68vSZM=
-X-Received: by 2002:adf:f847:: with SMTP id d7mr28220980wrq.35.1576463481435;
- Sun, 15 Dec 2019 18:31:21 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=m8jv1ZjcwuWUckxPyANOJEGlpioaHtVIEdToSkgWcBM=;
+        b=lUsvZ0CcXGO8tN/htois4hbCAxXEZJlR7I6uZxpGV10IjGAyZIcvBcDxhfFZVYK7mE
+         fY7KuRJiB8AkIxhvdYSQzVY53lzAYw6XS4BxKyjGELoXw9xtZm6E66v+rfm7prdE6j4u
+         OdbW6xrno8G1QDtMFTxcXcA9FQBFl6JqT1DLT+AujjVA6r8Ew0iMgltx2CJiaEqY6V4x
+         HULEiGumWM/DhGCq8f28P8HOdjHJlyvFhTZBt6mck4im7Y2W/oOI2d6qC1pzpaFlEMmk
+         Me1/IoH/pZ98Kzdz98Moltr0JxV1mq9b0kVnXug4lToXTvYzypPmnq+A21qBefuJBGhx
+         2b+w==
+X-Gm-Message-State: APjAAAX8xvAVLukrp2EtE9W5eJGIPpc672l/1UfRqaZILifUEQOO0mXR
+        0AXtBrM+bb2DXhuti7qFQ34YjZPchlw=
+X-Google-Smtp-Source: APXvYqwJDUhssX/SuN57Ic6JCCHkDENoNeQa++sZpuJpvRW3O9NlveTRQkNwVjKj559BLHCsr0vEdw==
+X-Received: by 2002:a17:90a:508:: with SMTP id h8mr15041273pjh.91.1576464001834;
+        Sun, 15 Dec 2019 18:40:01 -0800 (PST)
+Received: from ?IPv6:2601:647:4000:110a:d014:2a0a:ea98:f50e? ([2601:647:4000:110a:d014:2a0a:ea98:f50e])
+        by smtp.gmail.com with ESMTPSA id k16sm20101291pfh.97.2019.12.15.18.39.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Dec 2019 18:40:00 -0800 (PST)
+Subject: Re: [PATCH 1/2] scsi: ufs: Put SCSI host after remove it
+To:     cang@codeaurora.org
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1576328616-30404-1-git-send-email-cang@codeaurora.org>
+ <1576328616-30404-2-git-send-email-cang@codeaurora.org>
+ <85475247-efd5-732e-ae74-6d9a11e1bdf2@acm.org>
+ <5aa3a266e3db3403e663b36ddfdc4d60@codeaurora.org>
+ <2956b9c7-b019-e2b3-7a1b-7b796b724add@acm.org>
+ <3afbe71cc9f0626edf66f7bc13b331f4@codeaurora.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
+ mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
+ LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
+ fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
+ AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
+ 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
+ AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
+ igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
+ Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
+ jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
+ macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
+ CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
+ RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
+ PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
+ eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
+ lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
+ T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
+ ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
+ CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
+ oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
+ //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
+ mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
+ goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
+Message-ID: <5b77c25f-3cc7-f90b-fcd7-dd4c1e2f46d2@acm.org>
+Date:   Sun, 15 Dec 2019 18:39:59 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20191213000657.931618-1-dima@arista.com> <20191213000657.931618-43-dima@arista.com>
-In-Reply-To: <20191213000657.931618-43-dima@arista.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Mon, 16 Dec 2019 10:30:45 +0800
-Message-ID: <CAAfSe-vSZZcNSgcCj_OPmgVxMNKgV8f4Os6vJCHcL-SU+EVjeg@mail.gmail.com>
-Subject: Re: [PATCH 42/58] tty/serial: Migrate sprd_serial to use has_sysrq
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3afbe71cc9f0626edf66f7bc13b331f4@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Dec 2019 at 08:09, Dmitry Safonov <dima@arista.com> wrote:
->
-> The SUPPORT_SYSRQ ifdeffery is not nice as:
-> - May create misunderstanding about sizeof(struct uart_port) between
->   different objects
-> - Prevents moving functions from serial_core.h
-> - Reduces readability (well, it's ifdeffery - it's hard to follow)
->
-> In order to remove SUPPORT_SYSRQ, has_sysrq variable has been added.
-> Initialise it in driver's probe and remove ifdeffery.
->
-> Cc: Baolin Wang <baolin.wang7@gmail.com>
-> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-> Cc: Orson Zhai <orsonzhai@gmail.com>
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
+On 2019-12-15 17:34, cang@codeaurora.org wrote:
+> This is applied to 5.5/scsi-queue. The two changes I patsed from you are
+> not merged yet, I am still doing code review to them, so there is no
+> blk_cleanup_queue() calls in my code base. I am just saying you may move
+> your blk_cleanup_queue() calls below cancel_work_sync(&hba->eh_work) if
+> my change applies. How do you think?
+> 
+> scsi_host_put() was there before but explicitly removed by
+> afa3dfd42d205b106787476647735aa1de1a5d02. I agree with you, without this
+> change, there is memory leak.
 
-Acked-by: Chunyan Zhang <zhang.lyra@gmail.com>
+Hi Can,
 
-> ---
->  drivers/tty/serial/sprd_serial.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-> index 31df23502562..0c3b7420b01e 100644
-> --- a/drivers/tty/serial/sprd_serial.c
-> +++ b/drivers/tty/serial/sprd_serial.c
-> @@ -3,10 +3,6 @@
->   * Copyright (C) 2012-2015 Spreadtrum Communications Inc.
->   */
->
-> -#if defined(CONFIG_SERIAL_SPRD_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
-> -#define SUPPORT_SYSRQ
-> -#endif
-> -
->  #include <linux/clk.h>
->  #include <linux/console.h>
->  #include <linux/delay.h>
-> @@ -1227,6 +1223,7 @@ static int sprd_probe(struct platform_device *pdev)
->         up->fifosize = SPRD_FIFO_SIZE;
->         up->ops = &serial_sprd_ops;
->         up->flags = UPF_BOOT_AUTOCONF;
-> +       up->has_sysrq = IS_ENABLED(CONFIG_SERIAL_SPRD_CONSOLE);
->
->         ret = sprd_clk_init(up);
->         if (ret)
-> --
-> 2.24.0
->
+Since your patch restores a call that was removed earlier, please
+consider adding a Fixes: tag to your patch.
+
+Please also have a look at
+https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git/log/?h=5.6/scsi-queue.
+As one can see my patches that introduce blk_cleanup_queue() and
+blk_mq_free_tag_set() calls have already been queued on Martin's
+5.6/scsi-queue branch.
+
+Bart.
