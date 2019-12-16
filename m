@@ -2,108 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F8E1202AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:32:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 185591203CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:24:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbfLPKcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 05:32:33 -0500
-Received: from foss.arm.com ([217.140.110.172]:49062 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727229AbfLPKcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:32:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D71C91FB;
-        Mon, 16 Dec 2019 02:32:31 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EFAD3F6CF;
-        Mon, 16 Dec 2019 02:32:31 -0800 (PST)
-Date:   Mon, 16 Dec 2019 10:32:29 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: PCI: qcom: Add support for SDM845
- PCIe
-Message-ID: <20191216103229.GP24359@e119886-lin.cambridge.arm.com>
-References: <20191107001642.1127561-1-bjorn.andersson@linaro.org>
- <20191107001642.1127561-2-bjorn.andersson@linaro.org>
+        id S1727522AbfLPLY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:24:26 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:49882 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727440AbfLPLYB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 06:24:01 -0500
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id ABFEA200ACA;
+        Mon, 16 Dec 2019 11:23:58 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id E5E8320BAB; Mon, 16 Dec 2019 11:32:51 +0100 (CET)
+Date:   Mon, 16 Dec 2019 11:32:51 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Simon Geis <simon.geis@fau.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Adam Zerella <adam.zerella@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
+        Lukas Panzer <lukas.panzer@fau.de>
+Subject: Re: [PATCH v3 06/10] PCMCIA/i82092: move assignment out of if
+ condition
+Message-ID: <20191216103251.GF159459@light.dominikbrodowski.net>
+References: <20191213135311.9111-1-simon.geis@fau.de>
+ <20191213135311.9111-7-simon.geis@fau.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191107001642.1127561-2-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20191213135311.9111-7-simon.geis@fau.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 04:16:41PM -0800, Bjorn Andersson wrote:
-> Add compatible and necessary clocks and resets definitions for the
-> SDM845 PCIe controller.
+On Fri, Dec 13, 2019 at 02:53:10PM +0100, Simon Geis wrote:
+> Improve readability by moving the assignment out of if conditions.
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+> Co-developed-by: Lukas Panzer <lukas.panzer@fau.de>
+> Signed-off-by: Lukas Panzer <lukas.panzer@fau.de>
+> Signed-off-by: Simon Geis <simon.geis@fau.de>
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Applied, thanks!
 
-> 
-> Changes since v1:
-> - Picked up Rob and Vinod's R-b
-> 
->  .../devicetree/bindings/pci/qcom,pcie.txt     | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.txt b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-> index ada80b01bf0c..981b4de12807 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-> @@ -11,6 +11,7 @@
->  			- "qcom,pcie-ipq4019" for ipq4019
->  			- "qcom,pcie-ipq8074" for ipq8074
->  			- "qcom,pcie-qcs404" for qcs404
-> +			- "qcom,pcie-sdm845" for sdm845
->  
->  - reg:
->  	Usage: required
-> @@ -126,6 +127,18 @@
->  			- "master_bus"	AXI Master clock
->  			- "slave_bus"	AXI Slave clock
->  
-> +-clock-names:
-> +	Usage: required for sdm845
-> +	Value type: <stringlist>
-> +	Definition: Should contain the following entries
-> +			- "aux"		Auxiliary clock
-> +			- "cfg"		Configuration clock
-> +			- "bus_master"	Master AXI clock
-> +			- "bus_slave"	Slave AXI clock
-> +			- "slave_q2a"	Slave Q2A clock
-> +			- "tbu"		PCIe TBU clock
-> +			- "pipe"	PIPE clock
-> +
->  - resets:
->  	Usage: required
->  	Value type: <prop-encoded-array>
-> @@ -188,6 +201,12 @@
->  			- "pwr"			PWR reset
->  			- "ahb"			AHB reset
->  
-> +- reset-names:
-> +	Usage: required for sdm845
-> +	Value type: <stringlist>
-> +	Definition: Should contain the following entries
-> +			- "pci"			PCIe core reset
-> +
->  - power-domains:
->  	Usage: required for apq8084 and msm8996/apq8096
->  	Value type: <prop-encoded-array>
-> -- 
-> 2.23.0
-> 
+	Dominik
