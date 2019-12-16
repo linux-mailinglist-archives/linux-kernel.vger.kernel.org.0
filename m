@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 739191215A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2C5212149F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:14:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbfLPSXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:23:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50234 "EHLO mail.kernel.org"
+        id S1731054AbfLPSNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:13:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728654AbfLPSUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:20:20 -0500
+        id S1731040AbfLPSM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:12:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AED6207FF;
-        Mon, 16 Dec 2019 18:20:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE9C4206E0;
+        Mon, 16 Dec 2019 18:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520419;
-        bh=GtfKZoJgMTs3ehiuavid4AXeo1Y4Vl+ehqLzDuPUa/c=;
+        s=default; t=1576519979;
+        bh=3ky4ZU8tMvRV5lg3udxWMIllO9DeUCVEmcuIMNAYDU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BHbW+Zlahcvp4tQZosDl58j2pH1ryeq83KpJOorGrJXDxWGnebgdK+09KG7guIcdq
-         EbcGYvMPsEizcXEdVoZLNXo0JhMD2RSv/fnu/FzM5wCk8yNWrWN3OOn7ieil6Ir1Ov
-         +mZ9vivIZCkHLi7WQlk9m6qX2DFjbWO0WR5YOn+o=
+        b=S2773ho0cPuXrOm0+/zkSFmBEi0OhGwO1usqAAZcbp2bNW6vEBXf9t1/TQhIPgGN0
+         fhdR9/tofNqEVj1TRLPP6LZ43F1oN2c5c2UH6IDKSFghqrGv+ZZGfiOCQcN0V2/zdG
+         gfHM81nkegcDeunDAI1qO4X7lKXoRwBzyJTq/U2M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Todd Brandt <todd.e.brandt@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.4 130/177] ACPI: PM: Avoid attaching ACPI PM domain to certain devices
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 146/180] scsi: qla2xxx: Fix qla24xx_process_bidir_cmd()
 Date:   Mon, 16 Dec 2019 18:49:46 +0100
-Message-Id: <20191216174844.410256993@linuxfoundation.org>
+Message-Id: <20191216174843.609838178@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit b9ea0bae260f6aae546db224daa6ac1bd9d94b91 upstream.
+[ Upstream commit c29282c65d1cf54daeea63be46243d7f69d72f4d ]
 
-Certain ACPI-enumerated devices represented as platform devices in
-Linux, like fans, require special low-level power management handling
-implemented by their drivers that is not in agreement with the ACPI
-PM domain behavior.  That leads to problems with managing ACPI fans
-during system-wide suspend and resume.
+Set the r??_data_len variables before using these instead of after.
 
-For this reason, make acpi_dev_pm_attach() skip the affected devices
-by adding a list of device IDs to avoid to it and putting the IDs of
-the affected devices into that list.
+This patch fixes the following Coverity complaint:
 
-Fixes: e5cc8ef31267 (ACPI / PM: Provide ACPI PM callback routines for subsystems)
-Reported-by: Zhang Rui <rui.zhang@intel.com>
-Tested-by: Todd Brandt <todd.e.brandt@linux.intel.com>
-Cc: 3.10+ <stable@vger.kernel.org> # 3.10+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+const: At condition req_data_len != rsp_data_len, the value of req_data_len
+must be equal to 0.
+const: At condition req_data_len != rsp_data_len, the value of rsp_data_len
+must be equal to 0.
+dead_error_condition: The condition req_data_len != rsp_data_len cannot be
+true.
 
+Cc: Himanshu Madhani <hmadhani@marvell.com>
+Fixes: a9b6f722f62d ("[SCSI] qla2xxx: Implementation of bidirectional.") # v3.7.
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Tested-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/device_pm.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_bsg.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
---- a/drivers/acpi/device_pm.c
-+++ b/drivers/acpi/device_pm.c
-@@ -1314,9 +1314,19 @@ static void acpi_dev_pm_detach(struct de
-  */
- int acpi_dev_pm_attach(struct device *dev, bool power_on)
- {
-+	/*
-+	 * Skip devices whose ACPI companions match the device IDs below,
-+	 * because they require special power management handling incompatible
-+	 * with the generic ACPI PM domain.
-+	 */
-+	static const struct acpi_device_id special_pm_ids[] = {
-+		{"PNP0C0B", }, /* Generic ACPI fan */
-+		{"INT3404", }, /* Fan */
-+		{}
-+	};
- 	struct acpi_device *adev = ACPI_COMPANION(dev);
+diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
+index ce87bbdb30907..be9eeabe965e2 100644
+--- a/drivers/scsi/qla2xxx/qla_bsg.c
++++ b/drivers/scsi/qla2xxx/qla_bsg.c
+@@ -1782,8 +1782,8 @@ qla24xx_process_bidir_cmd(struct bsg_job *bsg_job)
+ 	uint16_t nextlid = 0;
+ 	uint32_t tot_dsds;
+ 	srb_t *sp = NULL;
+-	uint32_t req_data_len = 0;
+-	uint32_t rsp_data_len = 0;
++	uint32_t req_data_len;
++	uint32_t rsp_data_len;
  
--	if (!adev)
-+	if (!adev || !acpi_match_device_ids(adev, special_pm_ids))
- 		return 0;
+ 	/* Check the type of the adapter */
+ 	if (!IS_BIDI_CAPABLE(ha)) {
+@@ -1888,6 +1888,9 @@ qla24xx_process_bidir_cmd(struct bsg_job *bsg_job)
+ 		goto done_unmap_sg;
+ 	}
  
- 	/*
++	req_data_len = bsg_job->request_payload.payload_len;
++	rsp_data_len = bsg_job->reply_payload.payload_len;
++
+ 	if (req_data_len != rsp_data_len) {
+ 		rval = EXT_STATUS_BUSY;
+ 		ql_log(ql_log_warn, vha, 0x70aa,
+@@ -1895,10 +1898,6 @@ qla24xx_process_bidir_cmd(struct bsg_job *bsg_job)
+ 		goto done_unmap_sg;
+ 	}
+ 
+-	req_data_len = bsg_job->request_payload.payload_len;
+-	rsp_data_len = bsg_job->reply_payload.payload_len;
+-
+-
+ 	/* Alloc SRB structure */
+ 	sp = qla2x00_get_sp(vha, &(vha->bidir_fcport), GFP_KERNEL);
+ 	if (!sp) {
+-- 
+2.20.1
+
 
 
