@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 724511214CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 625AF121371
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730449AbfLPSPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:15:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35092 "EHLO mail.kernel.org"
+        id S1729211AbfLPSBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:01:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731305AbfLPSO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:14:56 -0500
+        id S1727711AbfLPSBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:01:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9068207FF;
-        Mon, 16 Dec 2019 18:14:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E1B02176D;
+        Mon, 16 Dec 2019 18:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520096;
-        bh=Wm1ku6Alg7T5Ja1Bgxx+9qYOfyQ9wOzROKYjzfqDVjU=;
+        s=default; t=1576519301;
+        bh=rxoZOuPi8FYcQwk8HJHMY0NpyXgfqvZ4ggIwplk5InI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=db6gKMhBg571niQegol85HOa3q6X/RL8Rd1Ylta/2GtgtVAKAac4RIQ5n0WeGM9p9
-         vOIH5LBY6DleVsnT4tFQ80Mu1M9o4JS2NBKFDDHPqnsVrqMCO9JL2rEPjBUPf6jMcG
-         8+KPiqBTFW0gWtbp2pXNQ9H7HLxzRQ9Rklcf/9Ng=
+        b=Jofuv5/4tfXSDeITEosJ2NuFB+fRIF6zm4RPuGeUA10XXu3b9HuyaddP4To2ZFc/1
+         hgUY2cl2SOcbWPKGIZ8z5Epl4xHc5zgNYkQniNhx/YdSUBFeP7JrQkZKxTnk5PLpOb
+         ZLHPEe338cS3hCzqps4A5J2vzrJCNbnuAbGOBt00=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 5.4 015/177] USB: uas: heed CAPACITY_HEURISTICS
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Quinn Tran <qutran@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 003/140] scsi: qla2xxx: Fix driver unload hang
 Date:   Mon, 16 Dec 2019 18:47:51 +0100
-Message-Id: <20191216174815.945508601@linuxfoundation.org>
+Message-Id: <20191216174748.887845533@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,37 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Quinn Tran <qutran@marvell.com>
 
-commit 335cbbd5762d5e5c67a8ddd6e6362c2aa42a328f upstream.
+commit dd322b7f3efc8cda085bb60eadc4aee6324eadd8 upstream.
 
-There is no need to ignore this flag. We should be as close
-to storage in that regard as makes sense, so honor flags whose
-cost is tiny.
+This patch fixes driver unload hang by removing msleep()
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191114112758.32747-3-oneukum@suse.com
+Fixes: d74595278f4ab ("scsi: qla2xxx: Add multiple queue pair functionality.")
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191105150657.8092-5-hmadhani@marvell.com
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Quinn Tran <qutran@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/uas.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/scsi/qla2xxx/qla_init.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -838,6 +838,12 @@ static int uas_slave_configure(struct sc
- 		sdev->fix_capacity = 1;
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -8725,8 +8725,6 @@ int qla2xxx_delete_qpair(struct scsi_qla
+ 	struct qla_hw_data *ha = qpair->hw;
  
- 	/*
-+	 * in some cases we have to guess
-+	 */
-+	if (devinfo->flags & US_FL_CAPACITY_HEURISTICS)
-+		sdev->guess_capacity = 1;
-+
-+	/*
- 	 * Some devices don't like MODE SENSE with page=0x3f,
- 	 * which is the command used for checking if a device
- 	 * is write-protected.  Now that we tell the sd driver
+ 	qpair->delete_in_progress = 1;
+-	while (atomic_read(&qpair->ref_count))
+-		msleep(500);
+ 
+ 	ret = qla25xx_delete_req_que(vha, qpair->req);
+ 	if (ret != QLA_SUCCESS)
 
 
