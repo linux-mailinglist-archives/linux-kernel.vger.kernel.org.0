@@ -2,78 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04456120236
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:21:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9455F120249
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:25:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbfLPKUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 05:20:45 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:41349 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbfLPKUp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:20:45 -0500
-Received: by mail-ua1-f68.google.com with SMTP id f7so1869828uaa.8
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 02:20:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MkbL1d/SzqUihRGV9EGxMppkoVLFMzfPIRPZl16fK20=;
-        b=tHE/FqAndfXj+pF3rpKcyZB3P2mC/ivGu+RuNn7h6U8fH6CwMbbwsVUcsp/rTQHd7w
-         SnHZW/qVxTnvRge2orkhtQ9Xsf73XYevjXfqvfdKDkG6TobwnqhLBRLLAqcTfYe0WEYP
-         TemamdhsBonUMSlcJPhpPbtBP1PxXnbcO6gUB921WNamWplR0wZicOySkVBqhLyXZ1Yo
-         5/Wicv3VUbruyGwEo/ySRP7hgpg/Rx9tzYgwHjF/x5Tt0Rb19SDBDqLbx7dadCPp/2w3
-         55sfvzdVwUdtHbd82oEpCim18++9O0mztUBgkt/XgEzxg9/Ghg+3d2LhqjyhP+4MBMHG
-         ziSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MkbL1d/SzqUihRGV9EGxMppkoVLFMzfPIRPZl16fK20=;
-        b=q9DZ4hHUn4jmoCxhobpsRdpoC6+nL2CddBC2SdBGEJQhpIOSi+LutLsQ0fRFfk7fQw
-         93pzRf8Rzs6M5j95890AZb9EKrGvX7Ofs6qUwYyuDVxCGC6aRW77sIOqXqLgGa6cuC8u
-         3bd4k3mMaRHyeAdySk1bXbjPIK4PbIBiRQ7VVHbArWP12he+w83tRim/lITDSSAvgM2U
-         9Lw+B5hCJq+/d6NK6YP0A6fCd2Iw+SQsqb2QROj3MnIsY+05DO/iBJBk/znEyYgogu1l
-         BEBWndyGBnZJOW6g/c1bc2ciUmeZKfZ23QpKFgKtvFYCV2HC3tXv/L+ylsgsE+ZfyTqW
-         dJww==
-X-Gm-Message-State: APjAAAXhYxi7uJ9qCDp6VhP+IDXlAKXsuGwZhhm4GHm+OSZvOHwFtYXw
-        ImAUM4DE5DjR6S4R5UoI+EnHo5CPg1ltDco7ZQeY3w==
-X-Google-Smtp-Source: APXvYqytRcaEhtLm4UxsiP0XcQ5WA/lllFA43ewjb5KkmW6LveWszgSmmf6NQVq50n36TRexdsgdRA2S2NxjbZ7+23A=
-X-Received: by 2002:ab0:7219:: with SMTP id u25mr23212467uao.10.1576491644556;
- Mon, 16 Dec 2019 02:20:44 -0800 (PST)
+        id S1727341AbfLPKZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 05:25:18 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8129 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727183AbfLPKZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 05:25:17 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 509CC379E4694F3806BA;
+        Mon, 16 Dec 2019 18:25:14 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 16 Dec 2019 18:25:07 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <airlied@redhat.com>, <airlied@linux.ie>, <daniel@ffwll.ch>
+CC:     <linux-kernel@vger.kernel.org>, <zhongjiang@huawei.com>
+Subject: [PATCH] drm/ast: make the symbol 'ast_primary_plane_helper_atomic_update' static
+Date:   Mon, 16 Dec 2019 18:20:45 +0800
+Message-ID: <1576491645-18795-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-References: <20191215011045.15453-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191215011045.15453-1-navid.emamdoost@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 16 Dec 2019 11:20:33 +0100
-Message-ID: <CACRpkdYZDj+rO0WL3wFtVM0Kosx5LWrKDLkUvmqV4EVXtSeO-w@mail.gmail.com>
-Subject: Re: [PATCH] net: gemini: Fix memory leak in gmac_setup_txqs
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        emamd001@umn.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 15, 2019 at 2:11 AM Navid Emamdoost
-<navid.emamdoost@gmail.com> wrote:
+Fix the following sparse warning.
 
-> In the implementation of gmac_setup_txqs() the allocated desc_ring is
-> leaked if TX queue base is not aligned. Release it via
-> dma_free_coherent.
->
-> Fixes: 4d5ae32f5e1e ("net: ethernet: Add a driver for Gemini gigabit ethernet")
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+drivers/gpu/drm/ast/ast_mode.c:563:6: warning: symbol 'ast_primary_plane_helper_atomic_update' was not declared. Should it be static?
 
-Looks correct to me,
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/gpu/drm/ast/ast_mode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index cde1cae..44b598d 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -560,7 +560,7 @@ static int ast_primary_plane_helper_atomic_check(struct drm_plane *plane,
+ 	return 0;
+ }
+ 
+-void ast_primary_plane_helper_atomic_update(struct drm_plane *plane,
++static void ast_primary_plane_helper_atomic_update(struct drm_plane *plane,
+ 					    struct drm_plane_state *old_state)
+ {
+ 	struct ast_private *ast = plane->dev->dev_private;
+-- 
+1.7.12.4
+
