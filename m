@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31BA9121452
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63F4A1214FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:17:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730598AbfLPSKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:10:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53310 "EHLO mail.kernel.org"
+        id S1731189AbfLPSRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:17:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728339AbfLPSKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:10:18 -0500
+        id S1731429AbfLPSRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:17:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99DD0206EC;
-        Mon, 16 Dec 2019 18:10:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4399206E0;
+        Mon, 16 Dec 2019 18:17:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519818;
-        bh=Y4iET9vI16486tsdjHkxtgL0h01ixTEhKDNcbp5kogY=;
+        s=default; t=1576520225;
+        bh=364GGQrlE6OQHEpJXW3US8s53v1PHNi3/gNpEqfS8gU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VKgOEa71qf7meO6l2KqGbJuNg5rDJ1k4E7z2SdRkfJ0CnhJi+FPNeQ8bsp8fDbxZa
-         T9XqHbjT06pK9djyR8KT5AxyLw7Nlii1SQ7lIfa211AzchIT5EbSUowiMhKaXnNEZZ
-         nobo62nKt+zo02g1P5Y8Mv+XctlAkPys1oYOurlU=
+        b=mn5bD9t5VvkkbRJNOEKBt27mYm+UBmmihhtcdrp2OqAkjTGUYp82NODhFAxJbj6RF
+         vu3tNl0QvD4E58rBeGLQBANi8ocSN4Wa0YUzLujy/exa82bH5K1wsKwL8YovrVmTS9
+         xSf342SEkWIXXtBUZ4U1mweVKf410W5fbaBB1JOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maya Erez <merez@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Denis Efremov <efremov@linux.com>
-Subject: [PATCH 5.3 082/180] wil6210: check len before memcpy() calls
-Date:   Mon, 16 Dec 2019 18:48:42 +0100
-Message-Id: <20191216174831.479468128@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.4 067/177] btrfs: use btrfs_block_group_cache_done in update_block_group
+Date:   Mon, 16 Dec 2019 18:48:43 +0100
+Message-Id: <20191216174834.482657428@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Efremov <efremov@linux.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 2c840676be8ffc624bf9bb4490d944fd13c02d71 upstream.
+commit a60adce85f4bb5c1ef8ffcebadd702cafa2f3696 upstream.
 
-memcpy() in wmi_set_ie() and wmi_update_ft_ies() is called with
-src == NULL and len == 0. This is an undefined behavior. Fix it
-by checking "ie_len > 0" before the memcpy() calls.
+When free'ing extents in a block group we check to see if the block
+group is not cached, and then cache it if we need to.  However we'll
+just carry on as long as we're loading the cache.  This is problematic
+because we are dirtying the block group here.  If we are fast enough we
+could do a transaction commit and clear the free space cache while we're
+still loading the space cache in another thread.  This truncates the
+free space inode, which will keep it from loading the space cache.
 
-As suggested by GCC documentation:
-"The pointers passed to memmove (and similar functions in <string.h>)
-must be non-null even when nbytes==0, so GCC can use that information
-to remove the check after the memmove call." [1]
+Fix this by using the btrfs_block_group_cache_done helper so that we try
+to load the space cache unconditionally here, which will result in the
+caller waiting for the fast caching to complete and keep us from
+truncating the free space inode.
 
-[1] https://gcc.gnu.org/gcc-4.9/porting_to.html
-
-Cc: Maya Erez <merez@codeaurora.org>
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Efremov <efremov@linux.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/wil6210/wmi.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/btrfs/block-group.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/wil6210/wmi.c
-+++ b/drivers/net/wireless/ath/wil6210/wmi.c
-@@ -2478,7 +2478,8 @@ int wmi_set_ie(struct wil6210_vif *vif,
- 	cmd->mgmt_frm_type = type;
- 	/* BUG: FW API define ieLen as u8. Will fix FW */
- 	cmd->ie_len = cpu_to_le16(ie_len);
--	memcpy(cmd->ie_info, ie, ie_len);
-+	if (ie_len)
-+		memcpy(cmd->ie_info, ie, ie_len);
- 	rc = wmi_send(wil, WMI_SET_APPIE_CMDID, vif->mid, cmd, len);
- 	kfree(cmd);
- out:
-@@ -2514,7 +2515,8 @@ int wmi_update_ft_ies(struct wil6210_vif
- 	}
+--- a/fs/btrfs/block-group.c
++++ b/fs/btrfs/block-group.c
+@@ -2662,7 +2662,7 @@ int btrfs_update_block_group(struct btrf
+ 		 * is because we need the unpinning stage to actually add the
+ 		 * space back to the block group, otherwise we will leak space.
+ 		 */
+-		if (!alloc && cache->cached == BTRFS_CACHE_NO)
++		if (!alloc && !btrfs_block_group_cache_done(cache))
+ 			btrfs_cache_block_group(cache, 1);
  
- 	cmd->ie_len = cpu_to_le16(ie_len);
--	memcpy(cmd->ie_info, ie, ie_len);
-+	if (ie_len)
-+		memcpy(cmd->ie_info, ie, ie_len);
- 	rc = wmi_send(wil, WMI_UPDATE_FT_IES_CMDID, vif->mid, cmd, len);
- 	kfree(cmd);
- 
+ 		byte_in_group = bytenr - cache->key.objectid;
 
 
