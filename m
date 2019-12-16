@@ -2,103 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6475121A82
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 21:05:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C2C7121A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 21:08:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfLPUF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 15:05:26 -0500
-Received: from mga05.intel.com ([192.55.52.43]:55303 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbfLPUF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 15:05:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 12:05:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
-   d="scan'208";a="389578093"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 16 Dec 2019 12:05:24 -0800
-Received: from [10.251.95.214] (abudanko-mobl.ccr.corp.intel.com [10.251.95.214])
-        by linux.intel.com (Postfix) with ESMTP id C3D875802E5;
-        Mon, 16 Dec 2019 12:05:16 -0800 (PST)
-Subject: [PATCH v3 7/7] parisc/perf: open access for CAP_SYS_PERFMON
- privileged process
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        intel-gfx@lists.freedesktop.org,
-        Brendan Gregg <bgregg@netflix.com>, songliubraving@fb.com,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <b175f283-d256-e37e-f447-6ba4ab4f3d3a@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <5d87f946-3588-7531-933b-fd1104ca0842@linux.intel.com>
-Date:   Mon, 16 Dec 2019 23:05:15 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <b175f283-d256-e37e-f447-6ba4ab4f3d3a@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727229AbfLPUIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 15:08:31 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:35153 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbfLPUIb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 15:08:31 -0500
+Received: from orion.localdomain ([77.2.141.144]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MeTwY-1i6VS22h3k-00aXtK; Mon, 16 Dec 2019 21:08:18 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     masahiroy@kernel.org, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: [PATCH] scripts: package: mkdebian: add missing rsync dependency
+Date:   Mon, 16 Dec 2019 21:07:19 +0100
+Message-Id: <20191216200719.30479-1-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+X-Provags-ID: V03:K1:X3dLwHI5BlJvKUqov+BBRxI2y/lv6j7c5H9Exq3erg81r0oXhJV
+ fNVV0JAb3EXCrDStihXCM7spxv21WfLySYZWlSiPqIdOG3Mdoi4Mq/1x1YR2HUp3iIrzEzL
+ zwGLNs0H+1m6sPIbvCjzMARuWMD+XkhB1B/GMh/oiAdVJeCAYOWaftljzuhFVGpZ8w9G7Ww
+ zkv8KdfjfJcSMS1Mr28rg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gJcpD6BR8ag=:LFBKzkBFmfJiXCCHB5+tD2
+ K02F0tflYl+vUPuovo2JPLQ3IGetPSmvxTZ4TJlnIu+knZoZZRx1L5ORkwALl+pR54fnFOKJL
+ 4aqu5XEZulrjHAWPqmwInktfbYghJH5/JqavTZqHEeTunLLe7sBlN26SJewzYVwO+YYOI/rXd
+ mw5geX5+WXcwLjrbcnO8jzyvuW7lLhK6dWP8gumZVZb5Bc3xRv/aEJ+26XrURyihqnpGBL2Zo
+ It0uDX57BXKKatifwXOtphjtfWIvFJBdN1SH54UG/wCiHtNaYo9OjaOZlozhGuQxWGFT5DBR9
+ TqXW8YyEn+zwuUvs+fJgzF+X3I3MzYC/yqCKdpBzmge9cajpQUyzuI90hr8gjlMKnS6ytRFU+
+ b4O048ZmxsTUJsw/ILXkGzklqF04VLBrcsX7OAy2B5Sxct/+AGm9OxtAqNhGwtgQ9+eabagRL
+ pfaKCL3NxxEeVrB6tMvUgALC6EACdO++ljrZ2zXv5ES7Jl30i/WgxWThbsJdp4ch5aD6vC471
+ rAjNgUpLvGskfU3aHFZ8Jxjj4dADn7ASAeLKmTT+DuZR+mqNX86P0c/4GIJiVpvUrOtvwZxc8
+ m45910fXufUk7Grja3W0sKGSE2lBfgVAqRYj9DZJoIXc7ncwk1PwXEOhsqFOAnf45ncTcxxZY
+ xdgi7OxncQ/iwwm2AgLDM0GKH4nHtpcC5qkemnVkn/Z+NvEwori+0FG1kQmPjhG+M0wTeIrKZ
+ 6iBzYgWWi5Vbefy8Fo7KTKtDUeEJGSXe7Vl62twFqPWl0Y//uxxOLoS8lCdby1xhac3slwQAh
+ RGyRMKi87N6QS1Yc4svyNdHGn1zLeAJ/cZd3ewWpVpsD1V4hl2zT2rMJRehUsM+hJx3NermA1
+ 9kjqKN2V4JbTmc7zh47g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We've missed the dependency to rsync, so build fails on
+minimal containers.
 
-Open access to monitoring for CAP_SYS_PERFMON privileged processes.
-For backward compatibility reasons access to the monitoring remains open
-for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage for secure
-monitoring is discouraged with respect to CAP_SYS_PERFMON capability.
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- arch/parisc/kernel/perf.c | 2 +-
+ scripts/package/mkdebian | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/parisc/kernel/perf.c b/arch/parisc/kernel/perf.c
-index 676683641d00..c4208d027794 100644
---- a/arch/parisc/kernel/perf.c
-+++ b/arch/parisc/kernel/perf.c
-@@ -300,7 +300,7 @@ static ssize_t perf_write(struct file *file, const char __user *buf,
- 	else
- 		return -EFAULT;
+diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+index e0750b70453f..7c230016b08d 100755
+--- a/scripts/package/mkdebian
++++ b/scripts/package/mkdebian
+@@ -174,7 +174,7 @@ Source: $sourcename
+ Section: kernel
+ Priority: optional
+ Maintainer: $maintainer
+-Build-Depends: bc, kmod, cpio, bison, flex | flex:native $extra_build_depends
++Build-Depends: bc, rsync, kmod, cpio, bison, flex | flex:native $extra_build_depends
+ Homepage: http://www.kernel.org/
  
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!perfmon_capable())
- 		return -EACCES;
- 
- 	if (count != sizeof(uint32_t))
+ Package: $packagename
 -- 
-2.20.1
-
+2.11.0
 
