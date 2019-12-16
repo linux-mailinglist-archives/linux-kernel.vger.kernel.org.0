@@ -2,164 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58CCB1211A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:21:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD4361211A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:22:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbfLPRVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:21:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbfLPRVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:21:17 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D70E7206E0;
-        Mon, 16 Dec 2019 17:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576516876;
-        bh=Q4yTC5SDyZmpiMOi5cnPhop29ndMyyIHxAjnW9Qr1xY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fQTv6vEbU7+1/jpoq4zDJisLx/VKltrWs+IPodAO8vamZw9SQJ0FVS26cZj3qng93
-         dG5v2AUTy1PhwWgHhxTKICz/SMRBU0EB5LD1o+fWro1kp/4MI4+mATnTVFmzNeeJmo
-         w9/h+jG6qlhO2y46f4YULRo73PnTFnvlS0VnAync=
-Date:   Mon, 16 Dec 2019 09:21:14 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+958915844b296815c246@syzkaller.appspotmail.com>
-Cc:     dhowells@redhat.com, linux-kernel@vger.kernel.org,
-        linux@dominikbrodowski.net, pc@cjr.nz,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: upstream boot error: general protection fault in do_mount_root
-Message-ID: <20191216172114.GB139479@gmail.com>
-References: <000000000000b321f20599cd8725@google.com>
+        id S1726692AbfLPRWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:22:25 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:37100 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbfLPRWY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:22:24 -0500
+Received: by mail-pj1-f65.google.com with SMTP id ep17so3263065pjb.4;
+        Mon, 16 Dec 2019 09:22:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=v2qcov+FADvqNKCZLTTFv4XXmMDQ6mSro4B3OA7yDB4=;
+        b=YLApVkzXcoH9sYQXo6mubykVkMquzm4hPnOO2VYMdFTpdtjkwLBqLxMy5aRo/fpYiw
+         z199KvvkQzFkZxcukgOia5eV+SjGDcqP7CioizzE6UMFy6q/yrBwgqbZUasv8DeIAKnk
+         +EsZYxdbsRZKe7F1x+AcoLBQMJrvhe3IgL7xvsA2m0XMctCMGuHl+IRFvic48fE3fFL4
+         UJkKpttLNafXzX+/LYI48JaLKjhzlJWufz0ycibsaM86sHvaoPsYS1soW8GU5XZXEXyT
+         qB/qKYKefZtDb+xtWhWwJLBpWWcZlI6duU00/RE014KUUM133nr4bZmvMNWV9x3Ilw2w
+         qmPQ==
+X-Gm-Message-State: APjAAAX4vy2EicBRyoO73LzQVVDQ89uGpHD/THtu/2gNFvdFrNEuB8+4
+        qVxJ1TLoWuzU+q/9kmH2r0wkdhf4yYA=
+X-Google-Smtp-Source: APXvYqxldVMknpdg/eYJWmUNo2cFG3KPf6KXVYwf96AKErLg1KEQQefR53J33LuhjIbPJ3XNpWpZ0A==
+X-Received: by 2002:a17:90a:cc02:: with SMTP id b2mr66257pju.137.1576516943602;
+        Mon, 16 Dec 2019 09:22:23 -0800 (PST)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id c8sm23384328pfo.163.2019.12.16.09.22.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2019 09:22:22 -0800 (PST)
+Subject: Re: [PATCH v2 2/3] scsi: ufs: Modulize ufs-bsg
+To:     cang@codeaurora.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Evan Green <evgreen@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1576054123-16417-1-git-send-email-cang@codeaurora.org>
+ <0101016ef425ef65-5c4508cc-5e76-4107-bb27-270f66acaa9a-000000@us-west-2.amazonses.com>
+ <20191212045357.GA415177@yoga>
+ <0101016ef8b2e2f8-72260b08-e6ad-42fc-bd4b-4a0a72c5c9b3-000000@us-west-2.amazonses.com>
+ <20191212063703.GC415177@yoga> <5691bfa1-42e5-3c5f-2497-590bcc0cb2b1@acm.org>
+ <926dd55d8d0dc762b1f6461495fc747a@codeaurora.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <62933901-fcdf-b5ae-431d-e1fbfc897128@acm.org>
+Date:   Mon, 16 Dec 2019 09:22:21 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000b321f20599cd8725@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <926dd55d8d0dc762b1f6461495fc747a@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 15, 2019 at 11:55:07PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    d1eef1c6 Linux 5.5-rc2
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11ff2fb1e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=dcf10bf83926432a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=958915844b296815c246
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+958915844b296815c246@syzkaller.appspotmail.com
-> 
-> IPI shorthand broadcast: enabled
-> AVX2 version of gcm_enc/dec engaged.
-> AES CTR mode by8 optimization enabled
-> registered taskstats version 1
-> Loading compiled-in X.509 certificates
-> Loaded X.509 cert 'Build time autogenerated kernel key:
-> 2a1122198a3e68692ac5775a16203e4f5f9d30c2'
-> zswap: loaded using pool lzo/zbud
-> Key type ._fscrypt registered
-> Key type .fscrypt registered
-> Btrfs loaded, crc32c=crc32c-intel
-> Key type big_key registered
-> Key type encrypted registered
-> ima: No TPM chip found, activating TPM-bypass!
-> ima: Allocated hash algorithm: sha256
-> ima: No architecture policies found
-> evm: Initialising EVM extended attributes:
-> evm: security.selinux
-> evm: security.SMACK64
-> evm: security.SMACK64EXEC
-> evm: security.SMACK64TRANSMUTE
-> evm: security.SMACK64MMAP
-> evm: security.apparmor
-> evm: security.ima
-> evm: security.capability
-> evm: HMAC attrs: 0x1
-> PM:   Magic number: 15:612:306
-> usb usb38: hash matches
-> tty tty35: hash matches
-> printk: console [netcon0] enabled
-> netconsole: network logging started
-> gtp: GTP module loaded (pdp ctx size 104 bytes)
-> rdma_rxe: loaded
-> cfg80211: Loading compiled-in X.509 certificates for regulatory database
-> cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-> Unstable clock detected, switching default tracing clock to "global"
-> If you want to keep using the local clock, then add:
->   "trace_clock=local"
-> on the kernel command line
-> ALSA device list:
->   #0: Dummy 1
->   #1: Loopback 1
->   #2: Virtual MIDI Card 1
->   #3: HDA Intel at 0xfebf0000 irq 31
-> md: Waiting for all devices to be available before autodetect
-> md: If you don't use raid, use raid=noautodetect
-> md: Autodetecting RAID arrays.
-> md: autorun ...
-> md: ... autorun DONE.
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc2-syzkaller #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-> RIP: 0010:strncpy+0x35/0xc0 lib/string.c:119
-> Code: e5 41 56 41 55 4c 8d 34 17 49 bd 00 00 00 00 00 fc ff df 41 54 53 48
-> 89 fb 48 83 ec 10 48 89 f2 48 89 f1 48 c1 ea 03 83 e1 07 <42> 0f b6 14 2a 38
-> ca 7f 04 84 d2 75 40 48 89 da 48 89 d9 44 0f b6
-> RSP: 0000:ffffc9000034fca8 EFLAGS: 00010246
-> RAX: ffff88807331f000 RBX: ffff88807331f000 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88807331f000
-> RBP: ffffc9000034fcd8 R08: ffff88807331f000 R09: ffffed1005a6703d
-> R10: ffffed1005a6703c R11: ffff88802d3381e3 R12: ffffea0001ccc7c0
-> R13: dffffc0000000000 R14: ffff88807331ffff R15: ffff88801f1cb000
-> FS:  0000000000000000(0000) GS:ffff88802d300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000000986d000 CR4: 0000000000340ee0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  strncpy include/linux/string.h:281 [inline]
->  do_mount_root+0x74/0x23b init/do_mounts.c:404
->  mount_block_root+0x342/0x51a init/do_mounts.c:438
->  mount_root+0x283/0x2cd init/do_mounts.c:628
->  prepare_namespace+0x26f/0x2a7 init/do_mounts.c:687
->  kernel_init_freeable+0x557/0x570 init/main.c:1231
->  kernel_init+0x12/0x1bf init/main.c:1110
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> Modules linked in:
-> ---[ end trace dc1d12e4189687e7 ]---
-> RIP: 0010:strncpy+0x35/0xc0 lib/string.c:119
-> Code: e5 41 56 41 55 4c 8d 34 17 49 bd 00 00 00 00 00 fc ff df 41 54 53 48
-> 89 fb 48 83 ec 10 48 89 f2 48 89 f1 48 c1 ea 03 83 e1 07 <42> 0f b6 14 2a 38
-> ca 7f 04 84 d2 75 40 48 89 da 48 89 d9 44 0f b6
-> RSP: 0000:ffffc9000034fca8 EFLAGS: 00010246
-> RAX: ffff88807331f000 RBX: ffff88807331f000 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88807331f000
-> RBP: ffffc9000034fcd8 R08: ffff88807331f000 R09: ffffed1005a6703d
-> R10: ffffed1005a6703c R11: ffff88802d3381e3 R12: ffffea0001ccc7c0
-> R13: dffffc0000000000 R14: ffff88807331ffff R15: ffff88801f1cb000
-> FS:  0000000000000000(0000) GS:ffff88802d300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000000986d000 CR4: 0000000000340ee0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
+On 12/15/19 8:36 PM, cang@codeaurora.org wrote:
+> On 2019-12-16 05:49, Bart Van Assche wrote:
+>> On 2019-12-11 22:37, Bjorn Andersson wrote:
+>>> It's the asymmetry that I don't like.
+>>>
+>>> Perhaps if you instead make ufshcd platform_device_register_data() the
+>>> bsg device you would solve the probe ordering, the remove will be
+>>> symmetric and module autoloading will work as well (although then you
+>>> need a MODULE_ALIAS of platform:device-name).
+>>
+>> Hi Bjorn,
+>>
+>> From Documentation/driver-api/driver-model/platform.rst:
+>> "Platform devices are devices that typically appear as autonomous
+>> entities in the system. This includes legacy port-based devices and
+>> host bridges to peripheral buses, and most controllers integrated
+>> into system-on-chip platforms.  What they usually have in common
+>> is direct addressing from a CPU bus.  Rarely, a platform_device will
+>> be connected through a segment of some other kind of bus; but its
+>> registers will still be directly addressable."
+>>
+>> Do you agree that the above description is not a good match for the
+>> ufs-bsg kernel module?
+>
+> I missed this one.
+> How about making it a plain device and add it from ufs driver?
 
-Fixed in mainline by commit 7de7de7ca0ae0
+Hi Can,
 
-#syz fix: Fix root mounting with no mount options
+Since the ufs_bsg kernel module already creates one device node under 
+/dev/bsg for each UFS host I don't think that we need to create any 
+additional device nodes for ufs-bsg devices. My proposal is to modify 
+the original patch 2/3 from this series as follows:
+* Use module_init() instead of late_initcall_sync().
+* Remove the ufshcd_get_hba_list_lock() and
+   ufshcd_put_hba_list_unlock() functions.
+* Implement a notification mechanism in the UFS core that invokes a
+   callback function after an UFS host has been created and also after an
+   UFS host has been removed.
+* Register for these notifications from inside the ufs-bsg driver.
+* During registration for notifications, invoke the UFS host creation
+   callback function for all known UFS hosts.
+* If the UFS core is unloaded, invoke the UFS host removal callback
+   function for all known UFS hosts.
 
-- Eric
+I think there are several examples of similar notification mechanisms in 
+the Linux kernel, e.g. the probe and remove callback functions in struct 
+pci_driver.
+
+Bart.
