@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5992B1214F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:17:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6451F121480
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:12:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731607AbfLPSQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:16:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39968 "EHLO mail.kernel.org"
+        id S1730659AbfLPSLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:11:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731369AbfLPSQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:16:51 -0500
+        id S1730832AbfLPSLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:11:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47CB6207FF;
-        Mon, 16 Dec 2019 18:16:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD9352072D;
+        Mon, 16 Dec 2019 18:11:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520210;
-        bh=QUuWlmukpB22zUiY0dYuQxdxdGq93Oj0RixZKBw1294=;
+        s=default; t=1576519908;
+        bh=00g5RKiIENXMC3oLyUK6qvQXapP1X6bpjKBjMZkmUmE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fD8Z8XyhoSrCtUntcAJArKlRsXaqPzTCQd8WlMJvn7MjscqRPQAhDjifG2R2HY7/+
-         eraW+stjEjvb6owdoQcV0MQQpLDVQ2qQ3+aL0HzbsINAGPvjrRU8E2dC852ALB+Y2U
-         TvHzH6bSa3Ji+23BysxW38PUk5QwGLxKA+zfQV10=
+        b=qGIFrQaobMNG/LsTmsqCpIuCF47JVbxBxTt8vdWD+/lrpzWx8NmT+OHYOd8delBqY
+         Z+CIwFn7FYDwtpX2a65M258xAH4691aNuKe9hJtzDRj+clrM5MKbGGQRYhIYqTz+Z4
+         NC2teG/eE+XygGsQ0ngiKrN60Sd1fU9Q+elI0UvM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <balbi@kernel.org>
-Subject: [PATCH 5.4 061/177] usb: dwc3: gadget: Clear started flag for non-IOC
-Date:   Mon, 16 Dec 2019 18:48:37 +0100
-Message-Id: <20191216174831.556504486@linuxfoundation.org>
+        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.3 078/180] ASoC: fsl_audmix: Add spin lock to protect tdms
+Date:   Mon, 16 Dec 2019 18:48:38 +0100
+Message-Id: <20191216174830.960022512@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-commit d3abda5a98a18e524e17fd4085c9f4bd53e9ef53 upstream.
+commit fe965096c9495ddcf78ec163348105e2baf8d185 upstream.
 
-Normally the END_TRANSFER command completion handler will clear the
-DWC3_EP_TRANSFER_STARTED flag. However, if the command was sent without
-interrupt on completion, then the flag will not be cleared. Make sure to
-clear the flag in this case.
+Audmix support two substream, When two substream start
+to run, the trigger function may be called by two substream
+in same time, that the priv->tdms may be updated wrongly.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+The expected priv->tdms is 0x3, but sometimes the
+result is 0x2, or 0x1.
+
+Fixes: be1df61cf06e ("ASoC: fsl: Add Audio Mixer CPU DAI driver")
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Link: https://lore.kernel.org/r/1e706afe53fdd1fbbbc79277c48a98f8416ba873.1573458378.git.shengjiu.wang@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |    3 +++
- 1 file changed, 3 insertions(+)
+ sound/soc/fsl/fsl_audmix.c |    6 ++++++
+ sound/soc/fsl/fsl_audmix.h |    1 +
+ 2 files changed, 7 insertions(+)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -2719,6 +2719,9 @@ static void dwc3_stop_active_transfer(st
- 	WARN_ON_ONCE(ret);
- 	dep->resource_index = 0;
+--- a/sound/soc/fsl/fsl_audmix.c
++++ b/sound/soc/fsl/fsl_audmix.c
+@@ -286,6 +286,7 @@ static int fsl_audmix_dai_trigger(struct
+ 				  struct snd_soc_dai *dai)
+ {
+ 	struct fsl_audmix *priv = snd_soc_dai_get_drvdata(dai);
++	unsigned long lock_flags;
  
-+	if (!interrupt)
-+		dep->flags &= ~DWC3_EP_TRANSFER_STARTED;
-+
- 	if (dwc3_is_usb31(dwc) || dwc->revision < DWC3_REVISION_310A)
- 		udelay(100);
- }
+ 	/* Capture stream shall not be handled */
+ 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
+@@ -295,12 +296,16 @@ static int fsl_audmix_dai_trigger(struct
+ 	case SNDRV_PCM_TRIGGER_START:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++		spin_lock_irqsave(&priv->lock, lock_flags);
+ 		priv->tdms |= BIT(dai->driver->id);
++		spin_unlock_irqrestore(&priv->lock, lock_flags);
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 	case SNDRV_PCM_TRIGGER_SUSPEND:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++		spin_lock_irqsave(&priv->lock, lock_flags);
+ 		priv->tdms &= ~BIT(dai->driver->id);
++		spin_unlock_irqrestore(&priv->lock, lock_flags);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -493,6 +498,7 @@ static int fsl_audmix_probe(struct platf
+ 		return PTR_ERR(priv->ipg_clk);
+ 	}
+ 
++	spin_lock_init(&priv->lock);
+ 	platform_set_drvdata(pdev, priv);
+ 	pm_runtime_enable(dev);
+ 
+--- a/sound/soc/fsl/fsl_audmix.h
++++ b/sound/soc/fsl/fsl_audmix.h
+@@ -96,6 +96,7 @@ struct fsl_audmix {
+ 	struct platform_device *pdev;
+ 	struct regmap *regmap;
+ 	struct clk *ipg_clk;
++	spinlock_t lock; /* Protect tdms */
+ 	u8 tdms;
+ };
+ 
 
 
