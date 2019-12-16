@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F36A012186B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:44:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FF0F1216CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:32:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbfLPR6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:58:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58878 "EHLO mail.kernel.org"
+        id S1730666AbfLPSKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:10:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728302AbfLPR6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:58:45 -0500
+        id S1730448AbfLPSKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:10:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AF7A21739;
-        Mon, 16 Dec 2019 17:58:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B5A22467E;
+        Mon, 16 Dec 2019 18:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519124;
-        bh=I1pM00sAx1NXWrBCRm+Y2c8vbUDiPb+MHsbOUbAf5Rk=;
+        s=default; t=1576519845;
+        bh=JfdLsctLNhC0Q+bmhltptJfEYXoQ8ljEj1jkUODPDik=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VtzNDyJ5wyp5EGUP0oG1X1dXNPu4ZY88s7dAmL2CU3RW4zAP9ESFh47M9zQn+Kjsk
-         Ljk78JigIlHmj6yJ6aQ+HmuSRSrWuborlRqmM+Bs0hYzlmaLhFO0UT6xKFHGwd0ZSA
-         GUMR9NQ3OVOftJyPg/MLZ1NZ9gicpj82vrVLdDtY=
+        b=pAKI+yYWcOKAyJdwUzcDrI3fSm9wjXXbKD3vdvpCSEP8xd2R9Q4teucbcbwMEsxMj
+         EbMYAPpZe8P7MVAp7KAoeKyp68ZusqmjZPYvJidMJzNjFUzHzserVHtdUbxmY6XVxR
+         UIKcASn7q+3QHeI3Sr+3ROL6rKqAjqeZbwkWqWnM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.14 205/267] cgroup: pids: use atomic64_t for pids->limit
-Date:   Mon, 16 Dec 2019 18:48:51 +0100
-Message-Id: <20191216174913.766499977@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.3 092/180] cpuidle: teo: Consider hits and misses metrics of disabled states
+Date:   Mon, 16 Dec 2019 18:48:52 +0100
+Message-Id: <20191216174834.801861382@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,78 +43,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aleksa Sarai <cyphar@cyphar.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit a713af394cf382a30dd28a1015cbe572f1b9ca75 upstream.
+commit e43dcf20215f0287ea113102617ca04daa76b70e upstream.
 
-Because pids->limit can be changed concurrently (but we don't want to
-take a lock because it would be needlessly expensive), use atomic64_ts
-instead.
+The TEO governor uses idle duration "bins" defined in accordance with
+the CPU idle states table provided by the driver, so that each "bin"
+covers the idle duration range between the target residency of the
+idle state corresponding to it and the target residency of the closest
+deeper idle state.  The governor collects statistics for each bin
+regardless of whether or not the idle state corresponding to it is
+currently enabled.
 
-Fixes: commit 49b786ea146f ("cgroup: implement the PIDs subsystem")
-Cc: stable@vger.kernel.org # v4.3+
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+In particular, the "hits" and "misses" metrics measure the likelihood
+of a situation in which both the time till the next timer (sleep
+length) and the idle duration measured after wakeup fall into the
+given bin.  Namely, if the "hits" value is greater than the "misses"
+one, that situation is more likely than the one in which the sleep
+length falls into the given bin, but the idle duration measured after
+wakeup falls into a bin corresponding to one of the shallower idle
+states.
+
+If the idle state corresponding to the given bin is disabled, it
+cannot be selected and if it turns out to be the one that should be
+selected, a shallower idle state needs to be used instead of it.
+Nevertheless, the metrics collected for the bin corresponding to it
+are still valid and need to be taken into account as though that
+state had not been disabled.
+
+For this reason, make teo_select() always use the "hits" and "misses"
+values of the idle duration range that the sleep length falls into
+even if the specific idle state corresponding to it is disabled and
+if the "hits" values is greater than the "misses" one, select the
+closest enabled shallower idle state in that case.
+
+Fixes: b26bf6ab716f ("cpuidle: New timer events oriented governor for tickless systems")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: 5.1+ <stable@vger.kernel.org> # 5.1+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/cgroup/pids.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/cpuidle/governors/teo.c |   25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
 
---- a/kernel/cgroup/pids.c
-+++ b/kernel/cgroup/pids.c
-@@ -48,7 +48,7 @@ struct pids_cgroup {
- 	 * %PIDS_MAX = (%PID_MAX_LIMIT + 1).
- 	 */
- 	atomic64_t			counter;
--	int64_t				limit;
-+	atomic64_t			limit;
- 
- 	/* Handle for "pids.events" */
- 	struct cgroup_file		events_file;
-@@ -76,8 +76,8 @@ pids_css_alloc(struct cgroup_subsys_stat
- 	if (!pids)
- 		return ERR_PTR(-ENOMEM);
- 
--	pids->limit = PIDS_MAX;
- 	atomic64_set(&pids->counter, 0);
-+	atomic64_set(&pids->limit, PIDS_MAX);
- 	atomic64_set(&pids->events_limit, 0);
- 	return &pids->css;
- }
-@@ -149,13 +149,14 @@ static int pids_try_charge(struct pids_c
- 
- 	for (p = pids; parent_pids(p); p = parent_pids(p)) {
- 		int64_t new = atomic64_add_return(num, &p->counter);
-+		int64_t limit = atomic64_read(&p->limit);
- 
- 		/*
- 		 * Since new is capped to the maximum number of pid_t, if
- 		 * p->limit is %PIDS_MAX then we know that this test will never
- 		 * fail.
- 		 */
--		if (new > p->limit)
-+		if (new > limit)
- 			goto revert;
- 	}
- 
-@@ -280,7 +281,7 @@ set_limit:
- 	 * Limit updates don't need to be mutex'd, since it isn't
- 	 * critical that any racing fork()s follow the new limit.
- 	 */
--	pids->limit = limit;
-+	atomic64_set(&pids->limit, limit);
- 	return nbytes;
- }
- 
-@@ -288,7 +289,7 @@ static int pids_max_show(struct seq_file
+--- a/drivers/cpuidle/governors/teo.c
++++ b/drivers/cpuidle/governors/teo.c
+@@ -241,7 +241,7 @@ static int teo_select(struct cpuidle_dri
  {
- 	struct cgroup_subsys_state *css = seq_css(sf);
- 	struct pids_cgroup *pids = css_pids(css);
--	int64_t limit = pids->limit;
-+	int64_t limit = atomic64_read(&pids->limit);
+ 	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
+ 	int latency_req = cpuidle_governor_latency_req(dev->cpu);
+-	unsigned int duration_us, early_hits;
++	unsigned int duration_us, hits, misses, early_hits;
+ 	int max_early_idx, constraint_idx, idx, i;
+ 	ktime_t delta_tick;
  
- 	if (limit >= PIDS_MAX)
- 		seq_printf(sf, "%s\n", PIDS_MAX_STR);
+@@ -255,6 +255,8 @@ static int teo_select(struct cpuidle_dri
+ 	cpu_data->sleep_length_ns = tick_nohz_get_sleep_length(&delta_tick);
+ 	duration_us = ktime_to_us(cpu_data->sleep_length_ns);
+ 
++	hits = 0;
++	misses = 0;
+ 	early_hits = 0;
+ 	max_early_idx = -1;
+ 	constraint_idx = drv->state_count;
+@@ -273,6 +275,17 @@ static int teo_select(struct cpuidle_dri
+ 				continue;
+ 
+ 			/*
++			 * This state is disabled, so the range of idle duration
++			 * values corresponding to it is covered by the current
++			 * candidate state, but still the "hits" and "misses"
++			 * metrics of the disabled state need to be used to
++			 * decide whether or not the state covering the range in
++			 * question is good enough.
++			 */
++			hits = cpu_data->states[i].hits;
++			misses = cpu_data->states[i].misses;
++
++			/*
+ 			 * If the "early hits" metric of a disabled state is
+ 			 * greater than the current maximum, it should be taken
+ 			 * into account, because it would be a mistake to select
+@@ -288,8 +301,11 @@ static int teo_select(struct cpuidle_dri
+ 			continue;
+ 		}
+ 
+-		if (idx < 0)
++		if (idx < 0) {
+ 			idx = i; /* first enabled state */
++			hits = cpu_data->states[i].hits;
++			misses = cpu_data->states[i].misses;
++		}
+ 
+ 		if (s->target_residency > duration_us)
+ 			break;
+@@ -298,6 +314,8 @@ static int teo_select(struct cpuidle_dri
+ 			constraint_idx = i;
+ 
+ 		idx = i;
++		hits = cpu_data->states[i].hits;
++		misses = cpu_data->states[i].misses;
+ 
+ 		if (early_hits < cpu_data->states[i].early_hits &&
+ 		    !(tick_nohz_tick_stopped() &&
+@@ -315,8 +333,7 @@ static int teo_select(struct cpuidle_dri
+ 	 * "early hits" metric, but if that cannot be determined, just use the
+ 	 * state selected so far.
+ 	 */
+-	if (cpu_data->states[idx].hits <= cpu_data->states[idx].misses &&
+-	    max_early_idx >= 0) {
++	if (hits <= misses && max_early_idx >= 0) {
+ 		idx = max_early_idx;
+ 		duration_us = drv->states[idx].target_residency;
+ 	}
 
 
