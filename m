@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D14A1213DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5CAE121530
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729849AbfLPSFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:05:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44230 "EHLO mail.kernel.org"
+        id S1731911AbfLPSTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:19:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727459AbfLPSFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:05:36 -0500
+        id S1731758AbfLPSTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:19:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC3202166E;
-        Mon, 16 Dec 2019 18:05:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43853218AC;
+        Mon, 16 Dec 2019 18:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519536;
-        bh=UOc/FJlJ+vBa71ybe5UqQhEaD33njVr12Vobl8SZBx4=;
+        s=default; t=1576520356;
+        bh=KO3vXSYLDbK8UNt87SuJS8TyyPyYA34rfIsJRPBk7ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S7G2aWN92uHE3nc3Mja17MYMPPhnCijFoXC8ocjWcZXd2Cmmh0J06CxuEaTcn/5Ho
-         OB2Kqw5NnUmp7pTVELCD+peAO7lSBIlwyiZ6X3ubdq3Iq/jWGIYRhEmwGyHerOB9HH
-         8NnB7BdzWUB15MzKuJLC9UJNqXwCCCGp+t8APK1o=
+        b=ZlwwlMnbVs/1HQ5ACdYlxkbf7KMT6XKLr8VNOKzcLsN+aXFyNz3a+v0h93x7ByaS8
+         BxcoVP8+8BUvTTL3fpNUnsKyIMv2PlhvqX6q1D+MpcKfrqHS7Hg8//9q0to7xQ0TDo
+         KSKOW4g3xI3Q8TFrqDhSGw+3nAXeoATIzk5bTf60=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
-        linux-usb@vger.kernel.org,
-        =?UTF-8?q?Heikki=20Krogerus=C2=A0?= 
-        <heikki.krogerus@linux.intel.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 107/140] usb: typec: fix use after free in typec_register_port()
-Date:   Mon, 16 Dec 2019 18:49:35 +0100
-Message-Id: <20191216174815.842184472@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 120/177] ALSA: oxfw: fix return value in error path of isochronous resources reservation
+Date:   Mon, 16 Dec 2019 18:49:36 +0100
+Message-Id: <20191216174843.200388791@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wenyang@linux.alibaba.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-[ Upstream commit 5c388abefda0d92355714010c0199055c57ab6c7 ]
+commit 59a126aa3113fc23f03fedcafe3705f1de5aff50 upstream.
 
-We can't use "port->sw" and/or "port->mux" after it has been freed.
+Even if isochronous resources reservation fails, error code doesn't return
+in pcm.hw_params callback.
 
-Fixes: 23481121c81d ("usb: typec: class: Don't use port parent for getting mux handles")
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Link: https://lore.kernel.org/r/20191126140452.14048-1-wenyang@linux.alibaba.com
+Cc: <stable@vger.kernel.org> #5.3+
+Fixes: 4f380d007052 ("ALSA: oxfw: configure packet format in pcm.hw_params callback")
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Link: https://lore.kernel.org/r/20191209151655.GA8090@workstation
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/usb/typec/class.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/firewire/oxfw/oxfw-pcm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 00141e05bc724..1916ee1600b47 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -1589,14 +1589,16 @@ struct typec_port *typec_register_port(struct device *parent,
- 
- 	port->sw = typec_switch_get(&port->dev);
- 	if (IS_ERR(port->sw)) {
-+		ret = PTR_ERR(port->sw);
- 		put_device(&port->dev);
--		return ERR_CAST(port->sw);
-+		return ERR_PTR(ret);
+--- a/sound/firewire/oxfw/oxfw-pcm.c
++++ b/sound/firewire/oxfw/oxfw-pcm.c
+@@ -255,7 +255,7 @@ static int pcm_playback_hw_params(struct
+ 		mutex_unlock(&oxfw->mutex);
  	}
  
- 	port->mux = typec_mux_get(&port->dev, "typec-mux");
- 	if (IS_ERR(port->mux)) {
-+		ret = PTR_ERR(port->mux);
- 		put_device(&port->dev);
--		return ERR_CAST(port->mux);
-+		return ERR_PTR(ret);
- 	}
+-	return 0;
++	return err;
+ }
  
- 	ret = device_add(&port->dev);
--- 
-2.20.1
-
+ static int pcm_capture_hw_free(struct snd_pcm_substream *substream)
 
 
