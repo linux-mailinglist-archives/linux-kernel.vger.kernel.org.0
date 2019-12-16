@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FA27121432
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7BC81214E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfLPSJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:09:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51244 "EHLO mail.kernel.org"
+        id S1728681AbfLPSQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730381AbfLPSJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:10 -0500
+        id S1728525AbfLPSP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:15:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A09882072B;
-        Mon, 16 Dec 2019 18:09:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A286206E0;
+        Mon, 16 Dec 2019 18:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519750;
-        bh=zJJttVOwLrFq9aZgonSL2Bb1IaAF8YNWFphhjZylzC8=;
+        s=default; t=1576520156;
+        bh=54g1RQWe0ZQcTMSuQP2WxVHfbj0WlZ+Smeh/tvKqMiM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1HT1EImWob1Q8ywOwB17CTCmpGCoQkvtBLqM9fYTKwOEFL6bcx4jTm0Drf4xnNzhL
-         ILcius4OGcmDBO+MlaI6HvM/7egpTBBBAAE4z3JGhwOpjLCKSnlnO2tD+S41Uk8Ylt
-         qygSyQykJ7dyB9eLAGAZo+x3RfHnUHSnu1lUlLvQ=
+        b=A1Ppr9LzIwWA0CFqE7m1o63ypXfgG2nFoh/pte+Za9EOHUtbIDk+hEOjRqbpraWmV
+         sk40J0WRithHSLCfcymjdpIyfmuX/spmnewmpsqz/sQ0va/L9DozqvgG2xUg6ILiec
+         pxFSJmx/zIlyLdD7cMYl91E22OfpSPCnZX+N8OfM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
-        linux-usb@vger.kernel.org,
-        =?UTF-8?q?Heikki=20Krogerus=C2=A0?= 
-        <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 5.3 053/180] usb: typec: fix use after free in typec_register_port()
-Date:   Mon, 16 Dec 2019 18:48:13 +0100
-Message-Id: <20191216174824.725793396@linuxfoundation.org>
+        stable@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.4 038/177] iio: imu: st_lsm6dsx: fix ODR check in st_lsm6dsx_write_raw
+Date:   Mon, 16 Dec 2019 18:48:14 +0100
+Message-Id: <20191216174828.973318534@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wenyang@linux.alibaba.com>
+From: Lorenzo Bianconi <lorenzo@kernel.org>
 
-commit 5c388abefda0d92355714010c0199055c57ab6c7 upstream.
+commit fc3f6ad7f5dc6c899fbda0255865737bac88c2e0 upstream.
 
-We can't use "port->sw" and/or "port->mux" after it has been freed.
+Since st_lsm6dsx i2c master controller relies on accel device as trigger
+and slave devices can run at different ODRs we must select an accel_odr >=
+slave_odr. Report real accel ODR in st_lsm6dsx_check_odr() in order to
+properly set sensor frequency in st_lsm6dsx_write_raw and avoid to
+report unsupported frequency
 
-Fixes: 23481121c81d ("usb: typec: class: Don't use port parent for getting mux handles")
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Link: https://lore.kernel.org/r/20191126140452.14048-1-wenyang@linux.alibaba.com
+Fixes: 6ffb55e5009ff ("iio: imu: st_lsm6dsx: introduce ST_LSM6DSX_ID_EXT sensor ids")
+Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/typec/class.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -1604,14 +1604,16 @@ struct typec_port *typec_register_port(s
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+@@ -985,8 +985,7 @@ int st_lsm6dsx_check_odr(struct st_lsm6d
+ 		return -EINVAL;
  
- 	port->sw = typec_switch_get(&port->dev);
- 	if (IS_ERR(port->sw)) {
-+		ret = PTR_ERR(port->sw);
- 		put_device(&port->dev);
--		return ERR_CAST(port->sw);
-+		return ERR_PTR(ret);
+ 	*val = odr_table->odr_avl[i].val;
+-
+-	return 0;
++	return odr_table->odr_avl[i].hz;
+ }
+ 
+ static u16 st_lsm6dsx_check_odr_dependency(struct st_lsm6dsx_hw *hw, u16 odr,
+@@ -1149,8 +1148,10 @@ static int st_lsm6dsx_write_raw(struct i
+ 	case IIO_CHAN_INFO_SAMP_FREQ: {
+ 		u8 data;
+ 
+-		err = st_lsm6dsx_check_odr(sensor, val, &data);
+-		if (!err)
++		val = st_lsm6dsx_check_odr(sensor, val, &data);
++		if (val < 0)
++			err = val;
++		else
+ 			sensor->odr = val;
+ 		break;
  	}
- 
- 	port->mux = typec_mux_get(&port->dev, NULL);
- 	if (IS_ERR(port->mux)) {
-+		ret = PTR_ERR(port->mux);
- 		put_device(&port->dev);
--		return ERR_CAST(port->mux);
-+		return ERR_PTR(ret);
- 	}
- 
- 	ret = device_add(&port->dev);
 
 
