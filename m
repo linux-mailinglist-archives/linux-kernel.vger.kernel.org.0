@@ -2,122 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AFF612078A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DAE3120794
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:50:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbfLPNsQ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 16 Dec 2019 08:48:16 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:50891 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbfLPNsP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 08:48:15 -0500
-X-Originating-IP: 91.224.148.103
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 351A2C0003;
-        Mon, 16 Dec 2019 13:48:11 +0000 (UTC)
-Date:   Mon, 16 Dec 2019 14:48:10 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] drm/panel: simple: Support reset GPIOs
-Message-ID: <20191216144810.18710ed3@xps13>
-In-Reply-To: <20191216132732.mmqivmpnq4mio6oo@gilmour.lan>
-References: <20191213181325.26228-1-miquel.raynal@bootlin.com>
-        <20191216130615.qs6ub7bwqofwvhr7@gilmour.lan>
-        <20191216141036.24c22899@xps13>
-        <20191216132732.mmqivmpnq4mio6oo@gilmour.lan>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727925AbfLPNu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 08:50:29 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7253 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727579AbfLPNu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 08:50:29 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 33520A48BA882C891ECE;
+        Mon, 16 Dec 2019 21:50:27 +0800 (CST)
+Received: from [127.0.0.1] (10.133.216.73) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Mon, 16 Dec 2019
+ 21:50:21 +0800
+Subject: Re: [PATCH] irq-gic-v3: fix NULL dereference of disabled redist_base
+To:     Marc Zyngier <maz@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <20191216062745.63397-1-guoheyi@huawei.com>
+ <36a042f6bcea5b5d5bfd9f6e6f01d6f5@www.loen.fr>
+From:   Guoheyi <guoheyi@huawei.com>
+Message-ID: <c1447d9f-df4a-db07-adae-7e7e6c0f6455@huawei.com>
+Date:   Mon, 16 Dec 2019 21:50:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <36a042f6bcea5b5d5bfd9f6e6f01d6f5@www.loen.fr>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.133.216.73]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
 
-Maxime Ripard <maxime@cerno.tech> wrote on Mon, 16 Dec 2019 14:27:32
-+0100:
+在 2019/12/16 19:14, Marc Zyngier 写道:
+> Hi Heyi,
+>
+> On 2019-12-16 06:27, Heyi Guo wrote:
+>> If we use ACPI MADT GICC structure to pass single redistributor base,
+>> and mark some GICC as disabled, we'll get below call trace during
+>> boot:
+>>
+>> [    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+>> [    0.000000] GICv3: 256 SPIs implemented
+>> [    0.000000] GICv3: 0 Extended SPIs implemented
+>> [    0.000000] GICv3: Distributor has no Range Selector support
+>> [    0.000000] Unable to handle kernel paging request at virtual
+>> address 000000000000ffe8
+>> [    0.000000] Mem abort info:
+>> [    0.000000]   ESR = 0x96000004
+>> [    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
+>> [    0.000000]   SET = 0, FnV = 0
+>> [    0.000000]   EA = 0, S1PTW = 0
+>> [    0.000000] Data abort info:
+>> [    0.000000]   ISV = 0, ISS = 0x00000004
+>> [    0.000000]   CM = 0, WnR = 0
+>> [    0.000000] [000000000000ffe8] user address but active_mm is swapper
+>> [    0.000000] Internal error: Oops: 96000004 [#1] SMP
+>> [    0.000000] Modules linked in:
+>> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.5.0-rc1 #5
+>> [    0.000000] pstate: 20000085 (nzCv daIf -PAN -UAO)
+>> [    0.000000] pc : gic_iterate_rdists+0x58/0x130
+>> [    0.000000] lr : gic_iterate_rdists+0x80/0x130
+>> [    0.000000] sp : ffff8000113d3cb0
+>> [    0.000000] x29: ffff8000113d3cb0 x28: 0000000000000000
+>> [    0.000000] x27: 0000000000000000 x26: 0000000000000018
+>> [    0.000000] x25: 000000000000ffe8 x24: 000000000000003f
+>> [    0.000000] x23: ffff800010588040 x22: 00000000000005e8
+>> [    0.000000] x21: ffff8000113df7d0 x20: 0000030f00003f11
+>> [    0.000000] x19: 0000000000000000 x18: ffffffffffffffff
+>> [    0.000000] x17: 0000000014aeb8dc x16: 00000000c3ba0ccf
+>> [    0.000000] x15: ffff8000113d9908 x14: ffff8000913d3a37
+>> [    0.000000] x13: ffff8000113d3a45 x12: ffff800011402000
+>> [    0.000000] x11: ffff8000113d39d0 x10: ffff8000113db980
+>> [    0.000000] x9 : 00000000ffffffd0 x8 : ffff8000106dca98
+>> [    0.000000] x7 : 000000000000005b x6 : 0000000000000000
+>> [    0.000000] x5 : 0000000000000000 x4 : ffff8000128c0000
+>> [    0.000000] x3 : ffff8000128a0000 x2 : ffff0003fc3c7000
+>> [    0.000000] x1 : 0000000000000001 x0 : 000000000000ffe8
+>> [    0.000000] Call trace:
+>> [    0.000000]  gic_iterate_rdists+0x58/0x130
+>> [    0.000000]  gic_init_bases+0x200/0x4b4
+>> [    0.000000]  gic_acpi_init+0x148/0x284
+>> [    0.000000]  acpi_match_madt+0x4c/0x84
+>> [    0.000000]  acpi_table_parse_entries_array+0x188/0x278
+>> [    0.000000]  acpi_table_parse_entries+0x70/0x98
+>> [    0.000000]  acpi_table_parse_madt+0x40/0x50
+>> [    0.000000]  __acpi_probe_device_table+0x88/0xe4
+>> [    0.000000]  irqchip_init+0x38/0x40
+>> [    0.000000]  init_IRQ+0x168/0x19c
+>> [    0.000000]  start_kernel+0x328/0x508
+>> [    0.000000] Code: f90017b6 9b3a7f16 f8766853 8b190260 (b9400000)
+>> [    0.000000] ---[ end trace ae5cf232d924bfc1 ]---
+>> [    0.000000] Kernel panic - not syncing: Fatal exception
+>> [    0.000000] Rebooting in 3 seconds..
+>>
+>> In this case, nr_redist_regions counts all GICC structures but only
+>> enabled ones have redistributor mapped. So add check to avoid NULL
+>> deference of redist_base.
+>>
+>> Signed-off-by: Heyi Guo <guoheyi@huawei.com>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Jason Cooper <jason@lakedaemon.net>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> ---
+>>  drivers/irqchip/irq-gic-v3.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+>> index d6218012097b..bd9d55cadef9 100644
+>> --- a/drivers/irqchip/irq-gic-v3.c
+>> +++ b/drivers/irqchip/irq-gic-v3.c
+>> @@ -781,6 +781,13 @@ static int gic_iterate_rdists(int (*fn)(struct
+>> redist_region *, void __iomem *))
+>>          u64 typer;
+>>          u32 reg;
+>>
+>> +        /*
+>> +         * redist_base may be NULL if we use single_redist and some 
+>> GICC
+>> +         * structure is disabled.
+>> +         */
+>> +        if (!ptr)
+>> +            continue;
+>> +
+>>          reg = readl_relaxed(ptr + GICR_PIDR2) & GIC_PIDR2_ARCH_MASK;
+>>          if (reg != GIC_PIDR2_ARCH_GICv3 &&
+>>              reg != GIC_PIDR2_ARCH_GICv4) { /* We're in trouble... */
+>
+> This feels like the wrong fix. The redistributor region array should
+> be completely populated, and there is an assumption all over this driver
+> that there is no junk in these structures.
 
-> On Mon, Dec 16, 2019 at 02:10:36PM +0100, Miquel Raynal wrote:
-> > > >  drivers/gpu/drm/panel/panel-simple.c | 12 +++++++++++-
-> > > >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> > > > index 5d487686d25c..15dd495c347d 100644
-> > > > --- a/drivers/gpu/drm/panel/panel-simple.c
-> > > > +++ b/drivers/gpu/drm/panel/panel-simple.c
-> > > > @@ -110,6 +110,7 @@ struct panel_simple {
-> > > >  	struct i2c_adapter *ddc;
-> > > >
-> > > >  	struct gpio_desc *enable_gpio;
-> > > > +	struct gpio_desc *reset_gpio;
-> > > >
-> > > >  	struct drm_display_mode override_mode;
-> > > >  };
-> > > > @@ -433,12 +434,21 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
-> > > >  	if (IS_ERR(panel->supply))
-> > > >  		return PTR_ERR(panel->supply);
-> > > >
-> > > > +	panel->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-> > > > +						    GPIOD_OUT_LOW);
-> > > > +	if (IS_ERR(panel->reset_gpio)) {
-> > > > +		err = PTR_ERR(panel->reset_gpio);
-> > > > +		if (err != -EPROBE_DEFER)
-> > > > +			dev_err(dev, "failed to request reset pin: %d\n", err);
-> > > > +		return err;
-> > > > +	}
-> > > > +  
-> > >
-> > > However, I'm wondering if it wouldn't be better to just have the
-> > > device maintained in reset at probe (so OUT_HIGH) and moved out of
-> > > reset during either the prepare or enable callbacks.
-> > >
-> > > This is pretty much what is happening with the enable-gpios already.
-> > >
-> > > Also, panels usually need to wait for a minimum time after you
-> > > deassert the reset line. How is that dealt with?
-> > >
-> > > I guess a good way to do that would be to add that duration to the
-> > > panel description, since this is pretty much device specific.  
-> >
-> > What about the case were your Bootloader displays something and you
-> > don't want the panel to blink ?  
-> 
-> The Bootloader to Linux transition will make the panel blink already,
-> since the display engine is going to be reset / reconfigured during
-> the transition.
-> 
-> The only way to implement this would be to implement properly the
-> reset callbacks in all you display drivers to recreate the DRM state
-> from the hardware state, and then you'll be able to just switch to the
-> new buffer.
-> 
-> Only Intel does this at the time though, and that's way outside of the
-> scope of this patch...
-> 
-> > Right now I am just forcing the reset to be deasserted.  
-> 
-> ... Especially since the very next line after your patch forces the
-> panel to be disabled.
-> 
 
-Is the addition of the reset support (as proposed by Maxime)
-interesting from your point of view? As you answered that you were not
-understanding the needs for such a change, I prefer to ask before
-spending more time on it.
+Oh, I thought the place holder for disabled GICR in nr_redist_regions 
+were for some special reason, like CPU hotplug. Now I know I was wrong :)
 
+
+>
+> You're seeing this because we don't track the number of *enabled* rdists,
+> and allocate the number of regions based on the number of overall GICC
+> entries instead of the number of enabled redistributors.
+>
+> How about this instead?
+
+It looks good to me, and works fine in my case.
 
 Thanks,
-Miquèl
+
+Heyi
+
+
+>
+>         M.
+>
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 3a1866682dd0..9b26a860340b 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -1861,6 +1861,7 @@ static struct
+>      struct redist_region *redist_regs;
+>      u32 nr_redist_regions;
+>      bool single_redist;
+> +    int enabled_rdists;
+>      u32 maint_irq;
+>      int maint_irq_mode;
+>      phys_addr_t vcpu_base;
+> @@ -1955,8 +1956,10 @@ static int __init gic_acpi_match_gicc(union 
+> acpi_subtable_headers *header,
+>       * If GICC is enabled and has valid gicr base address, then it means
+>       * GICR base is presented via GICC
+>       */
+> -    if ((gicc->flags & ACPI_MADT_ENABLED) && gicc->gicr_base_address)
+> +    if ((gicc->flags & ACPI_MADT_ENABLED) && gicc->gicr_base_address) {
+> +        acpi_data.enabled_rdists++;
+>          return 0;
+> +    }
+>
+>      /*
+>       * It's perfectly valid firmware can pass disabled GICC entry, 
+> driver
+> @@ -1986,8 +1989,10 @@ static int __init 
+> gic_acpi_count_gicr_regions(void)
+>
+>      count = acpi_table_parse_madt(ACPI_MADT_TYPE_GENERIC_INTERRUPT,
+>                        gic_acpi_match_gicc, 0);
+> -    if (count > 0)
+> +    if (count > 0) {
+>          acpi_data.single_redist = true;
+> +        count = acpi_data.enabled_rdists;
+> +    }
+>
+>      return count;
+>  }
+>
+
