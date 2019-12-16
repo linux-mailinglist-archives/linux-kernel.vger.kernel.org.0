@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32D7E1215C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:24:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1853312148E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:13:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731762AbfLPSTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:19:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46560 "EHLO mail.kernel.org"
+        id S1730761AbfLPSMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:12:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731899AbfLPSTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:19:10 -0500
+        id S1730774AbfLPSMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:12:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F09EF20717;
-        Mon, 16 Dec 2019 18:19:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8117206E0;
+        Mon, 16 Dec 2019 18:12:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520349;
-        bh=LIdc/Ky4bIZV7jaCh27m9/rLPKNcEEgcB2fhg7yU7wM=;
+        s=default; t=1576519942;
+        bh=NrWdrWtn4VJKQ0e5Ra59uuBMOs9/sQETE74QJUDxaf4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1pH4tfDBLnnirVJ2y4Z9E0bAJfpivF4IxDBiScONNVAgvG0BqgmdVdPp+8iOjZMqe
-         zXKhLPkPNZL2Jj5Y9J2IueORhQeymmSHvIjieUYNg2qPk36XzjaMXoumK90GpRJA7w
-         Cl8tOTJHShJlQUXlifiORKHTupC2GUzdDpOBLl+Y=
+        b=rFkr3HZYK78dBD62csfuq/xQMD17PtOl95At+oUrtdtjD51ZHPxxzDA0uq9vDnXE2
+         HZYSDDTWkcLaakuAvGpErpuJHHZaOVFmCRYhO8Wbtetf3JUCHdmp8DRQebERrBECYO
+         ZqtT5gCfb0qFZiSTG3pdez8xMCyiMTWz2rS41q2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 5.4 117/177] PM / devfreq: Lock devfreq in trans_stat_show
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 5.3 133/180] ext4: Fix credit estimate for final inode freeing
 Date:   Mon, 16 Dec 2019 18:49:33 +0100
-Message-Id: <20191216174842.825068854@linuxfoundation.org>
+Message-Id: <20191216174842.083844717@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 2abb0d5268ae7b5ddf82099b1f8d5aa8414637d4 upstream.
+commit 65db869c754e7c271691dd5feabf884347e694f5 upstream.
 
-There is no locking in this sysfs show function so stats printing can
-race with a devfreq_update_status called as part of freq switching or
-with initialization.
+Estimate for the number of credits needed for final freeing of inode in
+ext4_evict_inode() was to small. We may modify 4 blocks (inode & sb for
+orphan deletion, bitmap & group descriptor for inode freeing) and not
+just 3.
 
-Also add an assert in devfreq_update_status to make it clear that lock
-must be held by caller.
+[ Fixed minor whitespace nit. -- TYT ]
 
-Fixes: 39688ce6facd ("PM / devfreq: account suspend/resume for stats")
-Cc: stable@vger.kernel.org
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
+CC: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+Link: https://lore.kernel.org/r/20191105164437.32602-6-jack@suse.cz
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/devfreq/devfreq.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/ext4/inode.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -160,6 +160,7 @@ int devfreq_update_status(struct devfreq
- 	int lev, prev_lev, ret = 0;
- 	unsigned long cur_time;
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -196,7 +196,12 @@ void ext4_evict_inode(struct inode *inod
+ {
+ 	handle_t *handle;
+ 	int err;
+-	int extra_credits = 3;
++	/*
++	 * Credits for final inode cleanup and freeing:
++	 * sb + inode (ext4_orphan_del()), block bitmap, group descriptor
++	 * (xattr block freeing), bitmap, group descriptor (inode freeing)
++	 */
++	int extra_credits = 6;
+ 	struct ext4_xattr_inode_array *ea_inode_array = NULL;
  
-+	lockdep_assert_held(&devfreq->lock);
- 	cur_time = jiffies;
+ 	trace_ext4_evict_inode(inode);
+@@ -252,8 +257,12 @@ void ext4_evict_inode(struct inode *inod
+ 	if (!IS_NOQUOTA(inode))
+ 		extra_credits += EXT4_MAXQUOTAS_DEL_BLOCKS(inode->i_sb);
  
- 	/* Immediately exit if previous_freq is not initialized yet. */
-@@ -1397,12 +1398,17 @@ static ssize_t trans_stat_show(struct de
- 	int i, j;
- 	unsigned int max_state = devfreq->profile->max_state;
- 
--	if (!devfreq->stop_polling &&
--			devfreq_update_status(devfreq, devfreq->previous_freq))
--		return 0;
- 	if (max_state == 0)
- 		return sprintf(buf, "Not Supported.\n");
- 
-+	mutex_lock(&devfreq->lock);
-+	if (!devfreq->stop_polling &&
-+			devfreq_update_status(devfreq, devfreq->previous_freq)) {
-+		mutex_unlock(&devfreq->lock);
-+		return 0;
-+	}
-+	mutex_unlock(&devfreq->lock);
-+
- 	len = sprintf(buf, "     From  :   To\n");
- 	len += sprintf(buf + len, "           :");
- 	for (i = 0; i < max_state; i++)
++	/*
++	 * Block bitmap, group descriptor, and inode are accounted in both
++	 * ext4_blocks_for_truncate() and extra_credits. So subtract 3.
++	 */
+ 	handle = ext4_journal_start(inode, EXT4_HT_TRUNCATE,
+-				 ext4_blocks_for_truncate(inode)+extra_credits);
++			 ext4_blocks_for_truncate(inode) + extra_credits - 3);
+ 	if (IS_ERR(handle)) {
+ 		ext4_std_error(inode->i_sb, PTR_ERR(handle));
+ 		/*
 
 
