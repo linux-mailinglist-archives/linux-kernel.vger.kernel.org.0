@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5EF91217E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F5371218BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbfLPSDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:03:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40006 "EHLO mail.kernel.org"
+        id S1728428AbfLPSp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:45:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729280AbfLPSDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:03:20 -0500
+        id S1727921AbfLPR4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:56:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DE8B2072D;
-        Mon, 16 Dec 2019 18:03:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CDFE205ED;
+        Mon, 16 Dec 2019 17:56:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519399;
-        bh=Q6IPlbKphm9Ek82Zr/DSnj+WRQWNrsOn12LL6QQn+jg=;
+        s=default; t=1576519005;
+        bh=3UOo2nzTK/HKra1hB3D6Q1ldASbnw37qIKyf5VpvXFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=emTF5Qphi2K/Jrj9LNtU7xDYzlzTbqOfIb4oUgY4xN9sn2Oqu8CUaUzYEPm4t0jKm
-         WCO6yFSnKCvF1hLW5ygbE0gCuFWR8VC5DEwh5Htb0Yn9WxBw2eEeB6Qrs9XaYHwusr
-         30iuHiw0UePukD5Dx0UNW2M9UN6xREjofFgos/Cg=
+        b=JI5P8gI+8TEnTEKbPLY9OGfPnMICyxuT6mosF00y01GMJ+d3PP63OOjBL9HKkTUuL
+         R2IYyct2uvDD47kF9YX0KXsp/OQlZP9Ml7w31Oxu5OmGl7F/xffWP8C9P2cfMukeT4
+         hBn6wdm028Qf7VSM7J+lWXWPPn+ys+ZscXXiPrg0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 013/140] staging: gigaset: add endpoint-type sanity check
-Date:   Mon, 16 Dec 2019 18:48:01 +0100
-Message-Id: <20191216174754.265077397@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Peter Chen <peter.chen@nxp.com>
+Subject: [PATCH 4.14 157/267] usb: gadget: configfs: Fix missing spin_lock_init()
+Date:   Mon, 16 Dec 2019 18:48:03 +0100
+Message-Id: <20191216174911.106775624@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,51 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit ed9ed5a89acba51b82bdff61144d4e4a4245ec8a upstream.
+commit 093edc2baad2c258b1f55d1ab9c63c2b5ae67e42 upstream.
 
-Add missing endpoint-type sanity checks to probe.
+The driver allocates the spinlock but not initialize it.
+Use spin_lock_init() on it to initialize it correctly.
 
-This specifically prevents a warning in USB core on URB submission when
-fuzzing USB descriptors.
+This is detected by Coccinelle semantic patch.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: 1a1c851bbd70 ("usb: gadget: configfs: fix concurrent issue between composite APIs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191202085610.12719-4-johan@kernel.org
+Reviewed-by: Peter Chen <peter.chen@nxp.com>
+Link: https://lore.kernel.org/r/20191030034046.188808-1-weiyongjun1@huawei.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/isdn/gigaset/usb-gigaset.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/usb/gadget/configfs.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/isdn/gigaset/usb-gigaset.c
-+++ b/drivers/isdn/gigaset/usb-gigaset.c
-@@ -708,6 +708,12 @@ static int gigaset_probe(struct usb_inte
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -1543,6 +1543,7 @@ static struct config_group *gadgets_make
+ 	gi->composite.resume = NULL;
+ 	gi->composite.max_speed = USB_SPEED_SUPER;
  
- 	endpoint = &hostif->endpoint[0].desc;
- 
-+	if (!usb_endpoint_is_bulk_out(endpoint)) {
-+		dev_err(&interface->dev, "missing bulk-out endpoint\n");
-+		retval = -ENODEV;
-+		goto error;
-+	}
-+
- 	buffer_size = le16_to_cpu(endpoint->wMaxPacketSize);
- 	ucs->bulk_out_size = buffer_size;
- 	ucs->bulk_out_epnum = usb_endpoint_num(endpoint);
-@@ -727,6 +733,12 @@ static int gigaset_probe(struct usb_inte
- 
- 	endpoint = &hostif->endpoint[1].desc;
- 
-+	if (!usb_endpoint_is_int_in(endpoint)) {
-+		dev_err(&interface->dev, "missing int-in endpoint\n");
-+		retval = -ENODEV;
-+		goto error;
-+	}
-+
- 	ucs->busy = 0;
- 
- 	ucs->read_urb = usb_alloc_urb(0, GFP_KERNEL);
++	spin_lock_init(&gi->spinlock);
+ 	mutex_init(&gi->lock);
+ 	INIT_LIST_HEAD(&gi->string_list);
+ 	INIT_LIST_HEAD(&gi->available_func);
 
 
