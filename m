@@ -2,157 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 287DC11FE43
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 06:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CA5811FE51
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 07:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfLPF7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 00:59:17 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:11542 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726655AbfLPF7P (ORCPT
+        id S1726759AbfLPGAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 01:00:46 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:61672 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726054AbfLPGAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 00:59:15 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576475954; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=WfYVZRY7NUJGi0SdNulsMWXe+awHuELnsj9TepITErQ=; b=ilalTjIwg8HxkgBVzOovKeHmuSM6LY2ElbYIOF5eflS1/3tXBFEOh2N7PMix/HYqdgUaqUiw
- /YGqqebBZgbN51ttn2jvlF5H9KjNHOhvcrlLtO7XYU804Z8fngcR7GgV8U8n/VE3d4DDcn9D
- oi5vBnIf2CPZi1GTem91BqVRc+o=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5df71d2d.7fb8ca01de68-smtp-out-n02;
- Mon, 16 Dec 2019 05:59:09 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id BDB89C4479D; Mon, 16 Dec 2019 05:59:08 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from davidai-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E1231C433A2;
-        Mon, 16 Dec 2019 05:59:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1231C433A2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-From:   David Dai <daidavid1@codeaurora.org>
-To:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc:     David Dai <daidavid1@codeaurora.org>, evgreen@google.com,
-        sboyd@kernel.org, ilina@codeaurora.org, seansw@qti.qualcomm.com,
-        elder@linaro.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v1 4/4] arm64: dts: sdm845: Redefine interconnect provider DT nodes
-Date:   Sun, 15 Dec 2019 21:58:45 -0800
-Message-Id: <1576475925-20601-5-git-send-email-daidavid1@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1576475925-20601-1-git-send-email-daidavid1@codeaurora.org>
-References: <1576475925-20601-1-git-send-email-daidavid1@codeaurora.org>
+        Mon, 16 Dec 2019 01:00:45 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBG60gga005933;
+        Sun, 15 Dec 2019 22:00:43 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=XV/KH5y5Wwhvs4O0l74bJAeX+00z+E1xmvKexUoF7Dw=;
+ b=W5ZxnUOdym6QSzi4Nv6iVMSYBL7WNMJGd6hm7TaKQK/2cwFgBYMLacTLzqYGGnVMZEp4
+ 8HY0FeX3BDaaRZyNestGmT7kSDzhmJUuox5B6L0Yu3y7aj/rLyaUQxO2tBsPYHZ6R22R
+ T3dj3bBoD9n7mo05WMMnbJku9HFu32D88to= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2wwgc0js05-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Sun, 15 Dec 2019 22:00:43 -0800
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Sun, 15 Dec 2019 22:00:12 -0800
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Sun, 15 Dec 2019 22:00:12 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XtagY5g4LFygAJmiov7XNLzSKXvATAdxjxoXiMX4mwIIZu49RLh1XzxNv7TwH9bNTlyaH6eEDmseM6fhA/aYtXoM4L633XwJJNMcEwPHiQ1LuwldpV9nf3jdHK9Eu74lK1/QQ6e/Jd12VY43MNH/d2xGMTtY9T6sjHEAqI8gbE1fbULiZVQaCeWBGs0ykBTIlp6wEOx8yr6PSnHdLjc+t9+Mn1kYN0zNYV5gd8/PnayEkk/Tgf04CeIm2SskcqR6w7ggDjo2oaXl8KVPyet0vRjHZJ69P3JO7/lYUEfYy+USOqd+LJWJSnB4UmW0NQXBAZHKjdn1QYcrzGPO70wnZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XV/KH5y5Wwhvs4O0l74bJAeX+00z+E1xmvKexUoF7Dw=;
+ b=iwWjP5lgv+7jaP4NvW5pJNPxbbPIjqHOAAnHHH9T0b2UU8lNAVDGXhZeEx/v6aW+OLoxPZoZ4UY7MurJiKVZ5ZyUst5qnkQULtQlZc0HEUyr6z2IF5UJuy406rmbsaG8HNg3WO3V0lsPeLGdmcVI2/0S3Y9bquUl8bYiS1Q3AAQKeVPTElyZCgSh+RO8FjUhAbGRk+KzGpBNwMqG3v5QPxe2P+KQAaPQWnxaP5ne9R9eY+v2EXTKlfU+ASfVBzUOpjm6jqDP8mnB1iueKMTEYX8e4c4GyP+IKd7l/ZqDrFxi4XR5EJqslLKIH/yT6fdMK8jl63ww0PXW37PA4vJhhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XV/KH5y5Wwhvs4O0l74bJAeX+00z+E1xmvKexUoF7Dw=;
+ b=HBC5vWxOZjhG/y9y5UiZWrkwVcoX8dV6FDeVnarL3gOI3QI7oiXSIddKvpJu9CAVfGaoUCFwg3McWI/XMiE8os7XaV99yb0l25RsPBfj/Ckvme1Vb/2FkHzyAgsco+Yjpp3yuLRxl/n7nb8VKF52uNPv+JUhuy6x8WpDJV+WjMk=
+Received: from DM5PR15MB1675.namprd15.prod.outlook.com (10.175.107.145) by
+ DM5PR15MB1452.namprd15.prod.outlook.com (10.173.225.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.16; Mon, 16 Dec 2019 05:59:57 +0000
+Received: from DM5PR15MB1675.namprd15.prod.outlook.com
+ ([fe80::2844:b18d:c296:c23]) by DM5PR15MB1675.namprd15.prod.outlook.com
+ ([fe80::2844:b18d:c296:c23%8]) with mapi id 15.20.2538.019; Mon, 16 Dec 2019
+ 05:59:57 +0000
+From:   Yonghong Song <yhs@fb.com>
+To:     Jules Irenge <jbi.octave@gmail.com>,
+        "bokun.feng@gmail.com" <bokun.feng@gmail.com>
+CC:     Martin Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+        "Andrii Nakryiko" <andriin@fb.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "\"bpf@vger.kernel\"@vger.kernel.org" 
+        <"bpf@vger.kernel"@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kernel: bpf: add __release sparse annotation
+Thread-Topic: [PATCH] kernel: bpf: add __release sparse annotation
+Thread-Index: AQHVs5+2HhiAKBeViECR7jMbivMnZKe8RNKA
+Date:   Mon, 16 Dec 2019 05:59:57 +0000
+Message-ID: <dd0b6577-aaf6-a557-4cdd-ddc490995c38@fb.com>
+References: <20191215233046.78212-1-jbi.octave@gmail.com>
+In-Reply-To: <20191215233046.78212-1-jbi.octave@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR03CA0019.namprd03.prod.outlook.com
+ (2603:10b6:300:117::29) To DM5PR15MB1675.namprd15.prod.outlook.com
+ (2603:10b6:3:11f::17)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:180::a11e]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bc8391b9-5a84-438f-af6f-08d781ed2db7
+x-ms-traffictypediagnostic: DM5PR15MB1452:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR15MB1452B0BE8D15FC6876C9BB10D3510@DM5PR15MB1452.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1824;
+x-forefront-prvs: 02530BD3AA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(396003)(39860400002)(136003)(366004)(189003)(199004)(8676002)(5660300002)(186003)(8936002)(558084003)(81156014)(81166006)(6486002)(66446008)(66476007)(66556008)(64756008)(2906002)(53546011)(6506007)(6512007)(36756003)(71200400001)(86362001)(4326008)(110136005)(2616005)(478600001)(52116002)(31686004)(31696002)(316002)(66946007)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1452;H:DM5PR15MB1675.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: H1vy/F6EPRKhXy3eeu3bZXWFmQInZy6h0l/fCeuwNb2u6w0aDDl7SjwL2e2I31V0Tdg2K/YFbCqxOMvAyLMfuy7tbMVlF438FbQ6c8pLOaEqyS9pGRIyRIjirVJZJPIRBCFBEtekvedd20rD9d0aYpx5MxL93hqUPjcryHIu9te8HdhhVMxduuFjMtzRa8sV1HBk97wMmfwHmG1vJCWWnEe6agj3AMbqi5eLDx/kRB9vr4N9Yh7CerLaeAp/M+bswbu9UJGilPJbjyi8AqcK2nADFMi/px9HOsmE0HX6PUgnXVd8KrNU4KPByD6MiXbB57KeeDfgkIvgOcIJVNqaVcKh+08h43flTGhwhr47zBcK1YQ/3rOyaZ0a6hop4KyGQam8kr3xce9PwDU1SBiBAIRHtPLkFKD91aH8ZeTajE7WgSla4jefTsSGYQ9c4933
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7E71F68C8F2F50479B47BAAF37210AD1@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc8391b9-5a84-438f-af6f-08d781ed2db7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2019 05:59:57.5317
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 76jCpPvkcxsw2xcmbz4afOupQ0vJo0xnD02wsaR5KHcMiHFvoBRs4zTE+TTNt9z8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1452
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-16_01:2019-12-16,2019-12-15 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 malwarescore=0
+ impostorscore=0 spamscore=0 phishscore=0 clxscore=1011 suspectscore=0
+ mlxlogscore=591 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912160053
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the DT nodes for each of the Network-On-Chip interconnect
-buses found on SDM845 based platform and redefine the rsc_hlos
-child node as a bcm-voter device to better represent the hardware.
-
-Signed-off-by: David Dai <daidavid1@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 61 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 58 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index ddb1f23..7c617a9 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1364,6 +1364,55 @@
- 			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		mem_noc: interconnect@1380000 {
-+			compatible = "qcom,sdm845-mem-noc";
-+			reg = <0 0x01380000 0 0x27200>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		dc_noc: interconnect@14e0000 {
-+			compatible = "qcom,sdm845-dc-noc";
-+			reg = <0 0x014e0000 0 0x400>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		config_noc: interconnect@1500000 {
-+			compatible = "qcom,sdm845-config-noc";
-+			reg = <0 0x01500000 0 0x5080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		system_noc: interconnect@1620000 {
-+			compatible = "qcom,sdm845-system-noc";
-+			reg = <0 0x01620000 0 0x18080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		aggre1_noc: interconnect@16e0000 {
-+			compatible = "qcom,sdm845-aggre1-noc";
-+			reg = <0 0x016e0000 0 0xd080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		aggre2_noc: interconnect@1700000 {
-+			compatible = "qcom,sdm845-aggre2-noc";
-+			reg = <0 0x01700000 0 0x3b100>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		mmss_noc: interconnect@1740000 {
-+			compatible = "qcom,sdm845-mmss-noc";
-+			reg = <0 0x01740000 0 0x1c1000>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		ufs_mem_hc: ufshc@1d84000 {
- 			compatible = "qcom,sdm845-ufshc", "qcom,ufshc",
- 				     "jedec,ufs-2.0";
-@@ -3100,6 +3149,13 @@
- 			#mbox-cells = <1>;
- 		};
- 
-+		gladiator_noc: interconnect@17900000 {
-+			compatible = "qcom,sdm845-gladiator-noc";
-+			reg = <0 0x17900000 0 0xd080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		apps_rsc: rsc@179c0000 {
- 			label = "apps_rsc";
- 			compatible = "qcom,rpmh-rsc";
-@@ -3174,9 +3230,8 @@
- 				};
- 			};
- 
--			rsc_hlos: interconnect {
--				compatible = "qcom,sdm845-rsc-hlos";
--				#interconnect-cells = <1>;
-+			apps_bcm_voter: bcm-voter {
-+				compatible = "qcom,sdm845-bcm-voter";
- 			};
- 		};
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+DQoNCk9uIDEyLzE1LzE5IDM6MzAgUE0sIEp1bGVzIElyZW5nZSB3cm90ZToNCj4gQWRkIHNwYXJz
+ZSBhbm5vdGF0aW9uIHRvIHJlbW92ZSBpc3N1ZSBkZXRlY3RlZCBieSBzcGFyc2UgdG9vbC4NCj4g
+d2FybmluZzogY29udGV4dCBpbWJhbGFuY2UgaW4gZnVuY3Rpb24gX19icGZfcHJvZ19leGl0IC0g
+dW5leHBlY3RlZCB1bmxvY2sNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEp1bGVzIElyZW5nZSA8amJp
+Lm9jdGF2ZUBnbWFpbC5jb20+DQoNCkFja2VkLWJ5OiBZb25naG9uZyBTb25nIDx5aHNAZmIuY29t
+Pg0K
