@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 463EE1215F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBD7E12143F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731842AbfLPSZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:25:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42826 "EHLO mail.kernel.org"
+        id S1730494AbfLPSJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:09:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731741AbfLPSSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:18:02 -0500
+        id S1730126AbfLPSJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:09:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1BF0206E0;
-        Mon, 16 Dec 2019 18:18:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A99DF206B7;
+        Mon, 16 Dec 2019 18:09:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520281;
-        bh=ThkZrGCpRWJfNFSjjFeIhD8e0DeNX9ugk1KreQ0/rlM=;
+        s=default; t=1576519784;
+        bh=vT09+Y2atmoIbCV7QqkXaUqPrSgl4UOEZ/3qeExbu4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lwgK6tsjiFkwEBsHY2+654jJwsGk7YJiuZYvCGsbrr5hQFImkk2cZM0mc/NPsadJD
-         2EQUiffBJa0NvGnTdfP0yMEOVu3ZuyrsCifiul6Cx7SyvjrmVhNXnw4sCKR+4Z5/ln
-         ag86GRRVC/oP1gaNSDgMab6Nfd11QD27ov2qymnM=
+        b=OJNmDjFZ+glGnqhimh7fkMBT4WjLtQqdgDrmyHAN6EQFYE6GLHji8cavuaGVtTZjv
+         5smYLqsiG78Sur6OcAErVWmc+jsD4hrJBiTy/i/hbluYB+ETgdx/wt6Vp2oQtrp3qp
+         GO5Oem3YJ9yGyLhOEMh7OoLZMWW1aLqGYaK2FAvI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pete Zaitcev <zaitcev@redhat.com>,
-        syzbot+56f9673bb4cdcbeb0e92@syzkaller.appspotmail.com,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 5.4 050/177] usb: mon: Fix a deadlock in usbmon between mmap and read
+        stable@vger.kernel.org
+Subject: [PATCH 5.3 066/180] lib: raid6: fix awk build warnings
 Date:   Mon, 16 Dec 2019 18:48:26 +0100
-Message-Id: <20191216174830.354331162@linuxfoundation.org>
+Message-Id: <20191216174829.872645949@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,104 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pete Zaitcev <zaitcev@redhat.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 19e6317d24c25ee737c65d1ffb7483bdda4bb54a upstream.
+commit 702600eef73033ddd4eafcefcbb6560f3e3a90f7 upstream.
 
-The problem arises because our read() function grabs a lock of the
-circular buffer, finds something of interest, then invokes copy_to_user()
-straight from the buffer, which in turn takes mm->mmap_sem. In the same
-time, the callback mon_bin_vma_fault() is invoked under mm->mmap_sem.
-It attempts to take the fetch lock and deadlocks.
+Newer versions of awk spit out these fun warnings:
+	awk: ../lib/raid6/unroll.awk:16: warning: regexp escape sequence `\#' is not a known regexp operator
 
-This patch does away with protecting of our page list with any
-semaphores, and instead relies on the kernel not close the device
-while mmap is active in a process.
+As commit 700c1018b86d ("x86/insn: Fix awk regexp warnings") showed, it
+turns out that there are a number of awk strings that do not need to be
+escaped and newer versions of awk now warn about this.
 
-In addition, we prohibit re-sizing of a buffer while mmap is active.
-This way, when (now unlocked) fault is processed, it works with the
-page that is intended to be mapped-in, and not some other random page.
-Note that this may have an ABI impact, but hopefully no legitimate
-program is this wrong.
+Fix the string up so that no warning is produced.  The exact same kernel
+module gets created before and after this patch, showing that it wasn't
+needed.
 
-Signed-off-by: Pete Zaitcev <zaitcev@redhat.com>
-Reported-by: syzbot+56f9673bb4cdcbeb0e92@syzkaller.appspotmail.com
-Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
-Fixes: 46eb14a6e158 ("USB: fix usbmon BUG trigger")
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191204203941.3503452b@suzdal.zaitcev.lan
+Link: https://lore.kernel.org/r/20191206152600.GA75093@kroah.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/mon/mon_bin.c |   32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ lib/raid6/unroll.awk |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/mon/mon_bin.c
-+++ b/drivers/usb/mon/mon_bin.c
-@@ -1039,12 +1039,18 @@ static long mon_bin_ioctl(struct file *f
- 
- 		mutex_lock(&rp->fetch_lock);
- 		spin_lock_irqsave(&rp->b_lock, flags);
--		mon_free_buff(rp->b_vec, rp->b_size/CHUNK_SIZE);
--		kfree(rp->b_vec);
--		rp->b_vec  = vec;
--		rp->b_size = size;
--		rp->b_read = rp->b_in = rp->b_out = rp->b_cnt = 0;
--		rp->cnt_lost = 0;
-+		if (rp->mmap_active) {
-+			mon_free_buff(vec, size/CHUNK_SIZE);
-+			kfree(vec);
-+			ret = -EBUSY;
-+		} else {
-+			mon_free_buff(rp->b_vec, rp->b_size/CHUNK_SIZE);
-+			kfree(rp->b_vec);
-+			rp->b_vec  = vec;
-+			rp->b_size = size;
-+			rp->b_read = rp->b_in = rp->b_out = rp->b_cnt = 0;
-+			rp->cnt_lost = 0;
-+		}
- 		spin_unlock_irqrestore(&rp->b_lock, flags);
- 		mutex_unlock(&rp->fetch_lock);
- 		}
-@@ -1216,13 +1222,21 @@ mon_bin_poll(struct file *file, struct p
- static void mon_bin_vma_open(struct vm_area_struct *vma)
- {
- 	struct mon_reader_bin *rp = vma->vm_private_data;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&rp->b_lock, flags);
- 	rp->mmap_active++;
-+	spin_unlock_irqrestore(&rp->b_lock, flags);
- }
- 
- static void mon_bin_vma_close(struct vm_area_struct *vma)
- {
-+	unsigned long flags;
-+
- 	struct mon_reader_bin *rp = vma->vm_private_data;
-+	spin_lock_irqsave(&rp->b_lock, flags);
- 	rp->mmap_active--;
-+	spin_unlock_irqrestore(&rp->b_lock, flags);
- }
- 
- /*
-@@ -1234,16 +1248,12 @@ static vm_fault_t mon_bin_vma_fault(stru
- 	unsigned long offset, chunk_idx;
- 	struct page *pageptr;
- 
--	mutex_lock(&rp->fetch_lock);
- 	offset = vmf->pgoff << PAGE_SHIFT;
--	if (offset >= rp->b_size) {
--		mutex_unlock(&rp->fetch_lock);
-+	if (offset >= rp->b_size)
- 		return VM_FAULT_SIGBUS;
--	}
- 	chunk_idx = offset / CHUNK_SIZE;
- 	pageptr = rp->b_vec[chunk_idx].pg;
- 	get_page(pageptr);
--	mutex_unlock(&rp->fetch_lock);
- 	vmf->page = pageptr;
- 	return 0;
- }
+--- a/lib/raid6/unroll.awk
++++ b/lib/raid6/unroll.awk
+@@ -13,7 +13,7 @@ BEGIN {
+ 	for (i = 0; i < rep; ++i) {
+ 		tmp = $0
+ 		gsub(/\$\$/, i, tmp)
+-		gsub(/\$\#/, n, tmp)
++		gsub(/\$#/, n, tmp)
+ 		gsub(/\$\*/, "$", tmp)
+ 		print tmp
+ 	}
 
 
