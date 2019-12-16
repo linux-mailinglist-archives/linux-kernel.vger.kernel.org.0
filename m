@@ -2,84 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3EA1120E8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:55:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76401120E93
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:55:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbfLPPwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 10:52:13 -0500
-Received: from sauhun.de ([88.99.104.3]:42030 "EHLO pokefinder.org"
+        id S1728603AbfLPPwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 10:52:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728655AbfLPPwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 10:52:05 -0500
-Received: from localhost (p54B33297.dip0.t-ipconnect.de [84.179.50.151])
-        by pokefinder.org (Postfix) with ESMTPSA id 549DC2C2DBC;
-        Mon, 16 Dec 2019 16:52:03 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-media@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2 16/16] media: v4l2-core: v4l2-i2c: convert to new API with ERRPTR
-Date:   Mon, 16 Dec 2019 16:51:43 +0100
-Message-Id: <20191216155146.8803-17-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191216155146.8803-1-wsa+renesas@sang-engineering.com>
-References: <20191216155146.8803-1-wsa+renesas@sang-engineering.com>
+        id S1727763AbfLPPwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 10:52:34 -0500
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 941902146E;
+        Mon, 16 Dec 2019 15:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576511553;
+        bh=eaQ3x3sQJkJ+Ir/RJSw4LQ05zXXPEkT+Q2g7IkDI1xk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lgRlANm6ITls3sYB0vkQAD5vJ57JdMCMEmQ/XRM0hA1divZOs2sBzjxEwuea7F3a7
+         ZAVlVG4YApTTQ/jZ68HF7/swo8gY4cFHYBLoYfyuvleEGHa3MTCyE1ipkW679xQY1G
+         eFE5gJNMOLFuUWQsTsLrlxPgMeabqRVppPGDh7KU=
+Received: by mail-qv1-f44.google.com with SMTP id l14so2293794qvu.12;
+        Mon, 16 Dec 2019 07:52:33 -0800 (PST)
+X-Gm-Message-State: APjAAAXb8i6qbCpmyTM+eR23BkUA2pmVn8hz7vbNMZ2j8UBJ0vIqeV7g
+        TGf8IDaUcP5rV2NYQm6nAHPoPOuGzrumjiaclA==
+X-Google-Smtp-Source: APXvYqwVJYkAlWIdZU2TFQfbL6hRU5QxGwsrdp61SPZ/B7ThiZyfT8pRxhhI4yQUPA1YvRv8RCRQMv+9we0zkJBDmxg=
+X-Received: by 2002:ad4:450a:: with SMTP id k10mr25719233qvu.136.1576511552698;
+ Mon, 16 Dec 2019 07:52:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191202233127.31160-1-ray.jui@broadcom.com> <20191202233127.31160-2-ray.jui@broadcom.com>
+ <62254bbb-168e-c0ad-a72d-bd659a2c23fa@gmail.com> <0f0e965b-2e57-8b6b-0c72-1a1008497793@broadcom.com>
+ <20191213235013.GA9997@bogus> <a5af90d0-eebf-3bf8-46d8-75160a1fc7de@gmail.com>
+In-Reply-To: <a5af90d0-eebf-3bf8-46d8-75160a1fc7de@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 16 Dec 2019 09:52:21 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKXdo+wouHZV9VFQojtQNK3NOLmj3NtnTmVo2fX541GPA@mail.gmail.com>
+Message-ID: <CAL_JsqKXdo+wouHZV9VFQojtQNK3NOLmj3NtnTmVo2fX541GPA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: soc: Add binding doc for iProc IDM device
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Ray Jui <ray.jui@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new APIs instead of the deprecated ones.
+On Fri, Dec 13, 2019 at 6:00 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+>
+> On 12/13/2019 3:50 PM, Rob Herring wrote:
+> > On Fri, Dec 06, 2019 at 05:09:34PM -0800, Ray Jui wrote:
+> >>
+> >>
+> >> On 12/5/19 4:09 PM, Florian Fainelli wrote:
+> >>> On 12/2/19 3:31 PM, Ray Jui wrote:
+> >>>> Add binding document for iProc based IDM devices.
+> >>>>
+> >>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> >>>
+> >>> Looks good to me, it's 2019, nearly 2020, maybe make this a YAML
+> >>> compatible binding since it is a new one?
+> >>>
+> >>
+> >> Sorry I am not aware of this YAML requirement until now.
+> >>
+> >> Is this a new requirement that new DT binding document should be made with
+> >> YAML format?
+> >
+> > The format has been in place in the kernel for a year now and we've
+> > moved slowly towards it being required. If you're paying that little
+> > attention to upstream, then yes it's definitely required so someone else
+> > doesn't get stuck converting your binding later.
+> >
+> > BTW, I think all but RPi chips still need their SoC/board bindings
+> > converted. One of the few not yet converted...
+>
+> Is there something more to do than what Stefan did here:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ab06837dd269b600396b298e9f4678d02b11b71d
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+No, that's it.
 
-Change since last version:
-
-* use more new API (i2c_new_*_device)
-
- drivers/media/v4l2-core/v4l2-i2c.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/v4l2-core/v4l2-i2c.c b/drivers/media/v4l2-core/v4l2-i2c.c
-index 5bf99e7c0c09..b4acca75644b 100644
---- a/drivers/media/v4l2-core/v4l2-i2c.c
-+++ b/drivers/media/v4l2-core/v4l2-i2c.c
-@@ -74,10 +74,10 @@ struct v4l2_subdev
- 
- 	/* Create the i2c client */
- 	if (info->addr == 0 && probe_addrs)
--		client = i2c_new_probed_device(adapter, info, probe_addrs,
--					       NULL);
-+		client = i2c_new_scanned_device(adapter, info, probe_addrs,
-+						NULL);
- 	else
--		client = i2c_new_device(adapter, info);
-+		client = i2c_new_client_device(adapter, info);
- 
- 	/*
- 	 * Note: by loading the module first we are certain that c->driver
-@@ -88,7 +88,7 @@ struct v4l2_subdev
- 	 * want to use the i2c device, so explicitly loading the module
- 	 * is the best alternative.
- 	 */
--	if (!client || !client->dev.driver)
-+	if (!i2c_client_has_driver(client))
- 		goto error;
- 
- 	/* Lock the module so we can safely get the v4l2_subdev pointer */
-@@ -110,7 +110,7 @@ struct v4l2_subdev
- 	 * If we have a client but no subdev, then something went wrong and
- 	 * we must unregister the client.
- 	 */
--	if (client && !sd)
-+	if (!IS_ERR(client) && !sd)
- 		i2c_unregister_device(client);
- 	return sd;
- }
--- 
-2.20.1
-
+> we could convert other Broadcom SoCs, and there, just found another
+> weekend project!
+> --
+> Florian
