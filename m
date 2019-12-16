@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D6212167A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F86312136A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730518AbfLPSNd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:13:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59480 "EHLO mail.kernel.org"
+        id S1729159AbfLPSB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:01:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731094AbfLPSNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:13:22 -0500
+        id S1729139AbfLPSBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:01:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A299207FF;
-        Mon, 16 Dec 2019 18:13:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0679A2082E;
+        Mon, 16 Dec 2019 18:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520001;
-        bh=B3uDbUr2ZpsvlyW0xfEfaHDX65/k0MXfJxDbDhI7W+8=;
+        s=default; t=1576519284;
+        bh=RcA8gkxlOcWeShVMQ7iGO0il+QHkLYZa3tgKdkqU2p4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dN/vsjPs/8PlxcdblPq3aGNAbbBl8jplmmPzWVh+O359d8FDOvZ1gT0LDedOLNtXj
-         FZ88ZDEi1UPBK+A8SKBO+ruxytiP6usMzKNVNBi8p0n+AybWObIiQKTiqasDC08QIi
-         HInjNEDuBMZx0WRK3S4LTdP6WrQV+dHtv3pAW1DI=
+        b=NH0gVYb6wr2pG7gXrzbtjbwdConPO1akIv7BdojkefedxNJf8255xjOZyvmqDZJMv
+         8BnLKZRtFkHXZHxw0P+Yyr8VyJy9o3yguf8CcUnn4IWIzzZfYRWRyJonUf+ZGyRmGK
+         ebCbaNer0FwhqdxXqxGygGI/F0Ka8UwOvkAziUH0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 5.3 119/180] ARM: dts: omap3-tao3530: Fix incorrect MMC card detection GPIO polarity
-Date:   Mon, 16 Dec 2019 18:49:19 +0100
-Message-Id: <20191216174840.423452835@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.14 234/267] quota: fix livelock in dquot_writeback_dquots
+Date:   Mon, 16 Dec 2019 18:49:20 +0100
+Message-Id: <20191216174915.376508843@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarkko Nikula <jarkko.nikula@bitmer.com>
+From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
 
-commit 287897f9aaa2ad1c923d9875914f57c4dc9159c8 upstream.
+commit 6ff33d99fc5c96797103b48b7b0902c296f09c05 upstream.
 
-The MMC card detection GPIO polarity is active low on TAO3530, like in many
-other similar boards. Now the card is not detected and it is unable to
-mount rootfs from an SD card.
+Write only quotas which are dirty at entry.
 
-Fix this by using the correct polarity.
+XFSTEST: https://github.com/dmonakhov/xfstests/commit/b10ad23566a5bf75832a6f500e1236084083cddc
 
-This incorrect polarity was defined already in the commit 30d95c6d7092
-("ARM: dts: omap3: Add Technexion TAO3530 SOM omap3-tao3530.dtsi") in v3.18
-kernel and later changed to use defined GPIO constants in v4.4 kernel by
-the commit 3a637e008e54 ("ARM: dts: Use defined GPIO constants in flags
-cell for OMAP2+ boards").
-
-While the latter commit did not introduce the issue I'm marking it with
-Fixes tag due the v4.4 kernels still being maintained.
-
-Fixes: 3a637e008e54 ("ARM: dts: Use defined GPIO constants in flags cell for OMAP2+ boards")
-Cc: linux-stable <stable@vger.kernel.org> # 4.4+
-Signed-off-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Link: https://lore.kernel.org/r/20191031103920.3919-1-dmonakhov@openvz.org
+CC: stable@vger.kernel.org
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/omap3-tao3530.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/quota/dquot.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/arch/arm/boot/dts/omap3-tao3530.dtsi
-+++ b/arch/arm/boot/dts/omap3-tao3530.dtsi
-@@ -222,7 +222,7 @@
- 	pinctrl-0 = <&mmc1_pins>;
- 	vmmc-supply = <&vmmc1>;
- 	vqmmc-supply = <&vsim>;
--	cd-gpios = <&twl_gpio 0 GPIO_ACTIVE_HIGH>;
-+	cd-gpios = <&twl_gpio 0 GPIO_ACTIVE_LOW>;
- 	bus-width = <8>;
- };
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -617,7 +617,7 @@ EXPORT_SYMBOL(dquot_scan_active);
+ /* Write all dquot structures to quota files */
+ int dquot_writeback_dquots(struct super_block *sb, int type)
+ {
+-	struct list_head *dirty;
++	struct list_head dirty;
+ 	struct dquot *dquot;
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	int cnt;
+@@ -631,9 +631,10 @@ int dquot_writeback_dquots(struct super_
+ 		if (!sb_has_quota_active(sb, cnt))
+ 			continue;
+ 		spin_lock(&dq_list_lock);
+-		dirty = &dqopt->info[cnt].dqi_dirty_list;
+-		while (!list_empty(dirty)) {
+-			dquot = list_first_entry(dirty, struct dquot,
++		/* Move list away to avoid livelock. */
++		list_replace_init(&dqopt->info[cnt].dqi_dirty_list, &dirty);
++		while (!list_empty(&dirty)) {
++			dquot = list_first_entry(&dirty, struct dquot,
+ 						 dq_dirty);
  
+ 			WARN_ON(!test_bit(DQ_ACTIVE_B, &dquot->dq_flags));
 
 
