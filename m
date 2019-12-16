@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB9B9121764
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:36:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEC8B1218E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:47:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730521AbfLPSfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:35:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49896 "EHLO mail.kernel.org"
+        id S1727434AbfLPRzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:55:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730250AbfLPSIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:08:21 -0500
+        id S1727727AbfLPRza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:55:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B19B72072D;
-        Mon, 16 Dec 2019 18:08:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC7CE20663;
+        Mon, 16 Dec 2019 17:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519701;
-        bh=1AUrRWkuKd93Vu4XM2xAppPLl4YptojGjXIUS81Acr0=;
+        s=default; t=1576518930;
+        bh=BQ+UarkZnY/9e1W3RwRUZE+Dnq+bf/y+cbKkp4BNUMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cZwQs08kf9URlCN2awVcFnMoQbPtESOep3u5Bjmt1S01AumJNEIrwQeiA4C0UPPn4
-         2dLx/2J2Z7nbzjF1EmVEkgogR1DI61QGuaMEhYI85pxD7JIMUT4Nz+cxq1CN63xXbY
-         q17dMpMXE+FKWuqtCjts/IX+gf5i4tdp7Vja5APo=
+        b=Q0KpKmO2csAnJ3m7KPsdRg/NhIMeWXYMM22EKJgNsTRAKUW0mgzfE5CeWeAEFZDrH
+         sIk+ma2YlHfPUfrZxm/3W2A5Esde5f104rVgsPWDvAEWH3hmdl/tYL15Io5c7AfU/+
+         KuzUNgxaXDwtPhaPpypgRW2RFvGhcGnyw26mISCc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 5.3 008/180] USB: uas: honor flag to avoid CAPACITY16
-Date:   Mon, 16 Dec 2019 18:47:28 +0100
-Message-Id: <20191216174807.557919593@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 125/267] ALSA: hda - Add mute led support for HP ProBook 645 G4
+Date:   Mon, 16 Dec 2019 18:47:31 +0100
+Message-Id: <20191216174903.563751541@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,33 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit bff000cae1eec750d62e265c4ba2db9af57b17e1 upstream.
+commit e190de6941db14813032af87873f5550ad5764fe upstream.
 
-Copy the support over from usb-storage to get feature parity
+Mic mute led does not work on HP ProBook 645 G4.
+We can use CXT_FIXUP_MUTE_LED_GPIO fixup to support it.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191114112758.32747-2-oneukum@suse.com
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191120082035.18937-1-kai.heng.feng@canonical.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/uas.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -825,6 +825,10 @@ static int uas_slave_configure(struct sc
- 		sdev->wce_default_on = 1;
- 	}
- 
-+	/* Some disks cannot handle READ_CAPACITY_16 */
-+	if (devinfo->flags & US_FL_NO_READ_CAPACITY_16)
-+		sdev->no_read_capacity_16 = 1;
-+
- 	/*
- 	 * Some disks return the total number of blocks in response
- 	 * to READ CAPACITY rather than the highest block number.
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -960,6 +960,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x837f, "HP ProBook 470 G5", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x103c, 0x8402, "HP ProBook 645 G4", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1043, 0x138d, "Asus", CXT_FIXUP_HEADPHONE_MIC_PIN),
+ 	SND_PCI_QUIRK(0x152d, 0x0833, "OLPC XO-1.5", CXT_FIXUP_OLPC_XO),
 
 
