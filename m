@@ -2,249 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 085D4121968
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A0912196B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbfLPSuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:50:50 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:33814 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfLPSuo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:50:44 -0500
-Received: by mail-il1-f195.google.com with SMTP id s15so3187943iln.1;
-        Mon, 16 Dec 2019 10:50:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w0GqAeMADEza9fllh4bzbMMhhnGfJ6Bsr92tmvmU29Q=;
-        b=XHIt33Sbu/oJ/7qVpTvsAHtZHBwLg9SQwva5srVojJiAus8eZEtoJILNZgBk+Se82t
-         FRYS1X4R8m6hzUP68lIRVFnVJD+hI2lRDTA5ixyOhVYqgDo4ZWJP+8ZBuNG4SVR9q8wO
-         f48dO6lyFE0ERpv55rIk8bc2mzlOH2eOg4FzQMLBjr1P719Q1rxCOLJCHh+Fdf8QS7L9
-         325JLqgl73XAM4ATbXKycmRDjnBp3U579bTfSala8hC8MwADZ81HZldZSuRCnMP4ay1S
-         GqpQ/CxGIuGVM3SqiNlNZKiYiP2Y1tyoFZIa1p1bDMx69MXIamsR6tRHFKv0ESL/sFKj
-         1MJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w0GqAeMADEza9fllh4bzbMMhhnGfJ6Bsr92tmvmU29Q=;
-        b=YF+BszQPLOW67TAcYK10XVO/xSV4M03gISSMLmWSIsZ8iK8tktABDMYsqFD4CV0nii
-         V8rgwZPTThHUIhjrxgWgW4mMfPLBVhCf8zaOYe+LPPRKah/5RTz7DDZOEhFICEMwc9zC
-         DmiXESZs65d2VdOBrbZKsXua0WYHVo97AgCHvWTVRcg9T8NO4eve4klVauFetXRPsG7y
-         9tZRA7f1zDPFMjZQZLvxwLVd8zTKcO7kaBpJPh3P9FeZCQMtZto3AWL1gKdeaZQtsTt3
-         YIcFJC+wbFNAYmpoWV99mFWnFu205xMcpvWJivOkOpIJ12BZMTyNaNn8K5eqxR3M9+8m
-         ILqw==
-X-Gm-Message-State: APjAAAXMt2qKOhLex1z3EwQ5zaFufBPIjzxbWqAHKuPWOsqbQzyNMCb1
-        roZhGwj2bHR6cf3FeGRCKGZbuh5wbl7LTiCXRhU=
-X-Google-Smtp-Source: APXvYqypJW7zX7JyFKFt7HBQ8IFzxMx8ab/QOfg5OvPPeZw6Wz/pWUWEXSfeBLH2Zai8aIypXtN8r03Gms7377jgnkw=
-X-Received: by 2002:a92:d308:: with SMTP id x8mr13709006ila.42.1576522243125;
- Mon, 16 Dec 2019 10:50:43 -0800 (PST)
+        id S1727801AbfLPSvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:51:02 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2198 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726683AbfLPSu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:50:59 -0500
+Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 1591BE8D58F2BEE38D72;
+        Mon, 16 Dec 2019 18:50:57 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ lhreml702-cah.china.huawei.com (10.201.108.43) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 16 Dec 2019 18:50:56 +0000
+Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 16 Dec
+ 2019 18:50:56 +0000
+Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity
+ for managed interrupt
+To:     Marc Zyngier <maz@kernel.org>
+CC:     Ming Lei <ming.lei@redhat.com>, <tglx@linutronix.de>,
+        "chenxiang (M)" <chenxiang66@hisilicon.com>,
+        <bigeasy@linutronix.de>, <linux-kernel@vger.kernel.org>,
+        <hare@suse.com>, <hch@lst.de>, <axboe@kernel.dk>,
+        <bvanassche@acm.org>, <peterz@infradead.org>, <mingo@redhat.com>
+References: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
+ <1575642904-58295-2-git-send-email-john.garry@huawei.com>
+ <20191207080335.GA6077@ming.t460p>
+ <78a10958-fdc9-0576-0c39-6079b9749d39@huawei.com>
+ <20191210014335.GA25022@ming.t460p>
+ <0ad37515-c22d-6857-65a2-cc28256a8afa@huawei.com>
+ <20191212223805.GA24463@ming.t460p>
+ <d4b89ecf-7ced-d5d6-fc02-6d4257580465@huawei.com>
+ <20191213131822.GA19876@ming.t460p>
+ <b7f3bcea-84ec-f9f6-a3aa-007ae712415f@huawei.com>
+ <20191214135641.5a817512@why>
+ <7db89b97-1b9e-8dd1-684a-3eef1b1af244@huawei.com>
+ <50d9ba606e1e3ee1665a0328ffac67ac@www.loen.fr>
+ <a5f6a542-2dbc-62de-52e2-bd5413b5db51@huawei.com>
+ <68058fd28c939b8e065524715494de95@www.loen.fr>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <ac5b5a25-df2e-18e9-6b0f-60af8c7cec3b@huawei.com>
+Date:   Mon, 16 Dec 2019 18:50:55 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-References: <20191127141544.4277-1-leo.yan@linaro.org> <20191127141544.4277-3-leo.yan@linaro.org>
- <CAOCk7NqZmBYN4tY0_V8xzvBfWShDCP8gTa60Aoc78wK2tXx=6A@mail.gmail.com>
- <20191203082325.GC28241@leoy-ThinkPad-X240s> <CAOCk7NpYt_OVYB7yZz+U9OE7jdtdm4sKG9wzKY7_YvKKx2Q4fg@mail.gmail.com>
- <20191204161330.GA28567@leoy-ThinkPad-X240s> <CAD9cdQ6ROYf6B2PkQYJds_80-0dA=Jcew=TCNCSB=r+WEUNvdQ@mail.gmail.com>
-In-Reply-To: <CAD9cdQ6ROYf6B2PkQYJds_80-0dA=Jcew=TCNCSB=r+WEUNvdQ@mail.gmail.com>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Mon, 16 Dec 2019 11:50:31 -0700
-Message-ID: <CAOCk7Np3DCYmeq1n3aemuLRK=krjOYp88rj_mdrwG2_vg0Gn_w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] tty: serial: msm_serial: Fix deadlock caused by
- recursive output
-To:     Rainer Sickinger <rainersickinger.official@gmail.com>
-Cc:     Leo Yan <leo.yan@linaro.org>, Andy Gross <agross@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        linux-serial@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <68058fd28c939b8e065524715494de95@www.loen.fr>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.202.226.46]
+X-ClientProxiedBy: lhreml728-chm.china.huawei.com (10.201.108.79) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 9:21 AM Rainer Sickinger
-<rainersickinger.official@gmail.com> wrote:
->
-> Can't you just exit with System.exit()?
+Hi Marc,
 
-Isn't System.exit() a Java thing, and we are in a C environment?
+>>
+>>>>
+>>>> I'm just wondering if non-managed interrupts should be included in
+>>>> the load balancing calculation? Couldn't irqbalance (if active) start
+>>>> moving non-managed interrupts around anyway?
+>>> But they are, aren't they? See what we do in irq_set_affinity:
+>>> +        atomic_inc(per_cpu_ptr(&cpu_lpi_count, cpu));
+>>> +        atomic_dec(per_cpu_ptr(&cpu_lpi_count,
+>>> +                       its_dev->event_map.col_map[id]));
+>>> We don't try to "rebalance" anything based on that though, not that
+>>> I think we should.
+>>
+>> Ah sorry, I meant whether they should not be included. In
+>> its_irq_domain_activate(), we increment the per-cpu lpi count and also
+>> use its_pick_target_cpu() to find the least loaded cpu. I am asking
+>> whether we should just stick with the old policy for non-managed
+>> interrupts here.
+>>
+>> After checking D05, I see a very significant performance hit for SAS
+>> controller performance - ~40% throughout lowering.
+> 
+> -ETOOMANYMOVINGPARTS.
 
->
-> Am Mi., 4. Dez. 2019 um 17:14 Uhr schrieb Leo Yan <leo.yan@linaro.org>:
+Understood.
+
+> 
+>> With this patch, now we have effective affinity targeted at seemingly
+>> "random" CPUs, as opposed to all just using CPU0. This affects
+>> performance.
+> 
+> And piling all interrupts on the same CPU does help?
+
+Apparently... I need to check this more.
+
+> 
+>> The difference is that when we use managed interrupts - like for NVME
+>> or D06 SAS controller - the irq cpu affinity mask matches the CPUs
+>> which enqueue the requests to the queue associated with the interrupt.
+>> So there is an efficiency is enqueuing and deqeueing on same CPU group
+>> - all related to blk multi-queue. And this is not the case for
+>> non-managed interrupts.
+> 
+> So you enqueue requests from CPU0 only? It seems a bit odd...
+
+No, but maybe I wasn't clear enough. I'll give an overview:
+
+For D06 SAS controller - which is a multi-queue PCI device - we use 
+managed interrupts. The HW has 16 submission/completion queues, so for 
+96 cores, we have an even spread of 6 CPUs assigned per queue; and this 
+per-queue CPU mask is the interrupt affinity mask. So CPU0-5 would 
+submit any IO on queue0, CPU6-11 on queue2, and so on. PCI NVMe is 
+essentially the same.
+
+These are the environments which we're trying to promote performance.
+
+Then for D05 SAS controller - which is multi-queue platform device 
+(mbigen) - we don't use managed interrupts. We still submit IO from any 
+CPU, but we choose the queue to submit IO on a round-robin basis to 
+promote some isolation, i.e. reduce inter-queue lock contention, so the 
+queue chosen has nothing to do with the CPU.
+
+And with your change we may submit on cpu4 but service the interrupt on 
+cpu30, as an example. While previously we would always service on cpu0. 
+The old way still isn't ideal, I'll admit.
+
+For this env, we would just like to maintain the same performance. And 
+it's here that we see the performance drop.
+
+> 
+>>>>> Please give this new patch a shot on your system (my D05 doesn't have
+>>>>> any managed devices):
+>>>>
+>>>> We could consider supporting platform msi managed interrupts, but I
+>>>> doubt the value.
+>>> It shouldn't be hard to do, and most of the existing code could be
+>>> moved to the generic level. As for the value, I'm not convinced
+>>> either. For example D05 uses the MBIGEN as an intermediate interrupt
+>>> controller, so MSIs are from the PoV of MBIGEN, and not the SAS device
+>>> attached to it. Not the best design...
 >>
->> On Tue, Dec 03, 2019 at 03:42:31PM -0700, Jeffrey Hugo wrote:
+>> JFYI, I did raise this following topic before, but that's as far as I 
+>> got:
 >>
->> [...]
->>
->> > > > > This patch fixes the deadlock issue for recursive output; it adds a
->> > > > > variable 'curr_user' to indicate the uart port is used by which CPU, if
->> > > > > the CPU has acquired spinlock and wants to execute recursive output,
->> > > > > it will directly bail out.  Here we don't choose to avoid locking and
->> > > > > print out log, the reason is in this case we don't want to reset the
->> > > > > uart port with function msm_reset_dm_count(); otherwise it can introduce
->> > > > > confliction with other flows and results in uart port malfunction and
->> > > > > later cannot output anymore.
->> > > >
->> > > > Is this not fixable?  Sure, fixing the deadlock is an improvement, but
->> > > > dropping logs (particularly a memory warning like in your example)
->> > > > seems undesirable.
->> > >
->> > > Thanks a lot for your reviewing, Jeffrey.
->> > >
->> > > Agreed with you for the concern.
->> > >
->> > > To be honest, I am not familiar with the msm uart driver, so have no
->> > > confidence which is the best way for uart port operations.  I can
->> > > think out one possible fixing is shown in below, if detects the lock
->> > > is not acquired then it will force to reset UART port before exit the
->> > > function __msm_console_write().
->> > >
->> > > This approach is not tested yet and it looks too arbitrary; I will
->> > > give a try for it.  At the meantime, welcome any insight suggestion
->> > > with proper register operations.
->> >
->> > According to the documentation, NCF_TX is only needed for SW transmit
->> > mode, where software is directly puttting characters in the fifo.  Its
->> > not needed for BAM mode.  According to your example, recursive console
->> > printing will only happen in BAM mode, and not in SW mode.  Perhaps if
->> > we put the NCF_TX uses to just the SW mode, we avoid the issue and can
->> > allow recursive printing?
->>
->> Thanks for the suggestion!  But based on the suggestion, I tried to
->> change code as below, the console even cannot work when boot the
->> kernel:
->>
->>  static void msm_reset_dm_count(struct uart_port *port, int count)
->>  {
->> +       u32 val;
->> +
->>         msm_wait_for_xmitr(port);
->> -       msm_write(port, count, UARTDM_NCF_TX);
->> -       msm_read(port, UARTDM_NCF_TX);
->> +
->> +       val = msm_read(port, UARTDM_DMEN);
->> +
->> +       /*
->> +        * NCF is only enabled for SW transmit mode and is
->> +        * skipped for BAM mode.
->> +        */
->> +       if (!(val & UARTDM_DMEN_TX_BAM_ENABLE) &&
->> +           !(val & UARTDM_DMEN_RX_BAM_ENABLE)) {
->> +               msm_write(port, count, UARTDM_NCF_TX);
->> +               msm_read(port, UARTDM_NCF_TX);
->> +       }
->>  }
->>
->>
->> Alternatively, when exit from __msm_console_write() and if detect the
->> case for without acquiring spinlock, invoke msm_wait_for_xmitr() to wait
->> for transmit completion looks a good candidate solution. The updated
->> patch is as below.  Please let me know if this is doable?
->>
->> diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
->> index 1db79ee8a886..aa6a494c898d 100644
->> --- a/drivers/tty/serial/msm_serial.c
->> +++ b/drivers/tty/serial/msm_serial.c
->> @@ -190,6 +190,7 @@ struct msm_port {
->>         bool                    break_detected;
->>         struct msm_dma          tx_dma;
->>         struct msm_dma          rx_dma;
->> +       struct cpumask          curr_user;
->>  };
->>
->>  #define UART_TO_MSM(uart_port) container_of(uart_port, struct msm_port, uart)
->> @@ -440,6 +441,7 @@ static void msm_complete_tx_dma(void *args)
->>         u32 val;
->>
->>         spin_lock_irqsave(&port->lock, flags);
->> +       cpumask_set_cpu(smp_processor_id(), &msm_port->curr_user);
->>
->>         /* Already stopped */
->>         if (!dma->count)
->> @@ -474,6 +476,7 @@ static void msm_complete_tx_dma(void *args)
->>
->>         msm_handle_tx(port);
->>  done:
->> +       cpumask_clear_cpu(smp_processor_id(), &msm_port->curr_user);
->>         spin_unlock_irqrestore(&port->lock, flags);
->>  }
->>
->> @@ -548,6 +551,7 @@ static void msm_complete_rx_dma(void *args)
->>         u32 val;
->>
->>         spin_lock_irqsave(&port->lock, flags);
->> +       cpumask_set_cpu(smp_processor_id(), &msm_port->curr_user);
->>
->>         /* Already stopped */
->>         if (!dma->count)
->> @@ -594,6 +598,7 @@ static void msm_complete_rx_dma(void *args)
->>
->>         msm_start_rx_dma(msm_port);
->>  done:
->> +       cpumask_clear_cpu(smp_processor_id(), &msm_port->curr_user);
->>         spin_unlock_irqrestore(&port->lock, flags);
->>
->>         if (count)
->> @@ -932,6 +937,7 @@ static irqreturn_t msm_uart_irq(int irq, void *dev_id)
->>         u32 val;
->>
->>         spin_lock_irqsave(&port->lock, flags);
->> +       cpumask_set_cpu(smp_processor_id(), &msm_port->curr_user);
->>         misr = msm_read(port, UART_MISR);
->>         msm_write(port, 0, UART_IMR); /* disable interrupt */
->>
->> @@ -963,6 +969,7 @@ static irqreturn_t msm_uart_irq(int irq, void *dev_id)
->>                 msm_handle_delta_cts(port);
->>
->>         msm_write(port, msm_port->imr, UART_IMR); /* restore interrupt */
->> +       cpumask_clear_cpu(smp_processor_id(), &msm_port->curr_user);
->>         spin_unlock_irqrestore(&port->lock, flags);
->>
->>         return IRQ_HANDLED;
->> @@ -1573,10 +1580,12 @@ static inline struct uart_port *msm_get_port_from_line(unsigned int line)
->>  static void __msm_console_write(struct uart_port *port, const char *s,
->>                                 unsigned int count, bool is_uartdm)
->>  {
->> +       struct msm_port *msm_port = UART_TO_MSM(port);
->>         int i;
->>         int num_newlines = 0;
->>         bool replaced = false;
->>         void __iomem *tf;
->> +       int locked = 1;
->>
->>         if (is_uartdm)
->>                 tf = port->membase + UARTDM_TF;
->> @@ -1589,7 +1598,15 @@ static void __msm_console_write(struct uart_port *port, const char *s,
->>                         num_newlines++;
->>         count += num_newlines;
->>
->> -       spin_lock(&port->lock);
->> +       if (port->sysrq)
->> +               locked = 0;
->> +       else if (oops_in_progress)
->> +               locked = spin_trylock(&port->lock);
->> +       else if (cpumask_test_cpu(smp_processor_id(), &msm_port->curr_user))
->> +               locked = 0;
->> +       else
->> +               spin_lock(&port->lock);
->> +
->>         if (is_uartdm)
->>                 msm_reset_dm_count(port, count);
->>
->> @@ -1625,7 +1642,12 @@ static void __msm_console_write(struct uart_port *port, const char *s,
->>                 iowrite32_rep(tf, buf, 1);
->>                 i += num_chars;
->>         }
->> -       spin_unlock(&port->lock);
->> +
->> +       if (!locked)
->> +               msm_wait_for_xmitr(port);
->> +
->> +       if (locked)
->> +               spin_unlock(&port->lock);
->>  }
+>> https://marc.info/?l=linux-block&m=150722088314310&w=2
+> 
+> Yes. And that's probably not very hard, but the problem in your case is
+> that the D05 HW is not using MSIs...
+
+Right
+
+  You'd have to provide an abstraction
+> for wired interrupts (please don't).
+> 
+> You'd be better off directly setting the affinity of the interrupts from
+> the driver, but I somehow can't believe that you're only submitting 
+> requests
+> from the same CPU,
+
+Maybe...
+
+  always. There must be something I'm missing.
+> 
+
+Thanks,
+John
