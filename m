@@ -2,54 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFB36121A06
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 20:35:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 293A3121A0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 20:35:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbfLPTfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 14:35:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726646AbfLPTfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 14:35:12 -0500
-Subject: Re: [GIT PULL] Kselftest fixes update for Linux 5.5-rc3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576524912;
-        bh=jsrfCHHYKY0vkTXN4nMzpTPCwU/s5OIj35Zy+kQ4Ico=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=2KyCnZwwc+WtMmRa/1JmTP4v8qIuAVFZRTqwyYjJ+XfkkBK0KQfa4PGFUOyg2d9zE
-         njlgT5htLxSoeXfNDAXB/P2UTRoeCC4XdOkkH8t9fcEM1n3LUA/xl6928q8P5e3A8K
-         NRZy4ZFZ2wZv1XuYspMhVE1ZmKLlxiMUzTxEkqeE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <57894f9b-3cd0-f42d-cdc2-e3b8cb7255ab@linuxfoundation.org>
-References: <57894f9b-3cd0-f42d-cdc2-e3b8cb7255ab@linuxfoundation.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <57894f9b-3cd0-f42d-cdc2-e3b8cb7255ab@linuxfoundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
- tags/linux-kselftest-5.5-rc2
-X-PR-Tracked-Commit-Id: 4eac734486fd431e0756cc5e929f140911a36a53
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6afa873170a612b2b9e392c19c523ed8aae6fbc9
-Message-Id: <157652491208.27590.13034529510762184266.pr-tracker-bot@kernel.org>
-Date:   Mon, 16 Dec 2019 19:35:12 +0000
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     torvalds@linux-foundation.org, skhan@linuxfoundation.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>
+        id S1727337AbfLPTfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 14:35:22 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43099 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726710AbfLPTfV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 14:35:21 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p27so4922495pli.10
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 11:35:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc:user-agent:date;
+        bh=zyf5oqIBC4otO0TD/aAKD2B0cXiPBUfjLdMtf1EP18U=;
+        b=fD2NoFnjxGFSTYc9JB2rdjm5W2cJCsvuN331lqeALXlrVqI9Kab6FoixmzhZsPnV4F
+         0oLidyk97L8Y/gBuyeKt4h+/IdJbFP1Z8xAC8SFHRZsBViH+ShyzlVyS2hwIf/7YWFNM
+         qIh1bQRzBxFIMFaEHGZcuHBFxjH4BjGrBSqTI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc
+         :user-agent:date;
+        bh=zyf5oqIBC4otO0TD/aAKD2B0cXiPBUfjLdMtf1EP18U=;
+        b=CHRHyMIK+7V7LV4czdFn4WVA1FlHgyf/vMHG9LQ/69W45WGCCux2KkjjyJlSjJkZsL
+         Z1H31zqJwUxrcDBpXC600AKWisFfEXZd5kI2/LU/2wOuKGS+wNvS0nEgiYIvGaIScsHW
+         1Xh4Wa8pmS5a1cARGefcintl8NhxtQmEhNYII0T9jf6dI26SjjGxWn+uKsu74P197CgW
+         ibrzhZ4fgX9X4KW6oK+Qr5elbRrQWm3D4eJGJm9Iff6TtvEbiYOBa9qne0R4XaBZs1vH
+         9b51V7BL2OTaDhDC3+WtqctuKp/J90iLZR+XXqLD2WZM1Y7fTHDFs9WtPht+CivcT4oa
+         IICA==
+X-Gm-Message-State: APjAAAVqo4OYmSWgBSutY52PDIv8MvYU8D9D7ZqzaplzLJa8lcAcAa9I
+        A21Vf4ZYsfywe2KoDtYaLEeOqIMs8DcWbQ==
+X-Google-Smtp-Source: APXvYqyviP4AYpq091Bvfn20j4LGQVIn39RgQpNuNLHQhQ9Q2u7Np+YFHk/5q8zyKt58XN+P7TaNAQ==
+X-Received: by 2002:a17:902:7c13:: with SMTP id x19mr18277088pll.236.1576524920196;
+        Mon, 16 Dec 2019 11:35:20 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id i4sm260898pjw.28.2019.12.16.11.35.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 11:35:19 -0800 (PST)
+Message-ID: <5df7dc77.1c69fb81.9e37f.16a5@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191216115531.17573-2-sibis@codeaurora.org>
+References: <20191216115531.17573-1-sibis@codeaurora.org> <20191216115531.17573-2-sibis@codeaurora.org>
+Subject: Re: [PATCH 1/2] dt-bindings: power: rpmpd: Convert rpmpd bindings to yaml
+To:     Sibi Sankar <sibis@codeaurora.org>, bjorn.andersson@linaro.org,
+        rnayak@codeaurora.org, robh+dt@kernel.org
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     agross@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        mark.rutland@arm.com, dianders@chromium.org,
+        Sibi Sankar <sibis@codeaurora.org>
+User-Agent: alot/0.8.1
+Date:   Mon, 16 Dec 2019 11:35:18 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 16 Dec 2019 11:00:51 -0700:
+Quoting Sibi Sankar (2019-12-16 03:55:30)
+> Convert RPM/RPMH power-domain bindings to yaml.
+>=20
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-5.5-rc2
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6afa873170a612b2b9e392c19c523ed8aae6fbc9
+One nitpick below!
 
-Thank you!
+> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml b/Do=
+cumentation/devicetree/bindings/power/qcom,rpmpd.yaml
+> new file mode 100644
+> index 0000000000000..4aebf024e4427
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+> @@ -0,0 +1,170 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/qcom,rpmpd.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm RPM/RPMh Power domains
+> +
+> +maintainers:
+> +  - Rajendra Nayak <rnayak@codeaurora.org>
+> +
+> +description:
+> +  For RPM/RPMh Power domains, we communicate a performance state to RPM/=
+RPMh
+> +  which then translates it into a corresponding voltage on a rail
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Add a full-stop here to make it a true sentence?
+
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,msm8976-rpmpd
+> +      - qcom,msm8996-rpmpd
+> +      - qcom,msm8998-rpmpd
+> +      - qcom,qcs404-rpmpd
+> +      - qcom,sc7180-rpmhpd
+> +      - qcom,sdm845-rpmhpd
+> +      - qcom,sm8150-rpmhpd
+> +
