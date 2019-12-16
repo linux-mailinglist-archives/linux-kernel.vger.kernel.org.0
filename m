@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A2E71213F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:08:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F7D3121546
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:21:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730038AbfLPSGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:06:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47230 "EHLO mail.kernel.org"
+        id S1732060AbfLPSUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:20:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729811AbfLPSGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:06:47 -0500
+        id S1732048AbfLPSUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:20:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE3E0206E0;
-        Mon, 16 Dec 2019 18:06:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A0CD20409;
+        Mon, 16 Dec 2019 18:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519606;
-        bh=Ra/lRltuPzgBInhRQA6Q8qlZpPa3xdL0Jgy7VW2kfdY=;
+        s=default; t=1576520412;
+        bh=HaHzptjKu1T87dmbAWLzqhh+FUdykCnYHllHgqcCvPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i+cT5ePVsL83U20LL6nRgSZCCnS1TcEAs+kv05zKFJDXBXz25I8PViCePHbSAKev/
-         dhsCizGnKNYIeXcPokoVY5obhbt3GcjwbHzvIXtJitJO1NCuqIxaiJzK0QIMq8rVgL
-         kxb7FO304c9kwlMvPPezuqTdKSu6i2GQvndDRpaI=
+        b=gCn7v8/4TYEuFscDB3RNDSW4iK/+5VRlXKcrPGXEvA1SQjJzXg3ivGmnYOJiuWN3G
+         u9bSZsCvRNvLdXraeoAw7uctVPqJ5qsG6oPGLgaxwVCPlpeg4Yarj/wdJk9QSZk6uM
+         gOvAFPj2Jpe7WVqIsQhQmXgkeIQU0SRl+oX+qo8U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen Jun <chenjun102@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Qian Cai <cai@lca.pw>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 133/140] mm/shmem.c: cast the type of unmap_start to u64
+        stable@vger.kernel.org,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Greg Kurz <groug@kaod.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 145/177] powerpc/xive: Prevent page fault issues in the machine crash handler
 Date:   Mon, 16 Dec 2019 18:50:01 +0100
-Message-Id: <20191216174828.836278714@linuxfoundation.org>
+Message-Id: <20191216174847.239885182@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,73 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Jun <chenjun102@huawei.com>
+From: Cédric Le Goater <clg@kaod.org>
 
-commit aa71ecd8d86500da6081a72da6b0b524007e0627 upstream.
+commit 1ca3dec2b2dff9d286ce6cd64108bda0e98f9710 upstream.
 
-In 64bit system. sb->s_maxbytes of shmem filesystem is MAX_LFS_FILESIZE,
-which equal LLONG_MAX.
+When the machine crash handler is invoked, all interrupts are masked
+but interrupts which have not been started yet do not have an ESB page
+mapped in the Linux address space. This crashes the 'crash kexec'
+sequence on sPAPR guests.
 
-If offset > LLONG_MAX - PAGE_SIZE, offset + len < LLONG_MAX in
-shmem_fallocate, which will pass the checking in vfs_fallocate.
+To fix, force the mapping of the ESB page when an interrupt is being
+mapped in the Linux IRQ number space. This is done by setting the
+initial state of the interrupt to OFF which is not necessarily the
+case on PowerNV.
 
-	/* Check for wrap through zero too */
-	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
-		return -EFBIG;
-
-loff_t unmap_start = round_up(offset, PAGE_SIZE) in shmem_fallocate
-causes a overflow.
-
-Syzkaller reports a overflow problem in mm/shmem:
-
-  UBSAN: Undefined behaviour in mm/shmem.c:2014:10
-  signed integer overflow: '9223372036854775807 + 1' cannot be represented in type 'long long int'
-  CPU: 0 PID:17076 Comm: syz-executor0 Not tainted 4.1.46+ #1
-  Hardware name: linux, dummy-virt (DT)
-  Call trace:
-     dump_backtrace+0x0/0x2c8 arch/arm64/kernel/traps.c:100
-     show_stack+0x20/0x30 arch/arm64/kernel/traps.c:238
-     __dump_stack lib/dump_stack.c:15 [inline]
-     ubsan_epilogue+0x18/0x70 lib/ubsan.c:164
-     handle_overflow+0x158/0x1b0 lib/ubsan.c:195
-     shmem_fallocate+0x6d0/0x820 mm/shmem.c:2104
-     vfs_fallocate+0x238/0x428 fs/open.c:312
-     SYSC_fallocate fs/open.c:335 [inline]
-     SyS_fallocate+0x54/0xc8 fs/open.c:239
-
-The highest bit of unmap_start will be appended with sign bit 1
-(overflow) when calculate shmem_falloc.start:
-
-    shmem_falloc.start = unmap_start >> PAGE_SHIFT.
-
-Fix it by casting the type of unmap_start to u64, when right shifted.
-
-This bug is found in LTS Linux 4.1.  It also seems to exist in mainline.
-
-Link: http://lkml.kernel.org/r/1573867464-5107-1-git-send-email-chenjun102@huawei.com
-Signed-off-by: Chen Jun <chenjun102@huawei.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Qian Cai <cai@lca.pw>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 243e25112d06 ("powerpc/xive: Native exploitation of the XIVE interrupt controller")
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Cédric Le Goater <clg@kaod.org>
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191031063100.3864-1-clg@kaod.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/shmem.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/sysdev/xive/common.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2692,7 +2692,7 @@ static long shmem_fallocate(struct file
- 		}
+--- a/arch/powerpc/sysdev/xive/common.c
++++ b/arch/powerpc/sysdev/xive/common.c
+@@ -1035,6 +1035,15 @@ static int xive_irq_alloc_data(unsigned
+ 	xd->target = XIVE_INVALID_TARGET;
+ 	irq_set_handler_data(virq, xd);
  
- 		shmem_falloc.waitq = &shmem_falloc_waitq;
--		shmem_falloc.start = unmap_start >> PAGE_SHIFT;
-+		shmem_falloc.start = (u64)unmap_start >> PAGE_SHIFT;
- 		shmem_falloc.next = (unmap_end + 1) >> PAGE_SHIFT;
- 		spin_lock(&inode->i_lock);
- 		inode->i_private = &shmem_falloc;
++	/*
++	 * Turn OFF by default the interrupt being mapped. A side
++	 * effect of this check is the mapping the ESB page of the
++	 * interrupt in the Linux address space. This prevents page
++	 * fault issues in the crash handler which masks all
++	 * interrupts.
++	 */
++	xive_esb_read(xd, XIVE_ESB_SET_PQ_01);
++
+ 	return 0;
+ }
+ 
 
 
