@@ -2,78 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D03C121BC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:37:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01157121BF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:37:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727539AbfLPVfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 16:35:47 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46351 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfLPVfq (ORCPT
+        id S1727928AbfLPVgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 16:36:46 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:51076 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727306AbfLPVgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 16:35:46 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a124so4491632oii.13;
-        Mon, 16 Dec 2019 13:35:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vJ2usFWIeCmkzmTC7qcf2zGiRqXsS5ix2vXMB0EkNbI=;
-        b=KyxZePEZ3YNKJXcVKlyZlVzzbTLYeNjCNtwazWD9XU6GxZwyS6zEXU9qDAidHsUClO
-         fZoXkOrdKzRm5B7vnHgC08d3RsMbT//W1k32OP4m6uLoJ4dRNbjeRr5h9ErcKpe7jMRZ
-         yYtklx9Vc8T51qnsL8Mt3FU7I2bzOGlHiR89i3S9PFzjTyWnZJRh2RSufSvJBVOI8wHQ
-         XxKKg8KoeLkMcvtJ/b/IfBa5yMOiJ0HUTry9lu2P8XX8hE973JkgcRX5cc3YIBRjdhe9
-         SZ72QCmoOE0wbu0QB+yqeevDB9ybeihVkErjsN0zQ1WTtHpjaEKiYV87ZAa3sGpAkeDW
-         JP/w==
-X-Gm-Message-State: APjAAAV/sXZU2MaveHIs/Z3n2DjWrWpUHExSXX/aZ1Kc1zrECMrOlgTh
-        s7TBaiE82djpNoqFFWcstBl1G0zJuM2kqx3GYCE=
-X-Google-Smtp-Source: APXvYqzeC3z/0g7tRLvdvvwAJCteCRLAbygW1va+REys9e3fUJcMxQkdZnEB0iQtUlOzmkKHEvgmtrZmAiwIi1djeJc=
-X-Received: by 2002:a05:6808:b38:: with SMTP id t24mr729850oij.110.1576532145696;
- Mon, 16 Dec 2019 13:35:45 -0800 (PST)
+        Mon, 16 Dec 2019 16:36:45 -0500
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id AF8B32010ACB;
+        Mon, 16 Dec 2019 13:36:44 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AF8B32010ACB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1576532204;
+        bh=jjiUXybQ95W56LiGa6HusxKXrrEr0qSTLsY8XbVtvlA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IAdQZp4WF0DhoUzg462kj1q95OXjIIr7Pgt6M/8Pq9rp5nu4jZFhTfY3g2TEG++Ol
+         rdBvXkgMX1ZADO99zv65d1rBrdDh+dFTtjeYuW6mOPzmW7FiTSgn4KHh0P3/iewdIZ
+         L1qovoQf4wDWTkxFy454hwG87e/ffY/XcmLkLClE=
+Subject: Re: [PATCH v4 2/2] IMA: Call workqueue functions to measure queued
+ keys
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+References: <20191213171827.28657-1-nramas@linux.microsoft.com>
+ <20191213171827.28657-3-nramas@linux.microsoft.com>
+ <1576257955.8504.20.camel@HansenPartnership.com>
+ <39624b97-245c-ed05-27c5-588787aacc00@linux.microsoft.com>
+ <1576423353.3343.3.camel@HansenPartnership.com>
+ <1568ff14-316f-f2c4-84d4-7ca4c0a1936a@linux.microsoft.com>
+ <1576479187.3784.1.camel@HansenPartnership.com>
+ <8844a360-6d1e-1435-db7c-fd7739487168@linux.microsoft.com>
+ <1576531022.3365.6.camel@HansenPartnership.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <35a6c241-9a46-2657-51d1-0c04d32a9fae@linux.microsoft.com>
+Date:   Mon, 16 Dec 2019 13:37:11 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <cover.1576520244.git.gayatri.kammela@intel.com>
-In-Reply-To: <cover.1576520244.git.gayatri.kammela@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 16 Dec 2019 22:35:34 +0100
-Message-ID: <CAJZ5v0g2UHJcnczekgegX6_7kzHrmXNS_e3KRCC2d4LQ1+RceA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] drivers: Add Tiger Lake hardware IDs to support ACPI,
-To:     Gayatri Kammela <gayatri.kammela@intel.com>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Alex Hung <alex.hung@canonical.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        "Prestopine, Charles D" <charles.d.prestopine@intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1576531022.3365.6.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 7:33 PM Gayatri Kammela
-<gayatri.kammela@intel.com> wrote:
->
-> Hi,
->
-> Tiger Lake supports devices whose hardware IDs are changed for various
-> drivers. Hence, add the new hardware IDs.
->
-> Patch 1: Add Tiger Lake support to DPTF driver
-> Patch 2: Add Tiger Lake support to fan driver
-> Patch 3: Add Tiger Lake support to device_pm
-> Patch 4: Add Tiger Lake support to Intel's HID driver
-> Patch 5: Add Tiger Lake support to thermal driver
 
-I'm going to apply the whole series (for 5.6) if nobody has any issues
-with that.
+On 12/16/2019 1:17 PM, James Bottomley wrote:
+> On Mon, 2019-12-16 at 11:20 -0800, Lakshmi Ramasubramanian wrote:
+>>    => If the flag is false, mutex is taken and the flag is checked
+>> again. If the flag changed from false to true between the above two
+>> tests, that means another thread had raced to call
+>> ima_process_queued_keys() and has  processed the queued keys. So
+>> again, no further action is required.
+> 
+> This is the problem: in the race case you may still be adding keys to
+> the queue after the other thread has processed it. Those keys won't get
+> processed because the flag is now false in the post check so the
+> current thread won't process them either.
+> 
+> James
+> 
 
-Thanks!
+I am not sure how a key could get added to the queue after another 
+thread has processed the queued keys.
+
+The flag changes from false to true only once - in 
+ima_process_queued_keys(). This change is done under the lock. The 
+thread that makes this change will process all the queued keys.
+
+Once the above change is done, ima_process_keys flag will never become 
+false again.
+
+Another thread that is trying to queue the key will wait on the mutex - 
+in ima_queue_key(). If this thread finds the flag is true after taking 
+the mutex, it will NOT queue the key.
+
+Please see my explanation below:
+
+
+"READER" functions: ima_post_key_create_or_update() and ima_queue_key()
+***********************************************************************
+In ima_post_key_create_or_update() the flag is checked first without the 
+mutex taken:
+
+  => If the flag is true, then there is no need to queue the key and it 
+can be processed immediately.
+
+     This condition means that either queued keys have already been 
+processed OR there is another thread in the middle of processing queued 
+keys. In both these conditions, the new key should NOT be queued, but 
+processed immediately.
+
+  => If the flag is false, ima_queue_key() is called. In this function, 
+the mutex is taken and flag checked again.
+
+Say, the flag changed from false to true at this point, the key will NOT 
+be queued. ima_queue_key() will return false and in response 
+ima_post_key_create_or_update() will process the key immediately.
+
+But if the flag is still false, the key will be queued by 
+ima_queue_key() and will be processed later.
