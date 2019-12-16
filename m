@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6485D1212F3
+	by mail.lfdr.de (Postfix) with ESMTP id D38B91212F4
 	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:57:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbfLPR52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:57:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56206 "EHLO mail.kernel.org"
+        id S1728480AbfLPR5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:57:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728433AbfLPR5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:57:24 -0500
+        id S1727584AbfLPR5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:57:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDBB320733;
-        Mon, 16 Dec 2019 17:57:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33263205ED;
+        Mon, 16 Dec 2019 17:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519044;
-        bh=CVQpmsHggTTIIS9+lI4h+PJUbqp97d7qTuyXzomvncQ=;
+        s=default; t=1576519051;
+        bh=Qezn44Irrc6jgQSJErdffXCId1xTUQDMw3SjZOStOXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YC86IzqRf6rYtG/jJn0azjjB/Jv7PmnaFxew9QQS0MsJMcTedjnJjCyliBgFGDYfv
-         FQ85eqXgWcrEmLHXeqplr+zQ/bAAWGqaM7tZN+evFtrmXeZWg6HU45l1HcxErd+FOx
-         Fnh6A++ggMkbEOFbONY3RpWDgulXZhVjcJk9tA50=
+        b=eorDUIcaOInG46zzJjwB/VWWjr5kfDkStoqYk3d/HoYxymVyPA9xDhwbjAH1sUrJ5
+         VPlJTSDqwAWYy39W59/FxugO6LSmysE4p8DgUinHyujq3+PNwGYv+w6W4Z3Y+UQ9e9
+         AivGxYsfuDiMS3oxkYlL2/qGQg/LD3sljHALMuLo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 171/267] xhci: Increase STS_HALT timeout in xhci_suspend()
-Date:   Mon, 16 Dec 2019 18:48:17 +0100
-Message-Id: <20191216174911.868500975@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Lesiak <chris.lesiak@licor.com>,
+        Matt Ranostay <matt.ranostay@konsulko.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 174/267] iio: humidity: hdc100x: fix IIO_HUMIDITYRELATIVE channel reporting
+Date:   Mon, 16 Dec 2019 18:48:20 +0100
+Message-Id: <20191216174912.036950667@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,43 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Chris Lesiak <chris.lesiak@licor.com>
 
-commit 7c67cf6658cec70d8a43229f2ce74ca1443dc95e upstream.
+commit 342a6928bd5017edbdae376042d8ad6af3d3b943 upstream.
 
-I've recently observed failed xHCI suspend attempt on AMD Raven Ridge
-system:
-kernel: xhci_hcd 0000:04:00.4: WARN: xHC CMD_RUN timeout
-kernel: PM: suspend_common(): xhci_pci_suspend+0x0/0xd0 returns -110
-kernel: PM: pci_pm_suspend(): hcd_pci_suspend+0x0/0x30 returns -110
-kernel: PM: dpm_run_callback(): pci_pm_suspend+0x0/0x150 returns -110
-kernel: PM: Device 0000:04:00.4 failed to suspend async: error -110
+The IIO_HUMIDITYRELATIVE channel was being incorrectly reported back
+as percent when it should have been milli percent. This is via an
+incorrect scale value being returned to userspace.
 
-Similar to commit ac343366846a ("xhci: Increase STS_SAVE timeout in
-xhci_suspend()") we also need to increase the HALT timeout to make it be
-able to suspend again.
-
-Cc: <stable@vger.kernel.org> # 5.2+
-Fixes: f7fac17ca925 ("xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()")
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20191211142007.8847-5-mathias.nyman@linux.intel.com
+Signed-off-by: Chris Lesiak <chris.lesiak@licor.com>
+Acked-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |    2 +-
+ drivers/iio/humidity/hdc100x.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -908,7 +908,7 @@ static bool xhci_pending_portevent(struc
- int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup)
- {
- 	int			rc = 0;
--	unsigned int		delay = XHCI_MAX_HALT_USEC;
-+	unsigned int		delay = XHCI_MAX_HALT_USEC * 2;
- 	struct usb_hcd		*hcd = xhci_to_hcd(xhci);
- 	u32			command;
- 	u32			res;
+--- a/drivers/iio/humidity/hdc100x.c
++++ b/drivers/iio/humidity/hdc100x.c
+@@ -237,7 +237,7 @@ static int hdc100x_read_raw(struct iio_d
+ 			*val2 = 65536;
+ 			return IIO_VAL_FRACTIONAL;
+ 		} else {
+-			*val = 100;
++			*val = 100000;
+ 			*val2 = 65536;
+ 			return IIO_VAL_FRACTIONAL;
+ 		}
 
 
