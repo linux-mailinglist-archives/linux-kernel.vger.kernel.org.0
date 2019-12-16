@@ -2,143 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DCD5120120
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:30:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1A3B120128
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:30:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfLPJ2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 04:28:13 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40573 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfLPJ2N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 04:28:13 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c14so6341934wrn.7
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 01:28:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HKgaKFvzVnMf8Fep7rLjESTFRX5FlsKByugoFxPEX+Q=;
-        b=tguXRnUtty/NeZCDDc1tjGsX0/RigtL2RoDbPUqnUkylyzYfEOzMchvua4eCOFsmr1
-         TD3uVNfmVIfxHHbzpTYI3asZNBylUmzG11akmDnLo6eeuB9bVm4c9ubCnI06nmF4y+Tm
-         dfB28eQM6bmUWvvdWSqHTj3URODh4Ym0EjF+FGGHE7DiW9WqorzB/SKN0dJrWBZGzKrs
-         FYJkJPzWZno3F8nDPHSFzNVXEPfetKK+5SyhTONDs4PbqvZsKv4LkcyqZQrwdFE8AfE8
-         BofXIHS+2IC3lv7IQQq8GQbFFoCIXNku9js3REkdkAt+Krk159jh8jCNiXsDlXWKmE71
-         iAGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=HKgaKFvzVnMf8Fep7rLjESTFRX5FlsKByugoFxPEX+Q=;
-        b=TYFu5XeBj3XYbS36XYRLHelyQ5rhE5AD+Wi7HsJ/+1OcDwuO0WKRYMTvD7kzP/O0KH
-         P53nSJy4IBQVLVy4vItKpZNPaUOho47dVcza5amZZTM5sXHiueh/VKZV9lserszlotIB
-         WrE8t8+5IcBN5Aq0gbORCEpoPmvfyFX7Ei36YCy7YiY0y35Xhx8yyq84dWTGDwjUO1+2
-         TuCBjJ9hpg/cnn/It8mGazKKv+0gOQVq9krSvcF+vl8tEKTX7oxlSlUm8T+a/pgCyyVs
-         o6kpmujuD6xio9hZh+J8mHuEvHpA+5A4/sh6T3eY7QVDfSSIxRgHJD4JUqCQ/bCWzhSm
-         vghg==
-X-Gm-Message-State: APjAAAUfuGJDiZ/34FwRMJzZAliJJrR0jdlC56qCnKknkyk4nQMo9JkK
-        ycO0TZ7WVseNFMH4COSg+PuNnQ==
-X-Google-Smtp-Source: APXvYqzw05Ue1vhGzja88dxMD7DZNCdY7g6P2bOsTX2WubzK+Dhvb+tdDWvPII2t0je9y705rqsNeA==
-X-Received: by 2002:adf:d184:: with SMTP id v4mr29096486wrc.76.1576488490480;
-        Mon, 16 Dec 2019 01:28:10 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:44d6:972c:f996:2f15? ([2a01:e34:ed2f:f020:44d6:972c:f996:2f15])
-        by smtp.googlemail.com with ESMTPSA id e18sm20739696wrr.95.2019.12.16.01.28.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2019 01:28:09 -0800 (PST)
-Subject: Re: [PATCH v2] drivers: thermal: tsens: Work with old DTBs
-To:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, agross@kernel.org, swboyd@chromium.org,
-        stephan@gerhold.net, olof@lixom.net
-Cc:     linux-pm@vger.kernel.org
-References: <cover.1576146898.git.amit.kucheria@linaro.org>
- <cea3317c5d793db312064d68b261ad420a4a81b1.1576146898.git.amit.kucheria@linaro.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <be07b05d-421f-35a7-0582-a04a226c8c2c@linaro.org>
-Date:   Mon, 16 Dec 2019 10:28:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727383AbfLPJ2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 04:28:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39536 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727053AbfLPJ2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 04:28:22 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAF312075A;
+        Mon, 16 Dec 2019 09:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576488501;
+        bh=RW14kw0PJ2wrm6ulu6HtyD0f3CFUMop1Am8yugJWJLY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZR9zT84IZckgL6VojKqYtTYubTnmKvXzNr8AlFm4gcwHI/sjcPmZzLNtZV53XQyzI
+         1IqF2do9BVvrI9iRYVZX+unWx1dwf2wJtRRLH8qKOHZxuj7MA7KJ9Hyhkc/Q4Jjd6k
+         ELcF5ywb2uDp7ymvJjK3TnaoLcfG6VA7an7pl+ro=
+Date:   Mon, 16 Dec 2019 10:28:18 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andre Tomt <andre@tomt.net>
+Cc:     Jack Wang <jack.wang.usish@gmail.com>,
+        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 153/306] block: fix the DISCARD request merge
+ (4.19.87+ crash)
+Message-ID: <20191216092818.GA1203682@kroah.com>
+References: <20191127203114.766709977@linuxfoundation.org>
+ <20191127203126.845809286@linuxfoundation.org>
+ <aabbc521-b263-2d5f-efc6-72d500ab5c71@tomt.net>
+ <CA+res+RtrAOfiVLeg1QE7V1Xjs6029y3tVmh0vfy+B71_bhsUw@mail.gmail.com>
+ <4d8343e0-f38a-3e08-edf6-3346b3011ddf@tomt.net>
 MIME-Version: 1.0
-In-Reply-To: <cea3317c5d793db312064d68b261ad420a4a81b1.1576146898.git.amit.kucheria@linaro.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4d8343e0-f38a-3e08-edf6-3346b3011ddf@tomt.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/2019 11:38, Amit Kucheria wrote:
-> In order for the old DTBs to continue working, the new interrupt code
-> must not return an error if interrupts are not defined. Don't return an
-> error in case of -ENXIO.
+On Mon, Dec 16, 2019 at 10:18:48AM +0100, Andre Tomt wrote:
+> On 16.12.2019 08:42, Jack Wang wrote:
+> > Andre Tomt <andre@tomt.net> 于2019年12月14日周六 下午3:24写道：
+> > > 
+> > > 4.19.87, 4.19.88, 4.19.89 all lock up frequently on some of my systems.
+> > > The same systems run 5.4.3 fine, so the newer trees are probably OK.
+> > > Reverting this commit on top of 4.19.87 makes everything stable.
+> > > 
+> > > To trigger it all I have to do is re-rsyncing a directory tree with some
+> > > changed files churn, it will usually crash in 10 to 30 minutes.
+> > > 
+> > > The systems crashing has ext4 filesystem on a two ssd md raid1 mounted
+> > > with the mount option discard. If mounting it without discard, the
+> > > crashes no longer seem to occur.
+> > > 
+> > > No oops/panic made it to the ipmi console. I suspect the console is just
+> > > misbehaving and it didnt really livelock. At one point one line of the
+> > > crash made it to the console (kernel BUG at block/blk-core.c:1776), and
+> > > it was enough to pinpoint this commit. Note that the line number might
+> > > be off, as I was attempting a bisect at the time.
+> > > 
+> > > This commit also made it to 4.14.x, but I have not tested it.
+> > Hi Andre,
+> > 
+> > I noticed one fix is missing for discard merge in 4.19.y
+> > 2a5cf35cd6c5 ("block: fix single range discard merge")
+> > 
+> > Can you try if it helps? just "git cherry-pick 2a5cf35cd6c5"
 > 
-> Fixes: 634e11d5b450a ("drivers: thermal: tsens: Add interrupt support")
-> Suggested-by: Stephan Gerhold <stephan@gerhold.net>
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Indeed, adding this commit on top a clean 4.19.89 fixes the issue. So far
+> survived about an hour of rsyncing file churn.
+> 
 
-Applied.
+Great!
 
+Thanks Jack for finding the fix and Andre for reporting this.  I'll go
+queue this fix up right now.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+greg k-h
