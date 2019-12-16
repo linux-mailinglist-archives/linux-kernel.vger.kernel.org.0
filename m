@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABA7F121700
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:34:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5A881218AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730864AbfLPSdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:33:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52298 "EHLO mail.kernel.org"
+        id S1727229AbfLPR5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:57:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730466AbfLPSJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:42 -0500
+        id S1728524AbfLPR5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:57:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4771A21582;
-        Mon, 16 Dec 2019 18:09:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C3EB21582;
+        Mon, 16 Dec 2019 17:57:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519781;
-        bh=LIOwHcfllStzS2p0VL9Ya63jUZg+UW6CQNNda2dA7EM=;
+        s=default; t=1576519063;
+        bh=T0ZeePh69wfZFJoEVb5zMxvl/KiHPmT9h9JmdM695A8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w3etqv+sRxQntm1xwyxc18DC7I1VQhFfpq9qLpgtbwPfo0V6NZ71b38eFFc/tsi4N
-         84uw9oalonFG5maRstE1kURM4V+nUVXiCfVA4CA96wyRGkh2I/rhRvgS7Kkyo1Iznw
-         CghKeIbqoObMqKYC2hQvc+p33+yETsPKOdR63/d0=
+        b=le8qzr1KoaBIhDG0vTTjDC5COLDgHFvPey+ucJC6eMQEbAXD07fpjfZzSPipwRFEx
+         ec9gbL7OmR8ZJ+tw5QEvMtxc0MudWp1FJeGuI4yB6g+TVcHmYVBSSKQ6ZEBodA6bO1
+         lFvuz7vARrAmNb0bt0QYxOXTKputjB6mXpI7BjAI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.3 065/180] rtlwifi: rtl8192de: Fix missing enable interrupt flag
+        stable@vger.kernel.org,
+        Emiliano Ingrassia <ingrassia@epigenesys.com>
+Subject: [PATCH 4.14 179/267] usb: core: urb: fix URB structure initialization function
 Date:   Mon, 16 Dec 2019 18:48:25 +0100
-Message-Id: <20191216174829.762640277@linuxfoundation.org>
+Message-Id: <20191216174912.308525246@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,67 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Emiliano Ingrassia <ingrassia@epigenesys.com>
 
-commit 330bb7117101099c687e9c7f13d48068670b9c62 upstream.
+commit 1cd17f7f0def31e3695501c4f86cd3faf8489840 upstream.
 
-In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
-new drivers"), the flag that indicates that interrupts are enabled was
-never set.
+Explicitly initialize URB structure urb_list field in usb_init_urb().
+This field can be potentially accessed uninitialized and its
+initialization is coherent with the usage of list_del_init() in
+usb_hcd_unlink_urb_from_ep() and usb_giveback_urb_bh() and its
+explicit initialization in usb_hcd_submit_urb() error path.
 
-In addition, there are several places when enable/disable interrupts
-were commented out are restored. A sychronize_interrupts() call is
-removed.
-
-Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
-Cc: Stable <stable@vger.kernel.org>	# v3.18+
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191127160355.GA27196@ingrassia.epigenesys.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/hw.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/usb/core/urb.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/hw.c
-@@ -1176,6 +1176,7 @@ void rtl92de_enable_interrupt(struct iee
- 
- 	rtl_write_dword(rtlpriv, REG_HIMR, rtlpci->irq_mask[0] & 0xFFFFFFFF);
- 	rtl_write_dword(rtlpriv, REG_HIMRE, rtlpci->irq_mask[1] & 0xFFFFFFFF);
-+	rtlpci->irq_enabled = true;
+--- a/drivers/usb/core/urb.c
++++ b/drivers/usb/core/urb.c
+@@ -45,6 +45,7 @@ void usb_init_urb(struct urb *urb)
+ 	if (urb) {
+ 		memset(urb, 0, sizeof(*urb));
+ 		kref_init(&urb->kref);
++		INIT_LIST_HEAD(&urb->urb_list);
+ 		INIT_LIST_HEAD(&urb->anchor_list);
+ 	}
  }
- 
- void rtl92de_disable_interrupt(struct ieee80211_hw *hw)
-@@ -1185,7 +1186,7 @@ void rtl92de_disable_interrupt(struct ie
- 
- 	rtl_write_dword(rtlpriv, REG_HIMR, IMR8190_DISABLED);
- 	rtl_write_dword(rtlpriv, REG_HIMRE, IMR8190_DISABLED);
--	synchronize_irq(rtlpci->pdev->irq);
-+	rtlpci->irq_enabled = false;
- }
- 
- static void _rtl92de_poweroff_adapter(struct ieee80211_hw *hw)
-@@ -1351,7 +1352,7 @@ void rtl92de_set_beacon_related_register
- 
- 	bcn_interval = mac->beacon_interval;
- 	atim_window = 2;
--	/*rtl92de_disable_interrupt(hw);  */
-+	rtl92de_disable_interrupt(hw);
- 	rtl_write_word(rtlpriv, REG_ATIMWND, atim_window);
- 	rtl_write_word(rtlpriv, REG_BCN_INTERVAL, bcn_interval);
- 	rtl_write_word(rtlpriv, REG_BCNTCFG, 0x660f);
-@@ -1371,9 +1372,9 @@ void rtl92de_set_beacon_interval(struct
- 
- 	RT_TRACE(rtlpriv, COMP_BEACON, DBG_DMESG,
- 		 "beacon_interval:%d\n", bcn_interval);
--	/* rtl92de_disable_interrupt(hw); */
-+	rtl92de_disable_interrupt(hw);
- 	rtl_write_word(rtlpriv, REG_BCN_INTERVAL, bcn_interval);
--	/* rtl92de_enable_interrupt(hw); */
-+	rtl92de_enable_interrupt(hw);
- }
- 
- void rtl92de_update_interrupt_mask(struct ieee80211_hw *hw,
 
 
