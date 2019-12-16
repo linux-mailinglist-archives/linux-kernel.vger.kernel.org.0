@@ -2,281 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D5011FCBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 03:11:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EC9711FCC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 03:18:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfLPCLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 21:11:02 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45575 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfLPCLB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 21:11:01 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 2so4711012pfg.12
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 18:11:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rouuj09csn2DMCPTLoONYfkkA03lZ638co9mw+fOrww=;
-        b=gPcvLo1sEZC65zlj2YVQF5YP2VbweT+rSoVFIUvpg8G8bf8ftaINGHlAvM8+NxGtF4
-         b/R85r8yD1hWVZydnMwMbsz6AZI0QgEnpLLBaIslO4msjO5ycygiak/gPUvfjkJ1CLMq
-         dtPcG6dES2iSxEI/QYHZ+dQF1Td2r7pf+oesnNkberseieIZDMrBENWwDhcW4TvX/OST
-         vIEtoWxHezDFjlFcu5WdpV5OV0cn5PjpXTQmbtVyCO+AVWG9R8NlPsGkPYsSp8PngmOO
-         WMp+Or8DFkANt2cd2NGXT3x2oJVCXnQolpsKsTu9zo897GOqpb/j/cKQ6WpFPRL2povX
-         5++A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rouuj09csn2DMCPTLoONYfkkA03lZ638co9mw+fOrww=;
-        b=Pf1tvkg0lZkPDYFwo4fIdbEOq6h3ajO9lI/lvPCSojEG4RUeHuxPCGwrPgdxGFm3JA
-         hiwRocNld3WxEgN7bijd0a4C4cAe/1VI0X0DTXZdWSgkH+uT7SaReFrxHKELe09+eoza
-         rnNKNl2dLqhxlv2/pzthOWbE1SHbj3TyfVjMNhsq2sY7clel99Uh1hMIhoQfd6yOxgP3
-         Q3BF6z0ANsiSFg3MqpVloSGnS4NGFjNyNFzslbHYraezcnqIez2mcEb2moR/4gjEsAti
-         ovuoasUTRJQyb7JumMcDQx2xOLNwsHtTozVUhGvXKoPJd2LZ2J/B8a+tjIVQn30JGAtm
-         mKnQ==
-X-Gm-Message-State: APjAAAWX8/IfxGso/sFtTHycPJIyS07Dn69HjXQQxAsKx4ukT16zxdln
-        2FGp1cKQTLQt7uK5XQxL4YeFZw==
-X-Google-Smtp-Source: APXvYqyrI7ubwkGo1O338HO8iuOcDy1z6i98R+HSi9cV41Jg4uPjhLpcurYt5dJT3On0EaPsoYsjag==
-X-Received: by 2002:a63:4f54:: with SMTP id p20mr15428804pgl.246.1576462260969;
-        Sun, 15 Dec 2019 18:11:00 -0800 (PST)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id o19sm18241044pjr.2.2019.12.15.18.11.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Dec 2019 18:11:00 -0800 (PST)
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     catalin.marinas@arm.com, will.deacon@arm.com, robh+dt@kernel.org,
-        frowand.list@gmail.com
-Cc:     james.morse@arm.com, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v4 2/2] arm64: kexec_file: add crash dump support
-Date:   Mon, 16 Dec 2019 11:12:47 +0900
-Message-Id: <20191216021247.24950-3-takahiro.akashi@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191216021247.24950-1-takahiro.akashi@linaro.org>
-References: <20191216021247.24950-1-takahiro.akashi@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726548AbfLPCSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 21:18:31 -0500
+Received: from mail.loongson.cn ([114.242.206.163]:47684 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726299AbfLPCSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 21:18:30 -0500
+Received: from localhost.loongson.cn (unknown [10.40.23.36])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxX9ZP6fZddEkLAA--.98S2;
+        Mon, 16 Dec 2019 10:17:51 +0800 (CST)
+From:   Guoyun Sun <sunguoyun@loongson.cn>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Tiezhu Yang <yangtiezhu@loongson.cn>,
+        Xuefeng Li <lixuefeng@loongson.cn>,
+        Guoyun Sun <sunguoyun@loongson.cn>
+Subject: [PATCH V3] MIPS: Add get_thread_area syscall
+Date:   Mon, 16 Dec 2019 10:17:51 +0800
+Message-Id: <1576462671-7226-1-git-send-email-sunguoyun@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9DxX9ZP6fZddEkLAA--.98S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXF17XryxXw48Cr17GrWDXFb_yoWrJF48pF
+        WUAw1kKw4rury8Aa4fCF1kurWxJr1kXrWjgFZ7trZ8Z3W0qry5tr1Sga4rXFya9ryIkay0
+        ga1F9ry5t3yvvF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
+        W8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xf
+        McIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7
+        v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
+        7I0E8cxan2IY04v7MxkIecxEwVCm-wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+        WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+        67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+        IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1l
+        IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+        C2KfnxnUUI43ZEXa7VUb0D73UUUUU==
+X-CM-SenderInfo: 5vxqw3hr1x0qxorr0wxvrqhubq/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling crash dump (kdump) includes
-* prepare contents of ELF header of a core dump file, /proc/vmcore,
-  using crash_prepare_elf64_headers(), and
-* add two device tree properties, "linux,usable-memory-range" and
-  "linux,elfcorehdr", which represent respectively a memory range
-  to be used by crash dump kernel and the header's location
+CRIU(https://criu.org/) tools will dump TLS(Thread Local Storage) by
+get_thread_area during checkpoint and restore TLS by set_thread_area during
+restore. without this syscall, criu restore will fail on MIPS platform
+because a variable with GCC __thread will be invalid.
 
-Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
-Tested-and-reviewed-by: Bhupesh Sharma <bhsharma@redhat.com>
+The following function will be called when criu restore
+
+static inline void restore_tls(tls_t *ptls) {
+        asm volatile(
+                     "move $4, %0                                   \n"
+                     "li $2,  "__stringify(__NR_set_thread_area)"  \n"
+                     "syscall                                       \n"
+                     :
+                     : "r"(*ptls)
+                     : "$4","$2","memory");
+
+the *ptls can be obtained by get_thread_area on MIPS platform when criu
+checkpoint. just like this:
+
+static inline void arch_get_tls(tls_t *ptls)
+{
+	asm volatile(
+		     "move $4, %0				    \n"
+		     "li $2,  "__stringify(__NR_get_thread_area)"  \n"
+		     "syscall					    \n"
+		     :
+		     : "r"(ptls)
+		     : "$4","$2","memory");
+
+}
+
+Signed-off-by: Guoyun Sun <sunguoyun@loongson.cn>
 ---
- arch/arm64/include/asm/kexec.h         |   4 +
- arch/arm64/kernel/kexec_image.c        |   4 -
- arch/arm64/kernel/machine_kexec_file.c | 106 ++++++++++++++++++++++++-
- 3 files changed, 106 insertions(+), 8 deletions(-)
+ arch/mips/kernel/syscall.c                | 11 +++++++++++
+ arch/mips/kernel/syscalls/syscall_n32.tbl |  2 ++
+ arch/mips/kernel/syscalls/syscall_n64.tbl |  2 ++
+ arch/mips/kernel/syscalls/syscall_o32.tbl |  2 ++
+ 4 files changed, 17 insertions(+)
 
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index 12a561a54128..d24b527e8c00 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -96,6 +96,10 @@ static inline void crash_post_resume(void) {}
- struct kimage_arch {
- 	void *dtb;
- 	unsigned long dtb_mem;
-+	/* Core ELF header buffer */
-+	void *elf_headers;
-+	unsigned long elf_headers_mem;
-+	unsigned long elf_headers_sz;
- };
+diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
+index c333e57..7ac78bf 100644
+--- a/arch/mips/kernel/syscall.c
++++ b/arch/mips/kernel/syscall.c
+@@ -27,6 +27,7 @@
+ #include <linux/slab.h>
+ #include <linux/elf.h>
+ #include <linux/sched/task_stack.h>
++#include <linux/compat.h>
  
- extern const struct kexec_file_ops kexec_image_ops;
-diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-index 29a9428486a5..af9987c154ca 100644
---- a/arch/arm64/kernel/kexec_image.c
-+++ b/arch/arm64/kernel/kexec_image.c
-@@ -47,10 +47,6 @@ static void *image_load(struct kimage *image,
- 	struct kexec_segment *kernel_segment;
- 	int ret;
- 
--	/* We don't support crash kernels yet. */
--	if (image->type == KEXEC_TYPE_CRASH)
--		return ERR_PTR(-EOPNOTSUPP);
--
- 	/*
- 	 * We require a kernel with an unambiguous Image header. Per
- 	 * Documentation/arm64/booting.rst, this is the case when image_size
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 7b08bf9499b6..dd3ae8081b38 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -17,12 +17,15 @@
- #include <linux/memblock.h>
- #include <linux/of_fdt.h>
- #include <linux/random.h>
-+#include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/vmalloc.h>
- #include <asm/byteorder.h>
- 
- /* relevant device tree properties */
-+#define FDT_PROP_KEXEC_ELFHDR	"linux,elfcorehdr"
-+#define FDT_PROP_MEM_RANGE	"linux,usable-memory-range"
- #define FDT_PROP_INITRD_START	"linux,initrd-start"
- #define FDT_PROP_INITRD_END	"linux,initrd-end"
- #define FDT_PROP_BOOTARGS	"bootargs"
-@@ -40,6 +43,10 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	vfree(image->arch.dtb);
- 	image->arch.dtb = NULL;
- 
-+	vfree(image->arch.elf_headers);
-+	image->arch.elf_headers = NULL;
-+	image->arch.elf_headers_sz = 0;
-+
- 	return kexec_image_post_load_cleanup_default(image);
+ #include <asm/asm.h>
+ #include <asm/asm-eva.h>
+@@ -94,6 +95,16 @@ SYSCALL_DEFINE1(set_thread_area, unsigned long, addr)
+ 	return 0;
  }
  
-@@ -55,6 +62,31 @@ static int setup_dtb(struct kimage *image,
- 
- 	off = ret;
- 
-+	ret = fdt_delprop(dtb, off, FDT_PROP_KEXEC_ELFHDR);
-+	if (ret && ret != -FDT_ERR_NOTFOUND)
-+		goto out;
-+	ret = fdt_delprop(dtb, off, FDT_PROP_MEM_RANGE);
-+	if (ret && ret != -FDT_ERR_NOTFOUND)
-+		goto out;
-+
-+	if (image->type == KEXEC_TYPE_CRASH) {
-+		/* add linux,elfcorehdr */
-+		ret = fdt_appendprop_addrrange(dtb, 0, off,
-+				FDT_PROP_KEXEC_ELFHDR,
-+				image->arch.elf_headers_mem,
-+				image->arch.elf_headers_sz);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+
-+		/* add linux,usable-memory-range */
-+		ret = fdt_appendprop_addrrange(dtb, 0, off,
-+				FDT_PROP_MEM_RANGE,
-+				crashk_res.start,
-+				crashk_res.end - crashk_res.start + 1);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+	}
-+
- 	/* add bootargs */
- 	if (cmdline) {
- 		ret = fdt_setprop_string(dtb, off, FDT_PROP_BOOTARGS, cmdline);
-@@ -125,8 +157,8 @@ static int setup_dtb(struct kimage *image,
- }
- 
- /*
-- * More space needed so that we can add initrd, bootargs, kaslr-seed, and
-- * rng-seed.
-+ * More space needed so that we can add initrd, bootargs, kaslr-seed,
-+ * rng-seed, userable-memory-range and elfcorehdr.
-  */
- #define DTB_EXTRA_SPACE 0x1000
- 
-@@ -174,6 +206,43 @@ static int create_dtb(struct kimage *image,
- 	}
- }
- 
-+static int prepare_elf_headers(void **addr, unsigned long *sz)
++SYSCALL_DEFINE1(get_thread_area, unsigned long __user *, u_info)
 +{
-+	struct crash_mem *cmem;
-+	unsigned int nr_ranges;
-+	int ret;
-+	u64 i;
-+	phys_addr_t start, end;
++	struct thread_info *ti = task_thread_info(current);
 +
-+	nr_ranges = 1; /* for exclusion of crashkernel region */
-+	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE,
-+					MEMBLOCK_NONE, &start, &end, NULL)
-+		nr_ranges++;
++	if (in_compat_syscall())
++		return put_user(ti->tp_value, (__u32 *)u_info);
 +
-+	cmem = kmalloc(sizeof(struct crash_mem) +
-+			sizeof(struct crash_mem_range) * nr_ranges, GFP_KERNEL);
-+	if (!cmem)
-+		return -ENOMEM;
-+
-+	cmem->max_nr_ranges = nr_ranges;
-+	cmem->nr_ranges = 0;
-+	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE,
-+					MEMBLOCK_NONE, &start, &end, NULL) {
-+		cmem->ranges[cmem->nr_ranges].start = start;
-+		cmem->ranges[cmem->nr_ranges].end = end - 1;
-+		cmem->nr_ranges++;
-+	}
-+
-+	/* Exclude crashkernel region */
-+	ret = crash_exclude_mem_range(cmem, crashk_res.start, crashk_res.end);
-+
-+	if (!ret)
-+		ret =  crash_prepare_elf64_headers(cmem, true, addr, sz);
-+
-+	kfree(cmem);
-+	return ret;
++	return put_user(ti->tp_value, u_info);
 +}
 +
- int load_other_segments(struct kimage *image,
- 			unsigned long kernel_load_addr,
- 			unsigned long kernel_size,
-@@ -181,14 +250,43 @@ int load_other_segments(struct kimage *image,
- 			char *cmdline)
+ static inline int mips_atomic_set(unsigned long addr, unsigned long new)
  {
- 	struct kexec_buf kbuf;
--	void *dtb = NULL;
--	unsigned long initrd_load_addr = 0, dtb_len;
-+	void *headers, *dtb = NULL;
-+	unsigned long headers_sz, initrd_load_addr = 0, dtb_len;
- 	int ret = 0;
- 
- 	kbuf.image = image;
- 	/* not allocate anything below the kernel */
- 	kbuf.buf_min = kernel_load_addr + kernel_size;
- 
-+	/* load elf core header */
-+	if (image->type == KEXEC_TYPE_CRASH) {
-+		ret = prepare_elf_headers(&headers, &headers_sz);
-+		if (ret) {
-+			pr_err("Preparing elf core header failed\n");
-+			goto out_err;
-+		}
+ 	unsigned long old, tmp;
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index e7c5ab3..3aa4858 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -341,6 +341,8 @@
+ 330	n32	statx				sys_statx
+ 331	n32	rseq				sys_rseq
+ 332	n32	io_pgetevents			compat_sys_io_pgetevents
++333	n32	get_thread_area			sys_get_thread_area
 +
-+		kbuf.buffer = headers;
-+		kbuf.bufsz = headers_sz;
-+		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
-+		kbuf.memsz = headers_sz;
-+		kbuf.buf_align = SZ_64K; /* largest supported page size */
-+		kbuf.buf_max = ULONG_MAX;
-+		kbuf.top_down = true;
+ # 333 through 402 are unassigned to sync up with generic numbers
+ 403	n32	clock_gettime64			sys_clock_gettime
+ 404	n32	clock_settime64			sys_clock_settime
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 13cd665..14b6796 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -337,6 +337,8 @@
+ 326	n64	statx				sys_statx
+ 327	n64	rseq				sys_rseq
+ 328	n64	io_pgetevents			sys_io_pgetevents
++329	n64	get_thread_area			sys_get_thread_area
 +
-+		ret = kexec_add_buffer(&kbuf);
-+		if (ret) {
-+			vfree(headers);
-+			goto out_err;
-+		}
-+		image->arch.elf_headers = headers;
-+		image->arch.elf_headers_mem = kbuf.mem;
-+		image->arch.elf_headers_sz = headers_sz;
+ # 329 through 423 are reserved to sync up with other architectures
+ 424	n64	pidfd_send_signal		sys_pidfd_send_signal
+ 425	n64	io_uring_setup			sys_io_uring_setup
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 353539e..bb4e050 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -380,6 +380,8 @@
+ 366	o32	statx				sys_statx
+ 367	o32	rseq				sys_rseq
+ 368	o32	io_pgetevents			sys_io_pgetevents_time32	compat_sys_io_pgetevents
++369	o32	get_thread_area			sys_get_thread_area
 +
-+		pr_debug("Loaded elf core header at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-+			 image->arch.elf_headers_mem, headers_sz, headers_sz);
-+	}
-+
- 	/* load initrd */
- 	if (initrd) {
- 		kbuf.buffer = initrd;
+ # room for arch specific calls
+ 393	o32	semget				sys_semget
+ 394	o32	semctl				sys_semctl			compat_sys_semctl
 -- 
-2.24.0
+2.1.0
 
