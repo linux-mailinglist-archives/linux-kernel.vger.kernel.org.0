@@ -2,130 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 061A411FC5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 01:51:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F69111FC41
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 01:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfLPAvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 19:51:49 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:40257 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbfLPAvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 19:51:48 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47bjQT4Mwwz9sNH;
-        Mon, 16 Dec 2019 11:51:45 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1576457505;
-        bh=barIgZhfjdNaSR9zBtj2KFrVq4xY0e5qWMY9AxtpYqY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=MpW1QRXKX9RFkxvglPSI06kUY0h7nF2FWLtfVi+zJRuT59YycQjQMDeDVqRqirLxx
-         bM3mlmsh7UzanCbbuptc6EW+cth9WbS1NvNVYtQkfrbhaAjL1RE4qveSiuFqEQnhMe
-         rLbs5byUaRmdIgJWpHOnsdtryYahmNIYoAR5LMnT3bttY/PTqdxHybnXrdsQDSz7QN
-         06wER/JDj8sthx2goX1f3vg6UXxmz100jNT26hfQkTEW6VJtfEGGllEjk5xvhkJaR+
-         NDd31o4Qcj1flI/zZOtwtI2akvvKb7dChFVPCJkl30VJAWkUAE1prO5xc4agnenNZg
-         QLF/ZT8KKtTcQ==
-Date:   Mon, 16 Dec 2019 11:51:45 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Lyude Paul <lyude@redhat.com>
-Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
-Message-ID: <20191216115145.4f5cc123@canb.auug.org.au>
+        id S1726512AbfLPApc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 19:45:32 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:53828 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbfLPApb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 19:45:31 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191216004528epoutp03f2e88eea94d982ae66b882df5bd48997~gs2ffXSxI1508415084epoutp03Z
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 00:45:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191216004528epoutp03f2e88eea94d982ae66b882df5bd48997~gs2ffXSxI1508415084epoutp03Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576457128;
+        bh=8SrOS0uNXUB2064t8Tnx6zhtsjBJWxM95cvkex1+2Ew=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=HmShdL8ANtJE85uKW5k2r81+JX/mfv4FtW4PoWN3Mw3vVkG/TtphhMQUkRrICwezq
+         WWrgckvyNZv5f5LFyjSnrMvCdjAd9I/QwAB5heOi3MtRHRCV1c4JN7MvYusc7OhQ4s
+         qf7hAyvtRAER81v6N3vbUM7ORGG8LKlNiMyz706Q=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191216004527epcas1p4efe5964a2622230fc39c68110c5adf1d~gs2eVX1NW1662016620epcas1p4K;
+        Mon, 16 Dec 2019 00:45:27 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.157]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 47bjH752xxzMqYm3; Mon, 16 Dec
+        2019 00:45:23 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        87.EC.48019.3A3D6FD5; Mon, 16 Dec 2019 09:45:23 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191216004522epcas1p3dd06bfb24212c2fee558e7a7a23cf65c~gs2aaPWXQ2782227822epcas1p3L;
+        Mon, 16 Dec 2019 00:45:22 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191216004522epsmtrp195288207fd38caf8dc6ee3651a632978~gs2aZcB2Y2107121071epsmtrp19;
+        Mon, 16 Dec 2019 00:45:22 +0000 (GMT)
+X-AuditID: b6c32a38-257ff7000001bb93-52-5df6d3a38a79
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        81.C8.10238.2A3D6FD5; Mon, 16 Dec 2019 09:45:22 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191216004522epsmtip2a349e34b2a186331be05484d1c596d08~gs2aHWWc12795527955epsmtip2n;
+        Mon, 16 Dec 2019 00:45:22 +0000 (GMT)
+Subject: Re: [RFC PATCH v2 08/11] arm: dts: exynos: Add parents and
+ #interconnect-cells to Exynos4412
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     myungjoo.ham@samsung.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, georgi.djakov@linaro.org,
+        leonard.crestez@nxp.com, m.szyprowski@samsung.com,
+        b.zolnierkie@samsung.com, krzk@kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <693e250d-9656-df67-9685-188020b43542@samsung.com>
+Date:   Mon, 16 Dec 2019 09:51:58 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/frIcPPG8WbhjeYa/mWDsggn";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20190919142236.4071-9-a.swigon@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGJsWRmVeSWpSXmKPExsWy7bCmvu7iy99iDfZe0LC4P6+V0WLjjPWs
+        FvOPnGO1uPL1PZvF9L2b2Cwm3Z/AYnH+/AZ2ixV3P7JabHp8jdXi8q45bBafe48wWsw4v4/J
+        Yu2Ru+wWtxtXsFnMmPySzYHfY9OqTjaPO9f2sHnc7z7O5LF5Sb3Hxnc7mDz6tqxi9Pi8SS6A
+        PSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfobiWF
+        ssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgWWBXnFibnFpXrpecn6ulaGBgZEpUGFC
+        dsaqyfNYCvrkKmbMmcbWwLhQvIuRk0NCwERi2vf/bF2MXBxCAjsYJd71vWEGSQgJfGKUmN4f
+        BpH4xihxp/07M0xH/7o2RojEXkaJrgmtUM57RonzXx6zgVQJC6RLXO/8xASSEBH4zyhxetlK
+        VhCHWeAYo8TeOz9ZQKrYBLQk9r+4AdbBL6AocfXHY0YQm1fATuLtvadMIDaLgKrEp7NXweKi
+        AmESJ7e1QNUISpyc+QRoDgcHp4ClROdsfZAws4C4xK0n85kgbHmJ5q2zoc7exS4xaZ0qhO0i
+        8WdDLzuELSzx6vgWKFtK4mV/G5RdLbHy5BFwwEgIdDBKbNl/gRUiYSyxf+lkJpC9zAKaEut3
+        6UOEFSV2/p7LCLGXT+Ld1x5WkBIJAV6JjjYhiBJlicsP7jJB2JISi9s72SYwKs1C8swsJB/M
+        QvLBLIRlCxhZVjGKpRYU56anFhsWmCDH9iZGcJrWstjBuOeczyFGAQ5GJR7eFxnfYoVYE8uK
+        K3MPMUpwMCuJ8KZqf44V4k1JrKxKLcqPLyrNSS0+xGgKDOuJzFKiyfnAHJJXEm9oamRsbGxh
+        YmhmamioJM7L8eNirJBAemJJanZqakFqEUwfEwenVANjbBfLzxqn93mu+0qKTX8UWjoLZ7/O
+        dekWjwi+U+qpytI+wXL2zXPzGbZfE/4Rl2g1Z/UlWcXpLRt3qi8OzBD+1swyI8p83Y7opp6b
+        K49b5SdX3Sq8/uuN68T59UdK/23ZHvLg2LkP1XVB0atn1antT+MK+Vq4WJcr7bRJm9Me6T2P
+        naIvvAlQYinOSDTUYi4qTgQAXewU4OkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCSvO6iy99iDZo+aVncn9fKaLFxxnpW
+        i/lHzrFaXPn6ns1i+t5NbBaT7k9gsTh/fgO7xYq7H1ktNj2+xmpxedccNovPvUcYLWac38dk
+        sfbIXXaL240r2CxmTH7J5sDvsWlVJ5vHnWt72Dzudx9n8ti8pN5j47sdTB59W1YxenzeJBfA
+        HsVlk5Kak1mWWqRvl8CVsWryPJaCPrmKGXOmsTUwLhTvYuTkkBAwkehf18bYxcjFISSwm1Hi
+        ypG5LBAJSYlpF48ydzFyANnCEocPF0PUvGWUmNHbwgpSIyyQLnG98xMTSEJE4D+jxMO2Y2CT
+        mAWOMUp8XLGeFW7sgqMPmUBa2AS0JPa/uMEGYvMLKEpc/fGYEcTmFbCTeHvvKVgNi4CqxKez
+        V8HiogJhEjuXPGaCqBGUODnzCQvISZwClhKds/VBwswC6hJ/5l1ihrDFJW49mc8EYctLNG+d
+        zTyBUXgWku5ZSFpmIWmZhaRlASPLKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4JjV
+        0tzBeHlJ/CFGAQ5GJR5eh+xvsUKsiWXFlbmHGCU4mJVEeFO1P8cK8aYkVlalFuXHF5XmpBYf
+        YpTmYFES532adyxSSCA9sSQ1OzW1ILUIJsvEwSnVwBj76rf0OfvNDTY1mfliR3v2OvZpVap/
+        t+Q58FRp2wzGm6sC0jt/zpeUZwx/mz1jf9PK7d69e7R8fxsVGH8Xv70nNeD4jCs9O5IlXh3+
+        FONhE8Rz89xV+Yld4imrir30TJcskbt7o2OFE98udVlduRCD3woCT329tB7ecLx40d+r3Hlq
+        XF/+dCWW4oxEQy3mouJEAE1MdK/VAgAA
+X-CMS-MailID: 20191216004522epcas1p3dd06bfb24212c2fee558e7a7a23cf65c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190919142329eucas1p299762f99dd55a5d625633ceec84219f9
+References: <20190919142236.4071-1-a.swigon@samsung.com>
+        <CGME20190919142329eucas1p299762f99dd55a5d625633ceec84219f9@eucas1p2.samsung.com>
+        <20190919142236.4071-9-a.swigon@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/frIcPPG8WbhjeYa/mWDsggn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 9/19/19 11:22 PM, Artur Świgoń wrote:
+> From: Artur Świgoń <a.swigon@partner.samsung.com>
+> 
+> This patch adds two fields to the Exynos4412 DTS:
+>   - parent: to declare connections between nodes that are not in a
+>     parent-child relation in devfreq;
+>   - #interconnect-cells: required by the interconnect framework.
+> 
+> Please note that #interconnect-cells is always zero and node IDs are not
+> hardcoded anywhere. The above-mentioned parent-child relation in devfreq
+> means that there is a shared power line ('devfreq' property). The 'parent'
+> property only signifies an interconnect connection.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
+>  arch/arm/boot/dts/exynos4412.dtsi               | 9 +++++++++
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> index ea55f377d17c..bdd61ae86103 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -106,6 +106,7 @@
+>  &bus_leftbus {
+>  	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+>  	vdd-supply = <&buck3_reg>;
+> +	parent = <&bus_dmc>;
 
-Hi all,
+As I mentioned on other reply,
+I'm not sure to use the specific 'parent' property to make
+the connection between buses. If possible, you better to
+use the standard way like OF graph. Except for making
+the connection between buses by 'parent' property,
+looks good to me.
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
 
-  include/drm/drm_dp_mst_helper.h
+>  	status = "okay";
+>  };
+>  
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> index d20db2dfe8e2..a70a671acacd 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -390,6 +390,7 @@
+>  			clocks = <&clock CLK_DIV_DMC>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_dmc_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -398,6 +399,7 @@
+>  			clocks = <&clock CLK_DIV_ACP>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_acp_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -406,6 +408,7 @@
+>  			clocks = <&clock CLK_DIV_C2C>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_dmc_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -459,6 +462,7 @@
+>  			clocks = <&clock CLK_DIV_GDL>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_leftbus_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -467,6 +471,7 @@
+>  			clocks = <&clock CLK_DIV_GDR>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_leftbus_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -475,6 +480,7 @@
+>  			clocks = <&clock CLK_ACLK160>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_display_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -483,6 +489,7 @@
+>  			clocks = <&clock CLK_ACLK133>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_fsys_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -491,6 +498,7 @@
+>  			clocks = <&clock CLK_ACLK100>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_peri_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -499,6 +507,7 @@
+>  			clocks = <&clock CLK_SCLK_MFC>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_leftbus_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> 
 
-between commit:
 
-  14692a3637d4 ("drm/dp_mst: Add probe_lock")
-
-from the Linus' tree and commit:
-
-  f79489074c59 ("drm/dp_mst: Clear all payload id tables downstream when in=
-itializing")
-
-from the drm-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/drm/drm_dp_mst_helper.h
-index d5fc90b30487,a448d701dc7e..000000000000
---- a/include/drm/drm_dp_mst_helper.h
-+++ b/include/drm/drm_dp_mst_helper.h
-@@@ -565,18 -495,18 +566,25 @@@ struct drm_dp_mst_topology_mgr=20
-  	 */
-  	struct mutex lock;
- =20
- +	/**
- +	 * @probe_lock: Prevents @work and @up_req_work, the only writers of
- +	 * &drm_dp_mst_port.mstb and &drm_dp_mst_branch.ports, from racing
- +	 * while they update the topology.
- +	 */
- +	struct mutex probe_lock;
- +
-  	/**
-- 	 * @mst_state: If this manager is enabled for an MST capable port. False
-- 	 * if no MST sink/branch devices is connected.
-+ 	 * @mst_state: If this manager is enabled for an MST capable port.
-+ 	 * False if no MST sink/branch devices is connected.
-  	 */
-- 	bool mst_state;
-+ 	bool mst_state : 1;
-+=20
-+ 	/**
-+ 	 * @payload_id_table_cleared: Whether or not we've cleared the payload
-+ 	 * ID table for @mst_primary. Protected by @lock.
-+ 	 */
-+ 	bool payload_id_table_cleared : 1;
-+=20
-  	/**
-  	 * @mst_primary: Pointer to the primary/first branch device.
-  	 */
-
---Sig_/frIcPPG8WbhjeYa/mWDsggn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl321SEACgkQAVBC80lX
-0GxkGggAlbCXpG7jCrvVDB2pJnRYmmHYGa9snqllJr3avUva39HJgOEHVcZKjNou
-zbOWU2JW9iWxm7n5ar3bFomH+r3/tE1T1/KmxTKF+PmFSKAzptMyeJ4MM8D+iZb7
-cyu3+jG0bOouRrwNrdGV5UD4WHig9KR67geBY6a6iIheMk9J3j+ngR0obs9D89iZ
-9A08yTnaYEdqjwnBgQLF85N3PCdygZ01FGjXypM98yxGtDQhCbVV78ybJBJGJR97
-eZB3CNimqXjU5ExSnd6/sEifeF+6jxnzv5B+S2nChf6nUdMSvSegXGFhktIKg18W
-TC4XZ+bFPFiCQj+tEgpqk/WsqCybOA==
-=3+Ni
------END PGP SIGNATURE-----
-
---Sig_/frIcPPG8WbhjeYa/mWDsggn--
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
