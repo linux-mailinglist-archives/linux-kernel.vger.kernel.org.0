@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6C6712162E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:27:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0AF121434
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731589AbfLPS1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:27:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37870 "EHLO mail.kernel.org"
+        id S1730007AbfLPSJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:09:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731026AbfLPSQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:16:00 -0500
+        id S1729989AbfLPSJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:09:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDE242082E;
-        Mon, 16 Dec 2019 18:15:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 832DC20700;
+        Mon, 16 Dec 2019 18:09:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520159;
-        bh=c3b11KuKTlf4EQDY08ikTupWIKHuZkP4FzwML715AYs=;
+        s=default; t=1576519755;
+        bh=MZDP1uDEVQ1FeCEgMw5LxnwwOU/j06szPXQYjxuaDkc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j/WpaoEYZBHStpaq77WU6T3BE+Qnyx2u+d3HL5eametq16VjoY+BxMF2b8cTYdiDL
-         sdpVcboGKP7s5L+A0hrH1n8mh9I20gaS/1+6NfKhU+ox5e0/zFmfsn1xaIzOzubQqw
-         P3kl/oJ9PY/GHem+l06YEEMb3/BwCbOD/4QhQ++4=
+        b=XaLFnmbCbu0GpPbYT1Cq09mdtGygaXWXNwvZ8w7rW52JPQ305SHBhTgFCe0WQ8aaT
+         TdjmHszIWMU/lJykanEMgI51LUhzjSkNY+83RszvlXELan9YfAiIhKJx89gWs+cgtO
+         NshYs+vfrO4okIUOkPLG/B6cS+lXM7cNy9gGifyk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.4 039/177] iio: adis16480: Fix scales factors
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.3 055/180] btrfs: check page->mapping when loading free space cache
 Date:   Mon, 16 Dec 2019 18:48:15 +0100
-Message-Id: <20191216174829.195150327@linuxfoundation.org>
+Message-Id: <20191216174828.178979255@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,182 +45,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nuno Sá <nuno.sa@analog.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 49549cb23a2926eba70bb634e361daea0f319794 upstream.
+commit 3797136b626ad4b6582223660c041efdea8f26b2 upstream.
 
-This patch fixes the scales for the gyroscope, accelerometer and
-barometer. The pressure scale was just wrong. For the others, the scale
-factors were not taking into account that a 32bit word is being read
-from the device.
+While testing 5.2 we ran into the following panic
 
-Fixes: 7abad1063deb ("iio: adis16480: Fix scale factors")
-Fixes: 82e7a1b25017 ("iio: imu: adis16480: Add support for ADIS1649x family of devices")
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[52238.017028] BUG: kernel NULL pointer dereference, address: 0000000000000001
+[52238.105608] RIP: 0010:drop_buffers+0x3d/0x150
+[52238.304051] Call Trace:
+[52238.308958]  try_to_free_buffers+0x15b/0x1b0
+[52238.317503]  shrink_page_list+0x1164/0x1780
+[52238.325877]  shrink_inactive_list+0x18f/0x3b0
+[52238.334596]  shrink_node_memcg+0x23e/0x7d0
+[52238.342790]  ? do_shrink_slab+0x4f/0x290
+[52238.350648]  shrink_node+0xce/0x4a0
+[52238.357628]  balance_pgdat+0x2c7/0x510
+[52238.365135]  kswapd+0x216/0x3e0
+[52238.371425]  ? wait_woken+0x80/0x80
+[52238.378412]  ? balance_pgdat+0x510/0x510
+[52238.386265]  kthread+0x111/0x130
+[52238.392727]  ? kthread_create_on_node+0x60/0x60
+[52238.401782]  ret_from_fork+0x1f/0x30
+
+The page we were trying to drop had a page->private, but had no
+page->mapping and so called drop_buffers, assuming that we had a
+buffer_head on the page, and then panic'ed trying to deref 1, which is
+our page->private for data pages.
+
+This is happening because we're truncating the free space cache while
+we're trying to load the free space cache.  This isn't supposed to
+happen, and I'll fix that in a followup patch.  However we still
+shouldn't allow those sort of mistakes to result in messing with pages
+that do not belong to us.  So add the page->mapping check to verify that
+we still own this page after dropping and re-acquiring the page lock.
+
+This page being unlocked as:
+btrfs_readpage
+  extent_read_full_page
+    __extent_read_full_page
+      __do_readpage
+        if (!nr)
+	   unlock_page  <-- nr can be 0 only if submit_extent_page
+			    returns an error
+
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+[ add callchain ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/imu/adis16480.c |   77 +++++++++++++++++++++++---------------------
- 1 file changed, 41 insertions(+), 36 deletions(-)
+ fs/btrfs/free-space-cache.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/iio/imu/adis16480.c
-+++ b/drivers/iio/imu/adis16480.c
-@@ -623,9 +623,13 @@ static int adis16480_read_raw(struct iio
- 			*val2 = (st->chip_info->temp_scale % 1000) * 1000;
- 			return IIO_VAL_INT_PLUS_MICRO;
- 		case IIO_PRESSURE:
--			*val = 0;
--			*val2 = 4000; /* 40ubar = 0.004 kPa */
--			return IIO_VAL_INT_PLUS_MICRO;
-+			/*
-+			 * max scale is 1310 mbar
-+			 * max raw value is 32767 shifted for 32bits
-+			 */
-+			*val = 131; /* 1310mbar = 131 kPa */
-+			*val2 = 32767 << 16;
-+			return IIO_VAL_FRACTIONAL;
- 		default:
- 			return -EINVAL;
- 		}
-@@ -786,13 +790,14 @@ static const struct adis16480_chip_info
- 		.channels = adis16485_channels,
- 		.num_channels = ARRAY_SIZE(adis16485_channels),
- 		/*
--		 * storing the value in rad/degree and the scale in degree
--		 * gives us the result in rad and better precession than
--		 * storing the scale directly in rad.
-+		 * Typically we do IIO_RAD_TO_DEGREE in the denominator, which
-+		 * is exactly the same as IIO_DEGREE_TO_RAD in numerator, since
-+		 * it gives better approximation. However, in this case we
-+		 * cannot do it since it would not fit in a 32bit variable.
- 		 */
--		.gyro_max_val = IIO_RAD_TO_DEGREE(22887),
--		.gyro_max_scale = 300,
--		.accel_max_val = IIO_M_S_2_TO_G(21973),
-+		.gyro_max_val = 22887 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(300),
-+		.accel_max_val = IIO_M_S_2_TO_G(21973 << 16),
- 		.accel_max_scale = 18,
- 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
- 		.int_clk = 2460000,
-@@ -802,9 +807,9 @@ static const struct adis16480_chip_info
- 	[ADIS16480] = {
- 		.channels = adis16480_channels,
- 		.num_channels = ARRAY_SIZE(adis16480_channels),
--		.gyro_max_val = IIO_RAD_TO_DEGREE(22500),
--		.gyro_max_scale = 450,
--		.accel_max_val = IIO_M_S_2_TO_G(12500),
-+		.gyro_max_val = 22500 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
-+		.accel_max_val = IIO_M_S_2_TO_G(12500 << 16),
- 		.accel_max_scale = 10,
- 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
- 		.int_clk = 2460000,
-@@ -814,9 +819,9 @@ static const struct adis16480_chip_info
- 	[ADIS16485] = {
- 		.channels = adis16485_channels,
- 		.num_channels = ARRAY_SIZE(adis16485_channels),
--		.gyro_max_val = IIO_RAD_TO_DEGREE(22500),
--		.gyro_max_scale = 450,
--		.accel_max_val = IIO_M_S_2_TO_G(20000),
-+		.gyro_max_val = 22500 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
-+		.accel_max_val = IIO_M_S_2_TO_G(20000 << 16),
- 		.accel_max_scale = 5,
- 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
- 		.int_clk = 2460000,
-@@ -826,9 +831,9 @@ static const struct adis16480_chip_info
- 	[ADIS16488] = {
- 		.channels = adis16480_channels,
- 		.num_channels = ARRAY_SIZE(adis16480_channels),
--		.gyro_max_val = IIO_RAD_TO_DEGREE(22500),
--		.gyro_max_scale = 450,
--		.accel_max_val = IIO_M_S_2_TO_G(22500),
-+		.gyro_max_val = 22500 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
-+		.accel_max_val = IIO_M_S_2_TO_G(22500 << 16),
- 		.accel_max_scale = 18,
- 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
- 		.int_clk = 2460000,
-@@ -838,9 +843,9 @@ static const struct adis16480_chip_info
- 	[ADIS16495_1] = {
- 		.channels = adis16485_channels,
- 		.num_channels = ARRAY_SIZE(adis16485_channels),
--		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
--		.gyro_max_scale = 125,
--		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.gyro_max_val = 20000 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(125),
-+		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
- 		.accel_max_scale = 8,
- 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
- 		.int_clk = 4250000,
-@@ -851,9 +856,9 @@ static const struct adis16480_chip_info
- 	[ADIS16495_2] = {
- 		.channels = adis16485_channels,
- 		.num_channels = ARRAY_SIZE(adis16485_channels),
--		.gyro_max_val = IIO_RAD_TO_DEGREE(18000),
--		.gyro_max_scale = 450,
--		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.gyro_max_val = 18000 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
-+		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
- 		.accel_max_scale = 8,
- 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
- 		.int_clk = 4250000,
-@@ -864,9 +869,9 @@ static const struct adis16480_chip_info
- 	[ADIS16495_3] = {
- 		.channels = adis16485_channels,
- 		.num_channels = ARRAY_SIZE(adis16485_channels),
--		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
--		.gyro_max_scale = 2000,
--		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.gyro_max_val = 20000 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(2000),
-+		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
- 		.accel_max_scale = 8,
- 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
- 		.int_clk = 4250000,
-@@ -877,9 +882,9 @@ static const struct adis16480_chip_info
- 	[ADIS16497_1] = {
- 		.channels = adis16485_channels,
- 		.num_channels = ARRAY_SIZE(adis16485_channels),
--		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
--		.gyro_max_scale = 125,
--		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.gyro_max_val = 20000 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(125),
-+		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
- 		.accel_max_scale = 40,
- 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
- 		.int_clk = 4250000,
-@@ -890,9 +895,9 @@ static const struct adis16480_chip_info
- 	[ADIS16497_2] = {
- 		.channels = adis16485_channels,
- 		.num_channels = ARRAY_SIZE(adis16485_channels),
--		.gyro_max_val = IIO_RAD_TO_DEGREE(18000),
--		.gyro_max_scale = 450,
--		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.gyro_max_val = 18000 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
-+		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
- 		.accel_max_scale = 40,
- 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
- 		.int_clk = 4250000,
-@@ -903,9 +908,9 @@ static const struct adis16480_chip_info
- 	[ADIS16497_3] = {
- 		.channels = adis16485_channels,
- 		.num_channels = ARRAY_SIZE(adis16485_channels),
--		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
--		.gyro_max_scale = 2000,
--		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.gyro_max_val = 20000 << 16,
-+		.gyro_max_scale = IIO_DEGREE_TO_RAD(2000),
-+		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
- 		.accel_max_scale = 40,
- 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
- 		.int_clk = 4250000,
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@ -384,6 +384,12 @@ static int io_ctl_prepare_pages(struct b
+ 		if (uptodate && !PageUptodate(page)) {
+ 			btrfs_readpage(NULL, page);
+ 			lock_page(page);
++			if (page->mapping != inode->i_mapping) {
++				btrfs_err(BTRFS_I(inode)->root->fs_info,
++					  "free space cache page truncated");
++				io_ctl_drop_pages(io_ctl);
++				return -EIO;
++			}
+ 			if (!PageUptodate(page)) {
+ 				btrfs_err(BTRFS_I(inode)->root->fs_info,
+ 					   "error reading free space cache");
 
 
