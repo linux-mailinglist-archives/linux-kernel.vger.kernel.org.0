@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8ADA121866
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:43:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA49F1217F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbfLPSnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:43:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32974 "EHLO mail.kernel.org"
+        id S1729620AbfLPSja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:39:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727335AbfLPR7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:59:45 -0500
+        id S1729253AbfLPSDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99B89205C9;
-        Mon, 16 Dec 2019 17:59:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C97420726;
+        Mon, 16 Dec 2019 18:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519185;
-        bh=eRMUhsOZB2UzrhVWcwpyvpslMKCzC00Koai3F01Gycw=;
+        s=default; t=1576519411;
+        bh=YOwGTA8bggtg9EB37TCIHVOeLJOVKCJIfA3AfeYnd68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bVY8UD5DS4ZEMRWgiquUR9XHCcyQWIPcHlrvkp4QmUKTrRxRgijHUfZ5rzFCd3nMx
-         wYiogOg9MzT9/KfLkup8cmDMC5WZNm9GHUfDJzJlknRC1BNPr6Uur6X8JXPK8+Zb61
-         G6xi6Cw29ZklJy77yQW1zFQyCCG1c0hYRETCiEK0=
+        b=M3fzI+AUgQ2NlfFQE65IlOc2ZYhvsydE42r4MZvmsHTb0NFWZ5+GHytm4mjefRrPH
+         r8aER92QoOceFZIiGL5KzO4NVOShPnr6KoDVPLbm9fBOPzpp6qT5qJlEot712xnxpj
+         RGJFIM54dS62WkVfoOc5iZJ7rVOgQHxY3lWu/l4Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Atemu <atemu.main@gmail.com>,
-        Qu Wenruo <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 189/267] Btrfs: send, skip backreference walking for extents with many references
-Date:   Mon, 16 Dec 2019 18:48:35 +0100
-Message-Id: <20191216174912.879616002@linuxfoundation.org>
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.19 048/140] ovl: fix corner case of non-unique st_dev;st_ino
+Date:   Mon, 16 Dec 2019 18:48:36 +0100
+Message-Id: <20191216174801.803159477@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,89 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit fd0ddbe2509568b00df364156f47561e9f469f15 upstream.
+commit 9c6d8f13e9da10a26ad7f0a020ef86e8ef142835 upstream.
 
-Backreference walking, which is used by send to figure if it can issue
-clone operations instead of write operations, can be very slow and use
-too much memory when extents have many references. This change simply
-skips backreference walking when an extent has more than 64 references,
-in which case we fallback to a write operation instead of a clone
-operation. This limit is conservative and in practice I observed no
-signicant slowdown with up to 100 references and still low memory usage
-up to that limit.
+On non-samefs overlay without xino, non pure upper inodes should use a
+pseudo_dev assigned to each unique lower fs and pure upper inodes use the
+real upper st_dev.
 
-This is a temporary workaround until there are speedups in the backref
-walking code, and as such it does not attempt to add extra interfaces or
-knobs to tweak the threshold.
+It is fine for an overlay pure upper inode to use the same st_dev;st_ino
+values as the real upper inode, because the content of those two different
+filesystem objects is always the same.
 
-Reported-by: Atemu <atemu.main@gmail.com>
-Link: https://lore.kernel.org/linux-btrfs/CAE4GHgkvqVADtS4AzcQJxo0Q1jKQgKaW3JGp3SGdoinVo=C9eQ@mail.gmail.com/T/#me55dc0987f9cc2acaa54372ce0492c65782be3fa
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+In this case, however:
+ - two filesystems, A and B
+ - upper layer is on A
+ - lower layer 1 is also on A
+ - lower layer 2 is on B
+
+Non pure upper overlay inode, whose origin is in layer 1 will have the same
+st_dev;st_ino values as the real lower inode. This may result with a false
+positive results of 'diff' between the real lower and copied up overlay
+inode.
+
+Fix this by using the upper st_dev;st_ino values in this case.  This breaks
+the property of constant st_dev;st_ino across copy up of this case. This
+breakage will be fixed by a later patch.
+
+Fixes: 5148626b806a ("ovl: allocate anon bdev per unique lower fs")
+Cc: stable@vger.kernel.org # v4.17+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/send.c |   25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ fs/overlayfs/inode.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -37,6 +37,14 @@
- #include "compression.h"
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -203,8 +203,14 @@ int ovl_getattr(const struct path *path,
+ 			if (ovl_test_flag(OVL_INDEX, d_inode(dentry)) ||
+ 			    (!ovl_verify_lower(dentry->d_sb) &&
+ 			     (is_dir || lowerstat.nlink == 1))) {
+-				stat->ino = lowerstat.ino;
+ 				lower_layer = ovl_layer_lower(dentry);
++				/*
++				 * Cannot use origin st_dev;st_ino because
++				 * origin inode content may differ from overlay
++				 * inode content.
++				 */
++				if (samefs || lower_layer->fsid)
++					stat->ino = lowerstat.ino;
+ 			}
  
- /*
-+ * Maximum number of references an extent can have in order for us to attempt to
-+ * issue clone operations instead of write operations. This currently exists to
-+ * avoid hitting limitations of the backreference walking code (taking a lot of
-+ * time and using too much memory for extents with large number of references).
-+ */
-+#define SEND_MAX_EXTENT_REFS	64
-+
-+/*
-  * A fs_path is a helper to dynamically build path names with unknown size.
-  * It reallocates the internal buffer on demand.
-  * It allows fast adding of path elements on the right side (normal path) and
-@@ -1324,6 +1332,7 @@ static int find_extent_clone(struct send
- 	struct clone_root *cur_clone_root;
- 	struct btrfs_key found_key;
- 	struct btrfs_path *tmp_path;
-+	struct btrfs_extent_item *ei;
- 	int compressed;
- 	u32 i;
- 
-@@ -1373,7 +1382,6 @@ static int find_extent_clone(struct send
- 	ret = extent_from_logical(fs_info, disk_byte, tmp_path,
- 				  &found_key, &flags);
- 	up_read(&fs_info->commit_root_sem);
--	btrfs_release_path(tmp_path);
- 
- 	if (ret < 0)
- 		goto out;
-@@ -1382,6 +1390,21 @@ static int find_extent_clone(struct send
- 		goto out;
- 	}
- 
-+	ei = btrfs_item_ptr(tmp_path->nodes[0], tmp_path->slots[0],
-+			    struct btrfs_extent_item);
-+	/*
-+	 * Backreference walking (iterate_extent_inodes() below) is currently
-+	 * too expensive when an extent has a large number of references, both
-+	 * in time spent and used memory. So for now just fallback to write
-+	 * operations instead of clone operations when an extent has more than
-+	 * a certain amount of references.
-+	 */
-+	if (btrfs_extent_refs(tmp_path->nodes[0], ei) > SEND_MAX_EXTENT_REFS) {
-+		ret = -ENOENT;
-+		goto out;
-+	}
-+	btrfs_release_path(tmp_path);
-+
- 	/*
- 	 * Setup the clone roots.
- 	 */
+ 			/*
 
 
