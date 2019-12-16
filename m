@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E9A121469
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:11:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7485012150C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:18:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730715AbfLPSLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:11:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
+        id S1731718AbfLPSRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:17:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730705AbfLPSLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:11:02 -0500
+        id S1731368AbfLPSRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:17:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93DB0206E0;
-        Mon, 16 Dec 2019 18:11:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0821206E0;
+        Mon, 16 Dec 2019 18:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519862;
-        bh=LIdc/Ky4bIZV7jaCh27m9/rLPKNcEEgcB2fhg7yU7wM=;
+        s=default; t=1576520269;
+        bh=IWANP2m/HdiV9PxPUQGlMOT2EXU8H0Be69ffeLkXblc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uBiZA9zBjTEiCXVYvB1Fu3FjlF9g/4ffW0ReNK3JuyD2qqeslD152hDWGu3DFZ7/R
-         R5V7zMPCd+os9UNtl5NQnnA3us6W0XJitaPZeEJilEjQEf2lA7BCilYmO0YQOQ2shl
-         8MyZyvhzzhUHkhYIu7RIDqMRR7jchQVlz+mjaE+4=
+        b=K1BX4kHNOzycgnQqtT17kj8YVcwxO21PeUyVm9O0v/TVEViJwL8aUwwA/lvYelmQ+
+         Gi7hbsp1F64oZsX2UCK62H4dIbcop9hdjVvZRUnvgOc7McKk6deA//eSRKu15Zv0z4
+         ddzAI2gCcsXzgeA64vC5wA99lPJEljyR/VIeG2HU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 5.3 099/180] PM / devfreq: Lock devfreq in trans_stat_show
+        stable@vger.kernel.org, Maged Mokhtar <mmokhtar@petasan.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.4 083/177] dm writecache: handle REQ_FUA
 Date:   Mon, 16 Dec 2019 18:48:59 +0100
-Message-Id: <20191216174835.841861395@linuxfoundation.org>
+Message-Id: <20191216174837.756474123@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Maged Mokhtar <mmokhtar@petasan.org>
 
-commit 2abb0d5268ae7b5ddf82099b1f8d5aa8414637d4 upstream.
+commit c1005322ff02110a4df7f0033368ea015062b583 upstream.
 
-There is no locking in this sysfs show function so stats printing can
-race with a devfreq_update_status called as part of freq switching or
-with initialization.
+Call writecache_flush() on REQ_FUA in writecache_map().
 
-Also add an assert in devfreq_update_status to make it clear that lock
-must be held by caller.
-
-Fixes: 39688ce6facd ("PM / devfreq: account suspend/resume for stats")
-Cc: stable@vger.kernel.org
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: stable@vger.kernel.org # 4.18+
+Signed-off-by: Maged Mokhtar <mmokhtar@petasan.org>
+Acked-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/devfreq/devfreq.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/md/dm-writecache.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -160,6 +160,7 @@ int devfreq_update_status(struct devfreq
- 	int lev, prev_lev, ret = 0;
- 	unsigned long cur_time;
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -1218,7 +1218,8 @@ bio_copy:
+ 			}
+ 		} while (bio->bi_iter.bi_size);
  
-+	lockdep_assert_held(&devfreq->lock);
- 	cur_time = jiffies;
- 
- 	/* Immediately exit if previous_freq is not initialized yet. */
-@@ -1397,12 +1398,17 @@ static ssize_t trans_stat_show(struct de
- 	int i, j;
- 	unsigned int max_state = devfreq->profile->max_state;
- 
--	if (!devfreq->stop_polling &&
--			devfreq_update_status(devfreq, devfreq->previous_freq))
--		return 0;
- 	if (max_state == 0)
- 		return sprintf(buf, "Not Supported.\n");
- 
-+	mutex_lock(&devfreq->lock);
-+	if (!devfreq->stop_polling &&
-+			devfreq_update_status(devfreq, devfreq->previous_freq)) {
-+		mutex_unlock(&devfreq->lock);
-+		return 0;
-+	}
-+	mutex_unlock(&devfreq->lock);
-+
- 	len = sprintf(buf, "     From  :   To\n");
- 	len += sprintf(buf + len, "           :");
- 	for (i = 0; i < max_state; i++)
+-		if (unlikely(wc->uncommitted_blocks >= wc->autocommit_blocks))
++		if (unlikely(bio->bi_opf & REQ_FUA ||
++			     wc->uncommitted_blocks >= wc->autocommit_blocks))
+ 			writecache_flush(wc);
+ 		else
+ 			writecache_schedule_autocommit(wc);
 
 
