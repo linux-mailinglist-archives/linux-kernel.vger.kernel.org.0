@@ -2,107 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4E5D11FC77
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 02:11:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A86FA11FC84
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 02:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbfLPBLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 20:11:37 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:50334 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfLPBLh (ORCPT
+        id S1726487AbfLPBTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 20:19:19 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:46642 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbfLPBTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 20:11:37 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1E6BE20B7187;
-        Sun, 15 Dec 2019 17:11:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1E6BE20B7187
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576458696;
-        bh=Pzwok10KfFEpjY2IugMLpWf937V1EUtkBukPFshHWsQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=e9MJBnHbj2MrEr3+LPw7oEQPfnsCVvzhy/VqmEnGR4Ny1lZM0IUySpU3L8asH+AEB
-         8oYI77Sf6R94AK02bHllM/i/wrm7JtOu3HeaSew0RjLkV6QFubKaL7Gj1QM3JsYAOV
-         i1FuHWnS9kQfbKu6MRYaveZQN2vpcAFUav5K0S3Q=
-Subject: Re: [PATCH v4 2/2] IMA: Call workqueue functions to measure queued
- keys
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-References: <20191213171827.28657-1-nramas@linux.microsoft.com>
- <20191213171827.28657-3-nramas@linux.microsoft.com>
- <1576257955.8504.20.camel@HansenPartnership.com>
- <39624b97-245c-ed05-27c5-588787aacc00@linux.microsoft.com>
- <1576423353.3343.3.camel@HansenPartnership.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <1568ff14-316f-f2c4-84d4-7ca4c0a1936a@linux.microsoft.com>
-Date:   Sun, 15 Dec 2019 17:12:02 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Sun, 15 Dec 2019 20:19:19 -0500
+Received: by mail-il1-f195.google.com with SMTP id t17so4061929ilm.13;
+        Sun, 15 Dec 2019 17:19:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ePXTIUIV0Ij0A4oFj9n/QikNcOig0/QRLPKU1H5Yl24=;
+        b=sLKPB9VQC3w3hOZ2rB0Zj7IdZFrQ7RPW2q18mbwdnIfdK3WSusuuVHYKvdX4IXEwe8
+         hzLoUWxTb5Uaia3LHoHRZz4qtYV2NLwhgrY5SDdMr/T6LRY215U2o95E7V2ZdY+TgZmQ
+         uotdb1LF7J0yfmJhjzJh7r4eiR51N8lQh/sF+87Tx6P2kf92KDrPToRrDsO+myw8H6UR
+         lnbmcXrdQDRHJehj4Z5ImhNS/K1CR16ORqPXUk2GyCMVlHDL6W4PPx6GgFO4Mm+9RyN+
+         x7QawRLn0MaCrnH63TF7WLR6UW8tgEYzzPvU86CD+1GQ3BxCszDiG65dRBvISbRUirq2
+         aMGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ePXTIUIV0Ij0A4oFj9n/QikNcOig0/QRLPKU1H5Yl24=;
+        b=U9Jf5K+DNjY/mRHJTzqX0xF5Igpp9+3zEgz+eVjB5C8hUjCx3Vd9yEgZhnFXGXpJOW
+         X2MKf3UsDoYFa4gEIhNBl3WK3L3RDRO61wM/2ntwh81LwwzjZb/vrXK5QPWKyRn7qlzM
+         783ClkRc7EVtZjgylmYh3GSXiWuHXgGI9uEsifdwLv+Qt5M6XejIVp8hQp5FxQljYWYK
+         ioMDWLuE0lbmxe6vu8M6eBKtNVxIf6rTRQ3g/FIcspSvvkF0njs3zLGM+ZyCEFXH23X2
+         GHGqAxvwAliXF1T7BRVz/CQtAICtIb3j1tAetzEZkNuwDwD0CeuKXKqjJOQFn4Bj74JA
+         Zxeg==
+X-Gm-Message-State: APjAAAVX5W/s2TZl2tUX9ZIexb5qBuCoWrx8syjM3sUiWQzswZtp+2Ta
+        7qEFrs+FMUKusm5OoBbvlLQ9uliHaIty0wlkjpQ=
+X-Google-Smtp-Source: APXvYqwD8Xnb/tCPRqtJ8UGlll0Xewt5uNwl7jCMZ0uVsOUTNIJewHgcq6oah6cqSetAmqsuqyBBSYFKuG3i1gfA7EY=
+X-Received: by 2002:a92:6e09:: with SMTP id j9mr10245125ilc.178.1576459158278;
+ Sun, 15 Dec 2019 17:19:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1576423353.3343.3.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191213234530.145963-1-dianders@chromium.org>
+ <20191213154448.9.I1791f91dd22894da04f86699a7507d101d4385bc@changeid>
+ <20191214000738.GP624164@phenom.ffwll.local> <CAD=FV=VqU8Aeuno44hAi6SP+7NZRTfgJcYPHcWpVNCo6GXUJPw@mail.gmail.com>
+In-Reply-To: <CAD=FV=VqU8Aeuno44hAi6SP+7NZRTfgJcYPHcWpVNCo6GXUJPw@mail.gmail.com>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Sun, 15 Dec 2019 18:19:06 -0700
+Message-ID: <CAOCk7NoT9FKikk3pNi-JGZPopaicE0kM-7nEK4GeqZmEtB+nAA@mail.gmail.com>
+Subject: Re: [PATCH 9/9] drm/bridge: ti-sn65dsi86: Skip non-standard DP rates
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Rob Clark <robdclark@chromium.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/15/2019 7:22 AM, James Bottomley wrote:
+On Fri, Dec 13, 2019 at 5:49 PM Doug Anderson <dianders@chromium.org> wrote:
+>
+> Hi,
+>
+> On Fri, Dec 13, 2019 at 4:07 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Fri, Dec 13, 2019 at 03:45:30PM -0800, Douglas Anderson wrote:
+> > > The bridge chip supports these DP rates according to TI's spec:
+> > > * 1.62 Gbps (RBR)
+> > > * 2.16 Gbps
+> > > * 2.43 Gbps
+> > > * 2.7 Gbps (HBR)
+> > > * 3.24 Gbps
+> > > * 4.32 Gbps
+> > > * 5.4 Gbps (HBR2)
+> > >
+> > > As far as I can tell, only RBR, HBR, and HBR2 are part of the DP spec.
+> > > If other rates work then I believe it's because the sink has allowed
+> > > bending the spec a little bit.
+> >
+> > I think you need to look at the eDP spec. And filter this stuff correctly
+> > (there's more fields there for these somewhat irky edp timings). Simply
+> > not using them works, but it's defeating the point of having these
+> > intermediate clocks for edp panels.
+>
+> Ah, I see my problem.  I had earlier only found the eDP 1.3 spec which
+> doesn't mention these rates.  The eDP 1.4 spec does, however.  ...and
+> the change log for 1.4 specifically mentions that it added 4 new link
+> rates and also adds the "SUPPORTED_LINK_RATES" register.
 
-Hi James,
+Yeah, you need the eDP spec.  I previously posted
+https://patchwork.kernel.org/patch/11205201/ and was hoping Bjorn
+would find time to test it.  Maybe it would fit well with your series?
+ I'm coming back from tracel, and hope to review everything you have,
+but this caught my eye.
 
-> 
-> This is the problem:
-> 
-> if (!flag)
->      pre()
-> .
-> .
-> .
-> if (!flag)
->      post()
-> 
-> And your pre and post function either have to both run or neither must.
->   However, the flag is set asynchronously, so if it gets set while
-> another thread is running through the above code, it can change after
-> pre is run but before post is.
-> 
-> James
-
-The pre() and post() functions you have referenced above including the 
-check for the flag are executed with the mutex held.
-
-Please see Mimi's response to the v3 email. I have copied it below:
-
-************************************
-Reading the flag IS lock protected, just spread across two functions.
-For performance, ima_post_key_create_or_update() checks
-ima_process_keys, before calling ima_queue_key(), which takes the
-mutex before checking ima_process_keys again.
-
-As long as both the reader and writer, take the mutex before checking
-the flag, the locking is fine.  The additional check, before taking
-the mutex, is simply for performance.
-************************************
-
-The flag is checked with the mutex held in the "reader" - 
-ima_queue_key(). The key is queued with the mutex held only if the flag 
-is false.
-
-The flag is protected in the "writer" also - ima_process_queued_keys(). 
-The flag is checked with the mutex held, set to true, and queued keys 
-(if any) are transferred to the temp list.
-
-As Mimi has pointed out the additional check of the flag, before taking 
-the mutex in ima_post_key_create_or_update() and in 
-ima_process_queued_keys(), is for performance reason.
-
-If the flag is true, there is no need to take the mutex to check it 
-again in those functions.
-
-thanks,
-  -lakshmi
+>
+> I can try to spin a v2 but for now I'll hold off for additional feedback.
+>
+> I'll also note that I'd be totally OK if just the first 8 patches in
+> this series landed for now and someone could eventually figure out how
+> to make this work.  With just the first 8 patches I think we will
+> still be in an improved state compared to where we were before (and it
+> fixes the panel I care about) and someone could later write the code
+> to skip unsupported rates...
+>
+>
+> -Doug
