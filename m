@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB461216F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:33:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B11721218AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730502AbfLPSJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:09:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52396 "EHLO mail.kernel.org"
+        id S1728551AbfLPR57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:57:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730493AbfLPSJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:47 -0500
+        id S1728253AbfLPR5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:57:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A54A206B7;
-        Mon, 16 Dec 2019 18:09:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C6A0205ED;
+        Mon, 16 Dec 2019 17:57:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519786;
-        bh=8li020Po+yB8tIM/vH97YFOqrlj1+GSSXyV+MrYkqqo=;
+        s=default; t=1576519073;
+        bh=EvYG8J8rrt1Rby5sE8y2ueLkHNm3ED/KbOuIQmmIz5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iMHxoE8OF8VDq5N0UvkMOjXYLdpNvNBlWqq4DCza2R8/3GR+cmd+LxokWqOGvhjCs
-         NO8I4BApjT0K2/nHtNnBssg0eDGJ7PDaJ0DhlZ8COyL6qbGZ8v9stwbKxvVmrO+DL4
-         A0iY/eRfgyn0KLzmKDOy/OJNOi31Hr9kh7QXzWQM=
+        b=DiUp8+OoxA3LCjcydvhyG3X66GhbnvVRaE69eI0RmlQTVLskO3oNXV3VvVywGNDZ8
+         l56dKzdKKfLPNRPQ6Hi3zlcXblpbxx6y4Tfopa0yWqGbowywTj+Nl/8IMt6AZgXdB2
+         Bl8xqjOzo+/QwAx6fOO7j3R2hQlo6IrdlxHMXdjg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.3 067/180] ovl: fix lookup failure on multi lower squashfs
-Date:   Mon, 16 Dec 2019 18:48:27 +0100
-Message-Id: <20191216174829.950628779@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.14 182/267] mtd: spear_smi: Fix Write Burst mode
+Date:   Mon, 16 Dec 2019 18:48:28 +0100
+Message-Id: <20191216174912.479677655@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,145 +45,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-commit 7e63c87fc2dcf3be9d3aab82d4a0ea085880bdca upstream.
+commit 69c7f4618c16b4678f8a4949b6bb5ace259c0033 upstream.
 
-In the past, overlayfs required that lower fs have non null uuid in
-order to support nfs export and decode copy up origin file handles.
+Any write with either dd or flashcp to a device driven by the
+spear_smi.c driver will pass through the spear_smi_cpy_toio()
+function. This function will get called for chunks of up to 256 bytes.
+If the amount of data is smaller, we may have a problem if the data
+length is not 4-byte aligned. In this situation, the kernel panics
+during the memcpy:
 
-Commit 9df085f3c9a2 ("ovl: relax requirement for non null uuid of
-lower fs") relaxed this requirement for nfs export support, as long
-as uuid (even if null) is unique among all lower fs.
+    # dd if=/dev/urandom bs=1001 count=1 of=/dev/mtd6
+    spear_smi_cpy_toio [620] dest c9070000, src c7be8800, len 256
+    spear_smi_cpy_toio [620] dest c9070100, src c7be8900, len 256
+    spear_smi_cpy_toio [620] dest c9070200, src c7be8a00, len 256
+    spear_smi_cpy_toio [620] dest c9070300, src c7be8b00, len 233
+    Unhandled fault: external abort on non-linefetch (0x808) at 0xc90703e8
+    [...]
+    PC is at memcpy+0xcc/0x330
 
-However, said commit unintentionally also relaxed the non null uuid
-requirement for decoding copy up origin file handles, regardless of
-the unique uuid requirement.
+The above error occurs because the implementation of memcpy_toio()
+tries to optimize the number of I/O by writing 4 bytes at a time as
+much as possible, until there are less than 4 bytes left and then
+switches to word or byte writes.
 
-Amend this mistake by disabling decoding of copy up origin file handle
-from lower fs with a conflicting uuid.
+Unfortunately, the specification states about the Write Burst mode:
 
-We still encode copy up origin file handles from those fs, because
-file handles like those already exist in the wild and because they
-might provide useful information in the future.
+        "the next AHB Write request should point to the next
+	incremented address and should have the same size (byte,
+	half-word or word)"
 
-There is an unhandled corner case described by Miklos this way:
-- two filesystems, A and B, both have null uuid
-- upper layer is on A
-- lower layer 1 is also on A
-- lower layer 2 is on B
+This means ARM architecture implementation of memcpy_toio() cannot
+reliably be used blindly here. Workaround this situation by update the
+write path to stick to byte access when the burst length is not
+multiple of 4.
 
-In this case bad_uuid won't be set for B, because the check only
-involves the list of lower fs.  Hence we'll try to decode a layer 2
-origin on layer 1 and fail.
-
-We will deal with this corner case later.
-
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Tested-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/lkml/20191106234301.283006-1-colin.king@canonical.com/
-Fixes: 9df085f3c9a2 ("ovl: relax requirement for non null uuid ...")
-Cc: stable@vger.kernel.org # v4.20+
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: f18dbbb1bfe0 ("mtd: ST SPEAr: Add SMI driver for serial NOR flash")
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/namei.c     |    8 ++++++++
- fs/overlayfs/ovl_entry.h |    2 ++
- fs/overlayfs/super.c     |   24 +++++++++++++++++-------
- 3 files changed, 27 insertions(+), 7 deletions(-)
+ drivers/mtd/devices/spear_smi.c |   38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -325,6 +325,14 @@ int ovl_check_origin_fh(struct ovl_fs *o
- 	int i;
- 
- 	for (i = 0; i < ofs->numlower; i++) {
-+		/*
-+		 * If lower fs uuid is not unique among lower fs we cannot match
-+		 * fh->uuid to layer.
-+		 */
-+		if (ofs->lower_layers[i].fsid &&
-+		    ofs->lower_layers[i].fs->bad_uuid)
-+			continue;
-+
- 		origin = ovl_decode_real_fh(fh, ofs->lower_layers[i].mnt,
- 					    connected);
- 		if (origin)
---- a/fs/overlayfs/ovl_entry.h
-+++ b/fs/overlayfs/ovl_entry.h
-@@ -22,6 +22,8 @@ struct ovl_config {
- struct ovl_sb {
- 	struct super_block *sb;
- 	dev_t pseudo_dev;
-+	/* Unusable (conflicting) uuid */
-+	bool bad_uuid;
- };
- 
- struct ovl_layer {
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -1255,7 +1255,7 @@ static bool ovl_lower_uuid_ok(struct ovl
- {
- 	unsigned int i;
- 
--	if (!ofs->config.nfs_export && !(ofs->config.index && ofs->upper_mnt))
-+	if (!ofs->config.nfs_export && !ofs->upper_mnt)
- 		return true;
- 
- 	for (i = 0; i < ofs->numlowerfs; i++) {
-@@ -1263,9 +1263,13 @@ static bool ovl_lower_uuid_ok(struct ovl
- 		 * We use uuid to associate an overlay lower file handle with a
- 		 * lower layer, so we can accept lower fs with null uuid as long
- 		 * as all lower layers with null uuid are on the same fs.
-+		 * if we detect multiple lower fs with the same uuid, we
-+		 * disable lower file handle decoding on all of them.
- 		 */
--		if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid))
-+		if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid)) {
-+			ofs->lower_fs[i].bad_uuid = true;
- 			return false;
-+		}
- 	}
- 	return true;
+--- a/drivers/mtd/devices/spear_smi.c
++++ b/drivers/mtd/devices/spear_smi.c
+@@ -595,6 +595,26 @@ static int spear_mtd_read(struct mtd_inf
+ 	return 0;
  }
-@@ -1277,6 +1281,7 @@ static int ovl_get_fsid(struct ovl_fs *o
- 	unsigned int i;
- 	dev_t dev;
- 	int err;
-+	bool bad_uuid = false;
  
- 	/* fsid 0 is reserved for upper fs even with non upper overlay */
- 	if (ofs->upper_mnt && ofs->upper_mnt->mnt_sb == sb)
-@@ -1288,11 +1293,15 @@ static int ovl_get_fsid(struct ovl_fs *o
- 	}
++/*
++ * The purpose of this function is to ensure a memcpy_toio() with byte writes
++ * only. Its structure is inspired from the ARM implementation of _memcpy_toio()
++ * which also does single byte writes but cannot be used here as this is just an
++ * implementation detail and not part of the API. Not mentioning the comment
++ * stating that _memcpy_toio() should be optimized.
++ */
++static void spear_smi_memcpy_toio_b(volatile void __iomem *dest,
++				    const void *src, size_t len)
++{
++	const unsigned char *from = src;
++
++	while (len) {
++		len--;
++		writeb(*from, dest);
++		from++;
++		dest++;
++	}
++}
++
+ static inline int spear_smi_cpy_toio(struct spear_smi *dev, u32 bank,
+ 		void __iomem *dest, const void *src, size_t len)
+ {
+@@ -617,7 +637,23 @@ static inline int spear_smi_cpy_toio(str
+ 	ctrlreg1 = readl(dev->io_base + SMI_CR1);
+ 	writel((ctrlreg1 | WB_MODE) & ~SW_MODE, dev->io_base + SMI_CR1);
  
- 	if (!ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
--		ofs->config.index = false;
--		ofs->config.nfs_export = false;
--		pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', falling back to index=off,nfs_export=off.\n",
--			uuid_is_null(&sb->s_uuid) ? "null" : "conflicting",
--			path->dentry);
-+		bad_uuid = true;
-+		if (ofs->config.index || ofs->config.nfs_export) {
-+			ofs->config.index = false;
-+			ofs->config.nfs_export = false;
-+			pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', falling back to index=off,nfs_export=off.\n",
-+				uuid_is_null(&sb->s_uuid) ? "null" :
-+							    "conflicting",
-+				path->dentry);
-+		}
- 	}
+-	memcpy_toio(dest, src, len);
++	/*
++	 * In Write Burst mode (WB_MODE), the specs states that writes must be:
++	 * - incremental
++	 * - of the same size
++	 * The ARM implementation of memcpy_toio() will optimize the number of
++	 * I/O by using as much 4-byte writes as possible, surrounded by
++	 * 2-byte/1-byte access if:
++	 * - the destination is not 4-byte aligned
++	 * - the length is not a multiple of 4-byte.
++	 * Avoid this alternance of write access size by using our own 'byte
++	 * access' helper if at least one of the two conditions above is true.
++	 */
++	if (IS_ALIGNED(len, sizeof(u32)) &&
++	    IS_ALIGNED((uintptr_t)dest, sizeof(u32)))
++		memcpy_toio(dest, src, len);
++	else
++		spear_smi_memcpy_toio_b(dest, src, len);
  
- 	err = get_anon_bdev(&dev);
-@@ -1303,6 +1312,7 @@ static int ovl_get_fsid(struct ovl_fs *o
+ 	writel(ctrlreg1, dev->io_base + SMI_CR1);
  
- 	ofs->lower_fs[ofs->numlowerfs].sb = sb;
- 	ofs->lower_fs[ofs->numlowerfs].pseudo_dev = dev;
-+	ofs->lower_fs[ofs->numlowerfs].bad_uuid = bad_uuid;
- 	ofs->numlowerfs++;
- 
- 	return ofs->numlowerfs;
 
 
