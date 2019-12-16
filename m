@@ -2,161 +2,353 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E52C11200FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:27:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F3AE12010F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:30:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbfLPJ0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 04:26:32 -0500
-Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:52670 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726903AbfLPJ0c (ORCPT
+        id S1727135AbfLPJ12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 04:27:28 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:43099 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727020AbfLPJ11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 04:26:32 -0500
-Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id DF950C00A7;
-        Mon, 16 Dec 2019 09:26:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1576488391; bh=VqE/VXg+vV+Li+3VRW2K8tKQYknthHpXqMs1+Qjnbns=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=O/AzOzKxdkNz6NWBhowZTraYvTQL83By659a42a+OHeX7qWA2odlhOJ0BNM/YvLOh
-         pohhBjJJK8AK85svOVn+uTAT5EmDxw8YhARzfaBHFUl8eW1OSOOFDlRBGTIY3HNeIK
-         xq9x6TkPxdiru0Gtdxy2ZqxeqXkgUwOXELEqIbmkC87VNcv8tkzXKsjHIwgt4Nrj5u
-         L+mJlypAqn0bmGVVmKhwHKfKT4wi7MgO0M3d+k9KXSzDoeDKzzrIJoXeHm0PH21/Lj
-         fYPzmvFLK1MUQ3vQN7vZvXt7vnrxNLkfNkHrTPzoKh2MRE0C/AmhPN2eURwoTDf+nW
-         y6Vlg2/V50LNg==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 53EE3A007D;
-        Mon, 16 Dec 2019 09:26:25 +0000 (UTC)
-Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 16 Dec 2019 01:26:25 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (10.202.3.67) by
- mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Mon, 16 Dec 2019 01:26:25 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jGaNTXRnw6wGN27Sk4rAphQwqH4ME4usVRm3CHMdYSwp5hBzg/Y6lBzRZy0mWk2stf/FY2AlEey87vNGjveJ877u6xI9LDy45m55jauaibRBAZ0mNFJkfO/CXrhvitkCCpq+rhspFHUhpAb2vld0NWOjO3u4pAhC7QrruXQ+vKr+jreX7E5MCheU5y0uzDgjwaT0i1qACfFRkZ3UW5fzQ5xQdaPvR1AWWTotd8PNh/2iJlFTVMHwGyv0aUcsnG+E1nQE+eyRLv5/7zq1O9aJEFzxLtNKTnt4xePzAZSNb3rOtC1BB3C1wDuzcWoze3d2vXspWFzSN8D8srXag/b4lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VqE/VXg+vV+Li+3VRW2K8tKQYknthHpXqMs1+Qjnbns=;
- b=NKjSzUB3hXu+yHdEczsnRmeHHZsaKR1+O2wgYXwcoBnOcSW7WCcpsJ9JwxYbiH7lzrVxhFtoDEi5z+WCA1AdL56NVtmtzjsiznKVX2eL+JZBxsFFWto0sg8Lv0lJh6KDpvcTiqwaC2SHk5lJkMn6LqdbTyWlt5n7oJuzUh7fQHKZSSmAQJ0AWs13C31Fu8X1ZBUfDCwXSCwIhLJnEToxXoVx2Scd/g6WRHlUb0SIeqDvfFCvYIECRl6eMX607vdUxu+F6bzh7Z5yAhl+rN0RQd6f7Jh1x0qQHCXI8WCwc6jbg44bXlEJMrtW3e7HoupQ9iDXOjYtAo5O6Ii3v5JR/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VqE/VXg+vV+Li+3VRW2K8tKQYknthHpXqMs1+Qjnbns=;
- b=Ww0rOw61UkDyYzfgQE4EYt6mFqK+OXREFJgyuchu31AHh8l7oyrw5NK1QKSRVWXDN+SVv/BhZOcPD6ljpWlFQE3X1TtoHx3Bhh40V8l7hKuI8tkHqFsSi3cAboVKX5SM5t83LBtfFzVAJ/WNzh5JtUeXSp6+o1P5otmCJF+PfiM=
-Received: from BN8PR12MB3266.namprd12.prod.outlook.com (20.179.67.145) by
- BN8PR12MB2994.namprd12.prod.outlook.com (20.178.210.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.18; Mon, 16 Dec 2019 09:26:23 +0000
-Received: from BN8PR12MB3266.namprd12.prod.outlook.com
- ([fe80::3d20:3a36:3b64:4510]) by BN8PR12MB3266.namprd12.prod.outlook.com
- ([fe80::3d20:3a36:3b64:4510%7]) with mapi id 15.20.2538.019; Mon, 16 Dec 2019
- 09:26:23 +0000
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net 0/8] net: stmmac: Fixes for -net
-Thread-Topic: [PATCH net 0/8] net: stmmac: Fixes for -net
-Thread-Index: AQHVr5DiuA/S/u4Lb0GUkL7jqplpwae4yfIAgAO7yTA=
-Date:   Mon, 16 Dec 2019 09:26:22 +0000
-Message-ID: <BN8PR12MB326639325F465266DEACAA64D3510@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <cover.1576005975.git.Jose.Abreu@synopsys.com>
- <20191213162216.2dc8a108@cakuba.netronome.com>
-In-Reply-To: <20191213162216.2dc8a108@cakuba.netronome.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=joabreu@synopsys.com; 
-x-originating-ip: [83.174.63.141]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ee42dd07-2751-4a2c-2d90-08d7820a0456
-x-ms-traffictypediagnostic: BN8PR12MB2994:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN8PR12MB2994598EB0751D1EF528A922D3510@BN8PR12MB2994.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 02530BD3AA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(39850400004)(396003)(136003)(189003)(199004)(186003)(316002)(66946007)(54906003)(6916009)(5660300002)(33656002)(66556008)(66446008)(66476007)(478600001)(76116006)(64756008)(7696005)(6506007)(26005)(2906002)(71200400001)(9686003)(4326008)(55016002)(8936002)(81166006)(52536014)(86362001)(81156014)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR12MB2994;H:BN8PR12MB3266.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Rq/5T77uCWoaPGCq9QEHSHrvONj8AeSD2Lac9RuOP15uUbIYOulJpd3F2vjfJubSNVBAHct+CsctIDhYPPXVvDwLfKNLRsvEPCeWKg/40KqboEklBPJCLH6Knmb0NbzkvZw+YgEXniH0GE8p6xeNzrl9CBgzJwdz6QBt57zrHoizThXzN/7vjyDod43OexQDED1mjulMEM5tCQOwstWmV4M94C3ZOuqDRZfFNzcRaDeRBvQQjCDK1r4LTCz6fUpdBYQJh/jlgra7EyApZZND7Fp7GNHG04HKNX44NTRWeaPsdVQ8y9SqmY7FknkKb2aaxt7CmNs2jhG8JTnQo0nmm0LS6CZFLHTeIwg//3GThjhKJrXz6JnnmjkaTyeC96S8QrVESSnh96PrKuvqyWouczVLNd5UIFo3cfNi6NM/KIbqJ1gel76apqKZbf8R/VSP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 16 Dec 2019 04:27:27 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=38;SR=0;TI=SMTPD_---0Tl3Q8bH_1576488440;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Tl3Q8bH_1576488440)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 16 Dec 2019 17:27:20 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+To:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        shakeelb@google.com, hannes@cmpxchg.org
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Jann Horn <jannh@google.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Arun KS <arunks@codeaurora.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v6 07/10] mm/lru: revise the comments of lru_lock
+Date:   Mon, 16 Dec 2019 17:26:23 +0800
+Message-Id: <1576488386-32544-8-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1576488386-32544-1-git-send-email-alex.shi@linux.alibaba.com>
+References: <1576488386-32544-1-git-send-email-alex.shi@linux.alibaba.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee42dd07-2751-4a2c-2d90-08d7820a0456
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2019 09:26:22.8426
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8k+GIvVuJ9NtsjZA/P5bnQjIjyZCTWa1KaYRvUOWnrqj6uJ2vvYN9a8vhFTM57HOPwOBzLGdZ6qfn+GbBFtj6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB2994
-X-OriginatorOrg: synopsys.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-Date: Dec/14/2019, 00:22:16 (UTC+00:00)
+From: Hugh Dickins <hughd@google.com>
 
-> On Tue, 10 Dec 2019 20:33:52 +0100, Jose Abreu wrote:
-> > Fixes for stmmac.
-> >=20
-> > 1) Fixes the filtering selftests (again) for cases when the number of m=
-ulticast
-> > filters are not enough.
-> >=20
-> > 2) Fixes SPH feature for MTU > default.
-> >=20
-> > 3) Fixes the behavior of accepting invalid MTU values.
-> >=20
-> > 4) Fixes FCS stripping for multi-descriptor packets.
-> >=20
-> > 5) Fixes the change of RX buffer size in XGMAC.
-> >=20
-> > 6) Fixes RX buffer size alignment.
-> >=20
-> > 7) Fixes the 16KB buffer alignment.
-> >=20
-> > 8) Fixes the enabling of 16KB buffer size feature.
->=20
-> Hi Jose!
->=20
-> Patches directed at net should have a Fixes tag identifying the commit
-> which introduced the problem. The commit messages should also describe
-> user-visible outcomes of the bugs. Without those two its hard to judge
-> which patches are important for stable backports.
->=20
-> Could you please repost with appropriate Fixes tags?
+Since we changed the pgdat->lru_lock to lruvec->lru_lock, it's time to
+fix the incorrect comments in code. Also fixed some zone->lru_lock comment
+error from ancient time. etc.
 
-I agree with you Jakub but although these are bugs they are either for=20
-recently introduced features (such as SPH and selftests), or for=20
-features that are not commonly used. I can dig into the GIT history and=20
-provide fixes tag for them all or I can always provide a backport fix if=20
-any user requires so. Can you please comment on which one you prefer ?
-
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: "Tobin C. Harding" <tobin@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Wei Yang <richard.weiyang@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Arun KS <arunks@codeaurora.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Dave Chinner <dchinner@redhat.com>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Yafang Shao <laoar.shao@gmail.com>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: cgroups@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
 ---
-Thanks,
-Jose Miguel Abreu
+ Documentation/admin-guide/cgroup-v1/memcg_test.rst | 15 +++------------
+ Documentation/admin-guide/cgroup-v1/memory.rst     |  6 +++---
+ Documentation/trace/events-kmem.rst                |  2 +-
+ Documentation/vm/unevictable-lru.rst               | 22 ++++++++--------------
+ include/linux/mm_types.h                           |  2 +-
+ include/linux/mmzone.h                             |  2 +-
+ mm/filemap.c                                       |  4 ++--
+ mm/rmap.c                                          |  2 +-
+ mm/vmscan.c                                        | 12 ++++++++----
+ 9 files changed, 28 insertions(+), 39 deletions(-)
+
+diff --git a/Documentation/admin-guide/cgroup-v1/memcg_test.rst b/Documentation/admin-guide/cgroup-v1/memcg_test.rst
+index 3f7115e07b5d..0b9f91589d3d 100644
+--- a/Documentation/admin-guide/cgroup-v1/memcg_test.rst
++++ b/Documentation/admin-guide/cgroup-v1/memcg_test.rst
+@@ -133,18 +133,9 @@ Under below explanation, we assume CONFIG_MEM_RES_CTRL_SWAP=y.
+ 
+ 8. LRU
+ ======
+-        Each memcg has its own private LRU. Now, its handling is under global
+-	VM's control (means that it's handled under global pgdat->lru_lock).
+-	Almost all routines around memcg's LRU is called by global LRU's
+-	list management functions under pgdat->lru_lock.
+-
+-	A special function is mem_cgroup_isolate_pages(). This scans
+-	memcg's private LRU and call __isolate_lru_page() to extract a page
+-	from LRU.
+-
+-	(By __isolate_lru_page(), the page is removed from both of global and
+-	private LRU.)
+-
++	Each memcg has its own vector of LRUs (inactive anon, active anon,
++	inactive file, active file, unevictable) of pages from each node,
++	each LRU handled under a single lru_lock for that memcg and node.
+ 
+ 9. Typical Tests.
+ =================
+diff --git a/Documentation/admin-guide/cgroup-v1/memory.rst b/Documentation/admin-guide/cgroup-v1/memory.rst
+index 0ae4f564c2d6..60d97e8b7f3c 100644
+--- a/Documentation/admin-guide/cgroup-v1/memory.rst
++++ b/Documentation/admin-guide/cgroup-v1/memory.rst
+@@ -297,13 +297,13 @@ When oom event notifier is registered, event will be delivered.
+ 
+    PG_locked.
+      mm->page_table_lock
+-         pgdat->lru_lock
++         lruvec->lru_lock
+ 	   lock_page_cgroup.
+ 
+   In many cases, just lock_page_cgroup() is called.
+ 
+-  per-zone-per-cgroup LRU (cgroup's private LRU) is just guarded by
+-  pgdat->lru_lock, it has no lock of its own.
++  per-node-per-cgroup LRU (cgroup's private LRU) is just guarded by
++  lruvec->lru_lock, it has no lock of its own.
+ 
+ 2.7 Kernel Memory Extension (CONFIG_MEMCG_KMEM)
+ -----------------------------------------------
+diff --git a/Documentation/trace/events-kmem.rst b/Documentation/trace/events-kmem.rst
+index 555484110e36..68fa75247488 100644
+--- a/Documentation/trace/events-kmem.rst
++++ b/Documentation/trace/events-kmem.rst
+@@ -69,7 +69,7 @@ When pages are freed in batch, the also mm_page_free_batched is triggered.
+ Broadly speaking, pages are taken off the LRU lock in bulk and
+ freed in batch with a page list. Significant amounts of activity here could
+ indicate that the system is under memory pressure and can also indicate
+-contention on the zone->lru_lock.
++contention on the lruvec->lru_lock.
+ 
+ 4. Per-CPU Allocator Activity
+ =============================
+diff --git a/Documentation/vm/unevictable-lru.rst b/Documentation/vm/unevictable-lru.rst
+index 17d0861b0f1d..0e1490524f53 100644
+--- a/Documentation/vm/unevictable-lru.rst
++++ b/Documentation/vm/unevictable-lru.rst
+@@ -33,7 +33,7 @@ reclaim in Linux.  The problems have been observed at customer sites on large
+ memory x86_64 systems.
+ 
+ To illustrate this with an example, a non-NUMA x86_64 platform with 128GB of
+-main memory will have over 32 million 4k pages in a single zone.  When a large
++main memory will have over 32 million 4k pages in a single node.  When a large
+ fraction of these pages are not evictable for any reason [see below], vmscan
+ will spend a lot of time scanning the LRU lists looking for the small fraction
+ of pages that are evictable.  This can result in a situation where all CPUs are
+@@ -55,7 +55,7 @@ unevictable, either by definition or by circumstance, in the future.
+ The Unevictable Page List
+ -------------------------
+ 
+-The Unevictable LRU infrastructure consists of an additional, per-zone, LRU list
++The Unevictable LRU infrastructure consists of an additional, per-node, LRU list
+ called the "unevictable" list and an associated page flag, PG_unevictable, to
+ indicate that the page is being managed on the unevictable list.
+ 
+@@ -84,15 +84,9 @@ The unevictable list does not differentiate between file-backed and anonymous,
+ swap-backed pages.  This differentiation is only important while the pages are,
+ in fact, evictable.
+ 
+-The unevictable list benefits from the "arrayification" of the per-zone LRU
++The unevictable list benefits from the "arrayification" of the per-node LRU
+ lists and statistics originally proposed and posted by Christoph Lameter.
+ 
+-The unevictable list does not use the LRU pagevec mechanism. Rather,
+-unevictable pages are placed directly on the page's zone's unevictable list
+-under the zone lru_lock.  This allows us to prevent the stranding of pages on
+-the unevictable list when one task has the page isolated from the LRU and other
+-tasks are changing the "evictability" state of the page.
+-
+ 
+ Memory Control Group Interaction
+ --------------------------------
+@@ -101,8 +95,8 @@ The unevictable LRU facility interacts with the memory control group [aka
+ memory controller; see Documentation/admin-guide/cgroup-v1/memory.rst] by extending the
+ lru_list enum.
+ 
+-The memory controller data structure automatically gets a per-zone unevictable
+-list as a result of the "arrayification" of the per-zone LRU lists (one per
++The memory controller data structure automatically gets a per-node unevictable
++list as a result of the "arrayification" of the per-node LRU lists (one per
+ lru_list enum element).  The memory controller tracks the movement of pages to
+ and from the unevictable list.
+ 
+@@ -196,7 +190,7 @@ for the sake of expediency, to leave a unevictable page on one of the regular
+ active/inactive LRU lists for vmscan to deal with.  vmscan checks for such
+ pages in all of the shrink_{active|inactive|page}_list() functions and will
+ "cull" such pages that it encounters: that is, it diverts those pages to the
+-unevictable list for the zone being scanned.
++unevictable list for the node being scanned.
+ 
+ There may be situations where a page is mapped into a VM_LOCKED VMA, but the
+ page is not marked as PG_mlocked.  Such pages will make it all the way to
+@@ -328,7 +322,7 @@ If the page was NOT already mlocked, mlock_vma_page() attempts to isolate the
+ page from the LRU, as it is likely on the appropriate active or inactive list
+ at that time.  If the isolate_lru_page() succeeds, mlock_vma_page() will put
+ back the page - by calling putback_lru_page() - which will notice that the page
+-is now mlocked and divert the page to the zone's unevictable list.  If
++is now mlocked and divert the page to the node's unevictable list.  If
+ mlock_vma_page() is unable to isolate the page from the LRU, vmscan will handle
+ it later if and when it attempts to reclaim the page.
+ 
+@@ -603,7 +597,7 @@ Some examples of these unevictable pages on the LRU lists are:
+      unevictable list in mlock_vma_page().
+ 
+ shrink_inactive_list() also diverts any unevictable pages that it finds on the
+-inactive lists to the appropriate zone's unevictable list.
++inactive lists to the appropriate node's unevictable list.
+ 
+ shrink_inactive_list() should only see SHM_LOCK'd pages that became SHM_LOCK'd
+ after shrink_active_list() had moved them to the inactive list, or pages mapped
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 270aa8fd2800..ff08a6a8145c 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -78,7 +78,7 @@ struct page {
+ 		struct {	/* Page cache and anonymous pages */
+ 			/**
+ 			 * @lru: Pageout list, eg. active_list protected by
+-			 * pgdat->lru_lock.  Sometimes used as a generic list
++			 * lruvec->lru_lock.  Sometimes used as a generic list
+ 			 * by the page owner.
+ 			 */
+ 			struct list_head lru;
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 7db0cec19aa0..d73be191e9f8 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -159,7 +159,7 @@ static inline bool free_area_empty(struct free_area *area, int migratetype)
+ struct pglist_data;
+ 
+ /*
+- * zone->lock and the zone lru_lock are two of the hottest locks in the kernel.
++ * zone->lock and the lru_lock are two of the hottest locks in the kernel.
+  * So add a wild amount of padding here to ensure that they fall into separate
+  * cachelines.  There are very few zone structures in the machine, so space
+  * consumption is not a concern here.
+diff --git a/mm/filemap.c b/mm/filemap.c
+index bf6aa30be58d..6dcdf06660fb 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -101,8 +101,8 @@
+  *    ->swap_lock		(try_to_unmap_one)
+  *    ->private_lock		(try_to_unmap_one)
+  *    ->i_pages lock		(try_to_unmap_one)
+- *    ->pgdat->lru_lock		(follow_page->mark_page_accessed)
+- *    ->pgdat->lru_lock		(check_pte_range->isolate_lru_page)
++ *    ->lruvec->lru_lock	(follow_page->mark_page_accessed)
++ *    ->lruvec->lru_lock	(check_pte_range->isolate_lru_page)
+  *    ->private_lock		(page_remove_rmap->set_page_dirty)
+  *    ->i_pages lock		(page_remove_rmap->set_page_dirty)
+  *    bdi.wb->list_lock		(page_remove_rmap->set_page_dirty)
+diff --git a/mm/rmap.c b/mm/rmap.c
+index b3e381919835..39052794cb46 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -27,7 +27,7 @@
+  *         mapping->i_mmap_rwsem
+  *           anon_vma->rwsem
+  *             mm->page_table_lock or pte_lock
+- *               pgdat->lru_lock (in mark_page_accessed, isolate_lru_page)
++ *               lruvec->lru_lock (in mark_page_accessed, isolate_lru_page)
+  *               swap_lock (in swap_duplicate, swap_info_get)
+  *                 mmlist_lock (in mmput, drain_mmlist and others)
+  *                 mapping->private_lock (in __set_page_dirty_buffers)
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index be8bca45f7c6..21b6a9f681ff 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1626,14 +1626,16 @@ static __always_inline void update_lru_sizes(struct lruvec *lruvec,
+ }
+ 
+ /**
+- * pgdat->lru_lock is heavily contended.  Some of the functions that
++ * Isolating page from the lruvec to fill in @dst list by nr_to_scan times.
++ *
++ * lruvec->lru_lock is heavily contended.  Some of the functions that
+  * shrink the lists perform better by taking out a batch of pages
+  * and working on them outside the LRU lock.
+  *
+  * For pagecache intensive workloads, this function is the hottest
+  * spot in the kernel (apart from copy_*_user functions).
+  *
+- * Appropriate locks must be held before calling this function.
++ * Lru_lock must be held before calling this function.
+  *
+  * @nr_to_scan:	The number of eligible pages to look through on the list.
+  * @lruvec:	The LRU vector to pull pages from.
+@@ -1820,14 +1822,16 @@ static int too_many_isolated(struct pglist_data *pgdat, int file,
+ 
+ /*
+  * This moves pages from @list to corresponding LRU list.
++ * The pages from @list is out of any lruvec, and in the end list reuses as
++ * pages_to_free list.
+  *
+  * We move them the other way if the page is referenced by one or more
+  * processes, from rmap.
+  *
+  * If the pages are mostly unmapped, the processing is fast and it is
+- * appropriate to hold zone_lru_lock across the whole operation.  But if
++ * appropriate to hold lru_lock across the whole operation.  But if
+  * the pages are mapped, the processing is slow (page_referenced()) so we
+- * should drop zone_lru_lock around each page.  It's impossible to balance
++ * should drop lru_lock around each page.  It's impossible to balance
+  * this, so instead we remove the pages from the LRU while processing them.
+  * It is safe to rely on PG_active against the non-LRU pages in here because
+  * nobody will play with that bit on a non-LRU page.
+-- 
+1.8.3.1
+
