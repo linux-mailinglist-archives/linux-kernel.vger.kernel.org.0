@@ -2,102 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0AE8121227
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:49:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B462B1212B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:55:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfLPRrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:47:46 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42586 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbfLPRrq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:47:46 -0500
-Received: by mail-pg1-f193.google.com with SMTP id s64so4108797pgb.9
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 09:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hw5Av0omrpqDMS7vMjj661LVLxdnMyCAfz7uWvwVCL8=;
-        b=UzAut7oPZ6MwulRVGd8z4CDfcsQG18oSMOJeImKi0I4vNbCimNPWgWxR6T1cuHUrkn
-         QuhGtJyUnUuhh8/vFQAoC0pckg8wppSCIzyHSEO3UDa6otYVEjP5f+FFluCbxdOuQ3/r
-         QgQj8JMj+hVg+QKXCgElrEGcaf2ifPzofkon8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hw5Av0omrpqDMS7vMjj661LVLxdnMyCAfz7uWvwVCL8=;
-        b=M9dUyqQtVCW/4b4iT5u3tYdKAufdvjI3jWwPdlf3hUXPWs1QbUU4UVG92lq+rY/m+t
-         FTE0a8wNdfHfwZdnmX5NyKafN5qvJI5SKpbf3HRUc4rIHxxlUavwUh+zUIbIbQeZeSDS
-         vPRYQnDmKtD+QXyz8vPBnuZb/SKQCyl7xQTl9nWai6u5dPRB5skPJISqd//8r0bNKBgO
-         uTvKBryrYgMcqikpuV+SYloSbGGLWU/ZRKACaAfkQOYUc9oWBuHjVl8SQlAaUQUmkygC
-         aaqv7C3VeyKHreJWfupeHAhYs2K/41VuJO3KyUoWdbnQdMG6y+Ckwst33abFmzYm/thp
-         ZmkQ==
-X-Gm-Message-State: APjAAAVfaRfTbsfN5aEwdWi+w9hGfjc4Tq64Ci/YUkg9h3XnlsNjI+Os
-        8b8AaJgE1L1idpiedDFjlY3Hbw==
-X-Google-Smtp-Source: APXvYqyXoQALeAM+zoIV40agZm7icWv+ejSDOE9brdNu2AiqwbmAeH5gOOEc/CZzDWaZYkhS1xv4Kg==
-X-Received: by 2002:a63:5f91:: with SMTP id t139mr19298242pgb.185.1576518465339;
-        Mon, 16 Dec 2019 09:47:45 -0800 (PST)
-Received: from localhost.localdomain ([2405:201:c809:c7d5:6d28:a89:f9e1:1506])
-        by smtp.gmail.com with ESMTPSA id a6sm22342924pgg.25.2019.12.16.09.47.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 09:47:44 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Akash Gajjar <akash@openedev.com>, Tom Cubie <tom@radxa.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 1/4] dt-bindings: arm: rockchip: Add Rock Pi N10 binding
-Date:   Mon, 16 Dec 2019 23:17:08 +0530
-Message-Id: <20191216174711.17856-2-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20191216174711.17856-1-jagan@amarulasolutions.com>
-References: <20191216174711.17856-1-jagan@amarulasolutions.com>
+        id S1728015AbfLPRzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:55:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727791AbfLPRzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:55:16 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 461B320663;
+        Mon, 16 Dec 2019 17:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576518915;
+        bh=JuIU6evUP0TJkyze9RRlQ4q5lVJ+JG69SdDkDI2hhDI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lqz2dlpjFPxbFoHNCzc9YliOCe8ykiwzDtoG99Vsb8R1j0aFxugZyU930dzs0QATd
+         klGPYKz9rjdn0xZSZLV8V2/HjcwSERiMgD4Pi3X7luiAfoAH00UkW8YhMENw27Vzim
+         ZwqyX+NWhldeN4RV5glFW48F/7SgWRh+8o+tZs9U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Erez Alfasi <ereza@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 102/267] net/mlx4_core: Fix return codes of unsupported operations
+Date:   Mon, 16 Dec 2019 18:47:08 +0100
+Message-Id: <20191216174902.302005230@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rock Pi N10 is a Rockchip RK3399Pro based SBC, which has
-- VMARC RK3399Pro SOM (as per SMARC standard) from Vamrs.
-- Compatible carrier board from Radxa.
+From: Erez Alfasi <ereza@mellanox.com>
 
-VMARC RK3399Pro SOM need to mount on top of dalang carrier
-board for making Rock PI N10 SBC.
+[ Upstream commit 95aac2cdafd8c8298c9b2589c52f44db0d824e0e ]
 
-Add dt-bindings for it.
+Functions __set_port_type and mlx4_check_port_params returned
+-EINVAL while the proper return code is -EOPNOTSUPP as a
+result of an unsupported operation. All drivers should generate
+this and all users should check for it when detecting an
+unsupported functionality.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Erez Alfasi <ereza@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Changes for v3:
-- Move som binding on board side
+ drivers/net/ethernet/mellanox/mlx4/main.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
- Documentation/devicetree/bindings/arm/rockchip.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 45728fd22af8..c3eb32f1a9ee 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -423,6 +423,12 @@ properties:
-           - const: radxa,rockpi4
-           - const: rockchip,rk3399
+diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
+index c273a3ebb8e8e..12d4b891301b6 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -199,7 +199,7 @@ int mlx4_check_port_params(struct mlx4_dev *dev,
+ 		for (i = 0; i < dev->caps.num_ports - 1; i++) {
+ 			if (port_type[i] != port_type[i + 1]) {
+ 				mlx4_err(dev, "Only same port types supported on this HCA, aborting\n");
+-				return -EINVAL;
++				return -EOPNOTSUPP;
+ 			}
+ 		}
+ 	}
+@@ -208,7 +208,7 @@ int mlx4_check_port_params(struct mlx4_dev *dev,
+ 		if (!(port_type[i] & dev->caps.supported_type[i+1])) {
+ 			mlx4_err(dev, "Requested port type for port %d is not supported on this HCA\n",
+ 				 i + 1);
+-			return -EINVAL;
++			return -EOPNOTSUPP;
+ 		}
+ 	}
+ 	return 0;
+@@ -1152,8 +1152,7 @@ static int __set_port_type(struct mlx4_port_info *info,
+ 		mlx4_err(mdev,
+ 			 "Requested port type for port %d is not supported on this HCA\n",
+ 			 info->port);
+-		err = -EINVAL;
+-		goto err_sup;
++		return -EOPNOTSUPP;
+ 	}
  
-+      - description: Radxa ROCK Pi N10
-+        items:
-+          - const: radxa,rockpi-n10
-+          - const: vamrs,rk3399pro-vmarc-som
-+          - const: rockchip,rk3399pro
+ 	mlx4_stop_sense(mdev);
+@@ -1175,7 +1174,7 @@ static int __set_port_type(struct mlx4_port_info *info,
+ 		for (i = 1; i <= mdev->caps.num_ports; i++) {
+ 			if (mdev->caps.possible_type[i] == MLX4_PORT_TYPE_AUTO) {
+ 				mdev->caps.possible_type[i] = mdev->caps.port_type[i];
+-				err = -EINVAL;
++				err = -EOPNOTSUPP;
+ 			}
+ 		}
+ 	}
+@@ -1201,7 +1200,7 @@ static int __set_port_type(struct mlx4_port_info *info,
+ out:
+ 	mlx4_start_sense(mdev);
+ 	mutex_unlock(&priv->port_mutex);
+-err_sup:
 +
-       - description: Radxa Rock2 Square
-         items:
-           - const: radxa,rock2-square
+ 	return err;
+ }
+ 
 -- 
-2.18.0.321.gffc6fa0e3
+2.20.1
+
+
 
