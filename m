@@ -2,29 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EC4B1204B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:06:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96ACA1204B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:06:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbfLPMFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:05:51 -0500
-Received: from foss.arm.com ([217.140.110.172]:52428 "EHLO foss.arm.com"
+        id S1727577AbfLPMGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:06:01 -0500
+Received: from foss.arm.com ([217.140.110.172]:52456 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbfLPMFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:05:51 -0500
+        id S1727241AbfLPMGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 07:06:01 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFBD01FB;
-        Mon, 16 Dec 2019 04:05:50 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 290FA1FB;
+        Mon, 16 Dec 2019 04:06:01 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F8D93F719;
-        Mon, 16 Dec 2019 04:05:50 -0800 (PST)
-Date:   Mon, 16 Dec 2019 12:05:48 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 779503F719;
+        Mon, 16 Dec 2019 04:06:00 -0800 (PST)
+Date:   Mon, 16 Dec 2019 12:05:59 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     b.galvani@gmail.com, broonie@kernel.org, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: rn5t618: fix module aliases" to the regulator tree
-In-Reply-To: <20191211221600.29438-1-andreas@kemnade.info>
-Message-Id: <applied-20191211221600.29438-1-andreas@kemnade.info>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     alexandre.torgue@st.com, baohua@kernel.org, broonie@kernel.org,
+        f.fainelli@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-spi@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Mark Brown <broonie@kernel.org>, mcoquelin.stm32@gmail.com,
+        nsaenzjulienne@suse.de, rjui@broadcom.com, sbranden@broadcom.com,
+        s.hauer@pengutronix.de, shawnguo@kernel.org, vkoul@kernel.org
+Subject: Applied "spi: stm32: Use dma_request_chan() instead dma_request_slave_channel()" to the spi tree
+In-Reply-To: <20191212135550.4634-10-peter.ujfalusi@ti.com>
+Message-Id: <applied-20191212135550.4634-10-peter.ujfalusi@ti.com>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -33,11 +39,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: rn5t618: fix module aliases
+   spi: stm32: Use dma_request_chan() instead dma_request_slave_channel()
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.6
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -58,34 +64,96 @@ to this mail.
 Thanks,
 Mark
 
-From 62a1923cc8fe095912e6213ed5de27abbf1de77e Mon Sep 17 00:00:00 2001
-From: Andreas Kemnade <andreas@kemnade.info>
-Date: Wed, 11 Dec 2019 23:16:00 +0100
-Subject: [PATCH] regulator: rn5t618: fix module aliases
+From 0a454258febb73e4c60d7f5d9a02d1a8c64fdfb8 Mon Sep 17 00:00:00 2001
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Date: Thu, 12 Dec 2019 15:55:50 +0200
+Subject: [PATCH] spi: stm32: Use dma_request_chan() instead
+ dma_request_slave_channel()
 
-platform device aliases were missing, preventing
-autoloading of module.
+dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+eating up the error code.
 
-Fixes: 811b700630ff ("regulator: rn5t618: add driver for Ricoh RN5T618 regulators")
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Link: https://lore.kernel.org/r/20191211221600.29438-1-andreas@kemnade.info
+By using dma_request_chan() directly the driver can support deferred
+probing against DMA.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Link: https://lore.kernel.org/r/20191212135550.4634-10-peter.ujfalusi@ti.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/rn5t618-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/spi/spi-stm32.c | 32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/regulator/rn5t618-regulator.c b/drivers/regulator/rn5t618-regulator.c
-index eb807a059479..aa6e7c5341ce 100644
---- a/drivers/regulator/rn5t618-regulator.c
-+++ b/drivers/regulator/rn5t618-regulator.c
-@@ -148,6 +148,7 @@ static struct platform_driver rn5t618_regulator_driver = {
+diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+index 7d75632c4151..e041f9c4ec47 100644
+--- a/drivers/spi/spi-stm32.c
++++ b/drivers/spi/spi-stm32.c
+@@ -1879,17 +1879,29 @@ static int stm32_spi_probe(struct platform_device *pdev)
+ 	master->transfer_one = stm32_spi_transfer_one;
+ 	master->unprepare_message = stm32_spi_unprepare_msg;
  
- module_platform_driver(rn5t618_regulator_driver);
+-	spi->dma_tx = dma_request_slave_channel(spi->dev, "tx");
+-	if (!spi->dma_tx)
++	spi->dma_tx = dma_request_chan(spi->dev, "tx");
++	if (IS_ERR(spi->dma_tx)) {
++		ret = PTR_ERR(spi->dma_tx);
++		spi->dma_tx = NULL;
++		if (ret == -EPROBE_DEFER)
++			goto err_clk_disable;
++
+ 		dev_warn(&pdev->dev, "failed to request tx dma channel\n");
+-	else
++	} else {
+ 		master->dma_tx = spi->dma_tx;
++	}
++
++	spi->dma_rx = dma_request_chan(spi->dev, "rx");
++	if (IS_ERR(spi->dma_rx)) {
++		ret = PTR_ERR(spi->dma_rx);
++		spi->dma_rx = NULL;
++		if (ret == -EPROBE_DEFER)
++			goto err_dma_release;
  
-+MODULE_ALIAS("platform:rn5t618-regulator");
- MODULE_AUTHOR("Beniamino Galvani <b.galvani@gmail.com>");
- MODULE_DESCRIPTION("RN5T618 regulator driver");
- MODULE_LICENSE("GPL v2");
+-	spi->dma_rx = dma_request_slave_channel(spi->dev, "rx");
+-	if (!spi->dma_rx)
+ 		dev_warn(&pdev->dev, "failed to request rx dma channel\n");
+-	else
++	} else {
+ 		master->dma_rx = spi->dma_rx;
++	}
+ 
+ 	if (spi->dma_tx || spi->dma_rx)
+ 		master->can_dma = stm32_spi_can_dma;
+@@ -1901,26 +1913,26 @@ static int stm32_spi_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "spi master registration failed: %d\n",
+ 			ret);
+-		goto err_dma_release;
++		goto err_pm_disable;
+ 	}
+ 
+ 	if (!master->cs_gpiods) {
+ 		dev_err(&pdev->dev, "no CS gpios available\n");
+ 		ret = -EINVAL;
+-		goto err_dma_release;
++		goto err_pm_disable;
+ 	}
+ 
+ 	dev_info(&pdev->dev, "driver initialized\n");
+ 
+ 	return 0;
+ 
++err_pm_disable:
++	pm_runtime_disable(&pdev->dev);
+ err_dma_release:
+ 	if (spi->dma_tx)
+ 		dma_release_channel(spi->dma_tx);
+ 	if (spi->dma_rx)
+ 		dma_release_channel(spi->dma_rx);
+-
+-	pm_runtime_disable(&pdev->dev);
+ err_clk_disable:
+ 	clk_disable_unprepare(spi->clk);
+ err_master_put:
 -- 
 2.20.1
 
