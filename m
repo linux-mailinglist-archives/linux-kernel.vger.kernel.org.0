@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A17F112129C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DFA12129D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:54:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfLPRyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:54:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50058 "EHLO mail.kernel.org"
+        id S1727925AbfLPRya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:54:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727892AbfLPRyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:54:21 -0500
+        id S1727592AbfLPRy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:54:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32D652146E;
-        Mon, 16 Dec 2019 17:54:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64E822166E;
+        Mon, 16 Dec 2019 17:54:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518859;
-        bh=wIj8gMp24TWB2JPYURolixV89zLKt1lP8418gUBTlAI=;
+        s=default; t=1576518866;
+        bh=GyA/31BZ8wlGojdchA0jc42GNfdeg6TYDd7NlEAnIAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=esP0r58NYLggXF1ZeJkYsOTY0FJbr7OlB8KTo9OwN6i+saHBKH8zccVkfCHcFBsF2
-         /MIyMbnBtEl1ADgy4FzuFKrM66mTrGMUJF/51FSoOisD9w/jk8pWd96cCk+CYj6+pt
-         cbZzAmBmyrENjhMIN69aHo5SgpYItpccDW2Qq1Ew=
+        b=dMkcp4/FCz35prQpvyuNc4hnT8Re7caCX1JM7J9Y4GjhYgtKZBUrbDaW+DAJ6/0mX
+         RsfcmARqhxeEWQGcFsovUuA1FTj+H5sQman3BGBWa+37re4dE/JOTQm1Zarwu83HNQ
+         9BgR9vhnp/aS3+5Ep1QuKD2Fwouu8sEVdTOvbzs0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Sergey Yanovich <ynvich@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 095/267] modpost: skip ELF local symbols during section mismatch check
-Date:   Mon, 16 Dec 2019 18:47:01 +0100
-Message-Id: <20191216174901.927306028@linuxfoundation.org>
+Subject: [PATCH 4.14 098/267] ARM: dts: pxa: clean up USB controller nodes
+Date:   Mon, 16 Dec 2019 18:47:04 +0100
+Message-Id: <20191216174902.088630811@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -46,94 +45,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Walmsley <paul.walmsley@sifive.com>
+From: Daniel Mack <daniel@zonque.org>
 
-[ Upstream commit a4d26f1a0958bb1c2b60c6f1e67c6f5d43e2647b ]
+[ Upstream commit c40ad24254f1dbd54f2df5f5f524130dc1862122 ]
 
-During development of a serial console driver with a gcc 8.2.0
-toolchain for RISC-V, the following modpost warning appeared:
+PXA25xx SoCs don't have a USB controller, so drop the node from the
+common pxa2xx.dtsi base file. Both pxa27x and pxa3xx have a dedicated
+node already anyway.
 
-----
-WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
-The variable .LANCHOR1 references
-the function __init sifive_serial_console_setup()
-If the reference is valid then annotate the
-variable with __init* or __refdata (see linux/init.h) or name the variable:
-*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
-----
+While at it, unify the names for the nodes across all pxa platforms.
 
-".LANCHOR1" is an ELF local symbol, automatically created by gcc's section
-anchor generation code:
-
-https://gcc.gnu.org/onlinedocs/gccint/Anchored-Addresses.html
-
-https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/varasm.c;h=cd9591a45617464946dcf9a126dde277d9de9804;hb=9fb89fa845c1b2e0a18d85ada0b077c84508ab78#l7473
-
-This was verified by compiling the kernel with -fno-section-anchors
-and observing that the ".LANCHOR1" ELF local symbol disappeared, and
-modpost no longer warned about the section mismatch.  The serial
-driver code idiom triggering the warning is standard Linux serial
-driver practice that has a specific whitelist inclusion in modpost.c.
-
-I'm neither a modpost nor an ELF expert, but naively, it doesn't seem
-useful for modpost to report section mismatch warnings caused by ELF
-local symbols by default.  Local symbols have compiler-generated
-names, and thus bypass modpost's whitelisting algorithm, which relies
-on the presence of a non-autogenerated symbol name.  This increases
-the likelihood that false positive warnings will be generated (as in
-the above case).
-
-Thus, disable section mismatch reporting on ELF local symbols.  The
-rationale here is similar to that of commit 2e3a10a1551d ("ARM: avoid
-ARM binutils leaking ELF local symbols") and of similar code already
-present in modpost.c:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/mod/modpost.c?h=v4.19-rc4&id=7876320f88802b22d4e2daf7eb027dd14175a0f8#n1256
-
-This third version of the patch implements a suggestion from Masahiro
-Yamada <yamada.masahiro@socionext.com> to restructure the code as an
-additional pattern matching step inside secref_whitelist(), and
-further improves the patch description.
-
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Signed-off-by: Paul Walmsley <paul@pwsan.com>
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reported-by: Sergey Yanovich <ynvich@gmail.com>
+Link: https://patchwork.kernel.org/patch/8375421/
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/mod/modpost.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/pxa27x.dtsi | 2 +-
+ arch/arm/boot/dts/pxa2xx.dtsi | 7 -------
+ arch/arm/boot/dts/pxa3xx.dtsi | 2 +-
+ 3 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index c22041a4fc360..b6eb929899c55 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1174,6 +1174,14 @@ static const struct sectioncheck *section_mismatch(
-  *   fromsec = text section
-  *   refsymname = *.constprop.*
-  *
-+ * Pattern 6:
-+ *   Hide section mismatch warnings for ELF local symbols.  The goal
-+ *   is to eliminate false positive modpost warnings caused by
-+ *   compiler-generated ELF local symbol names such as ".LANCHOR1".
-+ *   Autogenerated symbol names bypass modpost's "Pattern 2"
-+ *   whitelisting, which relies on pattern-matching against symbol
-+ *   names to work.  (One situation where gcc can autogenerate ELF
-+ *   local symbols is when "-fsection-anchors" is used.)
-  **/
- static int secref_whitelist(const struct sectioncheck *mismatch,
- 			    const char *fromsec, const char *fromsym,
-@@ -1212,6 +1220,10 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
- 	    match(fromsym, optim_symbols))
- 		return 0;
+diff --git a/arch/arm/boot/dts/pxa27x.dtsi b/arch/arm/boot/dts/pxa27x.dtsi
+index 3228ad5fb725f..ccbecad9c5c7c 100644
+--- a/arch/arm/boot/dts/pxa27x.dtsi
++++ b/arch/arm/boot/dts/pxa27x.dtsi
+@@ -35,7 +35,7 @@
+ 			clocks = <&clks CLK_NONE>;
+ 		};
  
-+	/* Check for pattern 6 */
-+	if (strstarts(fromsym, ".L"))
-+		return 0;
-+
- 	return 1;
- }
+-		pxa27x_ohci: usb@4c000000 {
++		usb0: usb@4c000000 {
+ 			compatible = "marvell,pxa-ohci";
+ 			reg = <0x4c000000 0x10000>;
+ 			interrupts = <3>;
+diff --git a/arch/arm/boot/dts/pxa2xx.dtsi b/arch/arm/boot/dts/pxa2xx.dtsi
+index e4ebcde17837c..a03bca81ae8a6 100644
+--- a/arch/arm/boot/dts/pxa2xx.dtsi
++++ b/arch/arm/boot/dts/pxa2xx.dtsi
+@@ -117,13 +117,6 @@
+ 			status = "disabled";
+ 		};
  
+-		usb0: ohci@4c000000 {
+-			compatible = "marvell,pxa-ohci";
+-			reg = <0x4c000000 0x10000>;
+-			interrupts = <3>;
+-			status = "disabled";
+-		};
+-
+ 		mmc0: mmc@41100000 {
+ 			compatible = "marvell,pxa-mmc";
+ 			reg = <0x41100000 0x1000>;
+diff --git a/arch/arm/boot/dts/pxa3xx.dtsi b/arch/arm/boot/dts/pxa3xx.dtsi
+index 55c75b67351cb..affa5b6f6da14 100644
+--- a/arch/arm/boot/dts/pxa3xx.dtsi
++++ b/arch/arm/boot/dts/pxa3xx.dtsi
+@@ -189,7 +189,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		pxa3xx_ohci: usb@4c000000 {
++		usb0: usb@4c000000 {
+ 			compatible = "marvell,pxa-ohci";
+ 			reg = <0x4c000000 0x10000>;
+ 			interrupts = <3>;
 -- 
 2.20.1
 
