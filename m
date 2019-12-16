@@ -2,34 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A681212EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:57:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B40DA1212ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:57:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbfLPR5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:57:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55784 "EHLO mail.kernel.org"
+        id S1728413AbfLPR5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:57:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728009AbfLPR5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:57:10 -0500
+        id S1728401AbfLPR5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:57:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A9E8206B7;
-        Mon, 16 Dec 2019 17:57:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 940FB206B7;
+        Mon, 16 Dec 2019 17:57:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519029;
-        bh=pMddC1IxYZNUa4z6kDPSLVuBkG4EzoSj4SwhIGjUhYw=;
+        s=default; t=1576519032;
+        bh=3TWcu9/vsPKBynX4OuH3lh8x9lLJu48NKdQdI7KMP8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qP16DsmTROmIJmt3r3mc2NHFcamp5t3oFIVKij9+DHd6fq2xfvztiSqWwzHPPaog/
-         kW944q8ZLzhFFo++lt00Uatd+VdPxpAPEgnB8qqMRQ/aIOaq8Ql21JjegOiB1DmDeH
-         wSJI75lihWlF13+QVfooZFPlIafHjHt1adh7EqBw=
+        b=M+5Xo9svKYeExvZIFuAZ10KaWy1BOzspDNcGOl7IEGgyq4rjS4h5+9PPFikkP2hxf
+         W+ntJw293ti6xraiw6gPbRRT+QlejnN6IowbZOl4G7Euis3AG+gBPGDDzIXpCjWJEm
+         FzYUfO5CZg4KCtLOaHsUPM29LG0kE8cflbE6s2f8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 166/267] staging: rtl8712: fix interface sanity check
-Date:   Mon, 16 Dec 2019 18:48:12 +0100
-Message-Id: <20191216174911.597459384@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+35b1c403a14f5c89eba7@syzkaller.appspotmail.com,
+        Hansjoerg Lipp <hjlipp@web.de>,
+        Tilman Schmidt <tilman@imap.cc>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 167/267] staging: gigaset: fix general protection fault on probe
+Date:   Mon, 16 Dec 2019 18:48:13 +0100
+Message-Id: <20191216174911.652179597@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,34 +48,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit c724f776f048538ecfdf53a52b7a522309f5c504 upstream.
+commit 53f35a39c3860baac1e5ca80bf052751cfb24a99 upstream.
 
-Make sure to use the current alternate setting when verifying the
-interface descriptors to avoid binding to an invalid interface.
+Fix a general protection fault when accessing the endpoint descriptors
+which could be triggered by a malicious device due to missing sanity
+checks on the number of endpoints.
 
-Failing to do so could cause the driver to misbehave or trigger a WARN()
-in usb_submit_urb() that kernels with panic_on_warn set would choke on.
-
-Fixes: 2865d42c78a9 ("staging: r8712u: Add the new driver to the mainline kernel")
-Cc: stable <stable@vger.kernel.org>     # 2.6.37
+Reported-by: syzbot+35b1c403a14f5c89eba7@syzkaller.appspotmail.com
+Fixes: 07dc1f9f2f80 ("[PATCH] isdn4linux: Siemens Gigaset drivers - M105 USB DECT adapter")
+Cc: stable <stable@vger.kernel.org>     # 2.6.17
+Cc: Hansjoerg Lipp <hjlipp@web.de>
+Cc: Tilman Schmidt <tilman@imap.cc>
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191210114751.5119-3-johan@kernel.org
+Link: https://lore.kernel.org/r/20191202085610.12719-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8712/usb_intf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/isdn/gigaset/usb-gigaset.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/staging/rtl8712/usb_intf.c
-+++ b/drivers/staging/rtl8712/usb_intf.c
-@@ -275,7 +275,7 @@ static uint r8712_usb_dvobj_init(struct
+--- a/drivers/isdn/gigaset/usb-gigaset.c
++++ b/drivers/isdn/gigaset/usb-gigaset.c
+@@ -688,6 +688,11 @@ static int gigaset_probe(struct usb_inte
+ 		return -ENODEV;
+ 	}
  
- 	pdvobjpriv->padapter = padapter;
- 	padapter->EepromAddressSize = 6;
--	phost_iface = &pintf->altsetting[0];
-+	phost_iface = pintf->cur_altsetting;
- 	piface_desc = &phost_iface->desc;
- 	pdvobjpriv->nr_endpoint = piface_desc->bNumEndpoints;
- 	if (pusbd->speed == USB_SPEED_HIGH) {
++	if (hostif->desc.bNumEndpoints < 2) {
++		dev_err(&interface->dev, "missing endpoints\n");
++		return -ENODEV;
++	}
++
+ 	dev_info(&udev->dev, "%s: Device matched ... !\n", __func__);
+ 
+ 	/* allocate memory for our device state and initialize it */
 
 
