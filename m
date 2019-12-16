@@ -2,78 +2,368 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 407951200F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:25:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 468991200FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:27:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbfLPJY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 04:24:28 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52367 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbfLPJY2 (ORCPT
+        id S1727039AbfLPJ0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 04:26:17 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:63420 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727007AbfLPJ0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 04:24:28 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1igmc2-0007UI-5I; Mon, 16 Dec 2019 10:24:22 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1igmc1-0007rp-8f; Mon, 16 Dec 2019 10:24:21 +0100
-Date:   Mon, 16 Dec 2019 10:24:21 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     linux-pwm@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        kernel@pengutronix.de
-Subject: Re: [PATCH v4] gpio: pca953x: Add Maxim MAX7313 PWM support
-Message-ID: <20191216092421.qjifzrdggu7jgqj3@pengutronix.de>
-References: <20191129191023.2209-1-miquel.raynal@bootlin.com>
- <20191212211434.455trhnlcvn26zl6@pengutronix.de>
- <20191216093955.177a04af@xps13>
- <20191216085424.x6fqr4gxkph5zqjh@pengutronix.de>
- <20191216101416.339d873f@xps13>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191216101416.339d873f@xps13>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 16 Dec 2019 04:26:16 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576488375; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=uTGnsX9HMG9dubiHjOyToucnTgvVizTCl+f2DfPpes4=; b=n73749cbLeaOY1Z8/zBECxfQtL4KRtSIA9pK8CNUYphfbyiTIr5OI9uRpkXsgXmK6JpQNHDP
+ YwyI2mZtG2eAElbhdvZhPSpkGvO+uDHXVxbsi5r5UzVhwPDMQtX2Jkt6Vy+mDu1YP6/EvXZe
+ rrenBXjChPTGyNXU8L2z4H9/cEQ=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df74daf.7f07ab4a10a0-smtp-out-n03;
+ Mon, 16 Dec 2019 09:26:07 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 407B6C4479D; Mon, 16 Dec 2019 09:26:06 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from akashast-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: akashast)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DE948C43383;
+        Mon, 16 Dec 2019 09:26:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE948C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=akashast@codeaurora.org
+From:   Akash Asthana <akashast@codeaurora.org>
+To:     robh+dt@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
+        mark.rutland@arm.com
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mgautam@codeaurora.org,
+        swboyd@chromium.org, Akash Asthana <akashast@codeaurora.org>
+Subject: [PATCH] dt-bindings: geni-se: Convert QUP geni-se bindings to YAML
+Date:   Mon, 16 Dec 2019 14:55:51 +0530
+Message-Id: <1576488351-22396-1-git-send-email-akashast@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miquèl
+Convert QUP geni-se bindings to DT schema format using json-schema.
 
-On Mon, Dec 16, 2019 at 10:14:16AM +0100, Miquel Raynal wrote:
-> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote on Mon, 16 Dec
-> 2019 09:54:24 +0100:
-> > intensity = DIV_ROUND_DOWN_ULL((unsigned long long)state->duty_cycle * PWM_DC_STATES, state->period);
-> > 
-> > should be both more exact and cheaper to calculate. (But this is
-> > somewhat moot given that state->period shouldn't be there.)
-> > (And in general you have to care for overflowing, but I think that's not
-> > a problem in practise here as struct pwm_state::duty_cycle is an int
-> > (still), and PWM_DC_STATES is small.)
-> 
-> Do you plan to change duty_cycle type?
+Signed-off-by: Akash Asthana <akashast@codeaurora.org>
+---
+ .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  |  94 ----------
+ .../devicetree/bindings/soc/qcom/qcom,geni-se.yaml | 196 +++++++++++++++++++++
+ 2 files changed, 196 insertions(+), 94 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
 
-I don't, but https://patchwork.ozlabs.org/patch/1195481/
-
-Best regards
-Uwe
-
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+deleted file mode 100644
+index dab7ca9..0000000
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
++++ /dev/null
+@@ -1,94 +0,0 @@
+-Qualcomm Technologies, Inc. GENI Serial Engine QUP Wrapper Controller
+-
+-Generic Interface (GENI) based Qualcomm Universal Peripheral (QUP) wrapper
+-is a programmable module for supporting a wide range of serial interfaces
+-like UART, SPI, I2C, I3C, etc. A single QUP module can provide upto 8 Serial
+-Interfaces, using its internal Serial Engines. The GENI Serial Engine QUP
+-Wrapper controller is modeled as a node with zero or more child nodes each
+-representing a serial engine.
+-
+-Required properties:
+-- compatible:		Must be "qcom,geni-se-qup".
+-- reg:			Must contain QUP register address and length.
+-- clock-names:		Must contain "m-ahb" and "s-ahb".
+-- clocks:		AHB clocks needed by the device.
+-
+-Required properties if child node exists:
+-- #address-cells: 	Must be <1> for Serial Engine Address
+-- #size-cells: 		Must be <1> for Serial Engine Address Size
+-- ranges: 		Must be present
+-
+-Properties for children:
+-
+-A GENI based QUP wrapper controller node can contain 0 or more child nodes
+-representing serial devices.  These serial devices can be a QCOM UART, I2C
+-controller, SPI controller, or some combination of aforementioned devices.
+-Please refer below the child node definitions for the supported serial
+-interface protocols.
+-
+-Qualcomm Technologies Inc. GENI Serial Engine based I2C Controller
+-
+-Required properties:
+-- compatible:		Must be "qcom,geni-i2c".
+-- reg: 			Must contain QUP register address and length.
+-- interrupts: 		Must contain I2C interrupt.
+-- clock-names: 		Must contain "se".
+-- clocks: 		Serial engine core clock needed by the device.
+-- #address-cells:	Must be <1> for I2C device address.
+-- #size-cells:		Must be <0> as I2C addresses have no size component.
+-
+-Optional property:
+-- clock-frequency:	Desired I2C bus clock frequency in Hz.
+-			When missing default to 100000Hz.
+-
+-Child nodes should conform to I2C bus binding as described in i2c.txt.
+-
+-Qualcomm Technologies Inc. GENI Serial Engine based UART Controller
+-
+-Required properties:
+-- compatible:		Must be "qcom,geni-debug-uart" or "qcom,geni-uart".
+-- reg: 			Must contain UART register location and length.
+-- interrupts: 		Must contain UART core interrupts.
+-- clock-names:		Must contain "se".
+-- clocks:		Serial engine core clock needed by the device.
+-
+-Qualcomm Technologies Inc. GENI Serial Engine based SPI Controller
+-node binding is described in
+-Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.txt.
+-
+-Example:
+-	geniqup@8c0000 {
+-		compatible = "qcom,geni-se-qup";
+-		reg = <0x8c0000 0x6000>;
+-		clock-names = "m-ahb", "s-ahb";
+-		clocks = <&clock_gcc GCC_QUPV3_WRAP_0_M_AHB_CLK>,
+-			<&clock_gcc GCC_QUPV3_WRAP_0_S_AHB_CLK>;
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges;
+-
+-		i2c0: i2c@a94000 {
+-			compatible = "qcom,geni-i2c";
+-			reg = <0xa94000 0x4000>;
+-			interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
+-			clock-names = "se";
+-			clocks = <&clock_gcc GCC_QUPV3_WRAP0_S5_CLK>;
+-			pinctrl-names = "default", "sleep";
+-			pinctrl-0 = <&qup_1_i2c_5_active>;
+-			pinctrl-1 = <&qup_1_i2c_5_sleep>;
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-		};
+-
+-		uart0: serial@a88000 {
+-			compatible = "qcom,geni-debug-uart";
+-			reg = <0xa88000 0x7000>;
+-			interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
+-			clock-names = "se";
+-			clocks = <&clock_gcc GCC_QUPV3_WRAP0_S0_CLK>;
+-			pinctrl-names = "default", "sleep";
+-			pinctrl-0 = <&qup_1_uart_3_active>;
+-			pinctrl-1 = <&qup_1_uart_3_sleep>;
+-		};
+-
+-	}
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
+new file mode 100644
+index 0000000..2c3b911
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
+@@ -0,0 +1,196 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: GENI Serial Engine QUP Wrapper Controller
++
++maintainers:
++ - Mukesh Savaliya <msavaliy@codeaurora.org>
++ - Akash Asthana <akashast@codeaurora.org>
++
++description: |
++ Generic Interface (GENI) based Qualcomm Universal Peripheral (QUP) wrapper
++ is a programmable module for supporting a wide range of serial interfaces
++ like UART, SPI, I2C, I3C, etc. A single QUP module can provide upto 8 Serial
++ Interfaces, using its internal Serial Engines. The GENI Serial Engine QUP
++ Wrapper controller is modeled as a node with zero or more child nodes each
++ representing a serial engine.
++
++properties:
++  compatible:
++    enum:
++      - qcom,geni-se-qup
++
++  reg:
++    description: QUP wrapper common register address and length.
++
++  clock-names:
++    items:
++      - const: m-ahb
++      - const: s-ahb
++
++  clocks:
++    minItems: 2
++    maxItems: 2
++    items:
++      - description: Master AHB Clock
++      - description: Slave AHB Clock
++
++  "#address-cells":
++     const: 2
++
++  "#size-cells":
++     const: 2
++
++  ranges: true
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#address-cells"
++  - "#size-cells"
++  - ranges
++
++patternProperties:
++  "[i2c|spi]@[0-9]+$":
++    type: object
++    description: GENI Serial Engine based I2C and SPI Controller.
++                 SPI in master mode supports up to 50MHz, up to four chip
++                 selects, programmable data path from 4 bits to 32 bits and
++                 numerous protocol variants.
++
++    properties:
++      compatible:
++        enum:
++          - qcom,geni-i2c
++          - qcom,geni-spi
++
++      reg:
++        description: GENI Serial Engine register address and length.
++
++      interrupts:
++        maxItems: 1
++
++      clock-names:
++        const: se
++
++      clocks:
++        description: Serial engine core clock needed by the device.
++        maxItems: 1
++
++      "#address-cells":
++         const: 1
++
++      "#size-cells":
++         const: 0
++
++      clock-frequency:
++        description: Desired I2C bus clock frequency in Hz.
++        default: 100000
++
++    required:
++      - compatible
++      - reg
++      - interrupts
++      - clock-names
++      - clocks
++      - "#address-cells"
++      - "#size-cells"
++
++  "serial@[0-9]+$":
++    type: object
++    description: GENI Serial Engine based UART Controller.
++
++    properties:
++      compatible:
++        enum:
++          - qcom,geni-uart
++          - qcom,geni-debug-uart
++
++      reg:
++        description: GENI Serial Engine register address and length.
++
++      interrupts:
++        description: Contains UART core and wakeup interrupts for wakeup
++                     capable UART devices. We configure wakeup interrupt
++                     on UART RX line using TLMM interrupt controller.
++        maxItems: 2
++
++      clock-names:
++        const: se
++
++      clocks:
++        description: Serial engine core clock needed by the device.
++        maxItems: 1
++
++    required:
++      - compatible
++      - reg
++      - interrupts
++      - clock-names
++      - clocks
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,gcc-sdm845.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    soc: soc@0 {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        qupv3_id_0: geniqup@8c0000 {
++            compatible = "qcom,geni-se-qup";
++            reg = <0 0x008c0000 0 0x6000>;
++            clocks = <&gcc GCC_QUPV3_WRAP_0_M_AHB_CLK>,
++                <&gcc GCC_QUPV3_WRAP_0_S_AHB_CLK>;
++            #address-cells = <2>;
++            #size-cells = <2>;
++            ranges;
++            status = "disabled";
++
++            i2c0: i2c@880000 {
++                compatible = "qcom,geni-i2c";
++                reg = <0 0x00880000 0 0x4000>;
++                clock-names = "se";
++                clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
++                pinctrl-names = "default";
++                pinctrl-0 = <&qup_i2c0_default>;
++                interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>;
++                #address-cells = <1>;
++                #size-cells = <0>;
++                status = "disabled";
++            };
++
++            spi0: spi@880000 {
++                compatible = "qcom,geni-spi";
++                reg = <0 0x00880000 0 0x4000>;
++                clock-names = "se";
++                clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
++                pinctrl-names = "default";
++                pinctrl-0 = <&qup_spi0_default>;
++                interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>;
++                #address-cells = <1>;
++                #size-cells = <0>;
++                status = "disabled";
++            };
++
++            uart0: serial@880000 {
++                compatible = "qcom,geni-uart";
++                reg = <0 0x00880000 0 0x4000>;
++                clock-names = "se";
++                clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
++                pinctrl-names = "default";
++                pinctrl-0 = <&qup_uart0_default>;
++                interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>;
++                status = "disabled";
++            };
++        };
++    };
++
++...
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
