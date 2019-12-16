@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C0F4121400
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:08:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 259BA1214C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:14:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbfLPSHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:07:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47768 "EHLO mail.kernel.org"
+        id S1731241AbfLPSOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:14:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729910AbfLPSHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:07:03 -0500
+        id S1729861AbfLPSOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:14:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDCAD2072D;
-        Mon, 16 Dec 2019 18:07:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0B7C218AC;
+        Mon, 16 Dec 2019 18:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519623;
-        bh=BpIGkf7iuxgSZhgg6xR7ks/6NmXixohDVYBsKO+T/yY=;
+        s=default; t=1576520069;
+        bh=jNhiLWgNNvfGJzQsvErs2H3K0hHtqiAErRcw42j8ADk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YR48d6AGJfbxYsudKtBjXboAkLKxhIrYKXG00PO75bXMvp+a2wxrUcLic/vK59wpj
-         MF4jrpHWdEYROIJTQ409smeWueKQB3mJ/3q87y1D1vyC+Znl14MygwQJ74HDIvmze+
-         QyveF8tYV1w1EgTFt188EEeUPwTquoulWB9Sj69Q=
+        b=UaKvGUp8Y1saCwj+mf0xKAzJZDydPaGqvrxIsmjFTInAqA1FLGqAsom878MfmcQNc
+         mdumRZigI+37Uc8XPFD+e096O+9P+bGGHobIONizw6vhO8C5Cy0kCl/TPyEkj97o7e
+         3nxlPhzK20oMWMhojNRAdludGkCPjUaNVqiRIxw8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com,
-        =?UTF-8?q?Andreas=20Gr=C3=BCnbacher?= 
-        <andreas.gruenbacher@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: [PATCH 4.19 135/140] splice: only read in as much information as there is pipe buffer space
+        stable@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 163/180] iio: imu: st_lsm6dsx: fix ODR check in st_lsm6dsx_write_raw
 Date:   Mon, 16 Dec 2019 18:50:03 +0100
-Message-Id: <20191216174829.190526167@linuxfoundation.org>
+Message-Id: <20191216174846.581369267@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,63 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+From: Lorenzo Bianconi <lorenzo@kernel.org>
 
-commit 3253d9d093376d62b4a56e609f15d2ec5085ac73 upstream.
+[ Upstream commit fc3f6ad7f5dc6c899fbda0255865737bac88c2e0 ]
 
-Andreas Grünbacher reports that on the two filesystems that support
-iomap directio, it's possible for splice() to return -EAGAIN (instead of
-a short splice) if the pipe being written to has less space available in
-its pipe buffers than the length supplied by the calling process.
+Since st_lsm6dsx i2c master controller relies on accel device as trigger
+and slave devices can run at different ODRs we must select an accel_odr >=
+slave_odr. Report real accel ODR in st_lsm6dsx_check_odr() in order to
+properly set sensor frequency in st_lsm6dsx_write_raw and avoid to
+report unsupported frequency
 
-Months ago we fixed splice_direct_to_actor to clamp the length of the
-read request to the size of the splice pipe.  Do the same to do_splice.
-
-Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
-Reported-by: syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com
-Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-Reviewed-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 6ffb55e5009ff ("iio: imu: st_lsm6dsx: introduce ST_LSM6DSX_ID_EXT sensor ids")
+Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/splice.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -949,12 +949,13 @@ ssize_t splice_direct_to_actor(struct fi
- 	WARN_ON_ONCE(pipe->nrbufs != 0);
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+index 41341cf2d9821..ba89cbbb73ae3 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+@@ -705,8 +705,7 @@ int st_lsm6dsx_check_odr(struct st_lsm6dsx_sensor *sensor, u16 odr, u8 *val)
+ 		return -EINVAL;
  
- 	while (len) {
-+		unsigned int pipe_pages;
- 		size_t read_len;
- 		loff_t pos = sd->pos, prev_pos = pos;
+ 	*val = odr_table->odr_avl[i].val;
+-
+-	return 0;
++	return odr_table->odr_avl[i].hz;
+ }
  
- 		/* Don't try to read more the pipe has space for. */
--		read_len = min_t(size_t, len,
--				 (pipe->buffers - pipe->nrbufs) << PAGE_SHIFT);
-+		pipe_pages = pipe->buffers - pipe->nrbufs;
-+		read_len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
- 		ret = do_splice_to(in, &pos, pipe, read_len, flags);
- 		if (unlikely(ret <= 0))
- 			goto out_release;
-@@ -1175,8 +1176,15 @@ static long do_splice(struct file *in, l
+ static u16 st_lsm6dsx_check_odr_dependency(struct st_lsm6dsx_hw *hw, u16 odr,
+@@ -869,8 +868,10 @@ static int st_lsm6dsx_write_raw(struct iio_dev *iio_dev,
+ 	case IIO_CHAN_INFO_SAMP_FREQ: {
+ 		u8 data;
  
- 		pipe_lock(opipe);
- 		ret = wait_for_space(opipe, flags);
--		if (!ret)
-+		if (!ret) {
-+			unsigned int pipe_pages;
-+
-+			/* Don't try to read more the pipe has space for. */
-+			pipe_pages = opipe->buffers - opipe->nrbufs;
-+			len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
-+
- 			ret = do_splice_to(in, &offset, opipe, len, flags);
-+		}
- 		pipe_unlock(opipe);
- 		if (ret > 0)
- 			wakeup_pipe_readers(opipe);
+-		err = st_lsm6dsx_check_odr(sensor, val, &data);
+-		if (!err)
++		val = st_lsm6dsx_check_odr(sensor, val, &data);
++		if (val < 0)
++			err = val;
++		else
+ 			sensor->odr = val;
+ 		break;
+ 	}
+-- 
+2.20.1
+
 
 
