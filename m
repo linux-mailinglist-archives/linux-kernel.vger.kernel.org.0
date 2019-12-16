@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1D5B12128F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:53:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFB18121291
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:54:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbfLPRxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:53:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48534 "EHLO mail.kernel.org"
+        id S1727835AbfLPRxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:53:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727815AbfLPRxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:53:48 -0500
+        id S1727826AbfLPRxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:53:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83D90206D3;
-        Mon, 16 Dec 2019 17:53:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E430120733;
+        Mon, 16 Dec 2019 17:53:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518828;
-        bh=YuhEBZJyMt+Lfrvbqcx6l9FpzFwOKU9CEJ0Qd0iJNmM=;
+        s=default; t=1576518830;
+        bh=l+iuQlcezMBd/7Et/nhWonLvMUief6HtBQvhF9FLr0A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PT4YcMc8H8DzLIZXSiFhNW8eewErzIOgn7vASoklM0IBCNBTcSK3urEdBrqWt8VpU
-         p0+O8oWNHQf2u5mk9mpeASQuAkIF7ezlhJI0MIJwSEBJ8g7ZjYUUOA8UpVKebquVOZ
-         TMUInt7HkS975mQsMiMzqweySElj6mpSlCSe6uJw=
+        b=JPNLy/OetpZOBSW3Mp+SXbO8+yzYq4DJ7/4y56fJGTL9EAPcEyFDQDP9BKHEcwj2U
+         PBbDXaD3EEMtjAPQjhDr++R+6I7jd5eu6QrA5a6ubM+jG8sb37q266xO8fZNfo+30n
+         lBZAM15hPHdYNfmDkfqWt1+4tYCAgNNdh8CMO4h8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 083/267] ARM: OMAP1/2: fix SoC name printing
-Date:   Mon, 16 Dec 2019 18:46:49 +0100
-Message-Id: <20191216174857.514249153@linuxfoundation.org>
+Subject: [PATCH 4.14 084/267] arm64: dts: meson-gxl-libretech-cc: fix GPIO lines names
+Date:   Mon, 16 Dec 2019 18:46:50 +0100
+Message-Id: <20191216174857.585681299@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,61 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-[ Upstream commit 04a92358b3964988c78dfe370a559ae550383886 ]
+[ Upstream commit 11fa9774612decea87144d7f950a9c53a4fe3050 ]
 
-Currently we get extra newlines on OMAP1/2 when the SoC name is printed:
+The gpio line names were set in the pinctrl node instead of the gpio node,
+at the time it was merged, it worked, but was obviously wrong.
+This patch moves the properties to the gpio nodes.
 
-[    0.000000] OMAP1510
-[    0.000000]  revision 2 handled as 15xx id: bc058c9b93111a16
-
-[    0.000000] OMAP2420
-[    0.000000]
-
-Fix by using pr_cont.
-
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: 47884c5c746e ("ARM64: dts: meson-gxl-libretech-cc: Add GPIO lines names")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap1/id.c | 6 +++---
- arch/arm/mach-omap2/id.c | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-omap1/id.c b/arch/arm/mach-omap1/id.c
-index 52de382fc8047..7e49dfda3d2f4 100644
---- a/arch/arm/mach-omap1/id.c
-+++ b/arch/arm/mach-omap1/id.c
-@@ -200,10 +200,10 @@ void __init omap_check_revision(void)
- 		printk(KERN_INFO "Unknown OMAP cpu type: 0x%02x\n", cpu_type);
- 	}
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index 0814b6b29b86a..e2c71753e3278 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -139,7 +139,7 @@
+ 	};
+ };
  
--	printk(KERN_INFO "OMAP%04x", omap_revision >> 16);
-+	pr_info("OMAP%04x", omap_revision >> 16);
- 	if ((omap_revision >> 8) & 0xff)
--		printk(KERN_INFO "%x", (omap_revision >> 8) & 0xff);
--	printk(KERN_INFO " revision %i handled as %02xxx id: %08x%08x\n",
-+		pr_cont("%x", (omap_revision >> 8) & 0xff);
-+	pr_cont(" revision %i handled as %02xxx id: %08x%08x\n",
- 	       die_rev, omap_revision & 0xff, system_serial_low,
- 	       system_serial_high);
- }
-diff --git a/arch/arm/mach-omap2/id.c b/arch/arm/mach-omap2/id.c
-index 16cb1c195fd8e..79d71b1eae594 100644
---- a/arch/arm/mach-omap2/id.c
-+++ b/arch/arm/mach-omap2/id.c
-@@ -199,8 +199,8 @@ void __init omap2xxx_check_revision(void)
+-&pinctrl_aobus {
++&gpio_ao {
+ 	gpio-line-names = "UART TX",
+ 			  "UART RX",
+ 			  "Blue LED",
+@@ -152,7 +152,7 @@
+ 			  "7J1 Header Pin13";
+ };
  
- 	pr_info("%s", soc_name);
- 	if ((omap_rev() >> 8) & 0x0f)
--		pr_info("%s", soc_rev);
--	pr_info("\n");
-+		pr_cont("%s", soc_rev);
-+	pr_cont("\n");
- }
- 
- #define OMAP3_SHOW_FEATURE(feat)		\
+-&pinctrl_periphs {
++&gpio {
+ 	gpio-line-names = /* Bank GPIOZ */
+ 			  "", "", "", "", "", "", "",
+ 			  "", "", "", "", "", "", "",
 -- 
 2.20.1
 
