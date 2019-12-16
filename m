@@ -2,114 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 874191200F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:26:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69F73120102
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:27:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfLPJ0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 04:26:05 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45734 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbfLPJ0E (ORCPT
+        id S1727089AbfLPJ1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 04:27:23 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:53732 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726313AbfLPJ1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 04:26:04 -0500
-Received: by mail-lj1-f195.google.com with SMTP id d20so5954458ljc.12;
-        Mon, 16 Dec 2019 01:26:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=eHc/7A2caZDhQBjoUT0EKqLg4aWV7NiZT6Jvfet3oeo=;
-        b=ggFyP2/pULJ/iiAP04glRh9PTS/tfPk5TuxVxeIY1s8n+v8g6S3HBTB4oXpVXJzWeg
-         em9brWrXIP95010KBsvsbCVD3ua26Nc0d5PIYe66so5T8ImJJyEQB/Hs0vP8lkarmmbr
-         OYGZcSwHPeyBmBFszW8oaglBKVHoY6VXfdrkTEk3YQgKA6n+rgbb48hba3H2pruaW4bL
-         1Q/Y0M8zj/n3Xc1ov7izM2OLluU5dALSqMds7HD7l+63hdZUP1RdH8++DG6OPf1Khc+X
-         tMTFoZfvFD7zy3lVH2YcYdcAuWq6j+58h3irlufxDRyz3AWfFfmTlsMtPabVSKcn9cH+
-         Eo2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=eHc/7A2caZDhQBjoUT0EKqLg4aWV7NiZT6Jvfet3oeo=;
-        b=OBhPz6SolPQdU/LAD073jl8EHmUvffciQ/vZRbuyf6OZ9KydfWa9JeHtTkFyJLj5fw
-         lc5lG2k8qFaRljNYWpv+VRMmKtpVpiZenhQTqG0VE3AxC3bycSQx+Zv8zURZAkBFCWHU
-         b8ZubNxathcB8Nc9Mu4lPijih1dvqkclPmPKlIw5nSHVoa0vFicyKudPN47fgaKJ7wGW
-         Rd4tY4MSdBEMivBGRws6j3vQg4GHbkkLU5F+XTVC+ixtYkortuKGOO4FDC8evf0zl90Q
-         UKkXrw83vBnbZYZhlb/EZqqMM9OTjGF4WYPL6m/mfa9rPToJpzeLBjVP86O5DYdB/RDX
-         vpWg==
-X-Gm-Message-State: APjAAAU/P/rfqQvoEG6mTWH8KdYSVn2FpTV6sKws6PTecS6gu3cmIN1+
-        tBiBcNL9rRkMTfnOsRua0zgwz7IRnxSes852SNQ=
-X-Google-Smtp-Source: APXvYqzN4C2wQu8qUMf+pbjDAwUrfVb3mkjJnfsQRGgnyXLnssYlkRAryAusa/rftZit09x9DkmOr9J1hnld0Mawfhw=
-X-Received: by 2002:a2e:824a:: with SMTP id j10mr19295811ljh.209.1576488362388;
- Mon, 16 Dec 2019 01:26:02 -0800 (PST)
+        Mon, 16 Dec 2019 04:27:22 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0Tl4L2qr_1576488436;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Tl4L2qr_1576488436)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 16 Dec 2019 17:27:17 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+To:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        shakeelb@google.com, hannes@cmpxchg.org
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>
+Subject: [PATCH v6 00/10] per lruvec lru_lock for memcg
+Date:   Mon, 16 Dec 2019 17:26:16 +0800
+Message-Id: <1576488386-32544-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-References: <20191127203114.766709977@linuxfoundation.org> <20191127203126.845809286@linuxfoundation.org>
- <aabbc521-b263-2d5f-efc6-72d500ab5c71@tomt.net> <CA+res+RtrAOfiVLeg1QE7V1Xjs6029y3tVmh0vfy+B71_bhsUw@mail.gmail.com>
- <4d8343e0-f38a-3e08-edf6-3346b3011ddf@tomt.net>
-In-Reply-To: <4d8343e0-f38a-3e08-edf6-3346b3011ddf@tomt.net>
-From:   Jack Wang <jack.wang.usish@gmail.com>
-Date:   Mon, 16 Dec 2019 10:25:51 +0100
-Message-ID: <CA+res+TE8VaDSOfX_wbnW0fxhUmwain83U6pVbT2pFYYuyuQMQ@mail.gmail.com>
-Subject: Re: [PATCH 4.19 153/306] block: fix the DISCARD request merge
- (4.19.87+ crash)
-To:     Andre Tomt <andre@tomt.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andre Tomt <andre@tomt.net> =E4=BA=8E2019=E5=B9=B412=E6=9C=8816=E6=97=A5=E5=
-=91=A8=E4=B8=80 =E4=B8=8A=E5=8D=8810:18=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 16.12.2019 08:42, Jack Wang wrote:
-> > Andre Tomt <andre@tomt.net> =E4=BA=8E2019=E5=B9=B412=E6=9C=8814=E6=97=
-=A5=E5=91=A8=E5=85=AD =E4=B8=8B=E5=8D=883:24=E5=86=99=E9=81=93=EF=BC=9A
-> >>
-> >> 4.19.87, 4.19.88, 4.19.89 all lock up frequently on some of my systems=
-.
-> >> The same systems run 5.4.3 fine, so the newer trees are probably OK.
-> >> Reverting this commit on top of 4.19.87 makes everything stable.
-> >>
-> >> To trigger it all I have to do is re-rsyncing a directory tree with so=
-me
-> >> changed files churn, it will usually crash in 10 to 30 minutes.
-> >>
-> >> The systems crashing has ext4 filesystem on a two ssd md raid1 mounted
-> >> with the mount option discard. If mounting it without discard, the
-> >> crashes no longer seem to occur.
-> >>
-> >> No oops/panic made it to the ipmi console. I suspect the console is ju=
-st
-> >> misbehaving and it didnt really livelock. At one point one line of the
-> >> crash made it to the console (kernel BUG at block/blk-core.c:1776), an=
-d
-> >> it was enough to pinpoint this commit. Note that the line number might
-> >> be off, as I was attempting a bisect at the time.
-> >>
-> >> This commit also made it to 4.14.x, but I have not tested it.
-> > Hi Andre,
-> >
-> > I noticed one fix is missing for discard merge in 4.19.y
-> > 2a5cf35cd6c5 ("block: fix single range discard merge")
-> >
-> > Can you try if it helps? just "git cherry-pick 2a5cf35cd6c5"
->
-> Indeed, adding this commit on top a clean 4.19.89 fixes the issue. So
-> far survived about an hour of rsyncing file churn.
->
-Glad to hear it!
+This patchset move lru_lock into lruvec, give a lru_lock for each of
+lruvec, thus bring a lru_lock for each of memcg per node.
 
-Greg, Sasha,
+We introduces function lock_page_lruvec, which will lock the page's
+memcg and then memcg's lruvec->lru_lock(Thanks Johannes Weiner,
+Hugh Dickins and Konstantin Khlebnikov suggestion/reminder) to replace
+old pgdat->lru_lock.
 
-Can you apply the fix 2a5cf35cd6c5 ("block: fix single range discard
-merge") for 4.19 tree.
+Following to Daniel Jordan's suggestion, I run 208 'dd' with on 104
+containers on a 2s * 26cores * HT box with a modefied case:
+  https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git/tree/case-lru-file-readtwice
 
-Regards,
-Jack Wang
+With this patchset, the readtwice performance increased about 80%
+with containers. And no performance drops w/o container. The previous
+suspicious slightly drop has gone in v5.5-rc version. And we even got another
+5% performance increase. Also the readtwice case performance increased from 5.4
+to 5.5-rc.
+
+Another way to guard move_account is by lru_lock instead of move_lock 
+Considering the memcg move task path:
+   mem_cgroup_move_task:
+     mem_cgroup_move_charge:
+	lru_add_drain_all();
+	atomic_inc(&mc.from->moving_account); //ask lruvec's move_lock
+	synchronize_rcu();
+	walk_parge_range: do charge_walk_ops(mem_cgroup_move_charge_pte_range):
+	   isolate_lru_page();
+	   mem_cgroup_move_account(page,)
+		spin_lock(&from->move_lock) 
+		page->mem_cgroup = to;
+		spin_unlock(&from->move_lock) 
+	   putback_lru_page(page)
+
+to guard 'page->mem_cgroup = to' by to_vec->lru_lock has the similar effect with
+move_lock. So for performance reason, both solutions are same.
+
+Thanks Hugh Dickins and Konstantin Khlebnikov, they both brought the same idea
+7 years ago.
+
+Thanks all the comments from Hugh Dickins, Konstantin Khlebnikov, Daniel Jordan, 
+Johannes Weiner, Mel Gorman, Shakeel Butt, Rong Chen, Fengguang Wu, Yun Wang etc.
+and some testing support from Intel 0days!
+
+v6, 
+  a, rebase on v5.5-rc2, and do retesting.
+  b, pick up Johanness' comments change and a lock_page_lru cleanup.
+
+v5,
+  a, locking page's memcg according JohannesW suggestion
+  b, using macro for non memcg, according to Johanness and Metthew's suggestion.
+
+v4: 
+  a, fix the page->mem_cgroup dereferencing issue, thanks Johannes Weiner
+  b, remove the irqsave flags changes, thanks Metthew Wilcox
+  c, merge/split patches for better understanding and bisection purpose
+
+v3: rebase on linux-next, and fold the relock fix patch into introduceing patch
+
+v2: bypass a performance regression bug and fix some function issues
+
+v1: initial version, aim testing show 5% performance increase
+
+
+
+Alex Shi (8):
+  mm/vmscan: remove unnecessary lruvec adding
+  mm/lru: replace pgdat lru_lock with lruvec lock
+  mm/lru: introduce the relock_page_lruvec function
+  mm/mlock: optimize munlock_pagevec by relocking
+  mm/swap: only change the lru_lock iff page's lruvec is different
+  mm/pgdat: remove pgdat lru_lock
+  mm/lru: debug checking for page memcg moving and lock_page_memcg
+  mm/memcg: fold lock in lock_page_lru
+
+Hugh Dickins (1):
+  mm/lru: revise the comments of lru_lock
+
+Johannes Weiner (1):
+  mm: revise the comments of mem_cgroup_page_lruvec
+
+ Documentation/admin-guide/cgroup-v1/memcg_test.rst | 15 +---
+ Documentation/admin-guide/cgroup-v1/memory.rst     |  6 +-
+ Documentation/trace/events-kmem.rst                |  2 +-
+ Documentation/vm/unevictable-lru.rst               | 22 ++---
+ include/linux/memcontrol.h                         | 63 ++++++++++++++
+ include/linux/mm_types.h                           |  2 +-
+ include/linux/mmzone.h                             |  5 +-
+ mm/compaction.c                                    | 59 ++++++++-----
+ mm/filemap.c                                       |  4 +-
+ mm/huge_memory.c                                   | 18 ++--
+ mm/memcontrol.c                                    | 95 +++++++++++++++++----
+ mm/mlock.c                                         | 28 +++----
+ mm/mmzone.c                                        |  1 +
+ mm/page_alloc.c                                    |  1 -
+ mm/page_idle.c                                     |  7 +-
+ mm/rmap.c                                          |  2 +-
+ mm/swap.c                                          | 75 +++++++----------
+ mm/vmscan.c                                        | 97 ++++++++++++----------
+ 18 files changed, 309 insertions(+), 193 deletions(-)
+
+-- 
+1.8.3.1
+
