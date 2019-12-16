@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F0C1121347
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32D7E1215C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:24:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbfLPSA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:00:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34432 "EHLO mail.kernel.org"
+        id S1731762AbfLPSTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:19:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728886AbfLPSAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:00:24 -0500
+        id S1731899AbfLPSTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:19:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7D2D20717;
-        Mon, 16 Dec 2019 18:00:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F09EF20717;
+        Mon, 16 Dec 2019 18:19:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519224;
-        bh=5IJM1pJA7ozEvkK9jLRtuFXCKoILH1YQJYX/K1ljbcQ=;
+        s=default; t=1576520349;
+        bh=LIdc/Ky4bIZV7jaCh27m9/rLPKNcEEgcB2fhg7yU7wM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tcU20dkGPbe7ne/JQne/VJMQx35yHXYmfgpuARvSnOjY5nShTevHDI2u2FAbKkqJL
-         aC0ubaRkdc+A8cr3wB8oNU14+PdwInn8wDgMhimSWCzUwv28WkMxqY1It7cnMBCUs0
-         MvTpkhsc6RMV/GyKmHn4gh5BxlhfpgYMww5TRWXM=
+        b=1pH4tfDBLnnirVJ2y4Z9E0bAJfpivF4IxDBiScONNVAgvG0BqgmdVdPp+8iOjZMqe
+         zXKhLPkPNZL2Jj5Y9J2IueORhQeymmSHvIjieUYNg2qPk36XzjaMXoumK90GpRJA7w
+         Cl8tOTJHShJlQUXlifiORKHTupC2GUzdDpOBLl+Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@denx.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 247/267] phy: renesas: rcar-gen3-usb2: Fix sysfs interface of "role"
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 5.4 117/177] PM / devfreq: Lock devfreq in trans_stat_show
 Date:   Mon, 16 Dec 2019 18:49:33 +0100
-Message-Id: <20191216174916.111718482@linuxfoundation.org>
+Message-Id: <20191216174842.825068854@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-[ Upstream commit 4bd5ead82d4b877ebe41daf95f28cda53205b039 ]
+commit 2abb0d5268ae7b5ddf82099b1f8d5aa8414637d4 upstream.
 
-Since the role_store() uses strncmp(), it's possible to refer
-out-of-memory if the sysfs data size is smaller than strlen("host").
-This patch fixes it by using sysfs_streq() instead of strncmp().
+There is no locking in this sysfs show function so stats printing can
+race with a devfreq_update_status called as part of freq switching or
+with initialization.
 
-Reported-by: Pavel Machek <pavel@denx.de>
-Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
-Cc: <stable@vger.kernel.org> # v4.10+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Pavel Machek <pavel@denx.de>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Also add an assert in devfreq_update_status to make it clear that lock
+must be held by caller.
+
+Fixes: 39688ce6facd ("PM / devfreq: account suspend/resume for stats")
+Cc: stable@vger.kernel.org
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/devfreq/devfreq.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 7f5e36bfeee8d..f8c7ce89d8d73 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -22,6 +22,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/string.h>
- #include <linux/workqueue.h>
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -160,6 +160,7 @@ int devfreq_update_status(struct devfreq
+ 	int lev, prev_lev, ret = 0;
+ 	unsigned long cur_time;
  
- /******* USB2.0 Host registers (original offset is +0x200) *******/
-@@ -234,9 +235,9 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 	 */
- 	is_b_device = rcar_gen3_check_id(ch);
- 	is_host = rcar_gen3_is_host(ch);
--	if (!strncmp(buf, "host", strlen("host")))
-+	if (sysfs_streq(buf, "host"))
- 		new_mode_is_host = true;
--	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
-+	else if (sysfs_streq(buf, "peripheral"))
- 		new_mode_is_host = false;
- 	else
- 		return -EINVAL;
--- 
-2.20.1
-
++	lockdep_assert_held(&devfreq->lock);
+ 	cur_time = jiffies;
+ 
+ 	/* Immediately exit if previous_freq is not initialized yet. */
+@@ -1397,12 +1398,17 @@ static ssize_t trans_stat_show(struct de
+ 	int i, j;
+ 	unsigned int max_state = devfreq->profile->max_state;
+ 
+-	if (!devfreq->stop_polling &&
+-			devfreq_update_status(devfreq, devfreq->previous_freq))
+-		return 0;
+ 	if (max_state == 0)
+ 		return sprintf(buf, "Not Supported.\n");
+ 
++	mutex_lock(&devfreq->lock);
++	if (!devfreq->stop_polling &&
++			devfreq_update_status(devfreq, devfreq->previous_freq)) {
++		mutex_unlock(&devfreq->lock);
++		return 0;
++	}
++	mutex_unlock(&devfreq->lock);
++
+ 	len = sprintf(buf, "     From  :   To\n");
+ 	len += sprintf(buf + len, "           :");
+ 	for (i = 0; i < max_state; i++)
 
 
