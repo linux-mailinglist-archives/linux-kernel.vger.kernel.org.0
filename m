@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B1A51212C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:56:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 049BA1212CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:56:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbfLPRzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:55:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53196 "EHLO mail.kernel.org"
+        id S1728114AbfLPRzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:55:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728074AbfLPRzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:55:45 -0500
+        id S1727692AbfLPRzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:55:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 370492176D;
-        Mon, 16 Dec 2019 17:55:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 819BA206B7;
+        Mon, 16 Dec 2019 17:55:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518944;
-        bh=cvPAg9I2YwVLNkWL6x0/cKoqr1AmKIBCDJShQFg1R7k=;
+        s=default; t=1576518952;
+        bh=NEpL2CzNtWa8pl2T6jNiFSD8t5+OTKp74Cn9n98fZfI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TZYqAloXdJsD6O/mVSJ5rS2gnuKzoHMZCp2NOLlQEYcOtuQ3MENUpyWBxUfZ7tOwF
-         FAL+1y/sJKvR95o2HRgYfK4lSwMNEWyys+e1U0ekXY+QcnuWmRgkHsvxHD+uKv2dQG
-         wk9lIP5lMSI1w2B/XGyGXe7LJAX6hqZ2Lb+tWP4Q=
+        b=mFqnsXnZ2530A01RG1eDCnHUmnAe6i9Y9LxjB6oxUyiurB4rNGmN2y32iCp2ayzoq
+         C0xgy3WgpmUQErWQiOp7lLNUjy/zoIpl9Mo3XsmDYuVWNmAX+7vnP+mrlO204p5MEN
+         GecQXNtrqM0xY0JWbCwGZs7Ybg2LbF1NqmEwr9qU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>
-Subject: [PATCH 4.14 130/267] coresight: etm4x: Fix input validation for sysfs.
-Date:   Mon, 16 Dec 2019 18:47:36 +0100
-Message-Id: <20191216174906.442408533@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 133/267] CIFS: Fix NULL-pointer dereference in smb2_push_mandatory_locks
+Date:   Mon, 16 Dec 2019 18:47:39 +0100
+Message-Id: <20191216174907.518224306@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,90 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Leach <mike.leach@linaro.org>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit 2fe6899e36aa174abefd017887f9cfe0cb60c43a upstream.
+commit 6f582b273ec23332074d970a7fb25bef835df71f upstream.
 
-A number of issues are fixed relating to sysfs input validation:-
+Currently when the client creates a cifsFileInfo structure for
+a newly opened file, it allocates a list of byte-range locks
+with a pointer to the new cfile and attaches this list to the
+inode's lock list. The latter happens before initializing all
+other fields, e.g. cfile->tlink. Thus a partially initialized
+cifsFileInfo structure becomes available to other threads that
+walk through the inode's lock list. One example of such a thread
+may be an oplock break worker thread that tries to push all
+cached byte-range locks. This causes NULL-pointer dereference
+in smb2_push_mandatory_locks() when accessing cfile->tlink:
 
-1) bb_ctrl_store() - incorrect compare of bit select field to absolute
-value. Reworked per ETMv4 specification.
-2) seq_event_store() - incorrect mask value - register has two
-event values.
-3) cyc_threshold_store() - must mask with max before checking min
-otherwise wrapped values can set illegal value below min.
-4) res_ctrl_store() - update to mask off all res0 bits.
+[598428.945633] BUG: kernel NULL pointer dereference, address: 0000000000000038
+...
+[598428.945749] Workqueue: cifsoplockd cifs_oplock_break [cifs]
+[598428.945793] RIP: 0010:smb2_push_mandatory_locks+0xd6/0x5a0 [cifs]
+...
+[598428.945834] Call Trace:
+[598428.945870]  ? cifs_revalidate_mapping+0x45/0x90 [cifs]
+[598428.945901]  cifs_oplock_break+0x13d/0x450 [cifs]
+[598428.945909]  process_one_work+0x1db/0x380
+[598428.945914]  worker_thread+0x4d/0x400
+[598428.945921]  kthread+0x104/0x140
+[598428.945925]  ? process_one_work+0x380/0x380
+[598428.945931]  ? kthread_park+0x80/0x80
+[598428.945937]  ret_from_fork+0x35/0x40
 
-Reviewed-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Mike Leach <mike.leach@linaro.org>
-Fixes: a77de2637c9eb ("coresight: etm4x: moving sysFS entries to a dedicated file")
-Cc: stable <stable@vger.kernel.org> # 4.9+
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Link: https://lore.kernel.org/r/20191104181251.26732-6-mathieu.poirier@linaro.org
+Fix this by reordering initialization steps of the cifsFileInfo
+structure: initialize all the fields first and then add the new
+byte-range lock list to the inode's lock list.
+
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/coresight/coresight-etm4x-sysfs.c |   21 ++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ fs/cifs/file.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-@@ -667,10 +667,13 @@ static ssize_t cyc_threshold_store(struc
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -312,9 +312,6 @@ cifs_new_fileinfo(struct cifs_fid *fid,
+ 	INIT_LIST_HEAD(&fdlocks->locks);
+ 	fdlocks->cfile = cfile;
+ 	cfile->llist = fdlocks;
+-	cifs_down_write(&cinode->lock_sem);
+-	list_add(&fdlocks->llist, &cinode->llist);
+-	up_write(&cinode->lock_sem);
  
- 	if (kstrtoul(buf, 16, &val))
- 		return -EINVAL;
+ 	cfile->count = 1;
+ 	cfile->pid = current->tgid;
+@@ -338,6 +335,10 @@ cifs_new_fileinfo(struct cifs_fid *fid,
+ 		oplock = 0;
+ 	}
+ 
++	cifs_down_write(&cinode->lock_sem);
++	list_add(&fdlocks->llist, &cinode->llist);
++	up_write(&cinode->lock_sem);
 +
-+	/* mask off max threshold before checking min value */
-+	val &= ETM_CYC_THRESHOLD_MASK;
- 	if (val < drvdata->ccitmin)
- 		return -EINVAL;
- 
--	config->ccctlr = val & ETM_CYC_THRESHOLD_MASK;
-+	config->ccctlr = val;
- 	return size;
- }
- static DEVICE_ATTR_RW(cyc_threshold);
-@@ -701,14 +704,16 @@ static ssize_t bb_ctrl_store(struct devi
- 		return -EINVAL;
- 	if (!drvdata->nr_addr_cmp)
- 		return -EINVAL;
-+
- 	/*
--	 * Bit[7:0] selects which address range comparator is used for
--	 * branch broadcast control.
-+	 * Bit[8] controls include(1) / exclude(0), bits[0-7] select
-+	 * individual range comparators. If include then at least 1
-+	 * range must be selected.
- 	 */
--	if (BMVAL(val, 0, 7) > drvdata->nr_addr_cmp)
-+	if ((val & BIT(8)) && (BMVAL(val, 0, 7) == 0))
- 		return -EINVAL;
- 
--	config->bb_ctrl = val;
-+	config->bb_ctrl = val & GENMASK(8, 0);
- 	return size;
- }
- static DEVICE_ATTR_RW(bb_ctrl);
-@@ -1341,8 +1346,8 @@ static ssize_t seq_event_store(struct de
- 
- 	spin_lock(&drvdata->spinlock);
- 	idx = config->seq_idx;
--	/* RST, bits[7:0] */
--	config->seq_ctrl[idx] = val & 0xFF;
-+	/* Seq control has two masks B[15:8] F[7:0] */
-+	config->seq_ctrl[idx] = val & 0xFFFF;
- 	spin_unlock(&drvdata->spinlock);
- 	return size;
- }
-@@ -1597,7 +1602,7 @@ static ssize_t res_ctrl_store(struct dev
- 	if (idx % 2 != 0)
- 		/* PAIRINV, bit[21] */
- 		val &= ~BIT(21);
--	config->res_ctrl[idx] = val;
-+	config->res_ctrl[idx] = val & GENMASK(21, 0);
- 	spin_unlock(&drvdata->spinlock);
- 	return size;
- }
+ 	spin_lock(&tcon->open_file_lock);
+ 	if (fid->pending_open->oplock != CIFS_OPLOCK_NO_CHANGE && oplock)
+ 		oplock = fid->pending_open->oplock;
 
 
