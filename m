@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 516CD121446
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3000C12139E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:03:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730539AbfLPSJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:09:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52646 "EHLO mail.kernel.org"
+        id S1729476AbfLPSDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:03:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730188AbfLPSJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:56 -0500
+        id S1729439AbfLPSDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5E5C206B7;
-        Mon, 16 Dec 2019 18:09:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8A1620726;
+        Mon, 16 Dec 2019 18:03:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519796;
-        bh=QBrHzF/bDur2YZKXK3pZ0+nH4CtHkNb06QOzdb7jU/I=;
+        s=default; t=1576519382;
+        bh=/5DUqEzaNLRdbV3ur86BfkkVZ+Y736/baIc1Rt/Zd/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZhIR+LP0UYnKwUljIK73GZJgLpq3mk3VJMrALT6w3bZ7NIghxu7kIzcnjq8CxQfa1
-         H4pNM+UBLC3+is68JiuvK/MxpRK7xALN61FZlp8IjzlxJaUV6e3uUM0UQzcNGnR9ke
-         /NXrioLc/qhdmK10s2uv2CLBIBshsxgHqirRnEZE=
+        b=kME6suugm4WkodtZMCZd1okuZJHFnnlE2ji/8vdbyKNusTldg9WCl5s7Yn0rELzPy
+         sMQUp9p6J1MP2tvlesMVuvPE/BDR1pd5lMASsaPq04zu5lZtMa4f1oNPkRNY+i8jHe
+         VAz6J9aeR88Nrx9HYRehR+lfTLZVxmdbEkvI+qZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.3 070/180] hwrng: omap - Fix RNG wait loop timeout
+        stable@vger.kernel.org, Atemu <atemu.main@gmail.com>,
+        Qu Wenruo <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 042/140] Btrfs: send, skip backreference walking for extents with many references
 Date:   Mon, 16 Dec 2019 18:48:30 +0100
-Message-Id: <20191216174830.209592374@linuxfoundation.org>
+Message-Id: <20191216174800.208627990@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +44,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sumit Garg <sumit.garg@linaro.org>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit be867f987a4e1222114dd07a01838a17c26f3fff upstream.
+commit fd0ddbe2509568b00df364156f47561e9f469f15 upstream.
 
-Existing RNG data read timeout is 200us but it doesn't cover EIP76 RNG
-data rate which takes approx. 700us to produce 16 bytes of output data
-as per testing results. So configure the timeout as 1000us to also take
-account of lack of udelay()'s reliability.
+Backreference walking, which is used by send to figure if it can issue
+clone operations instead of write operations, can be very slow and use
+too much memory when extents have many references. This change simply
+skips backreference walking when an extent has more than 64 references,
+in which case we fallback to a write operation instead of a clone
+operation. This limit is conservative and in practice I observed no
+signicant slowdown with up to 100 references and still low memory usage
+up to that limit.
 
-Fixes: 383212425c92 ("hwrng: omap - Add device variant for SafeXcel IP-76 found in Armada 8K")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This is a temporary workaround until there are speedups in the backref
+walking code, and as such it does not attempt to add extra interfaces or
+knobs to tweak the threshold.
+
+Reported-by: Atemu <atemu.main@gmail.com>
+Link: https://lore.kernel.org/linux-btrfs/CAE4GHgkvqVADtS4AzcQJxo0Q1jKQgKaW3JGp3SGdoinVo=C9eQ@mail.gmail.com/T/#me55dc0987f9cc2acaa54372ce0492c65782be3fa
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/hw_random/omap-rng.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ fs/btrfs/send.c |   25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
---- a/drivers/char/hw_random/omap-rng.c
-+++ b/drivers/char/hw_random/omap-rng.c
-@@ -66,6 +66,13 @@
- #define OMAP4_RNG_OUTPUT_SIZE			0x8
- #define EIP76_RNG_OUTPUT_SIZE			0x10
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -25,6 +25,14 @@
+ #include "compression.h"
  
-+/*
-+ * EIP76 RNG takes approx. 700us to produce 16 bytes of output data
-+ * as per testing results. And to account for the lack of udelay()'s
-+ * reliability, we keep the timeout as 1000us.
+ /*
++ * Maximum number of references an extent can have in order for us to attempt to
++ * issue clone operations instead of write operations. This currently exists to
++ * avoid hitting limitations of the backreference walking code (taking a lot of
++ * time and using too much memory for extents with large number of references).
 + */
-+#define RNG_DATA_FILL_TIMEOUT			100
++#define SEND_MAX_EXTENT_REFS	64
 +
- enum {
- 	RNG_OUTPUT_0_REG = 0,
- 	RNG_OUTPUT_1_REG,
-@@ -176,7 +183,7 @@ static int omap_rng_do_read(struct hwrng
- 	if (max < priv->pdata->data_size)
- 		return 0;
++/*
+  * A fs_path is a helper to dynamically build path names with unknown size.
+  * It reallocates the internal buffer on demand.
+  * It allows fast adding of path elements on the right side (normal path) and
+@@ -1303,6 +1311,7 @@ static int find_extent_clone(struct send
+ 	struct clone_root *cur_clone_root;
+ 	struct btrfs_key found_key;
+ 	struct btrfs_path *tmp_path;
++	struct btrfs_extent_item *ei;
+ 	int compressed;
+ 	u32 i;
  
--	for (i = 0; i < 20; i++) {
-+	for (i = 0; i < RNG_DATA_FILL_TIMEOUT; i++) {
- 		present = priv->pdata->data_present(priv);
- 		if (present || !wait)
- 			break;
+@@ -1352,7 +1361,6 @@ static int find_extent_clone(struct send
+ 	ret = extent_from_logical(fs_info, disk_byte, tmp_path,
+ 				  &found_key, &flags);
+ 	up_read(&fs_info->commit_root_sem);
+-	btrfs_release_path(tmp_path);
+ 
+ 	if (ret < 0)
+ 		goto out;
+@@ -1361,6 +1369,21 @@ static int find_extent_clone(struct send
+ 		goto out;
+ 	}
+ 
++	ei = btrfs_item_ptr(tmp_path->nodes[0], tmp_path->slots[0],
++			    struct btrfs_extent_item);
++	/*
++	 * Backreference walking (iterate_extent_inodes() below) is currently
++	 * too expensive when an extent has a large number of references, both
++	 * in time spent and used memory. So for now just fallback to write
++	 * operations instead of clone operations when an extent has more than
++	 * a certain amount of references.
++	 */
++	if (btrfs_extent_refs(tmp_path->nodes[0], ei) > SEND_MAX_EXTENT_REFS) {
++		ret = -ENOENT;
++		goto out;
++	}
++	btrfs_release_path(tmp_path);
++
+ 	/*
+ 	 * Setup the clone roots.
+ 	 */
 
 
