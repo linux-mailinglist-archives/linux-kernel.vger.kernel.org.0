@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E23C121337
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:00:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 265071213B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:04:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfLPR7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:59:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33080 "EHLO mail.kernel.org"
+        id S1729613AbfLPSEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728806AbfLPR7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:59:48 -0500
+        id S1729599AbfLPSD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AF35206B7;
-        Mon, 16 Dec 2019 17:59:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 324CD20700;
+        Mon, 16 Dec 2019 18:03:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519187;
-        bh=vcw8e7sa05RyMhS4Kpi3imk8mmXPeDfeCjey1rZECiw=;
+        s=default; t=1576519438;
+        bh=FkDwqSX2U3Zi6u1zSLl0ekZoB6wGScHpf/uAMixefME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rffLCONMqvstCrFpZhKIKHyKkY7NK4LgTp+0oan1ZAYo8uCEE51m1/dwwTLFc6daI
-         pH3xLXCnmmYYgj93Di1qcHP31fnNJiClexN+s1cOtnZJdbcQKDX/J41d/gEn0JpCsm
-         Kv8x7eoARQLRHBYLiv5T8IQpkbF6ttyD1cS4LAVo=
+        b=ly8nJfBubQhbrPehHejxOIlJa44TIdI8hVN/bqs2/hyFfgunnzWGtCgJC2EZT4T42
+         WZ5/B/0FG4qS7XkAwgd8DMz1EaqR+KoQILRcYW75YVIfSGYF3sISednO4zsvLj+sjS
+         LEcJ/WCv/RiUHO/lDew/jQ0wxM0gx3nYgiJyrEQ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 190/267] btrfs: record all roots for rename exchange on a subvol
-Date:   Mon, 16 Dec 2019 18:48:36 +0100
-Message-Id: <20191216174912.935577828@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.19 049/140] ovl: relax WARN_ON() on rename to self
+Date:   Mon, 16 Dec 2019 18:48:37 +0100
+Message-Id: <20191216174802.043464455@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 3e1740993e43116b3bc71b0aad1e6872f6ccf341 upstream.
+commit 6889ee5a53b8d969aa542047f5ac8acdc0e79a91 upstream.
 
-Testing with the new fsstress support for subvolumes uncovered a pretty
-bad problem with rename exchange on subvolumes.  We're modifying two
-different subvolumes, but we only start the transaction on one of them,
-so the other one is not added to the dirty root list.  This is caught by
-btrfs_cow_block() with a warning because the root has not been updated,
-however if we do not modify this root again we'll end up pointing at an
-invalid root because the root item is never updated.
+In ovl_rename(), if new upper is hardlinked to old upper underneath
+overlayfs before upper dirs are locked, user will get an ESTALE error
+and a WARN_ON will be printed.
 
-Fix this by making sure we add the destination root to the trans list,
-the same as we do with normal renames.  This fixes the corruption.
+Changes to underlying layers while overlayfs is mounted may result in
+unexpected behavior, but it shouldn't crash the kernel and it shouldn't
+trigger WARN_ON() either, so relax this WARN_ON().
 
-Fixes: cdd1fedf8261 ("btrfs: add support for RENAME_EXCHANGE and RENAME_WHITEOUT")
-CC: stable@vger.kernel.org # 4.9+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com
+Fixes: 804032fabb3b ("ovl: don't check rename to self")
+Cc: <stable@vger.kernel.org> # v4.9+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/overlayfs/dir.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -9839,6 +9839,9 @@ static int btrfs_rename_exchange(struct
- 		goto out_notrans;
- 	}
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -1174,7 +1174,7 @@ static int ovl_rename(struct inode *oldd
+ 	if (newdentry == trap)
+ 		goto out_dput;
  
-+	if (dest != root)
-+		btrfs_record_root_in_trans(trans, dest);
-+
- 	/*
- 	 * We need to find a free sequence number both in the source and
- 	 * in the destination directory for the exchange.
+-	if (WARN_ON(olddentry->d_inode == newdentry->d_inode))
++	if (olddentry->d_inode == newdentry->d_inode)
+ 		goto out_dput;
+ 
+ 	err = 0;
 
 
