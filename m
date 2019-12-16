@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12D7D1215AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45431121477
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731381AbfLPSTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:19:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48510 "EHLO mail.kernel.org"
+        id S1730787AbfLPSLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:11:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731945AbfLPSTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:19:46 -0500
+        id S1730364AbfLPSL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:11:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B631207FF;
-        Mon, 16 Dec 2019 18:19:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 040602072D;
+        Mon, 16 Dec 2019 18:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520386;
-        bh=7OlzjaWYrNlZkBYMjW7YaLZgbyz7GzE2h/34B75E5tE=;
+        s=default; t=1576519886;
+        bh=k7xBRQGwFZT0l2WQ2lzq2M6iEO5KUqq5Nksao5BGViA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1bL7z9IqJiCQtqmLZ9ipm+Y2INnzideCXelZ6QwhMB6lPoGAGrfd1jIWDUYK3Zu4J
-         NHJWvug+Z27C6KHXp6VhlZo3NqvyxoelZN7CEfU/I2aN0MMDd4xQTeKy8oPlrL0kvr
-         fteZ7yzyT6/lunMcnOBlFcw7agtINgfti4vjTD3I=
+        b=mV8jOa1k4Vp0UNaFwS3qxJ7lzS61RXVoTGoBK6MpL69KX8TqD9dY3KRWZvplmQi5U
+         qBF8hRdp/pMAE0+JmAm5fKEbVhS/3Bnv+7dPzS75243FHKSujiZt06hjmFuz/HNEwv
+         jooH9lBM6WRr8B2s8wpn2Zm/DaLEqYs+WggvdDCk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.4 092/177] blk-mq: avoid sysfs buffer overflow with too many CPU cores
+        stable@vger.kernel.org, Francesco Ruggeri <fruggeri@arista.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.3 108/180] ACPI: OSL: only free map once in osl.c
 Date:   Mon, 16 Dec 2019 18:49:08 +0100
-Message-Id: <20191216174839.279464492@linuxfoundation.org>
+Message-Id: <20191216174838.239581788@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,61 +44,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Francesco Ruggeri <fruggeri@arista.com>
 
-commit 8962842ca5abdcf98e22ab3b2b45a103f0408b95 upstream.
+commit 833a426cc471b6088011b3d67f1dc4e147614647 upstream.
 
-It is reported that sysfs buffer overflow can be triggered if the system
-has too many CPU cores(>841 on 4K PAGE_SIZE) when showing CPUs of
-hctx via /sys/block/$DEV/mq/$N/cpu_list.
+acpi_os_map_cleanup checks map->refcount outside of acpi_ioremap_lock
+before freeing the map. This creates a race condition the can result
+in the map being freed more than once.
+A panic can be caused by running
 
-Use snprintf to avoid the potential buffer overflow.
+for ((i=0; i<10; i++))
+do
+        for ((j=0; j<100000; j++))
+        do
+                cat /sys/firmware/acpi/tables/data/BERT >/dev/null
+        done &
+done
 
-This version doesn't change the attribute format, and simply stops
-showing CPU numbers if the buffer is going to overflow.
+This patch makes sure that only the process that drops the reference
+to 0 does the freeing.
 
-Cc: stable@vger.kernel.org
-Fixes: 676141e48af7("blk-mq: don't dump CPU -> hw queue map on driver load")
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: b7c1fadd6c2e ("ACPI: Do not use krefs under a mutex in osl.c")
+Signed-off-by: Francesco Ruggeri <fruggeri@arista.com>
+Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-mq-sysfs.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/acpi/osl.c |   28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
---- a/block/blk-mq-sysfs.c
-+++ b/block/blk-mq-sysfs.c
-@@ -166,20 +166,25 @@ static ssize_t blk_mq_hw_sysfs_nr_reserv
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -360,19 +360,21 @@ void *__ref acpi_os_map_memory(acpi_phys
+ }
+ EXPORT_SYMBOL_GPL(acpi_os_map_memory);
  
- static ssize_t blk_mq_hw_sysfs_cpus_show(struct blk_mq_hw_ctx *hctx, char *page)
+-static void acpi_os_drop_map_ref(struct acpi_ioremap *map)
++/* Must be called with mutex_lock(&acpi_ioremap_lock) */
++static unsigned long acpi_os_drop_map_ref(struct acpi_ioremap *map)
  {
-+	const size_t size = PAGE_SIZE - 1;
- 	unsigned int i, first = 1;
--	ssize_t ret = 0;
-+	int ret = 0, pos = 0;
- 
- 	for_each_cpu(i, hctx->cpumask) {
- 		if (first)
--			ret += sprintf(ret + page, "%u", i);
-+			ret = snprintf(pos + page, size - pos, "%u", i);
- 		else
--			ret += sprintf(ret + page, ", %u", i);
-+			ret = snprintf(pos + page, size - pos, ", %u", i);
+-	if (!--map->refcount)
++	unsigned long refcount = --map->refcount;
 +
-+		if (ret >= size - pos)
-+			break;
- 
- 		first = 0;
-+		pos += ret;
- 	}
- 
--	ret += sprintf(ret + page, "\n");
--	return ret;
-+	ret = snprintf(pos + page, size - pos, "\n");
-+	return pos + ret;
++	if (!refcount)
+ 		list_del_rcu(&map->list);
++	return refcount;
  }
  
- static struct blk_mq_hw_ctx_sysfs_entry blk_mq_hw_sysfs_nr_tags = {
+ static void acpi_os_map_cleanup(struct acpi_ioremap *map)
+ {
+-	if (!map->refcount) {
+-		synchronize_rcu_expedited();
+-		acpi_unmap(map->phys, map->virt);
+-		kfree(map);
+-	}
++	synchronize_rcu_expedited();
++	acpi_unmap(map->phys, map->virt);
++	kfree(map);
+ }
+ 
+ /**
+@@ -392,6 +394,7 @@ static void acpi_os_map_cleanup(struct a
+ void __ref acpi_os_unmap_iomem(void __iomem *virt, acpi_size size)
+ {
+ 	struct acpi_ioremap *map;
++	unsigned long refcount;
+ 
+ 	if (!acpi_permanent_mmap) {
+ 		__acpi_unmap_table(virt, size);
+@@ -405,10 +408,11 @@ void __ref acpi_os_unmap_iomem(void __io
+ 		WARN(true, PREFIX "%s: bad address %p\n", __func__, virt);
+ 		return;
+ 	}
+-	acpi_os_drop_map_ref(map);
++	refcount = acpi_os_drop_map_ref(map);
+ 	mutex_unlock(&acpi_ioremap_lock);
+ 
+-	acpi_os_map_cleanup(map);
++	if (!refcount)
++		acpi_os_map_cleanup(map);
+ }
+ EXPORT_SYMBOL_GPL(acpi_os_unmap_iomem);
+ 
+@@ -443,6 +447,7 @@ void acpi_os_unmap_generic_address(struc
+ {
+ 	u64 addr;
+ 	struct acpi_ioremap *map;
++	unsigned long refcount;
+ 
+ 	if (gas->space_id != ACPI_ADR_SPACE_SYSTEM_MEMORY)
+ 		return;
+@@ -458,10 +463,11 @@ void acpi_os_unmap_generic_address(struc
+ 		mutex_unlock(&acpi_ioremap_lock);
+ 		return;
+ 	}
+-	acpi_os_drop_map_ref(map);
++	refcount = acpi_os_drop_map_ref(map);
+ 	mutex_unlock(&acpi_ioremap_lock);
+ 
+-	acpi_os_map_cleanup(map);
++	if (!refcount)
++		acpi_os_map_cleanup(map);
+ }
+ EXPORT_SYMBOL(acpi_os_unmap_generic_address);
+ 
 
 
