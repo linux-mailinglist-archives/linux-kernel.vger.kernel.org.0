@@ -2,115 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78DB61216CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:32:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E4EC121706
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:34:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbfLPSbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:31:48 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46505 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730365AbfLPSbo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:31:44 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z124so4169492pgb.13;
-        Mon, 16 Dec 2019 10:31:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=q6wgY7fQy1m4FBOYKfnwYqVpu2I96z7LmDo1JYpVKmA=;
-        b=oHAUq9CJWPu2x9rms0fDdTAm6ul0RPmQhldrsN5OLylWRT0QAkNMoiBg+qldjqhuVE
-         pC01WYcRZcqbql2Xk1TZeLGh/t9abXxANyNKi6ScykT5hqJ6VQHqIoyeOhIiNsnNxpmS
-         gYVIr9ogXexsFc5vP2kdujTRDAnuhVX8OcC9sEQ3WCLX2/0G6DBgAMnxj4EZpxH1fsiJ
-         h8Ue9p1vYopiP2M3k2mG90lwVZbF4bPwEoIWprXHXcRoHTevhwMdiHw/kN99BtaNLFV9
-         8WPiL2i0bskE5hz4kpEgdKG2o9zplIG0/a6L5jR8VjF6CCUgEF6hvVUUVjElXwucWa7n
-         fatg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=q6wgY7fQy1m4FBOYKfnwYqVpu2I96z7LmDo1JYpVKmA=;
-        b=jbi2ICbbxcMiGyE7fkzeyiNIjORZHo/VI8XIHIng9mAUg6Gbs2BFM3SGOa7KuQZ66n
-         uONJKdr2nrtvNaB2gmvhycPov+CvcjqURAsuVM4imhTI61nMV2/1u2stXP1YBQQjofU2
-         IeMWvMTnQuNusiPhkwY6BYBbrp/oQX2InswApC0nywEQup63/54gFmJDG5nt79NC+1ac
-         b7eC+tKE7Z5CfCwqM4uP8RnTs/ZirrurmyCNOpHp9Jt25FHa0n1nEf57lnpdm3YG0v2l
-         YM4o4tu+JG0j+9LhyABlVQqWNorV639P7XL7YXRvWicdrJFwP8x+5HVudTwxuQldRG/y
-         DuZg==
-X-Gm-Message-State: APjAAAVUY3efypcKyRyhbFhzhd+bt10liHxrIqrNp/PX/AI0mN5L+bdB
-        DG8PzjCvvgufWtJZy05brEbBe6jh0dvBXqTAWUBNnQ==
-X-Google-Smtp-Source: APXvYqxsNamYDluy4MU6SGf4xgUn04QcfrEm+7mgsyXt1Aa1RCnnLKK8DURIStGo/unIqvJuRCAO2zGEMOPD6Nn2h30=
-X-Received: by 2002:a63:364d:: with SMTP id d74mr19952282pga.408.1576521103641;
- Mon, 16 Dec 2019 10:31:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20191216174747.111154704@linuxfoundation.org> <20191216174815.749524432@linuxfoundation.org>
-In-Reply-To: <20191216174815.749524432@linuxfoundation.org>
-Reply-To: andrea.merello@gmail.com
-From:   Andrea Merello <andrea.merello@gmail.com>
-Date:   Mon, 16 Dec 2019 19:31:31 +0100
-Message-ID: <CAN8YU5NrEbJx3yxBNoRWnwUiAYWffDp6gEcCcGUK+g4zjbHwEg@mail.gmail.com>
-Subject: Re: [PATCH 4.19 106/140] iio: ad7949: kill pointless
- "readback"-handling code
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1730886AbfLPSdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:33:38 -0500
+Received: from mga12.intel.com ([192.55.52.136]:15476 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730601AbfLPSdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:33:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 10:33:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
+   d="scan'208";a="389550262"
+Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.172])
+  by orsmga005.jf.intel.com with ESMTP; 16 Dec 2019 10:33:33 -0800
+From:   Gayatri Kammela <gayatri.kammela@intel.com>
+To:     linux-pm@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org, alex.hung@canonical.com,
+        linux-acpi@vger.kernel.org, lenb@kernel.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, charles.d.prestopine@intel.com,
+        dvhart@infradead.org, Gayatri Kammela <gayatri.kammela@intel.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@intel.com>
+Subject: [PATCH v3 0/5] drivers: Add Tiger Lake hardware IDs to support ACPI,
+Date:   Mon, 16 Dec 2019 10:31:47 -0800
+Message-Id: <cover.1576520244.git.gayatri.kammela@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Something nasty seems happening here: it looks like the commit message
-and the actual diff have nothing to do one wrt the other; the commit
-message is from one of my patches, the diff is against some unrelated
-file.
+Hi,
 
-Il giorno lun 16 dic 2019 alle ore 19:05 Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> ha scritto:
->
-> From: Meng Li <Meng.Li@windriver.com>
->
-> [ Upstream commit c270bbf7bb9ddc4e2a51b3c56557c377c9ac79bc ]
->
-> The device could be configured to spit out also the configuration word
-> while reading the AD result value (in the same SPI xfer) - this is called
-> "readback" in the device datasheet.
->
-> The driver checks if readback is enabled and it eventually adjusts the SPI
-> xfer length and it applies proper shifts to still get the data, discarding
-> the configuration word.
->
-> The readback option is actually never enabled (the driver disables it), so
-> the said checks do not serve for any purpose.
->
-> Since enabling the readback option seems not to provide any advantage (the
-> driver entirely sets the configuration word without relying on any default
-> value), just kill the said, unused, code.
->
-> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-> Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/edac/altera_edac.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-> index 56de378ad13dc..c9108906bcdc0 100644
-> --- a/drivers/edac/altera_edac.c
-> +++ b/drivers/edac/altera_edac.c
-> @@ -600,6 +600,7 @@ static const struct regmap_config s10_sdram_regmap_cfg = {
->         .reg_read = s10_protected_reg_read,
->         .reg_write = s10_protected_reg_write,
->         .use_single_rw = true,
-> +       .fast_io = true,
->  };
->
->  static int altr_s10_sdram_probe(struct platform_device *pdev)
-> --
-> 2.20.1
->
->
->
+Tiger Lake supports devices whose hardware IDs are changed for various
+drivers. Hence, add the new hardware IDs.
+
+Patch 1: Add Tiger Lake support to DPTF driver
+Patch 2: Add Tiger Lake support to fan driver
+Patch 3: Add Tiger Lake support to device_pm
+Patch 4: Add Tiger Lake support to Intel's HID driver
+Patch 5: Add Tiger Lake support to thermal driver
+
+Changes since v1:
+1) Maintain the readability by adding hardware IDs in a sorted order
+
+Changes since v2:
+1) Added Tiger Lake support to device_pm
+2) Changed acpi to ACPI in commit messages
+
+Gayatri Kammela (5):
+  acpi: dptf: Add new Tiger Lake hardware IDs to support DPTF drivers in
+    ACPI
+  acpi: fan: Add new Tiger Lake hardware ID to support fan driver in
+    ACPI
+  acpi: device_pm: Add new Tiger Lake hardware ID to support ACPI device
+    power management
+  platform/x86: intel-hid: Add new Tiger Lake hardware ID to support HID
+    driver
+  thermal: int340x_thermal: Add new Tiger Lake hardware IDs to support
+    thermal driver
+
+ drivers/acpi/device_pm.c                                | 1 +
+ drivers/acpi/dptf/dptf_power.c                          | 1 +
+ drivers/acpi/dptf/int340x_thermal.c                     | 4 ++++
+ drivers/acpi/fan.c                                      | 1 +
+ drivers/platform/x86/intel-hid.c                        | 1 +
+ drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 1 +
+ drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 1 +
+ 7 files changed, 10 insertions(+)
+
+Cc: Rafael J. Wysocki <rafael@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
+-- 
+2.17.1
+
