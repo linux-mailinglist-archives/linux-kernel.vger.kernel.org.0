@@ -2,440 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2F23120898
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:29:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DBCF120862
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:17:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbfLPOZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 09:25:49 -0500
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:40492 "EHLO
-        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727579AbfLPOZr (ORCPT
+        id S1728272AbfLPOQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 09:16:36 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51361 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728060AbfLPOQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 09:25:47 -0500
-X-Greylist: delayed 583 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Dec 2019 09:25:44 EST
-Received: from faui04i.informatik.uni-erlangen.de (faui04i.informatik.uni-erlangen.de [131.188.30.139])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 86B53241656;
-        Mon, 16 Dec 2019 15:16:27 +0100 (CET)
-Received: by faui04i.informatik.uni-erlangen.de (Postfix, from userid 66565)
-        id 79EF1C808D6; Mon, 16 Dec 2019 15:16:27 +0100 (CET)
-From:   Julian Preis <julian.preis@fau.de>
-Cc:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Julian Preis <julian.preis@fau.de>,
-        Johannes Weidner <johannes.weidner@fau.de>
-Subject: [PATCH v2] drivers/staging/exfat/exfat_super.c: Clean up ffsCamelCase function names
-Date:   Mon, 16 Dec 2019 15:16:23 +0100
-Message-Id: <20191216141623.22379-1-julian.preis@fau.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <y>
-References: <y>
+        Mon, 16 Dec 2019 09:16:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576505794;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iyyJmBM3fDcRwB4obuoYugCBOkwPjR5ZZAf85xRDFJI=;
+        b=b77nBOnF3JGNrLI03zFyt5Zrx3PubgeGfAOgerEeTqRIVgqiJ7xofeND5s9TfxpXRyNpIy
+        JwerjvXlN1CitJ1lGP6GUfs37I/dSgzzjnXE3yqj5gk0TXBpBhSYy24V0C94gcRQ6PwrjB
+        3C8CZeMhTxOACpbeJhmnJcxt+goCJkI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-322-II0vhgpjMHCwv2rREpuEhg-1; Mon, 16 Dec 2019 09:16:32 -0500
+X-MC-Unique: II0vhgpjMHCwv2rREpuEhg-1
+Received: by mail-wm1-f70.google.com with SMTP id 7so1078214wmf.9
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 06:16:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iyyJmBM3fDcRwB4obuoYugCBOkwPjR5ZZAf85xRDFJI=;
+        b=WeF8qOppMpIe2otJcu2Oagzb3425MbtK2gBCUgMdxLy4d1Vcu5RMIDipaUiXXmukVH
+         3F5YjQLJEJI8DeajhiXz3Yx1YERySWw7ukvR6kH5D23fucMto7YAMExjjsQdWj79q1pa
+         f2JcBCuPQ55xr3J4pfKuH6y7bvz44cuyCrHHsiNQe1DceywR5u11zezj+TwtIueg1Tad
+         BrS6x0bDrErOM2pUCuD8AyzRs49/n9KYbpsB6eUiauIx5CkCQ1MenvZqzxEAVzmp5iVO
+         KTPo1kN01RaQeeRdxdnqmMtioZ4JhLJ454Zslsx/K1jOHfpEpeqDpt6/z8Lu4jFlxFlh
+         Y5KQ==
+X-Gm-Message-State: APjAAAWB1YYHNThq75EPrUXF2g9yvNXHIem4BC/20W820EZMXgSX8DU0
+        R507p595X96z7siPowx5G1oFeadjZA5tPe3tZG1dy9pgdX1oa0rAfZgLSKMEdbNmM1L5BUwiImU
+        CDSO3MQW/RdjOzJZ9FnS2D/5N
+X-Received: by 2002:adf:a308:: with SMTP id c8mr29838075wrb.240.1576505790871;
+        Mon, 16 Dec 2019 06:16:30 -0800 (PST)
+X-Google-Smtp-Source: APXvYqycr8vbMR7LAJzKT/83BL3q03HQov83Lat9afG86+vT2vXdgjwSHLffqAKplmr/V+CoUwBxgw==
+X-Received: by 2002:adf:a308:: with SMTP id c8mr29838050wrb.240.1576505790643;
+        Mon, 16 Dec 2019 06:16:30 -0800 (PST)
+Received: from shalem.localdomain (2001-1c00-0c0c-fe00-7e79-4dac-39d0-9c14.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:7e79:4dac:39d0:9c14])
+        by smtp.gmail.com with ESMTPSA id c9sm20297847wmc.47.2019.12.16.06.16.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2019 06:16:30 -0800 (PST)
+Subject: Re: [PATCH 4/5] drm/i915/dsi: Move Crystal Cove PMIC panel GPIO
+ lookup from mfd to the i915 driver
+To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20191215163810.52356-1-hdegoede@redhat.com>
+ <20191215163810.52356-5-hdegoede@redhat.com>
+ <20191216135627.GS1208@intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <25e93a0e-3f48-abd4-d2ba-07a4d03f7f7d@redhat.com>
+Date:   Mon, 16 Dec 2019 15:16:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <20191216135627.GS1208@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename every instance of <ffsCamelCaseExample> to <ffs_camel_case_example>
-in file exfat_super.c. Fix resulting overlong lines.
+Hi,
 
-Co-developed-by: Johannes Weidner <johannes.weidner@fau.de>
-Signed-off-by: Johannes Weidner <johannes.weidner@fau.de>
-Signed-off-by: Julian Preis <julian.preis@fau.de>
----
-Changes in v2:
-- Add email recipients according to get_maintainer.pl
-- Add patch versions
-- Use in-reply-to
+On 16-12-2019 14:56, Ville Syrjälä wrote:
+> On Sun, Dec 15, 2019 at 05:38:09PM +0100, Hans de Goede wrote:
+>> Move the Crystal Cove PMIC panel GPIO lookup-table from
+>> drivers/mfd/intel_soc_pmic_core.c to the i915 driver.
+>>
+>> The moved looked-up table is adding a GPIO lookup to the i915 PCI
+>> device and the GPIO subsys allows only one lookup table per device,
+>>
+>> The intel_soc_pmic_core.c code only adds lookup-table entries for the
+>> PMIC panel GPIO (as it deals only with the PMIC), but we also need to be
+>> able to access some GPIOs on the SoC itself, which requires entries for
+>> these GPIOs in the lookup-table.
+>>
+>> Since the lookup-table is attached to the i915 PCI device it really
+>> should be part of the i915 driver, this will also allow us to extend
+>> it with GPIOs from other sources when necessary.
+>>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>>   drivers/gpu/drm/i915/display/intel_dsi_vbt.c | 23 +++++++++++++++++++-
+>>   drivers/mfd/intel_soc_pmic_core.c            | 19 ----------------
+>>   2 files changed, 22 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/i915/display/intel_dsi_vbt.c b/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
+>> index 027970348b22..847f04eec2a1 100644
+>> --- a/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
+>> +++ b/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
+>> @@ -25,6 +25,7 @@
+>>    */
+>>   
+>>   #include <linux/gpio/consumer.h>
+>> +#include <linux/gpio/machine.h>
+>>   #include <linux/mfd/intel_soc_pmic.h>
+>>   #include <linux/slab.h>
+>>   
+>> @@ -686,8 +687,18 @@ bool intel_dsi_vbt_init(struct intel_dsi *intel_dsi, u16 panel_id)
+>>   
+>>   /*
+>>    * On some BYT/CHT devs some sequences are incomplete and we need to manually
+>> - * control some GPIOs.
+>> + * control some GPIOs. We need to add a GPIO lookup table before we get these.
+>>    */
+>> +static struct gpiod_lookup_table pmic_panel_gpio_table = {
+>> +	/* Intel GFX is consumer */
+>> +	.dev_id = "0000:00:02.0",
+>> +	.table = {
+>> +		/* Panel EN/DISABLE */
+>> +		GPIO_LOOKUP("gpio_crystalcove", 94, "panel", GPIO_ACTIVE_HIGH),
+>> +		{ },
+>> +	},
+>> +};
+> 
+> Feels like a failure in abstraction to have these irrelevant details
+> exposed on the consumer side. Also slightly concerned that someone
+> refactoring things in the pmic driver could now break this without
+> realizing it. But if people want it done this way I can live with it.
 
- drivers/staging/exfat/exfat_super.c | 99 +++++++++++++++--------------
- 1 file changed, 51 insertions(+), 48 deletions(-)
+Note how in the final patch we add another lookup for a GPIO called "panel"
+but now on another GPIO controller. Since which GPIO controller has the
+"panel" GPIO is specified by a bit in the VBT doing the lookup-table
+registering from within the i915 code actually kinda makes sense.
 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 6e481908c59f..14ff3fce70fb 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -343,7 +343,7 @@ static inline void exfat_save_attr(struct inode *inode, u32 attr)
- 		EXFAT_I(inode)->fid.attr = attr & (ATTR_RWMASK | ATTR_READONLY);
- }
- 
--static int ffsMountVol(struct super_block *sb)
-+static int ffs_mount_vol(struct super_block *sb)
- {
- 	int i, ret;
- 	struct pbr_sector_t *p_pbr;
-@@ -439,7 +439,7 @@ static int ffsMountVol(struct super_block *sb)
- 	return ret;
- }
- 
--static int ffsUmountVol(struct super_block *sb)
-+static int ffs_umount_vol(struct super_block *sb)
- {
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
- 	int err = 0;
-@@ -479,7 +479,7 @@ static int ffsUmountVol(struct super_block *sb)
- 	return err;
- }
- 
--static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
-+static int ffs_get_vol_info(struct super_block *sb, struct vol_info_t *info)
- {
- 	int err = 0;
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
-@@ -509,7 +509,7 @@ static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
- 	return err;
- }
- 
--static int ffsSyncVol(struct super_block *sb, bool do_sync)
-+static int ffs_sync_vol(struct super_block *sb, bool do_sync)
- {
- 	int err = 0;
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
-@@ -534,7 +534,8 @@ static int ffsSyncVol(struct super_block *sb, bool do_sync)
- /*  File Operation Functions                                            */
- /*----------------------------------------------------------------------*/
- 
--static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
-+static int ffs_lookup_file(struct inode *inode, char *path,
-+			   struct file_id_t *fid)
- {
- 	int ret, dentry, num_entries;
- 	struct chain_t dir;
-@@ -621,8 +622,8 @@ static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
- 	return ret;
- }
- 
--static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
--			 struct file_id_t *fid)
-+static int ffs_create_file(struct inode *inode, char *path, u8 mode,
-+			   struct file_id_t *fid)
- {
- 	struct chain_t dir;
- 	struct uni_name_t uni_name;
-@@ -662,8 +663,8 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
- 	return ret;
- }
- 
--static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
--		       u64 count, u64 *rcount)
-+static int ffs_read_file(struct inode *inode, struct file_id_t *fid,
-+			 void *buffer, u64 count, u64 *rcount)
- {
- 	s32 offset, sec_offset, clu_offset;
- 	u32 clu;
-@@ -788,8 +789,8 @@ static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
- 	return ret;
- }
- 
--static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
--			void *buffer, u64 count, u64 *wcount)
-+static int ffs_write_file(struct inode *inode, struct file_id_t *fid,
-+			  void *buffer, u64 count, u64 *wcount)
- {
- 	bool modified = false;
- 	s32 offset, sec_offset, clu_offset;
-@@ -1031,7 +1032,7 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
- 	return ret;
- }
- 
--static int ffsTruncateFile(struct inode *inode, u64 old_size, u64 new_size)
-+static int ffs_truncate_file(struct inode *inode, u64 old_size, u64 new_size)
- {
- 	s32 num_clusters;
- 	u32 last_clu = CLUSTER_32(0);
-@@ -1167,8 +1168,9 @@ static void update_parent_info(struct file_id_t *fid,
- 	}
- }
- 
--static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
--		       struct inode *new_parent_inode, struct dentry *new_dentry)
-+static int ffs_move_file(struct inode *old_parent_inode, struct file_id_t *fid,
-+			 struct inode *new_parent_inode,
-+			 struct dentry *new_dentry)
- {
- 	s32 ret;
- 	s32 dentry;
-@@ -1296,7 +1298,7 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
- 	return ret;
- }
- 
--static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
-+static int ffs_remove_file(struct inode *inode, struct file_id_t *fid)
- {
- 	s32 dentry;
- 	int ret = 0;
-@@ -1360,7 +1362,7 @@ static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
- 
- #if 0
- /* Not currently wired up */
--static int ffsSetAttr(struct inode *inode, u32 attr)
-+static int ffs_set_attr(struct inode *inode, u32 attr)
- {
- 	u32 type;
- 	int ret = 0;
-@@ -1435,7 +1437,7 @@ static int ffsSetAttr(struct inode *inode, u32 attr)
- }
- #endif
- 
--static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
-+static int ffs_read_stat(struct inode *inode, struct dir_entry_t *info)
- {
- 	s32 count;
- 	int ret = 0;
-@@ -1565,7 +1567,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 	return ret;
- }
- 
--static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
-+static int ffs_write_stat(struct inode *inode, struct dir_entry_t *info)
- {
- 	int ret = 0;
- 	struct timestamp_t tm;
-@@ -1638,7 +1640,7 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
- 	return ret;
- }
- 
--static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
-+static int ffs_map_cluster(struct inode *inode, s32 clu_offset, u32 *clu)
- {
- 	s32 num_clusters, num_alloced;
- 	bool modified = false;
-@@ -1778,7 +1780,8 @@ static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
- /*  Directory Operation Functions                                       */
- /*----------------------------------------------------------------------*/
- 
--static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
-+static int ffs_create_dir(struct inode *inode, char *path,
-+			  struct file_id_t *fid)
- {
- 	int ret = 0;
- 	struct chain_t dir;
-@@ -1818,7 +1821,7 @@ static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
- 	return ret;
- }
- 
--static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
-+static int ffs_read_dir(struct inode *inode, struct dir_entry_t *dir_entry)
- {
- 	int i, dentry, clu_offset;
- 	int ret = 0;
-@@ -2005,7 +2008,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
- 	return ret;
- }
- 
--static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
-+static int ffs_remove_dir(struct inode *inode, struct file_id_t *fid)
- {
- 	s32 dentry;
- 	int ret = 0;
-@@ -2114,7 +2117,7 @@ static int exfat_readdir(struct file *filp, struct dir_context *ctx)
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 	EXFAT_I(inode)->fid.rwoffset = cpos >> DENTRY_SIZE_BITS;
- 
--	err = ffsReadDir(inode, &de);
-+	err = ffs_read_dir(inode, &de);
- 	if (err) {
- 		/* at least we tried to read a sector
- 		 * move cpos to next sector position (should be aligned)
-@@ -2235,7 +2238,7 @@ static int exfat_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 
- 	pr_debug("%s entered\n", __func__);
- 
--	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
-+	err = ffs_create_file(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
- 	if (err)
- 		goto out;
- 
-@@ -2282,7 +2285,7 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
- 	if (qname->len == 0)
- 		return -ENOENT;
- 
--	err = ffsLookupFile(dir, (u8 *)qname->name, fid);
-+	err = ffs_lookup_file(dir, (u8 *)qname->name, fid);
- 	if (err)
- 		return -ENOENT;
- 
-@@ -2332,8 +2335,8 @@ static struct dentry *exfat_lookup(struct inode *dir, struct dentry *dentry,
- 			err = -ENOMEM;
- 			goto error;
- 		}
--		ffsReadFile(dir, &fid, EXFAT_I(inode)->target,
--			    i_size_read(inode), &ret);
-+		ffs_read_file(dir, &fid, EXFAT_I(inode)->target,
-+			      i_size_read(inode), &ret);
- 		*(EXFAT_I(inode)->target + i_size_read(inode)) = '\0';
- 	}
- 
-@@ -2402,7 +2405,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
- 
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 
--	err = ffsRemoveFile(dir, &(EXFAT_I(inode)->fid));
-+	err = ffs_remove_file(dir, &(EXFAT_I(inode)->fid));
- 	if (err)
- 		goto out;
- 
-@@ -2444,15 +2447,15 @@ static int exfat_symlink(struct inode *dir, struct dentry *dentry,
- 
- 	pr_debug("%s entered\n", __func__);
- 
--	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_SYMLINK, &fid);
-+	err = ffs_create_file(dir, (u8 *)dentry->d_name.name, FM_SYMLINK, &fid);
- 	if (err)
- 		goto out;
- 
- 
--	err = ffsWriteFile(dir, &fid, (char *)target, len, &ret);
-+	err = ffs_write_file(dir, &fid, (char *)target, len, &ret);
- 
- 	if (err) {
--		ffsRemoveFile(dir, &fid);
-+		ffs_remove_file(dir, &fid);
- 		goto out;
- 	}
- 
-@@ -2508,7 +2511,7 @@ static int exfat_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 
- 	pr_debug("%s entered\n", __func__);
- 
--	err = ffsCreateDir(dir, (u8 *)dentry->d_name.name, &fid);
-+	err = ffs_create_dir(dir, (u8 *)dentry->d_name.name, &fid);
- 	if (err)
- 		goto out;
- 
-@@ -2559,7 +2562,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
- 
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 
--	err = ffsRemoveDir(dir, &(EXFAT_I(inode)->fid));
-+	err = ffs_remove_dir(dir, &(EXFAT_I(inode)->fid));
- 	if (err)
- 		goto out;
- 
-@@ -2608,8 +2611,8 @@ static int exfat_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	EXFAT_I(old_inode)->fid.size = i_size_read(old_inode);
- 
--	err = ffsMoveFile(old_dir, &(EXFAT_I(old_inode)->fid), new_dir,
--			  new_dentry);
-+	err = ffs_move_file(old_dir, &(EXFAT_I(old_inode)->fid), new_dir,
-+			    new_dentry);
- 	if (err)
- 		goto out;
- 
-@@ -2766,7 +2769,7 @@ static void exfat_truncate(struct inode *inode, loff_t old_size)
- 	if (EXFAT_I(inode)->fid.start_clu == 0)
- 		goto out;
- 
--	err = ffsTruncateFile(inode, old_size, i_size_read(inode));
-+	err = ffs_truncate_file(inode, old_size, i_size_read(inode));
- 	if (err)
- 		goto out;
- 
-@@ -2902,7 +2905,7 @@ static int exfat_file_release(struct inode *inode, struct file *filp)
- 	struct super_block *sb = inode->i_sb;
- 
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
--	ffsSyncVol(sb, false);
-+	ffs_sync_vol(sb, false);
- 	return 0;
- }
- 
-@@ -2957,7 +2960,7 @@ static int exfat_bmap(struct inode *inode, sector_t sector, sector_t *phys,
- 
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 
--	err = ffsMapCluster(inode, clu_offset, &cluster);
-+	err = ffs_map_cluster(inode, clu_offset, &cluster);
- 
- 	if (!err && (cluster != CLUSTER_32(~0))) {
- 		*phys = START_SECTOR(cluster) + sec_offset;
-@@ -3150,7 +3153,7 @@ static int exfat_fill_inode(struct inode *inode, struct file_id_t *fid)
- 
- 	memcpy(&(EXFAT_I(inode)->fid), fid, sizeof(struct file_id_t));
- 
--	ffsReadStat(inode, &info);
-+	ffs_read_stat(inode, &info);
- 
- 	EXFAT_I(inode)->i_pos = 0;
- 	EXFAT_I(inode)->target = NULL;
-@@ -3266,7 +3269,7 @@ static int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
- 	exfat_time_unix2fat(&inode->i_ctime, &info.CreateTimestamp);
- 	exfat_time_unix2fat(&inode->i_atime, &info.AccessTimestamp);
- 
--	ffsWriteStat(inode, &info);
-+	ffs_write_stat(inode, &info);
- 
- 	return 0;
- }
-@@ -3304,7 +3307,7 @@ static void exfat_put_super(struct super_block *sb)
- 	if (__is_sb_dirty(sb))
- 		exfat_write_super(sb);
- 
--	ffsUmountVol(sb);
-+	ffs_umount_vol(sb);
- 
- 	sb->s_fs_info = NULL;
- 	exfat_free_super(sbi);
-@@ -3317,7 +3320,7 @@ static void exfat_write_super(struct super_block *sb)
- 	__set_sb_clean(sb);
- 
- 	if (!sb_rdonly(sb))
--		ffsSyncVol(sb, true);
-+		ffs_sync_vol(sb, true);
- 
- 	__unlock_super(sb);
- }
-@@ -3329,7 +3332,7 @@ static int exfat_sync_fs(struct super_block *sb, int wait)
- 	if (__is_sb_dirty(sb)) {
- 		__lock_super(sb);
- 		__set_sb_clean(sb);
--		err = ffsSyncVol(sb, true);
-+		err = ffs_sync_vol(sb, true);
- 		__unlock_super(sb);
- 	}
- 
-@@ -3344,7 +3347,7 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	struct vol_info_t info;
- 
- 	if (p_fs->used_clusters == UINT_MAX) {
--		if (ffsGetVolInfo(sb, &info) == -EIO)
-+		if (ffs_get_vol_info(sb, &info) == -EIO)
- 			return -EIO;
- 
- 	} else {
-@@ -3646,7 +3649,7 @@ static int exfat_read_root(struct inode *inode)
- 
- 	EXFAT_I(inode)->target = NULL;
- 
--	ffsReadStat(inode, &info);
-+	ffs_read_stat(inode, &info);
- 
- 	inode->i_uid = sbi->options.fs_uid;
- 	inode->i_gid = sbi->options.fs_gid;
-@@ -3713,10 +3716,10 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
- 	sb_min_blocksize(sb, 512);
- 	sb->s_maxbytes = 0x7fffffffffffffffLL;    /* maximum file size */
- 
--	ret = ffsMountVol(sb);
-+	ret = ffs_mount_vol(sb);
- 	if (ret) {
- 		if (!silent)
--			pr_err("[EXFAT] ffsMountVol failed\n");
-+			pr_err("[EXFAT] ffs_mount_vol failed\n");
- 
- 		goto out_fail;
- 	}
-@@ -3756,7 +3759,7 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
- 	return 0;
- 
- out_fail2:
--	ffsUmountVol(sb);
-+	ffs_umount_vol(sb);
- out_fail:
- 	if (root_inode)
- 		iput(root_inode);
--- 
-2.20.1
+> 
+>> +
+>>   void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi, bool panel_is_on)
+>>   {
+>>   	struct drm_device *dev = intel_dsi->base.base.dev;
+>> @@ -697,6 +708,8 @@ void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi, bool panel_is_on)
+>>   
+>>   	if ((IS_VALLEYVIEW(dev_priv) || IS_CHERRYVIEW(dev_priv)) &&
+>>   	    (mipi_config->pwm_blc == PPS_BLC_PMIC)) {
+>> +		gpiod_add_lookup_table(&pmic_panel_gpio_table);
+>> +
+>>   		intel_dsi->gpio_panel = gpiod_get(dev->dev, "panel", flags);
+>>   		if (IS_ERR(intel_dsi->gpio_panel)) {
+>>   			DRM_ERROR("Failed to own gpio for panel control\n");
+>> @@ -707,8 +720,16 @@ void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi, bool panel_is_on)
+>>   
+>>   void intel_dsi_vbt_gpio_cleanup(struct intel_dsi *intel_dsi)
+>>   {
+>> +	struct drm_device *dev = intel_dsi->base.base.dev;
+>> +	struct drm_i915_private *dev_priv = to_i915(dev);
+>> +	struct mipi_config *mipi_config = dev_priv->vbt.dsi.config;
+>> +
+>>   	if (intel_dsi->gpio_panel) {
+>>   		gpiod_put(intel_dsi->gpio_panel);
+>>   		intel_dsi->gpio_panel = NULL;
+>>   	}
+>> +
+>> +	if ((IS_VALLEYVIEW(dev_priv) || IS_CHERRYVIEW(dev_priv)) &&
+>> +	    (mipi_config->pwm_blc == PPS_BLC_PMIC))
+> 
+> Needless parens here as well.
+
+Will fix for v2 (will also the other case).
+
+> Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+
+Thanks.
+
+Regards,
+
+Hans
+
+
+
+> 
+>> +		gpiod_remove_lookup_table(&pmic_panel_gpio_table);
+>>   }
+>> diff --git a/drivers/mfd/intel_soc_pmic_core.c b/drivers/mfd/intel_soc_pmic_core.c
+>> index 47188df3080d..ddd64f9e3341 100644
+>> --- a/drivers/mfd/intel_soc_pmic_core.c
+>> +++ b/drivers/mfd/intel_soc_pmic_core.c
+>> @@ -9,8 +9,6 @@
+>>    */
+>>   
+>>   #include <linux/acpi.h>
+>> -#include <linux/gpio/consumer.h>
+>> -#include <linux/gpio/machine.h>
+>>   #include <linux/i2c.h>
+>>   #include <linux/interrupt.h>
+>>   #include <linux/module.h>
+>> @@ -25,17 +23,6 @@
+>>   #define BYT_CRC_HRV		2
+>>   #define CHT_CRC_HRV		3
+>>   
+>> -/* Lookup table for the Panel Enable/Disable line as GPIO signals */
+>> -static struct gpiod_lookup_table panel_gpio_table = {
+>> -	/* Intel GFX is consumer */
+>> -	.dev_id = "0000:00:02.0",
+>> -	.table = {
+>> -		/* Panel EN/DISABLE */
+>> -		GPIO_LOOKUP("gpio_crystalcove", 94, "panel", GPIO_ACTIVE_HIGH),
+>> -		{ },
+>> -	},
+>> -};
+>> -
+>>   /* PWM consumed by the Intel GFX */
+>>   static struct pwm_lookup crc_pwm_lookup[] = {
+>>   	PWM_LOOKUP("crystal_cove_pwm", 0, "0000:00:02.0", "pwm_pmic_backlight", 0, PWM_POLARITY_NORMAL),
+>> @@ -96,9 +83,6 @@ static int intel_soc_pmic_i2c_probe(struct i2c_client *i2c,
+>>   	if (ret)
+>>   		dev_warn(dev, "Can't enable IRQ as wake source: %d\n", ret);
+>>   
+>> -	/* Add lookup table binding for Panel Control to the GPIO Chip */
+>> -	gpiod_add_lookup_table(&panel_gpio_table);
+>> -
+>>   	/* Add lookup table for crc-pwm */
+>>   	pwm_add_table(crc_pwm_lookup, ARRAY_SIZE(crc_pwm_lookup));
+>>   
+>> @@ -121,9 +105,6 @@ static int intel_soc_pmic_i2c_remove(struct i2c_client *i2c)
+>>   
+>>   	regmap_del_irq_chip(pmic->irq, pmic->irq_chip_data);
+>>   
+>> -	/* Remove lookup table for Panel Control from the GPIO Chip */
+>> -	gpiod_remove_lookup_table(&panel_gpio_table);
+>> -
+>>   	/* remove crc-pwm lookup table */
+>>   	pwm_remove_table(crc_pwm_lookup, ARRAY_SIZE(crc_pwm_lookup));
+>>   
+>> -- 
+>> 2.23.0
+> 
 
