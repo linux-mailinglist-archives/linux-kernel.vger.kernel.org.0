@@ -2,169 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3972211FC85
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 02:19:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16B7B11FC96
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 02:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfLPBTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 20:19:53 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:55653 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbfLPBTx (ORCPT
+        id S1726528AbfLPBei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 20:34:38 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:62388 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726437AbfLPBei (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 20:19:53 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191216011948epoutp04881f471045fe381049b86f8b2c62040d~gtUeJgOk70931709317epoutp04P
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 01:19:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191216011948epoutp04881f471045fe381049b86f8b2c62040d~gtUeJgOk70931709317epoutp04P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576459188;
-        bh=8giqkkhX+t6iZYeFY9KVtwUMjXYwL+oSsLFbg5OEA7o=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=eIhOJkZALNTMtDxyg576IiTryvOQsM4A+bcPWPbeih6DqwzyVlxVTIg5rUSYxPdra
-         OhNue7eiHffeUvy4MBWYj46xdGTY3KPteBOPxmRwwP9kBu5VQ22ISuJ1oo2+B0AFYe
-         xUit4FFSJSJGKEDjclMJDd6gcoRMxlkRGG8RiXeY=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191216011947epcas1p39934fdf7cfd680c3b7ff966262e8f539~gtUdm8D3P2543125431epcas1p3J;
-        Mon, 16 Dec 2019 01:19:47 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47bk2n23rgzMqYkc; Mon, 16 Dec
-        2019 01:19:45 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5A.8A.48019.EABD6FD5; Mon, 16 Dec 2019 10:19:42 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191216011942epcas1p47aab213d18e13e805056d1e7be2fb729~gtUYNJG0P2204522045epcas1p4c;
-        Mon, 16 Dec 2019 01:19:42 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191216011942epsmtrp257955c838efed5a502a6b714b474cdcd~gtUYMjyxz2826028260epsmtrp2W;
-        Mon, 16 Dec 2019 01:19:42 +0000 (GMT)
-X-AuditID: b6c32a38-257ff7000001bb93-80-5df6dbaec84b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        11.DC.06569.DABD6FD5; Mon, 16 Dec 2019 10:19:41 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191216011941epsmtip2393d421082fd5ab53a31ee10a37df9a2~gtUX_XoVs1339113391epsmtip2a;
-        Mon, 16 Dec 2019 01:19:41 +0000 (GMT)
-Subject: Re: [PATCH] extcon: sm5502: remove unneeded semicolon
-To:     Xu Wang <vulab@iscas.ac.cn>, myungjoo.ham@samsung.com
-Cc:     linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <6e94aa1e-2669-621b-d70b-f4780ed6705a@samsung.com>
-Date:   Mon, 16 Dec 2019 10:26:17 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Sun, 15 Dec 2019 20:34:38 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576460077; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=hXp5Pym+ifAP29LPG9ZfYu5ZCPAzDqcCF4V7G9r94xg=;
+ b=jLZZ4zcFJ0HlWd3i+423XlMDl7WdwH70quOt0TJo0BK7YrDuKShVc2I5Se/qL0p9nUvz6brc
+ UZKBxNAjNuT7tm04bsWh6QUXYR+3EzX3UG9z23QXChALMHGxbJ0XSjZ9duLMgY87lpa4PIfJ
+ OAMIYJRlpT48Jt1rqkz0dVyQiOk=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df6df26.7fe751a7c650-smtp-out-n01;
+ Mon, 16 Dec 2019 01:34:30 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id A5C21C447A9; Mon, 16 Dec 2019 01:34:28 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 979EFC43383;
+        Mon, 16 Dec 2019 01:34:27 +0000 (UTC)
 MIME-Version: 1.0
-In-Reply-To: <1576230514-5049-1-git-send-email-vulab@iscas.ac.cn>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHe3a367Va3abmaUHNG0JO1F3nbNpmr5SSoBD1obB1mTdn7o3d
-        TdK+GGQti0gsypGpVOJWNFBTs0xSywwRZfhCZgRKWKJWllhRtOst8tvvnOf8z3n+z3MITFaK
-        y4l8q5N1WBkzha8UN3fFqOIejC3kqOofR2kDbTdx7diZelzrLW0X78TSn7Y2ovTLTT6UPt+w
-        KRs7UqAzsUwu61CwVqMtN9+ap6cOHDTsMWiSVXQcnaLdRimsjIXVU3szs+P25ZuDgyhFIWN2
-        BVPZDMdRCWk6h83lZBUmG+fUU6w912xPscdzjIVzWfPijTZLKq1SJWqChccLTNUzg2J745pT
-        vpnoEnRrVRkKJYBMgkF/RUgZWknIyFYE5W8qRULwBcH74VqJECwgCPjcIf8kc+cfYsJBO4K6
-        35+QEMwh6HvxEi9DBBFGpkHdkyJeEE6mQMNAt4RnjFTAj7cNS4yTSuiYGsV5XktGwdDiBOJZ
-        GpR+fV4ZwrcRk9HwdKiQT0eQh6G3+ezfknXQWzkp5jmU3AUd09dxoX0kvJ6sFgm8GVpmbi7d
-        E8huHNyfRzDBwF7wXmxDAofBx56mv8bkMD/bjgt8Gry93bggdiNo6hiQCAdq6LhbIeIvh5Ex
-        4G9LENJR8OhnFRIGr4HZb5ckfAmQUnCfkwklWyDwblwk8Aa4ff4CfgVRnmV2PMsseJZZ8Pwf
-        VoPEPrSetXOWPJaj7UnL/7oBLa2gUtuKnvRndiKSQNRq6ZRpIUcmYQq5IksnAgKjwqVs7HyO
-        TJrLFBWzDpvB4TKzXCfSBB+7HJNHGG3BhbY6DbQmUa1Wa5PoZA1NU5FSYnEwR0bmMU62gGXt
-        rOOfTkSEykuQfTy87Hvffelwwr1D1TVUZsHVkKreGztGambQlVjpqCL16LXXK37FWLtaTmjL
-        a3e6vTX39/vqfr81ver3GzOms7b6/JszirnUyGllmuhCWLEWTh6Lntg+ldG3cZve/MB7x+Df
-        /bFiN1Vi+JBf9awzgF/U6dye8tJhSU9t4UTWWUrMmRhaiTk45g/0cy2+mAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPLMWRmVeSWpSXmKPExsWy7bCSvO7a299iDdp/Wlhc3jWHzeJ24wo2
-        i5Wte1kcmD327djM6NG3ZRWjx+dNcgHMUVw2Kak5mWWpRfp2CVwZ899eZCnYzFex6q1qA+M8
-        7i5GTg4JAROJ9+1bmbsYuTiEBHYzSnxd9JAVIiEpMe3iUaAEB5AtLHH4cDFEzVtGiXlvZrGC
-        xIUF7CSW7akEKRcRsJTYdOEIWCuzgILEr3ubWCHqpzBK/Fq6hwUkwSagJbH/xQ02EJtfQFHi
-        6o/HjCA2L9CcL0dnsoPMZBFQldh3tQwkLCoQJrFzyWMmiBJBiZMzn4CN4RRwlNj/ejobxC51
-        iT/zLjFD2OISt57MZ4Kw5SW2v53DPIFReBaS9llIWmYhaZmFpGUBI8sqRsnUguLc9NxiwwKj
-        vNRyveLE3OLSvHS95PzcTYzgaNDS2sF44kT8IUYBDkYlHl6H7G+xQqyJZcWVuYcYJTiYlUR4
-        U7U/xwrxpiRWVqUW5ccXleakFh9ilOZgURLnlc8/FikkkJ5YkpqdmlqQWgSTZeLglGpgdNk6
-        ocL3mdL3o263Sp6qnlwupKuwq0aB7+izWI9ngqdNEzJfWPdd2/JQ4KPr7I9eq5d/s5O9fOBf
-        0saCZZ7GX+KmKz/yjDdmZQwJWvxvgf6C/Q31Z0/P3nju+cRzTlMXbfrgd3zRVTbltLWHfivZ
-        qOiFJ51afZ8n4kelZua9WNa/e9NN+/PXLVViKc5INNRiLipOBACGlHsAggIAAA==
-X-CMS-MailID: 20191216011942epcas1p47aab213d18e13e805056d1e7be2fb729
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191213094853epcas1p4459d16e88cbf5f12f7f682efddd993e7
-References: <CGME20191213094853epcas1p4459d16e88cbf5f12f7f682efddd993e7@epcas1p4.samsung.com>
-        <1576230514-5049-1-git-send-email-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 16 Dec 2019 09:34:27 +0800
+From:   cang@codeaurora.org
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] scsi: ufs: Put SCSI host after remove it
+In-Reply-To: <2956b9c7-b019-e2b3-7a1b-7b796b724add@acm.org>
+References: <1576328616-30404-1-git-send-email-cang@codeaurora.org>
+ <1576328616-30404-2-git-send-email-cang@codeaurora.org>
+ <85475247-efd5-732e-ae74-6d9a11e1bdf2@acm.org>
+ <5aa3a266e3db3403e663b36ddfdc4d60@codeaurora.org>
+ <2956b9c7-b019-e2b3-7a1b-7b796b724add@acm.org>
+Message-ID: <3afbe71cc9f0626edf66f7bc13b331f4@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/19 6:48 PM, Xu Wang wrote:
-> remove unneeded semicolon
-> This is detected by coccinelle.
+On 2019-12-16 05:55, Bart Van Assche wrote:
+> On 2019-12-14 14:24, cang@codeaurora.org wrote:
+>> How do you think if I replace my patch with below one?
+>> In this way, you can also move blk_cleanup_queue() behind
+>> cancel_work_sync(eh_work).
+>> 
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>> index b5966fa..bd4ae75 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -8251,15 +8251,17 @@ void ufshcd_remove(struct ufs_hba *hba)
+>>         ufs_bsg_remove(hba);
+>>         ufs_sysfs_remove_nodes(hba->dev);
+>>         scsi_remove_host(hba->host);
+>> -       /* disable interrupts */
+>> -       ufshcd_disable_intr(hba, hba->intr_mask);
+>> -       ufshcd_hba_stop(hba, true);
+>> -
+>>         ufshcd_exit_clk_scaling(hba);
+>>         ufshcd_exit_clk_gating(hba);
+>>         if (ufshcd_is_clkscaling_supported(hba))
+>>                 device_remove_file(hba->dev,
+>> &hba->clk_scaling.enable_attr);
+>> +       cancel_work_sync(&hba->eeh_work);
+>> +       cancel_work_sync(&hba->eh_work);
+>> +       /* disable interrupts */
+>> +       ufshcd_disable_intr(hba, hba->intr_mask);
+>> +       ufshcd_hba_stop(hba, true);
+>>         ufshcd_hba_exit(hba);
+>> +       ufshcd_dealloc_host(hba);
+>>  }
+>>  EXPORT_SYMBOL_GPL(ufshcd_remove);
 > 
-> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
-> ---
->  drivers/extcon/extcon-sm5502.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> Hi Can,
 > 
-> diff --git a/drivers/extcon/extcon-sm5502.c b/drivers/extcon/extcon-sm5502.c
-> index bcf65aa..106d4da 100644
-> --- a/drivers/extcon/extcon-sm5502.c
-> +++ b/drivers/extcon/extcon-sm5502.c
-> @@ -249,7 +249,7 @@ static int sm5502_muic_set_path(struct sm5502_muic_info *info,
->  		dev_err(info->dev, "Unknown DM_CON/DP_CON switch type (%d)\n",
->  				con_sw);
->  		return -EINVAL;
-> -	};
-> +	}
->  
->  	switch (vbus_sw) {
->  	case VBUSIN_SWITCH_OPEN:
-> @@ -268,7 +268,7 @@ static int sm5502_muic_set_path(struct sm5502_muic_info *info,
->  	default:
->  		dev_err(info->dev, "Unknown VBUS switch type (%d)\n", vbus_sw);
->  		return -EINVAL;
-> -	};
-> +	}
->  
->  	return 0;
->  }
-> @@ -357,13 +357,13 @@ static unsigned int sm5502_muic_get_cable_type(struct sm5502_muic_info *info)
->  				"cannot identify the cable type: adc(0x%x)\n",
->  				adc);
->  			return -EINVAL;
-> -		};
-> +		}
->  		break;
->  	default:
->  		dev_err(info->dev,
->  			"failed to identify the cable type: adc(0x%x)\n", adc);
->  		return -EINVAL;
-> -	};
-> +	}
->  
->  	return cable_type;
->  }
-> @@ -405,7 +405,7 @@ static int sm5502_muic_cable_handler(struct sm5502_muic_info *info,
->  		dev_dbg(info->dev,
->  			"cannot handle this cable_type (0x%x)\n", cable_type);
->  		return 0;
-> -	};
-> +	}
->  
->  	/* Change internal hardware path(DM_CON/DP_CON, VBUSIN) */
->  	ret = sm5502_muic_set_path(info, con_sw, vbus_sw, attached);
+> To which kernel tree does the above patch apply? I'm asking this 
+> because
+> I don't see the recently added blk_cleanup_queue() calls in the above
+> patch. Please start from Martin's latest scsi-queue branch when
+> preparing SCSI patches.
 > 
+> Additionally, is it on purpose that there is no scsi_host_put() call in
+> the above code? I'd like to keep that call because without that call a
+> memory leak will occur when unloading the ufshcd-core kernel driver.
+> 
+> Thanks,
+> 
+> Bart.
 
-Applied it. Better to use the capital letter for first char
-on patch title.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Hi Bart,
+
+This is applied to 5.5/scsi-queue. The two changes I patsed from you are
+not merged yet, I am still doing code review to them, so there is no
+blk_cleanup_queue() calls in my code base. I am just saying you may move
+your blk_cleanup_queue() calls below cancel_work_sync(&hba->eh_work) if
+my change applies. How do you think?
+
+scsi_host_put() was there before but explicitly removed by
+afa3dfd42d205b106787476647735aa1de1a5d02. I agree with you, without this
+change, there is memory leak.
+
+Thanks,
+
+Can Guo.
