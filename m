@@ -2,77 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 493C41205E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E23D51205F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:40:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfLPMg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:36:58 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:15210 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbfLPMg5 (ORCPT
+        id S1727677AbfLPMjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:39:03 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:39466 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727512AbfLPMjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:36:57 -0500
-Received: from localhost.localdomain (10.28.8.19) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Mon, 16 Dec 2019
- 20:37:25 +0800
-From:   Qianggui Song <qianggui.song@amlogic.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>
-CC:     Qianggui Song <qianggui.song@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 4/4] arm64: dts: meson: a1: add gpio interrupt controller support
-Date:   Mon, 16 Dec 2019 20:36:45 +0800
-Message-ID: <20191216123645.10099-5-qianggui.song@amlogic.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191216123645.10099-1-qianggui.song@amlogic.com>
-References: <20191216123645.10099-1-qianggui.song@amlogic.com>
+        Mon, 16 Dec 2019 07:39:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=c88RMelWbUgUiJroWa0Q0HLfhfNHGH7r6t3skBuZYFU=; b=XRZMxrgL4mXQitjiaHR/vTJzl
+        OiXWCYBgvU4/QgW7TOQLLk3vijwtgoULXNuuag+CGBE4W//7PBd4XrtGPhLNpwfwUbsYAVnFpDIos
+        JBgvxayPVZKPeIwz/yeAl21ZbYmkrTuMyrqxloImgsH3iPP2/GYw8gxOYj+/6wyF7CF0ysOL4G+nO
+        4huaSdYpFYtqTdO8fNHTZdS8gqUWr7PHTj34GM5vIZIWb0g4sYsbL8ajNGiTNBRUhCDO3zuMReRvL
+        AzmyMhV5V0/tSyXjv664vXjdN14UJgBsqce8S1p+YoCwFeO674JWwmT16Zd+loev4G23/hPGZYTbY
+        e0tgk3YbA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1igpdM-00064m-Dp; Mon, 16 Dec 2019 12:37:56 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 06AD13007F2;
+        Mon, 16 Dec 2019 13:36:30 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DBF192B1A6BF5; Mon, 16 Dec 2019 13:37:52 +0100 (CET)
+Date:   Mon, 16 Dec 2019 13:37:52 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Helge Deller <deller@gmx.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Nick Hu <nickhu@andestech.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [PATCH 05/17] asm-generic/tlb: Rename
+ HAVE_RCU_TABLE_NO_INVALIDATE
+Message-ID: <20191216123752.GM2844@hirez.programming.kicks-ass.net>
+References: <20191211120713.360281197@infradead.org>
+ <20191211122955.940455408@infradead.org>
+ <87woawzc1t.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.28.8.19]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87woawzc1t.fsf@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add gpio interrupt controller node to a1 SoC
+On Mon, Dec 16, 2019 at 06:01:58PM +0530, Aneesh Kumar K.V wrote:
+> Peter Zijlstra <peterz@infradead.org> writes:
+> 
+> > Towards a more consistent naming scheme.
+> >
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  arch/Kconfig              |    3 ++-
+> >  arch/powerpc/Kconfig      |    2 +-
+> >  arch/sparc/Kconfig        |    2 +-
+> >  include/asm-generic/tlb.h |    2 +-
+> >  mm/mmu_gather.c           |    2 +-
+> >  5 files changed, 6 insertions(+), 5 deletions(-)
+> >
+> > --- a/arch/Kconfig
+> > +++ b/arch/Kconfig
+> > @@ -396,8 +396,9 @@ config HAVE_ARCH_JUMP_LABEL_RELATIVE
+> >  config MMU_GATHER_RCU_TABLE_FREE
+> >  	bool
+> >  
+> > -config HAVE_RCU_TABLE_NO_INVALIDATE
+> > +config MMU_GATHER_NO_TABLE_INVALIDATE
+> >  	bool
+> > +	depends on MMU_GATHER_RCU_TABLE_FREE
+> 
+> 
+> Can we drop this Kernel config option instead use
+> MMU_GATHER_RCU_TABLE_FREE? IMHO reducing the kernel config related to
+> mmu_gather can reduce the complexity. 
 
-Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+I'm confused, are you saing you're happy to have PowerPC eat the extra
+TLB invalidates? I thought you cared about PPC performance :-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index 4dec518c4dde..e580d3e96c67 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -99,6 +99,15 @@ gpio: bank@0400 {
- 
- 			};
- 
-+			gpio_intc: interrupt-controller@0440 {
-+				compatible = "amlogic,meson-gpio-intc",
-+					     "amlogic,meson-a1-gpio-intc";
-+				reg = <0x0 0x0440 0x0 0x14>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				amlogic,channel-interrupts = <49 50 51 52 53 54 55 56>;
-+			};
-+
- 			uart_AO: serial@1c00 {
- 				compatible = "amlogic,meson-gx-uart",
- 					     "amlogic,meson-ao-uart";
--- 
-2.24.0
 
