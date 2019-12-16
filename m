@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2706E121635
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3761912137E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731668AbfLPS1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:27:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37118 "EHLO mail.kernel.org"
+        id S1729043AbfLPSCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:02:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731419AbfLPSPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:15:42 -0500
+        id S1729276AbfLPSCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:02:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D149F206EC;
-        Mon, 16 Dec 2019 18:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35F6F2082E;
+        Mon, 16 Dec 2019 18:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520142;
-        bh=XUGfC575xhIEqwMyg/cNDeOdlkQbMN1PMFYBybe8duE=;
+        s=default; t=1576519323;
+        bh=4FAopnWEW4sAmErItMkZw9/jbKecniXpe7hWz5Qlsvo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GQz/uq1loxjRsrvplRnDeSU4ic63y2oZVOI1DJqvzJ5nW3ce0rfCoJIovLTfFQw7x
-         mtsNjsCtcOzZGM/nFCk5/YKtHhft+e7QvomZkCV7/E2eTkRkHUN2idc24JQi70Xf44
-         Crtu3/G0AS2D8RTH9RqvQ24aRN1oDoeeRivXtDiY=
+        b=ySmp1m5NgKcB5r4a2vk3GwCSlPb+EAQAG8+RwXUmcs9Z47eTsb7ADHR8hGlQYqe6i
+         jsKakA/G/nbYniE8ZY/35w9BS1JTVmfessF+StJHwUT83g7za6Y4JIjxcFjmXGUHEc
+         eR6TuWyhbw3H4Kt9s7YSJmaFKAD95qOGnC+m0cYM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 5.4 032/177] xhci: make sure interrupts are restored to correct state
+        stable@vger.kernel.org, Chris Lesiak <chris.lesiak@licor.com>,
+        Matt Ranostay <matt.ranostay@konsulko.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 020/140] iio: humidity: hdc100x: fix IIO_HUMIDITYRELATIVE channel reporting
 Date:   Mon, 16 Dec 2019 18:48:08 +0100
-Message-Id: <20191216174825.035309617@linuxfoundation.org>
+Message-Id: <20191216174755.991862615@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,81 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Chris Lesiak <chris.lesiak@licor.com>
 
-commit bd82873f23c9a6ad834348f8b83f3b6a5bca2c65 upstream.
+commit 342a6928bd5017edbdae376042d8ad6af3d3b943 upstream.
 
-spin_unlock_irqrestore() might be called with stale flags after
-reading port status, possibly restoring interrupts to a incorrect
-state.
+The IIO_HUMIDITYRELATIVE channel was being incorrectly reported back
+as percent when it should have been milli percent. This is via an
+incorrect scale value being returned to userspace.
 
-If a usb2 port just finished resuming while the port status is read
-the spin lock will be temporary released and re-acquired in a separate
-function. The flags parameter is passed as value instead of a pointer,
-not updating flags properly before the final spin_unlock_irqrestore()
-is called.
-
-Cc: <stable@vger.kernel.org> # v3.12+
-Fixes: 8b3d45705e54 ("usb: Fix xHCI host issues on remote wakeup.")
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20191211142007.8847-7-mathias.nyman@linux.intel.com
+Signed-off-by: Chris Lesiak <chris.lesiak@licor.com>
+Acked-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-hub.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/iio/humidity/hdc100x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -806,7 +806,7 @@ static void xhci_del_comp_mod_timer(stru
- 
- static int xhci_handle_usb2_port_link_resume(struct xhci_port *port,
- 					     u32 *status, u32 portsc,
--					     unsigned long flags)
-+					     unsigned long *flags)
- {
- 	struct xhci_bus_state *bus_state;
- 	struct xhci_hcd	*xhci;
-@@ -860,11 +860,11 @@ static int xhci_handle_usb2_port_link_re
- 		xhci_test_and_clear_bit(xhci, port, PORT_PLC);
- 		xhci_set_link_state(xhci, port, XDEV_U0);
- 
--		spin_unlock_irqrestore(&xhci->lock, flags);
-+		spin_unlock_irqrestore(&xhci->lock, *flags);
- 		time_left = wait_for_completion_timeout(
- 			&bus_state->rexit_done[wIndex],
- 			msecs_to_jiffies(XHCI_MAX_REXIT_TIMEOUT_MS));
--		spin_lock_irqsave(&xhci->lock, flags);
-+		spin_lock_irqsave(&xhci->lock, *flags);
- 
- 		if (time_left) {
- 			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
-@@ -967,7 +967,7 @@ static void xhci_get_usb3_port_status(st
- }
- 
- static void xhci_get_usb2_port_status(struct xhci_port *port, u32 *status,
--				      u32 portsc, unsigned long flags)
-+				      u32 portsc, unsigned long *flags)
- {
- 	struct xhci_bus_state *bus_state;
- 	u32 link_state;
-@@ -1017,7 +1017,7 @@ static void xhci_get_usb2_port_status(st
- static u32 xhci_get_port_status(struct usb_hcd *hcd,
- 		struct xhci_bus_state *bus_state,
- 	u16 wIndex, u32 raw_port_status,
--		unsigned long flags)
-+		unsigned long *flags)
- 	__releases(&xhci->lock)
- 	__acquires(&xhci->lock)
- {
-@@ -1140,7 +1140,7 @@ int xhci_hub_control(struct usb_hcd *hcd
+--- a/drivers/iio/humidity/hdc100x.c
++++ b/drivers/iio/humidity/hdc100x.c
+@@ -229,7 +229,7 @@ static int hdc100x_read_raw(struct iio_d
+ 			*val2 = 65536;
+ 			return IIO_VAL_FRACTIONAL;
+ 		} else {
+-			*val = 100;
++			*val = 100000;
+ 			*val2 = 65536;
+ 			return IIO_VAL_FRACTIONAL;
  		}
- 		trace_xhci_get_port_status(wIndex, temp);
- 		status = xhci_get_port_status(hcd, bus_state, wIndex, temp,
--					      flags);
-+					      &flags);
- 		if (status == 0xffffffff)
- 			goto error;
- 
 
 
