@@ -2,137 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D1A0120165
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:46:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0607D120170
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfLPJpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 04:45:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49274 "EHLO mail.kernel.org"
+        id S1727151AbfLPJsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 04:48:20 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:48410 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbfLPJpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 04:45:30 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        id S1726992AbfLPJsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 04:48:20 -0500
+Received: from zn.tnic (p4FED3450.dip0.t-ipconnect.de [79.237.52.80])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D319320665;
-        Mon, 16 Dec 2019 09:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576489529;
-        bh=ID6AxVJaN/XZPaFJDNB6plYUfGK4flJOFGIZw/PCpfI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=usiK59CUF4wvbn/67RYEOn0Dl40MAPAvz11JWIwlYU8+v1B/eA6RgcQdph0DQoTse
-         Uj9p2alU1Ex+bT22CAN1SPQ55yltS4CATkUF8CVhrxuLPw1v+4YAB2nPL5OmW/dDkm
-         qn0CPviLJpyHQ7NqWfK4Ff2LapqUV9TjUR1xFzkk=
-Date:   Mon, 16 Dec 2019 09:45:24 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        "kernelci.org bot" <bot@kernelci.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH AUTOSEL 4.19 031/219] arm64: preempt: Fix big-endian when
- checking preempt count in assembly
-Message-ID: <20191216094523.GA9938@willie-the-truck>
-References: <20191122054911.1750-1-sashal@kernel.org>
- <20191122054911.1750-24-sashal@kernel.org>
- <20191214021403.GA1357@home.goodmis.org>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C5ED51EC05DE;
+        Mon, 16 Dec 2019 10:48:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1576489694;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=q8O6VZTemt35IGzR/FF7o3a1DfxJLaFVolgurqY/LZw=;
+        b=PFhxIKbPtj0Tv4MrASXYGGCvSuJTjVXI+02ZrMMKV/xMDyJS6ikvNKG12lAtDg/c4eGC6h
+        qSFUrBlyP9Ve0wV6HGQa3av8h6C+m0SemosA/HFPtg2fQ4FvS5eV5OpNTMS+cKa4uQ6Gjl
+        /cVXOuwEsjjoxl+amJjXg+uz9FRxaYA=
+Date:   Mon, 16 Dec 2019 10:45:56 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Dominik Brodowski <linux@dominikbrodowski.net>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] init: use do_mount() instead of ksys_mount()
+Message-ID: <20191216094556.GA32241@zn.tnic>
+References: <20191212181422.31033-1-linux@dominikbrodowski.net>
+ <20191212181422.31033-4-linux@dominikbrodowski.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191214021403.GA1357@home.goodmis.org>
+In-Reply-To: <20191212181422.31033-4-linux@dominikbrodowski.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 09:14:03PM -0500, Steven Rostedt wrote:
-> On Fri, Nov 22, 2019 at 12:46:03AM -0500, Sasha Levin wrote:
-> > From: Will Deacon <will.deacon@arm.com>
-> > 
-> > [ Upstream commit 7faa313f05cad184e8b17750f0cbe5216ac6debb ]
-> > 
-> > Commit 396244692232 ("arm64: preempt: Provide our own implementation of
-> > asm/preempt.h") extended the preempt count field in struct thread_info
-> > to 64 bits, so that it consists of a 32-bit count plus a 32-bit flag
-> > indicating whether or not the current task needs rescheduling.
-> > 
-> > Whilst the asm-offsets definition of TSK_TI_PREEMPT was updated to point
-> > to this new field, the assembly usage was left untouched meaning that a
-> > 32-bit load from TSK_TI_PREEMPT on a big-endian machine actually returns
-> > the reschedule flag instead of the count.
-> > 
-> > Whilst we could fix this by pointing TSK_TI_PREEMPT at the count field,
-> > we're actually better off reworking the two assembly users so that they
-> > operate on the whole 64-bit value in favour of inspecting the thread
-> > flags separately in order to determine whether a reschedule is needed.
-> > 
-> > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> > Tested-by: Kevin Hilman <khilman@baylibre.com>
-> > Signed-off-by: Will Deacon <will.deacon@arm.com>
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > ---
-> >  arch/arm64/include/asm/assembler.h | 8 +++-----
-> >  arch/arm64/kernel/entry.S          | 6 ++----
-> >  2 files changed, 5 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-> > index 5a97ac8531682..0c100506a29aa 100644
-> > --- a/arch/arm64/include/asm/assembler.h
-> > +++ b/arch/arm64/include/asm/assembler.h
-> > @@ -683,11 +683,9 @@ USER(\label, ic	ivau, \tmp2)			// invalidate I line PoU
-> >  	.macro		if_will_cond_yield_neon
-> >  #ifdef CONFIG_PREEMPT
-> >  	get_thread_info	x0
-> > -	ldr		w1, [x0, #TSK_TI_PREEMPT]
-> > -	ldr		x0, [x0, #TSK_TI_FLAGS]
-> > -	cmp		w1, #PREEMPT_DISABLE_OFFSET
-> > -	csel		x0, x0, xzr, eq
-> > -	tbnz		x0, #TIF_NEED_RESCHED, .Lyield_\@	// needs rescheduling?
-> > +	ldr		x0, [x0, #TSK_TI_PREEMPT]
-> > +	sub		x0, x0, #PREEMPT_DISABLE_OFFSET
-> > +	cbz		x0, .Lyield_\@
-> >  	/* fall through to endif_yield_neon */
-> >  	.subsection	1
-> >  .Lyield_\@ :
-> > diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> > index 5f800384cb9a8..bb68323530458 100644
-> > --- a/arch/arm64/kernel/entry.S
-> > +++ b/arch/arm64/kernel/entry.S
-> > @@ -622,10 +622,8 @@ el1_irq:
-> >  	irq_handler
-> >  
-> >  #ifdef CONFIG_PREEMPT
-> > -	ldr	w24, [tsk, #TSK_TI_PREEMPT]	// get preempt count
-> > -	cbnz	w24, 1f				// preempt count != 0
-> > -	ldr	x0, [tsk, #TSK_TI_FLAGS]	// get flags
-> > -	tbz	x0, #TIF_NEED_RESCHED, 1f	// needs rescheduling?
-> > +	ldr	x24, [tsk, #TSK_TI_PREEMPT]	// get preempt count
-> > +	cbnz	x24, 1f				// preempt count != 0
-> >  	bl	el1_preempt
-> 
-> While updating 4.19-rt, I stumbled on this change to arm64 backport. And was
-> confused by it, but looking deeper, this is something that breaks without
-> having 396244692232f ("arm64: preempt: Provide our own implementation of
-> asm/preempt.h").
-> 
-> That commit inverts the TIF_NEED_RESCHED meaning where set means we don't need
-> to resched, and clear means we need to resched. This way we can combine the
-> preempt count with the need resched flag test as they share the same 64bit
-> word. A 0 means we need to preempt (as NEED_RESCHED being zero means we need
-> to resched, and this also means preempt_count is zero). If the
-> TIF_NEED_RESCHED bit is set, that means we don't need to resched, and if
-> preempt count is something other than zero, we don't need to resched, and
-> since those two are together by commit 396244692232f, we can just test
-> #TSK_TI_PREEMPT. But because that commit does not exist in 4.19, we can't
-> remove the TIF_NEED_RESCHED check, that this backport does, and then breaks
-> the kernel!
+On Thu, Dec 12, 2019 at 07:14:20PM +0100, Dominik Brodowski wrote:
+> diff --git a/init/do_mounts.c b/init/do_mounts.c
+> index 43f6d098c880..f55cbd9cb818 100644
+> --- a/init/do_mounts.c
+> +++ b/init/do_mounts.c
+> @@ -387,12 +387,25 @@ static void __init get_fs_names(char *page)
+>  	*s = '\0';
+>  }
+>  
+> -static int __init do_mount_root(char *name, char *fs, int flags, void *data)
+> +static int __init do_mount_root(const char *name, const char *fs,
+> +				 const int flags, const void *data)
+>  {
+>  	struct super_block *s;
+> -	int err = ksys_mount(name, "/root", fs, flags, data);
+> -	if (err)
+> -		return err;
+> +	char *data_page;
+> +	struct page *p;
+> +	int ret;
+> +
+> +	/* do_mount() requires a full page as fifth argument */
+> +	p = alloc_page(GFP_KERNEL);
+> +	if (!p)
+> +		return -ENOMEM;
+> +
+> +	data_page = page_address(p);
+	^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Yup, without 396244692232 this commit makes no sense. That's why I didn't CC
-stable or add a Fixes tag :(
+That doesn't work in my guest as it gives a funny address:
 
-Will
+[    3.155314] mount_block_root: entry
+[    3.155868] mount_block_root: fs_name: [ext3]
+[    3.156512] do_mount_root: will copy data page: 0x00000000adf0ddb8
+
+leading to the splat below.
+
+Reverting the patch fixes the boot.
+
+Thx.
+
+[    3.575074] BUG: kernel NULL pointer dereference, address: 0000000000000000
+[    3.576858] #PF: supervisor read access in kernel mode
+[    3.578274] #PF: error_code(0x0000) - not-present page
+[    3.579003] PGD 0 P4D 0 
+[    3.579003] Oops: 0000 [#1] PREEMPT SMP
+[    3.579003] CPU: 8 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc1+ #17
+[    3.579003] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
+[    3.579003] RIP: 0010:strncpy+0xf/0x30
+[    3.579003] Code: 0f b6 0c 16 88 0c 10 48 ff c2 84 c9 75 f2 f3 c3 66 66 2e 0f 1f 84 00 00 00 00 00 48 85 d2 48 89 f8 74 1b 4c 8d 04 17 48 89 fa <0f> b6 0e 80 f9 01 88 0a 48 83 de ff 48 ff c2 4c 39 c2 75 ec f3 c3
+[    3.579003] RSP: 0018:ffffc90000013eb8 EFLAGS: 00010206
+[    3.579003] RAX: ffff88807b780000 RBX: 0000000000008001 RCX: 0000000000000000
+[    3.579003] RDX: ffff88807b780000 RSI: 0000000000000000 RDI: ffff88807b780000
+[    3.579003] RBP: ffff88807b781000 R08: ffff88807b780fff R09: 00000000000770f4
+[    3.579003] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88807b781000
+[    3.579003] R13: 0000000000000000 R14: 0000000000000000 R15: ffffea0001ede000
+[    3.579003] FS:  0000000000000000(0000) GS:ffff88807dc00000(0000) knlGS:0000000000000000
+[    3.579003] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    3.579003] CR2: 0000000000000000 CR3: 0000000002009000 CR4: 00000000003406e0
+[    3.579003] Call Trace:
+[    3.579003]  mount_block_root+0x14f/0x312
+[    3.579003]  prepare_namespace+0x136/0x165
+[    3.579003]  ? rest_init+0xb9/0xb9
+[    3.579003]  kernel_init+0xa/0xf7
+[    3.579003]  ret_from_fork+0x22/0x40
+[    3.579003] Modules linked in:
+[    3.579003] CR2: 0000000000000000
+[    3.579003] ---[ end trace 2884b7e501f1daa6 ]---
+[    3.579003] RIP: 0010:strncpy+0xf/0x30
+[    3.579003] Code: 0f b6 0c 16 88 0c 10 48 ff c2 84 c9 75 f2 f3 c3 66 66 2e 0f 1f 84 00 00 00 00 00 48 85 d2 48 89 f8 74 1b 4c 8d 04 17 48 89 fa <0f> b6 0e 80 f9 01 88 0a 48 83 de ff 48 ff c2 4c 39 c2 75 ec f3 c3
+[    3.579003] RSP: 0018:ffffc90000013eb8 EFLAGS: 00010206
+[    3.579003] RAX: ffff88807b780000 RBX: 0000000000008001 RCX: 0000000000000000
+[    3.579003] RDX: ffff88807b780000 RSI: 0000000000000000 RDI: ffff88807b780000
+[    3.579003] RBP: ffff88807b781000 R08: ffff88807b780fff R09: 00000000000770f4
+[    3.579003] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88807b781000
+[    3.579003] R13: 0000000000000000 R14: 0000000000000000 R15: ffffea0001ede000
+[    3.579003] FS:  0000000000000000(0000) GS:ffff88807dc00000(0000) knlGS:0000000000000000
+[    3.579003] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    3.579003] CR2: 0000000000000000 CR3: 0000000002009000 CR4: 00000000003406e0
+[    3.611795] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+[    3.612923] Kernel Offset: disabled
+[    3.613505] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009 ]---
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
