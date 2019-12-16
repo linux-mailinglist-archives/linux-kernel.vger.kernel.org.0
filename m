@@ -2,106 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9725D120574
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:21:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AB2B12057A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:21:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbfLPMVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:21:14 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33847 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727542AbfLPMVN (ORCPT
+        id S1727607AbfLPMVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:21:51 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:36219 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727545AbfLPMVu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:21:13 -0500
-Received: by mail-oi1-f195.google.com with SMTP id l136so3223340oig.1;
-        Mon, 16 Dec 2019 04:21:13 -0800 (PST)
+        Mon, 16 Dec 2019 07:21:50 -0500
+Received: by mail-vk1-f195.google.com with SMTP id i4so1553475vkc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 04:21:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4Osz9VkIv77cDwS5TcCegl7t+g2vcc4c6bR2gC0bBTE=;
+        b=DZZyv8KM/AkMijIzHa1GdiQtmMM5jFO5/iApv4ZaWBvNM353Ymxg2+pnW5EC9h1d10
+         raOcV/4ZpE2mLiy9niImgy6S2uIbA8AxH7zU77oNYUJK5xvF07asZDBu2dJQL1Nt3X8x
+         6HN96msV5Xasoa7rvuf7T9sxjtSopJk43dVkSSJ1RkjWKxqXtfKtVaWoc6wECXGLbsW6
+         +5KQFjSFWGoSMFLp4WestwfyV+ESb9MvghUFcvSOF1K4p1gyWUHq00PnIs22QsYnLQ66
+         zzcsQnc5XGu/COfqK2j7KirCwaIBS0mSgbm1k2K1q1CxtYxlAMMyEMywAX2JwUw3AoxK
+         cEcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PaEE6lhNeiZHy4KX5OI+M2Odz2KC3Vc0bGM8VMqQydA=;
-        b=aHyXoGV1+hGxLRV5Mj/TNaeHx0GrB2udC+GEeefeaV9iVVwRrzBnZQ0cgx5AAQ8/pQ
-         bqWB+BWXAUjVlPGR0z9BP81O5RDMan8ojENxWos5w3VxCTX+j3AmEiyObaFg7K+4BbbE
-         olQGzkRUy/4Lguz6kIW7Iy0PqNDDMoagfnP9akLnmcmr1Wo9ZYdPcXMrEfNdk84igr8N
-         wzF0Ckewcm0opJ5/IF+XemvGRp8jsD849jrx4Yo8p1YZLpieta7oOCZ0b8X5n+OWy3xd
-         OKEVAe0rpLX9bDvHEbI6mNPETy382ucp22a8+adNqORkR7zifliGXZHSnlsCLfmKedt/
-         YkVg==
-X-Gm-Message-State: APjAAAUI+YOvGPRxdFpUtxmFtgbd8T+K5cN/XxQoS3bK0N0QSZOEK5Hh
-        37FW2U6jI1PU1+eMdhsItN1BloU2jUREqQW4E5w=
-X-Google-Smtp-Source: APXvYqy6onpOUTgf6z2jN9osF6V/McSOeQd2O46aAeuU0K1NP+rtNUJUkzvE01f4B5snojrBbPKV7HFpiLzS2uYeA3U=
-X-Received: by 2002:aca:36c5:: with SMTP id d188mr9650688oia.54.1576498873004;
- Mon, 16 Dec 2019 04:21:13 -0800 (PST)
+        bh=4Osz9VkIv77cDwS5TcCegl7t+g2vcc4c6bR2gC0bBTE=;
+        b=RJ2CSFNq7Ym859sRNBJCFoXaeCw1sa7tWQPA+sA3fdTQZ/kQJK8eVsv3zVgO0Afl/q
+         vjuiGKtM59YobgGqNDf2bbOMPO858G/Ae58jhR9+ti18th97w/OoeztRH8nciYtiRLcH
+         UlUVyxnWDcixczkXhEyeSEcCtGD7gsLNAioqRpNzL8CrJBPhvxmL44sVcDaT/9E2Im3n
+         u4Kd/NyJ6nl+95GRas4KkN9sLMwklRLZ06B7+doNcbbI4b9hpKXf2dTLnG3oj1b2A9J5
+         n0AsPahMEdjyLH+5vA1C5Or+dOK2ELVHCEmyWwDihcfLC5rR8XCzdVC2NET9V4dZPuOu
+         hNzQ==
+X-Gm-Message-State: APjAAAUoNar4//sD/ztSny5ie4A1MX1lnbemEPoRuPxD60ZNoyHVmCF6
+        vCuf7ogyzTaN/W9JqUSz7dE4bfQVFKHA7U0AA+E/0g==
+X-Google-Smtp-Source: APXvYqx0xjbvyReO9ph3sJ/hbSdKSuPIz6dCp5eLmtjvK0OiHzZ5p261fyvWyE0OL/9Yo5d+jJByHNJNcdJ2/e/Yeww=
+X-Received: by 2002:a1f:add3:: with SMTP id w202mr2070054vke.30.1576498909436;
+ Mon, 16 Dec 2019 04:21:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20191216103522.32215-1-gonsolo@gmail.com> <20191216103522.32215-2-gonsolo@gmail.com>
-In-Reply-To: <20191216103522.32215-2-gonsolo@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 16 Dec 2019 13:21:01 +0100
-Message-ID: <CAMuHMdVotJuotVKa3rxgR3ujCedoWM19-HhwhbTC9g6gV_EVNw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] Fix undefined reference to 'node_reclaim_distance'.
-To:     Gon Solo <gonsolo@gmail.com>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <f34765b5cb4e949c2e85415ded3d0ee7736cc97b.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <CACRpkdbUS7WeQ7OoTtjGnB7L=uhYncwwcHxkJ1Uj6GqYCGNGJA@mail.gmail.com> <812acba9df70c4bb6975580c7965b61e923a3a13.camel@fi.rohmeurope.com>
+In-Reply-To: <812acba9df70c4bb6975580c7965b61e923a3a13.camel@fi.rohmeurope.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 16 Dec 2019 13:21:38 +0100
+Message-ID: <CACRpkdbi9AhGnG3hBwXNQV9foK=JNBH8WUNvXZVxbEX4LyDCig@mail.gmail.com>
+Subject: Re: [PATCH v6 10/15] gpio: devres: Add devm_gpiod_get_parent_array
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gon,
+On Mon, Dec 16, 2019 at 9:59 AM Vaittinen, Matti
+<Matti.Vaittinen@fi.rohmeurope.com> wrote:
 
-Thanks for your patch!
+> I dropped the run-level support from regulator patch (for now at
+> least). This means that I no longer have GPIO consumers needing this
+> new API in the series.
 
-On Mon, Dec 16, 2019 at 11:35 AM Gon Solo <gonsolo@gmail.com> wrote:
-> According to https://lkml.org/lkml/2019/12/16/101 and
-> http://kisskb.ellerman.id.au/kisskb/buildresult/14067948/ building on
-> sh4 is broken due to a
->
-> page_alloc.c:(.text+0x3148): undefined reference to `node_reclaim_distance'.
->
-> This only happens with CONFIG_NUMA=y (variable used with #ifdef
-> CONFIG_NUMA at mm/page_alloc.c:3529) and CONFIG_SMP=n (variable defined at
-> kernel/sched/topology.c:2291 but the whole file to be built depends on
-> CONFIG_SMP in kernel/sched/Makefile:23.
->
-> Follow the lead of arch/x86/Kconfig:1547 and depend on SMP.
->
-> This assumes that there are no NUMA systems without SMP which is
-> reasonable I guess.
+OK I dropped it for now, we can add it when needed.
 
-Unfortunately that may be an x86-centric assumption: on other platforms,
-there do exist systems with multiple memory banks with different access
-performance figures.
-
-> Signed-off-by: Gon Solo <gonsolo@gmail.com>
-> ---
->  arch/sh/mm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/sh/mm/Kconfig b/arch/sh/mm/Kconfig
-> index 5c8a2ebfc720..cf655d8e8758 100644
-> --- a/arch/sh/mm/Kconfig
-> +++ b/arch/sh/mm/Kconfig
-> @@ -108,7 +108,7 @@ config VSYSCALL
->
->  config NUMA
->         bool "Non Uniform Memory Access (NUMA) Support"
-> -       depends on MMU && SYS_SUPPORTS_NUMA
-> +       depends on MMU && SMP && SYS_SUPPORTS_NUMA
->         select ARCH_WANT_NUMA_VARIABLE_LOCALITY
->         default n
->         help
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
