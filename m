@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED7D91217BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ACB61216DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:32:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729842AbfLPSiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:38:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
+        id S1730755AbfLPSc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:32:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729769AbfLPSFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:05:07 -0500
+        id S1728339AbfLPSKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:10:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ACED20700;
-        Mon, 16 Dec 2019 18:05:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88C292166E;
+        Mon, 16 Dec 2019 18:10:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519506;
-        bh=HgPfHR2KUSol7AKE/2FX+6KbJnirQrJZGXCrdNQMvlU=;
+        s=default; t=1576519823;
+        bh=x1ed5r99Qnq3+hzL0B4eqzzGkPZGOvZD9r5grSQqhmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1OYA72B8QfHFKqnaffvmD64wai/jicAw7T55GKRER1fOmejHIH4w8kz/3pEvfgFtZ
-         RK2vX3yWQTofKNHw4xiaTd7Ah0vBSrLBCHrkEqCvmiyK95aWh9o1GRsNrDh8dJDh0Y
-         8e3Qq54ZxQl9xxmeOgDojCx4OYl1da9B85Tzl7Tk=
+        b=0H9VEHkLrxW6Dt9mwvJOuRVS5YxS7U/IoVbsLo49KmQUGsQNog+hZ42pHRlOM46qO
+         Kv53q8tTAcp/fa+bVIbJuaqWwhDeAbKBDTasqBprPlRYuLcTcxYfk0xfbl6eUS/OQ9
+         5gIoLWjsvG3TfA1zM9pnCtv8/ZqyYMdjT1QrUweU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Marcin Pawlowski <mpawlowski@fb.com>,
-        "Williams, Gerald S" <gerald.s.williams@intel.com>
-Subject: [PATCH 4.19 053/140] workqueue: Fix spurious sanity check failures in destroy_workqueue()
-Date:   Mon, 16 Dec 2019 18:48:41 +0100
-Message-Id: <20191216174802.938835002@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 5.3 084/180] s390/mm: properly clear _PAGE_NOEXEC bit when it is not supported
+Date:   Mon, 16 Dec 2019 18:48:44 +0100
+Message-Id: <20191216174831.832761010@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,83 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 
-commit def98c84b6cdf2eeea19ec5736e90e316df5206b upstream.
+commit ab874f22d35a8058d8fdee5f13eb69d8867efeae upstream.
 
-Before actually destrying a workqueue, destroy_workqueue() checks
-whether it's actually idle.  If it isn't, it prints out a bunch of
-warning messages and leaves the workqueue dangling.  It unfortunately
-has a couple issues.
+On older HW or under a hypervisor, w/o the instruction-execution-
+protection (IEP) facility, and also w/o EDAT-1, a translation-specification
+exception may be recognized when bit 55 of a pte is one (_PAGE_NOEXEC).
 
-* Mayday list queueing increments pwq's refcnts which gets detected as
-  busy and fails the sanity checks.  However, because mayday list
-  queueing is asynchronous, this condition can happen without any
-  actual work items left in the workqueue.
+The current code tries to prevent setting _PAGE_NOEXEC in such cases,
+by removing it within set_pte_at(). However, ptep_set_access_flags()
+will modify a pte directly, w/o using set_pte_at(). There is at least
+one scenario where this can result in an active pte with _PAGE_NOEXEC
+set, which would then lead to a panic due to a translation-specification
+exception (write to swapped out page):
 
-* Sanity check failure leaves the sysfs interface behind too which can
-  lead to init failure of newer instances of the workqueue.
+do_swap_page
+  pte = mk_pte (with _PAGE_NOEXEC bit)
+  set_pte_at   (will remove _PAGE_NOEXEC bit in page table, but keep it
+                in local variable pte)
+  vmf->orig_pte = pte (pte still contains _PAGE_NOEXEC bit)
+  do_wp_page
+    wp_page_reuse
+      entry = vmf->orig_pte (still with _PAGE_NOEXEC bit)
+      ptep_set_access_flags (writes entry with _PAGE_NOEXEC bit)
 
-This patch fixes the above two by
+Fix this by clearing _PAGE_NOEXEC already in mk_pte_phys(), where the
+pgprot value is applied, so that no pte with _PAGE_NOEXEC will ever be
+visible, if it is not supported. The check in set_pte_at() can then also
+be removed.
 
-* If a workqueue has a rescuer, disable and kill the rescuer before
-  sanity checks.  Disabling and killing is guaranteed to flush the
-  existing mayday list.
-
-* Remove sysfs interface before sanity checks.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Marcin Pawlowski <mpawlowski@fb.com>
-Reported-by: "Williams, Gerald S" <gerald.s.williams@intel.com>
-Cc: stable@vger.kernel.org
+Cc: <stable@vger.kernel.org> # 4.11+
+Fixes: 57d7f939e7bd ("s390: add no-execute support")
+Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/workqueue.c |   24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ arch/s390/include/asm/pgtable.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -4154,9 +4154,28 @@ void destroy_workqueue(struct workqueue_
- 	struct pool_workqueue *pwq;
- 	int node;
+--- a/arch/s390/include/asm/pgtable.h
++++ b/arch/s390/include/asm/pgtable.h
+@@ -1172,8 +1172,6 @@ void gmap_pmdp_idte_global(struct mm_str
+ static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
+ 			      pte_t *ptep, pte_t entry)
+ {
+-	if (!MACHINE_HAS_NX)
+-		pte_val(entry) &= ~_PAGE_NOEXEC;
+ 	if (pte_present(entry))
+ 		pte_val(entry) &= ~_PAGE_UNUSED;
+ 	if (mm_has_pgste(mm))
+@@ -1190,6 +1188,8 @@ static inline pte_t mk_pte_phys(unsigned
+ {
+ 	pte_t __pte;
+ 	pte_val(__pte) = physpage + pgprot_val(pgprot);
++	if (!MACHINE_HAS_NX)
++		pte_val(__pte) &= ~_PAGE_NOEXEC;
+ 	return pte_mkyoung(__pte);
+ }
  
-+	/*
-+	 * Remove it from sysfs first so that sanity check failure doesn't
-+	 * lead to sysfs name conflicts.
-+	 */
-+	workqueue_sysfs_unregister(wq);
-+
- 	/* drain it before proceeding with destruction */
- 	drain_workqueue(wq);
- 
-+	/* kill rescuer, if sanity checks fail, leave it w/o rescuer */
-+	if (wq->rescuer) {
-+		struct worker *rescuer = wq->rescuer;
-+
-+		/* this prevents new queueing */
-+		spin_lock_irq(&wq_mayday_lock);
-+		wq->rescuer = NULL;
-+		spin_unlock_irq(&wq_mayday_lock);
-+
-+		/* rescuer will empty maydays list before exiting */
-+		kthread_stop(rescuer->task);
-+	}
-+
- 	/* sanity checks */
- 	mutex_lock(&wq->mutex);
- 	for_each_pwq(pwq, wq) {
-@@ -4188,11 +4207,6 @@ void destroy_workqueue(struct workqueue_
- 	list_del_rcu(&wq->list);
- 	mutex_unlock(&wq_pool_mutex);
- 
--	workqueue_sysfs_unregister(wq);
--
--	if (wq->rescuer)
--		kthread_stop(wq->rescuer->task);
--
- 	if (!(wq->flags & WQ_UNBOUND)) {
- 		/*
- 		 * The base ref is never dropped on per-cpu pwqs.  Directly
 
 
