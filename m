@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD65D1215E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:25:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA741213CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731856AbfLPSZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:25:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43980 "EHLO mail.kernel.org"
+        id S1729764AbfLPSFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:05:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731463AbfLPSS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:18:26 -0500
+        id S1729756AbfLPSFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:05:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DA9620717;
-        Mon, 16 Dec 2019 18:18:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21D8221835;
+        Mon, 16 Dec 2019 18:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520305;
-        bh=fNccwqWA+SRuS5QnXcv5KmJy7FvExzlUIFIQAkUaYT4=;
+        s=default; t=1576519499;
+        bh=ZYYL1p+zq4PdlNBAJkLK66Wm5+hyr64tTevPX9wrpPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ISreGVuwUH+dcYoJPLu3HKzIn5q9Ppwfxu7xtGP8rIIeMwHs52Cq054QZ5ZHwSn02
-         y0vG9E4eKC3gKRCfsoVxqdi3T9Ev4QTOneSO8+IXfuNwl+u1OQJCbkPhX6P3OTpy5+
-         3B1S2f0zfJ4JrIhYC+MYnpn2HGfrtnC8cIX4kdTU=
+        b=JrCZXzGhaKRbk3ImHYfTGLGYU21IicURV/j0w6EMSXEnFqPn8cG6qaWkOFv94TTkZ
+         qsMxq7xZN2RT6//mUoaTVPqVu+YFn3nIuWdTXMtjVb1fKMRanJaUebA1KpFSEhg08k
+         Oszuy03N9HjO+NDQkFwpnLgM5fPrLtd7yhnIxXTo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 5.4 101/177] media: bdisp: fix memleak on release
+        stable@vger.kernel.org,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Daniel Axtens <dja@axtens.net>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 089/140] powerpc/xive: Skip ioremap() of ESB pages for LSI interrupts
 Date:   Mon, 16 Dec 2019 18:49:17 +0100
-Message-Id: <20191216174841.065452598@linuxfoundation.org>
+Message-Id: <20191216174811.044728822@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +45,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Cédric Le Goater <clg@kaod.org>
 
-commit 11609a7e21f8cea42630350aa57662928fa4dc63 upstream.
+commit b67a95f2abff0c34e5667c15ab8900de73d8d087 upstream.
 
-If a process is interrupted while accessing the video device and the
-device lock is contended, release() could return early and fail to free
-related resources.
+The PCI INTx interrupts and other LSI interrupts are handled differently
+under a sPAPR platform. When the interrupt source characteristics are
+queried, the hypervisor returns an H_INT_ESB flag to inform the OS
+that it should be using the H_INT_ESB hcall for interrupt management
+and not loads and stores on the interrupt ESB pages.
 
-Note that the return value of the v4l2 release file operation is
-ignored.
+A default -1 value is returned for the addresses of the ESB pages. The
+driver ignores this condition today and performs a bogus IO mapping.
+Recent changes and the DEBUG_VM configuration option make the bug
+visible with :
 
-Fixes: 28ffeebbb7bd ("[media] bdisp: 2D blitter driver using v4l2 mem2mem framework")
-Cc: stable <stable@vger.kernel.org>     # 4.2
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+  kernel BUG at arch/powerpc/include/asm/book3s/64/pgtable.h:612!
+  Oops: Exception in kernel mode, sig: 5 [#1]
+  LE PAGE_SIZE=64K MMU=Radix MMU=Hash SMP NR_CPUS=1024 NUMA pSeries
+  Modules linked in:
+  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-0.rc6.git0.1.fc32.ppc64le #1
+  NIP:  c000000000f63294 LR: c000000000f62e44 CTR: 0000000000000000
+  REGS: c0000000fa45f0d0 TRAP: 0700   Not tainted  (5.4.0-0.rc6.git0.1.fc32.ppc64le)
+  ...
+  NIP ioremap_page_range+0x4c4/0x6e0
+  LR  ioremap_page_range+0x74/0x6e0
+  Call Trace:
+    ioremap_page_range+0x74/0x6e0 (unreliable)
+    do_ioremap+0x8c/0x120
+    __ioremap_caller+0x128/0x140
+    ioremap+0x30/0x50
+    xive_spapr_populate_irq_data+0x170/0x260
+    xive_irq_domain_map+0x8c/0x170
+    irq_domain_associate+0xb4/0x2d0
+    irq_create_mapping+0x1e0/0x3b0
+    irq_create_fwspec_mapping+0x27c/0x3e0
+    irq_create_of_mapping+0x98/0xb0
+    of_irq_parse_and_map_pci+0x168/0x230
+    pcibios_setup_device+0x88/0x250
+    pcibios_setup_bus_devices+0x54/0x100
+    __of_scan_bus+0x160/0x310
+    pcibios_scan_phb+0x330/0x390
+    pcibios_init+0x8c/0x128
+    do_one_initcall+0x60/0x2c0
+    kernel_init_freeable+0x290/0x378
+    kernel_init+0x2c/0x148
+    ret_from_kernel_thread+0x5c/0x80
+
+Fixes: bed81ee181dd ("powerpc/xive: introduce H_INT_ESB hcall")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Cédric Le Goater <clg@kaod.org>
+Tested-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191203163642.2428-1-clg@kaod.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/sti/bdisp/bdisp-v4l2.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/powerpc/sysdev/xive/spapr.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-+++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-@@ -651,8 +651,7 @@ static int bdisp_release(struct file *fi
+--- a/arch/powerpc/sysdev/xive/spapr.c
++++ b/arch/powerpc/sysdev/xive/spapr.c
+@@ -359,20 +359,28 @@ static int xive_spapr_populate_irq_data(
+ 	data->esb_shift = esb_shift;
+ 	data->trig_page = trig_page;
  
- 	dev_dbg(bdisp->dev, "%s\n", __func__);
++	data->hw_irq = hw_irq;
++
+ 	/*
+ 	 * No chip-id for the sPAPR backend. This has an impact how we
+ 	 * pick a target. See xive_pick_irq_target().
+ 	 */
+ 	data->src_chip = XIVE_INVALID_CHIP_ID;
  
--	if (mutex_lock_interruptible(&bdisp->lock))
--		return -ERESTARTSYS;
-+	mutex_lock(&bdisp->lock);
++	/*
++	 * When the H_INT_ESB flag is set, the H_INT_ESB hcall should
++	 * be used for interrupt management. Skip the remapping of the
++	 * ESB pages which are not available.
++	 */
++	if (data->flags & XIVE_IRQ_FLAG_H_INT_ESB)
++		return 0;
++
+ 	data->eoi_mmio = ioremap(data->eoi_page, 1u << data->esb_shift);
+ 	if (!data->eoi_mmio) {
+ 		pr_err("Failed to map EOI page for irq 0x%x\n", hw_irq);
+ 		return -ENOMEM;
+ 	}
  
- 	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
- 
+-	data->hw_irq = hw_irq;
+-
+ 	/* Full function page supports trigger */
+ 	if (flags & XIVE_SRC_TRIGGER) {
+ 		data->trig_mmio = data->eoi_mmio;
 
 
