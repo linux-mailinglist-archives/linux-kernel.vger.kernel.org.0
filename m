@@ -2,183 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98346121224
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97BA8121264
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:52:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfLPRqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:46:24 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:23251 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725805AbfLPRqY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:46:24 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576518383; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=rzuAqWFdTzrWO4clWvy7mwhpSIFXq93mC1ouQT7d0SU=; b=i+RmSP29LGcKHFfGNyrdMulgcQoTL1fMWa+2g56A1ijBU+6wW1OHXRPy3p/ayLbTInSiXXjv
- suGv1hY4/MWcWERJpeqc0TuCDF7HwNrC6n5F8PjcOvfHMUWDygDwa9+e6mcvqGUjOwx7c0zx
- PjNdaSR6xmUyWHfQM4GVYrkxfpo=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5df7c2ee.7f4ad81ac420-smtp-out-n02;
- Mon, 16 Dec 2019 17:46:22 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 0A126C447A2; Mon, 16 Dec 2019 17:46:22 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.79.43.230] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727443AbfLPRwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:52:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43628 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727404AbfLPRwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:14 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5C946C433A2;
-        Mon, 16 Dec 2019 17:46:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C946C433A2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-Subject: Re: [PATCH 2/3] dt-bindings: soc: qcom: apr: Add protection domain
- bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org,
-        tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        rnayak@codeaurora.org
-References: <20191118142728.30187-1-sibis@codeaurora.org>
- <0101016e7ee9c591-d04928e8-6440-488c-a956-3b5c9b8988bf-000000@us-west-2.amazonses.com>
- <20191203215248.GA1688@bogus>
-From:   Sibi Sankar <sibis@codeaurora.org>
-Message-ID: <a19623d4-ab33-d87e-5925-d0411d7479dd@codeaurora.org>
-Date:   Mon, 16 Dec 2019 23:16:10 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FACF20726;
+        Mon, 16 Dec 2019 17:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576518733;
+        bh=5EaPEyrukBMg3O+QebSDf5gJFnoIyQFT0LBomUN5WwE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=R2NzP9wDqh/ZZWxMRTbwnIlRDN9MXVsiruFXb9xNe7DK052utm56hFzwAYyRX3XR+
+         SRHpL5jpN/Pac1IDJBj2kex9KMLs8gd6HOrnjuhr2W2jcpuERTb+HtmR3DdqKzH9DW
+         E1WoYPYrEbOhCZiWDnrZh56VV4F/EXyfvAhC9+3I=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Shreeya Patel <shreeya.patel23498@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 044/267] Staging: iio: adt7316: Fix i2c data reading, set the data field
+Date:   Mon, 16 Dec 2019 18:46:10 +0100
+Message-Id: <20191216174853.583168333@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <20191203215248.GA1688@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Rob,
-Thanks for the review :)
+From: Shreeya Patel <shreeya.patel23498@gmail.com>
 
-On 12/4/19 3:22 AM, Rob Herring wrote:
-> On Mon, Nov 18, 2019 at 02:28:00PM +0000, Sibi Sankar wrote:
->> Add optional "qcom,protection-domain" bindings for APR services. This
->> helps to capture the dependencies between APR services and the PD on
->> which each apr service run.
->>
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>   .../devicetree/bindings/soc/qcom/qcom,apr.txt | 59 +++++++++++++++++++
->>   1 file changed, 59 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->> index db501269f47b8..f87c0b2a48de4 100644
->> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->> @@ -45,6 +45,12 @@ by the individual bindings for the specific service
->>   			12 - Ultrasound stream manager.
->>   			13 - Listen stream manager.
->>   
->> +- qcom,protection-domain
->> +	Usage: optional
->> +	Value type: <stringlist>
->> +	Definition: Must list the protection domain service name and path
->> +		    that the particular apr service has a dependency on.
-> 
-> Is name and path 2 values? Length is always 2?
+[ Upstream commit 688cd642ba0c393344c802647848da5f0d925d0e ]
 
-Yes the length is always 2 values i.e service name and the path where
-the service is hosted.
+adt7316_i2c_read function nowhere sets the data field.
+It is necessary to have an appropriate value for it.
+Hence, assign the value stored in 'ret' variable to data field.
 
-> 
-> You've got the same values for every case in the example. Is there a
-> defined list of possible values?
+This is an ancient bug, and as no one seems to have noticed,
+probably no sense in applying it to stable.
 
-apr bus is expected to track just the "avs/audio" running on
-msm/adsp/audio_pd on msm8998 and sdm845 SoCs. So shouldn't
-make much sense to list all possible service names:paths here.
+Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/staging/iio/addac/adt7316-i2c.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-However the qcom,protection-domain is expected to be used
-on fastrpc compute bank nodes as well, where they track other
-services:paths. I'll make sure to include all the possible
-values that fastrpc cb nodes depend on.
-
-> 
->> +
->>   = EXAMPLE
->>   The following example represents a QDSP based sound card on a MSM8996 device
->>   which uses apr as communication between Apps and QDSP.
->> @@ -82,3 +88,56 @@ which uses apr as communication between Apps and QDSP.
->>   			...
->>   		};
->>   	};
->> +
->> += EXAMPLE 2
->> +The following example represents a QDSP based sound card on SDM845 device.
->> +Here the apr services are dependent on "avs/audio" service running on AUDIO
->> +Protection Domain hosted on ADSP remote processor.
->> +
->> +	apr {
->> +		compatible = "qcom,apr-v2";
->> +		qcom,glink-channels = "apr_audio_svc";
->> +		qcom,apr-domain = <APR_DOMAIN_ADSP>;
->> +
->> +		q6core {
->> +			compatible = "qcom,q6core";
->> +			reg = <APR_SVC_ADSP_CORE>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
->> +		};
->> +
->> +		q6afe: q6afe {
->> +			compatible = "qcom,q6afe";
->> +			reg = <APR_SVC_AFE>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
->> +			q6afedai: dais {
->> +				compatible = "qcom,q6afe-dais";
->> +				#sound-dai-cells = <1>;
->> +
->> +				qi2s@22 {
->> +					reg = <22>;
->> +					qcom,sd-lines = <3>;
->> +				};
->> +			};
->> +		};
->> +
->> +		q6asm: q6asm {
->> +			compatible = "qcom,q6asm";
->> +			reg = <APR_SVC_ASM>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
->> +			q6asmdai: dais {
->> +				compatible = "qcom,q6asm-dais";
->> +				#sound-dai-cells = <1>;
->> +				iommus = <&apps_smmu 0x1821 0x0>;
->> +			};
->> +		};
->> +
->> +		q6adm: q6adm {
->> +			compatible = "qcom,q6adm";
->> +			reg = <APR_SVC_ADM>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
->> +			q6routing: routing {
->> +				compatible = "qcom,q6adm-routing";
->> +				#sound-dai-cells = <0>;
->> +			};
->> +		};
->> +	};
->> -- 
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project
->>
-
+diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
+index f66dd3ebbab1f..856bcfa60c6c4 100644
+--- a/drivers/staging/iio/addac/adt7316-i2c.c
++++ b/drivers/staging/iio/addac/adt7316-i2c.c
+@@ -35,6 +35,8 @@ static int adt7316_i2c_read(void *client, u8 reg, u8 *data)
+ 		return ret;
+ 	}
+ 
++	*data = ret;
++
+ 	return 0;
+ }
+ 
 -- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.20.1
+
+
+
