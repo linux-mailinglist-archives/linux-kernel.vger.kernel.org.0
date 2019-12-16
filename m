@@ -2,463 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA7D1210F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:07:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C55E121102
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:08:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfLPRHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:07:23 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34466 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfLPRHT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:07:19 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 62C98291731
-Message-ID: <bb97505cfadae364afa14605793affe4a7d69ffa.camel@collabora.com>
-Subject: Re: [PATCH v21 2/2] drm/bridge: Add I2C based driver for ps8640
- bridge
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc:     Collabora Kernel ML <kernel@collabora.com>, matthias.bgg@gmail.com,
-        drinkcat@chromium.org, hsinyi@chromium.org,
-        Jitao Shi <jitao.shi@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Ulrich Hecht <uli@fpond.eu>,
-        linux-arm-kernel@lists.infradead.org,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        dri-devel@lists.freedesktop.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-mediatek@lists.infradead.org,
-        David Airlie <airlied@linux.ie>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Date:   Mon, 16 Dec 2019 14:07:05 -0300
-In-Reply-To: <20191216135834.27775-3-enric.balletbo@collabora.com>
-References: <20191216135834.27775-1-enric.balletbo@collabora.com>
-         <20191216135834.27775-3-enric.balletbo@collabora.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        id S1728113AbfLPRIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:08:05 -0500
+Received: from mga05.intel.com ([192.55.52.43]:42270 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728102AbfLPRIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:08:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 09:08:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
+   d="scan'208";a="247105417"
+Received: from andresma-mobl.amr.corp.intel.com (HELO [10.252.132.232]) ([10.252.132.232])
+  by fmsmga002.fm.intel.com with ESMTP; 16 Dec 2019 09:07:59 -0800
+Subject: Re: [alsa-devel] [PATCH v4 08/15] soundwire: add initial definitions
+ for sdw_master_device
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20191213050409.12776-1-pierre-louis.bossart@linux.intel.com>
+ <20191213050409.12776-9-pierre-louis.bossart@linux.intel.com>
+ <20191213072844.GF1750354@kroah.com>
+ <7431d8cf-4a09-42af-14f5-01ab3b15b47b@linux.intel.com>
+ <20191213161046.GA2653074@kroah.com>
+ <20728848-e0ae-01f6-1c45-c8eef6a6a1f4@linux.intel.com>
+ <20191214082742.GA3318534@kroah.com>
+ <e9d77c58-e0bd-010c-bbc8-b54c82f065fd@linux.intel.com>
+ <20191216162517.GA2258618@kroah.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <c8dfb12c-2394-3dfe-571d-dcc5fadb8dc2@linux.intel.com>
+Date:   Mon, 16 Dec 2019 11:07:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <20191216162517.GA2258618@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-12-16 at 14:58 +0100, Enric Balletbo i Serra wrote:
-> From: Jitao Shi <jitao.shi@mediatek.com>
+
+>>>> diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
+>>>> index 76a5c52b12b4..5bad8422887e 100644
+>>>> --- a/drivers/soundwire/Makefile
+>>>> +++ b/drivers/soundwire/Makefile
+>>>> @@ -7,9 +7,11 @@ ccflags-y += -DDEBUG
+>>>>    #Bus Objs
+>>>>    soundwire-bus-objs := bus_type.o bus.o master.o slave.o mipi_disco.o
+>>>> stream.o
+>>>>    obj-$(CONFIG_SOUNDWIRE) += soundwire-bus.o
+>>>> +ccflags-$(CONFIG_SOUNDWIRE) += -DDEFAULT_SYMBOL_NAMESPACE=SDW_CORE
+>>>>
+>>>>    soundwire-generic-allocation-objs := generic_bandwidth_allocation.o
+>>>>    obj-$(CONFIG_SOUNDWIRE_GENERIC_ALLOCATION) +=
+>>>> soundwire-generic-allocation.o
+>>>> +ccflags-$(CONFIG_SOUNDWIRE_GENERIC_ALLOCATION) +=
+>>>> -DDEFAULT_SYMBOL_NAMESPACE=SDW_CORE
+>>>
+>>> Don't use ccflags, just use the correct MODULE_EXPORT_NS() tag instead.
+>>
+>> The documentation [1] states
+>>
+>> "
+>> Defining namespaces for all symbols of a subsystem can be very verbose and
+>> may become hard to maintain. Therefore a default define
+>> (DEFAULT_SYMBOL_NAMESPACE) is been provided, that, if set, will become the
+>> default for all EXPORT_SYMBOL() and EXPORT_SYMBOL_GPL() macro expansions
+>> that do not specify a namespace.
+>> "
+>>
+>> If the ccflags option is not supported or no longer desired, it'd be worth
+>> updating the documentation for dummies like me. I took the wording as a hint
+>> to avoid using MODULE_EXPORT_NS.
 > 
-> This patch adds drm_bridge driver for parade DSI to eDP bridge chip.
+> It's supported, and works just fine.  It's just that you really don't
+> have a ton of exports, right?  What's wrong with manually marking them?
+
+I don't see a MODULE_EXPORT_NS so we'd have to change every single 
+EXPORT_SYMBOL to EXPORT_SYMBOL_NS.
+
+If we are talking about adding the namespaces just about the top-level 
+functions used by Intel, yes we have less than 10 and since they were 
+renamed it's no big deal.
+
+But if we want to use this namespace for lower-level components of the 
+SoundWire code, we have 17 exports in cadence_master.c and more than 27 
+for the core parts. With the Makefile changes shared last week you'd 
+have 3 changes, I find it more manageable but it's true that the 
+information would be split with the IMPORT_NS in the code and the 
+namespace definition in the Makefile.
+
+
+>>> And "SDW_CORE" is odd, "SOUNDWIRE" instead?
+>>
+>> 'sdw' is the prefix used everywhere for SoundWire symbols.
 > 
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> [uli: followed API changes, removed FW update feature]
-> Signed-off-by: Ulrich Hecht <uli@fpond.eu>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
-> Changes in v21:
->  - Use devm_i2c_new_dummy_device and fix build issue using deprecated i2c_new_dummy
->  - Fix build issue due missing drm_bridge.h
->  - Do not remove in ps8640_remove device managed resources
-> 
-> Changes in v19:
->  - fixed return value of ps8640_probe() when no panel is found
-> 
-> Changes in v18:
->  - followed DRM API changes
->  - use DEVICE_ATTR_RO()
->  - remove firmware update code
->  - add SPDX identifier
-> 
-> Changes in v17:
->  - remove some unused head files.
->  - add macros for ps8640 pages.
->  - remove ddc_i2c client
->  - add mipi_dsi_device_register_full
->  - remove the manufacturer from the name and i2c_device_id
-> 
-> Changes in v16:
->  - Disable ps8640 DSI MCS Function.
->  - Rename gpios name more clearly.
->  - Tune the ps8640 power on sequence.
-> 
-> Changes in v15:
->  - Drop drm_connector_(un)register calls from parade ps8640.
->    The main DRM driver mtk_drm_drv now calls
->    drm_connector_register_all() after drm_dev_register() in the
->    mtk_drm_bind() function. That function should iterate over all
->    connectors and call drm_connector_register() for each of them.
->    So, remove drm_connector_(un)register calls from parade ps8640.
-> 
-> Changes in v14:
->  - update copyright info.
->  - change bridge_to_ps8640 and connector_to_ps8640 to inline function.
->  - fix some coding style.
->  - use sizeof as array counter.
->  - use drm_get_edid when read edid.
->  - add mutex when firmware updating.
-> 
-> Changes in v13:
->  - add const on data, ps8640_write_bytes(struct i2c_client *client, const u8 *data, u16 data_len)
->  - fix PAGE2_SW_REST tyro.
->  - move the buf[3] init to entrance of the function.
-> 
-> Changes in v12:
->  - fix hw_chip_id build warning
-> 
-> Changes in v11:
->  - Remove depends on I2C, add DRM depends
->  - Reuse ps8640_write_bytes() in ps8640_write_byte()
->  - Use timer check for polling like the routines in <linux/iopoll.h>
->  - Fix no drm_connector_unregister/drm_connector_cleanup when ps8640_bridge_attach fail
->  - Check the ps8640 hardware id in ps8640_validate_firmware
->  - Remove fw_version check
->  - Move ps8640_validate_firmware before ps8640_enter_bl
->  - Add ddc_i2c unregister when probe fail and ps8640_remove
-> 
->  drivers/gpu/drm/bridge/Kconfig         |  11 +
->  drivers/gpu/drm/bridge/Makefile        |   1 +
->  drivers/gpu/drm/bridge/parade-ps8640.c | 655 +++++++++++++++++++++++++
->  3 files changed, 667 insertions(+)
->  create mode 100644 drivers/gpu/drm/bridge/parade-ps8640.c
-> 
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index 4734f6993858..3e0a63011723 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -101,6 +101,17 @@ config DRM_PARADE_PS8622
->  	---help---
->  	  Parade eDP-LVDS bridge chip driver.
->  
-> +config DRM_PARADE_PS8640
-> +	tristate "Parade PS8640 MIPI DSI to eDP Converter"
-> +	depends on OF
-> +	select DRM_KMS_HELPER
-> +	select DRM_MIPI_DSI
-> +	select DRM_PANEL
-> +	help
-> +	  Choose this option if you have PS8640 for display
-> +	  The PS8640 is a high-performance and low-power
-> +	  MIPI DSI to eDP converter
-> +
->  config DRM_SIL_SII8620
->  	tristate "Silicon Image SII8620 HDMI/MHL bridge"
->  	depends on OF
-> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-> index 1c0c92667ac4..91490c595b38 100644
-> --- a/drivers/gpu/drm/bridge/Makefile
-> +++ b/drivers/gpu/drm/bridge/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_LVDS_ENCODER) += lvds-encoder.o
->  obj-$(CONFIG_DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW) += megachips-stdpxxxx-ge-b850v3-fw.o
->  obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
->  obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
-> +obj-$(CONFIG_DRM_PARADE_PS8640) += parade-ps8640.o
->  obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
->  obj-$(CONFIG_DRM_SII902X) += sii902x.o
->  obj-$(CONFIG_DRM_SII9234) += sii9234.o
-> diff --git a/drivers/gpu/drm/bridge/parade-ps8640.c b/drivers/gpu/drm/bridge/parade-ps8640.c
-> new file mode 100644
-> index 000000000000..ab896ceb1a42
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/parade-ps8640.c
-> @@ -0,0 +1,655 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2016 MediaTek Inc.
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +//#include <linux/firmware.h>
+> Ok, I guess that ship has sailed :(
 
-Commented stuff should gone.
-
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of_graph.h>
-> +#include <linux/regulator/consumer.h>
-> +//#include <asm/unaligned.h>
-
-Ditto.
-
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_bridge.h>
-> +#include <drm/drm_crtc_helper.h>
-> +#include <drm/drm_edid.h>
-> +#include <drm/drm_mipi_dsi.h>
-> +#include <drm/drm_panel.h>
-> +#include <drm/drm_print.h>
-> +#include <drm/drm_probe_helper.h>
-> +
-> +#define PAGE1_VSTART		0x6b
-> +#define PAGE2_SPI_CFG3		0x82
-> +#define I2C_TO_SPI_RESET	0x20
-> +#define PAGE2_ROMADD_BYTE1	0x8e
-> +#define PAGE2_ROMADD_BYTE2	0x8f
-> +#define PAGE2_SWSPI_WDATA	0x90
-> +#define PAGE2_SWSPI_RDATA	0x91
-> +#define PAGE2_SWSPI_LEN		0x92
-> +#define PAGE2_SWSPI_CTL		0x93
-> +#define TRIGGER_NO_READBACK	0x05
-> +#define TRIGGER_READBACK	0x01
-> +#define PAGE2_SPI_STATUS	0x9e
-> +#define SPI_READY		0x0c
-> +#define PAGE2_GPIO_L		0xa6
-> +#define PAGE2_GPIO_H		0xa7
-> +#define PS_GPIO9		BIT(1)
-> +#define PAGE2_IROM_CTRL		0xb0
-> +#define IROM_ENABLE		0xc0
-> +#define IROM_DISABLE		0x80
-> +#define PAGE2_SW_RESET		0xbc
-> +#define SPI_SW_RESET		BIT(7)
-> +#define MPU_SW_RESET		BIT(6)
-> +#define PAGE2_ENCTLSPI_WR	0xda
-> +#define PAGE2_I2C_BYPASS	0xea
-> +#define I2C_BYPASS_EN		0xd0
-> +#define PAGE2_MCS_EN		0xf3
-> +#define MCS_EN			BIT(0)
-> +#define PAGE3_SET_ADD		0xfe
-> +#define PAGE3_SET_VAL		0xff
-> +#define VDO_CTL_ADD		0x13
-> +#define VDO_DIS			0x18
-> +#define VDO_EN			0x1c
-> +#define PAGE4_REV_L		0xf0
-> +#define PAGE4_REV_H		0xf1
-> +#define PAGE4_CHIP_L		0xf2
-> +#define PAGE4_CHIP_H		0xf3
-> +
-> +#define PAGE0_DP_CNTL		0
-
-Unused macro.
-
-> +#define PAGE1_VDO_BDG		1
-> +#define PAGE2_TOP_CNTL		2
-> +#define PAGE3_DSI_CNTL1		3
-> +#define PAGE4_MIPI_PHY		4
-
-Ditto... maybe others as well?
-
-> +#define PAGE5_VPLL		5
-> +#define PAGE6_DSI_CNTL2		6
-> +#define PAGE7_SPI_CNTL		7
-> +#define MAX_DEVS		0x8
-> +
-> +struct ps8640_info {
-> +	u8 family_id;
-> +	u8 variant_id;
-> +	u16 version;
-> +};
-> +
-> +struct ps8640 {
-> +	struct drm_connector connector;
-> +	struct drm_bridge bridge;
-> +	struct edid *edid;
-> +	struct mipi_dsi_device *dsi;
-> +	struct i2c_client *page[MAX_DEVS];
-> +	struct regulator_bulk_data supplies[2];
-> +	struct drm_panel *panel;
-> +	struct gpio_desc *gpio_reset;
-> +	struct gpio_desc *gpio_power_down;
-> +	struct gpio_desc *gpio_mode_sel;
-> +	bool enabled;
-> +
-> +	/* firmware file info */
-> +	struct ps8640_info info;
-> +	bool in_fw_update;
-> +	/* for firmware update protect */
-> +	struct mutex fw_mutex;
-> +};
-> +
-> +static const u8 enc_ctrl_code[6] = { 0xaa, 0x55, 0x50, 0x41, 0x52, 0x44 };
-> +static const u8 hw_chip_id[4] = { 0x00, 0x0a, 0x00, 0x30 };
-> +
-
-More unused stuff. Left-overs?
-
-> +static inline struct ps8640 *bridge_to_ps8640(struct drm_bridge *e)
-> +{
-> +	return container_of(e, struct ps8640, bridge);
-> +}
-> +
-> +static inline struct ps8640 *connector_to_ps8640(struct drm_connector *e)
-> +{
-> +	return container_of(e, struct ps8640, connector);
-> +}
-> +
-> +static int ps8640_read(struct i2c_client *client, u8 reg, u8 *data,
-> +		       u16 data_len)
-> +{
-> +	int ret;
-> +	struct i2c_msg msgs[] = {
-> +		{
-> +		 .addr = client->addr,
-> +		 .flags = 0,
-> +		 .len = 1,
-> +		 .buf = &reg,
-> +		},
-> +		{
-> +		 .addr = client->addr,
-> +		 .flags = I2C_M_RD,
-> +		 .len = data_len,
-> +		 .buf = data,
-> +		}
-> +	};
-> +
-> +	ret = i2c_transfer(client->adapter, msgs, 2);
-> +
-> +	if (ret == 2)
-> +		return 0;
-> +	if (ret < 0)
-> +		return ret;
-> +	else
-> +		return -EIO;
-> +}
-> +
-> +static int ps8640_write_bytes(struct i2c_client *client, const u8 *data,
-> +			      u16 data_len)
-> +{
-> +	int ret;
-> +	struct i2c_msg msg;
-> +
-> +	msg.addr = client->addr;
-> +	msg.flags = 0;
-> +	msg.len = data_len;
-> +	msg.buf = (u8 *)data;
-> +
-> +	ret = i2c_transfer(client->adapter, &msg, 1);
-> +	if (ret == 1)
-> +		return 0;
-> +	if (ret < 0)
-> +		return ret;
-> +	else
-> +		return -EIO;
-> +}
-> +
-> +static int ps8640_write_byte(struct i2c_client *client, u8 reg, u8 data)
-> +{
-> +	u8 buf[] = { reg, data };
-> +
-
-I was gonna say you should avoid transmitting data
-in the stack, but then I noticed the I2C core doesn't
-complaint about it (doesn't use object_is_on_stack).
-
-Wolfram, does the I2C accept stacked (possibly non-DMA-able) objects?
-
-> +	return ps8640_write_bytes(client, buf, sizeof(buf));
-> +}
-> +
-> +static void ps8640_get_mcu_fw_version(struct ps8640 *ps_bridge)
-> +{
-> +	struct i2c_client *client = ps_bridge->page[PAGE5_VPLL];
-> +	u8 fw_ver[2];
-> +
-> +	ps8640_read(client, 0x4, fw_ver, sizeof(fw_ver));
-> +	ps_bridge->info.version = (fw_ver[0] << 8) | fw_ver[1];
-> +
-> +	DRM_INFO_ONCE("ps8640 rom fw version %d.%d\n", fw_ver[0], fw_ver[1]);
-
-Hm, isn't this too verbose?
-
-> +}
-> +
-> +static int ps8640_bridge_unmute(struct ps8640 *ps_bridge)
-> +{
-> +	struct i2c_client *client = ps_bridge->page[PAGE3_DSI_CNTL1];
-> +	u8 vdo_ctrl_buf[3] = { PAGE3_SET_ADD, VDO_CTL_ADD, VDO_EN };
-> +
-> +	return ps8640_write_bytes(client, vdo_ctrl_buf, sizeof(vdo_ctrl_buf));
-> +}
-> +
-> +static int ps8640_bridge_mute(struct ps8640 *ps_bridge)
-> +{
-> +	struct i2c_client *client = ps_bridge->page[PAGE3_DSI_CNTL1];
-> +	u8 vdo_ctrl_buf[3] = { PAGE3_SET_ADD, VDO_CTL_ADD, VDO_DIS };
-> +
-> +	return ps8640_write_bytes(client, vdo_ctrl_buf, sizeof(vdo_ctrl_buf));
-> +}
-> +
-> +static void ps8640_pre_enable(struct drm_bridge *bridge)
-> +{
-> +	struct ps8640 *ps_bridge = bridge_to_ps8640(bridge);
-> +	struct i2c_client *client = ps_bridge->page[PAGE2_TOP_CNTL];
-> +	struct i2c_client *page1 = ps_bridge->page[PAGE1_VDO_BDG];
-> +	int err;
-> +	u8 set_vdo_done, mcs_en, vstart;
-> +	ktime_t timeout;
-> +
-> +	if (ps_bridge->in_fw_update)
-> +		return;
-> +
-> +	if (ps_bridge->enabled)
-> +		return;
-> +
-> +	err = drm_panel_prepare(ps_bridge->panel);
-> +	if (err < 0) {
-> +		DRM_ERROR("failed to prepare panel: %d\n", err);
-> +		return;
-> +	}
-> +
-> +	err = regulator_bulk_enable(ARRAY_SIZE(ps_bridge->supplies),
-> +				    ps_bridge->supplies);
-> +	if (err < 0) {
-> +		DRM_ERROR("cannot enable regulators %d\n", err);
-> +		goto err_panel_unprepare;
-> +	}
-> +
-> +	gpiod_set_value(ps_bridge->gpio_power_down, 1);
-> +	gpiod_set_value(ps_bridge->gpio_reset, 0);
-> +	usleep_range(2000, 2500);
-> +	gpiod_set_value(ps_bridge->gpio_reset, 1);
-> +
-> +	/*
-> +	 * Wait for the ps8640 embed mcu ready
-> +	 * First wait 200ms and then check the mcu ready flag every 20ms
-> +	 */
-> +	msleep(200);
-> +
-> +	timeout = ktime_add_ms(ktime_get(), 200);
-> +	for (;;) {
-> +		err = ps8640_read(client, PAGE2_GPIO_H, &set_vdo_done, 1);
-> +		if (err < 0) {
-> +			DRM_ERROR("failed read PAGE2_GPIO_H: %d\n", err);
-> +			goto err_regulators_disable;
-> +		}
-> +		if ((set_vdo_done & PS_GPIO9) == PS_GPIO9)
-> +			break;
-> +		if (ktime_compare(ktime_get(), timeout) > 0)
-> +			break;
-> +		msleep(20);
-> +	}
-
-I believe it's cleaner to use this idiom:
-
-        unsigned long timeout = jiffies + msecs_to_jiffies(YOUR_DRIVER_TIMEOUT);
-        
-        while (time_is_after_jiffies(timeout)) {
-                ....
-        }
-
-> +
-> +	msleep(50);
-> +
-> +	ps8640_read(page1, PAGE1_VSTART, &vstart, 1);
-> +	DRM_INFO("PS8640 PAGE1.0x6B = 0x%x\n", vstart);
-> +
-
-Ditto, isn't this too verbose?
-
-I stopped reviewing at this point. It sounds like this driver
-could use some love. (Not sure how this driver stood twenty reviews :-))
-
-Thanks,
-Ezequiel
-
+we can still use SOUNDWIRE for the namespaces, that'd be fine. you're 
+right to call us on acronyms, it's a bad habit.
