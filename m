@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8717E1218B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ED181217CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbfLPR64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:58:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59102 "EHLO mail.kernel.org"
+        id S1729624AbfLPSEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728648AbfLPR6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:58:50 -0500
+        id S1729605AbfLPSEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:04:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A33024686;
-        Mon, 16 Dec 2019 17:58:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25C7120700;
+        Mon, 16 Dec 2019 18:04:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519129;
-        bh=CIOEINeAN7LvyrE7wcED0uhSQ+QXU6eHBgG2IWOUgaM=;
+        s=default; t=1576519443;
+        bh=L/nnExgTN5kvZ37fES9X+zpcR8LXTKi/LCfLOz8SJg4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BsLwHJi8voGAYEbVo7bxosFWQ6/6Ujh97cHCrvvwl1LWdvqk0XrvVQOJZPqGfgECR
-         LR6t9t+kGDwTG/U5qbVAkLU9Fn79l977CCNBR4EiHR0Bp7gkGcS386vdHQE1fz977r
-         fyzKKDR2a/l04wagsadFWZDHT7Uk9xnZbnAnYmNY=
+        b=tlx0PCB9BbsIo86yviCRjQt3L08daidtKSavM35Kl9Vx4nJrFS5SmteF3pXutUZEG
+         jq7XzSxlam/tiXgNhO+6dF0SPN/BzifK2tCDG0avsuSHIQg3hywqJqcQkXXDlliy7i
+         Wkp4nXyxl/8IiC4MBbHXaF+bEKwJDY/0EBRSwwHc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 4.14 207/267] s390/mm: properly clear _PAGE_NOEXEC bit when it is not supported
-Date:   Mon, 16 Dec 2019 18:48:53 +0100
-Message-Id: <20191216174913.876284964@linuxfoundation.org>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Wen Yang <wenyang@linux.alibaba.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.19 068/140] intel_th: Fix a double put_device() in error path
+Date:   Mon, 16 Dec 2019 18:48:56 +0100
+Message-Id: <20191216174806.256392602@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit ab874f22d35a8058d8fdee5f13eb69d8867efeae upstream.
+commit 512592779a337feb5905d8fcf9498dbf33672d4a upstream.
 
-On older HW or under a hypervisor, w/o the instruction-execution-
-protection (IEP) facility, and also w/o EDAT-1, a translation-specification
-exception may be recognized when bit 55 of a pte is one (_PAGE_NOEXEC).
+Commit a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
+factored out intel_th_subdevice_alloc() from intel_th_populate(), but got
+the error path wrong, resulting in two instances of a double put_device()
+on a freshly initialized, but not 'added' device.
 
-The current code tries to prevent setting _PAGE_NOEXEC in such cases,
-by removing it within set_pte_at(). However, ptep_set_access_flags()
-will modify a pte directly, w/o using set_pte_at(). There is at least
-one scenario where this can result in an active pte with _PAGE_NOEXEC
-set, which would then lead to a panic due to a translation-specification
-exception (write to swapped out page):
+Fix this by only doing one put_device() in the error path.
 
-do_swap_page
-  pte = mk_pte (with _PAGE_NOEXEC bit)
-  set_pte_at   (will remove _PAGE_NOEXEC bit in page table, but keep it
-                in local variable pte)
-  vmf->orig_pte = pte (pte still contains _PAGE_NOEXEC bit)
-  do_wp_page
-    wp_page_reuse
-      entry = vmf->orig_pte (still with _PAGE_NOEXEC bit)
-      ptep_set_access_flags (writes entry with _PAGE_NOEXEC bit)
-
-Fix this by clearing _PAGE_NOEXEC already in mk_pte_phys(), where the
-pgprot value is applied, so that no pte with _PAGE_NOEXEC will ever be
-visible, if it is not supported. The check in set_pte_at() can then also
-be removed.
-
-Cc: <stable@vger.kernel.org> # 4.11+
-Fixes: 57d7f939e7bd ("s390: add no-execute support")
-Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Fixes: a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
+Reported-by: Wen Yang <wenyang@linux.alibaba.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: stable@vger.kernel.org # v4.14+
+Link: https://lore.kernel.org/r/20191120130806.44028-2-alexander.shishkin@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/include/asm/pgtable.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hwtracing/intel_th/core.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -1126,8 +1126,6 @@ int pgste_perform_essa(struct mm_struct
- static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
- 			      pte_t *ptep, pte_t entry)
- {
--	if (!MACHINE_HAS_NX)
--		pte_val(entry) &= ~_PAGE_NOEXEC;
- 	if (pte_present(entry))
- 		pte_val(entry) &= ~_PAGE_UNUSED;
- 	if (mm_has_pgste(mm))
-@@ -1144,6 +1142,8 @@ static inline pte_t mk_pte_phys(unsigned
- {
- 	pte_t __pte;
- 	pte_val(__pte) = physpage + pgprot_val(pgprot);
-+	if (!MACHINE_HAS_NX)
-+		pte_val(__pte) &= ~_PAGE_NOEXEC;
- 	return pte_mkyoung(__pte);
- }
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -629,10 +629,8 @@ intel_th_subdevice_alloc(struct intel_th
+ 	}
  
+ 	err = intel_th_device_add_resources(thdev, res, subdev->nres);
+-	if (err) {
+-		put_device(&thdev->dev);
++	if (err)
+ 		goto fail_put_device;
+-	}
+ 
+ 	if (subdev->type == INTEL_TH_OUTPUT) {
+ 		thdev->dev.devt = MKDEV(th->major, th->num_thdevs);
+@@ -646,10 +644,8 @@ intel_th_subdevice_alloc(struct intel_th
+ 	}
+ 
+ 	err = device_add(&thdev->dev);
+-	if (err) {
+-		put_device(&thdev->dev);
++	if (err)
+ 		goto fail_free_res;
+-	}
+ 
+ 	/* need switch driver to be loaded to enumerate the rest */
+ 	if (subdev->type == INTEL_TH_SWITCH && !req) {
 
 
