@@ -2,98 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76401120E93
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:55:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 398D5120E9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:55:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbfLPPwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 10:52:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55908 "EHLO mail.kernel.org"
+        id S1728494AbfLPPxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 10:53:36 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:42470 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727763AbfLPPwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 10:52:34 -0500
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 941902146E;
-        Mon, 16 Dec 2019 15:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576511553;
-        bh=eaQ3x3sQJkJ+Ir/RJSw4LQ05zXXPEkT+Q2g7IkDI1xk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lgRlANm6ITls3sYB0vkQAD5vJ57JdMCMEmQ/XRM0hA1divZOs2sBzjxEwuea7F3a7
-         ZAVlVG4YApTTQ/jZ68HF7/swo8gY4cFHYBLoYfyuvleEGHa3MTCyE1ipkW679xQY1G
-         eFE5gJNMOLFuUWQsTsLrlxPgMeabqRVppPGDh7KU=
-Received: by mail-qv1-f44.google.com with SMTP id l14so2293794qvu.12;
-        Mon, 16 Dec 2019 07:52:33 -0800 (PST)
-X-Gm-Message-State: APjAAAXb8i6qbCpmyTM+eR23BkUA2pmVn8hz7vbNMZ2j8UBJ0vIqeV7g
-        TGf8IDaUcP5rV2NYQm6nAHPoPOuGzrumjiaclA==
-X-Google-Smtp-Source: APXvYqwVJYkAlWIdZU2TFQfbL6hRU5QxGwsrdp61SPZ/B7ThiZyfT8pRxhhI4yQUPA1YvRv8RCRQMv+9we0zkJBDmxg=
-X-Received: by 2002:ad4:450a:: with SMTP id k10mr25719233qvu.136.1576511552698;
- Mon, 16 Dec 2019 07:52:32 -0800 (PST)
+        id S1726916AbfLPPxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 10:53:36 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 6B78BFB03;
+        Mon, 16 Dec 2019 16:53:34 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id yYpcNGzE6ASE; Mon, 16 Dec 2019 16:53:33 +0100 (CET)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id A743E498AE; Mon, 16 Dec 2019 16:53:32 +0100 (CET)
+Date:   Mon, 16 Dec 2019 16:53:32 +0100
+From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] init: use do_mount() instead of ksys_mount()
+Message-ID: <20191216155332.GA29065@bogon.m.sigxcpu.org>
+References: <20191212135724.331342-1-linux@dominikbrodowski.net>
+ <20191212135724.331342-4-linux@dominikbrodowski.net>
+ <20191216013536.5wyvq4vjv5efd35n@core.my.home>
+ <CAHk-=wh8VLe3AEKhz=1bzSO=1fv4EM71EhufxuC=Gp=+bLhXoA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20191202233127.31160-1-ray.jui@broadcom.com> <20191202233127.31160-2-ray.jui@broadcom.com>
- <62254bbb-168e-c0ad-a72d-bd659a2c23fa@gmail.com> <0f0e965b-2e57-8b6b-0c72-1a1008497793@broadcom.com>
- <20191213235013.GA9997@bogus> <a5af90d0-eebf-3bf8-46d8-75160a1fc7de@gmail.com>
-In-Reply-To: <a5af90d0-eebf-3bf8-46d8-75160a1fc7de@gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 16 Dec 2019 09:52:21 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKXdo+wouHZV9VFQojtQNK3NOLmj3NtnTmVo2fX541GPA@mail.gmail.com>
-Message-ID: <CAL_JsqKXdo+wouHZV9VFQojtQNK3NOLmj3NtnTmVo2fX541GPA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: soc: Add binding doc for iProc IDM device
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Ray Jui <ray.jui@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wh8VLe3AEKhz=1bzSO=1fv4EM71EhufxuC=Gp=+bLhXoA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 6:00 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
->
->
->
-> On 12/13/2019 3:50 PM, Rob Herring wrote:
-> > On Fri, Dec 06, 2019 at 05:09:34PM -0800, Ray Jui wrote:
-> >>
-> >>
-> >> On 12/5/19 4:09 PM, Florian Fainelli wrote:
-> >>> On 12/2/19 3:31 PM, Ray Jui wrote:
-> >>>> Add binding document for iProc based IDM devices.
-> >>>>
-> >>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> >>>
-> >>> Looks good to me, it's 2019, nearly 2020, maybe make this a YAML
-> >>> compatible binding since it is a new one?
-> >>>
-> >>
-> >> Sorry I am not aware of this YAML requirement until now.
-> >>
-> >> Is this a new requirement that new DT binding document should be made with
-> >> YAML format?
+Hi,
+On Sun, Dec 15, 2019 at 07:50:23PM -0800, Linus Torvalds wrote:
+> On Sun, Dec 15, 2019 at 5:35 PM Ondřej Jirman <megi@xff.cz> wrote:
 > >
-> > The format has been in place in the kernel for a year now and we've
-> > moved slowly towards it being required. If you're paying that little
-> > attention to upstream, then yes it's definitely required so someone else
-> > doesn't get stuck converting your binding later.
-> >
-> > BTW, I think all but RPi chips still need their SoC/board bindings
-> > converted. One of the few not yet converted...
->
-> Is there something more to do than what Stefan did here:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ab06837dd269b600396b298e9f4678d02b11b71d
+> > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+> 
+> Duh. So much for the trivial obvious conversion.
+> 
+> It didn't take "data might be NULL" into account.
+> 
+> A patch like this, perhaps? Untested..
+> 
+>                Linus
 
-No, that's it.
+>  init/do_mounts.c | 23 +++++++++++++----------
+>  1 file changed, 13 insertions(+), 10 deletions(-)
+> 
+> diff --git a/init/do_mounts.c b/init/do_mounts.c
+> index f55cbd9cb818..d204f605dbce 100644
+> --- a/init/do_mounts.c
+> +++ b/init/do_mounts.c
+> @@ -391,17 +391,19 @@ static int __init do_mount_root(const char *name, const char *fs,
+>  				 const int flags, const void *data)
+>  {
+>  	struct super_block *s;
+> -	char *data_page;
+> -	struct page *p;
+> +	struct page *p = NULL;
+> +	char *data_page = NULL;
+n>  	int ret;
+>  
+> -	/* do_mount() requires a full page as fifth argument */
+> -	p = alloc_page(GFP_KERNEL);
+> -	if (!p)
+> -		return -ENOMEM;
+> -
+> -	data_page = page_address(p);
+> -	strncpy(data_page, data, PAGE_SIZE - 1);
+> +	if (data) {
+> +		/* do_mount() requires a full page as fifth argument */
+> +		p = alloc_page(GFP_KERNEL);
+> +		if (!p)
+> +			return -ENOMEM;
+> +		data_page = page_address(p);
+> +		strncpy(data_page, data, PAGE_SIZE - 1);
+> +		data_page[PAGE_SIZE - 1] = '\0';
+> +	}
+>  
+>  	ret = do_mount(name, "/root", fs, flags, data_page);
+>  	if (ret)
+> @@ -417,7 +419,8 @@ static int __init do_mount_root(const char *name, const char *fs,
+>  	       MAJOR(ROOT_DEV), MINOR(ROOT_DEV));
+>  
+>  out:
+> -	put_page(p);
+> +	if (p)
+> +		put_page(p);
+>  	return ret;
+>  }
+>  
 
-> we could convert other Broadcom SoCs, and there, just found another
-> weekend project!
-> --
-> Florian
+This unbroke tftpboot on arm64 on next-20191216 for me as well:
+
+Tested-by: Guido Günther <agx@sigxcpu.org>
+
+Cheers,
+ -- Guido
