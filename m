@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6F1B121370
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C3912142E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfLPSBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:01:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36850 "EHLO mail.kernel.org"
+        id S1729996AbfLPSJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:09:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727711AbfLPSBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:01:39 -0500
+        id S1728056AbfLPSIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:08:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D8F32072D;
-        Mon, 16 Dec 2019 18:01:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4C5120700;
+        Mon, 16 Dec 2019 18:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519299;
-        bh=bHY+hH+oy5H5ZMf0BwWbtEFg6DNlTY265tdURzve4P8=;
+        s=default; t=1576519735;
+        bh=4FAopnWEW4sAmErItMkZw9/jbKecniXpe7hWz5Qlsvo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DDToMEgJskIG7qHqTCJiKRJOA5JGlnZEKsaxRnhoYFQLmgRzpjyFw/XPZSDARZQ76
-         J8WkyxyLGIXJS+SxQNgO+YvmAXSdi9W31ITN1yMdaH/r5pXrk4K0j7RGNsrLfZXBT6
-         iWeBy66HvEO9pN5d0jGz6varSBMloGm11f4xVJk4=
+        b=X685ISRIxfWt11/VMvM8Vy9bJq6yhPDdwfFRPzzWk47XDelT6tkZCSOk8P56951+Y
+         TXmJt7P9Z1eSnp89QJvaS6Iq3mNwjtYm0RL+6wbNE//Xo/cClYYBsrpfTHiersLqBz
+         UaE/wUoC4sYacYbuqnz7PH/Tmxf04b+ngKTSPp1w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 4.19 002/140] usb: gadget: pch_udc: fix use after free
+        stable@vger.kernel.org, Chris Lesiak <chris.lesiak@licor.com>,
+        Matt Ranostay <matt.ranostay@konsulko.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.3 030/180] iio: humidity: hdc100x: fix IIO_HUMIDITYRELATIVE channel reporting
 Date:   Mon, 16 Dec 2019 18:47:50 +0100
-Message-Id: <20191216174748.287062615@linuxfoundation.org>
+Message-Id: <20191216174812.824561557@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Chris Lesiak <chris.lesiak@licor.com>
 
-commit 66d1b0c0580b7f1b1850ee4423f32ac42afa2e92 upstream.
+commit 342a6928bd5017edbdae376042d8ad6af3d3b943 upstream.
 
-Remove pointer dereference after free.
+The IIO_HUMIDITYRELATIVE channel was being incorrectly reported back
+as percent when it should have been milli percent. This is via an
+incorrect scale value being returned to userspace.
 
-pci_pool_free doesn't care about contents of td.
-It's just a void* for it
-
-Addresses-Coverity-ID: 1091173 ("Use after free")
-Cc: stable@vger.kernel.org
-Acked-by: Michal Nazarewicz <mina86@mina86.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Link: https://lore.kernel.org/r/20191106202821.GA20347@embeddedor
+Signed-off-by: Chris Lesiak <chris.lesiak@licor.com>
+Acked-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/udc/pch_udc.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/iio/humidity/hdc100x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/udc/pch_udc.c
-+++ b/drivers/usb/gadget/udc/pch_udc.c
-@@ -1520,7 +1520,6 @@ static void pch_udc_free_dma_chain(struc
- 		td = phys_to_virt(addr);
- 		addr2 = (dma_addr_t)td->next;
- 		dma_pool_free(dev->data_requests, td, addr);
--		td->next = 0x00;
- 		addr = addr2;
- 	}
- 	req->chain_len = 1;
+--- a/drivers/iio/humidity/hdc100x.c
++++ b/drivers/iio/humidity/hdc100x.c
+@@ -229,7 +229,7 @@ static int hdc100x_read_raw(struct iio_d
+ 			*val2 = 65536;
+ 			return IIO_VAL_FRACTIONAL;
+ 		} else {
+-			*val = 100;
++			*val = 100000;
+ 			*val2 = 65536;
+ 			return IIO_VAL_FRACTIONAL;
+ 		}
 
 
