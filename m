@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB031213C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DDAC12147C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:11:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729710AbfLPSEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:04:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42182 "EHLO mail.kernel.org"
+        id S1730592AbfLPSLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:11:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729695AbfLPSEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:04:43 -0500
+        id S1730821AbfLPSLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:11:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F66120700;
-        Mon, 16 Dec 2019 18:04:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35139206E0;
+        Mon, 16 Dec 2019 18:11:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519482;
-        bh=yxYvKbpaGMYiRXOuD3O05HHV3Px5kBmR5aGyi6BMkYY=;
+        s=default; t=1576519898;
+        bh=NfLTpMpdY1P59r8KrNeZwv9n+oDLlDos8mnXv/OtaBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XiEfGfTpbR1v3XfuSB5shsCwfhE7d/rUquFzb/znfnVpus6s/jNi+IiBUagwYLRrI
-         cy/nLEcd5LhVvVv+Yvh6fap+EEA6XdHWw+nuLw4KcPh6PdNP9eSOte1Y0KuKV2e/P+
-         ttw8nb8V4bT1O5CGtY80rLOBrYj2ttqiXZ54jWi8=
+        b=HaU86BS4vHCw8HSAfhqwYTi1bHGMXqa/7BAXOMunGKA9KnlsV6d3Y7Buw8fdSOz8X
+         ZC8DMrUL/xyepROJKtXlUNE6R5Lb4/F6hYgbT4RcWytYVHhnjzhdB0fKxPXnKka+Vr
+         B1qo+pSbJA7EC8Ot1Wtj51eSyguRSaVP9vJpOhdk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.19 083/140] mmc: host: omap_hsmmc: add code for special init of wl1251 to get rid of pandora_wl1251_init_card
-Date:   Mon, 16 Dec 2019 18:49:11 +0100
-Message-Id: <20191216174809.504518575@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 5.3 112/180] pinctrl: armada-37xx: Fix irq mask access in armada_37xx_irq_set_type()
+Date:   Mon, 16 Dec 2019 18:49:12 +0100
+Message-Id: <20191216174838.919987096@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,73 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: H. Nikolaus Schaller <hns@goldelico.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-commit f6498b922e57aecbe3b7fa30a308d9d586c0c369 upstream.
+commit 04fb02757ae5188031eb71b2f6f189edb1caf5dc upstream.
 
-Pandora_wl1251_init_card was used to do special pdata based
-setup of the sdio mmc interface. This does no longer work with
-v4.7 and later. A fix requires a device tree based mmc3 setup.
+As explained in the following commit a9a1a4833613 ("pinctrl:
+armada-37xx: Fix gpio interrupt setup") the armada_37xx_irq_set_type()
+function can be called before the initialization of the mask field.
 
-Therefore we move the special setup to omap_hsmmc.c instead
-of calling some pdata supplied init_card function.
+That means that we can't use this field in this function and need to
+workaround it using hwirq.
 
-The new code checks for a DT child node compatible to wl1251
-so it will not affect other MMC3 use cases.
-
-Generally, this code was and still is a hack and should be
-moved to mmc core to e.g. read such properties from optional
-DT child nodes.
-
-Fixes: 81eef6ca9201 ("mmc: omap_hsmmc: Use dma_request_chan() for requesting DMA channel")
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: <stable@vger.kernel.org> # v4.7+
-[Ulf: Fixed up some checkpatch complaints]
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 30ac0d3b0702 ("pinctrl: armada-37xx: Add edge both type gpio irq support")
+Cc: stable@vger.kernel.org
+Reported-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Link: https://lore.kernel.org/r/20191115155752.2562-1-gregory.clement@bootlin.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/omap_hsmmc.c |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/mmc/host/omap_hsmmc.c
-+++ b/drivers/mmc/host/omap_hsmmc.c
-@@ -1661,6 +1661,36 @@ static void omap_hsmmc_init_card(struct
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -595,10 +595,10 @@ static int armada_37xx_irq_set_type(stru
+ 		regmap_read(info->regmap, in_reg, &in_val);
  
- 	if (mmc_pdata(host)->init_card)
- 		mmc_pdata(host)->init_card(card);
-+	else if (card->type == MMC_TYPE_SDIO ||
-+		 card->type == MMC_TYPE_SD_COMBO) {
-+		struct device_node *np = mmc_dev(mmc)->of_node;
-+
-+		/*
-+		 * REVISIT: should be moved to sdio core and made more
-+		 * general e.g. by expanding the DT bindings of child nodes
-+		 * to provide a mechanism to provide this information:
-+		 * Documentation/devicetree/bindings/mmc/mmc-card.txt
-+		 */
-+
-+		np = of_get_compatible_child(np, "ti,wl1251");
-+		if (np) {
-+			/*
-+			 * We have TI wl1251 attached to MMC3. Pass this
-+			 * information to the SDIO core because it can't be
-+			 * probed by normal methods.
-+			 */
-+
-+			dev_info(host->dev, "found wl1251\n");
-+			card->quirks |= MMC_QUIRK_NONSTD_SDIO;
-+			card->cccr.wide_bus = 1;
-+			card->cis.vendor = 0x104c;
-+			card->cis.device = 0x9066;
-+			card->cis.blksize = 512;
-+			card->cis.max_dtr = 24000000;
-+			card->ocr = 0x80;
-+			of_node_put(np);
-+		}
-+	}
- }
- 
- static void omap_hsmmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
+ 		/* Set initial polarity based on current input level. */
+-		if (in_val & d->mask)
+-			val |= d->mask;		/* falling */
++		if (in_val & BIT(d->hwirq % GPIO_PER_REG))
++			val |= BIT(d->hwirq % GPIO_PER_REG);	/* falling */
+ 		else
+-			val &= ~d->mask;	/* rising */
++			val &= ~(BIT(d->hwirq % GPIO_PER_REG));	/* rising */
+ 		break;
+ 	}
+ 	default:
 
 
