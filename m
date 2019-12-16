@@ -2,97 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D8B91211A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:22:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A582A121129
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:09:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfLPRVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:21:39 -0500
-Received: from mickerik.phytec.de ([195.145.39.210]:60736 "EHLO
-        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfLPRVj (ORCPT
+        id S1726561AbfLPRJJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 16 Dec 2019 12:09:09 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:27672 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727777AbfLPRGy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:21:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a1; c=relaxed/simple;
-        q=dns/txt; i=@phytec.de; t=1576515982; x=1579107982;
-        h=From:Sender:Reply-To:Subject:Date:Message-Id:To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=wgGOn0shs177g7kPo1CpR8L7E8Z8ys8t8NgHwI7xOoY=;
-        b=aSfRXbx1NPySNFC/FR5FWMfvZCTigdICW6KeihmRyA+EptIj3cDcX2YXmf4DPGm1
-        TsXu2hqU1Xku2uUx3BJctjd8I8qo+ftw8MH6K1zLQ3weeU7Bq/2kHl1GD7EHWHLr
-        B91J9SdJFlx2mFLAIhzJmKKzq28LA2iHTDjl/K4kpI4=;
-X-AuditID: c39127d2-df9ff7000000408f-0c-5df7b98d928d
-Received: from idefix.phytec.de (Unknown_Domain [172.16.0.10])
-        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 9E.1C.16527.D89B7FD5; Mon, 16 Dec 2019 18:06:21 +0100 (CET)
-Received: from augenblix2.phytec.de ([172.16.0.56])
-          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
-          with ESMTP id 2019121618062158-25361 ;
-          Mon, 16 Dec 2019 18:06:21 +0100 
-From:   Robert Karszniewicz <r.karszniewicz@phytec.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 1/1] regulator: of: Hide wrong warning regarding suspend state configuration
-Date:   Mon, 16 Dec 2019 18:06:21 +0100
-Message-Id: <1576515981-77867-2-git-send-email-r.karszniewicz@phytec.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576515981-77867-1-git-send-email-r.karszniewicz@phytec.de>
-References: <1576515981-77867-1-git-send-email-r.karszniewicz@phytec.de>
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 16.12.2019 18:06:21,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 16.12.2019 18:06:21,
-        Serialize complete at 16.12.2019 18:06:21
-X-TNEFEvaluated: 1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAJMWRmVeSWpSXmKPExsWyRoCBS7d35/dYg1mPbSymPnzCZvHtSgeT
-        xeVdc9gcmD12zrrL7rFpVSebx+dNcgHMUVw2Kak5mWWpRfp2CVwZPdfXMxa85KhoXcbWwLiZ
-        vYuRk0NCwETi8/YvQDYXh5DAVkaJy9euMUM45xglOrs3soBUsQFV7W6+xQxiiwgoSGzufcYK
-        YjMLeEh0POkDs4UFYiSat/4Bs1kEVCU2fHvKBGLzAtVcfXkIapucxM1znWBzOAU8Jd5uXAA2
-        Xwiopvn+RyaImkYmicaZEhC2kMTpxWeZJzDyLWBkWMUolJuZnJ1alJmtV5BRWZKarJeSuokR
-        GCqHJ6pf2sHYN8fjECMTB+MhRgkOZiUR3h0K32OFeFMSK6tSi/Lji0pzUosPMUpzsCiJ827g
-        LQkTEkhPLEnNTk0tSC2CyTJxcEo1MO6b0sTZfnwW00+fA58C0uVnV+nVSIZM4ax39vjT0+fs
-        f3ud2WzxNln5OM6Db+7YW++U7lQVS/u57uTmiB2f5/j4LInXeZdxOHR+nPrC+CMhB05Ny/c+
-        rcSxU23JaeXey/LT733fflD8Y4V4iqr+1N5169KUZncd+JH+5OrE1fHFz5+WWD45s1WJpTgj
-        0VCLuag4EQBYzJDOAwIAAA==
+        Mon, 16 Dec 2019 12:06:54 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-234-JuRnfgrMPl6iYDkTywHqlA-1; Mon, 16 Dec 2019 17:06:51 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 16 Dec 2019 17:06:50 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 16 Dec 2019 17:06:50 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Steven Rostedt' <rostedt@goodmis.org>
+CC:     'Tom Zanussi' <zanussi@kernel.org>,
+        Sven Schnelle <svens@stackframe.org>,
+        "linux-trace-devel@vger.kernel.org" 
+        <linux-trace-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: ftrace histogram sorting broken on BE architecures
+Thread-Topic: ftrace histogram sorting broken on BE architecures
+Thread-Index: AQHVsSDKonZphcun20Oca4kHPqdeCKe87LwAgAAGU4CAAA+FUA==
+Date:   Mon, 16 Dec 2019 17:06:50 +0000
+Message-ID: <548eb8ae4b8742e4bf122af98b208925@AcuMS.aculab.com>
+References: <20191211123316.GD12147@stackframe.org>
+        <20191211103557.7bed6928@gandalf.local.home>
+        <20191211110959.2baeb70f@gandalf.local.home>
+        <1576178241.3309.2.camel@kernel.org>
+        <4805b40c3e1547f8a26eeac6932f6499@AcuMS.aculab.com>
+ <20191216110539.2b268d86@gandalf.local.home>
+In-Reply-To: <20191216110539.2b268d86@gandalf.local.home>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: JuRnfgrMPl6iYDkTywHqlA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A "No configuration" warning is falsely emitted in the case when the
-of-property regulator-always-on is set but regulator-(on|off)-in-suspend
-isn't set.
-This patch fixes the warning by explicitly setting always-on regulator's
-states to ENABLE_IN_SUSPEND.
+From: Steven Rostedt
+> Sent: 16 December 2019 16:06
+> On Mon, 16 Dec 2019 15:47:12 +0000
+> David Laight <David.Laight@ACULAB.COM> wrote:
+> 
+> > > From: Tom Zanussi
+> > > Sent: 12 December 2019 19:17
+> > > On Wed, 2019-12-11 at 11:09 -0500, Steven Rostedt wrote:
+> > > > On Wed, 11 Dec 2019 10:35:57 -0500
+> > > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > >
+> > > > > > Any thoughts on how to fix this? I'm not sure whether i fully
+> > > > > > understand the
+> > > > > > ftrace maps... ;-)
+> > > > >
+> > > > > Your analysis makes sense. I'll take a deeper look at it.
+> > > >
+> > > > Sven,
+> > > >
+> > > > Does this patch fix it for you?
+> > > >
+> > > > Tom,
+> > > >
+> > > > Correct me if I'm wrong, from what I can tell, all sums and keys are
+> > > > u64 unless they are a string. Thus, I believe this patch should not
+> > > > have any issues.
+> > ...
+> > > > --- a/kernel/trace/tracing_map.c
+> > > > +++ b/kernel/trace/tracing_map.c
+> > > > @@ -148,8 +148,8 @@ static int tracing_map_cmp_atomic64(void *val_a,
+> > > > void *val_b)
+> > > >  #define DEFINE_TRACING_MAP_CMP_FN(type) 	\
+> > > >  static int tracing_map_cmp_##type(void *val_a, void *val_b) \
+> > > >  { \
+> > > > -	type a = *(type *)val_a; \
+> > > > -	type b = *(type *)val_b; \
+> > > > +	type a = (type)(*(u64 *)val_a); 	\
+> > > > +	type b = (type)(*(u64 *)val_b); 	\
+> > > > \
+> > > >  	return (a > b) ? 1 : ((a < b) ? -1 : 0); \
+> > > >  }
+> >
+> > That looks so horrid/wrong it can't be right on both BE and LE.
+> 
+> Well, the original is obviously not right for both BE and LE, but the
+> fix is:
+> 
+> 	type a = (type)(*(u64 *)val_a);
+> 
+> Which breaks down to:
+> 
+> 		(u64 *)val_a - make val_a a pointer to a u64 number
+> 
+> all values were written as u64.
+> 
+> 	u64 data = (u64)original_val_a
+> 
+> Where original_val_a could be a byte, short, int, long or long long.
 
-Signed-off-by: Robert Karszniewicz <r.karszniewicz@phytec.de>
----
-Tested on v4.19.67, applies cleanly on v5.5-rc2.
+I'd sort of guessed that, but then the pointer type passed to tracing_map_cmp_##type()
+will always be 'u64 *' (since the field the address is taken of must be that type).
+Then the (u64 *) casts are no longer needed.
 
- drivers/regulator/of_regulator.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Possibly you can just pass the u64 values to:
+tracing_map_cmp_##type(type a, type b)
+{
+	return a > b ? 1 : a < b ? -1 : 0;
+}
 
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 210fc20..3acb1571 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -188,8 +188,14 @@ static void of_get_regulation_constraints(struct device_node *np,
- 			continue;
- 		}
- 
-+		if (!suspend_state)
-+			continue;
-+
-+		if (constraints->always_on)
-+			suspend_state->enabled = ENABLE_IN_SUSPEND;
-+
- 		suspend_np = of_get_child_by_name(np, regulator_states[i]);
--		if (!suspend_np || !suspend_state)
-+		if (!suspend_np)
- 			continue;
- 
- 		if (!of_property_read_u32(suspend_np, "regulator-mode",
--- 
-2.7.4
+The high bit masking and sign extension is then implicit in the call.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
