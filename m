@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCD8121338
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:00:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5992B1214F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:17:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbfLPR7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:59:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33186 "EHLO mail.kernel.org"
+        id S1731607AbfLPSQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728646AbfLPR7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:59:50 -0500
+        id S1731369AbfLPSQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:16:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BBD2206EC;
-        Mon, 16 Dec 2019 17:59:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47CB6207FF;
+        Mon, 16 Dec 2019 18:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519190;
-        bh=tlsq84Sjw04k/4K1GPsBwrxcrthZHeY7gccHOEHnC7w=;
+        s=default; t=1576520210;
+        bh=QUuWlmukpB22zUiY0dYuQxdxdGq93Oj0RixZKBw1294=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rusY+goO97eKHBR5/OihqrIyAzmznjQQnUSkjMiSPBvG0XgCxtuouVxMz6IvX9IoY
-         8iLuc29TUyn06VRRH/758kEvds8DSlJoJNLxoyKG1fMpB9zm832vGOvaG4jqhhE96u
-         0DNG5nHg66SinJHjY67qPvvO9767cDaxkMIovNtQ=
+        b=fD8Z8XyhoSrCtUntcAJArKlRsXaqPzTCQd8WlMJvn7MjscqRPQAhDjifG2R2HY7/+
+         eraW+stjEjvb6owdoQcV0MQQpLDVQ2qQ3+aL0HzbsINAGPvjrRU8E2dC852ALB+Y2U
+         TvHzH6bSa3Ji+23BysxW38PUk5QwGLxKA+zfQV10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 191/267] rtlwifi: rtl8192de: Fix missing code to retrieve RX buffer address
+        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
+        Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH 5.4 061/177] usb: dwc3: gadget: Clear started flag for non-IOC
 Date:   Mon, 16 Dec 2019 18:48:37 +0100
-Message-Id: <20191216174912.989877268@linuxfoundation.org>
+Message-Id: <20191216174831.556504486@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-commit 0e531cc575c4e9e3dd52ad287b49d3c2dc74c810 upstream.
+commit d3abda5a98a18e524e17fd4085c9f4bd53e9ef53 upstream.
 
-In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
-new drivers"), a callback to get the RX buffer address was added to
-the PCI driver. Unfortunately, driver rtl8192de was not modified
-appropriately and the code runs into a WARN_ONCE() call. The use
-of an incorrect array is also fixed.
+Normally the END_TRANSFER command completion handler will clear the
+DWC3_EP_TRANSFER_STARTED flag. However, if the command was sent without
+interrupt on completion, then the flag will not be cleared. Make sure to
+clear the flag in this case.
 
-Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
-Cc: Stable <stable@vger.kernel.org> # 3.18+
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/usb/dwc3/gadget.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-@@ -839,13 +839,15 @@ u32 rtl92de_get_desc(u8 *p_desc, bool is
- 			break;
- 		}
- 	} else {
--		struct rx_desc_92c *pdesc = (struct rx_desc_92c *)p_desc;
- 		switch (desc_name) {
- 		case HW_DESC_OWN:
--			ret = GET_RX_DESC_OWN(pdesc);
-+			ret = GET_RX_DESC_OWN(p_desc);
- 			break;
- 		case HW_DESC_RXPKT_LEN:
--			ret = GET_RX_DESC_PKT_LEN(pdesc);
-+			ret = GET_RX_DESC_PKT_LEN(p_desc);
-+			break;
-+		case HW_DESC_RXBUFF_ADDR:
-+			ret = GET_RX_DESC_BUFF_ADDR(p_desc);
- 			break;
- 		default:
- 			WARN_ONCE(true, "rtl8192de: ERR rxdesc :%d not processed\n",
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2719,6 +2719,9 @@ static void dwc3_stop_active_transfer(st
+ 	WARN_ON_ONCE(ret);
+ 	dep->resource_index = 0;
+ 
++	if (!interrupt)
++		dep->flags &= ~DWC3_EP_TRANSFER_STARTED;
++
+ 	if (dwc3_is_usb31(dwc) || dwc->revision < DWC3_REVISION_310A)
+ 		udelay(100);
+ }
 
 
