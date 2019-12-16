@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E508F1217E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56C691217E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729462AbfLPSDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:03:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39666 "EHLO mail.kernel.org"
+        id S1729279AbfLPSDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:03:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729453AbfLPSDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:03:10 -0500
+        id S1729214AbfLPSDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39BB32072D;
-        Mon, 16 Dec 2019 18:03:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B857F20726;
+        Mon, 16 Dec 2019 18:03:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519389;
-        bh=hFureTdvfpp1CHTnbCGVi0B4qwsNsYx/cmvjy1S9FKE=;
+        s=default; t=1576519392;
+        bh=lQ3MO0lXRSqqXh3bi0sL81S/+szWWBcG95j98hRcJz4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ehSaD9VvpIrF1B7tQt6PZNH9Nf7KEi1YHT4JKmIz5KKd9Dc6Nhl7WE5HtfFcQxlMl
-         pEROoNJQednaBoFPePDIZef+w4KjIAjNA48hqexZKri141Q1ACAowgktM36icTglqi
-         KAnYyOVw/BYL6GwpNkU1e7QMTkAw7sbRBgYWACYM=
+        b=G7nJmXYh/8VXYqUaS8V+KSlzKhlSrYPaVrLl5Q6n/lkBi/rutXygulphMCjYUvtSZ
+         ppvigPU1xAUNhCed3Ca6eaZIUfm/z7wBabWAbe66ATLUA+k14CwrpU2Fiv1huzJlS7
+         xcgj0au/Q6p38ug4XC2D4gnNcBYRuhzHqRhdIbL0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
         Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.19 045/140] rtlwifi: rtl8192de: Fix missing callback that tests for hw release of buffer
-Date:   Mon, 16 Dec 2019 18:48:33 +0100
-Message-Id: <20191216174801.125984474@linuxfoundation.org>
+Subject: [PATCH 4.19 046/140] rtlwifi: rtl8192de: Fix missing enable interrupt flag
+Date:   Mon, 16 Dec 2019 18:48:34 +0100
+Message-Id: <20191216174801.328863007@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
 References: <20191216174747.111154704@linuxfoundation.org>
@@ -45,11 +45,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit 3155db7613edea8fb943624062baf1e4f9cfbfd6 upstream.
+commit 330bb7117101099c687e9c7f13d48068670b9c62 upstream.
 
 In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
-new drivers"), a callback needed to check if the hardware has released
-a buffer indicating that a DMA operation is completed was not added.
+new drivers"), the flag that indicates that interrupts are enabled was
+never set.
+
+In addition, there are several places when enable/disable interrupts
+were commented out are restored. A sychronize_interrupts() call is
+removed.
 
 Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
 Cc: Stable <stable@vger.kernel.org>	# v3.18+
@@ -58,57 +62,48 @@ Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c  |    1 +
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |   17 +++++++++++++++++
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h |    2 ++
- 3 files changed, 20 insertions(+)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/hw.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-@@ -238,6 +238,7 @@ static struct rtl_hal_ops rtl8192de_hal_
- 	.led_control = rtl92de_led_control,
- 	.set_desc = rtl92de_set_desc,
- 	.get_desc = rtl92de_get_desc,
-+	.is_tx_desc_closed = rtl92de_is_tx_desc_closed,
- 	.tx_polling = rtl92de_tx_polling,
- 	.enable_hw_sec = rtl92de_enable_hw_security_config,
- 	.set_key = rtl92de_set_key,
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-@@ -859,6 +859,23 @@ u64 rtl92de_get_desc(struct ieee80211_hw
- 	return ret;
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/hw.c
+@@ -1198,6 +1198,7 @@ void rtl92de_enable_interrupt(struct iee
+ 
+ 	rtl_write_dword(rtlpriv, REG_HIMR, rtlpci->irq_mask[0] & 0xFFFFFFFF);
+ 	rtl_write_dword(rtlpriv, REG_HIMRE, rtlpci->irq_mask[1] & 0xFFFFFFFF);
++	rtlpci->irq_enabled = true;
  }
  
-+bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
-+			       u8 hw_queue, u16 index)
-+{
-+	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
-+	struct rtl8192_tx_ring *ring = &rtlpci->tx_ring[hw_queue];
-+	u8 *entry = (u8 *)(&ring->desc[ring->idx]);
-+	u8 own = (u8)rtl92de_get_desc(hw, entry, true, HW_DESC_OWN);
-+
-+	/* a beacon packet will only use the first
-+	 * descriptor by defaut, and the own bit may not
-+	 * be cleared by the hardware
-+	 */
-+	if (own)
-+		return false;
-+	return true;
-+}
-+
- void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue)
- {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
-@@ -737,6 +737,8 @@ void rtl92de_set_desc(struct ieee80211_h
- 		      u8 desc_name, u8 *val);
- u64 rtl92de_get_desc(struct ieee80211_hw *hw,
- 		     u8 *p_desc, bool istx, u8 desc_name);
-+bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
-+			       u8 hw_queue, u16 index);
- void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue);
- void rtl92de_tx_fill_cmddesc(struct ieee80211_hw *hw, u8 *pdesc,
- 			     bool b_firstseg, bool b_lastseg,
+ void rtl92de_disable_interrupt(struct ieee80211_hw *hw)
+@@ -1207,7 +1208,7 @@ void rtl92de_disable_interrupt(struct ie
+ 
+ 	rtl_write_dword(rtlpriv, REG_HIMR, IMR8190_DISABLED);
+ 	rtl_write_dword(rtlpriv, REG_HIMRE, IMR8190_DISABLED);
+-	synchronize_irq(rtlpci->pdev->irq);
++	rtlpci->irq_enabled = false;
+ }
+ 
+ static void _rtl92de_poweroff_adapter(struct ieee80211_hw *hw)
+@@ -1373,7 +1374,7 @@ void rtl92de_set_beacon_related_register
+ 
+ 	bcn_interval = mac->beacon_interval;
+ 	atim_window = 2;
+-	/*rtl92de_disable_interrupt(hw);  */
++	rtl92de_disable_interrupt(hw);
+ 	rtl_write_word(rtlpriv, REG_ATIMWND, atim_window);
+ 	rtl_write_word(rtlpriv, REG_BCN_INTERVAL, bcn_interval);
+ 	rtl_write_word(rtlpriv, REG_BCNTCFG, 0x660f);
+@@ -1393,9 +1394,9 @@ void rtl92de_set_beacon_interval(struct
+ 
+ 	RT_TRACE(rtlpriv, COMP_BEACON, DBG_DMESG,
+ 		 "beacon_interval:%d\n", bcn_interval);
+-	/* rtl92de_disable_interrupt(hw); */
++	rtl92de_disable_interrupt(hw);
+ 	rtl_write_word(rtlpriv, REG_BCN_INTERVAL, bcn_interval);
+-	/* rtl92de_enable_interrupt(hw); */
++	rtl92de_enable_interrupt(hw);
+ }
+ 
+ void rtl92de_update_interrupt_mask(struct ieee80211_hw *hw,
 
 
