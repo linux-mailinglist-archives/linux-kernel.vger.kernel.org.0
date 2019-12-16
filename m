@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 971991213E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E448512134F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:01:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729497AbfLPSF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:05:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44892 "EHLO mail.kernel.org"
+        id S1728987AbfLPSAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:00:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729890AbfLPSFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:05:51 -0500
+        id S1728643AbfLPSAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:00:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 258EE20700;
-        Mon, 16 Dec 2019 18:05:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14EFA205C9;
+        Mon, 16 Dec 2019 18:00:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519550;
-        bh=qpNwJcQPCMoeoqAQpmsMhpaFzPY0C6tolrQbm+JA800=;
+        s=default; t=1576519243;
+        bh=8OkmznCdQmAgmxWHtpZ/BOvoxQfUSvb3cOTrolGHgt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VwNU4svdzHbOWO4O+WpGuPMrtgl0SyFrdqZFlfO5kZqvJb5cA5eGxcPFCNixQoxqd
-         2V6W1o4ZvES4lR7rxC/5b0XpwYn7JlRwYZskTE7DjvpcZ3Kkvcx7s52RGN+gybBSeB
-         LHUrdXGCk6+6AHx/5e9per5r97q9T00h5nYYkyPs=
+        b=PHKdJXy4wkdWgQVIl1Gl7I0O0lK25MLqzwHqBX58/ouIUqFmYay+Tymc6TTOlvwUs
+         yhsyzg0biC7TMoCLM0AYbtkGEikMpKkwYqFJASVnNr3Vyy4K0BfXyNpcBYsTer+OO/
+         UyVuNpgXj9TtkqO/JCN8o9Y4Ku5lRzIlw772qIBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 112/140] drbd: Change drbd_request_detach_interruptibles return type to int
+        stable@vger.kernel.org, Shirish S <shirish.s@amd.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Yazen Ghannam <yazen.ghannam@amd.com>, x86-ml <x86@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 254/267] x86/MCE/AMD: Carve out the MC4_MISC thresholding quirk
 Date:   Mon, 16 Dec 2019 18:49:40 +0100
-Message-Id: <20191216174817.167554962@linuxfoundation.org>
+Message-Id: <20191216174916.581884627@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +50,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Shirish S <Shirish.S@amd.com>
 
-[ Upstream commit 5816a0932b4fd74257b8cc5785bc8067186a8723 ]
+[ Upstream commit 30aa3d26edb0f3d7992757287eec0ca588a5c259 ]
 
-Clang warns when an implicit conversion is done between enumerated
-types:
+The MC4_MISC thresholding quirk needs to be applied during S5 -> S0 and
+S3 -> S0 state transitions, which follow different code paths. Carve it
+out into a separate function and call it mce_amd_feature_init() where
+the two code paths of the state transitions converge.
 
-drivers/block/drbd/drbd_state.c:708:8: warning: implicit conversion from
-enumeration type 'enum drbd_ret_code' to different enumeration type
-'enum drbd_state_rv' [-Wenum-conversion]
-                rv = ERR_INTR;
-                   ~ ^~~~~~~~
+ [ bp: massage commit message and the carved out function. ]
 
-drbd_request_detach_interruptible's only call site is in the return
-statement of adm_detach, which returns an int. Change the return type of
-drbd_request_detach_interruptible to match, silencing Clang's warning.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Shirish S <shirish.s@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/1547651417-23583-3-git-send-email-shirish.s@amd.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_state.c | 6 ++----
- drivers/block/drbd/drbd_state.h | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c     | 29 ----------------------
+ arch/x86/kernel/cpu/mcheck/mce_amd.c | 36 ++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_state.c b/drivers/block/drbd/drbd_state.c
-index 0813c654c8938..b452359b6aae8 100644
---- a/drivers/block/drbd/drbd_state.c
-+++ b/drivers/block/drbd/drbd_state.c
-@@ -688,11 +688,9 @@ request_detach(struct drbd_device *device)
- 			CS_VERBOSE | CS_ORDERED | CS_INHIBIT_MD_IO);
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index dcc11303885b7..c7bd2e549a6a1 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1660,35 +1660,6 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+ 		if (c->x86 == 0x15 && c->x86_model <= 0xf)
+ 			mce_flags.overflow_recov = 1;
+ 
+-		/*
+-		 * Turn off MC4_MISC thresholding banks on all models since
+-		 * they're not supported there.
+-		 */
+-		if (c->x86 == 0x15) {
+-			int i;
+-			u64 hwcr;
+-			bool need_toggle;
+-			u32 msrs[] = {
+-				0x00000413, /* MC4_MISC0 */
+-				0xc0000408, /* MC4_MISC1 */
+-			};
+-
+-			rdmsrl(MSR_K7_HWCR, hwcr);
+-
+-			/* McStatusWrEn has to be set */
+-			need_toggle = !(hwcr & BIT(18));
+-
+-			if (need_toggle)
+-				wrmsrl(MSR_K7_HWCR, hwcr | BIT(18));
+-
+-			/* Clear CntP bit safely */
+-			for (i = 0; i < ARRAY_SIZE(msrs); i++)
+-				msr_clear_bit(msrs[i], 62);
+-
+-			/* restore old settings */
+-			if (need_toggle)
+-				wrmsrl(MSR_K7_HWCR, hwcr);
+-		}
+ 	}
+ 
+ 	if (c->x86_vendor == X86_VENDOR_INTEL) {
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index 4fa97a44e73fa..b434780ae6802 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -544,6 +544,40 @@ out:
+ 	return offset;
  }
  
--enum drbd_state_rv
--drbd_request_detach_interruptible(struct drbd_device *device)
-+int drbd_request_detach_interruptible(struct drbd_device *device)
++/*
++ * Turn off MC4_MISC thresholding banks on all family 0x15 models since
++ * they're not supported there.
++ */
++void disable_err_thresholding(struct cpuinfo_x86 *c)
++{
++	int i;
++	u64 hwcr;
++	bool need_toggle;
++	u32 msrs[] = {
++		0x00000413, /* MC4_MISC0 */
++		0xc0000408, /* MC4_MISC1 */
++	};
++
++	if (c->x86 != 0x15)
++		return;
++
++	rdmsrl(MSR_K7_HWCR, hwcr);
++
++	/* McStatusWrEn has to be set */
++	need_toggle = !(hwcr & BIT(18));
++
++	if (need_toggle)
++		wrmsrl(MSR_K7_HWCR, hwcr | BIT(18));
++
++	/* Clear CntP bit safely */
++	for (i = 0; i < ARRAY_SIZE(msrs); i++)
++		msr_clear_bit(msrs[i], 62);
++
++	/* restore old settings */
++	if (need_toggle)
++		wrmsrl(MSR_K7_HWCR, hwcr);
++}
++
+ /* cpu init entry point, called from mce.c with preempt off */
+ void mce_amd_feature_init(struct cpuinfo_x86 *c)
  {
--	enum drbd_state_rv rv;
--	int ret;
-+	int ret, rv;
+@@ -551,6 +585,8 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
+ 	unsigned int bank, block, cpu = smp_processor_id();
+ 	int offset = -1;
  
- 	drbd_suspend_io(device); /* so no-one is stuck in drbd_al_begin_io */
- 	wait_event_interruptible(device->state_wait,
-diff --git a/drivers/block/drbd/drbd_state.h b/drivers/block/drbd/drbd_state.h
-index b2a390ba73a05..f87371e55e682 100644
---- a/drivers/block/drbd/drbd_state.h
-+++ b/drivers/block/drbd/drbd_state.h
-@@ -162,8 +162,7 @@ static inline int drbd_request_state(struct drbd_device *device,
- }
- 
- /* for use in adm_detach() (drbd_adm_detach(), drbd_adm_down()) */
--enum drbd_state_rv
--drbd_request_detach_interruptible(struct drbd_device *device);
-+int drbd_request_detach_interruptible(struct drbd_device *device);
- 
- enum drbd_role conn_highest_role(struct drbd_connection *connection);
- enum drbd_role conn_highest_peer(struct drbd_connection *connection);
++	disable_err_thresholding(c);
++
+ 	for (bank = 0; bank < mca_cfg.banks; ++bank) {
+ 		if (mce_flags.smca)
+ 			smca_configure(bank, cpu);
 -- 
 2.20.1
 
