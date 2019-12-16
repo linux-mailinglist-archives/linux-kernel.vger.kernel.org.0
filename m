@@ -2,16 +2,16 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7A531205DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7A321205E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:37:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbfLPMgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:36:51 -0500
+        id S1727640AbfLPMgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:36:54 -0500
 Received: from mail-sz.amlogic.com ([211.162.65.117]:15210 "EHLO
         mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727512AbfLPMgu (ORCPT
+        with ESMTP id S1727512AbfLPMgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:36:50 -0500
+        Mon, 16 Dec 2019 07:36:52 -0500
 Received: from localhost.localdomain (10.28.8.19) by mail-sz.amlogic.com
  (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Mon, 16 Dec 2019
  20:37:24 +0800
@@ -31,10 +31,12 @@ CC:     Qianggui Song <qianggui.song@amlogic.com>,
         <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 0/4] irqchip/meson-gpio: Add support for Meson-A1 SoC
-Date:   Mon, 16 Dec 2019 20:36:41 +0800
-Message-ID: <20191216123645.10099-1-qianggui.song@amlogic.com>
+Subject: [PATCH v2 1/4] dt-bindings: interrupt-controller: New binding for Meson-A1 SoCs
+Date:   Mon, 16 Dec 2019 20:36:42 +0800
+Message-ID: <20191216123645.10099-2-qianggui.song@amlogic.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191216123645.10099-1-qianggui.song@amlogic.com>
+References: <20191216123645.10099-1-qianggui.song@amlogic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -44,30 +46,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds support for GPIO interrupt controller of Meson-A1 SoC
-which use new register layout, two main things are done in the patchset
-1. rework current driver
-2. add a1 support
+Update dt-binding document for GPIO interrupt controller of Meson-A1 SoCs
 
-changes since v1 at [0]
- - place initial macro after the definition of param structure
- - make common data as parameter of initial macro
- - add dummy init function for previous chips
+Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
+---
+ .../bindings/interrupt-controller/amlogic,meson-gpio-intc.txt    | 1 +
+ 1 file changed, 1 insertion(+)
 
-[0]https://lore.kernel.org/linux-amlogic/20191206121714.14579-1-qianggui.song@amlogic.com
-
-Qianggui Song (4):
-  dt-bindings: interrupt-controller: New binding for Meson-A1 SoCs
-  irqchip/meson-gpio: rework meson irqchip driver to support meson-A1
-    SoCs
-  irqchip/meson-gpio: Add support for meson a1 SoCs
-  arm64: dts: meson: a1: add gpio interrupt controller support
-
- .../amlogic,meson-gpio-intc.txt               |   1 +
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |   9 ++
- drivers/irqchip/irq-meson-gpio.c              | 137 ++++++++++++++----
- 3 files changed, 122 insertions(+), 25 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+index 684bb1cd75ec..23b18b92c558 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+@@ -17,6 +17,7 @@ Required properties:
+     "amlogic,meson-axg-gpio-intc" for AXG SoCs (A113D, A113X)
+     "amlogic,meson-g12a-gpio-intc" for G12A SoCs (S905D2, S905X2, S905Y2)
+     "amlogic,meson-sm1-gpio-intc" for SM1 SoCs (S905D3, S905X3, S905Y3)
++    "amlogic,meson-a1-gpio-intc" for A1 SoCs (A113L)
+ - reg : Specifies base physical address and size of the registers.
+ - interrupt-controller : Identifies the node as an interrupt controller.
+ - #interrupt-cells : Specifies the number of cells needed to encode an
 -- 
 2.24.0
 
