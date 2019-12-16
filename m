@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C376B121931
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C586F121905
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:48:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfLPRw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:52:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45620 "EHLO mail.kernel.org"
+        id S1728275AbfLPSsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:48:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727620AbfLPRwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:52:53 -0500
+        id S1726742AbfLPRyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:54:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CA502166E;
-        Mon, 16 Dec 2019 17:52:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4464120733;
+        Mon, 16 Dec 2019 17:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518772;
-        bh=rDrWEFPlw/zmsNcazXUyUrysqrnelma9cR2EgBlJnSg=;
+        s=default; t=1576518871;
+        bh=7b7jS37hdbkIbafvVGOIgdZ/TibNlW9EEmrV6xUZF9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IRqNThU/kRYAxuu2jXW4UCQcZbOftyLBYMIer+28WR/ExCDthX8FqQZAZnxnsvKxX
-         BOb/rU7+RSdgWnBBkao/zey6ySBtpdNT3vRRHnXlsD9DBEzmjNG3VE8MVEfMOc7C7j
-         ObI7XXu4u8Uazs9d7Rp47c0eA7J0LMnmc1yOnd4E=
+        b=U7Mlcjm+uDIVmzcWNVGqBMzbOOanepLz2CbDzE9rsN5p6Rk82R3z95+1DFEGqxZXZ
+         rC4uD+Spu6VEYJGDignL+Gax4rEVrOGizICIbrIEhplaGJt+trnYsmzCfduZ6k4l3E
+         ZbAPWH+UpA40r/UbXK9XRwjUu08ZldvDdkKRPjA0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 058/267] media: cec: report Vendor ID after initialization
-Date:   Mon, 16 Dec 2019 18:46:24 +0100
-Message-Id: <20191216174855.421885798@linuxfoundation.org>
+Subject: [PATCH 4.14 064/267] ACPI: fix acpi_find_child_device() invocation in acpi_preset_companion()
+Date:   Mon, 16 Dec 2019 18:46:30 +0100
+Message-Id: <20191216174855.893939339@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,40 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-[ Upstream commit 7f02ac77c768ba2bcdd0ce719c1fca0870ffe2fb ]
+[ Upstream commit f8c6d1402b89f22a3647705d63cbd171aa19a77e ]
 
-The CEC specification requires that the Vendor ID (if any) is reported
-after a logical address was claimed.
+acpi_find_child_device() accepts boolean not pointer as last argument.
 
-This was never done, so add support for this.
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+[ rjw: Subject ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/cec/cec-adap.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ include/linux/acpi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/cec/cec-adap.c b/drivers/media/cec/cec-adap.c
-index f8a808d45034e..27e57915eb4d1 100644
---- a/drivers/media/cec/cec-adap.c
-+++ b/drivers/media/cec/cec-adap.c
-@@ -1403,6 +1403,13 @@ configured:
- 			las->log_addr[i],
- 			cec_phys_addr_exp(adap->phys_addr));
- 		cec_transmit_msg_fh(adap, &msg, NULL, false);
-+
-+		/* Report Vendor ID */
-+		if (adap->log_addrs.vendor_id != CEC_VENDOR_ID_NONE) {
-+			cec_msg_device_vendor_id(&msg,
-+						 adap->log_addrs.vendor_id);
-+			cec_transmit_msg_fh(adap, &msg, NULL, false);
-+		}
- 	}
- 	adap->kthread_config = NULL;
- 	complete(&adap->config_completion);
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index d7a9700b93339..4bb3bca75004d 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -99,7 +99,7 @@ static inline bool has_acpi_companion(struct device *dev)
+ static inline void acpi_preset_companion(struct device *dev,
+ 					 struct acpi_device *parent, u64 addr)
+ {
+-	ACPI_COMPANION_SET(dev, acpi_find_child_device(parent, addr, NULL));
++	ACPI_COMPANION_SET(dev, acpi_find_child_device(parent, addr, false));
+ }
+ 
+ static inline const char *acpi_dev_name(struct acpi_device *adev)
 -- 
 2.20.1
 
