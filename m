@@ -2,96 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C73E12194C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A15C51218CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbfLPSsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:48:19 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45219 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbfLPRyZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:54:25 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j42so4210753wrj.12;
-        Mon, 16 Dec 2019 09:54:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding:thread-index:content-language;
-        bh=/ADs60hbOFeV91Nal7IRwSibD1PvyjxPHFpLiwg56pU=;
-        b=alIV0owQs+4Tj0VrignHQenjkrJKJPddVpY38ar5e0/9GAS/qdZp6IvmaUQifxORdi
-         vpeh8DL4t32X85EhODF52sW1LIOeD8Ta6eGaZT8XpAILRK/kiKN+m5zag1FI97NCYtw9
-         J9c0B++M2fsp2z27my6fre4P9s7PAH6Af+JzD6+6mU5UAVDeuvr5VbdS6JkI5oiO9yjc
-         mXbpuQZDsY8EKFXUtHtJU/jbi3yoc6GLejAUNlPVmlQCq5l246PQg6KjH4143AmyZ1+d
-         KmveWgkLxo0l0AdNlv/U4Fu4Y7AH8GE1kA8Plk4sLr+ejkdSODixOPOZk75OSvvubQTJ
-         BgtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding:thread-index:content-language;
-        bh=/ADs60hbOFeV91Nal7IRwSibD1PvyjxPHFpLiwg56pU=;
-        b=LAccXNwtaUJK4TZfY7TsYSdeavEzrWn9PP63NKKpb+bC8arDjhcyi3lwwEoKbSi52p
-         gwEp1R1fYPdr5UjGKCr05E1onLFrdMFiyUqPcpgnR2pBUw2PQ1bz0aPu1w4bPs8JZ+CW
-         ukZgiScIAs5abuRKuDl+iMXemB5GiiAwCWkcwJLIy5xW6uU8pqvD8TJMx8qCCAKTpSqd
-         i0qP71yokq5ti5gBgA3H6KsvCRyjvdDUdaIaRvvSIJBi1pJXElcqJbaEq1vYCLuKXgIJ
-         frKQb4L75xsg6PcE+pck3dQ8DQk8JsmezZ0jiwN5vaHSPT/YbO+dW77dMPWsBvWy1J5+
-         2uZg==
-X-Gm-Message-State: APjAAAVwk43g/HO3SQxdACmTWL0mj8MnbHsajHXjMETUcdM7Z+57H7Oo
-        UyWv6DUI3qgje1E98Sn9ibE=
-X-Google-Smtp-Source: APXvYqzLvZWcCouTgjODTUh4a7Ne/akkw8fCqL5aQfJbgy+SUlUUEvXNo8P6tp8tTVtgRDgaZ54HHA==
-X-Received: by 2002:adf:f88c:: with SMTP id u12mr33319322wrp.323.1576518863678;
-        Mon, 16 Dec 2019 09:54:23 -0800 (PST)
-Received: from WINDOWSSS5SP16 (cpc96954-walt26-2-0-cust383.13-2.cable.virginm.net. [82.31.89.128])
-        by smtp.gmail.com with ESMTPSA id a16sm22341245wrt.37.2019.12.16.09.54.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Dec 2019 09:54:23 -0800 (PST)
-From:   "Robert Milkowski" <rmilkowski@gmail.com>
-To:     <linux-nfs@vger.kernel.org>
-Cc:     "'Trond Myklebust'" <trond.myklebust@hammerspace.com>,
-        "'Anna Schumaker'" <anna.schumaker@netapp.com>,
-        <linux-kernel@vger.kernel.org>, <linux-nfs@vger.kernel.org>
-Subject: [PATCH] NFSv4: open() should try lease recovery on NFS4ERR_EXPIRED
-Date:   Mon, 16 Dec 2019 17:54:22 -0000
-Message-ID: <05c201d5b439$d99083c0$8cb18b40$@gmail.com>
+        id S1727674AbfLPSqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:46:37 -0500
+Received: from mout.gmx.net ([212.227.15.19]:53821 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728175AbfLPR4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:56:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1576518964;
+        bh=CAK+937vMJ7Ul1L0L0cRsieV0URSjAloZ41FxESMYZg=;
+        h=X-UI-Sender-Class:Subject:To:References:From:Date:In-Reply-To;
+        b=JffkAK1tV2BmEBhNaIPc4vAg6igCT7DVh2lVhf8TVpHgSNU/3O83zV/s7OOF/wA/n
+         d7ey00CzlVsbZRoFDpsN9KLDfOqR15mOfQQa6/wvO+etKanIz3EyZybKUjeoe+onCm
+         9gnq6ewgl1vR0GEARXVdPJ34hWuCcI0lR7nuEsE8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.1.176] ([37.4.249.154]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M6lpM-1id5NS0toc-008KWy; Mon, 16
+ Dec 2019 18:56:04 +0100
+Subject: Re: [PATCH AUTOSEL 5.4 133/350] Bluetooth: hci_bcm: Fix RTS handling
+ during startup
+To:     Greg KH <greg@kroah.com>, Sasha Levin <sashal@kernel.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        linux-bluetooth@vger.kernel.org
+References: <20191210210735.9077-1-sashal@kernel.org>
+ <20191210210735.9077-94-sashal@kernel.org>
+ <20191216131512.c5x5ltndmdambdf4@core.my.home>
+ <20191216132750.GA1646935@kroah.com>
+From:   Stefan Wahren <wahrenst@gmx.net>
+Message-ID: <9ea6af63-0133-284c-98a4-57d19c60d497@gmx.net>
+Date:   Mon, 16 Dec 2019 18:56:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AdW0MuhLiOKK2wGRQLycz+SVs0XJrQ==
-Content-Language: en-gb
+In-Reply-To: <20191216132750.GA1646935@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Provags-ID: V03:K1:1NGjEk2kmw7CCqJGd+/tmrSULyEcRMlyxmyL9HTkLzxJ3t5WPre
+ h29L1kDiUcoAc5deXTwJbbDpbzsQPQziJ7QNj4jGfnaeGOyK4xzLxQS0A427fUgQqNIDH8w
+ qAP3Cw8J8T5ge2H2PDtTALHSY5uvcc6ePf+5gfwGd02xgCd1rDtq0pWE96dhiygulNxnJne
+ ssp/U87lfc9blvIt6MBNQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KLJednpRabg=:T5c7YPDR4wYazTXu2MmIJe
+ E+SqqfXyXnnDSPNkA/jBrVz/6+pOP+KcGfJdYeVPqa++qTH7k+ZmQtauFTjtT9w6y3jBrrP47
+ /+hHD7VfuluBjr7b+87e/E2Q9yGJ5Jdi1xdGyiey46Rcv2GMDOlXHe8p3C+XzYgMZCanN5kXo
+ WrYwgrEld69IcwI4cH6MV6R3qxoc40R9Ln39OkKAruN83IR8nPD3qxkgY5Yj2vdavAxwpeLkw
+ QVeaZqXGy45BFMuOpdIq9qM3E0VNQtyXPgnNxiDwlRokbsoUxDxSqv6nyFoIbaY9w9SOEnkeG
+ ONsxrqDHtoEs99GsE99PAMVAx5BpLwXd7sIVYgcEnM+F7rLDxMFpVdd4HeaPC0NC/0e1P3+or
+ 9kh8U5gTXb5LmdO68Df/n56tsYn0p3xc7+prnFmhgrCSJiGqtTcC5xCFfT37x8uwK98Wywx9f
+ 73b/wouir1NnWZaGFxzZ4iiVgGr21LJmv03o8l0PIItmiVqdIYLjxX6uGRdKag6ngtqTMK5ZA
+ SJOnU62Qj0/dSjF5FJTbiBgiKEZz20+Rv2jgGWv8e2MQ5Z2g9EjAbnUUUnG9eh1DSqeWM81eg
+ 0H2qN9KOc9sZ5W1aBOF8yl4U+NGvUnML5M0CYyuKtjU7feU36iv4KpcGabwf08gDX8aYm0yF2
+ O0Umcm9UI77hQdMX5sSjDw9scrTiUttl3+sCm3McXQmImJ8k9HVqcqw2yVzkjzoAhJoMIsI1I
+ A541DuPLICSFzevgpLHvvYXNbLJHoQdg8JHIrRiF48jTkc9B67J/L8riFGI+3ws6sOXPkBozZ
+ CFKighY8lG5zAhqwR/Fi0FpHh82wyucb8n8GmPX/LiBoIZpYvH68rNeDrKIGOfzkNVii0KzFW
+ Ibe3wPSVc+My842xtPbxHGuoQlVidb8kB1QV/Rf2L91ida6ML2fLc9Ki/o3BdSTxJL6IpSyT1
+ z3NIGVSmWWzmoUlvOQl8+onDyW8ZfM9K0TnvaHcAffIugHIBIxwFvPzvuBj6IAlG/1rU4VyF1
+ hUDaaVc/z4Z7WlIjScmpKUDAbqbFuX0wcORDT98xhYGwhRoQxCZ+mCPT9o1lQqSsxO/dMm4uB
+ 2Td8XkjsXjT+xASgxnuSaNHSu+Ttw1a5LbPoONwfn6B7jCmWH154P/V+pNDLRDkSHm5xSWEN+
+ dZiDgZUD8PMq1ugPPIb1O1S3NrlXZOQ4DTfcE7WgV3XwkLiwL34LFHDaqDkwMXl0ko0tCCqlF
+ 0KdG0l9dQUSgpPj0kemw3NcWpYRIUYR88g58tgK7Kaz4YuPFyKczGMUShQ6c=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Milkowski <rmilkowski@gmail.com>
+Am 16.12.19 um 14:27 schrieb Greg KH:
+> On Mon, Dec 16, 2019 at 02:15:12PM +0100, Ond=C5=99ej Jirman wrote:
+>> Hi,
+>>
+>> On Tue, Dec 10, 2019 at 04:03:58PM -0500, Sasha Levin wrote:
+>>> From: Stefan Wahren <wahrenst@gmx.net>
+>>>
+>>> [ Upstream commit 3347a80965b38f096b1d6f995c00c9c9e53d4b8b ]
+>>>
+>>> The RPi 4 uses the hardware handshake lines for CYW43455, but the chip
+>>> doesn't react to HCI requests during DT probe. The reason is the inpro=
+per
+>>> handling of the RTS line during startup. According to the startup
+>>> signaling sequence in the CYW43455 datasheet, the hosts RTS line must
+>>> be driven after BT_REG_ON and BT_HOST_WAKE.
+>>>
+>>> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+>>> Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+>>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>>> ---
+>>>  drivers/bluetooth/hci_bcm.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+>>> index 7646636f2d183..0f73f6a686cb7 100644
+>>> --- a/drivers/bluetooth/hci_bcm.c
+>>> +++ b/drivers/bluetooth/hci_bcm.c
+>>> @@ -445,9 +445,11 @@ static int bcm_open(struct hci_uart *hu)
+>>>
+>>>  out:
+>>>  	if (bcm->dev) {
+>>> +		hci_uart_set_flow_control(hu, true);
+>>>  		hu->init_speed =3D bcm->dev->init_speed;
+>>>  		hu->oper_speed =3D bcm->dev->oper_speed;
+>>>  		err =3D bcm_gpio_set_power(bcm->dev, true);
+>>> +		hci_uart_set_flow_control(hu, false);
+>>>  		if (err)
+>>>  			goto err_unset_hu;
+>>>  	}
+>> This causes bluetooth breakage (degraded bluetooth performance, due to =
+failure to
+>> switch to higher baudrate) for Orange Pi 3 board:
+>>
+>> [    3.839134] Bluetooth: hci0: command 0xfc18 tx timeout
+>> [   11.999136] Bluetooth: hci0: BCM: failed to write update baudrate (-=
+110)
+>> [   12.004613] Bluetooth: hci0: Failed to set baudrate
+>> [   12.123187] Bluetooth: hci0: BCM: chip id 130
+>> [   12.128398] Bluetooth: hci0: BCM: features 0x0f
+>> [   12.154686] Bluetooth: hci0: BCM4345C5
+>> [   12.157165] Bluetooth: hci0: BCM4345C5 (003.006.006) build 0000
+>> [   15.343684] Bluetooth: hci0: BCM4345C5 (003.006.006) build 0038
+>>
+>> I suggest not pushing this to stable.
+> Is it being fixed in Linus's tree?
 
-Currently, if an nfs server returns NFS4ERR_EXPIRED to open,
-we return EIO to applications without even trying to recover.
+No, because this mail was the first bug report.
 
-Signed-off-by: Robert Milkowski <rmilkowski@gmail.com>
----
- fs/nfs/nfs4proc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+But i agree with Ond=C5=99ej to not push it into stable.
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index aad65dd..04e6a13 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -481,6 +481,10 @@ static int nfs4_do_handle_exception(struct nfs_server
-*server,
- 						stateid);
- 				goto wait_on_recovery;
- 			}
-+			if (state == NULL) {
-+				nfs4_schedule_lease_recovery(clp);
-+				goto wait_on_recovery;
-+			}
- 			/* Fall through */
- 		case -NFS4ERR_OPENMODE:
- 			if (inode) {
--- 
-1.8.3.1
+Stefan
 
-
+>
+> thanks,
+>
+> greg k-h
