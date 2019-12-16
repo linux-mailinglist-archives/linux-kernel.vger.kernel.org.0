@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 106B5121801
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7BD1218A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbfLPSkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:40:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38274 "EHLO mail.kernel.org"
+        id S1728470AbfLPR5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729332AbfLPSCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:02:23 -0500
+        id S1728438AbfLPR51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:57:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF34420726;
-        Mon, 16 Dec 2019 18:02:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38958206B7;
+        Mon, 16 Dec 2019 17:57:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519343;
-        bh=T0ZeePh69wfZFJoEVb5zMxvl/KiHPmT9h9JmdM695A8=;
+        s=default; t=1576519046;
+        bh=eKqDTAxFyxA/lXvzU1Qr7q6anvv1C64wcHPO3SspZ5c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VkD6hHygbJs2wm6lJSLYsreD+6PspFfPOVJvFj8YeF9OuzaZuAE6dgIJ5A5254NjY
-         lSiA+QOlkUYYML/S+9SLQsXwXGeWp696+OlCZnw7qQwgXj7TidS9Q6R2is80nV51l4
-         82K8RKiWz/GMRBoh7vnFhTvhDFRkHqS5Jr9EaS/I=
+        b=gVKlVKrWlQBdAEiL8WtxfCQ9qdACq8hj/U5+g/BydiMsyPeTW50g/uf2Hhc+0LlsN
+         KXTkwZAoqBil4L5x78W63IF3odyC+HndJH9eY+olCqrUUGMDklMasqJpuKWBaFrpmA
+         uvlniWagZDPcKncdht0F355VrayjaOI4XBKZu0QE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emiliano Ingrassia <ingrassia@epigenesys.com>
-Subject: [PATCH 4.19 027/140] usb: core: urb: fix URB structure initialization function
-Date:   Mon, 16 Dec 2019 18:48:15 +0100
-Message-Id: <20191216174757.466182721@linuxfoundation.org>
+        stable@vger.kernel.org, Eli Billauer <eli.billauer@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.14 172/267] xhci: handle some XHCI_TRUST_TX_LENGTH quirks cases as default behaviour.
+Date:   Mon, 16 Dec 2019 18:48:18 +0100
+Message-Id: <20191216174911.925916147@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emiliano Ingrassia <ingrassia@epigenesys.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 1cd17f7f0def31e3695501c4f86cd3faf8489840 upstream.
+commit 7ff11162808cc2ec66353fc012c58bb449c892c3 upstream.
 
-Explicitly initialize URB structure urb_list field in usb_init_urb().
-This field can be potentially accessed uninitialized and its
-initialization is coherent with the usage of list_del_init() in
-usb_hcd_unlink_urb_from_ep() and usb_giveback_urb_bh() and its
-explicit initialization in usb_hcd_submit_urb() error path.
+xhci driver claims it needs XHCI_TRUST_TX_LENGTH quirk for both
+Broadcom/Cavium and a Renesas xHC controllers.
 
-Signed-off-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191127160355.GA27196@ingrassia.epigenesys.com
+The quirk was inteded for handling false "success" complete event for
+transfers that had data left untransferred.
+These transfers should complete with "short packet" events instead.
+
+In these two new cases the false "success" completion is reported
+after a "short packet" if the TD consists of several TRBs.
+xHCI specs 4.10.1.1.2 say remaining TRBs should report "short packet"
+as well after the first short packet in a TD, but this issue seems so
+common it doesn't make sense to add the quirk for all vendors.
+
+Turn these events into short packets automatically instead.
+
+This gets rid of the  "The WARN Successful completion on short TX for
+slot 1 ep 1: needs XHCI_TRUST_TX_LENGTH quirk" warning in many cases.
+
+Cc: <stable@vger.kernel.org>
+Reported-by: Eli Billauer <eli.billauer@gmail.com>
+Reported-by: Ard Biesheuvel <ardb@kernel.org>
+Tested-by: Eli Billauer <eli.billauer@gmail.com>
+Tested-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/20191211142007.8847-6-mathias.nyman@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/urb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/host/xhci-ring.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/core/urb.c
-+++ b/drivers/usb/core/urb.c
-@@ -45,6 +45,7 @@ void usb_init_urb(struct urb *urb)
- 	if (urb) {
- 		memset(urb, 0, sizeof(*urb));
- 		kref_init(&urb->kref);
-+		INIT_LIST_HEAD(&urb->urb_list);
- 		INIT_LIST_HEAD(&urb->anchor_list);
- 	}
- }
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -2398,7 +2398,8 @@ static int handle_tx_event(struct xhci_h
+ 	case COMP_SUCCESS:
+ 		if (EVENT_TRB_LEN(le32_to_cpu(event->transfer_len)) == 0)
+ 			break;
+-		if (xhci->quirks & XHCI_TRUST_TX_LENGTH)
++		if (xhci->quirks & XHCI_TRUST_TX_LENGTH ||
++		    ep_ring->last_td_was_short)
+ 			trb_comp_code = COMP_SHORT_PACKET;
+ 		else
+ 			xhci_warn_ratelimited(xhci,
 
 
