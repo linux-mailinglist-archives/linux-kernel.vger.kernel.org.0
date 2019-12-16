@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0805121267
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:52:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 181BB12126C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:52:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfLPRwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:52:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43848 "EHLO mail.kernel.org"
+        id S1727519AbfLPRwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:52:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727444AbfLPRwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:52:19 -0500
+        id S1727473AbfLPRw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4919220726;
-        Mon, 16 Dec 2019 17:52:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0991C20733;
+        Mon, 16 Dec 2019 17:52:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518738;
-        bh=C4lYRJukxV0+4PsZc7aDgH0OXVnlRSEUuOMr8jSSS1Y=;
+        s=default; t=1576518748;
+        bh=z3rTYzIuC9db465zqs7C561jd+xtDH6SGh4K3kTwM2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VPofYxLcrHRNu7iavXjhi71Kg/jO3C824VdfKa0UopQ4/VL30kPW+2cg17nZyqnPu
-         rqqgqJTbZhEHwcPKUQ2r+/GsxqSBNnyTfMYca7XAq079g70x4xq4vJONLKNwsID4C6
-         Lg63WWjDj1hb+TiaQAqBIo4vlHJX/5B18Go585rI=
+        b=tXqP0sfKu+6jvh1bGB2fRzSdWolHdGPCbo7o774zgjjyZg2WJN7/JcMf0tPfBVDv1
+         B3sflvnahgL8Es3CvpD2PB1GC7mJ+GXS5U1Msa/Qeyyb0kJHeJzlV/2h2brpDBXeeU
+         RCCI5RJdvQcRjvQvHlwem/09v+2gyFfwH4sJZimg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org, Xue Chaojing <xuechaojing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 046/267] clk: rockchip: fix I2S1 clock gate register for rk3328
-Date:   Mon, 16 Dec 2019 18:46:12 +0100
-Message-Id: <20191216174853.726718823@linuxfoundation.org>
+Subject: [PATCH 4.14 049/267] net-next/hinic:fix a bug in set mac address
+Date:   Mon, 16 Dec 2019 18:46:15 +0100
+Message-Id: <20191216174853.970651912@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,35 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+From: Xue Chaojing <xuechaojing@huawei.com>
 
-[ Upstream commit 5c73ac2f8b70834a603eb2d92eb0bb464634420b ]
+[ Upstream commit 9ea72dc9430306b77c73a8a21beb51437cde1d6d ]
 
-This patch fixes definition of I2S1 clock gate register for rk3328.
-Current setting is not related I2S clocks.
-  - bit6 of CRU_CLKGATE_CON0 means clk_ddrmon_en
-  - bit6 of CRU_CLKGATE_CON1 means clk_i2s1_en
+In add_mac_addr(), if the MAC address is a muliticast address,
+it will not be set, which causes the network card fail to receive
+the multicast packet. This patch fixes this bug.
 
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/rockchip/clk-rk3328.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/huawei/hinic/hinic_main.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
-index 33d1cf4e6d803..0e5222d1944b5 100644
---- a/drivers/clk/rockchip/clk-rk3328.c
-+++ b/drivers/clk/rockchip/clk-rk3328.c
-@@ -392,7 +392,7 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 			RK3328_CLKGATE_CON(1), 5, GFLAGS,
- 			&rk3328_i2s1_fracmux),
- 	GATE(SCLK_I2S1, "clk_i2s1", "i2s1_pre", CLK_SET_RATE_PARENT,
--			RK3328_CLKGATE_CON(0), 6, GFLAGS),
-+			RK3328_CLKGATE_CON(1), 6, GFLAGS),
- 	COMPOSITE_NODIV(SCLK_I2S1_OUT, "i2s1_out", mux_i2s1out_p, 0,
- 			RK3328_CLKSEL_CON(8), 12, 1, MFLAGS,
- 			RK3328_CLKGATE_CON(1), 7, GFLAGS),
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+index a696b5b2d40e6..44c73215d0264 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+@@ -598,9 +598,6 @@ static int add_mac_addr(struct net_device *netdev, const u8 *addr)
+ 	u16 vid = 0;
+ 	int err;
+ 
+-	if (!is_valid_ether_addr(addr))
+-		return -EADDRNOTAVAIL;
+-
+ 	netif_info(nic_dev, drv, netdev, "set mac addr = %02x %02x %02x %02x %02x %02x\n",
+ 		   addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
+ 
+@@ -724,6 +721,7 @@ static void set_rx_mode(struct work_struct *work)
+ {
+ 	struct hinic_rx_mode_work *rx_mode_work = work_to_rx_mode_work(work);
+ 	struct hinic_dev *nic_dev = rx_mode_work_to_nic_dev(rx_mode_work);
++	struct netdev_hw_addr *ha;
+ 
+ 	netif_info(nic_dev, drv, nic_dev->netdev, "set rx mode work\n");
+ 
+@@ -731,6 +729,9 @@ static void set_rx_mode(struct work_struct *work)
+ 
+ 	__dev_uc_sync(nic_dev->netdev, add_mac_addr, remove_mac_addr);
+ 	__dev_mc_sync(nic_dev->netdev, add_mac_addr, remove_mac_addr);
++
++	netdev_for_each_mc_addr(ha, nic_dev->netdev)
++		add_mac_addr(nic_dev->netdev, ha->addr);
+ }
+ 
+ static void hinic_set_rx_mode(struct net_device *netdev)
 -- 
 2.20.1
 
