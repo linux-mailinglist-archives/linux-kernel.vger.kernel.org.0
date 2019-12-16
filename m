@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4353E121916
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 506C112196D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfLPRva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:51:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41404 "EHLO mail.kernel.org"
+        id S1726556AbfLPRuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:50:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbfLPRvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:51:25 -0500
+        id S1726454AbfLPRuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:50:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D973F206EC;
-        Mon, 16 Dec 2019 17:51:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDDA720717;
+        Mon, 16 Dec 2019 17:50:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518685;
-        bh=iQ82Z0XPD8VLsRDNb2zEoDLlnNPuhQPAuwI+MEFLuKQ=;
+        s=default; t=1576518651;
+        bh=fDz5odz1kkl19+DXc3m1dlPMy+HzSUY2Aw+C6lLK4Sw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uOvy07FuK/tK6C5X3O42OU6nj9JQl3kmDI4DdjUFiQnB47+jxfbXi17/r5yHHKIsD
-         Gw79P4BJfTLxyACOdfT2LgqzqIv99GiBBrhmSEp8WFc/wL8AEmIyc+7MuZmVk2GkpU
-         fBFsUE2/DIWLB5lRgOvu43EdKHa7dmuEKz+BQSq0=
+        b=cX+Y/+KJHgrTEzHe5THU34B4qU0GiX03rCBEfyYxFVXG6KagMphgmQJ4Lg9RHvkCx
+         NFpvOw/GDckPidoD5B7WJmelcNRTiSFv/V85ah5TuDmezV7VmvnJ0gWloY2rBYAWHL
+         CCvNof3WiXAQCHM7/0QP9eyfM/9lxTB6MTXbIG8g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org,
+        Mordechay Goodstein <mordechay.goodstein@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 009/267] autofs: fix a leak in autofs_expire_indirect()
-Date:   Mon, 16 Dec 2019 18:45:35 +0100
-Message-Id: <20191216174849.872997927@linuxfoundation.org>
+Subject: [PATCH 4.14 011/267] iwlwifi: pcie: dont consider IV len in A-MSDU
+Date:   Mon, 16 Dec 2019 18:45:37 +0100
+Message-Id: <20191216174850.129523154@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -43,37 +46,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Mordechay Goodstein <mordechay.goodstein@intel.com>
 
-[ Upstream commit 03ad0d703df75c43f78bd72e16124b5b94a95188 ]
+[ Upstream commit cb1a4badf59275eb7221dcec621e8154917eabd1 ]
 
-if the second call of should_expire() in there ends up
-grabbing and returning a new reference to dentry, we need
-to drop it before continuing.
+>From gen2 PN is totally offloaded to hardware (also the space for the
+IV isn't part of the skb).  As you can see in mvm/mac80211.c:3545, the
+MAC for cipher types CCMP/GCMP doesn't set
+IEEE80211_KEY_FLAG_PUT_IV_SPACE for gen2 NICs.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+This causes all the AMSDU data to be corrupted with cipher enabled.
+
+Signed-off-by: Mordechay Goodstein <mordechay.goodstein@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/autofs4/expire.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ .../net/wireless/intel/iwlwifi/pcie/tx-gen2.c | 20 +++++++------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/fs/autofs4/expire.c b/fs/autofs4/expire.c
-index 141f9bc213a3d..94a0017c923b1 100644
---- a/fs/autofs4/expire.c
-+++ b/fs/autofs4/expire.c
-@@ -472,9 +472,10 @@ struct dentry *autofs4_expire_indirect(struct super_block *sb,
- 		 */
- 		flags &= ~AUTOFS_EXP_LEAVES;
- 		found = should_expire(expired, mnt, timeout, how);
--		if (!found || found != expired)
--			/* Something has changed, continue */
-+		if (found != expired) { // something has changed, continue
-+			dput(found);
- 			goto next;
-+		}
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c b/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
+index 6f45c8148b279..bbb39d6ec2ee3 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
+@@ -232,27 +232,23 @@ static int iwl_pcie_gen2_build_amsdu(struct iwl_trans *trans,
+ 	struct ieee80211_hdr *hdr = (void *)skb->data;
+ 	unsigned int snap_ip_tcp_hdrlen, ip_hdrlen, total_len, hdr_room;
+ 	unsigned int mss = skb_shinfo(skb)->gso_size;
+-	u16 length, iv_len, amsdu_pad;
++	u16 length, amsdu_pad;
+ 	u8 *start_hdr;
+ 	struct iwl_tso_hdr_page *hdr_page;
+ 	struct page **page_ptr;
+ 	struct tso_t tso;
  
- 		if (expired != dentry)
- 			dput(dentry);
+-	/* if the packet is protected, then it must be CCMP or GCMP */
+-	iv_len = ieee80211_has_protected(hdr->frame_control) ?
+-		IEEE80211_CCMP_HDR_LEN : 0;
+-
+ 	trace_iwlwifi_dev_tx(trans->dev, skb, tfd, sizeof(*tfd),
+ 			     &dev_cmd->hdr, start_len, 0);
+ 
+ 	ip_hdrlen = skb_transport_header(skb) - skb_network_header(skb);
+ 	snap_ip_tcp_hdrlen = 8 + ip_hdrlen + tcp_hdrlen(skb);
+-	total_len = skb->len - snap_ip_tcp_hdrlen - hdr_len - iv_len;
++	total_len = skb->len - snap_ip_tcp_hdrlen - hdr_len;
+ 	amsdu_pad = 0;
+ 
+ 	/* total amount of header we may need for this A-MSDU */
+ 	hdr_room = DIV_ROUND_UP(total_len, mss) *
+-		(3 + snap_ip_tcp_hdrlen + sizeof(struct ethhdr)) + iv_len;
++		(3 + snap_ip_tcp_hdrlen + sizeof(struct ethhdr));
+ 
+ 	/* Our device supports 9 segments at most, it will fit in 1 page */
+ 	hdr_page = get_page_hdr(trans, hdr_room);
+@@ -263,14 +259,12 @@ static int iwl_pcie_gen2_build_amsdu(struct iwl_trans *trans,
+ 	start_hdr = hdr_page->pos;
+ 	page_ptr = (void *)((u8 *)skb->cb + trans_pcie->page_offs);
+ 	*page_ptr = hdr_page->page;
+-	memcpy(hdr_page->pos, skb->data + hdr_len, iv_len);
+-	hdr_page->pos += iv_len;
+ 
+ 	/*
+-	 * Pull the ieee80211 header + IV to be able to use TSO core,
++	 * Pull the ieee80211 header to be able to use TSO core,
+ 	 * we will restore it for the tx_status flow.
+ 	 */
+-	skb_pull(skb, hdr_len + iv_len);
++	skb_pull(skb, hdr_len);
+ 
+ 	/*
+ 	 * Remove the length of all the headers that we don't actually
+@@ -348,8 +342,8 @@ static int iwl_pcie_gen2_build_amsdu(struct iwl_trans *trans,
+ 		}
+ 	}
+ 
+-	/* re -add the WiFi header and IV */
+-	skb_push(skb, hdr_len + iv_len);
++	/* re -add the WiFi header */
++	skb_push(skb, hdr_len);
+ 
+ 	return 0;
+ 
 -- 
 2.20.1
 
